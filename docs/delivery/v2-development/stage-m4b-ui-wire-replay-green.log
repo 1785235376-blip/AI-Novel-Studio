@@ -1,0 +1,25 @@
+GENUINE FILE/API WIRE REPLAY GREEN AFTER LMSTUDIO REASON CONTRACT ALIGNMENT; no service calls
+Sat Oct 10 10:54:03 UTC 2026
+09883fb7fe35b241f97ea7fe0a3e292178441935
+b22d5fe9b37f1cca86b909bf4fb4ff8f6b28550bd2e88bcdd48d5d60d4c971d5  /tmp/m4b-wire.Aqqvm4/wire.json
+bbb816a5bfce6a6e02684cb99b8a8e2a2b1478fa323250f7ee3916e25bd2c23c  frontend/src/creative/studioProviderClient.ts
+7376363d0b4508040c711c384b7039257262aa4a11bc390e217b9590dcced6cf  frontend/src/creative/studioProvider.testFixtures.ts
+04da80c3817339376e2e077c42fe4252460ce8b0f50cc85b657990735679ceff  frontend/src/creative/studioGraphTextAssetContract.ts
+5d2aeee05f9d88d1ee6b521858b35f7ccb4fbecc3415819f91225a984e010328  frontend/src/creative/studioGraphClient.ts
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ✓ ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts > Genuine mounted File/API wire replay through strict frontend client > accepts model capabilities including result storage
+ ✓ ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts > Genuine mounted File/API wire replay through strict frontend client > accepts provider catalog
+ ✓ ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts > Genuine mounted File/API wire replay through strict frontend client > accepts TEXT_GENERATION matching
+ ✓ ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts > Genuine mounted File/API wire replay through strict frontend client > accepts IMAGE_GENERATION matching
+ ✓ ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts > Genuine mounted File/API wire replay through strict frontend client > accepts VIDEO_GENERATION matching
+ ✓ ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts > Genuine mounted File/API wire replay through strict frontend client > accepts original dispatch with archival intent and pending receipt
+ ✓ ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts > Genuine mounted File/API wire replay through strict frontend client > accepts draft TextAsset result
+ ✓ ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts > Genuine mounted File/API wire replay through strict frontend client > accepts recovered TextAsset result
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  03:54:03
+   Duration  778ms (transform 265ms, setup 0ms, collect 305ms, tests 10ms, environment 0ms, prepare 142ms)
+

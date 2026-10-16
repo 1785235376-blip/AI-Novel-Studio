@@ -1,0 +1,16 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ✓ src/ui/LocalAiDiscovery.test.tsx (24 tests) 348ms
+ ✓ src/ui/LocalAiModelFiles.test.tsx (20 tests) 530ms
+ ✓ src/ui/LocalAiDiscoveryConsent.test.tsx (23 tests) 999ms
+   ✓ discloses all registered-model safety inspections without truncating the backend scope 309ms
+ ✓ src/localAiDiscoveryConsentApi.test.ts (20 tests) 17ms
+ ✓ src/localAiDiscoveryApi.test.ts (3 tests) 10ms
+ ✓ src/localAiEnvironmentApi.test.ts (2 tests) 7ms
+
+ Test Files  6 passed (6)
+      Tests  92 passed (92)
+   Start at  09:01:21
+   Duration  5.66s (transform 292ms, setup 0ms, collect 695ms, tests 1.91s, environment 1.91s, prepare 357ms)
+

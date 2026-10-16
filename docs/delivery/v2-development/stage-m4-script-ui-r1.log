@@ -1,0 +1,14 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ✓ src/creative/scriptExportClient.test.ts (5 tests) 16ms
+ ✓ src/creative/screenplayExportClient.test.ts (7 tests) 18ms
+ ✓ src/creative/ScreenplayExportPanel.test.tsx (7 tests) 255ms
+ ✓ src/creative/GenericScriptWorkspace.test.tsx (7 tests) 1598ms
+   ✓ standalone Script uses original Creative workspace > creates an explicitly independent script in the existing five-stage shell 590ms
+
+ Test Files  4 passed (4)
+      Tests  26 passed (26)
+   Start at  12:16:41
+   Duration  3.57s (transform 651ms, setup 0ms, collect 1.70s, tests 1.89s, environment 1.54s, prepare 455ms)
+

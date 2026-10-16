@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from threading import RLock
+from contextlib import contextmanager
 import json
 
 from .actor_context import ActorContext, SessionContext
@@ -16,17 +17,44 @@ class TrustedSessionResolver:
 
     def __init__(self) -> None:
         self._sessions: dict[str, SessionContext] = {}
+        self._binding_generations: dict[str, int] = {}
+        self._generation = 0
         self._lock = RLock()
+        # Mutation fencing may span storage work; ordinary owner-held authority
+        # reads must never wait for that work while holding their storage lease.
+        self._binding_mutation = RLock()
 
     def register(self, token: str, session: SessionContext) -> None:
         if not token.strip():
             raise ValueError("session token is required")
-        with self._lock:
+        with self._binding_mutation, self._lock:
+            self._generation += 1
             self._sessions[token] = session
+            self._binding_generations[token] = self._generation
 
     def revoke(self, token: str) -> None:
-        with self._lock:
+        with self._binding_mutation, self._lock:
+            self._generation += 1
             self._sessions.pop(token, None)
+            self._binding_generations.pop(token, None)
+
+    def binding_generation(self, token: str) -> int:
+        """Read the existing binding's incarnation; never mint or refresh access."""
+        with self._lock:
+            if token not in self._sessions:
+                raise KeyError("unknown or expired session")
+            return self._binding_generations[token]
+
+    @contextmanager
+    def binding_lease(self, token: str):
+        """Keep this resolver's original binding stable through a local commit.
+
+        This is process-local, like the registry itself. Shared membership and
+        role revocations are fenced by their persistent repository owners.
+        """
+        with self._binding_mutation:
+            actor = self.resolve(token)
+            yield actor
 
     def resolve(self, token: str) -> ActorContext:
         with self._lock:

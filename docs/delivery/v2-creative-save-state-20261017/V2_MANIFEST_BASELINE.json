@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-16T19:52:03.155845+00:00",
+  "base": "454ccd89499e3840d18622e8b6ec2669c17702c4",
+  "product_nodes": 15142,
+  "source_count": 2367,
+  "manifest_raw_snapshot": "baseline-coverage-manifest-v2.json.gz",
+  "manifest_raw_sha256": "6f621dcf211c778b09f9ee3351cca511a18b605d0f6d161383816c60dc0ea269",
+  "ordered_product_nodes_sha256": "b88166e66b8172fffe1fe9a23349a8e66842388fe91ccadd453b356ab7e3c4c6",
+  "classification_snapshot": "Raw manifest skips and external_gates retained in full",
+  "skips_sha256": "08393a038bb12bc6ea8a71f17e251842fbc69194b4830486893366d00162f5c3",
+  "external_gates_sha256": "cceed4261b5767968cb547884df11ec033ef7cdaec665a1b488b3927d67e6ff6",
+  "collection_snapshot": "baseline-collection-rows.json.gz",
+  "collection_gzip_sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34",
+  "collection_decompressed_raw_sha256": "1d95c304019297af45aae0bc68cd0cfa94035d617d49650ea04891165f75f0d3",
+  "manifest_source_working_mismatches": [],
+  "manifest_source_git_raw_mismatches": [],
+  "adoption_count": 61,
+  "existing_test_gate_count": 1118,
+  "navigation_source_count": 5,
+  "collector_run": false,
+  "tests_executed": false,
+  "source_edited": false
+}

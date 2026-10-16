@@ -1,0 +1,310 @@
+{
+  "size_han": 500000,
+  "method": "Browser fetch start through JSON parse, real loopback File API",
+  "warmups": [
+    {
+      "duration_ms": 209.90000000002328,
+      "status": 200,
+      "query": "星桥灯塔",
+      "item_count": 12,
+      "updated_documents": 15,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 202.90000000002328,
+      "status": 200,
+      "query": "阿澄",
+      "item_count": 13,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 200,
+      "status": 200,
+      "query": "旧信",
+      "item_count": 12,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    }
+  ],
+  "samples": [
+    {
+      "duration_ms": 200.39999999996508,
+      "status": 200,
+      "query": "月港",
+      "item_count": 12,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 195.29999999998836,
+      "status": 200,
+      "query": "不存在的线索",
+      "item_count": 0,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 195.79999999998836,
+      "status": 200,
+      "query": ".*",
+      "item_count": 0,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 201.30000000004657,
+      "status": 200,
+      "query": "星桥灯塔",
+      "item_count": 12,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 203.70000000001164,
+      "status": 200,
+      "query": "阿澄",
+      "item_count": 13,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 198.70000000001164,
+      "status": 200,
+      "query": "旧信",
+      "item_count": 12,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 199,
+      "status": 200,
+      "query": "月港",
+      "item_count": 12,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 203.09999999997672,
+      "status": 200,
+      "query": "不存在的线索",
+      "item_count": 0,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 195.5,
+      "status": 200,
+      "query": ".*",
+      "item_count": 0,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 201.89999999996508,
+      "status": 200,
+      "query": "星桥灯塔",
+      "item_count": 12,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 199.5,
+      "status": 200,
+      "query": "阿澄",
+      "item_count": 13,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 198.40000000002328,
+      "status": 200,
+      "query": "旧信",
+      "item_count": 12,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 198.59999999997672,
+      "status": 200,
+      "query": "月港",
+      "item_count": 12,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 197.90000000002328,
+      "status": 200,
+      "query": "不存在的线索",
+      "item_count": 0,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 200.5,
+      "status": 200,
+      "query": ".*",
+      "item_count": 0,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 199.09999999997672,
+      "status": 200,
+      "query": "星桥灯塔",
+      "item_count": 12,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 199.10000000003492,
+      "status": 200,
+      "query": "阿澄",
+      "item_count": 13,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 200.40000000002328,
+      "status": 200,
+      "query": "旧信",
+      "item_count": 12,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 202.90000000002328,
+      "status": 200,
+      "query": "月港",
+      "item_count": 12,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 201.60000000003492,
+      "status": 200,
+      "query": "不存在的线索",
+      "item_count": 0,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 200.20000000001164,
+      "status": 200,
+      "query": ".*",
+      "item_count": 0,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 198.60000000003492,
+      "status": 200,
+      "query": "星桥灯塔",
+      "item_count": 12,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 200.5,
+      "status": 200,
+      "query": "阿澄",
+      "item_count": 13,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 198.59999999997672,
+      "status": 200,
+      "query": "旧信",
+      "item_count": 12,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 199.40000000002328,
+      "status": 200,
+      "query": "月港",
+      "item_count": 12,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 205.30000000004657,
+      "status": 200,
+      "query": "不存在的线索",
+      "item_count": 0,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 195.5,
+      "status": 200,
+      "query": ".*",
+      "item_count": 0,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 199.29999999998836,
+      "status": 200,
+      "query": "星桥灯塔",
+      "item_count": 12,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 200.40000000002328,
+      "status": 200,
+      "query": "阿澄",
+      "item_count": 13,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    },
+    {
+      "duration_ms": 204.09999999997672,
+      "status": 200,
+      "query": "旧信",
+      "item_count": 12,
+      "updated_documents": 0,
+      "truncated": false,
+      "model_called": false
+    }
+  ],
+  "sample_count": 30,
+  "p50_ms": 199.40000000002328,
+  "p95_ms": 204.09999999997672,
+  "target_ms": 500,
+  "target_status": "PASS"
+}

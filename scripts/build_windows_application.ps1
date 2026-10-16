@@ -15,7 +15,12 @@ param(
     [string]$NodePath,
 
     [Parameter(Mandatory = $true)]
-    [string]$ViteCliPath
+    [string]$ViteCliPath,
+    [Parameter(Mandatory = $true)]
+    [string]$VerifiedFontDirectory,
+
+    [string]$WhisperHostPackageDirectory = '',
+    [string]$ExpectedWhisperHostSHA256 = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -29,6 +34,10 @@ $publishManifest = Join-Path $OutputRoot 'desktophost-publish-manifest.json'
 $provenanceManifest = Join-Path $OutputRoot 'desktophost-provenance.json'
 $applicationManifest = Join-Path $OutputRoot 'application-provenance.json'
 $frontendBuild = Join-Path $OutputRoot 'frontend-build\dist'
+$whisperHostProvenance = [ordered]@{ status = 'NOT_CONFIGURED'; inference = 'NOT_RUN'; gpu = 'NOT_RUN' }
+if ([bool]$WhisperHostPackageDirectory -ne [bool]$ExpectedWhisperHostSHA256) {
+    throw 'Whisper package and expected executable SHA256 must be supplied together'
+}
 
 function Resolve-ExistingPath([string]$Path, [string]$Label) {
     if (-not (Test-Path -LiteralPath $Path)) {
@@ -94,6 +103,9 @@ function New-ProductInventory([string]$Source, [string]$Prefix, [string[]]$Exten
     )
 }
 
+# The font is fetched from a pinned official source with a checked digest and
+# full OFL license. It is build material, never a copied proprietary OS font.
+# Preparation is explicit below after the owned output tree has been staged.
 $baseApplicationPath = Resolve-ExistingPath $BaseApplication 'Base Application'
 $dotnetExecutable = Resolve-ExistingPath $DotnetPath '.NET host'
 $nodeExecutable = Resolve-ExistingPath $NodePath 'Node.js host'
@@ -174,6 +186,8 @@ $sourceInventory = @(
 )
 $sourceInventory | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $sourceManifest -Encoding utf8
 
+& $dotnetExecutable restore $hostProjectPath -r win-x64 -p:SelfContained=true
+if ($LASTEXITCODE -ne 0) { throw "DesktopHost dependency restore failed with exit code $LASTEXITCODE" }
 & $dotnetExecutable publish $hostProjectPath `
     -c Release `
     -r win-x64 `
@@ -191,6 +205,60 @@ if (-not (Test-Path -LiteralPath $freshHostDll -PathType Leaf)) {
 
 Copy-Item -LiteralPath $baseApplicationPath -Destination $outputApplication -Recurse
 
+# Optional fixed host package is explicit build material. No model is bundled,
+# no environment configuration is activated and no executable is started.
+if ($WhisperHostPackageDirectory) {
+    if ($ExpectedWhisperHostSHA256 -cnotmatch '^[a-f0-9]{64}$') { throw 'Whisper executable pin is invalid' }
+    $whisperPackageRoot = Resolve-ExistingPath $WhisperHostPackageDirectory 'Fixed Whisper package'
+    $whisperManifestPath = Join-Path $whisperPackageRoot 'whisper-fixed-host-package.json'
+    $whisperManifestFile = Get-Item -LiteralPath $whisperManifestPath
+    if ($whisperManifestFile.Length -lt 1 -or $whisperManifestFile.Length -gt 8MB -or
+        $whisperManifestFile.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Fixed Whisper manifest capacity or identity invalid' }
+    $whisperManifest = Get-Content -LiteralPath $whisperManifestPath -Raw | ConvertFrom-Json
+    if ($whisperManifest.schema -ne 'studio-fixed-whisper-package/1' -or
+        $whisperManifest.protocol -ne 'studio-fixed-whisper-host/1' -or
+        $whisperManifest.executable -ne 'studio-fixed-whisper-host.exe' -or
+        $whisperManifest.executable_sha256 -cne $ExpectedWhisperHostSHA256 -or
+        $whisperManifest.upstream_commit -ne '4979e04f5dcaccb36057e059bbaed8a2f5288315' -or
+        $whisperManifest.upstream_version -ne '1.8.2' -or
+        $whisperManifest.backend -ne 'CPU_STATIC' -or
+        $whisperManifest.files.Count -lt 5 -or $whisperManifest.files.Count -gt 16) {
+        throw 'Fixed Whisper package provenance is invalid'
+    }
+    $whisperDestination = Join-Path $outputApplication 'Tools\WhisperFixedHost'
+    if (Test-Path -LiteralPath $whisperDestination) { throw 'Base Application already contains a Whisper fixed host; use a fresh base' }
+    [void](New-Item -ItemType Directory -Path $whisperDestination)
+    $whisperNames = @{}
+    $whisperBytes = 0L
+    foreach ($item in $whisperManifest.files) {
+        $relative = [string]$item.path
+        if ($relative -cnotmatch '^(studio-fixed-whisper-host\.exe|Licenses/(whisper-LICENSE\.txt|ggml-source-with-license\.h|httplib-source-with-license\.h|json-source-with-license\.hpp))$' -or
+            $whisperNames.ContainsKey($relative) -or [string]$item.sha256 -cnotmatch '^[a-f0-9]{64}$' -or
+            [long]$item.size -lt 1 -or [long]$item.size -gt 512MB) { throw 'Whisper member path or capacity invalid' }
+        $whisperNames[$relative] = $true
+        $source = Join-Path $whisperPackageRoot $relative
+        $file = Get-Item -LiteralPath $source
+        if ($file.Attributes -band [IO.FileAttributes]::ReparsePoint -or $file.Length -ne [long]$item.size -or
+            (Get-FileHash -Algorithm SHA256 -LiteralPath $source).Hash.ToLowerInvariant() -cne [string]$item.sha256) {
+            throw 'Fixed Whisper member hash or identity mismatch'
+        }
+        $whisperBytes += $file.Length
+        if ($whisperBytes -gt 512MB) { throw 'Fixed Whisper package capacity exceeded' }
+        $target = Join-Path $whisperDestination $relative
+        [void](New-Item -ItemType Directory -Path (Split-Path -Parent $target) -Force)
+        Copy-Item -LiteralPath $source -Destination $target
+        if ((Get-FileHash -Algorithm SHA256 -LiteralPath $target).Hash.ToLowerInvariant() -cne [string]$item.sha256) { throw 'Staged Whisper member hash mismatch' }
+    }
+    if ($whisperNames.Count -ne 5 -or -not $whisperNames.ContainsKey('studio-fixed-whisper-host.exe') -or
+        (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $whisperDestination 'studio-fixed-whisper-host.exe')).Hash.ToLowerInvariant() -cne $ExpectedWhisperHostSHA256) {
+        throw 'Complete fixed Whisper binary and notices are required'
+    }
+    Copy-Item -LiteralPath $whisperManifestPath -Destination (Join-Path $whisperDestination 'whisper-fixed-host-package.json')
+    $whisperHostProvenance = [ordered]@{ status = 'PACKAGED_NOT_VERIFIED'; source = $whisperPackageRoot
+        stage = $whisperDestination; executable_sha256 = $ExpectedWhisperHostSHA256; inventory = $whisperManifest.files
+        backend = 'CPU_STATIC'; inference = 'NOT_RUN'; gpu = 'NOT_RUN'; model = 'NOT_BUNDLED'; configuration = 'NOT_ACTIVATED' }
+}
+
 $stagedFrontend = Join-Path $outputApplication 'Frontend\dist'
 if (Test-Path -LiteralPath $stagedFrontend) {
     Remove-Item -LiteralPath $stagedFrontend -Recurse -Force
@@ -207,13 +275,15 @@ if (Test-Path -LiteralPath $stagedBackend) {
 }
 [void](New-Item -ItemType Directory -Path $stagedBackend)
 Copy-ProductTree $backendAppSource (Join-Path $stagedBackend 'app') @('.py')
+Copy-ProductTree (Join-Path $projectRoot 'local_interop_protocol') (Join-Path $stagedBackend 'local_interop_protocol') @('.py')
+Copy-ProductTree (Join-Path $projectRoot 'local_interop_desktop') (Join-Path $stagedBackend 'local_interop_desktop') @('.py')
 foreach ($name in @('config', 'prompts', 'workflows')) {
     Copy-ProductTree (Join-Path $projectRoot $name) (Join-Path $stagedBackend $name) @()
 }
 $backendSourceInventory = @()
 $backendStageInventory = @()
-foreach ($name in @('app', 'config', 'prompts', 'workflows')) {
-    $extensions = if ($name -eq 'app') { @('.py') } else { @() }
+foreach ($name in @('app', 'local_interop_protocol', 'local_interop_desktop', 'config', 'prompts', 'workflows')) {
+    $extensions = if ($name -in @('app', 'local_interop_protocol', 'local_interop_desktop')) { @('.py') } else { @() }
     $backendSourceInventory += New-ProductInventory (Join-Path $projectRoot $name) $name $extensions
     $stageRoot = Join-Path $stagedBackend $name
     $stageItems = New-FileInventory $stageRoot | ForEach-Object {
@@ -225,6 +295,19 @@ if ($backendStageInventory.Count -eq 0 -or -not (Test-Path -LiteralPath (Join-Pa
     throw 'Backend staging inventory is missing required product files'
 }
 Assert-InventoriesMatch $backendSourceInventory $backendStageInventory 'Backend'
+
+$fontSource = Resolve-ExistingPath $VerifiedFontDirectory 'Pinned CJK font directory'
+$fontName = 'NotoSansSC-Regular.ttf'
+$fontHash = 'eeb06b8a64fd04a2744d95579db1571b51027cda61ed78c62e4b730791525461'
+$licenseHash = '1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9'
+if ((Get-FileHash (Join-Path $fontSource $fontName) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $fontHash) { throw 'CJK font is not the verified regular build; run scripts/prepare_pdf_font.py with pinned dependencies.' }
+if ((Get-FileHash (Join-Path $fontSource 'OFL.txt') -Algorithm SHA256).Hash.ToLowerInvariant() -ne $licenseHash) { throw 'Complete pinned OFL license is required.' }
+$stagedFonts = Join-Path $stagedBackend 'assets\fonts'
+[void](New-Item -ItemType Directory -Path $stagedFonts -Force)
+foreach ($name in @($fontName, 'OFL.txt', 'font-manifest.json')) {
+    Copy-Item -LiteralPath (Join-Path $fontSource $name) -Destination $stagedFonts -Force
+}
+$fontInventory = New-FileInventory $stagedFonts
 
 $stagedMigrations = Join-Path $outputApplication 'Database\Migrations'
 if (Test-Path -LiteralPath $stagedMigrations) {
@@ -241,6 +324,53 @@ if (Test-Path -LiteralPath $stagedHost) {
     Remove-Item -LiteralPath $stagedHost -Recurse -Force
 }
 Copy-Item -LiteralPath $HostPublishDirectory -Destination $stagedHost -Recurse
+
+# Preserve full notices from precisely the packages restored for this build.
+# NuGet package folders and exact dependency versions come from project.assets;
+# do not copy unrelated versions from a shared global package cache.
+$assetsPath = Join-Path $hostSourcePath 'obj\project.assets.json'
+$restoredAssets = Get-Content -LiteralPath $assetsPath -Raw | ConvertFrom-Json
+$packageRoots = @($restoredAssets.packageFolders.PSObject.Properties | ForEach-Object { $_.Name })
+$licensePackages = @([ordered]@{ id = 'Microsoft.Web.WebView2'; version = '1.0.3537.50'; require_notices = $false })
+foreach ($framework in $restoredAssets.project.frameworks.PSObject.Properties) {
+    foreach ($dependency in $framework.Value.downloadDependencies) {
+        if ($dependency.name -in @('Microsoft.NETCore.App.Runtime.win-x64', 'Microsoft.WindowsDesktop.App.Runtime.win-x64')) {
+            $match = [regex]::Match([string]$dependency.version, '^\[(8\.0\.\d+),\s*\1\]$')
+            if (-not $match.Success) { throw "Runtime license source is not an exact .NET 8 pin: $($dependency.name)" }
+            $licensePackages += [ordered]@{ id = [string]$dependency.name; version = $match.Groups[1].Value; require_notices = ($dependency.name -eq 'Microsoft.NETCore.App.Runtime.win-x64') }
+        }
+    }
+}
+$licensePackages = @($licensePackages | Sort-Object { $_.id } -Unique)
+if ($licensePackages.Count -ne 3) { throw 'Exact restored .NET Runtime/WindowsDesktop/WebView2 license sources are required.' }
+$runtimeLicenseRoot = Join-Path $outputApplication 'Licenses\DesktopHost'
+$runtimeLicenseProvenance = @()
+foreach ($package in $licensePackages) {
+    $relative = $package.id.ToLowerInvariant() + '\' + $package.version
+    $packageDirectory = $packageRoots | ForEach-Object { Join-Path $_ $relative } |
+        Where-Object { Test-Path -LiteralPath $_ -PathType Container } | Select-Object -First 1
+    if (-not $packageDirectory) { throw "Restored package license source missing: $relative" }
+    $licenseFiles = @(Get-ChildItem -LiteralPath $packageDirectory -File | Where-Object {
+        $_.Name -match '^(?i:LICENSE)(?:[._-].*)?$' -or $_.Name -match '^(?i:THIRD-PARTY-NOTICES)(?:[._-].*)?$'
+    })
+    if (-not @($licenseFiles | Where-Object { $_.Name -match '^(?i:LICENSE)' }).Count) {
+        throw "Full license missing in restored package: $relative"
+    }
+    if ($package.require_notices -and -not @($licenseFiles | Where-Object { $_.Name -match '^(?i:THIRD-PARTY-NOTICES)' }).Count) {
+        throw "Full third-party notices missing in restored package: $relative"
+    }
+    $destination = Join-Path $runtimeLicenseRoot ($package.id + '-' + $package.version)
+    [void](New-Item -ItemType Directory -Path $destination -Force)
+    foreach ($file in $licenseFiles) {
+        Copy-Item -LiteralPath $file.FullName -Destination $destination
+        $runtimeLicenseProvenance += [ordered]@{
+            package = $package.id; version = $package.version; source = $file.FullName
+            staged = (Join-Path $destination $file.Name)
+            sha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $file.FullName).Hash
+        }
+    }
+}
+$runtimeLicenseProvenance | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $runtimeLicenseRoot 'provenance.json') -Encoding utf8
 
 $stagedHostDll = Join-Path $stagedHost 'AI-Novel-Studio.DesktopHost.dll'
 $freshHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $freshHostDll).Hash
@@ -291,8 +421,12 @@ $release = Get-Content -LiteralPath (Join-Path $projectRoot 'release\version.jso
         dotnet_sdk_version = $sdkVersion
         dotnet_sdk_base_path = $sdkBasePath
     }
-    python_runtime = 'CPython 3.12.10 x64'
-    postgresql_runtime = 'PostgreSQL 16.4 x64'
+    source_commit = (& git -C $projectRoot rev-parse HEAD)
+    font_inventory = $fontInventory
+    whisper_fixed_host = $whisperHostProvenance
+    runtime_license_provenance = $runtimeLicenseProvenance
+    python_runtime = (& (Join-Path $baseApplicationPath 'Runtime\Python\python.exe') --version)
+    postgresql_runtime = (& (Join-Path $baseApplicationPath 'PostgreSQL\bin\pg_ctl.exe') --version)
 } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $applicationManifest -Encoding utf8
 
 Write-Output "APPLICATION_STAGED $outputApplication"

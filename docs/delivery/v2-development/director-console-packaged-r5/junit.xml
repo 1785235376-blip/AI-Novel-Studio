@@ -1,0 +1,44 @@
+<testsuites id="" name="" tests="1" failures="1" skipped="0" errors="0" time="6.035759">
+<testsuite name="v2-director-console-live.spec.ts" timestamp="2026-10-16T15:03:17.132Z" hostname="director-1440x900" tests="1" failures="1" skipped="0" time="3.069" errors="0">
+<testcase name="real File Director graph participant saves, reopens and refuses a changed source" classname="v2-director-console-live.spec.ts" time="3.069">
+<properties>
+<property name="verification" value="Actual File owner, HTTP routes, rendered React and installed Edge. Authored synthetic text only; no response mocks, model inference or provider calls.">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\error-context.md]]
+]]>
+</system-out>
+<failure message="{&quot;detail&quot;:{&quot;code&quot;:&quot;EXPERIMENTAL_FEATURE_DISABLED&quot;,&quot;feature&quot;:&quot;ai_execution_v2&quot;},&quot;code&quot;:&quot;EXPERIMENTAL_FEATURE_DISABLED&quot;,&quot;message&quot;:&quot;EXPERIMENTAL_FEATURE_DISABLED&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;EXPERIMENTAL_FEATURE_DISABLED&quot;,&quot;feature&quot;:&quot;ai_execution_v2&quot;},&quot;request_id&quot;:&quot;7d4472ee-a02e-4579-9f64-8c54c40af253&quot;}" type="expect.toBe">
+<![CDATA[  [director-1440x900] › v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source 
+
+    Error: {"detail":{"code":"EXPERIMENTAL_FEATURE_DISABLED","feature":"ai_execution_v2"},"code":"EXPERIMENTAL_FEATURE_DISABLED","message":"EXPERIMENTAL_FEATURE_DISABLED","details":{"code":"EXPERIMENTAL_FEATURE_DISABLED","feature":"ai_execution_v2"},"request_id":"7d4472ee-a02e-4579-9f64-8c54c40af253"}
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 404
+
+      13 |     if (path.startsWith('/api/')) calls.push({ method: value.request().method(), path, status: value.status() }); });
+      14 |   const exact = async (response: APIResponse, status: number) => {
+    > 15 |     expect(response.status(), await response.text()).toBe(status); return response.json();
+         |                                                      ^
+      16 |   };
+      17 |   info.annotations.push({ type: 'verification', description: 'Actual File owner, HTTP routes, rendered React and installed Edge. Authored synthetic text only; no response mocks, model inference or provider calls.' });
+      18 |   const enterWorkspace = async () => {
+        at exact (D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-director-console-live.spec.ts:15:54)
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-director-console-live.spec.ts:42:21
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\docs\delivery\v2-development\director-console-packaged-r5\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\docs\delivery\v2-development\director-console-packaged-r5\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\error-context.md
+]]>
+</failure>
+</testcase>
+</testsuite>
+</testsuites>

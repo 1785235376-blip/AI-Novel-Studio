@@ -1,0 +1,22 @@
+........................................................................ [ 27%]
+........................................................................ [ 55%]
+........................................................................ [ 83%]
+..F.........................................                             [100%]
+================================== FAILURES ===================================
+_____ test_required_input_declaration_is_frozen_per_kind[image_generate] ______
+
+kind = 'image_generate'
+
+    @pytest.mark.parametrize("kind", sorted(models.DEFINITIONS))
+    def test_required_input_declaration_is_frozen_per_kind(kind):
+        assert set(REQUIRED_INPUTS) == set(models.DEFINITIONS)
+>       assert declared_required_inputs(kind) == REQUIRED_INPUTS[kind]
+E       AssertionError: assert [] == ['prompt']
+E         
+E         Right contains one more item: 'prompt'
+E         Use -v to get more diff
+
+tests\test_v2_creative_graph_contracts.py:588: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_v2_creative_graph_contracts.py::test_required_input_declaration_is_frozen_per_kind[image_generate]
+1 failed, 259 passed in 2.59s

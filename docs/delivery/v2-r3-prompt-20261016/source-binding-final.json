@@ -1,0 +1,122 @@
+{
+  "utc": "2026-10-16T16:48:20.470636+00:00",
+  "head_at_check": "f7fd63a1fff3c0ec7fa88c9c111676f9539a41a5",
+  "source_count": 2290,
+  "receipt_checks": [
+    {
+      "receipt": "docs/delivery/v2-development/r3-private-file-final-r3.json",
+      "sha256": "f29ec09f8dae3a3dd60c6806b540fce8dc170847fb7f60a4c6c292eb2d5bc2d9",
+      "log_sha256": "3fee179259aee3b5e2e984045ee86949dac512b98c6161d28be03bd5d27b5b4f",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2290
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-bindings-file-final-r3.json",
+      "sha256": "85d7658212296b039a6e00ce3a0804ba146e6207a53bf9cd14c81ac5bc054f38",
+      "log_sha256": "f3c6cafb4739468083829e725cc8dce54cf97ee9662ab7f1b177a9ad76bac527",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2290
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-authority-file-final-r3.json",
+      "sha256": "be355ebf1e678e1e6efee719bb6ac02af63f2367eec0244018a857ce75f3202a",
+      "log_sha256": "cc751992f5f8cc73f2052a642f47a9832f8ad2dc85103a59b1cfec0f43637491",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2290
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-authorized-file-final-r3.json",
+      "sha256": "88efb48c83f6a4db315bc80fe75e2fa3ab51ddb1fb30af2820e75c5cf3e5beb1",
+      "log_sha256": "995f4eab4d069212e0c0908baceb1046808d3a2d68f180056bcdd681ea0464ea",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2290
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-schema-id-module-ci-final.json",
+      "sha256": "d7866416d182f26803e3ad868c0dac8234be18ad822bc7f624122715b0c458e4",
+      "log_sha256": "9ddcc7b5571d82817a26633801331b8b69d1ac9bcf81357c342ee2bd66b9d9be",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2290
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-ui-token-final.json",
+      "sha256": "03943b68bf298cd4e05b4d36844a00e99e6c955a59b105178ebb5c3b46e1261a",
+      "log_sha256": "26949b524d180e026ee5e056df8b7c8885dadfa3268251b48c980d5cb2a4381b",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2290
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-prompt-process-file-final-r3.json",
+      "sha256": "53267bfa3a69139a00f840094be0c74277b01f3638a2dee8a4aa8d3428c49199",
+      "log_sha256": "70c3a1f3b4bdaf4c9c82e1b20fca6c05b7a711070aa3f9b97b5a9cd1966fc6bb",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2290
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-prompt-browser-file-final-r4.json",
+      "sha256": "e56ee4e247b58e80fb857d65f773a87261e5603279360e6a173927524628501b",
+      "log_sha256": "59435113307e45021de5d8b741a31c5959570c4242adb5547a43169b294f7ba7",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2290
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-prompt-combined-pg-final-r3.json",
+      "sha256": "757572412ac8666e4c3ea7b212741feefd1b8e75c8b5da35d249663fbe4f6311",
+      "log_sha256": "b9884ebcb3d13c6d91a85fe80255f5cb0b6b8c2e8ed4f3bae92f9e4dfdd3c8cf",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2290
+    },
+    {
+      "receipt": "docs/delivery/v2-development/r3-prompt-browser-pg-final-r1.json",
+      "sha256": "c64162f827115eb3dafbfbcf6286de3424a3ba7becabc28b33d7e706174a3652",
+      "log_sha256": "e9f1e1d1862488144c08774bcd867fc0711caaf5c6f688db55850f4ca79af0c1",
+      "status": "PASS",
+      "during_run_source_drift": false,
+      "current_source_differences": [],
+      "source_count": 2290
+    }
+  ],
+  "changed_source_sha256": {
+    "app/api.py": "acdca1488e4906b47a71d06cad2655374fef7cbdffdbeebea49200adc77f6a47",
+    "app/application/persistence.py": "f34f58c6866cade1f85f1c81b9432a4cf39f3d30c07bab175c7bc3f19c4eca9d",
+    "app/creative/prompt_adoption.py": "b32bf22d4a34b45d2fa972f042b76edbbb6af55fa80eb1463aa6937b8f87d699",
+    "app/creative/prompt_adoption_api.py": "538d0e6533424cfca404a58fbbbd5047c83b12bcb0f0166dc04fa8a191fa7a0b",
+    "app/creative/prompt_authoring.py": "aa65f5260c77a27fc459ff5432c2e2addfc3a5ec9706fe7d3a802b81aae2aa27",
+    "app/creative/workspace.py": "d3dc5a02bb866aca3381d0934ae48ae2d5f9b4e6eb03861ce859e0ebe1a50bbf",
+    "app/creative/workspace_api.py": "ce558660a30e1015d7cb41a94c04faacd226fecf97caaec3b231c1e92a67165d",
+    "app/experimental/api.py": "0a68f5ef4e73640b71754326e269c6ebdea8d93327eea5067c559176f269f98a",
+    "app/repositories/file/identity.py": "3c269feebc4a80cf660d534d495079e5adf3b2d617246f2ecd2b75c9d6054305",
+    "app/repositories/file/scope.py": "b3f664468ab78a0398ca90ee008f4395c055aedd8fc1539139088f15abecbffc",
+    "app/repositories/postgres/scope.py": "9097dde635bc6c3d8305a4ef6fb22acd441b2ee3dc66458783364a9a8891cfb9",
+    "app/services/asset_library_service.py": "9518ca28ddbb48aca098ffd3e6b7ccf7bdbdbbb0dfd5a93d3af533364d9650c4",
+    "app/trusted_sessions.py": "11f2520cade262fae3317e23c4379b0d376359faecc1df33160a4f1ba80c67bd",
+    "frontend/playwright.prompt-r3-live.config.ts": "d4bfb90bd1422738fed650a3161f9414f6557fbe305a9a82ee139c38a90afccf",
+    "frontend/tests/e2e/v2-prompt-r3-live.spec.ts": "6ee8e331cd394186f8ca3c0dfcd4d89eae79fce90d3cd5bcc901ac836cceee9d",
+    "scripts/run_v2_prompt_r3_browser.py": "83a7c384dd4a871d11fa880b9e3c6ecee7ee34c8388e51bc5a26deba37d0c74d",
+    "tests/test_round3_prompt_write_time_bindings.py": "e2cadb984e60ac7e80291c8183384fbb527e9c18973a465f579c6f4d43f24512",
+    "tests/test_v2_authority_commit_leases.py": "1bced0f416b757f0c81e669117f3c79240dd38645bdcc3ff3c26371b95664a3a",
+    "tests/test_v2_graph_schema_version_gate.py": "3808d405b39b9256b22147d691a10848734ef1b45d0ace78bd860ed78274e0d4",
+    "tests/test_v2_private_prompt_lifecycle.py": "3bfe0227fb25db5b5c12acc8a39c27bddc3eecae90e54e8dbb020aa6cc8baf62",
+    "tests/test_v2_project_retirement_file_io.py": "8ed7589ab6d135bbdd533dc51e4c5788c209bd13872128eaf6579b7af8df58c0",
+    "tests/test_v2_prompt_process_revocation.py": "9f950759d06f07e0dbc2927f4ce812ec58210a479305e275f2e476233b87661c"
+  },
+  "claim": "Exact current backend/frontend/runner/test sources match every selected successful original-runner snapshot; no source drift permitted."
+}

@@ -1,0 +1,95 @@
+.............................s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s [  1%]
+.........................ss..ss..ss..ss..ss..ss..ss..ss..ss..sssssssssss [  3%]
+sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss........... [  5%]
+.............................................................sssssssssss [  7%]
+sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss........... [  9%]
+.............................................................sssssssssss [ 11%]
+sssssssssssssssssssssssss....................................sssssssssss [ 13%]
+s............ssssssssssss............ssssssssssss............sssssssssss [ 15%]
+s............ss...ssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 17%]
+ssssssssssssssssss...................................................... [ 18%]
+..................ssssssssssss............ssssssssssssssssssssssssssssss [ 20%]
+ssssss....................................ssssssssssss............ssssss [ 22%]
+ssssssssssssssssssssssssssssssssssssssssss.............................. [ 24%]
+..................ssssssssssss............ssssssssssssssssssssssssssssss [ 26%]
+..............................ssssss......ss..ss..ss..ssss....ss..ss..ss [ 28%]
+..ss..ss..ss..ssssssssssss............ssssssssssssssssssssssssssssssssss [ 30%]
+ssssssssssssssssssssssssssssssss........................................ [ 32%]
+..........................ssssssssssssssssss..................ss..ssssss [ 34%]
+ss........ssss....ssssssssssss............ssssss......ss..ss..ss..ss..ss [ 35%]
+..ssssssssss..........ssssssss........ss..ssssssssssssssssssssssssssssss [ 37%]
+...s.s.s.s.s.s.s.sssssss.......s.s.s.s.s.s.sss...s..ss..s.s.s.s.s.s.s.s. [ 39%]
+sssssssss...sssss.....s.s.s.s.s.s.s.s.s.ss..ssssssssssssss.............. [ 41%]
+ss..ss..ss..ss..ss..ss..ss..ss..ss..s.s.s.ssssss......s.sss...s.s.s.s.s. [ 43%]
+sssssss.......sssssssss.........s.s.s.s.sssssssssssss.............sssss. [ 45%]
+....s.s.s.ss..s.s.s.s.sssss.....s.s.s.ss..s.s.s.s.s.s.s.s.s.sssssss..... [ 47%]
+..ss..ssss....ss..ss..ss..ss..ssss....ss..ss..ss..ss..ssssssss........ss [ 49%]
+sssss.......sss...ss..s.s.ssssssssss..........ss..s.ss..sss...s.s.s.ssss [ 51%]
+sssss.........s.s.s.s.ss..ss..ss..ss..s.sss...s.s.sss...s.ss..ss........ [ 53%]
+........s.s.ssssssss........s.s.s.s.ssssssssss..........s.s.s.s.s.s...s. [ 54%]
+s.s.ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss.. [ 56%]
+ss..........ss..ss...................................................... [ 58%]
+........................................................................ [ 60%]
+........................................................................ [ 62%]
+......................................................................s. [ 64%]
+s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.ssssssssssss [ 66%]
+s.............ss..ssss....ss..ss..ssss....ss..ss..ss.................... [ 68%]
+........................................................................ [ 70%]
+........................................................................ [ 71%]
+........................................................................ [ 73%]
+........................................................................ [ 75%]
+........................................................................ [ 77%]
+....s................................................................... [ 79%]
+........................................................................ [ 81%]
+........................................................................ [ 83%]
+........................................................................ [ 85%]
+........................................................................ [ 87%]
+...s.s.s.s.sssss.....sssss.....s.s.s.s.ssss....s.s.s.ss..s.s.s.ss.Fsssss [ 89%]
+sssss..........ss..ss..ss..ssss....ss..ss..ss..ss..ss..ss..ss..ss..ss..s [ 90%]
+s.....................ssss....s.s.s.s.sss...............s.s.ssss....s.s. [ 92%]
+ss...................................................................... [ 94%]
+..........ss..........ss...................................sssssssssssss [ 96%]
+sss................ss..ss..ss..ss..ss..ss..ss..ss..ssss....ss..sssssss.. [ 98%]
+.....s.s.s.s.s.s..s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.               [100%]
+=================================== FAILURES ===================================
+_ test_mounted_real_worker_review_preserves_existing_chapter_and_canon[postgres-/api/v1] _
+
+ai_client = namespace(client=<starlette.testclient.TestClient object at 0x7f5faa5e45c0>, prefix='/api/v1', base='/api/v1/novels/r3...st='m4-host-70268ecb974e46a8ac1de3320ecea5dc', headers={'X-Session-Token': 'm4-host-70268ecb974e46a8ac1de3320ecea5dc'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f5f9328e270>
+
+    def test_mounted_real_worker_review_preserves_existing_chapter_and_canon(ai_client, monkeypatch):
+        e = ai_client; spy_transport(e, monkeypatch)
+        before_chapter, before_canon = deepcopy(e.chapters.get(e.chapter["id"])), deepcopy(e.canon.list(e.nid))
+        response = e.client.get(e.graph_base + "/model-capabilities", headers=e.headers)
+        assert response.headers["cache-control"] == "no-store" and response.headers["x-content-type-options"] == "nosniff"
+        assert checked(response)["local_only"]
+        row, path = ready(e)
+        response = e.client.post(path + "/model/dispatch", headers=e.headers, json=body(row))
+        admitted = checked(response)
+>       job = e.manager.get(admitted["model_runtime"]["execution"]["job_id"]); wait_job(e, job)
+                                                                               ^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+e = namespace(client=<starlette.testclient.TestClient object at 0x7f5faa5e45c0>, prefix='/api/v1', base='/api/v1/novels/r3...st='m4-host-70268ecb974e46a8ac1de3320ecea5dc', headers={'X-Session-Token': 'm4-host-70268ecb974e46a8ac1de3320ecea5dc'})
+job = Job(id='2ca5eb30-44db-4505-a9bd-29e6e03b7270', operation='graph_text', novel_id='r3-mounted-d1fba26774fe49c3a8e8d1ae1c...7927fa7aac22bc1c9fb225e8f17', 'route_fingerprint': 'c8afdcb5da3ccdcbd653b1f345e988936104fa0e6ebcdce90bb9aabfffcc48c7'})
+
+    def wait_job(e, job):
+        deadline = time.monotonic() + 8
+        while job.status not in e.manager.terminal or job.terminal_hook_status is None:
+            if time.monotonic() >= deadline:
+>               pytest.fail("Original M4 worker did not terminate: " + repr(job.public()))
+E               Failed: Original M4 worker did not terminate: {'id': '2ca5eb30-44db-4505-a9bd-29e6e03b7270', 'operation': 'graph_text', 'novel_id': 'r3-mounted-d1fba26774fe49c3a8e8d1ae1c79ba3e', 'chapter_id': None, 'instruction': '', 'profile': 'LOCAL_ONLY', 'source': '', 'requested_provider': 'mock', 'requested_model': 'mock-writer', 'style': '', 'status': 'GENERATING', 'output': '海风裹着雨水灌入狭窄的舱道。林海推开船舱门，锈蚀的合页发出低哑呻吟。他没有立刻迈进去——黑暗深处，某种金属正有规律地轻响。', 'error': None, 'error_code': None, 'provider': 'mock', 'model': 'mock-writer', 'issues': [], 'latency_ms': 7872, 'base_chapter_version': None, 'variant_group_id': None, 'variant_index': None, 'actor_id': 'local-author', 'session_id': None, 'client_id': None, 'workspace_id': None, 'scope': {'mode': 'local', 'novel_id': 'r3-mounted-d1fba26774fe49c3a8e8d1ae1c79ba3e'}, 'scope_type': None, 'scope_id': None, 'correlation_id': None, 'context_snapshot_id': None, 'created_at': '2026-10-10T07:19:37.965946+00:00', 'updated_at': '2026-10-10T07:19:45.657565+00:00', 'creation_records': [], 'usage': None, 'usage_status': 'UNKNOWN', 'execution_mode': 'mock_standin', 'provider_reference_id': None, 'route_decisions': [{'provider': 'mock', 'model': 'mock-writer', 'cloud': False, 'status': 'COMPLETED'}], 'graph_binding': {'graph_id': '16498885-bc00-422c-8fe2-f7768abae391', 'graph_version': 1, 'run_id': 'eba56a6b-c340-4c7b-946c-2ee487410ae1', 'node_id': 'Generate', 'project_incarnation': 'postgres:7e1e787b-fb8e-49d6-9fd8-7190ba0b1cbd', 'input_digest': 'c1b01c3fe8bdde827b127a4b4bf36abb2079bada0b15dc4a4571180cf6fce6be', 'reviewed_preview_digest': '575a052667e887208912f64e76f3c7f9c5e757927fa7aac22bc1c9fb225e8f17', 'route_fingerprint': 'c8afdcb5da3ccdcbd653b1f345e988936104fa0e6ebcdce90bb9aabfffcc48c7'}, 'generation_max_output_bytes': 32000, 'generation_deadline': '2026-10-10T07:22:37.849590+00:00', 'expected_request_digest': 'baa5bf4661145f17a8f9d997cfa68d0b9ca7edbf449cd0a56f8d8a139fb0a24c', 'base_chapter_digest': None, 'experimental_origin': 'creative_graph_model', 'required_experimental_features': ['ai_execution_v2', 'author_context_inspector_v2', 'model_broker_v2', 'narrative_production_v2'], 'dispatch_hooks_required': True}
+
+tests/test_v2_ai_execution_runtime.py:177: Failed
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-owner-postgres-final3.xml -
+=========================== short test summary info ============================
+FAILED tests/test_v2_ai_execution_api.py::test_mounted_real_worker_review_preserves_existing_chapter_and_canon[postgres-/api/v1]
+1 failed, 2501 passed, 1300 skipped, 1 warning in 1575.32s (0:26:15)

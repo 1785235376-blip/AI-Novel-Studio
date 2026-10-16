@@ -1,0 +1,2043 @@
+TARGETED TEXTASSET NOTICE REGRESSION RED; new tests, before conditional copy fix
+Sat Oct 10 10:56:47 UTC 2026
+09883fb7fe35b241f97ea7fe0a3e292178441935
+73a525f0bb844206a68d1a5d33ea1b7b30be8b169bcb2d382839071d9d656a0c  frontend/src/creative/GraphRunPanel.tsx
+4325545493cab79c9526889ba52ba25e265e22f81e3149ddb5b8f639c5d550e3  frontend/src/creative/GraphTextAssetPanel.test.tsx
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ✓ src/creative/GraphRunPanel.test.tsx (19 tests) 966ms
+ ❯ src/creative/GraphTextAssetPanel.test.tsx (13 tests | 2 failed) 3078ms
+   ✓ same-confirmation automatic private TextAsset archival > discloses archival beside the original confirmation and submits one dispatch without another step 366ms
+   × same-confirmation automatic private TextAsset archival > reports the private asset receipt after APPROVED without claiming assets were untouched 1053ms
+     → Unable to find an element with the text: 原工作流运行记录已更新；私有文字资产状态见下方回执，正文未被写入。. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"创作图运行与审核"[39m
+      [33mclass[39m=[32m"studio-graph-run"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m本地节点运行[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m原工作流先处理作者输入与本地节点。模型节点在明确预览和确认前不会调用；资产引用节点尚无执行适配。审核不会改写正文或原文件。[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m原工作流运行记录已更新；正文和资产未被写入。[0m
+      [36m</div>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m核对运行范围[0m
+      [36m</button>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m读取运行记录[0m
+      [36m</button>[39m
+      [36m<label>[39m
+        [0m已保存运行[0m
+        [36m<select[39m
+          [33maria-label[39m=[32m"已保存运行"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择运行记录[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"model_run"[39m
+          [36m>[39m
+            [0mmodel_run[0m
+            [0m · [0m
+            [0m已完成[0m
+            [0m · v[0m
+            [0m6[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"当前创作图运行"[39m
+      [36m>[39m
+        [36m<p>[39m
+          [0m运行 [0m
+          [0mmodel_run[0m
+          [0m · v[0m
+          [0m6[0m
+          [0m · 图 v[0m
+          [0m1[0m
+        [36m</p>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m已完成[0m
+        [36m</span>[39m
+        [36m<p>[39m
+          [0m缓存命中 [0m
+          [0m0[0m
+          [0m / 未命中 [0m
+          [0m0[0m
+          [0m；仅同图版本的已审核本地结果。[0m
+          [0m模型输出不复用缓存。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m模型调用：[0m
+          [0m已调用[0m
+          [0m · 云端调用：0 · 应用到正文：否[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m运行时限 [0m
+          [0m3600[0m
+          [0m 秒 · 截止 [0m
+          [0m2026-10-10T01:00:00Z[0m
+          [0m。暂停、恢复与审核不会重新计时。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m重新读取当前运行[0m
+        [36m</button>[39m
+        [36m<ul>[39m
+          [36m<li>[39m
+            [0minput[0m
+            [0m · [0m
+            [0m已完成[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [0mgenerate[0m
+            [0m · [0m
+            [0m已完成[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [0mreview[0m
+            [0m · [0m
+            [0mPENDING[0m
+          [36m</li>[39m
+        [36m</ul>[39m
+        [36m<label>[39m
+          [0m运行备注[0m
+          [36m<input[39m
+            [33mmaxlength[39m=[32m"1000"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"可选本地文字模型执行"[39m
+        [33mclass[39m=[32m"studio-graph-model"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m可选本地文字模型执行[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0m先读取能力并选择本地路由，再核对完整输入并明确调用一次。不会自动安装、启动模型、调用、重试或转云端。结果仍需人工审核，不写入正文。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m云端 API：预留，当前不可执行。实际推理质量验收：未运行。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取本地模型能力[0m
+        [36m</button>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"私有文字资产回执"[39m
+          [33mclass[39m=[32m"studio-graph-model"[39m
+        [36m>[39m
+          [36m<h4>[39m
+            [0m私有文字资产[0m
+          [36m</h4>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0m已批准[0m
+          [36m</span>[39m
+          [36m<p>[39m
+            [0m仅当前创作者可见；未写入正文。质量验收：未运行。不会自动重试模型。[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m资产：[0m
+            [0mprivate_text_asset[0m
+            [0m · v[0m
+            [0m2[0m
+            [0m · [0m
+            [0m19[0m
+            [0m 字节 · text/plain[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m模型：[0m
+            [0mlocal[0m
+            [0m / [0m
+            [0mwriter[0m
+            [0m · 最多 [0m
+            [0m512[0m
+            [0m 输出 token · 温度 [0m
+            [0m0[0m
+          [36m</p>[39m
+          [36m<details>[39m
+            [36m<summary>[39m
+              [0m核对文字资产来源[0m
+            [36m</summary>[39m
+            [36m<p>[39m
+              [0m图：[0m
+              [0mmodel_graph[0m
+              [0m · v[0m
+              [0m1[0m
+              [0m · 运行：[0m
+              [0mmodel_run[0m
+              [0m · 来源 v[0m
+              [0m4[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m模型节点：[0m
+              [0mgenerate[0m
+              [0m · 原任务：[0m
+              [0moriginal_job[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m图摘要：[0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m输入摘要：[0m
+              [0mbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m预览摘要：[0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m文字 SHA-256：[0m
+              [0m8df20b44e9d5e31fe59161b21884971d0fb57ce15c44a80808b6faac05ded3d2[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m生成：[0m
+              [0m2026-10-10T00:00:01Z[0m
+              [0m · 建立：[0m
+              [0m2026-10-10T00:00:02Z[0m
+              [0m · 更新：[0m
+              [0m2026-10-10T00:00:02Z[0m
+            [36m</p>[39m
+          [36m</details>[39m
+        [36m</section>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0mTERMINAL[0m
+        [36m</span>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"图节点模型执行回执"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0m任务：[0m
+            [0moriginal_job[0m
+            [0m · [0m
+            [0mCOMPLETED[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m模型调用：[0m
+            [0m已调用[0m
+            [0m · [0m
+            [0m本地模型任务[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m回执：[0m
+            [0mRECORDED[0m
+            [0m · 用量：[0m
+            [0mPENDING[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m等待中的模型任务只能核对或取消，不能暂停后重复调度。[0m
+          [36m</p>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"创作图运行与审核"[39m
+      [33mclass[39m=[32m"studio-graph-run"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m本地节点运行[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m原工作流先处理作者输入与本地节点。模型节点在明确预览和确认前不会调用；资产引用节点尚无执行适配。审核不会改写正文或原文件。[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m原工作流运行记录已更新；正文和资产未被写入。[0m
+      [36m</div>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m核对运行范围[0m
+      [36m</button>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m读取运行记录[0m
+      [36m</button>[39m
+      [36m<label>[39m
+        [0m已保存运行[0m
+        [36m<select[39m
+          [33maria-label[39m=[32m"已保存运行"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择运行记录[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"model_run"[39m
+          [36m>[39m
+            [0mmodel_run[0m
+            [0m · [0m
+            [0m已完成[0m
+            [0m · v[0m
+            [0m6[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"当前创作图运行"[39m
+      [36m>[39m
+        [36m<p>[39m
+          [0m运行 [0m
+          [0mmodel_run[0m
+          [0m · v[0m
+          [0m6[0m
+          [0m · 图 v[0m
+          [0m1[0m
+        [36m</p>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m已完成[0m
+        [36m</span>[39m
+        [36m<p>[39m
+          [0m缓存命中 [0m
+          [0m0[0m
+          [0m / 未命中 [0m
+          [0m0[0m
+          [0m；仅同图版本的已审核本地结果。[0m
+          [0m模型输出不复用缓存。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m模型调用：[0m
+          [0m已调用[0m
+          [0m · 云端调用：0 · 应用到正文：否[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m运行时限 [0m
+          [0m3600[0m
+          [0m 秒 · 截止 [0m
+          [0m2026-10-10T01:00:00Z[0m
+          [0m。暂停、恢复与审核不会重新计时。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m重新读取当前运行[0m
+        [36m</button>[39m
+        [36m<ul>[39m
+          [36m<li>[39m
+            [0minput[0m
+            [0m · [0m
+            [0m已完成[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [0mgenerate[0m
+            [0m · [0m
+            [0m已完成[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [0mreview[0m
+            [0m · [0m
+            [0mPENDING[0m
+          [36m</li>[39m
+        [36m</ul>[39m
+        [36m<label>[39m
+          [0m运行备注[0m
+          [36m<input[39m
+            [33mmaxlength[39m=[32m"1000"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"可选本地文字模型执行"[39m
+        [33mclass[39m=[32m"studio-graph-model"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m可选本地文字模型执行[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0m先读取能力并选择本地路由，再核对完整输入并明确调用一次。不会自动安装、启动模型、调用、重试或转云端。结果仍需人工审核，不写入正文。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m云端 API：预留，当前不可执行。实际推理质量验收：未运行。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取本地模型能力[0m
+        [36m</button>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"私有文字资产回执"[39m
+          [33mclass[39m=[32m"studio-graph-model"[39m
+        [36m>[39m
+          [36m<h4>[39m
+            [0m私有文字资产[0m
+          [36m</h4>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0m已批准[0m
+          [36m</span>[39m
+          [36m<p>[39m
+            [0m仅当前创作者可见；未写入正文。质量验收：未运行。不会自动重试模型。[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m资产：[0m
+            [0mprivate_text_asset[0m
+            [0m · v[0m
+            [0m2[0m
+            [0m · [0m
+            [0m19[0m
+            [0m 字节 · text/plain[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m模型：[0m
+            [0mlocal[0m
+            [0m / [0m
+            [0mwriter[0m
+            [0m · 最多 [0m
+            [0m512[0m
+            [0m 输出 token · 温度 [0m
+            [0m0[0m
+          [36m</p>[39m
+          [36m<details>[39m
+            [36m<summary>[39m
+              [0m核对文字资产来源[0m
+            [36m</summary>[39m
+            [36m<p>[39m
+              [0m图：[0m
+              [0mmodel_graph[0m
+              [0m · v[0m
+              [0m1[0m
+              [0m · 运行：[0m
+              [0mmodel_run[0m
+              [0m · 来源 v[0m
+              [0m4[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m模型节点：[0m
+              [0mgenerate[0m
+              [0m · 原任务：[0m
+              [0moriginal_job[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m图摘要：[0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m输入摘要：[0m
+              [0mbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m预览摘要：[0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m文字 SHA-256：[0m
+              [0m8df20b44e9d5e31fe59161b21884971d0fb57ce15c44a80808b6faac05ded3d2[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m生成：[0m
+              [0m2026-10-10T00:00:01Z[0m
+              [0m · 建立：[0m
+              [0m2026-10-10T00:00:02Z[0m
+              [0m · 更新：[0m
+              [0m2026-10-10T00:00:02Z[0m
+            [36m</p>[39m
+          [36m</details>[39m
+        [36m</section>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0mTERMINAL[0m
+        [36m</span>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"图节点模型执行回执"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0m任务：[0m
+            [0moriginal_job[0m
+            [0m · [0m
+            [0mCOMPLETED[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m模型调用：[0m
+            [0m已调用[0m
+            [0m · [0m
+            [0m本地模型任务[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m回执：[0m
+            [0mRECORDED[0m
+            [0m · 用量：[0m
+            [0mPENDING[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m等待中的模型任务只能核对或取消，不能暂停后重复调度。[0m
+          [36m</p>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × same-confirmation automatic private TextAsset archival > reports the private asset receipt after REJECTED without claiming assets were untouched 1039ms
+     → Unable to find an element with the text: 原工作流运行记录已更新；私有文字资产状态见下方回执，正文未被写入。. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"创作图运行与审核"[39m
+      [33mclass[39m=[32m"studio-graph-run"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m本地节点运行[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m原工作流先处理作者输入与本地节点。模型节点在明确预览和确认前不会调用；资产引用节点尚无执行适配。审核不会改写正文或原文件。[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m原工作流运行记录已更新；正文和资产未被写入。[0m
+      [36m</div>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m核对运行范围[0m
+      [36m</button>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m读取运行记录[0m
+      [36m</button>[39m
+      [36m<label>[39m
+        [0m已保存运行[0m
+        [36m<select[39m
+          [33maria-label[39m=[32m"已保存运行"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择运行记录[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"model_run"[39m
+          [36m>[39m
+            [0mmodel_run[0m
+            [0m · [0m
+            [0m已驳回[0m
+            [0m · v[0m
+            [0m6[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"当前创作图运行"[39m
+      [36m>[39m
+        [36m<p>[39m
+          [0m运行 [0m
+          [0mmodel_run[0m
+          [0m · v[0m
+          [0m6[0m
+          [0m · 图 v[0m
+          [0m1[0m
+        [36m</p>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m已驳回[0m
+        [36m</span>[39m
+        [36m<p>[39m
+          [0m缓存命中 [0m
+          [0m0[0m
+          [0m / 未命中 [0m
+          [0m0[0m
+          [0m；仅同图版本的已审核本地结果。[0m
+          [0m模型输出不复用缓存。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m模型调用：[0m
+          [0m已调用[0m
+          [0m · 云端调用：0 · 应用到正文：否[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m运行时限 [0m
+          [0m3600[0m
+          [0m 秒 · 截止 [0m
+          [0m2026-10-10T01:00:00Z[0m
+          [0m。暂停、恢复与审核不会重新计时。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m重新读取当前运行[0m
+        [36m</button>[39m
+        [36m<ul>[39m
+          [36m<li>[39m
+            [0minput[0m
+            [0m · [0m
+            [0m已完成[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [0mgenerate[0m
+            [0m · [0m
+            [0m已完成[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [0mreview[0m
+            [0m · [0m
+            [0mPENDING[0m
+          [36m</li>[39m
+        [36m</ul>[39m
+        [36m<label>[39m
+          [0m运行备注[0m
+          [36m<input[39m
+            [33mmaxlength[39m=[32m"1000"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"可选本地文字模型执行"[39m
+        [33mclass[39m=[32m"studio-graph-model"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m可选本地文字模型执行[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0m先读取能力并选择本地路由，再核对完整输入并明确调用一次。不会自动安装、启动模型、调用、重试或转云端。结果仍需人工审核，不写入正文。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m云端 API：预留，当前不可执行。实际推理质量验收：未运行。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取本地模型能力[0m
+        [36m</button>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"私有文字资产回执"[39m
+          [33mclass[39m=[32m"studio-graph-model"[39m
+        [36m>[39m
+          [36m<h4>[39m
+            [0m私有文字资产[0m
+          [36m</h4>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0m已驳回[0m
+          [36m</span>[39m
+          [36m<p>[39m
+            [0m仅当前创作者可见；未写入正文。质量验收：未运行。不会自动重试模型。[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m资产：[0m
+            [0mprivate_text_asset[0m
+            [0m · v[0m
+            [0m2[0m
+            [0m · [0m
+            [0m19[0m
+            [0m 字节 · text/plain[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m模型：[0m
+            [0mlocal[0m
+            [0m / [0m
+            [0mwriter[0m
+            [0m · 最多 [0m
+            [0m512[0m
+            [0m 输出 token · 温度 [0m
+            [0m0[0m
+          [36m</p>[39m
+          [36m<details>[39m
+            [36m<summary>[39m
+              [0m核对文字资产来源[0m
+            [36m</summary>[39m
+            [36m<p>[39m
+              [0m图：[0m
+              [0mmodel_graph[0m
+              [0m · v[0m
+              [0m1[0m
+              [0m · 运行：[0m
+              [0mmodel_run[0m
+              [0m · 来源 v[0m
+              [0m4[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m模型节点：[0m
+              [0mgenerate[0m
+              [0m · 原任务：[0m
+              [0moriginal_job[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m图摘要：[0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m输入摘要：[0m
+              [0mbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m预览摘要：[0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m文字 SHA-256：[0m
+              [0m8df20b44e9d5e31fe59161b21884971d0fb57ce15c44a80808b6faac05ded3d2[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m生成：[0m
+              [0m2026-10-10T00:00:01Z[0m
+              [0m · 建立：[0m
+              [0m2026-10-10T00:00:02Z[0m
+              [0m · 更新：[0m
+              [0m2026-10-10T00:00:02Z[0m
+            [36m</p>[39m
+          [36m</details>[39m
+        [36m</section>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0mTERMINAL[0m
+        [36m</span>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"图节点模型执行回执"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0m任务：[0m
+            [0moriginal_job[0m
+            [0m · [0m
+            [0mCOMPLETED[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m模型调用：[0m
+            [0m已调用[0m
+            [0m · [0m
+            [0m本地模型任务[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m回执：[0m
+            [0mRECORDED[0m
+            [0m · 用量：[0m
+            [0mPENDING[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m等待中的模型任务只能核对或取消，不能暂停后重复调度。[0m
+          [36m</p>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"创作图运行与审核"[39m
+      [33mclass[39m=[32m"studio-graph-run"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m本地节点运行[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m原工作流先处理作者输入与本地节点。模型节点在明确预览和确认前不会调用；资产引用节点尚无执行适配。审核不会改写正文或原文件。[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m原工作流运行记录已更新；正文和资产未被写入。[0m
+      [36m</div>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m核对运行范围[0m
+      [36m</button>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m读取运行记录[0m
+      [36m</button>[39m
+      [36m<label>[39m
+        [0m已保存运行[0m
+        [36m<select[39m
+          [33maria-label[39m=[32m"已保存运行"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择运行记录[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"model_run"[39m
+          [36m>[39m
+            [0mmodel_run[0m
+            [0m · [0m
+            [0m已驳回[0m
+            [0m · v[0m
+            [0m6[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"当前创作图运行"[39m
+      [36m>[39m
+        [36m<p>[39m
+          [0m运行 [0m
+          [0mmodel_run[0m
+          [0m · v[0m
+          [0m6[0m
+          [0m · 图 v[0m
+          [0m1[0m
+        [36m</p>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m已驳回[0m
+        [36m</span>[39m
+        [36m<p>[39m
+          [0m缓存命中 [0m
+          [0m0[0m
+          [0m / 未命中 [0m
+          [0m0[0m
+          [0m；仅同图版本的已审核本地结果。[0m
+          [0m模型输出不复用缓存。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m模型调用：[0m
+          [0m已调用[0m
+          [0m · 云端调用：0 · 应用到正文：否[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m运行时限 [0m
+          [0m3600[0m
+          [0m 秒 · 截止 [0m
+          [0m2026-10-10T01:00:00Z[0m
+          [0m。暂停、恢复与审核不会重新计时。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m重新读取当前运行[0m
+        [36m</button>[39m
+        [36m<ul>[39m
+          [36m<li>[39m
+            [0minput[0m
+            [0m · [0m
+            [0m已完成[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [0mgenerate[0m
+            [0m · [0m
+            [0m已完成[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [0mreview[0m
+            [0m · [0m
+            [0mPENDING[0m
+          [36m</li>[39m
+        [36m</ul>[39m
+        [36m<label>[39m
+          [0m运行备注[0m
+          [36m<input[39m
+            [33mmaxlength[39m=[32m"1000"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"可选本地文字模型执行"[39m
+        [33mclass[39m=[32m"studio-graph-model"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m可选本地文字模型执行[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0m先读取能力并选择本地路由，再核对完整输入并明确调用一次。不会自动安装、启动模型、调用、重试或转云端。结果仍需人工审核，不写入正文。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m云端 API：预留，当前不可执行。实际推理质量验收：未运行。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取本地模型能力[0m
+        [36m</button>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"私有文字资产回执"[39m
+          [33mclass[39m=[32m"studio-graph-model"[39m
+        [36m>[39m
+          [36m<h4>[39m
+            [0m私有文字资产[0m
+          [36m</h4>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0m已驳回[0m
+          [36m</span>[39m
+          [36m<p>[39m
+            [0m仅当前创作者可见；未写入正文。质量验收：未运行。不会自动重试模型。[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m资产：[0m
+            [0mprivate_text_asset[0m
+            [0m · v[0m
+            [0m2[0m
+            [0m · [0m
+            [0m19[0m
+            [0m 字节 · text/plain[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m模型：[0m
+            [0mlocal[0m
+            [0m / [0m
+            [0mwriter[0m
+            [0m · 最多 [0m
+            [0m512[0m
+            [0m 输出 token · 温度 [0m
+            [0m0[0m
+          [36m</p>[39m
+          [36m<details>[39m
+            [36m<summary>[39m
+              [0m核对文字资产来源[0m
+            [36m</summary>[39m
+            [36m<p>[39m
+              [0m图：[0m
+              [0mmodel_graph[0m
+              [0m · v[0m
+              [0m1[0m
+              [0m · 运行：[0m
+              [0mmodel_run[0m
+              [0m · 来源 v[0m
+              [0m4[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m模型节点：[0m
+              [0mgenerate[0m
+              [0m · 原任务：[0m
+              [0moriginal_job[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m图摘要：[0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m输入摘要：[0m
+              [0mbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m预览摘要：[0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m文字 SHA-256：[0m
+              [0m8df20b44e9d5e31fe59161b21884971d0fb57ce15c44a80808b6faac05ded3d2[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m生成：[0m
+              [0m2026-10-10T00:00:01Z[0m
+              [0m · 建立：[0m
+              [0m2026-10-10T00:00:02Z[0m
+              [0m · 更新：[0m
+              [0m2026-10-10T00:00:02Z[0m
+            [36m</p>[39m
+          [36m</details>[39m
+        [36m</section>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0mTERMINAL[0m
+        [36m</span>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"图节点模型执行回执"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0m任务：[0m
+            [0moriginal_job[0m
+            [0m · [0m
+            [0mCOMPLETED[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m模型调用：[0m
+            [0m已调用[0m
+            [0m · [0m
+            [0m本地模型任务[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m回执：[0m
+            [0mRECORDED[0m
+            [0m · 用量：[0m
+            [0mPENDING[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m等待中的模型任务只能核对或取消，不能暂停后重复调度。[0m
+          [36m</p>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/GraphTextAssetPanel.test.tsx > same-confirmation automatic private TextAsset archival > reports the private asset receipt after APPROVED without claiming assets were untouched
+TestingLibraryElementError: Unable to find an element with the text: 原工作流运行记录已更新；私有文字资产状态见下方回执，正文未被写入。. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"创作图运行与审核"[39m
+      [33mclass[39m=[32m"studio-graph-run"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m本地节点运行[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m原工作流先处理作者输入与本地节点。模型节点在明确预览和确认前不会调用；资产引用节点尚无执行适配。审核不会改写正文或原文件。[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m原工作流运行记录已更新；正文和资产未被写入。[0m
+      [36m</div>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m核对运行范围[0m
+      [36m</button>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m读取运行记录[0m
+      [36m</button>[39m
+      [36m<label>[39m
+        [0m已保存运行[0m
+        [36m<select[39m
+          [33maria-label[39m=[32m"已保存运行"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择运行记录[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"model_run"[39m
+          [36m>[39m
+            [0mmodel_run[0m
+            [0m · [0m
+            [0m已完成[0m
+            [0m · v[0m
+            [0m6[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"当前创作图运行"[39m
+      [36m>[39m
+        [36m<p>[39m
+          [0m运行 [0m
+          [0mmodel_run[0m
+          [0m · v[0m
+          [0m6[0m
+          [0m · 图 v[0m
+          [0m1[0m
+        [36m</p>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m已完成[0m
+        [36m</span>[39m
+        [36m<p>[39m
+          [0m缓存命中 [0m
+          [0m0[0m
+          [0m / 未命中 [0m
+          [0m0[0m
+          [0m；仅同图版本的已审核本地结果。[0m
+          [0m模型输出不复用缓存。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m模型调用：[0m
+          [0m已调用[0m
+          [0m · 云端调用：0 · 应用到正文：否[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m运行时限 [0m
+          [0m3600[0m
+          [0m 秒 · 截止 [0m
+          [0m2026-10-10T01:00:00Z[0m
+          [0m。暂停、恢复与审核不会重新计时。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m重新读取当前运行[0m
+        [36m</button>[39m
+        [36m<ul>[39m
+          [36m<li>[39m
+            [0minput[0m
+            [0m · [0m
+            [0m已完成[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [0mgenerate[0m
+            [0m · [0m
+            [0m已完成[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [0mreview[0m
+            [0m · [0m
+            [0mPENDING[0m
+          [36m</li>[39m
+        [36m</ul>[39m
+        [36m<label>[39m
+          [0m运行备注[0m
+          [36m<input[39m
+            [33mmaxlength[39m=[32m"1000"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"可选本地文字模型执行"[39m
+        [33mclass[39m=[32m"studio-graph-model"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m可选本地文字模型执行[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0m先读取能力并选择本地路由，再核对完整输入并明确调用一次。不会自动安装、启动模型、调用、重试或转云端。结果仍需人工审核，不写入正文。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m云端 API：预留，当前不可执行。实际推理质量验收：未运行。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取本地模型能力[0m
+        [36m</button>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"私有文字资产回执"[39m
+          [33mclass[39m=[32m"studio-graph-model"[39m
+        [36m>[39m
+          [36m<h4>[39m
+            [0m私有文字资产[0m
+          [36m</h4>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0m已批准[0m
+          [36m</span>[39m
+          [36m<p>[39m
+            [0m仅当前创作者可见；未写入正文。质量验收：未运行。不会自动重试模型。[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m资产：[0m
+            [0mprivate_text_asset[0m
+            [0m · v[0m
+            [0m2[0m
+            [0m · [0m
+            [0m19[0m
+            [0m 字节 · text/plain[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m模型：[0m
+            [0mlocal[0m
+            [0m / [0m
+            [0mwriter[0m
+            [0m · 最多 [0m
+            [0m512[0m
+            [0m 输出 token · 温度 [0m
+            [0m0[0m
+          [36m</p>[39m
+          [36m<details>[39m
+            [36m<summary>[39m
+              [0m核对文字资产来源[0m
+            [36m</summary>[39m
+            [36m<p>[39m
+              [0m图：[0m
+              [0mmodel_graph[0m
+              [0m · v[0m
+              [0m1[0m
+              [0m · 运行：[0m
+              [0mmodel_run[0m
+              [0m · 来源 v[0m
+              [0m4[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m模型节点：[0m
+              [0mgenerate[0m
+              [0m · 原任务：[0m
+              [0moriginal_job[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m图摘要：[0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m输入摘要：[0m
+              [0mbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m预览摘要：[0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m文字 SHA-256：[0m
+              [0m8df20b44e9d5e31fe59161b21884971d0fb57ce15c44a80808b6faac05ded3d2[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m生成：[0m
+              [0m2026-10-10T00:00:01Z[0m
+              [0m · 建立：[0m
+              [0m2026-10-10T00:00:02Z[0m
+              [0m · 更新：[0m
+              [0m2026-10-10T00:00:02Z[0m
+            [36m</p>[39m
+          [36m</details>[39m
+        [36m</section>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0mTERMINAL[0m
+        [36m</span>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"图节点模型执行回执"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0m任务：[0m
+            [0moriginal_job[0m
+            [0m · [0m
+            [0mCOMPLETED[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m模型调用：[0m
+            [0m已调用[0m
+            [0m · [0m
+            [0m本地模型任务[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m回执：[0m
+            [0mRECORDED[0m
+            [0m · 用量：[0m
+            [0mPENDING[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m等待中的模型任务只能核对或取消，不能暂停后重复调度。[0m
+          [36m</p>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"创作图运行与审核"[39m
+      [33mclass[39m=[32m"studio-graph-run"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m本地节点运行[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m原工作流先处理作者输入与本地节点。模型节点在明确预览和确认前不会调用；资产引用节点尚无执行适配。审核不会改写正文或原文件。[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m原工作流运行记录已更新；正文和资产未被写入。[0m
+      [36m</div>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m核对运行范围[0m
+      [36m</button>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m读取运行记录[0m
+      [36m</button>[39m
+      [36m<label>[39m
+        [0m已保存运行[0m
+        [36m<select[39m
+          [33maria-label[39m=[32m"已保存运行"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择运行记录[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"model_run"[39m
+          [36m>[39m
+            [0mmodel_run[0m
+            [0m · [0m
+            [0m已完成[0m
+            [0m · v[0m
+            [0m6[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"当前创作图运行"[39m
+      [36m>[39m
+        [36m<p>[39m
+          [0m运行 [0m
+          [0mmodel_run[0m
+          [0m · v[0m
+          [0m6[0m
+          [0m · 图 v[0m
+          [0m1[0m
+        [36m</p>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m已完成[0m
+        [36m</span>[39m
+        [36m<p>[39m
+          [0m缓存命中 [0m
+          [0m0[0m
+          [0m / 未命中 [0m
+          [0m0[0m
+          [0m；仅同图版本的已审核本地结果。[0m
+          [0m模型输出不复用缓存。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m模型调用：[0m
+          [0m已调用[0m
+          [0m · 云端调用：0 · 应用到正文：否[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m运行时限 [0m
+          [0m3600[0m
+          [0m 秒 · 截止 [0m
+          [0m2026-10-10T01:00:00Z[0m
+          [0m。暂停、恢复与审核不会重新计时。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m重新读取当前运行[0m
+        [36m</button>[39m
+        [36m<ul>[39m
+          [36m<li>[39m
+            [0minput[0m
+            [0m · [0m
+            [0m已完成[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [0mgenerate[0m
+            [0m · [0m
+            [0m已完成[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [0mreview[0m
+            [0m · [0m
+            [0mPENDING[0m
+          [36m</li>[39m
+        [36m</ul>[39m
+        [36m<label>[39m
+          [0m运行备注[0m
+          [36m<input[39m
+            [33mmaxlength[39m=[32m"1000"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"可选本地文字模型执行"[39m
+        [33mclass[39m=[32m"studio-graph-model"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m可选本地文字模型执行[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0m先读取能力并选择本地路由，再核对完整输入并明确调用一次。不会自动安装、启动模型、调用、重试或转云端。结果仍需人工审核，不写入正文。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m云端 API：预留，当前不可执行。实际推理质量验收：未运行。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取本地模型能力[0m
+        [36m</button>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"私有文字资产回执"[39m
+          [33mclass[39m=[32m"studio-graph-model"[39m
+        [36m>[39m
+          [36m<h4>[39m
+            [0m私有文字资产[0m
+          [36m</h4>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0m已批准[0m
+          [36m</span>[39m
+          [36m<p>[39m
+            [0m仅当前创作者可见；未写入正文。质量验收：未运行。不会自动重试模型。[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m资产：[0m
+            [0mprivate_text_asset[0m
+            [0m · v[0m
+            [0m2[0m
+            [0m · [0m
+            [0m19[0m
+            [0m 字节 · text/plain[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m模型：[0m
+            [0mlocal[0m
+            [0m / [0m
+            [0mwriter[0m
+            [0m · 最多 [0m
+            [0m512[0m
+            [0m 输出 token · 温度 [0m
+            [0m0[0m
+          [36m</p>[39m
+          [36m<details>[39m
+            [36m<summary>[39m
+              [0m核对文字资产来源[0m
+            [36m</summary>[39m
+            [36m<p>[39m
+              [0m图：[0m
+              [0mmodel_graph[0m
+              [0m · v[0m
+              [0m1[0m
+              [0m · 运行：[0m
+              [0mmodel_run[0m
+              [0m · 来源 v[0m
+              [0m4[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m模型节点：[0m
+              [0mgenerate[0m
+              [0m · 原任务：[0m
+              [0moriginal_job[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m图摘要：[0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m输入摘要：[0m
+              [0mbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m预览摘要：[0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m文字 SHA-256：[0m
+              [0m8df20b44e9d5e31fe59161b21884971d0fb57ce15c44a80808b6faac05ded3d2[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m生成：[0m
+              [0m2026-10-10T00:00:01Z[0m
+              [0m · 建立：[0m
+              [0m2026-10-10T00:00:02Z[0m
+              [0m · 更新：[0m
+              [0m2026-10-10T00:00:02Z[0m
+            [36m</p>[39m
+          [36m</details>[39m
+        [36m</section>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0mTERMINAL[0m
+        [36m</span>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"图节点模型执行回执"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0m任务：[0m
+            [0moriginal_job[0m
+            [0m · [0m
+            [0mCOMPLETED[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m模型调用：[0m
+            [0m已调用[0m
+            [0m · [0m
+            [0m本地模型任务[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m回执：[0m
+            [0mRECORDED[0m
+            [0m · 用量：[0m
+            [0mPENDING[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m等待中的模型任务只能核对或取消，不能暂停后重复调度。[0m
+          [36m</p>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/creative/GraphTextAssetPanel.test.tsx:67:18
+     65|     const { api } = setup(storedTextAssetRun()); api.action.mockResolv…
+     66|     fireEvent.click(screen.getByRole('checkbox', { name: '已阅读本次输…
+     67|     await screen.findByText('原工作流运行记录已更新；私有文字资产状态…
+       |                  ^
+     68|     expect(screen.queryByText('原工作流运行记录已更新；正文和资产未被…
+     69|     expect(screen.getByText(/资产：private_text_asset · v2/)).toBeTrut…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/creative/GraphTextAssetPanel.test.tsx > same-confirmation automatic private TextAsset archival > reports the private asset receipt after REJECTED without claiming assets were untouched
+TestingLibraryElementError: Unable to find an element with the text: 原工作流运行记录已更新；私有文字资产状态见下方回执，正文未被写入。. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"创作图运行与审核"[39m
+      [33mclass[39m=[32m"studio-graph-run"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m本地节点运行[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m原工作流先处理作者输入与本地节点。模型节点在明确预览和确认前不会调用；资产引用节点尚无执行适配。审核不会改写正文或原文件。[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m原工作流运行记录已更新；正文和资产未被写入。[0m
+      [36m</div>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m核对运行范围[0m
+      [36m</button>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m读取运行记录[0m
+      [36m</button>[39m
+      [36m<label>[39m
+        [0m已保存运行[0m
+        [36m<select[39m
+          [33maria-label[39m=[32m"已保存运行"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择运行记录[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"model_run"[39m
+          [36m>[39m
+            [0mmodel_run[0m
+            [0m · [0m
+            [0m已驳回[0m
+            [0m · v[0m
+            [0m6[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"当前创作图运行"[39m
+      [36m>[39m
+        [36m<p>[39m
+          [0m运行 [0m
+          [0mmodel_run[0m
+          [0m · v[0m
+          [0m6[0m
+          [0m · 图 v[0m
+          [0m1[0m
+        [36m</p>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m已驳回[0m
+        [36m</span>[39m
+        [36m<p>[39m
+          [0m缓存命中 [0m
+          [0m0[0m
+          [0m / 未命中 [0m
+          [0m0[0m
+          [0m；仅同图版本的已审核本地结果。[0m
+          [0m模型输出不复用缓存。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m模型调用：[0m
+          [0m已调用[0m
+          [0m · 云端调用：0 · 应用到正文：否[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m运行时限 [0m
+          [0m3600[0m
+          [0m 秒 · 截止 [0m
+          [0m2026-10-10T01:00:00Z[0m
+          [0m。暂停、恢复与审核不会重新计时。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m重新读取当前运行[0m
+        [36m</button>[39m
+        [36m<ul>[39m
+          [36m<li>[39m
+            [0minput[0m
+            [0m · [0m
+            [0m已完成[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [0mgenerate[0m
+            [0m · [0m
+            [0m已完成[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [0mreview[0m
+            [0m · [0m
+            [0mPENDING[0m
+          [36m</li>[39m
+        [36m</ul>[39m
+        [36m<label>[39m
+          [0m运行备注[0m
+          [36m<input[39m
+            [33mmaxlength[39m=[32m"1000"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"可选本地文字模型执行"[39m
+        [33mclass[39m=[32m"studio-graph-model"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m可选本地文字模型执行[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0m先读取能力并选择本地路由，再核对完整输入并明确调用一次。不会自动安装、启动模型、调用、重试或转云端。结果仍需人工审核，不写入正文。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m云端 API：预留，当前不可执行。实际推理质量验收：未运行。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取本地模型能力[0m
+        [36m</button>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"私有文字资产回执"[39m
+          [33mclass[39m=[32m"studio-graph-model"[39m
+        [36m>[39m
+          [36m<h4>[39m
+            [0m私有文字资产[0m
+          [36m</h4>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0m已驳回[0m
+          [36m</span>[39m
+          [36m<p>[39m
+            [0m仅当前创作者可见；未写入正文。质量验收：未运行。不会自动重试模型。[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m资产：[0m
+            [0mprivate_text_asset[0m
+            [0m · v[0m
+            [0m2[0m
+            [0m · [0m
+            [0m19[0m
+            [0m 字节 · text/plain[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m模型：[0m
+            [0mlocal[0m
+            [0m / [0m
+            [0mwriter[0m
+            [0m · 最多 [0m
+            [0m512[0m
+            [0m 输出 token · 温度 [0m
+            [0m0[0m
+          [36m</p>[39m
+          [36m<details>[39m
+            [36m<summary>[39m
+              [0m核对文字资产来源[0m
+            [36m</summary>[39m
+            [36m<p>[39m
+              [0m图：[0m
+              [0mmodel_graph[0m
+              [0m · v[0m
+              [0m1[0m
+              [0m · 运行：[0m
+              [0mmodel_run[0m
+              [0m · 来源 v[0m
+              [0m4[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m模型节点：[0m
+              [0mgenerate[0m
+              [0m · 原任务：[0m
+              [0moriginal_job[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m图摘要：[0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m输入摘要：[0m
+              [0mbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m预览摘要：[0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m文字 SHA-256：[0m
+              [0m8df20b44e9d5e31fe59161b21884971d0fb57ce15c44a80808b6faac05ded3d2[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m生成：[0m
+              [0m2026-10-10T00:00:01Z[0m
+              [0m · 建立：[0m
+              [0m2026-10-10T00:00:02Z[0m
+              [0m · 更新：[0m
+              [0m2026-10-10T00:00:02Z[0m
+            [36m</p>[39m
+          [36m</details>[39m
+        [36m</section>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0mTERMINAL[0m
+        [36m</span>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"图节点模型执行回执"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0m任务：[0m
+            [0moriginal_job[0m
+            [0m · [0m
+            [0mCOMPLETED[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m模型调用：[0m
+            [0m已调用[0m
+            [0m · [0m
+            [0m本地模型任务[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m回执：[0m
+            [0mRECORDED[0m
+            [0m · 用量：[0m
+            [0mPENDING[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m等待中的模型任务只能核对或取消，不能暂停后重复调度。[0m
+          [36m</p>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"创作图运行与审核"[39m
+      [33mclass[39m=[32m"studio-graph-run"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m本地节点运行[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m原工作流先处理作者输入与本地节点。模型节点在明确预览和确认前不会调用；资产引用节点尚无执行适配。审核不会改写正文或原文件。[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m原工作流运行记录已更新；正文和资产未被写入。[0m
+      [36m</div>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m核对运行范围[0m
+      [36m</button>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m读取运行记录[0m
+      [36m</button>[39m
+      [36m<label>[39m
+        [0m已保存运行[0m
+        [36m<select[39m
+          [33maria-label[39m=[32m"已保存运行"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择运行记录[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"model_run"[39m
+          [36m>[39m
+            [0mmodel_run[0m
+            [0m · [0m
+            [0m已驳回[0m
+            [0m · v[0m
+            [0m6[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"当前创作图运行"[39m
+      [36m>[39m
+        [36m<p>[39m
+          [0m运行 [0m
+          [0mmodel_run[0m
+          [0m · v[0m
+          [0m6[0m
+          [0m · 图 v[0m
+          [0m1[0m
+        [36m</p>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m已驳回[0m
+        [36m</span>[39m
+        [36m<p>[39m
+          [0m缓存命中 [0m
+          [0m0[0m
+          [0m / 未命中 [0m
+          [0m0[0m
+          [0m；仅同图版本的已审核本地结果。[0m
+          [0m模型输出不复用缓存。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m模型调用：[0m
+          [0m已调用[0m
+          [0m · 云端调用：0 · 应用到正文：否[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m运行时限 [0m
+          [0m3600[0m
+          [0m 秒 · 截止 [0m
+          [0m2026-10-10T01:00:00Z[0m
+          [0m。暂停、恢复与审核不会重新计时。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m重新读取当前运行[0m
+        [36m</button>[39m
+        [36m<ul>[39m
+          [36m<li>[39m
+            [0minput[0m
+            [0m · [0m
+            [0m已完成[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [0mgenerate[0m
+            [0m · [0m
+            [0m已完成[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [0mreview[0m
+            [0m · [0m
+            [0mPENDING[0m
+          [36m</li>[39m
+        [36m</ul>[39m
+        [36m<label>[39m
+          [0m运行备注[0m
+          [36m<input[39m
+            [33mmaxlength[39m=[32m"1000"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"可选本地文字模型执行"[39m
+        [33mclass[39m=[32m"studio-graph-model"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m可选本地文字模型执行[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0m先读取能力并选择本地路由，再核对完整输入并明确调用一次。不会自动安装、启动模型、调用、重试或转云端。结果仍需人工审核，不写入正文。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m云端 API：预留，当前不可执行。实际推理质量验收：未运行。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取本地模型能力[0m
+        [36m</button>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"私有文字资产回执"[39m
+          [33mclass[39m=[32m"studio-graph-model"[39m
+        [36m>[39m
+          [36m<h4>[39m
+            [0m私有文字资产[0m
+          [36m</h4>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0m已驳回[0m
+          [36m</span>[39m
+          [36m<p>[39m
+            [0m仅当前创作者可见；未写入正文。质量验收：未运行。不会自动重试模型。[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m资产：[0m
+            [0mprivate_text_asset[0m
+            [0m · v[0m
+            [0m2[0m
+            [0m · [0m
+            [0m19[0m
+            [0m 字节 · text/plain[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m模型：[0m
+            [0mlocal[0m
+            [0m / [0m
+            [0mwriter[0m
+            [0m · 最多 [0m
+            [0m512[0m
+            [0m 输出 token · 温度 [0m
+            [0m0[0m
+          [36m</p>[39m
+          [36m<details>[39m
+            [36m<summary>[39m
+              [0m核对文字资产来源[0m
+            [36m</summary>[39m
+            [36m<p>[39m
+              [0m图：[0m
+              [0mmodel_graph[0m
+              [0m · v[0m
+              [0m1[0m
+              [0m · 运行：[0m
+              [0mmodel_run[0m
+              [0m · 来源 v[0m
+              [0m4[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m模型节点：[0m
+              [0mgenerate[0m
+              [0m · 原任务：[0m
+              [0moriginal_job[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m图摘要：[0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m输入摘要：[0m
+              [0mbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m预览摘要：[0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m文字 SHA-256：[0m
+              [0m8df20b44e9d5e31fe59161b21884971d0fb57ce15c44a80808b6faac05ded3d2[0m
+            [36m</p>[39m
+            [36m<p>[39m
+              [0m生成：[0m
+              [0m2026-10-10T00:00:01Z[0m
+              [0m · 建立：[0m
+              [0m2026-10-10T00:00:02Z[0m
+              [0m · 更新：[0m
+              [0m2026-10-10T00:00:02Z[0m
+            [36m</p>[39m
+          [36m</details>[39m
+        [36m</section>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0mTERMINAL[0m
+        [36m</span>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"图节点模型执行回执"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0m任务：[0m
+            [0moriginal_job[0m
+            [0m · [0m
+            [0mCOMPLETED[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m模型调用：[0m
+            [0m已调用[0m
+            [0m · [0m
+            [0m本地模型任务[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m回执：[0m
+            [0mRECORDED[0m
+            [0m · 用量：[0m
+            [0mPENDING[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m等待中的模型任务只能核对或取消，不能暂停后重复调度。[0m
+          [36m</p>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/creative/GraphTextAssetPanel.test.tsx:67:18
+     65|     const { api } = setup(storedTextAssetRun()); api.action.mockResolv…
+     66|     fireEvent.click(screen.getByRole('checkbox', { name: '已阅读本次输…
+     67|     await screen.findByText('原工作流运行记录已更新；私有文字资产状态…
+       |                  ^
+     68|     expect(screen.queryByText('原工作流运行记录已更新；正文和资产未被…
+     69|     expect(screen.getByText(/资产：private_text_asset · v2/)).toBeTrut…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 30 passed (32)
+   Start at  03:56:48
+   Duration  5.01s (transform 455ms, setup 0ms, collect 1.18s, tests 4.04s, environment 1.67s, prepare 278ms)
+

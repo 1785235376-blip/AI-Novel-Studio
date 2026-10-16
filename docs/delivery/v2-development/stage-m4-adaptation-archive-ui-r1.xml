@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="21" failures="0" errors="0" time="3.579">
+    <testsuite name="src/creative/AdaptationHostCapability.test.tsx" timestamp="2026-10-10T21:34:59.408Z" hostname="7abb01f187ba" tests="1" failures="0" errors="0" skipped="0" time="0.235655125">
+        <testcase classname="src/creative/AdaptationHostCapability.test.tsx" name="explains missing Host authority without reading private proposals or locking manual Creative editing" time="0.234719506">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/creative/CreativeScriptLabelPersistence.test.tsx" timestamp="2026-10-10T21:34:59.409Z" hostname="7abb01f187ba" tests="1" failures="0" errors="0" skipped="0" time="0.132187402">
+        <testcase classname="src/creative/CreativeScriptLabelPersistence.test.tsx" name="keeps the saved Script editor label independent of its initial textarea text node" time="0.131230881">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/creative/CreativeSelectLabels.test.tsx" timestamp="2026-10-10T21:34:59.409Z" hostname="7abb01f187ba" tests="3" failures="0" errors="0" skipped="0" time="0.122180546">
+        <testcase classname="src/creative/CreativeSelectLabels.test.tsx" name="gives SCREENPLAY export selection an exact name independent of option text" time="0.081739968">
+        </testcase>
+        <testcase classname="src/creative/CreativeSelectLabels.test.tsx" name="gives SCRIPT export selection an exact name independent of option text" time="0.012961296">
+        </testcase>
+        <testcase classname="src/creative/CreativeSelectLabels.test.tsx" name="gives Script purpose an exact name independent of translated option labels" time="0.026229138">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/creative/GenericScriptWorkspace.test.tsx" timestamp="2026-10-10T21:34:59.410Z" hostname="7abb01f187ba" tests="7" failures="0" errors="0" skipped="0" time="1.256766031">
+        <testcase classname="src/creative/GenericScriptWorkspace.test.tsx" name="standalone Script uses original Creative workspace &gt; creates an explicitly independent script in the existing five-stage shell" time="0.455915911">
+        </testcase>
+        <testcase classname="src/creative/GenericScriptWorkspace.test.tsx" name="standalone Script uses original Creative workspace &gt; reopens the actual saved Script and keeps its type when starting another document" time="0.139632889">
+        </testcase>
+        <testcase classname="src/creative/GenericScriptWorkspace.test.tsx" name="standalone Script uses original Creative workspace &gt; retains the dirty Script when changing modes or cancelling exit" time="0.196457051">
+        </testcase>
+        <testcase classname="src/creative/GenericScriptWorkspace.test.tsx" name="standalone Script uses original Creative workspace &gt; restores reviewed Script history with the current CAS version, preserving original versions" time="0.156336074">
+        </testcase>
+        <testcase classname="src/creative/GenericScriptWorkspace.test.tsx" name="standalone Script uses original Creative workspace &gt; locks a CAS-conflicted Script without erasing its local text or resubmitting" time="0.106930884">
+        </testcase>
+        <testcase classname="src/creative/GenericScriptWorkspace.test.tsx" name="standalone Script uses original Creative workspace &gt; keeps reader access read-only and hides creation when the server lacks this document type" time="0.058439101">
+        </testcase>
+        <testcase classname="src/creative/GenericScriptWorkspace.test.tsx" name="standalone Script uses original Creative workspace &gt; drops an old identity’s late saved Script after project navigation" time="0.141731029">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/creative/SourceAdaptationPanel.test.tsx" timestamp="2026-10-10T21:34:59.411Z" hostname="7abb01f187ba" tests="9" failures="0" errors="0" skipped="0" time="0.453925954">
+        <testcase classname="src/creative/SourceAdaptationPanel.test.tsx" name="requires explicit source and exact input review and never exposes synthetic routes as real models" time="0.232735061">
+        </testcase>
+        <testcase classname="src/creative/SourceAdaptationPanel.test.tsx" name="keeps edited scenes and difference notes until separately reviewed, then opens only the returned screenplay" time="0.059574106">
+        </testcase>
+        <testcase classname="src/creative/SourceAdaptationPanel.test.tsx" name="preserves review edits after an uncertain write and does not automatically retry" time="0.059852601">
+        </testcase>
+        <testcase classname="src/creative/SourceAdaptationPanel.test.tsx" name="ignores a late response after scope disposal" time="0.016116622">
+        </testcase>
+        <testcase classname="src/creative/SourceAdaptationPanel.test.tsx" name="purges protected contents on 401 without reusing another identity" time="0.006489365">
+        </testcase>
+        <testcase classname="src/creative/SourceAdaptationPanel.test.tsx" name="purges protected contents on 403 without reusing another identity" time="0.005992112">
+        </testcase>
+        <testcase classname="src/creative/SourceAdaptationPanel.test.tsx" name="keeps persisted proposals readable when optional model features are disabled" time="0.029601319">
+        </testcase>
+        <testcase classname="src/creative/SourceAdaptationPanel.test.tsx" name="shows private asset version and passive receipt without another save action" time="0.022261413">
+        </testcase>
+        <testcase classname="src/creative/SourceAdaptationPanel.test.tsx" name="keeps a committed screenplay distinct from its pending asset review projection" time="0.020104455">
+        </testcase>
+    </testsuite>
+</testsuites>

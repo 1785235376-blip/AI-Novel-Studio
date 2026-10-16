@@ -1,0 +1,13 @@
+.......sssssss...sss.........sssssssss.s.s...sss.s..ss...sss...sss.....s [ 21%]
+ssss....ssss...sss..ss.s...sss.s.s.s.s.s.s.s.......sssssss.s.s.s.s.s.s.. [ 43%]
+.sss.s...ss.s.s.s.s.s.s.s.s.........sss.....sssss.s.s.s.s.s.s.s.s.s..ss. [ 65%]
+.............ssssssssssssss..ss..ss..ss..ss..ss..ss..ss..ss..ss.s.s.s... [ 87%]
+...ssssss...............................                                 [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-script-file-final1.xml -
+183 passed, 145 skipped, 1 warning in 91.07s (0:01:31)

@@ -1,0 +1,40 @@
+....................................................F................... [ 81%]
+................                                                         [100%]
+================================== FAILURES ===================================
+_________ test_scans_only_configured_roots_bounded_depth_and_no_link __________
+
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-30/test_scans_only_configured_roo0')
+
+    def test_scans_only_configured_roots_bounded_depth_and_no_link(tmp_path):
+        root=tmp_path/'models';root.mkdir(); gguf(root/'qwen.gguf')
+        private=tmp_path/'private';private.mkdir();gguf(private/'secret.gguf')
+>       (root/'link').symlink_to(private, target_is_directory=True)
+
+tests\test_local_ai_discovery.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-30/test_scans_only_configured_roo0/models/link')
+target = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-30/test_scans_only_configured_roo0/private')
+target_is_directory = True
+
+    def symlink_to(self, target, target_is_directory=False):
+        """
+        Make this path a symlink pointing to the target path.
+        Note the order of arguments (link, target) is the reverse of os.symlink.
+        """
+        if not hasattr(os, "symlink"):
+            raise NotImplementedError("os.symlink() not available on this system")
+>       os.symlink(target, self, target_is_directory)
+E       OSError: [WinError 1314] �ͻ���û���������Ȩ��: 'C:\\Windows\\Temp\\pytest-of-admin\\pytest-30\\test_scans_only_configured_roo0\\private' -> 'C:\\Windows\\Temp\\pytest-of-admin\\pytest-30\\test_scans_only_configured_roo0\\models\\link'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1198: OSError
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\С˵\AI-Novel-Studio-Latest-Product\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: D:\С˵\AI-Novel-Studio-Latest-Product\docs\delivery\full-recovery\verification\local-structured-focused-final.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_local_ai_discovery.py::test_scans_only_configured_roots_bounded_depth_and_no_link
+1 failed, 87 passed, 1 warning in 7.65s

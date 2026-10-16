@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="4" tests="8" time="12.225" timestamp="2026-10-10T13:15:03.056510-07:00" hostname="7abb01f187ba"><testcase classname="tests.test_v2_source_adaptation" name="test_terminal_persistence_in_flight_cannot_publish_or_adopt[file-/api-settlement-write]" time="6.576"><failure message="AssertionError: assert ('NEEDS_REVIEW' == 'GENERATING'&#10;  &#10;  - GENERATING&#10;  + NEEDS_REVIEW)">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f3405139220&gt;, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f3405182cf0&gt;, creative_base='/api/novels/r3-mounted-3a81a39114d3410eb1f1c0e3db12f4bf/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f3404b55460&gt;
+publication_write = 1
+
+    @pytest.mark.parametrize("publication_write", [1, 2], ids=["settlement-write", "final-notification-write"])
+    def test_terminal_persistence_in_flight_cannot_publish_or_adopt(creative_model, monkeypatch, publication_write):
+        """A successful ledger is insufficient until the original worker publishes."""
+        e = creative_model
+        row, calls = ready(e, monkeypatch)
+        entered, release = Event(), Event()
+        original = e.manager._persist
+        writes = 0
+        def blocked(job):
+            nonlocal writes
+            if job.status == "COMPLETED" and job.terminal_hook_status == "COMPLETED":
+                writes += 1
+                if writes == publication_write:
+                    entered.set()
+                    assert release.wait(15), "test publication barrier was not released"
+                    raise OSError("synthetic terminal publication failure")
+            return original(job)
+        monkeypatch.setattr(e.manager, "_persist", blocked)
+        running = dispatch(e, row)
+        job = e.manager.get(running["model_execution"]["job_id"])
+        try:
+            assert entered.wait(10), "worker did not reach the controlled publication boundary"
+            response = e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/refresh',
+                headers=e.headers, json={"expected_version": running["version"]})
+            result = checked(response)
+            if result.get("output") is not None:
+                # On the old implementation this is a real successful write before
+                # the worker reports its injected persistence failure.
+                checked(review(e, result))
+&gt;           assert result["status"] == "GENERATING" and result["output"] is None
+E           AssertionError: assert ('NEEDS_REVIEW' == 'GENERATING'
+E             
+E             - GENERATING
+E             + NEEDS_REVIEW)
+
+tests/test_v2_source_adaptation.py:316: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_terminal_persistence_in_flight_cannot_publish_or_adopt[file-/api-final-notification-write]" time="1.067"><failure message="AssertionError: assert ('NEEDS_REVIEW' == 'GENERATING'&#10;  &#10;  - GENERATING&#10;  + NEEDS_REVIEW)">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f3403387740&gt;, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f3405182cf0&gt;, creative_base='/api/novels/r3-mounted-fc733490feb748dab5c885fb2fee6d3a/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f3402e3e720&gt;
+publication_write = 2
+
+    @pytest.mark.parametrize("publication_write", [1, 2], ids=["settlement-write", "final-notification-write"])
+    def test_terminal_persistence_in_flight_cannot_publish_or_adopt(creative_model, monkeypatch, publication_write):
+        """A successful ledger is insufficient until the original worker publishes."""
+        e = creative_model
+        row, calls = ready(e, monkeypatch)
+        entered, release = Event(), Event()
+        original = e.manager._persist
+        writes = 0
+        def blocked(job):
+            nonlocal writes
+            if job.status == "COMPLETED" and job.terminal_hook_status == "COMPLETED":
+                writes += 1
+                if writes == publication_write:
+                    entered.set()
+                    assert release.wait(15), "test publication barrier was not released"
+                    raise OSError("synthetic terminal publication failure")
+            return original(job)
+        monkeypatch.setattr(e.manager, "_persist", blocked)
+        running = dispatch(e, row)
+        job = e.manager.get(running["model_execution"]["job_id"])
+        try:
+            assert entered.wait(10), "worker did not reach the controlled publication boundary"
+            response = e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/refresh',
+                headers=e.headers, json={"expected_version": running["version"]})
+            result = checked(response)
+            if result.get("output") is not None:
+                # On the old implementation this is a real successful write before
+                # the worker reports its injected persistence failure.
+                checked(review(e, result))
+&gt;           assert result["status"] == "GENERATING" and result["output"] is None
+E           AssertionError: assert ('NEEDS_REVIEW' == 'GENERATING'
+E             
+E             - GENERATING
+E             + NEEDS_REVIEW)
+
+tests/test_v2_source_adaptation.py:316: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_terminal_persistence_in_flight_cannot_publish_or_adopt[file-/api/v1-settlement-write]" time="2.042"><failure message="AssertionError: assert ('NEEDS_REVIEW' == 'GENERATING'&#10;  &#10;  - GENERATING&#10;  + NEEDS_REVIEW)">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f34024a80e0&gt;, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f3405182cf0&gt;, creative_base='/api/v1/novels/r3-mounted-481b3a8bce48424ba3c3a7892211a614/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f34025a3260&gt;
+publication_write = 1
+
+    @pytest.mark.parametrize("publication_write", [1, 2], ids=["settlement-write", "final-notification-write"])
+    def test_terminal_persistence_in_flight_cannot_publish_or_adopt(creative_model, monkeypatch, publication_write):
+        """A successful ledger is insufficient until the original worker publishes."""
+        e = creative_model
+        row, calls = ready(e, monkeypatch)
+        entered, release = Event(), Event()
+        original = e.manager._persist
+        writes = 0
+        def blocked(job):
+            nonlocal writes
+            if job.status == "COMPLETED" and job.terminal_hook_status == "COMPLETED":
+                writes += 1
+                if writes == publication_write:
+                    entered.set()
+                    assert release.wait(15), "test publication barrier was not released"
+                    raise OSError("synthetic terminal publication failure")
+            return original(job)
+        monkeypatch.setattr(e.manager, "_persist", blocked)
+        running = dispatch(e, row)
+        job = e.manager.get(running["model_execution"]["job_id"])
+        try:
+            assert entered.wait(10), "worker did not reach the controlled publication boundary"
+            response = e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/refresh',
+                headers=e.headers, json={"expected_version": running["version"]})
+            result = checked(response)
+            if result.get("output") is not None:
+                # On the old implementation this is a real successful write before
+                # the worker reports its injected persistence failure.
+                checked(review(e, result))
+&gt;           assert result["status"] == "GENERATING" and result["output"] is None
+E           AssertionError: assert ('NEEDS_REVIEW' == 'GENERATING'
+E             
+E             - GENERATING
+E             + NEEDS_REVIEW)
+
+tests/test_v2_source_adaptation.py:316: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_terminal_persistence_in_flight_cannot_publish_or_adopt[file-/api/v1-final-notification-write]" time="1.267"><failure message="AssertionError: assert ('NEEDS_REVIEW' == 'GENERATING'&#10;  &#10;  - GENERATING&#10;  + NEEDS_REVIEW)">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f3401659220&gt;, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f3405182cf0&gt;, creative_base='/api/v1/novels/r3-mounted-907167bb281c4ab18b6cfa0cc0f55062/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f3401247ef0&gt;
+publication_write = 2
+
+    @pytest.mark.parametrize("publication_write", [1, 2], ids=["settlement-write", "final-notification-write"])
+    def test_terminal_persistence_in_flight_cannot_publish_or_adopt(creative_model, monkeypatch, publication_write):
+        """A successful ledger is insufficient until the original worker publishes."""
+        e = creative_model
+        row, calls = ready(e, monkeypatch)
+        entered, release = Event(), Event()
+        original = e.manager._persist
+        writes = 0
+        def blocked(job):
+            nonlocal writes
+            if job.status == "COMPLETED" and job.terminal_hook_status == "COMPLETED":
+                writes += 1
+                if writes == publication_write:
+                    entered.set()
+                    assert release.wait(15), "test publication barrier was not released"
+                    raise OSError("synthetic terminal publication failure")
+            return original(job)
+        monkeypatch.setattr(e.manager, "_persist", blocked)
+        running = dispatch(e, row)
+        job = e.manager.get(running["model_execution"]["job_id"])
+        try:
+            assert entered.wait(10), "worker did not reach the controlled publication boundary"
+            response = e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/refresh',
+                headers=e.headers, json={"expected_version": running["version"]})
+            result = checked(response)
+            if result.get("output") is not None:
+                # On the old implementation this is a real successful write before
+                # the worker reports its injected persistence failure.
+                checked(review(e, result))
+&gt;           assert result["status"] == "GENERATING" and result["output"] is None
+E           AssertionError: assert ('NEEDS_REVIEW' == 'GENERATING'
+E             
+E             - GENERATING
+E             + NEEDS_REVIEW)
+
+tests/test_v2_source_adaptation.py:316: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_terminal_persistence_in_flight_cannot_publish_or_adopt[postgres-/api-settlement-write]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:287: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_terminal_persistence_in_flight_cannot_publish_or_adopt[postgres-/api-final-notification-write]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:287: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_terminal_persistence_in_flight_cannot_publish_or_adopt[postgres-/api/v1-settlement-write]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:287: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_terminal_persistence_in_flight_cannot_publish_or_adopt[postgres-/api/v1-final-notification-write]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:287: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase></testsuite></testsuites>

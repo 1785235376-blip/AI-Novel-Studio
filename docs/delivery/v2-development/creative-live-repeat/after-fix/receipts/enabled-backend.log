@@ -1,0 +1,105 @@
+INFO:     Started server process [21]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8017 (Press CTRL+C to quit)
+INFO:     127.0.0.1:58448 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48520 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48530 - "POST /api/novels HTTP/1.1" 201 Created
+INFO:     127.0.0.1:48540 - "POST /api/novels/v2-http-real-file-lifecycle/chapters HTTP/1.1" 201 Created
+INFO:     127.0.0.1:48548 - "GET /api/chapters/v2-http-real-file-lifecycle%3A1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48556 - "GET /api/novels/v2-http-real-file-lifecycle/experimental/creative/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48564 - "POST /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents HTTP/1.1" 201 Created
+INFO:     127.0.0.1:48578 - "POST /api/novels/v2-http-real-file-lifecycle/experimental/creative/director-proposals HTTP/1.1" 201 Created
+INFO:     127.0.0.1:48584 - "GET /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48602 - "POST /api/novels/v2-http-real-file-lifecycle/experimental/creative/director-proposals/aa471e1f-db2e-4c51-9bd8-3c70dade3f3a/review HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48598 - "POST /api/novels/v2-http-real-file-lifecycle/experimental/creative/director-proposals/aa471e1f-db2e-4c51-9bd8-3c70dade3f3a/review HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:48616 - "GET /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48618 - "POST /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/d61af9ff-a43b-49aa-9503-787f192a7bd9/derive HTTP/1.1" 201 Created
+INFO:     127.0.0.1:48622 - "PUT /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/f9c53bd9-b132-49b6-9a22-b08a4b4865a5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48628 - "POST /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/f9c53bd9-b132-49b6-9a22-b08a4b4865a5/derive HTTP/1.1" 201 Created
+INFO:     127.0.0.1:48634 - "PUT /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/0c98a1d2-18a9-4c4c-82f8-024641b083a9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48636 - "POST /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/0c98a1d2-18a9-4c4c-82f8-024641b083a9/restore HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48652 - "GET /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/0c98a1d2-18a9-4c4c-82f8-024641b083a9/history HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48656 - "GET /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/0c98a1d2-18a9-4c4c-82f8-024641b083a9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48658 - "GET /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/0c98a1d2-18a9-4c4c-82f8-024641b083a9/export HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48666 - "GET /api/chapters/v2-http-real-file-lifecycle%3A1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48674 - "GET /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/ab7fd834-a7c9-46c5-9e23-5677ffe0bc28 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48686 - "GET /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48688 - "DELETE /api/novels/v2-http-real-file-lifecycle HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:48700 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48710 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48726 - "POST /api/novels HTTP/1.1" 201 Created
+INFO:     127.0.0.1:48734 - "POST /api/novels HTTP/1.1" 201 Created
+INFO:     127.0.0.1:48746 - "POST /api/novels/v2-http-fence-fixture/chapters HTTP/1.1" 201 Created
+INFO:     127.0.0.1:48760 - "GET /api/chapters/v2-http-fence-fixture%3A1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48774 - "POST /api/novels/v2-http-foreign-fixture/chapters HTTP/1.1" 201 Created
+INFO:     127.0.0.1:48786 - "POST /api/novels/v2-http-fence-fixture/experimental/creative/documents HTTP/1.1" 201 Created
+INFO:     127.0.0.1:48800 - "POST /api/novels/v2-http-fence-fixture/experimental/creative/documents HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:48806 - "GET /api/novels/v2-http-foreign-fixture/experimental/creative/documents/3857159e-aa5d-40c2-94e8-5f57eec6ba56 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:48818 - "POST /api/novels/v2-http-fence-fixture/experimental/creative/director-proposals HTTP/1.1" 201 Created
+INFO:     127.0.0.1:48822 - "POST /api/novels/v2-http-fence-fixture/experimental/creative/director-proposals/262a0f4f-795f-4b18-8a0b-4e4299231cce/cancel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48830 - "POST /api/novels/v2-http-fence-fixture/experimental/creative/director-proposals/262a0f4f-795f-4b18-8a0b-4e4299231cce/review HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:48846 - "GET /api/novels/v2-http-fence-fixture/experimental/creative/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48854 - "GET /api/chapters/v2-http-fence-fixture%3A1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48868 - "PUT /api/novels/v2-http-fence-fixture/experimental/creative/documents/3857159e-aa5d-40c2-94e8-5f57eec6ba56 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48876 - "PUT /api/novels/v2-http-fence-fixture/experimental/creative/documents/3857159e-aa5d-40c2-94e8-5f57eec6ba56 HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:48892 - "GET /api/novels/v2-http-fence-fixture/experimental/creative/documents/3857159e-aa5d-40c2-94e8-5f57eec6ba56 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48898 - "POST /api/novels/v2-http-fence-fixture/experimental/creative/director-proposals HTTP/1.1" 201 Created
+INFO:     127.0.0.1:48904 - "PUT /api/chapters/v2-http-fence-fixture%3A1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48906 - "GET /api/novels/v2-http-fence-fixture/experimental/creative/documents/3857159e-aa5d-40c2-94e8-5f57eec6ba56 HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:48916 - "GET /api/novels/v2-http-fence-fixture/experimental/creative/director-proposals/1ad98d73-219d-4a78-a153-469560797d78 HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:48928 - "GET /api/novels/v2-http-fence-fixture/experimental/creative/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48940 - "POST /api/novels/v2-http-fence-fixture/experimental/creative/documents/3857159e-aa5d-40c2-94e8-5f57eec6ba56/derive HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:48946 - "DELETE /api/novels/v2-http-fence-fixture HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:48950 - "DELETE /api/novels/v2-http-foreign-fixture HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:48964 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48968 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48976 - "POST /api/novels HTTP/1.1" 201 Created
+INFO:     127.0.0.1:48986 - "POST /api/novels/v2-http-real-file-lifecycle/chapters HTTP/1.1" 201 Created
+INFO:     127.0.0.1:48998 - "GET /api/chapters/v2-http-real-file-lifecycle%3A1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49004 - "GET /api/novels/v2-http-real-file-lifecycle/experimental/creative/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49018 - "POST /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49022 - "POST /api/novels/v2-http-real-file-lifecycle/experimental/creative/director-proposals HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49024 - "GET /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49036 - "POST /api/novels/v2-http-real-file-lifecycle/experimental/creative/director-proposals/1fe49dc0-f3cd-4924-87bf-1f9f17c5f951/review HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49038 - "POST /api/novels/v2-http-real-file-lifecycle/experimental/creative/director-proposals/1fe49dc0-f3cd-4924-87bf-1f9f17c5f951/review HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:49052 - "GET /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49066 - "POST /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/f2ee36c5-818c-42fc-9c8d-576606158d8a/derive HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49080 - "PUT /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/b4c392ff-65ae-44ef-aefb-495c03e0561c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49094 - "POST /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/b4c392ff-65ae-44ef-aefb-495c03e0561c/derive HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49096 - "PUT /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/d71f045b-a9d0-4131-a8c7-a1553e48acb6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49100 - "POST /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/d71f045b-a9d0-4131-a8c7-a1553e48acb6/restore HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49112 - "GET /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/d71f045b-a9d0-4131-a8c7-a1553e48acb6/history HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49124 - "GET /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/d71f045b-a9d0-4131-a8c7-a1553e48acb6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49128 - "GET /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/d71f045b-a9d0-4131-a8c7-a1553e48acb6/export HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49136 - "GET /api/chapters/v2-http-real-file-lifecycle%3A1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49140 - "GET /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents/cec7636a-35a7-484c-a93a-ffc91f1195a4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49148 - "GET /api/novels/v2-http-real-file-lifecycle/experimental/creative/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49152 - "DELETE /api/novels/v2-http-real-file-lifecycle HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:49158 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49162 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49178 - "POST /api/novels HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49180 - "POST /api/novels HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49182 - "POST /api/novels/v2-http-fence-fixture/chapters HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49192 - "GET /api/chapters/v2-http-fence-fixture%3A1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49198 - "POST /api/novels/v2-http-foreign-fixture/chapters HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49210 - "POST /api/novels/v2-http-fence-fixture/experimental/creative/documents HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49214 - "POST /api/novels/v2-http-fence-fixture/experimental/creative/documents HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:49226 - "GET /api/novels/v2-http-foreign-fixture/experimental/creative/documents/d9be4a97-0b7a-4e39-80fe-887fc80bce8f HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49234 - "POST /api/novels/v2-http-fence-fixture/experimental/creative/director-proposals HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49244 - "POST /api/novels/v2-http-fence-fixture/experimental/creative/director-proposals/3e2668b4-293f-4433-ae1c-819e1aa49076/cancel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49254 - "POST /api/novels/v2-http-fence-fixture/experimental/creative/director-proposals/3e2668b4-293f-4433-ae1c-819e1aa49076/review HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:49266 - "GET /api/novels/v2-http-fence-fixture/experimental/creative/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49274 - "GET /api/chapters/v2-http-fence-fixture%3A1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49280 - "PUT /api/novels/v2-http-fence-fixture/experimental/creative/documents/d9be4a97-0b7a-4e39-80fe-887fc80bce8f HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49284 - "PUT /api/novels/v2-http-fence-fixture/experimental/creative/documents/d9be4a97-0b7a-4e39-80fe-887fc80bce8f HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:49286 - "GET /api/novels/v2-http-fence-fixture/experimental/creative/documents/d9be4a97-0b7a-4e39-80fe-887fc80bce8f HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49302 - "POST /api/novels/v2-http-fence-fixture/experimental/creative/director-proposals HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49312 - "PUT /api/chapters/v2-http-fence-fixture%3A1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49326 - "GET /api/novels/v2-http-fence-fixture/experimental/creative/documents/d9be4a97-0b7a-4e39-80fe-887fc80bce8f HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:49336 - "GET /api/novels/v2-http-fence-fixture/experimental/creative/director-proposals/9aa27a78-de14-4530-bbb3-59dd9e7c2d0a HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:49342 - "GET /api/novels/v2-http-fence-fixture/experimental/creative/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49346 - "POST /api/novels/v2-http-fence-fixture/experimental/creative/documents/d9be4a97-0b7a-4e39-80fe-887fc80bce8f/derive HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:49360 - "DELETE /api/novels/v2-http-fence-fixture HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:49364 - "DELETE /api/novels/v2-http-foreign-fixture HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:49374 - "GET /api/novels HTTP/1.1" 200 OK

@@ -1,0 +1,166 @@
+{
+  "status": "PASS",
+  "verification_level": "DEVELOPMENT_ONLY",
+  "generated_utc": "2026-10-09T18:10:52.111847+00:00",
+  "head": "c386b0608ae92d18c351b5cb6e367380808a45cf",
+  "owned_sources": {
+    "tests/v2_discovery_browser_server.py": "f4723844f07a9c3451fa21d5c64abeb592d616eec9563e932ab9310843d2c276",
+    "tests/test_v2_discovery_prerequisite_browser_fixture.py": "32c56bfdb1842afa693c4fe59234dca037c1074708497cedb225b2d087b27eb5",
+    "frontend/tests/e2e/v2-local-ai-prerequisites-live.spec.ts": "2c85427449ee031ce4650c90c02a5c670663a9a8fc20943785faad4b7d2dae9d",
+    "frontend/playwright.independent-live.config.ts": "99b1890bffecf26f84362b97e57406f3d9b93fd7c62b71d14dbc2c5c0d84d108"
+  },
+  "evidence": [
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3c-prerequisite-fixture-red.json",
+      "receipt_sha256": "002d7724d1cd49fd8fd8c03d0b868ec758561ec39f7d5dabe089949bcce0e5df",
+      "status": "FAIL",
+      "qualification": "10 FAIL / 1 PASS; before opt-in fixture implementation",
+      "log": "docs/delivery/v2-development/dev-m3c-prerequisite-fixture-red.log",
+      "log_sha256": "9b8af115f3113812f6c8d6630dac9e525e553ba08f1bbdaad40a1e314be42db0",
+      "sources_changed_during_check": false,
+      "source_count": 1693,
+      "source_map_sha256": "767f710393ff12ec0d2fddb85243de5a17f248a242fbd4805dfa3ccc10107045"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3c-prerequisite-fixture-unit.json",
+      "receipt_sha256": "2bd58167f5540f936f0b5e744a8e1f95532a234c038e2d3e35b11b4aaf628f55",
+      "status": "PASS",
+      "qualification": "8 PASS / 3 deselected; seed boundaries only",
+      "log": "docs/delivery/v2-development/dev-m3c-prerequisite-fixture-unit.log",
+      "log_sha256": "56582f7bafe1ffc83085f12be9e41b76318492fe787010c9cba19ae6235b4a69",
+      "sources_changed_during_check": false,
+      "source_count": 1695,
+      "source_map_sha256": "f8b567100a4c2e29662a59e970045c06844e51837fefc15f7f93d89fd37e7bcb"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3c-prerequisite-fixture-mounted-first.json",
+      "receipt_sha256": "d0615ec3ba02aa2ed9e309b30b0be7603a5db386627fb76852ef9e48e708f14c",
+      "status": "FAIL",
+      "qualification": "FAIL; zero tests, misspelled legacy fixture path",
+      "log": "docs/delivery/v2-development/dev-m3c-prerequisite-fixture-mounted-first.log",
+      "log_sha256": "5dc66b2dda4f4d80d38eafdc082924945d6981612bb8cfd4b17ece56f37a02c5",
+      "sources_changed_during_check": false,
+      "source_count": 1695,
+      "source_map_sha256": "250a19b4d675f97ec6f7a2623646c408bf29372c79da314a4700a6842b73fe1d"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3c-prerequisite-fixture-mounted.json",
+      "receipt_sha256": "70a276921e32b4370aaa0c4f430ba9340e2c08d813f35cdff556934ea2e18548",
+      "status": "FAIL",
+      "qualification": "FAIL; zero tests, second misspelled legacy fixture path",
+      "log": "docs/delivery/v2-development/dev-m3c-prerequisite-fixture-mounted.log",
+      "log_sha256": "a6388ec24a39a53c8b80cec1f69633aefc4df72e9d6042bb0b8a82dd3c9040d0",
+      "sources_changed_during_check": false,
+      "source_count": 1695,
+      "source_map_sha256": "250a19b4d675f97ec6f7a2623646c408bf29372c79da314a4700a6842b73fe1d"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3c-prerequisite-fixture-contracts.json",
+      "receipt_sha256": "e1948463b0291a0f3461a63eee89df03eb704ec0cac5f0666598c1a26f059e38",
+      "status": "PASS",
+      "qualification": "27 PASS; first full fixture run, shared-source drift recorded",
+      "log": "docs/delivery/v2-development/dev-m3c-prerequisite-fixture-contracts.log",
+      "log_sha256": "6a87563797180fb6c54231500c93ca640a53abad383de7345363558df0e33381",
+      "sources_changed_during_check": true,
+      "source_count": 1696,
+      "source_map_sha256": "8d2890f2a48e6cd58b7542ce37b51d15d7f0ccf7020da8e33b48a239d35afb49"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3c-prerequisite-browser-typecheck.json",
+      "receipt_sha256": "c9efdb8316701c3871495a6df897b3d4394d97e6c85aab17562074448dc89e0c",
+      "status": "FAIL",
+      "qualification": "FAIL; new UI test fixture type error, fixed by its owner",
+      "log": "docs/delivery/v2-development/dev-m3c-prerequisite-browser-typecheck.log",
+      "log_sha256": "2be907f72f2fadbb137b86fbfdbc4e73bfd4dd365055e89f05b406c972d69cbf",
+      "sources_changed_during_check": true,
+      "source_count": 1696,
+      "source_map_sha256": "e2196736abf7d0ee480cdae12c9475a910e04e04ab699927e8667b80593f8e84"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3c-prerequisite-browser-typecheck-final.json",
+      "receipt_sha256": "ce37d62feeea61b9a0815095f8ecbbc5f2064051627ae2318905e98053da2560",
+      "status": "PASS",
+      "qualification": "PASS; frontend/src only, shared-source drift recorded",
+      "log": "docs/delivery/v2-development/dev-m3c-prerequisite-browser-typecheck-final.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sources_changed_during_check": true,
+      "source_count": 1696,
+      "source_map_sha256": "82b072c4fea1fc42445d70d2d02bc47877d2c97673540bbecb56d72c629d4dba"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3c-prerequisite-browser-lint.json",
+      "receipt_sha256": "0234220fed09144e45c0df1c13503b2745c71655d84c59bf32c800b9f8c9bca3",
+      "status": "FAIL",
+      "qualification": "FAIL; ESLint is not installed; no dependency added",
+      "log": "docs/delivery/v2-development/dev-m3c-prerequisite-browser-lint.log",
+      "log_sha256": "06b05453d0b75491899f0ebbbab3cc6b1b21cbab117b742126c15df692719342",
+      "sources_changed_during_check": false,
+      "source_count": 1696,
+      "source_map_sha256": "82b072c4fea1fc42445d70d2d02bc47877d2c97673540bbecb56d72c629d4dba"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3c-prerequisite-e2e-typecheck.json",
+      "receipt_sha256": "fb951bb1feab4fbb78834e83864ef4307fedc18744d5930e2a3dbc5d8a67f9c2",
+      "status": "PASS",
+      "qualification": "PASS; explicit strict TypeScript check includes new E2E and independent config",
+      "log": "docs/delivery/v2-development/dev-m3c-prerequisite-e2e-typecheck.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sources_changed_during_check": false,
+      "source_count": 1696,
+      "source_map_sha256": "51d94d044042f0d3ef8c07c336ded58aa24cd8257eb5a86766abb577ad53be16"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3c-prerequisite-token-guard.json",
+      "receipt_sha256": "c5f929515e8b6e54a806843693d659c2ecda26dde95fcfdf80327a7261076428",
+      "status": "PASS",
+      "qualification": "PASS; actual repository token guard, 52 files",
+      "log": "docs/delivery/v2-development/dev-m3c-prerequisite-token-guard.log",
+      "log_sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "sources_changed_during_check": false,
+      "source_count": 1696,
+      "source_map_sha256": "51d94d044042f0d3ef8c07c336ded58aa24cd8257eb5a86766abb577ad53be16"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3c-prerequisite-browser-collection.json",
+      "receipt_sha256": "6021262bff3579ef102c2ca70d40309a2b31ca015a1920d00dec93a6277858a9",
+      "status": "PASS",
+      "qualification": "PASS; inventory only, 15 independent entries, no Chromium",
+      "log": "docs/delivery/v2-development/dev-m3c-prerequisite-browser-collection.log",
+      "log_sha256": "aec1a78057abe09408a4e68cd4cb9e40475bbd1deb20db64b8aa422ca08912b4",
+      "sources_changed_during_check": false,
+      "source_count": 1696,
+      "source_map_sha256": "f31f3b37ea36fca78a92b4bd4cd1619d4ade7cf652ae8e3dd399c41a85fdcbb2"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3c-prerequisite-preservation.json",
+      "receipt_sha256": "c183ac8744c11a6a27bb29a593f4efb9451ce1d7da54d4e5cc78c894a652d480",
+      "status": "PASS",
+      "qualification": "PASS; unchanged original fixture functions/tests/protected config and old14 order",
+      "log": "docs/delivery/v2-development/dev-m3c-prerequisite-preservation.log",
+      "log_sha256": "83fc6cda297124c118b48a5b8638e8cf6566f06c3fae16096264e5785e3ed3de",
+      "sources_changed_during_check": false,
+      "source_count": 1696,
+      "source_map_sha256": "51d94d044042f0d3ef8c07c336ded58aa24cd8257eb5a86766abb577ad53be16"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3c-prerequisite-fixture-contracts-final.json",
+      "receipt_sha256": "6c384160a6ebef91517fb02c27adb6312a6f64d0a7c0abbcdd34d06c239afefb",
+      "status": "PASS",
+      "qualification": "27 PASS; 11 new + all16 old fixture cases; stable1696-input map",
+      "log": "docs/delivery/v2-development/dev-m3c-prerequisite-fixture-contracts-final.log",
+      "log_sha256": "0d987e09fbd02bef93af9823edded29d3098b7046546368f4b719591174ed98c",
+      "sources_changed_during_check": false,
+      "source_count": 1696,
+      "source_map_sha256": "51d94d044042f0d3ef8c07c336ded58aa24cd8257eb5a86766abb577ad53be16"
+    }
+  ],
+  "browser_execution": "BLOCKED_NOT_ATTEMPTED",
+  "hosted_browser": "PENDING",
+  "windows_native": "NOT_RUN",
+  "real_model_inference": "NOT_RUN",
+  "paid_api": "NOT_RUN",
+  "receipts_and_log_hashes_verified": true,
+  "old_independent_inventory_count": 14,
+  "new_independent_inventory_count": 15,
+  "old_order_preserved": true
+}

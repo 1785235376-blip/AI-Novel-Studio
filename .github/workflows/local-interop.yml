@@ -1,0 +1,134 @@
+name: Local Interop V1
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: local-interop-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MOCK_PROVIDER: 'true'
+  ENABLE_CLOUD: 'false'
+  CREDENTIAL_VAULT_BACKEND: memory
+  CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: 'true'
+  HF_HUB_OFFLINE: '1'
+  TRANSFORMERS_OFFLINE: '1'
+
+jobs:
+  protocol-transport:
+    name: Protocol and local transport / ${{ matrix.backend }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        backend: [file, postgres]
+    services:
+      postgres:
+        image: ${{ matrix.backend == 'postgres' && 'postgres:16-alpine' || '' }}
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci-ephemeral-only
+          POSTGRES_DB: interop_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci -d interop_ci"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - name: Prepare isolated source and revision receipt
+        run: bash .github/ci/prepare.sh local-interop
+      - name: Install pinned test environment
+        working-directory: ${{ env.CI_PROJECT }}
+        run: python -m pip install -c .github/ci/python-constraints.txt -e '.[dev]'
+      - name: Initialize disposable PostgreSQL contracts
+        if: matrix.backend == 'postgres'
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python - <<'PYCODE'
+          from pathlib import Path
+          import psycopg
+          with psycopg.connect('postgresql://ci:ci-ephemeral-only@127.0.0.1:5432/interop_ci', autocommit=True) as connection:
+              for migration in sorted(Path('database/migrations').glob('*.sql')):
+                  connection.execute(migration.read_text(encoding='utf-8'))
+          PYCODE
+      - name: Strict contracts and genuine subprocess transport tests
+        working-directory: ${{ env.CI_PROJECT }}
+        env:
+          STORAGE_BACKEND: ${{ matrix.backend }}
+          DATABASE_URL: ${{ matrix.backend == 'postgres' && 'postgresql://ci:ci-ephemeral-only@127.0.0.1:5432/interop_ci' || '' }}
+          TEST_POSTGRES_DATABASE_URL: ${{ matrix.backend == 'postgres' && 'postgresql://ci:ci-ephemeral-only@127.0.0.1:5432/interop_ci' || '' }}
+        run: |
+          set -o pipefail
+          PYTHONPATH="$CI_PROJECT/.github/ci:$CI_PROJECT" python -m pytest -p postgres_gate -p suite_coverage -q -ra --tb=short \
+            --ci-coverage-manifest=.github/ci/coverage_manifest_v2.json.gz \
+            --ci-scope=interop --ci-shard-index=0 --ci-shard-count=1 --ci-coverage-dir="$CI_RECEIPTS" \
+            tests/test_local_interop*.py --junitxml="$CI_RECEIPTS/local-interop.xml" 2>&1 | tee "$CI_RECEIPTS/local-interop.log"
+      - name: Reject missing contracts and unexpected Interop skips
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python .github/ci/coverage_reconcile.py \
+            --manifest .github/ci/coverage_manifest_v2.json.gz --scope interop \
+            --receipts-dir "$CI_RECEIPTS" --expected-shards ${{ matrix.backend }}=1 \
+            --expected-sha "$CI_COVERAGE_SHA" --expected-tree "$CI_COVERAGE_TREE" \
+            --expected-event-sha "$GITHUB_SHA" --expected-run "$GITHUB_RUN_ID" \
+            --expected-attempt "$GITHUB_RUN_ATTEMPT" --expected-repository "$GITHUB_REPOSITORY" \
+            --constraints .github/ci/python-constraints.txt --source-root "$CI_PROJECT" \
+            --output "$CI_RECEIPTS/interop-coverage.json"
+      - name: Desktop preparation harness and frozen protocol parity
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python scripts/check_desktop_integration.py
+          python -m local_interop_desktop.acceptance --mock-only --output "$CI_RECEIPTS/desktop-acceptance.json"
+      - name: Summarize exact source
+        if: always() && env.CI_RECEIPTS != ''
+        run: python .github/ci/receipt.py "$CI_RECEIPTS"
+      - uses: actions/upload-artifact@v4.6.2
+        if: always() && env.CI_RECEIPTS != ''
+        with:
+          name: local-interop-${{ matrix.backend }}-${{ github.sha }}
+          path: ${{ env.CI_RECEIPTS }}
+          if-no-files-found: error
+          retention-days: 14
+
+  named-pipe-reference:
+    name: Windows current-user pipe reference (MOCK_ONLY)
+    runs-on: windows-2022
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.424'
+      - name: Compile and execute separate-process transport reference
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path receipts | Out-Null
+          "source=$(git rev-parse HEAD)" | Out-File receipts/revision.txt -Encoding utf8
+          "scope=Windows transport reference only; actual Tutor Desktop LOCAL_REQUIRED; cross-user hostile attempt NOT_RUN" | Out-File receipts/revision.txt -Append -Encoding utf8
+          dotnet run --project interop-reference/PoemSeed.LocalInterop.Pipes -c Release 2>&1 | Tee-Object receipts/named-pipe.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet build native/local_interop_desktop/PoemSeed.LocalInterop.Pipes -c Release 2>&1 | Tee-Object receipts/named-pipe-library-build.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet run --project native/local_interop_desktop/PoemSeed.LocalInterop.Pipes.Acceptance -c Release 2>&1 | Tee-Object receipts/named-pipe-desktop-boundary.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4.6.2
+        if: always()
+        with:
+          name: named-pipe-reference-${{ github.sha }}
+          path: receipts/
+          if-no-files-found: error
+          retention-days: 14

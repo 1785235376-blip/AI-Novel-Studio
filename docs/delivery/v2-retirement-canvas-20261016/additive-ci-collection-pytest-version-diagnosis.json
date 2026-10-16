@@ -1,0 +1,46 @@
+{
+  "utc": "2026-10-16T15:23:10.336791+00:00",
+  "command": [
+    "D:\\PoemSeed\\Cache\\Tests\\expansion-20261013-97da10e1\\venv\\Scripts\\python.exe",
+    "-X",
+    "utf8",
+    "-B",
+    "-m",
+    "pytest",
+    "--collect-only",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "tests/test_a43_identity_references.py"
+  ],
+  "exit_code": 0,
+  "system_python": "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "system_pytest": "pytest 9.1.1",
+  "pinned_pytest": "pytest 8.4.2",
+  "system_collection_count": 14910,
+  "frozen_collection_count": 9151,
+  "system_missing_frozen_count": 1056,
+  "baseline_sample": [
+    "tests/test_a43_identity_references.py::test_same_version_old_url_save_history_and_uuid_keep_the_original_owner[off-file-numeric-/api]",
+    "tests/test_a43_identity_references.py::test_same_version_old_url_save_history_and_uuid_keep_the_original_owner[off-file-numeric-/api/v1]",
+    "tests/test_a43_identity_references.py::test_same_version_old_url_save_history_and_uuid_keep_the_original_owner[off-file-qualified-/api]",
+    "tests/test_a43_identity_references.py::test_same_version_old_url_save_history_and_uuid_keep_the_original_owner[off-file-qualified-/api/v1]"
+  ],
+  "system_sample": [
+    "tests/test_a43_identity_references.py::test_same_version_old_url_save_history_and_uuid_keep_the_original_owner[off-file-/api-numeric]",
+    "tests/test_a43_identity_references.py::test_same_version_old_url_save_history_and_uuid_keep_the_original_owner[off-file-/api-qualified]",
+    "tests/test_a43_identity_references.py::test_same_version_old_url_save_history_and_uuid_keep_the_original_owner[off-file-/api/v1-numeric]",
+    "tests/test_a43_identity_references.py::test_same_version_old_url_save_history_and_uuid_keep_the_original_owner[off-file-/api/v1-qualified]"
+  ],
+  "pinned_sample": [
+    "tests/test_a43_identity_references.py::test_same_version_old_url_save_history_and_uuid_keep_the_original_owner[off-file-numeric-/api]",
+    "tests/test_a43_identity_references.py::test_same_version_old_url_save_history_and_uuid_keep_the_original_owner[off-file-numeric-/api/v1]",
+    "tests/test_a43_identity_references.py::test_same_version_old_url_save_history_and_uuid_keep_the_original_owner[off-file-qualified-/api]",
+    "tests/test_a43_identity_references.py::test_same_version_old_url_save_history_and_uuid_keep_the_original_owner[off-file-qualified-/api/v1]"
+  ],
+  "probe_file_collected": 227,
+  "probe_file_frozen_nodes": 227,
+  "probe_preserves_frozen_ids": true,
+  "worker_snapshot_sha256": "bd0b278a174eeec82c54aca16eca264ec7cbc1b40acab599c095763093ca963c",
+  "tests_executed": false
+}

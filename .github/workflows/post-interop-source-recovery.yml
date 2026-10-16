@@ -1,0 +1,136 @@
+name: Post-Interop source recovery
+"on":
+  push:
+    branches: [work/post-interop-r4-r5-ux-continuation]
+    paths: [.github/workflows/post-interop-source-recovery.yml]
+permissions:
+  contents: read
+jobs:
+  source-only:
+    name: Exact public Git source recovery, not feature verification
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bundle tracked Git source and exact identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p recovery
+          git bundle create recovery/source.bundle HEAD
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json, subprocess
+          root = Path("recovery")
+          bundle = root / "source.bundle"
+          raw = bundle.read_bytes()
+          limit = 12 * 1024 * 1024
+          assert len(raw) <= 8 * limit, "bounded source bundle limit"
+          parts = []
+          for index, offset in enumerate(range(0, len(raw), limit)):
+              part = root / ("source.part-%02d" % index)
+              content = raw[offset:offset + limit]
+              part.write_bytes(content)
+              parts.append({"name": part.name, "bytes": len(content), "sha256": hashlib.sha256(content).hexdigest()})
+          def git(*args):
+              return subprocess.check_output(["git", *args], text=True).strip()
+          receipt = {"schema_version": 1, "kind": "PUBLIC_TRACKED_GIT_SOURCE_ONLY_NOT_TEST_EVIDENCE",
+                     "source_sha": git("rev-parse", "HEAD"), "source_tree": git("rev-parse", "HEAD^{tree}"),
+                     "source_parent": git("rev-parse", "HEAD^"),
+                     "repository": "1785235376-blip/AI-Novel-Studio",
+                     "bundle_bytes": len(raw), "bundle_sha256": hashlib.sha256(raw).hexdigest(),
+                     "parts": parts, "includes_credentials_logs_or_untracked_workspace": False}
+          (root / "receipt.json").write_text(json.dumps(receipt, indent=2) + "\n")
+          print(json.dumps(receipt, indent=2))
+          PY
+      - name: Preserve bounded source part 00
+        if: ${{ success() && hashFiles('recovery/source.part-00') != '' }}
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: post-interop-source-${{ github.sha }}-00
+          path: |
+            recovery/source.part-00
+            recovery/receipt.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+      - name: Preserve bounded source part 01
+        if: ${{ success() && hashFiles('recovery/source.part-01') != '' }}
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: post-interop-source-${{ github.sha }}-01
+          path: |
+            recovery/source.part-01
+            recovery/receipt.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+      - name: Preserve bounded source part 02
+        if: ${{ success() && hashFiles('recovery/source.part-02') != '' }}
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: post-interop-source-${{ github.sha }}-02
+          path: |
+            recovery/source.part-02
+            recovery/receipt.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+      - name: Preserve bounded source part 03
+        if: ${{ success() && hashFiles('recovery/source.part-03') != '' }}
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: post-interop-source-${{ github.sha }}-03
+          path: |
+            recovery/source.part-03
+            recovery/receipt.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+      - name: Preserve bounded source part 04
+        if: ${{ success() && hashFiles('recovery/source.part-04') != '' }}
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: post-interop-source-${{ github.sha }}-04
+          path: |
+            recovery/source.part-04
+            recovery/receipt.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+      - name: Preserve bounded source part 05
+        if: ${{ success() && hashFiles('recovery/source.part-05') != '' }}
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: post-interop-source-${{ github.sha }}-05
+          path: |
+            recovery/source.part-05
+            recovery/receipt.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+      - name: Preserve bounded source part 06
+        if: ${{ success() && hashFiles('recovery/source.part-06') != '' }}
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: post-interop-source-${{ github.sha }}-06
+          path: |
+            recovery/source.part-06
+            recovery/receipt.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+      - name: Preserve bounded source part 07
+        if: ${{ success() && hashFiles('recovery/source.part-07') != '' }}
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: post-interop-source-${{ github.sha }}-07
+          path: |
+            recovery/source.part-07
+            recovery/receipt.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7

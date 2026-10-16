@@ -1,0 +1,39 @@
+{
+  "command": [
+    "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=.runtime/v2-checks/cloud-baseline-file/pytest",
+    "tests/test_v2_creative_foundation.py"
+  ],
+  "cwd": "/workspace/scratch/b8734129d01d/AI-Novel-Studio",
+  "started_utc": "2026-10-09T04:42:49.347431+00:00",
+  "finished_utc": "2026-10-09T04:42:54.376560+00:00",
+  "exit_code": 1,
+  "status": "FAIL",
+  "isolated_environment": {
+    "PROJECT_ROOT": "/workspace/scratch/b8734129d01d/AI-Novel-Studio",
+    "PYTHONPATH": "/workspace/scratch/b8734129d01d/AI-Novel-Studio",
+    "NOVEL_DATA_PATH": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-checks/cloud-baseline-file/data",
+    "LOCALAPPDATA": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-checks/cloud-baseline-file/Local",
+    "CREDENTIAL_VAULT_BACKEND": "memory",
+    "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+    "STORAGE_BACKEND": "file",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "ENABLE_PACKAGED_RUNTIME": "false",
+    "ENABLE_COLLABORATION_RUNTIME": "false"
+  },
+  "head": "e21075d10801a60bdcb4282a6d5ce8068be21503",
+  "source_sha256": {
+    "app/creative/service.py": "286807221f99e18423ce2c0217abb2dc3d1878d23e7bfe43872efb4f8e31a39d",
+    "app/creative/api.py": "7078129793391e85db70191c040d88b8e1f5aa0faf22e41900b6fc44d0430190",
+    "app/creative/models.py": "a260a1e30238596262d2a38c34e70a54f5cca63ab70c7c2546294071cfcb5bda",
+    "app/creative/__init__.py": "22e9cdc335f433a18299dd63f82c0b68ca05af9e9cd0570b20baecac2624d0c4",
+    "frontend/src/creative/types.ts": "d3616b19303a1f8664fa553e14872f3a6728a15ed0f2ff1ea9db5fa507cac392"
+  },
+  "log": "docs/delivery/v2-development/cloud-baseline-file.log",
+  "log_sha256": "ede029f84d6df2b3c0a62f789aa0c96df5bd5c971a0bca5c349cc4ca5c3c1616"
+}

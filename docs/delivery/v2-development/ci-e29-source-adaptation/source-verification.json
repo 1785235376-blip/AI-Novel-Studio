@@ -1,0 +1,224 @@
+{
+  "verified_at_utc": "2026-10-10T21:21:03.215886+00:00",
+  "head_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+  "head_tree": "c592ef05396427a7f4da9bff4cf2818e6b6a14f5",
+  "pr_merge_sha": "395d66570bfd7f8a0e39673619448553e646fa50",
+  "pr_merge_tree": "c592ef05396427a7f4da9bff4cf2818e6b6a14f5",
+  "trees_equal": true,
+  "parent_sha": "899d40df5273413d987f9ee98d41a7405ed16d0a",
+  "local_HEAD": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+  "local_HEAD_tree": "c592ef05396427a7f4da9bff4cf2818e6b6a14f5",
+  "working_tree_dirty_paths_observed": [
+    "app/author_request.py",
+    "app/creative/adaptation.py",
+    "app/creative/adaptation_generation.py",
+    "app/creative/adaptation_models.py",
+    "app/creative/api.py",
+    "app/creative/service.py",
+    "app/experimental/api.py",
+    "app/jobs.py",
+    "app/repositories/generation_repository.py",
+    "tests/test_v2_creative_workflows.py"
+  ],
+  "working_tree_is_not_claimed_identical_to_published_commit": true,
+  "workflow_and_requirements": [
+    {
+      "path": ".github/workflows/cloud-ci.yml",
+      "head_sha256": "32a07a303603e477bc036d8b874c604c912225c0d2fd17574ec8be2f231c8077",
+      "parent_sha256": "32a07a303603e477bc036d8b874c604c912225c0d2fd17574ec8be2f231c8077",
+      "unchanged_from_parent": true
+    },
+    {
+      "path": ".github/workflows/local-interop.yml",
+      "head_sha256": "a00ff5f6f03971e3fcd8490dd2a8bc19a3b4a27db5ed1b2105aeca0fd9532fb4",
+      "parent_sha256": "a00ff5f6f03971e3fcd8490dd2a8bc19a3b4a27db5ed1b2105aeca0fd9532fb4",
+      "unchanged_from_parent": true
+    },
+    {
+      "path": ".github/ci/python-constraints.txt",
+      "head_sha256": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e",
+      "parent_sha256": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e",
+      "unchanged_from_parent": true
+    },
+    {
+      "path": "pyproject.toml",
+      "head_sha256": "fba6dd9b9a7971156118ab488274cd0ff611250200e666f91a9c2b9d51bd0a9f",
+      "parent_sha256": "fba6dd9b9a7971156118ab488274cd0ff611250200e666f91a9c2b9d51bd0a9f",
+      "unchanged_from_parent": true
+    }
+  ],
+  "checkout_logs": [
+    {
+      "job_id": 114314498387,
+      "sha_output_lines": []
+    },
+    {
+      "job_id": 114314498504,
+      "sha_output_lines": [
+        "2026-10-10T21:11:46.1678125Z e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6"
+      ]
+    },
+    {
+      "job_id": 114314498531,
+      "sha_output_lines": [
+        "2026-10-10T21:11:56.4286290Z e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6"
+      ]
+    },
+    {
+      "job_id": 114314498589,
+      "sha_output_lines": [
+        "2026-10-10T21:11:45.8171517Z e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6"
+      ]
+    },
+    {
+      "job_id": 114314498705,
+      "sha_output_lines": [
+        "2026-10-10T21:12:07.1573113Z e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6"
+      ]
+    },
+    {
+      "job_id": 114314498748,
+      "sha_output_lines": []
+    },
+    {
+      "job_id": 114314498761,
+      "sha_output_lines": [
+        "2026-10-10T21:11:44.9413734Z e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6"
+      ]
+    },
+    {
+      "job_id": 114314498775,
+      "sha_output_lines": [
+        "2026-10-10T21:11:45.7741391Z e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6"
+      ]
+    },
+    {
+      "job_id": 114314498778,
+      "sha_output_lines": [
+        "2026-10-10T21:11:46.1662156Z e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6"
+      ]
+    },
+    {
+      "job_id": 114314498787,
+      "sha_output_lines": [
+        "2026-10-10T21:11:57.2374103Z e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6"
+      ]
+    },
+    {
+      "job_id": 114314498823,
+      "sha_output_lines": [
+        "2026-10-10T21:11:44.9235797Z e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6"
+      ]
+    },
+    {
+      "job_id": 114314498839,
+      "sha_output_lines": []
+    },
+    {
+      "job_id": 114314514625,
+      "sha_output_lines": [
+        "2026-10-10T21:11:50.7738913Z 395d66570bfd7f8a0e39673619448553e646fa50",
+        "2026-10-10T21:11:52.6140671Z c6f2126115b52e17839d48efea091dc21ec08c61"
+      ]
+    },
+    {
+      "job_id": 114314514790,
+      "sha_output_lines": [
+        "2026-10-10T21:11:49.8027520Z 395d66570bfd7f8a0e39673619448553e646fa50"
+      ]
+    },
+    {
+      "job_id": 114314514876,
+      "sha_output_lines": [
+        "2026-10-10T21:12:01.8319470Z 395d66570bfd7f8a0e39673619448553e646fa50"
+      ]
+    },
+    {
+      "job_id": 114314514903,
+      "sha_output_lines": [
+        "2026-10-10T21:11:50.6584420Z 395d66570bfd7f8a0e39673619448553e646fa50"
+      ]
+    },
+    {
+      "job_id": 114314514910,
+      "sha_output_lines": [
+        "2026-10-10T21:11:49.7536977Z 395d66570bfd7f8a0e39673619448553e646fa50"
+      ]
+    },
+    {
+      "job_id": 114314514922,
+      "sha_output_lines": [
+        "2026-10-10T21:11:49.7045570Z 395d66570bfd7f8a0e39673619448553e646fa50"
+      ]
+    },
+    {
+      "job_id": 114314514934,
+      "sha_output_lines": [
+        "2026-10-10T21:11:51.0047361Z 395d66570bfd7f8a0e39673619448553e646fa50"
+      ]
+    },
+    {
+      "job_id": 114314514953,
+      "sha_output_lines": []
+    },
+    {
+      "job_id": 114314514970,
+      "sha_output_lines": [
+        "2026-10-10T21:11:56.4462282Z 395d66570bfd7f8a0e39673619448553e646fa50"
+      ]
+    },
+    {
+      "job_id": 114314514981,
+      "sha_output_lines": []
+    },
+    {
+      "job_id": 114314515201,
+      "sha_output_lines": []
+    },
+    {
+      "job_id": 114314515429,
+      "sha_output_lines": [
+        "2026-10-10T21:13:10.0648921Z 395d66570bfd7f8a0e39673619448553e646fa50"
+      ]
+    },
+    {
+      "job_id": 114314515439,
+      "sha_output_lines": [
+        "2026-10-10T21:13:53.4688074Z 395d66570bfd7f8a0e39673619448553e646fa50"
+      ]
+    },
+    {
+      "job_id": 114324456513,
+      "sha_output_lines": [
+        "2026-10-10T22:04:54.3851122Z e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6"
+      ]
+    },
+    {
+      "job_id": 114324456522,
+      "sha_output_lines": [
+        "2026-10-10T22:04:55.7644450Z e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6"
+      ]
+    },
+    {
+      "job_id": 114324887956,
+      "sha_output_lines": [
+        "2026-10-10T22:07:14.4073118Z 395d66570bfd7f8a0e39673619448553e646fa50"
+      ]
+    },
+    {
+      "job_id": 114324888050,
+      "sha_output_lines": [
+        "2026-10-10T22:07:14.4632694Z 395d66570bfd7f8a0e39673619448553e646fa50"
+      ]
+    }
+  ],
+  "final_verification_utc": "2026-10-10T22:09:44.802856+00:00",
+  "all_six_backend_receipts_bind_expected_event_checkout_and_source_tree": true,
+  "all_six_backend_source_manifest_sha256": "c57f8890a3274efa02274ce4e9ced3319ac7416dea89b153003266281905d5c7",
+  "current_PR_state": {
+    "number": 47,
+    "state": "open",
+    "draft": true,
+    "merge_commit_sha": "395d66570bfd7f8a0e39673619448553e646fa50"
+  }
+}

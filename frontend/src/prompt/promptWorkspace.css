@@ -1,0 +1,159 @@
+/* R3-U3 Prompt 工作台样式。
+ *
+ * 只使用 DS-v1.0 tokens（docs/ui/design_system.md）。不新增颜色、不硬编码随机 px 尺度。
+ * 注意：scripts/check_ui_design_tokens.mjs 当前只扫描 frontend/src/ui，
+ * 因此本文件必须单独自检（只允许 var(--...) 与既有 token）。
+ */
+
+.prompt-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  gap: var(--layout-content-gap);
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .prompt-workspace { grid-template-columns: minmax(0, 1fr); }
+}
+
+.prompt-library,
+.prompt-editor,
+.prompt-history {
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  padding: var(--layout-content-gap);
+}
+
+.prompt-library-actions,
+.prompt-editor-actions,
+.prompt-compare-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--layout-content-gap);
+  align-items: center;
+  margin-block-end: var(--layout-content-gap);
+}
+
+.prompt-filters {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--radius-sm) var(--layout-content-gap);
+  align-items: center;
+  margin-block-end: var(--layout-content-gap);
+}
+
+.prompt-filters label,
+.prompt-editor label,
+.prompt-editor legend {
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+}
+
+.prompt-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--radius-sm);
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.prompt-list-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--radius-sm);
+  inline-size: 100%;
+  text-align: start;
+  padding: var(--radius-sm) var(--layout-content-gap);
+  border: var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background var(--motion-fast) var(--ease-standard);
+}
+
+.prompt-list-item:hover { background: var(--color-bg-subtle); }
+.prompt-list-item:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.prompt-list-item[aria-current='true'] {
+  border-color: var(--color-accent-primary);
+  background: var(--color-accent-subtle);
+}
+
+.prompt-list-title { font-weight: 600; }
+.prompt-list-meta { display: flex; flex-wrap: wrap; gap: var(--radius-sm); }
+
+.prompt-detail-column { display: flex; flex-direction: column; gap: var(--layout-content-gap); }
+
+.prompt-editor textarea,
+.prompt-editor input,
+.prompt-editor select,
+.prompt-filters input,
+.prompt-filters select,
+.prompt-compare-picker select {
+  inline-size: 100%;
+  min-height: var(--control-height-md);
+  padding: var(--radius-sm) var(--radius-md);
+  border: var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  font-family: var(--font-ui);
+}
+
+.prompt-editor textarea { font-family: var(--font-mono); resize: vertical; }
+
+.prompt-editor input:focus-visible,
+.prompt-editor textarea:focus-visible,
+.prompt-editor select:focus-visible,
+.prompt-filters input:focus-visible,
+.prompt-filters select:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.prompt-editor input:disabled,
+.prompt-editor textarea:disabled,
+.prompt-editor select:disabled,
+.prompt-editor fieldset:disabled {
+  background: var(--color-bg-subtle);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.prompt-editor input[aria-invalid='true'],
+.prompt-editor textarea[aria-invalid='true'] { border-color: var(--color-status-error); }
+
+.prompt-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--layout-content-gap); }
+.prompt-row > div { display: flex; flex-direction: column; gap: var(--radius-sm); }
+
+.prompt-bindings { border: var(--border-default); border-radius: var(--radius-sm); padding: var(--layout-content-gap); margin-block: var(--layout-content-gap); display: grid; gap: var(--radius-sm); }
+.prompt-binding-truth { border: var(--border-default); border-radius: var(--radius-sm); padding: var(--layout-content-gap); background: var(--color-bg-subtle); }
+.prompt-binding-truth ul { margin: var(--radius-sm) 0; padding-inline-start: var(--icon-lg); }
+
+.prompt-status { font-weight: 600; color: var(--color-text-secondary); }
+.prompt-identity { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--radius-sm) var(--layout-content-gap); font-family: var(--font-mono); }
+.prompt-identity dt { color: var(--color-text-muted); }
+
+.prompt-version-list { list-style: none; margin: 0 0 var(--layout-content-gap); padding: 0; display: flex; flex-direction: column; gap: var(--radius-sm); }
+.prompt-version-list li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--radius-sm); padding: var(--radius-sm) var(--radius-md); border: var(--border-default); border-radius: var(--radius-sm); }
+.prompt-version-note { color: var(--color-text-secondary); }
+.prompt-anomalies { color: var(--color-status-warning); margin: 0 0 var(--layout-content-gap); padding-inline-start: var(--icon-lg); }
+
+.prompt-diff table { inline-size: 100%; border-collapse: collapse; font-family: var(--font-mono); }
+.prompt-diff th, .prompt-diff td { border: var(--border-default); padding: var(--radius-sm) var(--radius-md); text-align: start; vertical-align: top; white-space: pre-wrap; word-break: break-word; }
+.prompt-diff th { background: var(--color-bg-subtle); color: var(--color-text-secondary); }
+.prompt-diff-changed td { background: var(--color-selection-bg); }
+.prompt-diff-limit { color: var(--color-text-muted); }
+
+.sr-only {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

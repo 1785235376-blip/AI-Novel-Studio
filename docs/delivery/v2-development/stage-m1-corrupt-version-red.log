@@ -1,0 +1,179 @@
+FFFFFFFsssssss                                                           [100%]
+=================================== FAILURES ===================================
+_ test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-True] _
+
+rig = namespace(nid='v2-independent-66f4bd345d594b22b76610b1de41b86c', scope={'mode': 'local', 'novel_id': 'v2-independent-6...IdentityRepository object at 0x7f0593839e20>), create_project=<function rig.<locals>.create_project at 0x7f0597ff5940>)
+decoders = None, version = True
+
+    @pytest.mark.parametrize("version", [True, False, 0, -1, "1", 1.0, None])
+    def test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner(rig, decoders, version):
+        row = import_asset(rig)
+        path = rig.assets.root / f"{row['id']}.json"
+        metadata = json.loads(path.read_text())
+        metadata["version"] = version
+        path.write_text(json.dumps(metadata))
+        before = asset_files(rig)
+        for operation in (
+            lambda: rig.service.asset(rig.nid, rig.scope, row["id"]),
+            lambda: rig.service.download(rig.nid, rig.scope, row["id"]),
+            lambda: rig.service.list_assets(rig.nid, rig.scope),
+            lambda: rig.service.relationships.references(rig.nid, rig.scope, "ASSET"),
+        ):
+>           with pytest.raises(ValueError, match="CREATIVE_ASSET_VERSION_INVALID"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_v2_independent_workspace.py:991: Failed
+_ test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-False] _
+
+rig = namespace(nid='v2-independent-c3221cbb8c45473193309ec7adf79ec0', scope={'mode': 'local', 'novel_id': 'v2-independent-c...IdentityRepository object at 0x7f05935c3f20>), create_project=<function rig.<locals>.create_project at 0x7f05935eac00>)
+decoders = None, version = False
+
+    @pytest.mark.parametrize("version", [True, False, 0, -1, "1", 1.0, None])
+    def test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner(rig, decoders, version):
+        row = import_asset(rig)
+        path = rig.assets.root / f"{row['id']}.json"
+        metadata = json.loads(path.read_text())
+        metadata["version"] = version
+        path.write_text(json.dumps(metadata))
+        before = asset_files(rig)
+        for operation in (
+            lambda: rig.service.asset(rig.nid, rig.scope, row["id"]),
+            lambda: rig.service.download(rig.nid, rig.scope, row["id"]),
+            lambda: rig.service.list_assets(rig.nid, rig.scope),
+            lambda: rig.service.relationships.references(rig.nid, rig.scope, "ASSET"),
+        ):
+>           with pytest.raises(ValueError, match="CREATIVE_ASSET_VERSION_INVALID"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_v2_independent_workspace.py:991: Failed
+_ test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-0] _
+
+rig = namespace(nid='v2-independent-399f8511358345f99eea7fe0288a1ec1', scope={'mode': 'local', 'novel_id': 'v2-independent-3...IdentityRepository object at 0x7f05935c1bb0>), create_project=<function rig.<locals>.create_project at 0x7f05935c8360>)
+decoders = None, version = 0
+
+    @pytest.mark.parametrize("version", [True, False, 0, -1, "1", 1.0, None])
+    def test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner(rig, decoders, version):
+        row = import_asset(rig)
+        path = rig.assets.root / f"{row['id']}.json"
+        metadata = json.loads(path.read_text())
+        metadata["version"] = version
+        path.write_text(json.dumps(metadata))
+        before = asset_files(rig)
+        for operation in (
+            lambda: rig.service.asset(rig.nid, rig.scope, row["id"]),
+            lambda: rig.service.download(rig.nid, rig.scope, row["id"]),
+            lambda: rig.service.list_assets(rig.nid, rig.scope),
+            lambda: rig.service.relationships.references(rig.nid, rig.scope, "ASSET"),
+        ):
+>           with pytest.raises(ValueError, match="CREATIVE_ASSET_VERSION_INVALID"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_v2_independent_workspace.py:991: Failed
+_ test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file--1] _
+
+rig = namespace(nid='v2-independent-0899e929e51f4332ad782264d2621417', scope={'mode': 'local', 'novel_id': 'v2-independent-0...IdentityRepository object at 0x7f05935c34d0>), create_project=<function rig.<locals>.create_project at 0x7f05935ead40>)
+decoders = None, version = -1
+
+    @pytest.mark.parametrize("version", [True, False, 0, -1, "1", 1.0, None])
+    def test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner(rig, decoders, version):
+        row = import_asset(rig)
+        path = rig.assets.root / f"{row['id']}.json"
+        metadata = json.loads(path.read_text())
+        metadata["version"] = version
+        path.write_text(json.dumps(metadata))
+        before = asset_files(rig)
+        for operation in (
+            lambda: rig.service.asset(rig.nid, rig.scope, row["id"]),
+            lambda: rig.service.download(rig.nid, rig.scope, row["id"]),
+            lambda: rig.service.list_assets(rig.nid, rig.scope),
+            lambda: rig.service.relationships.references(rig.nid, rig.scope, "ASSET"),
+        ):
+>           with pytest.raises(ValueError, match="CREATIVE_ASSET_VERSION_INVALID"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_v2_independent_workspace.py:991: Failed
+_ test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-1] _
+
+rig = namespace(nid='v2-independent-c4efce7d0e654db08234f5b2ae96142c', scope={'mode': 'local', 'novel_id': 'v2-independent-c...IdentityRepository object at 0x7f05935c6090>), create_project=<function rig.<locals>.create_project at 0x7f05935a2520>)
+decoders = None, version = '1'
+
+    @pytest.mark.parametrize("version", [True, False, 0, -1, "1", 1.0, None])
+    def test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner(rig, decoders, version):
+        row = import_asset(rig)
+        path = rig.assets.root / f"{row['id']}.json"
+        metadata = json.loads(path.read_text())
+        metadata["version"] = version
+        path.write_text(json.dumps(metadata))
+        before = asset_files(rig)
+        for operation in (
+            lambda: rig.service.asset(rig.nid, rig.scope, row["id"]),
+            lambda: rig.service.download(rig.nid, rig.scope, row["id"]),
+            lambda: rig.service.list_assets(rig.nid, rig.scope),
+            lambda: rig.service.relationships.references(rig.nid, rig.scope, "ASSET"),
+        ):
+>           with pytest.raises(ValueError, match="CREATIVE_ASSET_VERSION_INVALID"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_v2_independent_workspace.py:991: Failed
+_ test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-1.0] _
+
+rig = namespace(nid='v2-independent-52859a4214824edaa55176dee5f8527b', scope={'mode': 'local', 'novel_id': 'v2-independent-5...IdentityRepository object at 0x7f05936e6d50>), create_project=<function rig.<locals>.create_project at 0x7f05935eb420>)
+decoders = None, version = 1.0
+
+    @pytest.mark.parametrize("version", [True, False, 0, -1, "1", 1.0, None])
+    def test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner(rig, decoders, version):
+        row = import_asset(rig)
+        path = rig.assets.root / f"{row['id']}.json"
+        metadata = json.loads(path.read_text())
+        metadata["version"] = version
+        path.write_text(json.dumps(metadata))
+        before = asset_files(rig)
+        for operation in (
+            lambda: rig.service.asset(rig.nid, rig.scope, row["id"]),
+            lambda: rig.service.download(rig.nid, rig.scope, row["id"]),
+            lambda: rig.service.list_assets(rig.nid, rig.scope),
+            lambda: rig.service.relationships.references(rig.nid, rig.scope, "ASSET"),
+        ):
+>           with pytest.raises(ValueError, match="CREATIVE_ASSET_VERSION_INVALID"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_v2_independent_workspace.py:991: Failed
+_ test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-None] _
+
+rig = namespace(nid='v2-independent-1dbeba339b0f41578a0e81a06769acff', scope={'mode': 'local', 'novel_id': 'v2-independent-1...IdentityRepository object at 0x7f05935c2690>), create_project=<function rig.<locals>.create_project at 0x7f0597ff4b80>)
+decoders = None, version = None
+
+    @pytest.mark.parametrize("version", [True, False, 0, -1, "1", 1.0, None])
+    def test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner(rig, decoders, version):
+        row = import_asset(rig)
+        path = rig.assets.root / f"{row['id']}.json"
+        metadata = json.loads(path.read_text())
+        metadata["version"] = version
+        path.write_text(json.dumps(metadata))
+        before = asset_files(rig)
+        for operation in (
+            lambda: rig.service.asset(rig.nid, rig.scope, row["id"]),
+            lambda: rig.service.download(rig.nid, rig.scope, row["id"]),
+            lambda: rig.service.list_assets(rig.nid, rig.scope),
+            lambda: rig.service.relationships.references(rig.nid, rig.scope, "ASSET"),
+        ):
+>           with pytest.raises(ValueError, match="CREATIVE_ASSET_VERSION_INVALID"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_v2_independent_workspace.py:991: Failed
+=========================== short test summary info ============================
+FAILED tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-True]
+FAILED tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-False]
+FAILED tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-0]
+FAILED tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file--1]
+FAILED tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-1]
+FAILED tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-1.0]
+FAILED tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-None]
+7 failed, 7 skipped, 150 deselected in 3.96s

@@ -1,0 +1,178 @@
+sss...sss...sssss.....ssss....sss...ss..s.sss...s.s.s.s.s.s.s.sssssss... [ 26%]
+....s.s.s.s.s.s.sss...s..ss..s.s.s.s.s.s.s.s.sssssssss...sssss.....s.s.s [ 53%]
+.s.s.s.s.s.s.ss..ssssssssssssss...FFFFFFFFFFFss..ss..ss..ss..ssFFss..ssF [ 79%]
+Fss..ssF.s.s.s.ssssss..................................                  [100%]
+=================================== FAILURES ===================================
+_ test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api-{"director_notes": [{"id": "direction-1", "number": 1, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}, {"id": "direction-1", "number": 1, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}]}] _
+tests/test_v2_creative_workflows.py:294: in test_untrusted_model_json_is_discarded_without_derived_write
+    result = model_settle(e, model_dispatch(e, row))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_creative_workflows.py:253: in model_settle
+    wait_ledger(e, running["model_execution"]["reservation_id"])
+tests/test_r4_broker_mounted.py:55: in wait_ledger
+    if time.monotonic() > deadline: pytest.fail(f'Broker job did not settle: {row["ledger"]["status"]}')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: Broker job did not settle: RESERVED
+_ test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api-{"director_notes": [{"id": "direction-1", "number": 1, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal", "tool": "execute"}]}] _
+tests/test_v2_creative_workflows.py:294: in test_untrusted_model_json_is_discarded_without_derived_write
+    result = model_settle(e, model_dispatch(e, row))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_creative_workflows.py:253: in model_settle
+    wait_ledger(e, running["model_execution"]["reservation_id"])
+tests/test_r4_broker_mounted.py:55: in wait_ledger
+    if time.monotonic() > deadline: pytest.fail(f'Broker job did not settle: {row["ledger"]["status"]}')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: Broker job did not settle: RESERVED
+_ test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api-{"director_notes": [{"id": "direction-1", "number": true, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}]}] _
+tests/test_v2_creative_workflows.py:294: in test_untrusted_model_json_is_discarded_without_derived_write
+    result = model_settle(e, model_dispatch(e, row))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_creative_workflows.py:253: in model_settle
+    wait_ledger(e, running["model_execution"]["reservation_id"])
+tests/test_r4_broker_mounted.py:55: in wait_ledger
+    if time.monotonic() > deadline: pytest.fail(f'Broker job did not settle: {row["ledger"]["status"]}')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: Broker job did not settle: RESERVED
+_ test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api-{"director_notes": [{"number": 1, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}]}] _
+tests/test_v2_creative_workflows.py:294: in test_untrusted_model_json_is_discarded_without_derived_write
+    result = model_settle(e, model_dispatch(e, row))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_creative_workflows.py:253: in model_settle
+    wait_ledger(e, running["model_execution"]["reservation_id"])
+tests/test_r4_broker_mounted.py:55: in wait_ledger
+    if time.monotonic() > deadline: pytest.fail(f'Broker job did not settle: {row["ledger"]["status"]}')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: Broker job did not settle: RESERVED
+_ test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api/v1-not json] _
+tests/test_v2_creative_workflows.py:294: in test_untrusted_model_json_is_discarded_without_derived_write
+    result = model_settle(e, model_dispatch(e, row))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_creative_workflows.py:253: in model_settle
+    wait_ledger(e, running["model_execution"]["reservation_id"])
+tests/test_r4_broker_mounted.py:55: in wait_ledger
+    if time.monotonic() > deadline: pytest.fail(f'Broker job did not settle: {row["ledger"]["status"]}')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: Broker job did not settle: RESERVED
+_ test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api/v1-{"director_notes":[],"director_notes":[]}] _
+tests/test_v2_creative_workflows.py:294: in test_untrusted_model_json_is_discarded_without_derived_write
+    result = model_settle(e, model_dispatch(e, row))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_creative_workflows.py:253: in model_settle
+    wait_ledger(e, running["model_execution"]["reservation_id"])
+tests/test_r4_broker_mounted.py:55: in wait_ledger
+    if time.monotonic() > deadline: pytest.fail(f'Broker job did not settle: {row["ledger"]["status"]}')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: Broker job did not settle: RESERVED
+_ test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api/v1-{"director_notes": [{"id": "direction-1", "number": 1, "scene_id": "unknown", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}]}] _
+tests/test_v2_creative_workflows.py:294: in test_untrusted_model_json_is_discarded_without_derived_write
+    result = model_settle(e, model_dispatch(e, row))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_creative_workflows.py:253: in model_settle
+    wait_ledger(e, running["model_execution"]["reservation_id"])
+tests/test_r4_broker_mounted.py:55: in wait_ledger
+    if time.monotonic() > deadline: pytest.fail(f'Broker job did not settle: {row["ledger"]["status"]}')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: Broker job did not settle: RESERVED
+_ test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api/v1-{"director_notes": [{"id": "direction-1", "number": 1, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}, {"id": "direction-1", "number": 1, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}]}] _
+tests/test_v2_creative_workflows.py:294: in test_untrusted_model_json_is_discarded_without_derived_write
+    result = model_settle(e, model_dispatch(e, row))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_creative_workflows.py:253: in model_settle
+    wait_ledger(e, running["model_execution"]["reservation_id"])
+tests/test_r4_broker_mounted.py:55: in wait_ledger
+    if time.monotonic() > deadline: pytest.fail(f'Broker job did not settle: {row["ledger"]["status"]}')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: Broker job did not settle: RESERVED
+_ test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api/v1-{"director_notes": [{"id": "direction-1", "number": 1, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal", "tool": "execute"}]}] _
+tests/test_v2_creative_workflows.py:294: in test_untrusted_model_json_is_discarded_without_derived_write
+    result = model_settle(e, model_dispatch(e, row))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_creative_workflows.py:253: in model_settle
+    wait_ledger(e, running["model_execution"]["reservation_id"])
+tests/test_r4_broker_mounted.py:55: in wait_ledger
+    if time.monotonic() > deadline: pytest.fail(f'Broker job did not settle: {row["ledger"]["status"]}')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: Broker job did not settle: RESERVED
+_ test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api/v1-{"director_notes": [{"id": "direction-1", "number": true, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}]}] _
+tests/test_v2_creative_workflows.py:294: in test_untrusted_model_json_is_discarded_without_derived_write
+    result = model_settle(e, model_dispatch(e, row))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_creative_workflows.py:253: in model_settle
+    wait_ledger(e, running["model_execution"]["reservation_id"])
+tests/test_r4_broker_mounted.py:55: in wait_ledger
+    if time.monotonic() > deadline: pytest.fail(f'Broker job did not settle: {row["ledger"]["status"]}')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: Broker job did not settle: DISPATCHED
+_ test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api/v1-{"director_notes": [{"number": 1, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}]}] _
+tests/test_v2_creative_workflows.py:294: in test_untrusted_model_json_is_discarded_without_derived_write
+    result = model_settle(e, model_dispatch(e, row))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_creative_workflows.py:253: in model_settle
+    wait_ledger(e, running["model_execution"]["reservation_id"])
+tests/test_r4_broker_mounted.py:55: in wait_ledger
+    if time.monotonic() > deadline: pytest.fail(f'Broker job did not settle: {row["ledger"]["status"]}')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: Broker job did not settle: DISPATCHED
+______ test_parallel_model_admission_only_creates_one_job[postgres-/api] _______
+tests/test_v2_creative_workflows.py:377: in test_parallel_model_admission_only_creates_one_job
+    wait_ledger(e, running["model_execution"]["reservation_id"])
+tests/test_r4_broker_mounted.py:55: in wait_ledger
+    if time.monotonic() > deadline: pytest.fail(f'Broker job did not settle: {row["ledger"]["status"]}')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: Broker job did not settle: RESERVED
+_____ test_parallel_model_admission_only_creates_one_job[postgres-/api/v1] _____
+tests/test_v2_creative_workflows.py:377: in test_parallel_model_admission_only_creates_one_job
+    wait_ledger(e, running["model_execution"]["reservation_id"])
+tests/test_r4_broker_mounted.py:55: in wait_ledger
+    if time.monotonic() > deadline: pytest.fail(f'Broker job did not settle: {row["ledger"]["status"]}')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: Broker job did not settle: RESERVED
+_ test_real_generation_restart_cannot_import_saved_model_output[postgres-/api] _
+tests/test_v2_creative_workflows.py:403: in test_real_generation_restart_cannot_import_saved_model_output
+    wait_ledger(e, running["model_execution"]["reservation_id"])
+tests/test_r4_broker_mounted.py:55: in wait_ledger
+    if time.monotonic() > deadline: pytest.fail(f'Broker job did not settle: {row["ledger"]["status"]}')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: Broker job did not settle: RESERVED
+_ test_real_generation_restart_cannot_import_saved_model_output[postgres-/api/v1] _
+tests/test_v2_creative_workflows.py:403: in test_real_generation_restart_cannot_import_saved_model_output
+    wait_ledger(e, running["model_execution"]["reservation_id"])
+tests/test_r4_broker_mounted.py:55: in wait_ledger
+    if time.monotonic() > deadline: pytest.fail(f'Broker job did not settle: {row["ledger"]["status"]}')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: Broker job did not settle: RESERVED
+_ test_model_output_byte_bound_is_enforced_by_original_executor[postgres-/api] _
+tests/test_v2_creative_workflows.py:448: in test_model_output_byte_bound_is_enforced_by_original_executor
+    result = model_settle(e, model_dispatch(e, row))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_creative_workflows.py:253: in model_settle
+    wait_ledger(e, running["model_execution"]["reservation_id"])
+tests/test_r4_broker_mounted.py:55: in wait_ledger
+    if time.monotonic() > deadline: pytest.fail(f'Broker job did not settle: {row["ledger"]["status"]}')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: Broker job did not settle: RESERVED
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4d-export-postgres-final1.xml -
+=========================== short test summary info ============================
+FAILED tests/test_v2_creative_workflows.py::test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api-{"director_notes": [{"id": "direction-1", "number": 1, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}, {"id": "direction-1", "number": 1, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}]}]
+FAILED tests/test_v2_creative_workflows.py::test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api-{"director_notes": [{"id": "direction-1", "number": 1, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal", "tool": "execute"}]}]
+FAILED tests/test_v2_creative_workflows.py::test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api-{"director_notes": [{"id": "direction-1", "number": true, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}]}]
+FAILED tests/test_v2_creative_workflows.py::test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api-{"director_notes": [{"number": 1, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}]}]
+FAILED tests/test_v2_creative_workflows.py::test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api/v1-not json]
+FAILED tests/test_v2_creative_workflows.py::test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api/v1-{"director_notes":[],"director_notes":[]}]
+FAILED tests/test_v2_creative_workflows.py::test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api/v1-{"director_notes": [{"id": "direction-1", "number": 1, "scene_id": "unknown", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}]}]
+FAILED tests/test_v2_creative_workflows.py::test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api/v1-{"director_notes": [{"id": "direction-1", "number": 1, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}, {"id": "direction-1", "number": 1, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}]}]
+FAILED tests/test_v2_creative_workflows.py::test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api/v1-{"director_notes": [{"id": "direction-1", "number": 1, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal", "tool": "execute"}]}]
+FAILED tests/test_v2_creative_workflows.py::test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api/v1-{"director_notes": [{"id": "direction-1", "number": true, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}]}]
+FAILED tests/test_v2_creative_workflows.py::test_untrusted_model_json_is_discarded_without_derived_write[postgres-/api/v1-{"director_notes": [{"number": 1, "scene_id": "scene-1", "note": "Start with a held frame", "shot_size": "CLOSE_UP", "camera_angle": "EYE_LEVEL", "camera_motion": "STATIC", "duration_seconds": 6, "emotion": "Hesitant", "pacing": "Pause after dialogue", "performance": "Hold eye contact", "blocking": "Confirm positions in rehearsal"}]}]
+FAILED tests/test_v2_creative_workflows.py::test_parallel_model_admission_only_creates_one_job[postgres-/api]
+FAILED tests/test_v2_creative_workflows.py::test_parallel_model_admission_only_creates_one_job[postgres-/api/v1]
+FAILED tests/test_v2_creative_workflows.py::test_real_generation_restart_cannot_import_saved_model_output[postgres-/api]
+FAILED tests/test_v2_creative_workflows.py::test_real_generation_restart_cannot_import_saved_model_output[postgres-/api/v1]
+FAILED tests/test_v2_creative_workflows.py::test_model_output_byte_bound_is_enforced_by_original_executor[postgres-/api]
+16 failed, 131 passed, 124 skipped, 1 warning in 327.73s (0:05:27)

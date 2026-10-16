@@ -1,0 +1,57 @@
+On branch feature/v2-narrative-platform
+Your branch is up to date with 'origin/feature/v2-narrative-platform'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   .github/ci/coverage_manifest_v2.json.gz
+	modified:   API_CATALOG.json
+	modified:   API_CATALOG.md
+	modified:   API_CATALOG_DETAIL.json.gz
+	modified:   MILESTONE_M4B_REPORT.md
+	modified:   app/creative/ai_execution.py
+	new file:   docs/delivery/v2-development/catalog-55cb339ba1bb.json
+	new file:   docs/delivery/v2-development/stage-m4b-a1eb-hosted-evidence.zip
+	new file:   docs/delivery/v2-development/stage-m4b-a1eb-hosted-terminal.json
+	new file:   docs/delivery/v2-development/stage-m4b-ci-corrections-collection-proof.json
+	new file:   docs/delivery/v2-development/stage-m4b-ci-corrections-infrastructure.json
+	new file:   docs/delivery/v2-development/stage-m4b-ci-corrections-infrastructure.log
+	new file:   docs/delivery/v2-development/stage-m4b-ci-corrections-infrastructure.xml
+	new file:   docs/delivery/v2-development/stage-m4b-ci-corrections-manifest.json
+	new file:   docs/delivery/v2-development/stage-m4b-ci-corrections-precommit-status.txt
+	new file:   docs/delivery/v2-development/stage-m4b-ci-corrections-publish-verification.json
+	new file:   docs/delivery/v2-development/stage-m4b-ci-corrections-verify.py
+	new file:   docs/delivery/v2-development/stage-m4b-ci-proof-path-diagnostic.json
+	new file:   docs/delivery/v2-development/stage-m4b-manual-refresh-focused.json
+	new file:   docs/delivery/v2-development/stage-m4b-manual-refresh-focused.log
+	new file:   docs/delivery/v2-development/stage-m4b-manual-refresh-focused.xml
+	new file:   docs/delivery/v2-development/stage-m4b-manual-refresh-green.json
+	new file:   docs/delivery/v2-development/stage-m4b-manual-refresh-green.log
+	new file:   docs/delivery/v2-development/stage-m4b-manual-refresh-green.xml
+	new file:   docs/delivery/v2-development/stage-m4b-manual-refresh-original-terminal.json
+	new file:   docs/delivery/v2-development/stage-m4b-manual-refresh-original-terminal.log
+	new file:   docs/delivery/v2-development/stage-m4b-manual-refresh-original-terminal.xml
+	new file:   docs/delivery/v2-development/stage-m4b-manual-refresh-red.json
+	new file:   docs/delivery/v2-development/stage-m4b-manual-refresh-red.log
+	new file:   docs/delivery/v2-development/stage-m4b-manual-refresh-red.xml
+	new file:   docs/delivery/v2-development/stage-m4b-postgres-final3-initdb.log
+	new file:   docs/delivery/v2-development/stage-m4b-selected-file-final3.json
+	new file:   docs/delivery/v2-development/stage-m4b-selected-file-final3.log
+	new file:   docs/delivery/v2-development/stage-m4b-selected-file-final3.xml
+	new file:   docs/delivery/v2-development/stage-m4b-selected-postgres-final3-postgres-runtime.json
+	new file:   docs/delivery/v2-development/stage-m4b-selected-postgres-final3.json
+	new file:   docs/delivery/v2-development/stage-m4b-selected-postgres-final3.log
+	new file:   docs/delivery/v2-development/stage-m4b-selected-postgres-final3.xml
+	new file:   docs/delivery/v2-development/stage-m4b-stable-node-collection-proof.json
+	new file:   docs/delivery/v2-development/stage-m4b-stable-node-infrastructure.json
+	new file:   docs/delivery/v2-development/stage-m4b-stable-node-infrastructure.log
+	new file:   docs/delivery/v2-development/stage-m4b-stable-node-infrastructure.xml
+	new file:   docs/delivery/v2-development/stage-m4b-stable-node-manifest.json
+	new file:   docs/delivery/v2-development/stage-m4b-stable-node-provider.json
+	new file:   docs/delivery/v2-development/stage-m4b-stable-node-provider.log
+	new file:   docs/delivery/v2-development/stage-m4b-stable-node-provider.xml
+	new file:   docs/delivery/v2-development/stage-m4b-stable-node-publish-verification.json
+	new file:   docs/delivery/v2-development/stage-m4b-stable-node-verify.py
+	modified:   tests/test_v2_graph_text_assets.py
+	modified:   tests/test_v2_graph_text_assets_api.py
+	modified:   tests/test_v2_model_provider_contracts.py
+

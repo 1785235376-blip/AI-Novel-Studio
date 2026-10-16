@@ -1,0 +1,6 @@
+
+> ai-novel-studio-ui@0.7.0 build D:\PoemSeed\Worktrees\studio-v2-audio-editing-20261014\frontend
+> tsc -b && vite build
+
+src/onboarding/studioEntryClient.ts(158,1): error TS1005: '}' expected.
+ ELIFECYCLE  Command failed with exit code 1.

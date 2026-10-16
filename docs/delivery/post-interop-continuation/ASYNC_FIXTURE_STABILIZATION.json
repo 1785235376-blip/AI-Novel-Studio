@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "scope": "ASYNC_TEST_FIXTURE_STABILIZATION_ONLY",
+  "previous_head": "daaebf871f646dd78632c8ee144ef3cba17f35b6",
+  "previous_tree": "aa9db1038368a90c0dcc51b59d58aa91cd0bfccd",
+  "production_code_changed": false,
+  "historical_pr_heads_evidence_and_frozen_protocol": "UNCHANGED",
+  "retained_failures": {
+    "interop_pr": {
+      "run": 37504919634,
+      "artifact": 11431604206,
+      "archive_sha256": "98d9c4d0b51c4c8d05ba6372c87c4d217449dac80f2f0b01481b63e69483738d",
+      "passed": 344,
+      "failed": 1,
+      "skipped": 68,
+      "case": "test_transport_actual_deadline_and_cancellation",
+      "observed": "Expected CancelledError was absent after an unsynchronized20ms delay"
+    },
+    "frontend_push": {
+      "run": 37504912645,
+      "compact_artifact": 11432960158,
+      "archive_sha256": "e4dff22c2c83be01590b966be7827482bdd457c6d43e8f98dc107e6415a67a87",
+      "unit_passed": 1261,
+      "unit_skipped": 8,
+      "r4_passed": 61,
+      "r4_errors": 2
+    },
+    "frontend_pr": {
+      "run": 37504919485,
+      "compact_artifact": 11431609200,
+      "archive_sha256": "9784d7197260b0e7bdc8fa363ec6fb9a0761686c8f4df0e6433d9a8cbd011f03",
+      "unit_passed": 1260,
+      "unit_failed": 1,
+      "unit_skipped": 8,
+      "r4_passed": 62,
+      "r4_errors": 1
+    }
+  },
+  "corrections": [
+    {
+      "owner": "tests/test_local_interop_tcp.py",
+      "kind": "INHERITED_FIXTURE_SYNCHRONIZATION",
+      "change": "Owned HTTP server arrival/release barriers prove the request is pending before cancellation. Original50ms TIMEOUT and CancelledError checks stay; bounded cleanup and in-flight assertions added. No transport/protocol change.",
+      "proof": "Original response-before-cancel failure reproduced with delayed continuation; corrected pending request survives400ms delay; swallowed-cancellation negative control still fails; no live threads remain.",
+      "local": "15 TCP cases and345 File Interop cases pass;68 unchanged opposite-profile skips",
+      "sha256": "de8beec5e76784dc86e0daa1c62398b8dc27311e5140122d86551bdc4e05ab66"
+    },
+    {
+      "owner": "frontend/src/novel/ImageGenerationPanel.test.tsx",
+      "kind": "INHERITED_FIXTURE_DEPENDENCY_AND_STARTUP",
+      "change": "Mock omitted original imageJobs API, fail closed on accidental real fetch, settle startup effects and add three delayed/earliest-enabled-click lifecycle cases. All23 original assertions retained.",
+      "proven": "Original incomplete fixture escapes to a real relative-URL fetch.",
+      "unverified": "Exact historical missing-RUNNING interleaving is not established; no runtime defect is claimed.",
+      "local": "29 related image/queue/consent cases pass",
+      "sha256": "f80705c4c5f29581ebf5bd304e1d1556e7497ff41f6338042d8b0d9d898eaeb0"
+    },
+    {
+      "owner": "frontend/tests/e2e/r4-model-task-reopen.spec.ts",
+      "kind": "NEW_FIXTURE_READINESS",
+      "change": "Wait for exact current chapter/manuscript and workspace readiness before Ctrl+k; assert workspace search visibility/focus before Task Center. Exact job, one-ledger, source and no-replay checks unchanged.",
+      "local": "65 related unit cases and strict TypeScript pass; actual new browser run pending",
+      "sha256": "eb11242f5c8d05b9970ac890d0d23098dd11ccde6c9de36dfcb0d31b797dbf06"
+    },
+    {
+      "owner": "frontend/tests/e2e/r4-post-interop-style-judge.spec.ts",
+      "kind": "NEW_FIXTURE_HYDRATION",
+      "change": "Wait for original history success and enabled saved-version privacy state around mutation/reload. Both original drains retain budgets and cleanup assertions, with distinct test.step labels.",
+      "observed": "Verified bounded PNG proves business assertions and1920px capture completed before later persistence-reload drain failed.",
+      "unverified": "Exact old request chronology is not reconstructed. Full43,838,427-byte trace artifact11432456702 exceeds32MiB supported materialization; NOT_INSPECTED, no alternate route.",
+      "local": "48 history/privacy/Judge/lifecycle cases and strict TypeScript pass",
+      "sha256": "48e7bde293a0606b297dc113dd4e07c09f6f9a244195288e92ace54150950a29"
+    }
+  ],
+  "fresh_exact_staged_verification": {
+    "code_tree": "ff6cf687b545b80931099bcc839ff90373044b02",
+    "frontend_passed": 1264,
+    "frontend_inherited_opt_in_skips": 8,
+    "typescript": "PASS",
+    "tokens": "PASS",
+    "interop_file_passed": 345,
+    "interop_opposite_profile_skipped": 68,
+    "r4_browser_collection_only": 63,
+    "two_complete_backend_collections": 7492,
+    "added_backend_cases": 0,
+    "changed_backend_source_digest": [
+      {
+        "path": "tests/test_local_interop_tcp.py",
+        "before_sha256": "f891af25884aee094df4e0fa19350954e99ea4ddbadd934c4155b70dc2c73517",
+        "after_sha256": "de8beec5e76784dc86e0daa1c62398b8dc27311e5140122d86551bdc4e05ab66"
+      }
+    ],
+    "manifest_sha256": "d0ab9008f2142e1ebb0a3653fc5c071bae4138c060a255a3d9f080d118bd6990",
+    "old_skip_maps_and_backend_classifications": "UNCHANGED"
+  },
+  "final_hosted_verification": "PENDING_SUCCESSOR_SOURCE",
+  "historical_independent_audit": "BLOCKED_UNCHANGED"
+}

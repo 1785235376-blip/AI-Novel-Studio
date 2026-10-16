@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ✓ src/creative/StudioSelectLabels.test.tsx (4 tests) 536ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  07:37:30
+   Duration  1.62s (transform 214ms, setup 0ms, collect 434ms, tests 536ms, environment 353ms, prepare 80ms)
+

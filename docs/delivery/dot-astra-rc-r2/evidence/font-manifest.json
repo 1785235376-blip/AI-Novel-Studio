@@ -1,0 +1,33 @@
+{
+  "upstream_revision": "2894aab31764f10f29c421bdfd2340d3b382d384",
+  "license": "SIL OFL 1.1",
+  "modified": true,
+  "derivation": {
+    "tool": "fonttools 4.59.1",
+    "axes": {
+      "wght": 400
+    },
+    "subset": false
+  },
+  "files": [
+    {
+      "path": "NotoSansSC-Variable.ttf",
+      "source": "https://raw.githubusercontent.com/google/fonts/2894aab31764f10f29c421bdfd2340d3b382d384/ofl/notosanssc/NotoSansSC%5Bwght%5D.ttf",
+      "sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+      "size": 17772300
+    },
+    {
+      "path": "OFL.txt",
+      "source": "https://raw.githubusercontent.com/google/fonts/2894aab31764f10f29c421bdfd2340d3b382d384/ofl/notosanssc/OFL.txt",
+      "sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9",
+      "size": 4388
+    },
+    {
+      "path": "NotoSansSC-Regular.ttf",
+      "sha256": "eeb06b8a64fd04a2744d95579db1571b51027cda61ed78c62e4b730791525461",
+      "size": 10595932,
+      "derived_from": "NotoSansSC-Variable.ttf",
+      "bundled": true
+    }
+  ]
+}

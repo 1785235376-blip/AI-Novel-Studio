@@ -1,0 +1,80 @@
+{
+  "source_map_sha256": "1f8bfabc61da1841f7edebcedc6c7a6a7e9455ca348c41a4c23496cb15a2df65",
+  "proofs": [
+    {
+      "backend": "file",
+      "viewport": "prompt-adoption-ui-1366x768",
+      "path": "r3-adoption-ui-browser-file-final-r3/decoded-receipts/prompt-adoption-ui-1366x768.json",
+      "sha256": "dfac349cda2cc6d98aabb2be71657858d947fa32df239ea2de29c3c9a2b24769",
+      "source_binding_contract": "prompt-adoption-bindings/1",
+      "source_bindings_verified": true,
+      "declared_character_bindings": 1,
+      "result_version": 2,
+      "owner_reopened_exactly_equal": true,
+      "ui_adoption_posts": 1
+    },
+    {
+      "backend": "file",
+      "viewport": "prompt-adoption-ui-1440x900",
+      "path": "r3-adoption-ui-browser-file-final-r3/decoded-receipts/prompt-adoption-ui-1440x900.json",
+      "sha256": "20ad27eff1198b27eaa2cd968ab1138dd882f42542d27218b1b448165d98c07b",
+      "source_binding_contract": "prompt-adoption-bindings/1",
+      "source_bindings_verified": true,
+      "declared_character_bindings": 1,
+      "result_version": 2,
+      "owner_reopened_exactly_equal": true,
+      "ui_adoption_posts": 1
+    },
+    {
+      "backend": "file",
+      "viewport": "prompt-adoption-ui-1920x1080",
+      "path": "r3-adoption-ui-browser-file-final-r3/decoded-receipts/prompt-adoption-ui-1920x1080.json",
+      "sha256": "aa8bdf655ffb70ec67ca24c7444fb5e82b2bbcef98258804359282e721467620",
+      "source_binding_contract": "prompt-adoption-bindings/1",
+      "source_bindings_verified": true,
+      "declared_character_bindings": 1,
+      "result_version": 2,
+      "owner_reopened_exactly_equal": true,
+      "ui_adoption_posts": 1
+    },
+    {
+      "backend": "postgres",
+      "viewport": "prompt-adoption-ui-1366x768",
+      "path": "r3-adoption-ui-browser-pg-final-r3/decoded-receipts/prompt-adoption-ui-1366x768.json",
+      "sha256": "966e9ea3108a107f0d2d4742cebb3ef4f9b7b80f6785af3e7ea1750944b6168e",
+      "source_binding_contract": "prompt-adoption-bindings/1",
+      "source_bindings_verified": true,
+      "declared_character_bindings": 1,
+      "result_version": 2,
+      "owner_reopened_exactly_equal": true,
+      "ui_adoption_posts": 1
+    },
+    {
+      "backend": "postgres",
+      "viewport": "prompt-adoption-ui-1440x900",
+      "path": "r3-adoption-ui-browser-pg-final-r3/decoded-receipts/prompt-adoption-ui-1440x900.json",
+      "sha256": "0b75579228e7b7c5e649b67b223da323737cc8f59283aa04fcbe74689a5c0eb0",
+      "source_binding_contract": "prompt-adoption-bindings/1",
+      "source_bindings_verified": true,
+      "declared_character_bindings": 1,
+      "result_version": 2,
+      "owner_reopened_exactly_equal": true,
+      "ui_adoption_posts": 1
+    },
+    {
+      "backend": "postgres",
+      "viewport": "prompt-adoption-ui-1920x1080",
+      "path": "r3-adoption-ui-browser-pg-final-r3/decoded-receipts/prompt-adoption-ui-1920x1080.json",
+      "sha256": "0fdd718d948054c264a2910290ae2ac491d04d4d24136376d41e1e8f21fa9e3c",
+      "source_binding_contract": "prompt-adoption-bindings/1",
+      "source_bindings_verified": true,
+      "declared_character_bindings": 1,
+      "result_version": 2,
+      "owner_reopened_exactly_equal": true,
+      "ui_adoption_posts": 1
+    }
+  ],
+  "source_verification_scope": "Write-time verification of declared bindings; not a claim of current dependency liveness.",
+  "model_execution": "NOT_REQUESTED",
+  "model_counter": "NOT_INSTRUMENTED"
+}

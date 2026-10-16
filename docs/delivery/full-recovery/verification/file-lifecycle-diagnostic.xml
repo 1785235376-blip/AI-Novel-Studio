@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="4" time="5.002" timestamp="2026-10-07T17:41:13.419435+08:00" hostname="冢"><testcase classname="tests.test_file_project_lifecycle" name="test_cross_process_lifecycle_and_version_cas[held_get-delete-expected0]" time="2.506"><failure message="AssertionError: assert False&#10; +  where False = is_alive()&#10; +    where is_alive = &lt;SpawnProcess name='SpawnProcess-2' pid=31448 parent=15804 stopped exitcode=0&gt;.is_alive">tests\test_file_project_lifecycle.py:189: in test_cross_process_lifecycle_and_version_cas
+    assert second.is_alive()
+E   AssertionError: assert False
+E    +  where False = is_alive()
+E    +    where is_alive = &lt;SpawnProcess name='SpawnProcess-2' pid=31448 parent=15804 stopped exitcode=0&gt;.is_alive</failure></testcase><testcase classname="tests.test_file_project_lifecycle" name="test_cross_process_lifecycle_and_version_cas[held_save-delete-expected1]" time="0.706"><failure message="AssertionError: assert False&#10; +  where False = is_alive()&#10; +    where is_alive = &lt;SpawnProcess name='SpawnProcess-4' pid=36360 parent=15804 stopped exitcode=0&gt;.is_alive">tests\test_file_project_lifecycle.py:189: in test_cross_process_lifecycle_and_version_cas
+    assert second.is_alive()
+E   AssertionError: assert False
+E    +  where False = is_alive()
+E    +    where is_alive = &lt;SpawnProcess name='SpawnProcess-4' pid=36360 parent=15804 stopped exitcode=0&gt;.is_alive</failure></testcase><testcase classname="tests.test_file_project_lifecycle" name="test_cross_process_lifecycle_and_version_cas[held_delete-save-expected2]" time="0.697"><failure message="AssertionError: assert False&#10; +  where False = is_alive()&#10; +    where is_alive = &lt;SpawnProcess name='SpawnProcess-6' pid=42112 parent=15804 stopped exitcode=0&gt;.is_alive">tests\test_file_project_lifecycle.py:189: in test_cross_process_lifecycle_and_version_cas
+    assert second.is_alive()
+E   AssertionError: assert False
+E    +  where False = is_alive()
+E    +    where is_alive = &lt;SpawnProcess name='SpawnProcess-6' pid=42112 parent=15804 stopped exitcode=0&gt;.is_alive</failure></testcase><testcase classname="tests.test_file_project_lifecycle" name="test_cross_process_lifecycle_and_version_cas[held_save-save-expected3]" time="0.750"><failure message="AssertionError: assert False&#10; +  where False = is_alive()&#10; +    where is_alive = &lt;SpawnProcess name='SpawnProcess-8' pid=39668 parent=15804 stopped exitcode=0&gt;.is_alive">tests\test_file_project_lifecycle.py:189: in test_cross_process_lifecycle_and_version_cas
+    assert second.is_alive()
+E   AssertionError: assert False
+E    +  where False = is_alive()
+E    +    where is_alive = &lt;SpawnProcess name='SpawnProcess-8' pid=39668 parent=15804 stopped exitcode=0&gt;.is_alive</failure></testcase></testsuite></testsuites>

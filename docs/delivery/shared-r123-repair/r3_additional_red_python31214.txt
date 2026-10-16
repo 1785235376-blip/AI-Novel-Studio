@@ -1,0 +1,121 @@
+R3 supplemental RED evidence, 2026-10-06 UTC.
+Source: app/jobs.py untouched from c6f2126115b52e17839d48efea091dc21ec08c61 when these tests ran, before R3 implementation edits.
+Python: 3.12.14 supplemental local environment; not pinned CI Python 3.12.9.
+Storage: real isolated File repositories; synthetic model transport; no private data, paid service, or external model.
+Command: XDG_DATA_HOME=/tmp/r3-terminal-home NOVEL_DATA=/tmp/r3-terminal-data CREDENTIAL_VAULT_BACKEND=memory MOCK_PROVIDER=true MOCK_STREAM_DELAY_MS=0 ENABLE_CLOUD=false python -m pytest -q tests/test_shared_generation_terminal_protocol.py -k "settlement_is_durable or restart_recovery" --maxfail=5
+NOVEL_DATA was an unused environment variable in this first RED command; the mounted fixture still creates isolated temporary File repositories for every case. Subsequent runs use NOVEL_DATA_PATH.
+This receipt preserves five assertion failures. The run stopped at --maxfail=5; other cases were not executed in this RED capture.
+The original R3 HTTP reproducer and fixed-source baseline evidence remain separately preserved by the parent task.
+
+FFssFFF
+=================================== FAILURES ===================================
+_ test_settlement_is_durable_and_reject_does_not_wait_to_change_its_meaning[file-/api] _
+
+terminal_app = namespace(client=<starlette.testclient.TestClient object at 0x7febf18b1820>, prefix='/api', base='/api/novels/r3-mount...ction terminal_app.<locals>.start at 0x7febf0a52a20>, reopen=<function terminal_app.<locals>.reopen at 0x7febf0a527a0>)
+
+    def test_settlement_is_durable_and_reject_does_not_wait_to_change_its_meaning(terminal_app):
+        e = terminal_app; settling = Event(); release = Event(); calls = []
+        job = e.prepare(); job.before_dispatch = lambda: None
+        def finalize():
+            calls.append(job.execution_outcome); settling.set(); assert release.wait(10)
+        job.on_terminal = finalize
+        try:
+            e.start(job); e.release_first.set(); e.release_last.set(); e.release_completed.set()
+            assert settling.wait(5)
+            assert job.public()['status'] == 'SETTLING'
+>           assert e.manager.persistence.get(job.id)['status'] == 'SETTLING'
+E           AssertionError: assert 'GENERATING' == 'SETTLING'
+E             
+E             - SETTLING
+E             + GENERATING
+
+tests/test_shared_generation_terminal_protocol.py:145: AssertionError
+_ test_settlement_is_durable_and_reject_does_not_wait_to_change_its_meaning[file-/api/v1] _
+
+terminal_app = namespace(client=<starlette.testclient.TestClient object at 0x7febf0c56330>, prefix='/api/v1', base='/api/v1/novels/r3...ction terminal_app.<locals>.start at 0x7febf0a7d300>, reopen=<function terminal_app.<locals>.reopen at 0x7febebb12fc0>)
+
+    def test_settlement_is_durable_and_reject_does_not_wait_to_change_its_meaning(terminal_app):
+        e = terminal_app; settling = Event(); release = Event(); calls = []
+        job = e.prepare(); job.before_dispatch = lambda: None
+        def finalize():
+            calls.append(job.execution_outcome); settling.set(); assert release.wait(10)
+        job.on_terminal = finalize
+        try:
+            e.start(job); e.release_first.set(); e.release_last.set(); e.release_completed.set()
+            assert settling.wait(5)
+            assert job.public()['status'] == 'SETTLING'
+>           assert e.manager.persistence.get(job.id)['status'] == 'SETTLING'
+E           AssertionError: assert 'GENERATING' == 'SETTLING'
+E             
+E             - SETTLING
+E             + GENERATING
+
+tests/test_shared_generation_terminal_protocol.py:145: AssertionError
+_ test_restart_recovery_is_persisted_and_never_dispatches_or_releases_unknown_use[file-/api-PREPARED] _
+
+terminal_app = namespace(client=<starlette.testclient.TestClient object at 0x7febebd11820>, prefix='/api', base='/api/novels/r3-mount...ction terminal_app.<locals>.start at 0x7febebb13880>, reopen=<function terminal_app.<locals>.reopen at 0x7febebb13600>)
+status = 'PREPARED'
+
+    @pytest.mark.parametrize('status', ['PREPARED', 'QUEUED', 'GENERATING', 'SETTLING'])
+    def test_restart_recovery_is_persisted_and_never_dispatches_or_releases_unknown_use(terminal_app, status):
+        e = terminal_app; job = e.prepare(); job.status = status; job.output = 'Retained synthetic partial'
+        if status == 'SETTLING': job.dispatch_hooks_required = True; job.execution_outcome = 'COMPLETED'
+        e.manager._persist(job)
+        restarted = e.reopen(); restored = restarted.get(job.id)
+>       assert restored.status == e.manager.persistence.get(job.id)['status'] == 'FAILED'
+E       AssertionError: assert 'FAILED' == 'PREPARED'
+E         
+E         - PREPARED
+E         + FAILED
+
+tests/test_shared_generation_terminal_protocol.py:165: AssertionError
+_ test_restart_recovery_is_persisted_and_never_dispatches_or_releases_unknown_use[file-/api-QUEUED] _
+
+terminal_app = namespace(client=<starlette.testclient.TestClient object at 0x7febebcff320>, prefix='/api', base='/api/novels/r3-mount...ction terminal_app.<locals>.start at 0x7febebb84cc0>, reopen=<function terminal_app.<locals>.reopen at 0x7febebb84b80>)
+status = 'QUEUED'
+
+    @pytest.mark.parametrize('status', ['PREPARED', 'QUEUED', 'GENERATING', 'SETTLING'])
+    def test_restart_recovery_is_persisted_and_never_dispatches_or_releases_unknown_use(terminal_app, status):
+        e = terminal_app; job = e.prepare(); job.status = status; job.output = 'Retained synthetic partial'
+        if status == 'SETTLING': job.dispatch_hooks_required = True; job.execution_outcome = 'COMPLETED'
+        e.manager._persist(job)
+        restarted = e.reopen(); restored = restarted.get(job.id)
+>       assert restored.status == e.manager.persistence.get(job.id)['status'] == 'FAILED'
+E       AssertionError: assert 'FAILED' == 'QUEUED'
+E         
+E         - QUEUED
+E         + FAILED
+
+tests/test_shared_generation_terminal_protocol.py:165: AssertionError
+_ test_restart_recovery_is_persisted_and_never_dispatches_or_releases_unknown_use[file-/api-GENERATING] _
+
+terminal_app = namespace(client=<starlette.testclient.TestClient object at 0x7febebb378f0>, prefix='/api', base='/api/novels/r3-mount...ction terminal_app.<locals>.start at 0x7febebb85760>, reopen=<function terminal_app.<locals>.reopen at 0x7febebb858a0>)
+status = 'GENERATING'
+
+    @pytest.mark.parametrize('status', ['PREPARED', 'QUEUED', 'GENERATING', 'SETTLING'])
+    def test_restart_recovery_is_persisted_and_never_dispatches_or_releases_unknown_use(terminal_app, status):
+        e = terminal_app; job = e.prepare(); job.status = status; job.output = 'Retained synthetic partial'
+        if status == 'SETTLING': job.dispatch_hooks_required = True; job.execution_outcome = 'COMPLETED'
+        e.manager._persist(job)
+        restarted = e.reopen(); restored = restarted.get(job.id)
+>       assert restored.status == e.manager.persistence.get(job.id)['status'] == 'FAILED'
+E       AssertionError: assert 'FAILED' == 'GENERATING'
+E         
+E         - GENERATING
+E         + FAILED
+
+tests/test_shared_generation_terminal_protocol.py:165: AssertionError
+=============================== warnings summary ===============================
+../ai-novel-r2-venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/ai-novel-r2-venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_shared_generation_terminal_protocol.py::test_settlement_is_durable_and_reject_does_not_wait_to_change_its_meaning[file-/api]
+FAILED tests/test_shared_generation_terminal_protocol.py::test_settlement_is_durable_and_reject_does_not_wait_to_change_its_meaning[file-/api/v1]
+FAILED tests/test_shared_generation_terminal_protocol.py::test_restart_recovery_is_persisted_and_never_dispatches_or_releases_unknown_use[file-/api-PREPARED]
+FAILED tests/test_shared_generation_terminal_protocol.py::test_restart_recovery_is_persisted_and_never_dispatches_or_releases_unknown_use[file-/api-QUEUED]
+FAILED tests/test_shared_generation_terminal_protocol.py::test_restart_recovery_is_persisted_and_never_dispatches_or_releases_unknown_use[file-/api-GENERATING]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 5 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+5 failed, 2 skipped, 176 deselected, 1 warning in 3.12s

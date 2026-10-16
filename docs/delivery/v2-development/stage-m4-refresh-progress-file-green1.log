@@ -1,0 +1,11 @@
+Diagnostic harness SHA256: 373873172a2572171f47f119e695435b1afe17e2e782fc2140d333f3593162a4
+Added latency per real refresh: 0.25 seconds; provider wait remains 6 seconds
+.                                                                        [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1290
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1290: PytestAssertRewriteWarning: Module already imported so cannot be rewritten; anyio
+    self._mark_plugins_for_rewrite(hook, disable_autoload)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1 passed, 1 warning in 12.58s
+Real refresh calls: 31

@@ -1,0 +1,34 @@
+<testsuites id="" name="" tests="7" failures="0" skipped="7" errors="0" time="0.13505600000000004">
+<testsuite name="v2-creative-live.spec.ts" timestamp="2026-10-10T06:46:56.286Z" hostname="v2-live-chromium" tests="5" failures="0" skipped="5" time="0" errors="0">
+<testcase name="real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript" classname="v2-creative-live.spec.ts">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="real File V2 cancel and navigation retain dirty drafts without duplicating accepted or cancelled proposals" classname="v2-creative-live.spec.ts">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="real File V2 scope and stale-write fencing keeps the browser draft and rejects foreign sources" classname="v2-creative-live.spec.ts">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript" classname="v2-creative-live.spec.ts">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="real HTTP File V2 scope, cancel and stale source fences remain authoritative" classname="v2-creative-live.spec.ts">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="v2-creative-live.spec.ts" timestamp="2026-10-10T06:46:56.286Z" hostname="v1-chromium" tests="2" failures="0" skipped="2" time="0" errors="0">
+<testcase name="V1 default-off backend and browser never expose the V2 workbench or accept creative writes" classname="v2-creative-live.spec.ts">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes" classname="v2-creative-live.spec.ts">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+</testsuites>

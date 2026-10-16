@@ -1,0 +1,11 @@
+frontend/src/creative/screenplayExportClient.test.ts(9,106): error TS2345: Argument of type 'Uint8Array<ArrayBufferLike>' is not assignable to parameter of type 'BodyInit | null | undefined'.
+  Type 'Uint8Array<ArrayBufferLike>' is missing the following properties from type 'URLSearchParams': size, append, delete, get, and 2 more.
+frontend/src/creative/screenplayExportClient.test.ts(16,32): error TS2493: Tuple type '[]' of length '0' has no element at index '0'.
+frontend/src/creative/screenplayExportClient.test.ts(17,12): error TS2532: Object is possibly 'undefined'.
+frontend/src/creative/screenplayExportClient.test.ts(17,32): error TS2493: Tuple type '[]' of length '0' has no element at index '1'.
+frontend/src/creative/screenplayExportClient.test.ts(18,12): error TS2532: Object is possibly 'undefined'.
+frontend/src/creative/screenplayExportClient.test.ts(18,32): error TS2493: Tuple type '[]' of length '0' has no element at index '1'.
+frontend/src/creative/screenplayExportClient.test.ts(22,55): error TS2345: Argument of type '{ 'X-Creative-Document-Version': string; 'X-Creative-Document-Digest'?: undefined; 'X-Content-SHA256'?: undefined; 'Content-Type'?: undefined; 'Content-Length'?: undefined; } | { 'X-Creative-Document-Digest': string; 'X-Creative-Document-Version'?: undefined; 'X-Content-SHA256'?: undefined; 'Content-Type'?: undefine...' is not assignable to parameter of type 'Record<string, string> | undefined'.
+  Type '{ 'X-Creative-Document-Version': string; 'X-Creative-Document-Digest'?: undefined; 'X-Content-SHA256'?: undefined; 'Content-Type'?: undefined; 'Content-Length'?: undefined; }' is not assignable to type 'Record<string, string>'.
+    Property ''X-Creative-Document-Digest'' is incompatible with index signature.
+      Type 'undefined' is not assignable to type 'string'.

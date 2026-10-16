@@ -1,0 +1,51 @@
+{
+  "contract": "studio-storyboard-image-request/1",
+  "shot_pin": {
+    "document_snapshot": {
+      "id": "89a4c387-9ff4-4b5b-919f-6755259868d5",
+      "version": 1,
+      "digest": "815802132569ad4144197257f041748f5f5ab4f75b06bc0fb85466dfaa1df005"
+    },
+    "shot_id": "shot-1",
+    "shot_version": 1,
+    "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471"
+  },
+  "command": {
+    "operation_id": "m5.image.t2i",
+    "request_id": "synthetic-storyboard-image",
+    "provider_id": "discovery-local-4c3ffc28953a791c7d9f9b51",
+    "model_id": "local-4c3ffc28953a791c7d9f9b51",
+    "prompt": "Synthetic character in a blue jacket",
+    "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": null,
+      "seed": null,
+      "negative_prompt": null,
+      "size": null,
+      "quality": null,
+      "duration_seconds": null,
+      "frame_rate": null,
+      "voice_id": null,
+      "speech_rate": null,
+      "in_ms": null,
+      "out_ms": null
+    },
+    "source_snapshots": [
+      {
+        "id": "89a4c387-9ff4-4b5b-919f-6755259868d5",
+        "kind": "CREATIVE_DOCUMENT",
+        "version": 1,
+        "digest": "815802132569ad4144197257f041748f5f5ab4f75b06bc0fb85466dfaa1df005",
+        "asset_kind": null,
+        "reference_only": true
+      }
+    ],
+    "allow_cloud": false,
+    "license_note": ""
+  },
+  "automatic_dispatch": false,
+  "model_called": false,
+  "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+  "product_acceptance": "LOCAL_REQUIRED"
+}

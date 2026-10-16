@@ -1,0 +1,110 @@
+<testsuites id="" name="" tests="3" failures="0" skipped="0" errors="3" time="272.86333399999995">
+<testsuite name="v2-prompt-adoption-ui-live.spec.ts" timestamp="2026-10-16T17:22:28.610Z" hostname="prompt-adoption-ui-1366x768" tests="1" failures="0" skipped="0" time="90.54" errors="1">
+<testcase name="isolated original button commits bound Prompt and reload preserves its exact source pin" classname="v2-prompt-adoption-ui-live.spec.ts" time="90.54">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\error-context.md]]
+]]>
+</system-out>
+<error message="locator.click: Timeout 25000ms exceeded." type="TimeoutError">
+<![CDATA[  [prompt-adoption-ui-1366x768] › v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 
+
+    TimeoutError: locator.click: Timeout 25000ms exceeded.
+    Call log:
+      - waiting for getByRole('region', { name: '创作文档', exact: true }).getByRole('button', { name: /真实分镜 prompt-adoption-ui-1366x768/ })
+
+
+       98 |       await page.getByRole('tab', { name: /^分镜/ }).click();
+       99 |       await page.getByRole('region', { name: '创作文档', exact: true })
+    > 100 |         .getByRole('button', { name: new RegExp(boardTitle) }).click();
+          |                                                                ^
+      101 |       await page.getByRole('button', { name: '按需打开镜头工作区', exact: true }).click();
+      102 |       const shots = page.getByRole('region', { name: '分镜工作区', exact: true });
+      103 |       await shots.getByRole('button', { name: '读取已保存分镜', exact: true }).click();
+        at openBoard (D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:100:64)
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:210:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\docs\delivery\v2-r3-adoption-ui-20261017\r3-adoption-ui-browser-pg-final-r1\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\docs\delivery\v2-r3-adoption-ui-20261017\r3-adoption-ui-browser-pg-final-r1\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\error-context.md
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="v2-prompt-adoption-ui-live.spec.ts" timestamp="2026-10-16T17:22:28.610Z" hostname="prompt-adoption-ui-1440x900" tests="1" failures="0" skipped="0" time="90.501" errors="1">
+<testcase name="isolated original button commits bound Prompt and reload preserves its exact source pin" classname="v2-prompt-adoption-ui-live.spec.ts" time="90.501">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900\error-context.md]]
+]]>
+</system-out>
+<error message="locator.click: Timeout 25000ms exceeded." type="TimeoutError">
+<![CDATA[  [prompt-adoption-ui-1440x900] › v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 
+
+    TimeoutError: locator.click: Timeout 25000ms exceeded.
+    Call log:
+      - waiting for getByRole('region', { name: '创作文档', exact: true }).getByRole('button', { name: /真实分镜 prompt-adoption-ui-1440x900/ })
+
+
+       98 |       await page.getByRole('tab', { name: /^分镜/ }).click();
+       99 |       await page.getByRole('region', { name: '创作文档', exact: true })
+    > 100 |         .getByRole('button', { name: new RegExp(boardTitle) }).click();
+          |                                                                ^
+      101 |       await page.getByRole('button', { name: '按需打开镜头工作区', exact: true }).click();
+      102 |       const shots = page.getByRole('region', { name: '分镜工作区', exact: true });
+      103 |       await shots.getByRole('button', { name: '读取已保存分镜', exact: true }).click();
+        at openBoard (D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:100:64)
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:210:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\docs\delivery\v2-r3-adoption-ui-20261017\r3-adoption-ui-browser-pg-final-r1\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\docs\delivery\v2-r3-adoption-ui-20261017\r3-adoption-ui-browser-pg-final-r1\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900\error-context.md
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="v2-prompt-adoption-ui-live.spec.ts" timestamp="2026-10-16T17:22:28.610Z" hostname="prompt-adoption-ui-1920x1080" tests="1" failures="0" skipped="0" time="89.426" errors="1">
+<testcase name="isolated original button commits bound Prompt and reload preserves its exact source pin" classname="v2-prompt-adoption-ui-live.spec.ts" time="89.426">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080\error-context.md]]
+]]>
+</system-out>
+<error message="locator.click: Timeout 25000ms exceeded." type="TimeoutError">
+<![CDATA[  [prompt-adoption-ui-1920x1080] › v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 
+
+    TimeoutError: locator.click: Timeout 25000ms exceeded.
+    Call log:
+      - waiting for getByRole('region', { name: '创作文档', exact: true }).getByRole('button', { name: /真实分镜 prompt-adoption-ui-1920x1080/ })
+
+
+       98 |       await page.getByRole('tab', { name: /^分镜/ }).click();
+       99 |       await page.getByRole('region', { name: '创作文档', exact: true })
+    > 100 |         .getByRole('button', { name: new RegExp(boardTitle) }).click();
+          |                                                                ^
+      101 |       await page.getByRole('button', { name: '按需打开镜头工作区', exact: true }).click();
+      102 |       const shots = page.getByRole('region', { name: '分镜工作区', exact: true });
+      103 |       await shots.getByRole('button', { name: '读取已保存分镜', exact: true }).click();
+        at openBoard (D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:100:64)
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:210:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\docs\delivery\v2-r3-adoption-ui-20261017\r3-adoption-ui-browser-pg-final-r1\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\docs\delivery\v2-r3-adoption-ui-20261017\r3-adoption-ui-browser-pg-final-r1\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080\error-context.md
+]]>
+</error>
+</testcase>
+</testsuite>
+</testsuites>

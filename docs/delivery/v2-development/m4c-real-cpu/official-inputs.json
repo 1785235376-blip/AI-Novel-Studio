@@ -1,0 +1,47 @@
+{
+  "checked_utc": "2026-10-10T15:07:50.188101+00:00",
+  "status": "OFFICIAL_INPUTS_DOWNLOADED_HASH_VERIFIED_NOT_EXECUTED",
+  "items": [
+    {
+      "kind": "runtime",
+      "url": "https://github.com/ggml-org/llama.cpp/releases/download/b11429/llama-b11429-bin-ubuntu-x64.tar.gz",
+      "path": "runtime/llama-b11429-bin-ubuntu-x64.tar.gz",
+      "size": 17693462,
+      "sha256": "f6d25dde8f51133143d1453da4fd5f73b145127177612a283bf7995957af3392",
+      "license": "MIT",
+      "verified": true,
+      "seconds": 15.429
+    },
+    {
+      "kind": "model",
+      "url": "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/9217f5db79a29953eb74d5343926648285ec7e67/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "path": "models/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "size": 491400032,
+      "sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+      "license": "Apache-2.0",
+      "verified": true,
+      "seconds": 18.956
+    }
+  ],
+  "licenses": [
+    {
+      "path": "licenses/llama-cpp-MIT.txt",
+      "url": "https://raw.githubusercontent.com/ggml-org/llama.cpp/b11429/LICENSE",
+      "bytes": 1078,
+      "sha256": "94f29bbed6a22c35b992c5c6ebf0e7c92f13b836b90f36f461c9cf2f0f1d010d"
+    },
+    {
+      "path": "licenses/Qwen-Apache-2.0.txt",
+      "url": "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/9217f5db79a29953eb74d5343926648285ec7e67/LICENSE",
+      "bytes": 11343,
+      "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+    }
+  ],
+  "runtime_stable_release": "v0.6.0",
+  "runtime_build": "b11429",
+  "runtime_source_commit": "d812350",
+  "model_revision": "9217f5db79a29953eb74d5343926648285ec7e67",
+  "zero_cost_public_download": true,
+  "private_credentials_used": false,
+  "inference": "NOT_RUN"
+}

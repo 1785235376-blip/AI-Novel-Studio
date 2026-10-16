@@ -1,0 +1,90 @@
+{
+  "command": "PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium ./node_modules/.bin/playwright test --config playwright.creative.config.ts --grep shared-shell\\ geometry --output /tmp/m4-ui-geometry",
+  "cwd": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend",
+  "browser": "preinstalled /usr/bin/chromium; bundled Playwright Chromium not present",
+  "process_outcome": "FAIL_BEFORE_PAGE_CREATION",
+  "collected_cases": 3,
+  "geometry_assertions": "NOT_RUN",
+  "screenshots": "NOT_RUN",
+  "canonical_visual_baselines": "NOT_RUN",
+  "real_inference": "NOT_RUN",
+  "blocker": "Chromium process_singleton socket() Operation not permitted (EPERM); original crashpad errors retained",
+  "evidence_kind": "Original Playwright error-context and trace files copied byte-for-byte; test.trace extracted unchanged. Terminal stdout was not separately captured, and no replacement stdout log is fabricated.",
+  "source_stage": "Earlier development launch attempt; not final-source browser acceptance",
+  "retry_or_bypass": false,
+  "files": [
+    {
+      "path": "docs/delivery/v2-development/m4-browser-launch-blocked-original/.last-run.json",
+      "bytes": 194,
+      "sha256": "a15fe906d8a07c1d5b88ba24c1aa9e931d9204416da339c06d354482420d280c",
+      "original_path": "/tmp/m4-ui-geometry/.last-run.json",
+      "byte_identical": true
+    },
+    {
+      "path": "docs/delivery/v2-development/m4-browser-launch-blocked-original/creative-workbench-V2-shared-shell-geometry-1366x768-chromium/error-context.md",
+      "bytes": 5102,
+      "sha256": "0f26b3b1f9c019a80b808ce350cca37d9d08f1368d35150fafd8716c7298a0ee",
+      "original_path": "/tmp/m4-ui-geometry/creative-workbench-V2-shared-shell-geometry-1366x768-chromium/error-context.md",
+      "byte_identical": true
+    },
+    {
+      "path": "docs/delivery/v2-development/m4-browser-launch-blocked-original/creative-workbench-V2-shared-shell-geometry-1366x768-chromium/trace.zip",
+      "bytes": 4751,
+      "sha256": "106f7f99d9f4784846e0680a33c9aad0512fa600d504cf8df2739ac67c1857e4",
+      "original_path": "/tmp/m4-ui-geometry/creative-workbench-V2-shared-shell-geometry-1366x768-chromium/trace.zip",
+      "byte_identical": true
+    },
+    {
+      "path": "docs/delivery/v2-development/m4-browser-launch-blocked-original/creative-workbench-V2-shared-shell-geometry-1440x900-chromium/error-context.md",
+      "bytes": 5127,
+      "sha256": "4c528f7659279f994f8392d6ac50b16233aaa699c86161b34f0d5686f4f06c7c",
+      "original_path": "/tmp/m4-ui-geometry/creative-workbench-V2-shared-shell-geometry-1440x900-chromium/error-context.md",
+      "byte_identical": true
+    },
+    {
+      "path": "docs/delivery/v2-development/m4-browser-launch-blocked-original/creative-workbench-V2-shared-shell-geometry-1440x900-chromium/trace.zip",
+      "bytes": 4733,
+      "sha256": "cfbf6af451af3189e8709925f1d71bb08ccda66d9f423bb1f0294e2b2d8d6743",
+      "original_path": "/tmp/m4-ui-geometry/creative-workbench-V2-shared-shell-geometry-1440x900-chromium/trace.zip",
+      "byte_identical": true
+    },
+    {
+      "path": "docs/delivery/v2-development/m4-browser-launch-blocked-original/creative-workbench-V2-shared-shell-geometry-1920x1080-chromium/error-context.md",
+      "bytes": 5128,
+      "sha256": "62474388ba248d4f18fe49a22a696a6ec871fb41a286d51b96cfcd832ab2d209",
+      "original_path": "/tmp/m4-ui-geometry/creative-workbench-V2-shared-shell-geometry-1920x1080-chromium/error-context.md",
+      "byte_identical": true
+    },
+    {
+      "path": "docs/delivery/v2-development/m4-browser-launch-blocked-original/creative-workbench-V2-shared-shell-geometry-1920x1080-chromium/trace.zip",
+      "bytes": 4731,
+      "sha256": "44e650631a28f650966556a2dc828f0f7b7504d78e90e841d5164512b4d1ebee",
+      "original_path": "/tmp/m4-ui-geometry/creative-workbench-V2-shared-shell-geometry-1920x1080-chromium/trace.zip",
+      "byte_identical": true
+    },
+    {
+      "path": "docs/delivery/v2-development/m4-browser-launch-blocked-original/creative-workbench-V2-shared-shell-geometry-1366x768-chromium/test.trace",
+      "bytes": 41566,
+      "sha256": "f9dfa9d033b6cec5b55ee0218d55b8ab7f4665d4d2a38ac06a35639d2a4035ff",
+      "original_zip": "docs/delivery/v2-development/m4-browser-launch-blocked-original/creative-workbench-V2-shared-shell-geometry-1366x768-chromium/trace.zip",
+      "zip_member": "test.trace",
+      "byte_identical": true
+    },
+    {
+      "path": "docs/delivery/v2-development/m4-browser-launch-blocked-original/creative-workbench-V2-shared-shell-geometry-1440x900-chromium/test.trace",
+      "bytes": 41743,
+      "sha256": "b815963dd49c749a993a4f7443b50706af6793f48b53ef9eda36ee89111cfa66",
+      "original_zip": "docs/delivery/v2-development/m4-browser-launch-blocked-original/creative-workbench-V2-shared-shell-geometry-1440x900-chromium/trace.zip",
+      "zip_member": "test.trace",
+      "byte_identical": true
+    },
+    {
+      "path": "docs/delivery/v2-development/m4-browser-launch-blocked-original/creative-workbench-V2-shared-shell-geometry-1920x1080-chromium/test.trace",
+      "bytes": 41746,
+      "sha256": "e729418ade6e85b709c5c86cc933f19f943c0ccb49c8e170bef001cb5a8ef8b0",
+      "original_zip": "docs/delivery/v2-development/m4-browser-launch-blocked-original/creative-workbench-V2-shared-shell-geometry-1920x1080-chromium/trace.zip",
+      "zip_member": "test.trace",
+      "byte_identical": true
+    }
+  ]
+}

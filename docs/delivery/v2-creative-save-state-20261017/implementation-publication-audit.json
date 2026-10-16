@@ -1,0 +1,38 @@
+{
+  "utc": "2026-10-16T20:07:26.338751+00:00",
+  "head": "5c17750bd59c76ed4fb060716d61019151a3ef42",
+  "remote_refs": {
+    "refs/heads/feature/v2-narrative-platform": "5c17750bd59c76ed4fb060716d61019151a3ef42",
+    "refs/heads/main": "fed2404c8e30b44061b7139dced45b7f3301601c",
+    "refs/heads/work/dot-astra-v1-rc-r2": "1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0"
+  },
+  "pull_request": {
+    "number": 47,
+    "url": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/47",
+    "state": "OPEN",
+    "isDraft": true,
+    "headRefName": "feature/v2-narrative-platform",
+    "headRefOid": "5c17750bd59c76ed4fb060716d61019151a3ef42",
+    "baseRefName": "main"
+  },
+  "tracked_worktree_status": "",
+  "ahead_behind": "0\t0",
+  "graphql_snapshot": {
+    "baseRefName": "main",
+    "headRefName": "feature/v2-narrative-platform",
+    "headRefOid": "5c17750bd59c76ed4fb060716d61019151a3ef42",
+    "isDraft": true,
+    "number": 47,
+    "state": "OPEN",
+    "url": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/47"
+  },
+  "rest_head_at_final": "5c17750bd59c76ed4fb060716d61019151a3ef42",
+  "commits_since_454ccd8": [
+    "4571bdaeee1b35e88fa19c032c3767a54be01d35 fix(creative): bind save status to the current document and operation",
+    "e0982471746a0da4ffb29c4427beb9ec6f28b4dc chore(ci): bind Creative save-state sources without changing frozen inventory",
+    "5c17750bd59c76ed4fb060716d61019151a3ef42 test(creative): verify real save state and late readbacks across File and PostgreSQL"
+  ],
+  "production_adoption_gate": false,
+  "status": "PUBLISHED_DRAFT_PROTECTED_REFS_UNCHANGED",
+  "boundary": "Git publication audit only. Hosted CI is a separately recorded external blocker."
+}

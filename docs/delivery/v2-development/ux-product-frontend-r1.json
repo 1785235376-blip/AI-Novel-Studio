@@ -1,0 +1,41 @@
+{
+  "check": "frontend",
+  "kind": "vitest",
+  "phase": "ux-product-batch1",
+  "status": "NOT_YET_AVAILABLE",
+  "exit_code": null,
+  "logical_command": null,
+  "command": null,
+  "cwd": "D:\\PoemSeed\\Worktrees\\studio-v2-audio-editing-20261014",
+  "targets": [
+    "src/onboarding"
+  ],
+  "frontend_test_files": null,
+  "started_utc": null,
+  "finished_utc": null,
+  "isolated_environment": {},
+  "python": null,
+  "python_version": null,
+  "frontend_interpreter": {
+    "PYTHON": "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+    "PYTHONUTF8": "1",
+    "resolved_version": "3.11.9"
+  },
+  "pnpm": null,
+  "head": "9ba3d773268e2eca5951466dc53f6d606d28da15",
+  "source_sha256": {},
+  "source_sha256_before": {},
+  "sources_changed_during_check": null,
+  "log": "docs/delivery/v2-development/ux-product-frontend-r1.log",
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "note": null,
+  "reason": "frontend/src/onboarding exist but contain no *.test.ts(x) file yet.",
+  "pending_dependency": "LINE_A+LINE_B",
+  "configuration": null,
+  "python_caches_removed_by_this_run": [],
+  "python_caches_left_behind": [
+    ".pytest_cache",
+    "app/__pycache__",
+    "app/creative/__pycache__"
+  ]
+}

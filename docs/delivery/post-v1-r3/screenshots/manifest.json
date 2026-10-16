@@ -1,0 +1,83 @@
+{
+  "source_sha": "20cd2679ee104702529962202ce4b9d894bffc89",
+  "source_tree": "bc0fd5eb415a2d0b2076e061f6982d8e85fecacb",
+  "run_id": 37321369458,
+  "job_id": 111800979403,
+  "artifact_id": 11350881328,
+  "artifact_sha256": "9b008d96b50f85965f91dec0950af5181c0ebfa44e9d1410c4d0dcbbe0537fb0",
+  "verification": "Actual hosted Chromium + File API; synthetic fixtures; planning/image MOCK_ONLY; no real model/GPU/voice quality claim",
+  "files": [
+    {
+      "file": "audiobook-reviewed-attribution.png",
+      "sha256": "49de90a15a705138a005a5f996cff6165ed0644820e8dfcca11aa9986654642c",
+      "bytes": 41582,
+      "width": 590,
+      "height": 578,
+      "source_path_in_artifact": "project/frontend/test-results/experimental/r3-experimental-R3-audiobo-b3c05-ine-and-unmeasured-manifest-chromium/audiobook-reviewed-attribution.png"
+    },
+    {
+      "file": "experimental-1366x768.png",
+      "sha256": "67eebb77c768a945eadefc143450ed584c4effd56db823fcf77ecdfae043f416",
+      "bytes": 139073,
+      "width": 1366,
+      "height": 768,
+      "source_path_in_artifact": "project/frontend/test-results/experimental/r3-experimental-R3-media-b-394ab-neage-and-honest-embeddings-chromium/experimental-1366x768.png"
+    },
+    {
+      "file": "experimental-1440x900.png",
+      "sha256": "485f2d8cac75e62e95bf07e2967571ad1241cd10035ead4b14e71d21377c3968",
+      "bytes": 149704,
+      "width": 1440,
+      "height": 900,
+      "source_path_in_artifact": "project/frontend/test-results/experimental/r3-experimental-R3-media-b-394ab-neage-and-honest-embeddings-chromium/experimental-1440x900.png"
+    },
+    {
+      "file": "experimental-1920x1080.png",
+      "sha256": "5e1d14058394523a7228d26e41483fd38502581a4cef7d26aa59b4b8b5aedfaa",
+      "bytes": 178706,
+      "width": 1920,
+      "height": 1080,
+      "source_path_in_artifact": "project/frontend/test-results/experimental/r3-experimental-R3-media-b-394ab-neage-and-honest-embeddings-chromium/experimental-1920x1080.png"
+    },
+    {
+      "file": "media-mock-comparison.png",
+      "sha256": "20b3225e12f51262c7907e170bd3615f926aeb2e0dddcddd44f5a05277ad8c3e",
+      "bytes": 11301,
+      "width": 590,
+      "height": 92,
+      "source_path_in_artifact": "project/frontend/test-results/experimental/r3-experimental-R3-media-b-394ab-neage-and-honest-embeddings-chromium/media-mock-comparison.png"
+    },
+    {
+      "file": "planning-compare.png",
+      "sha256": "c834becd88d91974810a35bb8788a36b1f856dcdb8c507c61f735c481976106f",
+      "bytes": 15202,
+      "width": 590,
+      "height": 162,
+      "source_path_in_artifact": "project/frontend/test-results/experimental/r3-experimental-R3-plannin-3066f-l-history-and-stale-fencing-chromium/planning-compare.png"
+    },
+    {
+      "file": "planning-history.png",
+      "sha256": "5bb28c90a28ad75839b1fff713c1a54bd80254b74ccc6c3c95ce1b20df95333e",
+      "bytes": 26210,
+      "width": 590,
+      "height": 304,
+      "source_path_in_artifact": "project/frontend/test-results/experimental/r3-experimental-R3-plannin-3066f-l-history-and-stale-fencing-chromium/planning-history.png"
+    },
+    {
+      "file": "unified-inbox-reviewed.png",
+      "sha256": "9ffb4fa2e17caab2197669cc9af90973aec10846a221ee953064f002d9973920",
+      "bytes": 39242,
+      "width": 590,
+      "height": 302,
+      "source_path_in_artifact": "project/frontend/test-results/experimental/r3-experimental-R3-world-b-6b0b0--and-deterministic-findings-chromium/unified-inbox-reviewed.png"
+    }
+  ],
+  "visual_inspection": {
+    "all_files_opened": true,
+    "serious_layout_defect_observed": false,
+    "notes": [
+      "Desktop screenshots preserve independent scroll positions; lower controls may be below smaller viewports.",
+      "Media previews are synthetic16px Mock fixtures and not image-quality evidence."
+    ]
+  }
+}

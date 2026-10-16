@@ -1,0 +1,28 @@
+{
+  "parent": "899d40df5273413d987f9ee98d41a7405ed16d0a",
+  "checks": {
+    "frontend/tests/e2e/v2-creative-live.spec.ts": {
+      "previous_sha256": "1daaf9f241d430c6943daecc0afe048ff444823b8239cb9e3b4e25f2d5ae3c45",
+      "current_sha256": "2b0f1762332ff2bf85ce86941aca1699c8e4c3175f8fc02aece1b2d6e8b5a6c3",
+      "original_body_preserved": true
+    },
+    "frontend/tests/e2e/v2-ai-execution-live.spec.ts": {
+      "previous_sha256": "4a11bf2b62445aa287fe883034e5c4a72800c880cbc18b85e91f0a134fd1d6a6",
+      "current_sha256": "1a2b96c8b360452bfea96f232136130fe60a373300069fc0ec8eb0485d716f7c",
+      "original_body_preserved": true
+    },
+    "frontend/playwright.v2-live.config.ts": {
+      "sha256": "dbbf62ee540feed65c69e7cd1a16d732220c240b0b016b868de24e91bfc14a36",
+      "unchanged_from_parent": true
+    },
+    "frontend/playwright.independent-live.config.ts": {
+      "sha256": "8e0224c0462fb68ec2fd9087cd57c809048e57468019af480e23d370be4ccfd7",
+      "unchanged_from_parent": true
+    },
+    ".github/workflows/cloud-ci.yml": {
+      "sha256": "32a07a303603e477bc036d8b874c604c912225c0d2fd17574ec8be2f231c8077",
+      "unchanged_from_parent": true
+    }
+  },
+  "browser_execution": "PENDING_HOSTED"
+}

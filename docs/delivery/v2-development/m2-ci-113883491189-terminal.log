@@ -1,0 +1,221 @@
+﻿2026-10-09T15:06:54.2605831Z Current runner version: '2.337.0'
+2026-10-09T15:06:54.2641969Z ##[group]Runner Image Provisioner
+2026-10-09T15:06:54.2643314Z Hosted Compute Agent
+2026-10-09T15:06:54.2644369Z Version: 20261002.596
+2026-10-09T15:06:54.2645460Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-09T15:06:54.2646788Z Build Date: 2026-10-02T22:28:27Z
+2026-10-09T15:06:54.2648001Z Worker ID: {f9f07bb6-c8f1-4b54-b65e-159e12bc06c9}
+2026-10-09T15:06:54.2649329Z Region: eastus2
+2026-10-09T15:06:54.2650264Z Cloud: Azure
+2026-10-09T15:06:54.2651519Z ##[endgroup]
+2026-10-09T15:06:54.2654240Z ##[group]Operating System
+2026-10-09T15:06:54.2655288Z Ubuntu
+2026-10-09T15:06:54.2656207Z 24.04.5
+2026-10-09T15:06:54.2657051Z LTS
+2026-10-09T15:06:54.2657896Z ##[endgroup]
+2026-10-09T15:06:54.2658920Z ##[group]Runner Image
+2026-10-09T15:06:54.2659924Z Image: ubuntu-24.04
+2026-10-09T15:06:54.2660967Z Version: 20261004.327.1
+2026-10-09T15:06:54.2663393Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-09T15:06:54.2666222Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-09T15:06:54.2667930Z ##[endgroup]
+2026-10-09T15:06:54.2669795Z ##[group]GITHUB_TOKEN Permissions
+2026-10-09T15:06:54.2673056Z Contents: read
+2026-10-09T15:06:54.2674163Z Metadata: read
+2026-10-09T15:06:54.2675174Z ##[endgroup]
+2026-10-09T15:06:54.2678279Z Secret source: Actions
+2026-10-09T15:06:54.2679849Z Cache mode: write
+2026-10-09T15:06:54.2681708Z Prepare workflow directory
+2026-10-09T15:06:54.3259736Z Prepare all required actions
+2026-10-09T15:06:54.3332201Z Getting action download info
+2026-10-09T15:06:54.5587444Z Download action repository 'actions/checkout@v4.2.2' (SHA:11bd71901bbe5b1630ceea73d27597364c9af683)
+2026-10-09T15:06:54.6791706Z Download action repository 'actions/setup-python@v5.6.0' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-10-09T15:06:54.7674114Z Download action repository 'actions/download-artifact@v4.3.0' (SHA:d3f86a106a0bac45b974a628896c90dbdf5c8093)
+2026-10-09T15:06:54.9941969Z Download action repository 'actions/upload-artifact@v4.6.2' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-09T15:06:55.2003512Z Complete job name: Backend / file
+2026-10-09T15:06:55.2790919Z ##[group]Run actions/checkout@v4.2.2
+2026-10-09T15:06:55.2792049Z with:
+2026-10-09T15:06:55.2792496Z   persist-credentials: false
+2026-10-09T15:06:55.2793049Z   repository: 1785235376-blip/AI-Novel-Studio
+2026-10-09T15:06:55.2797029Z   token: ***
+2026-10-09T15:06:55.2797456Z   ssh-strict: true
+2026-10-09T15:06:55.2797883Z   ssh-user: git
+2026-10-09T15:06:55.2798301Z   clean: true
+2026-10-09T15:06:55.2798776Z   sparse-checkout-cone-mode: true
+2026-10-09T15:06:55.2799290Z   fetch-depth: 1
+2026-10-09T15:06:55.2799708Z   fetch-tags: false
+2026-10-09T15:06:55.2800141Z   show-progress: true
+2026-10-09T15:06:55.2800611Z   lfs: false
+2026-10-09T15:06:55.2801259Z   submodules: false
+2026-10-09T15:06:55.2801886Z   set-safe-directory: true
+2026-10-09T15:06:55.2802705Z env:
+2026-10-09T15:06:55.2803130Z   MOCK_PROVIDER: true
+2026-10-09T15:06:55.2803629Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T15:06:55.2804107Z   ENABLE_CLOUD: false
+2026-10-09T15:06:55.2804570Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:06:55.2805178Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:06:55.2805777Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T15:06:55.2806273Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:06:55.2806711Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:06:55.2807175Z ##[endgroup]
+2026-10-09T15:06:55.3931838Z Syncing repository: 1785235376-blip/AI-Novel-Studio
+2026-10-09T15:06:55.3934087Z ##[group]Getting Git version info
+2026-10-09T15:06:55.3934949Z Working directory is '/home/runner/work/AI-Novel-Studio/AI-Novel-Studio'
+2026-10-09T15:06:55.3936225Z [command]/usr/bin/git version
+2026-10-09T15:06:55.3955170Z git version 2.55.0
+2026-10-09T15:06:55.3979985Z ##[endgroup]
+2026-10-09T15:06:55.3996181Z Temporarily overriding HOME='/home/runner/work/_temp/299c59c8-0ce8-4671-bab8-940faf3b345d' before making global git config changes
+2026-10-09T15:06:55.3998140Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-09T15:06:55.4004994Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/AI-Novel-Studio/AI-Novel-Studio
+2026-10-09T15:06:55.4059591Z Deleting the contents of '/home/runner/work/AI-Novel-Studio/AI-Novel-Studio'
+2026-10-09T15:06:55.4065263Z ##[group]Initializing the repository
+2026-10-09T15:06:55.4070648Z [command]/usr/bin/git init /home/runner/work/AI-Novel-Studio/AI-Novel-Studio
+2026-10-09T15:06:55.4179387Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-09T15:06:55.4181005Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-09T15:06:55.4182812Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-09T15:06:55.4184028Z hint: call:
+2026-10-09T15:06:55.4184651Z hint:
+2026-10-09T15:06:55.4185434Z hint: 	git config --global init.defaultBranch <name>
+2026-10-09T15:06:55.4186438Z hint:
+2026-10-09T15:06:55.4187399Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-09T15:06:55.4188984Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-09T15:06:55.4190188Z hint:
+2026-10-09T15:06:55.4190832Z hint: 	git branch -m <name>
+2026-10-09T15:06:55.4191776Z hint:
+2026-10-09T15:06:55.4192745Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-09T15:06:55.4201572Z Initialized empty Git repository in /home/runner/work/AI-Novel-Studio/AI-Novel-Studio/.git/
+2026-10-09T15:06:55.4217461Z [command]/usr/bin/git remote add origin https://github.com/1785235376-blip/AI-Novel-Studio
+2026-10-09T15:06:55.4267966Z ##[endgroup]
+2026-10-09T15:06:55.4268843Z ##[group]Disabling automatic garbage collection
+2026-10-09T15:06:55.4274856Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-09T15:06:55.4313511Z ##[endgroup]
+2026-10-09T15:06:55.4315345Z ##[group]Setting up auth
+2026-10-09T15:06:55.4323586Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T15:06:55.4363030Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-09T15:06:55.4734285Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T15:06:55.4776048Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-09T15:06:55.5001574Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-09T15:06:55.5043945Z ##[endgroup]
+2026-10-09T15:06:55.5044779Z ##[group]Fetching the repository
+2026-10-09T15:06:55.5054084Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +7f0d911549b04e8dbb7cf078316ad74c42095449:refs/remotes/pull/47/merge
+2026-10-09T15:06:59.4132076Z From https://github.com/1785235376-blip/AI-Novel-Studio
+2026-10-09T15:06:59.4134299Z  * [new ref]         7f0d911549b04e8dbb7cf078316ad74c42095449 -> pull/47/merge
+2026-10-09T15:06:59.4138915Z ##[endgroup]
+2026-10-09T15:06:59.4140675Z ##[group]Determining the checkout info
+2026-10-09T15:06:59.4142739Z ##[endgroup]
+2026-10-09T15:06:59.4147824Z [command]/usr/bin/git sparse-checkout disable
+2026-10-09T15:06:59.4210523Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-09T15:06:59.4242158Z ##[group]Checking out the ref
+2026-10-09T15:06:59.4245608Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/47/merge
+2026-10-09T15:07:00.0658987Z Note: switching to 'refs/remotes/pull/47/merge'.
+2026-10-09T15:07:00.0659702Z 
+2026-10-09T15:07:00.0660144Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-09T15:07:00.0661928Z changes and commit them, and you can discard any commits you make in this
+2026-10-09T15:07:00.0663048Z state without impacting any branches by switching back to a branch.
+2026-10-09T15:07:00.0663641Z 
+2026-10-09T15:07:00.0664039Z If you want to create a new branch to retain commits you create, you may
+2026-10-09T15:07:00.0664931Z do so (now or later) by using -c with the switch command. Example:
+2026-10-09T15:07:00.0665428Z 
+2026-10-09T15:07:00.0665662Z   git switch -c <new-branch-name>
+2026-10-09T15:07:00.0666032Z 
+2026-10-09T15:07:00.0666272Z Or undo this operation with:
+2026-10-09T15:07:00.0666600Z 
+2026-10-09T15:07:00.0666789Z   git switch -
+2026-10-09T15:07:00.0667058Z 
+2026-10-09T15:07:00.0667621Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-09T15:07:00.0668239Z 
+2026-10-09T15:07:00.0668939Z HEAD is now at 7f0d911 Merge 99c43b6892038233c390be2ae61acb669163d0b5 into fed2404c8e30b44061b7139dced45b7f3301601c
+2026-10-09T15:07:00.0702526Z ##[endgroup]
+2026-10-09T15:07:00.0750260Z [command]/usr/bin/git log -1 --format=%H
+2026-10-09T15:07:00.0778235Z 7f0d911549b04e8dbb7cf078316ad74c42095449
+2026-10-09T15:07:00.0787639Z ##[group]Removing auth
+2026-10-09T15:07:00.0791503Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T15:07:00.0824081Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-09T15:07:00.1051451Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T15:07:00.1080125Z http.https://github.com/.extraheader
+2026-10-09T15:07:00.1087692Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-09T15:07:00.1123705Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-09T15:07:00.1345904Z ##[endgroup]
+2026-10-09T15:07:00.1602091Z ##[group]Run actions/setup-python@v5.6.0
+2026-10-09T15:07:00.1602471Z with:
+2026-10-09T15:07:00.1602727Z   python-version: 3.12.9
+2026-10-09T15:07:00.1603021Z   check-latest: false
+2026-10-09T15:07:00.1605755Z   token: ***
+2026-10-09T15:07:00.1606021Z   update-environment: true
+2026-10-09T15:07:00.1606321Z   allow-prereleases: false
+2026-10-09T15:07:00.1606602Z   freethreaded: false
+2026-10-09T15:07:00.1606854Z env:
+2026-10-09T15:07:00.1607087Z   MOCK_PROVIDER: true
+2026-10-09T15:07:00.1607349Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T15:07:00.1607628Z   ENABLE_CLOUD: false
+2026-10-09T15:07:00.1607896Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:07:00.1608228Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:07:00.1608578Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T15:07:00.1608865Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:07:00.1609122Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:07:00.1609412Z ##[endgroup]
+2026-10-09T15:07:00.2991915Z ##[group]Installed versions
+2026-10-09T15:07:00.3011563Z Version 3.12.9 was not found in the local cache
+2026-10-09T15:07:00.3124585Z (node:2333) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T15:07:00.3126213Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T15:07:00.8867314Z Version 3.12.9 is available for downloading
+2026-10-09T15:07:00.8869418Z Download from "https://github.com/actions/python-versions/releases/download/3.12.9-13149478207/python-3.12.9-linux-24.04-x64.tar.gz"
+2026-10-09T15:07:01.9074255Z Extract downloaded archive
+2026-10-09T15:07:01.9203597Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/3fe15c6f-c53e-409f-8b16-d5d236997dbe -f /home/runner/work/_temp/be9182be-a013-4826-b90a-34996dc763bb
+2026-10-09T15:07:03.9469423Z Execute installation script
+2026-10-09T15:07:03.9569940Z Check if Python hostedtoolcache folder exist...
+2026-10-09T15:07:03.9570695Z Create Python 3.12.9 folder
+2026-10-09T15:07:03.9585678Z Copy Python binaries to hostedtoolcache folder
+2026-10-09T15:07:04.4373086Z Create additional symlinks (Required for the UsePythonVersion Azure Pipelines task and the setup-python GitHub Action)
+2026-10-09T15:07:04.4415842Z Upgrading pip...
+2026-10-09T15:07:06.7652180Z Looking in links: /tmp/tmp6jtkhk6m
+2026-10-09T15:07:06.7657414Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages (24.3.1)
+2026-10-09T15:07:08.2910150Z Collecting pip
+2026-10-09T15:07:08.3349342Z Downloading pip-26.2.1-py3-none-any.whl.metadata (4.6 kB)
+2026-10-09T15:07:08.3475499Z Downloading pip-26.2.1-py3-none-any.whl (1.8 MB)
+2026-10-09T15:07:08.4507685Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 20.3 MB/s eta 0:00:00
+2026-10-09T15:07:08.4508422Z 
+2026-10-09T15:07:08.4726880Z Installing collected packages: pip
+2026-10-09T15:07:08.4727828Z Attempting uninstall: pip
+2026-10-09T15:07:08.4758923Z Found existing installation: pip 24.3.1
+2026-10-09T15:07:08.5125962Z Uninstalling pip-24.3.1:
+2026-10-09T15:07:08.5181348Z Successfully uninstalled pip-24.3.1
+2026-10-09T15:07:09.4147811Z Successfully installed pip-26.2.1
+2026-10-09T15:07:09.4713627Z Create complete file
+2026-10-09T15:07:09.4753246Z Successfully set up CPython (3.12.9)
+2026-10-09T15:07:09.4754647Z ##[endgroup]
+2026-10-09T15:07:09.4992519Z ##[group]Run test "$EXECUTION_RESULT" = success
+2026-10-09T15:07:09.4992996Z [36;1mtest "$EXECUTION_RESULT" = success[0m
+2026-10-09T15:07:09.4993326Z [36;1mtest "$TCP_RESULT" = success[0m
+2026-10-09T15:07:09.5257112Z shell: /usr/bin/bash -e {0}
+2026-10-09T15:07:09.5257553Z env:
+2026-10-09T15:07:09.5257902Z   MOCK_PROVIDER: true
+2026-10-09T15:07:09.5258265Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T15:07:09.5258628Z   ENABLE_CLOUD: false
+2026-10-09T15:07:09.5259000Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:07:09.5259528Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:07:09.5260058Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T15:07:09.5260443Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:07:09.5260781Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:07:09.5261456Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T15:07:09.5262166Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T15:07:09.5262935Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T15:07:09.5263546Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T15:07:09.5264180Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T15:07:09.5264800Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T15:07:09.5265339Z   EXECUTION_RESULT: cancelled
+2026-10-09T15:07:09.5265718Z   TCP_RESULT: success
+2026-10-09T15:07:09.5266051Z ##[endgroup]
+2026-10-09T15:07:09.5394304Z ##[error]Process completed with exit code 1.
+2026-10-09T15:07:09.5572149Z Post job cleanup.
+2026-10-09T15:07:09.6471637Z [command]/usr/bin/git version
+2026-10-09T15:07:09.6517944Z git version 2.55.0
+2026-10-09T15:07:09.6567812Z Temporarily overriding HOME='/home/runner/work/_temp/ec9e9cd8-271e-479d-8f29-7559361e6cbb' before making global git config changes
+2026-10-09T15:07:09.6577538Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-09T15:07:09.6579010Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/AI-Novel-Studio/AI-Novel-Studio
+2026-10-09T15:07:09.6610003Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T15:07:09.6650554Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-09T15:07:09.6915318Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T15:07:09.6957971Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-09T15:07:09.7354800Z Cleaning up orphan processes
+2026-10-09T15:07:09.7701765Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4.2.2, actions/setup-python@v5.6.0. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

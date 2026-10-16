@@ -1,0 +1,11 @@
+NATIVE_BASE_PROGRESS {"files": 5089, "stage": "inventory_start"}
+Traceback (most recent call last):
+  File "D:\С˵\AI-Novel-Studio-Latest-Product\scripts\verify_windows_base.py", line 262, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "D:\С˵\AI-Novel-Studio-Latest-Product\scripts\verify_windows_base.py", line 256, in main
+    result = verify(args.base.absolute(), args.work_root.absolute())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\С˵\AI-Novel-Studio-Latest-Product\scripts\verify_windows_base.py", line 171, in verify
+    raise ValueError(f"Base inventory changed: {item['path']}")
+ValueError: Base inventory changed: Launcher/Launch-AI-Novel-Studio.cmd

@@ -1,0 +1,950 @@
+{
+  "schema": "studio-v2-nonwav-integration-verification/1",
+  "baseline_sha": "877cf0ab39891d37ccb9ffdecb1c5a98c88e3bd2",
+  "handoff": {
+    "cloud_local_commit": "f65025548d05632ae2b4a520f531dcc1abcea8d5",
+    "commit_object_recovered": false,
+    "patch_sha256": "3b74547575fe6ccd8c453e3fafd700efa3cad20ebc5ea91c699c0694b1554787",
+    "zip_sha256": "b818b16fe7793fa72aaa4d16f6f499af42642a48688dad71696aded254155670",
+    "verified_source_files": 10,
+    "patch_tree": "70f81a7e6ae421087c3336a03f27e02e93214e51"
+  },
+  "tested_source_tree": "42d251b6a8a9ec007425dff22b80c19328222f01",
+  "local_execution": {
+    "schema": "studio-v2-local-nonwav-execution-summary/1",
+    "date": "2026-10-13",
+    "baseline_sha": "877cf0ab39891d37ccb9ffdecb1c5a98c88e3bd2",
+    "final_tested_source_tree": "42d251b6a8a9ec007425dff22b80c19328222f01",
+    "environment": {
+      "platform": "Windows CPU",
+      "python": "3.12.9",
+      "ffmpeg": "8.1.2",
+      "postgresql": "16.15"
+    },
+    "runs": [
+      {
+        "label": "nonwav-file-focused-20261013",
+        "tested_source_tree": "70f81a7e6ae421087c3336a03f27e02e93214e51",
+        "category": "INITIAL_FAILURE",
+        "passed": 215,
+        "failed": 16,
+        "errors": 28,
+        "skipped": 2,
+        "deselected": 80,
+        "duration_seconds": 48.23,
+        "status": "FAIL",
+        "exit_code": 1,
+        "sources_changed_during_check": false,
+        "runner_receipt_sha256": "2f0c90e6ebbf8cc198ffc9970883f4b7b366fe73a32798ae41d70c820a21f0d6",
+        "private_log_sha256": "aea19ade68c5016341cc7f8506668da5a7b729a0a8cfcde3555408dd7040f043",
+        "changed_source_files": [],
+        "junit_sha256": "fde44720d21738eb04442cd50b53d2271f8fbf5832c95d5c9ba5cbb66cf77a54",
+        "skip_details": [
+          {
+            "node": "tests/test_v2_reconstructed_native_process_bounds.py::test_deadline_escalates_to_kill_and_reaps_sigterm_ignoring_child",
+            "category": "POSIX_ONLY",
+            "reason": "POSIX SIGTERM-ignore escalation; Windows kills terminate() directly"
+          },
+          {
+            "node": "tests/test_v2_reconstructed_native_process_bounds.py::test_pipe_setup_failure_reaps_child_and_closes_resources",
+            "category": "POSIX_ONLY",
+            "reason": "POSIX nonblocking setup fault; Windows uses PeekNamedPipe"
+          }
+        ],
+        "skip_categories": {
+          "POSIX_ONLY": 2,
+          "OPTIONAL_OPENTIMELINEIO": 0,
+          "OTHER_EXISTING": 0
+        }
+      },
+      {
+        "label": "nonwav-pg-focused-20261013",
+        "tested_source_tree": "70f81a7e6ae421087c3336a03f27e02e93214e51",
+        "category": "STARTUP_FAILED_NO_TESTS",
+        "passed": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "deselected": 0,
+        "duration_seconds": null,
+        "status": "ERROR",
+        "exit_code": null,
+        "sources_changed_during_check": null,
+        "skip_details": [],
+        "skip_categories": {
+          "POSIX_ONLY": 0,
+          "OPTIONAL_OPENTIMELINEIO": 0,
+          "OTHER_EXISTING": 0
+        },
+        "postgres_runtime_status": "ERROR",
+        "tests_executed": false,
+        "postgres": {
+          "real": true,
+          "version": "16.15",
+          "fresh_database": true,
+          "database_created": false,
+          "empty_before_migrations": null,
+          "original_migration_count": 20,
+          "migration_status": "pending",
+          "startup_ownership": "unknown",
+          "server_stop": "not_attempted_unconfirmed_ownership",
+          "cleanup_status": "unknown",
+          "runtime_receipt_sha256": "1590b3d004252d60ae96f1ebe0123d3394a016a25b9ea88c2a68dabeb8a1c386"
+        }
+      },
+      {
+        "label": "nonwav-pg-options-unit-20261013",
+        "tested_source_tree": null,
+        "category": "UNIT_ONLY",
+        "passed": 5,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "deselected": 0,
+        "duration_seconds": 2.86,
+        "status": "PASS",
+        "exit_code": 0,
+        "sources_changed_during_check": false,
+        "runner_receipt_sha256": "dca5d376437579e03a76007f480e825adea5c61f8cb5daa67b2f87164969afde",
+        "private_log_sha256": "9c90fcc83b8972ff06311c0e738564e7c5fe753b2a6d36793e8f66fa3a429893",
+        "changed_source_files": [],
+        "junit_sha256": "f8c8c9dca524aef89a2ea6f6fe7d96456124c75c639986f129da1a47ca35522e",
+        "skip_details": [],
+        "skip_categories": {
+          "POSIX_ONLY": 0,
+          "OPTIONAL_OPENTIMELINEIO": 0,
+          "OTHER_EXISTING": 0
+        }
+      },
+      {
+        "label": "nonwav-file-focused-r2-20261013",
+        "tested_source_tree": null,
+        "category": "INVALID_INVOCATION",
+        "passed": 53,
+        "failed": 0,
+        "errors": 217,
+        "skipped": 1,
+        "deselected": 80,
+        "duration_seconds": 6.37,
+        "status": "FAIL",
+        "exit_code": 1,
+        "sources_changed_during_check": false,
+        "runner_receipt_sha256": "e7b0ea2f7d5add6268d18b029082b82c28c56255ab85bad2803b490c9372b75f",
+        "private_log_sha256": "69372707a9e01d80b1fd99fe7c295674cf82f4ade3662bec9fdc405088c7f6f5",
+        "changed_source_files": [],
+        "junit_sha256": "111ebe6ec1888c02296b6c45509d5166b70c3a3648f0872524b33cbb98a2b800",
+        "skip_details": [
+          {
+            "node": "tests/test_v2_reconstructed_native_process_bounds.py::test_deadline_escalates_to_kill_and_reaps_sigterm_ignoring_child",
+            "category": "POSIX_ONLY",
+            "reason": "POSIX SIGTERM-ignore escalation; Windows kills terminate() directly"
+          }
+        ],
+        "skip_categories": {
+          "POSIX_ONLY": 1,
+          "OPTIONAL_OPENTIMELINEIO": 0,
+          "OTHER_EXISTING": 0
+        }
+      },
+      {
+        "label": "nonwav-file-focused-r3-20261013",
+        "tested_source_tree": null,
+        "category": "FAILED_AND_SOURCE_CHANGED",
+        "passed": 265,
+        "failed": 4,
+        "errors": 1,
+        "skipped": 2,
+        "deselected": 80,
+        "duration_seconds": 77.55,
+        "status": "FAIL",
+        "exit_code": 1,
+        "sources_changed_during_check": true,
+        "runner_receipt_sha256": "e214d3aed391d88a600d320c2674a48d26222b91104a02535f86b2dbde2cdfd5",
+        "private_log_sha256": "c2ae8aa9664cf7133968cd8dc04446d64d0bfddcb5019fe5e571b0b51d8e48f7",
+        "changed_source_files": [
+          "tests/test_v2_windows_timeline_receipt_identity.py"
+        ],
+        "junit_sha256": "47884845f0780e9d45a660f93d76ae5570adeedaf213ccf4bd0f9bffe9f33692",
+        "skip_details": [
+          {
+            "node": "tests/test_v2_reconstructed_native_process_bounds.py::test_deadline_escalates_to_kill_and_reaps_sigterm_ignoring_child",
+            "category": "POSIX_ONLY",
+            "reason": "POSIX SIGTERM-ignore escalation; Windows kills terminate() directly"
+          },
+          {
+            "node": "tests/test_v2_reconstructed_native_process_bounds.py::test_pipe_setup_failure_reaps_child_and_closes_resources",
+            "category": "POSIX_ONLY",
+            "reason": "POSIX nonblocking setup fault; Windows uses PeekNamedPipe"
+          }
+        ],
+        "skip_categories": {
+          "POSIX_ONLY": 2,
+          "OPTIONAL_OPENTIMELINEIO": 0,
+          "OTHER_EXISTING": 0
+        }
+      },
+      {
+        "label": "nonwav-file-final-focused-20261013",
+        "tested_source_tree": "517cc80dc58854d600777a8e0de7f39cdfdf7990",
+        "category": "SUPERSEDED_BY_REVIEW_FIX",
+        "passed": 284,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 2,
+        "deselected": 80,
+        "duration_seconds": 80.24,
+        "status": "PASS",
+        "exit_code": 0,
+        "sources_changed_during_check": false,
+        "runner_receipt_sha256": "524b524f22f7a4068364f65acd4384246b0b7db88c3c3dc1525173c687c9b879",
+        "private_log_sha256": "0fbc1e85df875852458fc2069de5565554d7effdce44a22d6edda36d1e0322b6",
+        "changed_source_files": [],
+        "junit_sha256": "4fc0e3b197dc30016e218e6ac1d52c16868ba72d20015c023742769f3ac95e84",
+        "skip_details": [
+          {
+            "node": "tests/test_v2_reconstructed_native_process_bounds.py::test_deadline_escalates_to_kill_and_reaps_sigterm_ignoring_child",
+            "category": "POSIX_ONLY",
+            "reason": "POSIX SIGTERM-ignore escalation; Windows kills terminate() directly"
+          },
+          {
+            "node": "tests/test_v2_reconstructed_native_process_bounds.py::test_pipe_setup_failure_reaps_child_and_closes_resources",
+            "category": "POSIX_ONLY",
+            "reason": "POSIX nonblocking setup fault; Windows uses PeekNamedPipe"
+          }
+        ],
+        "skip_categories": {
+          "POSIX_ONLY": 2,
+          "OPTIONAL_OPENTIMELINEIO": 0,
+          "OTHER_EXISTING": 0
+        }
+      },
+      {
+        "label": "nonwav-file-review-final-focused-20261013",
+        "tested_source_tree": "43e0deb3ea40f738ab56694e73aad78aa75cf9b8",
+        "category": "PRE_TIMING_FIX",
+        "passed": 286,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 2,
+        "deselected": 80,
+        "duration_seconds": 76.52,
+        "status": "PASS",
+        "exit_code": 0,
+        "sources_changed_during_check": false,
+        "runner_receipt_sha256": "51ee0504f9abc858963eb9b7f466ff7cae53efc221befa58d4a9edcf3fc2a404",
+        "private_log_sha256": "b2709a688d432e76da8da2797811f77b45515a04e01bfad218000a52ef720896",
+        "changed_source_files": [],
+        "junit_sha256": "ceb4270c9a9adc0b524a1c59441d8225886a6c2be8d259c1ef06e7caa74dd1e3",
+        "skip_details": [
+          {
+            "node": "tests/test_v2_reconstructed_native_process_bounds.py::test_deadline_escalates_to_kill_and_reaps_sigterm_ignoring_child",
+            "category": "POSIX_ONLY",
+            "reason": "POSIX SIGTERM-ignore escalation; Windows kills terminate() directly"
+          },
+          {
+            "node": "tests/test_v2_reconstructed_native_process_bounds.py::test_pipe_setup_failure_reaps_child_and_closes_resources",
+            "category": "POSIX_ONLY",
+            "reason": "POSIX nonblocking setup fault; Windows uses PeekNamedPipe"
+          }
+        ],
+        "skip_categories": {
+          "POSIX_ONLY": 2,
+          "OPTIONAL_OPENTIMELINEIO": 0,
+          "OTHER_EXISTING": 0
+        }
+      },
+      {
+        "label": "nonwav-pg-review-final-focused-20261013",
+        "tested_source_tree": "43e0deb3ea40f738ab56694e73aad78aa75cf9b8",
+        "category": "FAILED_5_SECOND_TIMING_BOUND",
+        "passed": 285,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 2,
+        "deselected": 80,
+        "duration_seconds": 351.34,
+        "status": "FAIL",
+        "exit_code": 1,
+        "sources_changed_during_check": false,
+        "runner_receipt_sha256": "b8abd4408a3f1f60b9b5d42e2b73278740ba1970c606728a33541ebe0b99ca31",
+        "private_log_sha256": "520adb942d493cbfd35a41e70dfd5588dd7690f6bd44bab4527c06c16f71d98f",
+        "changed_source_files": [],
+        "junit_sha256": "08d9e3c8f400b729e073b86a01f5c5ca49296b1ff1852578adf412d4d232067d",
+        "skip_details": [
+          {
+            "node": "tests/test_v2_reconstructed_native_process_bounds.py::test_deadline_escalates_to_kill_and_reaps_sigterm_ignoring_child",
+            "category": "POSIX_ONLY",
+            "reason": "POSIX SIGTERM-ignore escalation; Windows kills terminate() directly"
+          },
+          {
+            "node": "tests/test_v2_reconstructed_native_process_bounds.py::test_pipe_setup_failure_reaps_child_and_closes_resources",
+            "category": "POSIX_ONLY",
+            "reason": "POSIX nonblocking setup fault; Windows uses PeekNamedPipe"
+          }
+        ],
+        "skip_categories": {
+          "POSIX_ONLY": 2,
+          "OPTIONAL_OPENTIMELINEIO": 0,
+          "OTHER_EXISTING": 0
+        },
+        "postgres_runtime_status": "FAIL",
+        "postgres": {
+          "real": true,
+          "version": "PostgreSQL 16.15, compiled by Visual C++ build 1944, 64-bit",
+          "fresh_database": true,
+          "database_created": true,
+          "empty_before_migrations": true,
+          "original_migration_count": 20,
+          "migration_status": "applied",
+          "startup_ownership": "confirmed",
+          "server_stop": "stopped",
+          "cleanup_status": "completed",
+          "runtime_receipt_sha256": "2ed2b8ab949114c897200b09ac902fc3f4a3b43bb4ee88a63f648d74719ed678"
+        }
+      },
+      {
+        "label": "nonwav-pg-timing-observation-20261013",
+        "tested_source_tree": "43e0deb3ea40f738ab56694e73aad78aa75cf9b8",
+        "category": "ONE_OBSERVATION_NOT_STABILITY_PASS",
+        "passed": 1,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "deselected": 0,
+        "duration_seconds": 10.38,
+        "status": "PASS",
+        "exit_code": 0,
+        "sources_changed_during_check": false,
+        "runner_receipt_sha256": "a57cb27c29b886a120975a78de5b1ef72c869182194971df95357611c4c071da",
+        "private_log_sha256": "a91b1abb18d64ae418a8e38d8f39a22ed9a6bfc5e34cbabbe8f9103a671f522f",
+        "changed_source_files": [],
+        "junit_sha256": "50fca6f275f1a721c3b8f7281848b33bbd7961acf6617a2bcad16650c2379dc8",
+        "skip_details": [],
+        "skip_categories": {
+          "POSIX_ONLY": 0,
+          "OPTIONAL_OPENTIMELINEIO": 0,
+          "OTHER_EXISTING": 0
+        },
+        "postgres_runtime_status": "PASS",
+        "postgres": {
+          "real": true,
+          "version": "PostgreSQL 16.15, compiled by Visual C++ build 1944, 64-bit",
+          "fresh_database": true,
+          "database_created": true,
+          "empty_before_migrations": true,
+          "original_migration_count": 20,
+          "migration_status": "applied",
+          "startup_ownership": "confirmed",
+          "server_stop": "stopped",
+          "cleanup_status": "completed",
+          "runtime_receipt_sha256": "9df2fc011c67355f3eeee3982d77ff18d316a0caa3b2de259077c03437ab23cf"
+        }
+      },
+      {
+        "label": "nonwav-pg-timing-fix-selection-20261013",
+        "tested_source_tree": "42d251b6a8a9ec007425dff22b80c19328222f01",
+        "category": "SPECIFIC_SOURCE_FIX_CHECK",
+        "passed": 8,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "deselected": 54,
+        "duration_seconds": 43.92,
+        "status": "PASS",
+        "exit_code": 0,
+        "sources_changed_during_check": false,
+        "runner_receipt_sha256": "cfb73ba9ec55e1df7a12233387460593bc73e1c8b353e8c5028dbd71d641923a",
+        "private_log_sha256": "658c615b13e385aa59e317b6ad4a51806e6896ce99e76420fe93f9aa3379b36d",
+        "changed_source_files": [],
+        "junit_sha256": "7e2aa7338863743c0da30f1293daaf13164890baf28bbf750af946fe19d3ed21",
+        "skip_details": [],
+        "skip_categories": {
+          "POSIX_ONLY": 0,
+          "OPTIONAL_OPENTIMELINEIO": 0,
+          "OTHER_EXISTING": 0
+        },
+        "postgres_runtime_status": "PASS",
+        "postgres": {
+          "real": true,
+          "version": "PostgreSQL 16.15, compiled by Visual C++ build 1944, 64-bit",
+          "fresh_database": true,
+          "database_created": true,
+          "empty_before_migrations": true,
+          "original_migration_count": 20,
+          "migration_status": "applied",
+          "startup_ownership": "confirmed",
+          "server_stop": "stopped",
+          "cleanup_status": "completed",
+          "runtime_receipt_sha256": "fee4e0dddf9e00657d379d3e2b40e4068161543056e5e2dcdcb909a3d76cc024"
+        }
+      },
+      {
+        "label": "nonwav-file-final-broad-20261013",
+        "tested_source_tree": "42d251b6a8a9ec007425dff22b80c19328222f01",
+        "category": "FINAL_BROAD",
+        "passed": 750,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 14,
+        "deselected": 307,
+        "duration_seconds": 144.17,
+        "status": "PASS",
+        "exit_code": 0,
+        "sources_changed_during_check": false,
+        "runner_receipt_sha256": "eae708e182ace3ed768c85da66d93c140e49ea8b358c0c2368acccc5239dea88",
+        "private_log_sha256": "40178dc39bb7b77d77b3b6577308963b414b2bab62e5fc782e43dc745ea82b4a",
+        "changed_source_files": [],
+        "junit_sha256": "36785598cca05a091d896545ec81bfd493f7dabe181e7874e47e42ce563864eb",
+        "skip_details": [
+          {
+            "node": "tests/test_v2_reconstructed_native_process_bounds.py::test_deadline_escalates_to_kill_and_reaps_sigterm_ignoring_child",
+            "category": "POSIX_ONLY",
+            "reason": "POSIX SIGTERM-ignore escalation; Windows kills terminate() directly"
+          },
+          {
+            "node": "tests/test_v2_reconstructed_native_process_bounds.py::test_pipe_setup_failure_reaps_child_and_closes_resources",
+            "category": "POSIX_ONLY",
+            "reason": "POSIX nonblocking setup fault; Windows uses PeekNamedPipe"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_official_parser_round_trip_tracks_gaps_dissolve_references_and_exact_time",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_fractional_rate_and_many_frames_never_accumulate_float_drift",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_unsupported_effect_speed_mix_subtitle_and_nested_data_have_explicit_losses",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_invalid_inputs_fail_without_external_access",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_import_copy_persistence_loss_acknowledgement_and_actor_branch[file]",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_screenplay_asset_snapshot_stale_missing_media_and_reauth[file]",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_core_parser_never_calls_adapter_discovery_hooks_or_fetches_media",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_missing_optional_parser_is_a_supported_failure_not_an_auto_install",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_exact_time_metadata_cannot_lie_about_native_timing",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_scoped_media_change_hides_exchange_ids_and_current_read_rejects[file]",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_disabled_clip_with_available_media_range_becomes_reported_gap",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_long_names_are_not_silently_lost",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          }
+        ],
+        "skip_categories": {
+          "POSIX_ONLY": 2,
+          "OPTIONAL_OPENTIMELINEIO": 12,
+          "OTHER_EXISTING": 0
+        }
+      },
+      {
+        "label": "nonwav-pg-final-broad-20261013",
+        "tested_source_tree": "42d251b6a8a9ec007425dff22b80c19328222f01",
+        "category": "FINAL_BROAD",
+        "passed": 762,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 14,
+        "deselected": 295,
+        "duration_seconds": 1279.82,
+        "status": "PASS",
+        "exit_code": 0,
+        "sources_changed_during_check": false,
+        "runner_receipt_sha256": "461fd9e8e53c9597dbc474f7b2ce7cf09477b4ffd984d20b35989fa334f2c3f7",
+        "private_log_sha256": "87227ea35bf2d11a727318d2bd6e0f0a67f4003987bb5c38f22933c45207d453",
+        "changed_source_files": [],
+        "junit_sha256": "d01219fc0f4dabfe8f151bf1314fc43608b682f0ae91bc7b932dcff666184ec5",
+        "skip_details": [
+          {
+            "node": "tests/test_v2_reconstructed_native_process_bounds.py::test_deadline_escalates_to_kill_and_reaps_sigterm_ignoring_child",
+            "category": "POSIX_ONLY",
+            "reason": "POSIX SIGTERM-ignore escalation; Windows kills terminate() directly"
+          },
+          {
+            "node": "tests/test_v2_reconstructed_native_process_bounds.py::test_pipe_setup_failure_reaps_child_and_closes_resources",
+            "category": "POSIX_ONLY",
+            "reason": "POSIX nonblocking setup fault; Windows uses PeekNamedPipe"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_official_parser_round_trip_tracks_gaps_dissolve_references_and_exact_time",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_fractional_rate_and_many_frames_never_accumulate_float_drift",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_unsupported_effect_speed_mix_subtitle_and_nested_data_have_explicit_losses",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_invalid_inputs_fail_without_external_access",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_import_copy_persistence_loss_acknowledgement_and_actor_branch[postgres]",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_screenplay_asset_snapshot_stale_missing_media_and_reauth[postgres]",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_core_parser_never_calls_adapter_discovery_hooks_or_fetches_media",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_missing_optional_parser_is_a_supported_failure_not_an_auto_install",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_exact_time_metadata_cannot_lie_about_native_timing",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_scoped_media_change_hides_exchange_ids_and_current_read_rejects[postgres]",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_disabled_clip_with_available_media_range_becomes_reported_gap",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          },
+          {
+            "node": "tests/test_r4_timeline_exchange.py::test_long_names_are_not_silently_lost",
+            "category": "OPTIONAL_OPENTIMELINEIO",
+            "reason": "NOT_RUN: install pinned optional otio extra for official-parser verification"
+          }
+        ],
+        "skip_categories": {
+          "POSIX_ONLY": 2,
+          "OPTIONAL_OPENTIMELINEIO": 12,
+          "OTHER_EXISTING": 0
+        },
+        "postgres_runtime_status": "PASS",
+        "postgres": {
+          "real": true,
+          "version": "PostgreSQL 16.15, compiled by Visual C++ build 1944, 64-bit",
+          "fresh_database": true,
+          "database_created": true,
+          "empty_before_migrations": true,
+          "original_migration_count": 20,
+          "migration_status": "applied",
+          "startup_ownership": "confirmed",
+          "server_stop": "stopped",
+          "cleanup_status": "completed",
+          "runtime_receipt_sha256": "c30a8c6989d5f72a0c211c704ed1adb1e129b1363aa81f1fe7108cf26932f49e"
+        }
+      }
+    ],
+    "counts_overlap_do_not_add": true,
+    "code_test_source_sha256": {
+      "app/creative/production_execution.py": "f61a436750b4104b8e865320a11c7ecb073d59c46fcff6c682a15d7c5dacae82",
+      "app/creative/workspace.py": "5ad030e162575e2ac35c728ac769c5e6bb9423c82dd4bc5cb51427f5bcc37d63",
+      "app/media_files.py": "a3ddca3d9d705a31fd8c4312a48c9dcee21be35a5bce6d55ba901377a39a6e87",
+      "app/services/studio_audio_execution.py": "32e1d2c9e54b6dae158cee6dc28a9659eb0d9dc7684e1ba4c8b0ec70379ce990",
+      "app/services/studio_timeline_export.py": "1c70ab22e09471424b16dc25670a9f68056308fd9a64560c9cfe1aeee663bfc3",
+      "app/services/studio_timeline_render.py": "dcf6d7d336084850eda636cbad877b07e184adc72e80e28291c8fb04a80820a1",
+      "app/services/video_assembly_service.py": "eaf5645281d9ab7a2d5a04ba1b741803a01d118dbde37ddc402bbd1a36ae40bf",
+      "scripts/run_v2_postgres_checks.py": "0cc49fb86dfac0bd53d92d488855c39bccdc3f6a4a87aa4aab68fc4b45ed72a4",
+      "tests/test_v2_media_probe_bounds.py": "0dd6d07ad06e3cee85df3daa4328874bf3b5ca844521a028388a200e6379782c",
+      "tests/test_v2_media_probe_lifecycle.py": "7047e5aee8c50a301348fedeca0ea288ca5db1282c81b2c6717dc46d157a4526",
+      "tests/test_v2_postgres_native_options.py": "f65530bcdb3cf6d3c24ad8493f20d5b8abe533ef403d977225630558854f6017",
+      "tests/test_v2_windows_guarded_process_cleanup.py": "c5e4d35e36cafc8527a314237a647309474c331496541dafa2689875b575dae5",
+      "tests/test_v2_windows_timeline_receipt_identity.py": "8b42c43d6a7722ef7f4fa12b388c050e1451ae0d19fd4382549ce9d3c4420b1e"
+    },
+    "current_source_matches_final_freeze": true,
+    "final_owned_postgres_stop": {
+      "observed_utc": "2026-10-13T12:05:57.5987703Z",
+      "status_exit_code": 3,
+      "port_listeners": 0,
+      "postmaster_pid_absent": true,
+      "user_old_processes_touched": false,
+      "owned_cluster_stopped": true,
+      "original_wrapper_server_stop": "stopped",
+      "cleanup_status": "completed",
+      "finished_run": "nonwav-pg-final-broad-20261013"
+    },
+    "full_ci": "NOT_RUN_ACCOUNT_BILLING_LOCKED",
+    "windows_final_install": "NOT_RUN",
+    "gpu_or_real_model_acceptance": "NOT_RUN",
+    "user_database_or_works_touched": false,
+    "main_v1_frozen_assets_original_history_and_interop_changed": false,
+    "qingjian_progressed": false,
+    "product_acceptance": "LOCAL_REQUIRED",
+    "timing_boundary_evidence": {
+      "original_assertion_seconds": 5,
+      "prior_source_tree": "43e0deb3ea40f738ab56694e73aad78aa75cf9b8",
+      "original_failure_label": "nonwav-pg-review-final-focused-20261013",
+      "original_failed_node": "tests/test_v2_media_probe_lifecycle.py::test_timeline_initial_source_probe_observes_cancellation[postgres-/api-decode-export]",
+      "original_failed_elapsed_seconds": 5.062,
+      "single_observation_label": "nonwav-pg-timing-observation-20261013",
+      "single_observation_test_wall_seconds": 4.792256,
+      "single_observation_render_boundary_seconds": 4.791015,
+      "single_observation_connection_count": 164,
+      "single_observation_connection_wall_seconds": 3.955588,
+      "observation_is_stability_pass": false,
+      "final_source_tree": "42d251b6a8a9ec007425dff22b80c19328222f01",
+      "final_specific_selection_label": "nonwav-pg-timing-fix-selection-20261013",
+      "native_observer_plugin_used_in_final_checks": false,
+      "original_assertion_or_timeout_changed": false,
+      "inclusive_observation_timings_overlap_do_not_add": true
+    }
+  },
+  "inventories_and_original_windows47": {
+    "all_original_generators_and_protected_inputs_unchanged": true,
+    "api": {
+      "actual_operations": 2219,
+      "all_four_outputs_read_and_snapshotted": true,
+      "application_python_sources": 427,
+      "application_source_fingerprint_sha256": "66aa6bb368c9f06b6f2f84ccd0b96a71567af77bbe2eb98fad54582ae1625305",
+      "exit_code": 0,
+      "generator": "scripts/refresh_v2_staged_catalog.py --compact",
+      "source_provenance": {
+        "excluded_blob_bytes": 448351223,
+        "excluded_files": 3068,
+        "excluded_prefix": "docs/delivery/",
+        "mode": "compact",
+        "project_import_origins_sha256": "75ad8458d96c8414e82b2b752a27dfbca0170b537f0c148e2c7ba3a29061d0f8",
+        "retained_blob_bytes": 33790787,
+        "retained_files": 2467,
+        "retained_inventory_sha256": "361d6cea796e0e3cfe9f791ff31a7f5992ae0413a8eed94930f15b138744fed1"
+      },
+      "tests_executed": false
+    },
+    "artifacts": {
+      ".github/ci/coverage_manifest_v2.json.gz": {
+        "bytes": 461293,
+        "sha256": "dac80f0e325fe3a5f229b695100241dc074bbf820bef4070b5b3a08e31bc3bae"
+      },
+      "API_CATALOG.json": {
+        "bytes": 1351668,
+        "sha256": "d9a5cd70cd9e85be3e178170ae07cb97d30fe4630dc76d82b1f182972cbad463"
+      },
+      "API_CATALOG.md": {
+        "bytes": 360263,
+        "sha256": "a565f0b572c6b0342c46b361c4a31486d741eccea54de541b2ee484d08a05d92"
+      },
+      "API_CATALOG_DETAIL.json.gz": {
+        "bytes": 537207,
+        "sha256": "000bbd180ca55031a668cd8ecbd2786c4f39d5e15ed376d7c58648482e654514"
+      },
+      "API_OPENAPI.json.gz": {
+        "bytes": 114933,
+        "sha256": "2a15ec5c04e4ee2e0fad12d82d08e867372716c57e3c39336f465500aade9abf"
+      }
+    },
+    "client_date": "2026-10-13",
+    "commit_performed": false,
+    "completed_utc": "2026-10-13T20:19:06.144287+08:00",
+    "evidence_boundary": "Complete collection is inventory;45passing infrastructure/source checks do not erase2original Windows prerequisite failures or establish full product acceptance.",
+    "graphflow": {
+      "context": "SUCCEEDED_IN_INDEPENDENT_SESSION",
+      "plan": "NOT_RETURNED_BOUNDED_TERMINATED",
+      "plan_repeated": false
+    },
+    "head_during_generation": "877cf0ab39891d37ccb9ffdecb1c5a98c88e3bd2",
+    "index_application_bytes_verified_before_generation": true,
+    "only_tracked_worktree_changes": [
+      ".github/ci/coverage_manifest_v2.json.gz",
+      "API_CATALOG.json",
+      "API_CATALOG.md",
+      "API_CATALOG_DETAIL.json.gz",
+      "API_OPENAPI.json.gz"
+    ],
+    "original47": {
+      "assertions_unchanged": true,
+      "automatic_rerun": false,
+      "by_file": {
+        ".github.ci.test_compact_staged_catalog": {
+          "errors": 0,
+          "failed": 2,
+          "passed": 26,
+          "skipped": 0
+        },
+        ".github.ci.test_v2_manifest_extension": {
+          "errors": 0,
+          "failed": 0,
+          "passed": 13,
+          "skipped": 0
+        },
+        "tests.test_surface_api_catalog": {
+          "errors": 0,
+          "failed": 0,
+          "passed": 3,
+          "skipped": 0
+        },
+        "tests.test_v2_discovery_catalog": {
+          "errors": 0,
+          "failed": 0,
+          "passed": 3,
+          "skipped": 0
+        }
+      },
+      "errors": 0,
+      "execution_count": 1,
+      "exit_code": 1,
+      "failed": 2,
+      "failures": [
+        {
+          "category": "WINDOWS_SYMLINK_PRIVILEGE_PREREQUISITE",
+          "node": ".github/ci/test_compact_staged_catalog.py::test_retained_symlink_is_rejected_before_generator",
+          "status": "FAILED_CALL",
+          "target_assertions_reached": false,
+          "winerror_codes": [
+            "1314"
+          ]
+        },
+        {
+          "category": "WINDOWS_SYMLINK_PRIVILEGE_PREREQUISITE",
+          "node": ".github/ci/test_compact_staged_catalog.py::test_excluded_evidence_symlink_is_not_followed",
+          "status": "FAILED_CALL",
+          "target_assertions_reached": false,
+          "winerror_codes": [
+            "1314"
+          ]
+        }
+      ],
+      "full47_pass": false,
+      "passed": 45,
+      "pytest_seconds": 10.715,
+      "skipped": 0,
+      "skips_added": false,
+      "system_security_changed": false,
+      "tests": 47
+    },
+    "original_full_ci_complete_pass": false,
+    "protected_inputs": [
+      {
+        "path": ".github/ci/coverage_manifest.json.gz",
+        "sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+        "unchanged": true
+      },
+      {
+        "path": "scripts/refresh_product_api_catalog.py",
+        "sha256": "e9fc5835b4135446a3b0221c07033c7d88330c1658d416117ac68dba7d5268ec",
+        "unchanged": true
+      },
+      {
+        "path": "scripts/refresh_v2_staged_catalog.py",
+        "sha256": "2241561513d5d476bd6cc3ddd575ccb3e3d399942c627d2671657890ca2e7f80",
+        "unchanged": true
+      },
+      {
+        "path": "scripts/extend_v2_coverage_manifest.py",
+        "sha256": "337466ae33d15b2aafaeb15f2191ccdb0c65b22274e1b4d98ba10501dd30135e",
+        "unchanged": true
+      },
+      {
+        "path": "scripts/run_v2_checks.py",
+        "sha256": "539f04a8f4774ac0fb437521ca7f9fb8bc352e90140c394724bc38c1f0305f54",
+        "unchanged": true
+      },
+      {
+        "path": "AI_NOVEL_STUDIO_V2_FEATURE_MATRIX.md",
+        "sha256": "ce047e96f2fb428645d1e22f7cf999905ad26c9dccb6f5745c33b4a0ece1979c",
+        "unchanged": true
+      },
+      {
+        "path": "AI_NOVEL_STUDIO_V2_ARCHITECTURE.md",
+        "sha256": "34f8c8af409001c20d8a4a972b413bf07b41640920986d81782096770eb5707e",
+        "unchanged": true
+      },
+      {
+        "path": "AI_NOVEL_STUDIO_V2_MILESTONE_HISTORY.md",
+        "sha256": "89772b0f6d1e0266a5c3126bd9500df80824974a107fc73586efb087ae535dd0",
+        "unchanged": true
+      },
+      {
+        "path": "docs/v2/source-completion-boundaries.md",
+        "sha256": "c6edb6186851654ba36d218f20335576d17d1b6638c6abd3dd88f8bd49b1acda",
+        "unchanged": true
+      },
+      {
+        "path": "docs/v2/opus-ui-ux-handoff.md",
+        "sha256": "88ae9109573a6b01d074b8610fb9e2dc75dab9c9049ed32a59261d359d80bed4",
+        "unchanged": true
+      }
+    ],
+    "public_summary_contains_private_absolute_paths_environment_database_endpoints_credentials_or_financial_comments": false,
+    "push_performed": false,
+    "raw_logs_receipts_junit_worker_inventory_and_source_provenance_retained_externally": true,
+    "schema": "studio-v2-catalog-generation-summary/1",
+    "source_files_unchanged": true,
+    "source_input_tree": "42d251b6a8a9ec007425dff22b80c19328222f01",
+    "source_snapshot_file_count": 1905,
+    "source_snapshot_sha256": "2ef7d86054666da8747f0ac7b46ce34f27c44e8a02f9db0ec47e510fd53b89e0",
+    "stage_performed": false,
+    "status": "METADATA_GENERATED_ORIGINAL47_WINDOWS_PREREQUISITE_FAILURE",
+    "v2_manifest": {
+      "baseline_test_migrations": [
+        {
+          "commit": "1b7ff50a7e64742916bc64730df884cea819b379",
+          "delta": "Add -B before -I in the fixed launcher expectation only; all other bytes preserved",
+          "frozen_sha256": "d100e27589fb45cb921c13a82a83a911485fef1c0ed82a1e50eb5efc94f24799",
+          "path": "tests/test_windows_portable_entry.py",
+          "purpose": "Reconcile the preexisting V2 isolation baseline, not a historical audit approval",
+          "v2_baseline_sha256": "9f0d2d5f78a44e54a0fcc00925dc6d67038060408d3bd44753461ca57152fe1f"
+        }
+      ],
+      "collected_nodes": 13364,
+      "collection_errors": 0,
+      "collection_exit_code": 0,
+      "collection_head": "877cf0ab39891d37ccb9ffdecb1c5a98c88e3bd2",
+      "external_gates_unchanged": true,
+      "frozen_baseline_nodes": 9151,
+      "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+      "frozen_nodes_preserved_in_order": true,
+      "historical_skips_unchanged": true,
+      "manifest_source_hash_count": 1967,
+      "new_nodes_from_frozen": 4213,
+      "source_changes_from_frozen_count": 67,
+      "status": "INVENTORY_ONLY",
+      "tests_executed": false,
+      "unfiltered_complete_collection": true
+    },
+    "windows_installer_gpu_models_heavy_acceptance": "NOT_RUN"
+  },
+  "supplemental_symlink_checks": {
+    "schema": "studio-v2-wsl-symlink-sys-capture-supplement/1",
+    "date": "2026-10-13",
+    "baseline_sha": "877cf0ab39891d37ccb9ffdecb1c5a98c88e3bd2",
+    "staged_tree_at_check": "42d251b6a8a9ec007425dff22b80c19328222f01",
+    "platform": "existing Ubuntu-24.04 WSL2",
+    "python": "3.12.3",
+    "git": "git version 2.43.0",
+    "packages": {
+      "pip": "24.3.1",
+      "pytest": "8.4.2",
+      "iniconfig": "2.3.0",
+      "packaging": "26.3",
+      "pluggy": "1.6.0",
+      "pygments": "2.21.0"
+    },
+    "source_sha256_before": {
+      ".github/ci/test_compact_staged_catalog.py": "797fa962eaf6e4dbe5c8eb5bd1aec6f8f68ad6161faafcbc7851ec39a24edbbd",
+      "scripts/run_v2_checks.py": "539f04a8f4774ac0fb437521ca7f9fb8bc352e90140c394724bc38c1f0305f54",
+      "scripts/refresh_v2_staged_catalog.py": "2241561513d5d476bd6cc3ddd575ccb3e3d399942c627d2671657890ca2e7f80",
+      "scripts/refresh_product_api_catalog.py": "e9fc5835b4135446a3b0221c07033c7d88330c1658d416117ac68dba7d5268ec",
+      ".github/ci/python-constraints.txt": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+    },
+    "source_sha256_after": {
+      ".github/ci/test_compact_staged_catalog.py": "797fa962eaf6e4dbe5c8eb5bd1aec6f8f68ad6161faafcbc7851ec39a24edbbd",
+      "scripts/run_v2_checks.py": "539f04a8f4774ac0fb437521ca7f9fb8bc352e90140c394724bc38c1f0305f54",
+      "scripts/refresh_v2_staged_catalog.py": "2241561513d5d476bd6cc3ddd575ccb3e3d399942c627d2671657890ca2e7f80",
+      "scripts/refresh_product_api_catalog.py": "e9fc5835b4135446a3b0221c07033c7d88330c1658d416117ac68dba7d5268ec",
+      ".github/ci/python-constraints.txt": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+    },
+    "sources_changed_in_original_runner": false,
+    "selected_source_bytes_unchanged": true,
+    "label": "catalog-wsl-symlink-sys-supplement-20261013",
+    "selected_nodes": [
+      ".github/ci/test_compact_staged_catalog.py::test_retained_symlink_is_rejected_before_generator",
+      ".github/ci/test_compact_staged_catalog.py::test_excluded_evidence_symlink_is_not_followed"
+    ],
+    "exit_code": 0,
+    "status": "PASS_INDEPENDENT_UBUNTU_SYMLINK_ASSERTIONS",
+    "actual_result": {
+      "passed": 2,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "pytest_duration_seconds": 1.37,
+      "junit_duration_seconds": 1.355,
+      "requested_test_nodes_executed": 2
+    },
+    "capture_parameter_change": "--capture=sys",
+    "standard_pytest_option_confirmed": true,
+    "standard_sys_capture_uses_memory_stdout": true,
+    "original_nodes_depend_on_capture_fixture": false,
+    "confirmed_preflight": {
+      "drvfs_temporaryfile_truncate": "FileNotFoundError",
+      "native_linux_temporaryfile_truncate": "PASS",
+      "native_owned_temp_removed": true
+    },
+    "earlier_failed_run_preserved": true,
+    "earlier_failed_label": "catalog-wsl-symlink-supplement-20261013",
+    "earlier_failed_summary_sha256": "09a204c7782383c1a21e3aaa37dfb798b10792c1f5c1be39b3b54c0871e34526",
+    "earlier_failed_assertion_nodes_executed": 0,
+    "this_capture_configuration_runs": 1,
+    "original_runner_called": true,
+    "runner_tests_generator_baseline_or_assertions_modified": false,
+    "system_security_or_global_python_changed": false,
+    "models_or_postgres_started": false,
+    "owned_profile_data_boundary_changed": false,
+    "wsl_after_check": "Stopped",
+    "postgres_status_exit_code": 3,
+    "postgres_port_listeners": 0,
+    "windows_47_actual_status": "FAIL_OS_PREREQUISITE",
+    "windows_47_passed": 45,
+    "windows_47_os_symlink_prerequisite_failures": 2,
+    "windows_47_error": "WinError1314",
+    "windows_47_result_reclassified": false,
+    "counts_are_independent_do_not_combine_into_windows_47_pass": true,
+    "original_runner_receipt_sha256": "495890f3dbb639152c803c2b2409ac2f6774d811dcde9d4e847a7ba1b3e51b10",
+    "original_runner_log_sha256": "b2f314d1ce519b7b2aa38f4f5c9cc721ad6cdfc39bc8df808cb6197fd5f05403",
+    "junit_sha256": "deb2edd4dde0a43317cea4057df8463c7727c97fc60703618e2fcef0bd84112f",
+    "preflight_receipt_sha256": "06761926689f1e2fcae9e1567497ed225b27d4e4ec9ec892e511f396a8b3807d",
+    "product_or_windows_acceptance": "NOT_RUN"
+  },
+  "boundaries": {
+    "windows_gpu_real_models_heavy_acceptance": "NOT_RUN",
+    "older_unfinished_workspace_files_unchanged": 35,
+    "counts_overlap_do_not_add": true,
+    "historical_1134f8de_recovered": false,
+    "qingjian_progressed": false,
+    "opus_ui_ux_boundaries_unchanged": true,
+    "pr47_must_remain_draft": true,
+    "original_reports_and_failed_evidence_preserved": true,
+    "flac_delivery": "ASSESSMENT_ONLY",
+    "collection_is_not_execution": true,
+    "mp3_delivery": "DEFERRED_AFTER_FLAC",
+    "full_product_release_accepted": false
+  }
+}

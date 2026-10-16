@@ -1,0 +1,22 @@
+{
+  "backend": "postgres",
+  "operation": "create",
+  "revocation": "permission",
+  "nid": "r3-i-auth-2430953cc4",
+  "workspace": "w-2430953cc4",
+  "branch": "b-2430953cc4",
+  "actor": "writer-2430953cc4",
+  "admin": "init-2430953cc4",
+  "assignment": "write-df0e9ac34dbd48a5a0e6879225ad8e01",
+  "url": "/api/projects/r3-i-auth-2430953cc4/studio/prompts",
+  "method": "POST",
+  "body": {
+    "text": "PRIVATE process authoring 中文 🙂\n",
+    "purpose": "IMAGE",
+    "origin": "MANUAL",
+    "request_id": "aecd29f19fe44f9c87842cc40be695d7"
+  },
+  "ipc": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-combined-pg-final-r3\\temp\\test_independent_process_revoc8\\process-postgres-create-permission-writer",
+  "pause_writer": true,
+  "pause_revoker": false
+}

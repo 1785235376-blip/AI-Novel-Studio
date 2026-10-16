@@ -1,0 +1,30 @@
+{
+  "pid": 72896,
+  "status": 403,
+  "body": {
+    "detail": {
+      "code": "PROJECT_SCOPE_FORBIDDEN"
+    },
+    "code": "PROJECT_SCOPE_FORBIDDEN",
+    "message": "PROJECT_SCOPE_FORBIDDEN",
+    "details": {
+      "code": "PROJECT_SCOPE_FORBIDDEN"
+    },
+    "request_id": "30f472b3-b524-4fee-b9be-d425a822fd5a"
+  },
+  "negative_status": 403,
+  "negative_body": {
+    "detail": {
+      "code": "PROJECT_SCOPE_FORBIDDEN"
+    },
+    "code": "PROJECT_SCOPE_FORBIDDEN",
+    "message": "PROJECT_SCOPE_FORBIDDEN",
+    "details": {
+      "code": "PROJECT_SCOPE_FORBIDDEN"
+    },
+    "request_id": "dcbedc59-c8f8-43de-8e0c-2358d298bf80"
+  },
+  "same_issued_token_reused_after_revocation": true,
+  "real_session_owner": "LocalSessionBootstrap",
+  "isolated_adoption_gate": true
+}

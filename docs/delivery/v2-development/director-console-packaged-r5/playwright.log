@@ -1,0 +1,37 @@
+
+Running 1 test using 1 worker
+
+(node:75604) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:75604) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  x  1 [director-1440x900] › tests\e2e\v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source (3.1s)
+
+
+  1) [director-1440x900] › tests\e2e\v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source 
+
+    Error: {"detail":{"code":"EXPERIMENTAL_FEATURE_DISABLED","feature":"ai_execution_v2"},"code":"EXPERIMENTAL_FEATURE_DISABLED","message":"EXPERIMENTAL_FEATURE_DISABLED","details":{"code":"EXPERIMENTAL_FEATURE_DISABLED","feature":"ai_execution_v2"},"request_id":"7d4472ee-a02e-4579-9f64-8c54c40af253"}
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 404
+
+      13 |     if (path.startsWith('/api/')) calls.push({ method: value.request().method(), path, status: value.status() }); });
+      14 |   const exact = async (response: APIResponse, status: number) => {
+    > 15 |     expect(response.status(), await response.text()).toBe(status); return response.json();
+         |                                                      ^
+      16 |   };
+      17 |   info.annotations.push({ type: 'verification', description: 'Actual File owner, HTTP routes, rendered React and installed Edge. Authored synthetic text only; no response mocks, model inference or provider calls.' });
+      18 |   const enterWorkspace = async () => {
+        at exact (D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-director-console-live.spec.ts:15:54)
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-director-console-live.spec.ts:42:21
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\docs\delivery\v2-development\director-console-packaged-r5\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\docs\delivery\v2-development\director-console-packaged-r5\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\error-context.md
+
+  1 failed
+    [director-1440x900] › tests\e2e\v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source 

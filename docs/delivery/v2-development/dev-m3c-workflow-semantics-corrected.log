@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ✓ src/ui/LocalAiWorkflowPrerequisites.test.tsx (63 tests) 1421ms
+
+ Test Files  1 passed (1)
+      Tests  63 passed (63)
+   Start at  11:04:45
+   Duration  3.16s (transform 377ms, setup 0ms, collect 581ms, tests 1.42s, environment 646ms, prepare 86ms)
+

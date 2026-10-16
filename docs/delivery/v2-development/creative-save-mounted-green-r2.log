@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ✓ src/creative/CreativeWorkspace.saveState.regression.test.tsx (12 tests) 1498ms
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  03:56:11
+   Duration  2.99s (transform 540ms, setup 11ms, collect 892ms, tests 1.50s, environment 399ms, prepare 55ms)
+
+JSON report written to D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-creative-save-state-20261017/creative-save-mounted-green-r2.vitest.json

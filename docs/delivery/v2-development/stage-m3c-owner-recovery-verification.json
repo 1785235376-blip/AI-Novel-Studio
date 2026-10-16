@@ -1,0 +1,62 @@
+{
+  "utc": "2026-10-10T04:15:52.824353+00:00",
+  "status": "PASS_SELECTED_OWNER_RECOVERY",
+  "parent_head": "c386b0608ae92d18c351b5cb6e367380808a45cf",
+  "source_count": 1696,
+  "source_map_sha256": "51d94d044042f0d3ef8c07c336ded58aa24cd8257eb5a86766abb577ad53be16",
+  "scope": "Same complete selected 59-file owner range; not full-product hosted CI or strict aggregate acceptance.",
+  "execution": {
+    "receipt": "stage-m3c-owner-postgres-recovery3.json",
+    "receipt_sha256": "3e9488a51d013dbedea3ec74a7a261e08dd8b38dae933b6c753060e2b48fda52",
+    "log_sha256": "bbef65eb15fd2068f39af16200327b5fa76ca67d0c9e65ecd2851ce3968cb9b9",
+    "passed": 2183,
+    "skipped": 1132,
+    "warnings": 1,
+    "pytest_seconds": 1056.58,
+    "source_stable": true
+  },
+  "postgres": {
+    "runtime_receipt": "stage-m3c-owner-postgres-recovery3-postgres-runtime.json",
+    "runtime_receipt_sha256": "c3f70923e4e65d9aab67c57f07c875121e3f8b4baeefdad396d44484cf21d025",
+    "database": "v2_m3c_recovery_20261010",
+    "data_path": ".runtime/postgresql/data-m3c-recovery3",
+    "database_oid": 16384,
+    "new_empty_database": true,
+    "original_migrations": 20,
+    "normal_shutdown": true,
+    "database_retained": true,
+    "server_log_sha256": "7525d01c52d04b5662ef5f0911979e77428e706121455c1eeb5926cd9408a561"
+  },
+  "earlier_attempts": [
+    {
+      "label": "stage-m3c-owner-postgres",
+      "status": "INCOMPLETE_EXECUTION_SESSION_LOST",
+      "counts": null,
+      "normal_shutdown": "NOT_PROVEN",
+      "receipt": "stage-m3c-owner-postgres-incomplete.json"
+    },
+    {
+      "label": "stage-m3c-owner-postgres-recovery2",
+      "status": "INCOMPLETE_EXECUTION_SESSION_LOST",
+      "counts": null,
+      "normal_shutdown": "NOT_PROVEN",
+      "receipt": "stage-m3c-owner-postgres-recovery2-incomplete.json"
+    }
+  ],
+  "execution_observation": "Original harness ran in one continuously polled exec session to its terminal exit. Separate exec process listings did not expose its active processes, so those listings alone are not shutdown proof.",
+  "preservation": {
+    "all_original_201_paths_retained": true,
+    "source_files_changed": false,
+    "old_clusters_and_receipts_retained": true,
+    "old_publish_snapshot": "stage-m3c-publish-before-recovery3.json",
+    "old_publish_snapshot_sha256": "7a6ecfb9229b686813be887cb76c27c942e4af800b25e19aa35cb34e4df981c6"
+  },
+  "remaining": {
+    "full_m3": "PARTIAL",
+    "hosted_exact_commit": "PENDING_PUBLICATION",
+    "strict_ci_capacity": "PARTIAL_UNRESOLVED",
+    "local_browser": "BLOCKED_NOT_RUN",
+    "windows_user_acceptance": "LOCAL_REQUIRED_NOT_RUN",
+    "real_inference": "NOT_RUN"
+  }
+}

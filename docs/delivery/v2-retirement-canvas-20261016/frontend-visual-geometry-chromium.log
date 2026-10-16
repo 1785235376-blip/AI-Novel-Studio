@@ -1,0 +1,18 @@
+[WebServer] (node:70436) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 7 tests using 1 worker
+
+(node:68928) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:68928) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [chromium] › tests\visual\design-system.spec.ts:8:31 › novel workspace visual baseline (511ms)
+  ok 2 [chromium] › tests\visual\design-system.spec.ts:8:31 › image workspace visual baseline (326ms)
+  ok 3 [chromium] › tests\visual\design-system.spec.ts:8:31 › video workspace visual baseline (325ms)
+  ok 4 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1024x768 (220ms)
+  ok 5 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1366x768 (225ms)
+  ok 6 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1440x900 (228ms)
+  ok 7 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1920x1080 (248ms)
+
+  7 passed (5.8s)

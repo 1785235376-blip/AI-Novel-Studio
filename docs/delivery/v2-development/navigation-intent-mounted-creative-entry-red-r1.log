@@ -1,0 +1,1903 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ❯ src/AppModuleNavigationIntent.test.tsx (34 tests | 1 failed) 2435ms
+   × App module navigation during delayed original overview > keeps the explicitly opened CreativeWorkspace on NOVEL without requiring another top-level tab click 193ms
+     → Unable to find an accessible element with the role "button" and name "返回小说工作区"
+
+Here are the accessible roles:
+
+  status:
+
+  Name "Original overview queries pending":
+  [36m<output[39m
+    [33maria-label[39m=[32m"Original overview queries pending"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"ui-empty"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"ui-empty"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<span[39m
+    [33maria-live[39m=[32m"off"[39m
+    [33mclass[39m=[32m"save-status save-status--loading"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"ui-empty"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33maria-live[39m=[32m"polite"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"ui-empty"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"global-header"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<header />[39m
+
+  Name "":
+  [36m<header />[39m
+
+  Name "":
+  [36m<header />[39m
+
+  Name "":
+  [36m<header />[39m
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"generation-workflow__header"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  strong:
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong[39m
+    [33mid[39m=[32m"ai-status-title"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<strong[39m
+    [33mid[39m=[32m"generation-workflow-title"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  --------------------------------------------------
+  tablist:
+
+  Name "创作模块":
+  [36m<div[39m
+    [33maria-label[39m=[32m"创作模块"[39m
+    [33mclass[39m=[32m"module-switcher"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  Name "创作模式":
+  [36m<div[39m
+    [33maria-label[39m=[32m"创作模式"[39m
+    [33mclass[39m=[32m"creative-stage-tabs"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  Name "AI 写作方式":
+  [36m<div[39m
+    [33maria-label[39m=[32m"AI 写作方式"[39m
+    [33mclass[39m=[32m"novel-tabs"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tab:
+
+  Name "小说":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mclass[39m=[32m"is-active"[39m
+    [33mdata-module-tab[39m=[32m"NOVEL"[39m
+    [33mid[39m=[32m"module-tab-novel"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"0"[39m
+  [36m/>[39m
+
+  Name "图片":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mdata-module-tab[39m=[32m"IMAGE"[39m
+    [33mid[39m=[32m"module-tab-image"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "视频":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mdata-module-tab[39m=[32m"VIDEO"[39m
+    [33mid[39m=[32m"module-tab-video"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "资产":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mdata-module-tab[39m=[32m"ASSETS"[39m
+    [33mid[39m=[32m"module-tab-assets"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "声音":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mdata-module-tab[39m=[32m"AUDIO"[39m
+    [33mid[39m=[32m"module-tab-audio"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "主控":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mdata-module-tab[39m=[32m"CONTROL"[39m
+    [33mid[39m=[32m"module-tab-control"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "插件":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mdata-module-tab[39m=[32m"PLUGIN"[39m
+    [33mid[39m=[32m"module-tab-plugin"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "工作流":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mdata-module-tab[39m=[32m"WORKFLOW"[39m
+    [33mid[39m=[32m"module-tab-workflow"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "小说 Novel · 0":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"creative-canvas-NOVEL"[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mid[39m=[32m"creative-stage-NOVEL"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "剧本 Screenplay · 0":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"creative-canvas-SCREENPLAY"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"creative-stage-SCREENPLAY"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "导演 Director · 0":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"creative-canvas-DIRECTOR"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"creative-stage-DIRECTOR"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "分镜 Storyboard · 0":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"creative-canvas-STORYBOARD"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"creative-stage-STORYBOARD"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "制作 Production · 0":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"creative-canvas-PRODUCTION"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"creative-stage-PRODUCTION"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "创作下一章":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mrole[39m=[32m"tab"[39m
+  [36m/>[39m
+
+  Name "改写":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mrole[39m=[32m"tab"[39m
+  [36m/>[39m
+
+  Name "润色":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mrole[39m=[32m"tab"[39m
+  [36m/>[39m
+
+  Name "头脑风暴":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mrole[39m=[32m"tab"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "打开全局命令":
+  [36m<button[39m
+    [33maria-label[39m=[32m"打开全局命令"[39m
+    [33mclass[39m=[32m"global-search"[39m
+  [36m/>[39m
+
+  Name "返回经典工作区":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+  [36m/>[39m
+
+  Name "新建章节":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [36m/>[39m
+
+  Name "打开功能导航":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"feature-launcher-overlay"[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-label[39m=[32m"打开功能导航"[39m
+    [33mclass[39m=[32m"ui-button ui-button--ghost  feature-launcher__toggle"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "世界 World":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "人物 Character":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "场景 Scene":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "镜头 Shot":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "音频 Audio":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "视频 Video":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "保存":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "切换本机作品":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [36m/>[39m
+
+  Name "重试读取上次现场":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [36m/>[39m
+
+  Name "收起侧栏":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"workspace-inspector"[39m
+    [33maria-expanded[39m=[32m"true"[39m
+    [33maria-label[39m=[32m"收起侧栏"[39m
+    [33mclass[39m=[32m"ui-icon-button inspector-edge-toggle"[39m
+    [33mtitle[39m=[32m"收起侧栏"[39m
+  [36m/>[39m
+
+  Name "收起侧栏":
+  [36m<button[39m
+    [33maria-label[39m=[32m"收起侧栏"[39m
+    [33mclass[39m=[32m"ui-icon-button"[39m
+    [33mtitle[39m=[32m"收起侧栏"[39m
+  [36m/>[39m
+
+  Name "按需打开镜头工作区":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [36m/>[39m
+
+  Name "保存写作目标":
+  [36m<button[39m
+    [33mclass[39m=[32m"primary"[39m
+    [33mdisabled[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "1":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"true"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "2":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "3":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "克制冷峻 · 短句为主":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "细腻抒情 · 强化感官":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "紧张悬疑 · 加快节奏":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "轻松幽默 · 对话自然":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "生成创作下一章草稿":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+    [33mdisabled[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "问助手":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--ghost  local-tutor-entry"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  navigation:
+
+  Name "当前创作范围":
+  [36m<nav[39m
+    [33maria-label[39m=[32m"当前创作范围"[39m
+    [33mclass[39m=[32m"context-bar"[39m
+  [36m/>[39m
+
+  Name "项目创作阶段":
+  [36m<nav[39m
+    [33maria-label[39m=[32m"项目创作阶段"[39m
+    [33mclass[39m=[32m"creative-project-timeline"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  main:
+
+  Name "":
+  [36m<main[39m
+    [33mclass[39m=[32m"workspace-body"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  complementary:
+
+  Name "":
+  [36m<aside[39m
+    [33mclass[39m=[32m"workspace-sidebar"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<aside[39m
+    [33maria-hidden[39m=[32m"false"[39m
+    [33mclass[39m=[32m"workspace-inspector"[39m
+    [33mid[39m=[32m"workspace-inspector"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "创作资产":
+  [36m<h2 />[39m
+
+  Name "作品结构":
+  [36m<h2 />[39m
+
+  Name "已移出章节":
+  [36m<h3[39m
+    [33mid[39m=[32m"archived-heading"[39m
+  [36m/>[39m
+
+  Name "制作序列":
+  [36m<h2 />[39m
+
+  Name "项目概览":
+  [36m<h2 />[39m
+
+  Name "AI 写作助手":
+  [36m<h2 />[39m
+
+  --------------------------------------------------
+  group:
+
+  Name "":
+  [36m<details[39m
+    [33mclass[39m=[32m"creative-chapters"[39m
+    [33mopen[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "候选方案数量":
+  [36m<div[39m
+    [33maria-label[39m=[32m"候选方案数量"[39m
+    [33mclass[39m=[32m"novel-tabs"[39m
+    [33mrole[39m=[32m"group"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  region:
+
+  Name "已移出章节":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"archived-heading"[39m
+    [33mclass[39m=[32m"novel-archive-entry"[39m
+  [36m/>[39m
+
+  Name "当前项目上次工作":
+  [36m<section[39m
+    [33maria-label[39m=[32m"当前项目上次工作"[39m
+    [33mclass[39m=[32m"notice workspace-resume-summary"[39m
+  [36m/>[39m
+
+  Name "制作时间轴":
+  [36m<section[39m
+    [33maria-label[39m=[32m"制作时间轴"[39m
+    [33mclass[39m=[32m"creative-production-timeline"[39m
+  [36m/>[39m
+
+  Name "当前写作上下文":
+  [36m<section[39m
+    [33maria-label[39m=[32m"当前写作上下文"[39m
+    [33mclass[39m=[32m"novel-inspector-context"[39m
+  [36m/>[39m
+
+  Name "当前模型":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"ai-status-title"[39m
+    [33mclass[39m=[32m"novel-ai-status novel-ai-status--no-model"[39m
+  [36m/>[39m
+
+  Name "生成流程":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"generation-workflow-title"[39m
+    [33mclass[39m=[32m"generation-workflow"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tooltip:
+
+  Name "打开功能导航":
+  [36m<span[39m
+    [33mrole[39m=[32m"tooltip"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  searchbox:
+
+  Name "筛选资产":
+  [36m<input[39m
+    [33mplaceholder[39m=[32m"名称或描述"[39m
+    [33mtype[39m=[32m"search"[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tabpanel:
+
+  Name "小说 Novel · 0":
+  [36m<div[39m
+    [33maria-labelledby[39m=[32m"creative-stage-NOVEL"[39m
+    [33mid[39m=[32m"creative-canvas-NOVEL"[39m
+    [33mrole[39m=[32m"tabpanel"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  progressbar:
+
+  Name "":
+  [36m<div[39m
+    [33maria-valuemax[39m=[32m"100"[39m
+    [33maria-valuemin[39m=[32m"0"[39m
+    [33maria-valuenow[39m=[32m"0"[39m
+    [33mclass[39m=[32m"writing-goal__bar"[39m
+    [33mrole[39m=[32m"progressbar"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  list:
+
+  Name "":
+  [36m<ol[39m
+    [33mclass[39m=[32m"creative-timeline-track"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<ol[39m
+    [33mclass[39m=[32m"generation-workflow__steps"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  separator:
+
+  Name "调整检查面板宽度":
+  [36m<div[39m
+    [33maria-label[39m=[32m"调整检查面板宽度"[39m
+    [33maria-orientation[39m=[32m"vertical"[39m
+    [33mclass[39m=[32m"workspace-inspector__resize"[39m
+    [33mrole[39m=[32m"separator"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  spinbutton:
+
+  Name "目标字数":
+  [36m<input[39m
+    [33mmin[39m=[32m"1"[39m
+    [33mtype[39m=[32m"number"[39m
+    [33mvalue[39m=[32m"0"[39m
+  [36m/>[39m
+
+  Name "目标章节":
+  [36m<input[39m
+    [33mmin[39m=[32m"1"[39m
+    [33mtype[39m=[32m"number"[39m
+    [33mvalue[39m=[32m"0"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  combobox:
+
+  Name "文本模型":
+  [36m<select />[39m
+
+  --------------------------------------------------
+  option:
+
+  Name "尚未选择文本模型":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "附加要求（可选）":
+  [36m<textarea[39m
+    [33mplaceholder[39m=[32m"例如：保持紧张节奏，突出人物犹豫。"[39m
+  [36m/>[39m
+
+  Name "写作风格（可选）":
+  [36m<input[39m
+    [33mmaxlength[39m=[32m"120"[39m
+    [33mplaceholder[39m=[32m"例如：克制、冷峻、短句为主"[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  listitem:
+
+  Name "":
+  [36m<li[39m
+    [33mclass[39m=[32m"generation-workflow__step is-waiting"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mclass[39m=[32m"generation-workflow__step is-waiting"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mclass[39m=[32m"generation-workflow__step is-waiting"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mclass[39m=[32m"generation-workflow__step is-waiting"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  contentinfo:
+
+  Name "":
+  [36m<footer[39m
+    [33mclass[39m=[32m"status-bar"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<output[39m
+      [33maria-label[39m=[32m"Original overview queries pending"[39m
+    [36m>[39m
+      [0m1[0m
+    [36m</output>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+      [33mdata-module[39m=[32m"NOVEL"[39m
+      [33mstyle[39m=[32m"--layout-inspector-width: 340px;"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"global-header"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"AI Novel Studio"[39m
+          [33mclass[39m=[32m"product-mark"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__icon"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open-text"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 8h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 8h2"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</span>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__name"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mAI Novel[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mStudio[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"创作模块"[39m
+          [33mclass[39m=[32m"module-switcher"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mclass[39m=[32m"is-active"[39m
+            [33mdata-module-tab[39m=[32m"NOVEL"[39m
+            [33mid[39m=[32m"module-tab-novel"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"0"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m小说[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"IMAGE"[39m
+            [33mid[39m=[32m"module-tab-image"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-image"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mrx[39m=[32m"2"[39m
+                [33mry[39m=[32m"2"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mx[39m=[32m"3"[39m
+                [33my[39m=[32m"3"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"9"[39m
+                [33mcy[39m=[32m"9"[39m
+                [33mr[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m图片[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"VIDEO"[39m
+            [33mid[39m=[32m"module-tab-video"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-video"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+             ...
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 33 passed (34)
+   Start at  02:59:03
+   Duration  5.91s (transform 1.82s, setup 11ms, collect 2.86s, tests 2.44s, environment 401ms, prepare 52ms)
+
+JSON report written to D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-navigation-intent-20261017/navigation-intent-mounted-creative-entry-red-r1.vitest.json
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/AppModuleNavigationIntent.test.tsx > App module navigation during delayed original overview > keeps the explicitly opened CreativeWorkspace on NOVEL without requiring another top-level tab click
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "返回小说工作区"
+
+Here are the accessible roles:
+
+  status:
+
+  Name "Original overview queries pending":
+  [36m<output[39m
+    [33maria-label[39m=[32m"Original overview queries pending"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"ui-empty"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"ui-empty"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<span[39m
+    [33maria-live[39m=[32m"off"[39m
+    [33mclass[39m=[32m"save-status save-status--loading"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"ui-empty"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33maria-live[39m=[32m"polite"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"ui-empty"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"global-header"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<header />[39m
+
+  Name "":
+  [36m<header />[39m
+
+  Name "":
+  [36m<header />[39m
+
+  Name "":
+  [36m<header />[39m
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"generation-workflow__header"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  strong:
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong[39m
+    [33mid[39m=[32m"ai-status-title"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<strong[39m
+    [33mid[39m=[32m"generation-workflow-title"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  --------------------------------------------------
+  tablist:
+
+  Name "创作模块":
+  [36m<div[39m
+    [33maria-label[39m=[32m"创作模块"[39m
+    [33mclass[39m=[32m"module-switcher"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  Name "创作模式":
+  [36m<div[39m
+    [33maria-label[39m=[32m"创作模式"[39m
+    [33mclass[39m=[32m"creative-stage-tabs"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  Name "AI 写作方式":
+  [36m<div[39m
+    [33maria-label[39m=[32m"AI 写作方式"[39m
+    [33mclass[39m=[32m"novel-tabs"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tab:
+
+  Name "小说":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mclass[39m=[32m"is-active"[39m
+    [33mdata-module-tab[39m=[32m"NOVEL"[39m
+    [33mid[39m=[32m"module-tab-novel"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"0"[39m
+  [36m/>[39m
+
+  Name "图片":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mdata-module-tab[39m=[32m"IMAGE"[39m
+    [33mid[39m=[32m"module-tab-image"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "视频":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mdata-module-tab[39m=[32m"VIDEO"[39m
+    [33mid[39m=[32m"module-tab-video"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "资产":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mdata-module-tab[39m=[32m"ASSETS"[39m
+    [33mid[39m=[32m"module-tab-assets"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "声音":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mdata-module-tab[39m=[32m"AUDIO"[39m
+    [33mid[39m=[32m"module-tab-audio"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "主控":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mdata-module-tab[39m=[32m"CONTROL"[39m
+    [33mid[39m=[32m"module-tab-control"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "插件":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mdata-module-tab[39m=[32m"PLUGIN"[39m
+    [33mid[39m=[32m"module-tab-plugin"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "工作流":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mdata-module-tab[39m=[32m"WORKFLOW"[39m
+    [33mid[39m=[32m"module-tab-workflow"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "小说 Novel · 0":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"creative-canvas-NOVEL"[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mid[39m=[32m"creative-stage-NOVEL"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "剧本 Screenplay · 0":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"creative-canvas-SCREENPLAY"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"creative-stage-SCREENPLAY"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "导演 Director · 0":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"creative-canvas-DIRECTOR"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"creative-stage-DIRECTOR"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "分镜 Storyboard · 0":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"creative-canvas-STORYBOARD"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"creative-stage-STORYBOARD"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "制作 Production · 0":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"creative-canvas-PRODUCTION"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"creative-stage-PRODUCTION"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "创作下一章":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mrole[39m=[32m"tab"[39m
+  [36m/>[39m
+
+  Name "改写":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mrole[39m=[32m"tab"[39m
+  [36m/>[39m
+
+  Name "润色":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mrole[39m=[32m"tab"[39m
+  [36m/>[39m
+
+  Name "头脑风暴":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mrole[39m=[32m"tab"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "打开全局命令":
+  [36m<button[39m
+    [33maria-label[39m=[32m"打开全局命令"[39m
+    [33mclass[39m=[32m"global-search"[39m
+  [36m/>[39m
+
+  Name "返回经典工作区":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+  [36m/>[39m
+
+  Name "新建章节":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [36m/>[39m
+
+  Name "打开功能导航":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"feature-launcher-overlay"[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-label[39m=[32m"打开功能导航"[39m
+    [33mclass[39m=[32m"ui-button ui-button--ghost  feature-launcher__toggle"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "世界 World":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "人物 Character":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "场景 Scene":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "镜头 Shot":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "音频 Audio":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "视频 Video":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "保存":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "切换本机作品":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [36m/>[39m
+
+  Name "重试读取上次现场":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [36m/>[39m
+
+  Name "收起侧栏":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"workspace-inspector"[39m
+    [33maria-expanded[39m=[32m"true"[39m
+    [33maria-label[39m=[32m"收起侧栏"[39m
+    [33mclass[39m=[32m"ui-icon-button inspector-edge-toggle"[39m
+    [33mtitle[39m=[32m"收起侧栏"[39m
+  [36m/>[39m
+
+  Name "收起侧栏":
+  [36m<button[39m
+    [33maria-label[39m=[32m"收起侧栏"[39m
+    [33mclass[39m=[32m"ui-icon-button"[39m
+    [33mtitle[39m=[32m"收起侧栏"[39m
+  [36m/>[39m
+
+  Name "按需打开镜头工作区":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [36m/>[39m
+
+  Name "保存写作目标":
+  [36m<button[39m
+    [33mclass[39m=[32m"primary"[39m
+    [33mdisabled[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "1":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"true"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "2":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "3":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "克制冷峻 · 短句为主":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "细腻抒情 · 强化感官":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "紧张悬疑 · 加快节奏":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "轻松幽默 · 对话自然":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "生成创作下一章草稿":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+    [33mdisabled[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "问助手":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--ghost  local-tutor-entry"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  navigation:
+
+  Name "当前创作范围":
+  [36m<nav[39m
+    [33maria-label[39m=[32m"当前创作范围"[39m
+    [33mclass[39m=[32m"context-bar"[39m
+  [36m/>[39m
+
+  Name "项目创作阶段":
+  [36m<nav[39m
+    [33maria-label[39m=[32m"项目创作阶段"[39m
+    [33mclass[39m=[32m"creative-project-timeline"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  main:
+
+  Name "":
+  [36m<main[39m
+    [33mclass[39m=[32m"workspace-body"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  complementary:
+
+  Name "":
+  [36m<aside[39m
+    [33mclass[39m=[32m"workspace-sidebar"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<aside[39m
+    [33maria-hidden[39m=[32m"false"[39m
+    [33mclass[39m=[32m"workspace-inspector"[39m
+    [33mid[39m=[32m"workspace-inspector"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "创作资产":
+  [36m<h2 />[39m
+
+  Name "作品结构":
+  [36m<h2 />[39m
+
+  Name "已移出章节":
+  [36m<h3[39m
+    [33mid[39m=[32m"archived-heading"[39m
+  [36m/>[39m
+
+  Name "制作序列":
+  [36m<h2 />[39m
+
+  Name "项目概览":
+  [36m<h2 />[39m
+
+  Name "AI 写作助手":
+  [36m<h2 />[39m
+
+  --------------------------------------------------
+  group:
+
+  Name "":
+  [36m<details[39m
+    [33mclass[39m=[32m"creative-chapters"[39m
+    [33mopen[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "候选方案数量":
+  [36m<div[39m
+    [33maria-label[39m=[32m"候选方案数量"[39m
+    [33mclass[39m=[32m"novel-tabs"[39m
+    [33mrole[39m=[32m"group"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  region:
+
+  Name "已移出章节":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"archived-heading"[39m
+    [33mclass[39m=[32m"novel-archive-entry"[39m
+  [36m/>[39m
+
+  Name "当前项目上次工作":
+  [36m<section[39m
+    [33maria-label[39m=[32m"当前项目上次工作"[39m
+    [33mclass[39m=[32m"notice workspace-resume-summary"[39m
+  [36m/>[39m
+
+  Name "制作时间轴":
+  [36m<section[39m
+    [33maria-label[39m=[32m"制作时间轴"[39m
+    [33mclass[39m=[32m"creative-production-timeline"[39m
+  [36m/>[39m
+
+  Name "当前写作上下文":
+  [36m<section[39m
+    [33maria-label[39m=[32m"当前写作上下文"[39m
+    [33mclass[39m=[32m"novel-inspector-context"[39m
+  [36m/>[39m
+
+  Name "当前模型":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"ai-status-title"[39m
+    [33mclass[39m=[32m"novel-ai-status novel-ai-status--no-model"[39m
+  [36m/>[39m
+
+  Name "生成流程":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"generation-workflow-title"[39m
+    [33mclass[39m=[32m"generation-workflow"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tooltip:
+
+  Name "打开功能导航":
+  [36m<span[39m
+    [33mrole[39m=[32m"tooltip"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  searchbox:
+
+  Name "筛选资产":
+  [36m<input[39m
+    [33mplaceholder[39m=[32m"名称或描述"[39m
+    [33mtype[39m=[32m"search"[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tabpanel:
+
+  Name "小说 Novel · 0":
+  [36m<div[39m
+    [33maria-labelledby[39m=[32m"creative-stage-NOVEL"[39m
+    [33mid[39m=[32m"creative-canvas-NOVEL"[39m
+    [33mrole[39m=[32m"tabpanel"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  progressbar:
+
+  Name "":
+  [36m<div[39m
+    [33maria-valuemax[39m=[32m"100"[39m
+    [33maria-valuemin[39m=[32m"0"[39m
+    [33maria-valuenow[39m=[32m"0"[39m
+    [33mclass[39m=[32m"writing-goal__bar"[39m
+    [33mrole[39m=[32m"progressbar"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  list:
+
+  Name "":
+  [36m<ol[39m
+    [33mclass[39m=[32m"creative-timeline-track"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<ol[39m
+    [33mclass[39m=[32m"generation-workflow__steps"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  separator:
+
+  Name "调整检查面板宽度":
+  [36m<div[39m
+    [33maria-label[39m=[32m"调整检查面板宽度"[39m
+    [33maria-orientation[39m=[32m"vertical"[39m
+    [33mclass[39m=[32m"workspace-inspector__resize"[39m
+    [33mrole[39m=[32m"separator"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  spinbutton:
+
+  Name "目标字数":
+  [36m<input[39m
+    [33mmin[39m=[32m"1"[39m
+    [33mtype[39m=[32m"number"[39m
+    [33mvalue[39m=[32m"0"[39m
+  [36m/>[39m
+
+  Name "目标章节":
+  [36m<input[39m
+    [33mmin[39m=[32m"1"[39m
+    [33mtype[39m=[32m"number"[39m
+    [33mvalue[39m=[32m"0"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  combobox:
+
+  Name "文本模型":
+  [36m<select />[39m
+
+  --------------------------------------------------
+  option:
+
+  Name "尚未选择文本模型":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "附加要求（可选）":
+  [36m<textarea[39m
+    [33mplaceholder[39m=[32m"例如：保持紧张节奏，突出人物犹豫。"[39m
+  [36m/>[39m
+
+  Name "写作风格（可选）":
+  [36m<input[39m
+    [33mmaxlength[39m=[32m"120"[39m
+    [33mplaceholder[39m=[32m"例如：克制、冷峻、短句为主"[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  listitem:
+
+  Name "":
+  [36m<li[39m
+    [33mclass[39m=[32m"generation-workflow__step is-waiting"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mclass[39m=[32m"generation-workflow__step is-waiting"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mclass[39m=[32m"generation-workflow__step is-waiting"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33mclass[39m=[32m"generation-workflow__step is-waiting"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  contentinfo:
+
+  Name "":
+  [36m<footer[39m
+    [33mclass[39m=[32m"status-bar"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<output[39m
+      [33maria-label[39m=[32m"Original overview queries pending"[39m
+    [36m>[39m
+      [0m1[0m
+    [36m</output>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+      [33mdata-module[39m=[32m"NOVEL"[39m
+      [33mstyle[39m=[32m"--layout-inspector-width: 340px;"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"global-header"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"AI Novel Studio"[39m
+          [33mclass[39m=[32m"product-mark"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__icon"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open-text"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 8h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 8h2"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</span>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__name"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mAI Novel[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mStudio[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"创作模块"[39m
+          [33mclass[39m=[32m"module-switcher"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mclass[39m=[32m"is-active"[39m
+            [33mdata-module-tab[39m=[32m"NOVEL"[39m
+            [33mid[39m=[32m"module-tab-novel"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"0"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m小说[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"IMAGE"[39m
+            [33mid[39m=[32m"module-tab-image"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-image"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mrx[39m=[32m"2"[39m
+                [33mry[39m=[32m"2"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mx[39m=[32m"3"[39m
+                [33my[39m=[32m"3"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"9"[39m
+                [33mcy[39m=[32m"9"[39m
+                [33mr[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m图片[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"VIDEO"[39m
+            [33mid[39m=[32m"module-tab-video"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-video"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+             ...
+ ❯ Object.getElementError ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/AppModuleNavigationIntent.test.tsx:126:19
+    124|     mount(); const pending = await request();
+    125|     fireEvent.click(screen.getByRole('button', { name: '打开 V2 创作工…
+    126|     expect(screen.getByRole('button', { name: '返回小说工作区' })).toB…
+       |                   ^
+    127|     await release(pending); selected('小说');
+    128|     expect(screen.getByRole('button', { name: '返回小说工作区' })).toB…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

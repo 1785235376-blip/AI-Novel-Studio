@@ -1,0 +1,43 @@
+{
+  "command": [
+    "D:\\小说\\AI-Novel-Studio-Latest-Product\\.venv\\Scripts\\python.exe",
+    "-X",
+    "utf8",
+    "-B",
+    "-m",
+    "pytest",
+    "tests/test_v2_creative_foundation.py",
+    "tests/test_surface_api_catalog.py",
+    "-q",
+    "--basetemp",
+    ".runtime/v2-test/staged",
+    "--junitxml",
+    "docs/delivery/v2-development/phase1-staged.xml"
+  ],
+  "cwd": "D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-staged\\987d0ed8ee5249f495919ebd7c9e9745",
+  "started_utc": "2026-10-08T05:09:31.638603+00:00",
+  "finished_utc": "2026-10-08T05:09:44.137659+00:00",
+  "exit_code": 0,
+  "status": "PASS",
+  "isolated_environment": {
+    "PROJECT_ROOT": "D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-staged\\987d0ed8ee5249f495919ebd7c9e9745",
+    "PYTHONPATH": "D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-staged\\987d0ed8ee5249f495919ebd7c9e9745",
+    "NOVEL_DATA_PATH": "D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-staged\\987d0ed8ee5249f495919ebd7c9e9745\\.runtime\\v2-checks\\phase1-staged\\data",
+    "LOCALAPPDATA": "D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-staged\\987d0ed8ee5249f495919ebd7c9e9745\\.runtime\\v2-checks\\phase1-staged\\Local",
+    "CREDENTIAL_VAULT_BACKEND": "memory",
+    "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+    "STORAGE_BACKEND": "file",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "ENABLE_PACKAGED_RUNTIME": "false",
+    "ENABLE_COLLABORATION_RUNTIME": "false"
+  },
+  "head": "1b7ff50a7e64742916bc64730df884cea819b379",
+  "source_sha256": {
+    "app/creative/api.py": "7078129793391e85db70191c040d88b8e1f5aa0faf22e41900b6fc44d0430190",
+    "app/creative/models.py": "1af92d2a07560b43430c4b3f521c9ffc6bea3d8e216d6b05fb0b42033974d474",
+    "app/creative/service.py": "286807221f99e18423ce2c0217abb2dc3d1878d23e7bfe43872efb4f8e31a39d",
+    "app/creative/__init__.py": "22e9cdc335f433a18299dd63f82c0b68ca05af9e9cd0570b20baecac2624d0c4"
+  },
+  "log": "docs/delivery/v2-development/phase1-staged.log",
+  "log_sha256": "b35f33716be645f42c992162256ad2af8a5b162cbc850db9daac41a1568d94ac"
+}

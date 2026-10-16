@@ -1,0 +1,121 @@
+{
+  "total_count": 1,
+  "jobs": [
+    {
+      "id": 114314514625,
+      "run_id": 38086673979,
+      "workflow_name": "Shared R123 evidence",
+      "head_branch": "feature/v2-narrative-platform",
+      "run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/runs/38086673979",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOUEnaNM8AAAAana0QwQ",
+      "head_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/jobs/114314514625",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38086673979/job/114314514625",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-10T21:11:37Z",
+      "started_at": "2026-10-10T21:11:39Z",
+      "completed_at": "2026-10-10T21:12:36Z",
+      "name": "Original c6f2126 RED / Python 3.12.9",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T21:11:40Z",
+          "completed_at": "2026-10-10T21:11:41Z"
+        },
+        {
+          "name": "Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T21:11:41Z",
+          "completed_at": "2026-10-10T21:11:50Z"
+        },
+        {
+          "name": "Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T21:11:50Z",
+          "completed_at": "2026-10-10T21:11:52Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-10T21:11:52Z",
+          "completed_at": "2026-10-10T21:12:02Z"
+        },
+        {
+          "name": "Install exact baseline constraints",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-10T21:12:02Z",
+          "completed_at": "2026-10-10T21:12:16Z"
+        },
+        {
+          "name": "Run unchanged source and three separate original reproductions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-10T21:12:16Z",
+          "completed_at": "2026-10-10T21:12:31Z"
+        },
+        {
+          "name": "Upload exact RED observations",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-10T21:12:31Z",
+          "completed_at": "2026-10-10T21:12:32Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-10T21:12:32Z",
+          "completed_at": "2026-10-10T21:12:32Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-10T21:12:32Z",
+          "completed_at": "2026-10-10T21:12:32Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4.2.2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-10T21:12:32Z",
+          "completed_at": "2026-10-10T21:12:33Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-10T21:12:33Z",
+          "completed_at": "2026-10-10T21:12:33Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/check-runs/114314514625",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000002407,
+      "runner_name": "GitHub Actions 1000002407",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

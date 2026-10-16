@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ✓ src/AppModuleNavigationIntent.test.tsx (20 tests) 1400ms
+
+ Test Files  1 passed (1)
+      Tests  20 passed (20)
+   Start at  02:52:24
+   Duration  4.79s (transform 1.81s, setup 10ms, collect 2.80s, tests 1.40s, environment 388ms, prepare 54ms)
+
+JSON report written to D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-navigation-intent-20261017/navigation-intent-mounted-green-r1.vitest.json

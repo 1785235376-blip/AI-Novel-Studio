@@ -1,0 +1,11 @@
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following NEW packages will be installed:
+  libllvm17t64
+0 upgraded, 1 newly installed, 0 to remove and 156 not upgraded.
+Need to get 26.2 MB of archives.
+After this operation, 124 MB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu noble/main amd64 libllvm17t64 amd64 1:17.0.6-9ubuntu1 [26.2 MB]
+Fetched 26.2 MB in 5s (5421 kB/s)
+Download complete and in download only mode

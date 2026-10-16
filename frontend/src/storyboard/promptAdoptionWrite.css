@@ -1,0 +1,22 @@
+.prompt-adoption-write,
+.prompt-adoption-write .ui-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.prompt-adoption-write label {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+.prompt-adoption-write select { min-width: 0; max-width: 100%; }
+.prompt-adoption-write dd { margin-inline-start: 0; overflow-wrap: anywhere; }
+.prompt-adoption-write__body {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: var(--layout-inspector-width);
+  overflow: auto;
+  font-family: var(--font-mono);
+}

@@ -1,0 +1,19 @@
+0.00.036.199 I srv  llama_server: initializing ...
+0.00.036.256 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.036.494 I srv  init_listene: The UI is disabled
+0.00.036.503 I srv  init_listene: Use --ui/--no-ui (or deprecated --webui/--no-webui) to enable/disable
+0.00.039.855 I srv    load_model: loading model '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/models/qwen2.5-0.5b-instruct-q4_k_m.gguf'
+0.00.977.731 W load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden
+0.01.331.656 I cmn          init: llama threadpool init, n_threads = 2
+0.01.434.520 I srv    load_model: initializing, n_slots = 1, n_ctx_slot = 2048, kv_unified = 'false'
+0.01.434.625 W srv          init: --cache-idle-slots requires --cache-ram, disabling
+0.01.441.143 I srv  llama_server: model loaded
+0.01.441.164 I srv  llama_server: listening on http://127.0.0.1:18080
+0.11.025.547 I slot get_availabl: id  0 | task -1 | selected slot by LRU, t_last = -1
+0.11.025.735 I slot launch_slot_: id  0 | task 0 | processing task, is_child = 0
+0.12.298.606 I slot print_timing: id  0 | task 0 | prompt eval time =     700.95 ms /    89 tokens (    7.88 ms per token,   126.97 tokens per second)
+0.12.298.621 I slot print_timing: id  0 | task 0 |        eval time =     571.86 ms /    18 tokens (   33.64 ms per token,    29.73 tokens per second)
+0.12.298.622 I slot print_timing: id  0 | task 0 |       total time =    1272.80 ms /   107 tokens
+0.12.298.631 I slot print_timing: id  0 | task 0 |    graphs reused =         17
+0.12.298.704 I slot      release: id  0 | task 0 | stop processing: n_tokens = 106, truncated = 0
+0.13.972.655 I srv    operator(): operator(): cleaning up before exit...

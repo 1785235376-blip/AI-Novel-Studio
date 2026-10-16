@@ -1,0 +1,9 @@
+Listing tests:
+  [v2-live-chromium] › v2-creative-live.spec.ts:111:1 › real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript
+  [v2-live-chromium] › v2-creative-live.spec.ts:206:1 › real File V2 cancel and navigation retain dirty drafts without duplicating accepted or cancelled proposals
+  [v2-live-chromium] › v2-creative-live.spec.ts:236:1 › real File V2 scope and stale-write fencing keeps the browser draft and rejects foreign sources
+  [v2-live-chromium] › v2-creative-live.spec.ts:282:1 › real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript
+  [v2-live-chromium] › v2-creative-live.spec.ts:346:1 › real HTTP File V2 scope, cancel and stale source fences remain authoritative
+  [v1-chromium] › v2-creative-live.spec.ts:267:1 › V1 default-off backend and browser never expose the V2 workbench or accept creative writes
+  [v1-chromium] › v2-creative-live.spec.ts:379:1 › real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes
+Total: 7 tests in 1 file

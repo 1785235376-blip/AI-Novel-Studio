@@ -1,0 +1,356 @@
+......................................................................s. [ 25%]
+........sssssssss.s........ssssssss.s.s...sss.s.s....ssss.s....ssss.s.s. [ 50%]
+s...sss.s.s.s.s.s.s.s......................s........ssssss...s.s....ssss [ 76%]
+.s...FF.ssss.F.FFFFFFFFF....................s.....sssss.s.s.s.s.s.s      [100%]
+================================== FAILURES ===================================
+_ test_real_boundary_profiles_and_pcm_saturation_keep_reviewed_duration[file-96000-2-12.0-10000-32767] _
+
+audio = namespace(nid='v2-independent-f609feb9acea4c1599638eedca0a6a5a', scope={'mode': 'local', 'novel_id': 'v2-independent-f...4d', 'version': 1, 'digest': '327cc558b5388a3877c85caea3b598e3ade209c42d71118ad31fd35c7aae98c3'}], 'license_note': ''})
+rate = 96000, channels = 2, gain = 12.0, amplitude = 10000, expected = 32767
+
+    @pytest.mark.parametrize('rate,channels,gain,amplitude,expected', [
+        (8000, 1, -60.0, 2000, 2),
+        (96000, 2, 12.0, 10000, 32767),
+        (96000, 2, 12.0, -10000, -32768),
+        (48000, 1, 12.0, 2000, 7962),
+    ])
+    def test_real_boundary_profiles_and_pcm_saturation_keep_reviewed_duration(audio, rate, channels, gain, amplitude, expected):
+        e = audio
+        source = import_asset(e, data=wav_bytes(amplitude=amplitude, channels=channels), filename='boundary-fixture.wav', kind='audio')
+        e.command = command(snapshot(source), gain_db=gain, sample_rate=rate, channels=channels)
+>       result = run(e, queue(e)); assert result['status'] == 'AWAITING_REVIEW', result
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: {'contract': 'studio-production-job/1', 'owner': 'audio', 'id': 'audio-f08dcb30-7349-4167-aaf0-20aa223d439f', 'novel_id': 'v2-independent-f609feb9acea4c1599638eedca0a6a5a', ...}
+E       assert 'FAILED' == 'AWAITING_REVIEW'
+E         
+E         - AWAITING_REVIEW
+E         + FAILED
+
+tests\test_v2_audio_wav_controls.py:375: AssertionError
+_ test_real_boundary_profiles_and_pcm_saturation_keep_reviewed_duration[file-96000-2-12.0--10000--32768] _
+
+audio = namespace(nid='v2-independent-4c25301f5e6d4f84a9ea81b3f3372ca3', scope={'mode': 'local', 'novel_id': 'v2-independent-4...42', 'version': 1, 'digest': '8398252935b4b070d17b57c4b1cd716d9a45530df1217c8648439ef2f7887c55'}], 'license_note': ''})
+rate = 96000, channels = 2, gain = 12.0, amplitude = -10000, expected = -32768
+
+    @pytest.mark.parametrize('rate,channels,gain,amplitude,expected', [
+        (8000, 1, -60.0, 2000, 2),
+        (96000, 2, 12.0, 10000, 32767),
+        (96000, 2, 12.0, -10000, -32768),
+        (48000, 1, 12.0, 2000, 7962),
+    ])
+    def test_real_boundary_profiles_and_pcm_saturation_keep_reviewed_duration(audio, rate, channels, gain, amplitude, expected):
+        e = audio
+        source = import_asset(e, data=wav_bytes(amplitude=amplitude, channels=channels), filename='boundary-fixture.wav', kind='audio')
+        e.command = command(snapshot(source), gain_db=gain, sample_rate=rate, channels=channels)
+>       result = run(e, queue(e)); assert result['status'] == 'AWAITING_REVIEW', result
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: {'contract': 'studio-production-job/1', 'owner': 'audio', 'id': 'audio-c4b11842-04e8-4dcb-8a47-9bf92a07bf12', 'novel_id': 'v2-independent-4c25301f5e6d4f84a9ea81b3f3372ca3', ...}
+E       assert 'FAILED' == 'AWAITING_REVIEW'
+E         
+E         - AWAITING_REVIEW
+E         + FAILED
+
+tests\test_v2_audio_wav_controls.py:375: AssertionError
+______ test_synthetic_success_checks_both_tools_in_order_without_install ______
+
+tmp_path = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/pytest-ux-batch3/test_synthetic_success_checks_0')
+
+    def test_synthetic_success_checks_both_tools_in_order_without_install(tmp_path):
+        for name in ("ffmpeg", "ffprobe"):
+            executable(tmp_path, name)
+        result = probe(tmp_path)
+>       assert result.returncode == 0, result.stderr
+E       AssertionError: 
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['C:\\Program Files\\nodejs\\node.EXE', '--input-type=module', '-e', 'import {verifyInstalledMed...:[{"tool":"ffmpeg","status":"FAIL","elapsed_ms":4,"reason":"MISSING","exit_code":null}],"status":"FAIL"}\n', stderr='').returncode
+
+tests\test_v2_media_prerequisites.py:51: AssertionError
+_ test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[missing-MISSING-ffprobe] _
+
+tmp_path = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/pytest-ux-batch3/test_synthetic_missing_nonzero1')
+tool = 'ffprobe', behavior = 'missing', reason = 'MISSING'
+
+    @pytest.mark.parametrize("tool", ["ffmpeg", "ffprobe"])
+    @pytest.mark.parametrize("behavior,reason", [
+        ("missing", "MISSING"), ("nonzero", "NONZERO_OR_INVALID_VERSION"),
+        ("invalid", "NONZERO_OR_INVALID_VERSION"), ("timeout", "TIMEOUT_OR_OUTPUT_LIMIT"),
+        ("oversize", "TIMEOUT_OR_OUTPUT_LIMIT"),
+    ])
+    def test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed(tmp_path, tool, behavior, reason):
+        for name in ("ffmpeg", "ffprobe"):
+            if name != tool or behavior != "missing":
+                executable(tmp_path, name, behavior if name == tool else "success")
+        before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+        started = time.monotonic()
+        result = probe(tmp_path)
+        elapsed = time.monotonic() - started
+        assert result.returncode == 1, result.stderr
+        receipt = json.loads(result.stdout)
+        assert receipt["status"] == "FAIL" and receipt["install_attempted"] is False
+>       assert receipt["tools"][-1]["tool"] == tool
+E       AssertionError: assert 'ffmpeg' == 'ffprobe'
+E         
+E         - ffprobe
+E         + ffmpeg
+
+tests\test_v2_media_prerequisites.py:77: AssertionError
+_ test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[nonzero-NONZERO_OR_INVALID_VERSION-ffmpeg] _
+
+tmp_path = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/pytest-ux-batch3/test_synthetic_missing_nonzero2')
+tool = 'ffmpeg', behavior = 'nonzero', reason = 'NONZERO_OR_INVALID_VERSION'
+
+    @pytest.mark.parametrize("tool", ["ffmpeg", "ffprobe"])
+    @pytest.mark.parametrize("behavior,reason", [
+        ("missing", "MISSING"), ("nonzero", "NONZERO_OR_INVALID_VERSION"),
+        ("invalid", "NONZERO_OR_INVALID_VERSION"), ("timeout", "TIMEOUT_OR_OUTPUT_LIMIT"),
+        ("oversize", "TIMEOUT_OR_OUTPUT_LIMIT"),
+    ])
+    def test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed(tmp_path, tool, behavior, reason):
+        for name in ("ffmpeg", "ffprobe"):
+            if name != tool or behavior != "missing":
+                executable(tmp_path, name, behavior if name == tool else "success")
+        before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+        started = time.monotonic()
+        result = probe(tmp_path)
+        elapsed = time.monotonic() - started
+        assert result.returncode == 1, result.stderr
+        receipt = json.loads(result.stdout)
+        assert receipt["status"] == "FAIL" and receipt["install_attempted"] is False
+        assert receipt["tools"][-1]["tool"] == tool
+        assert receipt["tools"][-1]["status"] == "FAIL"
+>       assert receipt["tools"][-1]["reason"] == reason
+E       AssertionError: assert 'MISSING' == 'NONZERO_OR_INVALID_VERSION'
+E         
+E         - NONZERO_OR_INVALID_VERSION
+E         + MISSING
+
+tests\test_v2_media_prerequisites.py:79: AssertionError
+_ test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[nonzero-NONZERO_OR_INVALID_VERSION-ffprobe] _
+
+tmp_path = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/pytest-ux-batch3/test_synthetic_missing_nonzero3')
+tool = 'ffprobe', behavior = 'nonzero', reason = 'NONZERO_OR_INVALID_VERSION'
+
+    @pytest.mark.parametrize("tool", ["ffmpeg", "ffprobe"])
+    @pytest.mark.parametrize("behavior,reason", [
+        ("missing", "MISSING"), ("nonzero", "NONZERO_OR_INVALID_VERSION"),
+        ("invalid", "NONZERO_OR_INVALID_VERSION"), ("timeout", "TIMEOUT_OR_OUTPUT_LIMIT"),
+        ("oversize", "TIMEOUT_OR_OUTPUT_LIMIT"),
+    ])
+    def test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed(tmp_path, tool, behavior, reason):
+        for name in ("ffmpeg", "ffprobe"):
+            if name != tool or behavior != "missing":
+                executable(tmp_path, name, behavior if name == tool else "success")
+        before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+        started = time.monotonic()
+        result = probe(tmp_path)
+        elapsed = time.monotonic() - started
+        assert result.returncode == 1, result.stderr
+        receipt = json.loads(result.stdout)
+        assert receipt["status"] == "FAIL" and receipt["install_attempted"] is False
+>       assert receipt["tools"][-1]["tool"] == tool
+E       AssertionError: assert 'ffmpeg' == 'ffprobe'
+E         
+E         - ffprobe
+E         + ffmpeg
+
+tests\test_v2_media_prerequisites.py:77: AssertionError
+_ test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[invalid-NONZERO_OR_INVALID_VERSION-ffmpeg] _
+
+tmp_path = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/pytest-ux-batch3/test_synthetic_missing_nonzero4')
+tool = 'ffmpeg', behavior = 'invalid', reason = 'NONZERO_OR_INVALID_VERSION'
+
+    @pytest.mark.parametrize("tool", ["ffmpeg", "ffprobe"])
+    @pytest.mark.parametrize("behavior,reason", [
+        ("missing", "MISSING"), ("nonzero", "NONZERO_OR_INVALID_VERSION"),
+        ("invalid", "NONZERO_OR_INVALID_VERSION"), ("timeout", "TIMEOUT_OR_OUTPUT_LIMIT"),
+        ("oversize", "TIMEOUT_OR_OUTPUT_LIMIT"),
+    ])
+    def test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed(tmp_path, tool, behavior, reason):
+        for name in ("ffmpeg", "ffprobe"):
+            if name != tool or behavior != "missing":
+                executable(tmp_path, name, behavior if name == tool else "success")
+        before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+        started = time.monotonic()
+        result = probe(tmp_path)
+        elapsed = time.monotonic() - started
+        assert result.returncode == 1, result.stderr
+        receipt = json.loads(result.stdout)
+        assert receipt["status"] == "FAIL" and receipt["install_attempted"] is False
+        assert receipt["tools"][-1]["tool"] == tool
+        assert receipt["tools"][-1]["status"] == "FAIL"
+>       assert receipt["tools"][-1]["reason"] == reason
+E       AssertionError: assert 'MISSING' == 'NONZERO_OR_INVALID_VERSION'
+E         
+E         - NONZERO_OR_INVALID_VERSION
+E         + MISSING
+
+tests\test_v2_media_prerequisites.py:79: AssertionError
+_ test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[invalid-NONZERO_OR_INVALID_VERSION-ffprobe] _
+
+tmp_path = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/pytest-ux-batch3/test_synthetic_missing_nonzero5')
+tool = 'ffprobe', behavior = 'invalid', reason = 'NONZERO_OR_INVALID_VERSION'
+
+    @pytest.mark.parametrize("tool", ["ffmpeg", "ffprobe"])
+    @pytest.mark.parametrize("behavior,reason", [
+        ("missing", "MISSING"), ("nonzero", "NONZERO_OR_INVALID_VERSION"),
+        ("invalid", "NONZERO_OR_INVALID_VERSION"), ("timeout", "TIMEOUT_OR_OUTPUT_LIMIT"),
+        ("oversize", "TIMEOUT_OR_OUTPUT_LIMIT"),
+    ])
+    def test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed(tmp_path, tool, behavior, reason):
+        for name in ("ffmpeg", "ffprobe"):
+            if name != tool or behavior != "missing":
+                executable(tmp_path, name, behavior if name == tool else "success")
+        before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+        started = time.monotonic()
+        result = probe(tmp_path)
+        elapsed = time.monotonic() - started
+        assert result.returncode == 1, result.stderr
+        receipt = json.loads(result.stdout)
+        assert receipt["status"] == "FAIL" and receipt["install_attempted"] is False
+>       assert receipt["tools"][-1]["tool"] == tool
+E       AssertionError: assert 'ffmpeg' == 'ffprobe'
+E         
+E         - ffprobe
+E         + ffmpeg
+
+tests\test_v2_media_prerequisites.py:77: AssertionError
+_ test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[timeout-TIMEOUT_OR_OUTPUT_LIMIT-ffmpeg] _
+
+tmp_path = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/pytest-ux-batch3/test_synthetic_missing_nonzero6')
+tool = 'ffmpeg', behavior = 'timeout', reason = 'TIMEOUT_OR_OUTPUT_LIMIT'
+
+    @pytest.mark.parametrize("tool", ["ffmpeg", "ffprobe"])
+    @pytest.mark.parametrize("behavior,reason", [
+        ("missing", "MISSING"), ("nonzero", "NONZERO_OR_INVALID_VERSION"),
+        ("invalid", "NONZERO_OR_INVALID_VERSION"), ("timeout", "TIMEOUT_OR_OUTPUT_LIMIT"),
+        ("oversize", "TIMEOUT_OR_OUTPUT_LIMIT"),
+    ])
+    def test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed(tmp_path, tool, behavior, reason):
+        for name in ("ffmpeg", "ffprobe"):
+            if name != tool or behavior != "missing":
+                executable(tmp_path, name, behavior if name == tool else "success")
+        before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+        started = time.monotonic()
+        result = probe(tmp_path)
+        elapsed = time.monotonic() - started
+        assert result.returncode == 1, result.stderr
+        receipt = json.loads(result.stdout)
+        assert receipt["status"] == "FAIL" and receipt["install_attempted"] is False
+        assert receipt["tools"][-1]["tool"] == tool
+        assert receipt["tools"][-1]["status"] == "FAIL"
+>       assert receipt["tools"][-1]["reason"] == reason
+E       AssertionError: assert 'MISSING' == 'TIMEOUT_OR_OUTPUT_LIMIT'
+E         
+E         - TIMEOUT_OR_OUTPUT_LIMIT
+E         + MISSING
+
+tests\test_v2_media_prerequisites.py:79: AssertionError
+_ test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[timeout-TIMEOUT_OR_OUTPUT_LIMIT-ffprobe] _
+
+tmp_path = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/pytest-ux-batch3/test_synthetic_missing_nonzero7')
+tool = 'ffprobe', behavior = 'timeout', reason = 'TIMEOUT_OR_OUTPUT_LIMIT'
+
+    @pytest.mark.parametrize("tool", ["ffmpeg", "ffprobe"])
+    @pytest.mark.parametrize("behavior,reason", [
+        ("missing", "MISSING"), ("nonzero", "NONZERO_OR_INVALID_VERSION"),
+        ("invalid", "NONZERO_OR_INVALID_VERSION"), ("timeout", "TIMEOUT_OR_OUTPUT_LIMIT"),
+        ("oversize", "TIMEOUT_OR_OUTPUT_LIMIT"),
+    ])
+    def test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed(tmp_path, tool, behavior, reason):
+        for name in ("ffmpeg", "ffprobe"):
+            if name != tool or behavior != "missing":
+                executable(tmp_path, name, behavior if name == tool else "success")
+        before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+        started = time.monotonic()
+        result = probe(tmp_path)
+        elapsed = time.monotonic() - started
+        assert result.returncode == 1, result.stderr
+        receipt = json.loads(result.stdout)
+        assert receipt["status"] == "FAIL" and receipt["install_attempted"] is False
+>       assert receipt["tools"][-1]["tool"] == tool
+E       AssertionError: assert 'ffmpeg' == 'ffprobe'
+E         
+E         - ffprobe
+E         + ffmpeg
+
+tests\test_v2_media_prerequisites.py:77: AssertionError
+_ test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[oversize-TIMEOUT_OR_OUTPUT_LIMIT-ffmpeg] _
+
+tmp_path = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/pytest-ux-batch3/test_synthetic_missing_nonzero8')
+tool = 'ffmpeg', behavior = 'oversize', reason = 'TIMEOUT_OR_OUTPUT_LIMIT'
+
+    @pytest.mark.parametrize("tool", ["ffmpeg", "ffprobe"])
+    @pytest.mark.parametrize("behavior,reason", [
+        ("missing", "MISSING"), ("nonzero", "NONZERO_OR_INVALID_VERSION"),
+        ("invalid", "NONZERO_OR_INVALID_VERSION"), ("timeout", "TIMEOUT_OR_OUTPUT_LIMIT"),
+        ("oversize", "TIMEOUT_OR_OUTPUT_LIMIT"),
+    ])
+    def test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed(tmp_path, tool, behavior, reason):
+        for name in ("ffmpeg", "ffprobe"):
+            if name != tool or behavior != "missing":
+                executable(tmp_path, name, behavior if name == tool else "success")
+        before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+        started = time.monotonic()
+        result = probe(tmp_path)
+        elapsed = time.monotonic() - started
+        assert result.returncode == 1, result.stderr
+        receipt = json.loads(result.stdout)
+        assert receipt["status"] == "FAIL" and receipt["install_attempted"] is False
+        assert receipt["tools"][-1]["tool"] == tool
+        assert receipt["tools"][-1]["status"] == "FAIL"
+>       assert receipt["tools"][-1]["reason"] == reason
+E       AssertionError: assert 'MISSING' == 'TIMEOUT_OR_OUTPUT_LIMIT'
+E         
+E         - TIMEOUT_OR_OUTPUT_LIMIT
+E         + MISSING
+
+tests\test_v2_media_prerequisites.py:79: AssertionError
+_ test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[oversize-TIMEOUT_OR_OUTPUT_LIMIT-ffprobe] _
+
+tmp_path = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/pytest-ux-batch3/test_synthetic_missing_nonzero9')
+tool = 'ffprobe', behavior = 'oversize', reason = 'TIMEOUT_OR_OUTPUT_LIMIT'
+
+    @pytest.mark.parametrize("tool", ["ffmpeg", "ffprobe"])
+    @pytest.mark.parametrize("behavior,reason", [
+        ("missing", "MISSING"), ("nonzero", "NONZERO_OR_INVALID_VERSION"),
+        ("invalid", "NONZERO_OR_INVALID_VERSION"), ("timeout", "TIMEOUT_OR_OUTPUT_LIMIT"),
+        ("oversize", "TIMEOUT_OR_OUTPUT_LIMIT"),
+    ])
+    def test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed(tmp_path, tool, behavior, reason):
+        for name in ("ffmpeg", "ffprobe"):
+            if name != tool or behavior != "missing":
+                executable(tmp_path, name, behavior if name == tool else "success")
+        before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+        started = time.monotonic()
+        result = probe(tmp_path)
+        elapsed = time.monotonic() - started
+        assert result.returncode == 1, result.stderr
+        receipt = json.loads(result.stdout)
+        assert receipt["status"] == "FAIL" and receipt["install_attempted"] is False
+>       assert receipt["tools"][-1]["tool"] == tool
+E       AssertionError: assert 'ffmpeg' == 'ffprobe'
+E         
+E         - ffprobe
+E         + ffmpeg
+
+tests\test_v2_media_prerequisites.py:77: AssertionError
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_v2_audio_wav_controls.py::test_real_boundary_profiles_and_pcm_saturation_keep_reviewed_duration[file-96000-2-12.0-10000-32767]
+FAILED tests/test_v2_audio_wav_controls.py::test_real_boundary_profiles_and_pcm_saturation_keep_reviewed_duration[file-96000-2-12.0--10000--32768]
+FAILED tests/test_v2_media_prerequisites.py::test_synthetic_success_checks_both_tools_in_order_without_install
+FAILED tests/test_v2_media_prerequisites.py::test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[missing-MISSING-ffprobe]
+FAILED tests/test_v2_media_prerequisites.py::test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[nonzero-NONZERO_OR_INVALID_VERSION-ffmpeg]
+FAILED tests/test_v2_media_prerequisites.py::test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[nonzero-NONZERO_OR_INVALID_VERSION-ffprobe]
+FAILED tests/test_v2_media_prerequisites.py::test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[invalid-NONZERO_OR_INVALID_VERSION-ffmpeg]
+FAILED tests/test_v2_media_prerequisites.py::test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[invalid-NONZERO_OR_INVALID_VERSION-ffprobe]
+FAILED tests/test_v2_media_prerequisites.py::test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[timeout-TIMEOUT_OR_OUTPUT_LIMIT-ffmpeg]
+FAILED tests/test_v2_media_prerequisites.py::test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[timeout-TIMEOUT_OR_OUTPUT_LIMIT-ffprobe]
+FAILED tests/test_v2_media_prerequisites.py::test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[oversize-TIMEOUT_OR_OUTPUT_LIMIT-ffmpeg]
+FAILED tests/test_v2_media_prerequisites.py::test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[oversize-TIMEOUT_OR_OUTPUT_LIMIT-ffprobe]
+12 failed, 193 passed, 78 skipped, 1 warning in 37.17s

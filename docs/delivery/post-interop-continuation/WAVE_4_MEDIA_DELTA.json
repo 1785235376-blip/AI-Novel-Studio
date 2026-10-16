@@ -1,0 +1,368 @@
+{
+  "schema_version": 1,
+  "wave": 4,
+  "starting_sha": "e58c72b04182cd374af092314386b90f8250a173",
+  "publication": "SOURCE_CHECKPOINT_FINAL_HOSTED_CI_PENDING",
+  "historical_evidence_modified": false,
+  "reconstruction": {
+    "base_sha": "4d736c0d14bdcd12d0ad3cc7146553971654620b",
+    "base_tree": "6b8269fb95e695178ce4c587c9fc729275d0e848",
+    "source": "Verified official source bundle plus retained pre-reset edit commands",
+    "anchor_checks": "PASS_ALL_14_RUNTIME_FILES",
+    "pre_reset_pass_counts_reused": false,
+    "runtime_numstat_matches_retained_checkpoint": true,
+    "known_irrecoverable_behavior": [],
+    "recovered_source_sha256": {
+      "app/experimental/director.py": "6c53dab4a6898688eff8bf1d6d326558343ef9f0159e4ef9d3c746cd6d9d7526",
+      "app/experimental/media.py": "ec7226d1b8dc1ec17e66acc3a088afcb5edf2b17d29c6b2fd6536afd394f7174",
+      "app/experimental/media_api.py": "f6ae47cabb59d127172397984b6a075b2db6d5b2c9043590db3beb1d7decc082",
+      "app/experimental/production_lineage.py": "6b2b438ebf46bf49f563e1f432d610b90db060014d8a086e82ca6f05741cb124",
+      "app/experimental/audiobook.py": "593bc25938e5ecca196e6e69ec70eeadc2942df1d4106042792c8556570a11fe",
+      "app/experimental/voice_direction.py": "ee394ebd2775b9825899ddf2fb2f9f232b1c488b03f5957434fd565ca830946a",
+      "app/experimental/timeline_exchange.py": "a010274cfe988702ed5437a94d95b7804e42735a42af608b1d6d2f8d22b719c8",
+      "frontend/src/experimental/directorClient.ts": "ed1b7d54a0e426d3d22cd15e4e55ec6cd9c924075384a6aeaa63b41ea36a883f",
+      "frontend/src/experimental/DirectorPanel.tsx": "393e6659c4c7273e786f2336b50835a9493641a809ce373c43c18a9b12b501f8",
+      "frontend/src/experimental/MediaPanel.tsx": "6a6498800d4b0fc5e29126282b91a86eb6b60f71b7bea7cd166f3f6ebb332081",
+      "frontend/src/experimental/TimelineExchangePanel.tsx": "17ecafcad805b9be36462859f45113fc171251a8c45660cc053cf92f79143bff",
+      "frontend/src/experimental/ProductionLineagePanel.tsx": "0f3ddca5a8963b2b6eb3a4c657c4ba09ab621679ae9c57fb3580b999bb46e65f",
+      "frontend/src/experimental/AudiobookPanel.tsx": "5338db246519488af38b11d489fda82cfe4b5aecdb19f96d3c39e3c1ee478f4d",
+      "frontend/src/experimental/VoiceDirectionPanel.tsx": "47525687859f10f51b7206bd5d8559abe80116cfd65d01d3cbdc442b00c11efa",
+      "tests/test_post_interop_media_continuation.py": "9a6aca05f826748aa45b523b402a9fb67b247ebce199c1b91fc234caa4f353b2",
+      "frontend/src/experimental/MediaPanel.continuation.test.tsx": "908da8d5f4a218d50159d2339dd6b934dbb82450ce5b26611b2b1c6ee2ecc74b",
+      "frontend/src/experimental/VoiceDirectionPanel.continuation.test.tsx": "c6dd9306094db9844c2cfbc1c0c3244e568759d537c36e50cd2c2f6984b3fb7d",
+      "frontend/tests/e2e/r4-post-interop-media-continuation.spec.ts": "e40ce58af53a2d08e72d2643d13e1695da0e9c2446af6228a8b7fc4e93e80364"
+    }
+  },
+  "features": [
+    {
+      "id": "A08",
+      "owner": "Director",
+      "product_status": "PARTIAL",
+      "implemented_delta": "Add optional shot function and focus intent; original screenplay proposals/CAS/history; transparent same-scene rhythm, repeated-framing and declared-direction continuity review suggestions.",
+      "current_reconstructed_runtime_verification": "FILE_API_CONTRACT_VERIFIED; EXACT_STAGE_FRONTEND_VERIFIED; CORRECTED_MEDIA_UI_AND_TYPES_VERIFIED; CORRECTED_BROWSER_PENDING"
+    },
+    {
+      "id": "A09",
+      "owner": "Asset Lineage",
+      "product_status": "PARTIAL",
+      "implemented_delta": "Enrich original approved asset generation projection with observed adapter/workflow/model identity, seed, time, prompt digest and scene/shot pointers; preserve original DAG and public prompt redaction.",
+      "current_reconstructed_runtime_verification": "FILE_API_CONTRACT_VERIFIED; EXACT_STAGE_FRONTEND_VERIFIED; CORRECTED_MEDIA_UI_AND_TYPES_VERIFIED; CORRECTED_BROWSER_PENDING"
+    },
+    {
+      "id": "A12",
+      "owner": "OTIO",
+      "product_status": "PARTIAL",
+      "implemented_delta": "Warn on lost camera/action/dialogue/sound and unknown exchange metadata; reject malformed exact-time metadata; separate timeline start from source in/out; label independent audio/video timing.",
+      "current_reconstructed_runtime_verification": "FILE_API_CONTRACT_VERIFIED; EXACT_STAGE_FRONTEND_VERIFIED; CORRECTED_MEDIA_UI_AND_TYPES_VERIFIED; CORRECTED_BROWSER_PENDING"
+    },
+    {
+      "id": "A13",
+      "owner": "Production Manifest",
+      "product_status": "PARTIAL",
+      "implemented_delta": "Independent assurance labels for traceability, current preflight replayability, unassessed approximate reproduction, synthetic-only determinism and pending byte comparison.",
+      "current_reconstructed_runtime_verification": "FILE_API_CONTRACT_VERIFIED; EXACT_STAGE_FRONTEND_VERIFIED; CORRECTED_MEDIA_UI_AND_TYPES_VERIFIED; CORRECTED_BROWSER_PENDING"
+    },
+    {
+      "id": "B03",
+      "owner": "Audiobook and Voice Direction",
+      "product_status": "PARTIAL",
+      "implemented_delta": "Unknown identity always NEEDS_REVIEW; accumulate measured WAV frames exactly; clear stale frame evidence on edits; truthful timing manifests; original-queue independent cancellation and scoped task navigation.",
+      "current_reconstructed_runtime_verification": "FILE_API_CONTRACT_VERIFIED; EXACT_STAGE_FRONTEND_VERIFIED; CORRECTED_MEDIA_UI_AND_TYPES_VERIFIED; CORRECTED_BROWSER_PENDING"
+    },
+    {
+      "id": "B04",
+      "owner": "Subtitle Timeline",
+      "product_status": "PARTIAL",
+      "implemented_delta": "Keep original manual/measured cue authority; expose upstream measured-frame evidence and explicitly unknown word alignment; suppress old-version subtitle/manifest UI and partial misleading endpoints.",
+      "current_reconstructed_runtime_verification": "FILE_API_CONTRACT_VERIFIED; EXACT_STAGE_FRONTEND_VERIFIED; CORRECTED_MEDIA_UI_AND_TYPES_VERIFIED; CORRECTED_BROWSER_PENDING"
+    },
+    {
+      "id": "U06",
+      "owner": "Selective media refresh and original Cover/Storyboard",
+      "product_status": "PARTIAL",
+      "implemented_delta": "Scoped original source picker, typography-aware cover and registered-adapter input, storyboard revision API/history, visible cover revision, stale/cross-version comparison, cancel/late-callback and scope fences; existing U06 fresh task retains typography and leaves original task unchanged.",
+      "current_reconstructed_runtime_verification": "FILE_API_CONTRACT_VERIFIED; EXACT_STAGE_FRONTEND_VERIFIED; CORRECTED_MEDIA_UI_AND_TYPES_VERIFIED; CORRECTED_BROWSER_PENDING"
+    },
+    {
+      "id": "U07",
+      "owner": "Task-center owner integration seam",
+      "product_status": "PARTIAL",
+      "implemented_delta": "MediaPanel requestedTaskId, VoiceDirectionPanel requestedTaskId, AudiobookPanel requestedPlanId select/focus only owner-authorized original records; absent targets unavailable and navigation never executes.",
+      "current_reconstructed_runtime_verification": "FILE_API_CONTRACT_VERIFIED; EXACT_STAGE_FRONTEND_VERIFIED; CORRECTED_MEDIA_UI_AND_TYPES_VERIFIED; CORRECTED_BROWSER_PENDING"
+    }
+  ],
+  "changed_files": [
+    "app/experimental/director.py",
+    "app/experimental/media.py",
+    "app/experimental/media_api.py",
+    "app/experimental/production_lineage.py",
+    "app/experimental/audiobook.py",
+    "app/experimental/voice_direction.py",
+    "app/experimental/timeline_exchange.py",
+    "frontend/src/experimental/directorClient.ts",
+    "frontend/src/experimental/DirectorPanel.tsx",
+    "frontend/src/experimental/MediaPanel.tsx",
+    "frontend/src/experimental/TimelineExchangePanel.tsx",
+    "frontend/src/experimental/ProductionLineagePanel.tsx",
+    "frontend/src/experimental/AudiobookPanel.tsx",
+    "frontend/src/experimental/VoiceDirectionPanel.tsx",
+    "tests/test_post_interop_media_continuation.py",
+    "frontend/src/experimental/MediaPanel.continuation.test.tsx",
+    "frontend/src/experimental/VoiceDirectionPanel.continuation.test.tsx",
+    "frontend/tests/e2e/r4-post-interop-media-continuation.spec.ts",
+    "docs/delivery/post-interop-continuation/WAVE_4_MEDIA.md",
+    "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+    "tests/test_post_interop_media_visibility.py",
+    "frontend/src/experimental/ProductionLineagePanel.continuation.test.tsx"
+  ],
+  "apis_added": [
+    "GET /api[/v1]/novels/{nid}/experimental/media/catalog",
+    "PUT /api[/v1]/novels/{nid}/experimental/media/storyboard-briefs/{rid}?expected_version=N"
+  ],
+  "existing_apis_extended": [
+    "cover brief create/update: typography_intent",
+    "cover/storyboard listings: stale",
+    "candidate compare: stale per item, same_source_version",
+    "production manifest/preflight/export: assurance",
+    "audiobook duration manifest: timing precision and frame evidence",
+    "OTIO summary/loss report: source in/out and explicit omissions"
+  ],
+  "ui": [
+    "Original MediaPanel source pickers, revision controls and cancel availability",
+    "DirectorPanel grammar choices and deterministic review suggestions",
+    "ProductionLineagePanel independent evidence labels",
+    "AudiobookPanel scope/version-fenced timing views",
+    "VoiceDirectionPanel independent cancel and exact owner job navigation",
+    "TimelineExchangePanel explicit loss explanations"
+  ],
+  "old_data_compatibility": {
+    "database_migrations": [],
+    "storage": "Existing versioned JSON documents, original asset library and existing task stores only. No second state system.",
+    "additive_fields": true,
+    "old_records": "Default optional grammar/typography fields; old missing WAV frame evidence retains measured millisecond fallback.",
+    "rollback": "Retain original JSON/history and backups. Older strict Director input schema cannot accept new grammar fields; never rewrite history silently for downgrade.",
+    "file": "VERIFIED_POST_RESET",
+    "postgres": "Same code path and inherited parametrized tests; hosted exact-source verification required."
+  },
+  "tests": [
+    {
+      "name": "python_ast",
+      "status": "PASS",
+      "files": 8,
+      "test_functions": 14,
+      "scope": "Post-reset syntax only; no imports or runtime execution."
+    },
+    {
+      "name": "owned_diff_whitespace",
+      "status": "PASS"
+    },
+    {
+      "name": "post_reset_media_original_owner_union",
+      "command": "python -m pytest -q tests/test_post_interop_media_continuation.py tests/test_r3_media_workflows.py tests/test_r3_audiobook_preparation.py tests/test_r4_media_evidence.py tests/test_r4_director.py tests/test_r4_director_exchange_mounted.py tests/test_r4_production_lineage.py tests/test_r4_production_mounted.py tests/test_r4_registered_local_media.py tests/test_r4_registered_media_mounted.py tests/test_r4_timeline_exchange.py tests/test_r5_voice_subtitles.py tests/test_r5_voice_subtitles_mounted.py tests/test_r2_media_api.py tests/test_r2_media_lifecycle.py tests/test_phase1_media_project_authorization.py tests/test_audio_production_api.py tests/test_r4_change_impact.py tests/test_r4_change_impact_mounted.py tests/test_r4_batch_admission.py tests/test_r4_portable_batches.py -m \"not postgres_backend_only\"",
+      "status": "PASS",
+      "passed": 288,
+      "postgres_deselected": 205,
+      "warnings": 2,
+      "seconds": 107.35,
+      "scope": "Earlier reconstructed-source union before subsequent missing-character read-availability correction. Fresh reconstructed runtime, all 14 new backend tests, original File/API/auth/CAS/history/restart/cancel/late-result media, production, Director, audiobook, voice/subtitle, registered adapter, U06 and batch owners. Native OTIO 0.18.1; no real provider/GPU/model/NLE. No CJK-font-bound test or browser run.",
+      "python": "3.12.14",
+      "opentimelineio": "0.18.1",
+      "log_sha256": "27648e22373190f794e0a713b1c6f82666f2639433f4d04cc2798f6a387fcbcf"
+    },
+    {
+      "name": "exact_staged_complete_frontend",
+      "command": "cd frontend && node node_modules/vitest/vitest.mjs run",
+      "status": "PASS",
+      "scope": "Post-reset reconstructed UI/API fixtures and inherited AppShell; no real browser claim.",
+      "passed": 1231,
+      "inherited_opt_in_skipped": 8,
+      "tested_code_tree": "ac967d2a769b76c61bfb60ba01e12c0a2ca4ebc1"
+    },
+    {
+      "name": "design_token_guard",
+      "command": "node scripts/check_ui_design_tokens.mjs",
+      "status": "PASS"
+    },
+    {
+      "name": "typescript",
+      "command": "cd frontend && node node_modules/typescript/bin/tsc --noEmit",
+      "status": "PASS"
+    },
+    {
+      "name": "hosted_browser_journey",
+      "command": "cd frontend && npx playwright test --config playwright.r4.config.ts r4-post-interop-media-continuation.spec.ts",
+      "status": "NOT_RUN",
+      "authored_tests": 1,
+      "reason": "Current correction awaits next exact-source hosted run. Prior superseded run37498190450 failed missing project query/new fixture and inherited wording; both repaired with local regressions. Local Chromium remains blocked and was not attempted.",
+      "previous_run": "37498190450",
+      "previous_result": "FAILED_BEFORE_SUPERSESSION"
+    },
+    {
+      "name": "postgres",
+      "status": "NOT_RUN",
+      "new_marked_cases": 12,
+      "reason": "No confirmed disposable DSN locally; hosted postgres_backend_only lane retained with unchanged skips.",
+      "new_visibility_marked_cases": 10
+    },
+    {
+      "name": "missing_character_generated_candidates_postfix",
+      "status": "PASS",
+      "passed": 88,
+      "postgres_deselected": 81,
+      "skipped": 0,
+      "warnings": 1,
+      "seconds": 73.23,
+      "command": "python -m pytest -q tests/test_post_interop_media_visibility.py tests/test_post_interop_media_continuation.py tests/test_r3_media_workflows.py tests/test_r4_media_evidence.py tests/test_r4_change_impact.py tests/test_r4_production_lineage.py tests/test_r4_registered_local_media.py -m \"not postgres_backend_only\"",
+      "scope": "Fresh post-fix exact recognized-source error correction, original media/U06/lineage/registered-local owners; synthetic and injected contracts only.",
+      "source_hashes": {
+        "app/experimental/media.py": "461c03606d96915e52957ac945c483cf63c8569478453c21602c80d21ac38033",
+        "tests/test_post_interop_media_visibility.py": "a014f3ac28c380d16876ff032facdb9a40948213a4dab7f3e412845da34cea7f"
+      },
+      "log_sha256": "fa00e6b703bba21b6ebf0264be51da445a9712ec46d41a1c8701b25e63ff056c",
+      "pre_fix_reproduction_log_sha256": "3d424f90a491dda01419b31c0e77872ce412962dbda2808773ca79739a20838d",
+      "pre_fix_result": "One new File test failed at the exact _stale missing-character path before the correction."
+    },
+    {
+      "name": "independent_missing_character_postfix_check",
+      "status": "PASS",
+      "passed": 52,
+      "inherited_postgres_skips": 45,
+      "seconds": 38.46,
+      "scope": "Independent continuation integration reviewer reran visibility, continuation, original media workflows/evidence and registered-local/mounted checks, plus original direct File reproduction. Reported on identical media/test hashes; overlap with owner run. Not the historical blocked audit.",
+      "source_hashes": {
+        "app/experimental/media.py": "461c03606d96915e52957ac945c483cf63c8569478453c21602c80d21ac38033",
+        "tests/test_post_interop_media_visibility.py": "a014f3ac28c380d16876ff032facdb9a40948213a4dab7f3e412845da34cea7f"
+      }
+    },
+    {
+      "name": "hosted_media_correction_mounted_backend",
+      "status": "PASS",
+      "passed": 58,
+      "postgres_deselected": 36,
+      "skipped": 0,
+      "warnings": 1,
+      "seconds": 32.87,
+      "command": "python -m pytest -q tests/test_post_interop_media_continuation.py tests/test_post_interop_media_visibility.py tests/test_r4_registered_media_mounted.py tests/test_r4_production_mounted.py tests/test_phase1_media_project_authorization.py -m \"not postgres_backend_only\"",
+      "source_scope": "Current correction on c12f9b6; original mounted router requires correct project query. No runtime API change.",
+      "log_sha256": "afa0f167b63639f6b12b3dc69dd409027625f1f3e23a35737e33543f2906be20",
+      "source_hashes": {
+        "frontend/src/experimental/ProductionLineagePanel.tsx": "662f5161ed0577efaa66a99b95274690a7f89a6783a4923b7d1853ce5926013e",
+        "frontend/src/experimental/ProductionLineagePanel.continuation.test.tsx": "38384ac8673f63dd998a3180044a2aeda9c88ef22b21aff5ecb2de84b6d170fe",
+        "frontend/tests/e2e/r4-post-interop-media-continuation.spec.ts": "7a38821c7676b00a66ac6734139759e087aea8b2646d3f5708f299d4d70d9538",
+        "tests/test_post_interop_media_continuation.py": "a9332d53ead1bf215fd6f39c16ac295082353555a616eef89d23833a4a863124"
+      }
+    },
+    {
+      "name": "hosted_media_correction_frontend",
+      "status": "PASS",
+      "passed": 30,
+      "test_files": 5,
+      "typescript": "PASS",
+      "design_token_guard": "PASS_42_FILES",
+      "command": "cd frontend && ./node_modules/.bin/vitest run src/experimental/ProductionLineagePanel.continuation.test.tsx src/experimental/ProductionLineagePanel.test.tsx src/experimental/RegisteredMediaPanel.test.tsx src/experimental/MediaPanel.continuation.test.tsx src/experimental/MediaPanel.recovery.test.tsx && ./node_modules/.bin/tsc -b --pretty false && npm run lint",
+      "scope": "Current correction using restored official dependencies; no browser launch.",
+      "log_sha256": "fb5a2b1efb7075ebacee4a5e94114a3fc7c84195a378a4c206f367bb58d69d81",
+      "source_hashes": {
+        "frontend/src/experimental/ProductionLineagePanel.tsx": "662f5161ed0577efaa66a99b95274690a7f89a6783a4923b7d1853ce5926013e",
+        "frontend/src/experimental/ProductionLineagePanel.continuation.test.tsx": "38384ac8673f63dd998a3180044a2aeda9c88ef22b21aff5ecb2de84b6d170fe",
+        "frontend/tests/e2e/r4-post-interop-media-continuation.spec.ts": "7a38821c7676b00a66ac6734139759e087aea8b2646d3f5708f299d4d70d9538",
+        "tests/test_post_interop_media_continuation.py": "a9332d53ead1bf215fd6f39c16ac295082353555a616eef89d23833a4a863124"
+      }
+    }
+  ],
+  "boundaries": {
+    "PARTIAL": [
+      "All original product IDs remain PARTIAL; historical matrix unchanged.",
+      "Only original recorded dependency edges are known.",
+      "Synchronous bounded PCM mix is not newly represented as a durable background task."
+    ],
+    "MOCK_ONLY": [
+      "Built-in synthetic PNG is task/review/replay proof only."
+    ],
+    "CONTRACT_VERIFIED": [
+      "Fresh post-reset injected original local-image transport, original audio queue, deterministic media review/replay and official OTIO parser contracts."
+    ],
+    "REAL_VERIFIED": [
+      "Fresh post-reset File storage, mounted HTTP, source CAS/history/restart, original asset bytes/hash and measured fixture audio only; no real model quality claim."
+    ],
+    "NOT_RUN": [
+      "Real image/video/TTS quality",
+      "ASR/word/phoneme alignment",
+      "GPU/native Windows",
+      "Resolve/Premiere/target NLE interoperability",
+      "Local browser screenshots and visual geometry",
+      "Local PostgreSQL"
+    ],
+    "LOCAL_REQUIRED": [
+      "Actual ComfyUI/H3/GPU and user native production acceptance"
+    ],
+    "BLOCKED": [
+      "Historical independent audit unchanged."
+    ]
+  },
+  "integration": {
+    "props": {
+      "MediaPanel": "requestedTaskId?: string",
+      "VoiceDirectionPanel": "requestedTaskId?: string",
+      "AudiobookPanel": "requestedPlanId?: string"
+    },
+    "composition": "Existing ExperimentalWorkbench forwards only matching original media/audio task authorities."
+  },
+  "public_receipt_note": "Commands are normalized for an isolated test environment. Raw operational logs and local recovery paths are not public artifacts.",
+  "post_review_source_sha256": {
+    "app/experimental/media.py": "461c03606d96915e52957ac945c483cf63c8569478453c21602c80d21ac38033",
+    "tests/test_post_interop_media_visibility.py": "a014f3ac28c380d16876ff032facdb9a40948213a4dab7f3e412845da34cea7f"
+  },
+  "post_review_corrections": [
+    {
+      "id": "MEDIA_MISSING_CHARACTER_GENERATED_CANDIDATES",
+      "feature_ids": [
+        "U06",
+        "A09"
+      ],
+      "scope": "Normalize only the exact MEDIA_CHARACTER_REFERENCE_INVALID ValueError in existing MediaService._stale; keep other errors/auth propagation and original queue/review gates. No mutation in list/compare/Inbox projections.",
+      "reproduction": "Generate Alice-bound and independent covers, remove original Alice: pre-fix proposals fails; post-fix 2 briefs/2 tasks/4 proposals readable with correct stale state.",
+      "source_hashes": {
+        "app/experimental/media.py": "461c03606d96915e52957ac945c483cf63c8569478453c21602c80d21ac38033",
+        "tests/test_post_interop_media_visibility.py": "a014f3ac28c380d16876ff032facdb9a40948213a4dab7f3e412845da34cea7f"
+      },
+      "tests": [
+        "File/PG-parametrized generated candidate and independent-work lifecycle",
+        "Both API prefixes: lists/compare/auth/V1 and stale-write denial",
+        "Unknown configuration ValueError, lookalike suffix and PermissionError propagation"
+      ],
+      "independent_bounded_review": "PASS; original direct reproduction and focused checks on identical source hashes; historical blocked audit unchanged."
+    }
+  ],
+  "hosted_media_correction": {
+    "baseline_sha": "c12f9b61bf732b40181fabd88e432c6b8deb5bae",
+    "failed_hosted_run": "37498190450",
+    "failed_head": "dedb813",
+    "failed_merge_checkout": "4774ad6f",
+    "compact_artifact_id": "11429826185",
+    "findings": [
+      {
+        "kind": "NEW_TEST_FIXTURE_ERROR",
+        "path": "frontend/tests/e2e/r4-post-interop-media-continuation.spec.ts",
+        "cause": "Original asset GET requires novel_id query. New test omitted it after successful approval.",
+        "fix": "Supply project query, preserve HTTP200 assertion, add asset/project identity assertion. API unchanged."
+      },
+      {
+        "kind": "INHERITED_VISIBLE_WORDING_REGRESSION",
+        "path": "frontend/src/experimental/ProductionLineagePanel.tsx",
+        "cause": "State label changed while original browser contract expected 确定性协议可复现.",
+        "fix": "Restore original label and retain independent synthetic-only/same-seed/byte-equality explanation. Inherited browser test unchanged."
+      }
+    ],
+    "source_hashes": {
+      "frontend/src/experimental/ProductionLineagePanel.tsx": "662f5161ed0577efaa66a99b95274690a7f89a6783a4923b7d1853ce5926013e",
+      "frontend/src/experimental/ProductionLineagePanel.continuation.test.tsx": "38384ac8673f63dd998a3180044a2aeda9c88ef22b21aff5ecb2de84b6d170fe",
+      "frontend/tests/e2e/r4-post-interop-media-continuation.spec.ts": "7a38821c7676b00a66ac6734139759e087aea8b2646d3f5708f299d4d70d9538",
+      "tests/test_post_interop_media_continuation.py": "a9332d53ead1bf215fd6f39c16ac295082353555a616eef89d23833a4a863124"
+    },
+    "current_corrected_hosted_verification": "NOT_RUN_NEXT_COMMIT_CI_REQUIRED",
+    "local_chromium_launched": false,
+    "workflow_rerun_requested": false,
+    "asset_api_runtime_changed": false
+  }
+}

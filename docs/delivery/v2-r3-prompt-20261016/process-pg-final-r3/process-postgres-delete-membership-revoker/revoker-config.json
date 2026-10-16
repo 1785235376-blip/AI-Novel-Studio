@@ -1,0 +1,17 @@
+{
+  "backend": "postgres",
+  "operation": "delete",
+  "revocation": "membership",
+  "nid": "r3-i-auth-a33434abd5",
+  "workspace": "w-a33434abd5",
+  "branch": "b-a33434abd5",
+  "actor": "writer-a33434abd5",
+  "admin": "init-a33434abd5",
+  "assignment": "w-a33434abd5",
+  "url": "/api/projects/r3-i-auth-a33434abd5/studio/assets/70f29a7e-33b2-4f81-81ef-60f5506afe88?expected_version=2",
+  "method": "DELETE",
+  "body": null,
+  "ipc": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-combined-pg-final-r3\\temp\\test_independent_process_revoc14\\process-postgres-delete-membership-revoker",
+  "pause_writer": false,
+  "pause_revoker": true
+}

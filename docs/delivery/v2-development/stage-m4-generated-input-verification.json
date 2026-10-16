@@ -1,0 +1,70 @@
+{
+  "utc": "2026-10-10T07:36:56.898253+00:00",
+  "status": "VERIFIED_GENERATED_INVENTORY_NOT_TEST_EXECUTION",
+  "parent": "0bf79fb2d3b8be3ff7c3034371c4bc7642500d44",
+  "artifacts": [
+    {
+      "path": ".github/ci/coverage_manifest_v2.json.gz",
+      "bytes": 367374,
+      "sha256": "1d83d2a656a4bd27d3c9aee8220e77a110414da354883983b4673ecf4faf2761",
+      "decoded_bytes": 7864801,
+      "decoded_sha256": "8ac29da7976c533637236d96cbdb8c5312787f9b0077fb8edc038f02e6cde866",
+      "format": "JSON",
+      "local_read_decode_verified": true
+    },
+    {
+      "path": "API_CATALOG.json",
+      "bytes": 1286284,
+      "sha256": "a26a819e0cd299bcc1b86c5e2c46632b22a1b04ccbca414c166dc7874790e934",
+      "decoded_bytes": 1286284,
+      "decoded_sha256": "a26a819e0cd299bcc1b86c5e2c46632b22a1b04ccbca414c166dc7874790e934",
+      "format": "JSON",
+      "local_read_decode_verified": true
+    },
+    {
+      "path": "API_CATALOG.md",
+      "bytes": 342535,
+      "sha256": "871d103cdb1508479937f0862c9c6c49c14a069ae59263f493400dcb7ce2f15a",
+      "decoded_bytes": 342535,
+      "decoded_sha256": "871d103cdb1508479937f0862c9c6c49c14a069ae59263f493400dcb7ce2f15a",
+      "format": "utf8 Markdown",
+      "local_read_decode_verified": true
+    },
+    {
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 503539,
+      "sha256": "73e03d337f4acc12ac9efaac88d763ce12b40d651565a80bbb5544a4e7b25635",
+      "decoded_bytes": 4705645,
+      "decoded_sha256": "48a47238fcb005e4f209bf575a79e553234d8e396d041911bf6118806a9bc4c6",
+      "format": "JSON",
+      "local_read_decode_verified": true
+    },
+    {
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 106883,
+      "sha256": "e6de44260379c54b12fed7f077f066b128059edc850aafbe4abaab47d32a9aee",
+      "decoded_bytes": 2067340,
+      "decoded_sha256": "03a6d122f467d2f31c454ac9891a8c9cac7731f4686d12acb73557e797186b52",
+      "format": "JSON",
+      "local_read_decode_verified": true
+    }
+  ],
+  "catalog_receipt": "catalog-3a654e0d96e1.json",
+  "manifest_receipt": "stage-m4-manifest-extension7.json",
+  "product_nodes": 10727,
+  "old_nodes": 10469,
+  "added_nodes": 258,
+  "old_order_preserved": true,
+  "catalog_operations": 2119,
+  "all_bound_source_hashes_verified": true,
+  "sensitive_pattern_review": {
+    "new_runtime_credentials": false,
+    "test_fixture_only_patterns": [
+      "Repeated-letter synthetic token-shape rejection cases in unchanged tests/test_local_interop_desktop_core.py",
+      "Synthetic localhost database parsing/rejection fixtures in unchanged tests/test_e2e_database_fixture_contract.py and tests/test_local_interop_contracts.py"
+    ],
+    "same_pattern_bytes_in_parent_manifest": true,
+    "purpose": "Repository collection contains original parametrized rejection-test names, not live credentials."
+  },
+  "scope": "Generated repository API inventory and V2 collection manifest only; no private user data, model credentials or internal publication ledger. Historical independent audit remains BLOCKED."
+}

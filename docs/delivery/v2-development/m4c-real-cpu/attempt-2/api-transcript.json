@@ -1,0 +1,1044 @@
+[
+  {
+    "method": "GET",
+    "path": "/api/local-session",
+    "request": null,
+    "status": 200,
+    "elapsed_seconds": 0.006975,
+    "response": {
+      "session_mode": "LOCAL_HOST",
+      "actor_id": "owned-cpu-acceptance-host"
+    }
+  },
+  {
+    "method": "PUT",
+    "path": "/api/model-center/local-ai/settings",
+    "request": {
+      "scan_roots": [],
+      "include_common_model_dirs": false
+    },
+    "status": 200,
+    "elapsed_seconds": 0.019262,
+    "response": {
+      "scan_roots": [],
+      "runtimes": [],
+      "include_common_model_dirs": false
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/model-center/local-ai/runtimes",
+    "request": {
+      "name": "Owned CPU acceptance",
+      "type": "LLAMA_CPP",
+      "endpoint": "http://127.0.0.1:18080",
+      "model_id": "studio-owned-cpu-text-check",
+      "modality": "TEXT",
+      "health_endpoint": "/v1/models",
+      "credential_required": false,
+      "management": "EXTERNAL",
+      "executable": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/runtime/llama-b11429/llama-server",
+      "model_path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/models/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "context_size": 2048,
+      "gpu_layers": 0,
+      "threads": 2,
+      "batch_size": 128
+    },
+    "status": 200,
+    "elapsed_seconds": 0.023254,
+    "response": {
+      "id": "local-runtime-65de50e18fd743ce",
+      "name": "Owned CPU acceptance",
+      "type": "LLAMA_CPP",
+      "endpoint": "http://127.0.0.1:18080",
+      "model_id": "studio-owned-cpu-text-check",
+      "modality": "TEXT",
+      "health_endpoint": "/v1/models",
+      "credential_required": false,
+      "management": "EXTERNAL",
+      "executable": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/runtime/llama-b11429/llama-server",
+      "model_path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/models/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "context_size": 2048,
+      "gpu_layers": 0,
+      "threads": 2,
+      "batch_size": 128
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/model-center/local-ai/onboarding/scan-scope?include_common_model_dirs=false",
+    "request": null,
+    "status": 200,
+    "elapsed_seconds": 0.019227,
+    "response": {
+      "schema_version": 1,
+      "execution_scope": "BACKEND_HOST",
+      "scope_digest": "83d977e93b6441318db4f179e11f05f3af6cf83dfc7ab706e6f504d5ccf2a2c2",
+      "include_common_model_dirs": false,
+      "services": [
+        {
+          "id": "configured-ollama",
+          "name": "Saved Ollama",
+          "type": "OLLAMA",
+          "endpoint": "http://127.0.0.1:11434",
+          "management": "EXTERNAL",
+          "probe_paths": [
+            "/api/tags",
+            "/api/version"
+          ]
+        },
+        {
+          "id": "comfyui-local",
+          "name": "comfyui-local",
+          "type": "COMFYUI",
+          "endpoint": "http://127.0.0.1:8188",
+          "management": "EXTERNAL",
+          "probe_paths": [
+            "/system_stats",
+            "/object_info"
+          ]
+        },
+        {
+          "id": "discovery-automatic1111",
+          "name": "Automatic1111",
+          "type": "AUTOMATIC1111",
+          "endpoint": "http://127.0.0.1:7860",
+          "management": "EXTERNAL",
+          "probe_paths": [
+            "/sdapi/v1/sd-models"
+          ]
+        },
+        {
+          "id": "discovery-openai_compatible_local",
+          "name": "LM Studio",
+          "type": "OPENAI_COMPATIBLE_LOCAL",
+          "endpoint": "http://127.0.0.1:1234",
+          "management": "EXTERNAL",
+          "probe_paths": [
+            "/v1/models"
+          ]
+        },
+        {
+          "id": "discovery-llama_cpp",
+          "name": "llama.cpp",
+          "type": "LLAMA_CPP",
+          "endpoint": "http://127.0.0.1:8080",
+          "management": "EXTERNAL",
+          "probe_paths": [
+            "/v1/models"
+          ]
+        },
+        {
+          "id": "llama-cpp-local",
+          "name": "llama-cpp-local",
+          "type": "LLAMA_CPP",
+          "endpoint": "http://127.0.0.1:8081",
+          "management": "MANAGED",
+          "probe_paths": [
+            "/v1/models"
+          ]
+        },
+        {
+          "id": "local-runtime-65de50e18fd743ce",
+          "name": "Owned CPU acceptance",
+          "type": "LLAMA_CPP",
+          "endpoint": "http://127.0.0.1:18080",
+          "management": "EXTERNAL",
+          "probe_paths": [
+            "/v1/models"
+          ]
+        }
+      ],
+      "roots": [],
+      "metadata_inspections": [
+        {
+          "kind": "CONFIGURED_GGUF_HEADER",
+          "path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/models/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+          "max_entries": 1,
+          "max_bytes": 262144
+        },
+        {
+          "kind": "EXECUTABLE_VERSION_RESOURCE",
+          "path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/runtime/llama-b11429/llama-server",
+          "max_entries": 1,
+          "max_bytes": 1048576
+        },
+        {
+          "kind": "EXECUTABLE_DIRECTORY_SIBLINGS",
+          "path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/runtime/llama-b11429",
+          "max_entries": 256,
+          "max_bytes": 0
+        }
+      ],
+      "hardware_categories": [
+        "OS_PLATFORM",
+        "CPU_ARCHITECTURE",
+        "CPU_LOGICAL_COUNT",
+        "PHYSICAL_RAM",
+        "WINDOWS_DXGI_GPU_AND_VRAM",
+        "WINDOWS_SYSTEM_CUDA_DIRECTML_COMPONENT_METADATA"
+      ],
+      "limits": {
+        "planning_budget_seconds": 5,
+        "scan_budget_seconds": 45,
+        "request_timeout_seconds": 2.0,
+        "max_services": 20,
+        "max_models_per_service": 512,
+        "max_response_bytes": 4194304,
+        "max_roots": 32,
+        "max_http_requests": 9,
+        "max_entries": 5000,
+        "max_files": 2000,
+        "max_depth": 3,
+        "max_metadata_bytes": 262144,
+        "max_metadata_read_bytes": 262152,
+        "max_executable_siblings": 256,
+        "max_executable_version_bytes": 1048576,
+        "max_windows_gpu_adapters": 128,
+        "max_registration_metadata_inspections": 2048,
+        "preview_ttl_seconds": 120
+      },
+      "inference_status": "NOT_RUN",
+      "requires_confirmation": true,
+      "side_effects": {
+        "launches": false,
+        "loads_weights": false,
+        "registers": false,
+        "enables": false,
+        "cloud_calls": false,
+        "persists_settings": false,
+        "may_disable_stale_registrations": true,
+        "persists_registration_safety_updates": true
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/model-center/local-ai/onboarding/scan",
+    "request": {
+      "scope_digest": "83d977e93b6441318db4f179e11f05f3af6cf83dfc7ab706e6f504d5ccf2a2c2",
+      "confirmed": true
+    },
+    "status": 202,
+    "elapsed_seconds": 0.020029,
+    "response": {
+      "id": "6fff35cad75c48ee98043babe3b045bb",
+      "status": "RUNNING",
+      "runtimes": [],
+      "candidates": [],
+      "errors": [],
+      "started_at": "2026-10-10T15:16:00.052129+00:00",
+      "finished_at": null,
+      "environment_schema_version": 2,
+      "model_files": [],
+      "roots": [],
+      "consent": {
+        "scope_digest": "83d977e93b6441318db4f179e11f05f3af6cf83dfc7ab706e6f504d5ccf2a2c2",
+        "confirmed_at": "2026-10-10T15:16:00.052152+00:00",
+        "execution_scope": "BACKEND_HOST"
+      },
+      "workflow_prerequisites": {
+        "schema_version": 1,
+        "scan_id": "6fff35cad75c48ee98043babe3b045bb",
+        "scan_status": "RUNNING",
+        "definition_status": "COMPLETE",
+        "workflows": [
+          {
+            "runtime_id": "comfyui-local",
+            "adapter_id": "comfy-sd-checkpoint-v1",
+            "display_name": "Stable Diffusion checkpoint (T2I)",
+            "evidence_status": "NOT_SCANNED",
+            "nodes": [
+              {
+                "node_class": "CheckpointLoaderSimple",
+                "observation": "unknown"
+              },
+              {
+                "node_class": "KSampler",
+                "observation": "unknown"
+              },
+              {
+                "node_class": "EmptyLatentImage",
+                "observation": "unknown"
+              },
+              {
+                "node_class": "CLIPTextEncode",
+                "observation": "unknown"
+              },
+              {
+                "node_class": "VAEDecode",
+                "observation": "unknown"
+              },
+              {
+                "node_class": "SaveImage",
+                "observation": "unknown"
+              }
+            ],
+            "loader": {
+              "node_class": "CheckpointLoaderSimple",
+              "observation": "unknown",
+              "input_field": "ckpt_name",
+              "advertised_count": null,
+              "candidate_ids": []
+            },
+            "metadata_status": "NOT_VERIFIED",
+            "inference_status": "NOT_RUN"
+          }
+        ],
+        "components": [
+          {
+            "model_id": "flux2-klein-4b-fp8",
+            "model_display_name": "FLUX.2 Klein 4B FP8",
+            "component_id": "flux2-klein-qwen3-encoder",
+            "component_type": "TEXT_ENCODER",
+            "observation": "unknown",
+            "reason": "NO_COMPONENT_IDENTITY_EVIDENCE",
+            "metadata_status": "NOT_VERIFIED",
+            "inference_status": "NOT_RUN"
+          },
+          {
+            "model_id": "flux2-dev",
+            "model_display_name": "FLUX.2 Dev",
+            "component_id": "flux2-dev-mistral-encoder",
+            "component_type": "TEXT_ENCODER",
+            "observation": "unknown",
+            "reason": "NO_COMPONENT_IDENTITY_EVIDENCE",
+            "metadata_status": "NOT_VERIFIED",
+            "inference_status": "NOT_RUN"
+          },
+          {
+            "model_id": "rife-49",
+            "model_display_name": "RIFE 4.9",
+            "component_id": "rife-49-checkpoint",
+            "component_type": "CHECKPOINT",
+            "observation": "unknown",
+            "reason": "NO_COMPONENT_IDENTITY_EVIDENCE",
+            "metadata_status": "NOT_VERIFIED",
+            "inference_status": "NOT_RUN"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/model-center/local-ai/scan/6fff35cad75c48ee98043babe3b045bb",
+    "request": null,
+    "status": 200,
+    "elapsed_seconds": 0.011046,
+    "response": {
+      "id": "6fff35cad75c48ee98043babe3b045bb",
+      "status": "PARTIAL",
+      "runtimes": [
+        {
+          "id": "configured-ollama",
+          "name": "Saved Ollama",
+          "type": "OLLAMA",
+          "endpoint": "http://127.0.0.1:11434",
+          "management": "EXTERNAL",
+          "status": "NOT_FOUND",
+          "version": null,
+          "notes": [
+            "LOCAL_AI_PROBE_UNAVAILABLE"
+          ]
+        },
+        {
+          "id": "comfyui-local",
+          "name": "comfyui-local",
+          "type": "COMFYUI",
+          "endpoint": "http://127.0.0.1:8188",
+          "management": "EXTERNAL",
+          "status": "NOT_FOUND",
+          "version": null,
+          "notes": [
+            "LOCAL_AI_PROBE_UNAVAILABLE"
+          ]
+        },
+        {
+          "id": "discovery-automatic1111",
+          "name": "Automatic1111",
+          "type": "AUTOMATIC1111",
+          "endpoint": "http://127.0.0.1:7860",
+          "management": "EXTERNAL",
+          "status": "NOT_FOUND",
+          "version": null,
+          "notes": [
+            "LOCAL_AI_PROBE_UNAVAILABLE"
+          ]
+        },
+        {
+          "id": "discovery-openai_compatible_local",
+          "name": "LM Studio",
+          "type": "OPENAI_COMPATIBLE_LOCAL",
+          "endpoint": "http://127.0.0.1:1234",
+          "management": "EXTERNAL",
+          "status": "NOT_FOUND",
+          "version": null,
+          "notes": [
+            "LOCAL_AI_PROBE_UNAVAILABLE"
+          ]
+        },
+        {
+          "id": "discovery-llama_cpp",
+          "name": "llama.cpp",
+          "type": "LLAMA_CPP",
+          "endpoint": "http://127.0.0.1:8080",
+          "management": "EXTERNAL",
+          "status": "NOT_FOUND",
+          "version": null,
+          "notes": [
+            "EXECUTABLE_NOT_EXECUTED",
+            "LOCAL_AI_PROBE_UNAVAILABLE"
+          ],
+          "executable_exists": false,
+          "version_source": "NOT_VERIFIED",
+          "cuda_status": "NOT_VERIFIED"
+        },
+        {
+          "id": "llama-cpp-local",
+          "name": "llama-cpp-local",
+          "type": "LLAMA_CPP",
+          "endpoint": "http://127.0.0.1:8081",
+          "management": "MANAGED",
+          "status": "NOT_FOUND",
+          "version": null,
+          "notes": [
+            "EXECUTABLE_NOT_EXECUTED",
+            "LOCAL_AI_PROBE_UNAVAILABLE"
+          ],
+          "executable_exists": false,
+          "version_source": "NOT_VERIFIED",
+          "cuda_status": "NOT_VERIFIED"
+        },
+        {
+          "id": "local-runtime-65de50e18fd743ce",
+          "name": "Owned CPU acceptance",
+          "type": "LLAMA_CPP",
+          "endpoint": "http://127.0.0.1:18080",
+          "management": "EXTERNAL",
+          "status": "RUNNING",
+          "version": null,
+          "notes": [
+            "EXECUTABLE_NOT_EXECUTED"
+          ],
+          "executable_exists": true,
+          "version_source": "NOT_VERIFIED",
+          "cuda_status": "NOT_VERIFIED",
+          "executable_size": 17864,
+          "available_models": [
+            "studio-owned-cpu-text-check"
+          ]
+        }
+      ],
+      "candidates": [
+        {
+          "id": "local-9ed40e7298963a7863997e13",
+          "candidate_id": "local-9ed40e7298963a7863997e13",
+          "provider_id": "discovery-local-9ed40e7298963a7863997e13",
+          "display_name": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+          "model_id": "local-9ed40e7298963a7863997e13",
+          "family": "QWEN",
+          "modality": "TEXT",
+          "declared_capabilities": [
+            "TEXT"
+          ],
+          "verified_capabilities": [],
+          "runtime_id": "local-runtime-65de50e18fd743ce",
+          "runtime_type": "LLAMA_CPP",
+          "source": "LLAMA_CPP",
+          "model_name": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+          "local_path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/models/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+          "local": true,
+          "status": "DISCOVERED",
+          "compatible": "NOT_VERIFIED",
+          "verified": false,
+          "enabled": false,
+          "validated_at": null,
+          "validation_notes": [
+            "CAPABILITY_UNVERIFIED",
+            "INFERENCE_NOT_RUN"
+          ],
+          "evidence": {
+            "file_exists": true,
+            "header_valid": true,
+            "metadata_complete": false,
+            "size": 491400032,
+            "modified_ns": 1791644870170569879,
+            "gguf_version": 3,
+            "tensor_count": 291,
+            "general.architecture": "qwen2",
+            "general.name": "qwen2.5-0.5b-instruct",
+            "qwen2.context_length": 32768,
+            "general.file_type": 15,
+            "runtime_advertised_models": [
+              "studio-owned-cpu-text-check"
+            ]
+          },
+          "runtime_config": {
+            "id": "local-runtime-65de50e18fd743ce",
+            "name": "Owned CPU acceptance",
+            "type": "LLAMA_CPP",
+            "endpoint": "http://127.0.0.1:18080",
+            "model_id": "studio-owned-cpu-text-check",
+            "modality": "TEXT",
+            "health_endpoint": "/v1/models",
+            "credential_required": false,
+            "management": "EXTERNAL",
+            "executable": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/runtime/llama-b11429/llama-server",
+            "model_path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/models/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+            "context_size": 2048,
+            "gpu_layers": 0,
+            "threads": 2,
+            "batch_size": 128
+          },
+          "license_required": true,
+          "license_status": "REVIEW_REQUIRED",
+          "license_confirmed": false,
+          "workflow_adapter_id": "",
+          "enable_eligible": false,
+          "enable_blockers": [
+            "VALIDATION_REQUIRED"
+          ]
+        }
+      ],
+      "errors": [
+        {
+          "runtime_id": "configured-ollama",
+          "code": "LOCAL_AI_PROBE_UNAVAILABLE"
+        },
+        {
+          "runtime_id": "comfyui-local",
+          "code": "LOCAL_AI_PROBE_UNAVAILABLE"
+        },
+        {
+          "runtime_id": "discovery-automatic1111",
+          "code": "LOCAL_AI_PROBE_UNAVAILABLE"
+        },
+        {
+          "runtime_id": "discovery-openai_compatible_local",
+          "code": "LOCAL_AI_PROBE_UNAVAILABLE"
+        },
+        {
+          "runtime_id": "discovery-llama_cpp",
+          "code": "LOCAL_AI_PROBE_UNAVAILABLE"
+        },
+        {
+          "runtime_id": "llama-cpp-local",
+          "code": "LOCAL_AI_PROBE_UNAVAILABLE"
+        }
+      ],
+      "started_at": "2026-10-10T15:16:00.052129+00:00",
+      "finished_at": "2026-10-10T15:16:00.070911+00:00",
+      "environment_schema_version": 2,
+      "model_files": [],
+      "roots": [],
+      "consent": {
+        "scope_digest": "83d977e93b6441318db4f179e11f05f3af6cf83dfc7ab706e6f504d5ccf2a2c2",
+        "confirmed_at": "2026-10-10T15:16:00.052152+00:00",
+        "execution_scope": "BACKEND_HOST"
+      },
+      "workflow_prerequisites": {
+        "schema_version": 1,
+        "scan_id": "6fff35cad75c48ee98043babe3b045bb",
+        "scan_status": "PARTIAL",
+        "definition_status": "COMPLETE",
+        "workflows": [
+          {
+            "runtime_id": "comfyui-local",
+            "adapter_id": "comfy-sd-checkpoint-v1",
+            "display_name": "Stable Diffusion checkpoint (T2I)",
+            "evidence_status": "UNAVAILABLE",
+            "nodes": [
+              {
+                "node_class": "CheckpointLoaderSimple",
+                "observation": "unknown"
+              },
+              {
+                "node_class": "KSampler",
+                "observation": "unknown"
+              },
+              {
+                "node_class": "EmptyLatentImage",
+                "observation": "unknown"
+              },
+              {
+                "node_class": "CLIPTextEncode",
+                "observation": "unknown"
+              },
+              {
+                "node_class": "VAEDecode",
+                "observation": "unknown"
+              },
+              {
+                "node_class": "SaveImage",
+                "observation": "unknown"
+              }
+            ],
+            "loader": {
+              "node_class": "CheckpointLoaderSimple",
+              "observation": "unknown",
+              "input_field": "ckpt_name",
+              "advertised_count": null,
+              "candidate_ids": []
+            },
+            "metadata_status": "NOT_VERIFIED",
+            "inference_status": "NOT_RUN"
+          }
+        ],
+        "components": [
+          {
+            "model_id": "flux2-klein-4b-fp8",
+            "model_display_name": "FLUX.2 Klein 4B FP8",
+            "component_id": "flux2-klein-qwen3-encoder",
+            "component_type": "TEXT_ENCODER",
+            "observation": "unknown",
+            "reason": "NO_COMPONENT_IDENTITY_EVIDENCE",
+            "metadata_status": "NOT_VERIFIED",
+            "inference_status": "NOT_RUN"
+          },
+          {
+            "model_id": "flux2-dev",
+            "model_display_name": "FLUX.2 Dev",
+            "component_id": "flux2-dev-mistral-encoder",
+            "component_type": "TEXT_ENCODER",
+            "observation": "unknown",
+            "reason": "NO_COMPONENT_IDENTITY_EVIDENCE",
+            "metadata_status": "NOT_VERIFIED",
+            "inference_status": "NOT_RUN"
+          },
+          {
+            "model_id": "rife-49",
+            "model_display_name": "RIFE 4.9",
+            "component_id": "rife-49-checkpoint",
+            "component_type": "CHECKPOINT",
+            "observation": "unknown",
+            "reason": "NO_COMPONENT_IDENTITY_EVIDENCE",
+            "metadata_status": "NOT_VERIFIED",
+            "inference_status": "NOT_RUN"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/model-center/local-ai/candidates/local-9ed40e7298963a7863997e13/validate",
+    "request": null,
+    "status": 200,
+    "elapsed_seconds": 0.022175,
+    "response": {
+      "id": "local-9ed40e7298963a7863997e13",
+      "candidate_id": "local-9ed40e7298963a7863997e13",
+      "provider_id": "discovery-local-9ed40e7298963a7863997e13",
+      "display_name": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "model_id": "local-9ed40e7298963a7863997e13",
+      "family": "QWEN",
+      "modality": "TEXT",
+      "declared_capabilities": [
+        "TEXT"
+      ],
+      "verified_capabilities": [
+        "TEXT"
+      ],
+      "runtime_id": "local-runtime-65de50e18fd743ce",
+      "runtime_type": "LLAMA_CPP",
+      "source": "LLAMA_CPP",
+      "model_name": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "local_path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/models/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "local": true,
+      "status": "LICENSE_REQUIRED",
+      "compatible": "POSSIBLY_COMPATIBLE",
+      "verified": false,
+      "enabled": false,
+      "validated_at": "2026-10-10T15:16:00.289619+00:00",
+      "validation_notes": [
+        "INFERENCE_NOT_RUN",
+        "CURRENT_GPU_NOT_VERIFIED",
+        "EXECUTABLE_VERSION_NOT_VERIFIED",
+        "CUDA_NOT_VERIFIED"
+      ],
+      "evidence": {
+        "file_exists": true,
+        "header_valid": true,
+        "metadata_complete": false,
+        "size": 491400032,
+        "modified_ns": 1791644870170569879,
+        "gguf_version": 3,
+        "tensor_count": 291,
+        "general.architecture": "qwen2",
+        "general.name": "qwen2.5-0.5b-instruct",
+        "qwen2.context_length": 32768,
+        "general.file_type": 15
+      },
+      "runtime_config": {
+        "id": "local-runtime-65de50e18fd743ce",
+        "name": "Owned CPU acceptance",
+        "type": "LLAMA_CPP",
+        "endpoint": "http://127.0.0.1:18080",
+        "model_id": "studio-owned-cpu-text-check",
+        "modality": "TEXT",
+        "health_endpoint": "/v1/models",
+        "credential_required": false,
+        "management": "EXTERNAL",
+        "executable": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/runtime/llama-b11429/llama-server",
+        "model_path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/models/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+        "context_size": 2048,
+        "gpu_layers": 0,
+        "threads": 2,
+        "batch_size": 128
+      },
+      "license_required": true,
+      "license_status": "REVIEW_REQUIRED",
+      "license_confirmed": false,
+      "workflow_adapter_id": "",
+      "enable_eligible": false,
+      "enable_blockers": [
+        "LICENSE_VALIDATION_REQUIRED"
+      ],
+      "model_evidence_fingerprint": "165e261f4dd3731468e57e774613870a7ead2c4312c3992b2ee1c9a3b7f797f6",
+      "runtime_fingerprint": "718dd157effc9737427f0f4aae3bc9727725b545109bab0d43eaacb7a9c255a6"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/model-center/local-ai/candidates/local-9ed40e7298963a7863997e13/register",
+    "request": null,
+    "status": 200,
+    "elapsed_seconds": 0.014603,
+    "response": {
+      "id": "local-9ed40e7298963a7863997e13",
+      "candidate_id": "local-9ed40e7298963a7863997e13",
+      "provider_id": "discovery-local-9ed40e7298963a7863997e13",
+      "display_name": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "model_id": "local-9ed40e7298963a7863997e13",
+      "family": "QWEN",
+      "modality": "TEXT",
+      "declared_capabilities": [
+        "TEXT"
+      ],
+      "verified_capabilities": [
+        "TEXT"
+      ],
+      "runtime_id": "local-runtime-65de50e18fd743ce",
+      "runtime_type": "LLAMA_CPP",
+      "source": "LLAMA_CPP",
+      "model_name": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "local_path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/models/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "local": true,
+      "status": "LICENSE_REQUIRED",
+      "compatible": "POSSIBLY_COMPATIBLE",
+      "verified": false,
+      "enabled": false,
+      "validated_at": "2026-10-10T15:16:00.289619+00:00",
+      "validation_notes": [
+        "INFERENCE_NOT_RUN",
+        "CURRENT_GPU_NOT_VERIFIED",
+        "EXECUTABLE_VERSION_NOT_VERIFIED",
+        "CUDA_NOT_VERIFIED"
+      ],
+      "evidence": {
+        "file_exists": true,
+        "header_valid": true,
+        "metadata_complete": false,
+        "size": 491400032,
+        "modified_ns": 1791644870170569879,
+        "gguf_version": 3,
+        "tensor_count": 291,
+        "general.architecture": "qwen2",
+        "general.name": "qwen2.5-0.5b-instruct",
+        "qwen2.context_length": 32768,
+        "general.file_type": 15
+      },
+      "runtime_config": {
+        "id": "local-runtime-65de50e18fd743ce",
+        "name": "Owned CPU acceptance",
+        "type": "LLAMA_CPP",
+        "endpoint": "http://127.0.0.1:18080",
+        "model_id": "studio-owned-cpu-text-check",
+        "modality": "TEXT",
+        "health_endpoint": "/v1/models",
+        "credential_required": false,
+        "management": "EXTERNAL",
+        "executable": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/runtime/llama-b11429/llama-server",
+        "model_path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/models/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+        "context_size": 2048,
+        "gpu_layers": 0,
+        "threads": 2,
+        "batch_size": 128
+      },
+      "license_required": true,
+      "license_status": "REVIEW_REQUIRED",
+      "license_confirmed": false,
+      "workflow_adapter_id": "",
+      "enable_eligible": false,
+      "enable_blockers": [
+        "LICENSE_VALIDATION_REQUIRED"
+      ],
+      "model_evidence_fingerprint": "165e261f4dd3731468e57e774613870a7ead2c4312c3992b2ee1c9a3b7f797f6",
+      "runtime_fingerprint": "718dd157effc9737427f0f4aae3bc9727725b545109bab0d43eaacb7a9c255a6",
+      "registered_at": "2026-10-10T15:16:00.302886+00:00"
+    }
+  },
+  {
+    "method": "PUT",
+    "path": "/api/model-center/local-ai/registrations/local-9ed40e7298963a7863997e13",
+    "request": {
+      "workflow_adapter_id": "",
+      "license_confirmed": true
+    },
+    "status": 200,
+    "elapsed_seconds": 0.02231,
+    "response": {
+      "id": "local-9ed40e7298963a7863997e13",
+      "candidate_id": "local-9ed40e7298963a7863997e13",
+      "provider_id": "discovery-local-9ed40e7298963a7863997e13",
+      "display_name": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "model_id": "local-9ed40e7298963a7863997e13",
+      "family": "QWEN",
+      "modality": "TEXT",
+      "declared_capabilities": [
+        "TEXT"
+      ],
+      "verified_capabilities": [
+        "TEXT"
+      ],
+      "runtime_id": "local-runtime-65de50e18fd743ce",
+      "runtime_type": "LLAMA_CPP",
+      "source": "LLAMA_CPP",
+      "model_name": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "local_path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/models/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "local": true,
+      "status": "LICENSE_REQUIRED",
+      "compatible": "POSSIBLY_COMPATIBLE",
+      "verified": false,
+      "enabled": false,
+      "validated_at": "2026-10-10T15:16:00.289619+00:00",
+      "validation_notes": [
+        "INFERENCE_NOT_RUN",
+        "CURRENT_GPU_NOT_VERIFIED",
+        "EXECUTABLE_VERSION_NOT_VERIFIED",
+        "CUDA_NOT_VERIFIED"
+      ],
+      "evidence": {
+        "file_exists": true,
+        "header_valid": true,
+        "metadata_complete": false,
+        "size": 491400032,
+        "modified_ns": 1791644870170569879,
+        "gguf_version": 3,
+        "tensor_count": 291,
+        "general.architecture": "qwen2",
+        "general.name": "qwen2.5-0.5b-instruct",
+        "qwen2.context_length": 32768,
+        "general.file_type": 15
+      },
+      "runtime_config": {
+        "id": "local-runtime-65de50e18fd743ce",
+        "name": "Owned CPU acceptance",
+        "type": "LLAMA_CPP",
+        "endpoint": "http://127.0.0.1:18080",
+        "model_id": "studio-owned-cpu-text-check",
+        "modality": "TEXT",
+        "health_endpoint": "/v1/models",
+        "credential_required": false,
+        "management": "EXTERNAL",
+        "executable": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/runtime/llama-b11429/llama-server",
+        "model_path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/models/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+        "context_size": 2048,
+        "gpu_layers": 0,
+        "threads": 2,
+        "batch_size": 128
+      },
+      "license_required": true,
+      "license_status": "REVIEW_REQUIRED",
+      "license_confirmed": true,
+      "workflow_adapter_id": "",
+      "enable_eligible": true,
+      "enable_blockers": [],
+      "model_evidence_fingerprint": "165e261f4dd3731468e57e774613870a7ead2c4312c3992b2ee1c9a3b7f797f6",
+      "runtime_fingerprint": "718dd157effc9737427f0f4aae3bc9727725b545109bab0d43eaacb7a9c255a6",
+      "registered_at": "2026-10-10T15:16:00.302886+00:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/model-center/local-ai/registrations/local-9ed40e7298963a7863997e13/enable",
+    "request": {
+      "confirmed": true
+    },
+    "status": 200,
+    "elapsed_seconds": 0.036472,
+    "response": {
+      "id": "local-9ed40e7298963a7863997e13",
+      "candidate_id": "local-9ed40e7298963a7863997e13",
+      "provider_id": "discovery-local-9ed40e7298963a7863997e13",
+      "display_name": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "model_id": "local-9ed40e7298963a7863997e13",
+      "family": "QWEN",
+      "modality": "TEXT",
+      "declared_capabilities": [
+        "TEXT"
+      ],
+      "verified_capabilities": [
+        "TEXT"
+      ],
+      "runtime_id": "local-runtime-65de50e18fd743ce",
+      "runtime_type": "LLAMA_CPP",
+      "source": "LLAMA_CPP",
+      "model_name": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "local_path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/models/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "local": true,
+      "status": "DEGRADED",
+      "compatible": "POSSIBLY_COMPATIBLE",
+      "verified": false,
+      "enabled": true,
+      "validated_at": "2026-10-10T15:16:00.360489+00:00",
+      "validation_notes": [
+        "INFERENCE_NOT_RUN",
+        "CURRENT_GPU_NOT_VERIFIED",
+        "EXECUTABLE_VERSION_NOT_VERIFIED",
+        "CUDA_NOT_VERIFIED"
+      ],
+      "evidence": {
+        "file_exists": true,
+        "header_valid": true,
+        "metadata_complete": false,
+        "size": 491400032,
+        "modified_ns": 1791644870170569879,
+        "gguf_version": 3,
+        "tensor_count": 291,
+        "general.architecture": "qwen2",
+        "general.name": "qwen2.5-0.5b-instruct",
+        "qwen2.context_length": 32768,
+        "general.file_type": 15
+      },
+      "runtime_config": {
+        "id": "local-runtime-65de50e18fd743ce",
+        "name": "Owned CPU acceptance",
+        "type": "LLAMA_CPP",
+        "endpoint": "http://127.0.0.1:18080",
+        "model_id": "studio-owned-cpu-text-check",
+        "modality": "TEXT",
+        "health_endpoint": "/v1/models",
+        "credential_required": false,
+        "management": "EXTERNAL",
+        "executable": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/runtime/llama-b11429/llama-server",
+        "model_path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/models/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+        "context_size": 2048,
+        "gpu_layers": 0,
+        "threads": 2,
+        "batch_size": 128
+      },
+      "license_required": true,
+      "license_status": "REVIEW_REQUIRED",
+      "license_confirmed": true,
+      "workflow_adapter_id": "",
+      "enable_eligible": true,
+      "enable_blockers": [],
+      "model_evidence_fingerprint": "165e261f4dd3731468e57e774613870a7ead2c4312c3992b2ee1c9a3b7f797f6",
+      "runtime_fingerprint": "718dd157effc9737427f0f4aae3bc9727725b545109bab0d43eaacb7a9c255a6",
+      "enabled_at": "2026-10-10T15:16:00.364555+00:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/experimental/projects",
+    "request": {
+      "title": "Owned real CPU TextNode acceptance"
+    },
+    "status": 201,
+    "elapsed_seconds": 0.028701,
+    "response": {
+      "id": "owned-real-cpu-textnode-acceptance",
+      "title": "Owned real CPU TextNode acceptance",
+      "genre": "",
+      "status": "Writing",
+      "created_at": "2026-10-10T15:16:00.386918+00:00",
+      "updated_at": "2026-10-10T15:16:00.386932+00:00",
+      "studio_ready": true,
+      "requires_scope_selection": false
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/projects/owned-real-cpu-textnode-acceptance/studio/graphs/model-capabilities",
+    "request": null,
+    "status": 200,
+    "elapsed_seconds": 0.042334,
+    "response": {
+      "schema_version": 1,
+      "contract": "creative-graph-model/1",
+      "project_id": "owned-real-cpu-textnode-acceptance",
+      "scope": {
+        "mode": "local",
+        "novel_id": "owned-real-cpu-textnode-acceptance"
+      },
+      "adapter_owner": "TextModelNode",
+      "router_owner": "ModelBroker",
+      "scheduler_owner": "JobManager+WorkflowRun",
+      "local_only": true,
+      "automatic_fallback": false,
+      "api_provider": {
+        "status": "RESERVED",
+        "execution_available": false,
+        "reason": "API_PROVIDER_EXECUTION_NOT_ENABLED"
+      },
+      "limits": {
+        "model_nodes": 1,
+        "max_output_tokens": 2048,
+        "timeout_seconds": 180
+      },
+      "routes": [
+        {
+          "route_id": "92300465429bdfe0b74fd5a38e1f87a2711220c6ba80e0aa283f9a75e252945f",
+          "provider_id": "discovery-local-9ed40e7298963a7863997e13",
+          "model_id": "local-9ed40e7298963a7863997e13",
+          "display_name": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+          "synthetic": false,
+          "context_window": 2048,
+          "verification": "ADAPTER_CONTRACT_ONLY",
+          "available": false,
+          "reasons": [
+            "LOCAL_MODEL_ADAPTER_UNAVAILABLE",
+            "KNOWN_ZERO_PRICE_REQUIRED"
+          ]
+        },
+        {
+          "route_id": "5d101c2894a61127a2778bd844de7f4366d361dfae81ce338ed624557cc97ca2",
+          "provider_id": "mock",
+          "model_id": "mock-writer",
+          "display_name": "内置测试写作模型",
+          "synthetic": true,
+          "context_window": 8192,
+          "verification": "SYNTHETIC_PROTOCOL_ONLY",
+          "available": true,
+          "reasons": []
+        },
+        {
+          "route_id": "5d0a7089d0efca8ecc34fc188f1b5ec5cfb80ea5ff53524e2c5c6e27e32219b6",
+          "provider_id": "ollama",
+          "model_id": "qwen2.5:7b-instruct-q4_K_M",
+          "display_name": "qwen2.5:7b-instruct-q4_K_M",
+          "synthetic": false,
+          "context_window": null,
+          "verification": "ADAPTER_CONTRACT_ONLY",
+          "available": false,
+          "reasons": [
+            "EXPLICIT_MODEL_CENTER_ENABLE_REQUIRED",
+            "LOCAL_MODEL_ADAPTER_UNAVAILABLE",
+            "KNOWN_ZERO_PRICE_REQUIRED",
+            "LICENSE_CONFIRMATION_REQUIRED"
+          ]
+        }
+      ],
+      "quality_verification": "NOT_RUN",
+      "result_storage": {
+        "contract": "creative-graph-text-asset/1",
+        "available": true,
+        "owner": "AssetLibraryService",
+        "actor_private": true,
+        "automatic_model_retry": false
+      }
+    }
+  }
+]

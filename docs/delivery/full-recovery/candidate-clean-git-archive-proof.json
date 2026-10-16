@@ -1,0 +1,10 @@
+{
+  "source_commit": "3efa0393861c0dcddab7bd74e6d12e5ec483e7b1",
+  "source_tree": "764aa6e3373aa39103919ac01faaebf15a9373ae",
+  "candidate_manifest_sha256": "7e03e639ce4cd99230bcfe18efcf7703f5fd939f4e83ace2308b4284b38d49f9",
+  "source_fingerprint_sha256": "7bdd12fc2e2eed8acd0410f8dc059bdad01651ed1a02eab26f6a1c70dac1cb62",
+  "clean_git_archive_source_files": 1523,
+  "all_hashes_match": true,
+  "errors": [],
+  "boundary": "Committed clean Git archive proof, independent of Windows worktree EOL conversion; no execution or hosted CI claim."
+}

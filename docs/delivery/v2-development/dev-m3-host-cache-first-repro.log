@@ -1,0 +1,130 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_collaboration_session_cannot_read_host_cache_when_v2_enabled_or_disabled[True-/api] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f064aecde50>
+prefix = '/api', enabled = True
+
+    @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+    @pytest.mark.parametrize("enabled", [True, False])
+    def test_collaboration_session_cannot_read_host_cache_when_v2_enabled_or_disabled(monkeypatch, prefix, enabled):
+        import app.main as main
+        monkeypatch.setattr(main, "settings", replace(main.settings,
+            enable_collaboration_runtime=True, enable_packaged_runtime=False))
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", "narrative_production_v2" if enabled else "")
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        sessions = TrustedSessionResolver()
+        sessions.register("synthetic-workspace-administrator", SessionContext("s", "remote-client", "administrator", "workspace"))
+        monkeypatch.setattr(main, "trusted_session_resolver", sessions)
+        calls = []
+        def private_snapshot():
+            calls.append("read")
+            return {"settings": {"scan_roots": ["/synthetic-host-private/models"]},
+                    "scan": {"environment_schema_version": 2, "model_files": [{"path": "/synthetic-host-private/model.gguf"}]}}
+        monkeypatch.setattr(main.local_ai_discovery, "snapshot", private_snapshot)
+        response = TestClient(main.app).get(prefix + "/model-center/local-ai",
+            headers={"X-Session-Token": "synthetic-workspace-administrator"})
+>       assert response.status_code == 403
+E       assert 200 == 403
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/test_v2_discovery_host_authority.py:30: AssertionError
+_ test_collaboration_session_cannot_read_host_cache_when_v2_enabled_or_disabled[True-/api/v1] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f064ab0af30>
+prefix = '/api/v1', enabled = True
+
+    @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+    @pytest.mark.parametrize("enabled", [True, False])
+    def test_collaboration_session_cannot_read_host_cache_when_v2_enabled_or_disabled(monkeypatch, prefix, enabled):
+        import app.main as main
+        monkeypatch.setattr(main, "settings", replace(main.settings,
+            enable_collaboration_runtime=True, enable_packaged_runtime=False))
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", "narrative_production_v2" if enabled else "")
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        sessions = TrustedSessionResolver()
+        sessions.register("synthetic-workspace-administrator", SessionContext("s", "remote-client", "administrator", "workspace"))
+        monkeypatch.setattr(main, "trusted_session_resolver", sessions)
+        calls = []
+        def private_snapshot():
+            calls.append("read")
+            return {"settings": {"scan_roots": ["/synthetic-host-private/models"]},
+                    "scan": {"environment_schema_version": 2, "model_files": [{"path": "/synthetic-host-private/model.gguf"}]}}
+        monkeypatch.setattr(main.local_ai_discovery, "snapshot", private_snapshot)
+        response = TestClient(main.app).get(prefix + "/model-center/local-ai",
+            headers={"X-Session-Token": "synthetic-workspace-administrator"})
+>       assert response.status_code == 403
+E       assert 200 == 403
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/test_v2_discovery_host_authority.py:30: AssertionError
+_ test_collaboration_session_cannot_read_host_cache_when_v2_enabled_or_disabled[False-/api] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f064abdb4d0>
+prefix = '/api', enabled = False
+
+    @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+    @pytest.mark.parametrize("enabled", [True, False])
+    def test_collaboration_session_cannot_read_host_cache_when_v2_enabled_or_disabled(monkeypatch, prefix, enabled):
+        import app.main as main
+        monkeypatch.setattr(main, "settings", replace(main.settings,
+            enable_collaboration_runtime=True, enable_packaged_runtime=False))
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", "narrative_production_v2" if enabled else "")
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        sessions = TrustedSessionResolver()
+        sessions.register("synthetic-workspace-administrator", SessionContext("s", "remote-client", "administrator", "workspace"))
+        monkeypatch.setattr(main, "trusted_session_resolver", sessions)
+        calls = []
+        def private_snapshot():
+            calls.append("read")
+            return {"settings": {"scan_roots": ["/synthetic-host-private/models"]},
+                    "scan": {"environment_schema_version": 2, "model_files": [{"path": "/synthetic-host-private/model.gguf"}]}}
+        monkeypatch.setattr(main.local_ai_discovery, "snapshot", private_snapshot)
+        response = TestClient(main.app).get(prefix + "/model-center/local-ai",
+            headers={"X-Session-Token": "synthetic-workspace-administrator"})
+>       assert response.status_code == 403
+E       assert 200 == 403
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/test_v2_discovery_host_authority.py:30: AssertionError
+_ test_collaboration_session_cannot_read_host_cache_when_v2_enabled_or_disabled[False-/api/v1] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f064abdaf30>
+prefix = '/api/v1', enabled = False
+
+    @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+    @pytest.mark.parametrize("enabled", [True, False])
+    def test_collaboration_session_cannot_read_host_cache_when_v2_enabled_or_disabled(monkeypatch, prefix, enabled):
+        import app.main as main
+        monkeypatch.setattr(main, "settings", replace(main.settings,
+            enable_collaboration_runtime=True, enable_packaged_runtime=False))
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", "narrative_production_v2" if enabled else "")
+        monkeypatch.delenv("V1_ACCEPTANCE_MODE", raising=False)
+        sessions = TrustedSessionResolver()
+        sessions.register("synthetic-workspace-administrator", SessionContext("s", "remote-client", "administrator", "workspace"))
+        monkeypatch.setattr(main, "trusted_session_resolver", sessions)
+        calls = []
+        def private_snapshot():
+            calls.append("read")
+            return {"settings": {"scan_roots": ["/synthetic-host-private/models"]},
+                    "scan": {"environment_schema_version": 2, "model_files": [{"path": "/synthetic-host-private/model.gguf"}]}}
+        monkeypatch.setattr(main.local_ai_discovery, "snapshot", private_snapshot)
+        response = TestClient(main.app).get(prefix + "/model-center/local-ai",
+            headers={"X-Session-Token": "synthetic-workspace-administrator"})
+>       assert response.status_code == 403
+E       assert 200 == 403
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/test_v2_discovery_host_authority.py:30: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_discovery_host_authority.py::test_collaboration_session_cannot_read_host_cache_when_v2_enabled_or_disabled[True-/api]
+FAILED tests/test_v2_discovery_host_authority.py::test_collaboration_session_cannot_read_host_cache_when_v2_enabled_or_disabled[True-/api/v1]
+FAILED tests/test_v2_discovery_host_authority.py::test_collaboration_session_cannot_read_host_cache_when_v2_enabled_or_disabled[False-/api]
+FAILED tests/test_v2_discovery_host_authority.py::test_collaboration_session_cannot_read_host_cache_when_v2_enabled_or_disabled[False-/api/v1]
+4 failed, 1 warning in 5.13s

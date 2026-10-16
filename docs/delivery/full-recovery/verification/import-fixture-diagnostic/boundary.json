@@ -1,0 +1,21 @@
+{
+  "boundary": "Exactly one original node, diagnostic manifest, original three strict plugins unchanged; not full product collection/execution/reconciliation proof",
+  "arguments": [
+    "/tmp/ai-novel-full-recovery-j3hg2js6/venv/bin/python",
+    "-m",
+    "pytest",
+    "-p",
+    "postgres_gate",
+    "-p",
+    "suite_coverage",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=/tmp/ai-novel-full-recovery-j3hg2js6/import-fixture-diagnostic",
+    "-q",
+    "tests/test_provider_runtime_v2_routing_service.py::test_host_absent_does_not_import_initialize_or_collect",
+    "--ci-coverage-manifest=/mnt/d/\u5c0f\u8bf4/AI-Novel-Studio-Latest-Product/docs/delivery/full-recovery/verification/import-fixture-diagnostic/diagnostic-manifest.json",
+    "--ci-coverage-dir=/mnt/d/\u5c0f\u8bf4/AI-Novel-Studio-Latest-Product/docs/delivery/full-recovery/verification/import-fixture-diagnostic",
+    "--junitxml=/mnt/d/\u5c0f\u8bf4/AI-Novel-Studio-Latest-Product/docs/delivery/full-recovery/verification/import-fixture-diagnostic/diagnostic.xml"
+  ],
+  "process_exitcode": 1
+}

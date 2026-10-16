@@ -1,0 +1,12 @@
+0.00.050.471 I srv  llama_server: initializing ...
+0.00.050.587 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.050.875 I srv  init_listene: The UI is disabled
+0.00.050.882 I srv  init_listene: Use --ui/--no-ui (or deprecated --webui/--no-webui) to enable/disable
+0.00.054.127 I srv    load_model: loading model '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/models/qwen2.5-0.5b-instruct-q4_k_m.gguf'
+0.00.977.715 W load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden
+0.01.438.635 I cmn          init: llama threadpool init, n_threads = 2
+0.01.549.492 I srv    load_model: initializing, n_slots = 1, n_ctx_slot = 8192, kv_unified = 'false'
+0.01.549.653 W srv          init: --cache-idle-slots requires --cache-ram, disabling
+0.01.558.672 I srv  llama_server: model loaded
+0.01.558.699 I srv  llama_server: listening on http://127.0.0.1:18083
+0.09.123.097 I srv    operator(): operator(): cleaning up before exit...

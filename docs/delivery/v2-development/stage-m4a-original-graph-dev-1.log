@@ -1,0 +1,38 @@
+........................................................................ [ 17%]
+........................................................................ [ 35%]
+...................................................................F..s. [ 52%]
+s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.............sssssssssssss.s.s.s.s. [ 70%]
+s.s.s.s.s.s.s..ss....ssss..ss..ss....ssss..ss..ss..ss.......sssssss.s.s. [ 88%]
+s.s.s.s..s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s                         [100%]
+=================================== FAILURES ===================================
+_ test_generated_graph_schema_exposes_budgets_fixed_versions_and_closed_objects _
+
+    def test_generated_graph_schema_exposes_budgets_fixed_versions_and_closed_objects():
+        schema = models.GraphInput.model_json_schema()
+        assert schema["additionalProperties"] is False
+        properties = schema["properties"]
+        assert properties["schema_version"]["const"] == 1
+        assert properties["nodes"]["maxItems"] == models.MAX_NODES
+        assert properties["edges"]["maxItems"] == models.MAX_EDGES
+        assert properties["title"]["minLength"] == 1 and properties["title"]["maxLength"] == 160
+        definitions = schema["$defs"]
+        for name in ("NodeInstance", "TypedEdge", "Position", "Viewport"):
+            assert definitions[name]["additionalProperties"] is False
+        node_schema = definitions["NodeInstance"]["properties"]
+>       assert set(node_schema["definition_id"]["enum"]) == DEFINITION_IDS
+E       AssertionError: assert {'asset_refer...enerate', ...} == {'asset_refer...t_input', ...}
+E         
+E         Extra items in the left set:
+E         'text_generate'
+E         Use -v to get more diff
+
+tests/test_v2_creative_graph_contracts.py:503: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_creative_graph_contracts.py::test_generated_graph_schema_exposes_budgets_fixed_versions_and_closed_objects
+1 failed, 310 passed, 97 skipped, 1 warning in 20.37s

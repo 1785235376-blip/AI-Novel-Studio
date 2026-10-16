@@ -1,0 +1,41 @@
+{
+  "feature": "U03",
+  "status": "SOURCE_COMPLETE_HOSTED_VERIFICATION_PENDING",
+  "search_kinds": [
+    "organization",
+    "rule",
+    "story_graph",
+    "asset",
+    "workflow"
+  ],
+  "original_owners": [
+    "world_record",
+    "world_rule",
+    "graph_record",
+    "asset_record",
+    "workflow_definition"
+  ],
+  "additional_exact_navigation": "revision_model_job original chapter and original revision owner",
+  "backend": {
+    "passed": 21,
+    "postgres_deselected": 20,
+    "new_tests_passed": 10,
+    "new_postgres_deselected": 10
+  },
+  "frontend": {
+    "passed": 88,
+    "new_structured_tests": 12,
+    "new_app_revision_tests": 5
+  },
+  "typecheck": "PASS",
+  "token_guard": "PASS",
+  "diff_check": "PASS",
+  "hosted_browser_tests_listed": 2,
+  "local_browser_visual": "NOT_RUN_PLATFORM_PROHIBITION",
+  "postgres": "NOT_RUN_NO_TEST_DSN",
+  "mutations_from_navigation": false,
+  "model_dispatch_from_navigation": false,
+  "new_domain_authority": false,
+  "report": "WAVE_1_SEARCH_REFINEMENT.md",
+  "public_receipt_note": "Commands are normalized for an isolated test environment. Raw operational logs and local recovery paths are not public artifacts."
+}

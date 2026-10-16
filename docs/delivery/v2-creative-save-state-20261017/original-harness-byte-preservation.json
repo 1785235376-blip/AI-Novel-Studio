@@ -1,0 +1,47 @@
+{
+  "frontend/playwright.navigation-intent-live.config.ts": {
+    "prior_sha256": "e55ff4ec391ac0b6858b2d2ff191cdeac50c806839c1b9c4a3cc75877318a536",
+    "current_sha256": "e55ff4ec391ac0b6858b2d2ff191cdeac50c806839c1b9c4a3cc75877318a536",
+    "byte_exact": true
+  },
+  "frontend/playwright.prompt-adoption-ui-live.config.ts": {
+    "prior_sha256": "c0be257724b9ba0a60c3dec954491d4173cc4c570e28fc1ee1966bbd47fbe972",
+    "current_sha256": "c0be257724b9ba0a60c3dec954491d4173cc4c570e28fc1ee1966bbd47fbe972",
+    "byte_exact": true
+  },
+  "frontend/playwright.prompt-r3-live.config.ts": {
+    "prior_sha256": "d4bfb90bd1422738fed650a3161f9414f6557fbe305a9a82ee139c38a90afccf",
+    "current_sha256": "d4bfb90bd1422738fed650a3161f9414f6557fbe305a9a82ee139c38a90afccf",
+    "byte_exact": true
+  },
+  "frontend/tests/e2e/v2-navigation-intent-live.spec.ts": {
+    "prior_sha256": "59a63c11cbfa9c10fdbc754850e93dbd0f2c7aacf5d7ebd22d5d0315e8aaab48",
+    "current_sha256": "59a63c11cbfa9c10fdbc754850e93dbd0f2c7aacf5d7ebd22d5d0315e8aaab48",
+    "byte_exact": true
+  },
+  "frontend/tests/e2e/v2-prompt-adoption-ui-live.spec.ts": {
+    "prior_sha256": "c08ca7584301c2a257fd93f3603357e7aafc3a6812a4288a8178da4d7d4062a6",
+    "current_sha256": "c08ca7584301c2a257fd93f3603357e7aafc3a6812a4288a8178da4d7d4062a6",
+    "byte_exact": true
+  },
+  "frontend/tests/e2e/v2-prompt-r3-live.spec.ts": {
+    "prior_sha256": "6ee8e331cd394186f8ca3c0dfcd4d89eae79fce90d3cd5bcc901ac836cceee9d",
+    "current_sha256": "6ee8e331cd394186f8ca3c0dfcd4d89eae79fce90d3cd5bcc901ac836cceee9d",
+    "byte_exact": true
+  },
+  "scripts/run_v2_navigation_intent_browser.py": {
+    "prior_sha256": "396340b8d09f2225a51877bcba08d06013739d638cc8b123736e0dfd6ca288c9",
+    "current_sha256": "396340b8d09f2225a51877bcba08d06013739d638cc8b123736e0dfd6ca288c9",
+    "byte_exact": true
+  },
+  "scripts/run_v2_prompt_adoption_ui_browser.py": {
+    "prior_sha256": "2b87d52a53bc41a38c299ffb9cd43c5e6ac2b42d43f20d6c723bcf14b5a5b7d8",
+    "current_sha256": "2b87d52a53bc41a38c299ffb9cd43c5e6ac2b42d43f20d6c723bcf14b5a5b7d8",
+    "byte_exact": true
+  },
+  "scripts/run_v2_prompt_r3_browser.py": {
+    "prior_sha256": "83a7c384dd4a871d11fa880b9e3c6ecee7ee34c8388e51bc5a26deba37d0c74d",
+    "current_sha256": "83a7c384dd4a871d11fa880b9e3c6ecee7ee34c8388e51bc5a26deba37d0c74d",
+    "byte_exact": true
+  }
+}

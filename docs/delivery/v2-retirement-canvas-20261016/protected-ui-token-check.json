@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-16T15:11:12.445763+00:00",
+  "command": [
+    "node",
+    "scripts/check_ui_design_tokens.mjs"
+  ],
+  "cwd": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016",
+  "exit_code": 0,
+  "stdout": "UI token guard PASS (52 files)\n",
+  "stderr": "",
+  "scope": "Read-only offline source/contract check; not runtime V1 acceptance"
+}

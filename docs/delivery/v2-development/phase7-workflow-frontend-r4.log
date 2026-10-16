@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/frontend
+
+ ✓ src/production/productionWorkflowContract.test.ts (12 tests) 8ms
+ ✓ src/production/productionWorkflowClient.test.ts (6 tests) 8ms
+ ✓ src/production/ProductionDashboard.test.tsx (6 tests) 250ms
+ ✓ src/production/useProductionWorkflow.test.tsx (8 tests) 649ms
+
+ Test Files  4 passed (4)
+      Tests  32 passed (32)
+   Start at  17:51:54
+   Duration  1.58s (transform 339ms, setup 0ms, collect 774ms, tests 916ms, environment 970ms, prepare 326ms)
+

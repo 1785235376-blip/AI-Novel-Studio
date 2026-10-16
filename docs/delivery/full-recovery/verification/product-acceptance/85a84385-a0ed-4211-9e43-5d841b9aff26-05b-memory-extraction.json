@@ -1,0 +1,243 @@
+{
+  "stage": "05b-memory-extraction",
+  "status": "PASS",
+  "seconds": 11.292,
+  "evidence": {
+    "persisted_job": {
+      "id": "32f3acd6-dbe9-5b91-8cf4-42d26ab1ce2d",
+      "operation": "MEMORY_EXTRACTION",
+      "novel_id": "f4b8c9ee",
+      "chapter_id": "f4b8c9ee:2",
+      "status": "COMPLETED",
+      "request": {
+        "chapter_version": 1,
+        "profile": "LOCAL_ONLY"
+      },
+      "created_at": "2026-10-07T09:49:56.661074+00:00",
+      "provider": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+      "model": "local-cbe5fff59c25ef0f728e0e8c",
+      "execution_mode": "real",
+      "result": {
+        "proposal_ids": [
+          "84a1fdb0-4dc1-5261-83cc-20cb62b41d4d",
+          "cc8d153c-161e-5a85-9b09-1b10cb8156bd",
+          "de2c92c6-3923-51f1-aae5-62fda28d427c"
+        ]
+      }
+    },
+    "proposals": {
+      "items": [
+        {
+          "schema_version": 1,
+          "id": "12fa9fa6-1d4b-5c39-8e62-743e10106ad7",
+          "novel_id": "f4b8c9ee",
+          "proposal_type": "WORLD_RULE",
+          "payload": {
+            "statement": "旧时代的科技设备在接触特定频率的声波时会自我激活或爆炸。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "approved_payload": {
+            "statement": "旧时代的科技设备在接触特定频率的声波时会自我激活或爆炸。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "status": "APPROVED",
+          "source_chapter_id": null,
+          "source_version": null,
+          "agent_name": "plot_planner",
+          "generation_job_id": null,
+          "confidence": null,
+          "reviewed_by": "local-author",
+          "reviewed_at": "2026-10-07T09:49:36.133220Z",
+          "rejection_reason": null,
+          "created_at": "2026-10-07T09:49:36.117022Z",
+          "updated_at": "2026-10-07T09:49:36.133220Z"
+        },
+        {
+          "schema_version": 1,
+          "id": "84a1fdb0-4dc1-5261-83cc-20cb62b41d4d",
+          "novel_id": "f4b8c9ee",
+          "proposal_type": "CHARACTER_MEMORY",
+          "payload": {
+            "character_id": "225a179a-9466-5e5b-95bd-3bb321de7e7e",
+            "memory_type": "STATE_CHANGE",
+            "content": {
+              "state": "amnesia_confirmed",
+              "details": "The character Lin Yuan explicitly states he does not remember his identity, and this is confirmed by the city's defense mechanism ('echo') as a deliberate suppression of truth."
+            }
+          },
+          "approved_payload": null,
+          "status": "PENDING",
+          "source_chapter_id": "f4b8c9ee:2",
+          "source_version": 1,
+          "agent_name": "memory_agent",
+          "generation_job_id": "32f3acd6-dbe9-5b91-8cf4-42d26ab1ce2d",
+          "confidence": 0.95,
+          "reviewed_by": null,
+          "reviewed_at": null,
+          "rejection_reason": null,
+          "created_at": "2026-10-07T09:50:07.788130Z",
+          "updated_at": "2026-10-07T09:50:07.788130Z"
+        },
+        {
+          "schema_version": 1,
+          "id": "868f7be4-1077-5dfc-b99c-94d802d6aec5",
+          "novel_id": "f4b8c9ee",
+          "proposal_type": "WORLD_RULE",
+          "payload": {
+            "statement": "主角的记忆缺失并非偶然，而是城市防御系统为了掩盖真相而植入的。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "approved_payload": {
+            "statement": "主角的记忆缺失并非偶然，而是城市防御系统为了掩盖真相而植入的。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "status": "APPROVED",
+          "source_chapter_id": null,
+          "source_version": null,
+          "agent_name": "plot_planner",
+          "generation_job_id": null,
+          "confidence": null,
+          "reviewed_by": "local-author",
+          "reviewed_at": "2026-10-07T09:49:36.185057Z",
+          "rejection_reason": null,
+          "created_at": "2026-10-07T09:49:36.170210Z",
+          "updated_at": "2026-10-07T09:49:36.185057Z"
+        },
+        {
+          "schema_version": 1,
+          "id": "8948137b-8178-5d62-b936-2b21b6c3967c",
+          "novel_id": "f4b8c9ee",
+          "proposal_type": "WORLD_RULE",
+          "payload": {
+            "statement": "城市中心的核心反应堆从未真正关闭，它仍在以微弱但致命的频率运转。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "approved_payload": {
+            "statement": "城市中心的核心反应堆从未真正关闭，它仍在以微弱但致命的频率运转。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "status": "APPROVED",
+          "source_chapter_id": null,
+          "source_version": null,
+          "agent_name": "plot_planner",
+          "generation_job_id": null,
+          "confidence": null,
+          "reviewed_by": "local-author",
+          "reviewed_at": "2026-10-07T09:49:36.244189Z",
+          "rejection_reason": null,
+          "created_at": "2026-10-07T09:49:36.232205Z",
+          "updated_at": "2026-10-07T09:49:36.244189Z"
+        },
+        {
+          "schema_version": 1,
+          "id": "a11b1ee3-6314-56e3-8154-c123da3a6214",
+          "novel_id": "f4b8c9ee",
+          "proposal_type": "WORLD_RULE",
+          "payload": {
+            "statement": "任何试图修复城市的行为都会触发‘回声’的强烈反弹，导致记忆混乱。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "approved_payload": {
+            "statement": "任何试图修复城市的行为都会触发‘回声’的强烈反弹，导致记忆混乱。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "status": "APPROVED",
+          "source_chapter_id": null,
+          "source_version": null,
+          "agent_name": "plot_planner",
+          "generation_job_id": null,
+          "confidence": null,
+          "reviewed_by": "local-author",
+          "reviewed_at": "2026-10-07T09:49:36.301723Z",
+          "rejection_reason": null,
+          "created_at": "2026-10-07T09:49:36.287943Z",
+          "updated_at": "2026-10-07T09:49:36.301723Z"
+        },
+        {
+          "schema_version": 1,
+          "id": "cc8d153c-161e-5a85-9b09-1b10cb8156bd",
+          "novel_id": "f4b8c9ee",
+          "proposal_type": "CHARACTER_MEMORY",
+          "payload": {
+            "character_id": "225a179a-9466-5e5b-95bd-3bb321de7e7e",
+            "memory_type": "KNOWLEDGE_CHANGE",
+            "content": {
+              "knowledge": "self_destruction_role",
+              "details": "Lin Yuan realizes he is the culprit who initiated the city's destruction and the source of the 'echo' phenomenon, specifically recalling being pushed off a control panel and pressing a switch."
+            }
+          },
+          "approved_payload": null,
+          "status": "PENDING",
+          "source_chapter_id": "f4b8c9ee:2",
+          "source_version": 1,
+          "agent_name": "memory_agent",
+          "generation_job_id": "32f3acd6-dbe9-5b91-8cf4-42d26ab1ce2d",
+          "confidence": 0.9,
+          "reviewed_by": null,
+          "reviewed_at": null,
+          "rejection_reason": null,
+          "created_at": "2026-10-07T09:50:07.813781Z",
+          "updated_at": "2026-10-07T09:50:07.813781Z"
+        },
+        {
+          "schema_version": 1,
+          "id": "de2c92c6-3923-51f1-aae5-62fda28d427c",
+          "novel_id": "f4b8c9ee",
+          "proposal_type": "EVENT",
+          "payload": {
+            "event": "memory_flashback_trigger",
+            "details": "The 'echo' phenomenon triggered a forced flashback for Lin Yuan, revealing suppressed memories of a quantum experiment, energy loss, and his own role in the incident, causing physical pain."
+          },
+          "approved_payload": null,
+          "status": "PENDING",
+          "source_chapter_id": "f4b8c9ee:2",
+          "source_version": 1,
+          "agent_name": "memory_agent",
+          "generation_job_id": "32f3acd6-dbe9-5b91-8cf4-42d26ab1ce2d",
+          "confidence": 0.95,
+          "reviewed_by": null,
+          "reviewed_at": null,
+          "rejection_reason": null,
+          "created_at": "2026-10-07T09:50:07.834815Z",
+          "updated_at": "2026-10-07T09:50:07.834815Z"
+        },
+        {
+          "schema_version": 1,
+          "id": "f52f70c8-98d2-5523-8d6a-5c9bb62a2f29",
+          "novel_id": "f4b8c9ee",
+          "proposal_type": "WORLD_RULE",
+          "payload": {
+            "statement": "城市中的‘回声’现象会强制重现过去的关键时刻，干扰当前行动。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "approved_payload": {
+            "statement": "城市中的‘回声’现象会强制重现过去的关键时刻，干扰当前行动。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "status": "APPROVED",
+          "source_chapter_id": null,
+          "source_version": null,
+          "agent_name": "plot_planner",
+          "generation_job_id": null,
+          "confidence": null,
+          "reviewed_by": "local-author",
+          "reviewed_at": "2026-10-07T09:49:36.073488Z",
+          "rejection_reason": null,
+          "created_at": "2026-10-07T09:49:36.055868Z",
+          "updated_at": "2026-10-07T09:49:36.073488Z"
+        }
+      ],
+      "storage": "file"
+    }
+  }
+}

@@ -387,3 +387,15 @@ it("does not offer re-register for duplicate or missing packages", async () => {
   expect(screen.queryByRole("button", { name: "重新注册并重新审核" })).toBeNull();
   expect(screen.queryByRole("button", { name: "激活清单" })).toBeNull();
 });
+
+it("installs a reviewed declarative bundle without an execute control", async () => {
+  mockStatus();
+  const install=vi.spyOn(api,"installPluginPackage").mockResolvedValue({execution_supported:false});
+  render(<PluginManagerPanel/>);
+  const bundle={manifest:{id:"synthetic",name:"Synthetic",version:"1.0.0"},resources:{}};
+  fireEvent.change(screen.getByLabelText("插件包 JSON"),{target:{value:JSON.stringify(bundle)}});
+  fireEvent.click(screen.getByRole("button",{name:"验证并安装"}));
+  await waitFor(()=>expect(install).toHaveBeenCalledWith(bundle,false));
+  expect(await screen.findByText("资源包已验证并保存，请重新审核权限。")).toBeTruthy();
+  expect(screen.queryByRole("button",{name:"执行插件"})).toBeNull();
+});

@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ✓ src/creative/studioGraphLocalDraft.test.ts (6 tests) 7ms
+ ✓ src/creative/StudioGraphDraftRecovery.test.tsx (11 tests) 1389ms
+   ✓ mounted text graph autosave and explicit recovery > autosaves local authoring, survives remount and restores only after a live owner check without executing 477ms
+
+ Test Files  2 passed (2)
+      Tests  17 passed (17)
+   Start at  23:02:14
+   Duration  3.33s (transform 711ms, setup 23ms, collect 1.18s, tests 1.40s, environment 712ms, prepare 187ms)
+

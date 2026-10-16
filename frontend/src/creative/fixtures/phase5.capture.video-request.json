@@ -1,0 +1,69 @@
+{
+  "contract": "studio-storyboard-video-request/1",
+  "shot_pin": {
+    "document_snapshot": {
+      "id": "9d4094b3-d894-4ea1-a96d-1beae88ec3c5",
+      "version": 3,
+      "digest": "5f0b7b7734a502f2b0e4625e12b7432f22c06a529b8b7c71e711c709082bd68e"
+    },
+    "shot_id": "shot-1",
+    "shot_version": 1,
+    "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471"
+  },
+  "command": {
+    "operation_id": "m7.video.i2v",
+    "request_id": "mounted-shot-video-phase5",
+    "provider_id": "discovery-local-c7c98852d03292d2d694d9f9",
+    "model_id": "local-c7c98852d03292d2d694d9f9",
+    "prompt": "STORYBOARD_SHOT\nSynthetic character in a blue jacket\nshot_size: MEDIUM\ncamera_angle: EYE_LEVEL\ncamera_motion: STATIC\nlighting: Soft key",
+    "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": null,
+      "seed": 7,
+      "negative_prompt": null,
+      "size": null,
+      "quality": null,
+      "duration_seconds": 3,
+      "frame_rate": 8,
+      "voice_id": null,
+      "speech_rate": null,
+      "in_ms": null,
+      "out_ms": null
+    },
+    "source_snapshots": [
+      {
+        "id": "9d4094b3-d894-4ea1-a96d-1beae88ec3c5",
+        "kind": "CREATIVE_DOCUMENT",
+        "version": 3,
+        "digest": "5f0b7b7734a502f2b0e4625e12b7432f22c06a529b8b7c71e711c709082bd68e",
+        "asset_kind": null,
+        "reference_only": true
+      },
+      {
+        "id": "d8fb2ab4-9bc0-4b95-9f93-b529acc2714d",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "e44c53d995048ed9946460ee419333f679240806c26632cf21c517eb934667a4",
+        "asset_kind": "image",
+        "reference_only": true
+      }
+    ],
+    "allow_cloud": false,
+    "license_note": "",
+    "storyboard_shot": {
+      "document_snapshot": {
+        "id": "9d4094b3-d894-4ea1-a96d-1beae88ec3c5",
+        "version": 3,
+        "digest": "5f0b7b7734a502f2b0e4625e12b7432f22c06a529b8b7c71e711c709082bd68e"
+      },
+      "shot_id": "shot-1",
+      "shot_version": 1,
+      "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471"
+    }
+  },
+  "automatic_dispatch": false,
+  "model_called": false,
+  "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+  "product_acceptance": "LOCAL_REQUIRED"
+}

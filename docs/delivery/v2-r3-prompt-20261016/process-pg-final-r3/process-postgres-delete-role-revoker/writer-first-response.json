@@ -1,0 +1,15 @@
+{
+  "pid": 71000,
+  "status": 403,
+  "body": {
+    "detail": {
+      "code": "PROJECT_SCOPE_FORBIDDEN"
+    },
+    "code": "PROJECT_SCOPE_FORBIDDEN",
+    "message": "PROJECT_SCOPE_FORBIDDEN",
+    "details": {
+      "code": "PROJECT_SCOPE_FORBIDDEN"
+    },
+    "request_id": "4983a9a4-3678-44e8-a49d-668df2e5f8fb"
+  }
+}

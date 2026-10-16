@@ -1,0 +1,82 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+_______ test_a_private_draft_is_readable_by_its_author_through_the_api ________
+
+rig = namespace(client=<starlette.testclient.TestClient object at 0x000002461DBD86D0>, nid='r3r-fcdd9ac0e47347519254d604f276...paceService object at 0x000002461D992A10>, scope={'mode': 'local', 'novel_id': 'r3r-fcdd9ac0e47347519254d604f276c206'})
+
+    def test_a_private_draft_is_readable_by_its_author_through_the_api(rig):
+>       _create(rig, payload(family_id="priv"), text="secret body", actor="author-a", private=True)
+
+tests\test_round3r_prompt_read_contract.py:363: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+rig = namespace(client=<starlette.testclient.TestClient object at 0x000002461DBD86D0>, nid='r3r-fcdd9ac0e47347519254d604f276...paceService object at 0x000002461D992A10>, scope={'mode': 'local', 'novel_id': 'r3r-fcdd9ac0e47347519254d604f276c206'})
+body = {'contract': 'prompt-asset/1', 'family_id': 'priv', 'revision': 1, 'purpose': 'IMAGE', ...}
+text = 'secret body', actor = 'author-a', private = True, family = None
+
+    def _create(rig, body, text="prompt text", *, actor="author-a", private=False, family=None):
+        with rig.workspace._asset_scope(rig.nid, rig.scope):
+            created = rig.assets.create(rig.nid, "prompt.txt", base64.b64encode(text.encode()).decode(),
+                                        media_type="text/plain", kind="prompt",
+                                        required_features=("narrative_production_v2",),
+                                        owner_actor_id=actor if private else None)
+>           rig.assets.update_metadata(created["id"], {"parameters": {"prompt": body}},
+                                       branch_id=rig.scope.get("branch_id"))
+
+tests\test_round3r_prompt_read_contract.py:253: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.services.asset_library_service.AssetLibraryService object at 0x000002461D59C510>
+asset_id = 'ba503485-b8e2-4990-bec0-3570292070cf'
+fields = {'parameters': {'prompt': {'contract': 'prompt-asset/1', 'family_id': 'priv', 'revision': 1, 'purpose': 'IMAGE', ...}}}
+branch_id = None, expected_version = None, _lineage_write = False
+actor_id = None, guard = None, _relationships_write = False
+
+    def update_metadata(self, asset_id: str, fields: dict, *, branch_id: str | None = None,
+                        expected_version: int | None = None, _lineage_write: bool = False, actor_id: str | None = None,
+                        guard=None, _relationships_write: bool = False):
+        allowed = {"source_job_id", "provider_id", "model_id", "parameters", "approved_at",
+                   "character_id", "scene_id", "source_asset_ids"}
+        if not isinstance(fields, dict) or set(fields) - allowed:
+            raise ValueError("unsupported asset metadata fields")
+        if len(json.dumps(fields, ensure_ascii=False).encode()) > 64 * 1024:
+            raise ValueError("asset metadata exceeds 64 KiB")
+        for key, value in fields.items():
+            if key == "parameters":
+                if not isinstance(value, dict):
+                    raise ValueError("asset parameters must be an object")
+            elif key == "source_asset_ids":
+                if not isinstance(value, list) or len(value) > 100:
+                    raise ValueError("source_asset_ids must contain at most 100 assets")
+            elif value is not None and (not isinstance(value, str) or len(value) > 240
+                                        or any(ord(char) < 32 for char in value)):
+                raise ValueError("invalid asset metadata value")
+        with self._lock, workspace_mutation(self.root, "asset-library"):
+>           meta = self.get(asset_id, branch_id=branch_id, actor_id=actor_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+app\services\asset_library_service.py:791: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.services.asset_library_service.AssetLibraryService object at 0x000002461D59C510>
+asset_id = 'ba503485-b8e2-4990-bec0-3570292070cf', branch_id = None
+include_deleted = False, actor_id = None
+
+    def get(self, asset_id: str, *, branch_id: str | None = None, include_deleted: bool = False, actor_id: str | None = None):
+        if branch_id is not None:
+            self._identifier(branch_id, "branch_id")
+        meta = self._load(asset_id)
+        if not self._in_scope(meta, branch_id, actor_id) or (meta.get("deleted_at") and not include_deleted):
+>           raise FileNotFoundError(asset_id)
+E           FileNotFoundError: ba503485-b8e2-4990-bec0-3570292070cf
+
+app\services\asset_library_service.py:751: FileNotFoundError
+============================== warnings summary ===============================
+tests/test_round3r_prompt_read_contract.py::test_a_private_draft_is_readable_by_its_author_through_the_api
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_round3r_prompt_read_contract.py::test_a_private_draft_is_readable_by_its_author_through_the_api
+1 failed, 1 warning in 2.72s

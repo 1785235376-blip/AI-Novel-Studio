@@ -1,0 +1,646 @@
+{
+  "utc": "2026-10-16T20:12:48.918631+00:00",
+  "status": "INDEPENDENT_SOURCE_PROVENANCE_AND_SCOPED_RUNTIME_REVIEW_PASS",
+  "base": "454ccd89499e3840d18622e8b6ec2669c17702c4",
+  "implementation_head": "5c17750bd59c76ed4fb060716d61019151a3ef42",
+  "source_count": 2310,
+  "manifest_source_count": 2372,
+  "raw_git_working_source_mismatches": [],
+  "line_ending_exceptions": [],
+  "source_map_sha256": "783255e32b4a193965a8162becfe7df605eb76e99ee41b729f4fe28517999f9f",
+  "manifest_sha256": "9d9b8157f1f342ff680e6119b4338a30332a1cec970d5cb00faa10fc01193aca",
+  "inventory": {
+    "literal_nodes": 15142,
+    "baseline_and_two_collections_raw_equal": true,
+    "order_classifications_skips_external_gates_equal": true,
+    "round_added_nodes": 0,
+    "cumulative_extension_from9151": 5991,
+    "added_sources": [
+      "frontend/playwright.creative-save-live.config.ts",
+      "frontend/src/creative/CreativeWorkspace.productionSaveState.regression.test.tsx",
+      "frontend/src/creative/CreativeWorkspace.saveState.regression.test.tsx",
+      "frontend/tests/e2e/v2-creative-save-live.spec.ts",
+      "scripts/run_v2_creative_save_state_browser.py"
+    ],
+    "changed_existing_manifest_sources": [
+      "frontend/src/App.tsx",
+      "frontend/src/creative/CreativeCanvas.tsx",
+      "frontend/src/creative/CreativeWorkspace.tsx"
+    ]
+  },
+  "API_CATALOG_unchanged_from454": {
+    "API_CATALOG.json": {
+      "sha256": "7bf604c6054300a11e06243d5ffbb15ec791266249a30d04a7303887ec8c7881",
+      "raw_equal_to_454": true
+    },
+    "API_CATALOG.md": {
+      "sha256": "9433c648bf511e49a9b1e2fc58aa971b07cfef0df3f4529c45588e4f4bdac72e",
+      "raw_equal_to_454": true
+    },
+    "API_CATALOG_DETAIL.json.gz": {
+      "sha256": "647fab1ae139a420bd20e68db768cef926950083114d7b58d227093caad414c5",
+      "raw_equal_to_454": true
+    }
+  },
+  "protection": {
+    "ADOPTION_SOURCE_BASELINE.json": {
+      "count": 61,
+      "authorized_changes": [
+        "frontend/src/creative/CreativeWorkspace.tsx"
+      ],
+      "other_differences": []
+    },
+    "NAVIGATION_SOURCE_BASELINE.json": {
+      "count": 5,
+      "authorized_changes": [
+        "frontend/src/App.tsx"
+      ],
+      "other_differences": []
+    },
+    "EXISTING_TEST_GATE_BASELINE.json": {
+      "count": 1118,
+      "authorized_changes": [],
+      "other_differences": []
+    }
+  },
+  "protected_owner_guards": {
+    "app_navigation_entry_handler_query_overview": {
+      "raw_equal": true,
+      "sha256": "167b3196cea78d050a54f6ff4d22b8f3b6dbedc0097fb23cb2c256a038397f06"
+    },
+    "app_requested_asset_origin_fence": {
+      "raw_equal": true,
+      "sha256": "41c349957eee70b1f37927633722c6e7b08e537cf5faf8db325560199b9575d9"
+    },
+    "app_open_v2_explicit_novel_intent": {
+      "raw_equal": true,
+      "sha256": "f373e5c7b7b6545fa36b2ec8da1f91d0cc4e7f006db7b272ad81ea18dec14252"
+    },
+    "app_synchronous_subscription_observe": {
+      "raw_equal": true,
+      "sha256": "da436655eb7d3d4b3f671e411a832e6ea5340a3e861806f40bb8536a03a6f933"
+    },
+    "app_local_connection_authority_effect": {
+      "raw_equal": true,
+      "sha256": "cf09275f969550d59515fb34a3613f4264359599d8d7b00daeb39770d7eed0fa"
+    },
+    "creative_adoption_host_version_and_draft_fence": {
+      "raw_equal": true,
+      "sha256": "9018ba973321738fd97904f56ddf52b3b62c6090e33d5fe1eecc87e395725c3e"
+    }
+  },
+  "protection_final": "protection-final.json",
+  "stage_records_preserved": {
+    "SOURCE_PROVENANCE_AUDIT.json": "0e8267785ec2e41c1760412a0d92ed0f391181ea03f5c2c6f1d03966dcd97ba5",
+    "INDEPENDENT_IMPLEMENTATION_REVIEW.md": "0fd30248141c27a35995d46910d3cb4379bb401676a66ad6d431ee0b6c78d3bb",
+    "INDEPENDENT_CANDIDATE_REVIEW_R1.md": "2f89a4c211e07a52dfee1b8b72aa09b1dca79ce8dc631de92baba74ad9504aec",
+    "INDEPENDENT_CANDIDATE_REVIEW_R2.md": "6f7dbfbf043415b96a09d08072bbff21fd3bb0e0dfb66f1371699f3a737dbaed",
+    "protection-post-collection.json": "15a55b48928d156b8debab347cd023f7368def3dce1f21960d292ca34ef30d60"
+  },
+  "receipts": {
+    "creative-save-browser-file-final-r1": {
+      "path": "docs/delivery/v2-development/creative-save-browser-file-final-r1.json",
+      "head_at_run": "454ccd89499e3840d18622e8b6ec2669c17702c4",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_before_after_current_freeze_equal": true,
+      "source_count": 2310,
+      "log_sha256": "dcffff63bf4a8d0ef97dc31b4f884792e1adf1482cb98ba902a15b7bf6ea5c77",
+      "receipt_sha256": "fc474c8777cbbde6b2550542e93516dbb689f271645ac621ea70282f8e09d837"
+    },
+    "creative-save-browser-pg-final-r1": {
+      "path": "docs/delivery/v2-development/creative-save-browser-pg-final-r1.json",
+      "head_at_run": "5c17750bd59c76ed4fb060716d61019151a3ef42",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_before_after_current_freeze_equal": true,
+      "source_count": 2310,
+      "log_sha256": "2dcdf80b61f68fe1aae730ab76bd0f584de26fda2693093bc27a2d5c97d27b89",
+      "receipt_sha256": "350e4c1e702f8674aec9dfa9b51514b535a265f5a8c13d176df274f36c016c43"
+    },
+    "creative-save-src-final-r1": {
+      "path": "docs/delivery/v2-development/creative-save-src-final-r1.json",
+      "head_at_run": "4571bdaeee1b35e88fa19c032c3767a54be01d35",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_before_after_current_freeze_equal": true,
+      "source_count": 2310,
+      "log_sha256": "c58f9f5dfa7e16cf114f06b22dbf80bf89e3360f5d0189a9074cf6b571b5f8a5",
+      "receipt_sha256": "c0261f02ade135017a037f76513795a2a5c25e2ab1f832f98cc21dbf5ff7e110"
+    },
+    "creative-save-build-final-r1": {
+      "path": "docs/delivery/v2-development/creative-save-build-final-r1.json",
+      "head_at_run": "4571bdaeee1b35e88fa19c032c3767a54be01d35",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_before_after_current_freeze_equal": true,
+      "source_count": 2310,
+      "log_sha256": "4f4789413c9935caa3d2801afefc9bcc15919c7c7ae1c92e35fe1b1aebb41fa8",
+      "receipt_sha256": "f39bdad1fde6b4a364994b31603d09e20840a268e7fa2185d766b55edd344f6b"
+    },
+    "creative-save-visual-final-r1": {
+      "path": "docs/delivery/v2-development/creative-save-visual-final-r1.json",
+      "head_at_run": "4571bdaeee1b35e88fa19c032c3767a54be01d35",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_before_after_current_freeze_equal": true,
+      "source_count": 2310,
+      "log_sha256": "617dfa663eac73ae3e1591aadecec6a735f034393d335b04f5c9b60883a1653f",
+      "receipt_sha256": "6a2bb40e2c189668ea075e5d026168895ddb80ce6f30fa3362230e9a34849acb"
+    },
+    "creative-save-tokens-final-r1": {
+      "path": "docs/delivery/v2-development/creative-save-tokens-final-r1.json",
+      "head_at_run": "4571bdaeee1b35e88fa19c032c3767a54be01d35",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_before_after_current_freeze_equal": true,
+      "source_count": 2310,
+      "log_sha256": "26949b524d180e026ee5e056df8b7c8885dadfa3268251b48c980d5cb2a4381b",
+      "receipt_sha256": "728ab43f8953aed7e23a6af4b0cc5ab95c6211bd81afbdc7c1b68826aeacb17d"
+    },
+    "creative-save-ci-selfchecks-final-r1": {
+      "path": "docs/delivery/v2-development/creative-save-ci-selfchecks-final-r1.json",
+      "head_at_run": "454ccd89499e3840d18622e8b6ec2669c17702c4",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_before_after_current_freeze_equal": true,
+      "source_count": 2310,
+      "log_sha256": "2f8d075b80768d363ca1f41a7df38b9d8c6475a97e4d42ddd5f372bf070c6803",
+      "receipt_sha256": "927df9990f172376b5887fefa74b6052d088548b16d1687b065d2f1e62b694c8"
+    },
+    "creative-save-collection-final-r1": {
+      "path": "docs/delivery/v2-development/creative-save-collection-final-r1.json",
+      "head_at_run": "454ccd89499e3840d18622e8b6ec2669c17702c4",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_before_after_current_freeze_equal": true,
+      "source_count": 2310,
+      "log_sha256": "74b6a1e4b2d21df0dcd4fc5872fadba6b03543ab6db37c064c6463c5eb575955",
+      "receipt_sha256": "12f7eb6469ba6d39d62ef64dc30434f9caeac7fcc9dfe527b9f0c4b9e2e43fc5"
+    },
+    "creative-save-collection-confirmation-r1": {
+      "path": "docs/delivery/v2-development/creative-save-collection-confirmation-r1.json",
+      "head_at_run": "4571bdaeee1b35e88fa19c032c3767a54be01d35",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_before_after_current_freeze_equal": true,
+      "source_count": 2310,
+      "log_sha256": "e7687092e4ad3c1164a62509e18c7829121c9c758ff381032a92710a404c20d3",
+      "receipt_sha256": "2c8a7b6634cc092914c2a682948318b0fd31962fdb4faaf5a417b453dc9dc56d"
+    }
+  },
+  "browsers": {
+    "file": {
+      "status": "PASS",
+      "stats": {
+        "startTime": "2026-10-16T20:01:44.019Z",
+        "duration": 41407.487,
+        "expected": 9,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "launcher": {
+        "storage_backend": "file",
+        "database_identity": null,
+        "identity_owner": "LocalSessionBootstrap",
+        "asset_storage_owner": "original File AssetLibraryService",
+        "backend_process": "ordinary uvicorn app.main:app",
+        "production_literal_gate": false,
+        "production_gate_override": false,
+        "production_environment_toggle": false,
+        "gate_source_sha256": "a35c5a392fec0bc38446752e0c44cf79a3853edda7b5ce3fc40e2d58e78d8089",
+        "development_sessions": false,
+        "response_mocks": false,
+        "model_provider_mock": false,
+        "latency_schedule": "real Creative PUT and history GET dispatch held, then route.continue",
+        "request_not_dispatched_until_release": true,
+        "model_execution": "NOT_REQUESTED",
+        "model_counter": "NOT_INSTRUMENTED",
+        "health_storage": "file",
+        "playwright_exit": 0,
+        "owned_vite_pid": 55364,
+        "owned_vite_stopped": true,
+        "owned_backend_pid": 77364,
+        "owned_backend_stopped": true,
+        "gate_source_unchanged": true
+      },
+      "cases": [
+        {
+          "viewport": "creative-save-1366x768",
+          "case": "save",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "ff55347677745ffcc5d7180af9deba5962f8e81ed783d3c195bd925826bbf89a",
+          "reported_decoded_checks": 21,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 1,
+          "page_and_cleanup_errors": []
+        },
+        {
+          "viewport": "creative-save-1366x768",
+          "case": "faults",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "7884821e8625daafc5c300adb34552d92f6ca058ed0afff428dbd1f38d3689c5",
+          "reported_decoded_checks": 19,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 1,
+          "page_and_cleanup_errors": []
+        },
+        {
+          "viewport": "creative-save-1366x768",
+          "case": "history",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "2a700537bec579d3cc27a52f1980e9dc18eebc32e4ebdfb9b5a2199685ea7555",
+          "reported_decoded_checks": 15,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 2,
+          "page_and_cleanup_errors": []
+        },
+        {
+          "viewport": "creative-save-1440x900",
+          "case": "save",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "e0f81797dc1c75e9298bc4484e49485e3a6f26c95600eab9fd8354d5a6482c56",
+          "reported_decoded_checks": 21,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 1,
+          "page_and_cleanup_errors": []
+        },
+        {
+          "viewport": "creative-save-1440x900",
+          "case": "faults",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "d6f4781949a91b8cf9b5172889bc649c7d4e6ede82f718aa1b5be16c021db4fd",
+          "reported_decoded_checks": 19,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 1,
+          "page_and_cleanup_errors": []
+        },
+        {
+          "viewport": "creative-save-1440x900",
+          "case": "history",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "eeaf73aaf7a7574cac3fe61b00f21918fd7c8f6f03765a0f9f71d85125454f1d",
+          "reported_decoded_checks": 15,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 2,
+          "page_and_cleanup_errors": []
+        },
+        {
+          "viewport": "creative-save-1920x1080",
+          "case": "save",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "5f75efad5b6ece45abc19901580deff54e5c9724e9058f01fe9f9e2b24775aae",
+          "reported_decoded_checks": 21,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 1,
+          "page_and_cleanup_errors": []
+        },
+        {
+          "viewport": "creative-save-1920x1080",
+          "case": "faults",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "ff8366debbe665fc121b10a18cdb0af84964df36a19a4a434827ea8cb54f2a50",
+          "reported_decoded_checks": 19,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 1,
+          "page_and_cleanup_errors": []
+        },
+        {
+          "viewport": "creative-save-1920x1080",
+          "case": "history",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "cf47347feca328669131d8faa09a3892a3532d770e17decce02804c3c08c97b0",
+          "reported_decoded_checks": 15,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 2,
+          "page_and_cleanup_errors": []
+        }
+      ],
+      "artifacts_sha256": {
+        "backend.stderr.log": "571b6066392f27bbc2a4ad40af2296755c3318006414d06f544d3f302fd7feb2",
+        "backend.stdout.log": "272f3dcfbf60ab127488957c5d852cc2ab866b5e6465cb2e6db9c2d6360acbee",
+        "junit.xml": "f602a8ea0979784a9872945eb8d1a985a28d4229f44d54c077cd480bda6a7cb3",
+        "launcher.json": "7be4473a2fae599a836976255178768fb80b38cb7543636ace3ed78b416f109b",
+        "playwright.log": "b61bf5e2eb396c4b9b880adc9049b9c496d94a8db75b72a977a5947c9759dd72",
+        "results.json": "7f39c4c915ca9ea767163b50864078978824ad9f414a93078d29630ba351029d",
+        "vite.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "vite.stdout.log": "177d5eecc3ae2983e3003872659675528be1358e73f4535bb6225ce5b9fa4d6a"
+      }
+    },
+    "pg": {
+      "status": "PASS",
+      "stats": {
+        "startTime": "2026-10-16T20:02:52.541Z",
+        "duration": 468230.918,
+        "expected": 9,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "launcher": {
+        "storage_backend": "postgres",
+        "database_identity": {
+          "version": "PostgreSQL 16.15, compiled by Visual C++ build 1944, 64-bit",
+          "database": "v2_creative_save_browser_20261017_final_r1",
+          "host": "127.0.0.1",
+          "port": 50678,
+          "database_oid": 29705
+        },
+        "identity_owner": "LocalSessionBootstrap",
+        "asset_storage_owner": "original File AssetLibraryService",
+        "backend_process": "ordinary uvicorn app.main:app",
+        "production_literal_gate": false,
+        "production_gate_override": false,
+        "production_environment_toggle": false,
+        "gate_source_sha256": "a35c5a392fec0bc38446752e0c44cf79a3853edda7b5ce3fc40e2d58e78d8089",
+        "development_sessions": false,
+        "response_mocks": false,
+        "model_provider_mock": false,
+        "latency_schedule": "real Creative PUT and history GET dispatch held, then route.continue",
+        "request_not_dispatched_until_release": true,
+        "model_execution": "NOT_REQUESTED",
+        "model_counter": "NOT_INSTRUMENTED",
+        "health_storage": "postgres",
+        "playwright_exit": 0,
+        "owned_vite_pid": 78992,
+        "owned_vite_stopped": true,
+        "owned_backend_pid": 78732,
+        "owned_backend_stopped": true,
+        "gate_source_unchanged": true
+      },
+      "cases": [
+        {
+          "viewport": "creative-save-1366x768",
+          "case": "save",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "b4286ffaeeed4b0f370edcd7cfdb622e7c05b9a498386eb6c1e7aec34d5c8061",
+          "reported_decoded_checks": 21,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 1,
+          "page_and_cleanup_errors": []
+        },
+        {
+          "viewport": "creative-save-1366x768",
+          "case": "faults",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "925161f44c4e049274cd15cae74b24fb3e680f30228cfb7d761f5d12b426612e",
+          "reported_decoded_checks": 19,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 1,
+          "page_and_cleanup_errors": []
+        },
+        {
+          "viewport": "creative-save-1366x768",
+          "case": "history",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "04fabebffd73b36d7080d4c17b0af2d803f9342d1f65b9cbe646f3ba5aef60f0",
+          "reported_decoded_checks": 15,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 2,
+          "page_and_cleanup_errors": []
+        },
+        {
+          "viewport": "creative-save-1440x900",
+          "case": "save",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "f255ec4fbe7a5de648b1eea2aacccb954355bae5e77c17be535aa521fddc3dcb",
+          "reported_decoded_checks": 21,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 1,
+          "page_and_cleanup_errors": []
+        },
+        {
+          "viewport": "creative-save-1440x900",
+          "case": "faults",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "fdb3622d218a00763dbd8b63f7d781241f816d9fb9b6867a8935180acd304bbb",
+          "reported_decoded_checks": 19,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 1,
+          "page_and_cleanup_errors": []
+        },
+        {
+          "viewport": "creative-save-1440x900",
+          "case": "history",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "72b3ac4b535f2388776c6145ec81cc4c3f32f74b749f7d62df5003e824633f84",
+          "reported_decoded_checks": 15,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 2,
+          "page_and_cleanup_errors": []
+        },
+        {
+          "viewport": "creative-save-1920x1080",
+          "case": "save",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "47bc677479d0956d8e78b4269c70b3c2decc7eeaf986d840d0ccedeac4cdd450",
+          "reported_decoded_checks": 21,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 1,
+          "page_and_cleanup_errors": []
+        },
+        {
+          "viewport": "creative-save-1920x1080",
+          "case": "faults",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "d78b0f2afc13fd5b43a65609cd73b9ce7e03e3cf076f2c8bfe5e054122b093a4",
+          "reported_decoded_checks": 19,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 1,
+          "page_and_cleanup_errors": []
+        },
+        {
+          "viewport": "creative-save-1920x1080",
+          "case": "history",
+          "status": "passed",
+          "original_attachment_equals_decoded": true,
+          "decoded_sha256": "a6d86cf2bec44afa2ccc4783bfa0a24b9612c04fa5be3d44c8e53fee3d767505",
+          "reported_decoded_checks": 15,
+          "all_reported_checks_true": true,
+          "real_original_http200_body_hashes_rechecked": 2,
+          "page_and_cleanup_errors": []
+        }
+      ],
+      "artifacts_sha256": {
+        "backend.stderr.log": "372f5d76072133db3323ea686a71058599ea1862775f067e2d0d14c34dbbc0b1",
+        "backend.stdout.log": "0093dc5282866cd671122ee0d66ec55c665eafa868c2465fcdec6bdf9bf020fe",
+        "junit.xml": "eabf8d157a6b39974ac679404e1fffb361d3f2b5b0df2e038eac59d9d3ed77a7",
+        "launcher.json": "5b0a7a775e1ea9a1a83cb4e7653ad7bd6e0f26b0ae017af22688f51caea5e7c3",
+        "playwright.log": "ef42603b0e3726ae050a484fbc558ac3139a0ad59824b327219934a1646a6ceb",
+        "results.json": "18f36a4ab9a3bb7feee9b1bd2eeb6efb43e5467c3928798f02b0b3e270bf1f42",
+        "vite.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "vite.stdout.log": "1c5255dd81b30d4b0c5db24ed505158940c6e0008e6ecf86d563aa3b8b9a64eb"
+      }
+    }
+  },
+  "decoded_evidence": {
+    "original_attachment_count": 18,
+    "reported_true_checks": 330,
+    "raw_http200_body_hashes_rechecked": 24
+  },
+  "screenshots": {
+    "count": 78,
+    "all_raw_sha256_verified": true,
+    "visual_owner_report": "visual-image-review.json",
+    "all_visual_owner_raw_fingerprints_verified": true,
+    "auditor_pixel_inspection_claimed": false
+  },
+  "fresh_pg": {
+    "database": "v2_creative_save_browser_20261017_final_r1",
+    "oid": 29705,
+    "migrations": 20,
+    "initially_empty": true,
+    "wrapper_status": "PASS",
+    "server_stop": "stopped",
+    "cleanup_status": "completed"
+  },
+  "runtime_cleanup": {
+    "utc": "2026-10-16T20:11:08.080760+00:00",
+    "postgres_status_exit": 3,
+    "postgres_status_stdout": "pg_ctl: no server running",
+    "postgres_running": false,
+    "ports": {
+      "8138": {
+        "connectable": false
+      },
+      "5208": {
+        "connectable": false
+      },
+      "50678": {
+        "connectable": false
+      }
+    },
+    "listeners": [],
+    "owned_final_process_workers_remaining": [],
+    "owned_launchers": {
+      "file": {
+        "owned_vite_pid": 55364,
+        "owned_vite_stopped": true,
+        "owned_backend_pid": 77364,
+        "owned_backend_stopped": true
+      },
+      "pg": {
+        "owned_vite_pid": 78992,
+        "owned_vite_stopped": true,
+        "owned_backend_pid": 78732,
+        "owned_backend_stopped": true
+      }
+    },
+    "retained_paths": {
+      ".runtime\\retirement-pg\\data": true,
+      ".runtime\\v2-checks\\creative-save-browser-file-final-r1": true,
+      ".runtime\\creative-save-browser-file-final-r1": true,
+      ".runtime\\v2-checks\\creative-save-browser-pg-final-r1": true,
+      ".runtime\\creative-save-browser-pg-final-r1": true
+    },
+    "database_retained": "v2_creative_save_browser_20261017_final_r1",
+    "database_oid": 29705
+  },
+  "frontend_visual_cleanup": {
+    "utc": "2026-10-16T20:03:53.1123950Z",
+    "port": 5174,
+    "listeners": [],
+    "webserver_pid_from_original_log": 86928,
+    "webserver_still_present": false,
+    "process": null,
+    "stopped_by_original_playwright_owner": true,
+    "manual_termination_performed": false
+  },
+  "frontend_verification": {
+    "implementation_head_observed": "4571bdaeee1b35e88fa19c032c3767a54be01d35",
+    "source_freeze": "source-freeze-final-r1.json",
+    "source_count": 2310,
+    "canonical_source_map_sha256": "783255e32b4a193965a8162becfe7df605eb76e99ee41b729f4fe28517999f9f",
+    "checks": [
+      {
+        "mode": "src",
+        "receipt": "docs/delivery/v2-development/creative-save-src-final-r1.json",
+        "receipt_sha256": "c0261f02ade135017a037f76513795a2a5c25e2ab1f832f98cc21dbf5ff7e110",
+        "status": "PASS",
+        "head": "4571bdaeee1b35e88fa19c032c3767a54be01d35",
+        "source_count": 2310,
+        "before_after_equal": true,
+        "matches_frozen_map": true,
+        "log_sha256": "c58f9f5dfa7e16cf114f06b22dbf80bf89e3360f5d0189a9074cf6b571b5f8a5"
+      },
+      {
+        "mode": "build",
+        "receipt": "docs/delivery/v2-development/creative-save-build-final-r1.json",
+        "receipt_sha256": "f39bdad1fde6b4a364994b31603d09e20840a268e7fa2185d766b55edd344f6b",
+        "status": "PASS",
+        "head": "4571bdaeee1b35e88fa19c032c3767a54be01d35",
+        "source_count": 2310,
+        "before_after_equal": true,
+        "matches_frozen_map": true,
+        "log_sha256": "4f4789413c9935caa3d2801afefc9bcc15919c7c7ae1c92e35fe1b1aebb41fa8"
+      },
+      {
+        "mode": "visual",
+        "receipt": "docs/delivery/v2-development/creative-save-visual-final-r1.json",
+        "receipt_sha256": "6a2bb40e2c189668ea075e5d026168895ddb80ce6f30fa3362230e9a34849acb",
+        "status": "PASS",
+        "head": "4571bdaeee1b35e88fa19c032c3767a54be01d35",
+        "source_count": 2310,
+        "before_after_equal": true,
+        "matches_frozen_map": true,
+        "log_sha256": "617dfa663eac73ae3e1591aadecec6a735f034393d335b04f5c9b60883a1653f"
+      },
+      {
+        "mode": "tokens",
+        "receipt": "docs/delivery/v2-development/creative-save-tokens-final-r1.json",
+        "receipt_sha256": "728ab43f8953aed7e23a6af4b0cc5ab95c6211bd81afbdc7c1b68826aeacb17d",
+        "status": "PASS",
+        "head": "4571bdaeee1b35e88fa19c032c3767a54be01d35",
+        "source_count": 2310,
+        "before_after_equal": true,
+        "matches_frozen_map": true,
+        "log_sha256": "26949b524d180e026ee5e056df8b7c8885dadfa3268251b48c980d5cb2a4381b"
+      }
+    ],
+    "frontend": {
+      "passed": 4269,
+      "skipped": 6,
+      "failed": 0,
+      "files": 393
+    },
+    "visual": {
+      "passed": 7,
+      "fixture_comparisons": 3,
+      "geometry_checks": 4,
+      "output": "visual-results-final-r1"
+    },
+    "tokens": {
+      "files": 52,
+      "status": "PASS"
+    },
+    "runtime_evidence_is_separate": true
+  },
+  "production_adoption_gate": false,
+  "limits": [
+    "Inventory is not an executed 15142-test result.",
+    "Offline failure occurs before dispatch; post-commit receipt loss is not established.",
+    "Delays hold original request dispatch before server receipt, then original route.continue.",
+    "Old VERIFY and history requests return real200; protected UI ignores stale results.",
+    "Model execution NOT_REQUESTED; model counter NOT_INSTRUMENTED.",
+    "No hosted-CI or complete V1 runtime success claim; no aggregate unique test total.",
+    "This final reviewer executed no additional tests, collectors, browser or PostgreSQL processes."
+  ]
+}

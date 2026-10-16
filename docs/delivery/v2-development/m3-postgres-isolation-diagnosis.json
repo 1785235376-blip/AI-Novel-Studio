@@ -1,0 +1,64 @@
+{
+  "status": "CONFIRMED_TEST_DATABASE_REUSE_DEFECT",
+  "product_response": "Correct existing-project409; no product-source failure inferred from missing id",
+  "unchanged_test_source": "tests/test_r2_workflow_execution.py",
+  "test_sha256": "43fb770f9ecd0518a0bc1def0713daacf766ee4292ad0e47f40424b33f90fb9d",
+  "database": "127.0.0.1:55432/v2_creative_tests",
+  "prior_m2_run": {
+    "started": "2026-10-09T13:52:24.277184+00:00",
+    "finished": "2026-10-09T14:06:21.887696+00:00"
+  },
+  "failed_m3_run": {
+    "started": "2026-10-09T15:02:17.691176+00:00",
+    "finished": "2026-10-09T15:15:57.529186+00:00",
+    "failed": 2,
+    "passed": 2047,
+    "skipped": 1132,
+    "source_map_stable": true
+  },
+  "original_conflict_evidence": [
+    {
+      "title": "Synthetic workflow owner",
+      "existing_before": [
+        {
+          "id": "synthetic-workflow-owner",
+          "title": "Synthetic workflow owner",
+          "created_at": "2026-10-09T14:04:35.328252+00:00",
+          "updated_at": "2026-10-09T14:04:35.328252+00:00"
+        }
+      ],
+      "post_status": 409,
+      "post_response": {
+        "detail": "Already exists: synthetic-workflow-owner",
+        "code": "HTTP_409",
+        "message": "Already exists: synthetic-workflow-owner",
+        "details": {},
+        "request_id": "ca5093c9-a200-4773-9fed-ead0305d7290"
+      }
+    },
+    {
+      "title": "Synthetic agent isolation",
+      "existing_before": [
+        {
+          "id": "synthetic-agent-isolation",
+          "title": "Synthetic agent isolation",
+          "created_at": "2026-10-09T14:04:35.393136+00:00",
+          "updated_at": "2026-10-09T14:04:35.393136+00:00"
+        }
+      ],
+      "post_status": 409,
+      "post_response": {
+        "detail": "Already exists: synthetic-agent-isolation",
+        "code": "HTTP_409",
+        "message": "Already exists: synthetic-agent-isolation",
+        "details": {},
+        "request_id": "7c7f3f97-6a66-4f5b-8dc2-9cf385366abc"
+      }
+    }
+  ],
+  "diagnostic_note": "First diagnostic script failed due an unused incorrect import before HTTP calls; both diagnostic scripts and receipts are retained. Corrected diagnostic then proved prior rows and actual409 responses.",
+  "normal_shutdown_log": "stage-m3-integrated-owner-postgres-server.log",
+  "correction": "Add explicit fresh owned database mode to verification runner; reject preexisting names; preserve prior database and old fixed-title tests. Then rerun complete52-file selection plus new runner regressions.",
+  "historical_failure_retained": true,
+  "rows_deleted_or_renamed": false
+}

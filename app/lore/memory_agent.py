@@ -6,6 +6,12 @@ from pydantic import BaseModel,Field,model_validator
 from app.agents import AgentRunner
 from app.document import document_to_markdown
 from app.lore.enums import ProposalType
+from app.config import settings
+from app.model_runtime import (LegacyTextProviderAdapter, ModelRuntimeError, Modality,
+ RuntimeErrorCode, TextGenerationParameters, TextGenerationRequest, TextModelNodeInput)
+from app.model_center.discovery_bridge import LocalTextAdapter
+from app.model_center.discovery_types import local_endpoint
+from app.providers import MockProvider
 
 NAMESPACE=uuid.UUID("93e54f54-f779-5d9f-a354-fdfcc48bc146")
 def canonical(v):return json.dumps(v,ensure_ascii=False,sort_keys=True,separators=(",",":"))
@@ -23,21 +29,90 @@ class AgentProposal(BaseModel):
   return self
 class MemoryAgentOutput(BaseModel):proposals:list[AgentProposal]
 
+def source_bound_memory_schema(data):
+ """Constrain quoted evidence to actual accepted source before generation."""
+ source=data['accepted_chapter'];schema=MemoryAgentOutput.model_json_schema()
+ excerpts=[]
+ for line in source['content'].splitlines():
+  line=line.strip()
+  for start in range(0,len(line),800):
+   quote=line[start:start+800]
+   if quote and quote not in excerpts:excerpts.append(quote)
+ evidence=schema['$defs']['AgentEvidence']['properties']
+ evidence['chapter_id']['const']=source['chapter_id']
+ evidence['chapter_version']['const']=source['version']
+ # Empty chapters have no evidence and therefore only the empty proposals list.
+ if excerpts:evidence['excerpt']['enum']=excerpts
+ else:schema['properties']['proposals']['maxItems']=0
+ schema['$defs']['AgentProposal']['properties']['proposal_type']={'type':'string','enum':['CHARACTER_MEMORY','RELATIONSHIP','EVENT','SECRET_CHANGE']}
+ return schema
+
 class MemoryAgentRunner:
  def __init__(self,novels,chapters,lore,generations,agent_runner:AgentRunner,runtime):self.novels=novels;self.chapters=chapters;self.lore=lore;self.generations=generations;self.agent_runner=agent_runner;self.runtime=runtime
  def _input(self,novel_id,chapter_id,version):
   chapter=self.chapters.get(chapter_id);versions=self.chapters.history(chapter_id);match={"version":chapter["version"],"document":chapter["document"]} if chapter["version"]==version else next((x for x in versions if x["version"]==version),None)
   if not match:raise FileNotFoundError(f"chapter version {chapter_id}@{version}")
+  if chapter.get("novel_id")!=novel_id:raise ValueError("memory chapter belongs to another project")
   document=match["document"];text=document_to_markdown(document);sources=self.novels.get_context_sources(novel_id)
   chars=[x for x in sources.get("characters",[]) if (x.get("id") and x.get("id") in text) or (x.get("name") and x.get("name") in text)]
   keys=[x.get("id") for x in chars]+[x.get("name") for x in chars];related=lambda items:[x for x in items if any(k and k in canonical(x) for k in keys) or str(chapter["number"]) in canonical(x)]
   snapshot=self.lore.repository.get_latest_snapshot(novel_id,"NOVEL","novel")
   return {"accepted_chapter":{"chapter_id":chapter_id,"version":version,"document":document,"content":text},"characters":chars,"canon":related(self.novels.get_data_set(novel_id,"canon")),"timeline":related(self.novels.get_data_set(novel_id,"timeline")),"secrets":[x for x in sources.get("secrets",[]) if (x.get("id") and x.get("id") in text) or (x.get("title") and x.get("title") in text)],"memory_snapshot":snapshot}
+ def _verified_local_adapter(self,provider_id,model_id):
+  registry=getattr(self.runtime,"provider_registry",None)
+  if registry is None:raise ModelRuntimeError(RuntimeErrorCode.TEXT_PROVIDER_NOT_CONFIGURED,"MEMORY_LOCAL_PROVIDER_NOT_CONFIGURED")
+  descriptor=next((row for row in registry.descriptors() if row.provider_id==provider_id),None)
+  if descriptor is None or descriptor.provider_type not in {"local","development"}:
+   raise ModelRuntimeError(RuntimeErrorCode.TEXT_PROVIDER_NOT_CONFIGURED,"MEMORY_LOCAL_PROVIDER_NOT_CONFIGURED")
+  adapter=registry.resolve(provider_id)
+  if isinstance(adapter,LocalTextAdapter):
+   candidate=adapter.bridge.guard(adapter.candidate["id"])
+   local_endpoint(candidate["runtime_config"]["endpoint"])
+   if candidate.get("provider_id")!=provider_id or candidate.get("id")!=model_id:
+    raise ModelRuntimeError(RuntimeErrorCode.TEXT_PROVIDER_NOT_CONFIGURED,"MEMORY_LOCAL_PROVIDER_NOT_CONFIGURED")
+  elif not (isinstance(adapter,LegacyTextProviderAdapter) and isinstance(adapter.provider,MockProvider)
+            and settings.mock_provider and not settings.enable_packaged_runtime):
+   # A local-looking registry label or an Ollama brand does not prove egress is
+   # confined. Only the guarded, no-proxy/no-redirect local adapter is admitted.
+   raise ModelRuntimeError(RuntimeErrorCode.TEXT_PROVIDER_NOT_CONFIGURED,"MEMORY_LOCAL_PROVIDER_NOT_CONFIGURED")
+  return adapter
+ def _local_generation(self,prompt,jid,output_schema=None):
+  registry=getattr(self.runtime,"model_registry",None)
+  if registry is not None:
+   for model in registry.descriptors():
+    if model.modality is not Modality.TEXT or not model.enabled:continue
+    try:adapter=self._verified_local_adapter(model.provider_id,model.model_id)
+    except (ModelRuntimeError,ValueError,KeyError):continue
+    node=self.runtime.prepare_text_route(model.provider_id,model.model_id)
+    def dispatch_guard():
+     if self._verified_local_adapter(model.provider_id,model.model_id) is not adapter:
+      raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION,"memory local route changed before dispatch")
+    request=TextGenerationRequest(model.provider_id,model.model_id,prompt,job_id=jid,
+     parameters=TextGenerationParameters(temperature=0.2,max_output_tokens=4000),
+     structured_output_schema=(output_schema or MemoryAgentOutput.model_json_schema()) if getattr(model,'structured_output',False) else None,
+     metadata={"purpose":"memory_extraction","privacy_level":"LOCAL_ONLY"},dispatch_guard=dispatch_guard)
+    # Never fall back after an attempted generation, including to cloud routes.
+    return node.execute(TextModelNodeInput(request)).response
+  raise ModelRuntimeError(RuntimeErrorCode.TEXT_PROVIDER_NOT_CONFIGURED,"MEMORY_LOCAL_PROVIDER_NOT_CONFIGURED")
  def extract(self,novel_id,chapter_id,version,profile="LOCAL_ONLY",job_id=None):
-  jid=job_id or str(uuid.uuid4());base={"id":jid,"operation":"MEMORY_EXTRACTION","novel_id":novel_id,"chapter_id":chapter_id,"status":"GENERATING","request":{"chapter_version":version},"created_at":datetime.now(timezone.utc).isoformat()};self.generations.save(base)
+  jid=job_id or str(uuid.uuid4());base={"id":jid,"operation":"MEMORY_EXTRACTION","novel_id":novel_id,"chapter_id":chapter_id,"status":"GENERATING","request":{"chapter_version":version,"profile":"LOCAL_ONLY"},"created_at":datetime.now(timezone.utc).isoformat()};self.generations.save(base)
   try:
-   data=self._input(novel_id,chapter_id,version);prompt=self.agent_runner.build_prompt("memory_agent",data,"Extract only durable evidence-backed changes.")
-   router=self.runtime.router(profile,"memory_agent");result=router.generate("memory_agent",prompt);parsed=MemoryAgentOutput.model_validate_json(result.text);ids=[]
+   data=self._input(novel_id,chapter_id,version)
+   output_schema=source_bound_memory_schema(data)
+   task="Extract durable evidence-backed changes from the accepted chapter. Produce an INSTANCE of the output schema, never repeat the schema itself. Return ONLY JSON, without Markdown fences or commentary, matching this JSON schema: "+json.dumps(output_schema,ensure_ascii=False)
+   task+="\nEvery evidence reference must use chapter_id="+json.dumps(chapter_id)+" and chapter_version="+str(version)+". Copy an exact contiguous excerpt from accepted_chapter.content. Never cite paraphrases as evidence."
+   task+="\nFor CHARACTER_MEMORY payloads, use an existing supplied character_id, memory_type EXPERIENCE|STATE_CHANGE|KNOWLEDGE_CHANGE|RELATIONSHIP_CHANGE and content as a JSON object. Extract at most three important changes with concise payloads and short exact excerpts. Return {\"proposals\":[]} if no durable change can be proven."
+   prompt=self.agent_runner.build_prompt("memory_agent",data,task)
+   prompt+='\n\nOUTPUT TASK: Read the accepted_chapter above and extract its durable changes. The top-level response MUST be {"proposals":[...]}, never {"$defs":...} or {"properties":...}. Each item needs proposal_type, payload, confidence and evidence. Evidence must quote the accepted chapter verbatim, with its provided chapter_id and version. Use only known character IDs for CHARACTER_MEMORY. Return {"proposals":[]} only when no durable change is supported.'
+   result=self._local_generation(prompt,jid,output_schema);parsed=MemoryAgentOutput.model_validate_json(result.text);ids=[]
+   # Validate every reference before the first durable proposal/evidence write.
+   # An LLM's valid JSON is not evidence that a quoted event happened.
+   text=data["accepted_chapter"]["content"]
+   for item in parsed.proposals:
+    for evidence in item.evidence:
+     if evidence.chapter_id!=chapter_id or evidence.chapter_version!=version:raise ValueError("evidence must reference the accepted chapter version")
+     if evidence.excerpt not in text:raise ValueError("memory evidence quote does not occur in the accepted chapter version")
+   if canonical(self._input(novel_id,chapter_id,version))!=canonical(data):raise ValueError("memory extraction sources changed during inference")
    for index,item in enumerate(parsed.proposals):
     seed=f"{novel_id}:{chapter_id}:{version}:{index}:{canonical(item.payload)}";pid=str(uuid.uuid5(NAMESPACE,"proposal:"+seed));relations=[]
     for eindex,evidence in enumerate(item.evidence):
@@ -50,9 +125,10 @@ class MemoryAgentRunner:
     try:self.lore.create_proposal(proposal,relations)
     except FileExistsError:self.lore.repository.get_proposal(pid)
     ids.append(pid)
-   self.generations.save({**base,"status":"COMPLETED","provider":result.provider,"model":result.model,"result":{"proposal_ids":ids}});return ids
+   self.generations.save({**base,"status":"COMPLETED","provider":result.provider_id,"model":result.model_id,"execution_mode":result.execution_mode,"result":{"proposal_ids":ids}});return ids
   except Exception as exc:
-   self.generations.save({**base,"status":"FAILED","error":f"{type(exc).__name__}: {exc}"});raise
+   code=exc.code.value if isinstance(exc,ModelRuntimeError) else "MEMORY_EXTRACTION_FAILED"
+   self.generations.save({**base,"status":"NOT_CONFIGURED" if code=="TEXT_PROVIDER_NOT_CONFIGURED" else "FAILED","error_code":code,"error":f"{type(exc).__name__}: {exc}"});raise
  def enqueue(self,novel_id,chapter_id,version,profile="LOCAL_ONLY"):
   jid=str(uuid.uuid5(NAMESPACE,f"job:{novel_id}:{chapter_id}:{version}"))
   try:

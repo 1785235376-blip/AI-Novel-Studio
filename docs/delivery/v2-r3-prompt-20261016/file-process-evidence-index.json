@@ -1,0 +1,1626 @@
+{
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-revoker/assertions.json": {
+    "sha256": "c8596da946c23512e3cd72df2336a5dcab9b31068e696fabd8c57f9b00ba4452",
+    "bytes": 1606
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-revoker/authority-lock-witness.json": {
+    "sha256": "ff2c6491e0e160c992401bf105954d31cc7227ee64e4613d5393f4a8f7b60439",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-revoker/revoker-attempt.json": {
+    "sha256": "8289de192462b4caa4c05320c46829e61426ade8c25d7285ebc217436c51d17b",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-revoker/revoker-authority-current.json": {
+    "sha256": "16351c795c0ca85a2a278b1545ae93d507c9f3563728dfa61102fc5e0134624c",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-revoker/revoker-authority-events.jsonl": {
+    "sha256": "7626d3dde11d9efe91488e25de44edc896efccada62dc1b549a4600951f83f1e",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-revoker/revoker-config.json": {
+    "sha256": "f844c3bf4021f370519a3f05f1cd316cf578ea30630f6e19ac303da13b0d704e",
+    "bytes": 1178
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-revoker/revoker-persistence.json": {
+    "sha256": "957a419d8ef352e0e94e423dc23f94bb34799808f88050638f53f36aecac3f16",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-revoker/revoker-result.json": {
+    "sha256": "44ca84c778f577517dbe5edee7e47d45f8d44027374af0272e9de194082e502f",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-revoker/writer-attempt.json": {
+    "sha256": "4b017033f6fcbe658b5e9689a15cb5b8adc218da951186d57dadf64010b690f2",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-revoker/writer-authority-current.json": {
+    "sha256": "156df020450707af50bde6975d020bc7d64cc8636949fc69b10f327df1cf722f",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-revoker/writer-authority-events.jsonl": {
+    "sha256": "50e2e0739fc2854e6b299cc4783aae060aa00b5a094d7f669a6a60319fd98844",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-revoker/writer-config.json": {
+    "sha256": "f844c3bf4021f370519a3f05f1cd316cf578ea30630f6e19ac303da13b0d704e",
+    "bytes": 1178
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-revoker/writer-first-response.json": {
+    "sha256": "0959184f1bb8792c0d4b1327f22f4e02139206b51d5a31df3741f8c59d5375fd",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-revoker/writer-result.json": {
+    "sha256": "9e843a58cbb8247ea8ca05d213eaef600232cec10369c2708bcd68422a2a13b9",
+    "bytes": 799
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-writer/assertions.json": {
+    "sha256": "e643e8ac77555aabc136f32f27e69917ae56cda4930d5dd98a9f50eff8181f81",
+    "bytes": 1605
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-writer/authority-lock-witness.json": {
+    "sha256": "30221748ffc48fc57124c52c7aa588c9dfa81120f0cd3f07674cbae83fe2da80",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-writer/revoker-attempt.json": {
+    "sha256": "dfa2e12d8e3d2cbe1cd3bb8d69ee37994281dc7c1b4743d164720515cd6d3633",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-writer/revoker-authority-current.json": {
+    "sha256": "a0b43f9629ebb43356b8137365812d2139214f69529a40e8ebbb33ba118bb470",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-writer/revoker-authority-events.jsonl": {
+    "sha256": "3e61c0c27037d5a39c27a9b7b7f6233daa7626f65e351f323de76a5aeee1db9b",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-writer/revoker-config.json": {
+    "sha256": "0590f35a1ab0c4bc0bb2da6ea1ecfbdc92b7c7058acf536019a44cde98f18753",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-writer/revoker-result.json": {
+    "sha256": "5e87f4e71ac85f4ed16293766f1b2bcf1d6b6e8a6b195c6d831a521ff2ffa7c2",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-writer/writer-attempt.json": {
+    "sha256": "c9c6b0f5a5161d72cad0f9507519c5a7e3e9594e55b7e2940b246ae858880d6c",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-writer/writer-authority-current.json": {
+    "sha256": "605ce26094eb6a9d28d3023fb6ff38da3790bc24d709e0b5244ef872888e94bf",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-writer/writer-authority-events.jsonl": {
+    "sha256": "0e41629d9bb4efd2564877e3bdc07ddb7868d33e9562f2379e0aa63088999989",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-writer/writer-config.json": {
+    "sha256": "0590f35a1ab0c4bc0bb2da6ea1ecfbdc92b7c7058acf536019a44cde98f18753",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-writer/writer-first-response.json": {
+    "sha256": "0717cc26c40777594d5016c5718248327e119df7342e025b672fd330f8d66c60",
+    "bytes": 1380
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-writer/writer-persistence.json": {
+    "sha256": "eb7f975e0fadba7fe8b81535a9371af27caba0f71c0e6fdb013aac1e99c5309e",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-writer/writer-result.json": {
+    "sha256": "bb5bd81d146c97fc9d6310afa3095e85ba0f81d7e5e6f7f88d4c6e2a568f726e",
+    "bytes": 1848
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-membership-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-revoker/assertions.json": {
+    "sha256": "85f6f7e370e67583201163a3b8308ed7b33fd3a6911893071044a516ee10d79c",
+    "bytes": 1606
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-revoker/authority-lock-witness.json": {
+    "sha256": "ca1fe52918523fedae034bbad7d67af17194c695ed348e21f550d25a895574e0",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-revoker/revoker-attempt.json": {
+    "sha256": "7af46ccd04c3d2f109d4ef1a3e856560dc345637ce1c7f80c5e6a9c3ac3b0bc6",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-revoker/revoker-authority-current.json": {
+    "sha256": "8f47267cbca0746a4f51071485c85ab4c1f85aa75b948f21863916619be21bb1",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-revoker/revoker-authority-events.jsonl": {
+    "sha256": "17e540f19181d0e94f596503b08c5257b74588750cfacd3569df073df07b4cc7",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-revoker/revoker-config.json": {
+    "sha256": "da7bfeaa3e6e705ff93880aeebf041ea4301341847b2f1f7f533a65afe057fe9",
+    "bytes": 1204
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-revoker/revoker-persistence.json": {
+    "sha256": "a33e8291312b8925571e060361b0d9d3dd182fa677ca4543189c33b8e57fbe72",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-revoker/revoker-result.json": {
+    "sha256": "b63640e18165fcf463ba2738eed118ce95b463700261fbd5f02331f6574f45ae",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-revoker/writer-attempt.json": {
+    "sha256": "a88fc1542113e9dce7aca836e971a352fb8b176b54aacd36b7fbc051811e067c",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-revoker/writer-authority-current.json": {
+    "sha256": "bc3e23730a7f42f422ad1ab932ffe1c052eb7350ed0204dad7e40a0c0c30832e",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-revoker/writer-authority-events.jsonl": {
+    "sha256": "69e9d40ef80774a2876db0c295350b1e579b8ec53e5d4d50a3903b6033dc3b91",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-revoker/writer-config.json": {
+    "sha256": "da7bfeaa3e6e705ff93880aeebf041ea4301341847b2f1f7f533a65afe057fe9",
+    "bytes": 1204
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-revoker/writer-first-response.json": {
+    "sha256": "1047ba810db877eadfd0d5199611d369613d46255ea208d19003d6e6f58dbd12",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-revoker/writer-result.json": {
+    "sha256": "0377a0ea72ac81a257ec14e743aefe35c38fbbe70807300924813ef8539a515e",
+    "bytes": 799
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-writer/assertions.json": {
+    "sha256": "37ba1f3159afc70eb7be9d0a0e5515d5b8b91ddc5947e61a98dd8d337b4cc98c",
+    "bytes": 1600
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-writer/authority-lock-witness.json": {
+    "sha256": "68009f626b493d64aef4b887f12cb1ad3e98ad0a6409e8be0e47ea6b6eb2612a",
+    "bytes": 1171
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-writer/revoker-attempt.json": {
+    "sha256": "b3efd591affc64763a491221596d198cad2c8d8fc9794299ab5829fa90e57a31",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-writer/revoker-authority-current.json": {
+    "sha256": "326d134497877188cfad38abd59c4a5c8208f55b3281209b97badcf64a9dd84e",
+    "bytes": 370
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-writer/revoker-authority-events.jsonl": {
+    "sha256": "5cfcdc5aca5cbe5ea8a5f1bc9a15638cdc6ee95591fa3c436f17cd06464078e1",
+    "bytes": 1048
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-writer/revoker-config.json": {
+    "sha256": "45b71769fbe3fe10d16ac1ebebaff0ca41710fa5a4583da4f022f1ebed58e0ca",
+    "bytes": 1203
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-writer/revoker-result.json": {
+    "sha256": "4481638b255e437ed219214dee9e33dc1b95f3403edf7aa825574090381f03b6",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-writer/writer-attempt.json": {
+    "sha256": "99bd116d3bbac2355d70282adc9e78c8343cf4d88aa08316785b722e4f6fb09a",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-writer/writer-authority-current.json": {
+    "sha256": "cb8173e4a0d935b7c8dab9da60b7801b43fb765c7173de5e2146bb0fcdfaa888",
+    "bytes": 371
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-writer/writer-authority-events.jsonl": {
+    "sha256": "960e774aebed06182dbb74af13b678255713e76ff010731020e58263a32633ec",
+    "bytes": 12603
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-writer/writer-config.json": {
+    "sha256": "45b71769fbe3fe10d16ac1ebebaff0ca41710fa5a4583da4f022f1ebed58e0ca",
+    "bytes": 1203
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-writer/writer-first-response.json": {
+    "sha256": "7961030ebe172e95c29d94d0a7fbb5107979dddbe5917ef93664bfa1f9c9ef0a",
+    "bytes": 1380
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-writer/writer-persistence.json": {
+    "sha256": "08d46da7023d4d47f2c08b1316ef4e0d926c1fe65d3c75a936e0813572a38ba9",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-writer/writer-result.json": {
+    "sha256": "a01f05aafb6c4ad00fd8adf6f76ca6394a45f9a9cdb2aaf8759f85a40c213925",
+    "bytes": 1848
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-permission-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-revoker/assertions.json": {
+    "sha256": "10a01bbac4628b0c3218c78cecc6cb545803110a13be2b9c7dd7ab57451b59a3",
+    "bytes": 1600
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-revoker/authority-lock-witness.json": {
+    "sha256": "5ad7be60790e3150c8dc5d7909c0022291db845e0b011eeb615c62582a24254a",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-revoker/revoker-attempt.json": {
+    "sha256": "86db2951c0f5c6084649361869779c2d63212b8f4aecede9811e909749c10917",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-revoker/revoker-authority-current.json": {
+    "sha256": "a4a3ef0835f5b8d488bdcfb49b240285e25c9d1d0908a0c2b9215061dc32e9ff",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-revoker/revoker-authority-events.jsonl": {
+    "sha256": "75a3a07c6447587a069b2fa9996ba8b1a5d2a6226570c9a381112ab1cf423c72",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-revoker/revoker-config.json": {
+    "sha256": "f74117c74cf58aa37d9e23a60ceb41f5fbac72cbbd6418e21e746bfefc8fe1f6",
+    "bytes": 1166
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-revoker/revoker-persistence.json": {
+    "sha256": "0073bdee95caff206d74103a23e32a0155b4619a41364d222064aa821efa4e69",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-revoker/revoker-result.json": {
+    "sha256": "15e32322b8f1a23fcedf832d3e41b0cd1d02c9c9a429b177a9c5b03aa52fb66c",
+    "bytes": 67
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-revoker/writer-attempt.json": {
+    "sha256": "45b6eff6821ef3a8bcfca11bd503b180845211c380414fe652af0589cb93cbf7",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-revoker/writer-authority-current.json": {
+    "sha256": "63176f17a026392e1bcad6b2c440e45eae788c433eb1e0892ef2de5f55cd5714",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-revoker/writer-authority-events.jsonl": {
+    "sha256": "bad9caf9b609f90d13ccb26f7cfcf5e128714d73b9f45a8d7641125f2848d893",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-revoker/writer-config.json": {
+    "sha256": "f74117c74cf58aa37d9e23a60ceb41f5fbac72cbbd6418e21e746bfefc8fe1f6",
+    "bytes": 1166
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-revoker/writer-first-response.json": {
+    "sha256": "9e21c4ccdff6ef4181eadcd008d6b5d6ad1da58a031dd311c6d461d2e45967b9",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-revoker/writer-result.json": {
+    "sha256": "3b69f900cbe8a777be0daab20368bed17cf5becf665476f0eab560642faac08d",
+    "bytes": 799
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-writer/assertions.json": {
+    "sha256": "9e91efd56bdf34eac14fbe154ab10122da01f159376358ba800514b71ea772d6",
+    "bytes": 1594
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-writer/authority-lock-witness.json": {
+    "sha256": "b98288e7186b86cdd7fe80456e2d9704e306931dd9449b37185969bc6c67e7d6",
+    "bytes": 1171
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-writer/revoker-attempt.json": {
+    "sha256": "0f556cec489ba79d28fb026712ffcef04d38a22aec88e9fa99fa30b1e57d699b",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-writer/revoker-authority-current.json": {
+    "sha256": "27f5868a43e04ab464746ddc9a14514e8e4f19caf9397af885a88250e72375ec",
+    "bytes": 370
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-writer/revoker-authority-events.jsonl": {
+    "sha256": "ad9c7b0642efe4a16719f0f794972966f5816aac87d3316bfba52640d605cb6d",
+    "bytes": 1048
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-writer/revoker-config.json": {
+    "sha256": "4ffd26b0055716b800c779348874ec185e5d8625a2e17c67d1620adbc5d039a3",
+    "bytes": 1164
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-writer/revoker-result.json": {
+    "sha256": "ed6bb3929ee448b33d104015cf2ef9c3b7e0f533b97d398e8f7b5c856c3cbf71",
+    "bytes": 67
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-writer/writer-attempt.json": {
+    "sha256": "035cba04c2fdfdd50a0b9cc74c4c3a42d5915e5dfd4eac49b17e66926c54b318",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-writer/writer-authority-current.json": {
+    "sha256": "6a4bb524d53367eb057d075b9f29ea3ea2b5fd39f27c1b123c853a289067b3a9",
+    "bytes": 371
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-writer/writer-authority-events.jsonl": {
+    "sha256": "bc200b84bb4a23143629b6c3d94813791b87fbb83a271dbfa46f2be58de55732",
+    "bytes": 12603
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-writer/writer-config.json": {
+    "sha256": "4ffd26b0055716b800c779348874ec185e5d8625a2e17c67d1620adbc5d039a3",
+    "bytes": 1164
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-writer/writer-first-response.json": {
+    "sha256": "e0500cd2144ee30320b8301b0623c227f40cb49bf08ddc3a084b2d5fc6d97235",
+    "bytes": 1380
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-writer/writer-persistence.json": {
+    "sha256": "a2893aca3d71fd94bdb20be1e192bfce6917aad4d151607e8fe0879da1470ee0",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-writer/writer-result.json": {
+    "sha256": "4a0093a9476f5d6fe20c90586f860a8238460691f0670afda87e5e1baabe295a",
+    "bytes": 1848
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-adopt-role-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-revoker/assertions.json": {
+    "sha256": "0987b70452a773849f1361949a9e0911df4242fe39c6aa65dd0ae0410988419c",
+    "bytes": 1607
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-revoker/authority-lock-witness.json": {
+    "sha256": "e8b9258f06ec199b8034a248997fbaa177ef1868faf9b5e89a7bcc5de3905264",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-revoker/revoker-attempt.json": {
+    "sha256": "8bd4bb7599a028f1fe10ea18837a4af6d52ec706690ac345a38571a592c0a4f0",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-revoker/revoker-authority-current.json": {
+    "sha256": "1591a0c39198ea3006552fec19d8b707df8fa1f64b6ec49017d4577e8c602658",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-revoker/revoker-authority-events.jsonl": {
+    "sha256": "08dd1230a6c8b3727872f331446b7ef3baeb045bb640f159905ca7d403703c11",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-revoker/revoker-config.json": {
+    "sha256": "8eb125c32d457764da8064f02ee0ffa13be0fa7494eeb194a457cd1a1d98071e",
+    "bytes": 791
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-revoker/revoker-persistence.json": {
+    "sha256": "0259a11c45e0513a4fff743ea396f20b9156ec37c85c9308ccafa4ca03050324",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-revoker/revoker-result.json": {
+    "sha256": "613013721cad7a58745bcaf5e456d81440fa777fce97bea7ecf5cb270e933cec",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-revoker/writer-attempt.json": {
+    "sha256": "13e95ee8aa71f7695a19bc6654a2f43f54c4c927d769a42f0ce4205b0c2d02dd",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-revoker/writer-authority-current.json": {
+    "sha256": "622584c9285ff319db8b4b1484c8defc273a4cad5b5ba4a59ee866abbaf8e20d",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-revoker/writer-authority-events.jsonl": {
+    "sha256": "2fcddc1c455b8ed8f3c475f6fa8854dd4ac2011f84f9eeb8890497a946cf0dcb",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-revoker/writer-config.json": {
+    "sha256": "8eb125c32d457764da8064f02ee0ffa13be0fa7494eeb194a457cd1a1d98071e",
+    "bytes": 791
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-revoker/writer-first-response.json": {
+    "sha256": "2543991ac864c4649260d8fcfb0f72bac371b8028b270029145fe47e19e4cc57",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-revoker/writer-result.json": {
+    "sha256": "36a94f3a7200f07d71524b20e4bb29b573f52730ccc913b50de255a49e8dda2d",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-writer/assertions.json": {
+    "sha256": "487caa4357c363c7487f53e2cd7da0d5c1f5456c70cfb9a4ffe4dd9dbddd5437",
+    "bytes": 1606
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-writer/authority-lock-witness.json": {
+    "sha256": "90c51cd66dcd0943fe9f38b6cde2fc39d53d5715f36023c0041646d4d20e5bce",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-writer/revoker-attempt.json": {
+    "sha256": "2f23485533394d5a03b45e34636ddcd1fd996218c6565d2b66142ef1bd6b48a9",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-writer/revoker-authority-current.json": {
+    "sha256": "d367b5a47769598942791b789590d2df890845d1b4e8a7fc863d433f38055f5d",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-writer/revoker-authority-events.jsonl": {
+    "sha256": "429604e4e067292893f9f13b16c71b199e1bc2548b694a800581cc5a1d231360",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-writer/revoker-config.json": {
+    "sha256": "9b90a307e17e62e246871a9360d7e1b3532a561dc4dbb2f865fcc2ac50896181",
+    "bytes": 789
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-writer/revoker-result.json": {
+    "sha256": "9b71baa47e9ecbf3bb7ef8eed2eab5f050c0faaf1bf34584919b9fba669ab000",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-writer/writer-attempt.json": {
+    "sha256": "0906ccb9d5f74f8230d8d6bcf720546c7734d9a5d1024319542b44c94f84fc76",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-writer/writer-authority-current.json": {
+    "sha256": "b008c4d85f1d19e0dfcc34e1e7fefbfdda90ef893aea72640cb2004d4d565837",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-writer/writer-authority-events.jsonl": {
+    "sha256": "b6743dc42e276536026d69baff03a0f368a1336f69c2527f6b655f968ee5b9a2",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-writer/writer-config.json": {
+    "sha256": "9b90a307e17e62e246871a9360d7e1b3532a561dc4dbb2f865fcc2ac50896181",
+    "bytes": 789
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-writer/writer-first-response.json": {
+    "sha256": "6172befefc43a232e0f3f9a2464aceb7b2a12b73980e02c3f600eb5b7109b4f5",
+    "bytes": 460
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-writer/writer-persistence.json": {
+    "sha256": "336d84b584c0f21fc40ec70d75f06805e99736b5adb72aa85ee9edf0a983546f",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-writer/writer-result.json": {
+    "sha256": "483952362374eea90671d392c22f95fe1fe7708cad59d13c6bd35b59a7432016",
+    "bytes": 929
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-membership-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-revoker/assertions.json": {
+    "sha256": "7c03128f8a458d5381a346f7785d07cd35a7c38d673e5f918f107aad935c0797",
+    "bytes": 1607
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-revoker/authority-lock-witness.json": {
+    "sha256": "9aa708ed4c4514a88ffa70a5730a392d062449371edbacb3fe3ab9511d98cd75",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-revoker/revoker-attempt.json": {
+    "sha256": "7ff935ec8d067668649ec5b395bd32c16dabf660c91db476d05dd2f8c502f649",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-revoker/revoker-authority-current.json": {
+    "sha256": "f529ad64b1805c4641aa84232ec8342d3b5ac0244fe4ce4babe4cfd0fd6e6a12",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-revoker/revoker-authority-events.jsonl": {
+    "sha256": "e2c765c34529d087d7e2a1fc445a14a2aa3cc392347e8bc97853bdfeb417fc08",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-revoker/revoker-config.json": {
+    "sha256": "cc8a1b264acfbd00e8f052a2e40eadaa56cb9024a7402d32c5fae44655f40db9",
+    "bytes": 817
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-revoker/revoker-persistence.json": {
+    "sha256": "6f4926ce6c5dd62cd5df37cd08fad490a6c1d44917797ba722444c92a9895498",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-revoker/revoker-result.json": {
+    "sha256": "dba53df3267a50776c6278677e7152352544b72db7e97b61b6ab85344ede618a",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-revoker/writer-attempt.json": {
+    "sha256": "b49d21e154290dc5bdb4c3c7baaad92c63c75a383334ec76a1a9d2caa51c7fc4",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-revoker/writer-authority-current.json": {
+    "sha256": "5aab8d2291afad3a116d31814e25d257bff22eefa241e6adc7afcb01b00adbbb",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-revoker/writer-authority-events.jsonl": {
+    "sha256": "cae55a049ebf44a30a4f33a86156f76ea6c2741145409b5b477b16fbf5e54742",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-revoker/writer-config.json": {
+    "sha256": "cc8a1b264acfbd00e8f052a2e40eadaa56cb9024a7402d32c5fae44655f40db9",
+    "bytes": 817
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-revoker/writer-first-response.json": {
+    "sha256": "cb7603bfd7c6fb2e532240b376e61943451cbf74c122c69f1576c68c8cadd025",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-revoker/writer-result.json": {
+    "sha256": "3374e37e77e94d94eec2fc6c4aeeefa41d2cca63166de8d2a3219885e6c9d39b",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-writer/assertions.json": {
+    "sha256": "a27034ce6e419628a02828589a26b2ed52e2d9e41afd44ed7f09ac77f635b7af",
+    "bytes": 1601
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-writer/authority-lock-witness.json": {
+    "sha256": "27d9dd66089d8cf331dcbfa6f4b2473070b120c66749b1872b502667b97c09a4",
+    "bytes": 1171
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-writer/revoker-attempt.json": {
+    "sha256": "99df3b7c22c45833d4a3476ca690bbcc418884cd1e4e1d37197b7fcd5129f8b7",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-writer/revoker-authority-current.json": {
+    "sha256": "ab34a96f3825c12f2b70c06f2ce05228cf8d990e02c4107f1d04cde1351b7ee5",
+    "bytes": 370
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-writer/revoker-authority-events.jsonl": {
+    "sha256": "e1c6115291aebc99bf76fc285740636356d280ed0a5929ee4b9bff81a1f79262",
+    "bytes": 1048
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-writer/revoker-config.json": {
+    "sha256": "bf42dd1b6f0a05271a772626682417715803db3c312ffed781bcbe551dd3e650",
+    "bytes": 815
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-writer/revoker-result.json": {
+    "sha256": "d1ccceb795d29b11db8adcc83fa8a9173e97cff15188799a36684d7b1376baf3",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-writer/writer-attempt.json": {
+    "sha256": "a4e61d82d6155ad1a19494491113295736980226668a4c836b906bbab96165a7",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-writer/writer-authority-current.json": {
+    "sha256": "4005e968e6db7c110052530d384baa779f2258dc1f37b54b2d56007dd89fb526",
+    "bytes": 371
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-writer/writer-authority-events.jsonl": {
+    "sha256": "8d1211757217c3b4d726a28919ed4901dfed00be037b6f91bc7133be7502ec40",
+    "bytes": 9450
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-writer/writer-config.json": {
+    "sha256": "bf42dd1b6f0a05271a772626682417715803db3c312ffed781bcbe551dd3e650",
+    "bytes": 815
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-writer/writer-first-response.json": {
+    "sha256": "6cb0b3ef8366f314b8d92e354b8606f49ff6c84b917f5d46b51bb570740a5988",
+    "bytes": 460
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-writer/writer-persistence.json": {
+    "sha256": "d8fa2ab0940bf3850f27ab9d936bdf5e10e080be3d354e8a8796b6f586750faf",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-writer/writer-result.json": {
+    "sha256": "87396155d3c91979ac5ccedf2f151335beb0404a944c5cdbc3b0ab71ba6d7811",
+    "bytes": 929
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-permission-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-revoker/assertions.json": {
+    "sha256": "62e7d8e9f9fa2e6e87fa754acfca66726e00d86da59528e9aca9bbc06b61785d",
+    "bytes": 1601
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-revoker/authority-lock-witness.json": {
+    "sha256": "1c36acc8927c063747f21427f5f55131e1af24b596f882b5954c0a57edc9529e",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-revoker/revoker-attempt.json": {
+    "sha256": "8e9dd9bf8e4dc1008424c3c1bfd87f1292e908ecb3efcc5af116a2538a341285",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-revoker/revoker-authority-current.json": {
+    "sha256": "056551b1e3a3d1ecab55d9565e27cfd49e8b3aa85c4da11869e9531d3a3e63f2",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-revoker/revoker-authority-events.jsonl": {
+    "sha256": "87dc794b81ec11a69a15c90e975ed4a87d07e5b39f8e9ff9a8526eb5414418a5",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-revoker/revoker-config.json": {
+    "sha256": "09e8d24f8a0ec1a4338f24147e8a9ffd8616836166b841a3cba9d4eb848885dd",
+    "bytes": 779
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-revoker/revoker-persistence.json": {
+    "sha256": "bd8b1219480c4e761402f9665ac5d83052e5c6ec6c93cffff1dbe1ac9d12758b",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-revoker/revoker-result.json": {
+    "sha256": "c71158a8b9cb507070a3118d1e8ce335e6fcd56a16ade76528373e5cd2bf801a",
+    "bytes": 67
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-revoker/writer-attempt.json": {
+    "sha256": "0d25df69a80d807395199ca8cc427d2dbb2c8e9b43b134b85557751220109385",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-revoker/writer-authority-current.json": {
+    "sha256": "acb479f7d97c2c570922b69a50ab218db1533472bda69dd0e5ca3a1ed9130151",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-revoker/writer-authority-events.jsonl": {
+    "sha256": "7075749d3086d60f5072d76bdc7ab08d45f0bb0a0c233302bf0f63600dfe8504",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-revoker/writer-config.json": {
+    "sha256": "09e8d24f8a0ec1a4338f24147e8a9ffd8616836166b841a3cba9d4eb848885dd",
+    "bytes": 779
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-revoker/writer-first-response.json": {
+    "sha256": "1b0e251244b0c165246cca8d73b8fca184a37197530994c67352a92a3fc29f5c",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-revoker/writer-result.json": {
+    "sha256": "54a0dc306803948be84c862c2eaa32a4b0f6df6d6af4d8119a45f41f57924359",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-writer/assertions.json": {
+    "sha256": "f964e72376dcf5497e6c238a15ecc2fc0dbd1416bf46fe301efd0c6194038d0e",
+    "bytes": 1595
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-writer/authority-lock-witness.json": {
+    "sha256": "d86080c0ecdd5b3de7320411c7a8ae3f5f62bf31ad08fb349b40dab002c44ecb",
+    "bytes": 1171
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-writer/revoker-attempt.json": {
+    "sha256": "50ea462f4b7edd82cca2f73fdbdb9e1cfa0d2300d4d1d55ceb37a8cfb98c2972",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-writer/revoker-authority-current.json": {
+    "sha256": "324d537f4922d10f127f5d04b87641282219dbf819bcdb7e9c8ac87e83040640",
+    "bytes": 370
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-writer/revoker-authority-events.jsonl": {
+    "sha256": "2b7ac651db81dd3b5ab9431580d52be25358dc382fbf174dc9d84215c463b792",
+    "bytes": 1048
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-writer/revoker-config.json": {
+    "sha256": "c0a43299a26b783c799aacbcb065c2b13014bd7047f5de35fbabfbe858c0224a",
+    "bytes": 777
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-writer/revoker-result.json": {
+    "sha256": "19c1fdf2f5f6375b18e8ccd82d28ff6b5f36cde1f550cb5d71d7f35c3bd00508",
+    "bytes": 67
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-writer/writer-attempt.json": {
+    "sha256": "f6abf802071488bb29b9f87a628f4275736ca9f5e8417643edc263a3ac7036ee",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-writer/writer-authority-current.json": {
+    "sha256": "b5fc00aca1ee14e2bb6b54f0dbff81e109cf0752ad895efad98d97578298ff3a",
+    "bytes": 371
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-writer/writer-authority-events.jsonl": {
+    "sha256": "a0dbab3354aa15e6aaebfae490580f809d515481716a1e6eeef10d25e306a68b",
+    "bytes": 9450
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-writer/writer-config.json": {
+    "sha256": "c0a43299a26b783c799aacbcb065c2b13014bd7047f5de35fbabfbe858c0224a",
+    "bytes": 777
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-writer/writer-first-response.json": {
+    "sha256": "1e464f04c5a9e041e1ac7251f86ac70eeaed5455f2a039ea2357dd40ead2665a",
+    "bytes": 460
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-writer/writer-persistence.json": {
+    "sha256": "3bb3702f86eeed06c637f5ccfbc009ec8c015b76e6ee0212e298f1a49e2bcc74",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-writer/writer-result.json": {
+    "sha256": "b09020a20d55fb44605e763b38ee1a020aef4f91a99a348055919686b72264eb",
+    "bytes": 929
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-create-role-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-revoker/assertions.json": {
+    "sha256": "8b129b45450486d50e28ee6789a6558342078376cc2fd551763d1c027870765b",
+    "bytes": 1607
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-revoker/authority-lock-witness.json": {
+    "sha256": "8a83f5a37d20c3fc98152f8d51fa8fda288faf3dec79f722b7746feeb4d5490e",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-revoker/revoker-attempt.json": {
+    "sha256": "e8c5ec8d3097be8f5c0bd87ff8cee5a1099f05c66e84ea27fee2f56a81a74790",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-revoker/revoker-authority-current.json": {
+    "sha256": "895e0c89004be705b47f30dde9ca45fe05c5ebc1638423243bf0701413103b10",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-revoker/revoker-authority-events.jsonl": {
+    "sha256": "be5612254656b6341c86984aff922a20ad5435ca016a3b24be181cbf3cc7e56f",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-revoker/revoker-config.json": {
+    "sha256": "1dd9aff3852fe74d5a62d8f0b111ee9c60090f19283b335eb35fd7c38f2e7934",
+    "bytes": 686
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-revoker/revoker-persistence.json": {
+    "sha256": "f1093beb68b3e003eaddc32be484b67f5bfa8f39c921a2d640b88ad16595878e",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-revoker/revoker-result.json": {
+    "sha256": "f854d619b7c64f78ad7ef97c17bad53b00801937ba3ca95b234f5a4f6f4c483b",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-revoker/writer-attempt.json": {
+    "sha256": "b14a62b026420b2e6f286b2f23eea37a51dca8a057da3c7777e5b913a276ab8f",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-revoker/writer-authority-current.json": {
+    "sha256": "514297d86281af044d9459a5dd7c57a6f17434a16fa652801a2aa2b4743e3e3e",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-revoker/writer-authority-events.jsonl": {
+    "sha256": "fbef732a323c6de0ed776264f73f6d8b597c40bb23d3eb9883178db77f8d646d",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-revoker/writer-config.json": {
+    "sha256": "1dd9aff3852fe74d5a62d8f0b111ee9c60090f19283b335eb35fd7c38f2e7934",
+    "bytes": 686
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-revoker/writer-first-response.json": {
+    "sha256": "8d444335070701940550b835bded63ec3d715cb227b2c9b20ef7528b95c9abdf",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-revoker/writer-result.json": {
+    "sha256": "f7dba5588b008487ce1912358dd34bf8a3004bd2cd558d310447140887edabf5",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-writer/assertions.json": {
+    "sha256": "3483412eb4e06b49e935f83f113b2c1b476aadb416eb1472462d3e41163e9313",
+    "bytes": 1606
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-writer/authority-lock-witness.json": {
+    "sha256": "a1ff24cef6bd84d0860678632c8febbe9fd4c0a7f4ae958c7f68a4649c003c77",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-writer/revoker-attempt.json": {
+    "sha256": "4cd9e7883decfefc7822070727686351f224549c81c308d0f0f6456f882467c0",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-writer/revoker-authority-current.json": {
+    "sha256": "3a3c82096adf079051ba268b918724a9bf7e1878452fccb3226f64c4e962fd9c",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-writer/revoker-authority-events.jsonl": {
+    "sha256": "3757d1c95115c37e066bed505127fe557cb44d80aadad9d60c6deab19b9551dd",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-writer/revoker-config.json": {
+    "sha256": "9227ce6365fcbd52db109da78596c76d65ea487561617051c2501ba1d20a1100",
+    "bytes": 684
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-writer/revoker-result.json": {
+    "sha256": "aa1d692b7c75279c3e938622d5063f431836499326adbfe6b37c15dd17c0f0c8",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-writer/writer-attempt.json": {
+    "sha256": "783045f243c961a2dbfb5dd546635de1d967c5f0c50dc481bcd2c878cda74f3a",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-writer/writer-authority-current.json": {
+    "sha256": "4b067774fe59ef471906969c5b21a0d27d0f9b9c5aa9b3ad4399c6c24d209a27",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-writer/writer-authority-events.jsonl": {
+    "sha256": "b97a363449f8e51f42dba11071a48e22cf39eb1f1464fee40e822f95f4fd8be0",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-writer/writer-config.json": {
+    "sha256": "9227ce6365fcbd52db109da78596c76d65ea487561617051c2501ba1d20a1100",
+    "bytes": 684
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-writer/writer-first-response.json": {
+    "sha256": "589575807a9b2ced73f455ed5c07f3b739ebbbeed3a83b34800a4672178403cf",
+    "bytes": 2157
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-writer/writer-persistence.json": {
+    "sha256": "dcd881ce5f1fee10c351ae196f3e1f930d870594d0458fa460c7d4d47726b45c",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-writer/writer-result.json": {
+    "sha256": "59d40430965fd982861fc7cd47c0a05158bd3b0c58166c3470babc5cea87a977",
+    "bytes": 2626
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-membership-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-revoker/assertions.json": {
+    "sha256": "f8123e31d63de11b86b092a785b330bd7f281369f0fa3db272e587d47ef23b7d",
+    "bytes": 1607
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-revoker/authority-lock-witness.json": {
+    "sha256": "3cd87c77cce21a26ad6e021cb2342f91e319ac249ae36cdfed80a5e3e0c8b88c",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-revoker/revoker-attempt.json": {
+    "sha256": "ccece0154b0428c8ac931441c31eea8f38844403bbed1daffb06680a9e8cf1b5",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-revoker/revoker-authority-current.json": {
+    "sha256": "4e1b8f966844751707bcf2f70ca3f575402c49138675779fb4c0c701b64236c2",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-revoker/revoker-authority-events.jsonl": {
+    "sha256": "549f92729b248304e3bdebf009acde435c30226783f5d0cb12bb455c60b34a4a",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-revoker/revoker-config.json": {
+    "sha256": "09a0e104262848be294a0e431526a889a10a1d187f51f47d8a9145b830363b8b",
+    "bytes": 712
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-revoker/revoker-persistence.json": {
+    "sha256": "94d161d3f884b44337d1f170c928616eff8490f015fbfc258b9954ea772270a0",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-revoker/revoker-result.json": {
+    "sha256": "db70add28e999168a1fabbececa9978020ffa684abd089cee31cebd244b6b46d",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-revoker/writer-attempt.json": {
+    "sha256": "e0129f56d14b387e663f73e9cf36611fccb080077a5d260e9d494151dd15a1d5",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-revoker/writer-authority-current.json": {
+    "sha256": "53b44fb5a4a942fda3dc8d4d765a28c850c41567aede49816ea54e3e0f2d5325",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-revoker/writer-authority-events.jsonl": {
+    "sha256": "bb8400b58804426b13b01272019031449be406b6fa51eb0c93b1ebe7cf23412c",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-revoker/writer-config.json": {
+    "sha256": "09a0e104262848be294a0e431526a889a10a1d187f51f47d8a9145b830363b8b",
+    "bytes": 712
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-revoker/writer-first-response.json": {
+    "sha256": "e2e7801bc7ad64d0151e4c8df82a67de38c553b200b03b7ff679a20016d6dca6",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-revoker/writer-result.json": {
+    "sha256": "ccd5f5960a4f5e0996eaaf4cb57b3444b1ec091a1101c258ae7a952f7f63be20",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-writer/assertions.json": {
+    "sha256": "ad8c4e3424dd35797c8f99e1d900585f214f17b52b2f69f1e6343ab5e648bd5e",
+    "bytes": 1601
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-writer/authority-lock-witness.json": {
+    "sha256": "d73e30357d6e552c6984ea4b1fe5e3c437703b78590350709465e23b83bb44a4",
+    "bytes": 1171
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-writer/revoker-attempt.json": {
+    "sha256": "fae8377c999b45af8aa9a3cead0f49c1bb9c71120e804d4ba3af9931808c0783",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-writer/revoker-authority-current.json": {
+    "sha256": "62ba832e3a09401cd51801d28dda0d4f959bdaf9cc9e93378d67819d9f397c46",
+    "bytes": 370
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-writer/revoker-authority-events.jsonl": {
+    "sha256": "e88fc1a91cfba952fa90e77d25c28a3f4fe5b6bbf715a7b5bc31c6b46e6aa0fc",
+    "bytes": 1048
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-writer/revoker-config.json": {
+    "sha256": "e29dc94cb9bc25a3af1c72a29f012a4afaae45537cf35cf41185cd0e3acf11c7",
+    "bytes": 711
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-writer/revoker-result.json": {
+    "sha256": "76fdcd3069e221294034dfb0369d32af276bccc8257547b3294195888c2de5e9",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-writer/writer-attempt.json": {
+    "sha256": "f48c47462e556575d6dc91ffe41a552af20bef484116495ec9a64caec7190ed9",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-writer/writer-authority-current.json": {
+    "sha256": "660c1e4828c091a39c2cf8bd744c0b8d42da4857e16bf8942e2ae4fc2e49fa81",
+    "bytes": 371
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-writer/writer-authority-events.jsonl": {
+    "sha256": "c5911b5626c64e618aa195094218683024cd0f762c7e35036933e2312ddeb1e1",
+    "bytes": 8399
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-writer/writer-config.json": {
+    "sha256": "e29dc94cb9bc25a3af1c72a29f012a4afaae45537cf35cf41185cd0e3acf11c7",
+    "bytes": 711
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-writer/writer-first-response.json": {
+    "sha256": "35d39b5f08ebdef612683d25903e9ff4925a8badee0c79db96fe92844e0e2494",
+    "bytes": 2157
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-writer/writer-persistence.json": {
+    "sha256": "f7c13a425e7b08cc27fc3f4f48f57211e6510f3c502c7b57a31858cba798bfc5",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-writer/writer-result.json": {
+    "sha256": "b56308d7757f76a72fd9ea03f9d334dea869eb9cd473b698a3995361fdfb1604",
+    "bytes": 2626
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-permission-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-revoker/assertions.json": {
+    "sha256": "2af3dc11ace597f739bce48ef1d2dfa3a0925f90cabcf8b388c3ef060272982f",
+    "bytes": 1601
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-revoker/authority-lock-witness.json": {
+    "sha256": "a3da0bcc818588c96ce71546bd2ec70a69ef248f415f2c862caf8dde0fef60cb",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-revoker/revoker-attempt.json": {
+    "sha256": "13f0568c527d6cadf37493fff943b507532a5cfc7c1a71c4bb17e9273e832c29",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-revoker/revoker-authority-current.json": {
+    "sha256": "a37db33780b60582291c54325b383195c7363e56305088ba9e0ccd04292d8c4f",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-revoker/revoker-authority-events.jsonl": {
+    "sha256": "b9a06ec921ced1035a58717194cefe780fd3ce02bc17c1307b54aab24b083dfb",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-revoker/revoker-config.json": {
+    "sha256": "3d87573eaf9cec95b4bf5775804fa64f3ec725c99810f27a4f1c5e0d4fefac49",
+    "bytes": 674
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-revoker/revoker-persistence.json": {
+    "sha256": "3ccda246e6eea7be2d7b8c07358c596adf81ec92abdf551c39e80bf56119ca1c",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-revoker/revoker-result.json": {
+    "sha256": "d3594ffd83579268cd5c7bae4919263c6b1287a9d3a5440b1d8239b829b6516a",
+    "bytes": 67
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-revoker/writer-attempt.json": {
+    "sha256": "4db11be69e8ac9ec8a7494bc47a4e85c43527a3bffcada7bfdda040c2aecbced",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-revoker/writer-authority-current.json": {
+    "sha256": "a5f90d742fb3f8098b145d02368b430857c830823e492c3d8090af47e6f878a3",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-revoker/writer-authority-events.jsonl": {
+    "sha256": "4008295e83b285f54b6e666eef74916b79990b63ea5b303f8ba1edc2a57734c9",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-revoker/writer-config.json": {
+    "sha256": "3d87573eaf9cec95b4bf5775804fa64f3ec725c99810f27a4f1c5e0d4fefac49",
+    "bytes": 674
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-revoker/writer-first-response.json": {
+    "sha256": "5d89383a85ed3624a312508c814a2599c8575d52e0ea9da590e3fa8eb625e5cc",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-revoker/writer-result.json": {
+    "sha256": "7e02f5192c474e4ccaf8d0879fa93575e3d709044cff17e2af44bb85fa533f96",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-writer/assertions.json": {
+    "sha256": "5ba7fbc095386072a5efb547774e878fb8e27bd0a65d3823a3b9084851036f53",
+    "bytes": 1595
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-writer/authority-lock-witness.json": {
+    "sha256": "81944b8f49714343519c3564fd30729018f2a8e337e8ab3d3cba4bb07b976561",
+    "bytes": 1171
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-writer/revoker-attempt.json": {
+    "sha256": "8de6cda768b876b552720386023d699835bffd6a7571e831cee8176fc12cb53d",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-writer/revoker-authority-current.json": {
+    "sha256": "9b43c4c003decc195cf77cd5f3f62ac9d76fb76287d5af61849f9c517565c1f4",
+    "bytes": 370
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-writer/revoker-authority-events.jsonl": {
+    "sha256": "877995679c9fbef52d86e0ee55f96ec5f380e9d7bb21c724bd4a865f68827200",
+    "bytes": 1048
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-writer/revoker-config.json": {
+    "sha256": "eb097cb34d2b5ddc0d74021c4e385571c7e86dbe1ad6fbb544a509807cf1d01b",
+    "bytes": 672
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-writer/revoker-result.json": {
+    "sha256": "c8e78fa070d937f57f527769bc5cb704d4ae33f5bba218602fc23ea3fa7704dd",
+    "bytes": 67
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-writer/writer-attempt.json": {
+    "sha256": "ce5af4a0a5d4d16fd512c7b97a448ecf7c0ee76c638829d74cbfdea295f6d20b",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-writer/writer-authority-current.json": {
+    "sha256": "dc4c549ca82571a8014d55593b2b0d637a717f8cde78c732bfcfeadc81f77eb2",
+    "bytes": 371
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-writer/writer-authority-events.jsonl": {
+    "sha256": "872e7074c0c52ddde17e225e231a1ea704f5cb8469305616cd56a03b3bd86709",
+    "bytes": 8399
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-writer/writer-config.json": {
+    "sha256": "eb097cb34d2b5ddc0d74021c4e385571c7e86dbe1ad6fbb544a509807cf1d01b",
+    "bytes": 672
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-writer/writer-first-response.json": {
+    "sha256": "7971214718be4de71c70e6811f074c80d918c93c439c221ab3b768f213442442",
+    "bytes": 2157
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-writer/writer-persistence.json": {
+    "sha256": "755641423de718d29d1927acf46bdd8aee8ef7151420029afb3867cc3591440d",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-writer/writer-result.json": {
+    "sha256": "3d2229fabb4ece3ba6f5569e352e806235428a2247a4a844682eb2d1efa91427",
+    "bytes": 2626
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-delete-role-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-revoker/assertions.json": {
+    "sha256": "77d0733df46e758e9bb1d52a5950affb49906b7d7ed726b731f60249176581d8",
+    "bytes": 1607
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-revoker/authority-lock-witness.json": {
+    "sha256": "3e623cbbb1d835f99ef230858f1deb76d1b0e770316c526a5a53f173eda5bbc0",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-revoker/revoker-attempt.json": {
+    "sha256": "3078b9b40c24f1eaccb00f3ba7b913c6c12113a00e536f50ade0fd284137a2c7",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-revoker/revoker-authority-current.json": {
+    "sha256": "ea04bb1108b1526e9035d4800445cf372425ee38253ff2a20a3226282b8b1122",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-revoker/revoker-authority-events.jsonl": {
+    "sha256": "eaba6a467b9e3832d54d9f66c64a13ef31e44f22bb231b6e19892662d0252b6e",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-revoker/revoker-config.json": {
+    "sha256": "a1be29543626e94bdd2fbda81c12def3d332a92a8e04aa28fa4b457fbee3622f",
+    "bytes": 942
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-revoker/revoker-persistence.json": {
+    "sha256": "1c132f25e8a6d3866f9867b920e6e3726f6d4f7239184893f141ce2f5fefccf0",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-revoker/revoker-result.json": {
+    "sha256": "48905e03abaff1fc7cfb068c11dc3015545ff0e39dedc698961c24ec34ed4f6f",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-revoker/writer-attempt.json": {
+    "sha256": "1d227579dd98df1015de45331d41ca0fd71c43145305e60106a11a6c296a5eb1",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-revoker/writer-authority-current.json": {
+    "sha256": "e58e71f73f27b3b9d6c2640ddb27c7b02a496ba4a895c4db534c01e3405ae3a3",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-revoker/writer-authority-events.jsonl": {
+    "sha256": "abd433f3ac84d3cf886473c00a685e995883e64ef61b6b354700e45869b3d990",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-revoker/writer-config.json": {
+    "sha256": "a1be29543626e94bdd2fbda81c12def3d332a92a8e04aa28fa4b457fbee3622f",
+    "bytes": 942
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-revoker/writer-first-response.json": {
+    "sha256": "2cda89d01833deb11064deab78ffc3a691a76008192de5cc3f4a73b084f0f778",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-revoker/writer-result.json": {
+    "sha256": "b2910ce289fea603c4268445653562707da33341e1ac43059514c7cb8f6eea08",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-writer/assertions.json": {
+    "sha256": "0c171c217b970a203d12c0b400dd24aa1d8f998642146e94902efe0687625358",
+    "bytes": 1606
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-writer/authority-lock-witness.json": {
+    "sha256": "aa5d27c23602f1f878aecddc29309049c2e3355e3fb1a75aa3e2cd3576fe4e77",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-writer/revoker-attempt.json": {
+    "sha256": "887453ae2289b29552eb4c0f86e59ce3dccba428badd38bc80c16a174fdee3d2",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-writer/revoker-authority-current.json": {
+    "sha256": "6cd838d6be322917151ce04dfabdf1926a08e13f0c445e1187fe99e9748b7be7",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-writer/revoker-authority-events.jsonl": {
+    "sha256": "66ab0bae52ba681c0e196b38f1259b94f30153bd4e9bf9d0bf67ca5f52341e43",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-writer/revoker-config.json": {
+    "sha256": "abd5000cb09bea6dda44ee807987b9283bca7304aa78c3c91d3d1e20abd987df",
+    "bytes": 940
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-writer/revoker-result.json": {
+    "sha256": "741ca494b937e187b98568f178bd9620faba7ba1faa5d338a396545b16278ce0",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-writer/writer-attempt.json": {
+    "sha256": "d3338b52a7461a38750d3bcba09254e979ac2f26a05a4278aa7187ff34e88b6e",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-writer/writer-authority-current.json": {
+    "sha256": "22275503df2fa63278065aa34116e0fdeb9c9c4f613e0d155128cd590ff23e6b",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-writer/writer-authority-events.jsonl": {
+    "sha256": "83fb95e1c3059ab1e32c45bb9335448352aad1a6839542fd28d86a47163b1ac3",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-writer/writer-config.json": {
+    "sha256": "abd5000cb09bea6dda44ee807987b9283bca7304aa78c3c91d3d1e20abd987df",
+    "bytes": 940
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-writer/writer-first-response.json": {
+    "sha256": "b09ebe11b31d0b29e85c79054b1e03f0c80d055ae200d81151c34d302da68870",
+    "bytes": 494
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-writer/writer-persistence.json": {
+    "sha256": "ab39c33444603793c91d4e411b349479cb2e757805e68072e6df5b090dac68ea",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-writer/writer-result.json": {
+    "sha256": "d71ff5c92791a3aa9a51da64775b0a6f891c81f3658c92209435db6db88a9537",
+    "bytes": 963
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-membership-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-revoker/assertions.json": {
+    "sha256": "29bdbddf8e643aa9f912e5314f30935f291d649fd6a9272fe90018043d163719",
+    "bytes": 1607
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-revoker/authority-lock-witness.json": {
+    "sha256": "6d1a8132e51d5288543db630f80ada3348850e0dbfc390df3c0d43e8adab0419",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-revoker/revoker-attempt.json": {
+    "sha256": "580450bd6c95700bc23674837bc519f9e4527760475de8c510704452acc4b3d7",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-revoker/revoker-authority-current.json": {
+    "sha256": "75a3316f999a88efd5de77e13984c784ffd1ff5505d9a75ce80ad54918afa45d",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-revoker/revoker-authority-events.jsonl": {
+    "sha256": "edd05985809784e97e6c6f84471678b253485d9db028b4e0470faa7ad95c57bc",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-revoker/revoker-config.json": {
+    "sha256": "bae355ac7ce9c94cafb7008b9064fa9ca10ca57d260fc4f49b4dd9376ae25710",
+    "bytes": 968
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-revoker/revoker-persistence.json": {
+    "sha256": "a51e30e7d6dd1e9023acfbea4cc29a1ca0ff5886b18c8751a78004c5ea806fb3",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-revoker/revoker-result.json": {
+    "sha256": "8df4d577720fb278f2f7933eee179160f0ef12e38a5b2da71e78fc38dbdc7db6",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-revoker/writer-attempt.json": {
+    "sha256": "9b56a472dcaf4d9ead5b22b97109668595f52f9063de3a630ac2e16673c92dc2",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-revoker/writer-authority-current.json": {
+    "sha256": "263d4c564af81d581ce699463ef2ea17666d0937c48368fa482b1dcbe208d950",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-revoker/writer-authority-events.jsonl": {
+    "sha256": "98276ecf1bc832e1512107db8a475238396ffc63904d94ea55ccd41ce0f37b0d",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-revoker/writer-config.json": {
+    "sha256": "bae355ac7ce9c94cafb7008b9064fa9ca10ca57d260fc4f49b4dd9376ae25710",
+    "bytes": 968
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-revoker/writer-first-response.json": {
+    "sha256": "b29a1ee2e455ae2d6a6687870df691da839e344f3dae63c933c4bca00b63cf39",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-revoker/writer-result.json": {
+    "sha256": "4dd4c5463f968234a04843a18158cff22283257e3d1be87ce1006607b26654b0",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-writer/assertions.json": {
+    "sha256": "850c87394563c402a03fd3da4970cb459d67db2fc6efeb3cfa805d5fdaaeace2",
+    "bytes": 1601
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-writer/authority-lock-witness.json": {
+    "sha256": "956f78433b273d747359610b26cd8f76600490aa72cd77d817e57b1e3e38fed3",
+    "bytes": 1171
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-writer/revoker-attempt.json": {
+    "sha256": "32536be2ccb2b1cb76a4c7a115bd6f515ec2dfa55a247bb5c0fb0c9c7978f6b3",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-writer/revoker-authority-current.json": {
+    "sha256": "a240ce431aa3c70187c336f64573c96ba367ef20990670a9186d221eaa4b7de8",
+    "bytes": 370
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-writer/revoker-authority-events.jsonl": {
+    "sha256": "dc9d4d24ecd4a6bc37379aab496d12cda6e3a4e7b9a019fdc4be03a97d403561",
+    "bytes": 1048
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-writer/revoker-config.json": {
+    "sha256": "7bdea3966901d287d782c0816100f9f93caae14322016e40a4ff7391cdf8097d",
+    "bytes": 966
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-writer/revoker-result.json": {
+    "sha256": "d7e699e2dbb64c80913383036bb2d1075012f17ee1f9ea2f9b967bc92eb72617",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-writer/writer-attempt.json": {
+    "sha256": "847ec5a86413b017353a2b01ce7b6f4fd87381f3a2c76bb1078489466cb952d2",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-writer/writer-authority-current.json": {
+    "sha256": "2b9d165ef4562b996858ddd2de3c6714990ea72cc863b7ffa05127b1053002a1",
+    "bytes": 371
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-writer/writer-authority-events.jsonl": {
+    "sha256": "aa6e9504a3379286f62d53d6f396cbe27c255f385b75ea429aa48afbb9e75fb3",
+    "bytes": 9450
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-writer/writer-config.json": {
+    "sha256": "7bdea3966901d287d782c0816100f9f93caae14322016e40a4ff7391cdf8097d",
+    "bytes": 966
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-writer/writer-first-response.json": {
+    "sha256": "add6c00517f0f7757e8270c79f85feb767aebd96f6e0b705410f69202e4dac7c",
+    "bytes": 494
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-writer/writer-persistence.json": {
+    "sha256": "5f12b7ee0acee075a5d7028c6b954a2fb6eee1198c676fd18e75b62011ae828d",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-writer/writer-result.json": {
+    "sha256": "4aa7e3fd5828448baf61f0bbc362521c20ee679ff48edb972ef0776a02c6143c",
+    "bytes": 963
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-permission-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-revoker/assertions.json": {
+    "sha256": "7c528cb3dcd54bd8ff9d419271d729fdba99e0f6566494c286f053edfa326ea8",
+    "bytes": 1601
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-revoker/authority-lock-witness.json": {
+    "sha256": "f4f26800e6891ccf42428c34f59d78d7d8649d7eb0f37e0717afb05cbae8ae3f",
+    "bytes": 1176
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-revoker/revoker-attempt.json": {
+    "sha256": "8a60ad17967f9d3d9306fac940702386d67bfb6463760d1beeacd5787d1acfbe",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-revoker/revoker-authority-current.json": {
+    "sha256": "8188e475511b22f75aff633c9bb7b48e72da8772ebd504cdc861da076b9c2caf",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-revoker/revoker-authority-events.jsonl": {
+    "sha256": "36c143d9a6f647082b5b68c530554ceff8fa2c2135e80a94c733793076035eb4",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-revoker/revoker-config.json": {
+    "sha256": "1601a488726088a5f3c6e7899eafb1ba5e8324f14f257c98bea7be71909eab32",
+    "bytes": 930
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-revoker/revoker-persistence.json": {
+    "sha256": "aaf01672229872ec8c688e3eeb4d9922bf990f1a0fd8a44e88c227b3cb26789e",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-revoker/revoker-result.json": {
+    "sha256": "7476faa7e832ac75d4fb2d187f1a22ceb4a4a8b53a1e91e86b2ffc8ba7745965",
+    "bytes": 67
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-revoker/writer-attempt.json": {
+    "sha256": "d8c67789785df11215b7b056bdd83b74d1e89787d958b5cc62bfcb9cf7a5fa1e",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-revoker/writer-authority-current.json": {
+    "sha256": "07ac74c60e752d675827e94d0820a9ecedac105c1797928b3c45b8e061c5e5c2",
+    "bytes": 372
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-revoker/writer-authority-events.jsonl": {
+    "sha256": "ce8e513b61547ba4be7a6f675222e690f9343ac0fc1473294da6da4ac348ea2e",
+    "bytes": 1054
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-revoker/writer-config.json": {
+    "sha256": "1601a488726088a5f3c6e7899eafb1ba5e8324f14f257c98bea7be71909eab32",
+    "bytes": 930
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-revoker/writer-first-response.json": {
+    "sha256": "2e638a579052d725401de7bde09c6efd44e9e43105fb87ce9e2213cf858645f0",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-revoker/writer-result.json": {
+    "sha256": "b5caf0f710108ff49ec55d3cfa972d7df179cec93f1c1e21462f70b25763e400",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-writer/assertions.json": {
+    "sha256": "b922467a1499d77fc234f63af86d2a3699c8b2a950b235b7cbdb5465041b944d",
+    "bytes": 1595
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-writer/authority-lock-witness.json": {
+    "sha256": "0b25b56f58236d761c8d64e38282adbfcc543b9a776ac2762b3ce5d6331f2759",
+    "bytes": 1171
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-writer/revoker-attempt.json": {
+    "sha256": "c110b5dc5875516b79b266dc71da79f513eb51607221f4761855d953ac4cf6c0",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-writer/revoker-authority-current.json": {
+    "sha256": "a0aad54def23e5a31d8e8630a85ded10bae39297ab0353d1e56fd373b88a76be",
+    "bytes": 370
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-writer/revoker-authority-events.jsonl": {
+    "sha256": "b94a730a986fa3b1d8fbbeb964190befc0937f0b08a03c4e88cdd9878c69d337",
+    "bytes": 1048
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-writer/revoker-config.json": {
+    "sha256": "d3270c37dd72c2a7fe7224deb8c9005efe91528eb06602c8fbacbf35a961e7aa",
+    "bytes": 928
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-writer/revoker-result.json": {
+    "sha256": "58209fd508be80a09171b53cdc15838716f19d3a736e8d3c3afe359b802b3795",
+    "bytes": 67
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-writer/writer-attempt.json": {
+    "sha256": "f59fd44daa18606ae9439f8f951c96ad444bec4469d119f7b679df7b9473f0bd",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-writer/writer-authority-current.json": {
+    "sha256": "70b05fa3b4d5ea54e109a501f966b62d7413858964323e6e2475695e3e0736f1",
+    "bytes": 371
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-writer/writer-authority-events.jsonl": {
+    "sha256": "7b6d9f2efa403ee549b76f11c16ead44aab7cba9db6825bbe8e5f36806b3cd84",
+    "bytes": 9450
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-writer/writer-config.json": {
+    "sha256": "d3270c37dd72c2a7fe7224deb8c9005efe91528eb06602c8fbacbf35a961e7aa",
+    "bytes": 928
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-writer/writer-first-response.json": {
+    "sha256": "200ea49a4c6d462adacad4d8bc6e4ec27da428871e1647f1ef3cac8ef64a5b4f",
+    "bytes": 494
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-writer/writer-persistence.json": {
+    "sha256": "8a7064896312e82d11105c833102083ec885116b5a37816e7738523b45f5a48b",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-writer/writer-result.json": {
+    "sha256": "9872ddcfe17d8b426a9cfb58ca3f6424bf3eefabc48d15b4b98b74b5d26da526",
+    "bytes": 963
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-file-final-r3/process-file-revise-role-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/diagnostic-file-witness-r2/revoker-attempt.json": {
+    "sha256": "b8513791c4a23777dfcd5adfd9220bf96ec1af13e35e08bb2b98fc445e085234",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/diagnostic-file-witness-r2/revoker-config.json": {
+    "sha256": "84af0d47c0375290328c8f4ecbb3b2c1e3409bce7b157d1609f377898b2ce916",
+    "bytes": 777
+  },
+  "docs/delivery/v2-r3-prompt-20261016/diagnostic-file-witness-r2/revoker-result.json": {
+    "sha256": "10e8df623b8610478fd7537e0809fe42b6035cf912e4173687d9539ef2f76375",
+    "bytes": 2772
+  },
+  "docs/delivery/v2-r3-prompt-20261016/diagnostic-file-witness-r2/revoker.log": {
+    "sha256": "892707d4ceb0a500e56c97b0e3f5589464e483c4f0906b86ca5433575379e3d0",
+    "bytes": 3080
+  },
+  "docs/delivery/v2-r3-prompt-20261016/diagnostic-file-witness-r2/writer-attempt.json": {
+    "sha256": "e46c7f4b44060feacdf82a1a1c141ed4e3d38ee30042ae71d848f7e8fb54aec5",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/diagnostic-file-witness-r2/writer-authority-acquired.json": {
+    "sha256": "1525ec294fe0892723f7d3868b5afafc43033f125b256c8921a30d20d291ad3f",
+    "bytes": 294
+  },
+  "docs/delivery/v2-r3-prompt-20261016/diagnostic-file-witness-r2/writer-authority-attempt.json": {
+    "sha256": "1525ec294fe0892723f7d3868b5afafc43033f125b256c8921a30d20d291ad3f",
+    "bytes": 294
+  },
+  "docs/delivery/v2-r3-prompt-20261016/diagnostic-file-witness-r2/writer-config.json": {
+    "sha256": "84af0d47c0375290328c8f4ecbb3b2c1e3409bce7b157d1609f377898b2ce916",
+    "bytes": 777
+  },
+  "docs/delivery/v2-r3-prompt-20261016/diagnostic-file-witness-r2/writer-persistence.json": {
+    "sha256": "85d208fd1d7f5cf9d799f82a3a5d292e0bfda432390ce3f77ebc7f917cab7cdf",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/diagnostic-file-witness-r2/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/check-receipts/r3-prompt-browser-file-final-r4.json": {
+    "sha256": "e56ee4e247b58e80fb857d65f773a87261e5603279360e6a173927524628501b",
+    "bytes": 541052
+  },
+  "docs/delivery/v2-r3-prompt-20261016/check-receipts/r3-prompt-browser-file-final-r4.log": {
+    "sha256": "59435113307e45021de5d8b741a31c5959570c4242adb5547a43169b294f7ba7",
+    "bytes": 557
+  },
+  "docs/delivery/v2-r3-prompt-20261016/check-receipts/r3-prompt-combined-pg-final-r1-postgres-runtime.json": {
+    "sha256": "8ff29cdb13c27cff08fa6b0d522102af51857b134da0f871e54ccbfb44b9fd71",
+    "bytes": 9720
+  },
+  "docs/delivery/v2-r3-prompt-20261016/check-receipts/r3-prompt-combined-pg-final-r1.json": {
+    "sha256": "657472b4b7759a372f0734f83e3f5ceee1dbe86675418bb00ecddc3e0d49ea12",
+    "bytes": 541425
+  },
+  "docs/delivery/v2-r3-prompt-20261016/check-receipts/r3-prompt-combined-pg-final-r1.log": {
+    "sha256": "ee3707bcc8eb259af9c0a7807a88ceff0b461d07506062497ef97e8f2279c40f",
+    "bytes": 21
+  },
+  "docs/delivery/v2-r3-prompt-20261016/check-receipts/r3-prompt-combined-pg-final-r2-postgres-runtime.json": {
+    "sha256": "6bdd7d64fe9c1d824926170e672e40b070628a910b6a6b48a931821a4e00a377",
+    "bytes": 9720
+  },
+  "docs/delivery/v2-r3-prompt-20261016/check-receipts/r3-prompt-combined-pg-final-r2.json": {
+    "sha256": "5a911b377aa6fd08d6ce52988e09bfae300922b536485578a0bc4113ce57d0f5",
+    "bytes": 541425
+  },
+  "docs/delivery/v2-r3-prompt-20261016/check-receipts/r3-prompt-combined-pg-final-r2.log": {
+    "sha256": "fb3a85cd297aacb976a843a7a21df19eec92701e4e67a41d1a406e0498c7d307",
+    "bytes": 12
+  },
+  "docs/delivery/v2-r3-prompt-20261016/check-receipts/r3-prompt-process-file-final-r2.json": {
+    "sha256": "89856ada3afb34de8c9ed7c5f5ec43a40023e8c86d2c1f5235d9bb50c9653504",
+    "bytes": 541142
+  },
+  "docs/delivery/v2-r3-prompt-20261016/check-receipts/r3-prompt-process-file-final-r2.log": {
+    "sha256": "f87a86b8f8dfcd3388f24aaf362ac795f7e549a338ace491be9068bce9e7f141",
+    "bytes": 6486
+  },
+  "docs/delivery/v2-r3-prompt-20261016/check-receipts/r3-prompt-process-file-final-r3.json": {
+    "sha256": "53267bfa3a69139a00f840094be0c74277b01f3638a2dee8a4aa8d3428c49199",
+    "bytes": 541142
+  },
+  "docs/delivery/v2-r3-prompt-20261016/check-receipts/r3-prompt-process-file-final-r3.log": {
+    "sha256": "70c3a1f3b4bdaf4c9c82e1b20fca6c05b7a711070aa3f9b97b5a9cd1966fc6bb",
+    "bytes": 718
+  }
+}

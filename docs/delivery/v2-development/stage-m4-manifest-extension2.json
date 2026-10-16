@@ -1,0 +1,253 @@
+{
+  "utc": "2026-10-10T06:05:10.424547+00:00",
+  "status": "INVENTORY_ONLY",
+  "tests_executed": false,
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "collection_stdout": "{\"collection_exit_code\": 0, \"collected_nodes\": 10708, \"collection_errors\": 0, \"tests_executed\": false}\n",
+  "collection_stderr": "",
+  "collection_exit_code": 0,
+  "collected_nodes": 10708,
+  "baseline_nodes": 9151,
+  "source_changes": [
+    {
+      "path": "API_CATALOG.json",
+      "before_sha256": "29e3174319c3d118096b9caee8407212c5f2e079f03a981fc3db0c74f08b9bdf",
+      "after_sha256": "e26b54159186efa3819535beefe1f37685a2d43f8dad05ed6bdfe2f57931266d"
+    },
+    {
+      "path": "API_CATALOG.md",
+      "before_sha256": "22bc00bcd0c84c9a71c5d5d6826f673ac6fe6175f1138bb976059730f34cf448",
+      "after_sha256": "e8d0bf53f2a4fe323985936bd285431f4e39dec27639f04e62e5269091b62c7c"
+    },
+    {
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "before_sha256": "8005546e39ded22d4031f70b0a4caa7a22f2774428beda6a3d9fa2c029cd547a",
+      "after_sha256": "8563cb16ab883cb8ef9c5df0659fc63d2a97992d590c3e25ba36125948adf685"
+    },
+    {
+      "path": "API_OPENAPI.json.gz",
+      "before_sha256": "ca1bfa328ff32262722c3bee5d219c237c54b3b7ea3b1a6cd8c577cf3ae45341",
+      "after_sha256": "e6de44260379c54b12fed7f077f066b128059edc850aafbe4abaab47d32a9aee"
+    },
+    {
+      "path": "app/api.py",
+      "before_sha256": "a5a5d9472ea3ca9ff579ca2d744a5a6b158ff1cef3e092eadcaa67566cf98beb",
+      "after_sha256": "7ef7e4dda157ec7789ae1e3cae88bdf642f05d33f5bf0544c4d9033b2edc94ae"
+    },
+    {
+      "path": "app/experimental/api.py",
+      "before_sha256": "ac377f41a0e7847fdbe0c049cf2315c2dffad9317b20d800897b43b31b6da7be",
+      "after_sha256": "afb2de215cfcb723094319b5522a311ef3cc782c97ecea592e1279a0207d740b"
+    },
+    {
+      "path": "app/experimental/flags.py",
+      "before_sha256": "f321466a41e380c0be9d9f8912695d3e82fa4736fe7c50315e89ea667b357aa1",
+      "after_sha256": "571fd87488c5b744dcb043e04b55e039f824b29dec308e8660aa6fef5f7983b0"
+    },
+    {
+      "path": "app/experimental/model_broker.py",
+      "before_sha256": "c7c8aff2708fa80b740b206be5e7acf2cdd6156079613295dc59821db7650e55",
+      "after_sha256": "35d8191600484ab7bf537cbffa89ca67aeaade398459134012f36e2aad0b3078"
+    },
+    {
+      "path": "app/experimental/model_broker_api.py",
+      "before_sha256": "19df4dd5fad766cef98193f3b87c386315d6fe6d2f40a8376651842ff4083f74",
+      "after_sha256": "207ba03ad0a607d09c4284f67260c793e3848ab71a5efb76f4fe5a4dd49617f8"
+    },
+    {
+      "path": "app/experimental/production_lineage.py",
+      "before_sha256": "2f11c0846d4c616f18f336d003b2467294c8483e4190575443d2fa9327dc5483",
+      "after_sha256": "56b97f2de1d1e56cd3a68d8576a77ec175086fdcc393ae8479fac10ed81e8cdb"
+    },
+    {
+      "path": "app/jobs.py",
+      "before_sha256": "c16b85236171c188ac529ebc560b1b3be79caa124d791a2a245eeb32222e2794",
+      "after_sha256": "33eddef228341354f14a44a29ab08592c30e00510e4797b4a8b5722ecab4cff8"
+    },
+    {
+      "path": "app/main.py",
+      "before_sha256": "4fcf2dfc6c4b8369f48d9373b8f470949166d356b1e8a5d374049dedc8aab266",
+      "after_sha256": "bc79694e1bafa16cb41d2ed65bd4648e7f3cb502452a48af16adfb3ff52bb0c8"
+    },
+    {
+      "path": "app/model_center/discovery.py",
+      "before_sha256": "ffc235b8a7c44608ff014bf36dfef79e08773f1457ca83b5f71429d84c1d67a2",
+      "after_sha256": "8f60f57a47a640b3e33d3b0db424d8a01aca1853cf775e567bac38b94705cf42"
+    },
+    {
+      "path": "app/model_center/discovery_api.py",
+      "before_sha256": "d20a75fed9c517c96d768239c25261bba0c879fcdf0ca42931089f6f4b498493",
+      "after_sha256": "9e1f85d34a9e7df8d0e3faeace6cbbb82c5fa7129a522240a50a3cb2e75b51f6"
+    },
+    {
+      "path": "app/model_center/discovery_bridge.py",
+      "before_sha256": "cdb91ddee41252ec5dfd4ee3b9afa74c171dbff4f16534e4ff67aeb376d5a3e5",
+      "after_sha256": "a3e72887a36d635c6fb963f8bc8235a90c7c05c20e2aea6c95a0571684a0e823"
+    },
+    {
+      "path": "app/model_center/discovery_probes.py",
+      "before_sha256": "57cd65d95b3f483844a20e34c8da18d62bda4acd7c81bd3291e2cdbe956dfe93",
+      "after_sha256": "83f6763e585823c965d8c8744f75320bcb589bb174ce54f54d49c5cd30658bd7"
+    },
+    {
+      "path": "app/model_center/discovery_types.py",
+      "before_sha256": "0be88512eeb4a45ade7328b8e008e49c89bf8d5ca01b62053f8763677280dca2",
+      "after_sha256": "fdc6810dd5f248864af4ae6899553cec55e1438da8de51d7275e8bb41720aa87"
+    },
+    {
+      "path": "app/model_runtime.py",
+      "before_sha256": "47a8d7192ef1d39b1ba1ba9a6ef3af77a22928707a11c4245b5e75550621c544",
+      "after_sha256": "037d5b42117959f1c5e85b43807a7b7e9fe7f699ddc9b3452cc0b482f6e5e20b"
+    },
+    {
+      "path": "app/packaging/packaged_desktop_launcher.py",
+      "before_sha256": "f16f72f0585cc43ad92227b16add0ac8c8e2847baaa96b4c8eacea1b92acba54",
+      "after_sha256": "712870eff8f10998c44a5b980e7fbb0fbe502d97dcd51185053d20f5d20b5ea5"
+    },
+    {
+      "path": "app/packaging/packaged_processes.py",
+      "before_sha256": "c01be1b6f38ef5dc2bd1ec9a718a975fe7ebade48a97b505774da4485da9397c",
+      "after_sha256": "4fbdc2ab89cc3fe61941531b59487b8e10eea38281a1b339e81591e33d494f59"
+    },
+    {
+      "path": "app/packaging/postgres_migrations.py",
+      "before_sha256": "00d5fc573dc5610aee0d371d665b6a1cf1f1b1c0300ac02c2ac023b0b12b617e",
+      "after_sha256": "5a85e98353ac6266e4bcce85b89facf901a9a39cff4ef8f3c7a4a4ad84e1e60d"
+    },
+    {
+      "path": "app/repositories/generation_repository.py",
+      "before_sha256": "4ba59154aaad1333be4f5428e5bf8ed4f9a5b29660212bf1d08bbe7b18a4d0cd",
+      "after_sha256": "6f8b8a6155148ae98fd283f1d511bc9c0e56c64faea5609ea9508bbdf4b00cb6"
+    },
+    {
+      "path": "app/repositories/postgres/generation.py",
+      "before_sha256": "39825208fef1a6472701ef64fd495948a6dc84b9addc72699a846b41ec5c2c69",
+      "after_sha256": "f5e1d843cf0be662f033947aba1425a4cd3227a86c79b2fe6a63e9458dd48946"
+    },
+    {
+      "path": "app/services/ai_planning_service.py",
+      "before_sha256": "fb248818d356416a1c371572cdba84b712fb3bf027b61c654698b51d14e62fbb",
+      "after_sha256": "1b7f2b06bd62ae4d378ca1809a6003b6db1e1b5b3d449f88b2b929c8dad8c9fa"
+    },
+    {
+      "path": "app/services/asset_library_service.py",
+      "before_sha256": "a01044455bedcc67183e238808b7dc61c8fb0940e38f440fe41de951c4d4c874",
+      "after_sha256": "039f5e204c41e152a7a7da1dbd99e2e0c68ca3fbeacd10f438f7c3c5027ee7c8"
+    },
+    {
+      "path": "app/structured_log.py",
+      "before_sha256": "83dfd3fe772e5b2c1d0238321acec8bf6b190eac611c5d1653dd18c01a2c9def",
+      "after_sha256": "05185e38aa5f8b7caf2fb8a3b9b96c9de44f76a415308ad3f074e9973cc3723f"
+    },
+    {
+      "path": "app/trusted_sessions.py",
+      "before_sha256": "60e1f45a005b4a2122724446aad0be3cb7cc82e4ab8cdbd3bad31464b8417ad8",
+      "after_sha256": "c43a09552f3b940b02df2119dd7d060927c6eaeaed9502fdcdebb57bd17b3394"
+    },
+    {
+      "path": "frontend/src/App.tsx",
+      "before_sha256": "8fadd014afaacf3ff402697b7275196cfed9ecef45685d8d3262c1207d3dfcc8",
+      "after_sha256": "82a349221dd9e494b379918ce988ebb6a1713d1fa90965e04c2bae1745fb78e3"
+    },
+    {
+      "path": "frontend/src/api.ts",
+      "before_sha256": "e087df592283699b4da702b27b34db96815ae8b4e5b5a0e59b08f37d7f4a6137",
+      "after_sha256": "41e578d37b8af908c38cfa7566ca2a1868bdc2aad749acc040cc59a3f9572d04"
+    },
+    {
+      "path": "frontend/src/experimental/ProductionLineagePanel.tsx",
+      "before_sha256": "662f5161ed0577efaa66a99b95274690a7f89a6783a4923b7d1853ce5926013e",
+      "after_sha256": "33e4a2f32d915d58dda4558a525845aa39c3244ec2952658328a1f47cff02e51"
+    },
+    {
+      "path": "frontend/src/localAiDiscoveryApi.ts",
+      "before_sha256": "3053366c867aaf27e1e693c3b1c479e24634db96f8f6369dbb3f1e61b8c6e564",
+      "after_sha256": "a097510d58d7c087baa7f0b1b098f6257821c334861ff60fb3bfa4fec54561b7"
+    },
+    {
+      "path": "frontend/src/novel/AgentTeamPanel.tsx",
+      "before_sha256": "657a036affa3682a1e7363273cfebe3f705c74de8f4f0bc406a4bf8318386635",
+      "after_sha256": "89edbd3dfca9a0c77b10a27bea91e468924b4951b347d16c48540ac2b8dbb454"
+    },
+    {
+      "path": "frontend/src/novel/AssetInspector.tsx",
+      "before_sha256": "78fcb2dd21e8404e7e736c7bc875f037c30be1bb0e8f7d189a9a6afe800c584b",
+      "after_sha256": "5d98dc466dd74166b1a9b6532449a09e651b8bdff85cb97446d37c42e3afcffe"
+    },
+    {
+      "path": "frontend/src/novel/AssetLibraryPanel.tsx",
+      "before_sha256": "8e6ad65b20be06a3e1c3e697e12b61f309b9d3fecbc5030fe8d89699ce8dc1c3",
+      "after_sha256": "3f30b83cf9dd37aabb443607ab454726d0594bb25d8e4f5286d51e79fd1b4a80"
+    },
+    {
+      "path": "frontend/src/novel/EntryExperience.tsx",
+      "before_sha256": "23407edd4d6904c0bdd7d333e535c2d4d485aafdac1ea6ff31eb3cd1427caf83",
+      "after_sha256": "467694314dfb09089a97ce799e2d0378b665a6a93087bf1370d08da932e85ee4"
+    },
+    {
+      "path": "frontend/src/ui/AppShell.tsx",
+      "before_sha256": "3a481ec0956a59d59dd12298a465280468fcc248f6d872364eca7310aa3688aa",
+      "after_sha256": "0707e0a04288e0267f07a1b9ac509985d579f22877069ab272a84f8d05751073"
+    },
+    {
+      "path": "frontend/src/ui/LocalAiDiscovery.css",
+      "before_sha256": "35c5eaa398568f7195aedaeaf42215060efe4832f317becc038262acdcc5d748",
+      "after_sha256": "0693660fe8e73fd7ba2ff33e32e35a14788b5771c75a0b5e975995aaf8b0f6fe"
+    },
+    {
+      "path": "frontend/src/ui/LocalAiDiscovery.tsx",
+      "before_sha256": "3d30315afe21c08577b338f9de25496726e29f205ed0dc770671aef723662c75",
+      "after_sha256": "00339071e24936d4dfe55ff0a53f3182e7c0633e32f92d5446a3b2e4bac799e8"
+    },
+    {
+      "path": "frontend/src/ui/ModelCenter.tsx",
+      "before_sha256": "bc07eaf6b481c987fcefbd5e8bd0417fd993f201eb275c62c6b38521427933bc",
+      "after_sha256": "711649754a72059ddb221c8590636b4c326c44d4e9b26c7221d681446bbc91df"
+    },
+    {
+      "path": "frontend/src/ui/ModuleWorkspaceRoutes.tsx",
+      "before_sha256": "aa88209181c58ef7fc1b66d3520c88061e68b9251a0ca5396f4fd9121e61a5ce",
+      "after_sha256": "b63d8fee8a7b4e99c41ff75426b9ae17eb8a982a8e348b36a5ffd333946292c9"
+    },
+    {
+      "path": "frontend/src/workspaceSelection.ts",
+      "before_sha256": "93fd6fb8e08657ba02ff1bef20c62860e0e929064cac80fda92ff9f49b40fcaa",
+      "after_sha256": "05be7bad6979b6b18802a4342358754aedd013f4643a3de6dc17a66e7ee6e439"
+    },
+    {
+      "path": "scripts/installer/Launch-AI-Novel-Studio.ps1",
+      "before_sha256": "cffd5ab1eb16ccda9dea22c2221da0343f96aaf6ef44eb7a86552a525333b244",
+      "after_sha256": "7f32caad61c404426a05ec36a7d18cfbcdf7c98c44edc32e458b3d977f90ef6e"
+    },
+    {
+      "path": "scripts/package_windows_acceptance.ps1",
+      "before_sha256": "43744b577bc73d7d8a9659203ac916ef067c1e5e5bf25f6cbb4bb145a623bb6e",
+      "after_sha256": "dce014e04c757b4049ce45426f23fc1a4087ace81cfae9797c97caa0ab481e6c"
+    },
+    {
+      "path": "scripts/refresh_product_api_catalog.py",
+      "before_sha256": "ad14731ac37157ddfa659d37d5a25c104631f901c773bd09f604eecf9bc68e29",
+      "after_sha256": "e9fc5835b4135446a3b0221c07033c7d88330c1658d416117ac68dba7d5268ec"
+    },
+    {
+      "path": "tests/test_windows_portable_entry.py",
+      "before_sha256": "d100e27589fb45cb921c13a82a83a911485fef1c0ed82a1e50eb5efc94f24799",
+      "after_sha256": "9f0d2d5f78a44e54a0fcc00925dc6d67038060408d3bd44753461ca57152fe1f"
+    }
+  ],
+  "new_nodes": 1557,
+  "baseline_nodes_preserved_in_order": true,
+  "historical_skips_unchanged": true,
+  "baseline_test_migrations": [
+    {
+      "path": "tests/test_windows_portable_entry.py",
+      "commit": "1b7ff50a7e64742916bc64730df884cea819b379",
+      "frozen_sha256": "d100e27589fb45cb921c13a82a83a911485fef1c0ed82a1e50eb5efc94f24799",
+      "v2_baseline_sha256": "9f0d2d5f78a44e54a0fcc00925dc6d67038060408d3bd44753461ca57152fe1f",
+      "delta": "Add -B before -I in the fixed launcher expectation only; all other bytes preserved",
+      "purpose": "Reconcile the preexisting V2 isolation baseline, not a historical audit approval"
+    }
+  ],
+  "manifest_written": ".github/ci/coverage_manifest_v2.json.gz",
+  "manifest_sha256": "fd1763175b3cbb0b756ece6ef493310fb5783455f95d5347432de7d77358fa28"
+}

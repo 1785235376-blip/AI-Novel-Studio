@@ -1,0 +1,105 @@
+{
+  "kind": "OBSERVED_COMPLETE_EXECUTION_COUNTS_NOT_STRICT_PASS",
+  "head": "d80e4dc0429c219948e66abf2a8994cc706f3227",
+  "checked_out_sha": "d80e4dc0429c219948e66abf2a8994cc706f3227",
+  "tree": "e686c25a81b4f62e7493a6dad8596b503e117f74",
+  "event": "push",
+  "run": 37548998913,
+  "attempt": 1,
+  "profiles": {
+    "file": {
+      "unique_cases": 7900,
+      "outcomes": {
+        "passed": 5346,
+        "skipped": 2554
+      },
+      "original_7492": {
+        "passed": 5111,
+        "skipped": 2381
+      },
+      "new_408": {
+        "passed": 235,
+        "skipped": 173
+      },
+      "failed_nodes": [],
+      "previous_twelve_pg_accept_assertions": []
+    },
+    "postgres": {
+      "unique_cases": 7900,
+      "outcomes": {
+        "passed": 5312,
+        "skipped": 2580,
+        "failed": 8
+      },
+      "original_7492": {
+        "passed": 5112,
+        "skipped": 2380
+      },
+      "new_408": {
+        "passed": 200,
+        "skipped": 200,
+        "failed": 8
+      },
+      "failed_nodes": [
+        "tests/test_a43_duplicate_heading.py::test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api/v1-literal-crlf]",
+        "tests/test_a43_duplicate_heading.py::test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api/v1-split-marks-lf]",
+        "tests/test_a43_duplicate_heading.py::test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api/v1-run-ends-with-lf]",
+        "tests/test_a43_duplicate_heading.py::test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api-literal-lf]",
+        "tests/test_a43_duplicate_heading.py::test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api-literal-crlf]",
+        "tests/test_a43_duplicate_heading.py::test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api-split-marks-lf]",
+        "tests/test_a43_duplicate_heading.py::test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api-run-ends-with-lf]",
+        "tests/test_a43_duplicate_heading.py::test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api/v1-literal-lf]"
+      ],
+      "previous_twelve_pg_accept_assertions": [
+        {
+          "nodeid": "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[off-postgres-numeric-/api/v1]",
+          "outcome": "passed"
+        },
+        {
+          "nodeid": "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[off-postgres-qualified-/api/v1]",
+          "outcome": "passed"
+        },
+        {
+          "nodeid": "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[on-postgres-numeric-/api]",
+          "outcome": "passed"
+        },
+        {
+          "nodeid": "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[on-postgres-numeric-/api/v1]",
+          "outcome": "passed"
+        },
+        {
+          "nodeid": "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[on-postgres-qualified-/api]",
+          "outcome": "passed"
+        },
+        {
+          "nodeid": "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[v1-postgres-numeric-/api]",
+          "outcome": "passed"
+        },
+        {
+          "nodeid": "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[v1-postgres-qualified-/api]",
+          "outcome": "passed"
+        },
+        {
+          "nodeid": "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[off-postgres-numeric-/api]",
+          "outcome": "passed"
+        },
+        {
+          "nodeid": "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[off-postgres-qualified-/api]",
+          "outcome": "passed"
+        },
+        {
+          "nodeid": "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[on-postgres-qualified-/api/v1]",
+          "outcome": "passed"
+        },
+        {
+          "nodeid": "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[v1-postgres-numeric-/api/v1]",
+          "outcome": "passed"
+        },
+        {
+          "nodeid": "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[v1-postgres-qualified-/api/v1]",
+          "outcome": "passed"
+        }
+      ]
+    }
+  }
+}

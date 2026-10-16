@@ -1,0 +1,14 @@
+<testsuites id="" name="" tests="3" failures="0" skipped="0" errors="0" time="29.953538">
+<testsuite name="v2-prompt-adoption-ui-live.spec.ts" timestamp="2026-10-16T17:36:38.709Z" hostname="prompt-adoption-ui-1366x768" tests="1" failures="0" skipped="0" time="9.363" errors="0">
+<testcase name="isolated original button commits bound Prompt and reload preserves its exact source pin" classname="v2-prompt-adoption-ui-live.spec.ts" time="9.363">
+</testcase>
+</testsuite>
+<testsuite name="v2-prompt-adoption-ui-live.spec.ts" timestamp="2026-10-16T17:36:38.709Z" hostname="prompt-adoption-ui-1440x900" tests="1" failures="0" skipped="0" time="10.267" errors="0">
+<testcase name="isolated original button commits bound Prompt and reload preserves its exact source pin" classname="v2-prompt-adoption-ui-live.spec.ts" time="10.267">
+</testcase>
+</testsuite>
+<testsuite name="v2-prompt-adoption-ui-live.spec.ts" timestamp="2026-10-16T17:36:38.709Z" hostname="prompt-adoption-ui-1920x1080" tests="1" failures="0" skipped="0" time="7.498" errors="0">
+<testcase name="isolated original button commits bound Prompt and reload preserves its exact source pin" classname="v2-prompt-adoption-ui-live.spec.ts" time="7.498">
+</testcase>
+</testsuite>
+</testsuites>

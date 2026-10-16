@@ -1,0 +1,4 @@
+frontend/src/creative/SourceAdaptationPanel.test.tsx(36,110): error TS18048: 'init' is possibly 'undefined'.
+frontend/src/creative/SourceAdaptationPanel.test.tsx(57,28): error TS2532: Object is possibly 'undefined'.
+frontend/src/creative/SourceAdaptationPanel.test.tsx(58,50): error TS18048: 'init' is possibly 'undefined'.
+frontend/src/creative/SourceAdaptationPanel.test.tsx(71,34): error TS2532: Object is possibly 'undefined'.

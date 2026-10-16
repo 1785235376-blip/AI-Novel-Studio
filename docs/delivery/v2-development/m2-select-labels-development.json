@@ -1,0 +1,26 @@
+{
+  "recorded_utc": "2026-10-09T14:39:21.101428+00:00",
+  "published_failing_head": "99c43b6892038233c390be2ae61acb669163d0b5",
+  "cause": "Playwright exact getByLabel includes descendant option text for implicit select labels; explicit names bind visible captions.",
+  "change": "Nine aria-label attributes only in three creative components, no geometry/styles/old assertions or browser selectors/timeouts changed.",
+  "red": "3 failed / 1 passed",
+  "green": "4 passed",
+  "focused": "47 passed",
+  "source_binding": "Worker development logs did not capture a full before/after source map; not final integrated proof.",
+  "browser_launched": false,
+  "hosted_revalidation": "PENDING",
+  "logs": [
+    {
+      "log": "docs/delivery/v2-development/m2-select-labels-red.log",
+      "sha256": "e19fed1034c20f3ccb5fbe6fa10c413e2afa03c0197a307320da9c76e6a1442f"
+    },
+    {
+      "log": "docs/delivery/v2-development/m2-select-labels-green.log",
+      "sha256": "32e23f1679a612412870fdc75fdef761598be9ee66d356d8e9dca454ee7b885d"
+    },
+    {
+      "log": "docs/delivery/v2-development/m2-select-labels-focused-final.log",
+      "sha256": "aa2ce9ada2c44b44c0ab20f96439b9a24a4c1809e3dec810d7fc94c778d8b714"
+    }
+  ]
+}

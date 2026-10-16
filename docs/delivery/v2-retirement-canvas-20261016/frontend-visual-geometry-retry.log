@@ -1,0 +1,204 @@
+[WebServer] (node:66000) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 7 tests using 1 worker
+
+(node:48468) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48468) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\visual\design-system.spec.ts:8:31 › novel workspace visual baseline (1ms)
+(node:71028) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:71028) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 [chromium] › tests\visual\design-system.spec.ts:8:31 › image workspace visual baseline (1ms)
+(node:68252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:68252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  3 [chromium] › tests\visual\design-system.spec.ts:8:31 › video workspace visual baseline (1ms)
+(node:66736) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:66736) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  4 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1024x768 (1ms)
+(node:49832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  5 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1366x768 (2ms)
+(node:49828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  6 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1440x900 (1ms)
+(node:52944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:52944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  7 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1920x1080 (1ms)
+
+
+  1) [chromium] › tests\visual\design-system.spec.ts:8:31 › novel workspace visual baseline ────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\admin\AppData\Local\ms-playwright\chromium_headless_shell-1234\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\geometry\design-system-novel-workspace-visual-baseline-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\geometry\design-system-novel-workspace-visual-baseline-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\geometry\design-system-novel-workspace-visual-baseline-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests\visual\design-system.spec.ts:8:31 › image workspace visual baseline ────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\admin\AppData\Local\ms-playwright\chromium_headless_shell-1234\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\geometry\design-system-image-workspace-visual-baseline-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\geometry\design-system-image-workspace-visual-baseline-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\geometry\design-system-image-workspace-visual-baseline-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › tests\visual\design-system.spec.ts:8:31 › video workspace visual baseline ────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\admin\AppData\Local\ms-playwright\chromium_headless_shell-1234\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\geometry\design-system-video-workspace-visual-baseline-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\geometry\design-system-video-workspace-visual-baseline-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\geometry\design-system-video-workspace-visual-baseline-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1024x768 ──────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\admin\AppData\Local\ms-playwright\chromium_headless_shell-1234\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\geometry\design-system-shell-geometry-1024x768-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\geometry\design-system-shell-geometry-1024x768-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\geometry\design-system-shell-geometry-1024x768-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1366x768 ──────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\admin\AppData\Local\ms-playwright\chromium_headless_shell-1234\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\geometry\design-system-shell-geometry-1366x768-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\geometry\design-system-shell-geometry-1366x768-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\geometry\design-system-shell-geometry-1366x768-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1440x900 ──────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\admin\AppData\Local\ms-playwright\chromium_headless_shell-1234\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\geometry\design-system-shell-geometry-1440x900-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\geometry\design-system-shell-geometry-1440x900-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\geometry\design-system-shell-geometry-1440x900-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1920x1080 ─────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\admin\AppData\Local\ms-playwright\chromium_headless_shell-1234\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\geometry\design-system-shell-geometry-1920x1080-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\geometry\design-system-shell-geometry-1920x1080-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\geometry\design-system-shell-geometry-1920x1080-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7 failed
+    [chromium] › tests\visual\design-system.spec.ts:8:31 › novel workspace visual baseline ─────────
+    [chromium] › tests\visual\design-system.spec.ts:8:31 › image workspace visual baseline ─────────
+    [chromium] › tests\visual\design-system.spec.ts:8:31 › video workspace visual baseline ─────────
+    [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1024x768 ───────────────
+    [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1366x768 ───────────────
+    [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1440x900 ───────────────
+    [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1920x1080 ──────────────

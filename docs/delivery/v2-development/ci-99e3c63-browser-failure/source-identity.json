@@ -1,0 +1,226 @@
+{
+  "repo": "1785235376-blip/AI-Novel-Studio",
+  "head_sha": "99e3c636bc59f45f5faa4b7af84b80981f1ec2e5",
+  "run_id": 37902141902,
+  "job_id": 113726946074,
+  "artifact_id": 11602858790,
+  "zip_sha256": "94f0714b851b341f58f87d897c44b5f9f60295b128224d35cffd6ad3252b937f",
+  "zip_bytes": 24361394,
+  "uncompressed_bytes": 24706232,
+  "entry_count": 41,
+  "bounds": {
+    "max_entries": 2000,
+    "max_uncompressed_bytes": 268435456,
+    "max_entry_bytes": 67108864,
+    "reject_absolute_dotdot_symlinks": true
+  },
+  "checked_out_sha": "42d8355c00eb545d40ab503c4429315bb7eef74e",
+  "event_sha": "42d8355c00eb545d40ab503c4429315bb7eef74e",
+  "source_identity_note": "Artifact revision.txt is authoritative for the actual PR merge checkout; head_sha names the associated feature branch commit.",
+  "run_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37902141902",
+  "job_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37902141902/job/113726946074",
+  "test_reports": {
+    "live": {
+      "tests": 7,
+      "passed": 5,
+      "failed": 2,
+      "skipped": 0
+    },
+    "mocked_workbench": {
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "head_blob_sha256": {
+    "frontend/src/creative/CreativeWorkspace.tsx": "155ff8896aabf0bf22ec0d0844d473cc156d145865e87d2b9cd768f13c6f4257",
+    "frontend/src/creative/creative.css": "b68f314c01cb5db7fccbde0688a80405af21577c87c977f43e87542e422d463d",
+    "frontend/src/App.tsx": "1fae2abd0e1a1e49bd1395b4b281d9dcff9b2a2e02b2553acfb34381f34b0203",
+    "frontend/playwright.v2-live.config.ts": "dbbf62ee540feed65c69e7cd1a16d732220c240b0b016b868de24e91bfc14a36",
+    "frontend/tests/e2e/v2-creative-live.spec.ts": "732794dde5a1e64734578956dcbb061f15d6ef3110f87b07cf7a71a07927336d"
+  },
+  "preserved_files": [
+    {
+      "preserved_path": "receipts/revision.txt",
+      "source_path": "receipts/revision.txt",
+      "bytes": 283,
+      "sha256": "e2fb343e3c76cd11d2e810faf95e1c7487144420b3f9bd07f3c540d3ceb1d276"
+    },
+    {
+      "preserved_path": "receipts/summary.json",
+      "source_path": "receipts/summary.json",
+      "bytes": 711,
+      "sha256": "60aadca4a2650e71097eccbd2443054b206751472b2d97481b4a9e72acefe8b0"
+    },
+    {
+      "preserved_path": "receipts/frontend-tools.txt",
+      "source_path": "receipts/frontend-tools.txt",
+      "bytes": 97,
+      "sha256": "389aebd53775e6516ca5b1146957da0392f74097fbb07f5b724fae1baab64424"
+    },
+    {
+      "preserved_path": "receipts/v2-creative-live.log",
+      "source_path": "receipts/v2-creative-live.log",
+      "bytes": 12700,
+      "sha256": "0f3533d142716e73cc9e46abe1388aac79150370f0054e6409eceb9d0f6d56bf"
+    },
+    {
+      "preserved_path": "receipts/v2-creative-live.xml",
+      "source_path": "receipts/v2-creative-live.xml",
+      "bytes": 15805,
+      "sha256": "3c1926b6d90e59a2c29a42d4be11ff5b26108c48a18115207acf22089a000c68"
+    },
+    {
+      "preserved_path": "receipts/v2-creative-workbench.log",
+      "source_path": "receipts/v2-creative-workbench.log",
+      "bytes": 676,
+      "sha256": "506cf542ad91b0d7e3f8d8354f7c382bfefe851cab628e22610efe003bbaccbc"
+    },
+    {
+      "preserved_path": "receipts/v2-creative-workbench.xml",
+      "source_path": "receipts/v2-creative-workbench.xml",
+      "bytes": 905,
+      "sha256": "8b4bd2a6cda25889a53c947b6f75901c19270d248e00d1e637e0eff3af94af74"
+    },
+    {
+      "preserved_path": "receipts/live/results.json",
+      "source_path": "receipts/v2-creative-live/results.json",
+      "bytes": 46388,
+      "sha256": "07fa9ba650400c710a68809474e9f1fdbe5a5d9b8fb68987bb8879a1b37cbee4"
+    },
+    {
+      "preserved_path": "receipts/live/junit.xml",
+      "source_path": "receipts/v2-creative-live/junit.xml",
+      "bytes": 15805,
+      "sha256": "3c1926b6d90e59a2c29a42d4be11ff5b26108c48a18115207acf22089a000c68"
+    },
+    {
+      "preserved_path": "receipts/live/enabled-backend.log",
+      "source_path": "receipts/v2-creative-live/enabled-backend.log",
+      "bytes": 27110,
+      "sha256": "2e26a9bf138b2eab0004a75de6512769d76e86a50555882c39aa0f76ee9c9ce9"
+    },
+    {
+      "preserved_path": "receipts/live/enabled-vite.log",
+      "source_path": "receipts/v2-creative-live/enabled-vite.log",
+      "bytes": 159,
+      "sha256": "b545ae2b37db78904aba63fa01d4f0b8c5f88b4afd6c9f6b285bdcea331f3785"
+    },
+    {
+      "preserved_path": "receipts/live/default-off-backend.log",
+      "source_path": "receipts/v2-creative-live/default-off-backend.log",
+      "bytes": 2030,
+      "sha256": "eee9f2529b23b2a221280c0981d0e2e73612c5d815507896a421c36de42811b1"
+    },
+    {
+      "preserved_path": "receipts/live/default-off-vite.log",
+      "source_path": "receipts/v2-creative-live/default-off-vite.log",
+      "bytes": 159,
+      "sha256": "5879dd414c7f896ddaf1a1f9626f667a5ea690f1e47a93b8b3496f95f2453163"
+    },
+    {
+      "preserved_path": "receipts/job-113726946074.log",
+      "source_path": ".runtime/github-99e3c63-monitor/v2-browser-113726946074.log",
+      "bytes": 104724,
+      "sha256": "d15fe8a4c7aa25c881a4bd45e9d0a8fe8aeb489e6c32c692721cbe43c38c74bf"
+    },
+    {
+      "preserved_path": "screenshots/live-screenplay-saved.png",
+      "source_path": "receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/screenplay-saved.png",
+      "bytes": 214092,
+      "sha256": "3d815524fd721619f17a1a10efddac30bc58c077cb4cd45fe63de92ccfdeaceb"
+    },
+    {
+      "preserved_path": "screenshots/live-director-reviewed.png",
+      "source_path": "receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/director-human-reviewed.png",
+      "bytes": 213199,
+      "sha256": "4f7c172b1f2ca6b940fa538a3eafc5471badb5dbcba9baeeb75e1a42da749efe"
+    },
+    {
+      "preserved_path": "screenshots/live-production-1366x768.png",
+      "source_path": "receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/production-1366x768.png",
+      "bytes": 174216,
+      "sha256": "8975ef2c1812ef085a5dca8c3c7e018225f2171ddc2c1c1b9ef9af6dd79d7439"
+    },
+    {
+      "preserved_path": "screenshots/live-production-1440x900.png",
+      "source_path": "receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/production-1440x900.png",
+      "bytes": 210676,
+      "sha256": "9997a0de6942425228f3deb40bd5bed097f7546abeac1eb6014ad5ba39716691"
+    },
+    {
+      "preserved_path": "screenshots/live-production-1920x1080.png",
+      "source_path": "receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/production-1920x1080.png",
+      "bytes": 234100,
+      "sha256": "212f010115ff94a45a264f03acdfc0da3300d3d9d4469d31242989aa15b6a9f2"
+    },
+    {
+      "preserved_path": "screenshots/failure-production-reopen.png",
+      "source_path": "receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/failure-before-owned-cleanup.png",
+      "bytes": 228634,
+      "sha256": "8eafaee9383329bc13931508a6acaeb4255f99d35cbc380f735fb9bd567a31f3"
+    },
+    {
+      "preserved_path": "screenshots/failure-screenplay-reopen.png",
+      "source_path": "receipts/v2-creative-live/test-results/v2-creative-live-real-File-946d5-pted-or-cancelled-proposals-v2-live-chromium/failure-before-owned-cleanup.png",
+      "bytes": 210646,
+      "sha256": "fdba2f3ca3a2cd7f790ea7ab295285bc04ed80b248954d254a3c94f82d9eef98"
+    },
+    {
+      "preserved_path": "screenshots/live-cancelled-proposal-retained-draft.png",
+      "source_path": "receipts/v2-creative-live/test-results/v2-creative-live-real-File-946d5-pted-or-cancelled-proposals-v2-live-chromium/cancelled-proposal-dirty-draft-retained.png",
+      "bytes": 226054,
+      "sha256": "1426c8b06798281d42f3cd4abfd5646f5000bc3f479dcbd9a7edee39c0a01b50"
+    },
+    {
+      "preserved_path": "screenshots/live-stale-write-preserved-draft.png",
+      "source_path": "receipts/v2-creative-live/test-results/v2-creative-live-real-File-55744-and-rejects-foreign-sources-v2-live-chromium/stale-write-preserves-draft.png",
+      "bytes": 230801,
+      "sha256": "c83aea400d7626d800f75086568f6e5377c242d097a3205a3eb5c1a91bd464bf"
+    },
+    {
+      "preserved_path": "screenshots/mocked-storyboard-1366x768.png",
+      "source_path": "project/frontend/test-results/creative-workbench/creative-workbench-V2-shared-shell-geometry-1366x768-chromium/storyboard-1366.png",
+      "bytes": 168341,
+      "sha256": "a77fefcb42385e3213a6405531fa16789d5eaa2f0379d02d61c80d6f70ba1617"
+    },
+    {
+      "preserved_path": "screenshots/mocked-storyboard-1440x900.png",
+      "source_path": "project/frontend/test-results/creative-workbench/creative-workbench-V2-shared-shell-geometry-1440x900-chromium/storyboard-1440.png",
+      "bytes": 187291,
+      "sha256": "49156c023dae898ce2ca9dcf4a8faa302b082c666ee7d5a286b73fd7c9525d17"
+    },
+    {
+      "preserved_path": "screenshots/mocked-storyboard-1920x1080.png",
+      "source_path": "project/frontend/test-results/creative-workbench/creative-workbench-V2-shared-shell-geometry-1920x1080-chromium/storyboard-1920.png",
+      "bytes": 217419,
+      "sha256": "46f8dc6a9ed690f119b64cdeee8c5338340cf84205160cf6cb7828ad32732642"
+    },
+    {
+      "preserved_path": "receipts/failure-production-context.md",
+      "source_path": "receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/error-context.md",
+      "bytes": 20838,
+      "sha256": "223eda6ffabe11ba6f54318b36e281107074dcc815f8cae872d936f55a950a2f"
+    },
+    {
+      "preserved_path": "receipts/failure-screenplay-context.md",
+      "source_path": "receipts/v2-creative-live/test-results/v2-creative-live-real-File-946d5-pted-or-cancelled-proposals-v2-live-chromium/error-context.md",
+      "bytes": 20000,
+      "sha256": "1b4d9f1b76ad5c415635eb48e531202f9355c8170009c706fe34394b46467041"
+    }
+  ],
+  "raw_traces": [
+    {
+      "artifact_path": "receipts/v2-creative-live/test-results/v2-creative-live-real-File-946d5-pted-or-cancelled-proposals-v2-live-chromium/trace.zip",
+      "bytes": 7333245,
+      "sha256": "0986ac0984b31023ac437e3d0d2dde7d0a75b354e4cfc7cce8c4713fdab0a36d"
+    },
+    {
+      "artifact_path": "receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/trace.zip",
+      "bytes": 12617266,
+      "sha256": "1079aac8db48fc56c0782915de2e4fc88cf8f036eb6a0e2afaf44eed904c8fec"
+    }
+  ],
+  "raw_traces_retained_runtime_only": true
+}

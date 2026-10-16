@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-16T18:50:38.958515+00:00",
+  "original_helper": ".runtime/r3_adoption_ui_audit.py",
+  "original_helper_sha256": "823e6d64cea9bc54d08bc04b69f5cca9710a99b07558b71df9ccee302a7c488d",
+  "in_memory_only_replacements": {
+    "v2-r3-adoption-ui-20261017": "v2-navigation-intent-20261017",
+    "95420aa59acb4c196d92e7292df0744098f6d2ff": "87408f6881fd2dc2f22038c36643ed2e0a743f33"
+  },
+  "original_helper_unchanged": true,
+  "old_report_overwritten": false,
+  "output": "protection-baseline.json"
+}

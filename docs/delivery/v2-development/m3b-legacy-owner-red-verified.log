@@ -1,0 +1,1491 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ❯ src/localAiDiscoveryLegacyOwner.test.ts (14 tests | 8 failed) 24ms
+   × legacy discovery reuses the existing verified host owner > uses the local host token with the unchanged explicit legacy snapshot and scan contract 11ms
+     → expected undefined to be 'original-host' // Object.is equality
+   × legacy discovery reuses the existing verified host owner > rejects both successful and denied responses after host unlink 4ms
+     → promise resolved "{ private_path: '/private/model.gguf' }" instead of rejecting
+   × legacy discovery reuses the existing verified host owner > rejects both successful and denied responses after host replace 1ms
+     → promise resolved "{ private_path: '/private/model.gguf' }" instead of rejecting
+   × legacy discovery reuses the existing verified host owner > rejects both successful and denied responses after host ABA 1ms
+     → promise resolved "{ private_path: '/private/model.gguf' }" instead of rejecting
+   × legacy discovery reuses the existing verified host owner > rejects status 200 after deferred body parsing and an A → B → A epoch change 1ms
+     → promise resolved "{ …(2) }" instead of rejecting
+   × legacy discovery reuses the existing verified host owner > rejects status 401 after deferred body parsing and an A → B → A epoch change 1ms
+     → expected Error: 本地 AI 操作未完成。 { …(1) } to match object { name: 'AbortError' }
+(5 matching properties omitted from actual)
+   × legacy discovery reuses the existing verified host owner > rejects status 403 after deferred body parsing and an A → B → A epoch change 1ms
+     → expected Error: 本地 AI 操作未完成。 { …(1) } to match object { name: 'AbortError' }
+(5 matching properties omitted from actual)
+   × legacy discovery reuses the existing verified host owner > rejects an old response when collaboration context changes without a host change 1ms
+     → promise resolved "{ private_path: '/private/model.gguf' }" instead of rejecting
+ ❯ src/ui/LocalAiDiscoveryLegacyOwner.test.tsx (11 tests | 11 failed) 548ms
+   × all-mode discovery private view ownership > purges snapshot and copied forms on each observed denial (V2=false) 234ms
+     → expected 'Local AI · 本地 AI 发现收起只读检测本机 Runtime 和…' not to contain 'private-'
+   × all-mode discovery private view ownership > purges snapshot and copied forms on each observed denial (V2=true) 99ms
+     → expected 'Local AI · 本地 AI 发现跳过 / 收起先预览后端主机的检测范…' not to contain '/private/'
+   × all-mode discovery private view ownership > retains the authorized initial read-only view but purges an actual true → false permission revocation 62ms
+     → expected 'Local AI · 本地 AI 发现收起只读检测本机 Runtime 和…' not to contain 'private-'
+   × all-mode discovery private view ownership > clears legacy private state on same-mount owner invalidation and never revives it on project ABA 41ms
+     → expected 'Local AI · 本地 AI 发现收起只读检测本机 Runtime 和…' not to contain 'private-'
+   × all-mode discovery private view ownership > rejects a late legacy snapshot result after same-mounted host ABA 10ms
+     → expected 'Local AI · 本地 AI 发现收起只读检测本机 Runtime 和…' not to contain 'private-'
+   × all-mode discovery private view ownership > rejects a late legacy scan result after same-mounted host ABA 29ms
+     → expected 'Local AI · 本地 AI 发现收起只读检测本机 Runtime 和…' not to contain 'private-'
+   × all-mode discovery private view ownership > rejects a late legacy poll result after same-mounted host ABA 14ms
+     → expected 'Local AI · 本地 AI 发现收起只读检测本机 Runtime 和…' not to contain 'private-'
+   × all-mode discovery private view ownership > ignores late snapshot after permission revocation without refetching private data 6ms
+     → expected 'Local AI · 本地 AI 发现收起只读检测本机 Runtime 和…' not to contain 'private-'
+   × all-mode discovery private view ownership > ignores late scan after permission revocation without refetching private data 18ms
+     → expected 'Local AI · 本地 AI 发现收起只读检测本机 Runtime 和…' not to contain 'private-'
+   × all-mode discovery private view ownership > ignores late poll after permission revocation without refetching private data 9ms
+     → expected 'Local AI · 本地 AI 发现收起只读检测本机 Runtime 和…' not to contain 'private-'
+   × all-mode discovery private view ownership > checks legacy ownership before mutation dispatch during an uncommitted React transition 26ms
+     → expected "scan" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st scan call:
+
+    Array []
+
+
+Number of calls: 1
+
+ ❯ src/ui/ModelCenterLegacyOwner.test.tsx (4 tests | 4 failed) 2188ms
+   × default-off Model Center keeps existing shared controls and scoped discovery ownership > loads health and discovery under the same bound host while preserving the legacy scan UI 119ms
+     → expected undefined to be 'original-host' // Object.is equality
+   × default-off Model Center keeps existing shared controls and scoped discovery ownership > clears private view and refetches health on host epoch change: different token 1020ms
+     → Unable to find an element with the text: current-cpu. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"model-center"[39m
+    [36m>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel local-ai"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mLocal AI · 本地 AI 发现[0m
+          [36m</h2>[39m
+          [36m<button[39m
+            [33maria-expanded[39m=[32m"true"[39m
+            [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+          [36m>[39m
+            [0m跳过 / 收起[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"local-ai__body"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0m只读检测本机 Runtime 和指定模型目录。发现 → 验证 → 注册 → 确认启用 → 按需启动；扫描不会启动 Runtime 或加载模型。[0m
+          [36m</p>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"local-ai__muted"[39m
+          [36m>[39m
+            [0m扫描结果保留在本地，不上传路径、文件名或硬件信息到云 Provider；不会读取小说正文或私人文档。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"local-ai__actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+            [36m>[39m
+              [0m检测本机 AI 环境[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m添加本地 Runtime[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m配置扫描目录[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"系统硬件"[39m
+            [33mclass[39m=[32m"local-ai__section"[39m
+          [36m>[39m
+            [36m<h3>[39m
+              [0m系统硬件[0m
+            [36m</h3>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"local-ai__facts"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m系统 / 架构[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                  [0m / [0m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mCPU[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mprivate-original-cpu[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m系统内存[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m硬件检测状态[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+            [36m<p>[39m
+              [0mGPU / 独立显存：未检测[0m
+            [36m</p>[39m
+          [36m</section>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-empty"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0m尚未开始扫描[0m
+            [36m</strong>[39m
+            [36m<p>[39m
+              [0m可跳过检测，也可添加 Runtime 或模型目录后主动扫描。未安装的 Runtime 不影响应用使用。[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mModel Center[0m
+          [36m</h2>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m刷新[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无模型[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m注册本地模型后会显示在这里。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mLocal Runtimes[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无运行时[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m配置本地运行时后会显示在这里。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mPipelines[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"model-center"[39m
+    [36m>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel local-ai"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mLocal AI · 本地 AI 发现[0m
+          [36m</h2>[39m
+          [36m<button[39m
+            [33maria-expanded[39m=[32m"true"[39m
+            [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+          [36m>[39m
+            [0m跳过 / 收起[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"local-ai__body"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0m只读检测本机 Runtime 和指定模型目录。发现 → 验证 → 注册 → 确认启用 → 按需启动；扫描不会启动 Runtime 或加载模型。[0m
+          [36m</p>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"local-ai__muted"[39m
+          [36m>[39m
+            [0m扫描结果保留在本地，不上传路径、文件名或硬件信息到云 Provider；不会读取小说正文或私人文档。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"local-ai__actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+            [36m>[39m
+              [0m检测本机 AI 环境[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m添加本地 Runtime[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m配置扫描目录[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"系统硬件"[39m
+            [33mclass[39m=[32m"local-ai__section"[39m
+          [36m>[39m
+            [36m<h3>[39m
+              [0m系统硬件[0m
+            [36m</h3>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"local-ai__facts"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m系统 / 架构[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                  [0m / [0m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mCPU[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mprivate-original-cpu[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m系统内存[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m硬件检测状态[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+            [36m<p>[39m
+              [0mGPU / 独立显存：未检测[0m
+            [36m</p>[39m
+          [36m</section>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-empty"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0m尚未开始扫描[0m
+            [36m</strong>[39m
+            [36m<p>[39m
+              [0m可跳过检测，也可添加 Runtime 或模型目录后主动扫描。未安装的 Runtime 不影响应用使用。[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mModel Center[0m
+          [36m</h2>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m刷新[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无模型[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m注册本地模型后会显示在这里。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mLocal Runtimes[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无运行时[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m配置本地运行时后会显示在这里。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mPipelines[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × default-off Model Center keeps existing shared controls and scoped discovery ownership > clears private view and refetches health on host epoch change: same token ABA 1018ms
+     → Unable to find an element with the text: current-cpu. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"model-center"[39m
+    [36m>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel local-ai"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mLocal AI · 本地 AI 发现[0m
+          [36m</h2>[39m
+          [36m<button[39m
+            [33maria-expanded[39m=[32m"true"[39m
+            [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+          [36m>[39m
+            [0m跳过 / 收起[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"local-ai__body"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0m只读检测本机 Runtime 和指定模型目录。发现 → 验证 → 注册 → 确认启用 → 按需启动；扫描不会启动 Runtime 或加载模型。[0m
+          [36m</p>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"local-ai__muted"[39m
+          [36m>[39m
+            [0m扫描结果保留在本地，不上传路径、文件名或硬件信息到云 Provider；不会读取小说正文或私人文档。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"local-ai__actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+            [36m>[39m
+              [0m检测本机 AI 环境[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m添加本地 Runtime[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m配置扫描目录[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"系统硬件"[39m
+            [33mclass[39m=[32m"local-ai__section"[39m
+          [36m>[39m
+            [36m<h3>[39m
+              [0m系统硬件[0m
+            [36m</h3>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"local-ai__facts"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m系统 / 架构[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                  [0m / [0m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mCPU[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mprivate-original-cpu[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m系统内存[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m硬件检测状态[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+            [36m<p>[39m
+              [0mGPU / 独立显存：未检测[0m
+            [36m</p>[39m
+          [36m</section>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-empty"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0m尚未开始扫描[0m
+            [36m</strong>[39m
+            [36m<p>[39m
+              [0m可跳过检测，也可添加 Runtime 或模型目录后主动扫描。未安装的 Runtime 不影响应用使用。[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mModel Center[0m
+          [36m</h2>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m刷新[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无模型[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m注册本地模型后会显示在这里。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mLocal Runtimes[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无运行时[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m配置本地运行时后会显示在这里。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mPipelines[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"model-center"[39m
+    [36m>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel local-ai"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mLocal AI · 本地 AI 发现[0m
+          [36m</h2>[39m
+          [36m<button[39m
+            [33maria-expanded[39m=[32m"true"[39m
+            [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+          [36m>[39m
+            [0m跳过 / 收起[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"local-ai__body"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0m只读检测本机 Runtime 和指定模型目录。发现 → 验证 → 注册 → 确认启用 → 按需启动；扫描不会启动 Runtime 或加载模型。[0m
+          [36m</p>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"local-ai__muted"[39m
+          [36m>[39m
+            [0m扫描结果保留在本地，不上传路径、文件名或硬件信息到云 Provider；不会读取小说正文或私人文档。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"local-ai__actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+            [36m>[39m
+              [0m检测本机 AI 环境[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m添加本地 Runtime[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m配置扫描目录[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"系统硬件"[39m
+            [33mclass[39m=[32m"local-ai__section"[39m
+          [36m>[39m
+            [36m<h3>[39m
+              [0m系统硬件[0m
+            [36m</h3>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"local-ai__facts"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m系统 / 架构[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                  [0m / [0m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mCPU[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mprivate-original-cpu[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m系统内存[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m硬件检测状态[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+            [36m<p>[39m
+              [0mGPU / 独立显存：未检测[0m
+            [36m</p>[39m
+          [36m</section>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-empty"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0m尚未开始扫描[0m
+            [36m</strong>[39m
+            [36m<p>[39m
+              [0m可跳过检测，也可添加 Runtime 或模型目录后主动扫描。未安装的 Runtime 不影响应用使用。[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mModel Center[0m
+          [36m</h2>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m刷新[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无模型[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m注册本地模型后会显示在这里。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mLocal Runtimes[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无运行时[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m配置本地运行时后会显示在这里。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mPipelines[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × default-off Model Center keeps existing shared controls and scoped discovery ownership > purges discovery when shared health revokes mutation without changing shared registry access 29ms
+     → expected <dd></dd> to be null
+
+ Test Files  3 failed (3)
+      Tests  23 failed | 6 passed (29)
+   Start at  09:25:42
+   Duration  3.12s (transform 265ms, setup 0ms, collect 700ms, tests 2.76s, environment 1.09s, prepare 179ms)
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 23 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/localAiDiscoveryLegacyOwner.test.ts > legacy discovery reuses the existing verified host owner > uses the local host token with the unchanged explicit legacy snapshot and scan contract
+AssertionError: expected undefined to be 'original-host' // Object.is equality
+
+- Expected: 
+"original-host"
+
++ Received: 
+undefined
+
+ ❯ src/localAiDiscoveryLegacyOwner.test.ts:21:91
+     19|     expect(read.method).toBe('GET'); expect(read.signal).toBe(controll…
+     20|     expect(scan.method).toBe('POST'); expect(scan.body).toBe('{}'); ex…
+     21|     for (const [, init] of fetchMock.mock.calls) {expect(init.headers[…
+       |                                                                                           ^
+     22|   });
+     23|   it.each([
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/23]⎯
+
+ FAIL  src/localAiDiscoveryLegacyOwner.test.ts > legacy discovery reuses the existing verified host owner > rejects both successful and denied responses after host unlink
+ FAIL  src/localAiDiscoveryLegacyOwner.test.ts > legacy discovery reuses the existing verified host owner > rejects both successful and denied responses after host replace
+ FAIL  src/localAiDiscoveryLegacyOwner.test.ts > legacy discovery reuses the existing verified host owner > rejects both successful and denied responses after host ABA
+AssertionError: promise resolved "{ private_path: '/private/model.gguf' }" instead of rejecting
+
+- Expected
++ Received
+
+- [Error: rejected promise]
++ Object {
++   "private_path": "/private/model.gguf",
++ }
+
+ ❯ src/localAiDiscoveryLegacyOwner.test.ts:41:178
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/23]⎯
+
+ FAIL  src/localAiDiscoveryLegacyOwner.test.ts > legacy discovery reuses the existing verified host owner > rejects status 200 after deferred body parsing and an A → B → A epoch change
+AssertionError: promise resolved "{ …(2) }" instead of rejecting
+
+- Expected
++ Received
+
+- [Error: rejected promise]
++ Object {
++   "detail": Object {
++     "code": "INVALID_SESSION",
++   },
++   "private_path": "/private/model.gguf",
++ }
+
+ ❯ src/localAiDiscoveryLegacyOwner.test.ts:49:67
+     47|     const body = deferred<object>(), parsing = deferred<boolean>();
+     48|     fetchMock.mockImplementationOnce(async () => ({ok: status === 200,…
+     49|     const result = discovery.snapshot(), assertion = expect(result).re…
+       |                                                                   ^
+     50|     clearLocalHostSession(); bind('other-host'); clearLocalHostSession…
+     51|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/23]⎯
+
+ FAIL  src/localAiDiscoveryLegacyOwner.test.ts > legacy discovery reuses the existing verified host owner > rejects status 401 after deferred body parsing and an A → B → A epoch change
+ FAIL  src/localAiDiscoveryLegacyOwner.test.ts > legacy discovery reuses the existing verified host owner > rejects status 403 after deferred body parsing and an A → B → A epoch change
+AssertionError: expected Error: 本地 AI 操作未完成。 { …(1) } to match object { name: 'AbortError' }
+(5 matching properties omitted from actual)
+
+- Expected
++ Received
+
+- Object {
+-   "name": "AbortError",
+- }
++ [Error: 本地 AI 操作未完成。]
+
+ ❯ src/localAiDiscoveryLegacyOwner.test.ts:50:171
+     48|     fetchMock.mockImplementationOnce(async () => ({ok: status === 200,…
+     49|     const result = discovery.snapshot(), assertion = expect(result).re…
+     50|     clearLocalHostSession(); bind('other-host'); clearLocalHostSession…
+       |                                                                                                                                                                           ^
+     51|   });
+     52|   it('rejects an old response when collaboration context changes witho…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/23]⎯
+
+ FAIL  src/localAiDiscoveryLegacyOwner.test.ts > legacy discovery reuses the existing verified host owner > rejects an old response when collaboration context changes without a host change
+AssertionError: promise resolved "{ private_path: '/private/model.gguf' }" instead of rejecting
+
+- Expected
++ Received
+
+- [Error: rejected promise]
++ Object {
++   "private_path": "/private/model.gguf",
++ }
+
+ ❯ src/localAiDiscoveryLegacyOwner.test.ts:53:162
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/23]⎯
+
+ FAIL  src/ui/LocalAiDiscoveryLegacyOwner.test.tsx > all-mode discovery private view ownership > purges snapshot and copied forms on each observed denial (V2=false)
+AssertionError: expected 'Local AI · 本地 AI 发现收起只读检测本机 Runtime 和…' not to contain 'private-'
+
+Expected: "private-"
+Received: "Local AI · 本地 AI 发现收起只读检测本机 Runtime 和指定模型目录。发现 → 验证 → 注册 → 确认启用 → 按需启动；扫描不会启动 Runtime 或加载模型。扫描结果保留在本地，不上传路径、文件名或硬件信息到云 Provider；不会读取小说正文或私人文档。受信任的桌面会话已失效或权限不足，本地 AI 操作已禁用。请重新连接桌面会话。当前启用状态尚未确认；重新读取成功前，所有接入变更已暂时禁用。检测本机 AI 环境添加本地 Runtime配置扫描目录重新读取状态模型目录（每行一个完整路径）/private/models仅扫描明确配置的目录，受深度和数量限制；保存目录不会开始扫描。请勿选择磁盘根目录或私人文档目录。保存扫描目录取消配置本地 RuntimeRuntime 名称Runtime 类型OLLAMALLAMA_CPPCOMFYUIAUTOMATIC1111OPENAI_COMPATIBLE_LOCALCUSTOM_HTTP本机地址 Endpoint健康检查路径（可选）模型 ID（可选）声明模态（仍需验证）UNKNOWNTEXTVISIONIMAGEVIDEOAUDIOTTSRESTORATIONINTERPOLATION生命周期EXTERNAL_RUNTIME · 用户自行启停MANAGED · 仅按需启动需要凭据（未绑定受支持凭据库前不能启用）llama.cpp executableGGUF 模型路径Context SizeGPU LayersThreadsBatch Size仅接受本机地址，不在地址中填写密码或 Token。保存和验证不会启动程序；未知 Runtime 不会自动获得已验证能力。保存 Runtime取消系统硬件系统 / 架构未检测 / 未检测CPUprivate-cpu系统内存未检测硬件检测状态未检测GPU / 独立显存：未检测本地 Runtime（1）private-runtimeNOT_VERIFIEDLLAMA_CPP · EXTERNAL地址：http://127.0.0.1:19191 · 版本：未检测运行状态：未确认配置 RuntimeText 文本（1）private-modelNOT_VERIFIED本地候选接入状态待确认尚未实际生成验证Runtime / 来源LLAMA_CPP · private-runtime · CONFIGURED模型族 / 模型 IDQWEN · private-model-id声明能力TEXT已验证能力CAPABILITY_UNVERIFIED只读接入验证已完成检查（不代表实际生成验证）兼容性Not Verified · 未验证模型路径 / 文件 / 来源/private/model.gguf模型文件存在性未独立验证实际生成验证NOT_RUN · 尚未运行生成测试验证启用配置接入条件移除注册"
+
+ ❯ assertPrivateGone src/ui/LocalAiDiscoveryLegacyOwner.test.tsx:19:72
+
+ ❯ src/ui/LocalAiDiscoveryLegacyOwner.test.tsx:31:35
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/23]⎯
+
+ FAIL  src/ui/LocalAiDiscoveryLegacyOwner.test.tsx > all-mode discovery private view ownership > purges snapshot and copied forms on each observed denial (V2=true)
+AssertionError: expected 'Local AI · 本地 AI 发现跳过 / 收起先预览后端主机的检测范…' not to contain '/private/'
+
+Expected: "/private/"
+Received: "Local AI · 本地 AI 发现跳过 / 收起先预览后端主机的检测范围，再明确确认。发现 → 验证 → 注册 → 确认启用；不会启动 Runtime 或加载模型。无需填写路径或端口即可查看已有配置。范围仅限运行后端的主机（BACKEND_HOST），云端结果不代表你的电脑。未配置模型或跳过检测时，仍可手动创作。后端主机授权已失效或权限不足，检测与接入操作已禁用。可继续手动创作。预览 AI 检测范围高级：添加本地 Runtime高级：配置扫描目录重试读取先保存或取消高级配置，再预览检测范围。模型目录（每行一个完整路径）/private/models仅扫描明确配置的目录，受深度和数量限制；保存目录不会开始扫描。请勿选择磁盘根目录或私人文档目录。保存扫描目录取消配置本地 RuntimeRuntime 名称Runtime 类型OLLAMALLAMA_CPPCOMFYUIAUTOMATIC1111OPENAI_COMPATIBLE_LOCALCUSTOM_HTTP本机地址 Endpoint健康检查路径（可选）模型 ID（可选）声明模态（仍需验证）UNKNOWNTEXTVISIONIMAGEVIDEOAUDIOTTSRESTORATIONINTERPOLATION生命周期EXTERNAL_RUNTIME · 用户自行启停MANAGED · 仅按需启动需要凭据（未绑定受支持凭据库前不能启用）llama.cpp executableGGUF 模型路径Context SizeGPU LayersThreadsBatch Size仅接受本机地址，不在地址中填写密码或 Token。保存和验证不会启动程序；未知 Runtime 不会自动获得已验证能力。保存 Runtime取消"
+
+ ❯ assertPrivateGone src/ui/LocalAiDiscoveryLegacyOwner.test.tsx:19:133
+
+ ❯ src/ui/LocalAiDiscoveryLegacyOwner.test.tsx:31:35
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/23]⎯
+
+ FAIL  src/ui/LocalAiDiscoveryLegacyOwner.test.tsx > all-mode discovery private view ownership > retains the authorized initial read-only view but purges an actual true → false permission revocation
+AssertionError: expected 'Local AI · 本地 AI 发现收起只读检测本机 Runtime 和…' not to contain 'private-'
+
+Expected: "private-"
+Received: "Local AI · 本地 AI 发现收起只读检测本机 Runtime 和指定模型目录。发现 → 验证 → 注册 → 确认启用 → 按需启动；扫描不会启动 Runtime 或加载模型。扫描结果保留在本地，不上传路径、文件名或硬件信息到云 Provider；不会读取小说正文或私人文档。本地 AI 操作需要受信任的桌面会话。检测本机 AI 环境添加本地 Runtime配置扫描目录模型目录（每行一个完整路径）/private/models仅扫描明确配置的目录，受深度和数量限制；保存目录不会开始扫描。请勿选择磁盘根目录或私人文档目录。保存扫描目录取消配置本地 RuntimeRuntime 名称Runtime 类型OLLAMALLAMA_CPPCOMFYUIAUTOMATIC1111OPENAI_COMPATIBLE_LOCALCUSTOM_HTTP本机地址 Endpoint健康检查路径（可选）模型 ID（可选）声明模态（仍需验证）UNKNOWNTEXTVISIONIMAGEVIDEOAUDIOTTSRESTORATIONINTERPOLATION生命周期EXTERNAL_RUNTIME · 用户自行启停MANAGED · 仅按需启动需要凭据（未绑定受支持凭据库前不能启用）llama.cpp executableGGUF 模型路径Context SizeGPU LayersThreadsBatch Size仅接受本机地址，不在地址中填写密码或 Token。保存和验证不会启动程序；未知 Runtime 不会自动获得已验证能力。保存 Runtime取消系统硬件系统 / 架构未检测 / 未检测CPUprivate-cpu系统内存未检测硬件检测状态未检测GPU / 独立显存：未检测本地 Runtime（1）private-runtimeNOT_VERIFIEDLLAMA_CPP · EXTERNAL地址：http://127.0.0.1:19191 · 版本：未检测运行状态：未确认配置 RuntimeText 文本（1）private-modelVALIDATION_REQUIRED本地候选已注册 · 未启用尚未实际生成验证Runtime / 来源LLAMA_CPP · private-runtime · CONFIGURED模型族 / 模型 IDQWEN · private-model-id声明能力TEXT已验证能力CAPABILITY_UNVERIFIED只读接入验证已完成检查（不代表实际生成验证）兼容性Not Verified · 未验证模型路径 / 文件 / 来源/private/model.gguf模型文件存在性未独立验证实际生成验证NOT_RUN · 尚未运行生成测试验证启用配置接入条件移除注册Workflow Adapter未选择private-adapter我已核对该模型授权，允许在约定用途内使用发现模型不代表获得商业授权；勾选仅记录你的确认，不提供商业使用保证。无兼容工作流时仍无法启用。保存接入条件取消确认允许 private-model 进入实际任务路由？启用不会立即加载模型或常驻显存。确认启用取消"
+
+ ❯ assertPrivateGone src/ui/LocalAiDiscoveryLegacyOwner.test.tsx:19:72
+
+ ❯ src/ui/LocalAiDiscoveryLegacyOwner.test.tsx:37:74
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/23]⎯
+
+ FAIL  src/ui/LocalAiDiscoveryLegacyOwner.test.tsx > all-mode discovery private view ownership > clears legacy private state on same-mount owner invalidation and never revives it on project ABA
+AssertionError: expected 'Local AI · 本地 AI 发现收起只读检测本机 Runtime 和…' not to contain 'private-'
+
+Expected: "private-"
+Received: "Local AI · 本地 AI 发现收起只读检测本机 Runtime 和指定模型目录。发现 → 验证 → 注册 → 确认启用 → 按需启动；扫描不会启动 Runtime 或加载模型。扫描结果保留在本地，不上传路径、文件名或硬件信息到云 Provider；不会读取小说正文或私人文档。检测本机 AI 环境添加本地 Runtime配置扫描目录模型目录（每行一个完整路径）/private/models仅扫描明确配置的目录，受深度和数量限制；保存目录不会开始扫描。请勿选择磁盘根目录或私人文档目录。保存扫描目录取消配置本地 RuntimeRuntime 名称Runtime 类型OLLAMALLAMA_CPPCOMFYUIAUTOMATIC1111OPENAI_COMPATIBLE_LOCALCUSTOM_HTTP本机地址 Endpoint健康检查路径（可选）模型 ID（可选）声明模态（仍需验证）UNKNOWNTEXTVISIONIMAGEVIDEOAUDIOTTSRESTORATIONINTERPOLATION生命周期EXTERNAL_RUNTIME · 用户自行启停MANAGED · 仅按需启动需要凭据（未绑定受支持凭据库前不能启用）llama.cpp executableGGUF 模型路径Context SizeGPU LayersThreadsBatch Size仅接受本机地址，不在地址中填写密码或 Token。保存和验证不会启动程序；未知 Runtime 不会自动获得已验证能力。保存 Runtime取消系统硬件系统 / 架构未检测 / 未检测CPUprivate-cpu系统内存未检测硬件检测状态未检测GPU / 独立显存：未检测本地 Runtime（1）private-runtimeNOT_VERIFIEDLLAMA_CPP · EXTERNAL地址：http://127.0.0.1:19191 · 版本：未检测运行状态：未确认配置 RuntimeText 文本（1）private-modelVALIDATION_REQUIRED本地候选已注册 · 未启用尚未实际生成验证Runtime / 来源LLAMA_CPP · private-runtime · CONFIGURED模型族 / 模型 IDQWEN · private-model-id声明能力TEXT已验证能力CAPABILITY_UNVERIFIED只读接入验证已完成检查（不代表实际生成验证）兼容性Not Verified · 未验证模型路径 / 文件 / 来源/private/model.gguf模型文件存在性未独立验证实际生成验证NOT_RUN · 尚未运行生成测试验证启用配置接入条件移除注册"
+
+ ❯ assertPrivateGone src/ui/LocalAiDiscoveryLegacyOwner.test.tsx:19:72
+
+ ❯ src/ui/LocalAiDiscoveryLegacyOwner.test.tsx:42:116
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/23]⎯
+
+ FAIL  src/ui/LocalAiDiscoveryLegacyOwner.test.tsx > all-mode discovery private view ownership > rejects a late legacy snapshot result after same-mounted host ABA
+ FAIL  src/ui/LocalAiDiscoveryLegacyOwner.test.tsx > all-mode discovery private view ownership > rejects a late legacy scan result after same-mounted host ABA
+ FAIL  src/ui/LocalAiDiscoveryLegacyOwner.test.tsx > all-mode discovery private view ownership > rejects a late legacy poll result after same-mounted host ABA
+AssertionError: expected 'Local AI · 本地 AI 发现收起只读检测本机 Runtime 和…' not to contain 'private-'
+
+Expected: "private-"
+Received: "Local AI · 本地 AI 发现收起只读检测本机 Runtime 和指定模型目录。发现 → 验证 → 注册 → 确认启用 → 按需启动；扫描不会启动 Runtime 或加载模型。扫描结果保留在本地，不上传路径、文件名或硬件信息到云 Provider；不会读取小说正文或私人文档。检测本机 AI 环境添加本地 Runtime配置扫描目录系统硬件系统 / 架构未检测 / 未检测CPUprivate-cpu系统内存未检测硬件检测状态未检测GPU / 独立显存：未检测本地 Runtime（1）private-runtimeNOT_VERIFIEDLLAMA_CPP · EXTERNAL地址：http://127.0.0.1:19191 · 版本：未检测运行状态：未确认配置 RuntimeText 文本（1）private-modelVALIDATION_REQUIRED本地候选已注册 · 未启用尚未实际生成验证Runtime / 来源LLAMA_CPP · private-runtime · CONFIGURED模型族 / 模型 IDQWEN · private-model-id声明能力TEXT已验证能力CAPABILITY_UNVERIFIED只读接入验证已完成检查（不代表实际生成验证）兼容性Not Verified · 未验证模型路径 / 文件 / 来源/private/model.gguf模型文件存在性未独立验证实际生成验证NOT_RUN · 尚未运行生成测试验证启用配置接入条件移除注册"
+
+ ❯ assertPrivateGone src/ui/LocalAiDiscoveryLegacyOwner.test.tsx:19:72
+
+ ❯ src/ui/LocalAiDiscoveryLegacyOwner.test.tsx:54:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/23]⎯
+
+ FAIL  src/ui/LocalAiDiscoveryLegacyOwner.test.tsx > all-mode discovery private view ownership > ignores late snapshot after permission revocation without refetching private data
+ FAIL  src/ui/LocalAiDiscoveryLegacyOwner.test.tsx > all-mode discovery private view ownership > ignores late scan after permission revocation without refetching private data
+ FAIL  src/ui/LocalAiDiscoveryLegacyOwner.test.tsx > all-mode discovery private view ownership > ignores late poll after permission revocation without refetching private data
+AssertionError: expected 'Local AI · 本地 AI 发现收起只读检测本机 Runtime 和…' not to contain 'private-'
+
+Expected: "private-"
+Received: "Local AI · 本地 AI 发现收起只读检测本机 Runtime 和指定模型目录。发现 → 验证 → 注册 → 确认启用 → 按需启动；扫描不会启动 Runtime 或加载模型。扫描结果保留在本地，不上传路径、文件名或硬件信息到云 Provider；不会读取小说正文或私人文档。本地 AI 操作需要受信任的桌面会话。检测本机 AI 环境添加本地 Runtime配置扫描目录系统硬件系统 / 架构未检测 / 未检测CPUprivate-cpu系统内存未检测硬件检测状态未检测GPU / 独立显存：未检测本地 Runtime（1）private-runtimeNOT_VERIFIEDLLAMA_CPP · EXTERNAL地址：http://127.0.0.1:19191 · 版本：未检测运行状态：未确认配置 RuntimeText 文本（1）private-modelVALIDATION_REQUIRED本地候选已注册 · 未启用尚未实际生成验证Runtime / 来源LLAMA_CPP · private-runtime · CONFIGURED模型族 / 模型 IDQWEN · private-model-id声明能力TEXT已验证能力CAPABILITY_UNVERIFIED只读接入验证已完成检查（不代表实际生成验证）兼容性Not Verified · 未验证模型路径 / 文件 / 来源/private/model.gguf模型文件存在性未独立验证实际生成验证NOT_RUN · 尚未运行生成测试验证启用配置接入条件移除注册"
+
+ ❯ assertPrivateGone src/ui/LocalAiDiscoveryLegacyOwner.test.tsx:19:72
+
+ ❯ src/ui/LocalAiDiscoveryLegacyOwner.test.tsx:66:128
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/23]⎯
+
+ FAIL  src/ui/LocalAiDiscoveryLegacyOwner.test.tsx > all-mode discovery private view ownership > checks legacy ownership before mutation dispatch during an uncommitted React transition
+AssertionError: expected "scan" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st scan call:
+
+    Array []
+
+
+Number of calls: 1
+
+ ❯ src/ui/LocalAiDiscoveryLegacyOwner.test.tsx:72:96
+     70|   it('checks legacy ownership before mutation dispatch during an uncom…
+     71|     const start = vi.spyOn(discovery, 'scan'); render(<LocalAiDiscover…
+     72|     act(() => {clearLocalHostSession(); oldButton.click();}); await fl…
+       |                                                                                                ^
+     73|   });
+     74| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/23]⎯
+
+ FAIL  src/ui/ModelCenterLegacyOwner.test.tsx > default-off Model Center keeps existing shared controls and scoped discovery ownership > loads health and discovery under the same bound host while preserving the legacy scan UI
+AssertionError: expected undefined to be 'original-host' // Object.is equality
+
+- Expected: 
+"original-host"
+
++ Received: 
+undefined
+
+ ❯ src/ui/ModelCenterLegacyOwner.test.tsx:21:67
+     19|     render(<ModelCenter/>); await screen.findByText('暂无模型'); await…
+     20|     expect((screen.getByRole('button', {name: '检测本机 AI 环境'}) as …
+     21|     expect(fetchMock.mock.calls[0][1].headers['X-Session-Token']).toBe…
+       |                                                                   ^
+     22|   });
+     23|   it.each(['different token', 'same token ABA'])('clears private view …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/23]⎯
+
+ FAIL  src/ui/ModelCenterLegacyOwner.test.tsx > default-off Model Center keeps existing shared controls and scoped discovery ownership > clears private view and refetches health on host epoch change: different token
+ FAIL  src/ui/ModelCenterLegacyOwner.test.tsx > default-off Model Center keeps existing shared controls and scoped discovery ownership > clears private view and refetches health on host epoch change: same token ABA
+TestingLibraryElementError: Unable to find an element with the text: current-cpu. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"model-center"[39m
+    [36m>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel local-ai"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mLocal AI · 本地 AI 发现[0m
+          [36m</h2>[39m
+          [36m<button[39m
+            [33maria-expanded[39m=[32m"true"[39m
+            [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+          [36m>[39m
+            [0m跳过 / 收起[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"local-ai__body"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0m只读检测本机 Runtime 和指定模型目录。发现 → 验证 → 注册 → 确认启用 → 按需启动；扫描不会启动 Runtime 或加载模型。[0m
+          [36m</p>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"local-ai__muted"[39m
+          [36m>[39m
+            [0m扫描结果保留在本地，不上传路径、文件名或硬件信息到云 Provider；不会读取小说正文或私人文档。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"local-ai__actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+            [36m>[39m
+              [0m检测本机 AI 环境[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m添加本地 Runtime[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m配置扫描目录[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"系统硬件"[39m
+            [33mclass[39m=[32m"local-ai__section"[39m
+          [36m>[39m
+            [36m<h3>[39m
+              [0m系统硬件[0m
+            [36m</h3>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"local-ai__facts"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m系统 / 架构[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                  [0m / [0m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mCPU[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mprivate-original-cpu[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m系统内存[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m硬件检测状态[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+            [36m<p>[39m
+              [0mGPU / 独立显存：未检测[0m
+            [36m</p>[39m
+          [36m</section>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-empty"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0m尚未开始扫描[0m
+            [36m</strong>[39m
+            [36m<p>[39m
+              [0m可跳过检测，也可添加 Runtime 或模型目录后主动扫描。未安装的 Runtime 不影响应用使用。[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mModel Center[0m
+          [36m</h2>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m刷新[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无模型[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m注册本地模型后会显示在这里。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mLocal Runtimes[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无运行时[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m配置本地运行时后会显示在这里。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mPipelines[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"model-center"[39m
+    [36m>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel local-ai"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mLocal AI · 本地 AI 发现[0m
+          [36m</h2>[39m
+          [36m<button[39m
+            [33maria-expanded[39m=[32m"true"[39m
+            [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+          [36m>[39m
+            [0m跳过 / 收起[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"local-ai__body"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0m只读检测本机 Runtime 和指定模型目录。发现 → 验证 → 注册 → 确认启用 → 按需启动；扫描不会启动 Runtime 或加载模型。[0m
+          [36m</p>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"local-ai__muted"[39m
+          [36m>[39m
+            [0m扫描结果保留在本地，不上传路径、文件名或硬件信息到云 Provider；不会读取小说正文或私人文档。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"local-ai__actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+            [36m>[39m
+              [0m检测本机 AI 环境[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m添加本地 Runtime[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m配置扫描目录[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"系统硬件"[39m
+            [33mclass[39m=[32m"local-ai__section"[39m
+          [36m>[39m
+            [36m<h3>[39m
+              [0m系统硬件[0m
+            [36m</h3>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"local-ai__facts"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m系统 / 架构[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                  [0m / [0m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mCPU[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mprivate-original-cpu[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m系统内存[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0m硬件检测状态[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m未检测[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+            [36m<p>[39m
+              [0mGPU / 独立显存：未检测[0m
+            [36m</p>[39m
+          [36m</section>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-empty"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0m尚未开始扫描[0m
+            [36m</strong>[39m
+            [36m<p>[39m
+              [0m可跳过检测，也可添加 Runtime 或模型目录后主动扫描。未安装的 Runtime 不影响应用使用。[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mModel Center[0m
+          [36m</h2>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m刷新[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无模型[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m注册本地模型后会显示在这里。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mLocal Runtimes[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无运行时[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m配置本地运行时后会显示在这里。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0mPipelines[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/ui/ModelCenterLegacyOwner.test.tsx:26:128
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/23]⎯
+
+ FAIL  src/ui/ModelCenterLegacyOwner.test.tsx > default-off Model Center keeps existing shared controls and scoped discovery ownership > purges discovery when shared health revokes mutation without changing shared registry access
+AssertionError: expected <dd></dd> to be null
+
+- Expected: 
+null
+
++ Received: 
+<dd>
+  private-original-cpu
+</dd>
+
+ ❯ src/ui/ModelCenterLegacyOwner.test.tsx:32:83
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/23]⎯
+

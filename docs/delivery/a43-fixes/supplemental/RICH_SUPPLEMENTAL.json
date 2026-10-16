@@ -1,0 +1,94 @@
+{
+  "kind": "A43_RICH_DOCUMENT_SUPPLEMENTAL_LOCAL_RED_GREEN",
+  "baseline_commit": "ad1a90dced36208c63bfd65f5e1d918d4a4f7695",
+  "baseline_tree": "fd32163d45c0cbfb1cf2b54551214b99d282f6e1",
+  "baseline_app_blobs_checked": 333,
+  "baseline_app_mismatches": [],
+  "same_additive_test_sha256": "fc75e35365adcdde89ae3c5531c317de63d924067aefe1385e7fa2412de7e45f",
+  "baseline_additive_test_sha256": "fc75e35365adcdde89ae3c5531c317de63d924067aefe1385e7fa2412de7e45f",
+  "python": "3.12.14",
+  "node": "24.19.0",
+  "pnpm": "10.6.5",
+  "toolchain_scope": "Supplemental local results; not equivalent to locked CI Python 3.12.9",
+  "final_baseline": {
+    "receipt": "rich-final-baseline-red.xml",
+    "tests": 45,
+    "failures": 27,
+    "errors": 0,
+    "skipped": 16,
+    "passed": 2
+  },
+  "final_fixed_file": {
+    "receipt": "rich-final-file.xml",
+    "tests": 45,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 16,
+    "passed": 29
+  },
+  "combined_existing_and_new": {
+    "receipt": "targeted-final-green.xml",
+    "tests": 329,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 112,
+    "passed": 217,
+    "overlaps_final_rich_file": true
+  },
+  "editor_existing_and_new": {
+    "receipt": "frontend-targeted-green.xml",
+    "tests": 10,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 10
+  },
+  "typescript_typecheck": {
+    "exit_code": 0,
+    "receipt": "frontend-typecheck.log"
+  },
+  "postgres_local": "NOT_RUN; backend cases skipped by unchanged repository rules, real CI owned by integration lead",
+  "historical_independent_review": "BLOCKED",
+  "feature_matrix": "F00 INTEGRATED; 39 PARTIAL",
+  "real_models_gpu_windows_target_apps": "NOT_RUN/LOCAL_REQUIRED",
+  "source_sha256": {
+    "app/document.py": "7db694a2c1e3c67b01296a6ced28172e525ac5b1e0e1d1a83a1753a732f5374a",
+    "app/repositories/chapter_repository.py": "36ea60e62a2c02077973559ff7c8c0f017453ed2670c36bfc024ced6131f61cb",
+    "app/repositories/file/chapter.py": "8a3d3781dc3c60f3a72e40de261a735116dffb8ca8aa79c66af29a351a55d7e7",
+    "app/repositories/postgres/chapter.py": "86129d96a9587053f13ca9409e79e61b19d18d0e4068e5c2603fc432430c8fe1",
+    "app/export_formats.py": "c1e62d7c3cbebac42ff70a3e6f1c0e4ffecd3b5fc3fd355e7acd022e2f27a98a",
+    "app/pdf_export.py": "d5cdd4b67b05d3ade30dc6f554b016520fb359c1dd39144a46a205ec2a8dde47",
+    "app/services/novel_service.py": "95d57dfa03ab4ef8b80bb047f9ee5e222512f6287d80b739994cf6326d6f4b87",
+    "app/services/export_job_service.py": "f09e4fcdbe2db05a7a294cb9eb8cb21c50ba782d404dc24a70df482515e792c1",
+    "app/experimental/ux.py": "5e6b029dfdea3cecfe1e63049c5f37783b8f1e127ace68555e4d6e16e2068da0",
+    "app/local_interop/provider.py": "79c2a9eb2e9a3436a3f44e4af3f64d797496940f74cb7b80656e660ffef2bc1c",
+    "app/api.py": "696bc7494a5234ab2e821b093af711ae48915a3e01bd62bd5e723bddc0e40cc8",
+    "tests/test_a43_rich_document.py": "fc75e35365adcdde89ae3c5531c317de63d924067aefe1385e7fa2412de7e45f",
+    "tests/fixtures/a43_rich_document_coordinates.json": "0718e16d97cdcd58bc4fc91927b04ee2834595dd5144ee0cf7b071d999aadda7",
+    "frontend/src/Editor.a43-rich.test.tsx": "89f9ada1cbd420cb5cc29218a1262d6446594244288737c1d8aabecfb75a2078"
+  },
+  "selected_original_receipts": {
+    "rich-final-baseline-red.xml": {
+      "bytes": 62071,
+      "sha256": "d55b844c8abed7a09cac743541f7c64846f9e0fd966de46f8454abcf5954dd46"
+    },
+    "rich-final-file.xml": {
+      "bytes": 11659,
+      "sha256": "9d107eccfa396c80b5b3156432e718d7824e14dd228a39e48667df9e692b118b"
+    },
+    "frontend-targeted-green.xml": {
+      "bytes": 2662,
+      "sha256": "db2b6c924d6fd6ce5c7a06e2a712dfb31506a505c18f409394b4ed36a079decf"
+    }
+  },
+  "source_status": "INTERMEDIATE_SUPPLEMENTAL_SOURCE_HASHES_NOT_FINAL_TESTED_HEAD; shared identity/API files continued to evolve after this A43-01 checkpoint",
+  "retained_failure_history": {
+    "baseline-environment-blocked": "The default XDG path was read-only. Retried with isolated XDG_DATA_HOME.",
+    "baseline-initial-harness-red": "The new test attempted setattr on frozen Settings. Corrected only the new harness; old tests remain unchanged.",
+    "targeted-path-error": "A mistyped test filename prevented collection. No tests ran.",
+    "targeted-existing": "The isolated PROJECT_ROOT lacked original prompt assets. Corrected PROJECT_ROOT to the source checkout while retaining isolated data directories.",
+    "frontend-targeted": "The new fixture omitted StarterKit orderedList attrs.type=null. Made the fixture canonical without changing Editor code.",
+    "targeted-existing-corrected-env_and_targeted-final": "The initial PostgreSQL identity guard broke existing render-only SimpleNamespace fixtures. The identity owner restored pure projection and retained real ORM identity guards.",
+    "fixed-expanded": "The PDF queue exposed only a generic error code. Added passthrough of the explicit safe PDF error code."
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "source_commit": "bbb55d10ac57de123e138a51510efd846ee42aee",
+  "remote_source_equivalent": "55a9082dbd3655c39a9b23bd4da19fedb3373072",
+  "source_tree": "9280bee5f82c6843fef15154080f5dc1a89f87a0",
+  "python": "3.12.14",
+  "node": "24.19.0",
+  "pnpm": "10.6.5",
+  "browser": "NOT_RUN_LOCAL_SOCKET_EPERM",
+  "known_new_independent_issue": "StrictMode history effect replay under repair",
+  "suites": {
+    "file": {
+      "tests": 2181,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 45
+    },
+    "ui": {
+      "tests": 568,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0
+    }
+  },
+  "typecheck": "PASS",
+  "token_lint": "PASS_42_FILES",
+  "production_build": "PASS_WITH_LARGE_CHUNK_WARNING"
+}

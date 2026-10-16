@@ -1,0 +1,23 @@
+{
+  "origin": "User-provided A43 audit report portable observation appendices, extracted unchanged; exit 0 means observation completed, not safety PASS",
+  "baseline_sha": "ad1a90dced36208c63bfd65f5e1d918d4a4f7695",
+  "baseline_tree": "fd32163d45c0cbfb1cf2b54551214b99d282f6e1",
+  "scripts": {
+    "audit_a43_01_document.py": {
+      "sha256": "a4686d972d323215727cafda4e5f3cc3e6a2d45009d4b634fee983b4674dabae",
+      "bytes": 2892
+    },
+    "audit_a43_02_identity.py": {
+      "sha256": "9575b7ca10cab6d7a9a806f88f38f6441503530527bc6c31511eadb206df343d",
+      "bytes": 2453
+    },
+    "audit_a43_03_pg_algorithm.py": {
+      "sha256": "251dbf157547b74dbb1401d0acbb69a0b62cb0215833886cdabb6d8d699f8293",
+      "bytes": 2331
+    },
+    "audit_a43_boundaries.py": {
+      "sha256": "8ba40152c5366b5c6a1c76e6ebbbe80c557d385920fd8cd74afba21c8eda1fdb",
+      "bytes": 5987
+    }
+  }
+}

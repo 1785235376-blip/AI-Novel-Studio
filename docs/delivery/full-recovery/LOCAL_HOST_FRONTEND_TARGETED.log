@@ -1,0 +1,16 @@
+
+ RUN  v2.1.9 D:/小说/AI-Novel-Studio-Latest-Product/frontend
+
+ ✓ src/novel/WorkflowScopeGuards.test.tsx (20 tests) 353ms
+ ✓ src/novel/LocalHostSessionPanel.test.tsx (6 tests) 232ms
+ ✓ src/AuditGenerationScope.test.tsx (28 tests) 1090ms
+ ✓ src/novel/AgentTeamPanel.additional.test.tsx (5 tests) 235ms
+ ✓ src/localHostSession.test.ts (6 tests) 11ms
+ ✓ src/novel/AgentTeamPanel.test.tsx (2 tests) 146ms
+ ✓ src/AuditColdStorage.test.ts (4 tests) 35ms
+
+ Test Files  7 passed (7)
+      Tests  71 passed (71)
+   Start at  17:57:32
+   Duration  5.84s (transform 1.09s, setup 0ms, collect 2.71s, tests 2.10s, environment 3.81s, prepare 495ms)
+

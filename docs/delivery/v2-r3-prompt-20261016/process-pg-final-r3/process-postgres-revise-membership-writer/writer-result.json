@@ -1,0 +1,29 @@
+{
+  "pid": 54736,
+  "status": 201,
+  "body": {
+    "family_id": "6f81eb18-2037-435e-837a-67ce96172664",
+    "asset_id": "98a89290-a146-4fc1-8d21-ccb8c862cea8",
+    "revision": 2,
+    "asset_version": 2,
+    "text_digest": "106617f2358cf1e51fa81d57cc4f51c823039757e9abf100b594396b4d07c6c5",
+    "idempotent_replay": false,
+    "previous_asset_id": "30b84f42-3bef-4438-b9e0-5dc1e593ad77",
+    "payload_digest": "f059fa28bd6290228d962a5d220edab67f4ee04dfde412b257d8f449d1686d75"
+  },
+  "negative_status": 403,
+  "negative_body": {
+    "detail": {
+      "code": "PROJECT_SCOPE_FORBIDDEN"
+    },
+    "code": "PROJECT_SCOPE_FORBIDDEN",
+    "message": "PROJECT_SCOPE_FORBIDDEN",
+    "details": {
+      "code": "PROJECT_SCOPE_FORBIDDEN"
+    },
+    "request_id": "945b3019-7619-4717-a6d6-8aa7f1f20d05"
+  },
+  "same_issued_token_reused_after_revocation": true,
+  "real_session_owner": "LocalSessionBootstrap",
+  "isolated_adoption_gate": false
+}

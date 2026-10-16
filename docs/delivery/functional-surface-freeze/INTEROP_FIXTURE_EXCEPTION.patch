@@ -1,0 +1,23 @@
+diff --git a/frontend/scripts/local_interop_browser_host.py b/frontend/scripts/local_interop_browser_host.py
+index 092e409..6d7ed8c 100644
+--- a/frontend/scripts/local_interop_browser_host.py
++++ b/frontend/scripts/local_interop_browser_host.py
+@@ -10,0 +11,4 @@ if not all(os.getenv(name) for name in ("NOVEL_DATA_PATH", "HOME", "XDG_DATA_HOM
++# Only this explicitly isolated synthetic fixture opts in. Production branch
++# authority requires its own flag, independently of Local Interop consent.
++os.environ["EXPERIMENTAL_FEATURES"] = ",".join(filter(None, (
++    os.getenv("EXPERIMENTAL_FEATURES", ""), "branch_manuscript_v1")))
+@@ -21 +25 @@ d.repositories.novels.create({"id": project_id, "title": "Local Interop browser
+-d.repositories.chapters.backend.create_chapter(project_id, {"title": "合成😀选区（MOCK_ONLY）", "content": "合成😀选区与上下文。\nThis is synthetic manuscript data only."})
++source = d.repositories.chapters.backend.create_chapter(project_id, {"title": "合成😀选区（MOCK_ONLY）", "content": "合成😀选区与上下文。\nThis is synthetic manuscript data only."})
+@@ -30,0 +35,10 @@ d.authorization_service.assign_role(DomainRoleAssignment("interop-browser-role",
++# Initialize the true branch through the production, explicit reviewed fork.
++# The synthetic document is unchanged; the peer receives no mainline authority.
++from app.experimental.ux import ReadContext
++ctx = ReadContext(project_id, {"mode": "collaboration", "novel_id": project_id,
++    "workspace_id": "interop-browser-workspace", "storyline_id": "interop-browser-story",
++    "branch_id": "interop-browser-branch"}, "interop-browser-author",
++    "interop-browser-mock-session", "interop-browser-branch")
++fork = d.branch_manuscript_service.preview_fork(ctx, {"mode": "local", "novel_id": project_id}, [source["id"]])
++d.branch_manuscript_service.apply_fork(ctx, fork["id"], fork["version"], fork["preview_digest"], True)
++

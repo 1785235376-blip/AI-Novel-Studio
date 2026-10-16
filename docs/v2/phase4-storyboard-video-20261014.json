@@ -1,0 +1,197 @@
+{
+  "contract": "studio-phase4-source-evidence/1",
+  "baseline_sha": "c67a3c332ac493e67e5c873de3b00d8683219ca9",
+  "backend_test_input_tree": "b6deecae76e983c6735262bbb7687a5eab3fb969",
+  "frontend_test_input_tree": "d862969a3cbf271e7a988e25526f38261f0b0d82",
+  "source_hashes": {
+    "app/asset_providers.py": "31b72c15a0b69094cae8ddc1962dfbffc000beb9459ccd7f8a16be74ce6fe56d",
+    "app/creative/api.py": "dba127489237bb81aa0b33f847f0c31beec15951897df7df618b1f3d75ffdc89",
+    "app/creative/generation.py": "068144ee6e48d56c46d04662c1aba0861febcbe30a03d0829f7a6477049e053e",
+    "app/creative/graph.py": "f27edb298c806c9406afe1eeb2e72c7e9f74b08bb46cf64418088f979c468a09",
+    "app/creative/graph_api.py": "d47feafacf1fcea90b5a9d54d62cefd2d8491b4d8d6c7f8b9ca8fc96941bb592",
+    "app/creative/graph_asset_inputs.py": "b98af4c3be45bf22eb8dcde285e47b8f74a585a482c3f9bded2d5330adef53a6",
+    "app/creative/graph_execution.py": "bb8c3edafb92e5f57a9a0078e4b99a1ce34ea604bcc1d02afcc03df0228af991",
+    "app/creative/graph_media_execution.py": "e8bacda6630543a658d7d2aa2668b6f9e706df38272dd21bdc4d40764a193fab",
+    "app/creative/graph_models.py": "bc27f36d0f8991c72711a98db7438e891297151be4ba57151443d1cbdf93c036",
+    "app/creative/graph_planning_nodes.py": "1f12910cc7bd159361b96e8c39e6f25ee0141181a18ab92110083a97dd71ccf9",
+    "app/creative/graph_video_nodes.py": "97a039eb896bd4d36418182e12d2e6a165ea94197d1d69b0d4af3a99e1ff63d9",
+    "app/creative/models.py": "bb1b0cdd689be5bff90ed8dc556f1902f747016d315e84cfeb1fe7c95b91d5be",
+    "app/creative/production_execution.py": "498aa77ffed681c885e28938d750ae70e320c2163a6128f31c53480afc52b9f5",
+    "app/creative/production_execution_models.py": "7b8f2b71ed1593801318160eb8bdee90df111c4e933f111ff64a66e111884ee7",
+    "app/creative/service.py": "f25216fd38690ee74620e35fe66a64ec273c05accbcf65d3138c8914eacc051f",
+    "app/creative/storyboard.py": "a311a5b87f7e79526853c60415d3da9118f069a528efc190a3a596fa80a26322",
+    "app/dependencies.py": "33aae7f3ae51340e3ebb0e311322f4c1b908e31f6a7c49f61e3115709fdb01c6",
+    "app/model_center/discovery.py": "88428d50b725b00e73bcd66815719574fdf5a2037b74ca94331fc06ab0e79988",
+    "app/model_center/discovery_bridge.py": "4ec5502a773d560b8963c17542ef4dce753e2dd86e4ae8657338a4cdeffd94df",
+    "app/model_center/discovery_probes.py": "69ff55b80b69a9e6f80510235153585b0efe0922dc883f13351ab4f235e2dbae",
+    "app/services/studio_video_execution.py": "cc50d11f5464ffbf8d96b0e895a7f077e9826dca242f905eab603c1b9b0e32a4",
+    "app/services/studio_video_provider.py": "a8f4e362e5db6c279e99e3846f8b9ed90e45277ce42a6ab7d9e4d078cb81a10e",
+    "app/services/studio_video_provider_recipes.py": "3888e275e14204f211fa8b896520533b0e5b7bf2f0c1f2a6e760ba4394c8f17a",
+    "tests/test_v2_director_authority_reads.py": "38148d2d00b205f0927cbc3db803f32a350d0c8a898308a1bab025e02000271f",
+    "tests/test_v2_graph_video_api.py": "22ff594fe96a3c838835fafcb3b5d681c83f4be1d04ab8478d1d75668007952f",
+    "tests/test_v2_graph_video_foundation.py": "9b88ab58c9e5595231323967308e31f9b0edb5ca0efc83c0f0f89636082bb5f1",
+    "tests/test_v2_storyboard_workspace.py": "8d811169ab4f0007677d117fcd484c62db7174966c8418e7fcd87d9a4419c18e",
+    "tests/test_v2_storyboard_workspace_api.py": "1fff971be2bd676a50ca0ab81fe1069326e4d79ed012ba3d2a3be187ca4d506a",
+    "tests/test_v2_video_runtime_foundation.py": "cbc68ba278ca1cd810af910136b168f6c97baf124ae4493d66e570c4e32dcd53",
+    "tests/test_v2_video_runtime_foundation_api.py": "1dfdac764312720e4a5a46c5484ad3c1d7068fa6e8f3a1d6e03022d70443c49d",
+    "frontend/src/creative/CreativeCanvas.tsx": "de5681d8ae6f3a18d87d160ebaac4b22186767db0c598a6d9efd40eb7e0051a5",
+    "frontend/src/creative/CreativeStoryboardContinuity.phase4.test.tsx": "f89e862a88836e1163323938db65221a80e3baca9d337c6edbf489f9fb318779",
+    "frontend/src/creative/CreativeWorkspace.tsx": "1b6c7c1b7d9836792dc616e98882ebee1ed769388c80c99e22930697c3a9db60",
+    "frontend/src/creative/StoryboardProductionPanel.phase4.test.tsx": "2f7829280afdc1dbb055fd2ff60d7c187b206f3e37f743596dc6f4a160c4e25c",
+    "frontend/src/creative/StoryboardProductionPanel.tsx": "ac6a974507aeb6e2fbe5aa53eee38c6a1ef2352e05f68d72750a3fd9c27a1885",
+    "frontend/src/creative/StudioMediaExecutionPanel.tsx": "7164f66f00796ff5e4a98ed132fa5d18ffcd52ef1421bfa3cb96cb8c27236ce5",
+    "frontend/src/creative/StudioVideoGraphEditor.phase4.test.tsx": "c1692f4a68969fa3fb728061804546453f2c1bdf394bb7a00f794d114dfaf3a3",
+    "frontend/src/creative/client.ts": "07e5e30a8a0cbcaa122a1e0541398f9669acb276820f1a4875d2200f13336b31",
+    "frontend/src/creative/fixtures/phase4.file-api-director-advice.json": "acff87305b3171be4d22a11ff82d6cc71ebceed4af5340c355de90edbbbfa65d",
+    "frontend/src/creative/fixtures/phase4.file-api-image-request.json": "f8c318228bb8e899541b4e522df52719be5a711d7af49c5f0daf90667036fc57",
+    "frontend/src/creative/fixtures/phase4.file-api-job-candidate.json": "7fa71ca9cfefb3912ee959a97301c3be91352ab0645771571e94bd2236c10412",
+    "frontend/src/creative/fixtures/phase4.file-api-job-queued.json": "9b3ec95ad08f5288d5c78d231b5bbfab9a21b4e8964d949acc051bf23ddaeb31",
+    "frontend/src/creative/fixtures/phase4.file-api-job-reviewed.json": "58aa9bc0aaecdcb27e732d25c3f1f83ae42b45f4156818ba23666b39b65d6883",
+    "frontend/src/creative/fixtures/phase4.file-api-job-running.json": "3dd73054d4d20e55588d4462a363abeceff14821ff60bad14fa9c10f31aac8f8",
+    "frontend/src/creative/fixtures/phase4.file-api-preview.json": "3658e81be5d17471b8d0bc2b0d7b7c98489a93e3e3a472859c44b15eb1a2b7ff",
+    "frontend/src/creative/fixtures/phase4.file-api-providers.json": "09955c6e89b1ce67df97f5bd7b0b3fab931ca0e17232aea06bcfc1fd91ba7744",
+    "frontend/src/creative/fixtures/phase4.file-api-storyboard.json": "d7a1281669abfd804620a13b02c38a3c66e5c0158877232fd8636e3a7eddfe4a",
+    "frontend/src/creative/fixtures/phase4.file-api-timeline-draft.json": "694219667e08cb3a3ae1e2e39bbc54cdcbed8e00998c56415ec6d6c03ffe9cf5",
+    "frontend/src/creative/fixtures/phase4.file-api-video-graph-preflight.json": "97a448e6cef223f927522979f21eb80f9a2d9a1a502bca42ba211101cdb46452",
+    "frontend/src/creative/fixtures/phase4.file-api-video-graph-run.json": "4cc1fb36edd392e372875764608291ca21ffc74107a63d2e34bdeaf6fbcb0578",
+    "frontend/src/creative/fixtures/phase4.file-api-video-graph.json": "f27b239ad4895d2bc0698723df78fd9027dcff29189726135493a6986703ef8f",
+    "frontend/src/creative/fixtures/phase4.video-catalog.json": "81533e3adc42e05f095703b6bc9f789a87268cb3186484ec5e1f686dbad8bbfd",
+    "frontend/src/creative/graphDraft.ts": "e9a154e7e2400e79d154903463c05145b252e93680f5b1adfce5ad8dd4f5eb5b",
+    "frontend/src/creative/studioGraphClient.ts": "728db56d26427bb3fc99b710db86516bf21f227e2e418f8b733c7f0cc37914cb",
+    "frontend/src/creative/studioGraphEditorView.tsx": "a9776b3769065542a4cac0c26dc77000a2e6551635e927682903814f3228f5f6",
+    "frontend/src/creative/studioGraphLabels.ts": "c75435cea44425d9e2fc38a76d73d561e5ab000c4d7e0ff48b477e87ea5caad4",
+    "frontend/src/creative/studioGraphTypes.ts": "0825f160fb966642873cfff9e4e2fbdc725bed99a94845d9fc7ed3195f1f4bd4",
+    "frontend/src/creative/studioGraphVideoContract.phase4.test.ts": "160c323ea06bfd9f2265ae0cd26569314e7566e9bd35e53dde0e6852cdf05190",
+    "frontend/src/creative/studioProductionClient.ts": "5972a40216ee8c0f343967f5c569e1be708ce427ff7b5b245b6ebc71133e1fa1",
+    "frontend/src/creative/studioProductionGraphContract.ts": "4400f71e2ae0e923549d026b0e15ba210593ffa14ffdf9f6c75a9b06fe4ff7f9",
+    "frontend/src/creative/studioStoryboardClient.ts": "9d61801478f7c3a987dd17c948aa5878fda725f72ea8407ab803b77001e355f6",
+    "frontend/src/creative/studioStoryboardContract.phase4.test.ts": "472cb0473b640b6d744cefb53b881543fc3e1ed0f45c48b9147d197b76bad602",
+    "frontend/src/creative/studioStoryboardContract.ts": "e7b84a2f0b1d6022960a1da7b56b9da6fee7f9461cdd13e18feaef850eec0a76",
+    "frontend/src/creative/studioVideoRuntimeContract.phase4.test.ts": "2ae3ab9f9643a9b44ff46457b4ab548b3e54891482dce5e8d99ed877ca7d8c14",
+    "frontend/src/creative/studioVideoRuntimeContract.ts": "4ce150051d6249d325a0aea9aa2e6c37934475ee4d7e8f140d0043dcd88a20cc",
+    "frontend/src/creative/types.ts": "4b2c96999b84b4d5a603083dff5e4b09bcb3f4887113d68fde8ce0a74d815268",
+    "frontend/src/creative/useStoryboardProductionController.ts": "bd241ae4f574e9e18d73079d682ca6fc90ec551d99502e17505ad43aff61e656",
+    "frontend/src/creative/useStudioGraphEditorController.ts": "7bbda538e80af6e4dd45b37be84bdc219992a0aa89a98adfaa65a86d4555ee9a",
+    "frontend/src/creative/useStudioMediaExecution.ts": "951959b59cb0333aab9dff1ea1bcfc48f29b91bbf63dbf00257f123282faf545"
+  },
+  "verification": {
+    "file": {
+      "exit_code": 1,
+      "source_unchanged": true,
+      "counts": {
+        "tests": 938,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 321,
+        "passed": 616
+      },
+      "failures": [
+        {
+          "node": "tests.test_local_ai_discovery::test_scans_only_configured_roots_bounded_depth_and_no_link",
+          "category": "WINDOWS_SYMLINK_PRIVILEGE_PREREQUISITE"
+        }
+      ],
+      "receipt_sha256": "e688910ee0c47df531e52f801551d5788b6ce07dd6ca32abca409d5cb81313ff",
+      "new_modules_subset": {
+        "passed": 131,
+        "failure": 0,
+        "error": 0,
+        "skipped": 88
+      }
+    },
+    "postgres": {
+      "exit_code": 1,
+      "source_unchanged": true,
+      "counts": {
+        "tests": 938,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 321,
+        "passed": 616
+      },
+      "failures": [
+        {
+          "node": "tests.test_local_ai_discovery::test_scans_only_configured_roots_bounded_depth_and_no_link",
+          "category": "WINDOWS_SYMLINK_PRIVILEGE_PREREQUISITE"
+        }
+      ],
+      "receipt_sha256": "815bd8d457af140855570d46b0113d2d064f2615ea23b690ab85be3aac03dd56",
+      "new_modules_subset": {
+        "passed": 131,
+        "failure": 0,
+        "error": 0,
+        "skipped": 88
+      }
+    },
+    "frontend": {
+      "exit_code": 0,
+      "source_unchanged": true,
+      "counts": {
+        "tests": 3175,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 8,
+        "passed": 3167
+      },
+      "failures": [],
+      "receipt_sha256": "9c6b1cce6d5ef3b4b24837a16b132dbd3f44b9d20127db59f88e4d89c964c616"
+    },
+    "metadata": {
+      "exit_code": 1,
+      "source_unchanged": true,
+      "counts": {
+        "tests": 46,
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 44
+      },
+      "failures": [
+        {
+          "node": ".github.ci.test_compact_staged_catalog::test_retained_symlink_is_rejected_before_generator",
+          "category": "WINDOWS_SYMLINK_PRIVILEGE_PREREQUISITE"
+        },
+        {
+          "node": ".github.ci.test_compact_staged_catalog::test_excluded_evidence_symlink_is_not_followed",
+          "category": "WINDOWS_SYMLINK_PRIVILEGE_PREREQUISITE"
+        }
+      ],
+      "receipt_sha256": "42af7155a8c8789ae138d7e0c4ddd75731bc04036b10db6473fea2936212d072"
+    },
+    "linux_supplement": {
+      "exit_code": 0,
+      "counts": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "windows_failures_reclassified": false,
+      "unchanged_original_assertions": true,
+      "native_temp_removed": true
+    },
+    "types_tokens_build_visual": {
+      "exit_code": 0,
+      "visual_original_snapshots": 7,
+      "snapshot_updates": false,
+      "token_files": 52
+    },
+    "director_postgres_settlement_ms": [
+      2516,
+      2530
+    ],
+    "hosted_milestone_ci": "NOT_RUN_AT_SOURCE_PUBLICATION; inspect triggered jobs separately"
+  },
+  "collection": {
+    "status": "INVENTORY_ONLY",
+    "api_operations": 2233,
+    "collected_nodes": 14032,
+    "frozen_nodes_retained": 9151
+  },
+  "product_status": "PARTIAL",
+  "native_windows": "NOT_RUN",
+  "gpu_models": "LOCAL_REQUIRED",
+  "protected_gates_unchanged": true,
+  "suite_overlap_not_added": true,
+  "raw_evidence_published": false
+}

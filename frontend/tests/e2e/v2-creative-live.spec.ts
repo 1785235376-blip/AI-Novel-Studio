@@ -1,0 +1,597 @@
+import { test, expect, type APIRequestContext, type Locator, type Page, type TestInfo } from '@playwright/test';
+import { createHash } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
+
+type Row = Record<string, any>;
+// The enabled tests share one real File server. Own only IDs returned by this
+// test's successful create responses; never infer ownership from an inventory.
+const ownedNovels = new WeakMap<APIRequestContext, Set<string>>();
+const ownedPages = new WeakMap<APIRequestContext, Page>();
+const manuscript = '合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”';
+const creative = (novelId: string) => `/api/novels/${novelId}/experimental/creative`;
+const canvas = (page: Page) => page.getByRole('region', { name: '创作画布', exact: true });
+const stage = (page: Page, name: string) => page.getByRole('tablist', { name: '创作模式', exact: true }).getByRole('tab', { name: new RegExp(`^${name}`) });
+
+async function read(request: APIRequestContext, url: string): Promise<Row> {
+  const response = await request.get(url);
+  expect(response.ok(), `${url}: ${response.status()} ${await response.text()}`).toBeTruthy();
+  return response.json();
+}
+async function write(request: APIRequestContext, url: string, data: Row): Promise<Row> {
+  const response = await request.post(url, { data });
+  expect(response.ok(), `${url}: ${response.status()} ${await response.text()}`).toBeTruthy();
+  const row = await response.json();
+  if (url === '/api/novels') {
+    expect(response.status()).toBe(201);
+    rememberNovel(request, row);
+  }
+  return row;
+}
+function rememberNovel(request: APIRequestContext, novel: Row) {
+  expect(typeof novel.id, 'A successful synthetic novel create must return its exact ID.').toBe('string');
+  expect(novel.id.length).toBeGreaterThan(0);
+  const owned = ownedNovels.get(request);
+  expect(owned, 'Synthetic novel ownership must be initialized by the fixture.').toBeDefined();
+  owned!.add(novel.id);
+}
+test.beforeEach(async ({ request }) => {
+  expect(await read(request, '/api/novels'), 'V2 live tests require an empty isolated server; unexpected novels are unowned and must not be deleted.').toEqual([]);
+  ownedNovels.set(request, new Set());
+});
+test.afterEach(async ({ request }, info) => {
+  const page = ownedPages.get(request);
+  if (page && !page.isClosed()) {
+    if (info.status !== info.expectedStatus) await page.screenshot({ path: info.outputPath('failure-before-owned-cleanup.png'), fullPage: true }).catch(() => {});
+    // Stop the mounted UI before deleting fixtures, after all business assertions.
+    await page.close();
+  }
+  const owned = ownedNovels.get(request);
+  for (const id of owned || []) {
+    const response = await request.delete(`/api/novels/${encodeURIComponent(id)}`);
+    expect(response.status(), `Delete only this test's confirmed synthetic novel ${id}: ${await response.text()}`).toBe(204);
+    expect(await response.text()).toBe('');
+  }
+  if (owned) expect(await read(request, '/api/novels'), 'Owned synthetic fixtures must be removed; any unowned inventory is preserved and reported.').toEqual([]);
+});
+async function fixture(page: Page, request: APIRequestContext) {
+  ownedPages.set(request, page);
+  await page.goto('/');
+  await page.getByPlaceholder('小说名称').fill(`V2 浏览器合成验收 ${Date.now()}`);
+  const creating = page.waitForResponse(response => response.url().endsWith('/api/novels') && response.request().method() === 'POST');
+  await page.getByRole('button', { name: '创建小说', exact: true }).click();
+  const created = await creating;
+  expect(created.status()).toBe(201);
+  const novel = await created.json();
+  rememberNovel(request, novel);
+  await page.getByRole('button', { name: '新建章节', exact: true }).click();
+  await page.getByLabel('章节标题', { exact: true }).fill('第一章 合成海港');
+  await page.getByRole('button', { name: '创建章节', exact: true }).click();
+  await page.locator('.ProseMirror').fill(manuscript);
+  await page.getByRole('button', { name: '保存', exact: true }).click();
+  await expect(page.locator('.editorbar')).toContainText('已保存');
+  const chapters = await read(request, `/api/novels/${novel.id}/chapters`);
+  const chapter = await read(request, `/api/chapters/${chapters[0].id}`);
+  await page.getByRole('button', { name: '打开 V2 创作工作台', exact: true }).click();
+  await expect(stage(page, '小说')).toHaveAttribute('aria-selected', 'true');
+  await stage(page, '剧本').click();
+  await expect(canvas(page).getByLabel('文档标题', { exact: true })).toBeEnabled();
+  return { novel, chapter, base: creative(novel.id) };
+}
+async function clickTwice(locator: Locator) {
+  // Native browser double-click: two actual click events while the mutation guard is active.
+  await locator.dblclick({ delay: 10 });
+}
+async function mutate(page: Page, url: string, method: string, action: () => Promise<void>) {
+  const pending = page.waitForResponse(response => new URL(response.url()).pathname === url && response.request().method() === method);
+  await action();
+  const response = await pending;
+  expect(response.ok(), `${method} ${url}: ${response.status()} ${await response.text()}`).toBeTruthy();
+  return response.json() as Promise<Row>;
+}
+async function save(page: Page, base: string, document?: Row, repeat = false) {
+  return mutate(page, `${base}/documents${document ? `/${document.id}` : ''}`, document ? 'PUT' : 'POST',
+    () => repeat ? clickTwice(canvas(page).getByRole('button', { name: '保存草稿', exact: true })) : canvas(page).getByRole('button', { name: '保存草稿', exact: true }).click());
+}
+async function screenplay(page: Page, base: string) {
+  await canvas(page).getByLabel('文档标题', { exact: true }).fill('云港 · 合成剧本');
+  await page.getByRole('button', { name: '从当前已保存章节建立场景底稿', exact: true }).click();
+  await canvas(page).getByLabel('场景标题', { exact: true }).fill('EXT. 云港 · 清晨');
+  await canvas(page).getByLabel('场景地点', { exact: true }).fill('云港码头');
+  await canvas(page).getByRole('button', { name: '添加对白', exact: true }).click();
+  await canvas(page).getByLabel('对白 1 人物', { exact: true }).fill('林默');
+  await canvas(page).getByLabel('对白 1 内容', { exact: true }).fill('下一幕由我们自己决定。');
+  await canvas(page).getByRole('button', { name: '添加场景', exact: true }).click();
+  await canvas(page).getByLabel('场景标题', { exact: true }).fill('INT. 灯塔 · 日');
+  await canvas(page).getByLabel('动作与叙事', { exact: true }).fill('她在窗边整理航海图。');
+  return save(page, base, undefined, true);
+}
+async function capture(page: Page, info: TestInfo, name: string) {
+  await page.screenshot({ path: info.outputPath(`${name}.png`), fullPage: true });
+  await info.attach(name, { path: info.outputPath(`${name}.png`), contentType: 'image/png' });
+}
+
+test('real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript', async ({ page, request }, info) => {
+  test.info().annotations.push({ type: 'verification', description: 'Real uvicorn + File persistence + Vite + Chromium; synthetic manuscript; rule-assisted direction; no model inference or paid provider calls.' });
+  const errors: string[] = [], requests: Row[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  page.on('request', req => { if (req.url().includes('/experimental/creative') && req.method() !== 'GET') requests.push({ path: new URL(req.url()).pathname, method: req.method() }); });
+  const { novel, chapter, base } = await fixture(page, request);
+  const source = await screenplay(page, base);
+  expect(source.version).toBe(1);
+  expect(source.source_chapter_ids).toEqual([chapter.id]);
+  expect(source.scenes).toHaveLength(2);
+  expect((await read(request, `${base}/documents`)).items).toHaveLength(1);
+  expect(requests.filter(row => row.path === `${base}/documents` && row.method === 'POST')).toHaveLength(1);
+  await expect(canvas(page)).toContainText('已保存 · v1');
+  await capture(page, info, 'screenplay-saved');
+
+  const proposal = await mutate(page, `${base}/director-proposals`, 'POST', () => clickTwice(page.getByRole('button', { name: '准备待审导演建议', exact: true })));
+  expect(proposal.status).toBe('NEEDS_REVIEW');
+  expect(proposal.provenance.model_called).toBe(false);
+  await expect(page.getByRole('button', { name: '审核并采用', exact: true })).toBeDisabled();
+  expect((await read(request, `${base}/documents`)).items).toHaveLength(1);
+  const review = page.getByRole('region', { name: '导演建议审核', exact: true });
+  await review.getByText('场景调度 1', { exact: true }).click();
+  await review.getByLabel('建议 1 表演指导', { exact: true }).fill('人工确认：停顿后看向窗外。');
+  await review.getByLabel('采用后的导演文档标题', { exact: true }).fill('云港 · 人工审核导演稿');
+  await review.getByRole('checkbox', { name: '已核对来源、场面调度与导演建议；创建独立导演文档', exact: true }).check();
+  const approved = await mutate(page, `${base}/director-proposals/${proposal.id}/review`, 'POST', () => clickTwice(review.getByRole('button', { name: '审核并采用', exact: true })));
+  const director = approved.document;
+  expect(approved.proposal.status).toBe('APPROVED');
+  expect(director.director_notes[0].performance).toBe('人工确认：停顿后看向窗外。');
+  expect(director.source_documents[source.id].version).toBe(1);
+  await expect(stage(page, '导演')).toHaveAttribute('aria-selected', 'true');
+  expect((await read(request, `${base}/documents`)).items).toHaveLength(2);
+  expect(requests.filter(row => row.path.endsWith('/review'))).toHaveLength(1);
+  await capture(page, info, 'director-human-reviewed');
+
+  const board = await mutate(page, `${base}/documents/${director.id}/derive`, 'POST', () => clickTwice(canvas(page).getByRole('button', { name: '建立分镜草稿', exact: true })));
+  await expect(stage(page, '分镜')).toHaveAttribute('aria-selected', 'true');
+  expect(board.shots).toHaveLength(2);
+  expect(board.provenance.model_called).toBe(false);
+  await canvas(page).getByRole('button', { name: '前移镜头 2', exact: true }).click();
+  await canvas(page).getByLabel('画面描述', { exact: true }).fill('海港窗框里的人工镜头构图');
+  await canvas(page).getByLabel('镜头与焦距', { exact: true }).fill('50mm');
+  const editedBoard = await save(page, base, board);
+  expect(editedBoard.version).toBe(2);
+  expect(editedBoard.shots.map((shot: Row) => shot.id)).toEqual([...board.shots].reverse().map((shot: Row) => shot.id));
+  expect(editedBoard.shots.some((shot: Row) => shot.lens === '50mm')).toBe(true);
+  const production = await mutate(page, `${base}/documents/${board.id}/derive`, 'POST', () => clickTwice(canvas(page).getByRole('button', { name: '建立制作计划', exact: true })));
+  await expect(stage(page, '制作')).toHaveAttribute('aria-selected', 'true');
+  expect(production.video_plan.segments.map((row: Row) => row.shot_id)).toEqual(editedBoard.shots.map((row: Row) => row.id));
+  await page.getByRole('button', { name: '后移第 1 段', exact: true }).click();
+  await page.getByLabel('第 1 段时长', { exact: true }).fill('9');
+  await page.getByLabel('制作备注', { exact: true }).fill('人工排序，仅结构化计划，未渲染媒体。');
+  const editedProduction = await save(page, base, production);
+  expect(editedProduction.version).toBe(2);
+  expect(editedProduction.video_plan.segments[0].shot_id).toBe(production.video_plan.segments[1].shot_id);
+  expect(editedProduction.video_plan.segments[0].duration_seconds).toBe(9);
+  for (const [width, height] of [[1366, 768], [1440, 900], [1920, 1080]]) {
+    await page.setViewportSize({ width, height });
+    const geometry = await page.locator('.creative-workspace').evaluate(element => ({ client: element.clientWidth, scroll: element.scrollWidth, body: document.documentElement.scrollWidth, viewport: innerWidth }));
+    expect(geometry.scroll).toBeLessThanOrEqual(geometry.client + 1);
+    expect(geometry.body).toBeLessThanOrEqual(geometry.viewport + 1);
+    await capture(page, info, `production-${width}x${height}`);
+  }
+
+  await canvas(page).getByRole('button', { name: '历史', exact: true }).click();
+  const history = page.getByRole('region', { name: '创作文档历史', exact: true });
+  await history.locator('summary').filter({ hasText: /^v1 ·/ }).click();
+  await expect(history.getByRole('button', { name: '恢复 v1 为新版本', exact: true })).toBeDisabled();
+  await history.getByRole('checkbox', { name: '已核对 v1 的完整内容；恢复会新建当前版本', exact: true }).check();
+  const restored = await mutate(page, `${base}/documents/${production.id}/restore`, 'POST', () => clickTwice(history.getByRole('button', { name: '恢复 v1 为新版本', exact: true })));
+  expect(restored.version).toBe(3);
+  expect(restored.restored_from_version).toBe(1);
+  expect(restored.video_plan).toEqual(production.video_plan);
+  const persistedHistory = await read(request, `${base}/documents/${production.id}/history`);
+  expect(persistedHistory.items.map((row: Row) => row.version)).toEqual([1, 2, 3]);
+
+  await page.reload();
+  await page.getByRole('button', { name: '打开 V2 创作工作台', exact: true }).click();
+  await stage(page, '制作').click();
+  await expect(canvas(page)).toContainText('已保存 · v3');
+  await expect(page.getByLabel('制作备注', { exact: true })).toHaveValue(production.video_plan.notes);
+  const downloadEvent = page.waitForEvent('download');
+  await canvas(page).getByRole('button', { name: '导出', exact: true }).click();
+  const download = await downloadEvent;
+  expect(download.suggestedFilename()).toBe(`creative-${production.id}.json`);
+  await download.saveAs(info.outputPath('production-export.json'));
+  await info.attach('production-export', { path: info.outputPath('production-export.json'), contentType: 'application/json' });
+  expect(await read(request, `/api/chapters/${chapter.id}`)).toEqual(chapter);
+  expect(await read(request, `${base}/documents/${source.id}`)).toEqual(source);
+  expect((await read(request, `${base}/documents`)).items).toHaveLength(4);
+  expect(requests.filter(row => /\/(dispatch|generate)(\/|$)/.test(row.path))).toEqual([]);
+  expect(errors).toEqual([]);
+  await info.attach('real-file-receipt', { body: JSON.stringify({ novel_id: novel.id, chapter_id: chapter.id, manuscript_unchanged: true, mode_ids: [source.id, director.id, board.id, production.id], current_version: restored.version, model_called: false, requests }, null, 2), contentType: 'application/json' });
+});
+
+test('real File V2 cancel and navigation retain dirty drafts without duplicating accepted or cancelled proposals', async ({ page, request }, info) => {
+  const { chapter, base } = await fixture(page, request);
+  const source = await screenplay(page, base);
+  const proposal = await mutate(page, `${base}/director-proposals`, 'POST', () => page.getByRole('button', { name: '准备待审导演建议', exact: true }).click());
+  const cancelled = await mutate(page, `${base}/director-proposals/${proposal.id}/cancel`, 'POST', () => clickTwice(page.getByRole('button', { name: '取消建议', exact: true })));
+  expect(cancelled.status).toBe('CANCELLED');
+  await expect(page.getByRole('button', { name: '审核并采用', exact: true })).toBeDisabled();
+  expect((await read(request, `${base}/documents`)).items).toHaveLength(1);
+  await canvas(page).getByLabel('文档标题', { exact: true }).fill('尚未保存，离开也不能误写');
+  await stage(page, '分镜').click();
+  await stage(page, '剧本').click();
+  await expect(canvas(page).getByLabel('文档标题', { exact: true })).toHaveValue('尚未保存，离开也不能误写');
+  await page.getByRole('button', { name: '返回经典工作区', exact: true }).click();
+  await expect(page.getByRole('button', { name: '确认离开', exact: true })).toBeDisabled();
+  await page.getByRole('button', { name: '继续编辑', exact: true }).click();
+  await expect(page.getByRole('button', { name: '确认离开', exact: true })).toHaveCount(0);
+  await expect(canvas(page).getByLabel('文档标题', { exact: true })).toHaveValue('尚未保存，离开也不能误写');
+  await capture(page, info, 'cancelled-proposal-dirty-draft-retained');
+  await page.getByRole('button', { name: '返回经典工作区', exact: true }).click();
+  await page.getByRole('checkbox', { name: '确认放弃未保存草稿并离开', exact: true }).check();
+  await page.getByRole('button', { name: '确认离开', exact: true }).click();
+  await expect(page.getByRole('tablist', { name: '创作模式', exact: true })).toHaveCount(0);
+  await expect(page.locator('.ProseMirror')).toContainText(manuscript);
+  await page.getByRole('button', { name: '打开 V2 创作工作台', exact: true }).click();
+  await stage(page, '剧本').click();
+  await expect(canvas(page).getByLabel('文档标题', { exact: true })).toHaveValue(source.title);
+  expect(await read(request, `${base}/documents/${source.id}`)).toEqual(source);
+  expect(await read(request, `/api/chapters/${chapter.id}`)).toEqual(chapter);
+});
+
+test('real File V2 scope and stale-write fencing keeps the browser draft and rejects foreign sources', async ({ page, request }, info) => {
+  const { chapter, base } = await fixture(page, request);
+  const source = await screenplay(page, base);
+  const foreignNovel = await write(request, '/api/novels', { title: 'Foreign synthetic project' });
+  const foreignChapter = await write(request, `/api/novels/${foreignNovel.id}/chapters`, { title: 'Foreign source', content: 'Other project manuscript.' });
+  const payload = { mode: 'SCREENPLAY', title: 'Must reject foreign binding', source_chapter_ids: [foreignChapter.id], scenes: [{ id: 'foreign-scene', sequence: 1, heading: 'Foreign', source_chapter_id: foreignChapter.id }] };
+  const foreign = await request.post(`${base}/documents`, { data: payload });
+  expect(foreign.status()).toBe(422);
+  expect(await foreign.json()).toMatchObject({ code: 'EXPERIMENTAL_INVALID', message: 'chapter belongs to another project' });
+  expect((await read(request, `${base}/documents`)).items).toHaveLength(1);
+  expect((await request.get(`${creative(foreignNovel.id)}/documents/${source.id}`)).status()).toBe(404);
+  await canvas(page).getByLabel('文档标题', { exact: true }).fill('保留这份本地冲突草稿');
+  const input = Object.fromEntries(['mode', 'title', 'source_chapter_ids', 'source_independent', 'scenes', 'shots', 'director_notes', 'video_plan'].map(key => [key, source[key]]));
+  const serverChange = await request.put(`${base}/documents/${source.id}`, { data: { ...input, title: '另一客户端保存的标题', expected_version: source.version } });
+  expect(serverChange.ok()).toBeTruthy();
+  const conflicting = page.waitForResponse(response => new URL(response.url()).pathname === `${base}/documents/${source.id}` && response.request().method() === 'PUT');
+  await canvas(page).getByRole('button', { name: '保存草稿', exact: true }).click();
+  expect((await conflicting).status()).toBe(409);
+  await expect(page.getByText('需要核对版本 · 本地草稿仍保留', { exact: true })).toBeVisible();
+  await expect(canvas(page).getByLabel('文档标题', { exact: true })).toHaveValue('保留这份本地冲突草稿');
+  await expect(canvas(page).getByRole('button', { name: '保存草稿', exact: true })).toBeDisabled();
+  await page.getByRole('button', { name: '核对服务端版本', exact: true }).click();
+  const reconciliation = page.getByRole('region', { name: '服务端版本核对', exact: true });
+  await expect(reconciliation).toContainText('另一客户端保存的标题');
+  await reconciliation.getByRole('button', { name: '保留本地草稿', exact: true }).click();
+  await expect(canvas(page).getByLabel('文档标题', { exact: true })).toHaveValue('保留这份本地冲突草稿');
+  await capture(page, info, 'stale-write-preserves-draft');
+  expect((await read(request, `${base}/documents/${source.id}`)).title).toBe('另一客户端保存的标题');
+  expect(await read(request, `/api/chapters/${chapter.id}`)).toEqual(chapter);
+});
+
+test('V1 default-off backend and browser never expose the V2 workbench or accept creative writes', async ({ page, request }, info) => {
+  ownedPages.set(request, page);
+  await page.goto('/');
+  await expect(page.getByPlaceholder('小说名称')).toBeVisible();
+  await expect(page.getByRole('button', { name: '打开 V2 创作工作台', exact: true })).toHaveCount(0);
+  const novel = await write(request, '/api/novels', { title: 'V1 gate synthetic fixture' });
+  const base = creative(novel.id);
+  const capabilities = await read(request, `${base}/capabilities`);
+  expect(capabilities.enabled).toBe(false);
+  expect(capabilities.can_mutate).toBe(false);
+  expect((await request.get(`${base}/documents`)).status()).toBe(404);
+  expect((await request.post(`${base}/documents`, { data: { mode: 'SCREENPLAY', title: 'Blocked', source_independent: true } })).status()).toBe(404);
+  await capture(page, info, 'v1-default-off-workbench-hidden');
+});
+
+test('real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript', async ({ request }, info) => {
+  test.info().annotations.push({ type: 'verification', description: 'Real uvicorn HTTP/File test; no browser fixture; synthetic local rule-assisted data, no model inference.' });
+  const novel = await write(request, '/api/novels', { title: 'V2 HTTP real File lifecycle' });
+  const createdChapter = await write(request, `/api/novels/${novel.id}/chapters`, { title: '合成海港', content: manuscript });
+  const chapter = await read(request, `/api/chapters/${createdChapter.id}`);
+  const base = creative(novel.id);
+  const capabilities = await read(request, `${base}/capabilities`);
+  expect(capabilities.enabled).toBe(true);
+  expect(capabilities.can_mutate).toBe(true);
+  const source = await write(request, `${base}/documents`, {
+    mode: 'SCREENPLAY', title: 'HTTP 合成剧本', source_chapter_ids: [chapter.id],
+    scenes: [
+      { id: 'scene-port', sequence: 1, source_chapter_id: chapter.id, heading: 'EXT. 云港', action: manuscript, dialogue: [{ speaker: '林默', text: '下一幕由我们自己决定。' }] },
+      { id: 'scene-room', sequence: 2, source_chapter_id: chapter.id, heading: 'INT. 灯塔', action: '她在窗边整理航海图。' },
+    ],
+  });
+  const proposal = await write(request, `${base}/director-proposals`, { source_document_id: source.id, expected_source_version: source.version });
+  expect(proposal.status).toBe('NEEDS_REVIEW');
+  expect(proposal.provenance.model_called).toBe(false);
+  expect((await read(request, `${base}/documents`)).items).toHaveLength(1);
+  const notes = structuredClone(proposal.director_notes);
+  notes[0].performance = 'Human-reviewed blocking and performance';
+  const reviewBody = { expected_version: proposal.version, reviewed_output_digest: proposal.output_digest, title: 'HTTP 人工审核导演稿', director_notes: notes };
+  const reviews = await Promise.all([request.post(`${base}/director-proposals/${proposal.id}/review`, { data: reviewBody }), request.post(`${base}/director-proposals/${proposal.id}/review`, { data: reviewBody })]);
+  expect(reviews.map(row => row.status()).sort()).toEqual([200, 409]);
+  const accepted = await reviews.find(row => row.ok())!.json();
+  const director = accepted.document;
+  expect(director.director_notes[0].performance).toBe(notes[0].performance);
+  expect(director.source_documents[source.id].version).toBe(source.version);
+  expect((await read(request, `${base}/documents`)).items).toHaveLength(2);
+  const board = await write(request, `${base}/documents/${director.id}/derive`, { expected_version: director.version, mode: 'STORYBOARD' });
+  expect(board.shots).toHaveLength(2);
+  expect(board.provenance.model_called).toBe(false);
+  const content = (row: Row) => Object.fromEntries(['mode', 'title', 'source_chapter_ids', 'source_independent', 'scenes', 'shots', 'director_notes', 'video_plan'].map(key => [key, row[key]]));
+  const boardContent = content(board);
+  boardContent.shots = [...board.shots].reverse().map((shot: Row, index: number) => ({ ...shot, number: index + 1, lens: index === 0 ? '50mm' : '35mm' }));
+  const boardResponse = await request.put(`${base}/documents/${board.id}`, { data: { ...boardContent, expected_version: board.version } });
+  expect(boardResponse.status()).toBe(200);
+  const editedBoard = await boardResponse.json();
+  expect(editedBoard.shots.map((shot: Row) => shot.id)).toEqual([...board.shots].reverse().map((shot: Row) => shot.id));
+  const production = await write(request, `${base}/documents/${board.id}/derive`, { expected_version: editedBoard.version, mode: 'PRODUCTION' });
+  expect(production.source_documents[board.id].version).toBe(editedBoard.version);
+  const productionContent = content(production);
+  productionContent.video_plan = { ...production.video_plan, notes: 'No rendered media. Human production plan.', segments: [...production.video_plan.segments].reverse().map((segment: Row, index: number) => ({ ...segment, duration_seconds: index === 0 ? 9 : segment.duration_seconds })) };
+  const saveResponse = await request.put(`${base}/documents/${production.id}`, { data: { ...productionContent, expected_version: 1 } });
+  expect(saveResponse.status()).toBe(200);
+  expect((await saveResponse.json()).version).toBe(2);
+  const restored = await write(request, `${base}/documents/${production.id}/restore`, { expected_version: 2, restore_version: 1 });
+  expect(restored.version).toBe(3);
+  expect(restored.restored_from_version).toBe(1);
+  expect(restored.video_plan).toEqual(production.video_plan);
+  const history = await read(request, `${base}/documents/${production.id}/history`);
+  expect(history.items.map((row: Row) => row.version)).toEqual([1, 2, 3]);
+  expect(history.items[1].video_plan.segments[0].duration_seconds).toBe(9);
+  expect(await read(request, `${base}/documents/${production.id}`)).toEqual(restored);
+  const exported = await read(request, `${base}/documents/${production.id}/export`);
+  expect(exported.document.id).toBe(restored.id);
+  expect(exported.document.version).toBe(3);
+  expect(await read(request, `/api/chapters/${chapter.id}`)).toEqual(chapter);
+  expect(await read(request, `${base}/documents/${source.id}`)).toEqual(source);
+  expect((await read(request, `${base}/documents`)).items).toHaveLength(4);
+  await info.attach('http-file-lifecycle-receipt', { body: JSON.stringify({ verification: 'HTTP/File only, browser launch verified separately', novel_id: novel.id, chapter_id: chapter.id, manuscript_unchanged: true, created_documents: [source.id, director.id, board.id, production.id], concurrent_review_statuses: reviews.map(row => row.status()), versions: history.items.map((row: Row) => row.version), model_called: false, export: exported }, null, 2), contentType: 'application/json' });
+});
+
+test('real HTTP File V2 scope, cancel and stale source fences remain authoritative', async ({ request }, info) => {
+  const novel = await write(request, '/api/novels', { title: 'V2 HTTP fence fixture' });
+  const foreign = await write(request, '/api/novels', { title: 'V2 HTTP foreign fixture' });
+  const created = await write(request, `/api/novels/${novel.id}/chapters`, { title: 'Owned chapter', content: manuscript });
+  const chapter = await read(request, `/api/chapters/${created.id}`);
+  const outsider = await write(request, `/api/novels/${foreign.id}/chapters`, { title: 'Foreign chapter', content: 'Not authorized as this project source.' });
+  const base = creative(novel.id);
+  const input = { mode: 'SCREENPLAY', title: 'Fence source', source_chapter_ids: [chapter.id], scenes: [{ id: 's1', sequence: 1, heading: 'Scene', source_chapter_id: chapter.id, action: manuscript }] };
+  const source = await write(request, `${base}/documents`, input);
+  const badBinding = await request.post(`${base}/documents`, { data: { ...input, source_chapter_ids: [outsider.id], scenes: [] } });
+  expect(badBinding.status()).toBe(422);
+  expect(await badBinding.json()).toMatchObject({ code: 'EXPERIMENTAL_INVALID', message: 'chapter belongs to another project' });
+  expect((await request.get(`${creative(foreign.id)}/documents/${source.id}`)).status()).toBe(404);
+  const proposal = await write(request, `${base}/director-proposals`, { source_document_id: source.id, expected_source_version: 1 });
+  const cancelled = await write(request, `${base}/director-proposals/${proposal.id}/cancel`, { expected_version: proposal.version });
+  expect(cancelled.status).toBe('CANCELLED');
+  const rejectedReview = await request.post(`${base}/director-proposals/${proposal.id}/review`, { data: { expected_version: cancelled.version, reviewed_output_digest: proposal.output_digest, title: 'Must not accept cancelled', director_notes: proposal.director_notes } });
+  expect(rejectedReview.status()).toBe(422);
+  expect((await read(request, `${base}/documents`)).items).toHaveLength(1);
+  expect(await read(request, `/api/chapters/${chapter.id}`)).toEqual(chapter);
+  const simultaneous = await Promise.all(['First', 'Second'].map(title => request.put(`${base}/documents/${source.id}`, { data: { ...input, title, expected_version: 1 } })));
+  expect(simultaneous.map(row => row.status()).sort()).toEqual([200, 409]);
+  const current = await read(request, `${base}/documents/${source.id}`);
+  const pendingProposal = await write(request, `${base}/director-proposals`, { source_document_id: source.id, expected_source_version: current.version });
+  const chapterUpdate = await request.put(`/api/chapters/${chapter.id}`, { data: { version: chapter.version, content: manuscript + '\nExplicit second-client source edit.' } });
+  expect(chapterUpdate.status()).toBe(200);
+  expect((await request.get(`${base}/documents/${source.id}`)).status()).toBe(409);
+  expect((await request.get(`${base}/director-proposals/${pendingProposal.id}`)).status()).toBe(409);
+  expect((await read(request, `${base}/documents`)).items).toEqual([]);
+  expect((await request.post(`${base}/documents/${source.id}/derive`, { data: { expected_version: current.version, mode: 'STORYBOARD' } })).status()).toBe(409);
+  await info.attach('http-source-fence-receipt', { body: JSON.stringify({ foreign_binding: badBinding.status(), cancelled_review: rejectedReview.status(), simultaneous_update_statuses: simultaneous.map(row => row.status()), stale_source_read: 409, stale_source_derive: 409, model_called: false }, null, 2), contentType: 'application/json' });
+});
+
+test('real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes', async ({ request }, info) => {
+  const novel = await write(request, '/api/novels', { title: 'HTTP default-off fixture' });
+  const base = creative(novel.id);
+  const capabilities = await read(request, `${base}/capabilities`);
+  expect(capabilities.enabled).toBe(false);
+  expect(capabilities.can_mutate).toBe(false);
+  expect((await request.get(`${base}/documents`)).status()).toBe(404);
+  expect((await request.post(`${base}/documents`, { data: { mode: 'SCREENPLAY', title: 'Blocked', source_independent: true } })).status()).toBe(404);
+  await info.attach('http-default-off-receipt', { body: JSON.stringify(capabilities), contentType: 'application/json' });
+});
+
+test('real File chapterless screenplay saves, reopens and downloads pinned text formats', async ({ page, request }, info) => {
+  ownedPages.set(request, page);
+  await page.goto('/');
+  await page.getByPlaceholder('小说名称').fill('M4-D 独立剧本合成验收');
+  const creating = page.waitForResponse(response => response.url().endsWith('/api/novels') && response.request().method() === 'POST');
+  await page.getByRole('button', { name: '创建小说', exact: true }).click();
+  const created = await creating;
+  expect(created.status()).toBe(201);
+  const novel = await created.json(); rememberNovel(request, novel);
+  const base = creative(novel.id);
+  expect(await read(request, `/api/novels/${novel.id}/chapters`)).toEqual([]);
+  await page.getByRole('button', { name: '打开 V2 创作工作台', exact: true }).click();
+  await stage(page, '剧本').click();
+  await canvas(page).getByLabel('文档标题', { exact: true }).fill('无需小说章节的剧本');
+  await canvas(page).getByRole('checkbox', { name: '这是独立创作', exact: true }).check();
+  await canvas(page).getByRole('button', { name: '添加场景', exact: true }).click();
+  await canvas(page).getByLabel('场景标题', { exact: true }).fill('EXT. 独立海港 - NIGHT');
+  await canvas(page).getByLabel('动作与叙事', { exact: true }).fill('旅人独自走过港口。');
+  await canvas(page).getByRole('button', { name: '添加对白', exact: true }).click();
+  await canvas(page).getByLabel('对白 1 人物', { exact: true }).fill('旅人');
+  await canvas(page).getByLabel('对白 1 内容', { exact: true }).fill('下一幕由我们自己决定。');
+  const row = await save(page, base);
+  expect(row.source_independent).toBe(true); expect(row.source_chapter_ids).toEqual([]);
+  await page.reload();
+  await page.getByRole('button', { name: '打开 V2 创作工作台', exact: true }).click();
+  await stage(page, '剧本').click();
+  await expect(canvas(page)).toContainText('已保存 · v1');
+  const panel = page.getByRole('region', { name: '剧本文本格式导出', exact: true });
+  const receipts: Row[] = [];
+  for (const [format, extension] of [['fountain', 'fountain'], ['docx', 'docx'], ['markdown', 'md']]) {
+    await panel.getByLabel('剧本导出格式', { exact: true }).selectOption(format);
+    const responseEvent = page.waitForResponse(response => new URL(response.url()).pathname === `${base}/documents/${row.id}/screenplay-export`);
+    const downloadEvent = page.waitForEvent('download');
+    await panel.getByRole('button', { name: '导出剧本文本', exact: true }).click();
+    const [response, download] = await Promise.all([responseEvent, downloadEvent]);
+    expect(response.status()).toBe(200);
+    expect(download.suggestedFilename()).toBe(`creative-screenplay-v1.${extension}`);
+    const path = info.outputPath(`independent-screenplay.${extension}`);
+    await download.saveAs(path);
+    const bytes = await readFile(path), sha256 = createHash('sha256').update(bytes).digest('hex');
+    expect(sha256).toBe(response.headers()['x-content-sha256']);
+    expect(response.headers()['x-creative-document-version']).toBe('1');
+    expect(response.headers()['cache-control']).toBe('no-store');
+    if (format !== 'docx') expect(bytes.toString('utf8')).toContain('下一幕由我们自己决定。');
+    else expect(bytes.subarray(0, 2).toString()).toBe('PK');
+    await info.attach(`independent-${format}`, { path, contentType: response.headers()['content-type'].split(';')[0] });
+    receipts.push({ format, version: 1, sha256, bytes: bytes.length });
+  }
+  for (const [width, height] of [[1366, 768], [1440, 900], [1920, 1080]]) {
+    await page.setViewportSize({ width, height });
+    const geometry = await page.locator('.creative-workspace').evaluate(element => ({ client: element.clientWidth, scroll: element.scrollWidth, body: document.documentElement.scrollWidth, viewport: innerWidth }));
+    expect(geometry.scroll).toBeLessThanOrEqual(geometry.client + 1);
+    expect(geometry.body).toBeLessThanOrEqual(geometry.viewport + 1);
+    await capture(page, info, `screenplay-export-${width}x${height}`);
+  }
+  await canvas(page).getByLabel('文档标题', { exact: true }).fill('尚未保存的本地改动');
+  await expect(panel.getByRole('button', { name: '导出剧本文本', exact: true })).toBeDisabled();
+  expect(await read(request, `${base}/documents/${row.id}`)).toEqual(row);
+  expect(await read(request, `/api/novels/${novel.id}/chapters`)).toEqual([]);
+  await info.attach('independent-export-receipts', { body: JSON.stringify({ novel_id: novel.id, document_id: row.id, receipts, chapterless: true, model_called: false }), contentType: 'application/json' });
+});
+
+test('real HTTP chapterless screenplay format bytes preserve the saved owner and version fences', async ({ request }, info) => {
+  const novel = await write(request, '/api/novels', { title: 'M4-D HTTP synthetic export' });
+  const base = creative(novel.id);
+  const row = await write(request, `${base}/documents`, { mode: 'SCREENPLAY', title: '独立海港', source_independent: true,
+    scenes: [{ id: 'independent-scene', sequence: 1, heading: 'EXT. 港口 - NIGHT', action: '旅人独自走过港口。',
+      dialogue: [{ speaker: '旅人', text: '下一幕由我们自己决定。', delivery: '轻声' }] }] });
+  const receipts: Row[] = [];
+  for (const format of ['fountain', 'docx', 'markdown']) {
+    const response = await request.get(`${base}/documents/${row.id}/screenplay-export`, { params: { format, expected_version: 1 } });
+    expect(response.status()).toBe(200);
+    const bytes = await response.body(), sha256 = createHash('sha256').update(bytes).digest('hex');
+    expect(response.headers()['x-content-sha256']).toBe(sha256);
+    expect(response.headers()['x-creative-document-version']).toBe('1');
+    expect(response.headers()['cache-control']).toBe('no-store');
+    expect(response.headers()['x-content-type-options']).toBe('nosniff');
+    if (format !== 'docx') expect(bytes.toString('utf8')).toContain('下一幕由我们自己决定。');
+    else expect(bytes.subarray(0, 2).toString()).toBe('PK');
+    expect((await request.get(`${base}/documents/${row.id}/screenplay-export`, { params: { format, expected_version: 2 } })).status()).toBe(409);
+    receipts.push({ format, sha256, bytes: bytes.length });
+  }
+  expect(await read(request, `${base}/documents/${row.id}`)).toEqual(row);
+  expect(await read(request, `/api/novels/${novel.id}/chapters`)).toEqual([]);
+  expect((await read(request, `${base}/documents`)).items).toEqual([row]);
+  await info.attach('http-export-receipts', { body: JSON.stringify({ verification: 'Real HTTP/File; browser launch is separate', receipts, model_called: false }), contentType: 'application/json' });
+});
+
+test('real File standalone generic Script edits, reopens, restores and exports without chapters', async ({page, request}, info) => {
+  ownedPages.set(request,page);await page.goto('/');
+  await page.getByPlaceholder('小说名称').fill('通用脚本独立合成验收');
+  const creating=page.waitForResponse(response=>response.url().endsWith('/api/novels')&&response.request().method()==='POST');
+  await page.getByRole('button',{name:'创建小说',exact:true}).click();const created=await creating;expect(created.status()).toBe(201);
+  const novel=await created.json();rememberNovel(request,novel);const base=creative(novel.id),body='  播客合成开场。\n\n保留独立创作的空行。\n';
+  await page.getByRole('button',{name:'打开 V2 创作工作台',exact:true}).click();await stage(page,'剧本').click();
+  await page.getByRole('button',{name:'新建独立通用脚本',exact:true}).click();
+  await canvas(page).getByLabel('文档标题',{exact:true}).fill('独立播客稿');await canvas(page).getByLabel('脚本用途',{exact:true}).selectOption('PODCAST');await canvas(page).getByLabel('通用脚本内容',{exact:true}).fill(body);
+  const first=await save(page,base);expect(first.mode).toBe('SCRIPT');expect(first.source_chapter_ids).toEqual([]);expect(first.script).toEqual({purpose:'PODCAST',body});
+  await page.reload();await page.getByRole('button',{name:'打开 V2 创作工作台',exact:true}).click();await stage(page,'剧本').click();await expect(canvas(page).getByLabel('通用脚本内容',{exact:true})).toHaveValue(body);
+  await canvas(page).getByLabel('通用脚本内容',{exact:true}).fill('第二稿，仅修改独立脚本。');const second=await save(page,base,first);expect(second.version).toBe(2);
+  await canvas(page).getByRole('button',{name:'历史',exact:true}).click();const history=page.getByRole('region',{name:'创作文档历史',exact:true});
+  await history.getByText('v1 · 独立播客稿',{exact:true}).click();await history.getByLabel('已核对 v1 的完整内容；恢复会新建当前版本',{exact:true}).check();
+  const third=await mutate(page,`${base}/documents/${first.id}/restore`,'POST',()=>history.getByRole('button',{name:'恢复 v1 为新版本',exact:true}).click());expect(third.version).toBe(3);expect(third.script.body).toBe(body);
+  const panel=page.getByRole('region',{name:'通用脚本文本格式导出',exact:true}),receipts:Row[]=[];
+  for(const [format,extension] of [['txt','txt'],['markdown','md'],['docx','docx']]) {
+    await panel.getByLabel('脚本导出格式',{exact:true}).selectOption(format);
+    const responseEvent=page.waitForResponse(response=>new URL(response.url()).pathname===`${base}/documents/${first.id}/script-export`),downloadEvent=page.waitForEvent('download');
+    await panel.getByRole('button',{name:'导出脚本文本',exact:true}).click();const [response,download]=await Promise.all([responseEvent,downloadEvent]);expect(response.status()).toBe(200);expect(download.suggestedFilename()).toBe(`creative-script-v3.${extension}`);
+    const path=info.outputPath(`generic-script.${extension}`);await download.saveAs(path);const bytes=await readFile(path),sha256=createHash('sha256').update(bytes).digest('hex');expect(sha256).toBe(response.headers()['x-content-sha256']);expect(response.headers()['x-creative-document-version']).toBe('3');
+    if(format!=='docx')expect(bytes.toString('utf8')).toBe(body);else expect(bytes.subarray(0,2).toString()).toBe('PK');receipts.push({format,sha256,bytes:bytes.length});await info.attach(`script-${format}`,{path,contentType:response.headers()['content-type'].split(';')[0]});
+  }
+  for(const [width,height] of [[1366,768],[1440,900],[1920,1080]]) {await page.setViewportSize({width,height});const geometry=await page.locator('.creative-workspace').evaluate(element=>({client:element.clientWidth,scroll:element.scrollWidth,body:document.documentElement.scrollWidth,viewport:innerWidth}));expect(geometry.scroll).toBeLessThanOrEqual(geometry.client+1);expect(geometry.body).toBeLessThanOrEqual(geometry.viewport+1);await capture(page,info,`generic-script-${width}x${height}`);}
+  expect((await read(request,`${base}/documents/${first.id}/history`)).items.map((row:Row)=>row.version)).toEqual([1,2,3]);expect(await read(request,`/api/novels/${novel.id}/chapters`)).toEqual([]);expect((await read(request,`${base}/documents`)).items).toEqual([third]);
+  await canvas(page).getByLabel('通用脚本内容',{exact:true}).fill('保留在当前页的未保存草稿');await expect(panel.getByRole('button',{name:'导出脚本文本',exact:true})).toBeDisabled();
+  await info.attach('generic-script-receipt',{body:JSON.stringify({novel_id:novel.id,document_id:first.id,versions:[1,2,3],chapterless:true,model_called:false,receipts}),contentType:'application/json'});
+});
+
+test('real HTTP generic Script persists exact text and CAS history without a manuscript', async ({request},info) => {
+  const novel=await write(request,'/api/novels',{title:'通用脚本 HTTP 合成验收'}),base=creative(novel.id),body='  原始通用脚本。\n\n结尾保留换行。\n';
+  const input={mode:'SCRIPT',title:'独立广告稿',source_independent:true,script:{purpose:'ADVERTISEMENT',body}},first=await write(request,`${base}/documents`,input);
+  const updated=await request.put(`${base}/documents/${first.id}`,{data:{...input,expected_version:1,script:{purpose:'ADVERTISEMENT',body:'第二稿'}}});expect(updated.status()).toBe(200);
+  expect((await request.put(`${base}/documents/${first.id}`,{data:{...input,expected_version:1}})).status()).toBe(409);
+  const restored=await write(request,`${base}/documents/${first.id}/restore`,{expected_version:2,restore_version:1});expect(restored.script).toEqual(input.script);expect(restored.version).toBe(3);
+  const receipts:Row[]=[];for(const format of ['txt','markdown','docx']) {const response=await request.get(`${base}/documents/${first.id}/script-export`,{params:{format,expected_version:3}});expect(response.status()).toBe(200);const bytes=await response.body(),sha256=createHash('sha256').update(bytes).digest('hex');expect(response.headers()['x-content-sha256']).toBe(sha256);expect(response.headers()['cache-control']).toBe('no-store');if(format!=='docx')expect(bytes.toString('utf8')).toBe(body);else expect(bytes.subarray(0,2).toString()).toBe('PK');receipts.push({format,sha256,bytes:bytes.length});}
+  expect((await read(request,`${base}/documents/${first.id}/history`)).items.map((row:Row)=>row.version)).toEqual([1,2,3]);expect((await read(request,`${base}/documents/${first.id}/export`)).document.script).toEqual(input.script);expect(await read(request,`/api/novels/${novel.id}/chapters`)).toEqual([]);expect((await read(request,`${base}/documents`)).items).toEqual([restored]);
+  await info.attach('http-generic-script-receipt',{body:JSON.stringify({verification:'Real HTTP/File only; browser launch is separate',versions:[1,2,3],model_called:false,receipts}),contentType:'application/json'});
+});
+
+test('ordinary Creative without trusted Host keeps manual screenplay usable and gates private adaptation', async ({ page, request }, info) => {
+  const { base } = await fixture(page, request);
+  expect((await read(request, `${base}/capabilities`)).source_adaptation).toBe('HOST_SESSION_REQUIRED');
+  await expect(page.getByText('来源改编需要已验证的可信 Host 会话。普通手工创作仍可使用。', { exact: true })).toBeVisible();
+  await expect(canvas(page).getByLabel('文档标题', { exact: true })).toBeEnabled();
+  await expect(page.locator('details[aria-label="来源感知剧本改编"]')).toHaveCount(0);
+  expect((await request.get(`${base}/adaptation-proposals`)).status()).toBe(401);
+  await canvas(page).getByLabel('文档标题', { exact: true }).fill('普通手工剧本仍可编辑');
+  await expect(canvas(page).getByLabel('文档标题', { exact: true })).toHaveValue('普通手工剧本仍可编辑');
+  await capture(page, info, 'source-adaptation-host-required');
+  await info.attach('source-adaptation-host-gate', { body: JSON.stringify({ private_api_status: 401, manual_editor_available: true, model_called: false }), contentType: 'application/json' });
+});
+
+test('real File saved screenplay EPUB downloads verified reflowable bytes through the existing selector', async ({ page, request }, info) => {
+  const { novel, chapter, base } = await fixture(page, request);
+  const row = await screenplay(page, base);
+  const panel = page.getByRole('region', { name: '剧本文本格式导出', exact: true });
+  await panel.getByLabel('剧本导出格式', { exact: true }).selectOption('epub');
+  await expect(panel).toContainText('EPUB 是可导航的重排阅读版，不保证专业分页。');
+  const responseEvent = page.waitForResponse(response => new URL(response.url()).pathname === `${base}/documents/${row.id}/screenplay-export`);
+  const downloadEvent = page.waitForEvent('download');
+  await panel.getByRole('button', { name: '导出剧本文本', exact: true }).click();
+  const [response, download] = await Promise.all([responseEvent, downloadEvent]);
+  expect(response.status()).toBe(200); expect(response.headers()['content-type']).toBe('application/epub+zip');
+  expect(download.suggestedFilename()).toBe(`creative-screenplay-v${row.version}.epub`);
+  const path = info.outputPath('saved-screenplay.epub'); await download.saveAs(path);
+  const bytes = await readFile(path), sha256 = createHash('sha256').update(bytes).digest('hex');
+  expect(sha256).toBe(response.headers()['x-content-sha256']);
+  expect(response.headers()['x-creative-document-version']).toBe(String(row.version));
+  expect(response.headers()['cache-control']).toBe('no-store');
+  expect(bytes.subarray(0, 4)).toEqual(Buffer.from([0x50, 0x4b, 3, 4]));
+  expect(bytes.readUInt16LE(8)).toBe(0); // EPUB's first mimetype member is uncompressed.
+  const filenameLength = bytes.readUInt16LE(26), extraLength = bytes.readUInt16LE(28);
+  expect(bytes.subarray(30, 30 + filenameLength).toString()).toBe('mimetype');
+  expect(bytes.subarray(30 + filenameLength + extraLength, 30 + filenameLength + extraLength + 20).toString()).toBe('application/epub+zip');
+  expect(await read(request, `${base}/documents/${row.id}`)).toEqual(row);
+  expect((await read(request, `/api/chapters/${chapter.id}`)).content).toBe(chapter.content);
+  await capture(page, info, 'screenplay-epub-selector');
+  await info.attach('saved-screenplay-epub', { path, contentType: 'application/epub+zip' });
+  await info.attach('epub-download-receipt', { body: JSON.stringify({ novel_id: novel.id, document_id: row.id, version: row.version, sha256, bytes: bytes.length, model_called: false, layout: 'reflowable_scene_sections', external_reader_acceptance: 'NOT_RUN' }), contentType: 'application/json' });
+});
+
+test('real File screenplay starter creates an explicit unsaved independent draft then uses original save and export', async ({ page, request }, info) => {
+  ownedPages.set(request, page); await page.goto('/');
+  await page.getByPlaceholder('小说名称').fill('独立剧本起稿合成验收');
+  const creating = page.waitForResponse(response => response.url().endsWith('/api/novels') && response.request().method() === 'POST');
+  await page.getByRole('button', { name: '创建小说', exact: true }).click(); const created = await creating; expect(created.status()).toBe(201);
+  const novel = await created.json(); rememberNovel(request, novel); const base = creative(novel.id);
+  await page.getByRole('button', { name: '打开 V2 创作工作台', exact: true }).click(); await stage(page, '剧本').click();
+  const panel = page.getByRole('region', { name: '独立剧本起稿模板', exact: true });
+  await panel.getByRole('button', { name: '浏览起稿模板', exact: true }).click();
+  await expect(panel.getByLabel('起稿类型', { exact: true }).getByRole('option')).toHaveCount(4);
+  await panel.getByLabel('起稿类型', { exact: true }).selectOption('SHORT_FILM');
+  await expect(panel).toContainText('模板 v1'); expect((await read(request, `${base}/documents`)).items).toEqual([]);
+  await clickTwice(panel.getByRole('button', { name: '从模板新建未保存剧本', exact: true }));
+  await expect(canvas(page).getByLabel('文档标题', { exact: true })).toHaveValue('短片剧本');
+  await expect(panel.getByRole('button', { name: '从模板新建未保存剧本', exact: true })).toBeDisabled();
+  expect((await read(request, `${base}/documents`)).items).toEqual([]);
+  await canvas(page).getByLabel('文档标题', { exact: true }).fill('作者编辑的独立短片');
+  await canvas(page).getByLabel('动作与叙事', { exact: true }).fill('作者替换提示后的第一场动作。');
+  const first = await save(page, base); expect(first.version).toBe(1); expect(first.source_independent).toBe(true);
+  expect(first.source_chapter_ids).toEqual([]); expect(first.source_evidence).toEqual({}); expect(first.scenes).toHaveLength(4);
+  expect(new Set(first.scenes.map((scene: Row) => scene.id)).size).toBe(4); expect(first.scenes.every((scene: Row) => scene.source_chapter_id === null && !scene.id.startsWith('starter-'))).toBe(true);
+  await page.reload(); await page.getByRole('button', { name: '打开 V2 创作工作台', exact: true }).click(); await stage(page, '剧本').click();
+  await expect(canvas(page).getByLabel('动作与叙事', { exact: true })).toHaveValue('作者替换提示后的第一场动作。');
+  await canvas(page).getByLabel('动作与叙事', { exact: true }).fill('第二稿，仍由作者明确保存。'); const second = await save(page, base, first); expect(second.version).toBe(2);
+  const exportPanel = page.getByRole('region', { name: '剧本文本格式导出', exact: true });
+  await exportPanel.getByLabel('剧本导出格式', { exact: true }).selectOption('markdown');
+  const received = page.waitForResponse(response => new URL(response.url()).pathname === `${base}/documents/${first.id}/screenplay-export`), downloaded = page.waitForEvent('download');
+  await exportPanel.getByRole('button', { name: '导出剧本文本', exact: true }).click(); const [response, download] = await Promise.all([received, downloaded]);
+  const path = info.outputPath('starter-screenplay.md'); await download.saveAs(path); const bytes = await readFile(path), hash = createHash('sha256').update(bytes).digest('hex');
+  expect(response.status()).toBe(200); expect(hash).toBe(response.headers()['x-content-sha256']); expect(bytes.toString('utf8')).toContain('第二稿，仍由作者明确保存。');
+  expect((await read(request, `${base}/documents/${first.id}/history`)).items.map((row: Row) => row.version)).toEqual([1, 2]);
+  expect(await read(request, `/api/novels/${novel.id}/chapters`)).toEqual([]); expect((await read(request, `${base}/documents`)).items).toEqual([second]);
+  await panel.getByRole('button', { name: '浏览起稿模板', exact: true }).click(); await expect(panel.getByLabel('起稿类型', { exact: true })).toBeVisible();
+  for (const [width, height] of [[1366, 768], [1440, 900], [1920, 1080]]) { await page.setViewportSize({ width, height }); const size = await page.locator('.creative-workspace').evaluate(el => ({ client: el.clientWidth, scroll: el.scrollWidth, body: document.documentElement.scrollWidth, viewport: innerWidth })); expect(size.scroll).toBeLessThanOrEqual(size.client + 1); expect(size.body).toBeLessThanOrEqual(size.viewport + 1); await capture(page, info, `starter-screenplay-${width}x${height}`); }
+  await info.attach('starter-screenplay-receipt', { body: JSON.stringify({ novel_id: novel.id, document_id: first.id, template: 'SHORT_FILM', template_version: 1, versions: [1, 2], sha256: hash, chapterless: true, model_called: false, layout: 'linear_editable_writing_guide' }), contentType: 'application/json' });
+});

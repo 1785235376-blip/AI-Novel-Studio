@@ -1,0 +1,752 @@
+{
+  "protocol_name": "PoemSeed Local Interop",
+  "protocol_version": "1.0",
+  "evidence_policy": "Status records require exact-head executed proof; pending verification is NOT_RUN. Desktop unavailable is LOCAL_REQUIRED.",
+  "requirements": [
+    {
+      "section": 1,
+      "requirement": "当前开发基线",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Studio starts at exact repaired 2c5b4e2; separate private Cloud baseline ec487c4 retains later audited lifecycle/security fixes. Frozen PR heads are unchanged."
+    },
+    {
+      "section": 2,
+      "requirement": "总体目标",
+      "status": "PARTIAL",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Cloud-feasible protocol, adapters and Studio integration are implemented. Actual Tutor Desktop discovery/runtime remains LOCAL_REQUIRED."
+    },
+    {
+      "section": 3,
+      "requirement": "核心架构原则",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Product implementations communicate through serialized versioned protocol. No cross-product internal imports, writes or executable capabilities."
+    },
+    {
+      "section": 4,
+      "requirement": "建立独立协议层",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_contracts.py"
+      ],
+      "implementation": "29 strict JSON Schemas, Python DTOs/validators, strict-TypeScript DTOs and Rust interface draft; shared parity and both wheel manifests verified. Rust compilation NOT_RUN."
+    },
+    {
+      "section": 5,
+      "requirement": "Protocol Version",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_contracts.py"
+      ],
+      "implementation": "Every wire message requires explicit protocol name/version; missing or incompatible identity fails closed. Product versions remain independent."
+    },
+    {
+      "section": 6,
+      "requirement": "Product Identity",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_contracts.py"
+      ],
+      "implementation": "Stable product IDs, product role, instance, separate software versions, capabilities and supported protocol versions are validated."
+    },
+    {
+      "section": 7,
+      "requirement": "Handshake",
+      "status": "PARTIAL",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_contracts.py"
+      ],
+      "implementation": "Real loopback HELLO, capability negotiation and nonce-bound session, including negative order/version/session cases. Protocol and local host-user/session binding are verified, but development HTTP ProductDescriptor is self-declared, not authenticated installed-product/OS-user identity; actual mutual desktop peer attestation remains LOCAL_REQUIRED."
+    },
+    {
+      "section": 8,
+      "requirement": "Capability System",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_contracts.py"
+      ],
+      "implementation": "The 16 stable allowed capabilities are explicit; no execution, credential or project-write grant exists."
+    },
+    {
+      "section": 9,
+      "requirement": "Context Capsule",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_contracts.py"
+      ],
+      "implementation": "Live authorized Studio context produces immutable metadata-only capsules by default; source/hash/time/IDs/evidence are validated."
+    },
+    {
+      "section": 10,
+      "requirement": "Context Content 授权",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_contracts.py"
+      ],
+      "implementation": "Explicit preview and confirmation for metadata, saved selection, current chapter or a bounded specifically chosen chapter set. Whole-project fallback is absent."
+    },
+    {
+      "section": 11,
+      "requirement": "Context Authority",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_contracts.py"
+      ],
+      "implementation": "Host provenance validates authority; LLM ADVISORY cannot override AUTHORITATIVE FAILED state."
+    },
+    {
+      "section": 12,
+      "requirement": "Evidence",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_contracts.py"
+      ],
+      "implementation": "Evidence source/version/hash/time/authority/privacy validated; opaque locators are never dereferenced."
+    },
+    {
+      "section": 13,
+      "requirement": "Windows Transport",
+      "status": "LOCAL_REQUIRED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Windows current-user SID ACL, remote-denial, framing/cancel reference is authored; real Tutor Desktop transport integration unavailable. Native reference execution is a separate hosted CI check."
+    },
+    {
+      "section": 14,
+      "requirement": "Development Transport",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_host.py",
+        "tests/test_local_interop_tcp.py",
+        "tests/test_local_interop_cross_process_host.py",
+        "frontend/tests/e2e/local-interop.spec.ts"
+      ],
+      "implementation": "Actual separate-process 127.0.0.1 transport; proxies, redirects, URL tokens, DNS/LAN hosts and credentials are rejected."
+    },
+    {
+      "section": 15,
+      "requirement": "App Discovery",
+      "status": "PARTIAL",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Bounded read-only discovery of explicitly configured local peer is implemented. Native installed-app/pipe discovery awaits Desktop integration; nothing is launched or scanned."
+    },
+    {
+      "section": 16,
+      "requirement": "Event Bridge",
+      "status": "PARTIAL",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "All event types have strict contracts; live publisher emits project/task/chapter/model/runtime changes with bounded coalescing. Remaining product-specific emitters are not fabricated. Current automatic publication uses timer-polled authorized snapshots, not direct hooks for every application event source."
+    },
+    {
+      "section": 17,
+      "requirement": "事件撤权",
+      "status": "PARTIAL",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_host.py",
+        "tests/test_local_interop_tcp.py",
+        "tests/test_local_interop_cross_process_host.py",
+        "frontend/tests/e2e/local-interop.spec.ts",
+        "LOCAL_INTEROP_LIFECYCLE_LIMITS.md"
+      ],
+      "implementation": "Host rechecks authority at event delivery and response send; membership/session/project/scope/disable revocation terminates affected subscriptions while independent authorized readers continue. Ongoing event sharing now requires separate positive preview approval; connect alone grants no events. Payload, event names and change timing honor the chosen field groups; diagnostic preview pauses and clears the grant. Confirmed Host revocation is enforced; immediate revocation after an unreachable-Host UI close cannot be proven. Original fixed session expiry (maximum 24 hours; synthetic 10 minutes) bounds the existing explicit grant. See lifecycle limits."
+    },
+    {
+      "section": 18,
+      "requirement": "Studio → Tutor：“问助手”",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Unified Ask Tutor entry uses existing Studio shell and Settings entry, preserving NOVEL/IMAGE/VIDEO layout."
+    },
+    {
+      "section": 19,
+      "requirement": "Ask Tutor UX",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_host.py",
+        "tests/test_local_interop_tcp.py",
+        "tests/test_local_interop_cross_process_host.py",
+        "frontend/tests/e2e/local-interop.spec.ts"
+      ],
+      "implementation": "Metadata preview defaults on; selection/chapter/specific context defaults off. Confirmation, cancellation, interrupted flows and source versions are exercised by UI/Host tests."
+    },
+    {
+      "section": 20,
+      "requirement": "Tutor Response",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Advisory guidance, steps, warnings, references and structured verification render without executing operations or changing prose/settings."
+    },
+    {
+      "section": 21,
+      "requirement": "Deep Link",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Versioned action semantics and authorized local route handling are independent of UI URI registration. Real OS scheme registration is not added."
+    },
+    {
+      "section": 22,
+      "requirement": "Deep Link 安全",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_host.py",
+        "tests/test_local_interop_tcp.py",
+        "tests/test_local_interop_cross_process_host.py",
+        "frontend/tests/e2e/local-interop.spec.ts"
+      ],
+      "implementation": "Only explicit local click requests navigate after product/target/scope/version checks; advice itself does not navigate."
+    },
+    {
+      "section": 23,
+      "requirement": "Local Model Registry 互通",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Credential-free allowlist projection of captured local model/runtime metadata; no probing, model install or provider execution."
+    },
+    {
+      "section": 24,
+      "requirement": "禁止共享 Credential",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Unknown secret-bearing fields and credential-shaped content rejected; model projection never serializes a credential store or transport token."
+    },
+    {
+      "section": 25,
+      "requirement": "第一阶段 Model Registry 权限",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Only model registry/status reads exist; model.execute is explicitly disabled."
+    },
+    {
+      "section": 26,
+      "requirement": "Tutor Model Recommendation",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "TaskRequirement and advisory ModelRecommendation strict DTOs are available. Automatic routing/execution and richer recommendation UI are not implemented."
+    },
+    {
+      "section": 27,
+      "requirement": "Diagnostics Bridge",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_host.py",
+        "tests/test_local_interop_tcp.py",
+        "tests/test_local_interop_cross_process_host.py",
+        "frontend/tests/e2e/local-interop.spec.ts"
+      ],
+      "implementation": "Diagnostic allowlist excludes raw manuscript, prompts, screenshots, paths, DSN, credentials and arbitrary log dumps."
+    },
+    {
+      "section": 28,
+      "requirement": "Diagnostic Preview",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_host.py",
+        "tests/test_local_interop_tcp.py",
+        "tests/test_local_interop_cross_process_host.py",
+        "frontend/tests/e2e/local-interop.spec.ts"
+      ],
+      "implementation": "Exact diagnostic/envelope preview supports removing fields before confirmation; snapshot is sanitized, versioned, bounded and LOCAL_ONLY. Canonical DIAGNOSTICS transport uses correlated TutorRequest with required DiagnosticCapsule and content NONE. Ongoing metadata sharing is paused before diagnostic preview."
+    },
+    {
+      "section": 29,
+      "requirement": "Tutor → Verifier",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_host.py",
+        "tests/test_local_interop_tcp.py",
+        "tests/test_local_interop_cross_process_host.py",
+        "frontend/tests/e2e/local-interop.spec.ts"
+      ],
+      "implementation": "Verifier evaluates structured conditions against fresh independently trusted host state/evidence. Both independent adapters have deterministic verification paths."
+    },
+    {
+      "section": 30,
+      "requirement": "Verifier 不能相信 LLM 自报成功",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_host.py",
+        "tests/test_local_interop_tcp.py",
+        "tests/test_local_interop_cross_process_host.py",
+        "frontend/tests/e2e/local-interop.spec.ts"
+      ],
+      "implementation": "Guidance never changes the FAILED task. Negative tests reject LLM success; VERIFIED follows only an explicit new trusted source state satisfying the condition."
+    },
+    {
+      "section": 31,
+      "requirement": "Case Candidate",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Local CaseCandidate DTO and mapping include problem/environment/guidance/result/verification/evidence; no automatic persistence/upload."
+    },
+    {
+      "section": 32,
+      "requirement": "Case 写入必须用户确认",
+      "status": "PARTIAL",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Studio supports preview/explicit approval; independent reference adapter enforces fresh permission/source at Memory Gate. Actual cross-product Desktop Memory Gate wiring remains LOCAL_REQUIRED."
+    },
+    {
+      "section": 33,
+      "requirement": "隐私继承",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_contracts.py"
+      ],
+      "implementation": "Derived privacy preserves the strictest source, including capsule privacy; summaries cannot implicitly gain cloud consent."
+    },
+    {
+      "section": 34,
+      "requirement": "Studio Context Source Adapter",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_host.py",
+        "tests/test_local_interop_tcp.py",
+        "tests/test_local_interop_cross_process_host.py",
+        "frontend/tests/e2e/local-interop.spec.ts"
+      ],
+      "implementation": "Read-only Studio provider reuses current real authorization, project/chapter/task/error/model/runtime/feature sources and saved selection metadata."
+    },
+    {
+      "section": 35,
+      "requirement": "QingJian Adapter",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Independent Tutor adapter validates existing Context V2/Tutor/Verifier/Case contracts. Real Desktop composition remains LOCAL_REQUIRED."
+    },
+    {
+      "section": 36,
+      "requirement": "Capability Negotiation UI",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Settings integration displays detected peer, protocol/capabilities and forbidden execution/write capabilities."
+    },
+    {
+      "section": 37,
+      "requirement": "用户总开关",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_host.py",
+        "tests/test_local_interop_tcp.py",
+        "tests/test_local_interop_cross_process_host.py",
+        "frontend/tests/e2e/local-interop.spec.ts",
+        "LOCAL_INTEROP_LIFECYCLE_LIMITS.md"
+      ],
+      "implementation": "Independent server feature flag plus user opt-in default OFF. Disable clears bridge sessions/subscriptions without deleting projects or history. Master OFF removes the backend enabled gate and revokes before a successful acknowledgement. Unacknowledged failure must remain UNKNOWN; UI close is best-effort, not proof of application shutdown."
+    },
+    {
+      "section": 38,
+      "requirement": "权限页面",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Permission/capability UI describes status/model reads and per-request content/handoff consent."
+    },
+    {
+      "section": 39,
+      "requirement": "日志",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "No interop log stores prose, prompts, selection, credentials or personal paths. Reference adapter audit records only bounded opaque operation metadata."
+    },
+    {
+      "section": 40,
+      "requirement": "错误模型",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_contracts.py"
+      ],
+      "implementation": "Canonical typed error codes survive transport and frontend handling; arbitrary upstream strings are not used as authority."
+    },
+    {
+      "section": 41,
+      "requirement": "取消",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_host.py",
+        "tests/test_local_interop_tcp.py",
+        "tests/test_local_interop_cross_process_host.py",
+        "frontend/tests/e2e/local-interop.spec.ts"
+      ],
+      "implementation": "Bounded deadlines and cancellation cover waiting calls; old request/session responses are rejected and cannot populate new UI state. Committed subscription cancellation revokes its exact grant; pre-canceled/replayed previews cannot authorize delivery."
+    },
+    {
+      "section": 42,
+      "requirement": "Session Identity",
+      "status": "PARTIAL",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_contracts.py"
+      ],
+      "implementation": "Product/instance/user/protocol/capability/nonce/time bindings are enforced; fresh host instance invalidates prior sessions. Protocol and local host-user/session binding are verified, but development HTTP ProductDescriptor is self-declared, not authenticated installed-product/OS-user identity; actual mutual desktop peer attestation remains LOCAL_REQUIRED. Accepted maximum fixed TTL is 86,400 seconds; public synthetic 10 minutes/private HTTP reference 15 minutes; heartbeat never refreshes expiry."
+    },
+    {
+      "section": 43,
+      "requirement": "Replay / Stale Protection",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_contracts.py"
+      ],
+      "implementation": "Immutable ID/hash/version/time plus live source recheck prevents replayed/changed chapter and same-version tamper from passing."
+    },
+    {
+      "section": 44,
+      "requirement": "性能",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_host.py",
+        "tests/test_local_interop_tcp.py",
+        "tests/test_local_interop_cross_process_host.py",
+        "frontend/tests/e2e/local-interop.spec.ts"
+      ],
+      "implementation": "Bridge is inert on startup, peer absence is contained, waits and queues are bounded, events coalesce, and independent application use remains available."
+    },
+    {
+      "section": 45,
+      "requirement": "离线原则",
+      "status": "PARTIAL",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Development reference transport and protocol work offline without Cloud. Real Tutor local model mode and desktop transport require actual Desktop source/runtime."
+    },
+    {
+      "section": 46,
+      "requirement": "Compatibility Matrix",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Compatibility document records protocol/software versions, optional capabilities, transport boundaries and absence of deprecated fields."
+    },
+    {
+      "section": 47,
+      "requirement": "Feature Flag",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Both products default OFF and force OFF under V1_ACCEPTANCE_MODE; existing acceptance boundaries are preserved."
+    },
+    {
+      "section": 48,
+      "requirement": "测试：Contracts",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_contracts.py"
+      ],
+      "implementation": "Shared strict-contract regression suite covers unknown/malformed/missing fields, versions, capabilities, IDs, hashes, time, authority, privacy and schema parity."
+    },
+    {
+      "section": 49,
+      "requirement": "测试：Security",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_host.py",
+        "tests/test_local_interop_tcp.py",
+        "tests/test_local_interop_cross_process_host.py",
+        "frontend/tests/e2e/local-interop.spec.ts"
+      ],
+      "implementation": "Security regressions cover credential exclusion, local transport boundaries, current authorization, revoked sessions, stale scope/source, forged authority and handoff validation."
+    },
+    {
+      "section": 50,
+      "requirement": "测试：Context",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_host.py",
+        "tests/test_local_interop_tcp.py",
+        "tests/test_local_interop_cross_process_host.py",
+        "frontend/tests/e2e/local-interop.spec.ts"
+      ],
+      "implementation": "Authoritative FAILED cannot be overwritten by Tutor success; source state is independently bound and fresh."
+    },
+    {
+      "section": 51,
+      "requirement": "测试：Event",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_host.py",
+        "tests/test_local_interop_tcp.py",
+        "tests/test_local_interop_cross_process_host.py",
+        "frontend/tests/e2e/local-interop.spec.ts"
+      ],
+      "implementation": "Independent subscribers/cursors, bounded queue, live revoke and late-response cancellation are exercised; one revocation does not deny another authorized session."
+    },
+    {
+      "section": 52,
+      "requirement": "测试：Deep Link",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_host.py",
+        "tests/test_local_interop_tcp.py",
+        "tests/test_local_interop_cross_process_host.py",
+        "frontend/tests/e2e/local-interop.spec.ts"
+      ],
+      "implementation": "Handoff tests cover invalid product/target, unauthorized scope, missing click, stale source/task and current chapter existence."
+    },
+    {
+      "section": 53,
+      "requirement": "测试：Studio Offline",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_host.py",
+        "tests/test_local_interop_tcp.py",
+        "tests/test_local_interop_cross_process_host.py",
+        "frontend/tests/e2e/local-interop.spec.ts"
+      ],
+      "implementation": "Studio default-off and peer-absent behavior remain usable; existing full regression and hosted browser journeys verify the integration boundary."
+    },
+    {
+      "section": 54,
+      "requirement": "测试：Tutor Offline",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Reference adapter is optional and inert; existing Cloud application full regression passes without a Studio installation or running process."
+    },
+    {
+      "section": 55,
+      "requirement": "Mock 边界",
+      "status": "MOCK_ONLY",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Synthetic Tutor, Synthetic Studio and reference HTTP trust fixtures are labelled; no actual Tutor Desktop integration is claimed."
+    },
+    {
+      "section": 56,
+      "requirement": "建议仓库分工",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Studio Host/context/events/consent UI/diagnostics/model projection/handoff/flags and independent private reference mappings are implemented in their own repositories."
+    },
+    {
+      "section": 57,
+      "requirement": "建议未来抽独立仓库，但本轮不强制",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Shared versioned protocol is implemented now in both repositories; no dependency on a hypothetical future standalone repository."
+    },
+    {
+      "section": 58,
+      "requirement": "文档",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "All seven required protocol/security/capability/context/tutor/testing/compatibility documents and UI handoff are provided."
+    },
+    {
+      "section": 59,
+      "requirement": "交付状态",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "This 65-section matrix and PR receipts distinguish DONE/PARTIAL/CONTRACT_VERIFIED/MOCK_ONLY/LOCAL_REQUIRED/NOT_RUN/BLOCKED."
+    },
+    {
+      "section": 60,
+      "requirement": "GitHub 工作方式",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Separate work/local-interop-v1 branches and new Draft PRs: Studio #41 and private reference #4; older PR heads remain unchanged."
+    },
+    {
+      "section": 61,
+      "requirement": "禁止",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "No merge/release/deploy/backport/paid API/real manuscript/private credential/model installation/user app autostart/public listener/executable plugin."
+    },
+    {
+      "section": 62,
+      "requirement": "最终交付",
+      "status": "PARTIAL",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Branches and start SHAs are recorded. Final exact-head commit/test receipts and remaining gates are attached to the Draft PR delivery after CI."
+    },
+    {
+      "section": 63,
+      "requirement": "最终验收目标",
+      "status": "PARTIAL",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "Cloud-feasible Studio/synthetic/reference acceptance is implemented. Real Tutor Desktop remains LOCAL_REQUIRED and cannot be certified by mock results."
+    },
+    {
+      "section": 64,
+      "requirement": "后续 V1.5 预留",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json",
+        "tests/test_local_interop_contracts.py"
+      ],
+      "implementation": "Versioned case/model metadata/diagnostic/verifier/recommendation interfaces exist; no requirement to implement V1.5 autonomous behavior."
+    },
+    {
+      "section": 65,
+      "requirement": "V2 预留但禁止提前做复杂化",
+      "status": "DONE",
+      "evidence": [
+        "LOCAL_INTEROP_TESTING.md",
+        "contracts/local-interop/v1/parity-manifest.json"
+      ],
+      "implementation": "No common broker, shared runtime scheduler or cross-product model execution was introduced."
+    }
+  ],
+  "status_scope": "Two-repository implementation and executed local contract/reference proof. Exact-head hosted results are recorded separately on the Draft PR; no future CI result is self-certified here.",
+  "product_id": "poemseed.creative.studio",
+  "protocol_manifest_sha256": "77c1f82f0aec0ef385d95cacf6fe04530b83fb62d2403bc7341cbe6bf19c858c",
+  "historical_boundaries": [
+    "39 PARTIAL + F00 INTEGRATED unchanged",
+    "Historical independent review BLOCKED unchanged",
+    "Real Tutor Desktop integration LOCAL_REQUIRED",
+    "Local browser launch BLOCKED by OS socket restriction; hosted browser checks separately required",
+    "Local PostgreSQL and local Windows reference execution NOT_RUN"
+  ]
+}

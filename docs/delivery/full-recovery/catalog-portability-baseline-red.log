@@ -1,0 +1,21 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+__________ test_catalog_is_bound_to_every_current_application_source __________
+
+    def test_catalog_is_bound_to_every_current_application_source():
+        value = catalog()
+        sources = {path.relative_to(ROOT).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+                   for path in sorted((ROOT / "app").rglob("*.py"))}
+>       assert value["application_python_source_hashes"] == sources
+E       AssertionError: assert {'app/__init_...080b599', ...} == {'app/__init_...080b599', ...}
+E         
+E         Omitting 360 identical items, use -vv to show
+E         Differing items:
+E         {'app/jobs.py': '9e68ab582cee0960c5160bab517d32a9f3dedbbde200de276b1c75774342ec20'} != {'app/jobs.py': 'c16b85236171c188ac529ebc560b1b3be79caa124d791a2a245eeb32222e2794'}
+E         Use -v to get more diff
+
+tests\test_surface_api_catalog.py:31: AssertionError
+- generated xml file: D:\С˵\AI-Novel-Studio-Latest-Product\docs\delivery\full-recovery\catalog-portability-baseline-red.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_surface_api_catalog.py::test_catalog_is_bound_to_every_current_application_source
+1 failed in 2.05s

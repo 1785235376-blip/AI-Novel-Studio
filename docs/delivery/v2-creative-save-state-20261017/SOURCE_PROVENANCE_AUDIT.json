@@ -1,0 +1,129 @@
+{
+  "utc": "2026-10-16T20:03:52.032404+00:00",
+  "status": "POST_COLLECTION_SOURCE_AND_PROTECTION_PASS",
+  "base": "454ccd89499e3840d18622e8b6ec2669c17702c4",
+  "head_at_check": "4571bdaeee1b35e88fa19c032c3767a54be01d35",
+  "HEAD_byte_binding": "DEFERRED until browser harness and manifest commits",
+  "runtime_source_count": 2310,
+  "manifest_source_count": 2372,
+  "source_map_sha256": "783255e32b4a193965a8162becfe7df605eb76e99ee41b729f4fe28517999f9f",
+  "manifest_sha256": "9d9b8157f1f342ff680e6119b4338a30332a1cec970d5cb00faa10fc01193aca",
+  "source_drift": false,
+  "manifest_working_mismatches": [],
+  "source_protection": {
+    "ADOPTION_SOURCE_BASELINE.json": {
+      "count": 61,
+      "differences": [
+        "frontend/src/creative/CreativeWorkspace.tsx"
+      ]
+    },
+    "NAVIGATION_SOURCE_BASELINE.json": {
+      "count": 5,
+      "differences": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    "EXISTING_TEST_GATE_BASELINE.json": {
+      "count": 1118,
+      "differences": []
+    }
+  },
+  "guards": {
+    "app_navigation_entry_handler_query_overview": {
+      "sha256": "167b3196cea78d050a54f6ff4d22b8f3b6dbedc0097fb23cb2c256a038397f06",
+      "raw_equal": true
+    },
+    "app_requested_asset_origin_fence": {
+      "sha256": "41c349957eee70b1f37927633722c6e7b08e537cf5faf8db325560199b9575d9",
+      "raw_equal": true
+    },
+    "app_open_v2_explicit_novel_intent": {
+      "sha256": "f373e5c7b7b6545fa36b2ec8da1f91d0cc4e7f006db7b272ad81ea18dec14252",
+      "raw_equal": true
+    },
+    "app_synchronous_subscription_observe": {
+      "sha256": "da436655eb7d3d4b3f671e411a832e6ea5340a3e861806f40bb8536a03a6f933",
+      "raw_equal": true
+    },
+    "app_local_connection_authority_effect": {
+      "sha256": "cf09275f969550d59515fb34a3613f4264359599d8d7b00daeb39770d7eed0fa",
+      "raw_equal": true
+    },
+    "creative_adoption_host_version_and_draft_fence": {
+      "sha256": "9018ba973321738fd97904f56ddf52b3b62c6090e33d5fe1eecc87e395725c3e",
+      "raw_equal": true
+    }
+  },
+  "changed_new_sources_utf8_lf_sha256": {
+    "frontend/playwright.creative-save-live.config.ts": "e2dde17606c8c966c8cec26e09b052b927f42b36859c4b809e97a09ce58afe40",
+    "frontend/src/creative/CreativeWorkspace.productionSaveState.regression.test.tsx": "dba1f85aa973323d3bd5e9e3a497d3f42531f9898236ba81988abc7547ec3bcd",
+    "frontend/src/creative/CreativeWorkspace.saveState.regression.test.tsx": "dd3604e0027566d9d79cccb71043ac982985cbfaf072276016b838958b299444",
+    "frontend/tests/e2e/v2-creative-save-live.spec.ts": "fecf742eb37493238f121a1b54dae581830dcd70cf02340804e6739af44e9254",
+    "scripts/run_v2_creative_save_state_browser.py": "1f41bbf11eb8608ee4db4504cac5d06d281b321c82f6ecd1cadee6e5b550ba62",
+    "frontend/src/App.tsx": "f8b38726789f1ac5f4b4c20723487e70e366404623473b7a9fcee8b3d1de2212",
+    "frontend/src/creative/CreativeCanvas.tsx": "e03fb5e1a000233b873475bc7bea459843b60aef1490842f27f6597db70dfc92",
+    "frontend/src/creative/CreativeWorkspace.tsx": "5cda949edec0d5fd3fcd4ba28154eafc214108875708e650199da48afc637f8e"
+  },
+  "collector_sources": {
+    "scripts/run_v2_checks.py": {
+      "sha256": "64cf16c26412c5a1e36a1d4fb799519111ad409f7594ae15aa0b158e53396cd5",
+      "unchanged_from_454": true
+    },
+    "scripts/extend_v2_coverage_manifest.py": {
+      "sha256": "337466ae33d15b2aafaeb15f2191ccdb0c65b22274e1b4d98ba10501dd30135e",
+      "unchanged_from_454": true
+    }
+  },
+  "receipts": {
+    "creative-save-collection-final-r1": {
+      "status": "PASS",
+      "exit_code": 0,
+      "head_at_run": "454ccd89499e3840d18622e8b6ec2669c17702c4",
+      "source_count": 2310,
+      "before_after_current_freeze_equal": true,
+      "log": "docs/delivery/v2-development/creative-save-collection-final-r1.log",
+      "log_sha256": "74b6a1e4b2d21df0dcd4fc5872fadba6b03543ab6db37c064c6463c5eb575955",
+      "receipt_sha256": "12f7eb6469ba6d39d62ef64dc30434f9caeac7fcc9dfe527b9f0c4b9e2e43fc5"
+    },
+    "creative-save-collection-confirmation-r1": {
+      "status": "PASS",
+      "exit_code": 0,
+      "head_at_run": "4571bdaeee1b35e88fa19c032c3767a54be01d35",
+      "source_count": 2310,
+      "before_after_current_freeze_equal": true,
+      "log": "docs/delivery/v2-development/creative-save-collection-confirmation-r1.log",
+      "log_sha256": "e7687092e4ad3c1164a62509e18c7829121c9c758ff381032a92710a404c20d3",
+      "receipt_sha256": "2c8a7b6634cc092914c2a682948318b0fd31962fdb4faaf5a417b453dc9dc56d"
+    },
+    "creative-save-ci-selfchecks-final-r1": {
+      "status": "PASS",
+      "exit_code": 0,
+      "head_at_run": "454ccd89499e3840d18622e8b6ec2669c17702c4",
+      "source_count": 2310,
+      "before_after_current_freeze_equal": true,
+      "log": "docs/delivery/v2-development/creative-save-ci-selfchecks-final-r1.log",
+      "log_sha256": "2f8d075b80768d363ca1f41a7df38b9d8c6475a97e4d42ddd5f372bf070c6803",
+      "receipt_sha256": "927df9990f172376b5887fefa74b6052d088548b16d1687b065d2f1e62b694c8"
+    }
+  },
+  "protection_report": "protection-post-collection.json",
+  "API_CATALOG_equals_454": {
+    "API_CATALOG.json": {
+      "sha256": "7bf604c6054300a11e06243d5ffbb15ec791266249a30d04a7303887ec8c7881",
+      "raw_equal_to_454": true,
+      "baseline_manifest_and_current_equal": true
+    },
+    "API_CATALOG.md": {
+      "sha256": "9433c648bf511e49a9b1e2fc58aa971b07cfef0df3f4529c45588e4f4bdac72e",
+      "raw_equal_to_454": true,
+      "baseline_manifest_and_current_equal": true
+    },
+    "API_CATALOG_DETAIL.json.gz": {
+      "sha256": "647fab1ae139a420bd20e68db768cef926950083114d7b58d227093caad414c5",
+      "raw_equal_to_454": true,
+      "baseline_manifest_and_current_equal": true
+    }
+  },
+  "runtime_acceptance": "File/PG/frontend checks are separate owner evidence; no runtime PASS inferred from collection",
+  "tests_executed_by_collector": false
+}

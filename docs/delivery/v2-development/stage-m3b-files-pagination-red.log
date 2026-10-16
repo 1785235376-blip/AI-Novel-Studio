@@ -1,0 +1,539 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ❯ src/ui/LocalAiModelFiles.test.tsx (18 tests | 1 failed | 17 skipped) 168ms
+   × bounds 2000 observations to local pages without extra reads and resets the page on scan replacement 167ms
+     → Unable to find an accessible element with the role "region" and name "本次扫描的文件与索引观察"
+
+Here are the accessible roles:
+
+  banner:
+
+  Name "":
+  [36m<header />[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "Local AI · 本地 AI 发现":
+  [36m<h2 />[39m
+
+  Name "系统硬件":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "收起":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"true"[39m
+    [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+  [36m/>[39m
+
+  Name "重新预览检测范围":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+  [36m/>[39m
+
+  Name "高级：添加本地 Runtime":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [36m/>[39m
+
+  Name "高级：配置扫描目录":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"local-ai__muted"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"local-ai__summary"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"ui-empty"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  region:
+
+  Name "系统硬件":
+  [36m<section[39m
+    [33maria-label[39m=[32m"系统硬件"[39m
+    [33mclass[39m=[32m"local-ai__section"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  term:
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  --------------------------------------------------
+  definition:
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  --------------------------------------------------
+  strong:
+
+  Name "":
+  [36m<strong />[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33mclass[39m=[32m"ui-panel local-ai"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<h2>[39m
+          [0mLocal AI · 本地 AI 发现[0m
+        [36m</h2>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"true"[39m
+          [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+        [36m>[39m
+          [0m收起[0m
+        [36m</button>[39m
+      [36m</header>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"local-ai__body"[39m
+      [36m>[39m
+        [36m<p>[39m
+          [0m先预览后端主机的检测范围，再明确确认。发现 → 验证 → 注册 → 确认启用；不会启动 Runtime 或加载模型。无需填写路径或端口即可查看已有配置。[0m
+        [36m</p>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"local-ai__muted"[39m
+        [36m>[39m
+          [0m范围仅限运行后端的主机（BACKEND_HOST），云端结果不代表你的电脑。未配置模型或跳过检测时，仍可手动创作。[0m
+        [36m</p>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"local-ai__actions"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+          [36m>[39m
+            [0m重新预览检测范围[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m高级：添加本地 Runtime[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m高级：配置扫描目录[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"local-ai__summary"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--success"[39m
+          [36m>[39m
+            [0mCOMPLETED[0m
+          [36m</span>[39m
+          [36m<span>[39m
+            [0m发现 [0m
+            [0m0[0m
+            [0m 个模型 · 已注册 [0m
+            [0m0[0m
+            [0m 个 · [0m
+            [0m已启用 0 个[0m
+            [0m · [0m
+            [0m0[0m
+            [0m 个 Runtime 可用 · [0m
+            [0m0[0m
+            [0m 个检测问题[0m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"系统硬件"[39m
+          [33mclass[39m=[32m"local-ai__section"[39m
+        [36m>[39m
+          [36m<h3>[39m
+            [0m系统硬件[0m
+          [36m</h3>[39m
+          [36m<dl[39m
+            [33mclass[39m=[32m"local-ai__facts"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<dt>[39m
+                [0m系统 / 架构[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m未检测[0m
+                [0m / [0m
+                [0m未检测[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<dt>[39m
+                [0mCPU[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m未检测[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<dt>[39m
+                [0m系统内存[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m未检测[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<dt>[39m
+                [0m硬件检测状态[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m未检测[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+          [36m</dl>[39m
+          [36m<p>[39m
+            [0mGPU / 独立显存：未检测[0m
+          [36m</p>[39m
+        [36m</section>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m尚未发现模型[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m未配置或未发现可用模型时，可继续手动创作。可先预览已有服务；自定义路径与端口仅用于高级配置。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 17 skipped (18)
+   Start at  08:58:30
+   Duration  970ms (transform 188ms, setup 0ms, collect 312ms, tests 168ms, environment 288ms, prepare 62ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/ui/LocalAiModelFiles.test.tsx > bounds 2000 observations to local pages without extra reads and resets the page on scan replacement
+TestingLibraryElementError: Unable to find an accessible element with the role "region" and name "本次扫描的文件与索引观察"
+
+Here are the accessible roles:
+
+  banner:
+
+  Name "":
+  [36m<header />[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "Local AI · 本地 AI 发现":
+  [36m<h2 />[39m
+
+  Name "系统硬件":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "收起":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"true"[39m
+    [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+  [36m/>[39m
+
+  Name "重新预览检测范围":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+  [36m/>[39m
+
+  Name "高级：添加本地 Runtime":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [36m/>[39m
+
+  Name "高级：配置扫描目录":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"local-ai__muted"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"local-ai__summary"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"ui-empty"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  region:
+
+  Name "系统硬件":
+  [36m<section[39m
+    [33maria-label[39m=[32m"系统硬件"[39m
+    [33mclass[39m=[32m"local-ai__section"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  term:
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  --------------------------------------------------
+  definition:
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  --------------------------------------------------
+  strong:
+
+  Name "":
+  [36m<strong />[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33mclass[39m=[32m"ui-panel local-ai"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<h2>[39m
+          [0mLocal AI · 本地 AI 发现[0m
+        [36m</h2>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"true"[39m
+          [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+        [36m>[39m
+          [0m收起[0m
+        [36m</button>[39m
+      [36m</header>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"local-ai__body"[39m
+      [36m>[39m
+        [36m<p>[39m
+          [0m先预览后端主机的检测范围，再明确确认。发现 → 验证 → 注册 → 确认启用；不会启动 Runtime 或加载模型。无需填写路径或端口即可查看已有配置。[0m
+        [36m</p>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"local-ai__muted"[39m
+        [36m>[39m
+          [0m范围仅限运行后端的主机（BACKEND_HOST），云端结果不代表你的电脑。未配置模型或跳过检测时，仍可手动创作。[0m
+        [36m</p>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"local-ai__actions"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+          [36m>[39m
+            [0m重新预览检测范围[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m高级：添加本地 Runtime[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m高级：配置扫描目录[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"local-ai__summary"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--success"[39m
+          [36m>[39m
+            [0mCOMPLETED[0m
+          [36m</span>[39m
+          [36m<span>[39m
+            [0m发现 [0m
+            [0m0[0m
+            [0m 个模型 · 已注册 [0m
+            [0m0[0m
+            [0m 个 · [0m
+            [0m已启用 0 个[0m
+            [0m · [0m
+            [0m0[0m
+            [0m 个 Runtime 可用 · [0m
+            [0m0[0m
+            [0m 个检测问题[0m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"系统硬件"[39m
+          [33mclass[39m=[32m"local-ai__section"[39m
+        [36m>[39m
+          [36m<h3>[39m
+            [0m系统硬件[0m
+          [36m</h3>[39m
+          [36m<dl[39m
+            [33mclass[39m=[32m"local-ai__facts"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<dt>[39m
+                [0m系统 / 架构[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m未检测[0m
+                [0m / [0m
+                [0m未检测[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<dt>[39m
+                [0mCPU[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m未检测[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<dt>[39m
+                [0m系统内存[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m未检测[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<dt>[39m
+                [0m硬件检测状态[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m未检测[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+          [36m</dl>[39m
+          [36m<p>[39m
+            [0mGPU / 独立显存：未检测[0m
+          [36m</p>[39m
+        [36m</section>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m尚未发现模型[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m未配置或未发现可用模型时，可继续手动创作。可先预览已有服务；自定义路径与端口仅用于高级配置。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ observationView src/ui/LocalAiModelFiles.test.tsx:38:38
+     36| let currentSnapshot: LocalDiscoverySnapshot;
+     37| const fetchMock = vi.fn();
+     38| const observationView = () => screen.getByRole('region', {name: '本次…
+       |                                      ^
+     39| const observation = (name = 'same-model.safetensors') => within(observ…
+     40| async function mount(owner = context, legacy = false) {
+ ❯ src/ui/LocalAiModelFiles.test.tsx:172:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

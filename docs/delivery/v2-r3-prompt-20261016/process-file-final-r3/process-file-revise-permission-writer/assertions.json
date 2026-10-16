@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "backend": "file",
+  "operation": "revise",
+  "revocation": "permission",
+  "first": "writer",
+  "writer_pid": 81580,
+  "revoker_pid": 77208,
+  "parent_pid": 72024,
+  "production_gate": false,
+  "same_issued_token_reused_after_revocation": true,
+  "negative_status": 403,
+  "negative_code": "PROJECT_SCOPE_FORBIDDEN",
+  "authority_lock_witness": {
+    "kind": "FILE_OS_PROJECT_LIFECYCLE",
+    "same_lock_path": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-process-file-final-r3\\data\\.workspace-mutation-locks\\67d0c6b368a51a61c4b5baa0a7835872a8a362fd7de54a3ed92a3f0a083e9dd7.lock",
+    "holder_pid": 81580,
+    "waiter_pid": 77208,
+    "holder_state": {
+      "pid": 81580,
+      "state": "HELD",
+      "sequence": 17,
+      "kind": "FILE_OS_PROJECT_LIFECYCLE",
+      "lock_path": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-process-file-final-r3\\data\\.workspace-mutation-locks\\67d0c6b368a51a61c4b5baa0a7835872a8a362fd7de54a3ed92a3f0a083e9dd7.lock",
+      "monotonic_ns": 148816546000000
+    },
+    "waiter_state": {
+      "pid": 77208,
+      "state": "WAITING",
+      "sequence": 1,
+      "kind": "FILE_OS_PROJECT_LIFECYCLE",
+      "lock_path": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-process-file-final-r3\\data\\.workspace-mutation-locks\\67d0c6b368a51a61c4b5baa0a7835872a8a362fd7de54a3ed92a3f0a083e9dd7.lock",
+      "monotonic_ns": 148818953000000
+    },
+    "acquired_before_release": false
+  }
+}

@@ -1,0 +1,140 @@
+............s.FF                                                         [100%]
+================================== FAILURES ===================================
+______ test_accepting_generated_next_chapter_enqueues_its_actual_version ______
+
+core = namespace(nid='recovery-core-84e732bc6f99', bundle=RepositoryBundle(novels=<app.repositories.postgres.novel.PostgresNo...ery-core-84e732bc6f99'}, root=WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-17/test_accepting_generated_next_0'))
+
+    def test_accepting_generated_next_chapter_enqueues_its_actual_version(core):
+        from app.jobs import Job,JobManager
+        from app.services import CanonService
+        env=core;chapter=env.chapters.create(env.nid,{"title":"��һ","content":"��ȥ�İ汾"})
+        calls=[]
+        manager=JobManager(generations=GenerationService(env.bundle.generations),chapters=env.chapters,contexts=object(),
+            canon=CanonService(env.bundle.canon),memory_extractor=SimpleNamespace(enqueue=lambda *args:calls.append(args)),snapshot_required=False)
+        job=Job("synthetic-continue-accept","continue",env.nid,chapter["id"],"", "LOCAL_ONLY",status="COMPLETED",output="���ܵ����½�")
+        manager.jobs[job.id]=job
+>       result=manager.accept(job.id)
+               ^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_full_recovery_core_chain.py:286: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.jobs.JobManager object at 0x000002C90504E850>
+jid = 'synthetic-continue-accept', accepted_output = None, actor = None
+scope = None, expected_version = None
+
+    def accept(self,jid,accepted_output=None,actor=None,scope=None,expected_version=None):
+        from .repositories.file.mutation_coordinator import workspace_mutation
+        from .repositories.chapter_repository import VersionConflict
+        from pathlib import Path
+    
+        # The shared coordinator combines a process lock with an OS file lock.
+        # All managers on this host use the same persisted-job namespace, not a
+        # manager-local threading lock. Re-read durable state inside that lock.
+        persistence_repository = getattr(self.persistence, "repository", self.persistence)
+        lock_root = getattr(persistence_repository, "root", None) or Path(settings.novel_data) / "runtime/jobs"
+        with workspace_mutation(Path(lock_root), f"generation-accept:{jid}"):
+            job = self.get(jid)
+            with job.condition:
+                require_generation_content(job)
+                require_whole_generation_acceptance(job)
+                require_generation_accounting(job)
+                if job.error_code == "GENERATION_TERMINAL_PERSISTENCE_UNCERTAIN":
+                    raise ValueError("Draft completion persistence is unconfirmed; review the task before accepting")
+                read = getattr(self.persistence, "get", None)
+                try:
+                    stored = read(jid) if callable(read) else None
+                except KeyError:
+                    stored = None  # Compatibility with explicitly injected drafts.
+                if stored is not None:
+                    for key, value in stored.items():
+                        if key in Job.__dataclass_fields__ and key not in self.transient_fields:
+                            setattr(job, key, value)
+                require_generation_content(job)
+                require_whole_generation_acceptance(job)
+                require_generation_accounting(job)
+                # Resolve the original durable source before interpreting draft
+                # readiness. A refused late completion can leave an older job
+                # status persisted after its chapter was deleted; that missing
+                # owner must remain a not-found result on either backend.
+                chapter = self.chapters_for_job(job).get(job.chapter_id)
+                if job.status != "COMPLETED":
+>                   raise ValueError("Only completed drafts can be accepted; an interrupted acceptance requires manual review")
+E                   ValueError: Only completed drafts can be accepted; an interrupted acceptance requires manual review
+
+app\jobs.py:701: ValueError
+_____ test_memory_rejects_fabricated_quote_before_any_proposal_is_written _____
+
+core = namespace(nid='recovery-core-0fb0ebff8493', bundle=RepositoryBundle(novels=<app.repositories.postgres.novel.PostgresNo...ery-core-0fb0ebff8493'}, root=WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-17/test_memory_rejects_fabricated0'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002C903E23C50>
+
+    def test_memory_rejects_fabricated_quote_before_any_proposal_is_written(core,monkeypatch):
+        from app.lore.memory_agent import MemoryAgentRunner
+        env=core;chapter=env.chapters.create(env.nid,{"title":"��һ","content":"ʧ�����ڵ����ݷ���������"})
+        chapter=env.chapters.get(chapter["id"])
+        output={"proposals":[{"proposal_type":"EVENT","payload":{"event":"�ҵ�������"},"confidence":0.9,
+            "evidence":[{"chapter_id":chapter["id"],"chapter_version":chapter["version"],"excerpt":quote,"locator":{"kind":"DOCUMENT_RANGE"}}]}
+            for quote in ("ʧ�����ڵ����ݷ���������","�����д�δ���ֵ�֤��") ]}
+        service=MemoryAgentRunner(env.bundle.novels,env.bundle.chapters,env.lore,GenerationService(env.bundle.generations),
+            AgentRunner(SimpleNamespace(prompt=lambda _:"memory")),object())
+        monkeypatch.setattr(service,"_local_generation",lambda *_:TextGenerationResponse(json.dumps(output),"completed","synthetic","synthetic",execution_mode="mock_standin"))
+>       with pytest.raises(ValueError,match="quote does not occur"):service.extract(env.nid,chapter["id"],chapter["version"],job_id="synthetic-fabrication")
+                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_full_recovery_core_chain.py:302: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\lore\memory_agent.py:78: in extract
+    jid=job_id or str(uuid.uuid4());base={"id":jid,"operation":"MEMORY_EXTRACTION","novel_id":novel_id,"chapter_id":chapter_id,"status":"GENERATING","request":{"chapter_version":version,"profile":"LOCAL_ONLY"},"created_at":datetime.now(timezone.utc).isoformat()};self.generations.save(base)
+                                                                                                                                                                                                                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\generation_service.py:4: in save
+    def save(self,item):return self.repository.save(item)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.repositories.postgres.generation.PostgresGenerationRepository object at 0x000002C903E20C90>
+item = {'chapter_id': 'recovery-core-0fb0ebff8493:1', 'created_at': '2026-10-07T09:31:50.834341+00:00', 'id': 'synthetic-fabrication', 'novel_id': 'recovery-core-0fb0ebff8493', ...}
+
+    @committed_change("TASK")
+    def save(self,item):
+        with self.database.session() as session:
+            iid=external_uuid(item["id"]);row=session.get(GenerationJobModel,iid);novel_uuid=chapter_uuid=None
+            if item.get("novel_id"):novel_uuid=novel_or_raise(session,item["novel_id"]).id
+            from ..branch_manuscript import is_branch_chapter_id
+            branch_owned = is_branch_chapter_id(item.get('novel_id'), item.get('chapter_id'))
+            if branch_owned:
+                from ...services.branch_manuscript_service import experimental_scope
+                from ...experimental.store import ExperimentalStore
+                from ..branch_manuscript import COLLECTION, OWNER, branch_scope
+                scope = branch_scope(experimental_scope(item.get("scope") or {}))
+                if scope["novel_id"] != item.get("novel_id"): raise ValueError("GENERATION_BRANCH_PROJECT_MISMATCH")
+                key = ExperimentalStore.key(item["novel_id"], scope)
+                doc = session.execute(text("SELECT document FROM experimental_scope_documents WHERE scope_key=:key"), {"key": key}).scalar_one_or_none()
+                manuscript = (doc or {}).get("collections", {}).get(COLLECTION, {}).get(scope["branch_id"], {})
+                chapter = manuscript.get("chapters", {}).get(item["chapter_id"])
+                if (manuscript.get("owner") != OWNER or manuscript.get("scope") != scope or not isinstance(chapter, dict)
+                        or chapter.get('id') != item['chapter_id'] or chapter.get('novel_id') != item['novel_id']
+                        or chapter.get('scope') != scope or chapter.get('branch_id') != scope['branch_id']
+                        or chapter.get('authority') != OWNER):
+                    raise FileNotFoundError(item["chapter_id"])
+                if chapter.get('deleted') and row is None:
+                    raise FileNotFoundError(item['chapter_id'])
+            elif item.get("chapter_id"):
+                _,chapter=chapter_or_raise(session,item["chapter_id"]);chapter_uuid=chapter.id
+            if row is not None:
+                previous = dict((row.request or {}).get("_repository_payload", {}))
+                if ((previous.get("scope") != item.get("scope") and branch_owned)
+                        or (row.chapter_id is not None and row.chapter_id != chapter_uuid)
+                        or (previous.get("chapter_id") and previous["chapter_id"] != item.get("chapter_id"))):
+                    from ...chapter_identity import ChapterIdentityConflict
+>                   raise ChapterIdentityConflict("GENERATION_CHAPTER_IDENTITY_CHANGED")
+E                   app.chapter_identity.ChapterIdentityConflict: GENERATION_CHAPTER_IDENTITY_CHANGED
+
+app\repositories\postgres\generation.py:50: ChapterIdentityConflict
+- generated xml file: D:\С˵\AI-Novel-Studio-Latest-Product\docs\delivery\full-recovery\CORE_CHAIN_POSTGRES.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_full_recovery_core_chain.py::test_accepting_generated_next_chapter_enqueues_its_actual_version
+FAILED tests/test_full_recovery_core_chain.py::test_memory_rejects_fabricated_quote_before_any_proposal_is_written
+2 failed, 13 passed, 1 skipped in 5.45s

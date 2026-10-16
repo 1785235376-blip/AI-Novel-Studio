@@ -1,0 +1,41 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ❯ src/creative/AIDirectorFastReceipt.test.tsx (3 tests | 1 failed) 314ms
+   × director proposal activation after a fast receipt > keeps one native double-click bound to its first proposal through edited human review 217ms
+     → expected { …(2) } to deeply equal { createdIds: [ 'proposal-1' ], …(1) }
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  05:45:01
+   Duration  1.35s (transform 210ms, setup 0ms, collect 422ms, tests 314ms, environment 353ms, prepare 75ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/AIDirectorFastReceipt.test.tsx > director proposal activation after a fast receipt > keeps one native double-click bound to its first proposal through edited human review
+AssertionError: expected { …(2) } to deeply equal { createdIds: [ 'proposal-1' ], …(1) }
+
+- Expected
++ Received
+
+  Object {
+    "createdIds": Array [
+      "proposal-1",
++     "proposal-2",
+    ],
+    "reviewedIds": Array [
+-     "proposal-1",
++     "proposal-2",
+    ],
+  }
+
+ ❯ src/creative/AIDirectorFastReceipt.test.tsx:96:98
+     94| 
+     95|     expect(onDocument).toHaveBeenCalledTimes(1);
+     96|     expect({ createdIds: created.map(row => row.id), reviewedIds: revi…
+       |                                                                                                  ^
+     97|       createdIds: ['proposal-1'], reviewedIds: ['proposal-1'],
+     98|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

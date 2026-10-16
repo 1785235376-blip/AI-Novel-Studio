@@ -1,0 +1,2124 @@
+........................................................................ [ 12%]
+........................................................................ [ 24%]
+........................................................................ [ 37%]
+..............................................ss....ssss..ss..ss....ssss [ 49%]
+..ss..ss..ssEsEsEsEsEsEsEsEsEsEsEs.................................EsEsE [ 61%]
+EssEEEsssEsEsEsEEss.........EsEs.EEssEEEsssEEEEEEEsssssssEEEsssEEssEsEsE [ 74%]
+EEEEEEEEEssssssssssEEssEsEEssEEEsssEsEsEsEEEEEEEEEsssssssssEsEsEsEs..ss. [ 86%]
+.ss..ss..ss..ss....ssss..ss..ss..ss..ss....ssss..ss..ss..ss..ss........s [ 98%]
+sssssss                                                                  [100%]
+=================================== ERRORS ====================================
+_ ERROR at setup of test_empty_disconnected_graphs_reopen_without_chapter_or_model[file] _
+
+request = <SubRequest 'rig' for <Function test_empty_disconnected_graphs_reopen_without_chapter_or_model[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_empty_disconnected_graphs0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187014DA850>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_empty_disconnected_graphs0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_empty_disconnected_graphs0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_empty_disconnected_graphs0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_create_idempotency_and_cas_conflicts_preserve_input[file] _
+
+request = <SubRequest 'rig' for <Function test_create_idempotency_and_cas_conflicts_preserve_input[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_create_idempotency_and_ca0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000018701521F90>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_create_idempotency_and_ca0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_create_idempotency_and_ca0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_create_idempotency_and_ca0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+____ ERROR at setup of test_concurrent_save_has_one_real_cas_winner[file] _____
+
+request = <SubRequest 'rig' for <Function test_concurrent_save_has_one_real_cas_winner[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_concurrent_save_has_one_r0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877960C4D0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_concurrent_save_has_one_r0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_concurrent_save_has_one_r0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_concurrent_save_has_one_r0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_actor_scope_and_project_identity_are_not_interchangeable[file] _
+
+request = <SubRequest 'rig' for <Function test_actor_scope_and_project_identity_are_not_interchangeable[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_actor_scope_and_project_i0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187014F0E50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_actor_scope_and_project_i0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_actor_scope_and_project_i0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_actor_scope_and_project_i0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_failed_current_authority_guard_aborts_graph_commit[file] _
+
+request = <SubRequest 'rig' for <Function test_failed_current_authority_guard_aborts_graph_commit[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_failed_current_authority_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187018A0850>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_failed_current_authority_0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_failed_current_authority_0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_failed_current_authority_0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_definition_change_invalidates_pending_run_without_exposing_old_output[file] _
+
+request = <SubRequest 'rig' for <Function test_definition_change_invalidates_pending_run_without_exposing_old_output[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_definition_change_invalid0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187013D7C10>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_definition_change_invalid0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_definition_change_invalid0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_definition_change_invalid0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_asset_reference_is_nonexecuting_and_outside_scope_transaction[file] _
+
+request = <SubRequest 'rig' for <Function test_asset_reference_is_nonexecuting_and_outside_scope_transaction[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_asset_reference_is_nonexe0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001870153D310>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_asset_reference_is_nonexe0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_asset_reference_is_nonexe0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_asset_reference_is_nonexe0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_unavailable_reference_redaction_cannot_drop_binding_on_full_put[file] _
+
+request = <SubRequest 'rig' for <Function test_unavailable_reference_redaction_cannot_drop_binding_on_full_put[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_unavailable_reference_red0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187014F3B10>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_unavailable_reference_red0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_unavailable_reference_red0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_unavailable_reference_red0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_graph_current_snapshot_corruption_is_fail_closed[file] _
+
+request = <SubRequest 'rig' for <Function test_graph_current_snapshot_corruption_is_fail_closed[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_current_snapshot_co0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877ED5C750>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_current_snapshot_co0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_current_snapshot_co0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_current_snapshot_co0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_late_recreated_owner_suppresses_old_graph_projection[file] _
+
+request = <SubRequest 'rig' for <Function test_late_recreated_owner_suppresses_old_graph_projection[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_late_recreated_owner_supp0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187002E4E10>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_late_recreated_owner_supp0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_late_recreated_owner_supp0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_late_recreated_owner_supp0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_failed_scope_write_preserves_previous_complete_definition[file] _
+
+request = <SubRequest 'rig' for <Function test_failed_scope_write_preserves_previous_complete_definition[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_failed_scope_write_preser0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001870014EC50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_failed_scope_write_preser0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_failed_scope_write_preser0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_failed_scope_write_preser0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_original_asset_reference_prompt_nodes_execute_and_reopen_without_model_call[file] _
+
+request = <SubRequest 'rig' for <Function test_original_asset_reference_prompt_nodes_execute_and_reopen_without_model_call[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_original_asset_reference_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877FEF0C90>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_original_asset_reference_0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_original_asset_reference_0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_original_asset_reference_0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_actual_image_catalog_retains_original_shape_and_opt_in_capabilities[file] _
+
+request = <SubRequest 'rig' for <Function test_actual_image_catalog_retains_original_shape_and_opt_in_capabilities[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_actual_image_catalog_reta0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877FE39650>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_actual_image_catalog_reta0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_actual_image_catalog_reta0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_actual_image_catalog_reta0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_schema4_expanded_targets_execute_original_workflow_and_keep_old_limits[file-17] _
+
+request = <SubRequest 'rig' for <Function test_schema4_expanded_targets_execute_original_workflow_and_keep_old_limits[file-17]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_expanded_targets_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187013D7810>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_expanded_targets_0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_expanded_targets_0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_expanded_targets_0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_schema4_expanded_targets_execute_original_workflow_and_keep_old_limits[file-24] _
+
+request = <SubRequest 'rig' for <Function test_schema4_expanded_targets_execute_original_workflow_and_keep_old_limits[file-24]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_expanded_targets_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000018700159F50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_expanded_targets_1').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_expanded_targets_1') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_expanded_targets_1').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_schema4_static_wiring_blocks_dispatch_without_original_review_or_inputs[file-review-MEDIA_REVIEW_REQUIRED] _
+
+request = <SubRequest 'rig' for <Function test_schema4_static_wiring_blocks_dispatch_without_original_review_or_inputs[file-review-MEDIA_REVIEW_REQUIRED]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_static_wiring_blo0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187003F4FD0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_static_wiring_blo0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_static_wiring_blo0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_static_wiring_blo0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_schema4_static_wiring_blocks_dispatch_without_original_review_or_inputs[file-reference-REFERENCE_INPUT_REQUIRED] _
+
+request = <SubRequest 'rig' for <Function test_schema4_static_wiring_blocks_dispatch_without_original_review_or_inputs[file-reference-REFERENCE_INPUT_REQUIRED]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_static_wiring_blo1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877FC22990>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_static_wiring_blo1').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_static_wiring_blo1') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_static_wiring_blo1').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_schema4_static_wiring_blocks_dispatch_without_original_review_or_inputs[file-ambiguous-PROMPT_AMBIGUOUS] _
+
+request = <SubRequest 'rig' for <Function test_schema4_static_wiring_blocks_dispatch_without_original_review_or_inputs[file-ambiguous-PROMPT_AMBIGUOUS]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_static_wiring_blo2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877FF174D0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_static_wiring_blo2').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_static_wiring_blo2') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_static_wiring_blo2').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_reference_asset_change_blocks_existing_graph_preview[file] _
+
+request = <SubRequest 'rig' for <Function test_reference_asset_change_blocks_existing_graph_preview[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_reference_asset_change_bl0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000018701553D10>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_reference_asset_change_bl0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_reference_asset_change_bl0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_reference_asset_change_bl0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_reference_guard_revocation_propagates_without_mutation[file] _
+
+request = <SubRequest 'rig' for <Function test_reference_guard_revocation_propagates_without_mutation[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_reference_guard_revocatio0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001870001F110>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_reference_guard_revocatio0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_reference_guard_revocatio0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_reference_guard_revocatio0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_original_t2i_job_private_bytes_explicit_review_and_final_graph_asset[file] _
+
+request = <SubRequest 'rig' for <Function test_original_t2i_job_private_bytes_explicit_review_and_final_graph_asset[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_original_t2i_job_private_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877E46AD10>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_original_t2i_job_private_0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_original_t2i_job_private_0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_original_t2i_job_private_0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_schema4_authored_inpaint_original_job_review_asset_and_reopen[file-COMFYUI] _
+
+request = <SubRequest 'rig' for <Function test_schema4_authored_inpaint_original_job_review_asset_and_reopen[file-COMFYUI]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_authored_inpaint_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187003F7C50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_authored_inpaint_0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_authored_inpaint_0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_authored_inpaint_0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_schema4_authored_inpaint_original_job_review_asset_and_reopen[file-AUTOMATIC1111] _
+
+request = <SubRequest 'rig' for <Function test_schema4_authored_inpaint_original_job_review_asset_and_reopen[file-AUTOMATIC1111]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_authored_inpaint_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877FDD2050>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_authored_inpaint_1').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_authored_inpaint_1') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_schema4_authored_inpaint_1').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_pinned_shot_projection_uses_original_history_without_mutating_documents[file] _
+
+request = <SubRequest 'rig' for <Function test_pinned_shot_projection_uses_original_history_without_mutating_documents[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_pinned_shot_projection_us0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187003F7910>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_pinned_shot_projection_us0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_pinned_shot_projection_us0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_pinned_shot_projection_us0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_video_preflight_requires_explicit_current_storyboard_approval[file] _
+
+request = <SubRequest 'rig' for <Function test_video_preflight_requires_explicit_current_storyboard_approval[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_video_preflight_requires_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187001C4B90>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_video_preflight_requires_0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_video_preflight_requires_0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_video_preflight_requires_0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_approved_storyboard_graph_to_original_video_job_private_review_and_reopen[file-m7.video.t2v] _
+
+request = <SubRequest 'rig' for <Function test_approved_storyboard_graph_to_original_video_job_private_review_and_reopen[file-m7.video.t2v]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_approved_storyboard_graph0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000018700093010>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_approved_storyboard_graph0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_approved_storyboard_graph0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_approved_storyboard_graph0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_approved_storyboard_graph_to_original_video_job_private_review_and_reopen[file-m7.video.i2v] _
+
+request = <SubRequest 'rig' for <Function test_approved_storyboard_graph_to_original_video_job_private_review_and_reopen[file-m7.video.i2v]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_approved_storyboard_graph1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877FDC1D50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_approved_storyboard_graph1').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_approved_storyboard_graph1') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_approved_storyboard_graph1').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_graph_video_poll_never_downloads_after_source_route_or_workflow_revocation[file-edited] _
+
+request = <SubRequest 'rig' for <Function test_graph_video_poll_never_downloads_after_source_route_or_workflow_revocation[file-edited]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_video_poll_never_do0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877E1539D0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_video_poll_never_do0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_video_poll_never_do0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_video_poll_never_do0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_graph_video_poll_never_downloads_after_source_route_or_workflow_revocation[file-disabled] _
+
+request = <SubRequest 'rig' for <Function test_graph_video_poll_never_downloads_after_source_route_or_workflow_revocation[file-disabled]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_video_poll_never_do1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000018700072690>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_video_poll_never_do1').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_video_poll_never_do1') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_video_poll_never_do1').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_graph_video_poll_never_downloads_after_source_route_or_workflow_revocation[file-cancelled] _
+
+request = <SubRequest 'rig' for <Function test_graph_video_poll_never_downloads_after_source_route_or_workflow_revocation[file-cancelled]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_video_poll_never_do2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877FE38FD0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_video_poll_never_do2').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_video_poll_never_do2') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_video_poll_never_do2').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-SOURCE_OF] _
+
+request = <SubRequest 'rig' for <Function test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-SOURCE_OF]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877FE79B50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-DERIVED_FROM] _
+
+request = <SubRequest 'rig' for <Function test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-DERIVED_FROM]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877E45BF50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki1').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki1') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki1').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-REFERENCES] _
+
+request = <SubRequest 'rig' for <Function test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-REFERENCES]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877EFD11D0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki2').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki2') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki2').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-USED_IN] _
+
+request = <SubRequest 'rig' for <Function test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-USED_IN]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877EC12310>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki3').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki3') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki3').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-ALTERNATE_VERSION] _
+
+request = <SubRequest 'rig' for <Function test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-ALTERNATE_VERSION]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877FD750D0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki4').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki4') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki4').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-APPROVED_FOR] _
+
+request = <SubRequest 'rig' for <Function test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-APPROVED_FOR]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187000E3250>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki5').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki5') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki5').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-LINKED_CONTEXT] _
+
+request = <SubRequest 'rig' for <Function test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-LINKED_CONTEXT]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001870021DB50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki6').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki6') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_all_seven_relationship_ki6').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_references_capture_exact_owner_version_digest_without_copying_or_editing_text[file-ASSET] _
+
+request = <SubRequest 'rig' for <Function test_references_capture_exact_owner_version_digest_without_copying_or_editing_text[file-ASSET]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_references_capture_exact_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001870171D1D0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_references_capture_exact_0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_references_capture_exact_0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_references_capture_exact_0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_references_capture_exact_owner_version_digest_without_copying_or_editing_text[file-CHAPTER] _
+
+request = <SubRequest 'rig' for <Function test_references_capture_exact_owner_version_digest_without_copying_or_editing_text[file-CHAPTER]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_references_capture_exact_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877FD2B3D0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_references_capture_exact_1').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_references_capture_exact_1') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_references_capture_exact_1').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_references_capture_exact_owner_version_digest_without_copying_or_editing_text[file-SCREENPLAY] _
+
+request = <SubRequest 'rig' for <Function test_references_capture_exact_owner_version_digest_without_copying_or_editing_text[file-SCREENPLAY]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_references_capture_exact_2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877F0E2750>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_references_capture_exact_2').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_references_capture_exact_2') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_references_capture_exact_2').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_derivation_links_require_existing_lineage_and_never_invent_results[file-SOURCE_OF] _
+
+request = <SubRequest 'rig' for <Function test_derivation_links_require_existing_lineage_and_never_invent_results[file-SOURCE_OF]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_derivation_links_require_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001870179E290>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_derivation_links_require_0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_derivation_links_require_0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_derivation_links_require_0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_derivation_links_require_existing_lineage_and_never_invent_results[file-DERIVED_FROM] _
+
+request = <SubRequest 'rig' for <Function test_derivation_links_require_existing_lineage_and_never_invent_results[file-DERIVED_FROM]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_derivation_links_require_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877FD5B690>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_derivation_links_require_1').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_derivation_links_require_1') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_derivation_links_require_1').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_graph_projects_original_lineage_and_declared_links_with_distinct_semantics[file] _
+
+request = <SubRequest 'rig' for <Function test_graph_projects_original_lineage_and_declared_links_with_distinct_semantics[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_projects_original_l0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187000609D0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_projects_original_l0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_projects_original_l0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_graph_projects_original_l0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_duplicate_self_reference_and_unknown_targets_fail_without_any_write[file] _
+
+request = <SubRequest 'rig' for <Function test_duplicate_self_reference_and_unknown_targets_fail_without_any_write[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_duplicate_self_reference_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000018701400D50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_duplicate_self_reference_0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_duplicate_self_reference_0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_duplicate_self_reference_0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_relationship_input_is_closed_strict_and_bounded[file-mutation0] _
+
+request = <SubRequest 'rig' for <Function test_relationship_input_is_closed_strict_and_bounded[file-mutation0]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001870175C9D0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_relationship_input_is_closed_strict_and_bounded[file-mutation1] _
+
+request = <SubRequest 'rig' for <Function test_relationship_input_is_closed_strict_and_bounded[file-mutation1]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187014D3250>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo1').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo1') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo1').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_relationship_input_is_closed_strict_and_bounded[file-mutation2] _
+
+request = <SubRequest 'rig' for <Function test_relationship_input_is_closed_strict_and_bounded[file-mutation2]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187795803D0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo2').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo2') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo2').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_relationship_input_is_closed_strict_and_bounded[file-mutation3] _
+
+request = <SubRequest 'rig' for <Function test_relationship_input_is_closed_strict_and_bounded[file-mutation3]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000018700028890>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo3').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo3') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo3').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_relationship_input_is_closed_strict_and_bounded[file-mutation4] _
+
+request = <SubRequest 'rig' for <Function test_relationship_input_is_closed_strict_and_bounded[file-mutation4]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877FDD1C90>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo4').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo4') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo4').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_relationship_input_is_closed_strict_and_bounded[file-mutation5] _
+
+request = <SubRequest 'rig' for <Function test_relationship_input_is_closed_strict_and_bounded[file-mutation5]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001870001C950>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo5').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo5') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo5').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_relationship_input_is_closed_strict_and_bounded[file-mutation6] _
+
+request = <SubRequest 'rig' for <Function test_relationship_input_is_closed_strict_and_bounded[file-mutation6]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001870017DC90>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo6').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo6') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo6').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_relationship_input_is_closed_strict_and_bounded[file-mutation7] _
+
+request = <SubRequest 'rig' for <Function test_relationship_input_is_closed_strict_and_bounded[file-mutation7]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo7')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001870150F610>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo7').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo7') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo7').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_relationship_input_is_closed_strict_and_bounded[file-mutation8] _
+
+request = <SubRequest 'rig' for <Function test_relationship_input_is_closed_strict_and_bounded[file-mutation8]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo8')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187001F5850>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo8').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo8') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo8').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_relationship_input_is_closed_strict_and_bounded[file-mutation9] _
+
+request = <SubRequest 'rig' for <Function test_relationship_input_is_closed_strict_and_bounded[file-mutation9]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo9')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877FCEA8D0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo9').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo9') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_input_is_clo9').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_target_version_and_digest_each_bind_independently_before_commit[file-version] _
+
+request = <SubRequest 'rig' for <Function test_target_version_and_digest_each_bind_independently_before_commit[file-version]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_version_and_digest0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187018BD210>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_version_and_digest0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_version_and_digest0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_version_and_digest0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_target_version_and_digest_each_bind_independently_before_commit[file-digest] _
+
+request = <SubRequest 'rig' for <Function test_target_version_and_digest_each_bind_independently_before_commit[file-digest]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_version_and_digest1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000018701400790>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_version_and_digest1').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_version_and_digest1') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_version_and_digest1').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_cross_project_branch_workspace_storyline_targets_are_unavailable[file] _
+
+request = <SubRequest 'rig' for <Function test_cross_project_branch_workspace_storyline_targets_are_unavailable[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_cross_project_branch_work0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187014060D0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_cross_project_branch_work0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_cross_project_branch_work0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_cross_project_branch_work0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_hidden_screenplay_disappears_without_stored_identifier_or_text_leaks[file-hidden] _
+
+request = <SubRequest 'rig' for <Function test_hidden_screenplay_disappears_without_stored_identifier_or_text_leaks[file-hidden]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_hidden_screenplay_disappe0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001870142EC50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_hidden_screenplay_disappe0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_hidden_screenplay_disappe0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_hidden_screenplay_disappe0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_hidden_screenplay_disappears_without_stored_identifier_or_text_leaks[file-secret] _
+
+request = <SubRequest 'rig' for <Function test_hidden_screenplay_disappears_without_stored_identifier_or_text_leaks[file-secret]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_hidden_screenplay_disappe1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187000015D0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_hidden_screenplay_disappe1').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_hidden_screenplay_disappe1') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_hidden_screenplay_disappe1').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_target_edits_mark_exact_record_stale_and_deletion_is_explicit[file-ASSET] _
+
+request = <SubRequest 'rig' for <Function test_target_edits_mark_exact_record_stale_and_deletion_is_explicit[file-ASSET]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_edits_mark_exact_r0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187013E84D0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_edits_mark_exact_r0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_edits_mark_exact_r0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_edits_mark_exact_r0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_target_edits_mark_exact_record_stale_and_deletion_is_explicit[file-CHAPTER] _
+
+request = <SubRequest 'rig' for <Function test_target_edits_mark_exact_record_stale_and_deletion_is_explicit[file-CHAPTER]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_edits_mark_exact_r1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187000D6150>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_edits_mark_exact_r1').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_edits_mark_exact_r1') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_edits_mark_exact_r1').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_target_edits_mark_exact_record_stale_and_deletion_is_explicit[file-SCREENPLAY] _
+
+request = <SubRequest 'rig' for <Function test_target_edits_mark_exact_record_stale_and_deletion_is_explicit[file-SCREENPLAY]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_edits_mark_exact_r2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001870150EED0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_edits_mark_exact_r2').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_edits_mark_exact_r2') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_target_edits_mark_exact_r2').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_generic_metadata_cannot_create_replace_or_erase_reserved_relationships[file] _
+
+request = <SubRequest 'rig' for <Function test_generic_metadata_cannot_create_replace_or_erase_reserved_relationships[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_generic_metadata_cannot_c0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187014D8C50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_generic_metadata_cannot_c0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_generic_metadata_cannot_c0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_generic_metadata_cannot_c0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_incoming_active_relations_block_deletion_and_removal_keeps_tombstone[file] _
+
+request = <SubRequest 'rig' for <Function test_incoming_active_relations_block_deletion_and_removal_keeps_tombstone[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_incoming_active_relations0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187000E0810>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_incoming_active_relations0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_incoming_active_relations0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_incoming_active_relations0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_relationship_bounds_count_tombstones_and_reference_indexes[file] _
+
+request = <SubRequest 'rig' for <Function test_relationship_bounds_count_tombstones_and_reference_indexes[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_bounds_count0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187018A2D50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_bounds_count0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_bounds_count0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_bounds_count0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-boolean-schema] _
+
+request = <SubRequest 'rig' for <Function test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-boolean-schema]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000018700001D90>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-float-schema] _
+
+request = <SubRequest 'rig' for <Function test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-float-schema]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187002F07D0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio1').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio1') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio1').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-duplicate-id] _
+
+request = <SubRequest 'rig' for <Function test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-duplicate-id]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187018BE190>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio2').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio2') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio2').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-invalid-digest] _
+
+request = <SubRequest 'rig' for <Function test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-invalid-digest]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187003F6290>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio3').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio3') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio3').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-missing-removal] _
+
+request = <SubRequest 'rig' for <Function test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-missing-removal]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187000082D0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio4').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio4') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio4').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-boolean-removal] _
+
+request = <SubRequest 'rig' for <Function test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-boolean-removal]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877FD75410>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio5').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio5') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio5').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-invalid-remover] _
+
+request = <SubRequest 'rig' for <Function test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-invalid-remover]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187014F3250>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio6').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio6') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio6').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-unknown-kind] _
+
+request = <SubRequest 'rig' for <Function test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-unknown-kind]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio7')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877E2D7710>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio7').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio7') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio7').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-extra-field] _
+
+request = <SubRequest 'rig' for <Function test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-extra-field]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio8')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000187013EA850>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio8').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio8') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_corrupt_persisted_relatio8').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_independent_services_relationship_cas_allows_only_one_writer[file] _
+
+request = <SubRequest 'rig' for <Function test_independent_services_relationship_cas_allows_only_one_writer[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_independent_services_rela0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000018778AADB10>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_independent_services_rela0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_independent_services_rela0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_independent_services_rela0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_precommit_revocation_and_target_recheck_leave_source_unchanged[file] _
+
+request = <SubRequest 'rig' for <Function test_precommit_revocation_and_target_recheck_leave_source_unchanged[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_precommit_revocation_and_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000018701426D50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_precommit_revocation_and_0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_precommit_revocation_and_0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_precommit_revocation_and_0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_relationship_removal_revocation_preserves_active_dependency[file] _
+
+request = <SubRequest 'rig' for <Function test_relationship_removal_revocation_preserves_active_dependency[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_removal_revo0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000018701552E90>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_removal_revo0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_removal_revo0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_removal_revo0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_relationship_reads_and_writes_never_enter_scope_document_storage_under_asset_lease[file] _
+
+request = <SubRequest 'rig' for <Function test_relationship_reads_and_writes_never_enter_scope_document_storage_under_asset_lease[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_reads_and_wr0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001877FD9BAD0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_reads_and_wr0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_reads_and_wr0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-73/test_relationship_reads_and_wr0').resolve
+
+tests\test_v2_independent_workspace.py:108: AssertionError
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_v2_creative_graph_persistence.py::test_empty_disconnected_graphs_reopen_without_chapter_or_model[file]
+ERROR tests/test_v2_creative_graph_persistence.py::test_create_idempotency_and_cas_conflicts_preserve_input[file]
+ERROR tests/test_v2_creative_graph_persistence.py::test_concurrent_save_has_one_real_cas_winner[file]
+ERROR tests/test_v2_creative_graph_persistence.py::test_actor_scope_and_project_identity_are_not_interchangeable[file]
+ERROR tests/test_v2_creative_graph_persistence.py::test_failed_current_authority_guard_aborts_graph_commit[file]
+ERROR tests/test_v2_creative_graph_persistence.py::test_definition_change_invalidates_pending_run_without_exposing_old_output[file]
+ERROR tests/test_v2_creative_graph_persistence.py::test_asset_reference_is_nonexecuting_and_outside_scope_transaction[file]
+ERROR tests/test_v2_creative_graph_persistence.py::test_unavailable_reference_redaction_cannot_drop_binding_on_full_put[file]
+ERROR tests/test_v2_creative_graph_persistence.py::test_graph_current_snapshot_corruption_is_fail_closed[file]
+ERROR tests/test_v2_creative_graph_persistence.py::test_late_recreated_owner_suppresses_old_graph_projection[file]
+ERROR tests/test_v2_creative_graph_persistence.py::test_failed_scope_write_preserves_previous_complete_definition[file]
+ERROR tests/test_v2_graph_image_nodes.py::test_original_asset_reference_prompt_nodes_execute_and_reopen_without_model_call[file]
+ERROR tests/test_v2_graph_image_nodes.py::test_actual_image_catalog_retains_original_shape_and_opt_in_capabilities[file]
+ERROR tests/test_v2_graph_image_nodes.py::test_schema4_expanded_targets_execute_original_workflow_and_keep_old_limits[file-17]
+ERROR tests/test_v2_graph_image_nodes.py::test_schema4_expanded_targets_execute_original_workflow_and_keep_old_limits[file-24]
+ERROR tests/test_v2_graph_image_nodes.py::test_schema4_static_wiring_blocks_dispatch_without_original_review_or_inputs[file-review-MEDIA_REVIEW_REQUIRED]
+ERROR tests/test_v2_graph_image_nodes.py::test_schema4_static_wiring_blocks_dispatch_without_original_review_or_inputs[file-reference-REFERENCE_INPUT_REQUIRED]
+ERROR tests/test_v2_graph_image_nodes.py::test_schema4_static_wiring_blocks_dispatch_without_original_review_or_inputs[file-ambiguous-PROMPT_AMBIGUOUS]
+ERROR tests/test_v2_graph_image_nodes.py::test_reference_asset_change_blocks_existing_graph_preview[file]
+ERROR tests/test_v2_graph_image_nodes.py::test_reference_guard_revocation_propagates_without_mutation[file]
+ERROR tests/test_v2_graph_image_nodes.py::test_original_t2i_job_private_bytes_explicit_review_and_final_graph_asset[file]
+ERROR tests/test_v2_graph_image_nodes.py::test_schema4_authored_inpaint_original_job_review_asset_and_reopen[file-COMFYUI]
+ERROR tests/test_v2_graph_image_nodes.py::test_schema4_authored_inpaint_original_job_review_asset_and_reopen[file-AUTOMATIC1111]
+ERROR tests/test_v2_graph_video_foundation.py::test_pinned_shot_projection_uses_original_history_without_mutating_documents[file]
+ERROR tests/test_v2_graph_video_foundation.py::test_video_preflight_requires_explicit_current_storyboard_approval[file]
+ERROR tests/test_v2_graph_video_foundation.py::test_approved_storyboard_graph_to_original_video_job_private_review_and_reopen[file-m7.video.t2v]
+ERROR tests/test_v2_graph_video_foundation.py::test_approved_storyboard_graph_to_original_video_job_private_review_and_reopen[file-m7.video.i2v]
+ERROR tests/test_v2_graph_video_foundation.py::test_graph_video_poll_never_downloads_after_source_route_or_workflow_revocation[file-edited]
+ERROR tests/test_v2_graph_video_foundation.py::test_graph_video_poll_never_downloads_after_source_route_or_workflow_revocation[file-disabled]
+ERROR tests/test_v2_graph_video_foundation.py::test_graph_video_poll_never_downloads_after_source_route_or_workflow_revocation[file-cancelled]
+ERROR tests/test_v2_asset_relationships.py::test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-SOURCE_OF]
+ERROR tests/test_v2_asset_relationships.py::test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-DERIVED_FROM]
+ERROR tests/test_v2_asset_relationships.py::test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-REFERENCES]
+ERROR tests/test_v2_asset_relationships.py::test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-USED_IN]
+ERROR tests/test_v2_asset_relationships.py::test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-ALTERNATE_VERSION]
+ERROR tests/test_v2_asset_relationships.py::test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-APPROVED_FOR]
+ERROR tests/test_v2_asset_relationships.py::test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[file-LINKED_CONTEXT]
+ERROR tests/test_v2_asset_relationships.py::test_references_capture_exact_owner_version_digest_without_copying_or_editing_text[file-ASSET]
+ERROR tests/test_v2_asset_relationships.py::test_references_capture_exact_owner_version_digest_without_copying_or_editing_text[file-CHAPTER]
+ERROR tests/test_v2_asset_relationships.py::test_references_capture_exact_owner_version_digest_without_copying_or_editing_text[file-SCREENPLAY]
+ERROR tests/test_v2_asset_relationships.py::test_derivation_links_require_existing_lineage_and_never_invent_results[file-SOURCE_OF]
+ERROR tests/test_v2_asset_relationships.py::test_derivation_links_require_existing_lineage_and_never_invent_results[file-DERIVED_FROM]
+ERROR tests/test_v2_asset_relationships.py::test_graph_projects_original_lineage_and_declared_links_with_distinct_semantics[file]
+ERROR tests/test_v2_asset_relationships.py::test_duplicate_self_reference_and_unknown_targets_fail_without_any_write[file]
+ERROR tests/test_v2_asset_relationships.py::test_relationship_input_is_closed_strict_and_bounded[file-mutation0]
+ERROR tests/test_v2_asset_relationships.py::test_relationship_input_is_closed_strict_and_bounded[file-mutation1]
+ERROR tests/test_v2_asset_relationships.py::test_relationship_input_is_closed_strict_and_bounded[file-mutation2]
+ERROR tests/test_v2_asset_relationships.py::test_relationship_input_is_closed_strict_and_bounded[file-mutation3]
+ERROR tests/test_v2_asset_relationships.py::test_relationship_input_is_closed_strict_and_bounded[file-mutation4]
+ERROR tests/test_v2_asset_relationships.py::test_relationship_input_is_closed_strict_and_bounded[file-mutation5]
+ERROR tests/test_v2_asset_relationships.py::test_relationship_input_is_closed_strict_and_bounded[file-mutation6]
+ERROR tests/test_v2_asset_relationships.py::test_relationship_input_is_closed_strict_and_bounded[file-mutation7]
+ERROR tests/test_v2_asset_relationships.py::test_relationship_input_is_closed_strict_and_bounded[file-mutation8]
+ERROR tests/test_v2_asset_relationships.py::test_relationship_input_is_closed_strict_and_bounded[file-mutation9]
+ERROR tests/test_v2_asset_relationships.py::test_target_version_and_digest_each_bind_independently_before_commit[file-version]
+ERROR tests/test_v2_asset_relationships.py::test_target_version_and_digest_each_bind_independently_before_commit[file-digest]
+ERROR tests/test_v2_asset_relationships.py::test_cross_project_branch_workspace_storyline_targets_are_unavailable[file]
+ERROR tests/test_v2_asset_relationships.py::test_hidden_screenplay_disappears_without_stored_identifier_or_text_leaks[file-hidden]
+ERROR tests/test_v2_asset_relationships.py::test_hidden_screenplay_disappears_without_stored_identifier_or_text_leaks[file-secret]
+ERROR tests/test_v2_asset_relationships.py::test_target_edits_mark_exact_record_stale_and_deletion_is_explicit[file-ASSET]
+ERROR tests/test_v2_asset_relationships.py::test_target_edits_mark_exact_record_stale_and_deletion_is_explicit[file-CHAPTER]
+ERROR tests/test_v2_asset_relationships.py::test_target_edits_mark_exact_record_stale_and_deletion_is_explicit[file-SCREENPLAY]
+ERROR tests/test_v2_asset_relationships.py::test_generic_metadata_cannot_create_replace_or_erase_reserved_relationships[file]
+ERROR tests/test_v2_asset_relationships.py::test_incoming_active_relations_block_deletion_and_removal_keeps_tombstone[file]
+ERROR tests/test_v2_asset_relationships.py::test_relationship_bounds_count_tombstones_and_reference_indexes[file]
+ERROR tests/test_v2_asset_relationships.py::test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-boolean-schema]
+ERROR tests/test_v2_asset_relationships.py::test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-float-schema]
+ERROR tests/test_v2_asset_relationships.py::test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-duplicate-id]
+ERROR tests/test_v2_asset_relationships.py::test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-invalid-digest]
+ERROR tests/test_v2_asset_relationships.py::test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-missing-removal]
+ERROR tests/test_v2_asset_relationships.py::test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-boolean-removal]
+ERROR tests/test_v2_asset_relationships.py::test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-invalid-remover]
+ERROR tests/test_v2_asset_relationships.py::test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-unknown-kind]
+ERROR tests/test_v2_asset_relationships.py::test_corrupt_persisted_relationships_fail_closed_without_leaking_or_rewriting[file-extra-field]
+ERROR tests/test_v2_asset_relationships.py::test_independent_services_relationship_cas_allows_only_one_writer[file]
+ERROR tests/test_v2_asset_relationships.py::test_precommit_revocation_and_target_recheck_leave_source_unchanged[file]
+ERROR tests/test_v2_asset_relationships.py::test_relationship_removal_revocation_preserves_active_dependency[file]
+ERROR tests/test_v2_asset_relationships.py::test_relationship_reads_and_writes_never_enter_scope_document_storage_under_asset_lease[file]
+365 passed, 140 skipped, 1 warning, 78 errors in 37.25s

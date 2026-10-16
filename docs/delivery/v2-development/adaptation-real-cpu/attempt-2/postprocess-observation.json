@@ -1,0 +1,47 @@
+{
+  "status": "REAL_EXECUTION_AND_PRIVATE_DRAFT_OBSERVED_STRUCTURED_RESULT_REJECTED",
+  "original_acceptance_status": "FAIL",
+  "original_harness_error": "typed adaptation authority was incorrectly read from generic Job fields",
+  "no_new_model_call": true,
+  "verification": "READ_ONLY_EXACT_ORIGINAL_FILES",
+  "raw_sha256": "7b6f76124f3bfc15b2a7282659e8526a0caab47a3629bb2fd3e5b80ab582e324",
+  "raw_bytes": 241,
+  "asset_id": "e80a652d-c074-4a4e-815c-84d9ed7cf405",
+  "asset_version": 1,
+  "review_status": "DRAFT",
+  "execution_mode": "real",
+  "usage": {
+    "input_tokens": 1256,
+    "output_tokens": 78,
+    "total_tokens": 1334
+  },
+  "structured_status": "DISCARDED",
+  "screenplay_created": false,
+  "quality_verification": "NOT_RUN",
+  "source_receipt": {
+    "schema_version": 1,
+    "contract": "creative-adaptation-text-asset/1",
+    "proposal_id": "2a800cc2-e26c-434f-939b-6e3ed42f42ab",
+    "source_proposal_version": 3,
+    "chapter_id": "owned-real-cpu-textnode-acceptance:1",
+    "source_version": 1,
+    "source_digest": "df59ac99cd4bb18d8dcb38a3aca3d468c11010854602e76d4a457e7ab714c8c9",
+    "selection_digest": "adbae61b1b1bdfe648bfb3d50afc921bf1898a3c4bc98c030b30a0ec768355f2",
+    "job_id": "f9edc944-151d-4eab-bb78-696b6a2bca56",
+    "output_digest": "7b6f76124f3bfc15b2a7282659e8526a0caab47a3629bb2fd3e5b80ab582e324",
+    "preview_digest": "d42230a3346fa270766c6b509dec2ba40bbcc0db3c04590bd92d3638077b8952",
+    "produced_at": "2026-10-10T21:53:53.174108+00:00"
+  },
+  "hashes": {
+    "acceptance.json": "c6cd7a09fc66d9e295cffd234c5cdf4d54e8424b3bb78dda637a4fcf7e86b8aa",
+    "api-transcript.json": "1717bc854cbafe0bbcc6a438721b4e9b9ad7fa19ecc0f3e32bc763eb00610428",
+    "original-job.json": "195059959ab7ebc7b9ac6281c95ad51c968de1cb284ce33ebf7760c5eb309fb1",
+    "actual-model-output.txt": "7b6f76124f3bfc15b2a7282659e8526a0caab47a3629bb2fd3e5b80ab582e324",
+    "draft-asset.json": "7011d95e2ce8b386973d4b2c8e71dc2c9a53764f1767cf58fc2a3c4942eea6d7",
+    "adaptation-result.json": "8289c3858c6d2a2cb1fbeeecb71221d77bf5167a1153d65ed7f10cb5179019e1",
+    "native-runtime.log": "700477a846adb0271d878abcda71f0c52ea1ca5087d7c9ab8c619c7b8e49fa54"
+  },
+  "creative_store_sha256": "736836f36f3621c7183a1b9b9b7868e8ba2b3fa4d2185f36c625d1c3f263d016",
+  "durable_proposal_id": "2a800cc2-e26c-434f-939b-6e3ed42f42ab",
+  "source_binding_matches_original_saved_get": true
+}

@@ -1,0 +1,17 @@
+{
+  "status": "REVIEWED_FOR_ADDITIVE_V2_MANIFEST_ONLY",
+  "head": "99c43b6892038233c390be2ae61acb669163d0b5",
+  "previous_collected_nodes": 10335,
+  "current_collected_nodes": 10362,
+  "added_nodes": 27,
+  "added_only_file": "tests/test_v2_postgres_check_isolation.py",
+  "old_nodes_preserved_in_order": true,
+  "old_test_and_gate_bytes_unchanged": true,
+  "historical_skips_unchanged": true,
+  "changed_existing_execution_source": "scripts/run_v2_postgres_checks.py only since initial1676-input final checks",
+  "source_input_count": 1677,
+  "source_map_sha256": "964ad4a0c317f43d65e2aa8793d6f87b5e6630b977ee269803c42c6248fd143f",
+  "application_source_unchanged_from_initial_m3_checks": true,
+  "correction": "Fresh database validation harness; original project titles, assertions, SQL migrations and product logic remain unchanged",
+  "execution_claim": "Inventory only; complete owner range is running against fresh real PostgreSQL separately."
+}

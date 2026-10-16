@@ -1,0 +1,76 @@
+{
+  "checked_at_utc": "2026-10-06T16:52:41Z",
+  "scope": "READ_ONLY_PUBLIC_PR_METADATA",
+  "prs": [
+    {
+      "number": 37,
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/37",
+      "head": "work/dot-astra-v1-rc-r2",
+      "head_sha": "1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0",
+      "base": "main",
+      "base_sha": "fed2404c8e30b44061b7139dced45b7f3301601c",
+      "draft": true,
+      "merged": false
+    },
+    {
+      "number": 38,
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/38",
+      "head": "work/post-v1-feature-forward-r3",
+      "head_sha": "d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b",
+      "base": "work/dot-astra-v1-rc-r2",
+      "base_sha": "1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0",
+      "draft": true,
+      "merged": false
+    },
+    {
+      "number": 39,
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/39",
+      "head": "work/post-v1-r4-r5-ux",
+      "head_sha": "c6f2126115b52e17839d48efea091dc21ec08c61",
+      "base": "work/post-v1-feature-forward-r3",
+      "base_sha": "d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b",
+      "draft": true,
+      "merged": false
+    },
+    {
+      "number": 40,
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/40",
+      "head": "fix/shared-authority-stream-terminal-r123",
+      "head_sha": "2c5b4e2f43c50318d9c1eeea487f68c2d66f7b42",
+      "base": "work/post-v1-r4-r5-ux",
+      "base_sha": "c6f2126115b52e17839d48efea091dc21ec08c61",
+      "draft": true,
+      "merged": false
+    },
+    {
+      "number": 41,
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/41",
+      "head": "work/local-interop-v1",
+      "head_sha": "bcd60afb96cc69bdfd81db619cb0121d8712f074",
+      "base": "fix/shared-authority-stream-terminal-r123",
+      "base_sha": "2c5b4e2f43c50318d9c1eeea487f68c2d66f7b42",
+      "draft": true,
+      "merged": false
+    },
+    {
+      "number": 42,
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/42",
+      "head": "work/local-interop-desktop-prep",
+      "head_sha": "e58c72b04182cd374af092314386b90f8250a173",
+      "base": "work/local-interop-v1",
+      "base_sha": "bcd60afb96cc69bdfd81db619cb0121d8712f074",
+      "draft": true,
+      "merged": false
+    },
+    {
+      "number": 43,
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/43",
+      "head": "work/post-interop-r4-r5-ux-continuation",
+      "head_sha": "dedb813bb297bb5fb95bac55440a71913b54ed10",
+      "base": "work/local-interop-desktop-prep",
+      "base_sha": "e58c72b04182cd374af092314386b90f8250a173",
+      "draft": true,
+      "merged": false
+    }
+  ]
+}

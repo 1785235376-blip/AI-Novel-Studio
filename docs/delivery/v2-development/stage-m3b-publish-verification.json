@@ -1,0 +1,88 @@
+{
+  "utc": "2026-10-09T16:46:04.375279+00:00",
+  "status": "VERIFIED_BEFORE_PUBLISH",
+  "parent_head": "9851bdd2d692df983664bc8f4597fbc05c0e2ceb",
+  "source_input_count": 1688,
+  "source_map_sha256": "95f58c348feba6c15182e1b584e37c0370ff3e3e319b56443ff7cd08cd4aa7c6",
+  "checks": [
+    {
+      "receipt": "docs/delivery/v2-development/stage-m3b-fixed-owner-file.json",
+      "receipt_sha256": "193b7a762f3b0338402ea0f20d6dfc4853bf5fc112eeac0cb8118cc407d8c6db",
+      "log": "docs/delivery/v2-development/stage-m3b-fixed-owner-file.log",
+      "log_sha256": "5944b59507a8a4876023ed58c09faa5632f2b03e33c107974c13af696fc63714",
+      "status": "PASS",
+      "finished_utc": "2026-10-09T16:36:53.245406+00:00",
+      "tests_executed": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m3b-fixed-owner-postgres.json",
+      "receipt_sha256": "dffa84df921f7bc02adf689229fe6705ca6ad1165a0285dc30a2835bbafaef0f",
+      "log": "docs/delivery/v2-development/stage-m3b-fixed-owner-postgres.log",
+      "log_sha256": "9c20b83ff8ec1f2371b5d8b86865adad9ab6734d6034203969f8d78248412996",
+      "status": "PASS",
+      "finished_utc": "2026-10-09T16:45:32.974970+00:00",
+      "tests_executed": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m3b-fixed-full-frontend.json",
+      "receipt_sha256": "a85e4990027c584a55c974ed2fb1827f070dd8b083f9a05acdcfa3dd7cdb3b1c",
+      "log": "docs/delivery/v2-development/stage-m3b-fixed-full-frontend.log",
+      "log_sha256": "6dfc316d1351dadfd665ea8ffde3515c9c2c928f98309b874705d62cac38a783",
+      "status": "PASS",
+      "finished_utc": "2026-10-09T16:32:08.762363+00:00",
+      "tests_executed": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m3b-fixed-build.json",
+      "receipt_sha256": "3c31ca76a54c5d524524ad266318eba3054282503e213bc988411d2e7c5cb497",
+      "log": "docs/delivery/v2-development/stage-m3b-fixed-build.log",
+      "log_sha256": "56cf16abd7e24db2241e88da3341553a840ded9a6fb3a241ff11268664dab134",
+      "status": "PASS",
+      "finished_utc": "2026-10-09T16:31:45.195104+00:00",
+      "tests_executed": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m3b-fixed-infrastructure-catalog.json",
+      "receipt_sha256": "6214d91a87bb2953b402c458659fc196926bbe3ca026ba89ae3f24a1cd021997",
+      "log": "docs/delivery/v2-development/stage-m3b-fixed-infrastructure-catalog.log",
+      "log_sha256": "0358bb6ddc03e9d5da656cac38fa9f8d1cb261452f8d614d0f42e18c2a3d561c",
+      "status": "PASS",
+      "finished_utc": "2026-10-09T16:31:26.692452+00:00",
+      "tests_executed": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m3b-fixed-browser-collection.json",
+      "receipt_sha256": "f870ca3b9783488487b1e711d8fdc5883aa58a14bc524039855b3378fe97c4a3",
+      "log": "docs/delivery/v2-development/stage-m3b-fixed-browser-collection.log",
+      "log_sha256": "64c0ec09fe8f58a7085a154e43ab10c7a002800affb60ffa52433fa9770b8d95",
+      "status": "PASS",
+      "finished_utc": "2026-10-09T16:31:07.942136+00:00",
+      "tests_executed": false
+    }
+  ],
+  "postgres_runtime_receipt": "docs/delivery/v2-development/stage-m3b-fixed-owner-postgres-postgres-runtime.json",
+  "postgres_runtime_sha256": "4ba2d2cf7bba7323563af44b2496f82e3d19784e7d26ca7f4809960b624781a2",
+  "postgres_database": "v2_m3b_fixed_20261009",
+  "postgres_database_oid": 36708,
+  "postgres_migrations_verified": 20,
+  "postgres_empty_before_migrations": true,
+  "postgres_original_and_new_databases_preserved": true,
+  "postgres_server_log": "docs/delivery/v2-development/stage-m3b-fixed-owner-postgres-server.log",
+  "postgres_server_log_sha256": "1fa543f61116973b4aa2df0901e83b8cc5601b228c4a27926435436b49dd38aa",
+  "inventory_verification_receipt": "docs/delivery/v2-development/stage-m3b-fixed-inventory-verification.json",
+  "inventory_verification_sha256": "cc8f39a86097b4d0020d9e82ab1eb532e96556be6a960a096b863d9ae129a7a4",
+  "catalog_receipt": "docs/delivery/v2-development/catalog-9c6ce5e2c3b4.json",
+  "catalog_sha256": {
+    "API_CATALOG.json": "526cf8032a0cb0325f6c83ddd8e8a5af59b2962708ffcd55700eec9f2da780ba",
+    "API_CATALOG.md": "83fb47d32402635bff090df940c573ed29e1a1c3828aa9e3fa3cc2f6627dea00",
+    "API_CATALOG_DETAIL.json.gz": "37ed9d83263d4d476b1e596db946bbf026a9aae9de6f8b3e9f8e9c6a60400607",
+    "API_OPENAPI.json.gz": "93f5284767b03708cc38e1115c275397b8b318abb6d436489b8185864900b888"
+  },
+  "v2_manifest_sha256": "904bb2488f729857af98ef7abccacf90f664aea53eb49a48f8262f764141b522",
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "backend_scope": "Complete selected 56-file owner regression on File and real PostgreSQL; not all-product execution",
+  "frontend_scope": "Complete Vitest suite 2040 PASS / 8 existing SKIP; original first failure retained separately",
+  "browser_scope": "Collection only: original7 + independent14; hosted execution pending",
+  "windows_gpu_inference": "NOT_RUN; user Windows acceptance LOCAL_REQUIRED",
+  "historical_failures": "First M3-B frontend failure and all development RED receipts retained; older hosted File capacity cancellations remain nonpass; no historical audit reassignment"
+}

@@ -10,9 +10,14 @@ import uuid
 from ctypes import wintypes
 from typing import Callable, Literal, Protocol
 
+from .packaged_profile import DEFAULT_PROFILE, PROFILE_ENV, V2_PROFILE, validate_profile
 from .provider_support import STATIC_CREDENTIAL_PROVIDERS, provider_support_registry
 
 _TARGET_PREFIX = "AI-Novel-Studio/provider/"
+_WINDOWS_TARGET_PREFIXES = {
+    DEFAULT_PROFILE: _TARGET_PREFIX,
+    V2_PROFILE: "AI-Novel-Studio-V2/provider/",
+}
 _CRED_TYPE_GENERIC = 1
 _CRED_PERSIST_LOCAL_MACHINE = 2
 SUPPORTED_PROVIDERS = STATIC_CREDENTIAL_PROVIDERS
@@ -62,7 +67,9 @@ if sys.platform == "win32":
 class WindowsBackend:
     name: VaultBackendName = "windows"
     persistent = True
-    def __init__(self):
+    def __init__(self, namespace: str = DEFAULT_PROFILE):
+        # Select only a known namespace, before any platform or vault operation.
+        self._target_prefix = _WINDOWS_TARGET_PREFIXES[validate_profile(namespace)]
         if sys.platform != "win32": raise VaultUnavailableError("WINDOWS_CRED_MAN_UNAVAILABLE")
 
     def set(self, provider: str, secret: str) -> None:
@@ -70,7 +77,7 @@ class WindowsBackend:
         buffer = (ctypes.c_ubyte * len(blob)).from_buffer_copy(blob)
         credential = _CredentialW()
         credential.Type = _CRED_TYPE_GENERIC
-        credential.TargetName = _TARGET_PREFIX + provider
+        credential.TargetName = self._target_prefix + provider
         credential.CredentialBlobSize = len(blob)
         credential.CredentialBlob = ctypes.cast(buffer, ctypes.POINTER(ctypes.c_ubyte))
         credential.Persist = _CRED_PERSIST_LOCAL_MACHINE
@@ -86,7 +93,7 @@ class WindowsBackend:
         api.CredReadW.restype = wintypes.BOOL
         api.CredFree.argtypes = [ctypes.c_void_p]
         pointer = _PCREDENTIALW()
-        if not api.CredReadW(_TARGET_PREFIX + provider, _CRED_TYPE_GENERIC, 0, ctypes.byref(pointer)):
+        if not api.CredReadW(self._target_prefix + provider, _CRED_TYPE_GENERIC, 0, ctypes.byref(pointer)):
             if ctypes.get_last_error() == 1168: return None
             raise VaultUnavailableError("WINDOWS_CRED_MAN_ERROR")
         try:
@@ -98,7 +105,7 @@ class WindowsBackend:
         api = ctypes.WinDLL("Advapi32.dll", use_last_error=True)
         api.CredDeleteW.argtypes = [wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD]
         api.CredDeleteW.restype = wintypes.BOOL
-        if not api.CredDeleteW(_TARGET_PREFIX + provider, _CRED_TYPE_GENERIC, 0) and ctypes.get_last_error() != 1168:
+        if not api.CredDeleteW(self._target_prefix + provider, _CRED_TYPE_GENERIC, 0) and ctypes.get_last_error() != 1168:
             raise VaultUnavailableError("WINDOWS_CRED_MAN_ERROR")
 
 
@@ -150,15 +157,23 @@ class CredentialVault:
     def __init__(self, *, backend: str | None = None, service_name: str | None = None,
                  allow_memory_fallback: bool | None = None, backend_impl: VaultBackend | None = None,
                  supports_provider: Callable[[str], bool] | None = None):
+        self.profile = validate_profile(os.getenv(PROFILE_ENV, DEFAULT_PROFILE))
         requested=(backend or os.getenv("CREDENTIAL_VAULT_BACKEND","auto")).strip().lower()
         if requested not in {"auto","windows","keyring","memory"}: raise ValueError("unsupported credential vault backend")
         self.service_name=service_name or os.getenv("CREDENTIAL_VAULT_SERVICE","AI-Novel-Studio")
         packaged=_env_bool("ENABLE_PACKAGED_RUNTIME",False)
         self.allow_memory_fallback=_env_bool("CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK",not packaged) if allow_memory_fallback is None else allow_memory_fallback
+        if self.profile == V2_PROFILE:
+            if not packaged: raise ValueError("V2 credential vault requires packaged runtime")
+            if requested not in {"auto", "windows"}: raise ValueError("V2 credential vault requires Windows backend")
+            if self.allow_memory_fallback: raise ValueError("V2 credential vault forbids memory fallback")
+            if backend_impl is not None: raise ValueError("V2 credential vault forbids injected backends")
         self.degraded=False
         self.degraded_reason: str | None=None
         self._supports_provider = supports_provider or SUPPORTED_PROVIDERS.__contains__
-        if backend_impl is not None:
+        if self.profile == V2_PROFILE:
+            self._active_backend=WindowsBackend(namespace=V2_PROFILE)
+        elif backend_impl is not None:
             self._active_backend=backend_impl
         else:
             self._active_backend=self._select_backend(requested)
@@ -176,7 +191,7 @@ class CredentialVault:
             return self._fallback(exc.code)
 
     def _fallback(self, reason: str) -> VaultBackend:
-        if not self.allow_memory_fallback: raise VaultUnavailableError(reason)
+        if self.profile == V2_PROFILE or not self.allow_memory_fallback: raise VaultUnavailableError(reason)
         self.degraded=True;self.degraded_reason=reason
         return MemoryBackend()
 

@@ -1,0 +1,10 @@
+..............................ssssssssssssssssssssssssssssss......ssssss [ 51%]
+..ss..ss..ss....ssss..ss..ss..ss..ss..ss..ss............ssssssssssss     [100%]
+=============================== warnings summary ===============================
+../ai-novel-r2-venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/ai-novel-r2-venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+---------- generated xml file: /tmp/r123-sse-tests/file-complete.xml -----------
+70 passed, 70 skipped, 1 warning in 19.90s

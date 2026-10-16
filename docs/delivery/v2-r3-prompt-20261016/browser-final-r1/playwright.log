@@ -1,0 +1,20 @@
+
+Running 3 tests using 1 worker
+
+(node:76760) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:76760) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 1 [prompt-r3-1366x768] › tests\e2e\v2-prompt-r3-live.spec.ts:7:1 › real Prompt authoring, immutable revision, browser HTTP tombstone, and closed production adoption (5.2s)
+(node:80964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:80964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 2 [prompt-r3-1440x900] › tests\e2e\v2-prompt-r3-live.spec.ts:7:1 › real Prompt authoring, immutable revision, browser HTTP tombstone, and closed production adoption (3.4s)
+(node:81796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:81796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 3 [prompt-r3-1920x1080] › tests\e2e\v2-prompt-r3-live.spec.ts:7:1 › real Prompt authoring, immutable revision, browser HTTP tombstone, and closed production adoption (3.2s)
+
+  3 passed (14.6s)

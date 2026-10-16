@@ -1,0 +1,16 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ✓ src/creative/AssetRelationshipsPanel.test.tsx (11 tests) 679ms
+ ✓ src/creative/GraphRunPanel.test.tsx (19 tests) 731ms
+ ✓ src/creative/StudioSelectLabels.test.tsx (4 tests) 660ms
+   ✓ stable exact names for Studio selects with populated options > keeps saved-graph, node, asset and port names stable while editing the real graph hook 324ms
+ ✓ src/creative/IndependentStudioRelationships.test.tsx (5 tests) 1415ms
+   ✓ studio relationship ownership and draft integration > keeps a relationship draft across navigation attempts and prevents other asset mutations 592ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (8 tests) 1429ms
+
+ Test Files  5 passed (5)
+      Tests  47 passed (47)
+   Start at  07:38:07
+   Duration  2.73s (transform 692ms, setup 0ms, collect 2.19s, tests 4.91s, environment 1.98s, prepare 337ms)
+

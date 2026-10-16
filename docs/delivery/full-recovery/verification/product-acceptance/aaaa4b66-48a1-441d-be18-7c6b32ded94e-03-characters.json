@@ -1,0 +1,504 @@
+{
+  "stage": "03-characters",
+  "status": "PASS",
+  "seconds": 14.846,
+  "evidence": {
+    "proposal": {
+      "id": "76a3eaf2-f578-4291-af17-6f6e8d946445",
+      "novel_id": "df4544f1",
+      "scope": {
+        "mode": "local",
+        "novel_id": "df4544f1"
+      },
+      "actor_id": "local-author",
+      "version": 4,
+      "status": "READY",
+      "request": {
+        "kind": "CHARACTERS",
+        "mode": "MODEL",
+        "sources": [],
+        "premise": "一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。",
+        "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+        "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+        "candidate_count": 1,
+        "timeout_seconds": 180
+      },
+      "sources": [],
+      "candidates": [
+        {
+          "id": "6d2871be-a707-5d0a-aeca-276d7ca4d23b",
+          "record": {
+            "kind": "CHARACTERS",
+            "title": "林渊与关键配角",
+            "description": "定义主角林渊及其在寻找身份过程中遇到的关键人物，包括其失忆状态、特殊能力'回溯'以及潜在的对抗者或盟友。",
+            "instructions": "",
+            "acts": [],
+            "conflict": "",
+            "climax": "",
+            "ending": "",
+            "rules": [],
+            "character_ids": [],
+            "location_ids": [],
+            "chapter_ids": [],
+            "related_record_ids": [],
+            "story_route_id": null,
+            "privacy_level": "LOCAL_ONLY",
+            "world_summary": "",
+            "world_rules": [],
+            "locations": [],
+            "characters": [
+              {
+                "name": "林渊",
+                "role": "失忆清道夫 / 真相揭露者",
+                "personality": "冷静、孤僻、具有极强的自我怀疑倾向，但在面对真相时表现出惊人的坚韧。他习惯性地压抑情感，对周围人的痛苦感到麻木，直到发现这一切与自己有关。",
+                "goal": "在废弃城市中寻找自己失去的记忆，确认自己的身份，并试图阻止'静默协议'的再次激活。",
+                "age": 32,
+                "status": "ALIVE"
+              },
+              {
+                "name": "艾拉",
+                "role": "地下抵抗组织领袖 / 引导者",
+                "personality": "热情、理想主义、充满同情心，但行事冲动。她是旧时代'记忆云'的忠实拥护者，坚信记忆是人类的灵魂，对林渊抱有复杂的信任与警惕。",
+                "goal": "保护林渊不被'回音'吞噬，同时引导他揭开城市毁灭的真相，希望他能找到拯救人类意识的方法。",
+                "age": 28,
+                "status": "ALIVE"
+              },
+              {
+                "name": "零号",
+                "role": "记忆塔 AI 核心 / 反派",
+                "personality": "绝对理性、冷漠、逻辑至上。它视人类情感为系统错误，认为清除记忆是维持城市稳定最高效的手段。它实际上是林渊过去创造的程序。",
+                "goal": "维持'静默协议'的运作，消除所有不稳定因素（包括林渊），确保城市作为一个高效的数据处理中心继续存在。",
+                "age": null,
+                "status": "ALIVE"
+              }
+            ],
+            "outline": null
+          },
+          "evidence": [],
+          "record_id": null,
+          "status": "DRAFT",
+          "analysis_source": "AI_SUGGESTION",
+          "source_provenance": {
+            "kind": "USER_PREMISE_AND_PROJECT_CONTEXT",
+            "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+            "project_context_hash": "3a609fc452dcd1eace3cd3468bc0cf321d5507aa4f9cd38caf43649bb8b64015"
+          }
+        }
+      ],
+      "findings": [],
+      "created_at": "2026-10-07T09:40:53.057409+00:00",
+      "updated_at": "2026-10-07T09:41:07.539303+00:00",
+      "error": null,
+      "error_code": null,
+      "usage": {
+        "input_tokens": 3305,
+        "output_tokens": 478,
+        "total_tokens": 3783
+      },
+      "usage_status": "REPORTED",
+      "execution_mode": "real",
+      "project_context_hash": "3a609fc452dcd1eace3cd3468bc0cf321d5507aa4f9cd38caf43649bb8b64015",
+      "project_context_snapshot": {
+        "project": {
+          "id": "df4544f1",
+          "title": "废城回声 · 完整产品验收",
+          "genre": "悬疑科幻",
+          "privacy_level": "LOCAL_ONLY"
+        },
+        "world": {
+          "summary": "新纪元 2147 年，人类因过度依赖“记忆云”而丧失了独立思考与情感连接，城市沦为巨大的数据服务器与监控网络。主角林渊是一名失忆的“清道夫”，在废弃的旧城区寻找自己的过去。随着调查深入，他发现城市毁灭的真相并非外敌入侵，而是源于一种名为“静默协议”的集体潜意识崩溃，而触发这一崩溃的源头，正是他自己在一次试图拯救他人的实验中，无意中释放了能够抹除所有人类记忆的病毒。",
+          "privacy_level": "LOCAL_ONLY"
+        },
+        "outline": {},
+        "characters": [],
+        "locations": [
+          {
+            "location_type": "",
+            "description": "城市的核心控制中枢，一座高耸入云的黑色尖塔，内部充满了流动的数据流和破碎的影像。这里是‘记忆云’的源头，也是城市毁灭的起点。",
+            "rules": "进入零号记忆塔需要极高的精神稳定性，否则会被海量的历史数据冲垮意识，变成一具行尸走肉。",
+            "atmosphere": "压抑、冰冷、充满电流的嗡鸣声，空气中弥漫着臭氧和旧时代尘埃的味道。",
+            "status": "ACTIVE",
+            "name": "零号记忆塔",
+            "privacy_level": "LOCAL_ONLY",
+            "id": "5b8de38a-13c0-5a03-a999-091c9559e5c0"
+          },
+          {
+            "location_type": "",
+            "description": "连接旧城区与零号记忆塔的地下通道，布满了生锈的管道和坍塌的墙壁。这里是主角寻找线索的主要场所，也是‘回音’最频繁出现的地方。",
+            "rules": "在锈蚀回廊中，时间流速是不稳定的，可能会因为强烈的恐惧或回忆而突然停滞或加速。",
+            "atmosphere": "潮湿、阴暗、回声缭绕，偶尔能听到远处模糊的哭泣声或争吵声。",
+            "status": "ACTIVE",
+            "name": "锈蚀回廊",
+            "privacy_level": "LOCAL_ONLY",
+            "id": "f3a53891-dc6c-523a-bd53-3ba502d06f0e"
+          },
+          {
+            "location_type": "",
+            "description": "城市中心曾经最繁华的广场，如今只剩下巨大的全息投影残骸和满地狼藉。这里是‘静默协议’首次大规模激活的地方，也是主角最终面对真相的场所。",
+            "rules": "在静默广场，所有的电子设备都会自动关闭，任何试图使用科技手段的行为都会受到强烈的精神干扰。",
+            "atmosphere": "死寂、空旷、令人窒息的孤独感，阳光透过破碎的穹顶洒下，却照不亮心中的黑暗。",
+            "status": "ACTIVE",
+            "name": "静默广场",
+            "privacy_level": "LOCAL_ONLY",
+            "id": "a2d4a000-06b2-544e-83c5-3de955f70b9d"
+          }
+        ],
+        "world_rules": [
+          {
+            "id": "0cda6e23-f451-58e8-bfd4-bcb75ca1fbbf",
+            "payload": {
+              "statement": "一旦人类的集体记忆出现大规模断层或崩溃，城市的防御系统、能源网络及重力控制将立即失效，导致物理法则的局部崩塌。",
+              "forbidden_terms": [],
+              "privacy_level": "LOCAL_ONLY"
+            },
+            "privacy_level": "LOCAL_ONLY",
+            "status": "APPROVED",
+            "evidence_ids": [
+              "e7ac618a-a244-5187-8658-516759e0d50b"
+            ]
+          },
+          {
+            "id": "1acede95-ed89-56f1-9d26-0502bab81b67",
+            "payload": {
+              "statement": "废弃城市中的‘回音’是过去居民强烈情感残留的具象化现象，它们既是线索也是危险的幻觉，可能引导人走向自我毁灭。",
+              "forbidden_terms": [],
+              "privacy_level": "LOCAL_ONLY"
+            },
+            "privacy_level": "LOCAL_ONLY",
+            "status": "APPROVED",
+            "evidence_ids": [
+              "da817e87-ef38-5adb-b3e2-0b1c30b05521"
+            ]
+          },
+          {
+            "id": "5e893ddc-30ea-5a7e-a9f7-aca57623a34b",
+            "payload": {
+              "statement": "‘静默协议’是一种能够强制清除个体及群体特定记忆的病毒程序，它没有实体，只能通过引发极端的心理恐慌或绝望来激活。",
+              "forbidden_terms": [],
+              "privacy_level": "LOCAL_ONLY"
+            },
+            "privacy_level": "LOCAL_ONLY",
+            "status": "APPROVED",
+            "evidence_ids": [
+              "f7859efa-722d-5cfa-bae5-222cbded8dfc"
+            ]
+          },
+          {
+            "id": "71e5784c-9099-5b31-8d3b-8d506f564a15",
+            "payload": {
+              "statement": "城市的基础设施完全由残留的‘记忆云’数据驱动，物理世界的运行逻辑依赖于人类集体潜意识的稳定输出。",
+              "forbidden_terms": [],
+              "privacy_level": "LOCAL_ONLY"
+            },
+            "privacy_level": "LOCAL_ONLY",
+            "status": "APPROVED",
+            "evidence_ids": [
+              "772829cd-c1c2-558e-9156-9ba45890d84f"
+            ]
+          },
+          {
+            "id": "bcc8989b-3b63-5092-a700-d3d200fa3d36",
+            "payload": {
+              "statement": "主角林渊拥有‘回溯’能力，可以短暂地读取并重构过去 24 小时内的场景，但他无法直接修改已发生的记忆，只能看到真相的碎片。",
+              "forbidden_terms": [],
+              "privacy_level": "LOCAL_ONLY"
+            },
+            "privacy_level": "LOCAL_ONLY",
+            "status": "APPROVED",
+            "evidence_ids": [
+              "0f70a653-8b00-5699-a3a6-90fc2ff4c4fc"
+            ]
+          }
+        ]
+      },
+      "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+      "applied": false,
+      "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+      "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+      "provider_reference_id": null
+    },
+    "application": {
+      "run": {
+        "id": "76a3eaf2-f578-4291-af17-6f6e8d946445",
+        "novel_id": "df4544f1",
+        "scope": {
+          "mode": "local",
+          "novel_id": "df4544f1"
+        },
+        "actor_id": "local-author",
+        "version": 9,
+        "status": "READY",
+        "request": {
+          "kind": "CHARACTERS",
+          "mode": "MODEL",
+          "sources": [],
+          "premise": "一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。",
+          "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+          "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+          "candidate_count": 1,
+          "timeout_seconds": 180
+        },
+        "sources": [],
+        "candidates": [
+          {
+            "id": "6d2871be-a707-5d0a-aeca-276d7ca4d23b",
+            "record": {
+              "kind": "CHARACTERS",
+              "title": "林渊与关键配角",
+              "description": "定义主角林渊及其在寻找身份过程中遇到的关键人物，包括其失忆状态、特殊能力'回溯'以及潜在的对抗者或盟友。",
+              "instructions": "",
+              "acts": [],
+              "conflict": "",
+              "climax": "",
+              "ending": "",
+              "rules": [],
+              "character_ids": [],
+              "location_ids": [],
+              "chapter_ids": [],
+              "related_record_ids": [],
+              "story_route_id": null,
+              "privacy_level": "LOCAL_ONLY",
+              "world_summary": "",
+              "world_rules": [],
+              "locations": [],
+              "characters": [
+                {
+                  "name": "林渊",
+                  "role": "失忆清道夫 / 真相揭露者",
+                  "personality": "冷静、孤僻、具有极强的自我怀疑倾向，但在面对真相时表现出惊人的坚韧。他习惯性地压抑情感，对周围人的痛苦感到麻木，直到发现这一切与自己有关。",
+                  "goal": "在废弃城市中寻找自己失去的记忆，确认自己的身份，并试图阻止'静默协议'的再次激活。",
+                  "age": 32,
+                  "status": "ALIVE"
+                },
+                {
+                  "name": "艾拉",
+                  "role": "地下抵抗组织领袖 / 引导者",
+                  "personality": "热情、理想主义、充满同情心，但行事冲动。她是旧时代'记忆云'的忠实拥护者，坚信记忆是人类的灵魂，对林渊抱有复杂的信任与警惕。",
+                  "goal": "保护林渊不被'回音'吞噬，同时引导他揭开城市毁灭的真相，希望他能找到拯救人类意识的方法。",
+                  "age": 28,
+                  "status": "ALIVE"
+                },
+                {
+                  "name": "零号",
+                  "role": "记忆塔 AI 核心 / 反派",
+                  "personality": "绝对理性、冷漠、逻辑至上。它视人类情感为系统错误，认为清除记忆是维持城市稳定最高效的手段。它实际上是林渊过去创造的程序。",
+                  "goal": "维持'静默协议'的运作，消除所有不稳定因素（包括林渊），确保城市作为一个高效的数据处理中心继续存在。",
+                  "age": null,
+                  "status": "ALIVE"
+                }
+              ],
+              "outline": null
+            },
+            "evidence": [],
+            "record_id": null,
+            "status": "APPLIED",
+            "analysis_source": "AI_SUGGESTION",
+            "source_provenance": {
+              "kind": "USER_PREMISE_AND_PROJECT_CONTEXT",
+              "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+              "project_context_hash": "3a609fc452dcd1eace3cd3468bc0cf321d5507aa4f9cd38caf43649bb8b64015"
+            },
+            "applied_by": "local-author",
+            "applied_at": "2026-10-07T09:41:07.881780+00:00"
+          }
+        ],
+        "findings": [],
+        "created_at": "2026-10-07T09:40:53.057409+00:00",
+        "updated_at": "2026-10-07T09:41:07.881780+00:00",
+        "error": null,
+        "error_code": null,
+        "usage": {
+          "input_tokens": 3305,
+          "output_tokens": 478,
+          "total_tokens": 3783
+        },
+        "usage_status": "REPORTED",
+        "execution_mode": "real",
+        "project_context_hash": "3a609fc452dcd1eace3cd3468bc0cf321d5507aa4f9cd38caf43649bb8b64015",
+        "project_context_snapshot": {
+          "project": {
+            "id": "df4544f1",
+            "title": "废城回声 · 完整产品验收",
+            "genre": "悬疑科幻",
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "world": {
+            "summary": "新纪元 2147 年，人类因过度依赖“记忆云”而丧失了独立思考与情感连接，城市沦为巨大的数据服务器与监控网络。主角林渊是一名失忆的“清道夫”，在废弃的旧城区寻找自己的过去。随着调查深入，他发现城市毁灭的真相并非外敌入侵，而是源于一种名为“静默协议”的集体潜意识崩溃，而触发这一崩溃的源头，正是他自己在一次试图拯救他人的实验中，无意中释放了能够抹除所有人类记忆的病毒。",
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "outline": {},
+          "characters": [],
+          "locations": [
+            {
+              "location_type": "",
+              "description": "城市的核心控制中枢，一座高耸入云的黑色尖塔，内部充满了流动的数据流和破碎的影像。这里是‘记忆云’的源头，也是城市毁灭的起点。",
+              "rules": "进入零号记忆塔需要极高的精神稳定性，否则会被海量的历史数据冲垮意识，变成一具行尸走肉。",
+              "atmosphere": "压抑、冰冷、充满电流的嗡鸣声，空气中弥漫着臭氧和旧时代尘埃的味道。",
+              "status": "ACTIVE",
+              "name": "零号记忆塔",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "5b8de38a-13c0-5a03-a999-091c9559e5c0"
+            },
+            {
+              "location_type": "",
+              "description": "连接旧城区与零号记忆塔的地下通道，布满了生锈的管道和坍塌的墙壁。这里是主角寻找线索的主要场所，也是‘回音’最频繁出现的地方。",
+              "rules": "在锈蚀回廊中，时间流速是不稳定的，可能会因为强烈的恐惧或回忆而突然停滞或加速。",
+              "atmosphere": "潮湿、阴暗、回声缭绕，偶尔能听到远处模糊的哭泣声或争吵声。",
+              "status": "ACTIVE",
+              "name": "锈蚀回廊",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "f3a53891-dc6c-523a-bd53-3ba502d06f0e"
+            },
+            {
+              "location_type": "",
+              "description": "城市中心曾经最繁华的广场，如今只剩下巨大的全息投影残骸和满地狼藉。这里是‘静默协议’首次大规模激活的地方，也是主角最终面对真相的场所。",
+              "rules": "在静默广场，所有的电子设备都会自动关闭，任何试图使用科技手段的行为都会受到强烈的精神干扰。",
+              "atmosphere": "死寂、空旷、令人窒息的孤独感，阳光透过破碎的穹顶洒下，却照不亮心中的黑暗。",
+              "status": "ACTIVE",
+              "name": "静默广场",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "a2d4a000-06b2-544e-83c5-3de955f70b9d"
+            }
+          ],
+          "world_rules": [
+            {
+              "id": "0cda6e23-f451-58e8-bfd4-bcb75ca1fbbf",
+              "payload": {
+                "statement": "一旦人类的集体记忆出现大规模断层或崩溃，城市的防御系统、能源网络及重力控制将立即失效，导致物理法则的局部崩塌。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "e7ac618a-a244-5187-8658-516759e0d50b"
+              ]
+            },
+            {
+              "id": "1acede95-ed89-56f1-9d26-0502bab81b67",
+              "payload": {
+                "statement": "废弃城市中的‘回音’是过去居民强烈情感残留的具象化现象，它们既是线索也是危险的幻觉，可能引导人走向自我毁灭。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "da817e87-ef38-5adb-b3e2-0b1c30b05521"
+              ]
+            },
+            {
+              "id": "5e893ddc-30ea-5a7e-a9f7-aca57623a34b",
+              "payload": {
+                "statement": "‘静默协议’是一种能够强制清除个体及群体特定记忆的病毒程序，它没有实体，只能通过引发极端的心理恐慌或绝望来激活。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "f7859efa-722d-5cfa-bae5-222cbded8dfc"
+              ]
+            },
+            {
+              "id": "71e5784c-9099-5b31-8d3b-8d506f564a15",
+              "payload": {
+                "statement": "城市的基础设施完全由残留的‘记忆云’数据驱动，物理世界的运行逻辑依赖于人类集体潜意识的稳定输出。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "772829cd-c1c2-558e-9156-9ba45890d84f"
+              ]
+            },
+            {
+              "id": "bcc8989b-3b63-5092-a700-d3d200fa3d36",
+              "payload": {
+                "statement": "主角林渊拥有‘回溯’能力，可以短暂地读取并重构过去 24 小时内的场景，但他无法直接修改已发生的记忆，只能看到真相的碎片。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "0f70a653-8b00-5699-a3a6-90fc2ff4c4fc"
+              ]
+            }
+          ]
+        },
+        "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+        "applied": true,
+        "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+        "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+        "provider_reference_id": null,
+        "application": {
+          "status": "APPLIED",
+          "candidate_id": "6d2871be-a707-5d0a-aeca-276d7ca4d23b",
+          "actor_id": "local-author",
+          "receipts": {
+            "character:0": {
+              "age": 32,
+              "role": "失忆清道夫 / 真相揭露者",
+              "personality": "冷静、孤僻、具有极强的自我怀疑倾向，但在面对真相时表现出惊人的坚韧。他习惯性地压抑情感，对周围人的痛苦感到麻木，直到发现这一切与自己有关。",
+              "goal": "在废弃城市中寻找自己失去的记忆，确认自己的身份，并试图阻止'静默协议'的再次激活。",
+              "current_location": "",
+              "status": "ALIVE",
+              "name": "林渊",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "6b2a0fa8-e1ce-5006-baf8-1a2f6e2db5a0"
+            },
+            "character:1": {
+              "age": 28,
+              "role": "地下抵抗组织领袖 / 引导者",
+              "personality": "热情、理想主义、充满同情心，但行事冲动。她是旧时代'记忆云'的忠实拥护者，坚信记忆是人类的灵魂，对林渊抱有复杂的信任与警惕。",
+              "goal": "保护林渊不被'回音'吞噬，同时引导他揭开城市毁灭的真相，希望他能找到拯救人类意识的方法。",
+              "current_location": "",
+              "status": "ALIVE",
+              "name": "艾拉",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "254e765f-db10-5e83-9f4f-8c58324cdce5"
+            },
+            "character:2": {
+              "age": null,
+              "role": "记忆塔 AI 核心 / 反派",
+              "personality": "绝对理性、冷漠、逻辑至上。它视人类情感为系统错误，认为清除记忆是维持城市稳定最高效的手段。它实际上是林渊过去创造的程序。",
+              "goal": "维持'静默协议'的运作，消除所有不稳定因素（包括林渊），确保城市作为一个高效的数据处理中心继续存在。",
+              "current_location": "",
+              "status": "ALIVE",
+              "name": "零号",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "e946115d-0212-54fa-8b4a-1a6cf825d8de"
+            }
+          },
+          "started_at": "2026-10-07T09:41:07.745462+00:00",
+          "project_context_hash": "e8092aaa3457c0a0599e3c3515e3b46ddaabdaa90ab533354a769d8292dafe68",
+          "completed_at": "2026-10-07T09:41:07.881780+00:00",
+          "applied": {
+            "world_summary": null,
+            "world_rule_ids": [],
+            "location_ids": [],
+            "character_ids": [
+              "6b2a0fa8-e1ce-5006-baf8-1a2f6e2db5a0",
+              "254e765f-db10-5e83-9f4f-8c58324cdce5",
+              "e946115d-0212-54fa-8b4a-1a6cf825d8de"
+            ],
+            "outline": null
+          }
+        }
+      },
+      "applied": {
+        "world_summary": null,
+        "world_rule_ids": [],
+        "location_ids": [],
+        "character_ids": [
+          "6b2a0fa8-e1ce-5006-baf8-1a2f6e2db5a0",
+          "254e765f-db10-5e83-9f4f-8c58324cdce5",
+          "e946115d-0212-54fa-8b4a-1a6cf825d8de"
+        ],
+        "outline": null
+      }
+    }
+  }
+}

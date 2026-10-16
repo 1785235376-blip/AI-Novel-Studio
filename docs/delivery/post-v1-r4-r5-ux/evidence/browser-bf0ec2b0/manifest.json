@@ -1,0 +1,102 @@
+{
+  "source_head": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+  "source_tree": "b54040210916fc5a76bc94b79d7ab923d2647cfe",
+  "checkout_merge": "a35e443e40146749f8713d2e2a7c931495819199",
+  "checkout_tree_verified_equal": true,
+  "run": 37372638988,
+  "frontend_job": 111978727700,
+  "frontend_attempt": 2,
+  "artifact_id": 11372085047,
+  "artifact_zip_sha256": "0c44820d2ea2b71bb6dce84a9d7f4369ad3c5c53999ab9255ca645908c52ba23",
+  "artifact_zip_bytes": 19828359,
+  "rendering": "Original unedited hosted Linux Chromium PNGs; synthetic data. No visual golden changed.",
+  "inspection": "Lead directly inspected all five retained PNGs: visible prose, intact reachable actions, bounded long-note preview, unchanged shell. Browser pointer/overflow assertions passed; not native Windows or independent audit.",
+  "files": [
+    {
+      "path": "u10-guide-1366.png",
+      "artifact_path": "project/frontend/test-results/r4-ux/r4-first-use-U10-original--df18c-pen-and-actual-TXT-download-chromium/u10-guide-1366.png",
+      "bytes": 183329,
+      "sha256": "0d0fe0a7c1a81863b9555308d48d6c448278bc16b0414eee61f1159291f8c931"
+    },
+    {
+      "path": "u10-guide-1920.png",
+      "artifact_path": "project/frontend/test-results/r4-ux/r4-first-use-U10-original--df18c-pen-and-actual-TXT-download-chromium/u10-guide-1920.png",
+      "bytes": 214820,
+      "sha256": "9f8d72384538016dfee7e7adcfed0368bbe6cb8c241069126276eea5bbb380d0"
+    },
+    {
+      "path": "u02-conflict-export-hit-targets-1280.png",
+      "artifact_path": "project/frontend/test-results/r4-ux/r4-workspace-R4-durable-of-d673a-es-both-conflict-candidates-chromium/u02-conflict-export-hit-targets-1280.png",
+      "bytes": 143103,
+      "sha256": "1a62b278ddd8ca950e72f8092652a81d889b66804e3dcf7364255317e6fcc4a2"
+    },
+    {
+      "path": "u02-conflict-export-hit-targets-1440.png",
+      "artifact_path": "project/frontend/test-results/r4-ux/r4-workspace-R4-durable-of-d673a-es-both-conflict-candidates-chromium/u02-conflict-export-hit-targets-1440.png",
+      "bytes": 162043,
+      "sha256": "aea6bf5cd7df931d1be441d0c870071d7a51a1534938eaa9704eac8bb13fb83e"
+    },
+    {
+      "path": "u01-long-note-visible-editor-1366.png",
+      "artifact_path": "project/frontend/test-results/r4-ux/r4-workspace-U01-two-proje-9f3a7-d-original-reference-layout-chromium/u01-long-note-visible-editor-1366.png",
+      "bytes": 140811,
+      "sha256": "cae1777a4ff8749b26b00a1733a7e094af15686ee31d42a4f7c21aad41b9550b"
+    },
+    {
+      "path": "input-latency-100000.json",
+      "artifact_path": "project/frontend/test-results/r4-ux/r4-performance-U13-100000--efdbf-and-warm-indexed-API-search-chromium/input-latency-100000.json",
+      "bytes": 5160,
+      "sha256": "3c88ae40f478fd1327ea839ac491a05ffbdbd957b4f80ff03d4e080cf0ab1a13"
+    },
+    {
+      "path": "search-latency-100000.json",
+      "artifact_path": "project/frontend/test-results/r4-ux/r4-performance-U13-100000--efdbf-and-warm-indexed-API-search-chromium/search-latency-100000.json",
+      "bytes": 7111,
+      "sha256": "2ed56238c6aa21192e52c8f26b9fa1c21c77b1ace499d9323b026004f4a8064b"
+    },
+    {
+      "path": "input-latency-500000.json",
+      "artifact_path": "project/frontend/test-results/r4-ux/r4-performance-U13-500000--56cd7-and-warm-indexed-API-search-chromium/input-latency-500000.json",
+      "bytes": 5201,
+      "sha256": "6052a6f9013b670cd6a384173d925e161b3d287bf19d765879f8836ebfc9e3f0"
+    },
+    {
+      "path": "search-latency-500000.json",
+      "artifact_path": "project/frontend/test-results/r4-ux/r4-performance-U13-500000--56cd7-and-warm-indexed-API-search-chromium/search-latency-500000.json",
+      "bytes": 7092,
+      "sha256": "dd9bc3f12146947636c4bb5f98fae6569ff15c3b0f4ab50d46b254ba0cddafc4"
+    },
+    {
+      "path": "input-latency-1000000.json",
+      "artifact_path": "project/frontend/test-results/r4-ux/r4-performance-U13-1000000-32fe8-and-warm-indexed-API-search-chromium/input-latency-1000000.json",
+      "bytes": 5154,
+      "sha256": "8402048ddc6cbe53b821fea092c5c46b36400c8dcd9b75286eac205915a6b6a6"
+    },
+    {
+      "path": "search-latency-1000000.json",
+      "artifact_path": "project/frontend/test-results/r4-ux/r4-performance-U13-1000000-32fe8-and-warm-indexed-API-search-chromium/search-latency-1000000.json",
+      "bytes": 7077,
+      "sha256": "280e38b1f2d180f02fc2b1c851563ed1f7a4f6aea171b7fbee0a2c5c3bc57d23"
+    },
+    {
+      "path": "frontend-summary.json",
+      "artifact_path": "receipts/summary.json",
+      "bytes": 1113,
+      "sha256": "6da538a275d0d1dd3107b6a2833d099286ee94bbb5157b43678fe655a7cdb9f3"
+    },
+    {
+      "path": "frontend-revision.txt",
+      "artifact_path": "receipts/revision.txt",
+      "bytes": 272,
+      "sha256": "b5e91147ba88b11041bf99ce4f60857a4316098143beb1457e68582c949526ce"
+    },
+    {
+      "path": "postgres-receipt.json",
+      "source_artifact_id": 11372566371,
+      "bytes": 1587,
+      "sha256": "da8d382ef48a55ce63d4687e682100fbc30ad9dd72cdf9367246957febe5e11d"
+    }
+  ],
+  "full_pr_ci": "SUCCESS_ATTEMPT_4",
+  "queue_history": "Attempt1 queued cancellations; frontend targeted attempt2 success; PG attempt3 runner shutdown at63%; PG attempt4 success. No failed or interrupted attempt counted as passed."
+}

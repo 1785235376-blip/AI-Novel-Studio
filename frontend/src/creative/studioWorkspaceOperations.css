@@ -1,0 +1,17 @@
+.studio-production-contracts { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.studio-production-contracts p { margin: 0; color: var(--color-text-secondary); }
+.studio-production-stages { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.studio-production-operation { border-top: var(--border-default); padding-top: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
+.studio-production-operation > header { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.studio-production-operation h3, .studio-production-operation h4 { margin: 0; }
+.studio-production-operation dl { margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.studio-production-operation dl > div { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.studio-production-operation dd { margin: 0; overflow-wrap: anywhere; }
+.studio-production-operation dt { color: var(--color-text-muted); }
+.studio-production-requirements { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+.studio-production-requirements > section { flex: 1; min-width: 0; }
+.studio-production-operation ul { margin: var(--space-2) 0; padding-left: var(--space-6); }
+.studio-production-operation code { font-family: var(--font-mono); overflow-wrap: anywhere; }
+.studio-production-operation summary { cursor: pointer; color: var(--color-text-primary); }
+.studio-production-operation summary:focus-visible { outline: var(--border-strong); box-shadow: var(--focus-ring); }
+.studio-production-actions > li { margin-bottom: var(--space-3); }

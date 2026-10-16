@@ -1,0 +1,6 @@
+{
+  "whole_staged_diff_check_exit": 2,
+  "diagnostic_sha256": "3e8af19c9a4e4e9d20e5f6bcb61e7ec4af531743e59fb076033a4244f6712b20",
+  "source_and_document_diff_check_exit": 0,
+  "boundary": "Original raw pytest/native log whitespace is preserved; source and authored documentation pass. No test assertions or evidence bytes normalized."
+}

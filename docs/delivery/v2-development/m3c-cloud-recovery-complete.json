@@ -1,0 +1,66 @@
+{
+  "utc": "2026-10-09T17:57:26.725985+00:00",
+  "prior_recovery_receipt_sha256": "342b395b98bf762a723c2d7f5ff75d273b564ce3a60b64c2b26685a349df5965",
+  "status": "SOURCE_VERIFIED_DEPENDENCIES_RESTORED",
+  "head": "c386b0608ae92d18c351b5cb6e367380808a45cf",
+  "initial_source_count": 1688,
+  "initial_source_map_sha256": "95f58c348feba6c15182e1b584e37c0370ff3e3e319b56443ff7cd08cd4aa7c6",
+  "initial_source_changes": [],
+  "initial_processes": "No active pytest/pnpm/npm/PostgreSQL/Playwright processes at 17:52 UTC",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "os": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "node": "v24.19.0",
+  "pnpm": "10.6.5",
+  "pnpm_frozen_lockfile": true,
+  "postgres_packages": [
+    {
+      "url": "https://deb.debian.org/debian/pool/main/p/postgresql-17/postgresql-17_17.11-0+deb13u1_amd64.deb",
+      "sha256": "d2ce1ddffafa783f9acda4c92c86fc21e8288bff3782d739294f14fa797d7886"
+    },
+    {
+      "url": "https://deb.debian.org/debian/pool/main/p/postgresql-17/postgresql-client-17_17.11-0+deb13u1_amd64.deb",
+      "sha256": "9d8558f8dd57c8e92e218a20698383575d53742ca3f9e7c2b7fe5f246d5216ae"
+    }
+  ],
+  "postgres_version": "postgres (PostgreSQL) 17.11 (Debian 17.11-0+deb13u1)",
+  "new_cluster": ".runtime/postgresql/data",
+  "postgres_started": false,
+  "actual_tests_in_new_environment": "NOT_RUN",
+  "old_results_not_relabelled_as_new_environment": true,
+  "logs": {
+    ".runtime/recovery/pnpm-resume-install.log": {
+      "sha256": "b1f0234a823a33da4f94458cb7bdf60921c9965b63c7e2848cce20efad17964c",
+      "bytes": 3179
+    },
+    ".runtime/recovery/python-install.log": {
+      "sha256": "e634d696e94d6a2e3d7a1c8fd301e0c3084f3641ae850edb3a425b7fe9679d8a",
+      "bytes": 11097
+    },
+    ".runtime/recovery/fonttools-install.log": {
+      "sha256": "375e3f59ce7761f35c22d2adb521c133bdf7e4c66532c003cfa30af8ec3dbcc2",
+      "bytes": 814
+    },
+    ".runtime/recovery/postgres-initdb.log": {
+      "sha256": "5075c1df1078f81d52d655535be84fc87a7867c437a5043830e3b894eb65f924",
+      "bytes": 866
+    }
+  },
+  "preserved_logs": {
+    "docs/delivery/v2-development/m3c-recovery-logs/pnpm-resume-install.log": {
+      "sha256": "b1f0234a823a33da4f94458cb7bdf60921c9965b63c7e2848cce20efad17964c",
+      "bytes": 3179
+    },
+    "docs/delivery/v2-development/m3c-recovery-logs/python-install.log": {
+      "sha256": "e634d696e94d6a2e3d7a1c8fd301e0c3084f3641ae850edb3a425b7fe9679d8a",
+      "bytes": 11097
+    },
+    "docs/delivery/v2-development/m3c-recovery-logs/fonttools-install.log": {
+      "sha256": "375e3f59ce7761f35c22d2adb521c133bdf7e4c66532c003cfa30af8ec3dbcc2",
+      "bytes": 814
+    },
+    "docs/delivery/v2-development/m3c-recovery-logs/postgres-initdb.log": {
+      "sha256": "5075c1df1078f81d52d655535be84fc87a7867c437a5043830e3b894eb65f924",
+      "bytes": 866
+    }
+  }
+}

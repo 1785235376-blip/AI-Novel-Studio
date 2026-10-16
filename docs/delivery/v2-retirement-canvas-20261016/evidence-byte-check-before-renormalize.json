@@ -1,0 +1,61 @@
+{
+  "status": "FAIL",
+  "scope": "Evidence byte preservation check; not a product test",
+  "cause": "Previously staged captures retained earlier text filters after a bounded -text rule was added; explicit renormalization is required.",
+  "raw_evidence_to_staged_blob_differences": [
+    {
+      "path": "docs/delivery/v2-retirement-canvas-20261016/additive-ci-collection-pytest-version-diagnosis.json",
+      "group": "documentation_and_evidence",
+      "bytes": 2689,
+      "raw_sha256": "37ebbde5f85b8df0161813ff64a13d155303a1bb231e492d806f3e539336ae54",
+      "git_index_blob_oid": "c2a8419a7ff017b8f6deb7a677b6cf8a2f53a797",
+      "git_index_blob_sha256": "8e3a9bc6bbc452aa1d01043b68886f6e260b8993585e0d8efd7601c60007b379",
+      "git_index_blob_matches_raw_bytes": false
+    },
+    {
+      "path": "docs/delivery/v2-retirement-canvas-20261016/additive-ci-collection-pytest8-pinned-command.json",
+      "group": "documentation_and_evidence",
+      "bytes": 645,
+      "raw_sha256": "adc7cd178f0a8b15fa09f3c085d962fced187f73c84f447244021ef93878ebb7",
+      "git_index_blob_oid": "80ba919965090ad31c765093d9d5d9411c94b70d",
+      "git_index_blob_sha256": "36f929675e915b6bd57d40146667a3af3cf6ed267b596e050284dd14a0133fea",
+      "git_index_blob_matches_raw_bytes": false
+    },
+    {
+      "path": "docs/delivery/v2-retirement-canvas-20261016/additive-ci-collection-pytest8-pinned-verification.json",
+      "group": "documentation_and_evidence",
+      "bytes": 846,
+      "raw_sha256": "00b9067e6606869ee0b861814f9e4b1d256c05ffced013de7348533b65429d47",
+      "git_index_blob_oid": "092369f9560f38a6ff6825ffa4cbf628a1f89aa9",
+      "git_index_blob_sha256": "065136211d3e350b0a8a5c8fc49e19799c5125694825ce6dbba269f6e570fb73",
+      "git_index_blob_matches_raw_bytes": false
+    },
+    {
+      "path": "docs/delivery/v2-retirement-canvas-20261016/file-io-frozen-final.log",
+      "group": "documentation_and_evidence",
+      "bytes": 102,
+      "raw_sha256": "1ec2e93238f7b0adcfe9f7836b95ecb12457eacbc2c5e826ab99559fcaa9f818",
+      "git_index_blob_oid": "186f72ca9c874747a5997a4c9e1e27027747e9ae",
+      "git_index_blob_sha256": "7c5937a7ca94573e96972c6e380042330ab4bb0976a2f451dfbc14815ad3637c",
+      "git_index_blob_matches_raw_bytes": false
+    },
+    {
+      "path": "docs/delivery/v2-retirement-canvas-20261016/remote-audit.json",
+      "group": "documentation_and_evidence",
+      "bytes": 11356,
+      "raw_sha256": "6b21b0206e95ac63b9bba1cd255cb119bddb6ab23e413879d5620efa38df06ec",
+      "git_index_blob_oid": "149e439d7e2936355eb4aad8f9c925893bfb3fb6",
+      "git_index_blob_sha256": "f9d208349f440ebd8f6219acd06150b752bcdec1bcd60c574433609d83727557",
+      "git_index_blob_matches_raw_bytes": false
+    },
+    {
+      "path": "docs/delivery/v2-retirement-canvas-20261016/retirement-lock-order-final.log",
+      "group": "documentation_and_evidence",
+      "bytes": 100,
+      "raw_sha256": "4c256408b5cd383d0c002597d6607d8c80d4c1c5344e49c6dfb6352b328d1e3f",
+      "git_index_blob_oid": "1cc35058a9f6ad86ca5a4fab90ff1c2f8e1cd480",
+      "git_index_blob_sha256": "b9f6d7efd315ba10815d0b60526ef5488d44199802c09dea1558ddd6438cd861",
+      "git_index_blob_matches_raw_bytes": false
+    }
+  ]
+}

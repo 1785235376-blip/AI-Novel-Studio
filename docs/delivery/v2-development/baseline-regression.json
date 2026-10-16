@@ -1,0 +1,41 @@
+{
+  "command": [
+    "D:\\小说\\AI-Novel-Studio-Latest-Product\\.venv\\Scripts\\python.exe",
+    "-X",
+    "utf8",
+    "-B",
+    "-m",
+    "pytest",
+    "tests/test_rc_packaged_runtime_logging.py",
+    "tests/test_rc_packaged_scope_schema.py",
+    "tests/test_rc_startup_planning_contract.py",
+    "tests/test_phase8_screenplay.py",
+    "tests/test_phase8_storyboard.py",
+    "tests/test_screenplay_cas_history.py",
+    "-q",
+    "--junitxml=docs/delivery/v2-development/baseline-regression.xml"
+  ],
+  "cwd": "D:\\小说\\AI-Novel-Studio-V2",
+  "started_utc": "2026-10-08T04:48:45.700781+00:00",
+  "finished_utc": "2026-10-08T04:48:52.850904+00:00",
+  "exit_code": 0,
+  "status": "PASS",
+  "isolated_environment": {
+    "PROJECT_ROOT": "D:\\小说\\AI-Novel-Studio-V2",
+    "PYTHONPATH": "D:\\小说\\AI-Novel-Studio-V2",
+    "NOVEL_DATA_PATH": "D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-checks\\baseline-regression\\data",
+    "LOCALAPPDATA": "D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-checks\\baseline-regression\\Local",
+    "CREDENTIAL_VAULT_BACKEND": "memory",
+    "CREDENTIAL_VAULT_SERVICE": "AI-Novel-Studio-V2-Verification",
+    "STORAGE_BACKEND": "file",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "ENABLE_PACKAGED_RUNTIME": "false",
+    "ENABLE_COLLABORATION_RUNTIME": "false"
+  },
+  "head": "1b7ff50a7e64742916bc64730df884cea819b379",
+  "source_sha256": {
+    "frontend/src/creative/creative.css": "796fff82c5264cbdf4964020f3e005f140056529c26cb36867270b7aaff02656"
+  },
+  "log": "docs/delivery/v2-development/baseline-regression.log",
+  "log_sha256": "b6ae0980b2fd1e194fca6e74e614a4aee3a5626aefc2c56fb6bfdb40239f515b"
+}

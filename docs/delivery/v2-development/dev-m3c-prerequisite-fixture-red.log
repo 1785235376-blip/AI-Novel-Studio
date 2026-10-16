@@ -1,0 +1,302 @@
+.FFFFFFFFFF                                                              [100%]
+=================================== FAILURES ===================================
+_ test_explicit_seed_only_adds_tiny_metadata_to_existing_owners_without_scanning _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-1/test_explicit_seed_only_adds_t0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f44c0f2f5c0>
+
+    def test_explicit_seed_only_adds_tiny_metadata_to_existing_owners_without_scanning(tmp_path, monkeypatch):
+        fixture = SyntheticDiscoveryFixture(tmp_path / "adapter", delay_seconds=0)
+        discovery = service(tmp_path)
+        fixture.install(discovery)
+        discovery.scan = {"id": "prior-scan", "status": "COMPLETED", "candidates": []}
+        original_scan = copy.deepcopy(discovery.scan)
+        original_runtimes = copy.deepcopy(discovery.center.runtimes)
+        original_policy = copy.deepcopy(discovery.center.routing_policy)
+        original_payloads = copy.deepcopy(SyntheticDiscoveryFixture.payloads)
+        def network_forbidden(*_args, **_kwargs):
+            raise AssertionError("Synthetic prerequisite fixture has no network transport")
+        monkeypatch.setattr("urllib.request.urlopen", network_forbidden)
+        monkeypatch.setattr("socket.create_connection", network_forbidden)
+        guard = Mock()
+>       seeded = fixture.seed_workflow_prerequisites(discovery, guard)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'SyntheticDiscoveryFixture' object has no attribute 'seed_workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisite_browser_fixture.py:49: AttributeError
+___ test_seeded_object_info_is_closed_copied_and_other_probes_are_unchanged ____
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-1/test_seeded_object_info_is_clo0')
+
+    def test_seeded_object_info_is_closed_copied_and_other_probes_are_unchanged(tmp_path):
+        fixture = SyntheticDiscoveryFixture(tmp_path / "adapter", delay_seconds=0)
+        discovery = service(tmp_path)
+        fixture.install(discovery)
+>       seeded = fixture.seed_workflow_prerequisites(discovery, lambda: None)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'SyntheticDiscoveryFixture' object has no attribute 'seed_workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisite_browser_fixture.py:77: AttributeError
+_________ test_prerequisite_seed_never_replaces_existing_state[active] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-1/test_prerequisite_seed_never_r0')
+blocked = 'active'
+
+    @pytest.mark.parametrize("blocked", ["active", "revoked", "existing_model", "existing_component", "repeat"])
+    def test_prerequisite_seed_never_replaces_existing_state(tmp_path, blocked):
+        fixture = SyntheticDiscoveryFixture(tmp_path / "adapter", delay_seconds=0)
+        discovery = service(tmp_path)
+        fixture.install(discovery)
+        guard = lambda: None
+        expected = "PREREQUISITES_ALREADY_EXISTS"
+        if blocked == "active":
+            discovery.scan = {"id": "prior-scan", "status": "RUNNING"}
+            expected = "SCAN_ACTIVE"
+        elif blocked == "revoked":
+            guard = Mock(side_effect=ValueError("SYNTHETIC_REVOKED"))
+            expected = "SYNTHETIC_REVOKED"
+        elif blocked == "existing_model":
+            discovery.center.models[MODEL_ID] = object()
+        elif blocked == "existing_component":
+            discovery.center.components[COMPONENT_ID] = object()
+        else:
+            fixture.seed_workflow_prerequisites(discovery, lambda: None)
+        scan_before = copy.deepcopy(discovery.scan)
+        models_before = dict(discovery.center.models)
+        components_before = dict(discovery.center.components)
+        info_before = fixture.json(*OBJECT_INFO)
+        with pytest.raises(ValueError, match=expected):
+>           fixture.seed_workflow_prerequisites(discovery, guard)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'SyntheticDiscoveryFixture' object has no attribute 'seed_workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisite_browser_fixture.py:117: AttributeError
+________ test_prerequisite_seed_never_replaces_existing_state[revoked] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-1/test_prerequisite_seed_never_r1')
+blocked = 'revoked'
+
+    @pytest.mark.parametrize("blocked", ["active", "revoked", "existing_model", "existing_component", "repeat"])
+    def test_prerequisite_seed_never_replaces_existing_state(tmp_path, blocked):
+        fixture = SyntheticDiscoveryFixture(tmp_path / "adapter", delay_seconds=0)
+        discovery = service(tmp_path)
+        fixture.install(discovery)
+        guard = lambda: None
+        expected = "PREREQUISITES_ALREADY_EXISTS"
+        if blocked == "active":
+            discovery.scan = {"id": "prior-scan", "status": "RUNNING"}
+            expected = "SCAN_ACTIVE"
+        elif blocked == "revoked":
+            guard = Mock(side_effect=ValueError("SYNTHETIC_REVOKED"))
+            expected = "SYNTHETIC_REVOKED"
+        elif blocked == "existing_model":
+            discovery.center.models[MODEL_ID] = object()
+        elif blocked == "existing_component":
+            discovery.center.components[COMPONENT_ID] = object()
+        else:
+            fixture.seed_workflow_prerequisites(discovery, lambda: None)
+        scan_before = copy.deepcopy(discovery.scan)
+        models_before = dict(discovery.center.models)
+        components_before = dict(discovery.center.components)
+        info_before = fixture.json(*OBJECT_INFO)
+        with pytest.raises(ValueError, match=expected):
+>           fixture.seed_workflow_prerequisites(discovery, guard)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'SyntheticDiscoveryFixture' object has no attribute 'seed_workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisite_browser_fixture.py:117: AttributeError
+_____ test_prerequisite_seed_never_replaces_existing_state[existing_model] _____
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-1/test_prerequisite_seed_never_r2')
+blocked = 'existing_model'
+
+    @pytest.mark.parametrize("blocked", ["active", "revoked", "existing_model", "existing_component", "repeat"])
+    def test_prerequisite_seed_never_replaces_existing_state(tmp_path, blocked):
+        fixture = SyntheticDiscoveryFixture(tmp_path / "adapter", delay_seconds=0)
+        discovery = service(tmp_path)
+        fixture.install(discovery)
+        guard = lambda: None
+        expected = "PREREQUISITES_ALREADY_EXISTS"
+        if blocked == "active":
+            discovery.scan = {"id": "prior-scan", "status": "RUNNING"}
+            expected = "SCAN_ACTIVE"
+        elif blocked == "revoked":
+            guard = Mock(side_effect=ValueError("SYNTHETIC_REVOKED"))
+            expected = "SYNTHETIC_REVOKED"
+        elif blocked == "existing_model":
+            discovery.center.models[MODEL_ID] = object()
+        elif blocked == "existing_component":
+            discovery.center.components[COMPONENT_ID] = object()
+        else:
+            fixture.seed_workflow_prerequisites(discovery, lambda: None)
+        scan_before = copy.deepcopy(discovery.scan)
+        models_before = dict(discovery.center.models)
+        components_before = dict(discovery.center.components)
+        info_before = fixture.json(*OBJECT_INFO)
+        with pytest.raises(ValueError, match=expected):
+>           fixture.seed_workflow_prerequisites(discovery, guard)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'SyntheticDiscoveryFixture' object has no attribute 'seed_workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisite_browser_fixture.py:117: AttributeError
+___ test_prerequisite_seed_never_replaces_existing_state[existing_component] ___
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-1/test_prerequisite_seed_never_r3')
+blocked = 'existing_component'
+
+    @pytest.mark.parametrize("blocked", ["active", "revoked", "existing_model", "existing_component", "repeat"])
+    def test_prerequisite_seed_never_replaces_existing_state(tmp_path, blocked):
+        fixture = SyntheticDiscoveryFixture(tmp_path / "adapter", delay_seconds=0)
+        discovery = service(tmp_path)
+        fixture.install(discovery)
+        guard = lambda: None
+        expected = "PREREQUISITES_ALREADY_EXISTS"
+        if blocked == "active":
+            discovery.scan = {"id": "prior-scan", "status": "RUNNING"}
+            expected = "SCAN_ACTIVE"
+        elif blocked == "revoked":
+            guard = Mock(side_effect=ValueError("SYNTHETIC_REVOKED"))
+            expected = "SYNTHETIC_REVOKED"
+        elif blocked == "existing_model":
+            discovery.center.models[MODEL_ID] = object()
+        elif blocked == "existing_component":
+            discovery.center.components[COMPONENT_ID] = object()
+        else:
+            fixture.seed_workflow_prerequisites(discovery, lambda: None)
+        scan_before = copy.deepcopy(discovery.scan)
+        models_before = dict(discovery.center.models)
+        components_before = dict(discovery.center.components)
+        info_before = fixture.json(*OBJECT_INFO)
+        with pytest.raises(ValueError, match=expected):
+>           fixture.seed_workflow_prerequisites(discovery, guard)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'SyntheticDiscoveryFixture' object has no attribute 'seed_workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisite_browser_fixture.py:117: AttributeError
+_________ test_prerequisite_seed_never_replaces_existing_state[repeat] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-1/test_prerequisite_seed_never_r4')
+blocked = 'repeat'
+
+    @pytest.mark.parametrize("blocked", ["active", "revoked", "existing_model", "existing_component", "repeat"])
+    def test_prerequisite_seed_never_replaces_existing_state(tmp_path, blocked):
+        fixture = SyntheticDiscoveryFixture(tmp_path / "adapter", delay_seconds=0)
+        discovery = service(tmp_path)
+        fixture.install(discovery)
+        guard = lambda: None
+        expected = "PREREQUISITES_ALREADY_EXISTS"
+        if blocked == "active":
+            discovery.scan = {"id": "prior-scan", "status": "RUNNING"}
+            expected = "SCAN_ACTIVE"
+        elif blocked == "revoked":
+            guard = Mock(side_effect=ValueError("SYNTHETIC_REVOKED"))
+            expected = "SYNTHETIC_REVOKED"
+        elif blocked == "existing_model":
+            discovery.center.models[MODEL_ID] = object()
+        elif blocked == "existing_component":
+            discovery.center.components[COMPONENT_ID] = object()
+        else:
+>           fixture.seed_workflow_prerequisites(discovery, lambda: None)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'SyntheticDiscoveryFixture' object has no attribute 'seed_workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisite_browser_fixture.py:111: AttributeError
+__ test_mounted_seed_preserves_authority_scan_and_readonly_evidence[enabled] ___
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-1/test_mounted_seed_preserves_au0')
+mode = 'enabled'
+
+    @pytest.mark.parametrize("mode", ["enabled", "default-off", "acceptance"])
+    def test_mounted_seed_preserves_authority_scan_and_readonly_evidence(tmp_path, mode):
+        root = Path(__file__).resolve().parents[1]
+        owned = tmp_path / "prerequisite-process"
+        env = {**os.environ, **isolated_environment(root, owned),
+            "V2_DISCOVERY_FIXTURE_ROOT": str(owned), "NOVEL_DATA_PATH": str(owned / "novel-data"),
+            "EXPERIMENTAL_FEATURES": "" if mode == "default-off" else "narrative_production_v2",
+            "V1_ACCEPTANCE_MODE": str(mode == "acceptance").lower(),
+            "COLLABORATION_DEV_SESSIONS_JSON": "", "FRONTEND_ORIGIN": "http://127.0.0.1:5187",
+            "ENABLE_PROVIDER_FALLBACK": "false", "CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK": "true"}
+        result = subprocess.run([sys.executable, str(root / "tests/v2_discovery_browser_server.py"), "--self-check-prerequisites"],
+            env=env, capture_output=True, text=True, timeout=45)
+>       assert result.returncode == 0, result.stdout + result.stderr
+E       AssertionError: usage: v2_discovery_browser_server.py [-h] [--port PORT] [--self-check]
+E                                               [--self-check-files]
+E                                               [--self-check-legacy-host]
+E         v2_discovery_browser_server.py: error: unrecognized arguments: --self-check-prerequisites
+E         
+E       assert 2 == 0
+E        +  where 2 = CompletedProcess(args=['/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/bin/python', '/workspace/scratch/b...-self-check-legacy-host]\nv2_discovery_browser_server.py: error: unrecognized arguments: --self-check-prerequisites\n').returncode
+
+tests/test_v2_discovery_prerequisite_browser_fixture.py:137: AssertionError
+_ test_mounted_seed_preserves_authority_scan_and_readonly_evidence[default-off] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-1/test_mounted_seed_preserves_au1')
+mode = 'default-off'
+
+    @pytest.mark.parametrize("mode", ["enabled", "default-off", "acceptance"])
+    def test_mounted_seed_preserves_authority_scan_and_readonly_evidence(tmp_path, mode):
+        root = Path(__file__).resolve().parents[1]
+        owned = tmp_path / "prerequisite-process"
+        env = {**os.environ, **isolated_environment(root, owned),
+            "V2_DISCOVERY_FIXTURE_ROOT": str(owned), "NOVEL_DATA_PATH": str(owned / "novel-data"),
+            "EXPERIMENTAL_FEATURES": "" if mode == "default-off" else "narrative_production_v2",
+            "V1_ACCEPTANCE_MODE": str(mode == "acceptance").lower(),
+            "COLLABORATION_DEV_SESSIONS_JSON": "", "FRONTEND_ORIGIN": "http://127.0.0.1:5187",
+            "ENABLE_PROVIDER_FALLBACK": "false", "CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK": "true"}
+        result = subprocess.run([sys.executable, str(root / "tests/v2_discovery_browser_server.py"), "--self-check-prerequisites"],
+            env=env, capture_output=True, text=True, timeout=45)
+>       assert result.returncode == 0, result.stdout + result.stderr
+E       AssertionError: usage: v2_discovery_browser_server.py [-h] [--port PORT] [--self-check]
+E                                               [--self-check-files]
+E                                               [--self-check-legacy-host]
+E         v2_discovery_browser_server.py: error: unrecognized arguments: --self-check-prerequisites
+E         
+E       assert 2 == 0
+E        +  where 2 = CompletedProcess(args=['/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/bin/python', '/workspace/scratch/b...-self-check-legacy-host]\nv2_discovery_browser_server.py: error: unrecognized arguments: --self-check-prerequisites\n').returncode
+
+tests/test_v2_discovery_prerequisite_browser_fixture.py:137: AssertionError
+_ test_mounted_seed_preserves_authority_scan_and_readonly_evidence[acceptance] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-1/test_mounted_seed_preserves_au2')
+mode = 'acceptance'
+
+    @pytest.mark.parametrize("mode", ["enabled", "default-off", "acceptance"])
+    def test_mounted_seed_preserves_authority_scan_and_readonly_evidence(tmp_path, mode):
+        root = Path(__file__).resolve().parents[1]
+        owned = tmp_path / "prerequisite-process"
+        env = {**os.environ, **isolated_environment(root, owned),
+            "V2_DISCOVERY_FIXTURE_ROOT": str(owned), "NOVEL_DATA_PATH": str(owned / "novel-data"),
+            "EXPERIMENTAL_FEATURES": "" if mode == "default-off" else "narrative_production_v2",
+            "V1_ACCEPTANCE_MODE": str(mode == "acceptance").lower(),
+            "COLLABORATION_DEV_SESSIONS_JSON": "", "FRONTEND_ORIGIN": "http://127.0.0.1:5187",
+            "ENABLE_PROVIDER_FALLBACK": "false", "CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK": "true"}
+        result = subprocess.run([sys.executable, str(root / "tests/v2_discovery_browser_server.py"), "--self-check-prerequisites"],
+            env=env, capture_output=True, text=True, timeout=45)
+>       assert result.returncode == 0, result.stdout + result.stderr
+E       AssertionError: usage: v2_discovery_browser_server.py [-h] [--port PORT] [--self-check]
+E                                               [--self-check-files]
+E                                               [--self-check-legacy-host]
+E         v2_discovery_browser_server.py: error: unrecognized arguments: --self-check-prerequisites
+E         
+E       assert 2 == 0
+E        +  where 2 = CompletedProcess(args=['/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/bin/python', '/workspace/scratch/b...-self-check-legacy-host]\nv2_discovery_browser_server.py: error: unrecognized arguments: --self-check-prerequisites\n').returncode
+
+tests/test_v2_discovery_prerequisite_browser_fixture.py:137: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_discovery_prerequisite_browser_fixture.py::test_explicit_seed_only_adds_tiny_metadata_to_existing_owners_without_scanning
+FAILED tests/test_v2_discovery_prerequisite_browser_fixture.py::test_seeded_object_info_is_closed_copied_and_other_probes_are_unchanged
+FAILED tests/test_v2_discovery_prerequisite_browser_fixture.py::test_prerequisite_seed_never_replaces_existing_state[active]
+FAILED tests/test_v2_discovery_prerequisite_browser_fixture.py::test_prerequisite_seed_never_replaces_existing_state[revoked]
+FAILED tests/test_v2_discovery_prerequisite_browser_fixture.py::test_prerequisite_seed_never_replaces_existing_state[existing_model]
+FAILED tests/test_v2_discovery_prerequisite_browser_fixture.py::test_prerequisite_seed_never_replaces_existing_state[existing_component]
+FAILED tests/test_v2_discovery_prerequisite_browser_fixture.py::test_prerequisite_seed_never_replaces_existing_state[repeat]
+FAILED tests/test_v2_discovery_prerequisite_browser_fixture.py::test_mounted_seed_preserves_authority_scan_and_readonly_evidence[enabled]
+FAILED tests/test_v2_discovery_prerequisite_browser_fixture.py::test_mounted_seed_preserves_authority_scan_and_readonly_evidence[default-off]
+FAILED tests/test_v2_discovery_prerequisite_browser_fixture.py::test_mounted_seed_preserves_authority_scan_and_readonly_evidence[acceptance]
+10 failed, 1 passed, 1 warning in 7.78s

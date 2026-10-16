@@ -1,0 +1,236 @@
+{
+  "kind": "A43_KNOWN_DOCUMENT_NODE_COMPATIBILITY_CORRECTION",
+  "pre_correction_commit": "de92f5756ba8a789243d5a970ee865307a36e596",
+  "original_failure_source_tree": "a4f9dbeec37886b6ef53a77a0fa74357d97df543",
+  "document_source_equal_between_failure_tree_and_pre_correction_commit": true,
+  "pre_correction_document_sha256": "7db694a2c1e3c67b01296a6ced28172e525ac5b1e0e1d1a83a1753a732f5374a",
+  "corrected_document_sha256": "a4076f0188bf7b9f9171d4fa9ecbfeb2fa9310b6d4c7dfa7267c36add077a36e",
+  "new_test_sha256": "638cfcc459612447afeecf07e057babb05b95618cdf28fad0e41f894d2656a7a",
+  "python_version": "3.12.14",
+  "new_compatibility_red": {
+    "tests": 36,
+    "failures": 19,
+    "errors": 0,
+    "skipped": 12,
+    "passed": 5
+  },
+  "fixed_focused_original_and_rich": {
+    "tests": 259,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 110,
+    "passed": 149
+  },
+  "original_failures_reconciled": [
+    {
+      "class": "tests.test_r4_portable_batches",
+      "name": "test_portable_real_round_trip_new_ids_missing_media_and_original_history[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_batches",
+      "name": "test_missing_media_retains_manuscript_and_explicit_digest_relink[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_batches",
+      "name": "test_relink_same_name_mismatch_requires_explicit_replace_and_stale_denied[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_batches",
+      "name": "test_cache_preview_cleanup_preserves_assets_history_trash_and_regenerates[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_batches",
+      "name": "test_digest_member_tamper_credentials_and_extra_fields_rejected[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_batches",
+      "name": "test_portable_missing_restoration_readable_and_asset_escape_fails[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_batches",
+      "name": "test_media_flag_revocation_hides_only_dependent_batch_and_export_cache[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_batches",
+      "name": "test_xml_and_html_disguised_as_digest_valid_media_never_decode_or_execute[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_batches_mounted",
+      "name": "test_relink_original_chapter_cas_conflict_is_sanitized_and_preserves_recovery[file-/api]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_batches_mounted",
+      "name": "test_relink_original_chapter_cas_conflict_is_sanitized_and_preserves_recovery[file-/api/v1]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_maintenance",
+      "name": "test_missing_digest_survives_restore_restart_second_export_and_exact_relink[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_maintenance",
+      "name": "test_restored_missing_digest_is_actor_project_and_current_reference_scoped[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_maintenance",
+      "name": "test_relink_report_freezes_hashes_chapter_versions_and_detects_current_change[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_maintenance",
+      "name": "test_relink_report_source_privacy_change_blocks_even_when_chapter_version_stays[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_maintenance",
+      "name": "test_relink_original_authority_change_blocks_before_any_new_asset[file-digest]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_maintenance",
+      "name": "test_relink_original_authority_change_blocks_before_any_new_asset[file-reappeared]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_maintenance",
+      "name": "test_relink_report_cannot_expose_now_hidden_asset_metadata[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_maintenance",
+      "name": "test_partial_relink_retains_report_originals_and_measured_recovery_input[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_maintenance",
+      "name": "test_storage_measures_original_history_and_owned_inputs_without_deleting_them[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_maintenance",
+      "name": "test_mounted_relink_report_and_original_changed_conflict_stay_public_safe[file-/api]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_maintenance",
+      "name": "test_mounted_relink_report_and_original_changed_conflict_stay_public_safe[file-/api/v1]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_maintenance",
+      "name": "test_unknown_digest_needs_explicit_choice_and_older_record_requires_new_preflight[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r4_portable_maintenance",
+      "name": "test_original_reference_is_rechecked_at_actual_chapter_write_boundary[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r5_project_forks",
+      "name": "test_asset_license_id_map_provenance_and_unsupported_cross_reference[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r5_project_forks",
+      "name": "test_media_digest_or_source_version_drift_blocks_fork_and_compare[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    },
+    {
+      "class": "tests.test_r5_project_forks",
+      "name": "test_catalog_missing_media_does_not_block_unrelated_selected_chapters[file]",
+      "prior_status": "failed",
+      "corrected_status": "passed"
+    }
+  ],
+  "original_test_files_unchanged": [
+    {
+      "path": "tests/test_r4_portable_batches.py",
+      "sha256": "99cbbd5f4d534622a5cde1ffecf2c83e4be17e063510f7ec0073ce37f4dc4c76",
+      "identical_to_audited_original": true
+    },
+    {
+      "path": "tests/test_r4_portable_batches_mounted.py",
+      "sha256": "6f475f2a3975c78098f47139c732a4ec52921a4065a107e043862057ebe3bdc3",
+      "identical_to_audited_original": true
+    },
+    {
+      "path": "tests/test_r4_portable_maintenance.py",
+      "sha256": "7b88eec788a7eda97c475b4d7aa677eb1e874f5bdd2d545b4548c51c5e679da0",
+      "identical_to_audited_original": true
+    },
+    {
+      "path": "tests/test_r5_project_forks.py",
+      "sha256": "8ac99e13a23f9289ced9453e764fc60223c4525a1286b8d88596c24a8e378a40",
+      "identical_to_audited_original": true
+    }
+  ],
+  "postgres": "NOT_RUN locally; unchanged backend markers skip PostgreSQL cases",
+  "media_rendering": "Explicit non-embedded text placeholders and exact title/alt metadata. No binary decoding, fetch, provider or network access.",
+  "coordinate_scope": "Media atoms remain explicitly unsupported by the original PM selection/diff mapper; coordinate-only plain text omits those atoms with a typed warning. No PM equivalence claimed for media.",
+  "unknown_nodes": "Existing A43 unknown-node and unknown-mark errors/assertions are unchanged.",
+  "full_suite_status": "This targeted correction is not a full-suite pass. Full reruns are owned by the integration lead.",
+  "files": {
+    "media-coordinate-probe.json": {
+      "bytes": 861,
+      "sha256": "13a4c2b0dbd48e1f1bdcf571900683239618351ffc2b9a01e068ab5bc3a9e865"
+    },
+    "media-fixed-focused.log": {
+      "bytes": 1672,
+      "sha256": "6d880b359179e8f9d7378fc28b9af4e1d5e2bd5cb29ad592205c680f64ed0b32"
+    },
+    "media-fixed-focused.xml": {
+      "bytes": 72207,
+      "sha256": "05b751e178979ce852098dc885c6a6f23a0eeedec84d8f04cd02085d2a55886d"
+    },
+    "media-red.log": {
+      "bytes": 54501,
+      "sha256": "3b0099a1d76f5e358659f0973fc728566d8a7cc326ef90e91896fdf623fb5283"
+    },
+    "media-red.xml": {
+      "bytes": 62566,
+      "sha256": "568b0ed62f680081ec1ea80d9833c1e42ef7584f126b548bdf2b8f5831f033f7"
+    },
+    "original-failing-nodeids.txt": {
+      "bytes": 3042,
+      "sha256": "d16034000c170d21090df1da9245fc7d54804e7f9383dff71905b2824708496e"
+    }
+  },
+  "public_artifact_note": "Selected original JUnit is losslessly gzip encoded; see ../../ORIGINAL_RECEIPT_ENCODING.json. Full local trace logs remain private; only their integrity metadata, minimal product failures and test outcomes are published."
+}

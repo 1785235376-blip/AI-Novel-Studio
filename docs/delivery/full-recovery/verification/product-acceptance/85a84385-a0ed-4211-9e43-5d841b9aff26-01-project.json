@@ -1,0 +1,13 @@
+{
+  "stage": "01-project",
+  "status": "PASS",
+  "seconds": 1.429,
+  "evidence": {
+    "id": "f4b8c9ee",
+    "title": "废城回声 · 完整产品验收",
+    "genre": "悬疑科幻",
+    "status": "Writing",
+    "created_at": "2026-10-07T09:49:29.265122+00:00",
+    "updated_at": "2026-10-07T09:49:29.265122+00:00"
+  }
+}

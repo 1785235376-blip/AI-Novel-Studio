@@ -1,0 +1,1047 @@
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF..FFFFFFFFF....                           [100%]
+=================================== FAILURES ===================================
+__ test_same_scan_complete_nodes_and_loader_are_advertisements_not_readiness ___
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_same_scan_complete_nodes_0')
+
+    def test_same_scan_complete_nodes_and_loader_are_advertisements_not_readiness(tmp_path):
+        svc = service(tmp_path); configure_comfy(svc, object_info(svc))
+        original_models = copy.deepcopy(svc.center.models)
+        original_policy = copy.deepcopy(svc.center.routing_policy)
+>       job = scan(svc); row = workflow(job)
+                               ^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [{'candidate_id': 'local-9b6a23f7a1a970f66f4bea91', 'compatible': 'NOT_VERIFIED', 'declared_capabilitie...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:53.518231+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+__________ test_valid_complete_absence_is_scoped_not_observed[index] ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_valid_complete_absence_is0')
+empty = 'index'
+
+    @pytest.mark.parametrize('empty', ['index', 'options', 'missing_node'])
+    def test_valid_complete_absence_is_scoped_not_observed(tmp_path, empty):
+        svc = service(tmp_path); info = object_info(svc, [])
+        if empty == 'index': info = {}
+        if empty == 'missing_node': del info['SaveImage']
+>       configure_comfy(svc, info); row = workflow(scan(svc))
+                                          ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:75: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:53.589505+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+_________ test_valid_complete_absence_is_scoped_not_observed[options] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_valid_complete_absence_is1')
+empty = 'options'
+
+    @pytest.mark.parametrize('empty', ['index', 'options', 'missing_node'])
+    def test_valid_complete_absence_is_scoped_not_observed(tmp_path, empty):
+        svc = service(tmp_path); info = object_info(svc, [])
+        if empty == 'index': info = {}
+        if empty == 'missing_node': del info['SaveImage']
+>       configure_comfy(svc, info); row = workflow(scan(svc))
+                                          ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:75: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:53.618900+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+_______ test_valid_complete_absence_is_scoped_not_observed[missing_node] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_valid_complete_absence_is2')
+empty = 'missing_node'
+
+    @pytest.mark.parametrize('empty', ['index', 'options', 'missing_node'])
+    def test_valid_complete_absence_is_scoped_not_observed(tmp_path, empty):
+        svc = service(tmp_path); info = object_info(svc, [])
+        if empty == 'index': info = {}
+        if empty == 'missing_node': del info['SaveImage']
+>       configure_comfy(svc, info); row = workflow(scan(svc))
+                                          ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:75: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:53.648437+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+______ test_malformed_or_incomplete_evidence_never_reports_absence[None] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_malformed_or_incomplete_e0')
+bad = None
+
+    @pytest.mark.parametrize('bad', [None, [], 'private malformed payload',
+        {'CheckpointLoaderSimple': None}, {'CheckpointLoaderSimple': {'input': []}},
+        {'CheckpointLoaderSimple': {'input': {'required': []}}},
+        {'CheckpointLoaderSimple': {}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': 'STRING'}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': ['STRING']}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [[False]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['ok', None]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['x' * 257]]}}}},
+        {'Bad': {'input': []}}, {'': {}}, {'x' * 257: {}}])
+    def test_malformed_or_incomplete_evidence_never_reports_absence(tmp_path, bad):
+        svc = service(tmp_path); configure_comfy(svc, bad)
+>       row = workflow(scan(svc))
+              ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:53.675389+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+______ test_malformed_or_incomplete_evidence_never_reports_absence[bad1] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_malformed_or_incomplete_e1')
+bad = []
+
+    @pytest.mark.parametrize('bad', [None, [], 'private malformed payload',
+        {'CheckpointLoaderSimple': None}, {'CheckpointLoaderSimple': {'input': []}},
+        {'CheckpointLoaderSimple': {'input': {'required': []}}},
+        {'CheckpointLoaderSimple': {}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': 'STRING'}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': ['STRING']}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [[False]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['ok', None]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['x' * 257]]}}}},
+        {'Bad': {'input': []}}, {'': {}}, {'x' * 257: {}}])
+    def test_malformed_or_incomplete_evidence_never_reports_absence(tmp_path, bad):
+        svc = service(tmp_path); configure_comfy(svc, bad)
+>       row = workflow(scan(svc))
+              ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:53.703326+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+_ test_malformed_or_incomplete_evidence_never_reports_absence[private malformed payload] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_malformed_or_incomplete_e2')
+bad = 'private malformed payload'
+
+    @pytest.mark.parametrize('bad', [None, [], 'private malformed payload',
+        {'CheckpointLoaderSimple': None}, {'CheckpointLoaderSimple': {'input': []}},
+        {'CheckpointLoaderSimple': {'input': {'required': []}}},
+        {'CheckpointLoaderSimple': {}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': 'STRING'}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': ['STRING']}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [[False]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['ok', None]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['x' * 257]]}}}},
+        {'Bad': {'input': []}}, {'': {}}, {'x' * 257: {}}])
+    def test_malformed_or_incomplete_evidence_never_reports_absence(tmp_path, bad):
+        svc = service(tmp_path); configure_comfy(svc, bad)
+>       row = workflow(scan(svc))
+              ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:53.731116+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+______ test_malformed_or_incomplete_evidence_never_reports_absence[bad3] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_malformed_or_incomplete_e3')
+bad = {'CheckpointLoaderSimple': None}
+
+    @pytest.mark.parametrize('bad', [None, [], 'private malformed payload',
+        {'CheckpointLoaderSimple': None}, {'CheckpointLoaderSimple': {'input': []}},
+        {'CheckpointLoaderSimple': {'input': {'required': []}}},
+        {'CheckpointLoaderSimple': {}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': 'STRING'}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': ['STRING']}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [[False]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['ok', None]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['x' * 257]]}}}},
+        {'Bad': {'input': []}}, {'': {}}, {'x' * 257: {}}])
+    def test_malformed_or_incomplete_evidence_never_reports_absence(tmp_path, bad):
+        svc = service(tmp_path); configure_comfy(svc, bad)
+>       row = workflow(scan(svc))
+              ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:53.759167+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+______ test_malformed_or_incomplete_evidence_never_reports_absence[bad4] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_malformed_or_incomplete_e4')
+bad = {'CheckpointLoaderSimple': {'input': []}}
+
+    @pytest.mark.parametrize('bad', [None, [], 'private malformed payload',
+        {'CheckpointLoaderSimple': None}, {'CheckpointLoaderSimple': {'input': []}},
+        {'CheckpointLoaderSimple': {'input': {'required': []}}},
+        {'CheckpointLoaderSimple': {}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': 'STRING'}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': ['STRING']}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [[False]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['ok', None]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['x' * 257]]}}}},
+        {'Bad': {'input': []}}, {'': {}}, {'x' * 257: {}}])
+    def test_malformed_or_incomplete_evidence_never_reports_absence(tmp_path, bad):
+        svc = service(tmp_path); configure_comfy(svc, bad)
+>       row = workflow(scan(svc))
+              ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:53.787223+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+______ test_malformed_or_incomplete_evidence_never_reports_absence[bad5] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_malformed_or_incomplete_e5')
+bad = {'CheckpointLoaderSimple': {'input': {'required': []}}}
+
+    @pytest.mark.parametrize('bad', [None, [], 'private malformed payload',
+        {'CheckpointLoaderSimple': None}, {'CheckpointLoaderSimple': {'input': []}},
+        {'CheckpointLoaderSimple': {'input': {'required': []}}},
+        {'CheckpointLoaderSimple': {}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': 'STRING'}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': ['STRING']}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [[False]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['ok', None]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['x' * 257]]}}}},
+        {'Bad': {'input': []}}, {'': {}}, {'x' * 257: {}}])
+    def test_malformed_or_incomplete_evidence_never_reports_absence(tmp_path, bad):
+        svc = service(tmp_path); configure_comfy(svc, bad)
+>       row = workflow(scan(svc))
+              ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:53.818644+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+______ test_malformed_or_incomplete_evidence_never_reports_absence[bad6] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_malformed_or_incomplete_e6')
+bad = {'CheckpointLoaderSimple': {}}
+
+    @pytest.mark.parametrize('bad', [None, [], 'private malformed payload',
+        {'CheckpointLoaderSimple': None}, {'CheckpointLoaderSimple': {'input': []}},
+        {'CheckpointLoaderSimple': {'input': {'required': []}}},
+        {'CheckpointLoaderSimple': {}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': 'STRING'}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': ['STRING']}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [[False]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['ok', None]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['x' * 257]]}}}},
+        {'Bad': {'input': []}}, {'': {}}, {'x' * 257: {}}])
+    def test_malformed_or_incomplete_evidence_never_reports_absence(tmp_path, bad):
+        svc = service(tmp_path); configure_comfy(svc, bad)
+>       row = workflow(scan(svc))
+              ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:53.848500+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+______ test_malformed_or_incomplete_evidence_never_reports_absence[bad7] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_malformed_or_incomplete_e7')
+bad = {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': 'STRING'}}}}
+
+    @pytest.mark.parametrize('bad', [None, [], 'private malformed payload',
+        {'CheckpointLoaderSimple': None}, {'CheckpointLoaderSimple': {'input': []}},
+        {'CheckpointLoaderSimple': {'input': {'required': []}}},
+        {'CheckpointLoaderSimple': {}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': 'STRING'}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': ['STRING']}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [[False]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['ok', None]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['x' * 257]]}}}},
+        {'Bad': {'input': []}}, {'': {}}, {'x' * 257: {}}])
+    def test_malformed_or_incomplete_evidence_never_reports_absence(tmp_path, bad):
+        svc = service(tmp_path); configure_comfy(svc, bad)
+>       row = workflow(scan(svc))
+              ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:53.877931+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+______ test_malformed_or_incomplete_evidence_never_reports_absence[bad8] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_malformed_or_incomplete_e8')
+bad = {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': ['STRING']}}}}
+
+    @pytest.mark.parametrize('bad', [None, [], 'private malformed payload',
+        {'CheckpointLoaderSimple': None}, {'CheckpointLoaderSimple': {'input': []}},
+        {'CheckpointLoaderSimple': {'input': {'required': []}}},
+        {'CheckpointLoaderSimple': {}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': 'STRING'}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': ['STRING']}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [[False]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['ok', None]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['x' * 257]]}}}},
+        {'Bad': {'input': []}}, {'': {}}, {'x' * 257: {}}])
+    def test_malformed_or_incomplete_evidence_never_reports_absence(tmp_path, bad):
+        svc = service(tmp_path); configure_comfy(svc, bad)
+>       row = workflow(scan(svc))
+              ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:53.907634+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+______ test_malformed_or_incomplete_evidence_never_reports_absence[bad9] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_malformed_or_incomplete_e9')
+bad = {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [[False]]}}}}
+
+    @pytest.mark.parametrize('bad', [None, [], 'private malformed payload',
+        {'CheckpointLoaderSimple': None}, {'CheckpointLoaderSimple': {'input': []}},
+        {'CheckpointLoaderSimple': {'input': {'required': []}}},
+        {'CheckpointLoaderSimple': {}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': 'STRING'}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': ['STRING']}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [[False]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['ok', None]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['x' * 257]]}}}},
+        {'Bad': {'input': []}}, {'': {}}, {'x' * 257: {}}])
+    def test_malformed_or_incomplete_evidence_never_reports_absence(tmp_path, bad):
+        svc = service(tmp_path); configure_comfy(svc, bad)
+>       row = workflow(scan(svc))
+              ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:53.936057+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+______ test_malformed_or_incomplete_evidence_never_reports_absence[bad10] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_malformed_or_incomplete_e10')
+bad = {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['ok', None]]}}}}
+
+    @pytest.mark.parametrize('bad', [None, [], 'private malformed payload',
+        {'CheckpointLoaderSimple': None}, {'CheckpointLoaderSimple': {'input': []}},
+        {'CheckpointLoaderSimple': {'input': {'required': []}}},
+        {'CheckpointLoaderSimple': {}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': 'STRING'}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': ['STRING']}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [[False]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['ok', None]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['x' * 257]]}}}},
+        {'Bad': {'input': []}}, {'': {}}, {'x' * 257: {}}])
+    def test_malformed_or_incomplete_evidence_never_reports_absence(tmp_path, bad):
+        svc = service(tmp_path); configure_comfy(svc, bad)
+>       row = workflow(scan(svc))
+              ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [{'candidate_id': 'local-8cf2248d0b19ed3a0a979999', 'compatible': 'NOT_VERIFIED', 'declared_capabilitie...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:53.965069+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+______ test_malformed_or_incomplete_evidence_never_reports_absence[bad11] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_malformed_or_incomplete_e11')
+bad = {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx']]}}}}
+
+    @pytest.mark.parametrize('bad', [None, [], 'private malformed payload',
+        {'CheckpointLoaderSimple': None}, {'CheckpointLoaderSimple': {'input': []}},
+        {'CheckpointLoaderSimple': {'input': {'required': []}}},
+        {'CheckpointLoaderSimple': {}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': 'STRING'}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': ['STRING']}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [[False]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['ok', None]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['x' * 257]]}}}},
+        {'Bad': {'input': []}}, {'': {}}, {'x' * 257: {}}])
+    def test_malformed_or_incomplete_evidence_never_reports_absence(tmp_path, bad):
+        svc = service(tmp_path); configure_comfy(svc, bad)
+>       row = workflow(scan(svc))
+              ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:53.993612+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+______ test_malformed_or_incomplete_evidence_never_reports_absence[bad12] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_malformed_or_incomplete_e12')
+bad = {'Bad': {'input': []}}
+
+    @pytest.mark.parametrize('bad', [None, [], 'private malformed payload',
+        {'CheckpointLoaderSimple': None}, {'CheckpointLoaderSimple': {'input': []}},
+        {'CheckpointLoaderSimple': {'input': {'required': []}}},
+        {'CheckpointLoaderSimple': {}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': 'STRING'}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': ['STRING']}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [[False]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['ok', None]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['x' * 257]]}}}},
+        {'Bad': {'input': []}}, {'': {}}, {'x' * 257: {}}])
+    def test_malformed_or_incomplete_evidence_never_reports_absence(tmp_path, bad):
+        svc = service(tmp_path); configure_comfy(svc, bad)
+>       row = workflow(scan(svc))
+              ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:54.022481+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+______ test_malformed_or_incomplete_evidence_never_reports_absence[bad13] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_malformed_or_incomplete_e13')
+bad = {'': {}}
+
+    @pytest.mark.parametrize('bad', [None, [], 'private malformed payload',
+        {'CheckpointLoaderSimple': None}, {'CheckpointLoaderSimple': {'input': []}},
+        {'CheckpointLoaderSimple': {'input': {'required': []}}},
+        {'CheckpointLoaderSimple': {}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': 'STRING'}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': ['STRING']}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [[False]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['ok', None]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['x' * 257]]}}}},
+        {'Bad': {'input': []}}, {'': {}}, {'x' * 257: {}}])
+    def test_malformed_or_incomplete_evidence_never_reports_absence(tmp_path, bad):
+        svc = service(tmp_path); configure_comfy(svc, bad)
+>       row = workflow(scan(svc))
+              ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:54.052559+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+______ test_malformed_or_incomplete_evidence_never_reports_absence[bad14] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_malformed_or_incomplete_e14')
+bad = {'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx': {}}
+
+    @pytest.mark.parametrize('bad', [None, [], 'private malformed payload',
+        {'CheckpointLoaderSimple': None}, {'CheckpointLoaderSimple': {'input': []}},
+        {'CheckpointLoaderSimple': {'input': {'required': []}}},
+        {'CheckpointLoaderSimple': {}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': 'STRING'}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': ['STRING']}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [[False]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['ok', None]]}}}},
+        {'CheckpointLoaderSimple': {'input': {'required': {'ckpt_name': [['x' * 257]]}}}},
+        {'Bad': {'input': []}}, {'': {}}, {'x' * 257: {}}])
+    def test_malformed_or_incomplete_evidence_never_reports_absence(tmp_path, bad):
+        svc = service(tmp_path); configure_comfy(svc, bad)
+>       row = workflow(scan(svc))
+              ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:54.081042+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+_______ test_bounded_object_info_does_not_claim_negative_evidence[nodes] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_bounded_object_info_does_0')
+kind = 'nodes'
+
+    @pytest.mark.parametrize('kind', ['nodes', 'options', 'fields', 'groups'])
+    def test_bounded_object_info_does_not_claim_negative_evidence(tmp_path, kind):
+        svc = service(tmp_path); info = object_info(svc)
+        if kind == 'nodes': info.update({f'FixtureNode{i}': {} for i in range(4097)})
+        if kind == 'options': info['CheckpointLoaderSimple']['input']['required']['ckpt_name'] = [[f'sd{i}' for i in range(513)]]
+        if kind == 'fields': info['Other'] = {'input': {'required': {f'field{i}': ['STRING'] for i in range(129)}}}
+        if kind == 'groups': info['Other'] = {'input': {f'group{i}': {} for i in range(4)}}
+>       configure_comfy(svc, info); row = workflow(scan(svc))
+                                          ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [{'candidate_id': 'local-9b6a23f7a1a970f66f4bea91', 'compatible': 'NOT_VERIFIED', 'declared_capabilitie...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:54.122063+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+______ test_bounded_object_info_does_not_claim_negative_evidence[options] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_bounded_object_info_does_1')
+kind = 'options'
+
+    @pytest.mark.parametrize('kind', ['nodes', 'options', 'fields', 'groups'])
+    def test_bounded_object_info_does_not_claim_negative_evidence(tmp_path, kind):
+        svc = service(tmp_path); info = object_info(svc)
+        if kind == 'nodes': info.update({f'FixtureNode{i}': {} for i in range(4097)})
+        if kind == 'options': info['CheckpointLoaderSimple']['input']['required']['ckpt_name'] = [[f'sd{i}' for i in range(513)]]
+        if kind == 'fields': info['Other'] = {'input': {'required': {f'field{i}': ['STRING'] for i in range(129)}}}
+        if kind == 'groups': info['Other'] = {'input': {f'group{i}': {} for i in range(4)}}
+>       configure_comfy(svc, info); row = workflow(scan(svc))
+                                          ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [{'candidate_id': 'local-e02e199aa6080c8a5fdd8f27', 'compatible': 'NOT_VERIFIED', 'declared_capabilitie...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:54.175016+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+______ test_bounded_object_info_does_not_claim_negative_evidence[fields] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_bounded_object_info_does_2')
+kind = 'fields'
+
+    @pytest.mark.parametrize('kind', ['nodes', 'options', 'fields', 'groups'])
+    def test_bounded_object_info_does_not_claim_negative_evidence(tmp_path, kind):
+        svc = service(tmp_path); info = object_info(svc)
+        if kind == 'nodes': info.update({f'FixtureNode{i}': {} for i in range(4097)})
+        if kind == 'options': info['CheckpointLoaderSimple']['input']['required']['ckpt_name'] = [[f'sd{i}' for i in range(513)]]
+        if kind == 'fields': info['Other'] = {'input': {'required': {f'field{i}': ['STRING'] for i in range(129)}}}
+        if kind == 'groups': info['Other'] = {'input': {f'group{i}': {} for i in range(4)}}
+>       configure_comfy(svc, info); row = workflow(scan(svc))
+                                          ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [{'candidate_id': 'local-9b6a23f7a1a970f66f4bea91', 'compatible': 'NOT_VERIFIED', 'declared_capabilitie...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:54.217725+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+______ test_bounded_object_info_does_not_claim_negative_evidence[groups] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_bounded_object_info_does_3')
+kind = 'groups'
+
+    @pytest.mark.parametrize('kind', ['nodes', 'options', 'fields', 'groups'])
+    def test_bounded_object_info_does_not_claim_negative_evidence(tmp_path, kind):
+        svc = service(tmp_path); info = object_info(svc)
+        if kind == 'nodes': info.update({f'FixtureNode{i}': {} for i in range(4097)})
+        if kind == 'options': info['CheckpointLoaderSimple']['input']['required']['ckpt_name'] = [[f'sd{i}' for i in range(513)]]
+        if kind == 'fields': info['Other'] = {'input': {'required': {f'field{i}': ['STRING'] for i in range(129)}}}
+        if kind == 'groups': info['Other'] = {'input': {f'group{i}': {} for i in range(4)}}
+>       configure_comfy(svc, info); row = workflow(scan(svc))
+                                          ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [{'candidate_id': 'local-9b6a23f7a1a970f66f4bea91', 'compatible': 'NOT_VERIFIED', 'declared_capabilitie...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:54.245755+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+___________ test_unavailable_evidence_differs_from_valid_empty_index ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_unavailable_evidence_diff0')
+
+    def test_unavailable_evidence_differs_from_valid_empty_index(tmp_path):
+>       svc = service(tmp_path); row = workflow(scan(svc))
+                                       ^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:117: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [{'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'd...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:54.274381+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+_____ test_exact_loader_binding_excludes_other_nodes_fields_and_old_scans ______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_exact_loader_binding_excl0')
+
+    def test_exact_loader_binding_excludes_other_nodes_fields_and_old_scans(tmp_path):
+        svc = service(tmp_path); configure_comfy(svc, object_info(svc, ['sd-old']))
+>       first = scan(svc); old_id = workflow(first)['loader']['candidate_ids'][0]
+                                    ^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:125: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [{'candidate_id': 'local-c55b964c9a86150dac90077f', 'compatible': 'NOT_VERIFIED', 'declared_capabilitie...LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], 'finished_at': '2026-10-09T17:58:54.304515+00:00', ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+__ test_catalog_components_never_infer_installed_status_from_names_or_indexes __
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_catalog_components_never_0')
+
+    def test_catalog_components_never_infer_installed_status_from_names_or_indexes(tmp_path):
+        svc = service(tmp_path)
+        missing = svc.center.models['flux2-dev']
+        svc.center.models[missing.id] = replace(missing, components=(*missing.components, 'unknown-component'))
+        names = list(svc.center.components)
+        configure_comfy(svc, object_info(svc, names))
+        root = tmp_path / 'indexes'; root.mkdir()
+        (root / 'model_index.json').write_text(json.dumps({'_class_name': 'FluxPipeline',
+            **{name: ['library', 'Component'] for name in names}}))
+        svc.configure_roots(DiscoverySettingsInput(scan_roots=[str(root)], include_common_model_dirs=False))
+>       job = scan(svc); components = job['workflow_prerequisites']['components']
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:145: KeyError
+_ test_definition_drift_invalidates_existing_consent_without_starting_probe[adapter] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_definition_drift_invalida0')
+change = 'adapter'
+
+    @pytest.mark.parametrize('change', ['adapter', 'component', 'requirement'])
+    def test_definition_drift_invalidates_existing_consent_without_starting_probe(tmp_path, change):
+        svc = service(tmp_path)
+        preview = svc.preview_scan_scope(False, 'host', lambda: None)
+        if change == 'adapter': svc.workflow_adapters[0]['required_nodes'].append('AdditionalNode')
+        if change == 'component':
+            key = next(iter(svc.center.components)); svc.center.components[key] = replace(svc.center.components[key], architecture='CHANGED')
+        if change == 'requirement':
+            key = 'flux2-dev'; svc.center.models[key] = replace(svc.center.models[key], components=('new-requirement',))
+>       with pytest.raises(ValueError, match='LOCAL_AI_SCOPE_STALE'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_v2_discovery_prerequisites.py:167: Failed
+_ test_definition_drift_invalidates_existing_consent_without_starting_probe[component] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_definition_drift_invalida1')
+change = 'component'
+
+    @pytest.mark.parametrize('change', ['adapter', 'component', 'requirement'])
+    def test_definition_drift_invalidates_existing_consent_without_starting_probe(tmp_path, change):
+        svc = service(tmp_path)
+        preview = svc.preview_scan_scope(False, 'host', lambda: None)
+        if change == 'adapter': svc.workflow_adapters[0]['required_nodes'].append('AdditionalNode')
+        if change == 'component':
+            key = next(iter(svc.center.components)); svc.center.components[key] = replace(svc.center.components[key], architecture='CHANGED')
+        if change == 'requirement':
+            key = 'flux2-dev'; svc.center.models[key] = replace(svc.center.models[key], components=('new-requirement',))
+>       with pytest.raises(ValueError, match='LOCAL_AI_SCOPE_STALE'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_v2_discovery_prerequisites.py:167: Failed
+_ test_definition_drift_invalidates_existing_consent_without_starting_probe[requirement] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_definition_drift_invalida2')
+change = 'requirement'
+
+    @pytest.mark.parametrize('change', ['adapter', 'component', 'requirement'])
+    def test_definition_drift_invalidates_existing_consent_without_starting_probe(tmp_path, change):
+        svc = service(tmp_path)
+        preview = svc.preview_scan_scope(False, 'host', lambda: None)
+        if change == 'adapter': svc.workflow_adapters[0]['required_nodes'].append('AdditionalNode')
+        if change == 'component':
+            key = next(iter(svc.center.components)); svc.center.components[key] = replace(svc.center.components[key], architecture='CHANGED')
+        if change == 'requirement':
+            key = 'flux2-dev'; svc.center.models[key] = replace(svc.center.models[key], components=('new-requirement',))
+>       with pytest.raises(ValueError, match='LOCAL_AI_SCOPE_STALE'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_v2_discovery_prerequisites.py:167: Failed
+_________ test_running_cancelled_and_unstarted_workflows_stay_unknown __________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_running_cancelled_and_uns0')
+
+    def test_running_cancelled_and_unstarted_workflows_stay_unknown(tmp_path):
+        svc = service(tmp_path); entered, release = threading.Event(), threading.Event()
+        def hardware(): entered.set(); release.wait(2); return {'gpus': []}
+        svc.hardware_probe = hardware
+        job = svc.start_scan(); assert entered.wait(1)
+>       pending = workflow(svc.get_scan(job['id']))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:177: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [], 'environment_schema_version': 2, 'errors': [], 'finished_at': None, ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+____ test_projection_never_recomputes_from_live_catalog_and_returns_copies _____
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_projection_never_recomput0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f947b5cc1a0>
+
+    def test_projection_never_recomputes_from_live_catalog_and_returns_copies(tmp_path, monkeypatch):
+        svc = service(tmp_path); configure_comfy(svc, object_info(svc)); job = scan(svc)
+>       before = copy.deepcopy(job['workflow_prerequisites'])
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:189: KeyError
+_ test_duplicate_json_keys_are_rejected_by_original_probe_client[/object_info] _
+
+path = '/object_info'
+
+    @pytest.mark.parametrize('path', ['/object_info', '/api/tags', '/v1/models'])
+    def test_duplicate_json_keys_are_rejected_by_original_probe_client(path):
+        class Response(io.BytesIO):
+            status = 200
+        client = LocalProbeClient(); client.open = lambda *args, **kwargs: Response(b'{"node":{},"node":null}')
+>       with pytest.raises(ProbeFailure): client.json('http://127.0.0.1:8188', path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'app.model_center.discovery_probes.ProbeFailure'>
+
+tests/test_v2_discovery_prerequisites.py:215: Failed
+__ test_duplicate_json_keys_are_rejected_by_original_probe_client[/api/tags] ___
+
+path = '/api/tags'
+
+    @pytest.mark.parametrize('path', ['/object_info', '/api/tags', '/v1/models'])
+    def test_duplicate_json_keys_are_rejected_by_original_probe_client(path):
+        class Response(io.BytesIO):
+            status = 200
+        client = LocalProbeClient(); client.open = lambda *args, **kwargs: Response(b'{"node":{},"node":null}')
+>       with pytest.raises(ProbeFailure): client.json('http://127.0.0.1:8188', path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'app.model_center.discovery_probes.ProbeFailure'>
+
+tests/test_v2_discovery_prerequisites.py:215: Failed
+__ test_duplicate_json_keys_are_rejected_by_original_probe_client[/v1/models] __
+
+path = '/v1/models'
+
+    @pytest.mark.parametrize('path', ['/object_info', '/api/tags', '/v1/models'])
+    def test_duplicate_json_keys_are_rejected_by_original_probe_client(path):
+        class Response(io.BytesIO):
+            status = 200
+        client = LocalProbeClient(); client.open = lambda *args, **kwargs: Response(b'{"node":{},"node":null}')
+>       with pytest.raises(ProbeFailure): client.json('http://127.0.0.1:8188', path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'app.model_center.discovery_probes.ProbeFailure'>
+
+tests/test_v2_discovery_prerequisites.py:215: Failed
+_ test_mounted_projections_read_identical_same_scan_prerequisites_without_io[/api] _
+
+onboard = (<starlette.testclient.TestClient object at 0x7f947b344cb0>, <app.model_center.discovery.LocalDiscoveryService object at 0x7f947b3446e0>, <app.trusted_sessions.TrustedSessionResolver object at 0x7f947b344e60>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f947b344230>
+prefix = '/api'
+
+    @pytest.mark.parametrize('prefix', ['/api', '/api/v1'])
+    def test_mounted_projections_read_identical_same_scan_prerequisites_without_io(onboard, monkeypatch, prefix):
+        client, svc, _ = onboard
+        base = prefix + '/model-center/local-ai'
+        configure_comfy(svc, object_info(svc))
+        before = client.get(base + '/environment', headers=HEADERS)
+>       assert before.status_code == 200 and before.json()['workflow_prerequisites'] is None
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites_api.py:20: KeyError
+_ test_mounted_projections_read_identical_same_scan_prerequisites_without_io[/api/v1] _
+
+onboard = (<starlette.testclient.TestClient object at 0x7f9478f4d0a0>, <app.model_center.discovery.LocalDiscoveryService object at 0x7f947b2b0c80>, <app.trusted_sessions.TrustedSessionResolver object at 0x7f947b2b0da0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f947b2b3170>
+prefix = '/api/v1'
+
+    @pytest.mark.parametrize('prefix', ['/api', '/api/v1'])
+    def test_mounted_projections_read_identical_same_scan_prerequisites_without_io(onboard, monkeypatch, prefix):
+        client, svc, _ = onboard
+        base = prefix + '/model-center/local-ai'
+        configure_comfy(svc, object_info(svc))
+        before = client.get(base + '/environment', headers=HEADERS)
+>       assert before.status_code == 200 and before.json()['workflow_prerequisites'] is None
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites_api.py:20: KeyError
+_ test_revocation_denies_cached_prerequisites_even_after_feature_disabled[True-/api] _
+
+onboard = (<starlette.testclient.TestClient object at 0x7f94784943e0>, <app.model_center.discovery.LocalDiscoveryService object at 0x7f9478494830>, <app.trusted_sessions.TrustedSessionResolver object at 0x7f94784940e0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9478494110>
+prefix = '/api', enabled = True
+
+    @pytest.mark.parametrize('prefix', ['/api', '/api/v1'])
+    @pytest.mark.parametrize('enabled', [True, False])
+    def test_revocation_denies_cached_prerequisites_even_after_feature_disabled(onboard, monkeypatch, prefix, enabled):
+        client, svc, sessions = onboard
+        base = prefix + '/model-center/local-ai'
+        configure_comfy(svc, object_info(svc, ['synthetic-private-checkpoint']))
+        job = confirmed_scan(client, base)
+>       assert workflow(job)['loader']['candidate_ids']
+               ^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites_api.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [{'candidate_id': 'local-fe54f28ed222aa833fb6d7ce', 'compatible': 'NOT_VERIFIED', 'declared_capabilitie...', 'runtime_id': 'discovery-llama_cpp'}, {'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+_ test_revocation_denies_cached_prerequisites_even_after_feature_disabled[True-/api/v1] _
+
+onboard = (<starlette.testclient.TestClient object at 0x7f94782cf110>, <app.model_center.discovery.LocalDiscoveryService object at 0x7f94782ce7e0>, <app.trusted_sessions.TrustedSessionResolver object at 0x7f94782cc9e0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f94782cda30>
+prefix = '/api/v1', enabled = True
+
+    @pytest.mark.parametrize('prefix', ['/api', '/api/v1'])
+    @pytest.mark.parametrize('enabled', [True, False])
+    def test_revocation_denies_cached_prerequisites_even_after_feature_disabled(onboard, monkeypatch, prefix, enabled):
+        client, svc, sessions = onboard
+        base = prefix + '/model-center/local-ai'
+        configure_comfy(svc, object_info(svc, ['synthetic-private-checkpoint']))
+        job = confirmed_scan(client, base)
+>       assert workflow(job)['loader']['candidate_ids']
+               ^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites_api.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [{'candidate_id': 'local-fe54f28ed222aa833fb6d7ce', 'compatible': 'NOT_VERIFIED', 'declared_capabilitie...', 'runtime_id': 'discovery-llama_cpp'}, {'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+_ test_revocation_denies_cached_prerequisites_even_after_feature_disabled[False-/api] _
+
+onboard = (<starlette.testclient.TestClient object at 0x7f94788886b0>, <app.model_center.discovery.LocalDiscoveryService object at 0x7f947864ae10>, <app.trusted_sessions.TrustedSessionResolver object at 0x7f947893d3a0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9479efa930>
+prefix = '/api', enabled = False
+
+    @pytest.mark.parametrize('prefix', ['/api', '/api/v1'])
+    @pytest.mark.parametrize('enabled', [True, False])
+    def test_revocation_denies_cached_prerequisites_even_after_feature_disabled(onboard, monkeypatch, prefix, enabled):
+        client, svc, sessions = onboard
+        base = prefix + '/model-center/local-ai'
+        configure_comfy(svc, object_info(svc, ['synthetic-private-checkpoint']))
+        job = confirmed_scan(client, base)
+>       assert workflow(job)['loader']['candidate_ids']
+               ^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites_api.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [{'candidate_id': 'local-fe54f28ed222aa833fb6d7ce', 'compatible': 'NOT_VERIFIED', 'declared_capabilitie...', 'runtime_id': 'discovery-llama_cpp'}, {'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+_ test_revocation_denies_cached_prerequisites_even_after_feature_disabled[False-/api/v1] _
+
+onboard = (<starlette.testclient.TestClient object at 0x7f94782e8ad0>, <app.model_center.discovery.LocalDiscoveryService object at 0x7f94782ebf50>, <app.trusted_sessions.TrustedSessionResolver object at 0x7f94782eb4a0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f94782ea6c0>
+prefix = '/api/v1', enabled = False
+
+    @pytest.mark.parametrize('prefix', ['/api', '/api/v1'])
+    @pytest.mark.parametrize('enabled', [True, False])
+    def test_revocation_denies_cached_prerequisites_even_after_feature_disabled(onboard, monkeypatch, prefix, enabled):
+        client, svc, sessions = onboard
+        base = prefix + '/model-center/local-ai'
+        configure_comfy(svc, object_info(svc, ['synthetic-private-checkpoint']))
+        job = confirmed_scan(client, base)
+>       assert workflow(job)['loader']['candidate_ids']
+               ^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites_api.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+job = {'candidates': [{'candidate_id': 'local-fe54f28ed222aa833fb6d7ce', 'compatible': 'NOT_VERIFIED', 'declared_capabilitie...', 'runtime_id': 'discovery-llama_cpp'}, {'code': 'LOCAL_AI_PROBE_UNAVAILABLE', 'runtime_id': 'llama-cpp-local'}], ...}
+
+    def workflow(job):
+>       report = job['workflow_prerequisites']
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'workflow_prerequisites'
+
+tests/test_v2_discovery_prerequisites.py:43: KeyError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_discovery_prerequisites.py::test_same_scan_complete_nodes_and_loader_are_advertisements_not_readiness
+FAILED tests/test_v2_discovery_prerequisites.py::test_valid_complete_absence_is_scoped_not_observed[index]
+FAILED tests/test_v2_discovery_prerequisites.py::test_valid_complete_absence_is_scoped_not_observed[options]
+FAILED tests/test_v2_discovery_prerequisites.py::test_valid_complete_absence_is_scoped_not_observed[missing_node]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[None]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad1]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[private malformed payload]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad3]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad4]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad5]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad6]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad7]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad8]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad9]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad10]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad11]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad12]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad13]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad14]
+FAILED tests/test_v2_discovery_prerequisites.py::test_bounded_object_info_does_not_claim_negative_evidence[nodes]
+FAILED tests/test_v2_discovery_prerequisites.py::test_bounded_object_info_does_not_claim_negative_evidence[options]
+FAILED tests/test_v2_discovery_prerequisites.py::test_bounded_object_info_does_not_claim_negative_evidence[fields]
+FAILED tests/test_v2_discovery_prerequisites.py::test_bounded_object_info_does_not_claim_negative_evidence[groups]
+FAILED tests/test_v2_discovery_prerequisites.py::test_unavailable_evidence_differs_from_valid_empty_index
+FAILED tests/test_v2_discovery_prerequisites.py::test_exact_loader_binding_excludes_other_nodes_fields_and_old_scans
+FAILED tests/test_v2_discovery_prerequisites.py::test_catalog_components_never_infer_installed_status_from_names_or_indexes
+FAILED tests/test_v2_discovery_prerequisites.py::test_definition_drift_invalidates_existing_consent_without_starting_probe[adapter]
+FAILED tests/test_v2_discovery_prerequisites.py::test_definition_drift_invalidates_existing_consent_without_starting_probe[component]
+FAILED tests/test_v2_discovery_prerequisites.py::test_definition_drift_invalidates_existing_consent_without_starting_probe[requirement]
+FAILED tests/test_v2_discovery_prerequisites.py::test_running_cancelled_and_unstarted_workflows_stay_unknown
+FAILED tests/test_v2_discovery_prerequisites.py::test_projection_never_recomputes_from_live_catalog_and_returns_copies
+FAILED tests/test_v2_discovery_prerequisites.py::test_duplicate_json_keys_are_rejected_by_original_probe_client[/object_info]
+FAILED tests/test_v2_discovery_prerequisites.py::test_duplicate_json_keys_are_rejected_by_original_probe_client[/api/tags]
+FAILED tests/test_v2_discovery_prerequisites.py::test_duplicate_json_keys_are_rejected_by_original_probe_client[/v1/models]
+FAILED tests/test_v2_discovery_prerequisites_api.py::test_mounted_projections_read_identical_same_scan_prerequisites_without_io[/api]
+FAILED tests/test_v2_discovery_prerequisites_api.py::test_mounted_projections_read_identical_same_scan_prerequisites_without_io[/api/v1]
+FAILED tests/test_v2_discovery_prerequisites_api.py::test_revocation_denies_cached_prerequisites_even_after_feature_disabled[True-/api]
+FAILED tests/test_v2_discovery_prerequisites_api.py::test_revocation_denies_cached_prerequisites_even_after_feature_disabled[True-/api/v1]
+FAILED tests/test_v2_discovery_prerequisites_api.py::test_revocation_denies_cached_prerequisites_even_after_feature_disabled[False-/api]
+FAILED tests/test_v2_discovery_prerequisites_api.py::test_revocation_denies_cached_prerequisites_even_after_feature_disabled[False-/api/v1]
+40 failed, 6 passed, 1 warning in 10.44s

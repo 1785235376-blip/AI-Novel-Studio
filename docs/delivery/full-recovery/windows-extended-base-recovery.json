@@ -1,0 +1,18 @@
+{
+  "base_application": "D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\windows-base-final",
+  "files": 5087,
+  "actual_embedded_probe": {
+    "python": [
+      3,
+      12,
+      9
+    ],
+    "jsonschema": "4.26.0",
+    "pypdf": "6.19.0"
+  },
+  "original_wheels_preserved": 27,
+  "new_wheels": 6,
+  "all_wheel_records": 33,
+  "native_smoke": "NOT_RUN",
+  "system_runtime_modified": false
+}

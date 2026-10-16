@@ -1,0 +1,206 @@
+{
+  "$defs": {
+    "SharedModelDescriptor": {
+      "additionalProperties": false,
+      "properties": {
+        "availability": {
+          "default": "UNKNOWN",
+          "enum": [
+            "AVAILABLE",
+            "UNAVAILABLE",
+            "UNKNOWN"
+          ],
+          "title": "Availability",
+          "type": "string"
+        },
+        "compatibility": {
+          "default": [],
+          "items": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Compatibility",
+          "type": "array"
+        },
+        "context_window": {
+          "anyOf": [
+            {
+              "maximum": 100000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context Window"
+        },
+        "declared_capabilities": {
+          "default": [],
+          "items": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Declared Capabilities",
+          "type": "array"
+        },
+        "family": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Family",
+          "type": "string"
+        },
+        "last_validated": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Validated"
+        },
+        "local": {
+          "title": "Local",
+          "type": "boolean"
+        },
+        "modality": {
+          "items": {
+            "enum": [
+              "TEXT",
+              "IMAGE",
+              "AUDIO",
+              "VIDEO",
+              "EMBEDDING",
+              "MULTIMODAL"
+            ],
+            "type": "string"
+          },
+          "maxItems": 6,
+          "minItems": 1,
+          "title": "Modality",
+          "type": "array"
+        },
+        "model_hash_if_available": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Hash If Available"
+        },
+        "model_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Model Id",
+          "type": "string"
+        },
+        "model_version": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Version"
+        },
+        "runtime_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Runtime Id",
+          "type": "string"
+        },
+        "runtime_type": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Runtime Type",
+          "type": "string"
+        },
+        "verified_capabilities": {
+          "default": [],
+          "items": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Verified Capabilities",
+          "type": "array"
+        }
+      },
+      "required": [
+        "runtime_id",
+        "model_id",
+        "family",
+        "modality",
+        "runtime_type",
+        "local"
+      ],
+      "title": "SharedModelDescriptor",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.poemseed.dev/local-interop/v1/model-registry.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "models": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SharedModelDescriptor"
+      },
+      "maxItems": 256,
+      "title": "Models",
+      "type": "array"
+    },
+    "protocol_name": {
+      "const": "PoemSeed Local Interop",
+      "default": "PoemSeed Local Interop",
+      "title": "Protocol Name",
+      "type": "string"
+    },
+    "protocol_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Protocol Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "created_at",
+    "protocol_name",
+    "protocol_version"
+  ],
+  "title": "ModelRegistry",
+  "type": "object"
+}

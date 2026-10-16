@@ -1,0 +1,69 @@
+.........FF............................................................. [ 62%]
+............................................                             [100%]
+=================================== FAILURES ===================================
+_ test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[oversize-TIMEOUT_OR_OUTPUT_LIMIT-ffmpeg] _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-checks/stage-m1-ci-prerequisite-owned-profile/pytest/test_synthetic_missing_nonzero8')
+tool = 'ffmpeg', behavior = 'oversize', reason = 'TIMEOUT_OR_OUTPUT_LIMIT'
+
+    @pytest.mark.parametrize("tool", ["ffmpeg", "ffprobe"])
+    @pytest.mark.parametrize("behavior,reason", [
+        ("missing", "MISSING"), ("nonzero", "NONZERO_OR_INVALID_VERSION"),
+        ("invalid", "NONZERO_OR_INVALID_VERSION"), ("timeout", "TIMEOUT_OR_OUTPUT_LIMIT"),
+        ("oversize", "TIMEOUT_OR_OUTPUT_LIMIT"),
+    ])
+    def test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed(tmp_path, tool, behavior, reason):
+        for name in ("ffmpeg", "ffprobe"):
+            if name != tool or behavior != "missing":
+                executable(tmp_path, name, behavior if name == tool else "success")
+        before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+        started = time.monotonic()
+        result = probe(tmp_path)
+        elapsed = time.monotonic() - started
+        assert result.returncode == 1, result.stderr
+        receipt = json.loads(result.stdout)
+        assert receipt["status"] == "FAIL" and receipt["install_attempted"] is False
+        assert receipt["tools"][-1]["tool"] == tool
+        assert receipt["tools"][-1]["status"] == "FAIL"
+>       assert receipt["tools"][-1]["reason"] == reason
+E       AssertionError: assert 'NONZERO_OR_INVALID_VERSION' == 'TIMEOUT_OR_OUTPUT_LIMIT'
+E         
+E         - TIMEOUT_OR_OUTPUT_LIMIT
+E         + NONZERO_OR_INVALID_VERSION
+
+tests/test_v2_media_prerequisites.py:79: AssertionError
+_ test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[oversize-TIMEOUT_OR_OUTPUT_LIMIT-ffprobe] _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-checks/stage-m1-ci-prerequisite-owned-profile/pytest/test_synthetic_missing_nonzero9')
+tool = 'ffprobe', behavior = 'oversize', reason = 'TIMEOUT_OR_OUTPUT_LIMIT'
+
+    @pytest.mark.parametrize("tool", ["ffmpeg", "ffprobe"])
+    @pytest.mark.parametrize("behavior,reason", [
+        ("missing", "MISSING"), ("nonzero", "NONZERO_OR_INVALID_VERSION"),
+        ("invalid", "NONZERO_OR_INVALID_VERSION"), ("timeout", "TIMEOUT_OR_OUTPUT_LIMIT"),
+        ("oversize", "TIMEOUT_OR_OUTPUT_LIMIT"),
+    ])
+    def test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed(tmp_path, tool, behavior, reason):
+        for name in ("ffmpeg", "ffprobe"):
+            if name != tool or behavior != "missing":
+                executable(tmp_path, name, behavior if name == tool else "success")
+        before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+        started = time.monotonic()
+        result = probe(tmp_path)
+        elapsed = time.monotonic() - started
+        assert result.returncode == 1, result.stderr
+        receipt = json.loads(result.stdout)
+        assert receipt["status"] == "FAIL" and receipt["install_attempted"] is False
+        assert receipt["tools"][-1]["tool"] == tool
+        assert receipt["tools"][-1]["status"] == "FAIL"
+>       assert receipt["tools"][-1]["reason"] == reason
+E       AssertionError: assert 'NONZERO_OR_INVALID_VERSION' == 'TIMEOUT_OR_OUTPUT_LIMIT'
+E         
+E         - TIMEOUT_OR_OUTPUT_LIMIT
+E         + NONZERO_OR_INVALID_VERSION
+
+tests/test_v2_media_prerequisites.py:79: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_v2_media_prerequisites.py::test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[oversize-TIMEOUT_OR_OUTPUT_LIMIT-ffmpeg]
+FAILED tests/test_v2_media_prerequisites.py::test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed[oversize-TIMEOUT_OR_OUTPUT_LIMIT-ffprobe]
+2 failed, 114 passed in 16.22s

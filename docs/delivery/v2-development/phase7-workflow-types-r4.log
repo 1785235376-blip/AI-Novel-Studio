@@ -1,0 +1,16 @@
+src/production/productionWorkflowClient.test.ts(84,21): error TS2339: Property 'problem' does not exist on type 'ApiError | ProductionWorkflowIntent'.
+  Property 'problem' does not exist on type 'ProductionWorkflowIntent'.
+src/production/productionWorkflowClient.test.ts(85,21): error TS2339: Property 'problem' does not exist on type 'ApiError | ProductionWorkflowIntent'.
+  Property 'problem' does not exist on type 'ProductionWorkflowIntent'.
+src/production/productionWorkflowClient.test.ts(86,21): error TS2339: Property 'message' does not exist on type 'ApiError | ProductionWorkflowIntent'.
+  Property 'message' does not exist on type 'ProductionWorkflowIntent'.
+src/production/productionWorkflowClient.test.ts(87,21): error TS2339: Property 'message' does not exist on type 'ApiError | ProductionWorkflowIntent'.
+  Property 'message' does not exist on type 'ProductionWorkflowIntent'.
+src/production/productionWorkflowClient.test.ts(90,85): error TS2339: Property 'message' does not exist on type 'ApiError | ProductionWorkflowIntent'.
+  Property 'message' does not exist on type 'ProductionWorkflowIntent'.
+src/production/productionWorkflowClient.test.ts(92,85): error TS2339: Property 'message' does not exist on type 'ApiError | ProductionWorkflowIntent'.
+  Property 'message' does not exist on type 'ProductionWorkflowIntent'.
+src/production/productionWorkflowClient.test.ts(99,19): error TS2339: Property 'problem' does not exist on type 'ApiError | ProductionWorkflowProjection'.
+  Property 'problem' does not exist on type 'ProductionWorkflowProjection'.
+src/production/productionWorkflowClient.test.ts(102,21): error TS2339: Property 'problem' does not exist on type 'ApiError | ProductionWorkflowIntent'.
+  Property 'problem' does not exist on type 'ProductionWorkflowIntent'.

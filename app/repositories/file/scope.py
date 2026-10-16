@@ -3,6 +3,8 @@ from datetime import datetime,timezone
 from uuid import uuid4
 from pathlib import Path
 from threading import RLock
+from functools import wraps
+from contextlib import contextmanager
 from ...storage import atomic_write
 from .mutation_coordinator import workspace_mutation
 
@@ -11,29 +13,61 @@ _authorization_locks_guard=RLock()
 def authorization_file_lock(path):
  with _authorization_locks_guard:return _authorization_locks.setdefault(str(Path(path).resolve()),RLock())
 
+def scope_file_mutation(method):
+ @wraps(method)
+ def coordinated(self,*args,**kwargs):
+  with workspace_mutation(self.path.parent,"collaboration-scope"):
+   return method(self,*args,**kwargs)
+ return coordinated
+
+def authorization_file_mutation(method):
+ @wraps(method)
+ def coordinated(self,*args,**kwargs):
+  with self.mutation():return method(self,*args,**kwargs)
+ return coordinated
+
 class FileScopeRepository:
  def __init__(self,root:Path):self.path=Path(root)/"collaboration_scope.json"
  def _read(self):
   if not self.path.exists():return {"workspaces":[],"project_workspaces":[],"storylines":[],"branches":[]}
   return json.loads(self.path.read_text(encoding="utf-8"))
  def _write(self,data):atomic_write(self.path,json.dumps(data,ensure_ascii=False,sort_keys=True,indent=2))
+ @scope_file_mutation
  def create(self,kind,item):
   if kind=="branches":item={**item,"revision":int(item.get("revision",0))}
   data=self._read();old=next((x for x in data[kind] if x["id"]==item["id"]),None)
   if old:return old
   data[kind].append(item);data[kind].sort(key=lambda x:x["id"]);self._write(data);return item
+ @scope_file_mutation
  def get(self,kind,item_id):
   item=next((x for x in self._read()[kind] if x["id"]==item_id),None)
   if not item:raise KeyError(item_id)
   return item
+ @scope_file_mutation
  def list(self,kind,**filters):return [x for x in self._read()[kind] if all(x.get(k)==v for k,v in filters.items())]
+ @scope_file_mutation
  def link_project(self,project_id,workspace_id):
   data=self._read();old=next((x for x in data["project_workspaces"] if x["id"]==project_id),None)
   if old and old["workspace_id"]!=workspace_id:raise ValueError("project already belongs to another workspace")
   if not old:data["project_workspaces"].append({"id":project_id,"workspace_id":workspace_id});data["project_workspaces"].sort(key=lambda x:x["id"]);self._write(data)
   return {"id":project_id,"workspace_id":workspace_id}
+ @scope_file_mutation
  def project_workspace(self,project_id):
   return next((x["workspace_id"] for x in self._read()["project_workspaces"] if x["id"]==project_id),None)
+ @contextmanager
+ def project_authority_lease(self,project_id):
+  from ...file_project_lifecycle import project_operation
+  with project_operation(self.path.parent,project_id,require_exists=False):yield
+ def retire_project(self,project_id,workspace_id=None):
+  # Project IDs are globally unique. Retire every descendant, including a
+  # malformed old cross-workspace scope, without touching workspace records.
+  with workspace_mutation(self.path.parent,"collaboration-scope"):
+   data=self._read()
+   data["project_workspaces"]=[row for row in data["project_workspaces"] if row["id"]!=project_id]
+   for kind in ("storylines","branches"):
+    data[kind]=[row for row in data[kind] if row.get("project_id")!=project_id]
+   self._write(data)
+ @scope_file_mutation
  def compare_and_increment(self,scope,expected_revision,enforce=True):
   from ...collaboration import RevisionConflict
   data=self._read();branch=next((x for x in data["branches"] if x["id"]==scope.branch_id),None)
@@ -46,13 +80,13 @@ class FileScopeRepository:
   from .identity import FileIdentityRepository
   now=datetime.now(timezone.utc).isoformat();root=self.path.parent
   paths=(self.path,root/"identity.json",root/"authorization.json")
-  before={path:(path.read_bytes() if path.exists() else None) for path in paths}
   scope={"kind":"WORKSPACE","workspace_id":workspace_id,"project_id":None,"storyline_id":None,"branch_id":None}
   workspace={"id":workspace_id,"name":name,"created_at":now,"updated_at":now}
   membership={"id":f"membership:{workspace_id}:{actor_id}","user_id":actor_id,"workspace_id":workspace_id,"status":"ACTIVE","created_at":now,"updated_at":now,"metadata":None}
   role={"id":f"admin:{workspace_id}:{actor_id}","principal_id":actor_id,"role":"ADMIN","domain":"NOVEL","scope":scope,"created_by":actor_id,"created_at":now}
   audit={"id":str(uuid4()),"actor_id":actor_id,"action":"WORKSPACE_CREATED","target_type":"Workspace","target_id":workspace_id,"scope":scope,"timestamp":now,"metadata":{"name":name}}
-  with workspace_mutation(root,workspace_id):
+  with FileAuthorizationRepository(root).mutation(), workspace_mutation(root,workspace_id), workspace_mutation(root,"collaboration-scope"):
+   before={path:(path.read_bytes() if path.exists() else None) for path in paths}
    try:
     if any(x["id"]==workspace_id for x in self._read()["workspaces"]):raise FileExistsError(workspace_id)
     self.create("workspaces",workspace)
@@ -68,7 +102,7 @@ class FileScopeRepository:
   from .identity import FileIdentityRepository
   root=self.path.parent;identity=FileIdentityRepository(root);authorization=FileAuthorizationRepository(root)
   paths=(self.path,identity.path,authorization.path)
-  with workspace_mutation(root,f"initial-workspace:{actor_id}"):
+  with authorization.mutation(), workspace_mutation(root,f"initial-workspace:{actor_id}"), workspace_mutation(root,workspace_id), workspace_mutation(root,"collaboration-scope"):
    before={path:(path.read_bytes() if path.exists() else None) for path in paths}
    try:
     memberships=identity.list_memberships(user_id=actor_id)
@@ -96,10 +130,10 @@ class FileScopeRepository:
     raise
  def rename_workspace(self,workspace_id,name,actor_id):
   now=datetime.now(timezone.utc).isoformat();root=self.path.parent;auth_path=root/"authorization.json"
-  before={path:(path.read_bytes() if path.exists() else None) for path in (self.path,auth_path)}
   scope={"kind":"WORKSPACE","workspace_id":workspace_id,"project_id":None,"storyline_id":None,"branch_id":None}
   audit={"id":str(uuid4()),"actor_id":actor_id,"action":"WORKSPACE_RENAMED","target_type":"Workspace","target_id":workspace_id,"scope":scope,"timestamp":now,"metadata":{"name":name}}
-  with workspace_mutation(root,workspace_id):
+  with FileAuthorizationRepository(root).mutation(), workspace_mutation(root,workspace_id), workspace_mutation(root,"collaboration-scope"):
+   before={path:(path.read_bytes() if path.exists() else None) for path in (self.path,auth_path)}
    try:
     data=self._read();workspace=next((x for x in data["workspaces"] if x["id"]==workspace_id),None)
     if workspace is None:raise KeyError(workspace_id)
@@ -114,11 +148,15 @@ class FileScopeRepository:
 
 class FileAuthorizationRepository:
  def __init__(self,root:Path):self.path=Path(root)/"authorization.json";self.lock=authorization_file_lock(self.path)
+ @contextmanager
+ def mutation(self):
+  with self.lock,workspace_mutation(self.path.parent,"authorization-store"):yield
  def _read(self):
   if not self.path.exists():return {"role_assignments":[],"permission_assignments":[],"audit_events":[]}
   data=json.loads(self.path.read_text(encoding="utf-8"))
   return {key:list(data.get(key,[])) for key in ("role_assignments","permission_assignments","audit_events")}
  def _write(self,data):atomic_write(self.path,json.dumps(data,ensure_ascii=False,sort_keys=True,indent=2))
+ @authorization_file_mutation
  def _save(self,key,item):
   data=self._read();old=next((x for x in data[key] if x["id"]==item["id"]),None)
   if old:
@@ -129,6 +167,7 @@ class FileAuthorizationRepository:
   with self.lock:return self._save("role_assignments",item)
  def save_permission_assignment(self,item):
   with self.lock:return self._save("permission_assignments",item)
+ @authorization_file_mutation
  def _save_with_audit(self,key,item,audit):
   data=self._read();old=next((x for x in data[key] if x["id"]==item["id"]),None)
   if old and old!=item:raise ValueError(f"assignment id already exists: {item['id']}")
@@ -143,18 +182,25 @@ class FileAuthorizationRepository:
   with self.lock:return self._save_with_audit("permission_assignments",item,audit)
  def list_role_assignments(self,principal_id=None):return [x for x in self._read()["role_assignments"] if principal_id is None or x["principal_id"]==principal_id]
  def list_permission_assignments(self,principal_id=None):return [x for x in self._read()["permission_assignments"] if principal_id is None or x["principal_id"]==principal_id]
+ def retire_project(self,project_id,workspace_id=None):
+  with self.mutation():
+   data=self._read()
+   for key in ("role_assignments","permission_assignments"):
+    data[key]=[row for row in data[key] if row.get("scope",{}).get("project_id")!=project_id]
+   self._write(data)
  def _revoke_with_audit(self,key,assignment_id,audit,protect_last_admin=False):
   data=self._read();item=next((x for x in data[key] if x["id"]==assignment_id),None)
   if item is None:raise KeyError(assignment_id)
   workspace_id=item.get("scope",{}).get("workspace_id")
   if protect_last_admin and workspace_id:
    return self._revoke_with_workspace_lock(key, assignment_id, audit, workspace_id)
-  with self.lock:return self._revoke_unlocked(self._read(),key,assignment_id,audit,protect_last_admin)
+  with self.mutation():return self._revoke_unlocked(self._read(),key,assignment_id,audit,protect_last_admin)
 
  def _revoke_with_workspace_lock(self,key,assignment_id,audit,workspace_id):
-  with workspace_mutation(self.path.parent, workspace_id):
-   with self.lock:return self._revoke_unlocked(self._read(),key,assignment_id,audit,True)
+  with self.mutation(),workspace_mutation(self.path.parent, workspace_id):
+   return self._revoke_unlocked(self._read(),key,assignment_id,audit,True)
 
+ @authorization_file_mutation
  def _revoke_unlocked(self,data,key,assignment_id,audit,protect_last_admin):
    item=next((x for x in data[key] if x["id"]==assignment_id),None)
    if item is None:raise KeyError(assignment_id)

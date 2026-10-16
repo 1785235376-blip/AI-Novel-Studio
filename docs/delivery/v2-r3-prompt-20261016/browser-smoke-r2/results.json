@@ -1,0 +1,167 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.EXE",
+      "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "playwright.prompt-r3-live.config.ts",
+      "--project",
+      "prompt-r3-1366x768"
+    ],
+    "configFile": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\frontend\\playwright.prompt-r3-live.config.ts",
+    "rootDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-r3-prompt-20261016/browser-smoke-r2/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "prompt-r3-1366x768",
+        "name": "prompt-r3-1366x768",
+        "testDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "v2-prompt-r3-live.spec.ts"
+        ],
+        "timeout": 120000
+      },
+      {
+        "outputDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-r3-prompt-20261016/browser-smoke-r2/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "prompt-r3-1440x900",
+        "name": "prompt-r3-1440x900",
+        "testDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "v2-prompt-r3-live.spec.ts"
+        ],
+        "timeout": 120000
+      },
+      {
+        "outputDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-r3-prompt-20261016/browser-smoke-r2/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "prompt-r3-1920x1080",
+        "name": "prompt-r3-1920x1080",
+        "testDir": "D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "v2-prompt-r3-live.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\docs\\delivery\\v2-r3-prompt-20261016\\browser-smoke-r2\\results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\docs\\delivery\\v2-r3-prompt-20261016\\browser-smoke-r2\\junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "v2-prompt-r3-live.spec.ts",
+      "file": "v2-prompt-r3-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real Prompt authoring, immutable revision, browser HTTP tombstone, and closed production adoption",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "prompt-r3-1366x768",
+              "projectName": "prompt-r3-1366x768",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5278,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-16T15:54:08.124Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "redacted-real-browser-evidence",
+                      "contentType": "application/json",
+                      "body": "eyJwcm9kdWN0aW9uX2dhdGUiOmZhbHNlLCJwcm9kdWN0aW9uX2Fkb3B0aW9uX3N0YXR1cyI6NTAzLCJ1aV9hdXRob3JpbmciOnRydWUsImRlbGV0aW9uX3RyYW5zcG9ydCI6InJlYWwgYnJvd3NlciBIVFRQOyBubyBkZWxldGUgVUkgZXhpc3RzIiwicmVhbF9wZXJzaXN0ZW5jZSI6dHJ1ZSwicmVzcG9uc2VfbW9ja3MiOmZhbHNlLCJtb2RlbF9jYWxsc19yZXF1ZXN0ZWQiOmZhbHNlLCJnZW9tZXRyeSI6eyJ3aWR0aCI6MTM2Niwic2Nyb2xsV2lkdGgiOjEzNjYsImhlYWRlckhlaWdodCI6NTZ9LCJjYWxscyI6W3sibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9hcGkvbm92ZWxzIiwic3RhdHVzIjo0MDF9LHsibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9hcGkvdGV4dC1tb2RlbHMiLCJzdGF0dXMiOjQwMX0seyJtZXRob2QiOiJHRVQiLCJwYXRoIjoiL2FwaS9leHBlcmltZW50YWwvZmVhdHVyZXMiLCJzdGF0dXMiOjQwMX0seyJtZXRob2QiOiJHRVQiLCJwYXRoIjoiL2FwaS9leHBlcmltZW50YWwvZmVhdHVyZXMiLCJzdGF0dXMiOjQwMX0seyJtZXRob2QiOiJHRVQiLCJwYXRoIjoiL2FwaS9jb2xsYWJvcmF0aW9uL2FkbWluL3dvcmtzcGFjZXMiLCJzdGF0dXMiOjIwMH0seyJtZXRob2QiOiJHRVQiLCJwYXRoIjoiL2FwaS9jb2xsYWJvcmF0aW9uL2FkbWluL3dvcmtzcGFjZXMvd29ya3NwYWNlLWEvbmF2aWdhdGlvbiIsInN0YXR1cyI6MjAwfSx7Im1ldGhvZCI6IkdFVCIsInBhdGgiOiIvYXBpL2V4cGVyaW1lbnRhbC9mZWF0dXJlcyIsInN0YXR1cyI6MjAwfSx7Im1ldGhvZCI6IkdFVCIsInBhdGgiOiIvYXBpL25vdmVscy9kYzBhNTQ1Zi04OTYzLTQyZmMtYmI5ZC0xMWU3N2UwN2Q4MTAvd3JpdGluZy1nb2FsIiwic3RhdHVzIjo0MDl9LHsibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9hcGkvbm92ZWxzL2RjMGE1NDVmLTg5NjMtNDJmYy1iYjlkLTExZTc3ZTA3ZDgxMC9jaGFwdGVycy9hcmNoaXZlZCIsInN0YXR1cyI6NDA5fSx7Im1ldGhvZCI6IkdFVCIsInBhdGgiOiIvYXBpL2V4cGVyaW1lbnRhbC9mZWF0dXJlcyIsInN0YXR1cyI6MjAwfSx7Im1ldGhvZCI6IkdFVCIsInBhdGgiOiIvYXBpL25vdmVscy9kYzBhNTQ1Zi04OTYzLTQyZmMtYmI5ZC0xMWU3N2UwN2Q4MTAvbWVkaWEtdGFza3MiLCJzdGF0dXMiOjIwMH0seyJtZXRob2QiOiJHRVQiLCJwYXRoIjoiL2FwaS9jb2xsYWJvcmF0aW9uL3dvcmtzcGFjZXMvd29ya3NwYWNlLWEvcHJvamVjdHMvZGMwYTU0NWYtODk2My00MmZjLWJiOWQtMTFlNzdlMDdkODEwL3N0b3J5bGluZXMvOTk2ZDVlYjgtMjlhMi00MGQwLTliMTgtNjhkNjM2OTgzYmY0L2JyYW5jaGVzLzA4ZjIzOTRiLWZkYTYtNDgzMC04YTg1LTdmNTA3YzQ5ZTBiOC9jaGFwdGVycyIsInN0YXR1cyI6NDA0fSx7Im1ldGhvZCI6IkdFVCIsInBhdGgiOiIvYXBpL2NvbGxhYm9yYXRpb24vd29ya3NwYWNlcy93b3Jrc3BhY2UtYS9wcm9qZWN0cy9kYzBhNTQ1Zi04OTYzLTQyZmMtYmI5ZC0xMWU3N2UwN2Q4MTAvc3RvcnlsaW5lcy85OTZkNWViOC0yOWEyLTQwZDAtOWIxOC02OGQ2MzY5ODNiZjQvYnJhbmNoZXMvMDhmMjM5NGItZmRhNi00ODMwLThhODUtN2Y1MDdjNDllMGI4L2Jvb3RzdHJhcCIsInN0YXR1cyI6MjAwfSx7Im1ldGhvZCI6IkdFVCIsInBhdGgiOiIvYXBpL3Byb2plY3RzL2RjMGE1NDVmLTg5NjMtNDJmYy1iYjlkLTExZTc3ZTA3ZDgxMC9zdHVkaW8iLCJzdGF0dXMiOjIwMH0seyJtZXRob2QiOiJHRVQiLCJwYXRoIjoiL2FwaS9wcm9qZWN0cy9kYzBhNTQ1Zi04OTYzLTQyZmMtYmI5ZC0xMWU3N2UwN2Q4MTAvc3R1ZGlvIiwic3RhdHVzIjoyMDB9LHsibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9hcGkvcHJvamVjdHMvZGMwYTU0NWYtODk2My00MmZjLWJiOWQtMTFlNzdlMDdkODEwL3N0dWRpbyIsInN0YXR1cyI6MjAwfSx7Im1ldGhvZCI6IkdFVCIsInBhdGgiOiIvYXBpL3Byb2plY3RzL2RjMGE1NDVmLTg5NjMtNDJmYy1iYjlkLTExZTc3ZTA3ZDgxMC9zdHVkaW8vYXNzZXRzIiwic3RhdHVzIjoyMDB9LHsibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9hcGkvcHJvamVjdHMvZGMwYTU0NWYtODk2My00MmZjLWJiOWQtMTFlNzdlMDdkODEwL3N0dWRpby9hc3NldHMiLCJzdGF0dXMiOjIwMH0seyJtZXRob2QiOiJHRVQiLCJwYXRoIjoiL2FwaS9wcm9qZWN0cy9kYzBhNTQ1Zi04OTYzLTQyZmMtYmI5ZC0xMWU3N2UwN2Q4MTAvc3R1ZGlvL3Byb21wdHMiLCJzdGF0dXMiOjIwMH0seyJtZXRob2QiOiJQT1NUIiwicGF0aCI6Ii9hcGkvcHJvamVjdHMvZGMwYTU0NWYtODk2My00MmZjLWJiOWQtMTFlNzdlMDdkODEwL3N0dWRpby9wcm9tcHRzIiwic3RhdHVzIjoyMDF9LHsibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9hcGkvcHJvamVjdHMvZGMwYTU0NWYtODk2My00MmZjLWJiOWQtMTFlNzdlMDdkODEwL3N0dWRpby9wcm9tcHRzIiwic3RhdHVzIjoyMDB9LHsibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9hcGkvcHJvamVjdHMvZGMwYTU0NWYtODk2My00MmZjLWJiOWQtMTFlNzdlMDdkODEwL3N0dWRpby9wcm9tcHRzIiwic3RhdHVzIjoyMDB9LHsibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9hcGkvcHJvamVjdHMvZGMwYTU0NWYtODk2My00MmZjLWJiOWQtMTFlNzdlMDdkODEwL3N0dWRpby9wcm9tcHRzLzliZGZlZTZlLWU2MzMtNDMwNi04YWNjLTdmMTM1NjM4OWQzMiIsInN0YXR1cyI6MjAwfSx7Im1ldGhvZCI6IkdFVCIsInBhdGgiOiIvYXBpL3Byb2plY3RzL2RjMGE1NDVmLTg5NjMtNDJmYy1iYjlkLTExZTc3ZTA3ZDgxMC9zdHVkaW8vcHJvbXB0cy85YmRmZWU2ZS1lNjMzLTQzMDYtOGFjYy03ZjEzNTYzODlkMzIiLCJzdGF0dXMiOjIwMH0seyJtZXRob2QiOiJHRVQiLCJwYXRoIjoiL2FwaS9ub3ZlbHMiLCJzdGF0dXMiOjIwMH0seyJtZXRob2QiOiJQT1NUIiwicGF0aCI6Ii9hcGkvcHJvamVjdHMvZGMwYTU0NWYtODk2My00MmZjLWJiOWQtMTFlNzdlMDdkODEwL3N0dWRpby9wcm9tcHRzLzliZGZlZTZlLWU2MzMtNDMwNi04YWNjLTdmMTM1NjM4OWQzMi9yZXZpc2lvbnMiLCJzdGF0dXMiOjIwMX0seyJtZXRob2QiOiJHRVQiLCJwYXRoIjoiL2FwaS9wcm9qZWN0cy9kYzBhNTQ1Zi04OTYzLTQyZmMtYmI5ZC0xMWU3N2UwN2Q4MTAvc3R1ZGlvL3Byb21wdHMiLCJzdGF0dXMiOjIwMH0seyJtZXRob2QiOiJHRVQiLCJwYXRoIjoiL2FwaS9wcm9qZWN0cy9kYzBhNTQ1Zi04OTYzLTQyZmMtYmI5ZC0xMWU3N2UwN2Q4MTAvc3R1ZGlvL3Byb21wdHMvOWJkZmVlNmUtZTYzMy00MzA2LThhY2MtN2YxMzU2Mzg5ZDMyIiwic3RhdHVzIjoyMDB9LHsibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9hcGkvbm92ZWxzL2RjMGE1NDVmLTg5NjMtNDJmYy1iYjlkLTExZTc3ZTA3ZDgxMC93cml0aW5nLWdvYWwiLCJzdGF0dXMiOjQwOX0seyJtZXRob2QiOiJHRVQiLCJwYXRoIjoiL2FwaS9ub3ZlbHMvZGMwYTU0NWYtODk2My00MmZjLWJiOWQtMTFlNzdlMDdkODEwL2NoYXB0ZXJzL2FyY2hpdmVkIiwic3RhdHVzIjo0MDl9LHsibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9hcGkvcHJvamVjdHMvZGMwYTU0NWYtODk2My00MmZjLWJiOWQtMTFlNzdlMDdkODEwL3N0dWRpby9wcm9tcHRzLzliZGZlZTZlLWU2MzMtNDMwNi04YWNjLTdmMTM1NjM4OWQzMi9yZXZpc2lvbnMvNGZlNmIzNTktNDAwMS00MjIxLTkxNWYtNDU2Y2M3ZWZmOTI0L2JvZHkiLCJzdGF0dXMiOjIwMH0seyJtZXRob2QiOiJHRVQiLCJwYXRoIjoiL2FwaS9wcm9qZWN0cy9kYzBhNTQ1Zi04OTYzLTQyZmMtYmI5ZC0xMWU3N2UwN2Q4MTAvc3R1ZGlvL3Byb21wdHMvOWJkZmVlNmUtZTYzMy00MzA2LThhY2MtN2YxMzU2Mzg5ZDMyL3JldmlzaW9ucy84YTliOTRhMi0wMTJiLTQxNDktYmYxMi1hNDBmOTA2ZTFmYjUvYm9keSIsInN0YXR1cyI6MjAwfSx7Im1ldGhvZCI6IkdFVCIsInBhdGgiOiIvYXBpL2NvbGxhYm9yYXRpb24vd29ya3NwYWNlcy93b3Jrc3BhY2UtYS9wcm9qZWN0cy9kYzBhNTQ1Zi04OTYzLTQyZmMtYmI5ZC0xMWU3N2UwN2Q4MTAvc3RvcnlsaW5lcy85OTZkNWViOC0yOWEyLTQwZDAtOWIxOC02OGQ2MzY5ODNiZjQvYnJhbmNoZXMvMDhmMjM5NGItZmRhNi00ODMwLThhODUtN2Y1MDdjNDllMGI4L2NoYXB0ZXJzIiwic3RhdHVzIjo0MDR9LHsibWV0aG9kIjoiUE9TVCIsInBhdGgiOiIvYXBpL3Byb2plY3RzL2RjMGE1NDVmLTg5NjMtNDJmYy1iYjlkLTExZTc3ZTA3ZDgxMC9zdHVkaW8vZG9jdW1lbnRzLzI0NTEwMGJjLTM2ZGItNDM4Ni05ZDEzLTA5MTVlMzUwNmQ1MC9zaG90cy85MDA3MGNiMS0xOGY5LTQ1NmItODkyOS0yY2I3N2U4Y2VlYmQvcHJvbXB0LWFkb3B0aW9uIiwic3RhdHVzIjo1MDN9LHsibWV0aG9kIjoiREVMRVRFIiwicGF0aCI6Ii9hcGkvcHJvamVjdHMvZGMwYTU0NWYtODk2My00MmZjLWJiOWQtMTFlNzdlMDdkODEwL3N0dWRpby9hc3NldHMvOGE5Yjk0YTItMDEyYi00MTQ5LWJmMTItYTQwZjkwNmUxZmI1Iiwic3RhdHVzIjoyMDB9LHsibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9hcGkvcHJvamVjdHMvZGMwYTU0NWYtODk2My00MmZjLWJiOWQtMTFlNzdlMDdkODEwL3N0dWRpby9wcm9tcHRzIiwic3RhdHVzIjoyMDB9LHsibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9hcGkvcHJvamVjdHMvZGMwYTU0NWYtODk2My00MmZjLWJiOWQtMTFlNzdlMDdkODEwL3N0dWRpby9wcm9tcHRzLzliZGZlZTZlLWU2MzMtNDMwNi04YWNjLTdmMTM1NjM4OWQzMiIsInN0YXR1cyI6MjAwfV19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "eadcd37d8a379e3703ac-286d8feda47613dd98f3",
+          "file": "v2-prompt-r3-live.spec.ts",
+          "line": 7,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-16T15:54:07.531Z",
+    "duration": 6363.1810000000005,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

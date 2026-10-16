@@ -1,0 +1,48 @@
+FFFF                                                                     [100%]
+================================== FAILURES ===================================
+_ test_asset_held_session_read_progresses_while_binding_commit_waits[False-same] _
+tests\test_v2_authority_commit_leases.py:306: in test_asset_held_session_read_progresses_while_binding_commit_waits
+    result = _run_probe(tmp_path, "asset-read", token_relation, exception_exit)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_v2_authority_commit_leases.py:282: in _run_probe
+    assert process.returncode == 0, log.read_text(encoding="utf-8")
+E   AssertionError: {"deadlock": true, "asset_held": true, "binding_held": true, "token_relation": "same", "exception_exit": false, "outcomes": {}}
+E     
+E   assert 2 == 0
+E    +  where 2 = <Popen: returncode: 2 args: ['D:\\PoemSeed\\Cache\\Tests\\expansion-20261013...>.returncode
+_ test_asset_held_session_read_progresses_while_binding_commit_waits[False-different] _
+tests\test_v2_authority_commit_leases.py:306: in test_asset_held_session_read_progresses_while_binding_commit_waits
+    result = _run_probe(tmp_path, "asset-read", token_relation, exception_exit)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_v2_authority_commit_leases.py:282: in _run_probe
+    assert process.returncode == 0, log.read_text(encoding="utf-8")
+E   AssertionError: {"deadlock": true, "asset_held": true, "binding_held": true, "token_relation": "different", "exception_exit": false, "outcomes": {}}
+E     
+E   assert 2 == 0
+E    +  where 2 = <Popen: returncode: 2 args: ['D:\\PoemSeed\\Cache\\Tests\\expansion-20261013...>.returncode
+_ test_asset_held_session_read_progresses_while_binding_commit_waits[True-same] _
+tests\test_v2_authority_commit_leases.py:306: in test_asset_held_session_read_progresses_while_binding_commit_waits
+    result = _run_probe(tmp_path, "asset-read", token_relation, exception_exit)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_v2_authority_commit_leases.py:282: in _run_probe
+    assert process.returncode == 0, log.read_text(encoding="utf-8")
+E   AssertionError: {"deadlock": true, "asset_held": true, "binding_held": true, "token_relation": "same", "exception_exit": true, "outcomes": {}}
+E     
+E   assert 2 == 0
+E    +  where 2 = <Popen: returncode: 2 args: ['D:\\PoemSeed\\Cache\\Tests\\expansion-20261013...>.returncode
+_ test_asset_held_session_read_progresses_while_binding_commit_waits[True-different] _
+tests\test_v2_authority_commit_leases.py:306: in test_asset_held_session_read_progresses_while_binding_commit_waits
+    result = _run_probe(tmp_path, "asset-read", token_relation, exception_exit)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_v2_authority_commit_leases.py:282: in _run_probe
+    assert process.returncode == 0, log.read_text(encoding="utf-8")
+E   AssertionError: {"deadlock": true, "asset_held": true, "binding_held": true, "token_relation": "different", "exception_exit": true, "outcomes": {}}
+E     
+E   assert 2 == 0
+E    +  where 2 = <Popen: returncode: 2 args: ['D:\\PoemSeed\\Cache\\Tests\\expansion-20261013...>.returncode
+=========================== short test summary info ===========================
+FAILED tests/test_v2_authority_commit_leases.py::test_asset_held_session_read_progresses_while_binding_commit_waits[False-same]
+FAILED tests/test_v2_authority_commit_leases.py::test_asset_held_session_read_progresses_while_binding_commit_waits[False-different]
+FAILED tests/test_v2_authority_commit_leases.py::test_asset_held_session_read_progresses_while_binding_commit_waits[True-same]
+FAILED tests/test_v2_authority_commit_leases.py::test_asset_held_session_read_progresses_while_binding_commit_waits[True-different]
+4 failed, 7 deselected in 20.49s

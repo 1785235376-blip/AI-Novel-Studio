@@ -1,0 +1,94 @@
+............F.............................F.F........................... [ 87%]
+..........                                                               [100%]
+=================================== FAILURES ===================================
+_ test_late_mock_output_is_discarded_after_authority_or_deadline_change[file-timeout] _
+
+model_rig = namespace(nid='v2-independent-743cdeb0ad6148ec89c631da9eb4be6c', scope={'mode': 'local', 'novel_id': 'v2-independent-7...s=[<threading.Event at 0x7ff29159b5c0: set>], active=True, guard=<function configure.<locals>.guard at 0x7ff291616840>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7ff2915994c0>
+mutation = 'timeout'
+
+    @pytest.mark.parametrize("mutation", ["revoke", "flag", "cancel", "timeout", "replace_project"])
+    def test_late_mock_output_is_discarded_after_authority_or_deadline_change(model_rig, monkeypatch, mutation):
+        e = model_rig; entered, release = spy_transport(e, monkeypatch, blocked=True)
+        row = dispatch(e, preview(e, admit(e)))
+        job = e.manager.get(row["model_runtime"]["execution"]["job_id"])
+        try:
+            assert entered.wait(3)
+            if mutation == "revoke": e.active = False
+            elif mutation == "flag": monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS.replace("ai_execution_v2,", ""))
+            elif mutation == "cancel":
+                row = action(e, current(e, row), "cancel")
+                assert job.cancelled.is_set()
+            elif mutation == "timeout":
+                with e.graphs.store.transaction(e.nid, e.scope) as state:
+                    state["collections"][e.graphs.RUNS][row["id"]]["started_at"] = "2000-01-01T00:00:00+00:00"
+            else:
+                e.novels.delete(e.nid)
+                e.create_project("Recreated same public slug", e.nid)
+        finally: release.set()
+        wait_job(e, job)
+>       assert job.status in {"FAILED", "CANCELLED"}, job.public()
+E       AssertionError: {'actor_id': 'local-studio-author', 'base_chapter_digest': None, 'base_chapter_version': None, 'chapter_id': None, ...}
+E       assert 'COMPLETED' in {'CANCELLED', 'FAILED'}
+E        +  where 'COMPLETED' = Job(id='c2da3967-cc4b-4320-82c9-8f0731d06a16', operation='graph_text', novel_id='v2-independent-743cdeb0ad6148ec89c631...aee7dced18acbac5a5834af1f70', 'route_fingerprint': '48b82afb29fb66bb5557dd9b55d61350fba389c290c7e60109bffe398b425f11'}).status
+
+tests/test_v2_ai_execution_runtime.py:295: AssertionError
+_ test_late_host_revocation_masks_model_preview_and_private_errors[file-/api-True] _
+
+ai_client = namespace(client=<starlette.testclient.TestClient object at 0x7ff28a445040>, prefix='/api', base='/api/novels/r3-mount...st='m4-host-9edbf43c54854775a9e827c5e789efa8', headers={'X-Session-Token': 'm4-host-9edbf43c54854775a9e827c5e789efa8'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7ff289a4f860>
+private_error = True
+
+    @pytest.mark.parametrize("private_error", [False, True])
+    def test_late_host_revocation_masks_model_preview_and_private_errors(ai_client, monkeypatch, private_error):
+        e = ai_client
+        row, path = ready(e)
+        original = e.models.preview
+        def revoke(*args, **kwargs):
+            result = original(*args, **kwargs)
+            e.sessions.revoke(e.host)
+            if private_error: raise ValueError("private-m4-provider-error")
+            return result
+        monkeypatch.setattr(e.models, "preview", revoke)
+        response = e.client.post(path + "/model/preview", headers=e.headers, json={
+            "expected_version": row["version"], "route_id": e.route["route_id"], "allow_synthetic": True})
+>       assert response.status_code == 401
+E       assert 422 == 401
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_v2_ai_execution_api.py:127: AssertionError
+_ test_late_host_revocation_masks_model_preview_and_private_errors[file-/api/v1-True] _
+
+ai_client = namespace(client=<starlette.testclient.TestClient object at 0x7ff289ab60f0>, prefix='/api/v1', base='/api/v1/novels/r3...st='m4-host-d57d23c3f91f4cddbdeb8b6585214e96', headers={'X-Session-Token': 'm4-host-d57d23c3f91f4cddbdeb8b6585214e96'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7ff289ab4ef0>
+private_error = True
+
+    @pytest.mark.parametrize("private_error", [False, True])
+    def test_late_host_revocation_masks_model_preview_and_private_errors(ai_client, monkeypatch, private_error):
+        e = ai_client
+        row, path = ready(e)
+        original = e.models.preview
+        def revoke(*args, **kwargs):
+            result = original(*args, **kwargs)
+            e.sessions.revoke(e.host)
+            if private_error: raise ValueError("private-m4-provider-error")
+            return result
+        monkeypatch.setattr(e.models, "preview", revoke)
+        response = e.client.post(path + "/model/preview", headers=e.headers, json={
+            "expected_version": row["version"], "route_id": e.route["route_id"], "allow_synthetic": True})
+>       assert response.status_code == 401
+E       assert 422 == 401
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_v2_ai_execution_api.py:127: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_ai_execution_runtime.py::test_late_mock_output_is_discarded_after_authority_or_deadline_change[file-timeout]
+FAILED tests/test_v2_ai_execution_api.py::test_late_host_revocation_masks_model_preview_and_private_errors[file-/api-True]
+FAILED tests/test_v2_ai_execution_api.py::test_late_host_revocation_masks_model_preview_and_private_errors[file-/api/v1-True]
+3 failed, 79 passed, 62 deselected, 1 warning in 47.43s

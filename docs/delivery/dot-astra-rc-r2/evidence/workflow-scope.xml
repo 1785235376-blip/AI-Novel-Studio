@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="30" failures="0" errors="0" time="1.08">
+    <testsuite name="tests/uiContracts.test.ts" timestamp="2026-10-05T06:34:55.739Z" hostname="1c13474a30ae" tests="5" failures="0" errors="0" skipped="0" time="0.003246278">
+        <testcase classname="tests/uiContracts.test.ts" name="DS-v1.0 contracts &gt; defines every frozen layout token" time="0.001310942">
+        </testcase>
+        <testcase classname="tests/uiContracts.test.ts" name="DS-v1.0 contracts &gt; defines one accent family and semantic states" time="0.000257321">
+        </testcase>
+        <testcase classname="tests/uiContracts.test.ts" name="DS-v1.0 contracts &gt; builds the shell geometry from tokens" time="0.000409486">
+        </testcase>
+        <testcase classname="tests/uiContracts.test.ts" name="DS-v1.0 contracts &gt; keeps the Inspector recoverable across desktop and narrow shell layouts" time="0.000231824">
+        </testcase>
+        <testcase classname="tests/uiContracts.test.ts" name="DS-v1.0 contracts &gt; keeps the entry experience out of the legacy editor grid" time="0.000166376">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/novel/AgentQueuePanel.test.tsx" timestamp="2026-10-05T06:34:55.740Z" hostname="1c13474a30ae" tests="2" failures="0" errors="0" skipped="0" time="0.165388065">
+        <testcase classname="src/novel/AgentQueuePanel.test.tsx" name="publishes agent queue failures and focuses the matching task" time="0.136439035">
+        </testcase>
+        <testcase classname="src/novel/AgentQueuePanel.test.tsx" name="requires a selected model and offers no fake-success control" time="0.027779673">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/novel/WorkflowPanel.independent-audit.test.tsx" timestamp="2026-10-05T06:34:55.741Z" hostname="1c13474a30ae" tests="1" failures="0" errors="0" skipped="0" time="0.041704648">
+        <testcase classname="src/novel/WorkflowPanel.independent-audit.test.tsx" name="discard old-project workflow response after changing projects" time="0.040993304">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/novel/WorkflowPanel.test.tsx" timestamp="2026-10-05T06:34:55.741Z" hostname="1c13474a30ae" tests="2" failures="0" errors="0" skipped="0" time="0.206849157">
+        <testcase classname="src/novel/WorkflowPanel.test.tsx" name="publishes loaded workflow runs and focuses their real workspace" time="0.162412753">
+        </testcase>
+        <testcase classname="src/novel/WorkflowPanel.test.tsx" name="creates a bounded recipe and exposes reject beside real approval" time="0.04375858">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/novel/WorkflowScopeGuards.test.tsx" timestamp="2026-10-05T06:34:55.742Z" hostname="1c13474a30ae" tests="20" failures="0" errors="0" skipped="0" time="0.345773531">
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="workflow fences late list data after actor changes" time="0.05678394">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="workflow fences late list data after session changes" time="0.012148753">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="workflow fences late list data after workspaceId changes" time="0.008468382">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="workflow fences late list data after projectId changes" time="0.009131273">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="workflow fences late list data after storylineId changes" time="0.009043614">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="workflow fences late list data after branchId changes" time="0.007326731">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="agent queue fences late list data after actor changes" time="0.007496293">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="agent queue fences late list data after session changes" time="0.005582638">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="agent queue fences late list data after workspaceId changes" time="0.005942481">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="agent queue fences late list data after projectId changes" time="0.004465013">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="agent queue fences late list data after storylineId changes" time="0.003662154">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="agent queue fences late list data after branchId changes" time="0.004439826">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="workflow rejects out-of-order refresh results in the same scope" time="0.07144167">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="workflow rejects a prior selection&apos;s late runs in the same scope" time="0.03627795">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="workflow create resolve cannot refresh or modify a new scope" time="0.023307279">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="workflow create reject cannot refresh or modify a new scope" time="0.015602018">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="a completed old-workflow mutation never reloads the new selection" time="0.024307221">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="agent execute resolve cannot refresh or leak errors after branch switch" time="0.016068058">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="agent execute reject cannot refresh or leak errors after branch switch" time="0.014531112">
+        </testcase>
+        <testcase classname="src/novel/WorkflowScopeGuards.test.tsx" name="agent queue ignores older refresh errors and remains ready" time="0.008568881">
+        </testcase>
+    </testsuite>
+</testsuites>

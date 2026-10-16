@@ -1,0 +1,114 @@
+name: A43 baseline evidence
+on:
+  push:
+    branches: [fix/a43-document-chapter-identity, work/feature-completion-surface-freeze]
+  pull_request:
+    branches: [work/post-interop-r4-r5-ux-continuation, fix/a43-document-chapter-identity]
+permissions:
+  contents: read
+jobs:
+  baseline-red:
+    name: Exact ad1 baseline / real PostgreSQL 16 RED
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci-ephemeral-only
+          POSTGRES_DB: a43_baseline
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U ci -d a43_baseline"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      MOCK_PROVIDER: 'true'
+      ENABLE_CLOUD: 'false'
+      CREDENTIAL_VAULT_BACKEND: memory
+      PYTHONDONTWRITEBYTECODE: '1'
+      DATABASE_URL: postgresql://ci:ci-ephemeral-only@127.0.0.1:5432/a43_baseline
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          path: candidate
+          persist-credentials: false
+      - uses: actions/checkout@v4.2.2
+        with:
+          ref: ad1a90dced36208c63bfd65f5e1d918d4a4f7695
+          path: baseline
+          persist-credentials: false
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - name: Pin baseline source and isolated runtime
+        run: |
+          set -euo pipefail
+          test "$(git -C baseline rev-parse HEAD)" = ad1a90dced36208c63bfd65f5e1d918d4a4f7695
+          test "$(git -C baseline rev-parse HEAD^{tree})" = fd32163d45c0cbfb1cf2b54551214b99d282f6e1
+          mkdir -p receipts "$RUNNER_TEMP/a43-data"
+          echo "AUDIT_SOURCE_ROOT=$GITHUB_WORKSPACE/baseline" >> "$GITHUB_ENV"
+          echo "PROJECT_ROOT=$GITHUB_WORKSPACE/baseline" >> "$GITHUB_ENV"
+          echo "NOVEL_DATA_PATH=$RUNNER_TEMP/a43-data" >> "$GITHUB_ENV"
+          echo "A43_PG_OBSERVATION=$GITHUB_WORKSPACE/receipts/real-postgres.json" >> "$GITHUB_ENV"
+          { git -C baseline rev-parse HEAD HEAD^{tree}; python --version; } > receipts/source.txt
+          python -m pip install -c baseline/.github/ci/python-constraints.txt -e 'baseline[dev]'
+          python -m pip check
+          python -m pip freeze --exclude-editable > receipts/python-packages.txt
+      - name: Run original unmodified observation scripts
+        run: |
+          set -euo pipefail
+          for name in audit_a43_01_document audit_a43_02_identity audit_a43_03_pg_algorithm audit_a43_boundaries; do
+            python "candidate/scripts/a43_baseline/$name.py" > "receipts/$name.json"
+          done
+      - name: Initialize actual PostgreSQL from original migrations
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          import psycopg
+          with psycopg.connect(os.environ['DATABASE_URL'],autocommit=True) as c:
+              print(c.execute('SELECT version()').fetchone()[0])
+              for p in sorted(Path('baseline/database/migrations').glob('*.sql')):
+                  c.execute(p.read_text()); print('Applied',p.name)
+          PY
+      - name: Observe original repository on actual PostgreSQL
+        run: python candidate/scripts/a43_baseline/real_postgres_probe.py > receipts/real-postgres.log
+      - name: Preserve formal safety assertion RED
+        run: |
+          set +e
+          python -m pytest -q --tb=short candidate/scripts/a43_baseline/test_original_pg_safety.py --junitxml=receipts/baseline-safety.xml > receipts/baseline-safety.log 2>&1
+          code=$?
+          set -e
+          echo "$code" > receipts/baseline-safety-exit.txt
+          test "$code" = 1
+          python - <<'PY'
+          import json, xml.etree.ElementTree as ET
+          from pathlib import Path
+          r=json.loads(Path('receipts/real-postgres.json').read_text())
+          assert r['move_exception'] is None, r['move_exception']
+          assert r['same_id_and_version_now_different_document'] is True
+          cases=ET.parse('receipts/baseline-safety.xml').findall('.//testcase')
+          assert len(cases)==1 and cases[0].find('failure') is not None
+          assert cases[0].find('error') is None and cases[0].find('skipped') is None
+          assert 'A43-03' in cases[0].find('failure').get('message','')
+          PY
+      - name: Verify baseline remained unchanged
+        if: always()
+        run: |
+          git -C baseline diff --exit-code
+          test -z "$(git -C baseline status --porcelain --untracked-files=no)"
+          python - <<'PY'
+          import hashlib,json,os,subprocess
+          from pathlib import Path
+          files={str(p.relative_to('receipts')):{'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in Path('receipts').rglob('*') if p.is_file()}
+          r={'kind':'BASELINE_DEFECT_EVIDENCE_NOT_PRODUCT_PASS','baseline_sha':subprocess.check_output(['git','-C','baseline','rev-parse','HEAD'],text=True).strip(),'baseline_tree':subprocess.check_output(['git','-C','baseline','rev-parse','HEAD^{tree}'],text=True).strip(),'candidate_sha':subprocess.check_output(['git','-C','candidate','rev-parse','HEAD'],text=True).strip(),'candidate_tree':subprocess.check_output(['git','-C','candidate','rev-parse','HEAD^{tree}'],text=True).strip(),'run_id':os.environ['GITHUB_RUN_ID'],'run_attempt':os.environ['GITHUB_RUN_ATTEMPT'],'files':files}
+          Path('receipts/receipt.json').write_text(json.dumps(r,indent=2)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4.6.2
+        if: always()
+        with:
+          name: a43-baseline-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: receipts
+          if-no-files-found: error
+          retention-days: 14

@@ -1,0 +1,32 @@
+[
+  {
+    "original": "docs/delivery/v2-development/nav-intent-browser-file-final-r1.json",
+    "mirror": "runner-receipts/nav-intent-browser-file-final-r1.json",
+    "sha256": "e504833c0717bc64ced05bdfc39a86680619fefde2ac5dd6ca371e707a385cbb",
+    "byte_exact": true
+  },
+  {
+    "original": "docs/delivery/v2-development/nav-intent-browser-file-final-r1.log",
+    "mirror": "runner-receipts/nav-intent-browser-file-final-r1.log",
+    "sha256": "6c1fec4ad8c3a8b6fe9d78389564873c58436163fa9bbad309a5e90b51cf0315",
+    "byte_exact": true
+  },
+  {
+    "original": "docs/delivery/v2-development/nav-intent-browser-pg-final-r1.json",
+    "mirror": "runner-receipts/nav-intent-browser-pg-final-r1.json",
+    "sha256": "26e342081afaac9cde777b91bad38b8986af5870dad6c62752b4a8abd6647c26",
+    "byte_exact": true
+  },
+  {
+    "original": "docs/delivery/v2-development/nav-intent-browser-pg-final-r1.log",
+    "mirror": "runner-receipts/nav-intent-browser-pg-final-r1.log",
+    "sha256": "8170e573c44944da30cccde6a0d7263314228ec80dd332182a09b801446c6014",
+    "byte_exact": true
+  },
+  {
+    "original": "docs/delivery/v2-development/nav-intent-browser-pg-final-r1-postgres-runtime.json",
+    "mirror": "runner-receipts/nav-intent-browser-pg-final-r1-postgres-runtime.json",
+    "sha256": "105e97417500fa8b05af9eba83166bf688b384d79171ff54a178ce8066d30c65",
+    "byte_exact": true
+  }
+]

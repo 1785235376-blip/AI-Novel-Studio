@@ -1,0 +1,36 @@
+{
+  "scope": "Documentation inventory validation only; exact final product/test acceptance belongs to final owner receipts",
+  "source_inventory_head": "e73ab085407bcc63c4a7e380f685dba92f8b4cf5",
+  "checks": {
+    "exact_original_code_set": true,
+    "all_19_packages": true,
+    "required_fields": true,
+    "source_test_ui_evidence_paths_exist": true,
+    "real_provider_not_falsely_verified": true,
+    "current_planning_router_registered": true
+  },
+  "feature_count": 143,
+  "package_count": 19,
+  "independent_test_runs": [
+    {
+      "evidence": "readiness-focused.xml",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "overlap": "Runs overlap; do not add counts"
+    },
+    {
+      "evidence": "readiness-planning-focused.xml",
+      "tests": 47,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "overlap": "Runs overlap; do not add counts"
+    }
+  ],
+  "artifacts": {
+    "FEATURE_READINESS_MATRIX.json": "57bea478e9faed8fcd578b8f9cbb540245f63bac53cbc8c38b28ab041e495f47",
+    "FEATURE_READINESS_MATRIX.md": "387306c812f6ccd38bb640e9a5d7296053c8e5d648c51741e62974aee594bab2"
+  }
+}

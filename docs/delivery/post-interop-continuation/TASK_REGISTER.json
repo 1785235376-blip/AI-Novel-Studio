@@ -1,0 +1,1734 @@
+{
+  "phase": "ALL_WAVES_BOUNDED_CONTRACTS_RECONCILED_FINAL_HOSTED_GATES_PENDING",
+  "source": "User request of 2026-10-06, sections 1–37",
+  "waves": [
+    {
+      "wave": 0,
+      "feature_ids": [
+        "F00"
+      ],
+      "state": "BASELINE_AND_INVARIANTS_CONTRACT_VERIFIED",
+      "safe_cloud_closure": "Existing owner implementation and source-specific local File/API/React contracts; external/native/quality/unsupported boundaries remain explicit.",
+      "product_classification": "F00 INTEGRATED; all other original IDs PARTIAL",
+      "publication": "Per-wave publication is recorded in the current continuation report; exact final commits and remote status remain pending.",
+      "evidence": [
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ]
+    },
+    {
+      "wave": 1,
+      "feature_ids": [
+        "U01",
+        "U02",
+        "U03",
+        "U04",
+        "U05",
+        "U07",
+        "U08",
+        "U09",
+        "U10",
+        "U12",
+        "U13"
+      ],
+      "state": "IMPLEMENTED_BOUNDED_CONTRACTS_FINAL_HOSTED_PENDING",
+      "safe_cloud_closure": "Existing owner implementation and source-specific local File/API/React contracts; external/native/quality/unsupported boundaries remain explicit.",
+      "product_classification": "F00 INTEGRATED; all other original IDs PARTIAL",
+      "publication": "Per-wave publication is recorded in the current continuation report; exact final commits and remote status remain pending.",
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_1_UX.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_STAGED_VERIFICATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_SEARCH_REFINEMENT.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_REFINEMENT.json"
+      ]
+    },
+    {
+      "wave": 2,
+      "feature_ids": [
+        "A01",
+        "A02",
+        "A03",
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "state": "IMPLEMENTED_BOUNDED_CONTRACTS_FINAL_HOSTED_PENDING",
+      "safe_cloud_closure": "Existing owner implementation and source-specific local File/API/React contracts; external/native/quality/unsupported boundaries remain explicit.",
+      "product_classification": "F00 INTEGRATED; all other original IDs PARTIAL",
+      "publication": "Per-wave publication is recorded in the current continuation report; exact final commits and remote status remain pending.",
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ]
+    },
+    {
+      "wave": 3,
+      "feature_ids": [
+        "A06",
+        "A07",
+        "A10"
+      ],
+      "state": "IMPLEMENTED_BOUNDED_CONTRACTS_FINAL_HOSTED_PENDING",
+      "safe_cloud_closure": "Existing owner implementation and source-specific local File/API/React contracts; external/native/quality/unsupported boundaries remain explicit.",
+      "product_classification": "F00 INTEGRATED; all other original IDs PARTIAL",
+      "publication": "Per-wave publication is recorded in the current continuation report; exact final commits and remote status remain pending.",
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_3_MODELS_RESEARCH.json",
+        "docs/delivery/post-interop-continuation/WAVE_3_STAGED_VERIFICATION.json"
+      ]
+    },
+    {
+      "wave": 4,
+      "feature_ids": [
+        "A08",
+        "A09",
+        "A12",
+        "A13",
+        "B03",
+        "B04",
+        "U06",
+        "U11",
+        "U14",
+        "U16"
+      ],
+      "state": "IMPLEMENTED_BOUNDED_CONTRACTS_FINAL_HOSTED_PENDING",
+      "safe_cloud_closure": "Existing owner implementation and source-specific local File/API/React contracts; external/native/quality/unsupported boundaries remain explicit.",
+      "product_classification": "F00 INTEGRATED; all other original IDs PARTIAL",
+      "publication": "Per-wave publication is recorded in the current continuation report; exact final commits and remote status remain pending.",
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+        "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ]
+    },
+    {
+      "wave": 5,
+      "feature_ids": [
+        "B01",
+        "B02",
+        "B05",
+        "B06",
+        "B07",
+        "B08",
+        "B09",
+        "B10",
+        "U15"
+      ],
+      "state": "IMPLEMENTED_BOUNDED_CONTRACTS_FINAL_HOSTED_PENDING",
+      "safe_cloud_closure": "Existing owner implementation and source-specific local File/API/React contracts; external/native/quality/unsupported boundaries remain explicit.",
+      "product_classification": "F00 INTEGRATED; all other original IDs PARTIAL",
+      "publication": "Per-wave publication is recorded in the current continuation report; exact final commits and remote status remain pending.",
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_5_TEMPLATES_SDK_COMICS.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_EXTENDED.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ]
+    }
+  ],
+  "sections": {
+    "1-5": "F00: baseline, frozen historical evidence, new branch/current matrix and existing-owner depth",
+    "6": "Wave1 UX U01/U02/U03/U05/U07/U08/U09/U12",
+    "7": "Wave2 A01/A02/A03/A04/A05",
+    "8-11": "Wave3 A06/A07/A10; existing embeddings",
+    "12-17": "Wave4 A08/A09/A12/A13/B03/B04; Wave2 A11 semantic diff",
+    "18-26": "Wave5 B01/B02/B05/B06/B07/B08/B09; Shared Universe existing-world pinning",
+    "27-33": "Cross-cutting F00 flags/protocol/unique owners/migrations/tests/truth labels/UI handoff",
+    "34-37": "Wave commits, honest stopping boundaries and final deliverables"
+  },
+  "requirements": [
+    {
+      "section": "1",
+      "requirement": "Verify live GitHub baseline",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Live baseline inspection at the recorded 2026-10-06 checkpoint verified PR37–42 heads/branch relationships and the new stacked baseline. Later valid continuation commits and verified source recovery were retained.",
+      "implemented_safe_closure": "Live baseline inspection at the recorded 2026-10-06 checkpoint verified PR37–42 heads/branch relationships and the new stacked baseline. Later valid continuation commits and verified source recovery were retained.",
+      "remaining": "Final remote head and exact final CI readback remain recorded in the final integration receipt.",
+      "original_owners": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py",
+        ".github/ci/coverage_manifest.json.gz"
+      ],
+      "evidence": [
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "2",
+      "requirement": "Preserve frozen PR37–42 evidence and R1/R2/R3",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "INTEGRATED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Frozen branches/evidence, original Interop1.0 protocol and PR40 R1/R2/R3 semantics are preserved; current work is separate.",
+      "implemented_safe_closure": "Frozen branches/evidence, original Interop1.0 protocol and PR40 R1/R2/R3 semantics are preserved; current work is separate.",
+      "remaining": "The immutable pre-fix R123 reproduction remains a recorded FAILURE. Final corrected-source full security/SSE/terminal regressions are pending; historical independent audit remains BLOCKED.",
+      "original_owners": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py",
+        ".github/ci/coverage_manifest.json.gz"
+      ],
+      "evidence": [
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "3",
+      "requirement": "Create new stacked DraftPR and branch",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "INTEGRATED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "A separate work/post-interop-r4-r5-ux-continuation branch and stacked Draft PR43 were established from the verified PR42 baseline.",
+      "implemented_safe_closure": "A separate work/post-interop-r4-r5-ux-continuation branch and stacked Draft PR43 were established from the verified PR42 baseline.",
+      "remaining": "No merge, release, production deploy or historical Draft rewrite.",
+      "original_owners": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py",
+        ".github/ci/coverage_manifest.json.gz"
+      ],
+      "evidence": [
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "4",
+      "requirement": "Deepen existing owners and real closure",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "PARTIAL",
+      "current_verification": "PARTIAL_SCOPED_CONTRACTS_WITH_REMAINING_GATES",
+      "safe_closure": "Every current matrix row names original owners, actual deltas, source/permission/version/recovery/lifecycle contracts, UI/test evidence and remaining acceptance.",
+      "implemented_safe_closure": "Every current matrix row names original owners, actual deltas, source/permission/version/recovery/lifecycle contracts, UI/test evidence and remaining acceptance.",
+      "remaining": "No claim that every workflow is product-complete; synchronous metadata operations do not gain fabricated cancellation/jobs.",
+      "original_owners": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py",
+        ".github/ci/coverage_manifest.json.gz"
+      ],
+      "evidence": [
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "5",
+      "requirement": "Reconcile all39 PARTIAL in a new current matrix",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "The new current matrix reconciles all 40 IDs and preserves F00 INTEGRATED plus39 PARTIAL. Historical PR39 files remain unchanged.",
+      "implemented_safe_closure": "The new current matrix reconciles all 40 IDs and preserves F00 INTEGRATED plus39 PARTIAL. Historical PR39 files remain unchanged.",
+      "remaining": "Final complete hosted acceptance and real native/model/target quality are still pending.",
+      "original_owners": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py",
+        ".github/ci/coverage_manifest.json.gz"
+      ],
+      "evidence": [
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json",
+        "POST_INTEROP_FEATURE_MATRIX.md",
+        "POST_INTEROP_FEATURE_MATRIX.json"
+      ],
+      "test_sources": [],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "6.1",
+      "requirement": "Durable save states, draft/version/crash/restart recovery",
+      "feature_ids": [
+        "U02"
+      ],
+      "wave": 1,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Corrupt local drafts retain recoverable bytes and require an explicit export/recovery choice. Offline saves do not claim backend persistence; existing durable receipts, CAS conflict drafts and version restore remain authoritative.",
+      "implemented_safe_closure": "Corrupt local drafts retain recoverable bytes and require an explicit export/recovery choice. Offline saves do not claim backend persistence; existing durable receipts, CAS conflict drafts and version restore remain authoritative.",
+      "remaining": "Browser storage clearing, inaccessible storage, never-persisted keystrokes and real power-loss/native Windows acceptance remain outside the verified contract.",
+      "original_owners": [
+        "frontend/src/drafts.ts",
+        "frontend/src/App.tsx",
+        "frontend/src/ui/SaveControls.tsx",
+        "app/autosave/durable.py"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_1_UX.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "frontend/src/AppDraftRecovery.test.tsx",
+        "frontend/src/drafts.test.ts",
+        "tests/test_post_interop_workspace_ux.py"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "6.2",
+      "requirement": "Restore workspace, references, drafts, tasks and Review Inbox without model dispatch",
+      "feature_ids": [
+        "U01",
+        "U04",
+        "U07"
+      ],
+      "wave": 1,
+      "state": "PARTIAL",
+      "current_verification": "PARTIAL_SCOPED_CONTRACTS_WITH_REMAINING_GATES",
+      "safe_closure": "Resume retains current-authority project/chapter/location/reference/split/draft pointers and original unfinished task/Review Inbox IDs; restoration never dispatches a model.",
+      "implemented_safe_closure": "Resume retains current-authority project/chapter/location/reference/split/draft pointers and original unfinished task/Review Inbox IDs; restoration never dispatches a model.",
+      "remaining": "Missing/cleared browser storage requires explicit project selection; unavailable branch-manuscript sources fail closed. Exact reopen has focused contract verification; final browser acceptance is pending.",
+      "original_owners": [
+        "app/experimental/ux.py",
+        "frontend/src/store.ts",
+        "frontend/src/App.tsx",
+        "frontend/src/experimental/WorkspaceToolsPanel.tsx",
+        "app/experimental/writing_focus.py",
+        "frontend/src/experimental/WritingFocusPanel.tsx",
+        "frontend/src/Editor.tsx",
+        "app/experimental/author_task_projection.py",
+        "app/experimental/workspace_task_owners.py",
+        "frontend/src/experimental/ExperimentalWorkbench.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_1_UX.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_STAGED_VERIFICATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_TASK_REOPEN.json"
+      ],
+      "test_sources": [
+        "tests/test_r4_workspace_resume.py",
+        "tests/test_r4_workspace_resume_mounted.py",
+        "tests/test_post_interop_workspace_ux.py",
+        "tests/test_post_interop_creation_tasks.py",
+        "frontend/src/experimental/TaskOwnerNavigation.continuation.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE",
+      "model_task_exact_reopen": "CONTRACT_VERIFIED"
+    },
+    {
+      "section": "6.3",
+      "requirement": "Scoped global entity search and accurate Command Palette navigation",
+      "feature_ids": [
+        "U03"
+      ],
+      "wave": 1,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Search now spans original novel/chapter/volume/Scene/character-alias/location/organization/rule/timeline/foreshadowing/graph/asset/workflow/task/review records with current source receipts and exact owner navigation.",
+      "implemented_safe_closure": "Search now spans original novel/chapter/volume/Scene/character-alias/location/organization/rule/timeline/foreshadowing/graph/asset/workflow/task/review records with current source receipts and exact owner navigation.",
+      "remaining": "Literal search is not semantic retrieval. Result/cache/page limits and current permissions apply. Collaboration IDs cannot substitute for absent branch-manuscript storage; final browser journey pending.",
+      "original_owners": [
+        "app/experimental/ux.py",
+        "app/experimental/search_sources.py",
+        "frontend/src/experimental/WorkspaceSearch.tsx",
+        "frontend/src/App.tsx",
+        "frontend/src/ui/FeatureLauncher.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_1_SEARCH_REFINEMENT.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_structured_search.py",
+        "tests/test_post_interop_workspace_ux.py",
+        "frontend/src/experimental/StructuredSearchNavigation.test.tsx",
+        "frontend/tests/e2e/r4-structured-search.spec.ts"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "6.4",
+      "requirement": "Selection AI alternatives and version-CAS segmented acceptance",
+      "feature_ids": [
+        "U05",
+        "A11"
+      ],
+      "wave": 1,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Selection operations continue to use the exact saved range/version, reviewed candidate comparison and segmented original-CAS acceptance; stale candidates cannot overwrite new prose and paragraph locks remain enforced.",
+      "implemented_safe_closure": "Selection operations continue to use the exact saved range/version, reviewed candidate comparison and segmented original-CAS acceptance; stale candidates cannot overwrite new prose and paragraph locks remain enforced.",
+      "remaining": "Real output quality/native selection/IME acceptance NOT_RUN. Branch source adapters remain unavailable; no generic whole-manuscript adoption for feature-owned model jobs.",
+      "original_owners": [
+        "app/experimental/revision_intelligence.py",
+        "app/services/generation_service.py",
+        "frontend/src/Editor.tsx",
+        "frontend/src/novel/AiWritingPanel.tsx",
+        "app/experimental/revision_intelligence_model.py",
+        "app/experimental/revision_intelligence_api.py",
+        "frontend/src/experimental/RevisionIntelligencePanel.tsx",
+        "frontend/src/experimental/RevisionComparisonModelPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_r4_revision_intelligence.py",
+        "tests/test_post_interop_revision_compare.py",
+        "frontend/src/experimental/RevisionIntelligencePanel.test.tsx",
+        "tests/test_post_interop_revision_model.py",
+        "frontend/src/experimental/RevisionComparisonModelPanel.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "6.5",
+      "requirement": "Actual request context add/pin/exclude/preview and privacy/provider disclosure",
+      "feature_ids": [
+        "U08"
+      ],
+      "wave": 1,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Pointer-only Chapter/Canon/StoryGraph/Research add, pin, exclude and budget controls resolve original records into the actual request preview and repeat source/flag/privacy/authority checks at dispatch and persisted-result reads. Provider/model/cloud destination and clipping remain visible.",
+      "implemented_safe_closure": "Pointer-only Chapter/Canon/StoryGraph/Research add, pin, exclude and budget controls resolve original records into the actual request preview and repeat source/flag/privacy/authority checks at dispatch and persisted-result reads. Provider/model/cloud destination and clipping remain visible.",
+      "remaining": "Research is LOCAL_ONLY. Character-only author mode rejects author-only additions. Anonymous derived bundles use conservative whole-bundle exclusion; duplicated prose is not semantic DLP. Unsupported branch sources and cloud/budgeted variant groups remain unavailable.",
+      "original_owners": [
+        "app/author_context_sources.py",
+        "app/author_request.py",
+        "app/experimental/author_context_api.py",
+        "app/jobs.py",
+        "frontend/src/novel/AuthorSourceItems.tsx",
+        "frontend/src/novel/AuthorRequestPreviewPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_1_REFINEMENT.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_author_added_sources.py",
+        "frontend/src/novel/AuthorSourcePicker.test.tsx",
+        "frontend/tests/e2e/r4-author-added-sources.spec.ts"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "6.6",
+      "requirement": "All original task owners, honest stage/cost and explicit cancel/retry/resume/result/review",
+      "feature_ids": [
+        "U07",
+        "U12"
+      ],
+      "wave": 1,
+      "state": "PARTIAL",
+      "current_verification": "PARTIAL_SCOPED_CONTRACTS_WITH_REMAINING_GATES",
+      "safe_closure": "Original Generation/Import/Agent/Workflow/Image/Video/Audio/TTS/Export/analysis/review owners are projected into one task center with honest stages, errors, available cancellation, original IDs and owner-level retry/review navigation. Cost/progress remain unknown where the owner supplies no measurement.",
+      "implemented_safe_closure": "Original Generation/Import/Agent/Workflow/Image/Video/Audio/TTS/Export/analysis/review owners are projected into one task center with honest stages, errors, available cancellation, original IDs and owner-level retry/review navigation. Cost/progress remain unknown where the owner supplies no measurement.",
+      "remaining": "Retry/resume is never a generic replay. Exact style/revision model links are verified; simulator/Judge/translation/declarative exact subrecord reopen now has focused contract verification, with final browser acceptance pending. Synchronous operations are not fabricated background jobs.",
+      "original_owners": [
+        "app/experimental/ux.py",
+        "app/experimental/author_task_projection.py",
+        "app/experimental/workspace_task_owners.py",
+        "frontend/src/experimental/WorkspaceToolsPanel.tsx",
+        "frontend/src/experimental/ExperimentalWorkbench.tsx",
+        "app/experimental/ux_api.py",
+        "app/runtime_diagnostics.py",
+        "frontend/src/novel/RuntimeDiagnostics.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_1_UX.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_STAGED_VERIFICATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_TASK_REOPEN.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_workspace_ux.py",
+        "tests/test_post_interop_creation_tasks.py",
+        "frontend/src/experimental/TaskOwnerNavigation.continuation.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE",
+      "model_task_exact_reopen": "CONTRACT_VERIFIED"
+    },
+    {
+      "section": "6.7",
+      "requirement": "Local AI diagnostics, explicit lifecycle and no automatic install/upgrade",
+      "feature_ids": [
+        "U09"
+      ],
+      "wave": 1,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Existing Detect/Validate/Register/Enable/Launch owners expose readable runtime, endpoint, missing model/component/node/workflow, adapter, license and memory-risk diagnostics without guessing GPU figures or changing software automatically.",
+      "implemented_safe_closure": "Existing Detect/Validate/Register/Enable/Launch owners expose readable runtime, endpoint, missing model/component/node/workflow, adapter, license and memory-risk diagnostics without guessing GPU figures or changing software automatically.",
+      "remaining": "Actual hardware/runtime/model validation remains LOCAL_REQUIRED/NOT_RUN. No automatic ComfyUI/Torch/CUDA/driver upgrade or unknown-node installation; unsupported families retain ADAPTER_REQUIRED.",
+      "original_owners": [
+        "app/model_center/discovery.py",
+        "app/model_center/discovery_probes.py",
+        "app/experimental/local_ai_inspection.py",
+        "frontend/src/ui/LocalAiDiscovery.tsx",
+        "frontend/src/experimental/WorkflowInspectionPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_1_UX.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "frontend/src/ui/LocalAiDiscovery.test.tsx",
+        "tests/test_local_ai_discovery.py",
+        "tests/test_local_ai_discovery_egress.py"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "7.1",
+      "requirement": "Story Simulator uses world/mind/knowledge/Canon/timeline/constraints and returns proposals",
+      "feature_ids": [
+        "A01"
+      ],
+      "wave": 2,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Simulator uses current scene/mind/world/Canon/knowledge/constraints and retains per-step hypothetical state deltas, consequences, risks, version history and bounded alternate routes; generated results stay proposals.",
+      "implemented_safe_closure": "Simulator uses current scene/mind/world/Canon/knowledge/constraints and retains per-step hypothetical state deltas, consequences, risks, version history and bounded alternate routes; generated results stay proposals.",
+      "remaining": "Deterministic kernel outcomes are not factual future probabilities. Real local model/GPU/literary quality NOT_RUN; exact model-task reopening has focused contract verification; final browser acceptance is pending. No automatic manuscript or Canon write.",
+      "original_owners": [
+        "app/experimental/story_simulator.py",
+        "app/experimental/story_simulator_model.py",
+        "frontend/src/experimental/StorySimulatorPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_TASK_REOPEN.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_scene_mind.py",
+        "tests/test_post_interop_creation_mounted.py",
+        "tests/test_r4_story_simulator_model.py"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE",
+      "model_task_exact_reopen": "CONTRACT_VERIFIED"
+    },
+    {
+      "section": "7.2",
+      "requirement": "Separate character knowledge/beliefs/secrets/intent and chapter/scene states",
+      "feature_ids": [
+        "A05"
+      ],
+      "wave": 2,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Character context separates author/world facts, knowledge, belief/false belief, secrets, goals, fears, values, emotion, intent and relationship state at Chapter/Scene time; forget tombstones prevent stale knowledge from reappearing.",
+      "implemented_safe_closure": "Character context separates author/world facts, knowledge, belief/false belief, secrets, goals, fears, values, emotion, intent and relationship state at Chapter/Scene time; forget tombstones prevent stale knowledge from reappearing.",
+      "remaining": "Only the supported original character-author operations are available; unrestricted character-selection rewriting and real literary/POV quality are not verified. Author-only research/graph additions cannot enter character-only mode.",
+      "original_owners": [
+        "app/experimental/story_graph.py",
+        "app/experimental/character_author_context.py",
+        "app/experimental/author_context_api.py",
+        "frontend/src/experimental/StoryGraphPanel.tsx",
+        "frontend/src/novel/AiWritingPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_scene_mind.py",
+        "tests/test_r4_character_author_context.py",
+        "frontend/src/novel/CharacterAuthorPanel.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "7.3",
+      "requirement": "Typed temporal Story Graph entities/relations",
+      "feature_ids": [
+        "A04"
+      ],
+      "wave": 2,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Original typed graph adds OBJECT and requested knows/believes/belongs_to/hates/trusts/related_to/appears_in relations with explicit temporal Scene identity, original order/ancestor/source fences and transaction reauthorization.",
+      "implemented_safe_closure": "Original typed graph adds OBJECT and requested knows/believes/belongs_to/hates/trusts/related_to/appears_in relations with explicit temporal Scene identity, original order/ancestor/source fences and transaction reauthorization.",
+      "remaining": "Reviewed deterministic relations are not universal semantic inference. Uncertain/future/cross-parent scene states are excluded; absent branch manuscript authority remains unavailable.",
+      "original_owners": [
+        "app/experimental/world.py",
+        "app/experimental/story_graph.py",
+        "app/experimental/story_graph_api.py",
+        "frontend/src/experimental/StoryGraphPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_scene_mind.py",
+        "tests/test_post_interop_creation_mounted.py",
+        "tests/test_post_interop_creation_upgrade.py"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "7.4",
+      "requirement": "Style deterministic metrics separated from model opinion",
+      "feature_ids": [
+        "A02"
+      ],
+      "wave": 2,
+      "state": "PARTIAL",
+      "current_verification": "PARTIAL_SCOPED_CONTRACTS_WITH_REMAINING_GATES",
+      "safe_closure": "Style Profile measures source-local sentence/paragraph length, quoted dialogue share, lexical repetition/high-frequency units, punctuation and lexical POV cues; separately reviewed model opinions use exact selected source ranges and original jobs.",
+      "implemented_safe_closure": "Style Profile measures source-local sentence/paragraph length, quoted dialogue share, lexical repetition/high-frequency units, punctuation and lexical POV cues; separately reviewed model opinions use exact selected source ranges and original jobs.",
+      "remaining": "Description/sensory semantic ratios and narrative distance/tone/rhythm/humor/imagery are not calibrated deterministic facts. Lexical POV cues are not full POV classification; actual model judgments/quality NOT_RUN.",
+      "original_owners": [
+        "app/experimental/style_analysis.py",
+        "app/experimental/style_analysis_model.py",
+        "frontend/src/experimental/StyleAnalysisPanel.tsx",
+        "frontend/src/experimental/StyleAnalysisModelPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_style_judge.py",
+        "tests/test_post_interop_style_model.py",
+        "frontend/src/experimental/StyleAnalysisModelPanel.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "7.5",
+      "requirement": "Evidence-based Judge, intentional dedup and explicit revision tasks",
+      "feature_ids": [
+        "A03"
+      ],
+      "wave": 2,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Evidence-bound Judge findings support accept/ignore/intentional review, unchanged-evidence intentional dedup and reopen, plus real original WriterRoom revision-task creation with retained exact review target.",
+      "implemented_safe_closure": "Evidence-bound Judge findings support accept/ignore/intentional review, unchanged-evidence intentional dedup and reopen, plus real original WriterRoom revision-task creation with retained exact review target.",
+      "remaining": "Model-derived advice remains separately labelled; model independence and literary quality are NOT_RUN. Task-center exact model-opinion reopening has focused contract verification; domain approval never automatically applies prose/Canon.",
+      "original_owners": [
+        "app/experimental/narrative_judge.py",
+        "app/experimental/narrative_judge_model.py",
+        "app/experimental/writer_room.py",
+        "frontend/src/experimental/NarrativeJudgePanel.tsx",
+        "frontend/src/experimental/NarrativeJudgeRevisionTaskPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_TASK_REOPEN.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_style_judge_mounted.py",
+        "tests/test_post_interop_style_model.py",
+        "frontend/src/experimental/NarrativeJudgeContinuationPanels.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE",
+      "model_task_exact_reopen": "CONTRACT_VERIFIED"
+    },
+    {
+      "section": "8",
+      "requirement": "Model Broker policies with explicit cloud fallback, privacy/license/context/cost/admission",
+      "feature_ids": [
+        "A06"
+      ],
+      "wave": 3,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Original Broker supports Local/Quality/Cost/Speed/Privacy/Balanced/Custom policy aliases with explicit fallback preapproval, license/privacy/context/availability constraints, current route identities and original budget/admission fences.",
+      "implemented_safe_closure": "Original Broker supports Local/Quality/Cost/Speed/Privacy/Balanced/Custom policy aliases with explicit fallback preapproval, license/privacy/context/availability constraints, current route identities and original budget/admission fences.",
+      "remaining": "Unknown quality is not ranked as measured quality; unknown cost/hardware stays unknown. Local-only feature coordinators do not become paid-cloud execution merely because broker candidate policy exists. Real billing/model performance NOT_RUN.",
+      "original_owners": [
+        "app/experimental/model_broker.py",
+        "app/experimental/model_broker_api.py",
+        "app/experimental/provider_profiles.py",
+        "app/model_center/service.py",
+        "frontend/src/experimental/ModelBrokerPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_3_MODELS_RESEARCH.json",
+        "docs/delivery/post-interop-continuation/WAVE_3_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_wave3_broker.py",
+        "tests/test_r4_broker_cancel_dispatch.py",
+        "frontend/src/experimental/ModelBrokerPanel.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "9",
+      "requirement": "Model capability and benchmark evidence tiers",
+      "feature_ids": [
+        "A07"
+      ],
+      "wave": 3,
+      "state": "PARTIAL",
+      "current_verification": "PARTIAL_SCOPED_CONTRACTS_WITH_REMAINING_GATES",
+      "safe_closure": "Model profiles separate catalog claims, detection, contract tests, local benchmark observations and explicit version/output-bound human review, retaining original runtime/model identities.",
+      "implemented_safe_closure": "Model profiles separate catalog claims, detection, contract tests, local benchmark observations and explicit version/output-bound human review, retaining original runtime/model identities.",
+      "remaining": "Human review never manufactures quality scores, throughput, VRAM, memory or failure-rate measurements. Real GPU/quality benchmarks and unsupported video workflow admission remain NOT_RUN/adapter-bound.",
+      "original_owners": [
+        "app/experimental/model_benchmark.py",
+        "app/experimental/model_benchmark_api.py",
+        "app/model_center/discovery.py",
+        "frontend/src/experimental/ModelBenchmarkPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_3_MODELS_RESEARCH.json",
+        "docs/delivery/post-interop-continuation/WAVE_3_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_wave3_broker.py",
+        "frontend/src/experimental/ModelBenchmarkPanel.continuation.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "10",
+      "requirement": "Research Library CRUD/import/citations/source/version/time/digest separate from Canon",
+      "feature_ids": [
+        "A10"
+      ],
+      "wave": 3,
+      "state": "PARTIAL",
+      "current_verification": "PARTIAL_SCOPED_CONTRACTS_WITH_REMAINING_GATES",
+      "safe_closure": "Research has local source/citation/version/digest/import-time metadata, bounded file/web capture, replacement/history/export/PRIVATE restore and note repair through the original library.",
+      "implemented_safe_closure": "Research has local source/citation/version/digest/import-time metadata, bounded file/web capture, replacement/history/export/PRIVATE restore and note repair through the original library.",
+      "remaining": "Research remains LOCAL_ONLY and never automatically becomes Canon or character context. OCR/vision/image embedding are NOT_CONFIGURED; no keyword-as-vector fallback. Actual Ollama inference/semantic quality and broad public-web compatibility NOT_RUN; loopback transport tests use synthetic vectors.",
+      "original_owners": [
+        "app/experimental/research_library.py",
+        "app/experimental/research_extract.py",
+        "app/experimental/embeddings.py",
+        "app/experimental/research_library_api.py",
+        "frontend/src/experimental/ResearchLibraryPanel.tsx",
+        "frontend/src/experimental/EmbeddingPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_3_MODELS_RESEARCH.json",
+        "docs/delivery/post-interop-continuation/WAVE_3_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_wave3_research.py",
+        "tests/test_post_interop_wave3_embedding_adapter.py",
+        "tests/test_post_interop_embedding_feature_isolation.py",
+        "frontend/src/experimental/EmbeddingPanel.continuation.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "11",
+      "requirement": "Actual embedding adapter/vector CRUD/query/invalidate/rebuild, absent NOT_CONFIGURED",
+      "feature_ids": [
+        "A10",
+        "A09",
+        "A04"
+      ],
+      "wave": 3,
+      "state": "PARTIAL",
+      "current_verification": "PARTIAL_SCOPED_CONTRACTS_WITH_REMAINING_GATES",
+      "safe_closure": "The existing Embeddings owner implements provider/index/vector/source/model identity, versioned rebuild/query/invalidate/delete/cancel and original Model Center Ollama registration. Actual local HTTP transport is tested against synthetic vectors.",
+      "implemented_safe_closure": "The existing Embeddings owner implements provider/index/vector/source/model identity, versioned rebuild/query/invalidate/delete/cancel and original Model Center Ollama registration. Actual local HTTP transport is tested against synthetic vectors.",
+      "remaining": "Missing providers stay NOT_CONFIGURED; image/vector semantic quality and actual Ollama/GPU inference NOT_RUN. Disabling Research does not hide independent indexes, and privacy/source revocation fences late results. No lexical substitute.",
+      "original_owners": [
+        "app/experimental/research_library.py",
+        "app/experimental/research_extract.py",
+        "app/experimental/embeddings.py",
+        "app/experimental/research_library_api.py",
+        "frontend/src/experimental/ResearchLibraryPanel.tsx",
+        "frontend/src/experimental/EmbeddingPanel.tsx",
+        "app/experimental/model_broker.py",
+        "app/experimental/model_broker_api.py",
+        "app/experimental/provider_profiles.py",
+        "app/model_center/service.py",
+        "frontend/src/experimental/ModelBrokerPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_3_MODELS_RESEARCH.json",
+        "docs/delivery/post-interop-continuation/WAVE_3_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_wave3_research.py",
+        "tests/test_post_interop_wave3_embedding_adapter.py",
+        "tests/test_post_interop_embedding_feature_isolation.py",
+        "frontend/src/experimental/EmbeddingPanel.continuation.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE",
+      "supporting_feature_ids": [
+        "A06",
+        "A07"
+      ]
+    },
+    {
+      "section": "12",
+      "requirement": "Director camera grammar, continuity and proposal review",
+      "feature_ids": [
+        "A08"
+      ],
+      "wave": 4,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Existing Scene→Shot→Storyboard/Motion/Video proposals gain optional shot function/focus intent and transparent same-scene rhythm/repeated-framing/declared-direction review suggestions.",
+      "implemented_safe_closure": "Existing Scene→Shot→Storyboard/Motion/Video proposals gain optional shot function/focus intent and transparent same-scene rhythm/repeated-framing/declared-direction review suggestions.",
+      "remaining": "Grammar checks use declared metadata, not visual proof of cinematic quality or the 180-degree rule. Manual review remains required; real generated motion/video/model quality NOT_RUN.",
+      "original_owners": [
+        "app/experimental/director.py",
+        "app/services/screenplay_service.py",
+        "frontend/src/experimental/DirectorPanel.tsx",
+        "frontend/src/novel/DirectorShotCard.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+        "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_media_continuation.py",
+        "tests/test_r4_director.py",
+        "frontend/src/experimental/DirectorPanel.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "13",
+      "requirement": "Cover/storyboard brief-generation-compare-approve-asset workflow",
+      "feature_ids": [
+        "A08",
+        "A09",
+        "U06"
+      ],
+      "wave": 4,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Original Cover/Storyboard workflows gain source pickers, typography-aware briefs/revisions, source-version comparison, cancel/late-result fences and selective fresh requests. Known missing-character errors mark both briefs and generated candidates stale without hiding unrelated work.",
+      "implemented_safe_closure": "Original Cover/Storyboard workflows gain source pickers, typography-aware briefs/revisions, source-version comparison, cancel/late-result fences and selective fresh requests. Known missing-character errors mark both briefs and generated candidates stale without hiding unrelated work.",
+      "remaining": "Original queues and reviewed asset promotion remain authoritative. Registered adapter contracts and synthetic PNGs are not real Cover/Storyboard art quality; external paid/model/GPU acceptance NOT_RUN.",
+      "original_owners": [
+        "app/experimental/director.py",
+        "app/services/screenplay_service.py",
+        "frontend/src/experimental/DirectorPanel.tsx",
+        "frontend/src/novel/DirectorShotCard.tsx",
+        "app/services/asset_library_service.py",
+        "app/experimental/production_lineage.py",
+        "app/experimental/media.py",
+        "frontend/src/experimental/ProductionLineagePanel.tsx",
+        "app/experimental/media_api.py",
+        "app/experimental/change_impact.py",
+        "frontend/src/experimental/MediaPanel.tsx",
+        "frontend/src/experimental/ChangeImpactPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+        "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_media_continuation.py",
+        "tests/test_r4_director.py",
+        "frontend/src/experimental/DirectorPanel.test.tsx",
+        "tests/test_r4_production_lineage.py",
+        "tests/test_post_interop_wave5_templates_sdk_comics.py",
+        "tests/test_post_interop_media_visibility.py",
+        "frontend/src/experimental/MediaPanel.continuation.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "14",
+      "requirement": "Original asset lineage and transformation provenance",
+      "feature_ids": [
+        "A09"
+      ],
+      "wave": 4,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Original Asset Library/DAG projects observed provider/model/adapter/workflow/seed/time/prompt digest and Scene/Shot/input/parent evidence. Approved comic appearance references reuse those assets and source digests.",
+      "implemented_safe_closure": "Original Asset Library/DAG projects observed provider/model/adapter/workflow/seed/time/prompt digest and Scene/Shot/input/parent evidence. Approved comic appearance references reuse those assets and source digests.",
+      "remaining": "Only actually recorded dependency edges/hashes/licenses are known; missing historical provenance and legal judgments are not invented. Real visual embedding/provider quality remains separate.",
+      "original_owners": [
+        "app/services/asset_library_service.py",
+        "app/experimental/production_lineage.py",
+        "app/experimental/media.py",
+        "frontend/src/experimental/ProductionLineagePanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+        "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_media_continuation.py",
+        "tests/test_r4_production_lineage.py",
+        "tests/test_post_interop_wave5_templates_sdk_comics.py"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "15",
+      "requirement": "Production manifest and independent reproducibility assurance labels",
+      "feature_ids": [
+        "A13"
+      ],
+      "wave": 4,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Production manifest separates Traceable, current Replayable preflight, unassessed approximate reproduction, synthetic-only deterministic fixtures and actual byte-comparison evidence; original execution/review owns replay.",
+      "implemented_safe_closure": "Production manifest separates Traceable, current Replayable preflight, unassessed approximate reproduction, synthetic-only deterministic fixtures and actual byte-comparison evidence; original execution/review owns replay.",
+      "remaining": "Missing model hashes/environment/usage remain unknown; a seed never guarantees GPU byte identity. Cloud replay coordinator, real model reproducibility and hardware acceptance remain unimplemented/unverified.",
+      "original_owners": [
+        "app/experimental/production_lineage.py",
+        "app/experimental/media.py",
+        "frontend/src/experimental/ProductionLineagePanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+        "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_media_continuation.py",
+        "tests/test_r4_production_mounted.py"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "16",
+      "requirement": "Original Version A/B semantic change evidence with model-derived labels",
+      "feature_ids": [
+        "A11"
+      ],
+      "wave": 2,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Version A/B comparison binds original ChapterService history and separates deterministic text/source evidence, imported semantic declarations and executed Model-derived interpretations. Existing partial selection acceptance, locks and original CAS remain unchanged.",
+      "implemented_safe_closure": "Version A/B comparison binds original ChapterService history and separates deterministic text/source evidence, imported semantic declarations and executed Model-derived interpretations. Existing partial selection acceptance, locks and original CAS remain unchanged.",
+      "remaining": "Semantic interpretations are evidence-backed opinions, not automatic factual proof or edits. No branch-manuscript fallback. Real model quality NOT_RUN; original local partial-write authority only.",
+      "original_owners": [
+        "app/experimental/revision_intelligence.py",
+        "app/experimental/revision_intelligence_model.py",
+        "app/experimental/revision_intelligence_api.py",
+        "frontend/src/experimental/RevisionIntelligencePanel.tsx",
+        "frontend/src/experimental/RevisionComparisonModelPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_revision_compare.py",
+        "tests/test_post_interop_revision_model.py",
+        "tests/test_r4_revision_intelligence.py",
+        "frontend/src/experimental/RevisionComparisonModelPanel.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "17",
+      "requirement": "Voice mapping/attribution/segments/mixer with unknown speakers and no fake alignment",
+      "feature_ids": [
+        "B03",
+        "B04"
+      ],
+      "wave": 4,
+      "state": "PARTIAL",
+      "current_verification": "PARTIAL_SCOPED_CONTRACTS_WITH_REMAINING_GATES",
+      "safe_closure": "Original voice mapping, dialogue attribution, emotion/style and audio/TTS queues retain human review; unknown speakers are NEEDS_REVIEW. Measured WAV frames, pauses/order and bounded PCM mixing produce source-versioned segment timing. Original manual/measured subtitle cue editing and SRT/WebVTT export retain version/overlap/order checks; upstream frame evidence is shown, stale timing views and misleading partial endpoints are suppressed.",
+      "implemented_safe_closure": "Original voice mapping, dialogue attribution, emotion/style and audio/TTS queues retain human review; unknown speakers are NEEDS_REVIEW. Measured WAV frames, pauses/order and bounded PCM mixing produce source-versioned segment timing. Original manual/measured subtitle cue editing and SRT/WebVTT export retain version/overlap/order checks; upstream frame evidence is shown, stale timing views and misleading partial endpoints are suppressed.",
+      "remaining": "Measured fixture audio is not real voice quality. ASR/forced word/phoneme alignment, precise lip sync and reference-voice consent/execution remain NOT_CONFIGURED/NOT_RUN. Synchronous bounded mix is not a fabricated durable task. No ASR/word alignment model means exact speech-word timestamps are not claimed. Burn-in, subtitle applications and professional typography remain unimplemented/unverified.",
+      "original_owners": [
+        "app/experimental/audiobook.py",
+        "app/experimental/voice_direction.py",
+        "app/audio_production_store.py",
+        "frontend/src/experimental/AudiobookPanel.tsx",
+        "frontend/src/experimental/VoiceDirectionPanel.tsx",
+        "app/experimental/subtitle_timeline.py",
+        "frontend/src/experimental/SubtitleTimelinePanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+        "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_media_continuation.py",
+        "tests/test_r5_voice_subtitles.py",
+        "frontend/src/experimental/VoiceDirectionPanel.continuation.test.tsx",
+        "tests/test_r5_voice_subtitles_mounted.py",
+        "frontend/src/experimental/VoiceSubtitlePanels.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "18",
+      "requirement": "Translation memory, locked terms and source-linked language editions",
+      "feature_ids": [
+        "B05"
+      ],
+      "wave": 5,
+      "state": "PARTIAL",
+      "current_verification": "PARTIAL_SCOPED_CONTRACTS_WITH_REMAINING_GATES",
+      "safe_closure": "Independent source-linked editions add accepted exact Translation Memory, place/world terms, explicit preferred-term locks and current-source historical restore. Reuse always creates a draft. Locked Anna correctly tolerates nested Ann while standalone/mixed aliases remain rejected.",
+      "implemented_safe_closure": "Independent source-linked editions add accepted exact Translation Memory, place/world terms, explicit preferred-term locks and current-source historical restore. Reuse always creates a draft. Locked Anna correctly tolerates nested Ann while standalone/mixed aliases remain rejected.",
+      "remaining": "Literal missing/term checks are not semantic translation-quality/omission proof. No automatic retranslation or silent replay. Real language/RTL/font acceptance NOT_RUN; exact translation-job reopening has focused contract verification; final browser acceptance is pending.",
+      "original_owners": [
+        "app/experimental/multilingual_editions.py",
+        "app/experimental/multilingual_translation.py",
+        "frontend/src/experimental/MultilingualEditionsPanel.tsx",
+        "frontend/src/experimental/TranslationMemoryPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_5_EXTENDED.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_TASK_REOPEN.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_translation_memory.py",
+        "tests/test_post_interop_extended_mounted.py",
+        "tests/test_r5_multilingual_translation.py",
+        "frontend/src/experimental/TranslationMemoryPanel.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE",
+      "model_task_exact_reopen": "CONTRACT_VERIFIED"
+    },
+    {
+      "section": "19",
+      "requirement": "Distinct comics/Webtoon panels/order/bubbles/references/layout",
+      "feature_ids": [
+        "B06"
+      ],
+      "wave": 5,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Distinct comic/Webtoon panels retain order/bubbles/Scene linkage and deterministic vertical/page raster export. Image briefs and approved character appearance assets carry original version/hash/privacy and export lineage.",
+      "implemented_safe_closure": "Distinct comic/Webtoon panels retain order/bubbles/Scene linkage and deterministic vertical/page raster export. Image briefs and approved character appearance assets carry original version/hash/privacy and export lineage.",
+      "remaining": "Synthetic approved PNG/CJK raster contracts do not verify model art quality, arbitrary scripts/fonts or professional print/Webtoon production acceptance. No automatic generation from a brief.",
+      "original_owners": [
+        "app/experimental/comic_layouts.py",
+        "app/services/asset_library_service.py",
+        "frontend/src/experimental/ComicLayoutsPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_5_TEMPLATES_SDK_COMICS.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_wave5_templates_sdk_comics.py",
+        "tests/test_r5_comic_layouts.py",
+        "frontend/src/experimental/Wave5TemplatesSdkComics.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "20",
+      "requirement": "Interactive nodes/choices/conditions/variables/routes/endings and graph validation",
+      "feature_ids": [
+        "B07"
+      ],
+      "wave": 5,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Original planning-node adaptations retain typed choices/conditions/variables/routes/endings and bounded reachability/reference checks, explicit playback/review/export; source-current history can restore a new draft and archived/private linked entities are withheld.",
+      "implemented_safe_closure": "Original planning-node adaptations retain typed choices/conditions/variables/routes/endings and bounded reachability/reference checks, explicit playback/review/export; source-current history can restore a new draft and archived/private linked entities are withheld.",
+      "remaining": "Bounded analysis is not an unbounded graph proof. RenPy text/menu and engine-neutral JSON export do not execute/deploy engines or media. Actual RenPy/Godot runtime NOT_RUN.",
+      "original_owners": [
+        "app/experimental/interactive_story.py",
+        "app/experimental/planning.py",
+        "frontend/src/experimental/InteractiveStoryPanel.tsx",
+        "frontend/src/experimental/InteractiveStoryHistory.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_5_EXTENDED.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_interactive_history.py",
+        "tests/test_r5_interactive_story.py",
+        "tests/test_post_interop_extended_mounted.py"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "21",
+      "requirement": "OTIO tracks/clips/rational times/media/transitions/audio-video relations and explicit loss",
+      "feature_ids": [
+        "A12"
+      ],
+      "wave": 4,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Official OTIO parser contracts preserve tracks/clips/rational timing, media and supported transitions while distinguishing timeline start from source in/out and independent audio/video timing; unknown camera/action/dialogue/sound metadata produces losses/warnings.",
+      "implemented_safe_closure": "Official OTIO parser contracts preserve tracks/clips/rational timing, media and supported transitions while distinguishing timeline start from source in/out and independent audio/video timing; unknown camera/action/dialogue/sound metadata produces losses/warnings.",
+      "remaining": "Actual Resolve/Premiere/other NLE import/export acceptance remains NOT_RUN. Supported OTIO syntax is not universal target compatibility; media availability and unsupported metadata remain explicit.",
+      "original_owners": [
+        "app/experimental/timeline_exchange.py",
+        "app/industry_export_formats.py",
+        "frontend/src/experimental/TimelineExchangePanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+        "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_media_continuation.py",
+        "tests/test_r4_timeline_exchange.py",
+        "tests/test_r4_director_exchange_mounted.py"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "22",
+      "requirement": "Shared Universe immutable snapshots and explicit version pins across works",
+      "feature_ids": [
+        "A04",
+        "B09"
+      ],
+      "wave": 5,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Original project/structured Fork→Compare→Conflict→Human Merge remains; Shared Universe adds immutable selected original Character/Location/Organization/Rule/Timeline snapshots and explicit per-work Main/Sequel/Prequel/Side Story CAS pins, history, release and readonly incoming references.",
+      "implemented_safe_closure": "Original project/structured Fork→Compare→Conflict→Human Merge remains; Shared Universe adds immutable selected original Character/Location/Organization/Rule/Timeline snapshots and explicit per-work Main/Sequel/Prequel/Side Story CAS pins, history, release and readonly incoming references.",
+      "remaining": "Snapshots never mutate another work or become a second Canon; source edits do not repin. Current source/target deletion/archive/privacy/permission loss withholds old content. Local owner sharing only; bounded incoming scan; no implicit model-context injection or branch-manuscript fallback.",
+      "original_owners": [
+        "app/experimental/world.py",
+        "app/experimental/story_graph.py",
+        "app/experimental/story_graph_api.py",
+        "frontend/src/experimental/StoryGraphPanel.tsx",
+        "app/experimental/project_forks.py",
+        "app/experimental/structured_forks.py",
+        "frontend/src/experimental/ProjectForksPanel.tsx",
+        "frontend/src/experimental/SharedUniversePanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_EXTENDED.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_scene_mind.py",
+        "tests/test_post_interop_creation_mounted.py",
+        "tests/test_post_interop_creation_upgrade.py",
+        "tests/test_post_interop_shared_universe.py",
+        "tests/test_r5_project_forks.py",
+        "tests/test_r5_structured_forks.py",
+        "frontend/src/experimental/SharedUniversePanel.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "23",
+      "requirement": "Original project fork/compare/conflicts/human-approved merge",
+      "feature_ids": [
+        "B09"
+      ],
+      "wave": 5,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Original owned project and selected structured records support preflight/fork, baseline/original/fork comparison, field/block conflicts, human approval, original CAS and recoverable checkpoints.",
+      "implemented_safe_closure": "Original owned project and selected structured records support preflight/fork, baseline/original/fork comparison, field/block conflicts, human approval, original CAS and recoverable checkpoints.",
+      "remaining": "No automatic manuscript merge, arbitrary target overwrite or branch-manuscript substitution. Cross-store journals expose partial/unknown writes rather than asserting global atomicity.",
+      "original_owners": [
+        "app/experimental/project_forks.py",
+        "app/experimental/structured_forks.py",
+        "app/experimental/world.py",
+        "frontend/src/experimental/ProjectForksPanel.tsx",
+        "frontend/src/experimental/SharedUniversePanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_5_EXTENDED.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_shared_universe.py",
+        "tests/test_r5_project_forks.py",
+        "tests/test_r5_structured_forks.py",
+        "frontend/src/experimental/SharedUniversePanel.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "24",
+      "requirement": "Async Writer Room comment/review/assignment/proposal/change requests with honest presence",
+      "feature_ids": [
+        "B08"
+      ],
+      "wave": 5,
+      "state": "PARTIAL",
+      "current_verification": "PARTIAL_SCOPED_CONTRACTS_WITH_REMAINING_GATES",
+      "safe_closure": "Asynchronous comments/review/assignments/change requests and branch-aware original review targets remain. The explicit Presence interface reports NOT_CONFIGURED, empty occupants and no realtime claim.",
+      "implemented_safe_closure": "Asynchronous comments/review/assignments/change requests and branch-aware original review targets remain. The explicit Presence interface reports NOT_CONFIGURED, empty occupants and no realtime claim.",
+      "remaining": "No realtime co-editing, presence transport, invitation or permission grant. Finishing a room task cannot approve/apply original manuscript/Canon/assets; branch manuscript source remains unavailable.",
+      "original_owners": [
+        "app/experimental/writer_room.py",
+        "app/services/creation_workbench_service.py",
+        "app/experimental/inbox.py",
+        "frontend/src/experimental/WriterRoomPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_5_EXTENDED.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_r5_writer_room_mounted.py",
+        "tests/test_post_interop_extended_mounted.py",
+        "frontend/src/experimental/WriterRoomPanel.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "25",
+      "requirement": "Read-only template import and manifest/version/compatibility/permission",
+      "feature_ids": [
+        "B01"
+      ],
+      "wave": 5,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Nine legacy local starters remain compatible; five additive Novel/Genre/World/Agent/Story Structure starters use strict version/compatibility/no-grant manifests, readonly import and independent project copies. Agent copies instantiate the original reviewed definition.",
+      "implemented_safe_closure": "Nine legacy local starters remain compatible; five additive Novel/Genre/World/Agent/Story Structure starters use strict version/compatibility/no-grant manifests, readonly import and independent project copies. Agent copies instantiate the original reviewed definition.",
+      "remaining": "Most creative brief types are editable declarations rather than automatic manuscript/Canon construction. Marketplace, remote catalog sync and executable installation remain absent.",
+      "original_owners": [
+        "app/experimental/template_library.py",
+        "app/experimental/declarative_agents.py",
+        "frontend/src/experimental/TemplateLibraryPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_5_TEMPLATES_SDK_COMICS.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_wave5_templates_sdk_comics.py",
+        "frontend/src/experimental/Wave5TemplatesSdkComics.test.tsx"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "26",
+      "requirement": "Declarative agent/workflow/adapter contracts, review/retry/cancel and DENY_ALL executable plugins",
+      "feature_ids": [
+        "B02"
+      ],
+      "wave": 5,
+      "state": "PARTIAL",
+      "current_verification": "PARTIAL_SCOPED_CONTRACTS_WITH_REMAINING_GATES",
+      "safe_closure": "Agent role/prompt/input/output/capability/runtime/review declarations and rooted Workflow dependencies/human gates retain original JobManager execution, retry/cancel bounds and schema/authority checks; SDK only runs shipped trusted adapters.",
+      "implemented_safe_closure": "Agent role/prompt/input/output/capability/runtime/review declarations and rooted Workflow dependencies/human gates retain original JobManager execution, retry/cancel bounds and schema/authority checks; SDK only runs shipped trusted adapters.",
+      "remaining": "Executable third-party plugins remain DENY_ALL. Local known-zero configured route only; real model quality NOT_RUN. Exact task-center model-run reopening has focused contract verification; final browser acceptance is pending.",
+      "original_owners": [
+        "app/experimental/declarative_agents.py",
+        "app/experimental/declarative_model.py",
+        "app/experimental/declarative_adapter_sdk.py",
+        "frontend/src/experimental/DeclarativeAgentsPanel.tsx"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_5_TEMPLATES_SDK_COMICS.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_TASK_REOPEN.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_wave5_templates_sdk_comics.py",
+        "tests/test_r5_declarative_model.py",
+        "tests/test_r5_declarative_job_bounds.py"
+      ],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE",
+      "model_task_exact_reopen": "CONTRACT_VERIFIED"
+    },
+    {
+      "section": "27",
+      "requirement": "Reuse default-OFF flags with server V1 acceptance forced OFF",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Existing server feature names/dependencies are reused, default OFF, and V1_ACCEPTANCE_MODE forces experiments OFF. New domain routes recheck applicable flags.",
+      "implemented_safe_closure": "Existing server feature names/dependencies are reused, default OFF, and V1_ACCEPTANCE_MODE forces experiments OFF. New domain routes recheck applicable flags.",
+      "remaining": "Not merely front-end hiding. No automatic enabling of dependencies by imported templates or runtime registrations.",
+      "original_owners": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py",
+        ".github/ci/coverage_manifest.json.gz"
+      ],
+      "evidence": [
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "28",
+      "requirement": "Freeze PoemSeed Local Interop1.0 wire/authority/privacy/consent/product IDs",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "INTEGRATED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Frozen PoemSeed Local Interop1.0 fields/capabilities/error/authority/consent/privacy/Product IDs remain unchanged; the original37-file manifest is retained.",
+      "implemented_safe_closure": "Frozen PoemSeed Local Interop1.0 fields/capabilities/error/authority/consent/privacy/Product IDs remain unchanged; the original37-file manifest is retained.",
+      "remaining": "Any future cross-product extension must be optional/separate. Exact final source gate remains pending.",
+      "original_owners": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py",
+        ".github/ci/coverage_manifest.json.gz"
+      ],
+      "evidence": [
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "29",
+      "requirement": "Retain unique original project/manuscript/models/tasks/assets/permissions",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "INTEGRATED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Original projects/manuscripts/Model Center/jobs/queues/assets/permissions remain unique. Opinions, research indexes, translation targets, immutable snapshots and pointer histories are scoped derived metadata.",
+      "implemented_safe_closure": "Original projects/manuscripts/Model Center/jobs/queues/assets/permissions remain unique. Opinions, research indexes, translation targets, immutable snapshots and pointer histories are scoped derived metadata.",
+      "remaining": "Shared Universe never silently mutates a different work; no second Canon or implicit model context. QingJian does not gain a new authority.",
+      "original_owners": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py",
+        ".github/ci/coverage_manifest.json.gz"
+      ],
+      "evidence": [
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "30",
+      "requirement": "Additive metadata/migration parity, upgrade and rollback considerations",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "Existing schema-version1 File scope documents/PostgreSQL JSONB rows support additive fields/collections; no new SQL migration or historical migration edit. Old-fieldless upgrade tests and explicit downgrade limitations are documented.",
+      "implemented_safe_closure": "Existing schema-version1 File scope documents/PostgreSQL JSONB rows support additive fields/collections; no new SQL migration or historical migration edit. Old-fieldless upgrade tests and explicit downgrade limitations are documented.",
+      "remaining": "Actual PostgreSQL service execution awaits final hosted lanes. Older strict writers may reject new fields/enums; preserve records and use an explicit isolated-profile backup restore, never overwrite real V1 data.",
+      "original_owners": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py",
+        ".github/ci/coverage_manifest.json.gz"
+      ],
+      "evidence": [
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "31",
+      "requirement": "Preserve original tests and exact final-source File/PG/API/UI/browser/permission/lifecycle/flag coverage",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "PARTIAL",
+      "current_verification": "PARTIAL_SCOPED_CONTRACTS_WITH_REMAINING_GATES",
+      "safe_closure": "Original tests/assertions/skip provenance are retained, with reviewed additions and source-specific File/API/React/permission/CAS/cancel/restart/late-result/flag contracts. Browser journeys and marked PG variants are present.",
+      "implemented_safe_closure": "Original tests/assertions/skip provenance are retained, with reviewed additions and source-specific File/API/React/permission/CAS/cancel/restart/late-result/flag contracts. Browser journeys and marked PG variants are present.",
+      "remaining": "Final complete inherited+new File/PostgreSQL/React/browser/Windows source must still execute. Authored tests and collection counts are not passes; no final totals inserted.",
+      "original_owners": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py",
+        ".github/ci/coverage_manifest.json.gz"
+      ],
+      "evidence": [
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "32",
+      "requirement": "Use scoped truth labels without code-exists or CI-green product claims",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "CONTRACT_VERIFIED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "All current truth labels distinguish implemented code, source-specific contracts, narrow real File/transport/media processing, synthetic mocks and unrun target acceptance.",
+      "implemented_safe_closure": "All current truth labels distinguish implemented code, source-specific contracts, narrow real File/transport/media processing, synthetic mocks and unrun target acceptance.",
+      "remaining": "No READY/DONE promotion based on code or CI;39 feature classifications remain PARTIAL.",
+      "original_owners": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py",
+        ".github/ci/coverage_manifest.json.gz"
+      ],
+      "evidence": [
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "33",
+      "requirement": "Functional accessible UX within existing design; update Opus handoff",
+      "feature_ids": [
+        "U13",
+        "F00"
+      ],
+      "wave": 1,
+      "state": "PARTIAL",
+      "current_verification": "PARTIAL_SCOPED_CONTRACTS_WITH_REMAINING_GATES",
+      "safe_closure": "Existing AppShell, design tokens and shared primitives are retained. Functional state/navigation/recovery/error/permission controls and source-specific React checks are recorded; Opus handoff remains a separate deliverable.",
+      "implemented_safe_closure": "Existing AppShell, design tokens and shared primitives are retained. Functional state/navigation/recovery/error/permission controls and source-specific React checks are recorded; Opus handoff remains a separate deliverable.",
+      "remaining": "Final art direction, actual browser geometry/screenshots, native IME/accessibility and target-device acceptance are not inferred from jsdom/token checks.",
+      "original_owners": [
+        "frontend/src/Editor.tsx",
+        "frontend/src/ui/AppShell.tsx",
+        "frontend/src/ui/tokens.css",
+        "frontend/tests/visual",
+        "docs/ui/design_system.md",
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py",
+        ".github/ci/coverage_manifest.json.gz"
+      ],
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json",
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/ui/design_system.md",
+        "OPUS_UI_HANDOFF.md",
+        "UX_ACCEPTANCE_MATRIX.md"
+      ],
+      "test_sources": [],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "34",
+      "requirement": "Commit and push each integrated wave",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "PARTIAL",
+      "current_verification": "PARTIAL_SCOPED_CONTRACTS_WITH_REMAINING_GATES",
+      "safe_closure": "Integrated waves are published as separate checkpoints; no wait-for-every-feature first publication. Recovery retained already-published valid work.",
+      "implemented_safe_closure": "Integrated waves are published as separate checkpoints; no wait-for-every-feature first publication. Recovery retained already-published valid work.",
+      "remaining": "Final wave/fix/docs publication and exact remote commit list remain recorded in the final integration receipt; consult the current continuation report.",
+      "original_owners": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py",
+        ".github/ci/coverage_manifest.json.gz"
+      ],
+      "evidence": [
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "35",
+      "requirement": "Stop unsafe/native/paid/model-only execution at honest boundaries and continue safe work",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "INTEGRATED",
+      "current_verification": "CONTRACT_VERIFIED_SCOPED_LOCAL",
+      "safe_closure": "No unauthorized paid API, user credentials, model/GPU/native Windows/third-party execution, production service or irreversible V1 migration was used. Safe schemas/API/UI/adapters/contracts were completed at explicit boundaries.",
+      "implemented_safe_closure": "No unauthorized paid API, user credentials, model/GPU/native Windows/third-party execution, production service or irreversible V1 migration was used. Safe schemas/API/UI/adapters/contracts were completed at explicit boundaries.",
+      "remaining": "Real environments/credentials/paid work remain NOT_RUN/LOCAL_REQUIRED; executable third-party plugin execution DENY_ALL; no claim to bypass platform restrictions.",
+      "original_owners": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py",
+        ".github/ci/coverage_manifest.json.gz"
+      ],
+      "evidence": [
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "36",
+      "requirement": "Publish actual work and deliver branch/PR/SHAs/commits/files/APIs/UI/tests/matrix/reports",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "PARTIAL",
+      "current_verification": "PARTIAL_SCOPED_CONTRACTS_WITH_REMAINING_GATES",
+      "safe_closure": "Actual source, new stacked branch/Draft PR, per-wave reports, current feature/UX/task matrices, APIs and compatibility evidence exist in the authorized repository.",
+      "implemented_safe_closure": "Actual source, new stacked branch/Draft PR, per-wave reports, current feature/UX/task matrices, APIs and compatibility evidence exist in the authorized repository.",
+      "remaining": "Final delivery still requires final SHA/commit list/changed files and actual final CI links/counts. No final delivery or release inferred from this documentation pass.",
+      "original_owners": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py",
+        ".github/ci/coverage_manifest.json.gz"
+      ],
+      "evidence": [
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE"
+    },
+    {
+      "section": "37",
+      "requirement": "Reach genuine data/permission/version/recovery/cancel/history/user-operation closure",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "PARTIAL",
+      "current_verification": "PARTIAL_SCOPED_CONTRACTS_WITH_REMAINING_GATES",
+      "safe_closure": "The original workflows now have deeper data, source-version, permission, persistence, review, history/recovery and user-operation contracts, with gaps stated per original ID.",
+      "implemented_safe_closure": "The original workflows now have deeper data, source-version, permission, persistence, review, history/recovery and user-operation contracts, with gaps stated per original ID.",
+      "remaining": "Product-complete/native/model/third-party acceptance is not claimed. Exact owner navigation has bounded local contract verification; final hosted and real-environment gates stay open until verified.",
+      "original_owners": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py",
+        ".github/ci/coverage_manifest.json.gz"
+      ],
+      "evidence": [
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "final_hosted_verification": "PENDING_FINAL_PUBLISHED_SOURCE",
+      "model_task_exact_reopen": "CONTRACT_VERIFIED"
+    }
+  ],
+  "requirements_note": "All47 original numbered requirements are traced to the original40 feature IDs, actual original owners, source-specific evidence and gaps. Sections6/7 retain original subsection numbering. F00 INTEGRATED and39 PARTIAL remain; no historical PR39 rewrite or final-hosted acceptance inferred.",
+  "schema_version": 2,
+  "evidence_catalog": {
+    "foundation": [
+      "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+      "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+      "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json",
+      "docs/delivery/post-interop-continuation/BROWSER_CORRECTION_RECEIPT.json"
+    ],
+    "ux": [
+      "docs/delivery/post-interop-continuation/WAVE_1_UX.json",
+      "docs/delivery/post-interop-continuation/WAVE_1_STAGED_VERIFICATION.json"
+    ],
+    "context": [
+      "docs/delivery/post-interop-continuation/WAVE_1_REFINEMENT.json",
+      "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+    ],
+    "search": [
+      "docs/delivery/post-interop-continuation/WAVE_1_SEARCH_REFINEMENT.json",
+      "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+    ],
+    "creation": [
+      "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+      "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+    ],
+    "research": [
+      "docs/delivery/post-interop-continuation/WAVE_3_MODELS_RESEARCH.json",
+      "docs/delivery/post-interop-continuation/WAVE_3_STAGED_VERIFICATION.json"
+    ],
+    "media": [
+      "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+      "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json"
+    ],
+    "extended": [
+      "docs/delivery/post-interop-continuation/WAVE_5_EXTENDED.json",
+      "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json"
+    ],
+    "declarative": [
+      "docs/delivery/post-interop-continuation/WAVE_5_TEMPLATES_SDK_COMICS.json",
+      "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json"
+    ],
+    "inherited_ui": [
+      "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+    ]
+  },
+  "final_hosted_verification": {
+    "state": "PENDING_FINAL_PUBLISHED_SOURCE",
+    "file": "PENDING",
+    "postgres": "PENDING_REAL_SERVICE",
+    "react": "PENDING_FINAL_SOURCE",
+    "browser": "PENDING_HOSTED_EXECUTION",
+    "windows_build": "PENDING_FINAL_SOURCE",
+    "windows_native_contracts": "PENDING_FINAL_SOURCE",
+    "windows_package_smoke": "PENDING_FINAL_SOURCE",
+    "native_windows_interactive": "LOCAL_REQUIRED_NOT_RUN_USER_MACHINE_ACCEPTANCE",
+    "real_models_gpu_asr_nle": "NOT_RUN",
+    "counts": null
+  },
+  "active_followup": {
+    "state": "CONTRACT_VERIFIED",
+    "ids": [
+      "U01",
+      "U07",
+      "A01",
+      "A03",
+      "B02",
+      "B05"
+    ],
+    "scope": "Exact original simulator/Judge/translation/declarative model-task reopen verified by58 File/API and113 React cases. No dispatch/replay; stale simulator targets unavailable; translation lookup bounded to latest50 editions and50 runs each; exact receipt read-only until explicit dirty-guarded segment open. Final hosted browser/PG remains pending.",
+    "evidence": [
+      "docs/delivery/post-interop-continuation/WAVE_1_TASK_REOPEN.json"
+    ],
+    "test_sources": [
+      "tests/test_post_interop_task_reopen.py",
+      "frontend/src/experimental/ModelTaskReopen.test.tsx",
+      "frontend/tests/e2e/r4-model-task-reopen.spec.ts"
+    ]
+  },
+  "prior_hosted_observations": {
+    "source": "d18e874",
+    "feature_ids": [
+      "U02",
+      "U03",
+      "U07"
+    ],
+    "new_workspace_journeys_passed": 3,
+    "u08_added_source_journey": "D18_SELECTOR_TIMEOUT_SOURCE_TEST_FIXED_FINAL_HOSTED_PENDING",
+    "overall_run": "SUPERSEDED_CANCELLED_NOT_WHOLE_R4_PASS",
+    "exact_final_source_acceptance": false,
+    "official_ci_url": null
+  },
+  "cross_cutting_tests": {
+    "dimensions": [
+      "unit",
+      "actual File persistence",
+      "real PostgreSQL variants",
+      "API",
+      "permission/actor/project/workspace/branch",
+      "source version/CAS",
+      "cancel or explicitly synchronous/no-job",
+      "recovery/restart/history",
+      "late callback/terminal",
+      "default-OFF/V1",
+      "React UI contracts",
+      "authored hosted browser journeys",
+      "synthetic model/transport contracts"
+    ],
+    "availability": "Consult each owner/test source. Not every dimension applies to a synchronous or read-only operation. Marked PostgreSQL and actual browser/native/model acceptance remain separate pending gates."
+  },
+  "latest_staged_checkpoint": {
+    "source_tree": "ba7265a3a4dcf0d411799974570979414df2d70d",
+    "evidence": "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json",
+    "frontend_passed": 1259,
+    "inherited_opt_in_skipped": 8,
+    "typescript": "PASS",
+    "token_guard": "PASS",
+    "focused_backend_passed": 101,
+    "postgres_deselected": 77,
+    "ordered_inventory_nodes": 7484,
+    "added_above_PR42": 685,
+    "collections": 2,
+    "old_skip_maps": "UNCHANGED",
+    "acceptance": "SOURCE_SPECIFIC_STAGED_CHECKPOINT_NOT_FINAL_HOSTED_RESULT"
+  },
+  "hosted_browser_correction": {
+    "state": "SOURCE_FIXED_FRESH_LOCAL_CONTRACTS_FINAL_HOSTED_PENDING",
+    "prior_head": "dedb813bb297bb5fb95bac55440a71913b54ed10",
+    "prior_pr_run": 37498190450,
+    "completed_failures_before_cancellation": 7,
+    "receipt": "docs/delivery/post-interop-continuation/BROWSER_CORRECTION_RECEIPT.json",
+    "application_delta": "Restore inherited production determinism label; backend/API unchanged",
+    "fixture_delta": "Original GET version/Markdown baselines, exact saved Unicode offsets, required original asset project query",
+    "new_backend_cases": 8,
+    "complete_reviewed_inventory": 7492,
+    "previous_checkpoint_inventory": 7484,
+    "historical_assertions_and_skips": "UNCHANGED",
+    "additional_c12_r4": {
+      "passed": 49,
+      "failures": 10,
+      "errors": 4,
+      "total": 63,
+      "u08": "PASS",
+      "new_wave5_fixture": "PROXY_MATCH_AND_OWNED_CLEANUP_FIXED_HOSTED_PENDING"
+    },
+    "strict_profile_fixture": "29 new opposite-profile reason defects corrected with unchanged original guards and counts; no applicable-PG skip introduced"
+  },
+  "api_catalog": "docs/delivery/post-interop-continuation/API_CATALOG.json",
+  "async_fixture_acceptance": {
+    "state": "SOURCE_FIXED_FRESH_FOCUSED_PASS_FINAL_HOSTED_PENDING",
+    "receipt": "docs/delivery/post-interop-continuation/ASYNC_FIXTURE_STABILIZATION.json",
+    "runtime_change": false,
+    "inherited_fixture_changes": [
+      "tests/test_local_interop_tcp.py",
+      "frontend/src/novel/ImageGenerationPanel.test.tsx"
+    ],
+    "original_assertions_skip_maps_and_deadlines": "PRESERVED",
+    "historical_image_status_interleaving": "UNVERIFIED",
+    "large_judge_trace": "NOT_INSPECTED_TOOL_SIZE_LIMIT",
+    "backend_inventory": 7492
+  }
+}

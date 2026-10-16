@@ -19,7 +19,7 @@ import {
 describe('product language', () => {
   it('maps every AI operation and generation state to Chinese product language', () => {
     expect(aiOperationLabels).toEqual({continue: '续写', rewrite: '改写', polish: '润色', brainstorm: '头脑风暴', review: '审阅'});
-    expect(generationStatusLabels).toEqual({QUEUED: '等待生成', GENERATING: '生成中', COMPLETED: '生成完成', FAILED: '生成失败', CANCELLED: '已取消', ACCEPTED: '已接受', REJECTED: '已拒绝'});
+    expect(generationStatusLabels).toEqual({QUEUED: '等待生成', GENERATING: '生成中', COMPLETED: '生成完成', FAILED: '生成失败', CANCELLED: '已取消', ACCEPTING: '采用中', ACCEPTANCE_UNCERTAIN: '采用结果待核对', ACCEPTED: '已接受', REJECTED: '已拒绝'});
   });
 
   it('maps authorization concepts without changing their protocol values', () => {

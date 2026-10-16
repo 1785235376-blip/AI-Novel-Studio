@@ -1,0 +1,108 @@
+{
+  "observed_utc": "2026-10-09T13:21:00Z",
+  "kind": "EXCERPTS_NOT_COMPLETE_LOGS",
+  "jobs": [
+    {
+      "job_id": 113830882073,
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446079/job/113830882073",
+      "selected_log_lines": [
+        "2026-10-09T13:01:00.9744271Z Installing collected packages: pip",
+        "2026-10-09T13:01:01.8547102Z   EXECUTION_RESULT: cancelled",
+        "2026-10-09T13:01:01.8547338Z   TCP_RESULT: success"
+      ]
+    },
+    {
+      "job_id": 113830882074,
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446079/job/113830882074",
+      "selected_log_lines": [
+        "2026-10-09T13:00:59.7791317Z Installing collected packages: pip",
+        "2026-10-09T13:01:00.6374181Z   EXECUTION_RESULT: cancelled",
+        "2026-10-09T13:01:00.6374459Z   TCP_RESULT: success"
+      ]
+    },
+    {
+      "job_id": 113827700271,
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438685/job/113827700271",
+      "selected_log_lines": [
+        "2026-10-09T12:52:31.3351251Z Installing collected packages: pip",
+        "2026-10-09T12:52:32.5702382Z   EXECUTION_RESULT: success",
+        "2026-10-09T12:52:32.5702572Z   TCP_RESULT: success",
+        "2026-10-09T12:52:32.8302989Z - backend-postgres-shard-1-0df2640c4c1a2d3052bb0a84d14445744d04046f-attempt-1 (ID: 11617257093, Size: 598729, Expected Digest: sha256:1dd584b304050c4c43c7587fb62cf1b2c977c656497a4fa743536eb5298d2b57)",
+        "2026-10-09T12:52:32.8305070Z - backend-postgres-shard-0-0df2640c4c1a2d3052bb0a84d14445744d04046f-attempt-1 (ID: 11616333391, Size: 553980, Expected Digest: sha256:35aea868cb032f664b6f9ffc509f10dbb506bd1b0652f04c35d8023d3fd286e2)",
+        "2026-10-09T12:52:32.8306932Z - backend-file-shard-0-0df2640c4c1a2d3052bb0a84d14445744d04046f-attempt-1 (ID: 11615108512, Size: 857699, Expected Digest: sha256:ba8fac11867ad30ece7a85c23f5c579cfc854a83872fb66591e7e1db1b515b97)",
+        "2026-10-09T12:52:33.1597283Z SHA256 digest of downloaded artifact is 35aea868cb032f664b6f9ffc509f10dbb506bd1b0652f04c35d8023d3fd286e2",
+        "2026-10-09T12:52:33.2164419Z SHA256 digest of downloaded artifact is 1dd584b304050c4c43c7587fb62cf1b2c977c656497a4fa743536eb5298d2b57",
+        "2026-10-09T12:52:33.2935419Z SHA256 digest of downloaded artifact is ba8fac11867ad30ece7a85c23f5c579cfc854a83872fb66591e7e1db1b515b97",
+        "2026-10-09T12:52:33.8826699Z - backend-tcp-0df2640c4c1a2d3052bb0a84d14445744d04046f-attempt-1 (ID: 11615750130, Size: 160548, Expected Digest: sha256:cc0dc2067e09384fac4d66b8436acf7bf7d9f701bd51da8662f643f935e8c14f)",
+        "2026-10-09T12:52:34.0745105Z SHA256 digest of downloaded artifact is cc0dc2067e09384fac4d66b8436acf7bf7d9f701bd51da8662f643f935e8c14f",
+        "2026-10-09T12:52:34.0858077Z ##[group]Run python .github/ci/tcp_evidence.py join \\",
+        "2026-10-09T12:52:34.0858477Z \u001b[36;1mpython .github/ci/tcp_evidence.py join \\\u001b[0m",
+        "2026-10-09T12:52:34.0860080Z \u001b[36;1m  --output-dir joined-backend-receipts --report tcp-join.json \\\u001b[0m",
+        "2026-10-09T12:52:34.0862055Z \u001b[36;1m  --expected-run-attempt \"$GITHUB_RUN_ATTEMPT\" --expected-repository \"$GITHUB_REPOSITORY\"\u001b[0m",
+        "2026-10-09T12:52:34.0923421Z   EXECUTION_RESULT: success",
+        "2026-10-09T12:52:34.0923627Z   TCP_RESULT: success",
+        "2026-10-09T12:52:35.8271262Z ##[group]Run python .github/ci/coverage_reconcile.py \\",
+        "2026-10-09T12:52:35.8271637Z \u001b[36;1mpython .github/ci/coverage_reconcile.py \\\u001b[0m",
+        "2026-10-09T12:52:35.8272465Z \u001b[36;1m  --receipts-dir joined-backend-receipts --expected-shards file=1 postgres=2 \\\u001b[0m",
+        "2026-10-09T12:52:35.8274094Z \u001b[36;1m  --expected-attempt \"$GITHUB_RUN_ATTEMPT\" --expected-repository \"$GITHUB_REPOSITORY\" \\\u001b[0m",
+        "2026-10-09T12:52:35.8275275Z \u001b[36;1mcat backend-coverage.json >> \"$GITHUB_STEP_SUMMARY\"\u001b[0m",
+        "2026-10-09T12:52:36.8051334Z     \"source_tree\": \"f800c0e8a6d920e8836a027707c8078c5a8421f2\",",
+        "2026-10-09T12:52:36.8052480Z     \"run_attempt\": \"1\",",
+        "2026-10-09T12:52:36.8054282Z     \"source_manifest_sha256\": \"df72d854d942b0759b9d02229c33523bb1dd11470dd95c5c12a405a73c9a66ab\",",
+        "2026-10-09T12:52:36.8055736Z   \"unique_collected_per_profile\": 9449,",
+        "2026-10-09T12:52:36.8056637Z       \"collected\": 9449,",
+        "2026-10-09T12:52:36.8056908Z       \"passed\": 6190,",
+        "2026-10-09T12:52:36.8057167Z       \"skipped\": 3259,",
+        "2026-10-09T12:52:36.8058374Z       \"collected\": 9449,",
+        "2026-10-09T12:52:36.8058636Z       \"passed\": 6159,",
+        "2026-10-09T12:52:36.8058893Z       \"skipped\": 3290,",
+        "2026-10-09T12:52:36.8060807Z         \"passed\": 2,",
+        "2026-10-09T12:52:36.8065141Z   \"evidence\": \"complete collected backend coverage; not monolithic PostgreSQL interaction equivalence\"",
+        "tcp-join.json",
+        "2026-10-09T12:52:37.2535844Z SHA256 digest of uploaded artifact zip is 8a2d5807c17b0238309af47225e8614bb1b6fdc92ed67546e7e3307318c6adbb"
+      ]
+    },
+    {
+      "job_id": 113827700370,
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438685/job/113827700370",
+      "selected_log_lines": [
+        "2026-10-09T12:52:33.0518362Z Installing collected packages: pip",
+        "2026-10-09T12:52:34.0961946Z   EXECUTION_RESULT: success",
+        "2026-10-09T12:52:34.0962242Z   TCP_RESULT: success",
+        "2026-10-09T12:52:34.4572034Z - backend-postgres-shard-1-0df2640c4c1a2d3052bb0a84d14445744d04046f-attempt-1 (ID: 11617257093, Size: 598729, Expected Digest: sha256:1dd584b304050c4c43c7587fb62cf1b2c977c656497a4fa743536eb5298d2b57)",
+        "2026-10-09T12:52:34.4575876Z - backend-postgres-shard-0-0df2640c4c1a2d3052bb0a84d14445744d04046f-attempt-1 (ID: 11616333391, Size: 553980, Expected Digest: sha256:35aea868cb032f664b6f9ffc509f10dbb506bd1b0652f04c35d8023d3fd286e2)",
+        "2026-10-09T12:52:34.4578934Z - backend-file-shard-0-0df2640c4c1a2d3052bb0a84d14445744d04046f-attempt-1 (ID: 11615108512, Size: 857699, Expected Digest: sha256:ba8fac11867ad30ece7a85c23f5c579cfc854a83872fb66591e7e1db1b515b97)",
+        "2026-10-09T12:52:35.0825037Z SHA256 digest of downloaded artifact is 35aea868cb032f664b6f9ffc509f10dbb506bd1b0652f04c35d8023d3fd286e2",
+        "2026-10-09T12:52:35.2138016Z SHA256 digest of downloaded artifact is 1dd584b304050c4c43c7587fb62cf1b2c977c656497a4fa743536eb5298d2b57",
+        "2026-10-09T12:52:35.2738343Z SHA256 digest of downloaded artifact is ba8fac11867ad30ece7a85c23f5c579cfc854a83872fb66591e7e1db1b515b97",
+        "2026-10-09T12:52:35.6047714Z - backend-tcp-0df2640c4c1a2d3052bb0a84d14445744d04046f-attempt-1 (ID: 11615750130, Size: 160548, Expected Digest: sha256:cc0dc2067e09384fac4d66b8436acf7bf7d9f701bd51da8662f643f935e8c14f)",
+        "2026-10-09T12:52:36.0521659Z SHA256 digest of downloaded artifact is cc0dc2067e09384fac4d66b8436acf7bf7d9f701bd51da8662f643f935e8c14f",
+        "2026-10-09T12:52:36.0648474Z ##[group]Run python .github/ci/tcp_evidence.py join \\",
+        "2026-10-09T12:52:36.0648932Z \u001b[36;1mpython .github/ci/tcp_evidence.py join \\\u001b[0m",
+        "2026-10-09T12:52:36.0650897Z \u001b[36;1m  --output-dir joined-backend-receipts --report tcp-join.json \\\u001b[0m",
+        "2026-10-09T12:52:36.0653850Z \u001b[36;1m  --expected-run-attempt \"$GITHUB_RUN_ATTEMPT\" --expected-repository \"$GITHUB_REPOSITORY\"\u001b[0m",
+        "2026-10-09T12:52:36.0723727Z   EXECUTION_RESULT: success",
+        "2026-10-09T12:52:36.0723985Z   TCP_RESULT: success",
+        "2026-10-09T12:52:38.2412542Z ##[group]Run python .github/ci/coverage_reconcile.py \\",
+        "2026-10-09T12:52:38.2413630Z \u001b[36;1mpython .github/ci/coverage_reconcile.py \\\u001b[0m",
+        "2026-10-09T12:52:38.2415544Z \u001b[36;1m  --receipts-dir joined-backend-receipts --expected-shards file=1 postgres=2 \\\u001b[0m",
+        "2026-10-09T12:52:38.2419002Z \u001b[36;1m  --expected-attempt \"$GITHUB_RUN_ATTEMPT\" --expected-repository \"$GITHUB_REPOSITORY\" \\\u001b[0m",
+        "2026-10-09T12:52:38.2421768Z \u001b[36;1mcat backend-coverage.json >> \"$GITHUB_STEP_SUMMARY\"\u001b[0m",
+        "2026-10-09T12:52:39.4967880Z     \"source_tree\": \"f800c0e8a6d920e8836a027707c8078c5a8421f2\",",
+        "2026-10-09T12:52:39.4969516Z     \"run_attempt\": \"1\",",
+        "2026-10-09T12:52:39.4971755Z     \"source_manifest_sha256\": \"df72d854d942b0759b9d02229c33523bb1dd11470dd95c5c12a405a73c9a66ab\",",
+        "2026-10-09T12:52:39.4974213Z   \"unique_collected_per_profile\": 9449,",
+        "2026-10-09T12:52:39.4975351Z       \"collected\": 9449,",
+        "2026-10-09T12:52:39.4975721Z       \"passed\": 6190,",
+        "2026-10-09T12:52:39.4976081Z       \"skipped\": 3259,",
+        "2026-10-09T12:52:39.4977876Z       \"collected\": 9449,",
+        "2026-10-09T12:52:39.4978312Z       \"passed\": 6159,",
+        "2026-10-09T12:52:39.4978741Z       \"skipped\": 3290,",
+        "2026-10-09T12:52:39.4981670Z         \"passed\": 2,",
+        "2026-10-09T12:52:39.4987567Z   \"evidence\": \"complete collected backend coverage; not monolithic PostgreSQL interaction equivalence\"",
+        "tcp-join.json",
+        "2026-10-09T12:52:40.2151450Z SHA256 digest of uploaded artifact zip is 64905f5633e545762a93b6de35982ffd9a9924dae779fec515eddcef8d9160a8"
+      ]
+    }
+  ]
+}

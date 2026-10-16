@@ -1,0 +1,360 @@
+{
+  "graph": {
+    "id": "255fc2be-b918-4c48-8f37-49520e2ec778",
+    "version": 1,
+    "definition": {
+      "schema_version": 4,
+      "title": "SYNTHETIC planning only",
+      "nodes": [
+        {
+          "id": "director",
+          "definition_id": "director_plan",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "parameters": {
+            "document_snapshot": {
+              "id": "d659e4f5-0657-420f-a88c-c02a09438b0b",
+              "version": 1,
+              "digest": "403747988204ade5d5ded3758e65be29dd49466a22b4cdd00bcf82f7da35deac"
+            }
+          }
+        },
+        {
+          "id": "board",
+          "definition_id": "storyboard_plan",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "parameters": {
+            "document_snapshot": {
+              "id": "d7573381-f362-4e3c-b069-f76ff98afc94",
+              "version": 1,
+              "digest": "bdb2295dd388c8709a0198a438532b4852a5261c3a9cc901a5973a02fc32bd44"
+            }
+          }
+        },
+        {
+          "id": "prompt",
+          "definition_id": "storyboard_prompt",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "parameters": {
+            "shot_id": "b9b0c8da-66c2-448c-b43c-2a09c4f084b5"
+          }
+        },
+        {
+          "id": "style",
+          "definition_id": "image_style",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "parameters": {
+            "style": "ink",
+            "atmosphere": "",
+            "color_palette": ""
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "director_board_direction",
+          "source_node_id": "director",
+          "source_port": "direction",
+          "target_node_id": "board",
+          "target_port": "direction"
+        },
+        {
+          "id": "board_prompt_storyboard",
+          "source_node_id": "board",
+          "source_port": "storyboard",
+          "target_node_id": "prompt",
+          "target_port": "storyboard"
+        },
+        {
+          "id": "prompt_style_prompt",
+          "source_node_id": "prompt",
+          "source_port": "prompt",
+          "target_node_id": "style",
+          "target_port": "prompt"
+        }
+      ],
+      "viewport": {
+        "x": 0.0,
+        "y": 0.0,
+        "zoom": 1.0
+      }
+    },
+    "definition_digest": "f6cd5af9e1de9d4bf52814ed9108f6f61f657faa4115f19fd6d276396500b04e",
+    "execution_digest": "89c5251e97d17e4b6d599d2e1f7fc7fc93afdd5b44d2211c6230b4d1e05ef9cf",
+    "created_at": "2026-10-13T16:38:57.648413+00:00",
+    "updated_at": "2026-10-13T16:38:57.648413+00:00",
+    "can_edit": true,
+    "reference_states": [
+      {
+        "node_id": "director",
+        "state": "CURRENT"
+      },
+      {
+        "node_id": "board",
+        "state": "CURRENT"
+      }
+    ],
+    "project_id": "v2-independent-b458f90034024c9e9b721172bb3297f1",
+    "scope": {
+      "mode": "local",
+      "novel_id": "v2-independent-b458f90034024c9e9b721172bb3297f1"
+    }
+  },
+  "run": {
+    "id": "b5cc490b-9e8d-443b-923d-63a22b5aa4d3",
+    "version": 2,
+    "graph_id": "255fc2be-b918-4c48-8f37-49520e2ec778",
+    "graph_version": 1,
+    "status": "SUCCEEDED",
+    "current_node_id": null,
+    "cache": {
+      "hits": 0,
+      "misses": 4,
+      "mode": "SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY"
+    },
+    "created_at": "2026-10-13T16:38:57.721358+00:00",
+    "updated_at": "2026-10-13T16:38:58.933769+00:00",
+    "reviewed": false,
+    "project_id": "v2-independent-b458f90034024c9e9b721172bb3297f1",
+    "scope": {
+      "mode": "local",
+      "novel_id": "v2-independent-b458f90034024c9e9b721172bb3297f1"
+    },
+    "stale": false,
+    "timeout_seconds": 3600,
+    "deadline_at": "2026-10-13T17:38:57.721358+00:00",
+    "node_states": {
+      "board": {
+        "status": "SUCCEEDED",
+        "reviewed": false,
+        "output": {
+          "storyboard": {
+            "document_snapshot": {
+              "id": "d7573381-f362-4e3c-b069-f76ff98afc94",
+              "version": 1,
+              "digest": "bdb2295dd388c8709a0198a438532b4852a5261c3a9cc901a5973a02fc32bd44"
+            },
+            "content": {
+              "mode": "STORYBOARD",
+              "title": "SYNTHETIC Director visual target · 分镜",
+              "source_chapter_ids": [],
+              "source_independent": false,
+              "scenes": [
+                {
+                  "id": "scene-one",
+                  "sequence": 1,
+                  "source_chapter_id": null,
+                  "heading": "SYNTHETIC garden",
+                  "time": "",
+                  "location": "",
+                  "characters": [
+                    "A"
+                  ],
+                  "action": "",
+                  "dialogue": [],
+                  "emotion": "",
+                  "director_notes": []
+                }
+              ],
+              "shots": [
+                {
+                  "id": "b9b0c8da-66c2-448c-b43c-2a09c4f084b5",
+                  "number": 1,
+                  "scene_id": "scene-one",
+                  "shot_size": "MEDIUM",
+                  "camera_angle": "EYE_LEVEL",
+                  "camera_motion": "STATIC",
+                  "duration_seconds": 5,
+                  "frame_prompt": "",
+                  "composition": "thirds",
+                  "lens": "35mm",
+                  "lighting": "",
+                  "environment": "",
+                  "sound": "",
+                  "color": "",
+                  "action": "",
+                  "dialogue": [],
+                  "sound_effect": "",
+                  "director_notes": [
+                    {
+                      "id": "note-one",
+                      "note": "author direction",
+                      "shot_size": "",
+                      "camera_angle": "",
+                      "camera_motion": "",
+                      "duration_seconds": 5,
+                      "emotion": "hope",
+                      "pacing": "",
+                      "performance": "pause",
+                      "blocking": "",
+                      "composition": "thirds",
+                      "lens": "35mm"
+                    }
+                  ]
+                }
+              ],
+              "director_notes": [
+                {
+                  "id": "note-one",
+                  "note": "author direction",
+                  "shot_size": "",
+                  "camera_angle": "",
+                  "camera_motion": "",
+                  "duration_seconds": 5,
+                  "emotion": "hope",
+                  "pacing": "",
+                  "performance": "pause",
+                  "blocking": "",
+                  "composition": "thirds",
+                  "lens": "35mm",
+                  "number": 1,
+                  "scene_id": "scene-one"
+                }
+              ],
+              "video_plan": null,
+              "script": null,
+              "visual_target": {
+                "style": "watercolor",
+                "atmosphere": "quiet",
+                "reference_works": [],
+                "color": "blue",
+                "rhythm": "slow"
+              }
+            }
+          }
+        },
+        "error": null
+      },
+      "director": {
+        "status": "SUCCEEDED",
+        "reviewed": false,
+        "output": {
+          "direction": {
+            "document_snapshot": {
+              "id": "d659e4f5-0657-420f-a88c-c02a09438b0b",
+              "version": 1,
+              "digest": "403747988204ade5d5ded3758e65be29dd49466a22b4cdd00bcf82f7da35deac"
+            },
+            "content": {
+              "mode": "DIRECTOR",
+              "title": "SYNTHETIC Director visual target",
+              "source_chapter_ids": [],
+              "source_independent": true,
+              "scenes": [
+                {
+                  "id": "scene-one",
+                  "sequence": 1,
+                  "source_chapter_id": null,
+                  "heading": "SYNTHETIC garden",
+                  "time": "",
+                  "location": "",
+                  "characters": [
+                    "A"
+                  ],
+                  "action": "",
+                  "dialogue": [],
+                  "emotion": "",
+                  "director_notes": []
+                }
+              ],
+              "shots": [],
+              "director_notes": [
+                {
+                  "id": "note-one",
+                  "note": "author direction",
+                  "shot_size": "",
+                  "camera_angle": "",
+                  "camera_motion": "",
+                  "duration_seconds": 5,
+                  "emotion": "hope",
+                  "pacing": "",
+                  "performance": "pause",
+                  "blocking": "",
+                  "composition": "thirds",
+                  "lens": "35mm",
+                  "number": 1,
+                  "scene_id": "scene-one"
+                }
+              ],
+              "video_plan": null,
+              "script": null,
+              "visual_target": {
+                "style": "watercolor",
+                "atmosphere": "quiet",
+                "reference_works": [],
+                "color": "blue",
+                "rhythm": "slow"
+              }
+            }
+          }
+        },
+        "error": null
+      },
+      "prompt": {
+        "status": "SUCCEEDED",
+        "reviewed": false,
+        "output": {
+          "prompt": {
+            "prompt": "SYNTHETIC garden\nshot_size: MEDIUM\ncamera_angle: EYE_LEVEL\ncamera_motion: STATIC\ncomposition: thirds\nlens: 35mm\nstyle: watercolor\natmosphere: quiet\ncolor: blue\nrhythm: slow",
+            "references": [],
+            "document_sources": [
+              {
+                "id": "d7573381-f362-4e3c-b069-f76ff98afc94",
+                "kind": "CREATIVE_DOCUMENT",
+                "version": 1,
+                "digest": "bdb2295dd388c8709a0198a438532b4852a5261c3a9cc901a5973a02fc32bd44",
+                "asset_kind": null,
+                "reference_only": true
+              }
+            ]
+          }
+        },
+        "error": null
+      },
+      "style": {
+        "status": "SUCCEEDED",
+        "reviewed": false,
+        "output": {
+          "prompt": {
+            "prompt": "SYNTHETIC garden\nshot_size: MEDIUM\ncamera_angle: EYE_LEVEL\ncamera_motion: STATIC\ncomposition: thirds\nlens: 35mm\nstyle: watercolor\natmosphere: quiet\ncolor: blue\nrhythm: slow\nStyle: ink",
+            "references": [],
+            "document_sources": [
+              {
+                "id": "d7573381-f362-4e3c-b069-f76ff98afc94",
+                "kind": "CREATIVE_DOCUMENT",
+                "version": 1,
+                "digest": "bdb2295dd388c8709a0198a438532b4852a5261c3a9cc901a5973a02fc32bd44",
+                "asset_kind": null,
+                "reference_only": true
+              }
+            ]
+          }
+        },
+        "error": null
+      }
+    },
+    "review": null,
+    "model_called": false,
+    "external_calls": 0,
+    "applied": false
+  }
+}

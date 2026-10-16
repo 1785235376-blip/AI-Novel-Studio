@@ -1,0 +1,30 @@
+<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="0" time="14.755975000000001">
+<testsuite name="v2-creative-live.spec.ts" timestamp="2026-10-09T07:43:40.983Z" hostname="v2-live-chromium" tests="2" failures="0" skipped="0" time="2.539" errors="0">
+<testcase name="real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript" classname="v2-creative-live.spec.ts" time="2.083">
+<properties>
+<property name="verification" value="Real uvicorn HTTP/File test; no browser fixture; synthetic local rule-assisted data, no model inference.">
+</property>
+</properties>
+</testcase>
+<testcase name="real HTTP File V2 scope, cancel and stale source fences remain authoritative" classname="v2-creative-live.spec.ts" time="0.456">
+</testcase>
+</testsuite>
+<testsuite name="v2-creative-live.spec.ts" timestamp="2026-10-09T07:43:40.983Z" hostname="v2-live-chromium" tests="2" failures="0" skipped="0" time="1.323" errors="0">
+<testcase name="real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript" classname="v2-creative-live.spec.ts" time="0.914">
+<properties>
+<property name="verification" value="Real uvicorn HTTP/File test; no browser fixture; synthetic local rule-assisted data, no model inference.">
+</property>
+</properties>
+</testcase>
+<testcase name="real HTTP File V2 scope, cancel and stale source fences remain authoritative" classname="v2-creative-live.spec.ts" time="0.409">
+</testcase>
+</testsuite>
+<testsuite name="v2-creative-live.spec.ts" timestamp="2026-10-09T07:43:40.983Z" hostname="v1-chromium" tests="1" failures="0" skipped="0" time="1.217" errors="0">
+<testcase name="real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes" classname="v2-creative-live.spec.ts" time="1.217">
+</testcase>
+</testsuite>
+<testsuite name="v2-creative-live.spec.ts" timestamp="2026-10-09T07:43:40.983Z" hostname="v1-chromium" tests="1" failures="0" skipped="0" time="0.136" errors="0">
+<testcase name="real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes" classname="v2-creative-live.spec.ts" time="0.136">
+</testcase>
+</testsuite>
+</testsuites>

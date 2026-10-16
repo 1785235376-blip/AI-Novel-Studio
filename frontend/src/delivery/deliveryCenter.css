@@ -1,0 +1,120 @@
+/*
+ * UX-09 统一导出与工程交接 —— 视图样式。
+ *
+ * 只使用 `frontend/src/ui/tokens.css` 里已有的设计令牌（颜色、间距、圆角、控件高度、
+ * 焦点环、字体），不发明任何色值或魔法间距。`ui/primitives` 的 `Panel` / `Button` /
+ * `Badge` / `StatusMessage` / `EmptyState` 已经承担外观，这里只做版式。
+ */
+
+.delivery-center { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.delivery-center p { margin: 0; color: var(--color-text-secondary); }
+.delivery-center h3, .delivery-center h4 { margin: 0; }
+.delivery-center code { font-family: var(--font-mono); overflow-wrap: anywhere; }
+
+.delivery-center__help { color: var(--color-text-muted); overflow-wrap: anywhere; }
+.delivery-center__codes { color: var(--color-text-muted); }
+
+.delivery-center__denied {
+  display: flex; flex-direction: column; gap: var(--space-1);
+  border: var(--border-default); border-left: 3px solid var(--color-status-error);
+  border-radius: var(--radius-md); padding: var(--space-3); background: var(--color-bg-subtle);
+}
+
+.delivery-center__counts {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4);
+}
+.delivery-center__counts > li { display: flex; align-items: center; gap: var(--space-2); }
+.delivery-center__counts > div { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.delivery-center__counts dt { color: var(--color-text-muted); }
+.delivery-center__counts dd { margin: 0; overflow-wrap: anywhere; }
+
+.delivery-center__field { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.delivery-center__field > span { color: var(--color-text-muted); }
+.delivery-center__field select {
+  min-height: var(--control-height-md); padding: 0 var(--space-2);
+  border: var(--border-default); border-radius: var(--radius-sm);
+  background: var(--color-bg-elevated); color: var(--color-text-primary); font-family: var(--font-ui);
+}
+.delivery-center__field select:focus-visible { outline: var(--border-strong); box-shadow: var(--focus-ring); }
+
+.delivery-center__digest { font-family: var(--font-mono); color: var(--color-text-muted); overflow-wrap: anywhere; }
+
+/* ------------------------------------------------------------------ 单对象导出 */
+
+.delivery-item {
+  display: flex; flex-direction: column; gap: var(--space-3);
+  border: var(--border-default); border-radius: var(--radius-lg);
+  padding: var(--space-3); background: var(--color-bg-surface); min-width: 0;
+}
+.delivery-item__head { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-2) var(--space-3); }
+.delivery-item__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.delivery-item__row {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  border: var(--border-default); border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3); background: var(--color-bg-subtle); min-width: 0;
+}
+.delivery-item__row[data-exportable='true'] { border-color: var(--color-status-success); }
+.delivery-item__facts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); min-width: 0; }
+.delivery-item__facts span { color: var(--color-text-muted); font-family: var(--font-mono); overflow-wrap: anywhere; }
+.delivery-item__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.delivery-item__refusal { color: var(--color-status-warning); overflow-wrap: anywhere; }
+.delivery-item__limits {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  border-top: var(--border-default); padding-top: var(--space-3);
+}
+
+/* ------------------------------------------------------------------ 交接包清单 */
+
+.delivery-manifest {
+  display: flex; flex-direction: column; gap: var(--space-3);
+  border: var(--border-default); border-radius: var(--radius-lg);
+  padding: var(--space-3); background: var(--color-bg-surface); min-width: 0;
+}
+.delivery-manifest__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.delivery-manifest__flags li { color: var(--color-text-muted); }
+.delivery-manifest__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.delivery-manifest__row {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3);
+  border: var(--border-default); border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3); background: var(--color-bg-subtle); min-width: 0;
+}
+.delivery-manifest__row span { color: var(--color-text-muted); overflow-wrap: anywhere; }
+.delivery-manifest__excluded {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  border-top: var(--border-default); padding-top: var(--space-3);
+}
+.delivery-manifest__excluded ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.delivery-manifest__excluded li {
+  color: var(--color-text-secondary); overflow-wrap: anywhere;
+  border-left: 3px solid var(--color-status-warning); padding-left: var(--space-2);
+}
+
+/* ------------------------------------------------------------------ 回执与恢复 */
+
+.delivery-receipts {
+  display: flex; flex-direction: column; gap: var(--space-3);
+  border: var(--border-default); border-radius: var(--radius-lg);
+  padding: var(--space-3); background: var(--color-bg-surface); min-width: 0;
+}
+.delivery-receipts__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.delivery-receipts__recovery,
+.delivery-receipts__unknown {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  border: var(--border-default); border-radius: var(--radius-md);
+  padding: var(--space-3); background: var(--color-bg-subtle); min-width: 0;
+}
+.delivery-receipts__unknown ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.delivery-receipts__unknown li {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2);
+  border-left: 3px solid var(--color-status-warning); padding-left: var(--space-2);
+}
+.delivery-receipts__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.delivery-receipts__row {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3);
+  border: var(--border-default); border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3); background: var(--color-bg-subtle); min-width: 0;
+}
+.delivery-receipts__row span { color: var(--color-text-muted); overflow-wrap: anywhere; }
+.delivery-receipts__row[data-status='failed'] { border-color: var(--color-status-error); }
+.delivery-receipts__row[data-status='succeeded'] { border-color: var(--color-status-success); }

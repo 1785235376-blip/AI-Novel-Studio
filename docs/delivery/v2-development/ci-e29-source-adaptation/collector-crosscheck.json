@@ -1,0 +1,42 @@
+{
+  "scope": "READ_ONLY_ARCHIVE_VALIDATION_NOT_HOSTED_GATE_PROOF",
+  "all_original_attempt_1_runs_terminal": true,
+  "job_count": 29,
+  "full_backend_shard_count": 6,
+  "failed_phase_event_count": 0,
+  "cancelled_shards_remain_incomplete": true,
+  "postgres_partition_checks": [
+    {
+      "event": "push",
+      "assigned_counts": [
+        5765,
+        5768
+      ],
+      "disjoint": true,
+      "union_equals_inventory": true,
+      "inventory_count": 11533,
+      "both_execution_shards_complete": true,
+      "official_strict_join_passed": false,
+      "official_complete_coverage_proof_present": false,
+      "boundary": "Read-only collector reconciliation of original receipts; not a substitute for the skipped hosted strict join."
+    },
+    {
+      "event": "pull_request",
+      "assigned_counts": [
+        5765,
+        5768
+      ],
+      "disjoint": true,
+      "union_equals_inventory": true,
+      "inventory_count": 11533,
+      "both_execution_shards_complete": false,
+      "official_strict_join_passed": false,
+      "official_complete_coverage_proof_present": false,
+      "boundary": "Read-only collector reconciliation of original receipts; not a substitute for the skipped hosted strict join."
+    }
+  ],
+  "all_8_backend_cache_hits_and_actual_install_check_verified": true,
+  "cache_save_success_claimed": false,
+  "successful_posts_primary_key_hit_not_saving": 5,
+  "cancelled_execution_posts_skipped": 3
+}

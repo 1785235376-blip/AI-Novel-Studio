@@ -1,0 +1,6 @@
+{
+  "stage": "11-agent-planner",
+  "status": "FAIL",
+  "seconds": 2.032,
+  "error": "[WinError 10061] 由于目标计算机积极拒绝，无法连接。"
+}

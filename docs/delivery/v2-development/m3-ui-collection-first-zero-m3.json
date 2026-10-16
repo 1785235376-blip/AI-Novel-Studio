@@ -1,0 +1,182 @@
+{
+  "config": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.independent-live.config.ts",
+      "--project",
+      "m3-consent-chromium",
+      "--list"
+    ],
+    "configFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/playwright.independent-live.config.ts",
+    "rootDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-browser/m3-ui-collection-project",
+      "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/m3-ui-collection-project/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-browser/m3-ui-collection-project",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "v2-live-chromium",
+        "name": "v2-live-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-(independent-studio|asset-relationships)-live\\.spec\\.ts/",
+          "/v2-independent-graph-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/m3-ui-collection-project/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-browser/m3-ui-collection-project",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "v1-chromium",
+        "name": "v1-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-(independent-studio|asset-relationships)-live\\.spec\\.ts/",
+          "/v2-independent-graph-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/m3-ui-collection-project/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-browser/m3-ui-collection-project",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "v1-acceptance-chromium",
+        "name": "v1-acceptance-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-(independent-studio|asset-relationships)-live\\.spec\\.ts/",
+          "/v2-independent-graph-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/m3-ui-collection-project/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-browser/m3-ui-collection-project",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "m3-consent-chromium",
+        "name": "m3-consent-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-local-ai-consent-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/m3-ui-collection-project/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-browser/m3-ui-collection-project",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "m3-default-off-chromium",
+        "name": "m3-default-off-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-local-ai-consent-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/m3-ui-collection-project/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-browser/m3-ui-collection-project",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "m3-acceptance-chromium",
+        "name": "m3-acceptance-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-local-ai-consent-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/m3-ui-collection-project/junit.xml"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/m3-ui-collection-project/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [],
+  "errors": [
+    {
+      "message": "Error: No tests found",
+      "stack": "Error: No tests found"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-10-09T14:55:29.390Z",
+    "duration": 21.728999999999928,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

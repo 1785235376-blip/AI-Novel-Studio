@@ -1,0 +1,434 @@
+[
+  {
+    "case": "process-postgres-create-membership-writer",
+    "operation": "create",
+    "revocation": "membership",
+    "first": "writer",
+    "first_response_status": 201,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 78596,
+    "revoker_pid": 76784,
+    "holder_postgres_pid": 73644,
+    "waiter_postgres_pid": 82920,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      73644
+    ]
+  },
+  {
+    "case": "process-postgres-revise-membership-writer",
+    "operation": "revise",
+    "revocation": "membership",
+    "first": "writer",
+    "first_response_status": 201,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 54736,
+    "revoker_pid": 69724,
+    "holder_postgres_pid": 75360,
+    "waiter_postgres_pid": 80568,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      75360
+    ]
+  },
+  {
+    "case": "process-postgres-delete-permission-writer",
+    "operation": "delete",
+    "revocation": "permission",
+    "first": "writer",
+    "first_response_status": 200,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 81992,
+    "revoker_pid": 77856,
+    "holder_postgres_pid": 79188,
+    "waiter_postgres_pid": 65192,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      79188
+    ]
+  },
+  {
+    "case": "process-postgres-adopt-permission-writer",
+    "operation": "adopt",
+    "revocation": "permission",
+    "first": "writer",
+    "first_response_status": 200,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 78016,
+    "revoker_pid": 79112,
+    "holder_postgres_pid": 78272,
+    "waiter_postgres_pid": 80596,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      78272
+    ]
+  },
+  {
+    "case": "process-postgres-create-membership-revoker",
+    "operation": "create",
+    "revocation": "membership",
+    "first": "revoker",
+    "first_response_status": 403,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 75688,
+    "revoker_pid": 83004,
+    "holder_postgres_pid": 74744,
+    "waiter_postgres_pid": 54468,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      74744
+    ]
+  },
+  {
+    "case": "process-postgres-revise-membership-revoker",
+    "operation": "revise",
+    "revocation": "membership",
+    "first": "revoker",
+    "first_response_status": 403,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 82740,
+    "revoker_pid": 71492,
+    "holder_postgres_pid": 79520,
+    "waiter_postgres_pid": 78868,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      79520
+    ]
+  },
+  {
+    "case": "process-postgres-delete-membership-revoker",
+    "operation": "delete",
+    "revocation": "membership",
+    "first": "revoker",
+    "first_response_status": 403,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 53092,
+    "revoker_pid": 73020,
+    "holder_postgres_pid": 83284,
+    "waiter_postgres_pid": 81820,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      83284
+    ]
+  },
+  {
+    "case": "process-postgres-adopt-membership-revoker",
+    "operation": "adopt",
+    "revocation": "membership",
+    "first": "revoker",
+    "first_response_status": 403,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 72116,
+    "revoker_pid": 82460,
+    "holder_postgres_pid": 56272,
+    "waiter_postgres_pid": 75088,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      56272
+    ]
+  },
+  {
+    "case": "process-postgres-create-role-revoker",
+    "operation": "create",
+    "revocation": "role",
+    "first": "revoker",
+    "first_response_status": 403,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 80876,
+    "revoker_pid": 74320,
+    "holder_postgres_pid": 78140,
+    "waiter_postgres_pid": 78464,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      78140
+    ]
+  },
+  {
+    "case": "process-postgres-revise-role-revoker",
+    "operation": "revise",
+    "revocation": "role",
+    "first": "revoker",
+    "first_response_status": 403,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 79204,
+    "revoker_pid": 81388,
+    "holder_postgres_pid": 49636,
+    "waiter_postgres_pid": 81980,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      49636
+    ]
+  },
+  {
+    "case": "process-postgres-delete-role-revoker",
+    "operation": "delete",
+    "revocation": "role",
+    "first": "revoker",
+    "first_response_status": 403,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 71000,
+    "revoker_pid": 82604,
+    "holder_postgres_pid": 66788,
+    "waiter_postgres_pid": 79572,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      66788
+    ]
+  },
+  {
+    "case": "process-postgres-adopt-role-revoker",
+    "operation": "adopt",
+    "revocation": "role",
+    "first": "revoker",
+    "first_response_status": 403,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 74476,
+    "revoker_pid": 81896,
+    "holder_postgres_pid": 82504,
+    "waiter_postgres_pid": 59288,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      82504
+    ]
+  },
+  {
+    "case": "process-postgres-delete-membership-writer",
+    "operation": "delete",
+    "revocation": "membership",
+    "first": "writer",
+    "first_response_status": 200,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 70032,
+    "revoker_pid": 80240,
+    "holder_postgres_pid": 81972,
+    "waiter_postgres_pid": 75464,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      81972
+    ]
+  },
+  {
+    "case": "process-postgres-create-permission-revoker",
+    "operation": "create",
+    "revocation": "permission",
+    "first": "revoker",
+    "first_response_status": 403,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 81488,
+    "revoker_pid": 65984,
+    "holder_postgres_pid": 48844,
+    "waiter_postgres_pid": 80488,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      48844
+    ]
+  },
+  {
+    "case": "process-postgres-revise-permission-revoker",
+    "operation": "revise",
+    "revocation": "permission",
+    "first": "revoker",
+    "first_response_status": 403,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 83408,
+    "revoker_pid": 74480,
+    "holder_postgres_pid": 79808,
+    "waiter_postgres_pid": 83196,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      79808
+    ]
+  },
+  {
+    "case": "process-postgres-delete-permission-revoker",
+    "operation": "delete",
+    "revocation": "permission",
+    "first": "revoker",
+    "first_response_status": 403,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 75652,
+    "revoker_pid": 74508,
+    "holder_postgres_pid": 82556,
+    "waiter_postgres_pid": 82712,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      82556
+    ]
+  },
+  {
+    "case": "process-postgres-adopt-permission-revoker",
+    "operation": "adopt",
+    "revocation": "permission",
+    "first": "revoker",
+    "first_response_status": 403,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 72080,
+    "revoker_pid": 80932,
+    "holder_postgres_pid": 69840,
+    "waiter_postgres_pid": 78964,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      69840
+    ]
+  },
+  {
+    "case": "process-postgres-adopt-membership-writer",
+    "operation": "adopt",
+    "revocation": "membership",
+    "first": "writer",
+    "first_response_status": 200,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 81720,
+    "revoker_pid": 76464,
+    "holder_postgres_pid": 70184,
+    "waiter_postgres_pid": 75904,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      70184
+    ]
+  },
+  {
+    "case": "process-postgres-create-role-writer",
+    "operation": "create",
+    "revocation": "role",
+    "first": "writer",
+    "first_response_status": 201,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 78892,
+    "revoker_pid": 77028,
+    "holder_postgres_pid": 80636,
+    "waiter_postgres_pid": 82580,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      80636
+    ]
+  },
+  {
+    "case": "process-postgres-revise-role-writer",
+    "operation": "revise",
+    "revocation": "role",
+    "first": "writer",
+    "first_response_status": 201,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 75464,
+    "revoker_pid": 77940,
+    "holder_postgres_pid": 82884,
+    "waiter_postgres_pid": 81684,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      82884
+    ]
+  },
+  {
+    "case": "process-postgres-delete-role-writer",
+    "operation": "delete",
+    "revocation": "role",
+    "first": "writer",
+    "first_response_status": 200,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 82032,
+    "revoker_pid": 78304,
+    "holder_postgres_pid": 79072,
+    "waiter_postgres_pid": 78856,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      79072
+    ]
+  },
+  {
+    "case": "process-postgres-adopt-role-writer",
+    "operation": "adopt",
+    "revocation": "role",
+    "first": "writer",
+    "first_response_status": 200,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 71520,
+    "revoker_pid": 78132,
+    "holder_postgres_pid": 48640,
+    "waiter_postgres_pid": 74476,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      48640
+    ]
+  },
+  {
+    "case": "process-postgres-create-permission-writer",
+    "operation": "create",
+    "revocation": "permission",
+    "first": "writer",
+    "first_response_status": 201,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 79440,
+    "revoker_pid": 81896,
+    "holder_postgres_pid": 77700,
+    "waiter_postgres_pid": 77348,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      77700
+    ]
+  },
+  {
+    "case": "process-postgres-revise-permission-writer",
+    "operation": "revise",
+    "revocation": "permission",
+    "first": "writer",
+    "first_response_status": 201,
+    "same_original_token_negative_status": 403,
+    "same_original_token_negative_code": "PROJECT_SCOPE_FORBIDDEN",
+    "parent_pid": 75876,
+    "writer_pid": 61668,
+    "revoker_pid": 57744,
+    "holder_postgres_pid": 81396,
+    "waiter_postgres_pid": 82916,
+    "wait_event_type": "Lock",
+    "pg_blocking_pids": [
+      81396
+    ]
+  }
+]

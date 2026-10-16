@@ -1,0 +1,192 @@
+{
+  "contract": "studio-phase5-source-evidence/1",
+  "baseline_sha": "8e4f028680f885d7bc9e040609c5c1b5d2a48e13",
+  "backend_test_input_tree": "18f7a30f49c2aa21d5246e90297eea9abbda534b",
+  "frontend_test_input_tree": "724858468676a19c17dbb723afec6d4f660ebb1b",
+  "source_hashes": {
+    "app/creative/models.py": "ffc5e03e2ba94ef6eaede01d2a722f59467cfd66c50935483f26f64488d8172e",
+    "app/creative/storyboard.py": "3c0f9959c482f51c41787b60471fedbc39a3628991031804eb86f5270a94f525",
+    "app/creative/api.py": "d4f4f2f1b4d668c2194b2689ed9ece2287e78c259a0642bb05a053fcc1604bc1",
+    "app/creative/production_execution_models.py": "46eff11dfc5e4ea513d102b6fbc29d0395d9fdd41a9554c15180f041e0c3e2ae",
+    "app/creative/production_execution.py": "4b40da8f225d6495236aecaaa9e8ec327c507ab842368db5aeb18da4f332b19d",
+    "app/services/studio_video_execution.py": "98e9b7a0b657757b7db9f001704ca1bf8c24a5f4522952c7e092ba8a9ab1e325",
+    "app/services/asset_library_service.py": "8765422dd467edfd62f035920a6333ff85ef5ea824c936c4f9093f9f6c7020d0",
+    "tests/test_v2_storyboard_video_pipeline.py": "cb9e684f52ef6ef7feaefdcef9eda5f6cc07b721947cdb0befdc713df2bc684f",
+    "tests/test_v2_storyboard_video_pipeline_api.py": "832a8d4367932ef71bb0aa0140a1f4dbe02be76da7ec499333a3f9d17c57b5f6",
+    "app/model_center/discovery.py": "848023756247c0a530517e7ff67899ffcbddc5f0f6c75343a6916a7042559f92",
+    "app/model_center/discovery_environment.py": "25604fe938fd5420e218565ce31346f685cce8c604471097b550cc628dcaf031",
+    "app/model_center/discovery_bridge.py": "a57919a3aba5b58ebcbbb0940f013ad7bf4d011f13981cd27494b3321fb628a4",
+    "app/model_center/discovery_types.py": "99ca672105053f68f3fc754467983ac2d75a4e57ec1d7407e425ad88c64e1ae0",
+    "tests/test_v2_video_model_observations.py": "18fb7a5f5b8c5ba1164f2062bdba0b8bff6157c60419d7ef784fffd9580cd941",
+    "app/creative/graph.py": "aa9fcd0a1e404fae2cca3198da53367f696229109e39a3f4a362c93a36932c28",
+    "app/creative/graph_models.py": "cabcc16e431e59803127f4edfaf28f237200eef68ab58c57078c332d031e57bd",
+    "app/creative/graph_video_nodes.py": "67987609fbe5a7d07706021b23bf82bd14308ec73cf2098134817ee7f0d71acf",
+    "tests/test_v2_graph_storyboard_video_pipeline.py": "223eb1bbf9161f16163da90b83839324a0f89bec1d2cce5426f58bde5cbe092b",
+    "tests/fixtures/v2_phase5_legacy_video_command.json": "4ae649d4f784726bad841379b235e3d07faa2650fbe960524adad266a5a71ec3",
+    "frontend/src/AIEnvironmentSummary.tsx": "baa52922dd1518ca0dd47493cc5f92d71fc4e7517f8ee6cd0e77e7984ea7d196",
+    "frontend/src/creative/CreativeCanvas.tsx": "16a473c8ad83832604c4ff3fcd66eec24a21583b75a01566b7c80412d56362e8",
+    "frontend/src/creative/CreativeWorkspace.tsx": "025b6f391af616ef4c22d1f51c8977e74e22b7d8d607e30ee2db455406bf2990",
+    "frontend/src/creative/fixtures/phase5.capture.storyboard-video-approved.json": "feb1a80e501cd26e65a27bf38548456eb1cabc85e8e8c014d0b74850b76efd91",
+    "frontend/src/creative/fixtures/phase5.capture.storyboard-video-bound.json": "a0c233086da9bb745fe3fa53a4f8f20442fb6bcff726e4612389cc40e45d13f5",
+    "frontend/src/creative/fixtures/phase5.capture.timeline-created.json": "81a028df788a9b02030bcd783b894a2fba8341c3e12fefc3eb2d707e5ed9fe69",
+    "frontend/src/creative/fixtures/phase5.capture.timeline-recovered.json": "594112061ff7158fcd236bc8d65878dcfeb8f3ad99b2087d568032df340c436a",
+    "frontend/src/creative/fixtures/phase5.capture.video-adopted.json": "fbe144ab444a5c4a02919f1144a5cbbb5b6969e5d9d5ea75f4b4616abb286fdd",
+    "frontend/src/creative/fixtures/phase5.capture.video-approved.json": "9d76b79b92e7ea2b576566a6f0b7429589fbeef9234a736568068e072b4b720c",
+    "frontend/src/creative/fixtures/phase5.capture.video-catalog.json": "3527573d987543da69fb0bacae8aace152172a4d3396b7c92c9255ef9d74256b",
+    "frontend/src/creative/fixtures/phase5.capture.video-request.json": "46f9b9f9315dc16b8896e6e208ef5222c090ce40d7dedbb3c9820f7490a7a49d",
+    "frontend/src/creative/fixtures/phase5.file-api-video-environment.json": "85aec5e97d2aa286ee47575f5f182e528ec4bab795a7283007560c30c9e0da56",
+    "frontend/src/creative/StoryboardProductionPanel.tsx": "bd55b49d1e74a289489dfb5313d07853cfb64ff7feba6003f805bf0187914863",
+    "frontend/src/creative/StoryboardVideoPipeline.phase5.test.tsx": "50bc642c9f6486f363257ed7a107f902861e83ef43078d4041593228540e47cb",
+    "frontend/src/creative/studioGraphClient.ts": "a67dda00ec315694f5b97a53c105b556a8bbb2b95b4ce3ce106102c9d3edd2cb",
+    "frontend/src/creative/studioGraphEditorView.tsx": "d3ef18ef272403921c3daaa3f04f27d440290edea97fab4d0f65da574fc0e8ed",
+    "frontend/src/creative/studioGraphTypes.ts": "d311f0d6df1aef70d6f1f3c8a12e79174ff83175248edd8a969c4a241c0d38f5",
+    "frontend/src/creative/StudioMediaExecutionPanel.tsx": "e0aaeafe78431b3ebd7a29ca77b4a61a85200a6b9021a33fff764d25f17aa81d",
+    "frontend/src/creative/studioProductionClient.ts": "87adf175d7cd4f62cdeb64c8b7ee46918be3f6a4ca98a187b5967456c66bb9ad",
+    "frontend/src/creative/studioProductionGraphContract.ts": "69d6d1e6095fc3443b1f114b6719a7fbb4dc61e6d61521820f3e908e720ee7fd",
+    "frontend/src/creative/studioStoryboardClient.ts": "d31b9637104a0f5536c99ccdd289d05bbc2fa4b21c732d60b93e99744c9afe17",
+    "frontend/src/creative/studioStoryboardContract.ts": "dfae884ba63b9022a3f5f5e8f4b8db004b40c712d0e9a08999266c7b1afc4938",
+    "frontend/src/creative/studioStoryboardPipeline.phase5.test.ts": "9d5b89c713677b956a89399de8a46cba591f5d42ef8e9bf150fa1de73a594d8c",
+    "frontend/src/creative/studioStoryboardPipelineContract.ts": "ea4e223da8563b55021fde11396fc053b259317eb991623c88d5123d0356a1ec",
+    "frontend/src/creative/studioStoryboardShotContext.phase5.test.ts": "dcbf80820c8bb68a75df33cb8d3f6a3882dee2ee214dd55ddf128c554ca87da7",
+    "frontend/src/creative/studioVideoRuntimeContract.ts": "25d8765913a0e4ed831a15cc20efdf3d1703d2656861524f66c1c2c0c347b0c5",
+    "frontend/src/creative/StudioVideoShotBinding.phase5.test.tsx": "3d1984b1984d19f1c0fa42d74d3f136c648ecb42eb15cfe5885c408161ab087e",
+    "frontend/src/creative/types.ts": "45347710e393c7106154ec5c3d2319d9b905ef2232b73e7744fb40f745d2c9e8",
+    "frontend/src/creative/useStoryboardProductionController.ts": "d8c78a8d40bd65dab3f81185b1dd3067950a27deb76e5ff657c17eec86316882",
+    "frontend/src/creative/useStudioGraphEditorController.ts": "13cf9c6349ce828455c59a19fee65df473c9af58799b6b2962bf312579c65276",
+    "frontend/src/localAiDiscoveryApi.ts": "47b75ec395375d7b610e140f0106c65247bebd5d402efe0be4a7cb4f8212701d",
+    "frontend/src/ui/ModelCenter.tsx": "c7e1e5b7221f78c16dc50d07df1960041e1b275700b5aa194918ab2e185909ce",
+    "frontend/src/VideoModelObservations.phase5.test.tsx": "e09cd8c82cd53cea7040600687971469ae3ac116b706e2ba929e0375d39df65f"
+  },
+  "verification": {
+    "file": {
+      "counts": {
+        "tests": 456,
+        "failures": 2,
+        "errors": 0,
+        "skipped": 137,
+        "passed": 317
+      },
+      "exit_code": 1,
+      "source_unchanged": true,
+      "receipt_sha256": "c4e0bb1c3044ad598a3d311c27e9789fdc5d6048d59a13a31ddc2e3c08f5b3e7",
+      "failures": [
+        {
+          "node": "tests.test_local_ai_environment_v2::test_symlink_roots_and_entries_skipped_and_nested_roots_deduplicated",
+          "category": "WINDOWS_SYMLINK_PRIVILEGE_PREREQUISITE"
+        },
+        {
+          "node": "tests.test_local_ai_discovery::test_scans_only_configured_roots_bounded_depth_and_no_link",
+          "category": "WINDOWS_SYMLINK_PRIVILEGE_PREREQUISITE"
+        }
+      ],
+      "new_modules_subset": {
+        "passed": 67,
+        "failure": 0,
+        "error": 0,
+        "skipped": 30
+      }
+    },
+    "postgres": {
+      "counts": {
+        "tests": 456,
+        "failures": 2,
+        "errors": 0,
+        "skipped": 137,
+        "passed": 317
+      },
+      "exit_code": 1,
+      "source_unchanged": true,
+      "receipt_sha256": "0a388b291115796eca81bb655545a3c9d76cc3c0593b67cbe2a2a09b8adc2e46",
+      "failures": [
+        {
+          "node": "tests.test_local_ai_environment_v2::test_symlink_roots_and_entries_skipped_and_nested_roots_deduplicated",
+          "category": "WINDOWS_SYMLINK_PRIVILEGE_PREREQUISITE"
+        },
+        {
+          "node": "tests.test_local_ai_discovery::test_scans_only_configured_roots_bounded_depth_and_no_link",
+          "category": "WINDOWS_SYMLINK_PRIVILEGE_PREREQUISITE"
+        }
+      ],
+      "new_modules_subset": {
+        "passed": 67,
+        "failure": 0,
+        "error": 0,
+        "skipped": 30
+      }
+    },
+    "frontend": {
+      "counts": {
+        "tests": 3258,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 8,
+        "passed": 3250
+      },
+      "exit_code": 0,
+      "source_unchanged": true,
+      "receipt_sha256": "d1f3d5aee9c457e6529524fdcfbbc33e6fede4619585a57270ad1927e60d8ff9",
+      "failures": []
+    },
+    "metadata": {
+      "counts": {
+        "tests": 46,
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 44
+      },
+      "exit_code": 1,
+      "source_unchanged": true,
+      "receipt_sha256": "c289acad55a7c10188bd1509a324debda59eaa2fcac8fdb47e692c0c980b0f17",
+      "failures": [
+        {
+          "node": ".github.ci.test_compact_staged_catalog::test_retained_symlink_is_rejected_before_generator",
+          "category": "WINDOWS_SYMLINK_PRIVILEGE_PREREQUISITE"
+        },
+        {
+          "node": ".github.ci.test_compact_staged_catalog::test_excluded_evidence_symlink_is_not_followed",
+          "category": "WINDOWS_SYMLINK_PRIVILEGE_PREREQUISITE"
+        }
+      ]
+    },
+    "linux_supplement": {
+      "counts": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "original_assertions_unchanged": true,
+      "windows_failures_reclassified": false,
+      "owned_temp_removed": true
+    },
+    "types_tokens_build_visual": {
+      "passed": true,
+      "token_files": 52,
+      "original_shell_snapshots": 7,
+      "snapshot_updates": false
+    }
+  },
+  "product_status": "PARTIAL",
+  "native_windows": "NOT_RUN",
+  "gpu_models": "LOCAL_REQUIRED",
+  "raw_evidence_published": false,
+  "suite_overlap_not_added": true,
+  "protected_gates_unchanged": true,
+  "collection": {
+    "status": "INVENTORY_ONLY",
+    "api_operations": 2243,
+    "collected_nodes": 14129,
+    "frozen_nodes_retained": 9151
+  },
+  "hosted_checkpoint": {
+    "sha": "8e4f028680f885d7bc9e040609c5c1b5d2a48e13",
+    "jobs": 29,
+    "runner_id_zero": 29,
+    "without_steps": 29,
+    "status": "BLOCKED_ACCOUNT_PLATFORM",
+    "product_tests_executed": false,
+    "reruns_requested": false,
+    "private_diagnosis_retained": true
+  }
+}

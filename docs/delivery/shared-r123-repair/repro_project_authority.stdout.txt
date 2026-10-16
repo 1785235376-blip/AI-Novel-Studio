@@ -1,0 +1,35 @@
+{
+  "source": "c6f2126115b52e17839d48efea091dc21ec08c61",
+  "environment": "Linux Python 3.12.14 File TestClient; actual LocalSessionBootstrap issuance",
+  "real_model_calls": 0,
+  "control_project_write_authorization": {
+    "status": 403,
+    "detail": {
+      "code": "PROJECT_SCOPE_FORBIDDEN"
+    }
+  },
+  "aliases": {
+    "/api": {
+      "no_token": 401,
+      "protected_export": 403,
+      "goal_get": 403,
+      "goal_put": 403,
+      "goal_persisted": null,
+      "raw_novel_get": 403,
+      "chapters_get": 403,
+      "chapter_content_disclosed": false,
+      "overview": 403
+    },
+    "/api/v1": {
+      "no_token": 401,
+      "protected_export": 403,
+      "goal_get": 403,
+      "goal_put": 403,
+      "goal_persisted": null,
+      "raw_novel_get": 403,
+      "chapters_get": 403,
+      "chapter_content_disclosed": false,
+      "overview": 403
+    }
+  }
+}

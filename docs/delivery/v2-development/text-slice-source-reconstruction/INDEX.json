@@ -1,0 +1,21 @@
+{
+  "baseline": "3a234ed242a2d15698560752d6ac3a982da7c350",
+  "purpose": "Exact prior-source reconstruction for separately tested unpublished development slices; not final-tree acceptance",
+  "patches": {
+    "epub-only": {
+      "tree_or_commit": "53796e01aa157322f38ca80d1230a72804868bc6",
+      "file": "epub-only.patch.gz",
+      "raw_bytes": 44441,
+      "raw_sha256": "4a7fcf872e3b425e18daf9f8fc4e299e940137cbd6042e234b1de6524170a420",
+      "gzip_sha256": "84953e5191effda3c75b16f6029693873a6515baa09e6f6b633ccb2900eb38b5"
+    },
+    "starter-candidate": {
+      "tree_or_commit": "677c92760a86a86fd5e6a980a2b4a30597aa33cd",
+      "file": "starter-candidate.patch.gz",
+      "raw_bytes": 63619,
+      "raw_sha256": "43a9149abe45cac2950f1dfd44f9eca0827194ed76c861d380a1426f2de35f3f",
+      "gzip_sha256": "363f3068e2ef1d2e988a0791fecaa6bbed88a5a394ed25b0d68f0d94e8634a77"
+    }
+  },
+  "epub_manifest_sha256": "c7e8450c76b573790b0a4b04c582964cb68e6a83578f100e5f2c988909749971"
+}

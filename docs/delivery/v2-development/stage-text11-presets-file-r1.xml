@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="9" failures="0" skipped="9" tests="34" time="4.806" timestamp="2026-10-10T15:43:19.973617-07:00" hostname="7abb01f187ba"><testcase classname="tests.test_v2_screenplay_presets_pure" name="test_imports_resolve_only_to_this_checkout" time="3.384" /><testcase classname="tests.test_v2_screenplay_presets_pure" name="test_exact_closed_four_template_catalog_and_versions" time="0.001" /><testcase classname="tests.test_v2_screenplay_presets_pure" name="test_each_template_validates_original_models_and_stays_source_independent[FEATURE_FILM]" time="0.001" /><testcase classname="tests.test_v2_screenplay_presets_pure" name="test_each_template_validates_original_models_and_stays_source_independent[SHORT_FILM]" time="0.001" /><testcase classname="tests.test_v2_screenplay_presets_pure" name="test_each_template_validates_original_models_and_stays_source_independent[ANIMATION]" time="0.001" /><testcase classname="tests.test_v2_screenplay_presets_pure" name="test_each_template_validates_original_models_and_stays_source_independent[ADVERTISEMENT]" time="0.000" /><testcase classname="tests.test_v2_screenplay_presets_pure" name="test_distinct_bounded_linear_guidance_and_stable_ordered_prototype_ids[FEATURE_FILM]" time="0.212" /><testcase classname="tests.test_v2_screenplay_presets_pure" name="test_distinct_bounded_linear_guidance_and_stable_ordered_prototype_ids[SHORT_FILM]" time="0.001" /><testcase classname="tests.test_v2_screenplay_presets_pure" name="test_distinct_bounded_linear_guidance_and_stable_ordered_prototype_ids[ANIMATION]" time="0.000" /><testcase classname="tests.test_v2_screenplay_presets_pure" name="test_distinct_bounded_linear_guidance_and_stable_ordered_prototype_ids[ADVERTISEMENT]" time="0.001" /><testcase classname="tests.test_v2_screenplay_presets_pure" name="test_all_scene_identifiers_and_guides_are_unique_across_templates" time="0.001" /><testcase classname="tests.test_v2_screenplay_presets_pure" name="test_every_nested_result_is_detached_across_calls_and_templates" time="0.001" /><testcase classname="tests.test_v2_screenplay_presets_pure" name="test_original_model_validation_cannot_mutate_catalog_or_other_calls" time="0.001" /><testcase classname="tests.test_v2_screenplay_presets_pure" name="test_catalog_needs_no_file_network_or_fresh_identifier" time="0.000" /><testcase classname="tests.test_v2_screenplay_presets_pure" name="test_catalog_has_no_external_references_execution_or_saved_identity_fields" time="0.001" /><testcase classname="tests.test_v2_screenplay_presets_pure" name="test_v1_content_identity_is_pinned" time="0.000" /><testcase classname="tests.test_v2_screenplay_presets" name="test_each_starter_uses_original_create_edit_history_and_export_without_source[file-0]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'&quot;">self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError</error></testcase><testcase classname="tests.test_v2_screenplay_presets" name="test_each_starter_uses_original_create_edit_history_and_export_without_source[file-1]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'&quot;">self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError</error></testcase><testcase classname="tests.test_v2_screenplay_presets" name="test_each_starter_uses_original_create_edit_history_and_export_without_source[file-2]" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'&quot;">self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError</error></testcase><testcase classname="tests.test_v2_screenplay_presets" name="test_each_starter_uses_original_create_edit_history_and_export_without_source[file-3]" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'&quot;">self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError</error></testcase><testcase classname="tests.test_v2_screenplay_presets" name="test_each_starter_uses_original_create_edit_history_and_export_without_source[postgres-0]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/tests/test_v2_screenplay_presets.py:13: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_screenplay_presets" name="test_each_starter_uses_original_create_edit_history_and_export_without_source[postgres-1]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/tests/test_v2_screenplay_presets.py:13: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_screenplay_presets" name="test_each_starter_uses_original_create_edit_history_and_export_without_source[postgres-2]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/tests/test_v2_screenplay_presets.py:13: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_screenplay_presets" name="test_each_starter_uses_original_create_edit_history_and_export_without_source[postgres-3]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/tests/test_v2_screenplay_presets.py:13: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_screenplay_presets" name="test_catalog_does_not_read_chapters_or_open_a_mutation_transaction[file]" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'&quot;">self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError</error></testcase><testcase classname="tests.test_v2_screenplay_presets" name="test_catalog_does_not_read_chapters_or_open_a_mutation_transaction[postgres]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/tests/test_v2_screenplay_presets.py:35: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_screenplay_presets" name="test_catalog_api_requires_current_scope_and_never_creates_content[file]" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'&quot;">self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError</error></testcase><testcase classname="tests.test_v2_screenplay_presets" name="test_catalog_api_requires_current_scope_and_never_creates_content[postgres]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/tests/test_v2_screenplay_presets.py:45: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_screenplay_presets" name="test_catalog_api_is_default_off_and_v1_off[file-False]" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'&quot;">self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError</error></testcase><testcase classname="tests.test_v2_screenplay_presets" name="test_catalog_api_is_default_off_and_v1_off[file-True]" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'&quot;">self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError</error></testcase><testcase classname="tests.test_v2_screenplay_presets" name="test_catalog_api_is_default_off_and_v1_off[postgres-False]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/tests/test_v2_screenplay_presets.py:55: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_screenplay_presets" name="test_catalog_api_is_default_off_and_v1_off[postgres-True]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/tests/test_v2_screenplay_presets.py:55: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_screenplay_presets" name="test_catalog_rechecks_authority_after_building_public_guides[file]" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'&quot;">self = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/.runtime/text11-presets/file-r1'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError</error></testcase><testcase classname="tests.test_v2_screenplay_presets" name="test_catalog_rechecks_authority_after_building_public_guides[postgres]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/tests/test_v2_screenplay_presets.py:63: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase></testsuite></testsuites>

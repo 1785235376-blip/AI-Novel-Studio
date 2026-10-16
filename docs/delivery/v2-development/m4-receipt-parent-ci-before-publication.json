@@ -1,0 +1,200 @@
+{
+  "source_head": "bf1be37d1f27da0a9b9b3994cdac0fec4397784d",
+  "workflow_runs": [
+    {
+      "id": 38113445492,
+      "name": "Shared R123 evidence",
+      "event": "pull_request",
+      "head_sha": "bf1be37d1f27da0a9b9b3994cdac0fec4397784d",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-11T05:01:26Z",
+      "updated_at": "2026-10-11T05:02:26Z",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38113445492"
+    },
+    {
+      "id": 38113445484,
+      "name": "Local Interop V1",
+      "event": "pull_request",
+      "head_sha": "bf1be37d1f27da0a9b9b3994cdac0fec4397784d",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-10-11T05:01:26Z",
+      "updated_at": "2026-10-11T05:01:37Z",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38113445484"
+    },
+    {
+      "id": 38113445510,
+      "name": "Cloud CI",
+      "event": "pull_request",
+      "head_sha": "bf1be37d1f27da0a9b9b3994cdac0fec4397784d",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-10-11T05:01:26Z",
+      "updated_at": "2026-10-11T05:02:44Z",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38113445510"
+    },
+    {
+      "id": 38113440267,
+      "name": "Local Interop V1",
+      "event": "push",
+      "head_sha": "bf1be37d1f27da0a9b9b3994cdac0fec4397784d",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-10-11T05:01:21Z",
+      "updated_at": "2026-10-11T05:01:24Z",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38113440267"
+    },
+    {
+      "id": 38113440241,
+      "name": "Cloud CI",
+      "event": "push",
+      "head_sha": "bf1be37d1f27da0a9b9b3994cdac0fec4397784d",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-10-11T05:01:21Z",
+      "updated_at": "2026-10-11T05:01:29Z",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38113440241"
+    }
+  ],
+  "cloud_jobs": [
+    {
+      "run_id": 38113440241,
+      "jobs": [
+        {
+          "id": 114393534328,
+          "name": "Windows / Fresh base and acceptance package",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": []
+        },
+        {
+          "id": 114393534329,
+          "name": "Frontend / unit-type-build-tokens",
+          "status": "in_progress",
+          "conclusion": null,
+          "steps": []
+        },
+        {
+          "id": 114393534332,
+          "name": "V2 / Creative live workflows and geometry",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": []
+        },
+        {
+          "id": 114393534347,
+          "name": "Windows / Host compile and native contracts",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": []
+        },
+        {
+          "id": 114393534357,
+          "name": "Backend execution / original File TCP",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": []
+        },
+        {
+          "id": 114393534368,
+          "name": "Backend execution / postgres / shard 0",
+          "status": "in_progress",
+          "conclusion": null,
+          "steps": []
+        },
+        {
+          "id": 114393534399,
+          "name": "Backend execution / postgres / shard 1",
+          "status": "in_progress",
+          "conclusion": null,
+          "steps": []
+        },
+        {
+          "id": 114393534403,
+          "name": "Backend execution / file / shard 0",
+          "status": "in_progress",
+          "conclusion": null,
+          "steps": []
+        },
+        {
+          "id": 114393534412,
+          "name": "V2 / Independent studio live media",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": []
+        }
+      ]
+    },
+    {
+      "run_id": 38113445510,
+      "jobs": [
+        {
+          "id": 114393548121,
+          "name": "Frontend / unit-type-build-tokens",
+          "status": "in_progress",
+          "conclusion": null,
+          "steps": []
+        },
+        {
+          "id": 114393548210,
+          "name": "V2 / Creative live workflows and geometry",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": []
+        },
+        {
+          "id": 114393548221,
+          "name": "Windows / Fresh base and acceptance package",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": []
+        },
+        {
+          "id": 114393548229,
+          "name": "Windows / Host compile and native contracts",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": []
+        },
+        {
+          "id": 114393548244,
+          "name": "Backend execution / file / shard 0",
+          "status": "in_progress",
+          "conclusion": null,
+          "steps": []
+        },
+        {
+          "id": 114393548265,
+          "name": "Backend execution / postgres / shard 1",
+          "status": "in_progress",
+          "conclusion": null,
+          "steps": []
+        },
+        {
+          "id": 114393548266,
+          "name": "Backend execution / postgres / shard 0",
+          "status": "in_progress",
+          "conclusion": null,
+          "steps": []
+        },
+        {
+          "id": 114393548278,
+          "name": "V2 / Independent studio live media",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": []
+        },
+        {
+          "id": 114393548283,
+          "name": "Backend execution / original File TCP",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": []
+        }
+      ]
+    }
+  ],
+  "complete_coverage_claim": false,
+  "manual_cancel_or_rerun": false
+}

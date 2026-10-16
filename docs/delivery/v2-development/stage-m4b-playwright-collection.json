@@ -1,0 +1,242 @@
+{
+  "config": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config=playwright.independent-live.config.ts",
+      "--list",
+      "--project=m4b-model-assets-chromium"
+    ],
+    "configFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/playwright.independent-live.config.ts",
+    "rootDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/1791629524342-2",
+      "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/cloud-v2-independent-browser/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/1791629524342-2",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "v2-live-chromium",
+        "name": "v2-live-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-(independent-studio|asset-relationships)-live\\.spec\\.ts/",
+          "/v2-independent-graph-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/cloud-v2-independent-browser/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/1791629524342-2",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "v1-chromium",
+        "name": "v1-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-(independent-studio|asset-relationships)-live\\.spec\\.ts/",
+          "/v2-independent-graph-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/cloud-v2-independent-browser/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/1791629524342-2",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "v1-acceptance-chromium",
+        "name": "v1-acceptance-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-(independent-studio|asset-relationships)-live\\.spec\\.ts/",
+          "/v2-independent-graph-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/cloud-v2-independent-browser/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/1791629524342-2",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "m3-consent-chromium",
+        "name": "m3-consent-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-local-ai-consent-live\\.spec\\.ts/",
+          "/v2-local-ai-files-live\\.spec\\.ts/",
+          "/v2-local-ai-prerequisites-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/cloud-v2-independent-browser/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/1791629524342-2",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "m3-default-off-chromium",
+        "name": "m3-default-off-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-local-ai-consent-live\\.spec\\.ts/",
+          "/v2-local-ai-legacy-host-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/cloud-v2-independent-browser/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/1791629524342-2",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "m3-acceptance-chromium",
+        "name": "m3-acceptance-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-local-ai-consent-live\\.spec\\.ts/",
+          "/v2-local-ai-legacy-host-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/cloud-v2-independent-browser/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/1791629524342-2",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "m4-text-execution-chromium",
+        "name": "m4-text-execution-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-ai-execution-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/cloud-v2-independent-browser/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/1791629524342-2",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "m4b-model-assets-chromium",
+        "name": "m4b-model-assets-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-model-assets-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/cloud-v2-independent-browser/junit.xml"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/cloud-v2-independent-browser/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "v2-model-assets-live.spec.ts",
+      "file": "v2-model-assets-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "M4-B original File HTTP UI explains task matching and archives one reviewed model result, recovering a bounded metadata failure without replay",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "m4b-model-assets-chromium",
+              "projectName": "m4b-model-assets-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "fe0593e1bc7cb40d8794-a0c73df6333ab8fa4901",
+          "file": "v2-model-assets-live.spec.ts",
+          "line": 46,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-10T10:52:04.379Z",
+    "duration": 160.89100000000008,
+    "expected": 0,
+    "skipped": 1,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

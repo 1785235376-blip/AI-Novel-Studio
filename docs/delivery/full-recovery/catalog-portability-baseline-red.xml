@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="2.050" timestamp="2026-10-07T17:28:33.936269+08:00" hostname="冢"><testcase classname="tests.test_surface_api_catalog" name="test_catalog_is_bound_to_every_current_application_source" time="1.875"><failure message="AssertionError: assert {'app/__init_...080b599', ...} == {'app/__init_...080b599', ...}&#10;  &#10;  Omitting 360 identical items, use -vv to show&#10;  Differing items:&#10;  {'app/jobs.py': '9e68ab582cee0960c5160bab517d32a9f3dedbbde200de276b1c75774342ec20'} != {'app/jobs.py': 'c16b85236171c188ac529ebc560b1b3be79caa124d791a2a245eeb32222e2794'}&#10;  Use -v to get more diff">def test_catalog_is_bound_to_every_current_application_source():
+        value = catalog()
+        sources = {path.relative_to(ROOT).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+                   for path in sorted((ROOT / "app").rglob("*.py"))}
+&gt;       assert value["application_python_source_hashes"] == sources
+E       AssertionError: assert {'app/__init_...080b599', ...} == {'app/__init_...080b599', ...}
+E         
+E         Omitting 360 identical items, use -vv to show
+E         Differing items:
+E         {'app/jobs.py': '9e68ab582cee0960c5160bab517d32a9f3dedbbde200de276b1c75774342ec20'} != {'app/jobs.py': 'c16b85236171c188ac529ebc560b1b3be79caa124d791a2a245eeb32222e2794'}
+E         Use -v to get more diff
+
+tests\test_surface_api_catalog.py:31: AssertionError</failure></testcase></testsuite></testsuites>

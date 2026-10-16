@@ -1,0 +1,207 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ❯ src/storyboard/PromptAdoptionWritePanel.test.tsx (13 tests | 13 failed) 8ms
+   × Prompt adoption conditional write panel > makes no automatic request and keeps a closed/absent gate read-only: false 4ms
+     → ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+   × Prompt adoption conditional write panel > makes no automatic request and keeps a closed/absent gate read-only: absent 0ms
+     → ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+   × Prompt adoption conditional write panel > an enabled server does not grant a read-only host write controls 0ms
+     → ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+   × Prompt adoption conditional write panel > refuses a stale target snapshot before reading any source 0ms
+     → ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+   × Prompt adoption conditional write panel > refuses a foreign revision body instead of previewing or adopting it 0ms
+     → ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+   × Prompt adoption conditional write panel > requires explicit approval, then re-reads metadata and original body 0ms
+     → ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+   × Prompt adoption conditional write panel > double clicks commit once, sends pins only, and waits for original readback plus host reload 0ms
+     → ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+   × Prompt adoption conditional write panel > unknown outcomes retry the identical frozen request without rebase 0ms
+     → ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+   × Prompt adoption conditional write panel > a committed response with different current shot text never claims a successful current adoption 0ms
+     → ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+   × Prompt adoption conditional write panel > synchronously clears preview and consent when the target version changes 0ms
+     → ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+   × Prompt adoption conditional write panel > an old actor/branch body response cannot populate the new session 0ms
+     → ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+   × Prompt adoption conditional write panel > permission refusal hides source and never asserts that no write occurred 0ms
+     → ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+   × Prompt adoption conditional write panel > the mounted Storyboard owner reloads and closes old provenance after verified commit 0ms
+     → ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 13 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/storyboard/PromptAdoptionWritePanel.test.tsx > Prompt adoption conditional write panel > makes no automatic request and keeps a closed/absent gate read-only: false
+ FAIL  src/storyboard/PromptAdoptionWritePanel.test.tsx > Prompt adoption conditional write panel > makes no automatic request and keeps a closed/absent gate read-only: absent
+Error: ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+ ❯ fixture src/storyboard/PromptAdoptionWritePanel.test.tsx:16:46
+     14| 
+     15| afterEach(cleanup);
+     16| const fixture = (name: string) => JSON.parse(readFileSync(resolve(proc…
+       |                                              ^
+     17| const target = { documentId: 'doc-1', shotId: 'shot-1', version: 2, di…
+     18| const gate = async <T,>(work: () => Promise<T>) => work();
+ ❯ harness src/storyboard/PromptAdoptionWritePanel.test.tsx:22:18
+ ❯ src/storyboard/PromptAdoptionWritePanel.test.tsx:82:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/13]⎯
+
+ FAIL  src/storyboard/PromptAdoptionWritePanel.test.tsx > Prompt adoption conditional write panel > an enabled server does not grant a read-only host write controls
+Error: ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+ ❯ fixture src/storyboard/PromptAdoptionWritePanel.test.tsx:16:46
+     14| 
+     15| afterEach(cleanup);
+     16| const fixture = (name: string) => JSON.parse(readFileSync(resolve(proc…
+       |                                              ^
+     17| const target = { documentId: 'doc-1', shotId: 'shot-1', version: 2, di…
+     18| const gate = async <T,>(work: () => Promise<T>) => work();
+ ❯ harness src/storyboard/PromptAdoptionWritePanel.test.tsx:22:18
+ ❯ src/storyboard/PromptAdoptionWritePanel.test.tsx:97:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/13]⎯
+
+ FAIL  src/storyboard/PromptAdoptionWritePanel.test.tsx > Prompt adoption conditional write panel > refuses a stale target snapshot before reading any source
+Error: ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+ ❯ fixture src/storyboard/PromptAdoptionWritePanel.test.tsx:16:46
+     14| 
+     15| afterEach(cleanup);
+     16| const fixture = (name: string) => JSON.parse(readFileSync(resolve(proc…
+       |                                              ^
+     17| const target = { documentId: 'doc-1', shotId: 'shot-1', version: 2, di…
+     18| const gate = async <T,>(work: () => Promise<T>) => work();
+ ❯ harness src/storyboard/PromptAdoptionWritePanel.test.tsx:22:18
+ ❯ src/storyboard/PromptAdoptionWritePanel.test.tsx:103:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/13]⎯
+
+ FAIL  src/storyboard/PromptAdoptionWritePanel.test.tsx > Prompt adoption conditional write panel > refuses a foreign revision body instead of previewing or adopting it
+Error: ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+ ❯ fixture src/storyboard/PromptAdoptionWritePanel.test.tsx:16:46
+     14| 
+     15| afterEach(cleanup);
+     16| const fixture = (name: string) => JSON.parse(readFileSync(resolve(proc…
+       |                                              ^
+     17| const target = { documentId: 'doc-1', shotId: 'shot-1', version: 2, di…
+     18| const gate = async <T,>(work: () => Promise<T>) => work();
+ ❯ harness src/storyboard/PromptAdoptionWritePanel.test.tsx:22:18
+ ❯ src/storyboard/PromptAdoptionWritePanel.test.tsx:108:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/13]⎯
+
+ FAIL  src/storyboard/PromptAdoptionWritePanel.test.tsx > Prompt adoption conditional write panel > requires explicit approval, then re-reads metadata and original body
+Error: ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+ ❯ fixture src/storyboard/PromptAdoptionWritePanel.test.tsx:16:46
+     14| 
+     15| afterEach(cleanup);
+     16| const fixture = (name: string) => JSON.parse(readFileSync(resolve(proc…
+       |                                              ^
+     17| const target = { documentId: 'doc-1', shotId: 'shot-1', version: 2, di…
+     18| const gate = async <T,>(work: () => Promise<T>) => work();
+ ❯ harness src/storyboard/PromptAdoptionWritePanel.test.tsx:22:18
+ ❯ src/storyboard/PromptAdoptionWritePanel.test.tsx:117:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/13]⎯
+
+ FAIL  src/storyboard/PromptAdoptionWritePanel.test.tsx > Prompt adoption conditional write panel > double clicks commit once, sends pins only, and waits for original readback plus host reload
+Error: ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+ ❯ fixture src/storyboard/PromptAdoptionWritePanel.test.tsx:16:46
+     14| 
+     15| afterEach(cleanup);
+     16| const fixture = (name: string) => JSON.parse(readFileSync(resolve(proc…
+       |                                              ^
+     17| const target = { documentId: 'doc-1', shotId: 'shot-1', version: 2, di…
+     18| const gate = async <T,>(work: () => Promise<T>) => work();
+ ❯ harness src/storyboard/PromptAdoptionWritePanel.test.tsx:22:18
+ ❯ src/storyboard/PromptAdoptionWritePanel.test.tsx:131:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/13]⎯
+
+ FAIL  src/storyboard/PromptAdoptionWritePanel.test.tsx > Prompt adoption conditional write panel > unknown outcomes retry the identical frozen request without rebase
+Error: ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+ ❯ fixture src/storyboard/PromptAdoptionWritePanel.test.tsx:16:46
+     14| 
+     15| afterEach(cleanup);
+     16| const fixture = (name: string) => JSON.parse(readFileSync(resolve(proc…
+       |                                              ^
+     17| const target = { documentId: 'doc-1', shotId: 'shot-1', version: 2, di…
+     18| const gate = async <T,>(work: () => Promise<T>) => work();
+ ❯ harness src/storyboard/PromptAdoptionWritePanel.test.tsx:22:18
+ ❯ src/storyboard/PromptAdoptionWritePanel.test.tsx:148:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/13]⎯
+
+ FAIL  src/storyboard/PromptAdoptionWritePanel.test.tsx > Prompt adoption conditional write panel > a committed response with different current shot text never claims a successful current adoption
+Error: ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+ ❯ fixture src/storyboard/PromptAdoptionWritePanel.test.tsx:16:46
+     14| 
+     15| afterEach(cleanup);
+     16| const fixture = (name: string) => JSON.parse(readFileSync(resolve(proc…
+       |                                              ^
+     17| const target = { documentId: 'doc-1', shotId: 'shot-1', version: 2, di…
+     18| const gate = async <T,>(work: () => Promise<T>) => work();
+ ❯ harness src/storyboard/PromptAdoptionWritePanel.test.tsx:22:18
+ ❯ src/storyboard/PromptAdoptionWritePanel.test.tsx:158:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/13]⎯
+
+ FAIL  src/storyboard/PromptAdoptionWritePanel.test.tsx > Prompt adoption conditional write panel > synchronously clears preview and consent when the target version changes
+Error: ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+ ❯ fixture src/storyboard/PromptAdoptionWritePanel.test.tsx:16:46
+     14| 
+     15| afterEach(cleanup);
+     16| const fixture = (name: string) => JSON.parse(readFileSync(resolve(proc…
+       |                                              ^
+     17| const target = { documentId: 'doc-1', shotId: 'shot-1', version: 2, di…
+     18| const gate = async <T,>(work: () => Promise<T>) => work();
+ ❯ harness src/storyboard/PromptAdoptionWritePanel.test.tsx:22:18
+ ❯ src/storyboard/PromptAdoptionWritePanel.test.tsx:166:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/13]⎯
+
+ FAIL  src/storyboard/PromptAdoptionWritePanel.test.tsx > Prompt adoption conditional write panel > an old actor/branch body response cannot populate the new session
+Error: ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+ ❯ fixture src/storyboard/PromptAdoptionWritePanel.test.tsx:16:46
+     14| 
+     15| afterEach(cleanup);
+     16| const fixture = (name: string) => JSON.parse(readFileSync(resolve(proc…
+       |                                              ^
+     17| const target = { documentId: 'doc-1', shotId: 'shot-1', version: 2, di…
+     18| const gate = async <T,>(work: () => Promise<T>) => work();
+ ❯ harness src/storyboard/PromptAdoptionWritePanel.test.tsx:22:18
+ ❯ src/storyboard/PromptAdoptionWritePanel.test.tsx:174:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/13]⎯
+
+ FAIL  src/storyboard/PromptAdoptionWritePanel.test.tsx > Prompt adoption conditional write panel > permission refusal hides source and never asserts that no write occurred
+Error: ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+ ❯ fixture src/storyboard/PromptAdoptionWritePanel.test.tsx:16:46
+     14| 
+     15| afterEach(cleanup);
+     16| const fixture = (name: string) => JSON.parse(readFileSync(resolve(proc…
+       |                                              ^
+     17| const target = { documentId: 'doc-1', shotId: 'shot-1', version: 2, di…
+     18| const gate = async <T,>(work: () => Promise<T>) => work();
+ ❯ harness src/storyboard/PromptAdoptionWritePanel.test.tsx:22:18
+ ❯ src/storyboard/PromptAdoptionWritePanel.test.tsx:185:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/13]⎯
+
+ FAIL  src/storyboard/PromptAdoptionWritePanel.test.tsx > Prompt adoption conditional write panel > the mounted Storyboard owner reloads and closes old provenance after verified commit
+Error: ENOENT: no such file or directory, open 'D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\src\prompt\__fixtures__\detail.json'
+ ❯ fixture src/storyboard/PromptAdoptionWritePanel.test.tsx:16:46
+     14| 
+     15| afterEach(cleanup);
+     16| const fixture = (name: string) => JSON.parse(readFileSync(resolve(proc…
+       |                                              ^
+     17| const target = { documentId: 'doc-1', shotId: 'shot-1', version: 2, di…
+     18| const gate = async <T,>(work: () => Promise<T>) => work();
+ ❯ harness src/storyboard/PromptAdoptionWritePanel.test.tsx:22:18
+ ❯ src/storyboard/PromptAdoptionWritePanel.test.tsx:192:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/13]⎯
+
+ Test Files  1 failed (1)
+      Tests  13 failed (13)
+   Start at  01:03:54
+   Duration  1.04s (transform 232ms, setup 11ms, collect 406ms, tests 8ms, environment 376ms, prepare 64ms)
+

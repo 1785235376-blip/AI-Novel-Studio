@@ -1,0 +1,20 @@
+{
+  "utc": "2026-10-16T15:24:12.104826+00:00",
+  "pytest": "8.4.2",
+  "tests_executed": false,
+  "scope": "Inventory only; not a passing-suite receipt",
+  "new_collection_count": 14910,
+  "frozen_collection_count": 9151,
+  "frozen_missing_count": 0,
+  "frozen_order_preserved": true,
+  "old_additive_collection_count": 14225,
+  "old_additive_missing_count": 0,
+  "old_additive_missing_nodes": [],
+  "historical_skips_unchanged": true,
+  "external_gates_unchanged": true,
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "new_additive_manifest_sha256": "5dfb54185bf3f74d3c1457624ebd17f5d51fcf6b6166be009d5dd7116a8cf16f",
+  "new_worker_sha256": "5d8d5403825b30953063c90274a1f31d9a4d16149c5a9101152d4695db545644",
+  "protected_gate_diff": [],
+  "manifest_sources_current": true
+}

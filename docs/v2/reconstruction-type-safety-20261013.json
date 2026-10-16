@@ -1,0 +1,52 @@
+{
+  "baseline_sha": "4534bed9129bcf2a549b44a91f062c79a77e173b",
+  "tested_local_commit": "9d058bd14165f7765e146326d7db1ce2227f7d11",
+  "scope": "five existing frontend implementations and one additive regression module",
+  "source_files": {
+    "frontend/src/creative/StudioTimelineEditor.tsx": "a6651bd9ab60efbef72f804bd766e075492c23120d9b215f746fdecdbba6f676",
+    "frontend/src/creative/studioBaselineTypeSafety.test.tsx": "117d7b1be38432b8b609efa08146a543891d69a879c848f9a9463d82d29ab9d6",
+    "frontend/src/creative/studioGraphTimelineContract.ts": "e6f31ae78c9506b183f1fb2c59324ac16eaec51d8c6115e0eb345faa9d55177a",
+    "frontend/src/creative/studioTimelineExportTypes.ts": "e4b843738977547a0962681903e166478f58e8c2d227bc069776609cd8b917b1",
+    "frontend/src/creative/useStudioGraphMediaExecution.ts": "f3166f1c759a594137fc6278de15725bb3236ec8296003c9d85ec992db7904a6",
+    "frontend/src/creative/useStudioTimelinePlayback.ts": "39c5366eab5c640565c14d43b797b177c11ca474a0d0963313697bf971931a25"
+  },
+  "results": {
+    "typescript": "PASS; 21 baseline diagnostics corrected",
+    "production_vite_build": "PASS",
+    "design_tokens": "PASS",
+    "focused_unit_tests": {
+      "passed": 102
+    },
+    "original_creative_ui_contract_before": {
+      "passed": 755,
+      "failed": 23
+    },
+    "original_creative_ui_contract_after": {
+      "passed": 755,
+      "failed": 23,
+      "same_failed_test_ids": true
+    },
+    "browser_visual": "BLOCKED: required Chromium binary absent; no page assertions executed",
+    "windows": "NOT_RUN",
+    "real_model_gpu": "NOT_RUN"
+  },
+  "evidence_sha256": {
+    "baseline-original-creative-tests.log": "22cad343ab59086fdb373d99723b9a916f345244506c98037ccce54d29d516c8",
+    "design-token-lint.log": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+    "focused-final-tests.log": "fc243e1e3ed397e0db269b43de06b464e256124fa0ecc806d9465459ec2aba59",
+    "focused-regression-tests.log": "33c239ce223239a67817080da735b14040f46b4bf6af94e3b2628fc75684fb61",
+    "original-creative-tests.log": "668d096862ed32873f3f575378b79c3d035c8ec3c259e6d988f80973e27eb154",
+    "tsc-after.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tsc-before.log": "8ce27412eb5c77068090d674f346ef4a809f8f7043f440b7e30efc6205ed4ab3",
+    "tsc-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "visual-geometry.log": "a3ff002bdcb51719ab2193c37501fb0cb94d0d11048317a5d2a6a190f289aeec",
+    "vite-build.log": "8c0343ee8ba0136f8577b5f6ea590ae2dad8bb66b817d77dafd48656ca599a90"
+  },
+  "boundaries": [
+    "No original assertion weakened or removed",
+    "No route contract changed",
+    "No V1 frozen asset changed",
+    "Original 23 frontend failures remain; not full frontend acceptance",
+    "Raw logs, databases and local paths not published"
+  ]
+}

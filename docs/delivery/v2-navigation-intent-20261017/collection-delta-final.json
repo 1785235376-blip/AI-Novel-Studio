@@ -1,0 +1,31 @@
+{
+  "utc": "2026-10-16T19:03:55.901121+00:00",
+  "status": "INVENTORY_ONLY",
+  "tests_executed": false,
+  "round_base": "87408f6881fd2dc2f22038c36643ed2e0a743f33",
+  "previous_nodes": 15142,
+  "current_nodes": 15142,
+  "added_nodes": [],
+  "removed_or_reordered_nodes": [],
+  "all_literal_ids_order_and_classifications_equal_baseline": true,
+  "two_independent_exact_collections_equal": true,
+  "old_skips_and_external_gates_unchanged": true,
+  "old_source_count": 2363,
+  "source_count": 2367,
+  "new_source_paths": [
+    "frontend/playwright.navigation-intent-live.config.ts",
+    "frontend/src/AppModuleNavigationIntent.test.tsx",
+    "frontend/tests/e2e/v2-navigation-intent-live.spec.ts",
+    "scripts/run_v2_navigation_intent_browser.py"
+  ],
+  "authorized_changed_existing_source_paths": [
+    "frontend/src/App.tsx"
+  ],
+  "baseline_manifest_sha256": "ceacc0cb2f100dde23ce07a76dd086d27ae3eafbafc1b2499b97a0425a1dc405",
+  "manifest_sha256": "6f621dcf211c778b09f9ee3351cca511a18b605d0f6d161383816c60dc0ea269",
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "classification_sha256": "e7e543708b0ac8ebd1f81f77262a4afa6503d222af2b2e0ad9e71d6a749754d6",
+  "runtime_source_count": 2305,
+  "source_drift": false,
+  "implementation_head_binding": "DEFERRED until root commits all frozen source and additive manifest"
+}

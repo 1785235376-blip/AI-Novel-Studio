@@ -1,0 +1,102 @@
+BUDGET 7800 31784 66089 67046
+FBUDGET 7200 30584 63689 64646
+F
+=================================== FAILURES ===================================
+_ test_oversized_receipt_rejected_before_original_admission[file-7800-TEXT_EXECUTION_RECEIPT_INVALID] _
+
+model_rig = namespace(nid='v2-independent-f5f7dbe607dd414786539da777f734df', scope={'mode': 'local', 'novel_id': 'v2-independent-f...[<threading.Event at 0x7f60d5a272f0: unset>], active=True, guard=<function configure.<locals>.guard at 0x7f60d54537e0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f60d78c8f20>
+length = 7800, error = 'TEXT_EXECUTION_RECEIPT_INVALID'
+
+    @pytest.mark.parametrize("length,error", [(7800, "TEXT_EXECUTION_RECEIPT_INVALID"), (7200, "TEXT_RESULT_METADATA_LIMIT")])
+    def test_oversized_receipt_rejected_before_original_admission(model_rig, monkeypatch, length, error):
+        e = model_rig; spy_transport(e, monkeypatch)
+        row = preview(e, admit(e, create_graph(e, escaped_definition(length))))
+        initial = budget_fixture(e, row)
+        print("BUDGET", length, len(initial[PRIVATE_FIELD]["prompt"].encode()),
+            encoded_bytes(initial[PRIVATE_FIELD]), encoded_bytes(initial))
+        assert len(initial[PRIVATE_FIELD]["prompt"].encode()) <= 32_000
+        if error == "TEXT_EXECUTION_RECEIPT_INVALID":
+            assert encoded_bytes(initial[PRIVATE_FIELD]) > 64_000
+        else:
+            assert encoded_bytes(initial[PRIVATE_FIELD]) <= 64_000 < encoded_bytes(initial)
+        before = deepcopy(e.graphs.store.read(e.nid, e.scope))
+        calls = []
+        def forbidden(*args, **kwargs):
+            calls.append("prepare_graph_job")
+            raise AssertionError("unarchivable receipt reached original Job preparation")
+        monkeypatch.setattr(e.manager, "prepare_graph_job", forbidden)
+        with pytest.raises(HTTPException) as failed:
+>           api_call(dispatch, e, row, archive_result=True)
+
+.runtime/m4c-size-fix/test_receipt_size_admission.py:76: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/experimental/common.py:55: in api_call
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:157: in dispatch
+    return e.models.dispatch(e.nid, e.scope, e.actor, row["id"], {"expected_version": row["version"],
+app/creative/ai_execution.py:370: in dispatch
+    job = self.manager.prepare_graph_job(project_id=nid, provider_id=route["provider_id"],
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = ()
+kwargs = {'actor_id': 'local-studio-author', 'deadline': '2026-10-10T16:02:56.242828+00:00', 'max_output_bytes': 32000, 'max_output_tokens': 128, ...}
+
+    def forbidden(*args, **kwargs):
+        calls.append("prepare_graph_job")
+>       raise AssertionError("unarchivable receipt reached original Job preparation")
+E       AssertionError: unarchivable receipt reached original Job preparation
+
+.runtime/m4c-size-fix/test_receipt_size_admission.py:73: AssertionError
+_ test_oversized_receipt_rejected_before_original_admission[file-7200-TEXT_RESULT_METADATA_LIMIT] _
+
+model_rig = namespace(nid='v2-independent-fc8279c1e8074c3d827d02f8683bba96', scope={'mode': 'local', 'novel_id': 'v2-independent-f...[<threading.Event at 0x7f60d54c2f30: unset>], active=True, guard=<function configure.<locals>.guard at 0x7f60d53958a0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f60d546c5f0>
+length = 7200, error = 'TEXT_RESULT_METADATA_LIMIT'
+
+    @pytest.mark.parametrize("length,error", [(7800, "TEXT_EXECUTION_RECEIPT_INVALID"), (7200, "TEXT_RESULT_METADATA_LIMIT")])
+    def test_oversized_receipt_rejected_before_original_admission(model_rig, monkeypatch, length, error):
+        e = model_rig; spy_transport(e, monkeypatch)
+        row = preview(e, admit(e, create_graph(e, escaped_definition(length))))
+        initial = budget_fixture(e, row)
+        print("BUDGET", length, len(initial[PRIVATE_FIELD]["prompt"].encode()),
+            encoded_bytes(initial[PRIVATE_FIELD]), encoded_bytes(initial))
+        assert len(initial[PRIVATE_FIELD]["prompt"].encode()) <= 32_000
+        if error == "TEXT_EXECUTION_RECEIPT_INVALID":
+            assert encoded_bytes(initial[PRIVATE_FIELD]) > 64_000
+        else:
+            assert encoded_bytes(initial[PRIVATE_FIELD]) <= 64_000 < encoded_bytes(initial)
+        before = deepcopy(e.graphs.store.read(e.nid, e.scope))
+        calls = []
+        def forbidden(*args, **kwargs):
+            calls.append("prepare_graph_job")
+            raise AssertionError("unarchivable receipt reached original Job preparation")
+        monkeypatch.setattr(e.manager, "prepare_graph_job", forbidden)
+        with pytest.raises(HTTPException) as failed:
+>           api_call(dispatch, e, row, archive_result=True)
+
+.runtime/m4c-size-fix/test_receipt_size_admission.py:76: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/experimental/common.py:55: in api_call
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:157: in dispatch
+    return e.models.dispatch(e.nid, e.scope, e.actor, row["id"], {"expected_version": row["version"],
+app/creative/ai_execution.py:370: in dispatch
+    job = self.manager.prepare_graph_job(project_id=nid, provider_id=route["provider_id"],
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = ()
+kwargs = {'actor_id': 'local-studio-author', 'deadline': '2026-10-10T16:02:56.578506+00:00', 'max_output_bytes': 32000, 'max_output_tokens': 128, ...}
+
+    def forbidden(*args, **kwargs):
+        calls.append("prepare_graph_job")
+>       raise AssertionError("unarchivable receipt reached original Job preparation")
+E       AssertionError: unarchivable receipt reached original Job preparation
+
+.runtime/m4c-size-fix/test_receipt_size_admission.py:73: AssertionError
+=========================== short test summary info ============================
+FAILED .runtime/m4c-size-fix/test_receipt_size_admission.py::test_oversized_receipt_rejected_before_original_admission[file-7800-TEXT_EXECUTION_RECEIPT_INVALID]
+FAILED .runtime/m4c-size-fix/test_receipt_size_admission.py::test_oversized_receipt_rejected_before_original_admission[file-7200-TEXT_RESULT_METADATA_LIMIT]
+2 failed, 2 deselected in 6.24s

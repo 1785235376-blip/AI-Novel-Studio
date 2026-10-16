@@ -1,0 +1,134 @@
+import { defineConfig, devices } from '@playwright/test';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const frontend = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(frontend, '..');
+const runId = process.env.V2_LIVE_RUN_ID || `${Date.now()}-${process.pid}`;
+const runtime = path.join(root, '.runtime', 'v2-live-browser', runId);
+const receipts = process.env.CI_RECEIPTS || path.join(root, 'docs', 'delivery', 'v2-development', 'cloud-v2-independent-browser');
+const python = process.env.V2_PYTHON || path.join(root, '.venv', 'bin', 'python');
+fs.mkdirSync(receipts, { recursive: true });
+
+function servers(name: string, apiPort: number, port: number, enabled: boolean, acceptance = false) {
+  const owned = path.join(runtime, name);
+  for (const directory of ['home', 'data', 'cache', 'config', 'local', 'tmp']) fs.mkdirSync(path.join(owned, directory), { recursive: true });
+  const env = {
+    HOME: path.join(owned, 'home'), XDG_DATA_HOME: path.join(owned, 'data'),
+    XDG_CACHE_HOME: path.join(owned, 'cache'), XDG_CONFIG_HOME: path.join(owned, 'config'),
+    LOCALAPPDATA: path.join(owned, 'local'), TMPDIR: path.join(owned, 'tmp'),
+    TEMP: path.join(owned, 'tmp'), TMP: path.join(owned, 'tmp'),
+    PROJECT_ROOT: root, NOVEL_DATA_PATH: path.join(owned, 'novel-data'),
+    STORAGE_BACKEND: 'file', ENABLE_COLLABORATION_RUNTIME: 'false', ENABLE_PACKAGED_RUNTIME: 'false',
+    MOCK_PROVIDER: 'true', MOCK_STREAM_DELAY_MS: '0', ENABLE_CLOUD: 'false', ENABLE_PROVIDER_FALLBACK: 'false',
+    CREDENTIAL_VAULT_BACKEND: 'memory', CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: 'true',
+    EXPERIMENTAL_FEATURES: enabled ? 'narrative_production_v2' : '', V1_ACCEPTANCE_MODE: String(acceptance),
+    FRONTEND_ORIGIN: `http://127.0.0.1:${port}`,
+  };
+  return [
+    { command: `"${python}" -m uvicorn app.main:app --host 127.0.0.1 --port ${apiPort} 2>&1 | tee "${path.join(receipts, `${name}-backend.log`)}"`, cwd: root,
+      url: `http://127.0.0.1:${apiPort}/api/health`, timeout: 90000, reuseExistingServer: false, env },
+    { command: `"${process.execPath}" node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${port} 2>&1 | tee "${path.join(receipts, `${name}-vite.log`)}"`, cwd: frontend,
+      url: `http://127.0.0.1:${port}`, timeout: 60000, reuseExistingServer: false, env: { ...env, V061_API_URL: `http://127.0.0.1:${apiPort}` } },
+  ];
+}
+
+
+// M3 adds isolated synthetic discovery adapters; original M1/M2 servers and
+// inventories below retain their exact configuration and execution order.
+function m3Servers(name: string, apiPort: number, port: number, enabled: boolean, acceptance = false) {
+  const owned = path.join(runtime, name);
+  for (const directory of ['home', 'data', 'cache', 'config', 'local', 'tmp']) fs.mkdirSync(path.join(owned, directory), { recursive: true });
+  const env = {
+    HOME: path.join(owned, 'home'), USERPROFILE: path.join(owned, 'home'), XDG_DATA_HOME: path.join(owned, 'data'),
+    XDG_CACHE_HOME: path.join(owned, 'cache'), XDG_CONFIG_HOME: path.join(owned, 'config'),
+    LOCALAPPDATA: path.join(owned, 'local'), APPDATA: path.join(owned, 'local'), TMPDIR: path.join(owned, 'tmp'),
+    TEMP: path.join(owned, 'tmp'), TMP: path.join(owned, 'tmp'), PROJECT_ROOT: root,
+    NOVEL_DATA_PATH: path.join(owned, 'novel-data'), V2_DISCOVERY_FIXTURE_ROOT: owned,
+    STORAGE_BACKEND: 'file', ENABLE_COLLABORATION_RUNTIME: 'false', ENABLE_PACKAGED_RUNTIME: 'false',
+    MOCK_PROVIDER: 'true', MOCK_STREAM_DELAY_MS: '0', ENABLE_CLOUD: 'false', ENABLE_PROVIDER_FALLBACK: 'false',
+    COLLABORATION_DEV_SESSIONS_JSON: '', CREDENTIAL_VAULT_BACKEND: 'memory', CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: 'true',
+    EXPERIMENTAL_FEATURES: enabled ? 'narrative_production_v2' : '', V1_ACCEPTANCE_MODE: String(acceptance),
+    FRONTEND_ORIGIN: `http://127.0.0.1:${port}`, HF_HUB_OFFLINE: '1', TRANSFORMERS_OFFLINE: '1',
+  };
+  return [
+    { command: `"${python}" tests/v2_discovery_browser_server.py --port ${apiPort} 2>&1 | tee "${path.join(receipts, `${name}-backend.log`)}"`, cwd: root,
+      url: `http://127.0.0.1:${apiPort}/api/health`, timeout: 90000, reuseExistingServer: false, env },
+    { command: `"${process.execPath}" node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${port} 2>&1 | tee "${path.join(receipts, `${name}-vite.log`)}"`, cwd: frontend,
+      url: `http://127.0.0.1:${port}`, timeout: 60000, reuseExistingServer: false, env: { ...env, V061_API_URL: `http://127.0.0.1:${apiPort}` } },
+  ];
+}
+
+// M4 is a separate owned File host. Original M1/M2/M3 servers and projects below
+// retain their order and configuration; this new project runs after all M3 work.
+function m4Servers() {
+  const owned = path.join(runtime, 'm4-enabled');
+  for (const directory of ['home', 'data', 'cache', 'config', 'local', 'tmp']) fs.mkdirSync(path.join(owned, directory), { recursive: true });
+  const env = {
+    HOME: path.join(owned, 'home'), USERPROFILE: path.join(owned, 'home'), XDG_DATA_HOME: path.join(owned, 'data'),
+    XDG_CACHE_HOME: path.join(owned, 'cache'), XDG_CONFIG_HOME: path.join(owned, 'config'), LOCALAPPDATA: path.join(owned, 'local'),
+    APPDATA: path.join(owned, 'local'), TMPDIR: path.join(owned, 'tmp'), TEMP: path.join(owned, 'tmp'), TMP: path.join(owned, 'tmp'),
+    PROJECT_ROOT: root, NOVEL_DATA_PATH: path.join(owned, 'novel-data'), V2_AI_EXECUTION_FIXTURE_ROOT: owned,
+    STORAGE_BACKEND: 'file', ENABLE_COLLABORATION_RUNTIME: 'false', ENABLE_PACKAGED_RUNTIME: 'false',
+    MOCK_PROVIDER: 'true', MOCK_STREAM_DELAY_MS: '0', ENABLE_CLOUD: 'false', ENABLE_PROVIDER_FALLBACK: 'false',
+    COLLABORATION_DEV_SESSIONS_JSON: '', CREDENTIAL_VAULT_BACKEND: 'memory', CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: 'true',
+    EXPERIMENTAL_FEATURES: 'ai_execution_v2,narrative_production_v2,model_broker_v2,author_context_inspector_v2', V1_ACCEPTANCE_MODE: 'false',
+    FRONTEND_ORIGIN: 'http://127.0.0.1:5190', HF_HUB_OFFLINE: '1', TRANSFORMERS_OFFLINE: '1',
+  };
+  return [
+    { command: `"${python}" tests/v2_ai_execution_browser_server.py --port 8030 2>&1 | tee "${path.join(receipts, 'm4-enabled-backend.log')}"`, cwd: root,
+      url: 'http://127.0.0.1:8030/api/experimental/features', timeout: 90000, reuseExistingServer: false, env },
+    { command: `"${process.execPath}" node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5190 2>&1 | tee "${path.join(receipts, 'm4-enabled-vite.log')}"`, cwd: frontend,
+      url: 'http://127.0.0.1:5190', timeout: 60000, reuseExistingServer: false, env: { ...env, V061_API_URL: 'http://127.0.0.1:8030' } },
+  ];
+}
+
+// M4-B owns a separate process, File root and ports. The original M4 test
+// keeps its zero-starting Mock counter and can revoke only its own host.
+function m4bServers() {
+  const owned = path.join(runtime, 'm4b-model-assets');
+  for (const directory of ['home', 'data', 'cache', 'config', 'local', 'tmp']) fs.mkdirSync(path.join(owned, directory), { recursive: true });
+  const env = {
+    HOME: path.join(owned, 'home'), USERPROFILE: path.join(owned, 'home'), XDG_DATA_HOME: path.join(owned, 'data'),
+    XDG_CACHE_HOME: path.join(owned, 'cache'), XDG_CONFIG_HOME: path.join(owned, 'config'), LOCALAPPDATA: path.join(owned, 'local'),
+    APPDATA: path.join(owned, 'local'), TMPDIR: path.join(owned, 'tmp'), TEMP: path.join(owned, 'tmp'), TMP: path.join(owned, 'tmp'),
+    PROJECT_ROOT: root, NOVEL_DATA_PATH: path.join(owned, 'novel-data'), V2_AI_EXECUTION_FIXTURE_ROOT: owned,
+    V2_MODEL_ASSETS_FIXTURE_ROOT: owned,
+    STORAGE_BACKEND: 'file', ENABLE_COLLABORATION_RUNTIME: 'false', ENABLE_PACKAGED_RUNTIME: 'false',
+    MOCK_PROVIDER: 'true', MOCK_STREAM_DELAY_MS: '0', ENABLE_CLOUD: 'false', ENABLE_PROVIDER_FALLBACK: 'false',
+    COLLABORATION_DEV_SESSIONS_JSON: '', CREDENTIAL_VAULT_BACKEND: 'memory', CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: 'true',
+    EXPERIMENTAL_FEATURES: 'ai_execution_v2,narrative_production_v2,model_broker_v2,author_context_inspector_v2', V1_ACCEPTANCE_MODE: 'false',
+    FRONTEND_ORIGIN: 'http://127.0.0.1:5191', HF_HUB_OFFLINE: '1', TRANSFORMERS_OFFLINE: '1',
+  };
+  return [
+    { command: `"${python}" tests/v2_model_assets_browser_server.py --port 8031 2>&1 | tee "${path.join(receipts, 'm4b-model-assets-backend.log')}"`, cwd: root,
+      url: 'http://127.0.0.1:8031/api/experimental/features', timeout: 90000, reuseExistingServer: false, env },
+    { command: `"${process.execPath}" node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5191 2>&1 | tee "${path.join(receipts, 'm4b-model-assets-vite.log')}"`, cwd: frontend,
+      url: 'http://127.0.0.1:5191', timeout: 60000, reuseExistingServer: false, env: { ...env, V061_API_URL: 'http://127.0.0.1:8031' } },
+  ];
+}
+
+export default defineConfig({
+  metadata: { v2LiveRuntime: runtime, verification: 'Synthetic fixture; real File and HTTP; browser success requires Chromium to launch.' },
+  testDir: path.join(frontend, 'tests', 'e2e'), testMatch: [/v2-(independent-studio|asset-relationships)-live\.spec\.ts/, /v2-independent-graph-live\.spec\.ts/],
+  outputDir: path.join(receipts, 'test-results'), workers: 1, fullyParallel: false, timeout: 180000,
+  expect: { timeout: 15000 }, retries: 0,
+  reporter: [['list'], ['junit', { outputFile: path.join(receipts, 'junit.xml') }], ['json', { outputFile: path.join(receipts, 'results.json') }]],
+  use: { locale: 'zh-CN', viewport: { width: 1440, height: 900 }, trace: 'retain-on-failure', screenshot: 'only-on-failure',
+    launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE } : undefined },
+  projects: [
+    { name: 'v2-live-chromium', grepInvert: /default-off|acceptance-mode/, use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, baseURL: 'http://127.0.0.1:5177' } },
+    { name: 'v1-chromium', grep: /default-off/, use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, baseURL: 'http://127.0.0.1:5178' } },
+    { name: 'v1-acceptance-chromium', grep: /acceptance-mode/, use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, baseURL: 'http://127.0.0.1:5179' } },
+    // The new file follows the original consent file in this same serial,
+    // single-worker project. No project dependency phase reorders old suites.
+    { name: 'm3-consent-chromium', testMatch: [/v2-local-ai-consent-live\.spec\.ts/, /v2-local-ai-files-live\.spec\.ts/, /v2-local-ai-prerequisites-live\.spec\.ts/], grep: /M3 enabled|M3 files|M3 prerequisites/, use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, baseURL: 'http://127.0.0.1:5187' } },
+    { name: 'm3-default-off-chromium', testMatch: [/v2-local-ai-consent-live\.spec\.ts/, /v2-local-ai-legacy-host-live\.spec\.ts/], grep: /M3 (?:legacy )?default-off/, use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, baseURL: 'http://127.0.0.1:5188' } },
+    { name: 'm3-acceptance-chromium', testMatch: [/v2-local-ai-consent-live\.spec\.ts/, /v2-local-ai-legacy-host-live\.spec\.ts/], grep: /M3 (?:legacy )?acceptance-mode/, use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, baseURL: 'http://127.0.0.1:5189' } },
+    { name: 'm4-text-execution-chromium', testMatch: /v2-ai-execution-live\.spec\.ts/, use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, baseURL: 'http://127.0.0.1:5190' } },
+    { name: 'm4b-model-assets-chromium', testMatch: /v2-model-assets-live\.spec\.ts/, use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, baseURL: 'http://127.0.0.1:5191' } },
+  ],
+  webServer: [...servers('enabled', 8017, 5177, true), ...servers('default-off', 8018, 5178, false), ...servers('acceptance-mode', 8019, 5179, true, true),
+    ...m3Servers('m3-enabled', 8027, 5187, true), ...m3Servers('m3-default-off', 8028, 5188, false), ...m3Servers('m3-acceptance', 8029, 5189, true, true), ...m4Servers(), ...m4bServers()],
+});

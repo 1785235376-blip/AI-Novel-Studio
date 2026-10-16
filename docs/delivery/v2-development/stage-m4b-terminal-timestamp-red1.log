@@ -1,0 +1,16 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_existing_read_archives_one_draft_then_original_review_updates_version[file] _
+.runtime/m4b/diagnose_asset_timestamp.py:18: in case
+    assert second['asset_output']==first['asset_output'],'original terminal notification stranded an already archived result'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: original terminal notification stranded an already archived result
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1290
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1290: PytestAssertRewriteWarning: Module already imported so cannot be rewritten; anyio
+    self._mark_plugins_for_rewrite(hook, disable_autoload)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_graph_text_assets.py::test_existing_read_archives_one_draft_then_original_review_updates_version[file]
+1 failed, 1 warning in 4.29s

@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ✓ src/AppLocalEntryAuthorityRace.test.tsx (4 tests) 542ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  01:35:39
+   Duration  3.93s (transform 1.78s, setup 10ms, collect 2.72s, tests 542ms, environment 379ms, prepare 62ms)
+

@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "evidence_kind": "M4B_TEXTASSET_ACTION_NOTICE_CORRECTION",
+  "recorded_at_utc": "2026-10-10T10:57:16.059246+00:00",
+  "base_commit": "09883fb7fe35b241f97ea7fe0a3e292178441935",
+  "scope": "One conditional notice in GraphRunPanel action completion. An asset_output response now refers to the private asset receipt and says manuscript text was not written. Legacy responses without asset_output retain their original notice. Three new regression cases cover APPROVED, REJECTED and legacy absence. No pre-existing assertions or protected UI changed.",
+  "source_files": [
+    "frontend/src/creative/GraphRunPanel.tsx",
+    "frontend/src/creative/GraphTextAssetPanel.test.tsx"
+  ],
+  "runs": [
+    {
+      "id": "notice_red",
+      "log": "stage-m4b-ui-asset-notice-red.log",
+      "result": "FAIL_EXPECTED",
+      "tests_passed": 30,
+      "tests_failed": 2,
+      "source_identity": {
+        "frontend/src/creative/GraphRunPanel.tsx": "73a525f0bb844206a68d1a5d33ea1b7b30be8b169bcb2d382839071d9d656a0c",
+        "frontend/src/creative/GraphTextAssetPanel.test.tsx": "4325545493cab79c9526889ba52ba25e265e22f81e3149ddb5b8f639c5d550e3"
+      }
+    },
+    {
+      "id": "notice_green",
+      "log": "stage-m4b-ui-asset-notice-green.log",
+      "result": "PASS",
+      "tests_passed": 32,
+      "tests_failed": 0,
+      "source_identity": {
+        "frontend/src/creative/GraphRunPanel.tsx": "99f560db5142814193abb02244379d3f6eb67be82f84b3050c16153bcb3cddfa",
+        "frontend/src/creative/GraphTextAssetPanel.test.tsx": "4325545493cab79c9526889ba52ba25e265e22f81e3149ddb5b8f639c5d550e3"
+      }
+    }
+  ],
+  "limits": {
+    "full_frontend_suite": false,
+    "chromium_or_visual_verification": false,
+    "different_source_runs_are_not_merged": true,
+    "supersedes_prior_frozen_source_for_listed_files_only": true
+  },
+  "artifacts": {
+    "stage-m4b-ui-asset-notice-red.log": {
+      "sha256": "4ecde100d7635ca892b74ce988ea616a93512929542033b9afb3c4b4f1aa8cde",
+      "bytes": 73188
+    },
+    "stage-m4b-ui-asset-notice-green.log": {
+      "sha256": "58f25cca7d03399258d1eb05bbcbf053e7632093f3f1ecdc663464de1af8fac9",
+      "bytes": 941
+    }
+  }
+}

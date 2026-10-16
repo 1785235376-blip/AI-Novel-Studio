@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "note": "Git database API generated repository-connected author/committer/timestamp metadata, so commit IDs differ from local review snapshots. Every pair below has byte-identical Git source tree. CI is reported against the actual remote head/check-out SHA, never substituted by a local commit.",
+  "mappings": [
+    {
+      "local": "646b9f214b85de20e9640ee5ee81bcc8030b9d28",
+      "remote": "e8ebfccdce0678cac15c632d640ac57bd822b93f",
+      "tree": "e5a08a0362c2eaf79d3669dc318d4bf4370fb6dd"
+    },
+    {
+      "local": "0007528b9a003f8ea01749b74f3b06e4433a2227",
+      "remote": "ff34bf87979e2c4dc39681b3d91069979bca06a7",
+      "tree": "07d46846c5db80f163bc42b4d3117e2586c41f08"
+    },
+    {
+      "local": "80d480142a746074f5645c72da33346c5cd0228f",
+      "remote": "c6e8c07d8786da24c3e265561cece80c4bf5b73b",
+      "tree": "24e09ad9a45e734ac2d8be78079b99965c8fb7d3"
+    },
+    {
+      "local": "76d8c5099d4950196643d4702f1d759a6f7e199d",
+      "remote": "db3212c3f1418557e3ab0152e8c3c0c8ee27ef97",
+      "tree": "857b5319d12a45c0bae8e7dd22f5148442b22eb7"
+    },
+    {
+      "local": "e73ab085407bcc63c4a7e380f685dba92f8b4cf5",
+      "remote": "40464f656aa1437e5b56969212ea801eccfcafc0",
+      "tree": "8229ea45d37ef9fd6d411ac48d4ac284ba395a9f"
+    },
+    {
+      "local": "eb16560988672bfbbf4a6c46431ddc4df6162f2d",
+      "remote": "16b65c10ada1670ac57891054ffe4571fa463491",
+      "tree": "6a1b0081250eef7ae830ce584e7b5e1e48e68d0a"
+    },
+    {
+      "local": "547167e8abce15cad3495779f52e845310a0a1fe",
+      "remote": "90f4369b7367579b7aaeb00d4d25f21171353753",
+      "tree": "528459b8c7d6b94dde8b70e37c1e52d12524fc81"
+    },
+    {
+      "local": "19e240d999b41c28fe64f076759a567dd87ca2e6",
+      "remote": "4e7ca3d3bfcf9908fee7d3a6e80a3d1243b9238a",
+      "tree": "7dfcf2c9e9a1bfa7cb35f00c805419dd8a64fb45"
+    },
+    {
+      "local": "e38d1eccff6c1aac02a836817c878f423df0479e",
+      "remote": "2200238e8d549074573c2a1a298b74dc9be14780",
+      "tree": "197a04c858434b58ad1ab38fbd478030bcbca7b8"
+    },
+    {
+      "local": "bbb55d10ac57de123e138a51510efd846ee42aee",
+      "remote": "55a9082dbd3655c39a9b23bd4da19fedb3373072",
+      "tree": "9280bee5f82c6843fef15154080f5dc1a89f87a0"
+    },
+    {
+      "local": "d03399ee7d4b183173be47e5336b9bc4e0bd30b0",
+      "remote": "13723e23c5b1738c1deeaebf5ac4b50771db741b",
+      "tree": "e2dcef339c3e040130801e5e2608eb8f7af8a62c"
+    },
+    {
+      "local": "b0cb9723cebaafb1e62d0f2bccd466e2efd6d5ad",
+      "remote": "5a3a14f60afd28aad48ee15a992426d38af4739d",
+      "tree": "8b19ed6c0da3fc1511aa70169403135a718e27c6"
+    },
+    {
+      "local": "87127a5020c2c8d9463b4b631fe77fd0aacb3115",
+      "remote": "93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+      "tree": "09d9ebb78e4a987344546535cbd02ca1acfa35dc"
+    },
+    {
+      "local": "1c19d83d870f325cb6af1d182573b1e8b2a47a29",
+      "remote": "98b7d53c3193765e792e5a756fff02a87b5948b8",
+      "tree": "f6c4a84c5ff0d1b2639b537af1ea287611935fd4"
+    }
+  ]
+}

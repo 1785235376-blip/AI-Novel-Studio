@@ -1,0 +1,24 @@
+{
+  "backend": "file",
+  "operation": "revise",
+  "revocation": "membership",
+  "nid": "r3-i-auth-739801275a",
+  "workspace": "w-739801275a",
+  "branch": "b-739801275a",
+  "actor": "writer-739801275a",
+  "admin": "init-739801275a",
+  "assignment": "w-739801275a",
+  "url": "/api/projects/r3-i-auth-739801275a/studio/prompts/a409675b-0aca-4068-871a-551ed28d652d/revisions",
+  "method": "POST",
+  "body": {
+    "text": "PRIVATE process authoring 中文 🙂\n",
+    "purpose": "IMAGE",
+    "origin": "MANUAL",
+    "request_id": "0e3d51d08bd247bab8338e2645d34f38",
+    "expected_revision": 1,
+    "expected_previous_asset_id": "4cb681a8-a80a-4b55-8017-2db081ee9a81"
+  },
+  "ipc": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-process-file-final-r3\\temp\\test_independent_process_revoc1\\process-file-revise-membership-writer",
+  "pause_writer": true,
+  "pause_revoker": false
+}

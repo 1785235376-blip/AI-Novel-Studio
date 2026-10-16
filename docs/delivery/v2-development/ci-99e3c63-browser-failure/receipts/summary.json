@@ -1,0 +1,20 @@
+{
+  "revision": "checked_out_sha=42d8355c00eb545d40ab503c4429315bb7eef74e\nevent_sha=42d8355c00eb545d40ab503c4429315bb7eef74e\nrun_url=https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37902141902\njob=v2-creative-browser\nplatform=Linux; native Windows host/AppContainer/installer=NOT RUN\n",
+  "test_reports": {
+    "v2-creative-live.xml": {
+      "tests": 7,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    "v2-creative-workbench.xml": {
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "report_status": "RECORDED",
+  "native_windows_host_appcontainer_installer": "NOT RUN",
+  "real_model_and_paid_provider_execution": "NOT RUN"
+}

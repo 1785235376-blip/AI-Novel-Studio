@@ -1,0 +1,16 @@
+...F.........................                                            [100%]
+================================== FAILURES ===================================
+____________ test_archive_path_rejected_before_write[dir\\escape] _____________
+
+name = 'dir\\escape'
+
+    @pytest.mark.parametrize("name", ["../escape", "/absolute", "C:/escape", "dir\\escape", "dir/../../escape", "CON.txt", "dir/aux", "trailing.", "space ", "dir/./file", "dir//file"])
+    def test_archive_path_rejected_before_write(name):
+>       with archive("good/file", name) as value, pytest.raises(ValueError, match="Unsafe archive path"):
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests\test_r2_windows_base_inputs.py:30: Failed
+- generated xml file: D:\小说\AI-Novel-Studio-Latest-Product\docs\delivery\full-recovery\windows-dependency-lock-tests.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_r2_windows_base_inputs.py::test_archive_path_rejected_before_write[dir\\escape]
+1 failed, 28 passed in 2.33s

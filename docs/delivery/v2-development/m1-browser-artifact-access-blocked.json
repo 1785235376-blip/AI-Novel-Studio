@@ -1,0 +1,15 @@
+{
+  "status": "TRACE_ACCESS_BLOCKED",
+  "artifact_id": 11618169199,
+  "run_id": 37936615942,
+  "run_attempt": 1,
+  "head_sha": "57986cb13d452731baf82bbc242bfc79f9cfd145",
+  "tree": "7b06f7eb213893ec41e4ded14810b82b070b7dc7",
+  "github_reference_obtained": true,
+  "bytes_materialized": false,
+  "http_status": 403,
+  "error_code": "scope_violation",
+  "literal_error": "The requested file is outside the Library folders selected for this user turn.",
+  "alternate_route_attempted": false,
+  "evidence_available": "GitHub job logs and committed source only; no screenshot/trace contents inspected"
+}

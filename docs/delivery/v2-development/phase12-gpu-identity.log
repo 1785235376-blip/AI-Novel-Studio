@@ -1,0 +1,154 @@
+......F.......Fs........................................................ [ 36%]
+.........................F.............................................. [ 72%]
+.F...................s....F...........................                   [100%]
+================================== FAILURES ===================================
+______________ test_two_identical_physical_gpus_stay_two_devices ______________
+
+    def test_two_identical_physical_gpus_stay_two_devices():
+        """Requirement: a real multi-GPU machine must report multiple devices."""
+        devices, diagnostics = resolve_physical_gpus(
+            ALIASED, (RTX_5080_HARDWARE_ID, RTX_5080_HARDWARE_ID)
+        )
+        assert len(devices) == 2
+        assert diagnostics["aliased_adapter_count"] == 0
+>       assert diagnostics["unresolved_signatures"] == []
+E       AssertionError: assert ['PCI\\VEN_10...610DE&REV_A1'] == []
+E         
+E         Left contains one more item: 'PCI\\VEN_10DE&DEV_2C02&SUBSYS_209610DE&REV_A1'
+E         Use -v to get more diff
+
+tests\test_v2_gpu_physical_identity.py:114: AssertionError
+___________ test_live_probe_never_reports_one_physical_device_twice ___________
+
+    @pytest.mark.skipif(sys.platform != "win32", reason="real Windows native acceptance")
+    def test_live_probe_never_reports_one_physical_device_twice():
+        facts = WindowsHostHardwareProbe().collect()
+        if facts.gpus is None:
+            pytest.skip("GPU enumeration unavailable on this host")
+        signatures = [gpu.device_signature for gpu in facts.gpus]
+>       assert len(signatures) == len(set(signatures)), "one physical device reported twice"
+E       AssertionError: one physical device reported twice
+E       assert 2 == 1
+E        +  where 2 = len([(4318, 11266, 546705630, 161), (4318, 11266, 546705630, 161)])
+E        +  and   1 = len({(4318, 11266, 546705630, 161)})
+E        +    where {(4318, 11266, 546705630, 161)} = set([(4318, 11266, 546705630, 161), (4318, 11266, 546705630, 161)])
+
+tests\test_v2_gpu_physical_identity.py:182: AssertionError
+_________ test_scans_only_configured_roots_bounded_depth_and_no_link __________
+
+tmp_path = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/v2-checks/phase12-gpu-identity/pytest/test_scans_only_configured_roo0')
+
+    def test_scans_only_configured_roots_bounded_depth_and_no_link(tmp_path):
+        root=tmp_path/'models';root.mkdir(); gguf(root/'qwen.gguf')
+        private=tmp_path/'private';private.mkdir();gguf(private/'secret.gguf')
+>       (root/'link').symlink_to(private, target_is_directory=True)
+
+tests\test_local_ai_discovery.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/v2-checks/phase12-gpu-identity/pytest/test_scans_only_configured_roo0/models/link')
+target = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/v2-checks/phase12-gpu-identity/pytest/test_scans_only_configured_roo0/private')
+target_is_directory = True
+
+    def symlink_to(self, target, target_is_directory=False):
+        """
+        Make this path a symlink pointing to the target path.
+        Note the order of arguments (link, target) is the reverse of os.symlink.
+        """
+        if not hasattr(os, "symlink"):
+            raise NotImplementedError("os.symlink() not available on this system")
+>       os.symlink(target, self, target_is_directory)
+E       OSError: [WinError 1314] 客户端没有所需的特权。: 'D:\\PoemSeed\\Worktrees\\studio-v2-audio-editing-20261014\\.runtime\\v2-checks\\phase12-gpu-identity\\pytest\\test_scans_only_configured_roo0\\private' -> 'D:\\PoemSeed\\Worktrees\\studio-v2-audio-editing-20261014\\.runtime\\v2-checks\\phase12-gpu-identity\\pytest\\test_scans_only_configured_roo0\\models\\link'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1198: OSError
+____________ test_path_identity_changes_reject_before_probe[link] _____________
+
+tmp_path = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/v2-checks/phase12-gpu-identity/pytest/test_path_identity_changes_rej2')
+change = 'link'
+
+    @pytest.mark.parametrize('change', ['new', 'replace', 'link', 'metadata'])
+    def test_path_identity_changes_reject_before_probe(tmp_path, change):
+        svc = service(tmp_path); root = tmp_path / 'models'
+        if change != 'new': root.mkdir()
+        svc.configure_roots(DiscoverySettingsInput(scan_roots=[str(root)]))
+        scope = preview(svc)
+        if change == 'new': root.mkdir()
+        if change == 'replace': root.rename(tmp_path / 'old'); root.mkdir()
+        if change == 'link':
+            other = tmp_path / 'other'; other.mkdir()
+>           root.rmdir(); root.symlink_to(other, target_is_directory=True)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_v2_discovery_scope.py:135: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/v2-checks/phase12-gpu-identity/pytest/test_path_identity_changes_rej2/models')
+target = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/v2-checks/phase12-gpu-identity/pytest/test_path_identity_changes_rej2/other')
+target_is_directory = True
+
+    def symlink_to(self, target, target_is_directory=False):
+        """
+        Make this path a symlink pointing to the target path.
+        Note the order of arguments (link, target) is the reverse of os.symlink.
+        """
+        if not hasattr(os, "symlink"):
+            raise NotImplementedError("os.symlink() not available on this system")
+>       os.symlink(target, self, target_is_directory)
+E       OSError: [WinError 1314] 客户端没有所需的特权。: 'D:\\PoemSeed\\Worktrees\\studio-v2-audio-editing-20261014\\.runtime\\v2-checks\\phase12-gpu-identity\\pytest\\test_path_identity_changes_rej2\\other' -> 'D:\\PoemSeed\\Worktrees\\studio-v2-audio-editing-20261014\\.runtime\\v2-checks\\phase12-gpu-identity\\pytest\\test_path_identity_changes_rej2\\models'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1198: OSError
+____________ test_passive_hardware_never_calls_platform_processor _____________
+
+obj = <module 'os' (frozen)>, name = 'sysconf', ann = 'os'
+
+    def annotated_getattr(obj: object, name: str, ann: str) -> object:
+        try:
+>           obj = getattr(obj, name)
+                  ^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'os' has no attribute 'sysconf'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\monkeypatch.py:95: AttributeError
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/.runtime/v2-checks/phase12-gpu-identity/pytest/test_passive_hardware_never_ca0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000020A5416FF50>
+
+    def test_passive_hardware_never_calls_platform_processor(tmp_path, monkeypatch):
+        from app.model_center.discovery_probes import host_hardware
+        monkeypatch.setattr('platform.system', lambda: 'Linux')
+        monkeypatch.setattr('platform.machine', lambda: 'Synthetic')
+        monkeypatch.setattr('platform.processor', Mock(side_effect=AssertionError('may launch uname')))
+>       monkeypatch.setattr('os.sysconf', lambda _: 1)
+
+tests\test_v2_discovery_scope.py:423: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\monkeypatch.py:109: in derive_importpath
+    annotated_getattr(target, attr, ann=module)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+obj = <module 'os' (frozen)>, name = 'sysconf', ann = 'os'
+
+    def annotated_getattr(obj: object, name: str, ann: str) -> object:
+        try:
+            obj = getattr(obj, name)
+        except AttributeError as e:
+>           raise AttributeError(
+                f"{type(obj).__name__!r} object at {ann} has no attribute {name!r}"
+            ) from e
+E           AttributeError: 'module' object at os has no attribute 'sysconf'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\_pytest\monkeypatch.py:97: AttributeError
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_v2_gpu_physical_identity.py::test_two_identical_physical_gpus_stay_two_devices
+FAILED tests/test_v2_gpu_physical_identity.py::test_live_probe_never_reports_one_physical_device_twice
+FAILED tests/test_local_ai_discovery.py::test_scans_only_configured_roots_bounded_depth_and_no_link
+FAILED tests/test_v2_discovery_scope.py::test_path_identity_changes_reject_before_probe[link]
+FAILED tests/test_v2_discovery_scope.py::test_passive_hardware_never_calls_platform_processor
+5 failed, 191 passed, 2 skipped, 1 warning in 6.41s

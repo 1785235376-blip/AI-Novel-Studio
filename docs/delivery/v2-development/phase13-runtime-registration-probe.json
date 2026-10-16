@@ -1,0 +1,45 @@
+{
+  "recorder": "manual-transcription-from-observed-output",
+  "note": "This probe was run inline rather than through run_v2_checks.py, so the fields below are transcribed from the observed terminal output of the exact command recorded here. No value is inferred.",
+  "phase": "Phase13",
+  "step": "P1 Local Runtime registration closure",
+  "head": "5c100e9",
+  "command": [
+    "env STORAGE_BACKEND=file EXPERIMENTAL_FEATURES=narrative_production_v2 CREDENTIAL_VAULT_BACKEND=memory NOVEL_DATA_PATH=<worktree>\\.runtime\\phase13\\data",
+    "python -m uvicorn app.main:app --host 127.0.0.1 --port 8111",
+    "POST http://127.0.0.1:8111/api/model-center/local-ai/runtimes",
+    "body: {\"name\":\"Strata (observed)\",\"type\":\"CUSTOM_HTTP\",\"endpoint\":\"http://127.0.0.1:8080\"}"
+  ],
+  "observed": {
+    "backend_ready": true,
+    "http_status": 401,
+    "body": {
+      "detail": {"code": "SESSION_REQUIRED"},
+      "code": "SESSION_REQUIRED",
+      "message": "SESSION_REQUIRED",
+      "details": {"code": "SESSION_REQUIRED"},
+      "request_id": "87c2914f-145f-47ad-9f62-fc97faa5ae07"
+    },
+    "port_8111_listeners_after_stop": 0
+  },
+  "source_confirmation": {
+    "file": "app/model_center/discovery_api.py",
+    "lines": "50-68",
+    "fact": "create_local_discovery_router applies require_session as a router-level dependency; without an injected host authority it raises HTTPException(401, SESSION_REQUIRED) when mutation_authorization(...)['can_mutate'] is false."
+  },
+  "conclusion": {
+    "registration": "BLOCKED",
+    "blocker": "SESSION_REQUIRED",
+    "why_not_a_defect": "The gate is the product's intentional host-session authority boundary. A scripted client cannot register a runtime without that session, and obtaining or fabricating it would be a bypass of a security control, which the phase rules forbid.",
+    "task_routing": "NOT_RUN",
+    "live_local_runtime_end_to_end": "LOCAL_REQUIRED",
+    "already_verified_before_this_gate": [
+      "runtime detection (listener present, owner identified)",
+      "identity verification (/health -> service strata, model qwen3.8-flash-next-iq3_xxs)",
+      "capability mapping (advertised text->text -> model capability TEXT)",
+      "connectivity (/v1/models answered)",
+      "one real inference (ok, 53.7 s, 65 tokens) reaching observation level 5 READY",
+      "a user-confirmed custom-HTTP registration descriptor prepared with generates_tasks=false and auto_enabled=false"
+    ]
+  }
+}

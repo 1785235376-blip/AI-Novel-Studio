@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\scripts\check_desktop_integration.py", line 62, in <module>
+    print(json.dumps(check(), indent=2, sort_keys=True))
+                     ^^^^^^^
+  File "D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\scripts\check_desktop_integration.py", line 34, in check
+    requirements = json.loads((root / "DESKTOP_INTEGRATION_READINESS_MATRIX.json").read_text())
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py", line 1059, in read_text
+    return f.read()
+           ^^^^^^^^
+UnicodeDecodeError: 'gbk' codec can't decode byte 0x80 in position 556: illegal multibyte sequence

@@ -1,0 +1,582 @@
+﻿2026-10-09T15:51:30.4804944Z Current runner version: '2.337.0'
+2026-10-09T15:51:30.4841120Z ##[group]Runner Image Provisioner
+2026-10-09T15:51:30.4842756Z Hosted Compute Agent
+2026-10-09T15:51:30.4843865Z Version: 20261002.596
+2026-10-09T15:51:30.4845012Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-09T15:51:30.4846275Z Build Date: 2026-10-02T22:28:27Z
+2026-10-09T15:51:30.4847697Z Worker ID: {ba8754df-c495-4271-88b6-a5ea457edce7}
+2026-10-09T15:51:30.4849065Z Region: eastus
+2026-10-09T15:51:30.4850139Z Cloud: Azure
+2026-10-09T15:51:30.4851077Z ##[endgroup]
+2026-10-09T15:51:30.4853730Z ##[group]Operating System
+2026-10-09T15:51:30.4855001Z Ubuntu
+2026-10-09T15:51:30.4855900Z 24.04.5
+2026-10-09T15:51:30.4856752Z LTS
+2026-10-09T15:51:30.4857821Z ##[endgroup]
+2026-10-09T15:51:30.4858795Z ##[group]Runner Image
+2026-10-09T15:51:30.4859947Z Image: ubuntu-24.04
+2026-10-09T15:51:30.4861124Z Version: 20261004.327.1
+2026-10-09T15:51:30.4863672Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-09T15:51:30.4866774Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-09T15:51:30.4868777Z ##[endgroup]
+2026-10-09T15:51:30.4870702Z ##[group]GITHUB_TOKEN Permissions
+2026-10-09T15:51:30.4874381Z Contents: read
+2026-10-09T15:51:30.4875422Z Metadata: read
+2026-10-09T15:51:30.4876389Z ##[endgroup]
+2026-10-09T15:51:30.4879382Z Secret source: Actions
+2026-10-09T15:51:30.4880937Z Cache mode: write
+2026-10-09T15:51:30.4883009Z Prepare workflow directory
+2026-10-09T15:51:30.5352867Z Prepare all required actions
+2026-10-09T15:51:30.5423976Z Getting action download info
+2026-10-09T15:51:30.7570390Z Download action repository 'actions/checkout@v4.2.2' (SHA:11bd71901bbe5b1630ceea73d27597364c9af683)
+2026-10-09T15:51:30.8656060Z Download action repository 'actions/setup-python@v5.6.0' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-10-09T15:51:30.9480052Z Download action repository 'actions/upload-artifact@v4.6.2' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-09T15:51:31.1621024Z Complete job name: Original c6f2126 RED / Python 3.12.9
+2026-10-09T15:51:31.2407893Z ##[group]Run actions/checkout@v4.2.2
+2026-10-09T15:51:31.2408784Z with:
+2026-10-09T15:51:31.2409208Z   path: repair
+2026-10-09T15:51:31.2409668Z   persist-credentials: false
+2026-10-09T15:51:31.2410227Z   repository: 1785235376-blip/AI-Novel-Studio
+2026-10-09T15:51:31.2414649Z   token: ***
+2026-10-09T15:51:31.2415080Z   ssh-strict: true
+2026-10-09T15:51:31.2415511Z   ssh-user: git
+2026-10-09T15:51:31.2415930Z   clean: true
+2026-10-09T15:51:31.2416367Z   sparse-checkout-cone-mode: true
+2026-10-09T15:51:31.2416892Z   fetch-depth: 1
+2026-10-09T15:51:31.2417320Z   fetch-tags: false
+2026-10-09T15:51:31.2417759Z   show-progress: true
+2026-10-09T15:51:31.2418215Z   lfs: false
+2026-10-09T15:51:31.2418637Z   submodules: false
+2026-10-09T15:51:31.2419090Z   set-safe-directory: true
+2026-10-09T15:51:31.2419842Z ##[endgroup]
+2026-10-09T15:51:31.3436041Z Syncing repository: 1785235376-blip/AI-Novel-Studio
+2026-10-09T15:51:31.3438747Z ##[group]Getting Git version info
+2026-10-09T15:51:31.3440134Z Working directory is '/home/runner/work/AI-Novel-Studio/AI-Novel-Studio/repair'
+2026-10-09T15:51:31.3441959Z [command]/usr/bin/git version
+2026-10-09T15:51:31.3485233Z git version 2.55.0
+2026-10-09T15:51:31.3506257Z ##[endgroup]
+2026-10-09T15:51:31.3520687Z Temporarily overriding HOME='/home/runner/work/_temp/f7ae0fc1-4b4f-4ec7-aff6-85f741395bb0' before making global git config changes
+2026-10-09T15:51:31.3523202Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-09T15:51:31.3525495Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/AI-Novel-Studio/AI-Novel-Studio/repair
+2026-10-09T15:51:31.3586720Z ##[group]Initializing the repository
+2026-10-09T15:51:31.3588704Z [command]/usr/bin/git init /home/runner/work/AI-Novel-Studio/AI-Novel-Studio/repair
+2026-10-09T15:51:31.3679407Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-09T15:51:31.3680817Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-09T15:51:31.3681809Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-09T15:51:31.3682884Z hint: call:
+2026-10-09T15:51:31.3683299Z hint:
+2026-10-09T15:51:31.3684166Z hint: 	git config --global init.defaultBranch <name>
+2026-10-09T15:51:31.3684791Z hint:
+2026-10-09T15:51:31.3685387Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-09T15:51:31.3686378Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-09T15:51:31.3687120Z hint:
+2026-10-09T15:51:31.3687547Z hint: 	git branch -m <name>
+2026-10-09T15:51:31.3688043Z hint:
+2026-10-09T15:51:31.3688695Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-09T15:51:31.3693797Z Initialized empty Git repository in /home/runner/work/AI-Novel-Studio/AI-Novel-Studio/repair/.git/
+2026-10-09T15:51:31.3707394Z [command]/usr/bin/git remote add origin https://github.com/1785235376-blip/AI-Novel-Studio
+2026-10-09T15:51:31.3758732Z ##[endgroup]
+2026-10-09T15:51:31.3760254Z ##[group]Disabling automatic garbage collection
+2026-10-09T15:51:31.3764867Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-09T15:51:31.3801541Z ##[endgroup]
+2026-10-09T15:51:31.3803150Z ##[group]Setting up auth
+2026-10-09T15:51:31.3809889Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T15:51:31.3845143Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-09T15:51:31.4221063Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T15:51:31.4262072Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-09T15:51:31.4517735Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-09T15:51:31.4567210Z ##[endgroup]
+2026-10-09T15:51:31.4569206Z ##[group]Fetching the repository
+2026-10-09T15:51:31.4578527Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +02a3f6e9908f785a308a4605e362f8876aed4d8b:refs/remotes/pull/47/merge
+2026-10-09T15:51:35.7154271Z From https://github.com/1785235376-blip/AI-Novel-Studio
+2026-10-09T15:51:35.7156680Z  * [new ref]         02a3f6e9908f785a308a4605e362f8876aed4d8b -> pull/47/merge
+2026-10-09T15:51:35.7242509Z ##[endgroup]
+2026-10-09T15:51:35.7244836Z ##[group]Determining the checkout info
+2026-10-09T15:51:35.7246413Z ##[endgroup]
+2026-10-09T15:51:35.7247174Z [command]/usr/bin/git sparse-checkout disable
+2026-10-09T15:51:35.7249244Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-09T15:51:35.7274448Z ##[group]Checking out the ref
+2026-10-09T15:51:35.7277897Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/47/merge
+2026-10-09T15:51:36.4020839Z Note: switching to 'refs/remotes/pull/47/merge'.
+2026-10-09T15:51:36.4021468Z 
+2026-10-09T15:51:36.4021916Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-09T15:51:36.4023288Z changes and commit them, and you can discard any commits you make in this
+2026-10-09T15:51:36.4024264Z state without impacting any branches by switching back to a branch.
+2026-10-09T15:51:36.4024811Z 
+2026-10-09T15:51:36.4025257Z If you want to create a new branch to retain commits you create, you may
+2026-10-09T15:51:36.4025856Z do so (now or later) by using -c with the switch command. Example:
+2026-10-09T15:51:36.4026158Z 
+2026-10-09T15:51:36.4026299Z   git switch -c <new-branch-name>
+2026-10-09T15:51:36.4026511Z 
+2026-10-09T15:51:36.4026674Z Or undo this operation with:
+2026-10-09T15:51:36.4027218Z 
+2026-10-09T15:51:36.4027338Z   git switch -
+2026-10-09T15:51:36.4027530Z 
+2026-10-09T15:51:36.4027866Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-09T15:51:36.4028226Z 
+2026-10-09T15:51:36.4028631Z HEAD is now at 02a3f6e Merge 9851bdd2d692df983664bc8f4597fbc05c0e2ceb into fed2404c8e30b44061b7139dced45b7f3301601c
+2026-10-09T15:51:36.4065706Z ##[endgroup]
+2026-10-09T15:51:36.4113217Z [command]/usr/bin/git log -1 --format=%H
+2026-10-09T15:51:36.4141089Z 02a3f6e9908f785a308a4605e362f8876aed4d8b
+2026-10-09T15:51:36.4150436Z ##[group]Removing auth
+2026-10-09T15:51:36.4153984Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T15:51:36.4187643Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-09T15:51:36.4414421Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T15:51:36.4445445Z http.https://github.com/.extraheader
+2026-10-09T15:51:36.4452427Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-09T15:51:36.4487724Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-09T15:51:36.4707235Z ##[endgroup]
+2026-10-09T15:51:36.4968087Z ##[group]Run actions/checkout@v4.2.2
+2026-10-09T15:51:36.4968476Z with:
+2026-10-09T15:51:36.4968765Z   ref: c6f2126115b52e17839d48efea091dc21ec08c61
+2026-10-09T15:51:36.4969126Z   path: baseline
+2026-10-09T15:51:36.4969398Z   persist-credentials: false
+2026-10-09T15:51:36.4969721Z   repository: 1785235376-blip/AI-Novel-Studio
+2026-10-09T15:51:36.4972993Z   token: ***
+2026-10-09T15:51:36.4973278Z   ssh-strict: true
+2026-10-09T15:51:36.4973548Z   ssh-user: git
+2026-10-09T15:51:36.4973820Z   clean: true
+2026-10-09T15:51:36.4974090Z   sparse-checkout-cone-mode: true
+2026-10-09T15:51:36.4974409Z   fetch-depth: 1
+2026-10-09T15:51:36.4974671Z   fetch-tags: false
+2026-10-09T15:51:36.4974943Z   show-progress: true
+2026-10-09T15:51:36.4975204Z   lfs: false
+2026-10-09T15:51:36.4975445Z   submodules: false
+2026-10-09T15:51:36.4975708Z   set-safe-directory: true
+2026-10-09T15:51:36.4975990Z ##[endgroup]
+2026-10-09T15:51:36.5816739Z Syncing repository: 1785235376-blip/AI-Novel-Studio
+2026-10-09T15:51:36.5834532Z ##[group]Getting Git version info
+2026-10-09T15:51:36.5835623Z Working directory is '/home/runner/work/AI-Novel-Studio/AI-Novel-Studio/baseline'
+2026-10-09T15:51:36.5873144Z [command]/usr/bin/git version
+2026-10-09T15:51:36.5914852Z git version 2.55.0
+2026-10-09T15:51:36.5937205Z ##[endgroup]
+2026-10-09T15:51:36.5951718Z Temporarily overriding HOME='/home/runner/work/_temp/2038fcd5-bbca-4d52-8988-93e510bbc4b1' before making global git config changes
+2026-10-09T15:51:36.5953518Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-09T15:51:36.5956728Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/AI-Novel-Studio/AI-Novel-Studio/baseline
+2026-10-09T15:51:36.5991112Z ##[group]Initializing the repository
+2026-10-09T15:51:36.5996970Z [command]/usr/bin/git init /home/runner/work/AI-Novel-Studio/AI-Novel-Studio/baseline
+2026-10-09T15:51:36.6063584Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-09T15:51:36.6093102Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-09T15:51:36.6094344Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-09T15:51:36.6119837Z hint: call:
+2026-10-09T15:51:36.6142875Z hint:
+2026-10-09T15:51:36.6153909Z hint: 	git config --global init.defaultBranch <name>
+2026-10-09T15:51:36.6155160Z hint:
+2026-10-09T15:51:36.6158819Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-09T15:51:36.6160438Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-09T15:51:36.6161512Z hint:
+2026-10-09T15:51:36.6162516Z hint: 	git branch -m <name>
+2026-10-09T15:51:36.6163321Z hint:
+2026-10-09T15:51:36.6164259Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-09T15:51:36.6165882Z Initialized empty Git repository in /home/runner/work/AI-Novel-Studio/AI-Novel-Studio/baseline/.git/
+2026-10-09T15:51:36.6177645Z [command]/usr/bin/git remote add origin https://github.com/1785235376-blip/AI-Novel-Studio
+2026-10-09T15:51:36.6186983Z ##[endgroup]
+2026-10-09T15:51:36.6187977Z ##[group]Disabling automatic garbage collection
+2026-10-09T15:51:36.6188875Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-09T15:51:36.6191110Z ##[endgroup]
+2026-10-09T15:51:36.6196519Z ##[group]Setting up auth
+2026-10-09T15:51:36.6197541Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T15:51:36.6200721Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-09T15:51:36.6437221Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T15:51:36.6474837Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-09T15:51:36.6739072Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-09T15:51:36.6788875Z ##[endgroup]
+2026-10-09T15:51:36.6789701Z ##[group]Fetching the repository
+2026-10-09T15:51:36.6800225Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin c6f2126115b52e17839d48efea091dc21ec08c61
+2026-10-09T15:51:37.6328229Z From https://github.com/1785235376-blip/AI-Novel-Studio
+2026-10-09T15:51:37.6329211Z  * branch            c6f2126115b52e17839d48efea091dc21ec08c61 -> FETCH_HEAD
+2026-10-09T15:51:37.6343320Z ##[endgroup]
+2026-10-09T15:51:37.6343874Z ##[group]Determining the checkout info
+2026-10-09T15:51:37.6344392Z ##[endgroup]
+2026-10-09T15:51:37.6344676Z [command]/usr/bin/git sparse-checkout disable
+2026-10-09T15:51:37.6395065Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-09T15:51:37.6436176Z ##[group]Checking out the ref
+2026-10-09T15:51:37.6436705Z [command]/usr/bin/git checkout --progress --force c6f2126115b52e17839d48efea091dc21ec08c61
+2026-10-09T15:51:37.8068156Z Note: switching to 'c6f2126115b52e17839d48efea091dc21ec08c61'.
+2026-10-09T15:51:37.8068890Z 
+2026-10-09T15:51:37.8069330Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-09T15:51:37.8070390Z changes and commit them, and you can discard any commits you make in this
+2026-10-09T15:51:37.8071404Z state without impacting any branches by switching back to a branch.
+2026-10-09T15:51:37.8072470Z 
+2026-10-09T15:51:37.8072905Z If you want to create a new branch to retain commits you create, you may
+2026-10-09T15:51:37.8073591Z do so (now or later) by using -c with the switch command. Example:
+2026-10-09T15:51:37.8073887Z 
+2026-10-09T15:51:37.8074014Z   git switch -c <new-branch-name>
+2026-10-09T15:51:37.8074214Z 
+2026-10-09T15:51:37.8074331Z Or undo this operation with:
+2026-10-09T15:51:37.8074508Z 
+2026-10-09T15:51:37.8074627Z   git switch -
+2026-10-09T15:51:37.8074769Z 
+2026-10-09T15:51:37.8075013Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-09T15:51:37.8084957Z 
+2026-10-09T15:51:37.8085283Z HEAD is now at c6f2126 docs(delivery): reconcile forty packages and retain exact hosted evidence
+2026-10-09T15:51:37.8086413Z ##[endgroup]
+2026-10-09T15:51:37.8136144Z [command]/usr/bin/git log -1 --format=%H
+2026-10-09T15:51:37.8160331Z c6f2126115b52e17839d48efea091dc21ec08c61
+2026-10-09T15:51:37.8169832Z ##[group]Removing auth
+2026-10-09T15:51:37.8173724Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T15:51:37.8206487Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-09T15:51:37.8429504Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T15:51:37.8455880Z http.https://github.com/.extraheader
+2026-10-09T15:51:37.8463873Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-09T15:51:37.8499808Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-09T15:51:37.8722458Z ##[endgroup]
+2026-10-09T15:51:37.8977979Z ##[group]Run actions/setup-python@v5.6.0
+2026-10-09T15:51:37.8978321Z with:
+2026-10-09T15:51:37.8978526Z   python-version: 3.12.9
+2026-10-09T15:51:37.8978776Z   check-latest: false
+2026-10-09T15:51:37.8981580Z   token: ***
+2026-10-09T15:51:37.8981800Z   update-environment: true
+2026-10-09T15:51:37.8982061Z   allow-prereleases: false
+2026-10-09T15:51:37.8982557Z   freethreaded: false
+2026-10-09T15:51:37.8982780Z ##[endgroup]
+2026-10-09T15:51:38.0304983Z ##[group]Installed versions
+2026-10-09T15:51:38.0324351Z Version 3.12.9 was not found in the local cache
+2026-10-09T15:51:38.0435725Z (node:2478) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T15:51:38.0436980Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T15:51:38.6545976Z Version 3.12.9 is available for downloading
+2026-10-09T15:51:38.6547816Z Download from "https://github.com/actions/python-versions/releases/download/3.12.9-13149478207/python-3.12.9-linux-24.04-x64.tar.gz"
+2026-10-09T15:51:39.4214473Z Extract downloaded archive
+2026-10-09T15:51:39.4372942Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/ae9c0167-7e9e-4874-b601-b8fdbce4e4ff -f /home/runner/work/_temp/3ecf27fe-98d9-44f4-87b5-5f6fdb120e1c
+2026-10-09T15:51:41.4396677Z Execute installation script
+2026-10-09T15:51:41.4492752Z Check if Python hostedtoolcache folder exist...
+2026-10-09T15:51:41.4498369Z Create Python 3.12.9 folder
+2026-10-09T15:51:41.4508397Z Copy Python binaries to hostedtoolcache folder
+2026-10-09T15:51:41.9328605Z Create additional symlinks (Required for the UsePythonVersion Azure Pipelines task and the setup-python GitHub Action)
+2026-10-09T15:51:41.9367391Z Upgrading pip...
+2026-10-09T15:51:44.0465492Z Looking in links: /tmp/tmp_kbxrrfi
+2026-10-09T15:51:44.0469226Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages (24.3.1)
+2026-10-09T15:51:45.1354788Z Collecting pip
+2026-10-09T15:51:45.1700058Z Downloading pip-26.2.1-py3-none-any.whl.metadata (4.6 kB)
+2026-10-09T15:51:45.1788960Z Downloading pip-26.2.1-py3-none-any.whl (1.8 MB)
+2026-10-09T15:51:45.2206406Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 60.4 MB/s eta 0:00:00
+2026-10-09T15:51:45.2213049Z 
+2026-10-09T15:51:45.2404377Z Installing collected packages: pip
+2026-10-09T15:51:45.2406869Z Attempting uninstall: pip
+2026-10-09T15:51:45.2428961Z Found existing installation: pip 24.3.1
+2026-10-09T15:51:45.2791286Z Uninstalling pip-24.3.1:
+2026-10-09T15:51:45.2848294Z Successfully uninstalled pip-24.3.1
+2026-10-09T15:51:46.2079444Z Successfully installed pip-26.2.1
+2026-10-09T15:51:46.2524230Z Create complete file
+2026-10-09T15:51:46.2580463Z Successfully set up CPython (3.12.9)
+2026-10-09T15:51:46.2581624Z ##[endgroup]
+2026-10-09T15:51:46.2743437Z ##[group]Run python -m pip install -c baseline/.github/ci/python-constraints.txt -e 'baseline[dev,fontbuild,otio,comic]'
+2026-10-09T15:51:46.2744416Z [36;1mpython -m pip install -c baseline/.github/ci/python-constraints.txt -e 'baseline[dev,fontbuild,otio,comic]'[0m
+2026-10-09T15:51:46.2745185Z [36;1mpython -m pip check[0m
+2026-10-09T15:51:46.2745449Z [36;1mmkdir -p receipts[0m
+2026-10-09T15:51:46.2745834Z [36;1mpython -m pip freeze --exclude-editable > receipts/python-packages.txt[0m
+2026-10-09T15:51:46.2987314Z shell: /usr/bin/bash -e {0}
+2026-10-09T15:51:46.2987589Z env:
+2026-10-09T15:51:46.2987874Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T15:51:46.2988346Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T15:51:46.2988783Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T15:51:46.2989167Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T15:51:46.2989583Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T15:51:46.2989967Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T15:51:46.2990292Z ##[endgroup]
+2026-10-09T15:51:46.6535078Z Obtaining file:///home/runner/work/AI-Novel-Studio/AI-Novel-Studio/baseline
+2026-10-09T15:51:46.6551409Z   Installing build dependencies: started
+2026-10-09T15:51:47.3814998Z   Installing build dependencies: finished with status 'done'
+2026-10-09T15:51:47.3824799Z   Checking if build backend supports build_editable: started
+2026-10-09T15:51:47.6880067Z   Checking if build backend supports build_editable: finished with status 'done'
+2026-10-09T15:51:47.6887854Z   Getting requirements to build editable: started
+2026-10-09T15:51:48.0476544Z   Getting requirements to build editable: finished with status 'done'
+2026-10-09T15:51:48.0485782Z   Preparing editable metadata (pyproject.toml): started
+2026-10-09T15:51:48.2588915Z   Preparing editable metadata (pyproject.toml): finished with status 'done'
+2026-10-09T15:51:48.3665653Z Collecting fastapi<1,>=0.115 (from ai-novel-studio==0.7.0)
+2026-10-09T15:51:48.4288982Z   Downloading fastapi-0.142.2-py3-none-any.whl.metadata (27 kB)
+2026-10-09T15:51:48.4632236Z Collecting uvicorn<1,>=0.30 (from ai-novel-studio==0.7.0)
+2026-10-09T15:51:48.4721712Z   Downloading uvicorn-0.54.0-py3-none-any.whl.metadata (6.6 kB)
+2026-10-09T15:51:48.5030156Z Collecting psycopg<4,>=3.2 (from psycopg[binary]<4,>=3.2->ai-novel-studio==0.7.0)
+2026-10-09T15:51:48.5121858Z   Downloading psycopg-3.3.6-py3-none-any.whl.metadata (4.4 kB)
+2026-10-09T15:51:48.8007577Z Collecting sqlalchemy<3,>=2.0 (from ai-novel-studio==0.7.0)
+2026-10-09T15:51:48.8123341Z   Downloading sqlalchemy-2.1.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (9.7 kB)
+2026-10-09T15:51:48.8342177Z Collecting httpx<1,>=0.27 (from ai-novel-studio==0.7.0)
+2026-10-09T15:51:48.8440020Z   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+2026-10-09T15:51:48.8594553Z Collecting pydantic-settings<3,>=2.6 (from ai-novel-studio==0.7.0)
+2026-10-09T15:51:48.8686597Z   Downloading pydantic_settings-2.15.0-py3-none-any.whl.metadata (3.9 kB)
+2026-10-09T15:51:48.9659164Z Collecting reportlab<5,>=4.0 (from ai-novel-studio==0.7.0)
+2026-10-09T15:51:48.9793182Z   Downloading reportlab-4.5.1-py3-none-any.whl.metadata (1.7 kB)
+2026-10-09T15:51:49.0002412Z Collecting pypdf==6.19.0 (from ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.0095524Z   Downloading pypdf-6.19.0-py3-none-any.whl.metadata (7.5 kB)
+2026-10-09T15:51:49.0375051Z Collecting pytest<9,>=8 (from ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.0484742Z   Downloading pytest-8.4.2-py3-none-any.whl.metadata (7.7 kB)
+2026-10-09T15:51:49.1817166Z Collecting fonttools==4.59.1 (from ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.1938037Z   Downloading fonttools-4.59.1-cp312-cp312-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl.metadata (108 kB)
+2026-10-09T15:51:49.2361458Z Collecting opentimelineio==0.18.1 (from ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.2557478Z   Downloading opentimelineio-0.18.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.6 kB)
+2026-10-09T15:51:49.4246160Z Collecting Pillow==12.3.0 (from ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.4339882Z   Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.1 kB)
+2026-10-09T15:51:49.4613915Z Collecting starlette>=0.46.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.4700258Z   Downloading starlette-1.7.0-py3-none-any.whl.metadata (6.6 kB)
+2026-10-09T15:51:49.5662240Z Collecting pydantic>=2.9.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.5756738Z   Downloading pydantic-2.13.5-py3-none-any.whl.metadata (110 kB)
+2026-10-09T15:51:49.5961820Z Collecting typing-extensions>=4.8.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.6058522Z   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+2026-10-09T15:51:49.6164478Z Collecting typing-inspection>=0.4.2 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.6279180Z   Downloading typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+2026-10-09T15:51:49.6379824Z Collecting annotated-doc>=0.0.2 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.6466177Z   Downloading annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+2026-10-09T15:51:49.6639595Z Collecting opentelemetry-api>=1.44.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.6739425Z   Downloading opentelemetry_api-1.45.0-py3-none-any.whl.metadata (1.4 kB)
+2026-10-09T15:51:49.6897317Z Collecting anyio (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.7139080Z   Downloading anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+2026-10-09T15:51:49.7320687Z Collecting certifi (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.7406584Z   Downloading certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+2026-10-09T15:51:49.7546922Z Collecting httpcore==1.* (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.7641251Z   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+2026-10-09T15:51:49.7798429Z Collecting idna (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.7885847Z   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+2026-10-09T15:51:49.8001684Z Collecting h11>=0.16 (from httpcore==1.*->httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.8088793Z   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+2026-10-09T15:51:49.9525478Z Collecting psycopg-binary==3.3.6 (from psycopg[binary]<4,>=3.2->ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.9621439Z   Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.7 kB)
+2026-10-09T15:51:49.9796267Z Collecting python-dotenv>=0.21.0 (from pydantic-settings<3,>=2.6->ai-novel-studio==0.7.0)
+2026-10-09T15:51:49.9891555Z   Downloading python_dotenv-1.2.4-py3-none-any.whl.metadata (29 kB)
+2026-10-09T15:51:50.0027936Z Collecting iniconfig>=1 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-09T15:51:50.0118029Z   Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+2026-10-09T15:51:50.0255531Z Collecting packaging>=20 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-09T15:51:50.0343111Z   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+2026-10-09T15:51:50.0479895Z Collecting pluggy<2,>=1.5 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-09T15:51:50.0565565Z   Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+2026-10-09T15:51:50.0740637Z Collecting pygments>=2.7.2 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-09T15:51:50.0830873Z   Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+2026-10-09T15:51:50.1996756Z Collecting charset-normalizer (from reportlab<5,>=4.0->ai-novel-studio==0.7.0)
+2026-10-09T15:51:50.2090735Z   Downloading charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (46 kB)
+2026-10-09T15:51:50.2290883Z Collecting click>=7.0 (from uvicorn<1,>=0.30->ai-novel-studio==0.7.0)
+2026-10-09T15:51:50.2379496Z   Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+2026-10-09T15:51:50.2526642Z Collecting annotated-types>=0.6.0 (from pydantic>=2.9.0->fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T15:51:50.2664786Z   Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+2026-10-09T15:51:50.9216535Z Collecting pydantic-core==2.46.5 (from pydantic>=2.9.0->fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T15:51:50.9310423Z   Downloading pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+2026-10-09T15:51:50.9658412Z Downloading fonttools-4.59.1-cp312-cp312-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl (4.9 MB)
+2026-10-09T15:51:51.0414580Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.9/4.9 MB 70.4 MB/s  0:00:00
+2026-10-09T15:51:51.0902060Z Downloading opentimelineio-0.18.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (842 kB)
+2026-10-09T15:51:51.0959380Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 842.8/842.8 kB 177.1 MB/s  0:00:00
+2026-10-09T15:51:51.1058004Z Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.9 MB)
+2026-10-09T15:51:51.1360304Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.9/6.9 MB 251.8 MB/s  0:00:00
+2026-10-09T15:51:51.1482761Z Downloading pypdf-6.19.0-py3-none-any.whl (395 kB)
+2026-10-09T15:51:51.1599425Z Downloading fastapi-0.142.2-py3-none-any.whl (144 kB)
+2026-10-09T15:51:51.1714277Z Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+2026-10-09T15:51:51.1826279Z Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+2026-10-09T15:51:51.1932126Z Downloading psycopg-3.3.6-py3-none-any.whl (215 kB)
+2026-10-09T15:51:51.2069805Z Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.2 MB)
+2026-10-09T15:51:51.2449763Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.2/5.2 MB 145.8 MB/s  0:00:00
+2026-10-09T15:51:51.2547728Z Downloading pydantic_settings-2.15.0-py3-none-any.whl (69 kB)
+2026-10-09T15:51:51.2656604Z Downloading pytest-8.4.2-py3-none-any.whl (365 kB)
+2026-10-09T15:51:51.2769965Z Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+2026-10-09T15:51:51.2906202Z Downloading reportlab-4.5.1-py3-none-any.whl (2.0 MB)
+2026-10-09T15:51:51.3028074Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 179.2 MB/s  0:00:00
+2026-10-09T15:51:51.3211295Z Downloading sqlalchemy-2.1.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (4.7 MB)
+2026-10-09T15:51:51.3435407Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.7/4.7 MB 219.9 MB/s  0:00:00
+2026-10-09T15:51:51.3522913Z Downloading uvicorn-0.54.0-py3-none-any.whl (87 kB)
+2026-10-09T15:51:51.3635606Z Downloading annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+2026-10-09T15:51:51.3739268Z Downloading click-8.5.0-py3-none-any.whl (125 kB)
+2026-10-09T15:51:51.3989469Z Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+2026-10-09T15:51:51.4111120Z Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+2026-10-09T15:51:51.4233724Z Downloading opentelemetry_api-1.45.0-py3-none-any.whl (60 kB)
+2026-10-09T15:51:51.4348979Z Downloading packaging-26.3-py3-none-any.whl (129 kB)
+2026-10-09T15:51:51.4460534Z Downloading pydantic-2.13.5-py3-none-any.whl (472 kB)
+2026-10-09T15:51:51.4586865Z Downloading pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+2026-10-09T15:51:51.4673997Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 298.2 MB/s  0:00:00
+2026-10-09T15:51:51.4767110Z Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+2026-10-09T15:51:51.4875250Z Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+2026-10-09T15:51:51.4938561Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 231.9 MB/s  0:00:00
+2026-10-09T15:51:51.5026474Z Downloading python_dotenv-1.2.4-py3-none-any.whl (23 kB)
+2026-10-09T15:51:51.5129312Z Downloading starlette-1.7.0-py3-none-any.whl (78 kB)
+2026-10-09T15:51:51.5242279Z Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+2026-10-09T15:51:51.5350758Z Downloading idna-3.20-py3-none-any.whl (69 kB)
+2026-10-09T15:51:51.5457017Z Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+2026-10-09T15:51:51.5559555Z Downloading typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+2026-10-09T15:51:51.5662798Z Downloading certifi-2026.7.22-py3-none-any.whl (136 kB)
+2026-10-09T15:51:51.5773749Z Downloading charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (257 kB)
+2026-10-09T15:51:51.6966477Z Building wheels for collected packages: ai-novel-studio
+2026-10-09T15:51:51.6975785Z   Building editable for ai-novel-studio (pyproject.toml): started
+2026-10-09T15:51:51.9534390Z   Building editable for ai-novel-studio (pyproject.toml): finished with status 'done'
+2026-10-09T15:51:51.9540229Z   Created wheel for ai-novel-studio: filename=ai_novel_studio-0.7.0-0.editable-py3-none-any.whl size=3090 sha256=35a62afc49a97fc14f226e581548d9643dc50017f6a1f842ff26dcc71417c8f4
+2026-10-09T15:51:51.9542463Z   Stored in directory: /tmp/pip-ephem-wheel-cache-xffik0sg/wheels/ef/d0/fe/a873b6ae9831bb132856fd04c6840a9883e5407a26a247aebb
+2026-10-09T15:51:51.9557694Z Successfully built ai-novel-studio
+2026-10-09T15:51:52.0294546Z Installing collected packages: typing-extensions, python-dotenv, pypdf, pygments, psycopg-binary, pluggy, Pillow, packaging, opentimelineio, iniconfig, idna, h11, fonttools, click, charset-normalizer, certifi, annotated-types, annotated-doc, uvicorn, typing-inspection, sqlalchemy, reportlab, pytest, pydantic-core, psycopg, opentelemetry-api, httpcore, anyio, starlette, pydantic, httpx, pydantic-settings, fastapi, ai-novel-studio
+2026-10-09T15:51:58.1321482Z 
+2026-10-09T15:51:58.1369559Z Successfully installed Pillow-12.3.0 ai-novel-studio-0.7.0 annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.15.1 certifi-2026.7.22 charset-normalizer-3.5.2 click-8.5.0 fastapi-0.142.2 fonttools-4.59.1 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 idna-3.20 iniconfig-2.3.0 opentelemetry-api-1.45.0 opentimelineio-0.18.1 packaging-26.3 pluggy-1.6.0 psycopg-3.3.6 psycopg-binary-3.3.6 pydantic-2.13.5 pydantic-core-2.46.5 pydantic-settings-2.15.0 pygments-2.21.0 pypdf-6.19.0 pytest-8.4.2 python-dotenv-1.2.4 reportlab-4.5.1 sqlalchemy-2.1.3 starlette-1.7.0 typing-extensions-4.16.0 typing-inspection-0.4.4 uvicorn-0.54.0
+2026-10-09T15:51:58.5040685Z No broken requirements found.
+2026-10-09T15:51:59.2881260Z ##[group]Run python repair/.github/ci/r123_baseline.py --baseline baseline --scripts repair/docs/delivery/shared-r123-repair/reproductions --output receipts
+2026-10-09T15:51:59.2882765Z [36;1mpython repair/.github/ci/r123_baseline.py --baseline baseline --scripts repair/docs/delivery/shared-r123-repair/reproductions --output receipts[0m
+2026-10-09T15:51:59.2948086Z shell: /usr/bin/bash -e {0}
+2026-10-09T15:51:59.2948344Z env:
+2026-10-09T15:51:59.2948625Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T15:51:59.2949092Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T15:51:59.2949530Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T15:51:59.2949947Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T15:51:59.2950346Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T15:51:59.2950746Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T15:51:59.2951118Z ##[endgroup]
+2026-10-09T15:52:14.4786662Z {
+2026-10-09T15:52:14.4787243Z   "baseline_sha": "c6f2126115b52e17839d48efea091dc21ec08c61",
+2026-10-09T15:52:14.4787886Z   "baseline_tree": "eb80a9fa5f5aa6b8c2cbd0e1e67f7b7a48ac522f",
+2026-10-09T15:52:14.4788537Z   "python": "3.12.9 (main, Feb  5 2025, 03:22:31) [GCC 13.3.0]",
+2026-10-09T15:52:14.4789109Z   "result": "ALL_THREE_KNOWN_DEFECTS_REPRODUCED_RED",
+2026-10-09T15:52:14.4789639Z   "scripts_exit_zero_is_not_pass": true,
+2026-10-09T15:52:14.4790079Z   "reproductions": {
+2026-10-09T15:52:14.4790441Z     "repro_project_authority": {
+2026-10-09T15:52:14.4791057Z       "script_sha256": "b22a435f50db84262775476c046e95cdb600009ce9c357cd6c452fdc039e90a9",
+2026-10-09T15:52:14.4791725Z       "observations": {
+2026-10-09T15:52:14.4792353Z         "source": "c6f2126115b52e17839d48efea091dc21ec08c61",
+2026-10-09T15:52:14.4793568Z         "environment": "Linux Python 3.12.9 File TestClient; actual LocalSessionBootstrap issuance",
+2026-10-09T15:52:14.4794367Z         "real_model_calls": 0,
+2026-10-09T15:52:14.4794770Z         "control_project_write_authorization": {
+2026-10-09T15:52:14.4795200Z           "status": 403,
+2026-10-09T15:52:14.4795521Z           "detail": {
+2026-10-09T15:52:14.4795874Z             "code": "PROJECT_SCOPE_FORBIDDEN"
+2026-10-09T15:52:14.4796284Z           }
+2026-10-09T15:52:14.4796562Z         },
+2026-10-09T15:52:14.4796835Z         "aliases": {
+2026-10-09T15:52:14.4797135Z           "/api": {
+2026-10-09T15:52:14.4797447Z             "no_token": 401,
+2026-10-09T15:52:14.4797813Z             "protected_export": 403,
+2026-10-09T15:52:14.4798205Z             "goal_get": 200,
+2026-10-09T15:52:14.4798556Z             "goal_put": 200,
+2026-10-09T15:52:14.4798911Z             "goal_persisted": {
+2026-10-09T15:52:14.4799275Z               "target_words": 4321,
+2026-10-09T15:52:14.4799688Z               "target_chapters": 7,
+2026-10-09T15:52:14.4800145Z               "deadline": "audit-only"
+2026-10-09T15:52:14.4800588Z             },
+2026-10-09T15:52:14.4800944Z             "raw_novel_get": 200,
+2026-10-09T15:52:14.4801365Z             "chapters_get": 200,
+2026-10-09T15:52:14.4801830Z             "chapter_content_disclosed": true,
+2026-10-09T15:52:14.4802533Z             "overview": 200
+2026-10-09T15:52:14.4802913Z           },
+2026-10-09T15:52:14.4803243Z           "/api/v1": {
+2026-10-09T15:52:14.4803623Z             "no_token": 401,
+2026-10-09T15:52:14.4804044Z             "protected_export": 403,
+2026-10-09T15:52:14.4804488Z             "goal_get": 200,
+2026-10-09T15:52:14.4804876Z             "goal_put": 200,
+2026-10-09T15:52:14.4805302Z             "goal_persisted": {
+2026-10-09T15:52:14.4805718Z               "target_words": 4321,
+2026-10-09T15:52:14.4806159Z               "target_chapters": 7,
+2026-10-09T15:52:14.4806545Z               "deadline": "audit-only"
+2026-10-09T15:52:14.4806935Z             },
+2026-10-09T15:52:14.4807268Z             "raw_novel_get": 200,
+2026-10-09T15:52:14.4807686Z             "chapters_get": 200,
+2026-10-09T15:52:14.4808449Z             "chapter_content_disclosed": true,
+2026-10-09T15:52:14.4808977Z             "overview": 200
+2026-10-09T15:52:14.4809367Z           }
+2026-10-09T15:52:14.4809688Z         }
+2026-10-09T15:52:14.4809997Z       }
+2026-10-09T15:52:14.4810296Z     },
+2026-10-09T15:52:14.4810632Z     "repro_stream_revocation": {
+2026-10-09T15:52:14.4811339Z       "script_sha256": "3908834c6309ac24ab3369c81703049e3020953b291196a4e77f9232d98965ec",
+2026-10-09T15:52:14.4812333Z       "observations": {
+2026-10-09T15:52:14.4812825Z         "source": "c6f2126115b52e17839d48efea091dc21ec08c61",
+2026-10-09T15:52:14.4813398Z         "python": "3.12.9",
+2026-10-09T15:52:14.4814189Z         "scope": "Original API StreamingResponse iterator and membership/session services, synthetic File job",
+2026-10-09T15:52:14.4815083Z         "result": {
+2026-10-09T15:52:14.4816293Z           "initial_stream_chunk": "data: {\"job_id\": \"audit-stream-job\", \"status\": \"GENERATING\", \"chunk\": \"BEFORE_REVOCATION\", \"provider\": null, \"model\": null, \"error\": null, \"error_code\": null}\n\n",
+2026-10-09T15:52:14.4817649Z           "new_read_after_revocation": 401,
+2026-10-09T15:52:14.4819045Z           "existing_stream_after_revocation": "data: {\"job_id\": \"audit-stream-job\", \"status\": \"COMPLETED\", \"chunk\": \"_AFTER_REVOCATION\", \"provider\": null, \"model\": null, \"error\": null, \"error_code\": null}\n\n",
+2026-10-09T15:52:14.4820529Z           "post_revocation_output_disclosed": true
+2026-10-09T15:52:14.4820960Z         }
+2026-10-09T15:52:14.4821281Z       }
+2026-10-09T15:52:14.4821677Z     },
+2026-10-09T15:52:14.4821993Z     "repro_reject_running": {
+2026-10-09T15:52:14.4822864Z       "script_sha256": "c19e7977516e611661417c87f129822ed0a995981e453b3f5b064e9d9bbeb75e",
+2026-10-09T15:52:14.4823641Z       "observations": {
+2026-10-09T15:52:14.4824304Z         "source": "c6f2126115b52e17839d48efea091dc21ec08c61",
+2026-10-09T15:52:14.4824823Z         "python": "3.12.9",
+2026-10-09T15:52:14.4825475Z         "scope": "Synthetic provider + real File JobManager/HTTP API; no Windows/model test",
+2026-10-09T15:52:14.4826209Z         "results": [
+2026-10-09T15:52:14.4826536Z           {
+2026-10-09T15:52:14.4826853Z             "prefix": "/api",
+2026-10-09T15:52:14.4827231Z             "before": {
+2026-10-09T15:52:14.4827592Z               "status": "GENERATING",
+2026-10-09T15:52:14.4828042Z               "output": "SYNTHETIC_FIRST_CHUNK"
+2026-10-09T15:52:14.4828504Z             },
+2026-10-09T15:52:14.4828978Z             "reject": {
+2026-10-09T15:52:14.4829346Z               "http": 200,
+2026-10-09T15:52:14.4829719Z               "state": "REJECTED",
+2026-10-09T15:52:14.4830130Z               "cancelled": false
+2026-10-09T15:52:14.4830515Z             },
+2026-10-09T15:52:14.4830839Z             "final_http": 200,
+2026-10-09T15:52:14.4831269Z             "final_status": "COMPLETED",
+2026-10-09T15:52:14.4831772Z             "final_output": "SYNTHETIC_FIRST_CHUNK",
+2026-10-09T15:52:14.4832504Z             "persisted_status": "COMPLETED"
+2026-10-09T15:52:14.4832946Z           },
+2026-10-09T15:52:14.4833249Z           {
+2026-10-09T15:52:14.4833572Z             "prefix": "/api/v1",
+2026-10-09T15:52:14.4833967Z             "before": {
+2026-10-09T15:52:14.4834335Z               "status": "GENERATING",
+2026-10-09T15:52:14.4834818Z               "output": "SYNTHETIC_FIRST_CHUNK"
+2026-10-09T15:52:14.4835289Z             },
+2026-10-09T15:52:14.4835627Z             "reject": {
+2026-10-09T15:52:14.4836003Z               "http": 200,
+2026-10-09T15:52:14.4836411Z               "state": "REJECTED",
+2026-10-09T15:52:14.4836856Z               "cancelled": false
+2026-10-09T15:52:14.4837277Z             },
+2026-10-09T15:52:14.4837614Z             "final_http": 200,
+2026-10-09T15:52:14.4838065Z             "final_status": "COMPLETED",
+2026-10-09T15:52:14.4838557Z             "final_output": "SYNTHETIC_FIRST_CHUNK",
+2026-10-09T15:52:14.4839111Z             "persisted_status": "COMPLETED"
+2026-10-09T15:52:14.4839564Z           }
+2026-10-09T15:52:14.4840065Z         ]
+2026-10-09T15:52:14.4840379Z       }
+2026-10-09T15:52:14.4840673Z     }
+2026-10-09T15:52:14.4840958Z   }
+2026-10-09T15:52:14.4841243Z }
+2026-10-09T15:52:14.4952875Z ##[group]Run actions/upload-artifact@v4.6.2
+2026-10-09T15:52:14.4953227Z with:
+2026-10-09T15:52:14.4953562Z   name: shared-r123-baseline-red-02a3f6e9908f785a308a4605e362f8876aed4d8b
+2026-10-09T15:52:14.4954025Z   path: receipts/baseline-red.json
+receipts/*.txt
+
+2026-10-09T15:52:14.4954349Z   if-no-files-found: error
+2026-10-09T15:52:14.4954584Z   retention-days: 14
+2026-10-09T15:52:14.4954801Z   compression-level: 6
+2026-10-09T15:52:14.4955017Z   overwrite: false
+2026-10-09T15:52:14.4955231Z   include-hidden-files: false
+2026-10-09T15:52:14.4955463Z env:
+2026-10-09T15:52:14.4955715Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T15:52:14.4956146Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T15:52:14.4956557Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T15:52:14.4956930Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T15:52:14.4957345Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T15:52:14.4957726Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T15:52:14.4958097Z ##[endgroup]
+2026-10-09T15:52:14.6652776Z (node:2679) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T15:52:14.6653752Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T15:52:14.6763748Z With the provided path, there will be 11 files uploaded
+2026-10-09T15:52:14.6764312Z Artifact name is valid!
+2026-10-09T15:52:14.6764556Z Root directory input is valid!
+2026-10-09T15:52:14.8959944Z Beginning upload of artifact content to blob storage
+2026-10-09T15:52:14.9296093Z (node:2679) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-09T15:52:14.9739530Z Uploaded bytes 4964
+2026-10-09T15:52:14.9923805Z Finished uploading artifact content to blob storage!
+2026-10-09T15:52:14.9924481Z SHA256 digest of uploaded artifact zip is ff7f357a6da0709e55495f2b4fa65bf1556ded064245d7c59f409fc0225cba37
+2026-10-09T15:52:14.9926628Z Finalizing artifact upload
+2026-10-09T15:52:15.1967510Z Artifact shared-r123-baseline-red-02a3f6e9908f785a308a4605e362f8876aed4d8b.zip successfully finalized. Artifact ID 11627616727
+2026-10-09T15:52:15.1969500Z Artifact shared-r123-baseline-red-02a3f6e9908f785a308a4605e362f8876aed4d8b has been successfully uploaded! Final size is 4964 bytes. Artifact ID is 11627616727
+2026-10-09T15:52:15.1975457Z Artifact download URL: https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37954826039/artifacts/11627616727
+2026-10-09T15:52:15.2147388Z Post job cleanup.
+2026-10-09T15:52:15.3360200Z (node:2691) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T15:52:15.3361281Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T15:52:15.3551263Z Post job cleanup.
+2026-10-09T15:52:15.4449042Z [command]/usr/bin/git version
+2026-10-09T15:52:15.4491337Z git version 2.55.0
+2026-10-09T15:52:15.4529742Z Temporarily overriding HOME='/home/runner/work/_temp/c7fa0171-b926-4b4c-bc64-2d61901b1431' before making global git config changes
+2026-10-09T15:52:15.4531079Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-09T15:52:15.4536417Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/AI-Novel-Studio/AI-Novel-Studio/baseline
+2026-10-09T15:52:15.4574669Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T15:52:15.4609839Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-09T15:52:15.4864456Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T15:52:15.4901191Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-09T15:52:15.5484708Z Post job cleanup.
+2026-10-09T15:52:15.6362914Z [command]/usr/bin/git version
+2026-10-09T15:52:15.6405231Z git version 2.55.0
+2026-10-09T15:52:15.6442703Z Temporarily overriding HOME='/home/runner/work/_temp/bc3ff8be-ee3a-490b-87d6-3125297d6365' before making global git config changes
+2026-10-09T15:52:15.6444051Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-09T15:52:15.6448083Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/AI-Novel-Studio/AI-Novel-Studio/repair
+2026-10-09T15:52:15.6486087Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T15:52:15.6520543Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-09T15:52:15.6776128Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T15:52:15.6813078Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-09T15:52:15.7236616Z Cleaning up orphan processes
+2026-10-09T15:52:15.7548591Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4.2.2, actions/setup-python@v5.6.0, actions/upload-artifact@v4.6.2. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

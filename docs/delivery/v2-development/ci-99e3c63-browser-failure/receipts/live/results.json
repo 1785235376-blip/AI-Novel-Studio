@@ -1,0 +1,537 @@
+{
+  "config": {
+    "argv": [
+      "/opt/hostedtoolcache/node/22.14.0/x64/bin/node",
+      "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/frontend/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.v2-live.config.ts"
+    ],
+    "configFile": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/frontend/playwright.v2-live.config.ts",
+    "rootDir": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/frontend/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "v2LiveRuntime": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/.runtime/v2-live-browser/1791532799656-3253",
+      "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch.",
+      "ci": {
+        "commitHref": "https://github.com/1785235376-blip/AI-Novel-Studio/commit/42d8355c00eb545d40ab503c4429315bb7eef74e",
+        "commitHash": "42d8355c00eb545d40ab503c4429315bb7eef74e",
+        "prHref": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/47",
+        "prTitle": "V2 narrative production platform: local AI discovery and creative workbench",
+        "prBaseHash": "fed2404c8e30b44061b7139dced45b7f3301601c",
+        "buildHref": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37902141902"
+      },
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/.runtime/v2-live-browser/1791532799656-3253",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch.",
+          "ci": {
+            "commitHref": "https://github.com/1785235376-blip/AI-Novel-Studio/commit/42d8355c00eb545d40ab503c4429315bb7eef74e",
+            "commitHash": "42d8355c00eb545d40ab503c4429315bb7eef74e",
+            "prHref": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/47",
+            "prTitle": "V2 narrative production platform: local AI discovery and creative workbench",
+            "prBaseHash": "fed2404c8e30b44061b7139dced45b7f3301601c",
+            "buildHref": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37902141902"
+          },
+          "actualWorkers": 1
+        },
+        "id": "v2-live-chromium",
+        "name": "v2-live-chromium",
+        "testDir": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-creative-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/.runtime/v2-live-browser/1791532799656-3253",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch.",
+          "ci": {
+            "commitHref": "https://github.com/1785235376-blip/AI-Novel-Studio/commit/42d8355c00eb545d40ab503c4429315bb7eef74e",
+            "commitHash": "42d8355c00eb545d40ab503c4429315bb7eef74e",
+            "prHref": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/47",
+            "prTitle": "V2 narrative production platform: local AI discovery and creative workbench",
+            "prBaseHash": "fed2404c8e30b44061b7139dced45b7f3301601c",
+            "buildHref": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37902141902"
+          },
+          "actualWorkers": 1
+        },
+        "id": "v1-chromium",
+        "name": "v1-chromium",
+        "testDir": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-creative-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/junit.xml"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "v2-creative-live.spec.ts",
+      "file": "v2-creative-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "verification",
+                  "description": "Real uvicorn + File persistence + Vite + Chromium; synthetic manuscript; rule-assisted direction; no model inference or paid provider calls."
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 26344,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: '创作画布', exact: true })\nExpected substring: \u001b[32m\"已保存 · v3\"\u001b[39m\nReceived string:    \u001b[31m\"Creative Canvas未命名创作文档新草稿新建文档保存草稿创作文档内容文档标题来源：合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”（保存时核对版本）添加场景添加镜头从一个场景开始添加场景后，可填写地点、动作、对白，再安排导演调度与镜头。\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '创作画布', exact: true })\u001b[22m\n\u001b[2m    34 × locator resolved to <section aria-label=\"创作画布\" class=\"creative-canvas\">…</section>\u001b[22m\n\u001b[2m       - unexpected value \"Creative Canvas未命名创作文档新草稿新建文档保存草稿创作文档内容文档标题来源：合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”（保存时核对版本）添加场景添加镜头从一个场景开始添加场景后，可填写地点、动作、对白，再安排导演调度与镜头。\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: '创作画布', exact: true })\nExpected substring: \u001b[32m\"已保存 · v3\"\u001b[39m\nReceived string:    \u001b[31m\"Creative Canvas未命名创作文档新草稿新建文档保存草稿创作文档内容文档标题来源：合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”（保存时核对版本）添加场景添加镜头从一个场景开始添加场景后，可填写地点、动作、对白，再安排导演调度与镜头。\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '创作画布', exact: true })\u001b[22m\n\u001b[2m    34 × locator resolved to <section aria-label=\"创作画布\" class=\"creative-canvas\">…</section>\u001b[22m\n\u001b[2m       - unexpected value \"Creative Canvas未命名创作文档新草稿新建文档保存草稿创作文档内容文档标题来源：合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”（保存时核对版本）添加场景添加镜头从一个场景开始添加场景后，可填写地点、动作、对白，再安排导演调度与镜头。\"\u001b[22m\n\n    at /home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/frontend/tests/e2e/v2-creative-live.spec.ts:190:30",
+                    "location": {
+                      "file": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/frontend/tests/e2e/v2-creative-live.spec.ts",
+                      "column": 30,
+                      "line": 190
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 188 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'打开 V2 创作工作台'\u001b[39m\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 189 |\u001b[39m   \u001b[36mawait\u001b[39m stage(page\u001b[33m,\u001b[39m \u001b[32m'制作'\u001b[39m)\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 190 |\u001b[39m   \u001b[36mawait\u001b[39m expect(canvas(page))\u001b[33m.\u001b[39mtoContainText(\u001b[32m'已保存 · v3'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 191 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByLabel(\u001b[32m'制作备注'\u001b[39m\u001b[33m,\u001b[39m { exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m }))\u001b[33m.\u001b[39mtoHaveValue(production\u001b[33m.\u001b[39mvideo_plan\u001b[33m.\u001b[39mnotes)\u001b[33m;\u001b[39m\n \u001b[90m 192 |\u001b[39m   \u001b[36mconst\u001b[39m downloadEvent \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mwaitForEvent(\u001b[32m'download'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 193 |\u001b[39m   \u001b[36mawait\u001b[39m canvas(page)\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'导出'\u001b[39m\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/frontend/tests/e2e/v2-creative-live.spec.ts",
+                        "column": 30,
+                        "line": 190
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: '创作画布', exact: true })\nExpected substring: \u001b[32m\"已保存 · v3\"\u001b[39m\nReceived string:    \u001b[31m\"Creative Canvas未命名创作文档新草稿新建文档保存草稿创作文档内容文档标题来源：合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”（保存时核对版本）添加场景添加镜头从一个场景开始添加场景后，可填写地点、动作、对白，再安排导演调度与镜头。\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '创作画布', exact: true })\u001b[22m\n\u001b[2m    34 × locator resolved to <section aria-label=\"创作画布\" class=\"creative-canvas\">…</section>\u001b[22m\n\u001b[2m       - unexpected value \"Creative Canvas未命名创作文档新草稿新建文档保存草稿创作文档内容文档标题来源：合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”（保存时核对版本）添加场景添加镜头从一个场景开始添加场景后，可填写地点、动作、对白，再安排导演调度与镜头。\"\u001b[22m\n\n\n  188 |   await page.getByRole('button', { name: '打开 V2 创作工作台', exact: true }).click();\n  189 |   await stage(page, '制作').click();\n> 190 |   await expect(canvas(page)).toContainText('已保存 · v3');\n      |                              ^\n  191 |   await expect(page.getByLabel('制作备注', { exact: true })).toHaveValue(production.video_plan.notes);\n  192 |   const downloadEvent = page.waitForEvent('download');\n  193 |   await canvas(page).getByRole('button', { name: '导出', exact: true }).click();\n    at /home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/frontend/tests/e2e/v2-creative-live.spec.ts:190:30"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T08:00:14.258Z",
+                  "annotations": [
+                    {
+                      "type": "verification",
+                      "description": "Real uvicorn + File persistence + Vite + Chromium; synthetic manuscript; rule-assisted direction; no model inference or paid provider calls."
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "screenplay-saved",
+                      "contentType": "image/png",
+                      "path": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/attachments/screenplay-saved-a233dea2b0122127fea3434e40c138abe67b044f.png"
+                    },
+                    {
+                      "name": "director-human-reviewed",
+                      "contentType": "image/png",
+                      "path": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/attachments/director-human-reviewed-1ed2a636c50ec797d4bcd71be02138cf72dabc14.png"
+                    },
+                    {
+                      "name": "production-1366x768",
+                      "contentType": "image/png",
+                      "path": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/attachments/production-1366x768-929cf8b26b8788c8b3e7bf3efa4023d1417732e5.png"
+                    },
+                    {
+                      "name": "production-1440x900",
+                      "contentType": "image/png",
+                      "path": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/attachments/production-1440x900-fdc46e32f504fcbb91700b077a9aa0aa3c3d92b4.png"
+                    },
+                    {
+                      "name": "production-1920x1080",
+                      "contentType": "image/png",
+                      "path": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/attachments/production-1920x1080-58813c08a152630a98644529c8a0d9faed401ea9.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/frontend/tests/e2e/v2-creative-live.spec.ts",
+                    "column": 30,
+                    "line": 190
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-072b7f78308d6223f073",
+          "file": "v2-creative-live.spec.ts",
+          "line": 111,
+          "column": 1
+        },
+        {
+          "title": "real File V2 cancel and navigation retain dirty drafts without duplicating accepted or cancelled proposals",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 19255,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: '创作画布', exact: true }).getByLabel('文档标题', { exact: true })\nExpected: \u001b[32m\"云港 · 合成剧本\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '创作画布', exact: true }).getByLabel('文档标题', { exact: true })\u001b[22m\n\u001b[2m    34 × locator resolved to <input value=\"\" required=\"\" maxlength=\"240\"/>\u001b[22m\n\u001b[2m       - unexpected value \"\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: '创作画布', exact: true }).getByLabel('文档标题', { exact: true })\nExpected: \u001b[32m\"云港 · 合成剧本\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '创作画布', exact: true }).getByLabel('文档标题', { exact: true })\u001b[22m\n\u001b[2m    34 × locator resolved to <input value=\"\" required=\"\" maxlength=\"240\"/>\u001b[22m\n\u001b[2m       - unexpected value \"\"\u001b[22m\n\n    at /home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/frontend/tests/e2e/v2-creative-live.spec.ts:231:66",
+                    "location": {
+                      "file": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/frontend/tests/e2e/v2-creative-live.spec.ts",
+                      "column": 66,
+                      "line": 231
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 229 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'打开 V2 创作工作台'\u001b[39m\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 230 |\u001b[39m   \u001b[36mawait\u001b[39m stage(page\u001b[33m,\u001b[39m \u001b[32m'剧本'\u001b[39m)\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 231 |\u001b[39m   \u001b[36mawait\u001b[39m expect(canvas(page)\u001b[33m.\u001b[39mgetByLabel(\u001b[32m'文档标题'\u001b[39m\u001b[33m,\u001b[39m { exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m }))\u001b[33m.\u001b[39mtoHaveValue(source\u001b[33m.\u001b[39mtitle)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 232 |\u001b[39m   expect(\u001b[36mawait\u001b[39m read(request\u001b[33m,\u001b[39m \u001b[32m`${base}/documents/${source.id}`\u001b[39m))\u001b[33m.\u001b[39mtoEqual(source)\u001b[33m;\u001b[39m\n \u001b[90m 233 |\u001b[39m   expect(\u001b[36mawait\u001b[39m read(request\u001b[33m,\u001b[39m \u001b[32m`/api/chapters/${chapter.id}`\u001b[39m))\u001b[33m.\u001b[39mtoEqual(chapter)\u001b[33m;\u001b[39m\n \u001b[90m 234 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/frontend/tests/e2e/v2-creative-live.spec.ts",
+                        "column": 66,
+                        "line": 231
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: '创作画布', exact: true }).getByLabel('文档标题', { exact: true })\nExpected: \u001b[32m\"云港 · 合成剧本\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '创作画布', exact: true }).getByLabel('文档标题', { exact: true })\u001b[22m\n\u001b[2m    34 × locator resolved to <input value=\"\" required=\"\" maxlength=\"240\"/>\u001b[22m\n\u001b[2m       - unexpected value \"\"\u001b[22m\n\n\n  229 |   await page.getByRole('button', { name: '打开 V2 创作工作台', exact: true }).click();\n  230 |   await stage(page, '剧本').click();\n> 231 |   await expect(canvas(page).getByLabel('文档标题', { exact: true })).toHaveValue(source.title);\n      |                                                                  ^\n  232 |   expect(await read(request, `${base}/documents/${source.id}`)).toEqual(source);\n  233 |   expect(await read(request, `/api/chapters/${chapter.id}`)).toEqual(chapter);\n  234 | });\n    at /home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/frontend/tests/e2e/v2-creative-live.spec.ts:231:66"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T08:00:42.077Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "cancelled-proposal-dirty-draft-retained",
+                      "contentType": "image/png",
+                      "path": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/test-results/v2-creative-live-real-File-946d5-pted-or-cancelled-proposals-v2-live-chromium/attachments/cancelled-proposal-dirty-draft-retained-1e75bf3b35643dfb9325f21b65d479c4e06f1d36.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/test-results/v2-creative-live-real-File-946d5-pted-or-cancelled-proposals-v2-live-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/test-results/v2-creative-live-real-File-946d5-pted-or-cancelled-proposals-v2-live-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/test-results/v2-creative-live-real-File-946d5-pted-or-cancelled-proposals-v2-live-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/frontend/tests/e2e/v2-creative-live.spec.ts",
+                    "column": 66,
+                    "line": 231
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-40d5dfded221add74dc7",
+          "file": "v2-creative-live.spec.ts",
+          "line": 206,
+          "column": 1
+        },
+        {
+          "title": "real File V2 scope and stale-write fencing keeps the browser draft and rejects foreign sources",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3219,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T08:01:02.393Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "stale-write-preserves-draft",
+                      "contentType": "image/png",
+                      "path": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/test-results/v2-creative-live-real-File-55744-and-rejects-foreign-sources-v2-live-chromium/attachments/stale-write-preserves-draft-d45dbe27772b5ede96b9d93bf8d4ee3e580fd633.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-10181042a927215ee465",
+          "file": "v2-creative-live.spec.ts",
+          "line": 236,
+          "column": 1
+        },
+        {
+          "title": "real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "verification",
+                  "description": "Real uvicorn HTTP/File test; no browser fixture; synthetic local rule-assisted data, no model inference."
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 839,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T08:01:05.730Z",
+                  "annotations": [
+                    {
+                      "type": "verification",
+                      "description": "Real uvicorn HTTP/File test; no browser fixture; synthetic local rule-assisted data, no model inference."
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "http-file-lifecycle-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJ2ZXJpZmljYXRpb24iOiAiSFRUUC9GaWxlIG9ubHksIGJyb3dzZXIgbGF1bmNoIHZlcmlmaWVkIHNlcGFyYXRlbHkiLAogICJub3ZlbF9pZCI6ICJ2Mi1odHRwLXJlYWwtZmlsZS1saWZlY3ljbGUiLAogICJjaGFwdGVyX2lkIjogInYyLWh0dHAtcmVhbC1maWxlLWxpZmVjeWNsZToxIiwKICAibWFudXNjcmlwdF91bmNoYW5nZWQiOiB0cnVlLAogICJjcmVhdGVkX2RvY3VtZW50cyI6IFsKICAgICJjMTBmNGM0Zi02YTY5LTQxZmUtYjI3MC03MjcxYTQyYTZkMzUiLAogICAgIjliNjg0ZjIzLTM0NjctNDhjOS1iOWEzLTUwNTA5NTk3ZmQ0MiIsCiAgICAiMTJjNDMyNjMtYTM2Zi00YzQwLTkzMDQtZGI4MGFiMTA5ZWYwIiwKICAgICI2MzYyMGRkMC00ZWNjLTRiMDUtYmYxNS0zOTJjYjBiNzg3OGUiCiAgXSwKICAiY29uY3VycmVudF9yZXZpZXdfc3RhdHVzZXMiOiBbCiAgICAyMDAsCiAgICA0MDkKICBdLAogICJ2ZXJzaW9ucyI6IFsKICAgIDEsCiAgICAyLAogICAgMwogIF0sCiAgIm1vZGVsX2NhbGxlZCI6IGZhbHNlLAogICJleHBvcnQiOiB7CiAgICAiYm91bmRhcnkiOiAiU3RydWN0dXJlZCBkcmFmdC9wbGFubmluZyBKU09OOyBhY2NlcHRlZCBwcm9wb3NhbHMgcmV0YWluIGdlbmVyYXRpb24gcHJvdmVuYW5jZS4gTm8gbWVkaWEgcmVuZGVyaW5nLiIsCiAgICAiZG9jdW1lbnQiOiB7CiAgICAgICJjcmVhdGVkX2F0IjogIjIwMjYtMTAtMDlUMDg6MDE6MDYuMDg5ODAyKzAwOjAwIiwKICAgICAgImNyZWF0ZWRfYnkiOiAibG9jYWwtYXV0aG9yIiwKICAgICAgImRpcmVjdG9yX25vdGVzIjogWwogICAgICAgIHsKICAgICAgICAgICJibG9ja2luZyI6ICLlvoXkurrlt6Xnoa7orqTkurrniankvY3nva7jgIHop4bnur/lkozlh7rlhaXmlrnlkJHvvJvmloflrZfkuI3otrPku6Xnoa7lrprlrp7pmYXnqbrpl7TjgIIiLAogICAgICAgICAgImNhbWVyYV9hbmdsZSI6ICJFWUVfTEVWRUwiLAogICAgICAgICAgImNhbWVyYV9tb3Rpb24iOiAiU1RBVElDIiwKICAgICAgICAgICJkdXJhdGlvbl9zZWNvbmRzIjogNSwKICAgICAgICAgICJlbW90aW9uIjogIiIsCiAgICAgICAgICAiaWQiOiAiZTQyNGQyMjAtNWUyMy00YzkzLWIyZDEtZGJmNWQzODI2ODYzIiwKICAgICAgICAgICJub3RlIjogIuW+heWuoeW7uuiuru+8muWFiOaguOWvueWcuuaZr+ebrueahOS4juS6uueJqeWFs+ezu++8jOWGjemAieaLqeaZr+WIq+WSjOacuuS9jeOAgiIsCiAgICAgICAgICAibnVtYmVyIjogMSwKICAgICAgICAgICJwYWNpbmciOiAi5b6F5a6h5bu66K6u77ya5a+555m95ZCO5L+d55WZ5Y+N5bqU5YGc6aG/77yb5pe26ZW/55Sx6KGo5ryU5LiO5Ymq6L6R6K+V5o6S56Gu5a6a44CCIiwKICAgICAgICAgICJwZXJmb3JtYW5jZSI6ICJIdW1hbi1yZXZpZXdlZCBibG9ja2luZyBhbmQgcGVyZm9ybWFuY2UiLAogICAgICAgICAgInNjZW5lX2lkIjogInNjZW5lLXBvcnQiLAogICAgICAgICAgInNob3Rfc2l6ZSI6ICJNRURJVU0iCiAgICAgICAgfSwKICAgICAgICB7CiAgICAgICAgICAiYmxvY2tpbmciOiAi5b6F5Lq65bel56Gu6K6k5Lq654mp5L2N572u44CB6KeG57q/5ZKM5Ye65YWl5pa55ZCR77yb5paH5a2X5LiN6Laz5Lul56Gu5a6a5a6e6ZmF56m66Ze044CCIiwKICAgICAgICAgICJjYW1lcmFfYW5nbGUiOiAiRVlFX0xFVkVMIiwKICAgICAgICAgICJjYW1lcmFfbW90aW9uIjogIlNUQVRJQyIsCiAgICAgICAgICAiZHVyYXRpb25fc2Vjb25kcyI6IDUsCiAgICAgICAgICAiZW1vdGlvbiI6ICIiLAogICAgICAgICAgImlkIjogIjMxMDYyZTczLTE2ZjEtNGFlNi04OTM5LTIwODQ5OGY3NWEzZSIsCiAgICAgICAgICAibm90ZSI6ICLlvoXlrqHlu7rorq7vvJrlhYjmoLjlr7nlnLrmma/nm67nmoTkuI7kurrnianlhbPns7vvvIzlho3pgInmi6nmma/liKvlkozmnLrkvY3jgIIiLAogICAgICAgICAgIm51bWJlciI6IDIsCiAgICAgICAgICAicGFjaW5nIjogIuW+heWuoeW7uuiuru+8muWvueeZveWQjuS/neeVmeWPjeW6lOWBnOmhv++8m+aXtumVv+eUseihqOa8lOS4juWJqui+keivleaOkuehruWumuOAgiIsCiAgICAgICAgICAicGVyZm9ybWFuY2UiOiAiIiwKICAgICAgICAgICJzY2VuZV9pZCI6ICJzY2VuZS1yb29tIiwKICAgICAgICAgICJzaG90X3NpemUiOiAiTUVESVVNIgogICAgICAgIH0KICAgICAgXSwKICAgICAgImlkIjogIjYzNjIwZGQwLTRlY2MtNGIwNS1iZjE1LTM5MmNiMGI3ODc4ZSIsCiAgICAgICJtb2RlIjogIlBST0RVQ1RJT04iLAogICAgICAibm92ZWxfaWQiOiAidjItaHR0cC1yZWFsLWZpbGUtbGlmZWN5Y2xlIiwKICAgICAgInByaXZhY3lfbGV2ZWwiOiAiTE9DQUxfT05MWSIsCiAgICAgICJwcm9qZWN0X2luY2FybmF0aW9uIjogImZpbGU6YjRjYzEwYmEtYzQyZC00NWFmLTgyMzktMTg2ZjhiNmM2ZTY4IiwKICAgICAgInByb3ZlbmFuY2UiOiB7CiAgICAgICAgImlucHV0X2RpZ2VzdCI6ICI5ZGFlY2UxMDEzYzMxNGJjZDg1N2E3YzY3MjZlM2I2NmE5ZWU2YjVjODgwOWI2MzA3NGI1MmU1MDAzMjhjYmQ0IiwKICAgICAgICAibWV0aG9kIjogIlNUUlVDVFVSRURfREVSSVZBVElPTiIsCiAgICAgICAgIm1vZGVsX2NhbGxlZCI6IGZhbHNlLAogICAgICAgICJwYXJhbWV0ZXJzIjogewogICAgICAgICAgInJ1bGVfdmVyc2lvbiI6ICJjcmVhdGl2ZS1zdGFnZS1jb3B5LXYxIgogICAgICAgIH0sCiAgICAgICAgInF1YWxpdHlfdmVyaWZpY2F0aW9uIjogIkhVTUFOX1JFVklFV19SRVFVSVJFRCIsCiAgICAgICAgInNvdXJjZV9kb2N1bWVudF9pZCI6ICIxMmM0MzI2My1hMzZmLTRjNDAtOTMwNC1kYjgwYWIxMDllZjAiLAogICAgICAgICJzb3VyY2VfbW9kZSI6ICJTVE9SWUJPQVJEIiwKICAgICAgICAic291cmNlX3ZlcnNpb24iOiAyCiAgICAgIH0sCiAgICAgICJyZXN0b3JlZF9mcm9tX3ZlcnNpb24iOiAxLAogICAgICAic2NlbmVzIjogWwogICAgICAgIHsKICAgICAgICAgICJhY3Rpb24iOiAi5ZCI5oiQ6aqM5pS25q2j5paH77ya5p6X6buY6LWw5Yiw5LqR5riv44CC5aW56K+077ya4oCc5LiL5LiA5bmV55Sx5oiR5Lus6Ieq5bex5Yaz5a6a44CC4oCdIiwKICAgICAgICAgICJjaGFyYWN0ZXJzIjogW10sCiAgICAgICAgICAiZGlhbG9ndWUiOiBbCiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAiZGVsaXZlcnkiOiAiIiwKICAgICAgICAgICAgICAic3BlYWtlciI6ICLmnpfpu5giLAogICAgICAgICAgICAgICJ0ZXh0IjogIuS4i+S4gOW5leeUseaIkeS7rOiHquW3seWGs+WumuOAgiIKICAgICAgICAgICAgfQogICAgICAgICAgXSwKICAgICAgICAgICJkaXJlY3Rvcl9ub3RlcyI6IFtdLAogICAgICAgICAgImVtb3Rpb24iOiAiIiwKICAgICAgICAgICJoZWFkaW5nIjogIkVYVC4g5LqR5rivIiwKICAgICAgICAgICJpZCI6ICJzY2VuZS1wb3J0IiwKICAgICAgICAgICJsb2NhdGlvbiI6ICIiLAogICAgICAgICAgInNlcXVlbmNlIjogMSwKICAgICAgICAgICJzb3VyY2VfY2hhcHRlcl9pZCI6ICJ2Mi1odHRwLXJlYWwtZmlsZS1saWZlY3ljbGU6MSIsCiAgICAgICAgICAidGltZSI6ICIiCiAgICAgICAgfSwKICAgICAgICB7CiAgICAgICAgICAiYWN0aW9uIjogIuWlueWcqOeql+i+ueaVtOeQhuiIqua1t+WbvuOAgiIsCiAgICAgICAgICAiY2hhcmFjdGVycyI6IFtdLAogICAgICAgICAgImRpYWxvZ3VlIjogW10sCiAgICAgICAgICAiZGlyZWN0b3Jfbm90ZXMiOiBbXSwKICAgICAgICAgICJlbW90aW9uIjogIiIsCiAgICAgICAgICAiaGVhZGluZyI6ICJJTlQuIOeBr+WhlCIsCiAgICAgICAgICAiaWQiOiAic2NlbmUtcm9vbSIsCiAgICAgICAgICAibG9jYXRpb24iOiAiIiwKICAgICAgICAgICJzZXF1ZW5jZSI6IDIsCiAgICAgICAgICAic291cmNlX2NoYXB0ZXJfaWQiOiAidjItaHR0cC1yZWFsLWZpbGUtbGlmZWN5Y2xlOjEiLAogICAgICAgICAgInRpbWUiOiAiIgogICAgICAgIH0KICAgICAgXSwKICAgICAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAgICAgInNjb3BlIjogewogICAgICAgICJtb2RlIjogImxvY2FsIiwKICAgICAgICAibm92ZWxfaWQiOiAidjItaHR0cC1yZWFsLWZpbGUtbGlmZWN5Y2xlIgogICAgICB9LAogICAgICAic2hvdHMiOiBbCiAgICAgICAgewogICAgICAgICAgImFjdGlvbiI6ICLlpbnlnKjnqpfovrnmlbTnkIboiKrmtbflm77jgIIiLAogICAgICAgICAgImNhbWVyYV9hbmdsZSI6ICJFWUVfTEVWRUwiLAogICAgICAgICAgImNhbWVyYV9tb3Rpb24iOiAiU1RBVElDIiwKICAgICAgICAgICJjb2xvciI6ICIiLAogICAgICAgICAgImNvbXBvc2l0aW9uIjogIiIsCiAgICAgICAgICAiZGlhbG9ndWUiOiBbXSwKICAgICAgICAgICJkaXJlY3Rvcl9ub3RlcyI6IFsKICAgICAgICAgICAgewogICAgICAgICAgICAgICJibG9ja2luZyI6ICLlvoXkurrlt6Xnoa7orqTkurrniankvY3nva7jgIHop4bnur/lkozlh7rlhaXmlrnlkJHvvJvmloflrZfkuI3otrPku6Xnoa7lrprlrp7pmYXnqbrpl7TjgIIiLAogICAgICAgICAgICAgICJjYW1lcmFfYW5nbGUiOiAiRVlFX0xFVkVMIiwKICAgICAgICAgICAgICAiY2FtZXJhX21vdGlvbiI6ICJTVEFUSUMiLAogICAgICAgICAgICAgICJkdXJhdGlvbl9zZWNvbmRzIjogNSwKICAgICAgICAgICAgICAiZW1vdGlvbiI6ICIiLAogICAgICAgICAgICAgICJpZCI6ICIzMTA2MmU3My0xNmYxLTRhZTYtODkzOS0yMDg0OThmNzVhM2UiLAogICAgICAgICAgICAgICJub3RlIjogIuW+heWuoeW7uuiuru+8muWFiOaguOWvueWcuuaZr+ebrueahOS4juS6uueJqeWFs+ezu++8jOWGjemAieaLqeaZr+WIq+WSjOacuuS9jeOAgiIsCiAgICAgICAgICAgICAgInBhY2luZyI6ICLlvoXlrqHlu7rorq7vvJrlr7nnmb3lkI7kv53nlZnlj43lupTlgZzpob/vvJvml7bplb/nlLHooajmvJTkuI7liarovpHor5XmjpLnoa7lrprjgIIiLAogICAgICAgICAgICAgICJwZXJmb3JtYW5jZSI6ICIiLAogICAgICAgICAgICAgICJzaG90X3NpemUiOiAiTUVESVVNIgogICAgICAgICAgICB9CiAgICAgICAgICBdLAogICAgICAgICAgImR1cmF0aW9uX3NlY29uZHMiOiA1LAogICAgICAgICAgImVudmlyb25tZW50IjogIiIsCiAgICAgICAgICAiZnJhbWVfcHJvbXB0IjogIiIsCiAgICAgICAgICAiaWQiOiAiM2U2Y2E0MWEtZTZlNS00ODNlLTk0NmYtNTc4NmU5YThlNjQzIiwKICAgICAgICAgICJsZW5zIjogIjUwbW0iLAogICAgICAgICAgImxpZ2h0aW5nIjogIiIsCiAgICAgICAgICAibnVtYmVyIjogMSwKICAgICAgICAgICJzY2VuZV9pZCI6ICJzY2VuZS1yb29tIiwKICAgICAgICAgICJzaG90X3NpemUiOiAiTUVESVVNIiwKICAgICAgICAgICJzb3VuZCI6ICIiLAogICAgICAgICAgInNvdW5kX2VmZmVjdCI6ICIiCiAgICAgICAgfSwKICAgICAgICB7CiAgICAgICAgICAiYWN0aW9uIjogIuWQiOaIkOmqjOaUtuato+aWh++8muael+m7mOi1sOWIsOS6kea4r+OAguWlueivtO+8muKAnOS4i+S4gOW5leeUseaIkeS7rOiHquW3seWGs+WumuOAguKAnSIsCiAgICAgICAgICAiY2FtZXJhX2FuZ2xlIjogIkVZRV9MRVZFTCIsCiAgICAgICAgICAiY2FtZXJhX21vdGlvbiI6ICJTVEFUSUMiLAogICAgICAgICAgImNvbG9yIjogIiIsCiAgICAgICAgICAiY29tcG9zaXRpb24iOiAiIiwKICAgICAgICAgICJkaWFsb2d1ZSI6IFsKICAgICAgICAgICAgewogICAgICAgICAgICAgICJkZWxpdmVyeSI6ICIiLAogICAgICAgICAgICAgICJzcGVha2VyIjogIuael+m7mCIsCiAgICAgICAgICAgICAgInRleHQiOiAi5LiL5LiA5bmV55Sx5oiR5Lus6Ieq5bex5Yaz5a6a44CCIgogICAgICAgICAgICB9CiAgICAgICAgICBdLAogICAgICAgICAgImRpcmVjdG9yX25vdGVzIjogWwogICAgICAgICAgICB7CiAgICAgICAgICAgICAgImJsb2NraW5nIjogIuW+heS6uuW3peehruiupOS6uueJqeS9jee9ruOAgeinhue6v+WSjOWHuuWFpeaWueWQke+8m+aWh+Wtl+S4jei2s+S7peehruWumuWunumZheepuumXtOOAgiIsCiAgICAgICAgICAgICAgImNhbWVyYV9hbmdsZSI6ICJFWUVfTEVWRUwiLAogICAgICAgICAgICAgICJjYW1lcmFfbW90aW9uIjogIlNUQVRJQyIsCiAgICAgICAgICAgICAgImR1cmF0aW9uX3NlY29uZHMiOiA1LAogICAgICAgICAgICAgICJlbW90aW9uIjogIiIsCiAgICAgICAgICAgICAgImlkIjogImU0MjRkMjIwLTVlMjMtNGM5My1iMmQxLWRiZjVkMzgyNjg2MyIsCiAgICAgICAgICAgICAgIm5vdGUiOiAi5b6F5a6h5bu66K6u77ya5YWI5qC45a+55Zy65pmv55uu55qE5LiO5Lq654mp5YWz57O777yM5YaN6YCJ5oup5pmv5Yir5ZKM5py65L2N44CCIiwKICAgICAgICAgICAgICAicGFjaW5nIjogIuW+heWuoeW7uuiuru+8muWvueeZveWQjuS/neeVmeWPjeW6lOWBnOmhv++8m+aXtumVv+eUseihqOa8lOS4juWJqui+keivleaOkuehruWumuOAgiIsCiAgICAgICAgICAgICAgInBlcmZvcm1hbmNlIjogIkh1bWFuLXJldmlld2VkIGJsb2NraW5nIGFuZCBwZXJmb3JtYW5jZSIsCiAgICAgICAgICAgICAgInNob3Rfc2l6ZSI6ICJNRURJVU0iCiAgICAgICAgICAgIH0KICAgICAgICAgIF0sCiAgICAgICAgICAiZHVyYXRpb25fc2Vjb25kcyI6IDUsCiAgICAgICAgICAiZW52aXJvbm1lbnQiOiAiIiwKICAgICAgICAgICJmcmFtZV9wcm9tcHQiOiAiIiwKICAgICAgICAgICJpZCI6ICJkMWE4MDBkMy1jYTk1LTQ4ODAtYTY2YS02MmE3ZDNlY2IyMTUiLAogICAgICAgICAgImxlbnMiOiAiMzVtbSIsCiAgICAgICAgICAibGlnaHRpbmciOiAiIiwKICAgICAgICAgICJudW1iZXIiOiAyLAogICAgICAgICAgInNjZW5lX2lkIjogInNjZW5lLXBvcnQiLAogICAgICAgICAgInNob3Rfc2l6ZSI6ICJNRURJVU0iLAogICAgICAgICAgInNvdW5kIjogIiIsCiAgICAgICAgICAic291bmRfZWZmZWN0IjogIiIKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJzb3VyY2VfY2hhcHRlcl9pZHMiOiBbCiAgICAgICAgInYyLWh0dHAtcmVhbC1maWxlLWxpZmVjeWNsZToxIgogICAgICBdLAogICAgICAic291cmNlX2RvY3VtZW50cyI6IHsKICAgICAgICAiMTJjNDMyNjMtYTM2Zi00YzQwLTkzMDQtZGI4MGFiMTA5ZWYwIjogewogICAgICAgICAgImRpZ2VzdCI6ICI5ZGFlY2UxMDEzYzMxNGJjZDg1N2E3YzY3MjZlM2I2NmE5ZWU2YjVjODgwOWI2MzA3NGI1MmU1MDAzMjhjYmQ0IiwKICAgICAgICAgICJ2ZXJzaW9uIjogMgogICAgICAgIH0KICAgICAgfSwKICAgICAgInNvdXJjZV9ldmlkZW5jZSI6IHsKICAgICAgICAidjItaHR0cC1yZWFsLWZpbGUtbGlmZWN5Y2xlOjEiOiB7CiAgICAgICAgICAiZGlnZXN0IjogIjIzODdmZjkzZWQ4OTI2ZTNkNTUzZjBhNmQyZjlmOWQ4NmRiNjY5NzNmYWE0NjY4ZDBmNjMxODMyNWYyNWUzMDkiLAogICAgICAgICAgInZlcnNpb24iOiAxCiAgICAgICAgfQogICAgICB9LAogICAgICAic291cmNlX2luZGVwZW5kZW50IjogZmFsc2UsCiAgICAgICJzb3VyY2VfcHJpdmFjeSI6IHsKICAgICAgICAidjItaHR0cC1yZWFsLWZpbGUtbGlmZWN5Y2xlOjEiOiB7CiAgICAgICAgICAiYnJhbmNoX2lkIjogbnVsbCwKICAgICAgICAgICJjaGFwdGVyX2lkIjogInYyLWh0dHAtcmVhbC1maWxlLWxpZmVjeWNsZToxIiwKICAgICAgICAgICJjaGFwdGVyX3ZlcnNpb24iOiAxLAogICAgICAgICAgImNvbnRlbnRfc2hhMjU2IjogIjIzODdmZjkzZWQ4OTI2ZTNkNTUzZjBhNmQyZjlmOWQ4NmRiNjY5NzNmYWE0NjY4ZDBmNjMxODMyNWYyNWUzMDkiLAogICAgICAgICAgIm5vdmVsX2lkIjogInYyLWh0dHAtcmVhbC1maWxlLWxpZmVjeWNsZSIsCiAgICAgICAgICAicHJpdmFjeV9sZXZlbCI6ICJMT0NBTF9PTkxZIiwKICAgICAgICAgICJyZXZpZXdlZCI6IGZhbHNlLAogICAgICAgICAgInJldmlld2VkX2F0IjogbnVsbCwKICAgICAgICAgICJyZXZpZXdlZF9ieSI6IG51bGwsCiAgICAgICAgICAic3RhbGUiOiBmYWxzZQogICAgICAgIH0KICAgICAgfSwKICAgICAgInN0YXR1cyI6ICJEUkFGVCIsCiAgICAgICJ0aXRsZSI6ICJIVFRQIOS6uuW3peWuoeaguOWvvOa8lOeovyDCtyDliIbplZwgwrcg5Yi25L2cIiwKICAgICAgInVwZGF0ZWRfYXQiOiAiMjAyNi0xMC0wOVQwODowMTowNi4yMzAzNTUrMDA6MDAiLAogICAgICAidXBkYXRlZF9ieSI6ICJsb2NhbC1hdXRob3IiLAogICAgICAidmVyc2lvbiI6IDMsCiAgICAgICJ2aWRlb19wbGFuIjogewogICAgICAgICJmcmFtZV9yYXRlIjogMjQsCiAgICAgICAgImhlaWdodCI6IDEwODAsCiAgICAgICAgIm5vdGVzIjogIiIsCiAgICAgICAgInNlZ21lbnRzIjogWwogICAgICAgICAgewogICAgICAgICAgICAiZHVyYXRpb25fc2Vjb25kcyI6IDUsCiAgICAgICAgICAgICJub3RlIjogIiIsCiAgICAgICAgICAgICJzaG90X2lkIjogIjNlNmNhNDFhLWU2ZTUtNDgzZS05NDZmLTU3ODZlOWE4ZTY0MyIKICAgICAgICAgIH0sCiAgICAgICAgICB7CiAgICAgICAgICAgICJkdXJhdGlvbl9zZWNvbmRzIjogNSwKICAgICAgICAgICAgIm5vdGUiOiAiIiwKICAgICAgICAgICAgInNob3RfaWQiOiAiZDFhODAwZDMtY2E5NS00ODgwLWE2NmEtNjJhN2QzZWNiMjE1IgogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgIndpZHRoIjogMTkyMAogICAgICB9CiAgICB9LAogICAgImRvY3VtZW50X2RpZ2VzdCI6ICI3YWE0YTE1Y2RiZGE4NWM4ZjVjZWM5Zjc3OTYxNjE2OTUwNTllMDUyMjM0ZTM3YmEwN2M5OTcxOWY3YmYyYTY5IiwKICAgICJmb3JtYXQiOiAiYWktbm92ZWwtY3JlYXRpdmUtZG9jdW1lbnQiLAogICAgImZvcm1hdF92ZXJzaW9uIjogMQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-1e070ac283621e75b30b",
+          "file": "v2-creative-live.spec.ts",
+          "line": 282,
+          "column": 1
+        },
+        {
+          "title": "real HTTP File V2 scope, cancel and stale source fences remain authoritative",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 402,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T08:01:06.578Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "http-source-fence-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJmb3JlaWduX2JpbmRpbmciOiA0MjIsCiAgImNhbmNlbGxlZF9yZXZpZXciOiA0MjIsCiAgInNpbXVsdGFuZW91c191cGRhdGVfc3RhdHVzZXMiOiBbCiAgICA0MDksCiAgICAyMDAKICBdLAogICJzdGFsZV9zb3VyY2VfcmVhZCI6IDQwOSwKICAic3RhbGVfc291cmNlX2Rlcml2ZSI6IDQwOSwKICAibW9kZWxfY2FsbGVkIjogZmFsc2UKfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-8e13202c7684f91556e9",
+          "file": "v2-creative-live.spec.ts",
+          "line": 346,
+          "column": 1
+        },
+        {
+          "title": "V1 default-off backend and browser never expose the V2 workbench or accept creative writes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v1-chromium",
+              "projectName": "v1-chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4566,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T08:01:07.563Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "v1-default-off-workbench-hidden",
+                      "contentType": "image/png",
+                      "path": "/home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/receipts/v2-creative-live/test-results/v2-creative-live-V1-defaul-2304c-h-or-accept-creative-writes-v1-chromium/attachments/v1-default-off-workbench-hidden-b0bca4cfe0d1ada05733805bd3f21740836fcf5d.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-47445c522eb6152c78bd",
+          "file": "v2-creative-live.spec.ts",
+          "line": 267,
+          "column": 1
+        },
+        {
+          "title": "real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v1-chromium",
+              "projectName": "v1-chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 94,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T08:01:12.250Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "http-default-off-receipt",
+                      "contentType": "application/json",
+                      "body": "eyJlbmFibGVkIjpmYWxzZSwibW9kZXMiOlsiU0NSRUVOUExBWSIsIlNUT1JZQk9BUkQiLCJWSURFT19QTEFOTklORyJdLCJjYW5fbXV0YXRlIjpmYWxzZX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-4f3549875235122bf681",
+          "file": "v2-creative-live.spec.ts",
+          "line": 379,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-09T07:59:59.663Z",
+    "duration": 72734.317,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

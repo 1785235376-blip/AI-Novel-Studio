@@ -1,0 +1,41 @@
+...F
+================================== FAILURES ===================================
+_ test_same_workspace_recreation_retires_preupgrade_orphan_authority[file-/api] _
+
+retirement = namespace(client=<starlette.testclient.TestClient object at 0x000001F876CE8740>, prefix='/api', base='/api/novels/r3-m...17747643405d831'}, documents='/api/novels/r3-mounted-5dea271ba9874676ace5affe719c1732/experimental/creative/documents')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001F87650BD10>
+
+    def test_same_workspace_recreation_retires_preupgrade_orphan_authority(retirement, monkeypatch):
+        e = retirement
+        old, before = legacy_orphan(e, monkeypatch)
+        recreate(e)
+        assert not [item for item in e.bundle.authorization.list_role_assignments() if item["scope"].get("project_id") == e.nid]
+        assert not [item for item in e.bundle.authorization.list_permission_assignments() if item["scope"].get("project_id") == e.nid]
+        assert e.bundle.scope.list("storylines", project_id=e.nid) == []
+        assert e.bundle.scope.list("branches", project_id=e.nid) == []
+        fresh, _ = grant_new_incarnation(e, reuse_branch=True)
+>       overview = checked(e.client.get(e.url + "/overview", headers=fresh))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_v2_scope_lifecycle.py:138: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = <Response [409 Conflict]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"BRANCH_SOURCE_UNAVAILABLE"},"code":"BRANCH_SOURCE_UNAVAILABLE","message":"BRANCH_SOURCE_UNAVAILABLE","details":{"code":"BRANCH_SOURCE_UNAVAILABLE"},"request_id":"6d761ad9-eca5-4f88-ab45-aa661b93097f"}
+E       assert 409 == 200
+E        +  where 409 = <Response [409 Conflict]>.status_code
+
+tests\test_r3_mounted_contracts.py:61: AssertionError
+============================== warnings summary ===============================
+..\..\Cache\Tests\expansion-20261013-97da10e1\venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\PoemSeed\Cache\Tests\expansion-20261013-97da10e1\venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_v2_scope_lifecycle.py::test_same_workspace_recreation_retires_preupgrade_orphan_authority[file-/api]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 3 passed, 47 deselected, 1 warning in 8.34s

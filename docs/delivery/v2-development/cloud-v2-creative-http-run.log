@@ -1,0 +1,41 @@
+
+Running 3 tests using 1 worker
+
+(node:71) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [v2-live-chromium] › tests/e2e/v2-creative-live.spec.ts:242:1 › real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript (3.6s)
+  ✘  2 [v2-live-chromium] › tests/e2e/v2-creative-live.spec.ts:306:1 › real HTTP File V2 scope, cancel and stale source fences remain authoritative (333ms)
+(node:85) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  3 [v1-chromium] › tests/e2e/v2-creative-live.spec.ts:339:1 › real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes (2.3s)
+
+
+  1) [v2-live-chromium] › tests/e2e/v2-creative-live.spec.ts:306:1 › real HTTP File V2 scope, cancel and stale source fences remain authoritative 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 409
+    Received: 422
+
+      314 |   const source = await write(request, `${base}/documents`, input);
+      315 |   const badBinding = await request.post(`${base}/documents`, { data: { ...input, source_chapter_ids: [outsider.id], scenes: [] } });
+    > 316 |   expect(badBinding.status()).toBe(409);
+          |                               ^
+      317 |   expect(await badBinding.text()).toContain('CREATIVE_SOURCE_UNAVAILABLE');
+      318 |   expect((await request.get(`${creative(foreign.id)}/documents/${source.id}`)).status()).toBe(404);
+      319 |   const proposal = await write(request, `${base}/director-proposals`, { source_document_id: source.id, expected_source_version: 1 });
+        at /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e/v2-creative-live.spec.ts:316:31
+
+    Error Context: ../docs/delivery/v2-development/cloud-v2-creative-browser/test-results/v2-creative-live-real-HTTP-350ed-fences-remain-authoritative-v2-live-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../docs/delivery/v2-development/cloud-v2-creative-browser/test-results/v2-creative-live-real-HTTP-350ed-fences-remain-authoritative-v2-live-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../docs/delivery/v2-development/cloud-v2-creative-browser/test-results/v2-creative-live-real-HTTP-350ed-fences-remain-authoritative-v2-live-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [v2-live-chromium] › tests/e2e/v2-creative-live.spec.ts:306:1 › real HTTP File V2 scope, cancel and stale source fences remain authoritative 
+  2 passed (21.1s)

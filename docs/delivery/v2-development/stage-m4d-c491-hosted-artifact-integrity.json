@@ -1,0 +1,362 @@
+[
+  {
+    "artifact_id": 11678503633,
+    "run_id": 38078425636,
+    "name": "named-pipe-reference-d90352f005a33240a88d6369d72844d18f98344e",
+    "downloaded_size": 1764,
+    "github_size": 1764,
+    "downloaded_sha256": "5b77e28d7dd5166386dcd6fe1e6d4cb9a0c197df033381ed2ca72df887d18ba6",
+    "github_digest": "sha256:5b77e28d7dd5166386dcd6fe1e6d4cb9a0c197df033381ed2ca72df887d18ba6",
+    "crc_error": null,
+    "all_members_utf8_text": true,
+    "members": [
+      {
+        "name": "named-pipe-library-build.log",
+        "size": 351,
+        "sha256": "2ec3ae55351f55fb94af061961453c403cebbe9311500a6767f8db12dd9aaf74"
+      },
+      {
+        "name": "named-pipe-desktop-boundary.log",
+        "size": 1342,
+        "sha256": "972dde15e923fa1bab5c7b33a715fb7539576fa682fe96fdab71f36a93b15406"
+      },
+      {
+        "name": "named-pipe.log",
+        "size": 183,
+        "sha256": "2e262f776f8bae2eaf12fe9d7e43f7e3b33f2ae9e539f0fa8cddda12177392d7"
+      },
+      {
+        "name": "revision.txt",
+        "size": 162,
+        "sha256": "10d48b9aad3f1ce69c9b8a2e29ab2d961bd6e0e5dbb7181e892a8a71d3583560"
+      }
+    ],
+    "size_matches": true,
+    "digest_matches": true
+  },
+  {
+    "artifact_id": 11678739802,
+    "run_id": 38078421941,
+    "name": "named-pipe-reference-c491d1b0227a877eaa5bad7651ed22ba67463439",
+    "downloaded_size": 1763,
+    "github_size": 1763,
+    "downloaded_sha256": "fa86edabb6a256e229f70d26e31cb336c594aa9d09697f43adaeb152b014d954",
+    "github_digest": "sha256:fa86edabb6a256e229f70d26e31cb336c594aa9d09697f43adaeb152b014d954",
+    "crc_error": null,
+    "all_members_utf8_text": true,
+    "members": [
+      {
+        "name": "named-pipe-library-build.log",
+        "size": 351,
+        "sha256": "67c9dcdbc29680354cb6628e6b985527f7ed32c38b69441a9a782a0fd5cb93ed"
+      },
+      {
+        "name": "named-pipe-desktop-boundary.log",
+        "size": 1342,
+        "sha256": "972dde15e923fa1bab5c7b33a715fb7539576fa682fe96fdab71f36a93b15406"
+      },
+      {
+        "name": "named-pipe.log",
+        "size": 183,
+        "sha256": "2e262f776f8bae2eaf12fe9d7e43f7e3b33f2ae9e539f0fa8cddda12177392d7"
+      },
+      {
+        "name": "revision.txt",
+        "size": 162,
+        "sha256": "c8462da1efeef7489b6b278c1372a2366c284c33c2f5aef033517692a5bda32a"
+      }
+    ],
+    "size_matches": true,
+    "digest_matches": true
+  },
+  {
+    "artifact_id": 11679207950,
+    "run_id": 38078421941,
+    "name": "local-interop-file-c491d1b0227a877eaa5bad7651ed22ba67463439",
+    "downloaded_size": 41550,
+    "github_size": 41550,
+    "downloaded_sha256": "38ab88d4c0f27d002ca3b044e9dd0500f6c18fea296d3521338adf08746e9734",
+    "github_digest": "sha256:38ab88d4c0f27d002ca3b044e9dd0500f6c18fea296d3521338adf08746e9734",
+    "crc_error": null,
+    "all_members_utf8_text": true,
+    "members": [
+      {
+        "name": "coverage-events.jsonl",
+        "size": 231413,
+        "sha256": "905343e4108e7777e38a3fadf07b6d64626989367b60728895a543d46ac6d587"
+      },
+      {
+        "name": "desktop-acceptance.json",
+        "size": 7951,
+        "sha256": "07495af09e8e12e4e3d2f8528234009602079d9aafab1d93971044af7d824d76"
+      },
+      {
+        "name": "coverage.json",
+        "size": 251383,
+        "sha256": "4e4b54097f55c21b9a361067230c96242d688f20a7b6f15625186e04fc4b3f68"
+      },
+      {
+        "name": "interop-coverage.json",
+        "size": 929,
+        "sha256": "636dbf521f65ed75b455d3c58f28146f6ed3d6a466894be8afb2b990e5a92058"
+      },
+      {
+        "name": "local-interop.log",
+        "size": 2314,
+        "sha256": "94b404ee247ac4f26fc4215078b089f1e3428593f91b41b8327c51893a0032e7"
+      },
+      {
+        "name": "local-interop.xml",
+        "size": 158173,
+        "sha256": "7ed50c1ea79ec768fe9e4d3835dac6eb5364a54de51d678179a8000a3cd27a11"
+      },
+      {
+        "name": "revision.txt",
+        "size": 277,
+        "sha256": "825bdc4d6a06efb8d5bb7095ab17e622a33141832e3f3fe58c92b3eff972534c"
+      },
+      {
+        "name": "summary.json",
+        "size": 586,
+        "sha256": "8d0e86522a15794f9aae0fc65c1ef562a1dc37d2806c3c6c310c36b05b84d73b"
+      }
+    ],
+    "size_matches": true,
+    "digest_matches": true
+  },
+  {
+    "artifact_id": 11679207956,
+    "run_id": 38078425636,
+    "name": "local-interop-file-d90352f005a33240a88d6369d72844d18f98344e",
+    "downloaded_size": 41523,
+    "github_size": 41523,
+    "downloaded_sha256": "2d6669eeca4b1bae8726f75c6f75e76ea2328ba160ebf87937e71987f9b4c986",
+    "github_digest": "sha256:2d6669eeca4b1bae8726f75c6f75e76ea2328ba160ebf87937e71987f9b4c986",
+    "crc_error": null,
+    "all_members_utf8_text": true,
+    "members": [
+      {
+        "name": "coverage-events.jsonl",
+        "size": 231413,
+        "sha256": "905343e4108e7777e38a3fadf07b6d64626989367b60728895a543d46ac6d587"
+      },
+      {
+        "name": "desktop-acceptance.json",
+        "size": 7958,
+        "sha256": "5ba40069812342ad42b4c38d68d510d0a5c21acf1f05245a257b97dd548cea2e"
+      },
+      {
+        "name": "coverage.json",
+        "size": 251383,
+        "sha256": "2530a15456fd00bd41883b37f65984564ddaec78c32a2d372fe92c0f2e8b1cb1"
+      },
+      {
+        "name": "interop-coverage.json",
+        "size": 929,
+        "sha256": "f03b09da28fe35179df6e76b842ceaa5825ed246a22533310bd41f04f4bcb19e"
+      },
+      {
+        "name": "local-interop.log",
+        "size": 2314,
+        "sha256": "f9a34cbafeb9d9ec47111d8aadeddeba915161343183e9e44a1b32d6b84b5598"
+      },
+      {
+        "name": "local-interop.xml",
+        "size": 158173,
+        "sha256": "52aaa0fb458e3b5ee30886270a75c708af0627c743b156b962bd01a7c201798d"
+      },
+      {
+        "name": "revision.txt",
+        "size": 277,
+        "sha256": "43207186a5479ed014895893e7d7e7e1c65dd6d840a15eb06a2dbb3b205210ec"
+      },
+      {
+        "name": "summary.json",
+        "size": 586,
+        "sha256": "ac8668dff1ed07d12556709e7148f2df294f81678f7b1669e2e184d47ec76485"
+      }
+    ],
+    "size_matches": true,
+    "digest_matches": true
+  },
+  {
+    "artifact_id": 11679613761,
+    "run_id": 38078425519,
+    "name": "shared-r123-baseline-red-d90352f005a33240a88d6369d72844d18f98344e",
+    "downloaded_size": 4964,
+    "github_size": 4964,
+    "downloaded_sha256": "cbefef2bf007108be541b0c646b14c94895247a2c1050cb76423f4375dd204b0",
+    "github_digest": "sha256:cbefef2bf007108be541b0c646b14c94895247a2c1050cb76423f4375dd204b0",
+    "crc_error": null,
+    "all_members_utf8_text": true,
+    "members": [
+      {
+        "name": "baseline-red.json",
+        "size": 4066,
+        "sha256": "84ac496145cff3951322e2a46ba8126599a5f575464e343fcc664eabbbd69ab0"
+      },
+      {
+        "name": "python-packages.txt",
+        "size": 602,
+        "sha256": "1a3026832ad13ff7c9b67e469d97bf0b5bff9bf297a6ade0f86047e26a55ef21"
+      },
+      {
+        "name": "repro_project_authority.exit-code.txt",
+        "size": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "name": "repro_project_authority.stderr.txt",
+        "size": 273,
+        "sha256": "2c8879bac4daabfa71e05d09867ecf01ce462e8a14e6f3695e23f274eaa6afe1"
+      },
+      {
+        "name": "repro_project_authority.stdout.txt",
+        "size": 1064,
+        "sha256": "b1347bebfe12e63bc9695e86769f4567623745d12940270c92a111c06d8b7f2c"
+      },
+      {
+        "name": "repro_reject_running.exit-code.txt",
+        "size": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "name": "repro_reject_running.stderr.txt",
+        "size": 273,
+        "sha256": "2c8879bac4daabfa71e05d09867ecf01ce462e8a14e6f3695e23f274eaa6afe1"
+      },
+      {
+        "name": "repro_reject_running.stdout.txt",
+        "size": 965,
+        "sha256": "df0fde358a3bec05428a22438969a8d8b97d3607941a64a1ce957da1c15adde6"
+      },
+      {
+        "name": "repro_stream_revocation.exit-code.txt",
+        "size": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "name": "repro_stream_revocation.stderr.txt",
+        "size": 273,
+        "sha256": "2c8879bac4daabfa71e05d09867ecf01ce462e8a14e6f3695e23f274eaa6afe1"
+      },
+      {
+        "name": "repro_stream_revocation.stdout.txt",
+        "size": 728,
+        "sha256": "bc542e5da9a0bf98ae12301965752e9897d1ea1931b263463fa5e5798e9b6f22"
+      }
+    ],
+    "size_matches": true,
+    "digest_matches": true
+  },
+  {
+    "artifact_id": 11679765962,
+    "run_id": 38078425636,
+    "name": "local-interop-postgres-d90352f005a33240a88d6369d72844d18f98344e",
+    "downloaded_size": 41563,
+    "github_size": 41563,
+    "downloaded_sha256": "1aa657882f3b6a2bc4bf8bce51abf934ed2e71f0ae2c9b76f73604583dace171",
+    "github_digest": "sha256:1aa657882f3b6a2bc4bf8bce51abf934ed2e71f0ae2c9b76f73604583dace171",
+    "crc_error": null,
+    "all_members_utf8_text": true,
+    "members": [
+      {
+        "name": "coverage-events.jsonl",
+        "size": 231617,
+        "sha256": "d93a5d7820574432d68bbe61ae301b4ee5747bb340a37450eb2d1069b6018acc"
+      },
+      {
+        "name": "desktop-acceptance.json",
+        "size": 7955,
+        "sha256": "5c1fc40b894cc781bfa19181d708a172564ec8f88e0e3435a004f8a209938e44"
+      },
+      {
+        "name": "coverage.json",
+        "size": 251319,
+        "sha256": "8991942e456275ce1fd22b6851fe1bf788936fe2d0c994d01de573c05f55f2a2"
+      },
+      {
+        "name": "interop-coverage.json",
+        "size": 933,
+        "sha256": "c061e1c00bd4f665dc3350400271bb5f3c5b1be87a047776a48a2a4b33d14b02"
+      },
+      {
+        "name": "local-interop.log",
+        "size": 2313,
+        "sha256": "d210078b014db416d119da005e7cb131a5be240b2267d460772a76260051ac1a"
+      },
+      {
+        "name": "local-interop.xml",
+        "size": 158061,
+        "sha256": "b3fb8f601fce9ce2caf1eb423704c3005c61eec335b6040e38f20e9d7704597a"
+      },
+      {
+        "name": "revision.txt",
+        "size": 277,
+        "sha256": "43207186a5479ed014895893e7d7e7e1c65dd6d840a15eb06a2dbb3b205210ec"
+      },
+      {
+        "name": "summary.json",
+        "size": 586,
+        "sha256": "ac8668dff1ed07d12556709e7148f2df294f81678f7b1669e2e184d47ec76485"
+      }
+    ],
+    "size_matches": true,
+    "digest_matches": true
+  },
+  {
+    "artifact_id": 11680270025,
+    "run_id": 38078421941,
+    "name": "local-interop-postgres-c491d1b0227a877eaa5bad7651ed22ba67463439",
+    "downloaded_size": 41558,
+    "github_size": 41558,
+    "downloaded_sha256": "7b39e612d6722e2101193f3c887eec6dde4c2702972bf840abc8d71e54ca5f0c",
+    "github_digest": "sha256:7b39e612d6722e2101193f3c887eec6dde4c2702972bf840abc8d71e54ca5f0c",
+    "crc_error": null,
+    "all_members_utf8_text": true,
+    "members": [
+      {
+        "name": "coverage-events.jsonl",
+        "size": 231617,
+        "sha256": "d93a5d7820574432d68bbe61ae301b4ee5747bb340a37450eb2d1069b6018acc"
+      },
+      {
+        "name": "coverage.json",
+        "size": 251319,
+        "sha256": "e37d0fcce03c624012bae94c3c78c03bc5fc5ec6e143ea23b64838c1d19ad780"
+      },
+      {
+        "name": "desktop-acceptance.json",
+        "size": 7960,
+        "sha256": "80ea909ba76eb0b6f84e624ee0d8c7a6210a5ea0b9c7f12e530a6643d732946d"
+      },
+      {
+        "name": "interop-coverage.json",
+        "size": 933,
+        "sha256": "94e7e0beaf20fa20f434fa2db967442fcc67022105710d5f9d9e9d6126fd86b5"
+      },
+      {
+        "name": "local-interop.log",
+        "size": 2313,
+        "sha256": "d2038b8fd9bcd4d1a5b93a5f9822272e2169fc03d980d461e8240180d12dea0e"
+      },
+      {
+        "name": "local-interop.xml",
+        "size": 158064,
+        "sha256": "241561de1d9dbfdd0ea72fef8ad780e7c4a0fab3f3f189ccb9cb8635c82cd5af"
+      },
+      {
+        "name": "revision.txt",
+        "size": 277,
+        "sha256": "825bdc4d6a06efb8d5bb7095ab17e622a33141832e3f3fe58c92b3eff972534c"
+      },
+      {
+        "name": "summary.json",
+        "size": 586,
+        "sha256": "8d0e86522a15794f9aae0fc65c1ef562a1dc37d2806c3c6c310c36b05b84d73b"
+      }
+    ],
+    "size_matches": true,
+    "digest_matches": true
+  }
+]

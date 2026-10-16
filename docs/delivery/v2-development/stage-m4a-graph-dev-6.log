@@ -1,0 +1,174 @@
+.............F.......................................................... [ 76%]
+......................                                                   [100%]
+=================================== FAILURES ===================================
+_ test_late_mock_output_is_discarded_after_authority_or_deadline_change[file-replace_project] _
+
+self = <Thread(Thread-8 (_run), stopped daemon 140094929946304)>
+
+    def _bootstrap_inner(self):
+        try:
+            self._set_ident()
+            self._set_tstate_lock()
+            if _HAVE_THREAD_NATIVE_ID:
+                self._set_native_id()
+            self._started.set()
+            with _active_limbo_lock:
+                _active[self._ident] = self
+                del _limbo[self]
+    
+            if _trace_hook:
+                _sys.settrace(_trace_hook)
+            if _profile_hook:
+                _sys.setprofile(_profile_hook)
+    
+            try:
+>               self.run()
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py:1075: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py:1012: in run
+    self._target(*self._args, **self._kwargs)
+app/jobs.py:736: in _run
+    self._emit(job);return
+    ^^^^^^^^^^^^^^^
+app/jobs.py:467: in _emit
+    self._persist(job)
+app/jobs.py:288: in _persist
+    def _persist(self,job):self.persistence.save(job.public())
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/generation_service.py:4: in save
+    def save(self,item):return self.repository.save(item)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/generation_repository.py:74: in save
+    with self._graph_owner(item, binding):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.repositories.file.generation.FileGenerationRepository object at 0x7f6a65915040>
+item = {'actor_id': 'local-studio-author', 'base_chapter_digest': None, 'base_chapter_version': None, 'chapter_id': None, ...}
+binding = {'graph_id': '2706eb91-db4b-4ddc-a349-1417184f3638', 'graph_version': 1, 'input_digest': '4496390aef388ddbadc2d00b781c318369e2ba33b8ee68d15ab3657c9748f61f', 'node_id': 'Generate', ...}
+
+    @contextmanager
+    def _graph_owner(self, item, binding):
+        from ..file_project_lifecycle import project_operation
+        from ..creative.project_store import _read_marker, BINDING
+        data = self.root.parent.parent
+        with ExitStack() as owners:
+            try:
+                owners.enter_context(project_operation(data, item["novel_id"]))
+                # Read the original owner's marker; never call incarnation(),
+                # whose first-use behavior can provision a missing marker.
+                marker = _read_marker(data / "novels" / item["novel_id"] / "creative_project_v2.json")
+                if (not isinstance(marker, dict) or set(marker) != {"schema_version", BINDING}
+                        or type(marker["schema_version"]) is not int or marker["schema_version"] != 1
+                        or not isinstance(marker[BINDING], str)):
+                    raise ValueError("invalid project marker")
+                identity = UUID(marker[BINDING])
+                if (identity.version != 4 or str(identity) != marker[BINDING]
+                        or binding["project_incarnation"] != "file:" + str(identity)):
+                    raise ValueError("different project owner")
+            except (FileNotFoundError, ValueError, TypeError, KeyError, OSError):
+>               raise GenerationProjectIdentityError("GENERATION_GRAPH_PROJECT_OWNER_CHANGED") from None
+E               app.repositories.generation_repository.GenerationProjectIdentityError: GENERATION_GRAPH_PROJECT_OWNER_CHANGED
+
+app/repositories/generation_repository.py:63: GenerationProjectIdentityError
+
+The above exception was the direct cause of the following exception:
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7f6a67540540>
+when = 'call'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:850: in pytest_runtest_call
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:900: in pytest_runtest_call
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/skipping.py:263: in pytest_runtest_call
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/threadexception.py:147: in pytest_runtest_call
+    collect_thread_exception(item.config)
+.venv/lib/python3.12/site-packages/_pytest/threadexception.py:70: in collect_thread_exception
+    raise errors[0]
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+config = <_pytest.config.Config object at 0x7f6a6b1bf470>
+
+    def collect_thread_exception(config: Config) -> None:
+        pop_thread_exception = config.stash[thread_exceptions].pop
+        errors: list[pytest.PytestUnhandledThreadExceptionWarning | RuntimeError] = []
+        meta = None
+        hook_error = None
+        try:
+            while True:
+                try:
+                    meta = pop_thread_exception()
+                except IndexError:
+                    break
+    
+                if isinstance(meta, BaseException):
+                    hook_error = RuntimeError("Failed to process thread exception")
+                    hook_error.__cause__ = meta
+                    errors.append(hook_error)
+                    continue
+    
+                msg = meta.msg
+                try:
+>                   warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+E                   pytest.PytestUnhandledThreadExceptionWarning: Exception in thread Thread-8 (_run)
+E                   Enable tracemalloc to get traceback where the object was allocated.
+E                   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+.venv/lib/python3.12/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_ai_execution_runtime.py::test_late_mock_output_is_discarded_after_authority_or_deadline_change[file-replace_project]
+1 failed, 93 passed, 74 deselected, 1 warning in 58.04s

@@ -1,0 +1,79 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ❯ src/creative/StudioSelectLabels.test.tsx (4 tests | 3 failed) 238ms
+   × stable exact names for Studio selects with populated options > keeps relationship, reference-kind and target names stable through selection and saving 150ms
+     → expected null to be '关联目标' // Object.is equality
+   × stable exact names for Studio selects with populated options > keeps saved-graph, node, asset and port names stable while editing the real graph hook 39ms
+     → expected null to be '已保存创作图' // Object.is equality
+   × stable exact names for Studio selects with populated options > keeps the saved-run name stable after loading and selecting different records 19ms
+     → expected null to be '已保存运行' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/StudioSelectLabels.test.tsx > stable exact names for Studio selects with populated options > keeps relationship, reference-kind and target names stable through selection and saving
+AssertionError: expected null to be '关联目标' // Object.is equality
+
+- Expected: 
+"关联目标"
+
++ Received: 
+null
+
+ ❯ namedSelect src/creative/StudioSelectLabels.test.tsx:51:45
+     49|   const select = screen.getByLabelText(name, { exact: true }) as HTMLS…
+     50|   expect(select.tagName).toBe('SELECT');
+     51|   expect(select.getAttribute('aria-label')).toBe(name);
+       |                                             ^
+     52|   expect(select.labels?.[0]?.firstChild?.textContent).toBe(name);
+     53|   expect(screen.getByRole('combobox', { name, exact: true })).toBe(sel…
+ ❯ src/creative/StudioSelectLabels.test.tsx:79:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/creative/StudioSelectLabels.test.tsx > stable exact names for Studio selects with populated options > keeps saved-graph, node, asset and port names stable while editing the real graph hook
+AssertionError: expected null to be '已保存创作图' // Object.is equality
+
+- Expected: 
+"已保存创作图"
+
++ Received: 
+null
+
+ ❯ namedSelect src/creative/StudioSelectLabels.test.tsx:51:45
+     49|   const select = screen.getByLabelText(name, { exact: true }) as HTMLS…
+     50|   expect(select.tagName).toBe('SELECT');
+     51|   expect(select.getAttribute('aria-label')).toBe(name);
+       |                                             ^
+     52|   expect(select.labels?.[0]?.firstChild?.textContent).toBe(name);
+     53|   expect(screen.getByRole('combobox', { name, exact: true })).toBe(sel…
+ ❯ choose src/creative/StudioSelectLabels.test.tsx:57:20
+ ❯ src/creative/StudioSelectLabels.test.tsx:103:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/creative/StudioSelectLabels.test.tsx > stable exact names for Studio selects with populated options > keeps the saved-run name stable after loading and selecting different records
+AssertionError: expected null to be '已保存运行' // Object.is equality
+
+- Expected: 
+"已保存运行"
+
++ Received: 
+null
+
+ ❯ namedSelect src/creative/StudioSelectLabels.test.tsx:51:45
+     49|   const select = screen.getByLabelText(name, { exact: true }) as HTMLS…
+     50|   expect(select.tagName).toBe('SELECT');
+     51|   expect(select.getAttribute('aria-label')).toBe(name);
+       |                                             ^
+     52|   expect(select.labels?.[0]?.firstChild?.textContent).toBe(name);
+     53|   expect(screen.getByRole('combobox', { name, exact: true })).toBe(sel…
+ ❯ src/creative/StudioSelectLabels.test.tsx:139:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 1 passed (4)
+   Start at  07:37:12
+   Duration  1.20s (transform 212ms, setup 0ms, collect 415ms, tests 238ms, environment 294ms, prepare 61ms)
+

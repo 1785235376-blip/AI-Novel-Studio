@@ -1,0 +1,84 @@
+import { expect, test, type APIResponse, type Page } from '@playwright/test';
+import { createPageQuiescer } from './r3-fixture-lifecycle';
+const API = 'http://127.0.0.1:8022/api';
+const UI = 'http://127.0.0.1:5182';
+const headers = { 'X-Session-Token': 'r4-broker-test-session' };
+async function body(response: APIResponse) { expect(response.ok(), `HTTP ${response.status()}: ${await response.text()}`).toBeTruthy(); return response.json(); }
+async function tools(page: Page) {
+  await page.getByRole('button', { name: /功能导航/ }).first().click();
+  const group = page.getByRole('button', { name: /^Experimental/ });
+  if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
+  await page.getByRole('button', { name: '实验工作台', exact: true }).click();
+  await page.keyboard.press('Escape');
+  await page.getByRole('navigation', { name: '实验功能' }).getByRole('button', { name: 'Agent 与 Workflow', exact: true }).click();
+}
+test('B02 exact synthetic model request uses original author broker job and Workflow review without manuscript apply', async ({ page, request }, info) => {
+  const quiesce = createPageQuiescer(page); let nid = '', reservationId = '', jobId = '';
+  info.annotations.push({ type: 'verification', description: 'Actual React + File + original author/broker/JobManager/Workflow. Shipped synthetic protocol provider, no paid inference. Literary/model quality NOT_RUN. No mocked HTTP routes. Local browser launch remains NOT_RUN; hosted CI supplies execution receipt.' });
+  try {
+    await page.setExtraHTTPHeaders(headers); await page.goto(UI);
+    await page.getByPlaceholder('小说名称').fill('B02 synthetic original bound executor');
+    const creating = page.waitForResponse(r => r.url().endsWith('/api/novels') && r.request().method() === 'POST');
+    await page.getByRole('button', { name: '创建小说', exact: true }).click(); nid = (await body(await creating)).id;
+    const base = `${API}/novels/${nid}/experimental`;
+    const made = await body(await request.post(`${API}/novels/${nid}/chapters`, { headers, data: { title: '合成绑定章节', content: 'SYNTHETIC_MANUSCRIPT_MUST_NOT_SEND' } }));
+    const chapter = await body(await request.get(`${API}/chapters/${made.id}`, { headers }));
+    const catalog = await body(await request.get(`${base}/declarative-agents/catalog`, { headers }));
+    const route = catalog.model_routes.find((r: any) => r.provider_id === 'mock');
+    expect(route.available).toBe(true); expect(route.synthetic).toBe(true);
+    await tools(page);
+    const panel = page.getByRole('region', { name: 'Agent 与 Workflow', exact: true });
+    await panel.getByLabel('Agent 名称', { exact: true }).fill('合成航海策划 Agent');
+    await panel.getByLabel('角色提示词', { exact: true }).fill('只为合成场景提供两个草稿方向，不执行任何工具。');
+    await panel.getByLabel('已注册模型路线', { exact: true }).selectOption(route.id);
+    await panel.getByLabel('节点 1 类型', { exact: true }).selectOption('agent_task');
+    await panel.getByLabel('运行时限（秒）', { exact: true }).fill('120');
+    await panel.getByRole('button', { name: '保存 Agent 定义', exact: true }).click();
+    await expect(panel).toContainText('已保存定义');
+    await panel.getByRole('button', { name: '验证 Workflow 图与权限', exact: true }).click();
+    await expect(panel).toContainText('拓扑顺序：prepare → review → artifact');
+    await panel.getByLabel('测试输入 source_text', { exact: true }).fill('SYNTHETIC_MODEL_INPUT_456');
+    await panel.getByLabel('模型任务绑定章节（不发送正文）', { exact: true }).selectOption(chapter.id);
+    await panel.getByLabel('已核对已保存图版本、输入来源、工具范围和限额', { exact: true }).check();
+    const createRun = page.waitForResponse(r => /\/declarative-agents\/definitions\/[^/]+\/runs$/.test(r.url()) && r.request().method() === 'POST');
+    await panel.getByRole('button', { name: '创建已核对的测试运行', exact: true }).click();
+    const queued = await body(await createRun); expect(queued.status).toBe('QUEUED');
+    await panel.getByRole('button', { name: '执行本地节点到审核点', exact: true }).click();
+    await expect(panel.getByRole('button', { name: '预览精确模型请求与费用', exact: true })).toBeVisible();
+    await expect(panel.getByRole('button', { name: '批准当前审核节点', exact: true })).toHaveCount(0);
+    const previewRequest = page.waitForResponse(r => r.url().endsWith(`/runs/${queued.id}/model/preview`) && r.request().method() === 'POST');
+    await panel.getByRole('button', { name: '预览精确模型请求与费用', exact: true }).click();
+    const previewed = await body(await previewRequest);
+    expect(previewed.model_preview.request.context).toEqual({});
+    expect(previewed.model_preview.request.prompt).toContain('SYNTHETIC_MODEL_INPUT_456');
+    expect(previewed.model_preview.request.prompt).not.toContain('SYNTHETIC_MANUSCRIPT_MUST_NOT_SEND');
+    await expect(panel.getByRole('button', { name: '明确启动这个模型节点', exact: true })).toBeDisabled();
+    await page.screenshot({ path: info.outputPath('declarative-exact-model-preview.png'), fullPage: true });
+    await panel.getByLabel('已核对精确请求、模型、来源、零成本预留与本地限制', { exact: true }).check();
+    const dispatchRequest = page.waitForResponse(r => r.url().endsWith(`/runs/${queued.id}/model/dispatch`) && r.request().method() === 'POST');
+    await panel.getByRole('button', { name: '明确启动这个模型节点', exact: true }).click();
+    const running = await body(await dispatchRequest); jobId = running.model_execution.job_id; reservationId = running.model_execution.reservation_id;
+    await expect.poll(async () => (await body(await request.get(`${base}/model-broker/jobs/${reservationId}`, { headers }))).ledger.status).toBe('SETTLED');
+    await panel.getByRole('button', { name: '刷新原模型任务并核对输出', exact: true }).click();
+    await expect(panel.getByRole('button', { name: '批准当前审核节点', exact: true })).toBeVisible();
+    await expect(panel.getByRole('button', { name: '批准当前审核节点', exact: true })).toBeDisabled();
+    await panel.getByLabel('已查看逐节点结果，仅批准草稿材料，不写入正文或 Canon', { exact: true }).check();
+    await panel.getByRole('button', { name: '批准当前审核节点', exact: true }).click();
+    await expect(panel).toContainText('状态 SUCCEEDED');
+    const complete = await body(await request.get(`${base}/declarative-agents/runs/${queued.id}`, { headers }));
+    expect(complete.agent_output.draft).toBeTruthy(); expect(complete.applied).toBe(false); expect(complete.model_called).toBe(true);
+    expect(complete.model_execution.quality_verification).toBe('NOT_RUN');
+    expect((await request.post(`${API}/generation/${jobId}/accept`, { headers, data: {} })).status()).toBe(409);
+    expect((await body(await request.get(`${API}/chapters/${chapter.id}`, { headers }))).content).toBe(chapter.content);
+    await page.screenshot({ path: info.outputPath('declarative-reviewed-original-model-draft.png'), fullPage: true });
+    await quiesce.drain(); await page.reload(); await tools(page);
+    await panel.getByLabel('查看 Workflow 运行', { exact: true }).selectOption(queued.id);
+    await expect(panel).toContainText('状态 SUCCEEDED');
+    expect((await body(await request.get(`${base}/model-broker/history`, { headers }))).ledger).toHaveLength(1);
+  } finally {
+    if (!page.isClosed() && info.status !== info.expectedStatus) await page.screenshot({ path: info.outputPath('declarative-model-failure.png'), fullPage: true }).catch(() => {});
+    if (nid && jobId && reservationId) await request.post(`${API}/generation/${jobId}/cancel`, { headers }).catch(() => {});
+    await quiesce();
+    if (nid) expect([200, 204, 404]).toContain((await request.delete(`${API}/novels/${nid}`, { headers })).status());
+  }
+});

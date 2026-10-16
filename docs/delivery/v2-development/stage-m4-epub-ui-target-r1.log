@@ -1,0 +1,14 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ✓ src/creative/screenplayEpubClient.test.ts (6 tests) 17ms
+ ✓ src/creative/screenplayExportClient.test.ts (7 tests) 21ms
+ ✓ src/creative/ScreenplayEpubPanel.test.tsx (3 tests) 169ms
+ ✓ src/creative/ScreenplayExportPanel.test.tsx (7 tests) 208ms
+
+ Test Files  4 passed (4)
+      Tests  23 passed (23)
+   Start at  15:34:00
+   Duration  1.92s (transform 351ms, setup 0ms, collect 1.27s, tests 414ms, environment 1.68s, prepare 519ms)
+
+JUNIT report written to /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-epub-ui-target-r1.xml

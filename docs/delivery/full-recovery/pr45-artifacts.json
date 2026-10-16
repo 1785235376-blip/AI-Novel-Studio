@@ -1,0 +1,662 @@
+[
+  {
+    "id": 11471960687,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MTk2MDY4Nw==",
+    "name": "backend-postgres-shard-1-665817243cad59eef0d4140f17c2ea644f46971e-attempt-1",
+    "size_in_bytes": 573375,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11471960687",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11471960687/zip",
+    "expired": false,
+    "digest": "sha256:770efc7e5793a95233d36478f9c2389dc60ee2ad6a787467ba294baebcbac136",
+    "created_at": "2026-10-07T09:00:03Z",
+    "updated_at": "2026-10-07T09:00:03Z",
+    "expires_at": "2026-10-21T09:00:02Z",
+    "workflow_run": {
+      "id": 37593331209,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11471732122,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MTczMjEyMg==",
+    "name": "backend-coverage-postgres-665817243cad59eef0d4140f17c2ea644f46971e-attempt-1",
+    "size_in_bytes": 846,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11471732122",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11471732122/zip",
+    "expired": false,
+    "digest": "sha256:cd0267fac4d7e143300b4d0af2b649b85a27a0b7ba8c83af71badb46888f28f0",
+    "created_at": "2026-10-07T09:09:08Z",
+    "updated_at": "2026-10-07T09:09:08Z",
+    "expires_at": "2026-10-21T09:09:07Z",
+    "workflow_run": {
+      "id": 37593331209,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11471515372,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MTUxNTM3Mg==",
+    "name": "backend-postgres-shard-1-78929348e0ad7c232a039749d425e6293e4d6df9-attempt-1",
+    "size_in_bytes": 573193,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11471515372",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11471515372/zip",
+    "expired": false,
+    "digest": "sha256:6c4228d9fc863cab32f72ce399204a33d83a2c2a0127e9b471bd235fe66cc6c9",
+    "created_at": "2026-10-07T08:57:31Z",
+    "updated_at": "2026-10-07T08:57:31Z",
+    "expires_at": "2026-10-21T08:57:30Z",
+    "workflow_run": {
+      "id": 37593337560,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11471448014,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MTQ0ODAxNA==",
+    "name": "backend-coverage-file-665817243cad59eef0d4140f17c2ea644f46971e-attempt-1",
+    "size_in_bytes": 846,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11471448014",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11471448014/zip",
+    "expired": false,
+    "digest": "sha256:22de8bd7d606b2a3866a5df816a2cee0c5556044a92c19e9d259d72fff25cf69",
+    "created_at": "2026-10-07T09:09:04Z",
+    "updated_at": "2026-10-07T09:09:04Z",
+    "expires_at": "2026-10-21T09:09:03Z",
+    "workflow_run": {
+      "id": 37593331209,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11471312548,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MTMxMjU0OA==",
+    "name": "backend-postgres-shard-0-665817243cad59eef0d4140f17c2ea644f46971e-attempt-1",
+    "size_in_bytes": 530932,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11471312548",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11471312548/zip",
+    "expired": false,
+    "digest": "sha256:58b1eac88c409a91a35b8c989ffd33c3542a8443333d1efbc0bcb54d47aa88a2",
+    "created_at": "2026-10-07T09:08:42Z",
+    "updated_at": "2026-10-07T09:08:42Z",
+    "expires_at": "2026-10-21T09:08:41Z",
+    "workflow_run": {
+      "id": 37593331209,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11471260735,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MTI2MDczNQ==",
+    "name": "backend-postgres-shard-0-78929348e0ad7c232a039749d425e6293e4d6df9-attempt-1",
+    "size_in_bytes": 530550,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11471260735",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11471260735/zip",
+    "expired": false,
+    "digest": "sha256:b57ab054ef9361bfaafe8596c686cc78c009bcee9c6ca9dbe17d4b1d552a3410",
+    "created_at": "2026-10-07T08:55:35Z",
+    "updated_at": "2026-10-07T08:55:35Z",
+    "expires_at": "2026-10-21T08:55:34Z",
+    "workflow_run": {
+      "id": 37593337560,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11470925043,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MDkyNTA0Mw==",
+    "name": "frontend-compact-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "size_in_bytes": 746998,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470925043",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470925043/zip",
+    "expired": false,
+    "digest": "sha256:9c844dc5740213cd5c7a5fc39ff18e2e3e29edabe1ca88ea408b2a407e1e6c6f",
+    "created_at": "2026-10-07T08:37:18Z",
+    "updated_at": "2026-10-07T08:37:18Z",
+    "expires_at": "2026-10-21T08:37:18Z",
+    "workflow_run": {
+      "id": 37593337560,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11470914059,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MDkxNDA1OQ==",
+    "name": "backend-coverage-postgres-78929348e0ad7c232a039749d425e6293e4d6df9-attempt-1",
+    "size_in_bytes": 846,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470914059",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470914059/zip",
+    "expired": false,
+    "digest": "sha256:5a81e74ab46f15cdee609b209fed13705b87d2b9ab34c9b44ea1c7c3e54b2258",
+    "created_at": "2026-10-07T08:57:57Z",
+    "updated_at": "2026-10-07T08:57:57Z",
+    "expires_at": "2026-10-21T08:57:57Z",
+    "workflow_run": {
+      "id": 37593337560,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11470914055,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MDkxNDA1NQ==",
+    "name": "backend-coverage-file-78929348e0ad7c232a039749d425e6293e4d6df9-attempt-1",
+    "size_in_bytes": 846,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470914055",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470914055/zip",
+    "expired": false,
+    "digest": "sha256:5a81e74ab46f15cdee609b209fed13705b87d2b9ab34c9b44ea1c7c3e54b2258",
+    "created_at": "2026-10-07T08:57:57Z",
+    "updated_at": "2026-10-07T08:57:57Z",
+    "expires_at": "2026-10-21T08:57:56Z",
+    "workflow_run": {
+      "id": 37593337560,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11470820557,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MDgyMDU1Nw==",
+    "name": "frontend-png-2-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "size_in_bytes": 15758116,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470820557",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470820557/zip",
+    "expired": false,
+    "digest": "sha256:6c47bba876ec081f72a5bc78d93b0c0674b0bdad850234f7db278db505e9bb5a",
+    "created_at": "2026-10-07T08:37:17Z",
+    "updated_at": "2026-10-07T08:37:17Z",
+    "expires_at": "2026-10-21T08:37:16Z",
+    "workflow_run": {
+      "id": 37593337560,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11470790213,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MDc5MDIxMw==",
+    "name": "local-interop-postgres-665817243cad59eef0d4140f17c2ea644f46971e",
+    "size_in_bytes": 41576,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470790213",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470790213/zip",
+    "expired": false,
+    "digest": "sha256:f38e6865c8eb985df19fcb7c3a67272dc2cddcd5de0e752dd66fbab8193c19b1",
+    "created_at": "2026-10-07T08:33:28Z",
+    "updated_at": "2026-10-07T08:33:28Z",
+    "expires_at": "2026-10-21T08:33:27Z",
+    "workflow_run": {
+      "id": 37593331196,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11470746238,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MDc0NjIzOA==",
+    "name": "frontend-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "size_in_bytes": 40858920,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470746238",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470746238/zip",
+    "expired": false,
+    "digest": "sha256:3363b0e273de3284a071d292030d29b29c7f8df54b83a3e4c77c55a1c27e0333",
+    "created_at": "2026-10-07T08:37:21Z",
+    "updated_at": "2026-10-07T08:37:21Z",
+    "expires_at": "2026-10-21T08:37:19Z",
+    "workflow_run": {
+      "id": 37593337560,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11470561281,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MDU2MTI4MQ==",
+    "name": "backend-file-shard-0-665817243cad59eef0d4140f17c2ea644f46971e-attempt-1",
+    "size_in_bytes": 821618,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470561281",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470561281/zip",
+    "expired": false,
+    "digest": "sha256:f2e04b6dfc6c1c4e229a11181ca3ad497f1eaac7e03fcc3cdbf279e6d2042de9",
+    "created_at": "2026-10-07T08:34:40Z",
+    "updated_at": "2026-10-07T08:34:40Z",
+    "expires_at": "2026-10-21T08:34:39Z",
+    "workflow_run": {
+      "id": 37593331209,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11470368145,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MDM2ODE0NQ==",
+    "name": "frontend-665817243cad59eef0d4140f17c2ea644f46971e",
+    "size_in_bytes": 40869084,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470368145",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470368145/zip",
+    "expired": false,
+    "digest": "sha256:b9207fdd225f7713217e9a6ba659a5e113e5140b0d5dd95b2459ca42771cfd88",
+    "created_at": "2026-10-07T08:41:37Z",
+    "updated_at": "2026-10-07T08:41:37Z",
+    "expires_at": "2026-10-21T08:41:35Z",
+    "workflow_run": {
+      "id": 37593331209,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11470368131,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MDM2ODEzMQ==",
+    "name": "frontend-png-1-665817243cad59eef0d4140f17c2ea644f46971e",
+    "size_in_bytes": 24281258,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470368131",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470368131/zip",
+    "expired": false,
+    "digest": "sha256:67145ef566ad0571a02e64652b705517eafe53cc211890534db83e544674fd7b",
+    "created_at": "2026-10-07T08:41:33Z",
+    "updated_at": "2026-10-07T08:41:33Z",
+    "expires_at": "2026-10-21T08:41:31Z",
+    "workflow_run": {
+      "id": 37593331209,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11470346888,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MDM0Njg4OA==",
+    "name": "local-interop-postgres-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "size_in_bytes": 41559,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470346888",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470346888/zip",
+    "expired": false,
+    "digest": "sha256:e41f2423e37492023d66a0e9cb5107dfd02f3281546bcc2a8bedd7938c87e8dd",
+    "created_at": "2026-10-07T08:35:06Z",
+    "updated_at": "2026-10-07T08:35:06Z",
+    "expires_at": "2026-10-21T08:35:05Z",
+    "workflow_run": {
+      "id": 37593337638,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11470308100,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MDMwODEwMA==",
+    "name": "frontend-compact-665817243cad59eef0d4140f17c2ea644f46971e",
+    "size_in_bytes": 758066,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470308100",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470308100/zip",
+    "expired": false,
+    "digest": "sha256:e807e5cde2cfafcac88909fc953476cd710e048b8db4afe2f7d7c1205b64a46d",
+    "created_at": "2026-10-07T08:41:35Z",
+    "updated_at": "2026-10-07T08:41:35Z",
+    "expires_at": "2026-10-21T08:41:35Z",
+    "workflow_run": {
+      "id": 37593331209,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11470267238,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MDI2NzIzOA==",
+    "name": "frontend-png-1-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "size_in_bytes": 24296545,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470267238",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470267238/zip",
+    "expired": false,
+    "digest": "sha256:71683407894931c146c67fe41bdb8908d47c77dc271780d2c6b0b39b29f0658f",
+    "created_at": "2026-10-07T08:37:16Z",
+    "updated_at": "2026-10-07T08:37:16Z",
+    "expires_at": "2026-10-21T08:37:14Z",
+    "workflow_run": {
+      "id": 37593337560,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11470198199,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MDE5ODE5OQ==",
+    "name": "frontend-png-2-665817243cad59eef0d4140f17c2ea644f46971e",
+    "size_in_bytes": 15772500,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470198199",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470198199/zip",
+    "expired": false,
+    "digest": "sha256:8262c78f3d387b385139b2a39389ce7958338723112dd22fc9e979d7b153e1fa",
+    "created_at": "2026-10-07T08:41:34Z",
+    "updated_at": "2026-10-07T08:41:34Z",
+    "expires_at": "2026-10-21T08:41:33Z",
+    "workflow_run": {
+      "id": 37593331209,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11470003558,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ3MDAwMzU1OA==",
+    "name": "backend-file-shard-0-78929348e0ad7c232a039749d425e6293e4d6df9-attempt-1",
+    "size_in_bytes": 822064,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470003558",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11470003558/zip",
+    "expired": false,
+    "digest": "sha256:dfb959c189a0f73eb0eb5ee345b3c8926bf37e316f561759f93940270424c5a2",
+    "created_at": "2026-10-07T08:42:21Z",
+    "updated_at": "2026-10-07T08:42:21Z",
+    "expires_at": "2026-10-21T08:42:19Z",
+    "workflow_run": {
+      "id": 37593337560,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11469960100,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ2OTk2MDEwMA==",
+    "name": "shared-r123-baseline-red-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "size_in_bytes": 4964,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469960100",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469960100/zip",
+    "expired": false,
+    "digest": "sha256:9de2a220d43f516900b6792700ccafd162be8deeb5a1dafd45c1df4c97b7ffb3",
+    "created_at": "2026-10-07T08:23:19Z",
+    "updated_at": "2026-10-07T08:23:19Z",
+    "expires_at": "2026-10-21T08:23:18Z",
+    "workflow_run": {
+      "id": 37593337569,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11469805896,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ2OTgwNTg5Ng==",
+    "name": "windows-native-receipts-665817243cad59eef0d4140f17c2ea644f46971e",
+    "size_in_bytes": 558315,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469805896",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469805896/zip",
+    "expired": false,
+    "digest": "sha256:87ac9061348509f6e507f6b305be532a2c62e219401402216a787182dbf00a92",
+    "created_at": "2026-10-07T08:26:24Z",
+    "updated_at": "2026-10-07T08:26:24Z",
+    "expires_at": "2026-10-21T08:26:23Z",
+    "workflow_run": {
+      "id": 37593331209,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11469780407,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ2OTc4MDQwNw==",
+    "name": "windows-host-665817243cad59eef0d4140f17c2ea644f46971e",
+    "size_in_bytes": 531973,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469780407",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469780407/zip",
+    "expired": false,
+    "digest": "sha256:9fdeeeecf164877cb6dc1abd84e70328099c9e6cdd0b7c9261e78b10cf8caddb",
+    "created_at": "2026-10-07T08:24:51Z",
+    "updated_at": "2026-10-07T08:24:51Z",
+    "expires_at": "2026-10-21T08:24:50Z",
+    "workflow_run": {
+      "id": 37593331209,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11469602740,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ2OTYwMjc0MA==",
+    "name": "windows-host-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "size_in_bytes": 531980,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469602740",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469602740/zip",
+    "expired": false,
+    "digest": "sha256:03c590f4568b8b325266aea566187fc33f81138659547bf49ca6383fd2280d0f",
+    "created_at": "2026-10-07T08:24:52Z",
+    "updated_at": "2026-10-07T08:24:52Z",
+    "expires_at": "2026-10-21T08:24:51Z",
+    "workflow_run": {
+      "id": 37593337560,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11469602475,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ2OTYwMjQ3NQ==",
+    "name": "a43-baseline-78929348e0ad7c232a039749d425e6293e4d6df9-attempt-1",
+    "size_in_bytes": 7889,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469602475",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469602475/zip",
+    "expired": false,
+    "digest": "sha256:91423901aac4a64152f7ec88dd18489063250c1f2a15b96b85d55d37460ca25d",
+    "created_at": "2026-10-07T08:23:27Z",
+    "updated_at": "2026-10-07T08:23:27Z",
+    "expires_at": "2026-10-21T08:23:26Z",
+    "workflow_run": {
+      "id": 37593337586,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11469498900,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ2OTQ5ODkwMA==",
+    "name": "local-interop-file-665817243cad59eef0d4140f17c2ea644f46971e",
+    "size_in_bytes": 41537,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469498900",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469498900/zip",
+    "expired": false,
+    "digest": "sha256:cff24e362d85b3f8a7a1b9344a99f528bdb9b243229d0d3e31372a85f7a0415c",
+    "created_at": "2026-10-07T08:23:26Z",
+    "updated_at": "2026-10-07T08:23:26Z",
+    "expires_at": "2026-10-21T08:23:25Z",
+    "workflow_run": {
+      "id": 37593331196,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11469458461,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ2OTQ1ODQ2MQ==",
+    "name": "windows-acceptance-665817243cad59eef0d4140f17c2ea644f46971e",
+    "size_in_bytes": 162669240,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469458461",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469458461/zip",
+    "expired": false,
+    "digest": "sha256:c0f8e9541a43599de6066161935ac131fb1ddc5257a314604b0e84c395ddf4ed",
+    "created_at": "2026-10-07T08:26:29Z",
+    "updated_at": "2026-10-07T08:26:29Z",
+    "expires_at": "2026-10-21T08:26:25Z",
+    "workflow_run": {
+      "id": 37593331209,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11469364136,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ2OTM2NDEzNg==",
+    "name": "windows-acceptance-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "size_in_bytes": 162669171,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469364136",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469364136/zip",
+    "expired": false,
+    "digest": "sha256:3ac01be664ab804e52f5fdcef25ae66c89528bd48477db35ff2d67e46147fca9",
+    "created_at": "2026-10-07T08:26:37Z",
+    "updated_at": "2026-10-07T08:26:37Z",
+    "expires_at": "2026-10-21T08:26:32Z",
+    "workflow_run": {
+      "id": 37593337560,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11469348680,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ2OTM0ODY4MA==",
+    "name": "a43-baseline-665817243cad59eef0d4140f17c2ea644f46971e-attempt-1",
+    "size_in_bytes": 7883,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469348680",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469348680/zip",
+    "expired": false,
+    "digest": "sha256:8a46c4bdd2688a7df4495b7b51c3555d2e0dcb6aacb0df062c3f3a623af0764c",
+    "created_at": "2026-10-07T08:23:25Z",
+    "updated_at": "2026-10-07T08:23:25Z",
+    "expires_at": "2026-10-21T08:23:24Z",
+    "workflow_run": {
+      "id": 37593331227,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11469324238,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ2OTMyNDIzOA==",
+    "name": "windows-native-receipts-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "size_in_bytes": 558343,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469324238",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469324238/zip",
+    "expired": false,
+    "digest": "sha256:764ae8f1504e37ed727c6e8fc7ff8ee13ca9260083c699b9efd04ca121daef85",
+    "created_at": "2026-10-07T08:26:31Z",
+    "updated_at": "2026-10-07T08:26:31Z",
+    "expires_at": "2026-10-21T08:26:31Z",
+    "workflow_run": {
+      "id": 37593337560,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11469174183,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ2OTE3NDE4Mw==",
+    "name": "named-pipe-reference-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "size_in_bytes": 1762,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469174183",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469174183/zip",
+    "expired": false,
+    "digest": "sha256:a320934ef592202426b26bec4dca4a3042c004a12cfd011228101443df36b823",
+    "created_at": "2026-10-07T08:23:23Z",
+    "updated_at": "2026-10-07T08:23:23Z",
+    "expires_at": "2026-10-21T08:23:23Z",
+    "workflow_run": {
+      "id": 37593337638,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11469084650,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ2OTA4NDY1MA==",
+    "name": "named-pipe-reference-665817243cad59eef0d4140f17c2ea644f46971e",
+    "size_in_bytes": 1762,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469084650",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11469084650/zip",
+    "expired": false,
+    "digest": "sha256:ba2f489e9c2fb897b5461d630e053972022427bb0bcc8842352f3d967dedd47a",
+    "created_at": "2026-10-07T08:23:42Z",
+    "updated_at": "2026-10-07T08:23:42Z",
+    "expires_at": "2026-10-21T08:23:41Z",
+    "workflow_run": {
+      "id": 37593331196,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  },
+  {
+    "id": 11468984665,
+    "node_id": "MDg6QXJ0aWZhY3QxMTQ2ODk4NDY2NQ==",
+    "name": "local-interop-file-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "size_in_bytes": 41490,
+    "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11468984665",
+    "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11468984665/zip",
+    "expired": false,
+    "digest": "sha256:2ffcb857e244c9f5eeea8bdc5b240b7a9ed9ed5cb1480356f641ce3221dbee8c",
+    "created_at": "2026-10-07T08:23:16Z",
+    "updated_at": "2026-10-07T08:23:16Z",
+    "expires_at": "2026-10-21T08:23:16Z",
+    "workflow_run": {
+      "id": 37593337638,
+      "repository_id": 1347017268,
+      "head_repository_id": 1347017268,
+      "head_branch": "work/feature-completion-surface-freeze",
+      "head_sha": "665817243cad59eef0d4140f17c2ea644f46971e"
+    }
+  }
+]

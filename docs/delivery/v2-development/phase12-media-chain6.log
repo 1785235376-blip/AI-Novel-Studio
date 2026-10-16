@@ -1,0 +1,6 @@
+{"step": "0-edit-version", "edit_version": 3}
+{"step": "5a-approve-shots", "result": "PASS", "asset_id": "a15f7d00-cfd2-4c6d-8f7a-02ae7ede65b6", "version": 4, "review_state": "APPROVED", "output": {"status": "APPROVED", "shot_revision": 1, "storyboard_revision": null}, "digest": "deebe0ce3b2663b0857238ac19467ffd609a59c283d5407f796bebbbf44b9b82"}
+{"step": "0-edit-version-after", "edit_version": 4}
+{"step": "4-storyboard", "result": "PASS", "asset_id": "a15f7d00-cfd2-4c6d-8f7a-02ae7ede65b6", "version": 5, "review_state": "APPROVED", "output": {"status": "APPROVED", "shot_revision": 1, "storyboard_revision": 1}, "digest": "60079fa502575f347b5809a97c70eb0bc33b52e6c66ca2fa1499df5ab8be47d3"}
+{"step": "4a-approve-storyboard", "result": "PASS", "asset_id": "a15f7d00-cfd2-4c6d-8f7a-02ae7ede65b6", "version": 6, "review_state": "APPROVED", "output": {"status": "APPROVED", "shot_revision": 1, "storyboard_revision": 1}, "digest": "4a0b4e51006290694332d3dc76152ece09f66d30e26291539f13d8c8b9c154d1"}
+CHAIN6_SUMMARY {"pass": 3, "blocked": 0}

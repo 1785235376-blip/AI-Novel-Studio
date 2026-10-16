@@ -1,0 +1,262 @@
+[
+  {
+    "case": "ALICE",
+    "tokens": [
+      {
+        "is_title": true,
+        "type": "title",
+        "text": "Synthetic"
+      },
+      {
+        "is_title": true,
+        "type": "credit",
+        "text": "Written by"
+      },
+      {
+        "is_title": true,
+        "type": "author",
+        "text": "AI Novel Studio"
+      },
+      {
+        "is_title": true,
+        "type": "format",
+        "text": "Fountain 1.1"
+      },
+      {
+        "is_title": true,
+        "type": "project",
+        "text": "Synthetic"
+      },
+      {
+        "type": "action",
+        "text": "Exported-By: AI Novel Studio\nIndustry-Schema: 1\nNovel-ID: \nSnapshot-ID: not-recorded\nSource-Versions: not-recorded\nResources: available=0; missing=0"
+      },
+      {
+        "type": "scene_heading",
+        "text": "INT./EXT. 未设定地点 - 未设定时间"
+      },
+      {
+        "type": "dialogue_begin"
+      },
+      {
+        "type": "character",
+        "text": "THE DOOR"
+      },
+      {
+        "type": "dialogue",
+        "text": "It opens slowly."
+      },
+      {
+        "type": "dialogue_end"
+      },
+      {
+        "type": "dialogue_begin"
+      },
+      {
+        "type": "character",
+        "text": "ALICE"
+      },
+      {
+        "type": "dialogue",
+        "text": "First paragraph."
+      },
+      {
+        "type": "dialogue_end"
+      },
+      {
+        "type": "action",
+        "text": "Second paragraph."
+      }
+    ]
+  },
+  {
+    "case": "小明",
+    "tokens": [
+      {
+        "is_title": true,
+        "type": "title",
+        "text": "Synthetic"
+      },
+      {
+        "is_title": true,
+        "type": "credit",
+        "text": "Written by"
+      },
+      {
+        "is_title": true,
+        "type": "author",
+        "text": "AI Novel Studio"
+      },
+      {
+        "is_title": true,
+        "type": "format",
+        "text": "Fountain 1.1"
+      },
+      {
+        "is_title": true,
+        "type": "project",
+        "text": "Synthetic"
+      },
+      {
+        "type": "action",
+        "text": "Exported-By: AI Novel Studio\nIndustry-Schema: 1\nNovel-ID: \nSnapshot-ID: not-recorded\nSource-Versions: not-recorded\nResources: available=0; missing=0"
+      },
+      {
+        "type": "scene_heading",
+        "text": "INT./EXT. 未设定地点 - 未设定时间"
+      },
+      {
+        "type": "dialogue_begin"
+      },
+      {
+        "type": "character",
+        "text": "THE DOOR"
+      },
+      {
+        "type": "dialogue",
+        "text": "It opens slowly."
+      },
+      {
+        "type": "dialogue_end"
+      },
+      {
+        "type": "dialogue_begin"
+      },
+      {
+        "type": "character",
+        "text": "小明"
+      },
+      {
+        "type": "dialogue",
+        "text": "First paragraph."
+      },
+      {
+        "type": "dialogue_end"
+      },
+      {
+        "type": "action",
+        "text": "Second paragraph."
+      }
+    ]
+  },
+  {
+    "case": "小明Alex",
+    "tokens": [
+      {
+        "is_title": true,
+        "type": "title",
+        "text": "Synthetic"
+      },
+      {
+        "is_title": true,
+        "type": "credit",
+        "text": "Written by"
+      },
+      {
+        "is_title": true,
+        "type": "author",
+        "text": "AI Novel Studio"
+      },
+      {
+        "is_title": true,
+        "type": "format",
+        "text": "Fountain 1.1"
+      },
+      {
+        "is_title": true,
+        "type": "project",
+        "text": "Synthetic"
+      },
+      {
+        "type": "action",
+        "text": "Exported-By: AI Novel Studio\nIndustry-Schema: 1\nNovel-ID: \nSnapshot-ID: not-recorded\nSource-Versions: not-recorded\nResources: available=0; missing=0"
+      },
+      {
+        "type": "scene_heading",
+        "text": "INT./EXT. 未设定地点 - 未设定时间"
+      },
+      {
+        "type": "dialogue_begin"
+      },
+      {
+        "type": "character",
+        "text": "THE DOOR"
+      },
+      {
+        "type": "dialogue",
+        "text": "It opens slowly."
+      },
+      {
+        "type": "dialogue_end"
+      },
+      {
+        "type": "action",
+        "text": "小明Alex\nFirst paragraph."
+      },
+      {
+        "type": "action",
+        "text": "Second paragraph."
+      }
+    ]
+  },
+  {
+    "case": "007",
+    "tokens": [
+      {
+        "is_title": true,
+        "type": "title",
+        "text": "Synthetic"
+      },
+      {
+        "is_title": true,
+        "type": "credit",
+        "text": "Written by"
+      },
+      {
+        "is_title": true,
+        "type": "author",
+        "text": "AI Novel Studio"
+      },
+      {
+        "is_title": true,
+        "type": "format",
+        "text": "Fountain 1.1"
+      },
+      {
+        "is_title": true,
+        "type": "project",
+        "text": "Synthetic"
+      },
+      {
+        "type": "action",
+        "text": "Exported-By: AI Novel Studio\nIndustry-Schema: 1\nNovel-ID: \nSnapshot-ID: not-recorded\nSource-Versions: not-recorded\nResources: available=0; missing=0"
+      },
+      {
+        "type": "scene_heading",
+        "text": "INT./EXT. 未设定地点 - 未设定时间"
+      },
+      {
+        "type": "dialogue_begin"
+      },
+      {
+        "type": "character",
+        "text": "THE DOOR"
+      },
+      {
+        "type": "dialogue",
+        "text": "It opens slowly."
+      },
+      {
+        "type": "dialogue_end"
+      },
+      {
+        "type": "action",
+        "text": "007\nFirst paragraph."
+      },
+      {
+        "type": "action",
+        "text": "Second paragraph."
+      }
+    ]
+  }
+]

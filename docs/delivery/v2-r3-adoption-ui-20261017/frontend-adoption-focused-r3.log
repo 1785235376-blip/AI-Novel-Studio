@@ -1,0 +1,908 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ✓ src/storyboard/promptAdoptionWriteClient.test.ts (25 tests) 6ms
+ ✓ src/storyboard/PromptAdoptionPanel.test.tsx (8 tests) 129ms
+ ✓ src/storyboard/PromptAdoptionDisclosure.test.tsx (14 tests) 367ms
+ ✓ src/storyboard/StoryboardWorkspacePanel.test.tsx (24 tests) 557ms
+ ❯ src/storyboard/PromptAdoptionWritePanel.test.tsx (13 tests | 1 failed) 1492ms
+   × Prompt adoption conditional write panel > the mounted Storyboard owner reloads and closes old provenance after verified commit 1024ms
+     → Unable to find an element with the text: 此镜头尚未采用任何 Prompt 修订。. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"分镜工作区"[39m
+      [33mclass[39m=[32m"storyboard-workspace"[39m
+      [33mdata-active[39m=[32m"true"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"storyboard-workspace__bar"[39m
+      [36m>[39m
+        [36m<h2>[39m
+          [0m导演与分镜[0m
+        [36m</h2>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m项目 [0m
+          [0mp1[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m文档 [0m
+          [0m尚未读取[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--warning"[39m
+        [36m>[39m
+          [0m尚未读取批准状态[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取已保存分镜[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m重新读取[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--error"[39m
+        [33mrole[39m=[32m"alert"[39m
+      [36m>[39m
+        [0mSTUDIO_RESPONSE_INVALID[0m
+        [0m：[0m
+        [0m分镜回执或版本绑定不完整，请读取原文档核对。[0m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"storyboard-workspace__body"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"分镜镜头清单"[39m
+          [33mclass[39m=[32m"storyboard-shot-list"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"storyboard-shot-list__header"[39m
+          [36m>[39m
+            [36m<h3>[39m
+              [0m镜头清单[0m
+            [36m</h3>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+            [36m>[39m
+              [0m0[0m
+              [0m 个镜头[0m
+            [36m</span>[39m
+          [36m</header>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-status-message ui-status-message--error"[39m
+            [33mrole[39m=[32m"alert"[39m
+          [36m>[39m
+            [0m分镜读取失败[0m
+            [0m（STUDIO_RESPONSE_INVALID）[0m
+            [0m：[0m
+            [0m分镜回执或版本绑定不完整，请读取原文档核对。[0m
+          [36m</div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"storyboard-shot-list__hint"[39m
+          [36m>[39m
+            [0m失败不是"暂无分镜"：原文档可能有镜头，只是这次没有读到。[0m
+          [36m</p>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m重新读取原分镜[0m
+          [36m</button>[39m
+        [36m</section>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"storyboard-workspace__detail"[39m
+        [36m>[39m
+          [36m<section[39m
+            [33mclass[39m=[32m"ui-panel"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<h2>[39m
+                [0m镜头详情[0m
+              [36m</h2>[39m
+            [36m</header>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ui-empty"[39m
+              [33mrole[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<strong>[39m
+                [0m尚未选中镜头[0m
+              [36m</strong>[39m
+              [36m<p>[39m
+                [0m在上面的镜头清单里选择一个镜头；列表、详情与送往面板始终共用同一个选择。[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</section>[39m
+          [36m<section[39m
+            [33mclass[39m=[32m"prompt-adoption-disclosure"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [33mdisabled[39m=[32m""[39m
+            [36m>[39m
+              [0m查看 Prompt 采用来源[0m
+            [36m</button>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"prompt-adoption-disclosure__hint"[39m
+            [36m>[39m
+              [0m选中一个镜头后即可查看它的采用来源。[0m
+            [36m</p>[39m
+          [36m</section>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"Prompt 采用操作"[39m
+            [33mclass[39m=[32m"prompt-adoption-write"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [33mdisabled[39m=[32m""[39m
+            [36m>[39m
+              [0m核对 Prompt 采用条件[0m
+            [36m</button>[39m
+          [36m</section>[39m
+          [36m<section[39m
+            [33mclass[39m=[32m"ui-panel"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<h2>[39m
+                [0m送往…[0m
+              [36m</h2>[39m
+            [36m</header>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"storyboard-send__scope"[39m
+            [36m>[39m
+              [0m这里只形成草稿。目标模块是否执行、何时执行，由拿到这张卡的界面与它自己的 owner 决定；本工作区永远不会替你执行。[0m
+            [36m</p>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+              [33mrole[39m=[32m"status"[39m
+            [36m>[39m
+              [0m先在镜头清单里选一个镜头。[0m
+            [36m</div>[39m
+          [36m</section>[39m
+          [36m<section[39m
+            [33mclass[39m=[32m"ui-panel"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<h2>[39m
+                [0m导演目标[0m
+              [36m</h2>[39m
+            [36m</header>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"storyboard-director__scope"[39m
+            [36m>[39m
+              [0m导演是可选的创作节点，不是其它模块的"核心权威"：这里不改写镜头、不撤销批准，也不会因为改目标就覆盖已经批准的下游结果。[0m
+            [36m</p>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+              [33mrole[39m=[32m"status"[39m
+            [36m>[39m
+              [0m还没有读到导演目标。这里不会编造目标；请先读取导演文档，或使用原导演界面创建。[0m
+            [36m</div>[39m
+            [36m<section[39m
+              [33maria-label[39m=[32m"AI 建议（待审）"[39m
+            [36m>[39m
+              [36m<h4>[39m
+                [0mAI 建议（待审，与原文档已采用内容分开）[0m
+              [36m</h4>[39m
+              [36m<p>[39m
+                [0m这些是原 owner 的 `director-proposals` 记录，状态不是"已批准"；它们**没有**生效，也不能被这里直接采用。[0m
+              [36m</p>[39m
+              [36m<p>[39m
+                [0m没有读到待审建议（或本工作区没有提供读取入口）。[0m
+              [36m</p>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [36m>[39m
+                [0m只读读取导演调度建议[0m
+              [36m</button>[39m
+            [36m</section>[39m
+          [36m</section>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"director-workspace__entry"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-expanded[39m=[32m"false"[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m按需打开导演工作台[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-expanded[39m=[32m"false"[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m按需打开角色与场景圣经[0m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"分镜工作区"[39m
+      [33mclass[39m=[32m"storyboard-workspace"[39m
+      [33mdata-active[39m=[32m"true"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"storyboard-workspace__bar"[39m
+      [36m>[39m
+        [36m<h2>[39m
+          [0m导演与分镜[0m
+        [36m</h2>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m项目 [0m
+          [0mp1[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m文档 [0m
+          [0m尚未读取[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--warning"[39m
+        [36m>[39m
+          [0m尚未读取批准状态[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取已保存分镜[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m重新读取[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--error"[39m
+        [33mrole[39m=[32m"alert"[39m
+      [36m>[39m
+        [0mSTUDIO_RESPONSE_INVALID[0m
+        [0m：[0m
+        [0m分镜回执或版本绑定不完整，请读取原文档核对。[0m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"storyboard-workspace__body"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"分镜镜头清单"[39m
+          [33mclass[39m=[32m"storyboard-shot-list"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"storyboard-shot-list__header"[39m
+          [36m>[39m
+            [36m<h3>[39m
+              [0m镜头清单[0m
+            [36m</h3>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+            [36m>[39m
+              [0m0[0m
+              [0m 个镜头[0m
+            [36m</span>[39m
+          [36m</header>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-status-message ui-status-message--error"[39m
+            [33mrole[39m=[32m"alert"[39m
+          [36m>[39m
+            [0m分镜读取失败[0m
+            [0m（STUDIO_RESPONSE_INVALID）[0m
+            [0m：[0m
+            [0m分镜回执或版本绑定不完整，请读取原文档核对。[0m
+          [36m</div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"storyboard-shot-list__hint"[39m
+          [36m>[39m
+            [0m失败不是"暂无分镜"：原文档可能有镜头，只是这次没有读到。[0m
+          [36m</p>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m重新读取原分镜[0m
+          [36m</button>[39m
+        [36m</section>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"storyboard-workspace__detail"[39m
+        [36m>[39m
+          [36m<section[39m
+            [33mclass[39m=[32m"ui-panel"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<h2>[39m
+                [0m镜头详情[0m
+              [36m</h2>[39m
+            [36m</header>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ui-empty"[39m
+              [33mrole[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<strong>[39m
+                [0m尚未选中镜头[0m
+              [36m</strong>[39m
+              [36m<p>[39m
+                [0m在上面的镜头清单里选择一个镜头；列表、详情与送往面板始终共用同一个选择。[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</section>[39m
+          [36m<section[39m
+            [33mclass[39m=[32m"prompt-adoption-disclosure"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [33mdisabled[39m=[32m""[39m
+            [36m>[39m
+              [0m查看 Prompt 采用来源[0m
+            [36m</button>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"prompt-adoption-disclosure__hint"[39m
+            [36m>[39m
+              [0m选中一个镜头后即可查看它的采用来源。[0m
+            [36m</p>[39m
+          [36m</section>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"Prompt 采用操作"[39m
+            [33mclass[39m=[32m"prompt-adoption-write"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [33mdisabled[39m=[32m""[39m
+            [36m>[39m
+              [0m核对 Prompt 采用条件[0m
+            [36m</button>[39m
+          [36m</section>[39m
+          [36m<section[39m
+            [33mclass[39m=[32m"ui-panel"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<h2>[39m
+                [0m送往…[0m
+              [36m</h2>[39m
+            [36m</header>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"storyboard-send__scope"[39m
+            [36m>[39m
+              [0m这里只形成草稿。目标模块是否执行、何时执行，由拿到这张卡的界面与它自己的 owner 决定；本工作区永远不会替你执行。[0m
+            [36m</p>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+              [33mrole[39m=[32m"status"[39m
+            [36m>[39m
+              [0m先在镜头清单里选一个镜头。[0m
+            [36m</div>[39m
+          [36m</section>[39m
+          [36m<section[39m
+            [33mclass[39m=[32m"ui-panel"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<h2>[39m
+                [0m导演目标[0m
+              [36m</h2>[39m
+            [36m</header>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"storyboard-director__scope"[39m
+            [36m>[39m
+              [0m导演是可选的创作节点，不是其它模块的"核心权威"：这里不改写镜头、不撤销批准，也不会因为改目标就覆盖已经批准的下游结果。[0m
+            [36m</p>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+              [33mrole[39m=[32m"status"[39m
+            [36m>[39m
+              [0m还没有读到导演目标。这里不会编造目标；请先读取导演文档，或使用原导演界面创建。[0m
+            [36m</div>[39m
+            [36m<section[39m
+              [33maria-label[39m=[32m"AI 建议（待审）"[39m
+            [36m>[39m
+              [36m<h4>[39m
+                [0mAI 建议（待审，与原文档已采用内容分开）[0m
+              [36m</h4>[39m
+              [36m<p>[39m
+                [0m这些是原 owner 的 `director-proposals` 记录，状态不是"已批准"；它们**没有**生效，也不能被这里直接采用。[0m
+              [36m</p>[39m
+              [36m<p>[39m
+                [0m没有读到待审建议（或本工作区没有提供读取入口）。[0m
+              [36m</p>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [36m>[39m
+                [0m只读读取导演调度建议[0m
+              [36m</button>[39m
+            [36m</section>[39m
+          [36m</section>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"director-workspace__entry"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-expanded[39m=[32m"false"[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m按需打开导演工作台[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-expanded[39m=[32m"false"[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m按需打开角色与场景圣经[0m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/storyboard/PromptAdoptionWritePanel.test.tsx > Prompt adoption conditional write panel > the mounted Storyboard owner reloads and closes old provenance after verified commit
+TestingLibraryElementError: Unable to find an element with the text: 此镜头尚未采用任何 Prompt 修订。. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <section
+      aria-label="分镜工作区"
+      class="storyboard-workspace"
+      data-active="true"
+    >
+      <div
+        class="storyboard-workspace__bar"
+      >
+        <h2>
+          导演与分镜
+        </h2>
+        <span
+          class="ui-badge ui-badge--neutral"
+        >
+          项目 
+          p1
+        </span>
+        <span
+          class="ui-badge ui-badge--neutral"
+        >
+          文档 
+          尚未读取
+        </span>
+        <span
+          class="ui-badge ui-badge--warning"
+        >
+          尚未读取批准状态
+        </span>
+        <button
+          class="ui-button ui-button--secondary"
+        >
+          读取已保存分镜
+        </button>
+        <button
+          class="ui-button ui-button--secondary"
+        >
+          重新读取
+        </button>
+      </div>
+      <div
+        class="ui-status-message ui-status-message--error"
+        role="alert"
+      >
+        STUDIO_RESPONSE_INVALID
+        ：
+        分镜回执或版本绑定不完整，请读取原文档核对。
+      </div>
+      <div
+        class="storyboard-workspace__body"
+      >
+        <section
+          aria-label="分镜镜头清单"
+          class="storyboard-shot-list"
+        >
+          <header
+            class="storyboard-shot-list__header"
+          >
+            <h3>
+              镜头清单
+            </h3>
+            <span
+              class="ui-badge ui-badge--neutral"
+            >
+              0
+               个镜头
+            </span>
+          </header>
+          <div
+            class="ui-status-message ui-status-message--error"
+            role="alert"
+          >
+            分镜读取失败
+            （STUDIO_RESPONSE_INVALID）
+            ：
+            分镜回执或版本绑定不完整，请读取原文档核对。
+          </div>
+          <p
+            class="storyboard-shot-list__hint"
+          >
+            失败不是"暂无分镜"：原文档可能有镜头，只是这次没有读到。
+          </p>
+          <button
+            class="ui-button ui-button--secondary"
+          >
+            重新读取原分镜
+          </button>
+        </section>
+        <div
+          class="storyboard-workspace__detail"
+        >
+          <section
+            class="ui-panel"
+          >
+            <header>
+              <h2>
+                镜头详情
+              </h2>
+            </header>
+            <div
+              class="ui-empty"
+              role="status"
+            >
+              <strong>
+                尚未选中镜头
+              </strong>
+              <p>
+                在上面的镜头清单里选择一个镜头；列表、详情与送往面板始终共用同一个选择。
+              </p>
+            </div>
+          </section>
+          <section
+            class="prompt-adoption-disclosure"
+          >
+            <button
+              class="ui-button ui-button--secondary"
+              disabled=""
+            >
+              查看 Prompt 采用来源
+            </button>
+            <p
+              class="prompt-adoption-disclosure__hint"
+            >
+              选中一个镜头后即可查看它的采用来源。
+            </p>
+          </section>
+          <section
+            aria-label="Prompt 采用操作"
+            class="prompt-adoption-write"
+          >
+            <button
+              class="ui-button ui-button--secondary"
+              disabled=""
+            >
+              核对 Prompt 采用条件
+            </button>
+          </section>
+          <section
+            class="ui-panel"
+          >
+            <header>
+              <h2>
+                送往…
+              </h2>
+            </header>
+            <p
+              class="storyboard-send__scope"
+            >
+              这里只形成草稿。目标模块是否执行、何时执行，由拿到这张卡的界面与它自己的 owner 决定；本工作区永远不会替你执行。
+            </p>
+            <div
+              class="ui-status-message ui-status-message--info"
+              role="status"
+            >
+              先在镜头清单里选一个镜头。
+            </div>
+          </section>
+          <section
+            class="ui-panel"
+          >
+            <header>
+              <h2>
+                导演目标
+              </h2>
+            </header>
+            <p
+              class="storyboard-director__scope"
+            >
+              导演是可选的创作节点，不是其它模块的"核心权威"：这里不改写镜头、不撤销批准，也不会因为改目标就覆盖已经批准的下游结果。
+            </p>
+            <div
+              class="ui-status-message ui-status-message--info"
+              role="status"
+            >
+              还没有读到导演目标。这里不会编造目标；请先读取导演文档，或使用原导演界面创建。
+            </div>
+            <section
+              aria-label="AI 建议（待审）"
+            >
+              <h4>
+                AI 建议（待审，与原文档已采用内容分开）
+              </h4>
+              <p>
+                这些是原 owner 的 `director-proposals` 记录，状态不是"已批准"；它们**没有**生效，也不能被这里直接采用。
+              </p>
+              <p>
+                没有读到待审建议（或本工作区没有提供读取入口）。
+              </p>
+              <button
+                class="ui-button ui-button--secondary"
+              >
+                只读读取导演调度建议
+              </button>
+            </section>
+          </section>
+          <div
+            class="director-workspace__entry"
+          >
+            <button
+              aria-expanded="false"
+              class="ui-button ui-button--secondary"
+            >
+              按需打开导演工作台
+            </button>
+            <button
+              aria-expanded="false"
+              class="ui-button ui-button--secondary"
+            >
+              按需打开角色与场景圣经
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <section
+      aria-label="分镜工作区"
+      class="storyboard-workspace"
+      data-active="true"
+    >
+      <div
+        class="storyboard-workspace__bar"
+      >
+        <h2>
+          导演与分镜
+        </h2>
+        <span
+          class="ui-badge ui-badge--neutral"
+        >
+          项目 
+          p1
+        </span>
+        <span
+          class="ui-badge ui-badge--neutral"
+        >
+          文档 
+          尚未读取
+        </span>
+        <span
+          class="ui-badge ui-badge--warning"
+        >
+          尚未读取批准状态
+        </span>
+        <button
+          class="ui-button ui-button--secondary"
+        >
+          读取已保存分镜
+        </button>
+        <button
+          class="ui-button ui-button--secondary"
+        >
+          重新读取
+        </button>
+      </div>
+      <div
+        class="ui-status-message ui-status-message--error"
+        role="alert"
+      >
+        STUDIO_RESPONSE_INVALID
+        ：
+        分镜回执或版本绑定不完整，请读取原文档核对。
+      </div>
+      <div
+        class="storyboard-workspace__body"
+      >
+        <section
+          aria-label="分镜镜头清单"
+          class="storyboard-shot-list"
+        >
+          <header
+            class="storyboard-shot-list__header"
+          >
+            <h3>
+              镜头清单
+            </h3>
+            <span
+              class="ui-badge ui-badge--neutral"
+            >
+              0
+               个镜头
+            </span>
+          </header>
+          <div
+            class="ui-status-message ui-status-message--error"
+            role="alert"
+          >
+            分镜读取失败
+            （STUDIO_RESPONSE_INVALID）
+            ：
+            分镜回执或版本绑定不完整，请读取原文档核对。
+          </div>
+          <p
+            class="storyboard-shot-list__hint"
+          >
+            失败不是"暂无分镜"：原文档可能有镜头，只是这次没有读到。
+          </p>
+          <button
+            class="ui-button ui-button--secondary"
+          >
+            重新读取原分镜
+          </button>
+        </section>
+        <div
+          class="storyboard-workspace__detail"
+        >
+          <section
+            class="ui-panel"
+          >
+            <header>
+              <h2>
+                镜头详情
+              </h2>
+            </header>
+            <div
+              class="ui-empty"
+              role="status"
+            >
+              <strong>
+                尚未选中镜头
+              </strong>
+              <p>
+                在上面的镜头清单里选择一个镜头；列表、详情与送往面板始终共用同一个选择。
+              </p>
+            </div>
+          </section>
+          <section
+            class="prompt-adoption-disclosure"
+          >
+            <button
+              class="ui-button ui-button--secondary"
+              disabled=""
+            >
+              查看 Prompt 采用来源
+            </button>
+            <p
+              class="prompt-adoption-disclosure__hint"
+            >
+              选中一个镜头后即可查看它的采用来源。
+            </p>
+          </section>
+          <section
+            aria-label="Prompt 采用操作"
+            class="prompt-adoption-write"
+          >
+            <button
+              class="ui-button ui-button--secondary"
+              disabled=""
+            >
+              核对 Prompt 采用条件
+            </button>
+          </section>
+          <section
+            class="ui-panel"
+          >
+            <header>
+              <h2>
+                送往…
+              </h2>
+            </header>
+            <p
+              class="storyboard-send__scope"
+            >
+              这里只形成草稿。目标模块是否执行、何时执行，由拿到这张卡的界面与它自己的 owner 决定；本工作区永远不会替你执行。
+            </p>
+            <div
+              class="ui-status-message ui-status-message--info"
+              role="status"
+            >
+              先在镜头清单里选一个镜头。
+            </div>
+          </section>
+          <section
+            class="ui-panel"
+          >
+            <header>
+              <h2>
+                导演目标
+              </h2>
+            </header>
+            <p
+              class="storyboard-director__scope"
+            >
+              导演是可选的创作节点，不是其它模块的"核心权威"：这里不改写镜头、不撤销批准，也不会因为改目标就覆盖已经批准的下游结果。
+            </p>
+            <div
+              class="ui-status-message ui-status-message--info"
+              role="status"
+            >
+              还没有读到导演目标。这里不会编造目标；请先读取导演文档，或使用原导演界面创建。
+            </div>
+            <section
+              aria-label="AI 建议（待审）"
+            >
+              <h4>
+                AI 建议（待审，与原文档已采用内容分开）
+              </h4>
+              <p>
+                这些是原 owner 的 `director-proposals` 记录，状态不是"已批准"；它们**没有**生效，也不能被这里直接采用。
+              </p>
+              <p>
+                没有读到待审建议（或本工作区没有提供读取入口）。
+              </p>
+              <button
+                class="ui-button ui-button--secondary"
+              >
+                只读读取导演调度建议
+              </button>
+            </section>
+          </section>
+          <div
+            class="director-workspace__entry"
+          >
+            <button
+              aria-expanded="false"
+              class="ui-button ui-button--secondary"
+            >
+              按需打开导演工作台
+            </button>
+            <button
+              aria-expanded="false"
+              class="ui-button ui-button--secondary"
+            >
+              按需打开角色与场景圣经
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+ ❯ waitForWrapper ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/storyboard/PromptAdoptionWritePanel.test.tsx:212:18
+    210|     await waitFor(() => expect(reads).toBe(1));
+    211|     fireEvent.click(screen.getByRole('button', { name: '查看 Prompt 采…
+    212|     await screen.findByText('此镜头尚未采用任何 Prompt 修订。');
+       |                  ^
+    213|     await selectSource(h); confirm(); adopt();
+    214|     await screen.findByText('已回读确认 Prompt 采用；可查看固定的 Prom…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 83 passed (84)
+   Start at  01:03:17
+   Duration  2.59s (transform 369ms, setup 28ms, collect 1.23s, tests 2.55s, environment 1.71s, prepare 365ms)
+

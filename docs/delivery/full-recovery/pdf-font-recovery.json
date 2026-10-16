@@ -1,0 +1,29 @@
+{
+  "status": "VERIFIED",
+  "source_artifact_id": 11469458461,
+  "source_artifact_sha256": "c0f8e9541a43599de6066161935ac131fb1ddc5257a314604b0e84c395ddf4ed",
+  "source_head": "665817243cad59eef0d4140f17c2ea644f46971e",
+  "upstream_revision": "2894aab31764f10f29c421bdfd2340d3b382d384",
+  "license": "SIL OFL 1.1",
+  "derivation": {
+    "tool": "fonttools 4.59.1",
+    "axes": {
+      "wght": 400
+    },
+    "subset": false
+  },
+  "files": [
+    {
+      "path": "D:\\小说\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\fonts\\NotoSansSC-Regular.ttf",
+      "sha256": "eeb06b8a64fd04a2744d95579db1571b51027cda61ed78c62e4b730791525461",
+      "bytes": 10595932,
+      "source_member": "Application/Backend/assets/fonts/NotoSansSC-Regular.ttf"
+    },
+    {
+      "path": "D:\\小说\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\fonts\\OFL.txt",
+      "sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9",
+      "bytes": 4388,
+      "source_member": "Application/Backend/assets/fonts/OFL.txt"
+    }
+  ]
+}

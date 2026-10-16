@@ -1,0 +1,6 @@
+{
+  "stage": "02-world",
+  "status": "FAIL",
+  "seconds": 0.353,
+  "error": "{\"id\": \"613d49a9-0f07-400e-8a15-8137dd1aca2f\", \"novel_id\": \"13dbbcda\", \"scope\": {\"mode\": \"local\", \"novel_id\": \"13dbbcda\"}, \"actor_id\": \"local-author\", \"version\": 3, \"status\": \"FAILED\", \"request\": {\"kind\": \"WORLD\", \"mode\": \"MODEL\", \"sources\": [], \"premise\": \"一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。\", \"provider_id\": \"discovery-local-cbe5fff59c25ef0f728e0e8c\", \"model_id\": \"local-cbe5fff59c25ef0f728e0e8c\", \"candidate_count\": 1, \"timeout_seconds\": 180}, \"sources\": [], \"candidates\": [], \"findings\": [], \"created_at\": \"2026-10-07T09:45:06.670112+00:00\", \"updated_at\": \"2026-10-07T09:45:06.773683+00:00\", \"error\": \"生成失败。请检查模型配置、来源版本、隐私授权和结构化输出；没有写入正文或正式事实。\", \"error_code\": \"PROVIDER_UNAVAILABLE\", \"usage\": null, \"usage_status\": \"UNKNOWN\", \"execution_mode\": null, \"project_context_hash\": \"3cb4c89340dcb3841b7c28570fad2fb0068862181477d0c28713d63f0ab4228b\", \"project_context_snapshot\": {\"project\": {\"id\": \"13dbbcda\", \"title\": \"废城回声 · 完整产品验收\", \"genre\": \"悬疑科幻\", \"privacy_level\": \"LOCAL_ONLY\"}, \"world\": {}, \"outline\": {}, \"characters\": [], \"locations\": [], \"world_rules\": []}, \"premise_hash\": \"4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df\", \"applied\": false}"
+}

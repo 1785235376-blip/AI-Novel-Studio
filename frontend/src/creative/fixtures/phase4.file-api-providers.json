@@ -1,0 +1,84 @@
+{
+  "items": [
+    {
+      "operation_id": "m5.image.t2i",
+      "provider_id": "discovery-local-4c3ffc28953a791c7d9f9b51",
+      "model_id": "local-4c3ffc28953a791c7d9f9b51",
+      "local": true,
+      "route_digest": "ea115de36e5e019e9a70188681166919fede31039b5c63562e6d109bb71e3194",
+      "capability": "TEXT_TO_IMAGE",
+      "supported_parameters": [
+        "width",
+        "height",
+        "steps",
+        "seed",
+        "negative_prompt"
+      ],
+      "readiness": "CONFIGURED_NOT_VERIFIED",
+      "product_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "operation_id": "m7.video.t2v",
+      "provider_id": "discovery-local-c7c98852d03292d2d694d9f9",
+      "model_id": "local-c7c98852d03292d2d694d9f9",
+      "local": true,
+      "route_digest": "4d2c0588694d315b4bd3ce6a99a3efad7d848b64f24ef063c2492ce954da52ad",
+      "capability": "text_to_video",
+      "supported_parameters": [
+        "width",
+        "height",
+        "seed",
+        "negative_prompt",
+        "duration_seconds",
+        "frame_rate"
+      ],
+      "readiness": "CONFIGURED_NOT_VERIFIED",
+      "product_acceptance": "LOCAL_REQUIRED",
+      "video_capabilities": {
+        "recipe_id": "comfy-wan22-ti2v5b-v1",
+        "operations": [
+          "t2v",
+          "i2v"
+        ],
+        "structural_only": true,
+        "inference_verified": false,
+        "reference_semantics": "SINGLE_IMAGE_INITIALIZATION",
+        "reference_video_execution": false,
+        "output_format": "WEBM_VP9"
+      }
+    },
+    {
+      "operation_id": "m7.video.i2v",
+      "provider_id": "discovery-local-c7c98852d03292d2d694d9f9",
+      "model_id": "local-c7c98852d03292d2d694d9f9",
+      "local": true,
+      "route_digest": "89a34f378e902ae24a3d9108858adc5603f370b714baa8da0438fffc2ea4e0c5",
+      "capability": "image_to_video",
+      "supported_parameters": [
+        "width",
+        "height",
+        "seed",
+        "negative_prompt",
+        "duration_seconds",
+        "frame_rate"
+      ],
+      "readiness": "CONFIGURED_NOT_VERIFIED",
+      "product_acceptance": "LOCAL_REQUIRED",
+      "video_capabilities": {
+        "recipe_id": "comfy-wan22-ti2v5b-v1",
+        "operations": [
+          "t2v",
+          "i2v"
+        ],
+        "structural_only": true,
+        "inference_verified": false,
+        "reference_semantics": "SINGLE_IMAGE_INITIALIZATION",
+        "reference_video_execution": false,
+        "output_format": "WEBM_VP9"
+      }
+    }
+  ],
+  "automatic_runtime_start": false,
+  "health_probed": false,
+  "credentials_read": false
+}

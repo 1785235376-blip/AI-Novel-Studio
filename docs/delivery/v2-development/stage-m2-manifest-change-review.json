@@ -1,0 +1,99 @@
+{
+  "utc": "2026-10-09T13:59:54.216346+00:00",
+  "decision": "APPROVED_ADDITIVE_V2_MANIFEST_ONLY",
+  "published_parent": "57986cb13d452731baf82bbc242bfc79f9cfd145",
+  "published_v2_manifest_sha256": "3e86bfabbdcb2c494968cf89d6efdd3ff2cc10edf921fa47f6a9669474dfce9f",
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "prior_nodes": 9823,
+  "candidate_nodes": 10178,
+  "prior_nodes_preserved_in_order": true,
+  "historical_skips_and_external_gates_unchanged": true,
+  "added_node_counts": {
+    "tests/test_v2_creative_graph_api.py": 40,
+    "tests/test_v2_creative_graph_contracts.py": 213,
+    "tests/test_v2_creative_graph_execution.py": 66,
+    "tests/test_v2_creative_graph_persistence.py": 22,
+    "tests/test_v2_independent_media_job.py": 2,
+    "tests/test_v2_media_prerequisites.py": 12
+  },
+  "source_changes_from_published_m1": [
+    {
+      "path": ".github/workflows/cloud-ci.yml",
+      "before_sha256": "aaf3f1fbbb63d38e39631754b0f9d0b9099c6e86201b37826aac40dcfb860c48",
+      "after_sha256": "0a4abd866640573f6e4f8993b5af1a336e8b59b7d4f32891f7899069d86d5a71"
+    },
+    {
+      "path": "API_CATALOG.json",
+      "before_sha256": "e0c3111e8d09706501279dce58738b60520d80f29d4e6eab8d617ab06b1cf39f",
+      "after_sha256": "61669c03fecb00c734ebcf0cd9b6b1cfd9ba6b28b28006d2f48a821e445ab45e"
+    },
+    {
+      "path": "API_CATALOG.md",
+      "before_sha256": "79d5a019551399ccc72789a0c75802f705c5b2b0e5cd61c95186b2d38b0bb313",
+      "after_sha256": "c25be6158668666810d8f6d18136640c798756bfe078af0391321b93a47a9728"
+    },
+    {
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "before_sha256": "ef16fe60c98f3d0c45138ce349e96a74d574e5871b550306ff129336103788a7",
+      "after_sha256": "ea3e63208cb5375e5d00658ee58585682ea49a705ea9233f126d071128f6f734"
+    },
+    {
+      "path": "API_OPENAPI.json.gz",
+      "before_sha256": "e4d26ae351abdafcd50c7593f1ed2fb58ce20f583f1ad3fe016a6aef337e7750",
+      "after_sha256": "0ac70748de8a87dc0f2c08a0eafb040a4f8d7839358d08b26adced789acf0fff"
+    },
+    {
+      "path": "app/creative/project_store.py",
+      "before_sha256": "b6eb16080c73cf985283b2fb9948c251195b15784335a8e0fa2af8b6a1be8dbb",
+      "after_sha256": "2d928a2e440c60f7badc8aebe1bdf635c3b4464b43ed34231bd465c7b72ad1c8"
+    },
+    {
+      "path": "app/creative/workspace_api.py",
+      "before_sha256": "53a177db02a502a001df0252da65430ab9c17cde2dc2faae09973f9b2f0ab899",
+      "after_sha256": "5dea10fa82fe79208a69fcf98251d85fec3f31342a085ac5fb2a79b2b717a5f9"
+    },
+    {
+      "path": "app/experimental/api.py",
+      "before_sha256": "cfc2e9f01ad46dbce8e8bc146429a7a534520887945aba47d440b8cc86b67df6",
+      "after_sha256": "04ad7085fa8389d94b62daa627230075c9323aaaf561bbd9930ce9d3320742a1"
+    },
+    {
+      "path": "frontend/playwright.v2-live.config.ts",
+      "before_sha256": "ad4ccd83af570a36a870cae86065dd395d98b29fd66d662594dd30aa7265fa31",
+      "after_sha256": "dbbf62ee540feed65c69e7cd1a16d732220c240b0b016b868de24e91bfc14a36"
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioWorkspace.tsx",
+      "before_sha256": "cbd30ccae78677f6ba4f0a9ae0b5d4fe6657d31f4f1dc5091898020007ed93dd",
+      "after_sha256": "124e9d6d3ea8af8616fe1efd0c795e273510398c5e0d0701f63eb94fa5674ece"
+    },
+    {
+      "path": "frontend/src/creative/studioClient.ts",
+      "before_sha256": "19fd05998e8baa9bbea6c911b74f478d7bae86a560aefff675463928a9d59614",
+      "after_sha256": "3c8d90c13fae58ff5dc80e476e57bae57d0183c08b42233244af9d461e8b2766"
+    },
+    {
+      "path": "frontend/tests/e2e/v2-asset-relationships-live.spec.ts",
+      "before_sha256": "28d6e7044d0d4d4b61b1dda4b5edee98ca5b5a1044d6db9ebbfb8f3aa165aeca",
+      "after_sha256": "09489ecc25dc6bbb46ccc569149edab379b5888416b3a026399a8667388c7a67"
+    },
+    {
+      "path": "frontend/tests/e2e/v2-independent-studio-live.spec.ts",
+      "before_sha256": "fd8411cbacad2d541847b2ffdac2d219a7101a63af4606c9f9d0bdf9c7dac986",
+      "after_sha256": "622ef60c7e327c6128d8d447a35c360687180fa234922cc8a91827bedd7cb0f3"
+    },
+    {
+      "path": "tests/test_v2_studio_ci.py",
+      "before_sha256": "7e5fdf071386a9aa4ecbe2d70d2c2f8ed671263a2467647d0c6498d7d76ae9c9",
+      "after_sha256": "a64eba0a74c49febc0fc2f46151aebae5768501b1a353eccc39e22742fdcf25f"
+    }
+  ],
+  "review": [
+    "Existing frozen product tests, assertions and CI self-tests unchanged.",
+    "Only newly introduced M1 tests changed: media prerequisites checked through bounded readonly helper; relationship fixture cleanup moved to separate bounded afterEach and explicit upload readiness assertions added; no primary product assertion removed.",
+    "Original protected V2 job and config restored to M0 bytes; all five M1 cases move to explicit additive media job, and three M2 cases are added there. No budget growth, retries, new skips, hidden installation, or legacy test change.",
+    "New graph tests exercise strict contracts, original workflow authority, CAS, actor/scope/incarnation isolation, source revocation, original deadline, manual review and validated reviewed-node cache.",
+    "This is collection review only, not full-suite execution or historical audit approval."
+  ],
+  "tests_executed": false
+}

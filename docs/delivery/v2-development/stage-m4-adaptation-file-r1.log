@@ -1,0 +1,677 @@
+FFssFFFFFFFFFFFFFFssssssssssssss..ssFFss                                 [100%]
+=================================== FAILURES ===================================
+_ test_exact_saved_source_original_execution_and_separate_reviewed_screenplay[file-/api] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae93896420>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7fae93ca6240>, creative_base='/api/novels/r3-mounted-20c62ddc71b9490ab3887de4e43fbbf6/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae936de450>
+
+    def test_exact_saved_source_original_execution_and_separate_reviewed_screenplay(creative_model, monkeypatch):
+        e = creative_model
+        before = copy.deepcopy(e.chapters.get(e.chapter["id"]))
+        row, calls = ready(e, monkeypatch)
+        preview = row["model_preview"]
+        assert not calls and not e.manager.jobs
+        assert preview["author"]["request_scope"]["source_mode"] == "SELECTION_ONLY"
+        assert preview["author"]["source"] == before["content"]
+        assert before["content"] in preview["request"]["prompt"]
+        assert preview["request"]["context"] == {}
+>       running = dispatch(e, row)
+                  ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:74: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"70bd6b41-73e5-4daa-a511-2aaebcd64e7b"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_ test_exact_saved_source_original_execution_and_separate_reviewed_screenplay[file-/api/v1] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae91800470>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7fae93ca6240>, creative_base='/api/v1/novels/r3-mounted-787de860e70c4d1c9194d1ed6508f928/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae913a4470>
+
+    def test_exact_saved_source_original_execution_and_separate_reviewed_screenplay(creative_model, monkeypatch):
+        e = creative_model
+        before = copy.deepcopy(e.chapters.get(e.chapter["id"]))
+        row, calls = ready(e, monkeypatch)
+        preview = row["model_preview"]
+        assert not calls and not e.manager.jobs
+        assert preview["author"]["request_scope"]["source_mode"] == "SELECTION_ONLY"
+        assert preview["author"]["source"] == before["content"]
+        assert before["content"] in preview["request"]["prompt"]
+        assert preview["request"]["context"] == {}
+>       running = dispatch(e, row)
+                  ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:74: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"b961f8da-6788-405c-9191-181931b1d2da"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_ test_invalid_model_output_is_discarded_without_screenplay[file-/api-invalid] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae907852e0>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7fae93ca6240>, creative_base='/api/novels/r3-mounted-6886686b269f43498bcc1066248ad1d2/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae906c3a10>
+kind = 'invalid'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+>       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"c1133513-643a-48bb-9727-aeec9ccad2a4"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_ test_invalid_model_output_is_discarded_without_screenplay[file-/api-duplicate-key] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae9071b560>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7fae93ca6240>, creative_base='/api/novels/r3-mounted-f9f72c1d3cde4200a53cf49df2381d8d/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae90719460>
+kind = 'duplicate-key'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+>       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"27e9e17d-e4fe-40b8-8f98-adcd0f42fbc5"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_ test_invalid_model_output_is_discarded_without_screenplay[file-/api-missing-id] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae9074f4d0>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7fae93ca6240>, creative_base='/api/novels/r3-mounted-2de2a3c66d5d43898ddd6f892b41068c/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae9074efc0>
+kind = 'missing-id'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+>       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"38b40310-d589-4325-8768-bbe938aa33bf"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_ test_invalid_model_output_is_discarded_without_screenplay[file-/api-foreign-quote] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae9075ee70>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7fae93ca6240>, creative_base='/api/novels/r3-mounted-7327845190fd4e89aca6369f9ba9faca/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae9075eff0>
+kind = 'foreign-quote'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+>       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"80ca3dcc-8766-4661-9b2b-4499f612c352"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_ test_invalid_model_output_is_discarded_without_screenplay[file-/api-unknown-scene] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae905a0560>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7fae93ca6240>, creative_base='/api/novels/r3-mounted-6df85d8a822941e995dda1684c9eac2e/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae9074d280>
+kind = 'unknown-scene'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+>       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"ef607177-6ee2-410f-b3f9-a7e66ae22908"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+__ test_invalid_model_output_is_discarded_without_screenplay[file-/api-tool] ___
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae90613080>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7fae93ca6240>, creative_base='/api/novels/r3-mounted-2c8d96acfea1404b87ac9591f75b490b/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae90611c10>
+kind = 'tool'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+>       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"968dc5b0-abf1-497a-874f-c2d425f818f0"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+___ test_invalid_model_output_is_discarded_without_screenplay[file-/api-nan] ___
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae9074f080>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7fae93ca6240>, creative_base='/api/novels/r3-mounted-cf673d4d2063409da97f255773945496/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae905a2000>
+kind = 'nan'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+>       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"8e608143-b9e6-42b4-976d-4bc689f975ca"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_ test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-invalid] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae90634830>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7fae93ca6240>, creative_base='/api/v1/novels/r3-mounted-51ac6337886f4d149c72999312d3d21c/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae90608b30>
+kind = 'invalid'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+>       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"2e3e76be-8853-4454-97bc-c57dbc2831ff"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_ test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-duplicate-key] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae9075d280>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7fae93ca6240>, creative_base='/api/v1/novels/r3-mounted-b236573075a84001ad659557313a5d40/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae905a34d0>
+kind = 'duplicate-key'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+>       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"e9b60b5a-13b8-4640-aae9-4ebe402fe0eb"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_ test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-missing-id] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae90637e00>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7fae93ca6240>, creative_base='/api/v1/novels/r3-mounted-d4507736fd2c495c804c78d9d4184307/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae90636480>
+kind = 'missing-id'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+>       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"9c0a8643-c5fc-4183-8140-986226b6bb99"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_ test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-foreign-quote] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae905962a0>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7fae93ca6240>, creative_base='/api/v1/novels/r3-mounted-90f77c30861e4ed881c7f384bd91c3bf/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae905a0860>
+kind = 'foreign-quote'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+>       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"3c18cc03-35e1-46c7-80be-730bd9dd3e46"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_ test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-unknown-scene] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae905f70e0>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7fae93ca6240>, creative_base='/api/v1/novels/r3-mounted-1d3af18a3bcc47f1b8e9e19a402c1f40/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae905978c0>
+kind = 'unknown-scene'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+>       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"be6b5b66-c1f0-47ef-b00d-dd80895ce040"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_ test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-tool] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae9074c680>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7fae93ca6240>, creative_base='/api/v1/novels/r3-mounted-59077cdc654843a5ba62963d99b193bf/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae91162660>
+kind = 'tool'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+>       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"c9ba015a-3187-4bf5-8af3-6765a57eec1e"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_ test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-nan] __
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae905f6b10>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7fae93ca6240>, creative_base='/api/v1/novels/r3-mounted-4a419fdaf8354d519c7a04b76968b804/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae905f7e00>
+kind = 'nan'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+>       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"96761e37-7066-41ca-a8e6-8debe1e38710"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_______ test_source_change_and_restart_never_replay_or_adopt[file-/api] ________
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae903828d0>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7fae93ca6240>, creative_base='/api/novels/r3-mounted-ed63b99e60284f63abdced0ee4fca110/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae90597b30>
+
+    def test_source_change_and_restart_never_replay_or_adopt(creative_model, monkeypatch):
+        e = creative_model
+        row, calls = ready(e, monkeypatch)
+>       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"a1012957-4fa4-400d-8cb2-2761665a81d8"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+______ test_source_change_and_restart_never_replay_or_adopt[file-/api/v1] ______
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fae903830b0>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7fae93ca6240>, creative_base='/api/v1/novels/r3-mounted-fe596c7305284421858da90e53f09d4f/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fae9060b1a0>
+
+    def test_source_change_and_restart_never_replay_or_adopt(creative_model, monkeypatch):
+        e = creative_model
+        row, calls = ready(e, monkeypatch)
+>       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:44: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:28: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_LIVE_AUTHORITY_REQUIRED"},"request_id":"afbbfed1-7c23-4042-84b4-a8a30da186af"}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-adaptation-file-r1.xml -
+=========================== short test summary info ============================
+FAILED tests/test_v2_source_adaptation.py::test_exact_saved_source_original_execution_and_separate_reviewed_screenplay[file-/api]
+FAILED tests/test_v2_source_adaptation.py::test_exact_saved_source_original_execution_and_separate_reviewed_screenplay[file-/api/v1]
+FAILED tests/test_v2_source_adaptation.py::test_invalid_model_output_is_discarded_without_screenplay[file-/api-invalid]
+FAILED tests/test_v2_source_adaptation.py::test_invalid_model_output_is_discarded_without_screenplay[file-/api-duplicate-key]
+FAILED tests/test_v2_source_adaptation.py::test_invalid_model_output_is_discarded_without_screenplay[file-/api-missing-id]
+FAILED tests/test_v2_source_adaptation.py::test_invalid_model_output_is_discarded_without_screenplay[file-/api-foreign-quote]
+FAILED tests/test_v2_source_adaptation.py::test_invalid_model_output_is_discarded_without_screenplay[file-/api-unknown-scene]
+FAILED tests/test_v2_source_adaptation.py::test_invalid_model_output_is_discarded_without_screenplay[file-/api-tool]
+FAILED tests/test_v2_source_adaptation.py::test_invalid_model_output_is_discarded_without_screenplay[file-/api-nan]
+FAILED tests/test_v2_source_adaptation.py::test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-invalid]
+FAILED tests/test_v2_source_adaptation.py::test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-duplicate-key]
+FAILED tests/test_v2_source_adaptation.py::test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-missing-id]
+FAILED tests/test_v2_source_adaptation.py::test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-foreign-quote]
+FAILED tests/test_v2_source_adaptation.py::test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-unknown-scene]
+FAILED tests/test_v2_source_adaptation.py::test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-tool]
+FAILED tests/test_v2_source_adaptation.py::test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-nan]
+FAILED tests/test_v2_source_adaptation.py::test_source_change_and_restart_never_replay_or_adopt[file-/api]
+FAILED tests/test_v2_source_adaptation.py::test_source_change_and_restart_never_replay_or_adopt[file-/api/v1]
+18 failed, 2 passed, 20 skipped, 1 warning in 13.15s

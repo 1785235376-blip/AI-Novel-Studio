@@ -1,0 +1,32 @@
+{
+  "total_count": 1,
+  "artifacts": [
+    {
+      "id": 11683799261,
+      "node_id": "MDg6QXJ0aWZhY3QxMTY4Mzc5OTI2MQ==",
+      "name": "shared-r123-baseline-red-0d9d647c05da23582bbdd09c09e38c176f85b152",
+      "size_in_bytes": 4964,
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11683799261",
+      "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11683799261/zip",
+      "expired": false,
+      "digest": "sha256:42156084d6d7e30a90e1282a5b12987101d2e03cefda15128c77aac90e46a079",
+      "created_at": "2026-10-10T22:31:27Z",
+      "updated_at": "2026-10-10T22:31:27Z",
+      "expires_at": "2026-10-24T22:31:26Z",
+      "workflow_run": {
+        "id": 38091679852,
+        "repository_id": 1347017268,
+        "head_repository_id": 1347017268,
+        "head_branch": "feature/v2-narrative-platform",
+        "head_sha": "3a234ed242a2d15698560752d6ac3a982da7c350"
+      }
+    }
+  ],
+  "pagination": [
+    {
+      "page": 1,
+      "count": 1,
+      "total": 1
+    }
+  ]
+}

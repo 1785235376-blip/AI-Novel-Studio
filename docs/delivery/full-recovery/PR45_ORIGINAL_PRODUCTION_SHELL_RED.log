@@ -1,0 +1,49 @@
+[WebServer] (node:37788) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:38820) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38820) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\visual\design-system.spec.ts:33:1 › production NOVEL route uses the frozen AppShell (6.6s)
+
+
+  1) [chromium] › tests\visual\design-system.spec.ts:33:1 › production NOVEL route uses the frozen AppShell 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.context-bar')
+    Expected substring: "当前工作区"
+    Received string:    "创作空间：workspace-real/小说：project-real/故事线：storyline-real/创作分支：branch-real"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('.context-bar')
+        14 × locator resolved to <nav class="context-bar" aria-label="当前创作范围">…</nav>
+           - unexpected value "创作空间：workspace-real/小说：project-real/故事线：storyline-real/创作分支：branch-real"
+
+
+      35 |   await page.goto('/');
+      36 |   await expect(page.locator('.app-shell[data-module="NOVEL"]')).toBeVisible();
+    > 37 |   await expect(page.locator('.context-bar')).toContainText('当前工作区');
+         |                                              ^
+      38 |   await expect(page.locator('.context-bar')).not.toContainText('workspace-real');
+      39 |   await expect(page.locator('.context-bar')).not.toContainText('星海残章');
+      40 |   await expect(page.locator('.app-shell')).toHaveScreenshot('production-novel-shell.png');
+        at D:\小说\AI-Novel-Studio-Latest-Product\.tmp-pr45-visual-baseline\frontend\tests\visual\design-system.spec.ts:37:46
+
+    Error Context: ..\..\docs\delivery\full-recovery\pr45-original-production-shell-red\design-system-production-N-025c5-te-uses-the-frozen-AppShell-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\docs\delivery\full-recovery\pr45-original-production-shell-red\design-system-production-N-025c5-te-uses-the-frozen-AppShell-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\docs\delivery\full-recovery\pr45-original-production-shell-red\design-system-production-N-025c5-te-uses-the-frozen-AppShell-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\visual\design-system.spec.ts:33:1 › production NOVEL route uses the frozen AppShell 

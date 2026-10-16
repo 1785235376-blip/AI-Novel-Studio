@@ -1,0 +1,26 @@
+{
+  "backend": "postgres",
+  "operation": "adopt",
+  "revocation": "role",
+  "nid": "r3-i-auth-6eb0121146",
+  "workspace": "w-6eb0121146",
+  "branch": "b-6eb0121146",
+  "actor": "writer-6eb0121146",
+  "admin": "init-6eb0121146",
+  "assignment": "w-6eb0121146",
+  "url": "/api/projects/r3-i-auth-6eb0121146/studio/documents/7ce073cf-fddd-46aa-b3f1-00a29b071fcb/shots/0e8035ef-5a74-46d8-9516-727056164af5/prompt-adoption",
+  "method": "POST",
+  "body": {
+    "shot_id": "0e8035ef-5a74-46d8-9516-727056164af5",
+    "family_id": "f459d51b-4a4e-4590-a70e-5f21cd0f0ccf",
+    "asset_id": "f42c039b-56a7-4607-badf-56156aa3b876",
+    "revision": 1,
+    "expected_digest": "9d84a5ac50cf1087d3724b3999920cf709e93484be3f53f012b17736357a6296",
+    "expected_version": 1,
+    "expected_digest_target": "e14465ac53b940e70977c2b7f59a197bac96eb28c36f3637f44dd46915085f53",
+    "request_id": "auth-adopt-40f31a7b"
+  },
+  "ipc": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-combined-pg-final-r3\\temp\\test_independent_process_revoc7\\process-postgres-adopt-role-writer",
+  "pause_writer": true,
+  "pause_revoker": false
+}

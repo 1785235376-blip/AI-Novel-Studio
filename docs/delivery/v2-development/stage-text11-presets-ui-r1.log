@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/frontend
+
+ ✓ src/creative/screenplayPresets.test.tsx (18 tests) 860ms
+   ✓ creates a fresh unsaved draft once, preserves the saved document and uses original POST then versioned PUT 663ms
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 4741ms
+   ✓ creative workspace protected manuscript and request boundaries > recovers saved SCREENPLAY when its stage is selected before the initial reads finish 416ms
+   ✓ creative workspace protected manuscript and request boundaries > requires explicit server-version adoption and preserves the draft when adoption is cancelled 354ms
+
+ Test Files  2 passed (2)
+      Tests  47 passed (47)
+   Start at  15:45:19
+   Duration  6.99s (transform 590ms, setup 0ms, collect 1.73s, tests 5.60s, environment 1.59s, prepare 251ms)
+
+JUNIT report written to /workspace/scratch/b8734129d01d/AI-Novel-Studio-screenplay-presets/docs/delivery/v2-development/stage-text11-presets-ui-r1.xml

@@ -1,0 +1,163 @@
+{
+  "head": "6aed517611117771d767eb275a54773b24ba0300",
+  "tests_executed_by_this_audit": false,
+  "git_comparison": "Compute raw unfiltered Git blob identity from current file bytes and compare with current HEAD tree; additionally verify SHA256 against each receipt/manifest.",
+  "source_git_binding": {
+    "sources": 2300,
+    "working_mismatches": [],
+    "git_raw_blob_mismatches": [],
+    "recorded_oid_mismatches": [],
+    "normalization_exceptions": []
+  },
+  "manifest_binding": {
+    "sources": 2362,
+    "sha256": "2f2d2bb16c6159579ba4d051dc139147e17cf821ddbe783985d4bb4069b0b1c2",
+    "matches_report": true,
+    "working_mismatches": [],
+    "git_raw_blob_mismatches": []
+  },
+  "collection": {
+    "previous": 15118,
+    "current": 15142,
+    "added": 24,
+    "exact_old_ids_order": true,
+    "previous_multiplicity_preserved": true,
+    "additions_match_delta": true,
+    "all_24_from_new_module": true,
+    "two_collections_identical": true,
+    "collection_nodes_equal_manifest": true,
+    "collection_errors": [],
+    "collection_exit": 0,
+    "old_skips_equal": true,
+    "old_external_gates_equal": true,
+    "frozen_nodes_preserved": true
+  },
+  "protection": {
+    "frozen_manifest_nodes": 9151,
+    "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+    "frozen_manifest_sha_matches": true,
+    "frozen_test_gate_count": 750,
+    "frozen_test_gate_byte_changes": [],
+    "protected_union_count": 752,
+    "protected_byte_changes": [],
+    "protected_head_blob_changes": [],
+    "preexisting_differences_from_frozen_manifest": [
+      "tests/test_windows_portable_entry.py"
+    ]
+  },
+  "receipts": {
+    "r3-adoption-ui-bindings-file-final-r1": {
+      "status": "PASS",
+      "exit_code": 0,
+      "head_at_run": "69df94abd1604f32d397b991a6680d516edca59d",
+      "finished_utc": "2026-10-16T17:15:53.091629+00:00",
+      "source_count": 2300,
+      "before_equals_after": true,
+      "source_map_equals_final_binding": true,
+      "sources_changed_during_check": false,
+      "actual_log_sha256": "ec96b5be7df5df7ad111135a1e1cafc4889a77001f65d17b5cba57b1cf1f5fb0",
+      "log_sha_matches": true
+    },
+    "r3-adoption-ui-combined-pg-final-r1": {
+      "status": "PASS",
+      "exit_code": 0,
+      "head_at_run": "6aed517611117771d767eb275a54773b24ba0300",
+      "finished_utc": "2026-10-16T17:21:22.624749+00:00",
+      "source_count": 2300,
+      "before_equals_after": true,
+      "source_map_equals_final_binding": true,
+      "sources_changed_during_check": false,
+      "actual_log_sha256": "bdaa7947727c1d75353a1a548d895d61e2e5a3420d993ebd4f0b9fd021d535a2",
+      "log_sha_matches": true
+    },
+    "r3-adoption-ui-browser-file-final-r1": {
+      "status": "PASS",
+      "exit_code": 0,
+      "head_at_run": "69df94abd1604f32d397b991a6680d516edca59d",
+      "finished_utc": "2026-10-16T17:16:06.191411+00:00",
+      "source_count": 2300,
+      "before_equals_after": true,
+      "source_map_equals_final_binding": true,
+      "sources_changed_during_check": false,
+      "actual_log_sha256": "98160b83e7f1eb0f2317f9608285f653c6e3cc3630629d470fd897bde60f172e",
+      "log_sha_matches": true
+    }
+  },
+  "postgres_runtime": {
+    "database_mode": "fresh",
+    "database": "v2_r3_adoption_ui_20261017_final_r1",
+    "database_created": true,
+    "database_existed_before": false,
+    "database_oid": 25264,
+    "status": "PASS",
+    "checks_exit_code": 0,
+    "migration_status": "applied",
+    "server_stop": "stopped",
+    "cleanup_status": "completed",
+    "migrations_all_applied": true,
+    "migrations_count": 20,
+    "empty_before_migrations_count": 0
+  },
+  "file_browser": {
+    "stats": {
+      "startTime": "2026-10-16T17:15:31.722Z",
+      "duration": 25726.489,
+      "expected": 3,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "proof_attachments_checked": 3,
+    "all_three_exact_original_ui_post_and_target_source_proof_checks_passed": true,
+    "all_three_reopen_owner_and_family_advance_without_repin_checks_passed": true,
+    "all_three_one_browser_adoption_post_checks_passed": true,
+    "controls": {
+      "production-before-control.json": {
+        "status": 503,
+        "code": "PROMPT_ADOPTION_WRITE_TIME_UNVERIFIED",
+        "write_enabled": false,
+        "target_id": "fe442e33-ee27-47bf-8a3f-fe8653f05673",
+        "target_version": 1,
+        "before_owner_sha256": "e67a5e0a347b3d51a13c21d6628e44896ce96d526bae7726f2996e176d8d9702",
+        "after_owner_sha256": "e67a5e0a347b3d51a13c21d6628e44896ce96d526bae7726f2996e176d8d9702",
+        "owner_unchanged": true
+      },
+      "production-after-control.json": {
+        "status": 503,
+        "code": "PROMPT_ADOPTION_WRITE_TIME_UNVERIFIED",
+        "write_enabled": false,
+        "target_id": "fe442e33-ee27-47bf-8a3f-fe8653f05673",
+        "target_version": 1,
+        "before_owner_sha256": "e67a5e0a347b3d51a13c21d6628e44896ce96d526bae7726f2996e176d8d9702",
+        "after_owner_sha256": "e67a5e0a347b3d51a13c21d6628e44896ce96d526bae7726f2996e176d8d9702",
+        "owner_unchanged": true
+      }
+    },
+    "launcher": {
+      "production_literal_gate": false,
+      "production_environment_toggle": false,
+      "development_sessions": false,
+      "response_mocks": false,
+      "isolated_http_write_enabled": true,
+      "playwright_exit": 0,
+      "production_controls": "before503/isolatedTrue/after503",
+      "gate_source_unchanged": true,
+      "owned_production_before_stopped": true,
+      "owned_isolated_acceptance_stopped": true,
+      "owned_production_after_stopped": true,
+      "owned_vite_stopped": true
+    }
+  },
+  "pg_browser_at_review": "NOT_ACCEPTED: in progress or diagnostic failure receipts; no final PASS claimed by this source audit",
+  "post_audit_worktree_observation": {
+    "observed_utc": "2026-10-16T17:28:28.999183+00:00",
+    "changed_paths": [
+      "frontend/tests/e2e/v2-prompt-adoption-ui-live.spec.ts"
+    ],
+    "path": "frontend/tests/e2e/v2-prompt-adoption-ui-live.spec.ts",
+    "source_snapshot_sha256": "b09eda6377a49dfad8fbb8cb7b294fbaa4476eaab3373aaccd77163e95d7d9f0",
+    "later_working_sha256": "c08ca7584301c2a257fd93f3603357e7aafc3a6812a4288a8178da4d7d4062a6",
+    "matches_old_snapshot": false,
+    "boundary": "The zero-difference audit is bound to committed 6aed517 and its captured bytes, not the later startup-readiness spec edit. New source binding and browser result must be recorded separately."
+  }
+}

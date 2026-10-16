@@ -1,0 +1,22 @@
+{
+  "r3-prompt-combined-pg-final-r3": {
+    "database": "v2_r3_prompt_20261016_final_r3",
+    "database_oid": 23468,
+    "version": "PostgreSQL 16.15, compiled by Visual C++ build 1944, 64-bit",
+    "migrations": 20,
+    "empty_before_migrations": true,
+    "server_stop": "stopped",
+    "cleanup_status": "completed",
+    "database_retained": true
+  },
+  "r3-prompt-browser-pg-final-r1": {
+    "database": "v2_r3_prompt_browser_20261016_final_r1",
+    "database_oid": 24389,
+    "version": "PostgreSQL 16.15, compiled by Visual C++ build 1944, 64-bit",
+    "migrations": 20,
+    "empty_before_migrations": true,
+    "server_stop": "stopped",
+    "cleanup_status": "completed",
+    "database_retained": true
+  }
+}

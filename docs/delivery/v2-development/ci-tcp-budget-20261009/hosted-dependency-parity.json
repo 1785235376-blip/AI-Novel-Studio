@@ -1,0 +1,40 @@
+{
+  "scope": "Read-only hosted dependency byte parity; historical fe4 PostgreSQL receipts are not joined to current tests. Current 99 PostgreSQL not yet terminal.",
+  "byte_identical": true,
+  "receipts": [
+    {
+      "artifact_id": 11603118144,
+      "archive_sha256": "4845ef843fee680798c15df761fcc2103c12998753eb8f77966949690fcb5bbb",
+      "package_member": "python-packages.txt",
+      "package_sha256": "74cf563c7bc414940db61b6c9e84d500b0507b0b559590452b040b57a5738b12",
+      "bytes": 709,
+      "rows": 38,
+      "path": ".runtime/github-99e3c63-monitor/dependency-parity/99e3c63-push-file-python-packages.txt"
+    },
+    {
+      "artifact_id": 11602087694,
+      "archive_sha256": "949570b75c14c56dc3bf8b09b755d7cb5888872947752202a35890ea09c4b16e",
+      "package_member": "python-packages.txt",
+      "package_sha256": "74cf563c7bc414940db61b6c9e84d500b0507b0b559590452b040b57a5738b12",
+      "bytes": 709,
+      "rows": 38,
+      "path": ".runtime/github-99e3c63-monitor/dependency-parity/fe4d250-push-pg0-python-packages.txt"
+    },
+    {
+      "artifact_id": 11601719569,
+      "archive_sha256": "ff628d99a75919f414dbabdbd81b7b9b598ad5131827d86ddbed172b951ac294",
+      "package_member": "python-packages.txt",
+      "package_sha256": "74cf563c7bc414940db61b6c9e84d500b0507b0b559590452b040b57a5738b12",
+      "bytes": 709,
+      "rows": 38,
+      "path": ".runtime/github-99e3c63-monitor/dependency-parity/fe4d250-push-pg1-python-packages.txt"
+    },
+    {
+      "artifact_id": 11602858790,
+      "package_sha256": "74cf563c7bc414940db61b6c9e84d500b0507b0b559590452b040b57a5738b12",
+      "bytes": 709,
+      "rows": 38,
+      "path": ".runtime/github-99e3c63-monitor/artifact/receipts/python-packages.txt"
+    }
+  ]
+}

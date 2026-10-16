@@ -1,0 +1,37 @@
+
+Running 1 test using 1 worker
+
+(node:66632) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:66632) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  x  1 [prompt-adoption-ui-1366x768] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin (474ms)
+
+
+  1) [prompt-adoption-ui-1366x768] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 
+
+    Error: {"detail":{"code":"BRANCH_SOURCE_UNAVAILABLE"},"code":"BRANCH_SOURCE_UNAVAILABLE","message":"BRANCH_SOURCE_UNAVAILABLE","details":{"code":"BRANCH_SOURCE_UNAVAILABLE"},"request_id":"a48b379e-9c3f-467f-b125-0f832b714b38"}
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 409
+
+      27 |   });
+      28 |   const exact = async (response: APIResponse, status: number) => {
+    > 29 |     expect(response.status(), await response.text()).toBe(status);
+         |                                                      ^
+      30 |     return response.json();
+      31 |   };
+      32 |   const admin = '/api/collaboration/admin/workspaces/workspace-a';
+        at exact (D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:29:54)
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:46:23
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\docs\delivery\v2-r3-adoption-ui-20261017\browser-file-smoke-r1\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\docs\delivery\v2-r3-adoption-ui-20261017\browser-file-smoke-r1\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\error-context.md
+
+  1 failed
+    [prompt-adoption-ui-1366x768] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 

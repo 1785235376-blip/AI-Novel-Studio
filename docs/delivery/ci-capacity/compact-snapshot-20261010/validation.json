@@ -1,0 +1,47 @@
+{
+  "utc": "2026-10-10T19:41:24.687983+00:00",
+  "parent_commit": "0696f059ad631a88a76b10c9bc2c68c0b064612e",
+  "source_sha256": {
+    "scripts/refresh_v2_staged_catalog.py": "2241561513d5d476bd6cc3ddd575ccb3e3d399942c627d2671657890ca2e7f80",
+    ".github/ci/test_compact_staged_catalog.py": "797fa962eaf6e4dbe5c8eb5bd1aec6f8f68ad6161faafcbc7851ec39a24edbbd",
+    "scripts/refresh_product_api_catalog.py": "e9fc5835b4135446a3b0221c07033c7d88330c1658d416117ac68dba7d5268ec",
+    "scripts/run_v2_checks.py": "539f04a8f4774ac0fb437521ca7f9fb8bc352e90140c394724bc38c1f0305f54"
+  },
+  "unchanged_frozen_sha256": {
+    ".github/ci/coverage_manifest.json.gz": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+    ".github/ci/suite_coverage.py": "570892af0975c125868710e250eb7f30cc5e51ba7cbef9429a3b0f8f10238da7",
+    ".github/ci/coverage_reconcile.py": "f097904d51cc21cb6f1ce8dcc688f692cf89bdd473f3952605eba3b1ae02e66a",
+    ".github/ci/postgres_gate.py": "d18ee804595ab98f8aec4c25745a7961e65a36755e318c8f4f257663b4358a8c",
+    ".github/ci/prepare.sh": "1acd01e7f251dbd5c92af5f139ef026a820f2f412d15d248cdd7a62b80deb76d"
+  },
+  "focused": {
+    "passed": 33,
+    "failed": 0,
+    "seconds": 1.39
+  },
+  "infrastructure": {
+    "passed": 352,
+    "failed": 0,
+    "seconds": 11.08
+  },
+  "actionlint": {
+    "version": "1.7.12",
+    "exit": 0
+  },
+  "evidence_sha256": {
+    "compact-b7e1605713fd.json": "a2044ae056a0f405171cb8d29d8773e72c45bf1e4a5a20983f089214da818cf5",
+    "compact-b7e1605713fd.log": "80b8a0117c70739f0876f0a49623198077a096c32e1df41193a0fdc3f55b485b",
+    "compact-efca85593b86.json": "dedd8534be9d7ff21f1f5b08aa1e333ded5bf525fe6cef0ef51a63f4e8867f4b",
+    "compact-efca85593b86.log": "f977a429ee34dd5dcdc6f1de52124b5812dbfb50b05e2aee2d6049fa0c036594",
+    "compact-infra-final.log": "93dca7108afb89ddc2d7a093ee72a7ffe47ed5caef83363a46ec3b1a1421acad",
+    "compact-infra-final.xml": "535d154ee7a6e4315b54abea3df319e7fab43529f580f1bc0c86e80bd8d327a5",
+    "compact-tests-r2.log": "d2882d8544b132c83501f0069a2efcd9bd7e996970076eab714139a2938b7ce9",
+    "compact-tests-r3.log": "c001bf391236e2531ced5cff33b4f14b03480638dba1c70971a6b974b73526f3",
+    "compact-tests-r3.xml": "9109410811af36c266ac4d842b6c02fdb26fc40b25a349cd3f7a8e21121aa4be",
+    "compact-tests-r4.log": "05003aab83f926cf74b956dc0678bb35971da66ba64d4c1e8b4f3fa06fdb1151",
+    "compact-tests-r4.xml": "fd2e1475b1191f7adf41601e3dd9965da3ddfecdb3982a5199095a2d89669c6a",
+    "comparison-driver.py": "b4494d4a7c9ba5e298ebd56419408c13fcd3ce291749e11e3469ca00f849cf94",
+    "development-r1.xml": "5aee9c406e35754334ef65deb1eac62004791ccca6140371222b7fed5a0fbaf5"
+  },
+  "scope": "Opt-in snapshot engineering only; no hosted-backend or security acceptance"
+}

@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-16T19:52:03.098719+00:00",
+  "base": "454ccd89499e3840d18622e8b6ec2669c17702c4",
+  "source_count": 5,
+  "sources": {
+    "frontend/src/App.tsx": "ab211c5c61014ab617fcd3e320a03cfd7b92467f419ce9bf45e0ae5b78200bf3",
+    "frontend/src/AppModuleNavigationIntent.test.tsx": "99bd7e33b7595eae8638cb8cc9ae7994d55380fd8a59106b648731c433f5e710",
+    "scripts/run_v2_navigation_intent_browser.py": "396340b8d09f2225a51877bcba08d06013739d638cc8b123736e0dfd6ca288c9",
+    "frontend/playwright.navigation-intent-live.config.ts": "e55ff4ec391ac0b6858b2d2ff191cdeac50c806839c1b9c4a3cc75877318a536",
+    "frontend/tests/e2e/v2-navigation-intent-live.spec.ts": "59a63c11cbfa9c10fdbc754850e93dbd0f2c7aacf5d7ebd22d5d0315e8aaab48"
+  },
+  "authorized_partial_file_target": "frontend/src/App.tsx",
+  "boundary": "App may receive authorized common-status prop wiring only; navigation owner sections are separately raw-protected. The mounted navigation test and three harness sources remain byte-protected."
+}

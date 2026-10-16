@@ -1,0 +1,18 @@
+{
+  "synthetic_only": true,
+  "backend": "file",
+  "platform": "Linux",
+  "python": "3.12.14",
+  "chapters": 200,
+  "requested_characters_per_chapter": 5000,
+  "actual_characters": 1002092,
+  "candidate_count": 800,
+  "create_seconds": 12.894,
+  "extract_seconds": 14.813,
+  "snapshot_export_reopen_seconds": 26.141,
+  "total_seconds": 53.848,
+  "python_tracemalloc_peak_bytes": 19250094,
+  "export_sha256": "8ca65bda099afa8ec47c8bc9039160e7290e8b65c43bb344f2ba49fd08db3c3e",
+  "external_model_calls": 0,
+  "performance_acceptance": "MEASURED_ONLY; no universal hardware target asserted"
+}

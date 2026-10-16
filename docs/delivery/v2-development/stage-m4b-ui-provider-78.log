@@ -1,0 +1,15 @@
+ISOLATED TWO-FILE CONTRACT ALIGNMENT REGRESSION
+Sat Oct 10 10:54:10 UTC 2026
+bbb816a5bfce6a6e02684cb99b8a8e2a2b1478fa323250f7ee3916e25bd2c23c  frontend/src/creative/studioProviderClient.ts
+7376363d0b4508040c711c384b7039257262aa4a11bc390e217b9590dcced6cf  frontend/src/creative/studioProvider.testFixtures.ts
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ✓ src/creative/studioProviderClient.test.ts (62 tests) 38ms
+ ✓ src/creative/ProviderTaskMatchPanel.test.tsx (16 tests) 922ms
+
+ Test Files  2 passed (2)
+      Tests  78 passed (78)
+   Start at  03:54:10
+   Duration  2.58s (transform 545ms, setup 0ms, collect 797ms, tests 960ms, environment 611ms, prepare 389ms)
+

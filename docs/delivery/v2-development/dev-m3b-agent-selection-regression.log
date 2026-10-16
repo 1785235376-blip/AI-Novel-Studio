@@ -1,0 +1,18 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ✓ src/localHostSession.test.ts (6 tests) 46ms
+ ✓ src/novel/AgentQueuePanel.test.tsx (2 tests) 352ms
+ ✓ src/novel/AgentTeamPanel.selectionBoundary.test.tsx (7 tests) 433ms
+ ✓ src/novel/AgentActivityCenter.test.tsx (2 tests) 252ms
+ ✓ src/novel/A43ChapterIdentity.test.tsx (2 tests) 324ms
+ ✓ src/novel/AgentTeamPanel.additional.test.tsx (5 tests) 473ms
+ ✓ src/novel/AgentTeamPanel.test.tsx (2 tests) 370ms
+ ✓ src/novel/LocalHostSessionPanel.test.tsx (9 tests) 580ms
+ ✓ src/novel/AgentResultReview.test.tsx (2 tests) 90ms
+
+ Test Files  9 passed (9)
+      Tests  37 passed (37)
+   Start at  09:25:09
+   Duration  2.37s (transform 718ms, setup 0ms, collect 3.12s, tests 2.92s, environment 5.77s, prepare 978ms)
+

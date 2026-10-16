@@ -1,0 +1,449 @@
+.s...sss.s.s.s.s.s.......sssssss.........sssssssss.s.s.s.s.............s [ 34%]
+ssssssssssss.....sssss.s.s.s..ss.s.s.s.s.....sssss.s.s.sFEFEss.s.s.s.s.s [ 67%]
+.s.s.s.s..ss....ssss..ssFFssFFssFFFFssss..ss..ss..ss........ssssssss     [100%]
+==================================== ERRORS ====================================
+_ ERROR at teardown of test_same_slug_recreation_hides_old_bound_assets_even_on_legacy_routes[file-/api] _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7f0db7d35ee0>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio'), novel_data=PosixPath('/workspace/scratch/b...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_same_slug_recreation_hides_old_bound_assets_even_on_legacy_routes[file-/api/v1] _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7f0db6bc62a0>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+.venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv/lib/python3.12/site-packages/_pytest/runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv/lib/python3.12/site-packages/_pytest/runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/runner.py:546: in teardown_exact
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:1058: in finish
+    fin()
+.venv/lib/python3.12/site-packages/_pytest/fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio'), novel_data=PosixPath('/workspace/scratch/b...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+=================================== FAILURES ===================================
+_ test_same_slug_recreation_hides_old_bound_assets_even_on_legacy_routes[file-/api] _
+
+rig = namespace(nid='v2-independent-1f82bf1b7950417b916e3dab93b7d215', scope={'mode': 'local', 'novel_id': 'v2-independent-1...IdentityRepository object at 0x7f0db7d243e0>), create_project=<function rig.<locals>.create_project at 0x7f0db7d34860>)
+decoders = None
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0db7d26f90>
+prefix = '/api'
+
+    @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+    def test_same_slug_recreation_hides_old_bound_assets_even_on_legacy_routes(rig, decoders, monkeypatch, prefix):
+        import app.api as api
+        from app.config import settings
+        from app.main import app
+        from fastapi.testclient import TestClient
+        old = import_asset(rig, key="reused-after-recreate")
+        old_identity = stored_asset(rig, old["id"])["_project_binding"]["incarnation"]
+        rig.service.preferences(rig.nid, rig.scope, rig.actor, {"expected_version": 0, "preset": "VIDEO"})
+        other = rig.create_project("Unrelated project")
+        other_scope = {"mode": "local", "novel_id": other}
+        other_asset = rig.service.import_asset(other, other_scope, rig.actor, upload())
+        old_meta = stored_asset(rig, old["id"])
+        rig.novels.delete(rig.nid)
+        with pytest.raises(FileNotFoundError):
+            rig.service.list_assets(rig.nid, rig.scope)
+        rig.create_project("Recreated owner", nid=rig.nid)
+        second = reopened(rig)
+        assert second.project(rig.nid, rig.scope)["preferences"]["version"] == 0
+        assert second.list_assets(rig.nid, rig.scope) == {"items": []}
+        assert second.store.incarnation(rig.nid) != old_identity
+        for operation in (lambda: second.asset(rig.nid, rig.scope, old["id"]),
+                          lambda: second.download(rig.nid, rig.scope, old["id"]),
+                          lambda: second.lifecycle(rig.nid, rig.scope, old["id"], 1, restore=True),
+                          lambda: second.assets.get(old["id"], include_deleted=True),
+                          lambda: second.assets.content(old["id"])):
+            with pytest.raises(FileNotFoundError):
+                operation()
+        assert stored_asset(rig, old["id"]) == old_meta
+        assert (rig.assets.root / f"{old['id']}.bin").read_bytes() == png_bytes()
+        fresh = second.import_asset(rig.nid, rig.scope, rig.actor, upload(key="reused-after-recreate"))
+        assert fresh["id"] != old["id"]
+        assert second.download(other, other_scope, other_asset["id"])[1] == png_bytes()
+        monkeypatch.setattr(api, "asset_library_service", second.assets)
+        monkeypatch.setattr(api, "novel_service", rig.novels)
+>       monkeypatch.setattr(settings, "enable_collaboration_runtime", False)
+
+tests/test_v2_independent_workspace.py:790: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio'), novel_data=PosixPath('/workspace/scratch/b...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_ test_same_slug_recreation_hides_old_bound_assets_even_on_legacy_routes[file-/api/v1] _
+
+rig = namespace(nid='v2-independent-8824adcf136d4710aa293d90cddb6771', scope={'mode': 'local', 'novel_id': 'v2-independent-8...IdentityRepository object at 0x7f0dbcb03230>), create_project=<function rig.<locals>.create_project at 0x7f0db7d37740>)
+decoders = None
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0db7d407a0>
+prefix = '/api/v1'
+
+    @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+    def test_same_slug_recreation_hides_old_bound_assets_even_on_legacy_routes(rig, decoders, monkeypatch, prefix):
+        import app.api as api
+        from app.config import settings
+        from app.main import app
+        from fastapi.testclient import TestClient
+        old = import_asset(rig, key="reused-after-recreate")
+        old_identity = stored_asset(rig, old["id"])["_project_binding"]["incarnation"]
+        rig.service.preferences(rig.nid, rig.scope, rig.actor, {"expected_version": 0, "preset": "VIDEO"})
+        other = rig.create_project("Unrelated project")
+        other_scope = {"mode": "local", "novel_id": other}
+        other_asset = rig.service.import_asset(other, other_scope, rig.actor, upload())
+        old_meta = stored_asset(rig, old["id"])
+        rig.novels.delete(rig.nid)
+        with pytest.raises(FileNotFoundError):
+            rig.service.list_assets(rig.nid, rig.scope)
+        rig.create_project("Recreated owner", nid=rig.nid)
+        second = reopened(rig)
+        assert second.project(rig.nid, rig.scope)["preferences"]["version"] == 0
+        assert second.list_assets(rig.nid, rig.scope) == {"items": []}
+        assert second.store.incarnation(rig.nid) != old_identity
+        for operation in (lambda: second.asset(rig.nid, rig.scope, old["id"]),
+                          lambda: second.download(rig.nid, rig.scope, old["id"]),
+                          lambda: second.lifecycle(rig.nid, rig.scope, old["id"], 1, restore=True),
+                          lambda: second.assets.get(old["id"], include_deleted=True),
+                          lambda: second.assets.content(old["id"])):
+            with pytest.raises(FileNotFoundError):
+                operation()
+        assert stored_asset(rig, old["id"]) == old_meta
+        assert (rig.assets.root / f"{old['id']}.bin").read_bytes() == png_bytes()
+        fresh = second.import_asset(rig.nid, rig.scope, rig.actor, upload(key="reused-after-recreate"))
+        assert fresh["id"] != old["id"]
+        assert second.download(other, other_scope, other_asset["id"])[1] == png_bytes()
+        monkeypatch.setattr(api, "asset_library_service", second.assets)
+        monkeypatch.setattr(api, "novel_service", rig.novels)
+>       monkeypatch.setattr(settings, "enable_collaboration_runtime", False)
+
+tests/test_v2_independent_workspace.py:790: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Settings(root=PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio'), novel_data=PosixPath('/workspace/scratch/b...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+____ test_real_identity_branch_permissions_and_readonly_controls[file-/api] ____
+
+client = namespace(client=<starlette.testclient.TestClient object at 0x7f0db4e950a0>, prefix='/api', base='/api/novels/r3-mount...rs={'X-Session-Token': 'viewer-a8cc561d722842cda9b50b98f93f5263', 'X-Branch-ID': 'b-a8cc561d722842cda9b50b98f93f5263'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0db4d38f20>
+
+    def test_real_identity_branch_permissions_and_readonly_controls(client, monkeypatch):
+        e = scoped(client, monkeypatch)
+        for headers, status in (({}, 401), ({"X-Session-Token": "untrusted"}, 401),
+                                ({"X-Session-Token": e.lead}, 400)):
+>           assert e.client.get(e.studio_base, headers=headers).status_code == status
+E           AssertionError: assert 501 == 401
+E            +  where 501 = <Response [501 Not Implemented]>.status_code
+E            +    where <Response [501 Not Implemented]> = get('/api/projects/r3-mounted-0ead16e12b3544ba8baaba00183976a9/studio', headers={})
+E            +      where get = <starlette.testclient.TestClient object at 0x7f0db4e950a0>.get
+E            +        where <starlette.testclient.TestClient object at 0x7f0db4e950a0> = namespace(client=<starlette.testclient.TestClient object at 0x7f0db4e950a0>, prefix='/api', base='/api/novels/r3-mount...rs={'X-Session-Token': 'viewer-a8cc561d722842cda9b50b98f93f5263', 'X-Branch-ID': 'b-a8cc561d722842cda9b50b98f93f5263'}).client
+E            +      and   '/api/projects/r3-mounted-0ead16e12b3544ba8baaba00183976a9/studio' = namespace(client=<starlette.testclient.TestClient object at 0x7f0db4e950a0>, prefix='/api', base='/api/novels/r3-mount...rs={'X-Session-Token': 'viewer-a8cc561d722842cda9b50b98f93f5263', 'X-Branch-ID': 'b-a8cc561d722842cda9b50b98f93f5263'}).studio_base
+
+tests/test_v2_independent_workspace_api.py:118: AssertionError
+__ test_real_identity_branch_permissions_and_readonly_controls[file-/api/v1] ___
+
+client = namespace(client=<starlette.testclient.TestClient object at 0x7f0db4d07b60>, prefix='/api/v1', base='/api/v1/novels/r3...rs={'X-Session-Token': 'viewer-f4eebe92bc5a4f4a8ae2b3320f0dfac5', 'X-Branch-ID': 'b-f4eebe92bc5a4f4a8ae2b3320f0dfac5'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0db565e810>
+
+    def test_real_identity_branch_permissions_and_readonly_controls(client, monkeypatch):
+        e = scoped(client, monkeypatch)
+        for headers, status in (({}, 401), ({"X-Session-Token": "untrusted"}, 401),
+                                ({"X-Session-Token": e.lead}, 400)):
+>           assert e.client.get(e.studio_base, headers=headers).status_code == status
+E           AssertionError: assert 501 == 401
+E            +  where 501 = <Response [501 Not Implemented]>.status_code
+E            +    where <Response [501 Not Implemented]> = get('/api/v1/projects/r3-mounted-00f8e128cb22498f8f6601740aba2fb6/studio', headers={})
+E            +      where get = <starlette.testclient.TestClient object at 0x7f0db4d07b60>.get
+E            +        where <starlette.testclient.TestClient object at 0x7f0db4d07b60> = namespace(client=<starlette.testclient.TestClient object at 0x7f0db4d07b60>, prefix='/api/v1', base='/api/v1/novels/r3...rs={'X-Session-Token': 'viewer-f4eebe92bc5a4f4a8ae2b3320f0dfac5', 'X-Branch-ID': 'b-f4eebe92bc5a4f4a8ae2b3320f0dfac5'}).client
+E            +      and   '/api/v1/projects/r3-mounted-00f8e128cb22498f8f6601740aba2fb6/studio' = namespace(client=<starlette.testclient.TestClient object at 0x7f0db4d07b60>, prefix='/api/v1', base='/api/v1/novels/r3...rs={'X-Session-Token': 'viewer-f4eebe92bc5a4f4a8ae2b3320f0dfac5', 'X-Branch-ID': 'b-f4eebe92bc5a4f4a8ae2b3320f0dfac5'}).studio_base
+
+tests/test_v2_independent_workspace_api.py:118: AssertionError
+_ test_staged_decoding_rechecks_revocation_before_any_asset_commit[file-/api] __
+
+client = namespace(client=<starlette.testclient.TestClient object at 0x7f0db4d69550>, prefix='/api', base='/api/novels/r3-mount...rs={'X-Session-Token': 'viewer-fc2a2ebe2dfa4d83afb40563ae98fa8d', 'X-Branch-ID': 'b-fc2a2ebe2dfa4d83afb40563ae98fa8d'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0db4d693a0>
+
+    def test_staged_decoding_rechecks_revocation_before_any_asset_commit(client, monkeypatch):
+        import app.creative.workspace as module
+        e = scoped(client, monkeypatch)
+        decode = module.inspect_image
+        def revoke_after_decode(data):
+            result = decode(data)
+            e.authorization.revoke_role(e.role, e.lead)
+            return result
+        monkeypatch.setattr(module, "inspect_image", revoke_after_decode)
+        response = e.client.post(e.studio_base + "/assets", headers=e.headers, json=upload_body())
+>       assert response.status_code == 403
+E       assert 501 == 403
+E        +  where 501 = <Response [501 Not Implemented]>.status_code
+
+tests/test_v2_independent_workspace_api.py:145: AssertionError
+_ test_staged_decoding_rechecks_revocation_before_any_asset_commit[file-/api/v1] _
+
+client = namespace(client=<starlette.testclient.TestClient object at 0x7f0db4d60200>, prefix='/api/v1', base='/api/v1/novels/r3...rs={'X-Session-Token': 'viewer-ee27edca46ad4ed88bcffb3e04356c16', 'X-Branch-ID': 'b-ee27edca46ad4ed88bcffb3e04356c16'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0db4d62c60>
+
+    def test_staged_decoding_rechecks_revocation_before_any_asset_commit(client, monkeypatch):
+        import app.creative.workspace as module
+        e = scoped(client, monkeypatch)
+        decode = module.inspect_image
+        def revoke_after_decode(data):
+            result = decode(data)
+            e.authorization.revoke_role(e.role, e.lead)
+            return result
+        monkeypatch.setattr(module, "inspect_image", revoke_after_decode)
+        response = e.client.post(e.studio_base + "/assets", headers=e.headers, json=upload_body())
+>       assert response.status_code == 403
+E       assert 501 == 403
+E        +  where 501 = <Response [501 Not Implemented]>.status_code
+
+tests/test_v2_independent_workspace_api.py:145: AssertionError
+_ test_late_revoke_suppresses_asset_bytes_and_private_errors[file-/api-False] __
+
+client = namespace(client=<starlette.testclient.TestClient object at 0x7f0db4d69e50>, prefix='/api', base='/api/novels/r3-mount...rs={'X-Session-Token': 'viewer-10bb0e3978d7419f980b49c89b0f9425', 'X-Branch-ID': 'b-10bb0e3978d7419f980b49c89b0f9425'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0db4d3aab0>
+private_error = False
+
+    @pytest.mark.parametrize("private_error", [False, True])
+    def test_late_revoke_suppresses_asset_bytes_and_private_errors(client, monkeypatch, private_error):
+        e = scoped(client, monkeypatch)
+>       row = checked(e.client.post(e.studio_base + "/assets", headers=e.headers, json=upload_body()), 201)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_independent_workspace_api.py:152: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [501 Not Implemented]>, status = 201
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"COLLABORATION_ROUTE_NOT_ENABLED"}}
+E       assert 501 == 201
+E        +  where 501 = <Response [501 Not Implemented]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+__ test_late_revoke_suppresses_asset_bytes_and_private_errors[file-/api-True] __
+
+client = namespace(client=<starlette.testclient.TestClient object at 0x7f0db4d6ac00>, prefix='/api', base='/api/novels/r3-mount...rs={'X-Session-Token': 'viewer-ff8a45b73ecd459e9c76ea7cffba9339', 'X-Branch-ID': 'b-ff8a45b73ecd459e9c76ea7cffba9339'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0db4d6b800>
+private_error = True
+
+    @pytest.mark.parametrize("private_error", [False, True])
+    def test_late_revoke_suppresses_asset_bytes_and_private_errors(client, monkeypatch, private_error):
+        e = scoped(client, monkeypatch)
+>       row = checked(e.client.post(e.studio_base + "/assets", headers=e.headers, json=upload_body()), 201)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_independent_workspace_api.py:152: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [501 Not Implemented]>, status = 201
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"COLLABORATION_ROUTE_NOT_ENABLED"}}
+E       assert 501 == 201
+E        +  where 501 = <Response [501 Not Implemented]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_ test_late_revoke_suppresses_asset_bytes_and_private_errors[file-/api/v1-False] _
+
+client = namespace(client=<starlette.testclient.TestClient object at 0x7f0db4d38c20>, prefix='/api/v1', base='/api/v1/novels/r3...rs={'X-Session-Token': 'viewer-40787d0432a84e8ebbc5a9e5d95a9569', 'X-Branch-ID': 'b-40787d0432a84e8ebbc5a9e5d95a9569'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0db52c76b0>
+private_error = False
+
+    @pytest.mark.parametrize("private_error", [False, True])
+    def test_late_revoke_suppresses_asset_bytes_and_private_errors(client, monkeypatch, private_error):
+        e = scoped(client, monkeypatch)
+>       row = checked(e.client.post(e.studio_base + "/assets", headers=e.headers, json=upload_body()), 201)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_independent_workspace_api.py:152: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [501 Not Implemented]>, status = 201
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"COLLABORATION_ROUTE_NOT_ENABLED"}}
+E       assert 501 == 201
+E        +  where 501 = <Response [501 Not Implemented]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_ test_late_revoke_suppresses_asset_bytes_and_private_errors[file-/api/v1-True] _
+
+client = namespace(client=<starlette.testclient.TestClient object at 0x7f0db55fb8f0>, prefix='/api/v1', base='/api/v1/novels/r3...rs={'X-Session-Token': 'viewer-a7585f0b7cc2468e8770a03862f53584', 'X-Branch-ID': 'b-a7585f0b7cc2468e8770a03862f53584'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0db59d6e10>
+private_error = True
+
+    @pytest.mark.parametrize("private_error", [False, True])
+    def test_late_revoke_suppresses_asset_bytes_and_private_errors(client, monkeypatch, private_error):
+        e = scoped(client, monkeypatch)
+>       row = checked(e.client.post(e.studio_base + "/assets", headers=e.headers, json=upload_body()), 201)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_independent_workspace_api.py:152: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [501 Not Implemented]>, status = 201
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"COLLABORATION_ROUTE_NOT_ENABLED"}}
+E       assert 501 == 201
+E        +  where 501 = <Response [501 Not Implemented]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_independent_workspace.py::test_same_slug_recreation_hides_old_bound_assets_even_on_legacy_routes[file-/api]
+FAILED tests/test_v2_independent_workspace.py::test_same_slug_recreation_hides_old_bound_assets_even_on_legacy_routes[file-/api/v1]
+FAILED tests/test_v2_independent_workspace_api.py::test_real_identity_branch_permissions_and_readonly_controls[file-/api]
+FAILED tests/test_v2_independent_workspace_api.py::test_real_identity_branch_permissions_and_readonly_controls[file-/api/v1]
+FAILED tests/test_v2_independent_workspace_api.py::test_staged_decoding_rechecks_revocation_before_any_asset_commit[file-/api]
+FAILED tests/test_v2_independent_workspace_api.py::test_staged_decoding_rechecks_revocation_before_any_asset_commit[file-/api/v1]
+FAILED tests/test_v2_independent_workspace_api.py::test_late_revoke_suppresses_asset_bytes_and_private_errors[file-/api-False]
+FAILED tests/test_v2_independent_workspace_api.py::test_late_revoke_suppresses_asset_bytes_and_private_errors[file-/api-True]
+FAILED tests/test_v2_independent_workspace_api.py::test_late_revoke_suppresses_asset_bytes_and_private_errors[file-/api/v1-False]
+FAILED tests/test_v2_independent_workspace_api.py::test_late_revoke_suppresses_asset_bytes_and_private_errors[file-/api/v1-True]
+ERROR tests/test_v2_independent_workspace.py::test_same_slug_recreation_hides_old_bound_assets_even_on_legacy_routes[file-/api]
+ERROR tests/test_v2_independent_workspace.py::test_same_slug_recreation_hides_old_bound_assets_even_on_legacy_routes[file-/api/v1]
+10 failed, 95 passed, 105 skipped, 1 warning, 2 errors in 21.62s

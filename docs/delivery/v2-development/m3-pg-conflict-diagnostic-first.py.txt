@@ -1,0 +1,14 @@
+import json,os
+import psycopg
+from fastapi.testclient import TestClient
+from app.main import app
+from app.dependencies import novel_repo
+client=TestClient(app)
+with psycopg.connect(os.environ['DATABASE_URL']) as connection:
+ print(json.dumps({'sql_identity':connection.execute('SELECT current_database(),host(inet_server_addr()),inet_server_port()').fetchone()}))
+ print(json.dumps({'tables':connection.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name").fetchall()}))
+for title in ['Synthetic workflow owner','Synthetic agent isolation']:
+ prior=[v for v in client.get('/api/novels').json() if v.get('title')==title]
+ response=client.post('/api/novels',json={'title':title})
+ print(json.dumps({'title':title,'existing_before':prior,'post_status':response.status_code,'post_response':response.json()},ensure_ascii=False))
+ assert prior and response.status_code==409

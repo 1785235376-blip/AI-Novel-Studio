@@ -1,0 +1,55 @@
+{
+  "kind": "BASELINE_DEFECT_EVIDENCE_NOT_PRODUCT_PASS",
+  "baseline_sha": "ad1a90dced36208c63bfd65f5e1d918d4a4f7695",
+  "baseline_tree": "fd32163d45c0cbfb1cf2b54551214b99d282f6e1",
+  "candidate_sha": "b5466788f0510af9f15204587f149910d7e9f8ed",
+  "candidate_tree": "094bb4780646077ae9a3134edd664b6c3eef3aa7",
+  "run_id": "37538014264",
+  "run_attempt": "1",
+  "files": {
+    "baseline-safety.xml": {
+      "bytes": 4035,
+      "sha256": "42655a830ad92d11850f7ecb0e724185b4fe3c09e248ef5626c5f7e64cc762d2"
+    },
+    "audit_a43_02_identity.json": {
+      "bytes": 1384,
+      "sha256": "feb6ba3d841ef4edd488a8b2c0f457f3aa9141b22d28520d4e4b75cf12957252"
+    },
+    "real-postgres.json": {
+      "bytes": 4810,
+      "sha256": "c4123e064983ed6c4a3894615d379267544557c159babf46d5d0e5076d41fa42"
+    },
+    "audit_a43_03_pg_algorithm.json": {
+      "bytes": 486,
+      "sha256": "5c75da819b6cb543129e4df178c9a558f8a4cd4c962e43190459901bfe795c71"
+    },
+    "real-postgres.log": {
+      "bytes": 4810,
+      "sha256": "c4123e064983ed6c4a3894615d379267544557c159babf46d5d0e5076d41fa42"
+    },
+    "baseline-safety-exit.txt": {
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    "source.txt": {
+      "bytes": 96,
+      "sha256": "5adb5991d24270efc20488a93ba7c133a433624697b46e895cae717137818c28"
+    },
+    "baseline-safety.log": {
+      "bytes": 4016,
+      "sha256": "4e85bdf34a791c2b9b67cb73b6355668c76e38dc9dcaddfa0104cc0d8bf1afda"
+    },
+    "audit_a43_boundaries.json": {
+      "bytes": 2116,
+      "sha256": "0c55e1849671e41767212f4959a7a5ee748c80ced28aa0eef7b8832e04233a14"
+    },
+    "audit_a43_01_document.json": {
+      "bytes": 1392,
+      "sha256": "12c0f2aaf02b2b06074be3cc252f96c6c3bca3d6d9ff26309117deee8d666e42"
+    },
+    "python-packages.txt": {
+      "bytes": 668,
+      "sha256": "f1d75f02ac5631b3ed454957ac05eae945a37c6627611ca82fb244b912e7ecc6"
+    }
+  }
+}

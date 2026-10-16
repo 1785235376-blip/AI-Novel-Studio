@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="33" time="1.275" timestamp="2026-10-10T12:39:28.217767-07:00" hostname="7abb01f187ba"><testcase classname=".github.ci.test_compact_staged_catalog" name="test_exclusion_has_exact_directory_boundary[docs/delivery-True]" time="0.001" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_exclusion_has_exact_directory_boundary[docs/delivery/receipt.json-True]" time="0.000" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_exclusion_has_exact_directory_boundary[docs/delivery/deep/evidence.log-True]" time="0.000" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_exclusion_has_exact_directory_boundary[docs/delivery.md-False]" time="0.000" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_exclusion_has_exact_directory_boundary[docs/delivery-next/file-False]" time="0.000" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_exclusion_has_exact_directory_boundary[docs/deliveries/file-False]" time="0.000" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_exclusion_has_exact_directory_boundary[other/docs/delivery/file-False]" time="0.000" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_exclusion_has_exact_directory_boundary[docs/Delivery/file-False]" time="0.000" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_snapshot_reads_the_named_tree_not_current_index_or_worktree" time="0.040"><failure message="NameError: name 'tree' is not defined">repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r3/test_snapshot_reads_the_named_0/repository')
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r3/test_snapshot_reads_the_named_0')
+
+    def test_snapshot_reads_the_named_tree_not_current_index_or_worktree(repository, tmp_path):
+        root = repository
+        put(root, 'docs/delivery-next/file', 'retained evidence-like name')
+        put(root, 'frontend/test.ts', 'frontend remains included')
+        original_tree = stage(root)
+        put(root, 'app/current.py', 'later staged source')
+        git(root, 'add', 'app/current.py')
+        put(root, 'app/current.py', 'unstaged source')
+&gt;       old_receipt = root / f'docs/delivery/v2-development/catalog-{tree[:12]}.json'
+                                                                     ^^^^
+E       NameError: name 'tree' is not defined
+
+.github/ci/test_compact_staged_catalog.py:70: NameError</failure></testcase><testcase classname=".github.ci.test_compact_staged_catalog" name="test_refresh_runs_staged_generator_and_source_only[False]" time="0.102"><failure message="NameError: name 'old_receipt' is not defined">repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r3/test_refresh_runs_staged_gener0/repository')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f490efe7d70&gt;
+compact = False
+
+    @pytest.mark.parametrize('compact', [False, True])
+    def test_refresh_runs_staged_generator_and_source_only(repository, monkeypatch, compact):
+        root = repository
+        tree = git(root, 'write-tree')
+        put(root, 'scripts/refresh_product_api_catalog.py', "raise RuntimeError('unstaged generator')")
+        put(root, 'app/current.py', 'unstaged source')
+        monkeypatch.setattr(catalog, 'ROOT', root)
+        catalog.main(['--compact'] if compact else [])
+        assert all((root / name).read_text() == 'generated: staged source' for name in catalog.OUTPUTS)
+        if compact:
+            assert old_receipt.read_text() == 'existing full receipt must remain unchanged'
+            receipts = list((root / 'docs/delivery/v2-development').glob(f'catalog-{tree[:12]}-compact-*.json'))
+            assert len(receipts) == 1
+            receipt = json.loads(receipts[0].read_text())
+        else:
+&gt;           receipt = json.loads(old_receipt.read_text())
+                                 ^^^^^^^^^^^
+E           NameError: name 'old_receipt' is not defined
+
+.github/ci/test_compact_staged_catalog.py:107: NameError</failure></testcase><testcase classname=".github.ci.test_compact_staged_catalog" name="test_refresh_runs_staged_generator_and_source_only[True]" time="0.093"><failure message="NameError: name 'old_receipt' is not defined">repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r3/test_refresh_runs_staged_gener1/repository')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f490ee10d70&gt;
+compact = True
+
+    @pytest.mark.parametrize('compact', [False, True])
+    def test_refresh_runs_staged_generator_and_source_only(repository, monkeypatch, compact):
+        root = repository
+        tree = git(root, 'write-tree')
+        put(root, 'scripts/refresh_product_api_catalog.py', "raise RuntimeError('unstaged generator')")
+        put(root, 'app/current.py', 'unstaged source')
+        monkeypatch.setattr(catalog, 'ROOT', root)
+        catalog.main(['--compact'] if compact else [])
+        assert all((root / name).read_text() == 'generated: staged source' for name in catalog.OUTPUTS)
+        if compact:
+&gt;           assert old_receipt.read_text() == 'existing full receipt must remain unchanged'
+                   ^^^^^^^^^^^
+E           NameError: name 'old_receipt' is not defined
+
+.github/ci/test_compact_staged_catalog.py:102: NameError</failure></testcase><testcase classname=".github.ci.test_compact_staged_catalog" name="test_generation_or_provenance_failure_publishes_no_catalog[generator-error]" time="0.095" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_generation_or_provenance_failure_publishes_no_catalog[missing-output]" time="0.119" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_generation_or_provenance_failure_publishes_no_catalog[outside-import]" time="0.102" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_generation_or_provenance_failure_publishes_no_catalog[outside-namespace]" time="0.089" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_generation_or_provenance_failure_publishes_no_catalog[delivery-read]" time="0.089" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_archive_attributes_cannot_silently_change_retained_staged_bytes[export-ignore]" time="0.046" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_archive_attributes_cannot_silently_change_retained_staged_bytes[export-subst]" time="0.045" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_retained_symlink_is_rejected_before_generator" time="0.050" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_excluded_evidence_symlink_is_not_followed" time="0.054" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_invalid_tree_stops_before_archive" time="0.024" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_mutable_refs_and_abbreviations_are_rejected[HEAD]" time="0.022" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_mutable_refs_and_abbreviations_are_rejected[refs/heads/main]" time="0.025" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_mutable_refs_and_abbreviations_are_rejected[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]" time="0.027" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_mutable_refs_and_abbreviations_are_rejected[AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]" time="0.019" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_commit_object_cannot_replace_exact_tree" time="0.036" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_existing_destination_cannot_supply_untracked_sources" time="0.017" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_compact_byte_validation_rejects_extraction_drift" time="0.028" /><testcase classname=".github.ci.test_v2_check_runner" name="test_v2_runner_owns_posix_and_windows_state_directories" time="0.002" /><testcase classname=".github.ci.test_v2_check_runner" name="test_v2_runner_receipt_hashes_runtime_tests_and_frontend" time="0.014" /><testcase classname=".github.ci.test_v2_check_runner" name="test_v2_snapshot_omits_only_untracked_fixture_runtime_state" time="0.007" /><testcase classname=".github.ci.test_v2_check_runner" name="test_v2_snapshot_does_not_guess_untracked_status_without_git" time="0.002" /><testcase classname=".github.ci.test_v2_check_runner" name="test_staged_catalog_imports_cannot_write_to_host_home_or_use_host_secrets" time="0.002" /></testsuite></testsuites>

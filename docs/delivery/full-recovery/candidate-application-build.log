@@ -1,0 +1,36 @@
+FROZEN_CANDIDATE_SOURCE_VERIFIED 7bdd12fc2e2eed8acd0410f8dc059bdad01651ed1a02eab26f6a1c70dac1cb62
+vite v6.4.3 building for production...
+transforming...
+✓ 1995 modules transformed.
+rendering chunks...
+computing gzip size...
+../.runtime/full-recovery/candidate-application-final-7bdd12fc/frontend-build/dist/index.html                                   0.33 kB │ gzip:   0.19 kB
+../.runtime/full-recovery/candidate-application-final-7bdd12fc/frontend-build/dist/assets/LocalTutorIntegration-Bg9pZcT3.css    2.93 kB │ gzip:   0.82 kB
+../.runtime/full-recovery/candidate-application-final-7bdd12fc/frontend-build/dist/assets/style-6MlQLGa4.css                    3.79 kB │ gzip:   1.39 kB
+../.runtime/full-recovery/candidate-application-final-7bdd12fc/frontend-build/dist/assets/ExperimentalWorkbench-kya-NcdA.css    4.16 kB │ gzip:   1.07 kB
+../.runtime/full-recovery/candidate-application-final-7bdd12fc/frontend-build/dist/assets/index-Cj-tLRQ5.css                   32.29 kB │ gzip:   5.90 kB
+../.runtime/full-recovery/candidate-application-final-7bdd12fc/frontend-build/dist/assets/App-2vTgbcap.css                    124.23 kB │ gzip:  16.48 kB
+../.runtime/full-recovery/candidate-application-final-7bdd12fc/frontend-build/dist/assets/Health-DNxNh3GZ.js                    0.99 kB │ gzip:   0.57 kB
+../.runtime/full-recovery/candidate-application-final-7bdd12fc/frontend-build/dist/assets/index-0JT3DZKm.js                    30.10 kB │ gzip:   9.98 kB
+../.runtime/full-recovery/candidate-application-final-7bdd12fc/frontend-build/dist/assets/LocalTutorIntegration-Dg6UKK09.js    42.44 kB │ gzip:  13.79 kB
+../.runtime/full-recovery/candidate-application-final-7bdd12fc/frontend-build/dist/assets/style-CEkemVrr.js                    44.99 kB │ gzip:   8.37 kB
+../.runtime/full-recovery/candidate-application-final-7bdd12fc/frontend-build/dist/assets/query-vendor-CUnTvSIi.js             45.60 kB │ gzip:  13.56 kB
+../.runtime/full-recovery/candidate-application-final-7bdd12fc/frontend-build/dist/assets/react-vendor-D3pO_op5.js            142.98 kB │ gzip:  45.80 kB
+../.runtime/full-recovery/candidate-application-final-7bdd12fc/frontend-build/dist/assets/editor-vendor-WoPbGn4i.js           307.09 kB │ gzip:  93.11 kB
+../.runtime/full-recovery/candidate-application-final-7bdd12fc/frontend-build/dist/assets/ExperimentalWorkbench-_m-x7Ik3.js   647.28 kB │ gzip: 189.39 kB
+../.runtime/full-recovery/candidate-application-final-7bdd12fc/frontend-build/dist/assets/App-BU_P7ys2.js                     721.03 kB │ gzip: 207.84 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.30s
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  AI.NovelStudio.DesktopHost -> D:\小说\AI-Novel-Studio-Latest-Product\desktop-host\AI.NovelStudio.DesktopHost\bin\Release\net8.0-windows\win-x64\AI-Novel-Studio.DesktopHost.dll
+  AI.NovelStudio.DesktopHost -> D:\小说\AI-Novel-Studio-Latest-Product\.runtime\full-recovery\candidate-host-publish-final-7bdd12fc\
+APPLICATION_STAGED D:\小说\AI-Novel-Studio-Latest-Product\.runtime\full-recovery\candidate-application-final-7bdd12fc\Application
+DESKTOPHOST_DLL_SHA256 EA16CCF4B7D0F0407FC145E1471B6050C2FCCE2AB366FD3A9A4E8090C59DDCA3
+PROVENANCE_MANIFEST D:\小说\AI-Novel-Studio-Latest-Product\.runtime\full-recovery\candidate-application-final-7bdd12fc\desktophost-provenance.json
+APPLICATION_PROVENANCE_MANIFEST D:\小说\AI-Novel-Studio-Latest-Product\.runtime\full-recovery\candidate-application-final-7bdd12fc\application-provenance.json
+FRESH_CANDIDATE_APPLICATION D:\小说\AI-Novel-Studio-Latest-Product\.runtime\full-recovery\candidate-application-final-7bdd12fc\Application

@@ -1,0 +1,322 @@
+665817243cad59eef0d4140f17c2ea644f46971e	90f211065fed2e2cd7c440365c949d954077bc50	2026-10-07T16:22:05+08:00	fix: preserve form edits across save and recovery settlement
+90f211065fed2e2cd7c440365c949d954077bc50	d9d2df3a0a831a5bba6249793fd21946c17ce7d4	2026-10-07T15:32:38+08:00	fix: close source ownership, identity, and functional recovery gaps
+d9d2df3a0a831a5bba6249793fd21946c17ce7d4	f25f08bd978a01aa32ecb713871b1a70ce1732ce	2026-10-07T14:25:18+08:00	Complete authoritative branch and bounded product feature surfaces
+f25f08bd978a01aa32ecb713871b1a70ce1732ce	13b9f9171205b0e8a97d0b081a6b7e85c434a7b1	2026-10-07T12:20:07+08:00	fix: preserve legacy feature discovery while exposing explicit runtime opt-ins
+13b9f9171205b0e8a97d0b081a6b7e85c434a7b1	6dc09ffc71ba47b6730df491186bfce429f0721a	2026-10-07T11:26:43+08:00	feat: add scoped workspace interaction contracts and surface completion registry
+6dc09ffc71ba47b6730df491186bfce429f0721a	d80e4dc0429c219948e66abf2a8994cc706f3227	2026-10-07T09:32:57+08:00	fix: reject drive-qualified namespaces and preserve DOCX measurement fidelity
+d80e4dc0429c219948e66abf2a8994cc706f3227	1d9b88ac36b1d75c06544e3aa69c3ab308164120	2026-10-07T07:53:03+08:00	fix: preserve rich headings and reject detached generation sources
+1d9b88ac36b1d75c06544e3aa69c3ab308164120	de92f5756ba8a789243d5a970ee865307a36e596	2026-10-07T06:56:50+08:00	fix: retain original media nodes and type PostgreSQL identity reservations
+de92f5756ba8a789243d5a970ee865307a36e596	b5466788f0510af9f15204587f149910d7e9f8ed	2026-10-07T06:39:09+08:00	fix: preserve rich documents and stable chapter identities
+b5466788f0510af9f15204587f149910d7e9f8ed	ad1a90dced36208c63bfd65f5e1d918d4a4f7695	2026-10-07T06:02:17+08:00	test: preserve A43 observations and require real PostgreSQL baseline RED
+ad1a90dced36208c63bfd65f5e1d918d4a4f7695	55e18e2d15f2c2b93175c7b73750fe91eab7ff96	2026-10-07T02:49:04+08:00	test: verify style restart conservation across shared persistence
+55e18e2d15f2c2b93175c7b73750fe91eab7ff96	daaebf871f646dd78632c8ee144ef3cba17f35b6	2026-10-07T02:34:33+08:00	test: stabilize original cancellation and UI fixture readiness without weakening assertions
+daaebf871f646dd78632c8ee144ef3cba17f35b6	c12f9b61bf732b40181fabd88e432c6b8deb5bae	2026-10-07T01:36:43+08:00	fix: bind browser fixtures to original source and preserve strict profile coverage
+c12f9b61bf732b40181fabd88e432c6b8deb5bae	dedb813bb297bb5fb95bac55440a71913b54ed10	2026-10-07T01:02:22+08:00	feat: deepen extended creation and exact original task recovery (Wave5)
+dedb813bb297bb5fb95bac55440a71913b54ed10	d18e874e20117bce6cce15366b64d2c1c129b1bc	2026-10-07T00:44:48+08:00	feat: deepen original media production and stale-source recovery (Wave4)
+d18e874e20117bce6cce15366b64d2c1c129b1bc	dd34bf213020da488ae76ee07a43d416496a52c7	2026-10-07T00:38:42+08:00	feat: deepen creation intelligence and original context workflows (Wave2)
+dd34bf213020da488ae76ee07a43d416496a52c7	4d736c0d14bdcd12d0ad3cc7146553971654620b	2026-10-07T00:12:36+08:00	feat(models): deepen broker evidence, research history and real embedding adapters
+4d736c0d14bdcd12d0ad3cc7146553971654620b	bdb735f798f1441f1424bba313c9d50d010efcac	2026-10-06T23:47:59+08:00	ci: preserve exact public source for executor recovery
+bdb735f798f1441f1424bba313c9d50d010efcac	8ed7afd9a66dce226468532feead14f3a172796c	2026-10-06T23:37:51+08:00	feat(ux): deepen durable drafts, original task controls and scoped workspace navigation
+8ed7afd9a66dce226468532feead14f3a172796c	e58c72b04182cd374af092314386b90f8250a173	2026-10-06T23:06:58+08:00	docs: establish post-interop continuation baseline and current feature matrix
+e58c72b04182cd374af092314386b90f8250a173	ea530809e448c0cf967e3d288aaa5c19c97f1a9f	2026-10-06T22:05:15+08:00	ci: preserve complete backend coverage within bounded PostgreSQL shards
+ea530809e448c0cf967e3d288aaa5c19c97f1a9f	b6a61c48d3a37a0a116c5d1e664eb3b7eda4949a	2026-10-06T20:38:54+08:00	fix(packaging): include desktop interop SDK in Windows application
+b6a61c48d3a37a0a116c5d1e664eb3b7eda4949a	bcd60afb96cc69bdfd81db619cb0121d8712f074	2026-10-06T20:29:38+08:00	feat(interop): prepare desktop SDK and wire Studio runtime adapters
+bcd60afb96cc69bdfd81db619cb0121d8712f074	3c6642cef49f381cb28706e9102b73122e2f74aa	2026-10-06T17:30:53+08:00	test(runtime): allocate loopback ports for owned-process fixtures
+3c6642cef49f381cb28706e9102b73122e2f74aa	9591396db8703d4ce7a315a1510cfb2003b807c4	2026-10-06T16:34:59+08:00	test(interop): await observed editor and PostgreSQL readiness
+9591396db8703d4ce7a315a1510cfb2003b807c4	a1b42cfca8d1c00878f31e2ffcb9c614884a9236	2026-10-06T16:14:43+08:00	fix(interop): preserve modal keyboard boundary after async focus loss
+a1b42cfca8d1c00878f31e2ffcb9c614884a9236	ba69b12d3475f4881c207edfae0e58a781a9d83a	2026-10-06T15:51:39+08:00	fix: retain unknown revocation state until acknowledgement
+ba69b12d3475f4881c207edfae0e58a781a9d83a	bbd6e65e3334c213d91a2343208817a9106298ff	2026-10-06T15:28:06+08:00	fix: require explicit event consent and unify diagnostics envelopes
+bbd6e65e3334c213d91a2343208817a9106298ff	ca75897005e181b62f7e0f2b75600d8e9b9612f2	2026-10-06T15:07:16+08:00	feat: add opt-in Local Interop V1 host, strict protocol and Tutor workflows
+ca75897005e181b62f7e0f2b75600d8e9b9612f2	2c5b4e2f43c50318d9c1eeea487f68c2d66f7b42	2026-10-06T14:01:07+08:00	docs: establish Local Interop V1 compatibility boundary
+2c5b4e2f43c50318d9c1eeea487f68c2d66f7b42	14aad4756b68e3e00864b908fb80f7b1d3aebc47	2026-10-06T12:03:49+08:00	test: await settled saved-draft state without changing assertions
+14aad4756b68e3e00864b908fb80f7b1d3aebc47	94e74f79d6eb3bff23d86682774fc19bd1d05144	2026-10-06T11:14:40+08:00	ci: retain all PostgreSQL contracts with a finite 45-minute outer cap
+94e74f79d6eb3bff23d86682774fc19bd1d05144	afcfda1bd3b7b4d1bf61fd44ff59d715f0924041	2026-10-06T10:35:48+08:00	fix: preserve source lifetime across generation content readers
+afcfda1bd3b7b4d1bf61fd44ff59d715f0924041	1c88a7dfb821b9ba72425c180bd95ba3140fd079	2026-10-06T10:30:48+08:00	fix: repair shared project authority, live SSE revocation and terminal review protocol
+1c88a7dfb821b9ba72425c180bd95ba3140fd079	c6f2126115b52e17839d48efea091dc21ec08c61	2026-10-06T10:12:05+08:00	test: preserve supplied R123 reproductions against locked untouched baseline
+c6f2126115b52e17839d48efea091dc21ec08c61	4e476ce853aa26b395a9fe452d7d4a35b091e057	2026-10-06T08:50:25+08:00	docs(delivery): reconcile forty packages and retain exact hosted evidence
+4e476ce853aa26b395a9fe452d7d4a35b091e057	98a1a3c455601e38cc608c6fbac89bb011a68e63	2026-10-06T07:57:19+08:00	ci: retain full expanded PostgreSQL contracts with a bounded 30-minute cap
+98a1a3c455601e38cc608c6fbac89bb011a68e63	5f16e949a012265cce36609afff12c5edb19c28e	2026-10-06T07:52:30+08:00	test: retain exact source checks and bounded original PNG evidence
+5f16e949a012265cce36609afff12c5edb19c28e	9bdae526df25eaeef254c6992ddab5240d69fadc	2026-10-06T07:51:38+08:00	fix(ux): preserve exact reviewed author request receipt through App
+9bdae526df25eaeef254c6992ddab5240d69fadc	4d7b46a114beac85165432eadbba32436f402a5b	2026-10-06T07:32:06+08:00	test: repair observed browser synchronization and execute real PG search contract
+4d7b46a114beac85165432eadbba32436f402a5b	0ac265676c1739f1f5ce82b80d43161c2819e756	2026-10-06T07:30:49+08:00	feat: complete original registered model, media and audio execution (10/10)
+0ac265676c1739f1f5ce82b80d43161c2819e756	2300853b9f80b80c330c0902b024547eff00bc19	2026-10-06T07:30:20+08:00	feat: complete original registered model, media and audio execution (9/10)
+2300853b9f80b80c330c0902b024547eff00bc19	ba7b617620228dd9be9bcf307591fdac114fc5ea	2026-10-06T07:29:42+08:00	feat: complete original registered model, media and audio execution (8/10)
+ba7b617620228dd9be9bcf307591fdac114fc5ea	bca92c6bdcc868e2c09e85040297180f230183cc	2026-10-06T07:28:50+08:00	feat: complete original registered model, media and audio execution (7/10)
+bca92c6bdcc868e2c09e85040297180f230183cc	3a4e9fd07f2c8998583e8f0ffe7548b8eec81199	2026-10-06T07:27:19+08:00	feat: complete original registered model, media and audio execution (6/10)
+3a4e9fd07f2c8998583e8f0ffe7548b8eec81199	831a7c8132a3387ae025b78fb38a09b6e8c010d4	2026-10-06T07:26:29+08:00	feat: complete original registered model, media and audio execution (5/10)
+831a7c8132a3387ae025b78fb38a09b6e8c010d4	cb71c5878103caf4c94f9ace45fbfe23907c526e	2026-10-06T07:25:03+08:00	feat: complete original registered model, media and audio execution (4/10)
+cb71c5878103caf4c94f9ace45fbfe23907c526e	d8291aba990c8e52fe5a7bba3d1646be2cd07dee	2026-10-06T07:24:27+08:00	feat: complete original registered model, media and audio execution (3/10)
+d8291aba990c8e52fe5a7bba3d1646be2cd07dee	71866b5298bab5b3911196383a54f3638eadf67c	2026-10-06T07:22:53+08:00	feat: complete original registered model, media and audio execution (2/10)
+71866b5298bab5b3911196383a54f3638eadf67c	f9173c2bedf4866d8f28119baabc53ed2aa8d0dc	2026-10-06T07:21:53+08:00	feat: complete original registered model, media and audio execution (1/10)
+f9173c2bedf4866d8f28119baabc53ed2aa8d0dc	774bcd93ff0bf43338add2e3329f9445733c1e65	2026-10-06T07:07:03+08:00	feat: close original search, source, portable and fork scope (10/10)
+774bcd93ff0bf43338add2e3329f9445733c1e65	1b1ba6974fb5c3af3d1d974c68b093699a6d77fd	2026-10-06T07:06:32+08:00	feat: close original search, source, portable and fork scope (9/10)
+1b1ba6974fb5c3af3d1d974c68b093699a6d77fd	aeaf86c7e7bd466860c48887a6d2d0a67840eb5c	2026-10-06T07:05:52+08:00	feat: close original search, source, portable and fork scope (8/10)
+aeaf86c7e7bd466860c48887a6d2d0a67840eb5c	feec13d969a3181a50884786999884762852c6aa	2026-10-06T07:04:47+08:00	feat: close original search, source, portable and fork scope (7/10)
+feec13d969a3181a50884786999884762852c6aa	717f19794013909972a6fad8ac0102954464d0f2	2026-10-06T07:03:37+08:00	feat: close original search, source, portable and fork scope (6/10)
+717f19794013909972a6fad8ac0102954464d0f2	d7591862b18abaf96a0749f9c4e69c9600d1adbf	2026-10-06T07:02:35+08:00	feat: close original search, source, portable and fork scope (5/10)
+d7591862b18abaf96a0749f9c4e69c9600d1adbf	f0a1646618959d151cd863eaaba777c8e762871a	2026-10-06T07:01:52+08:00	feat: close original search, source, portable and fork scope (4/10)
+f0a1646618959d151cd863eaaba777c8e762871a	9d867863fb0bd2a4ed2b9c5a4d38aec52323c324	2026-10-06T07:01:09+08:00	feat: close original search, source, portable and fork scope (3/10)
+9d867863fb0bd2a4ed2b9c5a4d38aec52323c324	29908cdbfb271aa8a1ae1c157bc1b6f95a4547be	2026-10-06T06:59:58+08:00	feat: close original search, source, portable and fork scope (2/10)
+29908cdbfb271aa8a1ae1c157bc1b6f95a4547be	1da63f5b698a71ebb2a3e6a4e94f0634e8b8a487	2026-10-06T06:59:19+08:00	feat: close original search, source, portable and fork scope (1/10)
+1da63f5b698a71ebb2a3e6a4e94f0634e8b8a487	544e6ea616005a7078be0d993e21bd573f6b9394	2026-10-06T05:50:25+08:00	docs(delivery): reconcile all forty bounded capabilities, exact evidence and final UI handoff
+544e6ea616005a7078be0d993e21bd573f6b9394	bf0ec2b09ef03187536f0e9a677142e3e915aa44	2026-10-06T05:49:44+08:00	docs(evidence): retain corrected original screenshots and verified PG/browser receipts
+bf0ec2b09ef03187536f0e9a677142e3e915aa44	574ca0421df5c60be4f86aa9caff274a52dc71e3	2026-10-06T04:54:18+08:00	docs: retain actual toolbar failure and stronger action-target verification
+574ca0421df5c60be4f86aa9caff274a52dc71e3	038c322d98f034b04ab27770239fbfed8570e604	2026-10-06T04:53:49+08:00	fix(ux): reserve inspector hit area and reflow original save controls
+038c322d98f034b04ab27770239fbfed8570e604	b7b86a3134b9eafe77a80e810f4327ccafae4df3	2026-10-06T04:26:02+08:00	docs(delivery): retain real PostgreSQL, browser and layout-repair evidence
+b7b86a3134b9eafe77a80e810f4327ccafae4df3	97b51f19ef692662014ba1c81105833bb844a135	2026-10-06T04:25:21+08:00	fix(ux): keep resume controls in chrome and prove editor visibility
+97b51f19ef692662014ba1c81105833bb844a135	1d1b9756cedf9daf04dc1123f043e8d555b164c1	2026-10-06T04:24:33+08:00	fix(ux): expose the original task-center region accessibly
+1d1b9756cedf9daf04dc1123f043e8d555b164c1	6028e41b7934a5454e214b2f20785c23e02cd286	2026-10-06T03:30:25+08:00	docs: retain final UX evidence, failures and next priorities
+6028e41b7934a5454e214b2f20785c23e02cd286	84aa9668ff6bb2b3871be4868d46976e8ec55376	2026-10-06T03:29:57+08:00	feat(ux): compose current-authority restore and safe sample navigation
+84aa9668ff6bb2b3871be4868d46976e8ec55376	d47b13b4a17fe682271cc04c0e82b28f47bd8a3a	2026-10-06T03:29:11+08:00	test: correct original-scope browser and shared inventory fixtures
+d47b13b4a17fe682271cc04c0e82b28f47bd8a3a	ddb56f6beb29f7d51e7129f6c6c8378765c06820	2026-10-06T03:28:32+08:00	fix(a11y): give request source controls exact visible accessible names
+ddb56f6beb29f7d51e7129f6c6c8378765c06820	c385efa336ecc669a8b0c5c981c8eac9103e6938	2026-10-06T03:28:11+08:00	feat(onboarding): add original-authority isolated no-key sample workflow
+c385efa336ecc669a8b0c5c981c8eac9103e6938	344062df637685d78cf25e9edf9f2c6734bbd75e	2026-10-06T03:27:46+08:00	feat(ux): restore exact original workspace and last local project
+344062df637685d78cf25e9edf9f2c6734bbd75e	39d13a1927f30a3a9fbc34de8f063bb56dbbf78b	2026-10-06T03:07:09+08:00	test: match exact proxied multilingual response receipts
+39d13a1927f30a3a9fbc34de8f063bb56dbbf78b	422e8c62e5cc3a1c1fffb16ec152f46d9aee8b6d	2026-10-06T03:06:28+08:00	docs: record forty-package runtime evidence and explicit remaining limits
+422e8c62e5cc3a1c1fffb16ec152f46d9aee8b6d	85a800b2f1527eb1c46e61c5a96ef3b6b6d22673	2026-10-06T03:05:53+08:00	feat: compose forty bounded packages and searchable existing tools
+85a800b2f1527eb1c46e61c5a96ef3b6b6d22673	f89707dc72062a11a6ae81458b548864edee0bb1	2026-10-06T03:05:13+08:00	feat(tasks): project and reopen exact original author jobs
+f89707dc72062a11a6ae81458b548864edee0bb1	1f497eb7d29946a829a2e3a766fc7b09f121d087	2026-10-06T03:04:37+08:00	feat(author): bind removable context and exact local variant requests
+1f497eb7d29946a829a2e3a766fc7b09f121d087	9104040708d673a61c6dd432d9d8f38f8a9303b0	2026-10-06T03:03:41+08:00	feat(sync): add selected offline exchange and real two-process contracts
+9104040708d673a61c6dd432d9d8f38f8a9303b0	35f69bcf39409f8cfaaf87beddc0164b96edf295	2026-10-06T03:02:58+08:00	feat(forks): add original-CAS three-way merge and checkpoint recovery
+35f69bcf39409f8cfaaf87beddc0164b96edf295	8c2662972ef2fb2b9bdd8a7b630837c0765b4226	2026-10-06T03:02:05+08:00	feat(review): add scoped writer-room assignments and selected packages
+8c2662972ef2fb2b9bdd8a7b630837c0765b4226	3389fd986ec2bc60b180bd1d698b6a7bf053cc7f	2026-10-06T03:01:39+08:00	feat(story): add reviewed interactive branches and bounded engine export
+3389fd986ec2bc60b180bd1d698b6a7bf053cc7f	bba6a9705d01eaa91d25056f8d90525d5b0f29dc	2026-10-06T03:01:07+08:00	feat(comic): add reviewed original-media layouts and real raster export
+bba6a9705d01eaa91d25056f8d90525d5b0f29dc	e073f054ca35e8f357c18e792c1eaad286f76bb4	2026-10-06T03:00:39+08:00	fix(review): recheck original comment authority before persistence
+e073f054ca35e8f357c18e792c1eaad286f76bb4	6afb8b9b5ae16c40c6a63d3433526f4f464325c9	2026-10-06T03:00:19+08:00	fix(auth): validate project scopes through original authority
+6afb8b9b5ae16c40c6a63d3433526f4f464325c9	60314f9d093c6f1b4b27959ac2b3d7414d03d6da	2026-10-06T02:59:53+08:00	fix(http): preserve authoritative error response headers
+60314f9d093c6f1b4b27959ac2b3d7414d03d6da	e12db8d0cf1651afe99dfbfb01a248f198954c7c	2026-10-06T02:54:12+08:00	test: correct shared PostgreSQL and authoritative browser fixtures
+e12db8d0cf1651afe99dfbfb01a248f198954c7c	67ebb035b60e2a50d8390a9ca43ec87839e2e795	2026-10-06T02:29:46+08:00	fix(broker): retain explicit cancellation across owned dispatch transition
+67ebb035b60e2a50d8390a9ca43ec87839e2e795	14d4641847552fd195cf7c35ece97468723c7752	2026-10-06T02:28:53+08:00	docs(r5): record exact production reading and language checkpoint
+14d4641847552fd195cf7c35ece97468723c7752	0f1f49dce319f0d41cb23bd4204142ca1ba0ae39	2026-10-06T02:27:12+08:00	feat(r5): integration scoped workflows and regression tests
+0f1f49dce319f0d41cb23bd4204142ca1ba0ae39	68740313447ed0cadbbdfee1fad648a16be600f7	2026-10-06T02:25:36+08:00	feat(r5): language_editions scoped workflows and regression tests
+68740313447ed0cadbbdfee1fad648a16be600f7	5f156f5e11ac58c5ef1ab6f6aefc010f7161c720	2026-10-06T02:23:38+08:00	feat(r5): template_authoring scoped workflows and regression tests
+5f156f5e11ac58c5ef1ab6f6aefc010f7161c720	63d1668abeb07a6472a44ed641e04ba77108c1c4	2026-10-06T02:20:06+08:00	feat(r5): portable_batches scoped workflows and regression tests
+63d1668abeb07a6472a44ed641e04ba77108c1c4	502d6823b3c4da888563e1a2c1a7195a5e7c1623	2026-10-06T02:17:58+08:00	feat(r5): voice_subtitles scoped workflows and regression tests
+502d6823b3c4da888563e1a2c1a7195a5e7c1623	b05934cf558c772fb7ce09f65875906013f6b90f	2026-10-06T02:16:01+08:00	feat(r5): director_exchange scoped workflows and regression tests
+b05934cf558c772fb7ce09f65875906013f6b90f	4364613d8d9ff4ae192e7c99e06c3abef9416d35	2026-10-06T02:11:31+08:00	feat(r5): reader_sessions scoped workflows and regression tests
+4364613d8d9ff4ae192e7c99e06c3abef9416d35	11157b456cfe8c0f624cb6ee76ef9800e1d06dcc	2026-10-06T02:03:36+08:00	test(r4): retain server uncertainty after verified browser closure
+11157b456cfe8c0f624cb6ee76ef9800e1d06dcc	12745cbb7785d744e8aa2b13324a38dea6017718	2026-10-06T01:48:46+08:00	test(r4): use current source receipts and trusted-host browser setup
+12745cbb7785d744e8aa2b13324a38dea6017718	c31b43fa215b0f303ec92d21acd4f142cb5d3bbf	2026-10-06T01:34:09+08:00	docs(r4): publish validated wave checkpoint and current Opus handoff
+c31b43fa215b0f303ec92d21acd4f142cb5d3bbf	ea8b8860917baaab580642325186de8d07fdbf2c	2026-10-06T01:33:08+08:00	feat(r4): integration reviewed workflows and tests
+ea8b8860917baaab580642325186de8d07fdbf2c	ac9ad7ca3dea32d756aa0045404adc296f393e06	2026-10-06T01:32:12+08:00	feat(r4): change_impact reviewed workflows and tests
+ac9ad7ca3dea32d756aa0045404adc296f393e06	f062020bf3abd1928af51778a9348d4553a22a65	2026-10-06T01:30:57+08:00	feat(r4): revisions reviewed workflows and tests
+f062020bf3abd1928af51778a9348d4553a22a65	06fdc9df23dd205a022ece5fc0d817bed9ac22d7	2026-10-06T01:30:19+08:00	feat(r4): research reviewed workflows and tests
+06fdc9df23dd205a022ece5fc0d817bed9ac22d7	f07daebb11312d4962da47e3e774ce8fe6731aca	2026-10-06T01:29:44+08:00	feat(r4): simulator reviewed workflows and tests
+f07daebb11312d4962da47e3e774ce8fe6731aca	727342c86177cead6a1fd4d3606005aeb9f60f40	2026-10-06T01:28:32+08:00	feat(r4): style_judge reviewed workflows and tests
+727342c86177cead6a1fd4d3606005aeb9f60f40	82f05de8c073a65ceed5d401de15703068805459	2026-10-06T01:27:56+08:00	feat(r4): lineage reviewed workflows and tests
+82f05de8c073a65ceed5d401de15703068805459	195db91b88efa2351596cd1b750d8ab08a66db21	2026-10-06T01:26:57+08:00	feat(r4): broker reviewed workflows and tests
+195db91b88efa2351596cd1b750d8ab08a66db21	fc9e39ddcb1084da213f1463b76ded21a11c71c1	2026-10-06T01:25:16+08:00	feat(r4): generation workflows and current-authority guards
+fc9e39ddcb1084da213f1463b76ded21a11c71c1	a4438aa8912d536a5d0410085679e53a6f16f95a	2026-10-06T00:38:54+08:00	fix(recovery): keep reviewed merges pending without reopening old conflicts
+a4438aa8912d536a5d0410085679e53a6f16f95a	0238444db5d6723c61c2daa67ad5fa0ec2dfec20	2026-10-06T00:17:56+08:00	fix(ui): restore off-mode editor geometry and drain reload fixtures safely
+0238444db5d6723c61c2daa67ad5fa0ec2dfec20	93b1dbe8cd9554196c89cf8fff0b55f9dd036b71	2026-10-05T23:51:46+08:00	docs(delivery): record partial scope audit and Opus handoff
+93b1dbe8cd9554196c89cf8fff0b55f9dd036b71	e4b1669f431a761a1d056d4ea7eb396c6d4f6c14	2026-10-05T23:51:05+08:00	feat(ui): mount scoped writing and inspection user journeys
+e4b1669f431a761a1d056d4ea7eb396c6d4f6c14	1115aa530b8ccc55ecc2a5404dc181f7c996a9c0	2026-10-05T23:49:17+08:00	test(performance): add reproducible large-project and input measurements
+1115aa530b8ccc55ecc2a5404dc181f7c996a9c0	2b626e99569397ff16cad1e0fdea36f7db974c3d	2026-10-05T23:47:44+08:00	fix(recovery): preserve drafts and fence task observers by scope
+2b626e99569397ff16cad1e0fdea36f7db974c3d	2f64c48286d3a61c01dc426c65ec6c8e11a1fab0	2026-10-05T23:46:36+08:00	feat(story): add reviewed temporal graph and knowledge views
+2f64c48286d3a61c01dc426c65ec6c8e11a1fab0	e70f5ad4aa2f5acf6e245caa61a6ab3d8cb6b251	2026-10-05T23:45:28+08:00	feat(writing): add focus references inspiration and bookmarks
+e70f5ad4aa2f5acf6e245caa61a6ab3d8cb6b251	2c397e8ec0c560c45a108e9b9dea23e3ea3dedfd	2026-10-05T23:44:46+08:00	feat(author): bind visible request preflight to final dispatch
+2c397e8ec0c560c45a108e9b9dea23e3ea3dedfd	37946184023fd8e4b575b2012f6c20d1e2cc0355	2026-10-05T23:40:38+08:00	feat(local-ai): inspect untrusted workflows without execution
+37946184023fd8e4b575b2012f6c20d1e2cc0355	0852250f3d487eba9b4368a9a2ea4d9f00e10b67	2026-10-05T23:39:46+08:00	feat(workspace): add versioned resume search tasks and diagnostics
+0852250f3d487eba9b4368a9a2ea4d9f00e10b67	0e5ea915f4a540c78b4589a3974c9ee2fc7a268f	2026-10-05T23:38:44+08:00	feat(experimental): register writing and story capability dependencies
+0e5ea915f4a540c78b4589a3974c9ee2fc7a268f	ad17f905bfe97d6d7a4a7986f4848b7970f3478d	2026-10-05T23:11:07+08:00	fix(storage): prevent deleted project resurrection in coordinated File paths
+ad17f905bfe97d6d7a4a7986f4848b7970f3478d	d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b	2026-10-05T22:33:07+08:00	feat(experimental): register R4 R5 UX scope and runtime dependencies
+d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b	20cd2679ee104702529962202ce4b9d894bffc89	2026-10-05T22:13:27+08:00	docs: record exact R3 verification evidence and honest continuation boundaries
+20cd2679ee104702529962202ce4b9d894bffc89	4c43add056ba541c196a683fd7eee61534b38b6f	2026-10-05T22:01:04+08:00	test(experimental-ui): drain browser readers before owned fixture cleanup
+4c43add056ba541c196a683fd7eee61534b38b6f	8643232c4724201a690c3f88153c967f5e9cc22b	2026-10-05T21:46:39+08:00	test(experimental-ui): capture visible alternative ending comparison
+8643232c4724201a690c3f88153c967f5e9cc22b	8af968bd2780c88937e4292b0c58c1f61db8f236	2026-10-05T21:46:27+08:00	fix(experimental-ui): expose world continuity results as a named region
+8af968bd2780c88937e4292b0c58c1f61db8f236	86c4b104b31eeb30af24b51dfa76b05a26e4eee4	2026-10-05T21:46:13+08:00	ci: install real media validators for experimental browser workflows
+86c4b104b31eeb30af24b51dfa76b05a26e4eee4	b176218992cf3ce3b7d9c8c066c5173cba95f60b	2026-10-05T21:31:11+08:00	fix(experimental-ui): bind accessible fields and isolate browser fixtures
+b176218992cf3ce3b7d9c8c066c5173cba95f60b	3ecfa2d867ff30a2aaac35428685ead7e8bb8ce2	2026-10-05T21:30:58+08:00	fix(experimental-ui): hydrate planning drafts before exposing editor controls
+3ecfa2d867ff30a2aaac35428685ead7e8bb8ce2	e6c3093407a0af1a963d9430a0b67e54f9adcacc	2026-10-05T21:30:45+08:00	ci: allow complete experimental browser diagnostics without changing assertions
+e6c3093407a0af1a963d9430a0b67e54f9adcacc	e1c56461aae6c604dfda600e0a0a9a4f3e953796	2026-10-05T21:30:27+08:00	test(experimental): clean PostgreSQL fixture lore references in order
+e1c56461aae6c604dfda600e0a0a9a4f3e953796	ed09be8a950ac665765e5eb89182f7de3a367ab9	2026-10-05T21:30:15+08:00	fix(experimental-ui): retain checkpoints and block resume on refresh failure
+ed09be8a950ac665765e5eb89182f7de3a367ab9	9488d83694eaf5ea1c0635ff1efbe730f23995db	2026-10-05T21:30:03+08:00	fix(experimental-ui): expose guarded media approval checkpoint recovery
+9488d83694eaf5ea1c0635ff1efbe730f23995db	149eb957b7f2dddf58f1bc8782aadb61732836ab	2026-10-05T21:06:52+08:00	fix(experimental-ui): preserve planning drafts during explicit version recovery
+149eb957b7f2dddf58f1bc8782aadb61732836ab	42da72d22945dbb66e3afb636792b3ddc37facde	2026-10-05T21:06:34+08:00	test(experimental): verify mounted routes and real review authority
+42da72d22945dbb66e3afb636792b3ddc37facde	96725ab05d7eafadc0b34ca501629804e88ee400	2026-10-05T21:05:26+08:00	feat(experimental): integrate flagged domains and hosted browser regression gate
+96725ab05d7eafadc0b34ca501629804e88ee400	526464aa9cff9a323df2a5046782e2dc03203d30	2026-10-05T21:01:11+08:00	test(experimental): verify fresh-process persistence and crash rollback
+526464aa9cff9a323df2a5046782e2dc03203d30	81f17b173bdeb127b1f71f3936a5a1907a8f365c	2026-10-05T21:00:51+08:00	feat(experimental): add reviewed audiobook attribution and measured mixing preparation
+81f17b173bdeb127b1f71f3936a5a1907a8f365c	0690ff8fd8a4bb5bec2b4a43c678e9c52d412fa6	2026-10-05T21:00:30+08:00	feat(experimental): add optional source-fenced vector embedding indexes
+0690ff8fd8a4bb5bec2b4a43c678e9c52d412fa6	ca857a2ea80c711804b9fdc5a7f247ebba92a0bc	2026-10-05T21:00:09+08:00	feat(experimental): add media workflow registry and reviewed cover storyboard assets
+ca857a2ea80c711804b9fdc5a7f247ebba92a0bc	bd6676e14c7193c1802dbf4aa5bb1eff5e21ac0e	2026-10-05T20:59:46+08:00	feat(experimental): define credential-free provider profile contracts
+bd6676e14c7193c1802dbf4aa5bb1eff5e21ac0e	9da919da8ff6952ebbe38a0413476e4dee878872	2026-10-05T20:57:04+08:00	test(experimental-ui): cover flags scope real HTTP and browser journeys
+9da919da8ff6952ebbe38a0413476e4dee878872	f993debeea8084029756756caabd9e8086b3ed30	2026-10-05T20:56:40+08:00	feat(experimental-ui): add default-off reviewable authoring workbench
+f993debeea8084029756756caabd9e8086b3ed30	47951b160c76554e3a08d432bd4a480d665b9da1	2026-10-05T20:55:16+08:00	fix(experimental): enforce local import adapter contracts and final authority guards
+47951b160c76554e3a08d432bd4a480d665b9da1	eba10f24b830758d36bb4217ff633609c45127f6	2026-10-05T20:54:44+08:00	fix(review): preserve legacy permissions and unknown privacy states
+eba10f24b830758d36bb4217ff633609c45127f6	ee91df2e76e5a2a4048fa76e42815d9ef4f4db90	2026-10-05T20:47:58+08:00	fix(world): query character state from one canonical snapshot
+ee91df2e76e5a2a4048fa76e42815d9ef4f4db90	c2f9de0957fe27006b8b528dba4b0037e8b83541	2026-10-05T20:47:42+08:00	fix(planning): fence ancestor context and archived hierarchy edits
+c2f9de0957fe27006b8b528dba4b0037e8b83541	0f55580731cf8fa88ce108bea07823c5c6dc0717	2026-10-05T20:47:27+08:00	feat(experimental): unify domain review dispatch and safe batch checkpoints
+0f55580731cf8fa88ce108bea07823c5c6dc0717	262ff098ecf2354ca8202c7ecad73984d036ac7f	2026-10-05T20:46:39+08:00	feat(experimental): add reviewed world and character semantic engines
+262ff098ecf2354ca8202c7ecad73984d036ac7f	8a783d2ab792109ac5d6e9c0b0955be413ac1560	2026-10-05T20:46:19+08:00	feat(experimental): add version-fenced hierarchical planning and review
+8a783d2ab792109ac5d6e9c0b0955be413ac1560	68b0aa6488d58129cf241de930e3ec3bf4233dfc	2026-10-05T20:46:07+08:00	feat(experimental): add resumable semantic import evidence and review checkpoints
+68b0aa6488d58129cf241de930e3ec3bf4233dfc	d9d6be53c8afea1348d91db0e8890ce1f1b01ac1	2026-10-05T20:45:13+08:00	feat(experimental): add durable creative team recipes and fenced recovery
+d9d6be53c8afea1348d91db0e8890ce1f1b01ac1	1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0	2026-10-05T20:28:36+08:00	feat(experimental): freeze V1 scope and add default-off transactional foundation
+1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0	e281a9df522efa862a15d2db04dff33359dd146b	2026-10-05T16:59:38+08:00	docs: correct final checkpoint verification wording
+e281a9df522efa862a15d2db04dff33359dd146b	98b7d53c3193765e792e5a756fff02a87b5948b8	2026-10-05T16:56:55+08:00	docs: finalize R2 readiness evidence and Opus acceptance handoff
+98b7d53c3193765e792e5a756fff02a87b5948b8	93daeb977d9fd238ffda7be3d9c566fd3768dc27	2026-10-05T16:29:31+08:00	ui: stack writing goal fields within the inspector
+93daeb977d9fd238ffda7be3d9c566fd3768dc27	5a3a14f60afd28aad48ee15a992426d38af4739d	2026-10-05T16:19:15+08:00	build: bound native smoke process capture and preserve diagnostic receipts
+5a3a14f60afd28aad48ee15a992426d38af4739d	13723e23c5b1738c1deeaebf5ac4b50771db741b	2026-10-05T16:11:15+08:00	test: wait for hydrated navigation after browser reload
+13723e23c5b1738c1deeaebf5ac4b50771db741b	55a9082dbd3655c39a9b23bd4da19fedb3373072	2026-10-05T16:09:32+08:00	fix: preserve pending revision queries during StrictMode replay
+55a9082dbd3655c39a9b23bd4da19fedb3373072	2200238e8d549074573c2a1a298b74dc9be14780	2026-10-05T16:02:03+08:00	fix: refresh revision history safely and dispose agent timers
+2200238e8d549074573c2a1a298b74dc9be14780	4e7ca3d3bfcf9908fee7d3a6e80a3d1243b9238a	2026-10-05T16:00:45+08:00	build: produce verified Windows inputs and close remaining runtime guards
+4e7ca3d3bfcf9908fee7d3a6e80a3d1243b9238a	90f4369b7367579b7aaeb00d4d25f21171353753	2026-10-05T15:18:39+08:00	fix: prove Ollama locality and close discovery activation races
+90f4369b7367579b7aaeb00d4d25f21171353753	16b65c10ada1670ac57891054ffe4571fa463491	2026-10-05T14:55:10+08:00	fix: close independent dispatch and acceptance gaps and integrate local AI discovery
+16b65c10ada1670ac57891054ffe4571fa463491	40464f656aa1437e5b56969212ea801eccfcafc0	2026-10-05T14:47:43+08:00	feat: integrate reviewed planning and fail-closed release candidate workflows
+40464f656aa1437e5b56969212ea801eccfcafc0	db3212c3f1418557e3ab0152e8c3c0c8ee27ef97	2026-10-05T13:52:51+08:00	feat: recover frozen exports and version screenplay edits
+db3212c3f1418557e3ab0152e8c3c0c8ee27ef97	c6e8c07d8786da24c3e265561cece80c4bf5b73b	2026-10-05T13:52:34+08:00	build: verify CJK font provenance and expand release candidate gates
+c6e8c07d8786da24c3e265561cece80c4bf5b73b	ff34bf87979e2c4dc39681b3d91069979bca06a7	2026-10-05T13:52:04+08:00	feat: persist reviewed author plans and version-anchored collaboration
+ff34bf87979e2c4dc39681b3d91069979bca06a7	e8ebfccdce0678cac15c632d640ac57bd822b93f	2026-10-05T13:51:45+08:00	feat: add scoped reviewed media queues and recoverable assets
+e8ebfccdce0678cac15c632d640ac57bd822b93f	78920f2f9435a9c1d5625479c37b0948c1db5b51	2026-10-05T13:51:31+08:00	feat: enforce controlled model dispatch and durable workflow execution
+78920f2f9435a9c1d5625479c37b0948c1db5b51	825b3caf40f6f7f617e5350fd1efcfe86533a003	2026-10-05T13:26:04+08:00	fix: preserve privacy across storage and verified recovery
+825b3caf40f6f7f617e5350fd1efcfe86533a003	f8c141c39a543cc9dbea57647ac91185bc9aecd6	2026-10-05T13:06:15+08:00	build: pin frontend toolchain and record verified R2 baseline
+f8c141c39a543cc9dbea57647ac91185bc9aecd6	460fa31ac3e0a1d712e52e0fe858b5c3cc571520	2026-10-03T12:53:31+08:00	Connect queued screenplay exports and repair PostgreSQL contract parity
+460fa31ac3e0a1d712e52e0fe858b5c3cc571520	068fa08edf599b634f111c430131c5950ff364e2	2026-10-03T12:35:05+08:00	Fix PostgreSQL service health command quoting for GitHub runners
+068fa08edf599b634f111c430131c5950ff364e2	fed2404c8e30b44061b7139dced45b7f3301601c	2026-10-03T12:31:05+08:00	Continue cloud development with typed provider routing and reproducible CI
+fed2404c8e30b44061b7139dced45b7f3301601c	5b4897d0b170ec104f533e7c5af38ebbcab63e1e ad38ac70d238dde8411e1c636a0f97f2cf07426d	2026-09-02T18:42:29+08:00	Merge pull request #35 from 1785235376-blip/feature/provider-runtime-v2-host-hardware-inventory
+ad38ac70d238dde8411e1c636a0f97f2cf07426d	ece9f472c8a00c714ebb381abc2dba98f51faa32	2026-09-02T14:42:14+08:00	fix: fail closed on ambiguous host capabilities
+ece9f472c8a00c714ebb381abc2dba98f51faa32	5b4897d0b170ec104f533e7c5af38ebbcab63e1e	2026-09-02T13:25:12+08:00	feat: add authoritative host hardware inventory
+5b4897d0b170ec104f533e7c5af38ebbcab63e1e	d5ed9cc1a5e29a159a9193eb6a54515bdab94fe3 7e24be1765085b99352a39c8b5887e62221560f9	2026-09-02T12:43:05+08:00	Merge pull request #34 from 1785235376-blip/feature/provider-runtime-v2-runtime-requirements-authority
+9fe50cbe795b73e09b5f52ad598804013d10badf	d5ed9cc1a5e29a159a9193eb6a54515bdab94fe3 7e24be1765085b99352a39c8b5887e62221560f9	2026-09-02T12:25:12+08:00	Merge commit '7e24be1765085b99352a39c8b5887e62221560f9' into HEAD
+7e24be1765085b99352a39c8b5887e62221560f9	665974092564b9d67cd8b9a36539a0fb8be1f871	2026-09-02T11:42:02+08:00	fix: harden runtime architecture configuration authority
+665974092564b9d67cd8b9a36539a0fb8be1f871	d5ed9cc1a5e29a159a9193eb6a54515bdab94fe3	2026-09-02T10:44:27+08:00	feat: add authoritative runtime architecture requirements
+d5ed9cc1a5e29a159a9193eb6a54515bdab94fe3	12ac88b2477a6289df89650270b0dd014b477245 e994e7e5c11a9ad05daa3e36c035479445ee6b1e	2026-09-02T10:34:29+08:00	Merge pull request #33 from 1785235376-blip/feature/provider-runtime-v2-authoritative-snapshot-bridge
+cd16ffe89b7aa6c22ba2e7f24a16e5a0669b7c04	12ac88b2477a6289df89650270b0dd014b477245 e994e7e5c11a9ad05daa3e36c035479445ee6b1e	2026-09-02T10:02:55+08:00	Merge commit 'e994e7e5c11a9ad05daa3e36c035479445ee6b1e' into HEAD
+e994e7e5c11a9ad05daa3e36c035479445ee6b1e	7a1fc8458bbe4c5d26e2870503eef4cfbf3a445d	2026-09-02T01:29:21+08:00	fix: bind snapshot model identity to owner
+7a1fc8458bbe4c5d26e2870503eef4cfbf3a445d	613dc12f0ea30e2273f78c726995923b22c47955	2026-09-02T00:19:29+08:00	fix: make snapshot bridge facts authoritative
+613dc12f0ea30e2273f78c726995923b22c47955	bb8c5131c0566838545ae76f0edc1e9dc28fe405	2026-09-01T13:27:40+08:00	chore: tighten snapshot bridge imports
+bb8c5131c0566838545ae76f0edc1e9dc28fe405	12ac88b2477a6289df89650270b0dd014b477245	2026-09-01T13:23:47+08:00	feat: add authoritative model center snapshot bridge
+12ac88b2477a6289df89650270b0dd014b477245	8d52f3cb998080ee6eefc44d1d435303a46d12cb ea394756614bde225d20a2058b417213a98ba5f7	2026-09-01T13:03:17+08:00	Merge pull request #32 from 1785235376-blip/feature/provider-runtime-stable-identity-foundation
+ea394756614bde225d20a2058b417213a98ba5f7	e254962de16b5b327167daba668cd8babb363bb7	2026-08-31T22:23:25+08:00	test: cover all Windows identity cold-start cases
+e254962de16b5b327167daba668cd8babb363bb7	675f367bf760dbfefe1e08037d969829631cc524	2026-08-31T22:13:54+08:00	fix: close stable identity execution and owner boundaries
+675f367bf760dbfefe1e08037d969829631cc524	e4bc4d34f8f584ece5e500debb65bedaa8fa1359	2026-08-31T20:17:21+08:00	fix: finalize stable identity host and routing invariants
+e4bc4d34f8f584ece5e500debb65bedaa8fa1359	f1770f45b2b3b3004e26a8905cbe50301b41cf70	2026-08-31T15:40:22+08:00	fix: close stable identity authority edge cases
+f1770f45b2b3b3004e26a8905cbe50301b41cf70	14671ed8b8b4eb792521d40adb1e5a334e294cbe	2026-08-31T14:51:39+08:00	fix: keep legacy adapter route compatibility
+14671ed8b8b4eb792521d40adb1e5a334e294cbe	c927e792dc236360913b93395bcec740ae69169f	2026-08-31T14:49:01+08:00	fix: harden stable identity authority and concurrency
+c927e792dc236360913b93395bcec740ae69169f	8d52f3cb998080ee6eefc44d1d435303a46d12cb	2026-08-31T14:03:14+08:00	feat: add stable provider runtime identity foundation
+797d183e5954857337672d8f34897140a1491fa3	8d52f3cb998080ee6eefc44d1d435303a46d12cb	2026-08-31T02:30:58Z	feat: add Provider Runtime Model Center snapshot bridge
+8d52f3cb998080ee6eefc44d1d435303a46d12cb	741851f1a95e7b17c7ea30f3136f202da2b9d44a 1c2d0520fc90ba3a72d18b09f8c6eaf38b2d586c	2026-08-31T09:46:39+08:00	Merge pull request #30 from 1785235376-blip/feature/provider-runtime-v2-contract-foundation
+741851f1a95e7b17c7ea30f3136f202da2b9d44a	297435dfb368cae4015dd0ca96c6d582f41db795 02c4bc4cde737eae0d95453d9868a8d374375a83	2026-08-31T08:32:52+08:00	Merge pull request #28 from 1785235376-blip/feature/model-center-phase2a-runtime-control
+02c4bc4cde737eae0d95453d9868a8d374375a83	eeb80617a60b3d75b2a233f4f9ca7d24207636f3	2026-08-30T23:51:26Z	fix(model-center): canonicalize executable and ComfyUI path
+eeb80617a60b3d75b2a233f4f9ca7d24207636f3	e8c9b3ae7f4fd699794fa7c7127ef3e6c79b8354	2026-08-30T18:52:20Z	fix(model-center): close phase2a argv, roundtrip, and logs holes
+297435dfb368cae4015dd0ca96c6d582f41db795	b31b97d1263e1d492d131e9e9d3d09ffa54c19ab 45d8849076725a89d3725f43943800fba05c5979	2026-08-31T02:25:57+08:00	Merge pull request #29 from 1785235376-blip/feature/plugin-trust-signing-foundation
+45d8849076725a89d3725f43943800fba05c5979	f992cc2963e5e6fb1c410d22ef74f9a0a5a14cdb	2026-08-30T18:05:41Z	fix: require VERIFIED schemes from the canonical allowlist
+f992cc2963e5e6fb1c410d22ef74f9a0a5a14cdb	70e918bec5ccdf8daeeb469e8ad7f8156c54bd4b	2026-08-30T17:51:56Z	fix: close plugin trust VERIFIED contract holes
+70e918bec5ccdf8daeeb469e8ad7f8156c54bd4b	b31b97d1263e1d492d131e9e9d3d09ffa54c19ab	2026-08-30T17:01:43Z	feat: add plugin trust and signing contracts
+1c2d0520fc90ba3a72d18b09f8c6eaf38b2d586c	b31b97d1263e1d492d131e9e9d3d09ffa54c19ab	2026-08-30T16:54:38Z	feat: add provider runtime v2 contract foundation
+e8c9b3ae7f4fd699794fa7c7127ef3e6c79b8354	b31b97d1263e1d492d131e9e9d3d09ffa54c19ab	2026-08-30T23:26:33+08:00	feat(model-center): add phase2a runtime control plane
+b31b97d1263e1d492d131e9e9d3d09ffa54c19ab	76420aa28be7ca860591cbc9d31dfee5832f5677 334c681a26432dafdcb290327d7ae4270fb38039	2026-08-30T20:48:56+08:00	Merge pull request #27 from 1785235376-blip/feature/model-center-phase1
+334c681a26432dafdcb290327d7ae4270fb38039	16859224f7d87a30d767a29e5abfb94d752aadb2	2026-08-30T20:35:16+08:00	fix(model-center): align runtime control authorization
+5cae6e00356e2c7a2f05f83352d99611a33dd948	cd9ad447a2eddd1ca1348928e1bd2f7c757f89d2	2026-08-30T20:17:56+08:00	fix: normalize windows sandbox environment block
+16859224f7d87a30d767a29e5abfb94d752aadb2	e229c7a2893cbea9e775c6f384192a921c6b7602	2026-08-30T19:47:58+08:00	fix(model-center): harden runtime security and verification
+e229c7a2893cbea9e775c6f384192a921c6b7602	76420aa28be7ca860591cbc9d31dfee5832f5677	2026-08-30T18:21:13+08:00	feat(model-center): add local model runtime foundation
+cd9ad447a2eddd1ca1348928e1bd2f7c757f89d2	8cdf94133af521a44751ad582490ed6d8fcefbea	2026-08-29T20:48:24+08:00	fix: stabilize worker crash exit status on windows
+76420aa28be7ca860591cbc9d31dfee5832f5677	773b52e7155cc757076d7832b581d76a8def2423 cb7ec7fdee234c505cfed9dbafe18816f440443c	2026-08-29T20:03:54+08:00	fix: report default-cut time jumps in visual continuity (#25)
+8cdf94133af521a44751ad582490ed6d8fcefbea	da0c6706880d5c18315a0a72ade12ff9d66f6710	2026-08-29T10:21:12Z	docs: document phase 2b sandbox boundaries
+da0c6706880d5c18315a0a72ade12ff9d66f6710	106adad45a9c049b29c061e2ba8f8024304efbfb	2026-08-29T10:21:12Z	test: verify windows sandbox isolation
+106adad45a9c049b29c061e2ba8f8024304efbfb	773b52e7155cc757076d7832b581d76a8def2423	2026-08-29T10:20:57Z	feat: add windows appcontainer sandbox prototype
+773b52e7155cc757076d7832b581d76a8def2423	9f210b7117c14d418a7f57d8976568cd5506125a 4a13d865dcee7a1d74aa0d2802f23fa038a6ce05	2026-08-29T17:50:58+08:00	Merge pull request #24 from 1785235376-blip/feature/plugin-runtime-phase2a-test-worker-ipc
+cb7ec7fdee234c505cfed9dbafe18816f440443c	a9366053d1552ba69143b95ab222ced58e00f0bb	2026-08-29T08:49:35Z	docs: correct default-cut transition contract
+a9366053d1552ba69143b95ab222ced58e00f0bb	9326a6fa96ad3bb7ae39c9338939868d3149d765	2026-08-29T08:45:11Z	fix: preserve explicit visual transition types
+9326a6fa96ad3bb7ae39c9338939868d3149d765	47a080fae2c8e45d595c8ffe6a742492c77c5acd	2026-08-29T06:55:30Z	docs: record visual continuity regression closure
+47a080fae2c8e45d595c8ffe6a742492c77c5acd	9f210b7117c14d418a7f57d8976568cd5506125a	2026-08-29T06:54:19Z	fix: report default-cut time jumps in visual continuity
+4a13d865dcee7a1d74aa0d2802f23fa038a6ce05	b467ef00b16d5443c6f16f821ac319a94960f79f	2026-08-29T06:53:04Z	docs: document worker startup isolation correction
+b467ef00b16d5443c6f16f821ac319a94960f79f	49d5b48c482fd1cb7ce0710b03ef71ed91349ce7	2026-08-29T06:53:04Z	test: reject hostile worker import environments
+49d5b48c482fd1cb7ce0710b03ef71ed91349ce7	925712cbe14fb661e39bfddea52bb2ed552c7d91	2026-08-29T06:53:04Z	fix: isolate host test worker python environment
+9f210b7117c14d418a7f57d8976568cd5506125a	bc49b5d05ee934d948ab8784d52ba4481134ec0d 0ba1f1f23c744151ff4e859c8ac624eb880828ab	2026-08-29T14:30:34+08:00	test: isolate durable generation idempotency state (#22)
+925712cbe14fb661e39bfddea52bb2ed552c7d91	d64de874f2b55c64c9f8b8fe8d40fd502c7c4cc7	2026-08-29T05:33:29Z	docs: document plugin runtime phase 2a
+d64de874f2b55c64c9f8b8fe8d40fd502c7c4cc7	4717206eede8f871c371c2704ba682dc168f2940	2026-08-29T05:33:29Z	test: verify worker ipc and lifecycle safety
+4717206eede8f871c371c2704ba682dc168f2940	b1b1619476db040bdb73a45e4262f8f2960b7a31	2026-08-29T05:33:29Z	feat: add plugin test worker supervisor
+b1b1619476db040bdb73a45e4262f8f2960b7a31	bc49b5d05ee934d948ab8784d52ba4481134ec0d	2026-08-29T05:33:29Z	feat: add host-owned test worker protocol
+0ba1f1f23c744151ff4e859c8ac624eb880828ab	5e7ab893aa09db08d0d9566e65e0edeb0e3c46d7	2026-08-29T05:22:29Z	docs: bind idempotency evidence to reviewed snapshots
+bc49b5d05ee934d948ab8784d52ba4481134ec0d	47906bdde775d4ab9c7a07449c1f60f0e4e5d300 7db2aa1cc057c88e1dd9748c214e733252ce71a8	2026-08-29T13:08:11+08:00	Merge pull request #23 from 1785235376-blip/feature/plugin-runtime-foundation-phase1
+7db2aa1cc057c88e1dd9748c214e733252ce71a8	815d3fe70dc4caab4a4422ef0c66932252b8ccd5	2026-08-29T04:44:21Z	docs: document plugin runtime foundation phase 1
+815d3fe70dc4caab4a4422ef0c66932252b8ccd5	dbf86440f011340a728585c480ec3f0e18e943e6	2026-08-29T04:44:21Z	test: cover plugin runtime security contracts
+dbf86440f011340a728585c480ec3f0e18e943e6	e48b3b2b295a4af5ba23fe9d26b1431b0b1d22d6	2026-08-29T04:44:21Z	feat: add fail-closed capability policy foundation
+e48b3b2b295a4af5ba23fe9d26b1431b0b1d22d6	47906bdde775d4ab9c7a07449c1f60f0e4e5d300	2026-08-29T04:44:21Z	feat: add plugin execution contracts
+5e7ab893aa09db08d0d9566e65e0edeb0e3c46d7	e71ade5ed5a306872212724b7aeb880b1350802d	2026-08-29T04:40:01Z	docs: reclassify generation idempotency baseline
+e71ade5ed5a306872212724b7aeb880b1350802d	01cc304e3df5357160f3c98b2ef50b0d9ddf8d95	2026-08-29T04:40:01Z	test: isolate durable generation idempotency state
+47906bdde775d4ab9c7a07449c1f60f0e4e5d300	01cc304e3df5357160f3c98b2ef50b0d9ddf8d95 4b2cd1e5e89cdf4fc4af113c2a5a5faba798ab46	2026-08-29T12:27:20+08:00	Merge pull request #21 from 1785235376-blip/feature/official-declarative-plugin-packs-v1
+4b2cd1e5e89cdf4fc4af113c2a5a5faba798ab46	3843d94c8829ca5dd53f6fdc3078d580bebae0b5	2026-08-29T03:43:57Z	docs: document official declarative plugin catalog
+3843d94c8829ca5dd53f6fdc3078d580bebae0b5	f2f84f7e64b80fc021496397af48b505c444f4e2	2026-08-29T03:43:57Z	test: validate official declarative plugin packs
+f2f84f7e64b80fc021496397af48b505c444f4e2	bb53b9537c1c6bd68164842173c53430dc83d5d9	2026-08-29T03:43:57Z	feat: add adaptation and export plugin packs
+bb53b9537c1c6bd68164842173c53430dc83d5d9	56f05c06c0d1af5c879c1c3d60467b190a91378d	2026-08-29T03:43:57Z	feat: add narrative workflow plugin packs
+56f05c06c0d1af5c879c1c3d60467b190a91378d	01cc304e3df5357160f3c98b2ef50b0d9ddf8d95	2026-08-29T03:43:57Z	feat: add writing declarative plugin packs
+01cc304e3df5357160f3c98b2ef50b0d9ddf8d95	e4dd24a682d2338d3aaf9ffa6880cbb1e364e6ac db5cabcc5c40e570bb92e8a7ff2428cce011c8b7	2026-08-29T10:16:20+08:00	Merge pull request #19 from 1785235376-blip/fix/p0-clean-regression-foundation
+db5cabcc5c40e570bb92e8a7ff2428cce011c8b7	b15b58a30f29f019c70cb33485619d78d59b8a3f	2026-08-29T01:16:16Z	docs: bind regression evidence to integrated current main
+b15b58a30f29f019c70cb33485619d78d59b8a3f	407b74a628db1ca26b7ced79647a563e64bc7cd7 e4dd24a682d2338d3aaf9ffa6880cbb1e364e6ac	2026-08-29T01:03:31Z	merge: integrate current main into regression foundation
+407b74a628db1ca26b7ced79647a563e64bc7cd7	b711611af5a2d3a52e3b789366e6656ab172e26d	2026-08-29T00:52:04Z	docs: reconcile independent review evidence
+b711611af5a2d3a52e3b789366e6656ab172e26d	da6fb6c6f92856df4ed4b099e3841bbc2040c9db	2026-08-29T00:45:46Z	test: narrow vault isolation and classify Windows ports
+e4dd24a682d2338d3aaf9ffa6880cbb1e364e6ac	d8174af8cb68c5e4edf920e6ccb45671f19ff3c9 8557b2e593addef494bf33f3b8c181b665d371a9	2026-08-29T08:36:58+08:00	Merge pull request #12 from 1785235376-blip/feature/plugin-contract-v1-declarative
+8557b2e593addef494bf33f3b8c181b665d371a9	c3ef9efa23c7a515d380d3f94527782aef3fd0b4	2026-08-29T00:21:54Z	fix: account plugin resource budget from a read-once snapshot
+da6fb6c6f92856df4ed4b099e3841bbc2040c9db	c87b1a3abd0e1057a8dadb0b158a975ad64e8caf	2026-08-28T23:37:14Z	docs: establish current-main failure registry
+c87b1a3abd0e1057a8dadb0b158a975ad64e8caf	d8174af8cb68c5e4edf920e6ccb45671f19ff3c9	2026-08-28T23:37:13Z	test: isolate clean-clone fixtures and runtime settings
+c3ef9efa23c7a515d380d3f94527782aef3fd0b4	efceec3fadcb1df8507d6c0371b2b0dc7ac6e42c	2026-08-28T23:35:47Z	docs: clarify plugin registration and partial validation contracts
+efceec3fadcb1df8507d6c0371b2b0dc7ac6e42c	22520449674c8be6f7bfaf496358bc9413bdae55	2026-08-28T23:35:47Z	style: align plugin governance with design tokens
+22520449674c8be6f7bfaf496358bc9413bdae55	d794eb76b11b6526f2a3e603d139c786e7b90f1a	2026-08-28T23:35:47Z	fix: restore plugin governance re-registration path
+d794eb76b11b6526f2a3e603d139c786e7b90f1a	f314776e3ab9c4b3a766e26c2573260934244edb	2026-08-28T23:35:47Z	fix: reject duplicate plugin registration before sidecar mutation
+d8174af8cb68c5e4edf920e6ccb45671f19ff3c9	46bee8f4b57f0cc61d69746bf190a88a3fb3d733 cb571383f2dd1c33b10bea07dc46bb41cbb44c4e	2026-08-29T06:56:34+08:00	Merge pull request #13 from 1785235376-blip/grok-safe-maintenance-20260828
+f314776e3ab9c4b3a766e26c2573260934244edb	3c6e22db26f277afcdd7c13c0fe277610f1703cd	2026-08-28T17:53:11Z	docs: correct plugin data and worker isolation contracts
+3c6e22db26f277afcdd7c13c0fe277610f1703cd	56fa746955eda99aa0135590ab8d73c02b03ea44	2026-08-28T17:52:40Z	fix: make plugin governance reflect live validation state
+56fa746955eda99aa0135590ab8d73c02b03ea44	82956276cc514840a908bbc5ea46dd4f1049b6da	2026-08-28T17:47:30Z	fix: enforce plugin catalog budgets and bounded json parsing
+82956276cc514840a908bbc5ea46dd4f1049b6da	a0fc3f311f081ac9224cfe5f89ccb862fe2fc976	2026-08-28T17:43:31Z	fix: bind plugin activation to reviewed manifest identity
+cb571383f2dd1c33b10bea07dc46bb41cbb44c4e	5d2fd45faddee0566363deec561842d1b0ed79cb	2026-08-28T17:34:09Z	docs: record safe maintenance audit
+5d2fd45faddee0566363deec561842d1b0ed79cb	46bee8f4b57f0cc61d69746bf190a88a3fb3d733	2026-08-28T17:34:09Z	docs: refresh current-main test evidence
+a0fc3f311f081ac9224cfe5f89ccb862fe2fc976	524f75ffa214bf8acc6b783ef1d512cc1264617b	2026-08-28T17:06:43Z	docs: specify isolated plugin worker runtime
+524f75ffa214bf8acc6b783ef1d512cc1264617b	edc79fe6f65b4ac0f9bc50ee6c8992d377f1f01e	2026-08-28T17:05:10Z	feat: expose declarative plugin resources in governance UI
+edc79fe6f65b4ac0f9bc50ee6c8992d377f1f01e	3924eff1824096bcf8358bc5b0f650fdcf4f12f5	2026-08-28T16:46:15Z	feat: add declarative plugin resource catalog
+3924eff1824096bcf8358bc5b0f650fdcf4f12f5	46bee8f4b57f0cc61d69746bf190a88a3fb3d733	2026-08-28T16:18:52Z	feat: add plugin contract v1 and secure discovery
+46bee8f4b57f0cc61d69746bf190a88a3fb3d733	bbb238c884a5616bcd31a24e02d193efad33ede6 29d21bc8e4d2e7b875b6bb230e69806e4f1a7e6a	2026-08-28T20:05:59+08:00	Merge pull request #11 from 1785235376-blip/fix/mock-standin-provider-status-contract
+29d21bc8e4d2e7b875b6bb230e69806e4f1a7e6a	95313e8cc06c273c692467e4723f0cd5bb5b275c	2026-08-28T18:05:17+08:00	test: isolate mock stand-in provider safety checks
+95313e8cc06c273c692467e4723f0cd5bb5b275c	bbb238c884a5616bcd31a24e02d193efad33ede6	2026-08-28T17:47:42+08:00	fix: preserve mock stand-in provider status
+bbb238c884a5616bcd31a24e02d193efad33ede6	510213ddc2da5680a2fb6bf3a94ff57e984507ef 4f18eb675d08130065cda91d9695293f3681bef9	2026-08-28T13:59:54+08:00	Merge pull request #10 from 1785235376-blip/fix/research-ui-contract
+4f18eb675d08130065cda91d9695293f3681bef9	510213ddc2da5680a2fb6bf3a94ff57e984507ef	2026-08-28T13:53:28+08:00	fix: restore research UI metadata contract
+510213ddc2da5680a2fb6bf3a94ff57e984507ef	24e08eeac4466b9a36b91463866739e88be36a3f 27c7721d0b93dcfbb03bef230be6054ed2aac3a3	2026-08-28T13:20:13+08:00	Merge pull request #9 from 1785235376-blip/docs/truthful-desktop-release-gates
+27c7721d0b93dcfbb03bef230be6054ed2aac3a3	e55f01ec8436eb786038a047b6944ed1d197bd77	2026-08-28T13:00:31+08:00	docs: correct desktop gate runtime contracts
+e55f01ec8436eb786038a047b6944ed1d197bd77	24e08eeac4466b9a36b91463866739e88be36a3f	2026-08-28T12:54:12+08:00	docs: add truthful desktop release gates
+24e08eeac4466b9a36b91463866739e88be36a3f	eaba829465ef1dc9d2867dfa4f3ad594052c2f12 d002731a500e78e8282db67394bfa03ca0047f59	2026-08-28T12:36:59+08:00	Merge pull request #8 from 1785235376-blip/fix/panel-native-props-contract
+d002731a500e78e8282db67394bfa03ca0047f59	eaba829465ef1dc9d2867dfa4f3ad594052c2f12	2026-08-28T12:34:43+08:00	fix: forward native section props from Panel
+eaba829465ef1dc9d2867dfa4f3ad594052c2f12	a92ecff89beda33cda37f07ca727e050b3e4cecd 66d722201347ce9a49e74bac96a1bcaae815bc9c	2026-08-28T12:27:36+08:00	Merge pull request #7 from 1785235376-blip/fix/screenplay-motion-prompt-contract
+66d722201347ce9a49e74bac96a1bcaae815bc9c	a92ecff89beda33cda37f07ca727e050b3e4cecd	2026-08-28T12:19:40+08:00	fix: harden screenplay motion prompt contract
+a92ecff89beda33cda37f07ca727e050b3e4cecd	1bf0066ada9dcb3248a9919330087081b3e41327 456c4448e0e063df3b5ccfbcc13d51955de6d41d	2026-08-28T11:55:20+08:00	Merge pull request #6 from 1785235376-blip/fix/e2e-database-isolation-contract
+456c4448e0e063df3b5ccfbcc13d51955de6d41d	ad8718846f84379675a6be267497a32764a27651	2026-08-28T11:51:02+08:00	test: prevent e2e database target overrides
+ad8718846f84379675a6be267497a32764a27651	1bf0066ada9dcb3248a9919330087081b3e41327	2026-08-28T11:38:36+08:00	test: enforce explicit e2e database isolation
+1bf0066ada9dcb3248a9919330087081b3e41327	9ae7988e564efb729e03015b7272396bf1a99636 11dd0d00afb8d725597d2c388ab8f183ebbb1b4b	2026-08-28T11:12:03+08:00	Merge pull request #5 from 1785235376-blip/fix/credential-provider-allowlist
+11dd0d00afb8d725597d2c388ab8f183ebbb1b4b	4f318ca3bede193601df2fc2646a990796195622	2026-08-28T11:08:09+08:00	fix: block cleanup while credential vault is degraded
+4f318ca3bede193601df2fc2646a990796195622	ce06fa988c11a28f4f163a5ef12eb8fa0e19a6b2	2026-08-28T10:56:02+08:00	fix: make credential cleanup fail closed
+ce06fa988c11a28f4f163a5ef12eb8fa0e19a6b2	9ae7988e564efb729e03015b7272396bf1a99636	2026-08-28T10:43:24+08:00	fix: enforce credential provider allowlist
+9ae7988e564efb729e03015b7272396bf1a99636	15f4284771f0c02b54f9b0baad740c97f59fbefe 8c90ed0276a9660f3b7a3754f72d50b55adb2f9a	2026-08-28T10:03:20+08:00	Merge pull request #4 from 1785235376-blip/rescue/research-durable-sidecar-contract
+8c90ed0276a9660f3b7a3754f72d50b55adb2f9a	d947d4ef9ec60bc046de8e448c94501e1da6d534	2026-08-28T10:00:49+08:00	test: clarify research sidecar contract scope
+d947d4ef9ec60bc046de8e448c94501e1da6d534	15f4284771f0c02b54f9b0baad740c97f59fbefe	2026-08-28T09:56:13+08:00	test: add durable research sidecar contract
+15f4284771f0c02b54f9b0baad740c97f59fbefe	9a2a6204f68777257f1f16fd005a2345c82cb74f 7199d9b01404a66f7bd24a6faa5a94c66a20503b	2026-08-28T09:42:17+08:00	Merge pull request #3 from 1785235376-blip/fix/generation-error-code-contract
+7199d9b01404a66f7bd24a6faa5a94c66a20503b	9a2a6204f68777257f1f16fd005a2345c82cb74f	2026-08-28T09:26:07+08:00	fix: expose structured generation error codes
+9a2a6204f68777257f1f16fd005a2345c82cb74f	c74b51f5b1367a4f9b95651e2a97cdb6bfb2beaf a73deec547ad6cfd575aec301ace9ac09fc0713b	2026-08-28T01:18:11+08:00	Merge pull request #2 from 1785235376-blip/grok-p0-author-honesty
+a73deec547ad6cfd575aec301ace9ac09fc0713b	29b378bfa9f97f80e6abd5b170e1e8ea5cc4f26a	2026-08-27T17:04:50Z	chore: keep AiControlCenter line endings aligned with main
+29b378bfa9f97f80e6abd5b170e1e8ea5cc4f26a	5c8c15a6a6ed3d864ba551f95a77402037c096b6	2026-08-27T17:04:18Z	feat: show VALIDATED activity and fail-closed packaged chat
+5c8c15a6a6ed3d864ba551f95a77402037c096b6	5adb88e202cd0901eebae2292f1937015fb0ff5c	2026-08-27T16:46:24Z	feat: fail-closed packaged text generation without a real model
+5adb88e202cd0901eebae2292f1937015fb0ff5c	c74b51f5b1367a4f9b95651e2a97cdb6bfb2beaf	2026-08-27T16:32:59Z	feat: hang author-facing P0 honesty on latest main
+48b0b46a89331d51dd56edf50028d2c1c2debbdb	ff1511a3a394173171ed84dcea644a56a67f16e7	2026-08-27T15:59:37Z	feat: close Phase 1 window-facing honesty gaps
+ff1511a3a394173171ed84dcea644a56a67f16e7	c74b51f5b1367a4f9b95651e2a97cdb6bfb2beaf	2026-08-27T21:11:16+08:00	docs: add Grok Phase 1 DesktopHost acceptance checklist
+c74b51f5b1367a4f9b95651e2a97cdb6bfb2beaf	9448cd5c51535566b9e626b9cfafaaa6ede82115	2026-08-27T12:26:02+08:00	fix: delete novels within workspace scope
+9448cd5c51535566b9e626b9cfafaaa6ede82115	42e018e693b3d8fc43e0010f9955c8afa1a5c4a5	2026-08-27T12:10:56+08:00	feat: add configurable cloud audio providers
+42e018e693b3d8fc43e0010f9955c8afa1a5c4a5	7c44ab624f3e990b638bc40e1e34090c33bc34f9	2026-08-27T11:37:26+08:00	fix: complete frontend multimodal workflow audit
+7c44ab624f3e990b638bc40e1e34090c33bc34f9	1bdcd2f71a6af90340bd3f146a6b1182da022f34	2026-08-27T09:54:41+08:00	feat: add DDSHub multi-reference image editing
+1bdcd2f71a6af90340bd3f146a6b1182da022f34	ea4e847608bb65f984afcaf912105f6073c8b859	2026-08-27T09:35:02+08:00	fix: allow cloud image generation to complete
+ea4e847608bb65f984afcaf912105f6073c8b859	307bb34df3d288703f5cd553466ffbb70cfdde6d	2026-08-27T09:13:03+08:00	feat: complete local-first creative workflows
+307bb34df3d288703f5cd553466ffbb70cfdde6d	5698aca5b195e22100c8ace37cfe148c7ced3eaa	2026-08-26T22:00:39+08:00	fix: prevent global search label overlap
+5698aca5b195e22100c8ace37cfe148c7ced3eaa	3b8799f624c6eb6e51aa0e350ccfb67d9749fb15	2026-08-26T21:01:11+08:00	style: adopt deep navy and aqua theme palette
+3b8799f624c6eb6e51aa0e350ccfb67d9749fb15	4fc2b267994912b3f96f70e484f1ed9fa453b92b	2026-08-26T20:45:37+08:00	fix: align story planning and timeline status
+4fc2b267994912b3f96f70e484f1ed9fa453b92b	07849a989c7363be8b2d9c1b0598d1b079cd3f1d	2026-08-26T20:35:29+08:00	feat: clarify story planning workflow boundaries
+07849a989c7363be8b2d9c1b0598d1b079cd3f1d	e6ed83be32586a514311b12c628041f102e13cec	2026-08-26T20:19:31+08:00	feat: add world building visualization views
+e6ed83be32586a514311b12c628041f102e13cec	01d6d6178ee5ee42385f972e27977ade648d25c7	2026-08-26T19:42:51+08:00	feat: complete phase two multimodal production workflows
+01d6d6178ee5ee42385f972e27977ade648d25c7	c403104a35f8f41cba118138a8b652d8b345722c	2026-08-26T19:05:43+08:00	feat: complete phase one multimodal production runtime
+c403104a35f8f41cba118138a8b652d8b345722c	79becb3f58a8520c2a124c4232ac0526387e49da	2026-08-26T18:14:28+08:00	fix: secure deletion and stabilize novel imports
+79becb3f58a8520c2a124c4232ac0526387e49da	bbf404211a6f4ac93262e2fa2d659174084782ce	2026-08-26T17:46:47+08:00	fix: expose provider settings and destructive project controls
+bbf404211a6f4ac93262e2fa2d659174084782ce	44b199536b9ebad4dec543bfdffdbbcdadb826a4	2026-08-26T17:32:30+08:00	feat: restore chapter knowledge review and local media routing
+44b199536b9ebad4dec543bfdffdbbcdadb826a4	267ec91655f9e55c8b1097e95cfa35f11386bd8d	2026-08-26T17:21:36+08:00	fix: enforce export project authorization
+267ec91655f9e55c8b1097e95cfa35f11386bd8d	4fda5efdef09429ecdde4ffaef553a0d95a09d8a	2026-08-26T16:25:37+08:00	feat: add unified release readiness gate
+4fda5efdef09429ecdde4ffaef553a0d95a09d8a	89478feaffd1d04ab35c1e162bdc9d926a2532f0	2026-08-26T16:12:45+08:00	feat: add persistent cross-platform credential vault
+89478feaffd1d04ab35c1e162bdc9d926a2532f0	cdc5ef54cea999864c9abcf7a4735207f100511c	2026-08-26T15:56:16+08:00	fix: harden collaboration and outbound asset security
+cdc5ef54cea999864c9abcf7a4735207f100511c	97fd3f447092200e8aae2b7498f1489fe528506d	2026-08-26T15:38:13+08:00	fix: harden empty multimodal workspace states
+97fd3f447092200e8aae2b7498f1489fe528506d	51a717ee56bd1a9d15bc15b65d77ef409c8c14f0	2026-08-26T15:32:13+08:00	fix: restore production multimodal workspace routes
+51a717ee56bd1a9d15bc15b65d77ef409c8c14f0	ddf7997a4baebdc205f96ab245c82cccf8c2d52a	2026-08-26T15:10:35+08:00	Ignore local build and acceptance artifacts
+ddf7997a4baebdc205f96ab245c82cccf8c2d52a		2026-08-26T15:09:42+08:00	Initial AI Novel Studio source import

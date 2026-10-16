@@ -1,0 +1,49 @@
+{
+  "status": "PREPARATION_ONLY",
+  "runtime_started": false,
+  "production_gate_override": false,
+  "model_provider_mock": false,
+  "python_compile": "PASS",
+  "isolated_typescript": "PASS",
+  "playwright_collection": {
+    "nodes": 9,
+    "case_groups": 3,
+    "viewports": [
+      [
+        1366,
+        768
+      ],
+      [
+        1440,
+        900
+      ],
+      [
+        1920,
+        1080
+      ]
+    ],
+    "claim": "inventory only"
+  },
+  "files": {
+    "scripts/run_v2_creative_save_state_browser.py": "1f41bbf11eb8608ee4db4504cac5d06d281b321c82f6ecd1cadee6e5b550ba62",
+    "frontend/playwright.creative-save-live.config.ts": "e2dde17606c8c966c8cec26e09b052b927f42b36859c4b809e97a09ce58afe40",
+    "frontend/tests/e2e/v2-creative-save-live.spec.ts": "fecf742eb37493238f121a1b54dae581830dcd70cf02340804e6739af44e9254"
+  },
+  "prior_nine_harness_paths_raw_byte_preservation": {
+    "frontend/playwright.navigation-intent-live.config.ts": true,
+    "frontend/playwright.prompt-adoption-ui-live.config.ts": true,
+    "frontend/playwright.prompt-r3-live.config.ts": true,
+    "frontend/tests/e2e/v2-navigation-intent-live.spec.ts": true,
+    "frontend/tests/e2e/v2-prompt-adoption-ui-live.spec.ts": true,
+    "frontend/tests/e2e/v2-prompt-r3-live.spec.ts": true,
+    "scripts/run_v2_navigation_intent_browser.py": true,
+    "scripts/run_v2_prompt_adoption_ui_browser.py": true,
+    "scripts/run_v2_prompt_r3_browser.py": true
+  },
+  "awaiting": "Unified root source freeze; no runtime started.",
+  "preparation_revision": 2,
+  "changes_after_initial_preparation": [
+    "Aligned complete other-stage span text including its original middle-dot separator.",
+    "Added real original derive CAS409 clean+blocked origin, held VERIFY GET, original AssetBrowser B selection and stale A200 candidate rejection inside existing node; no new test node."
+  ]
+}

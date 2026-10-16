@@ -1,0 +1,71 @@
+{
+  "utc": "2026-10-16T16:35:55.920427+00:00",
+  "kind": "read-only-then-docs-only-eol-byte-binding-audit",
+  "old_head": "f8e97b167cb77c96d2885d0256e9a1083127e863",
+  "current_head_at_proof": "f7fd63a1fff3c0ec7fa88c9c111676f9539a41a5",
+  "source_files_edited_by_auditor": [],
+  "index_or_attrs_edited_by_auditor": false,
+  "tests_executed": false,
+  "frozen_9151_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "frozen_test_gate_count": 750,
+  "protected_artifact_count": 752,
+  "current_v2_manifest_sha256": "bbde78952c72280f8dbe05c3a9dfb83b96fc22f0f4ca3ecee21b453fb9579967",
+  "current_v2_source_count": 2352,
+  "sources": [
+    {
+      "path": "app/application/persistence.py",
+      "old_head_blob_sha256": "9d026ce9b1f9d46644d9c1ec89656302f4273a0b7822fafd48103ad931776a0f",
+      "old_head_blob_bytes": 22070,
+      "working_raw_sha256": "f34f58c6866cade1f85f1c81b9432a4cf39f3d30c07bab175c7bc3f19c4eca9d",
+      "working_raw_bytes": 22420,
+      "working_crlf": 350,
+      "working_bare_lf": 0,
+      "crlf_to_lf_equals_old_head_blob": true,
+      "old_head_lf_to_crlf_equals_working_raw": true,
+      "ast_equal_to_old_head": true,
+      "current_v2_manifest_sha256_for_source": "f34f58c6866cade1f85f1c81b9432a4cf39f3d30c07bab175c7bc3f19c4eca9d",
+      "manifest_matches_working_raw": true,
+      "current_head_blob_sha256": "f34f58c6866cade1f85f1c81b9432a4cf39f3d30c07bab175c7bc3f19c4eca9d",
+      "current_head_blob_equals_working_raw": true,
+      "in_frozen_750_test_gate_group": false,
+      "in_protected_752_artifact_group": false,
+      "frozen_9151_application_source_sha256": "7d77e380f8fbf84928ade130c4c022469636a62bbe7fd4e89c1e42c44c50c3a4",
+      "in_frozen_product_nodes": false
+    },
+    {
+      "path": "tests/test_v2_project_retirement_file_io.py",
+      "old_head_blob_sha256": "13395f48e9a1dfab02cbebf95c51197ed45a748da05db400d709604053c190a0",
+      "old_head_blob_bytes": 4010,
+      "working_raw_sha256": "8ed7589ab6d135bbdd533dc51e4c5788c209bd13872128eaf6579b7af8df58c0",
+      "working_raw_bytes": 4083,
+      "working_crlf": 73,
+      "working_bare_lf": 0,
+      "crlf_to_lf_equals_old_head_blob": true,
+      "old_head_lf_to_crlf_equals_working_raw": true,
+      "ast_equal_to_old_head": true,
+      "current_v2_manifest_sha256_for_source": "8ed7589ab6d135bbdd533dc51e4c5788c209bd13872128eaf6579b7af8df58c0",
+      "manifest_matches_working_raw": true,
+      "current_head_blob_sha256": "8ed7589ab6d135bbdd533dc51e4c5788c209bd13872128eaf6579b7af8df58c0",
+      "current_head_blob_equals_working_raw": true,
+      "in_frozen_750_test_gate_group": false,
+      "in_protected_752_artifact_group": false,
+      "frozen_9151_application_source_sha256": null,
+      "in_frozen_product_nodes": false
+    }
+  ],
+  "preexisting_application_difference": {
+    "reference": "e21075d10801a60bdcb4282a6d5ce8068be21503",
+    "source": "app/application/persistence.py",
+    "sha256": "7d77e380f8fbf84928ade130c4c022469636a62bbe7fd4e89c1e42c44c50c3a4",
+    "matches_frozen_application_source_hash": true,
+    "ast_equal_to_old_f8e97b1": false,
+    "difference_predates_eol_packaging_change": true
+  },
+  "current_attributes": [
+    "app/application/persistence.py: text: unset",
+    "app/application/persistence.py: whitespace: blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol",
+    "tests/test_v2_project_retirement_file_io.py: text: unset",
+    "tests/test_v2_project_retirement_file_io.py: whitespace: blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+  ],
+  "scope": "Only two path EOL packaging identities; no V1 runtime/semantic-identity claim, no full2352source binding or2290runtime snapshot claim by this audit."
+}

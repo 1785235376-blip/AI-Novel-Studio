@@ -1,0 +1,166 @@
+FF..FFFF                                                                 [100%]
+================================== FAILURES ===================================
+_ test_author_delete_returns_tombstone_without_removing_original_bytes[file-/api] _
+
+prompts = namespace(client=<starlette.testclient.TestClient object at 0x000001A809B78890>, prefix='/api', base='/api/novels/r3-m...fec/studio/assets', prompt_service=<app.creative.prompt_workspace.PromptWorkspaceService object at 0x000001A80962E030>)
+
+    def test_author_delete_returns_tombstone_without_removing_original_bytes(prompts):
+        e = prompts
+        receipt, _ = create(e)
+        before = metadata(e, receipt["asset_id"])
+        raw = (e.assets.root / (receipt["asset_id"] + ".bin")).read_bytes()
+        original = checked(read_body(e, receipt))
+        assert original["value"] == TEXT and original["verified"] is True
+>       removed = checked(remove(e, receipt))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_v2_private_prompt_lifecycle.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = <Response [404 Not Found]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_NOT_FOUND"},"code":"EXPERIMENTAL_NOT_FOUND","message":"EXPERIMENTAL_NOT_FOUND","details":{"code":"EXPERIMENTAL_NOT_FOUND"},"request_id":"afd3d0e5-fabe-4a55-a72d-0eecdc2a56d6"}
+E       assert 404 == 200
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests\test_r3_mounted_contracts.py:61: AssertionError
+_ test_author_delete_returns_tombstone_without_removing_original_bytes[file-/api/v1] _
+
+prompts = namespace(client=<starlette.testclient.TestClient object at 0x000001A80AC58890>, prefix='/api/v1', base='/api/v1/novel...452/studio/assets', prompt_service=<app.creative.prompt_workspace.PromptWorkspaceService object at 0x000001A80962E030>)
+
+    def test_author_delete_returns_tombstone_without_removing_original_bytes(prompts):
+        e = prompts
+        receipt, _ = create(e)
+        before = metadata(e, receipt["asset_id"])
+        raw = (e.assets.root / (receipt["asset_id"] + ".bin")).read_bytes()
+        original = checked(read_body(e, receipt))
+        assert original["value"] == TEXT and original["verified"] is True
+>       removed = checked(remove(e, receipt))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_v2_private_prompt_lifecycle.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = <Response [404 Not Found]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_NOT_FOUND"},"code":"EXPERIMENTAL_NOT_FOUND","message":"EXPERIMENTAL_NOT_FOUND","details":{"code":"EXPERIMENTAL_NOT_FOUND"},"request_id":"d044fa7f-1480-4ce0-8135-f84aaf2e36cd"}
+E       assert 404 == 200
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests\test_r3_mounted_contracts.py:61: AssertionError
+__ test_delete_cas_retry_and_create_retry_cannot_resurrect_prompt[file-/api] __
+
+prompts = namespace(client=<starlette.testclient.TestClient object at 0x000001A80CEC3260>, prefix='/api', base='/api/novels/r3-m...533/studio/assets', prompt_service=<app.creative.prompt_workspace.PromptWorkspaceService object at 0x000001A80962E030>)
+
+    def test_delete_cas_retry_and_create_retry_cannot_resurrect_prompt(prompts):
+        e = prompts
+        receipt, body = create(e)
+>       removed = checked(remove(e, receipt))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_v2_private_prompt_lifecycle.py:102: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = <Response [404 Not Found]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_NOT_FOUND"},"code":"EXPERIMENTAL_NOT_FOUND","message":"EXPERIMENTAL_NOT_FOUND","details":{"code":"EXPERIMENTAL_NOT_FOUND"},"request_id":"b5e5c317-f2b1-4ec6-b711-d09407ac5f74"}
+E       assert 404 == 200
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests\test_r3_mounted_contracts.py:61: AssertionError
+_ test_delete_cas_retry_and_create_retry_cannot_resurrect_prompt[file-/api/v1] _
+
+prompts = namespace(client=<starlette.testclient.TestClient object at 0x000001A80CF691C0>, prefix='/api/v1', base='/api/v1/novel...782/studio/assets', prompt_service=<app.creative.prompt_workspace.PromptWorkspaceService object at 0x000001A80962E030>)
+
+    def test_delete_cas_retry_and_create_retry_cannot_resurrect_prompt(prompts):
+        e = prompts
+        receipt, body = create(e)
+>       removed = checked(remove(e, receipt))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_v2_private_prompt_lifecycle.py:102: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = <Response [404 Not Found]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_NOT_FOUND"},"code":"EXPERIMENTAL_NOT_FOUND","message":"EXPERIMENTAL_NOT_FOUND","details":{"code":"EXPERIMENTAL_NOT_FOUND"},"request_id":"79ef84d6-ba1c-4973-aef7-0b293519cbee"}
+E       assert 404 == 200
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests\test_r3_mounted_contracts.py:61: AssertionError
+______ test_delete_preserves_prior_revision_and_other_branch[file-/api] _______
+
+prompts = namespace(client=<starlette.testclient.TestClient object at 0x000001A80BD54200>, prefix='/api', base='/api/novels/r3-m...10b/studio/assets', prompt_service=<app.creative.prompt_workspace.PromptWorkspaceService object at 0x000001A80962E030>)
+
+    def test_delete_preserves_prior_revision_and_other_branch(prompts):
+        e = prompts
+        first, _ = create(e, text="PRIVATE_PROMPT_BODY original revision")
+        second = checked(e.client.post(e.prompt_base + f"/{first['family_id']}/revisions",
+            headers=e.activate(e.lead, branch=e.branch), json={"text": TEXT, "purpose": "IMAGE", "origin": "MANUAL",
+                "request_id": uuid4().hex, "expected_previous_asset_id": first["asset_id"], "expected_revision": 1}), 201)
+        prior = metadata(e, first["asset_id"])
+        prior_body = checked(read_body(e, first))
+        not_found(remove(e, second, branch=e.other_branch))
+>       checked(remove(e, second))
+
+tests\test_v2_private_prompt_lifecycle.py:123: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = <Response [404 Not Found]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_NOT_FOUND"},"code":"EXPERIMENTAL_NOT_FOUND","message":"EXPERIMENTAL_NOT_FOUND","details":{"code":"EXPERIMENTAL_NOT_FOUND"},"request_id":"8a1bbef9-d0d0-47ff-9012-5392dd56027f"}
+E       assert 404 == 200
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests\test_r3_mounted_contracts.py:61: AssertionError
+_____ test_delete_preserves_prior_revision_and_other_branch[file-/api/v1] _____
+
+prompts = namespace(client=<starlette.testclient.TestClient object at 0x000001A80BB36570>, prefix='/api/v1', base='/api/v1/novel...aa7/studio/assets', prompt_service=<app.creative.prompt_workspace.PromptWorkspaceService object at 0x000001A80962E030>)
+
+    def test_delete_preserves_prior_revision_and_other_branch(prompts):
+        e = prompts
+        first, _ = create(e, text="PRIVATE_PROMPT_BODY original revision")
+        second = checked(e.client.post(e.prompt_base + f"/{first['family_id']}/revisions",
+            headers=e.activate(e.lead, branch=e.branch), json={"text": TEXT, "purpose": "IMAGE", "origin": "MANUAL",
+                "request_id": uuid4().hex, "expected_previous_asset_id": first["asset_id"], "expected_revision": 1}), 201)
+        prior = metadata(e, first["asset_id"])
+        prior_body = checked(read_body(e, first))
+        not_found(remove(e, second, branch=e.other_branch))
+>       checked(remove(e, second))
+
+tests\test_v2_private_prompt_lifecycle.py:123: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = <Response [404 Not Found]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_NOT_FOUND"},"code":"EXPERIMENTAL_NOT_FOUND","message":"EXPERIMENTAL_NOT_FOUND","details":{"code":"EXPERIMENTAL_NOT_FOUND"},"request_id":"318971c6-dc35-478c-a0d5-4c2b0c6a335d"}
+E       assert 404 == 200
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests\test_r3_mounted_contracts.py:61: AssertionError
+============================== warnings summary ===============================
+..\..\Cache\Tests\expansion-20261013-97da10e1\venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\PoemSeed\Cache\Tests\expansion-20261013-97da10e1\venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_v2_private_prompt_lifecycle.py::test_author_delete_returns_tombstone_without_removing_original_bytes[file-/api]
+FAILED tests/test_v2_private_prompt_lifecycle.py::test_author_delete_returns_tombstone_without_removing_original_bytes[file-/api/v1]
+FAILED tests/test_v2_private_prompt_lifecycle.py::test_delete_cas_retry_and_create_retry_cannot_resurrect_prompt[file-/api]
+FAILED tests/test_v2_private_prompt_lifecycle.py::test_delete_cas_retry_and_create_retry_cannot_resurrect_prompt[file-/api/v1]
+FAILED tests/test_v2_private_prompt_lifecycle.py::test_delete_preserves_prior_revision_and_other_branch[file-/api]
+FAILED tests/test_v2_private_prompt_lifecycle.py::test_delete_preserves_prior_revision_and_other_branch[file-/api/v1]
+6 failed, 2 passed, 8 deselected, 1 warning in 7.78s

@@ -1,0 +1,14 @@
+<testsuites id="" name="" tests="3" failures="0" skipped="0" errors="0" time="146.971951">
+<testsuite name="v2-prompt-r3-live.spec.ts" timestamp="2026-10-16T16:41:49.454Z" hostname="prompt-r3-1366x768" tests="1" failures="0" skipped="0" time="48.638" errors="0">
+<testcase name="real Prompt authoring, immutable revision, browser HTTP tombstone, and closed production adoption" classname="v2-prompt-r3-live.spec.ts" time="48.638">
+</testcase>
+</testsuite>
+<testsuite name="v2-prompt-r3-live.spec.ts" timestamp="2026-10-16T16:41:49.454Z" hostname="prompt-r3-1440x900" tests="1" failures="0" skipped="0" time="48.183" errors="0">
+<testcase name="real Prompt authoring, immutable revision, browser HTTP tombstone, and closed production adoption" classname="v2-prompt-r3-live.spec.ts" time="48.183">
+</testcase>
+</testsuite>
+<testsuite name="v2-prompt-r3-live.spec.ts" timestamp="2026-10-16T16:41:49.454Z" hostname="prompt-r3-1920x1080" tests="1" failures="0" skipped="0" time="47.661" errors="0">
+<testcase name="real Prompt authoring, immutable revision, browser HTTP tombstone, and closed production adoption" classname="v2-prompt-r3-live.spec.ts" time="47.661">
+</testcase>
+</testsuite>
+</testsuites>

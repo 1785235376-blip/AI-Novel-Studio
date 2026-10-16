@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="1" failures="1" errors="0" time="1.984">
+    <testsuite name="src/creative/CreativeScriptLabelPersistence.test.tsx" timestamp="2026-10-10T21:22:45.816Z" hostname="7abb01f187ba" tests="1" failures="1" errors="0" skipped="0" time="0.124295488">
+        <testcase classname="src/creative/CreativeScriptLabelPersistence.test.tsx" name="keeps the saved Script editor label independent of its initial textarea text node" time="0.123318587">
+            <failure message="expected null to be &apos;通用脚本内容&apos; // Object.is equality" type="AssertionError">
+AssertionError: expected null to be &apos;通用脚本内容&apos; // Object.is equality
+
+- Expected: 
+&quot;通用脚本内容&quot;
+
++ Received: 
+null
+
+ ❯ src/creative/CreativeScriptLabelPersistence.test.tsx:18:45
+            </failure>
+        </testcase>
+    </testsuite>
+</testsuites>

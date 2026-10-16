@@ -1,0 +1,186 @@
+INFO:     127.0.0.1:50481 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50540 - "POST /api/packaged/bootstrap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50606 - "POST /api/packaged/initial-workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54768 - "POST /api/collaboration/admin/workspaces/workspace-a/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53456 - "GET /api/collaboration/admin/workspaces/workspace-a/navigation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53458 - "POST /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/activate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59337 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:59338 - "GET /api/novels HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:59339 - "GET /api/text-models HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:59340 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:59341 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:59342 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:54202 - "GET /api/collaboration/admin/workspaces HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60228 - "GET /api/collaboration/admin/workspaces/workspace-a/navigation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53016 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50721 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58081 - "GET /api/novels/1678ecf4-9b85-4b31-a28d-be0918bc4420/writing-goal HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:65411 - "GET /api/novels/1678ecf4-9b85-4b31-a28d-be0918bc4420/chapters/archived HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:65409 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52103 - "GET /api/novels/1678ecf4-9b85-4b31-a28d-be0918bc4420/media-tasks HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65410 - "GET /api/collaboration/workspaces/workspace-a/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/storylines/df5bf844-e022-416e-a921-7b73672326eb/branches/ea4e0294-3e1b-49b4-9e13-f24a464b0495/chapters HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51694 - "GET /api/collaboration/workspaces/workspace-a/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/storylines/df5bf844-e022-416e-a921-7b73672326eb/branches/ea4e0294-3e1b-49b4-9e13-f24a464b0495/bootstrap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64147 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60304 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53267 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64274 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52681 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/assets?include_deleted=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52682 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59236 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57371 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61958 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50138 - "POST /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts HTTP/1.1" 201 Created
+INFO:     127.0.0.1:54020 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56197 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts/0ae1ac50-0f67-47cb-a632-c9a6e369912a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53131 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts/0ae1ac50-0f67-47cb-a632-c9a6e369912a/revisions/a110c602-abf3-4b7a-91d4-5e501f75ffb6/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53129 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts/0ae1ac50-0f67-47cb-a632-c9a6e369912a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56295 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60841 - "POST /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts/0ae1ac50-0f67-47cb-a632-c9a6e369912a/revisions HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52106 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts/0ae1ac50-0f67-47cb-a632-c9a6e369912a/revisions/a110c602-abf3-4b7a-91d4-5e501f75ffb6/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52104 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52108 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts/0ae1ac50-0f67-47cb-a632-c9a6e369912a/revisions/6702a5a8-0e26-475c-8ad6-80397f5a3505/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54639 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts/0ae1ac50-0f67-47cb-a632-c9a6e369912a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53412 - "GET /api/novels/1678ecf4-9b85-4b31-a28d-be0918bc4420/writing-goal HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:65063 - "GET /api/novels/1678ecf4-9b85-4b31-a28d-be0918bc4420/chapters/archived HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:52581 - "GET /api/collaboration/workspaces/workspace-a/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/storylines/df5bf844-e022-416e-a921-7b73672326eb/branches/ea4e0294-3e1b-49b4-9e13-f24a464b0495/chapters HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58914 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts/0ae1ac50-0f67-47cb-a632-c9a6e369912a/revisions/a110c602-abf3-4b7a-91d4-5e501f75ffb6/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58915 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts/0ae1ac50-0f67-47cb-a632-c9a6e369912a/revisions/6702a5a8-0e26-475c-8ad6-80397f5a3505/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52584 - "POST /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52586 - "POST /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts/10ca2967-2a4c-4719-9003-9baaaabc9d68/revisions/a80272cf-37d7-46c6-a2f1-46a32b6ea591/approve?expected_version=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52588 - "POST /api/novels/1678ecf4-9b85-4b31-a28d-be0918bc4420/experimental/creative/documents HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52590 - "POST /api/novels/1678ecf4-9b85-4b31-a28d-be0918bc4420/experimental/creative/documents/fe8b9968-0e16-4449-985a-e5c8176026fa/derive HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52600 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/documents/4902516f-70d8-42ae-91ed-7bba15b37ae0/prompt-adoption HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52602 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts/10ca2967-2a4c-4719-9003-9baaaabc9d68/revisions/a80272cf-37d7-46c6-a2f1-46a32b6ea591/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51695 - "POST /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/documents/4902516f-70d8-42ae-91ed-7bba15b37ae0/shots/8430982a-15c0-4e56-9e33-9037ce5e8a77/prompt-adoption HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:51697 - "GET /api/novels/1678ecf4-9b85-4b31-a28d-be0918bc4420/experimental/creative/documents/4902516f-70d8-42ae-91ed-7bba15b37ae0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51702 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/assets/6702a5a8-0e26-475c-8ad6-80397f5a3505 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62185 - "DELETE /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/assets/6702a5a8-0e26-475c-8ad6-80397f5a3505?expected_version=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62187 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts/0ae1ac50-0f67-47cb-a632-c9a6e369912a/revisions/6702a5a8-0e26-475c-8ad6-80397f5a3505/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62189 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts/0ae1ac50-0f67-47cb-a632-c9a6e369912a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52581 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62759 - "GET /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/prompts/0ae1ac50-0f67-47cb-a632-c9a6e369912a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62765 - "DELETE /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/assets/6702a5a8-0e26-475c-8ad6-80397f5a3505?expected_version=3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62772 - "POST /api/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420/studio/assets/6702a5a8-0e26-475c-8ad6-80397f5a3505/restore HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62774 - "DELETE /api/collaboration/admin/workspaces/workspace-a/projects/1678ecf4-9b85-4b31-a28d-be0918bc4420 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:58133 - "POST /api/collaboration/admin/workspaces/workspace-a/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56381 - "GET /api/collaboration/admin/workspaces/workspace-a/navigation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56383 - "POST /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/activate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51091 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:51092 - "GET /api/novels HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:51093 - "GET /api/text-models HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:51094 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:51095 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:53170 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:55457 - "GET /api/collaboration/admin/workspaces HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60486 - "GET /api/collaboration/admin/workspaces/workspace-a/navigation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64277 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52581 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49305 - "GET /api/novels/57fd5893-dc83-4f51-b52e-c83a9b10827c/writing-goal HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:55982 - "GET /api/novels/57fd5893-dc83-4f51-b52e-c83a9b10827c/chapters/archived HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:55979 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55980 - "GET /api/novels/57fd5893-dc83-4f51-b52e-c83a9b10827c/media-tasks HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55981 - "GET /api/collaboration/workspaces/workspace-a/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/storylines/479492fe-5408-436f-9b80-d320ebea5bb8/branches/315a2e70-5d1a-462c-8575-b91a56095e57/chapters HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53318 - "GET /api/collaboration/workspaces/workspace-a/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/storylines/479492fe-5408-436f-9b80-d320ebea5bb8/branches/315a2e70-5d1a-462c-8575-b91a56095e57/bootstrap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59482 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62521 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58353 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62104 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53856 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59984 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53855 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/assets?include_deleted=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53854 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60415 - "POST /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts HTTP/1.1" 201 Created
+INFO:     127.0.0.1:62721 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50647 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58586 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts/fbc424ff-b04c-48e4-8993-adbcc4b8c99c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63724 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts/fbc424ff-b04c-48e4-8993-adbcc4b8c99c/revisions/e40484bd-0683-47a1-9e2d-89305aba2ca2/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63722 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts/fbc424ff-b04c-48e4-8993-adbcc4b8c99c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64671 - "POST /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts/fbc424ff-b04c-48e4-8993-adbcc4b8c99c/revisions HTTP/1.1" 201 Created
+INFO:     127.0.0.1:55260 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50497 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts/fbc424ff-b04c-48e4-8993-adbcc4b8c99c/revisions/e40484bd-0683-47a1-9e2d-89305aba2ca2/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50473 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55262 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts/fbc424ff-b04c-48e4-8993-adbcc4b8c99c/revisions/3dc56b1e-c7e4-4cae-8ed2-1906dd0f6e07/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57423 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts/fbc424ff-b04c-48e4-8993-adbcc4b8c99c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49576 - "GET /api/novels/57fd5893-dc83-4f51-b52e-c83a9b10827c/writing-goal HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:64620 - "GET /api/novels/57fd5893-dc83-4f51-b52e-c83a9b10827c/chapters/archived HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:51403 - "GET /api/collaboration/workspaces/workspace-a/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/storylines/479492fe-5408-436f-9b80-d320ebea5bb8/branches/315a2e70-5d1a-462c-8575-b91a56095e57/chapters HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61912 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts/fbc424ff-b04c-48e4-8993-adbcc4b8c99c/revisions/3dc56b1e-c7e4-4cae-8ed2-1906dd0f6e07/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61911 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts/fbc424ff-b04c-48e4-8993-adbcc4b8c99c/revisions/e40484bd-0683-47a1-9e2d-89305aba2ca2/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51406 - "POST /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51408 - "POST /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts/636c2c9d-879e-4301-aff9-5e6e0f6628fb/revisions/5fc559e6-303d-4500-9377-6d0082831cdd/approve?expected_version=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51410 - "POST /api/novels/57fd5893-dc83-4f51-b52e-c83a9b10827c/experimental/creative/documents HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51412 - "POST /api/novels/57fd5893-dc83-4f51-b52e-c83a9b10827c/experimental/creative/documents/e4ad5f2c-3f11-41e2-a5e8-a763c8f9aa7d/derive HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51414 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/documents/e42d4933-7cf2-41bf-9456-301be31921ba/prompt-adoption HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51417 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts/636c2c9d-879e-4301-aff9-5e6e0f6628fb/revisions/5fc559e6-303d-4500-9377-6d0082831cdd/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53012 - "POST /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/documents/e42d4933-7cf2-41bf-9456-301be31921ba/shots/ea0ce7f2-cea2-4a0f-982d-1807355fe0b6/prompt-adoption HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:53014 - "GET /api/novels/57fd5893-dc83-4f51-b52e-c83a9b10827c/experimental/creative/documents/e42d4933-7cf2-41bf-9456-301be31921ba HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53017 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/assets/3dc56b1e-c7e4-4cae-8ed2-1906dd0f6e07 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65181 - "DELETE /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/assets/3dc56b1e-c7e4-4cae-8ed2-1906dd0f6e07?expected_version=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65183 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts/fbc424ff-b04c-48e4-8993-adbcc4b8c99c/revisions/3dc56b1e-c7e4-4cae-8ed2-1906dd0f6e07/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65185 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts/fbc424ff-b04c-48e4-8993-adbcc4b8c99c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64114 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56205 - "GET /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/prompts/fbc424ff-b04c-48e4-8993-adbcc4b8c99c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56208 - "DELETE /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/assets/3dc56b1e-c7e4-4cae-8ed2-1906dd0f6e07?expected_version=3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56210 - "POST /api/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c/studio/assets/3dc56b1e-c7e4-4cae-8ed2-1906dd0f6e07/restore HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56212 - "DELETE /api/collaboration/admin/workspaces/workspace-a/projects/57fd5893-dc83-4f51-b52e-c83a9b10827c HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:52600 - "POST /api/collaboration/admin/workspaces/workspace-a/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61448 - "GET /api/collaboration/admin/workspaces/workspace-a/navigation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61450 - "POST /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/activate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50457 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:50465 - "GET /api/novels HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:50468 - "GET /api/text-models HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:50473 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:50487 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:50497 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:60287 - "GET /api/collaboration/admin/workspaces HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56865 - "GET /api/collaboration/admin/workspaces/workspace-a/navigation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60686 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57851 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53463 - "GET /api/novels/eb427b42-7b7d-45b8-96ce-264da69c3c22/writing-goal HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:50434 - "GET /api/novels/eb427b42-7b7d-45b8-96ce-264da69c3c22/chapters/archived HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:50390 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50418 - "GET /api/novels/eb427b42-7b7d-45b8-96ce-264da69c3c22/media-tasks HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50432 - "GET /api/collaboration/workspaces/workspace-a/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/storylines/90598130-14cb-4f77-8d4e-3ea9eca5eaf6/branches/fbd01f04-ffe5-48cf-9db3-91742c491ada/chapters HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55791 - "GET /api/collaboration/workspaces/workspace-a/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/storylines/90598130-14cb-4f77-8d4e-3ea9eca5eaf6/branches/fbd01f04-ffe5-48cf-9db3-91742c491ada/bootstrap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60629 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54097 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61383 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52726 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51055 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60701 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60700 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/assets?include_deleted=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53913 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60923 - "POST /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49235 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51386 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52581 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts/5e74802b-ba63-4f72-8d17-584037e4730e HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62134 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts/5e74802b-ba63-4f72-8d17-584037e4730e/revisions/9d24be9e-7cc2-4342-8ecf-4f2cc8708c77/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62132 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts/5e74802b-ba63-4f72-8d17-584037e4730e HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52581 - "POST /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts/5e74802b-ba63-4f72-8d17-584037e4730e/revisions HTTP/1.1" 201 Created
+INFO:     127.0.0.1:65517 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55089 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts/5e74802b-ba63-4f72-8d17-584037e4730e/revisions/9d24be9e-7cc2-4342-8ecf-4f2cc8708c77/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55087 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65519 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts/5e74802b-ba63-4f72-8d17-584037e4730e/revisions/5b020342-33a3-46e5-99a7-e1804ca95c37/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62175 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts/5e74802b-ba63-4f72-8d17-584037e4730e HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63305 - "GET /api/novels/eb427b42-7b7d-45b8-96ce-264da69c3c22/writing-goal HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:51819 - "GET /api/novels/eb427b42-7b7d-45b8-96ce-264da69c3c22/chapters/archived HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:56067 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts/5e74802b-ba63-4f72-8d17-584037e4730e/revisions/9d24be9e-7cc2-4342-8ecf-4f2cc8708c77/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56068 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts/5e74802b-ba63-4f72-8d17-584037e4730e/revisions/5b020342-33a3-46e5-99a7-e1804ca95c37/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52581 - "GET /api/collaboration/workspaces/workspace-a/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/storylines/90598130-14cb-4f77-8d4e-3ea9eca5eaf6/branches/fbd01f04-ffe5-48cf-9db3-91742c491ada/chapters HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52589 - "POST /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52593 - "POST /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts/fbfa1808-3121-4e58-9710-1a93f4136816/revisions/967e6482-f68e-4ebc-9e07-07c84f308975/approve?expected_version=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52595 - "POST /api/novels/eb427b42-7b7d-45b8-96ce-264da69c3c22/experimental/creative/documents HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52598 - "POST /api/novels/eb427b42-7b7d-45b8-96ce-264da69c3c22/experimental/creative/documents/d6054ae7-4e91-4338-83dc-f6267f2601f4/derive HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52600 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/documents/d81f6c52-c3aa-49e2-bc5c-883ab1663f7b/prompt-adoption HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52606 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts/fbfa1808-3121-4e58-9710-1a93f4136816/revisions/967e6482-f68e-4ebc-9e07-07c84f308975/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64156 - "POST /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/documents/d81f6c52-c3aa-49e2-bc5c-883ab1663f7b/shots/d06bcef0-fd28-441a-b3e1-968e661ce9ab/prompt-adoption HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:64158 - "GET /api/novels/eb427b42-7b7d-45b8-96ce-264da69c3c22/experimental/creative/documents/d81f6c52-c3aa-49e2-bc5c-883ab1663f7b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64160 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/assets/5b020342-33a3-46e5-99a7-e1804ca95c37 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59161 - "DELETE /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/assets/5b020342-33a3-46e5-99a7-e1804ca95c37?expected_version=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59163 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts/5e74802b-ba63-4f72-8d17-584037e4730e/revisions/5b020342-33a3-46e5-99a7-e1804ca95c37/body HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59165 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts/5e74802b-ba63-4f72-8d17-584037e4730e HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53278 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58789 - "GET /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/prompts/5e74802b-ba63-4f72-8d17-584037e4730e HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58792 - "DELETE /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/assets/5b020342-33a3-46e5-99a7-e1804ca95c37?expected_version=3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58794 - "POST /api/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22/studio/assets/5b020342-33a3-46e5-99a7-e1804ca95c37/restore HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58796 - "DELETE /api/collaboration/admin/workspaces/workspace-a/projects/eb427b42-7b7d-45b8-96ce-264da69c3c22 HTTP/1.1" 204 No Content

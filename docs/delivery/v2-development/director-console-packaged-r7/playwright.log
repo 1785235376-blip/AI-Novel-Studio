@@ -1,0 +1,33 @@
+
+Running 1 test using 1 worker
+
+(node:78944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:78944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  x  1 [director-1440x900] › tests\e2e\v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source (1.5m)
+
+
+  1) [director-1440x900] › tests\e2e\v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: apiRequestContext.delete: Target page, context or browser has been closed
+
+      113 |     expect(errors).toEqual([]);
+      114 |     expect(calls.filter(row => !['GET', 'HEAD', 'OPTIONS'].includes(row.method)
+    > 115 |       && /\/(graph-runs|dispatch|generate|director-proposals|media\/tasks)(\/|$)/.test(row.path))).toEqual([]);
+          |                                                         ^
+      116 |     const stored = await exact(await request.get(`${base}/graphs/${graph.id}`, { headers }), 200);
+      117 |     expect(stored.version).toBe(graph.version);
+      118 |     expect(stored.definition.nodes[0].parameters.document_snapshot).toEqual(graph.definition.nodes[0].parameters.document_snapshot);
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-director-console-live.spec.ts:115:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\docs\delivery\v2-development\director-console-packaged-r7\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\docs\delivery\v2-development\director-console-packaged-r7\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\error-context.md
+
+  1 failed
+    [director-1440x900] › tests\e2e\v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source 

@@ -1,0 +1,45 @@
+{
+  "head": "bf1be37d1f27da0a9b9b3994cdac0fec4397784d",
+  "source_sha256": "7dde8794a29ceeaab2741ca283fe526f95d37813db8ba5f50b503e06654e09de",
+  "source_files": 1782,
+  "runs": [
+    {
+      "receipt": "docs/delivery/v2-development/m4-receipt-adjacent-green-20261011t0507.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "log_sha256": "99740ebedd7714710376f3c091e215cc1cee98e637afdd4edac3342cd6a343cf",
+      "source_stable": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/m4-receipt-collection-green-20261011t0508.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "log_sha256": "e24140f3453a0a888dabaa3e9255afdbb3156082a71d66a11597a9be3e60b939",
+      "source_stable": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/m4-receipt-infra-green-20261011t0508.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "log_sha256": "b2d8647a2d1784e3a2b908c3a63fc2b2a0459c219c00f2861bf69650a83c7f01",
+      "source_stable": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/m4-receipt-preservation-green-20261011t0506.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "log_sha256": "37c32c886e2fd502686a6cd165b78b2726729118de1a8be690d2bd95bd7d44bb",
+      "source_stable": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/m4-receipt-preservation-red-20261011t0506.json",
+      "status": "FAIL",
+      "exit_code": 1,
+      "log_sha256": "ccc3c7e5787658626540d52fea43afa4f841b874329d8fe3bbd15d04e2cdc7c2",
+      "source_stable": true
+    }
+  ],
+  "original_tests_prefix_unchanged": true,
+  "only_execute_changed": true,
+  "no_commit_or_publication": true
+}

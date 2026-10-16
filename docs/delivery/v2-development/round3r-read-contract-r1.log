@@ -1,0 +1,104 @@
+........................FF.F............................................ [ 28%]
+....................................................................sss. [ 56%]
+....sssss.s.s.s.s.s.s.s.s.s..ss..............ssssssssssssss..ss..ss..ss. [ 84%]
+.ss..ss..ss..ss..ss..ss.s.s.s......ssssss                                [100%]
+================================== FAILURES ===================================
+_______ test_a_private_draft_is_readable_by_its_author_through_the_api ________
+
+rig = namespace(client=<starlette.testclient.TestClient object at 0x000001A3A9CD2310>, nid='r3r-4e8de774090148aa863ceec23c33...paceService object at 0x000001A3A9CF0D90>, scope={'mode': 'local', 'novel_id': 'r3r-4e8de774090148aa863ceec23c334c6a'})
+
+    def test_a_private_draft_is_readable_by_its_author_through_the_api(rig):
+>       _create(rig, payload(family_id="priv"), text="secret body", actor="author-a", private=True)
+
+tests\test_round3r_prompt_read_contract.py:363: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_round3r_prompt_read_contract.py:253: in _create
+    rig.assets.update_metadata(created["id"], {"parameters": {"prompt": body}},
+app\services\asset_library_service.py:791: in update_metadata
+    meta = self.get(asset_id, branch_id=branch_id, actor_id=actor_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.services.asset_library_service.AssetLibraryService object at 0x000001A3A9CF1B10>
+asset_id = '5f270ddb-69df-404b-bd34-7f2323273888', branch_id = None
+include_deleted = False, actor_id = None
+
+    def get(self, asset_id: str, *, branch_id: str | None = None, include_deleted: bool = False, actor_id: str | None = None):
+        if branch_id is not None:
+            self._identifier(branch_id, "branch_id")
+        meta = self._load(asset_id)
+        if not self._in_scope(meta, branch_id, actor_id) or (meta.get("deleted_at") and not include_deleted):
+>           raise FileNotFoundError(asset_id)
+E           FileNotFoundError: 5f270ddb-69df-404b-bd34-7f2323273888
+
+app\services\asset_library_service.py:751: FileNotFoundError
+___________ test_a_private_draft_is_not_readable_by_another_author ____________
+
+rig = namespace(client=<starlette.testclient.TestClient object at 0x000001A3A9B74850>, nid='r3r-49f23b5692c54c23b3d939416d78...paceService object at 0x000001A3A95D7450>, scope={'mode': 'local', 'novel_id': 'r3r-49f23b5692c54c23b3d939416d78eb1d'})
+
+    def test_a_private_draft_is_not_readable_by_another_author(rig):
+>       _create(rig, payload(family_id="priv"), text="secret body", actor="author-a", private=True)
+
+tests\test_round3r_prompt_read_contract.py:371: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_round3r_prompt_read_contract.py:253: in _create
+    rig.assets.update_metadata(created["id"], {"parameters": {"prompt": body}},
+app\services\asset_library_service.py:791: in update_metadata
+    meta = self.get(asset_id, branch_id=branch_id, actor_id=actor_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.services.asset_library_service.AssetLibraryService object at 0x000001A3A95DDE10>
+asset_id = 'dc349a23-b70f-421a-8808-b8fdc8e0f6ef', branch_id = None
+include_deleted = False, actor_id = None
+
+    def get(self, asset_id: str, *, branch_id: str | None = None, include_deleted: bool = False, actor_id: str | None = None):
+        if branch_id is not None:
+            self._identifier(branch_id, "branch_id")
+        meta = self._load(asset_id)
+        if not self._in_scope(meta, branch_id, actor_id) or (meta.get("deleted_at") and not include_deleted):
+>           raise FileNotFoundError(asset_id)
+E           FileNotFoundError: dc349a23-b70f-421a-8808-b8fdc8e0f6ef
+
+app\services\asset_library_service.py:751: FileNotFoundError
+__________________ test_redaction_does_not_grant_permission ___________________
+
+rig = namespace(client=<starlette.testclient.TestClient object at 0x000001A3A9B30A50>, nid='r3r-406428fcd6484ca286074aa91300...paceService object at 0x000001A3A20C6610>, scope={'mode': 'local', 'novel_id': 'r3r-406428fcd6484ca286074aa913009ede'})
+
+    def test_redaction_does_not_grant_permission(rig):
+        """A redacted prompt is still subject to the owner's permission rules."""
+>       _create(rig, payload(family_id="red2", redacted=True), text="secret", actor="author-a", private=True)
+
+tests\test_round3r_prompt_read_contract.py:395: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_round3r_prompt_read_contract.py:253: in _create
+    rig.assets.update_metadata(created["id"], {"parameters": {"prompt": body}},
+app\services\asset_library_service.py:791: in update_metadata
+    meta = self.get(asset_id, branch_id=branch_id, actor_id=actor_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.services.asset_library_service.AssetLibraryService object at 0x000001A3A9C56090>
+asset_id = '4f28dab7-c4e7-4246-81ba-af3b0b188310', branch_id = None
+include_deleted = False, actor_id = None
+
+    def get(self, asset_id: str, *, branch_id: str | None = None, include_deleted: bool = False, actor_id: str | None = None):
+        if branch_id is not None:
+            self._identifier(branch_id, "branch_id")
+        meta = self._load(asset_id)
+        if not self._in_scope(meta, branch_id, actor_id) or (meta.get("deleted_at") and not include_deleted):
+>           raise FileNotFoundError(asset_id)
+E           FileNotFoundError: 4f28dab7-c4e7-4246-81ba-af3b0b188310
+
+app\services\asset_library_service.py:751: FileNotFoundError
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_round3r_prompt_read_contract.py::test_a_private_draft_is_readable_by_its_author_through_the_api
+FAILED tests/test_round3r_prompt_read_contract.py::test_a_private_draft_is_not_readable_by_another_author
+FAILED tests/test_round3r_prompt_read_contract.py::test_redaction_does_not_grant_permission
+3 failed, 194 passed, 60 skipped, 1 warning in 64.71s (0:01:04)

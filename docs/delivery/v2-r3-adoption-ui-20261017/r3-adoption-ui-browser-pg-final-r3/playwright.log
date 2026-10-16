@@ -1,0 +1,20 @@
+
+Running 3 tests using 1 worker
+
+(node:68128) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:68128) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 1 [prompt-adoption-ui-1366x768] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin (1.9m)
+(node:78004) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:78004) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 2 [prompt-adoption-ui-1440x900] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin (1.8m)
+(node:73528) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:73528) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 3 [prompt-adoption-ui-1920x1080] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin (1.8m)
+
+  3 passed (5.6m)

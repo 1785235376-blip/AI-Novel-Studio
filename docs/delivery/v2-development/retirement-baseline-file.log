@@ -1,0 +1,54 @@
+....ssssF
+================================== FAILURES ===================================
+_ test_recreated_incarnation_isolates_data_assets_and_idempotency[file-/api-False] _
+
+retirement = namespace(client=<starlette.testclient.TestClient object at 0x000001D5C07466F0>, prefix='/api', base='/api/novels/r3-m...e79d2ffcdd1f0c6'}, documents='/api/novels/r3-mounted-a9457bccbc534fe2a053992c2bf7fc02/experimental/creative/documents')
+cross_workspace = False
+
+    @pytest.mark.parametrize("cross_workspace", [False, True])
+    def test_recreated_incarnation_isolates_data_assets_and_idempotency(retirement, cross_workspace):
+        from app.creative.graph import CreativeGraphService
+        from test_v2_independent_workspace import services, upload
+        e = retirement
+        workspace = services(e.root, e.backend, e.bundle.novels.database.url if False else (e.config.database_url or ""), e.novels, e.chapters)
+        graph = CreativeGraphService(e.store, workspace)
+        old_doc = checked(e.client.post(e.documents, headers=e.activate(e.lead, branch=e.branch),
+            json=independent("PRIVATE_RETIRED")), 201)
+        scope = dict(e.scope)
+        old_identity = workspace.store.incarnation(e.nid)
+        asset_body = upload(key="same-public-import-key")
+        old_asset = workspace.import_asset(e.nid, scope, e.admin, asset_body)
+        graph_body = {"request_id": "same-public-create-key", "definition": {"title": "Retained private graph", "nodes": [], "edges": []}}
+        old_graph = graph.create(e.nid, scope, e.admin, graph_body)
+        assert graph.create(e.nid, scope, e.admin, graph_body)["id"] == old_graph["id"]
+        assert e.client.delete(e.url, headers=e.activate(e.admin)).status_code == 204
+        target = e.workspace
+        if cross_workspace:
+            target = "new-workspace-" + uuid4().hex
+            e.scopes.create_workspace(Workspace(target, "New incarnation workspace"))
+            for actor in (e.admin, e.new_actor):
+                e.identity.add_membership(WorkspaceMembership(uuid4().hex, actor, target))
+            role(e, e.admin, AuthorizationScope(ScopeKind.WORKSPACE, target), admin=True)
+        recreate(e, workspace=target)
+        fresh, fresh_scope = grant_new_incarnation(e, workspace=target, reuse_branch=not cross_workspace)
+        assert workspace.store.incarnation(e.nid) != old_identity
+        assert checked(e.client.get(e.documents, headers=fresh)) == {"items": []}
+        assert e.client.get(e.documents + "/" + old_doc["id"], headers=fresh).status_code == 404
+        assert graph.list(e.nid, fresh_scope, e.admin) == {"items": []}
+        with pytest.raises(FileNotFoundError):
+            graph.get(e.nid, fresh_scope, e.admin, old_graph["id"])
+        with pytest.raises(FileNotFoundError):
+>           workspace.asset(e.nid, fresh_scope, e.admin, old_asset["id"])
+E           TypeError: IndependentWorkspaceService.asset() takes 4 positional arguments but 5 were given
+
+tests\test_v2_project_retirement.py:194: TypeError
+============================== warnings summary ===============================
+..\..\Cache\Tests\expansion-20261013-97da10e1\venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\PoemSeed\Cache\Tests\expansion-20261013-97da10e1\venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_v2_project_retirement.py::test_recreated_incarnation_isolates_data_assets_and_idempotency[file-/api-False]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 4 passed, 4 skipped, 1 warning in 8.56s

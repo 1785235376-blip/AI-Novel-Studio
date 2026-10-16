@@ -1,0 +1,766 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="10" skipped="0" tests="27" time="1.059" timestamp="2026-10-10T12:37:09.648710-07:00" hostname="7abb01f187ba"><testcase classname=".github.ci.test_compact_staged_catalog" name="test_exclusion_has_exact_directory_boundary[docs/delivery-True]" time="0.001" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_exclusion_has_exact_directory_boundary[docs/delivery/receipt.json-True]" time="0.000" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_exclusion_has_exact_directory_boundary[docs/delivery/deep/evidence.log-True]" time="0.000" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_exclusion_has_exact_directory_boundary[docs/delivery.md-False]" time="0.000" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_exclusion_has_exact_directory_boundary[docs/delivery-next/file-False]" time="0.000" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_exclusion_has_exact_directory_boundary[docs/deliveries/file-False]" time="0.000" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_exclusion_has_exact_directory_boundary[other/docs/delivery/file-False]" time="0.000" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_exclusion_has_exact_directory_boundary[docs/Delivery/file-False]" time="0.000" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_snapshot_reads_the_named_tree_not_current_index_or_worktree" time="0.068" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_refresh_runs_staged_generator_and_source_only[False]" time="0.108" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_refresh_runs_staged_generator_and_source_only[True]" time="0.044"><failure message="ValueError: Unexpected archive directory: docs">repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_refresh_runs_staged_gener1/repository')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f7f947b11c0&gt;
+compact = True
+
+    @pytest.mark.parametrize('compact', [False, True])
+    def test_refresh_runs_staged_generator_and_source_only(repository, monkeypatch, compact):
+        root = repository
+        tree = git(root, 'write-tree')
+        put(root, 'scripts/refresh_product_api_catalog.py', "raise RuntimeError('unstaged generator')")
+        put(root, 'app/current.py', 'unstaged source')
+        monkeypatch.setattr(catalog, 'ROOT', root)
+&gt;       catalog.main(['--compact'] if compact else [])
+
+.github/ci/test_compact_staged_catalog.py:96: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/refresh_v2_staged_catalog.py:144: in main
+    snapshot = compact_snapshot(ROOT, tree, folder)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_refresh_runs_staged_gener1/repository')
+tree = '3f9fe682f57de899e7cc01f555cbb473f7668248'
+folder = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_refresh_runs_staged_gener1/repository/.runtime/v2-staged/b7900bf73d0046c7b73c8b3ec337203b')
+
+    def compact_snapshot(root, tree, folder):
+        """Stream an immutable Git tree, retaining every blob outside delivery evidence.
+    
+        Inventory checks deliberately fail on archive attributes, links or other
+        transformations that would make the compact snapshot differ from the tree.
+        No checkout files or installed application package are used as substitutes.
+        """
+        raw = subprocess.check_output(['git', 'ls-tree', '-r', '-z', '-l', tree], cwd=root)
+        retained = {}
+        excluded_files = excluded_bytes = 0
+        for row in raw.split(b'\0'):
+            if not row:
+                continue
+            header, path = row.split(b'\t', 1)
+            mode, kind, oid, size = header.decode().split()
+            name = path.decode('utf-8')
+            if delivery_path(name):
+                excluded_files += 1
+                excluded_bytes += int(size) if size != '-' else 0
+                continue
+            if kind != 'blob' or mode not in {'100644', '100755'}:
+                raise ValueError(f'Compact snapshot requires regular retained blobs: {name}')
+            retained[name] = {'oid': oid, 'bytes': int(size), 'mode': mode}
+        if not retained:
+            raise ValueError('Compact snapshot cannot be empty')
+        seen = set()
+        with subprocess.Popen(['git', 'archive', '--format=tar', tree], cwd=root,
+                              stdout=subprocess.PIPE) as process:
+            try:
+                with tarfile.open(fileobj=process.stdout, mode='r|') as archive:
+                    for member in archive:
+                        name = member.name.rstrip('/')
+                        if delivery_path(name):
+                            continue
+                        if member.isdir():
+                            if not any(path.startswith(name + '/') for path in retained):
+&gt;                               raise ValueError(f'Unexpected archive directory: {name}')
+E                               ValueError: Unexpected archive directory: docs
+
+scripts/refresh_v2_staged_catalog.py:63: ValueError</failure></testcase><testcase classname=".github.ci.test_compact_staged_catalog" name="test_generation_or_provenance_failure_publishes_no_catalog[generator-error]" time="0.044"><failure message="ValueError: Unexpected archive directory: docs">repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_generation_or_provenance_0/repository')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f7f945dd4f0&gt;
+kind = 'generator-error'
+
+    @pytest.mark.parametrize('kind', ['generator-error', 'missing-output', 'outside-import',
+                                      'outside-namespace', 'delivery-read'])
+    def test_generation_or_provenance_failure_publishes_no_catalog(repository, monkeypatch, kind):
+        root = repository
+        before = {name: (root / name).read_bytes() for name in catalog.OUTPUTS}
+        source = (root / 'scripts/refresh_product_api_catalog.py').read_text()
+        if kind == 'generator-error':
+            source += "raise RuntimeError('original failure retained')\n"
+        elif kind == 'missing-output':
+            source += "Path('API_OPENAPI.json.gz').unlink()\n"
+        elif kind in {'outside-import', 'outside-namespace'}:
+            source += "import types, sys\nmodule = types.ModuleType('app.synthetic')\n"
+            if kind == 'outside-import':
+                source += f"module.__file__ = {str(root / 'app/current.py')!r}\n"
+            else:
+                source += f"module.__path__ = [{str(root / 'app')!r}]\n"
+            source += "sys.modules['app.synthetic'] = module\n"
+        else:
+            source += "Path('docs/delivery/history.txt').read_text()\n"
+        put(root, 'scripts/refresh_product_api_catalog.py', source)
+        stage(root)
+        monkeypatch.setattr(catalog, 'ROOT', root)
+        with pytest.raises((subprocess.CalledProcessError, FileNotFoundError)):
+&gt;           catalog.main(['--compact'])
+
+.github/ci/test_compact_staged_catalog.py:134: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/refresh_v2_staged_catalog.py:144: in main
+    snapshot = compact_snapshot(ROOT, tree, folder)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_generation_or_provenance_0/repository')
+tree = '0fa4d8600ef36436f8d177e6d7743c46ece9dd39'
+folder = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_generation_or_provenance_0/repository/.runtime/v2-staged/8e43630e26614d06910e653da29c514a')
+
+    def compact_snapshot(root, tree, folder):
+        """Stream an immutable Git tree, retaining every blob outside delivery evidence.
+    
+        Inventory checks deliberately fail on archive attributes, links or other
+        transformations that would make the compact snapshot differ from the tree.
+        No checkout files or installed application package are used as substitutes.
+        """
+        raw = subprocess.check_output(['git', 'ls-tree', '-r', '-z', '-l', tree], cwd=root)
+        retained = {}
+        excluded_files = excluded_bytes = 0
+        for row in raw.split(b'\0'):
+            if not row:
+                continue
+            header, path = row.split(b'\t', 1)
+            mode, kind, oid, size = header.decode().split()
+            name = path.decode('utf-8')
+            if delivery_path(name):
+                excluded_files += 1
+                excluded_bytes += int(size) if size != '-' else 0
+                continue
+            if kind != 'blob' or mode not in {'100644', '100755'}:
+                raise ValueError(f'Compact snapshot requires regular retained blobs: {name}')
+            retained[name] = {'oid': oid, 'bytes': int(size), 'mode': mode}
+        if not retained:
+            raise ValueError('Compact snapshot cannot be empty')
+        seen = set()
+        with subprocess.Popen(['git', 'archive', '--format=tar', tree], cwd=root,
+                              stdout=subprocess.PIPE) as process:
+            try:
+                with tarfile.open(fileobj=process.stdout, mode='r|') as archive:
+                    for member in archive:
+                        name = member.name.rstrip('/')
+                        if delivery_path(name):
+                            continue
+                        if member.isdir():
+                            if not any(path.startswith(name + '/') for path in retained):
+&gt;                               raise ValueError(f'Unexpected archive directory: {name}')
+E                               ValueError: Unexpected archive directory: docs
+
+scripts/refresh_v2_staged_catalog.py:63: ValueError</failure></testcase><testcase classname=".github.ci.test_compact_staged_catalog" name="test_generation_or_provenance_failure_publishes_no_catalog[missing-output]" time="0.041"><failure message="ValueError: Unexpected archive directory: docs">repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_generation_or_provenance_1/repository')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f7f947b2f60&gt;
+kind = 'missing-output'
+
+    @pytest.mark.parametrize('kind', ['generator-error', 'missing-output', 'outside-import',
+                                      'outside-namespace', 'delivery-read'])
+    def test_generation_or_provenance_failure_publishes_no_catalog(repository, monkeypatch, kind):
+        root = repository
+        before = {name: (root / name).read_bytes() for name in catalog.OUTPUTS}
+        source = (root / 'scripts/refresh_product_api_catalog.py').read_text()
+        if kind == 'generator-error':
+            source += "raise RuntimeError('original failure retained')\n"
+        elif kind == 'missing-output':
+            source += "Path('API_OPENAPI.json.gz').unlink()\n"
+        elif kind in {'outside-import', 'outside-namespace'}:
+            source += "import types, sys\nmodule = types.ModuleType('app.synthetic')\n"
+            if kind == 'outside-import':
+                source += f"module.__file__ = {str(root / 'app/current.py')!r}\n"
+            else:
+                source += f"module.__path__ = [{str(root / 'app')!r}]\n"
+            source += "sys.modules['app.synthetic'] = module\n"
+        else:
+            source += "Path('docs/delivery/history.txt').read_text()\n"
+        put(root, 'scripts/refresh_product_api_catalog.py', source)
+        stage(root)
+        monkeypatch.setattr(catalog, 'ROOT', root)
+        with pytest.raises((subprocess.CalledProcessError, FileNotFoundError)):
+&gt;           catalog.main(['--compact'])
+
+.github/ci/test_compact_staged_catalog.py:134: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/refresh_v2_staged_catalog.py:144: in main
+    snapshot = compact_snapshot(ROOT, tree, folder)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_generation_or_provenance_1/repository')
+tree = '05a94e10458675f4f240b50f14449a022467293c'
+folder = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_generation_or_provenance_1/repository/.runtime/v2-staged/21035559ddbe4d1481664a15cf5680e5')
+
+    def compact_snapshot(root, tree, folder):
+        """Stream an immutable Git tree, retaining every blob outside delivery evidence.
+    
+        Inventory checks deliberately fail on archive attributes, links or other
+        transformations that would make the compact snapshot differ from the tree.
+        No checkout files or installed application package are used as substitutes.
+        """
+        raw = subprocess.check_output(['git', 'ls-tree', '-r', '-z', '-l', tree], cwd=root)
+        retained = {}
+        excluded_files = excluded_bytes = 0
+        for row in raw.split(b'\0'):
+            if not row:
+                continue
+            header, path = row.split(b'\t', 1)
+            mode, kind, oid, size = header.decode().split()
+            name = path.decode('utf-8')
+            if delivery_path(name):
+                excluded_files += 1
+                excluded_bytes += int(size) if size != '-' else 0
+                continue
+            if kind != 'blob' or mode not in {'100644', '100755'}:
+                raise ValueError(f'Compact snapshot requires regular retained blobs: {name}')
+            retained[name] = {'oid': oid, 'bytes': int(size), 'mode': mode}
+        if not retained:
+            raise ValueError('Compact snapshot cannot be empty')
+        seen = set()
+        with subprocess.Popen(['git', 'archive', '--format=tar', tree], cwd=root,
+                              stdout=subprocess.PIPE) as process:
+            try:
+                with tarfile.open(fileobj=process.stdout, mode='r|') as archive:
+                    for member in archive:
+                        name = member.name.rstrip('/')
+                        if delivery_path(name):
+                            continue
+                        if member.isdir():
+                            if not any(path.startswith(name + '/') for path in retained):
+&gt;                               raise ValueError(f'Unexpected archive directory: {name}')
+E                               ValueError: Unexpected archive directory: docs
+
+scripts/refresh_v2_staged_catalog.py:63: ValueError</failure></testcase><testcase classname=".github.ci.test_compact_staged_catalog" name="test_generation_or_provenance_failure_publishes_no_catalog[outside-import]" time="0.137"><failure message="ValueError: Unexpected archive directory: docs">repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_generation_or_provenance_2/repository')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f7f945dd6a0&gt;
+kind = 'outside-import'
+
+    @pytest.mark.parametrize('kind', ['generator-error', 'missing-output', 'outside-import',
+                                      'outside-namespace', 'delivery-read'])
+    def test_generation_or_provenance_failure_publishes_no_catalog(repository, monkeypatch, kind):
+        root = repository
+        before = {name: (root / name).read_bytes() for name in catalog.OUTPUTS}
+        source = (root / 'scripts/refresh_product_api_catalog.py').read_text()
+        if kind == 'generator-error':
+            source += "raise RuntimeError('original failure retained')\n"
+        elif kind == 'missing-output':
+            source += "Path('API_OPENAPI.json.gz').unlink()\n"
+        elif kind in {'outside-import', 'outside-namespace'}:
+            source += "import types, sys\nmodule = types.ModuleType('app.synthetic')\n"
+            if kind == 'outside-import':
+                source += f"module.__file__ = {str(root / 'app/current.py')!r}\n"
+            else:
+                source += f"module.__path__ = [{str(root / 'app')!r}]\n"
+            source += "sys.modules['app.synthetic'] = module\n"
+        else:
+            source += "Path('docs/delivery/history.txt').read_text()\n"
+        put(root, 'scripts/refresh_product_api_catalog.py', source)
+        stage(root)
+        monkeypatch.setattr(catalog, 'ROOT', root)
+        with pytest.raises((subprocess.CalledProcessError, FileNotFoundError)):
+&gt;           catalog.main(['--compact'])
+
+.github/ci/test_compact_staged_catalog.py:134: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/refresh_v2_staged_catalog.py:144: in main
+    snapshot = compact_snapshot(ROOT, tree, folder)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_generation_or_provenance_2/repository')
+tree = '34aaef494914d102521ab87433b1532814e1e0fd'
+folder = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_generation_or_provenance_2/repository/.runtime/v2-staged/51a1725a44614d91924aa4282d3d147d')
+
+    def compact_snapshot(root, tree, folder):
+        """Stream an immutable Git tree, retaining every blob outside delivery evidence.
+    
+        Inventory checks deliberately fail on archive attributes, links or other
+        transformations that would make the compact snapshot differ from the tree.
+        No checkout files or installed application package are used as substitutes.
+        """
+        raw = subprocess.check_output(['git', 'ls-tree', '-r', '-z', '-l', tree], cwd=root)
+        retained = {}
+        excluded_files = excluded_bytes = 0
+        for row in raw.split(b'\0'):
+            if not row:
+                continue
+            header, path = row.split(b'\t', 1)
+            mode, kind, oid, size = header.decode().split()
+            name = path.decode('utf-8')
+            if delivery_path(name):
+                excluded_files += 1
+                excluded_bytes += int(size) if size != '-' else 0
+                continue
+            if kind != 'blob' or mode not in {'100644', '100755'}:
+                raise ValueError(f'Compact snapshot requires regular retained blobs: {name}')
+            retained[name] = {'oid': oid, 'bytes': int(size), 'mode': mode}
+        if not retained:
+            raise ValueError('Compact snapshot cannot be empty')
+        seen = set()
+        with subprocess.Popen(['git', 'archive', '--format=tar', tree], cwd=root,
+                              stdout=subprocess.PIPE) as process:
+            try:
+                with tarfile.open(fileobj=process.stdout, mode='r|') as archive:
+                    for member in archive:
+                        name = member.name.rstrip('/')
+                        if delivery_path(name):
+                            continue
+                        if member.isdir():
+                            if not any(path.startswith(name + '/') for path in retained):
+&gt;                               raise ValueError(f'Unexpected archive directory: {name}')
+E                               ValueError: Unexpected archive directory: docs
+
+scripts/refresh_v2_staged_catalog.py:63: ValueError</failure></testcase><testcase classname=".github.ci.test_compact_staged_catalog" name="test_generation_or_provenance_failure_publishes_no_catalog[outside-namespace]" time="0.064"><failure message="ValueError: Unexpected archive directory: docs">repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_generation_or_provenance_3/repository')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f7f945df050&gt;
+kind = 'outside-namespace'
+
+    @pytest.mark.parametrize('kind', ['generator-error', 'missing-output', 'outside-import',
+                                      'outside-namespace', 'delivery-read'])
+    def test_generation_or_provenance_failure_publishes_no_catalog(repository, monkeypatch, kind):
+        root = repository
+        before = {name: (root / name).read_bytes() for name in catalog.OUTPUTS}
+        source = (root / 'scripts/refresh_product_api_catalog.py').read_text()
+        if kind == 'generator-error':
+            source += "raise RuntimeError('original failure retained')\n"
+        elif kind == 'missing-output':
+            source += "Path('API_OPENAPI.json.gz').unlink()\n"
+        elif kind in {'outside-import', 'outside-namespace'}:
+            source += "import types, sys\nmodule = types.ModuleType('app.synthetic')\n"
+            if kind == 'outside-import':
+                source += f"module.__file__ = {str(root / 'app/current.py')!r}\n"
+            else:
+                source += f"module.__path__ = [{str(root / 'app')!r}]\n"
+            source += "sys.modules['app.synthetic'] = module\n"
+        else:
+            source += "Path('docs/delivery/history.txt').read_text()\n"
+        put(root, 'scripts/refresh_product_api_catalog.py', source)
+        stage(root)
+        monkeypatch.setattr(catalog, 'ROOT', root)
+        with pytest.raises((subprocess.CalledProcessError, FileNotFoundError)):
+&gt;           catalog.main(['--compact'])
+
+.github/ci/test_compact_staged_catalog.py:134: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/refresh_v2_staged_catalog.py:144: in main
+    snapshot = compact_snapshot(ROOT, tree, folder)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_generation_or_provenance_3/repository')
+tree = '0dc726048d96c13e9d0255e9956c6f5fe81cf752'
+folder = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_generation_or_provenance_3/repository/.runtime/v2-staged/a273574d666b4738b1d2cdedc3f46cc0')
+
+    def compact_snapshot(root, tree, folder):
+        """Stream an immutable Git tree, retaining every blob outside delivery evidence.
+    
+        Inventory checks deliberately fail on archive attributes, links or other
+        transformations that would make the compact snapshot differ from the tree.
+        No checkout files or installed application package are used as substitutes.
+        """
+        raw = subprocess.check_output(['git', 'ls-tree', '-r', '-z', '-l', tree], cwd=root)
+        retained = {}
+        excluded_files = excluded_bytes = 0
+        for row in raw.split(b'\0'):
+            if not row:
+                continue
+            header, path = row.split(b'\t', 1)
+            mode, kind, oid, size = header.decode().split()
+            name = path.decode('utf-8')
+            if delivery_path(name):
+                excluded_files += 1
+                excluded_bytes += int(size) if size != '-' else 0
+                continue
+            if kind != 'blob' or mode not in {'100644', '100755'}:
+                raise ValueError(f'Compact snapshot requires regular retained blobs: {name}')
+            retained[name] = {'oid': oid, 'bytes': int(size), 'mode': mode}
+        if not retained:
+            raise ValueError('Compact snapshot cannot be empty')
+        seen = set()
+        with subprocess.Popen(['git', 'archive', '--format=tar', tree], cwd=root,
+                              stdout=subprocess.PIPE) as process:
+            try:
+                with tarfile.open(fileobj=process.stdout, mode='r|') as archive:
+                    for member in archive:
+                        name = member.name.rstrip('/')
+                        if delivery_path(name):
+                            continue
+                        if member.isdir():
+                            if not any(path.startswith(name + '/') for path in retained):
+&gt;                               raise ValueError(f'Unexpected archive directory: {name}')
+E                               ValueError: Unexpected archive directory: docs
+
+scripts/refresh_v2_staged_catalog.py:63: ValueError</failure></testcase><testcase classname=".github.ci.test_compact_staged_catalog" name="test_generation_or_provenance_failure_publishes_no_catalog[delivery-read]" time="0.050"><failure message="ValueError: Unexpected archive directory: docs">repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_generation_or_provenance_4/repository')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f7f945e05f0&gt;
+kind = 'delivery-read'
+
+    @pytest.mark.parametrize('kind', ['generator-error', 'missing-output', 'outside-import',
+                                      'outside-namespace', 'delivery-read'])
+    def test_generation_or_provenance_failure_publishes_no_catalog(repository, monkeypatch, kind):
+        root = repository
+        before = {name: (root / name).read_bytes() for name in catalog.OUTPUTS}
+        source = (root / 'scripts/refresh_product_api_catalog.py').read_text()
+        if kind == 'generator-error':
+            source += "raise RuntimeError('original failure retained')\n"
+        elif kind == 'missing-output':
+            source += "Path('API_OPENAPI.json.gz').unlink()\n"
+        elif kind in {'outside-import', 'outside-namespace'}:
+            source += "import types, sys\nmodule = types.ModuleType('app.synthetic')\n"
+            if kind == 'outside-import':
+                source += f"module.__file__ = {str(root / 'app/current.py')!r}\n"
+            else:
+                source += f"module.__path__ = [{str(root / 'app')!r}]\n"
+            source += "sys.modules['app.synthetic'] = module\n"
+        else:
+            source += "Path('docs/delivery/history.txt').read_text()\n"
+        put(root, 'scripts/refresh_product_api_catalog.py', source)
+        stage(root)
+        monkeypatch.setattr(catalog, 'ROOT', root)
+        with pytest.raises((subprocess.CalledProcessError, FileNotFoundError)):
+&gt;           catalog.main(['--compact'])
+
+.github/ci/test_compact_staged_catalog.py:134: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/refresh_v2_staged_catalog.py:144: in main
+    snapshot = compact_snapshot(ROOT, tree, folder)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_generation_or_provenance_4/repository')
+tree = '4887218267442f72d6c60e29837d75439ab46ac7'
+folder = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_generation_or_provenance_4/repository/.runtime/v2-staged/cb0ae0f6c0044e368405339b235ce9f5')
+
+    def compact_snapshot(root, tree, folder):
+        """Stream an immutable Git tree, retaining every blob outside delivery evidence.
+    
+        Inventory checks deliberately fail on archive attributes, links or other
+        transformations that would make the compact snapshot differ from the tree.
+        No checkout files or installed application package are used as substitutes.
+        """
+        raw = subprocess.check_output(['git', 'ls-tree', '-r', '-z', '-l', tree], cwd=root)
+        retained = {}
+        excluded_files = excluded_bytes = 0
+        for row in raw.split(b'\0'):
+            if not row:
+                continue
+            header, path = row.split(b'\t', 1)
+            mode, kind, oid, size = header.decode().split()
+            name = path.decode('utf-8')
+            if delivery_path(name):
+                excluded_files += 1
+                excluded_bytes += int(size) if size != '-' else 0
+                continue
+            if kind != 'blob' or mode not in {'100644', '100755'}:
+                raise ValueError(f'Compact snapshot requires regular retained blobs: {name}')
+            retained[name] = {'oid': oid, 'bytes': int(size), 'mode': mode}
+        if not retained:
+            raise ValueError('Compact snapshot cannot be empty')
+        seen = set()
+        with subprocess.Popen(['git', 'archive', '--format=tar', tree], cwd=root,
+                              stdout=subprocess.PIPE) as process:
+            try:
+                with tarfile.open(fileobj=process.stdout, mode='r|') as archive:
+                    for member in archive:
+                        name = member.name.rstrip('/')
+                        if delivery_path(name):
+                            continue
+                        if member.isdir():
+                            if not any(path.startswith(name + '/') for path in retained):
+&gt;                               raise ValueError(f'Unexpected archive directory: {name}')
+E                               ValueError: Unexpected archive directory: docs
+
+scripts/refresh_v2_staged_catalog.py:63: ValueError</failure></testcase><testcase classname=".github.ci.test_compact_staged_catalog" name="test_archive_attributes_cannot_silently_change_retained_staged_bytes[export-ignore]" time="0.045"><failure message="AssertionError: Regex pattern did not match.&#10; Regex: 'omitted retained'&#10; Input: 'Unexpected archive directory: docs'">repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_archive_attributes_cannot0/repository')
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_archive_attributes_cannot0')
+attribute = 'export-ignore'
+
+    @pytest.mark.parametrize('attribute', ['export-ignore', 'export-subst'])
+    def test_archive_attributes_cannot_silently_change_retained_staged_bytes(repository, tmp_path, attribute):
+        root = repository
+        put(root, 'app/current.py', '$Format:%H$')
+        put(root, '.gitattributes', f'app/current.py {attribute}\n')
+        stage(root)
+        if attribute == 'export-subst':
+            # Substitution is applied only when archive is given a commit/tag, while
+            # production passes an exact tree. The staged literal must stay intact.
+            folder = tmp_path / 'snapshot'
+            snapshot(root, folder)
+            assert (folder / 'app/current.py').read_text() == '$Format:%H$'
+        else:
+            with pytest.raises(ValueError, match='omitted retained'):
+&gt;               snapshot(root, tmp_path / 'snapshot')
+
+.github/ci/test_compact_staged_catalog.py:154: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.github/ci/test_compact_staged_catalog.py:49: in snapshot
+    return catalog.compact_snapshot(root, git(root, 'write-tree'), destination)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_archive_attributes_cannot0/repository')
+tree = '74082cf28b70b1d0948bb9a237bcb79ba9b9a97a'
+folder = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_archive_attributes_cannot0/snapshot')
+
+    def compact_snapshot(root, tree, folder):
+        """Stream an immutable Git tree, retaining every blob outside delivery evidence.
+    
+        Inventory checks deliberately fail on archive attributes, links or other
+        transformations that would make the compact snapshot differ from the tree.
+        No checkout files or installed application package are used as substitutes.
+        """
+        raw = subprocess.check_output(['git', 'ls-tree', '-r', '-z', '-l', tree], cwd=root)
+        retained = {}
+        excluded_files = excluded_bytes = 0
+        for row in raw.split(b'\0'):
+            if not row:
+                continue
+            header, path = row.split(b'\t', 1)
+            mode, kind, oid, size = header.decode().split()
+            name = path.decode('utf-8')
+            if delivery_path(name):
+                excluded_files += 1
+                excluded_bytes += int(size) if size != '-' else 0
+                continue
+            if kind != 'blob' or mode not in {'100644', '100755'}:
+                raise ValueError(f'Compact snapshot requires regular retained blobs: {name}')
+            retained[name] = {'oid': oid, 'bytes': int(size), 'mode': mode}
+        if not retained:
+            raise ValueError('Compact snapshot cannot be empty')
+        seen = set()
+        with subprocess.Popen(['git', 'archive', '--format=tar', tree], cwd=root,
+                              stdout=subprocess.PIPE) as process:
+            try:
+                with tarfile.open(fileobj=process.stdout, mode='r|') as archive:
+                    for member in archive:
+                        name = member.name.rstrip('/')
+                        if delivery_path(name):
+                            continue
+                        if member.isdir():
+                            if not any(path.startswith(name + '/') for path in retained):
+&gt;                               raise ValueError(f'Unexpected archive directory: {name}')
+E                               ValueError: Unexpected archive directory: docs
+
+scripts/refresh_v2_staged_catalog.py:63: ValueError
+
+During handling of the above exception, another exception occurred:
+
+repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_archive_attributes_cannot0/repository')
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_archive_attributes_cannot0')
+attribute = 'export-ignore'
+
+    @pytest.mark.parametrize('attribute', ['export-ignore', 'export-subst'])
+    def test_archive_attributes_cannot_silently_change_retained_staged_bytes(repository, tmp_path, attribute):
+        root = repository
+        put(root, 'app/current.py', '$Format:%H$')
+        put(root, '.gitattributes', f'app/current.py {attribute}\n')
+        stage(root)
+        if attribute == 'export-subst':
+            # Substitution is applied only when archive is given a commit/tag, while
+            # production passes an exact tree. The staged literal must stay intact.
+            folder = tmp_path / 'snapshot'
+            snapshot(root, folder)
+            assert (folder / 'app/current.py').read_text() == '$Format:%H$'
+        else:
+&gt;           with pytest.raises(ValueError, match='omitted retained'):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E            Regex: 'omitted retained'
+E            Input: 'Unexpected archive directory: docs'
+
+.github/ci/test_compact_staged_catalog.py:153: AssertionError</failure></testcase><testcase classname=".github.ci.test_compact_staged_catalog" name="test_archive_attributes_cannot_silently_change_retained_staged_bytes[export-subst]" time="0.035"><failure message="ValueError: Unexpected archive directory: docs">repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_archive_attributes_cannot1/repository')
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_archive_attributes_cannot1')
+attribute = 'export-subst'
+
+    @pytest.mark.parametrize('attribute', ['export-ignore', 'export-subst'])
+    def test_archive_attributes_cannot_silently_change_retained_staged_bytes(repository, tmp_path, attribute):
+        root = repository
+        put(root, 'app/current.py', '$Format:%H$')
+        put(root, '.gitattributes', f'app/current.py {attribute}\n')
+        stage(root)
+        if attribute == 'export-subst':
+            # Substitution is applied only when archive is given a commit/tag, while
+            # production passes an exact tree. The staged literal must stay intact.
+            folder = tmp_path / 'snapshot'
+&gt;           snapshot(root, folder)
+
+.github/ci/test_compact_staged_catalog.py:150: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.github/ci/test_compact_staged_catalog.py:49: in snapshot
+    return catalog.compact_snapshot(root, git(root, 'write-tree'), destination)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_archive_attributes_cannot1/repository')
+tree = '0a6524b1caa8bbacc0d5b86e20287ebc63960381'
+folder = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_archive_attributes_cannot1/snapshot')
+
+    def compact_snapshot(root, tree, folder):
+        """Stream an immutable Git tree, retaining every blob outside delivery evidence.
+    
+        Inventory checks deliberately fail on archive attributes, links or other
+        transformations that would make the compact snapshot differ from the tree.
+        No checkout files or installed application package are used as substitutes.
+        """
+        raw = subprocess.check_output(['git', 'ls-tree', '-r', '-z', '-l', tree], cwd=root)
+        retained = {}
+        excluded_files = excluded_bytes = 0
+        for row in raw.split(b'\0'):
+            if not row:
+                continue
+            header, path = row.split(b'\t', 1)
+            mode, kind, oid, size = header.decode().split()
+            name = path.decode('utf-8')
+            if delivery_path(name):
+                excluded_files += 1
+                excluded_bytes += int(size) if size != '-' else 0
+                continue
+            if kind != 'blob' or mode not in {'100644', '100755'}:
+                raise ValueError(f'Compact snapshot requires regular retained blobs: {name}')
+            retained[name] = {'oid': oid, 'bytes': int(size), 'mode': mode}
+        if not retained:
+            raise ValueError('Compact snapshot cannot be empty')
+        seen = set()
+        with subprocess.Popen(['git', 'archive', '--format=tar', tree], cwd=root,
+                              stdout=subprocess.PIPE) as process:
+            try:
+                with tarfile.open(fileobj=process.stdout, mode='r|') as archive:
+                    for member in archive:
+                        name = member.name.rstrip('/')
+                        if delivery_path(name):
+                            continue
+                        if member.isdir():
+                            if not any(path.startswith(name + '/') for path in retained):
+&gt;                               raise ValueError(f'Unexpected archive directory: {name}')
+E                               ValueError: Unexpected archive directory: docs
+
+scripts/refresh_v2_staged_catalog.py:63: ValueError</failure></testcase><testcase classname=".github.ci.test_compact_staged_catalog" name="test_retained_symlink_is_rejected_before_generator" time="0.030" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_excluded_evidence_symlink_is_not_followed" time="0.034"><failure message="ValueError: Unexpected archive directory: docs">repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_excluded_evidence_symlink0/repository')
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_excluded_evidence_symlink0')
+
+    def test_excluded_evidence_symlink_is_not_followed(repository, tmp_path):
+        (repository / 'docs/delivery/link').symlink_to(tmp_path / 'outside')
+        stage(repository)
+        folder = tmp_path / 'snapshot'
+&gt;       snapshot(repository, folder)
+
+.github/ci/test_compact_staged_catalog.py:168: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.github/ci/test_compact_staged_catalog.py:49: in snapshot
+    return catalog.compact_snapshot(root, git(root, 'write-tree'), destination)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_excluded_evidence_symlink0/repository')
+tree = '83b79d617090b2e26c5582e913fdbac815604d3d'
+folder = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_excluded_evidence_symlink0/snapshot')
+
+    def compact_snapshot(root, tree, folder):
+        """Stream an immutable Git tree, retaining every blob outside delivery evidence.
+    
+        Inventory checks deliberately fail on archive attributes, links or other
+        transformations that would make the compact snapshot differ from the tree.
+        No checkout files or installed application package are used as substitutes.
+        """
+        raw = subprocess.check_output(['git', 'ls-tree', '-r', '-z', '-l', tree], cwd=root)
+        retained = {}
+        excluded_files = excluded_bytes = 0
+        for row in raw.split(b'\0'):
+            if not row:
+                continue
+            header, path = row.split(b'\t', 1)
+            mode, kind, oid, size = header.decode().split()
+            name = path.decode('utf-8')
+            if delivery_path(name):
+                excluded_files += 1
+                excluded_bytes += int(size) if size != '-' else 0
+                continue
+            if kind != 'blob' or mode not in {'100644', '100755'}:
+                raise ValueError(f'Compact snapshot requires regular retained blobs: {name}')
+            retained[name] = {'oid': oid, 'bytes': int(size), 'mode': mode}
+        if not retained:
+            raise ValueError('Compact snapshot cannot be empty')
+        seen = set()
+        with subprocess.Popen(['git', 'archive', '--format=tar', tree], cwd=root,
+                              stdout=subprocess.PIPE) as process:
+            try:
+                with tarfile.open(fileobj=process.stdout, mode='r|') as archive:
+                    for member in archive:
+                        name = member.name.rstrip('/')
+                        if delivery_path(name):
+                            continue
+                        if member.isdir():
+                            if not any(path.startswith(name + '/') for path in retained):
+&gt;                               raise ValueError(f'Unexpected archive directory: {name}')
+E                               ValueError: Unexpected archive directory: docs
+
+scripts/refresh_v2_staged_catalog.py:63: ValueError</failure></testcase><testcase classname=".github.ci.test_compact_staged_catalog" name="test_invalid_tree_stops_before_archive" time="0.023" /><testcase classname=".github.ci.test_compact_staged_catalog" name="test_compact_byte_validation_rejects_extraction_drift" time="0.031"><failure message="AssertionError: Regex pattern did not match.&#10; Regex: 'differ from staged Git blob'&#10; Input: 'Unexpected archive directory: docs'">repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_compact_byte_validation_r0/repository')
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_compact_byte_validation_r0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f7f945dc500&gt;
+
+    def test_compact_byte_validation_rejects_extraction_drift(repository, tmp_path, monkeypatch):
+        extract = catalog.tarfile.TarFile.extract
+        def mutate(archive, member, path, **kwargs):
+            extract(archive, member, path, **kwargs)
+            if member.name == 'app/current.py':
+                (Path(path) / member.name).write_text('changed after archive')
+        monkeypatch.setattr(catalog.tarfile.TarFile, 'extract', mutate)
+        with pytest.raises(ValueError, match='differ from staged Git blob'):
+&gt;           snapshot(repository, tmp_path / 'snapshot')
+
+.github/ci/test_compact_staged_catalog.py:186: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.github/ci/test_compact_staged_catalog.py:49: in snapshot
+    return catalog.compact_snapshot(root, git(root, 'write-tree'), destination)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_compact_byte_validation_r0/repository')
+tree = '3f9fe682f57de899e7cc01f555cbb473f7668248'
+folder = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_compact_byte_validation_r0/snapshot')
+
+    def compact_snapshot(root, tree, folder):
+        """Stream an immutable Git tree, retaining every blob outside delivery evidence.
+    
+        Inventory checks deliberately fail on archive attributes, links or other
+        transformations that would make the compact snapshot differ from the tree.
+        No checkout files or installed application package are used as substitutes.
+        """
+        raw = subprocess.check_output(['git', 'ls-tree', '-r', '-z', '-l', tree], cwd=root)
+        retained = {}
+        excluded_files = excluded_bytes = 0
+        for row in raw.split(b'\0'):
+            if not row:
+                continue
+            header, path = row.split(b'\t', 1)
+            mode, kind, oid, size = header.decode().split()
+            name = path.decode('utf-8')
+            if delivery_path(name):
+                excluded_files += 1
+                excluded_bytes += int(size) if size != '-' else 0
+                continue
+            if kind != 'blob' or mode not in {'100644', '100755'}:
+                raise ValueError(f'Compact snapshot requires regular retained blobs: {name}')
+            retained[name] = {'oid': oid, 'bytes': int(size), 'mode': mode}
+        if not retained:
+            raise ValueError('Compact snapshot cannot be empty')
+        seen = set()
+        with subprocess.Popen(['git', 'archive', '--format=tar', tree], cwd=root,
+                              stdout=subprocess.PIPE) as process:
+            try:
+                with tarfile.open(fileobj=process.stdout, mode='r|') as archive:
+                    for member in archive:
+                        name = member.name.rstrip('/')
+                        if delivery_path(name):
+                            continue
+                        if member.isdir():
+                            if not any(path.startswith(name + '/') for path in retained):
+&gt;                               raise ValueError(f'Unexpected archive directory: {name}')
+E                               ValueError: Unexpected archive directory: docs
+
+scripts/refresh_v2_staged_catalog.py:63: ValueError
+
+During handling of the above exception, another exception occurred:
+
+repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_compact_byte_validation_r0/repository')
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r1/test_compact_byte_validation_r0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f7f945dc500&gt;
+
+    def test_compact_byte_validation_rejects_extraction_drift(repository, tmp_path, monkeypatch):
+        extract = catalog.tarfile.TarFile.extract
+        def mutate(archive, member, path, **kwargs):
+            extract(archive, member, path, **kwargs)
+            if member.name == 'app/current.py':
+                (Path(path) / member.name).write_text('changed after archive')
+        monkeypatch.setattr(catalog.tarfile.TarFile, 'extract', mutate)
+&gt;       with pytest.raises(ValueError, match='differ from staged Git blob'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E        Regex: 'differ from staged Git blob'
+E        Input: 'Unexpected archive directory: docs'
+
+.github/ci/test_compact_staged_catalog.py:185: AssertionError</failure></testcase><testcase classname=".github.ci.test_v2_check_runner" name="test_v2_runner_owns_posix_and_windows_state_directories" time="0.002" /><testcase classname=".github.ci.test_v2_check_runner" name="test_v2_runner_receipt_hashes_runtime_tests_and_frontend" time="0.021" /><testcase classname=".github.ci.test_v2_check_runner" name="test_v2_snapshot_omits_only_untracked_fixture_runtime_state" time="0.031" /><testcase classname=".github.ci.test_v2_check_runner" name="test_v2_snapshot_does_not_guess_untracked_status_without_git" time="0.003" /><testcase classname=".github.ci.test_v2_check_runner" name="test_staged_catalog_imports_cannot_write_to_host_home_or_use_host_secrets" time="0.049" /></testsuite></testsuites>

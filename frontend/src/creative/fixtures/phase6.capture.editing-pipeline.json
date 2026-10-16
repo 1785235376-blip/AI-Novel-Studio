@@ -1,0 +1,1528 @@
+{
+  "audio_receipts": {
+    "command": {
+      "operation_id": "m8.audio.trim",
+      "request_id": "trim-one",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {
+        "in_ms": 100,
+        "out_ms": 900,
+        "output_format": "FLAC",
+        "sample_rate": 22050,
+        "channels": 1
+      },
+      "allow_cloud": false,
+      "source_snapshots": [
+        {
+          "kind": "ASSET",
+          "asset_kind": "audio",
+          "id": "dcebed89-7ac7-4274-a4f8-9239457747de",
+          "version": 1,
+          "digest": "a7a0923c2fd4c1a8a705bf74902eee0b1c782a0061cb4f78519351346c7689fc"
+        }
+      ],
+      "license_note": ""
+    },
+    "preview": {
+      "contract": "studio-production-preview/1",
+      "novel_id": "r3-mounted-3fa4ed89689747beb107362dbf0d9a17",
+      "branch_id": null,
+      "operation_id": "m8.audio.trim",
+      "request_id": "trim-one",
+      "request_digest": "9f8127ceb3c5f1e1a823059c0e2faeea4891a46d5383f592f90a2d566a5289dd",
+      "provider": null,
+      "sources": [
+        {
+          "snapshot": {
+            "id": "dcebed89-7ac7-4274-a4f8-9239457747de",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "a7a0923c2fd4c1a8a705bf74902eee0b1c782a0061cb4f78519351346c7689fc",
+            "asset_kind": "audio"
+          },
+          "measured": {
+            "media_type": "audio/wav",
+            "extension": "wav",
+            "duration_ms": 1000,
+            "sample_rate": 16000,
+            "channels": 1,
+            "sample_width": 2,
+            "validation": "PCM_DECODED"
+          }
+        }
+      ],
+      "execution_recipe": {
+        "contract": "studio-execution-recipe/1",
+        "operation_id": "m8.audio.trim",
+        "adapter": "LOCAL_FFMPEG",
+        "parameters": {
+          "in_ms": 100,
+          "out_ms": 900,
+          "sample_rate": 22050,
+          "channels": 1,
+          "output_format": "FLAC"
+        },
+        "automatic_fallback": false,
+        "output_profile": "FLAC_S16_22050_MONO_COMPRESSION5",
+        "recipe_digest": "467b31a9905787ed5bf7193192d029cf0bba9056cf8f82f8b22bec18c3ec2e42"
+      },
+      "command": {
+        "operation_id": "m8.audio.trim",
+        "request_id": "trim-one",
+        "provider_id": null,
+        "model_id": null,
+        "prompt": "",
+        "parameters": {
+          "width": null,
+          "height": null,
+          "steps": null,
+          "seed": null,
+          "negative_prompt": null,
+          "size": null,
+          "quality": null,
+          "duration_seconds": null,
+          "frame_rate": null,
+          "voice_id": null,
+          "speech_rate": null,
+          "in_ms": 100,
+          "out_ms": 900,
+          "sample_rate": 22050,
+          "channels": 1,
+          "output_format": "FLAC"
+        },
+        "source_snapshots": [
+          {
+            "id": "dcebed89-7ac7-4274-a4f8-9239457747de",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "a7a0923c2fd4c1a8a705bf74902eee0b1c782a0061cb4f78519351346c7689fc",
+            "asset_kind": "audio",
+            "reference_only": true
+          }
+        ],
+        "allow_cloud": false,
+        "license_note": ""
+      },
+      "product_acceptance": "LOCAL_REQUIRED",
+      "execution_available": true,
+      "automatic_dispatch": false,
+      "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+      "preview_digest": "a06dc3e37434832fc9a8328ad80ec3ceddbcd8795925a85cb63a29d3923067f1"
+    },
+    "queued": {
+      "contract": "studio-production-job/1",
+      "owner": "audio",
+      "id": "audio-44b2738e-de96-4763-af09-59fce154a8eb",
+      "novel_id": "r3-mounted-3fa4ed89689747beb107362dbf0d9a17",
+      "branch_id": null,
+      "version": 1,
+      "status": "QUEUED",
+      "request_digest": "9f8127ceb3c5f1e1a823059c0e2faeea4891a46d5383f592f90a2d566a5289dd",
+      "receipt_digest": "092af8129f1ee9e2db133eb3dbc15eed26477e91d7140edd65358bd3d20f63d6",
+      "attempt": 0,
+      "created_at": "2026-10-13T20:01:04.599346+00:00",
+      "updated_at": "2026-10-13T20:01:04.599346+00:00",
+      "error_code": null,
+      "review_state": "NOT_READY",
+      "cancellation_mode": null,
+      "needs_reconciliation": null,
+      "execution_state": null,
+      "operation_id": "m8.audio.trim",
+      "output_candidate": null,
+      "timeline_snapshot": null,
+      "sources": [
+        {
+          "id": "dcebed89-7ac7-4274-a4f8-9239457747de",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "a7a0923c2fd4c1a8a705bf74902eee0b1c782a0061cb4f78519351346c7689fc",
+          "asset_kind": "audio"
+        }
+      ],
+      "command": {
+        "operation_id": "m8.audio.trim",
+        "request_id": "trim-one",
+        "provider_id": null,
+        "model_id": null,
+        "prompt": "",
+        "parameters": {
+          "in_ms": 100,
+          "out_ms": 900,
+          "sample_rate": 22050,
+          "channels": 1,
+          "output_format": "FLAC"
+        },
+        "source_snapshots": [
+          {
+            "id": "dcebed89-7ac7-4274-a4f8-9239457747de",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "a7a0923c2fd4c1a8a705bf74902eee0b1c782a0061cb4f78519351346c7689fc",
+            "asset_kind": "audio",
+            "reference_only": true
+          }
+        ],
+        "allow_cloud": false,
+        "license_note": ""
+      },
+      "provider": null,
+      "execution_recipe": {
+        "contract": "studio-execution-recipe/1",
+        "operation_id": "m8.audio.trim",
+        "adapter": "LOCAL_FFMPEG",
+        "parameters": {
+          "in_ms": 100,
+          "out_ms": 900,
+          "sample_rate": 22050,
+          "channels": 1,
+          "output_format": "FLAC"
+        },
+        "automatic_fallback": false,
+        "output_profile": "FLAC_S16_22050_MONO_COMPRESSION5",
+        "recipe_digest": "467b31a9905787ed5bf7193192d029cf0bba9056cf8f82f8b22bec18c3ec2e42"
+      },
+      "media_measurement": null,
+      "approved_asset_version": null,
+      "request_id": "trim-one",
+      "product_acceptance": "LOCAL_REQUIRED",
+      "automatic_replay": false,
+      "remote_compute_may_continue": false
+    },
+    "executed": {
+      "contract": "studio-production-job/1",
+      "owner": "audio",
+      "id": "audio-44b2738e-de96-4763-af09-59fce154a8eb",
+      "novel_id": "r3-mounted-3fa4ed89689747beb107362dbf0d9a17",
+      "branch_id": null,
+      "version": 4,
+      "status": "AWAITING_REVIEW",
+      "request_digest": "9f8127ceb3c5f1e1a823059c0e2faeea4891a46d5383f592f90a2d566a5289dd",
+      "receipt_digest": "ab7ca852608480918b55fcaaf2673b894bb7674b6ea9898c5aa54f46cd126b49",
+      "attempt": 1,
+      "created_at": "2026-10-13T20:01:04.599346+00:00",
+      "updated_at": "2026-10-13T20:01:04.899764+00:00",
+      "error_code": null,
+      "review_state": "VERIFIED_PRIVATE_CANDIDATE",
+      "cancellation_mode": null,
+      "needs_reconciliation": null,
+      "execution_state": null,
+      "operation_id": "m8.audio.trim",
+      "output_candidate": {
+        "id": "52b731dc-b418-4ffb-9e92-165ac670c146",
+        "version": 1,
+        "digest": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c",
+        "kind": "audio"
+      },
+      "timeline_snapshot": null,
+      "sources": [
+        {
+          "id": "dcebed89-7ac7-4274-a4f8-9239457747de",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "a7a0923c2fd4c1a8a705bf74902eee0b1c782a0061cb4f78519351346c7689fc",
+          "asset_kind": "audio"
+        }
+      ],
+      "command": {
+        "operation_id": "m8.audio.trim",
+        "request_id": "trim-one",
+        "provider_id": null,
+        "model_id": null,
+        "prompt": "",
+        "parameters": {
+          "in_ms": 100,
+          "out_ms": 900,
+          "sample_rate": 22050,
+          "channels": 1,
+          "output_format": "FLAC"
+        },
+        "source_snapshots": [
+          {
+            "id": "dcebed89-7ac7-4274-a4f8-9239457747de",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "a7a0923c2fd4c1a8a705bf74902eee0b1c782a0061cb4f78519351346c7689fc",
+            "asset_kind": "audio",
+            "reference_only": true
+          }
+        ],
+        "allow_cloud": false,
+        "license_note": ""
+      },
+      "provider": null,
+      "execution_recipe": {
+        "contract": "studio-execution-recipe/1",
+        "operation_id": "m8.audio.trim",
+        "adapter": "LOCAL_FFMPEG",
+        "parameters": {
+          "in_ms": 100,
+          "out_ms": 900,
+          "sample_rate": 22050,
+          "channels": 1,
+          "output_format": "FLAC"
+        },
+        "automatic_fallback": false,
+        "output_profile": "FLAC_S16_22050_MONO_COMPRESSION5",
+        "recipe_digest": "467b31a9905787ed5bf7193192d029cf0bba9056cf8f82f8b22bec18c3ec2e42"
+      },
+      "media_measurement": {
+        "duration_ms": 800,
+        "byte_count": 14347,
+        "sample_rate": 22050,
+        "channels": 1,
+        "sample_width": 2,
+        "container": "flac",
+        "audio_codec": "flac",
+        "profile_validation": "FLAC_STREAMINFO_PCM_VERIFIED",
+        "output_sha256": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c",
+        "total_samples": 17640,
+        "decoded_pcm_bytes": 35280,
+        "streaminfo_md5": "0bdacabe67ae0f4eddae3d009d77e047",
+        "decoded_pcm_sha256": "7aafbc4f3577d34e39ac1f2156261678c08eb1c21b3e180f89aedc69a105b9ef"
+      },
+      "approved_asset_version": null,
+      "request_id": "trim-one",
+      "product_acceptance": "LOCAL_REQUIRED",
+      "automatic_replay": false,
+      "remote_compute_may_continue": false
+    },
+    "approved": {
+      "contract": "studio-production-job/1",
+      "owner": "audio",
+      "id": "audio-44b2738e-de96-4763-af09-59fce154a8eb",
+      "novel_id": "r3-mounted-3fa4ed89689747beb107362dbf0d9a17",
+      "branch_id": null,
+      "version": 6,
+      "status": "APPROVED",
+      "request_digest": "9f8127ceb3c5f1e1a823059c0e2faeea4891a46d5383f592f90a2d566a5289dd",
+      "receipt_digest": "5a83ccf6d70680cc82e05cbb38a6cc75eaa40ed832d08c652537c22e74f76943",
+      "attempt": 1,
+      "created_at": "2026-10-13T20:01:04.599346+00:00",
+      "updated_at": "2026-10-13T20:01:04.974673+00:00",
+      "error_code": null,
+      "review_state": "ORIGINAL_OWNER_REVIEWED",
+      "cancellation_mode": null,
+      "needs_reconciliation": null,
+      "execution_state": null,
+      "operation_id": "m8.audio.trim",
+      "output_candidate": {
+        "id": "52b731dc-b418-4ffb-9e92-165ac670c146",
+        "version": 1,
+        "digest": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c",
+        "kind": "audio"
+      },
+      "timeline_snapshot": null,
+      "sources": [
+        {
+          "id": "dcebed89-7ac7-4274-a4f8-9239457747de",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "a7a0923c2fd4c1a8a705bf74902eee0b1c782a0061cb4f78519351346c7689fc",
+          "asset_kind": "audio"
+        }
+      ],
+      "command": {
+        "operation_id": "m8.audio.trim",
+        "request_id": "trim-one",
+        "provider_id": null,
+        "model_id": null,
+        "prompt": "",
+        "parameters": {
+          "in_ms": 100,
+          "out_ms": 900,
+          "sample_rate": 22050,
+          "channels": 1,
+          "output_format": "FLAC"
+        },
+        "source_snapshots": [
+          {
+            "id": "dcebed89-7ac7-4274-a4f8-9239457747de",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "a7a0923c2fd4c1a8a705bf74902eee0b1c782a0061cb4f78519351346c7689fc",
+            "asset_kind": "audio",
+            "reference_only": true
+          }
+        ],
+        "allow_cloud": false,
+        "license_note": ""
+      },
+      "provider": null,
+      "execution_recipe": {
+        "contract": "studio-execution-recipe/1",
+        "operation_id": "m8.audio.trim",
+        "adapter": "LOCAL_FFMPEG",
+        "parameters": {
+          "in_ms": 100,
+          "out_ms": 900,
+          "sample_rate": 22050,
+          "channels": 1,
+          "output_format": "FLAC"
+        },
+        "automatic_fallback": false,
+        "output_profile": "FLAC_S16_22050_MONO_COMPRESSION5",
+        "recipe_digest": "467b31a9905787ed5bf7193192d029cf0bba9056cf8f82f8b22bec18c3ec2e42"
+      },
+      "media_measurement": {
+        "duration_ms": 800,
+        "byte_count": 14347,
+        "sample_rate": 22050,
+        "channels": 1,
+        "sample_width": 2,
+        "container": "flac",
+        "audio_codec": "flac",
+        "profile_validation": "FLAC_STREAMINFO_PCM_VERIFIED",
+        "output_sha256": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c",
+        "total_samples": 17640,
+        "decoded_pcm_bytes": 35280,
+        "streaminfo_md5": "0bdacabe67ae0f4eddae3d009d77e047",
+        "decoded_pcm_sha256": "7aafbc4f3577d34e39ac1f2156261678c08eb1c21b3e180f89aedc69a105b9ef"
+      },
+      "approved_asset_version": 2,
+      "request_id": "trim-one",
+      "product_acceptance": "LOCAL_REQUIRED",
+      "automatic_replay": false,
+      "remote_compute_may_continue": false
+    }
+  },
+  "video_source": {
+    "id": "51ef064e-45ff-46f9-bad5-4a8413c03394",
+    "novel_id": "r3-mounted-3fa4ed89689747beb107362dbf0d9a17",
+    "filename": "synthetic-blue.mp4",
+    "kind": "video",
+    "media_type": "video/mp4",
+    "size": 1080,
+    "sha256": "77e49a53f579bbe6250f97e93f7468b762f4018e6261ea09f83d86b8b2209267",
+    "branch_id": null,
+    "created_at": "2026-10-13T20:01:04.436376+00:00",
+    "updated_at": "2026-10-13T20:01:04.436376+00:00",
+    "version": 1,
+    "deleted_at": null,
+    "idempotency_key": "5a8d12a46a494a549b7f1514bebbe6a3",
+    "provenance": {
+      "id": "51ef064e-45ff-46f9-bad5-4a8413c03394",
+      "label": "synthetic-blue.mp4",
+      "kind": "video",
+      "version": 1,
+      "digest": "77e49a53f579bbe6250f97e93f7468b762f4018e6261ea09f83d86b8b2209267",
+      "deleted": false,
+      "integrity": "VERIFIED",
+      "origin": "UNDECLARED",
+      "license": {
+        "label": "UNSPECIFIED",
+        "source": "",
+        "note": ""
+      },
+      "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+      "operation": "",
+      "parents": [],
+      "sources": [],
+      "producer": {
+        "declared_by": null,
+        "provider_id": null,
+        "model_id": null
+      },
+      "generation": null,
+      "declaration_history_versions": [],
+      "stale": false,
+      "source_task_id": null
+    },
+    "relationships": []
+  },
+  "audio_formal": {
+    "id": "52b731dc-b418-4ffb-9e92-165ac670c146",
+    "novel_id": "r3-mounted-3fa4ed89689747beb107362dbf0d9a17",
+    "filename": "audio-44b2738e-de96-4763-af09-59fce154a8eb.flac",
+    "kind": "audio",
+    "media_type": "audio/flac",
+    "size": 14347,
+    "sha256": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c",
+    "branch_id": null,
+    "source_job_id": "audio-44b2738e-de96-4763-af09-59fce154a8eb",
+    "provider_id": null,
+    "model_id": null,
+    "created_at": "2026-10-13T20:01:04.885132+00:00",
+    "updated_at": "2026-10-13T20:01:04.968575+00:00",
+    "version": 2,
+    "deleted_at": null,
+    "idempotency_key": "studio-production:30e58611be7241b46d8e5a3a0573c665d5f841f65ed751f869c8ea0a4296fd99",
+    "approved_at": "2026-10-13T20:01:04.968575+00:00",
+    "provenance": {
+      "id": "52b731dc-b418-4ffb-9e92-165ac670c146",
+      "label": "audio-44b2738e-de96-4763-af09-59fce154a8eb.flac",
+      "kind": "audio",
+      "version": 2,
+      "digest": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c",
+      "deleted": false,
+      "integrity": "VERIFIED",
+      "origin": "DERIVED_PROCESSING",
+      "license": {
+        "label": "UNSPECIFIED",
+        "source": "",
+        "note": ""
+      },
+      "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+      "operation": "m8.audio.trim",
+      "parents": [
+        {
+          "id": "dcebed89-7ac7-4274-a4f8-9239457747de",
+          "label": "synthetic-sine.wav",
+          "version": 1,
+          "digest": "a7a0923c2fd4c1a8a705bf74902eee0b1c782a0061cb4f78519351346c7689fc",
+          "state": "CURRENT"
+        }
+      ],
+      "sources": [],
+      "stale": false,
+      "source_task_id": "audio-44b2738e-de96-4763-af09-59fce154a8eb",
+      "generation": null,
+      "reference_only": true,
+      "product_acceptance": "LOCAL_REQUIRED"
+    },
+    "relationships": []
+  },
+  "created": {
+    "id": "fb00040d-e183-4bfc-8f2f-de09f0c3b06f",
+    "novel_id": "r3-mounted-3fa4ed89689747beb107362dbf0d9a17",
+    "title": "SYNTHETIC CPU postproduction",
+    "version": 1,
+    "timeline_digest": "531aa16b529ecbfc292cda302d4fb53142de1a305d39de9c8d30a462db5b8619",
+    "timeline": {
+      "captions": [],
+      "duration_ms": 1000,
+      "fps": 10,
+      "height": 64,
+      "schema_version": 2,
+      "tracks": [
+        {
+          "clips": [
+            {
+              "fade_in_ms": 0,
+              "fade_out_ms": 0,
+              "gain_db": 0.0,
+              "height": 64,
+              "id": "picture-one",
+              "in_ms": 0,
+              "include_audio": false,
+              "muted": false,
+              "opacity": 1.0,
+              "out_ms": 1000,
+              "source_snapshot": {
+                "asset_kind": "video",
+                "digest": "77e49a53f579bbe6250f97e93f7468b762f4018e6261ea09f83d86b8b2209267",
+                "id": "51ef064e-45ff-46f9-bad5-4a8413c03394",
+                "kind": "ASSET",
+                "version": 1
+              },
+              "speed_den": 1,
+              "speed_num": 1,
+              "start_ms": 0,
+              "width": 64,
+              "x": 0,
+              "y": 0
+            }
+          ],
+          "gain_db": 0.0,
+          "id": "picture",
+          "kind": "VIDEO",
+          "muted": false,
+          "order": 0,
+          "role": "PRIMARY"
+        }
+      ],
+      "width": 64
+    },
+    "created_at": "2026-10-13T20:01:04.521446+00:00",
+    "updated_at": "2026-10-13T20:01:04.521446+00:00",
+    "branch_id": null
+  },
+  "insert_body": {
+    "expected_version": 1,
+    "reviewed_timeline_digest": "531aa16b529ecbfc292cda302d4fb53142de1a305d39de9c8d30a462db5b8619",
+    "request_id": "phase6-api-add-audio",
+    "operations": [
+      {
+        "op": "track.insert",
+        "track": {
+          "id": "dialogue",
+          "kind": "AUDIO",
+          "order": 1,
+          "clips": [],
+          "role": "DIALOGUE"
+        }
+      },
+      {
+        "op": "clip.insert",
+        "track_id": "dialogue",
+        "clip": {
+          "id": "voice-one",
+          "source_snapshot": {
+            "kind": "ASSET",
+            "asset_kind": "audio",
+            "id": "52b731dc-b418-4ffb-9e92-165ac670c146",
+            "version": 2,
+            "digest": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c"
+          },
+          "start_ms": 0,
+          "in_ms": 0,
+          "out_ms": 800,
+          "fade_in_ms": 20,
+          "fade_out_ms": 20
+        }
+      }
+    ]
+  },
+  "inserted": {
+    "id": "fb00040d-e183-4bfc-8f2f-de09f0c3b06f",
+    "novel_id": "r3-mounted-3fa4ed89689747beb107362dbf0d9a17",
+    "title": "SYNTHETIC CPU postproduction",
+    "version": 2,
+    "timeline_digest": "f543657c4784f184e5de54091deb461fb7fd5170ab97995be2ecf0516ad670e1",
+    "timeline": {
+      "schema_version": 2,
+      "duration_ms": 1000,
+      "width": 64,
+      "height": 64,
+      "fps": 10,
+      "tracks": [
+        {
+          "id": "picture",
+          "kind": "VIDEO",
+          "order": 0,
+          "role": "PRIMARY",
+          "muted": false,
+          "gain_db": 0.0,
+          "clips": [
+            {
+              "id": "picture-one",
+              "source_snapshot": {
+                "id": "51ef064e-45ff-46f9-bad5-4a8413c03394",
+                "kind": "ASSET",
+                "asset_kind": "video",
+                "version": 1,
+                "digest": "77e49a53f579bbe6250f97e93f7468b762f4018e6261ea09f83d86b8b2209267"
+              },
+              "start_ms": 0,
+              "in_ms": 0,
+              "out_ms": 1000,
+              "speed_num": 1,
+              "speed_den": 1,
+              "muted": false,
+              "gain_db": 0.0,
+              "fade_in_ms": 0,
+              "fade_out_ms": 0,
+              "x": 0,
+              "y": 0,
+              "width": 64,
+              "height": 64,
+              "opacity": 1.0,
+              "include_audio": false
+            }
+          ]
+        },
+        {
+          "id": "dialogue",
+          "kind": "AUDIO",
+          "order": 1,
+          "role": "DIALOGUE",
+          "muted": false,
+          "gain_db": 0.0,
+          "clips": [
+            {
+              "id": "voice-one",
+              "source_snapshot": {
+                "id": "52b731dc-b418-4ffb-9e92-165ac670c146",
+                "kind": "ASSET",
+                "asset_kind": "audio",
+                "version": 2,
+                "digest": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c"
+              },
+              "start_ms": 0,
+              "in_ms": 0,
+              "out_ms": 800,
+              "speed_num": 1,
+              "speed_den": 1,
+              "muted": false,
+              "gain_db": 0.0,
+              "fade_in_ms": 20,
+              "fade_out_ms": 20
+            }
+          ]
+        }
+      ],
+      "captions": []
+    },
+    "created_at": "2026-10-13T20:01:04.521446+00:00",
+    "updated_at": "2026-10-13T20:01:05.019146+00:00",
+    "branch_id": null,
+    "edit_receipt": {
+      "request_id": "phase6-api-add-audio",
+      "request_digest": "938de9f94f281ac53dff6de7d41b7a163e69dd0217242fda48ceb20d36f08630",
+      "input_version": 1,
+      "input_digest": "531aa16b529ecbfc292cda302d4fb53142de1a305d39de9c8d30a462db5b8619",
+      "output_digest": "f543657c4784f184e5de54091deb461fb7fd5170ab97995be2ecf0516ad670e1"
+    }
+  },
+  "insert_recovered": {
+    "id": "fb00040d-e183-4bfc-8f2f-de09f0c3b06f",
+    "novel_id": "r3-mounted-3fa4ed89689747beb107362dbf0d9a17",
+    "title": "SYNTHETIC CPU postproduction",
+    "version": 2,
+    "timeline_digest": "f543657c4784f184e5de54091deb461fb7fd5170ab97995be2ecf0516ad670e1",
+    "timeline": {
+      "captions": [],
+      "duration_ms": 1000,
+      "fps": 10,
+      "height": 64,
+      "schema_version": 2,
+      "tracks": [
+        {
+          "clips": [
+            {
+              "fade_in_ms": 0,
+              "fade_out_ms": 0,
+              "gain_db": 0.0,
+              "height": 64,
+              "id": "picture-one",
+              "in_ms": 0,
+              "include_audio": false,
+              "muted": false,
+              "opacity": 1.0,
+              "out_ms": 1000,
+              "source_snapshot": {
+                "asset_kind": "video",
+                "digest": "77e49a53f579bbe6250f97e93f7468b762f4018e6261ea09f83d86b8b2209267",
+                "id": "51ef064e-45ff-46f9-bad5-4a8413c03394",
+                "kind": "ASSET",
+                "version": 1
+              },
+              "speed_den": 1,
+              "speed_num": 1,
+              "start_ms": 0,
+              "width": 64,
+              "x": 0,
+              "y": 0
+            }
+          ],
+          "gain_db": 0.0,
+          "id": "picture",
+          "kind": "VIDEO",
+          "muted": false,
+          "order": 0,
+          "role": "PRIMARY"
+        },
+        {
+          "clips": [
+            {
+              "fade_in_ms": 20,
+              "fade_out_ms": 20,
+              "gain_db": 0.0,
+              "id": "voice-one",
+              "in_ms": 0,
+              "muted": false,
+              "out_ms": 800,
+              "source_snapshot": {
+                "asset_kind": "audio",
+                "digest": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c",
+                "id": "52b731dc-b418-4ffb-9e92-165ac670c146",
+                "kind": "ASSET",
+                "version": 2
+              },
+              "speed_den": 1,
+              "speed_num": 1,
+              "start_ms": 0
+            }
+          ],
+          "gain_db": 0.0,
+          "id": "dialogue",
+          "kind": "AUDIO",
+          "muted": false,
+          "order": 1,
+          "role": "DIALOGUE"
+        }
+      ],
+      "width": 64
+    },
+    "created_at": "2026-10-13T20:01:04.521446+00:00",
+    "updated_at": "2026-10-13T20:01:05.019146+00:00",
+    "branch_id": null,
+    "edit_receipt": {
+      "request_id": "phase6-api-add-audio",
+      "request_digest": "938de9f94f281ac53dff6de7d41b7a163e69dd0217242fda48ceb20d36f08630",
+      "input_version": 1,
+      "input_digest": "531aa16b529ecbfc292cda302d4fb53142de1a305d39de9c8d30a462db5b8619",
+      "output_digest": "f543657c4784f184e5de54091deb461fb7fd5170ab97995be2ecf0516ad670e1"
+    }
+  },
+  "replacement_asset": {
+    "id": "ef2083e1-9ecb-4c0d-8f1f-3f1f03867acc",
+    "novel_id": "r3-mounted-3fa4ed89689747beb107362dbf0d9a17",
+    "filename": "synthetic-replacement-blue.mp4",
+    "kind": "video",
+    "media_type": "video/mp4",
+    "size": 1080,
+    "sha256": "77e49a53f579bbe6250f97e93f7468b762f4018e6261ea09f83d86b8b2209267",
+    "branch_id": null,
+    "created_at": "2026-10-13T20:01:05.264230+00:00",
+    "updated_at": "2026-10-13T20:01:05.264230+00:00",
+    "version": 1,
+    "deleted_at": null,
+    "idempotency_key": "b6f9c01d07c14d349047a4e1b24a7dd7",
+    "provenance": {
+      "id": "ef2083e1-9ecb-4c0d-8f1f-3f1f03867acc",
+      "label": "synthetic-replacement-blue.mp4",
+      "kind": "video",
+      "version": 1,
+      "digest": "77e49a53f579bbe6250f97e93f7468b762f4018e6261ea09f83d86b8b2209267",
+      "deleted": false,
+      "integrity": "VERIFIED",
+      "origin": "UNDECLARED",
+      "license": {
+        "label": "UNSPECIFIED",
+        "source": "",
+        "note": ""
+      },
+      "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+      "operation": "",
+      "parents": [],
+      "sources": [],
+      "producer": {
+        "declared_by": null,
+        "provider_id": null,
+        "model_id": null
+      },
+      "generation": null,
+      "declaration_history_versions": [],
+      "stale": false,
+      "source_task_id": null
+    },
+    "relationships": []
+  },
+  "replacement_body": {
+    "expected_version": 2,
+    "reviewed_timeline_digest": "f543657c4784f184e5de54091deb461fb7fd5170ab97995be2ecf0516ad670e1",
+    "request_id": "phase6-api-replace-picture",
+    "operations": [
+      {
+        "op": "clip.update",
+        "clip_id": "picture-one",
+        "changes": {
+          "source_snapshot": {
+            "kind": "ASSET",
+            "asset_kind": "video",
+            "id": "ef2083e1-9ecb-4c0d-8f1f-3f1f03867acc",
+            "version": 1,
+            "digest": "77e49a53f579bbe6250f97e93f7468b762f4018e6261ea09f83d86b8b2209267"
+          },
+          "in_ms": 0,
+          "out_ms": 1000
+        }
+      }
+    ]
+  },
+  "replaced": {
+    "id": "fb00040d-e183-4bfc-8f2f-de09f0c3b06f",
+    "novel_id": "r3-mounted-3fa4ed89689747beb107362dbf0d9a17",
+    "title": "SYNTHETIC CPU postproduction",
+    "version": 3,
+    "timeline_digest": "cb7a72de6c8a2bbf40624b6823b327cdf4c7a4b45ee8ff345216a9a504de5c42",
+    "timeline": {
+      "schema_version": 2,
+      "duration_ms": 1000,
+      "width": 64,
+      "height": 64,
+      "fps": 10,
+      "tracks": [
+        {
+          "id": "picture",
+          "kind": "VIDEO",
+          "order": 0,
+          "role": "PRIMARY",
+          "muted": false,
+          "gain_db": 0.0,
+          "clips": [
+            {
+              "id": "picture-one",
+              "source_snapshot": {
+                "id": "ef2083e1-9ecb-4c0d-8f1f-3f1f03867acc",
+                "kind": "ASSET",
+                "asset_kind": "video",
+                "version": 1,
+                "digest": "77e49a53f579bbe6250f97e93f7468b762f4018e6261ea09f83d86b8b2209267"
+              },
+              "start_ms": 0,
+              "in_ms": 0,
+              "out_ms": 1000,
+              "speed_num": 1,
+              "speed_den": 1,
+              "muted": false,
+              "gain_db": 0.0,
+              "fade_in_ms": 0,
+              "fade_out_ms": 0,
+              "x": 0,
+              "y": 0,
+              "width": 64,
+              "height": 64,
+              "opacity": 1.0,
+              "include_audio": false
+            }
+          ]
+        },
+        {
+          "id": "dialogue",
+          "kind": "AUDIO",
+          "order": 1,
+          "role": "DIALOGUE",
+          "muted": false,
+          "gain_db": 0.0,
+          "clips": [
+            {
+              "id": "voice-one",
+              "source_snapshot": {
+                "id": "52b731dc-b418-4ffb-9e92-165ac670c146",
+                "kind": "ASSET",
+                "asset_kind": "audio",
+                "version": 2,
+                "digest": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c"
+              },
+              "start_ms": 0,
+              "in_ms": 0,
+              "out_ms": 800,
+              "speed_num": 1,
+              "speed_den": 1,
+              "muted": false,
+              "gain_db": 0.0,
+              "fade_in_ms": 20,
+              "fade_out_ms": 20
+            }
+          ]
+        }
+      ],
+      "captions": []
+    },
+    "created_at": "2026-10-13T20:01:04.521446+00:00",
+    "updated_at": "2026-10-13T20:01:05.300148+00:00",
+    "branch_id": null,
+    "edit_receipt": {
+      "request_id": "phase6-api-replace-picture",
+      "request_digest": "57ef4695b8177b0c4abae281d8586c185a10a410ef3a2f95c9e5b1adfd1315e4",
+      "input_version": 2,
+      "input_digest": "f543657c4784f184e5de54091deb461fb7fd5170ab97995be2ecf0516ad670e1",
+      "output_digest": "cb7a72de6c8a2bbf40624b6823b327cdf4c7a4b45ee8ff345216a9a504de5c42"
+    }
+  },
+  "replacement_recovered": {
+    "id": "fb00040d-e183-4bfc-8f2f-de09f0c3b06f",
+    "novel_id": "r3-mounted-3fa4ed89689747beb107362dbf0d9a17",
+    "title": "SYNTHETIC CPU postproduction",
+    "version": 3,
+    "timeline_digest": "cb7a72de6c8a2bbf40624b6823b327cdf4c7a4b45ee8ff345216a9a504de5c42",
+    "timeline": {
+      "captions": [],
+      "duration_ms": 1000,
+      "fps": 10,
+      "height": 64,
+      "schema_version": 2,
+      "tracks": [
+        {
+          "clips": [
+            {
+              "fade_in_ms": 0,
+              "fade_out_ms": 0,
+              "gain_db": 0.0,
+              "height": 64,
+              "id": "picture-one",
+              "in_ms": 0,
+              "include_audio": false,
+              "muted": false,
+              "opacity": 1.0,
+              "out_ms": 1000,
+              "source_snapshot": {
+                "asset_kind": "video",
+                "digest": "77e49a53f579bbe6250f97e93f7468b762f4018e6261ea09f83d86b8b2209267",
+                "id": "ef2083e1-9ecb-4c0d-8f1f-3f1f03867acc",
+                "kind": "ASSET",
+                "version": 1
+              },
+              "speed_den": 1,
+              "speed_num": 1,
+              "start_ms": 0,
+              "width": 64,
+              "x": 0,
+              "y": 0
+            }
+          ],
+          "gain_db": 0.0,
+          "id": "picture",
+          "kind": "VIDEO",
+          "muted": false,
+          "order": 0,
+          "role": "PRIMARY"
+        },
+        {
+          "clips": [
+            {
+              "fade_in_ms": 20,
+              "fade_out_ms": 20,
+              "gain_db": 0.0,
+              "id": "voice-one",
+              "in_ms": 0,
+              "muted": false,
+              "out_ms": 800,
+              "source_snapshot": {
+                "asset_kind": "audio",
+                "digest": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c",
+                "id": "52b731dc-b418-4ffb-9e92-165ac670c146",
+                "kind": "ASSET",
+                "version": 2
+              },
+              "speed_den": 1,
+              "speed_num": 1,
+              "start_ms": 0
+            }
+          ],
+          "gain_db": 0.0,
+          "id": "dialogue",
+          "kind": "AUDIO",
+          "muted": false,
+          "order": 1,
+          "role": "DIALOGUE"
+        }
+      ],
+      "width": 64
+    },
+    "created_at": "2026-10-13T20:01:04.521446+00:00",
+    "updated_at": "2026-10-13T20:01:05.300148+00:00",
+    "branch_id": null,
+    "edit_receipt": {
+      "request_id": "phase6-api-replace-picture",
+      "request_digest": "57ef4695b8177b0c4abae281d8586c185a10a410ef3a2f95c9e5b1adfd1315e4",
+      "input_version": 2,
+      "input_digest": "f543657c4784f184e5de54091deb461fb7fd5170ab97995be2ecf0516ad670e1",
+      "output_digest": "cb7a72de6c8a2bbf40624b6823b327cdf4c7a4b45ee8ff345216a9a504de5c42"
+    }
+  },
+  "render_body": {
+    "expected_version": 3,
+    "reviewed_timeline_digest": "cb7a72de6c8a2bbf40624b6823b327cdf4c7a4b45ee8ff345216a9a504de5c42",
+    "request_id": "phase6-api-render"
+  },
+  "rendered": {
+    "contract": "studio-production-job/1",
+    "owner": "timeline",
+    "id": "f287619180e1a104da3cb78fbd29a92701a05ce056f345f8158f6dc634a30168",
+    "novel_id": "r3-mounted-3fa4ed89689747beb107362dbf0d9a17",
+    "branch_id": null,
+    "version": 4,
+    "status": "SUCCEEDED",
+    "request_digest": "9929deffdfdc26aeefe34af0b4abd83c6f2f70a2c307952a2519e63952d6cc31",
+    "receipt_digest": "92e2be1bd258e93ceac4dfda0747341894db0538d1bd3b2e24433575c9d20768",
+    "attempt": null,
+    "created_at": "2026-10-13T20:01:05.351384+00:00",
+    "updated_at": "2026-10-13T20:01:07.164579+00:00",
+    "error_code": null,
+    "review_state": "HUMAN_REVIEW_REQUIRED",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m9.timeline.multitrack",
+    "output_candidate": {
+      "id": "8c6fcd45-c35e-4d58-bd69-86803507274b",
+      "version": 1,
+      "digest": "00d88ba092b1d54b6e16888f2818c904aba1604d6c4ba7571088579f0c58d6d0",
+      "kind": "video"
+    },
+    "timeline_snapshot": {
+      "id": "fb00040d-e183-4bfc-8f2f-de09f0c3b06f",
+      "version": 3,
+      "digest": "cb7a72de6c8a2bbf40624b6823b327cdf4c7a4b45ee8ff345216a9a504de5c42"
+    },
+    "sources": [
+      {
+        "asset_kind": "audio",
+        "digest": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c",
+        "id": "52b731dc-b418-4ffb-9e92-165ac670c146",
+        "kind": "ASSET",
+        "version": 2
+      },
+      {
+        "asset_kind": "video",
+        "digest": "77e49a53f579bbe6250f97e93f7468b762f4018e6261ea09f83d86b8b2209267",
+        "id": "ef2083e1-9ecb-4c0d-8f1f-3f1f03867acc",
+        "kind": "ASSET",
+        "version": 1
+      }
+    ],
+    "command": null,
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m9.timeline.multitrack",
+      "adapter": "LOCAL_FFMPEG",
+      "output_profile": "STUDIO_MULTITRACK_LOCAL_FFMPEG",
+      "timeline": {
+        "captions": [],
+        "duration_ms": 1000,
+        "fps": 10,
+        "height": 64,
+        "schema_version": 2,
+        "tracks": [
+          {
+            "clips": [
+              {
+                "fade_in_ms": 0,
+                "fade_out_ms": 0,
+                "gain_db": 0.0,
+                "height": 64,
+                "id": "picture-one",
+                "in_ms": 0,
+                "include_audio": false,
+                "muted": false,
+                "opacity": 1.0,
+                "out_ms": 1000,
+                "source_snapshot": {
+                  "asset_kind": "video",
+                  "digest": "77e49a53f579bbe6250f97e93f7468b762f4018e6261ea09f83d86b8b2209267",
+                  "id": "ef2083e1-9ecb-4c0d-8f1f-3f1f03867acc",
+                  "kind": "ASSET",
+                  "version": 1
+                },
+                "speed_den": 1,
+                "speed_num": 1,
+                "start_ms": 0,
+                "width": 64,
+                "x": 0,
+                "y": 0
+              }
+            ],
+            "gain_db": 0.0,
+            "id": "picture",
+            "kind": "VIDEO",
+            "muted": false,
+            "order": 0,
+            "role": "PRIMARY"
+          },
+          {
+            "clips": [
+              {
+                "fade_in_ms": 20,
+                "fade_out_ms": 20,
+                "gain_db": 0.0,
+                "id": "voice-one",
+                "in_ms": 0,
+                "muted": false,
+                "out_ms": 800,
+                "source_snapshot": {
+                  "asset_kind": "audio",
+                  "digest": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c",
+                  "id": "52b731dc-b418-4ffb-9e92-165ac670c146",
+                  "kind": "ASSET",
+                  "version": 2
+                },
+                "speed_den": 1,
+                "speed_num": 1,
+                "start_ms": 0
+              }
+            ],
+            "gain_db": 0.0,
+            "id": "dialogue",
+            "kind": "AUDIO",
+            "muted": false,
+            "order": 1,
+            "role": "DIALOGUE"
+          }
+        ],
+        "width": 64
+      },
+      "automatic_fallback": false,
+      "recipe_digest": "29cb3f12e6cbca099aa8c07b5f58becdaa5aac7c79bdbc63d2a7f9aa80614eb5"
+    },
+    "media_measurement": {
+      "duration_ms": 1000,
+      "byte_count": 11948,
+      "width": 64,
+      "height": 64,
+      "fps": 10.0,
+      "video_codec": "mpeg4",
+      "audio_codec": "aac",
+      "sample_rate": 48000,
+      "channels": 2,
+      "container": "mp4",
+      "profile_validation": "NATIVE_FFPROBE_EXACT",
+      "render_profile": "STUDIO_MULTITRACK_LOCAL_FFMPEG"
+    },
+    "approved_asset_version": null,
+    "request_id": "phase6-api-render",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "approved": {
+    "contract": "studio-production-job/1",
+    "owner": "timeline",
+    "id": "f287619180e1a104da3cb78fbd29a92701a05ce056f345f8158f6dc634a30168",
+    "novel_id": "r3-mounted-3fa4ed89689747beb107362dbf0d9a17",
+    "branch_id": null,
+    "version": 6,
+    "status": "APPROVED",
+    "request_digest": "9929deffdfdc26aeefe34af0b4abd83c6f2f70a2c307952a2519e63952d6cc31",
+    "receipt_digest": "b86f5c8abc1dd611e74ebd049f5525802bd799cd5b8f0fd9d9ef08b646c5991d",
+    "attempt": null,
+    "created_at": "2026-10-13T20:01:05.351384+00:00",
+    "updated_at": "2026-10-13T20:01:07.463877+00:00",
+    "error_code": null,
+    "review_state": "ORIGINAL_OWNER_REVIEWED",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m9.timeline.multitrack",
+    "output_candidate": {
+      "id": "8c6fcd45-c35e-4d58-bd69-86803507274b",
+      "version": 1,
+      "digest": "00d88ba092b1d54b6e16888f2818c904aba1604d6c4ba7571088579f0c58d6d0",
+      "kind": "video"
+    },
+    "timeline_snapshot": {
+      "id": "fb00040d-e183-4bfc-8f2f-de09f0c3b06f",
+      "version": 3,
+      "digest": "cb7a72de6c8a2bbf40624b6823b327cdf4c7a4b45ee8ff345216a9a504de5c42"
+    },
+    "sources": [
+      {
+        "asset_kind": "audio",
+        "digest": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c",
+        "id": "52b731dc-b418-4ffb-9e92-165ac670c146",
+        "kind": "ASSET",
+        "version": 2
+      },
+      {
+        "asset_kind": "video",
+        "digest": "77e49a53f579bbe6250f97e93f7468b762f4018e6261ea09f83d86b8b2209267",
+        "id": "ef2083e1-9ecb-4c0d-8f1f-3f1f03867acc",
+        "kind": "ASSET",
+        "version": 1
+      }
+    ],
+    "command": null,
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m9.timeline.multitrack",
+      "adapter": "LOCAL_FFMPEG",
+      "output_profile": "STUDIO_MULTITRACK_LOCAL_FFMPEG",
+      "timeline": {
+        "captions": [],
+        "duration_ms": 1000,
+        "fps": 10,
+        "height": 64,
+        "schema_version": 2,
+        "tracks": [
+          {
+            "clips": [
+              {
+                "fade_in_ms": 0,
+                "fade_out_ms": 0,
+                "gain_db": 0.0,
+                "height": 64,
+                "id": "picture-one",
+                "in_ms": 0,
+                "include_audio": false,
+                "muted": false,
+                "opacity": 1.0,
+                "out_ms": 1000,
+                "source_snapshot": {
+                  "asset_kind": "video",
+                  "digest": "77e49a53f579bbe6250f97e93f7468b762f4018e6261ea09f83d86b8b2209267",
+                  "id": "ef2083e1-9ecb-4c0d-8f1f-3f1f03867acc",
+                  "kind": "ASSET",
+                  "version": 1
+                },
+                "speed_den": 1,
+                "speed_num": 1,
+                "start_ms": 0,
+                "width": 64,
+                "x": 0,
+                "y": 0
+              }
+            ],
+            "gain_db": 0.0,
+            "id": "picture",
+            "kind": "VIDEO",
+            "muted": false,
+            "order": 0,
+            "role": "PRIMARY"
+          },
+          {
+            "clips": [
+              {
+                "fade_in_ms": 20,
+                "fade_out_ms": 20,
+                "gain_db": 0.0,
+                "id": "voice-one",
+                "in_ms": 0,
+                "muted": false,
+                "out_ms": 800,
+                "source_snapshot": {
+                  "asset_kind": "audio",
+                  "digest": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c",
+                  "id": "52b731dc-b418-4ffb-9e92-165ac670c146",
+                  "kind": "ASSET",
+                  "version": 2
+                },
+                "speed_den": 1,
+                "speed_num": 1,
+                "start_ms": 0
+              }
+            ],
+            "gain_db": 0.0,
+            "id": "dialogue",
+            "kind": "AUDIO",
+            "muted": false,
+            "order": 1,
+            "role": "DIALOGUE"
+          }
+        ],
+        "width": 64
+      },
+      "automatic_fallback": false,
+      "recipe_digest": "29cb3f12e6cbca099aa8c07b5f58becdaa5aac7c79bdbc63d2a7f9aa80614eb5"
+    },
+    "media_measurement": {
+      "duration_ms": 1000,
+      "byte_count": 11948,
+      "width": 64,
+      "height": 64,
+      "fps": 10.0,
+      "video_codec": "mpeg4",
+      "audio_codec": "aac",
+      "sample_rate": 48000,
+      "channels": 2,
+      "container": "mp4",
+      "profile_validation": "NATIVE_FFPROBE_EXACT",
+      "render_profile": "STUDIO_MULTITRACK_LOCAL_FFMPEG"
+    },
+    "approved_asset_version": 2,
+    "request_id": "phase6-api-render",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "approved_get": {
+    "contract": "studio-production-job/1",
+    "owner": "timeline",
+    "id": "f287619180e1a104da3cb78fbd29a92701a05ce056f345f8158f6dc634a30168",
+    "novel_id": "r3-mounted-3fa4ed89689747beb107362dbf0d9a17",
+    "branch_id": null,
+    "version": 6,
+    "status": "APPROVED",
+    "request_digest": "9929deffdfdc26aeefe34af0b4abd83c6f2f70a2c307952a2519e63952d6cc31",
+    "receipt_digest": "b86f5c8abc1dd611e74ebd049f5525802bd799cd5b8f0fd9d9ef08b646c5991d",
+    "attempt": null,
+    "created_at": "2026-10-13T20:01:05.351384+00:00",
+    "updated_at": "2026-10-13T20:01:07.463877+00:00",
+    "error_code": null,
+    "review_state": "ORIGINAL_OWNER_REVIEWED",
+    "cancellation_mode": null,
+    "needs_reconciliation": false,
+    "execution_state": "APPROVED",
+    "operation_id": "m9.timeline.multitrack",
+    "output_candidate": {
+      "id": "8c6fcd45-c35e-4d58-bd69-86803507274b",
+      "version": 1,
+      "digest": "00d88ba092b1d54b6e16888f2818c904aba1604d6c4ba7571088579f0c58d6d0",
+      "kind": "video"
+    },
+    "timeline_snapshot": {
+      "id": "fb00040d-e183-4bfc-8f2f-de09f0c3b06f",
+      "version": 3,
+      "digest": "cb7a72de6c8a2bbf40624b6823b327cdf4c7a4b45ee8ff345216a9a504de5c42"
+    },
+    "sources": [
+      {
+        "asset_kind": "audio",
+        "digest": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c",
+        "id": "52b731dc-b418-4ffb-9e92-165ac670c146",
+        "kind": "ASSET",
+        "version": 2
+      },
+      {
+        "asset_kind": "video",
+        "digest": "77e49a53f579bbe6250f97e93f7468b762f4018e6261ea09f83d86b8b2209267",
+        "id": "ef2083e1-9ecb-4c0d-8f1f-3f1f03867acc",
+        "kind": "ASSET",
+        "version": 1
+      }
+    ],
+    "command": null,
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m9.timeline.multitrack",
+      "adapter": "LOCAL_FFMPEG",
+      "output_profile": "STUDIO_MULTITRACK_LOCAL_FFMPEG",
+      "timeline": {
+        "captions": [],
+        "duration_ms": 1000,
+        "fps": 10,
+        "height": 64,
+        "schema_version": 2,
+        "tracks": [
+          {
+            "clips": [
+              {
+                "fade_in_ms": 0,
+                "fade_out_ms": 0,
+                "gain_db": 0.0,
+                "height": 64,
+                "id": "picture-one",
+                "in_ms": 0,
+                "include_audio": false,
+                "muted": false,
+                "opacity": 1.0,
+                "out_ms": 1000,
+                "source_snapshot": {
+                  "asset_kind": "video",
+                  "digest": "77e49a53f579bbe6250f97e93f7468b762f4018e6261ea09f83d86b8b2209267",
+                  "id": "ef2083e1-9ecb-4c0d-8f1f-3f1f03867acc",
+                  "kind": "ASSET",
+                  "version": 1
+                },
+                "speed_den": 1,
+                "speed_num": 1,
+                "start_ms": 0,
+                "width": 64,
+                "x": 0,
+                "y": 0
+              }
+            ],
+            "gain_db": 0.0,
+            "id": "picture",
+            "kind": "VIDEO",
+            "muted": false,
+            "order": 0,
+            "role": "PRIMARY"
+          },
+          {
+            "clips": [
+              {
+                "fade_in_ms": 20,
+                "fade_out_ms": 20,
+                "gain_db": 0.0,
+                "id": "voice-one",
+                "in_ms": 0,
+                "muted": false,
+                "out_ms": 800,
+                "source_snapshot": {
+                  "asset_kind": "audio",
+                  "digest": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c",
+                  "id": "52b731dc-b418-4ffb-9e92-165ac670c146",
+                  "kind": "ASSET",
+                  "version": 2
+                },
+                "speed_den": 1,
+                "speed_num": 1,
+                "start_ms": 0
+              }
+            ],
+            "gain_db": 0.0,
+            "id": "dialogue",
+            "kind": "AUDIO",
+            "muted": false,
+            "order": 1,
+            "role": "DIALOGUE"
+          }
+        ],
+        "width": 64
+      },
+      "automatic_fallback": false,
+      "recipe_digest": "29cb3f12e6cbca099aa8c07b5f58becdaa5aac7c79bdbc63d2a7f9aa80614eb5"
+    },
+    "media_measurement": {
+      "duration_ms": 1000,
+      "byte_count": 11948,
+      "width": 64,
+      "height": 64,
+      "fps": 10.0,
+      "video_codec": "mpeg4",
+      "audio_codec": "aac",
+      "sample_rate": 48000,
+      "channels": 2,
+      "container": "mp4",
+      "profile_validation": "NATIVE_FFPROBE_EXACT",
+      "render_profile": "STUDIO_MULTITRACK_LOCAL_FFMPEG"
+    },
+    "approved_asset_version": 2,
+    "request_id": "phase6-api-render",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "formal_result": {
+    "id": "8c6fcd45-c35e-4d58-bd69-86803507274b",
+    "novel_id": "r3-mounted-3fa4ed89689747beb107362dbf0d9a17",
+    "filename": "studio-timeline-f287619180e1a104da3cb78fbd29a92701a05ce056f345f8158f6dc634a30168.mp4",
+    "kind": "video",
+    "media_type": "video/mp4",
+    "size": 11948,
+    "sha256": "00d88ba092b1d54b6e16888f2818c904aba1604d6c4ba7571088579f0c58d6d0",
+    "branch_id": null,
+    "source_job_id": "f287619180e1a104da3cb78fbd29a92701a05ce056f345f8158f6dc634a30168",
+    "provider_id": null,
+    "model_id": null,
+    "created_at": "2026-10-13T20:01:07.141087+00:00",
+    "updated_at": "2026-10-13T20:01:07.458627+00:00",
+    "version": 2,
+    "deleted_at": null,
+    "idempotency_key": "studio-production:85c7408df2ca6e025fc33ed454c3b73aca5a21b1f6374ce81e98c7b98e375f74",
+    "approved_at": "2026-10-13T20:01:07.458627+00:00",
+    "provenance": {
+      "id": "8c6fcd45-c35e-4d58-bd69-86803507274b",
+      "label": "studio-timeline-f287619180e1a104da3cb78fbd29a92701a05ce056f345f8158f6dc634a30168.mp4",
+      "kind": "video",
+      "version": 2,
+      "digest": "00d88ba092b1d54b6e16888f2818c904aba1604d6c4ba7571088579f0c58d6d0",
+      "deleted": false,
+      "integrity": "VERIFIED",
+      "origin": "DERIVED_PROCESSING",
+      "license": {
+        "label": "UNSPECIFIED",
+        "source": "",
+        "note": ""
+      },
+      "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+      "operation": "m9.timeline.multitrack",
+      "parents": [
+        {
+          "id": "52b731dc-b418-4ffb-9e92-165ac670c146",
+          "label": "audio-44b2738e-de96-4763-af09-59fce154a8eb.flac",
+          "version": 2,
+          "digest": "49279889aa963a263ed975dcafd2ae9970537c75fcaf834947e9cdbd443a351c",
+          "state": "CURRENT"
+        },
+        {
+          "id": "ef2083e1-9ecb-4c0d-8f1f-3f1f03867acc",
+          "label": "synthetic-replacement-blue.mp4",
+          "version": 1,
+          "digest": "77e49a53f579bbe6250f97e93f7468b762f4018e6261ea09f83d86b8b2209267",
+          "state": "CURRENT"
+        }
+      ],
+      "sources": [],
+      "stale": false,
+      "source_task_id": "f287619180e1a104da3cb78fbd29a92701a05ce056f345f8158f6dc634a30168",
+      "generation": null,
+      "reference_only": true,
+      "product_acceptance": "LOCAL_REQUIRED"
+    },
+    "relationships": []
+  },
+  "decoded_proof": {
+    "decoded_frames": 10,
+    "sample_rate": 48000,
+    "channels": 2,
+    "output_sha256": "00d88ba092b1d54b6e16888f2818c904aba1604d6c4ba7571088579f0c58d6d0",
+    "decoded_pcm_sha256": "d943f4bf7ca0b20565b8b665a250be3e280414f5f6acabd9bcc0c717438f3bbe"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "kind": "SUPPLEMENTAL_LOCAL_PYTHON31214_CHANGED_SOURCE_FULL_FILE_REGRESSION",
+  "source_tree": "7ad139d78404f3f1bf81e67e66dd4b78e16ffc45",
+  "source_manifest_sha256": "f70c03c08b81509e5fa1993161561d455935a530586e7467d12d9a54fefee985",
+  "tracked_source_files": 2221,
+  "tracked_source_unchanged": true,
+  "main": {
+    "tests": 7862,
+    "passed": 5326,
+    "skipped": 2536,
+    "failed": 0,
+    "errors": 0,
+    "pytest_seconds": 571.44,
+    "wall_seconds": 578.1620877019996,
+    "outer_cap_seconds": 1200,
+    "runs_with_test_execution": 1,
+    "mode": "ONE_UNFILTERED_ORIGINAL_ORDER_PROCESS"
+  },
+  "original_nodes": {
+    "tests": 7492,
+    "passed": 5111,
+    "skipped": 2381
+  },
+  "new_a43_nodes": {
+    "tests": 370,
+    "passed": 215,
+    "skipped": 155,
+    "all_skips": "opposite PostgreSQL profile"
+  },
+  "tcp": {
+    "tests": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "pytest_seconds": 26.29,
+    "wall_seconds": 28.461493192997295,
+    "outer_cap_seconds": 300
+  },
+  "posthoc_reconciliation": {
+    "complete_junit_identity_mapping": true,
+    "unexpected_skips": [],
+    "source_manifest_files_checked": 399,
+    "issues": [],
+    "strict_hosted_gate": false
+  },
+  "earlier_red_run": {
+    "tree": "a4f9dbeec37886b6ef53a77a0fa74357d97df543",
+    "receipt": "../first-integration-a4f9dbee/receipt.json",
+    "status": "27 failures preserved; lifecycle and audio-node root causes corrected in changed source; no unchanged-source rerun"
+  },
+  "execution_limitations": [
+    "Python 3.12.14 local, not locked hosted 3.12.9",
+    "Frozen corrected tree only",
+    "No PostgreSQL run or hosted strict plugin/source/shard/phase reconciliation",
+    "No real data, user credentials, paid/model calls, native interactive acceptance"
+  ],
+  "setup_incidents": [],
+  "untracked_generated_files": [
+    "app/__pycache__/__init__.cpython-312.pyc",
+    "app/__pycache__/plugin_test_worker.cpython-312.pyc",
+    "app/__pycache__/plugin_worker_protocol.cpython-312.pyc",
+    "data/harness_access_audit.json",
+    "logs/runtime.jsonl",
+    "tests/fixtures/.workspace-mutation-locks/80ce7f87aac68c111646a7000ba128d1957d8a90b65f2e8b7c487024c857bda9.lock",
+    "tests/fixtures/novels/sample_novel/chapter_identity.json"
+  ],
+  "public_receipt_policy": "Full raw logs and tracked-file inventories remain private. Selected JUnit and summary are published with executor metadata-only redaction documented separately."
+}

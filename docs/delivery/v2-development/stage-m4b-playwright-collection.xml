@@ -1,0 +1,8 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="1" errors="0" time="0.1608910000000001">
+<testsuite name="v2-model-assets-live.spec.ts" timestamp="2026-10-10T10:52:04.540Z" hostname="m4b-model-assets-chromium" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="M4-B original File HTTP UI explains task matching and archives one reviewed model result, recovering a bounded metadata failure without replay" classname="v2-model-assets-live.spec.ts">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+</testsuites>

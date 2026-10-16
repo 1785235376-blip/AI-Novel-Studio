@@ -1,0 +1,24 @@
+{
+  "backend": "file",
+  "operation": "revise",
+  "revocation": "permission",
+  "nid": "r3-i-auth-a11e361e5e",
+  "workspace": "w-a11e361e5e",
+  "branch": "b-a11e361e5e",
+  "actor": "writer-a11e361e5e",
+  "admin": "init-a11e361e5e",
+  "assignment": "write-568a888a037748d7b9b0627af0fb7e75",
+  "url": "/api/projects/r3-i-auth-a11e361e5e/studio/prompts/ea0ca85e-503d-4d6f-be31-ae503862cbeb/revisions",
+  "method": "POST",
+  "body": {
+    "text": "PRIVATE process authoring 中文 🙂\n",
+    "purpose": "IMAGE",
+    "origin": "MANUAL",
+    "request_id": "ab15416c5c5d4818b4c5407442da4943",
+    "expected_revision": 1,
+    "expected_previous_asset_id": "aab63cd3-dd5f-4768-a484-01b297ad1c49"
+  },
+  "ipc": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-process-file-final-r3\\temp\\test_independent_process_revoc9\\process-file-revise-permission-writer",
+  "pause_writer": true,
+  "pause_revoker": false
+}

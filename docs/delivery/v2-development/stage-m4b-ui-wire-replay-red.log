@@ -1,0 +1,38 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ✓ ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts > Genuine mounted File/API wire replay through strict frontend client > accepts model capabilities including result storage
+ × ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts > Genuine mounted File/API wire replay through strict frontend client > accepts provider catalog
+   → 服务返回的提供方或匹配说明不可用，请重新读取。
+ ✓ ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts > Genuine mounted File/API wire replay through strict frontend client > accepts TEXT_GENERATION matching
+ ✓ ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts > Genuine mounted File/API wire replay through strict frontend client > accepts IMAGE_GENERATION matching
+ ✓ ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts > Genuine mounted File/API wire replay through strict frontend client > accepts VIDEO_GENERATION matching
+ ✓ ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts > Genuine mounted File/API wire replay through strict frontend client > accepts original dispatch with archival intent and pending receipt
+ ✓ ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts > Genuine mounted File/API wire replay through strict frontend client > accepts draft TextAsset result
+ ✓ ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts > Genuine mounted File/API wire replay through strict frontend client > accepts recovered TextAsset result
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts > Genuine mounted File/API wire replay through strict frontend client > accepts provider catalog
+Error: 服务返回的提供方或匹配说明不可用，请重新读取。
+ ❯ invalid src/creative/studioProviderClient.ts:11:9
+      9| const requirementKeys = ['task_type', 'preferred_route', 'min_host_ram…
+     10| function invalid(input = false): never {
+     11|   throw new ApiError({ status: input ? 400 : 200, code: input ? 'STUDI…
+       |         ^
+     12|     message: input ? '任务匹配条件不可用，请核对任务类型与内存要求。' …
+     13| }
+ ❯ provider src/creative/studioProviderClient.ts:70:50
+ ❯ catalog src/creative/studioProviderClient.ts:80:86
+ ❯ src/creative/studioProviderClient.ts:117:174
+ ❯ ../../../../../tmp/m4b-provider-ui/wire-replay.test.ts:7:49
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { problem: { status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '服务返回的提供方或匹配说明不可用，请重新读取。' }, status: 200 }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  03:53:46
+   Duration  934ms (transform 269ms, setup 0ms, collect 311ms, tests 16ms, environment 0ms, prepare 183ms)
+

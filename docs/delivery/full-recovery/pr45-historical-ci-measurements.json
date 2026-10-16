@@ -1,0 +1,1144 @@
+[
+  {
+    "artifact_id": 11468984665,
+    "artifact_name": "local-interop-file-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "run_id": 37593337638,
+    "archive_sha256": "2ffcb857e244c9f5eeea8bdc5b240b7a9ed9ed5cb1480356f641ce3221dbee8c",
+    "xml_results": [
+      {
+        "member": "local-interop.xml",
+        "tests": 413,
+        "outcomes": {
+          "passed": 345,
+          "skipped": 68
+        },
+        "summed_test_seconds": 17.842
+      }
+    ],
+    "summaries": {
+      "summary.json": {
+        "revision": "checked_out_sha=78929348e0ad7c232a039749d425e6293e4d6df9\nevent_sha=78929348e0ad7c232a039749d425e6293e4d6df9\nrun_url=https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37593337638\njob=local-interop\nplatform=Linux; native Windows host/AppContainer/installer=NOT RUN\n",
+        "test_reports": {
+          "local-interop.xml": {
+            "tests": 413,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 68
+          }
+        },
+        "report_status": "RECORDED",
+        "native_windows_host_appcontainer_installer": "NOT RUN",
+        "real_model_and_paid_provider_execution": "NOT RUN"
+      }
+    }
+  },
+  {
+    "artifact_id": 11469084650,
+    "artifact_name": "named-pipe-reference-665817243cad59eef0d4140f17c2ea644f46971e",
+    "run_id": 37593331196,
+    "archive_sha256": "ba2f489e9c2fb897b5461d630e053972022427bb0bcc8842352f3d967dedd47a",
+    "xml_results": [],
+    "summaries": {}
+  },
+  {
+    "artifact_id": 11469174183,
+    "artifact_name": "named-pipe-reference-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "run_id": 37593337638,
+    "archive_sha256": "a320934ef592202426b26bec4dca4a3042c004a12cfd011228101443df36b823",
+    "xml_results": [],
+    "summaries": {}
+  },
+  {
+    "artifact_id": 11469324238,
+    "artifact_name": "windows-native-receipts-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "run_id": 37593337560,
+    "archive_sha256": "764ae8f1504e37ed727c6e8fc7ff8ee13ca9260083c699b9efd04ca121daef85",
+    "xml_results": [],
+    "summaries": {},
+    "native_summary": {
+      "status": "PASS",
+      "commands_count": 11,
+      "commands_exit_zero": 11
+    }
+  },
+  {
+    "artifact_id": 11469348680,
+    "artifact_name": "a43-baseline-665817243cad59eef0d4140f17c2ea644f46971e-attempt-1",
+    "run_id": 37593331227,
+    "archive_sha256": "8a46c4bdd2688a7df4495b7b51c3555d2e0dcb6aacb0df062c3f3a623af0764c",
+    "xml_results": [
+      {
+        "member": "baseline-safety.xml",
+        "tests": 1,
+        "outcomes": {
+          "failure": 1
+        },
+        "summed_test_seconds": 0.002
+      }
+    ],
+    "summaries": {}
+  },
+  {
+    "artifact_id": 11469364136,
+    "artifact_name": "windows-acceptance-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "run_id": 37593337560,
+    "archive_sha256": "3ac01be664ab804e52f5fdcef25ae66c89528bd48477db35ff2d67e46147fca9",
+    "xml_results": [],
+    "summaries": {},
+    "native_summary": {
+      "status": "PASS",
+      "commands_count": 11,
+      "commands_exit_zero": 11
+    }
+  },
+  {
+    "artifact_id": 11469458461,
+    "artifact_name": "windows-acceptance-665817243cad59eef0d4140f17c2ea644f46971e",
+    "run_id": 37593331209,
+    "archive_sha256": "c0f8e9541a43599de6066161935ac131fb1ddc5257a314604b0e84c395ddf4ed",
+    "xml_results": [],
+    "summaries": {},
+    "native_summary": {
+      "status": "PASS",
+      "commands_count": 11,
+      "commands_exit_zero": 11
+    }
+  },
+  {
+    "artifact_id": 11469498900,
+    "artifact_name": "local-interop-file-665817243cad59eef0d4140f17c2ea644f46971e",
+    "run_id": 37593331196,
+    "archive_sha256": "cff24e362d85b3f8a7a1b9344a99f528bdb9b243229d0d3e31372a85f7a0415c",
+    "xml_results": [
+      {
+        "member": "local-interop.xml",
+        "tests": 413,
+        "outcomes": {
+          "passed": 345,
+          "skipped": 68
+        },
+        "summed_test_seconds": 23.985
+      }
+    ],
+    "summaries": {
+      "summary.json": {
+        "revision": "checked_out_sha=665817243cad59eef0d4140f17c2ea644f46971e\nevent_sha=665817243cad59eef0d4140f17c2ea644f46971e\nrun_url=https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37593331196\njob=local-interop\nplatform=Linux; native Windows host/AppContainer/installer=NOT RUN\n",
+        "test_reports": {
+          "local-interop.xml": {
+            "tests": 413,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 68
+          }
+        },
+        "report_status": "RECORDED",
+        "native_windows_host_appcontainer_installer": "NOT RUN",
+        "real_model_and_paid_provider_execution": "NOT RUN"
+      }
+    }
+  },
+  {
+    "artifact_id": 11469602475,
+    "artifact_name": "a43-baseline-78929348e0ad7c232a039749d425e6293e4d6df9-attempt-1",
+    "run_id": 37593337586,
+    "archive_sha256": "91423901aac4a64152f7ec88dd18489063250c1f2a15b96b85d55d37460ca25d",
+    "xml_results": [
+      {
+        "member": "baseline-safety.xml",
+        "tests": 1,
+        "outcomes": {
+          "failure": 1
+        },
+        "summed_test_seconds": 0.002
+      }
+    ],
+    "summaries": {}
+  },
+  {
+    "artifact_id": 11469602740,
+    "artifact_name": "windows-host-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "run_id": 37593337560,
+    "archive_sha256": "03c590f4568b8b325266aea566187fc33f81138659547bf49ca6383fd2280d0f",
+    "xml_results": [
+      {
+        "member": "receipts/windows.xml",
+        "tests": 59,
+        "outcomes": {
+          "passed": 59
+        },
+        "summed_test_seconds": 13.331
+      }
+    ],
+    "summaries": {}
+  },
+  {
+    "artifact_id": 11469780407,
+    "artifact_name": "windows-host-665817243cad59eef0d4140f17c2ea644f46971e",
+    "run_id": 37593331209,
+    "archive_sha256": "9fdeeeecf164877cb6dc1abd84e70328099c9e6cdd0b7c9261e78b10cf8caddb",
+    "xml_results": [
+      {
+        "member": "receipts/windows.xml",
+        "tests": 59,
+        "outcomes": {
+          "passed": 59
+        },
+        "summed_test_seconds": 13.395
+      }
+    ],
+    "summaries": {}
+  },
+  {
+    "artifact_id": 11469805896,
+    "artifact_name": "windows-native-receipts-665817243cad59eef0d4140f17c2ea644f46971e",
+    "run_id": 37593331209,
+    "archive_sha256": "87ac9061348509f6e507f6b305be532a2c62e219401402216a787182dbf00a92",
+    "xml_results": [],
+    "summaries": {},
+    "native_summary": {
+      "status": "PASS",
+      "commands_count": 11,
+      "commands_exit_zero": 11
+    }
+  },
+  {
+    "artifact_id": 11469960100,
+    "artifact_name": "shared-r123-baseline-red-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "run_id": 37593337569,
+    "archive_sha256": "9de2a220d43f516900b6792700ccafd162be8deeb5a1dafd45c1df4c97b7ffb3",
+    "xml_results": [],
+    "summaries": {}
+  },
+  {
+    "artifact_id": 11470003558,
+    "artifact_name": "backend-file-shard-0-78929348e0ad7c232a039749d425e6293e4d6df9-attempt-1",
+    "run_id": 37593337560,
+    "archive_sha256": "dfb959c189a0f73eb0eb5ee345b3c8926bf37e316f561759f93940270424c5a2",
+    "xml_results": [
+      {
+        "member": "backend.xml",
+        "tests": 9116,
+        "outcomes": {
+          "passed": 5969,
+          "skipped": 3147
+        },
+        "summed_test_seconds": 969.767
+      },
+      {
+        "member": "coverage-harness.xml",
+        "tests": 153,
+        "outcomes": {
+          "passed": 153
+        },
+        "summed_test_seconds": 12.662
+      },
+      {
+        "member": "sync-tcp.xml",
+        "tests": 2,
+        "outcomes": {
+          "passed": 2
+        },
+        "summed_test_seconds": 40.434
+      }
+    ],
+    "summaries": {
+      "summary.json": {
+        "revision": "checked_out_sha=78929348e0ad7c232a039749d425e6293e4d6df9\nevent_sha=78929348e0ad7c232a039749d425e6293e4d6df9\nrun_url=https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37593337560\njob=backend-file-shard-0\nplatform=Linux; native Windows host/AppContainer/installer=NOT RUN\n",
+        "test_reports": {
+          "backend.xml": {
+            "tests": 9116,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 3147
+          },
+          "coverage-harness.xml": {
+            "tests": 153,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          },
+          "sync-tcp.xml": {
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "report_status": "RECORDED",
+        "native_windows_host_appcontainer_installer": "NOT RUN",
+        "real_model_and_paid_provider_execution": "NOT RUN"
+      }
+    }
+  },
+  {
+    "artifact_id": 11470198199,
+    "artifact_name": "frontend-png-2-665817243cad59eef0d4140f17c2ea644f46971e",
+    "run_id": 37593331209,
+    "archive_sha256": "8262c78f3d387b385139b2a39389ce7958338723112dd22fc9e979d7b153e1fa",
+    "xml_results": [],
+    "summaries": {}
+  },
+  {
+    "artifact_id": 11470267238,
+    "artifact_name": "frontend-png-1-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "run_id": 37593337560,
+    "archive_sha256": "71683407894931c146c67fe41bdb8908d47c77dc271780d2c6b0b39b29f0658f",
+    "xml_results": [],
+    "summaries": {}
+  },
+  {
+    "artifact_id": 11470308100,
+    "artifact_name": "frontend-compact-665817243cad59eef0d4140f17c2ea644f46971e",
+    "run_id": 37593331209,
+    "archive_sha256": "e807e5cde2cfafcac88909fc953476cd710e048b8db4afe2f7d7c1205b64a46d",
+    "xml_results": [
+      {
+        "member": "receipts/branch-surface-browser.xml",
+        "tests": 1,
+        "outcomes": {
+          "passed": 1
+        },
+        "summed_test_seconds": 11.524
+      },
+      {
+        "member": "receipts/business.xml",
+        "tests": 2,
+        "outcomes": {
+          "passed": 2
+        },
+        "summed_test_seconds": 9.063
+      },
+      {
+        "member": "receipts/experimental.xml",
+        "tests": 7,
+        "outcomes": {
+          "passed": 7
+        },
+        "summed_test_seconds": 35.434
+      },
+      {
+        "member": "receipts/export-browser.xml",
+        "tests": 1,
+        "outcomes": {
+          "passed": 1
+        },
+        "summed_test_seconds": 1.468
+      },
+      {
+        "member": "receipts/frontend.xml",
+        "tests": 1463,
+        "outcomes": {
+          "passed": 1455,
+          "skipped": 8
+        },
+        "summed_test_seconds": 155.065
+      },
+      {
+        "member": "receipts/functional-surface-browser.xml",
+        "tests": 9,
+        "outcomes": {
+          "passed": 9
+        },
+        "summed_test_seconds": 48.607
+      },
+      {
+        "member": "receipts/geometry.xml",
+        "tests": 9,
+        "outcomes": {
+          "passed": 9
+        },
+        "summed_test_seconds": 9.982
+      },
+      {
+        "member": "receipts/r4-ux.xml",
+        "tests": 63,
+        "outcomes": {
+          "passed": 63
+        },
+        "summed_test_seconds": 598.823
+      }
+    ],
+    "summaries": {}
+  },
+  {
+    "artifact_id": 11470346888,
+    "artifact_name": "local-interop-postgres-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "run_id": 37593337638,
+    "archive_sha256": "e41f2423e37492023d66a0e9cb5107dfd02f3281546bcc2a8bedd7938c87e8dd",
+    "xml_results": [
+      {
+        "member": "local-interop.xml",
+        "tests": 413,
+        "outcomes": {
+          "passed": 345,
+          "skipped": 68
+        },
+        "summed_test_seconds": 708.861
+      }
+    ],
+    "summaries": {
+      "summary.json": {
+        "revision": "checked_out_sha=78929348e0ad7c232a039749d425e6293e4d6df9\nevent_sha=78929348e0ad7c232a039749d425e6293e4d6df9\nrun_url=https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37593337638\njob=local-interop\nplatform=Linux; native Windows host/AppContainer/installer=NOT RUN\n",
+        "test_reports": {
+          "local-interop.xml": {
+            "tests": 413,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 68
+          }
+        },
+        "report_status": "RECORDED",
+        "native_windows_host_appcontainer_installer": "NOT RUN",
+        "real_model_and_paid_provider_execution": "NOT RUN"
+      }
+    }
+  },
+  {
+    "artifact_id": 11470368131,
+    "artifact_name": "frontend-png-1-665817243cad59eef0d4140f17c2ea644f46971e",
+    "run_id": 37593331209,
+    "archive_sha256": "67145ef566ad0571a02e64652b705517eafe53cc211890534db83e544674fd7b",
+    "xml_results": [],
+    "summaries": {}
+  },
+  {
+    "artifact_id": 11470368145,
+    "artifact_name": "frontend-665817243cad59eef0d4140f17c2ea644f46971e",
+    "run_id": 37593331209,
+    "archive_sha256": "b9207fdd225f7713217e9a6ba659a5e113e5140b0d5dd95b2459ca42771cfd88",
+    "xml_results": [
+      {
+        "member": "receipts/branch-surface-browser.xml",
+        "tests": 1,
+        "outcomes": {
+          "passed": 1
+        },
+        "summed_test_seconds": 11.524
+      },
+      {
+        "member": "receipts/business.xml",
+        "tests": 2,
+        "outcomes": {
+          "passed": 2
+        },
+        "summed_test_seconds": 9.063
+      },
+      {
+        "member": "receipts/experimental.xml",
+        "tests": 7,
+        "outcomes": {
+          "passed": 7
+        },
+        "summed_test_seconds": 35.434
+      },
+      {
+        "member": "receipts/export-browser.xml",
+        "tests": 1,
+        "outcomes": {
+          "passed": 1
+        },
+        "summed_test_seconds": 1.468
+      },
+      {
+        "member": "receipts/frontend.xml",
+        "tests": 1463,
+        "outcomes": {
+          "passed": 1455,
+          "skipped": 8
+        },
+        "summed_test_seconds": 155.065
+      },
+      {
+        "member": "receipts/functional-surface-browser.xml",
+        "tests": 9,
+        "outcomes": {
+          "passed": 9
+        },
+        "summed_test_seconds": 48.607
+      },
+      {
+        "member": "receipts/geometry.xml",
+        "tests": 9,
+        "outcomes": {
+          "passed": 9
+        },
+        "summed_test_seconds": 9.982
+      },
+      {
+        "member": "receipts/r4-ux.xml",
+        "tests": 63,
+        "outcomes": {
+          "passed": 63
+        },
+        "summed_test_seconds": 598.823
+      },
+      {
+        "member": "project/frontend/test-results/local-interop.xml",
+        "tests": 12,
+        "outcomes": {
+          "passed": 12
+        },
+        "summed_test_seconds": 33.946
+      }
+    ],
+    "summaries": {}
+  },
+  {
+    "artifact_id": 11470561281,
+    "artifact_name": "backend-file-shard-0-665817243cad59eef0d4140f17c2ea644f46971e-attempt-1",
+    "run_id": 37593331209,
+    "archive_sha256": "f2e04b6dfc6c1c4e229a11181ca3ad497f1eaac7e03fcc3cdbf279e6d2042de9",
+    "xml_results": [
+      {
+        "member": "backend.xml",
+        "tests": 9116,
+        "outcomes": {
+          "passed": 5969,
+          "skipped": 3147
+        },
+        "summed_test_seconds": 606.205
+      },
+      {
+        "member": "coverage-harness.xml",
+        "tests": 153,
+        "outcomes": {
+          "passed": 153
+        },
+        "summed_test_seconds": 9.032
+      },
+      {
+        "member": "sync-tcp.xml",
+        "tests": 2,
+        "outcomes": {
+          "passed": 2
+        },
+        "summed_test_seconds": 23.478
+      }
+    ],
+    "summaries": {
+      "summary.json": {
+        "revision": "checked_out_sha=665817243cad59eef0d4140f17c2ea644f46971e\nevent_sha=665817243cad59eef0d4140f17c2ea644f46971e\nrun_url=https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37593331209\njob=backend-file-shard-0\nplatform=Linux; native Windows host/AppContainer/installer=NOT RUN\n",
+        "test_reports": {
+          "backend.xml": {
+            "tests": 9116,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 3147
+          },
+          "coverage-harness.xml": {
+            "tests": 153,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          },
+          "sync-tcp.xml": {
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "report_status": "RECORDED",
+        "native_windows_host_appcontainer_installer": "NOT RUN",
+        "real_model_and_paid_provider_execution": "NOT RUN"
+      }
+    }
+  },
+  {
+    "artifact_id": 11470746238,
+    "artifact_name": "frontend-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "run_id": 37593337560,
+    "archive_sha256": "3363b0e273de3284a071d292030d29b29c7f8df54b83a3e4c77c55a1c27e0333",
+    "xml_results": [
+      {
+        "member": "receipts/branch-surface-browser.xml",
+        "tests": 1,
+        "outcomes": {
+          "passed": 1
+        },
+        "summed_test_seconds": 8.306
+      },
+      {
+        "member": "receipts/business.xml",
+        "tests": 2,
+        "outcomes": {
+          "passed": 2
+        },
+        "summed_test_seconds": 7.489
+      },
+      {
+        "member": "receipts/experimental.xml",
+        "tests": 7,
+        "outcomes": {
+          "passed": 7
+        },
+        "summed_test_seconds": 24.7
+      },
+      {
+        "member": "receipts/export-browser.xml",
+        "tests": 1,
+        "outcomes": {
+          "passed": 1
+        },
+        "summed_test_seconds": 1.126
+      },
+      {
+        "member": "receipts/frontend.xml",
+        "tests": 1463,
+        "outcomes": {
+          "passed": 1455,
+          "skipped": 8
+        },
+        "summed_test_seconds": 99.637
+      },
+      {
+        "member": "receipts/functional-surface-browser.xml",
+        "tests": 9,
+        "outcomes": {
+          "passed": 9
+        },
+        "summed_test_seconds": 35.513
+      },
+      {
+        "member": "receipts/geometry.xml",
+        "tests": 9,
+        "outcomes": {
+          "passed": 9
+        },
+        "summed_test_seconds": 7.737
+      },
+      {
+        "member": "receipts/r4-ux.xml",
+        "tests": 63,
+        "outcomes": {
+          "passed": 63
+        },
+        "summed_test_seconds": 494.25
+      },
+      {
+        "member": "project/frontend/test-results/local-interop.xml",
+        "tests": 12,
+        "outcomes": {
+          "passed": 12
+        },
+        "summed_test_seconds": 22.215
+      }
+    ],
+    "summaries": {}
+  },
+  {
+    "artifact_id": 11470790213,
+    "artifact_name": "local-interop-postgres-665817243cad59eef0d4140f17c2ea644f46971e",
+    "run_id": 37593331196,
+    "archive_sha256": "f38e6865c8eb985df19fcb7c3a67272dc2cddcd5de0e752dd66fbab8193c19b1",
+    "xml_results": [
+      {
+        "member": "local-interop.xml",
+        "tests": 413,
+        "outcomes": {
+          "passed": 345,
+          "skipped": 68
+        },
+        "summed_test_seconds": 606.826
+      }
+    ],
+    "summaries": {
+      "summary.json": {
+        "revision": "checked_out_sha=665817243cad59eef0d4140f17c2ea644f46971e\nevent_sha=665817243cad59eef0d4140f17c2ea644f46971e\nrun_url=https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37593331196\njob=local-interop\nplatform=Linux; native Windows host/AppContainer/installer=NOT RUN\n",
+        "test_reports": {
+          "local-interop.xml": {
+            "tests": 413,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 68
+          }
+        },
+        "report_status": "RECORDED",
+        "native_windows_host_appcontainer_installer": "NOT RUN",
+        "real_model_and_paid_provider_execution": "NOT RUN"
+      }
+    }
+  },
+  {
+    "artifact_id": 11470820557,
+    "artifact_name": "frontend-png-2-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "run_id": 37593337560,
+    "archive_sha256": "6c47bba876ec081f72a5bc78d93b0c0674b0bdad850234f7db278db505e9bb5a",
+    "xml_results": [],
+    "summaries": {}
+  },
+  {
+    "artifact_id": 11470914055,
+    "artifact_name": "backend-coverage-file-78929348e0ad7c232a039749d425e6293e4d6df9-attempt-1",
+    "run_id": 37593337560,
+    "archive_sha256": "5a81e74ab46f15cdee609b209fed13705b87d2b9ab34c9b44ea1c7c3e54b2258",
+    "xml_results": [],
+    "summaries": {
+      "backend-coverage.json": {
+        "schema_version": 1,
+        "scope": "backend",
+        "status": "complete",
+        "identity": {
+          "checked_out_sha": "78929348e0ad7c232a039749d425e6293e4d6df9",
+          "source_tree": "ff53a8f3f9f1b704c4ac08784f3e2feaff49e4d8",
+          "event_sha": "78929348e0ad7c232a039749d425e6293e4d6df9",
+          "run_id": "37593337560",
+          "run_attempt": "1",
+          "repository": "1785235376-blip/AI-Novel-Studio",
+          "python_version": "3.12.9",
+          "platform": "linux",
+          "source_manifest_sha256": "87c017723b9987ee0fbf5349203ab14b31a0f63af29758a0d6f5f9499307e5d6",
+          "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+        },
+        "unique_collected_per_profile": 9116,
+        "profiles": {
+          "file": {
+            "collected": 9116,
+            "passed": 5969,
+            "skipped": 3147,
+            "shards": 1
+          },
+          "postgres": {
+            "collected": 9116,
+            "passed": 5945,
+            "skipped": 3171,
+            "shards": 2
+          }
+        },
+        "external_gates": {
+          "file": {
+            "sync-tcp.xml": {
+              "passed": 2,
+              "nodeids": [
+                "tests/test_r5_offline_sync_tcp.py::test_two_isolated_tcp_endpoints_add_edit_conflict_disconnect_replay_tombstone_and_revocation",
+                "tests/test_r5_offline_sync_tcp.py::test_two_isolated_tcp_endpoints_stale_dispatch_selective_withdrawal_and_fresh_baseline"
+              ]
+            }
+          }
+        },
+        "evidence": "complete collected backend coverage; not monolithic PostgreSQL interaction equivalence"
+      }
+    }
+  },
+  {
+    "artifact_id": 11470914059,
+    "artifact_name": "backend-coverage-postgres-78929348e0ad7c232a039749d425e6293e4d6df9-attempt-1",
+    "run_id": 37593337560,
+    "archive_sha256": "5a81e74ab46f15cdee609b209fed13705b87d2b9ab34c9b44ea1c7c3e54b2258",
+    "xml_results": [],
+    "summaries": {
+      "backend-coverage.json": {
+        "schema_version": 1,
+        "scope": "backend",
+        "status": "complete",
+        "identity": {
+          "checked_out_sha": "78929348e0ad7c232a039749d425e6293e4d6df9",
+          "source_tree": "ff53a8f3f9f1b704c4ac08784f3e2feaff49e4d8",
+          "event_sha": "78929348e0ad7c232a039749d425e6293e4d6df9",
+          "run_id": "37593337560",
+          "run_attempt": "1",
+          "repository": "1785235376-blip/AI-Novel-Studio",
+          "python_version": "3.12.9",
+          "platform": "linux",
+          "source_manifest_sha256": "87c017723b9987ee0fbf5349203ab14b31a0f63af29758a0d6f5f9499307e5d6",
+          "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+        },
+        "unique_collected_per_profile": 9116,
+        "profiles": {
+          "file": {
+            "collected": 9116,
+            "passed": 5969,
+            "skipped": 3147,
+            "shards": 1
+          },
+          "postgres": {
+            "collected": 9116,
+            "passed": 5945,
+            "skipped": 3171,
+            "shards": 2
+          }
+        },
+        "external_gates": {
+          "file": {
+            "sync-tcp.xml": {
+              "passed": 2,
+              "nodeids": [
+                "tests/test_r5_offline_sync_tcp.py::test_two_isolated_tcp_endpoints_add_edit_conflict_disconnect_replay_tombstone_and_revocation",
+                "tests/test_r5_offline_sync_tcp.py::test_two_isolated_tcp_endpoints_stale_dispatch_selective_withdrawal_and_fresh_baseline"
+              ]
+            }
+          }
+        },
+        "evidence": "complete collected backend coverage; not monolithic PostgreSQL interaction equivalence"
+      }
+    }
+  },
+  {
+    "artifact_id": 11470925043,
+    "artifact_name": "frontend-compact-78929348e0ad7c232a039749d425e6293e4d6df9",
+    "run_id": 37593337560,
+    "archive_sha256": "9c844dc5740213cd5c7a5fc39ff18e2e3e29edabe1ca88ea408b2a407e1e6c6f",
+    "xml_results": [
+      {
+        "member": "receipts/branch-surface-browser.xml",
+        "tests": 1,
+        "outcomes": {
+          "passed": 1
+        },
+        "summed_test_seconds": 8.306
+      },
+      {
+        "member": "receipts/business.xml",
+        "tests": 2,
+        "outcomes": {
+          "passed": 2
+        },
+        "summed_test_seconds": 7.489
+      },
+      {
+        "member": "receipts/experimental.xml",
+        "tests": 7,
+        "outcomes": {
+          "passed": 7
+        },
+        "summed_test_seconds": 24.7
+      },
+      {
+        "member": "receipts/export-browser.xml",
+        "tests": 1,
+        "outcomes": {
+          "passed": 1
+        },
+        "summed_test_seconds": 1.126
+      },
+      {
+        "member": "receipts/frontend.xml",
+        "tests": 1463,
+        "outcomes": {
+          "passed": 1455,
+          "skipped": 8
+        },
+        "summed_test_seconds": 99.637
+      },
+      {
+        "member": "receipts/functional-surface-browser.xml",
+        "tests": 9,
+        "outcomes": {
+          "passed": 9
+        },
+        "summed_test_seconds": 35.513
+      },
+      {
+        "member": "receipts/geometry.xml",
+        "tests": 9,
+        "outcomes": {
+          "passed": 9
+        },
+        "summed_test_seconds": 7.737
+      },
+      {
+        "member": "receipts/r4-ux.xml",
+        "tests": 63,
+        "outcomes": {
+          "passed": 63
+        },
+        "summed_test_seconds": 494.25
+      }
+    ],
+    "summaries": {}
+  },
+  {
+    "artifact_id": 11471260735,
+    "artifact_name": "backend-postgres-shard-0-78929348e0ad7c232a039749d425e6293e4d6df9-attempt-1",
+    "run_id": 37593337560,
+    "archive_sha256": "b57ab054ef9361bfaafe8596c686cc78c009bcee9c6ca9dbe17d4b1d552a3410",
+    "xml_results": [
+      {
+        "member": "backend.xml",
+        "tests": 4554,
+        "outcomes": {
+          "skipped": 1559,
+          "passed": 2995
+        },
+        "summed_test_seconds": 1862.236
+      },
+      {
+        "member": "coverage-harness.xml",
+        "tests": 153,
+        "outcomes": {
+          "passed": 153
+        },
+        "summed_test_seconds": 7.952
+      }
+    ],
+    "summaries": {
+      "summary.json": {
+        "revision": "checked_out_sha=78929348e0ad7c232a039749d425e6293e4d6df9\nevent_sha=78929348e0ad7c232a039749d425e6293e4d6df9\nrun_url=https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37593337560\njob=backend-postgres-shard-0\nplatform=Linux; native Windows host/AppContainer/installer=NOT RUN\n",
+        "test_reports": {
+          "backend.xml": {
+            "tests": 4554,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 1559
+          },
+          "coverage-harness.xml": {
+            "tests": 153,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "report_status": "RECORDED",
+        "native_windows_host_appcontainer_installer": "NOT RUN",
+        "real_model_and_paid_provider_execution": "NOT RUN"
+      }
+    }
+  },
+  {
+    "artifact_id": 11471312548,
+    "artifact_name": "backend-postgres-shard-0-665817243cad59eef0d4140f17c2ea644f46971e-attempt-1",
+    "run_id": 37593331209,
+    "archive_sha256": "58b1eac88c409a91a35b8c989ffd33c3542a8443333d1efbc0bcb54d47aa88a2",
+    "xml_results": [
+      {
+        "member": "backend.xml",
+        "tests": 4554,
+        "outcomes": {
+          "skipped": 1559,
+          "passed": 2995
+        },
+        "summed_test_seconds": 2633.295
+      },
+      {
+        "member": "coverage-harness.xml",
+        "tests": 153,
+        "outcomes": {
+          "passed": 153
+        },
+        "summed_test_seconds": 12.755
+      }
+    ],
+    "summaries": {
+      "summary.json": {
+        "revision": "checked_out_sha=665817243cad59eef0d4140f17c2ea644f46971e\nevent_sha=665817243cad59eef0d4140f17c2ea644f46971e\nrun_url=https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37593331209\njob=backend-postgres-shard-0\nplatform=Linux; native Windows host/AppContainer/installer=NOT RUN\n",
+        "test_reports": {
+          "backend.xml": {
+            "tests": 4554,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 1559
+          },
+          "coverage-harness.xml": {
+            "tests": 153,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "report_status": "RECORDED",
+        "native_windows_host_appcontainer_installer": "NOT RUN",
+        "real_model_and_paid_provider_execution": "NOT RUN"
+      }
+    }
+  },
+  {
+    "artifact_id": 11471448014,
+    "artifact_name": "backend-coverage-file-665817243cad59eef0d4140f17c2ea644f46971e-attempt-1",
+    "run_id": 37593331209,
+    "archive_sha256": "22de8bd7d606b2a3866a5df816a2cee0c5556044a92c19e9d259d72fff25cf69",
+    "xml_results": [],
+    "summaries": {
+      "backend-coverage.json": {
+        "schema_version": 1,
+        "scope": "backend",
+        "status": "complete",
+        "identity": {
+          "checked_out_sha": "665817243cad59eef0d4140f17c2ea644f46971e",
+          "source_tree": "ff53a8f3f9f1b704c4ac08784f3e2feaff49e4d8",
+          "event_sha": "665817243cad59eef0d4140f17c2ea644f46971e",
+          "run_id": "37593331209",
+          "run_attempt": "1",
+          "repository": "1785235376-blip/AI-Novel-Studio",
+          "python_version": "3.12.9",
+          "platform": "linux",
+          "source_manifest_sha256": "87c017723b9987ee0fbf5349203ab14b31a0f63af29758a0d6f5f9499307e5d6",
+          "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+        },
+        "unique_collected_per_profile": 9116,
+        "profiles": {
+          "file": {
+            "collected": 9116,
+            "passed": 5969,
+            "skipped": 3147,
+            "shards": 1
+          },
+          "postgres": {
+            "collected": 9116,
+            "passed": 5945,
+            "skipped": 3171,
+            "shards": 2
+          }
+        },
+        "external_gates": {
+          "file": {
+            "sync-tcp.xml": {
+              "passed": 2,
+              "nodeids": [
+                "tests/test_r5_offline_sync_tcp.py::test_two_isolated_tcp_endpoints_add_edit_conflict_disconnect_replay_tombstone_and_revocation",
+                "tests/test_r5_offline_sync_tcp.py::test_two_isolated_tcp_endpoints_stale_dispatch_selective_withdrawal_and_fresh_baseline"
+              ]
+            }
+          }
+        },
+        "evidence": "complete collected backend coverage; not monolithic PostgreSQL interaction equivalence"
+      }
+    }
+  },
+  {
+    "artifact_id": 11471515372,
+    "artifact_name": "backend-postgres-shard-1-78929348e0ad7c232a039749d425e6293e4d6df9-attempt-1",
+    "run_id": 37593337560,
+    "archive_sha256": "6c4228d9fc863cab32f72ce399204a33d83a2c2a0127e9b471bd235fe66cc6c9",
+    "xml_results": [
+      {
+        "member": "backend.xml",
+        "tests": 4562,
+        "outcomes": {
+          "passed": 2950,
+          "skipped": 1612
+        },
+        "summed_test_seconds": 1960.331
+      },
+      {
+        "member": "coverage-harness.xml",
+        "tests": 153,
+        "outcomes": {
+          "passed": 153
+        },
+        "summed_test_seconds": 10.91
+      }
+    ],
+    "summaries": {
+      "summary.json": {
+        "revision": "checked_out_sha=78929348e0ad7c232a039749d425e6293e4d6df9\nevent_sha=78929348e0ad7c232a039749d425e6293e4d6df9\nrun_url=https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37593337560\njob=backend-postgres-shard-1\nplatform=Linux; native Windows host/AppContainer/installer=NOT RUN\n",
+        "test_reports": {
+          "backend.xml": {
+            "tests": 4562,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 1612
+          },
+          "coverage-harness.xml": {
+            "tests": 153,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "report_status": "RECORDED",
+        "native_windows_host_appcontainer_installer": "NOT RUN",
+        "real_model_and_paid_provider_execution": "NOT RUN"
+      }
+    }
+  },
+  {
+    "artifact_id": 11471732122,
+    "artifact_name": "backend-coverage-postgres-665817243cad59eef0d4140f17c2ea644f46971e-attempt-1",
+    "run_id": 37593331209,
+    "archive_sha256": "cd0267fac4d7e143300b4d0af2b649b85a27a0b7ba8c83af71badb46888f28f0",
+    "xml_results": [],
+    "summaries": {
+      "backend-coverage.json": {
+        "schema_version": 1,
+        "scope": "backend",
+        "status": "complete",
+        "identity": {
+          "checked_out_sha": "665817243cad59eef0d4140f17c2ea644f46971e",
+          "source_tree": "ff53a8f3f9f1b704c4ac08784f3e2feaff49e4d8",
+          "event_sha": "665817243cad59eef0d4140f17c2ea644f46971e",
+          "run_id": "37593331209",
+          "run_attempt": "1",
+          "repository": "1785235376-blip/AI-Novel-Studio",
+          "python_version": "3.12.9",
+          "platform": "linux",
+          "source_manifest_sha256": "87c017723b9987ee0fbf5349203ab14b31a0f63af29758a0d6f5f9499307e5d6",
+          "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+        },
+        "unique_collected_per_profile": 9116,
+        "profiles": {
+          "file": {
+            "collected": 9116,
+            "passed": 5969,
+            "skipped": 3147,
+            "shards": 1
+          },
+          "postgres": {
+            "collected": 9116,
+            "passed": 5945,
+            "skipped": 3171,
+            "shards": 2
+          }
+        },
+        "external_gates": {
+          "file": {
+            "sync-tcp.xml": {
+              "passed": 2,
+              "nodeids": [
+                "tests/test_r5_offline_sync_tcp.py::test_two_isolated_tcp_endpoints_add_edit_conflict_disconnect_replay_tombstone_and_revocation",
+                "tests/test_r5_offline_sync_tcp.py::test_two_isolated_tcp_endpoints_stale_dispatch_selective_withdrawal_and_fresh_baseline"
+              ]
+            }
+          }
+        },
+        "evidence": "complete collected backend coverage; not monolithic PostgreSQL interaction equivalence"
+      }
+    }
+  },
+  {
+    "artifact_id": 11471960687,
+    "artifact_name": "backend-postgres-shard-1-665817243cad59eef0d4140f17c2ea644f46971e-attempt-1",
+    "run_id": 37593331209,
+    "archive_sha256": "770efc7e5793a95233d36478f9c2389dc60ee2ad6a787467ba294baebcbac136",
+    "xml_results": [
+      {
+        "member": "backend.xml",
+        "tests": 4562,
+        "outcomes": {
+          "passed": 2950,
+          "skipped": 1612
+        },
+        "summed_test_seconds": 2082.413
+      },
+      {
+        "member": "coverage-harness.xml",
+        "tests": 153,
+        "outcomes": {
+          "passed": 153
+        },
+        "summed_test_seconds": 10.914
+      }
+    ],
+    "summaries": {
+      "summary.json": {
+        "revision": "checked_out_sha=665817243cad59eef0d4140f17c2ea644f46971e\nevent_sha=665817243cad59eef0d4140f17c2ea644f46971e\nrun_url=https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37593331209\njob=backend-postgres-shard-1\nplatform=Linux; native Windows host/AppContainer/installer=NOT RUN\n",
+        "test_reports": {
+          "backend.xml": {
+            "tests": 4562,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 1612
+          },
+          "coverage-harness.xml": {
+            "tests": 153,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "report_status": "RECORDED",
+        "native_windows_host_appcontainer_installer": "NOT RUN",
+        "real_model_and_paid_provider_execution": "NOT RUN"
+      }
+    }
+  }
+]

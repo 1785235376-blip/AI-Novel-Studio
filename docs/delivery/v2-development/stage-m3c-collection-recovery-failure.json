@@ -1,0 +1,18 @@
+{
+  "status": "FAIL",
+  "tests_executed": false,
+  "command": [
+    ".venv/bin/python",
+    "scripts/extend_v2_coverage_manifest.py",
+    "--report",
+    "docs/delivery/v2-development/stage-m3c-collection-stable-review.json"
+  ],
+  "tool_session_id": 8997,
+  "exit_code": 1,
+  "failure": "subprocess.CalledProcessError: git show 1b7ff50a7e64742916bc64730df884cea819b379^:tests/test_windows_portable_entry.py returned non-zero exit status 128",
+  "stderr_first_line": "fatal: invalid object name '1b7ff50a7e64742916bc64730df884cea819b379^'.",
+  "receipt_not_written": "Original utility raised before writing its requested report; this records the captured tool result, not an execution receipt or traceback reconstruction.",
+  "cause": "Recovered checkout was shallow and had only current parent commit objects.",
+  "recovery": "Read-only git fetch --no-tags --depth=2 origin 1b7ff50a7e64742916bc64730df884cea819b379 restored the immutable prior migration object and its parent.",
+  "preceding_rejection": "stage-m3c-collection-review.json records collection overlapping API catalogue refresh; catalog outputs are among 62 baseline-only source inputs. Source runner maps are separate and remained stable."
+}

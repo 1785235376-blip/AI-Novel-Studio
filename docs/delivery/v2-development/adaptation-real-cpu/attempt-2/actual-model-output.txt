@@ -1,0 +1,9 @@
+{
+  "id": "sc1",
+  "kind": "SCENE_SPLIT",
+  "note": "A visitor pauses at the doorway. A lamp lights the empty study.",
+  "scene_ids": [
+    "11:00:00"
+  ],
+  "source_quote": "A visitor pauses at the doorway. A lamp lights the empty study."
+}

@@ -1,0 +1,69 @@
+{
+  "implementation_head_observed": "4571bdaeee1b35e88fa19c032c3767a54be01d35",
+  "source_freeze": "source-freeze-final-r1.json",
+  "source_count": 2310,
+  "canonical_source_map_sha256": "783255e32b4a193965a8162becfe7df605eb76e99ee41b729f4fe28517999f9f",
+  "checks": [
+    {
+      "mode": "src",
+      "receipt": "docs/delivery/v2-development/creative-save-src-final-r1.json",
+      "receipt_sha256": "c0261f02ade135017a037f76513795a2a5c25e2ab1f832f98cc21dbf5ff7e110",
+      "status": "PASS",
+      "head": "4571bdaeee1b35e88fa19c032c3767a54be01d35",
+      "source_count": 2310,
+      "before_after_equal": true,
+      "matches_frozen_map": true,
+      "log_sha256": "c58f9f5dfa7e16cf114f06b22dbf80bf89e3360f5d0189a9074cf6b571b5f8a5"
+    },
+    {
+      "mode": "build",
+      "receipt": "docs/delivery/v2-development/creative-save-build-final-r1.json",
+      "receipt_sha256": "f39bdad1fde6b4a364994b31603d09e20840a268e7fa2185d766b55edd344f6b",
+      "status": "PASS",
+      "head": "4571bdaeee1b35e88fa19c032c3767a54be01d35",
+      "source_count": 2310,
+      "before_after_equal": true,
+      "matches_frozen_map": true,
+      "log_sha256": "4f4789413c9935caa3d2801afefc9bcc15919c7c7ae1c92e35fe1b1aebb41fa8"
+    },
+    {
+      "mode": "visual",
+      "receipt": "docs/delivery/v2-development/creative-save-visual-final-r1.json",
+      "receipt_sha256": "6a2bb40e2c189668ea075e5d026168895ddb80ce6f30fa3362230e9a34849acb",
+      "status": "PASS",
+      "head": "4571bdaeee1b35e88fa19c032c3767a54be01d35",
+      "source_count": 2310,
+      "before_after_equal": true,
+      "matches_frozen_map": true,
+      "log_sha256": "617dfa663eac73ae3e1591aadecec6a735f034393d335b04f5c9b60883a1653f"
+    },
+    {
+      "mode": "tokens",
+      "receipt": "docs/delivery/v2-development/creative-save-tokens-final-r1.json",
+      "receipt_sha256": "728ab43f8953aed7e23a6af4b0cc5ab95c6211bd81afbdc7c1b68826aeacb17d",
+      "status": "PASS",
+      "head": "4571bdaeee1b35e88fa19c032c3767a54be01d35",
+      "source_count": 2310,
+      "before_after_equal": true,
+      "matches_frozen_map": true,
+      "log_sha256": "26949b524d180e026ee5e056df8b7c8885dadfa3268251b48c980d5cb2a4381b"
+    }
+  ],
+  "frontend": {
+    "passed": 4269,
+    "skipped": 6,
+    "failed": 0,
+    "files": 393
+  },
+  "visual": {
+    "passed": 7,
+    "fixture_comparisons": 3,
+    "geometry_checks": 4,
+    "output": "visual-results-final-r1"
+  },
+  "tokens": {
+    "files": 52,
+    "status": "PASS"
+  },
+  "runtime_evidence_is_separate": true
+}

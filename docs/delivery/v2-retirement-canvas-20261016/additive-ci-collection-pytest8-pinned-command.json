@@ -1,0 +1,18 @@
+{
+  "started_utc": "2026-10-16T15:23:26.167336+00:00",
+  "finished_utc": "2026-10-16T15:23:51.312520+00:00",
+  "command": [
+    "D:\\PoemSeed\\Cache\\Tests\\expansion-20261013-97da10e1\\venv\\Scripts\\python.exe",
+    "-X",
+    "utf8",
+    "-B",
+    "scripts/extend_v2_coverage_manifest.py",
+    "--write",
+    "--report",
+    "docs/delivery/v2-retirement-canvas-20261016/additive-ci-collection-pytest8-pinned.json"
+  ],
+  "exit_code": 0,
+  "pytest_version": "pytest 8.4.2",
+  "tests_executed": false,
+  "scope": "Original fail-closed additive inventory update with pinned runtime; no tests/gates/frozen V1 manifest changed"
+}

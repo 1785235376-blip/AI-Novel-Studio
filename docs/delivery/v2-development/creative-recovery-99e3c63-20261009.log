@@ -1,0 +1,297 @@
+vite v6.4.3 building for production...
+transforming...
+✓ 2007 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                   0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-Bg9pZcT3.css    2.93 kB │ gzip:   0.82 kB
+dist/assets/style-6MlQLGa4.css                    3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-kya-NcdA.css    4.16 kB │ gzip:   1.07 kB
+dist/assets/index-Cj-tLRQ5.css                   32.29 kB │ gzip:   5.90 kB
+dist/assets/App-CeF5MZTX.css                    136.20 kB │ gzip:  18.14 kB
+dist/assets/Health-CR4GlZg2.js                    0.99 kB │ gzip:   0.57 kB
+dist/assets/index-CtOlnfh8.js                    30.10 kB │ gzip:   9.98 kB
+dist/assets/LocalTutorIntegration-DHfZmXlJ.js    42.44 kB │ gzip:  13.79 kB
+dist/assets/style-BRkqWBE_.js                    44.99 kB │ gzip:   8.37 kB
+dist/assets/query-vendor-CUnTvSIi.js             45.60 kB │ gzip:  13.56 kB
+dist/assets/react-vendor-D3pO_op5.js            142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js           307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-dUmVpqGs.js   647.28 kB │ gzip: 189.39 kB
+dist/assets/App-BrMCA7is.js                     775.35 kB │ gzip: 223.74 kB
+✓ built in 4.73s
+UI token guard PASS (42 files)
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ✓ src/interop/LocalTutorIntegration.test.tsx (70 tests) 5392ms
+ ✓ src/AppWorkspaceResume.test.tsx (33 tests) 4356ms
+   ✓ reopens the saved chapter through current authority and applies original reading/split state only after explicit restore 332ms
+   ✓ opens another authorized project only after original inventory and exact chapter version revalidation 303ms
+   ✓ does not navigate to a search project removed from the refreshed original inventory 312ms
+   ✓ drops delayed revision-owner navigation after new typing or scope change 308ms
+ ✓ src/experimental/WorkspaceToolsPanel.test.tsx (30 tests) 2979ms
+   ✓ real workspace tools UI > shows stale recovery choice and never jumps until explicit current-version approval 311ms
+   ✓ deduplicates repeated resolves and only honors the reopened search request 433ms
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 3980ms
+   ✓ creative workspace protected manuscript and request boundaries > requires explicit server-version adoption and preserves the draft when adoption is cancelled 308ms
+ ✓ src/AuditGenerationScope.test.tsx (28 tests) 1056ms
+ ✓ src/novel/StoryCoreRecordVersionEditor.test.tsx (59 tests) 1640ms
+ ✓ src/ui/LocalAiDiscovery.test.tsx (24 tests) 271ms
+ ✓ src/experimental/StyleReviewPanels.test.tsx (16 tests) 1343ms
+ ✓ src/experimental/StorySimulatorPanel.test.tsx (14 tests) 3612ms
+   ✓ reads only on opening; builds explicit bounded manual inputs with captured authority and normalized fact lines 492ms
+   ✓ preserves editable drafts on failure and requires recovery before retry 391ms
+   ✓ previews exact local character request, dispatches once with consent, then manually selects checked candidate 436ms
+   ✓ invalidates scene context receipts and sends selected original scene with separate mind claims 374ms
+ ✓ src/experimental/OfflineSyncPanel.test.tsx (11 tests) 1257ms
+ ✓ src/experimental/DeclarativeTemplatePanels.test.tsx (8 tests) 1660ms
+   ✓ uses real form contracts, explicit graph check and version-bound creation before separate execute and review 531ms
+ ✓ src/AppRevisionHistory.test.tsx (23 tests) 900ms
+ ✓ src/ui/ModelCenter.test.tsx (10 tests) 170ms
+ ✓ src/experimental/WritingFocusPanel.test.tsx (13 tests) 1020ms
+ ✓ src/AppDraftRecovery.test.tsx (21 tests) 2827ms
+   ✓ suppresses autosave and manual submit throughout composition and submits after it ends 1095ms
+   ✓ labels browser-offline drafts honestly and permits an explicit reachable local-backend save 1027ms
+ ✓ src/novel/PluginManagerPanel.test.tsx (15 tests) 579ms
+ ✓ src/experimental/ExperimentalWorkbench.test.tsx (14 tests) 670ms
+ ✓ src/experimental/ModelBrokerPanel.test.tsx (9 tests) 1113ms
+   ✓ captures actual scoped route preview and requires exact author receipt plus review before existing job dispatch 395ms
+ ✓ src/ui/AppShell.test.tsx (19 tests) 281ms
+ ✓ src/experimental/RevisionIntelligencePanel.test.tsx (10 tests) 849ms
+ ✓ src/novel/ImageGenerationPanel.test.tsx (10 tests) 391ms
+ ✓ src/experimental/InteractiveStoryPanel.test.tsx (11 tests) 1121ms
+ ✓ src/novel/StoryRecordVersionEditor.test.tsx (14 tests) 556ms
+ ✓ src/AppAuthorTaskNavigation.test.tsx (10 tests) 752ms
+ ✓ src/experimental/ProductionLineagePanel.test.tsx (11 tests) 611ms
+ ✓ src/novel/AuthorRequestPreviewPanel.test.tsx (11 tests) 448ms
+ ✓ src/experimental/WriterRoomPanel.test.tsx (9 tests) 667ms
+   ✓ renders actual task progress and responsible change-request round trip without domain approval 320ms
+ ✓ src/experimental/ReaderSessionPanels.test.tsx (9 tests) 513ms
+ ✓ src/experimental/MultilingualEditionsPanel.test.tsx (10 tests) 1042ms
+   ✓ manual bilingual save→review→exact acceptance with RTL and no model calls 357ms
+ ✓ src/novel/ResearchPanel.test.tsx (14 tests) 502ms
+ ✓ src/experimental/SafeBatchesPanel.test.tsx (10 tests) 470ms
+ ✓ src/novel/ScreenplayPanel.test.tsx (17 tests) 684ms
+ ✓ src/experimental/ResearchLibraryPanel.test.tsx (10 tests) 1125ms
+ ✓ src/manualPromptConsent.test.tsx (17 tests) 716ms
+ ✓ src/experimental/StoryGraphPanel.test.tsx (8 tests) 805ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 750ms
+ ✓ src/experimental/Wave5TemplatesSdkComics.test.tsx (4 tests) 545ms
+ ✓ src/creative/AIDirectorPanel.test.tsx (10 tests) 433ms
+ ✓ src/experimental/ModelTaskReopen.test.tsx (16 tests) 1155ms
+   ✓ 'simulator' reopens the exact receipt, handles missing/back and never replays 310ms
+ ✓ src/novel/ExportPanel.test.tsx (12 tests) 1019ms
+ ✓ src/experimental/ProjectForksPanel.test.tsx (6 tests) 380ms
+ ✓ src/experimental/VoiceSubtitlePanels.test.tsx (7 tests) 587ms
+ ✓ src/experimental/StyleAnalysisModelPanel.test.tsx (7 tests) 270ms
+ ✓ src/experimental/ChangeImpactPanel.test.tsx (8 tests) 504ms
+ ✓ src/experimental/LanguageTranslationPanel.test.tsx (5 tests) 919ms
+   ✓ adoption updates visible saved draft while requiring separate submit and review 471ms
+ ↓ src/experimental/ExperimentalWorkbench.http.test.tsx (6 tests | 6 skipped)
+ ✓ src/experimental/StructuredForksPanel.test.tsx (7 tests) 425ms
+ ✓ src/experimental/StructuredSearchNavigation.test.tsx (12 tests) 1571ms
+   ✓ resolves organization with its exact original owner and original ID 360ms
+ ✓ src/experimental/NarrativeJudgeContinuationPanels.test.tsx (6 tests) 413ms
+ ✓ src/novel/AIPlanningPanel.project.test.tsx (11 tests) 549ms
+ ✓ src/AppBrokerRecovery.test.tsx (4 tests) 482ms
+ ✓ src/novel/LocalHostSessionPanel.test.tsx (9 tests) 256ms
+ ✓ src/novel/EntryExperience.test.tsx (10 tests) 480ms
+ ✓ src/novel/PluginInspector.test.tsx (8 tests) 194ms
+ ✓ src/experimental/BranchManuscriptPanel.test.tsx (6 tests) 327ms
+ ✓ src/novel/MultimodalDirectorWorkspace.test.tsx (11 tests) 527ms
+ ✓ src/novel/AiWritingPanel.test.tsx (12 tests) 384ms
+ ✓ src/novel/FirstUsePanel.test.tsx (8 tests) 201ms
+ ✓ src/novel/WorkflowScopeGuards.test.tsx (20 tests) 342ms
+ ✓ src/experimental/WorkspaceInteractionPanel.test.tsx (13 tests) 287ms
+ ✓ src/experimental/MediaPanel.continuation.test.tsx (6 tests) 530ms
+ ✓ src/experimental/AdapterReceiptProjection.test.tsx (8 tests) 384ms
+ ✓ src/experimental/WorkspaceSearch.test.tsx (6 tests) 2394ms
+   ✓ sends scoped filters, pages and a safe rebuild through the captured client 772ms
+   ✓ does not search unfinished IME composition and submits the completed Chinese text 623ms
+ ✓ src/experimental/MediaPanel.recovery.test.tsx (7 tests) 495ms
+ ✓ src/novel/AuthorSourcePicker.test.tsx (5 tests) 401ms
+ ✓ src/AppStorySourceNavigation.test.tsx (9 tests) 761ms
+ ✓ src/interop/client.test.ts (10 tests) 12ms
+ ✓ src/experimental/NarrativeJudgeModelPanel.test.tsx (6 tests) 212ms
+ ✓ src/experimental/PortableProjectsPanel.maintenance.test.tsx (5 tests) 310ms
+ ✓ src/novel/PendingCanonReviewPanel.test.tsx (7 tests) 491ms
+ ✓ src/novel/StoryRecordLifecycle.test.tsx (20 tests) 1247ms
+ ✓ src/WorkspaceAdminPanel.test.tsx (6 tests) 202ms
+ ✓ src/novel/ScreenplayPanel.revision.test.tsx (5 tests) 373ms
+ ✓ src/experimental/WorkflowInspectionPanel.test.tsx (6 tests) 335ms
+ ✓ src/novel/AiContextPreviewPanel.test.tsx (6 tests) 215ms
+ ✓ src/experimental/PortableProjectsPanel.test.tsx (5 tests) 299ms
+ ✓ src/AppAdaptationNavigation.test.tsx (12 tests) 645ms
+ ✓ src/novel/ExportPanel.scope.test.tsx (13 tests) 1107ms
+ ✓ src/experimental/EmbeddingPanel.continuation.test.tsx (5 tests) 392ms
+ ✓ src/AIEnvironmentSummary.test.tsx (7 tests) 154ms
+ ✓ src/novel/FindingReviewPanel.test.tsx (5 tests) 300ms
+ ✓ src/experimental/RegisteredMediaPanel.test.tsx (4 tests) 521ms
+ ✓ src/ConflictDialog.test.tsx (6 tests) 56ms
+ ✓ src/novel/AdaptationPanel.test.tsx (6 tests) 427ms
+ ✓ src/novel/AIPlanningPanel.test.tsx (6 tests) 277ms
+ ✓ src/novel/AudiobookManifestPanel.test.tsx (4 tests) 291ms
+ ✓ src/experimental/RevisionComparisonModelPanel.test.tsx (4 tests) 179ms
+ ✓ src/novel/CharacterAuthorPanel.test.tsx (3 tests) 266ms
+ ✓ src/novel/VideoTimeline.test.tsx (12 tests) 110ms
+ ✓ src/novel/AdaptationLifecycleControls.test.tsx (4 tests) 315ms
+ ✓ src/experimental/DirectorPanel.test.tsx (3 tests) 306ms
+ ✓ src/novel/AiWritingVariants.test.tsx (6 tests) 284ms
+ ✓ src/novel/AuthorSourceItems.test.tsx (4 tests) 158ms
+ ✓ src/novel/ExportPanel.recovery.test.tsx (4 tests) 500ms
+   ✓ rediscovers the same durable job and snapshot after full remount and downloads it 306ms
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 154ms
+ ✓ src/experimental/TimelineExchangePanel.test.tsx (4 tests) 210ms
+ ✓ src/drafts.test.ts (6 tests) 24ms
+ ✓ src/experimental/PlanningPanel.recovery.test.tsx (2 tests) 576ms
+   ✓ planning same-node version recovery > retains local edits after external change and only rebases through an explicit action 360ms
+ ✓ src/interop/DesktopIntegrationDetails.test.tsx (19 tests) 222ms
+ ✓ src/WorkspaceManagement.test.tsx (5 tests) 124ms
+ ✓ src/AppProjectStory.test.tsx (4 tests) 508ms
+ ✓ src/novel/AgentTeamPanel.additional.test.tsx (5 tests) 276ms
+ ✓ src/experimental/TranslationMemoryPanel.test.tsx (4 tests) 179ms
+ ✓ src/Editor.anchor.test.tsx (3 tests) 138ms
+ ✓ src/novel/MotionTaskWorkspace.test.tsx (5 tests) 150ms
+ ✓ src/novel/NovelImportPanel.test.tsx (3 tests) 86ms
+ ✓ src/novel/VisualReferencePanel.test.tsx (3 tests) 173ms
+ ✓ src/ui/MediaProviderSettings.test.tsx (3 tests) 89ms
+ ✓ src/ui/FeatureLauncher.test.tsx (5 tests) 355ms
+ ✓ src/RevisionPanel.test.tsx (4 tests) 83ms
+ ✓ src/experimental/SharedUniversePanel.test.tsx (3 tests) 228ms
+ ✓ src/experimental/ResearchLibraryPanel.continuation.test.tsx (3 tests) 471ms
+ ✓ src/novel/ImageInfiniteCanvas.test.tsx (6 tests) 178ms
+ ✓ src/novel/ChapterTree.accessibility.test.tsx (5 tests) 153ms
+ ✓ src/creative/ProductionTimeline.test.tsx (4 tests) 243ms
+ ✓ src/novel/VisualTextWorkflow.test.tsx (3 tests) 126ms
+ ✓ src/novel/ChapterTree.test.tsx (5 tests) 175ms
+ ✓ src/Editor.recovery.test.tsx (4 tests) 198ms
+ ✓ src/experimental/TaskOwnerNavigation.continuation.test.tsx (4 tests) 167ms
+ ✓ src/novel/DirectorShotList.test.tsx (6 tests) 131ms
+ ✓ src/AppWritingGoalRecovery.test.tsx (4 tests) 195ms
+ ✓ src/novel/useMultimodalWorkspacePersistence.test.ts (7 tests) 32ms
+ ✓ src/localHostSession.test.ts (6 tests) 11ms
+ ✓ src/PermissionManagement.test.tsx (3 tests) 64ms
+ ✓ src/novel/CreationWorkbenchPanel.test.tsx (4 tests) 171ms
+ ✓ src/novel/WorldTimelineView.test.tsx (3 tests) 131ms
+ ✓ src/experimental/ExperimentalWorkbench.continuation.test.tsx (5 tests) 100ms
+ ✓ src/novel/A43ChapterIdentity.test.tsx (2 tests) 131ms
+ ✓ src/Editor.a43-rich.test.tsx (3 tests) 150ms
+ ✓ src/novel/AssetLibraryPanel.test.tsx (4 tests) 241ms
+ ✓ src/ui/primitives.test.tsx (4 tests) 72ms
+ ✓ src/ui/SaveControls.test.tsx (5 tests) 36ms
+ ✓ src/novel/ChapterTree.lifecycle.test.tsx (5 tests) 239ms
+ ✓ src/novel/AgentTeamPanel.test.tsx (2 tests) 155ms
+ ✓ src/novel/SourcePrivacyControl.test.tsx (2 tests) 118ms
+ ✓ src/novel/WorkflowPanel.test.tsx (2 tests) 240ms
+ ✓ src/novel/WorldRelationshipGraph.test.tsx (4 tests) 124ms
+ ✓ src/novel/WorldBuildingDashboard.test.tsx (4 tests) 157ms
+ ✓ src/RevisionHistory.independent-audit.test.tsx (3 tests) 134ms
+ ✓ src/novel/SpeechSynthesisPanel.test.tsx (3 tests) 186ms
+ ✓ src/AppWorldSummary.test.tsx (3 tests) 227ms
+ ✓ src/experimental/VoiceDirectionPanel.continuation.test.tsx (3 tests) 157ms
+ ✓ src/AuditColdStorage.test.ts (4 tests) 26ms
+ ✓ src/experimental/EmbeddingPanel.hybrid.test.tsx (2 tests) 196ms
+ ✓ src/novel/GenerationWorkflowTimeline.test.tsx (7 tests) 80ms
+ ✓ src/ui/ModuleWorkspaceRoutes.test.tsx (7 tests) 191ms
+ ✓ src/StorySearchNavigation.test.tsx (1 test) 64ms
+ ✓ src/novel/ImageQueuePanel.test.tsx (2 tests) 147ms
+ ✓ src/experimental/DeferredExperimentalWorkbench.test.tsx (2 tests) 101ms
+ ✓ src/novel/ContinuityCheckPanel.test.tsx (2 tests) 128ms
+ ✓ src/experimental/InboxPanel.findings.test.tsx (2 tests) 236ms
+ ✓ src/novel/DirectorShotCard.test.tsx (4 tests) 126ms
+ ✓ src/localAiDiscoveryApi.test.ts (3 tests) 8ms
+ ✓ src/experimental/ProductionLineagePanel.continuation.test.tsx (2 tests) 174ms
+ ✓ src/experimental/ModelBenchmarkPanel.continuation.test.tsx (1 test) 175ms
+ ✓ src/novel/AgentQueuePanel.test.tsx (2 tests) 198ms
+ ✓ src/novel/ScreenplayPipelinePanel.test.tsx (3 tests) 114ms
+ ✓ src/novel/RuntimeDiagnostics.test.tsx (3 tests) 89ms
+ ✓ src/novel/AudioGenerationPanel.test.tsx (2 tests) 147ms
+ ✓ src/novel/AuthorRequestControls.test.tsx (2 tests) 102ms
+ ✓ src/novel/VideoTaskInspector.test.tsx (3 tests) 96ms
+ ✓ src/ui/AiControlCenter.test.tsx (1 test) 95ms
+ ✓ src/ui/taskSummary.test.ts (4 tests) 4ms
+ ✓ src/novel/GenerationRecoveryPicker.test.tsx (2 tests) 108ms
+ ✓ src/interop/entryScopeReview.test.tsx (1 test) 137ms
+ ✓ src/experimental/shared.test.tsx (2 tests) 78ms
+ ✓ src/novel/NovelOverviewPanel.test.tsx (1 test) 78ms
+ ✓ src/novel/StoryPlanningWorkspace.test.tsx (2 tests) 82ms
+ ✓ src/generationRecovery.test.ts (3 tests) 6ms
+ ✓ src/interop/entry.test.tsx (1 test) 91ms
+ ✓ src/experimental/InteractiveStoryHistory.test.tsx (1 test) 103ms
+ ✓ src/novel/AgentActivityCenter.test.tsx (2 tests) 106ms
+ ✓ src/novel/AssetInspector.test.tsx (2 tests) 79ms
+ ✓ src/workspaceSelection.test.ts (3 tests) 3ms
+ ✓ src/novel/MotionPrivacyPanel.test.tsx (1 test) 82ms
+ ✓ src/novel/ConstraintImportPreview.test.tsx (2 tests) 63ms
+ ✓ src/localAiEnvironmentApi.test.ts (2 tests) 7ms
+ ✓ src/novel/VideoAssemblyPanel.test.tsx (1 test) 114ms
+ ✓ src/ui/AuthorTerminology.test.tsx (2 tests) 19ms
+ ✓ src/novel/SceneEditor.test.tsx (1 test) 100ms
+ ✓ src/novel/AgentResultReview.test.tsx (2 tests) 81ms
+ ✓ src/experimental/WorldPanel.test.tsx (1 test) 127ms
+ ✓ src/novel/ForeshadowingEditor.test.tsx (1 test) 97ms
+ ✓ src/novel/ScreenplayPanel.motion-binding.test.ts (2 tests) 5ms
+ ✓ src/experimental/revisionLocks.test.ts (2 tests) 42ms
+ ✓ src/novel/useMultimodalBindingManifest.test.ts (2 tests) 14ms
+ ✓ src/novel/StoryDatabase.test.tsx (2 tests) 67ms
+ ✓ src/novel/StoryRecordNavigation.test.tsx (2 tests) 180ms
+ ✓ src/novel/ImageTaskInspector.test.tsx (2 tests) 61ms
+ ✓ src/novel/RelationshipEditor.test.tsx (1 test) 85ms
+ ✓ src/novel/VisualContextPanel.test.tsx (2 tests) 66ms
+ ✓ src/novel/TimelineEditor.test.tsx (1 test) 98ms
+ ✓ src/novel/OutlineEditor.test.tsx (1 test) 104ms
+ ✓ src/novel/WorkflowPanel.independent-audit.test.tsx (1 test) 47ms
+ ✓ src/novel/AudioTaskInspector.test.tsx (2 tests) 66ms
+ ✓ src/novel/CharacterEditor.test.tsx (1 test) 97ms
+ ✓ src/novel/StoryRouteEditor.test.tsx (1 test) 100ms
+ ✓ src/ui/CapabilityRoadmapPanel.test.tsx (1 test) 56ms
+ ✓ src/novel/VolumeEditor.test.tsx (1 test) 95ms
+ ✓ src/novel/WorkflowInspector.test.tsx (2 tests) 55ms
+ ✓ src/ui/CapabilityStatusCenter.test.tsx (1 test) 39ms
+ ✓ src/novel/DirectorVoiceToolbar.test.tsx (1 test) 24ms
+ ✓ src/novel/LocationEditor.test.tsx (1 test) 99ms
+ ✓ src/novel/BindingManifestPanel.test.tsx (1 test) 23ms
+ ✓ src/novel/WorldSummaryEditor.test.tsx (1 test) 77ms
+ ✓ tests/r3FixtureLifecycle.test.ts (17 tests) 17ms
+ ↓ tests/localInteropRealHost.test.ts (2 tests | 2 skipped)
+ ✓ src/creative/client.test.ts (11 tests) 10ms
+ ✓ src/e2eDatabaseContract.test.ts (20 tests) 295ms
+ ✓ src/interop/ChapterWireIdentity.test.ts (3 tests) 12ms
+ ✓ src/experimental/api.test.ts (5 tests) 11ms
+ ✓ src/novel/FountainParser.test.ts (21 tests) 915ms
+ ✓ src/App.test.tsx (12 tests) 11ms
+ ✓ tests/workspaceResumeLayout.test.ts (5 tests) 4ms
+ ✓ src/collaborationGuards.test.ts (7 tests) 4ms
+ ✓ src/contracts.test.ts (7 tests) 10ms
+ ✓ src/packagedHost.test.ts (7 tests) 6ms
+ ✓ src/productLanguage.test.ts (4 tests) 3ms
+ ✓ src/novel/AdaptationRouteMatching.test.ts (1 test) 4ms
+ ✓ src/generationVariants.test.ts (7 tests) 5ms
+ ✓ src/experimental/api.surface-flags.test.ts (4 tests) 7ms
+ ✓ tests/localInteropLayout.test.ts (3 tests) 4ms
+ ✓ src/ui/FeatureLauncher.css.test.ts (3 tests) 3ms
+ ✓ src/novel/ChapterTree.css.test.ts (4 tests) 3ms
+ ✓ src/novel/firstUseClient.test.ts (2 tests) 5ms
+ ✓ src/creative/CreativeWorkbenchEntry.test.ts (2 tests) 4ms
+ ✓ tests/writingGoalLayout.test.ts (4 tests) 3ms
+ ✓ src/novel/findingReviewClient.test.ts (2 tests) 4ms
+ ✓ tests/uiContracts.test.ts (5 tests) 3ms
+ ✓ src/novel/importRecovery.test.ts (2 tests) 6ms
+ ✓ src/ui/scopeLabels.test.ts (4 tests) 3ms
+ ✓ src/Editor.typography.test.ts (3 tests) 3ms
+ ✓ src/planningProjectApi.test.ts (1 test) 5ms
+ ✓ src/sourcePrivacyApi.test.ts (1 test) 3ms
+ ✓ src/creative/ProductionTimeline.css.test.ts (1 test) 3ms
+ ✓ src/experimental/writingFocus.layout.test.ts (1 test) 3ms
+ ✓ src/novel/MotionTaskBatchControls.test.ts (1 test) 2ms
+
+ Test Files  235 passed | 2 skipped (237)
+      Tests  1567 passed | 8 skipped (1575)
+   Start at  01:11:37
+   Duration  118.31s (transform 6.55s, setup 0ms, collect 38.44s, tests 89.72s, environment 66.91s, prepare 11.84s)
+
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

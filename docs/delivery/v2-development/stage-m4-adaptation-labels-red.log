@@ -1,0 +1,76 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ❯ src/creative/CreativeSelectLabels.test.tsx (3 tests | 3 failed) 152ms
+   × gives SCREENPLAY export selection an exact name independent of option text 101ms
+     → expected null to be '剧本导出格式' // Object.is equality
+   × gives SCRIPT export selection an exact name independent of option text 19ms
+     → expected null to be '脚本导出格式' // Object.is equality
+   × gives Script purpose an exact name independent of translated option labels 31ms
+     → expected null to be '脚本用途' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  12:59:08
+   Duration  1.68s (transform 251ms, setup 0ms, collect 628ms, tests 152ms, environment 614ms, prepare 96ms)
+
+JUNIT report written to /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-adaptation-labels-red.xml
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/CreativeSelectLabels.test.tsx > gives SCREENPLAY export selection an exact name independent of option text
+AssertionError: expected null to be '剧本导出格式' // Object.is equality
+
+- Expected: 
+"剧本导出格式"
+
++ Received: 
+null
+
+ ❯ src/creative/CreativeSelectLabels.test.tsx:14:67
+     12|   const document = { ...newDocument(mode), id: 'saved-document', versi…
+     13|   render(<ScreenplayExportPanel client={{} as CreativeClient} document…
+     14|   expect(screen.getByRole('combobox').getAttribute('aria-label')).toBe…
+       |                                                                   ^
+     15| });
+     16| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/creative/CreativeSelectLabels.test.tsx > gives SCRIPT export selection an exact name independent of option text
+AssertionError: expected null to be '脚本导出格式' // Object.is equality
+
+- Expected: 
+"脚本导出格式"
+
++ Received: 
+null
+
+ ❯ src/creative/CreativeSelectLabels.test.tsx:14:67
+     12|   const document = { ...newDocument(mode), id: 'saved-document', versi…
+     13|   render(<ScreenplayExportPanel client={{} as CreativeClient} document…
+     14|   expect(screen.getByRole('combobox').getAttribute('aria-label')).toBe…
+       |                                                                   ^
+     15| });
+     16| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/creative/CreativeSelectLabels.test.tsx > gives Script purpose an exact name independent of translated option labels
+AssertionError: expected null to be '脚本用途' // Object.is equality
+
+- Expected: 
+"脚本用途"
+
++ Received: 
+null
+
+ ❯ src/creative/CreativeSelectLabels.test.tsx:20:67
+     18|   render(<CreativeCanvas draft={newDocument('SCRIPT')} dirty={false} c…
+     19|     onScene={vi.fn()} onShot={vi.fn()} onChange={vi.fn()} onSave={vi.f…
+     20|   expect(screen.getByRole('combobox').getAttribute('aria-label')).toBe…
+       |                                                                   ^
+     21| });
+     22| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

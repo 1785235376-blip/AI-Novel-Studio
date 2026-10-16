@@ -1,0 +1,41 @@
+
+Running 1 test using 1 worker
+
+(node:73928) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:73928) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  x  1 [director-1440x900] › tests\e2e\v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source (18.4s)
+
+
+  1) [director-1440x900] › tests\e2e\v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator: getByLabel('作者输入文本', { exact: true })
+    Expected: "真实浏览器中保留的作者文本 🎬"
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveValue" with timeout 15000ms
+      - waiting for getByLabel('作者输入文本', { exact: true })
+
+
+      57 |     await expect(page.getByLabel('创作图标题', { exact: true })).toHaveValue('浏览器恢复的文本图');
+      58 |     await page.getByRole('button', { name: /^选择节点 文本输入/ }).click();
+    > 59 |     await expect(page.getByLabel('作者输入文本', { exact: true })).toHaveValue('真实浏览器中保留的作者文本 🎬');
+         |                                                              ^
+      60 |     const savingText = page.waitForResponse(value => new URL(value.url()).pathname === `${base}/graphs` && value.request().method() === 'POST');
+      61 |     await page.getByRole('button', { name: '保存创作图', exact: true }).click();
+      62 |     const textGraph = await exact(await savingText, 201);
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-director-console-live.spec.ts:59:62
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\docs\delivery\v2-development\director-console-packaged-r6\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\docs\delivery\v2-development\director-console-packaged-r6\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\error-context.md
+
+  1 failed
+    [director-1440x900] › tests\e2e\v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source 

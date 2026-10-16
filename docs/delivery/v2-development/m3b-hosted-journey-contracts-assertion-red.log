@@ -1,0 +1,83 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ❯ src/ui/LocalAiBrowserJourneyContracts.test.tsx (4 tests | 3 failed) 431ms
+   × additive M3 browser journeys follow existing product state > uses the exact existing rescan action after recovering the prior completed scan 154ms
+     → expected null to be <button …(1)></button> // Object.is equality
+   × additive M3 browser journeys follow existing product state > returns from CONTROL through the existing NOVEL tab before opening feature navigation: files reload 139ms
+     → expected 'async function bindHostAndOpenModels(…' to contain 'getByRole(\'tablist\', {name: \'创作模块\…'
+   × additive M3 browser journeys follow existing product state > returns from CONTROL through the existing NOVEL tab before opening feature navigation: legacy revoked-host rebind 95ms
+     → expected 'async function bindAndOpen(page: Page…' to contain 'getByRole(\'tablist\', {name: \'创作模块\…'
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 1 passed (4)
+   Start at  10:57:39
+   Duration  3.14s (transform 1.10s, setup 0ms, collect 1.63s, tests 431ms, environment 587ms, prepare 125ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/ui/LocalAiBrowserJourneyContracts.test.tsx > additive M3 browser journeys follow existing product state > uses the exact existing rescan action after recovering the prior completed scan
+AssertionError: expected null to be <button …(1)></button> // Object.is equality
+
+- Expected: 
+<button
+  class="ui-button ui-button--primary"
+>
+  重新预览检测范围
+</button>
+
++ Received: 
+null
+
+ ❯ src/ui/LocalAiBrowserJourneyContracts.test.tsx:73:89
+     71|     const names = [...filesJourney.matchAll(/getByRole\('button',\s*\{…
+     72|     expect(names).toHaveLength(2);
+     73|     for (const name of names) expect(screen.queryByRole('button', {nam…
+       |                                                                                         ^
+     74|   });
+     75| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/ui/LocalAiBrowserJourneyContracts.test.tsx > additive M3 browser journeys follow existing product state > returns from CONTROL through the existing NOVEL tab before opening feature navigation: files reload
+AssertionError: expected 'async function bindHostAndOpenModels(…' to contain 'getByRole(\'tablist\', {name: \'创作模块\…'
+
+- Expected
++ Received
+
+- getByRole('tablist', {name: '创作模块', exact: true}).getByRole('tab', {name: '小说', exact: true}).click()
++ async function bindHostAndOpenModels(page: Page) {
++   await page.getByRole('button', {name: '打开功能导航', exact: true}).click();
++   
+
+ ❯ src/ui/LocalAiBrowserJourneyContracts.test.tsx:103:20
+    101|     expect(start).toBeGreaterThanOrEqual(0);
+    102|     const prefix = journey.slice(start, journey.indexOf('const navigat…
+    103|     expect(prefix).toContain("getByRole('tablist', {name: '创作模块', …
+       |                    ^
+    104|     expect(prefix.indexOf("name: '小说'")).toBeLessThan(prefix.indexOf…
+    105|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/ui/LocalAiBrowserJourneyContracts.test.tsx > additive M3 browser journeys follow existing product state > returns from CONTROL through the existing NOVEL tab before opening feature navigation: legacy revoked-host rebind
+AssertionError: expected 'async function bindAndOpen(page: Page…' to contain 'getByRole(\'tablist\', {name: \'创作模块\…'
+
+- Expected
++ Received
+
+- getByRole('tablist', {name: '创作模块', exact: true}).getByRole('tab', {name: '小说', exact: true}).click()
++ async function bindAndOpen(page: Page, token: string, actor: string) {
++   await page.getByRole('button', {name: '打开功能导航', exact: true}).click();
++   
+
+ ❯ src/ui/LocalAiBrowserJourneyContracts.test.tsx:103:20
+    101|     expect(start).toBeGreaterThanOrEqual(0);
+    102|     const prefix = journey.slice(start, journey.indexOf('const navigat…
+    103|     expect(prefix).toContain("getByRole('tablist', {name: '创作模块', …
+       |                    ^
+    104|     expect(prefix.indexOf("name: '小说'")).toBeLessThan(prefix.indexOf…
+    105|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

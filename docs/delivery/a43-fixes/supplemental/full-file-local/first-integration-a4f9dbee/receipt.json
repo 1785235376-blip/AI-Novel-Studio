@@ -1,0 +1,66 @@
+{
+  "kind": "SUPPLEMENTAL_LOCAL_PYTHON31214_FROZEN_OLD_CANDIDATE_REGRESSION",
+  "source_tree": "a4f9dbeec37886b6ef53a77a0fa74357d97df543",
+  "source_manifest_sha256": "f7cebbc1bed375ade19fcf9f6c40917e845ac1da44882b154e0797182802ebd3",
+  "tracked_source_files": 2213,
+  "tracked_source_unchanged": true,
+  "main": {
+    "tests": 7826,
+    "passed": 5275,
+    "skipped": 2524,
+    "failed": 27,
+    "errors": 0,
+    "pytest_seconds": 563.5,
+    "wall_seconds": 570.8977361680008,
+    "outer_cap_seconds": 1200,
+    "runs_with_test_execution": 1,
+    "mode": "ONE_UNFILTERED_ORIGINAL_ORDER_PROCESS"
+  },
+  "original_nodes": {
+    "tests": 7492,
+    "passed": 5084,
+    "skipped": 2381,
+    "failed": 27
+  },
+  "new_a43_nodes": {
+    "tests": 334,
+    "passed": 191,
+    "skipped": 143,
+    "all_skips": "opposite PostgreSQL profile"
+  },
+  "tcp": {
+    "tests": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "pytest_seconds": 26.24,
+    "wall_seconds": 28.30112788599945,
+    "outer_cap_seconds": 300
+  },
+  "posthoc_reconciliation": {
+    "complete_junit_identity_mapping": true,
+    "unexpected_skips": [],
+    "source_manifest_files_checked": 398,
+    "issues": [],
+    "strict_hosted_gate": false
+  },
+  "first_cause": "tests/test_file_project_lifecycle.py::test_audited_call_after_delete_cannot_restore_stale_snapshot reaches audit append after deleted project and raises KeyError id at app/repositories/file/scope.py:127",
+  "other_failures": "26 original portable-media/relink/project-fork audio-block contracts rejected by app/document.py:51 validate_document",
+  "execution_limitations": [
+    "Python 3.12.14 local, not locked hosted 3.12.9",
+    "Frozen old tree only; parent reports later lifecycle and source compatibility corrections",
+    "No PostgreSQL run or hosted strict plugin/source/shard/phase reconciliation",
+    "No real data, user credentials, paid/model calls, native interactive acceptance"
+  ],
+  "setup_incident": "Read-only bubblewrap wrapper failed before collection with unavailable /dev/null; zero tests executed. Raw failure preserved under precollection-wrapper-failure. Normal isolated runtime then executed each requested gate once.",
+  "untracked_generated_files": [
+    "app/__pycache__/__init__.cpython-312.pyc",
+    "app/__pycache__/plugin_test_worker.cpython-312.pyc",
+    "app/__pycache__/plugin_worker_protocol.cpython-312.pyc",
+    "data/harness_access_audit.json",
+    "logs/runtime.jsonl",
+    "tests/fixtures/.workspace-mutation-locks/6f046f2622ece23d0f245dd03a195bb2e043589a80db28bc7e9791b7f33c824e.lock",
+    "tests/fixtures/novels/sample_novel/chapter_identity.json"
+  ],
+  "public_receipt_policy": "Full raw logs and tracked-file inventories remain private. Selected JUnit and summary are published with executor metadata-only redaction documented separately."
+}

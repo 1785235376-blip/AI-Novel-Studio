@@ -1,0 +1,551 @@
+....................................F................................... [ 31%]
+..................s.s.s.s.s.s.s.s.s.sEEEsssEEEEEsssssEsEsEsEsEsEsEsEsEs. [ 62%]
+.ss..............ssssssssssssss..ss..ss..ss..ss..ss..ss..ss..ss..ssEsEsE [ 94%]
+s......ssssss                                                            [100%]
+=================================== ERRORS ====================================
+_ ERROR at setup of test_modes_ordered_typed_assets_persist_and_are_editable[file-DIRECTOR] _
+
+request = <SubRequest 'rig' for <Function test_modes_ordered_typed_assets_persist_and_are_editable[file-DIRECTOR]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_modes_ordered_typed_asset0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_modes_ordered_typed_asset0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_modes_ordered_typed_asset0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_modes_ordered_typed_asset0').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_modes_ordered_typed_assets_persist_and_are_editable[file-PRODUCTION] _
+
+request = <SubRequest 'rig' for <Function test_modes_ordered_typed_assets_persist_and_are_editable[file-PRODUCTION]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_modes_ordered_typed_asset1')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_modes_ordered_typed_asset1').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_modes_ordered_typed_asset1') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_modes_ordered_typed_asset1').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_modes_ordered_typed_assets_persist_and_are_editable[file-VIDEO_PLANNING] _
+
+request = <SubRequest 'rig' for <Function test_modes_ordered_typed_assets_persist_and_are_editable[file-VIDEO_PLANNING]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_modes_ordered_typed_asset2')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_modes_ordered_typed_asset2').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_modes_ordered_typed_asset2') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_modes_ordered_typed_asset2').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_director_structure_rejects_unknown_duplicate_or_incompatible_assets[file-<lambda>0] _
+
+request = <SubRequest 'rig' for <Function test_director_structure_rejects_unknown_duplicate_or_incompatible_assets[file-<lambda>0]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject0').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_director_structure_rejects_unknown_duplicate_or_incompatible_assets[file-<lambda>1] _
+
+request = <SubRequest 'rig' for <Function test_director_structure_rejects_unknown_duplicate_or_incompatible_assets[file-<lambda>1]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject1')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject1').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject1') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject1').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_director_structure_rejects_unknown_duplicate_or_incompatible_assets[file-<lambda>2] _
+
+request = <SubRequest 'rig' for <Function test_director_structure_rejects_unknown_duplicate_or_incompatible_assets[file-<lambda>2]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject2')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject2').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject2') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject2').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_director_structure_rejects_unknown_duplicate_or_incompatible_assets[file-<lambda>3] _
+
+request = <SubRequest 'rig' for <Function test_director_structure_rejects_unknown_duplicate_or_incompatible_assets[file-<lambda>3]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject3')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject3').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject3') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject3').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_director_structure_rejects_unknown_duplicate_or_incompatible_assets[file-<lambda>4] _
+
+request = <SubRequest 'rig' for <Function test_director_structure_rejects_unknown_duplicate_or_incompatible_assets[file-<lambda>4]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject4')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject4').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject4') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_director_structure_reject4').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_existing_v1_creative_snapshot_missing_new_optional_fields_stays_readable[file] _
+
+request = <SubRequest 'rig' for <Function test_existing_v1_creative_snapshot_missing_new_optional_fields_stays_readable[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_existing_v1_creative_snap0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_existing_v1_creative_snap0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_existing_v1_creative_snap0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_existing_v1_creative_snap0').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_restore_is_a_new_cas_revision_and_can_restore_archived_document[file] _
+
+request = <SubRequest 'rig' for <Function test_restore_is_a_new_cas_revision_and_can_restore_archived_document[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_restore_is_a_new_cas_revi0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_restore_is_a_new_cas_revi0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_restore_is_a_new_cas_revi0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_restore_is_a_new_cas_revi0').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_____ ERROR at setup of test_restore_never_rebinds_a_stale_chapter[file] ______
+
+request = <SubRequest 'rig' for <Function test_restore_never_rebinds_a_stale_chapter[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_restore_never_rebinds_a_s0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_restore_never_rebinds_a_s0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_restore_never_rebinds_a_s0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_restore_never_rebinds_a_s0').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_rule_assisted_proposal_requires_human_review_and_preserves_manuscript[file] _
+
+request = <SubRequest 'rig' for <Function test_rule_assisted_proposal_requires_human_review_and_preserves_manuscript[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_rule_assisted_proposal_re0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_rule_assisted_proposal_re0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_rule_assisted_proposal_re0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_rule_assisted_proposal_re0').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_proposal_review_owner_scope_cas_digest_and_cancel_fences[file] _
+
+request = <SubRequest 'rig' for <Function test_proposal_review_owner_scope_cas_digest_and_cancel_fences[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_proposal_review_owner_sco0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_proposal_review_owner_sco0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_proposal_review_owner_sco0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_proposal_review_owner_sco0').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_proposal_and_derived_document_fence_source_edits_and_restart[file] _
+
+request = <SubRequest 'rig' for <Function test_proposal_and_derived_document_fence_source_edits_and_restart[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_proposal_and_derived_docu0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_proposal_and_derived_docu0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_proposal_and_derived_docu0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_proposal_and_derived_docu0').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_revocation_rolls_back_proposal_and_document_together[file] _
+
+request = <SubRequest 'rig' for <Function test_revocation_rolls_back_proposal_and_document_together[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_revocation_rolls_back_pro0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_revocation_rolls_back_pro0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_revocation_rolls_back_pro0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_revocation_rolls_back_pro0').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_simultaneous_reviews_commit_one_derived_document[file] _
+
+request = <SubRequest 'rig' for <Function test_simultaneous_reviews_commit_one_derived_document[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_simultaneous_reviews_comm0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_simultaneous_reviews_comm0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_simultaneous_reviews_comm0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_simultaneous_reviews_comm0').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_proposal_api_authority_private_response_and_restore[file] _
+
+request = <SubRequest 'rig' for <Function test_proposal_api_authority_private_response_and_restore[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_proposal_api_authority_pr0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_proposal_api_authority_pr0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_proposal_api_authority_pr0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_proposal_api_authority_pr0').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_derived_stage_progression_is_bound_ordered_and_never_writes_sources[file] _
+
+request = <SubRequest 'rig' for <Function test_derived_stage_progression_is_bound_ordered_and_never_writes_sources[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_derived_stage_progression0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_derived_stage_progression0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_derived_stage_progression0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_derived_stage_progression0').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_stage_derivation_rejects_wrong_mode_cas_and_revocation[file] _
+
+request = <SubRequest 'rig' for <Function test_stage_derivation_rejects_wrong_mode_cas_and_revocation[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_stage_derivation_rejects_0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_stage_derivation_rejects_0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_stage_derivation_rejects_0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_stage_derivation_rejects_0').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+_________ ERROR at setup of test_stage_derivation_http_contract[file] _________
+
+request = <SubRequest 'rig' for <Function test_stage_derivation_http_contract[file]>>
+tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_stage_derivation_http_con0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((WindowsPath('D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014') / '.runtime'))
+E        +    where is_relative_to = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_stage_derivation_http_con0').is_relative_to
+E        +      where WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_stage_derivation_http_con0') = resolve()
+E        +        where resolve = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-77/test_stage_derivation_http_con0').resolve
+
+tests\test_v2_creative_foundation.py:35: AssertionError
+================================== FAILURES ===================================
+________ test_director_workspace_route_does_not_expose_a_write_binding ________
+
+rig = namespace(client=<starlette.testclient.TestClient object at 0x00000169C051D3D0>, nid='phase14a-director-b9d77fa7e2a240...ject at 0x00000169C04AB410>, scope={'mode': 'local', 'novel_id': 'phase14a-director-b9d77fa7e2a240ea98b21e67d590dcf6'})
+
+    def test_director_workspace_route_does_not_expose_a_write_binding(rig):
+        """The projection route is GET-only; authoring stays on the existing owner."""
+        paths = {route.path for route in rig.client.app.routes if hasattr(route, "path")}
+        director_routes = {path for path in paths if "director/workspace" in path}
+>       assert director_routes == {"/api/projects/{nid}/studio/director/workspace/{rid}"}
+E       AssertionError: assert set() == {'/api/projec...kspace/{rid}'}
+E         
+E         Extra items in the right set:
+E         '/api/projects/{nid}/studio/director/workspace/{rid}'
+E         Use -v to get more diff
+
+tests\test_v2_director_workspace.py:506: AssertionError
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_v2_director_workspace.py::test_director_workspace_route_does_not_expose_a_write_binding
+ERROR tests/test_v2_creative_workflows.py::test_modes_ordered_typed_assets_persist_and_are_editable[file-DIRECTOR]
+ERROR tests/test_v2_creative_workflows.py::test_modes_ordered_typed_assets_persist_and_are_editable[file-PRODUCTION]
+ERROR tests/test_v2_creative_workflows.py::test_modes_ordered_typed_assets_persist_and_are_editable[file-VIDEO_PLANNING]
+ERROR tests/test_v2_creative_workflows.py::test_director_structure_rejects_unknown_duplicate_or_incompatible_assets[file-<lambda>0]
+ERROR tests/test_v2_creative_workflows.py::test_director_structure_rejects_unknown_duplicate_or_incompatible_assets[file-<lambda>1]
+ERROR tests/test_v2_creative_workflows.py::test_director_structure_rejects_unknown_duplicate_or_incompatible_assets[file-<lambda>2]
+ERROR tests/test_v2_creative_workflows.py::test_director_structure_rejects_unknown_duplicate_or_incompatible_assets[file-<lambda>3]
+ERROR tests/test_v2_creative_workflows.py::test_director_structure_rejects_unknown_duplicate_or_incompatible_assets[file-<lambda>4]
+ERROR tests/test_v2_creative_workflows.py::test_existing_v1_creative_snapshot_missing_new_optional_fields_stays_readable[file]
+ERROR tests/test_v2_creative_workflows.py::test_restore_is_a_new_cas_revision_and_can_restore_archived_document[file]
+ERROR tests/test_v2_creative_workflows.py::test_restore_never_rebinds_a_stale_chapter[file]
+ERROR tests/test_v2_creative_workflows.py::test_rule_assisted_proposal_requires_human_review_and_preserves_manuscript[file]
+ERROR tests/test_v2_creative_workflows.py::test_proposal_review_owner_scope_cas_digest_and_cancel_fences[file]
+ERROR tests/test_v2_creative_workflows.py::test_proposal_and_derived_document_fence_source_edits_and_restart[file]
+ERROR tests/test_v2_creative_workflows.py::test_revocation_rolls_back_proposal_and_document_together[file]
+ERROR tests/test_v2_creative_workflows.py::test_simultaneous_reviews_commit_one_derived_document[file]
+ERROR tests/test_v2_creative_workflows.py::test_proposal_api_authority_private_response_and_restore[file]
+ERROR tests/test_v2_creative_workflows.py::test_derived_stage_progression_is_bound_ordered_and_never_writes_sources[file]
+ERROR tests/test_v2_creative_workflows.py::test_stage_derivation_rejects_wrong_mode_cas_and_revocation[file]
+ERROR tests/test_v2_creative_workflows.py::test_stage_derivation_http_contract[file]
+1 failed, 138 passed, 70 skipped, 1 warning, 20 errors in 64.70s (0:01:04)

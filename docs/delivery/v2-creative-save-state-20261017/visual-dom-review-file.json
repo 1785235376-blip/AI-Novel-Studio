@@ -1,0 +1,1366 @@
+{
+  "source_results": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/results.json",
+  "source_results_sha256": "7f39c4c915ca9ea767163b50864078978824ad9f414a93078d29630ba351029d",
+  "stats": {
+    "startTime": "2026-10-16T20:01:44.019Z",
+    "duration": 41407.487,
+    "expected": 9,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": 9,
+  "snapshot_count": 39,
+  "reviews": [
+    {
+      "case": "manual persisted v1, exact edits, real save CAS v2 and refresh agree; other-stage dirty remains separate",
+      "project": "creative-save-1366x768",
+      "status": "passed",
+      "attachment_sha256": "ff55347677745ffcc5d7180af9deba5962f8e81ed783d3c195bd925826bbf89a",
+      "ordinary_false_gate_records": 2,
+      "raw_http_body_hashes_verified": 1,
+      "model_execution": "NOT_REQUESTED",
+      "model_counter": "NOT_INSTRUMENTED",
+      "response_fabrication": false,
+      "identity_or_state_injection": false,
+      "production_gate_override": false,
+      "expected_transport_failures": [
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/c475d851-359c-46c1-9e18-812b52d5cb35/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/c475d851-359c-46c1-9e18-812b52d5cb35/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/c475d851-359c-46c1-9e18-812b52d5cb35/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/c475d851-359c-46c1-9e18-812b52d5cb35/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/c475d851-359c-46c1-9e18-812b52d5cb35/experimental/creative/capabilities",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/c475d851-359c-46c1-9e18-812b52d5cb35/experimental/creative/adaptation-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/c475d851-359c-46c1-9e18-812b52d5cb35/experimental/creative/adaptation-proposals/model-routes",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/model-center/local-ai/environment",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/c475d851-359c-46c1-9e18-812b52d5cb35/experimental/creative/director-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/c475d851-359c-46c1-9e18-812b52d5cb35/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/c475d851-359c-46c1-9e18-812b52d5cb35/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/c475d851-359c-46c1-9e18-812b52d5cb35/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/c475d851-359c-46c1-9e18-812b52d5cb35/experimental/creative/capabilities",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/c475d851-359c-46c1-9e18-812b52d5cb35/experimental/creative/adaptation-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/c475d851-359c-46c1-9e18-812b52d5cb35/experimental/creative/adaptation-proposals/model-routes",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/model-center/local-ai/environment",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/c475d851-359c-46c1-9e18-812b52d5cb35/experimental/creative/director-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "snapshots": [
+        {
+          "phase": "manual-v1-initial-current-saved",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 保存 A\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 保存 A\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\nd494ddd6-6373-4889-a30c-5073bd4b23c1\n\n原始手动画面 保存 A\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 保存 A",
+          "action": "原始手动内容 保存 A"
+        },
+        {
+          "phase": "manual-v1-dirty-real-input",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 保存 A 已修改\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 保存 A\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\nd494ddd6-6373-4889-a30c-5073bd4b23c1\n\n原始手动画面 保存 A\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：未保存更改 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 保存 A 已修改",
+          "action": "  真实手动保存正文 🙂\n首尾空格与换行保留  \n"
+        },
+        {
+          "phase": "manual-real-put-held-saving-and-navigation-fenced",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 保存 A 已修改\n未保存\n新建文档\n保存中…\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 保存 A\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\nd494ddd6-6373-4889-a30c-5073bd4b23c1\n\n原始手动画面 保存 A\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：保存中… · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 保存 A 已修改",
+          "action": "  真实手动保存正文 🙂\n首尾空格与换行保留  \n"
+        },
+        {
+          "phase": "manual-v2-save-receipt-and-original-owner-readback",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 保存 A 已修改\n已保存 · v2\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 保存 A\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\nd494ddd6-6373-4889-a30c-5073bd4b23c1\n\n原始手动画面 保存 A\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v2\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 保存 A 已修改",
+          "action": "  真实手动保存正文 🙂\n首尾空格与换行保留  \n"
+        },
+        {
+          "phase": "manual-v2-refresh-reopen-saved",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 保存 A 已修改\n已保存 · v2\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 保存 A\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\nd494ddd6-6373-4889-a30c-5073bd4b23c1\n\n原始手动画面 保存 A\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v2\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 保存 A 已修改",
+          "action": "  真实手动保存正文 🙂\n首尾空格与换行保留  \n"
+        },
+        {
+          "phase": "current-saved-v1-and-other-stage-real-dirty",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 已保存 B\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 已保存 B\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n63757236-4794-4e1b-b390-f9bf536034c0\n\n原始手动画面 已保存 B\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD\n· 其他阶段未保存：剧本（仅本页内存）",
+          "title": "手动文档 已保存 B",
+          "action": "原始手动内容 已保存 B"
+        }
+      ]
+    },
+    {
+      "case": "real offline transport uncertainty and real original CAS409 retain the local draft and explicit reconciliation",
+      "project": "creative-save-1366x768",
+      "status": "passed",
+      "attachment_sha256": "7884821e8625daafc5c300adb34552d92f6ca058ed0afff428dbd1f38d3689c5",
+      "ordinary_false_gate_records": 2,
+      "raw_http_body_hashes_verified": 1,
+      "model_execution": "NOT_REQUESTED",
+      "model_counter": "NOT_INSTRUMENTED",
+      "response_fabrication": false,
+      "identity_or_state_injection": false,
+      "production_gate_override": false,
+      "expected_transport_failures": [
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/a10845d1-02c6-4c53-bbb3-5e5944984c77/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/a10845d1-02c6-4c53-bbb3-5e5944984c77/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/a10845d1-02c6-4c53-bbb3-5e5944984c77/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/a10845d1-02c6-4c53-bbb3-5e5944984c77/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/a10845d1-02c6-4c53-bbb3-5e5944984c77/experimental/creative/capabilities",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/a10845d1-02c6-4c53-bbb3-5e5944984c77/experimental/creative/adaptation-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/a10845d1-02c6-4c53-bbb3-5e5944984c77/experimental/creative/adaptation-proposals/model-routes",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/model-center/local-ai/environment",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/a10845d1-02c6-4c53-bbb3-5e5944984c77/experimental/creative/director-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/a10845d1-02c6-4c53-bbb3-5e5944984c77/experimental/creative/documents/9854f342-5af1-4e36-882b-6263a1784894",
+          "method": "PUT",
+          "failure": "net::ERR_INTERNET_DISCONNECTED"
+        }
+      ],
+      "snapshots": [
+        {
+          "phase": "offline-unknown-keeps-local-draft-and-current-status",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 故障保留\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 故障保留\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n002d40e7-a4bd-4f8a-ab5c-bc1e164c0c67\n\n原始手动画面 故障保留\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：需核对保存结果 · 本地草稿保留 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 故障保留",
+          "action": "网络故障必须保留的本地草稿 🙂"
+        },
+        {
+          "phase": "real-verify-get-held-does-not-claim-save-write",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 故障保留\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 故障保留\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n002d40e7-a4bd-4f8a-ab5c-bc1e164c0c67\n\n原始手动画面 故障保留\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：核对服务端版本中… · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 故障保留",
+          "action": "原始手动内容 故障保留"
+        },
+        {
+          "phase": "late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 核对期间的 B\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 核对期间的 B\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n896e2ad2-a65c-4b62-af30-0edb033f462d\n\n原始手动画面 核对期间的 B\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 核对期间的 B",
+          "action": "原始手动内容 核对期间的 B"
+        },
+        {
+          "phase": "real-cas409-keeps-local-draft-and-server-v2",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 故障保留\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 故障保留\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n002d40e7-a4bd-4f8a-ab5c-bc1e164c0c67\n\n原始手动画面 故障保留\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：需核对保存结果 · 本地草稿保留 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 故障保留",
+          "action": "本地旧v1上的独立编辑，409后仍保留"
+        },
+        {
+          "phase": "real-cas409-author-keeps-local-draft-after-owner-check",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 故障保留\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 故障保留\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n002d40e7-a4bd-4f8a-ab5c-bc1e164c0c67\n\n原始手动画面 故障保留\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：需核对保存结果 · 本地草稿保留 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 故障保留",
+          "action": "本地旧v1上的独立编辑，409后仍保留"
+        }
+      ]
+    },
+    {
+      "case": "late original history readbacks cannot contaminate another document or an explicitly changed project and branch",
+      "project": "creative-save-1366x768",
+      "status": "passed",
+      "attachment_sha256": "2a700537bec579d3cc27a52f1980e9dc18eebc32e4ebdfb9b5a2199685ea7555",
+      "ordinary_false_gate_records": 3,
+      "raw_http_body_hashes_verified": 2,
+      "model_execution": "NOT_REQUESTED",
+      "model_counter": "NOT_INSTRUMENTED",
+      "response_fabrication": false,
+      "identity_or_state_injection": false,
+      "production_gate_override": false,
+      "expected_transport_failures": [
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/experimental/creative/capabilities",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/experimental/creative/adaptation-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/experimental/creative/adaptation-proposals/model-routes",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/model-center/local-ai/environment",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/experimental/creative/director-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/ed40b708-c172-4d04-b526-e732910b6b7d/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/ed40b708-c172-4d04-b526-e732910b6b7d/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/ed40b708-c172-4d04-b526-e732910b6b7d/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/experimental/creative/capabilities",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/experimental/creative/adaptation-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/experimental/creative/adaptation-proposals/model-routes",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/model-center/local-ai/environment",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/experimental/creative/director-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "snapshots": [
+        {
+          "phase": "late-history-a-cannot-relabel-or-clear-dirty-document-b",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 当前 B\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 当前 B\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n524a870f-4542-4e6e-9033-294c7b58fe50\n\n原始手动画面 当前 B\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：未保存更改 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 当前 B",
+          "action": "B文档真实未保存编辑，不接受A的晚读回"
+        },
+        {
+          "phase": "late-history-old-scope-cannot-contaminate-current-saved-v1",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 新范围 C\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 新范围 C\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\nccc1b289-6e3f-4900-a6e6-ac7b10df7371\n\n原始手动画面 新范围 C\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 新范围 C",
+          "action": "原始手动内容 新范围 C"
+        }
+      ]
+    },
+    {
+      "case": "manual persisted v1, exact edits, real save CAS v2 and refresh agree; other-stage dirty remains separate",
+      "project": "creative-save-1440x900",
+      "status": "passed",
+      "attachment_sha256": "e0f81797dc1c75e9298bc4484e49485e3a6f26c95600eab9fd8354d5a6482c56",
+      "ordinary_false_gate_records": 2,
+      "raw_http_body_hashes_verified": 1,
+      "model_execution": "NOT_REQUESTED",
+      "model_counter": "NOT_INSTRUMENTED",
+      "response_fabrication": false,
+      "identity_or_state_injection": false,
+      "production_gate_override": false,
+      "expected_transport_failures": [
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/80fbf07b-4ff0-4d3d-a647-599f01091f35/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/80fbf07b-4ff0-4d3d-a647-599f01091f35/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/80fbf07b-4ff0-4d3d-a647-599f01091f35/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/80fbf07b-4ff0-4d3d-a647-599f01091f35/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/80fbf07b-4ff0-4d3d-a647-599f01091f35/experimental/creative/capabilities",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/80fbf07b-4ff0-4d3d-a647-599f01091f35/experimental/creative/adaptation-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/80fbf07b-4ff0-4d3d-a647-599f01091f35/experimental/creative/adaptation-proposals/model-routes",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/model-center/local-ai/environment",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/80fbf07b-4ff0-4d3d-a647-599f01091f35/experimental/creative/director-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/80fbf07b-4ff0-4d3d-a647-599f01091f35/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/80fbf07b-4ff0-4d3d-a647-599f01091f35/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/80fbf07b-4ff0-4d3d-a647-599f01091f35/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/80fbf07b-4ff0-4d3d-a647-599f01091f35/experimental/creative/capabilities",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/80fbf07b-4ff0-4d3d-a647-599f01091f35/experimental/creative/adaptation-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/80fbf07b-4ff0-4d3d-a647-599f01091f35/experimental/creative/adaptation-proposals/model-routes",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/model-center/local-ai/environment",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/80fbf07b-4ff0-4d3d-a647-599f01091f35/experimental/creative/director-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "snapshots": [
+        {
+          "phase": "manual-v1-initial-current-saved",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 保存 A\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 保存 A\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\ndbc44f10-7882-4c58-ae6b-0a79269c45db\n\n原始手动画面 保存 A\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 保存 A",
+          "action": "原始手动内容 保存 A"
+        },
+        {
+          "phase": "manual-v1-dirty-real-input",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 保存 A 已修改\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 保存 A\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\ndbc44f10-7882-4c58-ae6b-0a79269c45db\n\n原始手动画面 保存 A\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：未保存更改 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 保存 A 已修改",
+          "action": "  真实手动保存正文 🙂\n首尾空格与换行保留  \n"
+        },
+        {
+          "phase": "manual-real-put-held-saving-and-navigation-fenced",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 保存 A 已修改\n未保存\n新建文档\n保存中…\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 保存 A\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\ndbc44f10-7882-4c58-ae6b-0a79269c45db\n\n原始手动画面 保存 A\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：保存中… · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 保存 A 已修改",
+          "action": "  真实手动保存正文 🙂\n首尾空格与换行保留  \n"
+        },
+        {
+          "phase": "manual-v2-save-receipt-and-original-owner-readback",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 保存 A 已修改\n已保存 · v2\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 保存 A\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\ndbc44f10-7882-4c58-ae6b-0a79269c45db\n\n原始手动画面 保存 A\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v2\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 保存 A 已修改",
+          "action": "  真实手动保存正文 🙂\n首尾空格与换行保留  \n"
+        },
+        {
+          "phase": "manual-v2-refresh-reopen-saved",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 保存 A 已修改\n已保存 · v2\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 保存 A\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\ndbc44f10-7882-4c58-ae6b-0a79269c45db\n\n原始手动画面 保存 A\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v2\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 保存 A 已修改",
+          "action": "  真实手动保存正文 🙂\n首尾空格与换行保留  \n"
+        },
+        {
+          "phase": "current-saved-v1-and-other-stage-real-dirty",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 已保存 B\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 已保存 B\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\na2bc4149-2461-4092-8b08-e8af820b36ca\n\n原始手动画面 已保存 B\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD\n· 其他阶段未保存：剧本（仅本页内存）",
+          "title": "手动文档 已保存 B",
+          "action": "原始手动内容 已保存 B"
+        }
+      ]
+    },
+    {
+      "case": "real offline transport uncertainty and real original CAS409 retain the local draft and explicit reconciliation",
+      "project": "creative-save-1440x900",
+      "status": "passed",
+      "attachment_sha256": "d6f4781949a91b8cf9b5172889bc649c7d4e6ede82f718aa1b5be16c021db4fd",
+      "ordinary_false_gate_records": 2,
+      "raw_http_body_hashes_verified": 1,
+      "model_execution": "NOT_REQUESTED",
+      "model_counter": "NOT_INSTRUMENTED",
+      "response_fabrication": false,
+      "identity_or_state_injection": false,
+      "production_gate_override": false,
+      "expected_transport_failures": [
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/capabilities",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/adaptation-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/adaptation-proposals/model-routes",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/model-center/local-ai/environment",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/director-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/1da65bfa-9b04-4641-a3d9-2bc9b4dd5252/experimental/creative/documents/5768ae72-8021-4038-9897-d24380f88afe",
+          "method": "PUT",
+          "failure": "net::ERR_INTERNET_DISCONNECTED"
+        }
+      ],
+      "snapshots": [
+        {
+          "phase": "offline-unknown-keeps-local-draft-and-current-status",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 故障保留\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 故障保留\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n1864853c-5fe7-4a47-ac9d-f2edd05128e0\n\n原始手动画面 故障保留\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：需核对保存结果 · 本地草稿保留 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 故障保留",
+          "action": "网络故障必须保留的本地草稿 🙂"
+        },
+        {
+          "phase": "real-verify-get-held-does-not-claim-save-write",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 故障保留\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 故障保留\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n1864853c-5fe7-4a47-ac9d-f2edd05128e0\n\n原始手动画面 故障保留\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：核对服务端版本中… · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 故障保留",
+          "action": "原始手动内容 故障保留"
+        },
+        {
+          "phase": "late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 核对期间的 B\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 核对期间的 B\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\neb27c2d3-6c7c-481b-851a-c78599b1d849\n\n原始手动画面 核对期间的 B\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 核对期间的 B",
+          "action": "原始手动内容 核对期间的 B"
+        },
+        {
+          "phase": "real-cas409-keeps-local-draft-and-server-v2",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 故障保留\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 故障保留\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n1864853c-5fe7-4a47-ac9d-f2edd05128e0\n\n原始手动画面 故障保留\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：需核对保存结果 · 本地草稿保留 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 故障保留",
+          "action": "本地旧v1上的独立编辑，409后仍保留"
+        },
+        {
+          "phase": "real-cas409-author-keeps-local-draft-after-owner-check",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 故障保留\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 故障保留\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n1864853c-5fe7-4a47-ac9d-f2edd05128e0\n\n原始手动画面 故障保留\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：需核对保存结果 · 本地草稿保留 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 故障保留",
+          "action": "本地旧v1上的独立编辑，409后仍保留"
+        }
+      ]
+    },
+    {
+      "case": "late original history readbacks cannot contaminate another document or an explicitly changed project and branch",
+      "project": "creative-save-1440x900",
+      "status": "passed",
+      "attachment_sha256": "eeaf73aaf7a7574cac3fe61b00f21918fd7c8f6f03765a0f9f71d85125454f1d",
+      "ordinary_false_gate_records": 3,
+      "raw_http_body_hashes_verified": 2,
+      "model_execution": "NOT_REQUESTED",
+      "model_counter": "NOT_INSTRUMENTED",
+      "response_fabrication": false,
+      "identity_or_state_injection": false,
+      "production_gate_override": false,
+      "expected_transport_failures": [
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/2bf35195-9551-4321-ba94-a7e4deafbe40/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/2bf35195-9551-4321-ba94-a7e4deafbe40/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/2bf35195-9551-4321-ba94-a7e4deafbe40/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/2bf35195-9551-4321-ba94-a7e4deafbe40/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/2bf35195-9551-4321-ba94-a7e4deafbe40/experimental/creative/capabilities",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/2bf35195-9551-4321-ba94-a7e4deafbe40/experimental/creative/adaptation-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/2bf35195-9551-4321-ba94-a7e4deafbe40/experimental/creative/adaptation-proposals/model-routes",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/model-center/local-ai/environment",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/2bf35195-9551-4321-ba94-a7e4deafbe40/experimental/creative/director-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/2bf35195-9551-4321-ba94-a7e4deafbe40/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/2bf35195-9551-4321-ba94-a7e4deafbe40/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/2bf35195-9551-4321-ba94-a7e4deafbe40/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/2bf35195-9551-4321-ba94-a7e4deafbe40/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/b6f1c2af-36a5-4ec2-a81c-6ed837282509/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/b6f1c2af-36a5-4ec2-a81c-6ed837282509/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/b6f1c2af-36a5-4ec2-a81c-6ed837282509/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/b6f1c2af-36a5-4ec2-a81c-6ed837282509/experimental/creative/capabilities",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/b6f1c2af-36a5-4ec2-a81c-6ed837282509/experimental/creative/adaptation-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/b6f1c2af-36a5-4ec2-a81c-6ed837282509/experimental/creative/adaptation-proposals/model-routes",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/model-center/local-ai/environment",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/b6f1c2af-36a5-4ec2-a81c-6ed837282509/experimental/creative/director-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "snapshots": [
+        {
+          "phase": "late-history-a-cannot-relabel-or-clear-dirty-document-b",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 当前 B\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 当前 B\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\ne24c50e7-971c-4cad-81b1-b88d4a84898a\n\n原始手动画面 当前 B\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：未保存更改 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 当前 B",
+          "action": "B文档真实未保存编辑，不接受A的晚读回"
+        },
+        {
+          "phase": "late-history-old-scope-cannot-contaminate-current-saved-v1",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 新范围 C\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 新范围 C\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\ne66582cd-308f-4189-a438-cecf1c8b6b56\n\n原始手动画面 新范围 C\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 新范围 C",
+          "action": "原始手动内容 新范围 C"
+        }
+      ]
+    },
+    {
+      "case": "manual persisted v1, exact edits, real save CAS v2 and refresh agree; other-stage dirty remains separate",
+      "project": "creative-save-1920x1080",
+      "status": "passed",
+      "attachment_sha256": "5f75efad5b6ece45abc19901580deff54e5c9724e9058f01fe9f9e2b24775aae",
+      "ordinary_false_gate_records": 2,
+      "raw_http_body_hashes_verified": 1,
+      "model_execution": "NOT_REQUESTED",
+      "model_counter": "NOT_INSTRUMENTED",
+      "response_fabrication": false,
+      "identity_or_state_injection": false,
+      "production_gate_override": false,
+      "expected_transport_failures": [
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/567d4571-4d42-411d-8a33-519282b922ae/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/567d4571-4d42-411d-8a33-519282b922ae/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/567d4571-4d42-411d-8a33-519282b922ae/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/567d4571-4d42-411d-8a33-519282b922ae/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/567d4571-4d42-411d-8a33-519282b922ae/experimental/creative/capabilities",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/567d4571-4d42-411d-8a33-519282b922ae/experimental/creative/adaptation-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/567d4571-4d42-411d-8a33-519282b922ae/experimental/creative/adaptation-proposals/model-routes",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/model-center/local-ai/environment",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/567d4571-4d42-411d-8a33-519282b922ae/experimental/creative/director-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/567d4571-4d42-411d-8a33-519282b922ae/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/567d4571-4d42-411d-8a33-519282b922ae/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/567d4571-4d42-411d-8a33-519282b922ae/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/567d4571-4d42-411d-8a33-519282b922ae/experimental/creative/capabilities",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/567d4571-4d42-411d-8a33-519282b922ae/experimental/creative/adaptation-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/567d4571-4d42-411d-8a33-519282b922ae/experimental/creative/adaptation-proposals/model-routes",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/model-center/local-ai/environment",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/567d4571-4d42-411d-8a33-519282b922ae/experimental/creative/director-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "snapshots": [
+        {
+          "phase": "manual-v1-initial-current-saved",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 保存 A\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 保存 A\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n31560723-3002-466d-a9a1-a7a632f6e967\n\n原始手动画面 保存 A\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 保存 A",
+          "action": "原始手动内容 保存 A"
+        },
+        {
+          "phase": "manual-v1-dirty-real-input",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 保存 A 已修改\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 保存 A\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n31560723-3002-466d-a9a1-a7a632f6e967\n\n原始手动画面 保存 A\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：未保存更改 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 保存 A 已修改",
+          "action": "  真实手动保存正文 🙂\n首尾空格与换行保留  \n"
+        },
+        {
+          "phase": "manual-real-put-held-saving-and-navigation-fenced",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 保存 A 已修改\n未保存\n新建文档\n保存中…\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 保存 A\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n31560723-3002-466d-a9a1-a7a632f6e967\n\n原始手动画面 保存 A\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：保存中… · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 保存 A 已修改",
+          "action": "  真实手动保存正文 🙂\n首尾空格与换行保留  \n"
+        },
+        {
+          "phase": "manual-v2-save-receipt-and-original-owner-readback",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 保存 A 已修改\n已保存 · v2\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 保存 A\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n31560723-3002-466d-a9a1-a7a632f6e967\n\n原始手动画面 保存 A\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v2\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 保存 A 已修改",
+          "action": "  真实手动保存正文 🙂\n首尾空格与换行保留  \n"
+        },
+        {
+          "phase": "manual-v2-refresh-reopen-saved",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 保存 A 已修改\n已保存 · v2\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 保存 A\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n31560723-3002-466d-a9a1-a7a632f6e967\n\n原始手动画面 保存 A\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v2\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 保存 A 已修改",
+          "action": "  真实手动保存正文 🙂\n首尾空格与换行保留  \n"
+        },
+        {
+          "phase": "current-saved-v1-and-other-stage-real-dirty",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 已保存 B\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 已保存 B\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\nbf6adaed-8820-4690-9c2f-f4d99fb3e9f6\n\n原始手动画面 已保存 B\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD\n· 其他阶段未保存：剧本（仅本页内存）",
+          "title": "手动文档 已保存 B",
+          "action": "原始手动内容 已保存 B"
+        }
+      ]
+    },
+    {
+      "case": "real offline transport uncertainty and real original CAS409 retain the local draft and explicit reconciliation",
+      "project": "creative-save-1920x1080",
+      "status": "passed",
+      "attachment_sha256": "ff8366debbe665fc121b10a18cdb0af84964df36a19a4a434827ea8cb54f2a50",
+      "ordinary_false_gate_records": 2,
+      "raw_http_body_hashes_verified": 1,
+      "model_execution": "NOT_REQUESTED",
+      "model_counter": "NOT_INSTRUMENTED",
+      "response_fabrication": false,
+      "identity_or_state_injection": false,
+      "production_gate_override": false,
+      "expected_transport_failures": [
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/27e39e62-66f1-41db-b3ab-5e9871d39e8a/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/27e39e62-66f1-41db-b3ab-5e9871d39e8a/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/27e39e62-66f1-41db-b3ab-5e9871d39e8a/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/27e39e62-66f1-41db-b3ab-5e9871d39e8a/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/27e39e62-66f1-41db-b3ab-5e9871d39e8a/experimental/creative/capabilities",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/27e39e62-66f1-41db-b3ab-5e9871d39e8a/experimental/creative/adaptation-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/27e39e62-66f1-41db-b3ab-5e9871d39e8a/experimental/creative/adaptation-proposals/model-routes",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/model-center/local-ai/environment",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/27e39e62-66f1-41db-b3ab-5e9871d39e8a/experimental/creative/director-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/27e39e62-66f1-41db-b3ab-5e9871d39e8a/experimental/creative/documents/bec4df40-d757-41ec-b2f6-824aba2b8441",
+          "method": "PUT",
+          "failure": "net::ERR_INTERNET_DISCONNECTED"
+        }
+      ],
+      "snapshots": [
+        {
+          "phase": "offline-unknown-keeps-local-draft-and-current-status",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 故障保留\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 故障保留\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n392f2a14-764e-4733-a819-263567ec60b8\n\n原始手动画面 故障保留\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：需核对保存结果 · 本地草稿保留 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 故障保留",
+          "action": "网络故障必须保留的本地草稿 🙂"
+        },
+        {
+          "phase": "real-verify-get-held-does-not-claim-save-write",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 故障保留\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 故障保留\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n392f2a14-764e-4733-a819-263567ec60b8\n\n原始手动画面 故障保留\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：核对服务端版本中… · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 故障保留",
+          "action": "原始手动内容 故障保留"
+        },
+        {
+          "phase": "late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 核对期间的 B\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 核对期间的 B\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n9ef68225-39c2-4c48-8ff5-43290ba93f1b\n\n原始手动画面 核对期间的 B\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 核对期间的 B",
+          "action": "原始手动内容 核对期间的 B"
+        },
+        {
+          "phase": "real-cas409-keeps-local-draft-and-server-v2",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 故障保留\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 故障保留\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n392f2a14-764e-4733-a819-263567ec60b8\n\n原始手动画面 故障保留\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：需核对保存结果 · 本地草稿保留 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 故障保留",
+          "action": "本地旧v1上的独立编辑，409后仍保留"
+        },
+        {
+          "phase": "real-cas409-author-keeps-local-draft-after-owner-check",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 故障保留\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 故障保留\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n392f2a14-764e-4733-a819-263567ec60b8\n\n原始手动画面 故障保留\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：需核对保存结果 · 本地草稿保留 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 故障保留",
+          "action": "本地旧v1上的独立编辑，409后仍保留"
+        }
+      ]
+    },
+    {
+      "case": "late original history readbacks cannot contaminate another document or an explicitly changed project and branch",
+      "project": "creative-save-1920x1080",
+      "status": "passed",
+      "attachment_sha256": "cf47347feca328669131d8faa09a3892a3532d770e17decce02804c3c08c97b0",
+      "ordinary_false_gate_records": 3,
+      "raw_http_body_hashes_verified": 2,
+      "model_execution": "NOT_REQUESTED",
+      "model_counter": "NOT_INSTRUMENTED",
+      "response_fabrication": false,
+      "identity_or_state_injection": false,
+      "production_gate_override": false,
+      "expected_transport_failures": [
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/164d7632-9b71-4410-a1d7-25cb7eb0e2aa/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/164d7632-9b71-4410-a1d7-25cb7eb0e2aa/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/164d7632-9b71-4410-a1d7-25cb7eb0e2aa/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/164d7632-9b71-4410-a1d7-25cb7eb0e2aa/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/164d7632-9b71-4410-a1d7-25cb7eb0e2aa/experimental/creative/capabilities",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/164d7632-9b71-4410-a1d7-25cb7eb0e2aa/experimental/creative/adaptation-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/164d7632-9b71-4410-a1d7-25cb7eb0e2aa/experimental/creative/adaptation-proposals/model-routes",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/model-center/local-ai/environment",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/164d7632-9b71-4410-a1d7-25cb7eb0e2aa/experimental/creative/director-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/164d7632-9b71-4410-a1d7-25cb7eb0e2aa/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/164d7632-9b71-4410-a1d7-25cb7eb0e2aa/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/164d7632-9b71-4410-a1d7-25cb7eb0e2aa/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/164d7632-9b71-4410-a1d7-25cb7eb0e2aa/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/experimental/features",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/3f4a167d-3745-42cb-86c4-43706839a115/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/3f4a167d-3745-42cb-86c4-43706839a115/studio",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/projects/3f4a167d-3745-42cb-86c4-43706839a115/studio/assets",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/3f4a167d-3745-42cb-86c4-43706839a115/experimental/creative/capabilities",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/3f4a167d-3745-42cb-86c4-43706839a115/experimental/creative/adaptation-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/3f4a167d-3745-42cb-86c4-43706839a115/experimental/creative/adaptation-proposals/model-routes",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/model-center/local-ai/environment",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "path": "/api/novels/3f4a167d-3745-42cb-86c4-43706839a115/experimental/creative/director-proposals",
+          "method": "GET",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "snapshots": [
+        {
+          "phase": "late-history-a-cannot-relabel-or-clear-dirty-document-b",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 当前 B\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 当前 B\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n77b07f25-9571-4cc0-87fa-1dbcfb8285be\n\n原始手动画面 当前 B\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：未保存更改 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 当前 B",
+          "action": "B文档真实未保存编辑，不接受A的晚读回"
+        },
+        {
+          "phase": "late-history-old-scope-cannot-contaminate-current-saved-v1",
+          "source": "original_browser_dom_read_only",
+          "canvas_text": "Creative Canvas\n手动文档 新范围 C\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 新范围 C\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n0b76b5bd-d3d1-41ad-9613-716767ea1e5a\n\n原始手动画面 新范围 C\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+          "footer_text": "当前分镜：已保存 · v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+          "title": "手动文档 新范围 C",
+          "action": "原始手动内容 新范围 C"
+        }
+      ]
+    }
+  ]
+}

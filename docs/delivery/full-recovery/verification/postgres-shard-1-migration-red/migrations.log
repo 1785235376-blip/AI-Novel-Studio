@@ -1,0 +1,41 @@
+PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit
+Applied 001_initial.sql
+Applied 002_runtime_jobs.sql
+Applied 003_document_versions.sql
+Applied 004_lore_foundation.sql
+Applied 005_lore_memory.sql
+Applied 006_context_intelligence.sql
+Applied 007_continuity_foundations.sql
+Applied 008_narrative_state.sql
+Applied 009_narrative_findings.sql
+Applied 010_narrative_progress.sql
+Applied 011_narrative_change_proposals.sql
+Applied 012_collaboration_scope_foundation.sql
+Applied 013_branch_revision_optimistic_concurrency.sql
+Applied 014_scope_authorization_foundation.sql
+Applied 015_collaboration_runtime_foundation.sql
+Applied 016_generation_snapshot_ownership.sql
+Applied 017_chapter_archive_state.sql
+Applied 018_context_privacy.sql
+Applied 019_experimental_scope_documents.sql
+Traceback (most recent call last):
+  File "<string>", line 10, in <module>
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/psycopg/connection.py", line 304, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedFile: could not load library "/mnt/d/小说/AI-Novel-Studio-Latest-Product/.runtime/full-recovery/wsl/portable/usr/lib/postgresql/16/lib/llvmjit.so": libLLVM-17.so.1: cannot open shared object file: No such file or directory
+CONTEXT:  SQL statement "
+      INSERT INTO chapter_identities(novel_id, chapter_number, chapter_id, state, provenance)
+      SELECT DISTINCT aliases.novel_id, aliases.number::INTEGER, NULL::UUID, 'DELETED', 'LEGACY_REFERENCE'
+      FROM (
+        SELECT n.id AS novel_id,
+          CASE WHEN substring(ref.value #>> '{}' FROM length(n.slug)+2) ~ '^[1-9][0-9]{0,9}(:v[0-9]+)?$'
+            THEN split_part(substring(ref.value #>> '{}' FROM length(n.slug)+2), ':', 1)::BIGINT
+            ELSE NULL END AS number
+        FROM public.novels source
+        CROSS JOIN LATERAL jsonb_path_query(source.metadata::jsonb, '$.** ? (@.type() == "string")') ref(value)
+        JOIN novels n ON left(ref.value #>> '{}', length(n.slug)+1) = n.slug || ':'
+      ) aliases
+      WHERE aliases.number BETWEEN 1 AND 2147483647
+      ON CONFLICT (novel_id, chapter_number) DO NOTHING
+    "
+PL/pgSQL function inline_code_block line 14 at EXECUTE

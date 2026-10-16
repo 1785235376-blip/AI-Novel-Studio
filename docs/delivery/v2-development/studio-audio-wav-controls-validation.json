@@ -1,0 +1,57 @@
+{
+  "contract": "studio-audio-wav-controls-validation/1",
+  "base_commit": "005893ef873f15bf1745e6afef454fc50a8f8c84",
+  "scope": "Standalone m8.audio.trim PCM WAV controls; no Graph expansion, models, GPU, remote services, or paid calls.",
+  "evidence_kind": "Synthetic authored waveform processed by real guarded FFmpeg CPU and real PCM decoder; original File/PostgreSQL project owners, original audio file store and Asset/review paths.",
+  "ffmpeg_version": "7.1.5-0+deb13u1",
+  "checks": [
+    {
+      "label": "audio-controls-file-finalproof",
+      "status": "PASS",
+      "passed": 159,
+      "deselected": 44,
+      "source_changed_during_check": false,
+      "log_sha256": "08ad8ddf0be2848b06732ee82c8cf7e508f0fbd5f23d95b06854a533c4101f23",
+      "finished_utc": "2026-10-13T09:04:09.723841+00:00"
+    },
+    {
+      "label": "audio-controls-pg-finalproof",
+      "status": "PASS",
+      "passed": 159,
+      "deselected": 44,
+      "source_changed_during_check": false,
+      "log_sha256": "8a8efadd53e57941e85a270b78e633ba712c71a2e9e834d36172efbf1ab5cfe9",
+      "finished_utc": "2026-10-13T09:04:27.275534+00:00"
+    }
+  ],
+  "postgres": {
+    "version": "17.11",
+    "fresh_database": true,
+    "preexisting_database_reused": false,
+    "empty_before_migrations": true,
+    "original_migrations_applied": 20,
+    "server_stop": "stopped",
+    "database_retained": true
+  },
+  "test_files": [
+    "tests/test_v2_audio_wav_controls.py",
+    "tests/test_v2_audio_wav_controls_api.py",
+    "tests/test_v2_studio_audio_listing.py",
+    "tests/test_v2_reconstructed_native_process_bounds.py",
+    "tests/test_audio_production_api.py",
+    "tests/test_audio_providers.py"
+  ],
+  "source_sha256": {
+    "app/creative/production_execution.py": "4fead61410739f3f63a1320909200fcda176d14ab8b7c11d9a97af813c34e814",
+    "app/creative/production_execution_models.py": "ab97143ca95a438e96ee31048412b82f8c2521ffdc43f438e637853f60b97d95",
+    "app/services/studio_audio_execution.py": "3afbce88f457778487592e8d593e34688ba1e5340e9ca69485f4b0c963d8fadc",
+    "tests/test_v2_audio_wav_controls.py": "70f2e9b9ec6567db720e1b4d1b6363d566e260d801d55a7b95cfe549a15c2192",
+    "tests/test_v2_audio_wav_controls_api.py": "6c865d94ecc99037f4487d4e7e5971703821d5740ef50a440963f6fb5a8ea330"
+  },
+  "boundaries": [
+    "Other containers and codec expansion not verified.",
+    "Windows/device playback and actual model quality remain local acceptance.",
+    "Wider base-commit Graph contract run separately found two existing target-budget failures; this slice does not modify Graph owners or their tests."
+  ],
+  "earlier_runs": "Initial proof-deletion review gap was repaired and tested. Initial stereo clipping test used an incorrect mono rematrix assumption; corrected authored-stereo fixture before final runs. Earlier raw evidence remains local and is not included here."
+}

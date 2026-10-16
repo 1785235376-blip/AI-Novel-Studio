@@ -1,0 +1,28 @@
+Looking in links: d:\小说\AI-Novel-Studio-Latest-Product\.runtime\full-recovery\windows-runtime-cache\wheels
+Processing d:\小说\ai-novel-studio-latest-product\.runtime\full-recovery\windows-runtime-cache\wheels\attrs-26.1.0-py3-none-any.whl (from -r D:\小说\AI-Novel-Studio-Latest-Product\docs\delivery\full-recovery\new-windows-runtime-wheels.lock.txt (line 1))
+Processing d:\小说\ai-novel-studio-latest-product\.runtime\full-recovery\windows-runtime-cache\wheels\jsonschema-4.26.0-py3-none-any.whl (from -r D:\小说\AI-Novel-Studio-Latest-Product\docs\delivery\full-recovery\new-windows-runtime-wheels.lock.txt (line 2))
+Processing d:\小说\ai-novel-studio-latest-product\.runtime\full-recovery\windows-runtime-cache\wheels\jsonschema_specifications-2025.9.1-py3-none-any.whl (from -r D:\小说\AI-Novel-Studio-Latest-Product\docs\delivery\full-recovery\new-windows-runtime-wheels.lock.txt (line 3))
+Processing d:\小说\ai-novel-studio-latest-product\.runtime\full-recovery\windows-runtime-cache\wheels\pypdf-6.19.0-py3-none-any.whl (from -r D:\小说\AI-Novel-Studio-Latest-Product\docs\delivery\full-recovery\new-windows-runtime-wheels.lock.txt (line 4))
+Processing d:\小说\ai-novel-studio-latest-product\.runtime\full-recovery\windows-runtime-cache\wheels\referencing-0.37.0-py3-none-any.whl (from -r D:\小说\AI-Novel-Studio-Latest-Product\docs\delivery\full-recovery\new-windows-runtime-wheels.lock.txt (line 5))
+Processing d:\小说\ai-novel-studio-latest-product\.runtime\full-recovery\windows-runtime-cache\wheels\rpds_py-2026.9.1-cp312-cp312-win_amd64.whl (from -r D:\小说\AI-Novel-Studio-Latest-Product\docs\delivery\full-recovery\new-windows-runtime-wheels.lock.txt (line 6))
+Installing collected packages: rpds-py, referencing, pypdf, jsonschema-specifications, jsonschema, attrs
+Successfully installed attrs-26.1.0 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 pypdf-6.19.0 referencing-0.37.0 rpds-py-2026.9.1
+WARNING: Target directory D:\小说\AI-Novel-Studio-Latest-Product\.runtime\full-recovery\windows-base-final\Runtime\Python\Lib\site-packages\bin already exists. Specify --upgrade to force replacement.
+{
+  "base_application": "D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\windows-base-final",
+  "files": 5087,
+  "actual_embedded_probe": {
+    "python": [
+      3,
+      12,
+      9
+    ],
+    "jsonschema": "4.26.0",
+    "pypdf": "6.19.0"
+  },
+  "original_wheels_preserved": 27,
+  "new_wheels": 6,
+  "all_wheel_records": 33,
+  "native_smoke": "NOT_RUN",
+  "system_runtime_modified": false
+}

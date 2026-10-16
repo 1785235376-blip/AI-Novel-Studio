@@ -1,0 +1,10 @@
+Listing tests:
+  [v2-live-chromium] › v2-asset-relationships-live.spec.ts:41:1 › real File optional asset relationships persist, protect targets and remove explicitly with no chapter prerequisite
+  [v2-live-chromium] › v2-independent-graph-live.spec.ts:35:1 › real independent typed graph saves empty and disconnected drafts, reopens, and reviews an original local workflow without model calls
+  [v2-live-chromium] › v2-independent-studio-live.spec.ts:88:1 › real File independent studio imports, persists, reopens and exports an image with no chapters or model mutation
+  [v2-live-chromium] › v2-independent-studio-live.spec.ts:207:1 › real File independent VIDEO imports, decodes, reopens and exports original bytes without chapters or director
+  [v1-chromium] › v2-independent-graph-live.spec.ts:106:3 › default-off: independent graph remains unavailable without its server gate
+  [v1-chromium] › v2-independent-studio-live.spec.ts:281:1 › default-off independent studio entry is absent and neutral project writes are rejected
+  [v1-acceptance-chromium] › v2-independent-graph-live.spec.ts:106:3 › acceptance-mode: independent graph remains unavailable without its server gate
+  [v1-acceptance-chromium] › v2-independent-studio-live.spec.ts:285:1 › acceptance-mode independent studio stays absent despite an enabled narrative feature setting
+Total: 8 tests in 3 files

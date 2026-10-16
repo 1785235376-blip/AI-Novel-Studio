@@ -1,0 +1,198 @@
+{
+  "id": "d9bd1a55-1698-4cdb-9543-bf39af98bff0",
+  "version": 2,
+  "graph_id": "55e546ef-f729-4855-a9e5-2d4eae9a6181",
+  "graph_version": 1,
+  "status": "WAITING_APPROVAL",
+  "current_node_id": "video",
+  "cache": {
+    "hits": 0,
+    "misses": 2,
+    "mode": "SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY"
+  },
+  "created_at": "2026-10-13T18:15:02.381502+00:00",
+  "updated_at": "2026-10-13T18:15:02.806159+00:00",
+  "reviewed": false,
+  "project_id": "r3-mounted-1387794e357e43ebb903b6be80ae0849",
+  "scope": {
+    "mode": "local",
+    "novel_id": "r3-mounted-1387794e357e43ebb903b6be80ae0849"
+  },
+  "stale": false,
+  "timeout_seconds": 3600,
+  "deadline_at": "2026-10-13T19:15:02.381502+00:00",
+  "node_states": {
+    "board": {
+      "status": "SUCCEEDED",
+      "reviewed": false,
+      "output": {
+        "storyboard": {
+          "document_snapshot": {
+            "id": "7d670733-5a85-4807-b9a5-706ec02587c1",
+            "version": 2,
+            "digest": "e4e635a0a5f0576a002c0108cce3b4fc07eda2ce6f6361e5ef8026ade50f85ec"
+          },
+          "content": {
+            "mode": "STORYBOARD",
+            "title": "SYNTHETIC two-shot plan",
+            "source_chapter_ids": [],
+            "source_independent": true,
+            "scenes": [
+              {
+                "id": "scene-1",
+                "sequence": 1,
+                "source_chapter_id": null,
+                "heading": "INT. SYNTHETIC ROOM",
+                "time": "",
+                "location": "",
+                "characters": [],
+                "action": "",
+                "dialogue": [],
+                "emotion": "",
+                "director_notes": []
+              }
+            ],
+            "shots": [
+              {
+                "id": "shot-1",
+                "number": 1,
+                "scene_id": "scene-1",
+                "shot_size": "MEDIUM",
+                "camera_angle": "EYE_LEVEL",
+                "camera_motion": "STATIC",
+                "duration_seconds": 3,
+                "frame_prompt": "Synthetic character in a blue jacket",
+                "composition": "",
+                "lens": "",
+                "lighting": "Soft key",
+                "environment": "",
+                "sound": "",
+                "color": "",
+                "action": "",
+                "dialogue": [],
+                "sound_effect": "",
+                "director_notes": [],
+                "continuity": {
+                  "next_shot_id": "shot-2",
+                  "characters": "visitor",
+                  "outfit": "blue jacket",
+                  "environment": "",
+                  "camera": ""
+                }
+              },
+              {
+                "id": "shot-2",
+                "number": 2,
+                "scene_id": "scene-1",
+                "shot_size": "MEDIUM",
+                "camera_angle": "EYE_LEVEL",
+                "camera_motion": "STATIC",
+                "duration_seconds": 2,
+                "frame_prompt": "Same synthetic visitor looking up",
+                "composition": "",
+                "lens": "",
+                "lighting": "",
+                "environment": "",
+                "sound": "",
+                "color": "",
+                "action": "",
+                "dialogue": [],
+                "sound_effect": "",
+                "director_notes": [],
+                "continuity": {
+                  "previous_shot_id": "shot-1",
+                  "characters": "",
+                  "outfit": "",
+                  "environment": "",
+                  "camera": ""
+                }
+              }
+            ],
+            "director_notes": [],
+            "video_plan": null,
+            "script": null
+          }
+        }
+      },
+      "error": null
+    },
+    "review": {
+      "status": "PENDING",
+      "reviewed": false,
+      "output": null,
+      "error": null
+    },
+    "shot": {
+      "status": "SUCCEEDED",
+      "reviewed": false,
+      "output": {
+        "shot": {
+          "shot_id": "shot-1",
+          "shot_version": 1,
+          "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471",
+          "document_snapshot": {
+            "id": "7d670733-5a85-4807-b9a5-706ec02587c1",
+            "version": 2,
+            "digest": "e4e635a0a5f0576a002c0108cce3b4fc07eda2ce6f6361e5ef8026ade50f85ec"
+          },
+          "shot": {
+            "id": "shot-1",
+            "number": 1,
+            "scene_id": "scene-1",
+            "shot_size": "MEDIUM",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "duration_seconds": 3,
+            "frame_prompt": "Synthetic character in a blue jacket",
+            "composition": "",
+            "lens": "",
+            "lighting": "Soft key",
+            "environment": "",
+            "sound": "",
+            "color": "",
+            "action": "",
+            "dialogue": [],
+            "sound_effect": "",
+            "director_notes": [],
+            "continuity": {
+              "next_shot_id": "shot-2",
+              "characters": "visitor",
+              "outfit": "blue jacket",
+              "environment": "",
+              "camera": ""
+            }
+          },
+          "image_asset": null,
+          "approved": true
+        }
+      },
+      "error": null
+    },
+    "video": {
+      "status": "WAITING_APPROVAL",
+      "reviewed": false,
+      "output": null,
+      "error": null
+    }
+  },
+  "review": null,
+  "model_called": false,
+  "external_calls": 0,
+  "applied": false,
+  "media_runtime": {
+    "schema_version": 1,
+    "contract": "creative-graph-media/1",
+    "nodes": [
+      {
+        "node_id": "video",
+        "status": "AWAITING_PREVIEW",
+        "preview": null,
+        "execution": null
+      }
+    ],
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_retry": false,
+    "automatic_poll": false,
+    "applied": false
+  }
+}

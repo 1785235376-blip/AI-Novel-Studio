@@ -1,0 +1,31 @@
+{
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "sha": "0df2640c4c1a2d3052bb0a84d14445744d04046f",
+  "tree": "f800c0e8a6d920e8836a027707c8078c5a8421f2",
+  "event": "push",
+  "run_id": 37928438685,
+  "run_attempt": 1,
+  "job_id": 113812940144,
+  "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438685/job/113812940144",
+  "live": {
+    "passed": 6,
+    "failed": 1,
+    "timeout_ms": 180000,
+    "location": "frontend/tests/e2e/v2-creative-live.spec.ts:136:26",
+    "waiting": "POST director-proposals/{proposal.id}/review after native double click"
+  },
+  "geometry": {
+    "passed": 8,
+    "failed": 0
+  },
+  "artifact": {
+    "id": 11615127270,
+    "sha256": "43ac1e673dea6d4a0c82c956e6e9228f78aacf9898732f1ece08eed6a3352fb0",
+    "size": 9074009,
+    "download": "HTTP 403 Forbidden",
+    "status": "TRACE_ACCESS_BLOCKED",
+    "inspected": false,
+    "alternate_route_attempted": false
+  },
+  "diagnosis": "Job log and source only. Exact DOM, network trace and screenshot unavailable. No rerun, force click, timeout increase or baseline update."
+}

@@ -1,0 +1,14 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ✓ src/storyboard/promptAdoptionWriteClient.test.ts (25 tests) 6ms
+ ✓ src/storyboard/PromptAdoptionPanel.test.tsx (8 tests) 128ms
+ ✓ src/storyboard/PromptAdoptionDisclosure.test.tsx (14 tests) 325ms
+ ✓ src/storyboard/PromptAdoptionWritePanel.test.tsx (12 tests) 531ms
+ ✓ src/storyboard/StoryboardWorkspacePanel.test.tsx (24 tests) 544ms
+
+ Test Files  5 passed (5)
+      Tests  83 passed (83)
+   Start at  01:02:31
+   Duration  1.64s (transform 388ms, setup 27ms, collect 1.09s, tests 1.53s, environment 1.70s, prepare 360ms)
+

@@ -1,0 +1,26 @@
+{
+  "backend": "file",
+  "operation": "adopt",
+  "revocation": "membership",
+  "nid": "r3-i-auth-7a61f53005",
+  "workspace": "w-7a61f53005",
+  "branch": "b-7a61f53005",
+  "actor": "writer-7a61f53005",
+  "admin": "init-7a61f53005",
+  "assignment": "w-7a61f53005",
+  "url": "/api/projects/r3-i-auth-7a61f53005/studio/documents/bf292014-de95-4acb-b3e9-602dad0c66ba/shots/32e7507a-78ae-4d13-b9dc-be8a7d68989a/prompt-adoption",
+  "method": "POST",
+  "body": {
+    "shot_id": "32e7507a-78ae-4d13-b9dc-be8a7d68989a",
+    "family_id": "d70c7ed9-e3d8-41a7-9cf7-5fea5cde6127",
+    "asset_id": "6f1ff4ed-6a87-4de6-a41a-1454f479b88d",
+    "revision": 1,
+    "expected_digest": "9d84a5ac50cf1087d3724b3999920cf709e93484be3f53f012b17736357a6296",
+    "expected_version": 1,
+    "expected_digest_target": "ac3ebddde48ab2c75043b137a47389088350aa01bc1917870cc736cc947f6df6",
+    "request_id": "auth-adopt-9dc7f703"
+  },
+  "ipc": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-process-file-final-r3\\temp\\test_independent_process_revoc3\\process-file-adopt-membership-writer",
+  "pause_writer": true,
+  "pause_revoker": false
+}

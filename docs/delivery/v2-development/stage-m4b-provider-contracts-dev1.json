@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "passed": 118,
+  "scope": "76 new uniform-provider contracts plus 42 unchanged model-execution tests",
+  "real_model": "NOT_RUN",
+  "source_sha256": {
+    "app/model_execution.py": "d405f2a18e6ea0d945693d64ddcec3bcc929ada95523c074029dc2eb77f4dc36",
+    "app/model_provider_contracts.py": "f334ad095b101c3a67fd84a098d434dcd6a4564d244b5df58b2334393765d860",
+    "tests/test_v2_model_provider_contracts.py": "a38fb8612cc0c06c3d67c4c4b472d4d6818c0bf973d091a82fd35baa1e66cf2d",
+    "docs/v2/model-provider-contracts.md": "7630b485126ff159cf5b45f888a47a83c51e9fd15b628497c87d19dc8249508d"
+  },
+  "log": "stage-m4b-provider-contracts-dev1.log",
+  "log_sha256": "b016d586cc54631d063b0ef1bfc16ccd8af9624951180d73f4bdb1137692e345",
+  "boundary": "Focused earlier module sources only, not a whole-tree final pass"
+}

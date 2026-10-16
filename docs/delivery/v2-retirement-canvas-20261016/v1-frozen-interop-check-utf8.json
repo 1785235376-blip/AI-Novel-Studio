@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-16T15:11:19.039030+00:00",
+  "command": [
+    "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+    "-X",
+    "utf8",
+    "scripts/check_desktop_integration.py"
+  ],
+  "cwd": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016",
+  "exit_code": 0,
+  "stdout": "{\r\n  \"acceptance_scenarios\": 24,\r\n  \"frozen_protocol_files\": 37,\r\n  \"manifest_sha256\": \"77c1f82f0aec0ef385d95cacf6fe04530b83fb62d2403bc7341cbe6bf19c858c\",\r\n  \"protocol\": \"PoemSeed Local Interop 1.0\",\r\n  \"real_desktop_acceptance\": \"LOCAL_REQUIRED\",\r\n  \"requirements\": 69,\r\n  \"shared_desktop_preparation_files\": 26\r\n}\r\n",
+  "stderr": "",
+  "scope": "Original read-only checker with Python UTF-8 mode; original Windows gbk failure retained. Not runtime V1 acceptance."
+}

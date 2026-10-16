@@ -1,0 +1,91 @@
+............F.......F..                                                  [100%]
+=================================== FAILURES ===================================
+_ test_original_job_request_and_mode_are_verified_even_after_restore[file-request_digest] _
+
+model_rig = namespace(nid='v2-independent-6a313e79ab214d739baeacaaccf12907', scope={'mode': 'local', 'novel_id': 'v2-independent-6...[<threading.Event at 0x7f52e6e05f70: unset>], active=True, guard=<function configure.<locals>.guard at 0x7f52e6f9b1a0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f52e6ff6630>
+change = 'request_digest'
+
+    @pytest.mark.parametrize("change", ["mode", "request_digest", "deadline", "limit"])
+    def test_original_job_request_and_mode_are_verified_even_after_restore(model_rig, monkeypatch, change):
+        e = model_rig; spy_transport(e, monkeypatch)
+        sent, job = dispatch_asset(e)
+        if change == "mode": job.execution_mode = "real"
+        if change == "request_digest": job.expected_request_digest = "a" * 64
+        if change == "deadline": job.generation_deadline = "2026-10-10T00:00:00+00:00"
+        if change == "limit": job.generation_max_output_bytes = 31_999
+>       e.manager._persist(job)
+
+tests/test_v2_text_execution_receipts.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/jobs.py:288: in _persist
+    def _persist(self,job):self.persistence.save(job.public())
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/generation_service.py:4: in save
+    def save(self,item):return self.repository.save(item)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/generation_repository.py:77: in save
+    check_graph_job_update(previous, item)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+previous = {'actor_id': 'local-studio-author', 'base_chapter_digest': None, 'base_chapter_version': None, 'chapter_id': None, ...}
+item = {'actor_id': 'local-studio-author', 'base_chapter_digest': None, 'base_chapter_version': None, 'chapter_id': None, ...}
+
+    def check_graph_job_update(previous, item):
+        if previous is not None and (graph_job_binding(previous) is None or any(
+                previous.get(key) != item.get(key) for key in
+                ("novel_id", "actor_id", "scope", "graph_binding", "expected_request_digest"))):
+>           raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
+E           app.repositories.generation_repository.GenerationProjectIdentityError: GENERATION_GRAPH_JOB_BINDING_CHANGED
+
+app/repositories/generation_repository.py:37: GenerationProjectIdentityError
+_ test_historical_v1_durable_fixture_recovers_without_adding_new_receipt[file] _
+
+model_rig = namespace(nid='v2-independent-4e47c0531f934931bb84fb9324c51edd', scope={'mode': 'local', 'novel_id': 'v2-independent-4...[<threading.Event at 0x7f52e6510920: unset>], active=True, guard=<function configure.<locals>.guard at 0x7f52e65b7ec0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f52e6e2ec30>
+
+    def test_historical_v1_durable_fixture_recovers_without_adding_new_receipt(model_rig, monkeypatch):
+        e = model_rig; spy_transport(e, monkeypatch)
+        sent, job = dispatch_asset(e)
+        # Construct the exact older persisted shape, including its older request
+        # digest. This is a historical-data fixture, not a migration or API action.
+        job.graph_binding.pop("execution_receipt_contract")
+        job.graph_binding.pop("execution_receipt_source_version")
+        row = raw(e, sent)
+        job.expected_request_digest = graph_request_payload_digest(job,
+            request_payload(row["model_preview"], e.models.node(row)), row["model_preview"]["allow_synthetic"])
+>       e.manager._persist(job)
+
+tests/test_v2_text_execution_receipts.py:187: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/jobs.py:288: in _persist
+    def _persist(self,job):self.persistence.save(job.public())
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/generation_service.py:4: in save
+    def save(self,item):return self.repository.save(item)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/generation_repository.py:77: in save
+    check_graph_job_update(previous, item)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+previous = {'actor_id': 'local-studio-author', 'base_chapter_digest': None, 'base_chapter_version': None, 'chapter_id': None, ...}
+item = {'actor_id': 'local-studio-author', 'base_chapter_digest': None, 'base_chapter_version': None, 'chapter_id': None, ...}
+
+    def check_graph_job_update(previous, item):
+        if previous is not None and (graph_job_binding(previous) is None or any(
+                previous.get(key) != item.get(key) for key in
+                ("novel_id", "actor_id", "scope", "graph_binding", "expected_request_digest"))):
+>           raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
+E           app.repositories.generation_repository.GenerationProjectIdentityError: GENERATION_GRAPH_JOB_BINDING_CHANGED
+
+app/repositories/generation_repository.py:37: GenerationProjectIdentityError
+=========================== short test summary info ============================
+FAILED tests/test_v2_text_execution_receipts.py::test_original_job_request_and_mode_are_verified_even_after_restore[file-request_digest]
+FAILED tests/test_v2_text_execution_receipts.py::test_historical_v1_durable_fixture_recovers_without_adding_new_receipt[file]
+2 failed, 21 passed, 22 deselected in 41.37s

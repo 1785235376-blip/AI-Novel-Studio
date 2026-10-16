@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="5" failures="0" errors="0" time="0.723">
+    <testsuite name="src/localAiDiscoveryApi.test.ts" timestamp="2026-10-09T05:01:47.972Z" hostname="c3dd9d71b9bb" tests="3" failures="0" errors="0" skipped="0" time="0.009141851">
+        <testcase classname="src/localAiDiscoveryApi.test.ts" name="authenticated Local AI API &gt; sends the shared in-memory session and explicit enable confirmation" time="0.004561196">
+        </testcase>
+        <testcase classname="src/localAiDiscoveryApi.test.ts" name="authenticated Local AI API &gt; encodes scan IDs, forwards cancellation, and removes registration only" time="0.001287308">
+        </testcase>
+        <testcase classname="src/localAiDiscoveryApi.test.ts" name="authenticated Local AI API &gt; preserves structured auth errors without echoing arbitrary response details" time="0.00240076">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/localAiEnvironmentApi.test.ts" timestamp="2026-10-09T05:01:47.973Z" hostname="c3dd9d71b9bb" tests="2" failures="0" errors="0" skipped="0" time="0.006879855">
+        <testcase classname="src/localAiEnvironmentApi.test.ts" name="V2 environment API &gt; reads typed host report with authentication and abort signal without starting scan" time="0.004228586">
+        </testcase>
+        <testcase classname="src/localAiEnvironmentApi.test.ts" name="V2 environment API &gt; sends explicit common-directory opt-out only when provided" time="0.001752414">
+        </testcase>
+    </testsuite>
+</testsuites>

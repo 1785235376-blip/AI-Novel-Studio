@@ -1,0 +1,1348 @@
+{
+  "token_sha256": "ed8a7eea95173f8a3eb2b62ad27e211eaa1196e9b4c915e1bcebaecbb291ac8c",
+  "response_fabrication": false,
+  "identity_or_state_injection": false,
+  "production_gate_override": false,
+  "model_execution": "NOT_REQUESTED",
+  "model_counter": "NOT_INSTRUMENTED",
+  "records": [
+    {
+      "phase": "ordinary_production_adoption_gate",
+      "write_enabled": false,
+      "document_id": "9e034860-58d3-464e-9804-183f45315bfd"
+    },
+    {
+      "phase": "original_manual_document_created",
+      "source": "original_api",
+      "project_id": "b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9",
+      "branch_id": "d3e35b78-8c5d-4350-a417-bcc31ef4b3f4",
+      "owner": {
+        "mode": "STORYBOARD",
+        "title": "手动文档 历史 A",
+        "source_chapter_ids": [],
+        "source_independent": true,
+        "scenes": [
+          {
+            "id": "35c8597a-0d56-497a-a3cb-70f7d4c547da",
+            "sequence": 1,
+            "source_chapter_id": null,
+            "heading": "INT. SAVE ROOM - DAY",
+            "time": "",
+            "location": "",
+            "characters": [],
+            "action": "原始手动内容 历史 A",
+            "dialogue": [],
+            "emotion": "",
+            "director_notes": []
+          }
+        ],
+        "shots": [
+          {
+            "id": "f9538826-9da9-40f9-9b21-3c7e2e7cfbd5",
+            "number": 1,
+            "scene_id": "35c8597a-0d56-497a-a3cb-70f7d4c547da",
+            "shot_size": "MEDIUM",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "duration_seconds": 5,
+            "frame_prompt": "原始手动画面 历史 A",
+            "composition": "",
+            "lens": "",
+            "lighting": "",
+            "environment": "",
+            "sound": "",
+            "color": "",
+            "action": "",
+            "dialogue": [],
+            "sound_effect": "",
+            "director_notes": []
+          }
+        ],
+        "director_notes": [],
+        "video_plan": null,
+        "script": null,
+        "schema_version": 1,
+        "source_evidence": {},
+        "source_privacy": {},
+        "source_documents": {},
+        "project_incarnation": "file:3638a08f-6fbf-46ed-81c0-a2306da58f17",
+        "status": "DRAFT",
+        "privacy_level": "LOCAL_ONLY",
+        "id": "9e034860-58d3-464e-9804-183f45315bfd",
+        "novel_id": "b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9",
+        "scope": {
+          "mode": "collaboration",
+          "novel_id": "b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9",
+          "workspace_id": "workspace-a",
+          "storyline_id": "82fe5505-e5df-4e59-88a3-325e8170c31e",
+          "branch_id": "d3e35b78-8c5d-4350-a417-bcc31ef4b3f4"
+        },
+        "version": 1,
+        "created_by": "local-author",
+        "updated_by": "local-author",
+        "created_at": "2026-10-16T20:01:54.848748+00:00",
+        "updated_at": "2026-10-16T20:01:54.848748+00:00",
+        "history": []
+      }
+    },
+    {
+      "phase": "ordinary_production_adoption_gate",
+      "write_enabled": false,
+      "document_id": "30b047e8-1e82-4b1d-ae57-30cec4b3d909"
+    },
+    {
+      "phase": "original_manual_document_created",
+      "source": "original_api",
+      "project_id": "b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9",
+      "branch_id": "d3e35b78-8c5d-4350-a417-bcc31ef4b3f4",
+      "owner": {
+        "mode": "STORYBOARD",
+        "title": "手动文档 当前 B",
+        "source_chapter_ids": [],
+        "source_independent": true,
+        "scenes": [
+          {
+            "id": "b166e0d5-c913-42fa-bf83-4fcb2840980c",
+            "sequence": 1,
+            "source_chapter_id": null,
+            "heading": "INT. SAVE ROOM - DAY",
+            "time": "",
+            "location": "",
+            "characters": [],
+            "action": "原始手动内容 当前 B",
+            "dialogue": [],
+            "emotion": "",
+            "director_notes": []
+          }
+        ],
+        "shots": [
+          {
+            "id": "524a870f-4542-4e6e-9033-294c7b58fe50",
+            "number": 1,
+            "scene_id": "b166e0d5-c913-42fa-bf83-4fcb2840980c",
+            "shot_size": "MEDIUM",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "duration_seconds": 5,
+            "frame_prompt": "原始手动画面 当前 B",
+            "composition": "",
+            "lens": "",
+            "lighting": "",
+            "environment": "",
+            "sound": "",
+            "color": "",
+            "action": "",
+            "dialogue": [],
+            "sound_effect": "",
+            "director_notes": []
+          }
+        ],
+        "director_notes": [],
+        "video_plan": null,
+        "script": null,
+        "schema_version": 1,
+        "source_evidence": {},
+        "source_privacy": {},
+        "source_documents": {},
+        "project_incarnation": "file:3638a08f-6fbf-46ed-81c0-a2306da58f17",
+        "status": "DRAFT",
+        "privacy_level": "LOCAL_ONLY",
+        "id": "30b047e8-1e82-4b1d-ae57-30cec4b3d909",
+        "novel_id": "b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9",
+        "scope": {
+          "mode": "collaboration",
+          "novel_id": "b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9",
+          "workspace_id": "workspace-a",
+          "storyline_id": "82fe5505-e5df-4e59-88a3-325e8170c31e",
+          "branch_id": "d3e35b78-8c5d-4350-a417-bcc31ef4b3f4"
+        },
+        "version": 1,
+        "created_by": "local-author",
+        "updated_by": "local-author",
+        "created_at": "2026-10-16T20:01:54.913146+00:00",
+        "updated_at": "2026-10-16T20:01:54.913146+00:00",
+        "history": []
+      }
+    },
+    {
+      "phase": "ordinary_production_adoption_gate",
+      "write_enabled": false,
+      "document_id": "910b5d7b-25e9-47ad-a202-9ca74f494c34"
+    },
+    {
+      "phase": "original_manual_document_created",
+      "source": "original_api",
+      "project_id": "ed40b708-c172-4d04-b526-e732910b6b7d",
+      "branch_id": "c041be48-01c8-4192-a2e3-4084db75438c",
+      "owner": {
+        "mode": "STORYBOARD",
+        "title": "手动文档 新范围 C",
+        "source_chapter_ids": [],
+        "source_independent": true,
+        "scenes": [
+          {
+            "id": "43570b43-6e9e-42d1-9156-abf4b15ec789",
+            "sequence": 1,
+            "source_chapter_id": null,
+            "heading": "INT. SAVE ROOM - DAY",
+            "time": "",
+            "location": "",
+            "characters": [],
+            "action": "原始手动内容 新范围 C",
+            "dialogue": [],
+            "emotion": "",
+            "director_notes": []
+          }
+        ],
+        "shots": [
+          {
+            "id": "ccc1b289-6e3f-4900-a6e6-ac7b10df7371",
+            "number": 1,
+            "scene_id": "43570b43-6e9e-42d1-9156-abf4b15ec789",
+            "shot_size": "MEDIUM",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "duration_seconds": 5,
+            "frame_prompt": "原始手动画面 新范围 C",
+            "composition": "",
+            "lens": "",
+            "lighting": "",
+            "environment": "",
+            "sound": "",
+            "color": "",
+            "action": "",
+            "dialogue": [],
+            "sound_effect": "",
+            "director_notes": []
+          }
+        ],
+        "director_notes": [],
+        "video_plan": null,
+        "script": null,
+        "schema_version": 1,
+        "source_evidence": {},
+        "source_privacy": {},
+        "source_documents": {},
+        "project_incarnation": "file:d0be0fa4-0266-4365-a220-fd0e5d289a23",
+        "status": "DRAFT",
+        "privacy_level": "LOCAL_ONLY",
+        "id": "910b5d7b-25e9-47ad-a202-9ca74f494c34",
+        "novel_id": "ed40b708-c172-4d04-b526-e732910b6b7d",
+        "scope": {
+          "mode": "collaboration",
+          "novel_id": "ed40b708-c172-4d04-b526-e732910b6b7d",
+          "workspace_id": "workspace-a",
+          "storyline_id": "d8cab871-3ec9-4042-b3f3-ffd029730b38",
+          "branch_id": "c041be48-01c8-4192-a2e3-4084db75438c"
+        },
+        "version": 1,
+        "created_by": "local-author",
+        "updated_by": "local-author",
+        "created_at": "2026-10-16T20:01:54.975804+00:00",
+        "updated_at": "2026-10-16T20:01:54.975804+00:00",
+        "history": []
+      }
+    },
+    {
+      "phase": "late-history-a-cannot-relabel-or-clear-dirty-document-b",
+      "source": "original_browser_dom_read_only",
+      "canvas_text": "Creative Canvas\n手动文档 当前 B\n未保存\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 当前 B\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\n524a870f-4542-4e6e-9033-294c7b58fe50\n\n原始手动画面 当前 B\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+      "footer_text": "当前分镜：未保存更改 · 基于 v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+      "title": "手动文档 当前 B",
+      "action": "B文档真实未保存编辑，不接受A的晚读回"
+    },
+    {
+      "phase": "old_scope_owner_unchanged_after_explicit_local_discard",
+      "source": "standalone_original_owner_readback",
+      "owner": {
+        "created_at": "2026-10-16T20:01:54.913146+00:00",
+        "created_by": "local-author",
+        "director_notes": [],
+        "history": [],
+        "id": "30b047e8-1e82-4b1d-ae57-30cec4b3d909",
+        "mode": "STORYBOARD",
+        "novel_id": "b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9",
+        "privacy_level": "LOCAL_ONLY",
+        "project_incarnation": "file:3638a08f-6fbf-46ed-81c0-a2306da58f17",
+        "scenes": [
+          {
+            "action": "原始手动内容 当前 B",
+            "characters": [],
+            "dialogue": [],
+            "director_notes": [],
+            "emotion": "",
+            "heading": "INT. SAVE ROOM - DAY",
+            "id": "b166e0d5-c913-42fa-bf83-4fcb2840980c",
+            "location": "",
+            "sequence": 1,
+            "source_chapter_id": null,
+            "time": ""
+          }
+        ],
+        "schema_version": 1,
+        "scope": {
+          "branch_id": "d3e35b78-8c5d-4350-a417-bcc31ef4b3f4",
+          "mode": "collaboration",
+          "novel_id": "b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9",
+          "storyline_id": "82fe5505-e5df-4e59-88a3-325e8170c31e",
+          "workspace_id": "workspace-a"
+        },
+        "script": null,
+        "shots": [
+          {
+            "action": "",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "color": "",
+            "composition": "",
+            "dialogue": [],
+            "director_notes": [],
+            "duration_seconds": 5,
+            "environment": "",
+            "frame_prompt": "原始手动画面 当前 B",
+            "id": "524a870f-4542-4e6e-9033-294c7b58fe50",
+            "lens": "",
+            "lighting": "",
+            "number": 1,
+            "scene_id": "b166e0d5-c913-42fa-bf83-4fcb2840980c",
+            "shot_size": "MEDIUM",
+            "sound": "",
+            "sound_effect": ""
+          }
+        ],
+        "source_chapter_ids": [],
+        "source_documents": {},
+        "source_evidence": {},
+        "source_independent": true,
+        "source_privacy": {},
+        "status": "DRAFT",
+        "title": "手动文档 当前 B",
+        "updated_at": "2026-10-16T20:01:54.913146+00:00",
+        "updated_by": "local-author",
+        "version": 1,
+        "video_plan": null
+      },
+      "overview": {
+        "project": {
+          "id": "b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9",
+          "title": "真实创作保存 creative-save-1366x768 旧范围",
+          "incarnation": "file:3638a08f-6fbf-46ed-81c0-a2306da58f17",
+          "entry_kind": "NEUTRAL_STUDIO"
+        },
+        "preferences": {
+          "version": 1,
+          "intents": [],
+          "preset": "BLANK",
+          "custom_intent": ""
+        },
+        "capabilities": {
+          "manual_import": true,
+          "manual_export": true,
+          "model_required": false,
+          "chapter_required": false,
+          "media_validator_configured": true,
+          "asset_kinds": [
+            "image",
+            "video",
+            "audio"
+          ],
+          "intent_is_permission": false,
+          "can_mutate": true,
+          "can_review": true
+        }
+      },
+      "project_id": "b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9",
+      "branch_id": "d3e35b78-8c5d-4350-a417-bcc31ef4b3f4"
+    },
+    {
+      "phase": "new_scope_owner_remains_clean_after_old_history",
+      "source": "standalone_original_owner_readback",
+      "owner": {
+        "created_at": "2026-10-16T20:01:54.975804+00:00",
+        "created_by": "local-author",
+        "director_notes": [],
+        "history": [],
+        "id": "910b5d7b-25e9-47ad-a202-9ca74f494c34",
+        "mode": "STORYBOARD",
+        "novel_id": "ed40b708-c172-4d04-b526-e732910b6b7d",
+        "privacy_level": "LOCAL_ONLY",
+        "project_incarnation": "file:d0be0fa4-0266-4365-a220-fd0e5d289a23",
+        "scenes": [
+          {
+            "action": "原始手动内容 新范围 C",
+            "characters": [],
+            "dialogue": [],
+            "director_notes": [],
+            "emotion": "",
+            "heading": "INT. SAVE ROOM - DAY",
+            "id": "43570b43-6e9e-42d1-9156-abf4b15ec789",
+            "location": "",
+            "sequence": 1,
+            "source_chapter_id": null,
+            "time": ""
+          }
+        ],
+        "schema_version": 1,
+        "scope": {
+          "branch_id": "c041be48-01c8-4192-a2e3-4084db75438c",
+          "mode": "collaboration",
+          "novel_id": "ed40b708-c172-4d04-b526-e732910b6b7d",
+          "storyline_id": "d8cab871-3ec9-4042-b3f3-ffd029730b38",
+          "workspace_id": "workspace-a"
+        },
+        "script": null,
+        "shots": [
+          {
+            "action": "",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "color": "",
+            "composition": "",
+            "dialogue": [],
+            "director_notes": [],
+            "duration_seconds": 5,
+            "environment": "",
+            "frame_prompt": "原始手动画面 新范围 C",
+            "id": "ccc1b289-6e3f-4900-a6e6-ac7b10df7371",
+            "lens": "",
+            "lighting": "",
+            "number": 1,
+            "scene_id": "43570b43-6e9e-42d1-9156-abf4b15ec789",
+            "shot_size": "MEDIUM",
+            "sound": "",
+            "sound_effect": ""
+          }
+        ],
+        "source_chapter_ids": [],
+        "source_documents": {},
+        "source_evidence": {},
+        "source_independent": true,
+        "source_privacy": {},
+        "status": "DRAFT",
+        "title": "手动文档 新范围 C",
+        "updated_at": "2026-10-16T20:01:54.975804+00:00",
+        "updated_by": "local-author",
+        "version": 1,
+        "video_plan": null
+      },
+      "overview": {
+        "project": {
+          "id": "ed40b708-c172-4d04-b526-e732910b6b7d",
+          "title": "真实创作保存 creative-save-1366x768 新范围",
+          "incarnation": "file:d0be0fa4-0266-4365-a220-fd0e5d289a23",
+          "entry_kind": "NEUTRAL_STUDIO"
+        },
+        "preferences": {
+          "version": 1,
+          "intents": [],
+          "preset": "BLANK",
+          "custom_intent": ""
+        },
+        "capabilities": {
+          "manual_import": true,
+          "manual_export": true,
+          "model_required": false,
+          "chapter_required": false,
+          "media_validator_configured": true,
+          "asset_kinds": [
+            "image",
+            "video",
+            "audio"
+          ],
+          "intent_is_permission": false,
+          "can_mutate": true,
+          "can_review": true
+        }
+      },
+      "project_id": "ed40b708-c172-4d04-b526-e732910b6b7d",
+      "branch_id": "c041be48-01c8-4192-a2e3-4084db75438c"
+    },
+    {
+      "phase": "late-history-old-scope-cannot-contaminate-current-saved-v1",
+      "source": "original_browser_dom_read_only",
+      "canvas_text": "Creative Canvas\n手动文档 新范围 C\n已保存 · v1\n新建文档\n保存草稿\n建立制作计划\n导出\n历史\n创作文档内容\n文档标题\n来源：独立创作\n项目视觉目标\n尚未设定\n\n导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。\n\n视觉风格\n整体氛围\n展开色彩、节奏与参考作品\n添加场景\n添加镜头\nSCENE 01\nINT. SAVE ROOM - DAY\n场景标题\n场景地点\n场景时间\n场景情绪\n动作与叙事\n镜头卡片\n镜头列表\n1 镜头 · 5 秒\nSHOT 01\n5s\n\n原始手动画面 新范围 C\n\nINT. SAVE ROOM - DAY · MEDIUM · STATIC\n前移\n后移\nSHOT 01 · 创作预览\nccc1b289-6e3f-4900-a6e6-ac7b10df7371\n\n原始手动画面 新范围 C\n\n构图待设定 · EYE_LEVEL · STATIC · 5 秒\n\n角色：未指定 · 情绪：\n\n声音：未指定\n\n这是作者分镜数据的预览。保存后可在创作图绑定此文档版本；图片生成与人工审核仍分别确认。\n镜头 1 · 参数\n镜头所属场景\nINT. SAVE ROOM - DAY\n镜头时长（秒）\n镜头景别\n镜头角度\n镜头运动\n镜头与焦距\n光线设计\n环境设计\n构图\n色彩\n声音设计\n画面描述\n镜头动作\n镜头角色（用、分隔）\n镜头情绪\n展开视频生成意图\n展开镜头连续性与导演来源",
+      "footer_text": "当前分镜：已保存 · v1\n· 连接：协作服务\n问助手\n· V2 STORYBOARD",
+      "title": "手动文档 新范围 C",
+      "action": "原始手动内容 新范围 C"
+    },
+    {
+      "phase": "owned_project_cleanup",
+      "project_id": "ed40b708-c172-4d04-b526-e732910b6b7d",
+      "status": 204
+    },
+    {
+      "phase": "owned_project_cleanup",
+      "project_id": "b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9",
+      "status": 204
+    }
+  ],
+  "dispatches": [
+    {
+      "phase": "late_original_history_other_document",
+      "url": "http://127.0.0.1:5208/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/experimental/creative/documents/9e034860-58d3-464e-9804-183f45315bfd/history",
+      "method": "GET",
+      "project_id": "b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9",
+      "document_id": "9e034860-58d3-464e-9804-183f45315bfd",
+      "branch_id": "d3e35b78-8c5d-4350-a417-bcc31ef4b3f4",
+      "token_sha256": "ed8a7eea95173f8a3eb2b62ad27e211eaa1196e9b4c915e1bcebaecbb291ac8c",
+      "held_at": 1792180916382,
+      "original_request_body": null,
+      "request_not_dispatched_until_release": true,
+      "response_fabricated": false,
+      "current_other_document_dirty_before_release_at": 1792180916461,
+      "continue_at": 1792180916462,
+      "continue_returned": true,
+      "status": 200,
+      "response_raw_body": "{\"document_id\":\"9e034860-58d3-464e-9804-183f45315bfd\",\"current_version\":1,\"items\":[{\"created_at\":\"2026-10-16T20:01:54.848748+00:00\",\"created_by\":\"local-author\",\"director_notes\":[],\"id\":\"9e034860-58d3-464e-9804-183f45315bfd\",\"mode\":\"STORYBOARD\",\"novel_id\":\"b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9\",\"privacy_level\":\"LOCAL_ONLY\",\"project_incarnation\":\"file:3638a08f-6fbf-46ed-81c0-a2306da58f17\",\"scenes\":[{\"action\":\"原始手动内容 历史 A\",\"characters\":[],\"dialogue\":[],\"director_notes\":[],\"emotion\":\"\",\"heading\":\"INT. SAVE ROOM - DAY\",\"id\":\"35c8597a-0d56-497a-a3cb-70f7d4c547da\",\"location\":\"\",\"sequence\":1,\"source_chapter_id\":null,\"time\":\"\"}],\"schema_version\":1,\"scope\":{\"branch_id\":\"d3e35b78-8c5d-4350-a417-bcc31ef4b3f4\",\"mode\":\"collaboration\",\"novel_id\":\"b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9\",\"storyline_id\":\"82fe5505-e5df-4e59-88a3-325e8170c31e\",\"workspace_id\":\"workspace-a\"},\"script\":null,\"shots\":[{\"action\":\"\",\"camera_angle\":\"EYE_LEVEL\",\"camera_motion\":\"STATIC\",\"color\":\"\",\"composition\":\"\",\"dialogue\":[],\"director_notes\":[],\"duration_seconds\":5,\"environment\":\"\",\"frame_prompt\":\"原始手动画面 历史 A\",\"id\":\"f9538826-9da9-40f9-9b21-3c7e2e7cfbd5\",\"lens\":\"\",\"lighting\":\"\",\"number\":1,\"scene_id\":\"35c8597a-0d56-497a-a3cb-70f7d4c547da\",\"shot_size\":\"MEDIUM\",\"sound\":\"\",\"sound_effect\":\"\"}],\"source_chapter_ids\":[],\"source_documents\":{},\"source_evidence\":{},\"source_independent\":true,\"source_privacy\":{},\"status\":\"DRAFT\",\"title\":\"手动文档 历史 A\",\"updated_at\":\"2026-10-16T20:01:54.848748+00:00\",\"updated_by\":\"local-author\",\"version\":1,\"video_plan\":null}]}",
+      "response_body_sha256": "bdf675bf438423ddb160a9db55dc16bc0c46f3dd927ef46247a973cf29c4ca1d",
+      "response_body": {
+        "document_id": "9e034860-58d3-464e-9804-183f45315bfd",
+        "current_version": 1,
+        "items": [
+          {
+            "created_at": "2026-10-16T20:01:54.848748+00:00",
+            "created_by": "local-author",
+            "director_notes": [],
+            "id": "9e034860-58d3-464e-9804-183f45315bfd",
+            "mode": "STORYBOARD",
+            "novel_id": "b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9",
+            "privacy_level": "LOCAL_ONLY",
+            "project_incarnation": "file:3638a08f-6fbf-46ed-81c0-a2306da58f17",
+            "scenes": [
+              {
+                "action": "原始手动内容 历史 A",
+                "characters": [],
+                "dialogue": [],
+                "director_notes": [],
+                "emotion": "",
+                "heading": "INT. SAVE ROOM - DAY",
+                "id": "35c8597a-0d56-497a-a3cb-70f7d4c547da",
+                "location": "",
+                "sequence": 1,
+                "source_chapter_id": null,
+                "time": ""
+              }
+            ],
+            "schema_version": 1,
+            "scope": {
+              "branch_id": "d3e35b78-8c5d-4350-a417-bcc31ef4b3f4",
+              "mode": "collaboration",
+              "novel_id": "b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9",
+              "storyline_id": "82fe5505-e5df-4e59-88a3-325e8170c31e",
+              "workspace_id": "workspace-a"
+            },
+            "script": null,
+            "shots": [
+              {
+                "action": "",
+                "camera_angle": "EYE_LEVEL",
+                "camera_motion": "STATIC",
+                "color": "",
+                "composition": "",
+                "dialogue": [],
+                "director_notes": [],
+                "duration_seconds": 5,
+                "environment": "",
+                "frame_prompt": "原始手动画面 历史 A",
+                "id": "f9538826-9da9-40f9-9b21-3c7e2e7cfbd5",
+                "lens": "",
+                "lighting": "",
+                "number": 1,
+                "scene_id": "35c8597a-0d56-497a-a3cb-70f7d4c547da",
+                "shot_size": "MEDIUM",
+                "sound": "",
+                "sound_effect": ""
+              }
+            ],
+            "source_chapter_ids": [],
+            "source_documents": {},
+            "source_evidence": {},
+            "source_independent": true,
+            "source_privacy": {},
+            "status": "DRAFT",
+            "title": "手动文档 历史 A",
+            "updated_at": "2026-10-16T20:01:54.848748+00:00",
+            "updated_by": "local-author",
+            "version": 1,
+            "video_plan": null
+          }
+        ]
+      },
+      "response_at": 1792180916485
+    },
+    {
+      "phase": "late_original_history_other_project_branch",
+      "url": "http://127.0.0.1:5208/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/experimental/creative/documents/30b047e8-1e82-4b1d-ae57-30cec4b3d909/history",
+      "method": "GET",
+      "project_id": "b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9",
+      "document_id": "30b047e8-1e82-4b1d-ae57-30cec4b3d909",
+      "branch_id": "d3e35b78-8c5d-4350-a417-bcc31ef4b3f4",
+      "token_sha256": "ed8a7eea95173f8a3eb2b62ad27e211eaa1196e9b4c915e1bcebaecbb291ac8c",
+      "held_at": 1792180916660,
+      "original_request_body": null,
+      "request_not_dispatched_until_release": true,
+      "response_fabricated": false,
+      "new_project_and_branch_current_before_release_at": 1792180918311,
+      "continue_at": 1792180918312,
+      "continue_returned": true,
+      "status": 200,
+      "response_raw_body": "{\"document_id\":\"30b047e8-1e82-4b1d-ae57-30cec4b3d909\",\"current_version\":1,\"items\":[{\"created_at\":\"2026-10-16T20:01:54.913146+00:00\",\"created_by\":\"local-author\",\"director_notes\":[],\"id\":\"30b047e8-1e82-4b1d-ae57-30cec4b3d909\",\"mode\":\"STORYBOARD\",\"novel_id\":\"b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9\",\"privacy_level\":\"LOCAL_ONLY\",\"project_incarnation\":\"file:3638a08f-6fbf-46ed-81c0-a2306da58f17\",\"scenes\":[{\"action\":\"原始手动内容 当前 B\",\"characters\":[],\"dialogue\":[],\"director_notes\":[],\"emotion\":\"\",\"heading\":\"INT. SAVE ROOM - DAY\",\"id\":\"b166e0d5-c913-42fa-bf83-4fcb2840980c\",\"location\":\"\",\"sequence\":1,\"source_chapter_id\":null,\"time\":\"\"}],\"schema_version\":1,\"scope\":{\"branch_id\":\"d3e35b78-8c5d-4350-a417-bcc31ef4b3f4\",\"mode\":\"collaboration\",\"novel_id\":\"b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9\",\"storyline_id\":\"82fe5505-e5df-4e59-88a3-325e8170c31e\",\"workspace_id\":\"workspace-a\"},\"script\":null,\"shots\":[{\"action\":\"\",\"camera_angle\":\"EYE_LEVEL\",\"camera_motion\":\"STATIC\",\"color\":\"\",\"composition\":\"\",\"dialogue\":[],\"director_notes\":[],\"duration_seconds\":5,\"environment\":\"\",\"frame_prompt\":\"原始手动画面 当前 B\",\"id\":\"524a870f-4542-4e6e-9033-294c7b58fe50\",\"lens\":\"\",\"lighting\":\"\",\"number\":1,\"scene_id\":\"b166e0d5-c913-42fa-bf83-4fcb2840980c\",\"shot_size\":\"MEDIUM\",\"sound\":\"\",\"sound_effect\":\"\"}],\"source_chapter_ids\":[],\"source_documents\":{},\"source_evidence\":{},\"source_independent\":true,\"source_privacy\":{},\"status\":\"DRAFT\",\"title\":\"手动文档 当前 B\",\"updated_at\":\"2026-10-16T20:01:54.913146+00:00\",\"updated_by\":\"local-author\",\"version\":1,\"video_plan\":null}]}",
+      "response_body_sha256": "f76dc7b7b2de1ed70189918145104366c5d23bc31c3646235ce51e8493500cae",
+      "response_body": {
+        "document_id": "30b047e8-1e82-4b1d-ae57-30cec4b3d909",
+        "current_version": 1,
+        "items": [
+          {
+            "created_at": "2026-10-16T20:01:54.913146+00:00",
+            "created_by": "local-author",
+            "director_notes": [],
+            "id": "30b047e8-1e82-4b1d-ae57-30cec4b3d909",
+            "mode": "STORYBOARD",
+            "novel_id": "b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9",
+            "privacy_level": "LOCAL_ONLY",
+            "project_incarnation": "file:3638a08f-6fbf-46ed-81c0-a2306da58f17",
+            "scenes": [
+              {
+                "action": "原始手动内容 当前 B",
+                "characters": [],
+                "dialogue": [],
+                "director_notes": [],
+                "emotion": "",
+                "heading": "INT. SAVE ROOM - DAY",
+                "id": "b166e0d5-c913-42fa-bf83-4fcb2840980c",
+                "location": "",
+                "sequence": 1,
+                "source_chapter_id": null,
+                "time": ""
+              }
+            ],
+            "schema_version": 1,
+            "scope": {
+              "branch_id": "d3e35b78-8c5d-4350-a417-bcc31ef4b3f4",
+              "mode": "collaboration",
+              "novel_id": "b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9",
+              "storyline_id": "82fe5505-e5df-4e59-88a3-325e8170c31e",
+              "workspace_id": "workspace-a"
+            },
+            "script": null,
+            "shots": [
+              {
+                "action": "",
+                "camera_angle": "EYE_LEVEL",
+                "camera_motion": "STATIC",
+                "color": "",
+                "composition": "",
+                "dialogue": [],
+                "director_notes": [],
+                "duration_seconds": 5,
+                "environment": "",
+                "frame_prompt": "原始手动画面 当前 B",
+                "id": "524a870f-4542-4e6e-9033-294c7b58fe50",
+                "lens": "",
+                "lighting": "",
+                "number": 1,
+                "scene_id": "b166e0d5-c913-42fa-bf83-4fcb2840980c",
+                "shot_size": "MEDIUM",
+                "sound": "",
+                "sound_effect": ""
+              }
+            ],
+            "source_chapter_ids": [],
+            "source_documents": {},
+            "source_evidence": {},
+            "source_independent": true,
+            "source_privacy": {},
+            "status": "DRAFT",
+            "title": "手动文档 当前 B",
+            "updated_at": "2026-10-16T20:01:54.913146+00:00",
+            "updated_by": "local-author",
+            "version": 1,
+            "video_plan": null
+          }
+        ]
+      },
+      "response_at": 1792180918336
+    }
+  ],
+  "calls": [
+    {
+      "path": "/api/novels",
+      "method": "GET",
+      "status": 401
+    },
+    {
+      "path": "/api/text-models",
+      "method": "GET",
+      "status": 401
+    },
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "status": 401
+    },
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "status": 401
+    },
+    {
+      "path": "/api/collaboration/admin/workspaces",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/collaboration/admin/workspaces/workspace-a/navigation",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/writing-goal",
+      "method": "GET",
+      "status": 409
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/chapters/archived",
+      "method": "GET",
+      "status": 409
+    },
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/media-tasks",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/collaboration/workspaces/workspace-a/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/storylines/82fe5505-e5df-4e59-88a3-325e8170c31e/branches/d3e35b78-8c5d-4350-a417-bcc31ef4b3f4/chapters",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/api/collaboration/workspaces/workspace-a/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/storylines/82fe5505-e5df-4e59-88a3-325e8170c31e/branches/d3e35b78-8c5d-4350-a417-bcc31ef4b3f4/bootstrap",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio/assets",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio/prompts",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/experimental/creative/capabilities",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/creation-reference-data",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/model-center/local-ai/environment",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/assets",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio/prompts",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/experimental/creative/documents",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/experimental/creative/director-proposals",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/experimental/creative/adaptation-proposals/model-routes",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/experimental/creative/adaptation-proposals",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/experimental/creative/documents/9e034860-58d3-464e-9804-183f45315bfd/history",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/writing-goal",
+      "method": "GET",
+      "status": 409
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/chapters/archived",
+      "method": "GET",
+      "status": 409
+    },
+    {
+      "path": "/api/collaboration/workspaces/workspace-a/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/storylines/82fe5505-e5df-4e59-88a3-325e8170c31e/branches/d3e35b78-8c5d-4350-a417-bcc31ef4b3f4/chapters",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/collaboration/admin/workspaces",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/collaboration/admin/workspaces",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio/assets",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio/prompts",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio/prompts",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/collaboration/admin/workspaces/workspace-a/navigation",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/video-providers",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/plugins/runtime-status",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d",
+      "method": "GET",
+      "status": 409
+    },
+    {
+      "path": "/api/workflows",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/characters",
+      "method": "GET",
+      "status": 409
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/assets",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/multimodal/health",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/locations",
+      "method": "GET",
+      "status": 409
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/volumes",
+      "method": "GET",
+      "status": 409
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/scenes",
+      "method": "GET",
+      "status": 409
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/chapters",
+      "method": "GET",
+      "status": 409
+    },
+    {
+      "path": "/api/asset-providers",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/assets",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/visual-memories",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/writing-goal",
+      "method": "GET",
+      "status": 409
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/image-generations",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/image-jobs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/media-tasks",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/collaboration/workspaces/workspace-a/projects/ed40b708-c172-4d04-b526-e732910b6b7d/storylines/d8cab871-3ec9-4042-b3f3-ffd029730b38/branches/c041be48-01c8-4192-a2e3-4084db75438c/chapters",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/chapters/archived",
+      "method": "GET",
+      "status": 409
+    },
+    {
+      "path": "/api/collaboration/workspaces/workspace-a/projects/ed40b708-c172-4d04-b526-e732910b6b7d/storylines/d8cab871-3ec9-4042-b3f3-ffd029730b38/branches/c041be48-01c8-4192-a2e3-4084db75438c/bootstrap",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/video-providers",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/plugins/runtime-status",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/workflows",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/asset-providers",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/assets",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/visual-memories",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/video-providers",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/multimodal/health",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/image-generations",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/plugins/runtime-status",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/image-jobs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/workflows",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/multimodal/health",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/asset-providers",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/assets",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/assets",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/visual-memories",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/video-providers",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/plugins/runtime-status",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/image-jobs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/image-generations",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/workflows",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/multimodal/health",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/asset-providers",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/assets",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/visual-memories",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/image-jobs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/image-generations",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/ed40b708-c172-4d04-b526-e732910b6b7d/studio",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/ed40b708-c172-4d04-b526-e732910b6b7d/studio",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/ed40b708-c172-4d04-b526-e732910b6b7d/studio/assets",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/ed40b708-c172-4d04-b526-e732910b6b7d/studio/assets",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/ed40b708-c172-4d04-b526-e732910b6b7d/studio/prompts",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/ed40b708-c172-4d04-b526-e732910b6b7d/studio/prompts",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/projects/ed40b708-c172-4d04-b526-e732910b6b7d/studio",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/writing-goal",
+      "method": "GET",
+      "status": 409
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/experimental/creative/capabilities",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/model-center/local-ai/environment",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/creation-reference-data",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/assets",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/experimental/creative/documents",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/experimental/creative/director-proposals",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/experimental/creative/adaptation-proposals/model-routes",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/experimental/creative/adaptation-proposals",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/experimental/creative/documents/30b047e8-1e82-4b1d-ae57-30cec4b3d909/history",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/collaboration/workspaces/workspace-a/projects/ed40b708-c172-4d04-b526-e732910b6b7d/storylines/d8cab871-3ec9-4042-b3f3-ffd029730b38/branches/c041be48-01c8-4192-a2e3-4084db75438c/chapters",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/chapters/archived",
+      "method": "GET",
+      "status": 409
+    }
+  ],
+  "failures": [
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio/assets",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio/assets",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/experimental/creative/capabilities",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/experimental/creative/adaptation-proposals",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/experimental/creative/adaptation-proposals/model-routes",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/model-center/local-ai/environment",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/novels/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/experimental/creative/director-proposals",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio/assets",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio/assets",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/projects/b4c73fb7-50d8-49b6-8eb7-3e46d179a4f9/studio",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/experimental/features",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/projects/ed40b708-c172-4d04-b526-e732910b6b7d/studio",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/projects/ed40b708-c172-4d04-b526-e732910b6b7d/studio",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/projects/ed40b708-c172-4d04-b526-e732910b6b7d/studio/assets",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/experimental/creative/capabilities",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/experimental/creative/adaptation-proposals",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/experimental/creative/adaptation-proposals/model-routes",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/model-center/local-ai/environment",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/novels/ed40b708-c172-4d04-b526-e732910b6b7d/experimental/creative/director-proposals",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    }
+  ],
+  "errors": [],
+  "cleanupErrors": []
+}

@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "evidence_kind": "M4B_PROVIDER_TEXTASSET_FRONTEND_DEVELOPMENT_VERIFICATION",
+  "recorded_at_utc": "2026-10-10T10:55:41.028554+00:00",
+  "base_commit": "09883fb7fe35b241f97ea7fe0a3e292178441935",
+  "scope": "Provider/TaskRequirement advisory UI and automatic private TextAsset archival in the existing graph workflow; no protected shell changes or legacy assertion edits.",
+  "acceptance_limits": {
+    "same_source_full_acceptance": false,
+    "different_run_inputs_are_not_merged": true,
+    "full_frontend_suite_executed_here": false,
+    "chromium_execution_completed": false,
+    "visual_baseline_or_geometry_pass": false,
+    "browser_blocker": "Installed Chromium failed at process_singleton_posix.cc:297: socket() failed: Operation not permitted, including the escalated launch. No UI screenshot or browser geometry result was produced.",
+    "inference_quality_verified": false,
+    "real_model_inference_executed": false
+  },
+  "contracts": {
+    "provider_catalog": "creative-model-provider/1",
+    "task_types": [
+      "TEXT_GENERATION",
+      "IMAGE_GENERATION",
+      "VIDEO_GENERATION"
+    ],
+    "model_execution": "creative-graph-model/1",
+    "private_text_asset": "creative-graph-text-asset/1",
+    "aligned_lm_studio_reason": "LMSTUDIO_LOCALITY_UNVERIFIED",
+    "archival_dispatch_flag": "archive_result:true, within the original reviewed-preview dispatch request; absent for legacy capabilities"
+  },
+  "wire_input": {
+    "file": "stage-m4b-ui-wire-input.json",
+    "sha256": "b22d5fe9b37f1cca86b909bf4fb4ff8f6b28550bd2e88bcdd48d5d60d4c971d5",
+    "provenance": "Genuine responses captured from the mounted original File/API runtime using the built-in synthetic mock fixture. Replay used the real response JSON through frontend validators, with no Chromium and no additional service or model calls.",
+    "fixture": "M4B_ORIGINAL_FILE_HTTP_UI_MODEL_CONTRACTS_TEXT_ASSET_WITH_BUILTIN_MOCK_ONLY",
+    "contains": [
+      "capabilities",
+      "catalog",
+      "matches(TEXT/IMAGE/VIDEO)",
+      "dispatch_input",
+      "dispatched(PENDING)",
+      "draft(DRAFT v1)",
+      "recovered(APPROVED v2)",
+      "fault_http_status",
+      "fixture"
+    ],
+    "observed_fixture_facts": {
+      "fixture": "M4B_ORIGINAL_FILE_HTTP_UI_MODEL_CONTRACTS_TEXT_ASSET_WITH_BUILTIN_MOCK_ONLY",
+      "synthetic": true,
+      "mock_calls": 1,
+      "metadata_probe_attempts": 0,
+      "blocked_attempts": [],
+      "quality_verification": "NOT_RUN",
+      "real_inference": "NOT_RUN",
+      "model_weights_loaded": false,
+      "cloud_calls": 0,
+      "automatic_retry": false,
+      "original_fixture": "ORIGINAL_FILE_HTTP_UI_JOBMANAGER_WITH_BUILTIN_MOCK_ONLY",
+      "create_calls": 1,
+      "created_asset_ids": [
+        "cd34dbe4-7f26-4252-9b8e-f267c811ba88"
+      ],
+      "review_metadata_attempts": 5,
+      "review_metadata_faults": 1,
+      "fault_armed": false,
+      "fault_asset_id": "cd34dbe4-7f26-4252-9b8e-f267c811ba88"
+    },
+    "fault_http_status": 500
+  },
+  "runs": [
+    {
+      "id": "focused_270_pre_reason_alignment",
+      "started_at_utc": "2026-10-10T10:47:41Z",
+      "log": "stage-m4b-ui-focused-270.log",
+      "result": "PASS",
+      "test_files": 9,
+      "tests_passed": 270,
+      "tests_failed": 0,
+      "token_guard": "PASS (52 files)",
+      "diff_check": "PASS",
+      "source_identity": {
+        "frontend/src/creative/studioProvider.testFixtures.ts": "ddc26a59deffbdc1faea6bec86703af1e8aeed48dd1f3cfbd5b11492b6dc67b1",
+        "frontend/src/creative/studioProviderClient.test.ts": "eecdbf8872ee932aee0e5a9c612d56a83c4e90c94f84e9d63afb1d060aa5a880",
+        "frontend/src/creative/studioProviderClient.ts": "37bf425710cb34d48e45f3a37386d8d3cfc78f8d32931b558406ae471ab7b727",
+        "frontend/src/creative/studioProviderTypes.ts": "6bf4b5d71c6e0d181fc2a483436469e2983b9c2d77985e15f66b84c6e66be63f",
+        "frontend/src/creative/ProviderTaskMatchPanel.test.tsx": "78ce670f1bf78fd87bc03bd8ee163e35fb3c0b741bc4d4f266b13da5c21707b7",
+        "frontend/src/creative/ProviderTaskMatchPanel.tsx": "a18857eec9d1448e1ca897e5c0a1bc99fec49398e2ee2c5f16fb2f38b763babd",
+        "frontend/src/creative/studioGraphTextAsset.testFixtures.ts": "9130c00e663ce6320e61b92087c72121118570a60025ddcb008615bd8e54e59d",
+        "frontend/src/creative/studioGraphTextAssetClient.test.ts": "eaa100e428aa4866854e2379a83a59f64638a60c488f312dce507afe4a53e79e",
+        "frontend/src/creative/studioGraphTextAssetContract.ts": "04da80c3817339376e2e077c42fe4252460ce8b0f50cc85b657990735679ceff",
+        "frontend/src/creative/studioGraphTextAssetTypes.ts": "63a0cb9d5f56fefa72ba573f0901627d5c0077bde849c52429ec6379f9296a9e",
+        "frontend/src/creative/GraphTextAssetPanel.test.tsx": "023b21daa4e6145ed2051964ba77811c40a9b8947db7b74bbc3a18716275df7d",
+        "frontend/src/creative/GraphTextAssetSummary.tsx": "f5c0f0681ef1e4a792695c21e0caed07324ccaad01f2db7b9a65d556b0bda9f8",
+        "frontend/src/creative/studioGraphClient.ts": "5d2aeee05f9d88d1ee6b521858b35f7ccb4fbecc3415819f91225a984e010328",
+        "frontend/src/creative/studioGraphTypes.ts": "3f04edca0b479fbc282251f81672a8e6c633bc7049142e2277931f57a9343fc2",
+        "frontend/src/creative/studioGraphModelContract.ts": "62ade81b3091ee4736383254bc573e19542287c1b3e429ffb1cc6a5b60fab2a1",
+        "frontend/src/creative/GraphModelExecutionPanel.tsx": "f503c179caa4e8af62230a7ffaca01d82c36fdb21f9a588c52156f474f0a2c10",
+        "frontend/src/creative/GraphRunPanel.tsx": "73a525f0bb844206a68d1a5d33ea1b7b30be8b169bcb2d382839071d9d656a0c"
+      },
+      "scope": "Focused provider, TextAsset, graph client, graph run, model panel and exact-label regression. Before the LM Studio reason-code alignment; not a full-suite result."
+    },
+    {
+      "id": "wire_red_pre_reason_alignment",
+      "started_at_utc": "2026-10-10T10:53:46Z",
+      "log": "stage-m4b-ui-wire-replay-red.log",
+      "result": "FAIL",
+      "tests_passed": 7,
+      "tests_failed": 1,
+      "source_identity": {
+        "frontend/src/creative/studioProviderClient.ts": "37bf425710cb34d48e45f3a37386d8d3cfc78f8d32931b558406ae471ab7b727",
+        "frontend/src/creative/studioProvider.testFixtures.ts": "ddc26a59deffbdc1faea6bec86703af1e8aeed48dd1f3cfbd5b11492b6dc67b1",
+        "frontend/src/creative/studioGraphTextAssetContract.ts": "04da80c3817339376e2e077c42fe4252460ce8b0f50cc85b657990735679ceff",
+        "frontend/src/creative/studioGraphClient.ts": "5d2aeee05f9d88d1ee6b521858b35f7ccb4fbecc3415819f91225a984e010328"
+      },
+      "scope": "Actual wire replay. Only catalog failed: frontend required LM_STUDIO_TRUSTED_LOCAL_EVIDENCE_REQUIRED while the stable backend emitted LMSTUDIO_LOCALITY_UNVERIFIED. Capabilities, three matches, pending dispatch, draft and recovered assets passed."
+    },
+    {
+      "id": "wire_green_after_reason_alignment",
+      "started_at_utc": "2026-10-10T10:54:03Z",
+      "log": "stage-m4b-ui-wire-replay-green.log",
+      "result": "PASS",
+      "tests_passed": 8,
+      "tests_failed": 0,
+      "source_identity": {
+        "frontend/src/creative/studioProviderClient.ts": "bbb816a5bfce6a6e02684cb99b8a8e2a2b1478fa323250f7ee3916e25bd2c23c",
+        "frontend/src/creative/studioProvider.testFixtures.ts": "7376363d0b4508040c711c384b7039257262aa4a11bc390e217b9590dcced6cf",
+        "frontend/src/creative/studioGraphTextAssetContract.ts": "04da80c3817339376e2e077c42fe4252460ce8b0f50cc85b657990735679ceff",
+        "frontend/src/creative/studioGraphClient.ts": "5d2aeee05f9d88d1ee6b521858b35f7ccb4fbecc3415819f91225a984e010328"
+      },
+      "scope": "Replayed the identical captured wire after changing only the newly added provider validator and fixture reason string. All eight projections pass. This is parser compatibility, not browser acceptance."
+    },
+    {
+      "id": "provider_78_after_reason_alignment",
+      "started_at_utc": "2026-10-10T10:54:10Z",
+      "log": "stage-m4b-ui-provider-78.log",
+      "result": "PASS",
+      "test_files": 2,
+      "tests_passed": 78,
+      "tests_failed": 0,
+      "source_identity": {
+        "frontend/src/creative/studioProviderClient.ts": "bbb816a5bfce6a6e02684cb99b8a8e2a2b1478fa323250f7ee3916e25bd2c23c",
+        "frontend/src/creative/studioProvider.testFixtures.ts": "7376363d0b4508040c711c384b7039257262aa4a11bc390e217b9590dcced6cf"
+      },
+      "scope": "Focused provider validator and panel tests after reason-code alignment. Different input source identity from the earlier 270-test run."
+    },
+    {
+      "id": "typecheck_pre_reason_alignment",
+      "started_at_utc": "2026-10-10T10:46:53Z",
+      "log": "stage-m4b-ui-typecheck.log",
+      "result": "PASS",
+      "exit_code": 0,
+      "source_identity": {
+        "frontend/src/creative/studioProvider.testFixtures.ts": "ddc26a59deffbdc1faea6bec86703af1e8aeed48dd1f3cfbd5b11492b6dc67b1",
+        "frontend/src/creative/studioProviderClient.test.ts": "eecdbf8872ee932aee0e5a9c612d56a83c4e90c94f84e9d63afb1d060aa5a880",
+        "frontend/src/creative/studioProviderClient.ts": "37bf425710cb34d48e45f3a37386d8d3cfc78f8d32931b558406ae471ab7b727",
+        "frontend/src/creative/studioProviderTypes.ts": "6bf4b5d71c6e0d181fc2a483436469e2983b9c2d77985e15f66b84c6e66be63f",
+        "frontend/src/creative/ProviderTaskMatchPanel.test.tsx": "78ce670f1bf78fd87bc03bd8ee163e35fb3c0b741bc4d4f266b13da5c21707b7",
+        "frontend/src/creative/ProviderTaskMatchPanel.tsx": "a18857eec9d1448e1ca897e5c0a1bc99fec49398e2ee2c5f16fb2f38b763babd",
+        "frontend/src/creative/studioGraphTextAsset.testFixtures.ts": "9130c00e663ce6320e61b92087c72121118570a60025ddcb008615bd8e54e59d",
+        "frontend/src/creative/studioGraphTextAssetClient.test.ts": "eaa100e428aa4866854e2379a83a59f64638a60c488f312dce507afe4a53e79e",
+        "frontend/src/creative/studioGraphTextAssetContract.ts": "04da80c3817339376e2e077c42fe4252460ce8b0f50cc85b657990735679ceff",
+        "frontend/src/creative/studioGraphTextAssetTypes.ts": "63a0cb9d5f56fefa72ba573f0901627d5c0077bde849c52429ec6379f9296a9e",
+        "frontend/src/creative/GraphTextAssetPanel.test.tsx": "023b21daa4e6145ed2051964ba77811c40a9b8947db7b74bbc3a18716275df7d",
+        "frontend/src/creative/GraphTextAssetSummary.tsx": "f5c0f0681ef1e4a792695c21e0caed07324ccaad01f2db7b9a65d556b0bda9f8",
+        "frontend/src/creative/studioGraphClient.ts": "5d2aeee05f9d88d1ee6b521858b35f7ccb4fbecc3415819f91225a984e010328",
+        "frontend/src/creative/studioGraphTypes.ts": "3f04edca0b479fbc282251f81672a8e6c633bc7049142e2277931f57a9343fc2",
+        "frontend/src/creative/studioGraphModelContract.ts": "62ade81b3091ee4736383254bc573e19542287c1b3e429ffb1cc6a5b60fab2a1",
+        "frontend/src/creative/GraphModelExecutionPanel.tsx": "f503c179caa4e8af62230a7ffaca01d82c36fdb21f9a588c52156f474f0a2c10",
+        "frontend/src/creative/GraphRunPanel.tsx": "73a525f0bb844206a68d1a5d33ea1b7b30be8b169bcb2d382839071d9d656a0c"
+      },
+      "scope": "TypeScript noEmit check after provider/TextAsset integration and before the two reason-string updates."
+    }
+  ],
+  "replay_harness": {
+    "temporary_test_source": "import { readFileSync } from 'node:fs';\nimport { createStudioGraphClient } from '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/creative/studioGraphClient.ts';\nconst wire=JSON.parse(readFileSync('/tmp/m4b-wire.Aqqvm4/wire.json','utf8'));\nfunction client(value:unknown){return createStudioGraphClient(wire.capabilities.project_id,{}, {json: async () => value as never});}\ndescribe('Genuine mounted File/API wire replay through strict frontend client',()=>{\n it('accepts model capabilities including result storage',async()=>{expect(await client(wire.capabilities).modelCapabilities()).toEqual(wire.capabilities);});\n it('accepts provider catalog',async()=>{expect(await client(wire.catalog).providerContracts()).toEqual(wire.catalog);});\n for(const match of wire.matches) it(`accepts ${match.requirement.task_type} matching`,async()=>{expect(await client(match).modelMatch(match.requirement)).toEqual(match);});\n it('accepts original dispatch with archival intent and pending receipt',async()=>{const result=await client(wire.dispatched).dispatchModel(wire.dispatched.id,wire.dispatch_input);expect(result.asset_output).toEqual(wire.dispatched.asset_output);});\n for(const key of ['draft','recovered']) it(`accepts ${key} TextAsset result`,async()=>{const result=await client(wire[key]).getRun(wire[key].id);expect(result.asset_output).toEqual(wire[key].asset_output);});\n});\n",
+    "temporary_config_source": "export default {test:{globals:true,include:['/tmp/m4b-provider-ui/wire-replay.test.ts'],environment:'node',poolOptions:{threads:{singleThread:true}},reporters:['verbose']}};\n",
+    "note": "The preserved input JSON replaces the temporary input path for reproduction. Harness calls only createStudioGraphClient with an in-memory transport returning captured JSON."
+  },
+  "artifacts": {
+    "stage-m4b-ui-wire-replay-red.log": {
+      "sha256": "41885458466c2c9460445f7e98246dfcaae98e0e9b67208565fae0b1d355c6c8",
+      "bytes": 2995
+    },
+    "stage-m4b-ui-wire-replay-green.log": {
+      "sha256": "393788f2822bc660fca7bfa7409f07232c8048d668419d36d2693706be5ec821",
+      "bytes": 2349
+    },
+    "stage-m4b-ui-focused-270.log": {
+      "sha256": "899bab9828ec19dedc1b8710e5b7aa1f3697a73acd254142c54f87dae1f85626",
+      "bytes": 3494
+    },
+    "stage-m4b-ui-provider-78.log": {
+      "sha256": "c99cbdf7c377e8ce6ed5dd66747f110bc21b93a9b52e7c34c2d23a231c68bd0a",
+      "bytes": 704
+    },
+    "stage-m4b-ui-typecheck.log": {
+      "sha256": "466486aa945641bd802b63b66f17b09f1adc3a3311f64a0a723eb46bfacef3b3",
+      "bytes": 2115
+    },
+    "stage-m4b-ui-browser-blocked.log": {
+      "sha256": "1cd378dab3224fb1114df00dbe8859789fcf49f782f994a61d697ec17bad1ca9",
+      "bytes": 7477
+    },
+    "stage-m4b-ui-wire-input.json": {
+      "sha256": "b22d5fe9b37f1cca86b909bf4fb4ff8f6b28550bd2e88bcdd48d5d60d4c971d5",
+      "bytes": 33434
+    }
+  }
+}

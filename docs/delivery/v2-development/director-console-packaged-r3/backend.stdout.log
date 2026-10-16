@@ -1,0 +1,14 @@
+INFO:     127.0.0.1:64493 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64565 - "POST /api/packaged/bootstrap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64581 - "POST /api/packaged/initial-workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65307 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:65308 - "GET /api/novels HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:65309 - "GET /api/text-models HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:65310 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:65311 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:65314 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:58772 - "GET /api/collaboration/admin/workspaces HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52144 - "GET /api/collaboration/admin/workspaces/workspace-a/navigation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59254 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62084 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63744 - "GET /api/novels HTTP/1.1" 200 OK

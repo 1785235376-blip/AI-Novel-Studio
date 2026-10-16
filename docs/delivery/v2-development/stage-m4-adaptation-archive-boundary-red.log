@@ -1,0 +1,115 @@
+FFssFFFsss                                                               [100%]
+=================================== FAILURES ===================================
+_ test_completed_archive_recovers_after_same_durable_adapter_is_rebound[file-/api] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7f0b1c76cc80>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f0b1c4ce090>, creative_base='/api/novels/r3-mounted-7a85900cbdb04011852d3dabab6b45b4/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0b1c0bc440>
+
+    def test_completed_archive_recovers_after_same_durable_adapter_is_rebound(creative_model, monkeypatch):
+        e = creative_model
+        from app.runtime import runtime
+        from app.model_runtime import LegacyTextProviderAdapter
+        row, job, calls = completed_without_refresh(e, monkeypatch)
+>       before = row["model_preview"]["broker"]["chosen"]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_v2_adaptation_archive.py:406: TypeError
+_ test_completed_archive_recovers_after_same_durable_adapter_is_rebound[file-/api/v1] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7f0b1a7f9220>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f0b1c4ce090>, creative_base='/api/v1/novels/r3-mounted-13527064b93a48ea80a7be31f160a6a2/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0b19be9dc0>
+
+    def test_completed_archive_recovers_after_same_durable_adapter_is_rebound(creative_model, monkeypatch):
+        e = creative_model
+        from app.runtime import runtime
+        from app.model_runtime import LegacyTextProviderAdapter
+        row, job, calls = completed_without_refresh(e, monkeypatch)
+>       before = row["model_preview"]["broker"]["chosen"]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_v2_adaptation_archive.py:406: TypeError
+_ test_damaged_private_contract_never_falls_back_to_generic_asset_visibility[file-_owner_actor_id] _
+
+owner = namespace(nid='v2-foundation-1683629d492b4e1ea86d2054ed4af369', scope={'mode': 'local', 'novel_id': 'v2-foundation-168..._0'), backend='file', url='', assets=<app.services.asset_library_service.AssetLibraryService object at 0x7f0b18c70ef0>)
+field = '_owner_actor_id'
+
+    @pytest.mark.parametrize("field", ["_owner_actor_id", "_required_features", "version"])
+    def test_damaged_private_contract_never_falls_back_to_generic_asset_visibility(owner, field):
+        with lease(owner):
+            row = create(owner)
+            path = owner.assets._meta_path(row["id"])
+            value = json.loads(path.read_text())
+            if field == "version": value[field] = True
+            else: value.pop(field)
+            path.write_text(json.dumps(value))
+            for actor in (None, owner.actor):
+>               assert not owner.assets.list(owner.nid, actor_id=actor)
+E               AssertionError: assert not [{'_project_binding': {'branch_id': None, 'incarnation': 'file:25d48a53-0b29-4101-9d2d-da91cba79213', 'novel_id': 'v2-...1', 'job_id': 'job-1', 'output_digest': 'ced77127d10983d7b41fd8f29ce988333ea7f223c1473367ccccbdafbfb3e624', ...}, ...}]
+E                +  where [{'_project_binding': {'branch_id': None, 'incarnation': 'file:25d48a53-0b29-4101-9d2d-da91cba79213', 'novel_id': 'v2-...1', 'job_id': 'job-1', 'output_digest': 'ced77127d10983d7b41fd8f29ce988333ea7f223c1473367ccccbdafbfb3e624', ...}, ...}] = list('v2-foundation-1683629d492b4e1ea86d2054ed4af369', actor_id=None)
+E                +    where list = <app.services.asset_library_service.AssetLibraryService object at 0x7f0b18c70ef0>.list
+E                +      where <app.services.asset_library_service.AssetLibraryService object at 0x7f0b18c70ef0> = namespace(nid='v2-foundation-1683629d492b4e1ea86d2054ed4af369', scope={'mode': 'local', 'novel_id': 'v2-foundation-168..._0'), backend='file', url='', assets=<app.services.asset_library_service.AssetLibraryService object at 0x7f0b18c70ef0>).assets
+E                +    and   'v2-foundation-1683629d492b4e1ea86d2054ed4af369' = namespace(nid='v2-foundation-1683629d492b4e1ea86d2054ed4af369', scope={'mode': 'local', 'novel_id': 'v2-foundation-168..._0'), backend='file', url='', assets=<app.services.asset_library_service.AssetLibraryService object at 0x7f0b18c70ef0>).nid
+
+tests/test_v2_adaptation_asset_owner.py:570: AssertionError
+_ test_damaged_private_contract_never_falls_back_to_generic_asset_visibility[file-_required_features] _
+
+owner = namespace(nid='v2-foundation-b0839d31cc4549c7adeae27d6645f4d1', scope={'mode': 'local', 'novel_id': 'v2-foundation-b08..._1'), backend='file', url='', assets=<app.services.asset_library_service.AssetLibraryService object at 0x7f0b187b5b50>)
+field = '_required_features'
+
+    @pytest.mark.parametrize("field", ["_owner_actor_id", "_required_features", "version"])
+    def test_damaged_private_contract_never_falls_back_to_generic_asset_visibility(owner, field):
+        with lease(owner):
+            row = create(owner)
+            path = owner.assets._meta_path(row["id"])
+            value = json.loads(path.read_text())
+            if field == "version": value[field] = True
+            else: value.pop(field)
+            path.write_text(json.dumps(value))
+            for actor in (None, owner.actor):
+>               assert not owner.assets.list(owner.nid, actor_id=actor)
+E               AssertionError: assert not [{'_owner_actor_id': 'local-author', '_project_binding': {'branch_id': None, 'incarnation': 'file:c76994cc-b666-4adb-a...1', 'job_id': 'job-1', 'output_digest': 'ced77127d10983d7b41fd8f29ce988333ea7f223c1473367ccccbdafbfb3e624', ...}, ...}]
+E                +  where [{'_owner_actor_id': 'local-author', '_project_binding': {'branch_id': None, 'incarnation': 'file:c76994cc-b666-4adb-a...1', 'job_id': 'job-1', 'output_digest': 'ced77127d10983d7b41fd8f29ce988333ea7f223c1473367ccccbdafbfb3e624', ...}, ...}] = list('v2-foundation-b0839d31cc4549c7adeae27d6645f4d1', actor_id='local-author')
+E                +    where list = <app.services.asset_library_service.AssetLibraryService object at 0x7f0b187b5b50>.list
+E                +      where <app.services.asset_library_service.AssetLibraryService object at 0x7f0b187b5b50> = namespace(nid='v2-foundation-b0839d31cc4549c7adeae27d6645f4d1', scope={'mode': 'local', 'novel_id': 'v2-foundation-b08..._1'), backend='file', url='', assets=<app.services.asset_library_service.AssetLibraryService object at 0x7f0b187b5b50>).assets
+E                +    and   'v2-foundation-b0839d31cc4549c7adeae27d6645f4d1' = namespace(nid='v2-foundation-b0839d31cc4549c7adeae27d6645f4d1', scope={'mode': 'local', 'novel_id': 'v2-foundation-b08..._1'), backend='file', url='', assets=<app.services.asset_library_service.AssetLibraryService object at 0x7f0b187b5b50>).nid
+
+tests/test_v2_adaptation_asset_owner.py:570: AssertionError
+_ test_damaged_private_contract_never_falls_back_to_generic_asset_visibility[file-version] _
+
+owner = namespace(nid='v2-foundation-a639c9da69c0442383cef00d0212bab7', scope={'mode': 'local', 'novel_id': 'v2-foundation-a63..._2'), backend='file', url='', assets=<app.services.asset_library_service.AssetLibraryService object at 0x7f0b18e08e30>)
+field = 'version'
+
+    @pytest.mark.parametrize("field", ["_owner_actor_id", "_required_features", "version"])
+    def test_damaged_private_contract_never_falls_back_to_generic_asset_visibility(owner, field):
+        with lease(owner):
+            row = create(owner)
+            path = owner.assets._meta_path(row["id"])
+            value = json.loads(path.read_text())
+            if field == "version": value[field] = True
+            else: value.pop(field)
+            path.write_text(json.dumps(value))
+            for actor in (None, owner.actor):
+>               assert not owner.assets.list(owner.nid, actor_id=actor)
+E               AssertionError: assert not [{'_owner_actor_id': 'local-author', '_project_binding': {'branch_id': None, 'incarnation': 'file:089adcbe-ded9-4e41-9...odel_fingerprint': 'synthetic-protocol-v1', 'runtime_fingerprint': None, 'runtime_version': 'python-test'}, ...}, ...}]
+E                +  where [{'_owner_actor_id': 'local-author', '_project_binding': {'branch_id': None, 'incarnation': 'file:089adcbe-ded9-4e41-9...odel_fingerprint': 'synthetic-protocol-v1', 'runtime_fingerprint': None, 'runtime_version': 'python-test'}, ...}, ...}] = list('v2-foundation-a639c9da69c0442383cef00d0212bab7', actor_id='local-author')
+E                +    where list = <app.services.asset_library_service.AssetLibraryService object at 0x7f0b18e08e30>.list
+E                +      where <app.services.asset_library_service.AssetLibraryService object at 0x7f0b18e08e30> = namespace(nid='v2-foundation-a639c9da69c0442383cef00d0212bab7', scope={'mode': 'local', 'novel_id': 'v2-foundation-a63..._2'), backend='file', url='', assets=<app.services.asset_library_service.AssetLibraryService object at 0x7f0b18e08e30>).assets
+E                +    and   'v2-foundation-a639c9da69c0442383cef00d0212bab7' = namespace(nid='v2-foundation-a639c9da69c0442383cef00d0212bab7', scope={'mode': 'local', 'novel_id': 'v2-foundation-a63..._2'), backend='file', url='', assets=<app.services.asset_library_service.AssetLibraryService object at 0x7f0b18e08e30>).nid
+
+tests/test_v2_adaptation_asset_owner.py:570: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-adaptation-archive-boundary-red.xml -
+=========================== short test summary info ============================
+FAILED tests/test_v2_adaptation_archive.py::test_completed_archive_recovers_after_same_durable_adapter_is_rebound[file-/api]
+FAILED tests/test_v2_adaptation_archive.py::test_completed_archive_recovers_after_same_durable_adapter_is_rebound[file-/api/v1]
+FAILED tests/test_v2_adaptation_asset_owner.py::test_damaged_private_contract_never_falls_back_to_generic_asset_visibility[file-_owner_actor_id]
+FAILED tests/test_v2_adaptation_asset_owner.py::test_damaged_private_contract_never_falls_back_to_generic_asset_visibility[file-_required_features]
+FAILED tests/test_v2_adaptation_asset_owner.py::test_damaged_private_contract_never_falls_back_to_generic_asset_visibility[file-version]
+5 failed, 5 skipped, 1 warning in 9.53s

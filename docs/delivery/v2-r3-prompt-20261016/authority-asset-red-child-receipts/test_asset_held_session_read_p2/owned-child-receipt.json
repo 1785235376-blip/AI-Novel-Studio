@@ -1,0 +1,8 @@
+{
+  "pid": 79088,
+  "mode": "asset-read",
+  "operation": "same",
+  "returncode": 2,
+  "timed_out": false,
+  "child_stopped": true
+}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="2" tests="4" time="7.494" timestamp="2026-10-10T14:22:55.791657-07:00" hostname="7abb01f187ba"><testcase classname="tests.test_v2_adaptation_archive" name="test_automatic_archive_then_edited_adoption_preserves_original_bytes[file-/api]" time="5.258"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;EXPERIMENTAL_INVALID&quot;,&quot;message&quot;:&quot;ADAPTATION_TEXT_EXECUTION_RECEIPT_INVALID&quot;},&quot;code&quot;:&quot;EXPERIMENTAL_INVALID&quot;,&quot;message&quot;:&quot;ADAPTATION_TEXT_EXECUTION_RECEIPT_INVALID&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;EXPERIMENTAL_INVALID&quot;,&quot;message&quot;:&quot;ADAPTATION_TEXT_EXECUTION_RECEIPT_INVALID&quot;},&quot;request_id&quot;:&quot;fbcbc48c-bebc-4a95-9069-a3ff7efa25f3&quot;}&#10;assert 422 == 200&#10; +  where 422 = &lt;Response [422 Unprocessable Entity]&gt;.status_code">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f2bd9baa900&gt;, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f2bda182ab0&gt;, creative_base='/api/novels/r3-mounted-82fb60c8d7d444fa98a0655ba938a6e2/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f2bd9fd2ba0&gt;
+
+    def test_automatic_archive_then_edited_adoption_preserves_original_bytes(creative_model, monkeypatch):
+        e = creative_model
+        chapter = copy.deepcopy(e.chapters.get(e.chapter["id"]))
+        row, calls = ready(e, monkeypatch)
+&gt;       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_adaptation_archive.py:70: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:46: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:30: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = &lt;Response [422 Unprocessable Entity]&gt;, status = 200
+
+    def checked(response, status=200):
+&gt;       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_TEXT_EXECUTION_RECEIPT_INVALID"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_TEXT_EXECUTION_RECEIPT_INVALID","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_TEXT_EXECUTION_RECEIPT_INVALID"},"request_id":"fbcbc48c-bebc-4a95-9069-a3ff7efa25f3"}
+E       assert 422 == 200
+E        +  where 422 = &lt;Response [422 Unprocessable Entity]&gt;.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError</failure></testcase><testcase classname="tests.test_v2_adaptation_archive" name="test_automatic_archive_then_edited_adoption_preserves_original_bytes[file-/api/v1]" time="0.760"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;EXPERIMENTAL_INVALID&quot;,&quot;message&quot;:&quot;ADAPTATION_TEXT_EXECUTION_RECEIPT_INVALID&quot;},&quot;code&quot;:&quot;EXPERIMENTAL_INVALID&quot;,&quot;message&quot;:&quot;ADAPTATION_TEXT_EXECUTION_RECEIPT_INVALID&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;EXPERIMENTAL_INVALID&quot;,&quot;message&quot;:&quot;ADAPTATION_TEXT_EXECUTION_RECEIPT_INVALID&quot;},&quot;request_id&quot;:&quot;4996859d-d381-4993-8ce7-321a9317c02b&quot;}&#10;assert 422 == 200&#10; +  where 422 = &lt;Response [422 Unprocessable Entity]&gt;.status_code">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f2bd3cbcf80&gt;, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f2bda182ab0&gt;, creative_base='/api/v1/novels/r3-mounted-ede2952013d1478c9ccf5a8c012542ab/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f2bd84a8f20&gt;
+
+    def test_automatic_archive_then_edited_adoption_preserves_original_bytes(creative_model, monkeypatch):
+        e = creative_model
+        chapter = copy.deepcopy(e.chapters.get(e.chapter["id"]))
+        row, calls = ready(e, monkeypatch)
+&gt;       result = settle(e, dispatch(e, row))
+                           ^^^^^^^^^^^^^^^^
+
+tests/test_v2_adaptation_archive.py:70: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:46: in dispatch
+    return action(e, row, "dispatch", reviewed_preview_digest=row["model_preview"]["preview_digest"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_source_adaptation.py:30: in action
+    return checked(e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/{name}',
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = &lt;Response [422 Unprocessable Entity]&gt;, status = 200
+
+    def checked(response, status=200):
+&gt;       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_TEXT_EXECUTION_RECEIPT_INVALID"},"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_TEXT_EXECUTION_RECEIPT_INVALID","details":{"code":"EXPERIMENTAL_INVALID","message":"ADAPTATION_TEXT_EXECUTION_RECEIPT_INVALID"},"request_id":"4996859d-d381-4993-8ce7-321a9317c02b"}
+E       assert 422 == 200
+E        +  where 422 = &lt;Response [422 Unprocessable Entity]&gt;.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError</failure></testcase><testcase classname="tests.test_v2_adaptation_archive" name="test_automatic_archive_then_edited_adoption_preserves_original_bytes[postgres-/api]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_adaptation_archive.py:66: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_adaptation_archive" name="test_automatic_archive_then_edited_adoption_preserves_original_bytes[postgres-/api/v1]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_adaptation_archive.py:66: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase></testsuite></testsuites>

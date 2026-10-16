@@ -1,0 +1,14 @@
+.....F.................................................................. [ 51%]
+....................................................................     [100%]
+================================== FAILURES ===================================
+E   Failed: DID NOT RAISE ValueError
+D:\PoemSeed\Worktrees\studio-v2-audio-editing-20261014\tests\test_round3w_concurrency.py:238: Failed: DID NOT RAISE ValueError
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_round3w_concurrency.py::test_a_completed_revision_cannot_be_retargeted_through_the_generic_path
+1 failed, 139 passed, 1 warning in 9.72s

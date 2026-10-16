@@ -1,0 +1,48 @@
+<testsuites id="" name="" tests="8" failures="0" skipped="8" errors="0" time="0.1253839999999999">
+<testsuite name="v2-asset-relationships-live.spec.ts" timestamp="2026-10-09T13:59:56.993Z" hostname="v2-live-chromium" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="real File optional asset relationships persist, protect targets and remove explicitly with no chapter prerequisite" classname="v2-asset-relationships-live.spec.ts">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="v2-independent-graph-live.spec.ts" timestamp="2026-10-09T13:59:56.993Z" hostname="v2-live-chromium" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="real independent typed graph saves empty and disconnected drafts, reopens, and reviews an original local workflow without model calls" classname="v2-independent-graph-live.spec.ts">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="v2-independent-studio-live.spec.ts" timestamp="2026-10-09T13:59:56.993Z" hostname="v2-live-chromium" tests="2" failures="0" skipped="2" time="0" errors="0">
+<testcase name="real File independent studio imports, persists, reopens and exports an image with no chapters or model mutation" classname="v2-independent-studio-live.spec.ts">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="real File independent VIDEO imports, decodes, reopens and exports original bytes without chapters or director" classname="v2-independent-studio-live.spec.ts">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="v2-independent-graph-live.spec.ts" timestamp="2026-10-09T13:59:56.993Z" hostname="v1-chromium" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="default-off: independent graph remains unavailable without its server gate" classname="v2-independent-graph-live.spec.ts">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="v2-independent-studio-live.spec.ts" timestamp="2026-10-09T13:59:56.993Z" hostname="v1-chromium" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="default-off independent studio entry is absent and neutral project writes are rejected" classname="v2-independent-studio-live.spec.ts">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="v2-independent-graph-live.spec.ts" timestamp="2026-10-09T13:59:56.993Z" hostname="v1-acceptance-chromium" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="acceptance-mode: independent graph remains unavailable without its server gate" classname="v2-independent-graph-live.spec.ts">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="v2-independent-studio-live.spec.ts" timestamp="2026-10-09T13:59:56.993Z" hostname="v1-acceptance-chromium" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="acceptance-mode independent studio stays absent despite an enabled narrative feature setting" classname="v2-independent-studio-live.spec.ts">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+</testsuites>

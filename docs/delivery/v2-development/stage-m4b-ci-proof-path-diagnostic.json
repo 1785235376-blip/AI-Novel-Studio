@@ -1,0 +1,10 @@
+{
+  "status": "DIAGNOSTIC_ARTIFACT_PATH_CORRECTED",
+  "original_verifier_exit": 1,
+  "error": "FileNotFoundError: stage-m4b-ci-corrections-collection-proof.json",
+  "cause": "The final collection helper still wrote the earlier proof filename. Collection itself completed successfully twice; the subsequent verifier could not find the new destination.",
+  "resolution": "Retained the actual final proof at its distinct final filename, corrected the helper output path, and restored the earlier proof byte-for-byte against its previously recorded SHA256. No test result was rewritten or rerun.",
+  "prior_proof_sha256": "3fe47a99d6b60453086d375bea0fe28b80485be1fe2044f86cdb15e8d0e4d7c1",
+  "prior_previously_recorded_sha256": "3fe47a99d6b60453086d375bea0fe28b80485be1fe2044f86cdb15e8d0e4d7c1",
+  "final_proof_sha256": "d267bcf7ba60b5e9d85da75caf35cec79578e941ef4d926b91e74b94fb3e3be5"
+}

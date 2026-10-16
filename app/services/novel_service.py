@@ -1,11 +1,15 @@
 from __future__ import annotations
 import base64
+import copy
+import csv
+import io
 import json
 import re
 import uuid
 from datetime import datetime, timezone
 from ..import_parsers import decode_base64,docx_to_text,pdf_to_text
 from ..export_formats import novel_to_docx, novel_to_epub
+from ..document import chapter_body_text
 from ..pdf_export import novel_to_pdf
 from ..industry_export_formats import (
     screenplay_to_docx,
@@ -18,6 +22,7 @@ from ..industry_export_formats import (
     storyboard_to_package,
 )
 from ..repositories.interfaces import NovelRepositoryProtocol,ChapterRepositoryProtocol
+from .export_resource_snapshot import PACKAGE_FORMATS, MAX_PACKAGE_RESOURCE_BYTES, FrozenExportResources, capture_asset
 class NovelService:
     def __init__(self,novels:NovelRepositoryProtocol,chapters:ChapterRepositoryProtocol):self.novels=novels;self.chapters=chapters
     def list(self):return self.novels.list()
@@ -39,6 +44,93 @@ class NovelService:
         self.update(nid,{"writing_goal":{"target_words":target_words,"target_chapters":target_chapters,"deadline":str(payload.get("deadline") or "")}})
         return self.writing_goal(nid)
     def delete(self,nid):return self.novels.delete(nid)
+    def compare_and_swap_record(self,nid,kind,record_id,payload,expected_digest):return self.novels.compare_and_swap_record(nid,kind,record_id,payload,expected_digest)
+    def story_record(self,nid,kind,record_id):
+        return self._story_record_view(nid,kind,record_id,self.novels.story_record(nid,kind,record_id))
+
+    def _story_record_view(self,nid,kind,record_id,result):
+        result['scope']={'kind':'PROJECT','novel_id':nid,'branch_id':None}
+        result['navigation']={'module':'Story','kind':kind,'record_id':record_id,'novel_id':nid}
+        stale=[]
+        for source in result['source_versions']:
+            try: current=self._story_source(nid,source['kind'],source['id'])
+            except (FileNotFoundError,KeyError): current=None
+            if current is None or current['digest']!=source['digest']:stale.append(source['id'])
+        result['stale_sources']=stale
+        result['source_state']='STALE' if stale else 'CURRENT' if result['source_versions'] else 'UNLINKED'
+        feedback=result.get('feedback')
+        result['feedback_stale']=bool(feedback and (feedback['record_digest']!=result['digest'] or feedback.get('source_versions',[])!=result['source_versions'] or stale))
+        return result
+
+    def _story_source(self,nid,kind,record_id):
+        from ..repositories.structured_cas import record_digest
+        if kind=='chapter':
+            row=self.chapters.get(record_id)
+            if row.get('novel_id')!=nid or row.get('is_archived'):raise FileNotFoundError(record_id)
+            # A43 identity is the returned immutable chapter id, not its number.
+            return {'kind':kind,'id':row['id'],'version':row['version'],
+                    'digest':record_digest({'id':row['id'],'version':row['version'],'document':row.get('document'),'content':row.get('content')})}
+        if kind in {'timeline','characters','locations'}:
+            row=next((row for row in self.data_set(nid,kind) if row['id']==record_id),None)
+            if row is None:raise FileNotFoundError(record_id)
+            return {'kind':kind,'id':row['id'],'digest':record_digest(row)}
+        raise ValueError('unsupported story source')
+
+    def _story_sources(self,nid,kind,payload):
+        sources=[]
+        if kind=='timeline' and payload.get('chapter_id'):
+            sources.append(self._story_source(nid,'chapter',payload['chapter_id']))
+        if kind=='foreshadowing':
+            chapters=self.chapters.list(nid)
+            for field in ('planted_chapter','target_chapter'):
+                number=payload.get(field)
+                if number is None:continue
+                chapter=next((row for row in chapters if row.get('number')==number and not row.get('is_archived')),None)
+                # A target can be a future planned chapter. Never guess an id.
+                if chapter:sources.append(self._story_source(nid,'chapter',chapter['id']))
+            for event_id in payload.get('events',[]):sources.append(self._story_source(nid,'timeline',event_id))
+        if kind=='characters' and payload.get('current_location'):
+            # This legacy field permits free text. Bind only an exact existing id.
+            location=next((row for row in self.data_set(nid,'locations') if row['id']==payload['current_location']),None)
+            if location:sources.append(self._story_source(nid,'locations',location['id']))
+        if kind=='relationships':
+            for field in ('source_character_id','target_character_id'):
+                if payload.get(field):sources.append(self._story_source(nid,'characters',payload[field]))
+            for field in ('valid_from_event_id','valid_to_event_id'):
+                if payload.get(field):sources.append(self._story_source(nid,'timeline',payload[field]))
+        return list({(source['kind'],source['id']):source for source in sources}.values())
+
+    def save_story_record(self,nid,kind,record_id,payload,expected_digest,expected_version,*,
+                          actor_id='local-user',action='SAVE',restore_version=None,feedback=None,
+                          refresh_sources=False,check=None):
+        from ..repositories.story_record_versions import KINDS
+        from ..repositories.chapter_repository import VersionConflict
+        if kind not in KINDS:raise ValueError('unsupported story record kind')
+        if check:check()
+        previous=None
+        try:previous=self.story_record(nid,kind,record_id)
+        except FileNotFoundError:pass
+        if action!='SAVE' and previous is None:raise FileNotFoundError(record_id)
+        if previous and previous['stale_sources'] and not refresh_sources and action!='RESTORE':
+            raise VersionConflict({'id':record_id,'version':previous['version']},resource_id=record_id,expected_version=expected_version)
+        source_payload={**((previous or {}).get('record',{}) if kind in {'characters','locations','relationships'} else {}),**payload}
+        sources=self._story_sources(nid,kind,source_payload) if action=='SAVE' else (previous or {}).get('source_versions',[])
+        mutation={'expected_version':expected_version,'action':action,'actor_id':actor_id,
+                  'source_versions':sources,'restore_version':restore_version,'feedback':feedback}
+        def boundary():
+            if check:check()
+            if action!='RESTORE':
+                for source in sources:
+                    try: current=self._story_source(nid,source['kind'],source['id'])
+                    except (FileNotFoundError,KeyError):current=None
+                    if current is None or current['digest']!=source['digest']:
+                        raise VersionConflict({'id':record_id,'version':expected_version},resource_id=record_id,expected_version=expected_version)
+        result=self.novels.compare_and_swap_record(nid,kind,record_id,payload,expected_digest,mutation=mutation,check=boundary)
+        # Read after mutation is a receipt; a later writer may already have won.
+        # Keep this operation's exact resulting digest/version in the response.
+        if check:check()
+        return self._story_record_view(nid,kind,result['record']['id'],result)
+
     def data_set(self,nid,name):return self.novels.get_data_set(nid,name)
     def upsert_character(self,nid,character_id,payload):return self.novels.upsert_character(nid,character_id,payload)
     def upsert_location(self,nid,location_id,payload):return self.novels.upsert_location(nid,location_id,payload)
@@ -46,7 +138,8 @@ class NovelService:
     def upsert_foreshadowing(self,nid,foreshadowing_id,payload):return self.novels.upsert_foreshadowing(nid,foreshadowing_id,payload)
     def upsert_relationship(self,nid,relationship_id,payload):return self.novels.upsert_relationship(nid,relationship_id,payload)
     def outline(self,nid):return self.novels.get_outline(nid)
-    def update_outline(self,nid,payload):return self.novels.update_outline(nid,payload)
+    def update_outline(self,nid,payload,**kwargs):return self.novels.update_outline(nid,payload,**kwargs)
+    def update_world_summary(self,nid,summary,expected_digest):return self.novels.update_world_summary(nid,summary,expected_digest)
     def upsert_volume(self,nid,volume_id,payload):return self.novels.upsert_volume(nid,volume_id,payload)
     def upsert_scene(self,nid,scene_id,payload):return self.novels.upsert_scene(nid,scene_id,payload)
     def upsert_story_route(self,nid,route_id,payload):return self.novels.upsert_story_route(nid,route_id,payload)
@@ -58,51 +151,29 @@ class NovelService:
         for item in candidates.get("characters", []):
             name=str(item.get("name") or "").strip()
             if name:
-                item_id=str(item.get("id") or uuid.uuid5(uuid.NAMESPACE_URL, f"import:character:{nid}:{name}"))
-                applied["characters"].append(self.upsert_character(nid,item_id,{"name":name,"status":"ALIVE","source":"IMPORT_REVIEW"}))
+                item_id=str(item.get("id") or uuid.uuid5(uuid.NAMESPACE_URL, f"import:character:{nid}:{item.get('candidate_id') or name}"))
+                applied["characters"].append(self.upsert_character(nid,item_id,{**{k:item[k] for k in ("age","role","personality","goal","current_location","status","privacy_level") if k in item},"name":name,"source":"IMPORT_REVIEW"}))
         for item in candidates.get("locations", []):
             name=str(item.get("name") or "").strip()
             if name:
-                item_id=str(item.get("id") or uuid.uuid5(uuid.NAMESPACE_URL, f"import:location:{nid}:{name}"))
-                applied["locations"].append(self.upsert_location(nid,item_id,{"name":name,"status":"ACTIVE","source":"IMPORT_REVIEW"}))
+                item_id=str(item.get("id") or uuid.uuid5(uuid.NAMESPACE_URL, f"import:location:{nid}:{item.get('candidate_id') or name}"))
+                applied["locations"].append(self.upsert_location(nid,item_id,{**{k:item[k] for k in ("location_type","description","rules","atmosphere","status","privacy_level") if k in item},"name":name,"source":"IMPORT_REVIEW"}))
         for item in candidates.get("timeline_events", []):
             title=str(item.get("title") or "").strip()
             if title:
                 item_id=str(item.get("id") or uuid.uuid5(uuid.NAMESPACE_URL, f"import:event:{nid}:{title}:{item.get('chapter_number',0)}"))
-                applied["timeline_events"].append(self.upsert_timeline_event(nid,item_id,{"title":title,"sequence":int(item.get("chapter_number") or 1),"description":str(item.get("description") or ""),"status":"CONFIRMED","source":"IMPORT_REVIEW"}))
+                applied["timeline_events"].append(self.upsert_timeline_event(nid,item_id,{"title":title,"sequence":int(item.get("chapter_number") or 1),"description":str(item.get("description") or ""),"privacy_level":item.get("privacy_level","LOCAL_ONLY"),"status":"CONFIRMED","source":"IMPORT_REVIEW"}))
         for item in candidates.get("foreshadowing", []):
             title=str(item.get("title") or "").strip()
             if title:
                 item_id=str(item.get("id") or uuid.uuid5(uuid.NAMESPACE_URL, f"import:foreshadowing:{nid}:{title}"))
-                applied["foreshadowing"].append(self.upsert_foreshadowing(nid,item_id,{"title":title,"description":str(item.get("evidence") or ""),"status":"OPEN","source":"IMPORT_REVIEW"}))
+                applied["foreshadowing"].append(self.upsert_foreshadowing(nid,item_id,{"title":title,"description":str(item.get("description") or item.get("evidence") or ""),"privacy_level":item.get("privacy_level","LOCAL_ONLY"),"planted_chapter":item.get("chapter_number"),"status":"OPEN","source":"IMPORT_REVIEW"}))
         return {"decision": decision, "applied": applied}
 
     @staticmethod
     def _knowledge_candidates(chapters):
-        """Produce reviewable candidates; never writes entities during import."""
-        characters, locations, events, foreshadowing = {}, {}, [], []
-        name_pattern = re.compile(r"(?<![\u4e00-\u9fff])([\u4e00-\u9fff]{2,4})(?=(?:说|道|问|回答|看见|走向|转身|点头|摇头))")
-        location_pattern = re.compile(r"([\u4e00-\u9fff]{2,12}(?:城|镇|村|港|岛|宫|府|山|河|学院|基地|大陆))")
-        for number, chapter in enumerate(chapters, 1):
-            text = chapter["content"]
-            evidence = text[:240]
-            for match in name_pattern.finditer(text):
-                name = match.group(1).rstrip("说说道问回答看见走向转身点头摇头")
-                if len(name) < 2: continue
-                characters.setdefault(name, {"name": name, "evidence": evidence, "chapter_number": number, "confidence": 0.55})
-            for match in location_pattern.finditer(text):
-                raw_name = match.group(1)
-                marker = re.search(r"(学院|基地|大陆|城|镇|村|港|岛|宫|府|山|河)$", raw_name)
-                if not marker: continue
-                width = len(marker.group(1)) + 2
-                name = raw_name[-width:]
-                name = name.lstrip("\u4e86\u5230\u5728\u4e8e\u5f80\u8fdb\u5165")
-                locations.setdefault(name, {"name": name, "evidence": evidence, "chapter_number": number, "confidence": 0.5})
-            if text:
-                events.append({"title": chapter["title"], "description": text[:240], "chapter_number": number, "confidence": 0.35})
-            for match in re.finditer(r"(?:总有一天|迟早|秘密|真相|未完|伏笔|线索)[^。！？\n]{0,80}", text):
-                foreshadowing.append({"title": match.group(0)[:80], "evidence": evidence, "chapter_number": number, "confidence": 0.4})
-        return {"characters": list(characters.values()), "locations": list(locations.values()), "timeline_events": events, "foreshadowing": foreshadowing}
+        from ..knowledge_extraction import extract_knowledge_candidates
+        return extract_knowledge_candidates(chapters)
     @staticmethod
     def _now() -> str:
         return datetime.now(timezone.utc).isoformat()
@@ -122,7 +193,7 @@ class NovelService:
                     lowered = str(child_key).lower()
                     if lowered in {"asset_id", "reference_asset_id", "source_asset_id", "target_asset_id"} and isinstance(child, str) and child.strip():
                         references.add(child.strip())
-                    elif lowered in {"asset_ids", "reference_asset_ids", "asset_refs", "assets"} and isinstance(child, (list, tuple, set)):
+                    elif lowered in {"asset_ids", "reference_asset_ids", "asset_refs", "reference_assets", "assets"} and isinstance(child, (list, tuple, set)):
                         for entry in child:
                             if isinstance(entry, str) and entry.strip():
                                 references.add(entry.strip())
@@ -136,43 +207,91 @@ class NovelService:
         visit(value)
         return sorted(references)
 
-    def export_snapshot(self, nid, *, asset_library=None, format: str | None = None):
+    def export_snapshot(self, nid, *, asset_library=None, format: str | None = None, permission_context: dict | None = None):
         """Capture an immutable, provider-free export input snapshot.
 
         The snapshot contains only project data needed by deterministic
-        exporters and asset metadata (never binary bytes).  It is persisted by
+        exporters and asset metadata. Resource packages additionally capture
+        bounded, hash-verified binary payloads; they never reload live assets.
+        The snapshot is persisted by
         :class:`ExportJobService` at queue creation, so edits made while a job
         is running cannot change its output.
         """
         meta = dict(self.get(nid))
-        chapters = [dict(item) for item in self.chapters.list(nid)]
+        scoped_manuscript = bool(permission_context and permission_context.get('mode') == 'collaboration'
+                                 and permission_context.get('branch_id') and callable(getattr(self, 'branch_authority', None)))
+        chapter_owner = self.chapters
+        manuscript_scope = None
+        if scoped_manuscript:
+            from ..experimental.flags import require_flag
+            require_flag('branch_manuscript_v1')
+            manuscript_scope = {'mode': 'collaboration', 'novel_id': nid,
+                                **{key: permission_context.get(key) for key in ('workspace_id', 'storyline_id', 'branch_id')}}
+            chapter_owner = self.branch_authority(manuscript_scope)
+            meta = {key: meta[key] for key in ('id', 'title') if key in meta}
+        chapters = [dict(item) for item in chapter_owner.list(nid)]
+        if scoped_manuscript and any(
+                item.get('branch_id') != manuscript_scope['branch_id'] or item.get('scope') != manuscript_scope
+                or item.get('novel_id') != nid or item.get('authority') != 'BRANCH_MANUSCRIPT_V1'
+                or item.get('deleted') or item.get('is_archived') for item in chapters):
+            raise ValueError('BRANCH_EXPORT_SOURCE_MISMATCH')
         datasets = {}
         for name in ("characters", "locations", "canon", "foreshadowing", "timeline", "relationships", "volumes", "scenes", "story_routes", "outline"):
+            if scoped_manuscript:
+                # These are PROJECT-owned stores. A branch label on a project
+                # record cannot turn it into an independently authorized source.
+                datasets[name] = {} if name == 'outline' else []
+                continue
             try:
                 value = self.data_set(nid, name) if name != "outline" else self.outline(nid)
             except (FileNotFoundError, KeyError):
                 value = {} if name == "outline" else []
             datasets[name] = value
         try:
-            screenplays = [dict(item) for item in self.novels.list_screenplays(nid)]
+            screenplays = [{key:value for key,value in item.items() if key!="version_history"} for item in self.novels.list_screenplays(nid)]
         except (FileNotFoundError, AttributeError):
             screenplays = []
-        source = {"novel": meta, "chapters": chapters, "datasets": datasets, "screenplays": screenplays}
+        if permission_context and permission_context.get("mode") == "collaboration":
+            branch_id = permission_context.get("branch_id")
+            # Screenplays are branch-owned; older unscoped records are not
+            # assigned to an arbitrary branch during recovery/export.
+            screenplays = [row for row in screenplays if branch_id and row.get("branch_id") == branch_id]
+        source = copy.deepcopy({"novel": meta, "chapters": chapters, "datasets": datasets, "screenplays": screenplays})
         refs = self._asset_references(source)
         resources = []
         missing = []
+        resource_payloads = {}
+        total_resource_bytes = 0
+        resource_branch = permission_context.get("branch_id") if permission_context and permission_context.get("mode") == "collaboration" else None
+        package = str(format or "").lower().strip() in PACKAGE_FORMATS
         for asset_id in refs:
+            if not re.fullmatch(r"[A-Za-z0-9_-][A-Za-z0-9_.-]{0,254}", asset_id):
+                missing.append({"id": asset_id, "reason": "unsafe asset identity"})
+                continue
             if asset_library is None:
                 missing.append({"id": asset_id, "reason": "asset library unavailable"})
                 continue
             try:
                 asset = asset_library.get(asset_id)
-            except (FileNotFoundError, OSError):
+            except (FileNotFoundError, OSError, ValueError):
                 missing.append({"id": asset_id, "reason": "asset not found"})
                 continue
-            if str(asset.get("novel_id")) != str(nid):
+            if asset.get("id") != asset_id or str(asset.get("novel_id")) != str(nid):
                 missing.append({"id": asset_id, "reason": "asset belongs to another project"})
                 continue
+            if permission_context and permission_context.get("mode") == "collaboration" and (not resource_branch or asset.get("branch_id") != resource_branch):
+                missing.append({"id": asset_id, "reason": "asset belongs to another branch"})
+                continue
+            if package:
+                try:
+                    if type(asset.get("size")) is not int or asset["size"] < 0 or total_resource_bytes + asset["size"] > MAX_PACKAGE_RESOURCE_BYTES:
+                        raise ValueError("invalid asset size or package resource limit exceeded")
+                    payload = capture_asset(asset, asset_library.content(asset_id), asset_id=asset_id, novel_id=nid, branch_id=resource_branch)
+                    resource_payloads[asset_id] = payload
+                    total_resource_bytes += payload["size"]
+                except (FileNotFoundError, OSError, ValueError) as exc:
+                    missing.append({"id": asset_id, "reason": str(exc) or "asset unavailable"})
+                    continue
             resources.append({
                 "id": asset_id,
                 "status": "AVAILABLE",
@@ -186,11 +305,18 @@ class NovelService:
             "snapshot_id": str(uuid.uuid4()),
             "captured_at": self._now(),
             "novel_id": nid,
+            "branch_id": resource_branch,
             "format": str(format or "").lower().strip() or None,
             "source": source,
+            'manuscript_authority': 'BRANCH_MANUSCRIPT_V1' if scoped_manuscript else 'PROJECT_MANUSCRIPT_V1',
+            'manuscript_scope': manuscript_scope if scoped_manuscript else {'mode': 'local', 'novel_id': nid},
+            **({"resource_payloads": resource_payloads, "resource_policy": "require_all"} if package else {}),
             "source_versions": {
-                "novel_updated_at": meta.get("updated_at"),
-                "chapters": [{"id": c.get("id"), "version": c.get("version"), "updated_at": c.get("updated_at")} for c in chapters],
+                "novel_updated_at": source["novel"].get("updated_at"),
+                "chapters": [{"id": c.get("id"), "version": c.get("version"), "updated_at": c.get("updated_at"),
+                              **({'authority': c['authority'], 'scope': c['scope'], 'document_digest': c['document_digest']}
+                                 if scoped_manuscript else {})} for c in source["chapters"]],
+                "screenplays": [{"id": row.get("id"), "version": row.get("version"), "edit_version": row.get("edit_version"), "revision": row.get("revision"), "shot_revision": row.get("shot_revision"), "storyboard_revision": row.get("storyboard_revision"), "transition_revision": row.get("transition_revision"), "updated_at": row.get("updated_at")} for row in source["screenplays"]],
             },
             "resource_manifest": {
                 "referenced": refs,
@@ -202,9 +328,9 @@ class NovelService:
 
     def _export_data(self, nid, meta, chapters, format, *, screenplays=None, progress_callback=None, snapshot=None, resource_loader=None, resource_policy="allow_missing", screenplay_id=None):
         format = str(format or "json").lower().strip()
-        if format=="markdown":return {"format":"markdown","filename":f"{nid}.md","content":"\n\n---\n\n".join(f"# {c.get('title','')}\n\n{c.get('content','')}" for c in chapters)}
+        if format=="markdown":return {"format":"markdown","filename":f"{nid}.md","content":"\n\n---\n\n".join(f"# {c.get('title','')}\n\n{chapter_body_text(c, markdown=True)}" for c in chapters)}
         if format in {"txt", "text"}:
-            content = "\n\n".join(f"{c.get('title','')}\n\n{c.get('content','')}" for c in chapters)
+            content = "\n\n".join(f"{c.get('title','')}\n\n{chapter_body_text(c)}" for c in chapters)
             return {"format":"txt","filename":f"{nid}.txt","content":content}
         if format in {"docx", "word"}:
             binary = novel_to_docx(meta.get("title", ""), chapters)
@@ -259,7 +385,7 @@ class NovelService:
             }
             common_meta = {"schema_version": 1, "format_version": "1.0", "resource_manifest": resource_manifest}
             if format in {"screenplay-standard", "screenplay-fountain"}:
-                return {"format": "screenplay-standard", "filename": f"{nid}-screenplay.fountain", "media_type": "text/x-fountain", "content": screenplay_to_fountain(screenplay, **industry_kwargs), "industry": {**common_meta, "format_version": "Fountain 1.1"}}
+                return {"format": "screenplay-fountain", "filename": f"{nid}-screenplay.fountain", "media_type": "text/x-fountain", "content": screenplay_to_fountain(screenplay, **industry_kwargs), "industry": {**common_meta, "format_version": "Fountain 1.1"}}
             if format == "screenplay-docx":
                 binary = screenplay_to_docx(screenplay, **industry_kwargs)
                 return {"format": "screenplay-docx", "filename": f"{nid}-screenplay.docx", "media_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "content_base64": base64.b64encode(binary).decode("ascii"), "content_encoding": "base64", "industry": common_meta}
@@ -282,9 +408,12 @@ class NovelService:
                 content = "\n\n".join(f"INT./EXT. {scene.get('location') or '未设定'} - {scene.get('time') or '未设定'}\n{scene.get('action') or ''}\n" + "\n".join(f"{d.get('character','角色')}: {d.get('text','')}" for d in scene.get('dialogue',[])) for scene in screenplay.get('scenes',[]))
                 return {"format":"screenplay","filename":f"{nid}-screenplay.md","content":f"# {screenplay.get('title',meta.get('title',''))}\n\n{content}"}
             if format == "shot-list":
-                headers = "镜号,场景,景别,角度,运动,主体位置,动作,时长\n"
-                body = "\n".join(",".join(str(shot.get(key,"" )).replace(",","，") for key in ("number","scene_id","shot_size","camera_angle","camera_motion","subject_position","action","duration_seconds")) for shot in screenplay.get("shots",[]))
-                return {"format":"shot-list","filename":f"{nid}-shot-list.csv","content":headers+body}
+                buffer = io.StringIO(newline="")
+                writer = csv.writer(buffer, lineterminator="\n")
+                writer.writerow(("镜号", "场景", "景别", "角度", "运动", "主体位置", "动作", "时长"))
+                for shot in screenplay.get("shots", []):
+                    writer.writerow(str(shot.get(key, "")) for key in ("number", "scene_id", "shot_size", "camera_angle", "camera_motion", "subject_position", "action", "duration_seconds"))
+                return {"format":"shot-list","filename":f"{nid}-shot-list.csv","content":buffer.getvalue()}
             content = "\n\n".join(f"## 镜头 {card.get('number','')}\n\n画面：{card.get('frame_prompt','')}\n\n构图：{card.get('composition','')}\n\n色彩：{card.get('color','')}" for card in screenplay.get("storyboard",[]))
             return {"format":"storyboard","filename":f"{nid}-storyboard.md","content":content}
         if format not in {"json"}:
@@ -309,6 +438,9 @@ class NovelService:
                 screenplays = []
         if progress_callback:
             progress_callback(25, "读取快照")
+        package = str(format or "").lower().strip() in PACKAGE_FORMATS
+        if package and (not isinstance(snapshot, dict) or str(snapshot.get("novel_id")) != str(nid)):
+            raise ValueError("resource packages require a matching durable snapshot")
         result = self._export_data(
             nid,
             meta,
@@ -316,6 +448,9 @@ class NovelService:
             format,
             screenplays=screenplays,
             progress_callback=progress_callback,
+            snapshot=snapshot,
+            resource_loader=FrozenExportResources(snapshot) if package else None,
+            resource_policy="require_all" if package else "allow_missing",
         )
         if progress_callback:
             progress_callback(90, "生成文件")

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "../api";
+import { api, ApiError, apiErrorView, getCollaborationContext, CollaborationContext, Scope } from "../api";
 import { Badge, Button, EmptyState, Panel } from "../ui/primitives";
 import { AssetTaskExecutionPanel } from "./AssetTaskExecutionPanel";
 import { PipelineStatusPanel } from "./PipelineStatusPanel";
@@ -8,13 +8,22 @@ import { ScreenplayPipelinePanel } from "./ScreenplayPipelinePanel";
 import { FOCUS_FAILED_TASKS_EVENT } from "../ui/taskSummary";
 import type { VideoInspection } from "./VideoTaskInspector";
 import { MotionTaskWorkspace } from "./MotionTaskWorkspace";
+import "./screenplay.css";
 export function motionTaskInspection(task:any,screenplayId?:string):VideoInspection{return{id:String(task.id),status:task.status,screenplayId,transitionId:task.transition_id,providerId:task.provider_id,modelId:task.model_id,progress:task.progress,startFrame:task.start_frame,endFrame:task.end_frame,resultUrl:task.result?.url,assetId:task.result?.asset_id,error:task.error};}
-export function ScreenplayPanel({ novelId, onInspect }: { novelId?: string; onInspect?: (inspection: VideoInspection) => void }) {
+type ScreenplayPanelProps={novelId?:string;onInspect?:(inspection:VideoInspection)=>void;scope?:Scope|null;sessionToken?:string};
+export function ScreenplayPanel(props:ScreenplayPanelProps){
+  const context=getCollaborationContext();
+  const scope=props.scope===undefined?context.scope:props.scope;
+  const identity=JSON.stringify([props.novelId,scope?.workspaceId,scope?.projectId,scope?.storylineId,scope?.branchId,props.sessionToken??context.sessionToken]);
+  return <ScopedScreenplayPanel key={identity} {...props} requestContext={{sessionToken:props.sessionToken??context.sessionToken,scope:scope??undefined,actor:context.actor}}/>;
+}
+function ScopedScreenplayPanel({ novelId, onInspect,requestContext }: ScreenplayPanelProps&{requestContext:CollaborationContext}) {
   const qc = useQueryClient();
+  const [observerId]=useState(()=>globalThis.crypto?.randomUUID?.()||Math.random().toString(36));
   const [title, setTitle] = useState("");
   const q = useQuery({
-    queryKey: ["screenplays", novelId],
-    queryFn: () => api.screenplays(novelId!),
+    queryKey: ["screenplays", novelId, observerId],
+    queryFn: () => api.screenplays(novelId!,requestContext),
     enabled: !!novelId,
   });
   const refresh = () =>
@@ -27,55 +36,59 @@ export function ScreenplayPanel({ novelId, onInspect }: { novelId?: string; onIn
       refresh();
     },
   });
+  const onConflict=(error:unknown)=>{if(error instanceof ApiError&&error.status===409)refresh()};
   const approve = useMutation({
-    mutationFn: (id: string) => api.approveScreenplay(novelId!, id),
-    onSuccess: refresh,
+    mutationFn: (target: {id:string;version:number}) => api.approveScreenplay(novelId!, target.id,target.version),
+    onSuccess: refresh,onError:onConflict,
   });
+  const revise = useMutation({mutationFn:(target:{id:string;version:number;sourceVersion?:number})=>api.reviseScreenplay(novelId!,target.id,target.version,target.sourceVersion),onSuccess:refresh,onError:onConflict});
   const plan = useMutation({
-    mutationFn: (id: string) => api.planScreenplayShots(novelId!, id),
-    onSuccess: refresh,
+    mutationFn: (target: {id:string;version:number}) => api.planScreenplayShots(novelId!, target.id,target.version),
+    onSuccess: refresh,onError:onConflict,
   });
   const approveShots = useMutation({
-    mutationFn: (id: string) => api.approveScreenplayShots(novelId!, id),
-    onSuccess: refresh,
+    mutationFn: (target: {id:string;version:number}) => api.approveScreenplayShots(novelId!, target.id,target.version),
+    onSuccess: refresh,onError:onConflict,
   });
   const update = useMutation({
     mutationFn: (v: any) =>
       api.updateScreenplayScene(novelId!, v.screenplayId, v.sceneId, v.body),
-    onSuccess: refresh,
+    onSuccess: refresh,onError:onConflict,
   });
   const updateShot = useMutation({
     mutationFn: (v: any) =>
       api.updateScreenplayShot(novelId!, v.screenplayId, v.shotId, v.body),
-    onSuccess: refresh,
+    onSuccess: refresh,onError:onConflict,
   });
   const board = useMutation({
-    mutationFn: (id: string) => api.planStoryboard(novelId!, id),
-    onSuccess: refresh,
+    mutationFn: (target: {id:string;version:number}) => api.planStoryboard(novelId!, target.id,target.version),
+    onSuccess: refresh,onError:onConflict,
   });
   const boardApprove = useMutation({
-    mutationFn: (id: string) => api.approveStoryboard(novelId!, id),
-    onSuccess: refresh,
+    mutationFn: (target: {id:string;version:number}) => api.approveStoryboard(novelId!, target.id,target.version),
+    onSuccess: refresh,onError:onConflict,
   });
   const boardUpdate = useMutation({
     mutationFn: (v: any) =>
       api.updateStoryboardCard(novelId!, v.sid, v.cid, v.body),
-    onSuccess: refresh,
+    onSuccess: refresh,onError:onConflict,
   });
   const transitionPlan = useMutation({
-    mutationFn: (id: string) => api.planTransitions(novelId!, id),
-    onSuccess: refresh,
+    mutationFn: (target: {id:string;version:number}) => api.planTransitions(novelId!, target.id,target.version),
+    onSuccess: refresh,onError:onConflict,
   });
   const transitionApprove = useMutation({
-    mutationFn: (id: string) => api.approveTransitions(novelId!, id),
-    onSuccess: refresh,
+    mutationFn: (target: {id:string;version:number}) => api.approveTransitions(novelId!, target.id,target.version),
+    onSuccess: refresh,onError:onConflict,
   });
   const transitionUpdate = useMutation({
     mutationFn: (v: any) =>
       api.updateTransition(novelId!, v.sid, v.tid, v.body),
-    onSuccess: refresh,
+    onSuccess: refresh,onError:onConflict,
   });
   const motionTasks = useMutation({mutationFn:(id:string)=>api.createMotionTasks(novelId!,id),onSuccess:refresh});
+  const mutationError=[create,approve,revise,plan,approveShots,update,updateShot,board,boardApprove,boardUpdate,transitionPlan,transitionApprove,transitionUpdate,motionTasks].find(mutation=>mutation.error)?.error;
+  const busy=[create,approve,revise,plan,approveShots,update,updateShot,board,boardApprove,boardUpdate,transitionPlan,transitionApprove,transitionUpdate,motionTasks].some(mutation=>mutation.isPending);
   if (!novelId)
     return (
       <Panel title="影视剧本">
@@ -90,21 +103,28 @@ export function ScreenplayPanel({ novelId, onInspect }: { novelId?: string; onIn
       </label>
       <Button
         variant="primary"
-        disabled={!title.trim()}
+        disabled={!title.trim()||create.isPending||q.isError}
         onClick={() => create.mutate()}
       >
         创建剧本
       </Button>
-      <ul>
-        {q.data?.map((s: any) => (
+      {q.isPending&&<p className="novel-help" role="status">正在读取剧本…</p>}
+      {q.error&&<p className="novel-error" role="alert">{apiErrorView(q.error,'无法读取剧本').message} <Button onClick={()=>void q.refetch()} disabled={q.isFetching}>重新读取剧本</Button></p>}
+      {!!mutationError&&<p className="novel-error" role="alert">{mutationError instanceof ApiError&&mutationError.status===409?'剧本已有新版本。本地编辑已保留，请对照最新内容后再保存。':apiErrorView(mutationError,'操作失败，请重试').message}</p>}
+      {!q.isPending&&!q.isError&&!q.data?.length&&<EmptyState title="暂无剧本" detail="创建剧本后逐场编辑并审批，小说正文保持独立。"/>}
+      <fieldset disabled={busy} className="screenplay-controls"><ul>
+        {!q.isError&&q.data?.map((s: any) => (
           <li key={s.id}>
             <strong>{s.title}</strong> <Badge>{s.status}</Badge>
-            <p>{s.scenes.length} 个场景</p>
+            <p>{s.scenes.length} 个场景 · 剧本版本 {s.revision||1} · 编辑版本 {s.edit_version??0}</p>
+            {s.derived_from&&<p className="novel-help">修订自剧本 {s.derived_from.screenplay_id} · 版本 {s.derived_from.revision}</p>}
+            {s.status==='APPROVED'&&<><p className="novel-help">批准版本及其资产已保留。创建修订草稿后，镜头和资产需重新审核。</p><Button onClick={()=>revise.mutate({id:s.id,version:s.edit_version??0})}>创建修订草稿</Button></>}
+            <ScreenplayHistory novelId={novelId} screenplay={s} requestContext={requestContext} onFork={sourceVersion=>revise.mutate({id:s.id,version:s.edit_version??0,sourceVersion})}/>
             <ScreenplayPipelinePanel novelId={novelId} screenplayId={s.id}/>
             {s.scenes.map((x: any) => (
               <Scene
                 key={x.id}
-                scene={x}
+                scene={{...x,expected_version:s.edit_version??0}}
                 disabled={s.status !== "DRAFT"}
                 onSave={(b) =>
                   update.mutate({ screenplayId: s.id, sceneId: x.id, body: b })
@@ -112,14 +132,14 @@ export function ScreenplayPanel({ novelId, onInspect }: { novelId?: string; onIn
               />
             ))}
             {s.status === "DRAFT" ? (
-              <Button onClick={() => approve.mutate(s.id)}>
+              <Button onClick={() => approve.mutate({id:s.id,version:s.edit_version??0})}>
                 批准剧本并进入镜头规划
               </Button>
             ) : (
               <Shots
                 s={s}
-                plan={() => plan.mutate(s.id)}
-                approve={() => approveShots.mutate(s.id)}
+                plan={() => plan.mutate({id:s.id,version:s.edit_version??0})}
+                approve={() => approveShots.mutate({id:s.id,version:s.edit_version??0})}
                 save={(id, b) =>
                   updateShot.mutate({ screenplayId: s.id, shotId: id, body: b })
                 }
@@ -129,8 +149,8 @@ export function ScreenplayPanel({ novelId, onInspect }: { novelId?: string; onIn
               <>
                 <Storyboard
                   s={s}
-                  plan={() => board.mutate(s.id)}
-                  approve={() => boardApprove.mutate(s.id)}
+                  plan={() => board.mutate({id:s.id,version:s.edit_version??0})}
+                  approve={() => boardApprove.mutate({id:s.id,version:s.edit_version??0})}
                   save={(id, b) =>
                     boardUpdate.mutate({ sid: s.id, cid: id, body: b })
                   }
@@ -139,8 +159,8 @@ export function ScreenplayPanel({ novelId, onInspect }: { novelId?: string; onIn
                   novelId={novelId}
                   screenplayId={s.id}
                   s={s}
-                  plan={() => transitionPlan.mutate(s.id)}
-                  approve={() => transitionApprove.mutate(s.id)}
+                  plan={() => transitionPlan.mutate({id:s.id,version:s.edit_version??0})}
+                  approve={() => transitionApprove.mutate({id:s.id,version:s.edit_version??0})}
                   createMotionTasks={() => motionTasks.mutate(s.id)}
                   onInspect={onInspect}
                   save={(id, b) =>
@@ -151,33 +171,41 @@ export function ScreenplayPanel({ novelId, onInspect }: { novelId?: string; onIn
             )}
           </li>
         ))}
-      </ul>
+      </ul></fieldset>
     </Panel>
   );
 }
-function Scene({
-  scene,
-  disabled,
-  onSave,
-}: {
-  scene: any;
-  disabled: boolean;
-  onSave: (b: any) => void;
-}) {
-  const [d, setD] = useState(scene);
-  return (
-    <details>
-      <summary>
-        {scene.sequence}. {scene.heading}
-      </summary>
-      <textarea
-        disabled={disabled}
-        value={d.action || ""}
-        onChange={(e) => setD({ ...d, action: e.target.value })}
-      />
-      {!disabled && <Button onClick={() => onSave(d)}>保存场景</Button>}
-    </details>
-  );
+function useVersionedDraft(value:any,keys:string[]):[any,(value:any)=>void]{
+  const [draft,setDraft]=useState(value);
+  useEffect(()=>{
+    if(draft.expected_version!==value.expected_version&&keys.every(key=>JSON.stringify(draft[key])===JSON.stringify(value[key])))setDraft((current:any)=>({...current,expected_version:value.expected_version}));
+  },[value,draft]);
+  return [draft,setDraft];
+}
+function DraftVersionReview({draft,latest,onChange}:{draft:any;latest:any;onChange:(value:any)=>void}){
+  if(draft.expected_version===latest.expected_version)return null;
+  return <section className="novel-draft-review" role="alert"><p>服务器已有编辑版本 {latest.expected_version}，本地内容仍基于版本 {draft.expected_version}，尚未覆盖。</p><details><summary>查看最新内容</summary><pre>{JSON.stringify(latest,null,2)}</pre></details><Button variant="ghost" onClick={()=>onChange({...latest})}>载入最新内容（替换本地编辑）</Button><Button variant="secondary" onClick={()=>onChange({...draft,expected_version:latest.expected_version})}>保留本地内容，按最新版本继续编辑</Button></section>;
+}
+function ScreenplayHistory({novelId,screenplay,requestContext,onFork}:{novelId:string;screenplay:any;requestContext:CollaborationContext;onFork:(version:number)=>void}){
+  const [open,setOpen]=useState(false);
+  const [observerId]=useState(()=>globalThis.crypto?.randomUUID?.()||Math.random().toString(36));
+  const history=useQuery({queryKey:['screenplay-revisions',screenplay.id,observerId,screenplay.edit_version],queryFn:()=>api.screenplayRevisions(novelId,screenplay.id,requestContext),enabled:open});
+  return <details onToggle={event=>setOpen(event.currentTarget.open)}><summary>剧本版本历史</summary>{history.isPending&&open&&<p>正在读取版本…</p>}{history.error&&<p className="novel-error" role="alert">{apiErrorView(history.error,'无法读取版本历史').message}</p>}{!history.isError&&history.data?.items.slice().reverse().map(row=><article key={row.edit_version??0}><p>编辑版本 {row.edit_version??0} · {row.status} · {row.updated_at}</p><details><summary>查看场景与镜头快照</summary><pre>{JSON.stringify({scenes:row.scenes,shots:row.shots},null,2)}</pre></details>{screenplay.status==='APPROVED'&&<Button variant="ghost" onClick={()=>onFork(row.edit_version??0)}>从编辑版本 {row.edit_version??0} 创建修订草稿</Button>}</article>)}</details>;
+}
+function DialogueFields({rows,onChange,disabled}:{rows:any[];onChange:(rows:any[])=>void;disabled:boolean}){
+  return <section aria-label="对白"><h4>对白</h4>{rows.map((row,index)=><div key={index}><label>角色<input disabled={disabled} value={row.character||''} onChange={event=>onChange(rows.map((value,i)=>i===index?{...value,character:event.target.value}:value))}/></label><label>对白内容<textarea disabled={disabled} value={row.text||''} onChange={event=>onChange(rows.map((value,i)=>i===index?{...value,text:event.target.value}:value))}/></label>{!disabled&&<Button variant="ghost" onClick={()=>onChange(rows.filter((_,i)=>i!==index))}>移除对白 {index+1}</Button>}</div>)}{!disabled&&<Button variant="ghost" onClick={()=>onChange([...rows,{character:'',text:''}])}>添加对白</Button>}</section>;
+}
+function Scene({scene,disabled,onSave}:{scene:any;disabled:boolean;onSave:(body:any)=>void}){
+  const [d,setD]=useVersionedDraft(scene,['heading','time','location','characters','emotion','action','dialogue']);
+  return <details><summary>{scene.sequence}. {scene.heading}</summary>
+    <DraftVersionReview draft={d} latest={scene} onChange={setD}/>
+    <p className="novel-help">来源章节 {scene.source_chapter_id} · 版本 {scene.source_version}</p>
+    {[['heading','场景标题'],['time','时间'],['location','地点'],['emotion','情绪']].map(([key,label])=><label key={key}>{label}<input disabled={disabled} value={d[key]||''} onChange={event=>setD({...d,[key]:event.target.value})}/></label>)}
+    <label>出场人物（逗号分隔）<input disabled={disabled} value={(d.characters||[]).join(', ')} onChange={event=>setD({...d,characters:event.target.value.split(/[,，]/).map(name=>name.trim()).filter(Boolean)})}/></label>
+    <label>场景动作<textarea disabled={disabled} value={d.action||''} onChange={event=>setD({...d,action:event.target.value})}/></label>
+    <DialogueFields rows={d.dialogue||[]} disabled={disabled} onChange={dialogue=>setD({...d,dialogue})}/>
+    {!disabled&&<Button onClick={()=>onSave(d)}>保存场景</Button>}
+  </details>;
 }
 function Shots({
   s,
@@ -191,6 +219,7 @@ function Shots({
   save: (id: string, b: any) => void;
 }) {
   const shots = s.shots || [];
+  const locked=s.shot_status==='APPROVED';
   return (
     <section>
       <h3>镜头规划</h3>
@@ -199,36 +228,23 @@ function Shots({
       ) : (
         <>
           {shots.map((x: any) => (
-            <Shot key={x.id} shot={x} save={(b) => save(x.id, b)} />
+            <Shot key={x.id} shot={{...x,expected_version:s.edit_version??0}} disabled={locked} save={(b) => save(x.id, b)} />
           ))}
-          <Button onClick={approve}>批准镜头计划并冻结</Button>
+          {locked?<p className="novel-help">镜头计划已批准并冻结。</p>:<Button onClick={approve}>批准镜头计划并冻结</Button>}
         </>
       )}
     </section>
   );
 }
-function Shot({ shot, save }: { shot: any; save: (b: any) => void }) {
-  const [d, setD] = useState(shot);
-  return (
-    <details>
-      <summary>
-        镜头 {shot.number} <Badge>{shot.status}</Badge>
-      </summary>
-      <input
-        value={d.shot_size || ""}
-        onChange={(e) => setD({ ...d, shot_size: e.target.value })}
-      />
-      <input
-        value={d.camera_angle || ""}
-        onChange={(e) => setD({ ...d, camera_angle: e.target.value })}
-      />
-      <textarea
-        value={d.action || ""}
-        onChange={(e) => setD({ ...d, action: e.target.value })}
-      />
-      <Button onClick={() => save(d)}>保存镜头</Button>
-    </details>
-  );
+function Shot({shot,save,disabled}:{shot:any;save:(body:any)=>void;disabled:boolean}){
+  const [d,setD]=useVersionedDraft(shot,['shot_size','camera_angle','camera_motion','subject_position','sound_effect','duration_seconds','action','dialogue']);
+  return <details><summary>镜头 {shot.number} <Badge>{disabled?'APPROVED':shot.status}</Badge></summary><DraftVersionReview draft={d} latest={shot} onChange={setD}/>
+    {[['shot_size','景别'],['camera_angle','机位角度'],['camera_motion','摄影机运动'],['subject_position','主体构图'],['sound_effect','音效']].map(([key,label])=><label key={key}>{label}<input disabled={disabled} value={d[key]||''} onChange={event=>setD({...d,[key]:event.target.value})}/></label>)}
+    <label>时长（秒）<input type="number" min={1} max={600} disabled={disabled} value={d.duration_seconds||1} onChange={event=>setD({...d,duration_seconds:Number(event.target.value)})}/></label>
+    <label>镜头动作<textarea disabled={disabled} value={d.action||''} onChange={event=>setD({...d,action:event.target.value})}/></label>
+    <DialogueFields rows={d.dialogue||[]} disabled={disabled} onChange={dialogue=>setD({...d,dialogue})}/>
+    {!disabled&&<Button onClick={()=>save(d)}>保存镜头</Button>}
+  </details>;
 }
 function Storyboard({
   s,
@@ -254,7 +270,7 @@ function Storyboard({
             {cards.map((c: any) => (
               <StoryboardCard
                 key={c.id}
-                card={c}
+                card={{...c,expected_version:s.edit_version??0}}
                 disabled={locked}
                 save={(b) => save(c.id, b)}
               />
@@ -280,9 +296,10 @@ function StoryboardCard({
   disabled: boolean;
   save: (b: any) => void;
 }) {
-  const [d, setD] = useState(card);
+  const [d,setD]=useVersionedDraft(card,['frame_prompt','composition','color']);
   return (
     <article>
+      <DraftVersionReview draft={d} latest={card} onChange={setD}/>
       <header>
         <strong>分镜 {card.number}</strong>
         <Badge>{card.status}</Badge>
@@ -315,6 +332,7 @@ function StoryboardCard({
         <Button
           onClick={() =>
             save({
+              expected_version:d.expected_version,
               frame_prompt: d.frame_prompt,
               composition: d.composition,
               color: d.color,
@@ -381,7 +399,7 @@ function Transitions({
               novelId={novelId}
               screenplayId={screenplayId}
               key={x.id}
-              row={x}
+              row={{...x,expected_version:s.edit_version??0}}
               disabled={locked}
               save={(b) => save(x.id, b)}
             />
@@ -409,7 +427,7 @@ function Transition({
   disabled: boolean;
   save: (b: any) => void;
 }) {
-  const [d, setD] = useState(row);
+  const [d,setD]=useVersionedDraft(row,['type','duration_seconds','note','prompt']);
   const [prompt, setPrompt] = useState(row.prompt || "");
   const [promptMeta, setPromptMeta] = useState<{template_version:string;generated_at:string}>();
   const [transitionPromptError, setTransitionPromptError] = useState("");
@@ -431,7 +449,7 @@ function Transition({
   }, [row.id, row.motion_prompt]);
   async function generatePrompt() {
     if (!novelId) return;
-    try { setTransitionPromptError(""); const result = await api.transitionPrompt(novelId, screenplayId || "", row.id); setPrompt(result.prompt); setPromptMeta({template_version:result.template_version,generated_at:result.generated_at}); }
+    try { setTransitionPromptError(""); const result = await api.transitionPrompt(novelId, screenplayId || "", row.id); setPrompt(result.prompt); setD((current:any)=>({...current,prompt:result.prompt})); setPromptMeta({template_version:result.template_version,generated_at:result.generated_at}); }
     catch { setTransitionPromptError("Prompt 生成失败，请确认剧本已保存。"); }
   }
   async function suggest() {
@@ -483,6 +501,7 @@ function Transition({
   }
   return (
     <article>
+      <DraftVersionReview draft={{...d,prompt}} latest={row} onChange={value=>{setD(value);setPrompt(value.prompt||'')}}/>
       <header>
         <strong>
           {row.type} · {row.duration_seconds}s
@@ -522,6 +541,7 @@ function Transition({
         <Button
           onClick={() =>
             save({
+              expected_version:d.expected_version,
               type: d.type,
               duration_seconds: d.duration_seconds,
               note: d.note,
@@ -537,8 +557,8 @@ function Transition({
       {suggestion && <p className="novel-help">建议：{suggestion.suggested_type} · {suggestion.reason} <Button variant="ghost" disabled={disabled} onClick={()=>{setD({...d,type:suggestion.suggested_type});setSuggestionApplied(true)}}>采用建议</Button>{suggestionApplied&&<small> 已应用，点击保存转场后生效</small>}</p>}
       <label>Motion Prompt<textarea readOnly={disabled} value={motionPrompt} onChange={e=>setMotionPrompt(e.target.value)} rows={4}/></label>
       {!disabled&&<Button disabled={motionOperation !== null || !motionPrompt.trim()} onClick={saveMotion}>保存 Motion Prompt</Button>}
-      {prompt && <><label>Transition Prompt<textarea disabled={disabled} value={prompt} onChange={(e)=>setPrompt(e.target.value)} rows={4}/></label>{promptMeta&&<small className="novel-help">模板 {promptMeta.template_version} · {new Date(promptMeta.generated_at).toLocaleString()}</small>}{!disabled&&<Button onClick={()=>save({type:d.type,duration_seconds:d.duration_seconds,note:d.note,prompt})}>保存 Prompt</Button>}</>}
-      {row.prompt_history?.length>0&&<details><summary>Prompt 历史（{row.prompt_history.length}）</summary>{row.prompt_history.slice().reverse().map((item:any,index:number)=><p key={`${item.saved_at}-${index}`} className="novel-help">{new Date(item.saved_at).toLocaleString()} · {item.prompt} <Button variant="ghost" disabled={disabled} onClick={()=>setPrompt(item.prompt)}>恢复此版本</Button></p>)}</details>}
+      {prompt && <><label>Transition Prompt<textarea disabled={disabled} value={prompt} onChange={(e)=>{setPrompt(e.target.value);setD({...d,prompt:e.target.value})}} rows={4}/></label>{promptMeta&&<small className="novel-help">模板 {promptMeta.template_version} · {new Date(promptMeta.generated_at).toLocaleString()}</small>}{!disabled&&<Button onClick={()=>save({expected_version:d.expected_version,type:d.type,duration_seconds:d.duration_seconds,note:d.note,prompt})}>保存 Prompt</Button>}</>}
+      {row.prompt_history?.length>0&&<details><summary>Prompt 历史（{row.prompt_history.length}）</summary>{row.prompt_history.slice().reverse().map((item:any,index:number)=><p key={`${item.saved_at}-${index}`} className="novel-help">{new Date(item.saved_at).toLocaleString()} · {item.prompt} <Button variant="ghost" disabled={disabled} onClick={()=>{setPrompt(item.prompt);setD({...d,prompt:item.prompt})}}>恢复此版本</Button></p>)}</details>}
       {transitionPromptError && <p role="alert">{transitionPromptError}</p>}
       {suggestionError && <p role="alert">{suggestionError}</p>}
       {motionPromptError && <p role="alert">{motionPromptError}</p>}
@@ -553,34 +573,35 @@ export function AssetRequirementsPanel({
   screenplayId: string;
 }) {
   const qc = useQueryClient();
+  const [observerId]=useState(()=>globalThis.crypto?.randomUUID?.()||Math.random().toString(36));
   const q = useQuery({
-    queryKey: ["screenplays", novelId],
+    queryKey: ["screenplays", novelId, observerId],
     queryFn: () => api.screenplays(novelId),
   });
   const refresh = () =>
     void qc.invalidateQueries({ queryKey: ["screenplays", novelId] });
   const s = q.data?.find((x: any) => x.id === screenplayId);
   const plan = useMutation({
-    mutationFn: () => api.planAssets(novelId, screenplayId),
-    onSuccess: refresh,
+    mutationFn: () => api.planAssets(novelId, screenplayId,s?.edit_version??0),
+    onSuccess: refresh,onError:(error)=>{if(error instanceof ApiError&&error.status===409)refresh()},
   });
   const approve = useMutation({
-    mutationFn: () => api.approveAssets(novelId, screenplayId),
-    onSuccess: refresh,
+    mutationFn: () => api.approveAssets(novelId, screenplayId,s?.edit_version??0),
+    onSuccess: refresh,onError:(error)=>{if(error instanceof ApiError&&error.status===409)refresh()},
   });
   const save = useMutation({
     mutationFn: (v: any) =>
       api.updateAsset(novelId, screenplayId, v.id, v.body),
-    onSuccess: refresh,
+    onSuccess: refresh,onError:(error)=>{if(error instanceof ApiError&&error.status===409)refresh()},
   });
   const queue = useMutation({
     mutationFn: () => api.createAssetTasks(novelId, screenplayId),
-    onSuccess: refresh,
+    onSuccess: refresh,onError:(error)=>{if(error instanceof ApiError&&error.status===409)refresh()},
   });
   const task = useMutation({
     mutationFn: (v: any) =>
       api.updateAssetTask(novelId, screenplayId, v.id, v.body),
-    onSuccess: refresh,
+    onSuccess: refresh,onError:(error)=>{if(error instanceof ApiError&&error.status===409)refresh()},
   });
   const assets = s?.asset_requirements;
   const locked = s?.asset_status === "APPROVED";
@@ -588,6 +609,7 @@ export function AssetRequirementsPanel({
   return (
     <section className="novel-draft-review">
       <h3>素材资产需求</h3>
+      {!!(save.error||plan.error||approve.error)&&<p className="novel-error" role="alert">{apiErrorView(save.error||plan.error||approve.error,"保存失败，本地编辑已保留").message}</p>}
       {assets === undefined ? (
         <Button disabled={plan.isPending} onClick={() => plan.mutate()}>
           生成资产清单
@@ -597,7 +619,7 @@ export function AssetRequirementsPanel({
           {assets.map((a: any) => (
             <AssetRow
               key={a.id}
-              asset={a}
+              asset={{...a,expected_version:s?.edit_version??0}}
               disabled={locked}
               save={(b) => save.mutate({ id: a.id, body: b })}
             />
@@ -682,9 +704,10 @@ function AssetRow({
   disabled: boolean;
   save: (b: any) => void;
 }) {
-  const [d, setD] = useState(asset);
+  const [d,setD]=useVersionedDraft(asset,['kind','description','status','notes']);
   return (
     <article>
+      <DraftVersionReview draft={d} latest={asset} onChange={setD}/>
       <header>
         <strong>{d.kind}</strong>
         <Badge>{d.status}</Badge>
@@ -717,6 +740,7 @@ function AssetRow({
         <Button
           onClick={() =>
             save({
+              expected_version:d.expected_version,
               kind: d.kind,
               description: d.description,
               status: d.status,

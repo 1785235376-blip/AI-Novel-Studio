@@ -6,11 +6,14 @@ import time
 from threading import Event
 from dataclasses import dataclass, field, replace as dc_replace
 from enum import Enum
-from typing import Any, Iterable, Mapping, Protocol
+from typing import Any, Callable, Iterable, Mapping, Protocol, TYPE_CHECKING
 from uuid import UUID
 
 from .providers import Generation, LLMProvider, ProviderError
 from .stable_identity import IdentityMutationError, StableIdentityStore, canonical_model_identity_key, validate_uuid
+
+if TYPE_CHECKING:
+    from .audio_processing_runtime import AudioProcessingProvider
 
 
 class Modality(str, Enum):
@@ -19,6 +22,7 @@ class Modality(str, Enum):
     IMAGE = "IMAGE"
     VISION = "VISION"
     VIDEO = "VIDEO"
+    AUDIO = "AUDIO"
 
 
 class RuntimeErrorCode(str, Enum):
@@ -75,6 +79,8 @@ class TextGenerationRequest:
     metadata: Mapping[str, str] = field(default_factory=dict)
     job_id: str | None = None
     cancellation: Event | None = field(default=None, repr=False, compare=False)
+    dispatch_guard: Callable[[], None] | None = field(default=None, repr=False, compare=False)
+    preparation_guard: Callable[[], None] | None = field(default=None, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         if not self.provider_id or not self.model_id or not self.prompt.strip():
@@ -98,6 +104,7 @@ class TextGenerationResponse:
     latency_ms: int = 0
     provider_reference_id: str | None = None
     structured_output: Mapping[str, Any] | None = None
+    execution_mode: str = "real"
 
 
 @dataclass(frozen=True, slots=True)
@@ -173,14 +180,18 @@ class LegacyTextProviderAdapter:
             finish_reason="completed",
             provider_id=self.provider_id,
             model_id=request.model_id,
-            usage=GenerationUsage(value.input_tokens, value.output_tokens, value.input_tokens + value.output_tokens),
+            usage=(None if value.metadata.get("usage_known") is False else GenerationUsage(value.input_tokens, value.output_tokens, value.input_tokens + value.output_tokens)),
             latency_ms=value.latency_ms,
             provider_reference_id=str(value.metadata.get("request_id")) if value.metadata.get("request_id") else None,
+            execution_mode="mock_standin" if value.metadata.get("mock") else "real",
         )
 
     def generate_text(self, request: TextGenerationRequest) -> TextGenerationResponse:
         try:
-            return self._response(request, self.provider.generate(request.prompt, request.model_id, **self._kwargs(request)))
+            kwargs=self._kwargs(request)
+            if getattr(self.provider,"supports_dispatch_guard",False):
+                kwargs.update(dispatch_guard=request.dispatch_guard,cancellation=request.cancellation)
+            return self._response(request, self.provider.generate(request.prompt, request.model_id, **kwargs))
         except ProviderError as exc:
             raise ModelRuntimeError(RuntimeErrorCode.PROVIDER_UNAVAILABLE, "模型服务暂时不可用", retryable=True) from exc
 
@@ -188,8 +199,14 @@ class LegacyTextProviderAdapter:
         started = time.monotonic()
         yield GenerationEvent("generation.started", request.job_id)
         chunks: list[str] = []
+        reported_usage: dict[str, Any] = {}
+        kwargs=self._kwargs(request)
+        if getattr(self.provider,"supports_dispatch_guard",False):
+            kwargs.update(dispatch_guard=request.dispatch_guard,cancellation=request.cancellation)
+        if getattr(self.provider,"supports_stream_usage",False):
+            kwargs["usage_callback"]=reported_usage.update
         try:
-            for chunk in self.provider.stream(request.prompt, request.model_id, **self._kwargs(request)):
+            for chunk in self.provider.stream(request.prompt, request.model_id, **kwargs):
                 if request.cancellation is not None and request.cancellation.is_set():
                     raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
                 chunks.append(chunk)
@@ -200,7 +217,8 @@ class LegacyTextProviderAdapter:
                 finish_reason="completed",
                 provider_id=self.provider_id,
                 model_id=request.model_id,
-                usage=None,
+                usage=(GenerationUsage(reported_usage.get("input_tokens"),reported_usage.get("output_tokens"),sum(reported_usage.values()) if all(isinstance(value,int) for value in reported_usage.values()) else None) if any(value is not None for value in reported_usage.values()) else None),
+                execution_mode="mock_standin" if getattr(self.provider,"name",None)=="mock" else "real",
                 latency_ms=int((time.monotonic() - started) * 1000),
             )
             yield GenerationEvent("generation.completed", request.job_id, response=response)
@@ -210,11 +228,11 @@ class LegacyTextProviderAdapter:
 
 class ProviderRegistry:
     def __init__(self, identity_store: StableIdentityStore | None = None) -> None:
-        self._providers: dict[str, TextProvider] = {}
+        self._providers: dict[str, TextProvider | AudioProcessingProvider] = {}
         self._descriptors: dict[str, ProviderDescriptor] = {}
         self.identity_store = identity_store
 
-    def register(self, descriptor: ProviderDescriptor, provider: TextProvider, *, replace: bool = False) -> None:
+    def register(self, descriptor: ProviderDescriptor, provider: TextProvider | AudioProcessingProvider, *, replace: bool = False) -> None:
         if descriptor.provider_id in self._providers and not replace:
             raise ValueError(f"provider already registered: {descriptor.provider_id}")
         if self.identity_store is not None:
@@ -227,7 +245,7 @@ class ProviderRegistry:
         self._providers[descriptor.provider_id] = provider
         self._descriptors[descriptor.provider_id] = descriptor
 
-    def resolve(self, provider_id: str) -> TextProvider:
+    def resolve(self, provider_id: str) -> TextProvider | AudioProcessingProvider:
         try:
             descriptor, provider = self._descriptors[provider_id], self._providers[provider_id]
         except KeyError as exc:
@@ -308,7 +326,18 @@ class TextModelNode:
         model = self.models.resolve(request.provider_id, request.model_id, Modality.TEXT)
         if request.structured_output_schema is not None and not model.structured_output:
             raise ModelRuntimeError(RuntimeErrorCode.CAPABILITY_NOT_SUPPORTED, "当前模型不支持结构化输出")
+        if request.cancellation is not None and request.cancellation.is_set():
+            raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
+        guard = request.preparation_guard or request.dispatch_guard
+        if guard is not None:
+            guard()
+        if request.cancellation is not None and request.cancellation.is_set():
+            raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
         response = provider.generate_text(request)
+        if request.cancellation is not None and request.cancellation.is_set():
+            raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
+        if response.provider_id != request.provider_id or response.model_id != request.model_id:
+            raise ModelRuntimeError(RuntimeErrorCode.GENERATION_FAILED, "模型响应与已批准路由不一致")
         return TextModelNodeOutput(response.text, response, request.job_id)
 
     def stream(self, value: TextModelNodeInput) -> Iterable[GenerationEvent]:
@@ -319,14 +348,31 @@ class TextModelNode:
             raise ModelRuntimeError(RuntimeErrorCode.CAPABILITY_NOT_SUPPORTED, "当前模型不支持流式生成")
         terminal = False
         try:
+            if request.cancellation is not None and request.cancellation.is_set():
+                raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
+            # A guarded preparation phase may wait or inspect an existing
+            # runtime. Its adapter retains the actual final-hop dispatch guard.
+            # Existing requests without this opt-in retain their old boundary.
+            guard = request.preparation_guard or request.dispatch_guard
+            if guard is not None:
+                guard()
+            if request.cancellation is not None and request.cancellation.is_set():
+                raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
             for event in provider.stream_text(request):
+                if terminal:
+                    break
+                if request.cancellation is not None and request.cancellation.is_set():
+                    raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
+                if event.response and (event.response.provider_id != request.provider_id or event.response.model_id != request.model_id):
+                    raise ModelRuntimeError(RuntimeErrorCode.GENERATION_FAILED, "模型响应与已批准路由不一致")
                 if event.event_type in {"generation.completed", "generation.failed", "generation.cancelled"}:
                     if terminal:
                         continue
                     terminal = True
                 yield event
             if not terminal:
-                yield GenerationEvent("generation.completed", request.job_id)
+                # An interrupted adapter is not evidence of a completed generation.
+                yield GenerationEvent("generation.failed", request.job_id, error_code=RuntimeErrorCode.GENERATION_FAILED)
         except ModelRuntimeError as exc:
             event_type = "generation.cancelled" if exc.code is RuntimeErrorCode.CANCELLED else "generation.failed"
             yield GenerationEvent(event_type, request.job_id, error_code=exc.code)
@@ -337,3 +383,7 @@ class GenerationRuntime:
         self.providers = providers
         self.models = models
         self.text_node = TextModelNode(providers, models)
+        # AUDIO is additive and never broadens the original TEXT Router. No
+        # audio route is registered or launched by constructing this node.
+        from .audio_processing_runtime import AudioProcessingModelNode
+        self.audio_processing_node = AudioProcessingModelNode(providers, models)

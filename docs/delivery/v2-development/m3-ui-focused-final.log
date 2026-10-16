@@ -1,0 +1,22 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ✓ src/localAiDiscoveryConsentApi.test.ts (20 tests) 20ms
+ ✓ src/AIEnvironmentSummaryOwner.test.tsx (8 tests) 247ms
+ ✓ src/AIEnvironmentSummary.test.tsx (7 tests) 269ms
+ ✓ src/ui/ModelCenterOnboarding.test.tsx (3 tests) 326ms
+ ✓ src/ui/ModelCenter.test.tsx (10 tests) 346ms
+ ✓ src/ui/LocalAiDiscovery.test.tsx (24 tests) 409ms
+ ✓ src/localAiDiscoveryApi.test.ts (3 tests) 10ms
+ ✓ src/localAiEnvironmentApi.test.ts (2 tests) 7ms
+ ✓ src/ui/LocalAiDiscoveryConsent.test.tsx (23 tests) 1476ms
+   ✓ discloses all registered-model safety inspections without truncating the backend scope 357ms
+ ✓ src/ui/ModuleWorkspaceRoutes.test.tsx (7 tests) 205ms
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 3860ms
+   ✓ creative workspace protected manuscript and request boundaries > recovers saved SCREENPLAY when its stage is selected before the initial reads finish 330ms
+
+ Test Files  11 passed (11)
+      Tests  136 passed (136)
+   Start at  07:59:19
+   Duration  5.59s (transform 1.66s, setup 0ms, collect 4.42s, tests 7.18s, environment 5.37s, prepare 913ms)
+

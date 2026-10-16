@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "date_utc": "2026-10-07",
+  "evidence_scope": "Shared worktree verification before integration publication; rerun aggregate checks on the final Git SHA.",
+  "status": "CONTRACT_VERIFIED",
+  "focused_backend": {
+    "command": "pytest -q tests/test_surface_finding_review.py tests/test_surface_pending_canon_review.py --disable-warnings",
+    "passed": 66,
+    "skipped": 66,
+    "warnings": 1,
+    "executed_backend": "File",
+    "production_composition": "app.main TestClient, /api and /api/v1 aliases",
+    "skip_reason": "Existing postgres_backend_only profile; real PostgreSQL unavailable locally; no markers/assertions weakened."
+  },
+  "related_regression": {
+    "test_files": [
+      "tests/test_continuity_api.py",
+      "tests/test_continuity_engine.py",
+      "tests/test_continuity_foundations.py",
+      "tests/test_continuity_lifecycle.py",
+      "tests/test_continuity_rules.py",
+      "tests/test_continuity_semantic_rules.py",
+      "tests/test_continuity_service.py",
+      "tests/test_narrative_finding_api.py",
+      "tests/test_narrative_finding_service.py",
+      "tests/test_r2_privacy_persistence.py",
+      "tests/test_jobs_v03.py",
+      "tests/test_a43_context_identity.py",
+      "tests/test_surface_finding_review.py",
+      "tests/test_surface_pending_canon_review.py"
+    ],
+    "passed": 151,
+    "skipped": 82,
+    "warnings": 1,
+    "status": "PASS_WITH_EXISTING_BACKEND_PROFILE_SKIPS"
+  },
+  "react_and_shared_shell": {
+    "test_files": [
+      "frontend/src/novel/FindingReviewPanel.test.tsx",
+      "frontend/src/novel/PendingCanonReviewPanel.test.tsx",
+      "frontend/src/novel/findingReviewClient.test.ts",
+      "frontend/src/ui/AppShell.test.tsx",
+      "frontend/src/ui/FeatureLauncher.test.tsx",
+      "frontend/src/ui/FeatureLauncher.css.test.ts"
+    ],
+    "passed": 41,
+    "focused_new_tests": 14,
+    "status": "PASS"
+  },
+  "typecheck": {
+    "command": "tsc -p frontend/tsconfig.json --noEmit",
+    "exit_code": 0,
+    "status": "PASS"
+  },
+  "ui_token_guard": {
+    "command": "node scripts/check_ui_design_tokens.mjs",
+    "files_checked": 42,
+    "status": "PASS"
+  },
+  "patch_whitespace": {
+    "command": "git diff --check",
+    "status": "PASS"
+  },
+  "browser": {
+    "config": "frontend/playwright.surface.config.ts",
+    "spec": "frontend/tests/e2e/surface-freeze-findings-canon.spec.ts",
+    "collection": "PASS",
+    "execution": "NOT_RUN",
+    "geometry_and_screenshots": "NOT_RUN; authored for 1366x768, 1440x900, 1920x1080",
+    "blocker": "Previously verified local Chromium/socket denial; not retried. Hosted browser execution remains required.",
+    "coverage": [
+      "Real app.main and File owner",
+      "Existing shell entry",
+      "Cancel without write",
+      "Intentional review persistence",
+      "Stale CAS rejection",
+      "Exact historical evidence",
+      "Canon empty surface",
+      "No provider dispatch"
+    ],
+    "limitation": "Populated Canon decision/recovery browser journey is not claimed; those flows have mounted API and React coverage."
+  },
+  "postgresql": {
+    "status": "NOT_RUN",
+    "requirement": "Run existing dedicated STORAGE_BACKEND=postgres / TEST_POSTGRES_DATABASE_URL profile on hosted CI."
+  },
+  "model_and_gpu": {
+    "status": "NOT_RUN",
+    "invocations": 0
+  },
+  "historical_independent_review": "BLOCKED_UNCHANGED",
+  "publication": "Parent-owned; this worker did not commit, push, merge, release or deploy.",
+  "inbox_integration": {
+    "backend_test_files": [
+      "tests/test_surface_finding_review.py",
+      "tests/test_surface_pending_canon_review.py",
+      "tests/test_surface_findings_canon_inbox.py",
+      "tests/test_r3_inbox.py",
+      "tests/test_r3_mounted_contracts.py",
+      "tests/test_r5_writer_room_mounted.py"
+    ],
+    "backend_passed": 134,
+    "backend_skipped": 126,
+    "skip_reason": "Existing PostgreSQL profile, not available locally; no original tests or fixtures changed",
+    "react_test_files": [
+      "frontend/src/experimental/InboxPanel.findings.test.tsx",
+      "frontend/src/experimental/ExperimentalWorkbench.test.tsx",
+      "frontend/src/experimental/ExperimentalWorkbench.continuation.test.tsx",
+      "frontend/src/novel/FindingReviewPanel.test.tsx",
+      "frontend/src/novel/PendingCanonReviewPanel.test.tsx",
+      "frontend/src/novel/findingReviewClient.test.ts",
+      "frontend/src/ui/AppShell.test.tsx",
+      "frontend/src/ui/FeatureLauncher.test.tsx",
+      "frontend/src/ui/FeatureLauncher.css.test.ts"
+    ],
+    "react_passed": 62,
+    "generic_actions": "Read-only; approve/reject/reopen and batch writes require the original detail flow",
+    "navigation": "FORMAL_TARGET_ONLY; metadata/filter rendered, exact-open shortcut not implemented in generic Inbox",
+    "fixture_isolation": "New all-runtime Inbox fixture rebinds existing AdaptationService original repositories to disposable bundle because that reader is also mounted; no original fixture or production exception handling changed",
+    "typecheck": "PASS",
+    "ui_token_guard": "PASS",
+    "browser_execution": "NOT_RUN; previous Chromium/socket denial respected",
+    "status": "CONTRACT_VERIFIED"
+  }
+}

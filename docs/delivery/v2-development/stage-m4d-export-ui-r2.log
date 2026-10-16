@@ -1,0 +1,48 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ❯ src/creative/screenplayFountainParser.test.ts (1 test | 1 failed) 142ms
+   × Creative projection through independent fountain-js parser > preserves Unicode dialogue, delivery, context and provenance without extra scenes 141ms
+     → Command failed: python3 -c import json,sys; from app.creative.screenplay_export import render; sys.stdout.buffer.write(render(json.load(sys.stdin),"a"*64,"fountain")["content"])
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/app/creative/screenplay_export.py", line 25, in render
+    raise ValueError("CREATIVE_SCREENPLAY_EXPORT_MODE_REQUIRED")
+ValueError: CREATIVE_SCREENPLAY_EXPORT_MODE_REQUIRED
+
+ ✓ src/creative/client.test.ts (11 tests) 14ms
+ ✓ src/creative/screenplayExportClient.test.ts (7 tests) 28ms
+ ✓ src/creative/ScreenplayExportPanel.test.tsx (7 tests) 306ms
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 6398ms
+   ✓ creative workspace protected manuscript and request boundaries > recovers saved SCREENPLAY when its stage is selected before the initial reads finish 418ms
+   ✓ creative workspace protected manuscript and request boundaries > keeps an explicit new document, including an untouched draft, across stage and source changes 355ms
+   ✓ creative workspace protected manuscript and request boundaries > reloads saved content after confirmed discard and immediate workbench reopen 488ms
+   ✓ creative workspace protected manuscript and request boundaries > does not replace a blocked dirty draft when a recovery reread discovers its uncertain creation 321ms
+   ✓ creative workspace protected manuscript and request boundaries > exposes all five keyboard-accessible modes while the manuscript stays mounted 352ms
+   ✓ creative workspace protected manuscript and request boundaries > requires explicit server-version adoption and preserves the draft when adoption is cancelled 354ms
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 54 passed (55)
+   Start at  11:45:47
+   Duration  9.21s (transform 1.33s, setup 0ms, collect 2.95s, tests 6.89s, environment 2.15s, prepare 939ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/screenplayFountainParser.test.ts > Creative projection through independent fountain-js parser > preserves Unicode dialogue, delivery, context and provenance without extra scenes
+Error: Command failed: python3 -c import json,sys; from app.creative.screenplay_export import render; sys.stdout.buffer.write(render(json.load(sys.stdin),"a"*64,"fountain")["content"])
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/app/creative/screenplay_export.py", line 25, in render
+    raise ValueError("CREATIVE_SCREENPLAY_EXPORT_MODE_REQUIRED")
+ValueError: CREATIVE_SCREENPLAY_EXPORT_MODE_REQUIRED
+
+ ❯ src/creative/screenplayFountainParser.test.ts:15:21
+     13|         dialogue: [{ speaker: '旅人', text: '别忘记这座城。', delivery…
+     14|     const program = 'import json,sys; from app.creative.screenplay_exp…
+     15|     const content = execFileSync(process.env.PYTHON || 'python3', ['-c…
+       |                     ^
+     16|       cwd: root, input: JSON.stringify(row), encoding: 'utf8', stdio: …
+     17|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

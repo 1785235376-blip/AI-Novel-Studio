@@ -1,0 +1,716 @@
+{
+  "stage": "12-memory-human-review-context",
+  "status": "PASS",
+  "parent_run_id": "85a84385-a0ed-4211-9e43-5d841b9aff26",
+  "evidence": {
+    "proposal_before_review": {
+      "schema_version": 1,
+      "id": "84a1fdb0-4dc1-5261-83cc-20cb62b41d4d",
+      "novel_id": "f4b8c9ee",
+      "proposal_type": "CHARACTER_MEMORY",
+      "payload": {
+        "character_id": "225a179a-9466-5e5b-95bd-3bb321de7e7e",
+        "memory_type": "STATE_CHANGE",
+        "content": {
+          "state": "amnesia_confirmed",
+          "details": "The character Lin Yuan explicitly states he does not remember his identity, and this is confirmed by the city's defense mechanism ('echo') as a deliberate suppression of truth."
+        }
+      },
+      "approved_payload": null,
+      "status": "PENDING",
+      "source_chapter_id": "f4b8c9ee:2",
+      "source_version": 1,
+      "agent_name": "memory_agent",
+      "generation_job_id": "32f3acd6-dbe9-5b91-8cf4-42d26ab1ce2d",
+      "confidence": 0.95,
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "rejection_reason": null,
+      "created_at": "2026-10-07T09:50:07.788130Z",
+      "updated_at": "2026-10-07T09:50:07.788130Z"
+    },
+    "approved": {
+      "proposal": {
+        "schema_version": 1,
+        "id": "84a1fdb0-4dc1-5261-83cc-20cb62b41d4d",
+        "novel_id": "f4b8c9ee",
+        "proposal_type": "CHARACTER_MEMORY",
+        "payload": {
+          "character_id": "225a179a-9466-5e5b-95bd-3bb321de7e7e",
+          "memory_type": "STATE_CHANGE",
+          "content": {
+            "state": "amnesia_confirmed",
+            "details": "The character Lin Yuan explicitly states he does not remember his identity, and this is confirmed by the city's defense mechanism ('echo') as a deliberate suppression of truth."
+          }
+        },
+        "approved_payload": {
+          "character_id": "225a179a-9466-5e5b-95bd-3bb321de7e7e",
+          "memory_type": "STATE_CHANGE",
+          "content": {
+            "state": "amnesia_confirmed",
+            "details": "The character Lin Yuan explicitly states he does not remember his identity, and this is confirmed by the city's defense mechanism ('echo') as a deliberate suppression of truth."
+          },
+          "valid_from_chapter": null,
+          "valid_to_chapter": null
+        },
+        "status": "APPROVED",
+        "source_chapter_id": "f4b8c9ee:2",
+        "source_version": 1,
+        "agent_name": "memory_agent",
+        "generation_job_id": "32f3acd6-dbe9-5b91-8cf4-42d26ab1ce2d",
+        "confidence": 0.95,
+        "reviewed_by": "recovery-human-author",
+        "reviewed_at": "2026-10-07T09:51:12.522104Z",
+        "rejection_reason": null,
+        "created_at": "2026-10-07T09:50:07.788130Z",
+        "updated_at": "2026-10-07T09:51:12.522104Z"
+      },
+      "memory": {
+        "schema_version": 1,
+        "id": "fdb3ec0e-72e6-4fdb-9c0c-6fb200667c5d",
+        "novel_id": "f4b8c9ee",
+        "character_id": "225a179a-9466-5e5b-95bd-3bb321de7e7e",
+        "business_id": "memory-84a1fdb0-4dc1-5261-83cc-20cb62b41d4d",
+        "memory_type": "STATE_CHANGE",
+        "content": {
+          "state": "amnesia_confirmed",
+          "details": "The character Lin Yuan explicitly states he does not remember his identity, and this is confirmed by the city's defense mechanism ('echo') as a deliberate suppression of truth."
+        },
+        "status": "ACTIVE",
+        "valid_from_chapter": null,
+        "valid_to_chapter": null,
+        "proposal_id": "84a1fdb0-4dc1-5261-83cc-20cb62b41d4d",
+        "supersedes_id": null,
+        "retraction_reason": null,
+        "created_at": "2026-10-07T09:51:12.520856Z",
+        "updated_at": "2026-10-07T09:51:12.520856Z"
+      }
+    },
+    "chapter_context": {
+      "novel": "废城回声 · 完整产品验收",
+      "novel_id": "f4b8c9ee",
+      "volume": 1,
+      "chapter": 2,
+      "chapter_goal": "",
+      "pov": null,
+      "story_time": null,
+      "characters": [
+        {
+          "age": null,
+          "role": "失忆的探索者 / 前实验主导者",
+          "personality": "冷静、执着，但内心深处隐藏着对未知的恐惧和对自己身份的抗拒。他习惯性地回避直接的情感交流，更倾向于通过观察环境来理解世界。",
+          "goal": "找回自己失去的记忆，弄清楚自己是谁，以及为何这座城市会陷入永恒的停滞。",
+          "current_location": "",
+          "status": "ALIVE",
+          "name": "林渊",
+          "privacy_level": "LOCAL_ONLY",
+          "id": "225a179a-9466-5e5b-95bd-3bb321de7e7e"
+        },
+        {
+          "age": null,
+          "role": "集体潜意识的具象化 / 城市意志",
+          "personality": "冷漠、扭曲，由无数破碎的记忆碎片组成。它既是城市的守护者也是囚禁者，不断试图将林渊拉回过去的创伤中。",
+          "goal": "维持城市的现状，阻止林渊完全恢复记忆并可能再次‘修复’城市，因为那意味着‘回声’的终结。",
+          "current_location": "",
+          "status": "ALIVE",
+          "name": "回声",
+          "privacy_level": "LOCAL_ONLY",
+          "id": "3aca0456-9ef0-5890-a743-1857b674e44f"
+        },
+        {
+          "age": 58,
+          "role": "废墟广场的幸存者 / 向导",
+          "personality": "悲观、圆滑，依靠旧时代的自动售货机维持生计。他对林渊既好奇又警惕，试图从他身上寻找自己失去亲人的答案。",
+          "goal": "在混乱的废墟中生存下去，并帮助林渊找到通往城市核心的路径，尽管他并不完全信任林渊。",
+          "current_location": "",
+          "status": "ALIVE",
+          "name": "老陈",
+          "privacy_level": "LOCAL_ONLY",
+          "id": "0992a4ed-41b7-5a68-baaa-6fe863224795"
+        }
+      ],
+      "relationships": [],
+      "world": {
+        "summary": "故事发生在一座被巨大灾难摧毁后陷入永恒停滞的巨型都市“新巴别塔”。城市表面覆盖着厚厚的尘埃与变异植被，内部结构错综复杂，充满了旧时代的科技残骸与未知的辐射区。空气中弥漫着臭氧与腐烂金属的味道。这座城市的毁灭并非自然原因，而是源于一次失控的量子实验，而实验的主导者正是主角本人。城市现在由一种名为“回声”的集体潜意识现象笼罩，居民（或幸存者）的行为受过去记忆碎片的影响，导致社会秩序混乱。主角在寻找自我身份的过程中，逐渐揭开城市毁灭的真相，并面临是否要阻止“回声”完全吞噬现实，或是接受自己作为毁灭者的命运。",
+        "privacy_level": "LOCAL_ONLY"
+      },
+      "outline": {
+        "theme": "记忆与身份的代价，以及面对自身罪孽时的救赎与毁灭。",
+        "premise": "失忆者林渊在永恒停滞的巨型都市“新巴别塔”中流浪，试图找回过去。随着调查深入，他发现城市的毁灭源于自己主导的一次失控量子实验，而城市意志“回声”正试图通过扭曲现实来阻止他恢复记忆。",
+        "structure": "THREE_ACT",
+        "beginning": "林渊在记忆回廊的无限循环中醒来，依靠老陈提供的线索开始探索城市边缘。他遭遇了由碎片记忆构成的幻象，初次感受到“回声”的干扰，意识到自己的记忆缺失并非偶然，而是某种防御机制。",
+        "middle": "林渊深入城市腹地，穿越废墟广场和危险的辐射区。他逐渐拼凑出实验失败的真相：他为了追求完美秩序而启动了量子实验，却导致了灾难。与此同时，“回声”具象化并试图将他拉回过去的创伤时刻，老陈在保护他的过程中牺牲，揭示了修复城市的代价是彻底抹杀所有幸存者的意识。",
+        "ending": "林渊抵达静默区，面对核心反应堆和“回声”的最终形态。他必须选择是接受自己作为毁灭者的身份并让城市彻底崩溃，还是利用自己的记忆重塑城市，但这将意味着牺牲所有幸存者的自由意志。他选择了前者，拥抱毁灭以终结永恒的停滞。",
+        "main_conflict": "林渊恢复记忆并试图修复城市的愿望，与“回声”维持现状、阻止真相被揭露的意志之间的冲突。",
+        "climax": "在静默区，林渊直面“回声”的具象化自我，在巨大的精神冲击下确认了自己毁灭城市的身份。他利用核心反应堆的能量，主动引爆了维持城市停滞的量子锁，让“回声”消散，城市在废墟中迎来了真正的终结。",
+        "privacy_level": "LOCAL_ONLY"
+      },
+      "canon": [],
+      "timeline": [],
+      "world_rules": [
+        {
+          "id": "12fa9fa6-1d4b-5c39-8e62-743e10106ad7",
+          "payload": {
+            "statement": "旧时代的科技设备在接触特定频率的声波时会自我激活或爆炸。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "privacy_level": "LOCAL_ONLY",
+          "status": "APPROVED",
+          "evidence_ids": [
+            "dddb1d4c-71f7-5382-9514-7e3db7d582aa"
+          ]
+        },
+        {
+          "id": "868f7be4-1077-5dfc-b99c-94d802d6aec5",
+          "payload": {
+            "statement": "主角的记忆缺失并非偶然，而是城市防御系统为了掩盖真相而植入的。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "privacy_level": "LOCAL_ONLY",
+          "status": "APPROVED",
+          "evidence_ids": [
+            "6ca7f1d5-d0a7-561b-afb4-53772d734e56"
+          ]
+        },
+        {
+          "id": "8948137b-8178-5d62-b936-2b21b6c3967c",
+          "payload": {
+            "statement": "城市中心的核心反应堆从未真正关闭，它仍在以微弱但致命的频率运转。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "privacy_level": "LOCAL_ONLY",
+          "status": "APPROVED",
+          "evidence_ids": [
+            "b35f254e-729d-5899-8ab0-1ce1bcf1d49b"
+          ]
+        },
+        {
+          "id": "a11b1ee3-6314-56e3-8154-c123da3a6214",
+          "payload": {
+            "statement": "任何试图修复城市的行为都会触发‘回声’的强烈反弹，导致记忆混乱。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "privacy_level": "LOCAL_ONLY",
+          "status": "APPROVED",
+          "evidence_ids": [
+            "86ae6141-3964-5b27-9a73-cd65b393f340"
+          ]
+        },
+        {
+          "id": "f52f70c8-98d2-5523-8d6a-5c9bb62a2f29",
+          "payload": {
+            "statement": "城市中的‘回声’现象会强制重现过去的关键时刻，干扰当前行动。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "privacy_level": "LOCAL_ONLY",
+          "status": "APPROVED",
+          "evidence_ids": [
+            "692ea674-00b0-5b4e-8bb3-79bd4168bab0"
+          ]
+        }
+      ],
+      "locations": [
+        {
+          "location_type": "",
+          "description": "城市边缘的一条废弃地铁隧道，墙壁上投射着无数模糊的人脸和破碎的记忆片段。这里是主角最常出现的地方，也是他试图拼凑自己过去的起点。",
+          "rules": "进入回廊的人可能会陷入无限循环的梦境中，无法分辨现实与幻觉。",
+          "atmosphere": "压抑、神秘、充满心理暗示",
+          "status": "ACTIVE",
+          "name": "记忆回廊",
+          "privacy_level": "LOCAL_ONLY",
+          "id": "47da53ed-985b-5215-a16f-1edcc35f7ef7"
+        },
+        {
+          "location_type": "",
+          "description": "城市中心的一片绝对安静区域，没有任何声音传播。这里是旧时代实验的核心地带，也是主角最终发现真相的地方。",
+          "rules": "任何声音都会引发剧烈的空间扭曲和物理伤害。",
+          "atmosphere": "死寂、寒冷、令人不安",
+          "status": "ACTIVE",
+          "name": "静默区",
+          "privacy_level": "LOCAL_ONLY",
+          "id": "b8d9faf9-24e6-5c5a-a8f5-1557912dd6f6"
+        },
+        {
+          "location_type": "",
+          "description": "曾经繁华的商业中心，现在只剩下倒塌的高楼和扭曲的金属结构。这里聚集着少数幸存者，他们依靠旧时代的自动售货机维持生命。",
+          "rules": "自动售货机有时会吐出带有记忆碎片的食物或物品。",
+          "atmosphere": "荒凉、混乱、充满生存本能",
+          "status": "ACTIVE",
+          "name": "废墟广场",
+          "privacy_level": "LOCAL_ONLY",
+          "id": "2cc830e3-3d1a-5a66-9922-2fdda0760c51"
+        }
+      ],
+      "current_story_state": {
+        "volume": 1,
+        "chapter": 0,
+        "active_characters": []
+      },
+      "active_foreshadowing": [],
+      "forbidden_secrets": [],
+      "privacy_omissions": [],
+      "recent_chapter_summary": [
+        {
+          "chapter": 2,
+          "summary": "刺耳的尖啸并非来自外部，而是从林渊骨髓深处被强行挤压出来的。紧接着，沉重的金属扭曲声像是巨兽的咀嚼，啃噬着周围的空间。他在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣。灰白色的变异苔藓疯狂地爬满墙壁，每一片叶状结构都微微颤动，仿佛无数只窥视的眼睛，正贪婪地吞噬着微弱的光线。\n\n空气中弥漫着臭氧烧焦后的腥甜，混合着腐烂金属特有的涩味。每一次呼吸，那铁锈般的颗粒感都粗糙地刮擦着肺叶，带来一种令人窒息的沉重感。\n\n他试图坐起，指尖却死死攥着一枚破碎的银色芯片。芯"
+        }
+      ],
+      "long_term_summary": "",
+      "style_profile": {},
+      "must_include": [],
+      "must_not_include": [
+        "未经批准改变 Canon",
+        "提前揭露受保护秘密"
+      ],
+      "lore_memory": {
+        "short_memory": [],
+        "medium_memory": [
+          {
+            "schema_version": 1,
+            "id": "fdb3ec0e-72e6-4fdb-9c0c-6fb200667c5d",
+            "novel_id": "f4b8c9ee",
+            "character_id": "225a179a-9466-5e5b-95bd-3bb321de7e7e",
+            "business_id": "memory-84a1fdb0-4dc1-5261-83cc-20cb62b41d4d",
+            "memory_type": "STATE_CHANGE",
+            "content": {
+              "state": "amnesia_confirmed",
+              "details": "The character Lin Yuan explicitly states he does not remember his identity, and this is confirmed by the city's defense mechanism ('echo') as a deliberate suppression of truth."
+            },
+            "status": "ACTIVE",
+            "valid_from_chapter": null,
+            "valid_to_chapter": null,
+            "proposal_id": "84a1fdb0-4dc1-5261-83cc-20cb62b41d4d",
+            "supersedes_id": null,
+            "retraction_reason": null,
+            "created_at": "2026-10-07T09:51:12.520856Z",
+            "updated_at": "2026-10-07T09:51:12.520856Z"
+          }
+        ],
+        "long_memory": [],
+        "evidence_summary": [
+          {
+            "evidence_id": "0641ef99-446e-568b-a1ad-bdc4bd434288",
+            "source_type": "CHAPTER_VERSION",
+            "chapter_id": "f4b8c9ee:2",
+            "chapter_version": 1,
+            "privacy": "LOCAL_ONLY",
+            "excerpt": "“我记不起我是谁，”林渊的声音平静得可怕，只有他自己能听出那底下压抑的颤抖，“只知道我想弄清楚，为什么这座城市会陷入这种停滞。”"
+          },
+          {
+            "evidence_id": "f71313e1-1b60-5af9-81f3-4d1f48e28a24",
+            "source_type": "CHAPTER_VERSION",
+            "chapter_id": "f4b8c9ee:2",
+            "chapter_version": 1,
+            "privacy": "LOCAL_ONLY",
+            "excerpt": "“别看了，”老陈厉声喝止，伸手按住林渊的肩膀，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”"
+          }
+        ],
+        "memory_version": {
+          "active_memory_ids": [
+            "fdb3ec0e-72e6-4fdb-9c0c-6fb200667c5d"
+          ],
+          "volume_snapshot": null,
+          "novel_snapshot": null
+        }
+      },
+      "narrative_context": {
+        "project_id": "f4b8c9ee",
+        "plot_threads": [],
+        "foreshadowing": [],
+        "mysteries": [],
+        "character_goals": [],
+        "findings": [],
+        "selection_reasons": [],
+        "token_budget": 800,
+        "estimated_tokens": 0,
+        "truncated": false
+      },
+      "context_policy": {
+        "authoritative": [
+          {
+            "metadata": {
+              "source_type": "CANON",
+              "authority_level": "AUTHORITATIVE",
+              "source_id": "12fa9fa6-1d4b-5c39-8e62-743e10106ad7",
+              "project_id": "f4b8c9ee",
+              "chapter_version_id": null,
+              "evidence_ids": [
+                "dddb1d4c-71f7-5382-9514-7e3db7d582aa"
+              ],
+              "selection_reasons": [
+                "APPROVED_WORLD_RULE"
+              ],
+              "locality": "LOCAL_ONLY",
+              "fact_key": null
+            },
+            "value": {
+              "id": "12fa9fa6-1d4b-5c39-8e62-743e10106ad7",
+              "payload": {
+                "statement": "旧时代的科技设备在接触特定频率的声波时会自我激活或爆炸。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "dddb1d4c-71f7-5382-9514-7e3db7d582aa"
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "source_type": "CANON",
+              "authority_level": "AUTHORITATIVE",
+              "source_id": "868f7be4-1077-5dfc-b99c-94d802d6aec5",
+              "project_id": "f4b8c9ee",
+              "chapter_version_id": null,
+              "evidence_ids": [
+                "6ca7f1d5-d0a7-561b-afb4-53772d734e56"
+              ],
+              "selection_reasons": [
+                "APPROVED_WORLD_RULE"
+              ],
+              "locality": "LOCAL_ONLY",
+              "fact_key": null
+            },
+            "value": {
+              "id": "868f7be4-1077-5dfc-b99c-94d802d6aec5",
+              "payload": {
+                "statement": "主角的记忆缺失并非偶然，而是城市防御系统为了掩盖真相而植入的。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "6ca7f1d5-d0a7-561b-afb4-53772d734e56"
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "source_type": "CANON",
+              "authority_level": "AUTHORITATIVE",
+              "source_id": "8948137b-8178-5d62-b936-2b21b6c3967c",
+              "project_id": "f4b8c9ee",
+              "chapter_version_id": null,
+              "evidence_ids": [
+                "b35f254e-729d-5899-8ab0-1ce1bcf1d49b"
+              ],
+              "selection_reasons": [
+                "APPROVED_WORLD_RULE"
+              ],
+              "locality": "LOCAL_ONLY",
+              "fact_key": null
+            },
+            "value": {
+              "id": "8948137b-8178-5d62-b936-2b21b6c3967c",
+              "payload": {
+                "statement": "城市中心的核心反应堆从未真正关闭，它仍在以微弱但致命的频率运转。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "b35f254e-729d-5899-8ab0-1ce1bcf1d49b"
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "source_type": "CANON",
+              "authority_level": "AUTHORITATIVE",
+              "source_id": "a11b1ee3-6314-56e3-8154-c123da3a6214",
+              "project_id": "f4b8c9ee",
+              "chapter_version_id": null,
+              "evidence_ids": [
+                "86ae6141-3964-5b27-9a73-cd65b393f340"
+              ],
+              "selection_reasons": [
+                "APPROVED_WORLD_RULE"
+              ],
+              "locality": "LOCAL_ONLY",
+              "fact_key": null
+            },
+            "value": {
+              "id": "a11b1ee3-6314-56e3-8154-c123da3a6214",
+              "payload": {
+                "statement": "任何试图修复城市的行为都会触发‘回声’的强烈反弹，导致记忆混乱。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "86ae6141-3964-5b27-9a73-cd65b393f340"
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "source_type": "CANON",
+              "authority_level": "AUTHORITATIVE",
+              "source_id": "f52f70c8-98d2-5523-8d6a-5c9bb62a2f29",
+              "project_id": "f4b8c9ee",
+              "chapter_version_id": null,
+              "evidence_ids": [
+                "692ea674-00b0-5b4e-8bb3-79bd4168bab0"
+              ],
+              "selection_reasons": [
+                "APPROVED_WORLD_RULE"
+              ],
+              "locality": "LOCAL_ONLY",
+              "fact_key": null
+            },
+            "value": {
+              "id": "f52f70c8-98d2-5523-8d6a-5c9bb62a2f29",
+              "payload": {
+                "statement": "城市中的‘回声’现象会强制重现过去的关键时刻，干扰当前行动。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "692ea674-00b0-5b4e-8bb3-79bd4168bab0"
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "source_type": "ACCEPTED_CHAPTER",
+              "authority_level": "AUTHORITATIVE",
+              "source_id": "f4b8c9ee:2",
+              "project_id": "f4b8c9ee",
+              "chapter_version_id": "f4b8c9ee:2:v4",
+              "evidence_ids": [],
+              "selection_reasons": [
+                "CURRENT_CHAPTER"
+              ],
+              "locality": "CLOUD_ALLOWED",
+              "fact_key": "accepted_chapter_state"
+            },
+            "value": {
+              "volume": 1,
+              "chapter": 0,
+              "active_characters": []
+            }
+          }
+        ],
+        "constraining": [],
+        "supporting": [
+          {
+            "metadata": {
+              "source_type": "LORE_MEMORY",
+              "authority_level": "SUPPORTING",
+              "source_id": "fdb3ec0e-72e6-4fdb-9c0c-6fb200667c5d",
+              "project_id": "f4b8c9ee",
+              "chapter_version_id": null,
+              "evidence_ids": [],
+              "selection_reasons": [
+                "MEDIUM_MEMORY"
+              ],
+              "locality": "CLOUD_ALLOWED",
+              "fact_key": null
+            },
+            "value": {
+              "schema_version": 1,
+              "id": "fdb3ec0e-72e6-4fdb-9c0c-6fb200667c5d",
+              "novel_id": "f4b8c9ee",
+              "character_id": "225a179a-9466-5e5b-95bd-3bb321de7e7e",
+              "business_id": "memory-84a1fdb0-4dc1-5261-83cc-20cb62b41d4d",
+              "memory_type": "STATE_CHANGE",
+              "content": {
+                "state": "amnesia_confirmed",
+                "details": "The character Lin Yuan explicitly states he does not remember his identity, and this is confirmed by the city's defense mechanism ('echo') as a deliberate suppression of truth."
+              },
+              "status": "ACTIVE",
+              "valid_from_chapter": null,
+              "valid_to_chapter": null,
+              "proposal_id": "84a1fdb0-4dc1-5261-83cc-20cb62b41d4d",
+              "supersedes_id": null,
+              "retraction_reason": null,
+              "created_at": "2026-10-07T09:51:12.520856Z",
+              "updated_at": "2026-10-07T09:51:12.520856Z"
+            }
+          }
+        ],
+        "advisory": [],
+        "conflicts": [],
+        "duplicate_count": 0,
+        "budget_usage": {
+          "AUTHORITATIVE": 805,
+          "CONSTRAINING": 0,
+          "SUPPORTING": 248,
+          "ADVISORY": 0
+        },
+        "truncated_sources": [],
+        "authoritative_context_truncated": false,
+        "total_token_budget": 2400,
+        "writer_contract": [
+          "Higher-authority context overrides lower-authority context.",
+          "Advisories are warnings, not facts.",
+          "Do not guess through unresolved authoritative conflicts.",
+          "Context does not permit source-state mutation."
+        ]
+      },
+      "context_pack_v2": {
+        "enabled": true,
+        "chunks": [
+          {
+            "chunk_id": "RECENT_CHAPTER:f4b8c9ee:2:0",
+            "source_id": "f4b8c9ee:2",
+            "source_type": "RECENT_CHAPTER",
+            "content": {
+              "volume": 1,
+              "chapter": 0,
+              "active_characters": []
+            },
+            "estimated_tokens": 12,
+            "score": 10100,
+            "selection_reasons": [
+              "SOURCE_PRIORITY:RECENT_CHAPTER",
+              "CHAPTER_RECENCY"
+            ]
+          },
+          {
+            "chunk_id": "CHARACTER:0992a4ed-41b7-5a68-baaa-6fe863224795:0",
+            "source_id": "0992a4ed-41b7-5a68-baaa-6fe863224795",
+            "source_type": "CHARACTER",
+            "content": {
+              "age": 58,
+              "role": "废墟广场的幸存者 / 向导",
+              "personality": "悲观、圆滑，依靠旧时代的自动售货机维持生计。他对林渊既好奇又警惕，试图从他身上寻找自己失去亲人的答案。",
+              "goal": "在混乱的废墟中生存下去，并帮助林渊找到通往城市核心的路径，尽管他并不完全信任林渊。",
+              "current_location": "",
+              "status": "ALIVE",
+              "name": "老陈",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "0992a4ed-41b7-5a68-baaa-6fe863224795",
+              "character_ids": [
+                "0992a4ed-41b7-5a68-baaa-6fe863224795"
+              ]
+            },
+            "estimated_tokens": 84,
+            "score": 9000,
+            "selection_reasons": [
+              "SOURCE_PRIORITY:CHARACTER"
+            ]
+          },
+          {
+            "chunk_id": "CHARACTER:225a179a-9466-5e5b-95bd-3bb321de7e7e:0",
+            "source_id": "225a179a-9466-5e5b-95bd-3bb321de7e7e",
+            "source_type": "CHARACTER",
+            "content": {
+              "age": null,
+              "role": "失忆的探索者 / 前实验主导者",
+              "personality": "冷静、执着，但内心深处隐藏着对未知的恐惧和对自己身份的抗拒。他习惯性地回避直接的情感交流，更倾向于通过观察环境来理解世界。",
+              "goal": "找回自己失去的记忆，弄清楚自己是谁，以及为何这座城市会陷入永恒的停滞。",
+              "current_location": "",
+              "status": "ALIVE",
+              "name": "林渊",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "225a179a-9466-5e5b-95bd-3bb321de7e7e",
+              "character_ids": [
+                "225a179a-9466-5e5b-95bd-3bb321de7e7e"
+              ]
+            },
+            "estimated_tokens": 86,
+            "score": 9000,
+            "selection_reasons": [
+              "SOURCE_PRIORITY:CHARACTER"
+            ]
+          },
+          {
+            "chunk_id": "CHARACTER:3aca0456-9ef0-5890-a743-1857b674e44f:0",
+            "source_id": "3aca0456-9ef0-5890-a743-1857b674e44f",
+            "source_type": "CHARACTER",
+            "content": {
+              "age": null,
+              "role": "集体潜意识的具象化 / 城市意志",
+              "personality": "冷漠、扭曲，由无数破碎的记忆碎片组成。它既是城市的守护者也是囚禁者，不断试图将林渊拉回过去的创伤中。",
+              "goal": "维持城市的现状，阻止林渊完全恢复记忆并可能再次‘修复’城市，因为那意味着‘回声’的终结。",
+              "current_location": "",
+              "status": "ALIVE",
+              "name": "回声",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "3aca0456-9ef0-5890-a743-1857b674e44f",
+              "character_ids": [
+                "3aca0456-9ef0-5890-a743-1857b674e44f"
+              ]
+            },
+            "estimated_tokens": 85,
+            "score": 9000,
+            "selection_reasons": [
+              "SOURCE_PRIORITY:CHARACTER"
+            ]
+          },
+          {
+            "chunk_id": "LORE:fdb3ec0e-72e6-4fdb-9c0c-6fb200667c5d:0",
+            "source_id": "fdb3ec0e-72e6-4fdb-9c0c-6fb200667c5d",
+            "source_type": "LORE",
+            "content": {
+              "state": "amnesia_confirmed",
+              "details": "The character Lin Yuan explicitly states he does not remember his identity, and this is confirmed by the city's defense mechanism ('echo') as a deliberate suppression of truth."
+            },
+            "estimated_tokens": 55,
+            "score": 7000,
+            "selection_reasons": [
+              "SOURCE_PRIORITY:LORE"
+            ]
+          },
+          {
+            "chunk_id": "LORE:lore:1:0",
+            "source_id": "lore:1",
+            "source_type": "LORE",
+            "content": {
+              "evidence_id": "0641ef99-446e-568b-a1ad-bdc4bd434288",
+              "source_type": "CHAPTER_VERSION",
+              "chapter_id": "f4b8c9ee:2",
+              "chapter_version": 1,
+              "privacy": "LOCAL_ONLY",
+              "excerpt": "“我记不起我是谁，”林渊的声音平静得可怕，只有他自己能听出那底下压抑的颤抖，“只知道我想弄清楚，为什么这座城市会陷入这种停滞。”"
+            },
+            "estimated_tokens": 58,
+            "score": 7000,
+            "selection_reasons": [
+              "SOURCE_PRIORITY:LORE"
+            ]
+          },
+          {
+            "chunk_id": "LORE:lore:2:0",
+            "source_id": "lore:2",
+            "source_type": "LORE",
+            "content": {
+              "evidence_id": "f71313e1-1b60-5af9-81f3-4d1f48e28a24",
+              "source_type": "CHAPTER_VERSION",
+              "chapter_id": "f4b8c9ee:2",
+              "chapter_version": 1,
+              "privacy": "LOCAL_ONLY",
+              "excerpt": "“别看了，”老陈厉声喝止，伸手按住林渊的肩膀，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”"
+            },
+            "estimated_tokens": 61,
+            "score": 7000,
+            "selection_reasons": [
+              "SOURCE_PRIORITY:LORE"
+            ]
+          }
+        ],
+        "estimated_tokens": 441,
+        "token_budget": 2400,
+        "omitted_local_only": [],
+        "deduplicated_count": 0,
+        "truncated_sources": []
+      },
+      "token_estimate": 5099,
+      "secrets_policy": "Local-only context"
+    }
+  },
+  "seconds": 0.196
+}

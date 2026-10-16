@@ -1,0 +1,39 @@
+{
+  "kind": "EXPLICIT_SURFACE_INVENTORY_REVIEW_NOT_EXECUTION",
+  "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
+  "previous_manifest_sha256": "76c77566a0e9da329ed7d13bacbd6f11c101a7b75a50b42a24ea6c328f26af46",
+  "previous_nodes": 7957,
+  "collected_count": 7966,
+  "added_this_checkpoint": 9,
+  "original_source_digests_unchanged": true,
+  "original_relative_node_order_unchanged": true,
+  "original_skip_maps_unchanged": true,
+  "evidence": "TWO_IDENTICAL_COMPLETE_COLLECTIONS_NOT_TEST_EXECUTION",
+  "added_nodes": [
+    "tests/test_surface_flag_discovery.py::test_legacy_complete_opt_in_does_not_silently_enable_new_surfaces",
+    "tests/test_surface_flag_discovery.py::test_discovery_lists_disabled_new_features_without_granting_them[]",
+    "tests/test_surface_flag_discovery.py::test_discovery_lists_disabled_new_features_without_granting_them[*]",
+    "tests/test_surface_flag_discovery.py::test_discovery_lists_disabled_new_features_without_granting_them[all,unknown,arbitrary_plugin]",
+    "tests/test_surface_flag_discovery.py::test_surface_exact_dependencies_and_acceptance_override",
+    "tests/test_surface_flag_discovery.py::test_actual_api_discovery_exposes_runtime_inventory_and_does_not_mutate_configuration[file-/api]",
+    "tests/test_surface_flag_discovery.py::test_actual_api_discovery_exposes_runtime_inventory_and_does_not_mutate_configuration[file-/api/v1]",
+    "tests/test_surface_flag_discovery.py::test_actual_api_discovery_exposes_runtime_inventory_and_does_not_mutate_configuration[postgres-/api]",
+    "tests/test_surface_flag_discovery.py::test_actual_api_discovery_exposes_runtime_inventory_and_does_not_mutate_configuration[postgres-/api/v1]"
+  ],
+  "new_node_backend_classification": {
+    "tests/test_surface_flag_discovery.py::test_legacy_complete_opt_in_does_not_silently_enable_new_surfaces": "both",
+    "tests/test_surface_flag_discovery.py::test_discovery_lists_disabled_new_features_without_granting_them[]": "both",
+    "tests/test_surface_flag_discovery.py::test_discovery_lists_disabled_new_features_without_granting_them[*]": "both",
+    "tests/test_surface_flag_discovery.py::test_discovery_lists_disabled_new_features_without_granting_them[all,unknown,arbitrary_plugin]": "both",
+    "tests/test_surface_flag_discovery.py::test_surface_exact_dependencies_and_acceptance_override": "both",
+    "tests/test_surface_flag_discovery.py::test_actual_api_discovery_exposes_runtime_inventory_and_does_not_mutate_configuration[file-/api]": "file",
+    "tests/test_surface_flag_discovery.py::test_actual_api_discovery_exposes_runtime_inventory_and_does_not_mutate_configuration[file-/api/v1]": "file",
+    "tests/test_surface_flag_discovery.py::test_actual_api_discovery_exposes_runtime_inventory_and_does_not_mutate_configuration[postgres-/api]": "postgres",
+    "tests/test_surface_flag_discovery.py::test_actual_api_discovery_exposes_runtime_inventory_and_does_not_mutate_configuration[postgres-/api/v1]": "postgres"
+  },
+  "old_skip_counts": {
+    "file": 2035,
+    "postgres": 2059
+  },
+  "manifest_sha256": "cd44302b1c82007e780face84c57a5d7bc6a85d90dc472df5848731d5f7a11b1"
+}

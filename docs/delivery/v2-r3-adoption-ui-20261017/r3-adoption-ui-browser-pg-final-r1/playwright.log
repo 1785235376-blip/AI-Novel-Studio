@@ -1,0 +1,93 @@
+
+Running 3 tests using 1 worker
+
+(node:82452) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:82452) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  x  1 [prompt-adoption-ui-1366x768] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin (1.5m)
+(node:78348) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:78348) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  x  2 [prompt-adoption-ui-1440x900] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin (1.5m)
+(node:76532) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:76532) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  x  3 [prompt-adoption-ui-1920x1080] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin (1.5m)
+
+
+  1) [prompt-adoption-ui-1366x768] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 
+
+    TimeoutError: locator.click: Timeout 25000ms exceeded.
+    Call log:
+      - waiting for getByRole('region', { name: '创作文档', exact: true }).getByRole('button', { name: /真实分镜 prompt-adoption-ui-1366x768/ })
+
+
+       98 |       await page.getByRole('tab', { name: /^分镜/ }).click();
+       99 |       await page.getByRole('region', { name: '创作文档', exact: true })
+    > 100 |         .getByRole('button', { name: new RegExp(boardTitle) }).click();
+          |                                                                ^
+      101 |       await page.getByRole('button', { name: '按需打开镜头工作区', exact: true }).click();
+      102 |       const shots = page.getByRole('region', { name: '分镜工作区', exact: true });
+      103 |       await shots.getByRole('button', { name: '读取已保存分镜', exact: true }).click();
+        at openBoard (D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:100:64)
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:210:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\docs\delivery\v2-r3-adoption-ui-20261017\r3-adoption-ui-browser-pg-final-r1\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\docs\delivery\v2-r3-adoption-ui-20261017\r3-adoption-ui-browser-pg-final-r1\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\error-context.md
+
+  2) [prompt-adoption-ui-1440x900] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 
+
+    TimeoutError: locator.click: Timeout 25000ms exceeded.
+    Call log:
+      - waiting for getByRole('region', { name: '创作文档', exact: true }).getByRole('button', { name: /真实分镜 prompt-adoption-ui-1440x900/ })
+
+
+       98 |       await page.getByRole('tab', { name: /^分镜/ }).click();
+       99 |       await page.getByRole('region', { name: '创作文档', exact: true })
+    > 100 |         .getByRole('button', { name: new RegExp(boardTitle) }).click();
+          |                                                                ^
+      101 |       await page.getByRole('button', { name: '按需打开镜头工作区', exact: true }).click();
+      102 |       const shots = page.getByRole('region', { name: '分镜工作区', exact: true });
+      103 |       await shots.getByRole('button', { name: '读取已保存分镜', exact: true }).click();
+        at openBoard (D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:100:64)
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:210:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\docs\delivery\v2-r3-adoption-ui-20261017\r3-adoption-ui-browser-pg-final-r1\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\docs\delivery\v2-r3-adoption-ui-20261017\r3-adoption-ui-browser-pg-final-r1\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1440x900\error-context.md
+
+  3) [prompt-adoption-ui-1920x1080] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 
+
+    TimeoutError: locator.click: Timeout 25000ms exceeded.
+    Call log:
+      - waiting for getByRole('region', { name: '创作文档', exact: true }).getByRole('button', { name: /真实分镜 prompt-adoption-ui-1920x1080/ })
+
+
+       98 |       await page.getByRole('tab', { name: /^分镜/ }).click();
+       99 |       await page.getByRole('region', { name: '创作文档', exact: true })
+    > 100 |         .getByRole('button', { name: new RegExp(boardTitle) }).click();
+          |                                                                ^
+      101 |       await page.getByRole('button', { name: '按需打开镜头工作区', exact: true }).click();
+      102 |       const shots = page.getByRole('region', { name: '分镜工作区', exact: true });
+      103 |       await shots.getByRole('button', { name: '读取已保存分镜', exact: true }).click();
+        at openBoard (D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:100:64)
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:210:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\docs\delivery\v2-r3-adoption-ui-20261017\r3-adoption-ui-browser-pg-final-r1\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\docs\delivery\v2-r3-adoption-ui-20261017\r3-adoption-ui-browser-pg-final-r1\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1920x1080\error-context.md
+
+  3 failed
+    [prompt-adoption-ui-1366x768] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 
+    [prompt-adoption-ui-1440x900] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 
+    [prompt-adoption-ui-1920x1080] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 

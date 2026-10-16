@@ -1,0 +1,10 @@
+{"marker": "PROMPT_ADOPTION_UI_ISOLATED_PROCESS", "pid": 77124, "original_gate": false, "process_gate": true}
+INFO:     127.0.0.1:58912 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58950 - "POST /api/packaged/bootstrap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58965 - "POST /api/packaged/initial-workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58967 - "GET /api/projects/b4029bd8-d9a5-4fe4-8e1a-c3afb77c1968/studio/documents/af6ed5d9-5ffd-4697-ba40-de9d6379fdec/prompt-adoption HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58767 - "POST /api/collaboration/admin/workspaces/workspace-a/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:59896 - "GET /api/collaboration/admin/workspaces/workspace-a/navigation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59898 - "POST /api/projects/b8b13a7b-2304-4ef3-9bfc-b3a6f9611631/studio/activate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62781 - "PUT /api/novels/b8b13a7b-2304-4ef3-9bfc-b3a6f9611631/characters/ui-bound-character HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:62783 - "DELETE /api/collaboration/admin/workspaces/workspace-a/projects/b8b13a7b-2304-4ef3-9bfc-b3a6f9611631 HTTP/1.1" 204 No Content

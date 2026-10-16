@@ -1,0 +1,492 @@
+{
+  "owners": [
+    [
+      "94a19e06-5920-4797-b809-b48c3edcba29",
+      "v2-identical-title-lifecycle",
+      "V2 identical title lifecycle",
+      {
+        "genre": "",
+        "status": "Writing",
+        "style_profile": {}
+      },
+      "2026-10-09 07:39:36.583079+00:00"
+    ]
+  ],
+  "scopes": [
+    [
+      "396aecd729549cbe4de9b9acd1d5d59ff2c69b44e8f670e35d5329b4692d0d99",
+      "v2-identical-title-lifecycle",
+      {
+        "mode": "local",
+        "novel_id": "v2-identical-title-lifecycle"
+      },
+      {
+        "scope": {
+          "mode": "local",
+          "novel_id": "v2-identical-title-lifecycle"
+        },
+        "novel_id": "v2-identical-title-lifecycle",
+        "collections": {
+          "creative_documents_v2": {
+            "0bc71381-36d1-4786-90fa-49718b7cfc8b": {
+              "id": "0bc71381-36d1-4786-90fa-49718b7cfc8b",
+              "mode": "SCREENPLAY",
+              "scope": {
+                "mode": "local",
+                "novel_id": "v2-identical-title-lifecycle"
+              },
+              "shots": [],
+              "title": "Private synthetic draft",
+              "scenes": [],
+              "status": "DRAFT",
+              "history": [],
+              "version": 1,
+              "novel_id": "v2-identical-title-lifecycle",
+              "created_at": "2026-10-09T07:39:36.013454+00:00",
+              "created_by": "local-author",
+              "updated_at": "2026-10-09T07:39:36.013454+00:00",
+              "updated_by": "local-author",
+              "video_plan": null,
+              "privacy_level": "LOCAL_ONLY",
+              "director_notes": [],
+              "schema_version": 1,
+              "source_privacy": {},
+              "source_evidence": {},
+              "source_documents": {},
+              "source_chapter_ids": [],
+              "source_independent": true,
+              "project_incarnation": "postgres:f88861e0-29f4-4ad8-a3c8-27258a9731bd"
+            },
+            "2358a17b-8143-4725-aaf0-2f1cd3e3ff67": {
+              "id": "2358a17b-8143-4725-aaf0-2f1cd3e3ff67",
+              "mode": "SCREENPLAY",
+              "scope": {
+                "mode": "local",
+                "novel_id": "v2-identical-title-lifecycle"
+              },
+              "shots": [],
+              "title": "City",
+              "scenes": [
+                {
+                  "id": "scene-1",
+                  "time": "",
+                  "action": "The visitor pauses.",
+                  "emotion": "",
+                  "heading": "EXT. RUINS - NIGHT",
+                  "dialogue": [
+                    {
+                      "text": "I know this place.",
+                      "speaker": "Visitor",
+                      "delivery": ""
+                    }
+                  ],
+                  "location": "",
+                  "sequence": 1,
+                  "characters": [],
+                  "director_notes": [],
+                  "source_chapter_id": "v2-identical-title-lifecycle:1"
+                }
+              ],
+              "status": "DRAFT",
+              "history": [],
+              "version": 1,
+              "novel_id": "v2-identical-title-lifecycle",
+              "created_at": "2026-10-09T07:39:36.486128+00:00",
+              "created_by": "local-author",
+              "updated_at": "2026-10-09T07:39:36.486128+00:00",
+              "updated_by": "local-author",
+              "video_plan": null,
+              "privacy_level": "LOCAL_ONLY",
+              "director_notes": [],
+              "schema_version": 1,
+              "source_privacy": {
+                "v2-identical-title-lifecycle:1": {
+                  "stale": false,
+                  "novel_id": "v2-identical-title-lifecycle",
+                  "reviewed": false,
+                  "branch_id": null,
+                  "chapter_id": "v2-identical-title-lifecycle:1",
+                  "reviewed_at": null,
+                  "reviewed_by": null,
+                  "privacy_level": "LOCAL_ONLY",
+                  "content_sha256": "0fbd72f4480b17d9eed37315c970d7072302cd2531e551082ac3bd109d82e512",
+                  "chapter_version": 1
+                }
+              },
+              "source_evidence": {
+                "v2-identical-title-lifecycle:1": {
+                  "digest": "0fbd72f4480b17d9eed37315c970d7072302cd2531e551082ac3bd109d82e512",
+                  "version": 1
+                }
+              },
+              "source_documents": {},
+              "source_chapter_ids": [
+                "v2-identical-title-lifecycle:1"
+              ],
+              "source_independent": false,
+              "project_incarnation": "postgres:3a17751f-188c-4574-8162-351c85781204"
+            },
+            "26b84dd1-ffab-4094-b556-51734433e132": {
+              "id": "26b84dd1-ffab-4094-b556-51734433e132",
+              "mode": "SCREENPLAY",
+              "scope": {
+                "mode": "local",
+                "novel_id": "v2-identical-title-lifecycle"
+              },
+              "shots": [],
+              "title": "City",
+              "scenes": [
+                {
+                  "id": "scene-1",
+                  "time": "",
+                  "action": "The visitor pauses.",
+                  "emotion": "",
+                  "heading": "EXT. RUINS - NIGHT",
+                  "dialogue": [
+                    {
+                      "text": "I know this place.",
+                      "speaker": "Visitor",
+                      "delivery": ""
+                    }
+                  ],
+                  "location": "",
+                  "sequence": 1,
+                  "characters": [],
+                  "director_notes": [],
+                  "source_chapter_id": "v2-identical-title-lifecycle:1"
+                }
+              ],
+              "status": "DRAFT",
+              "history": [],
+              "version": 1,
+              "novel_id": "v2-identical-title-lifecycle",
+              "created_at": "2026-10-09T07:39:35.996229+00:00",
+              "created_by": "local-author",
+              "updated_at": "2026-10-09T07:39:35.996229+00:00",
+              "updated_by": "local-author",
+              "video_plan": null,
+              "privacy_level": "LOCAL_ONLY",
+              "director_notes": [],
+              "schema_version": 1,
+              "source_privacy": {
+                "v2-identical-title-lifecycle:1": {
+                  "stale": false,
+                  "novel_id": "v2-identical-title-lifecycle",
+                  "reviewed": false,
+                  "branch_id": null,
+                  "chapter_id": "v2-identical-title-lifecycle:1",
+                  "reviewed_at": null,
+                  "reviewed_by": null,
+                  "privacy_level": "LOCAL_ONLY",
+                  "content_sha256": "0fbd72f4480b17d9eed37315c970d7072302cd2531e551082ac3bd109d82e512",
+                  "chapter_version": 1
+                }
+              },
+              "source_evidence": {
+                "v2-identical-title-lifecycle:1": {
+                  "digest": "0fbd72f4480b17d9eed37315c970d7072302cd2531e551082ac3bd109d82e512",
+                  "version": 1
+                }
+              },
+              "source_documents": {},
+              "source_chapter_ids": [
+                "v2-identical-title-lifecycle:1"
+              ],
+              "source_independent": false,
+              "project_incarnation": "postgres:f88861e0-29f4-4ad8-a3c8-27258a9731bd"
+            },
+            "4695eca9-d67c-48b8-b423-de96cf8a95cf": {
+              "id": "4695eca9-d67c-48b8-b423-de96cf8a95cf",
+              "mode": "SCREENPLAY",
+              "scope": {
+                "mode": "local",
+                "novel_id": "v2-identical-title-lifecycle"
+              },
+              "shots": [],
+              "title": "Private synthetic draft",
+              "scenes": [],
+              "status": "DRAFT",
+              "history": [],
+              "version": 1,
+              "novel_id": "v2-identical-title-lifecycle",
+              "created_at": "2026-10-09T07:39:36.502848+00:00",
+              "created_by": "local-author",
+              "updated_at": "2026-10-09T07:39:36.502848+00:00",
+              "updated_by": "local-author",
+              "video_plan": null,
+              "privacy_level": "LOCAL_ONLY",
+              "director_notes": [],
+              "schema_version": 1,
+              "source_privacy": {},
+              "source_evidence": {},
+              "source_documents": {},
+              "source_chapter_ids": [],
+              "source_independent": true,
+              "project_incarnation": "postgres:3a17751f-188c-4574-8162-351c85781204"
+            },
+            "997c80f6-387f-43cc-ae21-b9b242c80ef9": {
+              "id": "997c80f6-387f-43cc-ae21-b9b242c80ef9",
+              "mode": "SCREENPLAY",
+              "scope": {
+                "mode": "local",
+                "novel_id": "v2-identical-title-lifecycle"
+              },
+              "shots": [],
+              "title": "Private synthetic draft",
+              "scenes": [],
+              "status": "DRAFT",
+              "history": [],
+              "version": 1,
+              "novel_id": "v2-identical-title-lifecycle",
+              "created_at": "2026-10-09T07:39:36.246823+00:00",
+              "created_by": "local-author",
+              "updated_at": "2026-10-09T07:39:36.246823+00:00",
+              "updated_by": "local-author",
+              "video_plan": null,
+              "privacy_level": "LOCAL_ONLY",
+              "director_notes": [],
+              "schema_version": 1,
+              "source_privacy": {},
+              "source_evidence": {},
+              "source_documents": {},
+              "source_chapter_ids": [],
+              "source_independent": true,
+              "project_incarnation": "postgres:ff46719a-4b04-48be-b8c2-08bf88a9f96d"
+            },
+            "f884a914-3352-4219-acf4-e7bb9e38d550": {
+              "id": "f884a914-3352-4219-acf4-e7bb9e38d550",
+              "mode": "SCREENPLAY",
+              "scope": {
+                "mode": "local",
+                "novel_id": "v2-identical-title-lifecycle"
+              },
+              "shots": [],
+              "title": "City",
+              "scenes": [
+                {
+                  "id": "scene-1",
+                  "time": "",
+                  "action": "The visitor pauses.",
+                  "emotion": "",
+                  "heading": "EXT. RUINS - NIGHT",
+                  "dialogue": [
+                    {
+                      "text": "I know this place.",
+                      "speaker": "Visitor",
+                      "delivery": ""
+                    }
+                  ],
+                  "location": "",
+                  "sequence": 1,
+                  "characters": [],
+                  "director_notes": [],
+                  "source_chapter_id": "v2-identical-title-lifecycle:1"
+                }
+              ],
+              "status": "DRAFT",
+              "history": [],
+              "version": 1,
+              "novel_id": "v2-identical-title-lifecycle",
+              "created_at": "2026-10-09T07:39:36.231300+00:00",
+              "created_by": "local-author",
+              "updated_at": "2026-10-09T07:39:36.231300+00:00",
+              "updated_by": "local-author",
+              "video_plan": null,
+              "privacy_level": "LOCAL_ONLY",
+              "director_notes": [],
+              "schema_version": 1,
+              "source_privacy": {
+                "v2-identical-title-lifecycle:1": {
+                  "stale": false,
+                  "novel_id": "v2-identical-title-lifecycle",
+                  "reviewed": false,
+                  "branch_id": null,
+                  "chapter_id": "v2-identical-title-lifecycle:1",
+                  "reviewed_at": null,
+                  "reviewed_by": null,
+                  "privacy_level": "LOCAL_ONLY",
+                  "content_sha256": "0fbd72f4480b17d9eed37315c970d7072302cd2531e551082ac3bd109d82e512",
+                  "chapter_version": 1
+                }
+              },
+              "source_evidence": {
+                "v2-identical-title-lifecycle:1": {
+                  "digest": "0fbd72f4480b17d9eed37315c970d7072302cd2531e551082ac3bd109d82e512",
+                  "version": 1
+                }
+              },
+              "source_documents": {},
+              "source_chapter_ids": [
+                "v2-identical-title-lifecycle:1"
+              ],
+              "source_independent": false,
+              "project_incarnation": "postgres:ff46719a-4b04-48be-b8c2-08bf88a9f96d"
+            }
+          },
+          "creative_director_proposals_v2": {
+            "4e3630ed-bd10-4476-b80b-f8077d61c740": {
+              "id": "4e3630ed-bd10-4476-b80b-f8077d61c740",
+              "scope": {
+                "mode": "local",
+                "novel_id": "v2-identical-title-lifecycle"
+              },
+              "title": "City \u00b7 \u5bfc\u6f14\u65b9\u6848",
+              "status": "NEEDS_REVIEW",
+              "history": [],
+              "version": 1,
+              "novel_id": "v2-identical-title-lifecycle",
+              "created_at": "2026-10-09T07:39:36.526444+00:00",
+              "created_by": "local-author",
+              "provenance": {
+                "method": "RULE_ASSISTED",
+                "model_id": null,
+                "parameters": {
+                  "rule_version": "director-planning-v1"
+                },
+                "provider_id": null,
+                "input_digest": "b3cd04d728542639750ae6cd2eae26c469fae4fc21b89e38a620d84e26da0e54",
+                "model_called": false,
+                "model_version": null,
+                "quality_verification": "HUMAN_REVIEW_REQUIRED"
+              },
+              "updated_at": "2026-10-09T07:39:36.526444+00:00",
+              "updated_by": "local-author",
+              "document_id": null,
+              "model_preview": null,
+              "output_digest": "48cba86f0473288e9e504b0c388ded3e8da4c270bfd10998658f72103b0a4ad8",
+              "privacy_level": "LOCAL_ONLY",
+              "source_digest": "b3cd04d728542639750ae6cd2eae26c469fae4fc21b89e38a620d84e26da0e54",
+              "director_notes": [
+                {
+                  "id": "5dc6cc51-0d91-4995-9e56-64e79ea784b4",
+                  "note": "\u5f85\u5ba1\u5efa\u8bae\uff1a\u5148\u6838\u5bf9\u573a\u666f\u76ee\u7684\u4e0e\u4eba\u7269\u5173\u7cfb\uff0c\u518d\u9009\u62e9\u666f\u522b\u548c\u673a\u4f4d\u3002",
+                  "number": 1,
+                  "pacing": "\u5f85\u5ba1\u5efa\u8bae\uff1a\u5bf9\u767d\u540e\u4fdd\u7559\u53cd\u5e94\u505c\u987f\uff1b\u65f6\u957f\u7531\u8868\u6f14\u4e0e\u526a\u8f91\u8bd5\u6392\u786e\u5b9a\u3002",
+                  "emotion": "",
+                  "blocking": "\u5f85\u4eba\u5de5\u786e\u8ba4\u4eba\u7269\u4f4d\u7f6e\u3001\u89c6\u7ebf\u548c\u51fa\u5165\u65b9\u5411\uff1b\u6587\u5b57\u4e0d\u8db3\u4ee5\u786e\u5b9a\u5b9e\u9645\u7a7a\u95f4\u3002",
+                  "scene_id": "scene-1",
+                  "shot_size": "MEDIUM",
+                  "performance": "",
+                  "camera_angle": "EYE_LEVEL",
+                  "camera_motion": "STATIC",
+                  "duration_seconds": 5
+                }
+              ],
+              "source_version": 1,
+              "model_execution": null,
+              "source_document_id": "2358a17b-8143-4725-aaf0-2f1cd3e3ff67",
+              "project_incarnation": "postgres:3a17751f-188c-4574-8162-351c85781204"
+            },
+            "92efc90d-43c2-4ac0-974b-398f3b60c31e": {
+              "id": "92efc90d-43c2-4ac0-974b-398f3b60c31e",
+              "scope": {
+                "mode": "local",
+                "novel_id": "v2-identical-title-lifecycle"
+              },
+              "title": "City \u00b7 \u5bfc\u6f14\u65b9\u6848",
+              "status": "NEEDS_REVIEW",
+              "history": [],
+              "version": 1,
+              "novel_id": "v2-identical-title-lifecycle",
+              "created_at": "2026-10-09T07:39:36.028886+00:00",
+              "created_by": "local-author",
+              "provenance": {
+                "method": "RULE_ASSISTED",
+                "model_id": null,
+                "parameters": {
+                  "rule_version": "director-planning-v1"
+                },
+                "provider_id": null,
+                "input_digest": "f6719bb4d563f9bdfcdba33d07dbe73955fc1dc4622c6c44745c9ffaf610fe12",
+                "model_called": false,
+                "model_version": null,
+                "quality_verification": "HUMAN_REVIEW_REQUIRED"
+              },
+              "updated_at": "2026-10-09T07:39:36.028886+00:00",
+              "updated_by": "local-author",
+              "document_id": null,
+              "model_preview": null,
+              "output_digest": "d79a1f43e218b928aa26656d30e570ca457ab106ff2c72d54d69c96e9bb1eb24",
+              "privacy_level": "LOCAL_ONLY",
+              "source_digest": "f6719bb4d563f9bdfcdba33d07dbe73955fc1dc4622c6c44745c9ffaf610fe12",
+              "director_notes": [
+                {
+                  "id": "d4634ec5-1a99-4161-bc22-19992072f697",
+                  "note": "\u5f85\u5ba1\u5efa\u8bae\uff1a\u5148\u6838\u5bf9\u573a\u666f\u76ee\u7684\u4e0e\u4eba\u7269\u5173\u7cfb\uff0c\u518d\u9009\u62e9\u666f\u522b\u548c\u673a\u4f4d\u3002",
+                  "number": 1,
+                  "pacing": "\u5f85\u5ba1\u5efa\u8bae\uff1a\u5bf9\u767d\u540e\u4fdd\u7559\u53cd\u5e94\u505c\u987f\uff1b\u65f6\u957f\u7531\u8868\u6f14\u4e0e\u526a\u8f91\u8bd5\u6392\u786e\u5b9a\u3002",
+                  "emotion": "",
+                  "blocking": "\u5f85\u4eba\u5de5\u786e\u8ba4\u4eba\u7269\u4f4d\u7f6e\u3001\u89c6\u7ebf\u548c\u51fa\u5165\u65b9\u5411\uff1b\u6587\u5b57\u4e0d\u8db3\u4ee5\u786e\u5b9a\u5b9e\u9645\u7a7a\u95f4\u3002",
+                  "scene_id": "scene-1",
+                  "shot_size": "MEDIUM",
+                  "performance": "",
+                  "camera_angle": "EYE_LEVEL",
+                  "camera_motion": "STATIC",
+                  "duration_seconds": 5
+                }
+              ],
+              "source_version": 1,
+              "model_execution": null,
+              "source_document_id": "26b84dd1-ffab-4094-b556-51734433e132",
+              "project_incarnation": "postgres:f88861e0-29f4-4ad8-a3c8-27258a9731bd"
+            },
+            "b05fb3bf-b0eb-42bb-9a31-ac2d9a0d8bf2": {
+              "id": "b05fb3bf-b0eb-42bb-9a31-ac2d9a0d8bf2",
+              "scope": {
+                "mode": "local",
+                "novel_id": "v2-identical-title-lifecycle"
+              },
+              "title": "City \u00b7 \u5bfc\u6f14\u65b9\u6848",
+              "status": "NEEDS_REVIEW",
+              "history": [],
+              "version": 1,
+              "novel_id": "v2-identical-title-lifecycle",
+              "created_at": "2026-10-09T07:39:36.261361+00:00",
+              "created_by": "local-author",
+              "provenance": {
+                "method": "RULE_ASSISTED",
+                "model_id": null,
+                "parameters": {
+                  "rule_version": "director-planning-v1"
+                },
+                "provider_id": null,
+                "input_digest": "1a8800c77bccbc1b4cec86077d13cd9b33bd3c2799c0cc699e43b21e7b808921",
+                "model_called": false,
+                "model_version": null,
+                "quality_verification": "HUMAN_REVIEW_REQUIRED"
+              },
+              "updated_at": "2026-10-09T07:39:36.261361+00:00",
+              "updated_by": "local-author",
+              "document_id": null,
+              "model_preview": null,
+              "output_digest": "d5d522c171f5cbb690806788614da295909c97559a9a4dcce56a004aaf18f72c",
+              "privacy_level": "LOCAL_ONLY",
+              "source_digest": "1a8800c77bccbc1b4cec86077d13cd9b33bd3c2799c0cc699e43b21e7b808921",
+              "director_notes": [
+                {
+                  "id": "bb439f10-a71c-4d90-b9b3-3a443d8320a4",
+                  "note": "\u5f85\u5ba1\u5efa\u8bae\uff1a\u5148\u6838\u5bf9\u573a\u666f\u76ee\u7684\u4e0e\u4eba\u7269\u5173\u7cfb\uff0c\u518d\u9009\u62e9\u666f\u522b\u548c\u673a\u4f4d\u3002",
+                  "number": 1,
+                  "pacing": "\u5f85\u5ba1\u5efa\u8bae\uff1a\u5bf9\u767d\u540e\u4fdd\u7559\u53cd\u5e94\u505c\u987f\uff1b\u65f6\u957f\u7531\u8868\u6f14\u4e0e\u526a\u8f91\u8bd5\u6392\u786e\u5b9a\u3002",
+                  "emotion": "",
+                  "blocking": "\u5f85\u4eba\u5de5\u786e\u8ba4\u4eba\u7269\u4f4d\u7f6e\u3001\u89c6\u7ebf\u548c\u51fa\u5165\u65b9\u5411\uff1b\u6587\u5b57\u4e0d\u8db3\u4ee5\u786e\u5b9a\u5b9e\u9645\u7a7a\u95f4\u3002",
+                  "scene_id": "scene-1",
+                  "shot_size": "MEDIUM",
+                  "performance": "",
+                  "camera_angle": "EYE_LEVEL",
+                  "camera_motion": "STATIC",
+                  "duration_seconds": 5
+                }
+              ],
+              "source_version": 1,
+              "model_execution": null,
+              "source_document_id": "f884a914-3352-4219-acf4-e7bb9e38d550",
+              "project_incarnation": "postgres:ff46719a-4b04-48be-b8c2-08bf88a9f96d"
+            }
+          }
+        },
+        "schema_version": 1
+      }
+    ]
+  ]
+}

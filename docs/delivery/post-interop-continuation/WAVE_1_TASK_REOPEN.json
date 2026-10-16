@@ -1,0 +1,114 @@
+{
+  "scope": "U07_EXACT_ORIGINAL_MODEL_TASK_REOPEN",
+  "status": "SOURCE_COMPLETE_FOCUSED_PASS_HOSTED_BROWSER_PG_PENDING",
+  "head_at_verification": "dedb813bb297bb5fb95bac55440a71913b54ed10",
+  "files": [
+    {
+      "path": "app/experimental/ux.py",
+      "sha256": "94ad05e7c1b1658d22b30c7866192f0e535a0b2ab66719a9224477a8790d085f",
+      "normalized_syntax_sha256": "27e10ff5b54a36e2546b671d2496938712dc60ed112bdd6b82c80dfeb95d4f9d",
+      "syntax_hash_method": "Python AST without location attributes"
+    },
+    {
+      "path": "frontend/src/experimental/ExperimentalWorkbench.tsx",
+      "sha256": "f13fdaf0e2f1230d5a7f33462025060f6c1856fe97b9141a5e5d46c69b1f8b72",
+      "normalized_syntax_sha256": "3cdefe4c73fa6f36f9c7e24efb4f5672d53c4a2b4fe605c5f0efc12c0ee15a62",
+      "syntax_hash_method": "TypeScript parser/printer, comments removed, LF"
+    },
+    {
+      "path": "frontend/src/experimental/WorkspaceToolsPanel.tsx",
+      "sha256": "ab36ef22936129525c43d047cb73946d686087f553ffd7b4c0e1eeba5cdd2b3e",
+      "normalized_syntax_sha256": "3762c73207d81040d72661f81235640b0ed228c205d0b9436e5a9e54ed143a9b",
+      "syntax_hash_method": "TypeScript parser/printer, comments removed, LF"
+    },
+    {
+      "path": "frontend/src/experimental/StorySimulatorPanel.tsx",
+      "sha256": "c83b9a9ded6a7cf769c80407b9f1b53aa1c474c31dd98bb377e66f4c3a72ba36",
+      "normalized_syntax_sha256": "62921e696b2ce1a1901554623a6ef09ba0d978d35c1d9bc373110eab5a8c44d1",
+      "syntax_hash_method": "TypeScript parser/printer, comments removed, LF"
+    },
+    {
+      "path": "frontend/src/experimental/NarrativeJudgePanel.tsx",
+      "sha256": "b6bbeb92289e75ac550822d72c61377e94839915d30413fe653b72cf674318ba",
+      "normalized_syntax_sha256": "53213c17294c7c7879dd9ea96604f1cf65aa0a779cfca65f6e44d9ca281792d9",
+      "syntax_hash_method": "TypeScript parser/printer, comments removed, LF"
+    },
+    {
+      "path": "frontend/src/experimental/DeclarativeAgentsPanel.tsx",
+      "sha256": "6d55c22fc6bf61f1dd1cf94999d35d4812eb3ff821d34534e31941ac89097ff4",
+      "normalized_syntax_sha256": "570b5058b4686e47f73d6d7482f6b1724caaffb8953f5a1f56787d5535b52d84",
+      "syntax_hash_method": "TypeScript parser/printer, comments removed, LF"
+    },
+    {
+      "path": "frontend/src/experimental/MultilingualEditionsPanel.tsx",
+      "sha256": "7adef03cbb5c7c6ae439f4ae90be62da4477c58d15c1e61c113a296c443ce710",
+      "normalized_syntax_sha256": "2a2660e89b60e85d7c076f232b465c27e4da9b041f3dc463e0917a0c3b2cd801",
+      "syntax_hash_method": "TypeScript parser/printer, comments removed, LF"
+    },
+    {
+      "path": "frontend/src/experimental/LanguageTranslationPanel.tsx",
+      "sha256": "9025c9c5487fbda4331c4988f6684827339af2c7f80b8a7bb0f3238350605299",
+      "normalized_syntax_sha256": "a89601ca5ea2c692c88d4d36085510ccfe3090d74d60a3ad62085db3a833a6c6",
+      "syntax_hash_method": "TypeScript parser/printer, comments removed, LF"
+    },
+    {
+      "path": "frontend/src/experimental/uxClient.ts",
+      "sha256": "1417ede3ee8a17885fb97e719a5ae7ae8c5db19d6f553352d47f2ee565efd0ac",
+      "normalized_syntax_sha256": "68f5abca310651d262ba82ac7befd163c83a0c003b051e2e2b3ab296adb1cdb9",
+      "syntax_hash_method": "TypeScript parser/printer, comments removed, LF"
+    },
+    {
+      "path": "frontend/src/experimental/ModelTaskReopen.test.tsx",
+      "sha256": "29981268b256e32477be0e0ddde3503f09fa9781f231370cfa1237f509ded5d6",
+      "normalized_syntax_sha256": "271a08f4858467fa7a46bb0c5e28e2dec22b7d52142213ca559e8c4e39d9d8aa",
+      "syntax_hash_method": "TypeScript parser/printer, comments removed, LF"
+    },
+    {
+      "path": "tests/test_post_interop_task_reopen.py",
+      "sha256": "f2b8b5cc7558fe1a4fdac5b4d197454a79c320d35921baaf1b788caae187e05b",
+      "normalized_syntax_sha256": "371934f1da0d244ad0f7c21ae28d2275d6e492bfe886f799547a01f9d09928e0",
+      "syntax_hash_method": "Python AST without location attributes"
+    },
+    {
+      "path": "frontend/tests/e2e/r4-model-task-reopen.spec.ts",
+      "sha256": "df480f9d8ade51df8935130f8a895ce7778be0ffd0a87653f619553e5b26344a",
+      "normalized_syntax_sha256": "1ad4107a9847f4f265211675cd75615bda28e50393d0f6c25193db74afe144ca",
+      "syntax_hash_method": "TypeScript parser/printer, comments removed, LF"
+    }
+  ],
+  "verification": {
+    "backend": {
+      "passed": 58,
+      "postgres_deselected": 56,
+      "new_file_cases": 10
+    },
+    "frontend": {
+      "passed": 113,
+      "files": 8,
+      "new_cases": 16
+    },
+    "typecheck": "PASS",
+    "token_guard": "PASS",
+    "diff_check": "PASS",
+    "browser": {
+      "authored": 1,
+      "collected": 1,
+      "executed": false
+    }
+  },
+  "owners": {
+    "story_simulator_model": "simulator_model_job",
+    "narrative_judge_model": "judge_model_job",
+    "multilingual_translation": "translation_model_job",
+    "declarative_agent": "declarative_model_job"
+  },
+  "boundaries": [
+    "Original simulator may withhold stale job identity; unavailable target is truthful",
+    "Original translation list bounds: latest50 editions and latest50 tasks per edition",
+    "Translation target view is read-only; explicit original-segment opening preserves dirty input",
+    "No automatic dispatch/refresh mutation/accept/cancel/replay",
+    "No App/API/jobs/Interop changes"
+  ],
+  "prior_hosted_failure": "d18e874 U08 selector timeout retained; exact accessible-role test correction included with Wave5, final hosted execution pending",
+  "publication": "INCLUDED_WITH_WAVE5_SOURCE_CHECKPOINT"
+}

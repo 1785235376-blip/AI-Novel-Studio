@@ -1,0 +1,510 @@
+{
+  "novel_id": "df4544f1",
+  "title": "废城回声 · 完整产品验收",
+  "frontend": "http://127.0.0.1:5209",
+  "api": "http://127.0.0.1:8051",
+  "mock_interception": false,
+  "chapter_count": 2,
+  "world_summary_verified": true,
+  "character_names_verified": [
+    "林渊",
+    "艾拉",
+    "零号"
+  ],
+  "outline_entry_reachable": true,
+  "outline_submit_enabled": true,
+  "selected_model": {
+    "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+    "model_id": "local-cbe5fff59c25ef0f728e0e8c"
+  },
+  "model_options": [
+    "选择已配置的 Provider / 模型",
+    "DeepSeek Chat · deepseek（不可用）",
+    "DeepSeek Reasoner · deepseek（不可用）",
+    "Qwen3.5-9B-Q4_K_M.gguf · discovery-local-cbe5fff59c25ef0f728e0e8c",
+    "qwen2.5:7b-instruct-q4_K_M · ollama（不可用）"
+  ],
+  "planning_runs": [
+    {
+      "id": "68949efe-a6df-4227-a2bd-fc28edd3ebc8",
+      "kind": "OUTLINE",
+      "status": "READY",
+      "execution_mode": "real",
+      "candidates": [
+        {
+          "id": "1676a6d3-002d-5117-9ac6-de9e7ecd6198",
+          "status": "APPLIED"
+        }
+      ]
+    },
+    {
+      "id": "76a3eaf2-f578-4291-af17-6f6e8d946445",
+      "kind": "CHARACTERS",
+      "status": "READY",
+      "execution_mode": "real",
+      "candidates": [
+        {
+          "id": "6d2871be-a707-5d0a-aeca-276d7ca4d23b",
+          "status": "APPLIED"
+        }
+      ]
+    },
+    {
+      "id": "8d421f7f-6b72-449a-a9c3-b45c3d1246b3",
+      "kind": "WORLD",
+      "status": "READY",
+      "execution_mode": "real",
+      "candidates": [
+        {
+          "id": "4f105b50-1acf-5655-a3e3-dec8068b8a09",
+          "status": "APPLIED"
+        }
+      ]
+    }
+  ],
+  "page_errors": [],
+  "network": [
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/first-use/sample",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/13dbbcda/experimental/workspace/resume",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/13dbbcda/chapters",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/first-use/sample",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/13dbbcda/writing-goal",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/13dbbcda/chapters/archived",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/13dbbcda/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/first-use/sample",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/experimental/workspace/resume",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/first-use/sample",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/chapters",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/chapters/archived",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/writing-goal",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/chapters/df4544f1:1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/chapters/df4544f1%3A1/history",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/chapters/df4544f1%3A1/privacy",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/chapters/df4544f1%3A1/privacy",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/outline",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/characters",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/canon",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/chapters",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/locations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/timeline",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/foreshadowing",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/relationships",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/volumes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/scenes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/story-routes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/world-rules",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/experimental/story-records/catalog",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/creation-records",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/review-threads",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/creation-records",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/creation-reference-data",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/review-threads",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/creation-reference-data",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/planning-runs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/planning-runs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/text-models",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/text-models",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/text-models",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/canon",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/outline",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/chapters",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/locations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/characters",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/timeline",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/foreshadowing",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/relationships",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/volumes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/scenes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/story-routes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/chapters/df4544f1:2",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/chapters/df4544f1%3A2/privacy",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/chapters/df4544f1%3A2/privacy",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/text-runtime-diagnostics",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/df4544f1/continuity/findings",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/df4544f1/world-rules",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/df4544f1/continuity/review-findings",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/df4544f1/pending-canon/review",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/chapters/df4544f1%3A2/history",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/exports",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/exports/b98cf52a-01e1-4f01-867c-d74c0f6e7715",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/exports/b98cf52a-01e1-4f01-867c-d74c0f6e7715/download",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/agents",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/agents",
+      "status": 200
+    }
+  ],
+  "geometry": {
+    "width": 1440,
+    "pageWidth": 1440
+  },
+  "entry_checks": {
+    "world": true,
+    "characters": true,
+    "project_planning": true,
+    "outline_proposal_ready": true,
+    "adopted_outline": true,
+    "chapter_open": true,
+    "manual_save": true,
+    "ai_rewrite": true,
+    "consistency": true,
+    "history_compare": true,
+    "restore_confirmation": true,
+    "export": true,
+    "existing_export_download": true,
+    "agent_roles": [
+      "reviewer",
+      "verifier"
+    ]
+  },
+  "history_versions": [
+    3,
+    2,
+    1
+  ],
+  "selected_chapter": {
+    "id": "df4544f1:2",
+    "version": 4
+  },
+  "download": {
+    "filename": "real-product-browser-df4544f1.md",
+    "bytes": 3794,
+    "sha256": "a13f504ce59e8b4d654d5bda400931c58baa8d1ef3a774564eaf1e11c1e8d44c"
+  }
+}

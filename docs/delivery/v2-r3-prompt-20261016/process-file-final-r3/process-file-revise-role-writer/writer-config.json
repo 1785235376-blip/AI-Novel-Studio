@@ -1,0 +1,24 @@
+{
+  "backend": "file",
+  "operation": "revise",
+  "revocation": "role",
+  "nid": "r3-i-auth-3607edeb1c",
+  "workspace": "w-3607edeb1c",
+  "branch": "b-3607edeb1c",
+  "actor": "writer-3607edeb1c",
+  "admin": "init-3607edeb1c",
+  "assignment": "w-3607edeb1c",
+  "url": "/api/projects/r3-i-auth-3607edeb1c/studio/prompts/9daa56d5-2893-47a8-aed0-0b108df23863/revisions",
+  "method": "POST",
+  "body": {
+    "text": "PRIVATE process authoring 中文 🙂\n",
+    "purpose": "IMAGE",
+    "origin": "MANUAL",
+    "request_id": "7350ea4446bc484dae5e7eabd860982d",
+    "expected_revision": 1,
+    "expected_previous_asset_id": "678a43d0-029d-435d-b9e2-a72218bdc786"
+  },
+  "ipc": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-process-file-final-r3\\temp\\test_independent_process_revoc5\\process-file-revise-role-writer",
+  "pause_writer": true,
+  "pause_revoker": false
+}

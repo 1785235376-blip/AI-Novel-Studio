@@ -1,0 +1,118 @@
+
+Running 7 tests using 1 worker
+
+  ✘  1 [v2-live-chromium] › tests/e2e/v2-creative-live.spec.ts:111:1 › real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript (26.3s)
+  ✘  2 [v2-live-chromium] › tests/e2e/v2-creative-live.spec.ts:206:1 › real File V2 cancel and navigation retain dirty drafts without duplicating accepted or cancelled proposals (19.3s)
+  ✓  3 [v2-live-chromium] › tests/e2e/v2-creative-live.spec.ts:236:1 › real File V2 scope and stale-write fencing keeps the browser draft and rejects foreign sources (3.2s)
+  ✓  4 [v2-live-chromium] › tests/e2e/v2-creative-live.spec.ts:282:1 › real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript (839ms)
+  ✓  5 [v2-live-chromium] › tests/e2e/v2-creative-live.spec.ts:346:1 › real HTTP File V2 scope, cancel and stale source fences remain authoritative (402ms)
+  ✓  6 [v1-chromium] › tests/e2e/v2-creative-live.spec.ts:267:1 › V1 default-off backend and browser never expose the V2 workbench or accept creative writes (4.6s)
+  ✓  7 [v1-chromium] › tests/e2e/v2-creative-live.spec.ts:379:1 › real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes (94ms)
+
+
+  1) [v2-live-chromium] › tests/e2e/v2-creative-live.spec.ts:111:1 › real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('region', { name: '创作画布', exact: true })
+    Expected substring: "已保存 · v3"
+    Received string:    "Creative Canvas未命名创作文档新草稿新建文档保存草稿创作文档内容文档标题来源：合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”（保存时核对版本）添加场景添加镜头从一个场景开始添加场景后，可填写地点、动作、对白，再安排导演调度与镜头。"
+    Timeout: 15000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 15000ms
+      - waiting for getByRole('region', { name: '创作画布', exact: true })
+        34 × locator resolved to <section aria-label="创作画布" class="creative-canvas">…</section>
+           - unexpected value "Creative Canvas未命名创作文档新草稿新建文档保存草稿创作文档内容文档标题来源：合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”（保存时核对版本）添加场景添加镜头从一个场景开始添加场景后，可填写地点、动作、对白，再安排导演调度与镜头。"
+
+
+      188 |   await page.getByRole('button', { name: '打开 V2 创作工作台', exact: true }).click();
+      189 |   await stage(page, '制作').click();
+    > 190 |   await expect(canvas(page)).toContainText('已保存 · v3');
+          |                              ^
+      191 |   await expect(page.getByLabel('制作备注', { exact: true })).toHaveValue(production.video_plan.notes);
+      192 |   const downloadEvent = page.waitForEvent('download');
+      193 |   await canvas(page).getByRole('button', { name: '导出', exact: true }).click();
+        at /home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/frontend/tests/e2e/v2-creative-live.spec.ts:190:30
+
+    attachment #1: screenplay-saved (image/png) ────────────────────────────────────────────────────
+    ../../receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/attachments/screenplay-saved-a233dea2b0122127fea3434e40c138abe67b044f.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: director-human-reviewed (image/png) ─────────────────────────────────────────────
+    ../../receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/attachments/director-human-reviewed-1ed2a636c50ec797d4bcd71be02138cf72dabc14.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: production-1366x768 (image/png) ─────────────────────────────────────────────────
+    ../../receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/attachments/production-1366x768-929cf8b26b8788c8b3e7bf3efa4023d1417732e5.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: production-1440x900 (image/png) ─────────────────────────────────────────────────
+    ../../receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/attachments/production-1440x900-fdc46e32f504fcbb91700b077a9aa0aa3c3d92b4.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: production-1920x1080 (image/png) ────────────────────────────────────────────────
+    ../../receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/attachments/production-1920x1080-58813c08a152630a98644529c8a0d9faed401ea9.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/error-context.md
+
+    attachment #8: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ../../receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [v2-live-chromium] › tests/e2e/v2-creative-live.spec.ts:206:1 › real File V2 cancel and navigation retain dirty drafts without duplicating accepted or cancelled proposals 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator:  getByRole('region', { name: '创作画布', exact: true }).getByLabel('文档标题', { exact: true })
+    Expected: "云港 · 合成剧本"
+    Received: ""
+    Timeout:  15000ms
+
+    Call log:
+      - Expect "toHaveValue" with timeout 15000ms
+      - waiting for getByRole('region', { name: '创作画布', exact: true }).getByLabel('文档标题', { exact: true })
+        34 × locator resolved to <input value="" required="" maxlength="240"/>
+           - unexpected value ""
+
+
+      229 |   await page.getByRole('button', { name: '打开 V2 创作工作台', exact: true }).click();
+      230 |   await stage(page, '剧本').click();
+    > 231 |   await expect(canvas(page).getByLabel('文档标题', { exact: true })).toHaveValue(source.title);
+          |                                                                  ^
+      232 |   expect(await read(request, `${base}/documents/${source.id}`)).toEqual(source);
+      233 |   expect(await read(request, `/api/chapters/${chapter.id}`)).toEqual(chapter);
+      234 | });
+        at /home/runner/work/_temp/novel-ci-v2-creative-browser.Temt2e/project/frontend/tests/e2e/v2-creative-live.spec.ts:231:66
+
+    attachment #1: cancelled-proposal-dirty-draft-retained (image/png) ─────────────────────────────
+    ../../receipts/v2-creative-live/test-results/v2-creative-live-real-File-946d5-pted-or-cancelled-proposals-v2-live-chromium/attachments/cancelled-proposal-dirty-draft-retained-1e75bf3b35643dfb9325f21b65d479c4e06f1d36.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../receipts/v2-creative-live/test-results/v2-creative-live-real-File-946d5-pted-or-cancelled-proposals-v2-live-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../receipts/v2-creative-live/test-results/v2-creative-live-real-File-946d5-pted-or-cancelled-proposals-v2-live-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../receipts/v2-creative-live/test-results/v2-creative-live-real-File-946d5-pted-or-cancelled-proposals-v2-live-chromium/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ../../receipts/v2-creative-live/test-results/v2-creative-live-real-File-946d5-pted-or-cancelled-proposals-v2-live-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [v2-live-chromium] › tests/e2e/v2-creative-live.spec.ts:111:1 › real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript 
+    [v2-live-chromium] › tests/e2e/v2-creative-live.spec.ts:206:1 › real File V2 cancel and navigation retain dirty drafts without duplicating accepted or cancelled proposals 
+  5 passed (1.2m)

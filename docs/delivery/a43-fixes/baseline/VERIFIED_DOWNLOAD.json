@@ -1,0 +1,30 @@
+{
+  "kind": "REAL_POSTGRESQL_BASELINE_RED_NOT_PRODUCT_PASS",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "baseline_sha": "ad1a90dced36208c63bfd65f5e1d918d4a4f7695",
+  "baseline_tree": "fd32163d45c0cbfb1cf2b54551214b99d282f6e1",
+  "evidence_source_sha": "b5466788f0510af9f15204587f149910d7e9f8ed",
+  "evidence_source_tree": "094bb4780646077ae9a3134edd664b6c3eef3aa7",
+  "run_id": 37538014264,
+  "run_attempt": 1,
+  "artifact_id": 11447880745,
+  "artifact_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37538014264/artifacts/11447880745",
+  "archive_bytes": 7886,
+  "archive_sha256": "5dbbd44b2fb81f0784d4aded43838f03188cded1bc63e692f4004c754c2b7af5",
+  "archive_crc_verified": true,
+  "every_downloaded_receipt_file_hash_verified": true,
+  "python": "3.12.9",
+  "postgresql": "16.15",
+  "safety_pytest": {
+    "passed": 0,
+    "failed": 1,
+    "errors": 0,
+    "skipped": 0
+  },
+  "observations": [
+    "Original move succeeds with actual PostgreSQL unique constraints intact.",
+    "External id :1 and version1 resolve UUID-B after move, rather than original UUID-A.",
+    "A stale save using original A id/version writes A manuscript to UUID-B and increments B to version2."
+  ],
+  "boundary": "Original audit synthetic Session result remains labelled synthetic. This new evidence is actual hosted PostgreSQL with disposable synthetic manuscripts. It does not certify models, native interaction, original V1 installations or product completion."
+}

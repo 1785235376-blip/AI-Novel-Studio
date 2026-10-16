@@ -1,0 +1,27 @@
+{
+  "layer": "original frozen exporter/importer with synthetic PG-shaped chapter metadata, no new PG execution",
+  "source": "d80 frozen correction-2",
+  "records": [
+    {
+      "format": "txt",
+      "chapter_body_text": "BODY-MUST-STAY",
+      "rendered": "中文🙂FIRST\r\nSECONDLINESECRET\n\nBODY-MUST-STAY",
+      "expected_original_sequence_present": true
+    },
+    {
+      "format": "docx",
+      "chapter_body_text": "BODY-MUST-STAY",
+      "rendered": "Book\n中文🙂FIRSTSECONDLINESECRET\nBODY-MUST-STAY",
+      "expected_original_sequence_present": false,
+      "word_xml": "<?xml version='1.0' encoding='utf-8'?>\n<w:document xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\"><w:body><w:p><w:pPr><w:pStyle w:val=\"Title\" /></w:pPr><w:r><w:t>Book</w:t></w:r></w:p><w:p><w:pPr><w:pStyle w:val=\"Heading1\" /></w:pPr><w:r><w:t>中文🙂FIRST</w:t></w:r><w:r><w:br /></w:r><w:r><w:t>SECONDLINESECRET</w:t></w:r></w:p><w:p><w:r><w:t>BODY-MUST-STAY</w:t></w:r></w:p><w:sectPr><w:pgSz w:w=\"11906\" w:h=\"16838\" /><w:pgMar w:top=\"1440\" w:right=\"1440\" w:bottom=\"1440\" w:left=\"1440\" w:header=\"708\" w:footer=\"708\" w:gutter=\"0\" /></w:sectPr></w:body></w:document>",
+      "original_docx_importer_text": "Book\n中文🙂FIRST\nSECONDLINESECRET\nBODY-MUST-STAY",
+      "w_br_count": 1
+    },
+    {
+      "format": "epub",
+      "chapter_body_text": "BODY-MUST-STAY",
+      "rendered": "Book\n中文🙂FIRST\nSECONDLINESECRET\nBODY-MUST-STAY",
+      "expected_original_sequence_present": true
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "pid": 82032,
+  "status": 200,
+  "body": {
+    "id": "217efae4-369e-4957-9689-a57c362ad9b2",
+    "novel_id": "r3-i-auth-5a2db0a0e9",
+    "filename": "prompt-7b80638f-r1.txt",
+    "kind": "prompt",
+    "media_type": "text/plain",
+    "size": 34,
+    "sha256": "509601d35863025018df1fda2b6130b89a6b002774836864495dcafcdddbcee3",
+    "branch_id": "b-5a2db0a0e9",
+    "created_at": "2026-10-16T16:21:48.549732+00:00",
+    "updated_at": "2026-10-16T16:21:54.689476+00:00",
+    "version": 3,
+    "deleted_at": "2026-10-16T16:21:54.689476+00:00",
+    "idempotency_key": "7672e73d06294bdab63abf1fc2d2d74b",
+    "parameters": {
+      "prompt": {
+        "contract": "prompt-asset/1",
+        "family_id": "7b80638f-8bcc-4385-86aa-10e242605762",
+        "revision": 1,
+        "purpose": "IMAGE",
+        "origin": "MANUAL",
+        "negative_prompt": "",
+        "model_reference": "",
+        "parameters": {},
+        "seed": null,
+        "reference_asset_ids": [],
+        "output_asset_ids": [],
+        "character_ids": [],
+        "scene_ids": [],
+        "shot_ids": [],
+        "change_note": "",
+        "change_reason": "",
+        "redacted": false,
+        "request_id": "7672e73d06294bdab63abf1fc2d2d74b",
+        "state": "ACTIVE"
+      }
+    },
+    "provenance": {
+      "id": "217efae4-369e-4957-9689-a57c362ad9b2",
+      "label": "prompt-7b80638f-r1.txt",
+      "kind": "prompt",
+      "version": 3,
+      "digest": "509601d35863025018df1fda2b6130b89a6b002774836864495dcafcdddbcee3",
+      "deleted": true,
+      "integrity": "DELETED",
+      "origin": "UNDECLARED",
+      "license": {
+        "label": "UNSPECIFIED",
+        "source": "",
+        "note": ""
+      },
+      "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+      "operation": "",
+      "parents": [],
+      "sources": [],
+      "producer": {
+        "declared_by": null,
+        "provider_id": null,
+        "model_id": null
+      },
+      "generation": null,
+      "declaration_history_versions": [],
+      "stale": true,
+      "source_task_id": null
+    },
+    "relationships": []
+  },
+  "negative_status": 403,
+  "negative_body": {
+    "detail": {
+      "code": "PROJECT_SCOPE_FORBIDDEN"
+    },
+    "code": "PROJECT_SCOPE_FORBIDDEN",
+    "message": "PROJECT_SCOPE_FORBIDDEN",
+    "details": {
+      "code": "PROJECT_SCOPE_FORBIDDEN"
+    },
+    "request_id": "62835086-3b49-4a9a-be83-edd1ed72864e"
+  },
+  "same_issued_token_reused_after_revocation": true,
+  "real_session_owner": "LocalSessionBootstrap",
+  "isolated_adoption_gate": false
+}

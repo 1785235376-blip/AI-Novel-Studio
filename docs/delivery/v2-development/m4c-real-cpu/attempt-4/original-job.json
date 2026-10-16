@@ -1,0 +1,80 @@
+{
+  "id": "9db3014a-192e-469d-a9f4-82b7482d1319",
+  "operation": "graph_text",
+  "novel_id": "owned-real-cpu-textnode-acceptance",
+  "chapter_id": null,
+  "instruction": "",
+  "profile": "LOCAL_ONLY",
+  "source": "",
+  "requested_provider": "discovery-local-9ed40e7298963a7863997e13",
+  "requested_model": "local-9ed40e7298963a7863997e13",
+  "style": "",
+  "status": "COMPLETED",
+  "output": "A paper boat floats on a quiet pond, gently swaying in the gentle breeze.",
+  "error": null,
+  "error_code": null,
+  "provider": "discovery-local-9ed40e7298963a7863997e13",
+  "model": "local-9ed40e7298963a7863997e13",
+  "issues": [],
+  "latency_ms": 1881,
+  "base_chapter_version": null,
+  "variant_group_id": null,
+  "variant_index": null,
+  "actor_id": "local-author",
+  "session_id": null,
+  "client_id": null,
+  "workspace_id": null,
+  "scope": {
+    "mode": "local",
+    "novel_id": "owned-real-cpu-textnode-acceptance"
+  },
+  "scope_type": null,
+  "scope_id": null,
+  "correlation_id": null,
+  "context_snapshot_id": null,
+  "created_at": "2026-10-10T15:24:43.593370+00:00",
+  "updated_at": "2026-10-10T15:24:45.712115+00:00",
+  "creation_records": [],
+  "usage": {
+    "input_tokens": 89,
+    "output_tokens": 18,
+    "total_tokens": 107
+  },
+  "usage_status": "REPORTED",
+  "execution_mode": "real",
+  "provider_reference_id": null,
+  "route_decisions": [
+    {
+      "provider": "discovery-local-9ed40e7298963a7863997e13",
+      "model": "local-9ed40e7298963a7863997e13",
+      "cloud": false,
+      "status": "COMPLETED"
+    }
+  ],
+  "graph_binding": {
+    "graph_id": "376d7018-46cb-47e4-9cb3-504b4c5a69e5",
+    "graph_version": 1,
+    "run_id": "81631d18-70cf-4eca-96f1-3ed7dbb9da0d",
+    "node_id": "Generate",
+    "project_incarnation": "file:7dcea6b4-891d-425d-bed6-113ae8d95053",
+    "input_digest": "b53329908fd02ef09d62b7f6e6dd2d2872249a747ad7d8685da4cbb475bb4d4a",
+    "reviewed_preview_digest": "595b1007c8916309e20e01e7d41d16290810a6a533f90de37787b3f83df80afe",
+    "route_fingerprint": "64f38aa2337d572ec31a9cde0d3a663e725e8100b009f20882e6626d9b301931",
+    "execution_receipt_contract": "creative-graph-text-execution/1",
+    "execution_receipt_source_version": 4
+  },
+  "generation_max_output_bytes": 32000,
+  "generation_deadline": "2026-10-10T15:27:43.566130+00:00",
+  "expected_request_digest": "3185c9f10a64b487a22440a2e8485f2e388c8c8fa916b5ded6a8046bf305d9e7",
+  "base_chapter_digest": null,
+  "experimental_origin": "creative_graph_model",
+  "required_experimental_features": [
+    "ai_execution_v2",
+    "author_context_inspector_v2",
+    "model_broker_v2",
+    "narrative_production_v2"
+  ],
+  "execution_outcome": "COMPLETED",
+  "dispatch_hooks_required": true,
+  "terminal_hook_status": "COMPLETED"
+}

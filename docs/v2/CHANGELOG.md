@@ -1,0 +1,155 @@
+# V2 development changelog
+
+These are development stages on `feature/v2-narrative-platform`, not releases.
+
+## M4-D — Creative screenplay export
+
+- Reuse existing industry encoders directly from the Creative document owner:
+  Fountain, DOCX and Markdown with saved-version and source/privacy fences.
+- Add private byte receipts and a verified-download UI; keep complete JSON
+  metadata exports, chapterless independent creation and original human edits.
+- Integrate isolated backend dependency caching and read-only CI capacity
+  diagnostics without changing frozen execution/coverage contracts.
+- Exact checks, initial failures and outstanding acceptance remain in the
+  [M4-D checkpoint report](../../MILESTONE_M4D_REPORT.md).
+
+## Phase 1 — Creative Expansion Layer foundation
+
+- Separate strict screenplay, storyboard and video-planning records reuse the existing scope-atomic File/PostgreSQL store.
+- Add opt-in API composition with existing identity, membership, branch permissions, CAS, source/privacy fences, history and private exports.
+- Preserve the complete original 44-entry published feature registry and all V1 novel owners.
+- Verification: File 30 passed / 29 PostgreSQL skips; dedicated PostgreSQL 30 passed / 29 File skips; original related regressions 30 passed / 25 PostgreSQL skips; frozen-baseline smoke regressions 29 passed. Failed harness attempts remain in delivery evidence.
+- Refresh the API catalog from an isolated staged tree so unfinished future modules cannot enter the phase fingerprint.
+
+## M3-C — Same-scan workflow prerequisite observations
+
+- Extend the existing LocalDiscovery scan and Model Center declarations with
+  bounded ComfyUI node/loader observations and separate unknown catalogue
+  component requirements; no additional scan, registry or execution authority.
+- Reuse existing consent binding, host authority and read-only UI owner with
+  observed / not_observed / unknown, NOT_VERIFIED and NOT_RUN semantics.
+- Correct deterministic setup/label assumptions only in the three newly added
+  M3-B browser cases; preserve original test and CI boundaries.
+- Retain M3-B exact-event CI failures and cloud recovery evidence. Current
+  verification and remaining PARTIAL gates: [M3-C report](../../MILESTONE_M3C_REPORT.md).
+
+## 2026-10-10 — M4 Text: neutral authored Script
+
+- Add SCRIPT to the original Creative document contract, seven purposes,
+  standalone text editing in Screenplay, existing versions/history/restore,
+  and authenticated exact-body TXT/Markdown/DOCX downloads.
+- Keep chapterless authoring, no automatic manuscript mutation, existing
+  authority/CAS/privacy/incarnation and late-result boundaries.
+- Integrate B's reproduced Actions context correction; preserve the original
+  zero-job workflow failure and all earlier failed observations.
+- Graph reuse, model-assisted Script and full M4 acceptance remain partial.
+
+## 2026-10-10 — M4 Text: source-aware screenplay adaptation, first slice
+
+- Add exact saved-chapter/selection proposals, original local route preview and
+  dispatch, stable scene/difference-report contracts and explicit human adoption
+  into a separate Creative screenplay version.
+- Reuse original actor/source/incarnation/CAS and Job/Broker owners; nonblocking
+  terminal publication verification and undispatched admission cleanup close
+  two reproducible new-path races without changing old assertions/time limits.
+- Correct two product select accessible names diagnosed from original hosted
+  traces; preserve the failed runs and additive regression red evidence.
+- Integrate optional staged compact API catalog snapshot with default full
+  behavior unchanged. Asset archival, multi-chapter scope and quality acceptance
+  remain partial; exact verification is in the checkpoint report.
+- Capture the original Host principal/binding generation for private adaptation
+  operations and late callbacks; six pre-fix token-ABA failures are retained.
+  Host-less manual Creative editing remains available. Preserve nonpackaged
+  collaboration-only rejection instead of granting a fixture synthetic Host.
+- Selected final File/PostgreSQL each 238 passed / 237 profile skips; full UI
+  2,439 passed / 8 old skips. Full hosted acceptance remains pending/incomplete,
+  including the newly retained 899d PG failed-call observation.
+
+## 2026-10-13 — Production Expansion takeover audit
+
+- Audit actual72765972 owners, currentAPI/Opus boundaries and module gaps before
+  writing product code. Preserve historical matrix rows and append current facts.
+- First Image slice: connect existing explicitly enabled local ModelCenter
+  image adapters to original production jobs/assets/review, with passive listing,
+  registration-identity guards and actual delegate recipe/parameter evidence.
+- Audit is documentation only: new module tests NOT_RUN, no model launch/download.
+  Previous selected results and billing-blocked CI stay separately identified.
+- Full audit: [Codex handover audit](../../AI_NOVEL_STUDIO_V2_CODEX_HANDOVER_AUDIT.md).
+
+## 2026-10-13 — Production Expansion 1: enabled local Image T2I
+
+- Connect explicitly validated/registered/enabled local image adapters to original
+  Studio productionjobs/assets/review. Passive listing, lifecycle/model binding,
+  real checkpoint recipe and existing per-request guards; public DTO unchanged.
+- Preserve configured legacy digests, original generate function, Graph fields,
+  all original assertions and no implicit cloud/model start. Discovered I2I and
+  unimplemented image tools remain closed; Image real acceptance LOCAL_REQUIRED.
+- Focused File48pass; relatedFile506pass/1platform symlink fixturefailure,
+  PG506pass/1platform node NOT_RUN; Linux3original assertions separately pass.
+  NewUI9/types/metadata19pass. Profile skips/overlap/failed evidence retained.
+- [Full stage report](production-expansion-image-local-20261013.md),
+  [source-bound summary](production-expansion-image-local-20261013.json).
+
+
+## 2026-10-14 — Production Expansion Phase 2
+
+- Added typed reference purpose/source note, Style and independent Upscale node
+  through original ModelCenter/ImageJob/private Asset/review/version owners.
+- Added opt-in Director visual targets, structured performance and independent
+  Storyboard details/explicit note-per-shot derivation; original scene/default
+  serialization, source evidence, CAS/history and model review retained.
+- Added passive Host-protected planning snapshot picker and finite Graph
+  Director→Storyboard→shot prompt→Image flow, source guards and strict UI decoding.
+- Added controller-backed goal/shot/node/preview controls without shell redesign.
+- [Report](../../DIRECTOR_STORYBOARD_IMAGE_PHASE_REPORT.md) separates selected
+  verification, retained failed attempts and remaining LOCAL_REQUIRED gates.
+
+
+## 2026-10-14 — Phase4 Storyboard and Video foundation
+
+- Add retained-history Shot versions, same-scene Director references, authored adjacency, Camera/Visual/Rhythm advice and exact formal image binding/approval.
+- Connect approved Storyboards to original Timeline drafts and retain historical creation provenance during edit/history/restore.
+- Add explicit Graphschema5 VideoCandidate ports and original VideoJob/review; retain schemas1–4/default request identities.
+- Connect enabled, structurally proved LTX/Wan/Hunyuan Comfy adapters with bounded same-origin output, source/task/route guards and native cancellation. Unsupported versions/local V2V remain closed.
+- Fix repeated PostgreSQL authority reads per checkpoint; preserve exact original checks/timeouts and earlier failures.
+- Add source-fenced Storyboard/Video controllers, strict captured DTOs and basic canvas/Inspector/preview; Opus presentation seams retained.
+- [Report](../../PHASE4_STORYBOARD_VIDEO_REPORT.md) records actual tests, Windows privilege failures, overlap and remaining LOCAL_REQUIRED gates.
+
+
+## 2026-10-14 — Phase5 Video / Storyboard production operations
+
+- Carry optional authored video hint and exact ShotPin through original command/job/immutable Asset origin; preserve default legacy identity.
+- Prepare original T2V/I2V requests; bind only original APPROVED VideoJob/formal Asset to unchanged historical Shot content and require new Storyboard review.
+- Add original Timeline atomic create request identity/read recovery and formal Video clip adoption through existing edit/CAS/locks/history; durable exact settlement, no UNKNOWN replay.
+- Add explicit Graph5 Shot binding, preserving existing nodes/requests and independent text/video use.
+- Project last authorized video file observations/current registration; no qualification, model start/download, credential read or guessed size/VRAM.
+- Connect headless controllers/basic views with exact captured DTOs, original mutex/Host/late/dirty/review and Opus seams.
+- [Actual report](../../PHASE5_STORYBOARD_VIDEO_PIPELINE_REPORT.md) retains failed evidence and distinguishes isolated tests from native/GPU/model/full CI acceptance.
+
+## 2026-10-14 — Phase6 Audio / Editing
+
+- Add explicit original standalone FLAC trim, fixed S16/level5 and bounded decoded samples/MD5/SHA/profile proof; preserve default WAV and Graph commands.
+- Expose original current ordinary Timeline edit receipt; connect explicit atomic formal-source insertion/replacement and full request/effect recovery through original controllers, no automatic replay.
+- Exercise real small CPU video/audio rendering, export, private Review, formal promotion and reopen. Fix new source-action numeric mismatch before POST; retain failure evidence and original native/model/product gates.
+
+## 2026-10-14 — Phase7 unified production workflow projection
+
+- Add one advisory read projection (`GET /api/projects/{nid}/studio/production/workflow`) over the
+  original Director, Storyboard, Image, Video, Audio, Timeline and Asset owners: neutral start state,
+  saved creative intent, seven-module workflow status measured from owner rows, asset overview and a
+  dashboard aggregate. It grants no execution authority and promotes no acceptance gate.
+- Add exactly one mutation (`POST .../workflow/intent`) that reuses the existing scope-atomic
+  `WorkspacePreferences` row with its version CAS, retained history and preset. No second intent,
+  project, asset, job, model or timeline owner is introduced; a null expectation fails closed.
+- Add the Studio dashboard, workflow board, intent editor, asset overview and inspector under
+  `frontend/src/production/` with strict captured DTOs, mounted through the existing module-content
+  seam. Protected shell surfaces are untouched.
+- Verification on the frozen tree: File 14 passed / 8 PostgreSQL skips; PostgreSQL
+  NOT_CONFIGURED (no server on this machine — not a pass); frontend 42 tests in 6 files;
+  `tsc -b` and the frozen `vite build` exit 0; UI token guard PASS (52 files); pre-existing studio
+  router/admission regressions 48 passed and 120 passed. A checked-in source-bound fixture emitted by
+  the real service is decoded by the strict frontend contract, so a wire drift fails a test.
+- [Design and contract](production-workflow-phase7.md) ·
+  [phase report](../../PHASE7_WORKFLOW_UX_REPORT.md). Whole modules remain PARTIAL;
+  Windows/GPU/real-model/full-CI acceptance and M4→M9 gates remain LOCAL_REQUIRED, hosted checks
+  BLOCKED_ACCOUNT_PLATFORM.

@@ -4,6 +4,7 @@ import json
 from typing import Any
 
 from pydantic import BaseModel,Field
+from .privacy import cloud_safe_context
 
 
 class NarrativeContextView(BaseModel):
@@ -29,8 +30,13 @@ class NarrativeContextBuilder:
     @staticmethod
     def _cost(item):return max(1,len(json.dumps(item,ensure_ascii=False,sort_keys=True,separators=(",",":")))//4)
 
-    def build(self,project_id,chapter_id,chapter_version,current_character_ids=()):
+    def build(self,project_id,chapter_id,chapter_version,current_character_ids=(), *, cloud=False):
         snapshot={kind:self.repository.list(project_id,kind) for kind in ("threads","foreshadowing","events","mysteries","character_goals","chapter_links","expectations","findings")}
+        if cloud:
+            # Source policies must be enforced before projecting away fields.
+            # Unknown/redacted derived prose has no proven narrative redactor.
+            snapshot={kind:[row for row in cloud_safe_context(rows)[0] if row.get("privacy_level")=="CLOUD_ALLOWED"]
+                      for kind,rows in snapshot.items()}
         current_links=[x for x in snapshot["chapter_links"] if x.get("chapter_id")==chapter_id and x.get("chapter_version")==chapter_version]
         linked={(x["entity_type"],x["entity_id"]) for x in current_links};characters=set(current_character_ids)
         latest={}

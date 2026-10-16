@@ -1,0 +1,32 @@
+{
+  "utc": "2026-10-16T17:38:12.536644+00:00",
+  "head": "db1f687108fac6e45a577196494dfac01cc63aca",
+  "remote_refs": {
+    "refs/heads/feature/v2-narrative-platform": "db1f687108fac6e45a577196494dfac01cc63aca",
+    "refs/heads/main": "fed2404c8e30b44061b7139dced45b7f3301601c",
+    "refs/heads/work/dot-astra-v1-rc-r2": "1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0"
+  },
+  "pull_request": {
+    "baseRefName": "main",
+    "headRefName": "feature/v2-narrative-platform",
+    "headRefOid": "db1f687108fac6e45a577196494dfac01cc63aca",
+    "isDraft": true,
+    "number": 47,
+    "state": "OPEN",
+    "url": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/47"
+  },
+  "tracked_worktree_status": "",
+  "ahead_behind": "0\t0",
+  "commits_since_95420aa": [
+    "679a88b635639fb680f56893a41857b4e79001ec feat(prompt): expose closed adoption write capability to existing UI",
+    "2216af12089a8df8f96e8fbe31c92ed1f27ab953 feat(prompt): add guarded adoption UI with owner readback",
+    "69df94abd1604f32d397b991a6680d516edca59d test(prompt): prove isolated adoption UI writes through real owners",
+    "6aed517611117771d767eb275a54773b24ba0300 test(v2): pin adoption UI sources and additive capability coverage",
+    "2d96d904a59d4403e2125b05f78b0b4c3c7c4adc fix(ui): preserve pending workspace connection during local resume",
+    "71d0b1ca69e642315781b72a5dcecc2d0682fa27 test(prompt): await original studio startup before adoption navigation",
+    "db1f687108fac6e45a577196494dfac01cc63aca test(v2): bind adoption entry regression and browser readiness sources"
+  ],
+  "production_adoption_gate": false,
+  "status": "PUBLISHED_DRAFT_PROTECTED_REFS_UNCHANGED",
+  "boundary": "Git publication audit only. Hosted CI is a separately recorded external blocker."
+}

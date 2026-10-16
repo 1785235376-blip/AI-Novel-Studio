@@ -1,0 +1,114 @@
+[
+  {
+    "path": "baseline/docs/v2/real-text-acceptance.md",
+    "raw_sha256": "07b93165f939a2104d58555bb7f6182906230e38e4a391b9804a9b330307afe7",
+    "bytes": 5335,
+    "gzip_path": "baseline/docs/v2/real-text-acceptance.md.gz",
+    "gzip_sha256": "d43890eb21ddadbf93d8db5c73550eabd8537ebd4a282217c1e14392321f3326"
+  },
+  {
+    "path": "baseline/scripts/run_v2_real_text_check.py",
+    "raw_sha256": "b6c7711080537d26273e4e289b58da2540bb28f353b092096053fb1e8e97f2a8",
+    "bytes": 24597,
+    "gzip_path": "baseline/scripts/run_v2_real_text_check.py.gz",
+    "gzip_sha256": "abb23e76a02f632e6c551deee797d4d100a1dd1ef7c1329b1721371b399c5229"
+  },
+  {
+    "path": "baseline/tests/test_v2_real_text_check.py",
+    "raw_sha256": "837def70dc113e42483011ae21d9916f3df378e3d044030f2d8462750cb4d2de",
+    "bytes": 28603,
+    "gzip_path": "baseline/tests/test_v2_real_text_check.py.gz",
+    "gzip_sha256": "765a80b4253fbbd431a2b9048ad4220dc4d93c0ccf87a373825679b80f24019f"
+  },
+  {
+    "path": "dependencies.txt",
+    "raw_sha256": "f1d75f02ac5631b3ed454957ac05eae945a37c6627611ca82fb244b912e7ecc6",
+    "bytes": 668,
+    "gzip_path": "dependencies.txt.gz",
+    "gzip_sha256": "661d1b4dd3e2fe2a013abb43040cf902358fa8fb346ac129074bf40276ce4abe"
+  },
+  {
+    "path": "dependency-install.log",
+    "raw_sha256": "b6c5a8a61d13eba508f2a658198ae632660d916bd3d859b50ad5d1159c663dc2",
+    "bytes": 7949,
+    "gzip_path": "dependency-install.log.gz",
+    "gzip_sha256": "9f0f8415f7d94df01a6fda1c025781a82dea25784b2afdadb845a11df597ee26"
+  },
+  {
+    "path": "green-1.log",
+    "raw_sha256": "07c209fa0313347933f97562bb6839fc4a8fdda9a34a44303bfce3d3ab3322f9",
+    "bytes": 355,
+    "gzip_path": "green-1.log.gz",
+    "gzip_sha256": "fe42cab1bd337098b51fb530eabe50b546e2a940c5949981b8781b2d645d6dfc"
+  },
+  {
+    "path": "green-1.xml",
+    "raw_sha256": "19e9c527d58fbb559a1e88e78ac95e9a383c2c0091b97b7d8c7f39c9ea4b7b63",
+    "bytes": 24766,
+    "gzip_path": "green-1.xml.gz",
+    "gzip_sha256": "3843a7619899154467873961887c71dfcf445f615d097efab67f4b4ae73a9139"
+  },
+  {
+    "path": "green-2.log",
+    "raw_sha256": "bd4420dbceab2b0d225ad8e3b6661ff96df480cfc30c1080d080cb558ee63fd7",
+    "bytes": 355,
+    "gzip_path": "green-2.log.gz",
+    "gzip_sha256": "25faae5aa60307ded8877d9754898deb5e75b0a9eafbf4b78b8cea67b5f86c48"
+  },
+  {
+    "path": "green-2.xml",
+    "raw_sha256": "c124d59c67284637ad28eb2defa407fd62f3ce5fcbf5a3b1db60ab789625da18",
+    "bytes": 25695,
+    "gzip_path": "green-2.xml.gz",
+    "gzip_sha256": "2a1bb6173dbcb22d02c3f105e5843df2eba0916567df2af763715db9cf7acd72"
+  },
+  {
+    "path": "m4-platform-preflight-final.patch",
+    "raw_sha256": "d7054426e88efac2cf6a738a3a7e5925d4198c507acdf7e33261fbd856caa4a0",
+    "bytes": 12076,
+    "gzip_path": "m4-platform-preflight-final.patch.gz",
+    "gzip_sha256": "62d81476165a73504cdcbd5720651d37a432e96322ec8226cb354dad6ddb18d5"
+  },
+  {
+    "path": "materialized-initial/docs/v2/real-text-acceptance.md",
+    "raw_sha256": "9cf6e3faed3085419ef3c1df45f4fae4f669ca7762f252829eb19533dd50de50",
+    "bytes": 5336,
+    "gzip_path": "materialized-initial/docs/v2/real-text-acceptance.md.gz",
+    "gzip_sha256": "cb6fc01aca3ff534871b526c316ec038c2973be1513571d9bf8e5c1a7631b284"
+  },
+  {
+    "path": "materialized-initial/scripts/run_v2_real_text_check.py",
+    "raw_sha256": "708aa7eaa5114c27287bf27b9f7b38c5d2d7beb8083e7138d1da21c4cbe754d4",
+    "bytes": 24598,
+    "gzip_path": "materialized-initial/scripts/run_v2_real_text_check.py.gz",
+    "gzip_sha256": "05e94f64b1d606513d9e30c5ce62f7464dbe3811788d9ec81c10e4d7efc2bd87"
+  },
+  {
+    "path": "materialized-initial/tests/test_v2_real_text_check.py",
+    "raw_sha256": "09e33832811a97e22bc2be096d1ec2b15101b522ea72180c02db6d5f6dcb09c9",
+    "bytes": 28604,
+    "gzip_path": "materialized-initial/tests/test_v2_real_text_check.py.gz",
+    "gzip_sha256": "d33381c21985b2eadd79c304ac65cd80aabdd1650dde3c3f42c61826c6e457f1"
+  },
+  {
+    "path": "red.log",
+    "raw_sha256": "44ef5fa8bf6581618835565df22b89bf6dce461136b2dde0e791b1577d271423",
+    "bytes": 41137,
+    "gzip_path": "red.log.gz",
+    "gzip_sha256": "a1ffb2d94561b70205618de829c2bca5d6267999e09604ff623fe77db659c78c"
+  },
+  {
+    "path": "red.xml",
+    "raw_sha256": "fd65799888531ade46f89a554a6102708a694d800824e7a639026765289ffd2d",
+    "bytes": 41926,
+    "gzip_path": "red.xml.gz",
+    "gzip_sha256": "2afa77eab7c36755ca58ff495fa836a47aaea3a531698fc70990d38b3c5ed7c0"
+  },
+  {
+    "path": "staged-raw-evidence-whitespace-check.log",
+    "raw_sha256": "a7e41743f76657842dc611c914659bacd099430577262b2db7dc4b4fbd636d0b",
+    "bytes": 14101,
+    "gzip_path": "staged-raw-evidence-whitespace-check.log.gz",
+    "gzip_sha256": "9d02cdac9702a0c5eb2ff8548ed9efc63e6dc2e7c3ce4e8047932350708043be"
+  }
+]

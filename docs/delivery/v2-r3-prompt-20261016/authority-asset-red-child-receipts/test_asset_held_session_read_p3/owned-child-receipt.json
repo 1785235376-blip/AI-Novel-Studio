@@ -1,0 +1,8 @@
+{
+  "pid": 82136,
+  "mode": "asset-read",
+  "operation": "different",
+  "returncode": 2,
+  "timed_out": false,
+  "child_stopped": true
+}

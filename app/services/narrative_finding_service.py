@@ -15,8 +15,13 @@ class NarrativeFindingService:
    stored=self.repository.create(context.project_id,"findings",asdict(finding))
    if stored.get("status")=="RESOLVED":self.repository.set_status(context.project_id,"findings",finding.id,"OPEN")
   for stored in self.repository.list(context.project_id,"findings"):
-   if stored.get("finding_type") in successful_rules and stored["id"] not in active_ids and stored.get("status")=="OPEN":self.repository.set_status(context.project_id,"findings",stored["id"],"RESOLVED")
+   if not stored.get("review_owner") and stored.get("finding_type") in successful_rules and stored["id"] not in active_ids and stored.get("status")=="OPEN":self.repository.set_status(context.project_id,"findings",stored["id"],"RESOLVED")
   return findings
- def list_findings(self,project_id):return self.repository.list(project_id,"findings")
- def get_finding(self,project_id,finding_id):return self.repository.get(project_id,"findings",finding_id)
- def resolve(self,project_id,finding_id):return self.repository.set_status(project_id,"findings",finding_id,"RESOLVED")
+ def list_findings(self,project_id):return [row for row in self.repository.list(project_id,"findings") if not row.get("review_owner")]
+ def get_finding(self,project_id,finding_id):
+  row=self.repository.get(project_id,"findings",finding_id)
+  if row.get("review_owner"):raise KeyError(finding_id)
+  return row
+ def resolve(self,project_id,finding_id):
+  self.get_finding(project_id,finding_id)
+  return self.repository.set_status(project_id,"findings",finding_id,"RESOLVED")

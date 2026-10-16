@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "status": "TERMINAL_ARCHIVE_COMPLETE_CLOUD_WORKFLOW_FAILED_BEFORE_JOBS",
+  "observed_at_utc": "2026-10-10T19:19:58Z",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "branch": "feature/v2-narrative-platform",
+  "pull_request": 47,
+  "pull_request_state_context": "DRAFT",
+  "published_sha": "c491d1b0227a877eaa5bad7651ed22ba67463439",
+  "published_tree": "5da5d8b5285fc720031889b5b37798a9db328e93",
+  "published_parent": "e6ff3431cf84b01b77cd1bd73a977fd5e784447b",
+  "pull_request_merge_sha": "d90352f005a33240a88d6369d72844d18f98344e",
+  "pull_request_merge_tree": "5da5d8b5285fc720031889b5b37798a9db328e93",
+  "pull_request_merge_parents": [
+    "fed2404c8e30b44061b7139dced45b7f3301601c",
+    "c491d1b0227a877eaa5bad7651ed22ba67463439"
+  ],
+  "discovery": {
+    "query_head_sha": "c491d1b0227a877eaa5bad7651ed22ba67463439",
+    "total_count": 4,
+    "per_page": 100,
+    "all_original_runs_terminal": true,
+    "all_run_attempts": 1,
+    "rerun_or_cancel_requested": false
+  },
+  "runs": [
+    {
+      "id": 38078421006,
+      "name": ".github/workflows/cloud-ci.yml",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "created_at": "2026-10-10T19:05:39Z",
+      "updated_at": "2026-10-10T19:05:39Z",
+      "head_sha": "c491d1b0227a877eaa5bad7651ed22ba67463439",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38078421006",
+      "job_count": 0,
+      "artifact_ids": [],
+      "jobs": [],
+      "checked_out_sha": null,
+      "event_sha_from_artifact": null,
+      "meaning": "FAILURE_BEFORE_ANY_JOB",
+      "exact_validation_annotation": "UNAVAILABLE_CONNECTOR_ALLOWLIST"
+    },
+    {
+      "id": 38078421941,
+      "name": "Local Interop V1",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "created_at": "2026-10-10T19:05:40Z",
+      "updated_at": "2026-10-10T19:19:23Z",
+      "head_sha": "c491d1b0227a877eaa5bad7651ed22ba67463439",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38078421941",
+      "job_count": 3,
+      "artifact_ids": [
+        11680270025,
+        11679207950,
+        11678739802
+      ],
+      "jobs": [
+        {
+          "id": 114290141685,
+          "name": "Windows current-user pipe reference (MOCK_ONLY)",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38078421941/job/114290141685",
+          "started_at": "2026-10-10T19:05:43Z",
+          "completed_at": "2026-10-10T19:06:53Z",
+          "log": "job-114290141685.log"
+        },
+        {
+          "id": 114290141810,
+          "name": "Protocol and local transport / postgres",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38078421941/job/114290141810",
+          "started_at": "2026-10-10T19:05:42Z",
+          "completed_at": "2026-10-10T19:19:22Z",
+          "log": "job-114290141810.log"
+        },
+        {
+          "id": 114290141832,
+          "name": "Protocol and local transport / file",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38078421941/job/114290141832",
+          "started_at": "2026-10-10T19:05:42Z",
+          "completed_at": "2026-10-10T19:06:50Z",
+          "log": "job-114290141832.log"
+        }
+      ],
+      "profiles": {
+        "postgres": {
+          "artifact_id": 11680270025,
+          "collected": 413,
+          "passed": 345,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 68,
+          "test_seconds": 763.53,
+          "desktop_preparation": {
+            "FAIL": 0,
+            "NOT_RUN": 1,
+            "PASS": 23
+          },
+          "desktop_native_acceptance": "LOCAL_REQUIRED"
+        },
+        "file": {
+          "artifact_id": 11679207950,
+          "collected": 413,
+          "passed": 345,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 68,
+          "test_seconds": 26.1,
+          "desktop_preparation": {
+            "FAIL": 0,
+            "NOT_RUN": 1,
+            "PASS": 23
+          },
+          "desktop_native_acceptance": "LOCAL_REQUIRED"
+        }
+      },
+      "checked_out_sha": "c491d1b0227a877eaa5bad7651ed22ba67463439",
+      "event_sha_from_artifact": "c491d1b0227a877eaa5bad7651ed22ba67463439",
+      "source_tree": "5da5d8b5285fc720031889b5b37798a9db328e93",
+      "windows_reference": {
+        "checks": 8,
+        "counterparty": "MOCK_ONLY",
+        "desktop_integration": "LOCAL_REQUIRED",
+        "cross_user_attempt": "NOT_RUN"
+      }
+    },
+    {
+      "id": 38078425519,
+      "name": "Shared R123 evidence",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "created_at": "2026-10-10T19:05:43Z",
+      "updated_at": "2026-10-10T19:06:42Z",
+      "head_sha": "c491d1b0227a877eaa5bad7651ed22ba67463439",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38078425519",
+      "job_count": 1,
+      "artifact_ids": [
+        11679613761
+      ],
+      "jobs": [
+        {
+          "id": 114290152192,
+          "name": "Original c6f2126 RED / Python 3.12.9",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38078425519/job/114290152192",
+          "started_at": "2026-10-10T19:05:46Z",
+          "completed_at": "2026-10-10T19:06:42Z",
+          "log": "job-114290152192.log"
+        }
+      ],
+      "workflow_checked_out_sha": "d90352f005a33240a88d6369d72844d18f98344e",
+      "workflow_tree": "5da5d8b5285fc720031889b5b37798a9db328e93",
+      "tested_sha": "c6f2126115b52e17839d48efea091dc21ec08c61",
+      "tested_tree": "eb80a9fa5f5aa6b8c2cbd0e1e67f7b7a48ac522f",
+      "meaning": "ALL_THREE_KNOWN_DEFECTS_REPRODUCED_RED",
+      "scripts_exit_zero_is_not_pass": true
+    },
+    {
+      "id": 38078425636,
+      "name": "Local Interop V1",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "created_at": "2026-10-10T19:05:43Z",
+      "updated_at": "2026-10-10T19:16:33Z",
+      "head_sha": "c491d1b0227a877eaa5bad7651ed22ba67463439",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38078425636",
+      "job_count": 3,
+      "artifact_ids": [
+        11679765962,
+        11679207956,
+        11678503633
+      ],
+      "jobs": [
+        {
+          "id": 114290152906,
+          "name": "Windows current-user pipe reference (MOCK_ONLY)",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38078425636/job/114290152906",
+          "started_at": "2026-10-10T19:05:46Z",
+          "completed_at": "2026-10-10T19:06:52Z",
+          "log": "job-114290152906.log"
+        },
+        {
+          "id": 114290153066,
+          "name": "Protocol and local transport / postgres",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38078425636/job/114290153066",
+          "started_at": "2026-10-10T19:05:46Z",
+          "completed_at": "2026-10-10T19:16:32Z",
+          "log": "job-114290153066.log"
+        },
+        {
+          "id": 114290153083,
+          "name": "Protocol and local transport / file",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38078425636/job/114290153083",
+          "started_at": "2026-10-10T19:05:46Z",
+          "completed_at": "2026-10-10T19:06:56Z",
+          "log": "job-114290153083.log"
+        }
+      ],
+      "profiles": {
+        "postgres": {
+          "artifact_id": 11679765962,
+          "collected": 413,
+          "passed": 345,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 68,
+          "test_seconds": 581.45,
+          "desktop_preparation": {
+            "FAIL": 0,
+            "NOT_RUN": 1,
+            "PASS": 23
+          },
+          "desktop_native_acceptance": "LOCAL_REQUIRED"
+        },
+        "file": {
+          "artifact_id": 11679207956,
+          "collected": 413,
+          "passed": 345,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 68,
+          "test_seconds": 28.72,
+          "desktop_preparation": {
+            "FAIL": 0,
+            "NOT_RUN": 1,
+            "PASS": 23
+          },
+          "desktop_native_acceptance": "LOCAL_REQUIRED"
+        }
+      },
+      "checked_out_sha": "d90352f005a33240a88d6369d72844d18f98344e",
+      "event_sha_from_artifact": "d90352f005a33240a88d6369d72844d18f98344e",
+      "source_tree": "5da5d8b5285fc720031889b5b37798a9db328e93",
+      "windows_reference": {
+        "checks": 8,
+        "counterparty": "MOCK_ONLY",
+        "desktop_integration": "LOCAL_REQUIRED",
+        "cross_user_attempt": "NOT_RUN"
+      }
+    }
+  ],
+  "downloaded_evidence": {
+    "artifact_count": 7,
+    "zip_bytes": 174685,
+    "member_count": 51,
+    "all_digest_and_size_matches": true,
+    "all_zip_crc_and_utf8_checks_passed": true,
+    "windows_binaries_downloaded": false,
+    "integrity_manifest": "artifact-integrity.json",
+    "job_log_count": 7
+  },
+  "scope_limits": [
+    "Cloud CI failure has zero jobs and zero artifacts. Full hosted source/backend/browser acceptance did not run in that workflow.",
+    "Interop is a selected 413-test scope per profile, not full-source acceptance or monolithic PostgreSQL interaction equivalence.",
+    "Windows transport reference has 8 MOCK_ONLY checks. Real Desktop integration remains LOCAL_REQUIRED; cross-user hostile attempt NOT_RUN.",
+    "Desktop preparation harness has 23 MOCK_ONLY passes and 1 native-required NOT_RUN per File/PostgreSQL artifact.",
+    "R123 workflow success means all three known defects reproduced RED on original c6f2126 baseline, not a passing current-source defect audit.",
+    "Local stage evidence remains separate: File 153 passed/118 skipped; adjacent PostgreSQL 131 passed/16 failed/124 skipped; export-only 21 passed per backend; UI 2416 passed/8 old skips; infrastructure 320 passed; local browser blocked by EPERM before page.",
+    "No historical M4-C FAILED_OBSERVED result is reclassified; historical independent review remains BLOCKED. Historical denied artifact IDs 11615127270 and 11618169199 were not requested.",
+    "No product source, Git index, branch, remote, run state, or PR mutation was performed."
+  ],
+  "full_source_acceptance": false,
+  "historical_independent_audit": "BLOCKED",
+  "source_publish_receipt": "source-publish-verification.json",
+  "cloud_validation_annotation_access": "cloud-annotation-access.json"
+}

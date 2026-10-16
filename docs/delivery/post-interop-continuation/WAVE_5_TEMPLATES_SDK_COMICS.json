@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-06",
+  "wave": 5,
+  "restored_baseline": {
+    "sha": "4d736c0d14bdcd12d0ad3cc7146553971654620b",
+    "tree": "6b8269fb95e695178ce4c587c9fc729275d0e848"
+  },
+  "scope": "Owned B01/B02/B06 continuation; source-hashed working-tree subset, no final commit or hosted pass claimed",
+  "features": [
+    {
+      "id": "B01",
+      "status": "PARTIAL",
+      "delta": [
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED"
+      ],
+      "legacy_catalog_items": 9,
+      "extended_catalog_items": 5
+    },
+    {
+      "id": "B02",
+      "status": "PARTIAL",
+      "delta": [
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED"
+      ],
+      "executable_third_party_plugins": "DENY_ALL",
+      "real_model": "NOT_RUN"
+    },
+    {
+      "id": "B06",
+      "status": "PARTIAL",
+      "delta": [
+        "IMPLEMENTED",
+        "REAL_VERIFIED",
+        "CONTRACT_VERIFIED"
+      ],
+      "real_verified_scope": "File persistence, approved synthetic PNG raster output and original pinned CJK font render/export",
+      "model_artwork_quality": "NOT_RUN"
+    }
+  ],
+  "storage": {
+    "new_sql_migrations": [],
+    "authority": "Original scope document store, Agent definitions and approved Asset Library",
+    "rollback": "Disable experimental flags; retain records; older strict writers must not rewrite new declaration fields/types"
+  },
+  "current_validation": {
+    "backend": {
+      "passed": 160,
+      "skipped": 142,
+      "failed": 0,
+      "errors": 0,
+      "seconds": 35.69,
+      "skip_reasons": {
+        "PostgreSQL implementation contract; covered by the real PostgreSQL full suite": 113,
+        "NOT_RUN: disposable PostgreSQL endpoint not configured": 29
+      },
+      "pytest": "8.4.2"
+    },
+    "python_syntax": "PASS",
+    "diff_check": "PASS",
+    "frontend": {
+      "passed": 44,
+      "failed": 0,
+      "files": 5,
+      "seconds": 2.63
+    },
+    "typescript": "PASS",
+    "token_guard": "PASS_42_FILES",
+    "browser": {
+      "authored_cases": 2,
+      "fresh_collection": "PASS_2_CASES",
+      "fresh_execution": "NOT_RUN",
+      "reason": "No local Chromium launch; hosted exact-source execution pending"
+    },
+    "postgres": "NOT_RUN locally; backend-parameterized real PostgreSQL fixtures retained",
+    "real_models_gpu_third_party": "NOT_RUN",
+    "official_ci": null,
+    "pinned_cjk_font": "REAL_RENDER_EXPORT_TEST_PASS",
+    "prior_fresh_attempts": [
+      {
+        "backend_passed": 159,
+        "backend_skipped": 143,
+        "reason": "Initial run before pinned font availability; source and assertions unchanged."
+      },
+      {
+        "frontend": "NOT_RUN",
+        "reason": "Package-manager engine mismatch before tests; verified installed tools subsequently invoked without dependency installation."
+      }
+    ]
+  },
+  "historical_only": {
+    "superseded_environment": true,
+    "backend_passed": 160,
+    "backend_skipped": 142,
+    "frontend_passed": 44,
+    "token_guard": "PASS",
+    "browser_collected": 2,
+    "not_current_reconstructed_validation": true
+  },
+  "source_inventory": [
+    {
+      "path": "app/experimental/comic_layouts.py",
+      "sha256": "8711c6c0ab20c042b400492e4f665589ff92cba2ae00df09034f9004826d04ec"
+    },
+    {
+      "path": "app/experimental/declarative_adapter_sdk.py",
+      "sha256": "8783ff8a17478dbd13023951176567904ab8c4985fc90aaf80a7fa1a7b707bc1"
+    },
+    {
+      "path": "app/experimental/declarative_agents.py",
+      "sha256": "b6f61d28185d5d09ffc517483f9a5d81f87672bd4121de81b600b1a918609231"
+    },
+    {
+      "path": "app/experimental/template_library.py",
+      "sha256": "c1b98bcceb40490b3addf8c5f0b9ed39a9db891535913e784a8faebaed934c11"
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.tsx",
+      "sha256": "0abcf606a94479d7e7fa9966da86cf369a291dba72114d0dbca8cd53c5f4003f"
+    },
+    {
+      "path": "frontend/src/experimental/DeclarativeAgentsPanel.tsx",
+      "sha256": "959b1f19265eb3f0873ff8bbf8240316828e98e0c84c7037ba51ec5c80d767bf"
+    },
+    {
+      "path": "frontend/src/experimental/TemplateLibraryPanel.tsx",
+      "sha256": "0876af70a7fe4aae6c198cb1681dfbf97fd991be6c31a2b5c0ce7e735db75d72"
+    },
+    {
+      "path": "frontend/src/experimental/Wave5TemplatesSdkComics.test.tsx",
+      "sha256": "52b9d628ca1a0a3cdfd2d11593de641fb6d7ae417fe0efabd4de26b28aeb3692"
+    },
+    {
+      "path": "frontend/src/experimental/comicLayoutsClient.ts",
+      "sha256": "7dc2e55721ea4195b470cb1f9a9383716ab2c85dfe2c2b6cc1dacfa06758fa94"
+    },
+    {
+      "path": "frontend/src/experimental/declarativeAgentsClient.ts",
+      "sha256": "9b1804b9237409d2edbbc2d18d0f00a169cfba3e935b5b45c5174f0a47c902e4"
+    },
+    {
+      "path": "frontend/src/experimental/templateLibraryClient.ts",
+      "sha256": "bd63e71765a3bf2245dda329411be91a1494b953228faf61f3393b13ad897ebe"
+    },
+    {
+      "path": "frontend/tests/e2e/r4-wave5-templates-sdk-comics.spec.ts",
+      "sha256": "da93d0396901e76b221a27b3071353ab22bc321fdc864844c9132778954b81cb"
+    },
+    {
+      "path": "tests/test_post_interop_wave5_templates_sdk_comics.py",
+      "sha256": "8c7b77dfccef5929195770a78b11fde98cd78ebe85c4f1a857d48752c26d51c7"
+    }
+  ],
+  "public_sources": [
+    "POST_INTEROP_FEATURE_MATRIX.md",
+    "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+    "docs/delivery/post-v1-r4-r5-ux/FEATURE_MATRIX.md",
+    "docs/delivery/post-v1-r4-r5-ux/FEATURE_MATRIX.json",
+    "docs/delivery/post-v1-r4-r5-ux/FINAL_DELIVERY.md",
+    "docs/delivery/post-v1-r4-r5-ux/SCOPE_RECONCILIATION.md",
+    "docs/delivery/post-v1-r4-r5-ux/ACCEPTANCE_RESULTS.md",
+    "docs/delivery/post-v1-r4-r5-ux/B01_B02_LOCAL_DECLARATIVE.md",
+    "docs/delivery/post-v1-r4-r5-ux/B02_BOUND_MODEL_RECEIPT.md",
+    "docs/delivery/post-v1-r4-r5-ux/U16_DOMAIN_ADMISSION.md",
+    "docs/ui/design_system.md",
+    "docs/ui/protected_ui_surfaces.md",
+    "docs/ui/visual_baseline.md",
+    "docs/ui/reference/novel_workspace.png"
+  ],
+  "public_receipt_note": "Commands are normalized for an isolated test environment. Raw operational logs and local recovery paths are not public artifacts."
+}

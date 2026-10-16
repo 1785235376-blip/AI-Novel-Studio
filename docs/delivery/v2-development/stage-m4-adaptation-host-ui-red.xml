@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="1" failures="1" errors="0" time="2.287">
+    <testsuite name="src/creative/AdaptationHostCapability.test.tsx" timestamp="2026-10-10T20:27:05.426Z" hostname="7abb01f187ba" tests="1" failures="1" errors="0" skipped="0" time="0.274990611">
+        <testcase classname="src/creative/AdaptationHostCapability.test.tsx" name="explains missing Host authority without reading private proposals or locking manual Creative editing" time="0.27421179">
+            <failure message="Unable to find an element with the text: 来源改编需要已验证的可信 Host 会话。普通手工创作仍可使用。. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m&lt;body&gt;[39m
+  [36m&lt;div&gt;[39m
+    [36m&lt;div[39m
+      [33mclass[39m=[32m&quot;app-shell&quot;[39m
+      [33mdata-module[39m=[32m&quot;NOVEL&quot;[39m
+      [33mstyle[39m=[32m&quot;--layout-inspector-width: 340px;&quot;[39m
+    [36m&gt;[39m
+      [36m&lt;header[39m
+        [33mclass[39m=[32m&quot;global-header&quot;[39m
+      [36m&gt;[39m
+        [36m&lt;div[39m
+          [33maria-label[39m=[32m&quot;AI Novel Studio&quot;[39m
+          [33mclass[39m=[32m&quot;product-mark&quot;[39m
+        [36m&gt;[39m
+          [36m&lt;span[39m
+            [33mclass[39m=[32m&quot;product-mark__icon&quot;[39m
+          [36m&gt;[39m
+            [36m&lt;svg[39m
+              [33maria-hidden[39m=[32m&quot;true&quot;[39m
+              [33mclass[39m=[32m&quot;lucide lucide-book-open-text&quot;[39m
+              [33mfill[39m=[32m&quot;none&quot;[39m
+              [33mheight[39m=[32m&quot;24&quot;[39m
+              [33mstroke[39m=[32m&quot;currentColor&quot;[39m
+              [33mstroke-linecap[39m=[32m&quot;round&quot;[39m
+              [33mstroke-linejoin[39m=[32m&quot;round&quot;[39m
+              [33mstroke-width[39m=[32m&quot;2&quot;[39m
+              [33mviewBox[39m=[32m&quot;0 0 24 24&quot;[39m
+              [33mwidth[39m=[32m&quot;24&quot;[39m
+              [33mxmlns[39m=[32m&quot;http://www.w3.org/2000/svg&quot;[39m
+            [36m&gt;[39m
+              [36m&lt;path[39m
+                [33md[39m=[32m&quot;M12 7v14&quot;[39m
+              [36m/&gt;[39m
+              [36m&lt;path[39m
+                [33md[39m=[32m&quot;M16 12h2&quot;[39m
+              [36m/&gt;[39m
+              [36m&lt;path[39m
+                [33md[39m=[32m&quot;M16 8h2&quot;[39m
+              [36m/&gt;[39m
+              [36m&lt;path[39m
+                [33md[39m=[32m&quot;M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z&quot;[39m
+              [36m/&gt;[39m
+              [36m&lt;path[39m
+                [33md[39m=[32m&quot;M6 12h2&quot;[39m
+              [36m/&gt;[39m
+              [36m&lt;path[39m
+                [33md[39m=[32m&quot;M6 8h2&quot;[39m
+              [36m/&gt;[39m
+            [36m&lt;/svg&gt;[39m
+          [36m&lt;/span&gt;[39m
+          [36m&lt;span[39m
+            [33mclass[39m=[32m&quot;product-mark__name&quot;[39m
+          [36m&gt;[39m
+            [36m&lt;strong&gt;[39m
+              [0mAI Novel[0m
+            [36m&lt;/strong&gt;[39m
+            [36m&lt;small&gt;[39m
+              [0mStudio[0m
+            [36m&lt;/small&gt;[39m
+          [36m&lt;/span&gt;[39m
+        [36m&lt;/div&gt;[39m
+        [36m&lt;div[39m
+          [33maria-label[39m=[32m&quot;创作模块&quot;[39m
+          [33mclass[39m=[32m&quot;module-switcher&quot;[39m
+          [33mrole[39m=[32m&quot;tablist&quot;[39m
+        [36m&gt;[39m
+          [36m&lt;button[39m
+            [33maria-selected[39m=[32m&quot;true&quot;[39m
+            [33mclass[39m=[32m&quot;is-active&quot;[39m
+            [33mdata-module-tab[39m=[32m&quot;NOVEL&quot;[39m
+            [33mid[39m=[32m&quot;module-tab-novel&quot;[39m
+            [33mrole[39m=[32m&quot;tab&quot;[39m
+            [33mtabindex[39m=[32m&quot;0&quot;[39m
+          [36m&gt;[39m
+            [36m&lt;svg[39m
+              [33maria-hidden[39m=[32m&quot;true&quot;[39m
+              [33mclass[39m=[32m&quot;lucide lucide-book-open&quot;[39m
+              [33mfill[39m=[32m&quot;none&quot;[39m
+              [33mheight[39m=[32m&quot;24&quot;[39m
+              [33mstroke[39m=[32m&quot;currentColor&quot;[39m
+              [33mstroke-linecap[39m=[32m&quot;round&quot;[39m
+              [33mstroke-linejoin[39m=[32m&quot;round&quot;[39m
+              [33mstroke-width[39m=[32m&quot;2&quot;[39m
+              [33mviewBox[39m=[32m&quot;0 0 24 24&quot;[39m
+              [33mwidth[39m=[32m&quot;24&quot;[39m
+              [33mxmlns[39m=[32m&quot;http://www.w3.org/2000/svg&quot;[39m
+            [36m&gt;[39m
+              [36m&lt;path[39m
+                [33md[39m=[32m&quot;M12 7v14&quot;[39m
+              [36m/&gt;[39m
+              [36m&lt;path[39m
+                [33md[39m=[32m&quot;M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z&quot;[39m
+              [36m/&gt;[39m
+            [36m&lt;/svg&gt;[39m
+            [36m&lt;span&gt;[39m
+              [0m小说[0m
+            [36m&lt;/span&gt;[39m
+          [36m&lt;/button&gt;[39m
+          [36m&lt;button[39m
+            [33maria-selected[39m=[32m&quot;false&quot;[39m
+            [33mclass[39m=[32m&quot;&quot;[39m
+            [33mdata-module-tab[39m=[32m&quot;IMAGE&quot;[39m
+            [33mid[39m=[32m&quot;module-tab-image&quot;[39m
+            [33mrole[39m=[32m&quot;tab&quot;[39m
+            [33mtabindex[39m=[32m&quot;-1&quot;[39m
+          [36m&gt;[39m
+            [36m&lt;svg[39m
+              [33maria-hidden[39m=[32m&quot;true&quot;[39m
+              [33mclass[39m=[32m&quot;lucide lucide-image&quot;[39m
+              [33mfill[39m=[32m&quot;none&quot;[39m
+              [33mheight[39m=[32m&quot;24&quot;[39m
+              [33mstroke[39m=[32m&quot;currentColor&quot;[39m
+              [33mstroke-linecap[39m=[32m&quot;round&quot;[39m
+              [33mstroke-linejoin[39m=[32m&quot;round&quot;[39m
+              [33mstroke-width[39m=[32m&quot;2&quot;[39m
+              [33mviewBox[39m=[32m&quot;0 0 24 24&quot;[39m
+              [33mwidth[39m=[32m&quot;24&quot;[39m
+              [33mxmlns[39m=[32m&quot;http://www.w3.org/2000/svg&quot;[39m
+            [36m&gt;[39m
+              [36m&lt;rect[39m
+                [33mheight[39m=[32m&quot;18&quot;[39m
+                [33mrx[39m=[32m&quot;2&quot;[39m
+                [33mry[39m=[32m&quot;2&quot;[39m
+                [33mwidth[39m=[32m&quot;18&quot;[39m
+                [33mx[39m=[32m&quot;3&quot;[39m
+                [33my[39m=[32m&quot;3&quot;[39m
+              [36m/&gt;[39m
+              [36m&lt;circle[39m
+                [33mcx[39m=[32m&quot;9&quot;[39m
+                [33mcy[39m=[32m&quot;9&quot;[39m
+                [33mr[39m=[32m&quot;2&quot;[39m
+              [36m/&gt;[39m
+              [36m&lt;path[39m
+                [33md[39m=[32m&quot;m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21&quot;[39m
+              [36m/&gt;[39m
+            [36m&lt;/svg&gt;[39m
+            [36m&lt;span&gt;[39m
+              [0m图片[0m
+            [36m&lt;/span&gt;[39m
+          [36m&lt;/button&gt;[39m
+          [36m&lt;button[39m
+            [33maria-selected[39m=[32m&quot;false&quot;[39m
+            [33mclass[39m=[32m&quot;&quot;[39m
+            [33mdata-module-tab[39m=[32m&quot;VIDEO&quot;[39m
+            [33mid[39m=[32m&quot;module-tab-video&quot;[39m
+            [33mrole[39m=[32m&quot;tab&quot;[39m
+            [33mtabindex[39m=[32m&quot;-1&quot;[39m
+          [36m&gt;[39m
+            [36m&lt;svg[39m
+              [33maria-hidden[39m=[32m&quot;true&quot;[39m
+              [33mclass[39m=[32m&quot;lucide lucide-video&quot;[39m
+              [33mfill[39m=[32m&quot;none&quot;[39m
+              [33mheight[39m=[32m&quot;24&quot;[39m
+              [33mstroke[39m=[32m&quot;currentColor&quot;[39m
+              [33mstroke-linecap[39m=[32m&quot;round&quot;[39m
+              [33mstroke-linejoin[39m=[32m&quot;round&quot;[39m
+              [33mstroke-width[39m=[32m&quot;2&quot;[39m
+              [33mviewBox[39m=[32m&quot;0 0 24 24&quot;[39m
+              [33mwidth[39m=[32m&quot;24&quot;[39m
+              [33mxmlns[39m=[32m&quot;http://www.w3.org/2000/svg&quot;[39m
+            [36m&gt;[39m
+              [36m&lt;path[39m
+                [33md[39m=[32m&quot;m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5&quot;[39m
+              [36m/..." type="TestingLibraryElementError">
+TestingLibraryElementError: Unable to find an element with the text: 来源改编需要已验证的可信 Host 会话。普通手工创作仍可使用。. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+&lt;body&gt;
+  &lt;div&gt;
+    &lt;div
+      class=&quot;app-shell&quot;
+      data-module=&quot;NOVEL&quot;
+      style=&quot;--layout-inspector-width: 340px;&quot;
+    &gt;
+      &lt;header
+        class=&quot;global-header&quot;
+      &gt;
+        &lt;div
+          aria-label=&quot;AI Novel Studio&quot;
+          class=&quot;product-mark&quot;
+        &gt;
+          &lt;span
+            class=&quot;product-mark__icon&quot;
+          &gt;
+            &lt;svg
+              aria-hidden=&quot;true&quot;
+              class=&quot;lucide lucide-book-open-text&quot;
+              fill=&quot;none&quot;
+              height=&quot;24&quot;
+              stroke=&quot;currentColor&quot;
+              stroke-linecap=&quot;round&quot;
+              stroke-linejoin=&quot;round&quot;
+              stroke-width=&quot;2&quot;
+              viewBox=&quot;0 0 24 24&quot;
+              width=&quot;24&quot;
+              xmlns=&quot;http://www.w3.org/2000/svg&quot;
+            &gt;
+              &lt;path
+                d=&quot;M12 7v14&quot;
+              /&gt;
+              &lt;path
+                d=&quot;M16 12h2&quot;
+              /&gt;
+              &lt;path
+                d=&quot;M16 8h2&quot;
+              /&gt;
+              &lt;path
+                d=&quot;M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z&quot;
+              /&gt;
+              &lt;path
+                d=&quot;M6 12h2&quot;
+              /&gt;
+              &lt;path
+                d=&quot;M6 8h2&quot;
+              /&gt;
+            &lt;/svg&gt;
+          &lt;/span&gt;
+          &lt;span
+            class=&quot;product-mark__name&quot;
+          &gt;
+            &lt;strong&gt;
+              AI Novel
+            &lt;/strong&gt;
+            &lt;small&gt;
+              Studio
+            &lt;/small&gt;
+          &lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div
+          aria-label=&quot;创作模块&quot;
+          class=&quot;module-switcher&quot;
+          role=&quot;tablist&quot;
+        &gt;
+          &lt;button
+            aria-selected=&quot;true&quot;
+            class=&quot;is-active&quot;
+            data-module-tab=&quot;NOVEL&quot;
+            id=&quot;module-tab-novel&quot;
+            role=&quot;tab&quot;
+            tabindex=&quot;0&quot;
+          &gt;
+            &lt;svg
+              aria-hidden=&quot;true&quot;
+              class=&quot;lucide lucide-book-open&quot;
+              fill=&quot;none&quot;
+              height=&quot;24&quot;
+              stroke=&quot;currentColor&quot;
+              stroke-linecap=&quot;round&quot;
+              stroke-linejoin=&quot;round&quot;
+              stroke-width=&quot;2&quot;
+              viewBox=&quot;0 0 24 24&quot;
+              width=&quot;24&quot;
+              xmlns=&quot;http://www.w3.org/2000/svg&quot;
+            &gt;
+              &lt;path
+                d=&quot;M12 7v14&quot;
+              /&gt;
+              &lt;path
+                d=&quot;M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z&quot;
+              /&gt;
+            &lt;/svg&gt;
+            &lt;span&gt;
+              小说
+            &lt;/span&gt;
+          &lt;/button&gt;
+          &lt;button
+            aria-selected=&quot;false&quot;
+            class=&quot;&quot;
+            data-module-tab=&quot;IMAGE&quot;
+            id=&quot;module-tab-image&quot;
+            role=&quot;tab&quot;
+            tabindex=&quot;-1&quot;
+          &gt;
+            &lt;svg
+              aria-hidden=&quot;true&quot;
+              class=&quot;lucide lucide-image&quot;
+              fill=&quot;none&quot;
+              height=&quot;24&quot;
+              stroke=&quot;currentColor&quot;
+              stroke-linecap=&quot;round&quot;
+              stroke-linejoin=&quot;round&quot;
+              stroke-width=&quot;2&quot;
+              viewBox=&quot;0 0 24 24&quot;
+              width=&quot;24&quot;
+              xmlns=&quot;http://www.w3.org/2000/svg&quot;
+            &gt;
+              &lt;rect
+                height=&quot;18&quot;
+                rx=&quot;2&quot;
+                ry=&quot;2&quot;
+                width=&quot;18&quot;
+                x=&quot;3&quot;
+                y=&quot;3&quot;
+              /&gt;
+              &lt;circle
+                cx=&quot;9&quot;
+                cy=&quot;9&quot;
+                r=&quot;2&quot;
+              /&gt;
+              &lt;path
+                d=&quot;m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21&quot;
+              /&gt;
+            &lt;/svg&gt;
+            &lt;span&gt;
+              图片
+            &lt;/span&gt;
+          &lt;/button&gt;
+          &lt;button
+            aria-selected=&quot;false&quot;
+            class=&quot;&quot;
+            data-module-tab=&quot;VIDEO&quot;
+            id=&quot;module-tab-video&quot;
+            role=&quot;tab&quot;
+            tabindex=&quot;-1&quot;
+          &gt;
+            &lt;svg
+              aria-hidden=&quot;true&quot;
+              class=&quot;lucide lucide-video&quot;
+              fill=&quot;none&quot;
+              height=&quot;24&quot;
+              stroke=&quot;currentColor&quot;
+              stroke-linecap=&quot;round&quot;
+              stroke-linejoin=&quot;round&quot;
+              stroke-width=&quot;2&quot;
+              viewBox=&quot;0 0 24 24&quot;
+              width=&quot;24&quot;
+              xmlns=&quot;http://www.w3.org/2000/svg&quot;
+            &gt;
+              &lt;path
+                d=&quot;m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5&quot;
+              /...
+ ❯ Object.getElementError node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/creative/AdaptationHostCapability.test.tsx:24:17
+            </failure>
+        </testcase>
+    </testsuite>
+</testsuites>

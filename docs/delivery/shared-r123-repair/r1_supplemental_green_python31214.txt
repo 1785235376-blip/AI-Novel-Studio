@@ -1,0 +1,15 @@
+........................................................................ [  7%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 15%]
+........................................................................ [ 23%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 31%]
+....................................ssssssssssssssssssssssssssssssssssss [ 38%]
+............ssssssssssss............ssssssssssss............ssssssssssss [ 46%]
+............ssssssssssss..ss............................................ [ 54%]
+.............................sssssssssssssssssssssssssssssssssssssssssss [ 62%]
+sssssssssssssssssssssssssssss............ssssssssssss................... [ 70%]
+.................ssssssssssssssssssssssssssssssssssss............sssssss [ 77%]
+sssss................................................sssssssssssssssssss [ 85%]
+sssssssssssssssssssssssssssss............ssssssssssss....ssss..ss..ss... [ 93%]
+.ssss....ssss..ss....ssss..ss..ss..ss..ss....ssss............            [100%]
+- generated xml file: /workspace/scratch/b8734129d01d/ai-novel-r4-r5-ux/docs/delivery/shared-r123-repair/r1_supplemental_green_python31214.junit.xml -
+469 passed, 456 skipped, 1 warning in 27.40s

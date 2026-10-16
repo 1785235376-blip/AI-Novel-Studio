@@ -1,0 +1,42 @@
+
+Running 1 test using 1 worker
+
+(node:83252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:83252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  x  1 [prompt-adoption-ui-1366x768] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin (27.8s)
+
+
+  1) [prompt-adoption-ui-1366x768] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('采用 UI 验收 prompt-adoption-ui-1366x768', { exact: true }).first()
+    Expected: visible
+    Timeout: 25000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 25000ms
+      - waiting for getByText('采用 UI 验收 prompt-adoption-ui-1366x768', { exact: true }).first()
+
+
+      90 |       }
+      91 |       if (await projectChoice.isVisible()) await projectChoice.click();
+    > 92 |       await expect(page.getByText(title, { exact: true }).first()).toBeVisible();
+         |                                                                    ^
+      93 |     };
+      94 |     const openBoard = async () => {
+      95 |       await page.getByRole('button', { name: '小说', exact: true }).click();
+        at enterProject (D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:92:68)
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-prompt-adoption-ui-live.spec.ts:114:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\docs\delivery\v2-r3-adoption-ui-20261017\browser-file-smoke-r2\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\docs\delivery\v2-r3-adoption-ui-20261017\browser-file-smoke-r2\test-results\v2-prompt-adoption-ui-live-10511-serves-its-exact-source-pin-prompt-adoption-ui-1366x768\error-context.md
+
+  1 failed
+    [prompt-adoption-ui-1366x768] › tests\e2e\v2-prompt-adoption-ui-live.spec.ts:19:1 › isolated original button commits bound Prompt and reload preserves its exact source pin 

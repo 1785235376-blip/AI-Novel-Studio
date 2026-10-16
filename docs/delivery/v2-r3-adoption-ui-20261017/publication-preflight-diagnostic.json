@@ -1,0 +1,21 @@
+{
+  "stage": "raw_evidence_index_before_commit",
+  "initial_check": "FAILED_STAGING_SELECTION",
+  "missing_unstaged_original_receipts": [
+    "docs/delivery/v2-development/adoption-ui-file-smoke-r1.json",
+    "docs/delivery/v2-development/adoption-ui-file-smoke-r1.log",
+    "docs/delivery/v2-development/adoption-ui-file-smoke-r2.json",
+    "docs/delivery/v2-development/adoption-ui-file-smoke-r2.log",
+    "docs/delivery/v2-development/adoption-ui-file-smoke-r3.json",
+    "docs/delivery/v2-development/adoption-ui-file-smoke-r3.log",
+    "docs/delivery/v2-development/adoption-ui-file-smoke-r4.json",
+    "docs/delivery/v2-development/adoption-ui-file-smoke-r4.log",
+    "docs/delivery/v2-development/adoption-ui-file-smoke-r5.json",
+    "docs/delivery/v2-development/adoption-ui-file-smoke-r5.log",
+    "docs/delivery/v2-development/adoption-ui-file-smoke-r6.json",
+    "docs/delivery/v2-development/adoption-ui-file-smoke-r6.log"
+  ],
+  "cause": "The first explicit staging pathspec selected r3-adoption-ui-*; these six retained smoke runs used the older adoption-ui-file-smoke-r* prefix.",
+  "correction": "Stage exactly the twelve original files, then regenerate and reverify the complete evidence manifest and Git index raw bytes. No raw receipt or source bytes changed.",
+  "product_test_result_changed": false
+}

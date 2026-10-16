@@ -5,7 +5,7 @@ from collections.abc import Callable
 from fastapi import APIRouter, Body, Header, HTTPException
 from pydantic import BaseModel, Field, ValidationError, model_validator
 
-from .domain import serialize
+from .domain import RuntimeType, serialize
 from .runtime_profiles import editable_configuration, mutation_payload
 from .service import ModelCenterService
 
@@ -65,10 +65,15 @@ def create_model_center_router(
         return HTTPException(409, {"code": str(exc)})
 
     @router.get("/models")
-    def models(): return {"items": [service.model(item.id) for item in service.models.values()]}
+    def models(x_session_token: str | None = Header(default=None, alias="X-Session-Token")):
+        authorization = mutation_authorization(x_session_token) if mutation_authorization else {}
+        return {"items": [service.model(item.id) for item in service.models.values()
+                          if not item.metadata.get("local_discovery") or authorization.get("can_mutate")] }
 
     @router.get("/models/{model_id}")
-    def model(model_id: str):
+    def model(model_id: str, x_session_token: str | None = Header(default=None, alias="X-Session-Token")):
+        if model_id in service.models and service.models[model_id].metadata.get("local_discovery"):
+            require_control(x_session_token)
         try: return service.model(model_id)
         except KeyError: raise HTTPException(404, {"code": "MODEL_CENTER_MODEL_NOT_FOUND"}) from None
 
@@ -94,20 +99,31 @@ def create_model_center_router(
         return service.validate_runtime(runtime_id)
 
     @router.post("/runtimes/{runtime_id}/start")
-    def start_runtime(runtime_id: str):
-        try: return serialize(service.lifecycle.start(runtime(runtime_id)))
+    def start_runtime(runtime_id: str, x_session_token: str | None = Header(default=None, alias="X-Session-Token")):
+        item = runtime(runtime_id)
+        guard = (lambda: require_control(x_session_token)) if item.runtime_type == RuntimeType.WHISPER_CPP else None
+        if guard is not None:
+            guard()
+        try: return serialize(service.lifecycle.start(item, authority_guard=guard))
         except ValueError as exc: raise HTTPException(409, {"code": str(exc)}) from exc
 
     @router.post("/runtimes/{runtime_id}/stop")
-    def stop_runtime(runtime_id: str):
-        runtime(runtime_id)
+    def stop_runtime(runtime_id: str, x_session_token: str | None = Header(default=None, alias="X-Session-Token")):
+        item = runtime(runtime_id)
+        if item.runtime_type == RuntimeType.WHISPER_CPP:
+            require_control(x_session_token)
         try: return serialize(service.lifecycle.stop(runtime_id))
         except ValueError as exc: raise HTTPException(409, {"code": str(exc)}) from exc
 
     @router.get("/runtimes/{runtime_id}/configuration")
     def runtime_configuration(runtime_id: str, x_session_token: str | None = Header(default=None, alias="X-Session-Token")):
         require_control(x_session_token)
-        return editable_configuration(runtime(runtime_id))
+        item = runtime(runtime_id)
+        if item.runtime_type == RuntimeType.WHISPER_CPP:
+            return {"id": item.id, "runtime_type": item.runtime_type, "management": item.management,
+                "base_url": item.base_url, "port": item.port, "configuration_source": "V2_HOST_CONFIGURATION",
+                "read_only": True, "pin_values_exposed": False}
+        return editable_configuration(item)
 
     @router.put("/runtimes/{runtime_id}/configuration")
     def update_runtime_configuration(runtime_id: str, body: dict = Body(...), x_session_token: str | None = Header(default=None, alias="X-Session-Token")):

@@ -39,3 +39,59 @@ V1.0 Windows DesktopHost 正在开发验收中，尚未发布。当前已有内�
 ## 测试
 
 安装 Python 3.11+ 后执行 `python -m pip install -e .[dev]` 与 `python -m pytest`。详见 `docs/test_report.md`。
+
+## V2 分支（`feature/v2-narrative-platform`）验证状态
+
+本节只记录**已核实**事实；未执行的项一律 `NOT_RUN`，不会因为存在旧报告而升级。
+状态词表只用 `IMPLEMENTED` / `PARTIAL` / `BLOCKED` / `LOCAL_REQUIRED` / `NOT_RUN`。
+
+### 校验运行器（本工作区实测）
+
+工作区：`Worktrees/studio-v2-audio-editing-20261014`；
+解释器：`C:\Users\admin\AppData\Local\Programs\Python\Python311\python.exe`；
+始终设置 `PYTHONUTF8=1`、`PYTHONDONTWRITEBYTECODE=1`。
+
+pytest **必须**经运行器，直接运行会 `KeyError: 'PROJECT_ROOT'`：
+
+```powershell
+python scripts/run_v2_checks.py <label> -- python -m pytest <files> -q `
+  --basetemp .runtime/v2-checks/<label>/pytest -p no:cacheprovider
+```
+
+真实 PostgreSQL（可复用便携集群，**不**安装系统服务；运行器结束时正常停止）：
+
+```powershell
+python scripts/run_v2_postgres_checks.py --pg-bin <便携 PG bin> --data <集群数据目录> `
+  --port 55433 --database v2_<新库名> --fresh-database <label> `
+  -- <python 绝对路径> -m pytest <files> -q --basetemp <已存在的目录> -p no:cacheprovider
+```
+
+四个易错点（漏掉会产生与产品无关的失败）：`--user` 是数据库**连接角色**（默认 `postgres`），
+不是标签；标签是**位置参数**；`--basetemp` 目录必须**预先存在**；解释器必须写**绝对路径**。
+
+### 本阶段已核实结论
+
+- 创作图节点契约追加测试：**260 passed**（`+142 / −0`，未放宽任何既有断言）。
+- `app/model_center/` 是**真实**本地探测栈，但五级中**第②级（Runtime 是否存在）未实现**：
+  发现报告不含任何进程事实，因此 `DISCOVERED` 只表示"端点未应答"，**不等于**"没有进程"。
+  **发现不等于可运行**。真实 PostgreSQL 上 `tests/test_v2_discovery_runtime_levels.py`
+  **4 passed**（空库先验证 → 20 个迁移全部应用 → 服务正常停止）。
+- 本机**没有**应用可用的本地运行时：11434 / 1234 / 8188 均拒连；8080 已确认为
+  **Strata** 本地模型服务（独立 Python 3.12 安装），**不是**本应用运行时，也未注册到
+  Model Center；8100 已被 ASUS `GearLink_KBService.exe` 占用。
+- 安装/卸载、打包、DesktopHost 可信会话、GPU 与真实模型执行、真实媒体流水线、
+  浏览器复验、完整 CI 全部 `NOT_RUN`；托管 CI 为 `BLOCKED_ACCOUNT_PLATFORM`（账单锁）。
+- `CONTENT_POLICY_FRAMEWORK` 仍为 `RESERVED`，未实现任何 NSFW/Mature 能力。
+
+详见 [`PHASE10_RELEASE_HARDENING_REPORT.md`](PHASE10_RELEASE_HARDENING_REPORT.md) 与
+[`AI_NOVEL_STUDIO_V2_FEATURE_MATRIX.md`](AI_NOVEL_STUDIO_V2_FEATURE_MATRIX.md) 的 Phase10 追加区。
+
+### Phase11（RC Gate Closure）已核实事实
+
+- **第②级已补齐**：`app/model_center/runtime_observation.py` 是**只观察**层——不启动、不安装、不下载、不产生任何子进程。五级阶梯：`0 NOT_OBSERVED → 1 DISCOVERED → 2 RUNTIME_AVAILABLE → 3 REACHABLE → 4 CAPABILITY_UNKNOWN → 5 READY`；**仅靠观察永远到不了 `READY`**（32 种证据组合的穷举测试固定这一点）。
+- **本机实测**：Ollama 11434 / LM Studio 1234 / ComfyUI 8188 **无任何监听** → `NOT_OBSERVED`（不是 `DISCOVERED`）；8080 的自定义 HTTP 本地端点 → 第④级 `CAPABILITY_UNKNOWN`，监听者已识别（pid 16292、`pythonw.exe`、模型 `qwen3.8-flash-next-iq3_xxs`），**推理未运行**。该服务是 **Strata**，**只观察、未注册、未绑定**。
+- **自定义 HTTP 本地注册必须人工确认**：`custom_http_local_registration(user_confirmed=True)`，否则 `CUSTOM_HTTP_LOCAL_USER_CONFIRMATION_REQUIRED`；它只**准备描述符**，不注册、不启用、不生成任务（`generates_tasks=False`、`auto_enabled=False`）。
+- **真实浏览器验收已在当前 HEAD 重跑**：**8 passed (14.4s)**，exit 0 —— 系统 Edge + 真实后端（8110）+ 真实 Vite，六个界面加 zh-CN 与键盘用例。后端 8110 是因为 8000 属 Windows 排除区间、8100 已被无关厂商服务占用。
+- **媒体链路**只做了**契约预检**（86 passed / 79 skipped / 1 `BLOCKED_EXTERNAL`：本机无 `bash`），真实产物全部 `NOT_RUN` → `MEDIA_PIPELINE_RC_CHECKLIST.md`。
+- **Windows / GPU** 部分只做到**清单与实测**（RTX 5080、驱动 591.74、16303 MiB；CUDA = `COMPONENT_FOUND_NOT_VERIFIED`），安装/打包与真实生成仍 `NOT_RUN` → `WINDOWS_GPU_RC_CHECKLIST.md`。
+- **RC 结论：`NOT ESTABLISHED`**（未安装、未打包、未真实生成、未完整 CI）→ `PHASE11_RC_GATE_CLOSURE_REPORT.md`。

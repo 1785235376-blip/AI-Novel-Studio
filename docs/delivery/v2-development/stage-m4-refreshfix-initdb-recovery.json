@@ -1,0 +1,27 @@
+{
+  "status": "SETUP_RECOVERED_NOT_TEST_EXECUTION",
+  "first_attempt": {
+    "exit_code": 1,
+    "error": "initdb: error: input file location must be an absolute path",
+    "error_source": "Exact stderr text returned by exec_command; stdout log was empty",
+    "cluster_created": false
+  },
+  "second_attempt": {
+    "exit_code": 0,
+    "change": "Use absolute -L share path and absolute owned data path",
+    "new_cluster": ".runtime/postgresql/data-m4-refreshfix1",
+    "retained": true
+  },
+  "logs": [
+    {
+      "path": "docs/delivery/v2-development/stage-m4-refreshfix-initdb1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-development/stage-m4-refreshfix-initdb2.log",
+      "bytes": 1004,
+      "sha256": "4910dd5bd82d4841a73c8dff5269df684784507537c7adfe154b833ac55cdd5d"
+    }
+  ]
+}

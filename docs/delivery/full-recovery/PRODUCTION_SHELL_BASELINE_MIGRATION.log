@@ -1,0 +1,13 @@
+[WebServer] (node:5380) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:19176) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19176) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+D:\小说\AI-Novel-Studio-Latest-Product\frontend\tests\visual\design-system.spec.ts-snapshots\production-novel-shell-chromium-win32.png is re-generated, writing actual.
+  ok 1 [chromium] › tests\visual\design-system.spec.ts:33:1 › production NOVEL route uses the frozen AppShell (2.1s)
+
+  1 passed (3.8s)

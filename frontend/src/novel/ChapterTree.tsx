@@ -7,11 +7,40 @@ export type ChapterTreeItem={id:string;title:string;number?:number;status?:strin
 export type ChapterTreeProps={chapters:ChapterTreeItem[];selectedId?:string;loading?:boolean;error?:string|null;creating?:boolean;reordering?:boolean;onSelect:(id:string)=>void;onCreate:(title:string)=>Promise<void>|void;onRename?:(id:string,title:string)=>Promise<void>|void;onReorder?:(sourceId:string,targetId:string)=>Promise<void>|void;onArchive?:(chapter:ChapterTreeItem)=>Promise<void>|void;onRestore?:(chapter:ChapterTreeItem)=>Promise<void>|void;onDelete?:(chapter:ChapterTreeItem)=>Promise<void>|void;archived?:ChapterTreeItem[];message?:string};
 
 export function CreateChapterDialog({open,pending=false,onSubmit,onClose}:{open:boolean;pending?:boolean;onSubmit:(title:string)=>Promise<void>|void;onClose:()=>void}){
- const input=useRef<HTMLInputElement>(null),[title,setTitle]=useState(''),id=useId();
- useEffect(()=>{if(open){setTitle('');input.current?.focus()}},[open]);
+ const input=useRef<HTMLInputElement>(null),dialog=useRef<HTMLElement>(null),[title,setTitle]=useState(''),id=useId();
+ const [submitting,setSubmitting]=useState(false),inFlight=useRef(false),composing=useRef(false);
+ const close=useRef(onClose),busy=useRef(pending);close.current=onClose;busy.current=pending||submitting;
+ useEffect(()=>{
+  if(!open)return;
+  const previous=document.activeElement;
+  setTitle('');composing.current=false;input.current?.focus();
+  const onKey=(event:KeyboardEvent)=>{
+   // Escape/Enter from an active IME candidate window belong to the IME.
+   if(event.isComposing||event.keyCode===229||composing.current)return;
+   if(event.key==='Escape'){
+    event.preventDefault();event.stopPropagation();
+    if(!busy.current&&!inFlight.current)close.current();
+   }
+   if(event.key==='Tab'){
+    const controls=Array.from(dialog.current?.querySelectorAll<HTMLElement>('input:not(:disabled),button:not(:disabled),[tabindex="0"]')||[]);
+    const first=controls[0],last=controls[controls.length-1];
+    if(!first){event.preventDefault();dialog.current?.focus();return;}
+    if(!dialog.current?.contains(document.activeElement)){event.preventDefault();first.focus();}
+    else if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+   }
+  };
+  document.addEventListener('keydown',onKey);
+  return()=>{document.removeEventListener('keydown',onKey);if(previous instanceof HTMLElement&&previous.isConnected)previous.focus();};
+ },[open]);
  if(!open)return null;
- return <div className="novel-dialog-backdrop" role="presentation"><section className="novel-dialog" role="dialog" aria-modal="true" aria-labelledby={id}>
-  <h2 id={id}>新建章节</h2><form onSubmit={async e=>{e.preventDefault();if(title.trim())await onSubmit(title.trim())}}><label>章节标题<input ref={input} value={title} disabled={pending} onChange={e=>setTitle(e.target.value)}/></label><div className="novel-actions"><Button type="button" onClick={onClose} disabled={pending}>取消</Button><Button variant="primary" type="submit" disabled={pending}>创建章节</Button></div></form>
+ const disabled=pending||submitting;
+ return <div className="novel-dialog-backdrop" role="presentation"><section ref={dialog} tabIndex={-1} className="novel-dialog" role="dialog" aria-modal="true" aria-labelledby={id}>
+  <h2 id={id}>新建章节</h2><form onCompositionStart={()=>{composing.current=true}} onCompositionEnd={()=>{composing.current=false}} onSubmit={async e=>{
+   e.preventDefault();if(disabled||inFlight.current||composing.current||!title.trim())return;
+   inFlight.current=true;setSubmitting(true);
+   try{await onSubmit(title.trim());}finally{inFlight.current=false;setSubmitting(false);}
+  }}><label>章节标题<input ref={input} value={title} disabled={disabled} onChange={e=>setTitle(e.target.value)}/></label><div className="novel-actions"><Button type="button" onClick={onClose} disabled={disabled}>取消</Button><Button variant="primary" type="submit" disabled={disabled}>创建章节</Button></div></form>
  </section></div>;
 }
 

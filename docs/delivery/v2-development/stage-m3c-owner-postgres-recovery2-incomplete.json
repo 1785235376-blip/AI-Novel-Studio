@@ -1,0 +1,17 @@
+{
+  "utc": "2026-10-09T23:35:55.684272+00:00",
+  "status": "INCOMPLETE_EXECUTION_SESSION_LOST",
+  "attempt": "one authorized recovery attempt",
+  "runtime_receipt_sha256": "5176ae082cafc043b1419e80cc9e2f43b27d74f3e79e9b81e7e516a93de7698a",
+  "runtime_status": "checking",
+  "database_oid": 16384,
+  "fresh_empty_database": true,
+  "normal_shutdown": "NOT_PROVEN",
+  "counts": null,
+  "process_check": "no postgres or pytest processes in current namespace",
+  "no_final_test_receipt": true,
+  "original_and_recovery_data_retained": true,
+  "repeat_not_started": true,
+  "server_log_sha256": "0d58739121bc3046b086bc36657dd08b47b631aff5fdbb487480efdbe121f914",
+  "server_log_tail": "2026-10-09 23:20:11.517 UTC [10] LOG:  starting PostgreSQL 17.11 (Debian 17.11-0+deb13u1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit\n2026-10-09 23:20:11.517 UTC [10] LOG:  listening on IPv4 address \"127.0.0.1\", port 55434\n2026-10-09 23:20:11.520 UTC [13] LOG:  database system was shut down at 2026-10-09 19:00:02 UTC\n2026-10-09 23:20:11.527 UTC [10] LOG:  database system is ready to accept connections\n"
+}

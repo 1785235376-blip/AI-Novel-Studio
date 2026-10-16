@@ -1,0 +1,12 @@
+src/AppLocalEntryAuthorityRace.test.tsx(27,49): error TS2345: Argument of type '{ audiobook: never[]; motion: never[]; }' is not assignable to parameter of type '{ novel_id: string; audiobook: any[]; motion: any[]; }'.
+  Property 'novel_id' is missing in type '{ audiobook: never[]; motion: never[]; }' but required in type '{ novel_id: string; audiobook: any[]; motion: any[]; }'.
+src/AppLocalEntryAuthorityRace.test.tsx(75,68): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(role: ByRoleMatcher, options?: ByRoleOptions | undefined): HTMLElement', gave the following error.
+    Object literal may only specify known properties, and 'exact' does not exist in type 'ByRoleOptions'.
+  Overload 2 of 2, '(role: ByRoleMatcher, options?: ByRoleOptions | undefined): HTMLElement', gave the following error.
+    Object literal may only specify known properties, and 'exact' does not exist in type 'ByRoleOptions'.
+src/AppLocalEntryAuthorityRace.test.tsx(91,92): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(role: ByRoleMatcher, options?: ByRoleOptions | undefined, waitForElementOptions?: waitForOptions | undefined): Promise<HTMLElement>', gave the following error.
+    Object literal may only specify known properties, and 'exact' does not exist in type 'ByRoleOptions'.
+  Overload 2 of 2, '(role: ByRoleMatcher, options?: ByRoleOptions | undefined, waitForElementOptions?: waitForOptions | undefined): Promise<HTMLElement>', gave the following error.
+    Object literal may only specify known properties, and 'exact' does not exist in type 'ByRoleOptions'.

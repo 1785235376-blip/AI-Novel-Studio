@@ -1,0 +1,698 @@
+....................................FFFF...F.......FFF.FF..........      [100%]
+=================================== FAILURES ===================================
+_______ test_malformed_catalog_model_does_not_abort_original_scan[None] ________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-5/test_malformed_catalog_model_d0')
+bad = None
+
+    @pytest.mark.parametrize('bad', [None, object(), {'id': 'invalid'}, 'invalid'])
+    def test_malformed_catalog_model_does_not_abort_original_scan(tmp_path, bad):
+        svc = service(tmp_path); svc.center.models['malformed-fixture'] = bad
+        configure_comfy(svc, object_info(svc))
+>       job = scan(svc)
+              ^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:222: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_local_ai_discovery.py:44: in scan
+    job = svc.start_scan()
+          ^^^^^^^^^^^^^^^^
+app/model_center/discovery.py:324: in start_scan
+    return self._start_scan()
+           ^^^^^^^^^^^^^^^^^^
+app/model_center/discovery.py:337: in _start_scan
+    component_rows, _, definition_status = (catalog_requirements(self.center.models, self.center.components)
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+models = {'dasheng-audiogen': ModelDefinition(id='dasheng-audiogen', display_name='Dasheng AudioGen', family='DASHENG', variant...tus.LICENSE_REQUIRED: 'LICENSE_REQUIRED'>, metadata={}, identity_id=UUID('2ce0cc32-0ae7-42b5-b726-712830577807')), ...}
+components = {'flux2-dev-mistral-encoder': ModelComponentDefinition(component_id='flux2-dev-mistral-encoder', component_type='TEXT_...9', architecture='RIFE49', version='4.9', format='PYTORCH', precision='FP32', hash='', compatible_models=('rife-49',))}
+
+    def catalog_requirements(models, components):
+        """Read the original ModelCenter owner under its caller-held config lock.
+    
+    The private identities include all bounded component-definition dimensions so
+    configuration changes invalidate the original consent receipt. They grant no
+    compatibility, install or inference assertion and are never returned to clients.
+    """
+        rows, identities, status = [], [], 'COMPLETE'
+        if len(models) > MAX_CATALOG_MODELS: status = 'BOUNDED'
+        for model in islice(models.values(), MAX_CATALOG_MODELS):
+>           if not model.components: continue
+                   ^^^^^^^^^^^^^^^^
+E           AttributeError: 'NoneType' object has no attribute 'components'
+
+app/model_center/discovery_prerequisites.py:42: AttributeError
+_______ test_malformed_catalog_model_does_not_abort_original_scan[bad1] ________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-5/test_malformed_catalog_model_d1')
+bad = <object object at 0x7f15fd075650>
+
+    @pytest.mark.parametrize('bad', [None, object(), {'id': 'invalid'}, 'invalid'])
+    def test_malformed_catalog_model_does_not_abort_original_scan(tmp_path, bad):
+        svc = service(tmp_path); svc.center.models['malformed-fixture'] = bad
+        configure_comfy(svc, object_info(svc))
+>       job = scan(svc)
+              ^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:222: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_local_ai_discovery.py:44: in scan
+    job = svc.start_scan()
+          ^^^^^^^^^^^^^^^^
+app/model_center/discovery.py:324: in start_scan
+    return self._start_scan()
+           ^^^^^^^^^^^^^^^^^^
+app/model_center/discovery.py:337: in _start_scan
+    component_rows, _, definition_status = (catalog_requirements(self.center.models, self.center.components)
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+models = {'dasheng-audiogen': ModelDefinition(id='dasheng-audiogen', display_name='Dasheng AudioGen', family='DASHENG', variant...tus.LICENSE_REQUIRED: 'LICENSE_REQUIRED'>, metadata={}, identity_id=UUID('2ce0cc32-0ae7-42b5-b726-712830577807')), ...}
+components = {'flux2-dev-mistral-encoder': ModelComponentDefinition(component_id='flux2-dev-mistral-encoder', component_type='TEXT_...9', architecture='RIFE49', version='4.9', format='PYTORCH', precision='FP32', hash='', compatible_models=('rife-49',))}
+
+    def catalog_requirements(models, components):
+        """Read the original ModelCenter owner under its caller-held config lock.
+    
+    The private identities include all bounded component-definition dimensions so
+    configuration changes invalidate the original consent receipt. They grant no
+    compatibility, install or inference assertion and are never returned to clients.
+    """
+        rows, identities, status = [], [], 'COMPLETE'
+        if len(models) > MAX_CATALOG_MODELS: status = 'BOUNDED'
+        for model in islice(models.values(), MAX_CATALOG_MODELS):
+>           if not model.components: continue
+                   ^^^^^^^^^^^^^^^^
+E           AttributeError: 'object' object has no attribute 'components'
+
+app/model_center/discovery_prerequisites.py:42: AttributeError
+_______ test_malformed_catalog_model_does_not_abort_original_scan[bad2] ________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-5/test_malformed_catalog_model_d2')
+bad = {'id': 'invalid'}
+
+    @pytest.mark.parametrize('bad', [None, object(), {'id': 'invalid'}, 'invalid'])
+    def test_malformed_catalog_model_does_not_abort_original_scan(tmp_path, bad):
+        svc = service(tmp_path); svc.center.models['malformed-fixture'] = bad
+        configure_comfy(svc, object_info(svc))
+>       job = scan(svc)
+              ^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:222: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_local_ai_discovery.py:44: in scan
+    job = svc.start_scan()
+          ^^^^^^^^^^^^^^^^
+app/model_center/discovery.py:324: in start_scan
+    return self._start_scan()
+           ^^^^^^^^^^^^^^^^^^
+app/model_center/discovery.py:337: in _start_scan
+    component_rows, _, definition_status = (catalog_requirements(self.center.models, self.center.components)
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+models = {'dasheng-audiogen': ModelDefinition(id='dasheng-audiogen', display_name='Dasheng AudioGen', family='DASHENG', variant...tus.LICENSE_REQUIRED: 'LICENSE_REQUIRED'>, metadata={}, identity_id=UUID('2ce0cc32-0ae7-42b5-b726-712830577807')), ...}
+components = {'flux2-dev-mistral-encoder': ModelComponentDefinition(component_id='flux2-dev-mistral-encoder', component_type='TEXT_...9', architecture='RIFE49', version='4.9', format='PYTORCH', precision='FP32', hash='', compatible_models=('rife-49',))}
+
+    def catalog_requirements(models, components):
+        """Read the original ModelCenter owner under its caller-held config lock.
+    
+    The private identities include all bounded component-definition dimensions so
+    configuration changes invalidate the original consent receipt. They grant no
+    compatibility, install or inference assertion and are never returned to clients.
+    """
+        rows, identities, status = [], [], 'COMPLETE'
+        if len(models) > MAX_CATALOG_MODELS: status = 'BOUNDED'
+        for model in islice(models.values(), MAX_CATALOG_MODELS):
+>           if not model.components: continue
+                   ^^^^^^^^^^^^^^^^
+E           AttributeError: 'dict' object has no attribute 'components'
+
+app/model_center/discovery_prerequisites.py:42: AttributeError
+______ test_malformed_catalog_model_does_not_abort_original_scan[invalid] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-5/test_malformed_catalog_model_d3')
+bad = 'invalid'
+
+    @pytest.mark.parametrize('bad', [None, object(), {'id': 'invalid'}, 'invalid'])
+    def test_malformed_catalog_model_does_not_abort_original_scan(tmp_path, bad):
+        svc = service(tmp_path); svc.center.models['malformed-fixture'] = bad
+        configure_comfy(svc, object_info(svc))
+>       job = scan(svc)
+              ^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:222: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_local_ai_discovery.py:44: in scan
+    job = svc.start_scan()
+          ^^^^^^^^^^^^^^^^
+app/model_center/discovery.py:324: in start_scan
+    return self._start_scan()
+           ^^^^^^^^^^^^^^^^^^
+app/model_center/discovery.py:337: in _start_scan
+    component_rows, _, definition_status = (catalog_requirements(self.center.models, self.center.components)
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+models = {'dasheng-audiogen': ModelDefinition(id='dasheng-audiogen', display_name='Dasheng AudioGen', family='DASHENG', variant...tus.LICENSE_REQUIRED: 'LICENSE_REQUIRED'>, metadata={}, identity_id=UUID('2ce0cc32-0ae7-42b5-b726-712830577807')), ...}
+components = {'flux2-dev-mistral-encoder': ModelComponentDefinition(component_id='flux2-dev-mistral-encoder', component_type='TEXT_...9', architecture='RIFE49', version='4.9', format='PYTORCH', precision='FP32', hash='', compatible_models=('rife-49',))}
+
+    def catalog_requirements(models, components):
+        """Read the original ModelCenter owner under its caller-held config lock.
+    
+    The private identities include all bounded component-definition dimensions so
+    configuration changes invalidate the original consent receipt. They grant no
+    compatibility, install or inference assertion and are never returned to clients.
+    """
+        rows, identities, status = [], [], 'COMPLETE'
+        if len(models) > MAX_CATALOG_MODELS: status = 'BOUNDED'
+        for model in islice(models.values(), MAX_CATALOG_MODELS):
+>           if not model.components: continue
+                   ^^^^^^^^^^^^^^^^
+E           AttributeError: 'str' object has no attribute 'components'
+
+app/model_center/discovery_prerequisites.py:42: AttributeError
+_ test_duplicate_component_requirements_are_reported_once_with_malformed_status _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-5/test_duplicate_component_requi0')
+
+    def test_duplicate_component_requirements_are_reported_once_with_malformed_status(tmp_path):
+        svc = service(tmp_path); model = svc.center.models['flux2-dev']
+        svc.center.models[model.id] = replace(model, components=model.components * 2)
+        report = scan(svc)['workflow_prerequisites']
+>       assert report['definition_status'] == 'MALFORMED'
+E       AssertionError: assert 'COMPLETE' == 'MALFORMED'
+E         
+E         - MALFORMED
+E         + COMPLETE
+
+tests/test_v2_discovery_prerequisites.py:240: AssertionError
+_____ test_invalid_system_stats_cannot_certify_complete_workflow_evidence ______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-5/test_invalid_system_stats_cann0')
+
+    def test_invalid_system_stats_cannot_certify_complete_workflow_evidence(tmp_path):
+        svc = service(tmp_path); configure_comfy(svc, object_info(svc))
+        svc.client.payloads[(ENDPOINT, '/system_stats')] = []
+        row = workflow(scan(svc))
+>       assert row['evidence_status'] == 'MALFORMED'
+E       AssertionError: assert 'COMPLETE' == 'MALFORMED'
+E         
+E         - MALFORMED
+E         + COMPLETE
+
+tests/test_v2_discovery_prerequisites.py:275: AssertionError
+________ test_invalid_json_transport_is_explicit_malformed_evidence[{] _________
+
+self = <app.model_center.discovery_probes.LocalProbeClient object at 0x7f15f74f5040>
+endpoint = 'http://127.0.0.1:8188', path = '/object_info'
+
+    def json(self, endpoint: str, path: str, *, body: dict | None = None) -> Any:
+        endpoint = local_endpoint(endpoint)
+        if not path.startswith('/') or path.startswith('//') or any(c in path for c in '?%#\\') or '..' in path.split('/'):
+            raise ProbeFailure('LOCAL_AI_PROBE_PATH_REJECTED')
+        request = urllib.request.Request(endpoint + path, data=json.dumps(body).encode() if body is not None else None,
+                                         headers={'Content-Type': 'application/json', 'Accept': 'application/json'})
+        try:
+            with self.open(request, timeout=self.timeout) as response:
+                if not 200 <= response.status < 300:
+                    raise ProbeFailure('LOCAL_AI_HTTP_UNAVAILABLE')
+                deadline = time.monotonic() + self.timeout
+                chunks = bytearray()
+                read = getattr(response, 'read1', response.read)
+                while True:
+                    if time.monotonic() >= deadline:
+                        raise ProbeFailure('LOCAL_AI_PROBE_TIMEOUT')
+                    block = read(min(65536, self.max_response_bytes + 1 - len(chunks)))
+                    if not block: break
+                    chunks.extend(block)
+                    if len(chunks) > self.max_response_bytes:
+                        raise ProbeFailure('LOCAL_AI_RESPONSE_TOO_LARGE')
+                payload = bytes(chunks)
+                def reject_constant(_value): raise ValueError('non-finite JSON')
+                def unique_pairs(pairs):
+                    value = {}
+                    for key, item in pairs:
+                        if key in value: raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
+                        value[key] = item
+                    return value
+>               result = json.loads(payload, parse_constant=reject_constant, object_pairs_hook=unique_pairs)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+app/model_center/discovery_probes.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py:359: in loads
+    return cls(**kw).decode(s)
+           ^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py:338: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <json.decoder.JSONDecoder object at 0x7f15f7465160>, s = '{', idx = 0
+
+    def raw_decode(self, s, idx=0):
+        """Decode a JSON document from ``s`` (a ``str`` beginning with
+        a JSON document) and return a 2-tuple of the Python
+        representation and the index in ``s`` where the document ended.
+    
+        This can be used to decode a JSON document from a string that may
+        have extraneous data at the end.
+    
+        """
+        try:
+>           obj, end = self.scan_once(s, idx)
+                       ^^^^^^^^^^^^^^^^^^^^^^
+E           json.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py:354: JSONDecodeError
+
+The above exception was the direct cause of the following exception:
+
+payload = b'{'
+
+    @pytest.mark.parametrize('payload', [b'{', b'{"x":NaN}', b'{"a":{},"a":{}}', b'\xff'])
+    def test_invalid_json_transport_is_explicit_malformed_evidence(payload):
+        class Response(io.BytesIO):
+            status = 200
+        client = LocalProbeClient(); client.open = lambda *args, **kwargs: Response(payload)
+        with pytest.raises(ProbeFailure, match='LOCAL_AI_INVALID_RESPONSE'):
+>           client.json(ENDPOINT, '/object_info')
+
+tests/test_v2_discovery_prerequisites.py:285: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.model_center.discovery_probes.LocalProbeClient object at 0x7f15f74f5040>
+endpoint = 'http://127.0.0.1:8188', path = '/object_info'
+
+    def json(self, endpoint: str, path: str, *, body: dict | None = None) -> Any:
+        endpoint = local_endpoint(endpoint)
+        if not path.startswith('/') or path.startswith('//') or any(c in path for c in '?%#\\') or '..' in path.split('/'):
+            raise ProbeFailure('LOCAL_AI_PROBE_PATH_REJECTED')
+        request = urllib.request.Request(endpoint + path, data=json.dumps(body).encode() if body is not None else None,
+                                         headers={'Content-Type': 'application/json', 'Accept': 'application/json'})
+        try:
+            with self.open(request, timeout=self.timeout) as response:
+                if not 200 <= response.status < 300:
+                    raise ProbeFailure('LOCAL_AI_HTTP_UNAVAILABLE')
+                deadline = time.monotonic() + self.timeout
+                chunks = bytearray()
+                read = getattr(response, 'read1', response.read)
+                while True:
+                    if time.monotonic() >= deadline:
+                        raise ProbeFailure('LOCAL_AI_PROBE_TIMEOUT')
+                    block = read(min(65536, self.max_response_bytes + 1 - len(chunks)))
+                    if not block: break
+                    chunks.extend(block)
+                    if len(chunks) > self.max_response_bytes:
+                        raise ProbeFailure('LOCAL_AI_RESPONSE_TOO_LARGE')
+                payload = bytes(chunks)
+                def reject_constant(_value): raise ValueError('non-finite JSON')
+                def unique_pairs(pairs):
+                    value = {}
+                    for key, item in pairs:
+                        if key in value: raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
+                        value[key] = item
+                    return value
+                result = json.loads(payload, parse_constant=reject_constant, object_pairs_hook=unique_pairs)
+                if not isinstance(result, (dict, list)):
+                    raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
+                return result
+        except ProbeFailure:
+            raise
+        except TimeoutError as exc:
+            raise ProbeFailure('LOCAL_AI_PROBE_TIMEOUT') from exc
+        except Exception as exc:
+>           raise ProbeFailure('LOCAL_AI_PROBE_UNAVAILABLE') from exc
+E           app.model_center.discovery_probes.ProbeFailure: LOCAL_AI_PROBE_UNAVAILABLE
+
+app/model_center/discovery_probes.py:74: ProbeFailure
+
+During handling of the above exception, another exception occurred:
+
+payload = b'{'
+
+    @pytest.mark.parametrize('payload', [b'{', b'{"x":NaN}', b'{"a":{},"a":{}}', b'\xff'])
+    def test_invalid_json_transport_is_explicit_malformed_evidence(payload):
+        class Response(io.BytesIO):
+            status = 200
+        client = LocalProbeClient(); client.open = lambda *args, **kwargs: Response(payload)
+>       with pytest.raises(ProbeFailure, match='LOCAL_AI_INVALID_RESPONSE'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E        Regex: 'LOCAL_AI_INVALID_RESPONSE'
+E        Input: 'LOCAL_AI_PROBE_UNAVAILABLE'
+
+tests/test_v2_discovery_prerequisites.py:284: AssertionError
+____ test_invalid_json_transport_is_explicit_malformed_evidence[{"x":NaN}] _____
+
+self = <app.model_center.discovery_probes.LocalProbeClient object at 0x7f15f74c2030>
+endpoint = 'http://127.0.0.1:8188', path = '/object_info'
+
+    def json(self, endpoint: str, path: str, *, body: dict | None = None) -> Any:
+        endpoint = local_endpoint(endpoint)
+        if not path.startswith('/') or path.startswith('//') or any(c in path for c in '?%#\\') or '..' in path.split('/'):
+            raise ProbeFailure('LOCAL_AI_PROBE_PATH_REJECTED')
+        request = urllib.request.Request(endpoint + path, data=json.dumps(body).encode() if body is not None else None,
+                                         headers={'Content-Type': 'application/json', 'Accept': 'application/json'})
+        try:
+            with self.open(request, timeout=self.timeout) as response:
+                if not 200 <= response.status < 300:
+                    raise ProbeFailure('LOCAL_AI_HTTP_UNAVAILABLE')
+                deadline = time.monotonic() + self.timeout
+                chunks = bytearray()
+                read = getattr(response, 'read1', response.read)
+                while True:
+                    if time.monotonic() >= deadline:
+                        raise ProbeFailure('LOCAL_AI_PROBE_TIMEOUT')
+                    block = read(min(65536, self.max_response_bytes + 1 - len(chunks)))
+                    if not block: break
+                    chunks.extend(block)
+                    if len(chunks) > self.max_response_bytes:
+                        raise ProbeFailure('LOCAL_AI_RESPONSE_TOO_LARGE')
+                payload = bytes(chunks)
+                def reject_constant(_value): raise ValueError('non-finite JSON')
+                def unique_pairs(pairs):
+                    value = {}
+                    for key, item in pairs:
+                        if key in value: raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
+                        value[key] = item
+                    return value
+>               result = json.loads(payload, parse_constant=reject_constant, object_pairs_hook=unique_pairs)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+app/model_center/discovery_probes.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py:359: in loads
+    return cls(**kw).decode(s)
+           ^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py:338: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py:354: in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+_value = 'NaN'
+
+>   def reject_constant(_value): raise ValueError('non-finite JSON')
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   ValueError: non-finite JSON
+
+app/model_center/discovery_probes.py:58: ValueError
+
+The above exception was the direct cause of the following exception:
+
+payload = b'{"x":NaN}'
+
+    @pytest.mark.parametrize('payload', [b'{', b'{"x":NaN}', b'{"a":{},"a":{}}', b'\xff'])
+    def test_invalid_json_transport_is_explicit_malformed_evidence(payload):
+        class Response(io.BytesIO):
+            status = 200
+        client = LocalProbeClient(); client.open = lambda *args, **kwargs: Response(payload)
+        with pytest.raises(ProbeFailure, match='LOCAL_AI_INVALID_RESPONSE'):
+>           client.json(ENDPOINT, '/object_info')
+
+tests/test_v2_discovery_prerequisites.py:285: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.model_center.discovery_probes.LocalProbeClient object at 0x7f15f74c2030>
+endpoint = 'http://127.0.0.1:8188', path = '/object_info'
+
+    def json(self, endpoint: str, path: str, *, body: dict | None = None) -> Any:
+        endpoint = local_endpoint(endpoint)
+        if not path.startswith('/') or path.startswith('//') or any(c in path for c in '?%#\\') or '..' in path.split('/'):
+            raise ProbeFailure('LOCAL_AI_PROBE_PATH_REJECTED')
+        request = urllib.request.Request(endpoint + path, data=json.dumps(body).encode() if body is not None else None,
+                                         headers={'Content-Type': 'application/json', 'Accept': 'application/json'})
+        try:
+            with self.open(request, timeout=self.timeout) as response:
+                if not 200 <= response.status < 300:
+                    raise ProbeFailure('LOCAL_AI_HTTP_UNAVAILABLE')
+                deadline = time.monotonic() + self.timeout
+                chunks = bytearray()
+                read = getattr(response, 'read1', response.read)
+                while True:
+                    if time.monotonic() >= deadline:
+                        raise ProbeFailure('LOCAL_AI_PROBE_TIMEOUT')
+                    block = read(min(65536, self.max_response_bytes + 1 - len(chunks)))
+                    if not block: break
+                    chunks.extend(block)
+                    if len(chunks) > self.max_response_bytes:
+                        raise ProbeFailure('LOCAL_AI_RESPONSE_TOO_LARGE')
+                payload = bytes(chunks)
+                def reject_constant(_value): raise ValueError('non-finite JSON')
+                def unique_pairs(pairs):
+                    value = {}
+                    for key, item in pairs:
+                        if key in value: raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
+                        value[key] = item
+                    return value
+                result = json.loads(payload, parse_constant=reject_constant, object_pairs_hook=unique_pairs)
+                if not isinstance(result, (dict, list)):
+                    raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
+                return result
+        except ProbeFailure:
+            raise
+        except TimeoutError as exc:
+            raise ProbeFailure('LOCAL_AI_PROBE_TIMEOUT') from exc
+        except Exception as exc:
+>           raise ProbeFailure('LOCAL_AI_PROBE_UNAVAILABLE') from exc
+E           app.model_center.discovery_probes.ProbeFailure: LOCAL_AI_PROBE_UNAVAILABLE
+
+app/model_center/discovery_probes.py:74: ProbeFailure
+
+During handling of the above exception, another exception occurred:
+
+payload = b'{"x":NaN}'
+
+    @pytest.mark.parametrize('payload', [b'{', b'{"x":NaN}', b'{"a":{},"a":{}}', b'\xff'])
+    def test_invalid_json_transport_is_explicit_malformed_evidence(payload):
+        class Response(io.BytesIO):
+            status = 200
+        client = LocalProbeClient(); client.open = lambda *args, **kwargs: Response(payload)
+>       with pytest.raises(ProbeFailure, match='LOCAL_AI_INVALID_RESPONSE'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E        Regex: 'LOCAL_AI_INVALID_RESPONSE'
+E        Input: 'LOCAL_AI_PROBE_UNAVAILABLE'
+
+tests/test_v2_discovery_prerequisites.py:284: AssertionError
+_______ test_invalid_json_transport_is_explicit_malformed_evidence[\xff] _______
+
+self = <app.model_center.discovery_probes.LocalProbeClient object at 0x7f15f7467ce0>
+endpoint = 'http://127.0.0.1:8188', path = '/object_info'
+
+    def json(self, endpoint: str, path: str, *, body: dict | None = None) -> Any:
+        endpoint = local_endpoint(endpoint)
+        if not path.startswith('/') or path.startswith('//') or any(c in path for c in '?%#\\') or '..' in path.split('/'):
+            raise ProbeFailure('LOCAL_AI_PROBE_PATH_REJECTED')
+        request = urllib.request.Request(endpoint + path, data=json.dumps(body).encode() if body is not None else None,
+                                         headers={'Content-Type': 'application/json', 'Accept': 'application/json'})
+        try:
+            with self.open(request, timeout=self.timeout) as response:
+                if not 200 <= response.status < 300:
+                    raise ProbeFailure('LOCAL_AI_HTTP_UNAVAILABLE')
+                deadline = time.monotonic() + self.timeout
+                chunks = bytearray()
+                read = getattr(response, 'read1', response.read)
+                while True:
+                    if time.monotonic() >= deadline:
+                        raise ProbeFailure('LOCAL_AI_PROBE_TIMEOUT')
+                    block = read(min(65536, self.max_response_bytes + 1 - len(chunks)))
+                    if not block: break
+                    chunks.extend(block)
+                    if len(chunks) > self.max_response_bytes:
+                        raise ProbeFailure('LOCAL_AI_RESPONSE_TOO_LARGE')
+                payload = bytes(chunks)
+                def reject_constant(_value): raise ValueError('non-finite JSON')
+                def unique_pairs(pairs):
+                    value = {}
+                    for key, item in pairs:
+                        if key in value: raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
+                        value[key] = item
+                    return value
+>               result = json.loads(payload, parse_constant=reject_constant, object_pairs_hook=unique_pairs)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+app/model_center/discovery_probes.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+s = b'\xff', cls = None, object_hook = None, parse_float = None
+parse_int = None
+parse_constant = <function LocalProbeClient.json.<locals>.reject_constant at 0x7f15f699fe20>
+object_pairs_hook = <function LocalProbeClient.json.<locals>.unique_pairs at 0x7f15f699f420>
+kw = {}
+
+    def loads(s, *, cls=None, object_hook=None, parse_float=None,
+            parse_int=None, parse_constant=None, object_pairs_hook=None, **kw):
+        """Deserialize ``s`` (a ``str``, ``bytes`` or ``bytearray`` instance
+        containing a JSON document) to a Python object.
+    
+        ``object_hook`` is an optional function that will be called with the
+        result of any object literal decode (a ``dict``). The return value of
+        ``object_hook`` will be used instead of the ``dict``. This feature
+        can be used to implement custom decoders (e.g. JSON-RPC class hinting).
+    
+        ``object_pairs_hook`` is an optional function that will be called with the
+        result of any object literal decoded with an ordered list of pairs.  The
+        return value of ``object_pairs_hook`` will be used instead of the ``dict``.
+        This feature can be used to implement custom decoders.  If ``object_hook``
+        is also defined, the ``object_pairs_hook`` takes priority.
+    
+        ``parse_float``, if specified, will be called with the string
+        of every JSON float to be decoded. By default this is equivalent to
+        float(num_str). This can be used to use another datatype or parser
+        for JSON floats (e.g. decimal.Decimal).
+    
+        ``parse_int``, if specified, will be called with the string
+        of every JSON int to be decoded. By default this is equivalent to
+        int(num_str). This can be used to use another datatype or parser
+        for JSON integers (e.g. float).
+    
+        ``parse_constant``, if specified, will be called with one of the
+        following strings: -Infinity, Infinity, NaN.
+        This can be used to raise an exception if invalid JSON numbers
+        are encountered.
+    
+        To use a custom ``JSONDecoder`` subclass, specify it with the ``cls``
+        kwarg; otherwise ``JSONDecoder`` is used.
+        """
+        if isinstance(s, str):
+            if s.startswith('\ufeff'):
+                raise JSONDecodeError("Unexpected UTF-8 BOM (decode using utf-8-sig)",
+                                      s, 0)
+        else:
+            if not isinstance(s, (bytes, bytearray)):
+                raise TypeError(f'the JSON object must be str, bytes or bytearray, '
+                                f'not {s.__class__.__name__}')
+>           s = s.decode(detect_encoding(s), 'surrogatepass')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py:341: UnicodeDecodeError
+
+The above exception was the direct cause of the following exception:
+
+payload = b'\xff'
+
+    @pytest.mark.parametrize('payload', [b'{', b'{"x":NaN}', b'{"a":{},"a":{}}', b'\xff'])
+    def test_invalid_json_transport_is_explicit_malformed_evidence(payload):
+        class Response(io.BytesIO):
+            status = 200
+        client = LocalProbeClient(); client.open = lambda *args, **kwargs: Response(payload)
+        with pytest.raises(ProbeFailure, match='LOCAL_AI_INVALID_RESPONSE'):
+>           client.json(ENDPOINT, '/object_info')
+
+tests/test_v2_discovery_prerequisites.py:285: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.model_center.discovery_probes.LocalProbeClient object at 0x7f15f7467ce0>
+endpoint = 'http://127.0.0.1:8188', path = '/object_info'
+
+    def json(self, endpoint: str, path: str, *, body: dict | None = None) -> Any:
+        endpoint = local_endpoint(endpoint)
+        if not path.startswith('/') or path.startswith('//') or any(c in path for c in '?%#\\') or '..' in path.split('/'):
+            raise ProbeFailure('LOCAL_AI_PROBE_PATH_REJECTED')
+        request = urllib.request.Request(endpoint + path, data=json.dumps(body).encode() if body is not None else None,
+                                         headers={'Content-Type': 'application/json', 'Accept': 'application/json'})
+        try:
+            with self.open(request, timeout=self.timeout) as response:
+                if not 200 <= response.status < 300:
+                    raise ProbeFailure('LOCAL_AI_HTTP_UNAVAILABLE')
+                deadline = time.monotonic() + self.timeout
+                chunks = bytearray()
+                read = getattr(response, 'read1', response.read)
+                while True:
+                    if time.monotonic() >= deadline:
+                        raise ProbeFailure('LOCAL_AI_PROBE_TIMEOUT')
+                    block = read(min(65536, self.max_response_bytes + 1 - len(chunks)))
+                    if not block: break
+                    chunks.extend(block)
+                    if len(chunks) > self.max_response_bytes:
+                        raise ProbeFailure('LOCAL_AI_RESPONSE_TOO_LARGE')
+                payload = bytes(chunks)
+                def reject_constant(_value): raise ValueError('non-finite JSON')
+                def unique_pairs(pairs):
+                    value = {}
+                    for key, item in pairs:
+                        if key in value: raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
+                        value[key] = item
+                    return value
+                result = json.loads(payload, parse_constant=reject_constant, object_pairs_hook=unique_pairs)
+                if not isinstance(result, (dict, list)):
+                    raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
+                return result
+        except ProbeFailure:
+            raise
+        except TimeoutError as exc:
+            raise ProbeFailure('LOCAL_AI_PROBE_TIMEOUT') from exc
+        except Exception as exc:
+>           raise ProbeFailure('LOCAL_AI_PROBE_UNAVAILABLE') from exc
+E           app.model_center.discovery_probes.ProbeFailure: LOCAL_AI_PROBE_UNAVAILABLE
+
+app/model_center/discovery_probes.py:74: ProbeFailure
+
+During handling of the above exception, another exception occurred:
+
+payload = b'\xff'
+
+    @pytest.mark.parametrize('payload', [b'{', b'{"x":NaN}', b'{"a":{},"a":{}}', b'\xff'])
+    def test_invalid_json_transport_is_explicit_malformed_evidence(payload):
+        class Response(io.BytesIO):
+            status = 200
+        client = LocalProbeClient(); client.open = lambda *args, **kwargs: Response(payload)
+>       with pytest.raises(ProbeFailure, match='LOCAL_AI_INVALID_RESPONSE'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E        Regex: 'LOCAL_AI_INVALID_RESPONSE'
+E        Input: 'LOCAL_AI_PROBE_UNAVAILABLE'
+
+tests/test_v2_discovery_prerequisites.py:284: AssertionError
+_______ test_deadline_after_object_info_returns_does_not_certify_absence _______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-5/test_deadline_after_object_inf0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f15f74f5730>
+
+    def test_deadline_after_object_info_returns_does_not_certify_absence(tmp_path, monkeypatch):
+        import app.model_center.discovery as discovery
+        svc = service(tmp_path); now = [0.0]
+        monkeypatch.setattr(discovery.time, 'monotonic', lambda: now[0])
+        svc.client.payloads[(ENDPOINT, '/system_stats')] = {}
+        def late(_body): now[0] = 46.0; return {}
+        svc.client.payloads[(ENDPOINT, '/object_info')] = late
+        job = {'id': 'direct-fixture', 'status': 'RUNNING', 'errors': [], 'runtimes': [], 'candidates': [],
+               'environment_schema_version': 2, 'roots': [], 'model_files': []}
+        from app.model_center.discovery_prerequisites import prerequisite_template
+        runtimes = [r for r in svc._runtimes() if r['type'] == 'COMFYUI']
+        job['workflow_prerequisites'] = {'schema_version': 1, 'scan_id': job['id'], 'scan_status': 'RUNNING',
+            **prerequisite_template(runtimes, svc.workflow_adapters, [], 'COMPLETE')}
+        svc._scan(job, runtimes, [], threading.Event())
+>       assert job['status'] == 'PARTIAL' and workflow(job)['evidence_status'] == 'BOUNDED'
+E       AssertionError: assert ('PARTIAL' == 'PARTIAL'
+E         
+E           PARTIAL and 'COMPLETE' == 'BOUNDED'
+E         
+E         - BOUNDED
+E         + COMPLETE)
+
+tests/test_v2_discovery_prerequisites.py:302: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_catalog_model_does_not_abort_original_scan[None]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_catalog_model_does_not_abort_original_scan[bad1]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_catalog_model_does_not_abort_original_scan[bad2]
+FAILED tests/test_v2_discovery_prerequisites.py::test_malformed_catalog_model_does_not_abort_original_scan[invalid]
+FAILED tests/test_v2_discovery_prerequisites.py::test_duplicate_component_requirements_are_reported_once_with_malformed_status
+FAILED tests/test_v2_discovery_prerequisites.py::test_invalid_system_stats_cannot_certify_complete_workflow_evidence
+FAILED tests/test_v2_discovery_prerequisites.py::test_invalid_json_transport_is_explicit_malformed_evidence[{]
+FAILED tests/test_v2_discovery_prerequisites.py::test_invalid_json_transport_is_explicit_malformed_evidence[{"x":NaN}]
+FAILED tests/test_v2_discovery_prerequisites.py::test_invalid_json_transport_is_explicit_malformed_evidence[\xff]
+FAILED tests/test_v2_discovery_prerequisites.py::test_deadline_after_object_info_returns_does_not_certify_absence
+10 failed, 57 passed, 1 warning in 12.48s

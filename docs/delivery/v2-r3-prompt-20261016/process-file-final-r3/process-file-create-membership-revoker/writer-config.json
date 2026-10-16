@@ -1,0 +1,22 @@
+{
+  "backend": "file",
+  "operation": "create",
+  "revocation": "membership",
+  "nid": "r3-i-auth-8d0398ff2e",
+  "workspace": "w-8d0398ff2e",
+  "branch": "b-8d0398ff2e",
+  "actor": "writer-8d0398ff2e",
+  "admin": "init-8d0398ff2e",
+  "assignment": "w-8d0398ff2e",
+  "url": "/api/projects/r3-i-auth-8d0398ff2e/studio/prompts",
+  "method": "POST",
+  "body": {
+    "text": "PRIVATE process authoring 中文 🙂\n",
+    "purpose": "IMAGE",
+    "origin": "MANUAL",
+    "request_id": "5caa411485ae4cf8955022ab20b0e5af"
+  },
+  "ipc": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-process-file-final-r3\\temp\\test_independent_process_revoc12\\process-file-create-membership-revoker",
+  "pause_writer": false,
+  "pause_revoker": true
+}

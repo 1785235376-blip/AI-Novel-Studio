@@ -1,0 +1,159 @@
+{
+  "config": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "frontend/playwright.v2-live.config.ts",
+      "--grep",
+      "real HTTP chapterless",
+      "--project",
+      "v2-live-chromium"
+    ],
+    "configFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/playwright.v2-live.config.ts",
+    "rootDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/m4d-export-http-final1",
+      "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch.",
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4d-export-http-final1/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/m4d-export-http-final1",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch.",
+          "actualWorkers": 1
+        },
+        "id": "v2-live-chromium",
+        "name": "v2-live-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-creative-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4d-export-http-final1/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/m4d-export-http-final1",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch.",
+          "actualWorkers": 1
+        },
+        "id": "v1-chromium",
+        "name": "v1-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-creative-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4d-export-http-final1/junit.xml"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4d-export-http-final1/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "v2-creative-live.spec.ts",
+      "file": "v2-creative-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real HTTP chapterless screenplay format bytes preserve the saved owner and version fences",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1877,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T18:47:46.686Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "http-export-receipts",
+                      "contentType": "application/json",
+                      "body": "eyJ2ZXJpZmljYXRpb24iOiJSZWFsIEhUVFAvRmlsZTsgYnJvd3NlciBsYXVuY2ggaXMgc2VwYXJhdGUiLCJyZWNlaXB0cyI6W3siZm9ybWF0IjoiZm91bnRhaW4iLCJzaGEyNTYiOiJmYThjYWM0NDJkMzNlOThlZmE4MzI1MTI0ZjZmOGY1MmUwY2NhN2Y0NmEyYzYzZWFlYzA3NjgwMmY4OGQyOTI5IiwiYnl0ZXMiOjc5OX0seyJmb3JtYXQiOiJkb2N4Iiwic2hhMjU2IjoiNjZlMmNlY2VlODM4ZmE1OTViNDlmY2Q1YzI3NzUxYmQxNTRkMDBhNzk2NzM3ZDg1NWIxNjYwOTI5ZjM1YjQ0NyIsImJ5dGVzIjozMTYyfSx7ImZvcm1hdCI6Im1hcmtkb3duIiwic2hhMjU2IjoiM2VmOWRhNDNjMjhmYjc5MmU1ZGZkMTNjNWYzNWI5M2E2ZWZhNmE3NWQyZTk0ZTU0ZGZhZWRiNjQzMjIzYWZmNiIsImJ5dGVzIjo4MDF9XSwibW9kZWxfY2FsbGVkIjpmYWxzZX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-dbc7735f30d9007eecf5",
+          "file": "v2-creative-live.spec.ts",
+          "line": 454,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-10T18:47:32.792Z",
+    "duration": 15886.055,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

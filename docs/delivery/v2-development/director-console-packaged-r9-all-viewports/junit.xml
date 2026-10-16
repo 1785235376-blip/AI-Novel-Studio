@@ -1,0 +1,26 @@
+<testsuites id="" name="" tests="3" failures="0" skipped="0" errors="0" time="25.285067">
+<testsuite name="v2-director-console-live.spec.ts" timestamp="2026-10-16T15:07:31.227Z" hostname="director-1366x768" tests="1" failures="0" skipped="0" time="7.215" errors="0">
+<testcase name="real File Director graph participant saves, reopens and refuses a changed source" classname="v2-director-console-live.spec.ts" time="7.215">
+<properties>
+<property name="verification" value="Actual File owner, HTTP routes, rendered React and installed Edge. Authored synthetic text only; no response mocks, model inference or provider calls.">
+</property>
+</properties>
+</testcase>
+</testsuite>
+<testsuite name="v2-director-console-live.spec.ts" timestamp="2026-10-16T15:07:31.227Z" hostname="director-1440x900" tests="1" failures="0" skipped="0" time="7.153" errors="0">
+<testcase name="real File Director graph participant saves, reopens and refuses a changed source" classname="v2-director-console-live.spec.ts" time="7.153">
+<properties>
+<property name="verification" value="Actual File owner, HTTP routes, rendered React and installed Edge. Authored synthetic text only; no response mocks, model inference or provider calls.">
+</property>
+</properties>
+</testcase>
+</testsuite>
+<testsuite name="v2-director-console-live.spec.ts" timestamp="2026-10-16T15:07:31.227Z" hostname="director-1920x1080" tests="1" failures="0" skipped="0" time="7.592" errors="0">
+<testcase name="real File Director graph participant saves, reopens and refuses a changed source" classname="v2-director-console-live.spec.ts" time="7.592">
+<properties>
+<property name="verification" value="Actual File owner, HTTP routes, rendered React and installed Edge. Authored synthetic text only; no response mocks, model inference or provider calls.">
+</property>
+</properties>
+</testcase>
+</testsuite>
+</testsuites>

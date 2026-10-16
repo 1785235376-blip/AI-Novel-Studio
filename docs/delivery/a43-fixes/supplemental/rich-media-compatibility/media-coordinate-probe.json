@@ -1,0 +1,23 @@
+[
+  {
+    "kind": "image",
+    "coordinate_text": "前文\n后文",
+    "warning": "Editor coordinate projection excludes non-text media; export projection retains media descriptions and omission markers.",
+    "unsupported_pm_atom": true,
+    "selection_crossing_atom_denied": true
+  },
+  {
+    "kind": "audio",
+    "coordinate_text": "前文\n后文",
+    "warning": "Editor coordinate projection excludes non-text media; export projection retains media descriptions and omission markers.",
+    "unsupported_pm_atom": true,
+    "selection_crossing_atom_denied": true
+  },
+  {
+    "kind": "video",
+    "coordinate_text": "前文\n后文",
+    "warning": "Editor coordinate projection excludes non-text media; export projection retains media descriptions and omission markers.",
+    "unsupported_pm_atom": true,
+    "selection_crossing_atom_denied": true
+  }
+]

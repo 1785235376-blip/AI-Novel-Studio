@@ -1,0 +1,32 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ❯ src/AppModuleNavigationIntent.test.tsx (34 tests | 1 failed) 2282ms
+   × App module navigation during delayed original overview > keeps the explicitly opened CreativeWorkspace on NOVEL without requiring another top-level tab click 66ms
+     → expected 'false' to be 'true' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 33 passed (34)
+   Start at  02:59:16
+   Duration  5.65s (transform 1.80s, setup 11ms, collect 2.79s, tests 2.28s, environment 381ms, prepare 53ms)
+
+JSON report written to D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-navigation-intent-20261017/navigation-intent-mounted-creative-entry-red-r2.vitest.json
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/AppModuleNavigationIntent.test.tsx > App module navigation during delayed original overview > keeps the explicitly opened CreativeWorkspace on NOVEL without requiring another top-level tab click
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ selected src/AppModuleNavigationIntent.test.tsx:58:83
+     56| }
+     57| const tab = (name: string) => within(screen.getByRole('tablist', { nam…
+     58| function selected(name: string) { expect(tab(name).getAttribute('aria-…
+       |                                                                                   ^
+     59| async function request(index = 0) { await waitFor(() => expect(held.le…
+     60| async function release(row: HeldOverview, settleCurrent = true, value …
+ ❯ src/AppModuleNavigationIntent.test.tsx:127:29
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

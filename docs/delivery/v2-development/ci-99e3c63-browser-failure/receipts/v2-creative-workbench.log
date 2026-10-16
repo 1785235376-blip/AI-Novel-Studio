@@ -1,0 +1,10 @@
+
+Running 5 tests using 1 worker
+
+  ✓  1 [chromium] › tests/visual/creative-workbench.spec.ts:49:1 › V2 remains off with no creative API requests (3.4s)
+  ✓  2 [chromium] › tests/visual/creative-workbench.spec.ts:51:1 › keyboard stages and cancelled exit preserve unsaved creative content (1.9s)
+  ✓  3 [chromium] › tests/visual/creative-workbench.spec.ts:53:117 › V2 shared-shell geometry 1366x768 (1.7s)
+  ✓  4 [chromium] › tests/visual/creative-workbench.spec.ts:53:117 › V2 shared-shell geometry 1440x900 (1.7s)
+  ✓  5 [chromium] › tests/visual/creative-workbench.spec.ts:53:117 › V2 shared-shell geometry 1920x1080 (2.1s)
+
+  5 passed (12.1s)

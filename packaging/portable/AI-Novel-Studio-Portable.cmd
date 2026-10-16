@@ -23,9 +23,10 @@ pushd "%APPLICATION_ROOT%\Backend" >nul 2>&1
 if errorlevel 1 goto :launch_failed
 
 rem -I keeps the bundled Python isolated from user site packages and PYTHONPATH.
+rem -B prevents imports from changing the installed payload's bytecode files.
 rem Do not append arbitrary command-line arguments: the entry point is fixed to
 rem the staged application root and cannot be redirected to another payload.
-"%PYTHON%" -I -m app.packaging.packaged_desktop_launcher --application-root "%APPLICATION_ROOT%"
+"%PYTHON%" -B -I -m app.packaging.packaged_desktop_launcher --application-root "%APPLICATION_ROOT%"
 set "EXIT_CODE=%ERRORLEVEL%"
 popd >nul 2>&1
 exit /b %EXIT_CODE%

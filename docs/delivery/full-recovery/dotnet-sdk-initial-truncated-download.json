@@ -1,0 +1,6 @@
+{
+  "bytes": 285082786,
+  "sha512": "701bf5459ffbe59d6d337b44fcb472489ed95f71298ab8cd9852a5ddc5465225352423779efb623641a2bb6d1e4339c9574be7f82143898be2ed5f48d9066205",
+  "expected_bytes": 285090820,
+  "reason": "Initial response ended before official Content-Length; extraction refused"
+}

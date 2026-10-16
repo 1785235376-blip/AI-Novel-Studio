@@ -1,0 +1,412 @@
+{
+  "schema": "studio-production-expansion-image-runtime/1",
+  "date": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "branch": "feature/v2-narrative-platform",
+  "baseline_sha": "c911e549143d4b4187afc056079da30221aa1e97",
+  "code_test_input_tree": "6d101abef220e566b281b2983f390df79c866fd1",
+  "source_map_sha256": "22b3f31a046085974c60dc9b40bfa84597dc00dcf71b49da41b35940f6f8a035",
+  "source_files": 1924,
+  "stage_status": "IMPLEMENTED_BOUNDED_IMAGE_RUNTIME_SELECTED_CONTRACT_CHECKS",
+  "module_status": "PARTIAL",
+  "product_acceptance": "LOCAL_REQUIRED",
+  "code_test_hashes": [
+    {
+      "path": "app/asset_providers.py",
+      "sha256": "915580f7018f84d6ac536ada38cbf76993009c651d06c19959d870081fa8b61b"
+    },
+    {
+      "path": "app/creative/graph.py",
+      "sha256": "f9da58da41ab43ea5b6ad2c9854ff9e0d6fe54471beaf9d98f5e128aa78e040a"
+    },
+    {
+      "path": "app/creative/graph_api.py",
+      "sha256": "e5be547b402a598987867c7f08d65354f62c8a9cd52bb98444da549b25c120bd"
+    },
+    {
+      "path": "app/creative/graph_asset_inputs.py",
+      "sha256": "dc7e3d891405498db44916a637243334c3a57406b4de469fd47a9dc29d0d10f2"
+    },
+    {
+      "path": "app/creative/graph_execution.py",
+      "sha256": "019b0faee63482afdc67dd966a0f822677021eb0813323e29b47650f01477831"
+    },
+    {
+      "path": "app/creative/graph_image_nodes.py",
+      "sha256": "489d2a93ff1222cd6764c9b37dffb2e1e8c8cec057736aadb1a50f0d581635f7"
+    },
+    {
+      "path": "app/creative/graph_media_execution.py",
+      "sha256": "6f187617042cbe2d2668955f8e2e425e9dd64ef71550b5d46a3e3c05563d3c42"
+    },
+    {
+      "path": "app/creative/graph_models.py",
+      "sha256": "c737d19dc15958a52bd9f6f1fde0660812c019e0ac55605806a948c6ec44dbb9"
+    },
+    {
+      "path": "app/creative/production_execution.py",
+      "sha256": "39dad02f7601ce6a80fb245eddf633a2db34db20c55f8143428c020e4e397733"
+    },
+    {
+      "path": "app/creative/production_execution_models.py",
+      "sha256": "800623bffe2606aa1535183d38173a0f339b63068cdaad1a51591bb4ce4866e0"
+    },
+    {
+      "path": "app/model_center/discovery.py",
+      "sha256": "587086ee807d43307b442cbbacb37b561a22672fd32dce0e92d5f510b63c52ef"
+    },
+    {
+      "path": "app/model_center/discovery_bridge.py",
+      "sha256": "b9a6a8c63d9c574d0fc317bc6a950113811645bee4632b1a6dba463976e2dcf0"
+    },
+    {
+      "path": "app/model_center/discovery_scope.py",
+      "sha256": "25539e385058fa330ebcc7c9264772dd4debbb7e1356f585c6f33229aae86f07"
+    },
+    {
+      "path": "app/services/studio_image_execution.py",
+      "sha256": "8616a8d170e6bdbde754aea4d4a3a1c1ce4101a64ba5128a6237c3bd4aa6c745"
+    },
+    {
+      "path": "app/services/studio_image_provider_recipes.py",
+      "sha256": "59dbf78bafff0267637978e215ba59d9634c82cd34181425ebb3e02a5b0922b9"
+    },
+    {
+      "path": "app/services/studio_image_upscale_contract.py",
+      "sha256": "87b0fff886561d138be6dcde24e4a3c1ac8a58f62ee0408ea394827abf535a02"
+    },
+    {
+      "path": "frontend/src/creative/StudioGraphMediaExecutionPanel.tsx",
+      "sha256": "184c010dd0a2f634c85a62258b5b0b21b703642784acd68986b2029add26803f"
+    },
+    {
+      "path": "frontend/src/creative/StudioImageGraphEditor.test.tsx",
+      "sha256": "b5088d2b896079eb7f70870acd30e2a0cbfa03005151064cfb6c5633adecc689"
+    },
+    {
+      "path": "frontend/src/creative/StudioImageRuntimeProduction.test.tsx",
+      "sha256": "1aa762009842fc6432047cccb7fc826c624ab1b2a776f8266aa3388f32fa0e08"
+    },
+    {
+      "path": "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+      "sha256": "c05dbf05d0d8ded60b6dff14577c74012edc2d67026955ab123873360d4d78bf"
+    },
+    {
+      "path": "frontend/src/creative/fixtures/imageGraph.catalog.json",
+      "sha256": "196080739a01c1371e04e169fd56a9d69ba67e3c2ef16e17bd333329786a7019"
+    },
+    {
+      "path": "frontend/src/creative/graphDraft.ts",
+      "sha256": "086c75452b0e666168163e84905737a9ae2e7d9c020532cb954afada567b2df2"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphClient.ts",
+      "sha256": "596e55037dfe7500e94f763973aa28d3d57fc115c3ca42471ff1fd275d87594c"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "sha256": "e93a61d83cdf39ef64994622e63a41134604f02544e784539e4c1adda861114a"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphLabels.ts",
+      "sha256": "e54c9dcc02905d0188a8a8317565ccd62950fbf011d5791bd6cc96cecb0551aa"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphTypes.ts",
+      "sha256": "f8f2878261e7040b375fa416b114668c7becc829f6eee900daa74aef65d93529"
+    },
+    {
+      "path": "frontend/src/creative/studioImageGraph.testFixtures.ts",
+      "sha256": "76b70367f75d59f61b07a1c832823e8d687d6d51da09c24e8c7280389a67c21e"
+    },
+    {
+      "path": "frontend/src/creative/studioImageGraphClient.test.ts",
+      "sha256": "a7308feec9bb76707fae2b4bea8bfd267a2dd3a1f095283cc73a70c1d48fb96d"
+    },
+    {
+      "path": "frontend/src/creative/studioImageRuntimeContract.test.ts",
+      "sha256": "3d4252df30228f861422eed88e90e657bc8c409c42f4ac5be1085b0a50787b10"
+    },
+    {
+      "path": "frontend/src/creative/studioImageRuntimeContract.ts",
+      "sha256": "4871c817e758d9379a6dbd5c3ef1e3ba2526aa931ed19185a7a081e3a76f4882"
+    },
+    {
+      "path": "frontend/src/creative/studioProductionClient.ts",
+      "sha256": "1192d31d6df44683030e1026ab4935a4aeb334dbfc7e8d6d7fb64f82bb633132"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "sha256": "85b1abf5d5c63bcd0b5664c7062a852f4fe1cedc2906876bc46b6398229b2737"
+    },
+    {
+      "path": "frontend/src/creative/useStudioMediaExecution.ts",
+      "sha256": "3565cd5dfe1974c8e0d8bb3052bf220f234fb1270a525939e033a2ec57812cc6"
+    },
+    {
+      "path": "tests/test_v2_graph_image_api.py",
+      "sha256": "ac6d197f7af398f000661261594e9bb53bc83089d41d0f075ddc4940baec055e"
+    },
+    {
+      "path": "tests/test_v2_graph_image_nodes.py",
+      "sha256": "4fb8c4194c2fc33332b96d75cc0e31cf3079060c4d7dfbfaf632e3c00d8c0a6f"
+    },
+    {
+      "path": "tests/test_v2_image_discovery_capabilities.py",
+      "sha256": "d394bb27b6244766c903a4ff49d8701f66d9d337b9e660330f722aaa0536aab4"
+    },
+    {
+      "path": "tests/test_v2_image_provider_recipes.py",
+      "sha256": "8408b68ebc965a0b8510ca04e7aa04bc59955ca6c7f1e77516c00d7efce7b787"
+    },
+    {
+      "path": "tests/test_v2_image_runtime_api.py",
+      "sha256": "7cc7dbdb5fe043b5ac8f30b6c3858531dfa61420e61faafaf570666f197366d9"
+    },
+    {
+      "path": "tests/test_v2_image_runtime_owner.py",
+      "sha256": "80d44d1d019b9020c44d4b320b46cccc36e5bad4af85a08b325283cd585baf3d"
+    }
+  ],
+  "results": {
+    "file": {
+      "exit_code": 1,
+      "source_unchanged": true,
+      "counts": {
+        "tests": 1487,
+        "failures": 4,
+        "errors": 0,
+        "skipped": 357,
+        "passed": 1126
+      },
+      "junit_sha256": "8db1269d5c66b46443e197ee6f26cc088c141c06d0b0b3f867c35357556a9563",
+      "raw_private_log_sha256": "616fb79039af2f725b3f69ce9be1065b827f5550a506ee7f70751b0df0dac4da",
+      "retained_failures": [
+        {
+          "node": "tests.test_local_ai_discovery::test_scans_only_configured_roots_bounded_depth_and_no_link",
+          "kind": "failure"
+        },
+        {
+          "node": "tests.test_v2_discovery_scope::test_path_identity_changes_reject_before_probe[link]",
+          "kind": "failure"
+        },
+        {
+          "node": "tests.test_v2_discovery_scope::test_passive_hardware_never_calls_platform_processor",
+          "kind": "failure"
+        },
+        {
+          "node": "tests.test_v2_independent_media_job::test_media_job_is_explicit_bounded_and_has_real_official_prerequisites",
+          "kind": "failure"
+        }
+      ],
+      "new_image_cases": {
+        "passed": 136,
+        "failed": 0,
+        "skipped": 49
+      }
+    },
+    "pg": {
+      "exit_code": 1,
+      "source_unchanged": true,
+      "counts": {
+        "tests": 1486,
+        "failures": 3,
+        "errors": 0,
+        "skipped": 357,
+        "passed": 1126
+      },
+      "junit_sha256": "e097e36873413b1cdd1fa8d75aebaec9421ca2731ba909ad791b2c5c0dcd3a04",
+      "raw_private_log_sha256": "204f82ca827bce85e81a349b805e8b79b1421fd402d2ebea3af9b8416a424467",
+      "retained_failures": [
+        {
+          "node": "tests.test_v2_discovery_scope::test_path_identity_changes_reject_before_probe[link]",
+          "kind": "failure"
+        },
+        {
+          "node": "tests.test_v2_discovery_scope::test_passive_hardware_never_calls_platform_processor",
+          "kind": "failure"
+        },
+        {
+          "node": "tests.test_v2_independent_media_job::test_media_job_is_explicit_bounded_and_has_real_official_prerequisites",
+          "kind": "failure"
+        }
+      ],
+      "new_image_cases": {
+        "passed": 136,
+        "failed": 0,
+        "skipped": 49
+      },
+      "explicit_platform_not_run": [
+        "tests/test_local_ai_discovery.py::test_scans_only_configured_roots_bounded_depth_and_no_link"
+      ]
+    },
+    "frontend": {
+      "exit_code": 0,
+      "source_unchanged": true,
+      "counts": {
+        "tests": 2981,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 8,
+        "passed": 2973
+      },
+      "junit_sha256": "a0dab027906024f238d3f79db38b1ddbe075b64a39ae3f4ed9eabab7b40e5907",
+      "raw_private_log_sha256": "758f93980ce198371371283d33a07bbabf3319d6b5467d3531f01d050b4b0fe5",
+      "retained_failures": []
+    },
+    "types": {
+      "exit_code": 0,
+      "source_unchanged": true,
+      "counts": null,
+      "junit_sha256": null,
+      "raw_private_log_sha256": "4faae9ae8030661c5cd5bd53d80e9faf0feb94a23d9c2194bae8dbf89cc8f136",
+      "retained_failures": []
+    },
+    "build": {
+      "exit_code": 0,
+      "source_unchanged": true,
+      "counts": null,
+      "junit_sha256": null,
+      "raw_private_log_sha256": "1cb1907922c6231d875235751af6886ce05804a2c27909b3a4e3bb338c074b3a",
+      "retained_failures": []
+    },
+    "metadata": {
+      "exit_code": 1,
+      "source_unchanged": true,
+      "counts": {
+        "tests": 46,
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 44
+      },
+      "junit_sha256": "42a56e85e022cb9265a71fa3de36112ca147b10eb88d5d92a54fe10f1b20e987",
+      "raw_private_log_sha256": "5de48310076aef40fea91f0f77b389d519ef3b3cc8b07594cf6a9e74e6ee31ad",
+      "retained_failures": [
+        {
+          "node": ".github.ci.test_compact_staged_catalog::test_retained_symlink_is_rejected_before_generator",
+          "kind": "failure"
+        },
+        {
+          "node": ".github.ci.test_compact_staged_catalog::test_excluded_evidence_symlink_is_not_followed",
+          "kind": "failure"
+        }
+      ]
+    },
+    "tokens": {
+      "exit_code": 0,
+      "source_unchanged": true,
+      "files": 52,
+      "outer_capture_interrupted_by_transient_vite_config": true,
+      "original_receipt_status": "PASS"
+    }
+  },
+  "independent_supplements": [
+    {
+      "scope": "LinuxSupplement",
+      "exit_code": 0,
+      "counts": {
+        "tests": 3,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      "source_unchanged": true,
+      "windows_failure_reclassified": false,
+      "owned_native_temp_removed": true
+    },
+    {
+      "scope": "LinuxScopeSupplement",
+      "exit_code": 0,
+      "counts": {
+        "tests": 2,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      "source_unchanged": true,
+      "windows_failure_reclassified": false,
+      "owned_native_temp_removed": true
+    }
+  ],
+  "corrected_bash_prerequisite": {
+    "passed": 2,
+    "original_windows_failure_retained": true
+  },
+  "postgres": {
+    "fresh_database": true,
+    "database_objects_before_migrations": 0,
+    "original_migrations_applied": 20,
+    "version": "16.15",
+    "owned_cluster_stopped": true
+  },
+  "inventory": {
+    "api_operations": 2219,
+    "collected_nodes": 13627,
+    "frozen_baseline_nodes": 9151,
+    "collection_is_execution": false,
+    "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+    "v2_manifest_sha256": "53641a9b6904950eeec243e41b4ff646549203c7e6dc4ce6dd7a99294f445a79",
+    "original_generators_and_gates_unchanged": true
+  },
+  "retained_failure_groups": [
+    "initial private runner basetemp/Python/cwd prerequisites",
+    "old Graph label compatibility regression and code repair",
+    "old prerequisite report/probe-count regressions and code repairs",
+    "new test scope/read-only defaults/CPU-proof/exception premises corrected without changing original assertions",
+    "first inventory collection rejected concurrent catalog source drift",
+    "Windows symlink/sysconf prerequisites and first missing Bash evidence",
+    "token outer capture interrupted by transient Vite config; original token check passed unchanged"
+  ],
+  "ui_skill_checks": {
+    "original_playwright_shell_screenshots_and_geometry_passed": 7,
+    "screenshot_baselines_updated": false,
+    "new_control_visual_acceptance": "NOT_RUN",
+    "protected_shell_tokens_primitives_changed": false
+  },
+  "graphflow_incremental_index": "SUCCESS_AFTER_IMPLEMENTATION",
+  "upscale": "RESERVED_NOT_CONFIGURED_NOT_EXECUTABLE",
+  "deferred": [
+    "Windows final installation/Host/vault acceptance",
+    "GPU stress",
+    "actual image models and quality",
+    "outpaint/repair/upscale execution",
+    "native semantic reference adapters",
+    "Router finance",
+    "professional UI/UX",
+    "full hosted CI acceptance",
+    "Video and QingJian development"
+  ],
+  "no_model_download_or_start": true,
+  "no_paid_api": true,
+  "original_tests_assertions_skips_timeouts_preserved": true,
+  "raw_logs_database_environment_credentials_private_paths_published": false,
+  "draft_pr": 47,
+  "merge_or_release": false,
+  "publication_identity": "Verified separately after ordinary commit/push; no self-referential final SHA is invented",
+  "tool_versions": {
+    "python": "3.12.9",
+    "node": "22.14.0",
+    "postgres": "16.15",
+    "ffmpeg": "8.1.2"
+  },
+  "baseline_hosted_ci": {
+    "sha": "c911e549143d4b4187afc056079da30221aa1e97",
+    "runs": [
+      38410595591,
+      38410595471,
+      38410595805,
+      38410574210,
+      38410574643
+    ],
+    "jobs": 29,
+    "failure": 29,
+    "runner_id_zero": 29,
+    "empty_steps": 29,
+    "tests_executed": false,
+    "status": "BLOCKED_BEFORE_EXECUTION"
+  },
+  "completed_utc": "2026-10-13T16:05:25.296940+00:00",
+  "completion_local_date": "2026-10-14"
+}

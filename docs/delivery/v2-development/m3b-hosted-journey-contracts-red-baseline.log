@@ -1,0 +1,24 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ❯ src/ui/LocalAiBrowserJourneyContracts.test.tsx (0 test)
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  10:57:21
+   Duration  3.16s (transform 1.20s, setup 0ms, collect 0ms, tests 0ms, environment 658ms, prepare 112ms)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/ui/LocalAiBrowserJourneyContracts.test.tsx [ src/ui/LocalAiBrowserJourneyContracts.test.tsx ]
+TypeError: The URL must be of scheme file
+ ❯ src/ui/LocalAiBrowserJourneyContracts.test.tsx:20:35
+     18| vi.mock('./CapabilityStatusCenter', () => ({CapabilityStatusCenter: ()…
+     19| 
+     20| const filesJourney = readFileSync(fileURLToPath(new URL('../../tests/e…
+       |                                   ^
+     21| const legacyJourney = readFileSync(fileURLToPath(new URL('../../tests/…
+     22| const fetchMock = vi.fn();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

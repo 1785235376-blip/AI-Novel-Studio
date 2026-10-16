@@ -1,0 +1,2 @@
+src/production/productionWorkflowContract.test.ts(118,80): error TS2353: Object literal may only specify known properties, and 'workspace_id' does not exist in type '{ mode: string; novel_id: string; }'.
+src/production/productionWorkflowContract.test.ts(122,23): error TS2339: Property 'branch_id' does not exist on type '{ mode: string; novel_id: string; }'.

@@ -1,0 +1,26 @@
+{
+  "backend": "postgres",
+  "operation": "adopt",
+  "revocation": "membership",
+  "nid": "r3-i-auth-27dc399f29",
+  "workspace": "w-27dc399f29",
+  "branch": "b-27dc399f29",
+  "actor": "writer-27dc399f29",
+  "admin": "init-27dc399f29",
+  "assignment": "w-27dc399f29",
+  "url": "/api/projects/r3-i-auth-27dc399f29/studio/documents/b46362be-b051-4d6d-aa4d-97dec6dc9a62/shots/5513c656-5139-4b9f-818a-9b5c9f1c086c/prompt-adoption",
+  "method": "POST",
+  "body": {
+    "shot_id": "5513c656-5139-4b9f-818a-9b5c9f1c086c",
+    "family_id": "babe10dc-81c1-4cbf-8c2a-a92a94e71ce5",
+    "asset_id": "20968015-4a47-41f0-baa6-c177040551c9",
+    "revision": 1,
+    "expected_digest": "9d84a5ac50cf1087d3724b3999920cf709e93484be3f53f012b17736357a6296",
+    "expected_version": 1,
+    "expected_digest_target": "c442f6f0df55b1a5e6eff7c1a2d01cfade760afdd2bdec1e40f68192bca53536",
+    "request_id": "auth-adopt-8da35e60"
+  },
+  "ipc": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-combined-pg-final-r3\\temp\\test_independent_process_revoc15\\process-postgres-adopt-membership-revoker",
+  "pause_writer": false,
+  "pause_revoker": true
+}

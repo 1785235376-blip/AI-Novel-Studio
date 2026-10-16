@@ -1,0 +1,400 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ❯ src/ui/LocalAiWorkflowPrerequisites.test.tsx (63 tests | 5 failed) 1412ms
+   × workflow prerequisite semantic evidence validation > masks evidence without an unambiguous same-scan running ComfyUI runtime %j 35ms
+     → Cannot read properties of undefined (reading 'forEach')
+   × workflow prerequisite semantic evidence validation > masks evidence without an unambiguous same-scan running ComfyUI runtime {"id":"other","type":"COMFYUI","status":"RUNNING"} 21ms
+     → Unable to find an accessible element with the role "region" and name "本次扫描的工作流前置条件观察"
+
+There are no accessible roles. But there might be some inaccessible roles. If you wish to access them, then set the `hidden` option to `true`. Learn more about this here: https://testing-library.com/docs/dom-testing-library/api-queries#byrole
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+[36m</body>[39m
+   × workflow prerequisite semantic evidence validation > masks evidence without an unambiguous same-scan running ComfyUI runtime {"id":"comfy-a","type":"OLLAMA","status":"RUNNING"} 12ms
+     → scan?.runtimes.forEach is not a function
+   × workflow prerequisite semantic evidence validation > masks evidence without an unambiguous same-scan running ComfyUI runtime {"id":"comfy-a","type":"COMFYUI","status":"NOT_FOUND"} 15ms
+     → Unable to find an accessible element with the role "region" and name "本次扫描的工作流前置条件观察"
+
+There are no accessible roles. But there might be some inaccessible roles. If you wish to access them, then set the `hidden` option to `true`. Learn more about this here: https://testing-library.com/docs/dom-testing-library/api-queries#byrole
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+[36m</body>[39m
+   × workflow prerequisite semantic evidence validation > masks evidence without an unambiguous same-scan running ComfyUI runtime {"id":"comfy-a","type":"COMFYUI","status":"RUNNING"} 12ms
+     → scan?.runtimes.forEach is not a function
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 2 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+ Test Files  1 failed (1)
+      Tests  5 failed | 58 passed (63)
+     Errors  2 errors
+   Start at  11:04:20
+   Duration  3.05s (transform 294ms, setup 0ms, collect 477ms, tests 1.41s, environment 616ms, prepare 114ms)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > workflow prerequisite semantic evidence validation > masks evidence without an unambiguous same-scan running ComfyUI runtime %j
+Error: Uncaught [TypeError: Cannot read properties of undefined (reading 'forEach')]
+    at reportException (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12) TypeError: Cannot read properties of undefined (reading 'forEach')
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:353:9)
+    at renderWithHooks (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at updateFunctionComponent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19617:20)
+    at beginWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [TypeError: Cannot read properties of undefined (reading 'forEach')]
+    at reportException (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12) TypeError: Cannot read properties of undefined (reading 'forEach')
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:353:9)
+    at renderWithHooks (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at updateFunctionComponent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19617:20)
+    at beginWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <LocalAiDiscoveryContent> component:
+
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > workflow prerequisite semantic evidence validation > masks evidence without an unambiguous same-scan running ComfyUI runtime {"id":"other","type":"COMFYUI","status":"RUNNING"}
+Error: Uncaught [TypeError: scan?.runtimes.forEach is not a function]
+    at reportException (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12) TypeError: scan?.runtimes.forEach is not a function
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:353:18)
+    at renderWithHooks (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at updateFunctionComponent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19617:20)
+    at beginWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [TypeError: scan?.runtimes.forEach is not a function]
+    at reportException (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12) TypeError: scan?.runtimes.forEach is not a function
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:353:18)
+    at renderWithHooks (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at updateFunctionComponent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19617:20)
+    at beginWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <LocalAiDiscoveryContent> component:
+
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > workflow prerequisite semantic evidence validation > masks evidence without an unambiguous same-scan running ComfyUI runtime {"id":"comfy-a","type":"OLLAMA","status":"RUNNING"}
+Error: Uncaught [TypeError: scan?.runtimes.forEach is not a function]
+    at reportException (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12) TypeError: scan?.runtimes.forEach is not a function
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:353:18)
+    at renderWithHooks (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at updateFunctionComponent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19617:20)
+    at beginWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [TypeError: scan?.runtimes.forEach is not a function]
+    at reportException (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12) TypeError: scan?.runtimes.forEach is not a function
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:353:18)
+    at renderWithHooks (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at updateFunctionComponent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19617:20)
+    at beginWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <LocalAiDiscoveryContent> component:
+
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > workflow prerequisite semantic evidence validation > masks evidence without an unambiguous same-scan running ComfyUI runtime {"id":"comfy-a","type":"COMFYUI","status":"NOT_FOUND"}
+Error: Uncaught [TypeError: scan?.runtimes.forEach is not a function]
+    at reportException (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12) TypeError: scan?.runtimes.forEach is not a function
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:353:18)
+    at renderWithHooks (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at updateFunctionComponent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19617:20)
+    at beginWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [TypeError: scan?.runtimes.forEach is not a function]
+    at reportException (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12) TypeError: scan?.runtimes.forEach is not a function
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:353:18)
+    at renderWithHooks (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at updateFunctionComponent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19617:20)
+    at beginWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <LocalAiDiscoveryContent> component:
+
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > workflow prerequisite semantic evidence validation > masks evidence without an unambiguous same-scan running ComfyUI runtime {"id":"comfy-a","type":"COMFYUI","status":"RUNNING"}
+Error: Uncaught [TypeError: scan?.runtimes.forEach is not a function]
+    at reportException (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12) TypeError: scan?.runtimes.forEach is not a function
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:353:18)
+    at renderWithHooks (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at updateFunctionComponent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19617:20)
+    at beginWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [TypeError: scan?.runtimes.forEach is not a function]
+    at reportException (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12) TypeError: scan?.runtimes.forEach is not a function
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:353:18)
+    at renderWithHooks (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at updateFunctionComponent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19617:20)
+    at beginWork (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <LocalAiDiscoveryContent> component:
+
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/ui/LocalAiWorkflowPrerequisites.test.tsx > workflow prerequisite semantic evidence validation > masks evidence without an unambiguous same-scan running ComfyUI runtime %j
+TypeError: Cannot read properties of undefined (reading 'forEach')
+ ❯ LocalAiDiscoveryContent src/ui/LocalAiDiscovery.tsx:353:9
+
+ ❯ renderWithHooks node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ❯ updateFunctionComponent node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ❯ beginWork node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ❯ beginWork$1 node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ❯ performUnitOfWork node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ❯ workLoopSync node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ❯ renderRootSync node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26473:7
+ ❯ recoverFromConcurrentError node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25889:20
+ ❯ performSyncWorkOnRoot node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26135:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/ui/LocalAiWorkflowPrerequisites.test.tsx > workflow prerequisite semantic evidence validation > masks evidence without an unambiguous same-scan running ComfyUI runtime {"id":"other","type":"COMFYUI","status":"RUNNING"}
+ FAIL  src/ui/LocalAiWorkflowPrerequisites.test.tsx > workflow prerequisite semantic evidence validation > masks evidence without an unambiguous same-scan running ComfyUI runtime {"id":"comfy-a","type":"COMFYUI","status":"NOT_FOUND"}
+TestingLibraryElementError: Unable to find an accessible element with the role "region" and name "本次扫描的工作流前置条件观察"
+
+There are no accessible roles. But there might be some inaccessible roles. If you wish to access them, then set the `hidden` option to `true`. Learn more about this here: https://testing-library.com/docs/dom-testing-library/api-queries#byrole
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ evidenceView src/ui/LocalAiWorkflowPrerequisites.test.tsx:36:35
+     34| const response = (value: unknown, status = 200) => new Response(JSON.s…
+     35| const deferred = <T,>() => {let resolve!: (value: T) => void; const pr…
+     36| const evidenceView = () => screen.getByRole('region', {name: '本次扫描…
+       |                                   ^
+     37| const workflowRow = (name = '图像工作流 A') => within(evidenceView()).…
+     38| let currentSnapshot: LocalDiscoverySnapshot;
+ ❯ workflowRow src/ui/LocalAiWorkflowPrerequisites.test.tsx:37:50
+ ❯ src/ui/LocalAiWorkflowPrerequisites.test.tsx:226:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/ui/LocalAiWorkflowPrerequisites.test.tsx > workflow prerequisite semantic evidence validation > masks evidence without an unambiguous same-scan running ComfyUI runtime {"id":"comfy-a","type":"OLLAMA","status":"RUNNING"}
+ FAIL  src/ui/LocalAiWorkflowPrerequisites.test.tsx > workflow prerequisite semantic evidence validation > masks evidence without an unambiguous same-scan running ComfyUI runtime {"id":"comfy-a","type":"COMFYUI","status":"RUNNING"}
+TypeError: scan?.runtimes.forEach is not a function
+ ❯ LocalAiDiscoveryContent src/ui/LocalAiDiscovery.tsx:353:18
+
+ ❯ renderWithHooks node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ❯ updateFunctionComponent node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ❯ beginWork node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ❯ beginWork$1 node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ❯ performUnitOfWork node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ❯ workLoopSync node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ❯ renderRootSync node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26473:7
+ ❯ recoverFromConcurrentError node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25889:20
+ ❯ performSyncWorkOnRoot node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26135:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+TypeError: scan?.runtimes.forEach is not a function
+ ❯ LocalAiDiscoveryContent src/ui/LocalAiDiscovery.tsx:353:18
+
+ ❯ renderWithHooks node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ❯ updateFunctionComponent node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ❯ beginWork node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ❯ beginWork$1 node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ❯ performUnitOfWork node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ❯ workLoopSync node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ❯ renderRootSync node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26473:7
+ ❯ recoverFromConcurrentError node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25889:20
+ ❯ performSyncWorkOnRoot node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26135:20
+
+This error originated in "src/ui/LocalAiWorkflowPrerequisites.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "masks evidence without an unambiguous same-scan running ComfyUI runtime {"id":"other","type":"COMFYUI","status":"RUNNING"}". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+TypeError: scan?.runtimes.forEach is not a function
+ ❯ LocalAiDiscoveryContent src/ui/LocalAiDiscovery.tsx:353:18
+
+ ❯ renderWithHooks node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ❯ updateFunctionComponent node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ❯ beginWork node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ❯ beginWork$1 node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ❯ performUnitOfWork node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ❯ workLoopSync node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ❯ renderRootSync node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26473:7
+ ❯ recoverFromConcurrentError node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25889:20
+ ❯ performSyncWorkOnRoot node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26135:20
+
+This error originated in "src/ui/LocalAiWorkflowPrerequisites.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "masks evidence without an unambiguous same-scan running ComfyUI runtime {"id":"comfy-a","type":"COMFYUI","status":"NOT_FOUND"}". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+

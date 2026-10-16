@@ -1,0 +1,19 @@
+{
+  "boundary": "Original real two-process uvicorn/loopback TCP gate; synthetic documents; no mocked HTTP transport",
+  "project": "/tmp/ai-novel-full-recovery-j3hg2js6/project",
+  "arguments": [
+    "/tmp/ai-novel-full-recovery-j3hg2js6/venv/bin/python",
+    "-m",
+    "pytest",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=/tmp/ai-novel-full-recovery-j3hg2js6/sandbox-sync-tcp/pytest",
+    "-q",
+    "-ra",
+    "--tb=short",
+    "tests/test_r5_offline_sync_tcp.py",
+    "--junitxml=/tmp/ai-novel-full-recovery-j3hg2js6/receipts/file/sync-tcp.xml"
+  ],
+  "elapsed_seconds": 30.966,
+  "process_exitcode": 0
+}

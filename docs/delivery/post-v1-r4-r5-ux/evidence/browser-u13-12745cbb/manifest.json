@@ -1,0 +1,67 @@
+{
+  "source_sha": "12745cbb7785d744e8aa2b13324a38dea6017718",
+  "run_id": 37349416728,
+  "job_id": 111896188038,
+  "artifact_id": 11361283953,
+  "artifact_sha256": "f029729d6205bbb11973361d136fcf8aede1ca322cc6b605c284de696297f58a",
+  "whole_frontend_run": "FAILED_OTHER_JOURNEYS",
+  "u13_journeys": "PASSED",
+  "actual_platform": "Ubuntu GitHub runner; Playwright Desktop Chrome emulates a Windows user-agent, not Windows execution",
+  "physical_ime_os_latency": "NOT_RUN",
+  "samples": [
+    {
+      "name": "search-latency-500000.json",
+      "sha256": "26add8629b5bdd8c14810c6a853f75c48826b66113db7aa444f2161e254a4279",
+      "sample_count": 30,
+      "p50_ms": 199.40000000002328,
+      "p95_ms": 204.09999999997672,
+      "method": "Browser fetch start through JSON parse, real loopback File API",
+      "target_status": "PASS"
+    },
+    {
+      "name": "input-latency-500000.json",
+      "sha256": "24fca88f869561f37e3c77aafda80362782765808082d24740312929d340323c",
+      "sample_count": 30,
+      "p50_ms": 28.599999999976717,
+      "p95_ms": 36.59999999997672,
+      "method": "Trusted Chromium beforeinput to second requestAnimationFrame after input; rendering opportunity proxy, not OS/physical-display latency",
+      "target_status": "PASS"
+    },
+    {
+      "name": "input-latency-100000.json",
+      "sha256": "b571ad81dbf3b7e18a48c49d8e2326075575fefa15e513d703e48a390d02b0bc",
+      "sample_count": 30,
+      "p50_ms": 18.400000000023283,
+      "p95_ms": 27,
+      "method": "Trusted Chromium beforeinput to second requestAnimationFrame after input; rendering opportunity proxy, not OS/physical-display latency",
+      "target_status": "PASS"
+    },
+    {
+      "name": "search-latency-100000.json",
+      "sha256": "d9d20d58fc1c3b449c9bfeccfd75608f22280bc729efc4a057e053a1a89621d7",
+      "sample_count": 30,
+      "p50_ms": 60,
+      "p95_ms": 61.800000000046566,
+      "method": "Browser fetch start through JSON parse, real loopback File API",
+      "target_status": "PASS"
+    },
+    {
+      "name": "input-latency-1000000.json",
+      "sha256": "b2bbe75456733130e04beb565a8dbc481be62de636753dfd474cb6da8b52f521",
+      "sample_count": 30,
+      "p50_ms": 43.90000000002328,
+      "p95_ms": 46.899999999965075,
+      "method": "Trusted Chromium beforeinput to second requestAnimationFrame after input; rendering opportunity proxy, not OS/physical-display latency",
+      "target_status": "PASS"
+    },
+    {
+      "name": "search-latency-1000000.json",
+      "sha256": "2a05db05335598fd9a27eb9d12aafe8df10a1366d3b8a06fe7ffb628a03ca31a",
+      "sample_count": 30,
+      "p50_ms": 370.0999999999767,
+      "p95_ms": 381,
+      "method": "Browser fetch start through JSON parse, real loopback File API",
+      "target_status": "PASS"
+    }
+  ]
+}

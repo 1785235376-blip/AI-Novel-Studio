@@ -1,0 +1,6 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="8.690563000000001">
+<testsuite name="v2-prompt-adoption-ui-live.spec.ts" timestamp="2026-10-16T17:14:20.801Z" hostname="prompt-adoption-ui-1366x768" tests="1" failures="0" skipped="0" time="7.651" errors="0">
+<testcase name="isolated original button commits bound Prompt and reload preserves its exact source pin" classname="v2-prompt-adoption-ui-live.spec.ts" time="7.651">
+</testcase>
+</testsuite>
+</testsuites>

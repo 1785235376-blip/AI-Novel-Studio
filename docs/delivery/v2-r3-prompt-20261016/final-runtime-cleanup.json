@@ -1,0 +1,16 @@
+{
+  "verified_utc": "2026-10-16T16:44:57.4332338Z",
+  "postgres_status_exit": 3,
+  "postgres_running": false,
+  "expected_ports": [
+    8138,
+    5208,
+    50678
+  ],
+  "listeners": [],
+  "owned_final_process_workers_remaining": [],
+  "retained_databases": [
+    "v2_r3_prompt_20261016_final_r3",
+    "v2_r3_prompt_browser_20261016_final_r1"
+  ]
+}

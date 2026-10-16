@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-10-07T08:07:06.382901+00:00",
+  "kind": "STATIC_SOURCE_MAP_VALIDATION_NOT_RUNTIME_TEST",
+  "status": "PASS",
+  "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
+  "observed_checkpoint_sha": "90f211065fed2e2cd7c440365c949d954077bc50",
+  "final_sha": null,
+  "source_state": "ACTIVE_WORKTREE_NOT_FINAL_PIN",
+  "counts": {
+    "surfaces": 73,
+    "logical_areas": 10,
+    "exact_requirement_texts_and_source_lines": 406,
+    "ux_requirements": 24,
+    "creative_domains": 12,
+    "creative_lifecycle_dimensions_each": 13,
+    "tsx_components": 156,
+    "unassigned_tsx_components": 0,
+    "source_snapshot_files": 795
+  },
+  "invariants": {
+    "requirements_source_sha256": "MATCH",
+    "catalog_file_references": "ALL_EXIST",
+    "navigation_surface_ids": "ALL_VALID",
+    "required_states_each": 12,
+    "historical_opus_handoff": "BYTE_IDENTICAL_TO_STARTING_SHA",
+    "historical_post_interop_matrices": "BYTE_IDENTICAL_TO_STARTING_SHA",
+    "other_original_tests": "UNCHANGED_FROM_STARTING_SHA",
+    "original_test_exception": "tests/test_phase7_adaptation_authorization.py",
+    "exception_test_function_sources_including_decorators": "UNCHANGED",
+    "exception_whole_file_hash": "CHANGED_AND_MATCHES_REVIEWED_RECEIPT",
+    "historical_migrations": "UNCHANGED_FROM_STARTING_SHA",
+    "protected_file_hashes": {
+      "count": 763,
+      "status": "ALL_CURRENT_AND_STARTING_HASHES_MATCH",
+      "explicit_changes": [
+        "app/local_interop/api.py",
+        "app/local_interop/host.py",
+        "app/local_interop/provider.py",
+        "frontend/scripts/local_interop_browser_host.py",
+        "tests/test_phase7_adaptation_authorization.py"
+      ]
+    },
+    "frozen_protocol_files": 37,
+    "interop_fixture_hash": "MATCHES_REVIEWED_BEFORE_AND_AFTER_RECEIPT"
+  },
+  "source_snapshot_changes_since_generation": [],
+  "mounted_api_artifacts": [
+    {
+      "path": "API_CATALOG.json",
+      "sha256": "fa175e6bb69cbee98123995859e28d63afd0c7872b17f4ea6f02855961d8350c"
+    },
+    {
+      "path": "API_CATALOG.md",
+      "sha256": "fb44189533952d39360d2a78ea7a388bb674bf1451c12630d2aee5627db2f730"
+    },
+    {
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "sha256": "ef462e19377d2ae25068fa40b36a0201da5675abcc0012c6c046447fc0b320a9"
+    },
+    {
+      "path": "API_OPENAPI.json.gz",
+      "sha256": "4e4e2d515abbc0c5faa6dfe0c8e65e2352b6d71f983b2c747ca8ac662e95c2f3"
+    },
+    {
+      "path": "tests/test_surface_api_catalog.py",
+      "sha256": "c3c1e0a90fcafbebd6a98e8643bb7367199da75b9213e9cec4eecb7de495e373"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "FINAL_PRODUCT_SURFACE_MAP.md",
+      "sha256": "e49671840dd361a72611d6f53c2984b80e0dd7dc64210a4f9591010aa6daae51",
+      "bytes": 284299
+    },
+    {
+      "path": "OPUS_UI_HANDOFF.md",
+      "sha256": "3639b770741a4b97d79ec61db2fd2b074a77a5ec852833519038f0495e3e7ced",
+      "bytes": 67612
+    },
+    {
+      "path": "FUNCTIONAL_SURFACE_MATRIX.json",
+      "sha256": "30334c810d2d9fd98465abc38d8196566fbf7984c7bb22d5a58dc37ccd590504",
+      "bytes": 311349
+    },
+    {
+      "path": "FUNCTIONAL_SURFACE_MATRIX.md",
+      "sha256": "47e509b0ebc8f3ccde4948503cdfec0817d4c760498a6a0e79eabd55e89e9c7b",
+      "bytes": 11437
+    },
+    {
+      "path": "UI_SURFACE_CATALOG.json",
+      "sha256": "b5447c7955a87e627782fb0254aa721f94f3b5099aa297a83e3a125ccc01d6c1",
+      "bytes": 2372012
+    },
+    {
+      "path": "UI_SURFACE_CATALOG.md",
+      "sha256": "f6562a51c985e597de5118ab203f392cd36823a56a91ba06e894889002ccee44",
+      "bytes": 394709
+    },
+    {
+      "path": "docs/delivery/functional-surface-freeze/REQUIREMENTS_REGISTER.json",
+      "sha256": "7546569b7644f76121c0dffcabb206e31f7cc14be7c3125a1ff47ccc6eccdf90",
+      "bytes": 411145
+    }
+  ],
+  "verification_boundary": "Only document/source invariants were checked by this validator. No unit/API/File/PostgreSQL/browser/model test is executed or passed by this receipt. Exact-final-head gates remain pending and owned by final hosted verification.",
+  "candidate_declaration": "WITHHELD",
+  "historical_independent_review": "BLOCKED_UNCHANGED_NOT_RETRIED"
+}

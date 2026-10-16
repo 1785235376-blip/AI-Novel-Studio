@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ✓ src/novel/AgentTeamPanel.additional.test.tsx (5 tests) 260ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  09:09:16
+   Duration  1.13s (transform 169ms, setup 0ms, collect 297ms, tests 260ms, environment 327ms, prepare 87ms)
+

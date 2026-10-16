@@ -1,0 +1,148 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ❯ src/novel/AgentTeamPanel.selectionBoundary.test.tsx (7 tests | 3 failed) 247ms
+   × shows the registered default and its description together at the first usable commit 75ms
+     → expected [ { id: 'verifier', description: '' } ] to deeply equal [ { id: 'verifier', …(1) } ]
+   × captures the displayed role as mutation input even if the catalog changes before execution 80ms
+     → expected undefined to be 'verifier' // Object.is equality
+     → expected "createAgentJob" to be called with arguments: [ ObjectContaining{…} ]
+
+Received: 
+
+  1st createAgentJob call:
+
+  Array [
+-   ObjectContaining {
+-     "agent_id": "verifier",
++   Object {
++     "agent_id": "reviewer",
++     "branch_id": undefined,
++     "chapter": 1,
++     "chapter_id": "n:1",
++     "execution_mode": "deterministic",
++     "instruction": "",
++     "model_id": undefined,
++     "novel_id": "n",
++     "provider_id": undefined,
++     "target": "local",
+    },
+  ]
+
+
+Number of calls: 1
+
+   × uses the new registered fallback at the first commit after the selected role is removed 26ms
+     → expected [ { id: 'verifier', description: '' } ] to deeply equal [ { id: 'verifier', …(1) } ]
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 4 passed (7)
+   Start at  09:24:25
+   Duration  1.12s (transform 181ms, setup 0ms, collect 299ms, tests 247ms, environment 293ms, prepare 64ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/novel/AgentTeamPanel.selectionBoundary.test.tsx > shows the registered default and its description together at the first usable commit
+AssertionError: expected [ { id: 'verifier', description: '' } ] to deeply equal [ { id: 'verifier', …(1) } ]
+
+- Expected
++ Received
+
+  Array [
+    Object {
+-     "description": "核验世界与人物。",
++     "description": "",
+      "id": "verifier",
+    },
+  ]
+
+ ❯ src/novel/AgentTeamPanel.selectionBoundary.test.tsx:98:24
+     96|     start.click();
+     97|   });
+     98|   expect.soft(commits).toEqual([{ id: verifier.id, description: verifi…
+       |                        ^
+     99|   await waitFor(() => expect(api.createAgentJob).toHaveBeenCalledTimes…
+    100|   expect(api.createAgentJob).toHaveBeenCalledWith(expect.objectContain…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/novel/AgentTeamPanel.selectionBoundary.test.tsx > captures the displayed role as mutation input even if the catalog changes before execution
+AssertionError: expected undefined to be 'verifier' // Object.is equality
+
+- Expected: 
+"verifier"
+
++ Received: 
+undefined
+
+ ❯ src/novel/AgentTeamPanel.selectionBoundary.test.tsx:118:55
+    116|   expect((screen.getByLabelText('Agent 角色') as HTMLSelectElement).va…
+    117|   // Global MutationCache receives variables plus the mutation and con…
+    118|   expect.soft(vi.mocked(onMutate).mock.calls[0]?.[0]).toBe(verifier.id…
+       |                                                       ^
+    119|   release();
+    120|   await waitFor(() => expect(api.createAgentJob).toHaveBeenCalledTimes…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/novel/AgentTeamPanel.selectionBoundary.test.tsx > captures the displayed role as mutation input even if the catalog changes before execution
+AssertionError: expected "createAgentJob" to be called with arguments: [ ObjectContaining{…} ]
+
+Received: 
+
+  1st createAgentJob call:
+
+  Array [
+-   ObjectContaining {
+-     "agent_id": "verifier",
++   Object {
++     "agent_id": "reviewer",
++     "branch_id": undefined,
++     "chapter": 1,
++     "chapter_id": "n:1",
++     "execution_mode": "deterministic",
++     "instruction": "",
++     "model_id": undefined,
++     "novel_id": "n",
++     "provider_id": undefined,
++     "target": "local",
+    },
+  ]
+
+
+Number of calls: 1
+
+ ❯ src/novel/AgentTeamPanel.selectionBoundary.test.tsx:121:30
+    119|   release();
+    120|   await waitFor(() => expect(api.createAgentJob).toHaveBeenCalledTimes…
+    121|   expect(api.createAgentJob).toHaveBeenCalledWith(expect.objectContain…
+       |                              ^
+    122|   expect(api.startAgentJob).toHaveBeenCalledTimes(1);
+    123|   expect(api.startAgentJob).toHaveBeenCalledWith('selection-job');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/novel/AgentTeamPanel.selectionBoundary.test.tsx > uses the new registered fallback at the first commit after the selected role is removed
+AssertionError: expected [ { id: 'verifier', description: '' } ] to deeply equal [ { id: 'verifier', …(1) } ]
+
+- Expected
++ Received
+
+  Array [
+    Object {
+-     "description": "核验世界与人物。",
++     "description": "",
+      "id": "verifier",
+    },
+  ]
+
+ ❯ src/novel/AgentTeamPanel.selectionBoundary.test.tsx:133:24
+    131|     start.click();
+    132|   });
+    133|   expect.soft(commits).toEqual([{ id: verifier.id, description: verifi…
+       |                        ^
+    134|   await waitFor(() => expect(api.createAgentJob).toHaveBeenCalledTimes…
+    135|   expect(api.createAgentJob).toHaveBeenCalledWith(expect.objectContain…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+

@@ -1,0 +1,288 @@
+{
+  "contract": "studio-storyboard-video-adoption/1",
+  "shot_pin": {
+    "document_snapshot": {
+      "id": "9d4094b3-d894-4ea1-a96d-1beae88ec3c5",
+      "version": 5,
+      "digest": "c2e9307117867bb52e50b7fda6d68f2e57b64d70227918fdd217f90887e39b48"
+    },
+    "shot_id": "shot-1",
+    "shot_version": 1,
+    "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471"
+  },
+  "video_result": {
+    "asset": {
+      "asset_id": "2a93e0f1-7720-40cf-8944-04e69c00ad8c",
+      "version": 2,
+      "digest": "c88175c01023ea4fca4bfab35c6953943bd0518de50bfb117225afb96c7e6a23",
+      "kind": "video"
+    },
+    "source_shot": {
+      "document_snapshot": {
+        "id": "9d4094b3-d894-4ea1-a96d-1beae88ec3c5",
+        "version": 3,
+        "digest": "5f0b7b7734a502f2b0e4625e12b7432f22c06a529b8b7c71e711c709082bd68e"
+      },
+      "shot_id": "shot-1",
+      "shot_version": 1,
+      "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471"
+    },
+    "job": {
+      "id": "c484583f599fb7b5608b81a44ebf8de52ddf67d2e8747160adeb68936c392a55",
+      "version": 8,
+      "request_digest": "32a4d460c69b9265fbda4741e3b877b8021e9bfa06af4903f366ae14d0fd389b",
+      "receipt_digest": "74ea5b99ef7ba33e175d616ce487131b86164e07dd599a397ea1d3c75c116208"
+    }
+  },
+  "timeline": {
+    "id": "997ce6c5-7028-47a9-a030-e4cd65d4048f",
+    "novel_id": "r3-mounted-d07ca488b8cf44ca9c8024c5d13fb7e3",
+    "title": "SYNTHETIC mounted production",
+    "version": 2,
+    "timeline_digest": "2ffff09d1a430b2adc5f5a82a72b00d0077bb5b2d967b60941a6088e3f0f4ad7",
+    "timeline": {
+      "schema_version": 2,
+      "duration_ms": 3000,
+      "width": 1280,
+      "height": 720,
+      "fps": 24,
+      "tracks": [
+        {
+          "id": "storyboard-video",
+          "kind": "VIDEO",
+          "order": 0,
+          "role": "PRIMARY",
+          "muted": false,
+          "gain_db": 0.0,
+          "clips": [
+            {
+              "id": "storyboard-1",
+              "source_snapshot": {
+                "id": "2a93e0f1-7720-40cf-8944-04e69c00ad8c",
+                "kind": "ASSET",
+                "asset_kind": "video",
+                "version": 2,
+                "digest": "c88175c01023ea4fca4bfab35c6953943bd0518de50bfb117225afb96c7e6a23"
+              },
+              "start_ms": 0,
+              "in_ms": 0,
+              "out_ms": 500,
+              "speed_num": 1,
+              "speed_den": 1,
+              "muted": false,
+              "gain_db": 0.0,
+              "fade_in_ms": 0,
+              "fade_out_ms": 0,
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 720,
+              "opacity": 1.0,
+              "include_audio": false
+            }
+          ]
+        }
+      ],
+      "captions": []
+    },
+    "created_at": "2026-10-13T19:10:37.582653+00:00",
+    "updated_at": "2026-10-13T19:10:39.323241+00:00",
+    "branch_id": null,
+    "storyboard_origin": {
+      "contract": "studio-storyboard-timeline-draft/1",
+      "document_snapshot": {
+        "id": "9d4094b3-d894-4ea1-a96d-1beae88ec3c5",
+        "version": 3,
+        "digest": "5f0b7b7734a502f2b0e4625e12b7432f22c06a529b8b7c71e711c709082bd68e"
+      },
+      "content_digest": "8e2366299200eedd10c650a67756f37dc8028caf3f478a10c9164431bb42588e",
+      "timeline_snapshot": {
+        "id": "997ce6c5-7028-47a9-a030-e4cd65d4048f",
+        "version": 1,
+        "digest": "b8b75f721f845cac14663cf48c88afb9a1595bb9c8c750e7bff61f12bf39a051"
+      },
+      "shots": [
+        {
+          "clip_id": "storyboard-1",
+          "shot_id": "shot-1",
+          "shot_version": 1,
+          "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471"
+        }
+      ],
+      "model_called": false,
+      "rendered": false
+    },
+    "creation_receipt": {
+      "contract": "studio-storyboard-timeline-create/1",
+      "request_id": "mounted-create-phase5",
+      "request_digest": "18029c142251ff60669128f65a0196c6854a26c4232e3fdac4b63e0b620a5130",
+      "document_id": "9d4094b3-d894-4ea1-a96d-1beae88ec3c5",
+      "request": {
+        "expected_version": 3,
+        "reviewed_content_digest": "8e2366299200eedd10c650a67756f37dc8028caf3f478a10c9164431bb42588e",
+        "title": "SYNTHETIC mounted production",
+        "shot_ids": [
+          "shot-1"
+        ],
+        "width": 1280,
+        "height": 720,
+        "fps": 24,
+        "request_id": "mounted-create-phase5"
+      },
+      "creation_snapshot": {
+        "id": "997ce6c5-7028-47a9-a030-e4cd65d4048f",
+        "version": 1,
+        "digest": "b8b75f721f845cac14663cf48c88afb9a1595bb9c8c750e7bff61f12bf39a051"
+      },
+      "origin_digest": "0a3cc111eeb99ff50886863c069b457e7e5e8d647645dfacfc34303087aa6ab7"
+    },
+    "video_adoption_receipt": {
+      "contract": "studio-storyboard-video-adoption/1",
+      "document_id": "9d4094b3-d894-4ea1-a96d-1beae88ec3c5",
+      "shot_id": "shot-1",
+      "timeline_id": "997ce6c5-7028-47a9-a030-e4cd65d4048f",
+      "request": {
+        "expected_version": 5,
+        "shot_version": 1,
+        "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471",
+        "expected_timeline_version": 1,
+        "reviewed_timeline_digest": "b8b75f721f845cac14663cf48c88afb9a1595bb9c8c750e7bff61f12bf39a051",
+        "request_id": "mounted-adopt-phase5",
+        "clip_id": "storyboard-1",
+        "video_asset": {
+          "asset_id": "2a93e0f1-7720-40cf-8944-04e69c00ad8c",
+          "version": 2,
+          "digest": "c88175c01023ea4fca4bfab35c6953943bd0518de50bfb117225afb96c7e6a23",
+          "kind": "video"
+        },
+        "video_job": {
+          "id": "c484583f599fb7b5608b81a44ebf8de52ddf67d2e8747160adeb68936c392a55",
+          "version": 8,
+          "request_digest": "32a4d460c69b9265fbda4741e3b877b8021e9bfa06af4903f366ae14d0fd389b",
+          "receipt_digest": "74ea5b99ef7ba33e175d616ce487131b86164e07dd599a397ea1d3c75c116208"
+        },
+        "in_ms": 0,
+        "out_ms": 500,
+        "include_audio": false
+      },
+      "request_digest": "515e87448d6b7d0f9f44ff8db0f59e97b2049638217d3e22463b2995b5d6fba2",
+      "edit_receipt": {
+        "request_id": "mounted-adopt-phase5",
+        "request_digest": "2ddff5a8ac114fc4479f88881060828fc9a88e427f35ab899196531500c010df",
+        "input_version": 1,
+        "input_digest": "b8b75f721f845cac14663cf48c88afb9a1595bb9c8c750e7bff61f12bf39a051",
+        "output_digest": "2ffff09d1a430b2adc5f5a82a72b00d0077bb5b2d967b60941a6088e3f0f4ad7"
+      },
+      "shot_pin": {
+        "document_snapshot": {
+          "id": "9d4094b3-d894-4ea1-a96d-1beae88ec3c5",
+          "version": 5,
+          "digest": "c2e9307117867bb52e50b7fda6d68f2e57b64d70227918fdd217f90887e39b48"
+        },
+        "shot_id": "shot-1",
+        "shot_version": 1,
+        "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471"
+      },
+      "video_result": {
+        "asset": {
+          "asset_id": "2a93e0f1-7720-40cf-8944-04e69c00ad8c",
+          "version": 2,
+          "digest": "c88175c01023ea4fca4bfab35c6953943bd0518de50bfb117225afb96c7e6a23",
+          "kind": "video"
+        },
+        "source_shot": {
+          "document_snapshot": {
+            "id": "9d4094b3-d894-4ea1-a96d-1beae88ec3c5",
+            "version": 3,
+            "digest": "5f0b7b7734a502f2b0e4625e12b7432f22c06a529b8b7c71e711c709082bd68e"
+          },
+          "shot_id": "shot-1",
+          "shot_version": 1,
+          "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471"
+        },
+        "job": {
+          "id": "c484583f599fb7b5608b81a44ebf8de52ddf67d2e8747160adeb68936c392a55",
+          "version": 8,
+          "request_digest": "32a4d460c69b9265fbda4741e3b877b8021e9bfa06af4903f366ae14d0fd389b",
+          "receipt_digest": "74ea5b99ef7ba33e175d616ce487131b86164e07dd599a397ea1d3c75c116208"
+        }
+      }
+    }
+  },
+  "adoption_receipt": {
+    "contract": "studio-storyboard-video-adoption/1",
+    "document_id": "9d4094b3-d894-4ea1-a96d-1beae88ec3c5",
+    "shot_id": "shot-1",
+    "timeline_id": "997ce6c5-7028-47a9-a030-e4cd65d4048f",
+    "request": {
+      "expected_version": 5,
+      "shot_version": 1,
+      "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471",
+      "expected_timeline_version": 1,
+      "reviewed_timeline_digest": "b8b75f721f845cac14663cf48c88afb9a1595bb9c8c750e7bff61f12bf39a051",
+      "request_id": "mounted-adopt-phase5",
+      "clip_id": "storyboard-1",
+      "video_asset": {
+        "asset_id": "2a93e0f1-7720-40cf-8944-04e69c00ad8c",
+        "version": 2,
+        "digest": "c88175c01023ea4fca4bfab35c6953943bd0518de50bfb117225afb96c7e6a23",
+        "kind": "video"
+      },
+      "video_job": {
+        "id": "c484583f599fb7b5608b81a44ebf8de52ddf67d2e8747160adeb68936c392a55",
+        "version": 8,
+        "request_digest": "32a4d460c69b9265fbda4741e3b877b8021e9bfa06af4903f366ae14d0fd389b",
+        "receipt_digest": "74ea5b99ef7ba33e175d616ce487131b86164e07dd599a397ea1d3c75c116208"
+      },
+      "in_ms": 0,
+      "out_ms": 500,
+      "include_audio": false
+    },
+    "request_digest": "515e87448d6b7d0f9f44ff8db0f59e97b2049638217d3e22463b2995b5d6fba2",
+    "edit_receipt": {
+      "request_id": "mounted-adopt-phase5",
+      "request_digest": "2ddff5a8ac114fc4479f88881060828fc9a88e427f35ab899196531500c010df",
+      "input_version": 1,
+      "input_digest": "b8b75f721f845cac14663cf48c88afb9a1595bb9c8c750e7bff61f12bf39a051",
+      "output_digest": "2ffff09d1a430b2adc5f5a82a72b00d0077bb5b2d967b60941a6088e3f0f4ad7"
+    },
+    "shot_pin": {
+      "document_snapshot": {
+        "id": "9d4094b3-d894-4ea1-a96d-1beae88ec3c5",
+        "version": 5,
+        "digest": "c2e9307117867bb52e50b7fda6d68f2e57b64d70227918fdd217f90887e39b48"
+      },
+      "shot_id": "shot-1",
+      "shot_version": 1,
+      "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471"
+    },
+    "video_result": {
+      "asset": {
+        "asset_id": "2a93e0f1-7720-40cf-8944-04e69c00ad8c",
+        "version": 2,
+        "digest": "c88175c01023ea4fca4bfab35c6953943bd0518de50bfb117225afb96c7e6a23",
+        "kind": "video"
+      },
+      "source_shot": {
+        "document_snapshot": {
+          "id": "9d4094b3-d894-4ea1-a96d-1beae88ec3c5",
+          "version": 3,
+          "digest": "5f0b7b7734a502f2b0e4625e12b7432f22c06a529b8b7c71e711c709082bd68e"
+        },
+        "shot_id": "shot-1",
+        "shot_version": 1,
+        "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471"
+      },
+      "job": {
+        "id": "c484583f599fb7b5608b81a44ebf8de52ddf67d2e8747160adeb68936c392a55",
+        "version": 8,
+        "request_digest": "32a4d460c69b9265fbda4741e3b877b8021e9bfa06af4903f366ae14d0fd389b",
+        "receipt_digest": "74ea5b99ef7ba33e175d616ce487131b86164e07dd599a397ea1d3c75c116208"
+      }
+    }
+  },
+  "automatic_dispatch": false,
+  "model_called": false,
+  "rendered": false,
+  "product_acceptance": "LOCAL_REQUIRED"
+}

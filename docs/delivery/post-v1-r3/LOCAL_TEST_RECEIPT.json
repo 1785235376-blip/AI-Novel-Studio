@@ -1,0 +1,31 @@
+{
+  "baseline_sha": "1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0",
+  "implementation_remote_sha": "9488d83694eaf5ea1c0635ff1efbe730f23995db",
+  "implementation_tree": "e72842b5c49fed125d067990c2f4dcab3d84a1bf",
+  "verification_scope": "Local working-tree verification; final exact-SHA hosted CI is recorded separately. Synthetic data only.",
+  "python": "3.12.14",
+  "runs": [
+    {
+      "name": "all_file",
+      "tests": 2457,
+      "passed": 2289,
+      "skipped": 168,
+      "failures": 0,
+      "errors": 0,
+      "new_r3_postgres_skipped": 123,
+      "v1_acceptance_mode": false,
+      "source_receipt": "local generated JUnit XML"
+    },
+    {
+      "name": "forced_v1_acceptance_file",
+      "tests": 2192,
+      "passed": 2147,
+      "skipped": 45,
+      "failures": 0,
+      "errors": 0,
+      "new_r3_postgres_skipped": 0,
+      "v1_acceptance_mode": true,
+      "source_receipt": "local generated JUnit XML"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="15.065971000000001">
+<testsuite name="v2-creative-live.spec.ts" timestamp="2026-10-10T19:31:23.235Z" hostname="v2-live-chromium" tests="1" failures="0" skipped="0" time="1.973" errors="0">
+<testcase name="real HTTP generic Script persists exact text and CAS history without a manuscript" classname="v2-creative-live.spec.ts" time="1.973">
+</testcase>
+</testsuite>
+</testsuites>

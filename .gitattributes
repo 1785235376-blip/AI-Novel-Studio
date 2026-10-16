@@ -1,0 +1,16 @@
+# Verification hashes describe exact bytes, including captured log line endings.
+docs/delivery/v2-development/** -text
+docs/delivery/v2-retirement-canvas-20261016/** -text
+docs/delivery/v2-r3-prompt-20261016/** -text
+docs/delivery/v2-r3-adoption-ui-20261017/** -text
+
+# V2 source manifests pin these existing CRLF bytes on every platform.
+# Keep default whitespace checks and recognize CR as the line terminator.
+app/application/persistence.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+tests/test_v2_project_retirement_file_io.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Preserve original navigation race receipts, failures and screenshots as raw bytes.
+docs/delivery/v2-navigation-intent-20261017/** -text
+
+# Preserve Creative save-state acceptance receipts and screenshots as raw bytes.
+docs/delivery/v2-creative-save-state-20261017/** -text

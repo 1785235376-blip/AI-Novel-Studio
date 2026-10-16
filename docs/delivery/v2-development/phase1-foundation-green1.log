@@ -1,0 +1,81 @@
+.........................FFss                                            [100%]
+================================== FAILURES ===================================
+___ test_real_composed_identity_membership_permissions_and_scope[file-/api] ___
+
+mounted = namespace(client=<starlette.testclient.TestClient object at 0x0000022545EF4790>, prefix='/api', base='/api/novels/r3-m...rs={'X-Session-Token': 'viewer-e8f5ef9e4a24406abd0ea98d14b4f405', 'X-Branch-ID': 'b-e8f5ef9e4a24406abd0ea98d14b4f405'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000225437DC6D0>
+
+    def test_real_composed_identity_membership_permissions_and_scope(mounted, monkeypatch):
+        e = scoped(mounted, monkeypatch)
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", "narrative_production_v2")
+        # Existing mounted fixture owns real File/opt-in PostgreSQL repositories,
+        # trusted sessions, workspace membership and branch-specific role grants.
+        # Only captured foundation dependencies are rebound to its owned storage.
+        for name, value in (("store", e.store), ("novels", e.novels), ("chapters", e.chapters)):
+            monkeypatch.setattr(e.experimental.creative_service, name, value)
+        base = e.base + "/creative"
+        body = {"mode": "SCREENPLAY", "title": "Branch-owned draft", "source_independent": True}
+        assert e.client.get(base + "/capabilities").status_code == 401
+        assert e.client.get(base + "/capabilities", headers={"X-Session-Token": "untrusted", "X-Branch-Id": e.branch}).status_code == 401
+        assert e.client.get(base + "/capabilities", headers={"X-Session-Token": e.lead}).status_code == 400
+        reader = e.client.get(base + "/capabilities", headers=e.viewer_headers)
+        assert reader.status_code == 200 and reader.json()["can_mutate"] is False
+        assert e.client.post(base + "/documents", headers=e.viewer_headers, json=body).status_code == 403
+        created = e.client.post(base + "/documents", headers=e.headers, json=body)
+        assert created.status_code == 201, created.text
+        row = created.json()
+        assert row["scope"] == e.scope and row["created_by"] == e.lead
+        assert e.client.get(base + "/documents/" + row["id"], headers=e.viewer_headers).json() == row
+>       assert e.client.get(base + "/documents/" + row["id"], headers={**e.headers, "X-Branch-Id": e.other_branch}).status_code == 403
+E       AssertionError: assert 200 == 403
+E        +  where 200 = <Response [200 OK]>.status_code
+E        +    where <Response [200 OK]> = get((('/api/novels/r3-mounted-db69d1ba959d434fbc63b298c9dd617b/experimental/creative' + '/documents/') + '881fd479-26e5-4f50-b38c-dc926b6f8875'), headers={'X-Branch-ID': 'b-e8f5ef9e4a24406abd0ea98d14b4f405', 'X-Branch-Id': 'other-e8f5ef9e4a24406abd0ea98d14b4f405', 'X-Session-Token': 'lead-e8f5ef9e4a24406abd0ea98d14b4f405'})
+E        +      where get = <starlette.testclient.TestClient object at 0x0000022545EF4790>.get
+E        +        where <starlette.testclient.TestClient object at 0x0000022545EF4790> = namespace(client=<starlette.testclient.TestClient object at 0x0000022545EF4790>, prefix='/api', base='/api/novels/r3-m...rs={'X-Session-Token': 'viewer-e8f5ef9e4a24406abd0ea98d14b4f405', 'X-Branch-ID': 'b-e8f5ef9e4a24406abd0ea98d14b4f405'}).client
+
+tests\test_v2_creative_foundation.py:312: AssertionError
+_ test_real_composed_identity_membership_permissions_and_scope[file-/api/v1] __
+
+mounted = namespace(client=<starlette.testclient.TestClient object at 0x00000225464E8D50>, prefix='/api/v1', base='/api/v1/novel...rs={'X-Session-Token': 'viewer-c7dc02c2acf84a8db93b8acfbd76dd92', 'X-Branch-ID': 'b-c7dc02c2acf84a8db93b8acfbd76dd92'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000225464EBA10>
+
+    def test_real_composed_identity_membership_permissions_and_scope(mounted, monkeypatch):
+        e = scoped(mounted, monkeypatch)
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", "narrative_production_v2")
+        # Existing mounted fixture owns real File/opt-in PostgreSQL repositories,
+        # trusted sessions, workspace membership and branch-specific role grants.
+        # Only captured foundation dependencies are rebound to its owned storage.
+        for name, value in (("store", e.store), ("novels", e.novels), ("chapters", e.chapters)):
+            monkeypatch.setattr(e.experimental.creative_service, name, value)
+        base = e.base + "/creative"
+        body = {"mode": "SCREENPLAY", "title": "Branch-owned draft", "source_independent": True}
+        assert e.client.get(base + "/capabilities").status_code == 401
+        assert e.client.get(base + "/capabilities", headers={"X-Session-Token": "untrusted", "X-Branch-Id": e.branch}).status_code == 401
+        assert e.client.get(base + "/capabilities", headers={"X-Session-Token": e.lead}).status_code == 400
+        reader = e.client.get(base + "/capabilities", headers=e.viewer_headers)
+        assert reader.status_code == 200 and reader.json()["can_mutate"] is False
+        assert e.client.post(base + "/documents", headers=e.viewer_headers, json=body).status_code == 403
+        created = e.client.post(base + "/documents", headers=e.headers, json=body)
+        assert created.status_code == 201, created.text
+        row = created.json()
+        assert row["scope"] == e.scope and row["created_by"] == e.lead
+        assert e.client.get(base + "/documents/" + row["id"], headers=e.viewer_headers).json() == row
+>       assert e.client.get(base + "/documents/" + row["id"], headers={**e.headers, "X-Branch-Id": e.other_branch}).status_code == 403
+E       AssertionError: assert 200 == 403
+E        +  where 200 = <Response [200 OK]>.status_code
+E        +    where <Response [200 OK]> = get((('/api/v1/novels/r3-mounted-4535707916494ca8b1f1569c86190267/experimental/creative' + '/documents/') + '5965691f-7c06-4a30-b6a9-ffd183fee182'), headers={'X-Branch-ID': 'b-c7dc02c2acf84a8db93b8acfbd76dd92', 'X-Branch-Id': 'other-c7dc02c2acf84a8db93b8acfbd76dd92', 'X-Session-Token': 'lead-c7dc02c2acf84a8db93b8acfbd76dd92'})
+E        +      where get = <starlette.testclient.TestClient object at 0x00000225464E8D50>.get
+E        +        where <starlette.testclient.TestClient object at 0x00000225464E8D50> = namespace(client=<starlette.testclient.TestClient object at 0x00000225464E8D50>, prefix='/api/v1', base='/api/v1/novel...rs={'X-Session-Token': 'viewer-c7dc02c2acf84a8db93b8acfbd76dd92', 'X-Branch-ID': 'b-c7dc02c2acf84a8db93b8acfbd76dd92'}).client
+
+tests\test_v2_creative_foundation.py:312: AssertionError
+============================== warnings summary ===============================
+..\AI-Novel-Studio-Latest-Product\.venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\小说\AI-Novel-Studio-Latest-Product\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: D:\小说\AI-Novel-Studio-V2\docs\delivery\v2-development\phase1-foundation-green1.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_v2_creative_foundation.py::test_real_composed_identity_membership_permissions_and_scope[file-/api]
+FAILED tests/test_v2_creative_foundation.py::test_real_composed_identity_membership_permissions_and_scope[file-/api/v1]
+2 failed, 25 passed, 2 skipped, 1 warning in 10.40s

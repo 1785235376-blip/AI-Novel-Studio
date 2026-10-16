@@ -1,0 +1,1537 @@
+{
+  "utc": "2026-10-16T20:14:33.602146+00:00",
+  "base": "454ccd89499e3840d18622e8b6ec2669c17702c4",
+  "byte_contract": ".gitattributes -text for raw delivery evidence; SHA256 describes retained on-disk bytes.",
+  "files": [
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/ADOPTION_SOURCE_BASELINE.json",
+      "bytes": 7760,
+      "sha256": "618354f63b7a8a5f9bb35215c78d44c291367e2b97c1446f4f3f32253347ac8f"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/BASELINE_REFS.json",
+      "bytes": 722,
+      "sha256": "868a041e43ed04fb67be748d046c4c11ade5ad3f8b2c04dd443d2ad3e76ef77a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/CREATIVE_SAVE_STATE_RUNTIME_ACCEPTANCE_REPORT.md",
+      "bytes": 8096,
+      "sha256": "989a0988f9fd96c89f5263d3f4527e59c82ba58dddc877bd201aae29d73eedac"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/EXISTING_TEST_GATE_BASELINE.json",
+      "bytes": 133416,
+      "sha256": "039264d4e16ec1297f2333731f049475a8b535a5e50dd6c992c2ea1c28df21fb"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/FINAL_FRONTEND_VISUAL_REVIEW.md",
+      "bytes": 7321,
+      "sha256": "82c0871aa6bbd1adb813caed947650de83c47336397ef2cb14d95d5e8a0fe30b"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/FINAL_SOURCE_PROVENANCE_REVIEW.json",
+      "bytes": 26984,
+      "sha256": "5a236b4b1145a10247efa6478b5cf5f21fb651f5a163ca3b61c1b0da80b29734"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/FINAL_SOURCE_PROVENANCE_REVIEW.md",
+      "bytes": 8048,
+      "sha256": "56c250e4dcb09a850a25bcac27dae45af7de784c37aecf59a50f03e0eef7c525"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/FRONTEND_CREATIVE_SAVE_IMPLEMENTATION_REPORT.md",
+      "bytes": 8510,
+      "sha256": "19d2bb98cce42dee2212c320ba33bfcb09447c66baada1a19578c1f827444e9a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/INDEPENDENT_BASELINE_AND_SAVE_STATE_REVIEW.md",
+      "bytes": 4888,
+      "sha256": "28d4fb17af3619327e93d6c87c8e97d94974ea6894755060e4dec26dbc5fd059"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/INDEPENDENT_CANDIDATE_REVIEW_R1.md",
+      "bytes": 4129,
+      "sha256": "2f89a4c211e07a52dfee1b8b72aa09b1dca79ce8dc631de92baba74ad9504aec"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/INDEPENDENT_CANDIDATE_REVIEW_R2.json",
+      "bytes": 4121,
+      "sha256": "2e7893153a059db13b532580e6ffb15df4aa447f7a4f19a4bee160a47f166396"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/INDEPENDENT_CANDIDATE_REVIEW_R2.md",
+      "bytes": 4276,
+      "sha256": "6f7dbfbf043415b96a09d08072bbff21fd3bb0e0dfb66f1371699f3a737dbaed"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/INDEPENDENT_IMPLEMENTATION_REVIEW.md",
+      "bytes": 7725,
+      "sha256": "0fd30248141c27a35995d46910d3cb4379bb401676a66ad6d431ee0b6c78d3bb"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/NAVIGATION_SOURCE_BASELINE.json",
+      "bytes": 1005,
+      "sha256": "ba49d5e9d0d53655ae552f290070ff1433c45ca77fb4660a25daebb28c8bf3d4"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/OWNER_GUARD_BASELINE.json",
+      "bytes": 9995,
+      "sha256": "78a67cd42f41b5e63820efd1e851dafc3c461105f8583899551ae6323efa7c1c"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/SOURCE_PROVENANCE_AUDIT.json",
+      "bytes": 5807,
+      "sha256": "0e8267785ec2e41c1760412a0d92ed0f391181ea03f5c2c6f1d03966dcd97ba5"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/V2_CREATIVE_SAVE_STATE_ROUND_REPORT.md",
+      "bytes": 8701,
+      "sha256": "2ebc9df7a0c9aa9b747e03b53602545f3acc6c4f9086ed4316f4016054840c4f"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/V2_MANIFEST_BASELINE.json",
+      "bytes": 1207,
+      "sha256": "c6bf00f888e97db4023d41779fc3adb23b5ee3fdb8c5ee1384820d6fbda462f7"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/audit-helper-reuse.json",
+      "bytes": 456,
+      "sha256": "bc55c0f6d5feb2d43bab67f08f3b5c7d4b32f9a13de523651498cd7ceba43c06"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/baseline-collection-rows.json.gz",
+      "bytes": 196846,
+      "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/baseline-coverage-manifest-v2.json.gz",
+      "bytes": 545326,
+      "sha256": "6f621dcf211c778b09f9ee3351cca511a18b605d0f6d161383816c60dc0ea269"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/collection-confirmation-rows.json.gz",
+      "bytes": 196846,
+      "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/collection-confirmation.json",
+      "bytes": 21636,
+      "sha256": "d6799d082dd26b3af2ea7f3e47c0d2a1124c2d62c96453d389fd28da85dc834a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/collection-delta-final.json",
+      "bytes": 1999,
+      "sha256": "2de770b9fb479454791c858e896cf78384fddd9e24fd957c2976b51a98cf57b0"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/collection-first-rows.json.gz",
+      "bytes": 196846,
+      "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/collection-first.json",
+      "bytes": 21792,
+      "sha256": "cf2c8deeede0f8d72fc8592a153df0775b74d55747f800d9467be7ebd0d20031"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/backend.stderr.log",
+      "bytes": 202,
+      "sha256": "571b6066392f27bbc2a4ad40af2296755c3318006414d06f544d3f302fd7feb2"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/backend.stdout.log",
+      "bytes": 117219,
+      "sha256": "272f3dcfbf60ab127488957c5d852cc2ab866b5e6465cb2e6db9c2d6360acbee"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/junit.xml",
+      "bytes": 11247,
+      "sha256": "f602a8ea0979784a9872945eb8d1a985a28d4229f44d54c077cd480bda6a7cb3"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/launcher.json",
+      "bytes": 970,
+      "sha256": "7be4473a2fae599a836976255178768fb80b38cb7543636ace3ed78b416f109b"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/playwright.log",
+      "bytes": 2885,
+      "sha256": "b61bf5e2eb396c4b9b880adc9049b9c496d94a8db75b72a977a5947c9759dd72"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/results.json",
+      "bytes": 664986,
+      "sha256": "7f39c4c915ca9ea767163b50864078978824ad9f414a93078d29630ba351029d"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1366x768/attachments/late-history-a-cannot-relabel-or-clear-dirty-document-b-f11a06129e88bf1bbb5cec795553c6993f689481.png",
+      "bytes": 99862,
+      "sha256": "12089a4f5ac39014589dcfab4c22aa1de1a67265be842cde62f8d2e86d493bc5"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1366x768/attachments/late-history-old-scope-cannot-contaminate-current-saved-v1-c3e1316d233936cbccad2b09a11fc66c8be3d897.png",
+      "bytes": 104097,
+      "sha256": "1e9b40ff3c67b30a0437ba4315ede3768e82f73f6f43da88bf93acda5ffd8320"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1366x768/late-history-a-cannot-relabel-or-clear-dirty-document-b.png",
+      "bytes": 99862,
+      "sha256": "12089a4f5ac39014589dcfab4c22aa1de1a67265be842cde62f8d2e86d493bc5"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1366x768/late-history-old-scope-cannot-contaminate-current-saved-v1.png",
+      "bytes": 104097,
+      "sha256": "1e9b40ff3c67b30a0437ba4315ede3768e82f73f6f43da88bf93acda5ffd8320"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1440x900/attachments/late-history-a-cannot-relabel-or-clear-dirty-document-b-9a4720b0cc682837a8af7d3b0ac3cbb1805160f8.png",
+      "bytes": 111586,
+      "sha256": "83f56ca0767e7b871a804e1c534709e0de9deea0505415949baba5d0ff9e3585"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1440x900/attachments/late-history-old-scope-cannot-contaminate-current-saved-v1-c101fcc559aed756a6f3f6d7231a45da2b03c369.png",
+      "bytes": 120536,
+      "sha256": "42029868bef3095b0ede4aa8e172701e5adeadc8f045da8bb7efd7366d608ced"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1440x900/late-history-a-cannot-relabel-or-clear-dirty-document-b.png",
+      "bytes": 111586,
+      "sha256": "83f56ca0767e7b871a804e1c534709e0de9deea0505415949baba5d0ff9e3585"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1440x900/late-history-old-scope-cannot-contaminate-current-saved-v1.png",
+      "bytes": 120536,
+      "sha256": "42029868bef3095b0ede4aa8e172701e5adeadc8f045da8bb7efd7366d608ced"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1920x1080/attachments/late-history-a-cannot-relabel-or-clear-dirty-document-b-7f35f339165d997fc2f3964516d412dae93d1e4e.png",
+      "bytes": 141201,
+      "sha256": "b9459cec8f426f97c07961bf92dd4d350c527ac3b5fa42f0420ca8da2668c4f0"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1920x1080/attachments/late-history-old-scope-cannot-contaminate-current-saved-v1-bea7439467d6f956b7b1701b3f9ec76fbf2bf612.png",
+      "bytes": 142632,
+      "sha256": "500664944e7939d5d6d2128b71b39704c8005f82fe41125cc29078a540148423"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1920x1080/late-history-a-cannot-relabel-or-clear-dirty-document-b.png",
+      "bytes": 141201,
+      "sha256": "b9459cec8f426f97c07961bf92dd4d350c527ac3b5fa42f0420ca8da2668c4f0"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1920x1080/late-history-old-scope-cannot-contaminate-current-saved-v1.png",
+      "bytes": 142632,
+      "sha256": "500664944e7939d5d6d2128b71b39704c8005f82fe41125cc29078a540148423"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/attachments/current-saved-v1-and-other-stage-real-dirty-56edcf94bf03de033f86b7d914759befbc40dc78.png",
+      "bytes": 108885,
+      "sha256": "98ae72a16d93d9d2c741d98534a3d84fe933de277cfe677ad32bbcff9afd651e"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/attachments/manual-real-put-held-saving-and-navigation-fenced-06bcf7182d448c71d54cce8fb52787ec37cd1581.png",
+      "bytes": 106343,
+      "sha256": "751174c78bee589efb262f133b3ec4f853cd33b2062222108e007bee15f58c38"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/attachments/manual-v1-dirty-real-input-389e617693a18514aa5472185c4963f554cbb989.png",
+      "bytes": 106662,
+      "sha256": "8a986e1298a34f4bab893a5b1cd7bae85363cb7962487b136ab5f56a658fcf3b"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/attachments/manual-v1-initial-current-saved-a3a14da1c9003541e5139f047c7435fc118f5b6f.png",
+      "bytes": 105304,
+      "sha256": "b7113806910eaaf156906726ffd9d98894f0127ff11d6c4278b12dcc5ec7c48a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/attachments/manual-v2-refresh-reopen-saved-3749d999756e5b6657e7f7e80eb48bf6ffc5f115.png",
+      "bytes": 106179,
+      "sha256": "c2d1b356df51a40516642eaa8bca3c919fc32bc1b5d7cef80a5ab609d91aa56a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/attachments/manual-v2-save-receipt-and-original-owner-readback-c0cfe2f535420822df385849bc1e66329d421ca4.png",
+      "bytes": 107294,
+      "sha256": "bf10ca14a58cbe7abc1349eda494cd6cf038706a2ead96e1eb2f4aa57f0ab485"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/current-saved-v1-and-other-stage-real-dirty.png",
+      "bytes": 108885,
+      "sha256": "98ae72a16d93d9d2c741d98534a3d84fe933de277cfe677ad32bbcff9afd651e"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-real-put-held-saving-and-navigation-fenced.png",
+      "bytes": 106343,
+      "sha256": "751174c78bee589efb262f133b3ec4f853cd33b2062222108e007bee15f58c38"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-v1-dirty-real-input.png",
+      "bytes": 106662,
+      "sha256": "8a986e1298a34f4bab893a5b1cd7bae85363cb7962487b136ab5f56a658fcf3b"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-v1-initial-current-saved.png",
+      "bytes": 105304,
+      "sha256": "b7113806910eaaf156906726ffd9d98894f0127ff11d6c4278b12dcc5ec7c48a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-v2-refresh-reopen-saved.png",
+      "bytes": 106179,
+      "sha256": "c2d1b356df51a40516642eaa8bca3c919fc32bc1b5d7cef80a5ab609d91aa56a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-v2-save-receipt-and-original-owner-readback.png",
+      "bytes": 107294,
+      "sha256": "bf10ca14a58cbe7abc1349eda494cd6cf038706a2ead96e1eb2f4aa57f0ab485"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/attachments/current-saved-v1-and-other-stage-real-dirty-bd5fd2fa6a0f74b1600edf0aa469edc128c88a3f.png",
+      "bytes": 121611,
+      "sha256": "fcb3c6a55664fb2c97e376723cae7cf9f3248e2a6e65c1b8e167b2c8354981e3"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/attachments/manual-real-put-held-saving-and-navigation-fenced-ad6dc2c565757c63c72ff0898030b8f827bb8447.png",
+      "bytes": 126032,
+      "sha256": "930c141857599e54e9c7fa28e0d7bfcdf8ba2aa6b0bc13002fb7f583689c0a3c"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/attachments/manual-v1-dirty-real-input-7b7bbf5f7b38805a9498a988da0948e8fe04f138.png",
+      "bytes": 120854,
+      "sha256": "8a5406f93cbb19cf06b24b7d4162a76008e300aed67ba062fe3558e000df3f57"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/attachments/manual-v1-initial-current-saved-4832e8180bdfc967834094053a9f825d73284349.png",
+      "bytes": 123039,
+      "sha256": "89553998dac46bd3fd124cf794bda602858327d1558dbf7037af9148f361af36"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/attachments/manual-v2-refresh-reopen-saved-e35ef69771f52c0cab6bf7a58035950bcbaf13c4.png",
+      "bytes": 125548,
+      "sha256": "8b69f2c9c12618700a1a8cd5bde1a730cfc497d82af4ad2294c4287d4c1cb4b3"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/attachments/manual-v2-save-receipt-and-original-owner-readback-bd403940869bc020e96e0cd29fe528e942a4cf42.png",
+      "bytes": 127559,
+      "sha256": "ca9868965ea5bedb194f9dc2e02227bcf7c738b658f811f1f620c6be9ae7f75c"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/current-saved-v1-and-other-stage-real-dirty.png",
+      "bytes": 121611,
+      "sha256": "fcb3c6a55664fb2c97e376723cae7cf9f3248e2a6e65c1b8e167b2c8354981e3"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-real-put-held-saving-and-navigation-fenced.png",
+      "bytes": 126032,
+      "sha256": "930c141857599e54e9c7fa28e0d7bfcdf8ba2aa6b0bc13002fb7f583689c0a3c"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-v1-dirty-real-input.png",
+      "bytes": 120854,
+      "sha256": "8a5406f93cbb19cf06b24b7d4162a76008e300aed67ba062fe3558e000df3f57"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-v1-initial-current-saved.png",
+      "bytes": 123039,
+      "sha256": "89553998dac46bd3fd124cf794bda602858327d1558dbf7037af9148f361af36"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-v2-refresh-reopen-saved.png",
+      "bytes": 125548,
+      "sha256": "8b69f2c9c12618700a1a8cd5bde1a730cfc497d82af4ad2294c4287d4c1cb4b3"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-v2-save-receipt-and-original-owner-readback.png",
+      "bytes": 127559,
+      "sha256": "ca9868965ea5bedb194f9dc2e02227bcf7c738b658f811f1f620c6be9ae7f75c"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/attachments/current-saved-v1-and-other-stage-real-dirty-1b6b05016fec0b3a0509791ce357e8e7620ea0cf.png",
+      "bytes": 146534,
+      "sha256": "b8df448191847b9c4ab4d094db9a98358baf30e066fc9aa14254897b74b61b22"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/attachments/manual-real-put-held-saving-and-navigation-fenced-5970f9333289e5b498cf2963b8e0cd24b45bf171.png",
+      "bytes": 147264,
+      "sha256": "396ee13395bd84b22cfb6000a6d3faa898a70050c851539760bf39309b0ce11a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/attachments/manual-v1-dirty-real-input-2a810a8bf9d22e5f2dee1ffaae34f8393702e7be.png",
+      "bytes": 140533,
+      "sha256": "fa0a19e7c29a125a357ec4628fe8c5ae9041c69a706b81306670977906e1c553"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/attachments/manual-v1-initial-current-saved-ccae578bfed91943a601d5a6928e26585e4df472.png",
+      "bytes": 143929,
+      "sha256": "e7b9ac433199f6dae7b4a7c8cf59bfa4fc6882dfaee05d1570ce06f74b1a6115"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/attachments/manual-v2-refresh-reopen-saved-2903fc4f4f39ea477a479006b429754de50e10b1.png",
+      "bytes": 146493,
+      "sha256": "c078167bbc6802059c41f8223e67a95c8f7ba43b0377bd06fb547071f2bbc1c2"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/attachments/manual-v2-save-receipt-and-original-owner-readback-83d51e7501e50a669e7dc3f9abb3629ac262ef6e.png",
+      "bytes": 147470,
+      "sha256": "6545ae3ff16dec8433c653e3f439c54b4795ada6285d1ff15258f0a25f8aebe6"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/current-saved-v1-and-other-stage-real-dirty.png",
+      "bytes": 146534,
+      "sha256": "b8df448191847b9c4ab4d094db9a98358baf30e066fc9aa14254897b74b61b22"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-real-put-held-saving-and-navigation-fenced.png",
+      "bytes": 147264,
+      "sha256": "396ee13395bd84b22cfb6000a6d3faa898a70050c851539760bf39309b0ce11a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-v1-dirty-real-input.png",
+      "bytes": 140533,
+      "sha256": "fa0a19e7c29a125a357ec4628fe8c5ae9041c69a706b81306670977906e1c553"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-v1-initial-current-saved.png",
+      "bytes": 143929,
+      "sha256": "e7b9ac433199f6dae7b4a7c8cf59bfa4fc6882dfaee05d1570ce06f74b1a6115"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-v2-refresh-reopen-saved.png",
+      "bytes": 146493,
+      "sha256": "c078167bbc6802059c41f8223e67a95c8f7ba43b0377bd06fb547071f2bbc1c2"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-v2-save-receipt-and-original-owner-readback.png",
+      "bytes": 147470,
+      "sha256": "6545ae3ff16dec8433c653e3f439c54b4795ada6285d1ff15258f0a25f8aebe6"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/attachments/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1-f06458e330b0c2cadcda24bb222e6d19752ac8df.png",
+      "bytes": 107130,
+      "sha256": "7ac8c2a07a1b57c14e14383798db22b5194ffcb3d861ef51684ba0722fa27006"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/attachments/offline-unknown-keeps-local-draft-and-current-status-e8ef173ddb98c27fc85b9e6aca853b19bb6e3840.png",
+      "bytes": 110077,
+      "sha256": "a0845c60d443d12afc8297a8cb465a071b25ed0e6359482547d0b882733d5bea"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/attachments/real-cas409-author-keeps-local-draft-after-owner-check-3bdc8be0aea518d38c1d9c6b90e9e470da4004d5.png",
+      "bytes": 115026,
+      "sha256": "2c3f7c56619972a862b2f645b3f71b3304d5e806edaf63e60bc2e1d8df09d5b8"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/attachments/real-cas409-keeps-local-draft-and-server-v2-3a10db21bf85a65f72f6fa2187f5f0e832224009.png",
+      "bytes": 112658,
+      "sha256": "2be25f43447c2841d36ccb1b1e720fcca4ae86a38e6b5dd71d48c81d0790c9e4"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/attachments/real-verify-get-held-does-not-claim-save-write-2442289de94a3ac8884bb6c20e1ed717489ead30.png",
+      "bytes": 112644,
+      "sha256": "320d6978c103f987380efbce2a089778035e522883e1afcb6f1621f04d019efd"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1.png",
+      "bytes": 107130,
+      "sha256": "7ac8c2a07a1b57c14e14383798db22b5194ffcb3d861ef51684ba0722fa27006"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/offline-unknown-keeps-local-draft-and-current-status.png",
+      "bytes": 110077,
+      "sha256": "a0845c60d443d12afc8297a8cb465a071b25ed0e6359482547d0b882733d5bea"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/real-cas409-author-keeps-local-draft-after-owner-check.png",
+      "bytes": 115026,
+      "sha256": "2c3f7c56619972a862b2f645b3f71b3304d5e806edaf63e60bc2e1d8df09d5b8"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/real-cas409-keeps-local-draft-and-server-v2.png",
+      "bytes": 112658,
+      "sha256": "2be25f43447c2841d36ccb1b1e720fcca4ae86a38e6b5dd71d48c81d0790c9e4"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/real-verify-get-held-does-not-claim-save-write.png",
+      "bytes": 112644,
+      "sha256": "320d6978c103f987380efbce2a089778035e522883e1afcb6f1621f04d019efd"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/attachments/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1-67747c7ce2f79e230520d5c7ad166ad2d47c7323.png",
+      "bytes": 125899,
+      "sha256": "69e0a2fcd998b9b0fca3d255548f420f2b8ef276dd1fd32fdfc6c0f02f5ab7b4"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/attachments/offline-unknown-keeps-local-draft-and-current-status-3a35d417d8f3b5914872801c1e1b2755d31d61c9.png",
+      "bytes": 127910,
+      "sha256": "fd628d32023348b73aaa2b426f6427d84ad6971db9260adf628b801f74968e12"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/attachments/real-cas409-author-keeps-local-draft-after-owner-check-5d4309b62ce0acc8dc14a19457834365aabd2103.png",
+      "bytes": 126859,
+      "sha256": "8169dfe1d447f4004e9606f6652d93db1a2be402609ec7ce675911e2abaf2455"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/attachments/real-cas409-keeps-local-draft-and-server-v2-98b93c4e522007ed1e70c4c6ae88189f55852d0d.png",
+      "bytes": 130523,
+      "sha256": "2083ce47b6199d11a1bf4623f69aa774754d679db6dfa9d489ea4e780fc5ae52"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/attachments/real-verify-get-held-does-not-claim-save-write-06e8d750b62ba9fa9a0206423551a225219735cc.png",
+      "bytes": 124431,
+      "sha256": "6b3412163efad3d42acb3330ec13dc8e3d26f2c46ad7aa98a5b91e510ef51343"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1.png",
+      "bytes": 125899,
+      "sha256": "69e0a2fcd998b9b0fca3d255548f420f2b8ef276dd1fd32fdfc6c0f02f5ab7b4"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/offline-unknown-keeps-local-draft-and-current-status.png",
+      "bytes": 127910,
+      "sha256": "fd628d32023348b73aaa2b426f6427d84ad6971db9260adf628b801f74968e12"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/real-cas409-author-keeps-local-draft-after-owner-check.png",
+      "bytes": 126859,
+      "sha256": "8169dfe1d447f4004e9606f6652d93db1a2be402609ec7ce675911e2abaf2455"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/real-cas409-keeps-local-draft-and-server-v2.png",
+      "bytes": 130523,
+      "sha256": "2083ce47b6199d11a1bf4623f69aa774754d679db6dfa9d489ea4e780fc5ae52"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/real-verify-get-held-does-not-claim-save-write.png",
+      "bytes": 124431,
+      "sha256": "6b3412163efad3d42acb3330ec13dc8e3d26f2c46ad7aa98a5b91e510ef51343"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/attachments/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1-3656122764f6cfe835f289eadb0e09de778a795d.png",
+      "bytes": 147075,
+      "sha256": "3abba473b6fe07f33c4867c01d49b55dca3932a21bcb178fbb2afaf6e7a06aab"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/attachments/offline-unknown-keeps-local-draft-and-current-status-677f0472fc643209c1760f3b7e2ebc1ad61109d6.png",
+      "bytes": 154843,
+      "sha256": "e0691d610d0ed47827a8db18c5870839d00d04ff5fd547ab55f57c357de5df35"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/attachments/real-cas409-author-keeps-local-draft-after-owner-check-f151387b9620dcc69119be9507ba89855546c0ee.png",
+      "bytes": 153828,
+      "sha256": "4fb05bee4b070eb06cf98e6633732f52849459dfb5979ae4ddd79667649dfe51"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/attachments/real-cas409-keeps-local-draft-and-server-v2-2b147dcc0bea7d7a0f0869a81f3048f52c2c3fca.png",
+      "bytes": 157574,
+      "sha256": "4f2cfb397ea38f9dfcb051bc25dc45673d06993d85b82d60700aa426a71a7112"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/attachments/real-verify-get-held-does-not-claim-save-write-d5a1cfb4ebc917ae8a814c85d2ac13f628295c4e.png",
+      "bytes": 151709,
+      "sha256": "afbe8ef057735a057dd0aa2f2d276749b08c2ad6f6e17dd6c0455d4ca90c129d"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1.png",
+      "bytes": 147075,
+      "sha256": "3abba473b6fe07f33c4867c01d49b55dca3932a21bcb178fbb2afaf6e7a06aab"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/offline-unknown-keeps-local-draft-and-current-status.png",
+      "bytes": 154843,
+      "sha256": "e0691d610d0ed47827a8db18c5870839d00d04ff5fd547ab55f57c357de5df35"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/real-cas409-author-keeps-local-draft-after-owner-check.png",
+      "bytes": 153828,
+      "sha256": "4fb05bee4b070eb06cf98e6633732f52849459dfb5979ae4ddd79667649dfe51"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/real-cas409-keeps-local-draft-and-server-v2.png",
+      "bytes": 157574,
+      "sha256": "4f2cfb397ea38f9dfcb051bc25dc45673d06993d85b82d60700aa426a71a7112"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/real-verify-get-held-does-not-claim-save-write.png",
+      "bytes": 151709,
+      "sha256": "afbe8ef057735a057dd0aa2f2d276749b08c2ad6f6e17dd6c0455d4ca90c129d"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/vite.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-file-final-r1/vite.stdout.log",
+      "bytes": 72,
+      "sha256": "177d5eecc3ae2983e3003872659675528be1358e73f4535bb6225ce5b9fa4d6a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/backend.stderr.log",
+      "bytes": 202,
+      "sha256": "372f5d76072133db3323ea686a71058599ea1862775f067e2d0d14c34dbbc0b1"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/backend.stdout.log",
+      "bytes": 142736,
+      "sha256": "0093dc5282866cd671122ee0d66ec55c665eafa868c2465fcdec6bdf9bf020fe"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/junit.xml",
+      "bytes": 11267,
+      "sha256": "eabf8d157a6b39974ac679404e1fffb361d3f2b5b0df2e038eac59d9d3ed77a7"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/launcher.json",
+      "bytes": 1195,
+      "sha256": "5b0a7a775e1ea9a1a83cb4e7653ad7bd6e0f26b0ae017af22688f51caea5e7c3"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/playwright.log",
+      "bytes": 2890,
+      "sha256": "ef42603b0e3726ae050a484fbc558ac3139a0ad59824b327219934a1646a6ceb"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/results.json",
+      "bytes": 706520,
+      "sha256": "18f36a4ab9a3bb7feee9b1bd2eeb6efb43e5467c3928798f02b0b3e270bf1f42"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1366x768/attachments/late-history-a-cannot-relabel-or-clear-dirty-document-b-4f9364f645eba6c9f808ad936d5030ed620e94ca.png",
+      "bytes": 99862,
+      "sha256": "12089a4f5ac39014589dcfab4c22aa1de1a67265be842cde62f8d2e86d493bc5"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1366x768/attachments/late-history-old-scope-cannot-contaminate-current-saved-v1-bdd6c60cb4e5e243506a7ff6f0b4c5eff1934ac6.png",
+      "bytes": 104097,
+      "sha256": "1e9b40ff3c67b30a0437ba4315ede3768e82f73f6f43da88bf93acda5ffd8320"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1366x768/late-history-a-cannot-relabel-or-clear-dirty-document-b.png",
+      "bytes": 99862,
+      "sha256": "12089a4f5ac39014589dcfab4c22aa1de1a67265be842cde62f8d2e86d493bc5"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1366x768/late-history-old-scope-cannot-contaminate-current-saved-v1.png",
+      "bytes": 104097,
+      "sha256": "1e9b40ff3c67b30a0437ba4315ede3768e82f73f6f43da88bf93acda5ffd8320"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1440x900/attachments/late-history-a-cannot-relabel-or-clear-dirty-document-b-f4154cf51461070c38f8753ac03f063f89c22a85.png",
+      "bytes": 111586,
+      "sha256": "83f56ca0767e7b871a804e1c534709e0de9deea0505415949baba5d0ff9e3585"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1440x900/attachments/late-history-old-scope-cannot-contaminate-current-saved-v1-35cabbe4f16c867435a083f73c01cca902542397.png",
+      "bytes": 120536,
+      "sha256": "42029868bef3095b0ede4aa8e172701e5adeadc8f045da8bb7efd7366d608ced"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1440x900/late-history-a-cannot-relabel-or-clear-dirty-document-b.png",
+      "bytes": 111586,
+      "sha256": "83f56ca0767e7b871a804e1c534709e0de9deea0505415949baba5d0ff9e3585"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1440x900/late-history-old-scope-cannot-contaminate-current-saved-v1.png",
+      "bytes": 120536,
+      "sha256": "42029868bef3095b0ede4aa8e172701e5adeadc8f045da8bb7efd7366d608ced"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1920x1080/attachments/late-history-a-cannot-relabel-or-clear-dirty-document-b-394d589daae5d047518d9f7ffef93010c20bbc98.png",
+      "bytes": 141201,
+      "sha256": "b9459cec8f426f97c07961bf92dd4d350c527ac3b5fa42f0420ca8da2668c4f0"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1920x1080/attachments/late-history-old-scope-cannot-contaminate-current-saved-v1-2035281e42c4dc8cf56ed0f3c728e71b072ee292.png",
+      "bytes": 142632,
+      "sha256": "500664944e7939d5d6d2128b71b39704c8005f82fe41125cc29078a540148423"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1920x1080/late-history-a-cannot-relabel-or-clear-dirty-document-b.png",
+      "bytes": 141201,
+      "sha256": "b9459cec8f426f97c07961bf92dd4d350c527ac3b5fa42f0420ca8da2668c4f0"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1920x1080/late-history-old-scope-cannot-contaminate-current-saved-v1.png",
+      "bytes": 142632,
+      "sha256": "500664944e7939d5d6d2128b71b39704c8005f82fe41125cc29078a540148423"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/attachments/current-saved-v1-and-other-stage-real-dirty-3c7cbaa25f0b4976fdc7303a5e8b8eeb08b348ae.png",
+      "bytes": 108885,
+      "sha256": "98ae72a16d93d9d2c741d98534a3d84fe933de277cfe677ad32bbcff9afd651e"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/attachments/manual-real-put-held-saving-and-navigation-fenced-f44dd0d40d42362754197ee28b8c58024b43cb08.png",
+      "bytes": 106343,
+      "sha256": "751174c78bee589efb262f133b3ec4f853cd33b2062222108e007bee15f58c38"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/attachments/manual-v1-dirty-real-input-eb3b19e316bc608aaa0eddd4efe142863e350b2e.png",
+      "bytes": 106662,
+      "sha256": "8a986e1298a34f4bab893a5b1cd7bae85363cb7962487b136ab5f56a658fcf3b"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/attachments/manual-v1-initial-current-saved-32f0940f3171211e5169736d3e932b3f189971b6.png",
+      "bytes": 105304,
+      "sha256": "b7113806910eaaf156906726ffd9d98894f0127ff11d6c4278b12dcc5ec7c48a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/attachments/manual-v2-refresh-reopen-saved-61e988f2e0c3ce9dd1961711392b09846a4795dd.png",
+      "bytes": 106179,
+      "sha256": "c2d1b356df51a40516642eaa8bca3c919fc32bc1b5d7cef80a5ab609d91aa56a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/attachments/manual-v2-save-receipt-and-original-owner-readback-b7fe87000e0ae43cd7b5e3144c1bd54a44577061.png",
+      "bytes": 107294,
+      "sha256": "bf10ca14a58cbe7abc1349eda494cd6cf038706a2ead96e1eb2f4aa57f0ab485"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/current-saved-v1-and-other-stage-real-dirty.png",
+      "bytes": 108885,
+      "sha256": "98ae72a16d93d9d2c741d98534a3d84fe933de277cfe677ad32bbcff9afd651e"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-real-put-held-saving-and-navigation-fenced.png",
+      "bytes": 106343,
+      "sha256": "751174c78bee589efb262f133b3ec4f853cd33b2062222108e007bee15f58c38"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-v1-dirty-real-input.png",
+      "bytes": 106662,
+      "sha256": "8a986e1298a34f4bab893a5b1cd7bae85363cb7962487b136ab5f56a658fcf3b"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-v1-initial-current-saved.png",
+      "bytes": 105304,
+      "sha256": "b7113806910eaaf156906726ffd9d98894f0127ff11d6c4278b12dcc5ec7c48a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-v2-refresh-reopen-saved.png",
+      "bytes": 106179,
+      "sha256": "c2d1b356df51a40516642eaa8bca3c919fc32bc1b5d7cef80a5ab609d91aa56a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768/manual-v2-save-receipt-and-original-owner-readback.png",
+      "bytes": 107294,
+      "sha256": "bf10ca14a58cbe7abc1349eda494cd6cf038706a2ead96e1eb2f4aa57f0ab485"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/attachments/current-saved-v1-and-other-stage-real-dirty-411b3368cd3be09805b3f94727a5fb3d482a7ad0.png",
+      "bytes": 121611,
+      "sha256": "fcb3c6a55664fb2c97e376723cae7cf9f3248e2a6e65c1b8e167b2c8354981e3"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/attachments/manual-real-put-held-saving-and-navigation-fenced-aea301712e93193ca2c7f6b0b7f2c6cb9c37b28a.png",
+      "bytes": 126032,
+      "sha256": "930c141857599e54e9c7fa28e0d7bfcdf8ba2aa6b0bc13002fb7f583689c0a3c"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/attachments/manual-v1-dirty-real-input-e8f9e0d19dfd0ad3c11827e15c0e89c7f5effc42.png",
+      "bytes": 120854,
+      "sha256": "8a5406f93cbb19cf06b24b7d4162a76008e300aed67ba062fe3558e000df3f57"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/attachments/manual-v1-initial-current-saved-ee8c4fdf5cd0a73cc5254830460d97c4638fe062.png",
+      "bytes": 123039,
+      "sha256": "89553998dac46bd3fd124cf794bda602858327d1558dbf7037af9148f361af36"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/attachments/manual-v2-refresh-reopen-saved-16268f938b953021e4f3317708d0ff0314b4b3cf.png",
+      "bytes": 125548,
+      "sha256": "8b69f2c9c12618700a1a8cd5bde1a730cfc497d82af4ad2294c4287d4c1cb4b3"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/attachments/manual-v2-save-receipt-and-original-owner-readback-e061170bbd75b3606a6912a987a7795fb987b736.png",
+      "bytes": 127559,
+      "sha256": "ca9868965ea5bedb194f9dc2e02227bcf7c738b658f811f1f620c6be9ae7f75c"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/current-saved-v1-and-other-stage-real-dirty.png",
+      "bytes": 121611,
+      "sha256": "fcb3c6a55664fb2c97e376723cae7cf9f3248e2a6e65c1b8e167b2c8354981e3"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-real-put-held-saving-and-navigation-fenced.png",
+      "bytes": 126032,
+      "sha256": "930c141857599e54e9c7fa28e0d7bfcdf8ba2aa6b0bc13002fb7f583689c0a3c"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-v1-dirty-real-input.png",
+      "bytes": 120854,
+      "sha256": "8a5406f93cbb19cf06b24b7d4162a76008e300aed67ba062fe3558e000df3f57"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-v1-initial-current-saved.png",
+      "bytes": 123039,
+      "sha256": "89553998dac46bd3fd124cf794bda602858327d1558dbf7037af9148f361af36"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-v2-refresh-reopen-saved.png",
+      "bytes": 125548,
+      "sha256": "8b69f2c9c12618700a1a8cd5bde1a730cfc497d82af4ad2294c4287d4c1cb4b3"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900/manual-v2-save-receipt-and-original-owner-readback.png",
+      "bytes": 127559,
+      "sha256": "ca9868965ea5bedb194f9dc2e02227bcf7c738b658f811f1f620c6be9ae7f75c"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/attachments/current-saved-v1-and-other-stage-real-dirty-65dfbf9c15c92572c28e4de2d40dc7792635ac80.png",
+      "bytes": 146534,
+      "sha256": "b8df448191847b9c4ab4d094db9a98358baf30e066fc9aa14254897b74b61b22"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/attachments/manual-real-put-held-saving-and-navigation-fenced-9a22cae856ba39dd9ebc9b66e56871f791236dc0.png",
+      "bytes": 147264,
+      "sha256": "396ee13395bd84b22cfb6000a6d3faa898a70050c851539760bf39309b0ce11a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/attachments/manual-v1-dirty-real-input-afbb80faf1ae34787c1abfc12c35d6aeda216115.png",
+      "bytes": 140533,
+      "sha256": "fa0a19e7c29a125a357ec4628fe8c5ae9041c69a706b81306670977906e1c553"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/attachments/manual-v1-initial-current-saved-6c997204da7d75eddb127cee53e981d19c4e651d.png",
+      "bytes": 143929,
+      "sha256": "e7b9ac433199f6dae7b4a7c8cf59bfa4fc6882dfaee05d1570ce06f74b1a6115"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/attachments/manual-v2-refresh-reopen-saved-be0e4959bb4e26c872da5e55542c7fb82b34c1c6.png",
+      "bytes": 146493,
+      "sha256": "c078167bbc6802059c41f8223e67a95c8f7ba43b0377bd06fb547071f2bbc1c2"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/attachments/manual-v2-save-receipt-and-original-owner-readback-23c4de8ae3fe24c2fc115365bc13be59af58007e.png",
+      "bytes": 147470,
+      "sha256": "6545ae3ff16dec8433c653e3f439c54b4795ada6285d1ff15258f0a25f8aebe6"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/current-saved-v1-and-other-stage-real-dirty.png",
+      "bytes": 146534,
+      "sha256": "b8df448191847b9c4ab4d094db9a98358baf30e066fc9aa14254897b74b61b22"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-real-put-held-saving-and-navigation-fenced.png",
+      "bytes": 147264,
+      "sha256": "396ee13395bd84b22cfb6000a6d3faa898a70050c851539760bf39309b0ce11a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-v1-dirty-real-input.png",
+      "bytes": 140533,
+      "sha256": "fa0a19e7c29a125a357ec4628fe8c5ae9041c69a706b81306670977906e1c553"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-v1-initial-current-saved.png",
+      "bytes": 143929,
+      "sha256": "e7b9ac433199f6dae7b4a7c8cf59bfa4fc6882dfaee05d1570ce06f74b1a6115"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-v2-refresh-reopen-saved.png",
+      "bytes": 146493,
+      "sha256": "c078167bbc6802059c41f8223e67a95c8f7ba43b0377bd06fb547071f2bbc1c2"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080/manual-v2-save-receipt-and-original-owner-readback.png",
+      "bytes": 147470,
+      "sha256": "6545ae3ff16dec8433c653e3f439c54b4795ada6285d1ff15258f0a25f8aebe6"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/attachments/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1-f195c37c6f2447485201e355dd4280b0f55f5e15.png",
+      "bytes": 107130,
+      "sha256": "7ac8c2a07a1b57c14e14383798db22b5194ffcb3d861ef51684ba0722fa27006"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/attachments/offline-unknown-keeps-local-draft-and-current-status-31ad46b9ba9c6ae47632d3ec37a048815ade521f.png",
+      "bytes": 110077,
+      "sha256": "a0845c60d443d12afc8297a8cb465a071b25ed0e6359482547d0b882733d5bea"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/attachments/real-cas409-author-keeps-local-draft-after-owner-check-634f1c3f234430c547b85184cdadb5d6ed0e5176.png",
+      "bytes": 115026,
+      "sha256": "2c3f7c56619972a862b2f645b3f71b3304d5e806edaf63e60bc2e1d8df09d5b8"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/attachments/real-cas409-keeps-local-draft-and-server-v2-3d87232a07c408514324c5b90cd363972756b15c.png",
+      "bytes": 112658,
+      "sha256": "2be25f43447c2841d36ccb1b1e720fcca4ae86a38e6b5dd71d48c81d0790c9e4"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/attachments/real-verify-get-held-does-not-claim-save-write-646316238d8c7e91f959823cd5779372ad4080f0.png",
+      "bytes": 112644,
+      "sha256": "320d6978c103f987380efbce2a089778035e522883e1afcb6f1621f04d019efd"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1.png",
+      "bytes": 107130,
+      "sha256": "7ac8c2a07a1b57c14e14383798db22b5194ffcb3d861ef51684ba0722fa27006"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/offline-unknown-keeps-local-draft-and-current-status.png",
+      "bytes": 110077,
+      "sha256": "a0845c60d443d12afc8297a8cb465a071b25ed0e6359482547d0b882733d5bea"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/real-cas409-author-keeps-local-draft-after-owner-check.png",
+      "bytes": 115026,
+      "sha256": "2c3f7c56619972a862b2f645b3f71b3304d5e806edaf63e60bc2e1d8df09d5b8"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/real-cas409-keeps-local-draft-and-server-v2.png",
+      "bytes": 112658,
+      "sha256": "2be25f43447c2841d36ccb1b1e720fcca4ae86a38e6b5dd71d48c81d0790c9e4"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768/real-verify-get-held-does-not-claim-save-write.png",
+      "bytes": 112644,
+      "sha256": "320d6978c103f987380efbce2a089778035e522883e1afcb6f1621f04d019efd"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/attachments/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1-e735929fa1a164c8eda2287d856724ef9180808a.png",
+      "bytes": 125899,
+      "sha256": "69e0a2fcd998b9b0fca3d255548f420f2b8ef276dd1fd32fdfc6c0f02f5ab7b4"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/attachments/offline-unknown-keeps-local-draft-and-current-status-7bb7fe46eab20c2ade9c16e445595813435ed240.png",
+      "bytes": 127910,
+      "sha256": "fd628d32023348b73aaa2b426f6427d84ad6971db9260adf628b801f74968e12"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/attachments/real-cas409-author-keeps-local-draft-after-owner-check-b00afd37ff9f0e02602ce6dfce2c4729fce91d47.png",
+      "bytes": 126859,
+      "sha256": "8169dfe1d447f4004e9606f6652d93db1a2be402609ec7ce675911e2abaf2455"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/attachments/real-cas409-keeps-local-draft-and-server-v2-23fb0313ee136ef7c98d298225fc66e51ce85257.png",
+      "bytes": 130523,
+      "sha256": "2083ce47b6199d11a1bf4623f69aa774754d679db6dfa9d489ea4e780fc5ae52"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/attachments/real-verify-get-held-does-not-claim-save-write-aa1bf6dc40734940bc69a7a5f5201d39fe5df86e.png",
+      "bytes": 124431,
+      "sha256": "6b3412163efad3d42acb3330ec13dc8e3d26f2c46ad7aa98a5b91e510ef51343"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1.png",
+      "bytes": 125899,
+      "sha256": "69e0a2fcd998b9b0fca3d255548f420f2b8ef276dd1fd32fdfc6c0f02f5ab7b4"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/offline-unknown-keeps-local-draft-and-current-status.png",
+      "bytes": 127910,
+      "sha256": "fd628d32023348b73aaa2b426f6427d84ad6971db9260adf628b801f74968e12"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/real-cas409-author-keeps-local-draft-after-owner-check.png",
+      "bytes": 126859,
+      "sha256": "8169dfe1d447f4004e9606f6652d93db1a2be402609ec7ce675911e2abaf2455"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/real-cas409-keeps-local-draft-and-server-v2.png",
+      "bytes": 130523,
+      "sha256": "2083ce47b6199d11a1bf4623f69aa774754d679db6dfa9d489ea4e780fc5ae52"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900/real-verify-get-held-does-not-claim-save-write.png",
+      "bytes": 124431,
+      "sha256": "6b3412163efad3d42acb3330ec13dc8e3d26f2c46ad7aa98a5b91e510ef51343"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/attachments/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1-533e19952040aba90bfb2f5bacac5f8796bf8674.png",
+      "bytes": 147075,
+      "sha256": "3abba473b6fe07f33c4867c01d49b55dca3932a21bcb178fbb2afaf6e7a06aab"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/attachments/offline-unknown-keeps-local-draft-and-current-status-519aa53d538c4ac2fc1b781c3c1603bff8a517d6.png",
+      "bytes": 154843,
+      "sha256": "e0691d610d0ed47827a8db18c5870839d00d04ff5fd547ab55f57c357de5df35"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/attachments/real-cas409-author-keeps-local-draft-after-owner-check-004d84d05132445b07265c67c8373df5e21729ca.png",
+      "bytes": 153828,
+      "sha256": "4fb05bee4b070eb06cf98e6633732f52849459dfb5979ae4ddd79667649dfe51"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/attachments/real-cas409-keeps-local-draft-and-server-v2-a9b55a85ad3147eb9fceecbd934c204d20ab8dbe.png",
+      "bytes": 157574,
+      "sha256": "4f2cfb397ea38f9dfcb051bc25dc45673d06993d85b82d60700aa426a71a7112"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/attachments/real-verify-get-held-does-not-claim-save-write-b06139d350086505c2de839215eeb7346500c02e.png",
+      "bytes": 151709,
+      "sha256": "afbe8ef057735a057dd0aa2f2d276749b08c2ad6f6e17dd6c0455d4ca90c129d"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1.png",
+      "bytes": 147075,
+      "sha256": "3abba473b6fe07f33c4867c01d49b55dca3932a21bcb178fbb2afaf6e7a06aab"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/offline-unknown-keeps-local-draft-and-current-status.png",
+      "bytes": 154843,
+      "sha256": "e0691d610d0ed47827a8db18c5870839d00d04ff5fd547ab55f57c357de5df35"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/real-cas409-author-keeps-local-draft-after-owner-check.png",
+      "bytes": 153828,
+      "sha256": "4fb05bee4b070eb06cf98e6633732f52849459dfb5979ae4ddd79667649dfe51"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/real-cas409-keeps-local-draft-and-server-v2.png",
+      "bytes": 157574,
+      "sha256": "4f2cfb397ea38f9dfcb051bc25dc45673d06993d85b82d60700aa426a71a7112"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/test-results/v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080/real-verify-get-held-does-not-claim-save-write.png",
+      "bytes": 151709,
+      "sha256": "afbe8ef057735a057dd0aa2f2d276749b08c2ad6f6e17dd6c0455d4ca90c129d"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/vite.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-browser-pg-final-r1/vite.stdout.log",
+      "bytes": 72,
+      "sha256": "1c5255dd81b30d4b0c5db24ed505158940c6e0008e6ecf86d563aa3b8b9a64eb"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-mounted-green-r1.vitest.json",
+      "bytes": 17895,
+      "sha256": "49e01bfec8b9f6594b9c5ef9773ac073b6a5f7e1a87a68d1194efc06517b166b"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-mounted-green-r2.vitest.json",
+      "bytes": 5426,
+      "sha256": "245b1eba549e13be61b271eb7da5ec4983a51a15887d1b7ec68307ece2797e2c"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-mounted-red-r1.vitest.json",
+      "bytes": 188111,
+      "sha256": "d1cb774718a92081970d8d01b0dbc3bb65cf42aa3315317147ff2f0a33059d85"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-operation-red-r1.vitest.json",
+      "bytes": 190651,
+      "sha256": "63bf41cc63c59f0a566c1d225054d8e6b73523004a06c513ca6a357023ed29c5"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-operation-red-r2.vitest.json",
+      "bytes": 193079,
+      "sha256": "4b20e4e1fbc86817684515658429199709978630eb945f8af90b144832745e41"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-operation-red-r3.vitest.json",
+      "bytes": 186293,
+      "sha256": "604c54877319ef27b440665d3998eb403dd53df68177abaa2dc8788995357929"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-owner-boundary-green-r1.vitest.json",
+      "bytes": 11518,
+      "sha256": "dcc2c6cd9dfad469d219f273b17cbb45142d70108d5012de5da48dcf0eef74b4"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-owner-boundary-red-r1.vitest.json",
+      "bytes": 232667,
+      "sha256": "af7b88dc04e830015998288a37aa27f2a2d0397ecdc23a5449b36543ff23076a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/creative-save-related-green-r1.vitest.json",
+      "bytes": 41532,
+      "sha256": "a427219495cb3b665c485b5ecc5bde7a8c148063f2c6c024c16290b5af3b1cfe"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/file-creative-save-1366x768-faults.json",
+      "bytes": 52904,
+      "sha256": "7884821e8625daafc5c300adb34552d92f6ca058ed0afff428dbd1f38d3689c5"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/file-creative-save-1366x768-history.json",
+      "bytes": 48532,
+      "sha256": "2a700537bec579d3cc27a52f1980e9dc18eebc32e4ebdfb9b5a2199685ea7555"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/file-creative-save-1366x768-save.json",
+      "bytes": 55394,
+      "sha256": "ff55347677745ffcc5d7180af9deba5962f8e81ed783d3c195bd925826bbf89a"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/file-creative-save-1440x900-faults.json",
+      "bytes": 52904,
+      "sha256": "d6f4781949a91b8cf9b5172889bc649c7d4e6ede82f718aa1b5be16c021db4fd"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/file-creative-save-1440x900-history.json",
+      "bytes": 48532,
+      "sha256": "eeaf73aaf7a7574cac3fe61b00f21918fd7c8f6f03765a0f9f71d85125454f1d"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/file-creative-save-1440x900-save.json",
+      "bytes": 55394,
+      "sha256": "e0f81797dc1c75e9298bc4484e49485e3a6f26c95600eab9fd8354d5a6482c56"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/file-creative-save-1920x1080-faults.json",
+      "bytes": 52907,
+      "sha256": "ff8366debbe665fc121b10a18cdb0af84964df36a19a4a434827ea8cb54f2a50"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/file-creative-save-1920x1080-history.json",
+      "bytes": 48534,
+      "sha256": "cf47347feca328669131d8faa09a3892a3532d770e17decce02804c3c08c97b0"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/file-creative-save-1920x1080-save.json",
+      "bytes": 55397,
+      "sha256": "5f75efad5b6ece45abc19901580deff54e5c9724e9058f01fe9f9e2b24775aae"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/pg-creative-save-1366x768-faults.json",
+      "bytes": 54669,
+      "sha256": "925161f44c4e049274cd15cae74b24fb3e680f30228cfb7d761f5d12b426612e"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/pg-creative-save-1366x768-history.json",
+      "bytes": 53107,
+      "sha256": "04fabebffd73b36d7080d4c17b0af2d803f9342d1f65b9cbe646f3ba5aef60f0"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/pg-creative-save-1366x768-save.json",
+      "bytes": 58236,
+      "sha256": "b4286ffaeeed4b0f370edcd7cfdb622e7c05b9a498386eb6c1e7aec34d5c8061"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/pg-creative-save-1440x900-faults.json",
+      "bytes": 56285,
+      "sha256": "fdb3622d218a00763dbd8b63f7d781241f816d9fb9b6867a8935180acd304bbb"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/pg-creative-save-1440x900-history.json",
+      "bytes": 53107,
+      "sha256": "72b3ac4b535f2388776c6145ec81cc4c3f32f74b749f7d62df5003e824633f84"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/pg-creative-save-1440x900-save.json",
+      "bytes": 58386,
+      "sha256": "f255ec4fbe7a5de648b1eea2aacccb954355bae5e77c17be535aa521fddc3dcb"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/pg-creative-save-1920x1080-faults.json",
+      "bytes": 56422,
+      "sha256": "d78b0f2afc13fd5b43a65609cd73b9ce7e03e3cf076f2c8bfe5e054122b093a4"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/pg-creative-save-1920x1080-history.json",
+      "bytes": 53109,
+      "sha256": "a6d86cf2bec44afa2ccc4783bfa0a24b9612c04fa5be3d44c8e53fee3d767505"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/decoded/pg-creative-save-1920x1080-save.json",
+      "bytes": 58389,
+      "sha256": "47bc677479d0956d8e78b4269c70b3c2decc7eeaf986d840d0ccedeac4cdd450"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/file-browser-evidence-index.json",
+      "bytes": 11387,
+      "sha256": "056a988fff99fef2c66ec6599af248405b6a21e87d6aa19896c93ae68c318ccd"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/file-browser-screenshots.json",
+      "bytes": 19381,
+      "sha256": "141359d064e8435af2d6665285e6031de73b4a78e8ae96005004e9c34aee5aee"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/file-runner-receipts-mirror.json",
+      "bytes": 569,
+      "sha256": "e59b9645bbe5b993f7e3aa71d5253dee9ca52cd1e27a132c77b99662a7a315ab"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/file-security-runtime-source-binding.json",
+      "bytes": 272122,
+      "sha256": "3a044a11e1d55c58500bf9d1c1f9d20c592ed680efd108957c36cb30eb51595c"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/final-browser-evidence-index.json",
+      "bytes": 22733,
+      "sha256": "8eb738f77a74830f3a2be8a69ac85c5a1a8b249f79473731d88ef9e1fdc6388e"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/final-browser-screenshots.json",
+      "bytes": 38601,
+      "sha256": "b27041407ed2a4a68866d9a9af0cb89b50c9bbd29c25f9d47cbf1b6f8b9e74e9"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/final-runtime-cleanup.json",
+      "bytes": 1187,
+      "sha256": "c671799c2f531857922dfa91da6d52a06a43ce807d4d3ada018471a307c44828"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/frontend-preservation-review.json",
+      "bytes": 3196,
+      "sha256": "3b8323eb6b3cf2f01a1cafcf9f8b2fb144bc592fb52ad59a25018483b348cdf8"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/frontend-src-final-r1.json",
+      "bytes": 1590040,
+      "sha256": "71576ccb517c2a48906b4cc6551e86f3b4b8753da3cdf399df879d97c2739876"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/frontend-verification.json",
+      "bytes": 2500,
+      "sha256": "bc4cb1d4a3ebbd15e2c149d88a7ceb034137fd24ed3dbe713b3bc38eb8ee1861"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/frontend-visual-runtime-cleanup.json",
+      "bytes": 277,
+      "sha256": "a950757f35a4ac3767f312ec7715ddb212edb416c160d602d67016c659540fe7"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/hosted-ci-baseline.json",
+      "bytes": 10421,
+      "sha256": "5f7c8ecb9aaa20e00edab8f40457c84d289cd17f960e4d79aa306e761417ceba"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/hosted-ci-implementation.json",
+      "bytes": 10421,
+      "sha256": "c6096e6357ba5eb5ed9f4509955f9189fdeeea16a0daf3615348adc97cfd14a8"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/implementation-publication-audit.json",
+      "bytes": 1736,
+      "sha256": "b69a081f8ebda94dd1a673cf50460f50c2f0267f539b695f3bd998bbb40cb126"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/manifest-source-git-binding-final.json",
+      "bytes": 596,
+      "sha256": "5946295db6ad8341dc5a7bcba8b4c5d2380d40ea94c1a98b56a9e1216e85c9f2"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/mounted-red-green-prepare-evidence.json",
+      "bytes": 13907,
+      "sha256": "32a0474be228770f55f205e2f069b0c87d0ceb16913eb7ca91702b1b29cbd009"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/original-harness-byte-preservation.json",
+      "bytes": 2396,
+      "sha256": "85df1e66c04e96562ebdd03dbf79a25cd529adc95031a9ed682661f66655a19e"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/protection-baseline.json",
+      "bytes": 871,
+      "sha256": "d2076dc9938f7e9683115ce62210d9463b9f9fe75ed2012ff6dccaa95a20e314"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/protection-final.json",
+      "bytes": 871,
+      "sha256": "fecfcd801bf075a04e2151f66f9d791218d9f8b85f4b5f6311090a74264e97aa"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/protection-post-collection.json",
+      "bytes": 871,
+      "sha256": "15a55b48928d156b8debab347cd023f7368def3dce1f21960d292ca34ef30d60"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/root-final-helper-path.json",
+      "bytes": 576,
+      "sha256": "83afea5d7a2bc1166cbd93592f105fd284f8cd9f2660661c51bebe5d4d901e11"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/root-helper-reuse.json",
+      "bytes": 3237,
+      "sha256": "d89bd0c4b80109206bd7ad855168f737b2171c53f2a8de9f3bd86e24e5abf7fa"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/runner-receipts-mirror.json",
+      "bytes": 1438,
+      "sha256": "cf53c892eddfc7965bebc165d96bb21418cf9dd100a561a1c3991e3f85b076ee"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/runner-receipts/creative-save-browser-file-final-r1.json",
+      "bytes": 546310,
+      "sha256": "fc474c8777cbbde6b2550542e93516dbb689f271645ac621ea70282f8e09d837"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/runner-receipts/creative-save-browser-file-final-r1.log",
+      "bytes": 898,
+      "sha256": "dcffff63bf4a8d0ef97dc31b4f884792e1adf1482cb98ba902a15b7bf6ea5c77"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/runner-receipts/creative-save-browser-pg-final-r1-postgres-runtime.json",
+      "bytes": 9747,
+      "sha256": "eaf987003e5595e7e3e3e849663f85bf1cd350d40586130deb88383a808abd48"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/runner-receipts/creative-save-browser-pg-final-r1.json",
+      "bytes": 546386,
+      "sha256": "350e4c1e702f8674aec9dfa9b51514b535a265f5a8c13d176df274f36c016c43"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/runner-receipts/creative-save-browser-pg-final-r1.log",
+      "bytes": 1093,
+      "sha256": "2dcdf80b61f68fe1aae730ab76bd0f584de26fda2693093bc27a2d5c97d27b89"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/runtime-retention-final.json",
+      "bytes": 972,
+      "sha256": "39b1c256cf085993e9b30368df7ce6c4d0027c45c2a90bbc11f10e7e72413574"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/security-browser-preparation-r2.json",
+      "bytes": 1908,
+      "sha256": "29bf7996c02c858129fce22dcf926c4b3f9a9106bffc0487b67f83f84f2e4902"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/security-browser-preparation.json",
+      "bytes": 1594,
+      "sha256": "7e7f38a209f4d570511bee501319e006c54699af84017b46e7a2084bb9718af5"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/security-runtime-artifact-index.json",
+      "bytes": 63984,
+      "sha256": "9e299befd9f5c9d01b64966100c5cd6b1d0d67681ff2e1c7b32ea1df534c9d23"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/security-runtime-source-binding.json",
+      "bytes": 272122,
+      "sha256": "3a044a11e1d55c58500bf9d1c1f9d20c592ed680efd108957c36cb30eb51595c"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/source-binding-final.json",
+      "bytes": 5071,
+      "sha256": "4c3a4cc875d5d250eebd0e396e10848283c6745f78272e9b4edd637b94a764a3"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/source-freeze-final-r1.json",
+      "bytes": 272191,
+      "sha256": "2d67d9d8fdf47e925a9d33e6dae8fc575829688b423000e7465b9ff809ea6275"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/source-git-binding-final.json",
+      "bytes": 600284,
+      "sha256": "bb839b9d48521322e5c872b172ae117c8d68c0ad029544ae9e91746d610580fa"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/visual-dom-review-file.json",
+      "bytes": 108157,
+      "sha256": "a49c422007a3fff135d76a718b79a4aab424e9a24d8c81d4f788f836ac375756"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/visual-dom-review-pg.json",
+      "bytes": 109033,
+      "sha256": "977e9a68f603639da781bb47d33a4cc1c9e41953825349f7ae9338fc58f0b7f4"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/visual-image-review.json",
+      "bytes": 39690,
+      "sha256": "d1d934fad23be59258d2e9ad39d79eb192a45de7f00586f236ecb5093217b8fd"
+    },
+    {
+      "path": "docs/delivery/v2-creative-save-state-20261017/visual-results-final-r1/.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-browser-file-final-r1.json",
+      "bytes": 546310,
+      "sha256": "fc474c8777cbbde6b2550542e93516dbb689f271645ac621ea70282f8e09d837"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-browser-file-final-r1.log",
+      "bytes": 898,
+      "sha256": "dcffff63bf4a8d0ef97dc31b4f884792e1adf1482cb98ba902a15b7bf6ea5c77"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-browser-pg-final-r1-postgres-runtime.json",
+      "bytes": 9747,
+      "sha256": "eaf987003e5595e7e3e3e849663f85bf1cd350d40586130deb88383a808abd48"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-browser-pg-final-r1.json",
+      "bytes": 546386,
+      "sha256": "350e4c1e702f8674aec9dfa9b51514b535a265f5a8c13d176df274f36c016c43"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-browser-pg-final-r1.log",
+      "bytes": 1093,
+      "sha256": "2dcdf80b61f68fe1aae730ab76bd0f584de26fda2693093bc27a2d5c97d27b89"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-build-final-r1.json",
+      "bytes": 546178,
+      "sha256": "f39bdad1fde6b4a364994b31603d09e20840a268e7fa2185d766b55edd344f6b"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-build-final-r1.log",
+      "bytes": 1980,
+      "sha256": "4f4789413c9935caa3d2801afefc9bcc15919c7c7ae1c92e35fe1b1aebb41fa8"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-ci-selfchecks-final-r1.json",
+      "bytes": 546467,
+      "sha256": "927df9990f172376b5887fefa74b6052d088548b16d1687b065d2f1e62b694c8"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-ci-selfchecks-final-r1.log",
+      "bytes": 264,
+      "sha256": "2f8d075b80768d363ca1f41a7df38b9d8c6475a97e4d42ddd5f372bf070c6803"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-collection-confirmation-r1.json",
+      "bytes": 546350,
+      "sha256": "2c8a7b6634cc092914c2a682948318b0fd31962fdb4faaf5a417b453dc9dc56d"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-collection-confirmation-r1.log",
+      "bytes": 961,
+      "sha256": "e7687092e4ad3c1164a62509e18c7829121c9c758ff381032a92710a404c20d3"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-collection-final-r1.json",
+      "bytes": 546296,
+      "sha256": "12f7eb6469ba6d39d62ef64dc30434f9caeac7fcc9dfe527b9f0c4b9e2e43fc5"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-collection-final-r1.log",
+      "bytes": 1117,
+      "sha256": "74b6a1e4b2d21df0dcd4fc5872fadba6b03543ab6db37c064c6463c5eb575955"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-mounted-green-r1.json",
+      "bytes": 546346,
+      "sha256": "19258899a0a12498b5d66863a6a76203bb58dff77634382c241fc2ebdbcee050"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-mounted-green-r1.log",
+      "bytes": 18197,
+      "sha256": "17a2507c8aa85a17f6e8e05d6c29f98918fb465abd5ab62f7dfe4c0406f8ae39"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-mounted-green-r2.json",
+      "bytes": 546346,
+      "sha256": "0f89fcd81359923b0f898a0f2e787dcca4cff5ce4c3d21040014966c325775db"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-mounted-green-r2.log",
+      "bytes": 523,
+      "sha256": "067d0a1d9a58ed5073e1e90d101438a2bba903485358c26ef140da6e42fbbf86"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-mounted-red-r1.json",
+      "bytes": 546326,
+      "sha256": "a640c2b9e223b81fbdb0efb8b618f929bd5801b7c84df6cadfb118803f5c6d14"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-mounted-red-r1.log",
+      "bytes": 223715,
+      "sha256": "966c87ee917a63acb8a6db1f6ce629a3ce9294ea547fbe96729e4930fcc90780"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-operation-red-r1.json",
+      "bytes": 546346,
+      "sha256": "9a78ba49330781a04235b194bba41e19769dfc70d6f51d27faadea189716dc39"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-operation-red-r1.log",
+      "bytes": 260501,
+      "sha256": "eac3a001c50fa7b270887c0d0dad0010115caa8f1b22abb51aa60cb0a4a70504"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-operation-red-r2.json",
+      "bytes": 546737,
+      "sha256": "78be53c4c4cbfedec5cf08bad721bbf8e8f0da8d4746a61e17791451fee60dd5"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-operation-red-r2.log",
+      "bytes": 271988,
+      "sha256": "f0fb10aae5036d00e928cd8344fe818d487577b5bf036ff280dd55b22252b932"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-operation-red-r3.json",
+      "bytes": 546737,
+      "sha256": "0afa565fbb0b8ca19a1c649c86fabbdd287a2a18ebe5049e48b5ae9c3e9d0f4c"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-operation-red-r3.log",
+      "bytes": 252705,
+      "sha256": "236f6cc96b979e2349b0f14a9b5196fc0b22f79cf0ccef2b90bde67fca39d138"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-owner-boundary-green-r1.json",
+      "bytes": 546807,
+      "sha256": "2493b38a378f0e592adc49b6a9e647e109d442d1112b13122ee4b0dc8b90caad"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-owner-boundary-green-r1.log",
+      "bytes": 623,
+      "sha256": "27da54b8039f7b64acce082722c101dfbfc71f25618bafc8b32ec299bac841c4"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-owner-boundary-red-r1.json",
+      "bytes": 546787,
+      "sha256": "bab7aab6d81b60e783cb0a74257827ed4b81b2bcc9f71a2432af52dad9e21f0c"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-owner-boundary-red-r1.log",
+      "bytes": 318108,
+      "sha256": "a9ef78a270384a1b55720c76aa972e0b6b35c5372cb73c98ca5e71b8b0e228b0"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-related-green-r1.json",
+      "bytes": 547002,
+      "sha256": "db2511db530c225a26c9c6715184f524f2f35676865214eb7b1daa1289f3632e"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-related-green-r1.log",
+      "bytes": 955,
+      "sha256": "e79e65dd0d146391bcb4ed941023110dae34582f32e14951a99cc88b37dfbb0f"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-src-final-r1.json",
+      "bytes": 546522,
+      "sha256": "c0261f02ade135017a037f76513795a2a5c25e2ab1f832f98cc21dbf5ff7e110"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-src-final-r1.log",
+      "bytes": 149,
+      "sha256": "c58f9f5dfa7e16cf114f06b22dbf80bf89e3360f5d0189a9074cf6b571b5f8a5"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-tokens-final-r1.json",
+      "bytes": 546100,
+      "sha256": "728ab43f8953aed7e23a6af4b0cc5ab95c6211bd81afbdc7c1b68826aeacb17d"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-tokens-final-r1.log",
+      "bytes": 32,
+      "sha256": "26949b524d180e026ee5e056df8b7c8885dadfa3268251b48c980d5cb2a4381b"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-tsc-prepare-r1.json",
+      "bytes": 546170,
+      "sha256": "621204e4363f7714597008e5eb1f7bb566904c4bff7d8afac7765b2c53b4c38b"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-tsc-prepare-r1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-visual-final-r1.json",
+      "bytes": 546447,
+      "sha256": "6a2bb40e2c189668ea075e5d026168895ddb80ce6f30fa3362230e9a34849acb"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-save-visual-final-r1.log",
+      "bytes": 1380,
+      "sha256": "617dfa663eac73ae3e1591aadecec6a735f034393d335b04f5c9b60883a1653f"
+    }
+  ]
+}

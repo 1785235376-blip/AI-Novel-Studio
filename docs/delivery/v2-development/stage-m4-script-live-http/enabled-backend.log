@@ -1,0 +1,20 @@
+INFO:     Started server process [9387]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8017 (Press CTRL+C to quit)
+INFO:     127.0.0.1:40590 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36602 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36608 - "POST /api/novels HTTP/1.1" 201 Created
+INFO:     127.0.0.1:36614 - "POST /api/novels/http/experimental/creative/documents HTTP/1.1" 201 Created
+INFO:     127.0.0.1:36628 - "PUT /api/novels/http/experimental/creative/documents/7d70f3a8-d0a5-4b9b-9256-8d668e5dda98 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36636 - "PUT /api/novels/http/experimental/creative/documents/7d70f3a8-d0a5-4b9b-9256-8d668e5dda98 HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:36652 - "POST /api/novels/http/experimental/creative/documents/7d70f3a8-d0a5-4b9b-9256-8d668e5dda98/restore HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36668 - "GET /api/novels/http/experimental/creative/documents/7d70f3a8-d0a5-4b9b-9256-8d668e5dda98/script-export?format=txt&expected_version=3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36672 - "GET /api/novels/http/experimental/creative/documents/7d70f3a8-d0a5-4b9b-9256-8d668e5dda98/script-export?format=markdown&expected_version=3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36680 - "GET /api/novels/http/experimental/creative/documents/7d70f3a8-d0a5-4b9b-9256-8d668e5dda98/script-export?format=docx&expected_version=3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36692 - "GET /api/novels/http/experimental/creative/documents/7d70f3a8-d0a5-4b9b-9256-8d668e5dda98/history HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36700 - "GET /api/novels/http/experimental/creative/documents/7d70f3a8-d0a5-4b9b-9256-8d668e5dda98/export HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36712 - "GET /api/novels/http/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36714 - "GET /api/novels/http/experimental/creative/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36718 - "DELETE /api/novels/http HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:36728 - "GET /api/novels HTTP/1.1" 200 OK

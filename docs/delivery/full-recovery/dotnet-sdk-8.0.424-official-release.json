@@ -1,0 +1,6 @@
+{
+  "name": "dotnet-sdk-win-x64.zip",
+  "rid": "win-x64",
+  "url": "https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.424/dotnet-sdk-8.0.424-win-x64.zip",
+  "hash": "1787ab90635c2950672ed7c6507b000e1b212ea7d9a22fcef37061344d37c64d4c4eda12b8742601eff5b45c8736485b31c55613892f240c300190e4e88a58b0"
+}

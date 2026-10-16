@@ -1,0 +1,1538 @@
+{
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-revoker/assertions.json": {
+    "sha256": "2c4c93d3f22b1b3074a3218fa73d68fbdd53cf38455c6f481e70bce8e353c518",
+    "bytes": 684
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-revoker/authority-lock-witness.json": {
+    "sha256": "18898fe08841457797906bd3d0e33c12da6d3712b62e1bc25dcb481eaf004dcb",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-revoker/revoker-attempt.json": {
+    "sha256": "3b3ac88dd57fbc6255111aee9c190b50a07912bae9cbc79cac873ca5fcd9d5b9",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-revoker/revoker-authority-acquired.json": {
+    "sha256": "3a7b4e0492f286af415499e89da9a3ef30f964d5ce617d603f8c95da6b327513",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-revoker/revoker-authority-attempt.json": {
+    "sha256": "3a7b4e0492f286af415499e89da9a3ef30f964d5ce617d603f8c95da6b327513",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-revoker/revoker-config.json": {
+    "sha256": "d3e25c814c4e37d4689297e733747025b59d5cc5f9a5f38c06cc0a0720cb5708",
+    "bytes": 1185
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-revoker/revoker-persistence.json": {
+    "sha256": "7e612dd09f34d8e0aa7cf7582e613b87cfd843fa735c6cf0147bb0d6f4ea907f",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-revoker/revoker-result.json": {
+    "sha256": "981b2b334c47cc53d2eee2166e2b8b726e993adc61abbb4b99878f9a934b7afa",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-revoker/writer-attempt.json": {
+    "sha256": "e7c3ba621774a67d3b86f1133c167444d1fe8eb73f79fdd517738dc213561c9c",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-revoker/writer-authority-acquired.json": {
+    "sha256": "e6c0f546a05c2b9c59375d71bdca6176b171fc5d9362c6843e2c3d27bd58d883",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-revoker/writer-authority-attempt.json": {
+    "sha256": "e6c0f546a05c2b9c59375d71bdca6176b171fc5d9362c6843e2c3d27bd58d883",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-revoker/writer-config.json": {
+    "sha256": "d3e25c814c4e37d4689297e733747025b59d5cc5f9a5f38c06cc0a0720cb5708",
+    "bytes": 1185
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-revoker/writer-first-response.json": {
+    "sha256": "a978a67e08ab3848a999931e1be20341a22c897e511d0f662b0c1f325b0a3ff6",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-revoker/writer-result.json": {
+    "sha256": "b779d7bc1517bd1f5b5b67a67b7e211b76274dbcb38b4554d9708cd86775a7d7",
+    "bytes": 799
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-writer/assertions.json": {
+    "sha256": "74ee69b34e6b7a3840c58d7c22cf520f0c498ca595b8bb7a2caa500c88265034",
+    "bytes": 683
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-writer/authority-lock-witness.json": {
+    "sha256": "b558a9379611b46c90e3198329315667a34a2f3325b9bb749ea252903639516f",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-writer/revoker-attempt.json": {
+    "sha256": "e8836a7e9a04b84726011e827a4ec009b5ddd7b04f9c135a50eb52dc012c1371",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-writer/revoker-authority-acquired.json": {
+    "sha256": "8b9e8878b292aa65e5e7bbde197da726ff2152d7dc484318fcd7414e32186c70",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-writer/revoker-authority-attempt.json": {
+    "sha256": "8b9e8878b292aa65e5e7bbde197da726ff2152d7dc484318fcd7414e32186c70",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-writer/revoker-config.json": {
+    "sha256": "97a118c009dcc874fe8dd6088b941e45bd611d4639caad845e52ecdf7aef1dd7",
+    "bytes": 1183
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-writer/revoker-result.json": {
+    "sha256": "182b8babc8cde8df00255ad3cf423d93a33dcf3de48905ee77da8c62ef663204",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-writer/writer-attempt.json": {
+    "sha256": "7cfdc4ec6aec51fab2746026725a8e3ce17966c4322703018c153aa75990cbe7",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-writer/writer-authority-acquired.json": {
+    "sha256": "5ee71f2d57959e12056454eabf4fad2c7986c4a31ddc4388c1d8c50af7793c0a",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-writer/writer-authority-attempt.json": {
+    "sha256": "5ee71f2d57959e12056454eabf4fad2c7986c4a31ddc4388c1d8c50af7793c0a",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-writer/writer-config.json": {
+    "sha256": "97a118c009dcc874fe8dd6088b941e45bd611d4639caad845e52ecdf7aef1dd7",
+    "bytes": 1183
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-writer/writer-first-response.json": {
+    "sha256": "cd4afdb7e9b0a4c6aabc7592510f0d54cd5cb24331a0d27a1ae25d8ef36e49a2",
+    "bytes": 1380
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-writer/writer-persistence.json": {
+    "sha256": "b0361c25f9d81e01690edf3335846dd0fa94e4f1286781f8974870c64d804fbc",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-writer/writer-result.json": {
+    "sha256": "9f473e5f3846397aa950b95031905c1b9b6bf85678b3fb78d0104fd636d0535a",
+    "bytes": 1848
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-membership-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-revoker/assertions.json": {
+    "sha256": "fd7b879409f0471a735d1a86af603f2eaec3d9df7ea1ec715bab5ec89523969d",
+    "bytes": 684
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-revoker/authority-lock-witness.json": {
+    "sha256": "4e268171061a1b2270a0a50a2ef7e73815d48dddd7443c65d548837517c1a6d2",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-revoker/revoker-attempt.json": {
+    "sha256": "aa1ce168ed1396168bcc08d5ffb0fa4536d30d20198f6cee78756f3f0d2682b5",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-revoker/revoker-authority-acquired.json": {
+    "sha256": "4e7d13672b95e5b35f40e22cd1fc5049d40c7a17af9c7445795c323832aca197",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-revoker/revoker-authority-attempt.json": {
+    "sha256": "4e7d13672b95e5b35f40e22cd1fc5049d40c7a17af9c7445795c323832aca197",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-revoker/revoker-config.json": {
+    "sha256": "606773bbd3c228575515f4b40cbaf1dfe1840a765b38fe19a1d706c6dc19fced",
+    "bytes": 1211
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-revoker/revoker-persistence.json": {
+    "sha256": "b83872a6f5c7d7f358c8f9a807ad5b9dcd132b1982456c766f87de617c3ac3b9",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-revoker/revoker-result.json": {
+    "sha256": "6ce2a327604e682bc863d440b0ac350f5c15b3b4b7a0ac0481b153500789fce5",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-revoker/writer-attempt.json": {
+    "sha256": "3af37e2d32e95667a3adc6488cfd170c81538339ef53a72dbaa5c4702104e7ec",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-revoker/writer-authority-acquired.json": {
+    "sha256": "493fceb2be2facb4d2bedf75e99f6463f200c6abc1bc23a8bbcddc52761129e7",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-revoker/writer-authority-attempt.json": {
+    "sha256": "493fceb2be2facb4d2bedf75e99f6463f200c6abc1bc23a8bbcddc52761129e7",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-revoker/writer-config.json": {
+    "sha256": "606773bbd3c228575515f4b40cbaf1dfe1840a765b38fe19a1d706c6dc19fced",
+    "bytes": 1211
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-revoker/writer-first-response.json": {
+    "sha256": "713e85f1e6ced2a2b57bfd4738663984fec61103d222f78a2baf19900ec2d237",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-revoker/writer-result.json": {
+    "sha256": "92208b1b75ecc4f50806456cbaf103a762e3a41bc2bd4d26b058095c3d5f6f93",
+    "bytes": 799
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-writer/assertions.json": {
+    "sha256": "1263680059a5806af97901a503617b0f4bb40c8439b07176aa1a5ec308c07805",
+    "bytes": 683
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-writer/authority-lock-witness.json": {
+    "sha256": "4e536ce05870c0bc139e2f8b92df0c852bdb545362756c7c95b9d67d3a75c229",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-writer/revoker-attempt.json": {
+    "sha256": "582a759640656a542cae381b50ec0c03f9d870e01c9d142b8d0f25496fc6b693",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-writer/revoker-authority-acquired.json": {
+    "sha256": "fa239faab5d7d0c7a80cbb53298b0be10d47eddd4a2a3922a630edb32a8a8f0a",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-writer/revoker-authority-attempt.json": {
+    "sha256": "fa239faab5d7d0c7a80cbb53298b0be10d47eddd4a2a3922a630edb32a8a8f0a",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-writer/revoker-config.json": {
+    "sha256": "c406a33ce83b1e74d580ea2cc704816caaafb625ea7002cd10b82e5ec1808e2a",
+    "bytes": 1210
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-writer/revoker-result.json": {
+    "sha256": "d4b636fb468978a24ba302df352c7b67a6205264e4258d31c93caae04e37e8fc",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-writer/writer-attempt.json": {
+    "sha256": "4c4911115e4114b2176190edcf6d8da5b032e50222b773d006d338ad9aeab994",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-writer/writer-authority-acquired.json": {
+    "sha256": "bd7b232fbaa0cc062de60ac72fb5224e7f6140ce67dbbaf0768e3d11e09ba466",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-writer/writer-authority-attempt.json": {
+    "sha256": "bd7b232fbaa0cc062de60ac72fb5224e7f6140ce67dbbaf0768e3d11e09ba466",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-writer/writer-config.json": {
+    "sha256": "c406a33ce83b1e74d580ea2cc704816caaafb625ea7002cd10b82e5ec1808e2a",
+    "bytes": 1210
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-writer/writer-first-response.json": {
+    "sha256": "ddc717b78a9591267ae03d8ab59c3ef0037a45fa591a3a995d76f38cccce1620",
+    "bytes": 1380
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-writer/writer-persistence.json": {
+    "sha256": "8bf06ca593086bc0573e551d63c3fd068c994112c6f785cfee301a1c36eb5887",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-writer/writer-result.json": {
+    "sha256": "1d7c0508f507fe8a839e9ffac797628a05899d68132e687f7e8f099dbd905dd4",
+    "bytes": 1848
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-permission-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-revoker/assertions.json": {
+    "sha256": "4da2af9980ffcc65d1fe6b4df87035e94930c90fe92448d97d986ec19fd2a2b5",
+    "bytes": 678
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-revoker/authority-lock-witness.json": {
+    "sha256": "eaca94f1523de1ecc075a6596ec3952122c2c3d4997269e6d936538f21d74d20",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-revoker/revoker-attempt.json": {
+    "sha256": "81a0e78503886c0a5309f163d36d7638053461c7ee83c703c256185ebe9818b1",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-revoker/revoker-authority-acquired.json": {
+    "sha256": "3f32dd9917a68a559398d3d38707841c89f84cbe6ae334e1db58aa8d14a99016",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-revoker/revoker-authority-attempt.json": {
+    "sha256": "3f32dd9917a68a559398d3d38707841c89f84cbe6ae334e1db58aa8d14a99016",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-revoker/revoker-config.json": {
+    "sha256": "2987786e99c5c6feb56c9e5e8b5e9670a9454a716852169efead8dcaaabf4a2a",
+    "bytes": 1173
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-revoker/revoker-persistence.json": {
+    "sha256": "53d1f224e134b1c919cb6bedd82d85a67af1be55a28964148c25d221175bb57f",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-revoker/revoker-result.json": {
+    "sha256": "d0eb3da2569b85386be7ac1da7b302dbe429633789f0b7fa711b0212f433c63f",
+    "bytes": 67
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-revoker/writer-attempt.json": {
+    "sha256": "7d056932c7de9acab91fe43efc6f20069135f2c4a8135ff4839dfe59573d2f1d",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-revoker/writer-authority-acquired.json": {
+    "sha256": "910b22ae271341142566fe52c7067ae0597336cc61bcb75d8d2d91e741c44c38",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-revoker/writer-authority-attempt.json": {
+    "sha256": "910b22ae271341142566fe52c7067ae0597336cc61bcb75d8d2d91e741c44c38",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-revoker/writer-config.json": {
+    "sha256": "2987786e99c5c6feb56c9e5e8b5e9670a9454a716852169efead8dcaaabf4a2a",
+    "bytes": 1173
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-revoker/writer-first-response.json": {
+    "sha256": "4044939a959649262b13a4004de3da96ba627a28c00e49504a0e4c64752d5851",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-revoker/writer-result.json": {
+    "sha256": "eeb9faa083f5fcecac14689d872ceeac0d986fe7fb9f6ed0cab8e958bddbd848",
+    "bytes": 799
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-writer/assertions.json": {
+    "sha256": "4528c349195f3d7d6521910d37afff8b264c15a05253d2ba4bf93eaddf06bc89",
+    "bytes": 677
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-writer/authority-lock-witness.json": {
+    "sha256": "2b149ce89e60247a339f3b8a70e9b92e545eb7c949ad5c28746f27a73c0d532f",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-writer/revoker-attempt.json": {
+    "sha256": "b8a04be50b328144aee6fbabcab875c743e401403c4b1dfe2cb4e2301c374aab",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-writer/revoker-authority-acquired.json": {
+    "sha256": "2da9b545b1979671e1b280ad3eb122202a74bfaf8d2159a504fc7c58d7596ac4",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-writer/revoker-authority-attempt.json": {
+    "sha256": "2da9b545b1979671e1b280ad3eb122202a74bfaf8d2159a504fc7c58d7596ac4",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-writer/revoker-config.json": {
+    "sha256": "8f585e6947095cab0642266d83aa617017c27d2e5f3d49d9192a8bc1bcfd6e3d",
+    "bytes": 1171
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-writer/revoker-result.json": {
+    "sha256": "ab73539fffabda089a6e7ae183af5887b1c9657e98b9eaa1efd7d836dd77bdeb",
+    "bytes": 67
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-writer/writer-attempt.json": {
+    "sha256": "c2a280605e6565bab711f3069b4f04b6e5ec853f9da553c88c4434f0aae14839",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-writer/writer-authority-acquired.json": {
+    "sha256": "d01b8522413908932838b1cd9b128aedb04511f98b36d8470f478d76b6756136",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-writer/writer-authority-attempt.json": {
+    "sha256": "d01b8522413908932838b1cd9b128aedb04511f98b36d8470f478d76b6756136",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-writer/writer-config.json": {
+    "sha256": "8f585e6947095cab0642266d83aa617017c27d2e5f3d49d9192a8bc1bcfd6e3d",
+    "bytes": 1171
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-writer/writer-first-response.json": {
+    "sha256": "039d829467165328f84192e1a3b7340638cead0c823186bcad2d4df6e3162e38",
+    "bytes": 1380
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-writer/writer-persistence.json": {
+    "sha256": "ddc36c084854f181a5e44ab4a54dd4e587c7334d463065b5851a9595f400b236",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-writer/writer-result.json": {
+    "sha256": "a35406ee184133fbd8d7eb029dfa1072ddea1fe1378b26f8158bee0848090cc9",
+    "bytes": 1848
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-adopt-role-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-revoker/assertions.json": {
+    "sha256": "7caaf643f15f5a2efc2ffb8ceb574bedfab6a787b384d801b86ddb424043ab01",
+    "bytes": 685
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-revoker/authority-lock-witness.json": {
+    "sha256": "877c7545e695360ba1002438ef809c807ee4682cb6d5c1b0b03ba04c5d4dfc55",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-revoker/revoker-attempt.json": {
+    "sha256": "620db50b39f17d64dedc33d4d67ededdf0c2f2583e62f89a95713fab896b452d",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-revoker/revoker-authority-acquired.json": {
+    "sha256": "670e8a2be31d1e8bc67a0375f296e5a1a77a9f765accf9723800a4d74e55b2ce",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-revoker/revoker-authority-attempt.json": {
+    "sha256": "670e8a2be31d1e8bc67a0375f296e5a1a77a9f765accf9723800a4d74e55b2ce",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-revoker/revoker-config.json": {
+    "sha256": "e84993b730f655d8de86708061ec067d9576b9bd3bf22dc40c6f63649d6e0e71",
+    "bytes": 798
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-revoker/revoker-persistence.json": {
+    "sha256": "ce2d24274876c357c75ca4dff3d03b3ba8296a41f15dab86d972d8c3d64edaf3",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-revoker/revoker-result.json": {
+    "sha256": "8bc5526fa07ade588dd6f131475447ed1b60407f39e61c5cd32b01ed79bda3eb",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-revoker/writer-attempt.json": {
+    "sha256": "cfd8c3d4adf8d9e4ccf1aa186d183b11a4c0ff64498dae15ffe2ff9a6e49903c",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-revoker/writer-authority-acquired.json": {
+    "sha256": "346b169327007d1673200b5d5a03f77fa86d815e5465b7cee29f37dd1a65a201",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-revoker/writer-authority-attempt.json": {
+    "sha256": "346b169327007d1673200b5d5a03f77fa86d815e5465b7cee29f37dd1a65a201",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-revoker/writer-config.json": {
+    "sha256": "e84993b730f655d8de86708061ec067d9576b9bd3bf22dc40c6f63649d6e0e71",
+    "bytes": 798
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-revoker/writer-first-response.json": {
+    "sha256": "05fc4fe467b9707582e3e49104570231ef9813662608a97ea5775fa86a369952",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-revoker/writer-result.json": {
+    "sha256": "ffb3d5d74659a5a3c50ed53207c0bef538587deb17334d2606c5dcd3eafd5f1c",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-writer/assertions.json": {
+    "sha256": "69e2ce577b7e6b007c7560bcd778d4a5f143f889b1273994e676648cf45ce4e8",
+    "bytes": 684
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-writer/authority-lock-witness.json": {
+    "sha256": "5315d76aadc4206ad15724e2c9266ae28ede4dc56734568b4ed3034296f20073",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-writer/revoker-attempt.json": {
+    "sha256": "78aa3dc13b97146c025aeec88ec0c77e4f83f8d3ffe1153da00128565cc61ce8",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-writer/revoker-authority-acquired.json": {
+    "sha256": "35681d2f960555f96193fd733645ebccfcc2e5dc71fc19e79ab773f9cfa9ce00",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-writer/revoker-authority-attempt.json": {
+    "sha256": "35681d2f960555f96193fd733645ebccfcc2e5dc71fc19e79ab773f9cfa9ce00",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-writer/revoker-config.json": {
+    "sha256": "4b3619cd2fe9c1f13208e63f56cd2bf178a845d0d0ab8545b0c8366ac8d411a4",
+    "bytes": 796
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-writer/revoker-result.json": {
+    "sha256": "883defab905bc42824ef6ecb52c6d40f24ef71ab925a1c62e237d2cbb54dcedb",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-writer/writer-attempt.json": {
+    "sha256": "a2fd24cee0072cb20dd6fa618951232da9584f0c333f92a38e0695525f5e047e",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-writer/writer-authority-acquired.json": {
+    "sha256": "589cb4dbd1fb6e5ea6ba5b6780bc343c8fd343f09525ea5e39045343be7b5679",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-writer/writer-authority-attempt.json": {
+    "sha256": "589cb4dbd1fb6e5ea6ba5b6780bc343c8fd343f09525ea5e39045343be7b5679",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-writer/writer-config.json": {
+    "sha256": "4b3619cd2fe9c1f13208e63f56cd2bf178a845d0d0ab8545b0c8366ac8d411a4",
+    "bytes": 796
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-writer/writer-first-response.json": {
+    "sha256": "5ffa52f46598f7e6957b74d591c1c5e8c0b2c8fc04ada8f057f2b9b7cb65da08",
+    "bytes": 460
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-writer/writer-persistence.json": {
+    "sha256": "ab807263b2d864d3c6cd887551cb0602cdd6e48935c4cc949314f82eba71cf16",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-writer/writer-result.json": {
+    "sha256": "8ac85d85efc0405274ef5d58796e00093dc2132d0ef64ae725fe55a859204c12",
+    "bytes": 929
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-membership-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-revoker/assertions.json": {
+    "sha256": "9dcdf795e4e962f20a9c8e6f93b1ad8b16e7091fe6f843157e14661b953802f0",
+    "bytes": 685
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-revoker/authority-lock-witness.json": {
+    "sha256": "158f6be0d84aab0b9c195c0e15fa721bb924bb73ee7995ac3ec459ea2bb14004",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-revoker/revoker-attempt.json": {
+    "sha256": "77f0d0375dc248f561f8b5397385cbc4ef57c3f74fec623227bc17f77f95341d",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-revoker/revoker-authority-acquired.json": {
+    "sha256": "1c97fccd0bdaee66e03228eaa33965098fafcccf5904764ad4941673d599c777",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-revoker/revoker-authority-attempt.json": {
+    "sha256": "1c97fccd0bdaee66e03228eaa33965098fafcccf5904764ad4941673d599c777",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-revoker/revoker-config.json": {
+    "sha256": "a8808dc846c23358bbb5d87c34e4543e55530f8482d4789d255133d717f819e7",
+    "bytes": 824
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-revoker/revoker-persistence.json": {
+    "sha256": "e6d043413312e330edb1f8cbc39a052fa2d4901f197f89c470a8e2a400e506ec",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-revoker/revoker-result.json": {
+    "sha256": "fed0685cea028770a24a51238b547f0cbebf42ae9114018b1c9395bb9d27e788",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-revoker/writer-attempt.json": {
+    "sha256": "032575ea0e5f5f975fb3f046714b1d302b01c508f5db365ad55c1b8531391ac4",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-revoker/writer-authority-acquired.json": {
+    "sha256": "315ad55f59cf50ca4d2c656c40d2cb9c96d605b7468abf9655de7580bed8e219",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-revoker/writer-authority-attempt.json": {
+    "sha256": "315ad55f59cf50ca4d2c656c40d2cb9c96d605b7468abf9655de7580bed8e219",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-revoker/writer-config.json": {
+    "sha256": "a8808dc846c23358bbb5d87c34e4543e55530f8482d4789d255133d717f819e7",
+    "bytes": 824
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-revoker/writer-first-response.json": {
+    "sha256": "0c92cb48100c55d6afaf5f224d7758b9999a74593b84779be59c4df55a816b7b",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-revoker/writer-result.json": {
+    "sha256": "4d81358611e8ca4b4a58c16eb7956f99e8ea5bd36c5228a215217e810c6ae0c4",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-writer/assertions.json": {
+    "sha256": "706f6d02339e9741a9ee3ebaafb9b712e5667c56210eabc98f5c8de93426e9a6",
+    "bytes": 684
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-writer/authority-lock-witness.json": {
+    "sha256": "1bc3f29fd81a0ce29626ba4d871525aee1ba5068885764bd3e197cc33acd67a7",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-writer/revoker-attempt.json": {
+    "sha256": "81a0e78503886c0a5309f163d36d7638053461c7ee83c703c256185ebe9818b1",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-writer/revoker-authority-acquired.json": {
+    "sha256": "c844f96fb8bcc76aa383d55c5da757ded0ecc9efb42c867420aaf8d2d48b5b89",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-writer/revoker-authority-attempt.json": {
+    "sha256": "c844f96fb8bcc76aa383d55c5da757ded0ecc9efb42c867420aaf8d2d48b5b89",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-writer/revoker-config.json": {
+    "sha256": "3e6e84f13aaf1c627a426eebd04d803f1f075fb0f2ad934ee99a8a7abc8d412a",
+    "bytes": 822
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-writer/revoker-result.json": {
+    "sha256": "ee04e6699ec2dbc28cc26421ac2f9cbb462a1e8f5d1bf7c05da50c35045a55a2",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-writer/writer-attempt.json": {
+    "sha256": "ff2c6457922fcb5e5bd32f1b7682774f13afeb79fae755cca17cef3a90d92195",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-writer/writer-authority-acquired.json": {
+    "sha256": "33877e6f30df1e8d44e66031e82c13935aa8ab3899ff49a6ca115952252cb4b5",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-writer/writer-authority-attempt.json": {
+    "sha256": "33877e6f30df1e8d44e66031e82c13935aa8ab3899ff49a6ca115952252cb4b5",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-writer/writer-config.json": {
+    "sha256": "3e6e84f13aaf1c627a426eebd04d803f1f075fb0f2ad934ee99a8a7abc8d412a",
+    "bytes": 822
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-writer/writer-first-response.json": {
+    "sha256": "45b4c8b12fcdad01b3cb66a5ab5a4bec97a1de33855836fd80d2332123844456",
+    "bytes": 460
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-writer/writer-persistence.json": {
+    "sha256": "3259dea178858255aa483cdad4e914682337b31f7f042c8637715d38775f618b",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-writer/writer-result.json": {
+    "sha256": "57315cf6f4e61cb03f512bae601225e42166ed2aaca616d2d72851d31201c05b",
+    "bytes": 929
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-permission-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-revoker/assertions.json": {
+    "sha256": "5ad8df0670bec5a9bab4c82e9ac5492932fff537ed9f42c0425b698263a79aa5",
+    "bytes": 679
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-revoker/authority-lock-witness.json": {
+    "sha256": "15d4720afc07c6643026cb886dd0d5f47480be91b0ee4147acbc82ecde37e469",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-revoker/revoker-attempt.json": {
+    "sha256": "dcf94e4e406965302e8748d05506423537f003d296c99ac51ee0ce60c932ac0f",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-revoker/revoker-authority-acquired.json": {
+    "sha256": "eb7a39fe5c8a5a2962cba1916555eb11dbb954603df28dea951af7a7d3c6f955",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-revoker/revoker-authority-attempt.json": {
+    "sha256": "eb7a39fe5c8a5a2962cba1916555eb11dbb954603df28dea951af7a7d3c6f955",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-revoker/revoker-config.json": {
+    "sha256": "37de92849e41f75c97e45dfd32ca5432b8c3dc894376f823ce147b7eea845bc1",
+    "bytes": 786
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-revoker/revoker-persistence.json": {
+    "sha256": "d481d73638e23c27eb7287964b0c090d96c28d5beb627130368e36af9bdccf71",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-revoker/revoker-result.json": {
+    "sha256": "a16a643c79ee24ddb468ef3956602897a06ebd543efab2b1a5c5d068f97e26f5",
+    "bytes": 67
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-revoker/writer-attempt.json": {
+    "sha256": "667e62ff9b4b4cdf327ee2441d0d7afac1f414955af9a44bb415e812f087aeec",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-revoker/writer-authority-acquired.json": {
+    "sha256": "46f5a62574bc9f4f7d2299144b8753ae4abc162d8ca8cf117353925c3e426262",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-revoker/writer-authority-attempt.json": {
+    "sha256": "46f5a62574bc9f4f7d2299144b8753ae4abc162d8ca8cf117353925c3e426262",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-revoker/writer-config.json": {
+    "sha256": "37de92849e41f75c97e45dfd32ca5432b8c3dc894376f823ce147b7eea845bc1",
+    "bytes": 786
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-revoker/writer-first-response.json": {
+    "sha256": "c6731d96201de0a7686b3858d9231062a64add331f70b130b9aa1c8a31a211e3",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-revoker/writer-result.json": {
+    "sha256": "1ff6137738af900b106249da9bb8c6f7a072eda38a6c299de4df8c34a4749129",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-writer/assertions.json": {
+    "sha256": "009be2413accb9e07b0589b014d41aab895e808e79564d077fe98dadb8faab45",
+    "bytes": 678
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-writer/authority-lock-witness.json": {
+    "sha256": "b49ce0d7139c6c9bac84addc106592d59b5473a30f62b2869a106d00b59da139",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-writer/revoker-attempt.json": {
+    "sha256": "8e43ba2742063a875084f8b0e377e5c15241a36d2deda87c3f5fe90b3ae7c851",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-writer/revoker-authority-acquired.json": {
+    "sha256": "279c3fd43f6c539986698cd6be23a485d125151f059a640315a6c7776a90a52a",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-writer/revoker-authority-attempt.json": {
+    "sha256": "279c3fd43f6c539986698cd6be23a485d125151f059a640315a6c7776a90a52a",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-writer/revoker-config.json": {
+    "sha256": "d183f39ae23417e421f86346971a2ce08e92357b1ba215875f57c27049ec3f3e",
+    "bytes": 784
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-writer/revoker-result.json": {
+    "sha256": "c03b9595dc5c9c1b805b976b604c843d672c1b8e31dd00832bb4287754b6deb0",
+    "bytes": 67
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-writer/writer-attempt.json": {
+    "sha256": "d817579e93e795f4a2025574b2560091c0a38c6385e6146bf1e7a122d27c5883",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-writer/writer-authority-acquired.json": {
+    "sha256": "25004989bf3cc6b870e3390ec60bd91f8f4a79628ee17729d66d26c370cb5f6b",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-writer/writer-authority-attempt.json": {
+    "sha256": "25004989bf3cc6b870e3390ec60bd91f8f4a79628ee17729d66d26c370cb5f6b",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-writer/writer-config.json": {
+    "sha256": "d183f39ae23417e421f86346971a2ce08e92357b1ba215875f57c27049ec3f3e",
+    "bytes": 784
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-writer/writer-first-response.json": {
+    "sha256": "8fe167889df3c3d2fbb9448dc4481d897b192e3b696b66e113c64963b83bf71d",
+    "bytes": 460
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-writer/writer-persistence.json": {
+    "sha256": "049614e83afaaec043dea4107d6703f1273c74950335a2f002c49d43d89f4545",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-writer/writer-result.json": {
+    "sha256": "cad275010f19b56cdc8fb978d39dad7d0f5419a207da783f8ec0afd34417de3e",
+    "bytes": 929
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-create-role-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-revoker/assertions.json": {
+    "sha256": "f3242483714576329e2f06038e4396b93498ce30651b65734cd03bde94733a33",
+    "bytes": 685
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-revoker/authority-lock-witness.json": {
+    "sha256": "89365c003203eeab258103a250df45a5677831ba860d701679807451fda57529",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-revoker/revoker-attempt.json": {
+    "sha256": "d3c8e537b07450b13c116f6c264dd9c219c7dcc256eb1d95b5eb32796e44cd73",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-revoker/revoker-authority-acquired.json": {
+    "sha256": "5ac3d311780ada75df814f6b955dd4171dd413bded0efcd06780300d50e97d5d",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-revoker/revoker-authority-attempt.json": {
+    "sha256": "5ac3d311780ada75df814f6b955dd4171dd413bded0efcd06780300d50e97d5d",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-revoker/revoker-config.json": {
+    "sha256": "f8fe8c1b58477a7c9cf4a2c719d45e25bc80bbe71167ae9453d13a0d204b58ca",
+    "bytes": 693
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-revoker/revoker-persistence.json": {
+    "sha256": "5bf47bf0a7cfca79de5bf4b750810d11993f4ae0565a7faae421b108d5ca4a02",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-revoker/revoker-result.json": {
+    "sha256": "d3448889dcdea2bfb53644949c0920641577d3b15224b8e354b27cc1f8f1c28f",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-revoker/writer-attempt.json": {
+    "sha256": "18c3ee72d21b03ba0778d1c27b597a3d00fe0bc164f8c5d82334c1686850f37d",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-revoker/writer-authority-acquired.json": {
+    "sha256": "009e8861dccf91ac785d6959c2ebf07d92f61ac660f68f990c81cdddf2f81228",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-revoker/writer-authority-attempt.json": {
+    "sha256": "009e8861dccf91ac785d6959c2ebf07d92f61ac660f68f990c81cdddf2f81228",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-revoker/writer-config.json": {
+    "sha256": "f8fe8c1b58477a7c9cf4a2c719d45e25bc80bbe71167ae9453d13a0d204b58ca",
+    "bytes": 693
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-revoker/writer-first-response.json": {
+    "sha256": "1a919db224fa9b5b0f4795074e969cebe7aeaadc2bd76e1e14f64276b313a4e8",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-revoker/writer-result.json": {
+    "sha256": "d5bb714471e9e950c3f1fb8d608edcd5d1a334e4fd9ffd23a6280e8a062172f7",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-writer/assertions.json": {
+    "sha256": "69e24d9724ddae193924507ad16d2ec67d0013ecf67522cedad5af1251eba9b3",
+    "bytes": 684
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-writer/authority-lock-witness.json": {
+    "sha256": "14224d9907bc9bcb0852d174670e4c0571c666dc6f04e9ae8a55f3893c0bd481",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-writer/revoker-attempt.json": {
+    "sha256": "66be53c7e7e0d3f6a08402bbbd65eadf47aea15576dfd149499923c19eaab46e",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-writer/revoker-authority-acquired.json": {
+    "sha256": "d66c15ab5a000854706667a460ea8aa49a2db0bf01ba0255e4a1e286a1e49601",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-writer/revoker-authority-attempt.json": {
+    "sha256": "d66c15ab5a000854706667a460ea8aa49a2db0bf01ba0255e4a1e286a1e49601",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-writer/revoker-config.json": {
+    "sha256": "835cfcd2f09a128c2d5bffdea5a8ae165250bb4066930106f69cda12d83882ef",
+    "bytes": 691
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-writer/revoker-result.json": {
+    "sha256": "14ccc56f52baf366ea966e66b51f1582d4bdfd30c7c2c45e4a3b7a3c31bfa358",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-writer/writer-attempt.json": {
+    "sha256": "9fa0ccfe2ba501ba436b55eae02dfb4084049ca13dcb4a7f6e0d982acb875bca",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-writer/writer-authority-acquired.json": {
+    "sha256": "b247e144be403bed5c65ade757ccc234aff0adfb5e743872529fd71ef7fcdb40",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-writer/writer-authority-attempt.json": {
+    "sha256": "b247e144be403bed5c65ade757ccc234aff0adfb5e743872529fd71ef7fcdb40",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-writer/writer-config.json": {
+    "sha256": "835cfcd2f09a128c2d5bffdea5a8ae165250bb4066930106f69cda12d83882ef",
+    "bytes": 691
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-writer/writer-first-response.json": {
+    "sha256": "f48c2f0ba0086bf8f7766d8e0017f3f10f27ec96ff20bd4f3cf9c31cd0df1373",
+    "bytes": 2157
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-writer/writer-persistence.json": {
+    "sha256": "b5dd68f0dc67e88d655c9e3a18d6bbe946a502c638e0414e3da8319e580d4fee",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-writer/writer-result.json": {
+    "sha256": "b4c296d703c7bcc156095393554945b19f9d4acc3e093062f8717cc99d6d41ab",
+    "bytes": 2626
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-membership-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-revoker/assertions.json": {
+    "sha256": "65e1e0fd4188d97e948aa3065497c75f4e8b67a769f78633bdfe83dfccf39587",
+    "bytes": 685
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-revoker/authority-lock-witness.json": {
+    "sha256": "83d578c56597366becf2c2e6fd769e3af0d133f132058f15fc14c265fa4117bc",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-revoker/revoker-attempt.json": {
+    "sha256": "f92bb429a52057bad2b600166b6774028a0c9eeb2bbe46bdebb4939ce55f5061",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-revoker/revoker-authority-acquired.json": {
+    "sha256": "fd03bf1d1c591dafab830dfb0a0bccab748149f90ff61fef9d3f2f646ae1ad0c",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-revoker/revoker-authority-attempt.json": {
+    "sha256": "fd03bf1d1c591dafab830dfb0a0bccab748149f90ff61fef9d3f2f646ae1ad0c",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-revoker/revoker-config.json": {
+    "sha256": "e96843cd0cc62a8d4f54d9be0db9e596be5e8d75c17b59bd6449b12594aeee2e",
+    "bytes": 719
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-revoker/revoker-persistence.json": {
+    "sha256": "dd758bf85756c4e4dd048a3e16721c4c173c35a0e8688ccec1545d77835360fc",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-revoker/revoker-result.json": {
+    "sha256": "56efad2492586cf0a8e44712378f06d78426327f4116f07004f2217760cb1c5f",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-revoker/writer-attempt.json": {
+    "sha256": "b3c9cc96990c20719419d86aeca4756918ab335ece9766bd13b9df45ff9f44a4",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-revoker/writer-authority-acquired.json": {
+    "sha256": "19e76de9b35975cc296dd713ef861157be9ea242cf03ebceca742f5affc1d8a7",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-revoker/writer-authority-attempt.json": {
+    "sha256": "19e76de9b35975cc296dd713ef861157be9ea242cf03ebceca742f5affc1d8a7",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-revoker/writer-config.json": {
+    "sha256": "e96843cd0cc62a8d4f54d9be0db9e596be5e8d75c17b59bd6449b12594aeee2e",
+    "bytes": 719
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-revoker/writer-first-response.json": {
+    "sha256": "2926eb8223d14077e9ae1ea19c06ad1cd5e108148ec4cd603001e8ad86b85690",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-revoker/writer-result.json": {
+    "sha256": "dbdc6d0a9863f213eca822cd55c823d5819e14007331f6e88de4de23ab870918",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-writer/assertions.json": {
+    "sha256": "9848acf5b91ae19d0f96a438dd6efa06008213fe64fca96412b9e38b5d5d047a",
+    "bytes": 684
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-writer/authority-lock-witness.json": {
+    "sha256": "86a69de8d9114add816321a4ab603d8f5adada0f678ce74568cd37e6f05c72fd",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-writer/revoker-attempt.json": {
+    "sha256": "e358fd54766409a814ed33d4371676d68762ee1802b4728d953bc02b01ee4e91",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-writer/revoker-authority-acquired.json": {
+    "sha256": "692465ff7e2edbbf178a3f1bd3a721dce7c52a6b2ddbcf874f95fcea5f248dd6",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-writer/revoker-authority-attempt.json": {
+    "sha256": "692465ff7e2edbbf178a3f1bd3a721dce7c52a6b2ddbcf874f95fcea5f248dd6",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-writer/revoker-config.json": {
+    "sha256": "8475ccf85ca6ebc1e3d9740877ce48dc17b8bd6d031c1cd799a59664ae21668e",
+    "bytes": 718
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-writer/revoker-result.json": {
+    "sha256": "b27062bf155cbb9ce67b0960c8f2da65ce77ec670caf2db267ce8aa7065b2667",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-writer/writer-attempt.json": {
+    "sha256": "31c26e78ba9cdb2c62b5ddcc3718fb39be255d42d85fb3e288ee9c4c554e91db",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-writer/writer-authority-acquired.json": {
+    "sha256": "3e1ba8930f5792c686b9b3e0a69f3950fc654ca7b9d6f0ebaace1885ce4a5cfd",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-writer/writer-authority-attempt.json": {
+    "sha256": "3e1ba8930f5792c686b9b3e0a69f3950fc654ca7b9d6f0ebaace1885ce4a5cfd",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-writer/writer-config.json": {
+    "sha256": "8475ccf85ca6ebc1e3d9740877ce48dc17b8bd6d031c1cd799a59664ae21668e",
+    "bytes": 718
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-writer/writer-first-response.json": {
+    "sha256": "b423ff7b2d611f037e9e5cae7dfaf2a4a475b3d5e410e9571f4aa7a309fd2cf0",
+    "bytes": 2157
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-writer/writer-persistence.json": {
+    "sha256": "8f83522fda0dde1aff3431cb1cb91f2dbea35499aa8ed70836011a90f2dfac90",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-writer/writer-result.json": {
+    "sha256": "e05de6f419bf239ed616053225c1721f06a2bfd48926c3f5c54760329a240efa",
+    "bytes": 2626
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-permission-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-revoker/assertions.json": {
+    "sha256": "b348b1e8a0469cbf26229d1362113b5499d92638fb74efe2bd20f8ce7ba6ebb4",
+    "bytes": 679
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-revoker/authority-lock-witness.json": {
+    "sha256": "da998766289b42f6bdb4f8118a372f3c7299b45e804e730a7f6f47fbe3c2e789",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-revoker/revoker-attempt.json": {
+    "sha256": "8fd4fe83710678156e127aca01dfa05c665e76375acce51a19adc3031a5f75c6",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-revoker/revoker-authority-acquired.json": {
+    "sha256": "780a8f6ba68eaa4eca790c447c264ad695447526fe33ae14052161864dd4c60b",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-revoker/revoker-authority-attempt.json": {
+    "sha256": "780a8f6ba68eaa4eca790c447c264ad695447526fe33ae14052161864dd4c60b",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-revoker/revoker-config.json": {
+    "sha256": "c5b786e80ed464569151851eac21e7b90562f45517d4e57146014eb211f7fcf0",
+    "bytes": 681
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-revoker/revoker-persistence.json": {
+    "sha256": "33e5b874315861949089ace89f5b3f3cb47e58204b91165344564e9fceae140d",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-revoker/revoker-result.json": {
+    "sha256": "7ae2d416597a7c7e3ccf7b15f3eb7e3fb9bd185a2762a84983a9bfbba7ab1b08",
+    "bytes": 67
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-revoker/writer-attempt.json": {
+    "sha256": "529ff3c295a9ebf6f96fe72b9e64d6f6dcd7cb4aba1290875e78f37afe7d2020",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-revoker/writer-authority-acquired.json": {
+    "sha256": "63d58633f4b4d81f88528c6431ae9ebe21510b1be920a23346c09458be833bcb",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-revoker/writer-authority-attempt.json": {
+    "sha256": "63d58633f4b4d81f88528c6431ae9ebe21510b1be920a23346c09458be833bcb",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-revoker/writer-config.json": {
+    "sha256": "c5b786e80ed464569151851eac21e7b90562f45517d4e57146014eb211f7fcf0",
+    "bytes": 681
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-revoker/writer-first-response.json": {
+    "sha256": "c33ddeb13c391fc8065065cb367e03a0facadfa494323d281246055512676d3d",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-revoker/writer-result.json": {
+    "sha256": "cb6478c482257c32ee080e5a1e03d9a6514f38c70583265c4ddf75f66c1b429b",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-writer/assertions.json": {
+    "sha256": "7f5f76ee737dd587f000ffc1e2d0046558ccb41523dd0cebf94952f052dfe3c9",
+    "bytes": 678
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-writer/authority-lock-witness.json": {
+    "sha256": "28b78081200676f9622a3aafa1857b3fab52a4131373f06aadad9158e242e8bc",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-writer/revoker-attempt.json": {
+    "sha256": "9470cb0f3a580cd9eb373256ef960926af8b3a073b3dacf66d865b8f168242d4",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-writer/revoker-authority-acquired.json": {
+    "sha256": "3e882f3f8b3081bffdb23e3d87a6c7153dcbf829579af837aeb2ffa566c47b55",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-writer/revoker-authority-attempt.json": {
+    "sha256": "3e882f3f8b3081bffdb23e3d87a6c7153dcbf829579af837aeb2ffa566c47b55",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-writer/revoker-config.json": {
+    "sha256": "cae45896543546bdb47cccaa990d0baa1fbdf4b3f9a3b0baf44457b2dff1d212",
+    "bytes": 679
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-writer/revoker-result.json": {
+    "sha256": "8b396ea1a0a921afc7733c39eb393edeeadd3e344af11005a007d77d9a169fea",
+    "bytes": 67
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-writer/writer-attempt.json": {
+    "sha256": "a62b6f3246f81b9f20ad1127d76659909044d34b4d51ce4e6c0922e1ed832bf2",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-writer/writer-authority-acquired.json": {
+    "sha256": "f76a3d3f10dcf8421f40f4d805bd5cfeeacf0504a3c754a4a5fb8d21ce1920d6",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-writer/writer-authority-attempt.json": {
+    "sha256": "f76a3d3f10dcf8421f40f4d805bd5cfeeacf0504a3c754a4a5fb8d21ce1920d6",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-writer/writer-config.json": {
+    "sha256": "cae45896543546bdb47cccaa990d0baa1fbdf4b3f9a3b0baf44457b2dff1d212",
+    "bytes": 679
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-writer/writer-first-response.json": {
+    "sha256": "e99c6313eef03c87a827e371fdbc205a1bd924545354471803cfdcc35390f068",
+    "bytes": 2157
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-writer/writer-persistence.json": {
+    "sha256": "55a4b165586bc3a75baa530e5b125fdcaebbd9dff5764a9a1c7eba622116bb37",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-writer/writer-result.json": {
+    "sha256": "e1dbb9b947fa1804d7c63e4321e84041db38daf3ae2f1fd2d8c192515091ec2d",
+    "bytes": 2626
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-delete-role-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-revoker/assertions.json": {
+    "sha256": "2a7099691db2fa387612e9e2bd426e3be7ec68e4a5ba8a4646c6745a78b492d5",
+    "bytes": 685
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-revoker/authority-lock-witness.json": {
+    "sha256": "7af7b8efca99af2448f751980561c66e7b52c6610021da6df5642835d704587f",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-revoker/revoker-attempt.json": {
+    "sha256": "f4f483dad6157e547829f4d9b808ff59eda28f86faa4f587fcc24d54e7497c8f",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-revoker/revoker-authority-acquired.json": {
+    "sha256": "7e0ca3f52c96b61772290b1d4ae3a89995574c80a760783ded300d0e74d9af29",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-revoker/revoker-authority-attempt.json": {
+    "sha256": "7e0ca3f52c96b61772290b1d4ae3a89995574c80a760783ded300d0e74d9af29",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-revoker/revoker-config.json": {
+    "sha256": "8893c29be2d785b71877323bc07b7f8512671abd218396342e0ba6613fb08200",
+    "bytes": 949
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-revoker/revoker-persistence.json": {
+    "sha256": "dc8258c54965684f1206938f62a678774847b0152fd80d28dfb31687934d2fd2",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-revoker/revoker-result.json": {
+    "sha256": "9ac57e7b86e106a765076857ded550ebab220ce77401b6a6605ca67c0b0fc63a",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-revoker/writer-attempt.json": {
+    "sha256": "028bf627efa7404c2fa1c9123d01efada54ecb8310110f3d8cd316a90a0118bf",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-revoker/writer-authority-acquired.json": {
+    "sha256": "6a72b2aed978a1a33c081f4779ff4e9bda23a06c52ce934d2412e711ada31db0",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-revoker/writer-authority-attempt.json": {
+    "sha256": "6a72b2aed978a1a33c081f4779ff4e9bda23a06c52ce934d2412e711ada31db0",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-revoker/writer-config.json": {
+    "sha256": "8893c29be2d785b71877323bc07b7f8512671abd218396342e0ba6613fb08200",
+    "bytes": 949
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-revoker/writer-first-response.json": {
+    "sha256": "8760c688e9fee6d0a4001c7003710b7a61920ce88a0449e7b1b58bd62e85cc24",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-revoker/writer-result.json": {
+    "sha256": "c4d2229908221ab69122314ca478d6af002c17f08b449266137e94824b77292e",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-writer/assertions.json": {
+    "sha256": "6250482a803f673444c0d6d162b60ec0b5c25abe991128ea0eae8c74ade5850d",
+    "bytes": 684
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-writer/authority-lock-witness.json": {
+    "sha256": "ee95d3affdd98aa0e55033d0b1b23dff826999a231d20e8197c85f32cc1de41f",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-writer/revoker-attempt.json": {
+    "sha256": "634d00360e921d88d40da55d5266a6686b7c4fc59fd10944731eb2f92527847b",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-writer/revoker-authority-acquired.json": {
+    "sha256": "8f8b6d4e59209dc6041ebd87ebd5092f715c9f9b2c0efd7f6811aa03fc5965a6",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-writer/revoker-authority-attempt.json": {
+    "sha256": "8f8b6d4e59209dc6041ebd87ebd5092f715c9f9b2c0efd7f6811aa03fc5965a6",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-writer/revoker-config.json": {
+    "sha256": "75f463544a0ac50618d17cbe3648255b37e16d33a2edf229549c1dccd062e02f",
+    "bytes": 947
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-writer/revoker-result.json": {
+    "sha256": "f2392f08dc198878e3769eecc6dde28fc4521fa44e76c19f816782749a42a913",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-writer/writer-attempt.json": {
+    "sha256": "ed2f54f0293f06176a65c70d0b907610a677136a8603ce4e72f02fcfdd93e3de",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-writer/writer-authority-acquired.json": {
+    "sha256": "91da582c53f334c67fb1a2977fcf121a5610b5da12776a218e7430d12a8c37d2",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-writer/writer-authority-attempt.json": {
+    "sha256": "91da582c53f334c67fb1a2977fcf121a5610b5da12776a218e7430d12a8c37d2",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-writer/writer-config.json": {
+    "sha256": "75f463544a0ac50618d17cbe3648255b37e16d33a2edf229549c1dccd062e02f",
+    "bytes": 947
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-writer/writer-first-response.json": {
+    "sha256": "47107b8db156f3d26431c313b4633b7fea9e171aea455077f4a51bd34883955d",
+    "bytes": 494
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-writer/writer-persistence.json": {
+    "sha256": "689384debda66f441354de06d04ab358415363520c18ed2d9047d059a6df038b",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-writer/writer-result.json": {
+    "sha256": "06b66e23e37ac6ff234293a4e044144e6a85c66420053e7956588af1c58e4779",
+    "bytes": 963
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-membership-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-revoker/assertions.json": {
+    "sha256": "9ee8ecdf227edaa33394e122635a51f47cf2edf2633858b55e6a039779237e68",
+    "bytes": 685
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-revoker/authority-lock-witness.json": {
+    "sha256": "5921e89bd9c1351f6000b997dea213bc5237c635c77c0164f0113434d72cd288",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-revoker/revoker-attempt.json": {
+    "sha256": "4bccacf59b30950faf6e75a6f78e4135e3a6e1ce4446b69ba5ecf0c78ce156fd",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-revoker/revoker-authority-acquired.json": {
+    "sha256": "4c5a7165d1b9c47d638c8523bf8c59a477b909610cb93a9fc5aca0b7592adba3",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-revoker/revoker-authority-attempt.json": {
+    "sha256": "4c5a7165d1b9c47d638c8523bf8c59a477b909610cb93a9fc5aca0b7592adba3",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-revoker/revoker-config.json": {
+    "sha256": "fc1a93a11002618d8fca698285c072c71bc32b29874b90534795adba1e0e5c67",
+    "bytes": 975
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-revoker/revoker-persistence.json": {
+    "sha256": "678227b99a3cdfb27b74dd262eb487b47dd60f11ac67b23441c70e168e00a38c",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-revoker/revoker-result.json": {
+    "sha256": "5fb69863812aafd5bd90c999ce345db52fe725a86f703c32a10501d6932de08d",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-revoker/writer-attempt.json": {
+    "sha256": "92d61a044bb537b8ff8ab224944329130a2956c7fc66600b12aa90e83ca2ff9b",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-revoker/writer-authority-acquired.json": {
+    "sha256": "544047120d7eff892188fe5abaea8db84f8b11695020627db514f84e12225f00",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-revoker/writer-authority-attempt.json": {
+    "sha256": "544047120d7eff892188fe5abaea8db84f8b11695020627db514f84e12225f00",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-revoker/writer-config.json": {
+    "sha256": "fc1a93a11002618d8fca698285c072c71bc32b29874b90534795adba1e0e5c67",
+    "bytes": 975
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-revoker/writer-first-response.json": {
+    "sha256": "caed909503a824ba495afa4e1bb04d69d9b3080fc0e0565e67192f595ac60ca0",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-revoker/writer-result.json": {
+    "sha256": "28f55767b3ebed7a4c8380de2a093df90b956302a6a630ed970a058c58486b3b",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-writer/assertions.json": {
+    "sha256": "08e627856eed6d1e2249519c76e61ee340e981df8fae28989108d006ebdc2aa4",
+    "bytes": 684
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-writer/authority-lock-witness.json": {
+    "sha256": "944ca23107be1f2b4316b660b5fbc6dbf8a373b695e9fc20d10fd828e14ab517",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-writer/revoker-attempt.json": {
+    "sha256": "af9402afd080bdc1cd0314407b95844432e36d3516dd1752c19cecc0fa6b571e",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-writer/revoker-authority-acquired.json": {
+    "sha256": "d39627048e57b8d53e5fe4bc8366160a9238e106d2f220f288cc1e8aa32fc196",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-writer/revoker-authority-attempt.json": {
+    "sha256": "d39627048e57b8d53e5fe4bc8366160a9238e106d2f220f288cc1e8aa32fc196",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-writer/revoker-config.json": {
+    "sha256": "b904da1442cc600b82e1e19ad298eecd121c176cab6b05b4716d12c83ec93f5f",
+    "bytes": 973
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-writer/revoker-result.json": {
+    "sha256": "e54328db8df51a05ced11b93424181b6ec8e6df8bf844b068228052ea8b2d33b",
+    "bytes": 73
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-writer/writer-attempt.json": {
+    "sha256": "8037a6e24ef2358f44e93b0c51a9fd09869098e142d20ddef48811cb91c3035a",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-writer/writer-authority-acquired.json": {
+    "sha256": "57ff8ecced8e4df06c209bf42db6d987f3a12242422cd0212f4c60130e1e3759",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-writer/writer-authority-attempt.json": {
+    "sha256": "57ff8ecced8e4df06c209bf42db6d987f3a12242422cd0212f4c60130e1e3759",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-writer/writer-config.json": {
+    "sha256": "b904da1442cc600b82e1e19ad298eecd121c176cab6b05b4716d12c83ec93f5f",
+    "bytes": 973
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-writer/writer-first-response.json": {
+    "sha256": "c75ccb3d95f221b03c25580af5b94aad9597a30872732a269f4408c52ae3a4ea",
+    "bytes": 494
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-writer/writer-persistence.json": {
+    "sha256": "354973eed58ac48ca17c016a2df4fe0d8ac596e821e7f66ac2b219e763a5eb6f",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-writer/writer-result.json": {
+    "sha256": "7d53e79ecfc8471cfe833918529282c3b3202876a9f0b0f8a0ba457e023fe989",
+    "bytes": 963
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-permission-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-revoker/assertions.json": {
+    "sha256": "3470c13cd021d7a536dc25cd196e1ccc7e8b9470aea330dce7d0c7580f3c11a4",
+    "bytes": 679
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-revoker/authority-lock-witness.json": {
+    "sha256": "26a534623fdf24b9b3b97f0c4adc950ca9ccc595a969df2f025822427b5943f2",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-revoker/revoker-attempt.json": {
+    "sha256": "13f0568c527d6cadf37493fff943b507532a5cfc7c1a71c4bb17e9273e832c29",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-revoker/revoker-authority-acquired.json": {
+    "sha256": "aeafa2207dafe0e292f4a0482ff433658ddc1c80ed4823f89f16c23c8773628d",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-revoker/revoker-authority-attempt.json": {
+    "sha256": "aeafa2207dafe0e292f4a0482ff433658ddc1c80ed4823f89f16c23c8773628d",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-revoker/revoker-config.json": {
+    "sha256": "bdfe2225a3a9c5c6e5660df3e7d117b58fb3eaab9e7d72f9784318d94936f18c",
+    "bytes": 937
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-revoker/revoker-persistence.json": {
+    "sha256": "3ccda246e6eea7be2d7b8c07358c596adf81ec92abdf551c39e80bf56119ca1c",
+    "bytes": 42
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-revoker/revoker-result.json": {
+    "sha256": "d3594ffd83579268cd5c7bae4919263c6b1287a9d3a5440b1d8239b829b6516a",
+    "bytes": 67
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-revoker/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-revoker/writer-attempt.json": {
+    "sha256": "e78bfba593be188a15488b906ddb33c3d0bdb11c05af6f2ae166ea1cd16ebf16",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-revoker/writer-authority-acquired.json": {
+    "sha256": "442cbb11c1ce5df8120198efdfc112d6f99e725f9e72a91715420623e0a5839e",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-revoker/writer-authority-attempt.json": {
+    "sha256": "442cbb11c1ce5df8120198efdfc112d6f99e725f9e72a91715420623e0a5839e",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-revoker/writer-config.json": {
+    "sha256": "bdfe2225a3a9c5c6e5660df3e7d117b58fb3eaab9e7d72f9784318d94936f18c",
+    "bytes": 937
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-revoker/writer-first-response.json": {
+    "sha256": "4a3a08429f8521dda48272deb57bab1068cb5aa20391be1531f88e11fe74a99d",
+    "bytes": 331
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-revoker/writer-result.json": {
+    "sha256": "ed6c2c961472b5123da9884428394fbccf551dc1bab3069269642ba4e97f5441",
+    "bytes": 800
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-revoker/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-writer/assertions.json": {
+    "sha256": "12e6f31bc1557ee98218de0db51b66453d4d667ec8747dcc3c77141c6ffae468",
+    "bytes": 678
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-writer/authority-lock-witness.json": {
+    "sha256": "d6af3da2f5d97dd6d57d6982e2538a25fad0c00c75b2deda19bb52645faf7286",
+    "bytes": 272
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-writer/revoker-attempt.json": {
+    "sha256": "3673bc0f688ca1289d46e0dfb54afe96d5f90599c94fe91160b56419d430bae9",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-writer/revoker-authority-acquired.json": {
+    "sha256": "2bcdfe18d8846ceb4f04e4268f7daff1cdcebcfb42f9c53c0943d0be1125bec0",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-writer/revoker-authority-attempt.json": {
+    "sha256": "2bcdfe18d8846ceb4f04e4268f7daff1cdcebcfb42f9c53c0943d0be1125bec0",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-writer/revoker-config.json": {
+    "sha256": "76a949104aeb152bbefc298c72e518d6f0c72cee2c34d767e1bcdefed3d0dcaf",
+    "bytes": 935
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-writer/revoker-result.json": {
+    "sha256": "47e5ba9a3c904215d0bf907d8d1986301057c7c35b69b0eb651ba402f4111218",
+    "bytes": 67
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-writer/revoker.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-writer/writer-attempt.json": {
+    "sha256": "59102418effa2fa8d0d97691f00a6dc24e2f0da1d7bc5064dffff63e95279feb",
+    "bytes": 20
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-writer/writer-authority-acquired.json": {
+    "sha256": "6963458999847ad1baea152d6f671b182f22cd4f9c4887d8d8363e20ad327578",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-writer/writer-authority-attempt.json": {
+    "sha256": "6963458999847ad1baea152d6f671b182f22cd4f9c4887d8d8363e20ad327578",
+    "bytes": 126
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-writer/writer-config.json": {
+    "sha256": "76a949104aeb152bbefc298c72e518d6f0c72cee2c34d767e1bcdefed3d0dcaf",
+    "bytes": 935
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-writer/writer-first-response.json": {
+    "sha256": "9cf293b55297c83d71a2b734047d7bf71d79e345236393cd6acb0957312c98f8",
+    "bytes": 494
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-writer/writer-persistence.json": {
+    "sha256": "62445f202ff4689f668d330e781ae541522a2691192208319dab6f1dfc9231e3",
+    "bytes": 41
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-writer/writer-result.json": {
+    "sha256": "2784bcc702bbf2fda39fe04e5966516715fc6a333b9afc5e6ba74882c7ef5da5",
+    "bytes": 963
+  },
+  "docs/delivery/v2-r3-prompt-20261016/process-pg-final-r3/process-postgres-revise-role-writer/writer.log": {
+    "sha256": "0e0c4fb31f4c24c3da7d691bb390a643fc0fa234d9e59a9cce7aaf08ebf0e6af",
+    "bytes": 282
+  }
+}

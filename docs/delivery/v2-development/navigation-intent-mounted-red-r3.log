@@ -1,0 +1,1339 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend
+
+ ❯ src/AppModuleNavigationIntent.test.tsx (20 tests | 10 failed) 4384ms
+   × App module navigation during delayed original overview > counts an explicit click on the already-selected NOVEL as intent 1143ms
+     → Unable to find role="button" and name "打开 V2 创作工作台"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<output[39m
+      [33maria-label[39m=[32m"Original overview queries pending"[39m
+    [36m>[39m
+      [0m0[0m
+    [36m</output>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+      [33mdata-module[39m=[32m"IMAGE"[39m
+      [33mstyle[39m=[32m"--layout-inspector-width: 340px;"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"global-header"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"AI Novel Studio"[39m
+          [33mclass[39m=[32m"product-mark"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__icon"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open-text"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 8h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 8h2"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</span>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__name"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mAI Novel[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mStudio[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"创作模块"[39m
+          [33mclass[39m=[32m"module-switcher"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"NOVEL"[39m
+            [33mid[39m=[32m"module-tab-novel"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m小说[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mclass[39m=[32m"is-active"[39m
+            [33mdata-module-tab[39m=[32m"IMAGE"[39m
+            [33mid[39m=[32m"module-tab-image"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"0"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-image"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mrx[39m=[32m"2"[39m
+                [33mry[39m=[32m"2"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mx[39m=[32m"3"[39m
+                [33my[39m=[32m"3"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"9"[39m
+                [33mcy[39m=[32m"9"[39m
+                [33mr[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m图片[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"VIDEO"[39m
+            [33mid[39m=[32m"module-tab-video"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-video"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+             ...
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<output[39m
+        [33maria-label[39m=[32m"Original overview queries pending"[39m
+      [36m>[39m
+        [0m0[0m
+      [36m</output>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"app-shell"[39m
+        [33mdata-module[39m=[32m"IMAGE"[39m
+        [33mstyle[39m=[32m"--layout-inspector-width: 340px;"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"global-header"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33maria-label[39m=[32m"AI Novel Studio"[39m
+            [33mclass[39m=[32m"product-mark"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"product-mark__icon"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-book-open-text"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 7v14"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 12h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 8h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 12h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 8h2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"product-mark__name"[39m
+            [36m>[39m
+              [36m<strong>[39m
+                [0mAI Novel[0m
+              [36m</strong>[39m
+              [36m<small>[39m
+                [0mStudio[0m
+              [36m</small>[39m
+            [36m</span>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33maria-label[39m=[32m"创作模块"[39m
+            [33mclass[39m=[32m"module-switcher"[39m
+            [33mrole[39m=[32m"tablist"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"false"[39m
+              [33mclass[39m=[32m""[39m
+              [33mdata-module-tab[39m=[32m"NOVEL"[39m
+              [33mid[39m=[32m"module-tab-novel"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-book-open"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 7v14"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span>[39m
+                [0m小说[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"true"[39m
+              [33mclass[39m=[32m"is-active"[39m
+              [33mdata-module-tab[39m=[32m"IMAGE"[39m
+              [33mid[39m=[32m"module-tab-image"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"0"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-image"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"18"[39m
+                  [33mrx[39m=[32m"2"[39m
+                  [33mry[39m=[32m"2"[39m
+                  [33mwidth[39m=[32m"18"[39m
+                  [33mx[39m=[32m"3"[39m
+                  [33my[39m=[32m"3"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"9"[39m
+                  [33mcy[39m=[32m"9"[39m
+                  [33mr[39m=[32m"2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span>[39m
+                [0m图片[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"false"[39m
+              [33mclass[39m=[32m""[39m
+              [33mdata-module-tab[39m=[32m"VIDEO"[39m
+              [33mid[39m=[32m"module-tab-video"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-video"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+               ...
+   × App module navigation during delayed original overview > keeps the last rapid choice through the original ModuleWorkspace switcher 122ms
+     → expected 'false' to be 'true' // Object.is equality
+   × App module navigation during delayed original overview > keeps VIDEO when the neutral overview arrives after IMAGE to VIDEO 75ms
+     → expected 'false' to be 'true' // Object.is equality
+   × App module navigation during delayed original overview > routes a real CreativeWorkspace module click through the same App intent 76ms
+     → expected 'false' to be 'true' // Object.is equality
+   × App module navigation during delayed original overview > retains an explicit same-value choice under StrictMode 42ms
+     → expected 'false' to be 'true' // Object.is equality
+   × App module navigation during delayed original overview > counts the original authorized interop OPEN_PROJECT route as explicit NOVEL intent 40ms
+     → expected 'false' to be 'true' // Object.is equality
+   × App module navigation during delayed original overview > rejects a module callback captured before A to B to A without consuming the new default 57ms
+     → expected 'false' to be 'true' // Object.is equality
+   × App module navigation during delayed original overview > does not reuse old intent or an old overview across a changed actor identity 1045ms
+     → expected 1 to be greater than 1
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<output[39m
+        [33maria-label[39m=[32m"Original overview queries pending"[39m
+      [36m>[39m
+        [0m1[0m
+      [36m</output>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"app-shell"[39m
+        [33mdata-module[39m=[32m"VIDEO"[39m
+        [33mstyle[39m=[32m"--layout-inspector-width: 340px;"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"global-header"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33maria-label[39m=[32m"AI Novel Studio"[39m
+            [33mclass[39m=[32m"product-mark"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"product-mark__icon"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-book-open-text"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 7v14"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 12h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 8h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 12h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 8h2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"product-mark__name"[39m
+            [36m>[39m
+              [36m<strong>[39m
+                [0mAI Novel[0m
+              [36m</strong>[39m
+              [36m<small>[39m
+                [0mStudio[0m
+              [36m</small>[39m
+            [36m</span>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33maria-label[39m=[32m"创作模块"[39m
+            [33mclass[39m=[32m"module-switcher"[39m
+            [33mrole[39m=[32m"tablist"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"false"[39m
+              [33mclass[39m=[32m""[39m
+              [33mdata-module-tab[39m=[32m"NOVEL"[39m
+              [33mid[39m=[32m"module-tab-novel"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-book-open"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 7v14"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span>[39m
+                [0m小说[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"false"[39m
+              [33mclass[39m=[32m""[39m
+              [33mdata-module-tab[39m=[32m"IMAGE"[39m
+              [33mid[39m=[32m"module-tab-image"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-image"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"18"[39m
+                  [33mrx[39m=[32m"2"[39m
+                  [33mry[39m=[32m"2"[39m
+                  [33mwidth[39m=[32m"18"[39m
+                  [33mx[39m=[32m"3"[39m
+                  [33my[39m=[32m"3"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"9"[39m
+                  [33mcy[39m=[32m"9"[39m
+                  [33mr[39m=[32m"2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span>[39m
+                [0m图片[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"true"[39m
+              [33mclass[39m=[32m"is-active"[39m
+              [33mdata-module-tab[39m=[32m"VIDEO"[39m
+              [33mid[39m=[32m"module-tab-video"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"0"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-video"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+               ...
+   × App module navigation during delayed original overview > does not reuse old intent or an old overview across a changed actor-workspace identity 1043ms
+     → expected 1 to be greater than 1
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<output[39m
+        [33maria-label[39m=[32m"Original overview queries pending"[39m
+      [36m>[39m
+        [0m1[0m
+      [36m</output>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"app-shell"[39m
+        [33mdata-module[39m=[32m"VIDEO"[39m
+        [33mstyle[39m=[32m"--layout-inspector-width: 340px;"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"global-header"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33maria-label[39m=[32m"AI Novel Studio"[39m
+            [33mclass[39m=[32m"product-mark"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"product-mark__icon"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-book-open-text"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 7v14"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 12h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 8h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 12h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 8h2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"product-mark__name"[39m
+            [36m>[39m
+              [36m<strong>[39m
+                [0mAI Novel[0m
+              [36m</strong>[39m
+              [36m<small>[39m
+                [0mStudio[0m
+              [36m</small>[39m
+            [36m</span>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33maria-label[39m=[32m"创作模块"[39m
+            [33mclass[39m=[32m"module-switcher"[39m
+            [33mrole[39m=[32m"tablist"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"false"[39m
+              [33mclass[39m=[32m""[39m
+              [33mdata-module-tab[39m=[32m"NOVEL"[39m
+              [33mid[39m=[32m"module-tab-novel"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-book-open"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 7v14"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span>[39m
+                [0m小说[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"false"[39m
+              [33mclass[39m=[32m""[39m
+              [33mdata-module-tab[39m=[32m"IMAGE"[39m
+              [33mid[39m=[32m"module-tab-image"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-image"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"18"[39m
+                  [33mrx[39m=[32m"2"[39m
+                  [33mry[39m=[32m"2"[39m
+                  [33mwidth[39m=[32m"18"[39m
+                  [33mx[39m=[32m"3"[39m
+                  [33my[39m=[32m"3"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"9"[39m
+                  [33mcy[39m=[32m"9"[39m
+                  [33mr[39m=[32m"2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span>[39m
+                [0m图片[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"true"[39m
+              [33mclass[39m=[32m"is-active"[39m
+              [33mdata-module-tab[39m=[32m"VIDEO"[39m
+              [33mid[39m=[32m"module-tab-video"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"0"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-video"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+               ...
+   × App module navigation during delayed original overview > does not let a previous branch response replace a new branch explicit same-value NOVEL choice 39ms
+     → expected 'false' to be 'true' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  10 failed | 10 passed (20)
+   Start at  02:51:40
+   Duration  7.83s (transform 1.85s, setup 12ms, collect 2.86s, tests 4.38s, environment 388ms, prepare 54ms)
+
+JSON report written to D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/docs/delivery/v2-navigation-intent-20261017/navigation-intent-mounted-red-r3.vitest.json
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/AppModuleNavigationIntent.test.tsx > App module navigation during delayed original overview > counts an explicit click on the already-selected NOVEL as intent
+TestingLibraryElementError: Unable to find role="button" and name "打开 V2 创作工作台"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<output[39m
+      [33maria-label[39m=[32m"Original overview queries pending"[39m
+    [36m>[39m
+      [0m0[0m
+    [36m</output>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+      [33mdata-module[39m=[32m"IMAGE"[39m
+      [33mstyle[39m=[32m"--layout-inspector-width: 340px;"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"global-header"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"AI Novel Studio"[39m
+          [33mclass[39m=[32m"product-mark"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__icon"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open-text"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 8h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 8h2"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</span>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"product-mark__name"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mAI Novel[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mStudio[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"创作模块"[39m
+          [33mclass[39m=[32m"module-switcher"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"NOVEL"[39m
+            [33mid[39m=[32m"module-tab-novel"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-book-open"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m小说[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mclass[39m=[32m"is-active"[39m
+            [33mdata-module-tab[39m=[32m"IMAGE"[39m
+            [33mid[39m=[32m"module-tab-image"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"0"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-image"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mrx[39m=[32m"2"[39m
+                [33mry[39m=[32m"2"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mx[39m=[32m"3"[39m
+                [33my[39m=[32m"3"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"9"[39m
+                [33mcy[39m=[32m"9"[39m
+                [33mr[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m图片[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mdata-module-tab[39m=[32m"VIDEO"[39m
+            [33mid[39m=[32m"module-tab-video"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-video"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+             ...
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<output[39m
+        [33maria-label[39m=[32m"Original overview queries pending"[39m
+      [36m>[39m
+        [0m0[0m
+      [36m</output>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"app-shell"[39m
+        [33mdata-module[39m=[32m"IMAGE"[39m
+        [33mstyle[39m=[32m"--layout-inspector-width: 340px;"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"global-header"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33maria-label[39m=[32m"AI Novel Studio"[39m
+            [33mclass[39m=[32m"product-mark"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"product-mark__icon"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-book-open-text"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 7v14"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 12h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 8h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 12h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 8h2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"product-mark__name"[39m
+            [36m>[39m
+              [36m<strong>[39m
+                [0mAI Novel[0m
+              [36m</strong>[39m
+              [36m<small>[39m
+                [0mStudio[0m
+              [36m</small>[39m
+            [36m</span>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33maria-label[39m=[32m"创作模块"[39m
+            [33mclass[39m=[32m"module-switcher"[39m
+            [33mrole[39m=[32m"tablist"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"false"[39m
+              [33mclass[39m=[32m""[39m
+              [33mdata-module-tab[39m=[32m"NOVEL"[39m
+              [33mid[39m=[32m"module-tab-novel"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-book-open"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 7v14"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span>[39m
+                [0m小说[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"true"[39m
+              [33mclass[39m=[32m"is-active"[39m
+              [33mdata-module-tab[39m=[32m"IMAGE"[39m
+              [33mid[39m=[32m"module-tab-image"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"0"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-image"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"18"[39m
+                  [33mrx[39m=[32m"2"[39m
+                  [33mry[39m=[32m"2"[39m
+                  [33mwidth[39m=[32m"18"[39m
+                  [33mx[39m=[32m"3"[39m
+                  [33my[39m=[32m"3"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"9"[39m
+                  [33mcy[39m=[32m"9"[39m
+                  [33mr[39m=[32m"2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span>[39m
+                [0m图片[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"false"[39m
+              [33mclass[39m=[32m""[39m
+              [33mdata-module-tab[39m=[32m"VIDEO"[39m
+              [33mid[39m=[32m"module-tab-video"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-video"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+               ...
+ ❯ Proxy.waitForWrapper ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/AppModuleNavigationIntent.test.tsx:95:11
+     93|     mount(); const pending = await request(); selected('小说');
+     94|     fireEvent.click(tab('小说')); await release(pending);
+     95|     await waitFor(() => expect(screen.getByRole('button', { name: '打…
+       |           ^
+     96|     selected('小说');
+     97|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  src/AppModuleNavigationIntent.test.tsx > App module navigation during delayed original overview > keeps the last rapid choice through the original ModuleWorkspace switcher
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ selected src/AppModuleNavigationIntent.test.tsx:52:83
+     50| }
+     51| const tab = (name: string) => within(screen.getByRole('tablist', { nam…
+     52| function selected(name: string) { expect(tab(name).getAttribute('aria-…
+       |                                                                                   ^
+     53| async function request(index = 0) { await waitFor(() => expect(held.le…
+     54| async function release(row: HeldOverview, settleCurrent = true, value …
+ ❯ src/AppModuleNavigationIntent.test.tsx:103:29
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  src/AppModuleNavigationIntent.test.tsx > App module navigation during delayed original overview > keeps VIDEO when the neutral overview arrives after IMAGE to VIDEO
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ selected src/AppModuleNavigationIntent.test.tsx:52:83
+     50| }
+     51| const tab = (name: string) => within(screen.getByRole('tablist', { nam…
+     52| function selected(name: string) { expect(tab(name).getAttribute('aria-…
+       |                                                                                   ^
+     53| async function request(index = 0) { await waitFor(() => expect(held.le…
+     54| async function release(row: HeldOverview, settleCurrent = true, value …
+ ❯ src/AppModuleNavigationIntent.test.tsx:108:29
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  src/AppModuleNavigationIntent.test.tsx > App module navigation during delayed original overview > routes a real CreativeWorkspace module click through the same App intent
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ selected src/AppModuleNavigationIntent.test.tsx:52:83
+     50| }
+     51| const tab = (name: string) => within(screen.getByRole('tablist', { nam…
+     52| function selected(name: string) { expect(tab(name).getAttribute('aria-…
+       |                                                                                   ^
+     53| async function request(index = 0) { await waitFor(() => expect(held.le…
+     54| async function release(row: HeldOverview, settleCurrent = true, value …
+ ❯ src/AppModuleNavigationIntent.test.tsx:114:29
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  src/AppModuleNavigationIntent.test.tsx > App module navigation during delayed original overview > retains an explicit same-value choice under StrictMode
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ selected src/AppModuleNavigationIntent.test.tsx:52:83
+     50| }
+     51| const tab = (name: string) => within(screen.getByRole('tablist', { nam…
+     52| function selected(name: string) { expect(tab(name).getAttribute('aria-…
+       |                                                                                   ^
+     53| async function request(index = 0) { await waitFor(() => expect(held.le…
+     54| async function release(row: HeldOverview, settleCurrent = true, value …
+ ❯ src/AppModuleNavigationIntent.test.tsx:147:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  src/AppModuleNavigationIntent.test.tsx > App module navigation during delayed original overview > counts the original authorized interop OPEN_PROJECT route as explicit NOVEL intent
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ selected src/AppModuleNavigationIntent.test.tsx:52:83
+     50| }
+     51| const tab = (name: string) => within(screen.getByRole('tablist', { nam…
+     52| function selected(name: string) { expect(tab(name).getAttribute('aria-…
+       |                                                                                   ^
+     53| async function request(index = 0) { await waitFor(() => expect(held.le…
+     54| async function release(row: HeldOverview, settleCurrent = true, value …
+ ❯ src/AppModuleNavigationIntent.test.tsx:155:29
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  src/AppModuleNavigationIntent.test.tsx > App module navigation during delayed original overview > rejects a module callback captured before A to B to A without consuming the new default
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ selected src/AppModuleNavigationIntent.test.tsx:52:83
+     50| }
+     51| const tab = (name: string) => within(screen.getByRole('tablist', { nam…
+     52| function selected(name: string) { expect(tab(name).getAttribute('aria-…
+       |                                                                                   ^
+     53| async function request(index = 0) { await waitFor(() => expect(held.le…
+     54| async function release(row: HeldOverview, settleCurrent = true, value …
+ ❯ src/AppModuleNavigationIntent.test.tsx:162:38
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  src/AppModuleNavigationIntent.test.tsx > App module navigation during delayed original overview > does not reuse old intent or an old overview across a changed actor identity
+ FAIL  src/AppModuleNavigationIntent.test.tsx > App module navigation during delayed original overview > does not reuse old intent or an old overview across a changed actor-workspace identity
+AssertionError: expected 1 to be greater than 1
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<output[39m
+        [33maria-label[39m=[32m"Original overview queries pending"[39m
+      [36m>[39m
+        [0m1[0m
+      [36m</output>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"app-shell"[39m
+        [33mdata-module[39m=[32m"VIDEO"[39m
+        [33mstyle[39m=[32m"--layout-inspector-width: 340px;"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"global-header"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33maria-label[39m=[32m"AI Novel Studio"[39m
+            [33mclass[39m=[32m"product-mark"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"product-mark__icon"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-book-open-text"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 7v14"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 12h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 8h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 12h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 8h2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"product-mark__name"[39m
+            [36m>[39m
+              [36m<strong>[39m
+                [0mAI Novel[0m
+              [36m</strong>[39m
+              [36m<small>[39m
+                [0mStudio[0m
+              [36m</small>[39m
+            [36m</span>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33maria-label[39m=[32m"创作模块"[39m
+            [33mclass[39m=[32m"module-switcher"[39m
+            [33mrole[39m=[32m"tablist"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"false"[39m
+              [33mclass[39m=[32m""[39m
+              [33mdata-module-tab[39m=[32m"NOVEL"[39m
+              [33mid[39m=[32m"module-tab-novel"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-book-open"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 7v14"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span>[39m
+                [0m小说[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"false"[39m
+              [33mclass[39m=[32m""[39m
+              [33mdata-module-tab[39m=[32m"IMAGE"[39m
+              [33mid[39m=[32m"module-tab-image"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-image"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"18"[39m
+                  [33mrx[39m=[32m"2"[39m
+                  [33mry[39m=[32m"2"[39m
+                  [33mwidth[39m=[32m"18"[39m
+                  [33mx[39m=[32m"3"[39m
+                  [33my[39m=[32m"3"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"9"[39m
+                  [33mcy[39m=[32m"9"[39m
+                  [33mr[39m=[32m"2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span>[39m
+                [0m图片[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-selected[39m=[32m"true"[39m
+              [33mclass[39m=[32m"is-active"[39m
+              [33mdata-module-tab[39m=[32m"VIDEO"[39m
+              [33mid[39m=[32m"module-tab-video"[39m
+              [33mrole[39m=[32m"tab"[39m
+              [33mtabindex[39m=[32m"0"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-video"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+               ...
+ ❯ src/AppModuleNavigationIntent.test.tsx:53:77
+     51| const tab = (name: string) => within(screen.getByRole('tablist', { nam…
+     52| function selected(name: string) { expect(tab(name).getAttribute('aria-…
+     53| async function request(index = 0) { await waitFor(() => expect(held.le…
+       |                                                                             ^
+     54| async function release(row: HeldOverview, settleCurrent = true, value …
+     55|   await act(async () => row.resolve(response(value)));
+ ❯ runWithExpensiveErrorDiagnosticsDisabled ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback ../../../AI-Novel-Studio/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+ FAIL  src/AppModuleNavigationIntent.test.tsx > App module navigation during delayed original overview > does not let a previous branch response replace a new branch explicit same-value NOVEL choice
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ selected src/AppModuleNavigationIntent.test.tsx:52:83
+     50| }
+     51| const tab = (name: string) => within(screen.getByRole('tablist', { nam…
+     52| function selected(name: string) { expect(tab(name).getAttribute('aria-…
+       |                                                                                   ^
+     53| async function request(index = 0) { await waitFor(() => expect(held.le…
+     54| async function release(row: HeldOverview, settleCurrent = true, value …
+ ❯ src/AppModuleNavigationIntent.test.tsx:185:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯
+

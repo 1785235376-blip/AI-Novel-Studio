@@ -1,0 +1,73 @@
+[WebServer] (node:41824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:40060) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40060) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\visual\design-system.spec.ts:33:1 › production NOVEL route uses the frozen AppShell (2.1s)
+
+
+  1) [chromium] › tests\visual\design-system.spec.ts:33:1 › production NOVEL route uses the frozen AppShell 
+
+    Error: expect(locator).toHaveScreenshot(expected) failed
+
+    Locator: locator('.app-shell')
+      38984 pixels (ratio 0.04 of all image pixels) are different.
+
+      Snapshot: production-novel-shell.png
+
+    Call log:
+      - Expect "toHaveScreenshot(production-novel-shell.png)" with timeout 5000ms
+        - verifying given screenshot expectation
+      - waiting for locator('.app-shell')
+        - locator resolved to <div class="app-shell" data-module="NOVEL">…</div>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - 38984 pixels (ratio 0.04 of all image pixels) are different.
+      - waiting 100ms before taking screenshot
+      - waiting for locator('.app-shell')
+        - locator resolved to <div class="app-shell" data-module="NOVEL">…</div>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - captured a stable screenshot
+      - 38984 pixels (ratio 0.04 of all image pixels) are different.
+
+
+      52 |   expect(geometry.main.right).toBeLessThanOrEqual(geometry.inspector.left);
+      53 |   expect(geometry.pageScrollWidth).toBeLessThanOrEqual(geometry.viewport.width);
+    > 54 |   await expect(page.locator('.app-shell')).toHaveScreenshot('production-novel-shell.png');
+         |                                            ^
+      55 | });
+      56 |
+      57 | async function seedProductionShell(page:Page) {
+        at D:\小说\AI-Novel-Studio-Latest-Product\.tmp-pr45-visual-baseline\frontend\tests\visual\design-system.spec.ts:54:44
+
+    attachment #1: production-novel-shell (image/png) ──────────────────────────────────────────────
+    Expected: tests\visual\design-system.spec.ts-snapshots\production-novel-shell-chromium-win32.png
+    Received: ..\..\docs\delivery\full-recovery\pr45-original-production-shell-legal-fixture\design-system-production-N-025c5-te-uses-the-frozen-AppShell-chromium\production-novel-shell-actual.png
+    Diff:     ..\..\docs\delivery\full-recovery\pr45-original-production-shell-legal-fixture\design-system-production-N-025c5-te-uses-the-frozen-AppShell-chromium\production-novel-shell-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\docs\delivery\full-recovery\pr45-original-production-shell-legal-fixture\design-system-production-N-025c5-te-uses-the-frozen-AppShell-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\docs\delivery\full-recovery\pr45-original-production-shell-legal-fixture\design-system-production-N-025c5-te-uses-the-frozen-AppShell-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\docs\delivery\full-recovery\pr45-original-production-shell-legal-fixture\design-system-production-N-025c5-te-uses-the-frozen-AppShell-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\visual\design-system.spec.ts:33:1 › production NOVEL route uses the frozen AppShell 

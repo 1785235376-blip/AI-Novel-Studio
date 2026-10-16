@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "D:\С˵\AI-Novel-Studio-Latest-Product\scripts\update_recovery_coverage_manifest.py", line 237, in <module>
+    print(json.dumps(build(args.output), ensure_ascii=False, indent=2))
+                     ^^^^^^^^^^^^^^^^^^
+  File "D:\С˵\AI-Novel-Studio-Latest-Product\scripts\update_recovery_coverage_manifest.py", line 166, in build
+    raise ValueError("source fixture exception exceeds the exact reviewed correction: " + name)
+ValueError: source fixture exception exceeds the exact reviewed correction: tests/test_r2_windows_base_inputs.py

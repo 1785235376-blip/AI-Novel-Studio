@@ -1,0 +1,33 @@
+.............................E
+=================================== ERRORS ====================================
+______ ERROR at setup of test_the_actor_is_a_real_collaboration_identity ______
+
+    @pytest.fixture(scope="module")
+    def env():
+        if os.environ.get("PROJECT_ROOT") is None:
+            pytest.skip("requires the isolated runner")
+        from fastapi.testclient import TestClient
+    
+        from app import dependencies as deps
+        import app.api as api
+        import app.main as main
+    
+        # Collaboration must genuinely be on, and the app and its API layer must share ONE graph.
+>       assert getattr(main.settings, "enable_collaboration_runtime", False) is True, \
+            "run with --collaboration-runtime so ENABLE_COLLABORATION_RUNTIME is exported first"
+E       AssertionError: run with --collaboration-runtime so ENABLE_COLLABORATION_RUNTIME is exported first
+E       assert False is True
+E        +  where False = getattr(Settings(root=WindowsPath('D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016'), novel_data=WindowsPath('D:/PoemSeed/...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True), 'enable_collaboration_runtime', False)
+E        +    where Settings(root=WindowsPath('D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016'), novel_data=WindowsPath('D:/PoemSeed/...kend='memory', credential_vault_service='AI-Novel-Studio-V2-Verification', credential_vault_allow_memory_fallback=True) = <module 'app.main' from 'D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\app\\main.py'>.settings
+
+tests\test_round3i_http_authorized.py:39: AssertionError
+============================== warnings summary ===============================
+..\..\Cache\Tests\expansion-20261013-97da10e1\venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\PoemSeed\Cache\Tests\expansion-20261013-97da10e1\venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_round3i_http_authorized.py::test_the_actor_is_a_real_collaboration_identity
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+29 passed, 1 warning, 1 error in 10.31s

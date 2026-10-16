@@ -1,0 +1,161 @@
+{
+  "contract": "studio-prompt-detail/1",
+  "family_id": "f81767d3-9725-449a-b4c4-f0675bdf0652",
+  "head_asset_id": "ce043945-e644-45bc-bc84-41c8cf32aad3",
+  "revision": 2,
+  "asset_version": 2,
+  "purpose": "IMAGE",
+  "origin": "MANUAL",
+  "review_status": "DRAFT",
+  "approved": false,
+  "redacted": false,
+  "body": {
+    "state": "COMPLETE",
+    "value": "合成测试正文第二版，改动若干 🙂🙂\n第三行\n",
+    "truncated": false,
+    "decodable": true,
+    "body_validated": true,
+    "tail_unverified": false,
+    "original_length": 62,
+    "preview_length": 62,
+    "limit": 65536,
+    "digest": "92515cbe7b86aac18861d30619df5d4b022f54484908413b2a66797076e75289",
+    "digest_of": "ORIGINAL_BYTES",
+    "fetch": "INCLUDED"
+  },
+  "bindings": {
+    "characters": [
+      {
+        "kind": "CHARACTER",
+        "id": "c1",
+        "resolution": "KNOWN",
+        "verification": "INDEX_SUPPLIED"
+      }
+    ],
+    "scenes": [],
+    "shots": [],
+    "assets": [],
+    "verification": "INDEX_SUPPLIED"
+  },
+  "unresolved_bindings": [],
+  "reference_asset_ids": [],
+  "output_asset_ids": [],
+  "anomalies": [],
+  "versions": [
+    {
+      "asset_id": "22c9827e-01d4-4a99-ab39-1fc3922c684a",
+      "revision": 1,
+      "asset_version": 2,
+      "change_note": "合成初稿",
+      "change_reason": "合成第一版",
+      "previous_asset_id": null,
+      "redacted": false,
+      "available": true
+    },
+    {
+      "asset_id": "ce043945-e644-45bc-bc84-41c8cf32aad3",
+      "revision": 2,
+      "asset_version": 2,
+      "change_note": "合成第二版",
+      "change_reason": "合成调整",
+      "previous_asset_id": "22c9827e-01d4-4a99-ab39-1fc3922c684a",
+      "redacted": false,
+      "available": true
+    }
+  ],
+  "fields": [
+    {
+      "field": "text",
+      "label": "提示词",
+      "value": "合成测试正文第二版，改动若干 🙂🙂\n第三行\n",
+      "authored": true,
+      "state": "KNOWN"
+    },
+    {
+      "field": "negative_prompt",
+      "label": "负向提示词",
+      "value": "低质量, 模糊",
+      "authored": true,
+      "state": "KNOWN"
+    },
+    {
+      "field": "model_reference",
+      "label": "模型引用",
+      "value": "flux-2",
+      "authored": true,
+      "state": "KNOWN"
+    },
+    {
+      "field": "parameters",
+      "label": "参数",
+      "value": {
+        "steps": 40
+      },
+      "authored": true,
+      "state": "KNOWN"
+    },
+    {
+      "field": "seed",
+      "label": "种子",
+      "value": 8,
+      "authored": true,
+      "state": "KNOWN"
+    },
+    {
+      "field": "reference_assets",
+      "label": "参考素材",
+      "value": "UNKNOWN",
+      "authored": false,
+      "state": "UNKNOWN"
+    },
+    {
+      "field": "output_assets",
+      "label": "产出素材",
+      "value": "UNKNOWN",
+      "authored": false,
+      "state": "UNKNOWN"
+    },
+    {
+      "field": "purpose",
+      "label": "用途",
+      "value": "IMAGE",
+      "authored": true,
+      "state": "KNOWN"
+    },
+    {
+      "field": "origin",
+      "label": "来源",
+      "value": "MANUAL",
+      "authored": true,
+      "state": "KNOWN"
+    },
+    {
+      "field": "binding",
+      "label": "绑定",
+      "value": [],
+      "authored": true,
+      "state": "KNOWN"
+    },
+    {
+      "field": "version",
+      "label": "版本",
+      "value": 2,
+      "authored": true,
+      "state": "KNOWN"
+    }
+  ],
+  "read_complete": true,
+  "history_complete": true,
+  "schema_version": 1,
+  "advisory_only": true,
+  "execution_authority": false,
+  "auto_modify": false,
+  "used_by": [],
+  "project_id": "fixture-28ba07df4e4b4268863a2f56c3a514e3",
+  "scope": {
+    "mode": "local",
+    "novel_id": "fixture-28ba07df4e4b4268863a2f56c3a514e3"
+  },
+  "generated_at": "2026-10-15T01:17:34.933553+00:00",
+  "scan_truncated": false
+}

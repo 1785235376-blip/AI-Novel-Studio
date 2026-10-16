@@ -1,0 +1,385 @@
+EEEEEEEEEEEEEEEEEEEEEEEEF                                                [100%]
+=================================== ERRORS ====================================
+_ ERROR at setup of test_real_file_roundtrip_restart_history_export_and_archive[SCREENPLAY] _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_real_file_roundtrip_restart_history_export_and_archive[STORYBOARD] _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_real_file_roundtrip_restart_history_export_and_archive[VIDEO_PLANNING] _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+__________ ERROR at setup of test_process_restart_reads_actual_store __________
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_two_service_cas_rejects_lost_update_and_preserves_history _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_chapter_change_fences_read_write_export_and_history __
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_privacy_review_change_revokes_previously_captured_source _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_cross_project_and_branch_are_fenced_without_mainline_fallback _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_independent_document_requires_explicit_opt_in_and_sources_cannot_be_forged _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_strict_schema_rejects_untrusted_fields_and_invalid_structure[<lambda>0] _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_strict_schema_rejects_untrusted_fields_and_invalid_structure[<lambda>1] _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_strict_schema_rejects_untrusted_fields_and_invalid_structure[<lambda>2] _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_strict_schema_rejects_untrusted_fields_and_invalid_structure[<lambda>3] _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_strict_schema_rejects_untrusted_fields_and_invalid_structure[<lambda>4] _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_strict_schema_rejects_untrusted_fields_and_invalid_structure[<lambda>5] _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_strict_schema_rejects_untrusted_fields_and_invalid_structure[<lambda>6] _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_derived_sources_are_atomic_recursive_and_preserved_on_update _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_derived_archive_digest_and_scope_changes_fail_closed _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+__ ERROR at setup of test_cycle_and_corrupt_persisted_evidence_are_rejected ___
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_authority_revocation_rolls_back_the_entire_scope_transaction _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_api_flag_off_wildcard_and_v1_acceptance_fail_closed[-False] _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_api_flag_off_wildcard_and_v1_acceptance_fail_closed[*-False] _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_api_flag_off_wildcard_and_v1_acceptance_fail_closed[narrative_production_v2-True] _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+_ ERROR at setup of test_api_authority_crud_private_cas_export_and_branch_scope _
+
+self = WindowsPath('D:/小说/AI-Novel-Studio-V2/.runtime/v2-test/foundation-red1')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\小说\\AI-Novel-Studio-V2\\.runtime\\v2-test\\foundation-red1'
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1116: FileNotFoundError
+================================== FAILURES ===================================
+_ test_composition_mounts_both_existing_api_aliases_and_keeps_published_flags _
+
+    def test_composition_mounts_both_existing_api_aliases_and_keeps_published_flags():
+        from app.main import app
+        from app.experimental.flags import FLAGS, flag_status
+>       paths = {route.path for route in app.routes}
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_v2_creative_foundation.py:276: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+.0 = <list_iterator object at 0x000002B79A0A5C00>
+
+>   paths = {route.path for route in app.routes}
+             ^^^^^^^^^^
+E   AttributeError: '_IncludedRouter' object has no attribute 'path'
+
+tests\test_v2_creative_foundation.py:276: AttributeError
+- generated xml file: D:\小说\AI-Novel-Studio-V2\docs\delivery\v2-development\phase1-foundation-red1.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_v2_creative_foundation.py::test_composition_mounts_both_existing_api_aliases_and_keeps_published_flags
+ERROR tests/test_v2_creative_foundation.py::test_real_file_roundtrip_restart_history_export_and_archive[SCREENPLAY]
+ERROR tests/test_v2_creative_foundation.py::test_real_file_roundtrip_restart_history_export_and_archive[STORYBOARD]
+ERROR tests/test_v2_creative_foundation.py::test_real_file_roundtrip_restart_history_export_and_archive[VIDEO_PLANNING]
+ERROR tests/test_v2_creative_foundation.py::test_process_restart_reads_actual_store
+ERROR tests/test_v2_creative_foundation.py::test_two_service_cas_rejects_lost_update_and_preserves_history
+ERROR tests/test_v2_creative_foundation.py::test_chapter_change_fences_read_write_export_and_history
+ERROR tests/test_v2_creative_foundation.py::test_privacy_review_change_revokes_previously_captured_source
+ERROR tests/test_v2_creative_foundation.py::test_cross_project_and_branch_are_fenced_without_mainline_fallback
+ERROR tests/test_v2_creative_foundation.py::test_independent_document_requires_explicit_opt_in_and_sources_cannot_be_forged
+ERROR tests/test_v2_creative_foundation.py::test_strict_schema_rejects_untrusted_fields_and_invalid_structure[<lambda>0]
+ERROR tests/test_v2_creative_foundation.py::test_strict_schema_rejects_untrusted_fields_and_invalid_structure[<lambda>1]
+ERROR tests/test_v2_creative_foundation.py::test_strict_schema_rejects_untrusted_fields_and_invalid_structure[<lambda>2]
+ERROR tests/test_v2_creative_foundation.py::test_strict_schema_rejects_untrusted_fields_and_invalid_structure[<lambda>3]
+ERROR tests/test_v2_creative_foundation.py::test_strict_schema_rejects_untrusted_fields_and_invalid_structure[<lambda>4]
+ERROR tests/test_v2_creative_foundation.py::test_strict_schema_rejects_untrusted_fields_and_invalid_structure[<lambda>5]
+ERROR tests/test_v2_creative_foundation.py::test_strict_schema_rejects_untrusted_fields_and_invalid_structure[<lambda>6]
+ERROR tests/test_v2_creative_foundation.py::test_derived_sources_are_atomic_recursive_and_preserved_on_update
+ERROR tests/test_v2_creative_foundation.py::test_derived_archive_digest_and_scope_changes_fail_closed
+ERROR tests/test_v2_creative_foundation.py::test_cycle_and_corrupt_persisted_evidence_are_rejected
+ERROR tests/test_v2_creative_foundation.py::test_authority_revocation_rolls_back_the_entire_scope_transaction
+ERROR tests/test_v2_creative_foundation.py::test_api_flag_off_wildcard_and_v1_acceptance_fail_closed[-False]
+ERROR tests/test_v2_creative_foundation.py::test_api_flag_off_wildcard_and_v1_acceptance_fail_closed[*-False]
+ERROR tests/test_v2_creative_foundation.py::test_api_flag_off_wildcard_and_v1_acceptance_fail_closed[narrative_production_v2-True]
+ERROR tests/test_v2_creative_foundation.py::test_api_authority_crud_private_cas_export_and_branch_scope
+1 failed, 24 errors in 3.51s

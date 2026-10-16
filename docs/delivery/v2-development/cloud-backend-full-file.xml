@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="20.170" timestamp="2026-10-08T21:55:07.414578-07:00" hostname="c3dd9d71b9bb"><testcase classname="" name="tests.test_v2_check_runner" time="0.000"><error message="collection failure">ImportError while importing test module '/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_v2_check_runner.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+ImportError: /workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_v2_check_runner.py</error></testcase></testsuite></testsuites>

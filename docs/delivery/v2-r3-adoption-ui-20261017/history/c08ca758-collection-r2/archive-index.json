@@ -1,0 +1,63 @@
+{
+  "archived_at": "2026-10-16T17:32:55.817059+00:00",
+  "snapshot": "c08ca758 browser-startup-readiness preparation snapshot; not final runtime acceptance",
+  "head_during_collection": "6aed517611117771d767eb275a54773b24ba0300",
+  "spec_sha256": "c08ca7584301c2a257fd93f3603357e7aafc3a6812a4288a8178da4d7d4062a6",
+  "v2_manifest_sha256": "02b066ddfbfa3a7ced0e8270fe7166b8ea73e3923a36f28bff2f8fd1e41830dd",
+  "inventory_nodes": 15142,
+  "tests_executed_by_collector": false,
+  "operation": "byte-identical copies; no original report/log/failure moved or deleted",
+  "previous_archive_14_files_unchanged": true,
+  "files": [
+    {
+      "source": "docs/delivery/v2-r3-adoption-ui-20261017/collection-first.json",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/collection-first.json",
+      "sha256": "bd7a19a1abb0c61f341245cfcab374af6ec5ce0ca8a78c6727aafaea2c7743ec"
+    },
+    {
+      "source": "docs/delivery/v2-r3-adoption-ui-20261017/collection-first-rows.json.gz",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/collection-first-rows.json.gz",
+      "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+    },
+    {
+      "source": "docs/delivery/v2-r3-adoption-ui-20261017/collection-confirmation.json",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/collection-confirmation.json",
+      "sha256": "4a4341b9af0fcd3da28048365d686d77775e93fa27f69fafe019698370ca3c5d"
+    },
+    {
+      "source": "docs/delivery/v2-r3-adoption-ui-20261017/collection-confirmation-rows.json.gz",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/collection-confirmation-rows.json.gz",
+      "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+    },
+    {
+      "source": "docs/delivery/v2-r3-adoption-ui-20261017/collection-delta-final.json",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/collection-delta-final.json",
+      "sha256": "1029f9a0920adee8c450747b8382f6b6200ff208ae5b5b9b6aed945240afc3a6"
+    },
+    {
+      "source": "docs/delivery/v2-development/r3-adoption-ui-collection-final-r2.json",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/r3-adoption-ui-collection-final-r2.json",
+      "sha256": "9550c0299b263822b01bd005cb71d6100a196548666fa133d34e0d87cb1a3c8a"
+    },
+    {
+      "source": "docs/delivery/v2-development/r3-adoption-ui-collection-final-r2.log",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/r3-adoption-ui-collection-final-r2.log",
+      "sha256": "5252813e725f38292f85b1d8ede9ec7aac4892a64454f7dc9655b2fd7aa669b6"
+    },
+    {
+      "source": "docs/delivery/v2-development/r3-adoption-ui-collection-confirmation-r2.json",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/r3-adoption-ui-collection-confirmation-r2.json",
+      "sha256": "1dba48c2c58154643c7e5700e15f34f4009819041c389f4b917e29599f466f8d"
+    },
+    {
+      "source": "docs/delivery/v2-development/r3-adoption-ui-collection-confirmation-r2.log",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/r3-adoption-ui-collection-confirmation-r2.log",
+      "sha256": "7ab46e6688ad186ce551d7172366ab3f3494ff4b4035140de1214f03a7f70677"
+    },
+    {
+      "source": ".github/ci/coverage_manifest_v2.json.gz",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/c08ca758-collection-r2/coverage_manifest_v2.json.gz",
+      "sha256": "02b066ddfbfa3a7ced0e8270fe7166b8ea73e3923a36f28bff2f8fd1e41830dd"
+    }
+  ]
+}

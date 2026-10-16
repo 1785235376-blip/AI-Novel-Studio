@@ -1,0 +1,22 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ✓ src/creative/graphDraft.test.ts (39 tests) 38ms
+ ✓ src/creative/studioGraphClient.test.ts (48 tests) 131ms
+ ✓ src/creative/graphCanvasGeometry.test.ts (9 tests) 22ms
+ ✓ src/creative/GraphRunPanel.test.tsx (19 tests) 1000ms
+ ✓ src/creative/GraphCanvas.test.tsx (25 tests) 1192ms
+ ✓ src/creative/IndependentStudioSequentialImport.test.tsx (2 tests) 809ms
+   ✓ independent studio sequential import readiness > does not advertise readiness at lineage completion while the asset list refresh is still pending, then imports the next file once 664ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests) 1194ms
+   ✓ independent studio original owner integration > imports once and saves source provenance without chapters, models, or the legacy asset API 381ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (8 tests) 1802ms
+   ✓ independent studio graph content integration > keeps graphs lazy until an explicit content choice, with unchanged eight shell modules 340ms
+   ✓ independent studio graph content integration > saves an empty disconnected definition through the scoped owner and reopens it without creating a run 400ms
+   ✓ independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job 454ms
+
+ Test Files  8 passed (8)
+      Tests  158 passed (158)
+   Start at  06:51:12
+   Duration  3.57s (transform 1.24s, setup 0ms, collect 3.98s, tests 6.19s, environment 3.56s, prepare 765ms)
+

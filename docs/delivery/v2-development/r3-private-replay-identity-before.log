@@ -1,0 +1,346 @@
+FFFFFFFF                                                                 [100%]
+================================== FAILURES ===================================
+_ test_revision_replay_is_bound_to_original_family_route_and_expectations[file-/api-other_family] _
+
+prompts = namespace(client=<starlette.testclient.TestClient object at 0x000001F6CC86AA50>, prefix='/api', base='/api/novels/r3-m...04e/studio/assets', prompt_service=<app.creative.prompt_workspace.PromptWorkspaceService object at 0x000001F6CC0EEE10>)
+changed_identity = 'other_family'
+
+    @pytest.mark.parametrize("changed_identity", ["other_family", "previous_asset", "expected_revision", "create_route"])
+    def test_revision_replay_is_bound_to_original_family_route_and_expectations(prompts, changed_identity):
+        e = prompts
+        first, _ = create(e, text="First immutable predecessor")
+        other, _ = create(e, text="Independent family predecessor")
+        route = e.prompt_base + f"/{first['family_id']}/revisions"
+        body = {"text": TEXT, "purpose": "IMAGE", "origin": "MANUAL", "request_id": uuid4().hex,
+                "expected_previous_asset_id": first["asset_id"], "expected_revision": 1}
+        saved = checked(e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=body), 201)
+        valid = checked(e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=body), 201)
+        assert valid["idempotent_replay"] is True
+        assert {k: v for k, v in valid.items() if k != "idempotent_replay"} == {
+            k: v for k, v in saved.items() if k != "idempotent_replay"}
+        with e.studio._asset_scope(e.nid, e.scope):
+            before = {row["id"]: deepcopy(row) for row in e.assets.list(
+                e.nid, branch_id=e.branch, actor_id=e.lead, include_deleted=True)}
+        binaries = {aid: (e.assets.root / (aid + ".bin")).read_bytes() for aid in before}
+        changed = dict(body)
+        if changed_identity == "other_family":
+            route = e.prompt_base + f"/{other['family_id']}/revisions"
+            changed["expected_previous_asset_id"] = other["asset_id"]
+        elif changed_identity == "previous_asset":
+            changed["expected_previous_asset_id"] = other["asset_id"]
+        elif changed_identity == "expected_revision":
+            changed["expected_revision"] = 2
+        else:
+            route = e.prompt_base
+            changed.pop("expected_previous_asset_id")
+            changed.pop("expected_revision")
+        refused = e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=changed)
+>       assert refused.status_code == 409, refused.text
+E       AssertionError: {"family_id":"01d9cc15-818c-429d-b8d9-2082bb46e0ee","asset_id":"390d5d01-41a9-4b41-a5fa-0434334c0196","revision":2,"asset_version":2,"text_digest":"224561d3a256fbb440a014ef97bef8c6db0d0db3f667b9ae082d283e67d44526","idempotent_replay":true,"previous_asset_id":"28516f53-9aaa-498f-b18b-e7775c03ad68","payload_digest":"f059fa28bd6290228d962a5d220edab67f4ee04dfde412b257d8f449d1686d75"}
+E       assert 201 == 409
+E        +  where 201 = <Response [201 Created]>.status_code
+
+tests\test_v2_private_prompt_lifecycle.py:212: AssertionError
+_ test_revision_replay_is_bound_to_original_family_route_and_expectations[file-/api-previous_asset] _
+
+prompts = namespace(client=<starlette.testclient.TestClient object at 0x000001F6CD898DA0>, prefix='/api', base='/api/novels/r3-m...7c3/studio/assets', prompt_service=<app.creative.prompt_workspace.PromptWorkspaceService object at 0x000001F6CC0EEE10>)
+changed_identity = 'previous_asset'
+
+    @pytest.mark.parametrize("changed_identity", ["other_family", "previous_asset", "expected_revision", "create_route"])
+    def test_revision_replay_is_bound_to_original_family_route_and_expectations(prompts, changed_identity):
+        e = prompts
+        first, _ = create(e, text="First immutable predecessor")
+        other, _ = create(e, text="Independent family predecessor")
+        route = e.prompt_base + f"/{first['family_id']}/revisions"
+        body = {"text": TEXT, "purpose": "IMAGE", "origin": "MANUAL", "request_id": uuid4().hex,
+                "expected_previous_asset_id": first["asset_id"], "expected_revision": 1}
+        saved = checked(e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=body), 201)
+        valid = checked(e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=body), 201)
+        assert valid["idempotent_replay"] is True
+        assert {k: v for k, v in valid.items() if k != "idempotent_replay"} == {
+            k: v for k, v in saved.items() if k != "idempotent_replay"}
+        with e.studio._asset_scope(e.nid, e.scope):
+            before = {row["id"]: deepcopy(row) for row in e.assets.list(
+                e.nid, branch_id=e.branch, actor_id=e.lead, include_deleted=True)}
+        binaries = {aid: (e.assets.root / (aid + ".bin")).read_bytes() for aid in before}
+        changed = dict(body)
+        if changed_identity == "other_family":
+            route = e.prompt_base + f"/{other['family_id']}/revisions"
+            changed["expected_previous_asset_id"] = other["asset_id"]
+        elif changed_identity == "previous_asset":
+            changed["expected_previous_asset_id"] = other["asset_id"]
+        elif changed_identity == "expected_revision":
+            changed["expected_revision"] = 2
+        else:
+            route = e.prompt_base
+            changed.pop("expected_previous_asset_id")
+            changed.pop("expected_revision")
+        refused = e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=changed)
+>       assert refused.status_code == 409, refused.text
+E       AssertionError: {"family_id":"116c7865-a366-453e-88d5-8035a36323f9","asset_id":"baf973a2-44a0-40a5-8257-c65a2b53283e","revision":2,"asset_version":2,"text_digest":"224561d3a256fbb440a014ef97bef8c6db0d0db3f667b9ae082d283e67d44526","idempotent_replay":true,"previous_asset_id":"4984c307-e77b-43e6-a250-23c5638ab137","payload_digest":"f059fa28bd6290228d962a5d220edab67f4ee04dfde412b257d8f449d1686d75"}
+E       assert 201 == 409
+E        +  where 201 = <Response [201 Created]>.status_code
+
+tests\test_v2_private_prompt_lifecycle.py:212: AssertionError
+_ test_revision_replay_is_bound_to_original_family_route_and_expectations[file-/api-expected_revision] _
+
+prompts = namespace(client=<starlette.testclient.TestClient object at 0x000001F6CDF29970>, prefix='/api', base='/api/novels/r3-m...e9d/studio/assets', prompt_service=<app.creative.prompt_workspace.PromptWorkspaceService object at 0x000001F6CC0EEE10>)
+changed_identity = 'expected_revision'
+
+    @pytest.mark.parametrize("changed_identity", ["other_family", "previous_asset", "expected_revision", "create_route"])
+    def test_revision_replay_is_bound_to_original_family_route_and_expectations(prompts, changed_identity):
+        e = prompts
+        first, _ = create(e, text="First immutable predecessor")
+        other, _ = create(e, text="Independent family predecessor")
+        route = e.prompt_base + f"/{first['family_id']}/revisions"
+        body = {"text": TEXT, "purpose": "IMAGE", "origin": "MANUAL", "request_id": uuid4().hex,
+                "expected_previous_asset_id": first["asset_id"], "expected_revision": 1}
+        saved = checked(e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=body), 201)
+        valid = checked(e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=body), 201)
+        assert valid["idempotent_replay"] is True
+        assert {k: v for k, v in valid.items() if k != "idempotent_replay"} == {
+            k: v for k, v in saved.items() if k != "idempotent_replay"}
+        with e.studio._asset_scope(e.nid, e.scope):
+            before = {row["id"]: deepcopy(row) for row in e.assets.list(
+                e.nid, branch_id=e.branch, actor_id=e.lead, include_deleted=True)}
+        binaries = {aid: (e.assets.root / (aid + ".bin")).read_bytes() for aid in before}
+        changed = dict(body)
+        if changed_identity == "other_family":
+            route = e.prompt_base + f"/{other['family_id']}/revisions"
+            changed["expected_previous_asset_id"] = other["asset_id"]
+        elif changed_identity == "previous_asset":
+            changed["expected_previous_asset_id"] = other["asset_id"]
+        elif changed_identity == "expected_revision":
+            changed["expected_revision"] = 2
+        else:
+            route = e.prompt_base
+            changed.pop("expected_previous_asset_id")
+            changed.pop("expected_revision")
+        refused = e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=changed)
+>       assert refused.status_code == 409, refused.text
+E       AssertionError: {"family_id":"7a5eae2c-3414-445d-a724-c7d6b108a5f0","asset_id":"723786e9-8353-44da-a3f7-5ec1b5f28af7","revision":2,"asset_version":2,"text_digest":"224561d3a256fbb440a014ef97bef8c6db0d0db3f667b9ae082d283e67d44526","idempotent_replay":true,"previous_asset_id":"539bbc07-ddd2-492f-98ea-eb171821f78c","payload_digest":"f059fa28bd6290228d962a5d220edab67f4ee04dfde412b257d8f449d1686d75"}
+E       assert 201 == 409
+E        +  where 201 = <Response [201 Created]>.status_code
+
+tests\test_v2_private_prompt_lifecycle.py:212: AssertionError
+_ test_revision_replay_is_bound_to_original_family_route_and_expectations[file-/api-create_route] _
+
+prompts = namespace(client=<starlette.testclient.TestClient object at 0x000001F6CDF3BB90>, prefix='/api', base='/api/novels/r3-m...ec7/studio/assets', prompt_service=<app.creative.prompt_workspace.PromptWorkspaceService object at 0x000001F6CC0EEE10>)
+changed_identity = 'create_route'
+
+    @pytest.mark.parametrize("changed_identity", ["other_family", "previous_asset", "expected_revision", "create_route"])
+    def test_revision_replay_is_bound_to_original_family_route_and_expectations(prompts, changed_identity):
+        e = prompts
+        first, _ = create(e, text="First immutable predecessor")
+        other, _ = create(e, text="Independent family predecessor")
+        route = e.prompt_base + f"/{first['family_id']}/revisions"
+        body = {"text": TEXT, "purpose": "IMAGE", "origin": "MANUAL", "request_id": uuid4().hex,
+                "expected_previous_asset_id": first["asset_id"], "expected_revision": 1}
+        saved = checked(e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=body), 201)
+        valid = checked(e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=body), 201)
+        assert valid["idempotent_replay"] is True
+        assert {k: v for k, v in valid.items() if k != "idempotent_replay"} == {
+            k: v for k, v in saved.items() if k != "idempotent_replay"}
+        with e.studio._asset_scope(e.nid, e.scope):
+            before = {row["id"]: deepcopy(row) for row in e.assets.list(
+                e.nid, branch_id=e.branch, actor_id=e.lead, include_deleted=True)}
+        binaries = {aid: (e.assets.root / (aid + ".bin")).read_bytes() for aid in before}
+        changed = dict(body)
+        if changed_identity == "other_family":
+            route = e.prompt_base + f"/{other['family_id']}/revisions"
+            changed["expected_previous_asset_id"] = other["asset_id"]
+        elif changed_identity == "previous_asset":
+            changed["expected_previous_asset_id"] = other["asset_id"]
+        elif changed_identity == "expected_revision":
+            changed["expected_revision"] = 2
+        else:
+            route = e.prompt_base
+            changed.pop("expected_previous_asset_id")
+            changed.pop("expected_revision")
+        refused = e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=changed)
+>       assert refused.status_code == 409, refused.text
+E       AssertionError: {"family_id":"6536ac00-ffb9-4211-bddd-2874eef0b0ed","asset_id":"998479cd-c811-43ef-9f53-3f69569524e1","revision":2,"asset_version":2,"text_digest":"224561d3a256fbb440a014ef97bef8c6db0d0db3f667b9ae082d283e67d44526","idempotent_replay":true,"previous_asset_id":"ac2023d9-22a9-4b87-b4bd-188a86bdb127","payload_digest":"f059fa28bd6290228d962a5d220edab67f4ee04dfde412b257d8f449d1686d75"}
+E       assert 201 == 409
+E        +  where 201 = <Response [201 Created]>.status_code
+
+tests\test_v2_private_prompt_lifecycle.py:212: AssertionError
+_ test_revision_replay_is_bound_to_original_family_route_and_expectations[file-/api/v1-other_family] _
+
+prompts = namespace(client=<starlette.testclient.TestClient object at 0x000001F6CDF28800>, prefix='/api/v1', base='/api/v1/novel...997/studio/assets', prompt_service=<app.creative.prompt_workspace.PromptWorkspaceService object at 0x000001F6CC0EEE10>)
+changed_identity = 'other_family'
+
+    @pytest.mark.parametrize("changed_identity", ["other_family", "previous_asset", "expected_revision", "create_route"])
+    def test_revision_replay_is_bound_to_original_family_route_and_expectations(prompts, changed_identity):
+        e = prompts
+        first, _ = create(e, text="First immutable predecessor")
+        other, _ = create(e, text="Independent family predecessor")
+        route = e.prompt_base + f"/{first['family_id']}/revisions"
+        body = {"text": TEXT, "purpose": "IMAGE", "origin": "MANUAL", "request_id": uuid4().hex,
+                "expected_previous_asset_id": first["asset_id"], "expected_revision": 1}
+        saved = checked(e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=body), 201)
+        valid = checked(e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=body), 201)
+        assert valid["idempotent_replay"] is True
+        assert {k: v for k, v in valid.items() if k != "idempotent_replay"} == {
+            k: v for k, v in saved.items() if k != "idempotent_replay"}
+        with e.studio._asset_scope(e.nid, e.scope):
+            before = {row["id"]: deepcopy(row) for row in e.assets.list(
+                e.nid, branch_id=e.branch, actor_id=e.lead, include_deleted=True)}
+        binaries = {aid: (e.assets.root / (aid + ".bin")).read_bytes() for aid in before}
+        changed = dict(body)
+        if changed_identity == "other_family":
+            route = e.prompt_base + f"/{other['family_id']}/revisions"
+            changed["expected_previous_asset_id"] = other["asset_id"]
+        elif changed_identity == "previous_asset":
+            changed["expected_previous_asset_id"] = other["asset_id"]
+        elif changed_identity == "expected_revision":
+            changed["expected_revision"] = 2
+        else:
+            route = e.prompt_base
+            changed.pop("expected_previous_asset_id")
+            changed.pop("expected_revision")
+        refused = e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=changed)
+>       assert refused.status_code == 409, refused.text
+E       AssertionError: {"family_id":"024f98ad-a653-4d69-9fe1-c95f94fd3a7a","asset_id":"d1194f93-880d-40fa-9bec-ba04cee4ca98","revision":2,"asset_version":2,"text_digest":"224561d3a256fbb440a014ef97bef8c6db0d0db3f667b9ae082d283e67d44526","idempotent_replay":true,"previous_asset_id":"9794e6d8-7922-4002-a8f6-34c5e4455180","payload_digest":"f059fa28bd6290228d962a5d220edab67f4ee04dfde412b257d8f449d1686d75"}
+E       assert 201 == 409
+E        +  where 201 = <Response [201 Created]>.status_code
+
+tests\test_v2_private_prompt_lifecycle.py:212: AssertionError
+_ test_revision_replay_is_bound_to_original_family_route_and_expectations[file-/api/v1-previous_asset] _
+
+prompts = namespace(client=<starlette.testclient.TestClient object at 0x000001F6CE9AAA50>, prefix='/api/v1', base='/api/v1/novel...070/studio/assets', prompt_service=<app.creative.prompt_workspace.PromptWorkspaceService object at 0x000001F6CC0EEE10>)
+changed_identity = 'previous_asset'
+
+    @pytest.mark.parametrize("changed_identity", ["other_family", "previous_asset", "expected_revision", "create_route"])
+    def test_revision_replay_is_bound_to_original_family_route_and_expectations(prompts, changed_identity):
+        e = prompts
+        first, _ = create(e, text="First immutable predecessor")
+        other, _ = create(e, text="Independent family predecessor")
+        route = e.prompt_base + f"/{first['family_id']}/revisions"
+        body = {"text": TEXT, "purpose": "IMAGE", "origin": "MANUAL", "request_id": uuid4().hex,
+                "expected_previous_asset_id": first["asset_id"], "expected_revision": 1}
+        saved = checked(e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=body), 201)
+        valid = checked(e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=body), 201)
+        assert valid["idempotent_replay"] is True
+        assert {k: v for k, v in valid.items() if k != "idempotent_replay"} == {
+            k: v for k, v in saved.items() if k != "idempotent_replay"}
+        with e.studio._asset_scope(e.nid, e.scope):
+            before = {row["id"]: deepcopy(row) for row in e.assets.list(
+                e.nid, branch_id=e.branch, actor_id=e.lead, include_deleted=True)}
+        binaries = {aid: (e.assets.root / (aid + ".bin")).read_bytes() for aid in before}
+        changed = dict(body)
+        if changed_identity == "other_family":
+            route = e.prompt_base + f"/{other['family_id']}/revisions"
+            changed["expected_previous_asset_id"] = other["asset_id"]
+        elif changed_identity == "previous_asset":
+            changed["expected_previous_asset_id"] = other["asset_id"]
+        elif changed_identity == "expected_revision":
+            changed["expected_revision"] = 2
+        else:
+            route = e.prompt_base
+            changed.pop("expected_previous_asset_id")
+            changed.pop("expected_revision")
+        refused = e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=changed)
+>       assert refused.status_code == 409, refused.text
+E       AssertionError: {"family_id":"b99c6490-7fee-409d-bc23-9414fc8d9769","asset_id":"e9a5977c-a8a5-4176-950d-af8b0d72fcbc","revision":2,"asset_version":2,"text_digest":"224561d3a256fbb440a014ef97bef8c6db0d0db3f667b9ae082d283e67d44526","idempotent_replay":true,"previous_asset_id":"8ac60851-db75-4f56-a7e1-a9011fb1c21d","payload_digest":"f059fa28bd6290228d962a5d220edab67f4ee04dfde412b257d8f449d1686d75"}
+E       assert 201 == 409
+E        +  where 201 = <Response [201 Created]>.status_code
+
+tests\test_v2_private_prompt_lifecycle.py:212: AssertionError
+_ test_revision_replay_is_bound_to_original_family_route_and_expectations[file-/api/v1-expected_revision] _
+
+prompts = namespace(client=<starlette.testclient.TestClient object at 0x000001F6CE0AE570>, prefix='/api/v1', base='/api/v1/novel...9c8/studio/assets', prompt_service=<app.creative.prompt_workspace.PromptWorkspaceService object at 0x000001F6CC0EEE10>)
+changed_identity = 'expected_revision'
+
+    @pytest.mark.parametrize("changed_identity", ["other_family", "previous_asset", "expected_revision", "create_route"])
+    def test_revision_replay_is_bound_to_original_family_route_and_expectations(prompts, changed_identity):
+        e = prompts
+        first, _ = create(e, text="First immutable predecessor")
+        other, _ = create(e, text="Independent family predecessor")
+        route = e.prompt_base + f"/{first['family_id']}/revisions"
+        body = {"text": TEXT, "purpose": "IMAGE", "origin": "MANUAL", "request_id": uuid4().hex,
+                "expected_previous_asset_id": first["asset_id"], "expected_revision": 1}
+        saved = checked(e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=body), 201)
+        valid = checked(e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=body), 201)
+        assert valid["idempotent_replay"] is True
+        assert {k: v for k, v in valid.items() if k != "idempotent_replay"} == {
+            k: v for k, v in saved.items() if k != "idempotent_replay"}
+        with e.studio._asset_scope(e.nid, e.scope):
+            before = {row["id"]: deepcopy(row) for row in e.assets.list(
+                e.nid, branch_id=e.branch, actor_id=e.lead, include_deleted=True)}
+        binaries = {aid: (e.assets.root / (aid + ".bin")).read_bytes() for aid in before}
+        changed = dict(body)
+        if changed_identity == "other_family":
+            route = e.prompt_base + f"/{other['family_id']}/revisions"
+            changed["expected_previous_asset_id"] = other["asset_id"]
+        elif changed_identity == "previous_asset":
+            changed["expected_previous_asset_id"] = other["asset_id"]
+        elif changed_identity == "expected_revision":
+            changed["expected_revision"] = 2
+        else:
+            route = e.prompt_base
+            changed.pop("expected_previous_asset_id")
+            changed.pop("expected_revision")
+        refused = e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=changed)
+>       assert refused.status_code == 409, refused.text
+E       AssertionError: {"family_id":"b2e48736-67b2-4053-bf8a-1cb102d232e4","asset_id":"001f5827-c889-468a-a328-fd887be3f4af","revision":2,"asset_version":2,"text_digest":"224561d3a256fbb440a014ef97bef8c6db0d0db3f667b9ae082d283e67d44526","idempotent_replay":true,"previous_asset_id":"f35f4966-b147-447c-aad8-531169137aa9","payload_digest":"f059fa28bd6290228d962a5d220edab67f4ee04dfde412b257d8f449d1686d75"}
+E       assert 201 == 409
+E        +  where 201 = <Response [201 Created]>.status_code
+
+tests\test_v2_private_prompt_lifecycle.py:212: AssertionError
+_ test_revision_replay_is_bound_to_original_family_route_and_expectations[file-/api/v1-create_route] _
+
+prompts = namespace(client=<starlette.testclient.TestClient object at 0x000001F6CEA49880>, prefix='/api/v1', base='/api/v1/novel...be1/studio/assets', prompt_service=<app.creative.prompt_workspace.PromptWorkspaceService object at 0x000001F6CC0EEE10>)
+changed_identity = 'create_route'
+
+    @pytest.mark.parametrize("changed_identity", ["other_family", "previous_asset", "expected_revision", "create_route"])
+    def test_revision_replay_is_bound_to_original_family_route_and_expectations(prompts, changed_identity):
+        e = prompts
+        first, _ = create(e, text="First immutable predecessor")
+        other, _ = create(e, text="Independent family predecessor")
+        route = e.prompt_base + f"/{first['family_id']}/revisions"
+        body = {"text": TEXT, "purpose": "IMAGE", "origin": "MANUAL", "request_id": uuid4().hex,
+                "expected_previous_asset_id": first["asset_id"], "expected_revision": 1}
+        saved = checked(e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=body), 201)
+        valid = checked(e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=body), 201)
+        assert valid["idempotent_replay"] is True
+        assert {k: v for k, v in valid.items() if k != "idempotent_replay"} == {
+            k: v for k, v in saved.items() if k != "idempotent_replay"}
+        with e.studio._asset_scope(e.nid, e.scope):
+            before = {row["id"]: deepcopy(row) for row in e.assets.list(
+                e.nid, branch_id=e.branch, actor_id=e.lead, include_deleted=True)}
+        binaries = {aid: (e.assets.root / (aid + ".bin")).read_bytes() for aid in before}
+        changed = dict(body)
+        if changed_identity == "other_family":
+            route = e.prompt_base + f"/{other['family_id']}/revisions"
+            changed["expected_previous_asset_id"] = other["asset_id"]
+        elif changed_identity == "previous_asset":
+            changed["expected_previous_asset_id"] = other["asset_id"]
+        elif changed_identity == "expected_revision":
+            changed["expected_revision"] = 2
+        else:
+            route = e.prompt_base
+            changed.pop("expected_previous_asset_id")
+            changed.pop("expected_revision")
+        refused = e.client.post(route, headers=e.activate(e.lead, branch=e.branch), json=changed)
+>       assert refused.status_code == 409, refused.text
+E       AssertionError: {"family_id":"aa58903e-3def-421d-aed0-fde97442d5a7","asset_id":"ce5d5f03-55d8-48cb-902b-5fa494ab5b63","revision":2,"asset_version":2,"text_digest":"224561d3a256fbb440a014ef97bef8c6db0d0db3f667b9ae082d283e67d44526","idempotent_replay":true,"previous_asset_id":"0b4a79df-760d-4e47-9726-f992b649a5ff","payload_digest":"f059fa28bd6290228d962a5d220edab67f4ee04dfde412b257d8f449d1686d75"}
+E       assert 201 == 409
+E        +  where 201 = <Response [201 Created]>.status_code
+
+tests\test_v2_private_prompt_lifecycle.py:212: AssertionError
+============================== warnings summary ===============================
+..\..\Cache\Tests\expansion-20261013-97da10e1\venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\PoemSeed\Cache\Tests\expansion-20261013-97da10e1\venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_v2_private_prompt_lifecycle.py::test_revision_replay_is_bound_to_original_family_route_and_expectations[file-/api-other_family]
+FAILED tests/test_v2_private_prompt_lifecycle.py::test_revision_replay_is_bound_to_original_family_route_and_expectations[file-/api-previous_asset]
+FAILED tests/test_v2_private_prompt_lifecycle.py::test_revision_replay_is_bound_to_original_family_route_and_expectations[file-/api-expected_revision]
+FAILED tests/test_v2_private_prompt_lifecycle.py::test_revision_replay_is_bound_to_original_family_route_and_expectations[file-/api-create_route]
+FAILED tests/test_v2_private_prompt_lifecycle.py::test_revision_replay_is_bound_to_original_family_route_and_expectations[file-/api/v1-other_family]
+FAILED tests/test_v2_private_prompt_lifecycle.py::test_revision_replay_is_bound_to_original_family_route_and_expectations[file-/api/v1-previous_asset]
+FAILED tests/test_v2_private_prompt_lifecycle.py::test_revision_replay_is_bound_to_original_family_route_and_expectations[file-/api/v1-expected_revision]
+FAILED tests/test_v2_private_prompt_lifecycle.py::test_revision_replay_is_bound_to_original_family_route_and_expectations[file-/api/v1-create_route]
+8 failed, 28 deselected, 1 warning in 9.17s

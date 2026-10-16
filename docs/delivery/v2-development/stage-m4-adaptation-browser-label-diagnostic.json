@@ -1,0 +1,58 @@
+{
+  "method": "Installed Playwright 1.62.1 exact getElementLabels algorithm evaluated on jsdom DOM reconstructed from original hosted trace; NOT Chromium execution",
+  "source_sha256": "fc43c7ab27d27b4e2241190a6f7a990089328dc95ca29785eb54ed59159f6315",
+  "results": [
+    {
+      "artifact_id": 11680666681,
+      "trace": "extracted/11680666681/receipts/v2-creative-live/test-results/v2-creative-live-real-File-e60db-wnloads-pinned-text-formats-v2-live-chromium/trace.zip",
+      "expected": "剧本导出格式",
+      "before": [
+        "剧本导出格式Fountain 剧本文本Word DOCXMarkdown"
+      ],
+      "after": [
+        "剧本导出格式"
+      ],
+      "exact_before": false,
+      "exact_after": true
+    },
+    {
+      "artifact_id": 11680666681,
+      "trace": "extracted/11680666681/receipts/v2-creative-live/test-results/v2-creative-live-real-File-b5c88-nd-exports-without-chapters-v2-live-chromium/trace.zip",
+      "expected": "脚本用途",
+      "before": [
+        "脚本用途自定义文本广告文案MV 旁白播客脚本游戏对白演示讲稿短视频脚本"
+      ],
+      "after": [
+        "脚本用途"
+      ],
+      "exact_before": false,
+      "exact_after": true
+    },
+    {
+      "artifact_id": 11679774651,
+      "trace": "extracted/11679774651/receipts/v2-creative-live/test-results/v2-creative-live-real-File-e60db-wnloads-pinned-text-formats-v2-live-chromium/trace.zip",
+      "expected": "剧本导出格式",
+      "before": [
+        "剧本导出格式Fountain 剧本文本Word DOCXMarkdown"
+      ],
+      "after": [
+        "剧本导出格式"
+      ],
+      "exact_before": false,
+      "exact_after": true
+    },
+    {
+      "artifact_id": 11679774651,
+      "trace": "extracted/11679774651/receipts/v2-creative-live/test-results/v2-creative-live-real-File-b5c88-nd-exports-without-chapters-v2-live-chromium/trace.zip",
+      "expected": "脚本用途",
+      "before": [
+        "脚本用途自定义文本广告文案MV 旁白播客脚本游戏对白演示讲稿短视频脚本"
+      ],
+      "after": [
+        "脚本用途"
+      ],
+      "exact_before": false,
+      "exact_after": true
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "pid": 64168,
+  "state": "RELEASED",
+  "sequence": 3,
+  "kind": "FILE_OS_PROJECT_LIFECYCLE",
+  "lock_path": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-process-file-final-r3\\data\\.workspace-mutation-locks\\4878d304278cf7c7635fe133fa5d6bbdbccd0131d541b59a84d312fd119054e1.lock",
+  "monotonic_ns": 148783531000000
+}

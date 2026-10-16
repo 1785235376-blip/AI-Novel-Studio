@@ -1,0 +1,26 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ✓ src/workspaceSelection.v2.test.ts (10 tests) 20ms
+ ✓ src/novel/AssetInspector.test.tsx (2 tests) 90ms
+ ✓ src/ui/AppShell.projectNoun.test.tsx (12 tests) 285ms
+ ✓ src/novel/AssetLibraryPanel.test.tsx (4 tests) 363ms
+ ✓ src/workspaceSelection.test.ts (3 tests) 4ms
+ ✓ src/novel/EntryExperience.studio.test.tsx (4 tests) 425ms
+ ✓ src/creative/studioClient.test.ts (38 tests) 25ms
+ ✓ src/creative/BlankProjectEntry.test.tsx (2 tests) 145ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests) 1118ms
+   ✓ independent studio original owner integration > imports once and saves source provenance without chapters, models, or the legacy asset API 517ms
+ ✓ src/ui/ModuleWorkspaceRoutes.test.tsx (7 tests) 250ms
+ ✓ src/AppWorkspaceResume.test.tsx (33 tests) 4310ms
+   ✓ reopens the saved chapter through current authority and applies original reading/split state only after explicit restore 321ms
+   ✓ opens another authorized project only after original inventory and exact chapter version revalidation 308ms
+   ✓ drops a delayed cross-project source when the author types during revalidation 306ms
+   ✓ does not navigate to a search project removed from the refreshed original inventory 302ms
+   ✓ drops delayed revision-owner navigation after new typing or scope change 303ms
+
+ Test Files  11 passed (11)
+      Tests  123 passed (123)
+   Start at  05:13:00
+   Duration  7.81s (transform 3.20s, setup 0ms, collect 7.78s, tests 7.04s, environment 4.75s, prepare 909ms)
+

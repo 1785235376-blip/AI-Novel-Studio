@@ -1,0 +1,125 @@
+{
+  "original_directory": "docs/delivery/v2-development",
+  "copied_without_modification": [
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r1.json",
+      "sha256": "430578954df602165884ea31695cfb218dee09e7ad79a805796745ad6c59d63b"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r1.log",
+      "sha256": "af25e89b5f47f8059bfb013a9fc963374aaac81b17e7b571053e851057b18838"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r2.json",
+      "sha256": "8efaaae367a18ccefef6f38f54725912e814ba848408b7db85e267e196a9a776"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r2.log",
+      "sha256": "9c1594f41a203d6554ed78e147138354bf7f2e452e5b84e430c4013ea61d3db9"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r3.json",
+      "sha256": "03a7f390f6d1ee26f79d14ef52eaef2975164302d03f6b343006b627cc98f4d5"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r3.log",
+      "sha256": "f99430b5263e3fb4b86d086ca757188d541c37a4f5ce7aa7a93faf4ccec1348b"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r4.json",
+      "sha256": "a62580add26de0233d24366001f63fd9c5ec07513ef58d170faf04490c9ec20f"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r4.log",
+      "sha256": "7d4856232b7fbaaf474c7d671019eb08556ad6c904d2eed9d7fb14049741d38d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r5.json",
+      "sha256": "f2a758fdc439d41659154a6933feb874bdef3ceedaf215b5fdf1782856642df9"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r5.log",
+      "sha256": "a5769f4e4f3d4426754f6f6a64daa28f9a91e811b56e2b5a2d85eb4ab9c26547"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r6.json",
+      "sha256": "00b2904dc8908215e157ebc4c489fe78cebdc3c5829b2dc569048a8ced0d510d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/adoption-ui-file-smoke-r6.log",
+      "sha256": "4c1c1d68df566493ecedbedd1cf934fe13db1b19f6d6704f148031109ed545d6"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-file-final-r1.json",
+      "sha256": "489f8870fbc27e949d1cc287dbe1fdfae1439b1a1c86f9f1389b166a4e452640"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-file-final-r1.log",
+      "sha256": "98160b83e7f1eb0f2317f9608285f653c6e3cc3630629d470fd897bde60f172e"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-file-final-r2.json",
+      "sha256": "cc45499916dd5620126cb2d8100174c3cc1ab415205230d788b1d66adc190f32"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-file-final-r2.log",
+      "sha256": "f662a3a469a7200d09fc1d2f564d1ecb741ab0003d38de90981dcbd777862d5c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-file-final-r3.json",
+      "sha256": "eee87b123937106dc81e1c972bfe5bf0cb3de5c2f08c52ff7117b650942166cd"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-file-final-r3.log",
+      "sha256": "d8b30ce81bba615a24b41390d6383092ada4b6a61fb45a701154e36b24497059"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-combined-pg-final-r1.json",
+      "sha256": "cfdbf45bc38e2a3e493d29bcef2cb583772bba993e6ddd2118b5bbbe3debe901"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-combined-pg-final-r1.log",
+      "sha256": "bdaa7947727c1d75353a1a548d895d61e2e5a3420d993ebd4f0b9fd021d535a2"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-combined-pg-final-r1-postgres-runtime.json",
+      "sha256": "72a871bc14029db5fcd079d613d0d64fcb2eeb6b04048cabff6e55a6bff0b301"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-combined-pg-final-r3.json",
+      "sha256": "91e224c6a3a710ee412ca46abe06512cfa287728248e26638887201359f0e282"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-combined-pg-final-r3.log",
+      "sha256": "51d778c8cb6820704aa1af64f213f228bd504ce551fc1daf8dd0f9e5a738a67c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-combined-pg-final-r3-postgres-runtime.json",
+      "sha256": "d99006471fc9710e1b274936c480587196566b80bccdf3a85b43eb8f9cf73df1"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-pg-final-r1.json",
+      "sha256": "a969267e302c7cbc7d839ba4b8326f10490dd8411315105a056afdbad2ce9102"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-pg-final-r1.log",
+      "sha256": "b046a3596470a66120d83c39501e4a17875523159f6b90c295705d201411308d"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-pg-final-r1-postgres-runtime.json",
+      "sha256": "7ee06d074feaea678d5a7276e889d6d8d029873728d0bc8dcc76aca7521d024c"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-pg-final-r3.json",
+      "sha256": "82e011c1126f4758eadf2ecddcaf6c6ac4f777929a1371a654b4f60335e3ea40"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-pg-final-r3.log",
+      "sha256": "3094f9824521d02c458d93e148fd1695f737e085b1eab8022de9c5db3aa00806"
+    },
+    {
+      "path": "docs/delivery/v2-r3-adoption-ui-20261017/runner-receipts/r3-adoption-ui-browser-pg-final-r3-postgres-runtime.json",
+      "sha256": "ca6a21795a4edf0d08fd96c905efa87e0330b04840ab177dedb94de60198b547"
+    }
+  ]
+}

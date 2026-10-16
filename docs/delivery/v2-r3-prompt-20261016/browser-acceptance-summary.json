@@ -1,0 +1,144 @@
+{
+  "file": {
+    "launcher": {
+      "backend": "real File",
+      "storage_backend": "file",
+      "database_identity": null,
+      "asset_storage_owner": "original File AssetLibraryService",
+      "identity_owner": "LocalSessionBootstrap",
+      "development_sessions": false,
+      "response_mocks": false,
+      "production_adoption_gate": false,
+      "model_execution": "NOT_REQUESTED",
+      "model_counter": "NOT_INSTRUMENTED",
+      "health_storage": "file",
+      "bootstrap_status": 200,
+      "workspace_status": 200,
+      "playwright_exit": 0,
+      "owned_vite_pid": 79236,
+      "owned_vite_stopped": true,
+      "owned_backend_pid": 76388,
+      "owned_backend_stopped": true
+    },
+    "stats": {
+      "startTime": "2026-10-16T16:18:47.548Z",
+      "duration": 15514.658000000001,
+      "expected": 3,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "runs": [
+      {
+        "project": "prompt-r3-1366x768",
+        "duration_ms": 6017,
+        "production_adoption_status": 503,
+        "deletion_transport": "real browser HTTP; no delete UI exists",
+        "geometry": {
+          "width": 1366,
+          "scrollWidth": 1366,
+          "headerHeight": 56
+        },
+        "recorded_real_api_calls": 37
+      },
+      {
+        "project": "prompt-r3-1440x900",
+        "duration_ms": 3405,
+        "production_adoption_status": 503,
+        "deletion_transport": "real browser HTTP; no delete UI exists",
+        "geometry": {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "headerHeight": 56
+        },
+        "recorded_real_api_calls": 37
+      },
+      {
+        "project": "prompt-r3-1920x1080",
+        "duration_ms": 3316,
+        "production_adoption_status": 503,
+        "deletion_transport": "real browser HTTP; no delete UI exists",
+        "geometry": {
+          "width": 1920,
+          "scrollWidth": 1920,
+          "headerHeight": 56
+        },
+        "recorded_real_api_calls": 37
+      }
+    ]
+  },
+  "postgres": {
+    "launcher": {
+      "backend": "real PostgreSQL",
+      "storage_backend": "postgres",
+      "database_identity": {
+        "version": "PostgreSQL 16.15, compiled by Visual C++ build 1944, 64-bit",
+        "database": "v2_r3_prompt_browser_20261016_final_r1",
+        "host": "127.0.0.1",
+        "port": 50678,
+        "database_oid": 24389
+      },
+      "asset_storage_owner": "original File AssetLibraryService",
+      "identity_owner": "LocalSessionBootstrap",
+      "development_sessions": false,
+      "response_mocks": false,
+      "production_adoption_gate": false,
+      "model_execution": "NOT_REQUESTED",
+      "model_counter": "NOT_INSTRUMENTED",
+      "health_storage": "postgres",
+      "bootstrap_status": 200,
+      "workspace_status": 200,
+      "playwright_exit": 0,
+      "owned_vite_pid": 75012,
+      "owned_vite_stopped": true,
+      "owned_backend_pid": 75968,
+      "owned_backend_stopped": true
+    },
+    "stats": {
+      "startTime": "2026-10-16T16:41:49.420Z",
+      "duration": 146971.951,
+      "expected": 3,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "runs": [
+      {
+        "project": "prompt-r3-1366x768",
+        "duration_ms": 48638,
+        "production_adoption_status": 503,
+        "deletion_transport": "real browser HTTP; no delete UI exists",
+        "geometry": {
+          "width": 1366,
+          "scrollWidth": 1366,
+          "headerHeight": 56
+        },
+        "recorded_real_api_calls": 50
+      },
+      {
+        "project": "prompt-r3-1440x900",
+        "duration_ms": 48183,
+        "production_adoption_status": 503,
+        "deletion_transport": "real browser HTTP; no delete UI exists",
+        "geometry": {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "headerHeight": 56
+        },
+        "recorded_real_api_calls": 50
+      },
+      {
+        "project": "prompt-r3-1920x1080",
+        "duration_ms": 47661,
+        "production_adoption_status": 503,
+        "deletion_transport": "real browser HTTP; no delete UI exists",
+        "geometry": {
+          "width": 1920,
+          "scrollWidth": 1920,
+          "headerHeight": 56
+        },
+        "recorded_real_api_calls": 50
+      }
+    ]
+  }
+}

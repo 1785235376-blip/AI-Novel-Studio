@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="7.488" timestamp="2026-10-10T04:55:23.396144-07:00" hostname="7abb01f187ba"><testcase classname="tests.test_v2_graph_text_assets" name="test_manual_refresh_completion_boundary_requires_archive_before_review[file-completed]" time="4.039"><failure message="AssertionError: assert ('WAITING_APPROVAL' == 'RUNNING'&#10;  &#10;  - RUNNING&#10;  + WAITING_APPROVAL)">model_rig = namespace(nid='v2-independent-a134c2e393624795ac3a4e582681557d', scope={'mode': 'local', 'novel_id': 'v2-independent-a...&gt;, &lt;threading.Event at 0x7efd3d65ecc0: set&gt;], active=True, guard=&lt;function configure.&lt;locals&gt;.guard at 0x7efd3d6e6e80&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7efd3d8180b0&gt;
+arrival = 'completed'
+
+    @pytest.mark.parametrize("arrival", ["completed", "settling"])
+    def test_manual_refresh_completion_boundary_requires_archive_before_review(model_rig, monkeypatch, arrival):
+        from test_v2_ai_execution_runtime import dispatch, refresh
+        e = model_rig; entered, release = spy_transport(e, monkeypatch, blocked=True)
+        sent = dispatch(e, preview(e, admit(e)), archive_result=True)
+        job = e.manager.get(sent["model_runtime"]["execution"]["job_id"])
+        settlement_entered, settlement_release = Event(), Event()
+        e.releases.append(settlement_release)
+        original_settle = job.on_terminal
+        def settle():
+            settlement_entered.set()
+            assert settlement_release.wait(6), "fixture settlement release missing"
+            original_settle()
+        if arrival == "settling":
+            job.on_terminal = settle
+        before_chapters = deepcopy(e.chapters.list(e.nid))
+        try:
+            assert entered.wait(3)
+            pending = refresh(e, sent)
+            assert pending["asset_output"]["state"] == "PENDING" and not pending["stale"]
+            original_refresh = e.models._refresh
+            def finish_between_observations(*args, **kwargs):
+                # The outer archival precheck has observed GENERATING. Let the
+                # original worker reach its real terminal boundary before _refresh.
+                assert job.status == "GENERATING"
+                release.set()
+                if arrival == "settling":
+                    assert settlement_entered.wait(3)
+                    assert job.public()["status"] == "SETTLING"
+                else:
+                    e.calls[0]["worker"].join(8)
+                    assert not e.calls[0]["worker"].is_alive()
+                    assert job.status == job.terminal_hook_status == "COMPLETED"
+                return original_refresh(*args, **kwargs)
+            with monkeypatch.context() as boundary:
+                boundary.setattr(e.models, "_refresh", finish_between_observations)
+                pending = refresh(e, pending)
+            # A completed provider receipt is not archival authority. No typed
+            # result or review transition may be persisted through the legacy path.
+&gt;           assert pending["status"] == "RUNNING" and not pending["stale"]
+E           AssertionError: assert ('WAITING_APPROVAL' == 'RUNNING'
+E             
+E             - RUNNING
+E             + WAITING_APPROVAL)
+
+tests/test_v2_graph_text_assets.py:401: AssertionError</failure></testcase><testcase classname="tests.test_v2_graph_text_assets" name="test_manual_refresh_completion_boundary_requires_archive_before_review[file-settling]" time="1.157"><failure message="AssertionError: assert ('RUNNING' == 'RUNNING'&#10;  &#10;    RUNNING and not True)">model_rig = namespace(nid='v2-independent-f58b15fc58c84e4fa1129efbf20faf25', scope={'mode': 'local', 'novel_id': 'v2-independent-f...&gt;, &lt;threading.Event at 0x7efd3d95c8f0: set&gt;], active=True, guard=&lt;function configure.&lt;locals&gt;.guard at 0x7efd3d5b3100&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7efd3d56a600&gt;
+arrival = 'settling'
+
+    @pytest.mark.parametrize("arrival", ["completed", "settling"])
+    def test_manual_refresh_completion_boundary_requires_archive_before_review(model_rig, monkeypatch, arrival):
+        from test_v2_ai_execution_runtime import dispatch, refresh
+        e = model_rig; entered, release = spy_transport(e, monkeypatch, blocked=True)
+        sent = dispatch(e, preview(e, admit(e)), archive_result=True)
+        job = e.manager.get(sent["model_runtime"]["execution"]["job_id"])
+        settlement_entered, settlement_release = Event(), Event()
+        e.releases.append(settlement_release)
+        original_settle = job.on_terminal
+        def settle():
+            settlement_entered.set()
+            assert settlement_release.wait(6), "fixture settlement release missing"
+            original_settle()
+        if arrival == "settling":
+            job.on_terminal = settle
+        before_chapters = deepcopy(e.chapters.list(e.nid))
+        try:
+            assert entered.wait(3)
+            pending = refresh(e, sent)
+            assert pending["asset_output"]["state"] == "PENDING" and not pending["stale"]
+            original_refresh = e.models._refresh
+            def finish_between_observations(*args, **kwargs):
+                # The outer archival precheck has observed GENERATING. Let the
+                # original worker reach its real terminal boundary before _refresh.
+                assert job.status == "GENERATING"
+                release.set()
+                if arrival == "settling":
+                    assert settlement_entered.wait(3)
+                    assert job.public()["status"] == "SETTLING"
+                else:
+                    e.calls[0]["worker"].join(8)
+                    assert not e.calls[0]["worker"].is_alive()
+                    assert job.status == job.terminal_hook_status == "COMPLETED"
+                return original_refresh(*args, **kwargs)
+            with monkeypatch.context() as boundary:
+                boundary.setattr(e.models, "_refresh", finish_between_observations)
+                pending = refresh(e, pending)
+            # A completed provider receipt is not archival authority. No typed
+            # result or review transition may be persisted through the legacy path.
+            assert pending["status"] == "RUNNING" and not pending["stale"]
+            assert pending["review"] is None and pending["asset_output"]["state"] == "PENDING"
+            assert pending["node_states"]["Generate"]["output"] is None
+            assert raw(e, sent)["node_states"]["Generate"]["status"] == "WORKING"
+            assert "Generate" not in raw(e, sent)["typed_outputs"] and not assets(e)
+            if arrival == "settling":
+                # A second explicit refresh can observe the active terminal hook
+                # itself; it must remain refreshable rather than look stale/failed.
+                pending = refresh(e, pending)
+&gt;               assert pending["status"] == "RUNNING" and not pending["stale"]
+E               AssertionError: assert ('RUNNING' == 'RUNNING'
+E                 
+E                   RUNNING and not True)
+
+tests/test_v2_graph_text_assets.py:410: AssertionError</failure></testcase></testsuite></testsuites>

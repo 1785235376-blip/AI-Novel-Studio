@@ -1,0 +1,25 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ❯ src/ui/LocalAiBrowserJourneyContracts.test.tsx (0 test)
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  10:57:00
+   Duration  4.13s (transform 1.67s, setup 0ms, collect 0ms, tests 0ms, environment 715ms, prepare 133ms)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/ui/LocalAiBrowserJourneyContracts.test.tsx [ src/ui/LocalAiBrowserJourneyContracts.test.tsx ]
+Error: ENOENT: no such file or directory, open '/tests/e2e/v2-local-ai-files-live.spec.ts'
+ ❯ source src/ui/LocalAiBrowserJourneyContracts.test.tsx:20:34
+     18| vi.mock('./CapabilityStatusCenter', () => ({CapabilityStatusCenter: ()…
+     19| 
+     20| const source = (name: string) => readFileSync(fileURLToPath(new URL(`.…
+       |                                  ^
+     21| const filesJourney = source('v2-local-ai-files-live.spec.ts');
+     22| const legacyJourney = source('v2-local-ai-legacy-host-live.spec.ts');
+ ❯ src/ui/LocalAiBrowserJourneyContracts.test.tsx:21:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

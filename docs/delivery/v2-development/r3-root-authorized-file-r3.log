@@ -1,0 +1,55 @@
+E
+=================================== ERRORS ====================================
+______ ERROR at setup of test_the_actor_is_a_real_collaboration_identity ______
+
+env = namespace(client=<starlette.testclient.TestClient object at 0x0000018640DDECF0>, main=<module 'app.main' from 'D:\\Poe...a_path='D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-root-authorized-file-r3\\data')
+
+    @pytest.fixture
+    def authorized(env):
+        from app.actor_context import SessionContext
+        from app.authorization import (AuthorizationScope, DomainRole, DomainRoleAssignment,
+                                       ModalityDomain, PermissionAssignment, ScopeKind)
+        from app.collaboration import Branch, Storyline, Workspace
+        from app.identity import User, WorkspaceMembership
+    
+        suffix = uuid4().hex[:10]
+        workspace, storyline = f"w-{suffix}", f"s-{suffix}"
+        branch, other = f"b-{suffix}", f"x-{suffix}"
+        init_user, writer, reader = f"init-{suffix}", f"writer-{suffix}", f"reader-{suffix}"
+        client = env.client
+    
+        # 1. workspace
+        env.scopes.create_workspace(Workspace(workspace, "R3-I authorized"))
+        # 2-5. identities, memberships and real sessions on the SAME resolver the routes use.
+        for user in (init_user, writer, reader):
+            env.identity.create_user(User(user, user))
+            env.identity.add_membership(WorkspaceMembership("m-" + user, user, workspace))
+            env.sessions.register(user, SessionContext("session-" + user, "client-" + user,
+                                                       user, workspace))
+        # 4. the initializer holds a WORKSPACE-scope NOVEL lead, which is what lets it create the
+        #    project. The business writer deliberately does NOT get a workspace-wide grant, or the
+        #    cross-branch refusal test would be a false positive.
+        env.authorization.assign_role(DomainRoleAssignment(
+            "init-" + suffix, init_user, DomainRole.DOMAIN_LEAD, ModalityDomain.NOVEL,
+            AuthorizationScope(ScopeKind.WORKSPACE, workspace, None, None, None), init_user))
+    
+        # 6-7. create the project over REAL HTTP as the initializing user.
+        init_headers = {"X-Session-Token": init_user}
+        project = client.post("/api/experimental/projects", headers=init_headers,
+                              json={"title": "R3-I auth " + suffix})
+>       assert project.status_code == 201, (project.status_code, project.text[:400])
+E       AssertionError: (501, '{"detail":{"code":"COLLABORATION_ROUTE_NOT_ENABLED"}}')
+E       assert 501 == 201
+E        +  where 501 = <Response [501 Not Implemented]>.status_code
+
+tests\test_round3i_http_authorized.py:90: AssertionError
+============================== warnings summary ===============================
+..\..\Cache\Tests\expansion-20261013-97da10e1\venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\PoemSeed\Cache\Tests\expansion-20261013-97da10e1\venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_round3i_http_authorized.py::test_the_actor_is_a_real_collaboration_identity
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+47 deselected, 1 warning, 1 error in 2.77s

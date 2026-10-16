@@ -1,0 +1,4 @@
+.comic-source-preview { display: block; max-width: 100%; max-height: 480px; object-fit: contain; border: 1px solid var(--border-default); margin-block: var(--space-3); }
+.comic-preview { border: 1px solid var(--border-default); margin-block: var(--space-3); }
+.comic-preview img { display: block; width: 100%; height: auto; }
+.comic-preview-viewport { max-width: 100%; overflow-x: auto; }

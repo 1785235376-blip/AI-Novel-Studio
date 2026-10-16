@@ -1,0 +1,136 @@
+{
+  "runtime_sha": "4e476ce853aa26b395a9fe452d7d4a35b091e057",
+  "runtime_tree": "d112ece92c261b1a28c87c022d4c6e942a277412",
+  "pr_checkout": "ba6dadcfc021e46e53eb9b583d6408306480ada1",
+  "pr_tree_equals_runtime": true,
+  "runs": {
+    "pull_request": 37391407528,
+    "push": 37391403192
+  },
+  "all_five_lanes": "SUCCESS_BOTH_RUNS_ATTEMPT_1",
+  "frontend": {
+    "passed": 1045,
+    "optional_http_skipped": 6,
+    "types": "PASS",
+    "build": "PASS",
+    "tokens": "PASS",
+    "bundle_minified_kb": {
+      "App": 641.11,
+      "ExperimentalWorkbench": 543.43
+    }
+  },
+  "browser": {
+    "r4": 45,
+    "business": 2,
+    "geometry": 9,
+    "r3": 7,
+    "immutable_export": 1,
+    "total_passed": 64,
+    "skipped": 0,
+    "failed": 0
+  },
+  "file": {
+    "passed": 3754,
+    "skipped": 1354,
+    "separate_real_tcp_passed": 2
+  },
+  "postgres": {
+    "passed": 3755,
+    "skipped": 1353,
+    "marked_contracts": 1344,
+    "marked_passed": 1344,
+    "marked_skipped": 0,
+    "marked_failed": 0,
+    "marked_missing": 0,
+    "explicit_postgres_parameters": 1318,
+    "seconds_pr": 1543.26,
+    "seconds_push": 1530.94
+  },
+  "windows": {
+    "host_compile_contracts": "PASS",
+    "fresh_internal_package": "PASS",
+    "interactive_acceptance": "NOT_RUN"
+  },
+  "independent_review": "BLOCKED_NO_RETRY",
+  "real_model_quality": "NOT_RUN",
+  "png_artifacts": [
+    11381956603,
+    11382036472
+  ],
+  "frontend_compact_artifact": 11381976618,
+  "postgres_artifact": 11382118463,
+  "all_original_png_hashes_verified": 144,
+  "selected_original_screenshots": [
+    {
+      "file": "u08-source-item-exclusion.png",
+      "bytes": 171030,
+      "sha256": "ad7f7c17294c87d7d84c691f7379bf8b47814ce4379c50133cacbd2ea404f300",
+      "caption": "U08 completed reviewed single request; exact exclusions and absence of legacy dispatch are verified by the browser network assertions, not by pixels alone.",
+      "directly_inspected": true
+    },
+    {
+      "file": "u03-search-1440.png",
+      "bytes": 208421,
+      "sha256": "0ed14fb46e55e39648cd9be4ed10ff01c624bd083a6ba8f4f6fc964731d1cf31",
+      "caption": "U03 cancelled search and retained stale-source warning after actual cross-project navigation and source-version rejection.",
+      "directly_inspected": true
+    },
+    {
+      "file": "registered-media-refresh-origin-replay.png",
+      "bytes": 248778,
+      "sha256": "776b29d73c6301204105ca19f0b2c9112d54f346d166d5d42a0da2e8fba188a5",
+      "caption": "A07/U06/A13 original registered-local protocol fixture, captured manifest and controlled replay entry. Synthetic loopback A1111 protocol; no GPU quality claim.",
+      "directly_inspected": true
+    },
+    {
+      "file": "judge-model-preview-1440.png",
+      "bytes": 231130,
+      "sha256": "4c957f9f0235a27bc45e9f26f91958ed3f6e17256d3875d59a39eb77c4293c45",
+      "caption": "A03 exact selected evidence, registered synthetic route, bounded output and separate unchecked send approval.",
+      "directly_inspected": true
+    },
+    {
+      "file": "translation-exact-preview-1440.png",
+      "bytes": 204899,
+      "sha256": "15fa49a018a5cbb0a3a1518d0d66196fe44b4a694b7e903bdec5b813ffce4979",
+      "caption": "B05 selected segment, glossary/style request and independent translation proposal before adoption/review.",
+      "directly_inspected": true
+    },
+    {
+      "file": "simulator-model-preview-1440.png",
+      "bytes": 228792,
+      "sha256": "2c941a9398f7ef74e4ac22bb9e149138a85abd3222613b590dfb29ed3d1990bf",
+      "caption": "A01 character-only candidate request and explicit send approval; synthetic protocol is visibly labelled.",
+      "directly_inspected": true
+    },
+    {
+      "file": "declarative-reviewed-original-model-draft.png",
+      "bytes": 176326,
+      "sha256": "a7f75a1379bab35ac9aac5e654424d4a67a8a82b71743ec7cd24b3feeb58fefc",
+      "caption": "B02 original Workflow review result and unapplied draft; no automatic manuscript acceptance.",
+      "directly_inspected": true
+    },
+    {
+      "file": "pause-aware-audio-1366.png",
+      "bytes": 168488,
+      "sha256": "6349601a5b11b0b7eacece760af6c8f77ce65c7197c576adb18feef32269cdaf",
+      "caption": "B03 approved measured 650ms PCM mix with explicit audition and WAV download. No TTS quality inference.",
+      "directly_inspected": true
+    },
+    {
+      "file": "structured-fork-review-1440.png",
+      "bytes": 173964,
+      "sha256": "8ba0d7c6adddbd78cc3c3bd180cdb6267b2ea8788bd28af2bc1d3604c8240692",
+      "caption": "B09 supported original structured-record three-way choices and explicit checkpoint/merge approval.",
+      "directly_inspected": true
+    },
+    {
+      "file": "offline-sync-selection-1440.png",
+      "bytes": 189384,
+      "sha256": "17b88346dbc9505cfa50b167beb0b6b535ea01e0df9488e1d820fd7940764968",
+      "caption": "B10 selected chapter withdrawal/addition preview, current baseline and no automatic transmission.",
+      "directly_inspected": true
+    }
+  ],
+  "documentation_successor_ci": "READ_EXACT_HEAD_FROM_PR39"
+}

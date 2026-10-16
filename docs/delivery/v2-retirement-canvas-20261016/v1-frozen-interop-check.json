@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-16T15:11:12.379438+00:00",
+  "command": [
+    "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+    "scripts/check_desktop_integration.py"
+  ],
+  "cwd": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016",
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\r\n  File \"D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\scripts\\check_desktop_integration.py\", line 62, in <module>\r\n    print(json.dumps(check(), indent=2, sort_keys=True))\r\n                     ^^^^^^^\r\n  File \"D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\scripts\\check_desktop_integration.py\", line 34, in check\r\n    requirements = json.loads((root / \"DESKTOP_INTEGRATION_READINESS_MATRIX.json\").read_text())\r\n                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\pathlib.py\", line 1059, in read_text\r\n    return f.read()\r\n           ^^^^^^^^\r\nUnicodeDecodeError: 'gbk' codec can't decode byte 0x80 in position 556: illegal multibyte sequence\r\n",
+  "scope": "Read-only offline source/contract check; not runtime V1 acceptance"
+}

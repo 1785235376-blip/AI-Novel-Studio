@@ -1,0 +1,15 @@
+ss..ssssssssssssss..............ss..ss..ss..ss..ssssssssssss............ [ 15%]
+ss..ss..ss..ss..ssss....ss..ss..ss..ss..ss..sss...s.s.s.s.s.s.s.sssssss. [ 30%]
+......s.s.s.s.s.s.sss...s..ss..sss...sssss.....s.s.s.s.s.s.s.s.s.ss..sss [ 45%]
+sssssssssss..............ss..ss..ss..ss..ss..ss..ss..ss..ss..s.s.s.sssss [ 60%]
+s......ss..ssssssssss..........ss..ss..ss..ssss....ss..ss..ss..ss..ss..s [ 75%]
+s..ss..ss..ss..ss..sssssss.......sss...sssssssss.........s.s.sss...s.ss. [ 90%]
+.sss...sss...sssss.....ssss....sss...ss..s.                              [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-adaptation-postgres-final2.xml -
+238 passed, 237 skipped, 1 warning in 355.75s (0:05:55)

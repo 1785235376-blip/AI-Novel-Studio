@@ -1,0 +1,1902 @@
+{
+  "schema_version": 1,
+  "checkpoint": "M4-C original hosted CI",
+  "captured_at_utc": "2026-10-10T16:56:55.797946+00:00",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "pull_request": 47,
+  "source": {
+    "published_head_sha": "ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+    "published_parent_sha": "90e77c0aa559a8c0a52d9b42658ac8c756de3197",
+    "source_tree": "aa9f568ab9aca0f5ef6ee5f3d5373fa7410d724d",
+    "pull_request_merge_sha": "400a64ec432e481d342d434e5786be06f5605545",
+    "pull_request_merge_tree_equals_head_tree": true,
+    "published_local_source_map_files": 1742,
+    "published_local_source_map_sha256": "740b684c9cb2aae4369af061aa21f1051161950f743b36e4d25bf062d6cc2b8c",
+    "published_local_source_map_verified_against_git_objects": true
+  },
+  "coverage_contract": {
+    "expected_unfiltered_backend_nodes": 11293,
+    "file_shards": 1,
+    "postgres_shards": 2,
+    "file_timeout_minutes": 20,
+    "postgres_timeout_minutes": 55,
+    "original_file_tcp_required": true,
+    "strict_join_weakened": false
+  },
+  "scope_limits": [
+    "Hosted CI uses mock providers; it is separate from local real-model CPU acceptance.",
+    "Windows evidence covers hosted build/native/package/fixture contracts only; interactive DesktopHost/WebView2/AppContainer/user acceptance remain NOT_RUN.",
+    "Historical M4-B partial hosted CI is separate and remains unchanged.",
+    "Original workflows completed naturally; no manual cancellation or rerun was performed."
+  ],
+  "runs": [
+    {
+      "id": 38065794016,
+      "name": "Cloud CI",
+      "event": "push",
+      "head_sha": "ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": "2026-10-10T15:58:59Z",
+      "updated_at": "2026-10-10T16:51:13Z",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38065794016",
+      "event_and_checkout_sha": "ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+      "source_complete": false,
+      "source_complete_scope": "Full backend collection, successful complete outcomes and strict File1+PG2+TCP join",
+      "jobs": [
+        {
+          "id": 114253055135,
+          "name": "Backend execution / original File TCP",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:02Z",
+          "completed_at": "2026-10-10T16:00:44Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Fail-closed TCP evidence and joiner self-tests",
+            "Original two-process loopback tests and fail-closed provenance"
+          ]
+        },
+        {
+          "id": 114253055204,
+          "name": "Windows / Host compile and native contracts",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:01Z",
+          "completed_at": "2026-10-10T16:01:49Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Compile fresh DesktopHost WinExe",
+            "Windows native and packaging contracts (not window acceptance)",
+            "V2 Windows environment fixture contracts (no GPU or inference acceptance)"
+          ]
+        },
+        {
+          "id": 114253055215,
+          "name": "Backend execution / postgres / shard 1",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:02Z",
+          "completed_at": "2026-10-10T16:50:45Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Fail-closed coverage infrastructure self-tests",
+            "Complete backend collection / assigned shard execution"
+          ]
+        },
+        {
+          "id": 114253055248,
+          "name": "V2 / Independent studio live media",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:01Z",
+          "completed_at": "2026-10-10T16:03:45Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Independent studios live media (real File and HTTP; mock providers)"
+          ]
+        },
+        {
+          "id": 114253055272,
+          "name": "Backend execution / postgres / shard 0",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:02Z",
+          "completed_at": "2026-10-10T16:37:52Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Fail-closed coverage infrastructure self-tests",
+            "Complete backend collection / assigned shard execution"
+          ]
+        },
+        {
+          "id": 114253055280,
+          "name": "Backend execution / file / shard 0",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-10T15:59:02Z",
+          "completed_at": "2026-10-10T16:19:25Z",
+          "failed_or_cancelled_steps": [
+            {
+              "name": "Complete backend collection / assigned shard execution",
+              "conclusion": "cancelled"
+            }
+          ],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Fail-closed coverage infrastructure self-tests"
+          ],
+          "interruption_observed": {
+            "conclusion": "cancelled",
+            "matching_original_error_lines": [
+              "2026-10-10T16:19:14.8512575Z ##[error]The operation was canceled."
+            ],
+            "workflow_budget_minutes": 20,
+            "explicit_timeout_annotation_verified": false
+          },
+          "interruption_cause_assessment": {
+            "type": "INFERENCE",
+            "assessment": "The observed cancellation timing is consistent with the original 20-minute hosted capacity limit; the preserved log itself states only that the operation was canceled."
+          }
+        },
+        {
+          "id": 114253055306,
+          "name": "V2 / Creative live workflows and geometry",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:02Z",
+          "completed_at": "2026-10-10T16:01:23Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "V2 live creative workflows (real File and HTTP; mock providers)",
+            "V2 keyboard recovery and fixture geometry (no golden updates)"
+          ]
+        },
+        {
+          "id": 114253055311,
+          "name": "Frontend / unit-type-build-tokens",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:02Z",
+          "completed_at": "2026-10-10T16:12:52Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Frontend unit suite",
+            "Type check and production build",
+            "Design-token lint",
+            "Browser geometry (no golden updates)",
+            "Local Interop actual TypeScript client and independent peer",
+            "Local Interop real-process browser journeys (MOCK_ONLY)",
+            "Business browser journeys (synthetic data; explicit mock boundary)",
+            "Experimental R3 business journeys and default-off regression",
+            "R4 writing recovery and workspace journeys",
+            "Export recovery browser isolation and screenshots",
+            "Functional surface browser journeys",
+            "Branch manuscript two-client browser journeys"
+          ]
+        },
+        {
+          "id": 114253055350,
+          "name": "Windows / Fresh base and acceptance package",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:01Z",
+          "completed_at": "2026-10-10T16:03:27Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Assemble official pinned base and OFL font",
+            "Build self-contained Host and unsigned internal acceptance package",
+            "Native embedded Python and PostgreSQL UTF-8 recovery smoke"
+          ]
+        },
+        {
+          "id": 114263255136,
+          "name": "Backend / file",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-10T16:50:48Z",
+          "completed_at": "2026-10-10T16:51:12Z",
+          "failed_or_cancelled_steps": [
+            {
+              "name": "Require every execution job including original File TCP gate",
+              "conclusion": "failure"
+            }
+          ],
+          "not_reached_steps": [
+            "Download this attempt's exact backend shard receipts",
+            "Download this attempt's exact original TCP receipts",
+            "Validate provenance and create byte-identical aggregation copies",
+            "Require exact complete collection and successful outcomes in both profiles",
+            "Upload complete collected-coverage proof"
+          ],
+          "successful_verification_stages": []
+        },
+        {
+          "id": 114263255211,
+          "name": "Backend / postgres",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-10T16:50:48Z",
+          "completed_at": "2026-10-10T16:51:12Z",
+          "failed_or_cancelled_steps": [
+            {
+              "name": "Require every execution job including original File TCP gate",
+              "conclusion": "failure"
+            }
+          ],
+          "not_reached_steps": [
+            "Download this attempt's exact backend shard receipts",
+            "Download this attempt's exact original TCP receipts",
+            "Validate provenance and create byte-identical aggregation copies",
+            "Require exact complete collection and successful outcomes in both profiles",
+            "Upload complete collected-coverage proof"
+          ],
+          "successful_verification_stages": []
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 11674338239,
+          "name": "windows-acceptance-ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+          "sha256": "a8c4e00a586384b7ff39c391a98368c59093568e1c99b73706335309aa7f6c87",
+          "size_in_bytes": 163775142,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11674378072,
+          "name": "windows-native-receipts-ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+          "sha256": "0862831c8e079e87c48872ff044f7cf3e6c85eac94049a290b15451c20c8b5ec",
+          "size_in_bytes": 582664,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11674594300,
+          "name": "v2-independent-media-ef79251fdc1a9b17f5733a28ee97afc525b73d7f-attempt-1",
+          "sha256": "594d8fd23cfd0c1a0420ee913b752ba1383e67d8c62a8e50ac3b56009fa03ce0",
+          "size_in_bytes": 8688888,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11674643593,
+          "name": "backend-tcp-ef79251fdc1a9b17f5733a28ee97afc525b73d7f-attempt-1",
+          "sha256": "f89e0a53944193eb591f48ad092bd37c1cd9af6aca13a4bc2167af03b1d6f1ec",
+          "size_in_bytes": 173756,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11674644958,
+          "name": "frontend-png-1-ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+          "sha256": "05e46c9e9e73a5e6472a5296d329d01d6123b306bb6730be16fb5af75208c463",
+          "size_in_bytes": 24328317,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11675024444,
+          "name": "frontend-compact-ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+          "sha256": "d8dfcbed0d04af670b8adbeb25dfeeac3f4587b08753ee941c8bddce2c33dfd0",
+          "size_in_bytes": 780495,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11675122945,
+          "name": "windows-host-ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+          "sha256": "e1113abb7f265513fb3adcaf0e01c015597f67f751fd6d8ed650629ace33ba43",
+          "size_in_bytes": 697317,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11675124194,
+          "name": "frontend-ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+          "sha256": "7d595e36cf23fd1687c866ca54b2b06de52c575e6a8241f40b8c2d704f134fd1",
+          "size_in_bytes": 40655549,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11675162841,
+          "name": "v2-creative-browser-ef79251fdc1a9b17f5733a28ee97afc525b73d7f-attempt-1",
+          "sha256": "aa1bffd78b48010be8ba3bc52ad6b5e3a3ca970889a500bea0ea9a70e72adbf8",
+          "size_in_bytes": 4206067,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11675219152,
+          "name": "frontend-png-2-ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+          "sha256": "572f0927ca0290e2ef08c6365b165d31ff2b775f808230b9cd1f8e7c45670621",
+          "size_in_bytes": 15489458,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11675294573,
+          "name": "backend-file-shard-0-ef79251fdc1a9b17f5733a28ee97afc525b73d7f-attempt-1",
+          "sha256": "806099fe9a4932fd0926d018c96b106ff8aa952ad1664481f01b8beafde8499f",
+          "size_in_bytes": 525889,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11675901193,
+          "name": "backend-postgres-shard-0-ef79251fdc1a9b17f5733a28ee97afc525b73d7f-attempt-1",
+          "sha256": "18ecadf42c7d730d67eceb44a2df2a7e5ea7692df495dc0b4879ed1d6e90cca2",
+          "size_in_bytes": 659977,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11675948436,
+          "name": "backend-postgres-shard-1-ef79251fdc1a9b17f5733a28ee97afc525b73d7f-attempt-1",
+          "sha256": "9e5d67710860fea26ea8e22fd219346770c2d2fc77b7b02cc0548f696a4b15a0",
+          "size_in_bytes": 700876,
+          "github_digest_verified": true
+        }
+      ],
+      "junit_reports": [
+        {
+          "sha256": "1167f068b89f1fb505a70304c763e8f14667b0fad5b7c7dfd80058e6441679e1",
+          "path": "v2-independent-live.xml",
+          "artifact_ids": [
+            11674594300,
+            11674594300
+          ],
+          "tests": 17,
+          "passed": 17,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "4a822c76ae04e6a54584fce767feab49616ad0a4256b4c1e41b34c8b697b82ce",
+          "path": "tcp-harness.xml",
+          "artifact_ids": [
+            11674643593
+          ],
+          "tests": 102,
+          "passed": 102,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "6ce160813d01c4b4f6f8eb79a9830138d0af91bd8dc7cda09e7f8ad0f550a656",
+          "path": "sync-tcp.xml",
+          "artifact_ids": [
+            11674643593
+          ],
+          "tests": 2,
+          "passed": 2,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "cb273f4d147128bec95cb96f69b359fd54cc52d75fac6b9141bb6997a8ce2b46",
+          "path": "receipts/export-browser.xml",
+          "artifact_ids": [
+            11675024444,
+            11675124194
+          ],
+          "tests": 1,
+          "passed": 1,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "7ab3f4ccac8a1c3b469520b901a993b938710157e6583830cd17d3be6e1c1182",
+          "path": "receipts/functional-surface-browser.xml",
+          "artifact_ids": [
+            11675024444,
+            11675124194
+          ],
+          "tests": 9,
+          "passed": 9,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "68f88025ad28931356515cdaa2e3000b0ec02d63383b2fb761882f48b8a037e3",
+          "path": "receipts/geometry.xml",
+          "artifact_ids": [
+            11675024444,
+            11675124194
+          ],
+          "tests": 9,
+          "passed": 9,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "9df3d32ef41f3db381d64f47c53735a9da193b38fd7c7a737818fe6de5aa0c4d",
+          "path": "receipts/frontend.xml",
+          "artifact_ids": [
+            11675024444,
+            11675124194
+          ],
+          "tests": 2409,
+          "passed": 2401,
+          "skipped": 8,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "e6dcc37091430d04fc2929f5bc2c2f68109cd693637c81bf64d87113d8718505",
+          "path": "receipts/business.xml",
+          "artifact_ids": [
+            11675024444,
+            11675124194
+          ],
+          "tests": 2,
+          "passed": 2,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "6cadc0cba630a3eccec104aafe008faf51761b37b3f8e75812549374a8d4f053",
+          "path": "receipts/r4-ux.xml",
+          "artifact_ids": [
+            11675024444,
+            11675124194
+          ],
+          "tests": 63,
+          "passed": 63,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "537eea3e7f78f46fc8b288864a874703f463b02f41dd626af1f9263e1d641cd2",
+          "path": "receipts/experimental.xml",
+          "artifact_ids": [
+            11675024444,
+            11675124194
+          ],
+          "tests": 7,
+          "passed": 7,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "05b35b5752919b9a3b49924726ed01f3ac9b428403735277b04844d85c2e976b",
+          "path": "receipts/branch-surface-browser.xml",
+          "artifact_ids": [
+            11675024444,
+            11675124194
+          ],
+          "tests": 1,
+          "passed": 1,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "b61883929d98aa17ccf41a1efe9971c2b1f8148d880aeace421504331727b03c",
+          "path": "receipts/windows.xml",
+          "artifact_ids": [
+            11675122945
+          ],
+          "tests": 59,
+          "passed": 59,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "033ae4f4a86e950d6e1f3da2130208af770ef89189da052f12543cc031e97983",
+          "path": "receipts/windows-v2-environment.xml",
+          "artifact_ids": [
+            11675122945
+          ],
+          "tests": 3,
+          "passed": 3,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "2fd09be29e8300f2cf2e5ee3509845d99abd20237ce1d72bde609c145a943d21",
+          "path": "project/frontend/test-results/local-interop.xml",
+          "artifact_ids": [
+            11675124194
+          ],
+          "tests": 12,
+          "passed": 12,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "1760a98f1603dde472ffb8740cf7264ef10deabb4addcca0422935775698b1fa",
+          "path": "receipts/v2-creative-workbench.xml",
+          "artifact_ids": [
+            11675162841
+          ],
+          "tests": 8,
+          "passed": 8,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "b8528083cbd69241b2bb657a475005290b8202a41bfee639e6eb6116642e399e",
+          "path": "receipts/v2-creative-live.xml",
+          "artifact_ids": [
+            11675162841,
+            11675162841
+          ],
+          "tests": 7,
+          "passed": 7,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "70d2b51dc70178447fac22675579af38b6dbbe240b70b2d043ec8e602421b634",
+          "path": "coverage-harness.xml",
+          "artifact_ids": [
+            11675294573
+          ],
+          "tests": 174,
+          "passed": 174,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "178243b4ee21d5b7ca3c301418e2cdea977b1c143ffbc085ac4a37599a22d30f",
+          "path": "backend.xml",
+          "artifact_ids": [
+            11675901193
+          ],
+          "tests": 5656,
+          "passed": 3793,
+          "skipped": 1863,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "2beec456f8b0f4828f44c3d7a62d09edee19f7e1eef1f99ed1418be022e51ed4",
+          "path": "coverage-harness.xml",
+          "artifact_ids": [
+            11675901193
+          ],
+          "tests": 174,
+          "passed": 174,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "ba22bb23fa9e91257c6829306fd13fa922eef92f00b6d7ede8e885c034ccc579",
+          "path": "backend.xml",
+          "artifact_ids": [
+            11675948436
+          ],
+          "tests": 5637,
+          "passed": 3712,
+          "skipped": 1925,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "15fcc434fe97c659df142e285c08647670a8ae78e273f5c8830188bdb621b0a2",
+          "path": "coverage-harness.xml",
+          "artifact_ids": [
+            11675948436
+          ],
+          "tests": 174,
+          "passed": 174,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        }
+      ],
+      "backend_shards": [
+        {
+          "artifact_id": 11675294573,
+          "backend": "file",
+          "shard": {
+            "index": 0,
+            "count": 1
+          },
+          "identity": {
+            "checked_out_sha": "ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+            "source_tree": "aa9f568ab9aca0f5ef6ee5f3d5373fa7410d724d",
+            "event_sha": "ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+            "run_id": "38065794016",
+            "run_attempt": "1",
+            "repository": "1785235376-blip/AI-Novel-Studio",
+            "python_version": "3.12.9",
+            "platform": "linux",
+            "source_manifest_sha256": "440c0c036a057d3d6d38e768810292f0434c82bf0fa7f1164b3a6801ed6d6929",
+            "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+          },
+          "unfiltered_collection_count": 11293,
+          "assigned_count": 11293,
+          "complete": false,
+          "pytest_exitstatus": null,
+          "collection_errors": [],
+          "validation_errors": [],
+          "backend_junit_present": false,
+          "recorded_outcomes_count": 0,
+          "partial_event_stream_observations": {
+            "events": 24756,
+            "call_outcomes": {
+              "passed": 6109
+            },
+            "setup_skips": 3214,
+            "last_event": {
+              "nodeid": "tests/test_v2_ai_execution_runtime.py::test_broker_mutations_hold_original_scope_then_project_lease_through_commit[file]",
+              "when": "setup",
+              "outcome": "passed",
+              "wasxfail": false,
+              "skip_reason": null
+            },
+            "not_a_substitute_for_complete_junit_or_strict_join": true
+          }
+        },
+        {
+          "artifact_id": 11675901193,
+          "backend": "postgres",
+          "shard": {
+            "index": 0,
+            "count": 2
+          },
+          "identity": {
+            "checked_out_sha": "ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+            "source_tree": "aa9f568ab9aca0f5ef6ee5f3d5373fa7410d724d",
+            "event_sha": "ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+            "run_id": "38065794016",
+            "run_attempt": "1",
+            "repository": "1785235376-blip/AI-Novel-Studio",
+            "python_version": "3.12.9",
+            "platform": "linux",
+            "source_manifest_sha256": "440c0c036a057d3d6d38e768810292f0434c82bf0fa7f1164b3a6801ed6d6929",
+            "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+          },
+          "unfiltered_collection_count": 11293,
+          "assigned_count": 5656,
+          "complete": true,
+          "pytest_exitstatus": 0,
+          "collection_errors": [],
+          "validation_errors": [],
+          "backend_junit_present": true,
+          "recorded_outcomes_count": 5656,
+          "partial_event_stream_observations": {
+            "events": 15105,
+            "call_outcomes": {
+              "passed": 3793
+            },
+            "setup_skips": 1863,
+            "last_event": {
+              "nodeid": "tests/test_writer_room_comment_authority_seam.py::test_original_comment_callback_rechecks_real_membership_after_source_read_before_commit[postgres-/api/v1]",
+              "when": "teardown",
+              "outcome": "passed",
+              "wasxfail": false,
+              "skip_reason": null
+            },
+            "not_a_substitute_for_complete_junit_or_strict_join": true
+          }
+        },
+        {
+          "artifact_id": 11675948436,
+          "backend": "postgres",
+          "shard": {
+            "index": 1,
+            "count": 2
+          },
+          "identity": {
+            "checked_out_sha": "ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+            "source_tree": "aa9f568ab9aca0f5ef6ee5f3d5373fa7410d724d",
+            "event_sha": "ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+            "run_id": "38065794016",
+            "run_attempt": "1",
+            "repository": "1785235376-blip/AI-Novel-Studio",
+            "python_version": "3.12.9",
+            "platform": "linux",
+            "source_manifest_sha256": "440c0c036a057d3d6d38e768810292f0434c82bf0fa7f1164b3a6801ed6d6929",
+            "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+          },
+          "unfiltered_collection_count": 11293,
+          "assigned_count": 5637,
+          "complete": true,
+          "pytest_exitstatus": 0,
+          "collection_errors": [],
+          "validation_errors": [],
+          "backend_junit_present": true,
+          "recorded_outcomes_count": 5637,
+          "partial_event_stream_observations": {
+            "events": 14986,
+            "call_outcomes": {
+              "passed": 3712
+            },
+            "setup_skips": 1925,
+            "last_event": {
+              "nodeid": "tests/test_writer_room_comment_authority_seam.py::test_original_comment_callback_rechecks_real_membership_after_source_read_before_commit[postgres-/api]",
+              "when": "teardown",
+              "outcome": "passed",
+              "wasxfail": false,
+              "skip_reason": null
+            },
+            "not_a_substitute_for_complete_junit_or_strict_join": true
+          }
+        }
+      ],
+      "non_junit_receipts": [
+        {
+          "artifact_id": 11674378072,
+          "path": "native-smoke/native-base-smoke.json",
+          "kind": "native-windows-base-smoke",
+          "status": "PASS",
+          "public_release": false,
+          "interactive_desktop": "NOT_RUN",
+          "user_acceptance": "NOT_RUN",
+          "command_count": 11,
+          "command_outcomes": [
+            "PASS",
+            "PASS",
+            "PASS",
+            "PASS",
+            "PASS",
+            "PASS",
+            "PASS",
+            "PASS",
+            "PASS",
+            "PASS",
+            "PASS"
+          ]
+        },
+        {
+          "artifact_id": 11674378072,
+          "path": "package/acceptance-package-closure.json",
+          "status": "PASS",
+          "manifest_payload_files": 6026,
+          "zip_files": 6027,
+          "manifest_self": "verified separately to avoid recursive self hashing",
+          "sha256": "E20AD63C0B5B3AB3B05A4C327A6F74B7EF0C78B14E2811CEC7D71530F1934C4A",
+          "bytes": 164564289,
+          "removed_cache_entries": 0
+        },
+        {
+          "artifact_id": 11675024444,
+          "path": "receipts/local-interop-client.log",
+          "scope": "Actual TypeScript client and synthetic independent peer; MOCK_ONLY",
+          "passed": 2
+        }
+      ],
+      "strict_join_artifacts": [],
+      "strict_join_complete": false,
+      "png_evidence": {
+        "run_id": 38065794016,
+        "parts": [
+          {
+            "artifact": "artifact-11674644958",
+            "part": 1,
+            "expected_parts": 2,
+            "source_sha": "ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+            "files": 136
+          },
+          {
+            "artifact": "artifact-11675219152",
+            "part": 2,
+            "expected_parts": 2,
+            "source_sha": "ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+            "files": 88
+          }
+        ],
+        "mismatches": [],
+        "manifest_images": 224,
+        "byte_identical_to_raw": true
+      }
+    },
+    {
+      "id": 38065794017,
+      "name": "Local Interop V1",
+      "event": "push",
+      "head_sha": "ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-10T15:58:59Z",
+      "updated_at": "2026-10-10T16:12:35Z",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38065794017",
+      "event_and_checkout_sha": "ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+      "source_complete": null,
+      "source_complete_scope": "This auxiliary workflow is not a full-source-suite claim",
+      "jobs": [
+        {
+          "id": 114253054676,
+          "name": "Windows current-user pipe reference (MOCK_ONLY)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:02Z",
+          "completed_at": "2026-10-10T16:00:02Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Compile and execute separate-process transport reference"
+          ]
+        },
+        {
+          "id": 114253054749,
+          "name": "Protocol and local transport / file",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:02Z",
+          "completed_at": "2026-10-10T16:00:00Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Strict contracts and genuine subprocess transport tests",
+            "Reject missing contracts and unexpected Interop skips",
+            "Desktop preparation harness and frozen protocol parity"
+          ]
+        },
+        {
+          "id": 114253054832,
+          "name": "Protocol and local transport / postgres",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:02Z",
+          "completed_at": "2026-10-10T16:12:35Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Strict contracts and genuine subprocess transport tests",
+            "Reject missing contracts and unexpected Interop skips",
+            "Desktop preparation harness and frozen protocol parity"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 11674708358,
+          "name": "named-pipe-reference-ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+          "sha256": "8dac824b52b6400dc77b852e28d7bca690906c2fa05fc91422fac2a238eb4640",
+          "size_in_bytes": 1762,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11675288884,
+          "name": "local-interop-postgres-ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+          "sha256": "aadd82423ec528f2a3f97f65aabbd2ea7bef1da032352522a911eb49495fc844",
+          "size_in_bytes": 41575,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11675297096,
+          "name": "local-interop-file-ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+          "sha256": "e9e7b61a17ae38df97c8c19ed0ea2d8328f8cc8911db9c6699d53316107215f3",
+          "size_in_bytes": 41450,
+          "github_digest_verified": true
+        }
+      ],
+      "junit_reports": [
+        {
+          "sha256": "02aee55adffeb982fbec64944a0a993deed82571ce8a7a8e4cc133369f841a6f",
+          "path": "local-interop.xml",
+          "artifact_ids": [
+            11675288884
+          ],
+          "tests": 413,
+          "passed": 345,
+          "skipped": 68,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "e30553a9bbb4d620ebd711dcb51adfa0d30cfb60225d62943c79cccab2b23fbe",
+          "path": "local-interop.xml",
+          "artifact_ids": [
+            11675297096
+          ],
+          "tests": 413,
+          "passed": 345,
+          "skipped": 68,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        }
+      ],
+      "backend_shards": [],
+      "non_junit_receipts": [],
+      "strict_join_artifacts": []
+    },
+    {
+      "id": 38065798764,
+      "name": "Cloud CI",
+      "event": "pull_request",
+      "head_sha": "ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": "2026-10-10T15:59:04Z",
+      "updated_at": "2026-10-10T16:54:41Z",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38065798764",
+      "event_and_checkout_sha": "400a64ec432e481d342d434e5786be06f5605545",
+      "source_complete": false,
+      "source_complete_scope": "Full backend collection, successful complete outcomes and strict File1+PG2+TCP join",
+      "jobs": [
+        {
+          "id": 114253069117,
+          "name": "Windows / Host compile and native contracts",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:06Z",
+          "completed_at": "2026-10-10T16:01:37Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Compile fresh DesktopHost WinExe",
+            "Windows native and packaging contracts (not window acceptance)",
+            "V2 Windows environment fixture contracts (no GPU or inference acceptance)"
+          ]
+        },
+        {
+          "id": 114253069199,
+          "name": "V2 / Independent studio live media",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:06Z",
+          "completed_at": "2026-10-10T16:04:00Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Independent studios live media (real File and HTTP; mock providers)"
+          ]
+        },
+        {
+          "id": 114253069200,
+          "name": "Windows / Fresh base and acceptance package",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:06Z",
+          "completed_at": "2026-10-10T16:04:00Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Assemble official pinned base and OFL font",
+            "Build self-contained Host and unsigned internal acceptance package",
+            "Native embedded Python and PostgreSQL UTF-8 recovery smoke"
+          ]
+        },
+        {
+          "id": 114253069217,
+          "name": "Backend execution / postgres / shard 1",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:06Z",
+          "completed_at": "2026-10-10T16:52:30Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Fail-closed coverage infrastructure self-tests",
+            "Complete backend collection / assigned shard execution"
+          ]
+        },
+        {
+          "id": 114253069222,
+          "name": "Backend execution / postgres / shard 0",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T16:00:01Z",
+          "completed_at": "2026-10-10T16:54:18Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Fail-closed coverage infrastructure self-tests",
+            "Complete backend collection / assigned shard execution"
+          ]
+        },
+        {
+          "id": 114253069227,
+          "name": "V2 / Creative live workflows and geometry",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:06Z",
+          "completed_at": "2026-10-10T16:01:23Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "V2 live creative workflows (real File and HTTP; mock providers)",
+            "V2 keyboard recovery and fixture geometry (no golden updates)"
+          ]
+        },
+        {
+          "id": 114253069243,
+          "name": "Frontend / unit-type-build-tokens",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:06Z",
+          "completed_at": "2026-10-10T16:15:58Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Frontend unit suite",
+            "Type check and production build",
+            "Design-token lint",
+            "Browser geometry (no golden updates)",
+            "Local Interop actual TypeScript client and independent peer",
+            "Local Interop real-process browser journeys (MOCK_ONLY)",
+            "Business browser journeys (synthetic data; explicit mock boundary)",
+            "Experimental R3 business journeys and default-off regression",
+            "R4 writing recovery and workspace journeys",
+            "Export recovery browser isolation and screenshots",
+            "Functional surface browser journeys",
+            "Branch manuscript two-client browser journeys"
+          ]
+        },
+        {
+          "id": 114253069256,
+          "name": "Backend execution / original File TCP",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T16:00:03Z",
+          "completed_at": "2026-10-10T16:01:33Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Fail-closed TCP evidence and joiner self-tests",
+            "Original two-process loopback tests and fail-closed provenance"
+          ]
+        },
+        {
+          "id": 114253069261,
+          "name": "Backend execution / file / shard 0",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-10T16:00:02Z",
+          "completed_at": "2026-10-10T16:20:27Z",
+          "failed_or_cancelled_steps": [
+            {
+              "name": "Complete backend collection / assigned shard execution",
+              "conclusion": "cancelled"
+            }
+          ],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Fail-closed coverage infrastructure self-tests"
+          ],
+          "interruption_observed": {
+            "conclusion": "cancelled",
+            "matching_original_error_lines": [
+              "2026-10-10T16:20:15.6329584Z ##[error]The operation was canceled."
+            ],
+            "workflow_budget_minutes": 20,
+            "explicit_timeout_annotation_verified": false
+          },
+          "interruption_cause_assessment": {
+            "type": "INFERENCE",
+            "assessment": "The observed cancellation timing is consistent with the original 20-minute hosted capacity limit; the preserved log itself states only that the operation was canceled."
+          }
+        },
+        {
+          "id": 114263971654,
+          "name": "Backend / postgres",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-10T16:54:19Z",
+          "completed_at": "2026-10-10T16:54:40Z",
+          "failed_or_cancelled_steps": [
+            {
+              "name": "Require every execution job including original File TCP gate",
+              "conclusion": "failure"
+            }
+          ],
+          "not_reached_steps": [
+            "Download this attempt's exact backend shard receipts",
+            "Download this attempt's exact original TCP receipts",
+            "Validate provenance and create byte-identical aggregation copies",
+            "Require exact complete collection and successful outcomes in both profiles",
+            "Upload complete collected-coverage proof"
+          ],
+          "successful_verification_stages": []
+        },
+        {
+          "id": 114263971728,
+          "name": "Backend / file",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-10T16:54:20Z",
+          "completed_at": "2026-10-10T16:54:38Z",
+          "failed_or_cancelled_steps": [
+            {
+              "name": "Require every execution job including original File TCP gate",
+              "conclusion": "failure"
+            }
+          ],
+          "not_reached_steps": [
+            "Download this attempt's exact backend shard receipts",
+            "Download this attempt's exact original TCP receipts",
+            "Validate provenance and create byte-identical aggregation copies",
+            "Require exact complete collection and successful outcomes in both profiles",
+            "Upload complete collected-coverage proof"
+          ],
+          "successful_verification_stages": []
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 11674183206,
+          "name": "v2-creative-browser-400a64ec432e481d342d434e5786be06f5605545-attempt-1",
+          "sha256": "ce841199a54e630723a7aa7ae8a742ccbcd8caeb247c48cb00447130e8ab67c5",
+          "size_in_bytes": 4203134,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11674524156,
+          "name": "backend-tcp-400a64ec432e481d342d434e5786be06f5605545-attempt-1",
+          "sha256": "bd1cfa77922d8087eca2623e115d336610dfc11de04618a9c4b304fe278deae3",
+          "size_in_bytes": 173754,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11674688754,
+          "name": "v2-independent-media-400a64ec432e481d342d434e5786be06f5605545-attempt-1",
+          "sha256": "d9aea8468cbfee2ce3ed08d39187cd0f2e22a26fe6c7e501d61390b2c1ad6778",
+          "size_in_bytes": 8690145,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11674698485,
+          "name": "windows-host-400a64ec432e481d342d434e5786be06f5605545",
+          "sha256": "ae7a8d053689decb870517441bef64fc1b5eff7a9054f769bfa014503e6e2941",
+          "size_in_bytes": 697312,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11674724985,
+          "name": "frontend-png-2-400a64ec432e481d342d434e5786be06f5605545",
+          "sha256": "143fed8d2c531635cd38c8242000b077d494ca2f4353fbf4818159ee30d53b81",
+          "size_in_bytes": 15704915,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11674898460,
+          "name": "windows-native-receipts-400a64ec432e481d342d434e5786be06f5605545",
+          "sha256": "0d3a79c20132a397ca20140f414cfbd38f228d5a36a50c063452431b5b6ebc5c",
+          "size_in_bytes": 582631,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11674969798,
+          "name": "frontend-compact-400a64ec432e481d342d434e5786be06f5605545",
+          "sha256": "3c46e48f830b701183613d3e5e6d9d2cdf384f2d2b802f14ac3a2ca0636b66a9",
+          "size_in_bytes": 782018,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11675053314,
+          "name": "windows-acceptance-400a64ec432e481d342d434e5786be06f5605545",
+          "sha256": "e565b5da20c149ae7eb4bf9bbd909253410bd70440aa8cccee6fe897b4b5fe9d",
+          "size_in_bytes": 163775178,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11675345999,
+          "name": "backend-file-shard-0-400a64ec432e481d342d434e5786be06f5605545-attempt-1",
+          "sha256": "4f550183085b87da8aa672a920819d3fcfc9eb06c386c82cd4ec8498f31f409e",
+          "size_in_bytes": 526032,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11675475119,
+          "name": "frontend-png-1-400a64ec432e481d342d434e5786be06f5605545",
+          "sha256": "90c3aee94ad24229c3449867a68ac47fd602dc1d5376a80509d999ce2e87dba9",
+          "size_in_bytes": 24252411,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11675529447,
+          "name": "backend-postgres-shard-0-400a64ec432e481d342d434e5786be06f5605545-attempt-1",
+          "sha256": "1767a142d2dd0d8d1354aa969fbb2ebecd6a49bea8d72544922f874ccfe8e7a5",
+          "size_in_bytes": 660543,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11675540062,
+          "name": "frontend-400a64ec432e481d342d434e5786be06f5605545",
+          "sha256": "cca93a3977a1550231c154140a3f8842635fedbbd1a2cc13d0ad12986ea7a704",
+          "size_in_bytes": 40796594,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11676122384,
+          "name": "backend-postgres-shard-1-400a64ec432e481d342d434e5786be06f5605545-attempt-1",
+          "sha256": "1e17e65a0d7ef9ebf8f671b0ec2144bf849654c4fa3750bea62f26b06f689196",
+          "size_in_bytes": 701124,
+          "github_digest_verified": true
+        }
+      ],
+      "junit_reports": [
+        {
+          "sha256": "7f0e755364d52063f433422722dd3d7cd4e9162d2ac2e159ecd56aa4f1bb67d8",
+          "path": "receipts/v2-creative-workbench.xml",
+          "artifact_ids": [
+            11674183206
+          ],
+          "tests": 8,
+          "passed": 8,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "ccc73a4b1ae2443baeb4c46fb81dfbf53d64b93a284fefa9643626af5fce4346",
+          "path": "receipts/v2-creative-live.xml",
+          "artifact_ids": [
+            11674183206,
+            11674183206
+          ],
+          "tests": 7,
+          "passed": 7,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "7cea774f0175c7e821a450a7eb7f9cee1adedc33dff774627733cac48d30d0b3",
+          "path": "tcp-harness.xml",
+          "artifact_ids": [
+            11674524156
+          ],
+          "tests": 102,
+          "passed": 102,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "aa7bdd860a8a6c7392f548b660fbd070921488b03f90141801c4c5acf19358cf",
+          "path": "sync-tcp.xml",
+          "artifact_ids": [
+            11674524156
+          ],
+          "tests": 2,
+          "passed": 2,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "8c31c29bd947beeea0f74b1bab7979374cf79233ea3b3369703116cae350cb2d",
+          "path": "v2-independent-live.xml",
+          "artifact_ids": [
+            11674688754,
+            11674688754
+          ],
+          "tests": 17,
+          "passed": 17,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "ea426eb5f0c669844dddabd9cdb7f04802513f90cee3c46ad332b0ccf34bcf2f",
+          "path": "receipts/windows.xml",
+          "artifact_ids": [
+            11674698485
+          ],
+          "tests": 59,
+          "passed": 59,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "528a9ecf70dd2a9c3de32bbadf4d28328dd4e81c62496c13740ea39419850c68",
+          "path": "receipts/windows-v2-environment.xml",
+          "artifact_ids": [
+            11674698485
+          ],
+          "tests": 3,
+          "passed": 3,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "cf746ea83fc99af2dac6fd53ef89c08eb642f9d6b5610366a72387224c9fca95",
+          "path": "receipts/export-browser.xml",
+          "artifact_ids": [
+            11674969798,
+            11675540062
+          ],
+          "tests": 1,
+          "passed": 1,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "f97c30e65246fb90defa68f55f2234f9ce50e04734cfebe99403df9656667f8b",
+          "path": "receipts/functional-surface-browser.xml",
+          "artifact_ids": [
+            11674969798,
+            11675540062
+          ],
+          "tests": 9,
+          "passed": 9,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "9a33911b3b7a7b6a075c2e4d5f71fbbfbf3d145eceffafb338c23a128de1e76a",
+          "path": "receipts/geometry.xml",
+          "artifact_ids": [
+            11674969798,
+            11675540062
+          ],
+          "tests": 9,
+          "passed": 9,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "9e3f021446357091fd81a0c7efa6accec39dd46a8b4e7b9c82288fe99c7d6d77",
+          "path": "receipts/frontend.xml",
+          "artifact_ids": [
+            11674969798,
+            11675540062
+          ],
+          "tests": 2409,
+          "passed": 2401,
+          "skipped": 8,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "af1dee807294267a5def53a4f9477b676aa89ed223a7ab1aafbf8eac8b9240b6",
+          "path": "receipts/business.xml",
+          "artifact_ids": [
+            11674969798,
+            11675540062
+          ],
+          "tests": 2,
+          "passed": 2,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "12fe620027893ea1f014efe9dbdf019d690f86e0a0d14992a0988f20f283881c",
+          "path": "receipts/r4-ux.xml",
+          "artifact_ids": [
+            11674969798,
+            11675540062
+          ],
+          "tests": 63,
+          "passed": 63,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "20e60d838e8e8be19422fc5a493059dfb8503cb93c516825eb499aa25519d340",
+          "path": "receipts/experimental.xml",
+          "artifact_ids": [
+            11674969798,
+            11675540062
+          ],
+          "tests": 7,
+          "passed": 7,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "c18333221e755f4ef84a00ce060d0acabda0c2fc93f98edd75ce9e01ea98bff6",
+          "path": "receipts/branch-surface-browser.xml",
+          "artifact_ids": [
+            11674969798,
+            11675540062
+          ],
+          "tests": 1,
+          "passed": 1,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "051b4abf4bb90ede098167b87e18d9cd2f221eaecf204afb513dd799e02df3fe",
+          "path": "coverage-harness.xml",
+          "artifact_ids": [
+            11675345999
+          ],
+          "tests": 174,
+          "passed": 174,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "f2d3fcca1d8fea8a28b6128fbd110e153d5c7c1f92fd6eae316be0025a59c154",
+          "path": "backend.xml",
+          "artifact_ids": [
+            11675529447
+          ],
+          "tests": 5656,
+          "passed": 3793,
+          "skipped": 1863,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "63b9e02656130d20c23d7149e8335c45d6cd2dc902390a6978746827e4784a1c",
+          "path": "coverage-harness.xml",
+          "artifact_ids": [
+            11675529447
+          ],
+          "tests": 174,
+          "passed": 174,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "c27c6f5c1cf36ff53bfe4e71bfc0c15af4d418426cd42ddbec48e62de97e7cd5",
+          "path": "project/frontend/test-results/local-interop.xml",
+          "artifact_ids": [
+            11675540062
+          ],
+          "tests": 12,
+          "passed": 12,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "faf01caa568ae6d2786fdc1f232f7bb2c25e6fa3e3d8302351f94f3f48618986",
+          "path": "backend.xml",
+          "artifact_ids": [
+            11676122384
+          ],
+          "tests": 5637,
+          "passed": 3712,
+          "skipped": 1925,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "3aa7ea9e738b8ce83430bcc7830e2c7d65684181a935915df98cf302858cbb3c",
+          "path": "coverage-harness.xml",
+          "artifact_ids": [
+            11676122384
+          ],
+          "tests": 174,
+          "passed": 174,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        }
+      ],
+      "backend_shards": [
+        {
+          "artifact_id": 11675345999,
+          "backend": "file",
+          "shard": {
+            "index": 0,
+            "count": 1
+          },
+          "identity": {
+            "checked_out_sha": "400a64ec432e481d342d434e5786be06f5605545",
+            "source_tree": "aa9f568ab9aca0f5ef6ee5f3d5373fa7410d724d",
+            "event_sha": "400a64ec432e481d342d434e5786be06f5605545",
+            "run_id": "38065798764",
+            "run_attempt": "1",
+            "repository": "1785235376-blip/AI-Novel-Studio",
+            "python_version": "3.12.9",
+            "platform": "linux",
+            "source_manifest_sha256": "440c0c036a057d3d6d38e768810292f0434c82bf0fa7f1164b3a6801ed6d6929",
+            "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+          },
+          "unfiltered_collection_count": 11293,
+          "assigned_count": 11293,
+          "complete": false,
+          "pytest_exitstatus": null,
+          "collection_errors": [],
+          "validation_errors": [],
+          "backend_junit_present": false,
+          "recorded_outcomes_count": 0,
+          "partial_event_stream_observations": {
+            "events": 24769,
+            "call_outcomes": {
+              "passed": 6112
+            },
+            "setup_skips": 3216,
+            "last_event": {
+              "nodeid": "tests/test_v2_ai_execution_runtime.py::test_unsettled_or_nonzero_original_ledger_cannot_promote_model_output[file-UNKNOWN_UPSTREAM-None]",
+              "when": "setup",
+              "outcome": "passed",
+              "wasxfail": false,
+              "skip_reason": null
+            },
+            "not_a_substitute_for_complete_junit_or_strict_join": true
+          }
+        },
+        {
+          "artifact_id": 11675529447,
+          "backend": "postgres",
+          "shard": {
+            "index": 0,
+            "count": 2
+          },
+          "identity": {
+            "checked_out_sha": "400a64ec432e481d342d434e5786be06f5605545",
+            "source_tree": "aa9f568ab9aca0f5ef6ee5f3d5373fa7410d724d",
+            "event_sha": "400a64ec432e481d342d434e5786be06f5605545",
+            "run_id": "38065798764",
+            "run_attempt": "1",
+            "repository": "1785235376-blip/AI-Novel-Studio",
+            "python_version": "3.12.9",
+            "platform": "linux",
+            "source_manifest_sha256": "440c0c036a057d3d6d38e768810292f0434c82bf0fa7f1164b3a6801ed6d6929",
+            "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+          },
+          "unfiltered_collection_count": 11293,
+          "assigned_count": 5656,
+          "complete": true,
+          "pytest_exitstatus": 0,
+          "collection_errors": [],
+          "validation_errors": [],
+          "backend_junit_present": true,
+          "recorded_outcomes_count": 5656,
+          "partial_event_stream_observations": {
+            "events": 15105,
+            "call_outcomes": {
+              "passed": 3793
+            },
+            "setup_skips": 1863,
+            "last_event": {
+              "nodeid": "tests/test_writer_room_comment_authority_seam.py::test_original_comment_callback_rechecks_real_membership_after_source_read_before_commit[postgres-/api/v1]",
+              "when": "teardown",
+              "outcome": "passed",
+              "wasxfail": false,
+              "skip_reason": null
+            },
+            "not_a_substitute_for_complete_junit_or_strict_join": true
+          }
+        },
+        {
+          "artifact_id": 11676122384,
+          "backend": "postgres",
+          "shard": {
+            "index": 1,
+            "count": 2
+          },
+          "identity": {
+            "checked_out_sha": "400a64ec432e481d342d434e5786be06f5605545",
+            "source_tree": "aa9f568ab9aca0f5ef6ee5f3d5373fa7410d724d",
+            "event_sha": "400a64ec432e481d342d434e5786be06f5605545",
+            "run_id": "38065798764",
+            "run_attempt": "1",
+            "repository": "1785235376-blip/AI-Novel-Studio",
+            "python_version": "3.12.9",
+            "platform": "linux",
+            "source_manifest_sha256": "440c0c036a057d3d6d38e768810292f0434c82bf0fa7f1164b3a6801ed6d6929",
+            "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+          },
+          "unfiltered_collection_count": 11293,
+          "assigned_count": 5637,
+          "complete": true,
+          "pytest_exitstatus": 0,
+          "collection_errors": [],
+          "validation_errors": [],
+          "backend_junit_present": true,
+          "recorded_outcomes_count": 5637,
+          "partial_event_stream_observations": {
+            "events": 14986,
+            "call_outcomes": {
+              "passed": 3712
+            },
+            "setup_skips": 1925,
+            "last_event": {
+              "nodeid": "tests/test_writer_room_comment_authority_seam.py::test_original_comment_callback_rechecks_real_membership_after_source_read_before_commit[postgres-/api]",
+              "when": "teardown",
+              "outcome": "passed",
+              "wasxfail": false,
+              "skip_reason": null
+            },
+            "not_a_substitute_for_complete_junit_or_strict_join": true
+          }
+        }
+      ],
+      "non_junit_receipts": [
+        {
+          "artifact_id": 11674898460,
+          "path": "native-smoke/native-base-smoke.json",
+          "kind": "native-windows-base-smoke",
+          "status": "PASS",
+          "public_release": false,
+          "interactive_desktop": "NOT_RUN",
+          "user_acceptance": "NOT_RUN",
+          "command_count": 11,
+          "command_outcomes": [
+            "PASS",
+            "PASS",
+            "PASS",
+            "PASS",
+            "PASS",
+            "PASS",
+            "PASS",
+            "PASS",
+            "PASS",
+            "PASS",
+            "PASS"
+          ]
+        },
+        {
+          "artifact_id": 11674898460,
+          "path": "package/acceptance-package-closure.json",
+          "status": "PASS",
+          "manifest_payload_files": 6026,
+          "zip_files": 6027,
+          "manifest_self": "verified separately to avoid recursive self hashing",
+          "sha256": "CA7197D1F7088A1A06ABB85DF98A9699084E3334AA38FA77C7E750710E1C666A",
+          "bytes": 164564272,
+          "removed_cache_entries": 0
+        },
+        {
+          "artifact_id": 11674969798,
+          "path": "receipts/local-interop-client.log",
+          "scope": "Actual TypeScript client and synthetic independent peer; MOCK_ONLY",
+          "passed": 2
+        }
+      ],
+      "strict_join_artifacts": [],
+      "strict_join_complete": false,
+      "png_evidence": {
+        "run_id": 38065798764,
+        "parts": [
+          {
+            "artifact": "artifact-11674724985",
+            "part": 2,
+            "expected_parts": 2,
+            "source_sha": "400a64ec432e481d342d434e5786be06f5605545",
+            "files": 89
+          },
+          {
+            "artifact": "artifact-11675475119",
+            "part": 1,
+            "expected_parts": 2,
+            "source_sha": "400a64ec432e481d342d434e5786be06f5605545",
+            "files": 135
+          }
+        ],
+        "mismatches": [],
+        "manifest_images": 224,
+        "byte_identical_to_raw": true
+      }
+    },
+    {
+      "id": 38065798765,
+      "name": "Local Interop V1",
+      "event": "pull_request",
+      "head_sha": "ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-10T15:59:04Z",
+      "updated_at": "2026-10-10T16:13:21Z",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38065798765",
+      "event_and_checkout_sha": "400a64ec432e481d342d434e5786be06f5605545",
+      "source_complete": null,
+      "source_complete_scope": "This auxiliary workflow is not a full-source-suite claim",
+      "jobs": [
+        {
+          "id": 114253069202,
+          "name": "Windows current-user pipe reference (MOCK_ONLY)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:06Z",
+          "completed_at": "2026-10-10T16:00:17Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Compile and execute separate-process transport reference"
+          ]
+        },
+        {
+          "id": 114253069449,
+          "name": "Protocol and local transport / postgres",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T16:00:19Z",
+          "completed_at": "2026-10-10T16:13:20Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Strict contracts and genuine subprocess transport tests",
+            "Reject missing contracts and unexpected Interop skips",
+            "Desktop preparation harness and frozen protocol parity"
+          ]
+        },
+        {
+          "id": 114253069502,
+          "name": "Protocol and local transport / file",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T16:00:46Z",
+          "completed_at": "2026-10-10T16:01:51Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Strict contracts and genuine subprocess transport tests",
+            "Reject missing contracts and unexpected Interop skips",
+            "Desktop preparation harness and frozen protocol parity"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 11674473748,
+          "name": "local-interop-postgres-400a64ec432e481d342d434e5786be06f5605545",
+          "sha256": "135ab681d8cf079ed67361912b420163f71205a06f57e61d9aba747bfec9a6e6",
+          "size_in_bytes": 41553,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11674768257,
+          "name": "named-pipe-reference-400a64ec432e481d342d434e5786be06f5605545",
+          "sha256": "3a3a77a10754f1959a9aa3ba35313abeae629396b18e8e15603f179b245f142c",
+          "size_in_bytes": 1760,
+          "github_digest_verified": true
+        },
+        {
+          "id": 11674983168,
+          "name": "local-interop-file-400a64ec432e481d342d434e5786be06f5605545",
+          "sha256": "399141ef2657907588d33c21753d7b56afcdea0bf91d0cc56a8fa598264e4ba8",
+          "size_in_bytes": 41520,
+          "github_digest_verified": true
+        }
+      ],
+      "junit_reports": [
+        {
+          "sha256": "335277f2ba86595b6d75a785ae4c5d9d959f3613a3d91e728609253abb9e35ec",
+          "path": "local-interop.xml",
+          "artifact_ids": [
+            11674473748
+          ],
+          "tests": 413,
+          "passed": 345,
+          "skipped": 68,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        },
+        {
+          "sha256": "6b6f589e16f8f3fa92cbe7a30525a907eb371354afcc5af3504845039350b5a4",
+          "path": "local-interop.xml",
+          "artifact_ids": [
+            11674983168
+          ],
+          "tests": 413,
+          "passed": 345,
+          "skipped": 68,
+          "failures": 0,
+          "errors": 0,
+          "failed_cases": []
+        }
+      ],
+      "backend_shards": [],
+      "non_junit_receipts": [],
+      "strict_join_artifacts": []
+    },
+    {
+      "id": 38065798776,
+      "name": "Shared R123 evidence",
+      "event": "pull_request",
+      "head_sha": "ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-10T15:59:04Z",
+      "updated_at": "2026-10-10T16:00:00Z",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38065798776",
+      "event_and_checkout_sha": "400a64ec432e481d342d434e5786be06f5605545",
+      "source_complete": null,
+      "source_complete_scope": "This auxiliary workflow is not a full-source-suite claim",
+      "jobs": [
+        {
+          "id": 114253068541,
+          "name": "Original c6f2126 RED / Python 3.12.9",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-10T15:59:06Z",
+          "completed_at": "2026-10-10T15:59:59Z",
+          "failed_or_cancelled_steps": [],
+          "not_reached_steps": [],
+          "successful_verification_stages": [
+            "Run unchanged source and three separate original reproductions"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 11674798178,
+          "name": "shared-r123-baseline-red-400a64ec432e481d342d434e5786be06f5605545",
+          "sha256": "b2b31206fcf8ccf52e354660d6de078909f7055a7ec16ae82a5ad47a91be7341",
+          "size_in_bytes": 4964,
+          "github_digest_verified": true
+        }
+      ],
+      "junit_reports": [],
+      "backend_shards": [],
+      "non_junit_receipts": [
+        {
+          "artifact_id": 11674798178,
+          "path": "baseline-red.json",
+          "baseline_sha": "c6f2126115b52e17839d48efea091dc21ec08c61",
+          "baseline_tree": "eb80a9fa5f5aa6b8c2cbd0e1e67f7b7a48ac522f",
+          "result": "ALL_THREE_KNOWN_DEFECTS_REPRODUCED_RED",
+          "scripts_exit_zero_is_not_pass": true,
+          "reproduction_names": [
+            "repro_project_authority",
+            "repro_stream_revocation",
+            "repro_reject_running"
+          ]
+        }
+      ],
+      "strict_join_artifacts": []
+    }
+  ],
+  "all_original_runs_terminal": true,
+  "full_source_complete": false,
+  "classification": "PARTIAL_HOSTED_CI_CAPACITY",
+  "classification_note": "PARTIAL_HOSTED_CI_CAPACITY is an assessment from the File cancellations, original 20-minute budget and preserved timing, not a quoted GitHub timeout annotation.",
+  "source_terminal_report_sha256": "c78927e4d13c0014601de2043aed1814b616c43a6cffd9900685c10d7fadfcb3"
+}

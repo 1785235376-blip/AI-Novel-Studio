@@ -1,0 +1,57 @@
+{
+  "kind": "OBSERVED_COMPLETE_RECEIPT_COUNTS_NOT_STRICT_PASS",
+  "strict_reconciler_exit": 1,
+  "source_head": "1d9b88ac36b1d75c06544e3aa69c3ab308164120",
+  "source_tree": "7ad139d78404f3f1bf81e67e66dd4b78e16ffc45",
+  "run": 37543798053,
+  "attempt": 1,
+  "profiles": {
+    "file": {
+      "unique_cases": 7862,
+      "outcomes": {
+        "passed": 5326,
+        "skipped": 2536
+      },
+      "original7492": {
+        "passed": 5111,
+        "skipped": 2381
+      },
+      "new370": {
+        "passed": 215,
+        "skipped": 155
+      },
+      "failed_nodes": []
+    },
+    "postgres": {
+      "unique_cases": 7862,
+      "outcomes": {
+        "passed": 5290,
+        "skipped": 2560,
+        "failed": 12
+      },
+      "original7492": {
+        "passed": 5112,
+        "skipped": 2380
+      },
+      "new370": {
+        "passed": 178,
+        "skipped": 180,
+        "failed": 12
+      },
+      "failed_nodes": [
+        "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[off-postgres-numeric-/api/v1]",
+        "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[off-postgres-qualified-/api/v1]",
+        "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[on-postgres-numeric-/api]",
+        "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[on-postgres-numeric-/api/v1]",
+        "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[on-postgres-qualified-/api]",
+        "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[v1-postgres-numeric-/api]",
+        "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[v1-postgres-qualified-/api]",
+        "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[off-postgres-numeric-/api]",
+        "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[off-postgres-qualified-/api]",
+        "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[on-postgres-qualified-/api/v1]",
+        "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[v1-postgres-numeric-/api/v1]",
+        "tests/test_a43_identity_references.py::test_deleted_old_task_callback_result_accept_and_old_save_never_target_replacement[v1-postgres-qualified-/api/v1]"
+      ]
+    }
+  }
+}

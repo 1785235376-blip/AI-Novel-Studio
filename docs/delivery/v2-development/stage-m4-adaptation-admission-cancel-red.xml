@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="2" tests="4" time="8.530" timestamp="2026-10-10T13:15:46.181155-07:00" hostname="7abb01f187ba"><testcase classname="tests.test_v2_source_adaptation" name="test_cancel_between_reservation_and_attachment_releases_only_undispatched_hold[file-/api]" time="6.337"><failure message="AssertionError: assert ('RESERVED' == 'RELEASED'&#10;  &#10;  - RELEASED&#10;  + RESERVED)">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7fcff36f8230&gt;, prefix='/api', base='/api/novels/r3-mount...ject at 0x7fcff3e91b80&gt;, creative_base='/api/novels/r3-mounted-2ac59b5720834d02a21b1a73dd6a9590/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fcff6a0f440&gt;
+
+    def test_cancel_between_reservation_and_attachment_releases_only_undispatched_hold(creative_model, monkeypatch):
+        e = creative_model
+        row, calls = ready(e, monkeypatch)
+        entered, release = Event(), Event()
+        original = e.broker.reserve
+        reserved = []
+        def blocked(*args, **kwargs):
+            result = original(*args, **kwargs)
+            reserved.append(result)
+            entered.set()
+            assert release.wait(15), "test reservation barrier was not released"
+            return result
+        monkeypatch.setattr(e.broker, "reserve", blocked)
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            pending = pool.submit(lambda: e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/dispatch',
+                headers=e.headers, json={"expected_version": row["version"], "reviewed_preview_digest": row["model_preview"]["preview_digest"]}))
+            try:
+                assert entered.wait(10)
+                latest = checked(e.client.get(e.creative_base + f'/adaptation-proposals/{row["id"]}', headers=e.headers))
+                cancelled = action(e, latest, "cancel")
+                assert cancelled["status"] == "CANCELLED"
+            finally:
+                release.set()
+            assert pending.result(timeout=20).status_code in {409, 422}
+        ledger = e.broker.get(e.nid, row["scope"], e.broker.LEDGER, reserved[0]["id"])
+&gt;       assert ledger["status"] == "RELEASED" and ledger["dispatched"] is False
+E       AssertionError: assert ('RESERVED' == 'RELEASED'
+E         
+E         - RELEASED
+E         + RESERVED)
+
+tests/test_v2_source_adaptation.py:355: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_cancel_between_reservation_and_attachment_releases_only_undispatched_hold[file-/api/v1]" time="1.047"><failure message="AssertionError: assert ('RESERVED' == 'RELEASED'&#10;  &#10;  - RELEASED&#10;  + RESERVED)">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7fcff1532fc0&gt;, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7fcff3e91b80&gt;, creative_base='/api/v1/novels/r3-mounted-48e1350a932945eca579adf3d5d9d569/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fcff35ffcb0&gt;
+
+    def test_cancel_between_reservation_and_attachment_releases_only_undispatched_hold(creative_model, monkeypatch):
+        e = creative_model
+        row, calls = ready(e, monkeypatch)
+        entered, release = Event(), Event()
+        original = e.broker.reserve
+        reserved = []
+        def blocked(*args, **kwargs):
+            result = original(*args, **kwargs)
+            reserved.append(result)
+            entered.set()
+            assert release.wait(15), "test reservation barrier was not released"
+            return result
+        monkeypatch.setattr(e.broker, "reserve", blocked)
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            pending = pool.submit(lambda: e.client.post(e.creative_base + f'/adaptation-proposals/{row["id"]}/dispatch',
+                headers=e.headers, json={"expected_version": row["version"], "reviewed_preview_digest": row["model_preview"]["preview_digest"]}))
+            try:
+                assert entered.wait(10)
+                latest = checked(e.client.get(e.creative_base + f'/adaptation-proposals/{row["id"]}', headers=e.headers))
+                cancelled = action(e, latest, "cancel")
+                assert cancelled["status"] == "CANCELLED"
+            finally:
+                release.set()
+            assert pending.result(timeout=20).status_code in {409, 422}
+        ledger = e.broker.get(e.nid, row["scope"], e.broker.LEDGER, reserved[0]["id"])
+&gt;       assert ledger["status"] == "RELEASED" and ledger["dispatched"] is False
+E       AssertionError: assert ('RESERVED' == 'RELEASED'
+E         
+E         - RELEASED
+E         + RESERVED)
+
+tests/test_v2_source_adaptation.py:355: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_cancel_between_reservation_and_attachment_releases_only_undispatched_hold[postgres-/api]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:330: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_cancel_between_reservation_and_attachment_releases_only_undispatched_hold[postgres-/api/v1]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:330: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase></testsuite></testsuites>

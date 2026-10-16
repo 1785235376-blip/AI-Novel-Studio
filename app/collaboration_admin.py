@@ -83,6 +83,16 @@ def create_collaboration_admin_router(
 ) -> APIRouter:
     router = APIRouter(prefix=prefix, tags=["collaboration-admin"])
 
+    def mutation_guard(actor, token, workspace_id, require):
+        # Existing third-party ports keep their old call contract. The product's
+        # atomic port opts in and invokes this inside its mutation boundary.
+        if not getattr(service.path_mutations,"supports_reauthorization",False):return {}
+        def reauthorize():
+            current=service.actor(token,workspace_id)
+            if current!=actor:raise _error(403,"PROJECT_SCOPE_FORBIDDEN")
+            require(current)
+        return {"reauthorize":reauthorize}
+
     @router.get("/workspaces", response_model=WorkspaceAdminList)
     def workspaces(x_session_token: str | None = Header(None)):
         if not x_session_token: raise _error(401, "SESSION_REQUIRED")
@@ -120,7 +130,8 @@ def create_collaboration_admin_router(
     def create_project(w: str, body: ProjectCreateRequest, x_session_token: str | None = Header(None)):
         actor=service.actor(x_session_token,w);service.require_admin(actor,w)
         if service.path_mutations is None: raise _error(501,"PATH_MUTATION_NOT_SUPPORTED")
-        return service.path_mutations.create_project(w,body.title,body.genre,actor)
+        return service.path_mutations.create_project(w,body.title,body.genre,actor,
+            **mutation_guard(actor,x_session_token,w,lambda current:service.require_admin(current,w)))
 
     @router.delete("/workspaces/{w}/projects/{p}", status_code=204)
     def delete_project(w: str, p: str, x_session_token: str | None = Header(None)):
@@ -132,7 +143,8 @@ def create_collaboration_admin_router(
         if service.path_mutations is None:
             raise _error(501, "PATH_MUTATION_NOT_SUPPORTED")
         try:
-            service.path_mutations.delete_project(w, p, actor)
+            service.path_mutations.delete_project(w, p, actor,
+                **mutation_guard(actor,x_session_token,w,lambda current:service.require_domain_manager(current,ModalityDomain.NOVEL,scope)))
         except (FileNotFoundError, KeyError) as exc:
             raise _error(404, "PROJECT_NOT_FOUND") from exc
 
@@ -146,7 +158,8 @@ def create_collaboration_admin_router(
     def create_storyline(w:str,p:str,body:StorylineCreateRequest,x_session_token:str|None=Header(None)):
         actor=service.actor(x_session_token,w);scope=AuthorizationScope(ScopeKind.PROJECT,w,p);service.require_domain_manager(actor,ModalityDomain.NOVEL,scope)
         if service.path_mutations is None:raise _error(501,"PATH_MUTATION_NOT_SUPPORTED")
-        try:return service.path_mutations.create_storyline(w,p,body.name,actor)
+        try:return service.path_mutations.create_storyline(w,p,body.name,actor,
+            **mutation_guard(actor,x_session_token,w,lambda current:service.require_domain_manager(current,ModalityDomain.NOVEL,scope)))
         except KeyError as exc:raise _error(404,"PROJECT_NOT_FOUND") from exc
 
     @router.get("/workspaces/{w}/projects/{p}/storylines/{s}/branches", response_model=list[BranchAdminView])
@@ -159,7 +172,8 @@ def create_collaboration_admin_router(
     def create_branch(w:str,p:str,s:str,body:BranchCreateRequest,x_session_token:str|None=Header(None)):
         actor=service.actor(x_session_token,w);scope=AuthorizationScope(ScopeKind.STORYLINE,w,p,s);service.require_domain_manager(actor,ModalityDomain.NOVEL,scope)
         if service.path_mutations is None:raise _error(501,"PATH_MUTATION_NOT_SUPPORTED")
-        try:return service.path_mutations.create_branch(w,p,s,body.name,actor)
+        try:return service.path_mutations.create_branch(w,p,s,body.name,actor,
+            **mutation_guard(actor,x_session_token,w,lambda current:service.require_domain_manager(current,ModalityDomain.NOVEL,scope)))
         except KeyError as exc:raise _error(404,"STORYLINE_NOT_FOUND") from exc
 
     @router.get("/workspaces/{w}/members", response_model=list[MemberAdminView])

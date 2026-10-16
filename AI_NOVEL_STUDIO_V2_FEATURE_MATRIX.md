@@ -1,0 +1,1813 @@
+# V2 Master Roadmap feature matrix
+
+## Identity, vocabulary and evidence limits
+
+**M0 source inventory, 2026-10-09.** Audited HEAD
+`4350a61fb9f61acccb845fef96b24b9b1275bbd3`, tree
+`a05d33f75c5af6f26171d6370c0efeb13a68619d` on
+`feature/v2-narrative-platform`. Requirements are the user's fully read 904-line
+V2 Master Roadmap and 28-line start instructions, supplied on 2026-10-09.
+Section numbers below trace to that roadmap. This is a new current engineering
+inventory, not a reopening/reclassification of the historical independent review.
+
+- **EXISTS**: the precisely described bounded implementation exists in the
+  audited source. It does not imply every broader Studio acceptance criterion.
+- **PARTIAL**: a reusable implementation exists, but specified UX, coverage,
+  semantics, integration or real execution evidence remains missing.
+- **MISSING**: the requested contract/surface was not found in the audited owner
+  and adjacent source. The evidence identifies the nearest extension seam.
+- **BLOCKED**: dependent on unavailable authority, external product, risk decision
+  or intentionally deferred scope; do not execute merely to improve the matrix.
+- **LOCAL_REQUIRED**: target Windows/GPU/native/two-product acceptance cannot be
+  substituted by cloud or mock results.
+
+Evidence IDs link to code and representative tests in §30. A listed test is
+**source evidence**, not an assertion that M0 ran it or that it proves the entire
+row. M0 ran no product tests and made no runtime changes. Current historical
+execution evidence is separately recorded in [M0 report](MILESTONE_M0_REPORT.md).
+The exact 4350a61 PR suite succeeded, but push File/PG capacity cancellation keeps
+overall CI **PARTIAL_CI_CAPACITY**. No cross-event stitching or rerun-to-green.
+The original **39 PARTIAL + F00 INTEGRATED**, independent review **BLOCKED**, remain.
+
+See [architecture](AI_NOVEL_STUDIO_V2_ARCHITECTURE.md) for the owner reuse map,
+cross-entry security seam, migration and rollback. Rows remain bound to the M0
+source even while a later stage is being implemented; later milestones must add
+their exact-source evidence rather than retroactively turn this baseline green.
+
+## 1–3. Product independence and core contracts
+
+| ID / roadmap | Sub-capability | Status | Authoritative owner / evidence and exact remaining boundary |
+|---|---|---|---|
+| CORE-01 §1.1 | Single Studio open/create/save/export without mandatory upstream novel/chapter | PARTIAL | [E01], [E02], [E03]. Standalone creative documents and media primitives exist, but project/entry UX remains novel-oriented; neutral blank image path is M1. **Phase 7 追加事实（不改本行状态）：**统一工作流投影把中性入口作为 `project_start` 投影出来——`entry_kind` 恒为 `NEUTRAL_STUDIO`（原 `IndependentWorkspaceService.activate` 写入的展示回执），`state` 按原偏好行报 `NOT_STARTED`／`READY`／`STARTED`，`has_creative_documents` 报是否已有原 Creative 文档，`start_action` 指向既有中性项目创建入口 `POST /api/experimental/projects`（`requires_original_host_session=true`）。该 GET 不要求已激活，因此能如实报告"尚未开始"；它不创建项目、不激活、不授予执行。仍不改**本行历史状态**；完整中性入口产品 UX 与浏览器验收仍 **PENDING**。[E27], [E28] |
+| CORE-02 §1.1 | Optional, removable/reorderable cross-module chain | PARTIAL | [E04], [E05]. Derivations and bounded workflows exist; general typed cross-module connections do not. |
+| CORE-03 §1.2 | Mutable multiple CreativeIntent values; skip/customize/change intent | MISSING | [E01], [E06]. First-use is a novel sample flow; no neutral intent preference contract. **Phase 7 追加事实（不改本行状态）：**统一工作流投影现在读原偏好 owner（`WorkspacePreferences.intents`／`preset`／`custom_intent`）并把原 `CreativeIntent` 的 11 个值（含 `BLANK` 与 `CUSTOM`）投影为 `creative_intent.values[]`，未选择项也返回，选择状态取自原保存行；**唯一新变更** `POST /api/projects/{nid}/studio/production/workflow/intent` 复用原 CAS 与保留历史（`history_retained=true`，上限 200）：`expected_version=null` 只在当前版本为 0（"尚无保存意图"）时创建，否则 `409 PRODUCTION_WORKFLOW_INTENT_CONFLICT`；越界词表／重复选择 `422 PRODUCTION_WORKFLOW_INTENT_INVALID`。意图与预设仍是展示偏好（`intent_is_permission=false`），不改变模块可见性、权限或执行能力，也不授权执行。仍不改**本行历史状态**；完整"跳过／自定义"产品 UX 与浏览器验收仍 **PENDING**。[E27], [E28] |
+| CORE-04 §1.2 | Editable workspace preset, empty graph, no automatic execution or permission restriction | MISSING | [E05], [E06]. Recipes/templates exist; free intent-to-layout mapping remains to be implemented. **Phase 7 追加事实（不改本行状态）：**统一工作流投影把 7 个模块（`director, storyboard, image, video, audio, timeline, asset`）连同 `dashboard`／`asset_overview` 汇总为只读视图，顶层固定 `advisory_only=true`、`execution_authority=false`；"空图"可直接表达（无文档且无资产 → 该模块 `NOT_STARTED`），`project_start.state=NOT_STARTED` 亦然。预设作为 `creative_intent.preset` 可写且经原 CAS，但**不**从意图／预设派生权限或执行能力（`intent_is_permission=false`），`next_action` 只是描述性元数据。仍不改**本行历史状态**；按意图自动套用布局／建议图仍 **MISSING**，专业 UI/UX 与浏览器验收仍 **PENDING**。[E27], [E28], [E29] |
+| CORE-05 §1.2 | On-demand workspaces and model/executor loading | PARTIAL | [E07], [E08]. Existing capability gating and discovery launch-on-demand; not all requested Studio surfaces exist. |
+| CORE-06 §1.3 | Ordinary forms/task cards and professional graph share assets/routes/jobs | PARTIAL | [E03], [E05], [E08]. Original owners exist; common professional typed graph is missing. |
+| CORE-07 §1.3 | Preview/edit/reject AI workflow suggestions before execution | PARTIAL | [E05], [E09]. Reviewed proposals exist; generalized graph-proposal review not implemented. |
+| CORE-08 §3.1 | Project identity, owner/scope, lifecycle, authorization | EXISTS | [E01], [E02]. Original repository and current-incarnation guard; no new project registry is needed. |
+| CORE-09 §3.1 | Project asset root, default export directory, preference metadata/version | PARTIAL | [E01], [E10]. Original roots/export owners exist; neutral user-configurable per-project metadata remains. |
+| CORE-10 §3.1 | Compatible reversible bridge to Novel Project | PARTIAL | [E01], [E02]. Existing repositories preserve novel data; neutral adapter/upgrade evidence is M1. |
+| CORE-11 §3.2 | Stable asset ID, kind, MIME, size, SHA256, timestamps, metadata revision | EXISTS | [E03]. AssetLibraryService owns bytes and metadata; generic declared MIME alone is not media validity. |
+| CORE-12 §3.2 | Unified source_kind/provider/model/parameters/review/license metadata | PARTIAL | [E03], [E04]. Fields/provenance exist across asset/media owners; independent V2 index projection and complete field parity remain. |
+| CORE-13 §3.2 | Independent image/audio/video import and saved-byte export | PARTIAL | [E03], [E11]. Asset primitives accept these, but neutral no-chapter UI/lifecycle path is not yet proven. |
+| CORE-14 §3.2 | 3D/reference model/white-model screenshot/previs imports with distinct typed semantics | MISSING | [E03], [E11]. Opaque file upload is not a 3D or reference-condition contract. |
+| CORE-15 §3.2 | Chapter/Version remains prose owner, asset index references only | EXISTS | [E01], [E02], [E04]. Existing creative source evidence references rather than overwrites source chapters. |
+| CORE-16 §3.2 | Exact source version/digest, stale detection, immutable old result | PARTIAL | [E02], [E04]. Implemented for covered creative/media lineage; not every future asset kind. |
+| CORE-17 §3.2 | Trash/restore, dependency display, retention-authorized physical cleanup | PARTIAL | [E03], [E10]. Recoverable binary deletion/reference queries exist; comprehensive dependency-protected cleanup is not a general manager. |
+| CORE-18 §3.2 | New V2 binary assets protected against slug reuse through all entry points | MISSING | [E02], [E03]. Creative documents are incarnation-bound; AssetLibrary binary records currently lack that binding. M1 must fence the original owner. |
+| CORE-19 §3.2 | Redacted metadata exports without credentials or absolute paths | PARTIAL | [E04], [E10], [E12]. Existing allowlists exist; new neutral asset/export projection requires its own regression. |
+| CORE-20 §3.3 | SOURCE_OF / DERIVED_FROM / REFERENCES / USED_IN / ALTERNATE_VERSION / APPROVED_FOR / LINKED_CONTEXT | PARTIAL | [E04]. Existing parent DAG and provenance cover derivation; full named relation taxonomy/reason/status is not implemented. |
+| CORE-21 §3.3 | Relation scope, actor, exact target version/hash; no cross-project edge | PARTIAL | [E03], [E04]. Existing lineage captures measured parents and scope; general typed relations remain. |
+| CORE-22 §3.4 | Graph ID/version/snapshot and node/edge persistence | PARTIAL | [E05]. Existing bounded DAG snapshots; complete creative graph geometry/draft contract missing. |
+| CORE-23 §3.4 | NodeDefinition version, typed ports, capabilities, validation, resource/cost estimate | PARTIAL | [E05], [E08]. Restricted declarative schemas/capability metadata exist; media typed-port registry missing. |
+| CORE-24 §3.4 | NodeInstance parameters, input bindings, independent enablement, cache/execution history | PARTIAL | [E05]. Config and run/node state exist; reusable creative cache/typed bindings missing. |
+| CORE-25 §3.4 | Edge port/type/format/version constraints and explicit conversions | MISSING | [E05]. Current edges are source/target IDs; no general media port contract. |
+| CORE-26 §3.4 | Cycle rejection and bounded execution | EXISTS | [E05]. Original topological validation rejects cycles; bounded step/time execution. No implicit loop support. |
+| CORE-27 §3.4 | Node removal preserves approved assets; partial failure preserves truthful results | PARTIAL | [E03], [E05]. Separate asset/run owners exist; future graph deletion/recovery semantics require tests. |
+| CORE-28 §3.5 | Draft/ready/queued/preparing/running/review/complete/fail/cancel/block/unknown projection | PARTIAL | [E08], [E11], [E13]. Existing states differ by owner; unify truthful projection, not a second state machine. |
+| CORE-29 §3.5 | Execution receipt actor, exact inputs, route/model, authority, time/resource/cost/digest/error | PARTIAL | [E08], [E09], [E11]. Several original receipts carry these; missing observations stay unknown. |
+| CORE-30 §3.5 | Cancel-request versus upstream cancellation; no replay of unknown billing | EXISTS | [E08], [E09]. Existing broker/admission/creative unknown-result fences are reusable. Real paid reconciliation is not tested here. |
+| CORE-31 §3.5 | Idempotent retry and original/new-task linkage | PARTIAL | [E05], [E08], [E13]. Implemented per owner; not universal graph retry/cache semantics. |
+| CORE-32 §3.5 | One cross-module orchestration authority reusing original jobs | PARTIAL | [E05], [E08], [E11], [E13]. Original author/media/workflow owners coexist; no new parallel queue is justified. |
+
+## 4–5. Startup, project entry and storage
+
+| ID / roadmap | Sub-capability | Status | Owner / evidence and remaining boundary |
+|---|---|---|---|
+| START-01 §4.1 | First-run language, safe storage defaults and optional advanced setup | PARTIAL | [E06], [E10]. Existing onboarding/packaged paths; unified language/storage first-run experience incomplete. |
+| START-02 §4.1 | Explicitly authorized bounded Windows/service/model-directory scan | PARTIAL | [E07]. Code and fixture tests exist; actual Windows observation is LOCAL_REQUIRED. |
+| START-03 §4.1 | Distinguish discovered file, advertised model, validated runtime and inference | EXISTS | [E07], [E08]. Source separates stages; no real-generation claim follows from discovery. |
+| START-04 §4.1 | Trusted running-service connection suggestions without routine port entry | PARTIAL | [E07]. Known endpoints/trusted configuration supported; arbitrary nondefault-service discovery not guaranteed. |
+| START-05 §4.1 | Reuse first; missing-capability install/API suggestions | PARTIAL | [E07], [E08]. Diagnostics exist; complete needs-driven install/size/license comparison remains. |
+| START-06 §4.1 | Skip model installation and edit/import/export offline | PARTIAL | [E01], [E03], [E06]. Manual core works; neutral independent Studio onboarding requires M1+. |
+| START-07 §4.2 | Per-project intention/preset/capability entry without rescanning machine | MISSING | [E06], [E07]. Scan is explicitly initiated, but new independent project wizard/preferences missing. |
+| START-08 §4.2 | Enter chosen Studio; all others remain available; change intent | MISSING | [E01], [E06]. No intent-based policy exists; requested neutral navigation still missing. |
+| START-09 §4.2 | Select project/asset/cache locations and optional immediate import | PARTIAL | [E03], [E10]. Paths/import primitives exist; project-level setup/relocation UX incomplete. |
+| STORE-01 §5 | Separate app/runtime, models, project/assets, cache/proxy, temp/test and export | PARTIAL | [E07], [E10]. Existing packaging separation; complete user-selected category policy missing. |
+| STORE-02 §5 | Reference existing model locations without copying/deleting weights | EXISTS | [E07]. Discovery/registry use configured paths and do not install weights. |
+| STORE-03 §5 | Per-project measured occupancy | PARTIAL | [E10]. Portable storage reports authorized categories, not whole-disk/complete media occupancy. |
+| STORE-04 §5 | Free space and task estimated space | MISSING | [E10], [E13]. General measured disk admission/estimation not found. |
+| STORE-05 §5 | Cache limits and reclaim policy | PARTIAL | [E10]. Bounded archive/cache records exist; proxy/thumbnail quota service missing. |
+| STORE-06 §5 | Cleanup list, exact preview digest and confirmation | EXISTS | [E10]. Only verified unused reproducible portable export cache; no general model/project deletion. |
+| STORE-07 §5 | Verify directory-migration copies and remap references | PARTIAL | [E10], [E23]. Existing backup/portable relink patterns; full V2 directory migration absent. |
+| STORE-08 §5 | Interrupted migration / crash recovery without user-data deletion | PARTIAL | [E02], [E10]. Atomic writes/recovery checkpoints exist; storage migration state machine not implemented. |
+| STORE-09 §5 | Low-space pause/admission and resume | MISSING | [E10], [E13]. Not covered by generic task failure status. |
+| STORE-10 §5 | High-volume media/model roots independent of install directory | PARTIAL | [E07], [E10]. Packaging safeguards exist; fully configurable per-category media policy missing. |
+
+## 6. Model Center, download and optional API
+
+| ID / roadmap | Sub-capability | Status | Owner / evidence and remaining boundary |
+|---|---|---|---|
+| MODEL-01 §6.1 | Reuse ModelCenter, Discovery, HardwareInventory, Runtime Registry and Broker | EXISTS | [E07], [E08]. These are actual owners, not proposed new services. |
+| MODEL-02 §6.1 | Ollama / LM Studio / ComfyUI / llama.cpp trusted discovery | PARTIAL | [E07]. Bounded probes/bridges; each real user runtime still requires validation. |
+| MODEL-03 §6.1 | Nondefault ports via trusted configuration, no LAN/public/unbounded probing | PARTIAL | [E07]. Configured runtime support; automatic enumeration coverage remains bounded. |
+| MODEL-04 §6.1 | Authorized model roots; GGUF / Safetensors / Diffusers metadata | EXISTS | [E07]. Bounded parsing without loading model code/weights; not real inference. |
+| MODEL-05 §6.1 | Format, component dependencies, model family and runtime compatibility | PARTIAL | [E07], [E11]. Metadata/probe checks exist; complete multimodal workflow component validation missing. |
+| MODEL-06 §6.1 | Content deduplication across locations, retain all paths, no physical merge | PARTIAL | [E07]. Existing discovery identity/digest records; full cross-root content identity UX not established. |
+| MODEL-07 §6.1 | Register disabled → explicit enable → launch on demand | EXISTS | [E07]. Existing separation and safe connection bridge; opening summary does not launch. |
+| MODEL-08 §6.1 | Need-specific official source/license/size/hardware/install guidance | PARTIAL | [E07], [E08]. Diagnostics/catalogs are not a complete install recommendation workflow. |
+| MODEL-09 §6.1 | DISCOVERED/INSPECTED/UNKNOWN/VERIFIED/DISABLED/ENABLED/READY/RUNNING/FAILED/STALE | PARTIAL | [E07], [E08]. Evidence distinctions exist; complete unified vocabulary/projection remains. |
+| MODEL-10 §6.2 | TEXT for novel/screenplay/Agent and context/JSON constraints | PARTIAL | [E08], [E09]. Real text adapter route exists; Chinese/literary quality and memory benchmark LOCAL_REQUIRED. |
+| MODEL-11 §6.2 | Embedding / reranker / OCR as optional capabilities | PARTIAL | [E19]. Embedding/vision extraction adapters exist; no promise all optional runtimes installed. |
+| MODEL-12 §6.2 | IMAGE T2I/I2I/edit with VAE/encoder/LoRA/ControlNet dependency checks | PARTIAL | [E07], [E11]. Registered image paths exist; all component combinations not covered. |
+| MODEL-13 §6.2 | VIDEO T2V/I2V/V2V/reference capability per model version | PARTIAL | [E11]. T2V/I2V operations/adapters exist; V2V/reference video is not a generic proven capability. |
+| MODEL-14 §6.2 | AUDIO TTS/ASR/music/SFX evidence and sample-rate/duration limits | PARTIAL | [E11], [E16]. Separate contracts exist; supported execution depends on actual adapter. |
+| MODEL-15 §6.2 | 3D generation/depth/pose adapters and model-free white-model import | MISSING | [E11]. No supported 3D parser/generation bridge found. |
+| MODEL-16 §6.2 | FFmpeg versus AI interpolation/upscale capability distinction | EXISTS | [E11], [E17]. Processing families are not advertised as fabricated video generators. |
+| MODEL-17 §6.2 | Dynamic quantization/workflow/peak-memory matching; low-resource alternative | PARTIAL | [E07], [E08]. Capacity/unknown evidence is preserved; actual peak-memory scheduler/benchmarks incomplete. |
+| MODEL-18 §6.2 | 8 GB / 12 GB / RTX 5080 16 GB + 64 GB performance evidence | LOCAL_REQUIRED | [E07], [E08]. Cloud/mock evidence cannot validate these target devices. |
+| MODEL-19 §6.3 | No duplicate download, user-selected existing/new model root | PARTIAL | [E07]. Current discovery does not download; complete managed download UI missing. |
+| MODEL-20 §6.3 | Source/author/license/card/restrictions/size/platform/resource/checksum disclosure | PARTIAL | [E07], [E08]. Some catalog metadata; complete version-current download receipts missing. |
+| MODEL-21 §6.3 | Chunked download, pause/resume, digest/signature verification, failure cleanup | MISSING | [E07]. No complete authorized model downloader was found. |
+| MODEL-22 §6.3 | Unknown code, pickle/custom-node installer requires separate authorization | EXISTS | [E07], [E24]. Safe scanner does not execute code; plugin execution remains denied. |
+| MODEL-23 §6.4 | Local-versus-API capability, estimated price and exact outbound data comparison | PARTIAL | [E08]. Broker preview exists; independent multimodal route UX/receipts incomplete. |
+| MODEL-24 §6.4 | Independent Provider adapters, Vault, user routing, budget/price-version binding | EXISTS | [E08], [E11]. Existing bounded implementations; no need for another router/Vault. |
+| MODEL-25 §6.4 | Explicit egress approval/revoke, async status/cancel, billing reconciliation | PARTIAL | [E08], [E11]. Existing guards/receipts; not every modality/provider has production proof. |
+| MODEL-26 §6.4 | Actual paid-provider end-to-end proof or personal subscription usage | BLOCKED | [E08]. This engineering task does not authorize personal paid API calls. |
+
+## 7–8. Shared Creative Graph and optional Director Console
+
+| ID / roadmap | Sub-capability | Status | Owner / evidence and remaining boundary |
+|---|---|---|---|
+| GRAPH-01 §7.1 | Shared Image/Video/Audio/3D/Research DAG and ordinary/pro UI | PARTIAL | [E05], [E14]. Bounded workflow authority exists; common multimodal graph contract/renderer missing. |
+| GRAPH-02 §7.2 | Pan/zoom, marquee/multiselect and draggable visual objects | PARTIAL | [E14]. Reference image board supports them; not executable graph node editing. |
+| GRAPH-03 §7.2 | Drag-connect, typed-port highlighting, invalid-edge explanation/conversion | MISSING | [E05], [E14]. No typed media connection editor. |
+| GRAPH-04 §7.2 | Context-menu and keyboard command search | PARTIAL | [E06], [E14]. Workspace search exists; node-specific quick insertion/search missing. |
+| GRAPH-05 §7.2 | Undo/redo and copy/paste | PARTIAL | [E14]. Existing board undo/redo; graph-aware copy/paste and history not implemented. |
+| GRAPH-06 §7.2 | Node grouping, annotations, collapse, MiniMap and alignment | PARTIAL | [E14]. Board grouping exists; full graph-specific set absent. |
+| GRAPH-07 §7.2 | Keyboard node/port navigation and error location | MISSING | [E05], [E14]. Requires accessible graph semantics and focused regression. |
+| GRAPH-08 §7.2 | Graph version, visible autosaved drafts and reload/disconnect recovery | PARTIAL | [E05], [E14]. Durable workflows and board persistence exist; common loss-resistant graph drafts absent. |
+| GRAPH-09 §7.2 | Import/export graph templates; disconnect/delete consequence preview | PARTIAL | [E05], [E06]. Restricted templates exist; typed graph format and impact preview missing. |
+| GRAPH-10 §7.2 | Large-graph virtualization/LOD benchmark | MISSING | [E14]. No 1,000-object benchmark/threshold is established. |
+| GRAPH-11 §7.3 | Input nodes: Text/Image/Video/Audio/3D/AssetRef/reference/Depth/external file | MISSING | [E05], [E11]. Original owner contracts are reusable; unified typed registry missing. |
+| GRAPH-12 §7.3 | Processing nodes: Agent/image/edit/upscale/video/interpolate/TTS/ASR/convert/quality | PARTIAL | [E05], [E11], [E16], [E17]. Individual adapters exist; graph node registration/binding remains. |
+| GRAPH-13 §7.3 | Control nodes: Director/style/character/camera/motion/budget/review/conditions | PARTIAL | [E05], [E08], [E15]. Manual review exists; generalized controls and conditions not available. |
+| GRAPH-14 §7.3 | Output nodes: Asset Save/Preview/Export/Timeline Handoff/Package | PARTIAL | [E03], [E05], [E17], [E23]. Individual outputs exist; graph output adapter contract missing. |
+| GRAPH-15 §7.3 | Text/Image/Video/Audio/Model/Scene/Camera/Pose/Depth/Style/AssetRef/Timeline ports | MISSING | [E05]. Source/target ID edges cannot represent this type system. |
+| GRAPH-16 §7.3 | Single-node or graph execution with no Director node | PARTIAL | [E11]. Standalone media calls exist; generic single-node execution not integrated. |
+| GRAPH-17 §7.4 | Preview inputs/outputs/models/permissions/privacy/resources/cost/overwrite | PARTIAL | [E08], [E09], [E11]. Existing route/request previews; whole-graph preview missing. |
+| GRAPH-18 §7.4 | Dependency execution and bounded concurrency | PARTIAL | [E05]. Topological ordered host exists; multimodal bounded parallel execution not implemented. |
+| GRAPH-19 §7.4 | VRAM conflict queue, staged unload and resource release | PARTIAL | [E07], [E08]. Runtime lifecycle exists; graph-wide memory resource scheduler missing. |
+| GRAPH-20 §7.4 | Cache binds input version/model/parameters/definition/permission; descendant invalidation | MISSING | [E04], [E05]. Existing stale-source evidence is not graph execution cache. |
+| GRAPH-21 §7.4 | Node/local rerun, queue pause, explicit retry, cancel requested versus acknowledged | PARTIAL | [E05], [E08], [E13]. Original run/job operations exist; partial graph replay remains. |
+| GRAPH-22 §7.4 | Truthful node progress/time/resource/missing-capability/error navigation | PARTIAL | [E13], [E14]. Existing task projections; per-node graph UI missing. |
+| CONSOLE-01 §8 | Optional Director Console carries vision/duration/audience/story/style/performance/sound/review | PARTIAL | [E02], [E15]. Director data/proposals exist; graph Console contract missing. |
+| CONSOLE-02 §8 | Versioned suggestions/parameters to multiple targets without elevated authority | MISSING | [E05], [E15]. Requires graph ports and reviewed propagation. |
+| CONSOLE-03 §8 | Collapsible card, expanded Console, dependency/progress preview | MISSING | [E14], [E15]. Current panels are not a graph Console node. |
+| CONSOLE-04 §8 | Multiple independent Director nodes, duplicate as sub-console | MISSING | [E05], [E15]. Multiple documents are not multiple typed console nodes. |
+| CONSOLE-05 §8 | Preview/review graph/Shot List proposals before replacing/rerunning/sending | PARTIAL | [E02], [E15]. Reviewed shot/director proposals exist; graph proposal adoption missing. |
+| CONSOLE-06 §8 | Disconnect/delete Director without breaking unrelated valid nodes/assets | MISSING | [E05]. Requires actual typed graph dependency tests. |
+
+## 9. Text and Screenplay
+
+| ID / roadmap | Sub-capability | Status | Owner / evidence and remaining boundary |
+|---|---|---|---|
+| TEXT-01 §9.1 | Existing project/world/character/outline/chapter/version/CAS/revision retained | EXISTS | [E01], [E20]. Preserve original owners; M0 does not reimplement V1. |
+| TEXT-02 §9.1 | Memory/context/Agent and existing exports retained | EXISTS | [E08], [E20], [E23]. New graph references must not replace these systems. |
+| TEXT-03 §9.1 | Long/short manual writing, continue/generate/rewrite/shorten/expand/style proposals | PARTIAL | [E08], [E20]. Original author actions exist; each real model's language/quality not accepted here. |
+| TEXT-04 §9.1 | Annotation/diff, explicit acceptance and new revision restoration | EXISTS | [E08], [E20]. Original review/CAS authorities apply. |
+| TEXT-05 §9.1 | Character state/event/time/location/foreshadow/world-rule continuity with evidence | PARTIAL | [E19], [E20]. Rule/knowledge/quality owners exist; full semantic continuity quality not proved. |
+| TEXT-06 §9.1 | Rich text and chapter identity preserved outside Graph text boxes | EXISTS | [E01], [E20]. Existing document/revision contracts remain authoritative. |
+| TEXT-07 §9.2 | Geography/history/organization/politics/rules/items/events/references/custom fields | PARTIAL | [E19], [E20]. Existing world/story schemas cover substantial subset; complete extensible domain UX remains. |
+| TEXT-08 §9.2 | Character identity/personality/motivation/relations/growth/language/state | PARTIAL | [E19], [E20]. Current owner evidence and temporal knowledge are reusable; quality beyond represented facts unverified. |
+| TEXT-09 §9.2 | Optional appearance/reference assets/Voice Profile links with privacy | PARTIAL | [E03], [E16], [E20]. Existing links; full cross-Studio optional selection/consent UX incomplete. |
+| TEXT-10 §9.3 | Independent screenplay with no novel chapter source | EXISTS | [E02]. `source_independent` structured document path; neutral project navigation still CORE-01. |
+| TEXT-11 §9.3 | Film/short/animation/ad/game screenplay presets | PARTIAL | [E02], [E06]. Flexible fields/templates, not all specialized presets verified. |
+| TEXT-12 §9.3 | Selected chapter/range source, scene/location/time/action/dialogue/performance structure | PARTIAL | [E02], [E20]. Existing adaptation and creative schemas; current text scaffolding is not full adaptation. |
+| TEXT-13 §9.3 | Real adaptation: scene splitting/visualization/dialogue restructuring/deletion/difference report | PARTIAL | [E20], [E09]. Adaptation proposal lifecycle exists; new V2 source-aware Agent depth/quality needs M4. |
+| TEXT-14 §9.3 | Independent revisions, human review, source comparison and downstream ScreenplayAsset | PARTIAL | [E02], [E20]. Original screenplay and creative contracts exist; avoid two authoritative copies in bridge. |
+| TEXT-15 §9.3 | Fountain/DOCX exports reused for independent V2 screenplay | PARTIAL | [E23]. Industry exporters exist; creative document export is JSON and needs an adapter. |
+| TEXT-16 §9.3 | Markdown/PDF/EPUB according to actual supported export route | PARTIAL | [E23]. Novel format support does not establish each V2 screenplay format. |
+| TEXT-17 §9.4 | Generic Document/Script for ads/MV/podcast/game dialogue/presentation text | MISSING | [E02], [E20]. Dedicated reusable neutral script asset contract not found. |
+| TEXT-18 §9.4 | Writer/Editor/Critic/Continuity/Adaptation reuse context and review | PARTIAL | [E08], [E20], [E24]. Existing roles/skills; full independent script integration missing. |
+| TEXT-19 §9 acceptance | Novel, independent screenplay and selected-chapter adaptation complete E2E | PARTIAL | [E02], [E20]. Exact current suites cover bounded creative flows; real adaptation quality LOCAL_REQUIRED. |
+
+## 10. Image Studio
+
+| ID / roadmap | Sub-capability | Status | Owner / evidence and remaining boundary |
+|---|---|---|---|
+| IMAGE-01 §10.1 | Standalone T2I, imported image edit and I2I | PARTIAL | [E03], [E11], [E14]. Existing provider/API/media routes, but neutral end-to-end independence incomplete. |
+| IMAGE-02 §10.1 | Multi-candidate, batch variants and side-by-side reuse | PARTIAL | [E11], [E14]. Candidate/task surfaces exist; full comparison/graph batch UX incomplete. |
+| IMAGE-03 §10.1 | Shared nodes for prompt/model/LoRA/style/character/composition/Pose/Depth/edit/upscale | MISSING | [E05], [E14]. Reference canvas is not the requested typed node system. |
+| IMAGE-04 §10.1 | Preview thumbnails, drag output reuse, saved graph groups | PARTIAL | [E14]. Image board previews/groups exist; executable graph persistence/reuse absent. |
+| IMAGE-05 §10.1 | External reference equal to generated asset, no Text/Storyboard prerequisite | PARTIAL | [E03], [E11]. Byte/reference contracts exist; no-chapter project path is M1. |
+| IMAGE-06 §10.2 Generate | T2I/I2I, negative prompt, size/aspect/seed/batch/preset | PARTIAL | [E11]. Capability-dependent provider paths; not all adapters support all parameters. |
+| IMAGE-07 §10.2 Generate | Multiple references only when actual adapter supports them | PARTIAL | [E11]. Operation schema exists; names/catalog claims are not real generation proof. |
+| IMAGE-08 §10.2 Edit | Inpaint mask/local redraw/outpaint/object/background/erase/repair | PARTIAL | [E11]. Generic image-edit adapter exists; full interactive mask/tools and supported-provider matrix missing. |
+| IMAGE-09 §10.2 Enhance | Upscale/denoise/repair/cutout, before-after comparison, new asset output | PARTIAL | [E11]. Processing registry/output lineage exists; complete four-operation editor not delivered. |
+| IMAGE-10 §10.2 Consistency | Character/outfit/style/scene reference sets pinned to exact versions | PARTIAL | [E04], [E11], [E20]. Existing visual identity/reference evidence; absolute visual consistency not guaranteed. |
+| IMAGE-11 §10.2 Character | Front/side/back, expression/pose/outfit variants and optional character atlas link | PARTIAL | [E11], [E20]. Character-reference contracts exist; atlas-specific UI/execution coverage missing. |
+| IMAGE-12 §10.2 Scene | Concept/architecture/atmosphere/layout/angle and optional Director/3D linkage | PARTIAL | [E11], [E15]. Scene reference capability exists; 3D/typed control absent. |
+| IMAGE-13 §10.2 Asset | Dimensions/color space/EXIF policy/rights/version compare/reuse | PARTIAL | [E03], [E04], [E11]. Measured media/lineage exists; complete color/EXIF policy and comparison UX missing. |
+| IMAGE-14 §10.3 | Separate pixel editor with layers/masks/brush/region/local generation; saved version → port | MISSING | [E14]. Node/reference canvas is not a layered pixel editor. |
+| IMAGE-15 §10.4 | Discover/reuse ComfyUI and validate graph components without reinstalling base model | PARTIAL | [E07], [E11]. Existing adapter/probes; complete per-graph dependencies missing. |
+| IMAGE-16 §10.4 | Optional approved API image egress and cost receipt | PARTIAL | [E08], [E11]. Guarded provider paths; no paid invocation in this task. |
+| IMAGE-17 §10 acceptance | PNG/JPEG/WebP actual encoding, graph save/reopen/local rerun/stale reference | PARTIAL | [E03], [E11], [E14]. Raw format-preserving download exists; conversion and graph path require separate tests. |
+| IMAGE-18 §10 acceptance | Actual local image model execution and quality on target Windows | LOCAL_REQUIRED | [E07], [E11]. Synthetic media/mock transport is not this evidence. |
+
+## 11–12. Director and Storyboard
+
+| ID / roadmap | Sub-capability | Status | Owner / evidence and remaining boundary |
+|---|---|---|---|
+| DIR-01 §11.1 | Start blank or with screenplay/shot/image/video/white-model/prompt | PARTIAL | [E02], [E15]. Independent structured Director possible; all media entry adapters missing. |
+| DIR-02 §11.1 | Vision/audience/duration/platform/art/story pacing/emotion curve | PARTIAL | [E02], [E15]. Notes/plans cover subset; full independent intent Console missing. |
+| DIR-03 §11.1 | Color/light/material/blocking/composition/camera/performance controls | PARTIAL | [E02], [E15]. Structured fields and rule checks exist; not all are executable model controls. |
+| DIR-04 §11.1 | Director notes/unknowns, A/B proposals, explicit review and rollback | PARTIAL | [E02], [E09], [E15]. Rule/model proposals and immutable revision recovery exist; broad A/B media workflow incomplete. |
+| DIR-05 §11.2 | Optional expandable/copyable/dragged Console in any project graph | MISSING | [E05], [E14], [E15]. See CONSOLE-02–06. |
+| DIR-06 §11.2 | Show related graph input/output/progress/resources/risks; proposal workflow/task groups | MISSING | [E05], [E13], [E15]. Task projection not yet a Console graph. |
+| DIR-07 §11.2 | Versioned suggestion port; no execution/fee/overwrite bypass | PARTIAL | [E09], [E15]. Existing review boundaries; port contract missing. |
+| DIR-08 §11.3 | Shot size/orientation/focal length/camera motion/eyeline/spatial/blocking/sound plan | PARTIAL | [E02], [E15]. Data and bounded rule diagnostics; geometry only when supplied evidence exists. |
+| DIR-09 §11.3 | Evidenced 3D camera/video motion analysis; unknown when absent | PARTIAL | [E15]. Current camera checks distinguish missing evidence; actual 3D/video analysis adapter absent. |
+| SHOT-01 §12.1 | Stable ShotId/order/duration/scene, lens/angle/motion/action/light/color/dialogue/sound | EXISTS | [E02], [E15]. Existing shot records cover this bounded field set. |
+| SHOT-02 §12.1 | Truly independent shot with optional scene/project link, timecode/media/review/source | PARTIAL | [E02], [E15]. Current creative ShotCard requires scene ID; generic independent Shot Asset missing. |
+| SHOT-03 §12.2 | Shot List sort/bulk edit/filter/import/export | PARTIAL | [E15], [E23]. Existing list/edit/export; complete bulk/import/filter semantics not all implemented. |
+| SHOT-04 §12.2 | Shot Board cards/scene groups/text-image mapping/thumbnails/comparison | PARTIAL | [E14], [E15]. Existing cards/board; comparison and generic grouping incomplete. |
+| SHOT-05 §12.2 | Storyboard Canvas branches/transitions with Image/Video/Director nodes | MISSING | [E05], [E14]. No shared executable typed Storyboard canvas. |
+| SHOT-06 §12.3 | Suggested breakdown from screenplay/director/image/uploaded video without forced script | PARTIAL | [E02], [E15]. Structured derivation exists; image/video breakdown and no-script UX incomplete. |
+| SHOT-07 §12.3 | Direct Shot→Image or Shot→Video without required image intermediate | PARTIAL | [E11], [E15]. Individual operations exist; free graph handoff and independent shot contract missing. |
+| SHOT-08 §12.3 | Depth/Pose/Camera/white-model/3D preview inputs and honest incompatibility | MISSING | [E11], [E15]. No complete typed 3D/reference input seam. |
+| SHOT-09 §12.3 | Stable reorder identity, timeline references and stale-impact indication | PARTIAL | [E02], [E04], [E15]. Stable IDs and source revisions; final NLE reference propagation missing. |
+
+## 13. Video Studio and reference control
+
+| ID / roadmap | Sub-capability | Status | Owner / evidence and remaining boundary |
+|---|---|---|---|
+| VIDEO-01 §13.1 | Prompt→independent T2V asset | PARTIAL | [E11]. Operation/provider seam exists; neutral UI and real provider result still separate. |
+| VIDEO-02 §13.1 | Any uploaded image→I2V without Image Studio history | PARTIAL | [E03], [E11]. Reference inputs exist; full M1/M7 independent path absent. |
+| VIDEO-03 §13.1 | Imported video→V2V/style/reference generation | MISSING | [E11]. No generic V2V operation in current media operation schema. |
+| VIDEO-04 §13.1 | Character/scene/action/style/camera constrained references | PARTIAL | [E11], [E15]. Some frame/continuation contracts; comprehensive validated controls unavailable. |
+| VIDEO-05 §13.1 | Previs/gray model screenshot/video/scene-camera→candidate video | MISSING | [E11]. Not established by a video model family catalog. |
+| VIDEO-06 §13.1 | MP4/MOV import directly into edit workflow without model generation | PARTIAL | [E03], [E17]. Imported bytes and bounded assembly exist; standalone NLE missing. |
+| VIDEO-07 §13.2 | Shared video node canvas, reference fan-out, candidates and batch execution | MISSING | [E05], [E14]. Existing shot sequence is not typed graph execution. |
+| VIDEO-08 §13.2 | Per-step actual input/output/time/resource/cost | PARTIAL | [E08], [E11], [E13]. Existing task receipts; full graph view/resource measurements missing. |
+| VIDEO-09 §13.3 | Separate static gray-image composition reference | MISSING | [E11]. Requires a typed reference intent and supported-provider mapping. |
+| VIDEO-10 §13.3 | Separate temporal Previs video/action/camera reference | MISSING | [E11]. No proven temporal-control capability. |
+| VIDEO-11 §13.3 | Separate actual 3D scene/animation/camera with extracted geometry | MISSING | [E11], [E18]. No parser/camera interchange owner exists yet. |
+| VIDEO-12 §13.3 | Import/preview/media metadata and keyframe selection/sampling | PARTIAL | [E11], [E17]. Media validation/frame helpers exist; full reference review UI incomplete. |
+| VIDEO-13 §13.3 | Reference purpose/weights/capability mapping/duration alignment/risk preview/comparison | PARTIAL | [E08], [E11]. Preflight supports bounded capabilities; complete controls/quality review missing. |
+| VIDEO-14 §13.3 | Optional optical flow/pose/depth/camera extraction | MISSING | [E11], [E18]. No validated complete extraction pipeline. |
+| VIDEO-15 §13.4 | Local/ComfyUI adapters advertise T2V/I2V/V2V separately | PARTIAL | [E07], [E11]. Registry/HTTP provider exists; all local workflow variants not implemented. |
+| VIDEO-16 §13.4 | Submit/progress/query/cancel/download/verify/usage/privacy/size contract | PARTIAL | [E11]. HttpVideoProvider and worker cover subset; production vendor semantics need explicit adapters. |
+| VIDEO-17 §13.4 | Low-spec alternatives or approved API without silent private upload | PARTIAL | [E08], [E11]. Guardrails exist; actual provider comparison/approved async paid path not proven. |
+| VIDEO-18 §13.4 | Stable result asset/model parameters/exact references, compare and independent export | PARTIAL | [E03], [E04], [E11]. Core receipts exist; standalone Video UI incomplete. |
+| VIDEO-19 §13.5 | Queue/VRAM-disk estimate/load-release/draft-final mode/fail-cancel-retry | PARTIAL | [E07], [E08], [E11], [E13]. Owner operations exist; full shared resource scheduling missing. |
+| VIDEO-20 §13.5 | Validate actual output codecs/metadata; retain confirmed results offline | PARTIAL | [E03], [E11]. Measured fixture media and persisted tasks exist; all crash/offline cases not accepted. |
+| VIDEO-21 §13 acceptance | Real target Windows local-video inference and reference-control quality | LOCAL_REQUIRED | [E07], [E11]. Cloud contracts do not prove model output or GPU throughput. |
+
+## 14. Audio Studio
+
+| ID / roadmap | Sub-capability | Status | Owner / evidence and remaining boundary |
+|---|---|---|---|
+| AUDIO-01 §14.1 | Independent TTS text and optional character Voice Profile | PARTIAL | [E11], [E16]. Existing TTS/profile services; neutral no-Text-project surface missing. |
+| AUDIO-02 §14.1 | Voice language/rate/emotion/performance suggestions | PARTIAL | [E16]. Voice-direction fields/adapters exist; provider support is explicit, not universal. |
+| AUDIO-03 §14.1 | Audio import, ASR transcription and subtitle alignment | PARTIAL | [E03], [E16], [E17]. Import/caption/ASR seams; full standalone path not complete. |
+| AUDIO-04 §14.1 | SFX/ambience/Foley/music generation or licensed references | PARTIAL | [E11], [E16]. Processing contracts/assets exist; not a complete sound library or all real adapters. |
+| AUDIO-05 §14.1 | Sample rate/channel/loudness processing | PARTIAL | [E16], [E17]. Metadata and audio tools exist; full conversion/normalization UI missing. |
+| AUDIO-06 §14.1 | Voice conversion/denoise/separation/consistency according to capabilities | MISSING | [E16]. No complete supported independent toolset found. |
+| AUDIO-07 §14.1 | Long dialogue segments, timecodes and role mapping | PARTIAL | [E16]. Audiobook/voice direction owners exist; standalone audio workflow incomplete. |
+| AUDIO-08 §14.1 | Shared Audio Canvas with text/video analysis/reference/TTS/SFX/mix nodes | MISSING | [E05], [E16]. Common graph integration required. |
+| AUDIO-09 §14.1 | Independent audition/light-edit/sync Audio Timeline | MISSING | [E16], [E17]. Voice/caption preparation is not an independent editable audio timeline. |
+| AUDIO-10 §14.2 | Voice-clone/person-imitation authorization and rights evidence | BLOCKED | [E16]. Explicitly later advanced capability; no default cloning/training or external recording retention. |
+| AUDIO-11 §14.3 | Distinct TTS/ASR/Music/SFX capability and local/approved API adapters | PARTIAL | [E11], [E16]. Source distinction exists; execution availability varies. |
+| AUDIO-12 §14.3 | Provenance/duration/sample rate/channels/rights/version; WAV/FLAC/MP3 actual encoding | PARTIAL | [E03], [E16], [E17]. Existing audio export paths; all named codecs/standalone flow unverified. |
+| AUDIO-13 §14 acceptance | Import→audition/trim/export and timeline stale-source detection | PARTIAL | [E03], [E04], [E16], [E17]. Full independent audio editor is not present. |
+| AUDIO-14 §14 acceptance | Real TTS/ASR quality and target-device performance | LOCAL_REQUIRED | [E16]. Mock/fixture output is not a model-quality result. |
+
+## 15. Editing Studio: actual NLE requirements
+
+| ID / roadmap | Sub-capability | Status | Owner / evidence and remaining boundary |
+|---|---|---|---|
+| EDIT-01 §15.1 | Separate Editing Studio from generation; external-only project | MISSING | [E17]. Existing shot planning/assembly do not provide an independent NLE. |
+| EDIT-02 §15.1 | Multiple editable video tracks; trim/split/move/insert/overwrite | MISSING | [E17]. Current assembly is an ordered single video-only cut, not track composition. |
+| EDIT-03 §15.1 | Video overlays/transitions/crop/position/scale/opacity/lock/mute | MISSING | [E17]. Planning transition values do not execute these edit operations. |
+| EDIT-04 §15.1 | Multiple audio tracks, waveform/gain/fade/mute/alignment/mix/link | MISSING | [E16], [E17]. Existing audio services are not multi-track NLE mixing. |
+| EDIT-05 §15.1 | Subtitle track editing/timecode/style/preview/export | PARTIAL | [E17]. Caption owner supports timing/edit/export; final NLE integration missing. |
+| EDIT-06 §15.1 | Ruler/playhead/zoom/snap/multiselect/track height/shortcuts/history | PARTIAL | [E14], [E17]. Planning timeline offers subsets; real media-edit history and track semantics missing. |
+| EDIT-07 §15.1 | Parallel player/browser/Inspector and smooth proxy editing | MISSING | [E17]. No complete proxy-based NLE workspace. |
+| EDIT-08 §15.2 | Real decoding, proxy/cache, preview-versus-final quality | PARTIAL | [E11], [E17]. Validation/review rendering exists; interactive playback/proxy owner missing. |
+| EDIT-09 §15.2 | Rational timebase/FPS, sync and offline/unsupported/missing-frame errors | PARTIAL | [E17]. Caption/OTIO fractions and media checks exist; full NLE media resolution/sync absent. |
+| EDIT-10 §15.2 | FFmpeg real trim/concat/compose/audio/subtitle mux or burn-in, final file validation | PARTIAL | [E17]. Verified video-only bounded assembly exists; audio/subtitle multi-track composition missing. |
+| EDIT-11 §15.2 | OTIO exchange with real parser and explicit compatibility losses | EXISTS | [E17]. Bounded official parser contract; no implication of full external editor compatibility. |
+| EDIT-12 §15.2 | FCPXML/EDL and real Resolve/Premiere compatibility | BLOCKED | [E17]. Planning text export is not certified exchange; target application acceptance not performed. |
+| EDIT-13 §15.3 | AI scene/material/rhythm/rough-cut/subtitle/color/continuity proposals | PARTIAL | [E15], [E17], [E20]. Some rule/analysis suggestions exist; reviewed NLE edit plans missing. |
+| EDIT-14 §15.3 | Review before timeline overwrite; regenerate candidate then explicit replace | MISSING | [E04], [E17]. Requires actual timeline authority and adoption contract. |
+| EDIT-15 §15.3 | Trace clip to model/prompt/reference/approval history | PARTIAL | [E04], [E11], [E17]. Existing source receipts; no full NLE clip graph. |
+| EDIT-16 §15 acceptance | External input→2 video+2 audio+subtitle tracks→preview→render→reopen | MISSING | [E17]. PRODUCTION/VideoTimeline cards must never satisfy this gate. |
+| EDIT-17 §15 acceptance | Target Windows GPU playback/encoding/performance | LOCAL_REQUIRED | [E17]. Requires completed NLE and explicitly authorized target-machine acceptance. |
+
+## 16–19. 3D, Research, Collaboration and Delivery
+
+| ID / roadmap | Sub-capability | Status | Owner / evidence and remaining boundary |
+|---|---|---|---|
+| D3-01 §16 | GLB/glTF/OBJ/FBX/USD actual supported parser, metadata/license/version | MISSING | [E03], [E18]. Generic binary upload is not parser support. |
+| D3-02 §16 | Orientation/camera/gray material lightweight preview and frame export | MISSING | [E18]. No verified 3D preview owner. |
+| D3-03 §16 | Blender asset/camera/animation/timebase/previs interchange | MISSING | [E18]. Future adapter, no authority to manipulate user's DCC project. |
+| D3-04 §16 | UE camera/Sequencer/render-result interchange and version compatibility | MISSING | [E18]. Contract needs actual supported format/version evidence. |
+| D3-05 §16 | 3D generation/rigging/mocap/material advanced execution | BLOCKED | [E18]. Explicit later scope, not inferred from model names. |
+| D3-06 §16 | Independent uploaded 3D→Video/Storyboard reference without Image Studio | MISSING | [E03], [E11], [E18]. Needs typed asset/parser/reference seam. |
+| RESEARCH-01 §17 | Independent research project, manual organization without model | PARTIAL | [E19]. Source/note library exists under project scope; neutral independent entry missing. |
+| RESEARCH-02 §17 | PDF/DOCX/Markdown/image/web reference/notes, cite without forced full copy | PARTIAL | [E19]. Bounded extraction/import and legacy metadata references exist; full type/view parity incomplete. |
+| RESEARCH-03 §17 | Author/date/link/license/access/trust/summary/verification timestamp | PARTIAL | [E19]. Metadata/citation/version fields cover subset; complete trust/license schema missing. |
+| RESEARCH-04 §17 | Search/RAG/embedding with traceable citations and missing-dependency fallback | PARTIAL | [E19]. Literal/vector/vision seams exist; real semantic performance not accepted. |
+| RESEARCH-05 §17 | Historical/geographic/architecture/world/reference analysis for other modules | PARTIAL | [E19], [E20]. Reviewed evidence/context links exist; broad visual/3D integration missing. |
+| RESEARCH-06 §17 | Explicit web fetch, no background private upload | EXISTS | [E19]. `confirm_fetch` and bounded source handling; no new online search was executed by M0. |
+| RESEARCH-07 §17 | Licensed QingJian public knowledge references, no automatic private memory/training | PARTIAL | [E12], [E19]. Privacy boundaries exist; external knowledge product integration unavailable. |
+| COLLAB-01 §18 | Workspace/members/roles/project/asset/task permissions and audit | EXISTS | [E01], [E21]. Existing authority must be reused. Neutral V2 asset paths need exact-scope regression. |
+| COLLAB-02 §18 | Review/comments/annotations and human-task versus AI-job distinction | PARTIAL | [E13], [E21]. Existing review/task owners; not complete all-Studio assignment UI. |
+| COLLAB-03 §18 | Branch/CAS/conflict/merge, immediate revocation | EXISTS | [E01], [E20], [E21]. Preserve original authorization and branch content ownership. |
+| COLLAB-04 §18 | Production cloud sync/realtime enterprise media collaboration | BLOCKED | [E21]. Existing experimental realtime/sync surfaces do not imply broad production approval; later high-risk scope. |
+| COLLAB-05 §18 | Team/branch ownership of all new asset/graph/timeline kinds | PARTIAL | [E01], [E03], [E05], [E21]. Existing scope guards; future media/graph kinds need complete proof. |
+| DELIVER-01 §19 | Each supported module independently exports its real format | PARTIAL | [E03], [E23]. Original novel/assets/captions/creative JSON exist; missing Studios cannot claim formats. |
+| DELIVER-02 §19 | Package manifest/assets/graph/relations/history/license list without weights | PARTIAL | [E10], [E23]. Existing portable package is selected chapters+referenced media; no full V2 graph/timeline package. |
+| DELIVER-03 §19 | Editable novel/short/vertical/CG/competition delivery presets | PARTIAL | [E06], [E23]. Existing export/template choices; complete delivery presets/rules evidence missing. |
+| DELIVER-04 §19 | Model/material/voice/API-output rights and permitted-use inventory | PARTIAL | [E04], [E08], [E16], [E23]. Declarations exist; not legal verification or comprehensive clearance. |
+| DELIVER-05 §19 | Production notes/log/manifest/missing-dependency report | PARTIAL | [E04], [E10], [E23]. Existing receipts/packages; complete cross-Studio report not available. |
+| DELIVER-06 §19 | Automatic submission or online portfolio publishing | BLOCKED | [E23]. Later optional externally consequential scope; no publish authorization here. |
+| DELIVER-07 §19 | Device migration/path remap/digest checks/traversal and overwrite protection | PARTIAL | [E10], [E23]. Portable restore/relink safeguards exist; full graph/timeline migration incomplete. |
+| DELIVER-08 §19 | Offline package reopen with finished media even if models absent | PARTIAL | [E10], [E23]. Bounded portable restore exists; full V2 package gate not met. |
+
+## 20–22. Intelligence, QingJian and UX
+
+| ID / roadmap | Sub-capability | Status | Owner / evidence and remaining boundary |
+|---|---|---|---|
+| AI-01 §20.1 | Writer/Editor/Adaptation/Director/Storyboard/Visual/Motion/Voice/RoughCut/Research/Quality/Delivery roles | PARTIAL | [E24], [E09], [E20]. Existing Agent/Skill owners; role names do not establish each capability. |
+| AI-02 §20.1 | Task Planner proposes editable module/node/task plan | PARTIAL | [E05], [E24]. Recipes/declarative proposals exist; generalized multimodal planner missing. |
+| AI-03 §20.1 | Orchestrator delegates execution to original Job/Provider owners | EXISTS | [E05], [E08], [E24]. Existing adapter pattern to preserve, not a second executor. |
+| AI-04 §20.1 | Authorized Context Broker with source versions and goal/fact/advice/external separation | PARTIAL | [E08], [E19], [E20]. Original author context evidence exists; every future asset type not yet supported. |
+| AI-05 §20.1 | Project memory versus user preference; no unreviewed output→canon promotion | EXISTS | [E20], [E24]. Existing gates and separate services. |
+| AI-06 §20.1 | Separate schema validity/media metadata/rule continuity/subjective model quality | EXISTS | [E11], [E20]. Contracts preserve evidence boundaries; aesthetic quality still requires actual review. |
+| AI-07 §20.2 | Suggested model/node/rework/reference/proxy/cleanup changes show egress/cost/impact | PARTIAL | [E04], [E08], [E10], [E24]. Existing preflights; complete generalized graph suggestion UX missing. |
+| AI-08 §20.2 | No arbitrary Shell/download/plugin/network/user-file action from model content | EXISTS | [E07], [E24]. Restricted adapters and deny-all executable extensions. |
+| AI-09 §20.3 | Route by capability/evidence/resources/language/quality/health/cost/privacy/preferences | PARTIAL | [E08]. Existing explainable broker; observed quality/resource data remains incomplete. |
+| AI-10 §20.3 | Refuse incapable local route; no unapproved charged fallback | EXISTS | [E08], [E09]. `NO_LEGAL_ROUTE`/local-only preview fences are not replaced by model-name guesses. |
+| TUTOR-01 §21.1 | Stable PoemSeed protocol 1.0 and both product IDs | EXISTS | [E12]. `poemseed.creative.studio`, `poemseed.tutor.desktop`; no new parallel protocol. |
+| TUTOR-02 §21.2 | Observer/Advisor/Tutor only; read consent distinct from control/memory/execution | EXISTS | [E12]. Security contract forbids inferred authority. |
+| TUTOR-03 §21.3 | Dock/collapse/float/close Tutor Slot beside Inspector, no canvas/track obstruction | MISSING | [E12], [E22]. Existing integration panel is not a complete dockable/floating slot. |
+| TUTOR-04 §21.3 | Avatar/breathing state/permission cue/advice/task explanation/tutorial steps | PARTIAL | [E12]. Advice/consent UI exists; slot-specific visual states missing. |
+| TUTOR-05 §21.3 | Absent QingJian and disconnect do not block Studio | EXISTS | [E12]. Optional default-off integration and failure isolation. |
+| TUTOR-06 §21.3 | Disconnected/authorizing/connected/expired/incompatible/unavailable states | PARTIAL | [E12]. Session state UI exists; future slot requires integration tests. |
+| TUTOR-07 §21.3 | Multi-monitor/high-DPI/resize/focus/reduced-motion real window behavior | LOCAL_REQUIRED | [E12], [E22]. Cloud React/native fixtures are not target-window UX acceptance. |
+| TUTOR-08 §21.3 | Tutor identity separate from built-in Agent and fee/permission decisions | EXISTS | [E12], [E24]. Existing external bridge authority remains distinct. |
+| TUTOR-09 §21.4 | Minimized semantic project/asset/task/module/graph/node/error/model/goal context | PARTIAL | [E12]. Existing chapter/task/model capsule; new graph/asset extensions need versioned schema. |
+| TUTOR-10 §21.4 | No default prose/media/private-path/credential/raw-log share | EXISTS | [E12]. Allowlist and content-preview consent are existing contracts. |
+| TUTOR-11 §21.4 | HELLO/capabilities/session/trust/expiry; restart invalidates old grants | EXISTS | [E12]. Current session lifecycle, not durable permission transfer. |
+| TUTOR-12 §21.4 | Recommendation/TeachingStep/Diagnostic; graph creation remains reviewed proposal | PARTIAL | [E12]. Existing advisory messages; graph draft type and adoption missing. |
+| TUTOR-13 §21.4 | Bounded loopback/Named Pipe SID/instance/version/size/deadline contract | PARTIAL | [E12]. Reference/native fixture evidence; complete production mutual attestation remains local. |
+| TUTOR-14 §21.4 | Actual independent QingJian desktop source and two-product integration | LOCAL_REQUIRED | [E12]. Real target Desktop source/runtime absent; synthetic peer is MOCK_ONLY. |
+| TUTOR-15 §21.5 | VRAM/LoRA/ControlNet/editing-continuity teaching for selected node/track | PARTIAL | [E12], [E07]. Advisory foundation exists; new node/track context not implemented. |
+| UX-01 §22.1 | DS-v1.0/AppShell/Tokens/primitives and protected-surface process | EXISTS | [E22]. Mandatory existing owner, not permission to redesign shell. |
+| UX-02 §22.2 | Home/intent/recent/capability cards without mandatory wizard | PARTIAL | [E06], [E22]. Existing entry/recents; neutral intent home missing. |
+| UX-03 §22.2 | Text chapter/screenplay/version/world/character specialized view | PARTIAL | [E02], [E20], [E22]. Existing specialized consumers; neutral Studio integration remains. |
+| UX-04 §22.2 | Image/Video graph+preview+Inspector+queue/simple form | PARTIAL | [E11], [E14], [E22]. Existing boards/forms; common typed canvas absent. |
+| UX-05 §22.2 | Director Console/Storyboard board/canvas/review | PARTIAL | [E02], [E15]. Existing panels and cards; Console/canvas missing. |
+| UX-06 §22.2 | Audio waveform/voice/design/preview/light timeline | MISSING | [E16], [E22]. Full independent Audio workspace not delivered. |
+| UX-07 §22.2 | Editing browser/player/Inspector and resizable true multi-track timeline | MISSING | [E17], [E22]. Requires actual NLE implementation. |
+| UX-08 §22.2 | 3D lightweight preview/structure/camera | MISSING | [E18], [E22]. No full 3D workspace. |
+| UX-09 §22.2 | Research/Delivery source/license/checklist and optional Tutor workspace | PARTIAL | [E12], [E19], [E23]. Existing panels; unified independent workspaces incomplete. |
+| UX-10 §22.3 | 1,000-object LOD/incremental rendering benchmark | MISSING | [E14], [E22]. No measured threshold frozen. |
+| UX-11 §22.3 | Background generation/transcode/index, nonblocking UI | PARTIAL | [E08], [E11], [E13], [E17]. Existing jobs; not every current synchronous owner becomes background automatically. |
+| UX-12 §22.3 | Thumbnail/proxy/chunked media loading, not all 4K media in React | PARTIAL | [E03], [E14], [E17]. Bounded previews exist; general proxy service missing. |
+| UX-13 §22.3 | Visible save/dirty/conflict and safe workspace switch/reload recovery | PARTIAL | [E02], [E20], [E22]. Existing drafts/guards; unsaved creative in-memory drafts do not survive every process exit. |
+| UX-14 §22.3 | Truthful queued/progress/cancel/error/retry from actual owner | EXISTS | [E13]. Unknown observations stay unknown; future nodes must adopt this contract. |
+| UX-15 §22.3 | Keyboard/focus/reduced-motion/IME and 1366×768/1440×900/1920×1080/2560×1440 | PARTIAL | [E22]. Existing UI/three-size geometry evidence; new canvases, 2560 and native IME incomplete. |
+| UX-16 §22.3 | Real screenshots plus independent subjective review and reproducible geometry | PARTIAL | [E22]. Historical current-source browser screenshots exist; new Studio review and historical independent audit are not closed. |
+
+## 23–29. Journeys, milestone gates, verification and safety
+
+| ID / roadmap | Sub-capability / gate | Status | Owner / evidence and remaining boundary |
+|---|---|---|---|
+| PATH-01 §23.1 | Novel-only manual/AI-approved writing and export, no media install | EXISTS | [E01], [E08], [E20], [E23]. Existing original path; actual model quality remains separate. |
+| PATH-02 §23.2 | External image→optional I2V model/API→independent video export | PARTIAL | [E03], [E08], [E11]. Full neutral UI/model evidence not complete. |
+| PATH-03 §23.3 | CG intent→free Image/3D/Director→references→Editing→delivery | MISSING | [E14], [E17], [E18]. Core graph/3D/NLE not implemented. |
+| PATH-04 §23.4 | Optional novel adaptation→screenplay/director/shot/media/audio/edit/export | PARTIAL | [E02], [E09], [E11], [E15], [E16], [E17]. Structured planning exists; free full-chain production not complete. |
+| PATH-05 §23.5 | Raw/previs video→reference analysis→capable provider→compare→NLE→output | MISSING | [E11], [E17], [E18]. Requires actual reference-video contract and NLE. |
+| GATE-M0 §24 | Current owner inventory/frozen baseline/CI truth/migration plan | EXISTS | This matrix, [architecture](AI_NOVEL_STUDIO_V2_ARCHITECTURE.md), [M0 report](MILESTONE_M0_REPORT.md). Documentation audit only, no historical-review closure. |
+| GATE-M1 §24 | Neutral Project/Intent/Storage/Asset plus independent image/video import/export | PARTIAL | [E01]–[E04], [E10]. Existing owner foundations; Appendix C image minimum remains next actual implementation. |
+| GATE-M2 §24 | Typed common Graph/UI/local execution/cache/Console/Tutor placeholder | MISSING | [E05], [E14]. Existing workflow host must be extended, not replaced. |
+| GATE-M3 §24 | Trusted reuse/onboarding/download choice/optional API proof | PARTIAL | [E07], [E08]. Existing discovery/route boundaries; full user workflow remains. |
+| GATE-M4 §24 | Text and real source-aware adaptation plus generic scripts | PARTIAL | [E02], [E09], [E20], [E23]. Actual model-dependent gates remain LOCAL_REQUIRED where unavailable. |
+| GATE-M5 §24 | Image graph/edit/reference/model/format path | PARTIAL | [E03], [E11], [E14]. Full graph/editor and real-model proof incomplete. |
+| GATE-M6 §24 | Independent Director/Shot with optional graph/media/3D references | PARTIAL | [E02], [E15]. Structured planning exists; Console and free shot graph incomplete. |
+| GATE-M7 §24 | Standalone video/reference/previs/local/API/resources | PARTIAL | [E08], [E11]. Existing provider seams; reference control and complete product flow missing. |
+| GATE-M8 §24 | Standalone audio/TTS/ASR/edit/waveform/export | PARTIAL | [E16], [E17]. Existing audio owners, incomplete Studio. |
+| GATE-M9 §24 | Real editable multi-track NLE and verified output/reopen | MISSING | [E17]. Planning timeline never satisfies this gate. |
+| GATE-M10 §24 | Independent 3D/research/delivery and Studio Tutor adapter | PARTIAL | [E12], [E18], [E19], [E23]. 3D missing, existing research/delivery/Interop bounded. |
+| GATE-M11 §24 | Five free-entry paths, combined UX/performance/full exact-source regression | MISSING | [E25]. Future modules and stable candidate required first. |
+| GATE-M12 §24 | Authorized user Windows installation/GPU/models/native acceptance | LOCAL_REQUIRED | [E12], [E25]. Only explicit later authorization permits target machine use. |
+| VERIFY-01 §25 | Schema/bad inputs/CAS/provenance/scope/restart per new module | PARTIAL | [E02]–[E05], [E25]. Current owners covered; future contracts require new tests. |
+| VERIFY-02 §25 | API auth/revoke/stale/timeout/audit/redacted failures | PARTIAL | [E01], [E02], [E08], [E12], [E25]. Existing fences; new neutral paths need cross-entry cases. |
+| VERIFY-03 §25 | Real UI click/drag/key/zoom/window/dirty/recovery checks | PARTIAL | [E14], [E22], [E25]. Current browser suites are not future graph/NLE tests. |
+| VERIFY-04 §25 | Real adapter request/receipt/incompatibility/fee/cancel/unknown/no-model | PARTIAL | [E07], [E08], [E11], [E25]. Contract/mock versus actual provider explicitly separated. |
+| VERIFY-05 §25 | Graph edge/type/cycle/invalidations/cache/partial failure/recovery | PARTIAL | [E05]. Cycle/limited workflow tests exist; typed graph suite missing. |
+| VERIFY-06 §25 | Real output bytes/metadata/preview-final distinction and audiovisual sync | PARTIAL | [E11], [E17]. Fixture validation exists; complete NLE sync/media coverage missing. |
+| VERIFY-07 §25 | Independent and optional cross-module journeys | PARTIAL | [E02], [E11], [E25]. Only bounded current flows, not five blueprint paths complete. |
+| VERIFY-08 §25 | Strict File/real-PG/frontend/browser/native/Interop/source receipts | PARTIAL | [E25]. Exact 4350 PR complete; push File/PG0 cancelled, aggregates fail closed. |
+| SAFE-01 §26 | No bundled weights/forced models; local storage, secret Vault, explicit paid egress | EXISTS | [E07], [E08], [E10]. Preserve these existing boundaries; no paid invocation made. |
+| SAFE-02 §26 | Bounded trusted path/port scans, no arbitrary code/plugins/pickle | EXISTS | [E07], [E24]. Actual safe discovery and deny-all execution rules. |
+| SAFE-03 §26 | No automatic move/delete of original models/media/personal files | EXISTS | [E03], [E10]. Existing safe cleanup is narrowly scoped; future migrations require explicit contract. |
+| SAFE-04 §26 | Voice/reference rights evidence, no implicit commercial clearance | PARTIAL | [E04], [E16]. Declarations exist; advanced voice cloning remains blocked. |
+| SAFE-05 §26 | Untrusted model output strict parsing, never executable instructions | EXISTS | [E09], [E11], [E24]. Typed/bounded parsing and host-owned execution. |
+| SAFE-06 §26 | Tutor no global RW token; revocable/audited context/memory/case sharing | EXISTS | [E12]. Optional bridge grants are distinct and scoped. |
+| SAFE-07 §26 | Server default-off V2 and V1_ACCEPTANCE_MODE absolute override | EXISTS | [E26]. Existing flag inventory/dependencies; no browser bypass. |
+| EXEC-01 §27 | Stage commits/tests/reports with exact start/end source identity | PARTIAL | [E25]. Existing source-bound evidence; new M0→M12 history belongs to each actual stage. |
+| EXEC-02 §27 | CI timeout diagnosis preserving test order/skips/manifests/failures | PARTIAL | [E25]. Actual push capacity evidence retained; no capacity fix proven. |
+| EXEC-03 §27 | Main/freeze/RC1 untouched, Draft retained, no merge/tag/release/deploy | EXISTS | [E25], [E26]. M0 changes only new documents; publication remains parent-controlled. |
+| DOC-01 §28 | Current feature matrix and actual architecture | EXISTS | This file and [architecture](AI_NOVEL_STUDIO_V2_ARCHITECTURE.md); current M0 deliverables. |
+| DOC-02 §28 | New full UX review/local-model integration/milestone history/Windows plan | PARTIAL | [E25]. Prior reports/plans exist; blueprint-complete final set is future milestone work. |
+| DOC-03 §28 | Final exact-source RC candidate/install-upgrade/package manifest without weights | BLOCKED | [E25]. Not ready before applicable implementation/acceptance; release needs separate approval. |
+| WIN-01 §29 | Clean install/start/uninstall/upgrade/IME/storage/no-model entry | LOCAL_REQUIRED | [E10], [E22], [E25]. Hosted packaging smoke is a different level. |
+| WIN-02 §29 | Actual trusted discovery/16 GB GPU/64 GB RAM/model reuse/no manual port | LOCAL_REQUIRED | [E07], [E25]. No cloud-host observation substitutes. |
+| WIN-03 §29 | Discovery versus enable/inference, service restart and 8/12/16 GB resource limits | LOCAL_REQUIRED | [E07], [E08]. Actual hardware/model evidence required. |
+| WIN-04 §29 | Independent Studios and free optional graph/white-model combinations | LOCAL_REQUIRED | [E25]. Also depends on missing implementation; no premature device test. |
+| WIN-05 §29 | Disconnect/revoke/cancel/error/crash/cache persistence and real multi-track reopen | LOCAL_REQUIRED | [E05], [E17], [E25]. Cloud contract subset does not prove native recovery. |
+| WIN-06 §29 | Real QingJian consent/disconnect/window behavior/no control | LOCAL_REQUIRED | [E12]. Two actual applications and target-window evidence required. |
+| WIN-07 §29 | Disk cleanup/safe exit preserving user models/assets; package SHA/file hashes | LOCAL_REQUIRED | [E10], [E25]. Bind actual built package and revalidate after source changes. |
+
+## Appendix scope and immediate gate
+
+Appendix A's future expansions remain **BLOCKED/deferred**, not missing current
+V2 acceptance items: distributed remote rendering, model quality ranking fleets,
+advanced realtime coauthoring, professional pixel compositing, complex automatic
+cinematography, complete 3D camera simulation, exact 3D-controlled generation,
+advanced live mixing/voice cloning, Resolve-class grading/VFX, full DCC,
+advanced active research, production enterprise sync and automatic online
+submission. Their nearest owners are the corresponding rows above; none should
+be implemented as a parallel core or silently included in a claimed V2 finish.
+
+Appendix B's prohibited shortcuts are review invariants for the associated rows:
+intent is advisory; no required novel/shot origin; no duplicate weights/library;
+discovery is not inference; no copied private ComfyUI engine; no superuser
+Director; no planning-cards-as-NLE; no invented 3D fidelity; no silent API upload;
+no forced Tutor popup; no modified frozen truth; no cloud-as-Windows claim.
+
+Appendix C's first actual implementation target is **M1 minimum image loop**.
+It is not completed by this matrix. Storage quotas/migration, video import,
+the full relationship taxonomy and later Graph/Model work remain explicitly
+separate even after that minimum path passes.
+
+## 30. Evidence and single-owner catalog
+
+| Evidence | Actual source owners and representative existing verification source |
+|---|---|
+| <a id="e01"></a>E01 | [RepositoryBundle](app/repositories/bundle.py), [NovelService](app/services/novel_service.py), [File novel](app/repositories/file/novel.py), [PostgreSQL novel](app/repositories/postgres/novel.py), [scope service](app/services/collaboration_scope_service.py), [authorization](app/services/authorization_service.py). |
+| <a id="e02"></a>E02 | [Creative models](app/creative/models.py), [service](app/creative/service.py), [project store](app/creative/project_store.py), [API](app/creative/api.py); [foundation tests](tests/test_v2_creative_foundation.py), [workflows](tests/test_v2_creative_workflows.py), [lifecycle](tests/test_v2_creative_project_lifecycle.py), [UI](frontend/src/creative/CreativeWorkspace.test.tsx). |
+| <a id="e03"></a>E03 | [AssetLibraryService](app/services/asset_library_service.py), [original API](app/api.py), [lifecycle](app/asset_lifecycle_api.py); [asset tests](tests/test_asset_library.py), [safety](tests/test_asset_safety.py), [recovery](tests/test_asset_lifecycle_r2.py). |
+| <a id="e04"></a>E04 | [ProductionLineageService](app/experimental/production_lineage.py), [change impact](app/experimental/change_impact.py), [original DAG](app/services/asset_library_service.py); [lineage tests](tests/test_r4_production_lineage.py). |
+| <a id="e05"></a>E05 | [original workflow host](app/services/v1_capability_service.py), [workflow API](app/workflow_api.py), [declarative adapter](app/experimental/declarative_agents.py), [adapter SDK](app/experimental/declarative_adapter_sdk.py); [execution tests](tests/test_r2_workflow_execution.py), [host seam tests](tests/test_declarative_workflow_host_seam.py). |
+| <a id="e06"></a>E06 | [First use](app/experimental/first_use.py), [UX](app/experimental/ux.py), [templates](app/experimental/template_library.py), [EntryExperience](frontend/src/novel/EntryExperience.tsx); [workspace UX tests](tests/test_post_interop_workspace_ux.py). |
+| <a id="e07"></a>E07 | [ModelCenter](app/model_center/service.py), [discovery](app/model_center/discovery.py), [environment](app/model_center/discovery_environment.py), [bridge](app/model_center/discovery_bridge.py), [HardwareInventory](app/provider_runtime_v2_host_hardware_inventory.py); [ModelCenter tests](tests/test_model_center_phase1.py), [phase2](tests/test_model_center_phase2a.py), [snapshot bridge](tests/test_provider_runtime_v2_model_center_snapshot_bridge.py), [discovery report](LOCAL_AI_DISCOVERY.md). |
+| <a id="e08"></a>E08 | [Broker](app/experimental/model_broker.py), [profiles](app/experimental/provider_profiles.py), [JobManager](app/jobs.py), [AuthorRequest](app/author_request.py), [Vault](app/credential_vault.py); [broker tests](tests/test_r4_model_broker.py), [cancel/dispatch](tests/test_r4_broker_cancel_dispatch.py). |
+| <a id="e09"></a>E09 | [creative proposals](app/creative/proposals.py), [creative generation coordinator](app/creative/generation.py); [workflows](tests/test_v2_creative_workflows.py), [Director model UI](frontend/src/creative/DirectorModelControls.test.tsx). |
+| <a id="e10"></a>E10 | [packaged path owner](app/packaging/paths.py), [atomic write](app/storage.py), [PortableProjectsService](app/experimental/portable_projects.py); [portable maintenance](tests/test_r4_portable_maintenance.py), [portable batches](tests/test_r4_portable_batches.py), [Windows plan](LOCAL_AI_WINDOWS_ACCEPTANCE.md). |
+| <a id="e11"></a>E11 | [MediaService/registry](app/experimental/media.py), [AssetProviderRegistry/adapters](app/asset_providers.py), [AssetTaskWorker](app/services/asset_task_worker.py), [media validator](app/media_files.py), [frame helpers](app/media_frames.py); [media workflows](tests/test_r3_media_workflows.py), [adapter tests](tests/test_asset_provider_adapter.py), [media engine tests](tests/test_surface_freeze_media_engine_adapters.py). |
+| <a id="e12"></a>E12 | [protocol](LOCAL_INTEROP_PROTOCOL_V1.md), [security](LOCAL_INTEROP_SECURITY.md), [Desktop mapping](QINGJIAN_DESKTOP_MAPPING_CHECKLIST.md), [host](app/local_interop/host.py), [provider](app/local_interop/provider.py), [integration UI](frontend/src/interop/LocalTutorIntegration.tsx); [contracts](tests/test_local_interop_contracts.py), [desktop tests](tests/test_local_interop_desktop_runtime.py). |
+| <a id="e13"></a>E13 | [task projection owners](app/experimental/workspace_task_owners.py), [UX service](app/experimental/ux.py), [author task projection](app/experimental/author_task_projection.py); [workspace UX tests](tests/test_post_interop_workspace_ux.py). |
+| <a id="e14"></a>E14 | [ImageInfiniteCanvas](frontend/src/novel/ImageInfiniteCanvas.tsx), [multimodal persistence](frontend/src/novel/useMultimodalWorkspacePersistence.ts), [CreativeCanvas](frontend/src/creative/CreativeCanvas.tsx); [canvas tests](frontend/src/novel/ImageInfiniteCanvas.test.tsx). These are not a typed executable Creative Graph. |
+| <a id="e15"></a>E15 | [DirectorService](app/experimental/director.py), [ScreenplayService](app/services/screenplay_service.py), [creative models](app/creative/models.py), [DirectorShotList](frontend/src/novel/DirectorShotList.tsx), [DirectorPanel](frontend/src/experimental/DirectorPanel.tsx); [shot tests](frontend/src/novel/DirectorShotList.test.tsx), [screenplay CAS](tests/test_screenplay_cas_history.py). |
+| <a id="e16"></a>E16 | [audio providers](app/audio_providers.py), [audio production store](app/audio_production_store.py), [AudiobookService](app/services/audiobook_service.py), [voice direction](app/experimental/voice_direction.py), [audiobook](app/experimental/audiobook.py); [audio provider tests](tests/test_audio_providers.py), [audio API tests](tests/test_audio_production_api.py). |
+| <a id="e17"></a>E17 | [VideoAssemblyService](app/services/video_assembly_service.py), [subtitle timeline](app/experimental/subtitle_timeline.py), [OTIO exchange](app/experimental/timeline_exchange.py), [VideoTimeline](frontend/src/novel/VideoTimeline.tsx), [ProductionTimeline](frontend/src/creative/ProductionTimeline.tsx); [VideoTimeline tests](frontend/src/novel/VideoTimeline.test.tsx), [production tests](frontend/src/creative/ProductionTimeline.test.tsx). |
+| <a id="e18"></a>E18 | Nearest future 3D seams: [asset owner](app/services/asset_library_service.py), [media operation schema](app/experimental/media.py), [Director camera grammar](app/experimental/director.py). Audited source has no supported GLB/glTF/OBJ/FBX/USD parser, Blender/UE bridge or 3D Studio acceptance path. |
+| <a id="e19"></a>E19 | [ResearchLibrary](app/experimental/research_library.py), [extraction](app/experimental/research_extract.py), [vision](app/experimental/research_vision.py), [embeddings](app/experimental/embeddings.py), [vector index](app/experimental/vector_index.py), [World](app/experimental/world.py), [StoryGraph](app/experimental/story_graph.py); [research tests](tests/test_r4_research_library.py), [extract tests](tests/test_r4_research_extract.py), [embedding adapter tests](tests/test_post_interop_wave3_embedding_adapter.py). |
+| <a id="e20"></a>E20 | [ChapterService](app/services/chapter_service.py), [AdaptationService](app/services/adaptation_service.py), [adaptation API](app/adaptation_api.py), [memory](app/services/memory_service.py), [user preferences](app/services/user_preference_service.py), [continuity](app/services/continuity_finding_service.py), [Editor](frontend/src/Editor.tsx); [branch screenplay tests](tests/test_screenplay_branch_revision.py), [screenplay PostgreSQL tests](tests/test_screenplay_cas_postgres.py). |
+| <a id="e21"></a>E21 | [collaboration API](app/collaboration_api.py), [branch manuscript](app/repositories/branch_manuscript.py), [teams](app/experimental/teams.py), [writer room](app/experimental/writer_room.py), [offline sync](app/experimental/offline_sync.py); [realtime/sync boundary](docs/delivery/functional-surface-freeze/REALTIME_AND_SYNC.md). |
+| <a id="e22"></a>E22 | [design system](docs/ui/design_system.md), [protected surfaces](docs/ui/protected_ui_surfaces.md), [AppShell](frontend/src/ui/AppShell.tsx), [tokens](frontend/src/ui/tokens.css), [V2 UI report](docs/delivery/v2-development/creative-workbench-ui.md), [CreativeWorkspace tests](frontend/src/creative/CreativeWorkspace.test.tsx). |
+| <a id="e23"></a>E23 | [ExportJobService](app/services/export_job_service.py), [NovelService exporters](app/services/novel_service.py), [industry formats](app/industry_export_formats.py), [PortableProjects](app/experimental/portable_projects.py), [creative export](app/creative/service.py); [resource package tests](tests/test_export_resource_packages.py), [portable mounted tests](tests/test_r4_portable_batches_mounted.py). |
+| <a id="e24"></a>E24 | [Agent catalog](app/agent_catalog.py), [Agent runner](app/agents.py), [AgentJobService](app/services/agent_job_service.py), [declarative agents](app/experimental/declarative_agents.py), [safe adapter SDK](app/experimental/declarative_adapter_sdk.py); [declarative model tests](tests/test_r5_declarative_model.py). |
+| <a id="e25"></a>E25 | [current PR 47 body](https://github.com/1785235376-blip/AI-Novel-Studio/pull/47), [4350 PR Cloud CI](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37907528214), [4350 push Cloud CI](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37907521986), [existing evidence index](docs/delivery/v2-development/cloud-v2-evidence-index.md), [M0 ledger](MILESTONE_M0_REPORT.md). |
+| <a id="e26"></a>E26 | [flags](app/experimental/flags.py), [V1 freeze](V1_SCOPE_FREEZE.md), [original historical matrix](POST_INTEROP_FEATURE_MATRIX.md), [continuation report](POST_INTEROP_R4_R5_CONTINUATION_REPORT.md), [compatibility/rollback](docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md). |
+| <a id="e27"></a>E27 | Phase 7 unified production workflow projection (current facts, added 2026-10-14): [projection](app/creative/production_workflow.py), [request models](app/creative/production_workflow_models.py), [closed routes](app/creative/production_workflow_api.py) included by [the original router factory](app/creative/workspace_api.py), [design/contract doc](docs/v2/production-workflow-phase7.md); [workflow tests](tests/test_v2_production_workflow.py), [route tests](tests/test_v2_production_workflow_api.py). |
+| <a id="e28"></a>E28 | Phase 7 receipts and harness (current facts, added 2026-10-14): [phase checks runner](scripts/run_phase7_workflow_checks.py), source-bound receipts `docs/delivery/v2-development/phase7-workflow-*-r*.json`/`.log`, [phase report](PHASE7_WORKFLOW_UX_REPORT.md). |
+| <a id="e29"></a>E29 | Phase 7 consolidation UI source (line B, current facts, added 2026-10-14): [production workflow contract](frontend/src/production/productionWorkflowContract.ts), [client](frontend/src/production/productionWorkflowClient.ts), [controller](frontend/src/production/useProductionWorkflow.ts), [status board](frontend/src/production/WorkflowStatusBoard.tsx), [dashboard](frontend/src/production/ProductionDashboard.tsx), [intent editor](frontend/src/production/ProductionIntentEditor.tsx), [inspector](frontend/src/production/ProductionInspectorPanel.tsx), [asset overview](frontend/src/production/ProductionAssetOverview.tsx), [tokens](frontend/src/production/productionWorkflow.css), [types](frontend/src/production/productionWorkflowTypes.ts); tests [contract](frontend/src/production/productionWorkflowContract.test.ts), [client](frontend/src/production/productionWorkflowClient.test.ts), [dashboard](frontend/src/production/ProductionDashboard.test.tsx), [controller](frontend/src/production/useProductionWorkflow.test.tsx), [mounted dashboard](frontend/src/production/productionDashboardMount.test.tsx). At this checkpoint the 5 vitest files (35 cases), `tsc -b` and `pnpm run build` all passed (earlier red `types`/`build`/`frontend` revisions retained), while browser/visual acceptance remained **PENDING_LINE_B**. |
+
+[E01]: #e01
+[E02]: #e02
+[E03]: #e03
+[E04]: #e04
+[E05]: #e05
+[E06]: #e06
+[E07]: #e07
+[E08]: #e08
+[E09]: #e09
+[E10]: #e10
+[E11]: #e11
+[E12]: #e12
+[E13]: #e13
+[E14]: #e14
+[E15]: #e15
+[E16]: #e16
+[E17]: #e17
+[E18]: #e18
+[E19]: #e19
+[E20]: #e20
+[E21]: #e21
+[E22]: #e22
+[E23]: #e23
+[E24]: #e24
+[E25]: #e25
+[E26]: #e26
+[E27]: #e27
+[E28]: #e28
+[E29]: #e29
+
+## 31. Append-only M1 delta — 2026-10-09 13:00 UTC
+
+**Full M1: PARTIAL.** The 325 M0 inventory rows above remain unchanged, including
+**47 EXISTS / 196 PARTIAL / 60 MISSING / 7 BLOCKED / 15 LOCAL_REQUIRED**. The delta
+below does not silently promote those baseline classifications. Source baseline:
+`0df2640c4c1a2d3052bb0a84d14445744d04046f`; M1 is uncommitted at this checkpoint,
+with no end SHA or published M1 CI claimed. Detailed contracts, exact receipt
+links, preserved failures and unmet requirements: [M1 report](MILESTONE_M1_REPORT.md).
+
+| Baseline requirement IDs | M1 implemented delta | Current evidence / remaining gap |
+| --- | --- | --- |
+| CORE-01/08/10; START-08 | Blank/neutral original project entry and independent manual IMAGE/VIDEO/AUDIO/ASSETS consumer; no compulsory chapter/model/graph. | Real decoded image/video/audio owner roundtrips and current unit contracts verified. Actual image/video file-picker, reopen/export browser acceptance **PENDING**. Full independent Studios remain **PARTIAL**. |
+| CORE-03/04; START-07 | Bounded multiple/empty/custom intents and preset metadata, CAS and saved-preference UI. | Unit-tested preservation of modules and absence of implicit mutation on local selection. Applied preset-specific layouts/suggested graphs **MISSING**; no permission or execution authority derives from intent. |
+| CORE-11/12/13; IMAGE-05 | Original asset ID/version/digest, actual media validation, author-declared external provenance/license and original-byte export. | Selected File/PG regressions pass. 25 MiB/asset and 512 MiB/scope bounds; declaration is a second write. Full cross-kind/generated-job catalog, large-media handling and transcode/export formats remain **PARTIAL**. |
+| CORE-18/19 | Original-owner project-incarnation/exact-scope fences, old-route denial, feature/V1 exclusion and redaction. | Included in selected original-owner regressions. No automatic adoption of old unbound assets. Final hosted/source-bound gates still pending. |
+| CORE-15/16/20/21 | Seven optional typed relationships, existing-parent constraints, version/digest snapshots and redacted current-state projection; original Chapter/Screenplay read-only bridge. | Integrated and original-owner File/PG plus frontend units pass. Browser acceptance remains pending. This list/overview is neither an executable M2 canvas nor a completed knowledge graph. |
+| CORE-17 | Version-aware trash/restore, original dependencies and new active incoming-relation protection; relationship removal tombstones. | Bounded lifecycle regressions pass. General retention/purge/physical cleanup **PARTIAL/MISSING**. |
+| CORE-09; START-09; STORE-01/02/10 | Existing packaging/storage owners retained; browser download destination; descriptive storage category projection. | No new configurable project/model/cache/export directory contract or default export path. Full path management/migration **PARTIAL/MISSING**. |
+| STORE-03 | Current bound-asset active/trash record counts/bytes; trash consumes quota. | Not total disk occupancy across DB/history/proxies/cache/filesystem allocation; original unbound assets excluded from this view. **PARTIAL**. |
+| STORE-04/09 | Real asset-filesystem free-space estimate, 64 MiB reserve, import-byte preflight, recheck and fail-closed 507; truthful capacity UI. | Current negative tests pass in File/PG and units. No task-sized reservation or running-job low-space pause/resume. **PARTIAL**. |
+| STORE-05/06 | Existing import quotas and narrowly scoped original portable-export-cache cleanup retained. | No generalized cache/proxy/thumbnail limits or Studio preview-confirm cleanup. Do not reclassify narrow M0 STORE-06 EXISTS as a full Storage Manager. |
+| STORE-07/08 | Existing original roots remain authoritative and are not automatically moved or cleaned. | Verified reference/copy migration, interruption journal/recovery and safe rollback **MISSING** for full Studio storage management. External model files are never cleanup targets. |
+| GATE-M1 | Implemented minimum no-model path plus original-owner regression and corrected frontend/build evidence. | **PARTIAL**: actual browser/visual proof, full storage/preset semantics and final published source/CI receipts remain open. Safe nondependent M2/M3 may proceed; dependent operations remain blocked. |
+
+Evidence checkpoint: File **1,047 passed / 954 skipped**; actual PG 17.11
+**1,011 passed / 987 skipped**, normal shutdown; corrected frontend **1,773 passed
+/ 8 existing skips**; corrected TypeScript/Vite/token **PASS**; catalog check
+**3 passed**. Each receipt is source-stable and separately scoped; backend runs
+are selected regressions, not the full manifest. The mounted API catalog has
+**2,077 operations**, M1-only delta **+34 / −0**. Independent collection review
+is **INVENTORY_ONLY**: **9,809 collected**, original **9,151** preserved in order,
+**658** additions relative to the frozen baseline, historical skips unchanged;
+no claim those 9,809 nodes executed.
+
+All earlier failures remain archived, including M1's test-fixture/assertion/build
+failures and the distinct M0 push browser failure with **403 TRACE_ACCESS_BLOCKED**.
+M0 hosted CI was still `IN_PROGRESS_WITH_NONPASS` at its persisted 12:49 checkpoint.
+Historical `PARTIAL_CI_CAPACITY`, `39 PARTIAL + F00 INTEGRATED`, independent-review
+`BLOCKED` and M12 `USER_APPROVAL_REQUIRED / LOCAL_REQUIRED / NOT_RUN` remain intact.
+
+## 32. Final M1 evidence delta: strict asset revisions
+
+The M0 inventory and §31's 13:00 snapshot remain unchanged. Final
+`IndependentWorkspaceService._row` adds a V2-only positive-actual-integer revision
+boundary; seven corrupt values across both profiles are covered without changing
+legacy owner semantics or repairing data implicitly. RED is **7 failed / 7 skipped
+/ 150 deselected**; final focused File and actual PG 17.11 are each **215 passed /
+186 opposite-profile skipped**, unchanged-source, with normal PG shutdown. This
+strengthens bounded CORE-11/12/18/19 version/identity safety; it does not complete
+every asset kind or full M1.
+
+Earlier **1,047/1,011** owner-regression passes and **1,773/8** frontend evidence
+are **pre-final-guard snapshots**. They are not advertised as a full regression
+of the final backend adapter. Final catalog generation is **2,077 operations,
+M1 +34/−0**, fingerprint
+`a06abe220e300bad702981085001c7bd0259ba6d81a519bb3f855c1f8db56292`.
+Final API catalog check is **3 passed**; coverage infrastructure **174 passed**.
+Actual final inventory has **9,823 nodes**, including exactly 14 new corruption
+variants since 9,809, original 9,151 ordered nodes and historical skips preserved.
+Written manifest SHA256
+`3e86bfabbdcb2c494968cf89d6efdd3ff2cc10edf921fa47f6a9669474dfce9f`
+is verified; collection remains **INVENTORY_ONLY**, not execution. Detailed receipts:
+[M1 report §11](MILESTONE_M1_REPORT.md#11-final-metadata-guard-delta-and-bounded-m1-closure).
+
+**GATE-M1 remains PARTIAL**, bounded minimum-path closure only. Local browser is
+**BLOCKED**, hosted current-M1 browser **NOT_RUN**, visual acceptance unverified.
+Storage migration/recovery, generalized cache cleanup/limits, global reservation,
+running-job low-space pause and applied presets remain missing/partial. Safe
+nondependent M2/M3 work can continue while dependent operations remain blocked.
+No final published SHA or user-Windows acceptance is claimed.
+
+Separate M0 terminal state is [preserved](docs/delivery/v2-development/m0-ci-terminal.json):
+push Cloud **FAILURE** and PR Cloud **CANCELLED**, including failed PR File/PG
+aggregates despite PG execution success. Prior local Chromium socket denial / SIGABRT
+explains the carried browser environment block; no new M1 local attempt or trace
+retrieval around the M0 **403 TRACE_ACCESS_BLOCKED** occurred.
+
+## 33. Append-only M2-A development delta
+
+Checkpoint **2026-10-09 13:50 UTC**, baseline M1
+`57986cb13d452731baf82bbc242bfc79f9cfd145`; M2 is uncommitted, **PARTIAL**.
+All 325 M0 rows and preceding M1 snapshots remain unchanged. This delta describes
+implemented source, not a final promoted status or full-stage test verdict.
+See [M2 report](MILESTONE_M2_REPORT.md) for exact owners and execution evidence.
+
+| M0 IDs | Implemented M2-A slice | Remaining gap |
+| --- | --- | --- |
+| GRAPH-01/11/15 | Closed seven-node/four-port graph registry, empty actor-private scoped graph, strict typed edges and CAS persistence. | Full multimodal port/adapters, shared ordinary/professional views; original Project/Asset/Workflow owners remain authoritative. |
+| GRAPH-02/03/07 | Positioned node canvas, pan/zoom, marquee/multiselect, keyboard movement, typed port buttons/form connection and invalid-edge feedback. | Drag-to-connect, richer highlighting/conversion/error focus, actual browser/a11y/visual acceptance. |
+| GRAPH-04/05/06/08/09/10 | Explicit save/reopen, in-memory undo/redo, conflict/dirty guards and bounded deletion. | Persistent draft autosave/reload recovery, command search, copy/paste/groups/MiniMap/templates and large-graph performance remain missing/partial. |
+| GRAPH-12/13/14/16 | Original WorkflowRun host executes local text/rule/manual outputs; optional Director note and exact human review. | No JobManager/provider/model dispatch, generated-asset lineage, Asset Save/Export/Timeline adapter or professional Console/Tutor. |
+| GRAPH-17/18/19/21/22 | Selected dependency closure/preflight, explicit queued execution, original review/pause/resume/cancel and fixed admission deadline. | Model capability/cost/privacy admission, parallel/VRAM scheduling, provider retry/cancellation reconciliation and full resource UI. |
+| GRAPH-20 | Same-version, same-owner reviewed-ancestor local output cache; approval never reused. | Cross-version descendant invalidation, binary cache and storage cleanup/reservation absent. |
+| CORE-17; GRAPH-11/14 | Asset reference displays original ID/version/digest and CURRENT/STALE/UNAVAILABLE state. | It is metadata, not an original parent/provenance/dependency edge. No graph-aware strong delete guard, atomic input CAS or output publication; saved detach/rebind and selected execution are blocked. |
+| GATE-M2 | Independent manual graph foundation with no compulsory Director/model/chapter. | **PARTIAL**: actual image generation/material conversion, missing graph features/adapters and final integrated/browser gates remain open. |
+
+Finite bounds are 16 nodes, 40 edges, **96,000/64,000 decimal bytes** for graph
+and output, 25 graphs/100 runs/20 history entries. Original run deadline is
+3,600 seconds from admission; node budget 5 seconds. These are not CI budget
+changes, large-graph performance proof or M1 Storage Manager completion.
+
+Verified development receipts include **257 passed / 44 PG deselected** for the
+latest File/contracts deadline slice; first API **16 passed / 16 skipped** is an
+earlier snapshot. Preserve the 241-pass run's explicit source drift and the wrong
+interpreter's `No module named pytest` failure. Final integrated counts, actual
+PG, full frontend/build, browser and current hosted M2 remain pending. The
+separate M1 compatibility/media correction preserves its first TCP/browser
+failures and **403 TRACE_ACCESS_BLOCKED** artifact, not a new whole-CI PASS.
+
+### 33.1 Terminal-check delta, 13:55 UTC
+
+Full frontend **1,923 passed / 8 existing skips**, build/token **PASS**, and
+**279 CI-infrastructure/catalog checks** now have agreeing source-stable receipts.
+Mounted API File **20 passed / 20 skips** is a separate earlier snapshot.
+Current catalog **2,107 operations, +30/−0**; collection **10,178 nodes** is
+inventory only, preserving original 9,151 order and skips. Written manifest,
+integrated File/PG and actual browser/visual remain pending. See the
+[M2 report](MILESTONE_M2_REPORT.md); none of these results promotes full GATE-M2.
+
+### 33.2 Integrated File update, 13:59 UTC
+
+[Original-owner File](docs/delivery/v2-development/stage-m2-integrated-owner-file.json)
+finished **PASS: 1,490 passed / 1,098 skipped**, 299.01 seconds. It selects 33
+original-owner/M1/M2/media-contract files; it is not the full backend manifest.
+The stable 1,660-input map matches frontend/build/279-check evidence. Real PG
+remains pending; no profile combination, browser PASS or full M2 completion is
+inferred. Exact log/source binding is in [M2 report](MILESTONE_M2_REPORT.md).
+
+### 33.3 Written inventory update, 14:01 UTC
+
+[Manifest review](docs/delivery/v2-development/stage-m2-manifest-change-review.json)
+and [independent recollection/write](docs/delivery/v2-development/stage-m2-manifest-written.json)
+verify **10,178 nodes = M1 9,823 + 355**, preserved old order/skips/external gates,
+and actual manifest SHA256
+`acefe60873bd452ff663b254cb4c25a910c99dcb140732171105b7ba0b687d62`.
+The frozen manifest remains unchanged. [Actual browser collection](docs/delivery/v2-development/m2-browser-inventory-review.json)
+retains all prior 12 cases: **7 original + 8 independent (5 M1 + 3 M2)**, no overlap.
+Both are **inventory only**; no browser launched or full backend execution inferred.
+Real PG completion remains pending at this observation.
+
+### 33.4 Current M2-A evidence summary, 14:07 UTC
+
+Selected 33-file owner regression is terminal in both profiles: File **1,490
+passed / 1,098 skipped**, real PG 17.11 **1,457 passed / 1,131 skipped**, normal
+shutdown. Their stable 1,660-input maps match full frontend **1,923/8**, build/token
+PASS and **279** infrastructure/catalog passes. Inventory remains distinct:
+10,178 backend nodes and 7+8 browser cases were collected, not all executed.
+[M2 report](MILESTONE_M2_REPORT.md) contains the final binding; **GATE-M2 remains
+PARTIAL**, current hosted/browser NOT_RUN and visual acceptance unverified.
+Final end SHA is deferred to the actual PR publication receipt. M0/M1 inventory,
+all failures and M12 approval boundary remain unchanged.
+
+## 34. Append-only M3-A host authority and consent delta
+
+**2026-10-09 14:44 UTC; development source, full M3 PARTIAL.** Parent HEAD
+`99c43b6892038233c390be2ae61acb669163d0b5`, tree
+`69d69ffe71838263069d164a0a07b39b5f4a4333`. Original baseline rows and all earlier
+milestone deltas remain unchanged. [M3 report](MILESTONE_M3_REPORT.md) supplies
+source owners, exact bounds and per-run evidence rather than rewriting M0 status.
+
+| Baseline IDs | Current source advancement | Remaining boundary |
+| --- | --- | --- |
+| START-02; MODEL-01/02/03/04 | Host-authorized preview and explicit strict-digest confirmation over existing discovery; known/saved loopback services; common roots default false; configured/registered file and executable metadata fully disclosed. | Development-only checks; actual Windows/runtime observation LOCAL_REQUIRED. No whole-disk, LAN/public or generic port scan. |
+| START-03; MODEL-07/09 | Preview, Detect, Validate, Register, configuration/license review and Enable stay distinct; inference explicitly NOT_RUN. | Metadata/protocol checks never establish working inference, model fit or quality; full lifecycle projection remains PARTIAL. |
+| START-05/06; MODEL-08/19/20/21 | Model Center can preview existing configuration or skip; advanced path/port forms and current blockers remain available. | Complete needs-driven sources/licenses/sizes/dependencies/install/download/resume/cleanup guidance remains PARTIAL/MISSING. |
+| MODEL-05/10/12/13/14/15/17/18 | Original modality adapters and hardware inventory reused; unknown facts preserved. | Complete component validation and measured 8/12/16-GB profiles, actual generation/quality still missing or LOCAL_REQUIRED. |
+| MODEL-23/24/25/26 | Broker, Vault, routing and budget owners preserved; no paid fallback or credential creation. | Full optional API consent/budget/reconciliation journey and paid proof not supplied by discovery. |
+| GATE-M3 | Useful bounded M3-A host-private onboarding foundation. | **PARTIAL**. Source freeze, integrated final receipts, browser acceptance and full model/API scope still open. |
+
+This is an intentional discovery compatibility/security tightening: all production
+routes, cached reads included and V2 off included, require actual current Host
+provenance. Nonpackaged project collaboration alone is rejected. The separate
+shared Model Center role helper is unchanged. Before/after/precommit rechecks and
+original trusted-session binding generations fence stale authority; a digest is
+not a new access credential. Scanning may disable and persist stale registrations,
+which is disclosed before consent; it is not an observation-only guarantee.
+
+Verified development subsets include first cache reproduction **4 FAIL**, later
+**23 PASS**, host-authority **296 PASS**, mounted precommit **23 PASS**, mutation
+**223 PASS** and newest service/legacy **215 PASS**. Their overlapping, differing
+source maps must not be summed or promoted to final integrated evidence. M3 final
+File/real-PG/full frontend/build/catalog/manifest and hosted/browser are pending;
+user Windows/inference remain NOT_RUN. Separate published M2 independent-media
+jobs each retained **6 PASS / 2 FAIL**; the select-label correction's unit evidence
+does not establish hosted/browser revalidation. See report §§5–7 for exact limits.
+
+### 34.1 Bounded planning delta, 14:55 UTC
+
+START-02 / MODEL-01–04 now also have a **5-second cooperative preview/replanning
+budget** and at-most-50-ms owner-lock wait intervals with live guard checks.
+`planning_budget_seconds` and `LOCAL_AI_SCOPE_BUDGET_REACHED` expose the bound;
+45-second scanning and 120-second consent TTL are unchanged. The latest
+[224-pass development receipt](docs/delivery/v2-development/m3-scope-planning-dev-01.json)
+records concurrent addition of a browser-fixture test (1,673 → 1,674 inputs), so it
+is not final-source proof. No browser has executed; full M3 remains PARTIAL.
+
+### 34.2 Frozen-source evidence delta, 15:05 UTC
+
+Final local source map is **1,676 inputs** (`aefdbfd9884879ab2e17b42754c8ae7cbb6ecd54de4b8e192c9b158e6fe22259`).
+Stable agreeing receipts now show frontend **1,981 PASS / 8 existing skips**,
+build/45-file token **PASS**, complete infrastructure/catalog **279 PASS** and
+current-discovery catalog-owner regression **3 PASS**. Catalog has **2,111
+operations, M3 +4/−0**; written backend inventory is **10,335 = 10,178 + 157**,
+with all published old nodes/order/test/gate/skip contracts preserved. Actual
+browser list output is **7 original + 11 independent**, not execution. See
+[M3 report §9](MILESTONE_M3_REPORT.md#9-source-freeze-and-terminal-local-checks--2026-10-09-1505-utc)
+for exact hashes. The selected 52-file File/real-PG integration remains pending;
+full M3 PARTIAL and all real-model/user-Windows/paid-provider boundaries remain.
+
+### 34.3 Integrated File update, 15:08 UTC
+
+The [52-file selected File owner run](docs/delivery/v2-development/stage-m3-integrated-owner-file.json)
+finished **2,082 PASS / 1,099 skips** (1,098 opposite-profile + one existing actual
+Windows native check), 310.49 s, on the matching stable 1,676-input map. It is not
+full-manifest/Windows/browser execution. Real PG remains pending; full M3 stays
+PARTIAL. [M3 report §9.5](MILESTONE_M3_REPORT.md#95-integrated-file-result-1508-utc)
+retains exact evidence and skip boundaries.
+
+### 34.4 First integrated PG failure retained, 15:20 UTC
+
+M3 real-PG selected integration is **FAIL: 2 failed / 2,047 passed / 1,132 skips**,
+811.97 s, despite stable matching 1,676-input maps. Two unchanged original workflow
+API tests failed on missing create-response `id`; diagnosis and normal-stop
+verification remain pending. The transient evidence transport disconnect did not
+restart tests or change source. Separately, the final M2 hosted manifest records
+both Cloud events FAIL (File incomplete; PG execution successful but aggregate
+prerequisite FAIL), with narrower passing browser/TCP/Windows/Interop selections.
+[M3 report §§10–11](MILESTONE_M3_REPORT.md#10-terminal-published-m2-hosted-record--2026-10-09-1520-utc)
+keeps each evidence level distinct. GATE-M3 remains PARTIAL; no PG aggregate or
+full-roadmap completion is inferred.
+
+### 34.5 Confirmed PG harness isolation issue, 15:24 UTC
+
+The two first-PG failures are now traced to reused test data: SQL shows both
+fixed-title rows created at 14:04:35 UTC during M2; the unchanged original API
+correctly returns 409. The first diagnostic's unused-import failure is retained,
+and the corrected diagnostic proves the conflict. Normal original-run shutdown
+is verified at 15:15:57 UTC. [M3 report §11.1](MILESTONE_M3_REPORT.md#111-confirmed-reused-database-cause-and-normal-shutdown-1524-utc)
+records hashes and exact evidence. A narrow runner-only fresh-database mode and
+new isolation tests are being prepared, preserving existing data and original
+assertions/titles. New source freeze and complete selected checks are required;
+the first failed run and prior 1,676-input results remain historical, not rewritten.
+
+### 34.6 Fresh-source File and local-check checkpoint, 15:42 UTC
+
+After the runner-only fresh-database correction, current receipts bind **1,677
+inputs**, map SHA256
+`964ad4a0c317f43d65e2aa8793d6f87b5e6630b977ee269803c42c6248fd143f`.
+The **complete selected 53-file File owner range** is **2,109 PASS / 1,099 skips**,
+317.00 s; it is not all **10,362** product nodes. Freshly rerun frontend is
+**1,981 PASS / 8 existing skips**, build/45-file token PASS, infrastructure/catalog
+**279 PASS** and browser collection **7 original + 11 independent, inventory only**.
+All these maps and logs were verified, rather than borrowing initial-source runs.
+
+Fresh smoke reruns the original two failed tests unchanged: **2 PASS**, with
+actual PG 17.11 database OID 31259, empty-before-migration proof, all 20 original
+SQL files, normal stop and retained data. Runner/helper regressions are **32 PASS**;
+the first integration failure remains preserved. New written inventory is
+**10,362 = 10,335 + 27**, SHA256
+`bc15318b92cae0ee7a3c581321de95f3577c684b0ced26daf9f7228ccda57715`,
+with old tests/gates/order/skips intact. Catalog stays **2,111 operations (+4/−0)**
+and application source is unchanged. Exact fresh receipt/source/log hashes are in
+[M3 report §12](MILESTONE_M3_REPORT.md#12-fresh-database-correction-and-current-source-checks--1542-utc).
+The complete fresh PG owner run is still pending. M3 stays PARTIAL; full-product
+hosted CI awaits publication, and browser/user-Windows/inference proof is separate.
+
+### 34.7 Final local M3-A checkpoint, 15:47 UTC
+
+The fresh real PostgreSQL 17.11 run is now **PASS: 2,076 passed / 1,132 skipped**,
+831.24 s, with the same stable **1,677-input** map as File **2,109/1,099**, full
+frontend **1,981/8**, passing build/45-file token and **279** infrastructure/catalog
+checks. Actual fresh DB OID **32129**, empty-before-migration proof, all 20 original
+SQL hashes, retained data and normal shutdown at 15:45:46 UTC were verified.
+[M3 report §13](MILESTONE_M3_REPORT.md#13-final-local-m3-a-checkpoint--1547-utc)
+contains exact current receipts/log hashes and publication identity rules.
+
+This completes the **selected 53-file owner range**, not full-product execution
+of all **10,362** manifest nodes. Catalog 2,111 (+4/−0), written manifest and 7+11
+browser collection retain their separate inventory level. Earlier failed attempts,
+including the diagnosed reused-database run and M2 hosted failures, remain intact.
+M3-A is a publishable **PARTIAL** checkpoint. Exact end SHA/tree will be bound via
+PR 47's publication receipt, not self-embedded or replaced with the M2 parent.
+New-SHA full-product hosted CI and M3 browser/visual results remain pending; actual
+user Windows, real inference/quality and full M3 model/API gates remain open.
+
+## 35. Append-only M3-B file-observation delta
+
+This updates evidence for only the rows below; original row text remains the
+historical baseline. Source, tests, retained failures and execution limits are in
+[MILESTONE_M3B_REPORT.md](MILESTONE_M3B_REPORT.md).
+
+| Row | Current M3-B delta; status boundary |
+| --- | --- |
+| START-03 / MODEL-04 | **EXISTS**, now exposed in the V2/schema-2 Model Center view from the existing scan. Files/indexes, runtime candidates and generation evidence are visibly distinct. Metadata/header checks still do not verify weights or inference. |
+| MODEL-05 | **PARTIAL**. Format, exact file/index byte size and family/capability hints are displayed. Diffusers size/path are only `model_index.json`; complete component/runtime compatibility is not established. |
+| MODEL-06 | **PARTIAL, unchanged**. Path-based IDs and separate locations are retained. No content digest grouping, cross-location deduplication or physical merge is implemented. |
+| MODEL-09 | **PARTIAL**. Same-scan candidate/registration associations, authorized-route state, unknown binding, missing/partial observations and uncertain registration state are projected honestly. Complete unified lifecycle vocabulary remains open. |
+| MODEL-01 / MODEL-07 / STORE-02 | **EXISTS, preserved**. Original discovery/registry owners and explicit register/configure/enable/dispatch boundaries remain; the new view never copies weights or triggers actions. |
+
+No broader MODEL/install/API/hardware or GATE-M3 row is promoted to complete.
+New browser collection is inventory only; current source and published M3-A hosted
+results retain separate identities. Full M3 remains **PARTIAL**.
+
+The [corrected-source continuation](MILESTONE_M3B_REPORT.md#12-corrected-source-freeze-and-terminal-frontend-checks--1634-utc)
+adds **START-02 / MODEL-02 (still PARTIAL)** compatibility evidence for legal
+legacy host scanning and **MODEL-09 (still PARTIAL)** all-mode private-state
+purging on denial/owner change. It restores existing owner reuse rather than
+expanding host access. Browser 7+14 remains inventory only at that checkpoint.
+
+The [final local M3-B ledger](MILESTONE_M3B_REPORT.md#12-corrected-source-freeze-and-terminal-frontend-checks--1634-utc)
+now includes matching 56-file File/real-PG passes. Written 10,380-node and 7+14
+browser inventories remain inventory only. No additional feature status or
+GATE-M3 status is promoted by these results.
+
+## 36. Append-only M3-C prerequisite-observation delta
+
+[M3-C report](MILESTONE_M3C_REPORT.md) records the same-scan extension and its own
+verification identity. **MODEL-05 and MODEL-09 remain PARTIAL**: exact ComfyUI
+workflow node/loader advertisements now distinguish observed, not_observed and
+unknown, while the original catalogue's component requirements remain unknown
+without identity evidence. Valid bounded absence is not machine-wide absence;
+complete response inspection is not component integrity or inference.
+
+**MODEL-01 / MODEL-07 remain preserved**: original Model Center/discovery/consent
+owners, registration, enablement and routing remain authoritative. The read-only
+view introduces no second inventory, scan, install or model action. MODEL-06
+content deduplication, complete compatibility, hardware profiles, install/API
+workflows and GATE-M3 remain partial. Actual Windows/inference remain NOT_RUN.
+
+[M3-B terminal CI](docs/delivery/v2-development/m3b-ci-terminal.json) retains both
+Cloud FAIL outcomes, incomplete File execution and failed strict joins, plus
+11-pass/3-fail independent media. Its new fixture correction has separate
+source-contract evidence; neither old CI nor collection validates M3-C.
+
+## 37. Append-only M4 AI Execution Layer delta
+
+The current user-defined M4 scope is AI Execution Layer; historical feature rows
+and the former M4 roadmap label remain unchanged as history. The six-module
+owner/API/UI map is in [the execution contract](docs/v2/ai-execution.md), and
+actual verification/remaining acceptance is in [M4 report](MILESTONE_M4_REPORT.md).
+
+- Model Provider Adapter and local invocation reuse original TextModelNode,
+  provider/model registries and enabled external Ollama/llama.cpp routes.
+- Model Router is a thin original ModelBroker facade, with explicit exact route,
+  capabilities/license/zero-price checks and no fallback.
+- Creative Graph Node Runtime bridges one schema-2 text node to original
+  WorkflowRun and JobManager. No chapter, second queue or second model registry
+  is created. Human review exposes a proposal and never applies manuscript/Canon.
+- APIProvider is **RESERVED**, not executable. Scheduling remains **PARTIAL**:
+  existing project admission and dependency ordering, without global fairness,
+  hardware allocation or measured inference performance.
+
+These bounded changes do not complete the broader MODEL/API/install/hardware
+rows, Image/Video execution, or GATE-M3. Real local inference/quality and actual
+user Windows/GPU acceptance remain **NOT_RUN / LOCAL_REQUIRED**. M3-C's inherited
+**PARTIAL_PR_CI_CAPACITY** and historical independent review **BLOCKED** persist.
+
+## 38. Append-only M4-B provider and text-asset delta
+
+[M4-B report](MILESTONE_M4B_REPORT.md) records this separate checkpoint and its
+source-bound results. Original owners and historical feature rows are preserved.
+
+- Uniform provider capability/availability/execution/result contracts and scoped
+  task matching are **PARTIAL**: Ollama/llama.cpp reuse authorized local routes;
+  LM Studio has tested codecs but trusted locality is unverified. ComfyUI,
+  image/video and API remain declared/reserved, without automatic fallback.
+- Hardware matching is advisory total RAM/VRAM filtering, not measured free
+  capacity, model-fit validation or a global scheduler.
+- Current TextNode UI execution archives every accepted result through original
+  AssetLibraryService as a private DRAFT v1 before original human review. Review
+  projects APPROVED/REJECTED v2; original reads/refresh recover bounded storage
+  gaps without inference replay or added steps. This does not migrate historical
+  clients or implement edited text-content versions, manuscript or Canon apply.
+- Real local inference/quality remains NOT_RUN; actual user Windows/GPU remains
+  LOCAL_REQUIRED. Historical PARTIAL_PR_CI_CAPACITY and independent review BLOCKED
+  remain. Full M4 and broader MODEL/API/install/image/video gates are not promoted.
+
+## 39. Append-only M4-C real CPU text delta
+
+[M4-C report](MILESTONE_M4C_REPORT.md) records the first actual owned CPU
+TextNode → original Router/JobManager → private TextAsset v1 → review v2 run,
+using official Qwen GGUF and llama.cpp. Exact prompt/parameters/model evidence
+and Workflow/settlement receipts are persisted and shown in the existing UI.
+Repeated admission/reads do not replay inference; manuscript/Canon remain untouched.
+
+This replaces the **NOT_RUN** boundary only for that explicit local CPU text
+acceptance case. Other model families, quality, real-model browser flows,
+Windows/GPU and full hosted CI remain separately qualified in the report.
+API/Image/Video/global scheduling remain reserved or partial. The historical
+M4-B File-capacity cancellations and independent-review BLOCKED are preserved.
+
+## 40. Append-only M4-C receipt admission boundary
+
+The [admission follow-up](MILESTONE_M4C_ADMISSION_REPORT.md) continues the same
+bounded text-execution scope from published `ef79251f`. New receipt-bearing
+requests now pass both existing JSON-byte budgets before the original Job is
+prepared. Actual serialization, shared passive builders and owner-proven maximum
+forms prevent heavily escaped prompts from generating an unarchivable result.
+No prompt is truncated, old limit increased, original assertion relaxed, or
+existing output migrated/replayed. Normal dispatch gains no extra user step.
+
+Same-source selected File and fresh PostgreSQL regressions each pass 233 tests;
+a separate owned llama.cpp/Qwen CPU recheck again yields one private asset v1→v2
+without manuscript apply. These results do not substitute for full exact-SHA CI
+or broaden the prior case into quality/all-model/Windows/GPU certification.
+Historical capacity failures and independent-review BLOCKED remain distinct.
+
+## 41. Append-only M4-D Creative screenplay export delta
+
+Roadmap TEXT-15 now has a Creative-owned Fountain/DOCX/Markdown projection,
+private exact-version API, verified-download UI and additive tests. No second
+screenplay owner or manuscript mutation is introduced. Original JSON preserves
+complete structured metadata; text formats retain their explicit projection and
+Fountain syntax limits. Chapterless save/reopen/export is covered separately
+from chapter-bound source/version/privacy fences.
+
+The [M4-D report](MILESTONE_M4D_REPORT.md) records final verification and retained
+failed attempts. Local browser launch was blocked before page execution; hosted
+browser/geometry acceptance is pending publication. TEXT-15 is therefore
+IMPLEMENTED_WITH_ACCEPTANCE_PARTIAL at this checkpoint, not a full V2 gate pass.
+TEXT-17 generic Script and TEXT-13 real structured adaptation remain subsequent
+roadmap work. Historical M4-C hosted failed call and incomplete File execution
+remain INCOMPLETE_HOSTED_CI + FAILED_OBSERVED; B's bounded cache/diagnostic work
+cannot reclassify them as only capacity or completed coverage.
+
+## 42. Append-only generic Script and CI-context correction
+
+TEXT-17 now has a bounded manual authored-text contract on the original Creative
+owner: seven purposes, no chapter prerequisite, immutable document kind,
+version/CAS/history/restore, scope/privacy/incarnation fences, a dedicated text
+editor inside the existing Screenplay stage, and TXT/Markdown/DOCX plus original
+JSON export. Exact body bytes are preserved; unsupported DOCX text fails
+explicitly. Existing five workspace stages and novel professional editor remain.
+
+Status is **IMPLEMENTED_WITH_ACCEPTANCE_PARTIAL**. Graph source reuse and
+model-assisted generic Script proposals are still incomplete. Source-aware
+TEXT-13 adaptation follows separately; this manual slice does not claim model
+quality or complete M4 acceptance. [Stage report](MILESTONE_M4_SCRIPT_REPORT.md)
+and [API/UI contract](docs/v2/creative-generic-script.md) carry exact evidence.
+
+B's cache workflow initialization was corrected after the actual c491 Cloud
+loader failure with zero jobs. Official actionlint reproduced the original
+invalid job-env runner contexts and accepts the corrected workflow. Original
+frozen commands, assertions, skip policy, budgets and strict joins remain.
+Historical FAILED_OBSERVED and incomplete hosted coverage are retained.
+
+## 43. Source-aware chapter adaptation (TEXT-13, first bounded slice)
+
+Status: **PARTIAL**. One saved chapter or an exact selected substring can produce
+an actor-private, version-bound proposal through the original local ModelRouter,
+AuthorPreparer, ModelBroker and JobManager. Strict stable-ID scenes and a linked
+scene-split/visualization/dialogue/omission/inference report require human review
+before creating a separate screenplay v1. API aliases, existing workspace UI,
+source/privacy/incarnation/actor/CAS fences and bounded fault-injection tests are
+implemented. No automatic manuscript/Canon edit or second registry/queue.
+
+AssetLibrary archival/restart convergence and multi-chapter ranges remain
+incomplete in this first slice. Mock transport verifies owner composition, not
+real model quality. See [the adaptation report](MILESTONE_M4_ADAPTATION_REPORT.md)
+and [contract](docs/v2/source-aware-adaptation.md) for exact tests and remaining
+work. Two new-path terminal-publication/admission-cancellation races were
+reproduced before fixing; their red receipts remain.
+
+The two observed 899d Creative browser failures are corrected at the product
+accessible-label boundary, with original browser assertions and deadlines kept.
+New SHA hosted verification is still required. Both 899d full File cancellations,
+other FAILED_OBSERVED history, strict joins and independent-audit BLOCKED persist.
+B's opt-in compact catalog snapshot excludes only historical delivery evidence;
+default full mode and byte-identical output checks remain documented.
+
+Final-source selected File and fresh PostgreSQL each pass **238 / 237 profile
+skips**, including 58 adaptation cases per backend; full UI **2,439 / 8 original
+skips**, original build and 52-file token guard pass. Captured shared Host
+principal/binding-generation checks close a deterministic six-case ABA failure;
+Host-less UI remains usable and unsupported collaboration-only model access
+fails closed. New real adaptation inference/Asset archival are not claimed.
+899d push PG0 also retains an observed original settling failed call without
+final traceback, in addition to its cancellation; this is not only capacity.
+
+## 44. Source adaptation private archive and recovery (TEXT-13 follow-on)
+
+The preceding section describes the published e29 first slice. The new bounded
+contract adds mandatory exact-output private TextAsset v1 through the existing
+AssetLibrary before scenes/report become reviewable. Existing reads/refresh
+converge incomplete archival without model replay or another user step. Original
+human adoption creates one separate screenplay, then projects the same asset to
+APPROVED v2; raw model bytes are immutable. Prompt, nullable parameters, source,
+route/model, settled reservation revision and final Job publication are retained.
+
+Selected source verification is complete: File and fresh PostgreSQL each
+**564 passed / 305 profile skips**, complete UI **2,442 passed / 8 original skips**,
+build/token guard, 352 infrastructure tests and actionlint pass. Two original
+collection inventories each contain 11,901 identical nodes. Status stays **PARTIAL**
+pending new-SHA hosted acceptance. A genuine CPU inference produced an exact
+private raw DRAFT v1; its malformed structured response was correctly rejected,
+and the original acceptance harness FAIL is retained. Multi-chapter adaptation, literary quality, hosted strict completion and
+historical independent security review remain open. Exact stage results and
+source identities belong to [the archive report](MILESTONE_M4_ADAPTATION_ARCHIVE_REPORT.md).
+
+
+## 45. Saved screenplay EPUB reading export (TEXT-16)
+
+Following the published private-archive checkpoint 3a234ed, the existing saved
+SCREENPLAY export owner now supports an EPUB3 reflowable reading projection,
+with one navigable scene section per saved scene. The existing API aliases,
+version/source/privacy and before/after permission checks, verified byte receipt
+and original selector are reused. Generic Script formats and existing Fountain,
+DOCX, Markdown behavior are unchanged. XML-unrepresentable text is rejected
+before encoding instead of silently removed.
+
+File and new-empty-PostgreSQL selected five-module checks each pass **238 / 88
+profile skips**; targeted client/panel checks pass **23**; complete frontend
+passes **2,451 / 8 original skips**. Build/token guard, 352 infrastructure tests
+and actionlint pass. Two complete inventories agree on **12,072 ordered nodes**;
+collection is not execution. New-SHA hosted results remain pending. Original PDF rejection
+assertions remain unchanged; PDF, external reader certification and professional
+pagination are not claimed. See [the EPUB report](MILESTONE_M4_EPUB_REPORT.md) and
+[contract](docs/v2/creative-screenplay-epub.md). Overall Text/M4 remains PARTIAL.
+
+
+## 46. Explicit independent screenplay starter guides (TEXT-11)
+
+Four fixed v1 linear writing-guide catalogs (feature film, short film, animation,
+advertisement) are read through the original gated Creative API. Preview never
+writes. Explicit use creates a new unsaved independent screenplay with fresh
+scene IDs, then original create/save/history/reopen/export persist user edits.
+No chapter or model is consulted; no schema/store/queue is added. Dirty, blocked,
+busy, revoked, repeated and stale-response guards preserve existing drafts.
+
+The isolated slice passed pure16, focused File25/9, UI48 and type checking, with
+its preparation error and label red retained. Combined EPUB+starter final-source
+verification passes File/new-PG **263 / 97 profile skips**, complete UI
+**2,470 / 8 original skips**, build/token guard, infrastructure352 and actionlint.
+Two full inventories agree on **12,106 ordered nodes**; no full strict acceptance
+is implied. Evidence is recorded in [the final Text report](MILESTONE_M4_TEXT_READING_AND_STARTERS_REPORT.md).
+Overall status remains **PARTIAL**: linear guides are not a game branching engine,
+professional-format acceptance or completion of the whole Text milestone.
+
+### Text publication checkpoint: preceding 3a hosted terminal
+
+The original 3a234ed attempt-1 runs are terminal: 29 jobs = 22 success, 3 cancelled,
+4 failure; both Cloud workflows report cancelled. Creative each 12/12 and geometry
+8/8 passed; PR PG0/PG1 and push PG0 completed, push PG1 and both File profiles
+remain incomplete. All four strict prerequisites failed, so no full joined proof.
+Six backend records have no failed phase observed on that source; historical
+e6ff/899 FAILED_OBSERVED remains. See the exact
+`docs/delivery/v2-development/ci-3a-private-archive/handoff-summary.json`.
+The EPUB/starter final source has separate selected verification and pending hosted
+CI; this baseline result is not its full-source acceptance.
+
+## 2026-10-13 — Fresh reconstruction checkpoint (not historical recovery)
+
+The current reconstruction starts from published `4534bed9129bcf2a549b44a91f062c79a77e173b`.
+Unavailable local `1134f8de...` source and test archives are not claimed restored.
+Earlier matrix rows remain historical evidence; new observations below do not
+retroactively upgrade their acceptance.
+
+| Capability | Current source status | Verification / boundary |
+|---|---|---|
+| Baseline timeline/Graph type safety | IMPLEMENTED | Published `de23bb50b96f07dac3e96dc0f9a1df9940e494b3`; type/build/token pass; 102 focused tests pass. The same 23 broader frontend failures remain before/after. |
+| Explicit manual binary-mask authoring | IMPLEMENTED, bounded | Original IMAGE surface, paint/erase/rectangle/undo and explicit Asset save. 64–1024 dimensions in multiples of eight; only closed 8-bit noninterlaced PNG admission. |
+| Exact mask provenance and save authority | CONTRACT_VERIFIED | Original Asset owner, source CAS/hash, immutable MANUAL_EDIT parent, scoped idempotency, Host/session/revoke guards; new 119 File/pixel and 86 real PostgreSQL tests pass. |
+| Mask integration | PARTIAL | Combined frontend 260 tests and TypeScript pass; actual mounted response passes the strict client decoder using a fetch stub. Browser/native image decoding is not verified. |
+| CPU cutout using the authored mask | MISSING from this reconstructed slice | No cutout job, segmentation/model call or automatic execution is provided by the mask save. |
+| Remaining lost post-baseline increments | PARTIAL / reconstruction pending | Recover requirements from historical matrix and inspect actual owners; do not count historical source/test claims as current implementation. |
+| Hosted CI | BLOCKED / not accepted | Type-repair CI terminated without executed steps, runner ID zero. Exact infrastructure cause unestablished. |
+| Windows/GPU/real-model/full-product acceptance | NOT_RUN / LOCAL_REQUIRED | No user-machine access, paid model call, merge or release. |
+
+See `docs/v2/reconstruction-20261013.md` and the separate backend/frontend mask
+reports. Original V1 evidence, F00 INTEGRATED + 39 PARTIAL, historical independent
+review BLOCKED and frozen Local Interop contracts retain their prior boundaries.
+
+### Later reconstruction evidence, 2026-10-13
+
+The preceding checkpoint remains historical. The following source-bound update
+does not alter V1, F00 INTEGRATED + 39 PARTIAL or prior independent-review BLOCKED.
+
+| Existing capability | Reconstructed status | Evidence and remaining limit |
+|---|---|---|
+| Original receipt byte bounds | IMPLEMENTED / CONTRACT_VERIFIED | `1c481a7`; bounded reads and observable file replacement checks. File 170 and real PG 117 passed. Not an OS atomic snapshot guarantee. |
+| Native export process output bounds | IMPLEMENTED / PARTIAL platform validation | `1c481a7`; bounded captured output, draining and cancellation, CPU FFmpeg/ffprobe exercised. Actual Windows path NOT_RUN. |
+| Shared workspace response and identity fences | IMPLEMENTED / CONTRACT_VERIFIED | `3a720cd9`; permanent scope/Host generation retirement, private data redaction, original CAS/consent retained. Full frontend 2741 passed/8 unchanged skips, zero failed. Browser rendering BLOCKED. |
+| Original activation acknowledgement | IMPLEMENTED / CONTRACT_VERIFIED | `3a720cd9`; strict project-identity projection, separate full overview, no fabricated preferences or permission. Included in full frontend result. |
+| Audio receipt history enumeration | IMPLEMENTED / CONTRACT_VERIFIED | `2fda20f6`; linear normal string-ID scan and fail-closed requested duplicates. File 255 and real PG 172 passed. Whole-file load and malformed-ID fallback remain. |
+| Generated API/coverage publication | BLOCKED pending explicit upload retry approval | Locally refreshed 2219 API operations and 12612 collected nodes; collection is inventory only. Remote generated files are not yet current. |
+| Hosted CI on current published source | BLOCKED / no acceptance | Cloud CI run 38343016231: 11 failures, runner_id zero and empty steps. Cause unconfirmed. |
+
+CPU mask cutout and other missing post-baseline increments remain uncompleted
+unless separately implemented and verified. Windows/GPU/model quality and final
+product acceptance retain NOT_RUN / LOCAL_REQUIRED.
+
+Image-provider connection boundary: **IMPLEMENTED / CONTRACT_VERIFIED**, using
+the existing configured/discovery transport owner. Local proxy isolation and
+bounded compressed responses are covered by synthetic HTTP and persisted
+File/PostgreSQL tests; authorized remote proxy policy is preserved. Scoped File
+273 and PG 277 passed, with skip/recovery details in
+`docs/v2/reconstruction-image-transport-20261013.md`. Real ComfyUI/A1111/model/GPU
+acceptance remains **NOT_RUN / LOCAL_REQUIRED**. This does not complete Image Studio.
+
+Later CPU cutout checkpoint: **IMPLEMENTED / CONTRACT_VERIFIED**, bounded to the
+original narrow PNG format and saved authored masks; previous MISSING row above
+remains historical. Standalone source/mask selection, explicit queue/execute,
+same-page cooperative cancel, private result and explicit review are connected.
+Graph cutout remains unsupported. Root File262 and frontend2814 pass; fresh real
+PG262 passes. Two broader original Graph target-budget assertions still fail on
+both original and current source. Native image display/Windows remains
+**NOT_RUN / LOCAL_REQUIRED**; no general Image Studio completion is claimed.
+
+Later inventory publication checkpoint: **IMPLEMENTED / published** at
+`c01bdc5dc020ec0bb10f9a2ef68b01aec7834084`. All five generated API/OpenAPI/coverage
+files match their local generated bytes. The catalog has 2219 operations with
+none removed; collection contains 12935 nodes and preserves all 9151 frozen
+baseline nodes. Collection is not test execution. The earlier upload blocker is
+resolved; no inventory approval is pending. Cloud CI run 38370156137 terminated
+with 11 failed jobs, empty steps and runner_id 0; no hosted test execution is
+claimed, and the infrastructure cause is unconfirmed.
+
+Graph request-budget repair: **IMPLEMENTED / CONTRACT_VERIFIED** in the original
+shared owners. Legacy request DTOs retain 16 targets; saved schema-3 definitions
+retain 24 through same-field envelopes. Admission, persisted closures and media
+review recovery select the allowance from the saved definition. The two original
+failing assertions now pass unchanged. Focused broad File and fresh PostgreSQL
+selections each pass 848 tests with 393 existing backend/feature skips; no full
+product acceptance is implied. See
+`docs/v2/reconstruction-graph-target-budgets-20261013.md`.
+
+Standalone Audio PCM controls: **IMPLEMENTED / CONTRACT_VERIFIED**, bounded to
+existing m8.audio.trim. Optional gain, resampling and mono/stereo preserve legacy
+request identities and original private Asset/review owners. Actual decoded WAV
+proof is checked against recipe and durable receipt; missing/tampered proof fails
+closed. Graph remains closed to new controls. Integrated File and fresh real PG
+each pass412 with167 backend skips; full frontend2928 passed/8 original skips.
+Real CPU FFmpeg fixture execution is not model or device playback acceptance.
+See `docs/v2/reconstruction-audio-wav-integration-20261013.json`.
+
+Latest locally generated inventory now contains2219 API operations and13153
+collected nodes. Original47 inventory tests pass, all9151 frozen nodes preserved.
+This newer inventory is **BLOCKED from synchronized publication** by the renewed
+Markdown upload rejection; prior c01 publication remains a completed historical
+checkpoint. No subsequent denied upload or alternate route was attempted.
+
+## 2026-10-13 — Production Expansion takeover audit (7276597)
+
+Append-only current observation: [Codex handover audit](AI_NOVEL_STUDIO_V2_CODEX_HANDOVER_AUDIT.md).
+The preceding publication block belongs to its historical source. Actual remote
+72765972 now contains verified non-WAV integration and generated catalogs:
+2219 API operations,13364 collected nodes,all9151 frozen nodes retained.
+Selected File750/PG762 pass with14 original skips each; scopes overlap.
+Original Windows inventory45pass/2symlink prerequisite failures, Ubuntu two-node
+supplement passes. Source checks are not final Windows/model acceptance.
+
+IMAGE-01/06/15 remain PARTIAL: configured image execution and schema3 Graph media
+exist, but enabled discovery LocalImageAdapter cannot yet satisfy production
+guard/parameter/recipe selection. AI inpaint/outpaint/repair/upscale and complete
+typed image-node tooling remain missing/partial. First phase will connect the
+original enabled local registry route, not create another registry or queue.
+Current Director/Storyboard, Video, Audio and bounded multitrack execution/gaps
+are detailed in the audit; old rows retain their historical identities.
+M4 PARTIAL and M5-M9 real acceptance LOCAL_REQUIRED remain. New audit tests NOT_RUN;
+727 CI is BLOCKED before execution by account billing lock. PR47 remains Draft.
+
+### Production Expansion 1 — original enabled local Image route
+
+IMAGE-01/06/15: bounded discovered T2I integration **IMPLEMENTED / CONTRACT_VERIFIED**
+on existing ModelCenter/AssetProviderRegistry/ProductionExecution/ImageJob/Asset
+owners. Passive configuration listing, exact enable/control epoch and model/runtime
+evidence binding, original delegate recipe/model remap and per-request caller
+guards are wired. Public DTO/configured legacy identity unchanged; discovered
+I2I/FLUX/Qwen workflows, AI inpaint/repair/upscale and Router finance remain open.
+Image whole module stays PARTIAL / real capability LOCAL_REQUIRED.
+
+Source inputtree90b4a3681b57bc0b33ce850a3790136f35ec5fee; exact checks/failures
+in [stage report](docs/v2/production-expansion-image-local-20261013.md).
+Focused File48/30profile skips; related File506pass/1WinError1314 fixturefail/
+192profile skips; PG506pass/192profile skips/1explicit platform NOT_RUN;
+Linux3original assertions pass separately. Newfrontend9/typecheck and19metadata
+checks pass. No complete Windows/CI/model/product verdict follows.
+Original generators produce2219API operations and13442collected nodes, all9151
+frozen nodes/order/skips/gates retained. No original test/generator/freeze/Interop
+modification; M4 and ordered M5-M9 acceptance, QingJian pause and Opus seams remain.
+
+
+### Production Expansion 2 — Image runtime, references and authored inpaint
+
+The prior Expansion1 T2I-only checkpoint remains historical. On baselinec911e549,
+IMAGE-01/06/10/15/17 and Graph image sub-capabilities now have bounded code for
+explicit I2I, weighted references and saved authored-mask inpaint through original
+owners. Fixed Comfy SD/FLUX.1/Qwen Image and schema-proved A1111 contracts reject
+missing components, ambiguous inputs and unsupported parameters. Explicit
+schema4 carries Asset→Reference→Prompt→ImageGeneration→originalReview→formalAsset;
+oldschemas1/2/3 and original labels/identities remain closed. Upscale is RESERVED /
+NOT_CONFIGURED with execution unavailable, not an implemented model capability.
+
+Sub-capability source is IMPLEMENTED; module status remains PARTIAL and actual
+model/quality/Windows/GPU acceptance LOCAL_REQUIRED. Selected actual verification
+and all failed attempts are separated in the [stage report](docs/v2/production-expansion-image-runtime-20261013.md)
+and same-name JSON. These results do not replace original M4→M9, F00, independent
+review or CI gates. No Video/QingJian development, download or paid model call.
+
+
+### 2026-10-14 — Production Expansion Phase 2: Image + Director + Storyboard
+
+Baseline `a79b7f9d6fbacfd112ac42f2082798b2cd7f9233`; preceding checkpoints remain historical.
+
+| Capability | Source status | Actual boundary |
+|---|---|---|
+| Reference purpose/source note and Style node | IMPLEMENTED / bounded | Original Asset version/SHA/weight; unset additions omitted; explicit schema4, finite prompt. Reference purpose does not claim learned identity conditioning. |
+| Image upscale provider and independent Graph node | IMPLEMENTED / bounded | Enabled local Comfy registration and fixed declared-model recipe; Real-ESRGAN/SwinIR/compatible nodes, 2×/4× target, actual PNG dimensions/SHA proof, original private candidate/review/version. Native quality/GPU LOCAL_REQUIRED. |
+| Depth/Pose/Edge/Mask/Layout Control Adapter | RESERVED / NOT_CONFIGURED | Typed model-agnostic inputs; no execution or download authority. Original authored-mask inpaint remains separate. |
+| Director visual target and typed performance | IMPLEMENTED / bounded | Original Creative owner/CAS/history/restore/review; goal changes stale exact model preview. Original model coordinator retains chapter anchor; scene-free model execution remains PARTIAL. |
+| Independent Storyboard and note-per-shot derivation | IMPLEMENTED / bounded | Stable shots, characters/emotion and original camera/lens/duration/sound; explicit DIRECTOR_NOTES derive and source version/digest; editable HUMAN_REVIEW_REQUIRED draft. |
+| Director→Storyboard→Style→Image→Review Graph | IMPLEMENTED / bounded | Opt-in production catalog, original WorkflowRun, saved-document projections, selected shot and exact source guards. No automatic author-content mutation. |
+| Canvas/Inspector/shot preview and Opus seams | IMPLEMENTED / basic source UI | Shared primitives/controllers, strict actual DTOs and original authority/CAS/UNKNOWN/late-response guards. Professional UI/UX refinement and product acceptance remain open. |
+| Whole Image/Director/Storyboard modules | PARTIAL | Tests, source pins and remaining limits in [phase report](DIRECTOR_STORYBOARD_IMAGE_PHASE_REPORT.md). No Video execution or whole-product completion. |
+
+Model/Windows/GPU/final product remain NOT_RUN / LOCAL_REQUIRED. Full milestone CI,
+M4→M9, frozen V1, F00 INTEGRATED + 39 PARTIAL and independent review BLOCKED remain.
+
+
+### 2026-10-14 — Phase4 Storyboard + Video foundation
+
+| Capability | Source status | Actual boundary |
+|---|---|---|
+| Shot history, authored adjacency and Director Camera/Visual/Rhythm advice | IMPLEMENTED / bounded | Original Creative history/CAS, optional fields, same-scene notes; no measured semantic continuity or automatic edits. |
+| Storyboard image/approval/Timeline adapter | IMPLEMENTED / bounded | Exact formal Asset and Shot pins; original image job/review; approved image-based original Timeline draft with retained creation origin. UNKNOWN create remains fenced; persisted request reconciliation is Phase5. |
+| Video Graph schema5 | IMPLEMENTED / bounded | Explicit finite catalog and typed STORYBOARD_SHOT/VIDEO_CANDIDATE, current approval/source guards, original job/review; old schemas1–4 unchanged. |
+| LTX/Wan/Hunyuan Video provider execution | IMPLEMENTED / bounded | Fixed proved Comfy object_info recipes through enabled ModelCenter routes and original VideoJob. Private candidate, bounded output, cancel/source fencing, explicit review. Unsupported versions/local V2V NOT_CONFIGURED. |
+| Controller-backed Storyboard/Video UI | IMPLEMENTED / basic source UI | Exact pins, late/revoked source retirement, independent UNKNOWN fences and parent mutex; professional visual UX remains open for Opus. |
+| Whole Director/Storyboard/Video and product | PARTIAL | File/PG each616pass/1Windows privilege failure/321skip; frontend3167pass/8skip. No full CI or model/Windows/GPU acceptance claim. |
+
+See [Phase4 report](PHASE4_STORYBOARD_VIDEO_REPORT.md) and pinned summary. Original M4→M9, V1, Interop1.0, F00 and independent review gates remain.
+
+
+### 2026-10-14 — Phase5 Storyboard production pipeline
+
+| Capability | Source status | Actual boundary |
+|---|---|---|
+| Authored video hint and explicit Shot provenance | IMPLEMENTED / bounded | Optional4k hint and exact original document/Shot pin enter original MediaCommand/VideoJob/Asset origin; legacy unset identity retained. |
+| Reviewed Video result → Shot | IMPLEMENTED / bounded | Original APPROVED job/formal Asset/retained approved source history; Graph server Review proof; metadata revisions do not change authored ShotVersion. Explicit reapproval required. |
+| Timeline create/recovery and reviewed Video adoption | IMPLEMENTED / bounded | Original TIMELINES transaction, exact request body/actor/incarnation namespace, original clip.update/CAS/lock/range/last_edit/history, durable settlement proofs. UNKNOWN GET only/no replay. |
+| Existing video model observations | IMPLEMENTED / bounded | Last explicit scan/exact configured-root filename association and original current registration state; no loading/qualification grant. Total model size/VRAM unknown. |
+| Video/Storyboard/Timeline controller operation UI | IMPLEMENTED / basic source UI | Exact job/Asset/source pins, independent recovery fences, original mutex/Host/late/dirty. Independent video remains; Opus view seams retained. |
+| Whole Video/Storyboard/Editing | PARTIAL | Source and selected isolated tests in [Phase5 report](PHASE5_STORYBOARD_VIDEO_PIPELINE_REPORT.md). No native/GPU/model/full product acceptance. |
+
+File/realPG each317pass/2oldWindows privilege failures/137profile skips; wholefrontend3250pass/8oldskip. Full hosted checks unexecuted by account/platform block. Frozen V1/Interop/F00/independent review and M4→M9 gates unchanged; Phase6 source expansion follows.
+
+### 2026-10-14 — Phase6 Audio / Editing
+
+| Capability | Source status | Actual boundary |
+| --- | --- | --- |
+| AUDIO-12 standalone FLAC trim delivery | IMPLEMENTED / bounded | Original Job/private Candidate/Review/Asset; fixed FLAC S16/level5, actual STREAMINFO+decoded PCM/sample/hash proof. Default WAV and Graph identity retained. MP3 remains open. |
+| Original Timeline formal-source operations | IMPLEMENTED / bounded | Atomic original track.insert+clip.insert, existingtrack insertion and clip source replacement; exact formal Asset, original CAS/locks/history. |
+| Original ordinary edit settlement | IMPLEMENTED / bounded | Current optional last_edit proof, fullbody SHA + exact effect, read-only UNKNOWN recovery/no replay; new source seam rejects tiny nonzero numbers before sending. |
+| Real CPU postproduction proof | IMPLEMENTED / exercised small synthetic path | Audio review→formal source→actual original render/export→private result→review→formal Asset→reopen. Not native/GPU/model quality acceptance. |
+| Whole Audio / Editing / AUDIO-12 | PARTIAL | Full codecs/editor/provider/proNLE/interop/native and quality remain under original gates. |
+
+[Report](PHASE6_AUDIO_EDITING_REPORT.md): frozen File/realPG each377pass/178profileskip; finalfrontend3289pass/8oldskip. Metadata44pass/2unchangedWindowsprivilegefailures. Hosted checks unexecuted under account/platform block; historical statuses and M4→M9 unchanged.
+
+### 2026-10-14 — Phase 7 unified production workflow projection (current facts)
+
+Append-only current observation. Baseline `345ea18d269ee9a8b777ed18060ea7e51ea8c848`; every earlier row and status above is unchanged, including CORE-01 PARTIAL and CORE-03/CORE-04 MISSING, whose boundary cells now carry the Phase 7 facts recorded here as well. No historical evidence ID was renumbered or replaced.
+
+| Capability | Source status | Actual boundary |
+| --- | --- | --- |
+| Unified production workflow read projection | IMPLEMENTED / source-verified | `GET /api/projects/{nid}/studio/production/workflow` (domain.read) projects 7 fixed modules (`director, storyboard, image, video, audio, timeline, asset`), `project_start`, `creative_intent`, `asset_overview` and `dashboard` from existing owner rows. Top level is fixed `advisory_only=true`, `execution_authority=false`; `next_action` is descriptive metadata, never an execution link. No project/asset/job/queue/permission/model/timeline owner is added. |
+| Neutral start projection | IMPLEMENTED / source-verified | `project_start.entry_kind` is always `NEUTRAL_STUDIO` (the receipt saved by the original `IndependentWorkspaceService.activate`); `state` is `NOT_STARTED`/`READY`/`STARTED` from the original preference row and `start_action` points at the existing neutral project creation route with `requires_original_host_session=true`. Unlike the older read-only catalog this GET does **not** require prior activation, otherwise it could not report "not started". |
+| Single intent mutation (CAS) | IMPLEMENTED / source-verified | `POST .../workflow/intent` (domain.write) reuses the original scope-atomic preference row, version CAS and retained history. `expected_version=null` declares "nothing saved yet" and fails closed unless the current version is 0; otherwise `409 PRODUCTION_WORKFLOW_INTENT_CONFLICT`; out-of-vocabulary or duplicate values `422 PRODUCTION_WORKFLOW_INTENT_INVALID`. Intent/preset remain presentation hints (`intent_is_permission=false`) and select no asset kind, permission or execution. |
+| Workflow admission and assembly | IMPLEMENTED / source-verified | Both routes are closed entries in the existing `is_independent_studio_route` table (`GET workflow`, `POST workflow/intent`; no wildcard prefix) and the workflow sub-router is included by the existing `create_independent_workspace_router`; collaboration admission still requires `narrative_production_v2` at `app/main.py:319`. |
+| Contract vs frozen text | PENDING_LEAD_DECISION | The implemented request body takes `preset` where the frozen text says `note` (bodies are `extra="forbid"`, so `note` yields 422); GET additionally returns `creative_intent.preset`; and GET `creative_intent.values[]` carries `custom` while the POST element model accepts only `intent_id/label/selected`, so GET items cannot be echoed straight back into POST. Details in [the Phase 7 doc](docs/v2/production-workflow-phase7.md). |
+| Consolidation UI source (line B) | IMPLEMENTED / basic source UI | `frontend/src/production/` contract, client, controller, views, tokens and 5 test files exist; at the final snapshot the 5 vitest files (35 cases), `tsc -b` and `pnpm run build` all passed (earlier red `types`/`build`/`frontend` revisions are retained). Browser/visual acceptance and the Opus visual refinement remain PENDING_LINE_B. |
+| Phase 7 verification | PARTIAL / input tree not frozen | Final combined run: File pytest **14 passed / 8 skipped / 0 failed**; `src/production` vitest **35 passed (5 files)**; `tsc -b` **PASS**; `pnpm run build` **PASS (2103 modules)**; token guard **PASS (52 files)**; pre-existing router/admission seam **34 passed / 34 skipped**; runner exit code 2 because PostgreSQL was **SKIPPED / NOT_CONFIGURED** (no server, no `TEST_POSTGRES_DATABASE_URL`) — not a pass. Earlier `types-r3`/`build-r3`/`types-r4`/`build-r4`/`frontend-r5` red receipts are retained. line A/B were still writing during these runs, so each receipt's `sources_changed_during_check` and `source_sha256` are point-in-time observations, not a frozen input tree; the final numbers must be re-measured after both lines stop writing. |
+| Whole Audio/Editing/Image/Video/Director/Storyboard and product | PARTIAL | Windows install, DesktopHost trusted session, GPU/real model, heavy render, browser/visual, full CI and the ordered M4→M9 gates remain LOCAL_REQUIRED / NOT_RUN. Hosted CI stays under its historical account/platform block; this stage did not rerun it and predicts nothing. |
+
+See [the Phase 7 design and contract doc](docs/v2/production-workflow-phase7.md), the [Phase 7 report](PHASE7_WORKFLOW_UX_REPORT.md) and [scripts/run_phase7_workflow_checks.py](scripts/run_phase7_workflow_checks.py) with source-bound receipts under `docs/delivery/v2-development/phase7-workflow-*-r*.json`. Frozen V1, PoemSeed Local Interop 1.0, F00 INTEGRATED + 39 PARTIAL, independent review BLOCKED, the QingJian pause and the M4 PARTIAL / M5–M9 LOCAL_REQUIRED sequence all remain unchanged.
+
+### 2026-10-14 — UX-PRODUCT batch 1: studio entry / intent / interface mode and unified task center (current facts)
+
+Append-only current observation for the UX-PRODUCT work package, which develops **Studio alone**; QingJian interop, its adapter and two-product runtime stay paused and the Local Interop 1.0 protocol semantics are untouched. Every earlier row, status and evidence ID above is unchanged; CORE-01/03/04 keep their historical PARTIAL/MISSING status. Batch 1 covers UX-01 and UX-02 only; UX-03…UX-09 are NOT_STARTED.
+
+| Capability | Source status | Verification | Actual boundary |
+| --- | --- | --- | --- |
+| UX-01 studio entry (continue / blank / by intent) | IMPLEMENTED | PASS (component/contract tests) | `frontend/src/onboarding/` (14 files) renders the entry in a dedicated `START` workspace view and calls only existing owners: `GET /api/novels` (project list), `POST /api/experimental/projects` (blank project), and one versioned read/replace of the saved preference row. It creates no second project or intent store; a missing project reports "已不可用" and never creates a replacement. |
+| UX-01 creative intent | IMPLEMENTED | PASS | Intent stays a presentation hint: multi-select, editable, skippable, custom label; the UI states it neither grants permission, restricts modules nor triggers generation. Adopting a suggestion writes the preference only. The intent vocabulary is derived from the existing `STUDIO_INTENTS` catalog and the Phase 7 wire identifiers, not a second catalog. |
+| UX-01 novice / professional mode | IMPLEMENTED | PASS | New optional `interface_mode` on the studio's own local view-location owner (typed, per-project, backward compatible). `PROFESSIONAL` is the default so no existing interface changes; `NOVICE` is an explicit opt-in that collapses the professional production-contract surface behind one click. Both modes share the same project, assets, tasks, graph and drafts; switching converts, copies and deletes nothing. |
+| UX-02 unified task center | IMPLEMENTED | PASS (protocol fixtures) | `frontend/src/taskcenter/` (15 files) aggregates the existing `WorkspaceToolsService.tasks` projection and the existing `UnifiedReviewInbox`; no second queue, status machine or review system. Owner statuses are transcribed verbatim (a status outside the owner set surfaces as `UNKNOWN` and keeps `raw_status`); progress is absent unless the owner supplies completed+total, so the UI says "进度未知" instead of inventing a percentage or ETA. |
+| UX-02 review inbox and recovery actions | IMPLEMENTED | PASS | Buttons exist only for owner-declared `allowed_actions`; adopt/reject bind the displayed candidate version and refuse a repeat submit locally; batch shows the exact item set and keeps per-item results under the owner's `PER_ITEM_CHECKPOINT` semantics. Cancel is distinguished from transfer cancellation and reads "取消请求已发送/待确认" until the owner's own status is CANCELLED. UNKNOWN's action queries the same original task; no automatic retry, resubmit or replay, and no polling timers. |
+| Studio workspace integration | IMPLEMENTED | PASS (existing regression kept green) | `frontend/src/creative/IndependentStudioWorkspace.tsx` adds the `START` and `TASKS` view entries and the controlled mode switch. During development an initial default of novice mode and an auto-rendered entry panel failed 28 existing tests (hidden graph entry, duplicate intent labels); both causes were fixed on the new code side — the default preserves today's interface and the entry lives in its own view — and the pre-existing studio regression is 10 files / 117 tests green. No existing test, assertion or skip was changed. |
+| UX batch 1 verification | PASS on a frozen input tree | PASS / PASS / PASS / PASS / SKIPPED-WITH-EVIDENCE | File **48 passed / 42 skipped**; new frontend surfaces **9 files / 87 tests** (plus 9 more in the mode owner = 96); pre-existing studio regression **117 passed**; `tsc -b` exit 0; `pnpm run build` exit 0; token guard PASS (52 files); router seam 34 passed / 34 skipped. All receipts record `sources_changed_during_check=false`. |
+| PostgreSQL for the persistence surface | **CONFIGURED NOW** (supersedes the Phase 7 NOT_CONFIGURED observation, which stays as history) | PASS | A reusable portable runtime (PostgreSQL 16.15) already on disk was reused with an owned cluster under this worktree's `.runtime` on a loopback, unprivileged port: fresh `v2_uxproduct` database, 20 migrations applied, `empty_before_migrations.is_empty=true`, `startup_ownership=confirmed`, clean stop, **14 passed / 8 skipped, exit 0** (`docs/delivery/v2-development/ux-product-pg.json`). No system service was installed and no firewall changed. |
+| Pre-existing frontend `python3` gap | FIXED (separate commit) | PASS | The two existing suites resolve `process.env.PYTHON \|\| 'python3'` (a Linux/CI default); this host has only `python`, and the Windows GBK console corrupted piped text (`旅人`→`鏃呬汉`). `frontend/vitest.setup.ts` (+ `test.setupFiles` in `vite.config.ts`) resolves the platform interpreter only when `PYTHON` is unset or names a missing path, and forces `PYTHONUTF8=1`. No test, assertion, case or skip changed; bare run is now 22 passed (previously 20 failed / 2 passed). |
+| Whole product (UX-03…UX-09, Windows install, GPU/real model, heavy render, full CI) | NOT_STARTED / LOCAL_REQUIRED | NOT_RUN | Batch 1 is an operating slice, not release readiness. Browser/visual and geometry acceptance for the new views, the remaining seven work packages, the installed-Windows/DesktopHost trusted session, GPU and real-model quality, heavy render and full CI remain open; hosted CI stays under the historical account/platform block and is not predicted. |
+
+See [the UX-PRODUCT plan](docs/v2/ux-product/PLAN.md), [status](docs/v2/ux-product/STATUS.md), [decisions](docs/v2/ux-product/DECISIONS.md), the [handover report](STUDIO_UX_PRODUCT_REPORT.md) and [scripts/run_ux_product_checks.py](scripts/run_ux_product_checks.py) with receipts under `docs/delivery/v2-development/ux-product-*.json`. This section adds current facts only: it does not turn any historical row green, renumber an evidence ID, or assert that the studio has reached release readiness.
+
+### 2026-10-14 — UX-PRODUCT batch 2: asset reuse and canvas/node operations (current facts)
+
+Append-only current observation. Batch 2 covers UX-03 and UX-04; UX-05…UX-09 remain NOT_STARTED. This batch adds **no backend contract, no database migration and no new endpoint**, so it adds no row to the persistence surface and the batch-1 real-PostgreSQL receipt still applies. No earlier row, status or evidence ID is changed.
+
+| Capability | Source status | Verification | Actual boundary |
+| --- | --- | --- | --- |
+| UX-03 asset reuse browser | IMPLEMENTED | PASS (component/contract tests) | `frontend/src/assetbrowser/` (18 files) filters by media kind, tag, review state, created time and reference state, and searches only names plus already-authorized metadata; list and grid share one selection model; detail, version comparison, zoom and mutually exclusive user-started media preview (switching stops the previous playback) come from the existing `studioClient` endpoints and the existing relationship projection. |
+| UX-03 reuse without a second owner | IMPLEMENTED | PASS | Passing an asset to IMAGE/VIDEO/STORYBOARD/TIMELINE emits only `{asset_id, version, digest}` through a callback and never executes the target module; nothing is copied into a second original asset; the panel is read-only, so tag/licence editing cannot claim a commercial or cloud grant, and deletion is reported as an impact preview (`physical_delete:false`, `content_removed:false`) rather than performed. Owner relationships declare only ASSET/CHAPTER/SCREENPLAY targets, so shot/node/timeline membership and undisclosed version candidates render as 未核实 instead of being guessed; `public()` strips the review marker, so review state is never inferred as approved. |
+| UX-04 canvas and node operations | IMPLEMENTED | PASS (pure-function and component tests) | `frontend/src/canvasops/` (10 files) adds node search/category with port types, marquee/multi-selection and focus built on the existing geometry helpers, a pre-connection advisor that shows the pending source port type, the compatible targets and the concrete rejection reason, and a change-impact classifier. Legality remains `graphDraft.connectionIssue`'s alone: each advised row stores that function's own verdict and verbatim text, and an unknown result is reported as unclassified and not legal. |
+| UX-04 presentation versus generation | IMPLEMENTED | PASS | The classifier reports PRESENTATION only when every difference is a known position/viewport change; a title change, node or edge reordering, unknown fields, unknown shape or a missing baseline are all GENERATION_AFFECTING. Grouping, annotation and collapse are session-local (`canvasops-local/1`) and are never written to the saved graph; the deterministic auto-layout is a read-only preview and must be committed through the existing `change()` to enter the existing undo stack. No node or job limit is raised: budgets are displayed and hitting one prints a split-the-workflow suggestion. |
+| Batch 2 verification | PASS on a frozen input tree | PASS | Frontend across the four UX folders **268 tests**; pre-existing integration regression (studio workspace, canvas, accessible labels, relationships, declaration form) **198 tests**; File **48 passed / 42 skipped**; `tsc -b` exit 0; `pnpm run build` exit 0 (2130 modules); token guard PASS; router seam PASS. Per-folder unit runs: assetbrowser 88, canvasops 93, onboarding+taskcenter 96. All receipts record `sources_changed_during_check=false`. |
+| Batch 2 regressions found and fixed | FIXED | PASS | The first connection-advisor draft reused the existing port selects' accessible names, which broke `StudioSelectLabels.test.tsx`; the new panel renamed its labels and the pre-existing suite is green again. The Lead's integration needed one narrowing assertion for the controller's catalog union, and the batch-1 `DECISIONS.md` ordering was repaired (D10–D14). No existing test, assertion or skip was changed. |
+| Whole product (UX-05…UX-09, Windows install, GPU/real model, heavy render, browser/visual, full CI) | NOT_STARTED / LOCAL_REQUIRED | NOT_RUN | Batches 1–2 are operating slices, not release readiness. Playwright visual and geometry acceptance for the four new surfaces, the remaining five work packages, the installed-Windows/DesktopHost trusted session, GPU and real-model quality, heavy render and full CI remain open; hosted CI stays under the historical account/platform block and is not predicted. |
+
+See the same UX-PRODUCT documents and receipts listed above. This section likewise adds current facts only.
+
+### 2026-10-14 — CONTENT_POLICY_FRAMEWORK: RESERVED (extension points only; not implemented)
+
+Architecture reservation requested during Phase 7 / UX-PRODUCT. It adds **no** product behaviour: no Mature/NSFW mode, no content-review system, no model filtering, no export blocking, no UI control, no permission change and no new storage. Status is **RESERVED**, deliberately not IMPLEMENTED, because the framework itself does not exist yet.
+
+| Reserved place | State | What exists today | What is deliberately absent |
+| --- | --- | --- | --- |
+| Project / workspace policy | RESERVED | An optional `content_policy: Literal['STANDARD','MATURE','RESTRICTED','CUSTOM'] \| None` on the existing `WorkspacePreferences` owner, with a single `effective_content_policy()` default of STANDARD for a missing or legacy value. No second store is created. | No UI switch, no Mature/NSFW mode, no policy-driven restriction of modules, providers or exports. |
+| Backward compatibility of old projects | DONE (required by the reservation) | The preference wire projection is frozen to `version/intents/preset/custom_intent` (`_preference_view` now reads `row.get`) so a row written before the field existed can neither raise `KeyError` nor expose a new key; an omitted policy on an unrelated preference edit means "unchanged" rather than being reset. | No migration file and no schema change. |
+| Asset policy | RESERVED | `asset_policy_for(project_policy)` states that an asset inherits its source project's policy, defaulting to STANDARD. | No asset metadata field, no change to the asset owner, and no change to existing asset read/write behaviour. |
+| Model-centre policy support | RESERVED | `model_content_policy_support(entry)` reads an OPTIONAL declared list off a registry entry and defaults to `('STANDARD',)`. | It never filters, hides, enables or launches a model, and no discovered model is filtered today. |
+| Export / delivery notice | RESERVED | `export_notice(project_policy)` returns a descriptor for a future package notice with `rendered:false` and `blocking:false`. | Nothing renders it and no export is blocked or altered. |
+| Safety boundary | UNCHANGED | The reservation is explicitly not a way to bypass a safety limit; a future framework still depends on user responsibility, platform rules, age limits and moderation policy. | No relaxation of any existing restriction. |
+| Verification | PASS (File + real PostgreSQL) | `tests/test_v2_content_policy_reservation.py`: a legacy row without the field reads STANDARD, a new project defaults to STANDARD, an unknown policy value is refused, asset/export reads survive a missing field, and an unrelated preference edit cannot reset a saved policy through the real owner. File run **54 passed / 43 skipped** together with the Phase 7 and studio-seam suites; real PostgreSQL run **6 passed / 1 skipped, exit 0** on a fresh database with 20 migrations, an empty-before-migrations proof and a clean stop (`docs/delivery/v2-development/ux-policy-reservation-pg.json`). | No large suite was added; the reservation adds no product surface. |
+
+This section records a reservation only. It does not turn any historical row green, and it does not claim that a content policy framework, Mature mode or any moderation capability has been implemented.
+
+### 2026-10-14 — UX-PRODUCT batch 3: director/storyboard space and multitrack editing (current facts)
+
+Append-only current observation. Batch 3 covers UX-05 and UX-06; UX-07…UX-09 remain NOT_STARTED. It adds **no backend contract, no migration and no new endpoint** (so the existing PostgreSQL receipts still apply), and no earlier row or evidence ID is changed.
+
+| Capability | Source status | Verification | Actual boundary |
+| --- | --- | --- | --- |
+| UX-05 director / shot workspace | IMPLEMENTED | PASS (pure-function, contract and view tests) | `frontend/src/storyboard/` (17 files) keeps `shot_id` as identity while display numbering is separate, so reordering preserves identity and reports which bindings the owner will invalidate; a shot summary states which fields carry evidence and which are absent; director goals are editable with AI suggestions kept in a separate, non-merged section; "send to image/video/timeline" produces a draft carrying the original document and shot versions and never executes the target module. |
+| UX-05 reuse without a second owner | IMPLEMENTED | PASS | Receipts still decode through the existing `checkedStoryboardReceipt`/`checkedDirectorAdvice`; the new client is read-only and exposes no approve/bind/timeline write, so `useStoryboardProductionController` remains the only writer. Continuity is reported only where the owner declares evidence, and "no evidence found" is stated as such rather than as a continuity guarantee. |
+| UX-06 multitrack editing, preview and delivery | IMPLEMENTED | PASS (pure-function and panel tests) | `frontend/src/nle/` (11 files) renders ruler/playhead/zoom/snap, in-out marks, track lock/mute/gain, clip inspection, a subtitle track and export status from the EXISTING controller and draft. The time base stays integer/rational with no floating-point accumulation; thumbnails/waveforms are not implemented (a version-bound preview request key is pure and performs no I/O); playback stays with the existing owner. |
+| UX-06 edit safety | IMPLEMENTED | PASS | Edit commands map only onto operations the existing owner already implements (`clip.split`/`clip.duplicate`/`clip.move` via the existing controller); everything else is refused with a machine code and a Chinese reason, never silently substituted. The existing limits (600000 ms, 8 tracks, 30 clips, 1920×1080, 25 MiB per asset, 200 MiB sources, 120 s runtime, 500 captions, 192000-byte sidecar, 1–40 ops) are quoted from the code, warned about at 80 %, and any offered limit above the owner's is refused. Preview quality and final delivery quality are separate and `deliveryReady` is hard false. |
+| Batch 3 verification | PASS on a frozen input tree | PASS | Frontend across all six UX folders plus the storyboard/nle suites; the studio workspace, creative-workspace and canvas regressions stay green (16 files / 292 tests in the direct run); `tsc -b` exit 0; `pnpm run build` exit 0; token guard PASS; router seam PASS; harness receipts under `docs/delivery/v2-development/ux-product-*-r6.*` with `sources_changed_during_check=false`. |
+| Batch 3 regression found and fixed | FIXED | PASS | The first mount of the shot workspace inside the creative-workspace inspector made two pre-existing `CreativeWorkspace.test.tsx` cases fail (mounting read added a request and DOM the existing expectations did not have). The mount was changed to an explicit on-demand open, the pre-existing suite is green, and no existing test, assertion or skip was modified. |
+| Batch 2 carry-over fixed | FIXED | PASS | Independent verification of batch 2 found `classifyGraphChange(undefined, undefined)` reporting PRESENTATION; the shape check now precedes the identity short-circuit and a regression case covers it. |
+| Whole product (UX-07…UX-09, Windows install, GPU/real model, heavy render, browser/visual, real render acceptance, full CI) | NOT_STARTED / LOCAL_REQUIRED | NOT_RUN | Batches 1–3 are operating slices, not release readiness. Four of the `editCommand` kinds the owner supports are still not wired to the controller (the UI refuses them visibly), thumbnails/waveforms are absent, and no real render, model, install or full-CI acceptance has been performed. |
+
+See the UX-PRODUCT plan/status/decisions documents, the handover report and the harness receipts. This section adds current facts only.
+
+### 2026-10-14 — UX-PRODUCT batches 4 and 5 complete: model/storage centre, in-project assistant, unified export and handover (current facts)
+
+Append-only current observation. With these two batches all nine UX work packages (UX-01…UX-09) are implemented and integrated, and the frozen-tree acceptance run r10 passes every check with `failed=0`/`pending=0` and `frontend` covering all nine folders. No earlier row, status or evidence ID is changed, and nothing here asserts release readiness.
+
+| Capability | Source status | Verification | Actual boundary |
+| --- | --- | --- | --- |
+| UX-07 model and storage centre | IMPLEMENTED | PASS (pure-function, contract and view tests) | `frontend/src/modelcenter/` (13 files) reports declared and verified capabilities separately and **never promotes a declared capability to verified** (it needs both an owner validation fact and a runtime observation); an unroutable model lists the concrete blocking fact instead of "no models available"; readiness states cannot start a download (`starts_download:false`, `read_only:true` are literal types) and the contract rejects any payload claiming automatic cleanup, migration or an external model scan; cleanup/orphan output is a report (`physical_delete:false`, deletion unavailable, the UI control is disabled); the credential view reads presence only and the decoder recursively refuses thirteen secret-like key names; unknown facts stay UNKNOWN. |
+| UX-08 in-project hint assistant | IMPLEMENTED | PASS (pure-function, controller and view tests) | `frontend/src/guide/` (14 files) derives every hint from already-loaded owner facts and cites the exact source field; a hint whose claim has no cited source is refused rather than shown; EMPTY, DENIED and FAILED are distinct states and unreadable sources are reported as unreadable rather than as "no problem"; the panel performs **no I/O at all**. QingJian remains a documented, disabled extension point: the adapter registration always refuses, the adapter count is zero, nothing renders and no connection is ever reported (a repository-wide grep finds every QingJian mention inside this folder's extension point and the pause documentation). |
+| UX-09 unified export and engineering handover | IMPLEMENTED | PASS (pure-function, contract, client and view tests) | `frontend/src/delivery/` (14 files): a single item's export decision has no "rest of the project" input, so project completion cannot influence it; an unsupported format produces an explicit refusal whose branch carries no receipt or filename, so it cannot be represented as success (audio and video have no export format in the existing owner and are refused rather than faked); the handover manifest structurally cannot carry models, dependency directories, credentials or another project's objects, and hostile inputs (a foreign project id, `node_modules`, `.runtime`, `.gguf`/`.safetensors`, `credentials.json`, a service-account key file, a secret flag, path traversal, absolute paths, a missing version or digest) all land in the exclusion list with stable machine codes; receipt recovery only re-reads through the original idempotency key (the read plan's method is the literal `GET`, the path contains no cancel/retry/download) and an unknown or lost receipt is never rendered as success. |
+| Final acceptance (batches 1–5) | PASS on a frozen tree | PASS | `scripts/run_ux_product_checks.py --revision 10` records file, frontend (all nine UX folders), types, build, tokens, seam and regression as PASS with `failed=0` and `pending=0`, every receipt carrying `sources_changed_during_check=false`. `tsc -b --force` exits 0. One hundred and twenty-five new files across the nine folders; the storyboard, timeline, asset, canvas, model, guide and delivery surfaces are integrated additively on demand, with every pre-existing entry point preserved. |
+| Process defects recorded, not hidden | RECORDED | — | Revision 8 had two concurrent runs of the same harness command overwriting one receipt set (a task-book parallel-write violation caused by Lead scheduling, so r8 is not a single uncontended run and the final evidence is r10); the `types` check is weak under a warm `tsbuildinfo`, hence the forced rebuild; a Lead integration edit transiently broke the build and was caught by the verification line; and revision 9 correctly recorded `frontend` as `NOT_YET_AVAILABLE` while the delivery folder was still absent. |
+| Whole product (browser/visual and geometry acceptance, real CPU media pipeline, real export, real model/GPU, Windows installed application, project migration, full CI) | NOT_STARTED / LOCAL_REQUIRED | NOT_RUN | All frontend evidence remains jsdom and protocol fixtures; S10 has no real pipeline execution; no export, model call, GPU work or install acceptance was performed; two pre-existing environment-level failures (a 96 kHz WAV boundary and POSIX-only media-prerequisite shims) remain outside this work package; hosted CI is still `BLOCKED_ACCOUNT_PLATFORM`. M4 PARTIAL, M5–M9 LOCAL_REQUIRED and the V1 freeze are unchanged. |
+
+This section adds current facts only; it does not turn any historical row green and does not claim release readiness.
+
+### 2026-10-14 — Phase8: Studio release preparation and the content policy framework reservation (current facts)
+
+Append-only current observation. Phase8 consolidates what already exists rather than adding new capability; no earlier row, status or evidence ID is changed, and nothing here asserts release readiness. The phase started from `70c8d63` (the task book named `1eb2e2c`, which is three closeout commits behind).
+
+| Item | Status | Current fact |
+| --- | --- | --- |
+| Startup flow (new / open / resume) | IMPLEMENTED | `frontend/src/onboarding/` creates a blank project without writing an intent, offers the blank baseline and restores a saved workspace location; integrated in the studio START view. |
+| Creative intent as direction only (skippable, modifiable, mixable) | IMPLEMENTED | Intent is multi-select and explicitly affects recommendations only; the blank baseline coexists with any intent and a custom intent expresses a mix. |
+| Production workspace digest (project / progress / tasks / assets / modules / export) | PARTIAL | The six facts live in the existing views (PRODUCTION stages, TASKS, ASSETS, and the on-demand model centre and delivery centre), and the in-project assistant supplies evidenced next steps; there is **no single consolidated digest panel**, so this stays PARTIAL. |
+| Task centre states | IMPLEMENTED | `frontend/src/taskcenter/` transcribes the owner's stages and review states, renders an owner-undefined status as an honest UNKNOWN, and keeps FAILED distinct from EMPTY (failures are not hidden). |
+| Asset browser (search / category / preview / version / references / source / module usage) | IMPLEMENTED (with an honest boundary) | `frontend/src/assetbrowser/` provides facets, one shared selection, detail, version comparison, mutually exclusive preview and reference-only hand-off. Source kind and module usage are shown **only from owner-declared relationships**; the owner declares ASSET/CHAPTER/SCREENPLAY targets only, so everything else renders as 未核实 rather than being guessed. |
+| Model centre, local first (Ollama / LM Studio / ComfyUI / llama.cpp / local model directories; name / type / capability / VRAM / status; no automatic download) | PARTIAL | `frontend/src/modelcenter/` separates declared from verified capability, shows the runtime state and the concrete blocking fact, and is structurally unable to download, prepare, repair or scan (GET-only client; the contract rejects any payload claiming automatic cleanup, migration or an external model scan). Whether the backend runtime probe covers all five named local sources was **not verified**; the frontend renders owner facts and never probes by itself. |
+| Content policy framework | **RESERVED** (never IMPLEMENTED) | See the rows below. No NSFW or Mature capability is implemented and no restriction is relaxed. |
+| Browser and visual acceptance | **ACCEPTED (8/8 in a real browser)** | The self-contained entry point (`frontend/playwright.studio-release.config.ts` + `frontend/e2e/`, eight tests) uses an ALREADY-INSTALLED system browser channel (Microsoft Edge by default) and downloads nothing. Phase9 re-ran it against a **real backend** (`uvicorn app.main:app` on 127.0.0.1:8100 with `STORAGE_BACKEND=file` and `narrative_production_v2`) plus Vite: **8 passed / 14.1 s / exit 0**, so START, TASKS, ASSETS, PRODUCTION, MODEL CENTER, DELIVERY, the zh-CN smoke and the keyboard-focus check are all accepted in a real browser. The earlier Phase8 result (7/1, START blocked) came from an older point-probe spec revision and no backend, and is retained as history. Honest limits: the assertions cover surface landmarks, Chinese copy and keyboard reachability, **not** the full data round-trips; a PostgreSQL-backed browser run is BLOCKED_EXTERNAL because the repository's existing config hardcodes a missing `../.venv` python and port 8000, which is in a Windows excluded range; pixel-level visual regression remains NOT_RUN. Details: `PHASE9_BROWSER_ACCEPTANCE_REPORT.md` and `docs/v2/phase8-browser-acceptance.md`. |
+| Phase9 preparation (Windows install, GPU, real models, full CI, install flow) | NOT_RUN | Listed with what each item needs in `PHASE8_RELEASE_PREPARATION_REPORT.md`; hosted CI remains `BLOCKED_ACCOUNT_PLATFORM`. |
+
+| Content policy reservation place | Status | What exists | What is deliberately absent |
+| --- | --- | --- | --- |
+| Project / workspace policy | RESERVED | An optional `content_policy` on the existing preference owner with a single effective default of STANDARD; no second store | No UI switch, no Mature/NSFW control, no policy-driven restriction of modules, providers or exports |
+| Legacy-project compatibility | DONE (required by the phase) | The preference wire projection stays frozen to the fields existing clients decode and reads `row.get` (a legacy row can neither raise KeyError nor expose a new key); an omitted policy on an unrelated edit means "unchanged" instead of resetting a saved policy | No migration file and no schema change |
+| Asset policy | RESERVED | `asset_policy_for(project_policy)`: an asset inherits its source project policy, defaulting to STANDARD | No asset metadata field, no change to the asset owner or to existing asset reads/writes |
+| Model registry declaration | RESERVED | `model_content_policy_support(entry)` now accepts the phase-8 mapping form `{"STANDARD": true, "MATURE": false}` (only explicit `True` counts; unknown names are dropped) while keeping the earlier list form; the default is `("STANDARD",)` | It never filters, hides, enables or launches a model |
+| Export notice | RESERVED | `export_notice(project_policy)` returns a descriptor with `rendered:false` and `blocking:false` | Nothing renders it and no export is blocked or changed |
+| Verification | PASS (File + real PostgreSQL) | `tests/test_v2_content_policy_reservation.py`: legacy read defaults to STANDARD, a new project defaults to STANDARD, an unknown policy is refused, a bounded source guard proves no owner outside the reservation reads the field (so asset and export reads cannot fail on it; the one exemption is a pre-existing unrelated interactive-story retention string), an unrelated edit cannot reset a saved policy, and the phase-8 mapping shape is covered. File **56 passed / 43 skipped** together with the Phase 7 and studio-seam suites; real PostgreSQL **8 passed / 1 skipped** on a fresh database with 20 migrations, an empty-before-migrations proof and a clean stop (`phase8-policy.json`, `phase8-policy-pg.json`). | — |
+| Safety boundary | UNCHANGED | Recorded in code and docs: a policy is not a way to bypass a safety limit; a future framework still depends on user responsibility, platform rules, age limits and content management | No restriction relaxed |
+
+### 2026-10-14 — Phase9: release validation preparation (current facts)
+
+Append-only current observation. Phase9 prepares release-candidate validation and does not add capability. No earlier row, status or evidence ID is changed. The phase started from `3304fa6`.
+
+| Item | Status | Current fact |
+| --- | --- | --- |
+| Real browser acceptance, all six surfaces | **PASS 8/8** | Re-run against a **real backend** (`uvicorn app.main:app` on 127.0.0.1:8100 with `STORAGE_BACKEND=file` and `narrative_production_v2`) plus Vite, using the already-installed Microsoft Edge channel: **8 passed in 14.1 s, exit 0** — START, TASKS, ASSETS, PRODUCTION, MODEL CENTER (opened on demand), DELIVERY (opened on demand), the zh-CN smoke and the keyboard-focus check. The Phase8 figure (7/1, START blocked) came from an older point-probe spec revision with no backend and is retained as history. `PHASE9_BROWSER_ACCEPTANCE_REPORT.md`. |
+| Browser acceptance honesty limits | RECORDED | The eight assertions cover surface landmarks, Chinese copy and keyboard reachability, **not** the full data round-trips (create project → intent → save → production, task state transitions, asset search/version/reference flows), which remain jsdom/API-level evidence. A PostgreSQL-backed browser run is **BLOCKED_EXTERNAL**: the repository's existing config hardcodes a missing `../.venv` python and port 8000, which Windows excludes. Pixel-level visual regression is NOT_RUN. Vite binds IPv6 `[::1]` only (so the base URL must be `http://localhost:5173`) and exited silently once mid-run. |
+| Model centre local-first verification | **PARTIAL / mostly NOT_FOUND** | Bounded probes found Ollama (11434), LM Studio (1234) and ComfyUI (8188) refusing connections, no `ollama`/`llama-server`/`llama-cli` on PATH, and no GGUF/Safetensors files in any probed model directory (`D:\PoemSeed\models` exists but holds none). Port 8080 answered HTTP 200 with 151 bytes but its identity was **not** proven, so it is not claimed as an app-usable runtime. Nothing was downloaded or installed and no existence was simulated. A live check of the app's own `/api/model-center/*` detection surface is NOT_RUN. |
+| Windows validation preparation | **PASS (plan) / NOT_RUN (execution)** | `WINDOWS_VALIDATION_PLAN.md` covers clean-Windows install and uninstall, Chinese and space-containing paths, long paths, first start, restart recovery, cache, DesktopHost launcher/backend/PostgreSQL/trusted session, an RTX 5080 test project, and the rule that environment gaps are `BLOCKED_EXTERNAL` rather than worked around by editing tests. |
+| Media pipeline validation preparation | **PASS (plan) / NOT_RUN (execution)** | `MEDIA_PIPELINE_VALIDATION_PLAN.md` fixes the Text → Image → Video → Audio → Timeline → Export chain against the existing owners, the inputs, the per-step checks (artefact exists and parses, version/digest consistency, real status with UNKNOWN preserved, the unchanged limits) and the failure handling (missing tools, missing model, out-of-memory, render timeout, lost receipt, unsupported format). The two pre-existing host-level test failures remain visible rather than hidden. |
+| Release documentation | **PARTIAL** | The repository already carries 80+ documents, so Phase9 added none that would duplicate them; `PHASE9_RELEASE_VALIDATION_REPORT.md` indexes what exists and flags the real gaps: the root `README.md` is short, `docs/INSTALLATION.md` and `docs/TROUBLESHOOTING.md` are 3- and 8-line stubs, and the user/model guides are not yet aligned with Phase9's acceptance. Producing that content was deliberately not improvised here. |
+| Release candidate conclusion | **NOT ESTABLISHED** | Install/uninstall, Chinese and space paths, DesktopHost trusted session, GPU and real model work, real media pipeline, real export packaging and full CI are all NOT_RUN; hosted CI is still `BLOCKED_ACCOUNT_PLATFORM`; S10 has no real execution; S12 is contract-level only; and the local-first discovery capability could not be positively verified on this host. M4 PARTIAL, M5–M9 LOCAL_REQUIRED, the V1 freeze, F00 INTEGRATED + 39 PARTIAL and the CONTENT_POLICY `RESERVED` marker are all unchanged. |
+
+This section adds current facts only.
+
+### 2026-10-14 — Phase10: release-candidate hardening (current facts)
+
+Append-only current observation. Phase10 hardened evidence and prepared real-environment
+validation; it added no product capability. **No earlier row, status or evidence ID is changed**,
+and nothing below upgrades a prior row because a later report exists. The phase started from
+`55f67ea` (local = remote), `main` `fed2404c` untouched, PR #47 still `OPEN`/draft.
+
+| Item | Status | Current fact |
+| --- | --- | --- |
+| Baseline and PR integrity | IMPLEMENTED | `git rev-parse --short HEAD` `55f67ea`; `git ls-remote` `55f67ea0f0af9…` / main `fed2404c8e30b…`; `gh pr view 47` `OPEN`, `isDraft true`, `MERGEABLE`, base `main`. Nothing merged, released or tagged. |
+| Creative-graph contract pins (work line C) | IMPLEMENTED | `tests/test_v2_creative_graph_contracts.py` **+142 / −0** — two hunks, **zero deletions**, so no existing assertion was relaxed. Independently re-run through the required runner: **260 passed, exit 0** (`phase10-graph-lead-verify-r2.json`). The 30 Phase10 receipts landed as produced, including the deliberately-failing `c1-mutation-probe` (proof the pin fails when the contract is mutated) and two command-line-mistake FAILs (`c1-c2-graph-suites`, `c1-graph-suites-r2`). Commit `37051ec`. |
+| Graph contract and snapshot authority (work line C audit, not redone) | PARTIAL | Node identity/ports/port types/`required`/caps/parameter models/schema-version gate are **backend-authoritative** (`app/creative/graph_models.py` `DEFINITIONS` 463–508, `port()` 459, `NodeInstance` 530–550, `parse_graph` 676–679; `graph.py:373-375`; `validate_output_ports` 765–830). Display-only: `capabilities`, parameter JSON-schema, `blockers`, `default_parameters`; the frontend keeps a second port table (`studioGraphClient.ts:57-86`, `graphDraft.ts:8-10`), so drift appears as a catalog load failure. `validate_output_ports` defaults `schema_version=None` (a caller omitting it validates as v1). Assets: seven declared relationship kinds, only `SOURCE_OF`/`DERIVED_FROM` have producers and lineage gating, and **no consumer guesses an undeclared relationship** (unknown → 未核实, D13); the `/relationships` projection drops `semantics: DECLARED_LINK_NOT_RIGHTS_GRANT_OR_EXECUTION` but adding the key breaks strict `assetbrowser` decoding, so it is recorded only. Snapshots: graph definition + version + node state + run history persisted (`creative_graph_definitions_v2`, `creative_graph_runs_v2`); edit-version `history` is appended but exposed by no DTO/route; canvas grouping and editor draft/selection/undo are **session-only** (D12) and must not be described as persisted. |
+| Model Center runtime levels ①–⑤ | PARTIAL (level ② not implemented) | Levels ①file existence (`executable_exists`, GGUF `file_exists`/`header_valid`), ③connectivity (bounded loopback HTTP; `RUNNING` on a well-formed answer, else `DISCOVERED` + `EXTERNAL_RUNTIME_NOT_RUNNING`) and ④recognisability (GGUF header/`general.architecture`; provider model lists; ComfyUI loader-node bindings) are **implemented**; level ⑤executability is **refused by design** (`INFERENCE_NOT_RUN`, `EXECUTABLE_NOT_EXECUTED`, `verified false`, `enable_eligible false`). **Level ②runtime existence is not implemented**: no discovery path observes a process, `RuntimeInstance.process_alive`/`http_reachable` live on the lifecycle object that discovery never consults, so `DISCOVERED` means "the endpoint did not answer", **not** "no process exists". This resolves the Phase 9 row's open question ("whether the backend runtime probe covers all five named local sources was not verified") **without editing that row**: all five named sources do have a discovery path — Ollama (`OLLAMA` + `OllamaProvider.list_models`/`/api/version`), LM Studio (**no `RuntimeType`**: `ProviderFamily` `LM_STUDIO` with `runtime_type` `OPENAI_COMPATIBLE_LOCAL`, seeded at `discovery.py:226`, dirs `~/.lmstudio/models` + `~/.cache/lm-studio/models`), ComfyUI (`/system_stats`+`/object_info`), llama.cpp (`/v1/models`), local model directories (`scan_environment_files`, `MAX_FILES 2000`, `MAX_DEPTH 3`). `LOCAL_TYPES` (`discovery_types.py:11`) excludes `WHISPER_CPP`, which is only ever pinned, never discovered. Commit `6a466c4` adds `tests/test_v2_discovery_runtime_levels.py` incl. `test_runtime_existence_is_never_probed_at_process_level`, which pins level ②'s absence so an inferred fact cannot later be presented as measured: **4 passed, exit 0** (`phase10-a1-runtime-levels-file-r3.json`). |
+| Model Center registry fields and capability mapping | IMPLEMENTED (two corrections) | The named fields all exist: `ModelDefinition` carries name/family/variant/version/**capabilities**/**runtime_type**/format/precision/source/license/**local_paths**/**status**/components/hardware_profiles/identity; VRAM is on `HardwareProfile` (`vram_required`, `vram_recommended`, `ram_required`, `offload_mode`, `tested`). `Capability` has ten values (`TEXT·IMAGE·VIDEO·VISION·TTS·AUDIO·EMBEDDING·RERANK·RESTORATION·INTERPOLATION`); `RuntimeType` has seven. **Correction 1:** FLUX is registered as `Capability.IMAGE` (`service.py:629-630`) — `IMAGE_GENERATION` is only the task-layer name that resolves down via `TASK_CAPABILITY` (`model_provider_contracts.py:21-24`). **Correction 2:** there is **no `ASR` value in `Capability`**; Whisper's model is `(Capability.AUDIO,)` with family `WHISPER` (`whisper_runtime.py:233-234`), and `ASR` appears only as a graph node binding name (`whisper_runtime.py:535`), so "Whisper→ASR capability" is inaccurate. |
+| Discovery runtime levels on real PostgreSQL | IMPLEMENTED | `phase10-a1-r4`: **4 passed, exit 0** on a real disposable PostgreSQL 16.15 (`127.0.0.1:55433`), fresh database `v2_phase10a1f`, database **proven empty before migrations**, all **20** `database/migrations/*.sql` applied, `server_stop stopped` / cleanup completed / no leftover listener. The earlier `phase10-a1-runtime-levels-pg` receipt was **not** a PostgreSQL check — its recorded command was a bare `pytest … -q` with no `--basetemp` outside `run_v2_postgres_checks.py`, so no schema existed and all three tests errored with `UndefinedTable`; it is retained as evidence of a command-line mistake. Corrected runner contract (three of four points were wrong in the phase brief): `--user` is the **connect role** (default `postgres`), the **label is positional** (`[a-z0-9-]+`), the `--basetemp` directory **must already exist**, and the interpreter must be an **absolute path** (`CreateProcess` does not resolve bare `python`). Commit `20924f5`. |
+| Live local runtime on this host | LOCAL_REQUIRED | No listener on 11434, 1234, 8188 or 19992; nothing installed or downloaded. **Port 8080's identity — unproven in Phase 9 — is now proven**: `GET /health` → `{"status":"ok","max_context":131072,"model":"qwen3.8-flash-next-iq3_xxs","images":false,"api_key":false,"loaded":false,"service":"strata"}`, owning process `pythonw.exe` from `C:\AI-Novel-Studio-Python312`. It is the **Strata local model server** (separate Python 3.12 install), **not** an AI-Novel-Studio runtime and not a V1 component; it is a reachable local OpenAI-compatible endpoint but is **not registered in Model Center**, and nothing claims the app uses it. Read-only observation only. **Port 8100 — used by the Phase 9 acceptance configuration — is now occupied** by an unrelated vendor service (`ASUS … GearLink_KBService.exe`); a re-run must pick another free port (8000 remains unusable, in a Windows excluded range held by PID 4). That service was recorded, **not** stopped. |
+| Model Center environment-level test failures | RECORDED (not masked) | The broader discovery suites gave `9 failed, 539 passed, 1 skipped`, none of them a product defect: 4 × `WinError 1314` creating symlinks (`SeCreateSymbolicLinkPrivilege` missing, POSIX-only assumption), 1 × `os.sysconf` missing (POSIX-only), 4 × `WinError 10013` / `PORT_IN_USE` on 54321/54323/54325/54327 (Windows excluded ranges). These are additional to the two already known (`tests/test_v2_media_prerequisites.py` 10 failed; `tests/test_v2_audio_wav_controls.py` 2 failed, 96 kHz boundary). **No assertion, skip or case was changed to hide any of them.** |
+| Release documentation | PARTIAL | The repository already carries 80+ documents, so this phase appended only verified content rather than adding duplicates: root `README.md` (was 41 lines) and `docs/installation.md` (historical 3-line stub retained, with a verified section appended covering the two check runners, the corrected PostgreSQL syntax and the acceptance configuration). Install/uninstall, packaging and the installer flow remain NOT_RUN and are not described as existing. |
+| Release candidate validation | NOT ESTABLISHED | Windows install/uninstall, Chinese and space-containing paths, long paths, restart recovery, DesktopHost trusted session, GPU and real model execution, the real media pipeline and Text→Image→Video→Audio→Timeline→Export, export packaging, the browser acceptance re-run, pixel-level visual regression and a full-CI run are all NOT_RUN. Hosted CI remains `BLOCKED_ACCOUNT_PLATFORM` (billing lock; never started, never counted as passing). `PHASE10_RELEASE_HARDENING_REPORT.md`. |
+| Content policy reservation | **RESERVED** (unchanged) | No NSFW or Mature capability, no UI entry point, no model filtering; only fields, interfaces and compatibility tests. A policy is never a way to bypass a safety limit. |
+
+This section adds current facts only.
+
+### 2026-10-14 — Phase11: RC gate closure (current facts)
+
+Append-only current observation. Phase11 closed the level-② gap, re-ran the browser acceptance
+instead of trusting the earlier receipt, and produced the two validation checklists. It added no
+product capability beyond the observation surface itself. **No earlier row, status or evidence ID
+is changed.** The phase started from `5179e56`; `main` `fed2404c` untouched; PR #47 still
+`OPEN`/draft.
+
+| Item | Status | Current fact |
+| --- | --- | --- |
+| Model Center level ② (runtime existence) | IMPLEMENTED | `app/model_center/runtime_observation.py` is a new **observation-only** surface: no launch, no install, no download, no child process (channels are a bounded TCP connect, the app's owned process handle, and — on Windows — the OS TCP table plus `QueryFullProcessImageNameW` via `ctypes`). Ladder: `0 NOT_OBSERVED → 1 DISCOVERED → 2 RUNTIME_AVAILABLE → 3 REACHABLE → 4 CAPABILITY_UNKNOWN → 5 READY`, where `READY` requires inference verified elsewhere and is unreachable from observation — an exhaustive test walks all 32 evidence combinations, a second drives the real path with `subprocess.Popen` poisoned, and a third scans the module for child-process APIs. `NOT_OBSERVED` was added to the five named statuses so an absent runtime is not reported as `DISCOVERED`. It deliberately does **not** touch the scan report, because the Phase10 pin asserts that report carries no process fact. Commit `a9f03bb`. |
+| Level ② live result on this host | IMPLEMENTED | Ollama `11434`, LM Studio `1234` and ComfyUI `8188`: **`NOT_OBSERVED` (level 0)** — no listener at all, verified with real probes. The custom HTTP local endpoint on `8080`: **`CAPABILITY_UNKNOWN` (level 4)** — listener present, owner identified as pid `16292` `C:\AI-Novel-Studio-Python312\pythonw.exe` with `identity_verified: true`, protocol answered on `/v1/models`, model `qwen3.8-flash-next-iq3_xxs` recognised, and **inference explicitly not observed**. Receipts `phase11-runtime-observation.json` (50 passed), `phase11-live-observation.json`. |
+| Custom HTTP local runtime registration | IMPLEMENTED (gated, never performed) | Section 6 of the brief: `custom_http_local_registration()` only **prepares** a descriptor for the existing owner-declared route. Fail-closed — `user_confirmed` must be literally `True` (else `CUSTOM_HTTP_LOCAL_USER_CONFIRMATION_REQUIRED`), the endpoint must be numeric loopback, the observation must already be `REACHABLE`, and a capability name must be one of the ten real `Capability` values. It records endpoint/model/capability, reports `capability_status: NOT_VERIFIED` when none was declared, and states `generates_tasks=False` / `auto_enabled=False`. Nothing is registered, enabled, launched or scheduled; Strata remains observed and unregistered. Commit `2be9e42`. |
+| Capability vocabularies (brief §7) | IMPLEMENTED (verification + invariants) | The three layers are pinned as separate vocabularies rather than described: the task vocabulary (`TEXT_GENERATION`/`IMAGE_GENERATION`/`VIDEO_GENERATION`) is **disjoint** from the ten model capabilities and maps down onto them one-directionally; `ASR` is in **neither** and is only Whisper's graph node binding (`whisper_runtime.py`); Whisper is runtime `WHISPER_CPP` with model capability `AUDIO`; FLUX is `Capability.IMAGE` under the `COMFYUI` runtime. A genuine conflation hazard was found while writing it and is recorded: `ProviderFamily` and `RuntimeType` are different vocabularies that nevertheless share **exactly two** spellings — `COMFYUI` and `LLAMA_CPP` — while `LM_STUDIO` deliberately has no runtime type (reached as `OPENAI_COMPATIBLE_LOCAL`). Commit `2be9e42`. |
+| Real-browser acceptance on the current head | **PASS 8/8** | Re-executed rather than inherited: system Microsoft Edge (`channel msedge`, nothing downloaded), real `uvicorn app.main:app` with `STORAGE_BACKEND=file` + `narrative_production_v2`, real Vite, Playwright driving the actual browser — **8 passed (14.4 s), exit 0, retries 0** covering START, TASKS, ASSETS, PRODUCTION, MODEL CENTER, DELIVERY, the zh-CN smoke and the keyboard focus case. Ports moved: 8000 stays Windows-excluded and **8100 is now held by the unrelated ASUS `GearLink_KBService`**, so the backend ran on `8110`; Vite bound IPv4 because `--host 127.0.0.1` was passed, making the base URL `http://127.0.0.1:5173`. Both services were stopped afterwards. Commit `0c5128b`. |
+| Media pipeline real execution | NOT_RUN | No generation, render or export was run. `MEDIA_PIPELINE_RC_CHECKLIST.md` (commit `3f97b34`) adds the real owner module per step, the real identity fields taken from `production_execution_models.py` (`shot_version`/`shot_digest`, `reviewed_preview_digest`, `expected_version`/`expected_request_digest`, `TimelineAssetSnapshot.version`/`digest`), and a **contract preflight**: `86 passed, 79 skipped, 1 failed` (`phase11-media-chain-contract-preflight.json`). The single failure is `BLOCKED_EXTERNAL`, not a product defect: `subprocess.run(["bash","-n"])` and this host has no `bash` (`ffmpeg`/`ffprobe` **do** exist at `D:\ffmpeg\ffmpeg-8.1.2-essentials_build\bin`). The 79 skips are not counted as passes. |
+| Windows install / packaged runtime | NOT_RUN | `WINDOWS_GPU_RC_CHECKLIST.md` (commit `2066f13`) records W1 clean install, W2 launcher, W4 DesktopHost and W6 recovery as `NOT_RUN`; `ENABLE_PACKAGED_RUNTIME=false` in the verified runner environment, so the packaged path was never exercised. Partially verified and marked as such: the **dev** backend invocation is `PASS` (started, `/docs` 200, stopped cleanly) and the **portable-cluster** PostgreSQL path is `PASS` from Phase10 `phase10-a1-r4`. |
+| GPU validation (RTX 5080) | PARTIAL (measurement only) | Measured on this host: **1 × NVIDIA GeForce RTX 5080** (`GPU-b277f34d-…`), driver `591.74`, **16 303 MiB** VRAM, **4 923 MiB in use**, compute capability `12.0`; Windows 11 Pro `10.0.26100`, 20 logical CPUs, 63.6 GiB RAM. The app's CUDA/DirectML verdict is the honest `COMPONENT_FOUND_NOT_VERIFIED` with `inference_verified: false`. CUDA execution, model load, image generation and video generation are all `NOT_RUN`. The 4 923 MiB in use belongs to the **separate** Strata server and must never be counted as this app's usage. |
+| Hardware inventory duplicate finding | RECORDED (not changed) | `host_hardware()` returns the RTX 5080 **twice** with identical vendor, name and `dedicated_vram_bytes`, while `nvidia-smi -L` reports exactly **one** GPU — so any GPU count or VRAM sum would double. Left unchanged on purpose: hardware reporting feeds hardware profiles and VRAM checks, and altering it is a functional change needing a decision plus a test (Phase11 is a validation phase). |
+| Live local runtime end-to-end | LOCAL_REQUIRED | Still no app-usable local runtime on this host: Ollama/LM Studio/ComfyUI have no listener, nothing installed or downloaded, and 8080 is the Strata server (observed, not registered). `READY` has never been reached for any runtime. |
+| Release documentation | PARTIAL | `README.md` gained a verified Phase11 block; `docs/troubleshooting.md` gained eight verified operational entries (8100 occupied, 8080 = Strata, `bash` absent, the four PostgreSQL-runner traps, Vite IPv4/IPv6 binding, "file exists ≠ runtime ready", the duplicate GPU count, and VRAM already partly in use). Install/uninstall, packaging and the installer flow remain `NOT_RUN`. |
+| Release candidate validation | NOT ESTABLISHED | Unchanged in substance: no install/uninstall, no packaged DesktopHost trusted session, no real local model execution, no real media pipeline, no export packaging, no clean-machine run, no full CI. Hosted CI remains `BLOCKED_ACCOUNT_PLATFORM`. `PHASE11_RC_GATE_CLOSURE_REPORT.md`. |
+| Content policy reservation | **RESERVED** (unchanged) | No NSFW or Mature capability, no UI entry point, no model filtering; only fields, interfaces and compatibility tests. A policy is never a way to bypass a safety limit. |
+
+This section adds current facts only.
+
+### 2026-10-15 — Phase12: RC final validation (current facts)
+
+Append-only current observation. Phase12 fixed a real hardware-inventory defect, reached runtime
+level ⑤ for the first time, and ran one real model-free media chain. **No earlier row, status or
+evidence ID is edited** — including the Phase11 sentence "`READY` has never been reached for any
+runtime", which this section explicitly supersedes below rather than rewrites. The phase started
+from `4e98afc`; `main` `fed2404c` untouched; PR #47 still `OPEN`/draft.
+
+| Item | Status | Current fact |
+| --- | --- | --- |
+| GPU physical identity (Phase11 finding F1) | **IMPLEMENTED (fixed)** | `host_hardware()` counted the single RTX 5080 **twice**. The consequence was not cosmetic: `_gpu_capability` fails closed unless it sees exactly one device, so the machine reported `gpu_vendor_id=None, vram_mib=0` — **no GPU capability at all**, which feeds VRAM budgets, hardware profiles and runtime admission. Cause, from the raw enumeration: DXGI advertises one physical GPU as **two** adapters with different AdapterLuids (`0:68850`, `0:112158`) but identical vendor/device/subsystem/revision (`10DE/2C02/209610DE/A1`), because a `GameViewer Virtual Display Adapter` is attached to it; Windows PnP confirms exactly **one** present RTX 5080 and a non-present GTX 1050 ghost. Fix: adapters keep full identity (`device_id`, `subsystem_id`, `revision`, `adapter_luid`, derived PnP `hardware_id`) and are collapsed **only** when the passive present-device inventory (SetupAPI + cfgmgr32, no subprocess) proves exactly one started device with that hardware ID — so two identical real GPUs stay two devices (the inventory returns a **tuple, not a set**, for exactly that reason), an unreadable inventory collapses nothing, and every collapse is disclosed via `gpu_enumeration`. `_gpu_capability` was not touched, so no threshold was lowered and genuinely multi-device hosts still fail closed. No vendor, model or VRAM value is hardcoded. Live: physical GPUs **2 → 1**, capability **`(None, 0)` → `(NVIDIA uuid, 15977 MiB)`**. Commit `82d1282`. |
+| Model Center runtime level ⑤ `READY` | **IMPLEMENTED (reached for the first time)** | **This supersedes the Phase11 sentence "`READY` has never been reached for any runtime"** (that row is left unchanged as history). One real inference was verified against the already-running local Strata server on 8080: identity `/health` → `service: strata`, model `qwen3.8-flash-next-iq3_xxs`, `max_context 131072`, no API key; capability mapping from advertised modalities `text→text` ⇒ model capability `TEXT`; connectivity `/v1/models` answered; then **one real inference** — ok, **53.7 s** (the first request loads the model), `usage: prompt 57 / completion 8 / total 65`, `finish_reason: length`. With that evidence the observation escalated to **level 5 `READY`** with `inference_verified: true`. Honest caveats: the runtime is the **DSH-provided Strata server, not an app-native runtime**; it was already running (started outside this session, so never stopped or reconfigured); and `content_preview` is empty because the 8-token cap was hit, so the proof of inference is the token usage and a valid `choices` payload rather than visible text. **Registration was not performed** — only a descriptor was prepared (`performed: false`, `generates_tasks: false`, `auto_enabled: false`). Commit `4e89f27`. |
+| Real media chain (model-free segment) | **PARTIAL** | One real chain completed through the app's own HTTP API against a real backend (`STORAGE_BACKEND=file`, `MOCK_PROVIDER=false`): **Text** (chapter `phase12:1`, version 1, `sha256 e7f4164a…`, `Draft`) → **Director/Screenplay** (`a15f7d00-…`, revision 1, `edit_version 1→2`, scene pinned to the real source chapter v1, `DRAFT → APPROVED`) → **shot plan** (`edit_version 3→4`, `shot_revision 1`, `APPROVED`) → **storyboard** (`edit_version 4→5`, `storyboard_revision 1`, `APPROVED`) → **approval** (`edit_version 5→6`) → **Export** (job `51155d19-…`, `snapshot_id 935c5c78-…`, `succeeded` at progress 100, **real artefact 1930 bytes**, `sha256 92ad87bc…`). No generative model was involved in any of those rows, so they are real product operations with real ids, versions, review transitions and digests. **Image, Video, Audio and Timeline remain `BLOCKED`** because they need a local runtime this host does not have (ComfyUI 8188 and the others have no listener; the Whisper host is not configured) — nothing was substituted for them. Commit `f9cad2a`. |
+| Media-chain gates and client gap | RECORDED | Three real product behaviours found by running the chain: (1) approvals are **review-gated** — `400 screenplay must be approved before shot planning`, `400 shot plan must be approved before storyboard`; the chain went *through* them. (2) Every approval is an **optimistic-concurrency write** — omitting the precondition returns `428 PRECONDITION_REQUIRED` and a stale value returns `409 VERSION_CONFLICT`; `expected_version` means the screenplay **`edit_version`**, not the per-artefact revision. (3) **The current `edit_version` is only readable indirectly**: there is no `GET` for one screenplay (`404`) and `GET …/shots` returns `405`, so a client must read it from an export job's `source_versions` — a real client-usability gap, recorded rather than worked around. |
+| Windows clean-machine execution | NOT_RUN | `WINDOWS_RC_EXECUTION_GUIDE.md` (commit `4e89f27`) specifies install/uninstall/first start, Chinese + space + long paths, launcher/backend/DesktopHost/PostgreSQL, restart + crash + cache recovery and the RTX 5080 CUDA/VRAM/model-load checks, with the real owners and the port constraints. Nothing in it was executed on a clean machine; `ENABLE_PACKAGED_RUNTIME=false` in the verified environment, so the packaged path is still unexercised. |
+| GPU CUDA execution / model load / image / video | NOT_RUN | VRAM is measured (15 977 MiB usable, ~4.9 GiB held by the separate Strata server, which must never be attributed to this app) and the identity regression is covered by `tests/test_v2_gpu_physical_identity.py`, but no CUDA inference was run through the app and no image or video was generated. The app's own verdict correctly stays `COMPONENT_FOUND_NOT_VERIFIED` with `inference_verified: false`. |
+| Live local runtime end-to-end | **LOCAL_REQUIRED** (app-native) | Verification is now `IMPLEMENTED` (level ⑤ reached with real inference), but **no app-native runtime exists**: Strata is observed/verified, deliberately **not registered**, so the app cannot yet route work to it. Moving this row requires either installing an app-native runtime or an explicit user decision to register the observed endpoint. |
+| Release documentation | PARTIAL | `WINDOWS_RC_EXECUTION_GUIDE.md` added; `MEDIA_PIPELINE_RC_CHECKLIST.md` gained the Phase12 execution record; install/uninstall and installer documentation still do not exist and are not claimed. |
+| Release candidate validation | **NOT ESTABLISHED** | Improved but still not established: the GPU identity defect is fixed, level ⑤ has been reached once with real inference, and one real model-free chain is recorded — but install/uninstall, the packaged DesktopHost trusted session, a real local model loaded and executed **through the app**, the media chain's model-dependent steps, export packaging and a full CI run are all still `NOT_RUN`. Hosted CI remains `BLOCKED_ACCOUNT_PLATFORM`. `PHASE12_RC_FINAL_VALIDATION_REPORT.md`. |
+| Content policy reservation | **RESERVED** (unchanged) | No NSFW or Mature capability, no UI entry point, no model filtering; only fields, interfaces and compatibility tests. A policy is never a way to bypass a safety limit. |
+
+This section adds current facts only.
+
+### 2026-10-15 — Phase13: RC final acceptance preparation (current facts)
+
+Append-only current observation. Phase13 closed one of the two named pre-release engineering gaps
+and produced a live, evidence-backed answer on the other. **No earlier row, status or evidence ID is
+edited.** The phase started from `f598bee`; `main` `fed2404c` untouched; PR #47 still `OPEN`/draft.
+
+| Item | Status | Current fact |
+| --- | --- | --- |
+| Graph `schema_version` gate (P0 gap 2) | **IMPLEMENTED (fixed)** | `validate_output_ports(..., schema_version=None)` was audited, not assumed. The default is a **deliberate legacy compatibility default, not an oversight**: `definition_for(id, None)` returns exactly the same definition as `schema_version=1` (only 5 and 3 change anything), `parse_graph` fixes the version set at 1–5 with 1 as the fallback, and the callers that omit it (`ai_execution`, `text_assets`) are the legacy v1 text paths whose behaviour `tests/test_v2_ai_execution_contracts.py` already pins. It is also fail-closed: every schema-specific port type refuses to validate under a version it does not own, so omitting the version can never grant a newer schema. **What was genuinely missing:** an *illegal* version never raised — `0`, `6`, `-1`, `99`, `1.0`, `"4"`, `True` and `object()` all fell through every `not in {3,4,5}` style gate and were silently validated as v1. Fix: `normalise_schema_version()` maps `None` to the explicit `LEGACY_SCHEMA_VERSION` (1) and refuses any value that is not an exact `int` in `SUPPORTED_SCHEMA_VERSIONS = {1,2,3,4,5}` with `CREATIVE_GRAPH_SCHEMA_VERSION_INVALID` (the type check is exact because `True == 1` in Python, matching the module's existing `GraphCreate.exact_zero` convention). `validate_output_ports` is otherwise unchanged, so old rows stay readable and nothing is force-upgraded. Evidence: `tests/test_v2_graph_schema_version_gate.py` (new) covers present / missing / illegal versions and the `None ≡ v1` equivalence across every catalog definition: **442 passed, 35 skipped, exit 0** with the adjacent graph suites, including the 260-case creative-graph contract suite. Commit `5c100e9`. |
+| Frontend port-table duplication (P0 gap 1) | **PARTIAL** (audited; migration NOT performed) | The duplication is located precisely and is **not** accidental drift. `app/creative/graph_models.py:753` already calls `definition_for(key, schema_version=5 if include_video else 3 if include_media else None)`, so **the catalog route already emits schema-resolved ports** and the backend is already authoritative for them. The frontend then *recomputes* the same resolution in two places — `studioGraphClient.ts:57-86` (`ports` + `nodePorts()` patching `media_review`/`timeline_export` at v5, `human_review`/`media_generate` at v3) and `graphDraft.ts:8-10` (`graphCatalogForSchema` patching the same three cases) — and `catalogDefinition` (line 421) **cross-checks the server's ports against its own table**, which is exactly why drift surfaces as a catalog load failure. That check is deliberate independent pinning, not redundancy, so the phase rule "do not delete port validation" rules out simply deleting it. The correct convergence (single frontend projection, preferring the server-resolved ports, keeping the structural checks) was **not implemented in this phase** — the remaining work is recorded rather than claimed. |
+| Local runtime registration closure (P1) | **BLOCKED** (`SESSION_REQUIRED`) | The registration path was exercised against a real backend and is refused by the product's own authority boundary: `POST /api/model-center/local-ai/runtimes` returns **HTTP 401 `SESSION_REQUIRED`** without an injected host session, confirming `app/model_center/discovery_api.py:50-68`, where `require_session` is a router-level dependency that raises unless the host authority reports `can_mutate`. This is an intentional security control, not a defect; obtaining or fabricating the session would be a bypass, which the phase rules forbid. Everything before the gate was already verified in Phase12 (detection → identity → capability mapping → connectivity → confirmation → one real inference reaching level ⑤ `READY`) and a user-confirmed descriptor is prepared with `generates_tasks=false` / `auto_enabled=false`. **Task routing is therefore `NOT_RUN`.** Evidence: `docs/delivery/v2-development/phase13-runtime-registration-probe.json`. |
+| Live local runtime end-to-end | **LOCAL_REQUIRED** (unchanged) | Unchanged by Phase13 and deliberately not upgraded: verification reaches level ⑤, but nothing is registered, so the app still cannot route work to a local runtime. The brief's own rule applies — keep `LOCAL_REQUIRED`, do not fabricate `READY`/routed success. |
+| Real media pipeline | **PARTIAL** (unchanged from Phase12) | No new real chain was run this phase; the Phase12 model-free chain stands (Text → Director/Screenplay → shot plan → storyboard → Export, all with real ids, versions and digests, real 1930-byte artefact). Image, Video and Audio remain **`BLOCKED_LOCAL_RUNTIME`** — no local image, video or ASR/TTS runtime exists on this host — and Timeline depends on their assets. Nothing mock or cloud was substituted. |
+| Windows RC preparation (P3) | **IMPLEMENTED (preparation) / NOT_RUN (execution)** | `WINDOWS_RC_EXECUTION_GUIDE.md` gained a completeness matrix covering every enumerated item — clean install/uninstall/first start; launcher/backend/DesktopHost/PostgreSQL; Chinese, space and long paths; crash, restart and cache recovery; and GPU CUDA discovery, VRAM, model load, image and video generation — each with its owner and its honest state. Nothing was executed on a clean machine. |
+| GPU rules (P0 guard) | MAINTAINED | No capability is inferred from a detected component, no VRAM threshold was lowered, and nothing vendor- or model-specific is hardcoded; capability still comes only from hardware discovery. The Phase12 identity fix (`82d1282`) is what keeps that discovery truthful. |
+| Model Center statuses | MAINTAINED | 发现 ≠ 可运行 preserved: `NOT_OBSERVED → DISCOVERED → RUNTIME_AVAILABLE → REACHABLE → CAPABILITY_UNKNOWN → READY`, with `READY` reachable only on real inference evidence. A scanned model is never presented as executable. |
+| Release candidate validation | **NOT ESTABLISHED** | One pre-release engineering gap is fixed and tested; the other is precisely audited but not migrated; registration is blocked by an intentional authority gate; the media chain's model-dependent steps are blocked by missing local runtimes; and install/uninstall, the packaged DesktopHost trusted session and full CI remain `NOT_RUN`. Hosted CI remains `BLOCKED_ACCOUNT_PLATFORM`. `PHASE13_RC_FINAL_ACCEPTANCE_REPORT.md`. |
+| Content policy reservation | **RESERVED** (unchanged) | No NSFW or Mature capability, no UI entry point, no model filtering; only fields, interfaces and compatibility tests. A policy is never a way to bypass a safety limit. |
+
+This section adds current facts only.
+
+### 2026-10-15 — Phase14: professional creative capability (current facts)
+
+Append-only current observation. Phase14 is a capability phase, not a validation phase, and it was
+**not** completed. This section records only what was actually built and verified; every other
+priority is recorded as `NOT_RUN` rather than described as reserved-but-intended. **No earlier row,
+status or evidence ID is edited.** The phase started from `5ab9b3d`; `main` `fed2404c` untouched;
+PR #47 still `OPEN`/draft.
+
+**Reconnaissance that shaped the work:** `DirectorNote` (`app/creative/models.py:62`) already carries
+`shot_size`, `camera_angle`, `camera_motion`, `composition`, `lens`, `lighting`, `color_palette`,
+`emotion`, `performance`, `blocking`, `character_state` and `performances`; `ShotContinuity`
+(`models.py:111`) already exists for `characters`/`outfit`/`environment`/`camera`; and the Asset
+relationship owner already declares seven relationship kinds (Phase10 audit). So the phase's gap was
+**not** missing owners — it was that every camera field is a bounded **free-text string** with no
+vocabulary anywhere in the tree.
+
+| Item | Status | Current fact |
+| --- | --- | --- |
+| P1 Advanced Director Studio — camera language | **PARTIAL** | `app/creative/camera_language.py` (commit `0e10c5d`) adds an authoritative vocabulary over the **existing** fields: shot sizes `EXTREME_WIDE · WIDE · MEDIUM · CLOSE_UP · EXTREME_CLOSE_UP`; movements `STATIC · PAN · TILT · DOLLY · TRACKING · CRANE · HANDHELD`; lenses `WIDE · NORMAL · TELEPHOTO · MACRO`; compositions `RULE_OF_THIRDS · CENTER · SYMMETRY · LEADING_LINES`, plus documented spellings that fold onto them. Values are **classified, never coerced**: `CANONICAL`, `LEGACY_PASSTHROUGH` (unrecognised non-empty text preserved verbatim and reported as non-canonical) or `EMPTY`, so old projects stay readable. `require_canonical()` is the strict gate for new professional writes and is deliberately **not** wired into the legacy shot-update path. `project_camera()` is a read-only projection that never mutates its input. **Not done:** the Director Workspace surface (Story Goal / Visual Direction / Mood / Genre / Reference → Director Intent), scene-direction and performance-direction projections, any frontend exposure, and write-path enforcement. |
+| P2 Storyboard Pro — shot continuity | **PARTIAL** | `continuity_warnings()` implements the phase's own example over **authored** `ShotContinuity` data — two adjacent shots with differing authored `outfit` produce `CONTINUITY_OUTFIT_CHANGED` (and likewise `CONTINUITY_CHARACTERS_CHANGED` / `CONTINUITY_ENVIRONMENT_CHANGED`). It obeys that owner's own rule (authored constraints, **never inferred**): a value authored on only one side is treated as *unknown*, not as a break, and a camera change is deliberately **not** a warning because moving the camera between shots is direction. Comparison ignores case and surrounding whitespace but not internal spacing. **Not done:** Shot Card UI, storyboard sequence preview, approval-surface integration. |
+| P3 Prompt Studio | `NOT_RUN` | No prompt asset owner, prompt version chain, or Prompt↔Asset/Shot/Character/Scene binding was added. Prompt data therefore still lives wherever it already lived; nothing was created and nothing is claimed. |
+| P4 Character / Scene Consistency | `NOT_RUN` | No character or scene profile (appearance, age range, wardrobe, palette, references; environment/building/material/lighting/weather) and no generation-time reference injection were added. Existing fields only. |
+| P5 Asset Relationship Graph | `NOT_RUN` | The read-only relationship surface is unchanged from the Phase10 audit: the owner declares seven kinds and consumers must not guess undeclared ones. The requested full-chain projection (Character → Images → Shots → Videos → Timeline Clips with `USED_IN`/`DERIVED_FROM`/`REFERENCES`/`VERSION_OF`) was **not** added. |
+| P6 Timeline professional layer | `NOT_RUN` | No colour-adjustment parameter layer (brightness/contrast/exposure/saturation/white balance/LUT reference), no clip inspector, no markers and no trim/slip/ripple/transition preparation. Per the brief these were to be parameter systems only, with no pseudo-implementation — nothing was faked. |
+| P7 Audio professional layer | `NOT_RUN` | No track/clip/volume/fade/sync layer and no voice/music/SFX reservation. |
+| Professional vs simplified mode (UX) | `NOT_RUN` | No mode split was introduced, so complex parameters are not yet hidden from ordinary users. |
+| Content policy | **RESERVED** (unchanged) | No NSFW/Mature mode, no adult-model entry point, no content filter. Only fields, interfaces and compatibility tests. |
+
+**Honest summary of the phase:** one priority's structured-data core and one continuity contract were
+delivered, verified against the existing owners and against the legacy suites (**122 passed,
+70 skipped, exit 0**, including `test_phase8_shots`, `test_r4_director` and
+`test_v2_creative_workflows`). The other five priorities are `NOT_RUN`. A test asserts the new module
+defines no second Shot/Scene/Project/Asset/Task model, so the "no second system" rule is enforced
+rather than merely stated. `PHASE14_PROFESSIONAL_CREATIVE_REPORT.md`.
+
+This section adds current facts only.
+
+### 2026-10-15 — Phase14-A: professional director system (current facts)
+
+Append-only current observation. Phase14-A builds the Director decision workbench that Phase14's
+recommendation asked to split out. **No earlier row, status or evidence ID is edited** — including
+the Phase14 rows above, which stay `PARTIAL`/`NOT_RUN` exactly as written; this section records the
+increment on top of them. The phase started from `c939b9b`; `main` `fed2404c` untouched; PR #47
+still `OPEN`/draft.
+
+**Reconnaissance that shaped the work:** the owners already held almost everything the brief asked
+for. `ShotCard` (`models.py:122`) already carried **all eleven** required Shot Card fields;
+`DirectorVisualTarget` (`models.py:41`) carried visual goal/mood/colour/rhythm/references;
+`ShotContinuity` (`models.py:111`) carried character/costume/scene; `camera_language.py` already
+held the authoritative vocabulary. So the gap was **structure and surface**, not owners — and the
+brief's "no new Director/Shot/Scene/Project/Asset model" rule turned out to be satisfiable exactly.
+
+| Item | Status | Current fact |
+| --- | --- | --- |
+| `DirectorVisualTarget.genre` | **IMPLEMENTED (opt-in)** | The brief requires Genre as a Director Intent dimension and no owner field carried it. `DirectorVisualTarget` now extends `OptionalProductionFields` with `production_optional_fields = ("genre",)` and `genre: str \| None = None`, so while unset the key is **omitted from serialization** and an existing stored `visual_target` keeps its exact shape and digest. A test pins the legacy `model_dump()` to exactly the five original keys. It is writable through the **pre-existing** creative document update endpoint with **no API change**. |
+| `ShotContinuity.time` / `ShotContinuity.lighting` | **IMPLEMENTED (opt-in)** | The brief requires Time and Lighting continuity; `time` had no shot-level home at all. Added to the owner's existing `production_optional_fields`, so an unauthored value is omitted rather than serialized as `null`. `lighting` is only needed when the shot card does not already author it. Legacy `model_dump()` is pinned unchanged by test. |
+| Camera language continuity, 5 dimensions | `IMPLEMENTED` | `CONTINUITY_FIELDS` is now `characters · outfit · environment · time · lighting` with declared authored sources per dimension in `CONTINUITY_SOURCES` — the continuity block **or** the shot's own authored field. Precedence is per shot, so the panel stays a **hint, not a form**: a director is never asked to retype an authored lighting or cast decision. Resolving an authored value is not inferring one, and a dimension authored on only one side of a cut stays **unknown**, never a break. `camera` remains deliberately excluded (`CAMERA_MOVE_IS_DIRECTION`, published as an explicit `excluded` entry rather than omitted silently). 46 legacy camera cases still pass unchanged. |
+| Director Intent structured output | **IMPLEMENTED** | `app/creative/director_intent.py` projects the seven required dimensions, each traced to its owner field. The honesty mechanism is structural: `DOCUMENT_AUTHORED` (visual goal, mood, genre, colour direction) versus `PER_SHOT_MEASURED` (camera language, lighting, performance direction) with `authored: false` and `authored_scope: PER_SHOT`. Camera language, lighting and performance have **no document-level home**, so a surface cannot present an aggregate as a decision the director made. A test refuses a payload that claims `authored_scope: DOCUMENT` for a measured dimension. |
+| Shot Card projection | **IMPLEMENTED** | All eleven required fields (`shot_id · duration · camera · lens · movement · composition · lighting · character · action · emotion · audio`) projected from the existing `ShotCard`, each with `authored` and its owner source; unset fields are `EMPTY`/`""`, never defaulted into something plausible. The UI tags each with `data-field`, so "all eleven render" is testable rather than eyeballed. |
+| Continuity Panel | **IMPLEMENTED (warning only)** | `warning_only: true` / `auto_modify: false` are **contract fields**, not comments, and the decoder refuses a payload that claims otherwise. Per-dimension coverage (`compared_pairs`, `unknown_pairs`) is published so silence is never presented as agreement. The panel has **no write control**; a test asserts none is present. |
+| Camera Language UI binding | **IMPLEMENTED** | The owner's `VOCABULARIES`/`ALIASES` are published verbatim (alias keys in the same folded form `normalise` matches) and the UI renders its selects from that payload, so the front-end **cannot drift** from the authoritative word list. Legacy text is preserved verbatim and labelled `旧写法保留`, never folded into a canonical value. |
+| Director Workspace route | `IMPLEMENTED` | One closed route: `GET /api/projects/{nid}/studio/director/workspace/{rid}`, added to the closed admission allow-list in `workspace_api.py`. A test asserts `POST`/`PUT`/`DELETE`, the bare path and any trailing segment are **not** admitted, and the app's own OpenAPI contract shows `get` only. Authority is resolved through the shared studio invoker; the document is read through the existing `CreativeService.get`, so incarnation/scope/source fencing stays the owner's job. |
+| Director Workspace surface (frontend) | `IMPLEMENTED` | New `frontend/src/director/` (13 files) mounted **on demand** through the existing `StoryboardWorkspacePanel` via an additive, optional `directorDocumentId` prop. That host already receives `projectId`/`transport`/`scope` and is already mounted for `DIRECTOR`/`STORYBOARD`, so the frozen one-line `AppShell` composition in `CreativeWorkspace.tsx` was not touched and every existing consumer is unaffected. DS-v1.0 tokens only; no protected surface changed, so no DESIGN SYSTEM CHANGE REQUEST was required. |
+| Second-system prohibition | **ENFORCED BY TEST** | A test asserts the projection module defines no `Shot`/`Scene`/`Project`/`Asset`/`Task`/`ShotCard`/`DirectorNote` model and imports no `app` model, and a second test asserts it exposes no `create`/`update`/`write`/`save`/`commit`/`delete`. The rule is a property of the code, not a promise in prose. |
+| Backend verification | `IMPLEMENTED` | **159 passed, 70 skipped, exit 0** (`phase14a-director-r4`) covering the new suite plus `test_v2_camera_language`, `test_phase8_shots`, `test_r4_director`, `test_v2_creative_workflows`; plus **127 passed, 109 skipped, 1 deselected, exit 0** (`phase14a-director-regression-r2`) on production workflow (+API), model requirements API, creative foundation, project lifecycle, screenplay CAS history and storyboard workspace. The three route integration tests run the **real** studio router and **real** File store with only authority stubbed. |
+| Frontend verification | `IMPLEMENTED` | `tsc --noEmit` **PASS** (`phase14a-director-types-r1`), `vite build` **PASS** (`phase14a-director-build-r1`), `vitest run src` **3973 passed / 6 skipped / exit 0** (`phase14a-director-frontend-r2`), and the repo's own design-token guard **PASS (52 files)**. |
+| Director Intent write-back from this surface | `NOT_RUN` (by design) | The workbench is read-only. Camera-language edits are held as a **local session draft** and are visibly labelled as unwritten. Authoring still happens in the original document interface. |
+| Genre authoring through the new UI | `PARTIAL` | The owner field exists and is writable through the **existing** document update endpoint; this phase added no write control for it. |
+| PostgreSQL coverage | `NOT_RUN` | This host has **no PostgreSQL cluster** (no service; binaries exist only inside a packaged build and there is no data directory). All evidence is the File backend. The owner change is schema-additive and backend-agnostic, but that is an argument, not evidence. |
+| Browser / visual acceptance | `NOT_RUN` | No Playwright run; component-level (jsdom) evidence only. |
+| Legacy camera-value migration | `NOT_RUN` (deliberate) | Unrecognised text is still preserved verbatim and reported as non-canonical; migrating it is a product decision not taken here. |
+| Write-path enforcement (`require_canonical`) | `NOT_RUN` (deliberate) | Unchanged from Phase14: never wired into a legacy write path. |
+| Professional vs simplified UX mode | `NOT_RUN` | No mode split, unchanged. |
+| `pnpm test` collection gap | RECORDED (pre-existing) | The project's vitest config excludes `tests/e2e/**` but not the frontend-local `e2e/`, so vitest collects `frontend/e2e/studio-release-acceptance.spec.ts` and reports *"Playwright Test did not expect test.describe() to be called here"*. **4007 tests pass; that one suite fails.** `frontend/e2e/` and `frontend/vite.config.ts` are **unmodified by this phase** (`git status`). It was **not** fixed: editing the test configuration to make a receipt green is the failure mode this project's rules forbid. Phase evidence therefore cites `vitest run src`, and the gap is stated rather than hidden. |
+| Windows symlink test | `BLOCKED_EXTERNAL` | `test_v2_creative_project_lifecycle.py::…[symlink]` fails with `OSError [WinError 1314]` (symlink creation needs a privilege this account lacks) — the already-documented Windows condition, unrelated to this phase, **deselected and not counted as a pass**. |
+| Hindsight memory | `NOT AVAILABLE` | `hindsight_capture_initiative` returned **HTTP 401** (no API key configured). Memory was neither used nor relied on; Phase13 recorded the same limitation. |
+| `$ai-novel-studio-ui` skill | `PRESENT ON DISK, NOT WIRED` | The skill is **not missing from the repository** — it exists at `.codex/skills/ai-novel-studio-ui/` with `SKILL.md` and four references. It is not registered in this session's skill catalog, so it was read **directly from disk** and its required workflow followed. Recorded as a harness wiring gap; nothing was assumed. |
+| Release candidate validation | **NOT ESTABLISHED** | Unchanged. This phase added capability; it did not move a release gate. `PHASE14A_DIRECTOR_REPORT.md`. |
+| Content policy | **RESERVED** (unchanged) | No NSFW/Mature mode, no adult-model entry point, no content filter. Only fields, interfaces and compatibility tests. |
+
+This section adds current facts only.
+
+### 2026-10-15 — Round 2: Character & Scene Bible, backend increment (current facts)
+
+Append-only current observation for the Round 1–10 master roadmap. **No earlier row, status or
+evidence ID is edited**, including the whole Phase14-A section above. The round started from
+`e951dbe`; `main` `fed2404c` untouched; PR #47 still `OPEN`/draft.
+
+**Reconnaissance that shaped the work:** every requested dimension was traced to an owner first, and
+most already had one — character identity on the project's `characters` records, behaviour on
+`WorldService` `PSYCHOLOGY`, relationships on `WorldService` `RELATIONSHIP`, location on the
+`locations` records plus `WorldService` `GEOGRAPHY`, story time on `WorldService` `HISTORY`. The only
+genuine gap was the **authored visual half** (appearance/clothing/reference; architecture/material/
+lighting/weather/mood). `V1_SCOPE_FREEZE.md` mentions none of characters/locations/lore/world, so
+none of this is frozen surface.
+
+| Item | Status | Current fact |
+| --- | --- | --- |
+| `CHARACTER_VISUAL` / `SCENE_VISUAL` record kinds | **IMPLEMENTED (extension of the existing owner)** | Rather than create a bible owner, two typed kinds were registered on the existing `WorldService`: `CharacterVisualData` (`character_id`, `appearance`, `clothing`, `distinguishing`, `reference_asset_ids`) and `SceneVisualData` (`location_id`, `architecture`, `material`, `lighting`, `weather`, `mood`, `time_of_day`, `reference_asset_ids`). They inherit the owner's existing versioning, CAS, review/approval, history, source fencing and typed `data` validation, and deliberately do **not** require a `chapter_id` (a visual profile is project-level). The alternative — adding visual fields to the V1 novel repository — would have touched `CharacterModel`, both novel repositories and the migration path, with no versioning or review. |
+| World reference dispatch | **IMPLEMENTED (hardened)** | `WorldService._references` gained explicit `CHARACTER_VISUAL`/`SCENE_VISUAL` branches; the previously-implicit `CHARACTER_EVENT` fallback was made explicit; and the final `else` now **raises** `unhandled world record kind` instead of silently treating a new kind as whichever one happened to be last. Pinned by test. The eight pre-existing kinds are unchanged (asserted as an exact set of ten including the two new ones). |
+| Bible projection | **IMPLEMENTED (read-only)** | `app/creative/bible_projection.py` joins the existing owners into a Character Bible (six required dimensions) and a Scene Bible (seven required dimensions), plus `gaps` (the literal list of still-unauthored dimensions) and `used_in` per entry built **only** from authored references on real scenes/shots. It imports no application model and has no write path — both asserted by test. |
+| Unknown is a value | **IMPLEMENTED** | An unauthored dimension is the literal `UNKNOWN` with `authored: false`, never an empty string that could read as "nothing to say". Not filled in from prose. |
+| Draft is not canon | **IMPLEMENTED** | The owner's own `status` is carried through: only `APPROVED` is `authoritative`, a `DRAFT` is reported as a draft, and an approved record wins over a draft for the same subject. The projection never promotes a record. |
+| Declared is not verified | **IMPLEMENTED** | An asset reference is `RESOLVED` only against an index the caller supplied; with no index every id is `UNRESOLVED` with `verification: NO_INDEX_SUPPLIED`. The route supplies the **real** workspace asset index. |
+| Closed read route | **IMPLEMENTED** | One GET: `GET /api/projects/{nid}/studio/bible`, added to the closed admission allow-list (POST/PUT/DELETE and any trailing segment are not admitted; asserted). Wired in `app/experimental/api.py` by passing the **existing** `world_service` instance — not a second one. No write route: authoring a profile still uses the existing `WorldService` record route with its own review and CAS. |
+| Backend verification | **IMPLEMENTED** | **173 passed, 27 skipped, exit 0** (`round2-bible-r3`) across the new suite plus the world/owner suites and the Round 1 director suites; the three route integration tests run the **real** studio router and **real** File store with only authority stubbed. |
+| **Real PostgreSQL verification** | **IMPLEMENTED** | **80 passed, 9 skipped, exit 0** (`round2-bible-postgres`) on a **fresh** `v2_round2` database with all 20 migrations applied on a loopback-only disposable cluster, cleanly stopped afterwards. This is the first round verified on both backends from the outset. |
+| Existing owner behaviour discovered | RECORDED | The project's location owner **lower-cases the location id** (`upsert_location(nid,"L1",…)` stores `l1`) while a **character id is preserved verbatim**. The owner correctly refused a `SCENE_VISUAL` record naming a location the project did not have — the reference validation working as designed. Verified directly and now asserted in the rig; not changed (existing behaviour, outside this round's scope). |
+| **Frontend Bible surface** | **`NOT_RUN`** | No Character/Scene Bible UI exists yet. Explicitly not claimed. The projection and route it will consume are done and verified. |
+| Authoring a visual profile from a Studio surface | `NOT_RUN` | The owner route accepts the two new kinds today with review and CAS; no Studio authoring UI was added. |
+| Image / Video consuming the bible | `NOT_RUN` | `used_in` is reported from real documents, but no generation path consumes the bible yet — that is Round 3 (Prompt Intelligence) territory. |
+| Browser / visual acceptance | `NOT_RUN` | No Playwright run; with no new UI in this increment there is nothing new to accept visually. |
+| GATE-M2 / §7–8 shared Creative Graph | UNCHANGED | Still MISSING/PARTIAL; this round added no graph capability. |
+| Release candidate validation | **NOT ESTABLISHED** | Unchanged. This round added capability; it did not move a release gate. `ROUND2_BIBLE_REPORT.md`. |
+| Content policy | **RESERVED** (unchanged) | No NSFW/Mature mode, no adult-model entry point, no content filter. Only fields, interfaces and compatibility tests. |
+
+This section adds current facts only.
+
+### 2026-10-15 — Round 2-B: Character & Scene Bible frontend surface (current facts)
+
+Append-only current observation. **No earlier row, status or evidence ID is edited**, including the
+Round 2 section immediately above — in particular the Round 2 row recording the frontend surface as
+`NOT_RUN` stays exactly as written; this section records that it has since been built. The round
+started from `4560dc0`; `main` `fed2404c` untouched; PR #47 still `OPEN`/draft.
+
+**No backend file was changed in this round.** The frontend consumes the Round 2 projection as-is.
+
+| Item | Status | Current fact |
+| --- | --- | --- |
+| Character Bible Panel | **IMPLEMENTED** | One read-only card per character with all **six** required dimensions (identity, appearance, clothing, reference, behaviour, relationship). Identity is read from the existing `characters` records, behaviour/relationship from the existing `WorldService` `PSYCHOLOGY`/`RELATIONSHIP` records, appearance/clothing from `CHARACTER_VISUAL`. Relationships are never inferred — an empty set states that the original document recorded none. |
+| Scene Bible Panel | **IMPLEMENTED** | One read-only card per location with all **seven** required dimensions (location, architecture, material, lighting, weather, time, mood), from the existing `locations` records plus `SCENE_VISUAL`, with `GEOGRAPHY` relations surfaced. |
+| `UNKNOWN` as a state | **IMPLEMENTED** | An unauthored dimension renders the **literal `UNKNOWN`** plus 未作者化, with a dashed neutral treatment and `data-state="UNKNOWN"`. The decoder enforces `state === 'UNKNOWN'` ⟺ `value === 'UNKNOWN'` ⟺ `authored === false`, so a blank can never reach the surface. |
+| Draft is not canon | **IMPLEMENTED** | A non-approved world record renders `DRAFT（非 canon）`; only an approved record renders `CANON · APPROVED`. Field-level and entry-level both shown, derived from the owner's own record status. |
+| Declared is not verified | **IMPLEMENTED** | Each declared asset id renders individually as `RESOLVED` / `UNRESOLVED`; the decoder requires `unresolved_references` to equal exactly the `UNRESOLVED` entries and forbids any `RESOLVED` reference under `NO_INDEX_SUPPLIED`. |
+| Read-only interaction | **IMPLEMENTED** | The surface has **no** edit/save/create/delete control and no textbox or combobox anywhere; asserted by test. Authoring stays on the existing `WorldService` record route. |
+| Source traceability | **IMPLEMENTED** | Every dimension displays the exact owner path it was read from (e.g. `world_records.CHARACTER_VISUAL.appearance`), so each value can be traced to the owner that stores it. |
+| Mount | **IMPLEMENTED (additive)** | `frontend/src/bible/` (12 files) mounted on demand through the existing `StoryboardWorkspacePanel` via a new button; no new props and no protected surface touched. The panel's own 24 tests still pass. |
+| Verification | **IMPLEMENTED** | Frontend `vitest run src` **4002 passed / 6 skipped / exit 0** (`round2b-frontend-r1`); `tsc --noEmit` **PASS**; `vite build` **PASS**; backend File **190 passed / 69 skipped / exit 0**; backend **real PostgreSQL 140 passed / 69 skipped / exit 0** on a fresh `v2_round2b` database. 29 new frontend cases. All five legs were run even though no backend code changed. |
+| **CORRECTION — design-token guard scope** | RECORDED | The repo's `scripts/check_ui_design_tokens.mjs` **only walks `frontend/src/ui`** (`walk(path.join(root,'frontend','src','ui'))`). The Phase14-A section above cites `UI token guard PASS (52 files)` alongside a new stylesheet without stating that scope, which over-implied coverage: the guard has **never** scanned `frontend/src/director/` or `frontend/src/bible/`. This round therefore verified its own stylesheet directly — no raw hex/`rgb()`/`hsl()` colours and no arbitrary `px` outside `var(--…)` for padding/margin/gap/border-radius — and re-checked the Phase14-A stylesheet the same way (also clean), so that section's *conclusion* still holds but was reached by this check rather than by the guard. Widening the guard is a Root/Design System Owner decision and was **not** taken unilaterally. |
+| Identity field breakdown | `PARTIAL` | The projection supplies one joined identity value plus the entry `name`; the UI shows both and labels the owner source. It does **not** parse the joined string, because splitting it in the view would be inventing structure. A structured identity `detail` on the projection is the clean fix and was deliberately left out of a frontend-only round. |
+| Profile authoring UI | `NOT_RUN` | The owner route accepts `CHARACTER_VISUAL`/`SCENE_VISUAL` today with review and CAS; no authoring UI exists, and this round was explicitly forbidden from adding write controls. |
+| Bible-driven generation | `NOT_RUN` | `used_in` is reported from real documents, but no generation path consumes the bible yet. Bound and handed over for Round 3 in `ROUND2B_HANDOFF.md`. |
+| Browser / visual acceptance | `NOT_RUN` | Component-level (jsdom) evidence only; the stylesheet was verified by token/geometry inspection, not screenshot. This is the largest honest verification gap across Rounds 1–2. |
+| Release candidate validation | **NOT ESTABLISHED** | Unchanged. This round added capability; it did not move a release gate. `ROUND2B_BIBLE_FRONTEND_REPORT.md`. |
+| Content policy | **RESERVED** (unchanged) | No NSFW/Mature mode, no adult-model entry point, no content filter. Only fields, interfaces and compatibility tests. |
+
+This section adds current facts only.
+
+### 2026-10-15 — Round 3: Prompt Intelligence System, audit + backend (current facts)
+
+Append-only current observation for the Round 1–10 master roadmap. **No earlier row, status or
+evidence ID is edited.** The round started from `558acea`; `main` `fed2404c` untouched; PR #47 still
+`OPEN`/draft.
+
+**Round 3 §4 required the audit first, and it was done first.** `ROUND3_PROMPT_SOURCE_AUDIT.md`
+scanned **15 prompt sources** read-only and changed/deleted nothing: the 12 `prompts/<agent>/system.md`
+files (excluded from the round as deploy-time agent configuration), `ImagePromptParameters` /
+`ImagePromptPort` / `StoryboardPromptParameters`, `ShotCard.frame_prompt`, screenplay
+`prompt`/`motion_prompt`, production-contract `prompt`/`negative_prompt`, media request/brief prompts,
+provider-invocation prompts and whitelists, legacy `ImageGenerateIn`, graph media execution,
+`VisionAnalyzeIn`, a hard-coded fallback negative prompt, and transport-level prompts. Eight problems
+recorded — no identity anywhere, incompatible bounds (`8000`/`10000`/`12000`/`16000`/`20000` for the
+same kind of text), no version/history, no bible binding, no unit-level provenance, silent hidden
+defaults, and a **deliberate redaction precedent** (`production_lineage.py:289` stores only a
+`negative_prompt_digest`).
+
+| Item | Status | Current fact |
+| --- | --- | --- |
+| Prompt Asset = existing asset | **IMPLEMENTED** | A prompt is an existing `AssetLibraryService` asset with `kind="prompt"` (the owner's `kind` is free-form `str(kind)[:40]`). **`app/services/asset_library_service.py` was NOT modified. No new collection, table or database was created.** The structured payload lives in `parameters` — an **already allow-listed** `update_metadata` field — bindings use the **already allow-listed** `character_id`/`scene_id`, references use `source_asset_ids`, version uses the existing `version` + `expected_version` CAS, the chain uses the existing `annotate_lineage` history, and review reuses `promote_owned`. |
+| Version + change note/reason | **IMPLEMENTED** | Asset bytes are immutable, so a revision is a **new asset in the same `family_id`** (`revision` 1→2→3, predecessor linked through existing lineage). Every prior revision therefore stays physically readable — history cannot be lost — and each carries its `change_note` and `change_reason`. Families are never merged (asserted). |
+| Prompt metadata (§6) | **IMPLEMENTED** | Frozen vocabularies: `purpose ∈ {IMAGE, VIDEO, AUDIO, TEXT}`, `origin ∈ {MANUAL, AI_GENERATED, IMPORTED}`, binding kinds `{CHARACTER, SCENE, SHOT, ASSET}`; all validated by the payload builder. |
+| Binding is a reference, never a copy (§7) | **IMPLEMENTED (read-only)** | Bindings are ids only, resolved against the live bible/asset index: a real target is `KNOWN`, a missing one is `UNKNOWN` and listed in `unresolved_bindings` — never dropped, never assumed. With no index every binding is `UNKNOWN` with `verification: NO_INDEX_SUPPLIED`. No bible field is written by this round, so a bible edit is visible on the next read. |
+| Prompt Library / Detail projections (§8 data) | **IMPLEMENTED** | Contracts `studio-prompt-library/1` and `studio-prompt-detail/1`, with the eleven required prompt fields, per-revision history, review status taken from the owner's `approved_at`, and `malformed[]` for an unreadable payload rather than a guess. |
+| Prompt generation context (§9) | **IMPLEMENTED** | `studio-prompt-context/1` reports **sources** (Character Bible, Scene Bible, Director Intent, Shot Card) with `authored`/`state`/`source` plus an `unauthored` list, and returns **`composes_prompt_text: false`** and `requires_user_confirmation: true` as contract fields. |
+| AI must not overwrite / auto-version / delete history (§10) | **IMPLEMENTED by absence** | The projection module and all three routes have **no write path at all**; there is no route that could overwrite a prompt, bump a revision or delete history. |
+| Redaction | **IMPLEMENTED** | `redacted: true` makes the projection emit digests for prompt text and negative prompt, respecting the audited `negative_prompt_digest` precedent. |
+| Verification | **IMPLEMENTED** | Backend File **177 passed / 69 skipped / exit 0** (`round3-prompt-r4`); **real PostgreSQL 108 passed / exit 0** (`round3-prompt-postgres`, fresh `v2_round3`, 20 migrations, cluster stopped cleanly). §12 cases asserted: a project with no prompt assets projects cleanly; non-prompt kinds are ignored and `graph_models.py` was not touched; a wrong contract/purpose/non-int revision is rejected; every revision is retained with note and reason; bindings are `KNOWN` only when the target exists. |
+| **Prompt Workspace UI (Round3-C)** | **`NOT_RUN`** | No Prompt Library / Detail / Version / Binding surface exists. The frozen contract for building it is in `ROUND3_HANDOFF.md` §3. |
+| **Frontend decoder / vitest / tsc / build** | **`NOT_RUN`** | Nothing frontend was changed in this round. |
+| **HTTP authoring route for prompt assets** | **`NOT_RUN`** | `ManualAssetImport.kind` is `Literal["image","video","audio"]` (`workspace_models.py:53`), so the existing `POST /studio/assets` route **cannot create a text or prompt asset**. A prompt is currently authorable only by a service holding the asset owner. This is the largest functional gap in Round 3 and needs a decision (widen the DTO, or add a dedicated prompt-asset route reusing `update_metadata`). |
+| Adoption of legacy sources | **`NOT_RUN`** (by design) | Round 3 **adopts, never migrates**: nothing was migrated, rewritten or deleted, and `prompts/**` is untouched. `build_payload` already accepts `adopted_from={owner, field, digest}` for a later increment. |
+| Two traps recorded for Round 4 | RECORDED | (1) `asset_index` is a deliberately **bounded** projection that **excludes `parameters`**, so any prompt payload must be read from the owner's own `list`/`get` under the project-binding lease — this cost two failed runs to find. (2) Asset visibility requires `IndependentWorkspaceService._asset_scope`; an asset created outside that lease is correctly invisible to studio reads. |
+| Release candidate validation | **NOT ESTABLISHED** | Unchanged. This round added capability; it did not move a release gate. `ROUND3_PROMPT_REPORT.md`. |
+| Content policy | **RESERVED** (unchanged) | No NSFW/Mature mode, no adult-model entry point, no content filter. Only fields, interfaces and compatibility tests. |
+
+This section adds current facts only.
+
+
+<!-- V2-RETIREMENT-CANVAS-20261016 -->
+## 2026-10-16 — Project retirement + Canvas/Director foundation 最新检查点
+
+本节为 append-only 当前事实；早期记录保留，旧 `authoring NOT_RUN` 与旧 lock 描述不作为当前结论。
+实现 HEAD `62d4aaf621eb7663e37d2ad88f2f9c64db9095f9`，后续仅发布报告与原始证据。PR #47 原分支 fast-forward 推送，main/frozen refs 未改。
+完整逐文件、失败/通过回执、范围与下一入口见 [docs/delivery/v2-retirement-canvas-20261016/V2_RETIREMENT_CANVAS_ROUND_REPORT.md](docs/delivery/v2-retirement-canvas-20261016/V2_RETIREMENT_CANVAS_ROUND_REPORT.md)。
+
+| 项目 | 当前结论 |
+| --- | --- |
+| Project retirement / incarnation isolation | 本轮指定缺陷已实现并通过真实 File/PG：项目级授权/binding/scopes 随原 owner 退休；新 incarnation 不继承旧授权；exact 403 与合法新作者 201/200 均有控制。 |
+| Cross-workspace / orphan / scope races | 同 workspace 历史 orphan 在原创建事务清除；foreign binding exact 400、无公开 orphan；原 owner 租约覆盖 scope validation/save；audited mutations 原边界前后重验 actor/membership。不是所有路由的撤权/ABA 并发证明。 |
+| Canvas / GRAPH | PARTIAL foundation：现有 Studio 挂载、schema 1/2 文本图本地恢复、incarnation/version/digest 复核与显式恢复；媒体/外部引用/分组注释恢复及完整 Infinite Canvas 未建立验收。 |
+| Director / CONSOLE / DIR | PARTIAL foundation：原 director_plan Graph 节点打开原 DirectorWorkspace 只读投影，前后 pin 校验、stale/revocation 拒绝、collapse/expand/reopen 已验证；完整 authoring/决策/review/rollback 未完成。 |
+| Prompt / R3 | authoring 的创建/修订/CAS/幂等实现已存在；production adoption gate 仍关闭，503 PROMPT_ADOPTION_WRITE_TIME_UNVERIFIED。继续原 Asset/Review owner，不能重建。 |
+| 真实 File | scope/retirement/orphan/权限基础 62 passed；冻结生命周期/额外 IO/通知/锁顺序 32 passed。 |
+| 真实 PostgreSQL | 最终稳定源码组合 48 passed，47 File cases deselected；PostgreSQL 16.15、新空库、原 20 migrations、实例已停止。 |
+| Frontend / tsc / build | 4163 passed、6 skipped、0 failed；tsc -b 与 Vite build PASS。 |
+| Browser | 原 Chromium visual/geometry 7 passed；真实 File Canvas+Director 最终三视口 3 passed，无响应 mock/dev session registry。 |
+| 冻结保护 | 750 frozen test/gate sources、752 选定保护 artifacts 与基线原字节相同；9151 manifest 不变。增量清单14910为 INVENTORY_ONLY，不是测试通过数。 |
+| 高级功能 / release | Storyboard/媒体图/NLE EDIT-16/3D/Tutor/storage/internal Mature 完整增量与全 V2集成未由本轮交付；整体 PARTIAL，非 freeze/RC。 |
+| NOT_RUN / LOCAL_REQUIRED | hosted 最终 HEAD CI、真实 PG browser、Windows installer/clean-machine、真实模型/GPU inference。既有 Prompt browser spec 存在，本轮未重新审计其运行回执。 |
+
+下一精确入口：`app/creative/prompt_adoption_api.py:adopt_prompt` 与
+`PromptAdoptionService.adopt_atomic`，在真实原路径证明 write-time binding（当前
+`source_bindings_verified=False`）、私有 Prompt 删除→tombstone、跨进程/撤权并发及 R3 browser gate；
+production adoption gate 在验证成立前保持关闭。复用现有 `_write`、File/PG 服务测试及 Prompt browser spec。
+原 `AssetLibraryService.project_scope` 当前已持 `workspace_mutation` 跨越 yield，不能沿用旧测试说明断言它无跨序列锁。
+
+原始失败记录全部保留；本轮 API/Vite/PG 已停止。自动审批复核阻止临时目录/worktree 清理，保留 profile、
+PG 数据与 baseline regression worktree，未通过其他删除路径绕过，也未宣称回收磁盘空间。
+
+
+<!-- V2-R3-PROMPT-20261017 -->
+## 2026-10-17 — R3 Prompt 后续最终检查点
+
+本节追加当前事实，早期记录及失败回执保留；取代上节 R3 write-time binding、私有 tombstone、跨进程撤权与 PG browser 未完成的状态。
+从 `618affbca0aaf20d5bc669d697d8e2b1abb9b3fa` 继续；五个独立实现/清单/字节包装切片均已逐个推送 PR #47 原分支，
+实现 HEAD `f7fd63a1fff3c0ec7fa88c9c111676f9539a41a5`，本节与原始证据另作独立提交。PR 仍为 Draft，main/frozen refs 未改。
+完整结论、原始回执、失败与边界见 [R3 最终报告](docs/delivery/v2-r3-prompt-20261016/V2_R3_PROMPT_ROUND_REPORT.md)。
+
+| 项目 | 当前结论 |
+| --- | --- |
+| Adoption write-time binding | 原 `GraphAssetInputs.phase` 内解析并验证 Character/Scene/目标 Shot/引用与输出 Asset，原 project/asset/Creative 租约覆盖提交。新提交凭证为 `prompt-adoption-bindings/1`、`source_bindings_verified=True`；是写入时快照，不代替审批或执行权限。 |
+| Private Prompt / tombstone / retry | 原 AssetLibrary/lifecycle 持 actor；删除保留不可变字节和旧 revision，tombstone 继续作为 CAS head/请求记账；完成 replay 严格绑定路由和前驱；失败恢复绑定服务器首次 origin，旧来源不明请求 fail-closed。 |
+| Cross-process revocation | File 24 passed、真实 PG 24 passed；create/revise/delete/adopt × 三类撤权 × 两种提交顺序。实际共享原 OS lock / PG `pg_blocking_pids` holder-waiter 证明，原已发 session 撤权后精确403、合法新作者正控制。不是所有路由或跨进程 session registry 的保证。 |
+| 真实 File 最终组 | 私有84、bindings43、authority74、授权/scope55、独立进程24 passed；各组有重叠，不相加为唯一覆盖数。 |
+| 真实 PostgreSQL 最终组合 | 103 passed、99 deselected，新空库 OID23468；原20 migrations，源码无漂移，数据库保留、服务已停止。 |
+| 真实 Edge 浏览器 | File 三视口3 passed，另一个全新 PG 库 OID24389三视口3 passed；原 LocalSessionBootstrap/HTTP，无 response mock。实际UI创建/修订/版本比较，真实浏览器HTTP删除后验证UI tombstone/history；没有删除按钮成功写声明。 |
+| Production adoption | `PROMPT_ADOPTION_WRITE_ENABLED=False` 继续关闭；真实浏览器请求为503 `PROMPT_ADOPTION_WRITE_TIME_UNVERIFIED`。后端正向 adoption 仅在显式隔离测试内启用，不因此开放生产。 |
+| Frontend / CI self-check | src 4163 passed、6 skipped；tsc/Vite build PASS。225项既有V2 ID模块/CI自检通过，UI token guard52文件通过。全目录Vitest误收集三个既有Playwright suite的失败保留。 |
+| 字节与 frozen | 2290 runner源码、2352全V2清单输入与实现HEAD raw bytes相同；750 frozen test/gate sources、752保护产物与9151 manifest原字节不变。不是全部V1 app源码或V1运行验收声明。 |
+| 增量清单 | 15118项、208新增、一个显式V2参数ID稳定迁移，双次字面ID/顺序收集一致；`INVENTORY_ONLY`，不是15118通过。 |
+| Hosted CI | BLOCKED：GitHub账户billing issue，job未启动/steps为空；不记产品测试失败，也不记hosted PASS。 |
+| 总体 V2 / release | PARTIAL；完整Canvas/Director/媒体/NLE/3D/Tutor等既有边界保留。生产adoption UI成功写、全V2集成、Windows installer/clean-machine、真实模型/GPU不由本轮建立PASS。 |
+
+后续入口：解除外部账户账单锁后重跑最终 HEAD 托管 CI，并继续既有全 V2 产品验收；生产 adoption 闸门仍关闭。
+原始失败/中断、截图、profile、PG数据库和先前保留baseline worktree均保留；自有API/Vite/PG已停止，不宣称回收磁盘空间。
+
+
+<!-- V2-R3-ADOPTION-UI-20261017 -->
+## 2026-10-17 — R3 adoption UI 隔离成功写检查点
+
+本节追加当前事实，保留早期历史。隔离 adoption UI 成功写已通过；生产常量仍为 literal False。
+基线95420aa，稳定切片已逐个提交并推送 PR #47 原分支，实现/清单 HEAD `db1f687108fac6e45a577196494dfac01cc63aca`；本节与证据独立提交。
+PR保持Draft，main/V1 frozen refs未动，完整V2仍PARTIAL，非freeze/RC。
+原始证据和限制见[R3 adoption UI 最终报告](docs/delivery/v2-r3-adoption-ui-20261017/V2_R3_ADOPTION_UI_ROUND_REPORT.md)。
+
+| 范围 | 当前结论 |
+| --- | --- |
+| 原 owner/UI | 原 Storyboard 新增显式读取/审批/确认/采用；原Asset/Review/adopt_atomic/Creative CAS复用。成功回读原文档及固定来源、同步host，迟到回读不能覆盖已接受新版本。 |
+| 闸门 | GET write_enabled是能力而非授权；普通后端前后False/精确503/owner不变。仅验收子进程内存True，无产品开启入口。 |
+| 真实 File/PG | File55 passed；新空PG库OID27042，原20迁移，43 passed；各组有重叠。 |
+| 真实 UI | File/PG Edge各3视口通过：真实POST200、单版本/单proof、真实Character快照、正文同步、刷新重开、幂等及来源r2后仍pin r1。PG浏览器另新库OID27943，原20迁移。 |
+| 前端 | src4208 passed/6 skipped/0failed，tsc/build PASS，原visual7 PASS、token52文件PASS。 |
+| 清单/冻结 | 双collection15142=原15118+24，INVENTORY_ONLY；2301运行源码/2363清单输入绑定实现HEAD。166原CI自检PASS。750 frozen test/gate、752保护产物、9151 manifest原字节不变。 |
+| 原连接/既有限制 | File r2连接界面被迟到本机列表切走，已在原App自动恢复补身份一致性guard并先RED后GREEN。PG r1刷新重开失败保留；晚到overview覆盖早期导航仍未修复，final-r3只建立启动完成后的闭环。原摘要裁切/上游不可读限制保留。 |
+| Hosted/总体 | GitHub账单锁使job steps为空，单独BLOCKED；完整V2 PARTIAL。生产adoption、全V2集成、installer/clean-machine、真实模型/GPU未建立PASS。 |
+
+自有API/Vite/PG已停止，失败/通过回执、截图、profile和数据库保留。上一轮跨进程24/PG103仅历史证据。
+后续需解除外部账单锁并重跑最终HEAD托管CI，继续原全V2验收；生产adoption闸门继续关闭。
+
+
+<!-- V2-NAVIGATION-INTENT-20261017 -->
+## 2026-10-17 — 初始化早期导航竞态修复检查点
+
+本节追加事实并保留全部历史。基于87408f6，原App晚到overview覆盖用户模块选择的问题已修复；此前“仍未修复”的记录为旧状态。
+稳定切片逐个提交并推送PR #47，实现/清单HEAD `7893cd027433e165b4035eac0f744c27cb93310a`；本节和原始证据独立提交。
+PR仍Draft/open，main/V1 frozen refs未动，完整V2仍PARTIAL、非freeze/RC。生产adoption literal False继续关闭，本轮普通后端未patch gate。
+详见[最终导航验收](docs/delivery/v2-navigation-intent-20261017/V2_NAVIGATION_INTENT_ROUND_REPORT.md)。
+
+| 范围 | 当前结果 |
+| --- | --- |
+| 原App owner | 同值NOVEL/真实Creative入口也记录intent；首次actor解析保留当前选择，真实身份/范围与ABA隔离旧callback；旧asset hint不跨entry。原连接guard不变。 |
+| 真实File/PG Edge | 各6 passed/0skip/0flaky，3视口覆盖冷启动、刷新、快速切换、默认IMAGE与跨project/branch；PG新空库OID28822、原20迁移。 |
+| 时序真实性 | 精确原GET client dispatch held→真实UI点击→continue原200；跨scope旧子GET真实abort，standalone owner readback另记。before-actor点击/parentABA/localhint仅mounted证明。 |
+| 前端 | 新34mounted、相关128包含新34；完整src4242 passed/6既有skip/0failed，391文件；tsc/build PASS、原visual7 PASS、token52文件PASS。 |
+| 来源/清单 | 2305 runner源、2367manifest输入与HEAD raw bytes绑定；双collection15142原rows/order/classification保持，INVENTORY_ONLY；166原CI自检PASS。 |
+| 冻结保护 | 750 frozen test/gate、752产物、9151manifest、1118既有test/gate、61adoption源和原connectionguard原字节保留；不是全V1 runtime声明。 |
+| Hosted/总体 | GitHub账单锁使job steps为空，单独BLOCKED；完整V2 PARTIAL。生产adoption、installer/clean-machine、真实模型/GPU及原全链路边界继续保留。 |
+
+自有API/Vite/PG已停止，所有失败/通过证据、profile与数据库保留；未递归清理或宣称磁盘回收。待账单锁解除后重跑最终HEAD hosted CI；生产adoption闸门继续关闭。
+
+
+<!-- V2-CREATIVE-SAVE-STATE-20261017 -->
+## 2026-10-17 — Creative 保存状态修复检查点
+
+本节追加事实并保留全部历史。基线454ccd8；当前保存版本、未保存/待核对与其他阶段草稿已在原owner内分别显示；等值/撤回编辑、非SAVE假保存中及旧VERIFY候选跨文档窗口已修复。
+稳定切片逐个提交并推送PR #47，实现/清单HEAD `5c17750bd59c76ed4fb060716d61019151a3ef42`；本节与原始证据独立提交。PR仍Draft/open，main/V1 frozen refs未变；完整V2 PARTIAL、未freeze/RC，生产adoption literal False继续关闭。
+详见[最终Creative保存状态验收](docs/delivery/v2-creative-save-state-20261017/V2_CREATIVE_SAVE_STATE_ROUND_REPORT.md)。
+
+| 范围 | 本轮结果 |
+| --- | --- |
+| 原owner | 完整可写内容比较保留空白/Unicode/数组顺序；当前SAVE/VERIFY/DERIVE/RESTORE分开；其他草稿和原退出/权限保护保留。旧导航与adoption CAS guard原字节保留。 |
+| 真实File/PG Edge | 各9 passed、0skip/0flaky，三视口；首开v1、真保存CASv2/readback/刷新、离线保稿、真409与显式核对、旧VERIFY/历史读回隔离。PG新空库OID29705、原20迁移。 |
+| 前端 | 新27回归（26完整原UI、1制作callback替换契约），相关99含新27；完整src4269 passed/6既有skip/0failed，393文件；build、原visual7和token52 PASS。 |
+| 来源/清单 | 2310 runner源、2372manifest输入与HEAD raw bytes绑定；双collection15142原rows/order/classification保持，INVENTORY_ONLY；原CI自检166 PASS。 |
+| 保护/边界 | 原750 frozen tests/gates、752产物、9151manifest、1118旧test/gate保持；不是全V1 runtime或旧全链路重跑声明。离线发生在派发前，不冒称已提交响应丢失。 |
+| Hosted/总体 | 原GitHub账单锁使job steps为空，独立BLOCKED；完整V2 PARTIAL。生产adoption、installer/clean-machine、真实模型/GPU与原全链路边界继续保留。 |
+
+自有验收服务已停；所有失败/通过证据、profile与数据库保留，未递归删除或宣称空间回收。待账单锁解除后重跑最终HEAD hosted CI；生产adoption闸门继续关闭。

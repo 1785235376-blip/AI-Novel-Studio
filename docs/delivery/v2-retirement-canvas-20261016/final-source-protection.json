@@ -1,0 +1,19 @@
+{
+  "utc": "2026-10-16T15:37:22.858941+00:00",
+  "head_at_check": "62d4aaf621eb7663e37d2ad88f2f9c64db9095f9",
+  "selected_baseline": "045b865e5a003cac3333462d055f22099f6368d6",
+  "scope": "Source/artifact byte preservation only; no V1 runtime or release acceptance",
+  "frozen_test_gate_sources": 750,
+  "frozen_test_gate_source_differences": [],
+  "protected_artifact_sources": 752,
+  "protected_artifact_source_differences": [],
+  "frozen_9151_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "reviewed_portable_entry_migration_preexisting_in_selected_baseline": {
+    "commit": "1b7ff50a7e64742916bc64730df884cea819b379",
+    "before_sha256": "d100e27589fb45cb921c13a82a83a911485fef1c0ed82a1e50eb5efc94f24799",
+    "after_sha256": "9f0d2d5f78a44e54a0fcc00925dc6d67038060408d3bd44753461ca57152fe1f",
+    "exact_single_addition_verified": true
+  },
+  "source_audit_reference": "protected-v1-source-audit-r2.json",
+  "status": "SOURCE_PROTECTION_PASS"
+}

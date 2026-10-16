@@ -1,0 +1,42 @@
+{
+  "utc": "2026-10-16T20:11:08.080760+00:00",
+  "postgres_status_exit": 3,
+  "postgres_status_stdout": "pg_ctl: no server running",
+  "postgres_running": false,
+  "ports": {
+    "8138": {
+      "connectable": false
+    },
+    "5208": {
+      "connectable": false
+    },
+    "50678": {
+      "connectable": false
+    }
+  },
+  "listeners": [],
+  "owned_final_process_workers_remaining": [],
+  "owned_launchers": {
+    "file": {
+      "owned_vite_pid": 55364,
+      "owned_vite_stopped": true,
+      "owned_backend_pid": 77364,
+      "owned_backend_stopped": true
+    },
+    "pg": {
+      "owned_vite_pid": 78992,
+      "owned_vite_stopped": true,
+      "owned_backend_pid": 78732,
+      "owned_backend_stopped": true
+    }
+  },
+  "retained_paths": {
+    ".runtime\\retirement-pg\\data": true,
+    ".runtime\\v2-checks\\creative-save-browser-file-final-r1": true,
+    ".runtime\\creative-save-browser-file-final-r1": true,
+    ".runtime\\v2-checks\\creative-save-browser-pg-final-r1": true,
+    ".runtime\\creative-save-browser-pg-final-r1": true
+  },
+  "database_retained": "v2_creative_save_browser_20261017_final_r1",
+  "database_oid": 29705
+}

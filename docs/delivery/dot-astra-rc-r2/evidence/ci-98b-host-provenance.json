@@ -1,0 +1,9 @@
+{
+  "source_root": "D:\\a\\AI-Novel-Studio\\AI-Novel-Studio\\desktop-host\\AI.NovelStudio.DesktopHost",
+  "source_manifest": "D:\\a\\_temp\\r2-complete-package\\package\\desktophost-source-manifest.json",
+  "host_publish_directory": "D:\\a\\_temp\\r2-complete-package\\host",
+  "fresh_host_dll_sha256": "17D17B8973F8073DC13124006B39EF543425766AEB3695BBD8F6CCAA55543A1A",
+  "staged_host_directory": "D:\\a\\_temp\\r2-complete-package\\package\\Application\\DesktopHost",
+  "staged_host_dll_sha256": "17D17B8973F8073DC13124006B39EF543425766AEB3695BBD8F6CCAA55543A1A",
+  "hashes_match": true
+}

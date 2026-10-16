@@ -1,0 +1,25 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/frontend
+
+ ✓ src/assetbrowser/assetBrowserContract.test.ts (19 tests) 10ms
+ ✓ src/assetbrowser/assetBrowserClient.test.ts (12 tests) 6ms
+ ✓ src/assetbrowser/assetBrowserOps.test.ts (30 tests) 24ms
+ ✓ src/onboarding/studioEntryContract.test.ts (7 tests) 6ms
+ ✓ src/taskcenter/taskCenterContract.test.ts (17 tests) 12ms
+ ✓ src/canvasops/canvasOps.test.ts (68 tests) 23ms
+ ✓ src/onboarding/studioEntryClient.test.ts (9 tests) 12ms
+ ✓ src/taskcenter/taskCenterClient.test.ts (7 tests) 13ms
+ ✓ src/onboarding/IntentPicker.test.tsx (4 tests) 243ms
+ ✓ src/onboarding/StudioStartPanel.test.tsx (8 tests) 287ms
+ ✓ src/canvasops/canvasOpsPanels.test.tsx (25 tests) 447ms
+ ✓ src/taskcenter/TaskCenter.test.tsx (11 tests) 538ms
+ ✓ src/assetbrowser/AssetBrowserPanel.test.tsx (13 tests) 741ms
+ ✓ src/taskcenter/useTaskCenter.test.ts (9 tests) 1142ms
+ ✓ src/onboarding/useStudioEntry.test.tsx (15 tests) 1103ms
+ ✓ src/assetbrowser/useAssetBrowser.test.tsx (14 tests) 1424ms
+
+ Test Files  16 passed (16)
+      Tests  268 passed (268)
+   Start at  21:17:26
+   Duration  2.77s (transform 1.49s, setup 194ms, collect 4.62s, tests 6.03s, environment 5.37s, prepare 1.70s)
+

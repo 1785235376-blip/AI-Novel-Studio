@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "product_nodes": [
+    "tests/test_provider_runtime_v2_routing_service.py::test_host_absent_does_not_import_initialize_or_collect"
+  ],
+  "skips": {
+    "file": {},
+    "postgres": {}
+  },
+  "source_files": {
+    "tests/test_provider_runtime_v2_routing_service.py": "22a782f56f708a476c72313796a8629c935e93296e298fba63859d4610b28e40",
+    ".github/ci/suite_coverage.py": "570892af0975c125868710e250eb7f30cc5e51ba7cbef9429a3b0f8f10238da7",
+    ".github/ci/postgres_gate.py": "d18ee804595ab98f8aec4c25745a7961e65a36755e318c8f4f257663b4358a8c",
+    ".github/ci/coverage_reconcile.py": "f097904d51cc21cb6f1ce8dcc688f692cf89bdd473f3952605eba3b1ae02e66a"
+  }
+}

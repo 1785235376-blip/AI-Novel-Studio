@@ -1,0 +1,17 @@
+{
+  "backend": "file",
+  "operation": "delete",
+  "revocation": "permission",
+  "nid": "r3-i-auth-65b30cef1e",
+  "workspace": "w-65b30cef1e",
+  "branch": "b-65b30cef1e",
+  "actor": "writer-65b30cef1e",
+  "admin": "init-65b30cef1e",
+  "assignment": "write-5808a46da9434165a97bef7e72b50d21",
+  "url": "/api/projects/r3-i-auth-65b30cef1e/studio/assets/553ca124-aa8d-415e-bbaf-a7ef827cf3e5?expected_version=2",
+  "method": "DELETE",
+  "body": null,
+  "ipc": "D:\\PoemSeed\\Worktrees\\v2-retirement-canvas-20261016\\.runtime\\v2-checks\\r3-prompt-process-file-final-r3\\temp\\test_independent_process_revoc22\\process-file-delete-permission-revoker",
+  "pause_writer": false,
+  "pause_revoker": true
+}

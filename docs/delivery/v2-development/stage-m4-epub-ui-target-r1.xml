@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="23" failures="0" errors="0" time="1.919">
+    <testsuite name="src/creative/ScreenplayEpubPanel.test.tsx" timestamp="2026-10-10T22:34:02.814Z" hostname="7abb01f187ba" tests="3" failures="0" errors="0" skipped="0" time="0.168826592">
+        <testcase classname="src/creative/ScreenplayEpubPanel.test.tsx" name="offers EPUB in the original saved screenplay selector and explains reflowed layout" time="0.113232958">
+        </testcase>
+        <testcase classname="src/creative/ScreenplayEpubPanel.test.tsx" name="uses the existing document-key remount boundary to discard a late EPUB" time="0.026759503">
+        </testcase>
+        <testcase classname="src/creative/ScreenplayEpubPanel.test.tsx" name="keeps unsupported EPUB absent from generic Script and dirty screenplay controls disabled" time="0.027743594">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/creative/ScreenplayExportPanel.test.tsx" timestamp="2026-10-10T22:34:02.816Z" hostname="7abb01f187ba" tests="7" failures="0" errors="0" skipped="0" time="0.208338933">
+        <testcase classname="src/creative/ScreenplayExportPanel.test.tsx" name="saved screenplay download boundaries &gt; selects a real format, pins the saved version and releases its object URL" time="0.116528391">
+        </testcase>
+        <testcase classname="src/creative/ScreenplayExportPanel.test.tsx" name="saved screenplay download boundaries &gt; blocks dirty or uncertain saved state without invoking download" time="0.010201467">
+        </testcase>
+        <testcase classname="src/creative/ScreenplayExportPanel.test.tsx" name="saved screenplay download boundaries &gt; deduplicates repeated clicks and suppresses a late download after draft editing" time="0.021543569">
+        </testcase>
+        <testcase classname="src/creative/ScreenplayExportPanel.test.tsx" name="saved screenplay download boundaries &gt; aborts and drops the late result after its originating document unmounts" time="0.009787437">
+        </testcase>
+        <testcase classname="src/creative/ScreenplayExportPanel.test.tsx" name="saved screenplay download boundaries &gt; purges the parent surface on authority denial 401" time="0.013579075">
+        </testcase>
+        <testcase classname="src/creative/ScreenplayExportPanel.test.tsx" name="saved screenplay download boundaries &gt; purges the parent surface on authority denial 403" time="0.015594235">
+        </testcase>
+        <testcase classname="src/creative/ScreenplayExportPanel.test.tsx" name="saved screenplay download boundaries &gt; keeps a recoverable format error without showing private response details" time="0.019015149">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/creative/screenplayEpubClient.test.ts" timestamp="2026-10-10T22:34:02.818Z" hostname="7abb01f187ba" tests="6" failures="0" errors="0" skipped="0" time="0.016632877">
+        <testcase classname="src/creative/screenplayEpubClient.test.ts" name="saved screenplay EPUB binary receipt &gt; uses the existing authenticated endpoint and returns exactly hashed bytes" time="0.010378479">
+        </testcase>
+        <testcase classname="src/creative/screenplayEpubClient.test.ts" name="saved screenplay EPUB binary receipt &gt; rejects mismatched receipt {&quot;Content-Type&quot;:&quot;text/html&quot;}" time="0.001405742">
+        </testcase>
+        <testcase classname="src/creative/screenplayEpubClient.test.ts" name="saved screenplay EPUB binary receipt &gt; rejects mismatched receipt {&quot;X-Creative-Document-Version&quot;:&quot;4&quot;}" time="0.000746921">
+        </testcase>
+        <testcase classname="src/creative/screenplayEpubClient.test.ts" name="saved screenplay EPUB binary receipt &gt; rejects mismatched receipt {&quot;X-Content-SHA256&quot;:&quot;0000000000000000000000000000000000000000000000000000000000000000&quot;}" time="0.001226477">
+        </testcase>
+        <testcase classname="src/creative/screenplayEpubClient.test.ts" name="saved screenplay EPUB binary receipt &gt; rejects mismatched receipt {&quot;Content-Length&quot;:&quot;8000001&quot;}" time="0.000719981">
+        </testcase>
+        <testcase classname="src/creative/screenplayEpubClient.test.ts" name="saved screenplay EPUB binary receipt &gt; does not expose corrupt binary bytes or silently enable Script EPUB" time="0.001197686">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/creative/screenplayExportClient.test.ts" timestamp="2026-10-10T22:34:02.819Z" hostname="7abb01f187ba" tests="7" failures="0" errors="0" skipped="0" time="0.020641135">
+        <testcase classname="src/creative/screenplayExportClient.test.ts" name="authenticated screenplay bytes and receipts &gt; uses the captured identity and verifies actual bytes before exposing a Blob" time="0.012754861">
+        </testcase>
+        <testcase classname="src/creative/screenplayExportClient.test.ts" name="authenticated screenplay bytes and receipts &gt; rejects mismatched receipt {&quot;X-Creative-Document-Version&quot;:&quot;5&quot;}" time="0.002024013">
+        </testcase>
+        <testcase classname="src/creative/screenplayExportClient.test.ts" name="authenticated screenplay bytes and receipts &gt; rejects mismatched receipt {&quot;X-Creative-Document-Digest&quot;:&quot;bad&quot;}" time="0.000866277">
+        </testcase>
+        <testcase classname="src/creative/screenplayExportClient.test.ts" name="authenticated screenplay bytes and receipts &gt; rejects mismatched receipt {&quot;X-Content-SHA256&quot;:&quot;0000000000000000000000000000000000000000000000000000000000000000&quot;}" time="0.001009137">
+        </testcase>
+        <testcase classname="src/creative/screenplayExportClient.test.ts" name="authenticated screenplay bytes and receipts &gt; rejects mismatched receipt {&quot;Content-Type&quot;:&quot;text/html&quot;}" time="0.000382685">
+        </testcase>
+        <testcase classname="src/creative/screenplayExportClient.test.ts" name="authenticated screenplay bytes and receipts &gt; rejects mismatched receipt {&quot;Content-Length&quot;:&quot;8000001&quot;}" time="0.000580416">
+        </testcase>
+        <testcase classname="src/creative/screenplayExportClient.test.ts" name="authenticated screenplay bytes and receipts &gt; rejects corrupted bytes even with a syntactically valid receipt" time="0.001091188">
+        </testcase>
+    </testsuite>
+</testsuites>

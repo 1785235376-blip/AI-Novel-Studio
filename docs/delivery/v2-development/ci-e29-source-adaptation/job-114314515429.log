@@ -1,0 +1,1022 @@
+﻿2026-10-10T21:13:00.2833805Z Current runner version: '2.337.0'
+2026-10-10T21:13:00.2851622Z ##[group]Runner Image Provisioner
+2026-10-10T21:13:00.2852327Z Hosted Compute Agent
+2026-10-10T21:13:00.2852729Z Version: 20261002.596
+2026-10-10T21:13:00.2853222Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-10T21:13:00.2853706Z Build Date: 2026-10-02T22:28:27Z
+2026-10-10T21:13:00.2854169Z Worker ID: {96c61ec4-df78-4931-93b1-0b045c066159}
+2026-10-10T21:13:00.2854674Z Region: centralus
+2026-10-10T21:13:00.2855048Z Cloud: Azure
+2026-10-10T21:13:00.2855415Z ##[endgroup]
+2026-10-10T21:13:00.2856253Z ##[group]Operating System
+2026-10-10T21:13:00.2856666Z Ubuntu
+2026-10-10T21:13:00.2857080Z 24.04.5
+2026-10-10T21:13:00.2857429Z LTS
+2026-10-10T21:13:00.2858023Z ##[endgroup]
+2026-10-10T21:13:00.2858413Z ##[group]Runner Image
+2026-10-10T21:13:00.2858822Z Image: ubuntu-24.04
+2026-10-10T21:13:00.2859258Z Version: 20261004.327.1
+2026-10-10T21:13:00.2860191Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-10T21:13:00.2861254Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-10T21:13:00.2861907Z ##[endgroup]
+2026-10-10T21:13:00.2862647Z ##[group]GITHUB_TOKEN Permissions
+2026-10-10T21:13:00.2864139Z Contents: read
+2026-10-10T21:13:00.2864563Z Metadata: read
+2026-10-10T21:13:00.2864946Z ##[endgroup]
+2026-10-10T21:13:00.2866625Z Secret source: Actions
+2026-10-10T21:13:00.2867307Z Cache mode: write
+2026-10-10T21:13:00.2867955Z Prepare workflow directory
+2026-10-10T21:13:00.3220472Z The service 'postgres' will not be started because the container definition has an empty image.
+2026-10-10T21:13:00.3242374Z Prepare all required actions
+2026-10-10T21:13:00.3277101Z Getting action download info
+2026-10-10T21:13:00.5467446Z Download action repository 'actions/checkout@v4.2.2' (SHA:11bd71901bbe5b1630ceea73d27597364c9af683)
+2026-10-10T21:13:00.6495157Z Download action repository 'actions/setup-python@v5.6.0' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-10-10T21:13:00.7388503Z Download action repository 'actions/upload-artifact@v4.6.2' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-10T21:13:00.9680757Z Complete job name: Protocol and local transport / file
+2026-10-10T21:13:01.0178682Z ##[group]Run actions/checkout@v4.2.2
+2026-10-10T21:13:01.0179530Z with:
+2026-10-10T21:13:01.0179889Z   persist-credentials: false
+2026-10-10T21:13:01.0180336Z   repository: 1785235376-blip/AI-Novel-Studio
+2026-10-10T21:13:01.0183167Z   token: ***
+2026-10-10T21:13:01.0183542Z   ssh-strict: true
+2026-10-10T21:13:01.0183916Z   ssh-user: git
+2026-10-10T21:13:01.0184262Z   clean: true
+2026-10-10T21:13:01.0184629Z   sparse-checkout-cone-mode: true
+2026-10-10T21:13:01.0185041Z   fetch-depth: 1
+2026-10-10T21:13:01.0185373Z   fetch-tags: false
+2026-10-10T21:13:01.0185765Z   show-progress: true
+2026-10-10T21:13:01.0186117Z   lfs: false
+2026-10-10T21:13:01.0186448Z   submodules: false
+2026-10-10T21:13:01.0186816Z   set-safe-directory: true
+2026-10-10T21:13:01.0187345Z env:
+2026-10-10T21:13:01.0187842Z   MOCK_PROVIDER: true
+2026-10-10T21:13:01.0188228Z   ENABLE_CLOUD: false
+2026-10-10T21:13:01.0188598Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-10T21:13:01.0189123Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-10T21:13:01.0189587Z   HF_HUB_OFFLINE: 1
+2026-10-10T21:13:01.0189950Z   TRANSFORMERS_OFFLINE: 1
+2026-10-10T21:13:01.0190320Z ##[endgroup]
+2026-10-10T21:13:01.0912521Z Syncing repository: 1785235376-blip/AI-Novel-Studio
+2026-10-10T21:13:01.0913891Z ##[group]Getting Git version info
+2026-10-10T21:13:01.0914474Z Working directory is '/home/runner/work/AI-Novel-Studio/AI-Novel-Studio'
+2026-10-10T21:13:01.0915329Z [command]/usr/bin/git version
+2026-10-10T21:13:01.1027904Z git version 2.55.0
+2026-10-10T21:13:01.1040911Z ##[endgroup]
+2026-10-10T21:13:01.1050975Z Temporarily overriding HOME='/home/runner/work/_temp/609450f9-397f-4e76-86f7-4ef01d13ce1a' before making global git config changes
+2026-10-10T21:13:01.1052532Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-10T21:13:01.1054338Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/AI-Novel-Studio/AI-Novel-Studio
+2026-10-10T21:13:01.1201102Z Deleting the contents of '/home/runner/work/AI-Novel-Studio/AI-Novel-Studio'
+2026-10-10T21:13:01.1204305Z ##[group]Initializing the repository
+2026-10-10T21:13:01.1208096Z [command]/usr/bin/git init /home/runner/work/AI-Novel-Studio/AI-Novel-Studio
+2026-10-10T21:13:01.1338291Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-10T21:13:01.1339069Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-10T21:13:01.1339784Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-10T21:13:01.1340376Z hint: call:
+2026-10-10T21:13:01.1340705Z hint:
+2026-10-10T21:13:01.1341119Z hint: 	git config --global init.defaultBranch <name>
+2026-10-10T21:13:01.1341636Z hint:
+2026-10-10T21:13:01.1342068Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-10T21:13:01.1342783Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-10T21:13:01.1343328Z hint:
+2026-10-10T21:13:01.1343692Z hint: 	git branch -m <name>
+2026-10-10T21:13:01.1344075Z hint:
+2026-10-10T21:13:01.1344547Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-10T21:13:01.1347443Z Initialized empty Git repository in /home/runner/work/AI-Novel-Studio/AI-Novel-Studio/.git/
+2026-10-10T21:13:01.1358003Z [command]/usr/bin/git remote add origin https://github.com/1785235376-blip/AI-Novel-Studio
+2026-10-10T21:13:01.1418422Z ##[endgroup]
+2026-10-10T21:13:01.1419039Z ##[group]Disabling automatic garbage collection
+2026-10-10T21:13:01.1421828Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-10T21:13:01.1450464Z ##[endgroup]
+2026-10-10T21:13:01.1451099Z ##[group]Setting up auth
+2026-10-10T21:13:01.1457192Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T21:13:01.1487734Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-10T21:13:01.1751984Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T21:13:01.1773737Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-10T21:13:01.1914617Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-10T21:13:01.1954664Z ##[endgroup]
+2026-10-10T21:13:01.1955663Z ##[group]Fetching the repository
+2026-10-10T21:13:01.1962573Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +395d66570bfd7f8a0e39673619448553e646fa50:refs/remotes/pull/47/merge
+2026-10-10T21:13:09.4744718Z From https://github.com/1785235376-blip/AI-Novel-Studio
+2026-10-10T21:13:09.4746295Z  * [new ref]         395d66570bfd7f8a0e39673619448553e646fa50 -> pull/47/merge
+2026-10-10T21:13:09.4750829Z ##[endgroup]
+2026-10-10T21:13:09.4751923Z ##[group]Determining the checkout info
+2026-10-10T21:13:09.4753741Z ##[endgroup]
+2026-10-10T21:13:09.4755917Z [command]/usr/bin/git sparse-checkout disable
+2026-10-10T21:13:09.4812677Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-10T21:13:09.4841440Z ##[group]Checking out the ref
+2026-10-10T21:13:09.4842657Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/47/merge
+2026-10-10T21:13:10.0564827Z Note: switching to 'refs/remotes/pull/47/merge'.
+2026-10-10T21:13:10.0565634Z 
+2026-10-10T21:13:10.0566029Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-10T21:13:10.0566686Z changes and commit them, and you can discard any commits you make in this
+2026-10-10T21:13:10.0567925Z state without impacting any branches by switching back to a branch.
+2026-10-10T21:13:10.0568342Z 
+2026-10-10T21:13:10.0568695Z If you want to create a new branch to retain commits you create, you may
+2026-10-10T21:13:10.0569276Z do so (now or later) by using -c with the switch command. Example:
+2026-10-10T21:13:10.0569734Z 
+2026-10-10T21:13:10.0569938Z   git switch -c <new-branch-name>
+2026-10-10T21:13:10.0571308Z 
+2026-10-10T21:13:10.0571519Z Or undo this operation with:
+2026-10-10T21:13:10.0571810Z 
+2026-10-10T21:13:10.0572041Z   git switch -
+2026-10-10T21:13:10.0572279Z 
+2026-10-10T21:13:10.0572710Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-10T21:13:10.0573142Z 
+2026-10-10T21:13:10.0573617Z HEAD is now at 395d665 Merge e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6 into fed2404c8e30b44061b7139dced45b7f3301601c
+2026-10-10T21:13:10.0591801Z ##[endgroup]
+2026-10-10T21:13:10.0629400Z [command]/usr/bin/git log -1 --format=%H
+2026-10-10T21:13:10.0648921Z 395d66570bfd7f8a0e39673619448553e646fa50
+2026-10-10T21:13:10.0656620Z ##[group]Removing auth
+2026-10-10T21:13:10.0660074Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T21:13:10.0683684Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-10T21:13:10.0835389Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T21:13:10.0854537Z http.https://github.com/.extraheader
+2026-10-10T21:13:10.0859268Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-10T21:13:10.0883826Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-10T21:13:10.1022840Z ##[endgroup]
+2026-10-10T21:13:10.1207294Z ##[group]Run actions/setup-python@v5.6.0
+2026-10-10T21:13:10.1207822Z with:
+2026-10-10T21:13:10.1208123Z   python-version: 3.12.9
+2026-10-10T21:13:10.1208675Z   check-latest: false
+2026-10-10T21:13:10.1210541Z   token: ***
+2026-10-10T21:13:10.1210779Z   update-environment: true
+2026-10-10T21:13:10.1211037Z   allow-prereleases: false
+2026-10-10T21:13:10.1211305Z   freethreaded: false
+2026-10-10T21:13:10.1211552Z env:
+2026-10-10T21:13:10.1211794Z   MOCK_PROVIDER: true
+2026-10-10T21:13:10.1212090Z   ENABLE_CLOUD: false
+2026-10-10T21:13:10.1212357Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-10T21:13:10.1212672Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-10T21:13:10.1212977Z   HF_HUB_OFFLINE: 1
+2026-10-10T21:13:10.1213232Z   TRANSFORMERS_OFFLINE: 1
+2026-10-10T21:13:10.1213477Z ##[endgroup]
+2026-10-10T21:13:10.2119782Z ##[group]Installed versions
+2026-10-10T21:13:10.2134024Z Version 3.12.9 was not found in the local cache
+2026-10-10T21:13:10.2208617Z (node:2109) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-10T21:13:10.2209268Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-10T21:13:10.9784403Z Version 3.12.9 is available for downloading
+2026-10-10T21:13:10.9785271Z Download from "https://github.com/actions/python-versions/releases/download/3.12.9-13149478207/python-3.12.9-linux-24.04-x64.tar.gz"
+2026-10-10T21:13:11.6219202Z Extract downloaded archive
+2026-10-10T21:13:11.6298945Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/cb41aa1a-a10c-4bdc-a4cc-8fded172ea81 -f /home/runner/work/_temp/5bccff6e-2dd9-467f-b4d7-23931b0b0808
+2026-10-10T21:13:13.3004472Z Execute installation script
+2026-10-10T21:13:13.3077469Z Check if Python hostedtoolcache folder exist...
+2026-10-10T21:13:13.3078050Z Create Python 3.12.9 folder
+2026-10-10T21:13:13.3088718Z Copy Python binaries to hostedtoolcache folder
+2026-10-10T21:13:13.5237391Z Create additional symlinks (Required for the UsePythonVersion Azure Pipelines task and the setup-python GitHub Action)
+2026-10-10T21:13:13.5264174Z Upgrading pip...
+2026-10-10T21:13:14.8891963Z Looking in links: /tmp/tmp24y4yam1
+2026-10-10T21:13:14.8892923Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages (24.3.1)
+2026-10-10T21:13:15.6667423Z Collecting pip
+2026-10-10T21:13:15.7210215Z Downloading pip-26.2.1-py3-none-any.whl.metadata (4.6 kB)
+2026-10-10T21:13:15.7373081Z Downloading pip-26.2.1-py3-none-any.whl (1.8 MB)
+2026-10-10T21:13:15.8357492Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 25.0 MB/s eta 0:00:00
+2026-10-10T21:13:15.8358161Z 
+2026-10-10T21:13:15.8499034Z Installing collected packages: pip
+2026-10-10T21:13:15.8499843Z Attempting uninstall: pip
+2026-10-10T21:13:15.8513137Z Found existing installation: pip 24.3.1
+2026-10-10T21:13:15.8671645Z Uninstalling pip-24.3.1:
+2026-10-10T21:13:15.8701398Z Successfully uninstalled pip-24.3.1
+2026-10-10T21:13:16.5069183Z Successfully installed pip-26.2.1
+2026-10-10T21:13:16.5535843Z Create complete file
+2026-10-10T21:13:16.5563288Z Successfully set up CPython (3.12.9)
+2026-10-10T21:13:16.5564449Z ##[endgroup]
+2026-10-10T21:13:16.5680095Z ##[group]Run bash .github/ci/prepare.sh local-interop
+2026-10-10T21:13:16.5680518Z [36;1mbash .github/ci/prepare.sh local-interop[0m
+2026-10-10T21:13:16.5880635Z shell: /usr/bin/bash -e {0}
+2026-10-10T21:13:16.5881029Z env:
+2026-10-10T21:13:16.5881301Z   MOCK_PROVIDER: true
+2026-10-10T21:13:16.5881552Z   ENABLE_CLOUD: false
+2026-10-10T21:13:16.5881822Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-10T21:13:16.5882106Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-10T21:13:16.5882377Z   HF_HUB_OFFLINE: 1
+2026-10-10T21:13:16.5882634Z   TRANSFORMERS_OFFLINE: 1
+2026-10-10T21:13:16.5882918Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:16.5883339Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-10T21:13:16.5883721Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:16.5884055Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:16.5884520Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:16.5884855Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-10T21:13:16.5885164Z ##[endgroup]
+2026-10-10T21:13:17.3418699Z ##[group]Run python -m pip install -c .github/ci/python-constraints.txt -e '.[dev]'
+2026-10-10T21:13:17.3419223Z [36;1mpython -m pip install -c .github/ci/python-constraints.txt -e '.[dev]'[0m
+2026-10-10T21:13:17.3454971Z shell: /usr/bin/bash -e {0}
+2026-10-10T21:13:17.3455304Z env:
+2026-10-10T21:13:17.3455529Z   MOCK_PROVIDER: true
+2026-10-10T21:13:17.3455748Z   ENABLE_CLOUD: false
+2026-10-10T21:13:17.3456062Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-10T21:13:17.3456348Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-10T21:13:17.3456632Z   HF_HUB_OFFLINE: 1
+2026-10-10T21:13:17.3456879Z   TRANSFORMERS_OFFLINE: 1
+2026-10-10T21:13:17.3457145Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:17.3457553Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-10T21:13:17.3458123Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:17.3458459Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:17.3458899Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:17.3459262Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-10T21:13:17.3459590Z   CI_COVERAGE_SHA: 395d66570bfd7f8a0e39673619448553e646fa50
+2026-10-10T21:13:17.3459898Z   CI_COVERAGE_TREE: c592ef05396427a7f4da9bff4cf2818e6b6a14f5
+2026-10-10T21:13:17.3460272Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2
+2026-10-10T21:13:17.3460658Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/project
+2026-10-10T21:13:17.3461055Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/receipts
+2026-10-10T21:13:17.3461589Z   HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/home
+2026-10-10T21:13:17.3461983Z   USERPROFILE: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/home
+2026-10-10T21:13:17.3462389Z   APPDATA: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/appdata
+2026-10-10T21:13:17.3462810Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/localappdata
+2026-10-10T21:13:17.3463252Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/config
+2026-10-10T21:13:17.3463668Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/cache
+2026-10-10T21:13:17.3464061Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data
+2026-10-10T21:13:17.3464452Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/state
+2026-10-10T21:13:17.3464855Z   TMPDIR: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:17.3465224Z   TMP: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:17.3465604Z   TEMP: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:17.3465984Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/project
+2026-10-10T21:13:17.3466401Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/novels
+2026-10-10T21:13:17.3466827Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/backups
+2026-10-10T21:13:17.3467327Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/database-backups
+2026-10-10T21:13:17.3467924Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/novels
+2026-10-10T21:13:17.3468277Z ##[endgroup]
+2026-10-10T21:13:18.0239506Z Obtaining file:///home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/project
+2026-10-10T21:13:18.0249841Z   Installing build dependencies: started
+2026-10-10T21:13:18.6302497Z   Installing build dependencies: finished with status 'done'
+2026-10-10T21:13:18.6306206Z   Checking if build backend supports build_editable: started
+2026-10-10T21:13:18.8281194Z   Checking if build backend supports build_editable: finished with status 'done'
+2026-10-10T21:13:18.8285796Z   Getting requirements to build editable: started
+2026-10-10T21:13:19.0551757Z   Getting requirements to build editable: finished with status 'done'
+2026-10-10T21:13:19.0557287Z   Preparing editable metadata (pyproject.toml): started
+2026-10-10T21:13:19.1918112Z   Preparing editable metadata (pyproject.toml): finished with status 'done'
+2026-10-10T21:13:19.3061567Z Collecting fastapi<1,>=0.115 (from ai-novel-studio==0.7.0)
+2026-10-10T21:13:19.3753866Z   Downloading fastapi-0.142.2-py3-none-any.whl.metadata (27 kB)
+2026-10-10T21:13:19.4147193Z Collecting uvicorn<1,>=0.30 (from ai-novel-studio==0.7.0)
+2026-10-10T21:13:19.4300465Z   Downloading uvicorn-0.54.0-py3-none-any.whl.metadata (6.6 kB)
+2026-10-10T21:13:19.4702025Z Collecting psycopg<4,>=3.2 (from psycopg[binary]<4,>=3.2->ai-novel-studio==0.7.0)
+2026-10-10T21:13:19.4854247Z   Downloading psycopg-3.3.6-py3-none-any.whl.metadata (4.4 kB)
+2026-10-10T21:13:19.7108939Z Collecting sqlalchemy<3,>=2.0 (from ai-novel-studio==0.7.0)
+2026-10-10T21:13:19.7330503Z   Downloading sqlalchemy-2.1.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (9.7 kB)
+2026-10-10T21:13:19.7626405Z Collecting httpx<1,>=0.27 (from ai-novel-studio==0.7.0)
+2026-10-10T21:13:19.7779658Z   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+2026-10-10T21:13:19.8032195Z Collecting pydantic-settings<3,>=2.6 (from ai-novel-studio==0.7.0)
+2026-10-10T21:13:19.8238944Z   Downloading pydantic_settings-2.15.0-py3-none-any.whl.metadata (3.9 kB)
+2026-10-10T21:13:19.8935340Z Collecting reportlab<5,>=4.0 (from ai-novel-studio==0.7.0)
+2026-10-10T21:13:19.9086309Z   Downloading reportlab-4.5.1-py3-none-any.whl.metadata (1.7 kB)
+2026-10-10T21:13:19.9361322Z Collecting pypdf==6.19.0 (from ai-novel-studio==0.7.0)
+2026-10-10T21:13:19.9572174Z   Downloading pypdf-6.19.0-py3-none-any.whl.metadata (7.5 kB)
+2026-10-10T21:13:19.9865508Z Collecting jsonschema<5,>=4.18 (from ai-novel-studio==0.7.0)
+2026-10-10T21:13:20.0017969Z   Downloading jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+2026-10-10T21:13:20.0327892Z Collecting pytest<9,>=8 (from ai-novel-studio==0.7.0)
+2026-10-10T21:13:20.0483518Z   Downloading pytest-8.4.2-py3-none-any.whl.metadata (7.7 kB)
+2026-10-10T21:13:20.0787344Z Collecting starlette>=0.46.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-10T21:13:20.0938421Z   Downloading starlette-1.7.0-py3-none-any.whl.metadata (6.6 kB)
+2026-10-10T21:13:20.1613162Z Collecting pydantic>=2.9.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-10T21:13:20.1765122Z   Downloading pydantic-2.13.5-py3-none-any.whl.metadata (110 kB)
+2026-10-10T21:13:20.2215154Z Collecting typing-extensions>=4.8.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-10T21:13:20.2367760Z   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+2026-10-10T21:13:20.2586674Z Collecting typing-inspection>=0.4.2 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-10T21:13:20.2741041Z   Downloading typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+2026-10-10T21:13:20.3684651Z Collecting annotated-doc>=0.0.2 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-10T21:13:20.3835771Z   Downloading annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+2026-10-10T21:13:20.4083796Z Collecting opentelemetry-api>=1.44.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-10T21:13:20.4235159Z   Downloading opentelemetry_api-1.45.0-py3-none-any.whl.metadata (1.4 kB)
+2026-10-10T21:13:20.4486218Z Collecting anyio (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-10T21:13:20.4637896Z   Downloading anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+2026-10-10T21:13:20.4881103Z Collecting certifi (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-10T21:13:20.5032356Z   Downloading certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+2026-10-10T21:13:20.5259991Z Collecting httpcore==1.* (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-10T21:13:20.5419402Z   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+2026-10-10T21:13:20.5654972Z Collecting idna (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-10T21:13:20.5807164Z   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+2026-10-10T21:13:20.6070672Z Collecting h11>=0.16 (from httpcore==1.*->httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-10T21:13:20.6222633Z   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+2026-10-10T21:13:20.6459983Z Collecting attrs>=22.2.0 (from jsonschema<5,>=4.18->ai-novel-studio==0.7.0)
+2026-10-10T21:13:20.6746933Z   Downloading attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+2026-10-10T21:13:20.6981548Z Collecting jsonschema-specifications>=2023.03.6 (from jsonschema<5,>=4.18->ai-novel-studio==0.7.0)
+2026-10-10T21:13:20.7141201Z   Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+2026-10-10T21:13:20.7388295Z Collecting referencing>=0.28.4 (from jsonschema<5,>=4.18->ai-novel-studio==0.7.0)
+2026-10-10T21:13:20.7539547Z   Downloading referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+2026-10-10T21:13:20.9098771Z Collecting rpds-py>=0.25.0 (from jsonschema<5,>=4.18->ai-novel-studio==0.7.0)
+2026-10-10T21:13:20.9249554Z   Downloading rpds_py-2026.9.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+2026-10-10T21:13:21.0194131Z Collecting psycopg-binary==3.3.6 (from psycopg[binary]<4,>=3.2->ai-novel-studio==0.7.0)
+2026-10-10T21:13:21.0350094Z   Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.7 kB)
+2026-10-10T21:13:21.0804999Z Collecting python-dotenv>=0.21.0 (from pydantic-settings<3,>=2.6->ai-novel-studio==0.7.0)
+2026-10-10T21:13:21.0957273Z   Downloading python_dotenv-1.2.4-py3-none-any.whl.metadata (29 kB)
+2026-10-10T21:13:21.1210007Z Collecting iniconfig>=1 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-10T21:13:21.1444136Z   Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+2026-10-10T21:13:21.1678613Z Collecting packaging>=20 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-10T21:13:21.1905451Z   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+2026-10-10T21:13:21.2141514Z Collecting pluggy<2,>=1.5 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-10T21:13:21.2292321Z   Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+2026-10-10T21:13:21.2541570Z Collecting pygments>=2.7.2 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-10T21:13:21.2822773Z   Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+2026-10-10T21:13:21.3853990Z Collecting pillow>=9.0.0 (from reportlab<5,>=4.0->ai-novel-studio==0.7.0)
+2026-10-10T21:13:21.4073081Z   Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.1 kB)
+2026-10-10T21:13:21.5029363Z Collecting charset-normalizer (from reportlab<5,>=4.0->ai-novel-studio==0.7.0)
+2026-10-10T21:13:21.5268298Z   Downloading charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (46 kB)
+2026-10-10T21:13:21.5601854Z Collecting click>=7.0 (from uvicorn<1,>=0.30->ai-novel-studio==0.7.0)
+2026-10-10T21:13:21.5752784Z   Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+2026-10-10T21:13:21.5998978Z Collecting annotated-types>=0.6.0 (from pydantic>=2.9.0->fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-10T21:13:21.6150817Z   Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+2026-10-10T21:13:22.0013851Z Collecting pydantic-core==2.46.5 (from pydantic>=2.9.0->fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-10T21:13:22.0165209Z   Downloading pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+2026-10-10T21:13:22.0426067Z Downloading pypdf-6.19.0-py3-none-any.whl (395 kB)
+2026-10-10T21:13:22.0920079Z Downloading fastapi-0.142.2-py3-none-any.whl (144 kB)
+2026-10-10T21:13:22.1121888Z Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+2026-10-10T21:13:22.1311369Z Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+2026-10-10T21:13:22.1507976Z Downloading jsonschema-4.26.0-py3-none-any.whl (90 kB)
+2026-10-10T21:13:22.1695598Z Downloading psycopg-3.3.6-py3-none-any.whl (215 kB)
+2026-10-10T21:13:22.1901228Z Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.2 MB)
+2026-10-10T21:13:22.3000016Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.2/5.2 MB 47.3 MB/s  0:00:00
+2026-10-10T21:13:22.3153496Z Downloading pydantic_settings-2.15.0-py3-none-any.whl (69 kB)
+2026-10-10T21:13:22.3333045Z Downloading pytest-8.4.2-py3-none-any.whl (365 kB)
+2026-10-10T21:13:22.3522576Z Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+2026-10-10T21:13:22.3701889Z Downloading reportlab-4.5.1-py3-none-any.whl (2.0 MB)
+2026-10-10T21:13:22.3789951Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 237.8 MB/s  0:00:00
+2026-10-10T21:13:22.3949052Z Downloading sqlalchemy-2.1.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (4.7 MB)
+2026-10-10T21:13:22.4319244Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.7/4.7 MB 125.1 MB/s  0:00:00
+2026-10-10T21:13:22.4472791Z Downloading uvicorn-0.54.0-py3-none-any.whl (87 kB)
+2026-10-10T21:13:22.4652454Z Downloading annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+2026-10-10T21:13:22.4922465Z Downloading attrs-26.1.0-py3-none-any.whl (67 kB)
+2026-10-10T21:13:22.5096460Z Downloading click-8.5.0-py3-none-any.whl (125 kB)
+2026-10-10T21:13:22.5272653Z Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+2026-10-10T21:13:22.5446452Z Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+2026-10-10T21:13:22.5618381Z Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+2026-10-10T21:13:22.5792206Z Downloading opentelemetry_api-1.45.0-py3-none-any.whl (60 kB)
+2026-10-10T21:13:22.5965734Z Downloading packaging-26.3-py3-none-any.whl (129 kB)
+2026-10-10T21:13:22.6150739Z Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.9 MB)
+2026-10-10T21:13:22.8148347Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.9/6.9 MB 33.8 MB/s  0:00:00
+2026-10-10T21:13:22.8303490Z Downloading pydantic-2.13.5-py3-none-any.whl (472 kB)
+2026-10-10T21:13:22.9976162Z Downloading pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+2026-10-10T21:13:23.2548223Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 7.1 MB/s  0:00:00
+2026-10-10T21:13:23.2722708Z Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+2026-10-10T21:13:23.4385430Z Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+2026-10-10T21:13:23.6552839Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 4.6 MB/s  0:00:00
+2026-10-10T21:13:23.6705606Z Downloading python_dotenv-1.2.4-py3-none-any.whl (23 kB)
+2026-10-10T21:13:23.8114297Z Downloading referencing-0.37.0-py3-none-any.whl (26 kB)
+2026-10-10T21:13:23.8302292Z Downloading rpds_py-2026.9.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (371 kB)
+2026-10-10T21:13:23.8595323Z Downloading starlette-1.7.0-py3-none-any.whl (78 kB)
+2026-10-10T21:13:23.8890043Z Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+2026-10-10T21:13:23.9290900Z Downloading idna-3.20-py3-none-any.whl (69 kB)
+2026-10-10T21:13:24.0732489Z Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+2026-10-10T21:13:24.0924234Z Downloading typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+2026-10-10T21:13:24.1526621Z Downloading certifi-2026.7.22-py3-none-any.whl (136 kB)
+2026-10-10T21:13:24.1814847Z Downloading charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (257 kB)
+2026-10-10T21:13:24.3786824Z Building wheels for collected packages: ai-novel-studio
+2026-10-10T21:13:24.3792084Z   Building editable for ai-novel-studio (pyproject.toml): started
+2026-10-10T21:13:24.6975409Z   Building editable for ai-novel-studio (pyproject.toml): finished with status 'done'
+2026-10-10T21:13:24.6978939Z   Created wheel for ai-novel-studio: filename=ai_novel_studio-0.7.0-0.editable-py3-none-any.whl size=3181 sha256=b929f361add0333a073dc7028fcf4d08136cea13800e60d64408a1cea2dce0bd
+2026-10-10T21:13:24.6979979Z   Stored in directory: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp/pip-ephem-wheel-cache-odsbveub/wheels/0a/bc/62/d0da98001d06dce939ee3aeaceb7eb89ccaff36e85650a8575
+2026-10-10T21:13:24.6996061Z Successfully built ai-novel-studio
+2026-10-10T21:13:24.7436857Z Installing collected packages: typing-extensions, rpds-py, python-dotenv, pypdf, pygments, psycopg-binary, pluggy, pillow, packaging, iniconfig, idna, h11, click, charset-normalizer, certifi, attrs, annotated-types, annotated-doc, uvicorn, typing-inspection, sqlalchemy, reportlab, referencing, pytest, pydantic-core, psycopg, opentelemetry-api, httpcore, anyio, starlette, pydantic, jsonschema-specifications, httpx, pydantic-settings, jsonschema, fastapi, ai-novel-studio
+2026-10-10T21:13:30.2296979Z 
+2026-10-10T21:13:30.2318416Z Successfully installed ai-novel-studio-0.7.0 annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.15.1 attrs-26.1.0 certifi-2026.7.22 charset-normalizer-3.5.2 click-8.5.0 fastapi-0.142.2 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 idna-3.20 iniconfig-2.3.0 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 opentelemetry-api-1.45.0 packaging-26.3 pillow-12.3.0 pluggy-1.6.0 psycopg-3.3.6 psycopg-binary-3.3.6 pydantic-2.13.5 pydantic-core-2.46.5 pydantic-settings-2.15.0 pygments-2.21.0 pypdf-6.19.0 pytest-8.4.2 python-dotenv-1.2.4 referencing-0.37.0 reportlab-4.5.1 rpds-py-2026.9.1 sqlalchemy-2.1.3 starlette-1.7.0 typing-extensions-4.16.0 typing-inspection-0.4.4 uvicorn-0.54.0
+2026-10-10T21:13:30.3402362Z ##[group]Run set -o pipefail
+2026-10-10T21:13:30.3402664Z [36;1mset -o pipefail[0m
+2026-10-10T21:13:30.3403081Z [36;1mPYTHONPATH="$CI_PROJECT/.github/ci:$CI_PROJECT" python -m pytest -p postgres_gate -p suite_coverage -q -ra --tb=short \[0m
+2026-10-10T21:13:30.3403650Z [36;1m  --ci-coverage-manifest=.github/ci/coverage_manifest_v2.json.gz \[0m
+2026-10-10T21:13:30.3404193Z [36;1m  --ci-scope=interop --ci-shard-index=0 --ci-shard-count=1 --ci-coverage-dir="$CI_RECEIPTS" \[0m
+2026-10-10T21:13:30.3404743Z [36;1m  tests/test_local_interop*.py --junitxml="$CI_RECEIPTS/local-interop.xml" 2>&1 | tee "$CI_RECEIPTS/local-interop.log"[0m
+2026-10-10T21:13:30.3438767Z shell: /usr/bin/bash -e {0}
+2026-10-10T21:13:30.3439047Z env:
+2026-10-10T21:13:30.3439261Z   MOCK_PROVIDER: true
+2026-10-10T21:13:30.3439533Z   ENABLE_CLOUD: false
+2026-10-10T21:13:30.3439799Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-10T21:13:30.3440072Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-10T21:13:30.3440462Z   HF_HUB_OFFLINE: 1
+2026-10-10T21:13:30.3440687Z   TRANSFORMERS_OFFLINE: 1
+2026-10-10T21:13:30.3440997Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:30.3441352Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-10T21:13:30.3441712Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:30.3442049Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:30.3442362Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:30.3442724Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-10T21:13:30.3443085Z   CI_COVERAGE_SHA: 395d66570bfd7f8a0e39673619448553e646fa50
+2026-10-10T21:13:30.3443415Z   CI_COVERAGE_TREE: c592ef05396427a7f4da9bff4cf2818e6b6a14f5
+2026-10-10T21:13:30.3443761Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2
+2026-10-10T21:13:30.3444133Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/project
+2026-10-10T21:13:30.3444577Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/receipts
+2026-10-10T21:13:30.3444960Z   HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/home
+2026-10-10T21:13:30.3445332Z   USERPROFILE: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/home
+2026-10-10T21:13:30.3445755Z   APPDATA: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/appdata
+2026-10-10T21:13:30.3446155Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/localappdata
+2026-10-10T21:13:30.3446614Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/config
+2026-10-10T21:13:30.3447019Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/cache
+2026-10-10T21:13:30.3447406Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data
+2026-10-10T21:13:30.3447976Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/state
+2026-10-10T21:13:30.3448402Z   TMPDIR: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:30.3448790Z   TMP: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:30.3449143Z   TEMP: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:30.3449522Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/project
+2026-10-10T21:13:30.3449948Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/novels
+2026-10-10T21:13:30.3450398Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/backups
+2026-10-10T21:13:30.3450898Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/database-backups
+2026-10-10T21:13:30.3451380Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/novels
+2026-10-10T21:13:30.3451740Z   STORAGE_BACKEND: file
+2026-10-10T21:13:30.3451973Z   DATABASE_URL: 
+2026-10-10T21:13:30.3452212Z   TEST_POSTGRES_DATABASE_URL: 
+2026-10-10T21:13:30.3452458Z ##[endgroup]
+2026-10-10T21:13:35.0249485Z ........................................................................ [ 17%]
+2026-10-10T21:13:35.1096698Z ........................................................................ [ 34%]
+2026-10-10T21:13:36.7374742Z .........................................s........ss.s.................. [ 52%]
+2026-10-10T21:13:38.8825485Z ............................................s.........sssssssss.s..s.s.s [ 69%]
+2026-10-10T21:13:43.0623019Z .s.s...sss..s.s.s.s...sss......ssssss.s.s.s.s.........s.s..s....ssss.s.s [ 87%]
+2026-10-10T21:13:49.4092550Z .s.s.s....ssss.s.s.s......ssssss.s.s.s...............                    [100%]
+2026-10-10T21:13:49.4093448Z - generated xml file: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/receipts/local-interop.xml -
+2026-10-10T21:13:49.4094112Z =========================== short test summary info ============================
+2026-10-10T21:13:49.4094818Z SKIPPED [1] tests/test_local_interop_cross_process_host.py: PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+2026-10-10T21:13:49.4095742Z SKIPPED [2] tests/test_local_interop_desktop_api_projection_races.py:15: PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+2026-10-10T21:13:49.4096530Z SKIPPED [1] tests/test_local_interop_desktop_api_projection_races.py: PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+2026-10-10T21:13:49.4097195Z SKIPPED [10] tests/test_local_interop_desktop_runtime.py: PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+2026-10-10T21:13:49.4098370Z SKIPPED [9] tests/test_local_interop_desktop_runtime.py:60: PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+2026-10-10T21:13:49.4098993Z SKIPPED [3] tests/test_local_interop_desktop_runtime.py:261: PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+2026-10-10T21:13:49.4099610Z SKIPPED [19] tests/test_local_interop_host.py: PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+2026-10-10T21:13:49.4100244Z SKIPPED [3] tests/test_local_interop_host.py:173: PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+2026-10-10T21:13:49.4100823Z SKIPPED [6] tests/test_local_interop_host.py:203: PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+2026-10-10T21:13:49.4101402Z SKIPPED [4] tests/test_local_interop_host.py:395: PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+2026-10-10T21:13:49.4102021Z SKIPPED [4] tests/test_local_interop_host.py:528: PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+2026-10-10T21:13:49.4102599Z SKIPPED [6] tests/test_local_interop_host.py:611: PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+2026-10-10T21:13:49.4103050Z 345 passed, 68 skipped in 18.28s
+2026-10-10T21:13:49.7631223Z ##[group]Run python .github/ci/coverage_reconcile.py \
+2026-10-10T21:13:49.7631609Z [36;1mpython .github/ci/coverage_reconcile.py \[0m
+2026-10-10T21:13:49.7631986Z [36;1m  --manifest .github/ci/coverage_manifest_v2.json.gz --scope interop \[0m
+2026-10-10T21:13:49.7632393Z [36;1m  --receipts-dir "$CI_RECEIPTS" --expected-shards file=1 \[0m
+2026-10-10T21:13:49.7632796Z [36;1m  --expected-sha "$CI_COVERAGE_SHA" --expected-tree "$CI_COVERAGE_TREE" \[0m
+2026-10-10T21:13:49.7633218Z [36;1m  --expected-event-sha "$GITHUB_SHA" --expected-run "$GITHUB_RUN_ID" \[0m
+2026-10-10T21:13:49.7633665Z [36;1m  --expected-attempt "$GITHUB_RUN_ATTEMPT" --expected-repository "$GITHUB_REPOSITORY" \[0m
+2026-10-10T21:13:49.7634134Z [36;1m  --constraints .github/ci/python-constraints.txt --source-root "$CI_PROJECT" \[0m
+2026-10-10T21:13:49.7634523Z [36;1m  --output "$CI_RECEIPTS/interop-coverage.json"[0m
+2026-10-10T21:13:49.7668201Z shell: /usr/bin/bash -e {0}
+2026-10-10T21:13:49.7668603Z env:
+2026-10-10T21:13:49.7668861Z   MOCK_PROVIDER: true
+2026-10-10T21:13:49.7669110Z   ENABLE_CLOUD: false
+2026-10-10T21:13:49.7669365Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-10T21:13:49.7669632Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-10T21:13:49.7669929Z   HF_HUB_OFFLINE: 1
+2026-10-10T21:13:49.7670150Z   TRANSFORMERS_OFFLINE: 1
+2026-10-10T21:13:49.7670435Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:49.7670816Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-10T21:13:49.7671188Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:49.7671665Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:49.7671987Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:49.7672313Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-10T21:13:49.7672672Z   CI_COVERAGE_SHA: 395d66570bfd7f8a0e39673619448553e646fa50
+2026-10-10T21:13:49.7672999Z   CI_COVERAGE_TREE: c592ef05396427a7f4da9bff4cf2818e6b6a14f5
+2026-10-10T21:13:49.7673358Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2
+2026-10-10T21:13:49.7673763Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/project
+2026-10-10T21:13:49.7674163Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/receipts
+2026-10-10T21:13:49.7674574Z   HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/home
+2026-10-10T21:13:49.7674956Z   USERPROFILE: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/home
+2026-10-10T21:13:49.7675358Z   APPDATA: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/appdata
+2026-10-10T21:13:49.7675775Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/localappdata
+2026-10-10T21:13:49.7676185Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/config
+2026-10-10T21:13:49.7676647Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/cache
+2026-10-10T21:13:49.7677042Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data
+2026-10-10T21:13:49.7677442Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/state
+2026-10-10T21:13:49.7677977Z   TMPDIR: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:49.7678337Z   TMP: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:49.7678736Z   TEMP: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:49.7679115Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/project
+2026-10-10T21:13:49.7679572Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/novels
+2026-10-10T21:13:49.7680001Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/backups
+2026-10-10T21:13:49.7680493Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/database-backups
+2026-10-10T21:13:49.7681119Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/novels
+2026-10-10T21:13:49.7681486Z ##[endgroup]
+2026-10-10T21:13:50.0131911Z {
+2026-10-10T21:13:50.0132382Z   "schema_version": 1,
+2026-10-10T21:13:50.0132699Z   "scope": "interop",
+2026-10-10T21:13:50.0133009Z   "status": "complete",
+2026-10-10T21:13:50.0133371Z   "identity": {
+2026-10-10T21:13:50.0133712Z     "checked_out_sha": "395d66570bfd7f8a0e39673619448553e646fa50",
+2026-10-10T21:13:50.0134082Z     "source_tree": "c592ef05396427a7f4da9bff4cf2818e6b6a14f5",
+2026-10-10T21:13:50.0134401Z     "event_sha": "395d66570bfd7f8a0e39673619448553e646fa50",
+2026-10-10T21:13:50.0134701Z     "run_id": "38086674000",
+2026-10-10T21:13:50.0134943Z     "run_attempt": "1",
+2026-10-10T21:13:50.0135219Z     "repository": "1785235376-blip/AI-Novel-Studio",
+2026-10-10T21:13:50.0135512Z     "python_version": "3.12.9",
+2026-10-10T21:13:50.0135754Z     "platform": "linux",
+2026-10-10T21:13:50.0136445Z     "source_manifest_sha256": "c57f8890a3274efa02274ce4e9ced3319ac7416dea89b153003266281905d5c7",
+2026-10-10T21:13:50.0137159Z     "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+2026-10-10T21:13:50.0137511Z   },
+2026-10-10T21:13:50.0137975Z   "unique_collected_per_profile": 413,
+2026-10-10T21:13:50.0138275Z   "profiles": {
+2026-10-10T21:13:50.0138507Z     "file": {
+2026-10-10T21:13:50.0138751Z       "collected": 413,
+2026-10-10T21:13:50.0139026Z       "passed": 345,
+2026-10-10T21:13:50.0139241Z       "skipped": 68,
+2026-10-10T21:13:50.0139504Z       "shards": 1
+2026-10-10T21:13:50.0139722Z     }
+2026-10-10T21:13:50.0139945Z   },
+2026-10-10T21:13:50.0140322Z   "external_gates": {},
+2026-10-10T21:13:50.0140677Z   "evidence": "complete collected backend coverage; not monolithic PostgreSQL interaction equivalence"
+2026-10-10T21:13:50.0141053Z }
+2026-10-10T21:13:50.0358539Z ##[group]Run python scripts/check_desktop_integration.py
+2026-10-10T21:13:50.0359079Z [36;1mpython scripts/check_desktop_integration.py[0m
+2026-10-10T21:13:50.0359756Z [36;1mpython -m local_interop_desktop.acceptance --mock-only --output "$CI_RECEIPTS/desktop-acceptance.json"[0m
+2026-10-10T21:13:50.0394233Z shell: /usr/bin/bash -e {0}
+2026-10-10T21:13:50.0394483Z env:
+2026-10-10T21:13:50.0394839Z   MOCK_PROVIDER: true
+2026-10-10T21:13:50.0395074Z   ENABLE_CLOUD: false
+2026-10-10T21:13:50.0395320Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-10T21:13:50.0395600Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-10T21:13:50.0395859Z   HF_HUB_OFFLINE: 1
+2026-10-10T21:13:50.0396097Z   TRANSFORMERS_OFFLINE: 1
+2026-10-10T21:13:50.0396398Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:50.0396766Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-10T21:13:50.0397155Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:50.0397546Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:50.0398034Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:50.0398355Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-10T21:13:50.0398706Z   CI_COVERAGE_SHA: 395d66570bfd7f8a0e39673619448553e646fa50
+2026-10-10T21:13:50.0399033Z   CI_COVERAGE_TREE: c592ef05396427a7f4da9bff4cf2818e6b6a14f5
+2026-10-10T21:13:50.0399382Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2
+2026-10-10T21:13:50.0399787Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/project
+2026-10-10T21:13:50.0400236Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/receipts
+2026-10-10T21:13:50.0400651Z   HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/home
+2026-10-10T21:13:50.0401026Z   USERPROFILE: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/home
+2026-10-10T21:13:50.0401423Z   APPDATA: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/appdata
+2026-10-10T21:13:50.0401854Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/localappdata
+2026-10-10T21:13:50.0402269Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/config
+2026-10-10T21:13:50.0402675Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/cache
+2026-10-10T21:13:50.0403093Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data
+2026-10-10T21:13:50.0403475Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/state
+2026-10-10T21:13:50.0403869Z   TMPDIR: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:50.0404224Z   TMP: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:50.0404582Z   TEMP: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:50.0404955Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/project
+2026-10-10T21:13:50.0405354Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/novels
+2026-10-10T21:13:50.0405842Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/backups
+2026-10-10T21:13:50.0406291Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/database-backups
+2026-10-10T21:13:50.0406800Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/novels
+2026-10-10T21:13:50.0407193Z ##[endgroup]
+2026-10-10T21:13:50.1391257Z {
+2026-10-10T21:13:50.1391588Z   "acceptance_scenarios": 24,
+2026-10-10T21:13:50.1391997Z   "frozen_protocol_files": 37,
+2026-10-10T21:13:50.1392386Z   "manifest_sha256": "77c1f82f0aec0ef385d95cacf6fe04530b83fb62d2403bc7341cbe6bf19c858c",
+2026-10-10T21:13:50.1392775Z   "protocol": "PoemSeed Local Interop 1.0",
+2026-10-10T21:13:50.1393241Z   "real_desktop_acceptance": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.1393545Z   "requirements": 69,
+2026-10-10T21:13:50.1393787Z   "shared_desktop_preparation_files": 26
+2026-10-10T21:13:50.1394166Z }
+2026-10-10T21:13:50.5040010Z {
+2026-10-10T21:13:50.5040414Z   "native_acceptance": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5040815Z   "protocol": "PoemSeed Local Interop 1.0",
+2026-10-10T21:13:50.5041214Z   "results": [
+2026-10-10T21:13:50.5041448Z     {
+2026-10-10T21:13:50.5041776Z       "checks": [
+2026-10-10T21:13:50.5042054Z         "absent_installation",
+2026-10-10T21:13:50.5042367Z         "no_auto_launch"
+2026-10-10T21:13:50.5042633Z       ],
+2026-10-10T21:13:50.5042866Z       "elapsed_ms": 0.438,
+2026-10-10T21:13:50.5043178Z       "error_code": null,
+2026-10-10T21:13:50.5043407Z       "id": "A01",
+2026-10-10T21:13:50.5043630Z       "name": "Install state",
+2026-10-10T21:13:50.5043891Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5044153Z       "outcome": "PASS",
+2026-10-10T21:13:50.5044770Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5044998Z     },
+2026-10-10T21:13:50.5045248Z     {
+2026-10-10T21:13:50.5045453Z       "checks": [
+2026-10-10T21:13:50.5045685Z         "registered_discovery",
+2026-10-10T21:13:50.5045957Z         "bounded_deduplication",
+2026-10-10T21:13:50.5046201Z         "no_process_scan"
+2026-10-10T21:13:50.5046412Z       ],
+2026-10-10T21:13:50.5046641Z       "elapsed_ms": 0.299,
+2026-10-10T21:13:50.5046873Z       "error_code": null,
+2026-10-10T21:13:50.5047151Z       "id": "A02",
+2026-10-10T21:13:50.5047371Z       "name": "Peer discovery",
+2026-10-10T21:13:50.5047823Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5048116Z       "outcome": "PASS",
+2026-10-10T21:13:50.5048343Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5048580Z     },
+2026-10-10T21:13:50.5048788Z     {
+2026-10-10T21:13:50.5048984Z       "checks": [
+2026-10-10T21:13:50.5049220Z         "synthetic_os_facts_only",
+2026-10-10T21:13:50.5049591Z         "explicit_approval",
+2026-10-10T21:13:50.5049880Z         "trust_downgrade",
+2026-10-10T21:13:50.5050106Z         "revocation"
+2026-10-10T21:13:50.5050305Z       ],
+2026-10-10T21:13:50.5050526Z       "elapsed_ms": 0.351,
+2026-10-10T21:13:50.5050757Z       "error_code": null,
+2026-10-10T21:13:50.5050992Z       "id": "A03",
+2026-10-10T21:13:50.5051215Z       "name": "Trust",
+2026-10-10T21:13:50.5051444Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5051705Z       "outcome": "PASS",
+2026-10-10T21:13:50.5051954Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5052187Z     },
+2026-10-10T21:13:50.5052389Z     {
+2026-10-10T21:13:50.5052691Z       "checks": [
+2026-10-10T21:13:50.5052919Z         "five_distinct_stages",
+2026-10-10T21:13:50.5053172Z         "deterministic_observable_history"
+2026-10-10T21:13:50.5053424Z       ],
+2026-10-10T21:13:50.5053644Z       "elapsed_ms": 6.742,
+2026-10-10T21:13:50.5053870Z       "error_code": null,
+2026-10-10T21:13:50.5054090Z       "id": "A04",
+2026-10-10T21:13:50.5054341Z       "name": "Handshake",
+2026-10-10T21:13:50.5054584Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5054859Z       "outcome": "PASS",
+2026-10-10T21:13:50.5055084Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5055303Z     },
+2026-10-10T21:13:50.5055507Z     {
+2026-10-10T21:13:50.5055717Z       "checks": [
+2026-10-10T21:13:50.5055950Z         "negotiated_support",
+2026-10-10T21:13:50.5056194Z         "content_permission_not_implied"
+2026-10-10T21:13:50.5056463Z       ],
+2026-10-10T21:13:50.5056674Z       "elapsed_ms": 7.038,
+2026-10-10T21:13:50.5056918Z       "error_code": null,
+2026-10-10T21:13:50.5057148Z       "id": "A05",
+2026-10-10T21:13:50.5057371Z       "name": "Capability negotiation",
+2026-10-10T21:13:50.5057760Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5058047Z       "outcome": "PASS",
+2026-10-10T21:13:50.5058288Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5058505Z     },
+2026-10-10T21:13:50.5058709Z     {
+2026-10-10T21:13:50.5058907Z       "checks": [
+2026-10-10T21:13:50.5059158Z         "metadata_only",
+2026-10-10T21:13:50.5059590Z         "no_manuscript_selection_prompt"
+2026-10-10T21:13:50.5059839Z       ],
+2026-10-10T21:13:50.5060054Z       "elapsed_ms": 0.631,
+2026-10-10T21:13:50.5060373Z       "error_code": null,
+2026-10-10T21:13:50.5060625Z       "id": "A06",
+2026-10-10T21:13:50.5060849Z       "name": "Metadata context",
+2026-10-10T21:13:50.5061091Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5061367Z       "outcome": "PASS",
+2026-10-10T21:13:50.5061620Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5061860Z     },
+2026-10-10T21:13:50.5062050Z     {
+2026-10-10T21:13:50.5062232Z       "checks": [
+2026-10-10T21:13:50.5062639Z         "explicit_consent",
+2026-10-10T21:13:50.5062878Z         "exact_content_scope",
+2026-10-10T21:13:50.5063132Z         "chapter_version_fence"
+2026-10-10T21:13:50.5063373Z       ],
+2026-10-10T21:13:50.5063578Z       "elapsed_ms": 0.686,
+2026-10-10T21:13:50.5063813Z       "error_code": null,
+2026-10-10T21:13:50.5064056Z       "id": "A07",
+2026-10-10T21:13:50.5064294Z       "name": "Selection context",
+2026-10-10T21:13:50.5064550Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5064802Z       "outcome": "PASS",
+2026-10-10T21:13:50.5065048Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5065266Z     },
+2026-10-10T21:13:50.5065462Z     {
+2026-10-10T21:13:50.5065674Z       "checks": [
+2026-10-10T21:13:50.5065890Z         "explicit_consent",
+2026-10-10T21:13:50.5066134Z         "exact_content_scope",
+2026-10-10T21:13:50.5066416Z         "chapter_version_fence"
+2026-10-10T21:13:50.5066645Z       ],
+2026-10-10T21:13:50.5066870Z       "elapsed_ms": 0.62,
+2026-10-10T21:13:50.5067092Z       "error_code": null,
+2026-10-10T21:13:50.5067312Z       "id": "A08",
+2026-10-10T21:13:50.5067540Z       "name": "Chapter context",
+2026-10-10T21:13:50.5067934Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5068201Z       "outcome": "PASS",
+2026-10-10T21:13:50.5068432Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5068679Z     },
+2026-10-10T21:13:50.5068885Z     {
+2026-10-10T21:13:50.5069090Z       "checks": [
+2026-10-10T21:13:50.5069319Z         "non_content_diagnostic",
+2026-10-10T21:13:50.5069563Z         "allowlisted_audit",
+2026-10-10T21:13:50.5069792Z         "bounded_audit"
+2026-10-10T21:13:50.5070024Z       ],
+2026-10-10T21:13:50.5070238Z       "elapsed_ms": 0.932,
+2026-10-10T21:13:50.5070459Z       "error_code": null,
+2026-10-10T21:13:50.5070684Z       "id": "A09",
+2026-10-10T21:13:50.5070900Z       "name": "Diagnostic",
+2026-10-10T21:13:50.5071181Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5071446Z       "outcome": "PASS",
+2026-10-10T21:13:50.5071663Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5071888Z     },
+2026-10-10T21:13:50.5072081Z     {
+2026-10-10T21:13:50.5072278Z       "checks": [
+2026-10-10T21:13:50.5072551Z         "coalescing",
+2026-10-10T21:13:50.5072788Z         "live_delivery_permission",
+2026-10-10T21:13:50.5073051Z         "isolated_revocation",
+2026-10-10T21:13:50.5073297Z         "pause_resume",
+2026-10-10T21:13:50.5073545Z         "disconnect_no_grant"
+2026-10-10T21:13:50.5073785Z       ],
+2026-10-10T21:13:50.5073979Z       "elapsed_ms": 58.848,
+2026-10-10T21:13:50.5074233Z       "error_code": null,
+2026-10-10T21:13:50.5074484Z       "id": "A10",
+2026-10-10T21:13:50.5074705Z       "name": "Event",
+2026-10-10T21:13:50.5074949Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5075191Z       "outcome": "PASS",
+2026-10-10T21:13:50.5075437Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5075672Z     },
+2026-10-10T21:13:50.5075863Z     {
+2026-10-10T21:13:50.5076085Z       "checks": [
+2026-10-10T21:13:50.5076295Z         "session_revoked",
+2026-10-10T21:13:50.5076546Z         "later_delivery_rejected"
+2026-10-10T21:13:50.5076805Z       ],
+2026-10-10T21:13:50.5077006Z       "elapsed_ms": 6.741,
+2026-10-10T21:13:50.5077263Z       "error_code": null,
+2026-10-10T21:13:50.5077479Z       "id": "A11",
+2026-10-10T21:13:50.5077875Z       "name": "Session revoke",
+2026-10-10T21:13:50.5078131Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5078476Z       "outcome": "PASS",
+2026-10-10T21:13:50.5078740Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5078956Z     },
+2026-10-10T21:13:50.5079211Z     {
+2026-10-10T21:13:50.5079448Z       "checks": [
+2026-10-10T21:13:50.5079662Z         "coalescing",
+2026-10-10T21:13:50.5079913Z         "live_delivery_permission",
+2026-10-10T21:13:50.5080163Z         "isolated_revocation",
+2026-10-10T21:13:50.5080398Z         "pause_resume",
+2026-10-10T21:13:50.5080629Z         "disconnect_no_grant"
+2026-10-10T21:13:50.5080872Z       ],
+2026-10-10T21:13:50.5081097Z       "elapsed_ms": 58.854,
+2026-10-10T21:13:50.5081325Z       "error_code": null,
+2026-10-10T21:13:50.5081573Z       "id": "A12",
+2026-10-10T21:13:50.5082207Z       "name": "Permission revoke",
+2026-10-10T21:13:50.5082475Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5082736Z       "outcome": "PASS",
+2026-10-10T21:13:50.5082963Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5083168Z     },
+2026-10-10T21:13:50.5083384Z     {
+2026-10-10T21:13:50.5083596Z       "checks": [
+2026-10-10T21:13:50.5083818Z         "v1_request_response_loop",
+2026-10-10T21:13:50.5084082Z         "advice_no_mutation"
+2026-10-10T21:13:50.5084310Z       ],
+2026-10-10T21:13:50.5084549Z       "elapsed_ms": 9.686,
+2026-10-10T21:13:50.5084787Z       "error_code": null,
+2026-10-10T21:13:50.5085075Z       "id": "A13",
+2026-10-10T21:13:50.5085310Z       "name": "Tutor guidance",
+2026-10-10T21:13:50.5085562Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5085826Z       "outcome": "PASS",
+2026-10-10T21:13:50.5086062Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5086264Z     },
+2026-10-10T21:13:50.5086483Z     {
+2026-10-10T21:13:50.5086706Z       "checks": [
+2026-10-10T21:13:50.5086937Z         "fresh_owner_callback",
+2026-10-10T21:13:50.5087196Z         "wire_evidence_never_promoted"
+2026-10-10T21:13:50.5087421Z       ],
+2026-10-10T21:13:50.5087805Z       "elapsed_ms": 12.137,
+2026-10-10T21:13:50.5088057Z       "error_code": null,
+2026-10-10T21:13:50.5088282Z       "id": "A14",
+2026-10-10T21:13:50.5088522Z       "name": "Verifier",
+2026-10-10T21:13:50.5088755Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5089021Z       "outcome": "PASS",
+2026-10-10T21:13:50.5089275Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5089489Z     },
+2026-10-10T21:13:50.5089706Z     {
+2026-10-10T21:13:50.5089900Z       "checks": [
+2026-10-10T21:13:50.5090125Z         "advice_does_not_navigate",
+2026-10-10T21:13:50.5090370Z         "local_user_click",
+2026-10-10T21:13:50.5090598Z         "single_use_presence"
+2026-10-10T21:13:50.5090870Z       ],
+2026-10-10T21:13:50.5091068Z       "elapsed_ms": 0.395,
+2026-10-10T21:13:50.5091293Z       "error_code": null,
+2026-10-10T21:13:50.5091554Z       "id": "A15",
+2026-10-10T21:13:50.5091751Z       "name": "Deep Link",
+2026-10-10T21:13:50.5092028Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5092277Z       "outcome": "PASS",
+2026-10-10T21:13:50.5092501Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5092727Z     },
+2026-10-10T21:13:50.5092918Z     {
+2026-10-10T21:13:50.5093143Z       "checks": [
+2026-10-10T21:13:50.5093355Z         "owner_projection",
+2026-10-10T21:13:50.5093574Z         "read_only_metadata",
+2026-10-10T21:13:50.5093853Z         "stale_cache"
+2026-10-10T21:13:50.5094116Z       ],
+2026-10-10T21:13:50.5094345Z       "elapsed_ms": 0.405,
+2026-10-10T21:13:50.5094570Z       "error_code": null,
+2026-10-10T21:13:50.5094774Z       "id": "A16",
+2026-10-10T21:13:50.5095015Z       "name": "Model Registry",
+2026-10-10T21:13:50.5095253Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5095515Z       "outcome": "PASS",
+2026-10-10T21:13:50.5095749Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5095966Z     },
+2026-10-10T21:13:50.5096194Z     {
+2026-10-10T21:13:50.5096387Z       "checks": [
+2026-10-10T21:13:50.5096615Z         "synthetic_peer_crash",
+2026-10-10T21:13:50.5096869Z         "no_successful_late_delivery"
+2026-10-10T21:13:50.5097105Z       ],
+2026-10-10T21:13:50.5097417Z       "elapsed_ms": 6.585,
+2026-10-10T21:13:50.5097775Z       "error_code": null,
+2026-10-10T21:13:50.5098013Z       "id": "A17",
+2026-10-10T21:13:50.5098333Z       "name": "Tutor crash",
+2026-10-10T21:13:50.5098573Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5098864Z       "outcome": "PASS",
+2026-10-10T21:13:50.5099101Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5099305Z     },
+2026-10-10T21:13:50.5099519Z     {
+2026-10-10T21:13:50.5099711Z       "checks": [
+2026-10-10T21:13:50.5099929Z         "simulated_host_shutdown",
+2026-10-10T21:13:50.5100189Z         "volatile_session_revoked"
+2026-10-10T21:13:50.5100436Z       ],
+2026-10-10T21:13:50.5100644Z       "elapsed_ms": 6.664,
+2026-10-10T21:13:50.5100898Z       "error_code": null,
+2026-10-10T21:13:50.5101113Z       "id": "A18",
+2026-10-10T21:13:50.5101354Z       "name": "Studio crash",
+2026-10-10T21:13:50.5101593Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5101854Z       "outcome": "PASS",
+2026-10-10T21:13:50.5102082Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5102284Z     },
+2026-10-10T21:13:50.5102495Z     {
+2026-10-10T21:13:50.5102705Z       "checks": [
+2026-10-10T21:13:50.5102917Z         "fresh_instance",
+2026-10-10T21:13:50.5103201Z         "no_session_or_standing_grant_restoration"
+2026-10-10T21:13:50.5103448Z       ],
+2026-10-10T21:13:50.5103683Z       "elapsed_ms": 7.404,
+2026-10-10T21:13:50.5103912Z       "error_code": null,
+2026-10-10T21:13:50.5104133Z       "id": "A19",
+2026-10-10T21:13:50.5104354Z       "name": "Restart",
+2026-10-10T21:13:50.5104594Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5104858Z       "outcome": "PASS",
+2026-10-10T21:13:50.5105096Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5105302Z     },
+2026-10-10T21:13:50.5105557Z     {
+2026-10-10T21:13:50.5105753Z       "checks": [
+2026-10-10T21:13:50.5106001Z         "product_upgrade_compatible",
+2026-10-10T21:13:50.5106270Z         "optional_1_1_advertisement_selects_1_0",
+2026-10-10T21:13:50.5106532Z         "unknown_major_rejected"
+2026-10-10T21:13:50.5106786Z       ],
+2026-10-10T21:13:50.5106985Z       "elapsed_ms": 5.78,
+2026-10-10T21:13:50.5107204Z       "error_code": null,
+2026-10-10T21:13:50.5107453Z       "id": "A20",
+2026-10-10T21:13:50.5107814Z       "name": "Upgrade compatibility",
+2026-10-10T21:13:50.5108122Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5108375Z       "outcome": "PASS",
+2026-10-10T21:13:50.5108603Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5108849Z     },
+2026-10-10T21:13:50.5109042Z     {
+2026-10-10T21:13:50.5109249Z       "checks": [
+2026-10-10T21:13:50.5109483Z         "distinct_windows_user_probe_required"
+2026-10-10T21:13:50.5109723Z       ],
+2026-10-10T21:13:50.5109972Z       "elapsed_ms": 0.0,
+2026-10-10T21:13:50.5110224Z       "error_code": null,
+2026-10-10T21:13:50.5110450Z       "id": "A21",
+2026-10-10T21:13:50.5110673Z       "name": "Different Windows user",
+2026-10-10T21:13:50.5110914Z       "native_status": "NOT_RUN",
+2026-10-10T21:13:50.5111198Z       "outcome": "NOT_RUN",
+2026-10-10T21:13:50.5111434Z       "scope": "NATIVE_REQUIRED"
+2026-10-10T21:13:50.5111661Z     },
+2026-10-10T21:13:50.5111859Z     {
+2026-10-10T21:13:50.5112053Z       "checks": [
+2026-10-10T21:13:50.5112302Z         "claimed_known_product_rejected",
+2026-10-10T21:13:50.5112587Z         "no_installation_no_trust"
+2026-10-10T21:13:50.5112820Z       ],
+2026-10-10T21:13:50.5113028Z       "elapsed_ms": 0.217,
+2026-10-10T21:13:50.5113269Z       "error_code": null,
+2026-10-10T21:13:50.5113499Z       "id": "A22",
+2026-10-10T21:13:50.5113719Z       "name": "Fake product_id",
+2026-10-10T21:13:50.5113948Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5114217Z       "outcome": "PASS",
+2026-10-10T21:13:50.5114437Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5114666Z     },
+2026-10-10T21:13:50.5114891Z     {
+2026-10-10T21:13:50.5115068Z       "checks": [
+2026-10-10T21:13:50.5115300Z         "fixed_expiry",
+2026-10-10T21:13:50.5115547Z         "heartbeat_does_not_extend",
+2026-10-10T21:13:50.5115906Z         "expired_request_rejected"
+2026-10-10T21:13:50.5116152Z       ],
+2026-10-10T21:13:50.5116354Z       "elapsed_ms": 7.302,
+2026-10-10T21:13:50.5116649Z       "error_code": null,
+2026-10-10T21:13:50.5116885Z       "id": "A23",
+2026-10-10T21:13:50.5117091Z       "name": "Expired session",
+2026-10-10T21:13:50.5117383Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5117777Z       "outcome": "PASS",
+2026-10-10T21:13:50.5118034Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5118272Z     },
+2026-10-10T21:13:50.5118455Z     {
+2026-10-10T21:13:50.5118669Z       "checks": [
+2026-10-10T21:13:50.5118885Z         "offline_peer_isolated",
+2026-10-10T21:13:50.5119124Z         "no_application_failure"
+2026-10-10T21:13:50.5119379Z       ],
+2026-10-10T21:13:50.5119580Z       "elapsed_ms": 0.295,
+2026-10-10T21:13:50.5119847Z       "error_code": null,
+2026-10-10T21:13:50.5120068Z       "id": "A24",
+2026-10-10T21:13:50.5120276Z       "name": "Offline",
+2026-10-10T21:13:50.5120530Z       "native_status": "LOCAL_REQUIRED",
+2026-10-10T21:13:50.5121673Z       "outcome": "PASS",
+2026-10-10T21:13:50.5121909Z       "scope": "MOCK_ONLY"
+2026-10-10T21:13:50.5122122Z     }
+2026-10-10T21:13:50.5122306Z   ],
+2026-10-10T21:13:50.5122653Z   "scope": "Desktop preparation contract harness; real Desktop acceptance LOCAL_REQUIRED",
+2026-10-10T21:13:50.5123033Z   "summary": {
+2026-10-10T21:13:50.5123242Z     "FAIL": 0,
+2026-10-10T21:13:50.5123448Z     "NOT_RUN": 1,
+2026-10-10T21:13:50.5123644Z     "PASS": 23
+2026-10-10T21:13:50.5123881Z   }
+2026-10-10T21:13:50.5124075Z }
+2026-10-10T21:13:50.6064307Z ##[group]Run python .github/ci/receipt.py "$CI_RECEIPTS"
+2026-10-10T21:13:50.6064774Z [36;1mpython .github/ci/receipt.py "$CI_RECEIPTS"[0m
+2026-10-10T21:13:50.6097991Z shell: /usr/bin/bash -e {0}
+2026-10-10T21:13:50.6098269Z env:
+2026-10-10T21:13:50.6098457Z   MOCK_PROVIDER: true
+2026-10-10T21:13:50.6098693Z   ENABLE_CLOUD: false
+2026-10-10T21:13:50.6098931Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-10T21:13:50.6099225Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-10T21:13:50.6099485Z   HF_HUB_OFFLINE: 1
+2026-10-10T21:13:50.6099688Z   TRANSFORMERS_OFFLINE: 1
+2026-10-10T21:13:50.6099967Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:50.6100304Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-10T21:13:50.6100679Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:50.6100994Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:50.6101375Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:50.6101690Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-10T21:13:50.6102017Z   CI_COVERAGE_SHA: 395d66570bfd7f8a0e39673619448553e646fa50
+2026-10-10T21:13:50.6102337Z   CI_COVERAGE_TREE: c592ef05396427a7f4da9bff4cf2818e6b6a14f5
+2026-10-10T21:13:50.6102676Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2
+2026-10-10T21:13:50.6103041Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/project
+2026-10-10T21:13:50.6103453Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/receipts
+2026-10-10T21:13:50.6103865Z   HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/home
+2026-10-10T21:13:50.6104236Z   USERPROFILE: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/home
+2026-10-10T21:13:50.6104613Z   APPDATA: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/appdata
+2026-10-10T21:13:50.6105006Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/localappdata
+2026-10-10T21:13:50.6105432Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/config
+2026-10-10T21:13:50.6105846Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/cache
+2026-10-10T21:13:50.6106262Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data
+2026-10-10T21:13:50.6106629Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/state
+2026-10-10T21:13:50.6107070Z   TMPDIR: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:50.6107437Z   TMP: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:50.6107914Z   TEMP: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:50.6108282Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/project
+2026-10-10T21:13:50.6108681Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/novels
+2026-10-10T21:13:50.6109110Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/backups
+2026-10-10T21:13:50.6109583Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/database-backups
+2026-10-10T21:13:50.6110047Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/novels
+2026-10-10T21:13:50.6110385Z ##[endgroup]
+2026-10-10T21:13:50.7218438Z {
+2026-10-10T21:13:50.7219815Z   "revision": "checked_out_sha=395d66570bfd7f8a0e39673619448553e646fa50\nevent_sha=395d66570bfd7f8a0e39673619448553e646fa50\nrun_url=https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38086674000\njob=local-interop\nplatform=Linux; native Windows host/AppContainer/installer=NOT RUN\n",
+2026-10-10T21:13:50.7221001Z   "test_reports": {
+2026-10-10T21:13:50.7221310Z     "local-interop.xml": {
+2026-10-10T21:13:50.7221617Z       "tests": 413,
+2026-10-10T21:13:50.7221887Z       "failures": 0,
+2026-10-10T21:13:50.7222149Z       "errors": 0,
+2026-10-10T21:13:50.7222459Z       "skipped": 68
+2026-10-10T21:13:50.7222746Z     }
+2026-10-10T21:13:50.7223250Z   },
+2026-10-10T21:13:50.7223516Z   "report_status": "RECORDED",
+2026-10-10T21:13:50.7223887Z   "native_windows_host_appcontainer_installer": "NOT RUN",
+2026-10-10T21:13:50.7224344Z   "real_model_and_paid_provider_execution": "NOT RUN"
+2026-10-10T21:13:50.7224683Z }
+2026-10-10T21:13:50.7224809Z 
+2026-10-10T21:13:50.8723679Z ##[group]Run actions/upload-artifact@v4.6.2
+2026-10-10T21:13:50.8723965Z with:
+2026-10-10T21:13:50.8724259Z   name: local-interop-file-395d66570bfd7f8a0e39673619448553e646fa50
+2026-10-10T21:13:50.8724657Z   path: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/receipts
+2026-10-10T21:13:50.8724980Z   if-no-files-found: error
+2026-10-10T21:13:50.8725224Z   retention-days: 14
+2026-10-10T21:13:50.8725474Z   compression-level: 6
+2026-10-10T21:13:50.8725702Z   overwrite: false
+2026-10-10T21:13:50.8725928Z   include-hidden-files: false
+2026-10-10T21:13:50.8726199Z env:
+2026-10-10T21:13:50.8726430Z   MOCK_PROVIDER: true
+2026-10-10T21:13:50.8726675Z   ENABLE_CLOUD: false
+2026-10-10T21:13:50.8726912Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-10T21:13:50.8727179Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-10T21:13:50.8727464Z   HF_HUB_OFFLINE: 1
+2026-10-10T21:13:50.8727840Z   TRANSFORMERS_OFFLINE: 1
+2026-10-10T21:13:50.8728223Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:50.8728576Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-10T21:13:50.8728938Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:50.8729277Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:50.8729626Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-10T21:13:50.8729964Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-10T21:13:50.8730296Z   CI_COVERAGE_SHA: 395d66570bfd7f8a0e39673619448553e646fa50
+2026-10-10T21:13:50.8730630Z   CI_COVERAGE_TREE: c592ef05396427a7f4da9bff4cf2818e6b6a14f5
+2026-10-10T21:13:50.8730988Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2
+2026-10-10T21:13:50.8731355Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/project
+2026-10-10T21:13:50.8731777Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/receipts
+2026-10-10T21:13:50.8732193Z   HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/home
+2026-10-10T21:13:50.8732573Z   USERPROFILE: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/home
+2026-10-10T21:13:50.8733081Z   APPDATA: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/appdata
+2026-10-10T21:13:50.8733475Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/localappdata
+2026-10-10T21:13:50.8733919Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/config
+2026-10-10T21:13:50.8734329Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/cache
+2026-10-10T21:13:50.8734780Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data
+2026-10-10T21:13:50.8735162Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/state
+2026-10-10T21:13:50.8735524Z   TMPDIR: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:50.8735902Z   TMP: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:50.8736251Z   TEMP: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/tmp
+2026-10-10T21:13:50.8736619Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/project
+2026-10-10T21:13:50.8737055Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/novels
+2026-10-10T21:13:50.8737492Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/backups
+2026-10-10T21:13:50.8738056Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/database-backups
+2026-10-10T21:13:50.8738531Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-local-interop.ZzmAk2/data/novels
+2026-10-10T21:13:50.8738880Z ##[endgroup]
+2026-10-10T21:13:50.9921554Z (node:2288) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-10T21:13:50.9922105Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-10T21:13:50.9996136Z With the provided path, there will be 8 files uploaded
+2026-10-10T21:13:50.9997827Z Artifact name is valid!
+2026-10-10T21:13:50.9998343Z Root directory input is valid!
+2026-10-10T21:13:51.2678615Z Beginning upload of artifact content to blob storage
+2026-10-10T21:13:51.2921644Z (node:2288) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-10T21:13:51.4596185Z Uploaded bytes 41499
+2026-10-10T21:13:51.5013514Z Finished uploading artifact content to blob storage!
+2026-10-10T21:13:51.5014249Z SHA256 digest of uploaded artifact zip is 0f8dd1fa8088b4fdd78c1bc1a63a311bf011e320ec81a09a682425b84f6336e4
+2026-10-10T21:13:51.5015092Z Finalizing artifact upload
+2026-10-10T21:13:51.7125513Z Artifact local-interop-file-395d66570bfd7f8a0e39673619448553e646fa50.zip successfully finalized. Artifact ID 11682468383
+2026-10-10T21:13:51.7126241Z Artifact local-interop-file-395d66570bfd7f8a0e39673619448553e646fa50 has been successfully uploaded! Final size is 41499 bytes. Artifact ID is 11682468383
+2026-10-10T21:13:51.7128385Z Artifact download URL: https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38086674000/artifacts/11682468383
+2026-10-10T21:13:51.7250535Z Post job cleanup.
+2026-10-10T21:13:51.8083013Z (node:2300) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-10T21:13:51.8083650Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-10T21:13:51.8335405Z Post job cleanup.
+2026-10-10T21:13:51.8929073Z [command]/usr/bin/git version
+2026-10-10T21:13:51.8954345Z git version 2.55.0
+2026-10-10T21:13:51.8977146Z Temporarily overriding HOME='/home/runner/work/_temp/dc4e5202-7be7-418d-9b6b-2b33c32d255e' before making global git config changes
+2026-10-10T21:13:51.8978271Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-10T21:13:51.8981510Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/AI-Novel-Studio/AI-Novel-Studio
+2026-10-10T21:13:51.9005760Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T21:13:51.9028965Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-10T21:13:51.9194574Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T21:13:51.9215449Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-10T21:13:51.9507570Z Cleaning up orphan processes
+2026-10-10T21:13:51.9677489Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4.2.2, actions/setup-python@v5.6.0, actions/upload-artifact@v4.6.2. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+

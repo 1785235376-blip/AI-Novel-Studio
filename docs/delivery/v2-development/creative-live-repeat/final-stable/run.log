@@ -1,0 +1,19 @@
+
+Running 6 tests using 1 worker
+
+(node:72) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [v2-live-chromium] › tests/e2e/v2-creative-live.spec.ts:282:1 › real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript (2.1s)
+  ✓  2 [v2-live-chromium] › tests/e2e/v2-creative-live.spec.ts:346:1 › real HTTP File V2 scope, cancel and stale source fences remain authoritative (456ms)
+(node:88) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  3 [v2-live-chromium] › tests/e2e/v2-creative-live.spec.ts:282:1 › real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript (914ms)
+  ✓  4 [v2-live-chromium] › tests/e2e/v2-creative-live.spec.ts:346:1 › real HTTP File V2 scope, cancel and stale source fences remain authoritative (409ms)
+(node:100) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  5 [v1-chromium] › tests/e2e/v2-creative-live.spec.ts:379:1 › real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes (1.2s)
+(node:112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  6 [v1-chromium] › tests/e2e/v2-creative-live.spec.ts:379:1 › real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes (136ms)
+
+  6 passed (14.8s)

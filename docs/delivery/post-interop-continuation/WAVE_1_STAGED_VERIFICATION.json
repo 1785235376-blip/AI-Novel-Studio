@@ -1,0 +1,70 @@
+{
+  "wave": 1,
+  "code_tree_before_inventory_receipt": "59f34b859221babea16c6c974dfe0ebb2554666d",
+  "frontend": {
+    "passed": 1167,
+    "skipped": 8,
+    "typecheck": "PASS",
+    "scope": "COMPLETE_UNIT_SUITE_NO_BROWSER"
+  },
+  "new_file_api": {
+    "passed": 20,
+    "postgres_deselected": 20
+  },
+  "collection": {
+    "kind": "INVENTORY_REVIEW_NOT_EXECUTION",
+    "previous_nodes": 6799,
+    "current_nodes": 6839,
+    "added_nodes": [
+      "tests/test_post_interop_workspace_ux.py::test_original_author_cancel_receipt_terminal_late_output_restart_and_model_identity[file-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_original_author_cancel_receipt_terminal_late_output_restart_and_model_identity[file-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_original_author_cancel_receipt_terminal_late_output_restart_and_model_identity[postgres-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_original_author_cancel_receipt_terminal_late_output_restart_and_model_identity[postgres-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_cancel_stale_terminal_and_feature_off_never_dispatch[file-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_cancel_stale_terminal_and_feature_off_never_dispatch[file-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_cancel_stale_terminal_and_feature_off_never_dispatch[postgres-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_cancel_stale_terminal_and_feature_off_never_dispatch[postgres-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_author_cancel_requires_current_project_writer_and_rechecks_revocation[file-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_author_cancel_requires_current_project_writer_and_rechecks_revocation[file-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_author_cancel_requires_current_project_writer_and_rechecks_revocation[postgres-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_author_cancel_requires_current_project_writer_and_rechecks_revocation[postgres-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_aggregate_task_and_diagnostic_late_revocation_discards_all_source_rows[file-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_aggregate_task_and_diagnostic_late_revocation_discards_all_source_rows[file-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_aggregate_task_and_diagnostic_late_revocation_discards_all_source_rows[postgres-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_aggregate_task_and_diagnostic_late_revocation_discards_all_source_rows[postgres-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_import_team_cancel_use_original_cas_and_persist_on_restart[file-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_import_team_cancel_use_original_cas_and_persist_on_restart[file-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_import_team_cancel_use_original_cas_and_persist_on_restart[postgres-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_import_team_cancel_use_original_cas_and_persist_on_restart[postgres-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_original_image_and_audio_tasks_cancel_without_dispatch[file-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_original_image_and_audio_tasks_cancel_without_dispatch[file-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_original_image_and_audio_tasks_cancel_without_dispatch[postgres-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_original_image_and_audio_tasks_cancel_without_dispatch[postgres-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_broader_original_search_precise_record_navigation_source_fence_and_branch_isolation[file-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_broader_original_search_precise_record_navigation_source_fence_and_branch_isolation[file-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_broader_original_search_precise_record_navigation_source_fence_and_branch_isolation[postgres-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_broader_original_search_precise_record_navigation_source_fence_and_branch_isolation[postgres-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_review_inbox_original_ids_resume_and_exact_owner_navigation[file-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_review_inbox_original_ids_resume_and_exact_owner_navigation[file-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_review_inbox_original_ids_resume_and_exact_owner_navigation[postgres-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_review_inbox_original_ids_resume_and_exact_owner_navigation[postgres-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_original_agent_working_stage_and_workflow_waiting_gate_cancel[file-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_original_agent_working_stage_and_workflow_waiting_gate_cancel[file-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_original_agent_working_stage_and_workflow_waiting_gate_cancel[postgres-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_original_agent_working_stage_and_workflow_waiting_gate_cancel[postgres-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_motion_projection_and_cancel_stay_in_original_screenplay[file-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_motion_projection_and_cancel_stay_in_original_screenplay[file-/api/v1]",
+      "tests/test_post_interop_workspace_ux.py::test_motion_projection_and_cancel_stay_in_original_screenplay[postgres-/api]",
+      "tests/test_post_interop_workspace_ux.py::test_motion_projection_and_cancel_stay_in_original_screenplay[postgres-/api/v1]"
+    ],
+    "changed_source_files": [],
+    "old_skip_counts": {
+      "file": 2035,
+      "postgres": 2059
+    },
+    "manifest_sha256": "ba032d4debd68b63db3ca03842410c56cd735f2ac0b04b06ace54438d9268613"
+  },
+  "historical_skip_maps": "UNCHANGED",
+  "full_backend_and_hosted_browser": "PENDING_FINAL_SOURCE",
+  "public_receipt_note": "Commands are normalized for an isolated test environment. Raw operational logs and local recovery paths are not public artifacts."
+}

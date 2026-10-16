@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 D:/PoemSeed/Worktrees/studio-v2-audio-editing-20261014/frontend
+
+ ✓ src/assetbrowser/assetBrowserContract.test.ts (19 tests) 9ms
+ ✓ src/assetbrowser/assetBrowserOps.test.ts (30 tests) 22ms
+ ✓ src/taskcenter/taskCenterContract.test.ts (17 tests) 16ms
+ ✓ src/canvasops/canvasOps.test.ts (69 tests) 26ms
+ ✓ src/storyboard/storyboardOps.test.ts (36 tests) 15ms
+ ✓ src/assetbrowser/assetBrowserClient.test.ts (12 tests) 6ms
+ ✓ src/storyboard/storyboardWorkspaceContract.test.ts (16 tests) 11ms
+ ✓ src/onboarding/studioEntryContract.test.ts (7 tests) 5ms
+ ✓ src/onboarding/studioEntryClient.test.ts (9 tests) 13ms
+ ✓ src/taskcenter/taskCenterClient.test.ts (7 tests) 15ms
+ ✓ src/nle/timelineOps.test.ts (52 tests) 68ms
+ ✓ src/onboarding/StudioStartPanel.test.tsx (8 tests) 414ms
+ ✓ src/onboarding/IntentPicker.test.tsx (4 tests) 395ms
+ ✓ src/nle/nlePanels.test.tsx (18 tests) 608ms
+ ✓ src/taskcenter/TaskCenter.test.tsx (11 tests) 741ms
+ ✓ src/canvasops/canvasOpsPanels.test.tsx (25 tests) 761ms
+ ✓ src/onboarding/useStudioEntry.test.tsx (15 tests) 1097ms
+ ✓ src/taskcenter/useTaskCenter.test.ts (9 tests) 1159ms
+ ✓ src/storyboard/StoryboardWorkspacePanel.test.tsx (24 tests) 969ms
+ ✓ src/assetbrowser/AssetBrowserPanel.test.tsx (13 tests) 1188ms
+ ✓ src/assetbrowser/useAssetBrowser.test.tsx (14 tests) 1421ms
+
+ Test Files  21 passed (21)
+      Tests  415 passed (415)
+   Start at  21:50:11
+   Duration  3.54s (transform 6.67s, setup 493ms, collect 12.77s, tests 8.96s, environment 11.24s, prepare 4.06s)
+

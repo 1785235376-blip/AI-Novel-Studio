@@ -1,0 +1,98 @@
+{
+  "endpoint": "http://127.0.0.1:8080",
+  "started_by_this_phase": false,
+  "identity": {
+    "service": "strata",
+    "model": "qwen3.8-flash-next-iq3_xxs",
+    "max_context": 131072,
+    "loaded_before": false,
+    "api_key_required": false
+  },
+  "capability_mapping": {
+    "advertised_model_id": "qwen3.8-flash-next-iq3_xxs",
+    "input_modalities": [
+      "text"
+    ],
+    "output_modalities": [
+      "text"
+    ],
+    "model_capability": "TEXT",
+    "task_capability_example": {
+      "TEXT_GENERATION": "TEXT",
+      "IMAGE_GENERATION": "IMAGE"
+    },
+    "note": "model capability (TEXT), task capability (TEXT_GENERATION) and graph node bindings are three different vocabularies and are kept separate"
+  },
+  "connectivity": {
+    "v1_models_ok": true,
+    "model_recognized": true
+  },
+  "user_confirmation": {
+    "basis": "the phase brief names the existing Strata local runtime as the preferred candidate and requires one real inference; no registration is performed"
+  },
+  "one_real_inference": {
+    "attempted": true,
+    "ok": true,
+    "latency_s": 53.7,
+    "finish_reason": "length",
+    "content_preview": "None",
+    "usage": {
+      "prompt_tokens": 57,
+      "completion_tokens": 8,
+      "total_tokens": 65,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    }
+  },
+  "observation": {
+    "runtime_id": "strata-custom-http-local",
+    "status": "READY",
+    "level": 5,
+    "artifact_present": false,
+    "managed_process_alive": null,
+    "listener_present": true,
+    "listener_owner": {
+      "pid": 16292,
+      "state": 2,
+      "bind_address": "127.0.0.1",
+      "image_name": "C:\\AI-Novel-Studio-Python312\\pythonw.exe",
+      "identity_verified": true
+    },
+    "http_reachable": true,
+    "model_recognized": true,
+    "inference_verified": true,
+    "observable_levels": 4,
+    "notes": [
+      "PROTOCOL_ANSWERED_IMPLIES_LISTENER",
+      "LISTENER_OWNER_IDENTIFIED",
+      "HTTP_REACHABLE",
+      "MODEL_RECOGNIZED",
+      "INFERENCE_VERIFIED"
+    ]
+  },
+  "registration": {
+    "performed": false,
+    "descriptor": {
+      "name": "Strata (observed 8080)",
+      "endpoint": "http://127.0.0.1:8080",
+      "runtime_type": "CUSTOM_HTTP",
+      "model": "qwen3.8-flash-next-iq3_xxs",
+      "capability": "TEXT",
+      "capability_status": "DECLARED_BY_USER",
+      "observation_status": "READY",
+      "observation_level": 5,
+      "listener_owner": {
+        "pid": 16292,
+        "state": 2,
+        "bind_address": "127.0.0.1",
+        "image_name": "C:\\AI-Novel-Studio-Python312\\pythonw.exe",
+        "identity_verified": true
+      },
+      "confirmed_by_user": true,
+      "generates_tasks": false,
+      "auto_enabled": false,
+      "blockers": []
+    }
+  }
+}

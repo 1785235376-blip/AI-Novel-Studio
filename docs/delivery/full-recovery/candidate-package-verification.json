@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "evidence_boundary": "Fresh unsigned internal acceptance ZIP from current candidate, not historical PR45 artifact",
+  "source_commit": "3efa0393861c0dcddab7bd74e6d12e5ec483e7b1",
+  "source_fingerprint": "7bdd12fc2e2eed8acd0410f8dc059bdad01651ed1a02eab26f6a1c70dac1cb62",
+  "application": "D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\candidate-application-package-3efa039\\Application",
+  "archive": "D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\candidate-application-package-3efa039\\AI-Novel-Studio-Windows-DesktopHost-acceptance.zip",
+  "archive_bytes": 169258663,
+  "archive_sha256": "fe6f491edf41e7b7681200eb6d50701635836f02e72d04b0897c309fbff537ff",
+  "archive_crc": "PASS",
+  "all_archive_entries_match_package_bytes": true,
+  "package_inventory_files": 5999,
+  "package_inventory_sha256": "389d0e47b134a7d6617b8c5fe422f35c278ee311cb413922d41921876d05a239",
+  "component_inventory_counts": {
+    "backend": 390,
+    "frontend": 15
+  },
+  "all_staged_backend_bytes_match_frozen_current_source": true,
+  "python_runtime": "Python 3.12.9",
+  "postgresql_runtime": "pg_ctl (PostgreSQL) 16.15",
+  "dotnet_sdk_version": "8.0.424",
+  "public_release": false,
+  "setup_exe": "Not built; original CI-equivalent -SkipIExpress; ZIP and PowerShell installer present"
+}

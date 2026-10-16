@@ -1,0 +1,9 @@
+{
+  "acceptance_scenarios": 24,
+  "frozen_protocol_files": 37,
+  "manifest_sha256": "77c1f82f0aec0ef385d95cacf6fe04530b83fb62d2403bc7341cbe6bf19c858c",
+  "protocol": "PoemSeed Local Interop 1.0",
+  "real_desktop_acceptance": "LOCAL_REQUIRED",
+  "requirements": 69,
+  "shared_desktop_preparation_files": 26
+}

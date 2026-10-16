@@ -1,0 +1,436 @@
+{
+  "config": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.v2-live.config.ts",
+      "--grep",
+      "real HTTP",
+      "--repeat-each=2"
+    ],
+    "configFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/playwright.v2-live.config.ts",
+    "rootDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-browser/1791530912321-6",
+      "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch.",
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-isolation-check/receipts/test-results",
+        "repeatEach": 2,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-browser/1791530912321-6",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch.",
+          "actualWorkers": 1
+        },
+        "id": "v2-live-chromium",
+        "name": "v2-live-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-creative-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-isolation-check/receipts/test-results",
+        "repeatEach": 2,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-browser/1791530912321-6",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch.",
+          "actualWorkers": 1
+        },
+        "id": "v1-chromium",
+        "name": "v1-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-creative-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-isolation-check/receipts/junit.xml"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-isolation-check/receipts/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "v2-creative-live.spec.ts",
+      "file": "v2-creative-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "verification",
+                  "description": "Real uvicorn HTTP/File test; no browser fixture; synthetic local rule-assisted data, no model inference."
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2479,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T07:28:42.884Z",
+                  "annotations": [
+                    {
+                      "type": "verification",
+                      "description": "Real uvicorn HTTP/File test; no browser fixture; synthetic local rule-assisted data, no model inference."
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "http-file-lifecycle-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJ2ZXJpZmljYXRpb24iOiAiSFRUUC9GaWxlIG9ubHksIGJyb3dzZXIgbGF1bmNoIHZlcmlmaWVkIHNlcGFyYXRlbHkiLAogICJub3ZlbF9pZCI6ICJ2Mi1odHRwLXJlYWwtZmlsZS1saWZlY3ljbGUiLAogICJjaGFwdGVyX2lkIjogInYyLWh0dHAtcmVhbC1maWxlLWxpZmVjeWNsZToxIiwKICAibWFudXNjcmlwdF91bmNoYW5nZWQiOiB0cnVlLAogICJjcmVhdGVkX2RvY3VtZW50cyI6IFsKICAgICI4MTA1OThhNy0yYTIyLTQxNDctOWM1MC1lYWZmNzc5ZGE1NzkiLAogICAgImQ0ZmRjOWEwLTIzMjMtNGYwNS1iOGNkLTM2NDRhYzIxZGFlNiIsCiAgICAiYzA2YTU0MTEtZWZhYy00YjZhLWEzNjgtNDU3YTNjM2RmYjI4IiwKICAgICI0NGIyYjI4OS1lZTRkLTQ0OWEtODE3My1jNTYzNjU1ZmRlZmUiCiAgXSwKICAiY29uY3VycmVudF9yZXZpZXdfc3RhdHVzZXMiOiBbCiAgICAyMDAsCiAgICA0MDkKICBdLAogICJ2ZXJzaW9ucyI6IFsKICAgIDEsCiAgICAyLAogICAgMwogIF0sCiAgIm1vZGVsX2NhbGxlZCI6IGZhbHNlLAogICJleHBvcnQiOiB7CiAgICAiYm91bmRhcnkiOiAiU3RydWN0dXJlZCBkcmFmdC9wbGFubmluZyBKU09OOyBhY2NlcHRlZCBwcm9wb3NhbHMgcmV0YWluIGdlbmVyYXRpb24gcHJvdmVuYW5jZS4gTm8gbWVkaWEgcmVuZGVyaW5nLiIsCiAgICAiZG9jdW1lbnQiOiB7CiAgICAgICJjcmVhdGVkX2F0IjogIjIwMjYtMTAtMDlUMDc6Mjg6NDQuOTA0NTMwKzAwOjAwIiwKICAgICAgImNyZWF0ZWRfYnkiOiAibG9jYWwtYXV0aG9yIiwKICAgICAgImRpcmVjdG9yX25vdGVzIjogWwogICAgICAgIHsKICAgICAgICAgICJibG9ja2luZyI6ICLlvoXkurrlt6Xnoa7orqTkurrniankvY3nva7jgIHop4bnur/lkozlh7rlhaXmlrnlkJHvvJvmloflrZfkuI3otrPku6Xnoa7lrprlrp7pmYXnqbrpl7TjgIIiLAogICAgICAgICAgImNhbWVyYV9hbmdsZSI6ICJFWUVfTEVWRUwiLAogICAgICAgICAgImNhbWVyYV9tb3Rpb24iOiAiU1RBVElDIiwKICAgICAgICAgICJkdXJhdGlvbl9zZWNvbmRzIjogNSwKICAgICAgICAgICJlbW90aW9uIjogIiIsCiAgICAgICAgICAiaWQiOiAiNTZlZGFjYTktYzgzNC00ZDAwLTk2MzMtZWI1OTcxNTM1NDQ1IiwKICAgICAgICAgICJub3RlIjogIuW+heWuoeW7uuiuru+8muWFiOaguOWvueWcuuaZr+ebrueahOS4juS6uueJqeWFs+ezu++8jOWGjemAieaLqeaZr+WIq+WSjOacuuS9jeOAgiIsCiAgICAgICAgICAibnVtYmVyIjogMSwKICAgICAgICAgICJwYWNpbmciOiAi5b6F5a6h5bu66K6u77ya5a+555m95ZCO5L+d55WZ5Y+N5bqU5YGc6aG/77yb5pe26ZW/55Sx6KGo5ryU5LiO5Ymq6L6R6K+V5o6S56Gu5a6a44CCIiwKICAgICAgICAgICJwZXJmb3JtYW5jZSI6ICJIdW1hbi1yZXZpZXdlZCBibG9ja2luZyBhbmQgcGVyZm9ybWFuY2UiLAogICAgICAgICAgInNjZW5lX2lkIjogInNjZW5lLXBvcnQiLAogICAgICAgICAgInNob3Rfc2l6ZSI6ICJNRURJVU0iCiAgICAgICAgfSwKICAgICAgICB7CiAgICAgICAgICAiYmxvY2tpbmciOiAi5b6F5Lq65bel56Gu6K6k5Lq654mp5L2N572u44CB6KeG57q/5ZKM5Ye65YWl5pa55ZCR77yb5paH5a2X5LiN6Laz5Lul56Gu5a6a5a6e6ZmF56m66Ze044CCIiwKICAgICAgICAgICJjYW1lcmFfYW5nbGUiOiAiRVlFX0xFVkVMIiwKICAgICAgICAgICJjYW1lcmFfbW90aW9uIjogIlNUQVRJQyIsCiAgICAgICAgICAiZHVyYXRpb25fc2Vjb25kcyI6IDUsCiAgICAgICAgICAiZW1vdGlvbiI6ICIiLAogICAgICAgICAgImlkIjogImY4ZDJlYWFiLTBlYzgtNGM2ZC05OTk3LWVhMmFlN2RlODdkYSIsCiAgICAgICAgICAibm90ZSI6ICLlvoXlrqHlu7rorq7vvJrlhYjmoLjlr7nlnLrmma/nm67nmoTkuI7kurrnianlhbPns7vvvIzlho3pgInmi6nmma/liKvlkozmnLrkvY3jgIIiLAogICAgICAgICAgIm51bWJlciI6IDIsCiAgICAgICAgICAicGFjaW5nIjogIuW+heWuoeW7uuiuru+8muWvueeZveWQjuS/neeVmeWPjeW6lOWBnOmhv++8m+aXtumVv+eUseihqOa8lOS4juWJqui+keivleaOkuehruWumuOAgiIsCiAgICAgICAgICAicGVyZm9ybWFuY2UiOiAiIiwKICAgICAgICAgICJzY2VuZV9pZCI6ICJzY2VuZS1yb29tIiwKICAgICAgICAgICJzaG90X3NpemUiOiAiTUVESVVNIgogICAgICAgIH0KICAgICAgXSwKICAgICAgImlkIjogIjQ0YjJiMjg5LWVlNGQtNDQ5YS04MTczLWM1NjM2NTVmZGVmZSIsCiAgICAgICJtb2RlIjogIlBST0RVQ1RJT04iLAogICAgICAibm92ZWxfaWQiOiAidjItaHR0cC1yZWFsLWZpbGUtbGlmZWN5Y2xlIiwKICAgICAgInByaXZhY3lfbGV2ZWwiOiAiTE9DQUxfT05MWSIsCiAgICAgICJwcm92ZW5hbmNlIjogewogICAgICAgICJpbnB1dF9kaWdlc3QiOiAiMmMzYTZlMzNiNzc5ZDQyMmQxMDIzMzZiM2YyZjA0N2I1MjE3ZTQxMDYyMzgzMzJmMGM5MjNkZTNhMmI0NWYxZSIsCiAgICAgICAgIm1ldGhvZCI6ICJTVFJVQ1RVUkVEX0RFUklWQVRJT04iLAogICAgICAgICJtb2RlbF9jYWxsZWQiOiBmYWxzZSwKICAgICAgICAicGFyYW1ldGVycyI6IHsKICAgICAgICAgICJydWxlX3ZlcnNpb24iOiAiY3JlYXRpdmUtc3RhZ2UtY29weS12MSIKICAgICAgICB9LAogICAgICAgICJxdWFsaXR5X3ZlcmlmaWNhdGlvbiI6ICJIVU1BTl9SRVZJRVdfUkVRVUlSRUQiLAogICAgICAgICJzb3VyY2VfZG9jdW1lbnRfaWQiOiAiYzA2YTU0MTEtZWZhYy00YjZhLWEzNjgtNDU3YTNjM2RmYjI4IiwKICAgICAgICAic291cmNlX21vZGUiOiAiU1RPUllCT0FSRCIsCiAgICAgICAgInNvdXJjZV92ZXJzaW9uIjogMgogICAgICB9LAogICAgICAicmVzdG9yZWRfZnJvbV92ZXJzaW9uIjogMSwKICAgICAgInNjZW5lcyI6IFsKICAgICAgICB7CiAgICAgICAgICAiYWN0aW9uIjogIuWQiOaIkOmqjOaUtuato+aWh++8muael+m7mOi1sOWIsOS6kea4r+OAguWlueivtO+8muKAnOS4i+S4gOW5leeUseaIkeS7rOiHquW3seWGs+WumuOAguKAnSIsCiAgICAgICAgICAiY2hhcmFjdGVycyI6IFtdLAogICAgICAgICAgImRpYWxvZ3VlIjogWwogICAgICAgICAgICB7CiAgICAgICAgICAgICAgImRlbGl2ZXJ5IjogIiIsCiAgICAgICAgICAgICAgInNwZWFrZXIiOiAi5p6X6buYIiwKICAgICAgICAgICAgICAidGV4dCI6ICLkuIvkuIDluZXnlLHmiJHku6zoh6rlt7HlhrPlrprjgIIiCiAgICAgICAgICAgIH0KICAgICAgICAgIF0sCiAgICAgICAgICAiZGlyZWN0b3Jfbm90ZXMiOiBbXSwKICAgICAgICAgICJlbW90aW9uIjogIiIsCiAgICAgICAgICAiaGVhZGluZyI6ICJFWFQuIOS6kea4ryIsCiAgICAgICAgICAiaWQiOiAic2NlbmUtcG9ydCIsCiAgICAgICAgICAibG9jYXRpb24iOiAiIiwKICAgICAgICAgICJzZXF1ZW5jZSI6IDEsCiAgICAgICAgICAic291cmNlX2NoYXB0ZXJfaWQiOiAidjItaHR0cC1yZWFsLWZpbGUtbGlmZWN5Y2xlOjEiLAogICAgICAgICAgInRpbWUiOiAiIgogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgImFjdGlvbiI6ICLlpbnlnKjnqpfovrnmlbTnkIboiKrmtbflm77jgIIiLAogICAgICAgICAgImNoYXJhY3RlcnMiOiBbXSwKICAgICAgICAgICJkaWFsb2d1ZSI6IFtdLAogICAgICAgICAgImRpcmVjdG9yX25vdGVzIjogW10sCiAgICAgICAgICAiZW1vdGlvbiI6ICIiLAogICAgICAgICAgImhlYWRpbmciOiAiSU5ULiDnga/loZQiLAogICAgICAgICAgImlkIjogInNjZW5lLXJvb20iLAogICAgICAgICAgImxvY2F0aW9uIjogIiIsCiAgICAgICAgICAic2VxdWVuY2UiOiAyLAogICAgICAgICAgInNvdXJjZV9jaGFwdGVyX2lkIjogInYyLWh0dHAtcmVhbC1maWxlLWxpZmVjeWNsZToxIiwKICAgICAgICAgICJ0aW1lIjogIiIKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJzY2hlbWFfdmVyc2lvbiI6IDEsCiAgICAgICJzY29wZSI6IHsKICAgICAgICAibW9kZSI6ICJsb2NhbCIsCiAgICAgICAgIm5vdmVsX2lkIjogInYyLWh0dHAtcmVhbC1maWxlLWxpZmVjeWNsZSIKICAgICAgfSwKICAgICAgInNob3RzIjogWwogICAgICAgIHsKICAgICAgICAgICJhY3Rpb24iOiAi5aW55Zyo56qX6L655pW055CG6Iiq5rW35Zu+44CCIiwKICAgICAgICAgICJjYW1lcmFfYW5nbGUiOiAiRVlFX0xFVkVMIiwKICAgICAgICAgICJjYW1lcmFfbW90aW9uIjogIlNUQVRJQyIsCiAgICAgICAgICAiY29sb3IiOiAiIiwKICAgICAgICAgICJjb21wb3NpdGlvbiI6ICIiLAogICAgICAgICAgImRpYWxvZ3VlIjogW10sCiAgICAgICAgICAiZGlyZWN0b3Jfbm90ZXMiOiBbCiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAiYmxvY2tpbmciOiAi5b6F5Lq65bel56Gu6K6k5Lq654mp5L2N572u44CB6KeG57q/5ZKM5Ye65YWl5pa55ZCR77yb5paH5a2X5LiN6Laz5Lul56Gu5a6a5a6e6ZmF56m66Ze044CCIiwKICAgICAgICAgICAgICAiY2FtZXJhX2FuZ2xlIjogIkVZRV9MRVZFTCIsCiAgICAgICAgICAgICAgImNhbWVyYV9tb3Rpb24iOiAiU1RBVElDIiwKICAgICAgICAgICAgICAiZHVyYXRpb25fc2Vjb25kcyI6IDUsCiAgICAgICAgICAgICAgImVtb3Rpb24iOiAiIiwKICAgICAgICAgICAgICAiaWQiOiAiZjhkMmVhYWItMGVjOC00YzZkLTk5OTctZWEyYWU3ZGU4N2RhIiwKICAgICAgICAgICAgICAibm90ZSI6ICLlvoXlrqHlu7rorq7vvJrlhYjmoLjlr7nlnLrmma/nm67nmoTkuI7kurrnianlhbPns7vvvIzlho3pgInmi6nmma/liKvlkozmnLrkvY3jgIIiLAogICAgICAgICAgICAgICJwYWNpbmciOiAi5b6F5a6h5bu66K6u77ya5a+555m95ZCO5L+d55WZ5Y+N5bqU5YGc6aG/77yb5pe26ZW/55Sx6KGo5ryU5LiO5Ymq6L6R6K+V5o6S56Gu5a6a44CCIiwKICAgICAgICAgICAgICAicGVyZm9ybWFuY2UiOiAiIiwKICAgICAgICAgICAgICAic2hvdF9zaXplIjogIk1FRElVTSIKICAgICAgICAgICAgfQogICAgICAgICAgXSwKICAgICAgICAgICJkdXJhdGlvbl9zZWNvbmRzIjogNSwKICAgICAgICAgICJlbnZpcm9ubWVudCI6ICIiLAogICAgICAgICAgImZyYW1lX3Byb21wdCI6ICIiLAogICAgICAgICAgImlkIjogIjI4ZTE0ZjI1LTc2MjAtNDEyOS1hZDQxLWU2YmZmNzY4NTc1MCIsCiAgICAgICAgICAibGVucyI6ICI1MG1tIiwKICAgICAgICAgICJsaWdodGluZyI6ICIiLAogICAgICAgICAgIm51bWJlciI6IDEsCiAgICAgICAgICAic2NlbmVfaWQiOiAic2NlbmUtcm9vbSIsCiAgICAgICAgICAic2hvdF9zaXplIjogIk1FRElVTSIsCiAgICAgICAgICAic291bmQiOiAiIiwKICAgICAgICAgICJzb3VuZF9lZmZlY3QiOiAiIgogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgImFjdGlvbiI6ICLlkIjmiJDpqozmlLbmraPmlofvvJrmnpfpu5jotbDliLDkupHmuK/jgILlpbnor7TvvJrigJzkuIvkuIDluZXnlLHmiJHku6zoh6rlt7HlhrPlrprjgILigJ0iLAogICAgICAgICAgImNhbWVyYV9hbmdsZSI6ICJFWUVfTEVWRUwiLAogICAgICAgICAgImNhbWVyYV9tb3Rpb24iOiAiU1RBVElDIiwKICAgICAgICAgICJjb2xvciI6ICIiLAogICAgICAgICAgImNvbXBvc2l0aW9uIjogIiIsCiAgICAgICAgICAiZGlhbG9ndWUiOiBbCiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAiZGVsaXZlcnkiOiAiIiwKICAgICAgICAgICAgICAic3BlYWtlciI6ICLmnpfpu5giLAogICAgICAgICAgICAgICJ0ZXh0IjogIuS4i+S4gOW5leeUseaIkeS7rOiHquW3seWGs+WumuOAgiIKICAgICAgICAgICAgfQogICAgICAgICAgXSwKICAgICAgICAgICJkaXJlY3Rvcl9ub3RlcyI6IFsKICAgICAgICAgICAgewogICAgICAgICAgICAgICJibG9ja2luZyI6ICLlvoXkurrlt6Xnoa7orqTkurrniankvY3nva7jgIHop4bnur/lkozlh7rlhaXmlrnlkJHvvJvmloflrZfkuI3otrPku6Xnoa7lrprlrp7pmYXnqbrpl7TjgIIiLAogICAgICAgICAgICAgICJjYW1lcmFfYW5nbGUiOiAiRVlFX0xFVkVMIiwKICAgICAgICAgICAgICAiY2FtZXJhX21vdGlvbiI6ICJTVEFUSUMiLAogICAgICAgICAgICAgICJkdXJhdGlvbl9zZWNvbmRzIjogNSwKICAgICAgICAgICAgICAiZW1vdGlvbiI6ICIiLAogICAgICAgICAgICAgICJpZCI6ICI1NmVkYWNhOS1jODM0LTRkMDAtOTYzMy1lYjU5NzE1MzU0NDUiLAogICAgICAgICAgICAgICJub3RlIjogIuW+heWuoeW7uuiuru+8muWFiOaguOWvueWcuuaZr+ebrueahOS4juS6uueJqeWFs+ezu++8jOWGjemAieaLqeaZr+WIq+WSjOacuuS9jeOAgiIsCiAgICAgICAgICAgICAgInBhY2luZyI6ICLlvoXlrqHlu7rorq7vvJrlr7nnmb3lkI7kv53nlZnlj43lupTlgZzpob/vvJvml7bplb/nlLHooajmvJTkuI7liarovpHor5XmjpLnoa7lrprjgIIiLAogICAgICAgICAgICAgICJwZXJmb3JtYW5jZSI6ICJIdW1hbi1yZXZpZXdlZCBibG9ja2luZyBhbmQgcGVyZm9ybWFuY2UiLAogICAgICAgICAgICAgICJzaG90X3NpemUiOiAiTUVESVVNIgogICAgICAgICAgICB9CiAgICAgICAgICBdLAogICAgICAgICAgImR1cmF0aW9uX3NlY29uZHMiOiA1LAogICAgICAgICAgImVudmlyb25tZW50IjogIiIsCiAgICAgICAgICAiZnJhbWVfcHJvbXB0IjogIiIsCiAgICAgICAgICAiaWQiOiAiMDJhNTRkM2YtOThhMS00NzRiLWFiM2UtMDc1NmUwYmViMmJiIiwKICAgICAgICAgICJsZW5zIjogIjM1bW0iLAogICAgICAgICAgImxpZ2h0aW5nIjogIiIsCiAgICAgICAgICAibnVtYmVyIjogMiwKICAgICAgICAgICJzY2VuZV9pZCI6ICJzY2VuZS1wb3J0IiwKICAgICAgICAgICJzaG90X3NpemUiOiAiTUVESVVNIiwKICAgICAgICAgICJzb3VuZCI6ICIiLAogICAgICAgICAgInNvdW5kX2VmZmVjdCI6ICIiCiAgICAgICAgfQogICAgICBdLAogICAgICAic291cmNlX2NoYXB0ZXJfaWRzIjogWwogICAgICAgICJ2Mi1odHRwLXJlYWwtZmlsZS1saWZlY3ljbGU6MSIKICAgICAgXSwKICAgICAgInNvdXJjZV9kb2N1bWVudHMiOiB7CiAgICAgICAgImMwNmE1NDExLWVmYWMtNGI2YS1hMzY4LTQ1N2EzYzNkZmIyOCI6IHsKICAgICAgICAgICJkaWdlc3QiOiAiMmMzYTZlMzNiNzc5ZDQyMmQxMDIzMzZiM2YyZjA0N2I1MjE3ZTQxMDYyMzgzMzJmMGM5MjNkZTNhMmI0NWYxZSIsCiAgICAgICAgICAidmVyc2lvbiI6IDIKICAgICAgICB9CiAgICAgIH0sCiAgICAgICJzb3VyY2VfZXZpZGVuY2UiOiB7CiAgICAgICAgInYyLWh0dHAtcmVhbC1maWxlLWxpZmVjeWNsZToxIjogewogICAgICAgICAgImRpZ2VzdCI6ICIyMzg3ZmY5M2VkODkyNmUzZDU1M2YwYTZkMmY5ZjlkODZkYjY2OTczZmFhNDY2OGQwZjYzMTgzMjVmMjVlMzA5IiwKICAgICAgICAgICJ2ZXJzaW9uIjogMQogICAgICAgIH0KICAgICAgfSwKICAgICAgInNvdXJjZV9pbmRlcGVuZGVudCI6IGZhbHNlLAogICAgICAic291cmNlX3ByaXZhY3kiOiB7CiAgICAgICAgInYyLWh0dHAtcmVhbC1maWxlLWxpZmVjeWNsZToxIjogewogICAgICAgICAgImJyYW5jaF9pZCI6IG51bGwsCiAgICAgICAgICAiY2hhcHRlcl9pZCI6ICJ2Mi1odHRwLXJlYWwtZmlsZS1saWZlY3ljbGU6MSIsCiAgICAgICAgICAiY2hhcHRlcl92ZXJzaW9uIjogMSwKICAgICAgICAgICJjb250ZW50X3NoYTI1NiI6ICIyMzg3ZmY5M2VkODkyNmUzZDU1M2YwYTZkMmY5ZjlkODZkYjY2OTczZmFhNDY2OGQwZjYzMTgzMjVmMjVlMzA5IiwKICAgICAgICAgICJub3ZlbF9pZCI6ICJ2Mi1odHRwLXJlYWwtZmlsZS1saWZlY3ljbGUiLAogICAgICAgICAgInByaXZhY3lfbGV2ZWwiOiAiTE9DQUxfT05MWSIsCiAgICAgICAgICAicmV2aWV3ZWQiOiBmYWxzZSwKICAgICAgICAgICJyZXZpZXdlZF9hdCI6IG51bGwsCiAgICAgICAgICAicmV2aWV3ZWRfYnkiOiBudWxsLAogICAgICAgICAgInN0YWxlIjogZmFsc2UKICAgICAgICB9CiAgICAgIH0sCiAgICAgICJzdGF0dXMiOiAiRFJBRlQiLAogICAgICAidGl0bGUiOiAiSFRUUCDkurrlt6XlrqHmoLjlr7zmvJTnqL8gwrcg5YiG6ZWcIMK3IOWItuS9nCIsCiAgICAgICJ1cGRhdGVkX2F0IjogIjIwMjYtMTAtMDlUMDc6Mjg6NDUuMTAwNDY1KzAwOjAwIiwKICAgICAgInVwZGF0ZWRfYnkiOiAibG9jYWwtYXV0aG9yIiwKICAgICAgInZlcnNpb24iOiAzLAogICAgICAidmlkZW9fcGxhbiI6IHsKICAgICAgICAiZnJhbWVfcmF0ZSI6IDI0LAogICAgICAgICJoZWlnaHQiOiAxMDgwLAogICAgICAgICJub3RlcyI6ICIiLAogICAgICAgICJzZWdtZW50cyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImR1cmF0aW9uX3NlY29uZHMiOiA1LAogICAgICAgICAgICAibm90ZSI6ICIiLAogICAgICAgICAgICAic2hvdF9pZCI6ICIyOGUxNGYyNS03NjIwLTQxMjktYWQ0MS1lNmJmZjc2ODU3NTAiCiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAiZHVyYXRpb25fc2Vjb25kcyI6IDUsCiAgICAgICAgICAgICJub3RlIjogIiIsCiAgICAgICAgICAgICJzaG90X2lkIjogIjAyYTU0ZDNmLTk4YTEtNDc0Yi1hYjNlLTA3NTZlMGJlYjJiYiIKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJ3aWR0aCI6IDE5MjAKICAgICAgfQogICAgfSwKICAgICJkb2N1bWVudF9kaWdlc3QiOiAiMzgxNTlhMmE3ZDU2MmYzNDI4YjQ5ZDZmNmYzYjM4NjA0MTU4YjJhMzJhZWMzYzg5MmViYjk4ZWI0YzZlYWEzOCIsCiAgICAiZm9ybWF0IjogImFpLW5vdmVsLWNyZWF0aXZlLWRvY3VtZW50IiwKICAgICJmb3JtYXRfdmVyc2lvbiI6IDEKICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-1e070ac283621e75b30b",
+          "file": "v2-creative-live.spec.ts",
+          "line": 282,
+          "column": 1
+        },
+        {
+          "title": "real HTTP File V2 scope, cancel and stale source fences remain authoritative",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 460,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T07:28:45.415Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "http-source-fence-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJmb3JlaWduX2JpbmRpbmciOiA0MjIsCiAgImNhbmNlbGxlZF9yZXZpZXciOiA0MjIsCiAgInNpbXVsdGFuZW91c191cGRhdGVfc3RhdHVzZXMiOiBbCiAgICAyMDAsCiAgICA0MDkKICBdLAogICJzdGFsZV9zb3VyY2VfcmVhZCI6IDQwOSwKICAic3RhbGVfc291cmNlX2Rlcml2ZSI6IDQwOSwKICAibW9kZWxfY2FsbGVkIjogZmFsc2UKfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-8e13202c7684f91556e9",
+          "file": "v2-creative-live.spec.ts",
+          "line": 346,
+          "column": 1
+        },
+        {
+          "title": "real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "verification",
+                  "description": "Real uvicorn HTTP/File test; no browser fixture; synthetic local rule-assisted data, no model inference."
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 306,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m1\u001b[39m\nReceived length: \u001b[31m5\u001b[39m\nReceived array:  \u001b[31m[{\"created_at\": \"2026-10-09T07:28:44.584681+00:00\", \"created_by\": \"local-author\", \"director_notes\": [Array], \"history\": [Array], \"id\": \"810598a7-2a22-4147-9c50-eaff779da579\", \"mode\": \"SCREENPLAY\", \"novel_id\": \"v2-http-real-file-lifecycle\", \"privacy_level\": \"LOCAL_ONLY\", \"scenes\": [Array], \"schema_version\": 1, \"scope\": [Object], \"shots\": [Array], \"source_chapter_ids\": [Array], \"source_documents\": [Object], \"source_evidence\": [Object], \"source_independent\": false, \"source_privacy\": [Object], \"status\": \"DRAFT\", \"title\": \"HTTP 合成剧本\", \"updated_at\": \"2026-10-09T07:28:44.584681+00:00\", \"updated_by\": \"local-author\", \"version\": 1, \"video_plan\": null}, {\"created_at\": \"2026-10-09T07:28:44.715941+00:00\", \"created_by\": \"local-author\", \"director_notes\": [Array], \"history\": [Array], \"id\": \"d4fdc9a0-2323-4f05-b8cd-3644ac21dae6\", \"mode\": \"DIRECTOR\", \"novel_id\": \"v2-http-real-file-lifecycle\", \"privacy_level\": \"LOCAL_ONLY\", \"provenance\": [Object], \"scenes\": [Array], \"schema_version\": 1, \"scope\": [Object], \"shots\": [Array], \"source_chapter_ids\": [Array], \"source_documents\": [Object], \"source_evidence\": [Object], \"source_independent\": false, \"source_privacy\": [Object], \"status\": \"DRAFT\", \"title\": \"HTTP 人工审核导演稿\", \"updated_at\": \"2026-10-09T07:28:44.715941+00:00\", \"updated_by\": \"local-author\", \"version\": 1, \"video_plan\": null}, {\"created_at\": \"2026-10-09T07:28:44.796994+00:00\", \"created_by\": \"local-author\", \"director_notes\": [Array], \"history\": [Array], \"id\": \"c06a5411-efac-4b6a-a368-457a3c3dfb28\", \"mode\": \"STORYBOARD\", \"novel_id\": \"v2-http-real-file-lifecycle\", \"privacy_level\": \"LOCAL_ONLY\", \"provenance\": [Object], \"scenes\": [Array], \"schema_version\": 1, \"scope\": [Object], \"shots\": [Array], \"source_chapter_ids\": [Array], \"source_documents\": [Object], \"source_evidence\": [Object], \"source_independent\": false, \"source_privacy\": [Object], \"status\": \"DRAFT\", \"title\": \"HTTP 人工审核导演稿 · 分镜\", \"updated_at\": \"2026-10-09T07:28:44.842267+00:00\", \"updated_by\": \"local-author\", \"version\": 2, \"video_plan\": null}, {\"created_at\": \"2026-10-09T07:28:44.904530+00:00\", \"created_by\": \"local-author\", \"director_notes\": [Array], \"history\": [Array], \"id\": \"44b2b289-ee4d-449a-8173-c563655fdefe\", \"mode\": \"PRODUCTION\", \"novel_id\": \"v2-http-real-file-lifecycle\", \"privacy_level\": \"LOCAL_ONLY\", \"provenance\": [Object], \"restored_from_version\": 1, \"scenes\": [Array], \"schema_version\": 1, \"scope\": [Object], \"shots\": [Array], \"source_chapter_ids\": [Array], \"source_documents\": [Object], \"source_evidence\": [Object], \"source_independent\": false, \"source_privacy\": [Object], \"status\": \"DRAFT\", \"title\": \"HTTP 人工审核导演稿 · 分镜 · 制作\", \"updated_at\": \"2026-10-09T07:28:45.100465+00:00\", \"updated_by\": \"local-author\", \"version\": 3, \"video_plan\": [Object]}, {\"created_at\": \"2026-10-09T07:28:46.501078+00:00\", \"created_by\": \"local-author\", \"director_notes\": [Array], \"history\": [Array], \"id\": \"f038f033-472b-441d-82cf-1dbc6f12b4de\", \"mode\": \"SCREENPLAY\", \"novel_id\": \"v2-http-real-file-lifecycle\", \"privacy_level\": \"LOCAL_ONLY\", \"scenes\": [Array], \"schema_version\": 1, \"scope\": [Object], \"shots\": [Array], \"source_chapter_ids\": [Array], \"source_documents\": [Object], \"source_evidence\": [Object], \"source_independent\": false, \"source_privacy\": [Object], \"status\": \"DRAFT\", \"title\": \"HTTP 合成剧本\", \"updated_at\": \"2026-10-09T07:28:46.501078+00:00\", \"updated_by\": \"local-author\", \"version\": 1, \"video_plan\": null}]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m1\u001b[39m\nReceived length: \u001b[31m5\u001b[39m\nReceived array:  \u001b[31m[{\"created_at\": \"2026-10-09T07:28:44.584681+00:00\", \"created_by\": \"local-author\", \"director_notes\": [Array], \"history\": [Array], \"id\": \"810598a7-2a22-4147-9c50-eaff779da579\", \"mode\": \"SCREENPLAY\", \"novel_id\": \"v2-http-real-file-lifecycle\", \"privacy_level\": \"LOCAL_ONLY\", \"scenes\": [Array], \"schema_version\": 1, \"scope\": [Object], \"shots\": [Array], \"source_chapter_ids\": [Array], \"source_documents\": [Object], \"source_evidence\": [Object], \"source_independent\": false, \"source_privacy\": [Object], \"status\": \"DRAFT\", \"title\": \"HTTP 合成剧本\", \"updated_at\": \"2026-10-09T07:28:44.584681+00:00\", \"updated_by\": \"local-author\", \"version\": 1, \"video_plan\": null}, {\"created_at\": \"2026-10-09T07:28:44.715941+00:00\", \"created_by\": \"local-author\", \"director_notes\": [Array], \"history\": [Array], \"id\": \"d4fdc9a0-2323-4f05-b8cd-3644ac21dae6\", \"mode\": \"DIRECTOR\", \"novel_id\": \"v2-http-real-file-lifecycle\", \"privacy_level\": \"LOCAL_ONLY\", \"provenance\": [Object], \"scenes\": [Array], \"schema_version\": 1, \"scope\": [Object], \"shots\": [Array], \"source_chapter_ids\": [Array], \"source_documents\": [Object], \"source_evidence\": [Object], \"source_independent\": false, \"source_privacy\": [Object], \"status\": \"DRAFT\", \"title\": \"HTTP 人工审核导演稿\", \"updated_at\": \"2026-10-09T07:28:44.715941+00:00\", \"updated_by\": \"local-author\", \"version\": 1, \"video_plan\": null}, {\"created_at\": \"2026-10-09T07:28:44.796994+00:00\", \"created_by\": \"local-author\", \"director_notes\": [Array], \"history\": [Array], \"id\": \"c06a5411-efac-4b6a-a368-457a3c3dfb28\", \"mode\": \"STORYBOARD\", \"novel_id\": \"v2-http-real-file-lifecycle\", \"privacy_level\": \"LOCAL_ONLY\", \"provenance\": [Object], \"scenes\": [Array], \"schema_version\": 1, \"scope\": [Object], \"shots\": [Array], \"source_chapter_ids\": [Array], \"source_documents\": [Object], \"source_evidence\": [Object], \"source_independent\": false, \"source_privacy\": [Object], \"status\": \"DRAFT\", \"title\": \"HTTP 人工审核导演稿 · 分镜\", \"updated_at\": \"2026-10-09T07:28:44.842267+00:00\", \"updated_by\": \"local-author\", \"version\": 2, \"video_plan\": null}, {\"created_at\": \"2026-10-09T07:28:44.904530+00:00\", \"created_by\": \"local-author\", \"director_notes\": [Array], \"history\": [Array], \"id\": \"44b2b289-ee4d-449a-8173-c563655fdefe\", \"mode\": \"PRODUCTION\", \"novel_id\": \"v2-http-real-file-lifecycle\", \"privacy_level\": \"LOCAL_ONLY\", \"provenance\": [Object], \"restored_from_version\": 1, \"scenes\": [Array], \"schema_version\": 1, \"scope\": [Object], \"shots\": [Array], \"source_chapter_ids\": [Array], \"source_documents\": [Object], \"source_evidence\": [Object], \"source_independent\": false, \"source_privacy\": [Object], \"status\": \"DRAFT\", \"title\": \"HTTP 人工审核导演稿 · 分镜 · 制作\", \"updated_at\": \"2026-10-09T07:28:45.100465+00:00\", \"updated_by\": \"local-author\", \"version\": 3, \"video_plan\": [Object]}, {\"created_at\": \"2026-10-09T07:28:46.501078+00:00\", \"created_by\": \"local-author\", \"director_notes\": [Array], \"history\": [Array], \"id\": \"f038f033-472b-441d-82cf-1dbc6f12b4de\", \"mode\": \"SCREENPLAY\", \"novel_id\": \"v2-http-real-file-lifecycle\", \"privacy_level\": \"LOCAL_ONLY\", \"scenes\": [Array], \"schema_version\": 1, \"scope\": [Object], \"shots\": [Array], \"source_chapter_ids\": [Array], \"source_documents\": [Object], \"source_evidence\": [Object], \"source_independent\": false, \"source_privacy\": [Object], \"status\": \"DRAFT\", \"title\": \"HTTP 合成剧本\", \"updated_at\": \"2026-10-09T07:28:46.501078+00:00\", \"updated_by\": \"local-author\", \"version\": 1, \"video_plan\": null}]\u001b[39m\n    at /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e/v2-creative-live.spec.ts:301:60",
+                    "location": {
+                      "file": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e/v2-creative-live.spec.ts",
+                      "column": 60,
+                      "line": 301
+                    },
+                    "snippet": "  299 |   expect(proposal.status).toBe('NEEDS_REVIEW');\n  300 |   expect(proposal.provenance.model_called).toBe(false);\n> 301 |   expect((await read(request, `${base}/documents`)).items).toHaveLength(1);\n      |                                                            ^\n  302 |   const notes = structuredClone(proposal.director_notes);\n  303 |   notes[0].performance = 'Human-reviewed blocking and performance';\n  304 |   const reviewBody = { expected_version: proposal.version, reviewed_output_digest: proposal.output_digest, title: 'HTTP 人工审核导演稿', director_notes: notes };"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e/v2-creative-live.spec.ts",
+                        "column": 60,
+                        "line": 301
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m1\u001b[39m\nReceived length: \u001b[31m5\u001b[39m\nReceived array:  \u001b[31m[{\"created_at\": \"2026-10-09T07:28:44.584681+00:00\", \"created_by\": \"local-author\", \"director_notes\": [Array], \"history\": [Array], \"id\": \"810598a7-2a22-4147-9c50-eaff779da579\", \"mode\": \"SCREENPLAY\", \"novel_id\": \"v2-http-real-file-lifecycle\", \"privacy_level\": \"LOCAL_ONLY\", \"scenes\": [Array], \"schema_version\": 1, \"scope\": [Object], \"shots\": [Array], \"source_chapter_ids\": [Array], \"source_documents\": [Object], \"source_evidence\": [Object], \"source_independent\": false, \"source_privacy\": [Object], \"status\": \"DRAFT\", \"title\": \"HTTP 合成剧本\", \"updated_at\": \"2026-10-09T07:28:44.584681+00:00\", \"updated_by\": \"local-author\", \"version\": 1, \"video_plan\": null}, {\"created_at\": \"2026-10-09T07:28:44.715941+00:00\", \"created_by\": \"local-author\", \"director_notes\": [Array], \"history\": [Array], \"id\": \"d4fdc9a0-2323-4f05-b8cd-3644ac21dae6\", \"mode\": \"DIRECTOR\", \"novel_id\": \"v2-http-real-file-lifecycle\", \"privacy_level\": \"LOCAL_ONLY\", \"provenance\": [Object], \"scenes\": [Array], \"schema_version\": 1, \"scope\": [Object], \"shots\": [Array], \"source_chapter_ids\": [Array], \"source_documents\": [Object], \"source_evidence\": [Object], \"source_independent\": false, \"source_privacy\": [Object], \"status\": \"DRAFT\", \"title\": \"HTTP 人工审核导演稿\", \"updated_at\": \"2026-10-09T07:28:44.715941+00:00\", \"updated_by\": \"local-author\", \"version\": 1, \"video_plan\": null}, {\"created_at\": \"2026-10-09T07:28:44.796994+00:00\", \"created_by\": \"local-author\", \"director_notes\": [Array], \"history\": [Array], \"id\": \"c06a5411-efac-4b6a-a368-457a3c3dfb28\", \"mode\": \"STORYBOARD\", \"novel_id\": \"v2-http-real-file-lifecycle\", \"privacy_level\": \"LOCAL_ONLY\", \"provenance\": [Object], \"scenes\": [Array], \"schema_version\": 1, \"scope\": [Object], \"shots\": [Array], \"source_chapter_ids\": [Array], \"source_documents\": [Object], \"source_evidence\": [Object], \"source_independent\": false, \"source_privacy\": [Object], \"status\": \"DRAFT\", \"title\": \"HTTP 人工审核导演稿 · 分镜\", \"updated_at\": \"2026-10-09T07:28:44.842267+00:00\", \"updated_by\": \"local-author\", \"version\": 2, \"video_plan\": null}, {\"created_at\": \"2026-10-09T07:28:44.904530+00:00\", \"created_by\": \"local-author\", \"director_notes\": [Array], \"history\": [Array], \"id\": \"44b2b289-ee4d-449a-8173-c563655fdefe\", \"mode\": \"PRODUCTION\", \"novel_id\": \"v2-http-real-file-lifecycle\", \"privacy_level\": \"LOCAL_ONLY\", \"provenance\": [Object], \"restored_from_version\": 1, \"scenes\": [Array], \"schema_version\": 1, \"scope\": [Object], \"shots\": [Array], \"source_chapter_ids\": [Array], \"source_documents\": [Object], \"source_evidence\": [Object], \"source_independent\": false, \"source_privacy\": [Object], \"status\": \"DRAFT\", \"title\": \"HTTP 人工审核导演稿 · 分镜 · 制作\", \"updated_at\": \"2026-10-09T07:28:45.100465+00:00\", \"updated_by\": \"local-author\", \"version\": 3, \"video_plan\": [Object]}, {\"created_at\": \"2026-10-09T07:28:46.501078+00:00\", \"created_by\": \"local-author\", \"director_notes\": [Array], \"history\": [Array], \"id\": \"f038f033-472b-441d-82cf-1dbc6f12b4de\", \"mode\": \"SCREENPLAY\", \"novel_id\": \"v2-http-real-file-lifecycle\", \"privacy_level\": \"LOCAL_ONLY\", \"scenes\": [Array], \"schema_version\": 1, \"scope\": [Object], \"shots\": [Array], \"source_chapter_ids\": [Array], \"source_documents\": [Object], \"source_evidence\": [Object], \"source_independent\": false, \"source_privacy\": [Object], \"status\": \"DRAFT\", \"title\": \"HTTP 合成剧本\", \"updated_at\": \"2026-10-09T07:28:46.501078+00:00\", \"updated_by\": \"local-author\", \"version\": 1, \"video_plan\": null}]\u001b[39m\n\n  299 |   expect(proposal.status).toBe('NEEDS_REVIEW');\n  300 |   expect(proposal.provenance.model_called).toBe(false);\n> 301 |   expect((await read(request, `${base}/documents`)).items).toHaveLength(1);\n      |                                                            ^\n  302 |   const notes = structuredClone(proposal.director_notes);\n  303 |   notes[0].performance = 'Human-reviewed blocking and performance';\n  304 |   const reviewBody = { expected_version: proposal.version, reviewed_output_digest: proposal.output_digest, title: 'HTTP 人工审核导演稿', director_notes: notes };\n    at /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e/v2-creative-live.spec.ts:301:60"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T07:28:46.350Z",
+                  "annotations": [
+                    {
+                      "type": "verification",
+                      "description": "Real uvicorn HTTP/File test; no browser fixture; synthetic local rule-assisted data, no model inference."
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-isolation-check/receipts/test-results/v2-creative-live-real-HTTP-48c57-t-with-unchanged-manuscript-v2-live-chromium-repeat1/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-isolation-check/receipts/test-results/v2-creative-live-real-HTTP-48c57-t-with-unchanged-manuscript-v2-live-chromium-repeat1/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e/v2-creative-live.spec.ts",
+                    "column": 60,
+                    "line": 301
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-8457241656247ec90e66",
+          "file": "v2-creative-live.spec.ts",
+          "line": 282,
+          "column": 1
+        },
+        {
+          "title": "real HTTP File V2 scope, cancel and stale source fences remain authoritative",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 321,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m1\u001b[39m\nReceived length: \u001b[31m2\u001b[39m\nReceived array:  \u001b[31m[{\"created_at\": \"2026-10-09T07:28:45.510039+00:00\", \"created_by\": \"local-author\", \"director_notes\": [], \"history\": [{\"created_at\": \"2026-10-09T07:28:45.510039+00:00\", \"created_by\": \"local-author\", \"director_notes\": [], \"id\": \"008a3993-63fa-42f4-880e-fc85782a5f98\", \"mode\": \"SCREENPLAY\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"scenes\": [{\"action\": \"合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”\", \"characters\": [], \"dialogue\": [], \"director_notes\": [], \"emotion\": \"\", \"heading\": \"Scene\", \"id\": \"s1\", \"location\": \"\", \"sequence\": 1, \"source_chapter_id\": \"v2-http-fence-fixture:1\", \"time\": \"\"}], \"schema_version\": 1, \"scope\": {\"mode\": \"local\", \"novel_id\": \"v2-http-fence-fixture\"}, \"shots\": [], \"source_chapter_ids\": [\"v2-http-fence-fixture:1\"], \"source_documents\": {}, \"source_evidence\": {\"v2-http-fence-fixture:1\": {\"digest\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"version\": 1}}, \"source_independent\": false, \"source_privacy\": {\"v2-http-fence-fixture:1\": {\"branch_id\": null, \"chapter_id\": \"v2-http-fence-fixture:1\", \"chapter_version\": 1, \"content_sha256\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"reviewed\": false, \"reviewed_at\": null, \"reviewed_by\": null, \"stale\": false}}, \"status\": \"DRAFT\", \"title\": \"Fence source\", \"updated_at\": \"2026-10-09T07:28:45.510039+00:00\", \"updated_by\": \"local-author\", \"version\": 1, \"video_plan\": null}], \"id\": \"008a3993-63fa-42f4-880e-fc85782a5f98\", \"mode\": \"SCREENPLAY\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"scenes\": [{\"action\": \"合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”\", \"characters\": [], \"dialogue\": [], \"director_notes\": [], \"emotion\": \"\", \"heading\": \"Scene\", \"id\": \"s1\", \"location\": \"\", \"sequence\": 1, \"source_chapter_id\": \"v2-http-fence-fixture:1\", \"time\": \"\"}], \"schema_version\": 1, \"scope\": {\"mode\": \"local\", \"novel_id\": \"v2-http-fence-fixture\"}, \"shots\": [], \"source_chapter_ids\": [\"v2-http-fence-fixture:1\"], \"source_documents\": {}, \"source_evidence\": {\"v2-http-fence-fixture:1\": {\"digest\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"version\": 1}}, \"source_independent\": false, \"source_privacy\": {\"v2-http-fence-fixture:1\": {\"branch_id\": null, \"chapter_id\": \"v2-http-fence-fixture:1\", \"chapter_version\": 1, \"content_sha256\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"reviewed\": false, \"reviewed_at\": null, \"reviewed_by\": null, \"stale\": false}}, \"status\": \"DRAFT\", \"title\": \"First\", \"updated_at\": \"2026-10-09T07:28:45.683192+00:00\", \"updated_by\": \"local-author\", \"version\": 2, \"video_plan\": null}, {\"created_at\": \"2026-10-09T07:28:47.249418+00:00\", \"created_by\": \"local-author\", \"director_notes\": [], \"history\": [], \"id\": \"00e1d85d-6364-4eb6-8125-ce05e95f8dba\", \"mode\": \"SCREENPLAY\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"scenes\": [{\"action\": \"合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”\", \"characters\": [], \"dialogue\": [], \"director_notes\": [], \"emotion\": \"\", \"heading\": \"Scene\", \"id\": \"s1\", \"location\": \"\", \"sequence\": 1, \"source_chapter_id\": \"v2-http-fence-fixture:1\", \"time\": \"\"}], \"schema_version\": 1, \"scope\": {\"mode\": \"local\", \"novel_id\": \"v2-http-fence-fixture\"}, \"shots\": [], \"source_chapter_ids\": [\"v2-http-fence-fixture:1\"], \"source_documents\": {}, \"source_evidence\": {\"v2-http-fence-fixture:1\": {\"digest\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"version\": 1}}, \"source_independent\": false, \"source_privacy\": {\"v2-http-fence-fixture:1\": {\"branch_id\": null, \"chapter_id\": \"v2-http-fence-fixture:1\", \"chapter_version\": 1, \"content_sha256\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"reviewed\": false, \"reviewed_at\": null, \"reviewed_by\": null, \"stale\": false}}, \"status\": \"DRAFT\", \"title\": \"Fence source\", \"updated_at\": \"2026-10-09T07:28:47.249418+00:00\", \"updated_by\": \"local-author\", \"version\": 1, \"video_plan\": null}]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m1\u001b[39m\nReceived length: \u001b[31m2\u001b[39m\nReceived array:  \u001b[31m[{\"created_at\": \"2026-10-09T07:28:45.510039+00:00\", \"created_by\": \"local-author\", \"director_notes\": [], \"history\": [{\"created_at\": \"2026-10-09T07:28:45.510039+00:00\", \"created_by\": \"local-author\", \"director_notes\": [], \"id\": \"008a3993-63fa-42f4-880e-fc85782a5f98\", \"mode\": \"SCREENPLAY\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"scenes\": [{\"action\": \"合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”\", \"characters\": [], \"dialogue\": [], \"director_notes\": [], \"emotion\": \"\", \"heading\": \"Scene\", \"id\": \"s1\", \"location\": \"\", \"sequence\": 1, \"source_chapter_id\": \"v2-http-fence-fixture:1\", \"time\": \"\"}], \"schema_version\": 1, \"scope\": {\"mode\": \"local\", \"novel_id\": \"v2-http-fence-fixture\"}, \"shots\": [], \"source_chapter_ids\": [\"v2-http-fence-fixture:1\"], \"source_documents\": {}, \"source_evidence\": {\"v2-http-fence-fixture:1\": {\"digest\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"version\": 1}}, \"source_independent\": false, \"source_privacy\": {\"v2-http-fence-fixture:1\": {\"branch_id\": null, \"chapter_id\": \"v2-http-fence-fixture:1\", \"chapter_version\": 1, \"content_sha256\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"reviewed\": false, \"reviewed_at\": null, \"reviewed_by\": null, \"stale\": false}}, \"status\": \"DRAFT\", \"title\": \"Fence source\", \"updated_at\": \"2026-10-09T07:28:45.510039+00:00\", \"updated_by\": \"local-author\", \"version\": 1, \"video_plan\": null}], \"id\": \"008a3993-63fa-42f4-880e-fc85782a5f98\", \"mode\": \"SCREENPLAY\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"scenes\": [{\"action\": \"合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”\", \"characters\": [], \"dialogue\": [], \"director_notes\": [], \"emotion\": \"\", \"heading\": \"Scene\", \"id\": \"s1\", \"location\": \"\", \"sequence\": 1, \"source_chapter_id\": \"v2-http-fence-fixture:1\", \"time\": \"\"}], \"schema_version\": 1, \"scope\": {\"mode\": \"local\", \"novel_id\": \"v2-http-fence-fixture\"}, \"shots\": [], \"source_chapter_ids\": [\"v2-http-fence-fixture:1\"], \"source_documents\": {}, \"source_evidence\": {\"v2-http-fence-fixture:1\": {\"digest\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"version\": 1}}, \"source_independent\": false, \"source_privacy\": {\"v2-http-fence-fixture:1\": {\"branch_id\": null, \"chapter_id\": \"v2-http-fence-fixture:1\", \"chapter_version\": 1, \"content_sha256\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"reviewed\": false, \"reviewed_at\": null, \"reviewed_by\": null, \"stale\": false}}, \"status\": \"DRAFT\", \"title\": \"First\", \"updated_at\": \"2026-10-09T07:28:45.683192+00:00\", \"updated_by\": \"local-author\", \"version\": 2, \"video_plan\": null}, {\"created_at\": \"2026-10-09T07:28:47.249418+00:00\", \"created_by\": \"local-author\", \"director_notes\": [], \"history\": [], \"id\": \"00e1d85d-6364-4eb6-8125-ce05e95f8dba\", \"mode\": \"SCREENPLAY\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"scenes\": [{\"action\": \"合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”\", \"characters\": [], \"dialogue\": [], \"director_notes\": [], \"emotion\": \"\", \"heading\": \"Scene\", \"id\": \"s1\", \"location\": \"\", \"sequence\": 1, \"source_chapter_id\": \"v2-http-fence-fixture:1\", \"time\": \"\"}], \"schema_version\": 1, \"scope\": {\"mode\": \"local\", \"novel_id\": \"v2-http-fence-fixture\"}, \"shots\": [], \"source_chapter_ids\": [\"v2-http-fence-fixture:1\"], \"source_documents\": {}, \"source_evidence\": {\"v2-http-fence-fixture:1\": {\"digest\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"version\": 1}}, \"source_independent\": false, \"source_privacy\": {\"v2-http-fence-fixture:1\": {\"branch_id\": null, \"chapter_id\": \"v2-http-fence-fixture:1\", \"chapter_version\": 1, \"content_sha256\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"reviewed\": false, \"reviewed_at\": null, \"reviewed_by\": null, \"stale\": false}}, \"status\": \"DRAFT\", \"title\": \"Fence source\", \"updated_at\": \"2026-10-09T07:28:47.249418+00:00\", \"updated_by\": \"local-author\", \"version\": 1, \"video_plan\": null}]\u001b[39m\n    at /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e/v2-creative-live.spec.ts:364:60",
+                    "location": {
+                      "file": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e/v2-creative-live.spec.ts",
+                      "column": 60,
+                      "line": 364
+                    },
+                    "snippet": "  362 |   const rejectedReview = await request.post(`${base}/director-proposals/${proposal.id}/review`, { data: { expected_version: cancelled.version, reviewed_output_digest: proposal.output_digest, title: 'Must not accept cancelled', director_notes: proposal.director_notes } });\n  363 |   expect(rejectedReview.status()).toBe(422);\n> 364 |   expect((await read(request, `${base}/documents`)).items).toHaveLength(1);\n      |                                                            ^\n  365 |   expect(await read(request, `/api/chapters/${chapter.id}`)).toEqual(chapter);\n  366 |   const simultaneous = await Promise.all(['First', 'Second'].map(title => request.put(`${base}/documents/${source.id}`, { data: { ...input, title, expected_version: 1 } })));\n  367 |   expect(simultaneous.map(row => row.status()).sort()).toEqual([200, 409]);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e/v2-creative-live.spec.ts",
+                        "column": 60,
+                        "line": 364
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m1\u001b[39m\nReceived length: \u001b[31m2\u001b[39m\nReceived array:  \u001b[31m[{\"created_at\": \"2026-10-09T07:28:45.510039+00:00\", \"created_by\": \"local-author\", \"director_notes\": [], \"history\": [{\"created_at\": \"2026-10-09T07:28:45.510039+00:00\", \"created_by\": \"local-author\", \"director_notes\": [], \"id\": \"008a3993-63fa-42f4-880e-fc85782a5f98\", \"mode\": \"SCREENPLAY\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"scenes\": [{\"action\": \"合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”\", \"characters\": [], \"dialogue\": [], \"director_notes\": [], \"emotion\": \"\", \"heading\": \"Scene\", \"id\": \"s1\", \"location\": \"\", \"sequence\": 1, \"source_chapter_id\": \"v2-http-fence-fixture:1\", \"time\": \"\"}], \"schema_version\": 1, \"scope\": {\"mode\": \"local\", \"novel_id\": \"v2-http-fence-fixture\"}, \"shots\": [], \"source_chapter_ids\": [\"v2-http-fence-fixture:1\"], \"source_documents\": {}, \"source_evidence\": {\"v2-http-fence-fixture:1\": {\"digest\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"version\": 1}}, \"source_independent\": false, \"source_privacy\": {\"v2-http-fence-fixture:1\": {\"branch_id\": null, \"chapter_id\": \"v2-http-fence-fixture:1\", \"chapter_version\": 1, \"content_sha256\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"reviewed\": false, \"reviewed_at\": null, \"reviewed_by\": null, \"stale\": false}}, \"status\": \"DRAFT\", \"title\": \"Fence source\", \"updated_at\": \"2026-10-09T07:28:45.510039+00:00\", \"updated_by\": \"local-author\", \"version\": 1, \"video_plan\": null}], \"id\": \"008a3993-63fa-42f4-880e-fc85782a5f98\", \"mode\": \"SCREENPLAY\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"scenes\": [{\"action\": \"合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”\", \"characters\": [], \"dialogue\": [], \"director_notes\": [], \"emotion\": \"\", \"heading\": \"Scene\", \"id\": \"s1\", \"location\": \"\", \"sequence\": 1, \"source_chapter_id\": \"v2-http-fence-fixture:1\", \"time\": \"\"}], \"schema_version\": 1, \"scope\": {\"mode\": \"local\", \"novel_id\": \"v2-http-fence-fixture\"}, \"shots\": [], \"source_chapter_ids\": [\"v2-http-fence-fixture:1\"], \"source_documents\": {}, \"source_evidence\": {\"v2-http-fence-fixture:1\": {\"digest\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"version\": 1}}, \"source_independent\": false, \"source_privacy\": {\"v2-http-fence-fixture:1\": {\"branch_id\": null, \"chapter_id\": \"v2-http-fence-fixture:1\", \"chapter_version\": 1, \"content_sha256\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"reviewed\": false, \"reviewed_at\": null, \"reviewed_by\": null, \"stale\": false}}, \"status\": \"DRAFT\", \"title\": \"First\", \"updated_at\": \"2026-10-09T07:28:45.683192+00:00\", \"updated_by\": \"local-author\", \"version\": 2, \"video_plan\": null}, {\"created_at\": \"2026-10-09T07:28:47.249418+00:00\", \"created_by\": \"local-author\", \"director_notes\": [], \"history\": [], \"id\": \"00e1d85d-6364-4eb6-8125-ce05e95f8dba\", \"mode\": \"SCREENPLAY\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"scenes\": [{\"action\": \"合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”\", \"characters\": [], \"dialogue\": [], \"director_notes\": [], \"emotion\": \"\", \"heading\": \"Scene\", \"id\": \"s1\", \"location\": \"\", \"sequence\": 1, \"source_chapter_id\": \"v2-http-fence-fixture:1\", \"time\": \"\"}], \"schema_version\": 1, \"scope\": {\"mode\": \"local\", \"novel_id\": \"v2-http-fence-fixture\"}, \"shots\": [], \"source_chapter_ids\": [\"v2-http-fence-fixture:1\"], \"source_documents\": {}, \"source_evidence\": {\"v2-http-fence-fixture:1\": {\"digest\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"version\": 1}}, \"source_independent\": false, \"source_privacy\": {\"v2-http-fence-fixture:1\": {\"branch_id\": null, \"chapter_id\": \"v2-http-fence-fixture:1\", \"chapter_version\": 1, \"content_sha256\": \"1790ab9ac5e517cddce83fcc5034de488de38f7d3c69072796163f3b52a44a7a\", \"novel_id\": \"v2-http-fence-fixture\", \"privacy_level\": \"LOCAL_ONLY\", \"reviewed\": false, \"reviewed_at\": null, \"reviewed_by\": null, \"stale\": false}}, \"status\": \"DRAFT\", \"title\": \"Fence source\", \"updated_at\": \"2026-10-09T07:28:47.249418+00:00\", \"updated_by\": \"local-author\", \"version\": 1, \"video_plan\": null}]\u001b[39m\n\n  362 |   const rejectedReview = await request.post(`${base}/director-proposals/${proposal.id}/review`, { data: { expected_version: cancelled.version, reviewed_output_digest: proposal.output_digest, title: 'Must not accept cancelled', director_notes: proposal.director_notes } });\n  363 |   expect(rejectedReview.status()).toBe(422);\n> 364 |   expect((await read(request, `${base}/documents`)).items).toHaveLength(1);\n      |                                                            ^\n  365 |   expect(await read(request, `/api/chapters/${chapter.id}`)).toEqual(chapter);\n  366 |   const simultaneous = await Promise.all(['First', 'Second'].map(title => request.put(`${base}/documents/${source.id}`, { data: { ...input, title, expected_version: 1 } })));\n  367 |   expect(simultaneous.map(row => row.status()).sort()).toEqual([200, 409]);\n    at /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e/v2-creative-live.spec.ts:364:60"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T07:28:47.096Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-isolation-check/receipts/test-results/v2-creative-live-real-HTTP-350ed-fences-remain-authoritative-v2-live-chromium-repeat1/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-isolation-check/receipts/test-results/v2-creative-live-real-HTTP-350ed-fences-remain-authoritative-v2-live-chromium-repeat1/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e/v2-creative-live.spec.ts",
+                    "column": 60,
+                    "line": 364
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-1f1487d05bbfe9d93a68",
+          "file": "v2-creative-live.spec.ts",
+          "line": 346,
+          "column": 1
+        },
+        {
+          "title": "real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v1-chromium",
+              "projectName": "v1-chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1345,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T07:28:47.895Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "http-default-off-receipt",
+                      "contentType": "application/json",
+                      "body": "eyJlbmFibGVkIjpmYWxzZSwibW9kZXMiOlsiU0NSRUVOUExBWSIsIlNUT1JZQk9BUkQiLCJWSURFT19QTEFOTklORyJdLCJjYW5fbXV0YXRlIjpmYWxzZX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-4f3549875235122bf681",
+          "file": "v2-creative-live.spec.ts",
+          "line": 379,
+          "column": 1
+        },
+        {
+          "title": "real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v1-chromium",
+              "projectName": "v1-chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 132,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T07:28:49.717Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "http-default-off-receipt",
+                      "contentType": "application/json",
+                      "body": "eyJlbmFibGVkIjpmYWxzZSwibW9kZXMiOlsiU0NSRUVOUExBWSIsIlNUT1JZQk9BUkQiLCJWSURFT19QTEFOTklORyJdLCJjYW5fbXV0YXRlIjpmYWxzZX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-9d851a9f4186c7b3a280",
+          "file": "v2-creative-live.spec.ts",
+          "line": 379,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-09T07:28:32.327Z",
+    "duration": 17582.712,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

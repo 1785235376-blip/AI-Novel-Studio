@@ -1,0 +1,58 @@
+{
+  "utc": "2026-10-10T20:41:08.912630+00:00",
+  "b_parent_commit": "4d45acb6a274dc3d19ff797bded83f51591474f3",
+  "tool_sha256": "81eaeb8ef1d5324ef2d794c4d944daec663ac7e4e150d825210505a7d828d224",
+  "commands": [
+    "python .github/ci/ci_capacity.py --run-dir .runtime/ci-capacity/hosted-899d40d/push --output .runtime/ci-capacity/hosted-899d40d/push-capacity.json",
+    "python .github/ci/ci_capacity.py --run-dir .runtime/ci-capacity/hosted-899d40d/pr --output .runtime/ci-capacity/hosted-899d40d/pr-capacity.json"
+  ],
+  "exit_codes": [
+    0,
+    0
+  ],
+  "metadata_original_byte_bindings": {
+    "push": {
+      "run-final.json": {
+        "source": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4-script-ci/run-38080738263-latest.json",
+        "sha256": "1c7a746580bbee8dd166727f478cfe179c11ae847fcdea36e25eefca6a3a8ef5"
+      },
+      "jobs-final.json": {
+        "source": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4-script-ci/run-38080738263-jobs-latest.json",
+        "sha256": "7d2d2cd57fcc13ff894a72472b09b5e03de3ffce84c1fffcf6a4189bf33ffba7"
+      },
+      "artifacts-final.json": {
+        "source": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4-script-ci/run-38080738263-artifacts-latest.json",
+        "sha256": "b948253dd98437d57fe225113378c0841d474089f5a5ab21f7b2a5c3edbe5e67"
+      }
+    },
+    "pr": {
+      "run-final.json": {
+        "source": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4-script-ci/run-38080743645-latest.json",
+        "sha256": "d257078a3d8c09edadefd554c8c28e498abcdbf02581cd41c1b1547a6d38488d"
+      },
+      "jobs-final.json": {
+        "source": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4-script-ci/run-38080743645-jobs-latest.json",
+        "sha256": "cccdabf8cd0582bf6819cd7b8b0d9103b137147900938a98fcda4458a2e01501"
+      },
+      "artifacts-final.json": {
+        "source": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4-script-ci/run-38080743645-artifacts-latest.json",
+        "sha256": "d52266a52dcd6e61b6720dea5f5dcd322b58be74e5561513505ca0e1fdb63649"
+      }
+    }
+  },
+  "evidence_sha256": {
+    "cache-initialization.json": "6ecf323f9e4af74b0f96b56fde2a03a4f6d67284f4231569a26dcbb7e312343f",
+    "cache-terminal.json": "bed457a5e0941b499301cc1c6ee1552a2b7e054f044d7a5b3dc3e1e50ad3fd32",
+    "pr-capacity.json": "4ed0272e29176c0e9670ad8803d7d7208d26659a8514d38ca726d868a9d36527",
+    "push-capacity.json": "4778e0f93fc002034ab655fc1d1d21efa087fe975fc5bd84ce59e7aa432702d3"
+  },
+  "unchanged_test_file": {
+    "path": "tests/test_v2_graph_text_assets.py",
+    "sha256_at_e6ff3431_and_899d40d": "76dea8012294e130ef9abd00c1b821fb96b21a72d8e17657a2567c54bf687a40"
+  },
+  "limits": [
+    "Diagnostic analysis only; no original tests rerun or source changed.",
+    "Normalized input filenames retain original metadata bytes; logs/artifacts were read through read-only links to their sole archive.",
+    "Run JSON filenames are analyzer interface names, not a claim that downstream reconciliation executed."
+  ]
+}

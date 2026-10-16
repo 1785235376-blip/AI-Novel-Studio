@@ -1,0 +1,26 @@
+
+Running 9 tests using 1 worker
+
+(node:78880) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:78880) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 1 [creative-save-1366x768] › tests\e2e\v2-creative-save-live.spec.ts:205:1 › manual persisted v1, exact edits, real save CAS v2 and refresh agree; other-stage dirty remains separate (6.5s)
+  ok 2 [creative-save-1366x768] › tests\e2e\v2-creative-save-live.spec.ts:270:1 › real offline transport uncertainty and real original CAS409 retain the local draft and explicit reconciliation (3.0s)
+  ok 3 [creative-save-1366x768] › tests\e2e\v2-creative-save-live.spec.ts:363:1 › late original history readbacks cannot contaminate another document or an explicitly changed project and branch (4.4s)
+(node:80660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:80660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 4 [creative-save-1440x900] › tests\e2e\v2-creative-save-live.spec.ts:205:1 › manual persisted v1, exact edits, real save CAS v2 and refresh agree; other-stage dirty remains separate (4.3s)
+  ok 5 [creative-save-1440x900] › tests\e2e\v2-creative-save-live.spec.ts:270:1 › real offline transport uncertainty and real original CAS409 retain the local draft and explicit reconciliation (3.8s)
+  ok 6 [creative-save-1440x900] › tests\e2e\v2-creative-save-live.spec.ts:363:1 › late original history readbacks cannot contaminate another document or an explicitly changed project and branch (4.6s)
+(node:83664) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+(node:83664) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 7 [creative-save-1920x1080] › tests\e2e\v2-creative-save-live.spec.ts:205:1 › manual persisted v1, exact edits, real save CAS v2 and refresh agree; other-stage dirty remains separate (4.4s)
+  ok 8 [creative-save-1920x1080] › tests\e2e\v2-creative-save-live.spec.ts:270:1 › real offline transport uncertainty and real original CAS409 retain the local draft and explicit reconciliation (3.2s)
+  ok 9 [creative-save-1920x1080] › tests\e2e\v2-creative-save-live.spec.ts:363:1 › late original history readbacks cannot contaminate another document or an explicitly changed project and branch (4.4s)
+
+  9 passed (41.4s)

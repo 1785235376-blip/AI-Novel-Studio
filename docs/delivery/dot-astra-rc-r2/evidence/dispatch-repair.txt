@@ -1,0 +1,4 @@
+........................................................................ [ 52%]
+.............................................................s...        [100%]
+- generated xml file: /workspace/scratch/b8734129d01d/r2-dispatch-repair-evidence/focused.xml -
+136 passed, 1 skipped, 1 warning in 11.69s

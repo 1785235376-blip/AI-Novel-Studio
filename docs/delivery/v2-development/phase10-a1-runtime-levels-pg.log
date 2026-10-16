@@ -1,0 +1,763 @@
+EEE                                                                      [100%]
+=================================== ERRORS ====================================
+_ ERROR at setup of test_artifacts_present_without_connectivity_is_discovered_never_running _
+
+self = <sqlalchemy.engine.base.Connection object at 0x000001A7B217C610>
+dialect = <sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg object at 0x000001A7B07FE890>
+context = <sqlalchemy.dialects.postgresql.psycopg.PGExecutionContext_psycopg object at 0x000001A7B217D790>
+statement = <sqlalchemy.dialects.postgresql.psycopg.PGCompiler_psycopg object at 0x000001A7B217DA50>
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <psycopg.Cursor [closed] [IDLE] (host=127.0.0.1 port=55432 user=postgres database=v2_phase10a1) at 0x1a7b20f07c0>
+query = 'SELECT generation_jobs.id, generation_jobs.novel_id, generation_jobs.chapter_id, generation_jobs.operation, generatio...n_jobs.timeout_seconds, generation_jobs.context_snapshot_id \nFROM generation_jobs ORDER BY generation_jobs.created_at'
+params = {}, prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.UndefinedTable: relation "generation_jobs" does not exist
+E           LINE 2: FROM generation_jobs ORDER BY generation_jobs.created_at
+E                        ^
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\psycopg\cursor.py:117: UndefinedTable
+
+The above exception was the direct cause of the following exception:
+
+request = <SubRequest 'restore_global_settings' for <Function test_artifacts_present_without_connectivity_is_discovered_never_running>>
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests\conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\main.py:25: in <module>
+    from .api import router as api_router
+app\api.py:19: in <module>
+    from .jobs import jobs
+app\jobs.py:1040: in <module>
+    jobs=JobManager()
+         ^^^^^^^^^^^^
+app\jobs.py:281: in __init__
+    for item in self.persistence.load_all():
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\generation_service.py:6: in load_all
+    def load_all(self):return self.repository.load_all()
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\repositories\postgres\generation.py:98: in load_all
+    for row in session.scalars(select(GenerationJobModel).order_by(GenerationJobModel.created_at)).all():
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\orm\session.py:2481: in scalars
+    return self._execute_internal(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\orm\session.py:2271: in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\orm\context.py:306: in orm_execute_statement
+    result = conn.execute(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1421: in execute
+    return meth(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\sql\elements.py:526: in _execute_on_connection
+    return connection._execute_clauseelement(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1643: in _execute_clauseelement
+    ret = self._execute_context(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1848: in _execute_context
+    return self._exec_single_context(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:2365: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <psycopg.Cursor [closed] [IDLE] (host=127.0.0.1 port=55432 user=postgres database=v2_phase10a1) at 0x1a7b20f07c0>
+query = 'SELECT generation_jobs.id, generation_jobs.novel_id, generation_jobs.chapter_id, generation_jobs.operation, generatio...n_jobs.timeout_seconds, generation_jobs.context_snapshot_id \nFROM generation_jobs ORDER BY generation_jobs.created_at'
+params = {}, prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "generation_jobs" does not exist
+E           LINE 2: FROM generation_jobs ORDER BY generation_jobs.created_at
+E                        ^
+E           [SQL: SELECT generation_jobs.id, generation_jobs.novel_id, generation_jobs.chapter_id, generation_jobs.operation, generation_jobs.status, generation_jobs.request, generation_jobs.draft_path, generation_jobs.provider, generation_jobs.model, generation_jobs.fallback_used, generation_jobs.error_code, generation_jobs.error_message, generation_jobs.created_at, generation_jobs.updated_at, generation_jobs.result, generation_jobs.retry_count, generation_jobs.timeout_seconds, generation_jobs.context_snapshot_id 
+E           FROM generation_jobs ORDER BY generation_jobs.created_at]
+E           (Background on this error at: https://sqlalche.me/e/20/f405)
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\psycopg\cursor.py:117: ProgrammingError
+_ ERROR at setup of test_connectivity_without_artifact_is_running_but_not_a_verified_model _
+
+self = <sqlalchemy.engine.base.Connection object at 0x000001A7B475CF50>
+dialect = <sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg object at 0x000001A7B07FE890>
+context = <sqlalchemy.dialects.postgresql.psycopg.PGExecutionContext_psycopg object at 0x000001A7B475CF90>
+statement = <sqlalchemy.dialects.postgresql.psycopg.PGCompiler_psycopg object at 0x000001A7B217DA50>
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <psycopg.Cursor [closed] [IDLE] (host=127.0.0.1 port=55432 user=postgres database=v2_phase10a1) at 0x1a7b245a440>
+query = 'SELECT generation_jobs.id, generation_jobs.novel_id, generation_jobs.chapter_id, generation_jobs.operation, generatio...n_jobs.timeout_seconds, generation_jobs.context_snapshot_id \nFROM generation_jobs ORDER BY generation_jobs.created_at'
+params = {}, prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.UndefinedTable: relation "generation_jobs" does not exist
+E           LINE 2: FROM generation_jobs ORDER BY generation_jobs.created_at
+E                        ^
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\psycopg\cursor.py:117: UndefinedTable
+
+The above exception was the direct cause of the following exception:
+
+request = <SubRequest 'restore_global_settings' for <Function test_connectivity_without_artifact_is_running_but_not_a_verified_model>>
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests\conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\main.py:25: in <module>
+    from .api import router as api_router
+app\api.py:19: in <module>
+    from .jobs import jobs
+app\jobs.py:1040: in <module>
+    jobs=JobManager()
+         ^^^^^^^^^^^^
+app\jobs.py:281: in __init__
+    for item in self.persistence.load_all():
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\generation_service.py:6: in load_all
+    def load_all(self):return self.repository.load_all()
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\repositories\postgres\generation.py:98: in load_all
+    for row in session.scalars(select(GenerationJobModel).order_by(GenerationJobModel.created_at)).all():
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\orm\session.py:2481: in scalars
+    return self._execute_internal(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\orm\session.py:2271: in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\orm\context.py:306: in orm_execute_statement
+    result = conn.execute(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1421: in execute
+    return meth(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\sql\elements.py:526: in _execute_on_connection
+    return connection._execute_clauseelement(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1643: in _execute_clauseelement
+    ret = self._execute_context(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1848: in _execute_context
+    return self._exec_single_context(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:2365: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <psycopg.Cursor [closed] [IDLE] (host=127.0.0.1 port=55432 user=postgres database=v2_phase10a1) at 0x1a7b245a440>
+query = 'SELECT generation_jobs.id, generation_jobs.novel_id, generation_jobs.chapter_id, generation_jobs.operation, generatio...n_jobs.timeout_seconds, generation_jobs.context_snapshot_id \nFROM generation_jobs ORDER BY generation_jobs.created_at'
+params = {}, prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "generation_jobs" does not exist
+E           LINE 2: FROM generation_jobs ORDER BY generation_jobs.created_at
+E                        ^
+E           [SQL: SELECT generation_jobs.id, generation_jobs.novel_id, generation_jobs.chapter_id, generation_jobs.operation, generation_jobs.status, generation_jobs.request, generation_jobs.draft_path, generation_jobs.provider, generation_jobs.model, generation_jobs.fallback_used, generation_jobs.error_code, generation_jobs.error_message, generation_jobs.created_at, generation_jobs.updated_at, generation_jobs.result, generation_jobs.retry_count, generation_jobs.timeout_seconds, generation_jobs.context_snapshot_id 
+E           FROM generation_jobs ORDER BY generation_jobs.created_at]
+E           (Background on this error at: https://sqlalche.me/e/20/f405)
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\psycopg\cursor.py:117: ProgrammingError
+_ ERROR at setup of test_validated_local_header_verifies_capability_without_granting_readiness _
+
+self = <sqlalchemy.engine.base.Connection object at 0x000001A7B0F83190>
+dialect = <sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg object at 0x000001A7B07FE890>
+context = <sqlalchemy.dialects.postgresql.psycopg.PGExecutionContext_psycopg object at 0x000001A7B0F82850>
+statement = <sqlalchemy.dialects.postgresql.psycopg.PGCompiler_psycopg object at 0x000001A7B217DA50>
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <psycopg.Cursor [closed] [IDLE] (host=127.0.0.1 port=55432 user=postgres database=v2_phase10a1) at 0x1a7b43fe380>
+query = 'SELECT generation_jobs.id, generation_jobs.novel_id, generation_jobs.chapter_id, generation_jobs.operation, generatio...n_jobs.timeout_seconds, generation_jobs.context_snapshot_id \nFROM generation_jobs ORDER BY generation_jobs.created_at'
+params = {}, prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.UndefinedTable: relation "generation_jobs" does not exist
+E           LINE 2: FROM generation_jobs ORDER BY generation_jobs.created_at
+E                        ^
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\psycopg\cursor.py:117: UndefinedTable
+
+The above exception was the direct cause of the following exception:
+
+request = <SubRequest 'restore_global_settings' for <Function test_validated_local_header_verifies_capability_without_granting_readiness>>
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests\conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\main.py:25: in <module>
+    from .api import router as api_router
+app\api.py:19: in <module>
+    from .jobs import jobs
+app\jobs.py:1040: in <module>
+    jobs=JobManager()
+         ^^^^^^^^^^^^
+app\jobs.py:281: in __init__
+    for item in self.persistence.load_all():
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\generation_service.py:6: in load_all
+    def load_all(self):return self.repository.load_all()
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\repositories\postgres\generation.py:98: in load_all
+    for row in session.scalars(select(GenerationJobModel).order_by(GenerationJobModel.created_at)).all():
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\orm\session.py:2481: in scalars
+    return self._execute_internal(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\orm\session.py:2271: in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\orm\context.py:306: in orm_execute_statement
+    result = conn.execute(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1421: in execute
+    return meth(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\sql\elements.py:526: in _execute_on_connection
+    return connection._execute_clauseelement(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1643: in _execute_clauseelement
+    ret = self._execute_context(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1848: in _execute_context
+    return self._exec_single_context(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:2365: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <psycopg.Cursor [closed] [IDLE] (host=127.0.0.1 port=55432 user=postgres database=v2_phase10a1) at 0x1a7b43fe380>
+query = 'SELECT generation_jobs.id, generation_jobs.novel_id, generation_jobs.chapter_id, generation_jobs.operation, generatio...n_jobs.timeout_seconds, generation_jobs.context_snapshot_id \nFROM generation_jobs ORDER BY generation_jobs.created_at'
+params = {}, prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "generation_jobs" does not exist
+E           LINE 2: FROM generation_jobs ORDER BY generation_jobs.created_at
+E                        ^
+E           [SQL: SELECT generation_jobs.id, generation_jobs.novel_id, generation_jobs.chapter_id, generation_jobs.operation, generation_jobs.status, generation_jobs.request, generation_jobs.draft_path, generation_jobs.provider, generation_jobs.model, generation_jobs.fallback_used, generation_jobs.error_code, generation_jobs.error_message, generation_jobs.created_at, generation_jobs.updated_at, generation_jobs.result, generation_jobs.retry_count, generation_jobs.timeout_seconds, generation_jobs.context_snapshot_id 
+E           FROM generation_jobs ORDER BY generation_jobs.created_at]
+E           (Background on this error at: https://sqlalche.me/e/20/f405)
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\psycopg\cursor.py:117: ProgrammingError
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_v2_discovery_runtime_levels.py::test_artifacts_present_without_connectivity_is_discovered_never_running
+ERROR tests/test_v2_discovery_runtime_levels.py::test_connectivity_without_artifact_is_running_but_not_a_verified_model
+ERROR tests/test_v2_discovery_runtime_levels.py::test_validated_local_header_verifies_capability_without_granting_readiness
+1 warning, 3 errors in 2.22s

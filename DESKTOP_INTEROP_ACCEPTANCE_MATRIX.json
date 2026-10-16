@@ -1,0 +1,223 @@
+{
+  "protocol": "PoemSeed Local Interop 1.0",
+  "command": "python -m local_interop_desktop.acceptance --mock-only --output receipts/desktop-acceptance.json",
+  "production_acceptance": "LOCAL_REQUIRED",
+  "scenarios": [
+    {
+      "id": "A01",
+      "name": "Install state",
+      "contract_scope": "Empty and populated registered-source discovery; no scanning or automatic launch.",
+      "contract_status": "CONTRACT_VERIFIED",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Actual installed-product records and explicit absent/present desktop UI checks.",
+      "runner": "local_interop_desktop.acceptance:A01"
+    },
+    {
+      "id": "A02",
+      "name": "Peer discovery",
+      "contract_scope": "Bounded installed/running/pipe discovery from explicit product-owned sources.",
+      "contract_status": "CONTRACT_VERIFIED",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Actual QingJian Desktop registration, running instance and approved pipe composition.",
+      "runner": "local_interop_desktop.acceptance:A02"
+    },
+    {
+      "id": "A03",
+      "name": "Trust",
+      "contract_scope": "Fail-closed OS-fact/installation/publisher/approval policy with synthetic evidence.",
+      "contract_status": "CONTRACT_VERIFIED",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Real connection-handle SID/PID plus binary signature, publisher and approved installation.",
+      "runner": "local_interop_desktop.acceptance:A03"
+    },
+    {
+      "id": "A04",
+      "name": "Handshake",
+      "contract_scope": "Observable connected, handshake, authenticated, session and negotiated stages.",
+      "contract_status": "CONTRACT_VERIFIED",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Real two-product V1 exchange over current-user Named Pipe.",
+      "runner": "local_interop_desktop.acceptance:A04"
+    },
+    {
+      "id": "A05",
+      "name": "Capability negotiation",
+      "contract_scope": "Only known requested V1 capabilities; connection alone grants no content.",
+      "contract_status": "CONTRACT_VERIFIED",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Actual product capability owners and per-scope permission center.",
+      "runner": "local_interop_desktop.acceptance:A05"
+    },
+    {
+      "id": "A06",
+      "name": "Metadata context",
+      "contract_scope": "Metadata capsule contains no selection, manuscript or prompt.",
+      "contract_status": "MOCK_ONLY",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Actual products with synthetic project metadata and independent settings.",
+      "runner": "local_interop_desktop.acceptance:A06"
+    },
+    {
+      "id": "A07",
+      "name": "Selection context",
+      "contract_scope": "Selected text is rejected without explicit scope consent; authorized preview only.",
+      "contract_status": "MOCK_ONLY",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Real editor selection preview/consent with synthetic text.",
+      "runner": "local_interop_desktop.acceptance:A07"
+    },
+    {
+      "id": "A08",
+      "name": "Chapter context",
+      "contract_scope": "Current chapter is rejected without explicit consent; current-version binding.",
+      "contract_status": "MOCK_ONLY",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Real chapter/version preview/consent with synthetic text.",
+      "runner": "local_interop_desktop.acceptance:A08"
+    },
+    {
+      "id": "A09",
+      "name": "Diagnostic",
+      "contract_scope": "Strict non-content diagnostic and bounded audit allowlists.",
+      "contract_status": "CONTRACT_VERIFIED",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Native diagnostic source and audit sink inspection with synthetic credentials.",
+      "runner": "local_interop_desktop.acceptance:A09"
+    },
+    {
+      "id": "A10",
+      "name": "Event",
+      "contract_scope": "Metadata projection, direct/poll/synthetic provenance and isolated subscriber revocation.",
+      "contract_status": "CONTRACT_VERIFIED",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Native producer event hooks and actual cross-product subscription delivery.",
+      "runner": "local_interop_desktop.acceptance:A10"
+    },
+    {
+      "id": "A11",
+      "name": "Session revoke",
+      "contract_scope": "Disconnect revokes the local session and cancels pending delivery.",
+      "contract_status": "CONTRACT_VERIFIED",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Actual transport/session/subscription cancellation on both products.",
+      "runner": "local_interop_desktop.acceptance:A11"
+    },
+    {
+      "id": "A12",
+      "name": "Permission revoke",
+      "contract_scope": "Fresh authorization at event delivery; revoke A while B continues.",
+      "contract_status": "CONTRACT_VERIFIED",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Two real subscribers with independent live permissions.",
+      "runner": "local_interop_desktop.acceptance:A12"
+    },
+    {
+      "id": "A13",
+      "name": "Tutor guidance",
+      "contract_scope": "Actual frozen TutorRequest/TutorGuidance exchange; advice performs no mutation.",
+      "contract_status": "MOCK_ONLY",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Actual Tutor orchestrator/ContextAssembler composition, without paid model invocation.",
+      "runner": "local_interop_desktop.acceptance:A13"
+    },
+    {
+      "id": "A14",
+      "name": "Verifier",
+      "contract_scope": "Fresh-state boundary; untrusted wire authority never proves verification.",
+      "contract_status": "MOCK_ONLY",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Actual Verifier owner with independently trusted current source and permission revision.",
+      "runner": "local_interop_desktop.acceptance:A14"
+    },
+    {
+      "id": "A15",
+      "name": "Deep Link",
+      "contract_scope": "Single-use, bounded, locally issued user-presence token and current target resolution.",
+      "contract_status": "CONTRACT_VERIFIED",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Real Windows URI registration plus user-click navigation.",
+      "runner": "local_interop_desktop.acceptance:A15"
+    },
+    {
+      "id": "A16",
+      "name": "Model Registry",
+      "contract_scope": "Read-only ModelRegistry projection, secret rejection and stale cache.",
+      "contract_status": "CONTRACT_VERIFIED",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Actual QingJian Model Scheduler projection and source freshness.",
+      "runner": "local_interop_desktop.acceptance:A16"
+    },
+    {
+      "id": "A17",
+      "name": "Tutor crash",
+      "contract_scope": "Synthetic peer failure cannot produce a usable response.",
+      "contract_status": "MOCK_ONLY",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Real Tutor process crash and subsequent host recovery.",
+      "runner": "local_interop_desktop.acceptance:A17"
+    },
+    {
+      "id": "A18",
+      "name": "Studio crash",
+      "contract_scope": "Simulated host shutdown revokes volatile session/grant state.",
+      "contract_status": "MOCK_ONLY",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Real Studio process crash, no surviving sender, and restart identity.",
+      "runner": "local_interop_desktop.acceptance:A18"
+    },
+    {
+      "id": "A19",
+      "name": "Restart",
+      "contract_scope": "Fresh instance on restart; no session or standing-grant restoration.",
+      "contract_status": "MOCK_ONLY",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Real desktop restart with non-restored content and standing-event grants.",
+      "runner": "local_interop_desktop.acceptance:A19"
+    },
+    {
+      "id": "A20",
+      "name": "Upgrade compatibility",
+      "contract_scope": "Product version compatibility, existing 1.0 selection and unknown-major refusal.",
+      "contract_status": "CONTRACT_VERIFIED",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Real product upgrade/install identity and signature revalidation.",
+      "runner": "local_interop_desktop.acceptance:A20"
+    },
+    {
+      "id": "A21",
+      "name": "Different Windows user",
+      "contract_scope": "A genuine separately authenticated Windows-user client must be denied by another SID pipe.",
+      "contract_status": "NOT_RUN",
+      "native_status": "NOT_RUN",
+      "native_requirement": "Run the distinct-user Windows probe; same-user CI is not evidence for this scenario.",
+      "runner": "local_interop_desktop.acceptance:A21"
+    },
+    {
+      "id": "A22",
+      "name": "Fake product_id",
+      "contract_scope": "Claimed known product ID without approved installation must fail production policy.",
+      "contract_status": "CONTRACT_VERIFIED",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Real hostile process plus trusted installer registry/signature evidence.",
+      "runner": "local_interop_desktop.acceptance:A22"
+    },
+    {
+      "id": "A23",
+      "name": "Expired session",
+      "contract_scope": "Fixed session expiry rejects use; heartbeat cannot extend the original expiry.",
+      "contract_status": "CONTRACT_VERIFIED",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Real two-product elapsed session expiry without implicit renewal.",
+      "runner": "local_interop_desktop.acceptance:A23"
+    },
+    {
+      "id": "A24",
+      "name": "Offline",
+      "contract_scope": "Missing peer/bridge failure remains isolated from host application startup.",
+      "contract_status": "CONTRACT_VERIFIED",
+      "native_status": "LOCAL_REQUIRED",
+      "native_requirement": "Offline actual user-machine acceptance and host startup timing.",
+      "runner": "local_interop_desktop.acceptance:A24"
+    }
+  ]
+}

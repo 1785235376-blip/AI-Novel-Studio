@@ -1,0 +1,968 @@
+{
+  "$defs": {
+    "AppContextCapsule": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "project_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project_id"
+            ]
+          },
+          "then": {
+            "properties": {
+              "project_version": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project_version"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "chapter_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "chapter_id"
+            ]
+          },
+          "then": {
+            "properties": {
+              "chapter_version": {
+                "type": "integer"
+              },
+              "project_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project_id",
+              "chapter_version"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "content": {
+                "properties": {
+                  "level": {
+                    "const": "SELECTED_TEXT"
+                  }
+                },
+                "required": [
+                  "level"
+                ]
+              }
+            },
+            "required": [
+              "content"
+            ]
+          },
+          "then": {
+            "properties": {
+              "selection_hash": {
+                "type": "string"
+              },
+              "selection_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "selection_id",
+              "selection_hash"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "content": {
+                "properties": {
+                  "level": {
+                    "const": "CURRENT_CHAPTER"
+                  }
+                },
+                "required": [
+                  "level"
+                ]
+              }
+            },
+            "required": [
+              "content"
+            ]
+          },
+          "then": {
+            "properties": {
+              "chapter_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "chapter_id"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "content": {
+                "properties": {
+                  "level": {
+                    "const": "PROJECT_CONTEXT"
+                  }
+                },
+                "required": [
+                  "level"
+                ]
+              }
+            },
+            "required": [
+              "content"
+            ]
+          },
+          "then": {
+            "properties": {
+              "project_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project_id"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "evidence": {
+                "contains": {
+                  "properties": {
+                    "privacy": {
+                      "const": "LOCAL_ONLY"
+                    }
+                  }
+                }
+              }
+            },
+            "required": [
+              "evidence"
+            ]
+          },
+          "then": {
+            "properties": {
+              "privacy_scope": {
+                "enum": [
+                  "LOCAL_ONLY"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "evidence": {
+                "contains": {
+                  "properties": {
+                    "privacy": {
+                      "const": "REDACTION_REQUIRED"
+                    }
+                  }
+                }
+              }
+            },
+            "required": [
+              "evidence"
+            ]
+          },
+          "then": {
+            "properties": {
+              "privacy_scope": {
+                "enum": [
+                  "LOCAL_ONLY",
+                  "REDACTION_REQUIRED"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "branch_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Branch Id"
+        },
+        "capsule_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Capsule Hash",
+          "type": "string"
+        },
+        "capsule_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Capsule Id",
+          "type": "string"
+        },
+        "chapter_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chapter Id"
+        },
+        "chapter_version": {
+          "anyOf": [
+            {
+              "maximum": 9007199254740991,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chapter Version"
+        },
+        "content": {
+          "$ref": "#/$defs/ContextContent"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Code"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ContextEvidence"
+          },
+          "maxItems": 64,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "instance_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Instance Id",
+          "type": "string"
+        },
+        "model_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Id"
+        },
+        "module": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Module",
+          "type": "string"
+        },
+        "privacy_scope": {
+          "default": "LOCAL_ONLY",
+          "enum": [
+            "LOCAL_ONLY",
+            "REDACTION_REQUIRED",
+            "CONSENTED_CLOUD"
+          ],
+          "title": "Privacy Scope",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 128,
+          "minLength": 3,
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$",
+          "title": "Product Id",
+          "type": "string"
+        },
+        "product_version": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+          "title": "Product Version",
+          "type": "string"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Id"
+        },
+        "project_version": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Version"
+        },
+        "protocol_name": {
+          "const": "PoemSeed Local Interop",
+          "default": "PoemSeed Local Interop",
+          "title": "Protocol Name",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Protocol Version",
+          "type": "string"
+        },
+        "runtime_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Runtime Id"
+        },
+        "runtime_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "READY",
+                "LOADING",
+                "UNAVAILABLE",
+                "ERROR",
+                "UNKNOWN"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Runtime Status"
+        },
+        "selection_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selection Hash"
+        },
+        "selection_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selection Id"
+        },
+        "source_version": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+          "title": "Source Version",
+          "type": "string"
+        },
+        "storyline_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Storyline Id"
+        },
+        "surface": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Surface",
+          "type": "string"
+        },
+        "task_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Id"
+        },
+        "task_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "PENDING",
+                "QUEUED",
+                "RUNNING",
+                "WAITING",
+                "FAILED",
+                "COMPLETED",
+                "CANCELLED",
+                "BLOCKED",
+                "UNKNOWN"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Status"
+        },
+        "task_type": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Type"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workspace Id"
+        }
+      },
+      "required": [
+        "capsule_hash",
+        "capsule_id",
+        "created_at",
+        "expires_at",
+        "instance_id",
+        "module",
+        "product_id",
+        "product_version",
+        "protocol_name",
+        "protocol_version",
+        "source_version",
+        "surface"
+      ],
+      "title": "AppContextCapsule",
+      "type": "object"
+    },
+    "ContextContent": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "consent_id": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "consent_id"
+            ]
+          },
+          "if": {
+            "properties": {
+              "level": {
+                "const": "NONE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "consent_id": {
+                "type": "null"
+              },
+              "text": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "level": {
+                "const": "SELECTED_TEXT"
+              }
+            },
+            "required": [
+              "level"
+            ]
+          },
+          "then": {
+            "properties": {
+              "text": {
+                "maxLength": 16384
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "consent_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Consent Id"
+        },
+        "level": {
+          "default": "NONE",
+          "enum": [
+            "NONE",
+            "SELECTED_TEXT",
+            "CURRENT_CHAPTER",
+            "PROJECT_CONTEXT"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "maxLength": 65536,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        }
+      },
+      "title": "ContextContent",
+      "type": "object"
+    },
+    "ContextEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "authority": {
+          "enum": [
+            "AUTHORITATIVE",
+            "CONSTRAINING",
+            "SUPPORTING",
+            "ADVISORY"
+          ],
+          "title": "Authority",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "locator": {
+          "maxLength": 256,
+          "pattern": "^(?:app|project|chapter|task|runtime|model|selection|feature|interop|diagnostic|user-observation):[A-Za-z0-9][A-Za-z0-9._:-]{0,191}$",
+          "title": "Locator",
+          "type": "string"
+        },
+        "privacy": {
+          "default": "LOCAL_ONLY",
+          "enum": [
+            "LOCAL_ONLY",
+            "REDACTION_REQUIRED",
+            "CONSENTED_CLOUD"
+          ],
+          "title": "Privacy",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_version": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+          "title": "Source Version",
+          "type": "string"
+        },
+        "timestamp": {
+          "format": "date-time",
+          "title": "Timestamp",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "source_version",
+        "locator",
+        "content_hash",
+        "timestamp",
+        "authority"
+      ],
+      "title": "ContextEvidence",
+      "type": "object"
+    },
+    "VerificationCondition": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "field": {
+                "const": "runtime_status"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expected_value": {
+                "enum": [
+                  "READY",
+                  "LOADING",
+                  "UNAVAILABLE",
+                  "ERROR",
+                  "UNKNOWN"
+                ]
+              },
+              "operator": {
+                "enum": [
+                  "EQ",
+                  "NE"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "field": {
+                "const": "task_status"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expected_value": {
+                "enum": [
+                  "PENDING",
+                  "QUEUED",
+                  "RUNNING",
+                  "WAITING",
+                  "FAILED",
+                  "COMPLETED",
+                  "CANCELLED",
+                  "BLOCKED",
+                  "UNKNOWN"
+                ]
+              },
+              "operator": {
+                "enum": [
+                  "EQ",
+                  "NE"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "field": {
+                "const": "project_version"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expected_value": {
+                "type": "string"
+              },
+              "operator": {
+                "enum": [
+                  "EQ",
+                  "NE"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "field": {
+                "const": "chapter_version"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expected_value": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "expected_value": {
+          "anyOf": [
+            {
+              "enum": [
+                "PENDING",
+                "QUEUED",
+                "RUNNING",
+                "WAITING",
+                "FAILED",
+                "COMPLETED",
+                "CANCELLED",
+                "BLOCKED",
+                "UNKNOWN"
+              ],
+              "type": "string"
+            },
+            {
+              "enum": [
+                "READY",
+                "LOADING",
+                "UNAVAILABLE",
+                "ERROR",
+                "UNKNOWN"
+              ],
+              "type": "string"
+            },
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "maximum": 9007199254740991,
+              "minimum": 0,
+              "type": "integer"
+            }
+          ],
+          "title": "Expected Value"
+        },
+        "field": {
+          "enum": [
+            "runtime_status",
+            "task_status",
+            "project_version",
+            "chapter_version"
+          ],
+          "title": "Field",
+          "type": "string"
+        },
+        "operator": {
+          "default": "EQ",
+          "enum": [
+            "EQ",
+            "NE",
+            "GTE"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field",
+        "expected_value",
+        "source_id"
+      ],
+      "title": "VerificationCondition",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.poemseed.dev/local-interop/v1/verifier-request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "condition": {
+      "$ref": "#/$defs/VerificationCondition"
+    },
+    "context": {
+      "$ref": "#/$defs/AppContextCapsule"
+    },
+    "guidance_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Guidance Id",
+      "type": "string"
+    },
+    "protocol_name": {
+      "const": "PoemSeed Local Interop",
+      "default": "PoemSeed Local Interop",
+      "title": "Protocol Name",
+      "type": "string"
+    },
+    "protocol_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Protocol Version",
+      "type": "string"
+    },
+    "request_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "session_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Session Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "condition",
+    "context",
+    "guidance_id",
+    "protocol_name",
+    "protocol_version",
+    "request_id",
+    "session_id"
+  ],
+  "title": "VerifierRequest",
+  "type": "object"
+}

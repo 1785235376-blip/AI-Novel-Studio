@@ -1,0 +1,70 @@
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +250
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 250, reused 48, downloaded 0, added 0
+Progress: resolved 250, reused 48, downloaded 1, added 0
+
+   ╭──────────────────────────────────────────╮
+   │                                          │
+   │   Update available! 10.6.5 → 12.10.1.    │
+   │   Changelog: https://pnpm.io/v/12.10.1   │
+   │     To update, run: pnpm add -g pnpm     │
+   │                                          │
+   ╰──────────────────────────────────────────╯
+
+Progress: resolved 250, reused 48, downloaded 16, added 16
+Progress: resolved 250, reused 48, downloaded 17, added 16
+Progress: resolved 250, reused 48, downloaded 31, added 31
+Progress: resolved 250, reused 48, downloaded 32, added 32
+Progress: resolved 250, reused 48, downloaded 33, added 32
+Progress: resolved 250, reused 48, downloaded 48, added 48
+Progress: resolved 250, reused 48, downloaded 49, added 48
+Progress: resolved 250, reused 48, downloaded 64, added 64
+Progress: resolved 250, reused 48, downloaded 65, added 64
+Progress: resolved 250, reused 48, downloaded 80, added 80
+Progress: resolved 250, reused 48, downloaded 81, added 80
+Progress: resolved 250, reused 48, downloaded 96, added 96
+Progress: resolved 250, reused 48, downloaded 97, added 96
+Progress: resolved 250, reused 48, downloaded 112, added 112
+Progress: resolved 250, reused 48, downloaded 113, added 112
+Progress: resolved 250, reused 48, downloaded 128, added 128
+Progress: resolved 250, reused 48, downloaded 129, added 128
+Progress: resolved 250, reused 48, downloaded 144, added 144
+Progress: resolved 250, reused 48, downloaded 145, added 144
+Progress: resolved 250, reused 48, downloaded 160, added 160
+Progress: resolved 250, reused 48, downloaded 161, added 160
+Progress: resolved 250, reused 48, downloaded 176, added 176
+Progress: resolved 250, reused 48, downloaded 177, added 176
+Progress: resolved 250, reused 48, downloaded 192, added 192
+Progress: resolved 250, reused 48, downloaded 193, added 192
+Progress: resolved 250, reused 48, downloaded 202, added 202, done
+.../esbuild@0.25.12/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.21.5/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.21.5/node_modules/esbuild postinstall: Done
+.../esbuild@0.25.12/node_modules/esbuild postinstall: Done
+
+dependencies:
++ @tanstack/react-query 5.101.4
++ @tiptap/extension-placeholder 2.27.2
++ @tiptap/react 2.27.2
++ @tiptap/starter-kit 2.27.2
++ lucide-react 0.468.0
++ react 18.3.1
++ react-dom 18.3.1
++ zustand 5.0.14
+
+devDependencies:
++ @playwright/test 1.62.1
++ @testing-library/react 16.3.2
++ @types/node 22.13.10
++ @types/react 18.3.31
++ @types/react-dom 18.3.7
++ @vitejs/plugin-react 4.7.0
++ fountain-js 1.2.4
++ jsdom 25.0.1
++ typescript 5.9.3
++ vite 6.4.3
++ vitest 2.1.9
+
+Done in 1m 30s using pnpm v10.6.5

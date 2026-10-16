@@ -1,0 +1,54 @@
+<testsuites id="" name="" tests="1" failures="1" skipped="0" errors="0" time="23.812464">
+<testsuite name="v2-director-console-live.spec.ts" timestamp="2026-10-16T14:56:17.577Z" hostname="director-1440x900" tests="1" failures="1" skipped="0" time="9.476" errors="0">
+<testcase name="real File Director graph participant saves, reopens and refuses a changed source" classname="v2-director-console-live.spec.ts" time="9.476">
+<properties>
+<property name="verification" value="Actual File owner, HTTP routes, rendered React and installed Edge. Authored synthetic text only; no response mocks, model inference or provider calls.">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\error-context.md]]
+
+[[ATTACHMENT|test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\trace.zip]]
+]]>
+</system-out>
+<failure message="{&quot;detail&quot;:{&quot;code&quot;:&quot;SESSION_REQUIRED&quot;},&quot;code&quot;:&quot;SESSION_REQUIRED&quot;,&quot;message&quot;:&quot;SESSION_REQUIRED&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;SESSION_REQUIRED&quot;},&quot;request_id&quot;:&quot;5094158a-8d63-4335-bd21-627fb1fd459b&quot;}" type="expect.toBe">
+<![CDATA[  [director-1440x900] › v2-director-console-live.spec.ts:3:1 › real File Director graph participant saves, reopens and refuses a changed source 
+
+    Error: {"detail":{"code":"SESSION_REQUIRED"},"code":"SESSION_REQUIRED","message":"SESSION_REQUIRED","details":{"code":"SESSION_REQUIRED"},"request_id":"5094158a-8d63-4335-bd21-627fb1fd459b"}
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+       9 |     if (path.startsWith('/api/')) calls.push({ method: value.request().method(), path, status: value.status() }); });
+      10 |   const exact = async (response: APIResponse, status: number) => {
+    > 11 |     expect(response.status(), await response.text()).toBe(status); return response.json();
+         |                                                      ^
+      12 |   };
+      13 |   info.annotations.push({ type: 'verification', description: 'Actual File owner, HTTP routes, rendered React and installed Edge. Authored synthetic text only; no response mocks, model inference or provider calls.' });
+      14 |   try {
+        at exact (D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-director-console-live.spec.ts:11:54)
+        at D:\PoemSeed\Worktrees\v2-retirement-canvas-20261016\frontend\tests\e2e\v2-director-console-live.spec.ts:27:21
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\docs\delivery\v2-development\director-console-20261016\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\docs\delivery\v2-development\director-console-20261016\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\..\docs\delivery\v2-development\director-console-20261016\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\..\docs\delivery\v2-development\director-console-20261016\test-results\v2-director-console-live-r-770b8-nd-refuses-a-changed-source-director-1440x900\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+</testsuite>
+</testsuites>

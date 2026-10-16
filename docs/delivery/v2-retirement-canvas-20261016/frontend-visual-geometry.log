@@ -1,0 +1,12 @@
+Error: E2E_DATABASE_URL_REQUIRED
+    at contractError (file:///D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/src/e2eDatabaseContract.ts:25:9)
+    at resolveE2EDatabaseContract (file:///D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/src/e2eDatabaseContract.ts:41:13)
+    at file:///D:/PoemSeed/Worktrees/v2-retirement-canvas-20261016/frontend/playwright.config.ts:11:26
+    at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+    at requireOrImport (D:\PoemSeed\AI-Novel-Studio\frontend\node_modules\.pnpm\playwright@1.62.1\node_modules\playwright\lib\common\index.js:1136:12)
+    at loadUserConfig (D:\PoemSeed\AI-Novel-Studio\frontend\node_modules\.pnpm\playwright@1.62.1\node_modules\playwright\lib\common\index.js:1323:46)
+    at loadConfig (D:\PoemSeed\AI-Novel-Studio\frontend\node_modules\.pnpm\playwright@1.62.1\node_modules\playwright\lib\common\index.js:1330:22)
+    at Object.loadConfigFromFile (D:\PoemSeed\AI-Novel-Studio\frontend\node_modules\.pnpm\playwright@1.62.1\node_modules\playwright\lib\common\index.js:1546:10)
+    at runTests (D:\PoemSeed\AI-Novel-Studio\frontend\node_modules\.pnpm\playwright@1.62.1\node_modules\playwright\lib\cli\testActions.js:46:18)
+    at _Command.<anonymous> (D:\PoemSeed\AI-Novel-Studio\frontend\node_modules\.pnpm\playwright@1.62.1\node_modules\playwright\lib\program.js:55:7)

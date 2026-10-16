@@ -1,0 +1,227 @@
+..ss....ssss..ss....ssss....ssss......................ssssssssssssssssss [  8%]
+ssss..ss..ssFFF....FFF....ssssssssssssss..ss..ss.............ssssss..ss. [ 16%]
+.....ssssss..........ssssssssss..ss..ss..............ssssssssssssss..ss. [ 24%]
+.ss..ss..ss............ssssssssssss..ss..ss..ss..ss....ssss..ss..ss..ss. [ 33%]
+.ss..ss.s......ssssss................................................... [ 41%]
+......................ssss...........sssssssssss.s.s................s... [ 49%]
+.........s......ssssss...sss.s..ss...........sss.s.s....ssss..ss..ss.... [ 58%]
+..ssssss.s.............sssssssssssss.s.s..ss.s.s.s.s.s..ss.s..ss.s.s.s.s [ 66%]
+.s.s.s.s.s.s.s..ss.s..ss...sss.....sssss.s.s.s.s.s.s.s.s.s..ss.......... [ 74%]
+....ssssssssssssss..ss..ss..ss..ss..ss..ss..ss..ss..ss.s.s.s......ssssss [ 83%]
+........................................................................ [ 91%]
+........................................................................ [ 99%]
+...                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_archive_and_proposal_tampering_masks_all_generated_projections[file-/api-_owner_actor_id] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7f6c60bc20c0>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f6c690de4b0>, creative_base='/api/novels/r3-mounted-c2d447a6584c473fa81be937b845ed59/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f6c60bc2ed0>
+field = '_owner_actor_id'
+
+    @pytest.mark.parametrize("field", ["_owner_actor_id", "_required_features", "version", "_text_result_review", "asset_archive", "model_asset_intent", "selection_digest"])
+    def test_archive_and_proposal_tampering_masks_all_generated_projections(creative_model, monkeypatch, field):
+        e = creative_model
+        row, calls = ready(e, monkeypatch)
+        result = settle(e, dispatch(e, row))
+        item, = archived(e, result)
+        if field.startswith("_") or field == "version":
+            path = e.assets._meta_path(item["id"])
+            meta = json.loads(path.read_text())
+            if field == "version": meta[field] = True
+            elif field == "_text_result_review": meta[field] = {"status": "APPROVED", "receipt": {}, "history": []}
+            else: meta.pop(field)
+            path.write_text(json.dumps(meta))
+        else:
+            with e.creative.store.transaction(e.nid, result["scope"]) as state:
+                current = state["collections"][e.creative.adaptations.COLLECTION][result["id"]]
+                if field == "selection_digest": current[field] = "f" * 64
+                else: current.pop(field)
+        view = read(e, result)
+        assert view["output"] is None and view["model_preview"] is None and view["provenance"] is None
+        assert view["asset_output"]["state"] == "INCOMPLETE"
+>       assert review(e, result).status_code in {409, 422}
+E       AssertionError: assert 404 in {409, 422}
+E        +  where 404 = <Response [404 Not Found]>.status_code
+E        +    where <Response [404 Not Found]> = review(namespace(client=<starlette.testclient.TestClient object at 0x7f6c60bc20c0>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f6c690de4b0>, creative_base='/api/novels/r3-mounted-c2d447a6584c473fa81be937b845ed59/experimental/creative'), {'asset_archive': {'asset_id': '22d384c6-4307-475d-862b-e823f4632d26', 'output_digest': 'ffc7a3698f480cd0c0b26c1314cef..., 'chapter_id': 'r3-mounted-c2d447a6584c473fa81be937b845ed59:1', 'created_at': '2026-10-10T21:47:11.333202+00:00', ...})
+
+tests/test_v2_adaptation_archive.py:252: AssertionError
+_ test_archive_and_proposal_tampering_masks_all_generated_projections[file-/api-_required_features] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7f6c60d373b0>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f6c690de4b0>, creative_base='/api/novels/r3-mounted-ff4690e0ee4549da9976d90745c827f5/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f6c60bf6a20>
+field = '_required_features'
+
+    @pytest.mark.parametrize("field", ["_owner_actor_id", "_required_features", "version", "_text_result_review", "asset_archive", "model_asset_intent", "selection_digest"])
+    def test_archive_and_proposal_tampering_masks_all_generated_projections(creative_model, monkeypatch, field):
+        e = creative_model
+        row, calls = ready(e, monkeypatch)
+        result = settle(e, dispatch(e, row))
+        item, = archived(e, result)
+        if field.startswith("_") or field == "version":
+            path = e.assets._meta_path(item["id"])
+            meta = json.loads(path.read_text())
+            if field == "version": meta[field] = True
+            elif field == "_text_result_review": meta[field] = {"status": "APPROVED", "receipt": {}, "history": []}
+            else: meta.pop(field)
+            path.write_text(json.dumps(meta))
+        else:
+            with e.creative.store.transaction(e.nid, result["scope"]) as state:
+                current = state["collections"][e.creative.adaptations.COLLECTION][result["id"]]
+                if field == "selection_digest": current[field] = "f" * 64
+                else: current.pop(field)
+        view = read(e, result)
+        assert view["output"] is None and view["model_preview"] is None and view["provenance"] is None
+        assert view["asset_output"]["state"] == "INCOMPLETE"
+>       assert review(e, result).status_code in {409, 422}
+E       AssertionError: assert 404 in {409, 422}
+E        +  where 404 = <Response [404 Not Found]>.status_code
+E        +    where <Response [404 Not Found]> = review(namespace(client=<starlette.testclient.TestClient object at 0x7f6c60d373b0>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f6c690de4b0>, creative_base='/api/novels/r3-mounted-ff4690e0ee4549da9976d90745c827f5/experimental/creative'), {'asset_archive': {'asset_id': '71932b35-53bc-4276-bb54-cba5073c622c', 'output_digest': 'ffc7a3698f480cd0c0b26c1314cef..., 'chapter_id': 'r3-mounted-ff4690e0ee4549da9976d90745c827f5:1', 'created_at': '2026-10-10T21:47:12.691607+00:00', ...})
+
+tests/test_v2_adaptation_archive.py:252: AssertionError
+_ test_archive_and_proposal_tampering_masks_all_generated_projections[file-/api-version] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7f6c60bc3530>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f6c690de4b0>, creative_base='/api/novels/r3-mounted-c1b3ee93b50c417fa794a6f95a64bb20/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f6c60bc23c0>
+field = 'version'
+
+    @pytest.mark.parametrize("field", ["_owner_actor_id", "_required_features", "version", "_text_result_review", "asset_archive", "model_asset_intent", "selection_digest"])
+    def test_archive_and_proposal_tampering_masks_all_generated_projections(creative_model, monkeypatch, field):
+        e = creative_model
+        row, calls = ready(e, monkeypatch)
+        result = settle(e, dispatch(e, row))
+        item, = archived(e, result)
+        if field.startswith("_") or field == "version":
+            path = e.assets._meta_path(item["id"])
+            meta = json.loads(path.read_text())
+            if field == "version": meta[field] = True
+            elif field == "_text_result_review": meta[field] = {"status": "APPROVED", "receipt": {}, "history": []}
+            else: meta.pop(field)
+            path.write_text(json.dumps(meta))
+        else:
+            with e.creative.store.transaction(e.nid, result["scope"]) as state:
+                current = state["collections"][e.creative.adaptations.COLLECTION][result["id"]]
+                if field == "selection_digest": current[field] = "f" * 64
+                else: current.pop(field)
+        view = read(e, result)
+        assert view["output"] is None and view["model_preview"] is None and view["provenance"] is None
+        assert view["asset_output"]["state"] == "INCOMPLETE"
+>       assert review(e, result).status_code in {409, 422}
+E       AssertionError: assert 404 in {409, 422}
+E        +  where 404 = <Response [404 Not Found]>.status_code
+E        +    where <Response [404 Not Found]> = review(namespace(client=<starlette.testclient.TestClient object at 0x7f6c60bc3530>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f6c690de4b0>, creative_base='/api/novels/r3-mounted-c1b3ee93b50c417fa794a6f95a64bb20/experimental/creative'), {'asset_archive': {'asset_id': 'd33eee1b-0658-4461-a098-5cf137ed3477', 'output_digest': 'ffc7a3698f480cd0c0b26c1314cef..., 'chapter_id': 'r3-mounted-c1b3ee93b50c417fa794a6f95a64bb20:1', 'created_at': '2026-10-10T21:47:14.246330+00:00', ...})
+
+tests/test_v2_adaptation_archive.py:252: AssertionError
+_ test_archive_and_proposal_tampering_masks_all_generated_projections[file-/api/v1-_owner_actor_id] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7f6c60b77710>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f6c690de4b0>, creative_base='/api/v1/novels/r3-mounted-5cfeee54649f4737925355a92debb648/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f6c610fa840>
+field = '_owner_actor_id'
+
+    @pytest.mark.parametrize("field", ["_owner_actor_id", "_required_features", "version", "_text_result_review", "asset_archive", "model_asset_intent", "selection_digest"])
+    def test_archive_and_proposal_tampering_masks_all_generated_projections(creative_model, monkeypatch, field):
+        e = creative_model
+        row, calls = ready(e, monkeypatch)
+        result = settle(e, dispatch(e, row))
+        item, = archived(e, result)
+        if field.startswith("_") or field == "version":
+            path = e.assets._meta_path(item["id"])
+            meta = json.loads(path.read_text())
+            if field == "version": meta[field] = True
+            elif field == "_text_result_review": meta[field] = {"status": "APPROVED", "receipt": {}, "history": []}
+            else: meta.pop(field)
+            path.write_text(json.dumps(meta))
+        else:
+            with e.creative.store.transaction(e.nid, result["scope"]) as state:
+                current = state["collections"][e.creative.adaptations.COLLECTION][result["id"]]
+                if field == "selection_digest": current[field] = "f" * 64
+                else: current.pop(field)
+        view = read(e, result)
+        assert view["output"] is None and view["model_preview"] is None and view["provenance"] is None
+        assert view["asset_output"]["state"] == "INCOMPLETE"
+>       assert review(e, result).status_code in {409, 422}
+E       AssertionError: assert 404 in {409, 422}
+E        +  where 404 = <Response [404 Not Found]>.status_code
+E        +    where <Response [404 Not Found]> = review(namespace(client=<starlette.testclient.TestClient object at 0x7f6c60b77710>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f6c690de4b0>, creative_base='/api/v1/novels/r3-mounted-5cfeee54649f4737925355a92debb648/experimental/creative'), {'asset_archive': {'asset_id': '9d96840e-40c7-483e-b1d6-1a027a11ed3f', 'output_digest': 'ffc7a3698f480cd0c0b26c1314cef..., 'chapter_id': 'r3-mounted-5cfeee54649f4737925355a92debb648:1', 'created_at': '2026-10-10T21:47:20.291769+00:00', ...})
+
+tests/test_v2_adaptation_archive.py:252: AssertionError
+_ test_archive_and_proposal_tampering_masks_all_generated_projections[file-/api/v1-_required_features] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7f6c6c662f30>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f6c690de4b0>, creative_base='/api/v1/novels/r3-mounted-28a2ba16e94a49f38cbbbda6e4f70e80/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f6c60b9ec30>
+field = '_required_features'
+
+    @pytest.mark.parametrize("field", ["_owner_actor_id", "_required_features", "version", "_text_result_review", "asset_archive", "model_asset_intent", "selection_digest"])
+    def test_archive_and_proposal_tampering_masks_all_generated_projections(creative_model, monkeypatch, field):
+        e = creative_model
+        row, calls = ready(e, monkeypatch)
+        result = settle(e, dispatch(e, row))
+        item, = archived(e, result)
+        if field.startswith("_") or field == "version":
+            path = e.assets._meta_path(item["id"])
+            meta = json.loads(path.read_text())
+            if field == "version": meta[field] = True
+            elif field == "_text_result_review": meta[field] = {"status": "APPROVED", "receipt": {}, "history": []}
+            else: meta.pop(field)
+            path.write_text(json.dumps(meta))
+        else:
+            with e.creative.store.transaction(e.nid, result["scope"]) as state:
+                current = state["collections"][e.creative.adaptations.COLLECTION][result["id"]]
+                if field == "selection_digest": current[field] = "f" * 64
+                else: current.pop(field)
+        view = read(e, result)
+        assert view["output"] is None and view["model_preview"] is None and view["provenance"] is None
+        assert view["asset_output"]["state"] == "INCOMPLETE"
+>       assert review(e, result).status_code in {409, 422}
+E       AssertionError: assert 404 in {409, 422}
+E        +  where 404 = <Response [404 Not Found]>.status_code
+E        +    where <Response [404 Not Found]> = review(namespace(client=<starlette.testclient.TestClient object at 0x7f6c6c662f30>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f6c690de4b0>, creative_base='/api/v1/novels/r3-mounted-28a2ba16e94a49f38cbbbda6e4f70e80/experimental/creative'), {'asset_archive': {'asset_id': '9102a747-decd-4605-aaa5-f90e6dd50780', 'output_digest': 'ffc7a3698f480cd0c0b26c1314cef..., 'chapter_id': 'r3-mounted-28a2ba16e94a49f38cbbbda6e4f70e80:1', 'created_at': '2026-10-10T21:47:21.640180+00:00', ...})
+
+tests/test_v2_adaptation_archive.py:252: AssertionError
+_ test_archive_and_proposal_tampering_masks_all_generated_projections[file-/api/v1-version] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7f6c62be13a0>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f6c690de4b0>, creative_base='/api/v1/novels/r3-mounted-02378a09754c4f0e88ef27dca710e556/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f6c6c60a120>
+field = 'version'
+
+    @pytest.mark.parametrize("field", ["_owner_actor_id", "_required_features", "version", "_text_result_review", "asset_archive", "model_asset_intent", "selection_digest"])
+    def test_archive_and_proposal_tampering_masks_all_generated_projections(creative_model, monkeypatch, field):
+        e = creative_model
+        row, calls = ready(e, monkeypatch)
+        result = settle(e, dispatch(e, row))
+        item, = archived(e, result)
+        if field.startswith("_") or field == "version":
+            path = e.assets._meta_path(item["id"])
+            meta = json.loads(path.read_text())
+            if field == "version": meta[field] = True
+            elif field == "_text_result_review": meta[field] = {"status": "APPROVED", "receipt": {}, "history": []}
+            else: meta.pop(field)
+            path.write_text(json.dumps(meta))
+        else:
+            with e.creative.store.transaction(e.nid, result["scope"]) as state:
+                current = state["collections"][e.creative.adaptations.COLLECTION][result["id"]]
+                if field == "selection_digest": current[field] = "f" * 64
+                else: current.pop(field)
+        view = read(e, result)
+        assert view["output"] is None and view["model_preview"] is None and view["provenance"] is None
+        assert view["asset_output"]["state"] == "INCOMPLETE"
+>       assert review(e, result).status_code in {409, 422}
+E       AssertionError: assert 404 in {409, 422}
+E        +  where 404 = <Response [404 Not Found]>.status_code
+E        +    where <Response [404 Not Found]> = review(namespace(client=<starlette.testclient.TestClient object at 0x7f6c62be13a0>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f6c690de4b0>, creative_base='/api/v1/novels/r3-mounted-02378a09754c4f0e88ef27dca710e556/experimental/creative'), {'asset_archive': {'asset_id': '604100ef-310b-4eff-96dd-b87df80ca16f', 'output_digest': 'ffc7a3698f480cd0c0b26c1314cef..., 'chapter_id': 'r3-mounted-02378a09754c4f0e88ef27dca710e556:1', 'created_at': '2026-10-10T21:47:23.025931+00:00', ...})
+
+tests/test_v2_adaptation_archive.py:252: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-adaptation-archive-file-final2.xml -
+=========================== short test summary info ============================
+FAILED tests/test_v2_adaptation_archive.py::test_archive_and_proposal_tampering_masks_all_generated_projections[file-/api-_owner_actor_id]
+FAILED tests/test_v2_adaptation_archive.py::test_archive_and_proposal_tampering_masks_all_generated_projections[file-/api-_required_features]
+FAILED tests/test_v2_adaptation_archive.py::test_archive_and_proposal_tampering_masks_all_generated_projections[file-/api-version]
+FAILED tests/test_v2_adaptation_archive.py::test_archive_and_proposal_tampering_masks_all_generated_projections[file-/api/v1-_owner_actor_id]
+FAILED tests/test_v2_adaptation_archive.py::test_archive_and_proposal_tampering_masks_all_generated_projections[file-/api/v1-_required_features]
+FAILED tests/test_v2_adaptation_archive.py::test_archive_and_proposal_tampering_masks_all_generated_projections[file-/api/v1-version]
+6 failed, 556 passed, 305 skipped, 1 warning in 256.48s (0:04:16)

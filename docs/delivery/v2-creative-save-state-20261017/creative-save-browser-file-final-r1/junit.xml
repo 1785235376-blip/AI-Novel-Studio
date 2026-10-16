@@ -1,0 +1,131 @@
+<testsuites id="" name="" tests="9" failures="0" skipped="0" errors="0" time="41.407487">
+<testsuite name="v2-creative-save-live.spec.ts" timestamp="2026-10-16T20:01:44.066Z" hostname="creative-save-1366x768" tests="3" failures="0" skipped="0" time="13.907" errors="0">
+<testcase name="manual persisted v1, exact edits, real save CAS v2 and refresh agree; other-stage dirty remains separate" classname="v2-creative-save-live.spec.ts" time="6.508">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768\attachments\manual-v1-initial-current-saved-a3a14da1c9003541e5139f047c7435fc118f5b6f.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768\attachments\manual-v1-dirty-real-input-389e617693a18514aa5472185c4963f554cbb989.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768\attachments\manual-real-put-held-saving-and-navigation-fenced-06bcf7182d448c71d54cce8fb52787ec37cd1581.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768\attachments\manual-v2-save-receipt-and-original-owner-readback-c0cfe2f535420822df385849bc1e66329d421ca4.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768\attachments\manual-v2-refresh-reopen-saved-3749d999756e5b6657e7f7e80eb48bf6ffc5f115.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1366x768\attachments\current-saved-v1-and-other-stage-real-dirty-56edcf94bf03de033f86b7d914759befbc40dc78.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="real offline transport uncertainty and real original CAS409 retain the local draft and explicit reconciliation" classname="v2-creative-save-live.spec.ts" time="3.014">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768\attachments\offline-unknown-keeps-local-draft-and-current-status-e8ef173ddb98c27fc85b9e6aca853b19bb6e3840.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768\attachments\real-verify-get-held-does-not-claim-save-write-2442289de94a3ac8884bb6c20e1ed717489ead30.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768\attachments\late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1-f06458e330b0c2cadcda24bb222e6d19752ac8df.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768\attachments\real-cas409-keeps-local-draft-and-server-v2-3a10db21bf85a65f72f6fa2187f5f0e832224009.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1366x768\attachments\real-cas409-author-keeps-local-draft-after-owner-check-3bdc8be0aea518d38c1d9c6b90e9e470da4004d5.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="late original history readbacks cannot contaminate another document or an explicitly changed project and branch" classname="v2-creative-save-live.spec.ts" time="4.385">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1366x768\attachments\late-history-a-cannot-relabel-or-clear-dirty-document-b-f11a06129e88bf1bbb5cec795553c6993f689481.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1366x768\attachments\late-history-old-scope-cannot-contaminate-current-saved-v1-c3e1316d233936cbccad2b09a11fc66c8be3d897.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="v2-creative-save-live.spec.ts" timestamp="2026-10-16T20:01:44.066Z" hostname="creative-save-1440x900" tests="3" failures="0" skipped="0" time="12.737" errors="0">
+<testcase name="manual persisted v1, exact edits, real save CAS v2 and refresh agree; other-stage dirty remains separate" classname="v2-creative-save-live.spec.ts" time="4.312">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900\attachments\manual-v1-initial-current-saved-4832e8180bdfc967834094053a9f825d73284349.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900\attachments\manual-v1-dirty-real-input-7b7bbf5f7b38805a9498a988da0948e8fe04f138.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900\attachments\manual-real-put-held-saving-and-navigation-fenced-ad6dc2c565757c63c72ff0898030b8f827bb8447.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900\attachments\manual-v2-save-receipt-and-original-owner-readback-bd403940869bc020e96e0cd29fe528e942a4cf42.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900\attachments\manual-v2-refresh-reopen-saved-e35ef69771f52c0cab6bf7a58035950bcbaf13c4.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1440x900\attachments\current-saved-v1-and-other-stage-real-dirty-bd5fd2fa6a0f74b1600edf0aa469edc128c88a3f.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="real offline transport uncertainty and real original CAS409 retain the local draft and explicit reconciliation" classname="v2-creative-save-live.spec.ts" time="3.816">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900\attachments\offline-unknown-keeps-local-draft-and-current-status-3a35d417d8f3b5914872801c1e1b2755d31d61c9.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900\attachments\real-verify-get-held-does-not-claim-save-write-06e8d750b62ba9fa9a0206423551a225219735cc.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900\attachments\late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1-67747c7ce2f79e230520d5c7ad166ad2d47c7323.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900\attachments\real-cas409-keeps-local-draft-and-server-v2-98b93c4e522007ed1e70c4c6ae88189f55852d0d.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1440x900\attachments\real-cas409-author-keeps-local-draft-after-owner-check-5d4309b62ce0acc8dc14a19457834365aabd2103.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="late original history readbacks cannot contaminate another document or an explicitly changed project and branch" classname="v2-creative-save-live.spec.ts" time="4.609">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1440x900\attachments\late-history-a-cannot-relabel-or-clear-dirty-document-b-9a4720b0cc682837a8af7d3b0ac3cbb1805160f8.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1440x900\attachments\late-history-old-scope-cannot-contaminate-current-saved-v1-c101fcc559aed756a6f3f6d7231a45da2b03c369.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="v2-creative-save-live.spec.ts" timestamp="2026-10-16T20:01:44.066Z" hostname="creative-save-1920x1080" tests="3" failures="0" skipped="0" time="11.923" errors="0">
+<testcase name="manual persisted v1, exact edits, real save CAS v2 and refresh agree; other-stage dirty remains separate" classname="v2-creative-save-live.spec.ts" time="4.363">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080\attachments\manual-v1-initial-current-saved-ccae578bfed91943a601d5a6928e26585e4df472.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080\attachments\manual-v1-dirty-real-input-2a810a8bf9d22e5f2dee1ffaae34f8393702e7be.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080\attachments\manual-real-put-held-saving-and-navigation-fenced-5970f9333289e5b498cf2963b8e0cd24b45bf171.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080\attachments\manual-v2-save-receipt-and-original-owner-readback-83d51e7501e50a669e7dc3f9abb3629ac262ef6e.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080\attachments\manual-v2-refresh-reopen-saved-2903fc4f4f39ea477a479006b429754de50e10b1.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-manu-3509a-tage-dirty-remains-separate-creative-save-1920x1080\attachments\current-saved-v1-and-other-stage-real-dirty-1b6b05016fec0b3a0509791ce357e8e7620ea0cf.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="real offline transport uncertainty and real original CAS409 retain the local draft and explicit reconciliation" classname="v2-creative-save-live.spec.ts" time="3.159">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080\attachments\offline-unknown-keeps-local-draft-and-current-status-677f0472fc643209c1760f3b7e2ebc1ad61109d6.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080\attachments\real-verify-get-held-does-not-claim-save-write-d5a1cfb4ebc917ae8a814c85d2ac13f628295c4e.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080\attachments\late-verify-a-v2-cannot-attach-candidate-to-clean-b-v1-3656122764f6cfe835f289eadb0e09de778a795d.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080\attachments\real-cas409-keeps-local-draft-and-server-v2-2b147dcc0bea7d7a0f0869a81f3048f52c2c3fca.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-real-fe200-and-explicit-reconciliation-creative-save-1920x1080\attachments\real-cas409-author-keeps-local-draft-after-owner-check-f151387b9620dcc69119be9507ba89855546c0ee.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="late original history readbacks cannot contaminate another document or an explicitly changed project and branch" classname="v2-creative-save-live.spec.ts" time="4.401">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1920x1080\attachments\late-history-a-cannot-relabel-or-clear-dirty-document-b-7f35f339165d997fc2f3964516d412dae93d1e4e.png]]
+
+[[ATTACHMENT|test-results\v2-creative-save-live-late-41283--changed-project-and-branch-creative-save-1920x1080\attachments\late-history-old-scope-cannot-contaminate-current-saved-v1-bea7439467d6f956b7b1701b3f9ec76fbf2bf612.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

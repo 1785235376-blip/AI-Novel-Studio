@@ -1,0 +1,44 @@
+name: Shared R123 evidence
+on:
+  push:
+    branches: [fix/shared-authority-stream-terminal-r123]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-baseline-red:
+    name: Original c6f2126 RED / Python 3.12.9
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          path: repair
+          persist-credentials: false
+      - uses: actions/checkout@v4.2.2
+        with:
+          ref: c6f2126115b52e17839d48efea091dc21ec08c61
+          path: baseline
+          persist-credentials: false
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - name: Install exact baseline constraints
+        run: |
+          python -m pip install -c baseline/.github/ci/python-constraints.txt -e 'baseline[dev,fontbuild,otio,comic]'
+          python -m pip check
+          mkdir -p receipts
+          python -m pip freeze --exclude-editable > receipts/python-packages.txt
+      - name: Run unchanged source and three separate original reproductions
+        run: python repair/.github/ci/r123_baseline.py --baseline baseline --scripts repair/docs/delivery/shared-r123-repair/reproductions --output receipts
+      - name: Upload exact RED observations
+        if: always()
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: shared-r123-baseline-red-${{ github.sha }}
+          path: |
+            receipts/baseline-red.json
+            receipts/*.txt
+          if-no-files-found: error
+          retention-days: 14

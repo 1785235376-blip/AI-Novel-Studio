@@ -1,0 +1,27 @@
+INFO:     127.0.0.1:63948 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64016 - "POST /api/packaged/bootstrap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64122 - "POST /api/packaged/initial-workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59037 - "POST /api/collaboration/admin/workspaces/workspace-a/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51863 - "GET /api/collaboration/admin/workspaces/workspace-a/navigation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51864 - "POST /api/projects/4a62ee9b-681d-4c5e-81a2-752c35742506/studio/activate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52842 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52843 - "GET /api/novels HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52844 - "GET /api/text-models HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52845 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52846 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52847 - "GET /api/experimental/features HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:53593 - "GET /api/collaboration/admin/workspaces HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59103 - "GET /api/collaboration/admin/workspaces/workspace-a/navigation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62528 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52104 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61772 - "GET /api/novels/4a62ee9b-681d-4c5e-81a2-752c35742506/writing-goal HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:61777 - "GET /api/novels/4a62ee9b-681d-4c5e-81a2-752c35742506/chapters/archived HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:61775 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61774 - "GET /api/novels/4a62ee9b-681d-4c5e-81a2-752c35742506/media-tasks HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65434 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61773 - "GET /api/collaboration/workspaces/workspace-a/projects/4a62ee9b-681d-4c5e-81a2-752c35742506/storylines/38d0af79-b6e8-4405-a3c7-f28f25ea8f50/branches/99876a33-33c2-478c-b696-00c84648ee62/bootstrap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61776 - "GET /api/collaboration/workspaces/workspace-a/projects/4a62ee9b-681d-4c5e-81a2-752c35742506/storylines/38d0af79-b6e8-4405-a3c7-f28f25ea8f50/branches/99876a33-33c2-478c-b696-00c84648ee62/chapters HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61780 - "POST /api/novels/4a62ee9b-681d-4c5e-81a2-752c35742506/experimental/creative/documents HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64926 - "GET /api/projects/4a62ee9b-681d-4c5e-81a2-752c35742506/studio/graphs/planning-documents HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64933 - "DELETE /api/collaboration/admin/workspaces/workspace-a/projects/4a62ee9b-681d-4c5e-81a2-752c35742506 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:64920 - "GET /api/projects/4a62ee9b-681d-4c5e-81a2-752c35742506/studio HTTP/1.1" 404 Not Found

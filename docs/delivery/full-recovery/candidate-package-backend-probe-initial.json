@@ -1,0 +1,91 @@
+{
+  "status": "PASS",
+  "source_commit": "3efa0393861c0dcddab7bd74e6d12e5ec483e7b1",
+  "evidence_boundary": "Actual packaged native Windows runtime owner, fresh PostgreSQL/backend; no WebView2 interaction or simulated host authentication",
+  "start_utc": "2026-10-07T10:17:02.363129+00:00",
+  "python": "3.12.9 (tags/v3.12.9:fdb8142, Feb  4 2025, 15:27:58) [MSC v.1942 64 bit (AMD64)]",
+  "application": "D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\candidate-application-package-3efa039\\Application",
+  "sandbox": "D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\candidate-package-backend-probe-3efa039",
+  "host_bootstrap_exchange": "NOT RUN",
+  "webview2_interaction": "NOT RUN",
+  "public_runtime_metadata": {
+    "application_version": "0.7.0",
+    "packaged_windows_mode": true,
+    "user_data_root": "D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\candidate-package-backend-probe-3efa039\\localappdata\\AI-Novel-Studio\\UserData",
+    "postgresql_data_root": "D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\candidate-package-backend-probe-3efa039\\localappdata\\AI-Novel-Studio\\UserData\\PostgreSQL",
+    "logs_root": "D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\candidate-package-backend-probe-3efa039\\localappdata\\AI-Novel-Studio\\Logs",
+    "runtime_root": "D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\candidate-package-backend-probe-3efa039\\localappdata\\AI-Novel-Studio\\Runtime",
+    "database_port": 61031,
+    "backend_port": 61032
+  },
+  "health": {
+    "status": 200,
+    "version": "0.7.0"
+  },
+  "frontend_index": {
+    "status": 200,
+    "bytes": 326,
+    "sha256": "f2701b44574b6c8fa6f58098c21ed33a6da7a1d7c805a8fad2bba3f767250a14",
+    "exact_staged_bytes": true
+  },
+  "frontend_assets": [
+    {
+      "path": "/assets/index-0JT3DZKm.js",
+      "status": 200,
+      "bytes": 30102,
+      "sha256": "45b76a50830b64dca8adf9cdeb08595ad2cc192d3e96b01057b8a498a99dd452",
+      "exact_staged_bytes": true
+    },
+    {
+      "path": "/assets/react-vendor-D3pO_op5.js",
+      "status": 200,
+      "bytes": 142976,
+      "sha256": "35539930060cd39417338afc8940bb1213d8d1dff683e25a6eb15291f8adfae9",
+      "exact_staged_bytes": true
+    },
+    {
+      "path": "/assets/query-vendor-CUnTvSIi.js",
+      "status": 200,
+      "bytes": 45602,
+      "sha256": "1fc0a3c6574061fdc18929187fdf6b0d00ab3c003918530126100a762e69a97b",
+      "exact_staged_bytes": true
+    },
+    {
+      "path": "/assets/index-Cj-tLRQ5.css",
+      "status": 200,
+      "bytes": 32292,
+      "sha256": "5399d8df3be57bb061fb8c48846d79c359846f844e18b776c58f2de48c58ade7",
+      "exact_staged_bytes": true
+    }
+  ],
+  "protected_unauthenticated": {
+    "path": "/local-session",
+    "status": 401
+  },
+  "cleanup_state": "STOPPED",
+  "all_children_stopped": true,
+  "elapsed_seconds": 15.25,
+  "end_utc": "2026-10-07T10:17:17.611144+00:00",
+  "events": [
+    "mutex.acquired",
+    "directories.validated",
+    "ports.reserved",
+    "port.released:postgresql",
+    "job.assigned:postgresql",
+    "ownership.validated:postgresql",
+    "ready:postgresql",
+    "port.released:backend",
+    "job.assigned:backend",
+    "ownership.validated:backend",
+    "ready:backend",
+    "runtime.ready",
+    "actions.blocked",
+    "shutdown.requested:backend",
+    "stopped:backend",
+    "shutdown.requested:postgresql",
+    "stopped:postgresql",
+    "metadata.cleared",
+    "job.closed",
+    "mutex.released"
+  ]
+}

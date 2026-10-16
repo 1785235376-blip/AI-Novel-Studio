@@ -1,0 +1,18 @@
+{
+  "status": "INVENTORY_AND_SOURCE_INTEGRITY_ONLY",
+  "tests_executed": false,
+  "unchanged_reconciler_accepts_manifest": true,
+  "all_current_source_hashes_match": true,
+  "product_nodes": 9427,
+  "baseline_nodes": 9151,
+  "added_nodes": 276,
+  "interop_nodes": 413,
+  "historical_skip_maps_unchanged": true,
+  "all_historical_source_entries_preserved": true,
+  "untracked_fixture_runtime_artifacts_excluded": true,
+  "generated_fixture_runtime_files_left_untouched": true,
+  "current_api_catalog_hashes_verified": true,
+  "source_file_count": 1654,
+  "historical_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "v2_manifest_sha256": "0e7752f63562b80dffeb6c058c0802c9f5df6b763a07c2a7a2d9f2d4d9419000"
+}

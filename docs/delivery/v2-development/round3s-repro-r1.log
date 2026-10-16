@@ -1,0 +1,9 @@
+OK + invalid ff, full read             state=COMPLETE    expected=UNDECODABLE value='OK'  MISMATCH
+OK + truncated CJK, full read          state=COMPLETE    expected=UNDECODABLE value='OK'  MISMATCH
+OK + invalid ff + X, limit 3           state=TRUNCATED   expected=UNDECODABLE value='OK'  MISMATCH
+valid CJK cut at boundary, limit 4     state=TRUNCATED   expected=TRUNCATED   value='OK'  OK
+valid full body                        state=COMPLETE    expected=COMPLETE    value='OK中X'  OK
+interior invalid byte                  state=UNDECODABLE expected=UNDECODABLE value=None  OK
+emoji cut at boundary                  state=TRUNCATED   expected=TRUNCATED   value='OK'  OK
+zero length                            state=COMPLETE    expected=COMPLETE    value=''  OK
+MISMATCHES: 3

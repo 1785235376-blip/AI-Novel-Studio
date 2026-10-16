@@ -1,0 +1,246 @@
+{
+  "baseline_head": "454ccd89499e3840d18622e8b6ec2669c17702c4",
+  "status": "PREPARE_SOURCE_READY",
+  "sources": {
+    "frontend/src/App.tsx": {
+      "sha256": "f8b38726789f1ac5f4b4c20723487e70e366404623473b7a9fcee8b3d1de2212",
+      "bytes": 162531,
+      "crlf": 0
+    },
+    "frontend/src/creative/CreativeWorkspace.tsx": {
+      "sha256": "5cda949edec0d5fd3fcd4ba28154eafc214108875708e650199da48afc637f8e",
+      "bytes": 35489,
+      "crlf": 0
+    },
+    "frontend/src/creative/CreativeCanvas.tsx": {
+      "sha256": "e03fb5e1a000233b873475bc7bea459843b60aef1490842f27f6597db70dfc92",
+      "bytes": 23263,
+      "crlf": 0
+    },
+    "frontend/src/creative/CreativeWorkspace.saveState.regression.test.tsx": {
+      "sha256": "dd3604e0027566d9d79cccb71043ac982985cbfaf072276016b838958b299444",
+      "bytes": 27805,
+      "crlf": 0
+    },
+    "frontend/src/creative/CreativeWorkspace.productionSaveState.regression.test.tsx": {
+      "sha256": "dba1f85aa973323d3bd5e9e3a497d3f42531f9898236ba81988abc7547ec3bcd",
+      "bytes": 3675,
+      "crlf": 0
+    }
+  },
+  "new_mounted_nodes": 27,
+  "related_nodes": 99,
+  "tsc": "PASS",
+  "runs": [
+    {
+      "label": "creative-save-mounted-red-r1",
+      "total": 12,
+      "passed": 3,
+      "failed": 9,
+      "json_sha256": "d1cb774718a92081970d8d01b0dbc3bb65cf42aa3315317147ff2f0a33059d85",
+      "failed_tests": [
+        {
+          "name": "Creative current document save-state ownership projects the current saved Creative version instead of an unrelated novel loading status",
+          "first_failure": "AssertionError: expected '正文：正在打开章节… · V2 STORYBOARD · 无未保存创作草稿' not to contain '正文：正在打开章节…'"
+        },
+        {
+          "name": "Creative current document save-state ownership returns to clean only after a real title edit is restored exactly to the saved payload",
+          "first_failure": "TestingLibraryElementError: Unable to find an element with the text: 已保存 · v1. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible."
+        },
+        {
+          "name": "Creative current document save-state ownership does not invent a content change for equivalent numeric editing",
+          "first_failure": "TestingLibraryElementError: Unable to find an element with the text: 已保存 · v1. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible."
+        },
+        {
+          "name": "Creative current document save-state ownership uses the original optional-field projection when an added visual target is explicitly removed",
+          "first_failure": "TestingLibraryElementError: Found multiple elements with the role \"button\" and name \"移除此文档视觉目标\""
+        },
+        {
+          "name": "Creative current document save-state ownership names other-stage real dirty drafts while preserving the saved current document and the original exit guard",
+          "first_failure": "AssertionError: expected '正文：正在打开章节… · V2 STORYBOARD · 1 份草稿未保存…' to contain '当前分镜：已保存 · v1'"
+        },
+        {
+          "name": "Creative current document save-state ownership adopts the actual normalized server response as both input and CAS base after saving",
+          "first_failure": "AssertionError: expected '正文：正在打开章节… · V2 STORYBOARD · 无未保存创作草稿' to contain '当前分镜：已保存 · v3'"
+        },
+        {
+          "name": "Creative current document save-state ownership identifies a real pending save and fences repeated clicks until its original response arrives",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"status\" and name \"当前创作文档保存状态\""
+        },
+        {
+          "name": "Creative current document save-state ownership keeps the exact draft blocked after network failure until explicit original-server adoption",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"status\" and name \"当前创作文档保存状态\""
+        },
+        {
+          "name": "Creative current document save-state ownership keeps the exact draft blocked after conflict failure until explicit original-server adoption",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"status\" and name \"当前创作文档保存状态\""
+        }
+      ]
+    },
+    {
+      "label": "creative-save-mounted-green-r1",
+      "total": 12,
+      "passed": 11,
+      "failed": 1,
+      "json_sha256": "49e01bfec8b9f6594b9c5ef9773ac073b6a5f7e1a87a68d1194efc06517b166b",
+      "failed_tests": [
+        {
+          "name": "Creative current document save-state ownership uses the original optional-field projection when an added visual target is explicitly removed",
+          "first_failure": "TestingLibraryElementError: Found multiple elements with the role \"button\" and name \"移除此文档视觉目标\""
+        }
+      ]
+    },
+    {
+      "label": "creative-save-mounted-green-r2",
+      "total": 12,
+      "passed": 12,
+      "failed": 0,
+      "json_sha256": "245b1eba549e13be61b271eb7da5ec4983a51a15887d1b7ec68307ece2797e2c",
+      "failed_tests": []
+    },
+    {
+      "label": "creative-save-operation-red-r1",
+      "total": 24,
+      "passed": 20,
+      "failed": 4,
+      "json_sha256": "63bf41cc63c59f0a566c1d225054d8e6b73523004a06c513ca6a357023ed29c5",
+      "failed_tests": [
+        {
+          "name": "Creative current document save-state ownership distinguishes a pending original derive operation from saving the current document",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        },
+        {
+          "name": "Creative current document save-state ownership distinguishes a pending reviewed history restore and adopts only its original versioned response",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        },
+        {
+          "name": "Creative current document save-state ownership does not call a pending Director proposal a document save",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        },
+        {
+          "name": "Creative current document save-state ownership does not label explicit server verification as saving or silently replace the blocked draft",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        }
+      ]
+    },
+    {
+      "label": "creative-save-operation-red-r2",
+      "total": 25,
+      "passed": 20,
+      "failed": 5,
+      "json_sha256": "4b20e4e1fbc86817684515658429199709978630eb945f8af90b144832745e41",
+      "failed_tests": [
+        {
+          "name": "keeps real production dirty protection without labelling an unsubmitted production draft as saving",
+          "first_failure": "TypeError: Cannot read properties of undefined (reading 'cpu')"
+        },
+        {
+          "name": "Creative current document save-state ownership distinguishes a pending original derive operation from saving the current document",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        },
+        {
+          "name": "Creative current document save-state ownership distinguishes a pending reviewed history restore and adopts only its original versioned response",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        },
+        {
+          "name": "Creative current document save-state ownership does not call a pending Director proposal a document save",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        },
+        {
+          "name": "Creative current document save-state ownership does not label explicit server verification as saving or silently replace the blocked draft",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        }
+      ]
+    },
+    {
+      "label": "creative-save-operation-red-r3",
+      "total": 25,
+      "passed": 20,
+      "failed": 5,
+      "json_sha256": "604c54877319ef27b440665d3998eb403dd53df68177abaa2dc8788995357929",
+      "failed_tests": [
+        {
+          "name": "keeps real production dirty protection without labelling an unsubmitted production draft as saving",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        },
+        {
+          "name": "Creative current document save-state ownership distinguishes a pending original derive operation from saving the current document",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        },
+        {
+          "name": "Creative current document save-state ownership distinguishes a pending reviewed history restore and adopts only its original versioned response",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        },
+        {
+          "name": "Creative current document save-state ownership does not call a pending Director proposal a document save",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        },
+        {
+          "name": "Creative current document save-state ownership does not label explicit server verification as saving or silently replace the blocked draft",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        }
+      ]
+    },
+    {
+      "label": "creative-save-owner-boundary-red-r1",
+      "total": 27,
+      "passed": 20,
+      "failed": 7,
+      "json_sha256": "af7b88dc04e830015998288a37aa27f2a2d0397ecdc23a5449b36543ff23076a",
+      "failed_tests": [
+        {
+          "name": "keeps real production dirty protection without labelling an unsubmitted production draft as saving",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        },
+        {
+          "name": "Creative current document save-state ownership reports an actual save ahead of an older pending list and preserves its server-normalized draft",
+          "first_failure": "AssertionError: expected '当前剧本：正在核对创作文档与权限…' to be '当前剧本：保存中…' // Object.is equality"
+        },
+        {
+          "name": "Creative current document save-state ownership does not attach a late verification candidate to a different clean document after an uncertain derive",
+          "first_failure": "AssertionError: expected <section …(2)>…(6)</section> to be null"
+        },
+        {
+          "name": "Creative current document save-state ownership distinguishes a pending original derive operation from saving the current document",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        },
+        {
+          "name": "Creative current document save-state ownership distinguishes a pending reviewed history restore and adopts only its original versioned response",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        },
+        {
+          "name": "Creative current document save-state ownership does not call a pending Director proposal a document save",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        },
+        {
+          "name": "Creative current document save-state ownership does not label explicit server verification as saving or silently replace the blocked draft",
+          "first_failure": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"保存草稿\""
+        }
+      ]
+    },
+    {
+      "label": "creative-save-owner-boundary-green-r1",
+      "total": 27,
+      "passed": 27,
+      "failed": 0,
+      "json_sha256": "dcc2c6cd9dfad469d219f273b17cbb45142d70108d5012de5da48dcf0eef74b4",
+      "failed_tests": []
+    },
+    {
+      "label": "creative-save-related-green-r1",
+      "total": 99,
+      "passed": 99,
+      "failed": 0,
+      "json_sha256": "a427219495cb3b665c485b5ecc5bde7a8c148063f2c6c024c16290b5af3b1cfe",
+      "failed_tests": []
+    }
+  ],
+  "runtime_acceptance": "NOT_RUN_BY_THIS_AGENT; security owner runs after global freeze",
+  "unchanged_old_test_sources": [
+    "frontend/src/creative/CreativeWorkspace.test.tsx",
+    "frontend/src/creative/CreativeWorkspace.adoptionCommitRace.test.tsx",
+    "frontend/src/creative/CreativeProductionCanvas.test.tsx",
+    "frontend/src/AppModuleNavigationIntent.test.tsx",
+    "frontend/src/AppLocalEntryAuthorityRace.test.tsx"
+  ]
+}

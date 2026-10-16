@@ -1,0 +1,25 @@
+{
+  "status": "dependency-download-failed",
+  "package": "@playwright/test",
+  "locked_version": "1.62.1",
+  "browser": "chromium-headless-shell",
+  "browser_revision": "1234",
+  "browser_version": "151.0.7922.34",
+  "official_url": "https://cdn.playwright.dev/builds/cft/151.0.7922.34/linux64/chrome-headless-shell-linux64.zip",
+  "cache": ".runtime/v2-headless-shell/cache",
+  "binary_ready": false,
+  "install_command": "node node_modules/@playwright/test/cli.js install chromium --only-shell",
+  "install_exit_code": 1,
+  "failure": "Official installer downloaded an unusable/truncated archive, reporting zero MiB and missing ZIP central-directory signature across its built-in retries.",
+  "reviewer_denied": false,
+  "security_settings_changed": false,
+  "full_chromium_retried": false,
+  "live_suite_attempted_with_shell": false,
+  "geometry_suite_attempted_with_shell": false,
+  "source_sha256": {
+    "frontend/playwright.v2-live.config.ts": "dbbf62ee540feed65c69e7cd1a16d732220c240b0b016b868de24e91bfc14a36",
+    "frontend/tests/e2e/v2-creative-live.spec.ts": "4a604e3e5424cefe9cd3f3805009c81b03f674a1847554aa9188c3f12600b18f",
+    "frontend/playwright.creative.config.ts": "9f8e1261645fdd023dbc3d34b1bc88c0bcc094c1bc66e82929437c3cf5d7c522",
+    "frontend/tests/visual/creative-workbench.spec.ts": "1a1f0bb43245b070db513c351928f046db93c441d8f42f74d48446acb508cb6a"
+  }
+}

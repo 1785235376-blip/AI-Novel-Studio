@@ -1,0 +1,78 @@
+{
+  "archived_at": "2026-10-16T17:29:30.230643+00:00",
+  "old_implementation_head": "6aed517611117771d767eb275a54773b24ba0300",
+  "current_head": "6aed517611117771d767eb275a54773b24ba0300",
+  "operation": "byte-identical copy before latest collection/manifest refresh; originals and failure evidence retained",
+  "files": [
+    {
+      "source": "docs/delivery/v2-r3-adoption-ui-20261017/collection-first.json",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/collection-first.json",
+      "sha256": "3e53b6cebf46b8d4e5a612d4b34edabdd5504be943669d0043fbb8eab3d5e3bd"
+    },
+    {
+      "source": "docs/delivery/v2-r3-adoption-ui-20261017/collection-first-rows.json.gz",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/collection-first-rows.json.gz",
+      "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+    },
+    {
+      "source": "docs/delivery/v2-r3-adoption-ui-20261017/collection-confirmation.json",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/collection-confirmation.json",
+      "sha256": "bf4410243fb11e347a3715c2b1981d8a338bd81f724c9f98ed6eaa6378ff1aa2"
+    },
+    {
+      "source": "docs/delivery/v2-r3-adoption-ui-20261017/collection-confirmation-rows.json.gz",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/collection-confirmation-rows.json.gz",
+      "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+    },
+    {
+      "source": "docs/delivery/v2-r3-adoption-ui-20261017/collection-delta-final.json",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/collection-delta-final.json",
+      "sha256": "00e1aa0afd0c89c2db10193189f49a71966b75252e29d04a8aa3ea473d4921f1"
+    },
+    {
+      "source": "docs/delivery/v2-r3-adoption-ui-20261017/source-git-binding-final.json",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/source-git-binding-final.json",
+      "sha256": "a0bae784e375270cf77be1f73fc8533ec7308c0f2fcfce228999aeaabb67b357"
+    },
+    {
+      "source": "docs/delivery/v2-r3-adoption-ui-20261017/manifest-source-git-binding-final.json",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/manifest-source-git-binding-final.json",
+      "sha256": "b8a3eab4498ec9a38d008ab46ce402a8c0b33d2956a566c9f11b7d995cff9883"
+    },
+    {
+      "source": "docs/delivery/v2-r3-adoption-ui-20261017/FINAL_SOURCE_PROVENANCE_REVIEW.md",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/FINAL_SOURCE_PROVENANCE_REVIEW.md",
+      "sha256": "08e9f99a0faa7e0ed09acaf93579f890741331be910207fd411073a67c7bdf23"
+    },
+    {
+      "source": "docs/delivery/v2-r3-adoption-ui-20261017/FINAL_SOURCE_PROVENANCE_REVIEW_DETAILS.json",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/FINAL_SOURCE_PROVENANCE_REVIEW_DETAILS.json",
+      "sha256": "718e8461435886b68a56eb0288514321302a8d8e614e347750f0b01a83b6083c"
+    },
+    {
+      "source": "docs/delivery/v2-development/r3-adoption-ui-collection-final-r1.json",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/r3-adoption-ui-collection-final-r1.json",
+      "sha256": "b1e0786ca548566f9610ed904852d0513910dd788d09864adeac2190cdf9c2d4"
+    },
+    {
+      "source": "docs/delivery/v2-development/r3-adoption-ui-collection-final-r1.log",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/r3-adoption-ui-collection-final-r1.log",
+      "sha256": "fcea8e6ff4f8bc471f359871fd53ad5a64be5448bc17f81b87fe79dacd972866"
+    },
+    {
+      "source": "docs/delivery/v2-development/r3-adoption-ui-collection-confirmation-r1.json",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/r3-adoption-ui-collection-confirmation-r1.json",
+      "sha256": "6e4740469b16c52cce556a74506130a930de5fc96e88dcc325a2cb94db1de3eb"
+    },
+    {
+      "source": "docs/delivery/v2-development/r3-adoption-ui-collection-confirmation-r1.log",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/r3-adoption-ui-collection-confirmation-r1.log",
+      "sha256": "8fd1137207539a3c603802f96ebdb5697e7ea88937073f25cdeb74cf9920ede6"
+    },
+    {
+      "source": ".github/ci/coverage_manifest_v2.json.gz",
+      "archive": "docs/delivery/v2-r3-adoption-ui-20261017/history/6aed517-collection-r1/coverage_manifest_v2.json.gz",
+      "sha256": "2f2d2bb16c6159579ba4d051dc139147e17cf821ddbe783985d4bb4069b0b1c2"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "commit_base": "fe4d2505ade9a161689313dea50555408ba4b511",
+  "command": "node node_modules/@playwright/test/cli.js test --config playwright.v2-live.config.ts --grep \"real HTTP\" --repeat-each=2",
+  "run_start": "2026-10-09T07:39:32.772Z",
+  "duration_ms": 17466.419,
+  "passed": 6,
+  "failed": 0,
+  "skipped": 0,
+  "verification_boundary": "HTTP/File only through real Vite and uvicorn; synthetic data; no browser rendering or model inference",
+  "captured_at": "2026-10-09T07:41:24.483314+00:00",
+  "sources": {
+    "frontend/playwright.v2-live.config.ts": {
+      "sha256": "dbbf62ee540feed65c69e7cd1a16d732220c240b0b016b868de24e91bfc14a36",
+      "file_modified_at": "2026-10-09T04:59:53.464853+00:00",
+      "basis": "Current file; live test/config unchanged since original isolation patch"
+    },
+    "frontend/tests/e2e/v2-creative-live.spec.ts": {
+      "sha256": "732794dde5a1e64734578956dcbb061f15d6ef3110f87b07cf7a71a07927336d",
+      "file_modified_at": "2026-10-09T07:28:12.260048+00:00",
+      "basis": "Current file; live test/config unchanged since original isolation patch"
+    },
+    "app/creative/service.py": {
+      "sha256": "5ce1d0f12b44b934dfc347dc68fb7d067f4702522f0a9190a84f5efb6320e29b",
+      "file_modified_at": "2026-10-09T07:37:15.271820+00:00",
+      "basis": "Current first-fix file; compare mtime with run start to establish snapshot identity"
+    },
+    "app/creative/proposals.py": {
+      "sha256": "4e8b93d2408b214165b01beda496b9dfbfee2b0bd400c414b2794da20262fd96",
+      "file_modified_at": "2026-10-09T07:37:15.272037+00:00",
+      "basis": "Current first-fix file; compare mtime with run start to establish snapshot identity"
+    },
+    "app/creative/project_store.py": {
+      "sha256": "4468d2a89ccda2f1a5a805acf43745404866a619a5e928d063f8438a6ba1ee0e",
+      "file_modified_at": "2026-10-09T07:37:15.256041+00:00",
+      "basis": "Current first-fix file; compare mtime with run start to establish snapshot identity"
+    }
+  }
+}

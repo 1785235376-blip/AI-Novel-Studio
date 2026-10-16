@@ -1,0 +1,23 @@
+{
+  "scope": "local owned-profile original real two-process TCP tests; not hosted GitHub producer identity",
+  "status": "PASS",
+  "passed": 2,
+  "skipped": 0,
+  "failures": 0,
+  "errors": 0,
+  "pytest_seconds": 28.04,
+  "nodeids": [
+    "tests/test_r5_offline_sync_tcp.py::test_two_isolated_tcp_endpoints_add_edit_conflict_disconnect_replay_tombstone_and_revocation",
+    "tests/test_r5_offline_sync_tcp.py::test_two_isolated_tcp_endpoints_stale_dispatch_selective_withdrawal_and_fresh_baseline"
+  ],
+  "head": "99e3c636bc59f45f5faa4b7af84b80981f1ec2e5",
+  "source_manifest_sha256": "df72d854d942b0759b9d02229c33523bb1dd11470dd95c5c12a405a73c9a66ab",
+  "source_count": 1661,
+  "source_files_match_final_v2_manifest": true,
+  "sources_changed_during_check": false,
+  "original_reconciler_tcp_junit_validation": "PASS",
+  "receipt_sha256": "08066b56eef7743518c0edfe9b38f2a75649fe05e71af6f08180c9ddd526c089",
+  "raw_junit_sha256": "16a6d4a13654f2d5232bd8b1871b6fee63d46442c7d41e19fa783e65cf2b0e67",
+  "raw_log_sha256": "5c21caf3f16168bef2baf5730b3aa436b243e4146ec2d66380c82357bb761a68",
+  "hosted_producer_and_join": "PENDING_NEW_EXACT_SOURCE_CI"
+}

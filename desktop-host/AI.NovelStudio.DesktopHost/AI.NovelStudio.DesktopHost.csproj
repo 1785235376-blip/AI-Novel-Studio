@@ -11,4 +11,16 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3537.50" />
   </ItemGroup>
+  <!-- WebView2's Common.targets adds the WPF wrapper to all .NET 5+ projects.
+       This WinForms host does not use WPF; its unused wrapper otherwise pulls
+       in a conflicting WindowsBase reference. Remove only that reference,
+       after package imports and before assembly resolution, without hiding warnings. -->
+  <Target Name="RemoveUnusedWebView2WpfReference"
+          BeforeTargets="ResolveAssemblyReferences"
+          Condition="'$(UseWPF)' != 'true'">
+    <ItemGroup>
+      <Reference Remove="@(Reference)"
+                 Condition="'%(Reference.Filename)' == 'Microsoft.Web.WebView2.Wpf'" />
+    </ItemGroup>
+  </Target>
 </Project>

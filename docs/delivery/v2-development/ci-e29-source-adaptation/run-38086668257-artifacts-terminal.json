@@ -1,0 +1,65 @@
+{
+  "total_count": 3,
+  "artifacts": [
+    {
+      "id": 11682388302,
+      "node_id": "MDg6QXJ0aWZhY3QxMTY4MjM4ODMwMg==",
+      "name": "named-pipe-reference-e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "size_in_bytes": 1762,
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11682388302",
+      "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11682388302/zip",
+      "expired": false,
+      "digest": "sha256:e9d98c29b5bd15dd0b5cdb504dd7c5d001a9652e1b011d6525ea4a968d618110",
+      "created_at": "2026-10-10T21:12:36Z",
+      "updated_at": "2026-10-10T21:12:36Z",
+      "expires_at": "2026-10-24T21:12:36Z",
+      "workflow_run": {
+        "id": 38086668257,
+        "repository_id": 1347017268,
+        "head_repository_id": 1347017268,
+        "head_branch": "feature/v2-narrative-platform",
+        "head_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6"
+      }
+    },
+    {
+      "id": 11682359425,
+      "node_id": "MDg6QXJ0aWZhY3QxMTY4MjM1OTQyNQ==",
+      "name": "local-interop-postgres-e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "size_in_bytes": 41565,
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11682359425",
+      "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11682359425/zip",
+      "expired": false,
+      "digest": "sha256:38d3f4a2e547f200791f86ffe118fef0b160ad66c3cbba0c51d86ffcd49cfd34",
+      "created_at": "2026-10-10T21:22:18Z",
+      "updated_at": "2026-10-10T21:22:18Z",
+      "expires_at": "2026-10-24T21:22:17Z",
+      "workflow_run": {
+        "id": 38086668257,
+        "repository_id": 1347017268,
+        "head_repository_id": 1347017268,
+        "head_branch": "feature/v2-narrative-platform",
+        "head_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6"
+      }
+    },
+    {
+      "id": 11682308375,
+      "node_id": "MDg6QXJ0aWZhY3QxMTY4MjMwODM3NQ==",
+      "name": "local-interop-file-e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6",
+      "size_in_bytes": 41554,
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11682308375",
+      "archive_download_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/actions/artifacts/11682308375/zip",
+      "expired": false,
+      "digest": "sha256:5dbe8b4734cb1c169ffd824fe8a16b4a31f6848f209272fca0a5a1f0459a0b32",
+      "created_at": "2026-10-10T21:12:44Z",
+      "updated_at": "2026-10-10T21:12:44Z",
+      "expires_at": "2026-10-24T21:12:43Z",
+      "workflow_run": {
+        "id": 38086668257,
+        "repository_id": 1347017268,
+        "head_repository_id": 1347017268,
+        "head_branch": "feature/v2-narrative-platform",
+        "head_sha": "e29e4329c895e72a79c7c1c2a40a8efcbb90f4d6"
+      }
+    }
+  ]
+}

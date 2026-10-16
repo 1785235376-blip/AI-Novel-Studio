@@ -1,0 +1,34 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ❯ src/creative/GraphModelExecutionPanel.test.tsx (18 tests | 1 failed) 1444ms
+   × explicit local graph model execution UI > keeps the exact model-route label stable with populated options and explicit route changes 101ms
+     → expected null to be '本地文字模型路由' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 17 passed (18)
+   Start at  01:07:02
+   Duration  3.29s (transform 313ms, setup 0ms, collect 569ms, tests 1.44s, environment 769ms, prepare 133ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/GraphModelExecutionPanel.test.tsx > explicit local graph model execution UI > keeps the exact model-route label stable with populated options and explicit route changes
+AssertionError: expected null to be '本地文字模型路由' // Object.is equality
+
+- Expected: 
+"本地文字模型路由"
+
++ Received: 
+null
+
+ ❯ namedRoute src/creative/GraphModelExecutionPanel.test.tsx:60:49
+     58|       // Playwright's exact label fallback includes nested option text…
+     59|       // explicit DOM contract protects the browser locator; jsdom is …
+     60|       expect(select.getAttribute('aria-label')).toBe(name);
+       |                                                 ^
+     61|       expect(select.labels?.[0]?.firstChild?.textContent).toBe(name);
+     62|       expect(screen.getByRole('combobox', { name })).toBe(select);
+ ❯ src/creative/GraphModelExecutionPanel.test.tsx:66:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

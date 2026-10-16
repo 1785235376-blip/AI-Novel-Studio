@@ -35,10 +35,33 @@ class HostHardwareInventoryError(RuntimeError):
 
 @dataclass(frozen=True)
 class HostGpuFact:
-    """Vendor and dedicated memory from one enumerated DXGI hardware adapter."""
+    """One physical GPU, with the identity of the adapter that proved it.
+
+    DXGI can expose a single physical GPU as several adapters — an indirect or
+    virtual display attached to that GPU does exactly that — so the raw adapter
+    identity is kept here rather than collapsed on sight. ``adapter_luid`` and
+    ``hardware_id`` are what make an alias **explainable** instead of silently
+    deduplicated.
+    """
 
     pci_vendor_id: int
     dedicated_vram_bytes: int | None
+    name: str = ""  # Display-only DXGI description; never used to infer vendor or memory.
+    device_id: int = 0
+    subsystem_id: int = 0
+    revision: int = 0
+    adapter_luid: str = ""
+
+    @property
+    def device_signature(self) -> tuple[int, int, int, int]:
+        """What identifies the physical device behind an adapter instance."""
+        return (self.pci_vendor_id, self.device_id, self.subsystem_id, self.revision)
+
+    @property
+    def hardware_id(self) -> str:
+        """The PnP hardware ID of this device, as Windows spells it."""
+        return (f"PCI\\VEN_{self.pci_vendor_id:04X}&DEV_{self.device_id:04X}"
+                f"&SUBSYS_{self.subsystem_id:08X}&REV_{self.revision:02X}")
 
 
 @dataclass(frozen=True)
@@ -48,6 +71,7 @@ class HostHardwareFacts:
     architecture: str
     physical_ram_bytes: int
     gpus: tuple[HostGpuFact, ...] | None
+    gpu_enumeration: dict[str, Any] | None = None
 
 
 _ARCHITECTURE_ALIASES = {
@@ -193,6 +217,169 @@ def serialize_host_hardware_snapshot(snapshot: HardwareSnapshot) -> dict[str, An
     }
 
 
+def present_display_hardware_ids() -> tuple[str, ...] | None:
+    """Hardware IDs of display devices that are present **and started** (passive).
+
+    Uses SetupAPI and cfgmgr32 only: no process is created, nothing is written and
+    no network is touched. The result is a **tuple, not a set**, because two
+    identical physical GPUs are two present devices and must stay countable — a set
+    would collapse them and hide a real second GPU. ``None`` means "could not
+    confirm", which callers must treat as unverified rather than as "there are no
+    devices"; that distinction is what stops an alias being collapsed on a guess.
+    """
+    if sys.platform != "win32":
+        return None
+    try:
+        import ctypes
+        from ctypes import wintypes
+
+        class Guid(ctypes.Structure):
+            _fields_ = [
+                ("Data1", wintypes.DWORD), ("Data2", wintypes.WORD),
+                ("Data3", wintypes.WORD), ("Data4", ctypes.c_ubyte * 8),
+            ]
+
+        class DeviceInfo(ctypes.Structure):
+            _fields_ = [
+                ("cbSize", wintypes.DWORD), ("ClassGuid", Guid),
+                ("DevInst", wintypes.DWORD), ("Reserved", ctypes.c_void_p),
+            ]
+
+        setupapi = ctypes.WinDLL("setupapi", use_last_error=True)
+        cfgmgr32 = ctypes.WinDLL("cfgmgr32", use_last_error=True)
+        class_guid = Guid.from_buffer_copy(
+            UUID("4d36e968-e325-11ce-bfc1-08002be10318").bytes_le  # GUID_DEVCLASS_DISPLAY
+        )
+        DIGCF_PRESENT = 0x2
+        SPDRP_HARDWAREID = 0x1  # 0x0 is SPDRP_DEVICEDESC; reading that yields descriptions
+        DN_STARTED = 0x8
+        invalid = 0xFFFFFFFFFFFFFFFF
+        setupapi.SetupDiGetClassDevsW.restype = ctypes.c_void_p
+        setupapi.SetupDiGetClassDevsW.argtypes = [
+            ctypes.POINTER(Guid), wintypes.LPCWSTR, wintypes.HWND, wintypes.DWORD,
+        ]
+        raw = setupapi.SetupDiGetClassDevsW(ctypes.byref(class_guid), None, None, DIGCF_PRESENT)
+        if not raw or raw == invalid:
+            return None
+        # A c_void_p restype comes back as a Python int; re-wrap it, or a 64-bit
+        # handle would be truncated to 32 bits on the way back into the API.
+        device_set = ctypes.c_void_p(raw)
+        setupapi.SetupDiEnumDeviceInfo.argtypes = [
+            ctypes.c_void_p, wintypes.DWORD, ctypes.POINTER(DeviceInfo),
+        ]
+        setupapi.SetupDiEnumDeviceInfo.restype = wintypes.BOOL
+        setupapi.SetupDiGetDeviceRegistryPropertyW.argtypes = [
+            ctypes.c_void_p, ctypes.POINTER(DeviceInfo), wintypes.DWORD,
+            ctypes.POINTER(wintypes.DWORD), ctypes.c_void_p, wintypes.DWORD,
+            ctypes.POINTER(wintypes.DWORD),
+        ]
+        setupapi.SetupDiGetDeviceRegistryPropertyW.restype = wintypes.BOOL
+        setupapi.SetupDiDestroyDeviceInfoList.argtypes = [ctypes.c_void_p]
+        cfgmgr32.CM_Get_DevNode_Status.argtypes = [
+            ctypes.POINTER(wintypes.ULONG), ctypes.POINTER(wintypes.ULONG),
+            wintypes.DWORD, wintypes.ULONG,
+        ]
+        cfgmgr32.CM_Get_DevNode_Status.restype = wintypes.ULONG
+        try:
+            found: list[str] = []
+            index = 0
+            while True:
+                info = DeviceInfo()
+                info.cbSize = ctypes.sizeof(info)
+                if not setupapi.SetupDiEnumDeviceInfo(device_set, index, ctypes.byref(info)):
+                    break
+                index += 1
+                status, problem = wintypes.ULONG(), wintypes.ULONG()
+                if cfgmgr32.CM_Get_DevNode_Status(
+                    ctypes.byref(status), ctypes.byref(problem), info.DevInst, 0
+                ) != 0:
+                    continue
+                # A ghost or disabled adapter is not a present device.
+                if not status.value & DN_STARTED:
+                    continue
+                needed = wintypes.DWORD()
+                setupapi.SetupDiGetDeviceRegistryPropertyW(
+                    device_set, ctypes.byref(info), SPDRP_HARDWAREID, None, None, 0,
+                    ctypes.byref(needed),
+                )
+                if not needed.value or needed.value % 2:
+                    continue
+                buffer = ctypes.create_unicode_buffer(needed.value // 2)
+                if not setupapi.SetupDiGetDeviceRegistryPropertyW(
+                    device_set, ctypes.byref(info), SPDRP_HARDWAREID, None,
+                    ctypes.cast(buffer, ctypes.c_void_p), needed.value,
+                    ctypes.byref(needed),
+                ):
+                    continue
+                # Appended, never de-duplicated: two identical GPUs are two devices.
+                for value in buffer[: needed.value // 2].split("\x00"):
+                    if value:
+                        found.append(value.upper())
+            return tuple(found)
+        finally:
+            setupapi.SetupDiDestroyDeviceInfoList(device_set)
+    except Exception:
+        return None
+
+
+def resolve_physical_gpus(
+    adapters: tuple[HostGpuFact, ...],
+    present_hardware_ids: tuple[str, ...] | None,
+) -> tuple[tuple[HostGpuFact, ...], dict[str, Any]]:
+    """Turn enumerated DXGI adapters into physical devices, and disclose the aliases.
+
+    Adapters sharing a device signature are the same physical device *when the OS
+    confirms exactly one present device with that hardware ID*; then — and only
+    then — the extras are recorded as aliases and collapsed. Any other outcome
+    keeps every adapter, so genuinely multiple identical GPUs stay multiple and an
+    unreadable presence inventory fails closed instead of guessing. Nothing is
+    dropped silently: the diagnostics record both counts and every LUID.
+    """
+    groups: dict[tuple[int, int, int, int], list[HostGpuFact]] = {}
+    for adapter in adapters:
+        groups.setdefault(adapter.device_signature, []).append(adapter)
+
+    devices: list[HostGpuFact] = []
+    aliased = 0
+    unresolved: list[str] = []
+    present_counts: dict[str, int] = {}
+    for group in groups.values():
+        if len(group) == 1:
+            devices.append(group[0])
+            continue
+        hardware_id = group[0].hardware_id
+        present = None if present_hardware_ids is None else sum(
+            1 for value in present_hardware_ids if value == hardware_id
+        )
+        present_counts[hardware_id] = -1 if present is None else present
+        if present == 1:
+            # Exactly one present device with this signature: the extra adapters
+            # are aliases of it, so this is one physical GPU.
+            devices.append(group[0])
+            aliased += len(group) - 1
+        elif present is not None and present >= len(group):
+            # The OS confirms at least as many present devices as adapters, so
+            # these are genuinely distinct GPUs and every one of them is kept.
+            devices.extend(group)
+        else:
+            # No inventory, or a count that proves neither aliasing nor
+            # distinctness: keep every adapter so capability fails closed.
+            devices.extend(group)
+            unresolved.append(hardware_id)
+
+    diagnostics = {
+        "raw_adapter_count": len(adapters),
+        "physical_device_count": len(devices),
+        "aliased_adapter_count": aliased,
+        "presence_verified": present_hardware_ids is not None,
+        "present_device_counts": present_counts,
+        "unresolved_signatures": sorted(unresolved),
+        "adapter_luids": [adapter.adapter_luid for adapter in adapters],
+        "hardware_ids": [adapter.hardware_id for adapter in adapters],
+    }
+    return tuple(devices), diagnostics
+
+
 class WindowsHostHardwareProbe:
     """Minimal native Windows probe; no WMI, subprocess, network or persistence."""
 
@@ -201,10 +388,17 @@ class WindowsHostHardwareProbe:
     def collect(self) -> HostHardwareFacts:
         if sys.platform != "win32":
             raise HostHardwareInventoryError("UNSUPPORTED_PLATFORM")
+        gpus: tuple[HostGpuFact, ...] | None = None
+        diagnostics: dict[str, Any] | None = None
+        try:
+            gpus, diagnostics = self._dxgi_gpus_and_diagnostics()
+        except Exception:
+            gpus, diagnostics = None, None
         return HostHardwareFacts(
             architecture=platform.machine(),
             physical_ram_bytes=self._physical_ram_bytes(),
-            gpus=self._gpu_facts_fail_closed(),
+            gpus=gpus,
+            gpu_enumeration=diagnostics,
         )
 
     @staticmethod
@@ -246,13 +440,35 @@ class WindowsHostHardwareProbe:
         vendor_id: int,
         dedicated_vram_bytes: int,
         flags: int,
+        name: str = "",
+        *,
+        device_id: int = 0,
+        subsystem_id: int = 0,
+        revision: int = 0,
+        adapter_luid: str = "",
     ) -> HostGpuFact | None:
         if flags & cls._DXGI_ADAPTER_FLAG_SOFTWARE:
             return None
-        return HostGpuFact(vendor_id, dedicated_vram_bytes)
+        return HostGpuFact(
+            vendor_id,
+            dedicated_vram_bytes,
+            name=str(name).replace("\x00", "")[:128],
+            device_id=int(device_id),
+            subsystem_id=int(subsystem_id),
+            revision=int(revision),
+            adapter_luid=str(adapter_luid),
+        )
+
+    @classmethod
+    def _dxgi_gpus_and_diagnostics(cls) -> tuple[tuple[HostGpuFact, ...], dict[str, Any]]:
+        return resolve_physical_gpus(cls._dxgi_raw_adapters(), present_display_hardware_ids())
 
     @classmethod
     def _dxgi_gpu_facts(cls) -> tuple[HostGpuFact, ...]:
+        return cls._dxgi_gpus_and_diagnostics()[0]
+
+    @classmethod
+    def _dxgi_raw_adapters(cls) -> tuple[HostGpuFact, ...]:
         from ctypes import wintypes
 
         class Guid(ctypes.Structure):
@@ -316,6 +532,14 @@ class WindowsHostHardwareProbe:
                         int(description.VendorId),
                         int(description.DedicatedVideoMemory),
                         int(description.Flags),
+                        str(description.Description),
+                        device_id=int(description.DeviceId),
+                        subsystem_id=int(description.SubSysId),
+                        revision=int(description.Revision),
+                        adapter_luid=(
+                            f"{int(description.AdapterLuid.HighPart)}:"
+                            f"{int(description.AdapterLuid.LowPart)}"
+                        ),
                     )
                     if fact is not None:
                         facts.append(fact)

@@ -1,3 +1,3 @@
-param([Parameter(Mandatory)][string]$Destination)
-& $PSScriptRoot/backup.ps1 -Destination $Destination
-Write-Output 'Migration bundle created. On the new machine, run restore.ps1 and install models from model_manifest.json.'
+param([Parameter(Mandatory)][string]$Destination,[switch]$OfflineConfirmed,[string]$DataDirectory,[string]$DatabaseUrlEnv)
+& $PSScriptRoot/backup.ps1 -Destination $Destination -OfflineConfirmed:$OfflineConfirmed -DataDirectory $DataDirectory -DatabaseUrlEnv $DatabaseUrlEnv
+Write-Output 'Verified migration bundle created. Restore into a new directory and new database; install models separately.'

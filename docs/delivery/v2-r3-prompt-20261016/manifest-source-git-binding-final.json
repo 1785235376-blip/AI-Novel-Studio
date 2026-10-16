@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-16T16:43:32.235822+00:00",
+  "implementation_head": "f7fd63a1fff3c0ec7fa88c9c111676f9539a41a5",
+  "v2_manifest_sha256": "bbde78952c72280f8dbe05c3a9dfb83b96fc22f0f4ca3ecee21b453fb9579967",
+  "source_count": 2352,
+  "working_raw_sha256_mismatches": [],
+  "git_head_blob_raw_byte_differences": [],
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "status": "ALL_MANIFEST_SOURCE_BYTES_MATCH_HEAD_AND_WORKTREE",
+  "scope": "Byte binding for every V2-manifest source, not hosted execution or full product test success."
+}
