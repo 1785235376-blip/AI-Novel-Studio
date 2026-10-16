@@ -1,0 +1,137 @@
+{
+  "status": "VERIFIED_COMMIT_BINDING_WITH_PRESERVED_EVIDENCE_WHITESPACE_WARNING",
+  "verified_utc": "2026-10-16T23:17:45.167Z",
+  "source_commit": "14ced1025b51af3b9636fc9564366bd5aba1946d",
+  "evidence_commit": "fdc19f304a6416d0f003f4b2ed944ceb2c5187d6",
+  "evidence_parent_is_source": true,
+  "source_path_count": 126,
+  "evidence_commit_path_count": 141,
+  "evidence_commit_scope": "140 bundle files (139 indexed payloads plus index) and canonical V2 only",
+  "bundle_directory": "docs/delivery/v2-development/ci-reconciliation-20261016",
+  "bundle_git_tree": "27910081f9656a3da45b69eb3bb421b56c905998",
+  "all_committed_bundle_and_manifest_bytes_match_accepted_worktree": true,
+  "evidence_index_sha256": "de1ec0a30469230fbc9643f23cd182ae5c4ee6fa52012690d3026ddf76077b6f",
+  "relocation_map_sha256": "78ec5e0faef206e6f4b0edaaf68e12cd58fa52d6e4af0ed923259b95ffa51539",
+  "canonical_v2_sha256": "bffc623ae02c28b8cf8c4022b3ed33674e6b14b9fc7a1ccab2326c36ccf3bb5c",
+  "canonical_v2_git_blob": "5c16afefe63b87d428abeb6fb8c284ade7cb0b32",
+  "frozen_v1_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "read_only_bundle_verification": {
+    "status": "PASS_READ_ONLY_EVIDENCE_CHECK",
+    "source_commit": "14ced1025b51af3b9636fc9564366bd5aba1946d",
+    "evidence_files": 139,
+    "checks": 7703,
+    "inventory_rows": 15617,
+    "old_rows": 15142,
+    "source_map_entries": 2576,
+    "companion_files": 11,
+    "tests_executed": false,
+    "product_imports": false
+  },
+  "full_evidence_commit_diff_check": {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "14ced1025b51af3b9636fc9564366bd5aba1946d",
+      "fdc19f304a6416d0f003f4b2ed944ceb2c5187d6"
+    ],
+    "exit_code": 2,
+    "original_staged_warning_bytes_preserved": true,
+    "log": "docs/delivery/v2-development/ci-reconciliation-commit-binding-20261016.diffcheck.log",
+    "log_sha256": "be4c57c27133dc3fa615140d0a4052b8343fe14887f2a7f6bbda3f567de8e179",
+    "warning_count": 25,
+    "warnings": [
+      "docs/delivery/v2-development/ci-reconciliation-20261016/backend/mp3-versioned-compatibility-20261016.log:24: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/backend/mp3-versioned-compatibility-20261016.log:25: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/backend/mp3-versioned-compatibility-20261016.log:29: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/backend/mp3-versioned-compatibility-20261016.log:59: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/backend/mp3-versioned-compatibility-20261016.log:60: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/backend/mp3-versioned-compatibility-20261016.log:64: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/backend/mp3-versioned-compatibility-20261016.log:94: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/backend/mp3-versioned-compatibility-20261016.log:95: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/backend/mp3-versioned-compatibility-20261016.log:99: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/backend/mp3-versioned-compatibility-20261016.log:124: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/backend/mp3-versioned-compatibility-20261016.log:125: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/backend/mp3-versioned-compatibility-20261016.log:129: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/backend/mp3-versioned-compatibility-20261016.log:165: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/backend/mp3-versioned-compatibility-20261016.log:166: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/backend/mp3-versioned-compatibility-20261016.log:170: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/frontend/canvas/dot-creative-large-diffs.txt:14: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/frontend/canvas/dot-creative-large-diffs.txt:722: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/frontend/canvas/dot-creative-large-diffs.txt:1144: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/frontend/canvas/dot-creative-large-diffs.txt:1230: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/frontend/ui/vitest-runtime.log:73: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/frontend/ui/vitest-runtime.log:81: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/frontend/ui/vitest.log:9: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/frontend/ui/vitest.log:1107: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/frontend/ui/vitest.log:1153: trailing whitespace.",
+      "docs/delivery/v2-development/ci-reconciliation-20261016/independent/dot-independent-reconciliation-ui-20261016.log:15: new blank line at EOF."
+    ],
+    "interpretation": "Exit 2 remains a real whitespace warning in exact preserved raw test logs and the captured canvas diff text. Four diagnostics are in dot-creative-large-diffs.txt; the other 21 are in logs. It is not a passing full diff-check. No log, index or guard was rewritten to hide it."
+  },
+  "source_only_diff_checks": [
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "72e636f87c7299a62cb3357bcb6a6e44a9388883",
+        "14ced1025b51af3b9636fc9564366bd5aba1946d",
+        "--",
+        "app",
+        "tests",
+        "scripts",
+        "frontend",
+        ".github",
+        "pyproject.toml"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "14ced1025b51af3b9636fc9564366bd5aba1946d",
+        "fdc19f304a6416d0f003f4b2ed944ceb2c5187d6",
+        "--",
+        "app",
+        "tests",
+        "scripts",
+        "frontend",
+        ".github",
+        "pyproject.toml"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "source_only_scope_note": "These exit-0 checks cover product/test/runner/config source paths; they exclude docs evidence logs and captured diffs and do not override the full evidence-commit exit 2.",
+  "execution_scope": {
+    "frontend_discovery": "NOT_RUN",
+    "full_frontend_suite": "NOT_RUN; explicitly scoped recorded Vitest selections only",
+    "full_backend_product_suite": "NOT_RUN; complete inventory is collect-only",
+    "collection": "Three raw inventories exactly match at 15,617 rows; all old 15,142 ordered/classified rows retained",
+    "new_collection_after_evidence_commit": false,
+    "postgres_runtime": "NOT_RUN",
+    "hosted_ci": "NOT_RUN; billing blocked or cost unknown",
+    "real_provider_services": "NOT_RUN",
+    "blocked_old_candidate_and_its_lifecycle_security_tests": "NOT_RUN",
+    "publication": "LOCAL_ONLY; no push, workflow trigger or publication performed in reconciliation"
+  },
+  "verification_tool_attempts": [
+    {
+      "attempt": 1,
+      "result": "Read-only Git blob verification hit Node default maxBuffer ENOBUFS at the setup-receipt blob; no output receipt or repository mutation occurred."
+    },
+    {
+      "attempt": 2,
+      "result": "Committed byte checks passed with a 64 MiB buffer. The logs-only warning assertion stopped on four diagnostics in the preserved canvas .txt diff artifact; no output receipt or mutation occurred."
+    },
+    {
+      "attempt": 3,
+      "result": "Exact warning paths and bytes were reviewed. All 25 diagnostics are preserved (21 in logs, 4 in the captured diff); committed byte verification and the portable verifier pass."
+    }
+  ],
+  "warning_and_failure_preservation": "Original failed test receipts, initial failed startup probe, prior environment provenance limits and whitespace diagnostics remain preserved.",
+  "receipt_boundary": "Outside the accepted indexed bundle; it does not mutate that bundle or its index and is not an additional test-run receipt."
+}
