@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
 import { Button, Panel, StatusMessage } from '../ui/primitives';
+import { GraphDirectorSourceImpact } from './GraphDirectorSourceImpact';
+import type { StudioGraphDefinition } from './studioGraphTypes';
 import { GraphDirectorStoryboardHandoff } from './GraphDirectorStoryboardHandoff';
 import { CreativeCanvas } from './CreativeCanvas';
 import type { creativeClient } from './client';
@@ -8,11 +10,13 @@ import { creativeAuthoringProblems, documentInput, newDocument, type CreativeDoc
 import type { PlanningSnapshot } from './studioProductionGraphContract';
 import './creative.css';
 
-export type GraphDirectorSource = Pick<ReturnType<typeof creativeClient>, 'create' | 'update' | 'export' | 'capabilities' | 'list' | 'derive'>;
+export type GraphDirectorSource = Pick<ReturnType<typeof creativeClient>, 'create' | 'update' | 'export' | 'capabilities' | 'list' | 'derive' | 'history'>;
 type Props = {
   client: GraphDirectorSource;
   pin?: PlanningSnapshot;
   selectionKey?: string;
+  graph?: StudioGraphDefinition;
+  selectedNodeId?: string;
   active: boolean;
   canMutate: boolean;
   busy: boolean;
@@ -26,7 +30,7 @@ const samePin = (a: PlanningSnapshot, b: PlanningSnapshot) => a.id === b.id && a
 
 /** A mounted view of the original Creative owner. Only author drafts live here;
  * Graph retains its exact pin and all execution/review remains with its owners. */
-export function GraphDirectorConsole({ client, pin, selectionKey, active, canMutate, busy, isCurrent, read, mutate, onDirtyChange }: Props) {
+export function GraphDirectorConsole({ client, pin, selectionKey, graph, selectedNodeId, active, canMutate, busy, isCurrent, read, mutate, onDirtyChange }: Props) {
   const [handoffPending, setHandoffPending] = useState(false), [storyboardAllowed, setStoryboardAllowed] = useState(false);
   const [open, setOpen] = useState(false), [authorized, setAuthorized] = useState(false);
   const [draft, setDraft] = useState<CreativeInput>(empty), [base, setBase] = useState<CreativeDocument>();
@@ -152,6 +156,7 @@ export function GraphDirectorConsole({ client, pin, selectionKey, active, canMut
       {pin && <p>选中节点绑定：{pin.id} · v{pin.version} · {pin.digest}</p>}
       {snapshot && <p>当前原文档：{snapshot.id} · v{snapshot.version} · {snapshot.digest}</p>}
       {pin && base?.id === pin.id && (base.version !== pin.version || snapshot && !samePin(pin, snapshot)) && <StatusMessage tone="warning">节点来源已变更，原绑定没有自动更新；请核对下游影响。</StatusMessage>}
+      {pin && <GraphDirectorSourceImpact key={JSON.stringify([selectedKey, base?.id, base?.version])} client={client} pin={pin} graph={graph} selectedNodeId={selectedNodeId} active={active} busy={busy || working} isCurrent={isCurrent} read={read} />}
       {notice && <StatusMessage>{notice}</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}
       {working && <StatusMessage>正在读取或保存原导演文档…</StatusMessage>}
       <CreativeCanvas draft={draft} version={base?.version} dirty={dirty} canEdit={editing} busy={busy || working}

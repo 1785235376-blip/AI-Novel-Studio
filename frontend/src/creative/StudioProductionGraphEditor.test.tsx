@@ -104,6 +104,8 @@ it('authors a director in the canvas, saves its exact node pin and reopens the b
   let authored: CreativeDocument = { ...newDocument('DIRECTOR'), source_independent: true, title: '画布导演', id: document.id,
     version: 3, status: 'DRAFT', created_at: '', updated_at: '', actor_id: 'author', source_evidence: {} };
   const source = { capabilities: vi.fn().mockResolvedValue({ enabled: true, can_mutate: true, modes: ['DIRECTOR'] }),
+    history: vi.fn(async () => ({ document_id: document.id, current_version: authored.version, items: [authored], snapshot_digests: [{ version: authored.version, digest: document.digest }] })),
+    list: vi.fn(async () => ({ items: [authored] })),
     create: vi.fn(async input => authored = { ...authored, ...input }), update: vi.fn(),
     export: vi.fn(async () => ({ document: authored, document_digest: document.digest, format: '', boundary: '' })) };
   vi.mocked(creativeClient).mockReturnValue(source as unknown as ReturnType<typeof creativeClient>);
@@ -124,6 +126,9 @@ it('authors a director in the canvas, saves its exact node pin and reopens the b
   const select = await screen.findByRole('button', { name: new RegExp(`选择节点 .*${saved.definition.nodes[0].id}`) }); fireEvent.click(select);
   click('打开导演总控台'); await waitFor(() => expect((screen.getByLabelText('文档标题') as HTMLInputElement).closest('fieldset')!.disabled).toBe(false));
   click('读取选中导演节点原文档'); await screen.findByDisplayValue('停顿后看向窗外');
+  click('读取／刷新导演来源影响'); await screen.findByText(/历史快照版本与原 Owner 摘要匹配/);
+  expect(screen.getByText(/选中 director_plan 节点：/).textContent).toContain(saved.definition.nodes[0].id);
+  expect(saved.definition.nodes[0].parameters.document_snapshot).toEqual({ id: document.id, version: 3, digest: document.digest });
   expect(source.export).toHaveBeenCalledWith(document.id); expect(source.update).not.toHaveBeenCalled();
   expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.dispatchMedia).not.toHaveBeenCalled();
 });

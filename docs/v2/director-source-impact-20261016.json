@@ -1,0 +1,104 @@
+{
+  "baseline_commit": "6ed69e1f6a5bcda902f47d113c3f7c198ae96a18",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/vitest run src/creative/GraphDirectorSourceImpact.test.tsx src/creative/GraphDirectorConsole.test.tsx src/creative/GraphDirectorStoryboardHandoff.test.tsx src/creative/StudioProductionGraphEditor.test.tsx src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/CreativeWorkspace.test.tsx src/creative/AIDirectorPanel.test.tsx src/creative/studioGraphClient.test.ts src/creative/GraphCanvas.test.tsx src/creative/graphCanvasGeometry.test.ts src/creative/StudioWorkspacePreferencesForm.public.test.tsx"
+      ],
+      "started_utc": "2026-10-16T09:45:33.235307+00:00",
+      "finished_utc": "2026-10-16T09:45:54.114003+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/director-impact-reviewed-final-ui.log",
+      "log_sha256": "8e26cfa326f26b15a32511891c321f241046226847d126489afd215dcb6a5406",
+      "receipt": "docs/delivery/v2-development/director-impact-reviewed-final-ui.json",
+      "receipt_sha256": "276f4c06704be16dbbd7203faf450df263ea535f8b635f3bcf00a53ac77a85c5"
+    },
+    {
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-usability/../studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_director_handoff_reopen.py::test_director_history_exact_digests_and_stale_storyboard_remain_gated[file]",
+        "tests/test_v2_director_handoff_reopen.py::test_original_director_derive_reopen_and_edit[file]",
+        "tests/test_v2_creative_foundation.py::test_two_service_cas_rejects_lost_update_and_preserves_history[file]",
+        "tests/test_v2_creative_foundation.py::test_process_restart_reads_actual_store[file]",
+        "tests/test_public_build_profile.py",
+        "--basetemp=.runtime/v2-checks/director-impact-reviewed-final-file/tmp",
+        "-q"
+      ],
+      "started_utc": "2026-10-16T09:45:34.868273+00:00",
+      "finished_utc": "2026-10-16T09:45:45.441825+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/director-impact-reviewed-final-file.log",
+      "log_sha256": "1f607625230bb19abb641b9436098d5b8e88f599a772f0c10cd166503fa45b57",
+      "receipt": "docs/delivery/v2-development/director-impact-reviewed-final-file.json",
+      "receipt_sha256": "ac4ee9080ad99e579fad5a56ce793659d2a31cf33f6d5327b2933b7d29a263c7"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build && node scripts/check-test-discovery.mjs && cd .. && node scripts/check_ui_design_tokens.mjs && ../studio-overnight/.venv/bin/python scripts/public_build.py --source . && git diff --check"
+      ],
+      "started_utc": "2026-10-16T09:45:05.157723+00:00",
+      "finished_utc": "2026-10-16T09:45:41.211228+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/director-impact-reviewed-build.log",
+      "log_sha256": "32876fd8b1694ea8de52492800b2353b051b338380de9b6bca69051e7189d9b2",
+      "receipt": "docs/delivery/v2-development/director-impact-reviewed-build.json",
+      "receipt_sha256": "41159f2e8949ef3aa961652693eca8f807ac9a7085f4df3857ec18dec0672a0b"
+    },
+    {
+      "command": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import fs from \"node:fs\"; for (const p of [\"frontend/src/creative/GraphDirectorConsole.tsx\", \"frontend/src/creative/GraphDirectorSourceImpact.tsx\"]) if (/#[0-9a-f]{3,8}\\b|\\brgb\\(|\\bhsl\\(/i.test(fs.readFileSync(p,\"utf8\"))) throw new Error(\"Raw color: \"+p); console.log(\"Scoped color/token guard PASS; visual browser acceptance NOT_RUN.\");"
+      ],
+      "started_utc": "2026-10-16T09:47:09.136489+00:00",
+      "finished_utc": "2026-10-16T09:47:09.193956+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "sources_changed_during_check": false,
+      "log": "docs/delivery/v2-development/director-impact-reviewed-token.log",
+      "log_sha256": "70d49b49428a5a113a58c875e67927c1386db942496ef3ae5d2b2f535bb9328e",
+      "receipt": "docs/delivery/v2-development/director-impact-reviewed-token.json",
+      "receipt_sha256": "b83d79326d18bd8bc29a2550d5b66288f7906e8a66c4e8433b18e032e11a6bf7"
+    }
+  ],
+  "changed_source_sha256": {
+    "app/creative/service.py": "249f289657ad0f5cd132afaf7d86279821c08d808eaa70956eb1158b2f883693",
+    "frontend/src/creative/GraphDirectorConsole.test.tsx": "4df3338e2c77d5424d80954e200b3c9a6305f1627bf8c1251dd06d289204d1dd",
+    "frontend/src/creative/GraphDirectorConsole.tsx": "b72e4e33c1cb8464ffd24475abc88b38f5e626bd8b2100f27323475304bf74a8",
+    "frontend/src/creative/GraphDirectorStoryboardHandoff.test.tsx": "0af93504dae9a4c49a83c302de602874be34c62e331ed66aaad3ae244ba3cdc3",
+    "frontend/src/creative/StudioProductionGraphEditor.test.tsx": "d93b207b4fca182d30cf307ba1e4b435dadc6efa699d404a1e7a5cad3969a6ec",
+    "frontend/src/creative/client.ts": "c830535a2c427ffc649d4eb23ebc77fc468fb5505d7ea52c40cdc81043884558",
+    "frontend/src/creative/useStudioGraphEditor.tsx": "021efbd5571e3bc164727a16359d164a465a5023514e3008f2be17a65fb84faa",
+    "tests/test_v2_director_handoff_reopen.py": "feb404db88be35cf62cdb0d371704c3d65e07f60662ef7cc31558c2194c87dbf",
+    "frontend/src/creative/GraphDirectorSourceImpact.tsx": "a5c80540bfb2c4a0c15bd29902e518b979715b099ea46b7cb453c5b4a1fa2b95",
+    "frontend/src/creative/GraphDirectorSourceImpact.test.tsx": "3cb268732d5b8f6c2405d32ff07b7e49e5607f0bbc4d5dac11a91172c6994601",
+    "frontend/src/creative/directorSourceImpact.ts": "c3f75f784298ecac8852841af5e004289cef0a2bfca41be3f1a209b291d13d34"
+  },
+  "not_run": [
+    "browser/visual/native input/performance",
+    "PostgreSQL/P0/security lifecycle",
+    "Windows/GPU/real provider/user computer",
+    "hosted CI",
+    "full RC"
+  ],
+  "boundaries": {
+    "P0": "BLOCKED",
+    "R3_GATE": "HOLD",
+    "prompt_adoption_write": false,
+    "push": false,
+    "public_source_file_count": 487
+  }
+}

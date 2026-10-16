@@ -9,7 +9,7 @@ const document = (version = 1): CreativeDocument => ({ ...newDocument('DIRECTOR'
   id: pin.id, version, status: 'DRAFT', created_at: '', updated_at: '', actor_id: 'author', source_evidence: {} });
 function setup() {
   let stored = document();
-  const client: GraphDirectorSource = {
+  const client: GraphDirectorSource = { history: vi.fn(),
     derive: vi.fn(),
     list: vi.fn(async () => ({ items: [stored] })),
     capabilities: vi.fn().mockResolvedValue({ enabled: true, can_mutate: true, modes: ['DIRECTOR'] }),
@@ -123,6 +123,18 @@ describe('optional mounted graph director source authoring', () => {
     expect(screen.getByDisplayValue('保留文本')).toBeTruthy();
     fireEvent.click(screen.getByLabelText('确认放弃导演本地草稿并采用已核对原版本')); click('处理导演本地草稿');
     expect(screen.getByDisplayValue('原导演')).toBeTruthy(); expect(client.create).toHaveBeenCalledTimes(1);
+  });
+  it('reads source impact while a conflict draft stays locked and unchanged', async () => {
+    const { client, props } = setup();
+    vi.mocked(client.history).mockResolvedValue({ document_id: pin.id, current_version: 1, items: [document()], snapshot_digests: [pin] });
+    vi.mocked(client.update).mockRejectedValue(new ApiError({ status: 409, code: 'CONFLICT', message: '版本冲突' }));
+    render(<GraphDirectorConsole {...props} pin={pin} selectedNodeId="director-node" />); await open(); click('读取选中导演节点原文档'); await screen.findByDisplayValue('原导演');
+    change('文档标题', '不可丢失草稿'); click('保存草稿'); await screen.findByText(/保存冲突或回执不确定/);
+    click('读取／刷新导演来源影响'); await screen.findByText(/历史快照版本与原 Owner 摘要匹配/);
+    expect(screen.getByDisplayValue('不可丢失草稿')).toBeTruthy();
+    expect((screen.getByRole('button', { name: '保存草稿' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(props.onDirtyChange).toHaveBeenLastCalledWith(true); expect(client.update).toHaveBeenCalledTimes(1);
+    expect(screen.getByText(/选中节点绑定：/).textContent).toContain(pin.digest);
   });
   it('ignores a late original-source read after leaving the graph', async () => {
     const { client, props } = setup(); let resolve!: (value: Awaited<ReturnType<GraphDirectorSource['export']>>) => void;
