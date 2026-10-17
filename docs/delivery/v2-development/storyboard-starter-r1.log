@@ -1,0 +1,26 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/creative/GraphStoryboardStarter.additive.test.tsx (8 tests | 1 failed) 192ms
+   × requires explicit inspection and shot choice and applies exactly once without background reads 99ms
+     → Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  04:41:39
+   Duration  1.20s (transform 294ms, setup 18ms, collect 431ms, tests 192ms, environment 303ms, prepare 57ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/GraphStoryboardStarter.additive.test.tsx > requires explicit inspection and shot choice and applies exactly once without background reads
+Error: Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+ ❯ src/creative/GraphStoryboardStarter.additive.test.tsx:50:22
+     48|  const {props}=setup();expect(props.onRead).not.toHaveBeenCalled();exp…
+     49|  const apply=handler(button('应用分镜视频链到本地空图'));act(()=>{appl…
+     50|  expect(props.onApply).toHaveBeenCalledExactlyOnceWith(receipt,receipt…
+       |                      ^
+     51| });
+     52| it.each(['scope','documents','disabled'] as const)('rejects retained a…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

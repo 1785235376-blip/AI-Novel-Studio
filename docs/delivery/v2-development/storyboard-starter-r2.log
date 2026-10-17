@@ -1,0 +1,916 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/creative/GraphStoryboardStarter.additive.test.tsx (9 tests | 1 failed) 1379ms
+   × assembles through the original controller with one undo and no automatic write or execution 1186ms
+     → Found multiple elements with the role "option" and name "Original storyboard · v5"
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<option[39m
+  [33mvalue[39m=[32m"9d4094b3-d894-4ea1-a96d-1beae88ec3c5"[39m
+[36m>[39m
+  [0mOriginal storyboard[0m
+  [0m · v[0m
+  [0m5[0m
+[36m</option>[39m
+
+Ignored nodes: comments, script, style
+[36m<option[39m
+  [33mvalue[39m=[32m"9d4094b3-d894-4ea1-a96d-1beae88ec3c5"[39m
+[36m>[39m
+  [0mOriginal storyboard[0m
+  [0m · v[0m
+  [0m5[0m
+[36m</option>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"独立创作图编辑器"[39m
+      [33mclass[39m=[32m"studio-graph-editor"[39m
+    [36m>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m创作图 · 手工编排[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<p>[39m
+          [0m空图和不相连的组件都可以保存。导演备注可选，可随时移除；连接类型由服务端定义。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m可选本地文字模型节点需单独预览输入并明确确认一次调用。每次运行最多一个文字模型节点，输出必须人工审核；不自动调用、重试或转云端。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m视频图 v5：原导演与已批准分镜 → 版本绑定镜头 → 视频生成 → 原媒体审核 → 正式视频，可再连接原时间线。各次模型调用、入队、执行与审核单独确认。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m明确读取图片节点目录[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m明确读取视频图节点目录[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m明确读取导演、分镜与视觉制作节点目录[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"studio-graph-actions"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m新建空图[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m刷新创作图目录[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<label>[39m
+          [0m已保存创作图[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"已保存创作图"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m未选择已保存图[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m创作图标题[0m
+          [36m<input[39m
+            [33mmaxlength[39m=[32m"160"[39m
+            [33mvalue[39m=[32m"独立创作图"[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--warning"[39m
+        [36m>[39m
+          [0m尚未保存[0m
+          [0m · [0m
+          [0m未保存修改[0m
+        [36m</span>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"studio-graph-actions"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+          [36m>[39m
+            [0m保存创作图[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m撤销图编辑[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m重做图编辑[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m重新读取创作图[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"分镜到视频起步方案"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m从已审核分镜搭好视频链[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0m读取原分镜和镜头版本，组装“分镜 → 镜头 → 视频候选 → 人工审核”。不复制原文档、不生成视频；服务商和模型仍需明确配置。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取起步分镜目录[0m
+        [36m</button>[39m
+        [36m<label>[39m
+          [0m起步来源分镜[0m
+          [36m<select>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择已保存的原分镜[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"9d4094b3-d894-4ea1-a96d-1beae88ec3c5"[39m
+            [36m>[39m
+              [0mOriginal storyboard[0m
+              [0m · v[0m
+              [0m5[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m核对起步分镜镜头与审核[0m
+        [36m</button>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"媒体图版本"[39m
+      [36m>[39m
+        [36m<p>[39m
+          [0m当前图格式：v[0m
+          [0m5[0m
+          [0m。旧图保持原行为，升级只在明确保存后生效，不自动执行。[0m
+        [36m</p>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"添加与连接节点"[39m
+        [33mclass[39m=[32m"studio-graph-controls"[39m
+      [36m>[39m
+        [36m<label>[39m
+          [0m节点类型[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"节点类型"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"text_input"[39m
+            [36m>[39m
+              [0m文本输入[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"text_reference"[39m
+            [36m>[39m
+              [0m文本引用[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"asset_reference"[39m
+            [36m>[39m
+              [0m资产引用[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"media_review"[39m
+            [36m>[39m
+              [0m媒体审核入库[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"timeline_export"[39m
+            [36m>[39m
+              [0m时间线剪辑与导出（需分别确认）[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"director_plan"[39m
+            [36m>[39m
+              [0m导演节点（已保存文档）[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"storyboard_plan"[39m
+            [36m>[39m
+              [0m分镜节点（已保存文档）[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"storyboard_shot"[39m
+            [36m>[39m
+              [0m分镜镜头（版本绑定）[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"video_generate"[39m
+            [36m>[39m
+              [0m视频生成（需分别确认）[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</lab...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"独立创作图编辑器"[39m
+      [33mclass[39m=[32m"studio-graph-editor"[39m
+    [36m>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m创作图 · 手工编排[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<p>[39m
+          [0m空图和不相连的组件都可以保存。导演备注可选，可随时移除；连接类型由服务端定义。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m可选本地文字模型节点需单独预览输入并明确确认一次调用。每次运行最多一个文字模型节点，输出必须人工审核；不自动调用、重试或转云端。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m视频图 v5：原导演与已批准分镜 → 版本绑定镜头 → 视频生成 → 原媒体审核 → 正式视频，可再连接原时间线。各次模型调用、入队、执行与审核单独确认。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m明确读取图片节点目录[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m明确读取视频图节点目录[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m明确读取导演、分镜与视觉制作节点目录[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"studio-graph-actions"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m新建空图[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m刷新创作图目录[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<label>[39m
+          [0m已保存创作图[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"已保存创作图"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m未选择已保存图[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m创作图标题[0m
+          [36m<input[39m
+            [33mmaxlength[39m=[32m"160"[39m
+            [33mvalue[39m=[32m"独立创作图"[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--warning"[39m
+        [36m>[39m
+          [0m尚未保存[0m
+          [0m · [0m
+          [0m未保存修改[0m
+        [36m</span>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"studio-graph-actions"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+          [36m>[39m
+            [0m保存创作图[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m撤销图编辑[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m重做图编辑[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m重新读取创作图[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"分镜到视频起步方案"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m从已审核分镜搭好视频链[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0m读取原分镜和镜头版本，组装“分镜 → 镜头 → 视频候选 → 人工审核”。不复制原文档、不生成视频；服务商和模型仍需明确配置。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取起步分镜目录[0m
+        [36m</button>[39m
+        [36m<label>[39m
+          [0m起步来源分镜[0m
+          [36m<select>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择已保存的原分镜[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"9d4094b3-d894-4ea1-a96d-1beae88ec3c5"[39m
+            [36m>[39m
+              [0mOriginal storyboard[0m
+              [0m · v[0m
+              [0m5[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m核对起步分镜镜头与审核[0m
+        [36m</button>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"媒体图版本"[39m
+      [36m>[39m
+        [36m<p>[39m
+          [0m当前图格式：v[0m
+          [0m5[0m
+          [0m。旧图保持原行为，升级只在明确保存后生效，不自动执行。[0m
+        [36m</p>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"添加与连接节点"[39m
+        [33mclass[39m=[32m"studio-graph-controls"[39m
+      [36m>[39m
+        [36m<label>[39m
+          [0m节点类型[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"节点类型"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"text_input"[39m
+            [36m>[39m
+              [0m文本输入[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"text_reference"[39m
+            [36m>[39m
+              [0m文本引用[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"asset_reference"[39m
+            [36m>[39m
+              [0m资产引用[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"media_review"[39m
+            [36m>[39m
+              [0m媒体审核入库[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"timeline_export"[39m
+            [36m>[39m
+              [0m时间线剪辑与导出（需分别确认）[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"director_plan"[39m
+            [36m>[39m
+              [0m导演节点（已保存文档）[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"storyboard_plan"[39m
+            [36m>[39m
+              [0m分镜节点（已保存文档）[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"storyboard_shot"[39m
+            [36m>[39m
+              [0m分镜镜头（版本绑定）[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"video_generate"[39m
+            [36m>[39m
+              [0m视频生成（需分别确认）[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</lab...
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  04:42:04
+   Duration  3.06s (transform 772ms, setup 14ms, collect 1.12s, tests 1.38s, environment 287ms, prepare 62ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/GraphStoryboardStarter.additive.test.tsx > assembles through the original controller with one undo and no automatic write or execution
+TestingLibraryElementError: Found multiple elements with the role "option" and name "Original storyboard · v5"
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<option[39m
+  [33mvalue[39m=[32m"9d4094b3-d894-4ea1-a96d-1beae88ec3c5"[39m
+[36m>[39m
+  [0mOriginal storyboard[0m
+  [0m · v[0m
+  [0m5[0m
+[36m</option>[39m
+
+Ignored nodes: comments, script, style
+[36m<option[39m
+  [33mvalue[39m=[32m"9d4094b3-d894-4ea1-a96d-1beae88ec3c5"[39m
+[36m>[39m
+  [0mOriginal storyboard[0m
+  [0m · v[0m
+  [0m5[0m
+[36m</option>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"独立创作图编辑器"[39m
+      [33mclass[39m=[32m"studio-graph-editor"[39m
+    [36m>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m创作图 · 手工编排[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<p>[39m
+          [0m空图和不相连的组件都可以保存。导演备注可选，可随时移除；连接类型由服务端定义。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m可选本地文字模型节点需单独预览输入并明确确认一次调用。每次运行最多一个文字模型节点，输出必须人工审核；不自动调用、重试或转云端。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m视频图 v5：原导演与已批准分镜 → 版本绑定镜头 → 视频生成 → 原媒体审核 → 正式视频，可再连接原时间线。各次模型调用、入队、执行与审核单独确认。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m明确读取图片节点目录[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m明确读取视频图节点目录[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m明确读取导演、分镜与视觉制作节点目录[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"studio-graph-actions"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m新建空图[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m刷新创作图目录[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<label>[39m
+          [0m已保存创作图[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"已保存创作图"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m未选择已保存图[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m创作图标题[0m
+          [36m<input[39m
+            [33mmaxlength[39m=[32m"160"[39m
+            [33mvalue[39m=[32m"独立创作图"[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--warning"[39m
+        [36m>[39m
+          [0m尚未保存[0m
+          [0m · [0m
+          [0m未保存修改[0m
+        [36m</span>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"studio-graph-actions"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+          [36m>[39m
+            [0m保存创作图[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m撤销图编辑[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m重做图编辑[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m重新读取创作图[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"分镜到视频起步方案"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m从已审核分镜搭好视频链[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0m读取原分镜和镜头版本，组装“分镜 → 镜头 → 视频候选 → 人工审核”。不复制原文档、不生成视频；服务商和模型仍需明确配置。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取起步分镜目录[0m
+        [36m</button>[39m
+        [36m<label>[39m
+          [0m起步来源分镜[0m
+          [36m<select>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择已保存的原分镜[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"9d4094b3-d894-4ea1-a96d-1beae88ec3c5"[39m
+            [36m>[39m
+              [0mOriginal storyboard[0m
+              [0m · v[0m
+              [0m5[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m核对起步分镜镜头与审核[0m
+        [36m</button>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"媒体图版本"[39m
+      [36m>[39m
+        [36m<p>[39m
+          [0m当前图格式：v[0m
+          [0m5[0m
+          [0m。旧图保持原行为，升级只在明确保存后生效，不自动执行。[0m
+        [36m</p>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"添加与连接节点"[39m
+        [33mclass[39m=[32m"studio-graph-controls"[39m
+      [36m>[39m
+        [36m<label>[39m
+          [0m节点类型[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"节点类型"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"text_input"[39m
+            [36m>[39m
+              [0m文本输入[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"text_reference"[39m
+            [36m>[39m
+              [0m文本引用[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"asset_reference"[39m
+            [36m>[39m
+              [0m资产引用[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"media_review"[39m
+            [36m>[39m
+              [0m媒体审核入库[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"timeline_export"[39m
+            [36m>[39m
+              [0m时间线剪辑与导出（需分别确认）[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"director_plan"[39m
+            [36m>[39m
+              [0m导演节点（已保存文档）[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"storyboard_plan"[39m
+            [36m>[39m
+              [0m分镜节点（已保存文档）[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"storyboard_shot"[39m
+            [36m>[39m
+              [0m分镜镜头（版本绑定）[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"video_generate"[39m
+            [36m>[39m
+              [0m视频生成（需分别确认）[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</lab...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"独立创作图编辑器"[39m
+      [33mclass[39m=[32m"studio-graph-editor"[39m
+    [36m>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m创作图 · 手工编排[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<p>[39m
+          [0m空图和不相连的组件都可以保存。导演备注可选，可随时移除；连接类型由服务端定义。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m可选本地文字模型节点需单独预览输入并明确确认一次调用。每次运行最多一个文字模型节点，输出必须人工审核；不自动调用、重试或转云端。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m视频图 v5：原导演与已批准分镜 → 版本绑定镜头 → 视频生成 → 原媒体审核 → 正式视频，可再连接原时间线。各次模型调用、入队、执行与审核单独确认。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m明确读取图片节点目录[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m明确读取视频图节点目录[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m明确读取导演、分镜与视觉制作节点目录[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"studio-graph-actions"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m新建空图[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m刷新创作图目录[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<label>[39m
+          [0m已保存创作图[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"已保存创作图"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m未选择已保存图[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m创作图标题[0m
+          [36m<input[39m
+            [33mmaxlength[39m=[32m"160"[39m
+            [33mvalue[39m=[32m"独立创作图"[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--warning"[39m
+        [36m>[39m
+          [0m尚未保存[0m
+          [0m · [0m
+          [0m未保存修改[0m
+        [36m</span>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"studio-graph-actions"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+          [36m>[39m
+            [0m保存创作图[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m撤销图编辑[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m重做图编辑[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m重新读取创作图[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"分镜到视频起步方案"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m从已审核分镜搭好视频链[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0m读取原分镜和镜头版本，组装“分镜 → 镜头 → 视频候选 → 人工审核”。不复制原文档、不生成视频；服务商和模型仍需明确配置。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取起步分镜目录[0m
+        [36m</button>[39m
+        [36m<label>[39m
+          [0m起步来源分镜[0m
+          [36m<select>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择已保存的原分镜[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"9d4094b3-d894-4ea1-a96d-1beae88ec3c5"[39m
+            [36m>[39m
+              [0mOriginal storyboard[0m
+              [0m · v[0m
+              [0m5[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m核对起步分镜镜头与审核[0m
+        [36m</button>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"媒体图版本"[39m
+      [36m>[39m
+        [36m<p>[39m
+          [0m当前图格式：v[0m
+          [0m5[0m
+          [0m。旧图保持原行为，升级只在明确保存后生效，不自动执行。[0m
+        [36m</p>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"添加与连接节点"[39m
+        [33mclass[39m=[32m"studio-graph-controls"[39m
+      [36m>[39m
+        [36m<label>[39m
+          [0m节点类型[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"节点类型"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"text_input"[39m
+            [36m>[39m
+              [0m文本输入[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"text_reference"[39m
+            [36m>[39m
+              [0m文本引用[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"asset_reference"[39m
+            [36m>[39m
+              [0m资产引用[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"media_review"[39m
+            [36m>[39m
+              [0m媒体审核入库[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"timeline_export"[39m
+            [36m>[39m
+              [0m时间线剪辑与导出（需分别确认）[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"director_plan"[39m
+            [36m>[39m
+              [0m导演节点（已保存文档）[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"storyboard_plan"[39m
+            [36m>[39m
+              [0m分镜节点（已保存文档）[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"storyboard_shot"[39m
+            [36m>[39m
+              [0m分镜镜头（版本绑定）[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"video_generate"[39m
+            [36m>[39m
+              [0m视频生成（需分别确认）[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</lab...
+ ❯ waitForWrapper ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/creative/GraphStoryboardStarter.additive.test.tsx:83:15
+     81|  fireEvent.click(button('明确采用视频图 v5'));
+     82|  await screen.findByLabelText('分镜到视频起步方案');fireEvent.click(bu…
+     83|  await screen.findByRole('option',{name:'Original storyboard · v5'});a…
+       |               ^
+     84|  fireEvent.click(button('应用分镜视频链到本地空图'));
+     85|  expect(document.querySelectorAll('[data-graph-node-id]')).toHaveLengt…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Approved storyboard-to-video starter (19:43 UTC)
+
+An explicitly selected empty v5 graph can now read the original storyboard directory, inspect an approved exact source version, choose one original shot, and assemble the existing storyboard_plan → storyboard_shot → video_generate → media_review chain. Exact shot/source version and digest remain pinned; bind_shot stays true. Provider/model remain blank and cloud stays false until the user configures them through existing controls. No automatic write, schema conversion, execution or approval. Original change/undo/Save and typed connection owners are reused.
+
+Focused storyboard-starter-r4:9 cases and TypeScript PASS, including actual controller apply/undo/redo and the original draft validator rejecting incomplete provider configuration. Transport is mocked; no native generation or browser acceptance. Scope/catalog/selection/shot changes retire old callbacks and late reads. Failed r1–r3 receipts retained: unsupported new-test matcher, ambiguous new-test selector, and a mock create method that bypassed the real client validator. Corrected only the new test harness; original validators/tests unchanged. Full suite/build/inventory remain deferred.
+
 ## Original-node canvas starters (19:12 UTC)
 
 Empty graphs can now preview/apply bounded code-owned starting chains: original text to manual review, model text to review (only after explicit supported schema selection), and text-to-image to media review on supported media/image schemas. Original ports and connectionIssue validate links; no schema upgrade, provider selection, cloud grant, run or write occurs automatically. Image starters intentionally retain the same blank provider/model author inputs as original Add Node; the original Save validator rejects them until configured. One original change/undo step preserves title/viewport/presentation and does not overwrite populated graphs.

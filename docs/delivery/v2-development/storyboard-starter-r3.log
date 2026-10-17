@@ -1,0 +1,250 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/creative/GraphStoryboardStarter.additive.test.tsx (9 tests | 1 failed) 646ms
+   × assembles through the original controller with one undo and no automatic write or execution 452ms
+     → expected "spy" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st spy call:
+
+    Array [
+      Object {
+        "definition": Object {
+          "edges": Array [
+            Object {
+              "id": "edge_04e4a317f3904af4b8d95b4443f53df5",
+              "source_node_id": "storyboard_b65f13e6e351430db8bc0dc03c363e5e",
+              "source_port": "storyboard",
+              "target_node_id": "shot_e444cb5065d54b6d82901dff3ac95235",
+              "target_port": "storyboard",
+            },
+            Object {
+              "id": "edge_2ac40ea0abca4a61973ed3c0dbd292cf",
+              "source_node_id": "shot_e444cb5065d54b6d82901dff3ac95235",
+              "source_port": "shot",
+              "target_node_id": "video_6dee797a79de4f0783a8c188cc98b894",
+              "target_port": "shot",
+            },
+            Object {
+              "id": "edge_61849710373f4402b0de2e5733bd4461",
+              "source_node_id": "video_6dee797a79de4f0783a8c188cc98b894",
+              "source_port": "candidate",
+              "target_node_id": "review_3537f58fea9d4b1c988536a8c6849b64",
+              "target_port": "candidate",
+            },
+          ],
+          "nodes": Array [
+            Object {
+              "definition_id": "storyboard_plan",
+              "definition_version": 1,
+              "enabled": true,
+              "id": "storyboard_b65f13e6e351430db8bc0dc03c363e5e",
+              "parameters": Object {
+                "document_snapshot": Object {
+                  "digest": "c2e9307117867bb52e50b7fda6d68f2e57b64d70227918fdd217f90887e39b48",
+                  "id": "9d4094b3-d894-4ea1-a96d-1beae88ec3c5",
+                  "version": 5,
+                },
+              },
+              "position": Object {
+                "x": 40,
+                "y": 80,
+              },
+            },
+            Object {
+              "definition_id": "storyboard_shot",
+              "definition_version": 1,
+              "enabled": true,
+              "id": "shot_e444cb5065d54b6d82901dff3ac95235",
+              "parameters": Object {
+                "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471",
+                "shot_id": "shot-1",
+                "shot_version": 1,
+              },
+              "position": Object {
+                "x": 460,
+                "y": 80,
+              },
+            },
+            Object {
+              "definition_id": "video_generate",
+              "definition_version": 1,
+              "enabled": true,
+              "id": "video_6dee797a79de4f0783a8c188cc98b894",
+              "parameters": Object {
+                "allow_cloud": false,
+                "bind_shot": true,
+                "license_note": "",
+                "model_id": "",
+                "operation_id": "m7.video.t2v",
+                "parameters": Object {},
+                "prompt": "",
+                "provider_id": "",
+              },
+              "position": Object {
+                "x": 880,
+                "y": 80,
+              },
+            },
+            Object {
+              "definition_id": "media_review",
+              "definition_version": 1,
+              "enabled": true,
+              "id": "review_3537f58fea9d4b1c988536a8c6849b64",
+              "parameters": Object {},
+              "position": Object {
+                "x": 1300,
+                "y": 80,
+              },
+            },
+          ],
+          "schema_version": 5,
+          "title": "独立创作图",
+          "viewport": Object {
+            "x": 0,
+            "y": 0,
+            "zoom": 1,
+          },
+        },
+        "expected_version": 0,
+        "request_id": "graph_02ddf653074c45ada8c3489ea6d8e330",
+      },
+    ]
+
+
+Number of calls: 1
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  04:42:17
+   Duration  2.31s (transform 781ms, setup 18ms, collect 1.11s, tests 646ms, environment 287ms, prepare 57ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/GraphStoryboardStarter.additive.test.tsx > assembles through the original controller with one undo and no automatic write or execution
+AssertionError: expected "spy" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st spy call:
+
+    Array [
+      Object {
+        "definition": Object {
+          "edges": Array [
+            Object {
+              "id": "edge_04e4a317f3904af4b8d95b4443f53df5",
+              "source_node_id": "storyboard_b65f13e6e351430db8bc0dc03c363e5e",
+              "source_port": "storyboard",
+              "target_node_id": "shot_e444cb5065d54b6d82901dff3ac95235",
+              "target_port": "storyboard",
+            },
+            Object {
+              "id": "edge_2ac40ea0abca4a61973ed3c0dbd292cf",
+              "source_node_id": "shot_e444cb5065d54b6d82901dff3ac95235",
+              "source_port": "shot",
+              "target_node_id": "video_6dee797a79de4f0783a8c188cc98b894",
+              "target_port": "shot",
+            },
+            Object {
+              "id": "edge_61849710373f4402b0de2e5733bd4461",
+              "source_node_id": "video_6dee797a79de4f0783a8c188cc98b894",
+              "source_port": "candidate",
+              "target_node_id": "review_3537f58fea9d4b1c988536a8c6849b64",
+              "target_port": "candidate",
+            },
+          ],
+          "nodes": Array [
+            Object {
+              "definition_id": "storyboard_plan",
+              "definition_version": 1,
+              "enabled": true,
+              "id": "storyboard_b65f13e6e351430db8bc0dc03c363e5e",
+              "parameters": Object {
+                "document_snapshot": Object {
+                  "digest": "c2e9307117867bb52e50b7fda6d68f2e57b64d70227918fdd217f90887e39b48",
+                  "id": "9d4094b3-d894-4ea1-a96d-1beae88ec3c5",
+                  "version": 5,
+                },
+              },
+              "position": Object {
+                "x": 40,
+                "y": 80,
+              },
+            },
+            Object {
+              "definition_id": "storyboard_shot",
+              "definition_version": 1,
+              "enabled": true,
+              "id": "shot_e444cb5065d54b6d82901dff3ac95235",
+              "parameters": Object {
+                "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471",
+                "shot_id": "shot-1",
+                "shot_version": 1,
+              },
+              "position": Object {
+                "x": 460,
+                "y": 80,
+              },
+            },
+            Object {
+              "definition_id": "video_generate",
+              "definition_version": 1,
+              "enabled": true,
+              "id": "video_6dee797a79de4f0783a8c188cc98b894",
+              "parameters": Object {
+                "allow_cloud": false,
+                "bind_shot": true,
+                "license_note": "",
+                "model_id": "",
+                "operation_id": "m7.video.t2v",
+                "parameters": Object {},
+                "prompt": "",
+                "provider_id": "",
+              },
+              "position": Object {
+                "x": 880,
+                "y": 80,
+              },
+            },
+            Object {
+              "definition_id": "media_review",
+              "definition_version": 1,
+              "enabled": true,
+              "id": "review_3537f58fea9d4b1c988536a8c6849b64",
+              "parameters": Object {},
+              "position": Object {
+                "x": 1300,
+                "y": 80,
+              },
+            },
+          ],
+          "schema_version": 5,
+          "title": "独立创作图",
+          "viewport": Object {
+            "x": 0,
+            "y": 0,
+            "zoom": 1,
+          },
+        },
+        "expected_version": 0,
+        "request_id": "graph_02ddf653074c45ada8c3489ea6d8e330",
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/creative/GraphStoryboardStarter.additive.test.tsx:89:77
+     87|  fireEvent.click(button('撤销图编辑'));expect(document.querySelectorAl…
+     88|  fireEvent.click(button('重做图编辑'));expect(document.querySelectorAl…
+     89|  fireEvent.click(button('保存创作图'));await act(async()=>{});expect(c…
+       |                                                                             ^
+     90|  expect(createRun).not.toHaveBeenCalled();expect(videoStoryboard).toHa…
+     91| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

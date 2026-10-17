@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/GraphStoryboardStarter.additive.test.tsx (9 tests) 636ms
+   ✓ assembles through the original controller with one undo and no automatic write or execution 424ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  04:42:38
+   Duration  2.26s (transform 728ms, setup 18ms, collect 1.06s, tests 636ms, environment 307ms, prepare 52ms)
+

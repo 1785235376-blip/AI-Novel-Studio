@@ -1,3 +1,4 @@
+import { GraphStoryboardStarter } from './GraphStoryboardStarter';
 import { GraphStarterPanel } from './GraphStarterPanel';
 import { IMAGE_REFERENCE_PURPOSES, IMAGE_REFERENCE_PURPOSE_LABELS } from './studioImageRuntimeContract';
 import { AssetInspector } from '../novel/AssetInspector';
@@ -137,7 +138,8 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
       <div className="studio-graph-actions"><Button variant="primary" disabled={!editable || controller.historyFull || !draft.title.trim() || !!base && !dirty} onClick={() => void save()}>保存创作图</Button><Button disabled={!editable || !past.length} onClick={() => travel(false)}>撤销图编辑</Button><Button disabled={!editable || !future.length} onClick={() => travel(true)}>重做图编辑</Button><Button disabled={busy || !base} onClick={() => navigate(() => void open(base!.id))}>重新读取创作图</Button></div>
     </Panel>
     {loading && <StatusMessage>正在读取当前范围的节点目录…</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}{notice && <StatusMessage>{notice}</StatusMessage>}
-    {catalog && !draft.nodes.length && !draft.edges.length && <GraphStarterPanel draft={draft} catalog={catalog} scope={controller.starterScope} disabled={!editable || timelineEditor.formDirty || !!controller.positionedInsertion} onApply={controller.applyStarterGraph} />}
+    {catalog && draft.schema_version === 5 && !draft.nodes.length && !draft.edges.length && <GraphStoryboardStarter scope={controller.starterScope} disabled={!editable || timelineEditor.formDirty || !!controller.positionedInsertion} loading={planningLoading} documents={planningDocuments} onLoad={loadPlanningDocuments} onRead={controller.readStarterStoryboard} onApply={controller.applyStoryboardStarter} />}
+    {catalog && draft.schema_version !== 5 && !draft.nodes.length && !draft.edges.length && <GraphStarterPanel draft={draft} catalog={catalog} scope={controller.starterScope} disabled={!editable || timelineEditor.formDirty || !!controller.positionedInsertion} onApply={controller.applyStarterGraph} />}
     {externalDirty && <StatusMessage tone="warning">请先保存或处理导演／资产／偏好输入，再修改创作图。</StatusMessage>}
     {executionDirty && <StatusMessage tone="warning">当前图媒体有待确认输入或不确定回执。先在原运行中取消确认或读取核对，再切换或修改图。</StatusMessage>}
     {timelineEditor.formDirty && <StatusMessage tone="warning">尚有未加入图草稿的剪辑输入，请明确加入或放弃后保存。<Button disabled={busy || timelineEditor.loading} onClick={timelineEditor.clearForm}>放弃尚未加入的剪辑输入</Button></StatusMessage>}

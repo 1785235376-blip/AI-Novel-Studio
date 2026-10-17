@@ -1,3 +1,5 @@
+import { buildStoryboardVideoStarter } from './graphStoryboardStarter';
+import { checkedStoryboardReceipt } from './studioStoryboardContract';
 import { buildGraphStarter, type GraphStarterKind } from './graphStarter';
 import type { ReviewedDirectorCanvasHandoff } from './directorCanvasHandoff';
 import { planningSourceFork, planningSourceReferences } from './graphPlanningFork';
@@ -349,6 +351,28 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
       change(next); if (draftRef.current !== next) return false;
       setSelected([next.nodes[0].id]); setNotice('起步方案已加入本地空图，可一次撤销。仍需明确保存、配置和运行；未调用模型。'); return true;
     } catch (value) { setError(value instanceof Error ? value.message : '起步方案未应用。'); return false; }
+  }
+  async function readStarterStoryboard(id: string, scope: object): Promise<StoryboardReceipt | undefined> {
+    if (scope !== verificationScope || !isVerificationCurrent() || !insertionCurrent(insertionScope)
+      || insertionRef.current || draftRef.current.schema_version !== 5 || draftRef.current.nodes.length
+      || !client.graphs.videoStoryboard) return;
+    const source = planningDocuments.find(row => row.id === id && row.mode === 'STORYBOARD');
+    if (!source) throw new Error('先读取并选择原分镜目录。');
+    const sourceEpoch = planningEpoch.current;
+    const receipt = checkedStoryboardReceipt(await read(() => client.graphs.videoStoryboard!(id)), id);
+    if (!isVerificationCurrent() || scope !== reviewedVerificationFence.current.token || sourceEpoch !== planningEpoch.current) return;
+    if (receipt.document_snapshot.version !== source.version || receipt.document_snapshot.digest !== source.digest || !receipt.approved)
+      throw new Error('分镜版本已变化或尚未审核，请在原分镜工作区核对。');
+    return receipt;
+  }
+  function applyStoryboardStarter(receipt: StoryboardReceipt, shotId: string, scope: object): boolean {
+    if (scope !== verificationScope || !isVerificationCurrent() || !insertionCurrent(insertionScope) || insertionRef.current || !catalog) return false;
+    const source = planningDocuments.find(row => row.mode === 'STORYBOARD' && row.id === receipt.document_snapshot.id);
+    if (!source || source.version !== receipt.document_snapshot.version || source.digest !== receipt.document_snapshot.digest) return false;
+    try { const next = buildStoryboardVideoStarter(draftRef.current, catalog, receipt, shotId); change(next);
+      if (draftRef.current !== next) return false;
+      setSelected([next.nodes[2].id]); setNotice('原分镜视频链已加入本地空图；请明确配置视频模型后保存。没有执行视频任务。'); return true;
+    } catch (value) { setError(value instanceof Error ? value.message : '分镜视频链未应用。'); return false; }
   }
   const currentCopy = active && copyPreview && copyPreview.identity === identity && copyPreview.client === client && copyPreview.graph === base?.id
     && copyPreview.epoch === selectedEpoch.current && copyPreview.catalog === catalog && copyPreview.source === JSON.stringify(draft) && editable ? copyPreview.result : undefined;
@@ -734,7 +758,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     providerPicker, sourceCopy, currentCrossCopy, captureSelectionForGraph, previewCrossGraphCopy, pasteCrossGraphCopy, clearGraphCopy: () => { copySourceEpoch.current++; crossCopyEpoch.current++; setCopySource(undefined); setCrossPreview(undefined); }, currentCopy, previewSelectionCopy, pasteSelectionCopy, cancelSelectionCopy: () => setCopyPreview(undefined),
     catalog: catalog ? { ...catalog, ...(pendingVideoCatalog ? { capabilities: { ...catalog.capabilities, video_graph: true as const, video_graph_schema_version: 5 as const, video_graph_evidence: 'LOCAL_REQUIRED' as const, storyboard_video_approval_required: true as const, automatic_video_dispatch: false as const } } : {}), definitions: graphCatalogForSchema(catalog.definitions, draft.schema_version) } : undefined,
     independentConfirmed, confirmIndependentGraph, prepareIndependentGraph, independentOrigin: visibleIndependentOrigin, historyFull,
-    starterScope: verificationScope, applyStarterGraph,
+    starterScope: verificationScope, applyStarterGraph, readStarterStoryboard, applyStoryboardStarter,
     planningForkScope: verificationScope, isPlanningForkCurrent: isVerificationCurrent, preparePlanningGraphFork, planningForkReferences,
     records, base, draft, selected, past, future, loading, error, notice, blocked,
     candidate, replaceConfirmed, checking, pendingNavigation, discardConfirmed, kind, sourcePort, targetPort,
