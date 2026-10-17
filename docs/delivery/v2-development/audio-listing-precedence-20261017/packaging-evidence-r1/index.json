@@ -1,0 +1,191 @@
+{
+  "status": "PASS_OFFLINE_PUBLIC_ARCHIVE_INSPECTION",
+  "manifest_sha256": "64ca4899566b3dae07192732ecba083e95244f8a625b9152f8c08602bfcc8400",
+  "archives": [
+    {
+      "archive": ".runtime/v2-checks/audio-listing-public-packaging-r1/pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "kind": "sdist",
+      "sha256": "4731f32a2e0b10ccfee1bfa5748f9b97cd795ade2ba226dc1ecfe21c570fabcb",
+      "payload_file_count": 523,
+      "changed_modules": {
+        "app/services/studio_audio_execution.py": {
+          "member": "ai_novel_studio-0.7.0/app/services/studio_audio_execution.py",
+          "sha256": "b46f9763540903022fcd070039cd3f00c87e26eade340e116481ef0c37b34ff1"
+        },
+        "app/jobs.py": {
+          "member": "ai_novel_studio-0.7.0/app/jobs.py",
+          "sha256": "8d76db6b09cd8efedecca565b9f550c3fdb2ef082bdb2d5d0fd0c81293aa46b2"
+        },
+        "app/creative/generation.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/generation.py",
+          "sha256": "df9a952946c1e2e2ad93e9fb698db0f0fea52bebe8146d742d8927271d873421"
+        },
+        "app/creative/director_terminal_evidence.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_terminal_evidence.py",
+          "sha256": "2d68c76a3cc26b7dd2b7b71b68cd1e26f3ece4610d4e5411ac7356a4a89ed7bf"
+        },
+        "app/creative/director_lifecycle.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_lifecycle.py",
+          "sha256": "667257bdfd76724e74813a336878e08d5be65465e7a8fba0a4d175faa070b176"
+        },
+        "app/creative/api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/api.py",
+          "sha256": "b74317a85e21ed95d1ba64cdc01d084cc9953e6167128fb74cf35b1440a748b9"
+        },
+        "app/creative/director_observation_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_observation_api.py",
+          "sha256": "d2cf3cf3ba245f90dfd2de75852425ecfcb44a618b12f82db9820783ef74ee21"
+        },
+        "app/creative/director_model_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_model_api.py",
+          "sha256": "07f242d00395625908649efcb47a0b09f15ed2ac0ba1764167ee14dd4584362c"
+        },
+        "app/creative/director_transport_contract.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_transport_contract.py",
+          "sha256": "481cd288b26db96805b2fa7be16055c18613517ff33a3f1558319828221ee745"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/audio-listing-precedence-20261017/packaging-evidence-r1/public-sdist0"
+    },
+    {
+      "archive": ".runtime/v2-checks/audio-listing-public-packaging-r1/pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "kind": "sdist",
+      "sha256": "521765b1761c00b8ca72d4d1b0ef6ecf6b8e3114d3afe670504ab543d57ef0b5",
+      "payload_file_count": 523,
+      "changed_modules": {
+        "app/services/studio_audio_execution.py": {
+          "member": "ai_novel_studio-0.7.0/app/services/studio_audio_execution.py",
+          "sha256": "b46f9763540903022fcd070039cd3f00c87e26eade340e116481ef0c37b34ff1"
+        },
+        "app/jobs.py": {
+          "member": "ai_novel_studio-0.7.0/app/jobs.py",
+          "sha256": "8d76db6b09cd8efedecca565b9f550c3fdb2ef082bdb2d5d0fd0c81293aa46b2"
+        },
+        "app/creative/generation.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/generation.py",
+          "sha256": "df9a952946c1e2e2ad93e9fb698db0f0fea52bebe8146d742d8927271d873421"
+        },
+        "app/creative/director_terminal_evidence.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_terminal_evidence.py",
+          "sha256": "2d68c76a3cc26b7dd2b7b71b68cd1e26f3ece4610d4e5411ac7356a4a89ed7bf"
+        },
+        "app/creative/director_lifecycle.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_lifecycle.py",
+          "sha256": "667257bdfd76724e74813a336878e08d5be65465e7a8fba0a4d175faa070b176"
+        },
+        "app/creative/api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/api.py",
+          "sha256": "b74317a85e21ed95d1ba64cdc01d084cc9953e6167128fb74cf35b1440a748b9"
+        },
+        "app/creative/director_observation_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_observation_api.py",
+          "sha256": "d2cf3cf3ba245f90dfd2de75852425ecfcb44a618b12f82db9820783ef74ee21"
+        },
+        "app/creative/director_model_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_model_api.py",
+          "sha256": "07f242d00395625908649efcb47a0b09f15ed2ac0ba1764167ee14dd4584362c"
+        },
+        "app/creative/director_transport_contract.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_transport_contract.py",
+          "sha256": "481cd288b26db96805b2fa7be16055c18613517ff33a3f1558319828221ee745"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/audio-listing-precedence-20261017/packaging-evidence-r1/public-sdist1"
+    },
+    {
+      "archive": ".runtime/v2-checks/audio-listing-public-packaging-r1/pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "kind": "wheel",
+      "sha256": "19e430c49321eb8180f58e6ca4ec5d1311890868cb183b3d804ab509e8f56e84",
+      "payload_file_count": 519,
+      "changed_modules": {
+        "app/services/studio_audio_execution.py": {
+          "member": "app/services/studio_audio_execution.py",
+          "sha256": "b46f9763540903022fcd070039cd3f00c87e26eade340e116481ef0c37b34ff1"
+        },
+        "app/jobs.py": {
+          "member": "app/jobs.py",
+          "sha256": "8d76db6b09cd8efedecca565b9f550c3fdb2ef082bdb2d5d0fd0c81293aa46b2"
+        },
+        "app/creative/generation.py": {
+          "member": "app/creative/generation.py",
+          "sha256": "df9a952946c1e2e2ad93e9fb698db0f0fea52bebe8146d742d8927271d873421"
+        },
+        "app/creative/director_terminal_evidence.py": {
+          "member": "app/creative/director_terminal_evidence.py",
+          "sha256": "2d68c76a3cc26b7dd2b7b71b68cd1e26f3ece4610d4e5411ac7356a4a89ed7bf"
+        },
+        "app/creative/director_lifecycle.py": {
+          "member": "app/creative/director_lifecycle.py",
+          "sha256": "667257bdfd76724e74813a336878e08d5be65465e7a8fba0a4d175faa070b176"
+        },
+        "app/creative/api.py": {
+          "member": "app/creative/api.py",
+          "sha256": "b74317a85e21ed95d1ba64cdc01d084cc9953e6167128fb74cf35b1440a748b9"
+        },
+        "app/creative/director_observation_api.py": {
+          "member": "app/creative/director_observation_api.py",
+          "sha256": "d2cf3cf3ba245f90dfd2de75852425ecfcb44a618b12f82db9820783ef74ee21"
+        },
+        "app/creative/director_model_api.py": {
+          "member": "app/creative/director_model_api.py",
+          "sha256": "07f242d00395625908649efcb47a0b09f15ed2ac0ba1764167ee14dd4584362c"
+        },
+        "app/creative/director_transport_contract.py": {
+          "member": "app/creative/director_transport_contract.py",
+          "sha256": "481cd288b26db96805b2fa7be16055c18613517ff33a3f1558319828221ee745"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/audio-listing-precedence-20261017/packaging-evidence-r1/public-wheel0"
+    },
+    {
+      "archive": ".runtime/v2-checks/audio-listing-public-packaging-r1/pytest/public-wheel1/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "kind": "wheel",
+      "sha256": "a4ed7718e118b681e6ead0d3b2334def09b5c6d2d38f242e7ea2b7e790ad7658",
+      "payload_file_count": 519,
+      "changed_modules": {
+        "app/services/studio_audio_execution.py": {
+          "member": "app/services/studio_audio_execution.py",
+          "sha256": "b46f9763540903022fcd070039cd3f00c87e26eade340e116481ef0c37b34ff1"
+        },
+        "app/jobs.py": {
+          "member": "app/jobs.py",
+          "sha256": "8d76db6b09cd8efedecca565b9f550c3fdb2ef082bdb2d5d0fd0c81293aa46b2"
+        },
+        "app/creative/generation.py": {
+          "member": "app/creative/generation.py",
+          "sha256": "df9a952946c1e2e2ad93e9fb698db0f0fea52bebe8146d742d8927271d873421"
+        },
+        "app/creative/director_terminal_evidence.py": {
+          "member": "app/creative/director_terminal_evidence.py",
+          "sha256": "2d68c76a3cc26b7dd2b7b71b68cd1e26f3ece4610d4e5411ac7356a4a89ed7bf"
+        },
+        "app/creative/director_lifecycle.py": {
+          "member": "app/creative/director_lifecycle.py",
+          "sha256": "667257bdfd76724e74813a336878e08d5be65465e7a8fba0a4d175faa070b176"
+        },
+        "app/creative/api.py": {
+          "member": "app/creative/api.py",
+          "sha256": "b74317a85e21ed95d1ba64cdc01d084cc9953e6167128fb74cf35b1440a748b9"
+        },
+        "app/creative/director_observation_api.py": {
+          "member": "app/creative/director_observation_api.py",
+          "sha256": "d2cf3cf3ba245f90dfd2de75852425ecfcb44a618b12f82db9820783ef74ee21"
+        },
+        "app/creative/director_model_api.py": {
+          "member": "app/creative/director_model_api.py",
+          "sha256": "07f242d00395625908649efcb47a0b09f15ed2ac0ba1764167ee14dd4584362c"
+        },
+        "app/creative/director_transport_contract.py": {
+          "member": "app/creative/director_transport_contract.py",
+          "sha256": "481cd288b26db96805b2fa7be16055c18613517ff33a3f1558319828221ee745"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/audio-listing-precedence-20261017/packaging-evidence-r1/public-wheel1"
+    }
+  ],
+  "all_runtime_source_bytes_verified": true,
+  "application_imported": false,
+  "installed": false,
+  "extracted": false,
+  "windows_native_browser_postgres_acceptance": "NOT_RUN"
+}

@@ -1,0 +1,27 @@
+{
+  "status": "SCOPED_PRIMARY_PASS",
+  "identical_source_snapshots": true,
+  "original_tests_unchanged": true,
+  "receipts": [
+    {
+      "receipt": "docs/delivery/v2-development/audio-listing-precedence-r1.json",
+      "sha256": "9a0b1d4ea609e8f8ceafa7152193cdf4a645521f97f6d1605a7796d63a6a22dc"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/audio-listing-contract-regression-r1.json",
+      "sha256": "3055c16a7fa8f4ec1c2a267e48ba9febaf49e3192fc0d3cb0acb78dd4648d633"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/audio-listing-media-regression-r1.json",
+      "sha256": "371839806e75c763afa931db636c66db681d359b51dd98d37efe94d30a583e1c"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/audio-listing-ui-build-r1.json",
+      "sha256": "6cc92008453dd239f82c8991eb2910a5dcd1dc637205df6ebe25edd979b3b802"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/audio-listing-public-packaging-r1.json",
+      "sha256": "c2407ba2b5ed6f4a1df46396f4e26377529bf64729a42b4f3f7a6c018c3c8bcb"
+    }
+  ]
+}
