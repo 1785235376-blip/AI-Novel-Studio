@@ -1,0 +1,12 @@
+{
+  "parent_approval_received": true,
+  "parent_authorization": "Explicitly authorize exact byte-for-byte promotion of reviewed candidate b17c2d62c5c042e2a5881bc9e38494f99fc682fc26c73391bd9efdd88bea2179 from owned candidate path to .github/ci/coverage_manifest_v2.json.gz. Verify both hashes before/after and unchanged predecessor first. Then separate third original no-write confirmation and reviewer final gate. No recompression/source edits.",
+  "byte_exact": true,
+  "predecessor_sha256": "1bb20ce05257c94fe36b68acb3f68edb3137268643af7888dad68566c6f7619e",
+  "candidate_path": ".runtime/director-review-inventory/candidate-manifest-v2.json.gz",
+  "canonical_path": ".github/ci/coverage_manifest_v2.json.gz",
+  "candidate_sha256": "b17c2d62c5c042e2a5881bc9e38494f99fc682fc26c73391bd9efdd88bea2179",
+  "canonical_sha256": "b17c2d62c5c042e2a5881bc9e38494f99fc682fc26c73391bd9efdd88bea2179",
+  "independent_approval_sha256": "c0a9f98065d1e789f717fe05c91660b5a747444527601b7f094e66c7683c8c3e",
+  "source_commit": "a1040fda61856da5be5fffa6f65ea3c9d7e6a3f1"
+}

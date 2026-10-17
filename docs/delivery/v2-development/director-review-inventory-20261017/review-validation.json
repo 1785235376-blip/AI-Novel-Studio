@@ -1,0 +1,25 @@
+{
+  "status": "INVENTORY_ONLY",
+  "head": "a1040fda61856da5be5fffa6f65ea3c9d7e6a3f1",
+  "rows": 16608,
+  "raw_sha256": "f5a05a44c1608e732fd1ce09da6690f3988a89468004e3618a3877be54f99b0e",
+  "report_sha256": "e17b1dda2cd1c5d59c32549d3e92b5fe9fbbfb9e2f514bc7db54e91e41e02ca9",
+  "all_old_rows_order_and_classifications_exact": 16495,
+  "new_rows": 113,
+  "new_backend_counts": {
+    "file": 81,
+    "postgres": 0,
+    "both": 32
+  },
+  "new_rows_by_file": {
+    "tests/test_v2_creative_director_review_contract.py": 32,
+    "tests/test_v2_independent_director_adoption.py": 81
+  },
+  "protected_entries_exact": 1299,
+  "source_count": 2616,
+  "source_stable": true,
+  "companion_files": 11,
+  "canonical_unchanged": true,
+  "canonical_sha256": "1bb20ce05257c94fe36b68acb3f68edb3137268643af7888dad68566c6f7619e",
+  "tests_executed": false
+}

@@ -1,0 +1,25 @@
+{
+  "status": "APPROVE_EXACT_CANDIDATE_PROMOTION",
+  "source_commit": "a1040fda61856da5be5fffa6f65ea3c9d7e6a3f1",
+  "candidate_path": ".runtime/director-review-inventory/candidate-manifest-v2.json.gz",
+  "candidate_sha256": "b17c2d62c5c042e2a5881bc9e38494f99fc682fc26c73391bd9efdd88bea2179",
+  "predecessor_canonical_sha256": "1bb20ce05257c94fe36b68acb3f68edb3137268643af7888dad68566c6f7619e",
+  "canonical_unchanged": true,
+  "rows": 16608,
+  "source_entries": 2616,
+  "raw_collection_byte_exact": true,
+  "old_rows_order_and_classifications_exact": 16495,
+  "new_rows": 113,
+  "new_backend_counts": {
+    "file": 81,
+    "both": 32,
+    "postgres": 0
+  },
+  "protected_entries_exact": 1299,
+  "companions": 11,
+  "original_generator_write_target_is_separate_candidate": true,
+  "normal_runner_origin_and_source_brackets_pass": true,
+  "offline_candidate_verifier_pass": true,
+  "tests_executed": false,
+  "promotion_scope": "Only exact approved candidate bytes; parent authorization required before canonical replacement; fresh original no-write confirmation remains required"
+}

@@ -1,0 +1,28 @@
+{
+  "status": "PASS_FINAL_INVENTORY_CONFIRMATION",
+  "source_commit": "a1040fda61856da5be5fffa6f65ea3c9d7e6a3f1",
+  "canonical_sha256": "b17c2d62c5c042e2a5881bc9e38494f99fc682fc26c73391bd9efdd88bea2179",
+  "candidate_sha256": "b17c2d62c5c042e2a5881bc9e38494f99fc682fc26c73391bd9efdd88bea2179",
+  "exact_approved_candidate_promoted": true,
+  "independent_candidate_approval_sha256": "c0a9f98065d1e789f717fe05c91660b5a747444527601b7f094e66c7683c8c3e",
+  "promotion_receipt_sha256": "7e31e49d4de7c2af5a09360e41499ef667c9f3721ad79ac0b3cec13de37ea1b5",
+  "all_three_raw_collections_byte_identical": true,
+  "raw_collection_sha256": "f5a05a44c1608e732fd1ce09da6690f3988a89468004e3618a3877be54f99b0e",
+  "rows": 16608,
+  "old_rows_order_and_classifications_exact": 16495,
+  "new_rows": 113,
+  "new_backend_counts": {
+    "file": 81,
+    "both": 32,
+    "postgres": 0
+  },
+  "source_entries": 2616,
+  "protected_entries_exact": 1299,
+  "companions_verified": 11,
+  "separate_original_no_write_confirmation": true,
+  "normal_and_runner_origin_and_brackets_pass": true,
+  "offline_final_verifier_pass": true,
+  "canonical_edited_by_reviewer": false,
+  "tests_executed": false,
+  "scope": "Inventory closure only; runtime tests and exclusions remain recorded separately; PostgreSQL/provider/browser gates remain unverified"
+}

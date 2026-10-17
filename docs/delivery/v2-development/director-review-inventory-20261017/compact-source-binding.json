@@ -1,0 +1,73 @@
+{
+  "source_checkpoint": "a1040fda61856da5be5fffa6f65ea3c9d7e6a3f1",
+  "baseline_manifest": {
+    "commit": "586c388b09844d2587043effb4b51955c17f8bb5",
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "sha256": "1bb20ce05257c94fe36b68acb3f68edb3137268643af7888dad68566c6f7619e"
+  },
+  "complete_source_map_entries": 2616,
+  "complete_source_map_sha256": "101b07dcf99fdabefba3bc17bd19d91d4eb8c2e7b9bcec7e01538486bc0ad420",
+  "source_delta": [
+    {
+      "path": "app/creative/generation.py",
+      "before": "af7f497c8c0edfe831b554c55986fb9ec8d2b9e6c7a3061021b71ad6ab2defaa",
+      "after": "1020e41c6bbb199241d628e51ed35e1195c998b9a9ca784fecbdb6de2f83b6ae"
+    },
+    {
+      "path": "app/creative/proposals.py",
+      "before": "1cc89432bded64802404511563bdc3834100e3a63b69aa333256802cc3e84ddc",
+      "after": "5f0b70fedcad83fafa6927b0940adb7afa51c0621fb5c61d277fa7f5443751d8"
+    },
+    {
+      "path": "app/creative/storyboard_model.py",
+      "before": "4bc019b4e4b78d1697f5543213fb2db682c4f4829c3303d44d392fa2612238a2",
+      "after": "253472b23c9704a5e31d5803a730ff01713570fcb3bf55f86347da5b4e54aa61"
+    },
+    {
+      "path": "tests/test_v2_creative_director_review_contract.py",
+      "before": null,
+      "after": "8a4fe7ebe5e4518c5a3c08133f41aac989ce8c8e3a76a54e1c83ed126c86e979"
+    },
+    {
+      "path": "tests/test_v2_independent_director_adoption.py",
+      "before": null,
+      "after": "6029db520619452d0efcca3514ec692c401d950f98709d9b9cabd59e5872fb32"
+    }
+  ],
+  "expected_new_sources": [
+    "tests/test_v2_creative_director_review_contract.py",
+    "tests/test_v2_independent_director_adoption.py"
+  ],
+  "protected_old_entries_exact": 1299,
+  "frontend_scripts_e2e_companion": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "raw_inventory": {
+    "path": "docs/delivery/v2-development/director-review-inventory-20261017/review-raw-collection.json",
+    "sha256": "f5a05a44c1608e732fd1ce09da6690f3988a89468004e3618a3877be54f99b0e",
+    "rows": 16608
+  },
+  "prior_raw_inventory": {
+    "path": "docs/delivery/v2-development/creative-lifecycle-inventory-20261017/review-raw-collection.json",
+    "sha256": "6220856c9389db25999ca7a41d35e02f9d98606b9071240bc42f5d1a99feed14",
+    "rows": 16495
+  },
+  "packaging_guard": {
+    "path": "packaging/public-build.json",
+    "before_sha256": "3261cc7549d58e5d8e84c69572a9475d9c416bfd487588ecfbec472e8695d37c",
+    "after_sha256": "3261cc7549d58e5d8e84c69572a9475d9c416bfd487588ecfbec472e8695d37c",
+    "outside_manifest": true,
+    "unchanged": true
+  },
+  "tests_executed": false
+}

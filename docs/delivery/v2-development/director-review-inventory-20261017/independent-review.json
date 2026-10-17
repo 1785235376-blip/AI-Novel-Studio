@@ -1,0 +1,25 @@
+{
+  "status": "APPROVE_CANDIDATE_GENERATION",
+  "source_commit": "a1040fda61856da5be5fffa6f65ea3c9d7e6a3f1",
+  "canonical_unchanged": true,
+  "canonical_sha256": "1bb20ce05257c94fe36b68acb3f68edb3137268643af7888dad68566c6f7619e",
+  "raw_collection_sha256": "f5a05a44c1608e732fd1ce09da6690f3988a89468004e3618a3877be54f99b0e",
+  "old_rows_exact": 16495,
+  "rows": 16608,
+  "new_rows": 113,
+  "new_backend_counts": {
+    "both": 32,
+    "file": 81
+  },
+  "source_entries_commit_and_current_verified": 2616,
+  "protected_entries_exact": 1299,
+  "omitted_companions_verified": 11,
+  "original_no_write_boundary_verified": true,
+  "normal_and_runner_origin_verified": true,
+  "offline_verifier_pass": true,
+  "tests_executed": false,
+  "limitations": [
+    "Inventory collection is not test execution or PostgreSQL runtime acceptance",
+    "Approval permits separate candidate generation only; no canonical promotion"
+  ]
+}
