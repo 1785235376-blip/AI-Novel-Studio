@@ -1,0 +1,53 @@
+{
+  "status": "PASS_REVIEW_RECOMMEND_CANDIDATE_ONLY",
+  "utc": "2026-10-17T02:08:20.865Z",
+  "head": "db30950eaad1aa10b50de94306486b1db3a86971",
+  "rows": 15779,
+  "old_rows": 15742,
+  "new_rows": 37,
+  "new_classifications": {
+    "file": 18,
+    "postgres": 18,
+    "both": 1
+  },
+  "raw_sha256": "34fe270c538da2eeae8ae4e8941bc3ad3459cbc91d4ebfce80bce74f8a0b3595",
+  "source_count": 2586,
+  "protected": 1273,
+  "companions": 11,
+  "canonical_sha256": "414865364741d8836181670735f2e4cecb041541645c3cfc8fd7a52f2492a254",
+  "source_map_sha256": "cb2c6142a66b697d95371b7c22b43f9623033a23b410abc5424154d2621bfc4c",
+  "checks": {
+    "head": true,
+    "canonical_old_exact": true,
+    "candidate_absent": true,
+    "raw_hash": true,
+    "all_old_rows_exact_order_classification": true,
+    "raw_success_uniqueness": true,
+    "new_rows_exact_file": true,
+    "classification": true,
+    "exact_seven_reviewed_deltas": true,
+    "delta_before_app/creative/generation.py": true,
+    "delta_before_app/creative/proposals.py": true,
+    "delta_before_frontend/src/creative/AIDirectorPanel.storyboard.additive.test.tsx": true,
+    "delta_before_frontend/src/creative/AIDirectorPanel.tsx": true,
+    "delta_before_frontend/src/creative/GraphDirectorProposalReview.tsx": true,
+    "delta_before_frontend/src/creative/client.ts": true,
+    "delta_before_tests/test_v2_storyboard_director_proposal_loop.py": true,
+    "source_count_digest": true,
+    "full_source_bracket": true,
+    "all_sources_exact_git": true,
+    "all_sources_exact_worktree": true,
+    "old_protected1273": true,
+    "companion11_exact_closure": true,
+    "companions_guards_exact": true,
+    "startup_exact_except_utc": true,
+    "normal_startup_exact": true,
+    "report_bound_success": true,
+    "safe_invocation": true
+  },
+  "tests_executed": false,
+  "disclosures": [
+    "Startup strict byte comparison initially rejected only parent/child UTC changes; independently verified all other original/fresh startup fields exact. Diagnostic preserved.",
+    "Independent initial comparator also needed to parse JSON-encoded child_stdout before removing its UTC; exact difference proof retained in /tmp/dot-storyboard-director-inventory-initial-checker-diagnostic-20261017.json."
+  ]
+}

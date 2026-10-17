@@ -1,0 +1,11 @@
+{
+  "source_checkpoint": "db30950eaad1aa10b50de94306486b1db3a86971",
+  "candidate_path": ".runtime/storyboard-director-inventory/candidate-manifest-v2.json.gz",
+  "candidate_sha256": "7d814e6ee28e1afd80b151e1aefc86edd39d62769bf4c0212780dfb39784c113",
+  "previous_canonical_sha256": "414865364741d8836181670735f2e4cecb041541645c3cfc8fd7a52f2492a254",
+  "canonical_sha256": "7d814e6ee28e1afd80b151e1aefc86edd39d62769bf4c0212780dfb39784c113",
+  "byte_exact": true,
+  "independent_approval_sha256": "37a05d60ce42da6d1e2244df0158827bf3f44bd97a7dc288ce54ad9f68139337",
+  "parent_approval_received": true,
+  "tests_executed": false
+}

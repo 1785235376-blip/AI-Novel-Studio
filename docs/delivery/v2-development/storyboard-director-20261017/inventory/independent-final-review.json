@@ -1,0 +1,51 @@
+{
+  "status": "APPROVE_CANONICAL_AND_EVIDENCE_COMMIT",
+  "utc": "2026-10-17T02:12:42.032Z",
+  "source_commit": "db30950eaad1aa10b50de94306486b1db3a86971",
+  "canonical_sha256": "7d814e6ee28e1afd80b151e1aefc86edd39d62769bf4c0212780dfb39784c113",
+  "raw_sha256": "34fe270c538da2eeae8ae4e8941bc3ad3459cbc91d4ebfce80bce74f8a0b3595",
+  "rows": 15779,
+  "old_rows": 15742,
+  "new_rows": 37,
+  "source_count": 2586,
+  "old_protected": 1273,
+  "refreshed_protected": 1275,
+  "companions": 11,
+  "source_map_sha256": "cb2c6142a66b697d95371b7c22b43f9623033a23b410abc5424154d2621bfc4c",
+  "evidence": {
+    "payload_files": 46,
+    "payload_bytes": 7315685,
+    "index_sha256": "1625173096e80d1273d4b66a6c35af067a1cde89abea5599f52c443e8757812e",
+    "verifier_sha256": "2aec5244ea38897696f78b9eb9cbb34bc984fa4bc8c547dc7b896a821ad40669",
+    "verifier_read_only_reviewed": true,
+    "verifier_exit_code": 0,
+    "index_bound_before_this_report_is_added": true
+  },
+  "checks": {
+    "exact_approved_canonical": true,
+    "review_raw_byte_exact": true,
+    "review_complete_source_bytes": true,
+    "review_write_boundary": true,
+    "candidate_raw_byte_exact": true,
+    "candidate_complete_source_bytes": true,
+    "candidate_write_boundary": true,
+    "confirmation_raw_byte_exact": true,
+    "confirmation_complete_source_bytes": true,
+    "confirmation_write_boundary": true,
+    "index_complete": true,
+    "index_safe_regular_files": true,
+    "all_indexed_hashes_lengths": true,
+    "independent_copies_byte_exact": true,
+    "promotion_approval_hash": true,
+    "refreshed_protected1275": true,
+    "source_head": true
+  },
+  "errors": [],
+  "tests_executed": false,
+  "scope": "Canonical and inventory evidence only. No product imports or tests in this review.",
+  "disclosures": [
+    "All original timestamp-comparison diagnostics are retained and accurately described.",
+    "Bundle contains one raw row archive, command/probe/hash evidence and verifier scripts; no dependency tree or application runtime payload is included.",
+    "Final report may be copied byte-exact and index regenerated without changing accepted source/canonical bytes."
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "status": "CHECKER_DIAGNOSTIC",
+  "error": "startup_exact_except_utc",
+  "cause": "Initial independent checker removed UTC from parent and child_receipt objects, but not JSON encoded in child_stdout. All differing parent/child values are UTC timestamps; parsing child_stdout before normalization confirms exact equality of all other fields.",
+  "top_level_differences": [
+    "utc",
+    "child_stdout",
+    "child_receipt"
+  ],
+  "child_stdout_differences": [
+    "utc"
+  ],
+  "product_executed": false
+}

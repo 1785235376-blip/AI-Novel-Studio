@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "normal_startup_exact": true,
+  "origin_proof_exact_except_parent_and_child_utc": true,
+  "initial_comparison_diagnostic": "The initial strict byte comparison rejected changing UTC timestamps in the successful origin probe. No origin, dependency, sys.path, importer, status or source differences. Collection used the previously verified safe environment; this comparison error did not block the subsequent shell command.",
+  "original_probe_sha256": "573bcf4eeb312ade6a95ba087db50169b01e3ace5080e2a51f27563aa2a5ece8"
+}

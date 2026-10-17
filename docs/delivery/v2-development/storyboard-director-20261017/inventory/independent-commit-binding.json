@@ -1,0 +1,23 @@
+{
+  "status": "PASS_COMMITTED_SOURCE_BINDING",
+  "commit": "db30950eaad1aa10b50de94306486b1db3a86971",
+  "parent": "00b305c9c784bd316a8c23a70a28157d19366f09",
+  "changed_paths": 42,
+  "source_paths": 7,
+  "source_hashes": {
+    "app/creative/proposals.py": "ca4b70d7ed30be6072e730aea2360650906b9805a0590cf6ad85798555afe1fa",
+    "app/creative/generation.py": "37b6ac843465bc091f452e66ba07d7f3e1233bb3a83a767ae5276d72d416ea47",
+    "tests/test_v2_storyboard_director_proposal_loop.py": "9d9a44a0522928a1040850137dbb9850ccf76f10f3b40e2d679c2bfca2d057d4",
+    "frontend/src/creative/AIDirectorPanel.tsx": "c43d2df0604fea99ff0b3b9c8be5827f82c73b6e99b138c77eead71fa19bb40e",
+    "frontend/src/creative/GraphDirectorProposalReview.tsx": "8efb4ba475038b1d89f0635e948c16f0903cd0c4f8fc499ce71a3fbf1d929428",
+    "frontend/src/creative/client.ts": "373285b58ae8cf087e25b229eba99299a9c5800b59d475656718330e0c1bf982",
+    "frontend/src/creative/AIDirectorPanel.storyboard.additive.test.tsx": "72beacb9ff37505b149599ecd1de32a3658a4d24fe7a649e92826569558cf74c"
+  },
+  "source_review": "/tmp/dot-storyboard-director-final-source-review-20261017.json",
+  "source_review_sha256": "180afad83d566318246ca5410c7e41529c8c55d3fbff60bddee306db3afbe8ed",
+  "unexpected": [],
+  "errors": [],
+  "tracked_worktree_diff": "",
+  "git_status": "?? frontend/node_modules",
+  "tests_executed": false
+}
