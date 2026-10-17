@@ -1,0 +1,11 @@
+{
+  "status": "CLASSIFIED_SYNTHETIC_FIXTURES_ONLY",
+  "new_blobs_scanned": 428,
+  "matched_occurrences": 147,
+  "inherited_negative_test_id_occurrences": 146,
+  "new_literal_fixture_occurrences": 1,
+  "new_literal_fixture_path": "frontend/src/creative/DirectorDraftComparison.additive.test.tsx",
+  "new_literal_fixture_value": "do-not-display",
+  "unclassified_hits": 0,
+  "absolute_secret_absence_guaranteed": false
+}
