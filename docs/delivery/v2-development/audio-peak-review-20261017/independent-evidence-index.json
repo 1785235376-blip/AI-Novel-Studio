@@ -1,0 +1,102 @@
+{
+  "status": "PASS_INDEPENDENT_SOURCE_LOG_AND_IMMUTABILITY_AUDIT",
+  "source_count": 2590,
+  "head": "e1e66cedeb7a140b6894850bc21a1e5ac7e06c16",
+  "receipts": [
+    {
+      "path": "docs/delivery/v2-development/audio-peak-primary-origin-before-r1.json",
+      "sha256": "e90fbd74de9b702e031e30a99e10ba0584a86cb75d6edd8e4f9c0d3e2decc5b4",
+      "log_sha256": "df32dded5f9481979da353f062b696c1dccaf5f6afa78bff97b50074438d5a45",
+      "status": "PASS"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-new-backend-r1.json",
+      "sha256": "efd3cb628ebac7a85c0e0dbd25da8199485b94b5147abb134c3c3dbdea15e3ce",
+      "log_sha256": "462a1eac1db51febcc359f751ae365c602a71dd8051cceae78e7d7f1b6b28513",
+      "status": "PASS"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-primary-origin-after-r1.json",
+      "sha256": "2ef95e02ad4b9b5c8d73f603f9f4f91755ec3256bdd077696d48d8d232343c9d",
+      "log_sha256": "e9cbff24ae414ba971f836be0f7cc0fccae2a30a8f1782b8e19a0fde64188ddd",
+      "status": "PASS"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-legacy-backend-r1.json",
+      "sha256": "56a495ffda18c2972fa4748f7f37ad32e4f7f247c4357a1228122885cb01e5ab",
+      "log_sha256": "8f1a3c792ffead52d9bae2ae98db364a6c97c49a0aa74dd208fc6a8210acbdfd",
+      "status": "PASS"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-frontend-tests-r1.json",
+      "sha256": "446032a6c6f5be23e50b02769c917f35129c165e9c6e613996154920890d05c5",
+      "log_sha256": "ea056e5593225424bdb70710839d7d615d945873dc4e497011cd96179ccea92e",
+      "status": "PASS"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-frontend-typecheck-r1.json",
+      "sha256": "51a656456e4966f3a738737ca7470d1f228c51ae309615e684950ac6e5c336ae",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-frontend-build-r1.json",
+      "sha256": "5ee43cea1b58ea1082925f1eed023b5cddfd4dbba8589eb0c74607bfae304b0e",
+      "log_sha256": "b18977561e6b867b0d64c5e1dfa838fbfa3270e7e13fd62119a2f49ed7e63945",
+      "status": "PASS"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-frontend-tokens-r1.json",
+      "sha256": "66c676cd21522e6d29c3d4e5572a32153c715c7ac60729cd6ff69e92b68986e9",
+      "log_sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "status": "PASS"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-final-origin-r1.json",
+      "sha256": "b0e65841200dec52d949baaec81d9fefb3c1e7ff655f3b367ac05333152e4bda",
+      "log_sha256": "d98ed37b87c25f977e240987553fd760f29ec4cccdaed5110ebdc8804d701710",
+      "status": "PASS"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-review-origin-before-r1.json",
+      "sha256": "63180d61928b57a3d83486b51cad9637c88047782a10be6127f762ec99006c2e",
+      "log_sha256": "92675e14ea40b6584d299ed806794782d65afdbc3d7bf642692c92cb8f9f0587",
+      "status": "PASS"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-review-backend-r1.json",
+      "sha256": "c0ef13713c43abf02e664d39a804fa69fd7bc16d0b45c5857823d5f7224d7e74",
+      "log_sha256": "1011db8cd65c9680d2468173ce5bcad09f348b8927984e812b671ef06750aae4",
+      "status": "PASS"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-review-frontend-r1.json",
+      "sha256": "0b87a42b4e279c2b1df972f7a57923e53ff61a3224205b3f690f6be0f69d504c",
+      "log_sha256": "3f8fd0cd874a6b962a7074114c146ec2dcfb47949c490eaedb150bc32a5b8df3",
+      "status": "PASS"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-review-origin-after-r1.json",
+      "sha256": "66d1778e2edec23f8516e03611d75f28de03cccfaed9c098e356c20b5c4ebe80",
+      "log_sha256": "e58ba51d54d59febb0d8540f48081b937ad5d01e4c7482db8437df69d62d03d6",
+      "status": "PASS"
+    }
+  ],
+  "runtime_changes": [
+    "app/creative/production_execution.py",
+    "app/creative/production_execution_models.py",
+    "app/services/studio_audio_execution.py",
+    "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+    "frontend/src/creative/studioProductionClient.ts",
+    "frontend/src/creative/useStudioMediaExecution.ts"
+  ],
+  "backend": "171 passed, 48 PostgreSQL deselected",
+  "frontend": "170 passed, 4 suites",
+  "scope": "PCM16 WAV unchanged rate/channels, exact frame trim; not LUFS/true-peak",
+  "limitations": [
+    "No PostgreSQL",
+    "No browser visual/geometry",
+    "No Windows/packaging/real models/providers",
+    "No commit/push/merge by reviewer"
+  ]
+}

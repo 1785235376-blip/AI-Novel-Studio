@@ -1,0 +1,270 @@
+{
+  "status": "PASS_COMPLETE_SCOPED_EVIDENCE_CLOSURE",
+  "baseline_head": "e1e66cedeb7a140b6894850bc21a1e5ac7e06c16",
+  "current_head": "e1e66cedeb7a140b6894850bc21a1e5ac7e06c16",
+  "branch": "work/dot-audio-normalize-20261017",
+  "source_count": 2590,
+  "source_map_reference": "docs/delivery/v2-development/audio-peak-20261017/primary-evidence-index.json",
+  "source_map_reference_sha256": "56364bf1c3db1ae67d311fa61feacde400c463ade63ce4ea6e28aeba0cae7326",
+  "runtime_and_additive_tests": {
+    "app/creative/production_execution.py": "f6128729b841424114b105d5d998dfecb71375ce8ccf714862e59c8cbd677f6a",
+    "app/creative/production_execution_models.py": "4aba9013da8987a5f00bc68e499648a5778f5c1cec42086278fdd86bf150d564",
+    "app/services/studio_audio_execution.py": "791f5e0dc9edcd3c53991440682199269601f45f13194d8b715a2bfdada45112",
+    "frontend/src/creative/StudioMediaExecutionPanel.tsx": "72fdf00eacfa35524b5e29ff446218d9f3fcadf7434a11634252768a9d347e26",
+    "frontend/src/creative/studioProductionClient.ts": "168bdf55eb2a28c1d2a0fa8d3accd6fd6969ddd1afb092c3dc4cef57cd86e06a",
+    "frontend/src/creative/useStudioMediaExecution.ts": "8daab8e645b44f9cb3d15d63bd2dbde1acb673a66bb4cbc2ade2ebe8e30b2fba",
+    "tests/test_v2_audio_peak_contract.py": "07b30e14e1bbb0d4599590e95c3ad88b033c067e661f3ecee7ae0604b7f640d7",
+    "tests/test_v2_audio_peak_api.py": "3527cea970d6fba286fa8853cddbbd78f2f853cea4ecb50106278fa9eea7b56d",
+    "tests/test_v2_audio_peak_cpu.py": "c9624330ea07a8a83320e5fd539dd701d453c71a25966579196aae3ea0f796e8",
+    "frontend/src/creative/studioAudioPeak.additive.test.tsx": "b9c90a9fbce5e44fdd642de76abd01c66a850231a58f7574c185c48c3ac3df61"
+  },
+  "frozen_fixture": {
+    "path": "tests/fixtures/studio_audio_peak_omission_v1.json",
+    "sha256": "d818680bf5895014cd400671d5ed95d3ca61a8886cec4e58c2f8dfcc0c4dcc16"
+  },
+  "receipts": [
+    {
+      "path": "docs/delivery/v2-development/audio-peak-primary-origin-before-r1.json",
+      "sha256": "e90fbd74de9b702e031e30a99e10ba0584a86cb75d6edd8e4f9c0d3e2decc5b4",
+      "log_sha256": "df32dded5f9481979da353f062b696c1dccaf5f6afa78bff97b50074438d5a45",
+      "status": "PASS",
+      "log": "docs/delivery/v2-development/audio-peak-primary-origin-before-r1.log"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-new-backend-r1.json",
+      "sha256": "efd3cb628ebac7a85c0e0dbd25da8199485b94b5147abb134c3c3dbdea15e3ce",
+      "log_sha256": "462a1eac1db51febcc359f751ae365c602a71dd8051cceae78e7d7f1b6b28513",
+      "status": "PASS",
+      "log": "docs/delivery/v2-development/audio-peak-new-backend-r1.log"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-primary-origin-after-r1.json",
+      "sha256": "2ef95e02ad4b9b5c8d73f603f9f4f91755ec3256bdd077696d48d8d232343c9d",
+      "log_sha256": "e9cbff24ae414ba971f836be0f7cc0fccae2a30a8f1782b8e19a0fde64188ddd",
+      "status": "PASS",
+      "log": "docs/delivery/v2-development/audio-peak-primary-origin-after-r1.log"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-legacy-backend-r1.json",
+      "sha256": "56a495ffda18c2972fa4748f7f37ad32e4f7f247c4357a1228122885cb01e5ab",
+      "log_sha256": "8f1a3c792ffead52d9bae2ae98db364a6c97c49a0aa74dd208fc6a8210acbdfd",
+      "status": "PASS",
+      "log": "docs/delivery/v2-development/audio-peak-legacy-backend-r1.log"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-frontend-tests-r1.json",
+      "sha256": "446032a6c6f5be23e50b02769c917f35129c165e9c6e613996154920890d05c5",
+      "log_sha256": "ea056e5593225424bdb70710839d7d615d945873dc4e497011cd96179ccea92e",
+      "status": "PASS",
+      "log": "docs/delivery/v2-development/audio-peak-frontend-tests-r1.log"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-frontend-typecheck-r1.json",
+      "sha256": "51a656456e4966f3a738737ca7470d1f228c51ae309615e684950ac6e5c336ae",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS",
+      "log": "docs/delivery/v2-development/audio-peak-frontend-typecheck-r1.log"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-frontend-build-r1.json",
+      "sha256": "5ee43cea1b58ea1082925f1eed023b5cddfd4dbba8589eb0c74607bfae304b0e",
+      "log_sha256": "b18977561e6b867b0d64c5e1dfa838fbfa3270e7e13fd62119a2f49ed7e63945",
+      "status": "PASS",
+      "log": "docs/delivery/v2-development/audio-peak-frontend-build-r1.log"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-frontend-tokens-r1.json",
+      "sha256": "66c676cd21522e6d29c3d4e5572a32153c715c7ac60729cd6ff69e92b68986e9",
+      "log_sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "status": "PASS",
+      "log": "docs/delivery/v2-development/audio-peak-frontend-tokens-r1.log"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-final-origin-r1.json",
+      "sha256": "b0e65841200dec52d949baaec81d9fefb3c1e7ff655f3b367ac05333152e4bda",
+      "log_sha256": "d98ed37b87c25f977e240987553fd760f29ec4cccdaed5110ebdc8804d701710",
+      "status": "PASS",
+      "log": "docs/delivery/v2-development/audio-peak-final-origin-r1.log"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-review-origin-before-r1.json",
+      "sha256": "63180d61928b57a3d83486b51cad9637c88047782a10be6127f762ec99006c2e",
+      "log_sha256": "92675e14ea40b6584d299ed806794782d65afdbc3d7bf642692c92cb8f9f0587",
+      "status": "PASS",
+      "log": "docs/delivery/v2-development/audio-peak-review-origin-before-r1.log"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-review-backend-r1.json",
+      "sha256": "c0ef13713c43abf02e664d39a804fa69fd7bc16d0b45c5857823d5f7224d7e74",
+      "log_sha256": "1011db8cd65c9680d2468173ce5bcad09f348b8927984e812b671ef06750aae4",
+      "status": "PASS",
+      "log": "docs/delivery/v2-development/audio-peak-review-backend-r1.log"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-review-frontend-r1.json",
+      "sha256": "0b87a42b4e279c2b1df972f7a57923e53ff61a3224205b3f690f6be0f69d504c",
+      "log_sha256": "3f8fd0cd874a6b962a7074114c146ec2dcfb47949c490eaedb150bc32a5b8df3",
+      "status": "PASS",
+      "log": "docs/delivery/v2-development/audio-peak-review-frontend-r1.log"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-review-origin-after-r1.json",
+      "sha256": "66d1778e2edec23f8516e03611d75f28de03cccfaed9c098e356c20b5c4ebe80",
+      "log_sha256": "e58ba51d54d59febb0d8540f48081b937ad5d01e4c7482db8437df69d62d03d6",
+      "status": "PASS",
+      "log": "docs/delivery/v2-development/audio-peak-review-origin-after-r1.log"
+    }
+  ],
+  "observations": [
+    {
+      "path": "docs/delivery/v2-development/audio-peak-20261017/observations/test_actual_exact_selected_pea0.json",
+      "sha256": "e43c86c45110fc5af7ecfe5f2e7d6986837e96fe92a88b2862a0c31529b01f82",
+      "original_owned_path": ".runtime/v2-checks/audio-peak-new-backend-r1/pytest/test_actual_exact_selected_pea0/peak-observation.json",
+      "source_sha256": "7539ae56ef9f8ce69d7047e47cecbeb05bf37f24aefd7000dd08312e91807f9d",
+      "candidate_sha256": "e7725a5e7bf4c3e2b79b0ea739959ab07a1a5e2fe7de9db658344809c6cf3e8a",
+      "selected_pcm_sha256": "bce9d690ca316a1fff3257b3b71f1c5f79ecddf455491ae4eca5a4d322cd9d67",
+      "output_pcm_sha256": "e89ddbed0d992eeec56991c9b1efad86ca52b4874bf25a06bd3975344323b775",
+      "selected_frames": 8000,
+      "output_frames": 8000,
+      "source_peak_s16": 8000,
+      "output_peak_s16": 16423
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-20261017/observations/test_actual_exact_selected_pea1.json",
+      "sha256": "795a9ea2f56e81bf5ca275e83c80d1c862723bd845829b6675100b7b7b0a7c39",
+      "original_owned_path": ".runtime/v2-checks/audio-peak-new-backend-r1/pytest/test_actual_exact_selected_pea1/peak-observation.json",
+      "source_sha256": "a48926d75bd1310d9dd151129fc5cb12845c3f633be4fee237140609e24776c8",
+      "candidate_sha256": "aec500427d0f8ff08fffbeac9e1742ad605696a8e5b4141280de17d35a4c7dba",
+      "selected_pcm_sha256": "43b471a8ddcdf99f1b02c56c06318e8d5a9b6f1d92543e0b050da6e63c744986",
+      "output_pcm_sha256": "5490f3277c60814a27434d65f4674f41996d24386c144a79762454a72428f677",
+      "selected_frames": 22050,
+      "output_frames": 22050,
+      "source_peak_s16": 8000,
+      "output_peak_s16": 15504
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-20261017/observations/test_actual_exact_selected_pea2.json",
+      "sha256": "2b5f663968dedf3b52837d395fa82d22ef8d16bd7b4bd15ec80129ec1b7421e9",
+      "original_owned_path": ".runtime/v2-checks/audio-peak-new-backend-r1/pytest/test_actual_exact_selected_pea2/peak-observation.json",
+      "source_sha256": "a6c2974dd7f1af803f4bdf02ace37a6689eeccbd9e726c7be03d849be8fe4d68",
+      "candidate_sha256": "f9782cdf535b20f973817235ec85e15df228a51b2700305789931f4be00002f8",
+      "selected_pcm_sha256": "cecf8b424ae134e60aeae6414beb4775b70f4093bbdfd3d09e0e852ad993a480",
+      "output_pcm_sha256": "b03d459cf2864b6ea0dd1ac83e060fc1a8010b1166e5eb926a660d8db4c66d0d",
+      "selected_frames": 8000,
+      "output_frames": 8000,
+      "source_peak_s16": 32768,
+      "output_peak_s16": 16423
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-20261017/observations/test_actual_exact_selected_pea3.json",
+      "sha256": "0b1f531a21f9c3727b5040bbd62442141981d12e64752de86d80404017d00365",
+      "original_owned_path": ".runtime/v2-checks/audio-peak-new-backend-r1/pytest/test_actual_exact_selected_pea3/peak-observation.json",
+      "source_sha256": "582e8e47a0b760384599b400d77b3fc1ee58a1c1881a25d56080f84242445430",
+      "candidate_sha256": "caad64761cd02946fe98522f7a60bb965fe939c67eaf7c0478fe35ef638f5cca",
+      "selected_pcm_sha256": "b51f13cfbfc3dc81d90d9d34f473e6cfb9a92f1d2331d9a17581a8168d907c53",
+      "output_pcm_sha256": "19155303de56aac6864f1f3850a88ea994025a50b052507ff832c44c730c221c",
+      "selected_frames": 8000,
+      "output_frames": 8000,
+      "source_peak_s16": 20000,
+      "output_peak_s16": 5827
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-peak-20261017/observations/test_actual_exact_selected_pea4.json",
+      "sha256": "73708da87a2321567c95b244fd38a65c39ca0378b7d30e8da84301c9b1dd2796",
+      "original_owned_path": ".runtime/v2-checks/audio-peak-new-backend-r1/pytest/test_actual_exact_selected_pea4/peak-observation.json",
+      "source_sha256": "7539ae56ef9f8ce69d7047e47cecbeb05bf37f24aefd7000dd08312e91807f9d",
+      "candidate_sha256": "04c2e88a9332bff861689ea7db49c471a98d76f736f9dc5d6df5db2d017810a3",
+      "selected_pcm_sha256": "bce9d690ca316a1fff3257b3b71f1c5f79ecddf455491ae4eca5a4d322cd9d67",
+      "output_pcm_sha256": "82e632baea4484f0ccbe194a06b16f74f1aaa1102fe4785c557d2a40ed7689e1",
+      "selected_frames": 8000,
+      "output_frames": 8000,
+      "source_peak_s16": 8000,
+      "output_peak_s16": 2
+    }
+  ],
+  "artifact_sha256": {
+    "docs/delivery/v2-development/audio-peak-baseline-capture.json": "8531857954d5639a8a9054367c5d34e1721f74260528d8180c1388ed8ac51e5a",
+    "docs/delivery/v2-development/audio-peak-baseline-capture.log": "fc470eff1a7d8827af5bede25fc647994a52f82840ad1eb16c4c366557468a2a",
+    "docs/delivery/v2-development/audio-peak-baseline-origin-after.json": "31ab0123bc9bfcd16e039b2c081b2178645dd8dd0e0c27507d661e86776af03a",
+    "docs/delivery/v2-development/audio-peak-baseline-origin-after.log": "fcbc092d27d327d81c64ab3fbbaa39b1c44bb3de6ef3895702f0fcb5af656b4e",
+    "docs/delivery/v2-development/audio-peak-baseline-origin-before.json": "25ff172fca79c4bd1ebabff240fd1815ef9d3353b9a9c8a410bb11255358edd7",
+    "docs/delivery/v2-development/audio-peak-baseline-origin-before.log": "62d0b014aeb6df85677ae6106b9a569e2d7876ab7da8fe9508f5b85114bd6a16",
+    "docs/delivery/v2-development/audio-peak-final-origin-r1.json": "b0e65841200dec52d949baaec81d9fefb3c1e7ff655f3b367ac05333152e4bda",
+    "docs/delivery/v2-development/audio-peak-final-origin-r1.log": "d98ed37b87c25f977e240987553fd760f29ec4cccdaed5110ebdc8804d701710",
+    "docs/delivery/v2-development/audio-peak-frontend-build-r1.json": "5ee43cea1b58ea1082925f1eed023b5cddfd4dbba8589eb0c74607bfae304b0e",
+    "docs/delivery/v2-development/audio-peak-frontend-build-r1.log": "b18977561e6b867b0d64c5e1dfa838fbfa3270e7e13fd62119a2f49ed7e63945",
+    "docs/delivery/v2-development/audio-peak-frontend-tests-r1.json": "446032a6c6f5be23e50b02769c917f35129c165e9c6e613996154920890d05c5",
+    "docs/delivery/v2-development/audio-peak-frontend-tests-r1.log": "ea056e5593225424bdb70710839d7d615d945873dc4e497011cd96179ccea92e",
+    "docs/delivery/v2-development/audio-peak-frontend-tokens-r1.json": "66c676cd21522e6d29c3d4e5572a32153c715c7ac60729cd6ff69e92b68986e9",
+    "docs/delivery/v2-development/audio-peak-frontend-tokens-r1.log": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+    "docs/delivery/v2-development/audio-peak-frontend-typecheck-r1.json": "51a656456e4966f3a738737ca7470d1f228c51ae309615e684950ac6e5c336ae",
+    "docs/delivery/v2-development/audio-peak-frontend-typecheck-r1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/delivery/v2-development/audio-peak-legacy-backend-r1.json": "56a495ffda18c2972fa4748f7f37ad32e4f7f247c4357a1228122885cb01e5ab",
+    "docs/delivery/v2-development/audio-peak-legacy-backend-r1.log": "8f1a3c792ffead52d9bae2ae98db364a6c97c49a0aa74dd208fc6a8210acbdfd",
+    "docs/delivery/v2-development/audio-peak-new-backend-r1.json": "efd3cb628ebac7a85c0e0dbd25da8199485b94b5147abb134c3c3dbdea15e3ce",
+    "docs/delivery/v2-development/audio-peak-new-backend-r1.log": "462a1eac1db51febcc359f751ae365c602a71dd8051cceae78e7d7f1b6b28513",
+    "docs/delivery/v2-development/audio-peak-primary-origin-after-r1.json": "2ef95e02ad4b9b5c8d73f603f9f4f91755ec3256bdd077696d48d8d232343c9d",
+    "docs/delivery/v2-development/audio-peak-primary-origin-after-r1.log": "e9cbff24ae414ba971f836be0f7cc0fccae2a30a8f1782b8e19a0fde64188ddd",
+    "docs/delivery/v2-development/audio-peak-primary-origin-before-r1.json": "e90fbd74de9b702e031e30a99e10ba0584a86cb75d6edd8e4f9c0d3e2decc5b4",
+    "docs/delivery/v2-development/audio-peak-primary-origin-before-r1.log": "df32dded5f9481979da353f062b696c1dccaf5f6afa78bff97b50074438d5a45",
+    "docs/delivery/v2-development/audio-peak-review-backend-r1.json": "c0ef13713c43abf02e664d39a804fa69fd7bc16d0b45c5857823d5f7224d7e74",
+    "docs/delivery/v2-development/audio-peak-review-backend-r1.log": "1011db8cd65c9680d2468173ce5bcad09f348b8927984e812b671ef06750aae4",
+    "docs/delivery/v2-development/audio-peak-review-frontend-r1.json": "0b87a42b4e279c2b1df972f7a57923e53ff61a3224205b3f690f6be0f69d504c",
+    "docs/delivery/v2-development/audio-peak-review-frontend-r1.log": "3f8fd0cd874a6b962a7074114c146ec2dcfb47949c490eaedb150bc32a5b8df3",
+    "docs/delivery/v2-development/audio-peak-review-origin-after-r1.json": "66d1778e2edec23f8516e03611d75f28de03cccfaed9c098e356c20b5c4ebe80",
+    "docs/delivery/v2-development/audio-peak-review-origin-after-r1.log": "e58ba51d54d59febb0d8540f48081b937ad5d01e4c7482db8437df69d62d03d6",
+    "docs/delivery/v2-development/audio-peak-review-origin-before-r1.json": "63180d61928b57a3d83486b51cad9637c88047782a10be6127f762ec99006c2e",
+    "docs/delivery/v2-development/audio-peak-review-origin-before-r1.log": "92675e14ea40b6584d299ed806794782d65afdbc3d7bf642692c92cb8f9f0587",
+    "docs/delivery/v2-development/audio-peak-20261017/baseline-provenance.md": "1117f99168d5cdf085213209f29f5ad8849b22ba60001dcdc90548c4e64e9e85",
+    "docs/delivery/v2-development/audio-peak-20261017/build-launch-r1.log": "0c8872e73f1ecbaf1f53f2a0b3aac2e676809cc1553a54587bd176faa99ec50d",
+    "docs/delivery/v2-development/audio-peak-20261017/capture-baseline.py": "83456bf5dc740dea7f7912d74e9a7dffbbf4062ce413e671a9e6a808d65f3cbd",
+    "docs/delivery/v2-development/audio-peak-20261017/capture-launch.log": "208f863248d8dea55c06433f8ef015bbd9360d66a57c961dbc97eb06e95f5700",
+    "docs/delivery/v2-development/audio-peak-20261017/final-origin-launch-r1.log": "9ac149cb8d6e4bebb92aa6e9853909b848fdb2723f40ed923b1efb3fbd1b577d",
+    "docs/delivery/v2-development/audio-peak-20261017/finalize-index.py": "5a8cf172358d8c5ffaa316df9b89aae591329de0b3267302ef446949ce73842c",
+    "docs/delivery/v2-development/audio-peak-20261017/frontend-launch-r1.log": "06cd5f868d32705995d2be01d10652d66ddd0034f062c4e8ee3909a6364395e1",
+    "docs/delivery/v2-development/audio-peak-20261017/handoff.md": "56a10414017e700c9fdd0c405f730c26c79e31a822132d9d71f0ad44c785e731",
+    "docs/delivery/v2-development/audio-peak-20261017/legacy-launch-r1.log": "c01b5ecf014bba63c8cd7df9e350761023324bfe3fd152160324384445e125b2",
+    "docs/delivery/v2-development/audio-peak-20261017/native-prerequisites.txt": "91899252d1f6d655059c20964700ae9d6712ac97c55f940fd54ec599a2cd9687",
+    "docs/delivery/v2-development/audio-peak-20261017/observations/test_actual_exact_selected_pea0.json": "e43c86c45110fc5af7ecfe5f2e7d6986837e96fe92a88b2862a0c31529b01f82",
+    "docs/delivery/v2-development/audio-peak-20261017/observations/test_actual_exact_selected_pea1.json": "795a9ea2f56e81bf5ca275e83c80d1c862723bd845829b6675100b7b7b0a7c39",
+    "docs/delivery/v2-development/audio-peak-20261017/observations/test_actual_exact_selected_pea2.json": "2b5f663968dedf3b52837d395fa82d22ef8d16bd7b4bd15ec80129ec1b7421e9",
+    "docs/delivery/v2-development/audio-peak-20261017/observations/test_actual_exact_selected_pea3.json": "0b1f531a21f9c3727b5040bbd62442141981d12e64752de86d80404017d00365",
+    "docs/delivery/v2-development/audio-peak-20261017/observations/test_actual_exact_selected_pea4.json": "73708da87a2321567c95b244fd38a65c39ca0378b7d30e8da84301c9b1dd2796",
+    "docs/delivery/v2-development/audio-peak-20261017/origin/after-launch.log": "bbe812a26d37be2ce0a3c473fe0f21a45f9ebfee3bfb7efe9b41d58cfe07801b",
+    "docs/delivery/v2-development/audio-peak-20261017/origin/before-launch.log": "de27abee3b2682996fbe8733b0e16b8e7871608ac19d4c83c8ff5b8c8646c645",
+    "docs/delivery/v2-development/audio-peak-20261017/origin/natural-startup.json": "faf5a893aa9b709a2f880ebb0f3d98dba6eb95bd1e30f7fbb330ce26828a7668",
+    "docs/delivery/v2-development/audio-peak-20261017/origin/origin-probe.py": "4bcadca10fd66e0ef7f722a6294fd7b9ae38ed3f5ef7553eaa30003a58c9fbaa",
+    "docs/delivery/v2-development/audio-peak-20261017/primary-evidence-index.json": "56364bf1c3db1ae67d311fa61feacde400c463ade63ce4ea6e28aeba0cae7326",
+    "docs/delivery/v2-development/audio-peak-20261017/primary-launch-r1.log": "068315121fe62e66de6f1e9e547d2deab077badcbd6389adcdba54e5df286f12",
+    "docs/delivery/v2-development/audio-peak-20261017/primary-natural-startup-r1.json": "faf5a893aa9b709a2f880ebb0f3d98dba6eb95bd1e30f7fbb330ce26828a7668",
+    "docs/delivery/v2-development/audio-peak-20261017/run-primary-r1.sh": "9f751de42497152e1869829ffbda7455ca03210dd973fecc13f0533fa70405c7",
+    "docs/delivery/v2-development/audio-peak-20261017/tokens-launch-r1.log": "75f2c41b910b86a1f7e34e2fd16cedd4fd1431995b2f152d62ed094bf8bc4877",
+    "docs/delivery/v2-development/audio-peak-20261017/typecheck-launch-r1.log": "22c3e21c7b557bba1e66e1927c8d3f92bebf307eb04bba8fca8b9f50ed68d580",
+    "docs/delivery/v2-development/audio-peak-review-20261017/backend-launch.log": "e7b7a862e4f34ac186a0068f9114c4a66e6f5854f7f2d2a1eee23792f441c5e0",
+    "docs/delivery/v2-development/audio-peak-review-20261017/frontend-launch.log": "e9234f9e4f384922e8ff1c5702891f80e621447e3f37ecff7ffeff0671ff3e0e",
+    "docs/delivery/v2-development/audio-peak-review-20261017/independent-evidence-index.json": "9c6aed7c263dbbe81eaadc3e21291f990cac9b33dd19a45f300670a23869f67d",
+    "docs/delivery/v2-development/audio-peak-review-20261017/natural-startup.json": "faf5a893aa9b709a2f880ebb0f3d98dba6eb95bd1e30f7fbb330ce26828a7668",
+    "docs/delivery/v2-development/audio-peak-review-20261017/origin-after-launch.log": "8ebc3635ef90674165ef6fc449ace46f7477dd326fec67be31a9af6e97773d9a",
+    "docs/delivery/v2-development/audio-peak-review-20261017/origin-before-launch.log": "ea243138c822f7ae37a105cc0cd616dd24dca009ccffd6ebe29830abeeab82bc",
+    "docs/delivery/v2-development/audio-peak-review-20261017/review.md": "b411945b829128bbd9f3e753b09899974ccd0b0705bd859c1f2455124d86cf5e"
+  },
+  "results": {
+    "new_backend": "95 passed, 48 PostgreSQL-only deselected",
+    "legacy_backend": "268 passed, 148 PostgreSQL-only deselected",
+    "primary_frontend": "360 passed, 15 suites",
+    "independent_backend": "171 passed, 48 PostgreSQL-only deselected",
+    "independent_frontend": "170 passed, 4 suites",
+    "counts_overlap": true,
+    "forced_typescript": "PASS",
+    "frontend_vite_build": "PASS",
+    "ui_token_guard": "PASS 52 files"
+  },
+  "limitations": [
+    "PCM16 WAV only, same source/output rate and channels, integral selected frames only",
+    "Sample-peak only, not LUFS or true-peak",
+    "PostgreSQL deselected; browser visual/geometry and native desktop not run",
+    "Five known previously reproduced audio-listing precedence failures not run here and still unresolved",
+    "Public wheel/sdist packaging not built for this source; parent must run on integrated branch",
+    "No live provider/model, subjective quality, full repository/product acceptance, commit, merge, push or release claim"
+  ]
+}
