@@ -1,0 +1,6 @@
+{
+  "app/creative/api.py": "734f331834a621de4fe69dc9ffb8c54ab66a54f3370bcfb06ef08b2bd2400f7d",
+  "app/creative/director_observation_api.py": "e6e4b6fdf534d84b37a99666f9ca6b6da6163cc7d53f38a2b615569f38c9212b",
+  "packaging/public-build.json": "77c0642c0562327caa6dbe4ac59a2d7788ca641f12c3cf52505c230134462a7e",
+  "tests/test_director_observation_transport_additive.py": "b1a5840a960ad7bf776c5d57f3e55e3430bf1dd09c64296d46f473d1019daf56"
+}

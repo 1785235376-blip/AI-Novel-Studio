@@ -1,0 +1,202 @@
+{
+  "source_commit": "8dcd36b7b54a68d66b169795422b2f33c6106d1c",
+  "status": "PRIMARY_CHECKED_DEFAULT_DISABLED_REVIEW_PENDING",
+  "files": {
+    "docs/delivery/v2-development/director-observation-adapter-r1.json": {
+      "sha256": "2d83d4559779c36e7fdb1e9e4aea6056e03ad05d71ec7cd640d705b51ca69787",
+      "bytes": 624745
+    },
+    "docs/delivery/v2-development/director-observation-adapter-r1.log": {
+      "sha256": "579b2f2ce97bb9bf322306f97441bb5674680732f5f257bf7e10f7832b3f2efb",
+      "bytes": 1083
+    },
+    "docs/delivery/v2-development/director-observation-adapter-r2.json": {
+      "sha256": "4eeaf3eca29beafae0c3f55f9df8fac20c0bba3cb1c58bcae6dc8a51bd6b386f",
+      "bytes": 624800
+    },
+    "docs/delivery/v2-development/director-observation-adapter-r2.log": {
+      "sha256": "e326ff8c2b635699aec2a3756d7b231a35a59bd4f72ae9f724b67bd2f702a48b",
+      "bytes": 1084
+    },
+    "docs/delivery/v2-development/director-observation-adapter-r3.json": {
+      "sha256": "60a863d3a625891cf1ea0c0ed14a9ba14e3d0f941b6fe66cddfe3caaa1a0194f",
+      "bytes": 624800
+    },
+    "docs/delivery/v2-development/director-observation-adapter-r3.log": {
+      "sha256": "5d0b3314ec83f179fbcb3ca680111b70df3b9de8f38a268cc03f6ac15a5e4242",
+      "bytes": 1084
+    },
+    "docs/delivery/v2-development/director-observation-adapter-r4.json": {
+      "sha256": "90ebd088551f499660c7505b771d9785b0276027fb0dcb1730b276ff424ddf4c",
+      "bytes": 624800
+    },
+    "docs/delivery/v2-development/director-observation-adapter-r4.log": {
+      "sha256": "50e70290ba4af104d0423f7bc0aed76e4711eefe2e4446f7484d37a7185ce0a8",
+      "bytes": 1084
+    },
+    "docs/delivery/v2-development/director-observation-adapter-r5.json": {
+      "sha256": "5dda3b6bafbf6c52f5ec37b237532cf61fbda18fcc7b23d76e3422e077ceaa17",
+      "bytes": 624938
+    },
+    "docs/delivery/v2-development/director-observation-adapter-r5.log": {
+      "sha256": "337d63f69572d6177297172b22ec7a139340c8105d54c3c0ca2f56b0e1809d1a",
+      "bytes": 1270
+    },
+    "docs/delivery/v2-development/director-observation-final-build-r1.json": {
+      "sha256": "9b45977e4742cb0aed2bf5f38286b127ef8831eb4238f15125920a4fb072555a",
+      "bytes": 624471
+    },
+    "docs/delivery/v2-development/director-observation-final-build-r1.log": {
+      "sha256": "bd25f17ebb4f5458117bffb388c793ad0b95493ce19de7ea88191d33d6dc71b1",
+      "bytes": 1679
+    },
+    "docs/delivery/v2-development/director-observation-final-origin-after-r1.json": {
+      "sha256": "d8a39751f7ebfc6fea2fd9eb6c0b05632bd6009278ea2cecb41104d201299748",
+      "bytes": 624750
+    },
+    "docs/delivery/v2-development/director-observation-final-origin-after-r1.log": {
+      "sha256": "ace1521c2b4c3ee85c58b125c7919ca2a8bd31626f4e91ac93cff219e124a046",
+      "bytes": 13262
+    },
+    "docs/delivery/v2-development/director-observation-final-origin-before-r1.json": {
+      "sha256": "e141be07afebbc38cfb5efc095261f783382fe15650e96dc8b5b63443a6d714a",
+      "bytes": 624759
+    },
+    "docs/delivery/v2-development/director-observation-final-origin-before-r1.log": {
+      "sha256": "6ce7f2b6d806bb2f55aa5f191521b3499861df8812e7ea27e487bd1d96c55fa2",
+      "bytes": 13262
+    },
+    "docs/delivery/v2-development/director-observation-final-token-r1.json": {
+      "sha256": "003ab876b507b7dc4a349f25d152be5e33d22c568f4aeba06862aa6a87323149",
+      "bytes": 624407
+    },
+    "docs/delivery/v2-development/director-observation-final-token-r1.log": {
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "bytes": 31
+    },
+    "docs/delivery/v2-development/director-observation-final-type-r1.json": {
+      "sha256": "32ed70d69796c617b1050d26921b85fd26008f624ec3cff3ada9a72f321ea3c6",
+      "bytes": 624469
+    },
+    "docs/delivery/v2-development/director-observation-final-type-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/director-observation-packaging-r1.json": {
+      "sha256": "30f479b0bd7bd297aca507837f4f09bbc0b645799d6f521006b6d36c5eb14e4a",
+      "bytes": 624892
+    },
+    "docs/delivery/v2-development/director-observation-packaging-r1.log": {
+      "sha256": "c9f300f99991ff4eae3cbe19ab26840f0aa10a4584a6c5e69b21f60e994e66be",
+      "bytes": 715
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/actual-artifact-inspection-r1.json": {
+      "sha256": "51598f479b05b5f54777f400640d0360aa54738998a39a703ac1787880123282",
+      "bytes": 7075
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/build-interpreter-r1.json": {
+      "sha256": "41c09a4ad28d12c7514b26ceb4e229ab56152c8fe4c9ff11356bbd91a3297a95",
+      "bytes": 1493
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/final-launch-r1.log": {
+      "sha256": "70b965f6907442dab036dc4e717253e55a63ee726ca5d3cd6d694b51caac2473",
+      "bytes": 29617
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/frozen-source-r1.json": {
+      "sha256": "892a87cff0a2c0b799d70e3d68aa27064ee3a6d04130b1bc0fab7eb9c551c31b",
+      "bytes": 438
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/inspect-artifacts.py": {
+      "sha256": "76ca1ebe9d0f561d766d5bf41ad8bcc52b624610297f45e473f26a30f849db8c",
+      "bytes": 4394
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/manifest-packaging-input-r1.sha256": {
+      "sha256": "a232232319d98f4d9b7831b161bb636cd3b0b7fed9902063e26ae188ccfc41a7",
+      "bytes": 94
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/natural-startup-r1.json": {
+      "sha256": "5b6c4a045d5397bf65936055f07b20bf353a7f22251dce1d8e63d59915cf0ac1",
+      "bytes": 13198
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/origin-probe.py": {
+      "sha256": "ca28bffe67db49e7372b4dca9d841e2287eebacf234d348fc3012c92c0cfe241",
+      "bytes": 7364
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-evidence/index.json": {
+      "sha256": "51598f479b05b5f54777f400640d0360aa54738998a39a703ac1787880123282",
+      "bytes": 7075
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-evidence/public-sdist0/build.log": {
+      "sha256": "2612b50f3bb37f269c40f200cc8b19d5fdec690f3f83ee34be65fd7017852a41",
+      "bytes": 43970
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-evidence/public-sdist0/payload-inventory.json": {
+      "sha256": "5eb7abdff22d2ef341393ecc5e766b325337adfd0246315ed38ebca0f83dbb75",
+      "bytes": 87228
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-evidence/public-sdist0/sdist-receipt.json": {
+      "sha256": "a5edaace04d36ad0f048bdf32bf823ef203f25067a870e2abe57842970abd7dc",
+      "bytes": 118824
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-evidence/public-sdist0/stage-receipt.json": {
+      "sha256": "2948dc63ade5e70ee7812f8299ad4d2b1bc561120f7b4d4c6228cd0c1199baaa",
+      "bytes": 79078
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-evidence/public-sdist1/build.log": {
+      "sha256": "2612b50f3bb37f269c40f200cc8b19d5fdec690f3f83ee34be65fd7017852a41",
+      "bytes": 43970
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-evidence/public-sdist1/payload-inventory.json": {
+      "sha256": "5eb7abdff22d2ef341393ecc5e766b325337adfd0246315ed38ebca0f83dbb75",
+      "bytes": 87228
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-evidence/public-sdist1/sdist-receipt.json": {
+      "sha256": "95466d53fcdd926c0a227696de1b697756a67db8338569c2818b0d764a6991c5",
+      "bytes": 118824
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-evidence/public-sdist1/stage-receipt.json": {
+      "sha256": "2948dc63ade5e70ee7812f8299ad4d2b1bc561120f7b4d4c6228cd0c1199baaa",
+      "bytes": 79078
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-evidence/public-wheel0/build.log": {
+      "sha256": "da481135232fe34cde2ef79c1c4b484f544752da3ef2b930abab45888c42b821",
+      "bytes": 111833
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-evidence/public-wheel0/payload-inventory.json": {
+      "sha256": "e636a3de8b09a51b79270f75f7db4b8701b0019e588ccd81a695482ead0d09c7",
+      "bytes": 76319
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-evidence/public-wheel0/stage-receipt.json": {
+      "sha256": "2948dc63ade5e70ee7812f8299ad4d2b1bc561120f7b4d4c6228cd0c1199baaa",
+      "bytes": 79078
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-evidence/public-wheel0/wheel-receipt.json": {
+      "sha256": "a5ebc97937fc9f87a1e40064cd56caf7863731e3638d5cbd21a491af2db69ccb",
+      "bytes": 108397
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-evidence/public-wheel1/build.log": {
+      "sha256": "09af723fa01e722c6647ba6a75688d743192d6c91190b908e5585be8fd73bd40",
+      "bytes": 111833
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-evidence/public-wheel1/payload-inventory.json": {
+      "sha256": "e636a3de8b09a51b79270f75f7db4b8701b0019e588ccd81a695482ead0d09c7",
+      "bytes": 76319
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-evidence/public-wheel1/stage-receipt.json": {
+      "sha256": "2948dc63ade5e70ee7812f8299ad4d2b1bc561120f7b4d4c6228cd0c1199baaa",
+      "bytes": 79078
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-evidence/public-wheel1/wheel-receipt.json": {
+      "sha256": "62df7fab6a8a0bc52530a29e269915e33e1d96949cbc1cf277c4f56363c5847a",
+      "bytes": 108397
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/packaging-interpreter-probe.py": {
+      "sha256": "99e3fd75effce3b27fe22b9878c793ba4a9aed3db4494d14177869036e2dc35c",
+      "bytes": 1378
+    },
+    "docs/delivery/v2-development/director-observation-parent-check-20261017/run-final-r1.sh": {
+      "sha256": "ad2b97a1aa9a5a9b36b0f93876b3b326e312607f5dfd37502c148a85c6fdfdb0",
+      "bytes": 2371
+    }
+  }
+}
