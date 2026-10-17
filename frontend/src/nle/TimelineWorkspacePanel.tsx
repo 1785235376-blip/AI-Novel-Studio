@@ -5,6 +5,7 @@ import { ExportDeliveryPanel } from './ExportDeliveryPanel';
 import { SubtitleTrackPanel } from './SubtitleTrackPanel';
 import { TimelineRulerPanel } from './TimelineRulerPanel';
 import { TrackHeaderPanel } from './TrackHeaderPanel';
+import { TimelineWaveformPanel, type TimelineWaveformPanelProps } from './TimelineWaveformPanel';
 import { safeTimeline, setInOut, timebaseOf, timelineUsage, validateWindow } from './timelineOps';
 import type { NleMarks } from './timelineOpsTypes';
 import './timelineWorkspace.css';
@@ -13,7 +14,7 @@ import './timelineWorkspace.css';
  * 冻结挂载形状：主代理把真实控制器值传进来；本面板把每个入参都当不可信数据处理。
  * 面板不发网络请求、不建定时器、不持有第二个编辑器引擎；它只生成原编辑服务的操作描述符。
  */
-export type TimelineWorkspacePanelProps = { projectId: string; identity: string; timeline: unknown; selectedClipIds: string[]; playheadMs: number; viewStartMs: number; viewScale: number; editable: boolean; onSelectClips: (ids: string[]) => void; onPlayhead: (ms: number) => void; onView: (next: { startMs: number; scale: number }) => void; onEdit: (command: { kind: string; payload: unknown }) => void; subtitles?: unknown; exportReceipt?: unknown; limits?: unknown; onUnavailable?: () => void };
+export type TimelineWorkspacePanelProps = { projectId: string; identity: string; timeline: unknown; selectedClipIds: string[]; playheadMs: number; viewStartMs: number; viewScale: number; editable: boolean; onSelectClips: (ids: string[]) => void; onPlayhead: (ms: number) => void; onView: (next: { startMs: number; scale: number }) => void; onEdit: (command: { kind: string; payload: unknown }) => void; subtitles?: unknown; exportReceipt?: unknown; limits?: unknown; waveform?: TimelineWaveformPanelProps; onUnavailable?: () => void };
 
 const bounded = (value: unknown, max: number): string => {
   const text = typeof value === 'string' ? value : '';
@@ -60,6 +61,7 @@ export function TimelineWorkspacePanel(props: TimelineWorkspacePanelProps) {
       onSelectClips={props.onSelectClips} />
     <ClipInspectorPanel timeline={timeline} selectedClipIds={props.selectedClipIds} playheadMs={props.playheadMs}
       marks={marks} editable={props.editable} onEdit={props.onEdit} />
+    {props.waveform && <TimelineWaveformPanel {...props.waveform} />}
     <SubtitleTrackPanel timeline={timeline} subtitles={props.subtitles} editable={props.editable} onEdit={props.onEdit} />
     <ExportDeliveryPanel exportReceipt={props.exportReceipt} limits={props.limits} usage={usage} />
     <p className="nle-workspace__foot">本批次不改变已保存的时间线契约、不提高任何上限、不做调色与合成；本地 Windows、真实媒体与重型渲染验收仍待执行。</p>

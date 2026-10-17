@@ -457,6 +457,29 @@ class IndependentWorkspaceService:
             guard()
             return self.assets.public(row), data
 
+    def pinned_content(self, nid, scope, snapshot, *, max_bytes, guard=lambda: None):
+        """Read one formal source inside the caller's original asset phase.
+
+        This deliberately does not acquire another asset scope or inspect media.
+        AssetLibraryService enforces the already active incarnation binding.
+        """
+        from ..experimental.common import StaleSourceError
+        binding = getattr(self.assets._scope, "binding", None)
+        if (binding is None or binding.get("novel_id") != nid
+                or binding.get("branch_id") != scope.get("branch_id")
+                or binding.get("scope_key") != self.store.key(nid, scope)):
+            raise ValueError("CREATIVE_ASSET_PHASE_REQUIRED")
+        guard()
+        row = self._row(nid, scope, snapshot["id"])
+        if (row.get("_owner_actor_id") or (row["version"], row["sha256"], row["kind"]) !=
+                (snapshot["version"], snapshot["digest"], snapshot["asset_kind"])):
+            raise StaleSourceError("STUDIO_TIMELINE_SOURCE_CHANGED")
+        if type(row.get("size")) is not int or not 0 < row["size"] <= max_bytes:
+            raise ValueError("ASSET_BOUNDED_READ_LIMIT")
+        data = self.assets.content(row["id"], branch_id=scope.get("branch_id"), max_bytes=max_bytes, guard=guard)
+        guard()
+        return row, data
+
     def lifecycle(self, nid, scope, aid, expected_version, *, restore=False, guard=lambda: None, actor_id=None):
         if type(expected_version) is not int or expected_version < 1:
             raise ValueError("CREATIVE_EXPECTED_VERSION_INVALID")

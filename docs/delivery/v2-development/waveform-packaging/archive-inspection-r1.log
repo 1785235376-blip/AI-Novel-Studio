@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/20a0022d2b33/studio-timeline-waveform/docs/delivery/v2-development/waveform-packaging/inspect-artifacts-r1.py", line 28, in <module>
+    assert len(receipts) == 4, 'expect the existing four real artifact builds'
+           ^^^^^^^^^^^^^^^^^^
+AssertionError: expect the existing four real artifact builds

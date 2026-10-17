@@ -9,6 +9,7 @@ import { checkedTimeline, checkedTimelineRow, type StudioTimeline, type StudioTi
 import { checkedTimelineTransferInput, checkedTimelineTransferPreview, timelineTransferInputDigest, type TimelineTransferInput, type TimelineTransferPreview } from './studioTimelineTransferTypes';
 import { checkedTimelineExportPreview, checkedTimelineExportProfile, type TimelineExportProfile } from './studioTimelineExportTypes';
 import { checkedTimelinePlayback, type TimelinePlayback } from './studioTimelinePlaybackTypes';
+import { checkedTimelineWaveform, timelineWaveformRequest } from './studioTimelineWaveformTypes';
 import { checkedTimelineSourceRequest, checkedTimelineSourceEffect, type TimelineSourceEditRequest } from './studioTimelineSourceEditContract';
 
 export type ProductionOwner = 'image' | 'audio' | 'video' | 'timeline';
@@ -445,6 +446,11 @@ export function studioProductionClient(projectId: string, context: Collaboration
     async timelineRender(id: string, body: { expected_version: number; reviewed_timeline_digest: string; request_id: string }) {
       return job(await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(id)}/render`, 'POST', body, undefined, body.request_id));
     },
+    async timelineWaveformPreview(source: StudioTimelineRow, clipId: string, signal?: AbortSignal) {
+      const body = timelineWaveformRequest(source, clipId);
+      const raw = await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/waveform-preview`, 'POST', body, signal);
+      return checkedTimelineWaveform(raw, source, clipId, { novelId: projectId, branchId: branch });
+    },
     async timelinePlaybackPreview(source: StudioTimelineRow, signal?: AbortSignal): Promise<TimelinePlayback> {
       const raw = await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/playback-preview`, 'POST', {
         expected_version: source.version, reviewed_timeline_digest: source.timeline_digest }, signal);
@@ -528,7 +534,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
   };
 }
 type CompleteProductionClient = ReturnType<typeof studioProductionClient>;
-type TimelineExportMethods = 'timelineExportPreview' | 'timelineExport' | 'timelineTransferPreview' | 'timelineTransferImport' | 'timelineTransferAttachment' | 'timelineTrackLock' | 'timelinePlaybackPreview' | 'timelinePlaybackBuild' | 'timelinePlaybackAttestation' | 'timelineEdit';
+type TimelineExportMethods = 'timelineWaveformPreview' | 'timelineExportPreview' | 'timelineExport' | 'timelineTransferPreview' | 'timelineTransferImport' | 'timelineTransferAttachment' | 'timelineTrackLock' | 'timelinePlaybackPreview' | 'timelinePlaybackBuild' | 'timelinePlaybackAttestation' | 'timelineEdit';
 // Existing embedded clients keep their original media/render surface. Export
 // controls require both additive methods before becoming available.
 export type StudioProductionClient = Omit<CompleteProductionClient, TimelineExportMethods> & Partial<Pick<CompleteProductionClient, TimelineExportMethods>>;

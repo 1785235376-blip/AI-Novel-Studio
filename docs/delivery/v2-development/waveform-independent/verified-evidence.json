@@ -1,0 +1,48 @@
+{
+  "status": "PASS_INDEPENDENT_TEST_AND_ARCHIVE_AUDIT",
+  "receipts": [
+    "waveform-independent-origin-r1",
+    "waveform-independent-backend-r1",
+    "waveform-independent-ui-r1"
+  ],
+  "source_count": 2578,
+  "source_map_sha256": "766be902169fbbcb693fbeba4e59cd13cf24a723865f5d65aa5352fc5c2a2c5d",
+  "all_source_maps_match_current": true,
+  "all_log_hashes_match": true,
+  "manifest_sha256": "57f657057a391fa9ebdd8586fba62262ea6f3bb5fb1e2fe71f0c5ff27ad573be",
+  "archives": [
+    {
+      "archive": ".runtime/v2-checks/waveform-packaging-r1/pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "sha256": "75eb7624771665a0a28931ec11cc572d633fb15cf67bebad73e2ab0c560e937e",
+      "payload_file_count": 517,
+      "runtime_files_matching_current": 476,
+      "changed_modules_matching_current": 10
+    },
+    {
+      "archive": ".runtime/v2-checks/waveform-packaging-r1/pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "sha256": "f03ce4b5788ecaadd0bc52af8c559941822d1ce1249f82b4b033a6e0a2294abf",
+      "payload_file_count": 517,
+      "runtime_files_matching_current": 476,
+      "changed_modules_matching_current": 10
+    },
+    {
+      "archive": ".runtime/v2-checks/waveform-packaging-r1/pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "sha256": "2a4771c710b1b79c1da0aee39c62d95af75d6cb493a9b19125c82faeba55f9f6",
+      "payload_file_count": 513,
+      "runtime_files_matching_current": 476,
+      "changed_modules_matching_current": 10
+    },
+    {
+      "archive": ".runtime/v2-checks/waveform-packaging-r1/pytest/public-wheel1/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "sha256": "13f6321720dd4bd9ac746771c79f3b45fe9155f6b406ba4cab258f9990589bb9",
+      "payload_file_count": 513,
+      "runtime_files_matching_current": 476,
+      "changed_modules_matching_current": 10
+    }
+  ],
+  "archive_extraction": false,
+  "product_import_or_install_for_audit": false,
+  "postgres_windows_browser_native": "NOT_RUN",
+  "source_map_serialization": "UTF-8 sorted JSON with compact separators",
+  "primary_backend_source_map_matches": true
+}

@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-timeline-waveform/frontend
+
+ ✓ src/creative/StudioTimelineWaveform.additive.test.tsx (29 tests) 659ms
+   ✓ original mounted timeline integration > requires saved clean single selection and preserves local history and saved payload 570ms
+ ✓ src/nle/TimelineWaveformPanel.additive.test.tsx (13 tests) 192ms
+ ✓ src/creative/studioTimelineWaveformContract.additive.test.ts (24 tests) 33ms
+
+ Test Files  3 passed (3)
+      Tests  66 passed (66)
+   Start at  16:48:34
+   Duration  3.12s (transform 666ms, setup 24ms, collect 1.01s, tests 884ms, environment 605ms, prepare 144ms)
+
+
+{"receipt": "docs/delivery/v2-development/waveform-frontend-new-r1.json", "status": "PASS"}

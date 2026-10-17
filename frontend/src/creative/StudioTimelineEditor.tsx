@@ -11,6 +11,7 @@ import { transferClipTarget } from './timelineTransferReview';
 import { StudioTimelineTransferPanel } from './StudioTimelineTransferPanel';
 import { StudioTimelinePlaybackPanel } from './StudioTimelinePlaybackPanel';
 import { StudioTimelineSourceEditPanel } from './StudioTimelineSourceEditPanel';
+import { useStudioTimelineWaveform } from './useStudioTimelineWaveform';
 // UX-PRODUCT batch 3 (UX-06): multitrack editing rail. Additive presentation over the
 // SAME controller and draft; it never introduces a second timeline engine.
 import { TimelineWorkspacePanel } from '../nle/TimelineWorkspacePanel';
@@ -47,6 +48,14 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
   useEffect(() => { composing.current = false; }, [props.client]);
   const latestReview = useRef({ c, props, nleClips }); latestReview.current = { c, props, nleClips };
   const reviewGeneration = c.getHandoffRevision();
+  const waveform = useStudioTimelineWaveform({ props, source: c.base, selectedClipIds: nleClips,
+    getSelectionGeneration: () => selection.current.generation, getRevision: c.getHandoffRevision,
+    isReady: () => {
+      const live = latestReview.current;
+      return live.c.canEdit && !!live.c.base && !live.c.inputDirty && !live.c.dirty && !live.c.failure && !live.c.pending
+        && !live.c.denied && live.c.attempt?.state !== 'UNKNOWN' && live.c.sourcesCurrent
+        && !live.c.transfer.locked && !live.c.playback.locked && !live.c.sourceEdit.locked;
+    } });
   const draft = c.draft;
   if (!draft) return <Panel title="时间线"><EmptyState title="当前时间线入口不可用" detail="请重新核对项目、身份与原可信会话。旧输入和回执不会跨身份显示。" /></Panel>;
   const extended = draft.timeline.schema_version === 2;
@@ -259,6 +268,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       editable={c.canEdit} onSelectClips={selectClips} onPlayhead={setNlePlayhead}
       onView={next => setNleView({ startMs: next.startMs, scale: next.scale })}
       exportReceipt={c.exportPreview} limits={TIMELINE_LIMITS}
+      waveform={{ ...waveform, onRequest: () => void waveform.request() }}
       onEdit={command => {
         // An array is an explicit batch of existing clip.move descriptors, never a new backend operation.
         if (command.kind === 'clip.move' && Array.isArray(command.payload)) {

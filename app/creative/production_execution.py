@@ -58,10 +58,15 @@ class ProductionExecutionService:
         self.timeline_transfer = TimelineTransfer(self)
         from .timeline_playback import TimelinePlayback
         self.timeline_playback = TimelinePlayback(self)
+        from .timeline_waveform import TimelineWaveform
+        self.timeline_waveform = TimelineWaveform(self)
         self.workspace.creative.configure_storyboard_production(self)
 
     def timeline_playback_preview(self, nid, scope, actor, tid, value, guard):
         return self.timeline_playback.preview(nid, scope, actor, tid, value, guard)
+
+    def timeline_waveform_preview(self, nid, scope, actor, tid, value, guard):
+        return self.timeline_waveform.preview(nid, scope, actor, tid, value, guard)
 
     def timeline_playback_build(self, nid, scope, actor, tid, value, guard):
         return self.timeline_playback.build(nid, scope, actor, tid, value, guard)

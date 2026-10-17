@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import copy
 from contextlib import contextmanager, ExitStack
+from contextvars import ContextVar
 import json
 import os
 import stat
@@ -56,6 +57,21 @@ class CreativeProjectStore:
     def __init__(self, store):
         self.store = store
         self._local = local()
+        self._existing_only = ContextVar("creative_existing_owner_only", default=False)
+
+    @contextmanager
+    def existing_owner_only(self):
+        """Opt-in observation scope: never provision a missing File identity.
+
+        Keep the original parser and lock ordering. Context-local policy spans
+        all original authority checks without holding an early project lease.
+        Other requests, store instances and ordinary owner creation are unchanged.
+        """
+        token = self._existing_only.set(True)
+        try:
+            yield
+        finally:
+            self._existing_only.reset(token)
 
     def __getattr__(self, name):
         return getattr(self.store, name)
@@ -75,6 +91,8 @@ class CreativeProjectStore:
                 try:
                     marker = _read_marker(path)
                 except FileNotFoundError:
+                    if self._existing_only.get():
+                        raise FileNotFoundError(nid) from None
                     marker = {"schema_version": 1, BINDING: str(uuid4())}
                     atomic_write(path, json.dumps(marker, sort_keys=True))
                 if (not isinstance(marker, dict) or set(marker) != {"schema_version", BINDING}

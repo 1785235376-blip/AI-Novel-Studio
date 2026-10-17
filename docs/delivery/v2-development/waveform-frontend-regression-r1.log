@@ -1,0 +1,29 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-timeline-waveform/frontend
+
+ ✓ src/nle/timelineOps.test.ts (52 tests) 83ms
+ ✓ src/nle/nlePanels.test.tsx (18 tests) 381ms
+ ✓ src/creative/TimelineSourceEditing.phase6.test.tsx (21 tests) 728ms
+ ✓ src/creative/StudioTimelineSlipDelete.additive.test.tsx (29 tests) 3383ms
+   ✓ mounted original editor slip/delete Save undo and reopen > refuses extra fields, wrong targets and retained bridge callbacks after a draft generation change 578ms
+   ✓ mounted original editor slip/delete Save undo and reopen > routes slip without timeline position and persists only with original CAS 675ms
+   ✓ mounted original editor slip/delete Save undo and reopen > routes ripple without timeline position and persists only with original CAS 656ms
+ ✓ src/creative/StudioTimelineTrim.test.tsx (29 tests) 2492ms
+   ✓ mounted original inspector trim > routes trim without start/at position, supports one-step undo/redo and explicit Save 880ms
+ ✓ src/creative/StudioTimelineSelectionMove.additive.test.tsx (32 tests) 3146ms
+   ✓ mounted selection move routing > moves the whole selected track, undoes atomically, and saves through original CAS 799ms
+   ✓ mounted selection move routing > refuses retained selection ABA callback while a fresh callback works 443ms
+ ✓ src/ui/AppShell.test.tsx (19 tests) 263ms
+ ✓ src/creative/StudioTimelineAssetHandoff.test.tsx (20 tests) 1067ms
+   ✓ mounted original timeline draft owner > adds one exact pinned clip, supports one undo/redo, explicitly saves and reopens the original owner 407ms
+ ✓ src/nle/ClipInspectorSlipDelete.additive.test.tsx (4 tests) 211ms
+ ✓ src/nle/ClipInspectorSelectionMove.additive.test.tsx (8 tests) 217ms
+ ✓ src/creative/ProductionTimeline.test.tsx (4 tests) 227ms
+ ✓ src/ui/primitives.test.tsx (4 tests) 84ms
+ ✓ src/nle/timelineSelectionMove.additive.test.ts (14 tests) 8ms
+
+ Test Files  13 passed (13)
+      Tests  254 passed (254)
+   Start at  16:48:47
+   Duration  20.48s (transform 856ms, setup 51ms, collect 2.30s, tests 12.29s, environment 3.69s, prepare 627ms)
+

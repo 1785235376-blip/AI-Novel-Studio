@@ -379,6 +379,15 @@ class TimelineAssetSnapshot(ExecutionModel):
     digest: Digest
 
 
+class TimelineWaveformSource(TimelineAssetSnapshot):
+    asset_kind: Literal["audio"]
+
+
+class TimelineWaveformPreview(TimelinePlaybackPreview):
+    clip_id: Name
+    source_snapshot: TimelineWaveformSource
+
+
 class TimelineMediaBinding(ExecutionModel):
     reference: str = Field(min_length=1, max_length=4096)
     source_snapshot: TimelineAssetSnapshot

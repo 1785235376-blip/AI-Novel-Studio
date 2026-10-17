@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "receipts": [
+    "waveform-origin-backend-r3",
+    "waveform-backend-additive-r3",
+    "waveform-backend-protected-r3"
+  ],
+  "source_count": 2578,
+  "source_map_sha256": "766be902169fbbcb693fbeba4e59cd13cf24a723865f5d65aa5352fc5c2a2c5d",
+  "same_source_maps": true,
+  "all_sources_unchanged": true,
+  "log_hashes_match": true
+}

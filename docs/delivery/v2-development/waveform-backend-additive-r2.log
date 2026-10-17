@@ -1,0 +1,55 @@
+..................................................................F
+=================================== FAILURES ===================================
+____ test_original_live_authorities_and_content_fail_closed[recreate-file] _____
+
+waveform = <function waveform.<locals>.prepare at 0x7fedc7bc6e80>
+change = 'recreate'
+
+    @pytest.mark.parametrize('change', ['actor', 'scope', 'private', 'pin', 'tamper', 'recreate'])
+    def test_original_live_authorities_and_content_fail_closed(waveform, change):
+        e = waveform(); options = {}
+        if change == 'actor': options['actor'] = 'different-author'
+        elif change == 'scope': options['scope'] = {**e.rig.scope, 'branch_id': 'wrong-branch'}
+        elif change in {'private', 'pin'}:
+            path = e.rig.assets._meta_path(e.source['id']); row = json.loads(path.read_text())
+            if change == 'private': row['_owner_actor_id'] = e.rig.actor
+            else: row['version'] += 1
+            path.write_text(json.dumps(row))
+        elif change == 'tamper':
+            path = e.rig.assets._bin_path(e.source['id']); data = bytearray(path.read_bytes()); data[-1] ^= 1; path.write_bytes(data)
+        else:
+            e.rig.novels.delete(e.rig.nid); e.rig.create_project(nid=e.rig.nid)
+        before = durable_files(e.rig.root)
+        with pytest.raises((ValueError, FileNotFoundError, StaleSourceError)):
+            e.preview(**options)
+        after = durable_files(e.rig.root)
+        if change == 'scope':
+            # Original File scope reads create one empty POSIX advisory lock. This
+            # exact housekeeping artifact is not a product document or cache.
+            key = e.rig.raw_store.key(e.rig.nid, options['scope'])
+            name = '.workspace-mutation-locks/' + hashlib.sha256(('experimental:' + key).encode()).hexdigest() + '.lock'
+            assert name not in before
+            assert after.pop(name) == b''
+>       assert after == before
+E       assert {'.workspace-...ck': b'', ...} == {'.workspace-...ck': b'', ...}
+E         
+E         Omitting 27 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'novels/v2-independent-b598d6c300c448e38180a26142088f11/creative_project_v2.json': b'{"pr'
+E                                                                                             b'ojec'
+E                                                                                             b't_in'
+E                                                                                             b'carn'...
+E         
+E         ...Full output truncated (18 lines hidden), use '-vv' to show
+
+tests/test_v2_timeline_waveform_preview.py:199: AssertionError
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_timeline_waveform_preview.py::test_original_live_authorities_and_content_fail_closed[recreate-file]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 66 passed, 1 warning in 6.08s

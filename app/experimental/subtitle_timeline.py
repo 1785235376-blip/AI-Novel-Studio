@@ -5,7 +5,6 @@ manual. Optional trusted processing adapters add reviewed ASR/alignment/burn-in
 contracts; no real-model, phoneme, lip-sync or rendering quality claim.
 """
 from __future__ import annotations
-import array
 import base64
 import binascii
 import copy
@@ -13,7 +12,6 @@ import hashlib
 from fractions import Fraction
 import io
 import re
-import sys
 import wave
 from uuid import uuid4
 from typing import Literal
@@ -23,6 +21,7 @@ from .flags import require_flag
 from .media import StrictModel, digest
 from ..media_files import inspect_media
 from ..services.studio_timeline_subtitles import MAX_SIDECAR_BYTES, parse_subtitle_cues
+from ..services.pcm16_envelope import pcm16_envelope
 from .subtitle_processing import SubtitleProcessingMixin
 
 SUBTITLE_FLAG = "subtitle_timeline_v2"
@@ -162,11 +161,8 @@ class SubtitleTimelineService(SubtitleProcessingMixin, DomainService):
                     duration = Fraction(frames, rate)
                     metadata.update(duration_seconds=rational(duration), frame_count=frames, sample_rate=rate, channels=channels)
                     if waveform and width == 2 and wav.getcomptype() == "NONE":
-                        samples = array.array("h", wav.readframes(frames))
-                        if sys.byteorder != "little": samples.byteswap()
-                        stride = max(1, (frames + 511) // 512)
-                        peaks = [max((abs(v) for v in samples[i*channels:min(frames,i+stride)*channels]), default=0) / 32768 for i in range(0, frames, stride)]
-                        metadata["waveform"] = {"status": "MEASURED_PCM16_PEAKS", "samples_per_bucket": stride, "sample_rate": rate, "peaks": peaks}
+                        envelope = pcm16_envelope(wav)
+                        metadata["waveform"] = {"status": "MEASURED_PCM16_PEAKS", "samples_per_bucket": envelope["samples_per_bucket"], "sample_rate": rate, "peaks": envelope["peaks"]}
             except (wave.Error, EOFError):
                 pass
         return asset, metadata

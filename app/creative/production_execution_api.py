@@ -2,6 +2,7 @@
 from typing import Literal
 from urllib.parse import quote
 from fastapi import APIRouter, Header, HTTPException, Request, Response
+from fastapi.exceptions import RequestValidationError
 
 from ..experimental.production_lineage_api import PrivateProductionRoute
 from ..services.v1_capability_service import CapabilityVersionConflict
@@ -9,9 +10,35 @@ from ..services.audiobook_service import AudiobookError
 from ..audio_production_store import AudioStateVersionConflict
 from .production_execution_models import (MediaCommand, MediaCreate, MediaJobAction, MediaReview, TimelineSave, TimelineRender,
     TimelineEdit, TimelineRestore, TimelineExportPreview, TimelineExport,
-    TimelineTransferPreview, TimelineTransferImport, TimelineTransferDownload, TimelinePlaybackPreview, TimelinePlaybackBuild, TimelinePlaybackAttestation)
+    TimelineTransferPreview, TimelineTransferImport, TimelineTransferDownload, TimelinePlaybackPreview, TimelinePlaybackBuild, TimelinePlaybackAttestation,
+    TimelineWaveformPreview)
 
 Owner = Literal["image", "audio", "video", "timeline"]
+
+
+class TimelineWaveformRoute(PrivateProductionRoute):
+    """Bound and sanitize only this new observation request, never old routes."""
+    MAX_BODY = 4096
+
+    def get_route_handler(self):
+        handler = super().get_route_handler()
+        async def checked(request):
+            headers = {"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"}
+            try:
+                parts, total = [], 0
+                async for part in request.stream():
+                    total += len(part)
+                    if total > self.MAX_BODY:
+                        raise HTTPException(413, {"code": "STUDIO_WAVEFORM_REQUEST_LIMIT"}, headers=headers)
+                    parts.append(part)
+                request._body = b"".join(parts)
+                return await handler(request)
+            except RequestValidationError:
+                raise HTTPException(422, {"code": "STUDIO_WAVEFORM_REQUEST_INVALID"}, headers=headers) from None
+            except HTTPException as exc:
+                exc.headers = {**(exc.headers or {}), **headers}
+                raise
+        return checked
 
 
 def create_production_invoker(invoke, *, require_host_session, model_host_authority):
@@ -52,6 +79,18 @@ def create_production_execution_router(service, invoke, *, require_host_session,
     router = APIRouter(tags=["Studio Production Execution V2"], route_class=PrivateProductionRoute)
 
     call = create_production_invoker(invoke, require_host_session=require_host_session, model_host_authority=model_host_authority)
+
+    waveform_router = APIRouter(route_class=TimelineWaveformRoute)
+
+    @waveform_router.post("/projects/{nid}/studio/production/timelines/{tid}/waveform-preview")
+    def waveform_preview(nid: str, tid: str, request: Request, body: TimelineWaveformPreview,
+                         x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        # Cover the original invoker's pre-callback incarnation check too.
+        with service.store.existing_owner_only():
+            return call(request, nid, x_session_token, x_branch_id, "domain.read",
+                        lambda actor, scope, guard: service.timeline_waveform_preview(nid, scope, actor, tid, body, guard))
+
+    router.include_router(waveform_router)
 
     @router.get("/projects/{nid}/studio/production/providers")
     def providers(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

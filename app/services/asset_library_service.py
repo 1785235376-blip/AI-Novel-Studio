@@ -8,6 +8,7 @@ import json
 import mimetypes
 import os
 import re
+import stat
 import tempfile
 import threading
 import uuid
@@ -773,7 +774,9 @@ class AssetLibraryService:
             raise FileNotFoundError(asset_id)
         return meta
 
-    def _verified_content(self, meta: dict) -> bytes:
+    def _verified_content(self, meta: dict, *, max_bytes=None, guard=lambda: None) -> bytes:
+        if max_bytes is not None:
+            return self._verified_bounded_content(meta, max_bytes, guard)
         path = self._bin_path(meta["id"])
         try:
             with path.open("rb") as stream:
@@ -786,9 +789,70 @@ class AssetLibraryService:
             raise AssetIntegrityError("asset content digest mismatch")
         return data
 
-    def content(self, asset_id: str, *, branch_id: str | None = None, actor_id: str | None = None):
+    def _verified_bounded_content(self, meta, max_bytes, guard):
+        """Opt-in guarded read; the established default reader is unchanged.
+
+        Platforms lacking safe nonblocking/no-follow opens are unavailable for
+        this bounded preview. Never emulate them with a racy ordinary open.
+        The original owner's root/ancestor directories remain trusted; the
+        no-follow flag protects the asset's final path component only.
+        """
+        if type(max_bytes) is not int or not 1 <= max_bytes <= self.MAX_BYTES:
+            raise ValueError("ASSET_BOUNDED_READ_LIMIT_INVALID")
+        if type(meta.get("size")) is not int or not 0 < meta["size"] <= max_bytes:
+            raise ValueError("ASSET_BOUNDED_READ_LIMIT")
+        if not getattr(os, "O_NOFOLLOW", 0) or not getattr(os, "O_NONBLOCK", 0):
+            raise ValueError("ASSET_BOUNDED_READ_UNSUPPORTED")
+        guard()
+        path = self._bin_path(meta["id"])
+
+        def identity(info):
+            if (not stat.S_ISREG(info.st_mode) or info.st_ino <= 0
+                    or getattr(info, "st_file_attributes", 0) & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)):
+                raise AssetIntegrityError("ASSET_BOUNDED_CONTENT_INVALID")
+            return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns)
+
+        descriptor = None
+        try:
+            before = identity(path.lstat())
+            if before[2] != meta["size"]:
+                raise AssetIntegrityError("ASSET_BOUNDED_CONTENT_INVALID")
+            descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | getattr(os, "O_BINARY", 0))
+            if identity(os.fstat(descriptor)) != before:
+                raise AssetIntegrityError("ASSET_BOUNDED_CONTENT_INVALID")
+            handle = os.fdopen(descriptor, "rb")
+            descriptor = None  # ownership transferred; with closes on every path
+            with handle:
+                parts, total, checksum = [], 0, hashlib.sha256()
+                while total <= max_bytes:
+                    guard()
+                    block = handle.read(min(65536, max_bytes + 1 - total))
+                    guard()
+                    if not block:
+                        break
+                    parts.append(block); total += len(block); checksum.update(block)
+                guard()
+                if identity(os.fstat(handle.fileno())) != before or identity(path.lstat()) != before:
+                    raise AssetIntegrityError("ASSET_BOUNDED_CONTENT_INVALID")
+            if total != meta["size"] or not hmac.compare_digest(checksum.hexdigest(), meta["sha256"]):
+                raise AssetIntegrityError("ASSET_BOUNDED_CONTENT_INVALID")
+            guard()
+            return b"".join(parts)
+        except OSError:
+            # Recheck authority before projecting a fixed private read error.
+            guard()
+            raise AssetIntegrityError("ASSET_BOUNDED_CONTENT_UNAVAILABLE") from None
+        finally:
+            if descriptor is not None:
+                os.close(descriptor)
+
+    def content(self, asset_id: str, *, branch_id: str | None = None, actor_id: str | None = None,
+                max_bytes=None, guard=lambda: None):
         with self._lock, workspace_mutation(self.root, "asset-library"):
-            return self._verified_content(self.get(asset_id, branch_id=branch_id, actor_id=actor_id))
+            meta = self.get(asset_id, branch_id=branch_id, actor_id=actor_id)
+            if max_bytes is None:
+                return self._verified_content(meta)
+            return self._verified_content(meta, max_bytes=max_bytes, guard=guard)
 
     def update_metadata(self, asset_id: str, fields: dict, *, branch_id: str | None = None,
                         expected_version: int | None = None, _lineage_write: bool = False, actor_id: str | None = None,

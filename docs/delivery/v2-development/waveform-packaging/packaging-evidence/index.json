@@ -1,0 +1,207 @@
+{
+  "status": "PASS_OFFLINE_PUBLIC_ARCHIVE_INSPECTION",
+  "manifest_sha256": "57f657057a391fa9ebdd8586fba62262ea6f3bb5fb1e2fe71f0c5ff27ad573be",
+  "archives": [
+    {
+      "archive": ".runtime/v2-checks/waveform-packaging-r1/pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "kind": "sdist",
+      "sha256": "75eb7624771665a0a28931ec11cc572d633fb15cf67bebad73e2ab0c560e937e",
+      "payload_file_count": 517,
+      "changed_modules": {
+        "app/creative/production_execution.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/production_execution.py",
+          "sha256": "0475d0bde93f30103911c905b6aa67535bb025bc19b03d1b11a6bd3ecabafd3e"
+        },
+        "app/creative/production_execution_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/production_execution_api.py",
+          "sha256": "65c3c68fc759f66be2cb2edd9619e6761d6ac565bc34ce298d18170212088b37"
+        },
+        "app/creative/production_execution_models.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/production_execution_models.py",
+          "sha256": "9faf968ad7261f29fd1bf4c032cb2f519b95ad27d7d04a49cfa7c84ce394ecb7"
+        },
+        "app/creative/project_store.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/project_store.py",
+          "sha256": "82087db399a81e37412635e12fd310b658197df46dbdb92c1637f8ec913446b9"
+        },
+        "app/creative/timeline_waveform.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/timeline_waveform.py",
+          "sha256": "64b341739e08e287b9dce98577746d0745e8aca71cd6cfdffe7737b7bc80a64e"
+        },
+        "app/creative/workspace.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/workspace.py",
+          "sha256": "45870a974066900fd0a437e753b0fdd93db4555e33e607f7e52d72deffbd9a76"
+        },
+        "app/creative/workspace_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/workspace_api.py",
+          "sha256": "5bf6e0565a1a8296e1995188a8d1e6e57c0497a976c511904b8c35fcc4adceb0"
+        },
+        "app/experimental/subtitle_timeline.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/subtitle_timeline.py",
+          "sha256": "b421c8862fba65aa6b42c11bbd5bef5c732d5846834d07d8eb1f4ec609a6bfa2"
+        },
+        "app/services/asset_library_service.py": {
+          "member": "ai_novel_studio-0.7.0/app/services/asset_library_service.py",
+          "sha256": "2495a862abf79081c5db294319cd4389494fe13cea39c97f4e75b7c6270f1816"
+        },
+        "app/services/pcm16_envelope.py": {
+          "member": "ai_novel_studio-0.7.0/app/services/pcm16_envelope.py",
+          "sha256": "b22309bdbee90cdab75262b24d93e63fbf8aa557cdb0ccce8485676cd961d220"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-sdist0"
+    },
+    {
+      "archive": ".runtime/v2-checks/waveform-packaging-r1/pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "kind": "sdist",
+      "sha256": "f03ce4b5788ecaadd0bc52af8c559941822d1ce1249f82b4b033a6e0a2294abf",
+      "payload_file_count": 517,
+      "changed_modules": {
+        "app/creative/production_execution.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/production_execution.py",
+          "sha256": "0475d0bde93f30103911c905b6aa67535bb025bc19b03d1b11a6bd3ecabafd3e"
+        },
+        "app/creative/production_execution_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/production_execution_api.py",
+          "sha256": "65c3c68fc759f66be2cb2edd9619e6761d6ac565bc34ce298d18170212088b37"
+        },
+        "app/creative/production_execution_models.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/production_execution_models.py",
+          "sha256": "9faf968ad7261f29fd1bf4c032cb2f519b95ad27d7d04a49cfa7c84ce394ecb7"
+        },
+        "app/creative/project_store.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/project_store.py",
+          "sha256": "82087db399a81e37412635e12fd310b658197df46dbdb92c1637f8ec913446b9"
+        },
+        "app/creative/timeline_waveform.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/timeline_waveform.py",
+          "sha256": "64b341739e08e287b9dce98577746d0745e8aca71cd6cfdffe7737b7bc80a64e"
+        },
+        "app/creative/workspace.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/workspace.py",
+          "sha256": "45870a974066900fd0a437e753b0fdd93db4555e33e607f7e52d72deffbd9a76"
+        },
+        "app/creative/workspace_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/workspace_api.py",
+          "sha256": "5bf6e0565a1a8296e1995188a8d1e6e57c0497a976c511904b8c35fcc4adceb0"
+        },
+        "app/experimental/subtitle_timeline.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/subtitle_timeline.py",
+          "sha256": "b421c8862fba65aa6b42c11bbd5bef5c732d5846834d07d8eb1f4ec609a6bfa2"
+        },
+        "app/services/asset_library_service.py": {
+          "member": "ai_novel_studio-0.7.0/app/services/asset_library_service.py",
+          "sha256": "2495a862abf79081c5db294319cd4389494fe13cea39c97f4e75b7c6270f1816"
+        },
+        "app/services/pcm16_envelope.py": {
+          "member": "ai_novel_studio-0.7.0/app/services/pcm16_envelope.py",
+          "sha256": "b22309bdbee90cdab75262b24d93e63fbf8aa557cdb0ccce8485676cd961d220"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-sdist1"
+    },
+    {
+      "archive": ".runtime/v2-checks/waveform-packaging-r1/pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "kind": "wheel",
+      "sha256": "2a4771c710b1b79c1da0aee39c62d95af75d6cb493a9b19125c82faeba55f9f6",
+      "payload_file_count": 513,
+      "changed_modules": {
+        "app/creative/production_execution.py": {
+          "member": "app/creative/production_execution.py",
+          "sha256": "0475d0bde93f30103911c905b6aa67535bb025bc19b03d1b11a6bd3ecabafd3e"
+        },
+        "app/creative/production_execution_api.py": {
+          "member": "app/creative/production_execution_api.py",
+          "sha256": "65c3c68fc759f66be2cb2edd9619e6761d6ac565bc34ce298d18170212088b37"
+        },
+        "app/creative/production_execution_models.py": {
+          "member": "app/creative/production_execution_models.py",
+          "sha256": "9faf968ad7261f29fd1bf4c032cb2f519b95ad27d7d04a49cfa7c84ce394ecb7"
+        },
+        "app/creative/project_store.py": {
+          "member": "app/creative/project_store.py",
+          "sha256": "82087db399a81e37412635e12fd310b658197df46dbdb92c1637f8ec913446b9"
+        },
+        "app/creative/timeline_waveform.py": {
+          "member": "app/creative/timeline_waveform.py",
+          "sha256": "64b341739e08e287b9dce98577746d0745e8aca71cd6cfdffe7737b7bc80a64e"
+        },
+        "app/creative/workspace.py": {
+          "member": "app/creative/workspace.py",
+          "sha256": "45870a974066900fd0a437e753b0fdd93db4555e33e607f7e52d72deffbd9a76"
+        },
+        "app/creative/workspace_api.py": {
+          "member": "app/creative/workspace_api.py",
+          "sha256": "5bf6e0565a1a8296e1995188a8d1e6e57c0497a976c511904b8c35fcc4adceb0"
+        },
+        "app/experimental/subtitle_timeline.py": {
+          "member": "app/experimental/subtitle_timeline.py",
+          "sha256": "b421c8862fba65aa6b42c11bbd5bef5c732d5846834d07d8eb1f4ec609a6bfa2"
+        },
+        "app/services/asset_library_service.py": {
+          "member": "app/services/asset_library_service.py",
+          "sha256": "2495a862abf79081c5db294319cd4389494fe13cea39c97f4e75b7c6270f1816"
+        },
+        "app/services/pcm16_envelope.py": {
+          "member": "app/services/pcm16_envelope.py",
+          "sha256": "b22309bdbee90cdab75262b24d93e63fbf8aa557cdb0ccce8485676cd961d220"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-wheel0"
+    },
+    {
+      "archive": ".runtime/v2-checks/waveform-packaging-r1/pytest/public-wheel1/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "kind": "wheel",
+      "sha256": "13f6321720dd4bd9ac746771c79f3b45fe9155f6b406ba4cab258f9990589bb9",
+      "payload_file_count": 513,
+      "changed_modules": {
+        "app/creative/production_execution.py": {
+          "member": "app/creative/production_execution.py",
+          "sha256": "0475d0bde93f30103911c905b6aa67535bb025bc19b03d1b11a6bd3ecabafd3e"
+        },
+        "app/creative/production_execution_api.py": {
+          "member": "app/creative/production_execution_api.py",
+          "sha256": "65c3c68fc759f66be2cb2edd9619e6761d6ac565bc34ce298d18170212088b37"
+        },
+        "app/creative/production_execution_models.py": {
+          "member": "app/creative/production_execution_models.py",
+          "sha256": "9faf968ad7261f29fd1bf4c032cb2f519b95ad27d7d04a49cfa7c84ce394ecb7"
+        },
+        "app/creative/project_store.py": {
+          "member": "app/creative/project_store.py",
+          "sha256": "82087db399a81e37412635e12fd310b658197df46dbdb92c1637f8ec913446b9"
+        },
+        "app/creative/timeline_waveform.py": {
+          "member": "app/creative/timeline_waveform.py",
+          "sha256": "64b341739e08e287b9dce98577746d0745e8aca71cd6cfdffe7737b7bc80a64e"
+        },
+        "app/creative/workspace.py": {
+          "member": "app/creative/workspace.py",
+          "sha256": "45870a974066900fd0a437e753b0fdd93db4555e33e607f7e52d72deffbd9a76"
+        },
+        "app/creative/workspace_api.py": {
+          "member": "app/creative/workspace_api.py",
+          "sha256": "5bf6e0565a1a8296e1995188a8d1e6e57c0497a976c511904b8c35fcc4adceb0"
+        },
+        "app/experimental/subtitle_timeline.py": {
+          "member": "app/experimental/subtitle_timeline.py",
+          "sha256": "b421c8862fba65aa6b42c11bbd5bef5c732d5846834d07d8eb1f4ec609a6bfa2"
+        },
+        "app/services/asset_library_service.py": {
+          "member": "app/services/asset_library_service.py",
+          "sha256": "2495a862abf79081c5db294319cd4389494fe13cea39c97f4e75b7c6270f1816"
+        },
+        "app/services/pcm16_envelope.py": {
+          "member": "app/services/pcm16_envelope.py",
+          "sha256": "b22309bdbee90cdab75262b24d93e63fbf8aa557cdb0ccce8485676cd961d220"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-wheel1"
+    }
+  ],
+  "all_runtime_source_bytes_verified": true,
+  "application_imported": false,
+  "installed": false,
+  "extracted": false,
+  "windows_native_browser_postgres_acceptance": "NOT_RUN"
+}

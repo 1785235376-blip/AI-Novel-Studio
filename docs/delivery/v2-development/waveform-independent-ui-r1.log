@@ -1,0 +1,33 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-timeline-waveform/frontend
+
+ ✓ src/nle/timelineOps.test.ts (52 tests) 82ms
+ ✓ src/nle/nlePanels.test.tsx (18 tests) 398ms
+ ✓ src/creative/TimelineSourceEditing.phase6.test.tsx (21 tests) 736ms
+ ✓ src/creative/StudioTimelineSlipDelete.additive.test.tsx (29 tests) 3352ms
+   ✓ mounted original editor slip/delete Save undo and reopen > refuses extra fields, wrong targets and retained bridge callbacks after a draft generation change 564ms
+   ✓ mounted original editor slip/delete Save undo and reopen > routes slip without timeline position and persists only with original CAS 667ms
+   ✓ mounted original editor slip/delete Save undo and reopen > routes ripple without timeline position and persists only with original CAS 640ms
+ ✓ src/creative/StudioTimelineTrim.test.tsx (29 tests) 2519ms
+   ✓ mounted original inspector trim > routes trim without start/at position, supports one-step undo/redo and explicit Save 905ms
+ ✓ src/creative/StudioTimelineSelectionMove.additive.test.tsx (32 tests) 3201ms
+   ✓ mounted selection move routing > moves the whole selected track, undoes atomically, and saves through original CAS 856ms
+   ✓ mounted selection move routing > refuses retained selection ABA callback while a fresh callback works 447ms
+ ✓ src/ui/AppShell.test.tsx (19 tests) 238ms
+ ✓ src/creative/StudioTimelineAssetHandoff.test.tsx (20 tests) 922ms
+   ✓ mounted original timeline draft owner > adds one exact pinned clip, supports one undo/redo, explicitly saves and reopens the original owner 303ms
+ ✓ src/creative/StudioTimelineWaveform.additive.test.tsx (29 tests) 585ms
+   ✓ original mounted timeline integration > requires saved clean single selection and preserves local history and saved payload 516ms
+ ✓ src/nle/ClipInspectorSlipDelete.additive.test.tsx (4 tests) 207ms
+ ✓ src/nle/ClipInspectorSelectionMove.additive.test.tsx (8 tests) 205ms
+ ✓ src/creative/ProductionTimeline.test.tsx (4 tests) 216ms
+ ✓ src/nle/TimelineWaveformPanel.additive.test.tsx (13 tests) 188ms
+ ✓ src/ui/primitives.test.tsx (4 tests) 73ms
+ ✓ src/creative/studioTimelineWaveformContract.additive.test.ts (24 tests) 32ms
+ ✓ src/nle/timelineSelectionMove.additive.test.ts (14 tests) 8ms
+
+ Test Files  16 passed (16)
+      Tests  320 passed (320)
+   Start at  16:54:06
+   Duration  22.54s (transform 1.08s, setup 93ms, collect 2.78s, tests 12.96s, environment 4.10s, prepare 733ms)
+

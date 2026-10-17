@@ -1,0 +1,769 @@
+{
+  "status": "INDEXED_AFTER_SCOPED_INDEPENDENT_REVIEW",
+  "base_head": "62a337bffddd3e0bd225f06b96486907d51c384b",
+  "final_source_count": 2578,
+  "final_sources_match_current": true,
+  "final_source_map_sha256": "766be902169fbbcb693fbeba4e59cd13cf24a723865f5d65aa5352fc5c2a2c5d",
+  "notes": [
+    "Independent counts overlap primary coverage; this is bounded File/jsdom/offline-artifact evidence, not full acceptance.",
+    "r1 backend failure retained: exact empty original wrong-scope lock housekeeping now explicitly asserted.",
+    "r2 backend failure retained: real original-owner identity provisioning fixed by opt-in nonprovision context; recreate no-write assertion preserved.",
+    "Supplementary archive inspector r1 failed before writing evidence on pytest current aliases; r2 resolves unique owned receipts and verifies all four real artifacts.",
+    "PUBLIC manifest is outside original runner source maps; its exact two-entry delta and before/after hashes are separately bound here.",
+    "Windows/platform support, browser geometry, PostgreSQL, native media/provider/model/render and packaged-runtime acceptance remain NOT_RUN."
+  ],
+  "receipt_validation": {
+    "docs/delivery/v2-development/waveform-backend-additive-r1.json": {
+      "exit_code": 1,
+      "status": "FAIL",
+      "source_count": 2577,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": [
+        "app/creative/production_execution_api.py",
+        "app/creative/project_store.py",
+        "app/creative/timeline_waveform.py",
+        "tests/test_existing_owner_observation_additive.py",
+        "tests/test_v2_timeline_waveform_preview.py",
+        "tests/test_v2_timeline_waveform_preview_api.py"
+      ]
+    },
+    "docs/delivery/v2-development/waveform-backend-additive-r2.json": {
+      "exit_code": 1,
+      "status": "FAIL",
+      "source_count": 2577,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": [
+        "app/creative/production_execution_api.py",
+        "app/creative/project_store.py",
+        "app/creative/timeline_waveform.py",
+        "tests/test_existing_owner_observation_additive.py",
+        "tests/test_v2_timeline_waveform_preview_api.py"
+      ]
+    },
+    "docs/delivery/v2-development/waveform-backend-additive-r3.json": {
+      "exit_code": 0,
+      "status": "PASS",
+      "source_count": 2578,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/waveform-backend-protected-r3.json": {
+      "exit_code": 0,
+      "status": "PASS",
+      "source_count": 2578,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/waveform-frontend-build-r1.json": {
+      "exit_code": 0,
+      "status": "PASS",
+      "source_count": 2578,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/waveform-frontend-new-r1.json": {
+      "exit_code": 0,
+      "status": "PASS",
+      "source_count": 2578,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/waveform-frontend-regression-r1.json": {
+      "exit_code": 0,
+      "status": "PASS",
+      "source_count": 2578,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/waveform-frontend-token-r1.json": {
+      "exit_code": 0,
+      "status": "PASS",
+      "source_count": 2578,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/waveform-frontend-type-r1.json": {
+      "exit_code": 0,
+      "status": "PASS",
+      "source_count": 2578,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/waveform-independent-backend-r1.json": {
+      "exit_code": 0,
+      "status": "PASS",
+      "source_count": 2578,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/waveform-independent-origin-r1.json": {
+      "exit_code": 0,
+      "status": "PASS",
+      "source_count": 2578,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/waveform-independent-ui-r1.json": {
+      "exit_code": 0,
+      "status": "PASS",
+      "source_count": 2578,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/waveform-origin-backend-r1.json": {
+      "exit_code": 0,
+      "status": "PASS",
+      "source_count": 2577,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": [
+        "app/creative/production_execution_api.py",
+        "app/creative/project_store.py",
+        "app/creative/timeline_waveform.py",
+        "tests/test_existing_owner_observation_additive.py",
+        "tests/test_v2_timeline_waveform_preview.py",
+        "tests/test_v2_timeline_waveform_preview_api.py"
+      ]
+    },
+    "docs/delivery/v2-development/waveform-origin-backend-r2.json": {
+      "exit_code": 0,
+      "status": "PASS",
+      "source_count": 2577,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": [
+        "app/creative/production_execution_api.py",
+        "app/creative/project_store.py",
+        "app/creative/timeline_waveform.py",
+        "tests/test_existing_owner_observation_additive.py",
+        "tests/test_v2_timeline_waveform_preview_api.py"
+      ]
+    },
+    "docs/delivery/v2-development/waveform-origin-backend-r3.json": {
+      "exit_code": 0,
+      "status": "PASS",
+      "source_count": 2578,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/waveform-packaging-origin-after-r1.json": {
+      "exit_code": 0,
+      "status": "PASS",
+      "source_count": 2578,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/waveform-packaging-origin-before-r1.json": {
+      "exit_code": 0,
+      "status": "PASS",
+      "source_count": 2578,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/waveform-packaging-r1.json": {
+      "exit_code": 0,
+      "status": "PASS",
+      "source_count": 2578,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    }
+  },
+  "manifest": {
+    "path": "packaging/public-build.json",
+    "before_sha256": "3261cc7549d58e5d8e84c69572a9475d9c416bfd487588ecfbec472e8695d37c",
+    "after_sha256": "57f657057a391fa9ebdd8586fba62262ea6f3bb5fb1e2fe71f0c5ff27ad573be",
+    "added_files": [
+      "app/creative/timeline_waveform.py",
+      "app/services/pcm16_envelope.py"
+    ],
+    "all_other_bytes_preserved": true
+  },
+  "files": {
+    "AGENTS.md": {
+      "sha256": "c60ccd1560dc9aacfc567260ff77f0f18c655991aa815a3891ea15944f4aa6c9",
+      "bytes": 922
+    },
+    "app/creative/production_execution.py": {
+      "sha256": "0475d0bde93f30103911c905b6aa67535bb025bc19b03d1b11a6bd3ecabafd3e",
+      "bytes": 116949
+    },
+    "app/creative/production_execution_api.py": {
+      "sha256": "65c3c68fc759f66be2cb2edd9619e6761d6ac565bc34ce298d18170212088b37",
+      "bytes": 16642
+    },
+    "app/creative/production_execution_models.py": {
+      "sha256": "9faf968ad7261f29fd1bf4c032cb2f519b95ad27d7d04a49cfa7c84ce394ecb7",
+      "bytes": 20745
+    },
+    "app/creative/project_store.py": {
+      "sha256": "82087db399a81e37412635e12fd310b658197df46dbdb92c1637f8ec913446b9",
+      "bytes": 9649
+    },
+    "app/creative/timeline_waveform.py": {
+      "sha256": "64b341739e08e287b9dce98577746d0745e8aca71cd6cfdffe7737b7bc80a64e",
+      "bytes": 6375
+    },
+    "app/creative/workspace.py": {
+      "sha256": "45870a974066900fd0a437e753b0fdd93db4555e33e607f7e52d72deffbd9a76",
+      "bytes": 33209
+    },
+    "app/creative/workspace_api.py": {
+      "sha256": "5bf6e0565a1a8296e1995188a8d1e6e57c0497a976c511904b8c35fcc4adceb0",
+      "bytes": 18018
+    },
+    "app/experimental/subtitle_timeline.py": {
+      "sha256": "b421c8862fba65aa6b42c11bbd5bef5c732d5846834d07d8eb1f4ec609a6bfa2",
+      "bytes": 25580
+    },
+    "app/services/asset_library_service.py": {
+      "sha256": "2495a862abf79081c5db294319cd4389494fe13cea39c97f4e75b7c6270f1816",
+      "bytes": 63837
+    },
+    "app/services/pcm16_envelope.py": {
+      "sha256": "b22309bdbee90cdab75262b24d93e63fbf8aa557cdb0ccce8485676cd961d220",
+      "bytes": 2738
+    },
+    "docs/TIMELINE_WAVEFORM_PREVIEW.md": {
+      "sha256": "47ad671dbaa30ad21ebe9bc48147ff711a8851dc336d83cfd1b08ba09f9593a9",
+      "bytes": 11156
+    },
+    "docs/delivery/v2-development/waveform-backend-additive-r1.json": {
+      "sha256": "595f1b431c7cfec67781bb10a3ae434507017f59586d56d2dd94b9e10090f89d",
+      "bytes": 610548
+    },
+    "docs/delivery/v2-development/waveform-backend-additive-r1.log": {
+      "sha256": "6cd872812eaef5b78e5d545ec2713212716c548325843a5ca73ffd06ca78a4c7",
+      "bytes": 2790
+    },
+    "docs/delivery/v2-development/waveform-backend-additive-r2.json": {
+      "sha256": "16878af46bee42e777df5b0ab93bd864b150d8bade98d9d8f689e336741f99c5",
+      "bytes": 610548
+    },
+    "docs/delivery/v2-development/waveform-backend-additive-r2.log": {
+      "sha256": "1fd8fb836c29ce4458dfd9430a4902eaae0dc33c29a391c52bd83ab891bfbe80",
+      "bytes": 3610
+    },
+    "docs/delivery/v2-development/waveform-backend-additive-r3.json": {
+      "sha256": "c8696cd76af30c3286ae417189cf1524068606ea4e925794990e97bf3f312131",
+      "bytes": 610855
+    },
+    "docs/delivery/v2-development/waveform-backend-additive-r3.log": {
+      "sha256": "9684e1872f6dddb99a927d25ab6a3be2036eb415d720ef45e6ae01451407bf4f",
+      "bytes": 876
+    },
+    "docs/delivery/v2-development/waveform-backend-protected-r3.json": {
+      "sha256": "5402239a709a5beaf5ed8e3ebb241877a1045f5bca7fb4d45c3364596b0acdfb",
+      "bytes": 611112
+    },
+    "docs/delivery/v2-development/waveform-backend-protected-r3.log": {
+      "sha256": "70c732eb0d30a001da385af7c4a2b615f59bd97451fa4c235f4a1d9c85482076",
+      "bytes": 729
+    },
+    "docs/delivery/v2-development/waveform-frontend-build-launcher-r1.log": {
+      "sha256": "654280d05730b8bfcf6bc6b4fbb2201e990146c9e5958013030111aa4204672a",
+      "bytes": 1774
+    },
+    "docs/delivery/v2-development/waveform-frontend-build-r1.json": {
+      "sha256": "68b687c5dd78a000e390bfdc0f0ed2f47cece475569addac227190a5f03d9e2c",
+      "bytes": 610392
+    },
+    "docs/delivery/v2-development/waveform-frontend-build-r1.log": {
+      "sha256": "56676d39dc4ef7947936bf5483b7f58345ad33375f2f0d81e3a757bdf54c7418",
+      "bytes": 1679
+    },
+    "docs/delivery/v2-development/waveform-frontend-new-launcher-r1.log": {
+      "sha256": "61c408a9b74e67b6be55bc7a5edd703b5d13069edbe6a773a4eee384f2d6ee24",
+      "bytes": 728
+    },
+    "docs/delivery/v2-development/waveform-frontend-new-r1.json": {
+      "sha256": "648ca0197598de7a1ab9270ab2895514a57c453f37be550a978506b0742411ab",
+      "bytes": 610601
+    },
+    "docs/delivery/v2-development/waveform-frontend-new-r1.log": {
+      "sha256": "0012b13403fd11cc53eaa40be8a83e62e9f21e9174901454b24a0b4f59c007a5",
+      "bytes": 635
+    },
+    "docs/delivery/v2-development/waveform-frontend-regression-launcher-r1.log": {
+      "sha256": "0a77f1d8315c56f007ed15bc6296b0a5af30335144ccc071783c8d0b63a4f6c4",
+      "bytes": 2204
+    },
+    "docs/delivery/v2-development/waveform-frontend-regression-r1.json": {
+      "sha256": "e818cb54563200b60b59f9b117bd276435a2e2556805b365ab5e4bf9744cc92c",
+      "bytes": 611055
+    },
+    "docs/delivery/v2-development/waveform-frontend-regression-r1.log": {
+      "sha256": "e922e81bdad01ca9c9c3c5788489cb2f1bc157a081e5c5a5b5934d4583b47d5a",
+      "bytes": 2104
+    },
+    "docs/delivery/v2-development/waveform-frontend-token-launcher-r1.log": {
+      "sha256": "40098d351ae5c51c6a7a3bf8b2da80e48786f67ba6f81447aa3cb21c68eb3062",
+      "bytes": 126
+    },
+    "docs/delivery/v2-development/waveform-frontend-token-r1.json": {
+      "sha256": "60b60d8c3da84caaef021692b034d8c35e3623a012a22dc599bc528ded11d902",
+      "bytes": 610361
+    },
+    "docs/delivery/v2-development/waveform-frontend-token-r1.log": {
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "bytes": 31
+    },
+    "docs/delivery/v2-development/waveform-frontend-type-launcher-r1.log": {
+      "sha256": "a4be0f7fb2b0a5909ee582613ee3134b659f09e0ced294fcfb2532ee554f8948",
+      "bytes": 94
+    },
+    "docs/delivery/v2-development/waveform-frontend-type-r1.json": {
+      "sha256": "f2e895a1e679608472fdfb9ab0c3fbfaeb08e6481ffefc1032a49d24826dec07",
+      "bytes": 610390
+    },
+    "docs/delivery/v2-development/waveform-frontend-type-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/waveform-independent/backend-launcher.log": {
+      "sha256": "57d123339cf84c24f4b773a7ec78aeb2b981524f7f3e341ef650af1a045068df",
+      "bytes": 1070
+    },
+    "docs/delivery/v2-development/waveform-independent/manifest-after.sha256": {
+      "sha256": "db217a365951eb56a56fdd87edb5c0991c33ca887645a7d5444aa5f4ed37be75",
+      "bytes": 94
+    },
+    "docs/delivery/v2-development/waveform-independent/manifest-before.sha256": {
+      "sha256": "db217a365951eb56a56fdd87edb5c0991c33ca887645a7d5444aa5f4ed37be75",
+      "bytes": 94
+    },
+    "docs/delivery/v2-development/waveform-independent/normal-startup.json": {
+      "sha256": "f8c4ace1a4bbaab6bc31d4d7795bdda291bdb7ba11913037de38ff96c61e3cef",
+      "bytes": 10639
+    },
+    "docs/delivery/v2-development/waveform-independent/origin-launcher.log": {
+      "sha256": "418d3fdf092ed97b39f56d8eeac854668b15e386676c5ab3e892c0da64a17b64",
+      "bytes": 10801
+    },
+    "docs/delivery/v2-development/waveform-independent/run-r1.sh": {
+      "sha256": "ade64c3a773d4e7d6efe11ddc3f34b3cebab658ef80e1b888c720af6d00894ce",
+      "bytes": 3373
+    },
+    "docs/delivery/v2-development/waveform-independent/ui-launcher.log": {
+      "sha256": "9241b71422d218b5581a558b9097b4a66d1acee7bd392bf18672d6b5e2966fef",
+      "bytes": 2563
+    },
+    "docs/delivery/v2-development/waveform-independent/verified-evidence.json": {
+      "sha256": "a41bd4706c3a8f0fe56f1303f4a8c64e234cfd607c238501c500c485202cf9c6",
+      "bytes": 2106
+    },
+    "docs/delivery/v2-development/waveform-independent/verify-evidence.py": {
+      "sha256": "79ce824058395a3fa5a7300cd080b681700edb82cce6eeacd23ed0c8062df35d",
+      "bytes": 3201
+    },
+    "docs/delivery/v2-development/waveform-independent-backend-r1.json": {
+      "sha256": "66c7c8e1237c6f5da6d8d9ed3543676677f963889b702b96e6c2cc1ed8734707",
+      "bytes": 611390
+    },
+    "docs/delivery/v2-development/waveform-independent-backend-r1.log": {
+      "sha256": "32516c6fd7b76608351fb0ee81be2ec6327a7c0a05c41ed41cd5d7430512ab6a",
+      "bytes": 970
+    },
+    "docs/delivery/v2-development/waveform-independent-origin-r1.json": {
+      "sha256": "51e62c08704f66380598fc5ba80110f1c7aa7550a117bc7804d95dc58b9f4fc5",
+      "bytes": 610673
+    },
+    "docs/delivery/v2-development/waveform-independent-origin-r1.log": {
+      "sha256": "c5f5adb64ee8fd2749ff8fe6c4507d2d1dcc8be92d06d71e181c97677e5e9a7d",
+      "bytes": 10702
+    },
+    "docs/delivery/v2-development/waveform-independent-ui-r1.json": {
+      "sha256": "37bdde8abfaa28b9024ee8eb32111f0840c26af41224096e04c964c0cc3f683d",
+      "bytes": 611173
+    },
+    "docs/delivery/v2-development/waveform-independent-ui-r1.log": {
+      "sha256": "ddae370110b31ed0ca5bc19f82624c893110044560c2996b26907bb019006793",
+      "bytes": 2468
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/additive-launcher-r1.log": {
+      "sha256": "b1f3a0b111ca634f79882b23fb23527044df12690c063a8a03da06f93ab22675",
+      "bytes": 2887
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/additive-launcher-r2.log": {
+      "sha256": "bc9df14acb3fca0a3da33c3a5de45b46456e7dae58435ffbabb7e3987a5694a3",
+      "bytes": 3707
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/additive-launcher-r3.log": {
+      "sha256": "8b9e3cc1572dc7db28fa8477a38a9102a1a34db917a35d734e2fbe7ecc4b7c84",
+      "bytes": 973
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/create-evidence-index.py": {
+      "sha256": "ff155ccf648efb53454e89339c8c7d276d9b56fd2a668765e7f4a5a2e45a6777",
+      "bytes": 5930
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/normal-startup-r1.json": {
+      "sha256": "ca023de2f54314dbb3eea3633e2e6039b74e67d8164f2170020775a84e3b7d3e",
+      "bytes": 10126
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/normal-startup-r1.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/normal-startup-r2.json": {
+      "sha256": "449aa38387005c9abdfe98695b2dfacfec5a863400e7dda732c2b5f4d51d0cc6",
+      "bytes": 10126
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/normal-startup-r2.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/normal-startup-r3.json": {
+      "sha256": "475938cec908ea68429104c8cbf5f1d3281efb04977b1f216d335229a6be2b24",
+      "bytes": 10639
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/normal-startup-r3.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/origin-launcher-r1.log": {
+      "sha256": "1763803c5e1941d28c7bd9f944f4f4622296a0faaca41815951ab3455670eb75",
+      "bytes": 10284
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/origin-launcher-r2.log": {
+      "sha256": "dbe72ecb1d1ca279ae32c0b49328e52f56c64c8e53af68a318ad78f864cf79e0",
+      "bytes": 10284
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/origin-launcher-r3.log": {
+      "sha256": "2c1b32ae53a2c02dde85958c83cc0282a300ba973fbcccb46c4ac15181bffdb3",
+      "bytes": 10797
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/origin-probe-r1.py": {
+      "sha256": "6d04672a9db797d5e891f2d718bd57d20eb8920babdd6951e2f70fe9c3d996f1",
+      "bytes": 6791
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/origin-probe-r3.py": {
+      "sha256": "e9c96ff7199bf822b141cbac714ab05559a6d4de0181fef32e824d2344c115d2",
+      "bytes": 6878
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/protected-launcher-r3.log": {
+      "sha256": "e09a2f7873ce6f1dc9695dbdf423f0df3ebcd27c34ddfab5eb4b3665f3b3d27f",
+      "bytes": 827
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/receipt-verification-r3.json": {
+      "sha256": "0ce3079cf6aa8fd3f251326e7e46d17277a766a7c24a61c40454e9e5829f85b4",
+      "bytes": 354
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/run-additive-r1.sh": {
+      "sha256": "e4d87fb20e26ae2524388b8a01c55b3ab86ba300869396744b9ca0d5f885ac37",
+      "bytes": 562
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/run-additive-r2.sh": {
+      "sha256": "5fd3df53e10046aea038d57c88c3f2a64d48f5bbaecba3bfa12d371e0948919b",
+      "bytes": 562
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/run-additive-r3.sh": {
+      "sha256": "3def6f591d0f7f279800f1c6126834eab0d1b2aca6d0bb54684901772dafd2a2",
+      "bytes": 612
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/run-origin-r1.sh": {
+      "sha256": "37c2376aa07d1b642fe84227220dae277633c27fcc3ece5c3f05c218ebd954a2",
+      "bytes": 772
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/run-origin-r2.sh": {
+      "sha256": "30030c28a3a15419c802eeace5066dcfb14146e9d53e8528b13406e5c922c9c0",
+      "bytes": 772
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/run-origin-r3.sh": {
+      "sha256": "6bee4da2cfefbdd09cd9a38e4971e2a12858bbcf95c439dc52e1f9b810e84959",
+      "bytes": 772
+    },
+    "docs/delivery/v2-development/waveform-origin-backend/run-protected-r3.sh": {
+      "sha256": "14d4d67c1048deed2461458c86b3f09c7de19f0a94d78b1c64cec75f2c15832d",
+      "bytes": 844
+    },
+    "docs/delivery/v2-development/waveform-origin-backend-r1.json": {
+      "sha256": "e22551628ee46d1f177a568f5f98285ff469973b804a9786405e148fc9f4ee6c",
+      "bytes": 610387
+    },
+    "docs/delivery/v2-development/waveform-origin-backend-r1.log": {
+      "sha256": "b09131f3006830ff475b19f9766fddb9e4689124e0497232260cd4adab73e7c7",
+      "bytes": 10189
+    },
+    "docs/delivery/v2-development/waveform-origin-backend-r2.json": {
+      "sha256": "b91d708e608b39e268d0028400acfe71351b59542ef70d499c43129f7bd26ad6",
+      "bytes": 610387
+    },
+    "docs/delivery/v2-development/waveform-origin-backend-r2.log": {
+      "sha256": "9bf584aca7275f9e1e7905730a9a67d0d05a1158594dcd0f2e6a733d2ad20ddc",
+      "bytes": 10189
+    },
+    "docs/delivery/v2-development/waveform-origin-backend-r3.json": {
+      "sha256": "1cce33f6f92d23475a4939e6100c30a4ca8c44b9b4f797b4ff4139ddf1de431a",
+      "bytes": 610637
+    },
+    "docs/delivery/v2-development/waveform-origin-backend-r3.log": {
+      "sha256": "a1d1fc306fc7b47fe97d6398889f76ca653d7916c1ce2cda34dcc45f49294c2b",
+      "bytes": 10702
+    },
+    "docs/delivery/v2-development/waveform-packaging/archive-inspection-r1.log": {
+      "sha256": "55b68b2120a3558373183c7d2ea0a8e35ddde27e3a500171756285900931ccee",
+      "bytes": 366
+    },
+    "docs/delivery/v2-development/waveform-packaging/archive-inspection-r2.log": {
+      "sha256": "f30a3f5618f68bebdc46975480a9c00e7d4627b7eaf62ad8593604648917580c",
+      "bytes": 10619
+    },
+    "docs/delivery/v2-development/waveform-packaging/build-interpreter-r1.json": {
+      "sha256": "faf5292f7af9a0265a964a6cfb4b938d9d7fc5c0bacd326e2c2ebc2010af114b",
+      "bytes": 1468
+    },
+    "docs/delivery/v2-development/waveform-packaging/inspect-artifacts-r1.py": {
+      "sha256": "a67706784207b1a01b9be0ce715c4e45cad5df2e642bbe0266f481b70d02fb86",
+      "bytes": 4196
+    },
+    "docs/delivery/v2-development/waveform-packaging/inspect-artifacts-r2.py": {
+      "sha256": "b30b7a85b15b3baf2d91eca3a50f4fa092629a13743022a40aba4926e008c0ba",
+      "bytes": 4551
+    },
+    "docs/delivery/v2-development/waveform-packaging/launcher-r1.log": {
+      "sha256": "a0166d0e14f0c724c8c8da88d37680165724d92b6761fe68d9dd05aff4fd43d2",
+      "bytes": 21913
+    },
+    "docs/delivery/v2-development/waveform-packaging/manifest-after-edit.sha256": {
+      "sha256": "db217a365951eb56a56fdd87edb5c0991c33ca887645a7d5444aa5f4ed37be75",
+      "bytes": 94
+    },
+    "docs/delivery/v2-development/waveform-packaging/manifest-before-edit.sha256": {
+      "sha256": "d89059b0c1b37367f7f192187228abc0ad72e4026f26e0e972dc661b88a1fcbb",
+      "bytes": 94
+    },
+    "docs/delivery/v2-development/waveform-packaging/manifest-packaging-input-r1.sha256": {
+      "sha256": "db217a365951eb56a56fdd87edb5c0991c33ca887645a7d5444aa5f4ed37be75",
+      "bytes": 94
+    },
+    "docs/delivery/v2-development/waveform-packaging/natural-startup-r1.json": {
+      "sha256": "27c35ac27aab23b6e9a3697671588038724d3f8f396447d58262389c395acc3d",
+      "bytes": 10639
+    },
+    "docs/delivery/v2-development/waveform-packaging/natural-startup-r1.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-evidence/index.json": {
+      "sha256": "f30a3f5618f68bebdc46975480a9c00e7d4627b7eaf62ad8593604648917580c",
+      "bytes": 10619
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-sdist0/build.log": {
+      "sha256": "a29d9016bb8ef1c3b2ca38a77298f13d8e51893be00fab9fb4c84842b327a9bb",
+      "bytes": 43619
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-sdist0/payload-inventory.json": {
+      "sha256": "133252a26f5f7ef82e1002fd56b582aaac6f846c46596fe7ca446d5d08b7988c",
+      "bytes": 86531
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-sdist0/sdist-receipt.json": {
+      "sha256": "181e94ba5481a1872e4a71dba749aafc4ac4c645467eb14addb60ccc4f95c193",
+      "bytes": 117862
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-sdist0/stage-receipt.json": {
+      "sha256": "4ec4934ab371943825300ee5590c748748ad86b5975d6a632952dbeedc363704",
+      "bytes": 78463
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-sdist1/build.log": {
+      "sha256": "a29d9016bb8ef1c3b2ca38a77298f13d8e51893be00fab9fb4c84842b327a9bb",
+      "bytes": 43619
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-sdist1/payload-inventory.json": {
+      "sha256": "133252a26f5f7ef82e1002fd56b582aaac6f846c46596fe7ca446d5d08b7988c",
+      "bytes": 86531
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-sdist1/sdist-receipt.json": {
+      "sha256": "b1ee534df089aa0ba102efc013018ce5ec8a94a5516ee6d8158d1e37e13747ce",
+      "bytes": 117862
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-sdist1/stage-receipt.json": {
+      "sha256": "4ec4934ab371943825300ee5590c748748ad86b5975d6a632952dbeedc363704",
+      "bytes": 78463
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-wheel0/build.log": {
+      "sha256": "e37cbf26cae3976a5200e3fbb69718459b8219c476ccb15239ca251a494b25af",
+      "bytes": 110883
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-wheel0/payload-inventory.json": {
+      "sha256": "8b8a5cfebf019298c85eaeeeb5d2cc161f17c6adeab13c8973a3d96613d4f7ee",
+      "bytes": 75710
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-wheel0/stage-receipt.json": {
+      "sha256": "4ec4934ab371943825300ee5590c748748ad86b5975d6a632952dbeedc363704",
+      "bytes": 78463
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-wheel0/wheel-receipt.json": {
+      "sha256": "198957401d9ab667118b7ffbee2b415674f63b9042bae31a3d308d77aa529b0e",
+      "bytes": 107523
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-wheel1/build.log": {
+      "sha256": "45105fe8f4be95825999e5e45bb8aeb67436381f82e0967aa469590baaef4b1b",
+      "bytes": 110883
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-wheel1/payload-inventory.json": {
+      "sha256": "8b8a5cfebf019298c85eaeeeb5d2cc161f17c6adeab13c8973a3d96613d4f7ee",
+      "bytes": 75710
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-wheel1/stage-receipt.json": {
+      "sha256": "4ec4934ab371943825300ee5590c748748ad86b5975d6a632952dbeedc363704",
+      "bytes": 78463
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-evidence/public-wheel1/wheel-receipt.json": {
+      "sha256": "793c40a0121b1f68fcc3cd20872751412b2cf79bdd39d432eb515c8249d18987",
+      "bytes": 107523
+    },
+    "docs/delivery/v2-development/waveform-packaging/packaging-interpreter-probe.py": {
+      "sha256": "99e3fd75effce3b27fe22b9878c793ba4a9aed3db4494d14177869036e2dc35c",
+      "bytes": 1378
+    },
+    "docs/delivery/v2-development/waveform-packaging/public-build-before.json": {
+      "sha256": "3261cc7549d58e5d8e84c69572a9475d9c416bfd487588ecfbec472e8695d37c",
+      "bytes": 22740
+    },
+    "docs/delivery/v2-development/waveform-packaging/run-packaging-r1.sh": {
+      "sha256": "b841eb234b253cf793c480843f67fb7c45a67d645e03f2f1c1608b8353d9b132",
+      "bytes": 1977
+    },
+    "docs/delivery/v2-development/waveform-packaging-origin-after-r1.json": {
+      "sha256": "4a01d7973f617eea6712c910d83fc3a93ade6c5de578a486bb3c1fdc084285c4",
+      "bytes": 610709
+    },
+    "docs/delivery/v2-development/waveform-packaging-origin-after-r1.log": {
+      "sha256": "40262a7410db4bb616013f0f520655f481f95ca11847d6d2e7a4382dfa578452",
+      "bytes": 10702
+    },
+    "docs/delivery/v2-development/waveform-packaging-origin-before-r1.json": {
+      "sha256": "19b69ee38718707e198c40ce2bb24a7e5af841bafcbac77430e54da64a8f728c",
+      "bytes": 610718
+    },
+    "docs/delivery/v2-development/waveform-packaging-origin-before-r1.log": {
+      "sha256": "f166fae42aa312031284798476317ffc9e13e1c8a025db0c1479040c6b52a04d",
+      "bytes": 10702
+    },
+    "docs/delivery/v2-development/waveform-packaging-r1.json": {
+      "sha256": "269620bfa2594af2798d25881ac5448b8502c99d830f7728d31d0541974675e1",
+      "bytes": 610772
+    },
+    "docs/delivery/v2-development/waveform-packaging-r1.log": {
+      "sha256": "c7bf9f3891968f3fb33d2da3c86893470f03bca03f984df9e50c11f78b1b3541",
+      "bytes": 180
+    },
+    "frontend/src/creative/StudioTimelineEditor.tsx": {
+      "sha256": "8f430ad79ed9b81ccbbc0c6df73b763c20d0032dd90c1717feb77e942028797d",
+      "bytes": 41717
+    },
+    "frontend/src/creative/StudioTimelineWaveform.additive.test.tsx": {
+      "sha256": "8fa61228a77b9d6e1e4bb4a35721fd49cb2dd109e79d0144d54e721c5c9f930d",
+      "bytes": 13508
+    },
+    "frontend/src/creative/studioProductionClient.ts": {
+      "sha256": "b1d7e4f4996d9212dbc417f09a77f09a853956a36b87b6fc33a15d427f56721e",
+      "bytes": 57486
+    },
+    "frontend/src/creative/studioTimelineWaveform.testFixtures.ts": {
+      "sha256": "4b1aaa383d7c7953e4e864d067d04883c0f592848b8a3e7d2ff0a15af19b2028",
+      "bytes": 2299
+    },
+    "frontend/src/creative/studioTimelineWaveformContract.additive.test.ts": {
+      "sha256": "772e73fb6397612148b468b915000247ac387a70054f46714a8bb01834207c45",
+      "bytes": 5650
+    },
+    "frontend/src/creative/studioTimelineWaveformTypes.ts": {
+      "sha256": "246ba5b0faf93eda615835c453d374de96cbb8ecdac479ef7616930916784b80",
+      "bytes": 6103
+    },
+    "frontend/src/creative/useStudioTimelineWaveform.ts": {
+      "sha256": "7d6b7ef6c4b40c7857883f01c9dff3161bed6ab9eb266e47b56c8cc13dcbf793",
+      "bytes": 7558
+    },
+    "frontend/src/nle/TimelineWaveformPanel.additive.test.tsx": {
+      "sha256": "ef4624452460c4206b9502992147c80f84c7d37edd866b2fe4e0caab4e4b27b0",
+      "bytes": 3818
+    },
+    "frontend/src/nle/TimelineWaveformPanel.tsx": {
+      "sha256": "0aa68200615741dd24d6f022c3841018e44d7d52cf416674b6104915f0a64900",
+      "bytes": 5266
+    },
+    "frontend/src/nle/TimelineWorkspacePanel.tsx": {
+      "sha256": "9dbb423bffc20a1fbc24841db05e89c58907b2161517258e94dafdcf8999fe27",
+      "bytes": 5263
+    },
+    "packaging/public-build.json": {
+      "sha256": "57f657057a391fa9ebdd8586fba62262ea6f3bb5fb1e2fe71f0c5ff27ad573be",
+      "bytes": 22819
+    },
+    "pyproject.toml": {
+      "sha256": "fba6dd9b9a7971156118ab488274cd0ff611250200e666f91a9c2b9d51bd0a9f",
+      "bytes": 1503
+    },
+    "scripts/public_build.py": {
+      "sha256": "052e5486633653cbe21725ac0d10843f03efb77eae8757503e5e249721f36619",
+      "bytes": 30299
+    },
+    "scripts/run_v2_checks.py": {
+      "sha256": "64cf16c26412c5a1e36a1d4fb799519111ad409f7594ae15aa0b158e53396cd5",
+      "bytes": 7260
+    },
+    "tests/test_asset_bounded_content_additive.py": {
+      "sha256": "9922f8bf191b7133d16632a0304279c458142ea03272d3b948fb42cfb2417616",
+      "bytes": 7726
+    },
+    "tests/test_existing_owner_observation_additive.py": {
+      "sha256": "8f973cb31f79ec3e44abc5490b5cb39ff89ec87cc83bce8882f2a2822b15fc59",
+      "bytes": 2823
+    },
+    "tests/test_pcm16_envelope_additive.py": {
+      "sha256": "ed2a91527ead6736b355515f777d18c5bfbe7d7b3e825cd23fc60dabef9ace23",
+      "bytes": 4416
+    },
+    "tests/test_v2_timeline_waveform_preview.py": {
+      "sha256": "e4b5f4b5758e3bf2c590aa7cf793fa93e4c2786e608ffcb032856f71877b91ab",
+      "bytes": 14757
+    },
+    "tests/test_v2_timeline_waveform_preview_api.py": {
+      "sha256": "56d847540eb84b7940d3b24b0a9c288aad8e1b24c958bcd2f2fe9fd14756bfae",
+      "bytes": 10199
+    }
+  },
+  "external_dependencies": {
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12": {
+      "sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+      "bytes": 30894944
+    },
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/site-packages/setuptools/__init__.py": {
+      "sha256": "04d3cd11754df1af03e547cf9e930e8f46330c2c46772b43545b75993667978f",
+      "bytes": 9566
+    },
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/site-packages/wheel/__init__.py": {
+      "sha256": "486f49117612245c2a2d8e9f4b9686a6e8451c5aa8bd0d7a63c9ee6d0e446bd4",
+      "bytes": 59
+    },
+    "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python": {
+      "sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+      "bytes": 30894944
+    },
+    "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/pyvenv.cfg": {
+      "sha256": "1f3b547f81e4fe1f061b082ae4959f9cb125a23e362e8063e974298fcb02809e",
+      "bytes": 421
+    },
+    "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/setup-receipt.json": {
+      "sha256": "02ccf5581e0ed9726af44dda40eb02dcbbce8e2ea5d5f08a7648e723f4a82d58",
+      "bytes": 1385370
+    }
+  }
+}
