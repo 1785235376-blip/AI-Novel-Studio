@@ -222,6 +222,7 @@
     "app/experimental/teams_api.py",
     "app/experimental/template_library.py",
     "app/experimental/template_library_api.py",
+    "app/experimental/terminology_portability.py",
     "app/experimental/timeline_exchange.py",
     "app/experimental/timeline_exchange_api.py",
     "app/experimental/ux.py",

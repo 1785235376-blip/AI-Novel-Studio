@@ -7,6 +7,7 @@ import './multilingualEditions.css';
 import { TerminologyIssueNavigator } from './TerminologyIssueNavigator';
 import { TranslationMemoryPanel } from './TranslationMemoryPanel';
 import { LanguageTranslationPanel } from './LanguageTranslationPanel';
+import { TerminologyPortabilityPanel } from './TerminologyPortabilityPanel';
 let sequence = 0;
 type EditionProps = { client: ExperimentalClient; requestedJobId?: string };
 export function MultilingualEditionsPanel({ client, requestedJobId }: EditionProps) {
@@ -98,7 +99,7 @@ function EditionsBody({ client, requestedJobId }: EditionProps) {
           {segment && <SegmentEditor key={`${selected.id}:${segment.id}`} api={api} edition={selected} segment={segment} number={index + 1} focusRequest={focusRequest} busy={action.busy} perform={perform} onDirty={setDirty} />}
         </>}
       </Panel>
-      {!selected.stale && !selected.content_withheld && <><Terminology api={api} edition={selected} busy={action.busy || dirty} perform={perform} /><EditionExportPanel key={selected.id} api={api} edition={selected} blocked={action.busy || dirty} /></>}
+      {!selected.stale && !selected.content_withheld && <><TerminologyPortabilityPanel key={`glossary:${selected.id}:${selected.version}`} client={client} edition={selected} blocked={action.busy || dirty} perform={perform} /><Terminology api={api} edition={selected} busy={action.busy || dirty} perform={perform} /><EditionExportPanel key={selected.id} api={api} edition={selected} blocked={action.busy || dirty} /></>}
     </>}
   </section>;
 }

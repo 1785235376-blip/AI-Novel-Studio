@@ -1,0 +1,1 @@
+Exec launch rejected: exec-server transport disconnected. Read-only process/artifact reconciliation at 2026-10-17 09:14:35 UTC found no terminology/check process, no launch output and no receipt. No test started or claimed.

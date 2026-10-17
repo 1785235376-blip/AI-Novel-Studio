@@ -1,0 +1,26 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-terminology-portability/frontend
+
+ ✓ src/experimental/TerminologyPortabilityPanel.test.tsx (20 tests) 389ms
+ ✓ src/experimental/MultilingualEditionsPanel.test.tsx (10 tests) 1042ms
+   ✓ manual bilingual save→review→exact acceptance with RTL and no model calls 396ms
+ ✓ src/experimental/LanguageTranslationPanel.test.tsx (5 tests) 786ms
+   ✓ adoption updates visible saved draft while requiring separate submit and review 425ms
+ ✓ src/experimental/MultilingualEditionsPanel.additive.test.tsx (6 tests) 522ms
+ ✓ src/experimental/TranslationMemoryPanel.test.tsx (4 tests) 133ms
+ ✓ src/experimental/TerminologyIssueNavigator.test.tsx (13 tests) 217ms
+
+ Test Files  6 passed (6)
+      Tests  58 passed (58)
+   Start at  18:19:11
+   Duration  6.85s (transform 241ms, setup 29ms, collect 821ms, tests 3.09s, environment 1.88s, prepare 298ms)
+
+stderr | src/experimental/MultilingualEditionsPanel.additive.test.tsx > does not select a matching rule version from duplicate IDs
+Warning: Encountered two children with the same key, `duplicate`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at section
+    at Panel (/workspace/scratch/20a0022d2b33/studio-terminology-portability/frontend/src/ui/primitives.tsx:36:18)
+    at Terminology (/workspace/scratch/20a0022d2b33/studio-terminology-portability/frontend/src/experimental/MultilingualEditionsPanel.tsx:912:24)
+    at section
+    at EditionsBody (/workspace/scratch/20a0022d2b33/studio-terminology-portability/frontend/src/experimental/MultilingualEditionsPanel.tsx:31:25)
+    at MultilingualEditionsPanel (/workspace/scratch/20a0022d2b33/studio-terminology-portability/frontend/src/experimental/MultilingualEditionsPanel.tsx:22:38)
+
