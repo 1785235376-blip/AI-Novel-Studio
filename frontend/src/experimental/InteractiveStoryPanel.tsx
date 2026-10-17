@@ -41,7 +41,7 @@ function StoryBody({ client }: { client: ExperimentalClient }) {
     <Button disabled={dirty || action.busy || story.status === 'ARCHIVED'} onClick={() => perform(() => api.review(story, 'archive'), '改编已归档，记录仍可恢复。')}>归档互动改编</Button>
     {story.status === 'ARCHIVED' && <Button disabled={action.busy || story.stale} onClick={() => perform(() => api.review(story, 'restore'), '改编恢复为待审草稿。')}>恢复互动改编</Button>}
   </Panel>
-  {!story.stale && story.spec && catalog.data && <><StoryEditor key={`editor:${story.id}:${story.version}`} story={story} catalog={catalog.data} busy={action.busy} onDirty={setDirty} onSave={spec => perform(() => api.save(story, spec), '互动草稿已保存，需要重新审核。')} />
+  {!story.stale && !story.content_withheld && story.spec && catalog.data && <><StoryEditor key={`editor:${story.id}:${story.version}`} story={story} catalog={catalog.data} catalogReady={!catalog.loading && !catalog.error} busy={action.busy} onDirty={setDirty} onSave={spec => perform(() => api.save(story, spec), '互动草稿已保存，需要重新审核。')} />
     <InteractiveStoryHistory key={`history:${story.id}:${story.version}`} api={api} story={story} blocked={dirty || action.busy} perform={perform} />
     <InteractiveStoryPreview api={api} story={story} blocked={dirty || action.busy} />
     <StoryApproval key={`approval:${story.id}:${story.version}`} api={api} story={story} blocked={dirty || action.busy} perform={perform} />
@@ -74,13 +74,35 @@ function Analysis({ story, spec, removedChoices, dirty, blocked, onLocate }: { s
     {analysis.endings.map(e => <p key={e.node_id}>可验证结局：{e.ending} · {e.choices.length} 次选择</p>)}<p>循环提醒不等于非法故事；无法到达结局或变量条件无出口需要修复。循环受运行步数限制；这是有界检查，不是所有可能故事的无限证明。</p>
   </Panel>;
 }
-function StoryEditor({ story, catalog, busy, onDirty, onSave }: { story: InteractiveStory; catalog: StoryCatalog; busy: boolean; onDirty: (value: boolean) => void; onSave: (spec: StorySpec) => void }) {
+function membershipGraph(spec: StorySpec, catalog: StoryCatalog) {
+  const matches = catalog.graphs.filter(graph => graph.id === spec.graph_id);
+  const graph = matches.length === 1 ? matches[0] : undefined;
+  if (!graph || !Number.isSafeInteger(graph.version) || graph.version < 1 || graph.version !== spec.graph_version) return;
+  const validText = (value: unknown, maximum: number) => typeof value === 'string' && [...value].length > 0 && [...value].length <= maximum && ![...value].some(char => { const code = char.codePointAt(0)!; return (code < 32 && !'\n\t\r'.includes(char)) || (code >= 0xd800 && code <= 0xdfff); });
+  if (new Set(graph.nodes.map(node => node.node_id)).size !== graph.nodes.length || new Set(spec.nodes.map(node => node.node_id)).size !== spec.nodes.length) return;
+  if (graph.nodes.some(node => !validText(node.node_id, 160) || !validText(node.title, 240) || !Number.isSafeInteger(node.node_version) || node.node_version < 1)) return;
+  if (spec.nodes.some(node => !graph.nodes.some(source => source.node_id === node.node_id && source.node_version === node.node_version))) return;
+  return graph;
+}
+function StoryEditor({ story, catalog, catalogReady, busy, onDirty, onSave }: { story: InteractiveStory; catalog: StoryCatalog; catalogReady: boolean; busy: boolean; onDirty: (value: boolean) => void; onSave: (spec: StorySpec) => void }) {
   const [spec, setSpec] = useState<StorySpec>(() => structuredClone(story.spec!)), [index, setIndex] = useState(0), [dirty, setDirty] = useState(false);
   const [name, setName] = useState(''), [kind, setKind] = useState<'bool' | 'int'>('bool'), [initial, setInitial] = useState('false'), [minimum, setMinimum] = useState(0), [maximum, setMaximum] = useState(100);
   const titleInput = useRef<HTMLInputElement>(null), choiceInputs = useRef(new Map<string, HTMLInputElement>());
   const [focusTarget, setFocusTarget] = useState<StoryIssue>();
   const removedChoices = useRef(new Set<string>());
   const composing = useRef(false); const [compositionActive, setCompositionActive] = useState(false);
+  const membershipAlive = useRef(false);
+  useEffect(() => { membershipAlive.current = true; return () => { membershipAlive.current = false; }; }, []);
+  const sourceGeneration = useRef({ catalog, ready: catalogReady, generation: 0 });
+  if (sourceGeneration.current.catalog !== catalog || sourceGeneration.current.ready !== catalogReady) sourceGeneration.current = { catalog, ready: catalogReady, generation: sourceGeneration.current.generation + 1 };
+  const generation = sourceGeneration.current.generation;
+  const [candidate, setCandidate] = useState<{ id: string; generation: number }>();
+  const sourceGraph = catalogReady ? membershipGraph(spec, catalog) : undefined;
+  const candidates = sourceGraph?.nodes.filter(source => !spec.nodes.some(node => node.node_id === source.node_id)) || [];
+  const selectedCandidate = candidate?.generation === generation ? candidates.find(source => source.node_id === candidate.id) : undefined;
+  // A retained callback must never revive after catalog/client A -> B -> A,
+  // a save, a revert, or a newer local edit, even if IDs happen to match.
+  const membershipTicket = {}; const currentMembershipTicket = useRef(membershipTicket); currentMembershipTicket.current = membershipTicket;
   const node = spec.nodes[index]; const blocked = busy || story.status === 'ARCHIVED';
   useEffect(() => {
     if (!focusTarget || blocked || composing.current || node.node_id !== focusTarget.node_id) return;
@@ -97,6 +119,7 @@ function StoryEditor({ story, catalog, busy, onDirty, onSave }: { story: Interac
   };
   useEffect(() => { if (!dirty) return; const guard = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ''; }; window.addEventListener('beforeunload', guard); return () => window.removeEventListener('beforeunload', guard); }, [dirty]);
   const change = (value: StorySpec) => {
+    currentMembershipTicket.current = {};
     // The original editor can reuse a removed choice ID. A saved issue must not
     // silently navigate to that replacement before save and owner reanalysis.
     for (const oldNode of spec.nodes) for (const choice of oldNode.choices) {
@@ -105,10 +128,24 @@ function StoryEditor({ story, catalog, busy, onDirty, onSave }: { story: Interac
     setSpec(value); setDirty(true); onDirty(true); };
   const edit = (patch: Partial<StoryNode>) => change({ ...spec, nodes: spec.nodes.map((n, i) => i === index ? { ...n, ...patch } : n) });
   const variables = spec.variables;
+  const membershipBlocked = blocked || compositionActive || !sourceGraph || spec.nodes.length >= 100;
+  const addNode = () => {
+    if (!membershipAlive.current || currentMembershipTicket.current !== membershipTicket || composing.current || membershipBlocked || !selectedCandidate) return;
+    currentMembershipTicket.current = {};
+    const { node_id, node_version, title } = selectedCandidate;
+    change({ ...spec, nodes: [...spec.nodes, { node_id, node_version, title, dialogue: '', ending: '', character_id: null, background_asset_id: null, music_asset_id: null, choices: [] }] });
+    setIndex(spec.nodes.length); setFocusTarget(undefined); setCandidate(undefined);
+  };
   return <><Panel title="互动节点编辑"><fieldset disabled={blocked} onCompositionStartCapture={() => { composing.current = true; setCompositionActive(true); setFocusTarget(undefined); }} onCompositionEndCapture={() => { composing.current = false; setCompositionActive(false); }}>
     <Field label="改编标题"><input value={spec.title} maxLength={160} onChange={e => change({ ...spec, title: e.target.value })} /></Field>
-    <div className="experimental-grid"><Field label="故事入口节点"><select value={spec.entry_node_id} onChange={e => change({ ...spec, entry_node_id: e.target.value })}>{spec.nodes.map(n => <option key={n.node_id} value={n.node_id}>{n.title}</option>)}</select></Field><Field label="互动步数上限"><input type="number" min={1} max={128} value={spec.max_steps} onChange={e => change({ ...spec, max_steps: Number(e.target.value) })} /></Field></div>
-    <Field label="当前编辑节点"><select value={index} onChange={e => { setFocusTarget(undefined); setIndex(Number(e.target.value)); }}>{spec.nodes.map((n, i) => <option key={n.node_id} value={i}>{n.title}</option>)}</select></Field>
+    <fieldset><legend>添加原规划节点</legend><p>只添加当前原规划版本中尚未改编的节点。添加后请手动编写对白、结局和连接选择，再保存互动草稿。</p>
+      <Field label="待添加原规划节点"><select value={selectedCandidate?.node_id || ''} disabled={membershipBlocked || !candidates.length} onChange={event => { if (!membershipAlive.current || currentMembershipTicket.current !== membershipTicket || composing.current || membershipBlocked) return; currentMembershipTicket.current = {}; setCandidate({ id: event.target.value, generation }); }}><option value="">选择尚未改编的原节点</option>{candidates.map(source => <option key={source.node_id} value={source.node_id}>{source.title} · {source.node_id} · v{source.node_version}</option>)}</select></Field>
+      <Button disabled={membershipBlocked || !selectedCandidate} onClick={addNode}>添加所选原节点</Button>
+      {!catalogReady ? <StatusMessage tone="warning">可用来源正在刷新或读取失败，暂不能添加节点。</StatusMessage> : !sourceGraph ? <StatusMessage tone="warning">原规划版本或节点来源无法精确匹配。请先保存或还原输入，再核对当前互动版本；来源变化时使用原有来源重绑定流程。</StatusMessage> : spec.nodes.length >= 100 ? <p>互动改编最多包含 100 个节点。</p> : !candidates.length ? <p>当前可用原节点均已加入改编。</p> : null}
+      {sourceGraph?.truncated && <p>只列出前 100 个原规划节点，不会猜测未列出的来源。</p>}
+    </fieldset>
+    <div className="experimental-grid"><Field label="故事入口节点"><select value={spec.entry_node_id} onChange={e => change({ ...spec, entry_node_id: e.target.value })}>{spec.nodes.map(n => <option key={n.node_id} value={n.node_id}>{n.title} · {n.node_id} · v{n.node_version}</option>)}</select></Field><Field label="互动步数上限"><input type="number" min={1} max={128} value={spec.max_steps} onChange={e => change({ ...spec, max_steps: Number(e.target.value) })} /></Field></div>
+    <Field label="当前编辑节点"><select value={index} onChange={e => { currentMembershipTicket.current = {}; setFocusTarget(undefined); setIndex(Number(e.target.value)); }}>{spec.nodes.map((n, i) => <option key={n.node_id} value={i}>{n.title} · {n.node_id} · v{n.node_version}</option>)}</select></Field>
     <p>原节点 ID：{node.node_id} · v{node.node_version}</p>
     <Field label="互动节点标题"><input ref={titleInput} value={node.title} maxLength={240} onChange={e => edit({ title: e.target.value })} /></Field>
     <Field label="对白或叙述"><textarea value={node.dialogue} maxLength={8000} onChange={e => edit({ dialogue: e.target.value })} /></Field>
@@ -118,7 +155,7 @@ function StoryEditor({ story, catalog, busy, onDirty, onSave }: { story: Interac
     <Field label="结局名称（留空表示非结局）"><input value={node.ending} disabled={node.choices.length > 0} maxLength={240} onChange={e => edit({ ending: e.target.value })} /></Field>
     {!!node.choices.length && <p>要改成结局，请先移除此节点的选择。</p>}
     {node.choices.map((choice, i) => <section className="experimental-record" key={choice.id} aria-label={`选择 ${i + 1}`}><Field label={`选择 ${i + 1} 文案`}><input value={choice.label} maxLength={240} onChange={e => edit({ choices: node.choices.map((c, j) => j === i ? { ...c, label: e.target.value } : c) })} /></Field>
-      <Field label={`选择 ${i + 1} 目标`}><select value={choice.target} onChange={e => edit({ choices: node.choices.map((c, j) => j === i ? { ...c, target: e.target.value } : c) })}>{spec.nodes.map(n => <option key={n.node_id} value={n.node_id}>{n.title}</option>)}</select></Field>
+      <Field label={`选择 ${i + 1} 目标`}><select value={choice.target} onChange={e => edit({ choices: node.choices.map((c, j) => j === i ? { ...c, target: e.target.value } : c) })}>{spec.nodes.map(n => <option key={n.node_id} value={n.node_id}>{n.title} · {n.node_id} · v{n.node_version}</option>)}</select></Field>
       <Field label={`选择 ${i + 1} 条件`}><input ref={element => { if (element) choiceInputs.current.set(choice.id, element); else choiceInputs.current.delete(choice.id); }} value={choice.condition} maxLength={240} placeholder="例如 courage >= 2 and trusted" onChange={e => edit({ choices: node.choices.map((c, j) => j === i ? { ...c, condition: e.target.value } : c) })} /></Field>
       <p>仅允许 bool/int 变量、True/False、比较、and/or/not 和括号；不执行代码。留空为始终可选。</p>
       {variables.map(v => <div key={v.name}><label className="experimental-check"><input type="checkbox" checked={v.name in choice.assignments} onChange={e => { const assignments = { ...choice.assignments }; if (e.target.checked) assignments[v.name] = v.initial; else delete assignments[v.name]; edit({ choices: node.choices.map((c, j) => j === i ? { ...c, assignments } : c) }); }} />选择后设置 {v.name}</label>
@@ -132,7 +169,7 @@ function StoryEditor({ story, catalog, busy, onDirty, onSave }: { story: Interac
     {kind === 'int' && <><Field label="变量最小值"><input type="number" value={minimum} min={-10000} max={10000} onChange={e => setMinimum(Number(e.target.value))} /></Field><Field label="变量最大值"><input type="number" value={maximum} min={-10000} max={10000} onChange={e => setMaximum(Number(e.target.value))} /></Field></>}
     </div><Button disabled={!/^[a-z][a-z0-9_]{0,31}$/.test(name) || variables.some(v => v.name === name) || variables.length >= 16} onClick={() => { const variable: StoryVariable = { name, type: kind, initial: kind === 'bool' ? initial === 'true' : Number(initial), minimum, maximum }; change({ ...spec, variables: [...variables, variable] }); setName(''); }}>添加有界变量</Button>
     <fieldset><legend>关联已审核故事图谱记录（可选，不复制事实）</legend>{catalog.graph_records.map(r => <label className="experimental-check" key={r.id}><input type="checkbox" checked={spec.graph_record_ids.includes(r.id)} onChange={e => change({ ...spec, graph_record_ids: e.target.checked ? [...spec.graph_record_ids, r.id] : spec.graph_record_ids.filter(id => id !== r.id) })} />{r.title} · v{r.version}</label>)}</fieldset>
-    <div className="experimental-actions"><Button disabled={!dirty} onClick={() => onSave(spec)}>保存互动草稿</Button><Button disabled={!dirty} onClick={() => { removedChoices.current.clear(); setSpec(structuredClone(story.spec!)); setDirty(false); onDirty(false); }}>还原未保存输入</Button></div>
+    <div className="experimental-actions"><Button disabled={!dirty} onClick={() => { currentMembershipTicket.current = {}; onSave(spec); }}>保存互动草稿</Button><Button disabled={!dirty} onClick={() => { removedChoices.current.clear(); setIndex(0); setFocusTarget(undefined); setCandidate(undefined); currentMembershipTicket.current = {}; setSpec(structuredClone(story.spec!)); setDirty(false); onDirty(false); }}>还原未保存输入</Button></div>
     </fieldset></Panel>{story.analysis && <Analysis story={story} spec={spec} removedChoices={removedChoices.current} dirty={dirty} blocked={blocked || compositionActive} onLocate={locate} />}</>;
 }
 function StoryApproval({ api, story, blocked, perform }: { api: StoryApi; story: InteractiveStory; blocked: boolean; perform: (fn: () => Promise<InteractiveStory>, message: string) => void }) {
