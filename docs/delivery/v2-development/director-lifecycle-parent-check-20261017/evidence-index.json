@@ -1,0 +1,270 @@
+{
+  "source_commit": "64248ba847e3db306bb7429fba6e16387ba62f42",
+  "status": "PRIMARY_CHECKED_REVIEW_PENDING",
+  "independent_review": "UNAVAILABLE_PLATFORM_PREVIEW_LIMIT",
+  "public_transport": "NOT_ADDED",
+  "real_postgresql": "NOT_RUN",
+  "live_provider_browser_windows_gpu": "NOT_RUN",
+  "files": {
+    "docs/delivery/v2-development/director-lifecycle-final-backend-r1.json": {
+      "sha256": "7bf83d45a692b8486cd0475e9cf0eef0e72457cafa797cfec01f43d158116169",
+      "bytes": 625355
+    },
+    "docs/delivery/v2-development/director-lifecycle-final-backend-r1.log": {
+      "sha256": "d5d0267d7b86c523cfd3d4b62a99c67fceaa8b87e32c25f92012a82671c50910",
+      "bytes": 1824
+    },
+    "docs/delivery/v2-development/director-lifecycle-final-build-r1.json": {
+      "sha256": "a01fa4d039f7c74c21901fe514527d10f457280bc9074cb3231f07c3f7474015",
+      "bytes": 623963
+    },
+    "docs/delivery/v2-development/director-lifecycle-final-build-r1.log": {
+      "sha256": "051cfbd82751ea72734566f9055d7dff1af2f1d036a4a5ef0c368ba45e157c50",
+      "bytes": 1679
+    },
+    "docs/delivery/v2-development/director-lifecycle-final-origin-after-r1.json": {
+      "sha256": "82a3a90da0b72014b34299d18a9d46dd19e36df3346c45ac154f733d5f03c498",
+      "bytes": 624240
+    },
+    "docs/delivery/v2-development/director-lifecycle-final-origin-after-r1.log": {
+      "sha256": "ccb2a4aed1246012ee23d1dfbffc72b6da35831179a4eccecb14de26f719908f",
+      "bytes": 13262
+    },
+    "docs/delivery/v2-development/director-lifecycle-final-origin-before-r1.json": {
+      "sha256": "db0dd83d194887328edc53e17cff122a44a4f4306299b58812c85ce08787155c",
+      "bytes": 624249
+    },
+    "docs/delivery/v2-development/director-lifecycle-final-origin-before-r1.log": {
+      "sha256": "f5111521b338da0fb960fe416132f9c038df13e32124b488fd2effb5e44ca241",
+      "bytes": 13262
+    },
+    "docs/delivery/v2-development/director-lifecycle-final-token-r1.json": {
+      "sha256": "756d1b597a5fb9ffcb22be3730cbdc35ab4e4468b120f7c159349f021575415a",
+      "bytes": 623899
+    },
+    "docs/delivery/v2-development/director-lifecycle-final-token-r1.log": {
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "bytes": 31
+    },
+    "docs/delivery/v2-development/director-lifecycle-final-type-r1.json": {
+      "sha256": "7f473a50e74e7e5ec54e6adf0ec735b5c28a3770a95357c6da2446a44d285fd6",
+      "bytes": 623961
+    },
+    "docs/delivery/v2-development/director-lifecycle-final-type-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/director-lifecycle-packaging-r1.json": {
+      "sha256": "3142d3f01c5e2ed88fb7ef6d9c1bfd57f7de78b31de6c5bf5e141c52248c6736",
+      "bytes": 624382
+    },
+    "docs/delivery/v2-development/director-lifecycle-packaging-r1.log": {
+      "sha256": "f91f8519718dade162bfc04842faa70f8685fc20caa5c2e6ac486e3f170064a4",
+      "bytes": 715
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-candidate-r1.json": {
+      "sha256": "e11f6ac58052ee9142357be84a9758f9e2ad8da05969c034f4e689d79c6894d3",
+      "bytes": 624319
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-candidate-r1.log": {
+      "sha256": "18785f980e873480a2fd04b2d31ec04710c5ca0a61de4ff5911a8a533957df57",
+      "bytes": 628
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-candidate-r2.json": {
+      "sha256": "6f1c6cfd15d329398d5d2467b301b3536d00fe80c0d6246eef42f7925b1faf89",
+      "bytes": 624319
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-candidate-r2.log": {
+      "sha256": "2ccbdc24913b61a69d9036fc8d05fc01cac2d3fdbd6a78083f9fb71af59246d1",
+      "bytes": 3596
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-candidate-r3.json": {
+      "sha256": "b60a4843042f7fcfb7ae6a8ca984f039eb820866d113906b1bd4d0b9c7c36bd0",
+      "bytes": 624319
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-candidate-r3.log": {
+      "sha256": "16be6a81179ef4a5955e6a0a4b4f311afb41139c35a1bb00c30cf14fb73984d8",
+      "bytes": 3644
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-candidate-r4.json": {
+      "sha256": "bc7231e87516386ea4af96dbbd11fd127af9c4407c20d18f5637d74a98b74a16",
+      "bytes": 624319
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-candidate-r4.log": {
+      "sha256": "309969b356439ef8165c5d8edd4bf79609c959cb36e11783c3c15937de24f02a",
+      "bytes": 629
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-candidate-r5.json": {
+      "sha256": "fba4c18e4600d38ece73b42b1c331175584c222b403c9edf259458a4b7df3a1f",
+      "bytes": 624319
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-candidate-r5.log": {
+      "sha256": "da7e0be4e31cf0329c2fa88e0a0ddfbb26d073d4ad087d0983865c433430938b",
+      "bytes": 624
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-candidate-r6.json": {
+      "sha256": "a91d063bc656bcd8562da40ff29f376ea07f593709f76ab93eff7da34dc03ff5",
+      "bytes": 624319
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-candidate-r6.log": {
+      "sha256": "565569a55740c996f3fa5d5af3431714a83bede1e55932134782c5ac01f4893e",
+      "bytes": 624
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/actual-artifact-inspection-r1.json": {
+      "sha256": "387310c634eec383448e53852bd16e746d1e1cf7a030486db97fd1c346b511f7",
+      "bytes": 5411
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/build-interpreter-r1.json": {
+      "sha256": "c6bb732271bbf5ffc844018e7786ccd3f4c324d7575c9adeb2619accc94f907e",
+      "bytes": 1491
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/candidate-launch-r1.log": {
+      "sha256": "4793870611cc31f63fd83f4048e047732a6833451ad29917ca72ea3dfcf1094f",
+      "bytes": 735
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/candidate-launch-r2.log": {
+      "sha256": "f2ed68d3ab45fe12dbea367c5d549ef0674e258dec53f9f4402d5877cc291e80",
+      "bytes": 3703
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/candidate-launch-r3.log": {
+      "sha256": "c3eeaf599885390f761b7cf05fd51231a9ddafe1f62c7eaf8cfe8833e618a046",
+      "bytes": 3751
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/candidate-launch-r4.log": {
+      "sha256": "a2370c83b1fa3efdcd22206974b81dcea4c1e33eff3c53552be8a0a7ae85890a",
+      "bytes": 736
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/candidate-launch-r5.log": {
+      "sha256": "ff087429575290efb301831f2f03454ee8078627acdb5abe7e29d1d7b521c0d3",
+      "bytes": 731
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/candidate-launch-r6.log": {
+      "sha256": "88a5769d25c54110f4a625e9ae448369456533c0dff12feecfaf1a516976be78",
+      "bytes": 731
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/child-origin-launch-r1.log": {
+      "sha256": "96c9a9730adeee3a095bda3b85e0fb86699eb8c22b52ea1a55eb34787bfc852d",
+      "bytes": 13366
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/final-frozen-source-r1.json": {
+      "sha256": "ab6a1193b70e8bc4dded164b590999c6b5205335dc2b8fa94b8f3fa4cf6a8f71",
+      "bytes": 634
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/final-launch-r1.log": {
+      "sha256": "307260a3fd66bd13cecb2a54dd924b905c1d9daaed45d45f2c30b99e3c3705f9",
+      "bytes": 30686
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/final-natural-r1.json": {
+      "sha256": "f7ab92610f31dc7d6e49fb6f189de2915c05fc8a65564d0d68a7a801d65bd00b",
+      "bytes": 13198
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/inspect-artifacts.py": {
+      "sha256": "6d6080e39160cd931db36f79d87a163b20af1f4c6836fcd0a929a71f9334e8ce",
+      "bytes": 4321
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/manifest-packaging-input-r1.sha256": {
+      "sha256": "71b38b3cbd2f00861a0db0c5e0489a75f3a95ca5bd76abaf404173a9d3c37856",
+      "bytes": 94
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/natural-origin-r1.json": {
+      "sha256": "2f35fac8d897af98e804b089f3c85f8450be6290c1226357c257be0189c6160a",
+      "bytes": 13198
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/origin-probe.py": {
+      "sha256": "ca28bffe67db49e7372b4dca9d841e2287eebacf234d348fc3012c92c0cfe241",
+      "bytes": 7364
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-evidence/index.json": {
+      "sha256": "387310c634eec383448e53852bd16e746d1e1cf7a030486db97fd1c346b511f7",
+      "bytes": 5411
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-evidence/public-sdist0/build.log": {
+      "sha256": "4b20a9f5a4f8f2a6b620f361662b9be4a2aa43f4f4a1a56cc1f4cb5958a858c1",
+      "bytes": 43883
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-evidence/public-sdist0/payload-inventory.json": {
+      "sha256": "08155506d8b969923b5331e875bd9ea6738dc1a498a4da87cdae7efc8629e383",
+      "bytes": 87054
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-evidence/public-sdist0/sdist-receipt.json": {
+      "sha256": "a33b5ca9f4cf6507c11371f0fdd96215cf2563c40bd03575e8c662c9b3e41050",
+      "bytes": 118583
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-evidence/public-sdist0/stage-receipt.json": {
+      "sha256": "b861dda7a656c4813edf4b69f81ecbc884752a917ae7c860e254daa6fe6f7af1",
+      "bytes": 78924
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-evidence/public-sdist1/build.log": {
+      "sha256": "4b20a9f5a4f8f2a6b620f361662b9be4a2aa43f4f4a1a56cc1f4cb5958a858c1",
+      "bytes": 43883
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-evidence/public-sdist1/payload-inventory.json": {
+      "sha256": "08155506d8b969923b5331e875bd9ea6738dc1a498a4da87cdae7efc8629e383",
+      "bytes": 87054
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-evidence/public-sdist1/sdist-receipt.json": {
+      "sha256": "ff1dc1a64e794908458f6115cae2d6e1d8c530a429f196f95a1d50c709c2ed4e",
+      "bytes": 118583
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-evidence/public-sdist1/stage-receipt.json": {
+      "sha256": "b861dda7a656c4813edf4b69f81ecbc884752a917ae7c860e254daa6fe6f7af1",
+      "bytes": 78924
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-evidence/public-wheel0/build.log": {
+      "sha256": "33c0302403241ebd3e7d4715f75c367c05c68d85e8c91ef9de1664694a41c6fa",
+      "bytes": 111598
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-evidence/public-wheel0/payload-inventory.json": {
+      "sha256": "05251d09f7f0219c943f89853ee1ec8f080694af7d04f74760bcc8ec28622353",
+      "bytes": 76167
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-evidence/public-wheel0/stage-receipt.json": {
+      "sha256": "b861dda7a656c4813edf4b69f81ecbc884752a917ae7c860e254daa6fe6f7af1",
+      "bytes": 78924
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-evidence/public-wheel0/wheel-receipt.json": {
+      "sha256": "7afea08d989213209228d8d28209858cc29dfd4ea2b8ce22310d2939bfda4ec6",
+      "bytes": 108178
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-evidence/public-wheel1/build.log": {
+      "sha256": "eafe3f3ffa8a170f30c103024678786a9033b5ded29c4e41b8d2b2e68546a0de",
+      "bytes": 111598
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-evidence/public-wheel1/payload-inventory.json": {
+      "sha256": "05251d09f7f0219c943f89853ee1ec8f080694af7d04f74760bcc8ec28622353",
+      "bytes": 76167
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-evidence/public-wheel1/stage-receipt.json": {
+      "sha256": "b861dda7a656c4813edf4b69f81ecbc884752a917ae7c860e254daa6fe6f7af1",
+      "bytes": 78924
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-evidence/public-wheel1/wheel-receipt.json": {
+      "sha256": "dd625ccba746ede26bdc187e8357e922a84877ff995fd0eea5ea09b95cd51b70",
+      "bytes": 108178
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-interpreter-probe.py": {
+      "sha256": "99e3fd75effce3b27fe22b9878c793ba4a9aed3db4494d14177869036e2dc35c",
+      "bytes": 1378
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/packaging-launch-r1.log": {
+      "sha256": "599e565895b1910c625baa54fc323ec2ff789cb71c55b6bd364bce51d406a71c",
+      "bytes": 847
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/run-final-r1.sh": {
+      "sha256": "e221fbe933f2e7d4bee16e10bc12c11ad9e1576facbbb401bb6df65f5ded7833",
+      "bytes": 2491
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-check-20261017/run-packaging-r1.sh": {
+      "sha256": "08c6a6ad3bffee23b7ed3deb59b7e0deb6d7b1ee1a0cbfe8017acf41d09ddab8",
+      "bytes": 1954
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-origin-r1.json": {
+      "sha256": "a8fdaa8653ed1dc45efe8ffde33b2a65df7f8a53816f3f02b6546d9eb1abd9a1",
+      "bytes": 624195
+    },
+    "docs/delivery/v2-development/director-lifecycle-parent-origin-r1.log": {
+      "sha256": "17ed845e54436ba0c8d2c3f6fb23443bf1b6aa69d1bd3b0b1914d3942d9f469e",
+      "bytes": 13262
+    }
+  }
+}

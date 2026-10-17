@@ -1,0 +1,10 @@
+....................                                                     [100%]
+=============================== warnings summary ===============================
+tests/test_director_lifecycle_owner_additive.py::test_preview_observation_does_not_admit_a_job_or_reservation
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+20 passed, 1 warning in 23.93s
+
+{"receipt": "docs/delivery/v2-development/director-lifecycle-parent-candidate-r6.json", "status": "PASS"}

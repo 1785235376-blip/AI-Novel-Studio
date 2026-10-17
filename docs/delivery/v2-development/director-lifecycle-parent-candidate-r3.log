@@ -1,0 +1,64 @@
+.........F
+=================================== FAILURES ===================================
+_______ test_live_cancellation_only_signals_then_original_worker_settles _______
+
+lifecycle = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-lifecy...firmed': True, 'runtime_config': {'management': 'EXTERNAL', 'type': 'LLAMA_CPP', 'endpoint': 'http://127.0.0.1:8999'}})
+
+    def test_live_cancellation_only_signals_then_original_worker_settles(lifecycle):
+        e = board(lifecycle)
+        entered, release = Event(), Event()
+        e.wire_text = json.dumps(output(e))
+    
+        def hold_wire():
+            entered.set()
+            assert release.wait(10), "test must release the original adapter wire"
+    
+        e.wire_hook = hold_wire
+        prepared = preview(e)
+        try:
+            e.coordinator._dispatch_independent(e.ctx, e.row["id"], {
+                "expected_version": prepared["version"],
+                "reviewed_preview_digest": prepared["model_preview"]["preview_digest"],
+            }, e.guard, host_authority=e.authority, terminal_evidence=True)
+            assert entered.wait(5)
+            row = raw_proposal(e)
+            job = e.manager.get(row["model_execution"]["job_id"])
+            body = {"expected_version": row["version"], "job_id": job.id,
+                "request_digest": row["model_execution"]["request_digest"],
+                "reviewed_preview_digest": row["model_preview"]["preview_digest"]}
+            before = raw_bytes(e)
+            with pytest.raises(DENIALS):
+                e.coordinator._cancel_independent(e.ctx, e.row["id"], {
+                    **body, "job_id": "not-the-owned-job",
+                }, e.guard, host_authority=e.authority)
+            assert not job.cancelled.is_set()
+            result = e.coordinator._cancel_independent(
+                e.ctx, e.row["id"], body, e.guard, host_authority=e.authority)
+            assert result["cancellation_requested"] is True
+            assert result["cancellation_confirmed"] is False
+            assert job.cancelled.is_set()
+            assert e.persistence.get(job.id)["status"] not in {"CANCELLED", "COMPLETED"}
+            assert raw_bytes(e) == before
+            repeated = e.coordinator._cancel_independent(
+                e.ctx, e.row["id"], body, e.guard, host_authority=e.authority)
+            assert repeated["cancellation_requested"] is True
+            assert raw_bytes(e) == before
+        finally:
+            release.set()
+        assert wait(e, job).status == "CANCELLED"
+        final = status(e)
+        assert final["phase"] == "CANCELLED"
+>       assert final["cancellation_confirmed"] is True
+E       assert False is True
+
+tests/test_director_lifecycle_owner_additive.py:172: AssertionError
+=============================== warnings summary ===============================
+tests/test_director_lifecycle_owner_additive.py::test_status_and_exact_adoption_receipt_survive_fresh_host_restart
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_director_lifecycle_owner_additive.py::test_live_cancellation_only_signals_then_original_worker_settles
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 9 passed, 1 warning in 15.15s
