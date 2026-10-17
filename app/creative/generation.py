@@ -1233,17 +1233,282 @@ class DirectorModelCoordinator:
 
     def _review_independent_pending(self, ctx, rid, value, guard, *, host_authority):
         from .models import DirectorProposalReview
+        from .director_terminal_evidence import PENDING_FIELD
+        from .director_lifecycle import validate_adoption, review_action_digest
         body = DirectorProposalReview.model_validate(value)
-        with self._pending_transaction(ctx, rid, guard, host_authority) as (raw, row, binding, repository, _):
+        with self._pending_transaction(ctx, rid, guard, host_authority) as (raw, row, binding, repository, locks):
             self._independent_version(row, body.expected_version)
             source, candidate = self._pending_candidate(ctx, row, binding, repository, guard, host_authority)
+            saved, _ = self._pending_history(ctx, row, binding, repository,
+                admitted_version=row[PENDING_FIELD]["admitted_version"], require_output=False)
             def before_mutation():
                 _, fresh = self._pending_candidate(ctx, row, binding, repository, guard, host_authority)
                 if canonical(fresh) != canonical(candidate):
                     raise ValueError("CREATIVE_DIRECTOR_PENDING_CANDIDATES_CHANGED")
+            def after_mutation():
+                # The original adoption owner has created exactly one DRAFT
+                # and advanced the proposal once in this same raw transaction.
+                document = self.documents.get(ctx.novel_id, ctx.scope, row["document_id"])
+                pending = row[PENDING_FIELD]
+                receipt = validate_adoption({"contract": "CREATIVE_DIRECTOR_ADOPTED_DRAFT_V1",
+                    "proposal_id": rid, "reviewed_version": body.expected_version,
+                    "approved_version": row["version"], "reviewed_by": ctx.actor,
+                    "review_action_digest": review_action_digest(body),
+                    "candidate_output_digest": candidate["output_digest"],
+                    "reviewed_output_digest": director_output_digest(document["director_notes"], document.get("visual_target")),
+                    "source_document_id": binding.source_document_id, "source_version": binding.source_version,
+                    "source_digest": binding.source_digest, "job_id": row["model_execution"]["job_id"],
+                    "request_digest": row["model_execution"]["request_digest"],
+                    "terminal_evidence_digest": pending["terminal_evidence_digest"],
+                    "document": {"document_id": document["id"], "version": document["version"],
+                        "digest": self.documents.document_digest(document), "mode": document["mode"],
+                        "status": document["status"]}})
+                pending["adoption"] = receipt
+                self.proposals._capacity(self.store._view(raw, binding.project_incarnation))
+                self._pending_current(ctx, row, binding, guard, host_authority)
             result = self.proposals._adopt_review_locked(ctx.novel_id, ctx.scope, ctx.actor,
                 raw, row, source, body, notes=candidate["director_notes"], output_digest=candidate["output_digest"],
                 provenance=candidate["provenance"], before_mutation=before_mutation,
-                after_mutation=lambda: self._pending_current(ctx, row, binding, guard, host_authority),
+                after_mutation=after_mutation,
                 quota_view=lambda: self.store._view(raw, binding.project_incarnation))
+            self._pending_current(ctx, row, binding, guard, host_authority)
+            locked = locks.enter_context(repository._director_snapshot_leaf(saved["id"]))
+            if canonical(locked) != canonical(saved):
+                raise ValueError("CREATIVE_DIRECTOR_PENDING_OUTPUT_CHANGED")
+        return result
+
+    def _lifecycle_preview(self, ctx, row, binding, guard, host_authority):
+        from .director_binding import CREATIVE_DIRECTOR_INTERNAL_CONTRACT
+        _, route = self._pending_current(ctx, row, binding, guard, host_authority)
+        preview = row.get("model_preview") or {}
+        unreviewed = binding.model_dump(); unreviewed["reviewed_preview_digest"] = "0" * 64
+        if (preview.get("contract") != CREATIVE_DIRECTOR_INTERNAL_CONTRACT
+                or preview.get("output_contract") != STORYBOARD_CONTRACT
+                or preview.get("allow_synthetic") is not False or route["synthetic"] is not False
+                or preview.get("preview_digest") != digest({k: v for k, v in preview.items() if k != "preview_digest"})
+                or canonical(preview.get("source_binding")) != canonical(unreviewed)
+                or preview.get("visual_target") != row.get("visual_target")):
+            raise ValueError("CREATIVE_DIRECTOR_LIFECYCLE_PREVIEW_CHANGED")
+        return route
+
+    def _lifecycle_identity(self, ctx, row, binding, repository, guard, host_authority):
+        """Passive exact identity plus fresh policy, never an execution guard."""
+        from types import SimpleNamespace
+        from .director_binding import CREATIVE_DIRECTOR_INTERNAL_CONTRACT, creative_director_job_binding
+        from ..model_execution import creative_director_request_payload_digest
+        route = self._lifecycle_preview(ctx, row, binding, guard, host_authority)
+        preview, execution = row.get("model_preview") or {}, row.get("model_execution") or {}
+        saved = repository.get(execution.get("job_id"))
+        if (creative_director_job_binding(saved) != binding.model_dump()
+                or saved["id"] != execution.get("job_id")
+                or execution.get("contract") != CREATIVE_DIRECTOR_INTERNAL_CONTRACT
+                or execution.get("preview_digest") != preview["preview_digest"]
+                or execution.get("request_digest") != saved.get("expected_request_digest")
+                or execution.get("deadline") != saved.get("generation_deadline")
+                or saved.get("generation_max_output_bytes") != preview["max_output_bytes"]
+                or saved.get("requested_provider") != route["provider_id"]
+                or saved.get("requested_model") != route["model_id"]):
+            raise ValueError("CREATIVE_DIRECTOR_LIFECYCLE_JOB_CHANGED")
+        payload = {"provider_id": route["provider_id"], "model_id": route["model_id"],
+            "prompt": preview["prompt"], "system_instruction": None, "context": {},
+            "parameters": {**deepcopy(preview["parameters"]), "stop_sequences": []},
+            "structured_output_schema": None, "metadata": {"purpose": "creative_director_source_model"}}
+        if creative_director_request_payload_digest(SimpleNamespace(**saved), payload, False,
+                route_fingerprint=route["fingerprint"]) != execution["request_digest"]:
+            raise ValueError("CREATIVE_DIRECTOR_LIFECYCLE_REQUEST_CHANGED")
+        ledger = self.broker.get(ctx.novel_id, ctx.scope, self.broker.LEDGER, execution.get("reservation_id"))
+        if (ledger.get("created_by") != ctx.actor or ledger.get("novel_id") != ctx.novel_id
+                or ledger.get("scope") != ctx.scope or ledger.get("job_id") != saved["id"]
+                or ledger.get("authorization_digest") != execution["request_digest"]
+                or ledger.get("preview_id") != preview["broker_preview_id"]
+                or ledger.get("route_id") != route["route_id"]
+                or ledger.get("route_fingerprint") != route["fingerprint"]
+                or ledger.get("provider_id") != route["provider_id"] or ledger.get("model_id") != route["model_id"]
+                or type(ledger.get("dispatched")) is not bool
+                or ledger.get("status") not in {"RESERVED", "DISPATCHED", "RELEASED", "SETTLED", "UNKNOWN_UPSTREAM"}
+                or type(ledger.get("reserve_microusd")) is not int or ledger["reserve_microusd"] != 0):
+            raise ValueError("CREATIVE_DIRECTOR_LIFECYCLE_LEDGER_CHANGED")
+        return saved, ledger
+
+    def _adopted_receipt(self, ctx, row, binding, repository, guard, host_authority):
+        from .director_terminal_evidence import PENDING_FIELD, validate_pending
+        from .director_lifecycle import validate_adoption
+        pending = validate_pending(row.get(PENDING_FIELD))
+        receipt = validate_adoption(pending.get("adoption"))
+        if (row.get("status") != "APPROVED" or row.get("version") != receipt["approved_version"]
+                or row.get("id") != receipt["proposal_id"] or row.get("reviewed_by") != ctx.actor
+                or receipt["reviewed_by"] != ctx.actor or row.get("document_id") != receipt["document"]["document_id"]
+                or receipt["reviewed_version"] != pending["published_version"]
+                or receipt["source_document_id"] != binding.source_document_id
+                or receipt["source_version"] != binding.source_version or receipt["source_digest"] != binding.source_digest
+                or receipt["job_id"] != row["model_execution"]["job_id"]
+                or receipt["request_digest"] != row["model_execution"]["request_digest"]
+                or receipt["terminal_evidence_digest"] != pending["terminal_evidence_digest"]
+                or receipt["candidate_output_digest"] != pending["output_digest"]):
+            raise ValueError("CREATIVE_DIRECTOR_ADOPTION_CHANGED")
+        history = row.get("history")
+        if not isinstance(history, list) or not history:
+            raise ValueError("CREATIVE_DIRECTOR_ADOPTION_HISTORY_REQUIRED")
+        original = history[-1]
+        if (original.get("id") != row["id"] or original.get("created_by") != ctx.actor
+                or original.get("novel_id") != ctx.novel_id or original.get("scope") != ctx.scope
+                or original.get("version") != receipt["reviewed_version"]
+                or canonical(original.get("model_preview")) != canonical(row.get("model_preview"))
+                or canonical(original.get("model_execution")) != canonical(row.get("model_execution"))
+                or canonical(original.get(PENDING_FIELD)) != canonical({k: v for k, v in pending.items() if k != "adoption"})):
+            raise ValueError("CREATIVE_DIRECTOR_ADOPTION_HISTORY_CHANGED")
+        self._pending_candidate(ctx, original, binding, repository, guard, host_authority)
+        document = self.documents.get(ctx.novel_id, ctx.scope, receipt["document"]["document_id"])
+        provenance = document.get("provenance") or {}
+        if (document.get("id") != receipt["document"]["document_id"]
+                or document.get("mode") != "DIRECTOR" or document.get("status") != "DRAFT"
+                or document.get("version") != receipt["document"]["version"]
+                or self.documents.document_digest(document) != receipt["document"]["digest"]
+                or document.get("created_by") != ctx.actor or document.get("project_incarnation") != binding.project_incarnation
+                or document.get("source_documents") != {binding.source_document_id: {
+                    "version": binding.source_version, "digest": binding.source_digest}}
+                or provenance.get("proposal_id") != row["id"]
+                or provenance.get("proposal_version") != receipt["reviewed_version"]
+                or provenance.get("reviewed_by") != ctx.actor
+                or provenance.get("output_digest") != receipt["candidate_output_digest"]
+                or provenance.get("reviewed_output_digest") != receipt["reviewed_output_digest"]
+                or director_output_digest(document["director_notes"], document.get("visual_target")) != receipt["reviewed_output_digest"]):
+            raise ValueError("CREATIVE_DIRECTOR_ADOPTED_DOCUMENT_CHANGED")
+        self._pending_current(ctx, row, binding, guard, host_authority)
+        return receipt
+
+    def _read_independent_adopted(self, ctx, rid, guard, *, host_authority):
+        """Reopen the exact original DRAFT receipt, never a latest-document lookup."""
+        with self._pending_transaction(ctx, rid, guard, host_authority) as (_, row, binding, repository, locks):
+            saved, _ = self._lifecycle_identity(ctx, row, binding, repository, guard, host_authority)
+            result = self._adopted_receipt(ctx, row, binding, repository, guard, host_authority)
+            locked = locks.enter_context(repository._director_snapshot_leaf(saved["id"]))
+            if canonical(locked) != canonical(saved):
+                raise ValueError("CREATIVE_DIRECTOR_LIFECYCLE_OBSERVATION_CHANGED")
+        return deepcopy(result)
+
+    def _reconcile_independent_review(self, ctx, rid, value, guard, *, host_authority):
+        """Read only: exact submitted review or fail closed; never retry adoption."""
+        from .models import DirectorProposalReview
+        from .director_lifecycle import review_action_digest
+        body = DirectorProposalReview.model_validate(value)
+        with self._pending_transaction(ctx, rid, guard, host_authority) as (_, row, binding, repository, locks):
+            saved, _ = self._lifecycle_identity(ctx, row, binding, repository, guard, host_authority)
+            result = self._adopted_receipt(ctx, row, binding, repository, guard, host_authority)
+            if (result["reviewed_version"] != body.expected_version
+                    or result["review_action_digest"] != review_action_digest(body)
+                    or result["candidate_output_digest"] != body.reviewed_output_digest):
+                raise ValueError("CREATIVE_DIRECTOR_EXACT_SUBMITTED_REVIEW_REQUIRED")
+            self._pending_current(ctx, row, binding, guard, host_authority)
+            locked = locks.enter_context(repository._director_snapshot_leaf(saved["id"]))
+            if canonical(locked) != canonical(saved):
+                raise ValueError("CREATIVE_DIRECTOR_LIFECYCLE_OBSERVATION_CHANGED")
+        return deepcopy(result)
+
+    def _lifecycle_status(self, ctx, row, binding, repository, guard, host_authority):
+        from .director_terminal_evidence import FIELD, PENDING_FIELD, validate_pending, digest as history_digest
+        from .director_lifecycle import StatusReceipt
+        saved, ledger = self._lifecycle_identity(ctx, row, binding, repository, guard, host_authority)
+        phase, terminal_digest, adoption = "UNKNOWN", None, None
+        if row.get("status") == "APPROVED":
+            adoption = self._adopted_receipt(ctx, row, binding, repository, guard, host_authority)
+            phase = "ADOPTED_DRAFT"
+        elif PENDING_FIELD in row:
+            self._pending_candidate(ctx, row, binding, repository, guard, host_authority)
+            phase = "PENDING_REVIEW"
+        elif row.get("status") == "INTERNAL_MODEL_EXECUTING":
+            status = saved.get("status")
+            if status in {"PREPARED", "QUEUED"}: phase = "ADMITTED"
+            elif status in {"RUNNING", "GENERATING"}: phase = "RUNNING"
+            elif status in {"SETTLING", "FAILED", "CANCELLED"}: phase = status
+            elif (status == "COMPLETED" and saved.get("execution_outcome") == "COMPLETED"
+                    and saved.get("terminal_hook_status") == "COMPLETED" and FIELD in saved): phase = "COMPLETED"
+        if FIELD in saved:
+            admitted = validate_pending(row[PENDING_FIELD])["admitted_version"] if PENDING_FIELD in row else row["version"]
+            _, evidence = self._pending_history(ctx, row, binding, repository,
+                admitted_version=admitted, require_output=False)
+            terminal_digest = history_digest(evidence)
+        try: job = self.manager.get(saved["id"])
+        except KeyError: job = None
+        if job is not None:
+            from .director_binding import creative_director_job_binding
+            live = job.public()
+            if (creative_director_job_binding(live) != binding.model_dump()
+                    or any(live.get(k) != saved.get(k) for k in ("id", "expected_request_digest", "generation_deadline",
+                        "generation_max_output_bytes", "requested_provider", "requested_model"))):
+                raise ValueError("CREATIVE_DIRECTOR_LIFECYCLE_LIVE_JOB_CHANGED")
+        # A process-local signal is not a durable cancellation receipt.
+        requested = bool(job is not None and job.creative_director_cancel_requested and job.cancelled.is_set())
+        accounted_stop = ((ledger.get("status") == "RELEASED" and ledger.get("dispatched") is False)
+            or (ledger.get("status") == "SETTLED" and ledger.get("dispatched") is True))
+        confirmed = (saved.get("status") == "CANCELLED" and saved.get("execution_outcome") == "CANCELLED"
+            and saved.get("terminal_hook_status") == "COMPLETED" and accounted_stop
+            and ledger.get("job_status") == "CANCELLED" and type(ledger.get("actual_microusd")) is int
+            and ledger["actual_microusd"] == 0)
+        result = StatusReceipt(proposal_id=row["id"], version=row["version"], phase=phase,
+            job_id=saved["id"], request_digest=row["model_execution"]["request_digest"],
+            reviewed_preview_digest=row["model_preview"]["preview_digest"], cancellation_requested=requested,
+            cancellation_confirmed=confirmed,
+            dispatch_state="DISPATCHED" if ledger["dispatched"] else "NOT_DISPATCHED",
+            settlement_state=ledger["status"], terminal_evidence_digest=terminal_digest, adoption=adoption).model_dump()
+        self._pending_current(ctx, row, binding, guard, host_authority)
+        return result, saved
+
+    def _read_independent_status(self, ctx, rid, guard, *, host_authority):
+        """Current-authorized passive observation; no refresh/dispatch/settlement."""
+        from .director_lifecycle import StatusReceipt
+        self._pending_repository()
+        self._independent_host(host_authority); guard(); self._flags()
+        routing = self.proposals._owned(ctx.novel_id, ctx.scope, ctx.actor, rid,
+            self.store.store.read(ctx.novel_id, ctx.scope))
+        if not routing.get("model_execution"):
+            binding = self._independent_binding(ctx, rid,
+                (routing.get("model_preview") or {}).get("preview_digest", "0" * 64))
+            with self._independent_transaction(ctx, binding) as raw:
+                row = self.proposals._owned(ctx.novel_id, ctx.scope, ctx.actor, rid, raw)
+                if row.get("model_execution") or row.get("status") != "INTERNAL_MODEL_PREVIEW":
+                    raise ValueError("CREATIVE_DIRECTOR_LIFECYCLE_PREVIEW_CHANGED")
+                self._lifecycle_preview(ctx, row, binding, guard, host_authority)
+                result = StatusReceipt(proposal_id=rid, version=row["version"], phase="PREVIEW",
+                    reviewed_preview_digest=row["model_preview"]["preview_digest"]).model_dump()
+                self._pending_current(ctx, row, binding, guard, host_authority)
+            return result
+        with self._pending_transaction(ctx, rid, guard, host_authority) as (_, row, binding, repository, locks):
+            result, saved = self._lifecycle_status(ctx, row, binding, repository, guard, host_authority)
+            # No callbacks below this leaf; compare detached data only.
+            locked = locks.enter_context(repository._director_snapshot_leaf(saved["id"]))
+            if canonical(locked) != canonical(saved):
+                raise ValueError("CREATIVE_DIRECTOR_LIFECYCLE_OBSERVATION_CHANGED")
+        return result
+
+    def _cancel_independent(self, ctx, rid, value, guard, *, host_authority):
+        """Explicit exact cooperative request; terminal rows are never rewritten."""
+        from .director_lifecycle import CancelInput
+        from .director_binding import creative_director_job_binding
+        body = CancelInput.model_validate(value)
+        with self._pending_transaction(ctx, rid, guard, host_authority) as (_, row, binding, repository, locks):
+            self._independent_version(row, body.expected_version)
+            result, saved = self._lifecycle_status(ctx, row, binding, repository, guard, host_authority)
+            if (body.job_id != result["job_id"] or body.request_digest != result["request_digest"]
+                    or body.reviewed_preview_digest != result["reviewed_preview_digest"]):
+                raise ValueError("CREATIVE_DIRECTOR_CANCEL_EXACT_JOB_REQUIRED")
+            if result["phase"] in {"PENDING_REVIEW", "ADOPTED_DRAFT", "COMPLETED", "FAILED", "CANCELLED", "SETTLING"}:
+                raise ValueError("CREATIVE_DIRECTOR_CANCEL_NOT_RUNNING")
+            if row.get("status") != "INTERNAL_MODEL_EXECUTING" or result["phase"] not in {"ADMITTED", "RUNNING"}:
+                raise ValueError("CREATIVE_DIRECTOR_CANCEL_LIVE_OWNER_REQUIRED")
+            job = self.manager.get(body.job_id)
+            live = job.public()
+            if (creative_director_job_binding(live) != binding.model_dump()
+                    or any(live.get(k) != saved.get(k) for k in ("id", "expected_request_digest", "generation_deadline",
+                        "generation_max_output_bytes", "requested_provider", "requested_model", "status"))):
+                raise ValueError("CREATIVE_DIRECTOR_CANCEL_JOB_CHANGED")
+            self._pending_current(ctx, row, binding, guard, host_authority)
+            # Last authority callbacks above. The manager's signal-only seam
+            # acquires no source/owner locks or persistence callbacks.
+            locked = locks.enter_context(repository._director_snapshot_leaf(body.job_id))
+            if canonical(locked) != canonical(saved):
+                raise ValueError("CREATIVE_DIRECTOR_CANCEL_JOB_CHANGED")
+            if self.manager._request_creative_director_cancellation(job):
+                result["cancellation_requested"] = True
+                result["cancellation_confirmed"] = False
         return result

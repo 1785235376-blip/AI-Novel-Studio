@@ -156,11 +156,15 @@ class PendingReview(_Strict):
     published_by: str = Field(min_length=1)
     published_at: str
     provenance: dict
+    adoption: dict | None = None
 
 
 def validate_pending(value):
     try:
-        pending = PendingReview.model_validate(value).model_dump()
+        pending = PendingReview.model_validate(value).model_dump(exclude_unset=True)
+        if "adoption" in pending:
+            from .director_lifecycle import validate_adoption
+            pending["adoption"] = validate_adoption(pending["adoption"])
         if (type(value["schema_version"]) is not int
                 or pending["published_version"] != pending["admitted_version"] + 1
                 or datetime.fromisoformat(pending["published_at"]).tzinfo is None

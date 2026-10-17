@@ -69,6 +69,7 @@
     "app/creative/content_policy.py",
     "app/creative/director_binding.py",
     "app/creative/director_intent.py",
+    "app/creative/director_lifecycle.py",
     "app/creative/director_terminal_evidence.py",
     "app/creative/director_workspace.py",
     "app/creative/director_workspace_api.py",

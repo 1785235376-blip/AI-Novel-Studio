@@ -62,6 +62,7 @@ class Job:
     graph_binding:dict|None=None
     creative_director_binding:dict|None=None
     creative_execution_authority:object=field(default=None,repr=False)
+    creative_director_cancel_requested:bool=field(default=False,repr=False)
     prepared_text_invocation:object=field(default=None,repr=False)
     def public(self):
         result = {k:getattr(self,k) for k in ("id","operation","novel_id","chapter_id","instruction","profile","source","requested_provider","requested_model","style","status","output","error","error_code","provider","model","issues","latency_ms","base_chapter_version","variant_group_id","variant_index","actor_id","session_id","client_id","workspace_id","scope","scope_type","scope_id","correlation_id","context_snapshot_id","created_at","updated_at","creation_records","usage","usage_status","execution_mode","provider_reference_id","route_decisions")}
@@ -258,9 +259,21 @@ def validate_generation_bounds(job):
 def check_generation_bounds(job, *, delta="", completion_text=None):
     if _is_creative_execution(job):
         _require_creative_execution_session(job)
+        # An explicitly authorized cooperative stop is not an authority
+        # revocation. Keep any previously recorded bound failure intact, and
+        # stop before content/provider work. Passive persisted Jobs cannot
+        # restore either this transient signal or the required live capability.
+        if job.creative_director_cancel_requested is True and job.cancelled.is_set():
+            raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已请求停止生成")
         try:
             _creative_execution_current(job)
         except Exception:
+            # The validated request can arrive while the current-authority
+            # callbacks are running. Recheck the same live identity, and do
+            # not relabel that cooperative stop as a new authority failure.
+            if job.creative_director_cancel_requested is True and job.cancelled.is_set():
+                _require_creative_execution_session(job)
+                raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已请求停止生成") from None
             job.generation_bound_failure = "GENERATION_AUTHORITY_REVOKED"
             job.output = ""; job.cancelled.set()
             raise ValueError("GENERATION_AUTHORITY_REVOKED") from None
@@ -332,7 +345,7 @@ def _isolated_generation(job):
 
 
 class JobManager:
-    transient_fields={"creative_execution_authority", "author_preparation_guard", "prepared_text_invocation", "cancelled", "condition", "request_authorization", "author_context_resolver", "character_context_resolver", "before_dispatch", "on_terminal", "_terminal_hook_called"}
+    transient_fields={"creative_director_cancel_requested", "creative_execution_authority", "author_preparation_guard", "prepared_text_invocation", "cancelled", "condition", "request_authorization", "author_context_resolver", "character_context_resolver", "before_dispatch", "on_terminal", "_terminal_hook_called"}
     terminal={"COMPLETED","FAILED","CANCELLED","ACCEPTED","REJECTED","ACCEPTING","ACCEPTANCE_UNCERTAIN"}
     def __init__(self,generations=None,chapters=None,contexts=None,canon=None,memory_extractor=None,snapshot_required=None,collaboration_updates=None):
         if generations is None and repo is not None and repo is not getattr(repositories.novels, "backend", None):
@@ -1054,6 +1067,23 @@ class JobManager:
         job.cancelled.set()
         if job.status not in self.terminal: self._cancel_execution(job)
         return job
+    def _request_creative_director_cancellation(self, job):
+        """Original coordinator has freshly authorized this exact locked Job.
+
+        Only signal the existing worker. Do not claim upstream preemption,
+        transition status, persist, settle, or restore a restarted capability.
+        Caller owns generation-accept, condition, source and project leases.
+        """
+        from .model_execution import _CreativeDirectorCapability
+        capability = job.creative_execution_authority
+        if self.get(job.id) is not job or type(capability) is not _CreativeDirectorCapability:
+            raise ValueError("CREATIVE_DIRECTOR_CANCEL_LIVE_OWNER_REQUIRED")
+        capability._check(job, manager=self)
+        if job.status in self.terminal:
+            return False
+        job.creative_director_cancel_requested = True
+        job.cancelled.set()
+        return True
     def events(self,jid,authorize=None,stop_event=None):
         job=self.get(jid);sent=0;heartbeat=time.monotonic()
         def available():
