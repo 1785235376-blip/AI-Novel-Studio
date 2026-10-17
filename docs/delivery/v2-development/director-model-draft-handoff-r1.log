@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/directorModelDraftHandoff.test.ts (15 tests) 13ms
+ ✓ src/creative/directorCanvasHandoff.additive.test.tsx (13 tests) 724ms
+
+ Test Files  2 passed (2)
+      Tests  28 passed (28)
+   Start at  23:25:44
+   Duration  1.92s (transform 558ms, setup 28ms, collect 763ms, tests 737ms, environment 324ms, prepare 118ms)
+
+src/creative/directorModelDraftHandoff.test.ts(8,47): error TS2352: Conversion of type '{ created_at: string; created_by: string; director_notes: { blocking: string; camera_angle: string; camera_motion: string; duration_seconds: number; emotion: string; id: string; note: string; number: number; ... 4 more ...; shot_size: string; }[]; ... 22 more ...; video_plan: null; }' to type 'CreativeDocument' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'actor_id' is missing in type '{ created_at: string; created_by: string; director_notes: { blocking: string; camera_angle: string; camera_motion: string; duration_seconds: number; emotion: string; id: string; note: string; number: number; ... 4 more ...; shot_size: string; }[]; ... 22 more ...; video_plan: null; }' but required in type '{ id: string; version: number; status: string; created_at: string; updated_at: string; actor_id: string; source_evidence: Record<string, unknown>; source_documents?: Record<string, { version: number; digest: string; }> | undefined; }'.
