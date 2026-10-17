@@ -1,0 +1,45 @@
+{
+  "status": "PASS_INDEPENDENT_TERMINAL_AUDIT",
+  "head": "b5f52c823b4df58ffe69ec309bfc2fc0e4a114fe",
+  "source_count": 2611,
+  "all_primary_independent_current_sources_equal": true,
+  "existing_tests_runner_frontend_manifest_unchanged": true,
+  "independent_receipts": [
+    {
+      "receipt": "docs/delivery/v2-development/director-pending-origin-before-independent-r1.json",
+      "receipt_sha256": "d94bcf6d9ec69bd1705f77af46f9b2601800b6b9958b76759ab0683fed8e7a56",
+      "log": "docs/delivery/v2-development/director-pending-origin-before-independent-r1.log",
+      "log_sha256": "6cea5be53ed9bafe2662175f99c5d37a16cf55bbc4e646114469c077ca51c2d7",
+      "started_utc": "2026-10-17T10:44:59.632121+00:00",
+      "finished_utc": "2026-10-17T10:44:59.717498+00:00"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-pending-new-independent-r1.json",
+      "receipt_sha256": "482fa814b4c64b659b6c2141199d73d90a9e750ed1fcc00c1fc70644ae208268",
+      "log": "docs/delivery/v2-development/director-pending-new-independent-r1.log",
+      "log_sha256": "271a2eef57b79e65190700360bc41fb427b42d9f57b9b692e06054b9893c89cb",
+      "started_utc": "2026-10-17T10:45:00.215194+00:00",
+      "finished_utc": "2026-10-17T10:46:38.579998+00:00"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-pending-regression-independent-r1.json",
+      "receipt_sha256": "0b585d3ec603a84b9f641aca3da288d6916feeeb7ccbeba2caf0f1dd79bf2a2f",
+      "log": "docs/delivery/v2-development/director-pending-regression-independent-r1.log",
+      "log_sha256": "630e4f2bb158c2715b332dbdcf55e2a906923648df8acb2ed070d8423c8cd469",
+      "started_utc": "2026-10-17T10:46:49.750671+00:00",
+      "finished_utc": "2026-10-17T10:49:48.994795+00:00"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-pending-origin-after-independent-r1.json",
+      "receipt_sha256": "49bc1d98ef00698ba657262ee008744d196afe3e4c706f5d8dcfc980268f3e8c",
+      "log": "docs/delivery/v2-development/director-pending-origin-after-independent-r1.log",
+      "log_sha256": "6b33f94169c5f2eb70a58384f32f57759a515059fc363346274bb8b0917effda",
+      "started_utc": "2026-10-17T10:49:49.453757+00:00",
+      "finished_utc": "2026-10-17T10:49:49.548365+00:00"
+    }
+  ],
+  "primary_receipts_checked": 9,
+  "archives_checked": 4,
+  "archive_audit_sha256": "e7ec81c5e3ae35962c87ea4d6805f2c98cc93abdff4a2a8610ac74ab3d1418b7",
+  "audit_script_sha256": "f3814178956f244c69ab24e621907b2fa665e45365b510964a3f3a9394e95a3a"
+}
