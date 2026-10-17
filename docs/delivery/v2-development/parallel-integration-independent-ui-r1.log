@@ -1,0 +1,17 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-timeline-waveform/frontend
+
+ ✓ src/experimental/TerminologyPortabilityPanel.test.tsx (20 tests) 363ms
+ ✓ src/creative/StudioGraphInsertion.additive.test.tsx (20 tests) 1185ms
+ ✓ src/creative/studioAudioFades.additive.test.tsx (29 tests) 776ms
+ ✓ src/creative/studioAudioPeak.additive.test.tsx (23 tests) 611ms
+ ✓ src/prompt/PromptWorkspace.receiptReopen.test.tsx (11 tests) 1186ms
+ ✓ src/creative/GraphCanvas.insertion.additive.test.tsx (12 tests) 443ms
+ ✓ src/creative/StudioGraphInsertion.palette.additive.test.tsx (4 tests) 576ms
+ ✓ src/prompt/promptDraft.settlement.test.ts (27 tests) 8ms
+
+ Test Files  8 passed (8)
+      Tests  146 passed (146)
+   Start at  18:30:35
+   Duration  10.51s (transform 935ms, setup 44ms, collect 2.00s, tests 5.15s, environment 2.04s, prepare 361ms)
+

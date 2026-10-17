@@ -1,0 +1,170 @@
+{
+  "status": "PASS_COMPLETE_SCOPED_INTEGRATION_CLOSURE",
+  "head": "39ba1c7bc6d8438cc7c7d59f5767ba67f97aca0a",
+  "tree": "adac601f4299c190507012e7dad984c2095c0ff5",
+  "primary_index": {
+    "path": "docs/delivery/v2-development/parallel-integration-20261017/evidence-index.json",
+    "sha256": "7181cd24d51427dae97f208b835142b89356f6dab50ceed8e47408f220bfa060"
+  },
+  "independent_index": {
+    "path": "docs/delivery/v2-development/parallel-integration-independent-20261017/evidence-index.json",
+    "sha256": "8c1d281440a40a8101ce23019a1294d17bc9e8cbb6bc8282e321992cbfd2586f"
+  },
+  "independent_report": {
+    "path": "docs/delivery/v2-development/parallel-integration-independent-20261017/review.md",
+    "sha256": "57f26932996a32d6479f069fc1d1ef417690c561254e0392345856fdb61deea6"
+  },
+  "source_path_count": 2600,
+  "all_tracked_files_unchanged": 11773,
+  "receipts": {
+    "docs/delivery/v2-development/parallel-integration-backend-r1.json": {
+      "sha256": "486bc1b2befb6a2bb91d17aac6f797bcaec201c0d28c2585d13e4f6f6169558a",
+      "log": "docs/delivery/v2-development/parallel-integration-backend-r1.log",
+      "log_sha256": "8356c3454b5dfea827660baf8f137cdfd9fae7ffa67168724520b5822da57b27"
+    },
+    "docs/delivery/v2-development/parallel-integration-build-r1.json": {
+      "sha256": "82217ab4222040803cdd4634eec4da7bb337f854741884cc1d57a5a16f698523",
+      "log": "docs/delivery/v2-development/parallel-integration-build-r1.log",
+      "log_sha256": "10d34a8f73d22883a6bffa54a36a757e32a8d939fce62a446f059abf4c1420ee"
+    },
+    "docs/delivery/v2-development/parallel-integration-independent-backend-r1.json": {
+      "sha256": "9b0981b131c0101241f47c571e41bd4b6d1ba8aa421342f221856f3c863c1d64",
+      "log": "docs/delivery/v2-development/parallel-integration-independent-backend-r1.log",
+      "log_sha256": "33490d8f40caeebd603be0b2ba54a2a89a5b2f7eb2a842f18ef414b2ff47ca3e"
+    },
+    "docs/delivery/v2-development/parallel-integration-independent-origin-r1.json": {
+      "sha256": "646358da0097fdcd25b8fa9b724ee51979e5cc7f1340369b922385b9f605d4d4",
+      "log": "docs/delivery/v2-development/parallel-integration-independent-origin-r1.log",
+      "log_sha256": "b9eae88ed49ee053fae612b39658f794b00c1a2695f2c92c75baf35dd32d0474"
+    },
+    "docs/delivery/v2-development/parallel-integration-independent-ui-r1.json": {
+      "sha256": "b023ba5e2c5a63179f634bab2a3fa67e8f92d9dd3269b2167e0d03ccecd764ba",
+      "log": "docs/delivery/v2-development/parallel-integration-independent-ui-r1.log",
+      "log_sha256": "32dbf2729cf444fbc9e425a16a236ace88e322e7ba13b52cd2342b8feb1e3a44"
+    },
+    "docs/delivery/v2-development/parallel-integration-origin-after-r1.json": {
+      "sha256": "999e2def0cc0fe2ebd5e975243431a46f965cb2b62d0ccec3224a11079bf4ec5",
+      "log": "docs/delivery/v2-development/parallel-integration-origin-after-r1.log",
+      "log_sha256": "9fee3d06ce4e01f51f4c439edeee46d65fdfe7280e7fb89b6e767aa92be6b53a"
+    },
+    "docs/delivery/v2-development/parallel-integration-origin-before-r1.json": {
+      "sha256": "155731a546cc95bbbb8abe3d372d752b42a2bf2093034d5b0896cfec265f1927",
+      "log": "docs/delivery/v2-development/parallel-integration-origin-before-r1.log",
+      "log_sha256": "a4b1bc4456c7a5641657c96de6a34cc7b97b2e4131515829fcb6abf98947bbdf"
+    },
+    "docs/delivery/v2-development/parallel-integration-packaging-r1.json": {
+      "sha256": "458e9ea6a96fa61d4e4ade83a94b7ac3ae870383b796f0be52d8e5f9e996178c",
+      "log": "docs/delivery/v2-development/parallel-integration-packaging-r1.log",
+      "log_sha256": "94ab58286b1bcb5aab954a7b325966eb235aabca04e87053163d7cfec4ab9876"
+    },
+    "docs/delivery/v2-development/parallel-integration-token-r1.json": {
+      "sha256": "f5f2de4000da3b016dbdb1e376e1f7ba7ff4d09a81f86d559218cbe3a2aa9163",
+      "log": "docs/delivery/v2-development/parallel-integration-token-r1.log",
+      "log_sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50"
+    },
+    "docs/delivery/v2-development/parallel-integration-type-r1.json": {
+      "sha256": "0b46f36ba266e4de82480469fa97b649f90acccaa9f797fd0a414f742613cc73",
+      "log": "docs/delivery/v2-development/parallel-integration-type-r1.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/delivery/v2-development/parallel-integration-ui-r1.json": {
+      "sha256": "1c8c07eb2c1d9c2c9f8032dc7d8247a6962a3d6339cd558986cd05457987c174",
+      "log": "docs/delivery/v2-development/parallel-integration-ui-r1.log",
+      "log_sha256": "83bc97d9e570c04c3e557b286cf5108b43150d6d12eedecd16d32744aa5f41bd"
+    }
+  },
+  "artifacts": {
+    "docs/delivery/v2-development/parallel-integration-20261017/archive-inspection.log": "a1f1270662594f27b0a87b4a547b42503e7f07419efa2c1b3fdbf08fbf9e4616",
+    "docs/delivery/v2-development/parallel-integration-20261017/audit-tree.py": "304243260ef3e865f7a7057caf6bf8cae945211074310fd7866843a68ebdcaa9",
+    "docs/delivery/v2-development/parallel-integration-20261017/backend-launch.log": "3ffbf2fdbaa4aa8b35ff1e531a51b61585691a5a779ae8c46bcb2923ed597c2b",
+    "docs/delivery/v2-development/parallel-integration-20261017/build-interpreter-r1.json": "d3c42f65a42db8ef3312eabb10d7682f4bc0fff74ec828bd764b405b1033113c",
+    "docs/delivery/v2-development/parallel-integration-20261017/build-launch.log": "579789b9b9169d44f1bdf5c79c80524a8a24ffdb2fe84f77194c44250c71966f",
+    "docs/delivery/v2-development/parallel-integration-20261017/finalize-evidence.py": "74c9e4b09e3e32489db296325e8acece29058eab0723e221fb3da8771179c717",
+    "docs/delivery/v2-development/parallel-integration-20261017/inspect-artifacts.py": "98b7c558914a22056e57244e3db7e004a8674bf9f5e8cb9a9ae09379a4162964",
+    "docs/delivery/v2-development/parallel-integration-20261017/integration-report.md": "080aa791d4833fd2306ee6bf611cd7e4068670b899ca28a74d580586c693fb55",
+    "docs/delivery/v2-development/parallel-integration-20261017/manifest-packaging-input-r1.sha256": "48a016058f28aad09f57959b3ff151276d686d7187b610971a3d1e3ce7a33755",
+    "docs/delivery/v2-development/parallel-integration-20261017/natural-startup-r1.json": "40ca4b0f92473c7fa1e70eff79c2ea235e0a9b86faceb9ca75b382bcb0917aa5",
+    "docs/delivery/v2-development/parallel-integration-20261017/origin-after-launch.log": "9993d4c9ef2e8a56fd463fab3fbc7e03d7b4da17bdb4cc6b2315e9630c7c87f2",
+    "docs/delivery/v2-development/parallel-integration-20261017/origin-launch.log": "542d5228c0f1afc8d004597b01d28935da4c430e972ee5b875b740d0b8825d48",
+    "docs/delivery/v2-development/parallel-integration-20261017/origin-probe.py": "943793d024dc343a270c632716ae517e21d648b0a15f87d772249d7678de41b3",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/index.json": "a1f1270662594f27b0a87b4a547b42503e7f07419efa2c1b3fdbf08fbf9e4616",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-sdist0/build.log": "e6fe6980985318fcffa53c74b937700147ab85992bf8c8708bca3aecb4dd0a7b",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-sdist0/payload-inventory.json": "bf5923a8da9fbf0b7146e92c5b52709b102001069d6429641f7e4a7c8d566faf",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-sdist0/sdist-receipt.json": "8a6a9d6efee266f96da86d72a41744d38255d167af8f8e9df4d7d9e1d6f36efb",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-sdist0/stage-receipt.json": "a87db716ab158df1e7596992d247ad9b4780d2ed4644d37dd2640c2ba22cdaa0",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-sdist1/build.log": "e6fe6980985318fcffa53c74b937700147ab85992bf8c8708bca3aecb4dd0a7b",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-sdist1/payload-inventory.json": "bf5923a8da9fbf0b7146e92c5b52709b102001069d6429641f7e4a7c8d566faf",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-sdist1/sdist-receipt.json": "7569b0ec09d4b2f92a122d616934ad604257bdca748bc37a6c0aa91a4476662d",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-sdist1/stage-receipt.json": "a87db716ab158df1e7596992d247ad9b4780d2ed4644d37dd2640c2ba22cdaa0",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-wheel0/build.log": "a4375ca5623658956bdd23bfb5eeba9307680c473e13ab8a2348baefa1eb4eb5",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-wheel0/payload-inventory.json": "ba4ae87d72bde7d592df69063ac68925ce752a78870eb2fd429fd868afe3d6df",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-wheel0/stage-receipt.json": "a87db716ab158df1e7596992d247ad9b4780d2ed4644d37dd2640c2ba22cdaa0",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-wheel0/wheel-receipt.json": "5255076e6144f148e875579b145471f103d8931f4356f18f5b001bba3f354b30",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-wheel1/build.log": "b85e533fe51ae30fc2f0bae37954163ec1d34ecad9292d21246283e3b1c2b2e6",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-wheel1/payload-inventory.json": "ba4ae87d72bde7d592df69063ac68925ce752a78870eb2fd429fd868afe3d6df",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-wheel1/stage-receipt.json": "a87db716ab158df1e7596992d247ad9b4780d2ed4644d37dd2640c2ba22cdaa0",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-wheel1/wheel-receipt.json": "a0e972a0c4dc06c9e14f6d0a9fab4bd876b072101be01e8bd7c0a5098f9ef462",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-interpreter-probe.py": "99e3fd75effce3b27fe22b9878c793ba4a9aed3db4494d14177869036e2dc35c",
+    "docs/delivery/v2-development/parallel-integration-20261017/packaging-launch.log": "cc85966357c76ad02eda2ca1ebbdb88bc0c8eda84c76e7b99d5fc6424bde0956",
+    "docs/delivery/v2-development/parallel-integration-20261017/run.sh": "b887cffebe6fe7bbd989c219d612220b595c4c0265fd753f9974888bda2bbbbe",
+    "docs/delivery/v2-development/parallel-integration-20261017/scope.json": "a19497f1bb7ee65ccb86587b24ae6f2b8e509f9a81f9b398da536f0f929fcbe4",
+    "docs/delivery/v2-development/parallel-integration-20261017/token-launch.log": "e6a81a5e58bf3a880dfdf1bb88e7d9f480d214f6dd6beda6a6997084770fb0fe",
+    "docs/delivery/v2-development/parallel-integration-20261017/tree-after.json": "eeaa6ae6d5e73fe3212befe25582353144f6d8423c84534f761095dfe9d854f4",
+    "docs/delivery/v2-development/parallel-integration-20261017/tree-after.log": "5a4dfba83f312ce5555b340073c97263d8c8e29ae45c459c2620079935f0f61e",
+    "docs/delivery/v2-development/parallel-integration-20261017/tree-before.json": "eeaa6ae6d5e73fe3212befe25582353144f6d8423c84534f761095dfe9d854f4",
+    "docs/delivery/v2-development/parallel-integration-20261017/tree-before.log": "5a4dfba83f312ce5555b340073c97263d8c8e29ae45c459c2620079935f0f61e",
+    "docs/delivery/v2-development/parallel-integration-20261017/type-launch.log": "ce6d06d66a0bd6de859e1c7ac0c2b97ea1d700d0a75946965e021f297919a303",
+    "docs/delivery/v2-development/parallel-integration-20261017/ui-launch.log": "6e2b4a386574f6ca62cb46d68e39003e2dd12b1b8373618ef44e982d88d5cbba",
+    "docs/delivery/v2-development/parallel-integration-independent-20261017/natural-startup.json": "9834d45a0506eddb7af224186a8e3e7c6cf9f9ffd1c42947d7d2485f2115b819",
+    "docs/delivery/v2-development/parallel-integration-independent-20261017/review.md": "57f26932996a32d6479f069fc1d1ef417690c561254e0392345856fdb61deea6",
+    "docs/delivery/v2-development/parallel-integration-independent-20261017/audit.log": "d962b6945e7b5a5c1e32743f2df1b1be9e41186a02620304d5e2d3e646cfcae7",
+    "docs/delivery/v2-development/parallel-integration-independent-20261017/evidence-index.json": "8c1d281440a40a8101ce23019a1294d17bc9e8cbb6bc8282e321992cbfd2586f",
+    "docs/delivery/v2-development/parallel-integration-independent-20261017/input-guards.sha256": "82b07aabf7229ab28f19e4ac4c1674ea8338e89bfcf6967084411ad4fe7fca64",
+    "docs/delivery/v2-development/parallel-integration-independent-20261017/launcher.log": "ba400dd6c9f599c21077a123da2a22783f0420c0de6eef7f06c4c31782beb062",
+    "docs/delivery/v2-development/parallel-integration-independent-20261017/audit.py": "635bdd67992c79b660e268675b48cc426a9e2008277958968109821eb19d3ddb",
+    "docs/delivery/v2-development/parallel-integration-independent-20261017/run.sh": "9e574cb8059fe9e727d044bb0efd771a005501a96f9032a94abb87b254e9149a",
+    "docs/delivery/v2-development/parallel-integration-independent-ui-r1.log": "32dbf2729cf444fbc9e425a16a236ace88e322e7ba13b52cd2342b8feb1e3a44",
+    "docs/delivery/v2-development/parallel-integration-independent-backend-r1.log": "33490d8f40caeebd603be0b2ba54a2a89a5b2f7eb2a842f18ef414b2ff47ca3e",
+    "docs/delivery/v2-development/parallel-integration-independent-backend-r1.json": "9b0981b131c0101241f47c571e41bd4b6d1ba8aa421342f221856f3c863c1d64",
+    "docs/delivery/v2-development/parallel-integration-independent-origin-r1.json": "646358da0097fdcd25b8fa9b724ee51979e5cc7f1340369b922385b9f605d4d4",
+    "docs/delivery/v2-development/parallel-integration-independent-origin-r1.log": "b9eae88ed49ee053fae612b39658f794b00c1a2695f2c92c75baf35dd32d0474",
+    "docs/delivery/v2-development/parallel-integration-independent-ui-r1.json": "b023ba5e2c5a63179f634bab2a3fa67e8f92d9dd3269b2167e0d03ccecd764ba",
+    "docs/delivery/v2-development/parallel-integration-20261017/evidence-index.json": "7181cd24d51427dae97f208b835142b89356f6dab50ceed8e47408f220bfa060",
+    "docs/delivery/v2-development/parallel-integration-20261017/complete-evidence.py": "86326d031f7b300f85b588000b60097ee06939c2921762022848ae62efa80b21",
+    "docs/delivery/v2-development/parallel-integration-independent-20261017/artifact-hashes.json": "68e670b537d0e590e688173393b7b8b6d1822b439e18a457e30cf7a02caa3925",
+    "docs/delivery/v2-development/parallel-integration-backend-r1.json": "486bc1b2befb6a2bb91d17aac6f797bcaec201c0d28c2585d13e4f6f6169558a",
+    "docs/delivery/v2-development/parallel-integration-backend-r1.log": "8356c3454b5dfea827660baf8f137cdfd9fae7ffa67168724520b5822da57b27",
+    "docs/delivery/v2-development/parallel-integration-build-r1.json": "82217ab4222040803cdd4634eec4da7bb337f854741884cc1d57a5a16f698523",
+    "docs/delivery/v2-development/parallel-integration-build-r1.log": "10d34a8f73d22883a6bffa54a36a757e32a8d939fce62a446f059abf4c1420ee",
+    "docs/delivery/v2-development/parallel-integration-origin-after-r1.json": "999e2def0cc0fe2ebd5e975243431a46f965cb2b62d0ccec3224a11079bf4ec5",
+    "docs/delivery/v2-development/parallel-integration-origin-after-r1.log": "9fee3d06ce4e01f51f4c439edeee46d65fdfe7280e7fb89b6e767aa92be6b53a",
+    "docs/delivery/v2-development/parallel-integration-origin-before-r1.json": "155731a546cc95bbbb8abe3d372d752b42a2bf2093034d5b0896cfec265f1927",
+    "docs/delivery/v2-development/parallel-integration-origin-before-r1.log": "a4b1bc4456c7a5641657c96de6a34cc7b97b2e4131515829fcb6abf98947bbdf",
+    "docs/delivery/v2-development/parallel-integration-packaging-r1.json": "458e9ea6a96fa61d4e4ade83a94b7ac3ae870383b796f0be52d8e5f9e996178c",
+    "docs/delivery/v2-development/parallel-integration-packaging-r1.log": "94ab58286b1bcb5aab954a7b325966eb235aabca04e87053163d7cfec4ab9876",
+    "docs/delivery/v2-development/parallel-integration-token-r1.json": "f5f2de4000da3b016dbdb1e376e1f7ba7ff4d09a81f86d559218cbe3a2aa9163",
+    "docs/delivery/v2-development/parallel-integration-token-r1.log": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+    "docs/delivery/v2-development/parallel-integration-type-r1.json": "0b46f36ba266e4de82480469fa97b649f90acccaa9f797fd0a414f742613cc73",
+    "docs/delivery/v2-development/parallel-integration-type-r1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/delivery/v2-development/parallel-integration-ui-r1.json": "1c8c07eb2c1d9c2c9f8032dc7d8247a6962a3d6339cd558986cd05457987c174",
+    "docs/delivery/v2-development/parallel-integration-ui-r1.log": "83bc97d9e570c04c3e557b286cf5108b43150d6d12eedecd16d32744aa5f41bd"
+  },
+  "actual_archive_count": 4,
+  "primary_counts": {
+    "backend_passed": 811,
+    "backend_pg_deselected": 303,
+    "frontend_passed": 1076,
+    "frontend_files": 71,
+    "public_passed": 87
+  },
+  "independent_overlapping_counts": {
+    "backend_passed": 245,
+    "backend_pg_deselected": 117,
+    "frontend_passed": 146,
+    "frontend_files": 8
+  },
+  "known_listing_failures_unresolved_and_excluded": 5,
+  "counts_must_not_be_added": true,
+  "global_green": false,
+  "canonical_inventory": "PENDING_PARENT_OWNED_SEPARATE_RECONCILIATION"
+}

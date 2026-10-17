@@ -1,0 +1,12 @@
+........................................................................ [ 82%]
+...............                                                          [100%]
+=============================== warnings summary ===============================
+tests/test_v2_creative_director_binding_packaging.py::test_actual_public_artifact_includes_passive_binding_module[wheel]
+  /workspace/scratch/20a0022d2b33/studio-timeline-waveform/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+87 passed, 1 warning in 39.59s
+
+{"receipt": "docs/delivery/v2-development/parallel-integration-packaging-r1.json", "status": "PASS"}
+packaging/public-build.json: OK

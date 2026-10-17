@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "head": "39ba1c7bc6d8438cc7c7d59f5767ba67f97aca0a",
+  "tree": "adac601f4299c190507012e7dad984c2095c0ff5",
+  "old_tests_unchanged": 1306,
+  "historical_docs_preserved": 8536,
+  "historical_inventory_exceptions": [],
+  "packaging_manifest_sha256": "c54c87073dbd7c09d4844c6b9884c1a466491b3a9e86064511fa1983acbc9178"
+}

@@ -1,0 +1,15 @@
+{
+  "status": "PASS_SCOPED_INDEPENDENT_COMBINED_REVIEW",
+  "head": "39ba1c7bc6d8438cc7c7d59f5767ba67f97aca0a",
+  "tree": "adac601f4299c190507012e7dad984c2095c0ff5",
+  "full_tracked_files_unchanged": 11773,
+  "source_count": 2600,
+  "public_manifest_sha256": "c54c87073dbd7c09d4844c6b9884c1a466491b3a9e86064511fa1983acbc9178",
+  "original_runner_sha256": "64cf16c26412c5a1e36a1d4fb799519111ad409f7594ae15aa0b158e53396cd5",
+  "limits": [
+    "Five baseline Audio listing-error-precedence failures excluded, not resolved",
+    "No PostgreSQL, real browser, Windows/native, provider, hosted CI, release, or full V2 acceptance",
+    "Historical thin-worktree feature receipts prove their declared code/test scopes; full tracked-document preservation verified separately",
+    "No archive extraction, installation or product imports in independent archive audit"
+  ]
+}

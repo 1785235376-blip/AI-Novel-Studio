@@ -1,0 +1,127 @@
+{
+  "status": "PASS_OFFLINE_PUBLIC_ARCHIVE_INSPECTION",
+  "manifest_sha256": "c54c87073dbd7c09d4844c6b9884c1a466491b3a9e86064511fa1983acbc9178",
+  "archives": [
+    {
+      "archive": ".runtime/v2-checks/parallel-integration-packaging-r1/pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "kind": "sdist",
+      "sha256": "89331d7339f59824afb751355309c0ac9e39e31a9aa0629cee7c5cc5557f1bcc",
+      "payload_file_count": 518,
+      "changed_modules": {
+        "app/creative/production_execution.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/production_execution.py",
+          "sha256": "f6128729b841424114b105d5d998dfecb71375ce8ccf714862e59c8cbd677f6a"
+        },
+        "app/creative/production_execution_models.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/production_execution_models.py",
+          "sha256": "4aba9013da8987a5f00bc68e499648a5778f5c1cec42086278fdd86bf150d564"
+        },
+        "app/experimental/multilingual_editions_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/multilingual_editions_api.py",
+          "sha256": "178889a22b67d5e3635a855d4b14aed9f64fac4a75233dc9e6acd0b80f88344a"
+        },
+        "app/experimental/terminology_portability.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/terminology_portability.py",
+          "sha256": "24a43548c5be3485f0691a61ed70ec9dcb316795680aeabcc783cb567f1c53da"
+        },
+        "app/services/studio_audio_execution.py": {
+          "member": "ai_novel_studio-0.7.0/app/services/studio_audio_execution.py",
+          "sha256": "791f5e0dc9edcd3c53991440682199269601f45f13194d8b715a2bfdada45112"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-sdist0"
+    },
+    {
+      "archive": ".runtime/v2-checks/parallel-integration-packaging-r1/pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "kind": "sdist",
+      "sha256": "c1f8eafaf6ffd954c19932fdb41f7fc0913591d5a15c0af81efe617b189893fb",
+      "payload_file_count": 518,
+      "changed_modules": {
+        "app/creative/production_execution.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/production_execution.py",
+          "sha256": "f6128729b841424114b105d5d998dfecb71375ce8ccf714862e59c8cbd677f6a"
+        },
+        "app/creative/production_execution_models.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/production_execution_models.py",
+          "sha256": "4aba9013da8987a5f00bc68e499648a5778f5c1cec42086278fdd86bf150d564"
+        },
+        "app/experimental/multilingual_editions_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/multilingual_editions_api.py",
+          "sha256": "178889a22b67d5e3635a855d4b14aed9f64fac4a75233dc9e6acd0b80f88344a"
+        },
+        "app/experimental/terminology_portability.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/terminology_portability.py",
+          "sha256": "24a43548c5be3485f0691a61ed70ec9dcb316795680aeabcc783cb567f1c53da"
+        },
+        "app/services/studio_audio_execution.py": {
+          "member": "ai_novel_studio-0.7.0/app/services/studio_audio_execution.py",
+          "sha256": "791f5e0dc9edcd3c53991440682199269601f45f13194d8b715a2bfdada45112"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-sdist1"
+    },
+    {
+      "archive": ".runtime/v2-checks/parallel-integration-packaging-r1/pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "kind": "wheel",
+      "sha256": "824e1fe2215462d8f91af5f3efda7097135ea2c6078e3ec15db54818f9af67bf",
+      "payload_file_count": 514,
+      "changed_modules": {
+        "app/creative/production_execution.py": {
+          "member": "app/creative/production_execution.py",
+          "sha256": "f6128729b841424114b105d5d998dfecb71375ce8ccf714862e59c8cbd677f6a"
+        },
+        "app/creative/production_execution_models.py": {
+          "member": "app/creative/production_execution_models.py",
+          "sha256": "4aba9013da8987a5f00bc68e499648a5778f5c1cec42086278fdd86bf150d564"
+        },
+        "app/experimental/multilingual_editions_api.py": {
+          "member": "app/experimental/multilingual_editions_api.py",
+          "sha256": "178889a22b67d5e3635a855d4b14aed9f64fac4a75233dc9e6acd0b80f88344a"
+        },
+        "app/experimental/terminology_portability.py": {
+          "member": "app/experimental/terminology_portability.py",
+          "sha256": "24a43548c5be3485f0691a61ed70ec9dcb316795680aeabcc783cb567f1c53da"
+        },
+        "app/services/studio_audio_execution.py": {
+          "member": "app/services/studio_audio_execution.py",
+          "sha256": "791f5e0dc9edcd3c53991440682199269601f45f13194d8b715a2bfdada45112"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-wheel0"
+    },
+    {
+      "archive": ".runtime/v2-checks/parallel-integration-packaging-r1/pytest/public-wheel1/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "kind": "wheel",
+      "sha256": "ef9b69d5a3dd7bf9b7e4e9dfcf7f5a6d44d41d43822ae033b8b1e188a7a952ff",
+      "payload_file_count": 514,
+      "changed_modules": {
+        "app/creative/production_execution.py": {
+          "member": "app/creative/production_execution.py",
+          "sha256": "f6128729b841424114b105d5d998dfecb71375ce8ccf714862e59c8cbd677f6a"
+        },
+        "app/creative/production_execution_models.py": {
+          "member": "app/creative/production_execution_models.py",
+          "sha256": "4aba9013da8987a5f00bc68e499648a5778f5c1cec42086278fdd86bf150d564"
+        },
+        "app/experimental/multilingual_editions_api.py": {
+          "member": "app/experimental/multilingual_editions_api.py",
+          "sha256": "178889a22b67d5e3635a855d4b14aed9f64fac4a75233dc9e6acd0b80f88344a"
+        },
+        "app/experimental/terminology_portability.py": {
+          "member": "app/experimental/terminology_portability.py",
+          "sha256": "24a43548c5be3485f0691a61ed70ec9dcb316795680aeabcc783cb567f1c53da"
+        },
+        "app/services/studio_audio_execution.py": {
+          "member": "app/services/studio_audio_execution.py",
+          "sha256": "791f5e0dc9edcd3c53991440682199269601f45f13194d8b715a2bfdada45112"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/parallel-integration-20261017/packaging-evidence/public-wheel1"
+    }
+  ],
+  "all_runtime_source_bytes_verified": true,
+  "application_imported": false,
+  "installed": false,
+  "extracted": false,
+  "windows_native_browser_postgres_acceptance": "NOT_RUN"
+}
