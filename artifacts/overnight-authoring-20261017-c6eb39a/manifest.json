@@ -1,0 +1,17 @@
+{
+  "source_head": "c6eb39abe593782824a072246236751f9a8bb324",
+  "prerequisite": "48f1ce3ae5eecfcab2bed1452abc4823dfd51f9f",
+  "source_branch": "work/dot-director-transport-20261017",
+  "commits": [
+    "0b26d4cd7cb202cc9d1538078cc7e5621516e974",
+    "9672f782a44d3268cbf37a4888541e31c352ec78",
+    "6eeecbe1d786688405072b8c809ece1492d99960",
+    "c6eb39abe593782824a072246236751f9a8bb324"
+  ],
+  "status": "FOCUSED_AUTHORING_CHECKS_ONLY",
+  "full_acceptance": "NOT_ESTABLISHED",
+  "new_test_packages": 0,
+  "full_regression": "DEFERRED",
+  "production_build": "DEFERRED",
+  "live_model_and_browser": "NOT_RUN"
+}
