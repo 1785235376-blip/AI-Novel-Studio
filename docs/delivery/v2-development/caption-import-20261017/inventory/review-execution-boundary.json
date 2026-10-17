@@ -1,0 +1,40 @@
+{
+  "head": "4ebac7a0b039c1cf6bdf3103650185325875260d",
+  "cwd": "/workspace/scratch/20a0022d2b33/studio-caption-import",
+  "interpreter": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+  "unset": [
+    "PYTHONHOME",
+    "PYTHONPATH",
+    "PYTHONSTARTUP",
+    "PYTHONUSERBASE",
+    "PYTEST_ADDOPTS",
+    "PYTEST_PLUGINS",
+    "DATABASE_URL",
+    "TEST_POSTGRES_DATABASE_URL",
+    "E2E_DATABASE_URL",
+    "COLLABORATION_DEV_SESSIONS_JSON",
+    "PACKAGED_RUNTIME_INSTANCE_ID",
+    "PACKAGED_BOOTSTRAP_SECRET",
+    "PACKAGED_CONTROL_PIPE"
+  ],
+  "also_unset_suffixes": [
+    "_API_KEY",
+    "_TOKEN",
+    "_SECRET"
+  ],
+  "set": {
+    "PYTHONNOUSERSITE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+    "PYTHON_DOTENV_DISABLED": "1",
+    "PACKAGED_WINDOWS_MODE": "false"
+  },
+  "args": [
+    "scripts/extend_v2_coverage_manifest.py",
+    "--report",
+    "docs/delivery/v2-development/caption-import-20261017/inventory/review-collection.json",
+    "--output",
+    ".runtime/caption-import-inventory/candidate-manifest-v2.json.gz"
+  ],
+  "tests_executed": false
+}

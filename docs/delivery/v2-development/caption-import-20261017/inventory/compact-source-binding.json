@@ -1,0 +1,80 @@
+{
+  "source_checkpoint": "4ebac7a0b039c1cf6bdf3103650185325875260d",
+  "baseline_manifest": {
+    "commit": "46fff4797f6110e130256566b397cb08586e56c1",
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "sha256": "1c70badc1373260b7138dc6cda39f46eda390b0a8a102a8a8ea299e7b586bcac"
+  },
+  "complete_source_map_entries": 2584,
+  "complete_source_map_sha256": "ec5a54be288f88ea023d7f8de56993084bfcd9fb6fcd4aca7d3794d45da70e73",
+  "source_delta": [
+    {
+      "path": "app/experimental/subtitle_timeline.py",
+      "before": "5e97e9277c8b0b8029132d768e528ae657f2dd86153d38b36d3c52fcc2100001",
+      "after": "cf6e4fb216ddb044b71bb1d5880ca03cc7e219e18fac5ae4c9aee0f47ba244ce"
+    },
+    {
+      "path": "app/experimental/subtitle_timeline_api.py",
+      "before": "0392a66ab2869a9cd1eb1116ea016f07a899c1ef6ec73e18c8b8e12dbfd70d11",
+      "after": "384d1884703cca100eda0126ab00515c2d758ec0334d8e507cf0192ae6bcc932"
+    },
+    {
+      "path": "app/services/studio_timeline_subtitles.py",
+      "before": "31feb39b16268c12a887da76227e2bde4a5bf44ffd0d9bce8469b638552ec78d",
+      "after": "244ff0be5447784977a446a4e237347a0a84340bd7f5ab3aa7af6cbd8c816055"
+    },
+    {
+      "path": "frontend/src/experimental/SubtitleTimelinePanel.import.test.tsx",
+      "before": null,
+      "after": "c04cf64b466f49f3496737772868a1ce86f137d826a9df74d76ad6dc7cc0552e"
+    },
+    {
+      "path": "frontend/src/experimental/SubtitleTimelinePanel.tsx",
+      "before": "2325cef73fcda3016e43cea37203f42cbac53cf2c89b06800bdb28b31ce08e1e",
+      "after": "84914b2187f95939e621b4bbc02c108d54174c7aac4d1a0f142fff1d13b602d5"
+    },
+    {
+      "path": "frontend/src/experimental/voiceSubtitleClient.ts",
+      "before": "0f62096e8e299559d74cb294b650a9642cce0c3f61f6fbe035ab3795da40c5fb",
+      "after": "afa7ee0c93bc9b8f6268d5183644a66c9f64e7b1ecfbcba7a6dc398fb6d49880"
+    },
+    {
+      "path": "tests/test_caption_import_preview_additive.py",
+      "before": null,
+      "after": "62acf9b757220acd78082ffcac63b4fccddd7dac268a8d8700a1fba2180a2a84"
+    }
+  ],
+  "protected_old_entries_exact": 1271,
+  "frontend_scripts_e2e_companion": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "raw_inventory": {
+    "path": "docs/delivery/v2-development/caption-import-20261017/inventory/raw-collection.json",
+    "sha256": "137bb78b6fe8c9b4c5f64589dca22c9b73ea5733dd9d597ce520b5309c15b23c",
+    "rows": 15742
+  },
+  "prior_raw_inventory": {
+    "committed_reference": "docs/delivery/v2-development/ci-reconciliation-20261016/inventory/raw-review-collection-b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede.json",
+    "sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+    "review_archive_sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+    "rows": 15617,
+    "byte_identical": true,
+    "candidate_archive_sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+    "confirmation_archive_sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede"
+  },
+  "prior_15142_inventory": {
+    "path": "docs/delivery/v2-development/ci-reconciliation-20261016/inventory/old-15142-collection-rows.json.gz",
+    "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+  },
+  "tests_executed": false
+}

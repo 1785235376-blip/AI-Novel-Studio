@@ -1,0 +1,10 @@
+{
+  "utc": "2026-10-17T01:48:12.667Z",
+  "source_checkpoint": "4ebac7a0b039c1cf6bdf3103650185325875260d",
+  "previous_canonical_sha256": "1c70badc1373260b7138dc6cda39f46eda390b0a8a102a8a8ea299e7b586bcac",
+  "candidate_sha256": "414865364741d8836181670735f2e4cecb041541645c3cfc8fd7a52f2492a254",
+  "canonical_sha256": "414865364741d8836181670735f2e4cecb041541645c3cfc8fd7a52f2492a254",
+  "method": "byte-exact copy after independent candidate review and parent release",
+  "independent_review_sha256": "29d1aeaae0ddf083feb2a9c0d0801f86c842718fce39644527419a425efdcd7d",
+  "tests_executed": false
+}

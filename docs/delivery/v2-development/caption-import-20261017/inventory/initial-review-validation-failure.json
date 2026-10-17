@@ -1,0 +1,16 @@
+{
+  "stage": "post-collection validation",
+  "generator_exit_code": 0,
+  "error": "backend counts",
+  "expected": {
+    "file": 63,
+    "postgres": 62,
+    "both": 0
+  },
+  "actual": {
+    "file": 62,
+    "postgres": 62,
+    "both": 1
+  },
+  "resolution": "Correct evidence expectation only; unparametrized lexical parser is both. No source, markers, generator or raw collection changed. Recover validation from archived raw without invoking collection again."
+}

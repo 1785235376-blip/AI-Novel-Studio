@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "commit": "4ebac7a0b039c1cf6bdf3103650185325875260d",
+  "parent": "46fff4797f6110e130256566b397cb08586e56c1",
+  "paths": 46,
+  "reviewed_source_paths": 7,
+  "source_hashes": {
+    "app/experimental/subtitle_timeline.py": "cf6e4fb216ddb044b71bb1d5880ca03cc7e219e18fac5ae4c9aee0f47ba244ce",
+    "app/experimental/subtitle_timeline_api.py": "384d1884703cca100eda0126ab00515c2d758ec0334d8e507cf0192ae6bcc932",
+    "app/services/studio_timeline_subtitles.py": "244ff0be5447784977a446a4e237347a0a84340bd7f5ab3aa7af6cbd8c816055",
+    "frontend/src/experimental/SubtitleTimelinePanel.tsx": "84914b2187f95939e621b4bbc02c108d54174c7aac4d1a0f142fff1d13b602d5",
+    "frontend/src/experimental/voiceSubtitleClient.ts": "afa7ee0c93bc9b8f6268d5183644a66c9f64e7b1ecfbcba7a6dc398fb6d49880",
+    "frontend/src/experimental/SubtitleTimelinePanel.import.test.tsx": "c04cf64b466f49f3496737772868a1ce86f137d826a9df74d76ad6dc7cc0552e",
+    "tests/test_caption_import_preview_additive.py": "62acf9b757220acd78082ffcac63b4fccddd7dac268a8d8700a1fba2180a2a84"
+  },
+  "failures": [],
+  "unexpected": [],
+  "canonical_changed": false
+}

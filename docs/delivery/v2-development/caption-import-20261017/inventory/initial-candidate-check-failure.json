@@ -1,0 +1,5 @@
+{
+  "error": "added node list",
+  "cause": "Validator incorrectly expected new nodes appended after all previous V2 additions. The unchanged generator reconstructs added_nodes from frozen V1, placing new nodes in current collection order.",
+  "resolution": "Verify exact generator construction from frozen V1 plus full old V2 added-node relative order, membership and uniqueness. Candidate bytes unchanged."
+}

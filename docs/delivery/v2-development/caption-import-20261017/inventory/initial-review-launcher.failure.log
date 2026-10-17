@@ -1,0 +1,6 @@
+Error: backend counts
+    at assert (collect.mjs:3:219)
+    at collect.mjs:11:761
+Node.js v24.19.0
+Launcher process exit: 1; generator subprocess exit: 0.
+Captured diagnostic transcribed from tool output. Original launcher retained in initial-review-launcher.mjs.

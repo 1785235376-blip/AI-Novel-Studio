@@ -1,0 +1,19 @@
+{
+  "review": "Original generator full before/after source check passed; launcher recovery is Git-bound, not a persisted initial snapshot.",
+  "snapshots": {
+    "candidate": {
+      "before_sha256": "ec5a54be288f88ea023d7f8de56993084bfcd9fb6fcd4aca7d3794d45da70e73",
+      "after_sha256": "ec5a54be288f88ea023d7f8de56993084bfcd9fb6fcd4aca7d3794d45da70e73",
+      "entries": 2584,
+      "byte_exact": true
+    },
+    "confirmation": {
+      "before_sha256": "ec5a54be288f88ea023d7f8de56993084bfcd9fb6fcd4aca7d3794d45da70e73",
+      "after_sha256": "ec5a54be288f88ea023d7f8de56993084bfcd9fb6fcd4aca7d3794d45da70e73",
+      "entries": 2584,
+      "byte_exact": true
+    }
+  },
+  "source_map_sha256": "ec5a54be288f88ea023d7f8de56993084bfcd9fb6fcd4aca7d3794d45da70e73",
+  "tests_executed": false
+}

@@ -1,0 +1,25 @@
+{
+  "status": "INVENTORY_ONLY",
+  "head": "4ebac7a0b039c1cf6bdf3103650185325875260d",
+  "rows": 15742,
+  "raw_sha256": "137bb78b6fe8c9b4c5f64589dca22c9b73ea5733dd9d597ce520b5309c15b23c",
+  "report_sha256": "f5c35b15149dd777012b5936ef2d3ff8b929eee01038f70591f28c792bea7aa3",
+  "all_old_rows_order_and_classifications_exact": 15617,
+  "new_rows": 125,
+  "new_backend_counts": {
+    "file": 62,
+    "postgres": 62,
+    "both": 1
+  },
+  "protected_entries_exact": 1271,
+  "source_count": 2584,
+  "source_stable": true,
+  "companion_files": 11,
+  "canonical_unchanged": true,
+  "canonical_sha256": "1c70badc1373260b7138dc6cda39f46eda390b0a8a102a8a8ea299e7b586bcac",
+  "tests_executed": false,
+  "validation_recovered_from_archived_raw": true,
+  "initial_launcher_source_postcheck_reached": false,
+  "source_stability_basis": "Unchanged generator internally compared complete pre/post source snapshots and returned INVENTORY_ONLY. Recovery independently binds current source hashes to the frozen committed source checkpoint; the initial launcher did not persist its in-memory pre-snapshot or reach its postcheck.",
+  "recovery_source_exact_to_commit": true
+}

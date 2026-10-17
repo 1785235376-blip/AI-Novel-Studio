@@ -1,0 +1,45 @@
+{
+  "status": "PASS_FINAL_CANONICAL_AND_EVIDENCE_REVIEW",
+  "utc": "2026-10-17T01:49:59.992Z",
+  "head": "4ebac7a0b039c1cf6bdf3103650185325875260d",
+  "canonical_sha256": "414865364741d8836181670735f2e4cecb041541645c3cfc8fd7a52f2492a254",
+  "raw_sha256": "137bb78b6fe8c9b4c5f64589dca22c9b73ea5733dd9d597ce520b5309c15b23c",
+  "all_three_raw_archives_byte_exact": true,
+  "rows": 15742,
+  "old_rows": 15617,
+  "new_rows": 125,
+  "source_count": 2584,
+  "old_protected": 1271,
+  "refreshed_protected": 1273,
+  "companion": 11,
+  "snapshots": {
+    "candidate": {
+      "entries": 2584,
+      "sha256": "ec5a54be288f88ea023d7f8de56993084bfcd9fb6fcd4aca7d3794d45da70e73",
+      "same": true
+    },
+    "confirmation": {
+      "entries": 2584,
+      "sha256": "ec5a54be288f88ea023d7f8de56993084bfcd9fb6fcd4aca7d3794d45da70e73",
+      "same": true
+    }
+  },
+  "reviewed_index_sha256": "87ef034d92f2eeb5780cc1359cc7c47df1c3dfba7813a841f3e56b68e20c4bb6",
+  "indexed_payloads": 47,
+  "payload_bytes": 7335078,
+  "all_indexed_hashes_and_directory_closure": true,
+  "independent_copies_exact": [
+    "independent-candidate-review.json",
+    "independent-candidate-review.mjs",
+    "independent-commit-binding.json",
+    "independent-review.json"
+  ],
+  "readonly_verifier_passed": true,
+  "tests_executed": false,
+  "notes": [
+    "Source and product bodies were not executed for this final review.",
+    "Initial evidence checker errors and recovery limitations are accurately disclosed; raw collection/test evidence is preserved.",
+    "Bundle contains one new raw collection, source/hash proofs, diagnostics and commands; no dependency directories or private runtime data are included.",
+    "This report records the index before adding the report itself. Regenerate and recheck the index if attaching it."
+  ]
+}
