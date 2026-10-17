@@ -1,0 +1,470 @@
+{
+  "status": "PASS_SCOPED_MERGED_WAVE2",
+  "head": "b5f52c823b4df58ffe69ec309bfc2fc0e4a114fe",
+  "tree": "c69fb267e26f3692f625deb0355bf5c1c3c13ef3",
+  "source_path_count": 2609,
+  "tracked_path_count": 12113,
+  "source_derivation": {
+    "baseline": 2600,
+    "added": [
+      "app/creative/director_terminal_evidence.py",
+      "frontend/src/experimental/ComicLayoutsPanel.framing.test.tsx",
+      "frontend/src/experimental/InteractiveStoryPanel.membership.test.tsx",
+      "tests/test_comic_cover_framing.py",
+      "tests/test_director_private_publication_races.py",
+      "tests/test_director_terminal_evidence_contract.py",
+      "tests/test_interactive_membership_handoff.py",
+      "tests/test_restored_file_verification.py",
+      "tests/test_wave2_generation_backup_restore_additive.py"
+    ],
+    "removed": []
+  },
+  "protected_old_tests": 1318,
+  "protected_old_docs": 8941,
+  "receipts": {
+    "origin-before": {
+      "path": "docs/delivery/v2-development/wave2-integration-origin-before-r1.json",
+      "sha256": "52f4cedafc6b1a46b397c40b69d0c6cecc9728ba3c238cb767bf1746f228b0cc",
+      "log": "docs/delivery/v2-development/wave2-integration-origin-before-r1.log",
+      "log_sha256": "0edb7fff9ba6418d3aa4197d06fa82532b8d845097982063c1abaa08fcefe249",
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-c",
+        "import sys; path=sys.argv[1]; globals()[\"__file__\"]=path; exec(compile(open(path).read(),path,\"exec\"))",
+        "docs/delivery/v2-development/parallel-integration-wave2-20261017/origin-probe.py",
+        "--child"
+      ]
+    },
+    "comic-golden": {
+      "path": "docs/delivery/v2-development/wave2-integration-comic-golden-r1.json",
+      "sha256": "4e3b6260bb9d57992d438ab10e49261ec9414f2348b94fe093dd0666489e25ca",
+      "log": "docs/delivery/v2-development/wave2-integration-comic-golden-r1.log",
+      "log_sha256": "760d9169903209866bf387c7804c359d9a6bac385565e88383eceb79b4f92aca",
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "docs/delivery/v2-development/comic-framing-baseline-20261017/verify_legacy_portable.py",
+        "--source",
+        "/workspace/scratch/20a0022d2b33/studio-timeline-waveform",
+        "--work",
+        "/workspace/scratch/20a0022d2b33/studio-timeline-waveform/.runtime/v2-checks/wave2-integration-comic-golden-r1/copied-state"
+      ]
+    },
+    "backend": {
+      "path": "docs/delivery/v2-development/wave2-integration-backend-r1.json",
+      "sha256": "79f08c5f858bbbf88bcf769780aec565ad11f0c83c3f11aec43bfe2b15f87f7a",
+      "log": "docs/delivery/v2-development/wave2-integration-backend-r1.log",
+      "log_sha256": "fec752984c852c6da4b4e823d3bb7c009971f103e6540ba5685a16c1ac7b5262",
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_wave2_generation_backup_restore_additive.py",
+        "tests/test_v2_audio_peak_contract.py",
+        "tests/test_v2_audio_peak_api.py",
+        "tests/test_v2_audio_peak_cpu.py",
+        "tests/test_v2_audio_editing_pipeline.py",
+        "tests/test_v2_audio_editing_pipeline_api.py",
+        "tests/test_v2_audio_wav_controls.py",
+        "tests/test_v2_audio_wav_controls_api.py",
+        "tests/test_v2_audio_flac.py",
+        "tests/test_v2_audio_flac_api.py",
+        "tests/test_v2_audio_mp3.py",
+        "tests/test_v2_audio_mp3_api.py",
+        "tests/test_v2_audio_mp3_compatibility.py",
+        "tests/test_v2_audio_fade_contract.py",
+        "tests/test_v2_audio_fade_api.py",
+        "tests/test_v2_audio_fades_cpu.py",
+        "tests/test_v2_creative_graph_persistence.py",
+        "tests/test_v2_creative_graph_persistence_additive.py",
+        "tests/test_v2_creative_graph_contracts.py",
+        "tests/test_v2_graph_schema_version_gate.py",
+        "tests/test_terminology_portability.py",
+        "tests/test_r5_multilingual_editions.py",
+        "tests/test_r5_multilingual_editions_mounted.py",
+        "tests/test_r5_multilingual_translation.py",
+        "tests/test_director_terminal_evidence_contract.py",
+        "tests/test_director_private_publication_races.py",
+        "tests/test_v2_creative_director_execution_lifecycle.py",
+        "tests/test_v2_creative_director_invocation.py",
+        "tests/test_v2_creative_director_binding.py",
+        "tests/test_v2_creative_director_binding_persistence.py",
+        "tests/test_v2_creative_director_review_contract.py",
+        "tests/test_generation_restart_recovery.py",
+        "tests/test_v2_generation_incarnation.py",
+        "tests/test_v2_creative_graph_execution.py",
+        "tests/test_v2_graph_director_proposal_loop.py",
+        "tests/test_v2_storyboard_director_proposal_loop.py",
+        "tests/test_a43_detached_generation_acceptance.py",
+        "tests/test_repository_contracts.py::test_generation_contract",
+        "tests/test_stability_v04.py::test_job_repository_survives_new_instance",
+        "tests/test_generation_snapshot_runtime_v056.py",
+        "tests/test_interactive_membership_handoff.py",
+        "tests/test_r5_interactive_story.py",
+        "tests/test_r5_interactive_story_additive.py",
+        "tests/test_r5_interactive_story_mounted.py",
+        "tests/test_post_interop_interactive_history.py",
+        "tests/test_comic_cover_framing.py",
+        "tests/test_r5_comic_layouts.py",
+        "tests/test_r5_comic_layouts_additive.py",
+        "tests/test_restored_file_verification.py",
+        "tests/test_r2_backup_restore.py",
+        "tests/test_asset_lifecycle_r2.py::test_delete_recover_and_restart_preserve_original",
+        "-m",
+        "not postgres_backend_only",
+        "-q",
+        "-x",
+        "-p",
+        "no:cacheprovider",
+        "--basetemp=/workspace/scratch/20a0022d2b33/studio-timeline-waveform/.runtime/v2-checks/wave2-integration-backend-r1/pytest"
+      ]
+    },
+    "ui": {
+      "path": "docs/delivery/v2-development/wave2-integration-ui-r1.json",
+      "sha256": "f0c335551e3f4a04af585dbd1e12264ca6f767f8c4e7e3df6b3f3090a0eb330d",
+      "log": "docs/delivery/v2-development/wave2-integration-ui-r1.log",
+      "log_sha256": "60bd7018cc174129bdad28a59300fb9c888585d07ed3e8db9341ba7835abaee6",
+      "command": [
+        "bash",
+        "--noprofile",
+        "--norc",
+        "-c",
+        "cd frontend && node node_modules/vitest/vitest.mjs run --config vite.config.ts --maxWorkers=1 --minWorkers=1 --no-file-parallelism --no-cache --bail=1 src/creative/GraphCanvas.insertion.additive.test.tsx src/creative/StudioGraphInsertion.additive.test.tsx src/creative/StudioGraphInsertion.palette.additive.test.tsx src/creative/GraphCanvas.connection.additive.test.tsx src/creative/StudioGraphConnection.additive.test.tsx src/creative/GraphCanvas.test.tsx src/creative/GraphCanvas.presentation.additive.test.tsx src/creative/GraphCanvasLargeNotes.test.tsx src/creative/graphCanvasGeometry.test.ts src/creative/graphCanvasGeometry.presentation.additive.test.ts src/creative/graphCanvasPresentation.test.ts src/creative/graphCanvasNotes.test.ts src/creative/graphCanvasLargeNotes.test.ts src/creative/GraphNodeNavigator.test.tsx src/creative/graphDraft.test.ts src/creative/graphSelectionCopyController.test.tsx src/creative/StudioGraphDraftRecovery.test.tsx src/creative/StudioGraphDraftRecovery.notes.test.tsx src/creative/studioGraphLocalDraft.test.ts src/creative/IndependentStudioGraphWorkspace.test.tsx src/creative/IndependentStudioGraphWorkspace.presentation.additive.test.tsx src/creative/GraphReadRevocation.regression.test.tsx src/creative/useStudioGraphEditor.storyboardAuthority.additive.test.tsx src/canvasops/canvasOps.test.ts src/canvasops/canvasOps.layout.additive.test.ts src/canvasops/canvasOpsPanels.test.tsx src/canvasops/canvasOpsPanels.layout.additive.test.tsx src/ui/AppShell.test.tsx src/ui/primitives.test.tsx src/creative/studioAudioPeak.additive.test.tsx src/creative/studioAudioFades.additive.test.tsx src/creative/IndependentStudioAudioWav.test.tsx src/creative/studioAudioWavContract.test.ts src/creative/studioAudioFlacContract.phase6.test.tsx src/creative/studioAudioFlacContract.formatVariant.additive.test.ts src/creative/studioAudioMp3Contract.test.tsx src/creative/studioAudioReceiptContext.compatibility.test.ts src/creative/StudioMediaRouteChoice.test.tsx src/creative/StudioImageRuntimeProduction.test.tsx src/creative/StudioImageUpscaleProduction.test.tsx src/creative/studioCpuCutoutContract.test.ts src/creative/StudioReferenceRoute.compatibility.test.tsx src/creative/StudioImageAssetHandoff.test.tsx src/creative/StudioVideoAssetHandoff.test.tsx src/experimental/TerminologyPortabilityPanel.test.tsx src/experimental/MultilingualEditionsPanel.test.tsx src/experimental/MultilingualEditionsPanel.additive.test.tsx src/experimental/TerminologyIssueNavigator.test.tsx src/experimental/LanguageTranslationPanel.test.tsx src/experimental/TranslationMemoryPanel.test.tsx src/prompt/PromptEditorPanel.copy.test.tsx src/prompt/PromptEditorPanel.usability.test.tsx src/prompt/PromptRevisionDiff.test.tsx src/prompt/PromptVersionHistory.test.tsx src/prompt/PromptWorkspace.additive.test.tsx src/prompt/PromptWorkspace.detailRace.test.tsx src/prompt/PromptWorkspace.detailRace2.test.tsx src/prompt/PromptWorkspace.loadingOwner.test.tsx src/prompt/PromptWorkspace.p0.test.tsx src/prompt/PromptWorkspace.p0c.test.tsx src/prompt/PromptWorkspace.p0i.test.tsx src/prompt/PromptWorkspace.receiptReopen.test.tsx src/prompt/PromptWorkspace.scoping.test.tsx src/prompt/PromptWorkspace.strictmode.test.tsx src/prompt/PromptWorkspace.test.tsx src/prompt/promptContract.test.ts src/prompt/promptDraft.aliasing.test.ts src/prompt/promptDraft.pending.test.ts src/prompt/promptDraft.settlement.test.ts src/prompt/promptDraft.test.ts src/prompt/promptProducerContract.test.ts src/creative/DirectorModelControls.test.tsx src/creative/DirectorModelControls.storyboard-model.additive.test.tsx src/creative/GraphDirectorStoryboardHandoff.test.tsx src/creative/GraphDirectorProposalReview.test.tsx src/creative/GraphModelExecutionPanel.test.tsx src/creative/studioGraphDirectorClient.test.ts src/experimental/InteractiveStoryPanel.membership.test.tsx src/experimental/InteractiveStoryPanel.test.tsx src/experimental/InteractiveStoryPanel.additive.test.tsx src/experimental/InteractiveStoryHistory.test.tsx src/experimental/ComicLayoutsPanel.framing.test.tsx src/experimental/ComicLayoutsPanel.test.tsx src/experimental/ComicLayoutsPanel.additive.test.tsx src/experimental/comicArrangement.test.ts"
+      ]
+    },
+    "type": {
+      "path": "docs/delivery/v2-development/wave2-integration-type-r1.json",
+      "sha256": "4dee3b86c76c53b08186e57303ed89c0e6c4b36ba5bd53ca9670cc181ce5280e",
+      "log": "docs/delivery/v2-development/wave2-integration-type-r1.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "command": [
+        "bash",
+        "--noprofile",
+        "--norc",
+        "-c",
+        "cd frontend && node node_modules/typescript/bin/tsc -b --force"
+      ]
+    },
+    "build": {
+      "path": "docs/delivery/v2-development/wave2-integration-build-r1.json",
+      "sha256": "a87a8a6235d7ee4c89cf928e92bd05dad8e0bf691e605c383dc6836480c8efa1",
+      "log": "docs/delivery/v2-development/wave2-integration-build-r1.log",
+      "log_sha256": "d79f3b2cfd8e7a51cb45b80ad4fd8ff3d56b3980584c0b6937d0c0914eb32099",
+      "command": [
+        "bash",
+        "--noprofile",
+        "--norc",
+        "-c",
+        "cd frontend && node node_modules/vite/bin/vite.js build"
+      ]
+    },
+    "token": {
+      "path": "docs/delivery/v2-development/wave2-integration-token-r1.json",
+      "sha256": "b1c38e7a318feb1926201ab751acd4ebe7b8588500b2877b81703e7d5d9fc8f5",
+      "log": "docs/delivery/v2-development/wave2-integration-token-r1.log",
+      "log_sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/check_ui_design_tokens.mjs"
+      ]
+    },
+    "packaging": {
+      "path": "docs/delivery/v2-development/wave2-integration-packaging-r1.json",
+      "sha256": "40601fcb1ff7de1c44f5722e3bf9242d443db07ccfe551e71ae8eacb8ee6d711",
+      "log": "docs/delivery/v2-development/wave2-integration-packaging-r1.log",
+      "log_sha256": "5d78123e8c1b9830090dbb12b7b02e1540653dc48083392ad08d01e41c01181d",
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_creative_director_binding_packaging.py",
+        "tests/test_public_build_profile.py",
+        "tests/test_public_wheel_artifact.py",
+        "tests/test_public_sdist_artifact.py",
+        "-m",
+        "not postgres_backend_only",
+        "-q",
+        "-x",
+        "--basetemp=/workspace/scratch/20a0022d2b33/studio-timeline-waveform/.runtime/v2-checks/wave2-integration-packaging-r1/pytest"
+      ]
+    },
+    "origin-after": {
+      "path": "docs/delivery/v2-development/wave2-integration-origin-after-r1.json",
+      "sha256": "d432342e0c4d4f72cbab919144af9f06b1e5b1250074d80cfd197124e829da6e",
+      "log": "docs/delivery/v2-development/wave2-integration-origin-after-r1.log",
+      "log_sha256": "825de6929993683ba14665d7773e14956253caec9fdc5d23596c16ff38032430",
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-c",
+        "import sys; path=sys.argv[1]; globals()[\"__file__\"]=path; exec(compile(open(path).read(),path,\"exec\"))",
+        "docs/delivery/v2-development/parallel-integration-wave2-20261017/origin-probe.py",
+        "--child"
+      ]
+    }
+  },
+  "actual_log_summaries": {
+    "origin-before": [],
+    "comic-golden": [],
+    "backend": [
+      "1482 passed, 1 skipped, 494 deselected, 2 warnings in 226.10s (0:03:46)"
+    ],
+    "ui": [
+      "Test Files  85 passed (85)",
+      "Tests  1262 passed (1262)"
+    ],
+    "type": [],
+    "build": [
+      "\u2713 built in 6.73s"
+    ],
+    "token": [
+      "UI token guard PASS (52 files)"
+    ],
+    "packaging": [
+      "87 passed, 1 warning in 39.40s"
+    ],
+    "origin-after": []
+  },
+  "artifacts": {
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/archive-inspection.log": "8985139ebbdb80cb840111df1669000a79e13a63b5da6f4abed9982790e2588b",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/audit-results.py": "d345d70790f3858862a5c717f354d7d51ec8ae8a71c3088e637d774dc6ba5ce8",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/backend-launch.log": "25c3779c6dab7bda9073df3afa0a67578441794e489dd32220ddebf8e6b84203",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/build-interpreter-r1.json": "5ff2a67190a47c8a32ab34481aa52c2d5ee4f370204b55237054cf2181e82522",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/build-launch.log": "08f7177f8c81a2b9c36ae5492272a8d5fbf89fd35fd832ef0f3e52638fec4a6d",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/check-freeze.py": "fcfa5cca5a3290d7530ada7b6af53ac91bb14e08d95b612a755c235633dd5c47",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/comic-golden-launch.log": "09be6c3b2e6a900a263d57518c2c1e834dd0d21bd0800218966d0408e5678ba6",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/freeze-launch.log": "17025a7c3a93721243d9a175536de5596339b0a3848bebe3d9e581eb97fcb76f",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/freeze-tree.py": "a7d4493d2355d53bc6b9da7f0e1831b5b85e26e231bd6e8a04e1ce28194613f2",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/inspect-artifacts.py": "72b035f2873b8a27251d9fb9b026f5f2803ce9025f5de385ea1438624f7200a2",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/integration-report.md": "7e4b5fe025112ac503eb5b01c2e0acaef4c539cbd7e50e4c46511a229794ea04",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/manifest-packaging-input-r1.sha256": "84be1b10b1f2b9f353f672b5f4f4a60bb0423931ceaf8fbc5f56e3213e4763ed",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/natural-startup-r1.json": "96909a4cf6070669282510e18ec178d504aa016e8c72098cd0cb72ff95f340f5",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/origin-after-launch.log": "8a5cbb7faff8881980d7f92eb9a7ab65089f1ee9b7b9bb2696209a2726599bc2",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/origin-launch.log": "f74fed511c3adc497bdb6bef5792f229c5c1a27542d3f364f472245913e5c8ed",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/origin-probe.py": "81e3f369668a6037ffdff1621d09dab4235191d30a3297a3b303df9fe2b69e98",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/index.json": "8985139ebbdb80cb840111df1669000a79e13a63b5da6f4abed9982790e2588b",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-sdist0/build.log": "4c7431944edba71cc5672a10fc00fd0b4e8229b1821dba965928468595198ef8",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-sdist0/payload-inventory.json": "7b7bd171120cd7551437720d5dc12329c10712670999b68398316b0dd9d1943c",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-sdist0/sdist-receipt.json": "2a46497d2ae7299bbaad1d3ec0f7d09c461588460e77cc86cbf17fb08401e483",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-sdist0/stage-receipt.json": "971974d08efad10f3aa8e4f8512179c7ac74585f3a112703d1518dd966995e8f",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-sdist1/build.log": "4c7431944edba71cc5672a10fc00fd0b4e8229b1821dba965928468595198ef8",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-sdist1/payload-inventory.json": "7b7bd171120cd7551437720d5dc12329c10712670999b68398316b0dd9d1943c",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-sdist1/sdist-receipt.json": "8532a0fe4779f0a807c5e80c75802b041c81f1391e960522fa752ad38e5c828e",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-sdist1/stage-receipt.json": "971974d08efad10f3aa8e4f8512179c7ac74585f3a112703d1518dd966995e8f",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-wheel0/build.log": "6a00e3e64bc7e2afabc57d648ca2438c933fcbe5aec38c83f5fb42ba9bd88105",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-wheel0/payload-inventory.json": "311a75f5b94dea0b41927899de0395eba949db7c1ded35958d6165c03f2d1e1d",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-wheel0/stage-receipt.json": "971974d08efad10f3aa8e4f8512179c7ac74585f3a112703d1518dd966995e8f",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-wheel0/wheel-receipt.json": "afe865864465bb6885a9b2b4346a7c097d3d73343c857f0a15e7caf04e606d3d",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-wheel1/build.log": "e06247ddd37f809b4c2c3e0ac247ecee98a144ed4eca3b3b613d139ba8d1be75",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-wheel1/payload-inventory.json": "311a75f5b94dea0b41927899de0395eba949db7c1ded35958d6165c03f2d1e1d",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-wheel1/stage-receipt.json": "971974d08efad10f3aa8e4f8512179c7ac74585f3a112703d1518dd966995e8f",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-wheel1/wheel-receipt.json": "21a85213b90193eea970ac24f49f872b4931ee733b52970e358816c11525fdd5",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-interpreter-probe.py": "99e3fd75effce3b27fe22b9878c793ba4a9aed3db4494d14177869036e2dc35c",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-launch.log": "2f4d00db1cec07b1c6c231c2176fabed2592a857eb3f0532304cb68460ca5ef0",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/release-freeze.json": "654599a0bfc49e80a9bb4b853676e7d75c81f2ef92fc364031b9ec2c129cbe88",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/run.sh": "78c768831ccec14c4f61b9e87036be4c6b61a845c5afae545939217426c7e148",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/scope.json": "178e8b46ea615c158aa3381ba009951908f035441cea9b7175dc25c538c2d089",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/token-launch.log": "da17e750db6521945761f72455c569b111678acb4e23c18a97938820dfa77acb",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/tree-after.json": "22718f801bd0b5a2b7c666f88fdee83c0ca66cfd4f86f78a677a9ed4a4e42dc4",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/type-launch.log": "2556edecc308b32c70f85317534c749930862b9a6e89c53d035ad2974dd41446",
+    "docs/delivery/v2-development/parallel-integration-wave2-20261017/ui-launch.log": "bf767f5adc3bd3181f2c672cbaa8afe2a6b3fcc2c1b79d84688f3e2de5968b0c"
+  },
+  "archives": {
+    "status": "PASS_OFFLINE_PUBLIC_ARCHIVE_INSPECTION",
+    "manifest_sha256": "353b92aff6116d873ea4402a1ef627e7899214b46ba823a9b4300ba75c5d0448",
+    "archives": [
+      {
+        "archive": ".runtime/v2-checks/wave2-integration-packaging-r1/pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+        "kind": "sdist",
+        "sha256": "3313922850bfabb47a6b2e23df7f6e55e5aebe299de38ee105b7e89da40ad40b",
+        "payload_file_count": 519,
+        "changed_modules": {
+          "app/creative/director_terminal_evidence.py": {
+            "member": "ai_novel_studio-0.7.0/app/creative/director_terminal_evidence.py",
+            "sha256": "f064777fdade12050f9e755d677ab042c9f4d221c430f3dbd41f4142b9ea29e6"
+          },
+          "app/creative/generation.py": {
+            "member": "ai_novel_studio-0.7.0/app/creative/generation.py",
+            "sha256": "de925e29d345733a5b01171c31bcdff866f7f699d965d0e718b0e1a65046b1c9"
+          },
+          "app/jobs.py": {
+            "member": "ai_novel_studio-0.7.0/app/jobs.py",
+            "sha256": "f00b17895a84c4ba1334981e81289e7a152adfa2f87b6b3e6768ace33685d505"
+          },
+          "app/model_execution.py": {
+            "member": "ai_novel_studio-0.7.0/app/model_execution.py",
+            "sha256": "f0fa804f1b7dd0f381bb610a67da46aa44706b01040891d9070a6952d270ac0b"
+          },
+          "app/repositories/generation_repository.py": {
+            "member": "ai_novel_studio-0.7.0/app/repositories/generation_repository.py",
+            "sha256": "2bd899bac38aaed894d126cad7fed942ced8b96f1b59a2a9ec01c30037193af6"
+          },
+          "app/repositories/postgres/generation.py": {
+            "member": "ai_novel_studio-0.7.0/app/repositories/postgres/generation.py",
+            "sha256": "4afe05df476da7f361e06d3bc5dc490b2707cdc0045c3cc3172a3d3ac4b34446"
+          },
+          "app/experimental/comic_layouts.py": {
+            "member": "ai_novel_studio-0.7.0/app/experimental/comic_layouts.py",
+            "sha256": "14322297e06e73861fc452d69737e894294db74b4f4d3c9903e5349180399a52"
+          },
+          "app/backup_restore.py": {
+            "member": "ai_novel_studio-0.7.0/app/backup_restore.py",
+            "sha256": "a0bfd17bd268581d41b7a0347e376f6c0895338b9cea16a7a86c2c8981cc6a62"
+          }
+        },
+        "durable_evidence": "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-sdist0"
+      },
+      {
+        "archive": ".runtime/v2-checks/wave2-integration-packaging-r1/pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+        "kind": "sdist",
+        "sha256": "49384425ee21505079d9f3bc5cb524ae29cf75718bb067e5393e10169ad09bf9",
+        "payload_file_count": 519,
+        "changed_modules": {
+          "app/creative/director_terminal_evidence.py": {
+            "member": "ai_novel_studio-0.7.0/app/creative/director_terminal_evidence.py",
+            "sha256": "f064777fdade12050f9e755d677ab042c9f4d221c430f3dbd41f4142b9ea29e6"
+          },
+          "app/creative/generation.py": {
+            "member": "ai_novel_studio-0.7.0/app/creative/generation.py",
+            "sha256": "de925e29d345733a5b01171c31bcdff866f7f699d965d0e718b0e1a65046b1c9"
+          },
+          "app/jobs.py": {
+            "member": "ai_novel_studio-0.7.0/app/jobs.py",
+            "sha256": "f00b17895a84c4ba1334981e81289e7a152adfa2f87b6b3e6768ace33685d505"
+          },
+          "app/model_execution.py": {
+            "member": "ai_novel_studio-0.7.0/app/model_execution.py",
+            "sha256": "f0fa804f1b7dd0f381bb610a67da46aa44706b01040891d9070a6952d270ac0b"
+          },
+          "app/repositories/generation_repository.py": {
+            "member": "ai_novel_studio-0.7.0/app/repositories/generation_repository.py",
+            "sha256": "2bd899bac38aaed894d126cad7fed942ced8b96f1b59a2a9ec01c30037193af6"
+          },
+          "app/repositories/postgres/generation.py": {
+            "member": "ai_novel_studio-0.7.0/app/repositories/postgres/generation.py",
+            "sha256": "4afe05df476da7f361e06d3bc5dc490b2707cdc0045c3cc3172a3d3ac4b34446"
+          },
+          "app/experimental/comic_layouts.py": {
+            "member": "ai_novel_studio-0.7.0/app/experimental/comic_layouts.py",
+            "sha256": "14322297e06e73861fc452d69737e894294db74b4f4d3c9903e5349180399a52"
+          },
+          "app/backup_restore.py": {
+            "member": "ai_novel_studio-0.7.0/app/backup_restore.py",
+            "sha256": "a0bfd17bd268581d41b7a0347e376f6c0895338b9cea16a7a86c2c8981cc6a62"
+          }
+        },
+        "durable_evidence": "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-sdist1"
+      },
+      {
+        "archive": ".runtime/v2-checks/wave2-integration-packaging-r1/pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+        "kind": "wheel",
+        "sha256": "2c10b0e92ddbc9d36c04980969274622642244ef0edf1c3846942c1f0aeaf0a2",
+        "payload_file_count": 515,
+        "changed_modules": {
+          "app/creative/director_terminal_evidence.py": {
+            "member": "app/creative/director_terminal_evidence.py",
+            "sha256": "f064777fdade12050f9e755d677ab042c9f4d221c430f3dbd41f4142b9ea29e6"
+          },
+          "app/creative/generation.py": {
+            "member": "app/creative/generation.py",
+            "sha256": "de925e29d345733a5b01171c31bcdff866f7f699d965d0e718b0e1a65046b1c9"
+          },
+          "app/jobs.py": {
+            "member": "app/jobs.py",
+            "sha256": "f00b17895a84c4ba1334981e81289e7a152adfa2f87b6b3e6768ace33685d505"
+          },
+          "app/model_execution.py": {
+            "member": "app/model_execution.py",
+            "sha256": "f0fa804f1b7dd0f381bb610a67da46aa44706b01040891d9070a6952d270ac0b"
+          },
+          "app/repositories/generation_repository.py": {
+            "member": "app/repositories/generation_repository.py",
+            "sha256": "2bd899bac38aaed894d126cad7fed942ced8b96f1b59a2a9ec01c30037193af6"
+          },
+          "app/repositories/postgres/generation.py": {
+            "member": "app/repositories/postgres/generation.py",
+            "sha256": "4afe05df476da7f361e06d3bc5dc490b2707cdc0045c3cc3172a3d3ac4b34446"
+          },
+          "app/experimental/comic_layouts.py": {
+            "member": "app/experimental/comic_layouts.py",
+            "sha256": "14322297e06e73861fc452d69737e894294db74b4f4d3c9903e5349180399a52"
+          },
+          "app/backup_restore.py": {
+            "member": "app/backup_restore.py",
+            "sha256": "a0bfd17bd268581d41b7a0347e376f6c0895338b9cea16a7a86c2c8981cc6a62"
+          }
+        },
+        "durable_evidence": "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-wheel0"
+      },
+      {
+        "archive": ".runtime/v2-checks/wave2-integration-packaging-r1/pytest/public-wheel1/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+        "kind": "wheel",
+        "sha256": "3a25ac2195d38a117e95e2676a451b734963b5602a5bcd9fd211bd795f77a913",
+        "payload_file_count": 515,
+        "changed_modules": {
+          "app/creative/director_terminal_evidence.py": {
+            "member": "app/creative/director_terminal_evidence.py",
+            "sha256": "f064777fdade12050f9e755d677ab042c9f4d221c430f3dbd41f4142b9ea29e6"
+          },
+          "app/creative/generation.py": {
+            "member": "app/creative/generation.py",
+            "sha256": "de925e29d345733a5b01171c31bcdff866f7f699d965d0e718b0e1a65046b1c9"
+          },
+          "app/jobs.py": {
+            "member": "app/jobs.py",
+            "sha256": "f00b17895a84c4ba1334981e81289e7a152adfa2f87b6b3e6768ace33685d505"
+          },
+          "app/model_execution.py": {
+            "member": "app/model_execution.py",
+            "sha256": "f0fa804f1b7dd0f381bb610a67da46aa44706b01040891d9070a6952d270ac0b"
+          },
+          "app/repositories/generation_repository.py": {
+            "member": "app/repositories/generation_repository.py",
+            "sha256": "2bd899bac38aaed894d126cad7fed942ced8b96f1b59a2a9ec01c30037193af6"
+          },
+          "app/repositories/postgres/generation.py": {
+            "member": "app/repositories/postgres/generation.py",
+            "sha256": "4afe05df476da7f361e06d3bc5dc490b2707cdc0045c3cc3172a3d3ac4b34446"
+          },
+          "app/experimental/comic_layouts.py": {
+            "member": "app/experimental/comic_layouts.py",
+            "sha256": "14322297e06e73861fc452d69737e894294db74b4f4d3c9903e5349180399a52"
+          },
+          "app/backup_restore.py": {
+            "member": "app/backup_restore.py",
+            "sha256": "a0bfd17bd268581d41b7a0347e376f6c0895338b9cea16a7a86c2c8981cc6a62"
+          }
+        },
+        "durable_evidence": "docs/delivery/v2-development/parallel-integration-wave2-20261017/packaging-evidence/public-wheel1"
+      }
+    ],
+    "all_runtime_source_bytes_verified": true,
+    "application_imported": false,
+    "installed": false,
+    "extracted": false,
+    "windows_native_browser_postgres_acceptance": "NOT_RUN"
+  },
+  "known_audio_listing_failures_excluded": 5,
+  "full_repository_green": false,
+  "independent_review": {
+    "status": "PASS_INDEPENDENT_REVIEW",
+    "index": "docs/delivery/v2-development/parallel-integration-wave2-independent-20261017/evidence-index.json",
+    "index_sha256": "89a000da0a0cc8753aa52813847352ed88a28c754225edf87caa1736de8528d7",
+    "report": "docs/delivery/v2-development/parallel-integration-wave2-independent-20261017/report.md",
+    "backend": {
+      "passed": 270,
+      "skipped": 1,
+      "postgres_deselected": 86
+    },
+    "frontend": {
+      "files": 11,
+      "passed": 147
+    },
+    "runner_receipts": [
+      "docs/delivery/v2-development/wave2-independent-origin-before-r1.json",
+      "docs/delivery/v2-development/wave2-independent-backend-r1.json",
+      "docs/delivery/v2-development/wave2-independent-comic-golden-r1.json",
+      "docs/delivery/v2-development/wave2-independent-ui-r1.json",
+      "docs/delivery/v2-development/wave2-independent-origin-after-r1.json"
+    ],
+    "all_independent_indexed_hashes_verified": true
+  }
+}

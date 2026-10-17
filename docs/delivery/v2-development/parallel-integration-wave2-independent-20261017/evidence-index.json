@@ -1,0 +1,120 @@
+{
+  "status": "PASS_INDEPENDENT_REVIEW",
+  "source_head": "b5f52c823b4df58ffe69ec309bfc2fc0e4a114fe",
+  "runner_receipts": [
+    "docs/delivery/v2-development/wave2-independent-origin-before-r1.json",
+    "docs/delivery/v2-development/wave2-independent-backend-r1.json",
+    "docs/delivery/v2-development/wave2-independent-comic-golden-r1.json",
+    "docs/delivery/v2-development/wave2-independent-ui-r1.json",
+    "docs/delivery/v2-development/wave2-independent-origin-after-r1.json"
+  ],
+  "source_map_paths": 2609,
+  "tracked_paths": 12113,
+  "backend": {
+    "passed": 270,
+    "skipped": 1,
+    "postgres_deselected": 86
+  },
+  "frontend": {
+    "files": 11,
+    "passed": 147
+  },
+  "files": {
+    "docs/delivery/v2-development/parallel-integration-wave2-independent-20261017/archive-audit.json": {
+      "bytes": 2900,
+      "sha256": "71c92ceab5bfedeee31926cba7893134a2b6a1495fa542f98d1fd50694da269f"
+    },
+    "docs/delivery/v2-development/parallel-integration-wave2-independent-20261017/archive-audit.log": {
+      "bytes": 2900,
+      "sha256": "71c92ceab5bfedeee31926cba7893134a2b6a1495fa542f98d1fd50694da269f"
+    },
+    "docs/delivery/v2-development/parallel-integration-wave2-independent-20261017/audit-archives.py": {
+      "bytes": 2572,
+      "sha256": "31ce93a760d83525a70b9c19f141ce84f86a99e86cab8dbb4771991888ef85c3"
+    },
+    "docs/delivery/v2-development/parallel-integration-wave2-independent-20261017/backend-launch.log": {
+      "bytes": 1451,
+      "sha256": "dc3bbd46b869b06c3ef44d1b042dca2755da38936fa7c0ad1cb2276bb3f7f90d"
+    },
+    "docs/delivery/v2-development/parallel-integration-wave2-independent-20261017/comic-golden-launch.log": {
+      "bytes": 368,
+      "sha256": "5673f205bafbff53239f811830460cdcc01b5174b33fb65f859faaf1503995ef"
+    },
+    "docs/delivery/v2-development/parallel-integration-wave2-independent-20261017/finalize.py": {
+      "bytes": 4016,
+      "sha256": "eb90c7adc60fa981dafcd7e1dcd088667115233e9b8fd3eba91838e4179d5461"
+    },
+    "docs/delivery/v2-development/parallel-integration-wave2-independent-20261017/freeze-after.json": {
+      "bytes": 124,
+      "sha256": "cbafe03a2322aa3fbf6a854ee994d9107bbb67865189a4a2f3fc46c9c86c3f0c"
+    },
+    "docs/delivery/v2-development/parallel-integration-wave2-independent-20261017/freeze-before.json": {
+      "bytes": 124,
+      "sha256": "cbafe03a2322aa3fbf6a854ee994d9107bbb67865189a4a2f3fc46c9c86c3f0c"
+    },
+    "docs/delivery/v2-development/parallel-integration-wave2-independent-20261017/natural-startup.json": {
+      "bytes": 12699,
+      "sha256": "8c029f55761e31d041a874c251be44bacb3ff7d0f527fbdb0c7760d624335d6c"
+    },
+    "docs/delivery/v2-development/parallel-integration-wave2-independent-20261017/origin-after-launch.log": {
+      "bytes": 12864,
+      "sha256": "eb6fef5e14f0443d3c5b41adeabc503cc9f51823aa870b4249ff1a1273b1a8a3"
+    },
+    "docs/delivery/v2-development/parallel-integration-wave2-independent-20261017/origin-before-launch.log": {
+      "bytes": 12865,
+      "sha256": "58c9b9957e99feabe93ae0e564fc15b766d32a6ec81d17af2a95d9054e4502e5"
+    },
+    "docs/delivery/v2-development/parallel-integration-wave2-independent-20261017/report.md": {
+      "bytes": 2488,
+      "sha256": "46d6bafa4e8f413369cad4cb2c0f30665821ba7f06e01b54fa5eea1eae78a020"
+    },
+    "docs/delivery/v2-development/parallel-integration-wave2-independent-20261017/run.sh": {
+      "bytes": 3123,
+      "sha256": "341d035f6d8202e5e26eb6012bd955f3217e609ff7f553d909a3068912c579a6"
+    },
+    "docs/delivery/v2-development/parallel-integration-wave2-independent-20261017/ui-launch.log": {
+      "bytes": 1285,
+      "sha256": "d4efbf6fc0ff746284c54e2d44c2078bb8afb79b170f31270d6183cdbaa5df61"
+    },
+    "docs/delivery/v2-development/wave2-independent-backend-r1.json": {
+      "bytes": 619197,
+      "sha256": "eec56802312430b2395f9fc5d1fe386afdab5bc797e742dbd6f14821def56d64"
+    },
+    "docs/delivery/v2-development/wave2-independent-backend-r1.log": {
+      "bytes": 1354,
+      "sha256": "e4b0b7177a0ef320bce3ee4c4d4ea49fa1798be15ece4eb7482de25935a5bf18"
+    },
+    "docs/delivery/v2-development/wave2-independent-comic-golden-r1.json": {
+      "bytes": 618704,
+      "sha256": "dc34ba70dc5c1f9bf101038ecf829d462136c71f5c2a029fa99550419e3fead6"
+    },
+    "docs/delivery/v2-development/wave2-independent-comic-golden-r1.log": {
+      "bytes": 266,
+      "sha256": "760d9169903209866bf387c7804c359d9a6bac385565e88383eceb79b4f92aca"
+    },
+    "docs/delivery/v2-development/wave2-independent-origin-after-r1.json": {
+      "bytes": 618601,
+      "sha256": "411c4f4f6e4a00660a58afe2696cc54c30446623b0f92877c75d2a03453a6e8d"
+    },
+    "docs/delivery/v2-development/wave2-independent-origin-after-r1.log": {
+      "bytes": 12762,
+      "sha256": "50695ecc87dc691a938b2c38e9fe550bfdf71bc9302c46a5a7ea4906c7778f0e"
+    },
+    "docs/delivery/v2-development/wave2-independent-origin-before-r1.json": {
+      "bytes": 618610,
+      "sha256": "659ad7f56dce22f767e2d22f1473c17f53b15e48270faceff56a80e45913ba80"
+    },
+    "docs/delivery/v2-development/wave2-independent-origin-before-r1.log": {
+      "bytes": 12762,
+      "sha256": "bfe147c8492832bfef7ca327a0c26a58138addfee9e646dcf8118732e799d8b0"
+    },
+    "docs/delivery/v2-development/wave2-independent-ui-r1.json": {
+      "bytes": 618966,
+      "sha256": "afb8daba5d9164ff72644edbcd278a3748b19fc6d8d875dc49dbebd4180a681d"
+    },
+    "docs/delivery/v2-development/wave2-independent-ui-r1.log": {
+      "bytes": 1193,
+      "sha256": "76763e7b21894b6a494bc305cc89512c1772b87334131a04919dae99292b9584"
+    }
+  }
+}

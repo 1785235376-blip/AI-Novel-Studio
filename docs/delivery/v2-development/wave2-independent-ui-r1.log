@@ -1,0 +1,21 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-timeline-waveform/frontend
+
+ ✓ src/creative/DirectorModelControls.storyboard-model.additive.test.tsx (49 tests) 1235ms
+ ✓ src/experimental/InteractiveStoryPanel.additive.test.tsx (11 tests) 1189ms
+   ✓ locates exact saved issues in the original dirty editor without writing or discarding Unicode input 317ms
+ ✓ src/experimental/InteractiveStoryPanel.membership.test.tsx (25 tests) 2043ms
+ ✓ src/experimental/InteractiveStoryPanel.test.tsx (11 tests) 1004ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 625ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 883ms
+ ✓ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests) 633ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 173ms
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 146ms
+ ✓ src/experimental/InteractiveStoryHistory.test.tsx (1 test) 78ms
+ ✓ src/experimental/comicArrangement.test.ts (18 tests) 6ms
+
+ Test Files  11 passed (11)
+      Tests  147 passed (147)
+   Start at  19:24:41
+   Duration  14.44s (transform 465ms, setup 50ms, collect 1.56s, tests 8.01s, environment 3.07s, prepare 514ms)
+

@@ -1,0 +1,4 @@
+{"status": "PASS_FREEZE", "head": "b5f52c823b4df58ffe69ec309bfc2fc0e4a114fe", "tracked_paths": 12113, "source_paths": 2609}
+UI token guard PASS (52 files)
+
+{"receipt": "docs/delivery/v2-development/wave2-integration-token-r1.json", "status": "PASS"}

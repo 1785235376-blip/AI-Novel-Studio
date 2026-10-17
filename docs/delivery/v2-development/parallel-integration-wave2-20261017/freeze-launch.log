@@ -1,0 +1,33 @@
+{
+  "status": "FROZEN_AFTER_PARENT_RELEASE",
+  "head": "b5f52c823b4df58ffe69ec309bfc2fc0e4a114fe",
+  "tree": "c69fb267e26f3692f625deb0355bf5c1c3c13ef3",
+  "baseline": "d10b72c",
+  "changed_runtime": [
+    "app/creative/director_terminal_evidence.py",
+    "app/creative/generation.py",
+    "app/jobs.py",
+    "app/model_execution.py",
+    "app/repositories/generation_repository.py",
+    "app/repositories/postgres/generation.py",
+    "app/experimental/comic_layouts.py",
+    "app/backup_restore.py"
+  ],
+  "baseline_source_count": 2600,
+  "source_additions": [
+    "app/creative/director_terminal_evidence.py",
+    "frontend/src/experimental/ComicLayoutsPanel.framing.test.tsx",
+    "frontend/src/experimental/InteractiveStoryPanel.membership.test.tsx",
+    "tests/test_comic_cover_framing.py",
+    "tests/test_director_private_publication_races.py",
+    "tests/test_director_terminal_evidence_contract.py",
+    "tests/test_interactive_membership_handoff.py",
+    "tests/test_restored_file_verification.py",
+    "tests/test_wave2_generation_backup_restore_additive.py"
+  ],
+  "source_removals": [],
+  "source_count": 2609,
+  "protected_old_tests": 1318,
+  "protected_old_docs": 8941,
+  "manifest_sha256": "353b92aff6116d873ea4402a1ef627e7899214b46ba823a9b4300ba75c5d0448"
+}

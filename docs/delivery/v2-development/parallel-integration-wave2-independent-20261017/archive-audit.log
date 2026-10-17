@@ -1,0 +1,73 @@
+{
+  "status": "PASS_INDEPENDENT_ACTUAL_ARCHIVE_HASH_AUDIT",
+  "head": "b5f52c823b4df58ffe69ec309bfc2fc0e4a114fe",
+  "archives": [
+    {
+      "archive": ".runtime/v2-checks/wave2-integration-packaging-r1/pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "archive_sha256": "3313922850bfabb47a6b2e23df7f6e55e5aebe299de38ee105b7e89da40ad40b",
+      "payload_files": 519,
+      "source_files_checked": 512,
+      "changed_runtime_checked": [
+        "app/creative/director_terminal_evidence.py",
+        "app/creative/generation.py",
+        "app/jobs.py",
+        "app/model_execution.py",
+        "app/repositories/generation_repository.py",
+        "app/repositories/postgres/generation.py",
+        "app/experimental/comic_layouts.py",
+        "app/backup_restore.py"
+      ]
+    },
+    {
+      "archive": ".runtime/v2-checks/wave2-integration-packaging-r1/pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "archive_sha256": "49384425ee21505079d9f3bc5cb524ae29cf75718bb067e5393e10169ad09bf9",
+      "payload_files": 519,
+      "source_files_checked": 512,
+      "changed_runtime_checked": [
+        "app/creative/director_terminal_evidence.py",
+        "app/creative/generation.py",
+        "app/jobs.py",
+        "app/model_execution.py",
+        "app/repositories/generation_repository.py",
+        "app/repositories/postgres/generation.py",
+        "app/experimental/comic_layouts.py",
+        "app/backup_restore.py"
+      ]
+    },
+    {
+      "archive": ".runtime/v2-checks/wave2-integration-packaging-r1/pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "archive_sha256": "2c10b0e92ddbc9d36c04980969274622642244ef0edf1c3846942c1f0aeaf0a2",
+      "payload_files": 515,
+      "source_files_checked": 511,
+      "changed_runtime_checked": [
+        "app/creative/director_terminal_evidence.py",
+        "app/creative/generation.py",
+        "app/jobs.py",
+        "app/model_execution.py",
+        "app/repositories/generation_repository.py",
+        "app/repositories/postgres/generation.py",
+        "app/experimental/comic_layouts.py",
+        "app/backup_restore.py"
+      ]
+    },
+    {
+      "archive": ".runtime/v2-checks/wave2-integration-packaging-r1/pytest/public-wheel1/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "archive_sha256": "3a25ac2195d38a117e95e2676a451b734963b5602a5bcd9fd211bd795f77a913",
+      "payload_files": 515,
+      "source_files_checked": 511,
+      "changed_runtime_checked": [
+        "app/creative/director_terminal_evidence.py",
+        "app/creative/generation.py",
+        "app/jobs.py",
+        "app/model_execution.py",
+        "app/repositories/generation_repository.py",
+        "app/repositories/postgres/generation.py",
+        "app/experimental/comic_layouts.py",
+        "app/backup_restore.py"
+      ]
+    }
+  ],
+  "installed": false,
+  "extracted": false,
+  "product_imported": false
+}

@@ -1,0 +1,49 @@
+{"status": "PASS_FREEZE", "head": "b5f52c823b4df58ffe69ec309bfc2fc0e4a114fe", "tracked_paths": 12113, "source_paths": 2609}
+{
+  "status": "PASS_SCOPED_MERGED_WAVE2",
+  "head": "b5f52c823b4df58ffe69ec309bfc2fc0e4a114fe",
+  "tree": "c69fb267e26f3692f625deb0355bf5c1c3c13ef3",
+  "source_path_count": 2609,
+  "tracked_path_count": 12113,
+  "source_derivation": {
+    "baseline": 2600,
+    "added": [
+      "app/creative/director_terminal_evidence.py",
+      "frontend/src/experimental/ComicLayoutsPanel.framing.test.tsx",
+      "frontend/src/experimental/InteractiveStoryPanel.membership.test.tsx",
+      "tests/test_comic_cover_framing.py",
+      "tests/test_director_private_publication_races.py",
+      "tests/test_director_terminal_evidence_contract.py",
+      "tests/test_interactive_membership_handoff.py",
+      "tests/test_restored_file_verification.py",
+      "tests/test_wave2_generation_backup_restore_additive.py"
+    ],
+    "removed": []
+  },
+  "protected_old_tests": 1318,
+  "protected_old_docs": 8941,
+  "actual_log_summaries": {
+    "origin-before": [],
+    "comic-golden": [],
+    "backend": [
+      "1482 passed, 1 skipped, 494 deselected, 2 warnings in 226.10s (0:03:46)"
+    ],
+    "ui": [
+      "Test Files  85 passed (85)",
+      "Tests  1262 passed (1262)"
+    ],
+    "type": [],
+    "build": [
+      "\u2713 built in 6.73s"
+    ],
+    "token": [
+      "UI token guard PASS (52 files)"
+    ],
+    "packaging": [
+      "87 passed, 1 warning in 39.40s"
+    ],
+    "origin-after": []
+  },
+  "known_audio_listing_failures_excluded": 5,
+  "full_repository_green": false
+}
