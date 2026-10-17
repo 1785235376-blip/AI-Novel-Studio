@@ -1,5 +1,13 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Original-service interactive story backtracking (19:58 UTC)
+
+Interactive preview now exposes its chosen path and an explicit one-step back action. It sends the shorter complete path to the same original play endpoint; server source/version checks recompute conditions and variables. No client-side state restoration, story mutation, media playback or second narrative engine. Displayed paths and action callbacks are bound to the client/story/blocked generation and request epoch. Source changes hide prior private results immediately; stale late completions cannot claim the new preview was updated.
+
+Focused r1:5 new plus11 original interactive panel checks and TypeScript PASS. Final r2:6 focused checks PASS after fencing feedback ownership; final type check deferred to the next consolidated increment. This is mocked playback transport, not exported-player/browser acceptance.
+
+Remote reference check at19:57 UTC: main fed2404c, PR47 a072cf9, PR48 58bbaad, unchanged from prior check. No main/PR changes made.
+
 ## Literal Prompt variable filling (19:55 UTC)
 
 The original Prompt editor can explicitly fill bounded {{name}} placeholders in the current body, including Unicode variable names, with a full preview and separate confirmation. Replacement is literal, one-pass and UTF-8-byte bounded; no expressions, recursive expansion, file reads, model call, credential storage or separate template backend. Escaped markers remain unchanged. Values clear on source-owner/scope changes, stale previews and IME actions retire consent, and application calls only the original onEdit({text}) owner. Negative prompts, model settings, seed and references stay untouched; original Save creates revisions.

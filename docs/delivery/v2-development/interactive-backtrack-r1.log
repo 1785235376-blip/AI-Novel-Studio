@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/InteractiveStoryBacktrack.additive.test.tsx (5 tests) 134ms
+ ✓ src/experimental/InteractiveStoryPanel.test.tsx (11 tests) 1136ms
+   ✓ authors Unicode choices and typed variables then saves exact original IDs and scope 306ms
+
+ Test Files  2 passed (2)
+      Tests  16 passed (16)
+   Start at  04:56:45
+   Duration  1.94s (transform 216ms, setup 46ms, collect 410ms, tests 1.27s, environment 573ms, prepare 130ms)
+

@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/InteractiveStoryBacktrack.additive.test.tsx (6 tests) 142ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  04:57:46
+   Duration  944ms (transform 130ms, setup 23ms, collect 217ms, tests 142ms, environment 301ms, prepare 76ms)
+
