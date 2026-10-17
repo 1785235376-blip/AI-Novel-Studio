@@ -114,8 +114,29 @@ def test_real_router_import_inspection_authority_and_private_validation(rig, mon
         inspected = client.get(root + '/' + asset['id'] + '/model-reference', headers=headers)
         assert inspected.status_code == 200 and inspected.json()['inspection']['triangle_count_per_primitive'] == 1
         assert inspected.headers['cache-control'] == 'no-store'
+        mesh = client.get(root + '/' + asset['id'] + '/model-reference/mesh-preview', headers=headers)
+        assert mesh.status_code == 200 and mesh.json()['mesh_preview']['primitives'][0]['triangles'] == [[0, 1, 2]]
+        document = triangle_document(); count = 4098
+        document['buffers'][0]['byteLength'] = count * 12
+        document['bufferViews'] = [{'buffer': 0, 'byteLength': count * 12}]
+        document['accessors'] = [{'bufferView': 0, 'componentType': 5126, 'count': count, 'type': 'VEC3'}]
+        document['meshes'][0]['primitives'][0].pop('indices')
+        large_model = client.post(root + '/model-reference', headers=headers, json=body(glb(document, b'\0' * (count * 12)), key='large-model'))
+        assert large_model.status_code == 201
+        denied_preview = client.get(root + '/' + large_model.json()['id'] + '/model-reference/mesh-preview', headers=headers)
+        assert denied_preview.status_code == 422 and denied_preview.json()['detail']['code'] == 'MODEL_REFERENCE_GLB_PREVIEW_LIMIT'
+
         permissions.remove('domain.read')
         assert client.get(root + '/' + asset['id'] + '/model-reference', headers=headers).status_code == 403
         monkeypatch.setattr(ModelReferenceImportRoute, 'MAX_BODY', 1000)
         large = client.post(root + '/model-reference', headers=headers, content=b' ' * 1001)
         assert large.status_code == 413 and 'MODEL_REFERENCE_REQUEST_LIMIT' in large.text
+
+
+def test_mesh_preview_keeps_original_asset_pin_and_is_read_only(rig):
+    value = upload(rig)
+    before = {str(path): path.read_bytes() for path in rig.root.rglob('*') if path.is_file()}
+    result = rig.service.inspect_model_reference(rig.nid, rig.scope, value['id'], mesh_preview=True)
+    assert result['asset_snapshot']['digest'] == value['sha256']
+    assert result['mesh_preview']['primitives'][0]['triangles'] == [[0, 1, 2]]
+    assert before == {str(path): path.read_bytes() for path in rig.root.rglob('*') if path.is_file()}

@@ -1,4 +1,4 @@
-import { ApiError } from '../api';
+import { ApiError, apiErrorView } from '../api';
 import type { StudioAsset } from './studioClient';
 export const MODEL_REFERENCE_MAX_BYTES=8*1024*1024;
 export type ModelReferenceImport={contract:'studio-static-glb-import/1';filename:string;content_base64:string;idempotency_key:string};
@@ -23,4 +23,26 @@ export function checkedModelReferenceInspection(value:unknown,expected:StudioAss
  const bounds=exact(item.bounds,['space','min','max']);if(bounds.space!=='MESH_LOCAL_UNTRANSFORMED')invalid();
  for(const key of ['min','max'])if(!Array.isArray(bounds[key])||(bounds[key] as unknown[]).length!==3||(bounds[key] as unknown[]).some(n=>typeof n!=='number'||!Number.isFinite(n)||Math.abs(n)>1e9))invalid();
  if((bounds.min as number[]).some((n,i)=>n>(bounds.max as number[])[i]))invalid();return structuredClone(value) as ModelReferenceInspection;
+}
+
+export type ModelMeshPreview=ModelReferenceInspection&{mesh_preview:{contract:'studio-static-glb-mesh-preview/1';space:'MESH_LOCAL_UNTRANSFORMED';primitives:{positions:number[][];triangles:number[][]}[];scene_transforms_applied:false;materials_rendered:false;decimated:false;model_called:false}};
+export function checkedModelMeshPreview(value:unknown,expected:StudioAsset):ModelMeshPreview{
+ const root=exact(value,['asset_snapshot','inspection','mesh_preview']);
+ const checked=checkedModelReferenceInspection({asset_snapshot:root.asset_snapshot,inspection:root.inspection},expected);
+ const mesh=exact(root.mesh_preview,['contract','space','primitives','scene_transforms_applied','materials_rendered','decimated','model_called']);
+ if(mesh.contract!=='studio-static-glb-mesh-preview/1'||mesh.space!=='MESH_LOCAL_UNTRANSFORMED'||['scene_transforms_applied','materials_rendered','decimated','model_called'].some(key=>mesh[key]!==false)||!Array.isArray(mesh.primitives)||mesh.primitives.length!==checked.inspection.primitive_count)invalid();
+ let positions=0,triangles=0;const minimum=[Infinity,Infinity,Infinity],maximum=[-Infinity,-Infinity,-Infinity];
+ for(const raw of mesh.primitives){const primitive=exact(raw,['positions','triangles']);if(!Array.isArray(primitive.positions)||!primitive.positions.length||!Array.isArray(primitive.triangles)||!primitive.triangles.length)invalid();
+  positions+=primitive.positions.length;triangles+=primitive.triangles.length;if(positions>4096||triangles>2048)invalid();
+  for(const point of primitive.positions){if(!Array.isArray(point)||point.length!==3||point.some(n=>typeof n!=='number'||!Number.isFinite(n)||Math.abs(n)>1e9))invalid();point.forEach((n,i)=>{minimum[i]=Math.min(minimum[i],n);maximum[i]=Math.max(maximum[i],n);});}
+  for(const triangle of primitive.triangles){if(!Array.isArray(triangle)||triangle.length!==3)invalid();triangle.forEach(index=>integer(index,0,(primitive.positions as unknown[]).length-1));}
+ }
+ if(positions!==checked.inspection.position_count_per_primitive||triangles!==checked.inspection.triangle_count_per_primitive||minimum.some((n,i)=>n!==checked.inspection.bounds.min[i])||maximum.some((n,i)=>n!==checked.inspection.bounds.max[i]))invalid();
+ return structuredClone(value) as ModelMeshPreview;
+}
+
+export function modelReferenceError(reason:unknown,fallback:string):string{
+ const code=reason instanceof ApiError?reason.problem.code:'';
+ const messages:Record<string,string>={MODEL_REFERENCE_GLB_PREVIEW_LIMIT:'网格超出诊断视图的 4096 个位置或 2048 个三角形上限；原文件保留，未自动简化。',MODEL_REFERENCE_GLB_URI_UNSUPPORTED:'GLB 含 URI 引用，当前不加载外部或内联 URI。请导出仅使用嵌入 BIN 数据的静态参考。',MODEL_REFERENCE_GLB_ANIMATION_OR_EXTENSION_UNSUPPORTED:'当前只支持静态未压缩网格，暂不支持动画、骨骼或扩展。',MODEL_REFERENCE_GLB_SIZE_INVALID:'GLB 文件为空、过小或超过 8 MiB 上限。',MODEL_REFERENCE_GLB_POSITION_UNSUPPORTED:'当前只支持 float32 VEC3 位置数据的三角网格。'};
+ return Object.hasOwn(messages,code)?messages[code]:apiErrorView(reason,fallback).message;
 }

@@ -524,8 +524,9 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
         onDirtyChange={promptDraftChanged} />
     )}
     {workspaceView === 'ASSETS' && <Panel title="独立素材工作区"><p>无需小说、章节或模型，导入素材即可保存和导出。</p><p>上传会保存文件，并记录“外部导入”；许可默认未指定，可在来源声明中补充。下载原始文件保留原格式，不进行重新编码。</p>{overview && <Badge tone="info">{!writable ? overview.capabilities.can_review === true ? '仅审核与读取' : '只读' : overview.capabilities.media_validator_configured ? '手工导入可用' : '媒体校验工具缺失'} · 不需要模型</Badge>}{overview && !overview.capabilities.media_validator_configured && <p>图片、视频和音频导入需要 FFmpeg / ffprobe 校验工具。当前可查看和导出已保存资产，未调用模型。</p>}</Panel>}
-    {workspaceView === 'ASSETS' && overview && !denied && <StudioModelReferencePanel scope={client} assets={rows} blocked={busy || dirty} canImport={writable && overview.capabilities.manual_import === true} isCurrent={current}
+    {workspaceView === 'ASSETS' && overview && !denied && <StudioModelReferencePanel scope={client} assets={rows} blocked={busy || dirty} canImport={writable && overview.capabilities.manual_import === true} canExport={overview.capabilities.manual_export === true} isCurrent={current}
       onInspect={asset => guarded(() => client.inspectModelReference(asset))}
+      onMesh={(asset,signal) => guarded(() => client.inspectModelMesh(asset,signal),signal)}
       onImport={async body => {
         if (!current() || !writable || overview.capabilities.manual_import !== true || busyRef.current || dirtyRef.current) throw new Error('请先处理当前输入并核对项目写入权限。');
         busyRef.current = true; setBusy(true); setNotice('');

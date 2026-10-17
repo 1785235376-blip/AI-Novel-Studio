@@ -99,3 +99,25 @@ def test_non_indexed_triangle_and_strided_positions():
     document["accessors"] = [document["accessors"][0]]
     binary = b"".join(struct.pack("<4f", *point, 99) for point in [(-1, 0, 0), (1, 0, 0), (0, 2, 0)])
     assert inspect_static_glb(glb(document, binary))["bounds"]["max"] == [1, 2, 0]
+
+
+def test_mesh_preview_contains_actual_bounded_positions_and_exact_triangle_indices():
+    result = inspect_static_glb(glb(), include_geometry=True)
+    assert result['inspection'] == inspect_static_glb(glb())
+    preview = result['mesh_preview']
+    assert preview['primitives'] == [{'positions': [[-1, 0, 0], [1, 0, 0], [0, 2, 0]], 'triangles': [[0, 1, 2]]}]
+    assert preview['space'] == 'MESH_LOCAL_UNTRANSFORMED'
+    assert preview['scene_transforms_applied'] is False and preview['decimated'] is False
+
+
+def test_preview_budget_does_not_reclassify_supported_import_or_silently_decimate():
+    count = 4098
+    document = triangle_document()
+    document['buffers'][0]['byteLength'] = count * 12
+    document['bufferViews'] = [{'buffer': 0, 'byteLength': count * 12}]
+    document['accessors'] = [{'bufferView': 0, 'componentType': 5126, 'count': count, 'type': 'VEC3'}]
+    document['meshes'][0]['primitives'][0].pop('indices')
+    data = glb(document, b'\0' * (count * 12))
+    assert inspect_static_glb(data)['position_count_per_primitive'] == count
+    with pytest.raises(ValueError, match='PREVIEW_LIMIT'):
+        inspect_static_glb(data, include_geometry=True)

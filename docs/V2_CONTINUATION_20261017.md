@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Bounded mesh-local diagnostic and explicit SVG export (20:49 UTC)
+
+The original GLB Asset path now returns strictly bounded, exact-source numeric geometry through a separate read-only contract. The existing panel explicitly loads it, offers orthographic wireframe/gray yaw/pitch views, and exports only a diagnostic SVG when original manual_export authority is present. Scope/source replacement aborts old reads; strict decoding checks counts, bounds and topology. Oversized previews fail clearly without silently decimating or invalidating a metadata-supported stored model.
+
+This is mesh-local: no scene transforms, materials, animation, production rendering or formal Image-asset creation. Metadata v1 full-scene preview/frame flags remain false. Full details and focused overlapping evidence are in STATIC_GLB_REFERENCE_CONTRACT.md. Final export-gate check:7 tests and TypeScript PASS; prior actual GLB File/router check:7 PASS. No browser, PostgreSQL, full suite/build or full 3D/V2 acceptance claim. User remains asleep; batch archive/report later.
+
 ## Bounded GLB request buffering (20:36 UTC)
 
 The new GLB-only private POST now accumulates bounded request bytes in a bytearray rather than retaining an unbounded count of tiny chunk objects. The existing 12 MiB byte cap and original media routes are unchanged. Non-schema JSON numeric conversion errors are reduced to the private GLB JSON-invalid code; deliberate bounded parser codes remain intact. Focused original parser plus private router check:20 PASS. No full-suite claim.

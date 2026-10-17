@@ -16,6 +16,8 @@ MAX_BYTES = 8 * 1024 * 1024
 MAX_JSON_BYTES = 1024 * 1024
 MAX_VERTICES = 100_000
 MAX_INDICES = 300_000
+MAX_PREVIEW_POSITIONS = 4096
+MAX_PREVIEW_TRIANGLES = 2048
 CONTRACT = "studio-static-glb-inspection/1"
 
 
@@ -68,7 +70,9 @@ def _inspect_json(value):
             _fail("MODEL_REFERENCE_GLB_NUMBER_INVALID")
 
 
-def inspect_static_glb(data: bytes):
+def inspect_static_glb(data: bytes, *, include_geometry=False):
+    if type(include_geometry) is not bool:
+        _fail("MODEL_REFERENCE_GLB_PREVIEW_OPTION_INVALID")
     if not isinstance(data, bytes) or not 28 <= len(data) <= MAX_BYTES:
         _fail("MODEL_REFERENCE_GLB_SIZE_INVALID")
     magic, version, length = struct.unpack_from("<III", data)
@@ -146,6 +150,7 @@ def inspect_static_glb(data: bytes):
         parsed.append((item, start, stride, count, code, width))
     meshes = _array(document.get("meshes"), 64, required=True)
     vertices = indices = primitives = triangles = 0
+    preview_primitives = []
     minimum, maximum = [math.inf] * 3, [-math.inf] * 3
     for raw in meshes:
         mesh = _object(raw)
@@ -167,25 +172,43 @@ def inspect_static_glb(data: bytes):
             vertices += count
             if vertices > MAX_VERTICES:
                 _fail("MODEL_REFERENCE_GLB_GEOMETRY_LIMIT")
+            if include_geometry and vertices > MAX_PREVIEW_POSITIONS:
+                _fail("MODEL_REFERENCE_GLB_PREVIEW_LIMIT")
+            preview_positions = []
             for index in range(count):
                 point = struct.unpack_from("<fff", binary, start + index * stride)
                 if any(not math.isfinite(number) or abs(number) > 1e9 for number in point):
                     _fail("MODEL_REFERENCE_GLB_POSITION_INVALID")
+                if include_geometry:
+                    preview_positions.append(list(point))
                 for axis, number in enumerate(point):
                     minimum[axis] = min(minimum[axis], number)
                     maximum[axis] = max(maximum[axis], number)
             element_count = count
+            preview_indices = []
             if "indices" in primitive:
                 item, start, stride, element_count, code, width = parsed[_integer(primitive["indices"], 0, len(parsed) - 1)]
                 if item["type"] != "SCALAR" or item["componentType"] not in (5121, 5123, 5125) or item.get("normalized", False):
                     _fail("MODEL_REFERENCE_GLB_INDICES_UNSUPPORTED")
+                if include_geometry and triangles + element_count // 3 > MAX_PREVIEW_TRIANGLES:
+                    _fail("MODEL_REFERENCE_GLB_PREVIEW_LIMIT")
                 for index in range(element_count):
-                    if struct.unpack_from("<" + code, binary, start + index * stride)[0] >= count:
+                    vertex_index = struct.unpack_from("<" + code, binary, start + index * stride)[0]
+                    if vertex_index >= count:
                         _fail("MODEL_REFERENCE_GLB_INDEX_OUT_OF_RANGE")
+                    if include_geometry:
+                        preview_indices.append(vertex_index)
             indices += element_count
             if indices > MAX_INDICES or element_count % 3:
                 _fail("MODEL_REFERENCE_GLB_TRIANGLES_INVALID")
             triangles += element_count // 3
+            if include_geometry:
+                if triangles > MAX_PREVIEW_TRIANGLES:
+                    _fail("MODEL_REFERENCE_GLB_PREVIEW_LIMIT")
+                if "indices" not in primitive:
+                    preview_indices = list(range(count))
+                preview_primitives.append({"positions": preview_positions,
+                    "triangles": [preview_indices[index:index + 3] for index in range(0, element_count, 3)]})
     nodes = _array(document.get("nodes", []), 256)
     for node in nodes:
         node = _object(node)
@@ -193,10 +216,17 @@ def inspect_static_glb(data: bytes):
             _fail("MODEL_REFERENCE_GLB_ANIMATION_OR_EXTENSION_UNSUPPORTED")
         if "mesh" in node:
             _integer(node["mesh"], 0, len(meshes) - 1)
-    return {"contract": CONTRACT, "format": "GLB_2_STATIC_TRIANGLE_GEOMETRY", "byte_count": len(data),
+    inspection = {"contract": CONTRACT, "format": "GLB_2_STATIC_TRIANGLE_GEOMETRY", "byte_count": len(data),
             "sha256": hashlib.sha256(data).hexdigest(), "mesh_count": len(meshes), "node_count": len(nodes),
             "primitive_count": primitives, "position_count_per_primitive": vertices, "triangle_count_per_primitive": triangles,
             "bounds": {"space": "MESH_LOCAL_UNTRANSFORMED", "min": minimum, "max": maximum},
             "scene_transforms_applied": False, "materials_rendered": False, "textures_decoded": False,
             "full_gltf_conformance_verified": False, "external_resources_loaded": False,
             "model_called": False, "preview_available": False, "frame_export_available": False}
+
+    if include_geometry:
+        return {"inspection": inspection, "mesh_preview": {
+            "contract": "studio-static-glb-mesh-preview/1", "space": "MESH_LOCAL_UNTRANSFORMED",
+            "primitives": preview_primitives, "scene_transforms_applied": False,
+            "materials_rendered": False, "decimated": False, "model_called": False}}
+    return inspection

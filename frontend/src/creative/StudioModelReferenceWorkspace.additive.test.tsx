@@ -22,13 +22,14 @@ it.each([false,true])('imports through original workspace, with lost-response re
   if(url===base+'/assets/model-reference'&&init.method==='POST'){if(!saved.length)saved=[modelAsset()];if(lost&&!didLose){didLose=true;throw new Error('Fixture lost response after commit');}return reply(saved[0],201);}
   if(url.endsWith('/lineage')){saved=[{...saved[0],version:2}];return reply(saved[0]);}
   if(url===base+'/assets/model-reference/model-reference')return reply(modelInspection(saved[0]));
+  if(url===base+'/assets/model-reference/model-reference/mesh-preview')return reply({...modelInspection(saved[0]),mesh_preview:{contract:'studio-static-glb-mesh-preview/1',space:'MESH_LOCAL_UNTRANSFORMED',primitives:[{positions:[[-1,0,0],[1,0,0],[0,2,0]],triangles:[[0,1,2]]}],scene_transforms_applied:false,materials_rendered:false,decimated:false,model_called:false}});
   if(url===base+'/assets/model-reference')return reply(saved[0]);
   throw new Error(`Unexpected request: ${init.method} ${url}`);
  });vi.stubGlobal('fetch',fetch);
  const query=new QueryClient({defaultOptions:{queries:{retry:false},mutations:{retry:false}}});render(<QueryClientProvider client={query}><IndependentStudioWorkspace projectId='project' context={{sessionToken:''}} scope={{workspace:'Local',project:'Independent',storyline:'Default',branch:'Main'}} actor='Author' module='ASSETS' onModuleChange={vi.fn()} onProjectChoice={vi.fn()}/></QueryClientProvider>);
  const picker=await screen.findByLabelText('选择静态 GLB 文件');const bytes=modelGlbBytes(),file=new File([bytes],'triangle.glb');Object.defineProperty(file,'arrayBuffer',{value:async()=>bytes.buffer});fireEvent.change(picker,{target:{files:[file]}});fireEvent.click(await screen.findByRole('button',{name:'明确导入并保存 GLB 参考素材'}));
  if(lost)fireEvent.click(await screen.findByRole('button',{name:'使用同一请求重试 GLB 导入'}));
- await waitFor(()=>expect(saved[0]?.version).toBe(2));await waitFor(()=>expect((screen.getByRole('button',{name:'读取当前 GLB 几何检查'}) as HTMLButtonElement).disabled).toBe(false));fireEvent.click(screen.getByRole('button',{name:'读取当前 GLB 几何检查'}));await screen.findByLabelText('GLB 原素材几何回执');
+ await waitFor(()=>expect(saved[0]?.version).toBe(2));await waitFor(()=>expect((screen.getByRole('button',{name:'读取当前 GLB 几何检查'}) as HTMLButtonElement).disabled).toBe(false));fireEvent.click(screen.getByRole('button',{name:'读取当前 GLB 几何检查'}));await screen.findByLabelText('GLB 原素材几何回执');fireEvent.click(screen.getByRole('button',{name:'明确读取 GLB 网格诊断'}));await screen.findByRole('img',{name:'实际 GLB 网格局部几何示意'});
  const writes=fetch.mock.calls.filter(([,init])=>(init?.method??'GET')!=='GET');expect(writes.map(([url])=>url)).toEqual([base+'/assets/model-reference',...(lost?[base+'/assets/model-reference']:[]),base+'/assets/model-reference/lineage']);
  const sent=JSON.parse(String(writes[0][1]!.body));expect(sent.contract).toBe('studio-static-glb-import/1');expect(writes[0][1]!.headers).toMatchObject({'Idempotency-Key':sent.idempotency_key});if(lost)expect(JSON.parse(String(writes[1][1]!.body)).idempotency_key).toBe(sent.idempotency_key);expect(fetch.mock.calls.some(([url])=>/generate|execute|render/.test(url))).toBe(false);
 });

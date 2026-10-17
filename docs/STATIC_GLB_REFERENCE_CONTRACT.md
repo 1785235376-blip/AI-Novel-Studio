@@ -25,4 +25,14 @@ The container and accessor interpretation follows the [Khronos glTF 2.0 specific
 - Earlier parser/owner receipts are retained; their totals overlap the final cases and must not be summed as new capability counts.
 - Router tests mount the real router with a constrained test authorization callback. They are not full application/desktop session acceptance.
 - UI import/inspection now mounts in the original Asset workspace: explicit file save, byte/hash-bound receipt, original idempotent retry, separate source declaration and exact source inspection. static-glb-ui-r3:7 mounted/unit checks and TypeScript PASS; transport is mocked.
-- PostgreSQL, actual browser, 3D viewport, transformed scene bounds, frame export, GLTF/OBJ/FBX/USD, Blender/UE interoperability and graph/reference integration remain NOT_RUN or NOT_IMPLEMENTED for this slice. No M10/full-V2 completion claim.
+- PostgreSQL, actual browser, full scene viewport, transformed scene bounds, production frame export, GLTF/OBJ/FBX/USD, Blender/UE interoperability and graph/reference integration remain NOT_RUN or NOT_IMPLEMENTED for this slice. No M10/full-V2 completion claim.
+
+## Explicit mesh-local diagnostic increment (20:49 UTC)
+
+GET /api/projects/{nid}/studio/assets/{aid}/model-reference/mesh-preview reuses the exact-pinned read and final authority/source recheck. It returns the closed studio-static-glb-mesh-preview/1 contract with actual numeric positions and triangle indices. At most 4096 positions and 2048 triangles are accepted for this view. Larger metadata-supported files receive a private preview-limit error without invalidating the stored asset; there is no silent decimation. Known private parser codes survive as bounded 422 errors, while stale-source handling remains unchanged.
+
+The original Asset panel explicitly requests this geometry, validates source/digest/counts/bounds/topology, and displays a local orthographic wireframe or gray diagnostic with yaw/pitch controls. Node transforms, scene instancing, materials, textures and animation are not applied. Painter-sort occlusion is approximate. Read state is retired across source/scope changes. Nothing is automatically fetched or generated.
+
+An explicit SVG diagnostic download requires the original manual_export capability. It contains only numeric projected geometry and fixed text; it does not create a formal Image asset, PNG, video frame or production render. Original metadata v1 preview_available/frame_export_available flags remain false for full-scene/production capabilities; the narrow mesh diagnostic has its own explicit contract.
+
+Evidence: static-glb-mesh-owner-r1 has 28 focused Python checks; static-glb-mesh-final-r1 has 7 File/router and 4 UI checks plus TypeScript; static-glb-mesh-workspace-r1 has 2 mounted original-workspace checks; static-glb-mesh-export-gate-r1 has 7 focused/mounted checks plus TypeScript. These overlap, are not additive acceptance counts, and do not replace PostgreSQL/browser/full product acceptance. No full suite or production build was repeated.

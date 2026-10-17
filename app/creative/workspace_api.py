@@ -18,7 +18,7 @@ def is_independent_studio_route(method, normalized_path):
     """Exact method/path admission; each handler still resolves full authority."""
     root = r"/api/projects/[^/]+/studio"
     patterns = {
-        "GET": root + r"(?:/(?:preferences|storage|references|relationships|production-contracts|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/(?:download|model-reference))?)?|director/workspace/[^/]+))?",
+        "GET": root + r"(?:/(?:preferences|storage|references|relationships|production-contracts|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/(?:download|model-reference(?:/mesh-preview)?))?)?|director/workspace/[^/]+))?",
         "POST": r"(?:/api/experimental/projects|" + root + r"/(?:activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/model-reference|/[^/]+/(?:restore|relationships|mask))?))",
         "PUT": root + r"/(?:preferences|assets/[^/]+/lineage)",
         "DELETE": root + r"/assets/[^/]+(?:/relationships/[^/]+)?",
@@ -221,12 +221,26 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
         return invoke(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.import_asset(nid, scope, actor, body, guard))
 
+    def model_reference_call(nid, token, branch, permission, callback):
+        def operation(actor, scope, guard):
+            from ..experimental.common import StaleSourceError
+            try:
+                return callback(actor, scope, guard)
+            except StaleSourceError:
+                raise
+            except ValueError as error:
+                code = str(error)
+                if re.fullmatch(r"MODEL_REFERENCE_GLB_[A-Z_]{1,80}", code):
+                    raise HTTPException(422, {"code": code}) from None
+                raise
+        return invoke(nid, token, branch, permission, operation)
+
     model_reference_router = APIRouter(route_class=ModelReferenceImportRoute)
 
     @model_reference_router.post("/projects/{nid}/studio/assets/model-reference", status_code=201)
     def import_model_reference(nid: str, body: ManualModelReferenceImport,
                                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return invoke(nid, x_session_token, x_branch_id, "domain.write",
+        return model_reference_call(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.import_model_reference(nid, scope, actor, body, guard))
 
     router.include_router(model_reference_router)
@@ -234,8 +248,14 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
     @router.get("/projects/{nid}/studio/assets/{aid}/model-reference")
     def inspect_model_reference(nid: str, aid: str,
                                 x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return invoke(nid, x_session_token, x_branch_id, "domain.read",
+        return model_reference_call(nid, x_session_token, x_branch_id, "domain.read",
                       lambda actor, scope, guard: service.inspect_model_reference(nid, scope, aid, guard))
+
+    @router.get("/projects/{nid}/studio/assets/{aid}/model-reference/mesh-preview")
+    def preview_model_reference_mesh(nid: str, aid: str,
+                                     x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return model_reference_call(nid, x_session_token, x_branch_id, "domain.read",
+                      lambda actor, scope, guard: service.inspect_model_reference(nid, scope, aid, guard, mesh_preview=True))
 
     @router.get("/projects/{nid}/studio/assets/{aid}")
     def asset(nid: str, aid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
