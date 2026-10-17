@@ -1,0 +1,73 @@
+{
+  "status": "PASS",
+  "head": "39ba1c7bc6d8438cc7c7d59f5767ba67f97aca0a",
+  "frozen_source_count": 2603,
+  "all_current_source_hashes_match_all_receipts": true,
+  "original_tests_unchanged": true,
+  "original_runner_unchanged": true,
+  "manifest_added_only": "app/creative/director_terminal_evidence.py",
+  "manifest_sha256": "353b92aff6116d873ea4402a1ef627e7899214b46ba823a9b4300ba75c5d0448",
+  "receipts": {
+    "origin-before": {
+      "receipt": "docs/delivery/v2-development/director-publication-origin-before-r1.json",
+      "sha256": "ef9c1da5f7bddf5278ca13d246fa159cc22c6a494209825e2a11971ceaab550b",
+      "log_sha256": "57700d07dd0ee98768f4a3ae6c0f0049574ecd18220ad074776ebccef337ad49",
+      "sources_changed": false
+    },
+    "new": {
+      "receipt": "docs/delivery/v2-development/director-publication-new-r1.json",
+      "sha256": "553d2584042fe805690dae4d6f2cfaf13cd6125980dbd166c66ff5983f9fb804",
+      "log_sha256": "3e2347e9dcac4582d06728d6718024c9dda203289e0d608ff323ee6892b4f811",
+      "sources_changed": false
+    },
+    "regression": {
+      "receipt": "docs/delivery/v2-development/director-publication-regression-r1.json",
+      "sha256": "d2dff3643fde0e4feadf6b1ad7d16ba010f950e1b8ea12bd4db47bd013db92d4",
+      "log_sha256": "ba0693db834559c636e3a0f0de4133f90ba279bd732e206bec8496b125741d50",
+      "sources_changed": false
+    },
+    "file-staging": {
+      "receipt": "docs/delivery/v2-development/director-publication-file-staging-r1.json",
+      "sha256": "9be1b85272435fcfed9800953a59e9f13a380fb6990622e9da80e02619e10e5a",
+      "log_sha256": "46af09c99c909681a191d7dba7d462df14058989100ef4136c0ea4fb13f25f70",
+      "sources_changed": false
+    },
+    "packaging": {
+      "receipt": "docs/delivery/v2-development/director-publication-packaging-r1.json",
+      "sha256": "85adf4db1535a6d24c1b02fc2d2f0f30061be6e5244b9f5423ea13eca1ac835a",
+      "log_sha256": "b3ee80ff723bdad8a866b6585aaee3d28bf15a7f84355709265011d57fda69b7",
+      "sources_changed": false
+    },
+    "ui": {
+      "receipt": "docs/delivery/v2-development/director-publication-ui-r1.json",
+      "sha256": "f8f1a0dee6461e457dabd73e178f26d53547f5d748eac16275bb6c0207cf3ff6",
+      "log_sha256": "bafc608bfa178a651dd240a1655a7221aa1329c949617ab3064b2c9f47cfb663",
+      "sources_changed": false
+    },
+    "type": {
+      "receipt": "docs/delivery/v2-development/director-publication-type-r1.json",
+      "sha256": "90fa43671c251f67b7550163336f6fcef09335bf8c95f6be0737bae804dfa8af",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sources_changed": false
+    },
+    "build": {
+      "receipt": "docs/delivery/v2-development/director-publication-build-r1.json",
+      "sha256": "87c99e9005547468079b04abb93d869c579980c9a879a47fedec864c3966c2d0",
+      "log_sha256": "f8e800611052e9af1c774ce877d6cce6732aeb9efd6744937b578e134968784b",
+      "sources_changed": false
+    },
+    "tokens": {
+      "receipt": "docs/delivery/v2-development/director-publication-tokens-r1.json",
+      "sha256": "8e8742bfa0f55f501e2715727f4bb4e662f1b24b07882dee0b54f036567f4684",
+      "log_sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "sources_changed": false
+    },
+    "origin-after": {
+      "receipt": "docs/delivery/v2-development/director-publication-origin-after-r1.json",
+      "sha256": "8ab5fcbe92d6115b7ccc86f0d4aabd44df786a08862cd3cc913f8e3e5cc4cfd6",
+      "log_sha256": "c335f5b81d8bb6a7265f336b35253c371eb79580b80e718d679ed89334889c5b",
+      "sources_changed": false
+    }
+  },
+  "acceptance_limits": "No PostgreSQL, native Windows, live provider, install, browser, or network execution."
+}

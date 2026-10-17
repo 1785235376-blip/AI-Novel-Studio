@@ -207,7 +207,8 @@ class _CreativeDirectorCapability:
     Python code with arbitrary in-process introspection is outside this boundary.
     """
     __slots__ = ("_seal", "manager", "host", "preparation", "authorization", "route_fingerprint",
-                 "job", "job_id", "cancellation", "invocation", "adapter", "started", "before_dispatch", "on_terminal", "worker_claimed")
+                 "job", "job_id", "cancellation", "invocation", "adapter", "started", "before_dispatch", "on_terminal", "worker_claimed",
+                 "terminal_publication", "publication_state", "publication_thread", "_publication_binding")
 
     def __init__(self, seal, manager, host, preparation, authorization, route_fingerprint):
         from .model_center.discovery_authority import DiscoveryAuthority
@@ -223,6 +224,10 @@ class _CreativeDirectorCapability:
         self.started = False
         self.worker_claimed = False
         self.before_dispatch = self.on_terminal = None
+        self.terminal_publication = None
+        self.publication_state = None
+        self.publication_thread = None
+        self._publication_binding = None
         host.guard()
 
     @classmethod
@@ -241,6 +246,15 @@ class _CreativeDirectorCapability:
         self.before_dispatch, self.on_terminal = before_dispatch, on_terminal
         job.before_dispatch, job.on_terminal = before_dispatch, on_terminal
 
+    def _bind_terminal_publication(self, job, publisher, repository):
+        self._check(job)
+        if (self.started or self._publication_binding is not None or not callable(publisher)
+                or repository is not getattr(self.manager.persistence, "repository", self.manager.persistence)):
+            raise ValueError("CREATIVE_DIRECTOR_TERMINAL_OWNER_REQUIRED")
+        self._publication_binding = (publisher, repository, job.expected_request_digest)
+        self.terminal_publication = publisher
+        self.publication_state = "PENDING"
+
     def _check(self, job, *, manager=None, started=False):
         from .model_center.discovery_authority import DiscoveryAuthority
         if (self._seal is not _CREATIVE_SEAL or self.job is not job or self.job_id != job.id
@@ -253,6 +267,10 @@ class _CreativeDirectorCapability:
 
     def _current(self, job):
         self._check(job)
+        if self._publication_binding is not None and (
+                self.terminal_publication is not self._publication_binding[0]
+                or job.expected_request_digest != self._publication_binding[2]):
+            raise ValueError("CREATIVE_DIRECTOR_TERMINAL_OWNER_CHANGED")
         if (self.before_dispatch is not None and (job.before_dispatch is not self.before_dispatch
                 or job.on_terminal is not self.on_terminal)):
             raise ValueError("CREATIVE_DIRECTOR_BROKER_HOOKS_CHANGED")
@@ -260,6 +278,10 @@ class _CreativeDirectorCapability:
         self.authorization()
         self.host.guard()
         self._check(job)
+        if self._publication_binding is not None and (
+                self.terminal_publication is not self._publication_binding[0]
+                or job.expected_request_digest != self._publication_binding[2]):
+            raise ValueError("CREATIVE_DIRECTOR_TERMINAL_OWNER_CHANGED")
 
 
 @dataclass(frozen=True, slots=True)

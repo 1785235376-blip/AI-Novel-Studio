@@ -35,10 +35,15 @@ class PostgresGenerationRepository:
 
     @committed_change("TASK")
     def save(self,item):
+        from ...creative.director_terminal_evidence import FIELD
+        if FIELD in item:
+            raise ValueError("CREATIVE_DIRECTOR_TERMINAL_POSTGRES_UNSUPPORTED")
         with self.database.session() as session:
             binding = graph_job_binding(item)
             novel_uuid = self._graph_owner(session, item, binding) if binding is not None else None
             iid=external_uuid(item["id"]);row=session.get(GenerationJobModel,iid);chapter_uuid=None
+            if row is not None and FIELD in self._payload(row):
+                raise ValueError("CREATIVE_DIRECTOR_TERMINAL_POSTGRES_UNSUPPORTED")
             if binding is None and row is not None and graph_job_binding(self._payload(row)) is not None:
                 raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
             if binding is None and item.get("novel_id"):novel_uuid=novel_or_raise(session,item["novel_id"]).id

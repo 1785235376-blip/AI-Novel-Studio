@@ -1,0 +1,8 @@
+{
+  "status": "PASS_COMPLETE_RETAINED_EVIDENCE",
+  "receipt_count": 12,
+  "indexed_evidence_files": 69,
+  "source_count": 2603,
+  "archives": 4,
+  "manifest_sha256": "353b92aff6116d873ea4402a1ef627e7899214b46ba823a9b4300ba75c5d0448"
+}

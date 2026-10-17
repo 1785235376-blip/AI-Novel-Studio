@@ -1,0 +1,32 @@
+{
+  "status": "PASS_INSTALLED_PACKAGING_TOOLS",
+  "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+  "executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+  "sys_path": [
+    "/workspace/scratch/20a0022d2b33/studio-director-publication/docs/delivery/v2-development/director-publication-20261017",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python312.zip",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/lib-dynload",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/site-packages"
+  ],
+  "meta_path": [
+    "_distutils_hack.DistutilsMetaFinder",
+    "builtins.type",
+    "builtins.type",
+    "builtins.type"
+  ],
+  "modules": {
+    "setuptools": {
+      "origin": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/site-packages/setuptools/__init__.py",
+      "version": "84.0.0",
+      "sha256": "04d3cd11754df1af03e547cf9e930e8f46330c2c46772b43545b75993667978f"
+    },
+    "wheel": {
+      "origin": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/site-packages/wheel/__init__.py",
+      "version": "0.48.0",
+      "sha256": "486f49117612245c2a2d8e9f4b9686a6e8451c5aa8bd0d7a63c9ee6d0e446bd4"
+    }
+  },
+  "product_imported": false,
+  "tool_installation": false
+}

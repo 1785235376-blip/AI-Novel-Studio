@@ -833,6 +833,7 @@ class JobManager:
                 if capability.worker_claimed:
                     raise ValueError("CREATIVE_DIRECTOR_WORKER_ALREADY_CLAIMED")
                 capability.worker_claimed = True
+                publication_binding = capability._publication_binding
         started=time.monotonic()
         try:
             if _is_creative_execution(job): self._guard_creative_request(job)
@@ -969,6 +970,38 @@ class JobManager:
                     self._emit(job)
                     if creative_job and job.status == "COMPLETED":
                         check_generation_bounds(job)
+                        if publication_binding is not None:
+                            # Append only after the existing final guard. Earlier
+                            # COMPLETED writes are explicitly not terminal history.
+                            # Any write/unwind ambiguity blocks this live result,
+                            # without rewriting a possibly committed envelope.
+                            if capability.publication_state != "PENDING":
+                                raise ValueError("CREATIVE_DIRECTOR_TERMINAL_ALREADY_ATTEMPTED")
+                            capability.publication_state = "PUBLISHING"
+                            capability.publication_thread = threading.get_ident()
+                            try:
+                                from .creative.director_terminal_evidence import _PublicationAcknowledgment
+                                if (capability._publication_binding is not publication_binding
+                                        or capability.terminal_publication is not publication_binding[0]):
+                                    raise ValueError("CREATIVE_DIRECTOR_TERMINAL_OWNER_CHANGED")
+                                acknowledgment = publication_binding[0]()
+                                capability._check(job, manager=self, started=True)
+                                if (type(acknowledgment) is not _PublicationAcknowledgment
+                                        or acknowledgment.capability is not capability or acknowledgment.job is not job
+                                        or acknowledgment.repository is not publication_binding[1]
+                                        or capability._publication_binding is not publication_binding
+                                        or capability.terminal_publication is not publication_binding[0]):
+                                    raise ValueError("CREATIVE_DIRECTOR_TERMINAL_ACKNOWLEDGMENT_INVALID")
+                            except Exception:
+                                capability.publication_state = "UNKNOWN"
+                                job.status = "FAILED"  # In-memory only; never overwrite uncertain history.
+                                job.output = ""
+                                job.error_code = "CREATIVE_DIRECTOR_TERMINAL_PUBLICATION_UNCONFIRMED"
+                                job.error = "历史完成证据未确认保存，不会自动重试或采用。"
+                                job.condition.notify_all()
+                                return
+                            capability.publication_state = "ACKNOWLEDGED"
+                            job.condition.notify_all()
                 except Exception:
                     # A provider completion is not a published draft until its
                     # receipt is durable. Keep the separate execution outcome

@@ -1,0 +1,17 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-publication/frontend
+
+ ✓ src/creative/DirectorModelControls.storyboard-model.additive.test.tsx (49 tests) 1214ms
+ ✓ src/creative/GraphModelExecutionPanel.test.tsx (18 tests) 868ms
+ ✓ src/creative/GraphDirectorStoryboardHandoff.test.tsx (7 tests) 244ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 156ms
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 160ms
+ ✓ src/creative/studioGraphDirectorClient.test.ts (14 tests) 15ms
+
+ Test Files  6 passed (6)
+      Tests  100 passed (100)
+   Start at  18:42:14
+   Duration  6.59s (transform 801ms, setup 32ms, collect 1.55s, tests 2.66s, environment 1.41s, prepare 272ms)
+
+
+{"receipt": "docs/delivery/v2-development/director-publication-ui-r1.json", "status": "PASS"}
