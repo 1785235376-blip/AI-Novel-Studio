@@ -624,7 +624,18 @@ class DirectorModelCoordinator:
             guard(); host_authority.guard()
         return deepcopy({key: val for key, val in stored.items() if key != "history"})
 
-    def _dispatch_independent(self, ctx, rid, value, guard, *, host_authority):
+    def _dispatch_independent(self, ctx, rid, value, guard, *, host_authority, terminal_evidence=False):
+        # Private historical-only opt-in. No request/preview/public payload key
+        # is introduced, and unsupported owners fail before admission effects.
+        if type(terminal_evidence) is not bool:
+            raise ValueError("CREATIVE_DIRECTOR_TERMINAL_OPTION_INVALID")
+        terminal_repository = None
+        if terminal_evidence:
+            from ..repositories.generation_repository import GenerationRepository
+            terminal_repository = getattr(self.manager.persistence, "repository", self.manager.persistence)
+            if (self.store.backend != "file" or not isinstance(terminal_repository, GenerationRepository)
+                    or terminal_repository.root.resolve() != (self.store.root / "runtime/jobs").resolve()):
+                raise ValueError("CREATIVE_DIRECTOR_TERMINAL_BACKEND_UNSUPPORTED")
         from pydantic import BaseModel, ConfigDict, Field
         from ..model_execution import _CreativeDirectorCapability
         from .director_binding import CREATIVE_DIRECTOR_INTERNAL_CONTRACT, _creative_director_owner_lease
@@ -715,6 +726,58 @@ class DirectorModelCoordinator:
                 self.broker.finalize(ctx.novel_id, ctx.scope, ctx.actor, reservation["id"], job_id,
                     job.execution_outcome or "UNKNOWN", job.usage, owner_lease=owner)
             capability._bind_hooks(job, dispatch, settle)
+            if terminal_evidence:
+                def publish_terminal():
+                    """Condition is already held; scope then owner precede leaf IO.
+
+                    All semantic checks occur before the generation replacement.
+                    Scope/owner unwind may still fail: that is acknowledgment
+                    uncertainty, never a reason to erase committed history.
+                    """
+                    from ..jobs import check_generation_bounds
+                    from .director_terminal_evidence import CONTRACT as HISTORY_CONTRACT, digest as history_digest
+                    with self._independent_transaction(ctx, binding) as raw:
+                        before = canonical(raw)
+                        current()
+                        route_now = self._independent_policy(ctx, preview)
+                        accounting = self.broker.get(ctx.novel_id, ctx.scope, self.broker.LEDGER, reservation["id"])
+                        if (accounting.get("id") != reservation["id"]
+                                or accounting.get("created_by") != ctx.actor or accounting.get("job_id") != job_id
+                                or accounting.get("authorization_digest") != request_digest_value
+                                or accounting.get("preview_id") != preview["broker_preview_id"]
+                                or accounting.get("route_id") != route_now["route_id"]
+                                or accounting.get("route_fingerprint") != route_now["fingerprint"]
+                                or accounting.get("provider_id") != job.requested_provider
+                                or accounting.get("model_id") != job.requested_model
+                                or accounting.get("status") != "SETTLED" or accounting.get("job_status") != "COMPLETED"
+                                or accounting.get("dispatched") is not True
+                                or type(accounting.get("actual_microusd")) is not int or accounting["actual_microusd"] != 0):
+                            raise ValueError("CREATIVE_DIRECTOR_TERMINAL_ACCOUNTING_CHANGED")
+                        check_generation_bounds(job)
+                        if canonical(raw) != before:
+                            raise ValueError("CREATIVE_DIRECTOR_TERMINAL_SCOPE_MUTATED")
+                        evidence = {"contract": HISTORY_CONTRACT, "schema_version": 1,
+                            "semantics": "AUTHORITY_AND_BOUNDS_SAMPLED_PRE_COMMIT", "consumer_authority": False,
+                            "checkpoint_at": datetime.now(timezone.utc).isoformat(),
+                            "job_id": job_id, "operation": job.operation, "origin": job.experimental_origin,
+                            "source_binding": binding.model_dump(), "request_digest": request_digest_value,
+                            "output_digest": hashlib.sha256(job.output.encode("utf-8")).hexdigest(),
+                            "output_bytes": len(job.output.encode("utf-8")),
+                            "maximum_output_bytes": job.generation_max_output_bytes,
+                            "generation_deadline": job.generation_deadline,
+                            "admission": {"proposal_id": rid, "proposal_version": admitted_version,
+                                "preview_id": preview["broker_preview_id"], "preview_version": preview["broker_preview_version"],
+                                "preview_digest": preview["preview_digest"], "output_contract": preview.get("output_contract")},
+                            "route": {"route_id": route_now["route_id"], "fingerprint": route_now["fingerprint"],
+                                "binding_hash": route_now["binding_hash"], "provider_id": job.provider, "model_id": job.model,
+                                "parameters": deepcopy(preview["parameters"]), "execution_mode": job.execution_mode,
+                                "synthetic": route_now["synthetic"]},
+                            "accounting": {"reservation_id": accounting["id"], "version": accounting["version"],
+                                "digest": history_digest(accounting), "status": "SETTLED", "job_status": "COMPLETED",
+                                "dispatched": True, "actual_microusd": 0}}
+                        acknowledgment = terminal_repository._publish_director_terminal(job, capability, evidence)
+                    return acknowledgment
+                capability._bind_terminal_publication(job, publish_terminal, terminal_repository)
             self.manager._start_creative_director_job(job, capability)
         except Exception:
             # Best effort annotation against the same existing owner only. An
@@ -757,6 +820,10 @@ class DirectorModelCoordinator:
                     or execution.get("status") != "QUEUED"):
                 raise ValueError("CREATIVE_DIRECTOR_INTERNAL_RESULT_UNAVAILABLE")
             job = self.manager.get(execution["job_id"])
+            capability = getattr(job, "creative_execution_authority", None)
+            if (getattr(capability, "_publication_binding", None) is not None
+                    and getattr(capability, "publication_state", None) != "ACKNOWLEDGED"):
+                raise ValueError("CREATIVE_DIRECTOR_TERMINAL_PUBLICATION_UNCONFIRMED")
             check_generation_bounds(job)
             if (job.status != "COMPLETED" or job.execution_outcome != "COMPLETED"
                     or job.terminal_hook_status != "COMPLETED" or not job.output.strip()):

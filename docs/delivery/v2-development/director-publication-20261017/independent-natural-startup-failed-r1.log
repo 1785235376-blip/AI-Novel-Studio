@@ -1,0 +1,3 @@
+Recorded from the first launcher tool result: direct script invocation exited 1 before tests or product imports.
+AssertionError: missing explicit spec: app
+The direct script path made sys.path[0] the docs directory. Parent approved a launcher-only retry from -c without path injection. Original stdout was empty and retained alongside this note.

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from ..runtime_events import committed_change
-import json
-from pathlib import Path
+import json, os
+from pathlib import Path, PureWindowsPath
 from contextlib import contextmanager, ExitStack
 from uuid import UUID
 from ..storage import atomic_write
@@ -74,6 +74,21 @@ def check_graph_job_update(previous, item):
 class GenerationRepository:
     def __init__(self,root:Path):self.root=root/"runtime/jobs";self.root.mkdir(parents=True,exist_ok=True)
 
+    def _job_path(self, jid):
+        # Ordinary legacy basename IDs remain valid; path-bearing aliases must
+        # fail before lock creation, filesystem reads, or writes.
+        if (not isinstance(jid, str) or not jid or jid in {".", ".."}
+                or any(character in jid for character in ("/", "\\", "\x00"))
+                or PureWindowsPath(jid).drive):
+            raise ValueError("GENERATION_JOB_ID_INVALID")
+        return self.root / f"{jid}.json"
+
+    @staticmethod
+    def _write_key(path):
+        # Windows case aliases must share the same leaf lock as well. This is
+        # cooperating-writer identity, not protection against hostile symlinks.
+        return "generation-write:" + os.path.normcase(str(path.resolve()))
+
     @contextmanager
     def _graph_owner(self, item, binding):
         from ..file_project_lifecycle import project_operation
@@ -101,19 +116,72 @@ class GenerationRepository:
 
     @committed_change("TASK")
     def save(self,item:dict):
+        from .file.mutation_coordinator import workspace_mutation
+        from ..creative.director_terminal_evidence import preserve_evidence
+        path = self._job_path(item["id"])
         binding = graph_job_binding(item)
         if binding is None:
-            path = self.root / f"{item['id']}.json"
-            previous = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
-            if previous is not None and graph_job_binding(previous) is not None:
-                raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
-            atomic_write(self.root/f"{item['id']}.json",json.dumps(item,ensure_ascii=False,indent=2))
+            with workspace_mutation(self.root, self._write_key(path)):
+                previous = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+                if previous is not None and graph_job_binding(previous) is not None:
+                    raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
+                saved = preserve_evidence(previous, item)
+                atomic_write(path,json.dumps(saved,ensure_ascii=False,indent=2))
             return
-        with self._graph_owner(item, binding):
-            path = self.root / f"{item['id']}.json"
+        with self._graph_owner(item, binding), workspace_mutation(self.root, self._write_key(path)):
             previous = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
             check_graph_job_update(previous, item)
-            atomic_write(path,json.dumps(item,ensure_ascii=False,indent=2))
+            saved = preserve_evidence(previous, item)
+            atomic_write(path,json.dumps(saved,ensure_ascii=False,indent=2))
+
+    def _publish_director_terminal(self, job, capability, evidence):
+        """Original live worker only. All authority callbacks precede the leaf lock."""
+        path = self._job_path(job.id)
+        from threading import get_ident
+        from .file.mutation_coordinator import workspace_mutation
+        from ..model_execution import _CreativeDirectorCapability
+        from ..creative.director_terminal_evidence import FIELD, validate_evidence, digest, _PublicationAcknowledgment
+        if type(capability) is not _CreativeDirectorCapability:
+            raise ValueError("CREATIVE_DIRECTOR_TERMINAL_OWNER_REQUIRED")
+        capability._check(job, started=True)
+        repository = getattr(capability.manager.persistence, "repository", capability.manager.persistence)
+        if (repository is not self or not capability.worker_claimed
+                or capability.publication_state != "PUBLISHING"
+                or capability.publication_thread != get_ident()
+                or capability._publication_binding is None
+                or capability._publication_binding[1] is not self
+                or capability._publication_binding[2] != job.expected_request_digest
+                or capability.terminal_publication is not capability._publication_binding[0]):
+            raise ValueError("CREATIVE_DIRECTOR_TERMINAL_OWNER_REQUIRED")
+        item = job.public()
+        if (item.get("status") != "COMPLETED" or item.get("execution_outcome") != "COMPLETED"
+                or item.get("terminal_hook_status") != "COMPLETED" or not job.output.strip()):
+            raise ValueError("CREATIVE_DIRECTOR_TERMINAL_RESULT_REQUIRED")
+        import hashlib
+        evidence = validate_evidence(evidence, item)
+        if (evidence["output_digest"] != hashlib.sha256(job.output.encode("utf-8")).hexdigest()
+                or evidence["output_bytes"] != len(job.output.encode("utf-8"))
+                or evidence["route"]["fingerprint"] != capability.route_fingerprint
+                or evidence["route"]["provider_id"] != job.requested_provider or job.provider != job.requested_provider
+                or evidence["route"]["model_id"] != job.requested_model or job.model != job.requested_model):
+            raise ValueError("CREATIVE_DIRECTOR_TERMINAL_OUTPUT_CHANGED")
+        binding = graph_job_binding(item)
+        # The coordinator already holds raw scope and original owner. Reenter
+        # only that owner, then the distinct write leaf; never call back here.
+        with self._graph_owner(item, binding), workspace_mutation(self.root, self._write_key(path)):
+            if not path.exists():
+                raise ValueError("CREATIVE_DIRECTOR_TERMINAL_ORIGINAL_JOB_REQUIRED")
+            previous = json.loads(path.read_text(encoding="utf-8"))
+            check_graph_job_update(previous, item)
+            if FIELD in previous:
+                raise ValueError("CREATIVE_DIRECTOR_TERMINAL_ALREADY_ATTEMPTED")
+            if any(previous.get(key) != item.get(key) for key in (
+                    "status", "execution_outcome", "terminal_hook_status", "output", "provider", "model",
+                    "requested_provider", "requested_model", "generation_deadline", "generation_max_output_bytes")):
+                raise ValueError("CREATIVE_DIRECTOR_TERMINAL_ORIGINAL_JOB_CHANGED")
+            item[FIELD] = evidence
+            atomic_write(path, json.dumps(item, ensure_ascii=False, indent=2))
+        return _PublicationAcknowledgment(capability, self, job, digest(evidence))
 
     def load_all(self):
         out=[]
@@ -129,7 +197,7 @@ class GenerationRepository:
         return out
 
     def get(self,jid):
-        path=self.root/f"{jid}.json"
+        path=self._job_path(jid)
         if not path.exists():raise KeyError(jid)
         item = json.loads(path.read_text(encoding="utf-8"))
         binding = graph_job_binding(item)
