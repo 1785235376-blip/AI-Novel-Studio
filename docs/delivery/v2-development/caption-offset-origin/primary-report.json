@@ -1,0 +1,51 @@
+{
+  "status": "PASS_TARGETED_PRIMARY_GATES",
+  "source_entries": 2613,
+  "identical_sources_across_final_gates": true,
+  "baseline_protected_paths": 1229,
+  "ui": {
+    "passed": 224,
+    "files": 7
+  },
+  "backend": {
+    "passed": 213,
+    "postgres_deselected": 200
+  },
+  "forced_typescript": "PASS",
+  "production_build": "PASS_WITH_EXISTING_CHUNK_SIZE_WARNING",
+  "tokens": "PASS_52_FILES",
+  "r1_ui": {
+    "passed": 221,
+    "failed": 2,
+    "details": [
+      "New test table spread empty selection into default parameter; new test table corrected.",
+      "Runtime revision ref invalidation could omit rerender after unchanged IME completion; explicit revision render added."
+    ]
+  },
+  "not_run": [
+    "browser_geometry",
+    "real_browser_e2e",
+    "postgres",
+    "real_provider",
+    "Windows",
+    "target_subtitle_application"
+  ],
+  "evidence": {
+    "docs/delivery/v2-development/caption-offset-backend-r1.json": "d79ff7ec4dcba0fbdefa396238895435da4c2414939e0a12f5fe272218f437b8",
+    "docs/delivery/v2-development/caption-offset-backend-r1.log": "d5ea01f00e7ccc871b4c479ed7ae480f74649cbd99e0c54588143236edb03cc7",
+    "docs/delivery/v2-development/caption-offset-build-r1.json": "b1fcdbc16f1fe222893c3da346f8f897348d50d4e379146262ffc9ba3a8cee88",
+    "docs/delivery/v2-development/caption-offset-build-r1.log": "4d454190b891b733551186dc36d986a9a1deecb3d8f021902b3e022d3f2657ff",
+    "docs/delivery/v2-development/caption-offset-origin-r1.json": "50206f078c66075bd8565459c3ed584d703b4a5315746c0afad165a56d7ce8a9",
+    "docs/delivery/v2-development/caption-offset-origin-r1.log": "90ecd95eca407dd8f8abe8ddc7af9513019b34217a1a3c385a290a9b0aee0da0",
+    "docs/delivery/v2-development/caption-offset-origin-r2.json": "ea98693afe513dae290cdc563362511c7461914012a4c5ed87084199477e54b0",
+    "docs/delivery/v2-development/caption-offset-origin-r2.log": "992a240f65854a808432b1045e7a2de0aa37e0003dc654621c4445cb596c77eb",
+    "docs/delivery/v2-development/caption-offset-tokens-r1.json": "550239c3229d721d3605897a068dbc3650f61de76697bbabaac1062fbaa7a0d9",
+    "docs/delivery/v2-development/caption-offset-tokens-r1.log": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+    "docs/delivery/v2-development/caption-offset-tsc-r1.json": "e2c7edf0afc7a05964ea7228e9ea0a0eef5d2d17d4d5abde87c34fd4020e76dd",
+    "docs/delivery/v2-development/caption-offset-tsc-r1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/delivery/v2-development/caption-offset-ui-r1.json": "37a248dc7d254a074cf31f250e5dded756d47d8cfc2169e45e421af7ccee2529",
+    "docs/delivery/v2-development/caption-offset-ui-r1.log": "080111f7f9e4ec9dab052ce1a27ca792961a8cee6d48a6102f56b242a70b6e6d",
+    "docs/delivery/v2-development/caption-offset-ui-r2.json": "1252a866177be637a65117c8c89f44db8c5b4d55343385ea434ddae8f09cbede",
+    "docs/delivery/v2-development/caption-offset-ui-r2.log": "2e5e0341b370336f9bc04d0016f11486d9c9f886fc1295cbd752d7db514132a2"
+  }
+}

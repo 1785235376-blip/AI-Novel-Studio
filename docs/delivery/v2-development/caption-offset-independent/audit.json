@@ -1,0 +1,44 @@
+{
+  "status": "PASS_INDEPENDENT_REVIEW",
+  "utc": "2026-10-17T10:52:04.968851+00:00",
+  "ui": {
+    "passed": 224,
+    "files": 7
+  },
+  "backend": {
+    "passed": 213,
+    "postgres_deselected": 200,
+    "warnings": 2
+  },
+  "source_entries": 2613,
+  "all_primary_final_and_independent_sources_identical": true,
+  "protected_paths_unchanged": 1229,
+  "natural_startup_and_actual_runner_child": "PASS",
+  "earlier_ui_221_passed_2_failed_preserved": true,
+  "build_not_rerun": "Primary forced TypeScript/build/token receipts verified against identical full source maps and log hashes.",
+  "receipt_hashes": {
+    "docs/delivery/v2-development/caption-offset-origin-r2.json": "ea98693afe513dae290cdc563362511c7461914012a4c5ed87084199477e54b0",
+    "docs/delivery/v2-development/caption-offset-ui-r2.json": "1252a866177be637a65117c8c89f44db8c5b4d55343385ea434ddae8f09cbede",
+    "docs/delivery/v2-development/caption-offset-backend-r1.json": "d79ff7ec4dcba0fbdefa396238895435da4c2414939e0a12f5fe272218f437b8",
+    "docs/delivery/v2-development/caption-offset-tsc-r1.json": "e2c7edf0afc7a05964ea7228e9ea0a0eef5d2d17d4d5abde87c34fd4020e76dd",
+    "docs/delivery/v2-development/caption-offset-build-r1.json": "b1fcdbc16f1fe222893c3da346f8f897348d50d4e379146262ffc9ba3a8cee88",
+    "docs/delivery/v2-development/caption-offset-tokens-r1.json": "550239c3229d721d3605897a068dbc3650f61de76697bbabaac1062fbaa7a0d9",
+    "docs/delivery/v2-development/caption-offset-independent-origin.json": "060a5f92b9bc44e912aaa7a785cac750c469d8897f902be4305a484b605390cf",
+    "docs/delivery/v2-development/caption-offset-independent-ui.json": "939b94957d628249ce7d2cdb230ad417a74aa6965caa11f2e8946765d1c5b613",
+    "docs/delivery/v2-development/caption-offset-independent-backend.json": "6ed202269e9497e128da299462627dc654cd73188267b6a8d7fe9c6b5c460218"
+  },
+  "natural_startup": {
+    "path": ".runtime/caption-offset-independent/normal-startup.json",
+    "sha256": "5f7afd1917d78f38eac7ed8443f47b6574eb7137793b2943d7bb74deb1ec0a5d"
+  },
+  "tracked_changes": [
+    "frontend/src/experimental/SubtitleTimelinePanel.tsx"
+  ],
+  "not_run": [
+    "browser",
+    "PostgreSQL",
+    "provider",
+    "Windows",
+    "target subtitle application"
+  ]
+}

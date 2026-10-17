@@ -1,4 +1,5 @@
 import { useId, useLayoutEffect, useMemo, useRef, useState, type SetStateAction } from 'react';
+import { previewCaptionTimingOffset, type CaptionTimingOffset } from './captionTimingOffset';
 import { reviewCaptionTransfer } from './captionTransferReview';
 import { CaptionHistory } from './CaptionHistory';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
@@ -54,6 +55,7 @@ function CaptionEditor({client,current,plans,available,refresh,admissionEpoch}:{
  {restoreHistoryVersion!==undefined&&<StatusMessage>本地字幕来自历史 v{restoreHistoryVersion}，尚未保存；后续编辑仍保留历史来源校验。保存将创建新版本，不恢复审批或处理任务权限。</StatusMessage>}
  <CaptionHistory client={client} row={captured} cues={cues} binding={JSON.stringify({current,captured,available,unavailable,draftEpoch:draftEpoch.current,admissionEpoch:admissionEpoch.current})} disabled={!!unavailable} dirty={dirty||splitDirty} draftEpoch={draftEpoch} admissionEpoch={admissionEpoch} replace={(value,version)=>{setRestoreHistoryVersion(version);setCues(value);setSplit({});}}/>
  <CaptionImport client={client} row={captured} binding={JSON.stringify({current,captured,available,unavailable,draftEpoch:draftEpoch.current,admissionEpoch:admissionEpoch.current})} disabled={!!unavailable} dirty={dirty||splitDirty} draftEpoch={draftEpoch} admissionEpoch={admissionEpoch} replace={value=>{setRestoreHistoryVersion(undefined);setCues(value);setSplit({});}}/>
+ <CaptionOffset row={captured} cues={cues} binding={JSON.stringify({current,captured,available,unavailable})} disabled={!!unavailable} draftEpoch={draftEpoch} admissionEpoch={admissionEpoch} replace={setCues}/>
  {waveform?.status==='MEASURED_PCM16_PEAKS'&&waveform.peaks?<details className="experimental-details"><summary>实测 PCM16 波形</summary><svg role="img" aria-label="实际音频采样峰值波形" viewBox={`0 0 ${waveform.peaks.length} 100`} width="100%" height="100" preserveAspectRatio="none"><path stroke="currentColor" fill="none" d={waveform.peaks.map((p,i)=>`M${i} ${50-p*50}V${50+p*50}`).join(' ')}/></svg><p>峰值包络；不是语音或单词对齐。</p></details>:<p>此媒体无可用实测波形，仍可人工编辑时间。</p>}
  <ol aria-label="字幕轨道预览">{cues.map(c=><li key={c.id}>{c.start_tick} → {c.end_tick} tick · {c.segment_id?current.speakers?.[c.segment_id]?.name||'说话人待刷新':'无说话人标签'} · {c.text}</li>)}</ol>
  {cues.map((cue,index)=><article className="experimental-record" key={cue.id}><h4>字幕 {index+1}</h4><div className="experimental-grid"><Field label={`字幕 ${index+1} 开始 tick`}><input type="number" min={0} disabled={unavailable} value={cue.start_tick} onChange={e=>edit(index,'start_tick',Number(e.target.value))}/></Field><Field label={`字幕 ${index+1} 结束 tick`}><input type="number" min={1} disabled={unavailable} value={cue.end_tick} onChange={e=>edit(index,'end_tick',Number(e.target.value))}/></Field></div>
@@ -110,5 +112,36 @@ function CaptionImport({client,row,binding,disabled,dirty,draftEpoch,admissionEp
  {!!preview.value.warnings.length&&<Details label="导入读速 / 行长提示" value={preview.value.warnings}/>}
  <Button disabled={disabled||busy} onClick={()=>{if(!active()||!valid||preview.owner!==owner.current||preview.selection!==selection.current||preview.draft!==draftEpoch.current)return;selection.current++;setPreview(null);setError(undefined);replace(preview.value.cues.map(c=>({id:c.id,start_tick:c.start_tick,end_tick:c.end_tick,text:c.text,segment_id:c.segment_id,overlap_reason:c.overlap_reason})));}}>确认替换全部本地字幕（尚未保存）</Button>
  </section>}
+ </section>;
+}
+
+// Offset and undo stay local; all persistence remains in the editor's original save.
+function CaptionOffset({row,cues,binding,disabled,draftEpoch,admissionEpoch,replace}:{row:CaptionTrack;cues:CaptionCue[];binding:string;disabled:boolean;draftEpoch:{current:number};admissionEpoch:{current:number};replace:(cues:CaptionCue[])=>void}) {
+ const alive=useRef(true),owner=useRef({binding}),revision=useRef(0),composing=useRef(false),input=useRef<HTMLInputElement>(null);
+ const [,renderRevision]=useState(0);
+ const [amount,setAmount]=useState('0'),[mode,setMode]=useState<'all'|'selected'>('all'),[selected,setSelected]=useState<string[]>([]),[error,setError]=useState('');
+ const [preview,setPreview]=useState<{value:CaptionTimingOffset;owner:object;revision:number;draft:number;admission:number}|null>(null);
+ const [undo,setUndo]=useState<{cues:CaptionCue[];owner:object;draft:number;admission:number}|null>(null);
+ if(owner.current.binding!==binding)owner.current={binding};
+ const capturedOwner=owner.current,capturedRevision=revision.current,capturedDraft=draftEpoch.current,capturedAdmission=admissionEpoch.current;
+ useLayoutEffect(()=>{alive.current=true;return()=>{alive.current=false;};},[]);
+ const active=()=>alive.current&&!disabled&&owner.current===capturedOwner&&revision.current===capturedRevision&&draftEpoch.current===capturedDraft&&admissionEpoch.current===capturedAdmission;
+ const ready=()=>active()&&!composing.current&&input.current?.value===amount;
+ const invalidate=()=>{revision.current++;renderRevision(revision.current);setPreview(null);setError('');};
+ const valid=preview?.owner===capturedOwner&&preview.revision===capturedRevision&&preview.draft===capturedDraft&&preview.admission===capturedAdmission&&!disabled?preview.value:null;
+ const canUndo=undo?.owner===capturedOwner&&undo.draft===capturedDraft&&undo.admission===capturedAdmission&&!disabled;
+ return <section aria-label="字幕时间批量偏移"><h4>字幕时间批量偏移</h4>
+ <p>正数延后，负数提前；单位为当前时间基准的整数 tick。先核对精确预览，再应用到本地输入，最后使用原保存操作。不会裁剪、排序或自动补充重叠说明。</p>
+ <Field label="字幕偏移范围"><select disabled={disabled} value={mode} onChange={event=>{if(!active())return;invalidate();setSelected(selected.filter(id=>cues.some(cue=>cue.id===id)));setMode(event.target.value as 'all'|'selected');}}><option value="all">全部字幕</option><option value="selected">所选字幕</option></select></Field>
+ {mode==='selected'&&<fieldset disabled={disabled}><legend>选择要偏移的字幕</legend>{cues.map((cue,index)=><label key={cue.id}><input type="checkbox" aria-label={`偏移字幕 ${index+1}`} checked={selected.includes(cue.id)} onChange={event=>{if(!active())return;invalidate();setSelected(event.target.checked?[...selected.filter(id=>cues.some(current=>current.id===id)),cue.id]:selected.filter(id=>id!==cue.id&&cues.some(current=>current.id===id)));}}/>{index+1} · {cue.text}</label>)}</fieldset>}
+ <Field label="字幕偏移 tick"><input ref={input} type="text" inputMode="text" disabled={disabled} value={amount} onChange={event=>{if(!active())return;invalidate();setAmount(event.target.value);}} onCompositionStart={()=>{if(!active())return;composing.current=true;invalidate();}} onCompositionEnd={event=>{if(!active())return;composing.current=false;invalidate();setAmount(event.currentTarget.value);}}/></Field>
+ <Button disabled={disabled||!cues.length} onClick={()=>{if(!ready())return;invalidate();try{const value=previewCaptionTimingOffset(row,cues,mode==='all'?'all':selected,amount);setPreview({value,owner:capturedOwner,revision:revision.current,draft:capturedDraft,admission:capturedAdmission});}catch(value){setError(value instanceof Error?value.message:'字幕偏移预览失败。');}}}>预览字幕时间偏移</Button>
+ {!!error&&<StatusMessage tone="error">{error}</StatusMessage>}
+ {valid&&<section aria-label="字幕时间偏移只读预览"><p>{valid.changes.length} 条字幕 · 偏移 {valid.offset} tick · {row.timebase.numerator}/{row.timebase.denominator} tick/秒</p>
+ <ol>{valid.changes.map(change=><li key={change.id}>字幕 {change.index+1}：{change.before[0]} → {change.before[1]} tick；偏移后 {change.after[0]} → {change.after[1]} tick</li>)}</ol>
+ {valid.offset===0?<StatusMessage>偏移为零，本地输入和历史来源标记保持不变。</StatusMessage>:<Button disabled={disabled} onClick={()=>{if(!ready()||!valid||preview?.owner!==owner.current||preview.revision!==revision.current)return;invalidate();replace(valid.cues.map(cue=>({...cue})));setUndo({cues:cues.map(cue=>({...cue})),owner:capturedOwner,draft:draftEpoch.current,admission:capturedAdmission});}}>应用字幕偏移到本地（尚未保存）</Button>}
+ </section>}
+ <Button disabled={!canUndo} onClick={()=>{if(!ready()||!canUndo||!undo)return;invalidate();setUndo(null);replace(undo.cues.map(cue=>({...cue})));}}>撤销上次本地字幕偏移</Button>
+ <p>撤销仅适用于尚未再次编辑、载入、刷新或保存的最近一次偏移；说话人、文字及历史来源标记保持不变。</p>
  </section>;
 }
