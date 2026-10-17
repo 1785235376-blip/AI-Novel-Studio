@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/GraphNodeNavigator.test.tsx (2 tests) 174ms
+ ✓ src/creative/GraphDependencyInspector.additive.test.tsx (9 tests) 202ms
+
+ Test Files  2 passed (2)
+      Tests  11 passed (11)
+   Start at  03:18:32
+   Duration  1.00s (transform 112ms, setup 24ms, collect 272ms, tests 377ms, environment 685ms, prepare 145ms)
+

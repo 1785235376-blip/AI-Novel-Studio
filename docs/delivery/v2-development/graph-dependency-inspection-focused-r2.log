@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/GraphDependencyInspector.additive.test.tsx (10 tests) 254ms
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  03:19:25
+   Duration  1.14s (transform 163ms, setup 18ms, collect 334ms, tests 254ms, environment 298ms, prepare 60ms)
+

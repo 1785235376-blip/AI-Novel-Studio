@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Canvas dependency inspection (18:20 UTC)
+
+Added an upstream/downstream inspector directly to the original GraphCanvas. It traverses existing authored edges, shows shortest hop distance and exact port connections, supports direct-only filtering and paginated results, includes disabled nodes, and selects existing nodes without rewriting the graph or invoking execution. Iterative traversal handles cycles/dangling edges and a 5,000-node synthetic chain without recursion. Owner/draft/selection/busy changes retire old selection callbacks. This is authored-graph inspection, not an execution authorization or runtime impact guarantee.
+
+Focused r1: nine new checks plus two original node-navigation checks and TypeScript PASS. Final r2: ten targeted checks including the actual read-only GraphCanvas mount PASS. Original save owner was not invoked by read-only dependency selection. Browser/full suite/build and canonical inventory reconciliation remain deferred.
+
 ## Subtitle literal find/replace (18:17 UTC)
 
 Added local subtitle text find/replace with full before/after preview, explicit consent, bounded literal Unicode replacement, and one-step local undo. Existing timing, speaker/media bindings and historical restoration provenance remain; persistence uses the existing Save and CAS owner. Source/authority/draft changes retire stale actions, and unfinished split inputs pause replacement. No new network action or backend owner.
