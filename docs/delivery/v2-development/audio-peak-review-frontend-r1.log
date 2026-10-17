@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-audio-normalize/frontend
+
+ ✓ src/creative/studioAudioMp3Contract.test.tsx (32 tests) 359ms
+ ✓ src/creative/studioAudioFades.additive.test.tsx (29 tests) 786ms
+ ✓ src/creative/studioAudioPeak.additive.test.tsx (23 tests) 618ms
+ ✓ src/creative/studioAudioWavContract.test.ts (86 tests) 56ms
+
+ Test Files  4 passed (4)
+      Tests  170 passed (170)
+   Start at  18:10:10
+   Duration  4.85s (transform 568ms, setup 41ms, collect 1.12s, tests 1.82s, environment 1.20s, prepare 194ms)
+

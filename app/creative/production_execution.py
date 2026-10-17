@@ -454,12 +454,12 @@ class ProductionExecutionService:
             "m7.video.i2v": ["width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"],
             "m7.video.v2v": ["width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"],
             "m8.audio.speech": ["voice_id", "speech_rate"], "m8.audio.music": ["duration_seconds", "seed"],
-            "m8.audio.effects": ["duration_seconds", "seed"], "m8.audio.trim": ["in_ms", "out_ms", "gain_db", "sample_rate", "channels", "output_format", "fade_in_ms", "fade_out_ms"]}[command.operation_id]
+            "m8.audio.effects": ["duration_seconds", "seed"], "m8.audio.trim": ["in_ms", "out_ms", "gain_db", "sample_rate", "channels", "output_format", "fade_in_ms", "fade_out_ms", "target_peak_dbfs"]}[command.operation_id]
 
     def preview(self, nid, scope, actor, value, guard, *, graph_binding=None):
         command = MediaCommand.model_validate(value)
         if (graph_binding is not None and command.operation_id == "m8.audio.trim"
-                and any(getattr(command.parameters, key) is not None for key in ("gain_db", "sample_rate", "channels", "output_format", "fade_in_ms", "fade_out_ms"))):
+                and any(getattr(command.parameters, key) is not None for key in ("gain_db", "sample_rate", "channels", "output_format", "fade_in_ms", "fade_out_ms", "target_peak_dbfs"))):
             raise ValueError("STUDIO_AUDIO_CONTROLS_STANDALONE_ONLY")
         if command.operation_id in {"m5.image.cutout", "m5.image.inpaint"}: guard = self._cutout_guard(guard)
         context = self._base(nid, scope, actor, guard)

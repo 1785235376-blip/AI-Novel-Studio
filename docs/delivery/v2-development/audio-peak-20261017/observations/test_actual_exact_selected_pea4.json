@@ -1,0 +1,27 @@
+{
+  "source": "7539ae56ef9f8ce69d7047e47cecbeb05bf37f24aefd7000dd08312e91807f9d",
+  "measurement": {
+    "duration_ms": 500,
+    "byte_count": 16078,
+    "sample_rate": 16000,
+    "channels": 1,
+    "sample_width": 2,
+    "container": "wav",
+    "audio_codec": "pcm_s16le",
+    "profile_validation": "PCM_DECODED",
+    "output_sha256": "04c2e88a9332bff861689ea7db49c471a98d76f736f9dc5d6df5db2d017810a3",
+    "peak_normalization": {
+      "contract": "studio-audio-sample-peak/1",
+      "source_sha256": "7539ae56ef9f8ce69d7047e47cecbeb05bf37f24aefd7000dd08312e91807f9d",
+      "selected_pcm_sha256": "bce9d690ca316a1fff3257b3b71f1c5f79ecddf455491ae4eca5a4d322cd9d67",
+      "selected_frames": 8000,
+      "source_peak_s16": 8000,
+      "target_peak_dbfs": -24.0,
+      "normalization_gain_db": -11.752801040644513,
+      "manual_gain_db": -60.0,
+      "output_peak_s16": 2,
+      "output_frames": 8000,
+      "output_pcm_sha256": "82e632baea4484f0ccbe194a06b16f74f1aaa1102fe4785c557d2a40ed7689e1"
+    }
+  }
+}

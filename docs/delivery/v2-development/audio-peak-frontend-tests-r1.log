@@ -1,0 +1,39 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-audio-normalize/frontend
+
+ ✓ src/creative/IndependentStudioAudioWav.test.tsx (28 tests) 8732ms
+   ✓ WAV controls through the original mounted production workspace > keeps blank controls absent, original defaults explicit, and preview/queue/execute separate 499ms
+   ✓ WAV controls through the original mounted production workspace > executes explicit controls, shows only measured WAV output, byte-checks privately and requires explicit review 578ms
+   ✓ WAV controls through the original mounted production workspace > keeps the shared workspace locked while executing and never submits a duplicate execution 338ms
+   ✓ WAV controls through the original mounted production workspace > cancels the queued task with exact CAS while preserving its selected controls 303ms
+   ✓ WAV controls through the original mounted production workspace > rejects private candidate size outside the verified output measurement 409ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches host ABA 452ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches host-rebind ABA 480ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches project ABA 437ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches actor ABA 490ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches branch ABA 417ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches session ABA 421ms
+   ✓ WAV controls through the original mounted production workspace > ignores a candidate response arriving after project identity ABA 375ms
+ ✓ src/creative/StudioImageRuntimeProduction.test.tsx (6 tests) 3168ms
+   ✓ image runtime source roles through the mounted original workspace > records weighted references without automatic queue, execution or review and invalidates old preview consent on weight edit 540ms
+   ✓ image runtime source roles through the mounted original workspace > binds base then mask, preserves explicit candidate byte verification and separate review 636ms
+   ✓ image runtime source roles through the mounted original workspace > requires fresh cloud consent after reference weights change and never falls back or sends automatically 1253ms
+ ✓ src/creative/studioAudioMp3Contract.test.tsx (32 tests) 350ms
+ ✓ src/creative/studioAudioFades.additive.test.tsx (29 tests) 787ms
+ ✓ src/creative/studioAudioPeak.additive.test.tsx (23 tests) 626ms
+ ✓ src/creative/studioCpuCutoutContract.test.ts (52 tests) 28ms
+ ✓ src/creative/StudioMediaRouteChoice.test.tsx (9 tests) 429ms
+ ✓ src/creative/StudioImageAssetHandoff.test.tsx (22 tests) 1233ms
+ ✓ src/creative/studioAudioWavContract.test.ts (86 tests) 55ms
+ ✓ src/creative/StudioVideoAssetHandoff.test.tsx (26 tests) 1456ms
+ ✓ src/creative/StudioReferenceRoute.compatibility.test.tsx (5 tests) 428ms
+ ✓ src/creative/studioAudioFlacContract.phase6.test.tsx (18 tests) 210ms
+ ✓ src/creative/StudioImageUpscaleProduction.test.tsx (2 tests) 196ms
+ ✓ src/creative/studioAudioFlacContract.formatVariant.additive.test.ts (1 test) 4ms
+ ✓ src/creative/studioAudioReceiptContext.compatibility.test.ts (21 tests) 5ms
+
+ Test Files  15 passed (15)
+      Tests  360 passed (360)
+   Start at  18:07:29
+   Duration  29.40s (transform 2.25s, setup 49ms, collect 4.90s, tests 17.71s, environment 4.22s, prepare 737ms)
+

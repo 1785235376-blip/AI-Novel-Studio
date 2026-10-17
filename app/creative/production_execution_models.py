@@ -40,6 +40,7 @@ class MediaParameters(ExecutionModel):
 
 class MediaExecutionParameters(MediaParameters):
     """Standalone additions; the original Graph parameter schema stays closed."""
+    target_peak_dbfs: float | None = Field(default=None, ge=-24, le=-1)
     fade_in_ms: int | None = Field(default=None, ge=0, le=120000)
     fade_out_ms: int | None = Field(default=None, ge=0, le=120000)
     gain_db: float | None = Field(default=None, ge=-60, le=12)
@@ -48,6 +49,13 @@ class MediaExecutionParameters(MediaParameters):
     output_format: Literal["FLAC", "MP3"] | None = None
     denoising_strength: float | None = Field(default=None, gt=0, le=1)
     scale: Literal[2, 4] | None = None
+
+    @field_validator("target_peak_dbfs", mode="before")
+    @classmethod
+    def exact_peak(cls, value):
+        if type(value) not in {int, float}:
+            raise ValueError("STUDIO_AUDIO_PEAK_INVALID")
+        return value
 
     @field_validator("fade_in_ms", "fade_out_ms", mode="before")
     @classmethod
@@ -69,7 +77,7 @@ class MediaExecutionParameters(MediaParameters):
         # Original preview and job identities include the old null fields.
         # Omit only the new unset controls, including in nested model_dump().
         value = handler(self)
-        for key in ("gain_db", "sample_rate", "channels", "output_format", "denoising_strength", "scale", "fade_in_ms", "fade_out_ms"):
+        for key in ("gain_db", "sample_rate", "channels", "output_format", "denoising_strength", "scale", "fade_in_ms", "fade_out_ms", "target_peak_dbfs"):
             if value.get(key) is None:
                 value.pop(key, None)
         return value
@@ -184,7 +192,7 @@ class _MediaCommandShape(ExecutionModel):
             "m8.audio.speech": {"voice_id", "speech_rate"},
             "m8.audio.music": {"duration_seconds", "seed"},
             "m8.audio.effects": {"duration_seconds", "seed"},
-            "m8.audio.trim": {"in_ms", "out_ms", "gain_db", "sample_rate", "channels", "output_format", "fade_in_ms", "fade_out_ms"},
+            "m8.audio.trim": {"in_ms", "out_ms", "gain_db", "sample_rate", "channels", "output_format", "fade_in_ms", "fade_out_ms", "target_peak_dbfs"},
         }[self.operation_id]
         if set(p) - allowed:
             raise ValueError("STUDIO_OPERATION_PARAMETER_UNSUPPORTED")
@@ -223,6 +231,11 @@ class _MediaCommandShape(ExecutionModel):
                     or self.parameters.out_ms <= self.parameters.in_ms
                     or self.parameters.out_ms - self.parameters.in_ms > 120000):
                 raise ValueError("STUDIO_AUDIO_TRIM_INPUT_REQUIRED")
+            if self.parameters.target_peak_dbfs is not None:
+                if self.parameters.output_format is not None:
+                    raise ValueError("STUDIO_AUDIO_PEAK_WAV_ONLY")
+                if self.parameters.target_peak_dbfs + (self.parameters.gain_db or 0) > -1:
+                    raise ValueError("STUDIO_AUDIO_PEAK_HEADROOM_INVALID")
             if (self.parameters.fade_in_ms or 0) + (self.parameters.fade_out_ms or 0) > self.parameters.out_ms - self.parameters.in_ms:
                 raise ValueError("STUDIO_AUDIO_FADE_RANGE_INVALID")
         elif not self.provider_id or not self.model_id or not self.prompt.strip() or self.provider_id == "auto":

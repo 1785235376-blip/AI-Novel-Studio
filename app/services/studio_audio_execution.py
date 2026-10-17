@@ -8,6 +8,9 @@ from __future__ import annotations
 import base64
 import copy
 import hashlib
+import io
+import struct
+import wave
 import json
 import math
 import os
@@ -30,7 +33,8 @@ CAPABILITIES = {"m8.audio.speech": "TTS", "m8.audio.music": "MUSIC", "m8.audio.e
 _ACTIVE: set[tuple[str, str, str]] = set()
 _ACTIVE_LOCK = threading.RLock()
 FADE_CONTROLS = {"fade_in_ms", "fade_out_ms"}
-TRIM_CONTROLS = {"gain_db", "sample_rate", "channels", "output_format"} | FADE_CONTROLS
+PEAK_CONTROL = "target_peak_dbfs"
+TRIM_CONTROLS = {"gain_db", "sample_rate", "channels", "output_format", PEAK_CONTROL} | FADE_CONTROLS
 AUDIO_MP3_PROFILE = "studio-audio-mp3/1"
 
 
@@ -60,13 +64,17 @@ def trim_output_profile(parameters):
 
 
 
-def _trim_filters(parameters):
+def _trim_filters(parameters, *, normalization_gain_db=None):
     """Linear fades in trimmed-output time, after gain and before output conversion.
 
     No positive fade preserves the exact original gain-only (or empty) argv.
     Resampling, channel conversion and encoding remain the original output options.
     """
     filters = [f"volume={parameters['gain_db']:.17g}dB"] if "gain_db" in parameters else []
+    if normalization_gain_db is not None:
+        # One double-precision gain stage avoids intermediate integer clipping.
+        gain = normalization_gain_db + parameters.get("gain_db", 0)
+        filters = [f"volume={gain:.17g}dB:precision=double"]
     fade_in, fade_out = parameters.get("fade_in_ms", 0), parameters.get("fade_out_ms", 0)
     if fade_in or fade_out:
         filters.append("asetpts=PTS-STARTPTS")
@@ -77,6 +85,71 @@ def _trim_filters(parameters):
             filters.append(f"afade=t=out:st={start / 1000:.3f}:d={fade_out / 1000:.3f}:curve=tri")
     return ["-af", ",".join(filters)] if filters else []
 
+
+
+def _peak_pcm(data, parameters, guard, *, selected):
+    """Scan bounded verified PCM16 WAV bytes; no conversion or per-channel gain."""
+    guard()
+    try:
+        with wave.open(io.BytesIO(data), "rb") as reader:
+            rate, channels = reader.getframerate(), reader.getnchannels()
+            if (reader.getsampwidth() != 2 or reader.getcomptype() != "NONE"
+                    or rate != parameters.get("sample_rate", 48000)
+                    or channels != parameters.get("channels", 2)):
+                raise _error("STUDIO_AUDIO_PEAK_PCM_PROFILE_REQUIRED", "峰值归一化仅支持同采样率、同声道 PCM16 WAV；请明确匹配来源参数", 400)
+            start, end = parameters["in_ms"] * rate, parameters["out_ms"] * rate
+            if start % 1000 or end % 1000:
+                raise _error("STUDIO_AUDIO_PEAK_FRAME_ALIGNMENT_REQUIRED", "峰值归一化的起止毫秒须对应完整来源采样帧，不会自动取整", 400)
+            first, frames = start // 1000, (end - start) // 1000
+            if selected:
+                if first + frames > reader.getnframes():
+                    raise _error("STUDIO_AUDIO_PEAK_FRAME_COUNT_INVALID", "所选采样帧超出来源", 400)
+                reader.setpos(first)
+            elif reader.getnframes() != frames:
+                raise _error("STUDIO_AUDIO_PEAK_FRAME_COUNT_INVALID", "实际输出采样帧数不匹配", 409)
+            remaining, peak, digest = frames, 0, hashlib.sha256()
+            while remaining:
+                guard()
+                count = min(remaining, 8192)
+                chunk = reader.readframes(count)
+                if len(chunk) != count * channels * 2:
+                    raise _error("STUDIO_AUDIO_PEAK_FRAME_COUNT_INVALID", "PCM 采样字节不完整", 409)
+                digest.update(chunk)
+                peak = max(peak, max(abs(value[0]) for value in struct.iter_unpack("<h", chunk)))
+                remaining -= count
+            guard()
+            return {"peak_s16": peak, "frames": frames, "pcm_sha256": digest.hexdigest(), "first_frame": first}
+    except (wave.Error, EOFError):
+        raise _error("STUDIO_AUDIO_PEAK_PCM_PROFILE_REQUIRED", "峰值归一化仅支持已核对的 PCM16 WAV 来源", 400) from None
+
+
+def _peak_proof(value, parameters, rate):
+    """Strict persisted proof; raw-byte measurements are produced only by _trim."""
+    fields = {"contract", "source_sha256", "selected_pcm_sha256", "selected_frames", "source_peak_s16",
+              "target_peak_dbfs", "normalization_gain_db", "manual_gain_db", "output_peak_s16", "output_frames", "output_pcm_sha256"}
+    def invalid():
+        raise _error("STUDIO_AUDIO_PEAK_PROOF_INVALID", "采样峰值归一化的实际字节证明不一致", 409)
+    if not isinstance(value, dict) or set(value) != fields or value.get("contract") != "studio-audio-sample-peak/1": invalid()
+    for key in ("selected_frames", "source_peak_s16", "output_peak_s16", "output_frames"):
+        if type(value[key]) is not int: invalid()
+    for key in ("target_peak_dbfs", "normalization_gain_db", "manual_gain_db"):
+        if type(value[key]) not in {int, float} or not math.isfinite(value[key]): invalid()
+    for key in ("source_sha256", "selected_pcm_sha256", "output_pcm_sha256"): _sha(value[key])
+    if (parameters["in_ms"] * rate % 1000 or parameters["out_ms"] * rate % 1000
+            or value["selected_frames"] != (parameters["out_ms"] - parameters["in_ms"]) * rate // 1000
+            or value["output_frames"] != value["selected_frames"] or value["selected_frames"] < 1
+            or not 1 <= value["source_peak_s16"] <= 32768 or not 0 <= value["output_peak_s16"] < 32767
+            or value["target_peak_dbfs"] != parameters[PEAK_CONTROL]
+            or value["manual_gain_db"] != parameters.get("gain_db", 0)
+            or not -60 <= value["normalization_gain_db"] <= 12): invalid()
+    expected = parameters[PEAK_CONTROL] - 20 * math.log10(value["source_peak_s16"] / 32768)
+    limit = 32768 * 10 ** ((parameters[PEAK_CONTROL] + parameters.get("gain_db", 0)) / 20)
+    if (abs(value["normalization_gain_db"] - expected) > 1e-9
+            or value["output_peak_s16"] > limit + 1
+            or value["output_peak_s16"] > 32768 * 10 ** (-1 / 20) + 1): invalid()
+    if not parameters.get("fade_in_ms", 0) and not parameters.get("fade_out_ms", 0):
+        if abs(value["output_peak_s16"] - limit) > 1: invalid()
+    return value
 
 def _trim_measurement(value, parameters):
     """Validate persisted actual-byte proof, never synthesize it from settings."""
@@ -94,6 +167,7 @@ def _trim_measurement(value, parameters):
             raise _error("STUDIO_AUDIO_MEASUREMENT_INVALID", "原 MP3 实际输出证明不一致", 409) from None
     fields = {"duration_ms", "byte_count", "sample_rate", "channels", "sample_width", "container",
               "audio_codec", "profile_validation", "output_sha256"}
+    if PEAK_CONTROL in parameters: fields.add("peak_normalization")
     if (not isinstance(value, dict) or set(value) != fields
             or any(type(value.get(key)) is not int for key in ("duration_ms", "byte_count", "sample_rate", "channels", "sample_width"))
             or not 0 < value["byte_count"] <= 25 * 1024 * 1024 or value["duration_ms"] < 1
@@ -104,6 +178,7 @@ def _trim_measurement(value, parameters):
             or value["profile_validation"] != "PCM_DECODED"):
         raise _error("STUDIO_AUDIO_MEASUREMENT_INVALID", "原音频实际输出证明不一致", 409)
     _sha(value["output_sha256"])
+    if PEAK_CONTROL in parameters: _peak_proof(value["peak_normalization"], parameters, value["sample_rate"])
     return value
 
 
@@ -198,6 +273,14 @@ def _body_shape(value):
             raise _error("STUDIO_AUDIO_TRIM_PARAMETERS_INVALID", "音频增益、采样率或声道超出本地 WAV 参数范围", 400)
         if "output_format" in parameters and parameters["output_format"] not in ("FLAC", "MP3"):
             raise _error("STUDIO_AUDIO_TRIM_FORMAT_INVALID", "仅支持明确选择 FLAC 或 MP3，默认输出仍为 WAV", 400)
+        if PEAK_CONTROL in parameters:
+            target = parameters[PEAK_CONTROL]
+            if type(target) not in {int, float} or not math.isfinite(target) or not -24 <= target <= -1:
+                raise _error("STUDIO_AUDIO_PEAK_INVALID", "目标采样峰值须为 -24 至 -1 dBFS 的有限数值", 400)
+            if "output_format" in parameters:
+                raise _error("STUDIO_AUDIO_PEAK_WAV_ONLY", "峰值归一化目前仅支持 PCM16 WAV 输出", 400)
+            if target + gain > -1:
+                raise _error("STUDIO_AUDIO_PEAK_HEADROOM_INVALID", "目标峰值加手动增益须不高于 -1 dBFS", 400)
         trim_output_profile(parameters)
         if prompt:
             raise _error("STUDIO_AUDIO_TRIM_PROMPT_INVALID", "本地裁剪不使用生成提示词", 400)
@@ -274,9 +357,14 @@ def _binding(value, body):
     for captured in (value.get("command"), value.get("execution_recipe")):
         if isinstance(captured, dict) and isinstance(captured.get("parameters"), dict):
             fade_bound = fade_bound or bool(FADE_CONTROLS.intersection(captured["parameters"]))
+    peak_bound = PEAK_CONTROL in body["parameters"] or any(
+        isinstance(captured, dict) and isinstance(captured.get("parameters"), dict) and PEAK_CONTROL in captured["parameters"]
+        for captured in (value.get("command"), value.get("execution_recipe")))
+    if peak_bound and ("command" not in value or "execution_recipe" not in value):
+        raise _error("STUDIO_AUDIO_PEAK_BINDING_REQUIRED", "峰值归一化缺少原命令或配方绑定", 403)
     if fade_bound and ("command" not in value or "execution_recipe" not in value):
         raise _error("STUDIO_AUDIO_FADE_BINDING_REQUIRED", "淡入淡出缺少原命令或配方绑定", 403)
-    if "audio_profile" in body or fade_bound:
+    if "audio_profile" in body or fade_bound or peak_bound:
         from ..creative.production_execution_models import MediaCommand
         try:
             command = MediaCommand.model_validate(value["command"])
@@ -291,7 +379,7 @@ def _binding(value, body):
                     or request_digest != value["request_digest"]):
                 raise ValueError("versioned command binding")
         except (ValueError, TypeError, KeyError):
-            raise _error("STUDIO_AUDIO_FADE_BINDING_CHANGED" if fade_bound else "STUDIO_AUDIO_PROFILE_BINDING_CHANGED",
+            raise _error("STUDIO_AUDIO_PEAK_BINDING_CHANGED" if peak_bound else "STUDIO_AUDIO_FADE_BINDING_CHANGED" if fade_bound else "STUDIO_AUDIO_PROFILE_BINDING_CHANGED",
                 "音频命令与原请求摘要不一致", 409) from None
     if "execution_recipe" in value:
         recipe = value["execution_recipe"]
@@ -405,6 +493,8 @@ class StudioAudioExecution:
             if body["operation_id"] != "m8.audio.trim" or "graph_binding" in binding:
                 raise _error("STUDIO_AUDIO_MEASUREMENT_INVALID", "音频输出证明不属于此原操作", 409)
             measured = _trim_measurement(row["measured"], body["parameters"])
+            if PEAK_CONTROL in body["parameters"] and measured["peak_normalization"]["source_sha256"] != binding["sources"][0]["digest"]:
+                raise _error("STUDIO_AUDIO_PEAK_PROOF_INVALID", "峰值测量来源摘要与绑定来源不一致", 409)
             ready = row.get("publication_ready")
             receipt = copy.deepcopy(row); self._receipt(receipt)
             if (not isinstance(ready, dict) or ready.get("output_digest") != measured["output_sha256"]
@@ -633,6 +723,8 @@ class StudioAudioExecution:
                 if body["parameters"].get("output_format") == "MP3":
                     proof.update(container="mp3", audio_codec="mp3", **{key: measured[key] for key in
                         ("total_samples", "decoded_pcm_bytes", "decoded_pcm_sha256", "bit_rate", "container_duration_ms")})
+                if PEAK_CONTROL in body["parameters"]:
+                    proof["peak_normalization"] = measured["peak_normalization"]
                 output_proof["measured"] = _trim_measurement(proof, body["parameters"])
             # Persist uncertainty before crossing from the audio owner to the
             # original source/asset owners. Never acquire those leases while
@@ -725,6 +817,16 @@ class StudioAudioExecution:
             raise _error("STUDIO_AUDIO_TRIM_SOURCE_CHANGED", "原音频资产或字节已变化", 409)
         measured = inspect_media(data, "audio", guard=inspection_current)
         if parameters["out_ms"] > measured["duration_ms"]: raise _error("STUDIO_AUDIO_TRIM_RANGE_INVALID", "裁剪终点超过原音频时长", 400)
+        peak_source, normalization_gain = None, None
+        if PEAK_CONTROL in parameters:
+            if measured.get("media_type") != "audio/wav" or measured.get("validation") != "PCM_DECODED":
+                raise _error("STUDIO_AUDIO_PEAK_PCM_PROFILE_REQUIRED", "峰值归一化仅支持已核对的 PCM16 WAV 来源", 400)
+            peak_source = _peak_pcm(data, parameters, inspection_current, selected=True)
+            if peak_source["peak_s16"] == 0:
+                raise _error("STUDIO_AUDIO_PEAK_SILENCE", "所选片段为数字静音，无法归一化峰值", 400)
+            normalization_gain = parameters[PEAK_CONTROL] - 20 * math.log10(peak_source["peak_s16"] / 32768)
+            if not -60 <= normalization_gain <= 12:
+                raise _error("STUDIO_AUDIO_PEAK_GAIN_OUT_OF_RANGE", "峰值修正超出 -60 至 +12 dB；不会自动截断或放大静音", 400)
         executable = shutil.which("ffmpeg")
         if not executable: raise _error("STUDIO_AUDIO_TRIM_TOOL_UNAVAILABLE", "本地裁剪需要原配置 ffmpeg", 501)
         if self._attempt(nid, claim, context, guard, source_guard) is None: raise _error("STUDIO_AUDIO_ATTEMPT_SUPERSEDED", "音频裁剪已取消或失效", 409)
@@ -742,15 +844,21 @@ class StudioAudioExecution:
             source_path.write_bytes(data)
             if self._attempt(nid, claim, context, guard, source_guard) is None: raise _error("STUDIO_AUDIO_ATTEMPT_SUPERSEDED", "音频裁剪已取消或失效", 409)
             from .studio_timeline_export import run_guarded_process
-            filters = _trim_filters(parameters)
+            filters = _trim_filters(parameters, normalization_gain_db=normalization_gain)
+            seek = ["-ss", f"{parameters['in_ms'] / 1000:.3f}"]
+            length = ["-t", f"{duration / 1000:.3f}"]
+            if peak_source is not None:
+                first = peak_source["first_frame"]
+                filters = ["-af", f"atrim=start_sample={first}:end_sample={first + peak_source['frames']},asetpts=PTS-STARTPTS," + filters[1]]
+                seek, length = [], []
             codec = ["-c:a", "flac", "-sample_fmt", "s16", "-compression_level", "5"] if flac else ["-c:a", "pcm_s16le"]
             if mp3:
                 from .studio_audio_mp3_profile import bit_rate
                 codec = ["-c:a", "libmp3lame", "-sample_fmt", "s16p", "-b:a", str(bit_rate(parameters.get("sample_rate", 48000))),
                          "-abr", "0", "-write_xing", "1", "-id3v2_version", "3", "-map_metadata", "-1"]
             run_guarded_process([executable, "-nostdin", "-v", "error", "-xerror", "-threads", "1", "-protocol_whitelist", "file,pipe",
-                "-ss", f"{parameters['in_ms'] / 1000:.3f}", "-i", str(source_path), "-map", "0:a:0", "-vn", "-sn", "-dn",
-                "-t", f"{duration / 1000:.3f}", *filters, "-ar", str(parameters.get("sample_rate", 48000)),
+                *seek, "-i", str(source_path), "-map", "0:a:0", "-vn", "-sn", "-dn",
+                *length, *filters, "-ar", str(parameters.get("sample_rate", 48000)),
                 "-ac", str(parameters.get("channels", 2)), *codec, "-fs", str(self.assets.MAX_BYTES + 1),
                 "-f", container, str(target)], cwd=directory, guard=inspection_current, timeout=50)
             inspection_current()
@@ -774,6 +882,15 @@ class StudioAudioExecution:
                 or result.get("sample_rate") != parameters.get("sample_rate", 48000)
                 or result.get("channels") != parameters.get("channels", 2) or result.get("sample_width") != 2):
             raise MediaValidationError("trim output does not match the reviewed PCM WAV profile")
+        if peak_source is not None:
+            actual = _peak_pcm(output, parameters, inspection_current, selected=False)
+            result["peak_normalization"] = _peak_proof({
+                "contract": "studio-audio-sample-peak/1", "source_sha256": source["digest"],
+                "selected_pcm_sha256": peak_source["pcm_sha256"], "selected_frames": peak_source["frames"],
+                "source_peak_s16": peak_source["peak_s16"], "target_peak_dbfs": parameters[PEAK_CONTROL],
+                "normalization_gain_db": normalization_gain, "manual_gain_db": parameters.get("gain_db", 0),
+                "output_peak_s16": actual["peak_s16"], "output_frames": actual["frames"],
+                "output_pcm_sha256": actual["pcm_sha256"]}, parameters, result["sample_rate"])
         return output, result
 
     def cancel(self, nid, job_id, expected_version, context, guard, *, expected_request_digest=None):
