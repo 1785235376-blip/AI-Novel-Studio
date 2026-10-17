@@ -1,0 +1,75 @@
+{
+  "status": "PASS_FROZEN_PRIMARY_AUDIT",
+  "head": "b5f52c823b4df58ffe69ec309bfc2fc0e4a114fe",
+  "source_count": 2611,
+  "all_nine_receipts_and_current_sources_equal": true,
+  "old_tests_frontend_original_runner_and_public_manifest_unchanged": true,
+  "golden_sha256": "640ca3823d83a378b9018a180957d375b9cef6b524f2e527f7e731236cfd90ac",
+  "manifest_sha256": "353b92aff6116d873ea4402a1ef627e7899214b46ba823a9b4300ba75c5d0448",
+  "receipts": [
+    {
+      "stage": "origin-before",
+      "path": "docs/delivery/v2-development/director-pending-origin-before-r1.json",
+      "sha256": "139dd26cdf796769c56d19f499cbc12b26c95c73d345dcaca67997f28f0c28fe",
+      "log": "docs/delivery/v2-development/director-pending-origin-before-r1.log",
+      "log_sha256": "56813d9b901642adec31224062fb6a6ba61c417820b65161f2672759c0fc67fe"
+    },
+    {
+      "stage": "new",
+      "path": "docs/delivery/v2-development/director-pending-new-r1.json",
+      "sha256": "82423a15ad7c59b9fcd0e62d5ef4e387e0fbf1e949a61ee02351fa6c67e3c2f1",
+      "log": "docs/delivery/v2-development/director-pending-new-r1.log",
+      "log_sha256": "bbff33543645ccae6e52e304c23b49ccc7ba7e4b6864c0baa88e90c02995d366"
+    },
+    {
+      "stage": "regression",
+      "path": "docs/delivery/v2-development/director-pending-regression-r1.json",
+      "sha256": "4192911296aeb67ce8bc337c4d2a0fad3eb979f6564c9bdeb3dafd7a3fc8f64a",
+      "log": "docs/delivery/v2-development/director-pending-regression-r1.log",
+      "log_sha256": "98dd2e1cb4824dbc4aac94345378ad0fd2ad2a113c8f9ac36b25ad9409856686"
+    },
+    {
+      "stage": "packaging",
+      "path": "docs/delivery/v2-development/director-pending-packaging-r1.json",
+      "sha256": "6c8f39db1a9b7908eff853c09654de1b278054cfc9c2c24f5c0df5ed4565a2b3",
+      "log": "docs/delivery/v2-development/director-pending-packaging-r1.log",
+      "log_sha256": "ce75818b99c94235386740a37bf029060afbd84fd161cd2569af64546d4a40d8"
+    },
+    {
+      "stage": "ui",
+      "path": "docs/delivery/v2-development/director-pending-ui-r1.json",
+      "sha256": "7bf540c7fb77b4ef7a9a42819f66202f5b06c7a087b923172796f5ed36539758",
+      "log": "docs/delivery/v2-development/director-pending-ui-r1.log",
+      "log_sha256": "0c9f5ba3cee7cefb3f2e17afbb55d41e2abf18aa0e9c57f409edc0d7d5ed7c16"
+    },
+    {
+      "stage": "type",
+      "path": "docs/delivery/v2-development/director-pending-type-r1.json",
+      "sha256": "931873d7d331dbdf5c4c0119262ca8126ca186f49dd2d6d3848614601b126599",
+      "log": "docs/delivery/v2-development/director-pending-type-r1.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "build",
+      "path": "docs/delivery/v2-development/director-pending-build-r1.json",
+      "sha256": "1f111f4ec4c13b66ca358bb22d3b68300ffc3a8c8c65d7e33c060139915c9a87",
+      "log": "docs/delivery/v2-development/director-pending-build-r1.log",
+      "log_sha256": "bf3fa3734d7492308efdaf6eb7a41e8ccb024c43493998dd052d4d12bcb5c9ae"
+    },
+    {
+      "stage": "token",
+      "path": "docs/delivery/v2-development/director-pending-token-r1.json",
+      "sha256": "4bae30f7720e8aab570fe2ee017129ae2cded3927dd752e4fb2acf47ee1f0906",
+      "log": "docs/delivery/v2-development/director-pending-token-r1.log",
+      "log_sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50"
+    },
+    {
+      "stage": "origin-after",
+      "path": "docs/delivery/v2-development/director-pending-origin-after-r1.json",
+      "sha256": "9193e1e971c087cd474feb37f74b779be0f9a984f5498668d812f0da7c7b0528",
+      "log": "docs/delivery/v2-development/director-pending-origin-after-r1.log",
+      "log_sha256": "5e7e6b43a47c2fb08349ee1759341ea5aaaf02c84fcf372b2859f01e259178fd"
+    }
+  ],
+  "archive_index_sha256": "45756eb33784ceed3dbde0e0395df32539c08b51a041e820929bce2e05658201"
+}

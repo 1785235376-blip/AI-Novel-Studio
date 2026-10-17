@@ -1,0 +1,17 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-pending/frontend
+
+ ✓ src/creative/DirectorModelControls.storyboard-model.additive.test.tsx (49 tests) 1275ms
+ ✓ src/creative/GraphModelExecutionPanel.test.tsx (18 tests) 881ms
+ ✓ src/creative/GraphDirectorStoryboardHandoff.test.tsx (7 tests) 220ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 165ms
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 146ms
+ ✓ src/creative/studioGraphDirectorClient.test.ts (14 tests) 14ms
+
+ Test Files  6 passed (6)
+      Tests  100 passed (100)
+   Start at  19:43:32
+   Duration  6.80s (transform 811ms, setup 42ms, collect 1.59s, tests 2.70s, environment 1.46s, prepare 278ms)
+
+
+{"receipt": "docs/delivery/v2-development/director-pending-ui-r1.json", "status": "PASS"}

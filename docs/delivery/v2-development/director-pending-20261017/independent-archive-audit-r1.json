@@ -1,0 +1,68 @@
+{
+  "status": "PASS_INDEPENDENT_ACTUAL_ARCHIVE_AUDIT",
+  "archive_count": 4,
+  "archives": [
+    {
+      "kind": "sdist",
+      "archive": ".runtime/v2-checks/director-pending-packaging-r1/pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "sha256": "f69afc73f8ce038e9f43369b056de84052957002a7ad2f8f61624348dfe2e901",
+      "all_source_payloads_verified": 512,
+      "all_archive_members_verified": 519,
+      "changed_module_sha256": {
+        "app/creative/generation.py": "dfc727fdaef2ee1434216871bd4aa0d7fbfe62747b82c8532d84b9fdceaf6b08",
+        "app/creative/director_binding.py": "294bfd27629edb84da855a1343fac264e848fabdd41dd4d95bee4f01381e5292",
+        "app/creative/director_terminal_evidence.py": "f46c4ee428b4bfc3cfc137326e07c83a30c643d8a1cef4c7eaa70d84d36f146a",
+        "app/creative/proposals.py": "a27ac7da3cce6677c46565e3ada67dc54f5ffb58eadea0db54f437c929b6c407",
+        "app/repositories/generation_repository.py": "35698818863ffdd6b90e464fb506510438d20b9a5a3edb2b6caeeed08ae4254a"
+      }
+    },
+    {
+      "kind": "sdist",
+      "archive": ".runtime/v2-checks/director-pending-packaging-r1/pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "sha256": "99a5ed879c03b1b93e21da9c86b1fbce79642c148522c0da54a83673e6950228",
+      "all_source_payloads_verified": 512,
+      "all_archive_members_verified": 519,
+      "changed_module_sha256": {
+        "app/creative/generation.py": "dfc727fdaef2ee1434216871bd4aa0d7fbfe62747b82c8532d84b9fdceaf6b08",
+        "app/creative/director_binding.py": "294bfd27629edb84da855a1343fac264e848fabdd41dd4d95bee4f01381e5292",
+        "app/creative/director_terminal_evidence.py": "f46c4ee428b4bfc3cfc137326e07c83a30c643d8a1cef4c7eaa70d84d36f146a",
+        "app/creative/proposals.py": "a27ac7da3cce6677c46565e3ada67dc54f5ffb58eadea0db54f437c929b6c407",
+        "app/repositories/generation_repository.py": "35698818863ffdd6b90e464fb506510438d20b9a5a3edb2b6caeeed08ae4254a"
+      }
+    },
+    {
+      "kind": "wheel",
+      "archive": ".runtime/v2-checks/director-pending-packaging-r1/pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "sha256": "28b5c780c7ec1e25a1ad6a7dd8af6d24662dee4fad6b096fee9630980a2be6af",
+      "all_source_payloads_verified": 511,
+      "all_archive_members_verified": 515,
+      "changed_module_sha256": {
+        "app/creative/generation.py": "dfc727fdaef2ee1434216871bd4aa0d7fbfe62747b82c8532d84b9fdceaf6b08",
+        "app/creative/director_binding.py": "294bfd27629edb84da855a1343fac264e848fabdd41dd4d95bee4f01381e5292",
+        "app/creative/director_terminal_evidence.py": "f46c4ee428b4bfc3cfc137326e07c83a30c643d8a1cef4c7eaa70d84d36f146a",
+        "app/creative/proposals.py": "a27ac7da3cce6677c46565e3ada67dc54f5ffb58eadea0db54f437c929b6c407",
+        "app/repositories/generation_repository.py": "35698818863ffdd6b90e464fb506510438d20b9a5a3edb2b6caeeed08ae4254a"
+      }
+    },
+    {
+      "kind": "wheel",
+      "archive": ".runtime/v2-checks/director-pending-packaging-r1/pytest/public-wheel1/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "sha256": "9ba0e0e7266b7ba8e96da86691a52a5021afe204931ef9934e72fdb1ca2f0da1",
+      "all_source_payloads_verified": 511,
+      "all_archive_members_verified": 515,
+      "changed_module_sha256": {
+        "app/creative/generation.py": "dfc727fdaef2ee1434216871bd4aa0d7fbfe62747b82c8532d84b9fdceaf6b08",
+        "app/creative/director_binding.py": "294bfd27629edb84da855a1343fac264e848fabdd41dd4d95bee4f01381e5292",
+        "app/creative/director_terminal_evidence.py": "f46c4ee428b4bfc3cfc137326e07c83a30c643d8a1cef4c7eaa70d84d36f146a",
+        "app/creative/proposals.py": "a27ac7da3cce6677c46565e3ada67dc54f5ffb58eadea0db54f437c929b6c407",
+        "app/repositories/generation_repository.py": "35698818863ffdd6b90e464fb506510438d20b9a5a3edb2b6caeeed08ae4254a"
+      }
+    }
+  ],
+  "manifest_sha256": "353b92aff6116d873ea4402a1ef627e7899214b46ba823a9b4300ba75c5d0448",
+  "audit_script_sha256": "63e0357c7b496e4c647502a471da2e4b858b6970205742d32937921ac9a75538",
+  "imports_product": false,
+  "installs": false,
+  "extracts": false,
+  "copies_archives": false
+}

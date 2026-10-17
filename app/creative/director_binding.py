@@ -221,11 +221,15 @@ def _has_internal_director_record(row):
             if not isinstance(value, dict): return True
             contract = value.get("contract")
             if contract is not None and not isinstance(contract, str): return True
-            if contract in (CREATIVE_DIRECTOR_INTERNAL_CONTRACT, "CREATIVE_DIRECTOR_SOURCE_V1"):
+            if contract in (CREATIVE_DIRECTOR_INTERNAL_CONTRACT, "CREATIVE_DIRECTOR_SOURCE_V1",
+                            "CREATIVE_DIRECTOR_PENDING_REVIEW_V1"):
                 return True
             stack.extend((item, depth + 1, True) for item in value.values() if isinstance(item, (dict, list)))
         else:
             if not isinstance(value, dict): return True
+            # Presence alone, including null/malformed values, is private.
+            if "_creative_director_pending_review" in value:
+                return True
             for key in ("model_preview", "model_execution"):
                 child = value.get(key)
                 if child is not None:

@@ -67,12 +67,14 @@ class DirectorProposalService:
         from .camera_language import project_camera
         if _has_internal_director_record(row):
             result = deepcopy({key: value for key, value in row.items()
-                if key not in {"history", "model_preview", "model_execution", "director_notes", "output_digest"}})
+                if key not in {"history", "model_preview", "model_execution", "director_notes", "output_digest",
+                               "_creative_director_pending_review", "provenance"}})
             result.update(status="MODEL_UNAVAILABLE", model_preview=None, model_execution=None,
                 director_notes=[], output_digest=None, rule_checks=[],
                 unavailable_reason="CREATIVE_DIRECTOR_EXECUTION_UNAVAILABLE")
             return result
-        result = deepcopy({key: value for key, value in row.items() if key != "history"})
+        result = deepcopy({key: value for key, value in row.items()
+                           if key not in {"history", "_creative_director_pending_review"}})
         # Auxiliary read-only vocabulary checks; no inferred spatial correctness.
         result["rule_checks"] = [{"note_id": note["id"], "camera": project_camera(note)}
                                  for note in row.get("director_notes", [])]

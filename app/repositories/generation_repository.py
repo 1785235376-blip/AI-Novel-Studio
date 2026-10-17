@@ -183,6 +183,21 @@ class GenerationRepository:
             atomic_write(path, json.dumps(item, ensure_ascii=False, indent=2))
         return _PublicationAcknowledgment(capability, self, job, digest(evidence))
 
+    @contextmanager
+    def _director_snapshot_leaf(self, jid):
+        """Caller already owns raw scope/project; no callbacks under this leaf.
+
+        Keep this context entered through the caller's original scope commit.
+        Identity/authority checks must precede entry; the yielded detached row
+        is only compared as data, never used to mint execution authority.
+        """
+        from .file.mutation_coordinator import workspace_mutation
+        path = self._job_path(jid)
+        with workspace_mutation(self.root, self._write_key(path)):
+            if not path.exists():
+                raise KeyError(jid)
+            yield json.loads(path.read_text(encoding="utf-8"))
+
     def load_all(self):
         out=[]
         for p in self.root.glob("*.json"):

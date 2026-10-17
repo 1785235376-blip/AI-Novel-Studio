@@ -137,3 +137,35 @@ def preserve_evidence(previous, item):
     result = dict(item)
     result[FIELD] = deepcopy(previous[FIELD])
     return result
+
+
+# Parsed candidates live only in the original proposal. This private receipt
+# records explicit fresh-authorized publication, never an execution capability.
+PENDING_FIELD = "_creative_director_pending_review"
+PENDING_CONTRACT = "CREATIVE_DIRECTOR_PENDING_REVIEW_V1"
+
+
+class PendingReview(_Strict):
+    contract: Literal["CREATIVE_DIRECTOR_PENDING_REVIEW_V1"]
+    schema_version: Literal[1]
+    proposal_id: str = Field(min_length=1)
+    admitted_version: int = Field(ge=1)
+    published_version: int = Field(ge=2)
+    terminal_evidence_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+    output_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+    published_by: str = Field(min_length=1)
+    published_at: str
+    provenance: dict
+
+
+def validate_pending(value):
+    try:
+        pending = PendingReview.model_validate(value).model_dump()
+        if (type(value["schema_version"]) is not int
+                or pending["published_version"] != pending["admitted_version"] + 1
+                or datetime.fromisoformat(pending["published_at"]).tzinfo is None
+                or digest(pending) != digest(value)):
+            raise ValueError("invalid pending identity")
+        return pending
+    except (ValueError, TypeError, KeyError, AttributeError):
+        raise ValueError("CREATIVE_DIRECTOR_PENDING_REVIEW_INVALID") from None

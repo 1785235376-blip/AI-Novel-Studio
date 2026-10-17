@@ -951,3 +951,299 @@ class DirectorModelCoordinator:
                 provenance=candidate["provenance"], before_mutation=before_mutation,
                 after_mutation=after_mutation,
                 quota_view=lambda: self.store._view(raw, binding.project_incarnation))
+
+    def _pending_repository(self):
+        from ..repositories.generation_repository import GenerationRepository
+        repository = getattr(self.manager.persistence, "repository", self.manager.persistence)
+        if (self.store.backend != "file" or not isinstance(repository, GenerationRepository)
+                or repository.root.resolve() != (self.store.root / "runtime/jobs").resolve()
+                or self.broker.store is not self.store.store):
+            raise ValueError("CREATIVE_DIRECTOR_PENDING_BACKEND_UNSUPPORTED")
+        return repository
+
+    @contextmanager
+    def _pending_transaction(self, ctx, rid, guard, host_authority):
+        """Original accept → condition → raw scope → owner; caller may add leaf.
+
+        The outer ExitStack keeps owner and any late-entered generation leaf
+        through the INNER raw transaction's atomic commit. All semantic
+        callbacks must finish before that leaf is entered. Existing File
+        coordinator waits retain their original blocking behavior.
+        """
+        from contextlib import ExitStack
+        from .director_binding import _creative_director_owner_lease
+        repository = self._pending_repository()
+        if (getattr(self.store.store._local, "active", {})
+                or getattr(self.store._local, "active", {})
+                or getattr(self.store._local, "owners", {})):
+            raise ValueError("CREATIVE_DIRECTOR_SOURCE_LOCK_ORDER_INVALID")
+        self._independent_host(host_authority)
+        if not callable(guard):
+            raise ValueError("CREATIVE_DIRECTOR_ACTOR_AUTHORITY_REQUIRED")
+        guard(); self._flags()
+        routing = self.proposals._owned(ctx.novel_id, ctx.scope, ctx.actor, rid,
+            self.store.store.read(ctx.novel_id, ctx.scope))
+        job_id = (routing.get("model_execution") or {}).get("job_id")
+        if not isinstance(job_id, str) or not job_id:
+            raise ValueError("CREATIVE_DIRECTOR_PENDING_ADMISSION_REQUIRED")
+        repository._job_path(job_id)
+        with self.manager._review_mutation(job_id), ExitStack() as locks:
+            try:
+                job = self.manager.get(job_id)
+            except KeyError:
+                job = None
+            if job is not None:
+                if not job.condition.acquire(timeout=TIMEOUT_SECONDS):
+                    raise ValueError("CREATIVE_DIRECTOR_PENDING_LOCK_TIMEOUT")
+                locks.callback(job.condition.release)
+            binding = self._independent_binding(ctx, rid,
+                (routing.get("model_preview") or {}).get("preview_digest", "0" * 64))
+            with self.store.store.transaction(ctx.novel_id, ctx.scope) as raw:
+                locks.enter_context(_creative_director_owner_lease(self.documents, binding))
+                row = self.proposals._owned(ctx.novel_id, ctx.scope, ctx.actor, rid, raw)
+                if ((row.get("model_execution") or {}).get("job_id") != job_id
+                        or (job is not None and self.manager.get(job_id) is not job)):
+                    raise ValueError("CREATIVE_DIRECTOR_ADMISSION_CHANGED")
+                yield raw, row, binding, repository, locks
+            # No source/authority/policy callbacks here: leaf may remain held.
+
+    def _pending_current(self, ctx, row, binding, guard, host_authority):
+        """Fresh current authority, independently of the historical Host session."""
+        from .director_binding import _validate_creative_director_source_locked
+        key = self.store.store.key(ctx.novel_id, ctx.scope)
+        active = getattr(self.store.store._local, "active", {})
+        raw = active.get(key)
+        if not isinstance(raw, dict):
+            raise ValueError("CREATIVE_DIRECTOR_SOURCE_LOCK_ORDER_INVALID")
+        before_scope, before = canonical(raw), canonical(row)
+        if type(row.get("version")) is not int or row["version"] < 1:
+            raise ValueError("CREATIVE_DIRECTOR_PENDING_VERSION_INVALID")
+        self._independent_host(host_authority); guard(); self._flags()
+        require_flag("ai_execution_v2")
+        source = _validate_creative_director_source_locked(self.documents, binding,
+            actor_id=ctx.actor, scope=ctx.scope)
+        if (row.get("project_incarnation") != binding.project_incarnation
+                or row.get("source_document_id") != binding.source_document_id
+                or row.get("source_version") != binding.source_version
+                or row.get("source_digest") != binding.source_digest):
+            raise ValueError("CREATIVE_DIRECTOR_PENDING_SOURCE_CHANGED")
+        route = self._independent_policy(ctx, row.get("model_preview") or {})
+        self._independent_host(host_authority); guard(); self._flags()
+        require_flag("ai_execution_v2")
+        if (getattr(self.store.store._local, "active", None) is not active
+                or active.get(key) is not raw or canonical(raw) != before_scope or canonical(row) != before):
+            raise ValueError("CREATIVE_DIRECTOR_PENDING_MUTATION_DENIED")
+        return source, route
+
+    def _pending_history(self, ctx, row, binding, repository, *, admitted_version, require_output):
+        """Verify passive persisted identity/settlement, never restore a Job seal."""
+        from types import SimpleNamespace
+        from .director_binding import CREATIVE_DIRECTOR_INTERNAL_CONTRACT
+        from .director_terminal_evidence import FIELD, validate_evidence, digest as history_digest
+        from ..model_execution import creative_director_request_payload_digest
+        preview, execution = row.get("model_preview") or {}, row.get("model_execution") or {}
+        if (preview.get("contract") != CREATIVE_DIRECTOR_INTERNAL_CONTRACT
+                or preview.get("output_contract") != STORYBOARD_CONTRACT
+                or preview.get("preview_digest") != digest({key: value for key, value in preview.items() if key != "preview_digest"})
+                or preview.get("visual_target") != row.get("visual_target")):
+            raise ValueError("CREATIVE_DIRECTOR_PENDING_PREVIEW_CHANGED")
+        unreviewed = binding.model_dump(); unreviewed["reviewed_preview_digest"] = "0" * 64
+        if canonical(preview.get("source_binding")) != canonical(unreviewed):
+            raise ValueError("CREATIVE_DIRECTOR_PENDING_SOURCE_CHANGED")
+        saved = repository.get(execution.get("job_id"))
+        evidence = validate_evidence(saved.get(FIELD), saved)
+        if canonical(saved[FIELD]) != canonical(evidence):
+            raise ValueError("CREATIVE_DIRECTOR_TERMINAL_EVIDENCE_INVALID")
+        admission, route, accounting = evidence["admission"], evidence["route"], evidence["accounting"]
+        expected_execution = {"contract": CREATIVE_DIRECTOR_INTERNAL_CONTRACT,
+            "job_id": evidence["job_id"], "reservation_id": accounting["reservation_id"],
+            "status": "QUEUED", "receipt_state": "RECORDED", "request_digest": evidence["request_digest"],
+            "preview_digest": preview["preview_digest"], "deadline": evidence["generation_deadline"],
+            "model_called": False, "usage_state": "UNKNOWN"}
+        if (canonical(execution) != canonical(expected_execution)
+                or canonical(evidence["source_binding"]) != canonical(binding.model_dump())
+                or admission != {"proposal_id": row["id"], "proposal_version": admitted_version,
+                    "preview_id": preview["broker_preview_id"], "preview_version": preview["broker_preview_version"],
+                    "preview_digest": preview["preview_digest"], "output_contract": STORYBOARD_CONTRACT}
+                or route["route_id"] != preview["route_id"]
+                or route["fingerprint"] != preview["route_fingerprint"]
+                or route["binding_hash"] != preview["route_binding_hash"]
+                or canonical(route["parameters"]) != canonical(preview["parameters"])
+                or route["provider_id"] != saved.get("requested_provider")
+                or route["model_id"] != saved.get("requested_model")
+                or evidence["maximum_output_bytes"] != preview["max_output_bytes"]
+                or evidence["maximum_output_bytes"] != saved.get("generation_max_output_bytes")
+                or evidence["generation_deadline"] != saved.get("generation_deadline")):
+            raise ValueError("CREATIVE_DIRECTOR_PENDING_ADMISSION_CHANGED")
+        # Reconstruct ONLY canonical passive adapter data, not a request,
+        # invocation, cancellation Event, guard, Job or execution capability.
+        payload = {"provider_id": route["provider_id"], "model_id": route["model_id"],
+            "prompt": preview["prompt"], "system_instruction": None, "context": {},
+            "parameters": {**deepcopy(preview["parameters"]), "stop_sequences": []},
+            "structured_output_schema": None, "metadata": {"purpose": "creative_director_source_model"}}
+        if creative_director_request_payload_digest(SimpleNamespace(**saved), payload,
+                preview["allow_synthetic"], route_fingerprint=route["fingerprint"]) != evidence["request_digest"]:
+            raise ValueError("CREATIVE_DIRECTOR_PENDING_REQUEST_CHANGED")
+        ledger = self.broker.get(ctx.novel_id, ctx.scope, self.broker.LEDGER, accounting["reservation_id"])
+        if (ledger.get("created_by") != ctx.actor or ledger.get("job_id") != evidence["job_id"]
+                or ledger.get("authorization_digest") != evidence["request_digest"]
+                or ledger.get("preview_id") != preview["broker_preview_id"]
+                or ledger.get("route_id") != route["route_id"] or ledger.get("route_fingerprint") != route["fingerprint"]
+                or ledger.get("provider_id") != route["provider_id"] or ledger.get("model_id") != route["model_id"]
+                or ledger.get("status") != "SETTLED" or ledger.get("job_status") != "COMPLETED"
+                or ledger.get("dispatched") is not True or type(ledger.get("actual_microusd")) is not int
+                or ledger["actual_microusd"] != 0 or ledger.get("version") != accounting["version"]
+                or history_digest(ledger) != accounting["digest"]):
+            raise ValueError("CREATIVE_DIRECTOR_PENDING_SETTLEMENT_CHANGED")
+        if require_output:
+            text = saved.get("output")
+            if (saved.get("status") != "COMPLETED" or saved.get("execution_outcome") != "COMPLETED"
+                    or saved.get("terminal_hook_status") != "COMPLETED"
+                    or saved.get("provider") != route["provider_id"] or saved.get("model") != route["model_id"]
+                    or saved.get("execution_mode") != route["execution_mode"]
+                    or not isinstance(text, str) or not text.strip()
+                    or len(text.encode("utf-8")) != evidence["output_bytes"]
+                    or hashlib.sha256(text.encode("utf-8")).hexdigest() != evidence["output_digest"]):
+                raise ValueError("CREATIVE_DIRECTOR_PENDING_OUTPUT_UNAVAILABLE")
+        return saved, evidence
+
+    @staticmethod
+    def _pending_provenance(row, source, route, evidence, output_digest):
+        from .director_terminal_evidence import digest as history_digest
+        return {"method": "MODEL_ASSISTED", "model_called": True,
+            "provider_id": evidence["route"]["provider_id"], "model_id": evidence["route"]["model_id"],
+            "model_version": route.get("identity", {}).get("model_version"),
+            "route_fingerprint": evidence["route"]["fingerprint"], "synthetic": evidence["route"]["synthetic"],
+            "parameters": deepcopy(evidence["route"]["parameters"]), "source_mode": "STORYBOARD",
+            "source_document_id": source["id"], "source_version": source["version"],
+            "source_digest": row["source_digest"], "source_mapping": source_mapping(row, source),
+            "job_id": evidence["job_id"], "reservation_id": evidence["accounting"]["reservation_id"],
+            "request_digest": evidence["request_digest"], "preview_digest": evidence["admission"]["preview_digest"],
+            "raw_output_digest": evidence["output_digest"], "candidate_output_digest": output_digest,
+            "terminal_evidence_digest": history_digest(evidence), "quality_verification": "HUMAN_REVIEW_REQUIRED"}
+
+    def _pending_candidate(self, ctx, row, binding, repository, guard, host_authority):
+        from .director_terminal_evidence import PENDING_FIELD, validate_pending, digest as history_digest
+        key = self.store.store.key(ctx.novel_id, ctx.scope)
+        active = self.store.store._local.active
+        raw = active[key]
+        before_scope, before = canonical(raw), canonical(row)
+        pending = validate_pending(row.get(PENDING_FIELD))
+        if (row.get("status") != "INTERNAL_MODEL_PENDING_REVIEW" or row.get("document_id")
+                or pending["proposal_id"] != row["id"] or pending["published_by"] != ctx.actor
+                or pending["published_version"] != row["version"]):
+            raise ValueError("CREATIVE_DIRECTOR_PENDING_REVIEW_CHANGED")
+        source, route = self._pending_current(ctx, row, binding, guard, host_authority)
+        _, evidence = self._pending_history(ctx, row, binding, repository,
+            admitted_version=pending["admitted_version"], require_output=False)
+        mapping = source_mapping(row, source)
+        notes = row.get("director_notes")
+        if not isinstance(notes, list) or len(notes) != len(mapping):
+            raise ValueError("CREATIVE_DIRECTOR_PENDING_CANDIDATES_CHANGED")
+        # Revalidate saved parsed schema and scene evidence without retaining
+        # a second raw-output string or requiring the original output to remain.
+        parsed = _validate_director_output(row, source, {"source_contract": STORYBOARD_CONTRACT,
+            "source_document_id": source["id"], "source_version": source["version"], "source_digest": row["source_digest"],
+            "director_notes": [{**note, "source_shot_id": association["source_shot_id"]}
+                for note, association in zip(notes, mapping)]})
+        output_digest = director_output_digest(parsed, row.get("visual_target"))
+        provenance = self._pending_provenance(row, source, route, evidence, output_digest)
+        if (canonical(parsed) != canonical(notes) or pending["output_digest"] != output_digest
+                or row.get("output_digest") != output_digest
+                or pending["terminal_evidence_digest"] != history_digest(evidence)
+                or canonical(pending["provenance"]) != canonical(provenance)
+                or getattr(self.store.store._local, "active", None) is not active or active.get(key) is not raw
+                or canonical(row) != before or canonical(raw) != before_scope):
+            raise ValueError("CREATIVE_DIRECTOR_PENDING_CANDIDATES_CHANGED")
+        return source, {"proposal_id": row["id"], "expected_version": row["version"],
+            "director_notes": deepcopy(parsed), "output_digest": output_digest,
+            "visual_target": deepcopy(row.get("visual_target")), "provenance": provenance}
+
+    def _prepare_independent_pending_review(self, ctx, rid, value, guard, *, host_authority):
+        """Explicit current-authorized publication; never automatic or execution."""
+        from pydantic import BaseModel, ConfigDict, Field
+        from .director_terminal_evidence import PENDING_FIELD, PENDING_CONTRACT, validate_pending, digest as history_digest
+        class Input(BaseModel):
+            model_config = ConfigDict(extra="forbid", strict=True)
+            expected_version: int = Field(ge=1)
+            terminal_evidence_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+        body = Input.model_validate(value)
+        with self._pending_transaction(ctx, rid, guard, host_authority) as (raw, row, binding, repository, locks):
+            if PENDING_FIELD in row:
+                # Reconcile an exact lost-response commit BEFORE any mutation.
+                pending = validate_pending(row[PENDING_FIELD])
+                if (pending["admitted_version"] != body.expected_version
+                        or pending["terminal_evidence_digest"] != body.terminal_evidence_digest):
+                    self._independent_version(row, body.expected_version)
+                    raise ValueError("CREATIVE_DIRECTOR_PENDING_ALREADY_PUBLISHED")
+                _, candidate = self._pending_candidate(ctx, row, binding, repository, guard, host_authority)
+                self._pending_current(ctx, row, binding, guard, host_authority)
+            else:
+                self._independent_version(row, body.expected_version)
+                if (row.get("status") != "INTERNAL_MODEL_EXECUTING" or row.get("document_id")
+                        or row.get("director_notes") != []
+                        or row.get("output_digest") != director_output_digest([], row.get("visual_target"))):
+                    raise ValueError("CREATIVE_DIRECTOR_PENDING_NOT_PREPARABLE")
+                source, route = self._pending_current(ctx, row, binding, guard, host_authority)
+                saved, evidence = self._pending_history(ctx, row, binding, repository,
+                    admitted_version=body.expected_version, require_output=True)
+                if history_digest(evidence) != body.terminal_evidence_digest:
+                    raise ValueError("CREATIVE_DIRECTOR_EXACT_TERMINAL_EVIDENCE_REQUIRED")
+                if (route["synthetic"] != evidence["route"]["synthetic"]
+                        or route["provider_id"] != evidence["route"]["provider_id"]
+                        or route["model_id"] != evidence["route"]["model_id"]):
+                    raise ValueError("CREATIVE_DIRECTOR_PENDING_ROUTE_CHANGED")
+                notes = _parse_director_output(row, source, saved["output"], max_output_bytes=MAX_OUTPUT_BYTES)
+                output_digest = director_output_digest(notes, row.get("visual_target"))
+                provenance = self._pending_provenance(row, source, route, evidence, output_digest)
+                pending = validate_pending({"contract": PENDING_CONTRACT, "schema_version": 1,
+                    "proposal_id": rid, "admitted_version": body.expected_version,
+                    "published_version": body.expected_version + 1,
+                    "terminal_evidence_digest": body.terminal_evidence_digest, "output_digest": output_digest,
+                    "published_by": ctx.actor, "published_at": datetime.now(timezone.utc).isoformat(),
+                    "provenance": provenance})
+                change_row(row, ctx.actor, body.expected_version, lambda item: item.update(
+                    status="INTERNAL_MODEL_PENDING_REVIEW", director_notes=deepcopy(notes),
+                    output_digest=output_digest, **{PENDING_FIELD: pending}))
+                staged_scope = canonical(raw)
+                self.proposals._capacity(self.store._view(raw, binding.project_incarnation))
+                self._pending_current(ctx, row, binding, guard, host_authority)
+                fresh, fresh_evidence = self._pending_history(ctx, row, binding, repository,
+                    admitted_version=body.expected_version, require_output=True)
+                if canonical(fresh) != canonical(saved) or canonical(fresh_evidence) != canonical(evidence):
+                    raise ValueError("CREATIVE_DIRECTOR_PENDING_OUTPUT_CHANGED")
+                self._pending_current(ctx, row, binding, guard, host_authority)
+                if canonical(raw) != staged_scope:
+                    raise ValueError("CREATIVE_DIRECTOR_PENDING_MUTATION_DENIED")
+                candidate = {"proposal_id": rid, "expected_version": row["version"],
+                    "director_notes": deepcopy(notes), "output_digest": output_digest,
+                    "visual_target": deepcopy(row.get("visual_target")), "provenance": deepcopy(provenance)}
+                # LAST callbacks above. Only detached-data equality below; leaf
+                # stays entered through raw atomic write, then exits before owner.
+                locked = locks.enter_context(repository._director_snapshot_leaf(evidence["job_id"]))
+                if canonical(locked) != canonical(saved):
+                    raise ValueError("CREATIVE_DIRECTOR_PENDING_OUTPUT_CHANGED")
+        return deepcopy(candidate)
+
+    def _read_independent_pending_review(self, ctx, rid, guard, *, host_authority):
+        with self._pending_transaction(ctx, rid, guard, host_authority) as (_, row, binding, repository, _):
+            _, candidate = self._pending_candidate(ctx, row, binding, repository, guard, host_authority)
+            self._pending_current(ctx, row, binding, guard, host_authority)
+        return deepcopy(candidate)
+
+    def _review_independent_pending(self, ctx, rid, value, guard, *, host_authority):
+        from .models import DirectorProposalReview
+        body = DirectorProposalReview.model_validate(value)
+        with self._pending_transaction(ctx, rid, guard, host_authority) as (raw, row, binding, repository, _):
+            self._independent_version(row, body.expected_version)
+            source, candidate = self._pending_candidate(ctx, row, binding, repository, guard, host_authority)
+            def before_mutation():
+                _, fresh = self._pending_candidate(ctx, row, binding, repository, guard, host_authority)
+                if canonical(fresh) != canonical(candidate):
+                    raise ValueError("CREATIVE_DIRECTOR_PENDING_CANDIDATES_CHANGED")
+            result = self.proposals._adopt_review_locked(ctx.novel_id, ctx.scope, ctx.actor,
+                raw, row, source, body, notes=candidate["director_notes"], output_digest=candidate["output_digest"],
+                provenance=candidate["provenance"], before_mutation=before_mutation,
+                after_mutation=lambda: self._pending_current(ctx, row, binding, guard, host_authority),
+                quota_view=lambda: self.store._view(raw, binding.project_incarnation))
+        return result

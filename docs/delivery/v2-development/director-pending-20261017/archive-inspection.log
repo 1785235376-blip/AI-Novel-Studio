@@ -1,0 +1,127 @@
+{
+  "status": "PASS_OFFLINE_PUBLIC_ARCHIVE_INSPECTION",
+  "manifest_sha256": "353b92aff6116d873ea4402a1ef627e7899214b46ba823a9b4300ba75c5d0448",
+  "archives": [
+    {
+      "archive": ".runtime/v2-checks/director-pending-packaging-r1/pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "kind": "sdist",
+      "sha256": "f69afc73f8ce038e9f43369b056de84052957002a7ad2f8f61624348dfe2e901",
+      "payload_file_count": 519,
+      "changed_modules": {
+        "app/creative/director_binding.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_binding.py",
+          "sha256": "294bfd27629edb84da855a1343fac264e848fabdd41dd4d95bee4f01381e5292"
+        },
+        "app/creative/director_terminal_evidence.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_terminal_evidence.py",
+          "sha256": "f46c4ee428b4bfc3cfc137326e07c83a30c643d8a1cef4c7eaa70d84d36f146a"
+        },
+        "app/creative/generation.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/generation.py",
+          "sha256": "dfc727fdaef2ee1434216871bd4aa0d7fbfe62747b82c8532d84b9fdceaf6b08"
+        },
+        "app/creative/proposals.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/proposals.py",
+          "sha256": "a27ac7da3cce6677c46565e3ada67dc54f5ffb58eadea0db54f437c929b6c407"
+        },
+        "app/repositories/generation_repository.py": {
+          "member": "ai_novel_studio-0.7.0/app/repositories/generation_repository.py",
+          "sha256": "35698818863ffdd6b90e464fb506510438d20b9a5a3edb2b6caeeed08ae4254a"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/director-pending-20261017/packaging-evidence/public-sdist0"
+    },
+    {
+      "archive": ".runtime/v2-checks/director-pending-packaging-r1/pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "kind": "sdist",
+      "sha256": "99a5ed879c03b1b93e21da9c86b1fbce79642c148522c0da54a83673e6950228",
+      "payload_file_count": 519,
+      "changed_modules": {
+        "app/creative/director_binding.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_binding.py",
+          "sha256": "294bfd27629edb84da855a1343fac264e848fabdd41dd4d95bee4f01381e5292"
+        },
+        "app/creative/director_terminal_evidence.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_terminal_evidence.py",
+          "sha256": "f46c4ee428b4bfc3cfc137326e07c83a30c643d8a1cef4c7eaa70d84d36f146a"
+        },
+        "app/creative/generation.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/generation.py",
+          "sha256": "dfc727fdaef2ee1434216871bd4aa0d7fbfe62747b82c8532d84b9fdceaf6b08"
+        },
+        "app/creative/proposals.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/proposals.py",
+          "sha256": "a27ac7da3cce6677c46565e3ada67dc54f5ffb58eadea0db54f437c929b6c407"
+        },
+        "app/repositories/generation_repository.py": {
+          "member": "ai_novel_studio-0.7.0/app/repositories/generation_repository.py",
+          "sha256": "35698818863ffdd6b90e464fb506510438d20b9a5a3edb2b6caeeed08ae4254a"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/director-pending-20261017/packaging-evidence/public-sdist1"
+    },
+    {
+      "archive": ".runtime/v2-checks/director-pending-packaging-r1/pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "kind": "wheel",
+      "sha256": "28b5c780c7ec1e25a1ad6a7dd8af6d24662dee4fad6b096fee9630980a2be6af",
+      "payload_file_count": 515,
+      "changed_modules": {
+        "app/creative/director_binding.py": {
+          "member": "app/creative/director_binding.py",
+          "sha256": "294bfd27629edb84da855a1343fac264e848fabdd41dd4d95bee4f01381e5292"
+        },
+        "app/creative/director_terminal_evidence.py": {
+          "member": "app/creative/director_terminal_evidence.py",
+          "sha256": "f46c4ee428b4bfc3cfc137326e07c83a30c643d8a1cef4c7eaa70d84d36f146a"
+        },
+        "app/creative/generation.py": {
+          "member": "app/creative/generation.py",
+          "sha256": "dfc727fdaef2ee1434216871bd4aa0d7fbfe62747b82c8532d84b9fdceaf6b08"
+        },
+        "app/creative/proposals.py": {
+          "member": "app/creative/proposals.py",
+          "sha256": "a27ac7da3cce6677c46565e3ada67dc54f5ffb58eadea0db54f437c929b6c407"
+        },
+        "app/repositories/generation_repository.py": {
+          "member": "app/repositories/generation_repository.py",
+          "sha256": "35698818863ffdd6b90e464fb506510438d20b9a5a3edb2b6caeeed08ae4254a"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/director-pending-20261017/packaging-evidence/public-wheel0"
+    },
+    {
+      "archive": ".runtime/v2-checks/director-pending-packaging-r1/pytest/public-wheel1/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "kind": "wheel",
+      "sha256": "9ba0e0e7266b7ba8e96da86691a52a5021afe204931ef9934e72fdb1ca2f0da1",
+      "payload_file_count": 515,
+      "changed_modules": {
+        "app/creative/director_binding.py": {
+          "member": "app/creative/director_binding.py",
+          "sha256": "294bfd27629edb84da855a1343fac264e848fabdd41dd4d95bee4f01381e5292"
+        },
+        "app/creative/director_terminal_evidence.py": {
+          "member": "app/creative/director_terminal_evidence.py",
+          "sha256": "f46c4ee428b4bfc3cfc137326e07c83a30c643d8a1cef4c7eaa70d84d36f146a"
+        },
+        "app/creative/generation.py": {
+          "member": "app/creative/generation.py",
+          "sha256": "dfc727fdaef2ee1434216871bd4aa0d7fbfe62747b82c8532d84b9fdceaf6b08"
+        },
+        "app/creative/proposals.py": {
+          "member": "app/creative/proposals.py",
+          "sha256": "a27ac7da3cce6677c46565e3ada67dc54f5ffb58eadea0db54f437c929b6c407"
+        },
+        "app/repositories/generation_repository.py": {
+          "member": "app/repositories/generation_repository.py",
+          "sha256": "35698818863ffdd6b90e464fb506510438d20b9a5a3edb2b6caeeed08ae4254a"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/director-pending-20261017/packaging-evidence/public-wheel1"
+    }
+  ],
+  "all_runtime_source_bytes_verified": true,
+  "application_imported": false,
+  "installed": false,
+  "extracted": false,
+  "windows_native_browser_postgres_acceptance": "NOT_RUN"
+}
