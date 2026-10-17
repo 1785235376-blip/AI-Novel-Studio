@@ -1,0 +1,41 @@
+{
+  "status": "PRIMARY_APPROVES_CANDIDATE_GENERATION",
+  "old_rows_exact": 17498,
+  "new_rows": [
+    {
+      "nodeid": "tests/test_audio_listing_integrity_precedence_additive.py::test_valid_shape_tampering_is_still_rejected_without_writing_storage[prompt]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_audio_listing_integrity_precedence_additive.py::test_valid_shape_tampering_is_still_rejected_without_writing_storage[rights]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_audio_listing_integrity_precedence_additive.py::test_valid_shape_tampering_is_still_rejected_without_writing_storage[source]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_audio_listing_integrity_precedence_additive.py::test_shape_diagnostic_is_listing_only_and_original_job_access_remains_hash_first[body-STUDIO_AUDIO_OPERATION_UNSUPPORTED]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_audio_listing_integrity_precedence_additive.py::test_shape_diagnostic_is_listing_only_and_original_job_access_remains_hash_first[prompt-STUDIO_AUDIO_PROMPT_INVALID]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_audio_listing_integrity_precedence_additive.py::test_shape_diagnostic_is_listing_only_and_original_job_access_remains_hash_first[sources-STUDIO_AUDIO_SOURCE_INVALID]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_audio_listing_integrity_precedence_additive.py::test_shape_diagnostic_is_listing_only_and_original_job_access_remains_hash_first[graph-CREATIVE_GRAPH_MEDIA_BINDING_INVALID]",
+      "backend": "file"
+    }
+  ],
+  "only_predecessor_source_change": [
+    "app/services/studio_audio_execution.py"
+  ],
+  "all_old_tests_gates_unchanged": true,
+  "raw_sha256": "308d06729f829499f97db5a8fd41839e8705e12b4eb38612ef530e7254e29a8c",
+  "source_commit": "25742db8128fe77800ff42c9ddd17a8bb190b4e2",
+  "tests_executed": false
+}

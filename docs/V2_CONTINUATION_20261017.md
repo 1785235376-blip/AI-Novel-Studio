@@ -1,5 +1,16 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Latest Audio diagnostic closure (15:16 UTC)
+
+Source fix `313051c`, evidence `25742db`: the five previously recorded Audio-listing diagnostic failures are resolved in their unchanged original tests. Matching-owner listing retains specific bounded shape/source errors while get/execution/review preserve hash-first admission. Valid-shape tampering still fails and stored bytes are unchanged. See `AUDIO_LISTING_DIAGNOSTIC_PRECEDENCE.md`; the historical unresolved Audio bullet below is superseded by this scoped result, not a globally green claim.
+
+Verification scopes: 79 listing/integrity/MP3-compatibility checks, 231 contract/API checks, 117 CPU-media/Audio-API checks, fresh TypeScript/build/token checks and 87 PUBLIC package checks passed. PostgreSQL exclusions remain explicit in each receipt. Two actual wheels and two sdists match all current included source bytes. Frontend source remains equal to the preceding 332-test Director checkpoint; that UI test scope was reused, not rerun.
+
+Canonical V2 is now 17,505 rows / 2,718 sources, SHA256 `80251092a5d769650dd2e2000625e2560ad1bdc776b54792898ca37d30419e4c`. Three raw collections match, with all prior 17,498 full rows/order/classes unchanged and seven new File-only rows. See `delivery/v2-development/audio-listing-inventory-20261017/README.md`. Collection is not execution.
+
+All post-17c6500 work remains local. The approved archive through 17c6500 is verified remotely at de872b5; a later read found zero Actions runs for that archive commit, intentionally skipped and not a CI pass. No main or PR branch was changed.
+
+
 ## Latest serial Director continuation (14:55 UTC)
 
 The earlier integrated baseline below remains historical. New work is on `work/dot-director-transport-20261017`, source `bcf2dbf` with its runtime evidence at `3e90ee6`; it has not been merged into the prior integration branch or PR branches.

@@ -1,0 +1,8 @@
+{
+  "status": "PRIMARY_APPROVES_EXACT_CANDIDATE_PROMOTION",
+  "sha256": "80251092a5d769650dd2e2000625e2560ad1bdc776b54792898ca37d30419e4c",
+  "source_files": 2718,
+  "rows": 17505,
+  "all_sources_match_committed_git": true,
+  "tests_executed": false
+}
