@@ -1,0 +1,21 @@
+{
+  "status": "INVENTORY_ONLY",
+  "head": "4f60564f182e0f393e814ba807b085980a890f15",
+  "rows": 15921,
+  "raw_sha256": "6f3a3fd59e460eedee499297f098dd4f3c47dff4fc837c37b5bea75607c8803a",
+  "report_sha256": "f168c61baf0b55df9b20a6d3200de9e6936d700fdf2a0d952e40e0d7cb5fa5c8",
+  "all_old_rows_order_and_classifications_exact": 15920,
+  "new_rows": 1,
+  "new_backend_counts": {
+    "file": 1,
+    "postgres": 0,
+    "both": 0
+  },
+  "protected_entries_exact": 1279,
+  "source_count": 2598,
+  "source_stable": true,
+  "companion_files": 11,
+  "canonical_unchanged": true,
+  "canonical_sha256": "bdc505005416221a5829a13aa12d303b43ebb2a20681bb54a1581ab90fa56c13",
+  "tests_executed": false
+}

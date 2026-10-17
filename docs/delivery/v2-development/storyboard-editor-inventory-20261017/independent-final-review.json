@@ -1,0 +1,16 @@
+{
+  "status": "APPROVE_FINAL_INVENTORY_COMMIT",
+  "source_commit": "4f60564f182e0f393e814ba807b085980a890f15",
+  "canonical_sha256": "bdc505005416221a5829a13aa12d303b43ebb2a20681bb54a1581ab90fa56c13",
+  "raw_sha256": "6f3a3fd59e460eedee499297f098dd4f3c47dff4fc837c37b5bea75607c8803a",
+  "complete_source_map_sha256": "ec9d70aad42c60ca0d1ff23d0f9ae3b8ee2736e142a55ff54e7e25e6124c096a",
+  "six_source_snapshots_byte_identical": true,
+  "rows": 15921,
+  "old_rows_preserved": 15920,
+  "new_file_rows": 1,
+  "protected_preserved": 1279,
+  "companions_preserved": 11,
+  "evidence_index_sha256_before_adding_this_report": "e8d87d545c2e626047f751fde7df99bc3fa232b6877c536920939dfe24883a41",
+  "portable_final_verifier": "PASS",
+  "tests_executed": false
+}

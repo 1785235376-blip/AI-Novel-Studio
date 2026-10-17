@@ -1,0 +1,126 @@
+{
+  "source_checkpoint": "4f60564f182e0f393e814ba807b085980a890f15",
+  "baseline_manifest": {
+    "commit": "93bc8b49502cdc388688143c9d830449c62d75e6",
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "sha256": "561c0980491fae35a9ca87a4858373b50ee6d7d81176f3637e1cbc0d97c85902"
+  },
+  "complete_source_map_entries": 2598,
+  "complete_source_map_sha256": "ec9d70aad42c60ca0d1ff23d0f9ae3b8ee2736e142a55ff54e7e25e6124c096a",
+  "source_delta": [
+    {
+      "path": "frontend/src/creative/AIDirectorPanel.sourceLabels.additive.test.tsx",
+      "before": null,
+      "after": "d48531f9f45b6522f061c6b574f2a60b6a01df8ab6c09eb854bfdcbc912c65ab"
+    },
+    {
+      "path": "frontend/src/creative/AIDirectorPanel.tsx",
+      "before": "84a123397a4690eacab6660211d28b9f46f64edb3e121c997fc2abbb8526b419",
+      "after": "2e099e6baedf4a3fb66150e2d27735a37c72bea932266f5df244aafb65984af5"
+    },
+    {
+      "path": "frontend/src/creative/AssetBrowser.tsx",
+      "before": "1411666780148c0e7df08c129e207dff934520d50c3d8e142b2229edb3cf14f8",
+      "after": "48945cff9ae59c2154b5c9a31a67d3360c5b2b2b61a8c654d0b6bfd36aca0ca6"
+    },
+    {
+      "path": "frontend/src/creative/CreativeCanvas.tsx",
+      "before": "c5aca87b47a8cfacac85e80b8ed4aadd108b4e3794f5a2bfa5992c59fe7a4db9",
+      "after": "a0a0436d1c61b93c48ffb0696399234e186d980831116593e3bcdc440ca00a02"
+    },
+    {
+      "path": "frontend/src/creative/CreativeWorkspace.storyboardIntake.additive.test.tsx",
+      "before": null,
+      "after": "12514c61b57b134867d5ad0d4abf37c7e816a0e42980cb4338686f22c3d2d030"
+    },
+    {
+      "path": "frontend/src/creative/CreativeWorkspace.tsx",
+      "before": "f0bddf3ea1f6164515eb17e03d82f12b460b23618d270e404cf9985489167dbf",
+      "after": "290f6c5e92cc878675cfeacdb9824b760ec786afa04982161c4f47ae36bc41a7"
+    },
+    {
+      "path": "frontend/src/creative/GraphDirectorConsole.tsx",
+      "before": "c2d8b5377e35d4578bef4c95915dcc2c39c205dca36c4614606fe9f3872f7209",
+      "after": "d389812cebf9cb10af563685f77d4df4137b3e67b86ce8349f8ff7087b8cc27f"
+    },
+    {
+      "path": "frontend/src/creative/GraphDirectorStoryboardHandoff.tsx",
+      "before": "6955f60a7117c4e74f4f33d5c70e699dc7afca0b32946434e8dc2084fb1945f6",
+      "after": "e64fea3aee0e661cbc69d6692f0a46276f129f6a1599f81f964ff271cc1f97c9"
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx",
+      "before": null,
+      "after": "969dcaa0d2b3e6112261ce8d1f3469a0bf5b84006a527a24173bd7734dbe5574"
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioWorkspace.tsx",
+      "before": "1bc88c259d55786df03943092fe98b91267e4694eeb995673eb3404c99f0ae83",
+      "after": "ad6abb39623f725d9bc5caae3b953709bc0b54321b3fee615dd29b13634b369d"
+    },
+    {
+      "path": "frontend/src/creative/ProjectTimeline.tsx",
+      "before": "77070ccc91f2318d7966552b0a476ff57bd48de908596a56171f80b332063cc9",
+      "after": "ac51d4de530c8f7e28cd2c6d13cb33859f8d2f824fb52a6a18f2dee1f5112071"
+    },
+    {
+      "path": "frontend/src/creative/storyboardEditorHandoff.additive.test.tsx",
+      "before": null,
+      "after": "64bdf50aef7898a10f9178d04137da2e4144dd85f5f5728dfd9d178064d9bfe0"
+    },
+    {
+      "path": "frontend/src/creative/storyboardEditorHandoff.ts",
+      "before": null,
+      "after": "b70903797fbb0924afd4993766897406a0991cd4715b3b34fefa092cbd8744b9"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditor.storyboardAuthority.additive.test.tsx",
+      "before": null,
+      "after": "db165807b78a562ea259bd65a6c9205a88002afd6b42e20629bf2b600e8192d4"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditor.tsx",
+      "before": "39aa7a097d589ed9cbd2e3993b45452e44ff4615722df0a5c10fa43f7ea9514c",
+      "after": "71cff8ca1c2246c6cafb72ac57ebf07262edf23b37a5d5c53c8e2b4883e580c2"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "before": "bda230f6dd46a5d6522428a8eae3356d856108ecb076c8555089ad73a459b814",
+      "after": "42888a40caa82e1a3dc5dde7b026ae998a692466f656678fa7ddb44f61c39739"
+    },
+    {
+      "path": "tests/test_v2_storyboard_editor_handoff_persistence.py",
+      "before": null,
+      "after": "a86c7c9a5259644927ec5fca4611979769e67a2a484b3b57937f47ddf5103744"
+    }
+  ],
+  "protected_old_entries_exact": 1279,
+  "frontend_scripts_e2e_companion": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "raw_inventory": {
+    "path": "docs/delivery/v2-development/storyboard-editor-inventory-20261017/raw-collection.json",
+    "sha256": "6f3a3fd59e460eedee499297f098dd4f3c47dff4fc837c37b5bea75607c8803a",
+    "rows": 15921
+  },
+  "prior_raw_inventory": {
+    "path": "docs/delivery/v2-development/storyboard-model-inventory-20261017/raw-collection.json",
+    "sha256": "899e32da918f82f9c137cf3a944fb1ab066f75dc98e0d6a1c109e86042363c80",
+    "rows": 15920
+  },
+  "prior_15142_inventory": {
+    "path": "docs/delivery/v2-development/ci-reconciliation-20261016/inventory/old-15142-collection-rows.json.gz",
+    "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+  },
+  "tests_executed": false
+}

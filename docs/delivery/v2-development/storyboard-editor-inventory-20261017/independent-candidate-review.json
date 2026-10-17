@@ -1,0 +1,13 @@
+{
+  "status": "APPROVE_EXACT_CANDIDATE_PROMOTION",
+  "candidate_sha256": "bdc505005416221a5829a13aa12d303b43ebb2a20681bb54a1581ab90fa56c13",
+  "source_commit": "4f60564f182e0f393e814ba807b085980a890f15",
+  "raw_sha256": "6f3a3fd59e460eedee499297f098dd4f3c47dff4fc837c37b5bea75607c8803a",
+  "complete_source_map_sha256": "ec9d70aad42c60ca0d1ff23d0f9ae3b8ee2736e142a55ff54e7e25e6124c096a",
+  "source_entries": 2598,
+  "old_rows_exact": 15920,
+  "new_file_rows": 1,
+  "protected_exact": 1279,
+  "canonical_unchanged_before_promotion": true,
+  "tests_executed": false
+}

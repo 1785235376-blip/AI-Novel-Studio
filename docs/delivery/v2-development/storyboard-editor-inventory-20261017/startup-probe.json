@@ -1,0 +1,492 @@
+{
+  "status": "PASS_STARTUP_AND_EXPLICIT_PATHFINDER_ONLY",
+  "child": false,
+  "utc": "2026-10-17T03:53:13.636570+00:00",
+  "executable": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+  "prefix": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1",
+  "base_prefix": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+  "sys_path": [
+    "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/.runtime/storyboard-editor-origin",
+    "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python312.zip",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/lib-dynload",
+    "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages"
+  ],
+  "meta_path": [
+    "_frozen_importlib.BuiltinImporter",
+    "_frozen_importlib.FrozenImporter",
+    "_frozen_importlib_external.PathFinder"
+  ],
+  "user_site_enabled": false,
+  "product_or_pytest_imported": false,
+  "dependency_distributions": [
+    [
+      "Pygments",
+      "2.21.0"
+    ],
+    [
+      "SQLAlchemy",
+      "2.1.3"
+    ],
+    [
+      "annotated-doc",
+      "0.0.5"
+    ],
+    [
+      "annotated-types",
+      "0.8.0"
+    ],
+    [
+      "anyio",
+      "4.15.1"
+    ],
+    [
+      "attrs",
+      "26.1.0"
+    ],
+    [
+      "certifi",
+      "2026.7.22"
+    ],
+    [
+      "charset-normalizer",
+      "3.5.2"
+    ],
+    [
+      "click",
+      "8.5.0"
+    ],
+    [
+      "fastapi",
+      "0.142.2"
+    ],
+    [
+      "h11",
+      "0.16.0"
+    ],
+    [
+      "httpcore",
+      "1.0.9"
+    ],
+    [
+      "httpx",
+      "0.28.1"
+    ],
+    [
+      "idna",
+      "3.20"
+    ],
+    [
+      "iniconfig",
+      "2.3.0"
+    ],
+    [
+      "jsonschema",
+      "4.26.0"
+    ],
+    [
+      "jsonschema-specifications",
+      "2025.9.1"
+    ],
+    [
+      "opentelemetry-api",
+      "1.45.0"
+    ],
+    [
+      "packaging",
+      "26.3"
+    ],
+    [
+      "pillow",
+      "12.3.0"
+    ],
+    [
+      "pluggy",
+      "1.6.0"
+    ],
+    [
+      "psycopg",
+      "3.3.6"
+    ],
+    [
+      "psycopg-binary",
+      "3.3.6"
+    ],
+    [
+      "pydantic",
+      "2.13.5"
+    ],
+    [
+      "pydantic-settings",
+      "2.15.0"
+    ],
+    [
+      "pydantic_core",
+      "2.46.5"
+    ],
+    [
+      "pypdf",
+      "6.19.0"
+    ],
+    [
+      "pytest",
+      "8.4.2"
+    ],
+    [
+      "python-dotenv",
+      "1.2.4"
+    ],
+    [
+      "referencing",
+      "0.37.0"
+    ],
+    [
+      "reportlab",
+      "4.5.1"
+    ],
+    [
+      "rpds-py",
+      "2026.9.1"
+    ],
+    [
+      "starlette",
+      "1.7.0"
+    ],
+    [
+      "typing-inspection",
+      "0.4.4"
+    ],
+    [
+      "typing_extensions",
+      "4.16.0"
+    ],
+    [
+      "uvicorn",
+      "0.54.0"
+    ]
+  ],
+  "specs": {
+    "app": {
+      "lookup_name": "app",
+      "origin": "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app/__init__.py",
+      "submodule_search_locations": [
+        "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app"
+      ]
+    },
+    "local_interop_desktop": {
+      "lookup_name": "local_interop_desktop",
+      "origin": "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/local_interop_desktop/__init__.py",
+      "submodule_search_locations": [
+        "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/local_interop_desktop"
+      ]
+    },
+    "local_interop_protocol": {
+      "lookup_name": "local_interop_protocol",
+      "origin": "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/local_interop_protocol/__init__.py",
+      "submodule_search_locations": [
+        "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/local_interop_protocol"
+      ]
+    },
+    "app.application": {
+      "lookup_name": "application",
+      "origin": null,
+      "submodule_search_locations": [
+        "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app/application"
+      ]
+    },
+    "app.application.persistence": {
+      "lookup_name": "persistence",
+      "origin": "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app/application/persistence.py",
+      "submodule_search_locations": []
+    },
+    "app.autosave": {
+      "lookup_name": "autosave",
+      "origin": null,
+      "submodule_search_locations": [
+        "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app/autosave"
+      ]
+    },
+    "app.project_retirement": {
+      "lookup_name": "project_retirement",
+      "origin": "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app/project_retirement.py",
+      "submodule_search_locations": []
+    },
+    "pytest": {
+      "origin": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/pytest/__init__.py",
+      "submodule_search_locations": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/pytest"
+      ]
+    },
+    "pydantic": {
+      "origin": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/pydantic/__init__.py",
+      "submodule_search_locations": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/pydantic"
+      ]
+    },
+    "fastapi": {
+      "origin": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/__init__.py",
+      "submodule_search_locations": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi"
+      ]
+    },
+    "psycopg": {
+      "origin": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/psycopg/__init__.py",
+      "submodule_search_locations": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/psycopg"
+      ]
+    }
+  },
+  "probe_sha256": "07629f943ad4fd6a9d588ccfb23f6f6f4efd4b4fca39a9573575e4fd12cc6cd0",
+  "setup_receipt_sha256": "02ccf5581e0ed9726af44dda40eb02dcbbce8e2ea5d5f08a7648e723f4a82d58",
+  "child_command": [
+    "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+    "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/.runtime/storyboard-editor-origin/origin-probe.py",
+    "--child"
+  ],
+  "child_exit_code": 0,
+  "child_stdout": "{\n  \"status\": \"PASS_STARTUP_AND_EXPLICIT_PATHFINDER_ONLY\",\n  \"child\": true,\n  \"utc\": \"2026-10-17T03:53:13.706914+00:00\",\n  \"executable\": \"/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python\",\n  \"prefix\": \"/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1\",\n  \"base_prefix\": \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python\",\n  \"sys_path\": [\n    \"/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/.runtime/storyboard-editor-origin\",\n    \"/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff\",\n    \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python312.zip\",\n    \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12\",\n    \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/lib-dynload\",\n    \"/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages\"\n  ],\n  \"meta_path\": [\n    \"_frozen_importlib.BuiltinImporter\",\n    \"_frozen_importlib.FrozenImporter\",\n    \"_frozen_importlib_external.PathFinder\"\n  ],\n  \"user_site_enabled\": false,\n  \"product_or_pytest_imported\": false,\n  \"dependency_distributions\": [\n    [\n      \"Pygments\",\n      \"2.21.0\"\n    ],\n    [\n      \"SQLAlchemy\",\n      \"2.1.3\"\n    ],\n    [\n      \"annotated-doc\",\n      \"0.0.5\"\n    ],\n    [\n      \"annotated-types\",\n      \"0.8.0\"\n    ],\n    [\n      \"anyio\",\n      \"4.15.1\"\n    ],\n    [\n      \"attrs\",\n      \"26.1.0\"\n    ],\n    [\n      \"certifi\",\n      \"2026.7.22\"\n    ],\n    [\n      \"charset-normalizer\",\n      \"3.5.2\"\n    ],\n    [\n      \"click\",\n      \"8.5.0\"\n    ],\n    [\n      \"fastapi\",\n      \"0.142.2\"\n    ],\n    [\n      \"h11\",\n      \"0.16.0\"\n    ],\n    [\n      \"httpcore\",\n      \"1.0.9\"\n    ],\n    [\n      \"httpx\",\n      \"0.28.1\"\n    ],\n    [\n      \"idna\",\n      \"3.20\"\n    ],\n    [\n      \"iniconfig\",\n      \"2.3.0\"\n    ],\n    [\n      \"jsonschema\",\n      \"4.26.0\"\n    ],\n    [\n      \"jsonschema-specifications\",\n      \"2025.9.1\"\n    ],\n    [\n      \"opentelemetry-api\",\n      \"1.45.0\"\n    ],\n    [\n      \"packaging\",\n      \"26.3\"\n    ],\n    [\n      \"pillow\",\n      \"12.3.0\"\n    ],\n    [\n      \"pluggy\",\n      \"1.6.0\"\n    ],\n    [\n      \"psycopg\",\n      \"3.3.6\"\n    ],\n    [\n      \"psycopg-binary\",\n      \"3.3.6\"\n    ],\n    [\n      \"pydantic\",\n      \"2.13.5\"\n    ],\n    [\n      \"pydantic-settings\",\n      \"2.15.0\"\n    ],\n    [\n      \"pydantic_core\",\n      \"2.46.5\"\n    ],\n    [\n      \"pypdf\",\n      \"6.19.0\"\n    ],\n    [\n      \"pytest\",\n      \"8.4.2\"\n    ],\n    [\n      \"python-dotenv\",\n      \"1.2.4\"\n    ],\n    [\n      \"referencing\",\n      \"0.37.0\"\n    ],\n    [\n      \"reportlab\",\n      \"4.5.1\"\n    ],\n    [\n      \"rpds-py\",\n      \"2026.9.1\"\n    ],\n    [\n      \"starlette\",\n      \"1.7.0\"\n    ],\n    [\n      \"typing-inspection\",\n      \"0.4.4\"\n    ],\n    [\n      \"typing_extensions\",\n      \"4.16.0\"\n    ],\n    [\n      \"uvicorn\",\n      \"0.54.0\"\n    ]\n  ],\n  \"specs\": {\n    \"app\": {\n      \"lookup_name\": \"app\",\n      \"origin\": \"/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app/__init__.py\",\n      \"submodule_search_locations\": [\n        \"/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app\"\n      ]\n    },\n    \"local_interop_desktop\": {\n      \"lookup_name\": \"local_interop_desktop\",\n      \"origin\": \"/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/local_interop_desktop/__init__.py\",\n      \"submodule_search_locations\": [\n        \"/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/local_interop_desktop\"\n      ]\n    },\n    \"local_interop_protocol\": {\n      \"lookup_name\": \"local_interop_protocol\",\n      \"origin\": \"/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/local_interop_protocol/__init__.py\",\n      \"submodule_search_locations\": [\n        \"/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/local_interop_protocol\"\n      ]\n    },\n    \"app.application\": {\n      \"lookup_name\": \"application\",\n      \"origin\": null,\n      \"submodule_search_locations\": [\n        \"/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app/application\"\n      ]\n    },\n    \"app.application.persistence\": {\n      \"lookup_name\": \"persistence\",\n      \"origin\": \"/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app/application/persistence.py\",\n      \"submodule_search_locations\": []\n    },\n    \"app.autosave\": {\n      \"lookup_name\": \"autosave\",\n      \"origin\": null,\n      \"submodule_search_locations\": [\n        \"/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app/autosave\"\n      ]\n    },\n    \"app.project_retirement\": {\n      \"lookup_name\": \"project_retirement\",\n      \"origin\": \"/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app/project_retirement.py\",\n      \"submodule_search_locations\": []\n    },\n    \"pytest\": {\n      \"origin\": \"/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/pytest/__init__.py\",\n      \"submodule_search_locations\": [\n        \"/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/pytest\"\n      ]\n    },\n    \"pydantic\": {\n      \"origin\": \"/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/pydantic/__init__.py\",\n      \"submodule_search_locations\": [\n        \"/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/pydantic\"\n      ]\n    },\n    \"fastapi\": {\n      \"origin\": \"/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/__init__.py\",\n      \"submodule_search_locations\": [\n        \"/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi\"\n      ]\n    },\n    \"psycopg\": {\n      \"origin\": \"/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/psycopg/__init__.py\",\n      \"submodule_search_locations\": [\n        \"/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/psycopg\"\n      ]\n    }\n  },\n  \"probe_sha256\": \"07629f943ad4fd6a9d588ccfb23f6f6f4efd4b4fca39a9573575e4fd12cc6cd0\",\n  \"setup_receipt_sha256\": \"02ccf5581e0ed9726af44dda40eb02dcbbce8e2ea5d5f08a7648e723f4a82d58\"\n}\n",
+  "child_stderr": "",
+  "child_receipt": {
+    "status": "PASS_STARTUP_AND_EXPLICIT_PATHFINDER_ONLY",
+    "child": true,
+    "utc": "2026-10-17T03:53:13.706914+00:00",
+    "executable": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+    "prefix": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1",
+    "base_prefix": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+    "sys_path": [
+      "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/.runtime/storyboard-editor-origin",
+      "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff",
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python312.zip",
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12",
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/lib-dynload",
+      "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages"
+    ],
+    "meta_path": [
+      "_frozen_importlib.BuiltinImporter",
+      "_frozen_importlib.FrozenImporter",
+      "_frozen_importlib_external.PathFinder"
+    ],
+    "user_site_enabled": false,
+    "product_or_pytest_imported": false,
+    "dependency_distributions": [
+      [
+        "Pygments",
+        "2.21.0"
+      ],
+      [
+        "SQLAlchemy",
+        "2.1.3"
+      ],
+      [
+        "annotated-doc",
+        "0.0.5"
+      ],
+      [
+        "annotated-types",
+        "0.8.0"
+      ],
+      [
+        "anyio",
+        "4.15.1"
+      ],
+      [
+        "attrs",
+        "26.1.0"
+      ],
+      [
+        "certifi",
+        "2026.7.22"
+      ],
+      [
+        "charset-normalizer",
+        "3.5.2"
+      ],
+      [
+        "click",
+        "8.5.0"
+      ],
+      [
+        "fastapi",
+        "0.142.2"
+      ],
+      [
+        "h11",
+        "0.16.0"
+      ],
+      [
+        "httpcore",
+        "1.0.9"
+      ],
+      [
+        "httpx",
+        "0.28.1"
+      ],
+      [
+        "idna",
+        "3.20"
+      ],
+      [
+        "iniconfig",
+        "2.3.0"
+      ],
+      [
+        "jsonschema",
+        "4.26.0"
+      ],
+      [
+        "jsonschema-specifications",
+        "2025.9.1"
+      ],
+      [
+        "opentelemetry-api",
+        "1.45.0"
+      ],
+      [
+        "packaging",
+        "26.3"
+      ],
+      [
+        "pillow",
+        "12.3.0"
+      ],
+      [
+        "pluggy",
+        "1.6.0"
+      ],
+      [
+        "psycopg",
+        "3.3.6"
+      ],
+      [
+        "psycopg-binary",
+        "3.3.6"
+      ],
+      [
+        "pydantic",
+        "2.13.5"
+      ],
+      [
+        "pydantic-settings",
+        "2.15.0"
+      ],
+      [
+        "pydantic_core",
+        "2.46.5"
+      ],
+      [
+        "pypdf",
+        "6.19.0"
+      ],
+      [
+        "pytest",
+        "8.4.2"
+      ],
+      [
+        "python-dotenv",
+        "1.2.4"
+      ],
+      [
+        "referencing",
+        "0.37.0"
+      ],
+      [
+        "reportlab",
+        "4.5.1"
+      ],
+      [
+        "rpds-py",
+        "2026.9.1"
+      ],
+      [
+        "starlette",
+        "1.7.0"
+      ],
+      [
+        "typing-inspection",
+        "0.4.4"
+      ],
+      [
+        "typing_extensions",
+        "4.16.0"
+      ],
+      [
+        "uvicorn",
+        "0.54.0"
+      ]
+    ],
+    "specs": {
+      "app": {
+        "lookup_name": "app",
+        "origin": "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app/__init__.py",
+        "submodule_search_locations": [
+          "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app"
+        ]
+      },
+      "local_interop_desktop": {
+        "lookup_name": "local_interop_desktop",
+        "origin": "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/local_interop_desktop/__init__.py",
+        "submodule_search_locations": [
+          "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/local_interop_desktop"
+        ]
+      },
+      "local_interop_protocol": {
+        "lookup_name": "local_interop_protocol",
+        "origin": "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/local_interop_protocol/__init__.py",
+        "submodule_search_locations": [
+          "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/local_interop_protocol"
+        ]
+      },
+      "app.application": {
+        "lookup_name": "application",
+        "origin": null,
+        "submodule_search_locations": [
+          "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app/application"
+        ]
+      },
+      "app.application.persistence": {
+        "lookup_name": "persistence",
+        "origin": "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app/application/persistence.py",
+        "submodule_search_locations": []
+      },
+      "app.autosave": {
+        "lookup_name": "autosave",
+        "origin": null,
+        "submodule_search_locations": [
+          "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app/autosave"
+        ]
+      },
+      "app.project_retirement": {
+        "lookup_name": "project_retirement",
+        "origin": "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/app/project_retirement.py",
+        "submodule_search_locations": []
+      },
+      "pytest": {
+        "origin": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/pytest/__init__.py",
+        "submodule_search_locations": [
+          "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/pytest"
+        ]
+      },
+      "pydantic": {
+        "origin": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/pydantic/__init__.py",
+        "submodule_search_locations": [
+          "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/pydantic"
+        ]
+      },
+      "fastapi": {
+        "origin": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/__init__.py",
+        "submodule_search_locations": [
+          "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi"
+        ]
+      },
+      "psycopg": {
+        "origin": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/psycopg/__init__.py",
+        "submodule_search_locations": [
+          "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/psycopg"
+        ]
+      }
+    },
+    "probe_sha256": "07629f943ad4fd6a9d588ccfb23f6f6f4efd4b4fca39a9573575e4fd12cc6cd0",
+    "setup_receipt_sha256": "02ccf5581e0ed9726af44dda40eb02dcbbce8e2ea5d5f08a7648e723f4a82d58"
+  }
+}

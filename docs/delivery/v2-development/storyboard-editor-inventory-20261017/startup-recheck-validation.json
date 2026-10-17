@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "comparisons": [
+    {
+      "original": "docs/delivery/v2-development/storyboard-editor-ui-20261017/origin/normal-startup.json",
+      "sha256": "e214851897b01fa13d8136608d29b986baeb77957dc0103ca5669440f21d02e3",
+      "recheck": "docs/delivery/v2-development/storyboard-editor-inventory-20261017/recheck-normal-startup.json",
+      "recheck_sha256": "e214851897b01fa13d8136608d29b986baeb77957dc0103ca5669440f21d02e3",
+      "semantic_equal_except_utc": true
+    },
+    {
+      "original": "docs/delivery/v2-development/storyboard-editor-ui-20261017/origin/startup-probe.json",
+      "sha256": "b0a02c1da0097acb19953a8cb60cc02eb020090c39ed21b732175bf1578c94e9",
+      "recheck": "docs/delivery/v2-development/storyboard-editor-inventory-20261017/recheck-startup.json",
+      "recheck_sha256": "55892246a7c81cd06e951bbc1ba46617efbf30143070648c54660faa12681c5b",
+      "semantic_equal_except_utc": true
+    },
+    {
+      "original": "docs/delivery/v2-development/storyboard-editor-ui-20261017/storyboard-editor-independent-origin.json",
+      "sha256": "7688a6a4814e786002d092ce58158253415abe36c3078cf942f56c4a6858a911",
+      "recheck": "docs/delivery/v2-development/storyboard-editor-inventory-20261017/recheck-startup.json",
+      "recheck_sha256": "55892246a7c81cd06e951bbc1ba46617efbf30143070648c54660faa12681c5b",
+      "semantic_equal_except_utc": true
+    }
+  ],
+  "probe_sha256": "07629f943ad4fd6a9d588ccfb23f6f6f4efd4b4fca39a9573575e4fd12cc6cd0",
+  "tests_executed": false
+}

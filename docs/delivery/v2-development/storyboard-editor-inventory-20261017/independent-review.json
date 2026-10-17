@@ -1,0 +1,18 @@
+{
+  "status": "APPROVE_CANDIDATE_ONLY_GENERATION",
+  "source_commit": "4f60564f182e0f393e814ba807b085980a890f15",
+  "raw_sha256": "6f3a3fd59e460eedee499297f098dd4f3c47dff4fc837c37b5bea75607c8803a",
+  "complete_source_map_sha256": "ec9d70aad42c60ca0d1ff23d0f9ae3b8ee2736e142a55ff54e7e25e6124c096a",
+  "old_rows_exact": 15920,
+  "new_rows": [
+    {
+      "nodeid": "tests/test_v2_storyboard_editor_handoff_persistence.py::test_explicit_storyboard_edit_restarts_from_file_and_leaves_old_graph_pin_stale[file]",
+      "backend": "file"
+    }
+  ],
+  "source_entries": 2598,
+  "protected_exact": 1279,
+  "companions_exact": 11,
+  "canonical_unchanged": true,
+  "tests_executed": false
+}
