@@ -1,0 +1,17 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/GraphStarter.additive.test.tsx (9 tests) 429ms
+   ✓ uses the actual controller change/undo/Save and never auto-runs 326ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  04:09:48
+   Duration  2.15s (transform 812ms, setup 16ms, collect 1.15s, tests 429ms, environment 323ms, prepare 61ms)
+
+src/creative/studioGraphEditorView.tsx(140,96): error TS2322: Type '{ definitions: StudioGraphCatalogDefinition[]; capabilities: { local_execution: true; chapter_required: false; model_execution: boolean; model_execution_contract?: "creative-graph-model/1"; ... 25 more ...; cache_mode: "SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY"; } | { ...; }; limits: { nodes: 16; edges: 40; definition...' is not assignable to type 'StudioGraphCatalog'.
+  Types of property 'capabilities' are incompatible.
+    Type '{ local_execution: true; chapter_required: false; model_execution: boolean; model_execution_contract?: "creative-graph-model/1" | undefined; media_execution?: boolean | undefined; ... 24 more ...; cache_mode: "SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY"; } | { ...; }' is not assignable to type '{ local_execution: true; chapter_required: false; model_execution: boolean; model_execution_contract?: "creative-graph-model/1" | undefined; media_execution?: boolean | undefined; ... 24 more ...; cache_mode: "SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY"; }'.
+      Type '{ video_graph: boolean; video_graph_schema_version: 5; video_graph_evidence: "LOCAL_REQUIRED"; storyboard_video_approval_required: boolean; automatic_video_dispatch: boolean; local_execution: true; ... 23 more ...; cache_mode: "SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY"; }' is not assignable to type '{ local_execution: true; chapter_required: false; model_execution: boolean; model_execution_contract?: "creative-graph-model/1" | undefined; media_execution?: boolean | undefined; ... 24 more ...; cache_mode: "SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY"; }'.
+        Types of property 'video_graph' are incompatible.
+          Type 'boolean' is not assignable to type 'true'.

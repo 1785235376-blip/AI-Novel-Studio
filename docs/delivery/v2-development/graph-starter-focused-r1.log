@@ -1,0 +1,23 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/creative/GraphStarter.additive.test.tsx (9 tests | 1 failed) 461ms
+   × connects image schema through original typed ports while honestly leaving provider choice unfinished 5ms
+     → 请选择真实的输出端口和输入端口。
+   ✓ uses the actual controller change/undo/Save and never auto-runs 342ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  04:08:07
+   Duration  2.49s (transform 979ms, setup 17ms, collect 1.42s, tests 461ms, environment 318ms, prepare 60ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/GraphStarter.additive.test.tsx > connects image schema through original typed ports while honestly leaving provider choice unfinished
+Error: 请选择真实的输出端口和输入端口。
+ ❯ Module.buildGraphStarter src/creative/graphStarter.ts:22:239
+
+ ❯ src/creative/GraphStarter.additive.test.tsx:20:183
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

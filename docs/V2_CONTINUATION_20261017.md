@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Original-node canvas starters (19:12 UTC)
+
+Empty graphs can now preview/apply bounded code-owned starting chains: original text to manual review, model text to review (only after explicit supported schema selection), and text-to-image to media review on supported media/image schemas. Original ports and connectionIssue validate links; no schema upgrade, provider selection, cloud grant, run or write occurs automatically. Image starters intentionally retain the same blank provider/model author inputs as original Add Node; the original Save validator rejects them until configured. One original change/undo step preserves title/viewport/presentation and does not overwrite populated graphs.
+
+Focused r2:9 cases passed, including actual controller local apply/undo/Save call with mocked transport; its TS phase then found widened legacy capability literal types at the new strict consumer. Narrowed those unchanged literal values with as const; type-only r3 PASS. r1 caught the image blueprint selecting the generic node list; fixed shared blueprint selection. All failed receipts retained. This is not native/browser/model acceptance.
+
 ## Explicit Aliyun Bailian text preset (18:55 UTC)
 
 Added the requested Aliyun text preset to the original typed Runtime through explicit host model/region configuration only. Four official shared regional endpoints are fixed; arbitrary/Coding Plan URLs are not accepted. Original transport, vault and cloud-disabled route gate remain authoritative. No default selection, credential entry, remote probe, paid call or second routing engine. Non-thinking text generation/streaming is the stated protocol scope; live provider/model/settings-UI acceptance remains NOT_RUN. See BAILIAN_TEXT_PRESET.md for source documentation and remaining limits.

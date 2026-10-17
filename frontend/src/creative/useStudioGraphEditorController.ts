@@ -1,3 +1,4 @@
+import { buildGraphStarter, type GraphStarterKind } from './graphStarter';
 import type { ReviewedDirectorCanvasHandoff } from './directorCanvasHandoff';
 import { planningSourceFork, planningSourceReferences } from './graphPlanningFork';
 import type { OpenStoryboardEditor } from './storyboardEditorHandoff';
@@ -340,6 +341,15 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     if (record) { const previous = structuredClone(draftRef.current); setPast(rows => [...rows.slice(-49), previous]); setFuture([]); }
     crossCopyEpoch.current++; draftRef.current = next; setDraft(next); setError(''); setNotice(''); invalidateCandidate();
   }, [editable, current, isBusy, invalidateCandidate]);
+  function applyStarterGraph(kind: GraphStarterKind, text: string, scope: object): boolean {
+    if (scope !== verificationScope || !isVerificationCurrent() || !insertionCurrent(insertionScope)
+      || insertionRef.current || !catalog || draftRef.current.nodes.length || draftRef.current.edges.length) return false;
+    try {
+      const next = buildGraphStarter(draftRef.current, catalog, kind, text);
+      change(next); if (draftRef.current !== next) return false;
+      setSelected([next.nodes[0].id]); setNotice('起步方案已加入本地空图，可一次撤销。仍需明确保存、配置和运行；未调用模型。'); return true;
+    } catch (value) { setError(value instanceof Error ? value.message : '起步方案未应用。'); return false; }
+  }
   const currentCopy = active && copyPreview && copyPreview.identity === identity && copyPreview.client === client && copyPreview.graph === base?.id
     && copyPreview.epoch === selectedEpoch.current && copyPreview.catalog === catalog && copyPreview.source === JSON.stringify(draft) && editable ? copyPreview.result : undefined;
   useEffect(() => { setCopyPreview(undefined); }, [identity, client, base?.id, denied, canMutate, externalDirty, executionDirty, active, draft, catalog]);
@@ -722,8 +732,9 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     localRecovery: current() && !denied ? localRecovery : undefined, recoveryBusy, recoveryError,
     draftStorageNotice, draftSavedAt, draftOwnerCurrent, draftRecoverable, canRecoverDraft, recoverLocalDraft, discardLocalRecovery,
     providerPicker, sourceCopy, currentCrossCopy, captureSelectionForGraph, previewCrossGraphCopy, pasteCrossGraphCopy, clearGraphCopy: () => { copySourceEpoch.current++; crossCopyEpoch.current++; setCopySource(undefined); setCrossPreview(undefined); }, currentCopy, previewSelectionCopy, pasteSelectionCopy, cancelSelectionCopy: () => setCopyPreview(undefined),
-    catalog: catalog ? { ...catalog, ...(pendingVideoCatalog ? { capabilities: { ...catalog.capabilities, video_graph: true, video_graph_schema_version: 5 as const, video_graph_evidence: 'LOCAL_REQUIRED' as const, storyboard_video_approval_required: true, automatic_video_dispatch: false } } : {}), definitions: graphCatalogForSchema(catalog.definitions, draft.schema_version) } : undefined,
+    catalog: catalog ? { ...catalog, ...(pendingVideoCatalog ? { capabilities: { ...catalog.capabilities, video_graph: true as const, video_graph_schema_version: 5 as const, video_graph_evidence: 'LOCAL_REQUIRED' as const, storyboard_video_approval_required: true as const, automatic_video_dispatch: false as const } } : {}), definitions: graphCatalogForSchema(catalog.definitions, draft.schema_version) } : undefined,
     independentConfirmed, confirmIndependentGraph, prepareIndependentGraph, independentOrigin: visibleIndependentOrigin, historyFull,
+    starterScope: verificationScope, applyStarterGraph,
     planningForkScope: verificationScope, isPlanningForkCurrent: isVerificationCurrent, preparePlanningGraphFork, planningForkReferences,
     records, base, draft, selected, past, future, loading, error, notice, blocked,
     candidate, replaceConfirmed, checking, pendingNavigation, discardConfirmed, kind, sourcePort, targetPort,
