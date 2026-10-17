@@ -1,5 +1,9 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Integrated Research follow-up (16:15 UTC)
+
+Historical exact-location inspection is integrated with existing Director and Audio owners at b7eddfc. Primary checks: 526 File, 233 real PostgreSQL, 399 UI, forced TypeScript/production build/token guard, and 87 original PUBLIC packaging checks passed. Four actual archives were read against current runtime source; before/after origin and all final gate source hashes match. Scope and limits: `delivery/v2-development/director-research-integration-20261017/README.md`. Inventory reconciliation is pending. This later work is outside the fixed fourteen-commit upload request.
+
 ## Native Creative follow-up (15:46 UTC)
 
 227 original Creative / Graph / supported Director PostgreSQL cases passed (712 deselected), on a third fresh database with unchanged original tests and source hashes. Persistence, restart, deletion/recreation and authority scopes are covered; the separate private Director pending repository remains File-only. See `delivery/v2-development/creative-current-native-20261017/README.md`. This later evidence is excluded from the fixed pending upload candidate.

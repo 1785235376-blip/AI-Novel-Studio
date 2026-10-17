@@ -1,0 +1,47 @@
+{
+  "status": "PASS_PRIMARY_INTEGRATED_SCOPES",
+  "source_commit": "b7eddfc220471ff5e300206526f92e64f12eca2b",
+  "source_snapshot_equal": true,
+  "receipts": {
+    "director-research-origin-before-r1": {
+      "sha256": "50a5fce8395840d7209831d270a68314dbd6f6feafecfc3df56cde063e6f83f5",
+      "status": "PASS"
+    },
+    "director-research-origin-after-r1": {
+      "sha256": "631a2a2236930649768a82f1a373223984c90c97874df17e818e93efabde2765",
+      "status": "PASS"
+    },
+    "director-research-ui-r1": {
+      "sha256": "9b4a91b1c75da8f87deb715a72c1b8eddf6eb1b8780e2029bb3ad9e546dbcb28",
+      "status": "PASS"
+    },
+    "director-research-file-r1": {
+      "sha256": "6eedace2f6650b04850ba4169e3df8e30f8c3360b30ad68f4bb04db7bf5e5c31",
+      "status": "PASS"
+    },
+    "director-research-postgres-r1": {
+      "sha256": "a7e201e204d3d1053bef351bea88b815efc0cab2d2ac9d95a63e22b29ed82b80",
+      "status": "PASS"
+    },
+    "director-research-public-wheel-r1": {
+      "sha256": "8d968fef5fe5675ffafa3ac2ab92a7c651aad8a801bfb3214e440b1a8389f348",
+      "status": "PASS"
+    },
+    "director-research-public-sdist-binding-r1": {
+      "sha256": "0180d5d8cd4c8d0f240b48a9f8c4396e06b692cd98058bd69c627b4226571941",
+      "status": "PASS"
+    }
+  },
+  "counts": {
+    "file_pass": 526,
+    "file_deselected": 233,
+    "postgres_pass": 233,
+    "postgres_deselected": 526,
+    "ui_pass": 399,
+    "public_checks_pass": 87
+  },
+  "inventory": "PENDING",
+  "browser_and_geometry": "BLOCKED_ENVIRONMENT",
+  "independent_agent_review": "UNAVAILABLE_PREVIEW_LIMIT",
+  "full_v2_release": "NOT_ACCEPTED"
+}

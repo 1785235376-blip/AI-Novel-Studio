@@ -1,0 +1,95 @@
+{
+  "status": "PASS_OFFLINE_PUBLIC_ARCHIVE_INSPECTION",
+  "manifest_sha256": "64ca4899566b3dae07192732ecba083e95244f8a625b9152f8c08602bfcc8400",
+  "archives": [
+    {
+      "archive": ".runtime/v2-checks/director-research-public-sdist-binding-r1/pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "kind": "sdist",
+      "sha256": "2e6c15458b754ae70205dbf7fa027f66c2907cd45147cce170d9026705fe63d9",
+      "payload_file_count": 523,
+      "changed_modules": {
+        "app/experimental/api.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/api.py",
+          "sha256": "9b4be0e877d12b8eb9b7b08b14a6c82f96cc0c4ab53b1811f6ba9f21227665d5"
+        },
+        "app/experimental/research_library.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/research_library.py",
+          "sha256": "8037d2cd28f1c4446f4fb1103011b71b1e874d0d9e3340cd23a7c12c8d8ef59f"
+        },
+        "app/experimental/research_library_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/research_library_api.py",
+          "sha256": "aaeadea66db767d91eda467990923fe91357f08df8f63310e52e3aa0cf7c4618"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/director-research-integration-20261017/packaging-evidence-r1/director-research-public-sdist-binding-r1__public-sdist0"
+    },
+    {
+      "archive": ".runtime/v2-checks/director-research-public-sdist-binding-r1/pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "kind": "sdist",
+      "sha256": "6b6bee9f839e45f39108d27dd55d375b9626b702e17f2df3a6a93bf5e206dc86",
+      "payload_file_count": 523,
+      "changed_modules": {
+        "app/experimental/api.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/api.py",
+          "sha256": "9b4be0e877d12b8eb9b7b08b14a6c82f96cc0c4ab53b1811f6ba9f21227665d5"
+        },
+        "app/experimental/research_library.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/research_library.py",
+          "sha256": "8037d2cd28f1c4446f4fb1103011b71b1e874d0d9e3340cd23a7c12c8d8ef59f"
+        },
+        "app/experimental/research_library_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/research_library_api.py",
+          "sha256": "aaeadea66db767d91eda467990923fe91357f08df8f63310e52e3aa0cf7c4618"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/director-research-integration-20261017/packaging-evidence-r1/director-research-public-sdist-binding-r1__public-sdist1"
+    },
+    {
+      "archive": ".runtime/v2-checks/director-research-public-sdist-binding-r1/pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "kind": "wheel",
+      "sha256": "f949bb92410758a948161807a56cf0596946254c7ccb6e13380beb88db0ba7fc",
+      "payload_file_count": 519,
+      "changed_modules": {
+        "app/experimental/api.py": {
+          "member": "app/experimental/api.py",
+          "sha256": "9b4be0e877d12b8eb9b7b08b14a6c82f96cc0c4ab53b1811f6ba9f21227665d5"
+        },
+        "app/experimental/research_library.py": {
+          "member": "app/experimental/research_library.py",
+          "sha256": "8037d2cd28f1c4446f4fb1103011b71b1e874d0d9e3340cd23a7c12c8d8ef59f"
+        },
+        "app/experimental/research_library_api.py": {
+          "member": "app/experimental/research_library_api.py",
+          "sha256": "aaeadea66db767d91eda467990923fe91357f08df8f63310e52e3aa0cf7c4618"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/director-research-integration-20261017/packaging-evidence-r1/director-research-public-sdist-binding-r1__public-wheel0"
+    },
+    {
+      "archive": ".runtime/v2-checks/director-research-public-wheel-r1/pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "kind": "wheel",
+      "sha256": "64676fa6727508b0ad2b3b5fdb62dc84c4f26cad47baeaa5dc3f9787ab1e73a8",
+      "payload_file_count": 519,
+      "changed_modules": {
+        "app/experimental/api.py": {
+          "member": "app/experimental/api.py",
+          "sha256": "9b4be0e877d12b8eb9b7b08b14a6c82f96cc0c4ab53b1811f6ba9f21227665d5"
+        },
+        "app/experimental/research_library.py": {
+          "member": "app/experimental/research_library.py",
+          "sha256": "8037d2cd28f1c4446f4fb1103011b71b1e874d0d9e3340cd23a7c12c8d8ef59f"
+        },
+        "app/experimental/research_library_api.py": {
+          "member": "app/experimental/research_library_api.py",
+          "sha256": "aaeadea66db767d91eda467990923fe91357f08df8f63310e52e3aa0cf7c4618"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/director-research-integration-20261017/packaging-evidence-r1/director-research-public-wheel-r1__public-wheel0"
+    }
+  ],
+  "all_runtime_source_bytes_verified": true,
+  "application_imported": false,
+  "installed": false,
+  "extracted": false,
+  "artifact_installation_and_native_execution": "NOT_RUN"
+}

@@ -1,0 +1,8 @@
+...............................                                          [100%]
+=============================== warnings summary ===============================
+tests/test_public_sdist_artifact.py::test_actual_sdist_preserves_stage_hashes_and_standard_model_safety_inputs
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+31 passed, 1 warning in 33.19s
