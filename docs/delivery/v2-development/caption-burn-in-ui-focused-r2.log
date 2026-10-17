@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/CaptionBurnIn.additive.test.tsx (11 tests) 348ms
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  03:39:12
+   Duration  1.23s (transform 203ms, setup 16ms, collect 304ms, tests 348ms, environment 302ms, prepare 64ms)
+

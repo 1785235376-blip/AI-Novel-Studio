@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Explicit subtitle burn-in workspace (18:44 UTC)
+
+Added the missing UI over existing SubtitleTimelineService processing endpoints and the existing host-configured FFmpeg adapter. Current saved video captions can explicitly read capability/tasks, queue without execution, separately execute, inspect result metadata, approve/reject, cancel/recover/resume and download approved bytes with MIME/size/SHA verification. No installation, new executor, cloud call or automatic action. Synthetic adapters are excluded. Source/actor/draft lifetime and separate live consents fence callbacks. Unknown creates cannot be replayed; uncertain task actions require an explicit adoption of a strictly newer original task state. The original backend remains sole authority for source validation, review and byte ownership.
+
+Final runtime focused r2:11 checks and TypeScript PASS. Earlier r1:10 plus15 existing text-replacement checks and TS PASS. Download-focused r2:12 checks including real byte hashing; r1 failed on jsdom's incomplete Blob implementation and was corrected with Node's native Blob fixture, without changing product behavior. This is mounted UI with mocked transport, not live FFmpeg/browser/model-quality acceptance. Full production rebuild and inventory refresh remain deferred.
+
 ## NLE authoring rail connections (18:34 UTC)
 
 Connected two previously unhandled original NLE descriptors in StudioTimelineEditor. Exact clip.update source replacements now populate and reveal the existing formal-source inspector, retaining current source trim and requiring its original preview/confirmation/CAS before writing. Current catalog identity, locked track, draft/selection ownership and existing unsent source forms are respected; no automatic save. Subtitle rail insert/update/remove now reuse the original caption mapper and complete timeline validator, then the existing local change/undo/Save owner.

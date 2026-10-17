@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/CaptionBurnIn.additive.test.tsx (10 tests) 274ms
+ ✓ src/experimental/SubtitleTimelinePanel.textReplace.test.tsx (15 tests) 1726ms
+   ✓ previews, explicitly applies, undoes, then persists only through existing save 441ms
+
+ Test Files  2 passed (2)
+      Tests  25 passed (25)
+   Start at  03:37:58
+   Duration  2.60s (transform 272ms, setup 19ms, collect 555ms, tests 2.00s, environment 625ms, prepare 132ms)
+

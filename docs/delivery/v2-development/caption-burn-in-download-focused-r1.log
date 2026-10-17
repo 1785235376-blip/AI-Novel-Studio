@@ -1,0 +1,22 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/experimental/CaptionBurnIn.additive.test.tsx (12 tests | 1 failed) 348ms
+   × verifies approved download bytes against the original receipt digest 9ms
+     → blob.arrayBuffer is not a function
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed (12)
+   Start at  03:41:30
+   Duration  1.24s (transform 204ms, setup 18ms, collect 312ms, tests 348ms, environment 311ms, prepare 62ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/experimental/CaptionBurnIn.additive.test.tsx > verifies approved download bytes against the original receipt digest
+TypeError: blob.arrayBuffer is not a function
+ ❯ Object.download src/experimental/captionBurnInClient.ts:30:357
+
+ ❯ src/experimental/CaptionBurnIn.additive.test.tsx:29:597
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

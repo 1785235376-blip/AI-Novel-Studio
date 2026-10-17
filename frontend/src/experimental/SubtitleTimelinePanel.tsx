@@ -3,6 +3,7 @@ import { previewCaptionTimingOffset, type CaptionTimingOffset } from './captionT
 import { reviewCaptionTransfer } from './captionTransferReview';
 import { CaptionHistory } from './CaptionHistory';
 import { CaptionTextReplace } from './CaptionTextReplace';
+import { CaptionBurnIn } from './CaptionBurnIn';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
 import { Details, ErrorMessage, Field, ResourceState, useResource } from './shared';
@@ -18,7 +19,7 @@ function SubtitleContent({client,onOpenAudiobook}:{client:ExperimentalClient;onO
  const admissionEpoch=useRef(0);
  const refresh=()=>{admissionEpoch.current++;catalog.reload();records.reload();};
  return <section className="experimental-section" aria-label="字幕时间轴"><div className="experimental-actions"><h3>字幕时间轴</h3><Button disabled={action.busy||catalog.loading||records.loading} onClick={refresh}>刷新字幕来源与记录</Button>{onOpenAudiobook&&<Button onClick={onOpenAudiobook}>打开原有声书审核</Button>}</div>
- <StatusMessage>人工时间标记，可编辑整数 tick。媒体时长来自实测；只有 PCM16 WAV 显示实际采样波形。自动 ASR / 音素或逐字对齐、字幕压制均未配置。</StatusMessage>
+ <StatusMessage>人工时间标记，可编辑整数 tick。媒体时长来自实测；只有 PCM16 WAV 显示实际采样波形。自动转录与对齐依赖原模型运行时；字幕压制须明确读取已配置能力，不由手动编辑入口推断就绪。</StatusMessage>
  <ResourceState loading={catalog.loading} error={catalog.error}/>{!!action.error&&<ErrorMessage error={action.error}/>}<p role="status">{action.notice}</p>
  <Panel title="绑定现有媒体创建字幕版本"><Field label="字幕标题"><input value={title} onChange={e=>setTitle(e.target.value)}/></Field><Field label="字幕绑定媒体"><select disabled={!available||action.busy} value={asset} onChange={e=>setAsset(e.target.value)}><option value="">选择原资产库的音频 / 视频</option>{available&&catalog.data!.assets.map(a=><option key={a.id} value={a.id}>{a.filename} · v{a.version}</option>)}</select></Field>
  <Field label="字幕说话人来源计划"><select disabled={!available||action.busy} value={plan} onChange={e=>setPlan(e.target.value)}><option value="">不关联说话人</option>{available&&catalog.data!.plans.filter(p=>!p.stale).map(p=><option key={p.id} value={p.id}>{p.title} · v{p.version}</option>)}</select></Field>
@@ -26,11 +27,11 @@ function SubtitleContent({client,onOpenAudiobook}:{client:ExperimentalClient;onO
  <Button disabled={action.busy||!available||!asset||!title.trim()} onClick={()=>void action.run(async current=>{const [numerator,denominator]=rate.split('/').map(Number);const selected=catalog.data!.plans.find(p=>p.id===plan);await api.createTrack({asset_id:asset,title,plan_id:plan||null,expected_plan_version:selected?.version??null,timebase:{numerator,denominator},cues:[],language:'zh'});if(current())records.reload();},'字幕草稿已绑定实测媒体，等待填写人工时间标记')}>创建字幕草稿</Button>
  {available&&!catalog.data!.assets.length&&<EmptyState title="暂无可绑定媒体" detail="先在原资产库导入或批准音频 / 视频。这里不会制造时长或假波形。"/>}</Panel>
  <ResourceState loading={records.loading} error={records.error}/>{!records.loading&&!records.error&&!records.data?.items.length&&<EmptyState title="还没有字幕版本" detail="选择实际媒体建立字幕，再逐条编辑时间和文本。"/>}
- {records.data?.items.map(row=><CaptionEditor key={row.id} client={client} admissionEpoch={admissionEpoch} current={row} plans={catalog.data?.plans||[]} available={!records.loading&&!records.error&&available} refresh={records.reload}/>)}
+ {records.data?.items.map(row=><CaptionEditor key={row.id} client={client} admissionEpoch={admissionEpoch} current={row} video={catalog.data?.assets.some(asset=>asset.id===row.asset_id&&asset.version===row.asset_snapshot?.version&&asset.kind==='video')===true} plans={catalog.data?.plans||[]} available={!records.loading&&!records.error&&available} refresh={records.reload}/>)}
  <StatusMessage>导出支持纯文本 SRT / WebVTT，毫秒量化向下取整并进行实际文件读回校验。目标字幕软件显示：NOT_RUN。字幕元数据导出不会渲染媒体。</StatusMessage>
  </section>;
 }
-function CaptionEditor({client,current,plans,available,refresh,admissionEpoch}:{admissionEpoch:{current:number};client:ExperimentalClient;current:CaptionTrack;plans:AudioPlan[];available:boolean;refresh:()=>void}) {
+function CaptionEditor({client,current,video,plans,available,refresh,admissionEpoch}:{admissionEpoch:{current:number};client:ExperimentalClient;current:CaptionTrack;video:boolean;plans:AudioPlan[];available:boolean;refresh:()=>void}) {
  const api=useMemo(()=>voiceSubtitleClient(client),[client]);const action=useReviewAction();const [captured,setCaptured]=useState(current),[cues,updateCues]=useState(current.cues||[]),[split,updateSplit]=useState<Record<string,{tick:string;left:string;right:string}>>({});
  const draftEpoch=useRef(0);
  const [restoreHistoryVersion,setRestoreHistoryVersion]=useState<number>();
@@ -57,6 +58,7 @@ function CaptionEditor({client,current,plans,available,refresh,admissionEpoch}:{
  <CaptionHistory client={client} row={captured} cues={cues} binding={JSON.stringify({current,captured,available,unavailable,draftEpoch:draftEpoch.current,admissionEpoch:admissionEpoch.current})} disabled={!!unavailable} dirty={dirty||splitDirty} draftEpoch={draftEpoch} admissionEpoch={admissionEpoch} replace={(value,version)=>{setRestoreHistoryVersion(version);setCues(value);setSplit({});}}/>
  <CaptionImport client={client} row={captured} binding={JSON.stringify({current,captured,available,unavailable,draftEpoch:draftEpoch.current,admissionEpoch:admissionEpoch.current})} disabled={!!unavailable} dirty={dirty||splitDirty} draftEpoch={draftEpoch} admissionEpoch={admissionEpoch} replace={value=>{setRestoreHistoryVersion(undefined);setCues(value);setSplit({});}}/>
  <CaptionOffset row={captured} cues={cues} binding={JSON.stringify({current,captured,available,unavailable})} disabled={!!unavailable} draftEpoch={draftEpoch} admissionEpoch={admissionEpoch} replace={setCues}/>
+ {video && <CaptionBurnIn client={client} row={captured} binding={JSON.stringify({current,captured,available,unavailable})} disabled={!!unavailable||dirty||splitDirty}/>}
  <CaptionTextReplace row={captured} cues={cues} binding={JSON.stringify({current,captured,available,unavailable})}
    disabled={!!unavailable||splitDirty} draftEpoch={draftEpoch} admissionEpoch={admissionEpoch} replace={setCues}/>
  {waveform?.status==='MEASURED_PCM16_PEAKS'&&waveform.peaks?<details className="experimental-details"><summary>实测 PCM16 波形</summary><svg role="img" aria-label="实际音频采样峰值波形" viewBox={`0 0 ${waveform.peaks.length} 100`} width="100%" height="100" preserveAspectRatio="none"><path stroke="currentColor" fill="none" d={waveform.peaks.map((p,i)=>`M${i} ${50-p*50}V${50+p*50}`).join(' ')}/></svg><p>峰值包络；不是语音或单词对齐。</p></details>:<p>此媒体无可用实测波形，仍可人工编辑时间。</p>}
