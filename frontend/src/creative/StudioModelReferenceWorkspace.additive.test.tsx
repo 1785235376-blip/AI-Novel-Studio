@@ -1,0 +1,34 @@
+// @vitest-environment jsdom
+import { webcrypto } from 'node:crypto';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { afterEach, expect, it, vi } from 'vitest';
+import { IndependentStudioWorkspace } from './IndependentStudioWorkspace';
+import { useStudio } from '../store';
+import { useLocalHostSession } from '../localHostSession';
+import { modelAsset, modelGlbBytes, modelInspection } from './studioModelReference.testFixtures';
+import emptyPromptLibrary from '../prompt/__fixtures__/empty-library.json';
+afterEach(()=>{cleanup();vi.restoreAllMocks();vi.unstubAllGlobals();});
+it.each([false,true])('imports through original workspace, with lost-response retry %s and no FFmpeg',async(lost)=>{
+ vi.stubGlobal('crypto',webcrypto);localStorage.clear();useStudio.setState({novelId:'project',chapterId:'',sessionToken:'',actor:undefined,scope:undefined});useLocalHostSession.setState({token:'',actorId:''});
+ Object.defineProperty(URL,'createObjectURL',{configurable:true,value:vi.fn(()=> 'blob:fixture')});Object.defineProperty(URL,'revokeObjectURL',{configurable:true,value:vi.fn()});
+ let didLose=false;let saved:ReturnType<typeof modelAsset>[]=[];const base='/api/projects/project/studio';
+ const overview={project:{id:'project',title:'Independent',entry_kind:'NEUTRAL_STUDIO'},preferences:{version:1,intents:[],preset:'BLANK',custom_intent:''},capabilities:{can_mutate:true,manual_import:true,manual_export:true,model_required:false,chapter_required:false,intent_is_permission:false,media_validator_configured:false,asset_kinds:['image','video','audio']}};
+ const reply=(value:unknown,status=200)=>new Response(JSON.stringify(value),{status});
+ const fetch=vi.fn(async(url:string,init:RequestInit={})=>{
+  if(url===base)return reply(overview);
+  if(url===base+'/prompts')return reply({...emptyPromptLibrary,project_id:'project',scope:{mode:'local',novel_id:'project'}});
+  if((url===base+'/assets'||url.startsWith(base+'/assets?'))&&init.method==='GET')return reply({items:saved});
+  if(url===base+'/assets/model-reference'&&init.method==='POST'){if(!saved.length)saved=[modelAsset()];if(lost&&!didLose){didLose=true;throw new Error('Fixture lost response after commit');}return reply(saved[0],201);}
+  if(url.endsWith('/lineage')){saved=[{...saved[0],version:2}];return reply(saved[0]);}
+  if(url===base+'/assets/model-reference/model-reference')return reply(modelInspection(saved[0]));
+  if(url===base+'/assets/model-reference')return reply(saved[0]);
+  throw new Error(`Unexpected request: ${init.method} ${url}`);
+ });vi.stubGlobal('fetch',fetch);
+ const query=new QueryClient({defaultOptions:{queries:{retry:false},mutations:{retry:false}}});render(<QueryClientProvider client={query}><IndependentStudioWorkspace projectId='project' context={{sessionToken:''}} scope={{workspace:'Local',project:'Independent',storyline:'Default',branch:'Main'}} actor='Author' module='ASSETS' onModuleChange={vi.fn()} onProjectChoice={vi.fn()}/></QueryClientProvider>);
+ const picker=await screen.findByLabelText('选择静态 GLB 文件');const bytes=modelGlbBytes(),file=new File([bytes],'triangle.glb');Object.defineProperty(file,'arrayBuffer',{value:async()=>bytes.buffer});fireEvent.change(picker,{target:{files:[file]}});fireEvent.click(await screen.findByRole('button',{name:'明确导入并保存 GLB 参考素材'}));
+ if(lost)fireEvent.click(await screen.findByRole('button',{name:'使用同一请求重试 GLB 导入'}));
+ await waitFor(()=>expect(saved[0]?.version).toBe(2));await waitFor(()=>expect((screen.getByRole('button',{name:'读取当前 GLB 几何检查'}) as HTMLButtonElement).disabled).toBe(false));fireEvent.click(screen.getByRole('button',{name:'读取当前 GLB 几何检查'}));await screen.findByLabelText('GLB 原素材几何回执');
+ const writes=fetch.mock.calls.filter(([,init])=>(init?.method??'GET')!=='GET');expect(writes.map(([url])=>url)).toEqual([base+'/assets/model-reference',...(lost?[base+'/assets/model-reference']:[]),base+'/assets/model-reference/lineage']);
+ const sent=JSON.parse(String(writes[0][1]!.body));expect(sent.contract).toBe('studio-static-glb-import/1');expect(writes[0][1]!.headers).toMatchObject({'Idempotency-Key':sent.idempotency_key});if(lost)expect(JSON.parse(String(writes[1][1]!.body)).idempotency_key).toBe(sent.idempotency_key);expect(fetch.mock.calls.some(([url])=>/generate|execute|render/.test(url))).toBe(false);
+});

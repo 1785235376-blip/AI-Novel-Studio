@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/studioClient.test.ts (38 tests) 30ms
+ ✓ src/creative/StudioModelReference.additive.test.tsx (5 tests) 167ms
+
+ Test Files  2 passed (2)
+      Tests  43 passed (43)
+   Start at  05:30:02
+   Duration  1.32s (transform 767ms, setup 36ms, collect 1.11s, tests 198ms, environment 336ms, prepare 132ms)
+
+src/creative/StudioModelReference.additive.test.tsx(19,275): error TS2493: Tuple type '[]' of length '0' has no element at index '0'.

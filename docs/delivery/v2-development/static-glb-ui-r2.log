@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/StudioModelReference.additive.test.tsx (5 tests) 163ms
+ ✓ src/creative/StudioModelReferenceWorkspace.additive.test.tsx (1 test) 542ms
+   ✓ imports and inspects through mounted original workspace without FFmpeg or a legacy opaque upload 542ms
+
+ Test Files  2 passed (2)
+      Tests  6 passed (6)
+   Start at  05:31:24
+   Duration  4.07s (transform 2.27s, setup 32ms, collect 3.43s, tests 705ms, environment 588ms, prepare 128ms)
+
+src/creative/StudioModelReferenceWorkspace.additive.test.tsx(31,50): error TS18048: 'init' is possibly 'undefined'.
+src/creative/StudioModelReferenceWorkspace.additive.test.tsx(32,31): error TS2532: Object is possibly 'undefined'.
+src/creative/StudioModelReferenceWorkspace.additive.test.tsx(32,115): error TS2532: Object is possibly 'undefined'.

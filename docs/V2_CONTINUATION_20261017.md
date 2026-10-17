@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Explicit static GLB import/inspection UI (20:33 UTC)
+
+The existing independent Asset workspace now mounts the dedicated GLB form without requiring FFmpeg or a model. Selecting a bounded local file does not upload; explicit save uses the original captured transport and existing workspace mutation lock. The client checks the returned asset size/SHA-256 against the selected bytes. Unknown-result retry preserves the original idempotency key in the workspace. Source declaration stays a second original-owner operation; failed declaration can be retried without reimporting. Exact selected-asset inspection is explicit, closed-contract decoded and retired across scope/source changes. Download, declarations and lifecycle remain the existing Asset UI.
+
+Focused static-glb-ui-r3:7 checks and TypeScript PASS, including mounted original workspace success and lost-response retry with the same request. Earlier r1 also passed38 original studio transport checks; r1/r2 type phases found only new-test mock tuple/optional argument typing, corrected without runtime weakening. Failed receipts retained. This is mounted React with mocked transport, separate from prior real File/GLB owner checks; actual browser/viewport/full product acceptance is not claimed.
+
 ## Static GLB original-Asset import/inspection API (20:24 UTC)
 
 Added a bounded actual GLB triangle-geometry parser and a separate explicit import contract over the original Asset/Storage/Lineage/project-incarnation owners. The old image/video/audio import DTO is unchanged. A bounded private POST persists validated binary bytes with original idempotency; a read-only GET rechecks exact source/authority after parsing and returns mesh-local metadata. No provider, URI resource opening, executable, model, renderer or second asset registry. See STATIC_GLB_REFERENCE_CONTRACT.md for the narrow supported subset and official specification reference.

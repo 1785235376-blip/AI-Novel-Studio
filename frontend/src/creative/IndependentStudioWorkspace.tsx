@@ -1,3 +1,4 @@
+import { StudioModelReferencePanel } from './StudioModelReferencePanel';
 import { CreativeWorkspace } from './CreativeWorkspace';
 import { checkedStoryboardCapabilities, prepareStoryboardEditor, type OpenStoryboardEditor, type PreparedStoryboardEditor } from './storyboardEditorHandoff';
 import { StudioStoryboardAssetHandoff } from './StudioStoryboardAssetHandoff';
@@ -523,6 +524,21 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
         onDirtyChange={promptDraftChanged} />
     )}
     {workspaceView === 'ASSETS' && <Panel title="独立素材工作区"><p>无需小说、章节或模型，导入素材即可保存和导出。</p><p>上传会保存文件，并记录“外部导入”；许可默认未指定，可在来源声明中补充。下载原始文件保留原格式，不进行重新编码。</p>{overview && <Badge tone="info">{!writable ? overview.capabilities.can_review === true ? '仅审核与读取' : '只读' : overview.capabilities.media_validator_configured ? '手工导入可用' : '媒体校验工具缺失'} · 不需要模型</Badge>}{overview && !overview.capabilities.media_validator_configured && <p>图片、视频和音频导入需要 FFmpeg / ffprobe 校验工具。当前可查看和导出已保存资产，未调用模型。</p>}</Panel>}
+    {workspaceView === 'ASSETS' && overview && !denied && <StudioModelReferencePanel scope={client} assets={rows} blocked={busy || dirty} canImport={writable && overview.capabilities.manual_import === true} isCurrent={current}
+      onInspect={asset => guarded(() => client.inspectModelReference(asset))}
+      onImport={async body => {
+        if (!current() || !writable || overview.capabilities.manual_import !== true || busyRef.current || dirtyRef.current) throw new Error('请先处理当前输入并核对项目写入权限。');
+        busyRef.current = true; setBusy(true); setNotice('');
+        const identity = JSON.stringify([body.filename,'model',body.content_base64]);
+        if (lastImport.current?.body !== identity) lastImport.current = {body:identity,key:crypto.randomUUID()};
+        try {
+          const imported = await guarded(() => client.importModelReference({contract:'studio-static-glb-import/1',...body,idempotency_key:lastImport.current!.key}));
+          let asset = imported;
+          try {asset = await guarded(() => declared(imported));setPendingDeclaration(undefined);}
+          catch (reason) {if(!current())throw reason;setPendingDeclaration(imported);setNotice('GLB 文件已保存，来源声明尚未保存。可仅重试声明，无需重新上传。');}
+          if(current())refreshedAsset(asset);return asset;
+        } finally {busyRef.current=false;if(current()){setBusy(false);invalidateStorage();}}
+      }} />}
     {loading && <StatusMessage>正在核对项目与权限…</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}{notice && <StatusMessage>{notice}</StatusMessage>}
     {denied ? <EmptyState title="当前会话无权访问此项目" detail="私人预览已关闭。重新核对身份与范围后再打开。" /> : !overview && !loading ? <Button onClick={() => void refresh()}>重新读取项目</Button> : null}
     {pendingNavigation && !denied && <section className="creative-navigation-confirm" role="alert"><p>{storyboardDirty ? '分镜图片接收输入或保存结果仍待核对。离开只放弃本地接收状态，不会取消已经发出的保存；返回后须核对原文档。' : mediaDirty || timelineDirty ? '制作输入尚未保存，或请求结果仍待核对。离开只放弃本地输入，不会取消远端任务；重新打开后先读取原任务回执。' : graph.directorPending ? '有未保存的创作图／导演输入。放弃只移除本地草稿，不代表远端写入失败；若保存回执未知，返回后先核对原文档目录，避免重复创建。' : graph.dirty ? '有未保存的创作图输入。可以继续编辑，或确认放弃后离开。' : preferenceController.blocked ? '偏好保存结果尚待核对。离开不代表请求失败，再次操作前仍需读取服务端版本。' : '有未保存的偏好、来源声明或资产关联。可以继续编辑，或确认放弃后离开。'}</p><label><input type="checkbox" disabled={busy || !!preferenceController.pending} checked={discard} onChange={event => setDiscard(event.target.checked)} />确认放弃未保存输入</label><Button disabled={!discard || busy || !!preferenceController.pending} onClick={confirmNavigation}>确认离开</Button><Button onClick={() => { editorTicket.current++; pendingEditor.current = undefined; setPendingNavigation(undefined); setDiscard(false); }}>继续编辑</Button></section>}

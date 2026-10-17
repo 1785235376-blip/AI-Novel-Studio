@@ -1,3 +1,4 @@
+import { checkedModelReferenceAsset, checkedModelReferenceInspection, type ModelReferenceImport } from './studioModelReferenceContract';
 import { ApiError, type Asset, type AssetProvenance, type AssetRelationship, type AssetRelationshipKind, type AssetRelationshipReference, type AssetRelationshipReferenceKind, type AssetRelationshipTarget, type CollaborationContext } from '../api';
 import { useLocalHostSession } from '../localHostSession';
 import { isPackagedDesktopHost } from '../packagedHost';
@@ -341,6 +342,16 @@ export function studioClient(projectId: string, context: CollaborationContext) {
       return { items: value.items.map(checkedAsset) };
     }),
     importAsset: (body: StudioImportInput) => transport.json<StudioAsset>(`${base}/assets`, 'POST', body, undefined, body.idempotency_key).then(checkedAsset),
+    importModelReference: async (body: ModelReferenceImport) => {
+      if(body.contract!=='studio-static-glb-import/1'||typeof body.filename!=='string'||!body.filename.toLowerCase().endsWith('.glb')||body.filename.length>255||typeof body.content_base64!=='string'||body.content_base64.length>4*Math.ceil(8*1024*1024/3)||typeof body.idempotency_key!=='string'||!/^[A-Za-z0-9][A-Za-z0-9_-]{0,119}$/.test(body.idempotency_key)) throw new Error('GLB 导入输入无效。');
+      let binary:string;try{binary=atob(body.content_base64);}catch{throw new Error('GLB 文件编码无效。');}
+      if(binary.length<28||binary.length>8*1024*1024||btoa(binary)!==body.content_base64)throw new Error('GLB 文件编码或大小无效。');
+      const hash=await maskSha256(Uint8Array.from(binary,char=>char.charCodeAt(0)));
+      const result=checkedModelReferenceAsset(checkedAsset(await transport.json<StudioAsset>(`${base}/assets/model-reference`, 'POST', body, undefined, body.idempotency_key)));
+      if(result.size!==binary.length||result.sha256!==hash)throw new ApiError({status:200,code:'STUDIO_RESPONSE_INVALID',message:'导入回执与所选文件字节不一致；请核对原素材，未自动重试。'});
+      return result;
+    },
+    inspectModelReference: (asset: StudioAsset, signal?: AbortSignal) => transport.json<unknown>(`${assetUrl(asset.id)}/model-reference`, 'GET', undefined, signal).then(value => checkedModelReferenceInspection(value,checkedAsset(asset))),
     asset: (id: string, signal?: AbortSignal) => transport.json<StudioAsset>(assetUrl(id), 'GET', undefined, signal).then(checkedAsset),
     lineage: (id: string, body: StudioLineageInput) => transport.json<StudioAsset>(`${assetUrl(id)}/lineage`, 'PUT', { ...body, expected_version: version(body.expected_version, 1) }).then(checkedAsset),
     download: (id: string, signal?: AbortSignal) => transport.blob(`${assetUrl(id)}/download`, 'GET', undefined, signal),
