@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Explicit Aliyun Bailian text preset (18:55 UTC)
+
+Added the requested Aliyun text preset to the original typed Runtime through explicit host model/region configuration only. Four official shared regional endpoints are fixed; arbitrary/Coding Plan URLs are not accepted. Original transport, vault and cloud-disabled route gate remain authoritative. No default selection, credential entry, remote probe, paid call or second routing engine. Non-thinking text generation/streaming is the stated protocol scope; live provider/model/settings-UI acceptance remains NOT_RUN. See BAILIAN_TEXT_PRESET.md for source documentation and remaining limits.
+
+Focused r2:12 new plus11 original native-provider checks PASS (synthetic HTTP transport). r1's frozen Settings monkeypatch failure is preserved; only the new fixture was corrected to replace the immutable settings instance. No broad regression, package or source-inventory refresh performed.
+
 ## Local ASR and forced-alignment authoring surface (18:49 UTC)
 
 Added the missing explicit UI over original subtitle processing routes for ASR and FORCED_ALIGNMENT. The catalog must report a real, local, CONTRACT_VERIFIED operation; synthetic/cloud/unconfigured routes are excluded. Creation does not execute. Alignment sends only explicitly entered original text; transcript edits/composition invalidate consent. Execution results show validated cue ticks/text in pages. A separate digest-bound approval calls the original service, which must return the exact next caption version; the UI requests a refresh and does not overwrite local input automatically. Existing caption-history ownership is unchanged. Dirty/scope/source lifetime, unknown create and uncertain action protections match the burn-in surface.

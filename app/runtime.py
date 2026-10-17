@@ -52,6 +52,26 @@ class Runtime:
         for provider_id,variable in (("claude","ANTHROPIC_MODEL"),("gemini","GEMINI_MODEL")):
             model_id=os.getenv(variable,"").strip()
             if model_id:self.register_native_text_route(provider_id,model_id)
+        bailian_model = os.getenv("ALIYUN_BAILIAN_MODEL", "")
+        if bailian_model:
+            self.register_bailian_text_route(bailian_model, os.getenv("ALIYUN_BAILIAN_REGION", "cn-beijing"))
+
+    def register_bailian_text_route(self, model_id: str, region: str = "cn-beijing"):
+        """Explicit host bootstrap preset. Registration never probes or generates."""
+        from .bailian_text_preset import BailianTextProvider
+        from .credential_vault import credential_vault
+        if (not isinstance(model_id, str) or not model_id or len(model_id) > 200
+                or any(ord(character) <= 32 or ord(character) == 127 for character in model_id)):
+            raise ValueError("BAILIAN_EXPLICIT_MODEL_REQUIRED")
+        adapter = BailianTextProvider(region)
+        packaged = settings.enable_packaged_runtime or os.getenv("PACKAGED_WINDOWS_MODE", "").lower() in {"1", "true", "yes", "on"}
+        configured = credential_vault.has("aliyun-bailian") or (not packaged and bool(os.getenv("DASHSCOPE_API_KEY")))
+        self.provider_registry.register(ProviderDescriptor("aliyun-bailian", "阿里云百炼（文本）", "remote",
+            frozenset({Modality.TEXT}), configured, configured,
+            "configured_unverified" if configured else "not_configured"), adapter, replace=True)
+        self.model_registry.register(ModelDescriptor(model_id, "aliyun-bailian", model_id,
+            Modality.TEXT, frozenset({"generate", "stream"}), streaming=True), replace=True)
+
     def register_native_text_route(self, provider_id: str, model_id: str):
         """Host bootstrap only: explicit configured model, no discovery or egress."""
         from .native_text_providers import AnthropicTextProvider, GeminiTextProvider
