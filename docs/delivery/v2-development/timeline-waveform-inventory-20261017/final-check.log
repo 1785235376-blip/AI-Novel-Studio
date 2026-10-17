@@ -1,0 +1,1 @@
+{"status":"PASS_INVENTORY_ONLY","mode":"final","source_checkpoint":"31b9f741c02f6665a3a2fed317b29d15e7f2264b","sources":2640,"protected":1310,"companions":11,"old_rows":16741,"new_rows":151,"rows":16892,"raw_sha256":"080e617e9aee0483a57ac59bcd25b93251cc8c2c88452018629aad5537e92334","tests_executed":false}

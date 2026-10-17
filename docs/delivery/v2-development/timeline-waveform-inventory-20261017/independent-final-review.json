@@ -1,0 +1,20 @@
+{
+  "status": "APPROVE_CONFIRMED_INVENTORY_CLOSURE",
+  "source_commit": "31b9f741c02f6665a3a2fed317b29d15e7f2264b",
+  "canonical_sha256": "835210459b56ac40948631ba6ac228bb98732ab2d723d49cb3266222917126a4",
+  "raw_sha256": "080e617e9aee0483a57ac59bcd25b93251cc8c2c88452018629aad5537e92334",
+  "three_raw_invocations_byte_identical": true,
+  "source_count": 2640,
+  "protected_entries_exact": 1310,
+  "companion_files": 11,
+  "old_rows_exact": 16741,
+  "new_rows": 151,
+  "rows": 16892,
+  "public_manifest_sha256": "57f657057a391fa9ebdd8586fba62262ea6f3bb5fb1e2fe71f0c5ff27ad573be",
+  "original_runner_unchanged": true,
+  "fresh_origins_all_three_phases": true,
+  "offline_verifier": "check.mjs final PASS",
+  "tests_executed": false,
+  "scope": "INVENTORY_ONLY; no new runtime or PostgreSQL acceptance",
+  "utc": "2026-10-17T08:02:21.311Z"
+}

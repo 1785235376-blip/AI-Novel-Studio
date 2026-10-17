@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-17T08:01:13.100Z",
+  "source_commit": "31b9f741c02f6665a3a2fed317b29d15e7f2264b",
+  "parent_approval_received": true,
+  "parent_approval_text": "Explicit authorization: promote exact reviewed candidate835210459b56ac40948631ba6ac228bb98732ab2d723d49cb3266222917126a4 bytes tocanonical afterpredecessorhashcheck. Verifyresult andrunseparate thirdoriginalnowrite thenreviewerfinal/index. No recompression/sourcechange.",
+  "candidate_path": ".runtime/timeline-waveform-inventory/candidate-manifest-v2.json.gz",
+  "canonical_path": ".github/ci/coverage_manifest_v2.json.gz",
+  "predecessor_sha256": "e1e075039869cde2734ea4329aa68f3b5edeebfa74de7afd6cf296670d039e3c",
+  "candidate_sha256": "835210459b56ac40948631ba6ac228bb98732ab2d723d49cb3266222917126a4",
+  "canonical_sha256": "835210459b56ac40948631ba6ac228bb98732ab2d723d49cb3266222917126a4",
+  "independent_approval_sha256": "6264490762f691e3e9d3eb318329dbc05f841b6c93d6cce6d8238ea57f63d4ac",
+  "byte_exact": true,
+  "recompressed": false
+}

@@ -1,0 +1,19 @@
+{
+  "status": "APPROVE_EXACT_CANDIDATE_PROMOTION",
+  "source_commit": "31b9f741c02f6665a3a2fed317b29d15e7f2264b",
+  "candidate_path": ".runtime/timeline-waveform-inventory/candidate-manifest-v2.json.gz",
+  "candidate_sha256": "835210459b56ac40948631ba6ac228bb98732ab2d723d49cb3266222917126a4",
+  "canonical_predecessor_sha256": "e1e075039869cde2734ea4329aa68f3b5edeebfa74de7afd6cf296670d039e3c",
+  "raw_sha256": "080e617e9aee0483a57ac59bcd25b93251cc8c2c88452018629aad5537e92334",
+  "source_count": 2640,
+  "protected_entries_exact": 1310,
+  "companion_files": 11,
+  "old_rows_exact": 16741,
+  "new_rows": 151,
+  "rows": 16892,
+  "raw_review_candidate_byte_identical": true,
+  "offline_verifier": "check.mjs candidate PASS",
+  "parent_promotion_approval_still_required": true,
+  "tests_executed": false,
+  "utc": "2026-10-17T08:00:42.414Z"
+}

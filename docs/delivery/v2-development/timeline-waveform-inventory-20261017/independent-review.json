@@ -1,0 +1,23 @@
+{
+  "status": "APPROVE_CANDIDATE_GENERATION",
+  "source_commit": "31b9f741c02f6665a3a2fed317b29d15e7f2264b",
+  "source_count": 2640,
+  "all_git_source_hashes_verified": true,
+  "prior_rows_exact": 16741,
+  "new_rows": 151,
+  "new_backend_counts": {
+    "file": 94,
+    "both": 57,
+    "postgres": 0
+  },
+  "rows": 16892,
+  "raw_sha256": "080e617e9aee0483a57ac59bcd25b93251cc8c2c88452018629aad5537e92334",
+  "protected_entries_exact": 1310,
+  "companion_files": 11,
+  "canonical_unchanged_sha256": "e1e075039869cde2734ea4329aa68f3b5edeebfa74de7afd6cf296670d039e3c",
+  "public_manifest_approved_exact_two_entry_delta": true,
+  "fresh_natural_and_runner_origin_verified": true,
+  "offline_verifier": "check.mjs review PASS",
+  "tests_executed": false,
+  "utc": "2026-10-17T07:59:17.276966+00:00"
+}

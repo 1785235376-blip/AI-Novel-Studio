@@ -1,0 +1,191 @@
+{
+  "source_checkpoint": "31b9f741c02f6665a3a2fed317b29d15e7f2264b",
+  "baseline_manifest": {
+    "commit": "62a337bffddd3e0bd225f06b96486907d51c384b",
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "sha256": "e1e075039869cde2734ea4329aa68f3b5edeebfa74de7afd6cf296670d039e3c"
+  },
+  "complete_source_map_entries": 2640,
+  "complete_source_map_sha256": "8aa2d6c8391650ebbb199e3bc9d562739b8bd650c1fc4cc768deb836eba5b5fa",
+  "source_delta": [
+    {
+      "path": "app/creative/production_execution.py",
+      "before": "6ea314248f1d427cab8abfd51f99c7b4b70fe8c029250b476456a2c0d3987916",
+      "after": "0475d0bde93f30103911c905b6aa67535bb025bc19b03d1b11a6bd3ecabafd3e"
+    },
+    {
+      "path": "app/creative/production_execution_api.py",
+      "before": "da27d71614ac89a1ddff72790336ad563a6e89ecdea626b26e8ee54b82bbb303",
+      "after": "65c3c68fc759f66be2cb2edd9619e6761d6ac565bc34ce298d18170212088b37"
+    },
+    {
+      "path": "app/creative/production_execution_models.py",
+      "before": "906d8a95bc4dfe12b285bb12008d56d8764b4bab810025fe5708f222f77089fe",
+      "after": "9faf968ad7261f29fd1bf4c032cb2f519b95ad27d7d04a49cfa7c84ce394ecb7"
+    },
+    {
+      "path": "app/creative/project_store.py",
+      "before": "17eaef6b7a9c382d24f59e85850c0b2a9ed8334b69c10c47ee0959084dac3cbd",
+      "after": "82087db399a81e37412635e12fd310b658197df46dbdb92c1637f8ec913446b9"
+    },
+    {
+      "path": "app/creative/timeline_waveform.py",
+      "before": null,
+      "after": "64b341739e08e287b9dce98577746d0745e8aca71cd6cfdffe7737b7bc80a64e"
+    },
+    {
+      "path": "app/creative/workspace.py",
+      "before": "d3dc5a02bb866aca3381d0934ae48ae2d5f9b4e6eb03861ce859e0ebe1a50bbf",
+      "after": "45870a974066900fd0a437e753b0fdd93db4555e33e607f7e52d72deffbd9a76"
+    },
+    {
+      "path": "app/creative/workspace_api.py",
+      "before": "ce558660a30e1015d7cb41a94c04faacd226fecf97caaec3b231c1e92a67165d",
+      "after": "5bf6e0565a1a8296e1995188a8d1e6e57c0497a976c511904b8c35fcc4adceb0"
+    },
+    {
+      "path": "app/experimental/subtitle_timeline.py",
+      "before": "5ffc37bb2c79301d69c83f6de91fefeae065a36efeb0f9757c566a1001a2975d",
+      "after": "b421c8862fba65aa6b42c11bbd5bef5c732d5846834d07d8eb1f4ec609a6bfa2"
+    },
+    {
+      "path": "app/services/asset_library_service.py",
+      "before": "9518ca28ddbb48aca098ffd3e6b7ccf7bdbdbbb0dfd5a93d3af533364d9650c4",
+      "after": "2495a862abf79081c5db294319cd4389494fe13cea39c97f4e75b7c6270f1816"
+    },
+    {
+      "path": "app/services/pcm16_envelope.py",
+      "before": null,
+      "after": "b22309bdbee90cdab75262b24d93e63fbf8aa557cdb0ccce8485676cd961d220"
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineEditor.tsx",
+      "before": "be4fbd0943589f8a022a4e41a070306bcf83265324c7624a7a157a63666cf49c",
+      "after": "8f430ad79ed9b81ccbbc0c6df73b763c20d0032dd90c1717feb77e942028797d"
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineWaveform.additive.test.tsx",
+      "before": null,
+      "after": "8fa61228a77b9d6e1e4bb4a35721fd49cb2dd109e79d0144d54e721c5c9f930d"
+    },
+    {
+      "path": "frontend/src/creative/studioProductionClient.ts",
+      "before": "d12311cb9b781d17fafd7225cc8e83a7b51cc61694ef61830f1e073327c6db86",
+      "after": "b1d7e4f4996d9212dbc417f09a77f09a853956a36b87b6fc33a15d427f56721e"
+    },
+    {
+      "path": "frontend/src/creative/studioTimelineWaveform.testFixtures.ts",
+      "before": null,
+      "after": "4b1aaa383d7c7953e4e864d067d04883c0f592848b8a3e7d2ff0a15af19b2028"
+    },
+    {
+      "path": "frontend/src/creative/studioTimelineWaveformContract.additive.test.ts",
+      "before": null,
+      "after": "772e73fb6397612148b468b915000247ac387a70054f46714a8bb01834207c45"
+    },
+    {
+      "path": "frontend/src/creative/studioTimelineWaveformTypes.ts",
+      "before": null,
+      "after": "246ba5b0faf93eda615835c453d374de96cbb8ecdac479ef7616930916784b80"
+    },
+    {
+      "path": "frontend/src/creative/useStudioTimelineWaveform.ts",
+      "before": null,
+      "after": "7d6b7ef6c4b40c7857883f01c9dff3161bed6ab9eb266e47b56c8cc13dcbf793"
+    },
+    {
+      "path": "frontend/src/nle/TimelineWaveformPanel.additive.test.tsx",
+      "before": null,
+      "after": "ef4624452460c4206b9502992147c80f84c7d37edd866b2fe4e0caab4e4b27b0"
+    },
+    {
+      "path": "frontend/src/nle/TimelineWaveformPanel.tsx",
+      "before": null,
+      "after": "0aa68200615741dd24d6f022c3841018e44d7d52cf416674b6104915f0a64900"
+    },
+    {
+      "path": "frontend/src/nle/TimelineWorkspacePanel.tsx",
+      "before": "378c7adee85b9ef861529f52096cf4aa87ad7823b18eaaf92b9e107806d9f365",
+      "after": "9dbb423bffc20a1fbc24841db05e89c58907b2161517258e94dafdcf8999fe27"
+    },
+    {
+      "path": "tests/test_asset_bounded_content_additive.py",
+      "before": null,
+      "after": "9922f8bf191b7133d16632a0304279c458142ea03272d3b948fb42cfb2417616"
+    },
+    {
+      "path": "tests/test_existing_owner_observation_additive.py",
+      "before": null,
+      "after": "8f973cb31f79ec3e44abc5490b5cb39ff89ec87cc83bce8882f2a2822b15fc59"
+    },
+    {
+      "path": "tests/test_pcm16_envelope_additive.py",
+      "before": null,
+      "after": "ed2a91527ead6736b355515f777d18c5bfbe7d7b3e825cd23fc60dabef9ace23"
+    },
+    {
+      "path": "tests/test_v2_timeline_waveform_preview.py",
+      "before": null,
+      "after": "e4b5f4b5758e3bf2c590aa7cf793fa93e4c2786e608ffcb032856f71877b91ab"
+    },
+    {
+      "path": "tests/test_v2_timeline_waveform_preview_api.py",
+      "before": null,
+      "after": "56d847540eb84b7940d3b24b0a9c288aad8e1b24c958bcd2f2fe9fd14756bfae"
+    }
+  ],
+  "expected_new_sources": [
+    "app/creative/timeline_waveform.py",
+    "app/services/pcm16_envelope.py",
+    "frontend/src/creative/StudioTimelineWaveform.additive.test.tsx",
+    "frontend/src/creative/studioTimelineWaveform.testFixtures.ts",
+    "frontend/src/creative/studioTimelineWaveformContract.additive.test.ts",
+    "frontend/src/creative/studioTimelineWaveformTypes.ts",
+    "frontend/src/creative/useStudioTimelineWaveform.ts",
+    "frontend/src/nle/TimelineWaveformPanel.additive.test.tsx",
+    "frontend/src/nle/TimelineWaveformPanel.tsx",
+    "tests/test_asset_bounded_content_additive.py",
+    "tests/test_existing_owner_observation_additive.py",
+    "tests/test_pcm16_envelope_additive.py",
+    "tests/test_v2_timeline_waveform_preview.py",
+    "tests/test_v2_timeline_waveform_preview_api.py"
+  ],
+  "protected_old_entries_exact": 1310,
+  "frontend_scripts_e2e_companion": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "raw_inventory": {
+    "path": "docs/delivery/v2-development/timeline-waveform-inventory-20261017/review-raw-collection.json",
+    "sha256": "080e617e9aee0483a57ac59bcd25b93251cc8c2c88452018629aad5537e92334",
+    "rows": 16892
+  },
+  "prior_raw_inventory": {
+    "path": "docs/delivery/v2-development/timeline-selection-inventory-20261017/review-raw-collection.json",
+    "sha256": "3c49e9bb2374e6545154e39d7ebd1deb050712211f128541c2db64913099d80d",
+    "rows": 16741
+  },
+  "packaging_guard": {
+    "path": "packaging/public-build.json",
+    "before_sha256": "3261cc7549d58e5d8e84c69572a9475d9c416bfd487588ecfbec472e8695d37c",
+    "after_sha256": "57f657057a391fa9ebdd8586fba62262ea6f3bb5fb1e2fe71f0c5ff27ad573be",
+    "outside_manifest": true,
+    "unchanged": false,
+    "approved_source_delta": true,
+    "added_entries": [
+      "app/creative/timeline_waveform.py",
+      "app/services/pcm16_envelope.py"
+    ],
+    "predecessor_path": "docs/delivery/v2-development/timeline-waveform-inventory-20261017/public-predecessor.json"
+  },
+  "tests_executed": false
+}
