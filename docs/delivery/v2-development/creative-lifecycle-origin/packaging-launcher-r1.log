@@ -1,0 +1,6 @@
+........................................................................ [ 82%]
+...............                                                          [100%]
+87 passed in 38.58s
+
+{"receipt": "docs/delivery/v2-development/creative-lifecycle-packaging-r1.json", "status": "PASS"}
+packaging/public-build.json: OK

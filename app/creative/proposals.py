@@ -12,6 +12,7 @@ from fastapi import HTTPException
 
 from ..experimental.common import StaleSourceError, check_version, change_row, new_row, now
 from ..experimental.store import canonical
+from .director_binding import _has_internal_director_record, _deny_internal_director_record
 from .models import CreativeProductionDocumentIn, DirectorProposalIn, DirectorProposalReview, ProposalAction
 
 
@@ -64,6 +65,13 @@ class DirectorProposalService:
     @staticmethod
     def _public(row):
         from .camera_language import project_camera
+        if _has_internal_director_record(row):
+            result = deepcopy({key: value for key, value in row.items()
+                if key not in {"history", "model_preview", "model_execution", "director_notes", "output_digest"}})
+            result.update(status="MODEL_UNAVAILABLE", model_preview=None, model_execution=None,
+                director_notes=[], output_digest=None, rule_checks=[],
+                unavailable_reason="CREATIVE_DIRECTOR_EXECUTION_UNAVAILABLE")
+            return result
         result = deepcopy({key: value for key, value in row.items() if key != "history"})
         # Auxiliary read-only vocabulary checks; no inferred spatial correctness.
         result["rule_checks"] = [{"note_id": note["id"], "camera": project_camera(note)}
@@ -73,6 +81,7 @@ class DirectorProposalService:
     def get(self, nid, scope, actor, rid):
         row = self._owned(nid, scope, actor, rid)
         self._current(nid, scope, row)
+        if _has_internal_director_record(row): return self._public(row)
         result = self._public(row)
         if row.get("model_execution") and row["status"] not in {"APPROVED", "CANCELLED"}:
             try:
@@ -196,6 +205,7 @@ class DirectorProposalService:
         body = DirectorProposalReview.model_validate(value)
         with self.documents.store.transaction(nid, scope) as state:
             row = self._owned(nid, scope, actor, rid, state)
+            _deny_internal_director_record(row)
             source = self._current(nid, scope, row)
             check_version(row, body.expected_version)
             if row["status"] != "NEEDS_REVIEW" or row.get("document_id"):
@@ -239,6 +249,7 @@ class DirectorProposalService:
         body = ProposalAction.model_validate(value)
         with self.documents.store.transaction(nid, scope) as state:
             row = self._owned(nid, scope, actor, rid, state)
+            _deny_internal_director_record(row)
             check_version(row, body.expected_version)
             guard()
             if row["status"] == "APPROVED":

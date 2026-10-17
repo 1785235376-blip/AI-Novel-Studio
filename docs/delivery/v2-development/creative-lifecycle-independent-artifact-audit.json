@@ -1,0 +1,103 @@
+{
+  "status": "PASS_INDEPENDENT_READ_ONLY_ARTIFACT_AND_RECEIPT_AUDIT",
+  "artifacts": [
+    {
+      "artifact": ".runtime/creative-lifecycle-packaging-r1-pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "sha256": "de6dd1a00061c14af4c342714657a3a650cf90a8a145871fd209c297f86a0a8e",
+      "payload_hashes_verified": 507,
+      "module_hashes": {
+        "app/creative/director_binding.py": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88",
+        "app/jobs.py": "c4c63a20c95da09bee922d4526d2691107f9845f9b2b0114282def1dd60f0ab5",
+        "app/model_execution.py": "923bb10ac7e55dc67bf573ff4d0bb432bf1ea1f77413c8bde83069c7fb4e7ad3"
+      },
+      "rebuilt": false
+    },
+    {
+      "artifact": ".runtime/creative-lifecycle-packaging-r1-pytest/public-wheel1/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "sha256": "2d3859c58eb4811952e417c680874c666954a602ff6891d386d2cfd15183cf71",
+      "payload_hashes_verified": 507,
+      "module_hashes": {
+        "app/creative/director_binding.py": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88",
+        "app/jobs.py": "c4c63a20c95da09bee922d4526d2691107f9845f9b2b0114282def1dd60f0ab5",
+        "app/model_execution.py": "923bb10ac7e55dc67bf573ff4d0bb432bf1ea1f77413c8bde83069c7fb4e7ad3"
+      },
+      "rebuilt": false
+    },
+    {
+      "artifact": ".runtime/creative-lifecycle-packaging-r1-pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "sha256": "284fafab6c158cb8521e0c1d117c968453601bd5b167435844adb594cd291e00",
+      "payload_hashes_verified": 508,
+      "module_hashes": {
+        "app/creative/director_binding.py": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88",
+        "app/jobs.py": "c4c63a20c95da09bee922d4526d2691107f9845f9b2b0114282def1dd60f0ab5",
+        "app/model_execution.py": "923bb10ac7e55dc67bf573ff4d0bb432bf1ea1f77413c8bde83069c7fb4e7ad3"
+      },
+      "rebuilt": false
+    },
+    {
+      "artifact": ".runtime/creative-lifecycle-packaging-r1-pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "sha256": "2bf992b7bb36f79975084e6f5c5026c795d0866ea9bd68790b66659bfd83f983",
+      "payload_hashes_verified": 508,
+      "module_hashes": {
+        "app/creative/director_binding.py": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88",
+        "app/jobs.py": "c4c63a20c95da09bee922d4526d2691107f9845f9b2b0114282def1dd60f0ab5",
+        "app/model_execution.py": "923bb10ac7e55dc67bf573ff4d0bb432bf1ea1f77413c8bde83069c7fb4e7ad3"
+      },
+      "rebuilt": false
+    }
+  ],
+  "primary_receipts": [
+    {
+      "receipt": "docs/delivery/v2-development/creative-lifecycle-origin-r2.json",
+      "source_count": 2552,
+      "source_maps_equal": true,
+      "current_sources_match": true,
+      "log_hash_matches": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-lifecycle-backend-r1.json",
+      "source_count": 2552,
+      "source_maps_equal": true,
+      "current_sources_match": true,
+      "log_hash_matches": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-lifecycle-packaging-r1.json",
+      "source_count": 2552,
+      "source_maps_equal": true,
+      "current_sources_match": true,
+      "log_hash_matches": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-lifecycle-types-r1.json",
+      "source_count": 2552,
+      "source_maps_equal": true,
+      "current_sources_match": true,
+      "log_hash_matches": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-lifecycle-build-r1.json",
+      "source_count": 2552,
+      "source_maps_equal": true,
+      "current_sources_match": true,
+      "log_hash_matches": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-lifecycle-tokens-r1.json",
+      "source_count": 2552,
+      "source_maps_equal": true,
+      "current_sources_match": true,
+      "log_hash_matches": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-lifecycle-ui-r1.json",
+      "source_count": 2552,
+      "source_maps_equal": true,
+      "current_sources_match": true,
+      "log_hash_matches": true
+    }
+  ],
+  "golden_fixture_unchanged": true,
+  "public_manifest_identical_to_foundation": true,
+  "artifact_rebuilds": 0
+}

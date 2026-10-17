@@ -1,0 +1,45 @@
+{
+  "status": "PASS_REAL_OFFLINE_ARTIFACTS",
+  "artifacts": [
+    {
+      "name": "public-wheel0",
+      "artifact": ".runtime/creative-lifecycle-packaging-r1-pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "artifact_sha256": "de6dd1a00061c14af4c342714657a3a650cf90a8a145871fd209c297f86a0a8e",
+      "new_module_sha256": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88",
+      "payload_file_count": 507,
+      "saved_receipt": "docs/delivery/v2-development/creative-lifecycle-origin/artifacts/public-wheel0/wheel-receipt.json",
+      "receipt_sha256": "114a44bb04f6f4d4b0279197f18a42b4d9ebdee14b7edb974ee75b3670e9b7b6",
+      "stage_receipt_sha256": "446c26b0381789cb82f0e5b3173b3346d87196fa4ff152978ad739396c2bc48c"
+    },
+    {
+      "name": "public-wheel1",
+      "artifact": ".runtime/creative-lifecycle-packaging-r1-pytest/public-wheel1/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "artifact_sha256": "2d3859c58eb4811952e417c680874c666954a602ff6891d386d2cfd15183cf71",
+      "new_module_sha256": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88",
+      "payload_file_count": 507,
+      "saved_receipt": "docs/delivery/v2-development/creative-lifecycle-origin/artifacts/public-wheel1/wheel-receipt.json",
+      "receipt_sha256": "7eb044b1d151783f4b14cbf56197c9479b13c0c3e081fd6b43d4ba2e09e07c29",
+      "stage_receipt_sha256": "446c26b0381789cb82f0e5b3173b3346d87196fa4ff152978ad739396c2bc48c"
+    },
+    {
+      "name": "public-sdist0",
+      "artifact": ".runtime/creative-lifecycle-packaging-r1-pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "artifact_sha256": "284fafab6c158cb8521e0c1d117c968453601bd5b167435844adb594cd291e00",
+      "new_module_sha256": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88",
+      "payload_file_count": 508,
+      "saved_receipt": "docs/delivery/v2-development/creative-lifecycle-origin/artifacts/public-sdist0/sdist-receipt.json",
+      "receipt_sha256": "801cc544da71b813e1d10f30e8d507c0628d11dcc6ee305ae41dc93c04f34100",
+      "stage_receipt_sha256": "446c26b0381789cb82f0e5b3173b3346d87196fa4ff152978ad739396c2bc48c"
+    },
+    {
+      "name": "public-sdist1",
+      "artifact": ".runtime/creative-lifecycle-packaging-r1-pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "artifact_sha256": "2bf992b7bb36f79975084e6f5c5026c795d0866ea9bd68790b66659bfd83f983",
+      "new_module_sha256": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88",
+      "payload_file_count": 508,
+      "saved_receipt": "docs/delivery/v2-development/creative-lifecycle-origin/artifacts/public-sdist1/sdist-receipt.json",
+      "receipt_sha256": "5485956eba07f9f72e90724fd7f83abbc4f410b33628e1a27a2dfc943b7aa025",
+      "stage_receipt_sha256": "446c26b0381789cb82f0e5b3173b3346d87196fa4ff152978ad739396c2bc48c"
+    }
+  ]
+}

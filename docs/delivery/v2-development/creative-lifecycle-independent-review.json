@@ -1,0 +1,86 @@
+{
+  "status": "PASS_SCOPED_INDEPENDENT_REVIEW",
+  "utc": "2026-10-17T06:09:53.991257+00:00",
+  "scope": "Internal independent STORYBOARD CreativeDirector lifecycle only; public activation remains closed",
+  "independent_tests": {
+    "passed": 514,
+    "deselected_postgres": 227,
+    "skipped": 0,
+    "warnings": 1,
+    "seconds": 75.31,
+    "overlap_with_primary": true,
+    "unique_test_count_claimed": false
+  },
+  "source_verification": {
+    "runner_source_files": 2552,
+    "before_after_current_exact": true,
+    "core_freeze": "creative-lifecycle-origin/core-freeze-r3.sha256",
+    "foundation_test_sources_unchanged": 657,
+    "golden_fixture_sha256": "640ca3823d83a378b9018a180957d375b9cef6b524f2e527f7e731236cfd90ac",
+    "public_manifest_sha256": "3261cc7549d58e5d8e84c69572a9475d9c416bfd487588ecfbec472e8695d37c",
+    "public_manifest_identical_to_foundation": true
+  },
+  "artifact_verification": {
+    "actual_wheels_inspected": 2,
+    "actual_sdists_inspected": 2,
+    "rebuilds": 0,
+    "all_receipt_payload_hashes_verified": true,
+    "current_jobs_model_execution_director_binding_bytes_verified": true,
+    "primary_receipts_verified": 7
+  },
+  "reviewed_boundaries": [
+    "Strict private capability and exact invocation/job/manager/cancellation/hook identity; original Graph binding APIs still reject new domain",
+    "Original raw-scope to nonprovisioning project-owner lock order, active source/view verification and bounded mutation checks; leases retained through commit",
+    "Live actor/scope/source/proposal/Host ABA/flags/route fingerprint and binding hash/zero price/budget/license/local TEXT/synthetic guards",
+    "Original JobManager streaming identity, exact response route/text, byte/deadline/cancel guards, once-only original broker settlement and terminal-write uncertainty suppression",
+    "Recovery strips all live authority without replay or ledger release; persisted cross-domain fences remain",
+    "Public reads redact and public model/review/adoption routes reject structural model/history markers; malformed/deep traversal fails closed without authored-prose matching"
+  ],
+  "resolved_findings": [
+    "Separated locked source seam from unchanged standalone nesting-denial contract",
+    "Nonprovisioning owner validation before original broker lease acquisition",
+    "Bound original broker hooks and protected authentic admitted-job cleanup",
+    "Bound exact queued receipt and proposal version",
+    "Redaction before recursive copying; malformed contract and nested-list structural markers handled",
+    "Actual deadline rechecked after settlement/final save and during private result read",
+    "Continuous terminal storage failures retain suppressed in-memory uncertainty without unhandled worker exception",
+    "Shared private start tail rejects unsealed Creative domain before side effects",
+    "Slow-settlement test proves successful completed zero settlement before actual expiry using outer phase flag"
+  ],
+  "remaining_blockers": [],
+  "limitations": [
+    "No live PostgreSQL validation",
+    "No browser/geometry/native desktop/Windows acceptance",
+    "No live provider/model-quality claim; real LocalTextAdapter exercised with mocked external-local wire",
+    "Archive inspection is not installed-package runtime acceptance",
+    "Private seal is a supported-caller/persisted-payload boundary, not protection from hostile arbitrary in-process Python",
+    "Public preview/dispatch/content/refresh/adoption/generic review remain unavailable",
+    "Successful private result expires at original deadline; proposal retains internal admission receipt rather than review-ready promotion"
+  ],
+  "evidence": [
+    {
+      "path": "docs/delivery/v2-development/creative-lifecycle-independent-r1.json",
+      "sha256": "8934789fa092176453ed4e047bb583bd91ed8e9d748cf1adcdb51680aa45b305"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-lifecycle-independent-origin-r1.json",
+      "sha256": "7efb0c8b3bebf253f646f63ac1ebdf56572a70c09e8ecef83fa56ab0f57cf4e0"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-lifecycle-origin/independent-normal-startup-r1.json",
+      "sha256": "97838f5a5fbbd16ff03edd1eb31ec7a630af30440369afd8502ef75ea7a6bd41"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-lifecycle-independent-artifact-audit.json",
+      "sha256": "4c090bf20c0804fd4c624fb75194cea4e8a0aacfee9365b1ee27585a1d3cfd87"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-lifecycle-origin/run-independent-r1.sh",
+      "sha256": "fa0eb06139467e238d168efeb21ce0e3e580fee141fab53aa34d31f0b42d2eaf"
+    },
+    {
+      "path": "docs/delivery/v2-development/creative-lifecycle-origin/independent-artifact-audit.py",
+      "sha256": "daa6a5a1d3b9dd56f0d5c83114acd87e908325482cada7837ad24827d40b7caf"
+    }
+  ]
+}

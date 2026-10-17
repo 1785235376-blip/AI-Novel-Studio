@@ -1,0 +1,412 @@
+{
+  "status": "PASS_PRIMARY_SCOPED_EVIDENCE",
+  "baseline_commit": "3087f53276e42c57bf4baed2a76fbf75380d947e",
+  "source_files_current": 2552,
+  "changed_source_paths": [
+    "app/creative/director_binding.py",
+    "app/creative/generation.py",
+    "app/creative/proposals.py",
+    "app/jobs.py",
+    "app/model_execution.py"
+  ],
+  "added_source_paths": [
+    "tests/creative_director_execution_fixture.py",
+    "tests/test_v2_creative_director_execution_lifecycle.py",
+    "tests/test_v2_creative_director_invocation.py"
+  ],
+  "public_manifest_sha256": "3261cc7549d58e5d8e84c69572a9475d9c416bfd487588ecfbec472e8695d37c",
+  "frozen_fixture_sha256": "640ca3823d83a378b9018a180957d375b9cef6b524f2e527f7e731236cfd90ac",
+  "primary": {
+    "backend_passed": 699,
+    "backend_deselected": 410,
+    "backend_skipped": 0,
+    "packaging_passed": 87,
+    "packaging_skipped": 0,
+    "ui_passed": 100,
+    "ui_files": 6,
+    "types_build_tokens": "PASS"
+  },
+  "independent": "SEPARATE_REVIEW_SEE_COMPLETE_EVIDENCE_INDEX",
+  "artifacts": [
+    {
+      "name": "public-wheel0",
+      "artifact": ".runtime/creative-lifecycle-packaging-r1-pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "artifact_sha256": "de6dd1a00061c14af4c342714657a3a650cf90a8a145871fd209c297f86a0a8e",
+      "new_module_sha256": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88",
+      "payload_file_count": 507,
+      "saved_receipt": "docs/delivery/v2-development/creative-lifecycle-origin/artifacts/public-wheel0/wheel-receipt.json",
+      "receipt_sha256": "114a44bb04f6f4d4b0279197f18a42b4d9ebdee14b7edb974ee75b3670e9b7b6",
+      "stage_receipt_sha256": "446c26b0381789cb82f0e5b3173b3346d87196fa4ff152978ad739396c2bc48c"
+    },
+    {
+      "name": "public-wheel1",
+      "artifact": ".runtime/creative-lifecycle-packaging-r1-pytest/public-wheel1/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "artifact_sha256": "2d3859c58eb4811952e417c680874c666954a602ff6891d386d2cfd15183cf71",
+      "new_module_sha256": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88",
+      "payload_file_count": 507,
+      "saved_receipt": "docs/delivery/v2-development/creative-lifecycle-origin/artifacts/public-wheel1/wheel-receipt.json",
+      "receipt_sha256": "7eb044b1d151783f4b14cbf56197c9479b13c0c3e081fd6b43d4ba2e09e07c29",
+      "stage_receipt_sha256": "446c26b0381789cb82f0e5b3173b3346d87196fa4ff152978ad739396c2bc48c"
+    },
+    {
+      "name": "public-sdist0",
+      "artifact": ".runtime/creative-lifecycle-packaging-r1-pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "artifact_sha256": "284fafab6c158cb8521e0c1d117c968453601bd5b167435844adb594cd291e00",
+      "new_module_sha256": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88",
+      "payload_file_count": 508,
+      "saved_receipt": "docs/delivery/v2-development/creative-lifecycle-origin/artifacts/public-sdist0/sdist-receipt.json",
+      "receipt_sha256": "801cc544da71b813e1d10f30e8d507c0628d11dcc6ee305ae41dc93c04f34100",
+      "stage_receipt_sha256": "446c26b0381789cb82f0e5b3173b3346d87196fa4ff152978ad739396c2bc48c"
+    },
+    {
+      "name": "public-sdist1",
+      "artifact": ".runtime/creative-lifecycle-packaging-r1-pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "artifact_sha256": "2bf992b7bb36f79975084e6f5c5026c795d0866ea9bd68790b66659bfd83f983",
+      "new_module_sha256": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88",
+      "payload_file_count": 508,
+      "saved_receipt": "docs/delivery/v2-development/creative-lifecycle-origin/artifacts/public-sdist1/sdist-receipt.json",
+      "receipt_sha256": "5485956eba07f9f72e90724fd7f83abbc4f410b33628e1a27a2dfc943b7aa025",
+      "stage_receipt_sha256": "446c26b0381789cb82f0e5b3173b3346d87196fa4ff152978ad739396c2bc48c"
+    }
+  ],
+  "receipts": [
+    {
+      "receipt": "docs/delivery/v2-development/creative-lifecycle-origin-r1.json",
+      "receipt_sha256": "6465c561dcd8bc04b3d72cbee7e6351c0ac9e071425ab7cc711f8f611962a9f2",
+      "log": "docs/delivery/v2-development/creative-lifecycle-origin-r1.log",
+      "log_sha256": "3a36c429d0dd098c12428d2dfb303b5fac6cb5fa01f459230027c4a6e0ebcc10",
+      "source_count": 2552,
+      "sources_unchanged": true,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-c",
+        "import sys; path=sys.argv[1]; globals()[\"__file__\"]=path; exec(compile(open(path).read(),path,\"exec\"))",
+        "docs/delivery/v2-development/creative-lifecycle-origin/origin-probe.py",
+        "--child"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-lifecycle-origin-r2.json",
+      "receipt_sha256": "5fa2b3c83253e2dd3ca0b5c3b6141036360c2a84d7ef4655d147f2d0ed9c6f06",
+      "log": "docs/delivery/v2-development/creative-lifecycle-origin-r2.log",
+      "log_sha256": "29e84ee834db51fc652e24003b4d3d2701a8703a73a3b644eb4e3c53361a0297",
+      "source_count": 2552,
+      "sources_unchanged": true,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-c",
+        "import sys; path=sys.argv[1]; globals()[\"__file__\"]=path; exec(compile(open(path).read(),path,\"exec\"))",
+        "docs/delivery/v2-development/creative-lifecycle-origin/origin-probe.py",
+        "--child"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-lifecycle-backend-r1.json",
+      "receipt_sha256": "827a76101f15015fc0e58f7bb6c3ad003f312e7058228612842c570c0e254771",
+      "log": "docs/delivery/v2-development/creative-lifecycle-backend-r1.log",
+      "log_sha256": "d2802e51d284187ec77ef78909e98e3e86e32d96e0b275efa65020231478676f",
+      "source_count": 2552,
+      "sources_unchanged": true,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_creative_director_invocation.py",
+        "tests/test_v2_creative_director_execution_lifecycle.py",
+        "tests/test_v2_creative_director_binding.py",
+        "tests/test_v2_creative_director_binding_persistence.py",
+        "tests/test_v2_model_execution.py",
+        "tests/test_v2_generation_incarnation.py",
+        "tests/test_shared_generation_terminal_protocol.py",
+        "tests/test_r4_generation_origin_guards.py",
+        "tests/test_r4_generation_origin_regression.py",
+        "tests/test_r4_broker_cancel_dispatch.py",
+        "tests/test_r4_model_broker.py",
+        "tests/test_r4_broker_mounted.py",
+        "tests/test_v2_source_adaptation.py",
+        "tests/test_v2_storyboard_model_contract.py",
+        "-m",
+        "not postgres_backend_only",
+        "-q",
+        "--basetemp=.runtime/creative-lifecycle-backend-r1-pytest"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-lifecycle-packaging-r1.json",
+      "receipt_sha256": "87a701cda2aae4515392b1f2b106c43e2d83d7209fa9c97c4712314abe1ac56e",
+      "log": "docs/delivery/v2-development/creative-lifecycle-packaging-r1.log",
+      "log_sha256": "02348921a17095864327085ae30b72f9a12482640364585a170ba8abab8efb8f",
+      "source_count": 2552,
+      "sources_unchanged": true,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_creative_director_binding_packaging.py",
+        "tests/test_public_build_profile.py",
+        "tests/test_public_wheel_artifact.py",
+        "tests/test_public_sdist_artifact.py",
+        "-m",
+        "not postgres_backend_only",
+        "-q",
+        "--basetemp=.runtime/creative-lifecycle-packaging-r1-pytest"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-lifecycle-types-r1.json",
+      "receipt_sha256": "9bb1a74e48f99a4eb0c33ef0de29b055ece354bd554928aa6e1c00c8c33d107d",
+      "log": "docs/delivery/v2-development/creative-lifecycle-types-r1.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_count": 2552,
+      "sources_unchanged": true,
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && node node_modules/typescript/bin/tsc -b --force"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-lifecycle-build-r1.json",
+      "receipt_sha256": "33cc7563e8d4041a105cf8cfbbce29309e6981a8ae7a37b00f634ae76ed81351",
+      "log": "docs/delivery/v2-development/creative-lifecycle-build-r1.log",
+      "log_sha256": "6d80ea87a6c86937210a0acc64c8384376a41edd61a21add2577148a0116192d",
+      "source_count": 2552,
+      "sources_unchanged": true,
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && node node_modules/vite/bin/vite.js build"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-lifecycle-tokens-r1.json",
+      "receipt_sha256": "cb294f4e73d0050bd7e56050035225a18e257443c9d3ebdda750141fbc904d37",
+      "log": "docs/delivery/v2-development/creative-lifecycle-tokens-r1.log",
+      "log_sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "source_count": 2552,
+      "sources_unchanged": true,
+      "command": [
+        "node",
+        "scripts/check_ui_design_tokens.mjs"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-lifecycle-ui-r1.json",
+      "receipt_sha256": "5c516acbc4941cfe6883dfa1144450cd4b9e412ad3af38185dff7804d31da29a",
+      "log": "docs/delivery/v2-development/creative-lifecycle-ui-r1.log",
+      "log_sha256": "3cee89263004ae72b3ad8783467c4d4312342e3560caada577c4784183f7c64d",
+      "source_count": 2552,
+      "sources_unchanged": true,
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && node node_modules/vitest/vitest.mjs run --config vite.config.ts --maxWorkers=1 --minWorkers=1 --no-cache src/creative/DirectorModelControls.test.tsx src/creative/DirectorModelControls.storyboard-model.additive.test.tsx src/creative/GraphDirectorStoryboardHandoff.test.tsx src/creative/GraphDirectorProposalReview.test.tsx src/creative/GraphModelExecutionPanel.test.tsx src/creative/studioGraphDirectorClient.test.ts"
+      ]
+    }
+  ],
+  "limits": [
+    "internal lifecycle only; public independent Director routes/content/review/adoption closed",
+    "no PostgreSQL execution",
+    "no live-provider/model-quality acceptance",
+    "no browser/native/Windows/packaged runtime acceptance",
+    "no installation/merge/tag/release"
+  ],
+  "files": {
+    "docs/CREATIVE_DIRECTOR_INTERNAL_LIFECYCLE.md": {
+      "sha256": "a96af54594bb31eab975994dfbcdd3d58e5bf189faa5f77deba8719e67c51455",
+      "bytes": 13233
+    },
+    "docs/delivery/v2-development/creative-lifecycle-backend-r1.json": {
+      "sha256": "827a76101f15015fc0e58f7bb6c3ad003f312e7058228612842c570c0e254771",
+      "bytes": 604856
+    },
+    "docs/delivery/v2-development/creative-lifecycle-backend-r1.log": {
+      "sha256": "d2802e51d284187ec77ef78909e98e3e86e32d96e0b275efa65020231478676f",
+      "bytes": 1463
+    },
+    "docs/delivery/v2-development/creative-lifecycle-build-r1.json": {
+      "sha256": "33cc7563e8d4041a105cf8cfbbce29309e6981a8ae7a37b00f634ae76ed81351",
+      "bytes": 603982
+    },
+    "docs/delivery/v2-development/creative-lifecycle-build-r1.log": {
+      "sha256": "6d80ea87a6c86937210a0acc64c8384376a41edd61a21add2577148a0116192d",
+      "bytes": 1679
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/artifact-hashes.json": {
+      "sha256": "a5177b208c8d9bb21f8d8594ead5e5785f0fe9b22d08373e80f8fd6bb4705312",
+      "bytes": 2875
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/artifacts/public-sdist0/sdist-receipt.json": {
+      "sha256": "801cc544da71b813e1d10f30e8d507c0628d11dcc6ee305ae41dc93c04f34100",
+      "bytes": 117414
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/artifacts/public-sdist0/stage-receipt.json": {
+      "sha256": "446c26b0381789cb82f0e5b3173b3346d87196fa4ff152978ad739396c2bc48c",
+      "bytes": 78172
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/artifacts/public-sdist1/sdist-receipt.json": {
+      "sha256": "5485956eba07f9f72e90724fd7f83abbc4f410b33628e1a27a2dfc943b7aa025",
+      "bytes": 117414
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/artifacts/public-sdist1/stage-receipt.json": {
+      "sha256": "446c26b0381789cb82f0e5b3173b3346d87196fa4ff152978ad739396c2bc48c",
+      "bytes": 78172
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/artifacts/public-wheel0/stage-receipt.json": {
+      "sha256": "446c26b0381789cb82f0e5b3173b3346d87196fa4ff152978ad739396c2bc48c",
+      "bytes": 78172
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/artifacts/public-wheel0/wheel-receipt.json": {
+      "sha256": "114a44bb04f6f4d4b0279197f18a42b4d9ebdee14b7edb974ee75b3670e9b7b6",
+      "bytes": 107119
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/artifacts/public-wheel1/stage-receipt.json": {
+      "sha256": "446c26b0381789cb82f0e5b3173b3346d87196fa4ff152978ad739396c2bc48c",
+      "bytes": 78172
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/artifacts/public-wheel1/wheel-receipt.json": {
+      "sha256": "7eb044b1d151783f4b14cbf56197c9479b13c0c3e081fd6b43d4ba2e09e07c29",
+      "bytes": 107119
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/backend-launcher-r1.log": {
+      "sha256": "09cfd3f55902258a2a6b79795423d0360a54f2234d4fdd1c0ef6f2c8dd36a291",
+      "bytes": 8045
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/backend-normal-startup-r1.json": {
+      "sha256": "de6d4a7854ca72832342dfba054a26956564fca1745c16e74b35a3716300dd35",
+      "bytes": 6323
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/backend-normal-startup-r1.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/check-artifacts.py": {
+      "sha256": "5f818ce7577efcacefb83d86d5800715b4cebd2ebe68806b8ec6107cc0ff481d",
+      "bytes": 1542
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/core-freeze-r1.sha256": {
+      "sha256": "38cebd1b5636f2bcbd2e98e3dd1ed3a5fecc9b657e49445e09851739fc58cb89",
+      "bytes": 914
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/core-freeze-r2.sha256": {
+      "sha256": "0dff14bed7823a09338aa116a8a323295b950514b7eed687f9e8ce06201cfccf",
+      "bytes": 914
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/core-freeze-r3.sha256": {
+      "sha256": "a276f56fbb206bbcca21b2d50c6d27db0d792eebab762c2d8b7eeabc1addad61",
+      "bytes": 914
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/frontend-launcher-r1.log": {
+      "sha256": "a48bfb21c5a7daa92dd68242ef800ee5b0372017e4391134f6d94b262581fccc",
+      "bytes": 2805
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/index-evidence.py": {
+      "sha256": "8a3336be24046d80c4a6dc9d617a3c883680b2e4edb0825f55bc685f54ed10d4",
+      "bytes": 4640
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/index-primary-evidence.py": {
+      "sha256": "1b41cdb222c441a31bf26d2e2386f2fa2bb3034b3796d6e1ab7dca5cab326b03",
+      "bytes": 3936
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/launcher.log": {
+      "sha256": "f4847085a944c98c1cf67bb8cdbbb778025893fc7b35a783d9b472a3461a7406",
+      "bytes": 6484
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/normal-startup.json": {
+      "sha256": "a9b2ea46374657e55142a27b0f19b94fe4763fda9c28374eeb6ac84936be26d6",
+      "bytes": 6323
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/normal-startup.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/origin-probe.py": {
+      "sha256": "fce5055904cc32778736e1eea2398372994b982639057dd7ba21669ab0744f0c",
+      "bytes": 6087
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/packaging-interpreter-probe.py": {
+      "sha256": "99e3fd75effce3b27fe22b9878c793ba4a9aed3db4494d14177869036e2dc35c",
+      "bytes": 1378
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/packaging-interpreter-provenance.json": {
+      "sha256": "143617bcf52579d306e329a9ba5fa87822e5aad6918251f7cefc1448fe676827",
+      "bytes": 1364
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/packaging-launcher-r1.log": {
+      "sha256": "98e97ec428580e962c6da1aa3d5534f093ceff26ed497b472c26bc5d822912ea",
+      "bytes": 312
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/packaging-manifest-before.sha256": {
+      "sha256": "d89059b0c1b37367f7f192187228abc0ad72e4026f26e0e972dc661b88a1fcbb",
+      "bytes": 94
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/run-backend-r1.sh": {
+      "sha256": "17c599a33e6bee84f8040907a09148c057c7299032aab70bbf2166c6ec66a3ba",
+      "bytes": 2071
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/run-frontend-r1.sh": {
+      "sha256": "96ed1ebfc278e44e88be9ac52d6366f2da6941303e37bee18c2641e01f61b852",
+      "bytes": 1483
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/run-packaging-r1.sh": {
+      "sha256": "333c8f6dd92136ba3df9811c8ad2e79766fa882a2466dd8df047f0b27686afaa",
+      "bytes": 1822
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin/run-proof.sh": {
+      "sha256": "30d91f98401404520211a15ceb3feaa10a3fb9156b7bdeb5661075a4a826f6c4",
+      "bytes": 1354
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin-r1.json": {
+      "sha256": "6465c561dcd8bc04b3d72cbee7e6351c0ac9e071425ab7cc711f8f611962a9f2",
+      "bytes": 604235
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin-r1.log": {
+      "sha256": "3a36c429d0dd098c12428d2dfb303b5fac6cb5fa01f459230027c4a6e0ebcc10",
+      "bytes": 6387
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin-r2.json": {
+      "sha256": "5fa2b3c83253e2dd3ca0b5c3b6141036360c2a84d7ef4655d147f2d0ed9c6f06",
+      "bytes": 604235
+    },
+    "docs/delivery/v2-development/creative-lifecycle-origin-r2.log": {
+      "sha256": "29e84ee834db51fc652e24003b4d3d2701a8703a73a3b644eb4e3c53361a0297",
+      "bytes": 6387
+    },
+    "docs/delivery/v2-development/creative-lifecycle-packaging-r1.json": {
+      "sha256": "87a701cda2aae4515392b1f2b106c43e2d83d7209fa9c97c4712314abe1ac56e",
+      "bytes": 604376
+    },
+    "docs/delivery/v2-development/creative-lifecycle-packaging-r1.log": {
+      "sha256": "02348921a17095864327085ae30b72f9a12482640364585a170ba8abab8efb8f",
+      "bytes": 180
+    },
+    "docs/delivery/v2-development/creative-lifecycle-tokens-r1.json": {
+      "sha256": "cb294f4e73d0050bd7e56050035225a18e257443c9d3ebdda750141fbc904d37",
+      "bytes": 603960
+    },
+    "docs/delivery/v2-development/creative-lifecycle-tokens-r1.log": {
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "bytes": 31
+    },
+    "docs/delivery/v2-development/creative-lifecycle-types-r1.json": {
+      "sha256": "9bb1a74e48f99a4eb0c33ef0de29b055ece354bd554928aa6e1c00c8c33d107d",
+      "bytes": 603989
+    },
+    "docs/delivery/v2-development/creative-lifecycle-types-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/creative-lifecycle-ui-r1.json": {
+      "sha256": "5c516acbc4941cfe6883dfa1144450cd4b9e412ad3af38185dff7804d31da29a",
+      "bytes": 604330
+    },
+    "docs/delivery/v2-development/creative-lifecycle-ui-r1.log": {
+      "sha256": "3cee89263004ae72b3ad8783467c4d4312342e3560caada577c4784183f7c64d",
+      "bytes": 713
+    },
+    "docs/v2/frozen-capability-ledger-20261016.md": {
+      "sha256": "420c1fac1d1a50c7021b1278c99a44521258ce067a31c115868f5eca94afa99d",
+      "bytes": 130924
+    }
+  }
+}

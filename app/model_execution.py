@@ -196,12 +196,79 @@ def _require_graph_only_invocation(job):
         raise ValueError("GRAPH_PREPARED_DOMAIN_INVALID")
 
 
+_CREATIVE_SEAL = object()
+
+
+class _CreativeDirectorCapability:
+    """Transient supported-caller boundary, not a sandbox for hostile Python.
+
+    Only the original Director coordinator issues this private object. JSON,
+    passive Jobs, copied invocations and arbitrary callbacks cannot restore it.
+    Python code with arbitrary in-process introspection is outside this boundary.
+    """
+    __slots__ = ("_seal", "manager", "host", "preparation", "authorization", "route_fingerprint",
+                 "job", "job_id", "cancellation", "invocation", "adapter", "started", "before_dispatch", "on_terminal", "worker_claimed")
+
+    def __init__(self, seal, manager, host, preparation, authorization, route_fingerprint):
+        from .model_center.discovery_authority import DiscoveryAuthority
+        if (seal is not _CREATIVE_SEAL or type(host) is not DiscoveryAuthority
+                or not isinstance(host.principal, str) or not host.principal
+                or not callable(host.guard) or not callable(preparation) or not callable(authorization)):
+            raise ValueError("CREATIVE_DIRECTOR_LIVE_AUTHORITY_REQUIRED")
+        self._seal, self.manager, self.host = seal, manager, host
+        self.preparation, self.authorization = preparation, authorization
+        self.route_fingerprint = route_fingerprint
+        self.job_id = None
+        self.job = self.cancellation = self.invocation = self.adapter = None
+        self.started = False
+        self.worker_claimed = False
+        self.before_dispatch = self.on_terminal = None
+        host.guard()
+
+    @classmethod
+    def _issue(cls, manager, host, preparation, authorization, route_fingerprint):
+        return cls(_CREATIVE_SEAL, manager, host, preparation, authorization, route_fingerprint)
+
+    def _attach(self, job):
+        if self._seal is not _CREATIVE_SEAL or self.job is not None:
+            raise ValueError("CREATIVE_DIRECTOR_CAPABILITY_ALREADY_BOUND")
+        self.job, self.job_id, self.cancellation = job, job.id, job.cancelled
+
+    def _bind_hooks(self, job, before_dispatch, on_terminal):
+        self._check(job)
+        if self.before_dispatch is not None or self.on_terminal is not None or not callable(before_dispatch) or not callable(on_terminal):
+            raise ValueError("CREATIVE_DIRECTOR_BROKER_HOOKS_REQUIRED")
+        self.before_dispatch, self.on_terminal = before_dispatch, on_terminal
+        job.before_dispatch, job.on_terminal = before_dispatch, on_terminal
+
+    def _check(self, job, *, manager=None, started=False):
+        from .model_center.discovery_authority import DiscoveryAuthority
+        if (self._seal is not _CREATIVE_SEAL or self.job is not job or self.job_id != job.id
+                or (manager is not None and self.manager is not manager)
+                or job.creative_execution_authority is not self
+                or self.cancellation is not job.cancelled
+                or type(self.host) is not DiscoveryAuthority or not self.host.principal
+                or not callable(self.host.guard) or (started and not self.started)):
+            raise ValueError("CREATIVE_DIRECTOR_LIVE_AUTHORITY_REQUIRED")
+
+    def _current(self, job):
+        self._check(job)
+        if (self.before_dispatch is not None and (job.before_dispatch is not self.before_dispatch
+                or job.on_terminal is not self.on_terminal)):
+            raise ValueError("CREATIVE_DIRECTOR_BROKER_HOOKS_CHANGED")
+        self.host.guard()
+        self.authorization()
+        self.host.guard()
+        self._check(job)
+
+
 @dataclass(frozen=True, slots=True)
 class PreparedTextInvocation:
     request: TextGenerationRequest
     adapter: ModelProviderAdapter
     binding_digest: str
     synthetic_allowed: bool
+    _creative_capability: object = None
 
     @classmethod
     def bind(cls, job, request, adapter, synthetic_allowed):
@@ -223,6 +290,42 @@ class PreparedTextInvocation:
         # Only the exact external-local adapter has a separate preparation
         # phase and final-hop callback. Synthetic legacy Mock dispatches at the
         # original TextModelNode boundary and must not lose that callback.
+        from .model_center.discovery_bridge import LocalTextAdapter
+        prepare = preparation_guard if type(self.adapter._provider) is LocalTextAdapter else None
+        return replace(self.request, dispatch_guard=dispatch_guard, preparation_guard=prepare)
+
+    @classmethod
+    def _bind_creative(cls, job, request, adapter, synthetic_allowed, capability):
+        if type(capability) is not _CreativeDirectorCapability:
+            raise ValueError("CREATIVE_DIRECTOR_LIVE_AUTHORITY_REQUIRED")
+        capability._check(job)
+        if capability.invocation is not None or type(adapter) is not LocalModelInvocation:
+            raise ValueError("CREATIVE_DIRECTOR_PREPARED_REQUEST_INVALID")
+        value = creative_director_request_payload_digest(job, _payload(request), synthetic_allowed,
+            route_fingerprint=capability.route_fingerprint)
+        invocation = cls(request, adapter, value, synthetic_allowed, capability)
+        capability.invocation, capability.adapter = invocation, adapter
+        return invocation
+
+    def _validate_creative(self, job, *, manager=None, started=False):
+        capability = self._creative_capability
+        if type(capability) is not _CreativeDirectorCapability:
+            raise ValueError("CREATIVE_DIRECTOR_LIVE_AUTHORITY_REQUIRED")
+        capability._check(job, manager=manager, started=started)
+        if (capability.invocation is not self or job.prepared_text_invocation is not self
+                or capability.adapter is not self.adapter or type(self.adapter) is not LocalModelInvocation
+                or self.request.job_id != job.id or self.request.cancellation is not job.cancelled
+                or self.request.dispatch_guard is not None or self.request.preparation_guard is not None
+                or self.adapter.synthetic_allowed is not self.synthetic_allowed
+                or (self.adapter.provider_id, self.adapter.model_id) != (job.requested_provider, job.requested_model)
+                or creative_director_request_payload_digest(job, _payload(self.request), self.synthetic_allowed,
+                    route_fingerprint=capability.route_fingerprint) != self.binding_digest
+                or job.expected_request_digest != self.binding_digest):
+            raise ValueError("CREATIVE_DIRECTOR_PREPARED_REQUEST_CHANGED")
+        self.adapter.validate()
+
+    def _creative_request_for_dispatch(self, job, dispatch_guard, preparation_guard):
+        self._validate_creative(job, started=True)
         from .model_center.discovery_bridge import LocalTextAdapter
         prepare = preparation_guard if type(self.adapter._provider) is LocalTextAdapter else None
         return replace(self.request, dispatch_guard=dispatch_guard, preparation_guard=prepare)
