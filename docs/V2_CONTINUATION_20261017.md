@@ -1,5 +1,9 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Native Audio follow-up (15:42 UTC)
+
+198 original PostgreSQL Audio cases passed (409 deselected) on a second fresh database, covering the original Audio modules and listing owner. Original tests and product code were unchanged; source hashes matched throughout and the owned server stopped. See `delivery/v2-development/audio-current-native-20261017/README.md`. This evidence remains outside the fixed pending fourteen-commit archive.
+
 ## Native P0 follow-up (15:34 UTC)
 
 Without changing the code or original tests at 4684577, real PostgreSQL 17.11 passed 38 P0 retirement/incarnation tests and File passed 43. A new empty disposable database received the 20 original migrations; its exact live identity was checked and the owned server stopped successfully. Actual persisted authority/bindings, same-public-ID recreation, positive new users, create/link rollback and generation isolation were exercised. See `delivery/v2-development/p0-current-native-20261017/README.md`. This supersedes the earlier lack of fresh PG proof for this P0 scope only; it does not make the File-only Director pending lifecycle PG-capable or establish complete V2 acceptance.
