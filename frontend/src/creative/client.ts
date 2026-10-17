@@ -1,5 +1,6 @@
 import { parseScreenplayPresets, type ScreenplayPresetCatalog } from './screenplayPresets';
 import { createStoryboardClient } from './studioStoryboardClient';
+import { createDirectorModelClient } from './directorModelClient';
 import { ApiError, type CollaborationContext } from '../api';
 import { useLocalHostSession } from '../localHostSession';
 import { isPackagedDesktopHost } from '../packagedHost';
@@ -23,6 +24,7 @@ export function creativeClient(novelId: string, context: CollaborationContext) {
   // Capture a complete origin. No request may borrow a later session or branch.
   const token = context.sessionToken || (!context.scope && !context.actor && !isPackagedDesktopHost() ? (context.localHostToken ?? useLocalHostSession.getState().token) : '');
   const branch = context.scope?.branchId;
+  const directorScope = context.scope ? { ...context.scope } : undefined;
   const root = `/api/novels/${encodeURIComponent(novelId)}`;
   const base = `${root}/experimental/creative`;
   async function responseFor(url: string, method = 'GET', body?: unknown, signal?: AbortSignal): Promise<Response> {
@@ -60,6 +62,9 @@ export function creativeClient(novelId: string, context: CollaborationContext) {
     return { blob: new Blob([bytes], { type: mime }), filename: `creative-${kind === 'SCRIPT' ? 'script' : 'screenplay'}-v${source.version}.${extension}`, documentVersion: source.version, documentDigest: digest, sha256: hash };
   }
   return {
+    // Lazy and request-free. Reuse the already captured original transport;
+    // constructing an ordinary legacy client does not activate new endpoints.
+    independentDirector: () => createDirectorModelClient(novelId, { json: request }, directorScope),
     ...createStoryboardClient(novelId, base, branch ?? null, request),
     capabilities: (signal?: AbortSignal) => request<CreativeCapabilities>(`${base}/capabilities`, 'GET', undefined, signal),
     screenplayPresets: async (signal?: AbortSignal): Promise<ScreenplayPresetCatalog> => parseScreenplayPresets(await request<unknown>(`${base}/screenplay-presets`, 'GET', undefined, signal)),
@@ -99,4 +104,4 @@ export function creativeClient(novelId: string, context: CollaborationContext) {
 }
 export type CreativeClient = ReturnType<typeof creativeClient>;
 export type DirectorProposalClient = Pick<CreativeClient, 'proposals' | 'proposal' | 'propose' | 'review' | 'cancelProposal' | 'get'
-  | 'modelRoutes' | 'previewModel' | 'dispatchModel' | 'refreshModel'> & Partial<Pick<CreativeClient, 'modelCapabilities' | 'previewStoryboardModel' | 'dispatchStoryboardModel'>>;
+  | 'modelRoutes' | 'previewModel' | 'dispatchModel' | 'refreshModel'> & Partial<Pick<CreativeClient, 'modelCapabilities' | 'previewStoryboardModel' | 'dispatchStoryboardModel' | 'independentDirector'>>;

@@ -123,3 +123,6 @@ export function createDirectorObservationClient(projectId: string, transport: St
     },
   };
 }
+
+// Shared strict passive decoders for the separately explicit action transport.
+export { adoption as checkedDirectorAdoptionReceipt, status as checkedDirectorStatusReceipt };
