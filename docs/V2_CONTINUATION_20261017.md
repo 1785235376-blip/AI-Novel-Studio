@@ -1,0 +1,79 @@
+# Studio V2 continuation checkpoint — 2026-10-17
+
+## Status and scope
+
+This is an additive progress record, not a replacement for frozen product decisions or historical acceptance reports. The original A/B/U feature matrix must not be promoted wholesale to COMPLETE from these slices. Public release remains unaccepted.
+
+Local development branch: `work/dot-v2-integration-wave3-20261017`.
+
+Latest integrated source checkpoint: `f4a6fed15cc52c0323e73f5e410e184c42bb5200`.
+Its supplemental evidence is committed at `4d6bbe985994c7a679d17bfddd600658a358bc76`.
+Inventory and all original-runner origin receipts are committed at `11b3f022dc0561f093bf6a93599066c08009e442`.
+No remote push, main merge, release or tag was performed.
+
+Read-only remote verification at 2026-10-17 10:47 UTC found:
+
+- main: `fed2404c8e30b44061b7139dced45b7f3301601c`
+- Draft PR #47: `a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3`
+- Draft PR #48: `58bbaad11360330d51f49fc2bb78a955a26469f0`
+
+Recheck remote refs before any later submission. Do not assume these remain current.
+
+## Newly verified slices
+
+| Slice | Source commit | Proven boundary |
+| --- | --- | --- |
+| Private durable Director pending review | `18df9d05bd6956ddb88b7fce2c4028ee6100f255` | Explicit fresh-authorized historical-result preparation, persisted parsed candidates, restart/review, original DIRECTOR DRAFT adoption. Existing live deadlines and public redaction preserved. |
+| Caption timing-offset preview | `b5ab297c4f49a7743aa2dbf89af9781242e06687` | Exact bounded tick arithmetic, selected/all-cue preview, explicit local apply/undo, original Save/CAS and File restart/SRT/VTT paths. |
+| Interactive node removal | `97b3cf3b8587855ce02458c5d5d9cfb0ae0825d2` | Explicit removal of a non-entry, unreferenced node, preserved original content/pins, original review/export and File restart. |
+| Authored comic panel duplication | `e8219aa16db3492050364df019b1ac2b36ab46f8` | Explicit placement, fresh IDs, preserved references/crop/style, original history/save/review, actual no-text pixels and ZIP verification. |
+| Reviewed Director canvas handoff | `a557889b473f0b2976369a0805115fcd02ee8a56` | Explicit original-owner pin verification and one-shot insertion through the existing Graph owner; ordinary Graph Save remains separate. No automatic edge, schema upgrade, or private transport activation. |
+
+The existing rule-assisted SCREENPLAY → reviewed DRAFT → exact Graph pin → File restart loop was already implemented. Do not rebuild it or describe Graph persistence as missing.
+
+The new additive `tests/test_wave3_pending_director_canvas_bridge.py` extends the proof to private durable pending review, human-edited DRAFT, saved position/viewport/presentation and actual reconstructed File owners. It checks unchanged Jobs/ledger, no Graph runs, and rejection of the original source Storyboard as a falsely derived downstream document.
+
+## Acceptance evidence
+
+- Combined backend at `db6487b5eab7340433426fefcb5499122ec3d881`: 1,799 passed, two genuine font-dependent skips, 697 PostgreSQL-marked cases excluded.
+- Independent combined subset: 357 passed, one applicable font skip, 196 PostgreSQL-marked cases excluded; 366 UI tests across 15 files.
+- Initial combined UI: 1,587 passed across 96 files; forced TypeScript, production build, token guard and 87 actual PUBLIC packaging tests passed. Two wheels and two sdists were inspected independently.
+- After the frontend-only handoff merge: fresh combined UI passed 1,667 tests across 104 files, plus forced TypeScript, production build, token guard and origin/source checks.
+- That supplement did not rerun backend or packaging tests. It verified 1,478 backend/Python/test-fixture/infrastructure paths byte-identical to the accepted backend checkpoint and rechecked the retained actual archive payloads, inventories and wheel RECORD hashes against current inputs.
+- The handoff itself separately passed the same 169-test UI scope in primary and independent executions.
+
+Counts describe their documented scopes and overlap; do not add them together or claim every repository test passed.
+
+Evidence entry points:
+
+- `delivery/v2-development/director-pending-20261017/report.md`
+- `CAPTION_TIMING_OFFSET.md`
+- `INTERACTIVE_REMOVAL_HANDOFF.md`
+- `delivery/v2-development/comic-duplicate-primary-handoff/HANDOFF.md`
+- `handoff/DIRECTOR_REVIEWED_CANVAS_HANDOFF.md`
+- `delivery/v2-development/parallel-integration-wave3-20261017/complete-index.json`
+- `delivery/v2-development/parallel-integration-wave3-canvas-supplement-20261017/complete-index.json`
+- `delivery/v2-development/parallel-integration-wave3-inventory-20261017/README.md`
+
+The new bridge initially expected APPROVED in the legacy public projection. The corrected test separately asserts public MODEL_UNAVAILABLE and persisted raw APPROVED. This preserved the original privacy contract; it was not a runtime fix. The failed receipt and a separate pre-Python launcher-path failure are retained.
+
+## Inventory closure
+
+The unchanged original collection tool collected 17,425 rows and 2,691 source entries. All 17,289 predecessor row dictionaries, ordering and classifications remain exact. The 136 added rows classify as 119 File and 17 PostgreSQL; collection is not test execution.
+
+Canonical V2 SHA-256: `6a94abca1ad6fe835e1ad483774b1fbfb660b6e599a69a2b48533ee2141abb77`.
+All three raw collections have SHA-256 `8489499d82e9ebeeeb6ae455dbd7ee7659f2a9ae56ef5b2b563f579d082984a3`.
+Frozen V1 and protected existing sources, tests, fixtures, documents and PUBLIC packaging definition remain unchanged by reconciliation.
+
+## Remaining limits and next core work
+
+1. Independent Director model preview/dispatch/status/cancellation/pending-review/adoption still has no complete authorized public transport. Private File acceptance and the public rule/manual canvas handoff do not establish that end-to-end UI lifecycle.
+2. Keep legacy private-marker/history redaction intact. Any next transport must use fresh Request-derived Host authority, current scope/incarnation/source/policy checks, strict allowlisted responses, explicit actions and original coordinator/proposal/Job owners. Status/reopen must never dispatch or restore execution authority.
+3. Add safe same-owner cancellation and exact uncertain-review/adoption reconciliation before calling the public lifecycle complete. Do not expose raw private proposal records merely to obtain an APPROVED status.
+4. Independent model binding currently supports the constrained independent STORYBOARD shape. Direct independent SCRIPT and lineage-bearing derived Storyboards need separate contract work; do not loosen ancestry validation implicitly.
+5. The source Storyboard is an ancestor of its reviewed Director. It cannot automatically be the downstream Storyboard of a `director_plan` edge. Use a genuinely derived document through the original owner when that workflow is implemented.
+6. PostgreSQL durability/locking, browser geometry and actual UI end-to-end behavior, Windows installation/upgrade, real model quality, cloud/provider behavior and target applications remain outside these gates.
+7. Five prior Audio-listing diagnostic-precedence failures remain unresolved and excluded from passing combined scopes. Preserve immutable-body guards and original tests; do not call the repository globally green.
+8. Rendered Unicode comic acceptance remains blocked by the unavailable original pinned font. No substitute font or mocked successful rendering was used.
+
+Continue from verified commits and exact evidence, not old summaries. Preserve existing work and failed raw logs; do not reset worktrees or force-push. Resource expansion, paid calls and destructive cleanup are not implied by this checkpoint.
