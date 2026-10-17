@@ -1,0 +1,19 @@
+{
+  "executable": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+  "prefix": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1",
+  "base_prefix": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+  "sys_path": [
+    "",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python312.zip",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/lib-dynload",
+    "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages"
+  ],
+  "meta_path": [
+    "_frozen_importlib.BuiltinImporter",
+    "_frozen_importlib.FrozenImporter",
+    "_frozen_importlib_external.PathFinder"
+  ],
+  "user_site_enabled": false,
+  "product_or_pytest_imported": false
+}

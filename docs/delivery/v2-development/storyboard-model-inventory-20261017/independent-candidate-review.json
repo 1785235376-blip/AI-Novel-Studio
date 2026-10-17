@@ -1,0 +1,13 @@
+{
+  "status": "APPROVE_EXACT_CANDIDATE_PROMOTION",
+  "utc": "2026-10-17T03:49:01.944109+00:00",
+  "candidate_sha256": "561c0980491fae35a9ca87a4858373b50ee6d7d81176f3637e1cbc0d97c85902",
+  "source_commit": "e7cf2a02fdc0ab52b0c239df6127e577980ea693",
+  "raw_sha256": "899e32da918f82f9c137cf3a944fb1ab066f75dc98e0d6a1c109e86042363c80",
+  "rows": 15920,
+  "sources": 2591,
+  "old_protected": 1275,
+  "read_only_checker_reviewed_and_passed": true,
+  "independent_checks": "product node exact order/uniqueness; frozen prior fields preserved; review and candidate full source/raw hashes equal; canonical unchanged",
+  "tests_executed": false
+}

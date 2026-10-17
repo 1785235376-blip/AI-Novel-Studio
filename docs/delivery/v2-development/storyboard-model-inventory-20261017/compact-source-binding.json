@@ -1,0 +1,96 @@
+{
+  "source_checkpoint": "e7cf2a02fdc0ab52b0c239df6127e577980ea693",
+  "baseline_manifest": {
+    "commit": "abff2ee7acc842e87abd53e0858110669922f9bc",
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "sha256": "7d814e6ee28e1afd80b151e1aefc86edd39d62769bf4c0212780dfb39784c113"
+  },
+  "complete_source_map_entries": 2591,
+  "complete_source_map_sha256": "b070bc57d1f428cdf0c701cd620a92daa28a2b9145b629101e220726d215c5af",
+  "source_delta": [
+    {
+      "path": "app/creative/api.py",
+      "before": "d4f4f2f1b4d668c2194b2689ed9ece2287e78c259a0642bb05a053fcc1604bc1",
+      "after": "1dcfee252c2fd1926ccac0ca00b99ba98c822acd471d04f3de38867e3194908f"
+    },
+    {
+      "path": "app/creative/generation.py",
+      "before": "37b6ac843465bc091f452e66ba07d7f3e1233bb3a83a767ae5276d72d416ea47",
+      "after": "e18d6afce39ceec60aff386312720209fad3e08309337f81531e7cdc06daf1ef"
+    },
+    {
+      "path": "app/creative/storyboard_model.py",
+      "before": null,
+      "after": "4bc019b4e4b78d1697f5543213fb2db682c4f4829c3303d44d392fa2612238a2"
+    },
+    {
+      "path": "frontend/src/creative/AIDirectorPanel.tsx",
+      "before": "c43d2df0604fea99ff0b3b9c8be5827f82c73b6e99b138c77eead71fa19bb40e",
+      "after": "84a123397a4690eacab6660211d28b9f46f64edb3e121c997fc2abbb8526b419"
+    },
+    {
+      "path": "frontend/src/creative/DirectorModelControls.storyboard-model.additive.test.tsx",
+      "before": null,
+      "after": "4e0a5d404f9741a7947e91ce4e3f09c6928654c7ade99e8725eff2fbeac92a84"
+    },
+    {
+      "path": "frontend/src/creative/DirectorModelControls.tsx",
+      "before": "88917d64ef2c40d9c85921a807b9015e72134ccd737d7ec0b40d26f41a067b00",
+      "after": "1d8b7da4cfde39e3a7be815b2806333616d8111957487dfdf4ae23e4e0f4f10e"
+    },
+    {
+      "path": "frontend/src/creative/GraphDirectorProposalReview.tsx",
+      "before": "8efb4ba475038b1d89f0635e948c16f0903cd0c4f8fc499ce71a3fbf1d929428",
+      "after": "f75a71ba35e232e7df5c04fd0fe2efb92eb0893a50374f0a972afbf091959931"
+    },
+    {
+      "path": "frontend/src/creative/client.ts",
+      "before": "373285b58ae8cf087e25b229eba99299a9c5800b59d475656718330e0c1bf982",
+      "after": "60d7fba09c547d6304623740ba658113268af6a62c7b337c196dd076c97bf349"
+    },
+    {
+      "path": "tests/fixtures/storyboard_model/screenplay_author_golden.txt",
+      "before": null,
+      "after": "5c4a7dd246de3fa48770b87eb45387fb8a5a5386f1708ce350fd425b3ae4acac"
+    },
+    {
+      "path": "tests/fixtures/storyboard_model/screenplay_schema_golden.txt",
+      "before": null,
+      "after": "609c7084701347b34c892212766ea0ca28ab1e2e415f9c82f9d9c8685a00e1c2"
+    },
+    {
+      "path": "tests/test_v2_storyboard_model_contract.py",
+      "before": null,
+      "after": "93a7667c8c767f7a2db6b069ca3e2460befabd1010fc454b09ce9c0d7a31a61d"
+    }
+  ],
+  "protected_old_entries_exact": 1275,
+  "frontend_scripts_e2e_companion": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "raw_inventory": {
+    "path": "docs/delivery/v2-development/storyboard-model-inventory-20261017/raw-collection.json",
+    "sha256": "899e32da918f82f9c137cf3a944fb1ab066f75dc98e0d6a1c109e86042363c80",
+    "rows": 15920
+  },
+  "prior_raw_inventory": {
+    "path": "docs/delivery/v2-development/storyboard-director-20261017/inventory/raw-collection.json",
+    "sha256": "34fe270c538da2eeae8ae4e8941bc3ad3459cbc91d4ebfce80bce74f8a0b3595",
+    "rows": 15779
+  },
+  "prior_15142_inventory": {
+    "path": "docs/delivery/v2-development/ci-reconciliation-20261016/inventory/old-15142-collection-rows.json.gz",
+    "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+  },
+  "tests_executed": false
+}

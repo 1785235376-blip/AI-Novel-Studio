@@ -1,0 +1,34 @@
+{
+  "status": "APPROVE_CANONICAL_AND_EVIDENCE_COMMIT",
+  "utc": "2026-10-17T03:51:02.052660+00:00",
+  "source_commit": "e7cf2a02fdc0ab52b0c239df6127e577980ea693",
+  "canonical_sha256": "561c0980491fae35a9ca87a4858373b50ee6d7d81176f3637e1cbc0d97c85902",
+  "raw_sha256": "899e32da918f82f9c137cf3a944fb1ab066f75dc98e0d6a1c109e86042363c80",
+  "rows": 15920,
+  "old_rows": 15779,
+  "new_rows": 141,
+  "source_count": 2591,
+  "old_protected": 1275,
+  "refreshed_protected": 1279,
+  "source_map_sha256": "b070bc57d1f428cdf0c701cd620a92daa28a2b9145b629101e220726d215c5af",
+  "evidence": {
+    "payload_files": 43,
+    "payload_bytes": 7846698,
+    "index_sha256": "64b913393dac7096fe189fb3ed2ef232e53d68ea45e7a808345091375709b8b3",
+    "verifier_sha256": "806fe9c353c630259db5b934bdc3634e414e383b4e82c1c7939afc3fac6daa5e",
+    "verifier_read_only_reviewed": true,
+    "verifier_exit_code": 0,
+    "index_bound_before_this_report_is_added": true
+  },
+  "checks": [
+    "three separate phase boundaries and exact promotion approval",
+    "six complete source snapshots byte-exact",
+    "complete Git and current source reconstruction",
+    "all old full rows/order/classifications retained",
+    "exact safe evidence filenames/hash/byte sizes",
+    "independent reports copied unchanged",
+    "refreshed protected 1279 exact"
+  ],
+  "tests_executed": false,
+  "scope": "Inventory and evidence closure only; prior product validation remains separately recorded."
+}

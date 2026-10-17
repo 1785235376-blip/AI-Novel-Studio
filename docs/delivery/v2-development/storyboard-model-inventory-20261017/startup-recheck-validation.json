@@ -1,0 +1,20 @@
+{
+  "status": "PASS_STDLIB_ONLY",
+  "results": [
+    {
+      "original": "normal-startup.json",
+      "recheck": "recheck-normal-startup.json",
+      "original_sha256": "009d97c44690bda3c6447a668a419698f5fb0c0f9bda70e341ce85f24c8fe07f",
+      "recheck_sha256": "009d97c44690bda3c6447a668a419698f5fb0c0f9bda70e341ce85f24c8fe07f",
+      "semantic_exact_excluding_utc": true
+    },
+    {
+      "original": "startup-probe.json",
+      "recheck": "recheck-startup.json",
+      "original_sha256": "6ef22b60f4b71592a5520109506c92c7466bb7c686cc546c3f9f34a54be98991",
+      "recheck_sha256": "9c38d5626368902be5a080e629e8f6837cc5e927dec3a82600a8a9d827e6146b",
+      "semantic_exact_excluding_utc": true
+    }
+  ],
+  "tests_executed": false
+}
