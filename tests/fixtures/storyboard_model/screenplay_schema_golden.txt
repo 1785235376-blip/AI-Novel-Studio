@@ -1,0 +1,16 @@
+def director_output_schema(*, production=False, planning=False):
+    """Keep default author request identity; opt into the richer output schema."""
+    schema = DirectorModelOutput.model_json_schema()
+    if not planning:
+        schema["$defs"]["DirectorModelNote"]["properties"].pop("planning", None)
+        for name in ("DirectorPlanning", "DirectorEvidence", "DirectorAlternative"):
+            schema["$defs"].pop(name, None)
+    if not production:
+        properties = schema["$defs"]["DirectorModelNote"]["properties"]
+        for name in ("shot_suggestion", "composition", "lens", "character_state", "performances",
+                     "lighting", "color_palette", "material", "transition"):
+            properties.pop(name, None)
+        schema["$defs"].pop("DirectorPerformance", None)
+    return schema
+
+

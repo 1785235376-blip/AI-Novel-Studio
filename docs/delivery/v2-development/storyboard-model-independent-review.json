@@ -1,0 +1,61 @@
+{
+  "status": "PASS_INDEPENDENT_SOURCE_AND_MOCK_VALIDATION",
+  "utc": "2026-10-17T03:44:05.464645+00:00",
+  "head": "abff2ee7acc842e87abd53e0858110669922f9bc",
+  "canonical_sha256": "7d814e6ee28e1afd80b151e1aefc86edd39d62769bf4c0212780dfb39784c113",
+  "protected_count": 1275,
+  "protected_drift": [],
+  "guard_companion_entries": 36,
+  "guard_companion_drift": [],
+  "tracked_product_change_scope_exact": true,
+  "concurrent_docs_changes": [
+    "docs/v2/frozen-capability-ledger-20261016.md"
+  ],
+  "source_sha256": {
+    "app/creative/api.py": "1dcfee252c2fd1926ccac0ca00b99ba98c822acd471d04f3de38867e3194908f",
+    "app/creative/generation.py": "e18d6afce39ceec60aff386312720209fad3e08309337f81531e7cdc06daf1ef",
+    "frontend/src/creative/AIDirectorPanel.tsx": "84a123397a4690eacab6660211d28b9f46f64edb3e121c997fc2abbb8526b419",
+    "frontend/src/creative/DirectorModelControls.tsx": "1d8b7da4cfde39e3a7be815b2806333616d8111957487dfdf4ae23e4e0f4f10e",
+    "frontend/src/creative/GraphDirectorProposalReview.tsx": "f75a71ba35e232e7df5c04fd0fe2efb92eb0893a50374f0a972afbf091959931",
+    "frontend/src/creative/client.ts": "60d7fba09c547d6304623740ba658113268af6a62c7b337c196dd076c97bf349",
+    "packaging/public-build.json": "4c8e6acb27d4c636da3f230290903da459deb90363181dade58ad766810134c8",
+    "app/creative/storyboard_model.py": "4bc019b4e4b78d1697f5543213fb2db682c4f4829c3303d44d392fa2612238a2",
+    "tests/test_v2_storyboard_model_contract.py": "93a7667c8c767f7a2db6b069ca3e2460befabd1010fc454b09ce9c0d7a31a61d",
+    "frontend/src/creative/DirectorModelControls.storyboard-model.additive.test.tsx": "4e0a5d404f9741a7947e91ce4e3f09c6928654c7ade99e8725eff2fbeac92a84"
+  },
+  "backend": {
+    "passed": 90,
+    "postgres_deselected": 88,
+    "receipt": "docs/delivery/v2-development/storyboard-model-independent-r1.json",
+    "stable_source_entries": 2529
+  },
+  "ui": {
+    "passed": 61,
+    "suites": 3,
+    "new_cases": 49,
+    "original_cases": 12,
+    "log": "docs/delivery/v2-development/storyboard-model-independent-ui/vitest.log",
+    "log_sha256": "6e3b8f60fb765de6e794df33700081bc819f7fdabe6d39865813535d8a7ca166",
+    "source_stable": true
+  },
+  "artifacts": {
+    "wheel": {
+      "archive": ".runtime/storyboard-model-public-artifacts-r1-tmp/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "sha256": "5ec3611969ae9715a24e540fe88a5ab14c1214acd790e795d3babdd7506a0b2c",
+      "module_sha256": "4bc019b4e4b78d1697f5543213fb2db682c4f4829c3303d44d392fa2612238a2",
+      "stage_exact": true
+    },
+    "sdist": {
+      "archive": ".runtime/storyboard-model-public-artifacts-r1-tmp/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "sha256": "817e2e11e9e409dc5f1276281dafcfe9a3f3c7410e3bba560b250253734ea189",
+      "module_sha256": "4bc019b4e4b78d1697f5543213fb2db682c4f4829c3303d44d392fa2612238a2",
+      "stage_exact": true
+    },
+    "receipt_verified": true
+  },
+  "limitations": [
+    "Live provider quality, PostgreSQL, browser geometry/visual tests and end-to-end acceptance NOT_RUN",
+    "No installation, push, merge or release performed",
+    "Owner build retains >500 kB chunk warning"
+  ]
+}

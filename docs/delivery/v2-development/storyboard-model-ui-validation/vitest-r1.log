@@ -1,0 +1,267 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-storyboard-model/frontend
+
+ ✓ src/creative/AIDirectorReopen.test.tsx (31 tests) 1577ms
+ ❯ src/creative/DirectorModelControls.storyboard-model.additive.test.tsx (48 tests | 1 failed) 1170ms
+   × requires advertised support, exact complete input and one-call consent without automatic calls 89ms
+     → Unable to find an element with the text: /"Authored first"/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"可选本地分镜模型导演"[39m
+      [33mclass[39m=[32m"creative-model-controls"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m可选：本地分镜模型导演[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m仅使用价格已确认为零的本地文字模型。完整分镜与场景先预览，再明确允许调用一次；不自动重试或转云端。[0m
+      [36m</p>[39m
+      [36m<label[39m
+        [33mclass[39m=[32m"creative-field"[39m
+      [36m>[39m
+        [36m<span>[39m
+          [0m本地分镜导演模型[0m
+        [36m</span>[39m
+        [36m<select>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择本地模型[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"route"[39m
+          [36m>[39m
+            [0mlocal[0m
+            [0m / [0m
+            [0mmodel[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m预览分镜模型输入[0m
+      [36m</button>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"creative-model-preview"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--info"[39m
+        [36m>[39m
+          [0m预览尚未调用模型[0m
+        [36m</span>[39m
+        [36m<p>[39m
+          [0m来源 [0m
+          [0mboard[0m
+          [0m · v[0m
+          [0m7[0m
+          [0m · [0m
+          [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+          [0m · [0m
+          [0m2[0m
+          [0m 个已写镜头，按原序号排列。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m完整已写镜头、场景与固定映射均在输入中。证据只引用场景，不伪造镜头引用。章节最多 20 个，完整指令最多 20000 字符；不保证适合模型 token 窗口。最长 [0m
+          [0m30[0m
+          [0ms。最高费用：0 USD。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m路由：[0m
+          [0mlocal[0m
+          [0m / [0m
+          [0mmodel[0m
+        [36m</p>[39m
+        [36m<details>[39m
+          [36m<summary>[39m
+            [0m核对将发送的完整分镜模型输入与固定映射[0m
+          [36m</summary>[39m
+          [36m<pre>[39m
+            [0m{
+  "source_contract": "STORYBOARD_SHOT_CONTEXT_V1",
+  "source_mapping": [
+    {
+      "source_shot_id": "first",
+      "note_id": "note-first",
+      "scene_id": "scene",
+      "source_number": 3
+    },
+    {
+      "source_shot_id": "last",
+      "note_id": "note-last",
+      "scene_id": "scene",
+      "source_number": 9
+    }
+  ],
+  "request": {
+    "prompt": "STORYBOARD_SHOT_CONTEXT_V1\n{\"contract\":\"STORYBOARD_SHOT_CONTEXT_V1\",\"source_document_id\":\"board\",\"source_version\":7,\"source_digest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"storyboard\":{\"title\":\"Authored board\",\"scenes\":[{\"id\":\"scene\",\"sequence\":1,\"source_chapter_id\":\"chapter\",\"heading\":\"场景 1\",\"time\":\"\",\"location\":\"\",\"characters\":[],\"action\":\"Authored scene\",\"dialogue\":[],\"emotion\":\"\",\"director_notes\":[]}],\"shots\":[{\"id\":\"first\",\"number\":3,\"scene_id\":\"scene\",\"shot_size\":\"MEDIUM\",\"camera_angle\":\"EYE_LEVEL\",\"camera_motion\":\"STATIC\",\"duration_seconds\":5,\"frame_prompt\":\"Authored first\",\"composition\":\"\",\"color\":\"\",\"action\":\"\",\"dialogue\":[],\"sound_effect\":\"\",\"lens\":\"\",\"lighting\":\"\",\"environment\":\"\",\"sound\":\"\",\"director_notes\":[]},{\"id\":\"last\",\"number\":9,\"scene_id\":\"scene\",\"shot_size\":\"MEDIUM\",\"camera_angle\":\"EYE_LEVEL\",\"camera_motion\":\"STATIC\",\"duration_seconds\":5,\"frame_prompt\":\"Authored last\",\"composition\":\"\",\"color\":\"\",\"action\":\"\",\"dialogue\":[],\"sound_effect\":\"\",\"lens\":\"\",\"lighting\":\"\",\"environment\":\"\",\"sound\":\"\",\"director_notes\":[]}]},\"source_mapping\":[{\"source_shot_id\":\"first\",\"note_id\":\"note-first\",\"scene_id\":\"scene\",\"source_number\":3},{\"source_shot_id\":\"last\",\"note_id\":\"note-last\",\"scene_id\":\"scene\",\"source_number\":9}]}"
+  }
+}[0m
+          [36m</pre>[39m
+        [36m</details>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"creative-review-check"[39m
+        [36m>[39m
+          [36m<input[39m
+            [33mtype[39m=[32m"checkbox"[39m
+          [36m/>[39m
+          [0m已核对完整分镜输入和固定映射，允许本地调用一次[0m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m确认调用分镜本地模型[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ✓ src/creative/AIDirectorPanel.storyboard.additive.test.tsx (19 tests) 963ms
+ ✓ src/creative/AIDirectorPanel.test.tsx (10 tests) 558ms
+ ✓ src/creative/AIDirectorPanel.reasoning.additive.test.tsx (2 tests) 332ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 165ms
+ ✓ src/creative/AIDirectorFastReceipt.test.tsx (3 tests) 279ms
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 137ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/DirectorModelControls.storyboard-model.additive.test.tsx > requires advertised support, exact complete input and one-call consent without automatic calls
+TestingLibraryElementError: Unable to find an element with the text: /"Authored first"/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"可选本地分镜模型导演"[39m
+      [33mclass[39m=[32m"creative-model-controls"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m可选：本地分镜模型导演[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m仅使用价格已确认为零的本地文字模型。完整分镜与场景先预览，再明确允许调用一次；不自动重试或转云端。[0m
+      [36m</p>[39m
+      [36m<label[39m
+        [33mclass[39m=[32m"creative-field"[39m
+      [36m>[39m
+        [36m<span>[39m
+          [0m本地分镜导演模型[0m
+        [36m</span>[39m
+        [36m<select>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择本地模型[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"route"[39m
+          [36m>[39m
+            [0mlocal[0m
+            [0m / [0m
+            [0mmodel[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m预览分镜模型输入[0m
+      [36m</button>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"creative-model-preview"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--info"[39m
+        [36m>[39m
+          [0m预览尚未调用模型[0m
+        [36m</span>[39m
+        [36m<p>[39m
+          [0m来源 [0m
+          [0mboard[0m
+          [0m · v[0m
+          [0m7[0m
+          [0m · [0m
+          [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+          [0m · [0m
+          [0m2[0m
+          [0m 个已写镜头，按原序号排列。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m完整已写镜头、场景与固定映射均在输入中。证据只引用场景，不伪造镜头引用。章节最多 20 个，完整指令最多 20000 字符；不保证适合模型 token 窗口。最长 [0m
+          [0m30[0m
+          [0ms。最高费用：0 USD。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m路由：[0m
+          [0mlocal[0m
+          [0m / [0m
+          [0mmodel[0m
+        [36m</p>[39m
+        [36m<details>[39m
+          [36m<summary>[39m
+            [0m核对将发送的完整分镜模型输入与固定映射[0m
+          [36m</summary>[39m
+          [36m<pre>[39m
+            [0m{
+  "source_contract": "STORYBOARD_SHOT_CONTEXT_V1",
+  "source_mapping": [
+    {
+      "source_shot_id": "first",
+      "note_id": "note-first",
+      "scene_id": "scene",
+      "source_number": 3
+    },
+    {
+      "source_shot_id": "last",
+      "note_id": "note-last",
+      "scene_id": "scene",
+      "source_number": 9
+    }
+  ],
+  "request": {
+    "prompt": "STORYBOARD_SHOT_CONTEXT_V1\n{\"contract\":\"STORYBOARD_SHOT_CONTEXT_V1\",\"source_document_id\":\"board\",\"source_version\":7,\"source_digest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"storyboard\":{\"title\":\"Authored board\",\"scenes\":[{\"id\":\"scene\",\"sequence\":1,\"source_chapter_id\":\"chapter\",\"heading\":\"场景 1\",\"time\":\"\",\"location\":\"\",\"characters\":[],\"action\":\"Authored scene\",\"dialogue\":[],\"emotion\":\"\",\"director_notes\":[]}],\"shots\":[{\"id\":\"first\",\"number\":3,\"scene_id\":\"scene\",\"shot_size\":\"MEDIUM\",\"camera_angle\":\"EYE_LEVEL\",\"camera_motion\":\"STATIC\",\"duration_seconds\":5,\"frame_prompt\":\"Authored first\",\"composition\":\"\",\"color\":\"\",\"action\":\"\",\"dialogue\":[],\"sound_effect\":\"\",\"lens\":\"\",\"lighting\":\"\",\"environment\":\"\",\"sound\":\"\",\"director_notes\":[]},{\"id\":\"last\",\"number\":9,\"scene_id\":\"scene\",\"shot_size\":\"MEDIUM\",\"camera_angle\":\"EYE_LEVEL\",\"camera_motion\":\"STATIC\",\"duration_seconds\":5,\"frame_prompt\":\"Authored last\",\"composition\":\"\",\"color\":\"\",\"action\":\"\",\"dialogue\":[],\"sound_effect\":\"\",\"lens\":\"\",\"lighting\":\"\",\"environment\":\"\",\"sound\":\"\",\"director_notes\":[]}]},\"source_mapping\":[{\"source_shot_id\":\"first\",\"note_id\":\"note-first\",\"scene_id\":\"scene\",\"source_number\":3},{\"source_shot_id\":\"last\",\"note_id\":\"note-last\",\"scene_id\":\"scene\",\"source_number\":9}]}"
+  }
+}[0m
+          [36m</pre>[39m
+        [36m</details>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"creative-review-check"[39m
+        [36m>[39m
+          [36m<input[39m
+            [33mtype[39m=[32m"checkbox"[39m
+          [36m/>[39m
+          [0m已核对完整分镜输入和固定映射，允许本地调用一次[0m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m确认调用分镜本地模型[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/creative/DirectorModelControls.storyboard-model.additive.test.tsx:44:17
+     42|   fireEvent.click(await ready()); await screen.findByText('预览尚未调…
+     43|   expect(screen.getByText(/不保证适合模型 token 窗口/)).toBeTruthy();
+     44|   expect(screen.getByText(/"Authored first"/)).toBeTruthy(); expect(sc…
+       |                 ^
+     45|   expect((dispatch() as HTMLButtonElement).disabled).toBe(true);
+     46|   fireEvent.click(consent()); const click = retained<() => void>(dispa…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 7 passed (8)
+      Tests  1 failed | 124 passed (125)
+   Start at  11:26:15
+   Duration  10.55s (transform 356ms, setup 54ms, collect 1.59s, tests 5.18s, environment 2.39s, prepare 388ms)
+

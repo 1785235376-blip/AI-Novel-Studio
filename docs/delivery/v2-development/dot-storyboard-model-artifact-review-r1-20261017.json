@@ -1,0 +1,15 @@
+{
+  "wheel": {
+    "archive": ".runtime/storyboard-model-public-artifacts-r1-tmp/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+    "sha256": "5ec3611969ae9715a24e540fe88a5ab14c1214acd790e795d3babdd7506a0b2c",
+    "module_sha256": "4bc019b4e4b78d1697f5543213fb2db682c4f4829c3303d44d392fa2612238a2",
+    "stage_exact": true
+  },
+  "sdist": {
+    "archive": ".runtime/storyboard-model-public-artifacts-r1-tmp/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+    "sha256": "817e2e11e9e409dc5f1276281dafcfe9a3f3c7410e3bba560b250253734ea189",
+    "module_sha256": "4bc019b4e4b78d1697f5543213fb2db682c4f4829c3303d44d392fa2612238a2",
+    "stage_exact": true
+  },
+  "receipt_verified": true
+}

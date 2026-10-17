@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-storyboard-model/frontend
+
+ ✓ src/creative/DirectorModelControls.storyboard-model.additive.test.tsx (49 tests) 1175ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 175ms
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 137ms
+
+ Test Files  3 passed (3)
+      Tests  61 passed (61)
+   Start at  12:43:10
+   Duration  3.61s (transform 304ms, setup 23ms, collect 728ms, tests 1.49s, environment 878ms, prepare 144ms)
+

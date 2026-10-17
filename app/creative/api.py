@@ -11,6 +11,7 @@ from .models import (CreativeProductionDocumentIn, CreativeDocumentUpdate, Creat
                      DirectorModelDispatch, ProposalAction, MODES, USER_MODES, LEGACY_MODES)
 
 from .adaptation_models import AdaptationIn, AdaptationReview, AdaptationPreview
+from .storyboard_model import DirectorStoryboardModelPreview, DirectorStoryboardModelDispatch
 from .storyboard import (StoryboardApproval, ShotImageBinding, ShotImageRequest, StoryboardTimelineDraft,
     ShotVideoRequest, ShotVideoBinding, StoryboardTimelineCreate, StoryboardVideoAdoption)
 
@@ -268,11 +269,23 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
                 raise
             model_guard()
             return result
-        return invoke(nid, token, branch, "domain.read" if method == "catalog" else "domain.write", operation)
+        return invoke(nid, token, branch, "domain.read" if method in {"catalog", "capabilities"} else "domain.write", operation)
 
     @router.get("/director-proposals/model-routes")
     def model_routes(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return model_call(nid, x_session_token, x_branch_id, "catalog")
+
+    @router.get("/director-proposals/model-capabilities")
+    def model_capabilities(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return model_call(nid, x_session_token, x_branch_id, "capabilities")
+
+    @router.post("/director-proposals/{rid}/storyboard-preview")
+    def preview_storyboard_model(nid: str, rid: str, body: DirectorStoryboardModelPreview, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return model_call(nid, x_session_token, x_branch_id, "preview_storyboard", rid, body)
+
+    @router.post("/director-proposals/{rid}/storyboard-dispatch")
+    def dispatch_storyboard_model(nid: str, rid: str, body: DirectorStoryboardModelDispatch, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return model_call(nid, x_session_token, x_branch_id, "dispatch_storyboard", rid, body)
 
     @router.get("/director-proposals/{rid}")
     def proposal(nid: str, rid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

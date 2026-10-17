@@ -107,6 +107,7 @@
     "app/creative/service.py",
     "app/creative/storage_admission.py",
     "app/creative/storyboard.py",
+    "app/creative/storyboard_model.py",
     "app/creative/text_assets.py",
     "app/creative/text_execution_receipt.py",
     "app/creative/timeline_playback.py",

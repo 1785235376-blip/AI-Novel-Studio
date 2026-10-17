@@ -1,0 +1,20 @@
+{
+  "status": "OWNER_RECEIPT_VERIFIED_INDEPENDENT_EXECUTION_PENDING",
+  "utc": "2026-10-17T03:39:36.559094+00:00",
+  "receipt": "docs/delivery/v2-development/storyboard-model-core-r2.json",
+  "receipt_sha256": "ef8dc5f0a91ed8477fe9e3585591da361898901ca4468e8a91695a6d22261d4c",
+  "log_sha256": "175525803d7e280e84b18c893e986ce287a61ff304003b74133376a30e2ff159",
+  "source_entries_verified_at_0338_UTC": 2529,
+  "source_snapshots_equal": true,
+  "test_summary": "173 passed, 160 deselected",
+  "protected_closure": {
+    "count": 1275,
+    "drift": []
+  },
+  "added_assertions_reviewed": [
+    "legacy preview and dispatch after admission reject without additional job",
+    "seven candidate contract or snapshot tampering cases refuse and preserve source"
+  ],
+  "subsequent_authorized_change": "UI worker modifying new additive test for admission diagnostics after original verification; runtime fix approved separately",
+  "independent_product_execution": "NOT_RUN"
+}

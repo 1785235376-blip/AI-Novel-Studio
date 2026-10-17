@@ -63,6 +63,9 @@ export function GraphDirectorProposalReview(props: Props) {
       proposal: (id, signal) => call(false, () => props.client.proposal(id, signal)),
       get: (id, signal) => call(false, () => props.client.get(id, signal)),
       modelRoutes: signal => call(false, () => props.client.modelRoutes(signal)),
+      ...(props.client.modelCapabilities ? { modelCapabilities: (signal?: AbortSignal) => call(false, () => props.client.modelCapabilities!(signal)) } : {}),
+      ...(props.client.previewStoryboardModel ? { previewStoryboardModel: (...args: Parameters<NonNullable<DirectorProposalClient['previewStoryboardModel']>>) => call(true, () => props.client.previewStoryboardModel!(...args)) } : {}),
+      ...(props.client.dispatchStoryboardModel ? { dispatchStoryboardModel: (...args: Parameters<NonNullable<DirectorProposalClient['dispatchStoryboardModel']>>) => call(true, () => props.client.dispatchStoryboardModel!(...args)) } : {}),
       propose: (...args) => call(true, () => props.client.propose(...args)),
       review: (...args) => call(true, () => props.client.review(...args)),
       cancelProposal: (...args) => call(true, () => props.client.cancelProposal(...args)),
@@ -104,7 +107,7 @@ export function GraphDirectorProposalReview(props: Props) {
   if (!props.active || !props.isCurrent() || initialClient.current !== props.client) return null;
   return <section aria-label="画布原导演建议审核">
     <h3>原剧本 / 分镜 → 导演建议与人工审核</h3>
-    <p>读取原 Creative owner 已保存的剧本或分镜，复用原建议与审核队列。分镜仅支持规则辅助，不代表模型分析。采用后是独立导演草稿；图节点绑定仍需明确选择和保存。</p>
+    <p>读取原 Creative owner 已保存的剧本或分镜，复用原建议与审核队列。分镜默认使用规则辅助；只有主机明确支持完整分镜上下文并逐次确认，才可调用本地模型。采用后是独立导演草稿；图节点绑定仍需明确选择和保存。</p>
     <Button disabled={props.busy || loading || pending} onClick={() => void loadSources()}>
       {open ? '刷新原剧本来源' : '从已保存剧本打开导演建议审核'}
     </Button>
@@ -112,7 +115,7 @@ export function GraphDirectorProposalReview(props: Props) {
     {open && <Button disabled={props.busy || pending} onClick={() => setOpen(false)}>收起导演建议审核</Button>}
     {loading && <StatusMessage>正在读取原剧本来源…</StatusMessage>}
     {error && <StatusMessage tone="error">{error}</StatusMessage>}
-    {open && <AIDirectorPanel client={boundClient} documents={documents} canMutate={props.canMutate && !props.busy && !loading}
+    {open && <AIDirectorPanel client={boundClient} documents={documents} canMutate={props.canMutate && !props.busy && !loading} modelAuthority={props.canMutate}
       onDocument={acceptDocument} onDenied={denied} onPendingChange={reviewPending} onOpenModels={props.onOpenModels} />}
   </section>;
 }

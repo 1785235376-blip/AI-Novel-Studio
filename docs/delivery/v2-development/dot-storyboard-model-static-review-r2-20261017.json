@@ -1,0 +1,35 @@
+{
+  "status": "STATIC_REVIEW_PASS_TESTS_PENDING",
+  "utc": "2026-10-17T03:35:18.871330+00:00",
+  "head": "abff2ee7acc842e87abd53e0858110669922f9bc",
+  "root": "/workspace/scratch/20a0022d2b33/studio-storyboard-model",
+  "canonical_sha256": "7d814e6ee28e1afd80b151e1aefc86edd39d62769bf4c0212780dfb39784c113",
+  "protected_count": 1275,
+  "protected_drift": [],
+  "source_sha256": {
+    "app/creative/api.py": "1dcfee252c2fd1926ccac0ca00b99ba98c822acd471d04f3de38867e3194908f",
+    "app/creative/generation.py": "e18d6afce39ceec60aff386312720209fad3e08309337f81531e7cdc06daf1ef",
+    "app/creative/storyboard_model.py": "4bc019b4e4b78d1697f5543213fb2db682c4f4829c3303d44d392fa2612238a2",
+    "frontend/src/creative/DirectorModelControls.tsx": "594fbf8980067b4ec624e2855e13d907a3c4275c15f3777cba42fa90bb0eb875",
+    "frontend/src/creative/AIDirectorPanel.tsx": "84a123397a4690eacab6660211d28b9f46f64edb3e121c997fc2abbb8526b419",
+    "frontend/src/creative/GraphDirectorProposalReview.tsx": "f75a71ba35e232e7df5c04fd0fe2efb92eb0893a50374f0a972afbf091959931",
+    "frontend/src/creative/client.ts": "60d7fba09c547d6304623740ba658113268af6a62c7b337c196dd076c97bf349",
+    "frontend/src/creative/DirectorModelControls.storyboard-model.additive.test.tsx": "235b3238b57781a67183dd4d05dafc6712eb2b18683939d36691f336d9dfc6d0",
+    "tests/test_v2_storyboard_model_contract.py": "cfc8720ac9104c59f0471009c867670e9906e3f0a3b44903eb2ef3925a8bb93d",
+    "packaging/public-build.json": "4c8e6acb27d4c636da3f230290903da459deb90363181dade58ad766810134c8"
+  },
+  "checks": [
+    "Normal clean interpreter startup no product/pytest imports; only standard import finders",
+    "Existing stdlib-only explicit PathFinder probe parent and actual child PASS current-root origins",
+    "Malformed preview display gated; invalid preview raw JSON plus warning only",
+    "Typed route catalog display and provider/model string plus exact zero price consent gates",
+    "Source/client ABA admission and unmount guards; parent authority/dirty state key retirement",
+    "Legacy storyboard calls reject before broker and repeated-receipt shortcuts",
+    "Full sorted source snapshots and exact typed output mapping/order validation",
+    "Refresh preserves source snapshots; manifest exact one-module inclusion",
+    "Artifact test node names and builder executable SHA verified; no artifacts executed"
+  ],
+  "product_tests": "NOT_RUN_NO_SERIALIZED_GRANT",
+  "artifact_tests": "NOT_RUN_NO_SEPARATE_GRANT",
+  "findings": []
+}

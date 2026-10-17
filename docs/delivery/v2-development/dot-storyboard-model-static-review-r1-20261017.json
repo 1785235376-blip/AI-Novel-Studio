@@ -1,0 +1,57 @@
+{
+  "status": "STATIC_REVIEW_IN_PROGRESS",
+  "utc": "2026-10-17T02:23:14.657Z",
+  "root": "/workspace/scratch/20a0022d2b33/studio-storyboard-model",
+  "head": "abff2ee7acc842e87abd53e0858110669922f9bc",
+  "source_hashes": {
+    "app/creative/api.py": "1dcfee252c2fd1926ccac0ca00b99ba98c822acd471d04f3de38867e3194908f",
+    "app/creative/generation.py": "e18d6afce39ceec60aff386312720209fad3e08309337f81531e7cdc06daf1ef",
+    "app/creative/storyboard_model.py": "4bc019b4e4b78d1697f5543213fb2db682c4f4829c3303d44d392fa2612238a2",
+    "packaging/public-build.json": "4c8e6acb27d4c636da3f230290903da459deb90363181dade58ad766810134c8",
+    "frontend/src/creative/AIDirectorPanel.tsx": "84a123397a4690eacab6660211d28b9f46f64edb3e121c997fc2abbb8526b419",
+    "frontend/src/creative/DirectorModelControls.tsx": "c5613bcdcc8f62840e35abac9d73d521e419f6e4b54ccffe9e9fb7848ce8f8dc",
+    "frontend/src/creative/GraphDirectorProposalReview.tsx": "f75a71ba35e232e7df5c04fd0fe2efb92eb0893a50374f0a972afbf091959931",
+    "frontend/src/creative/client.ts": "60d7fba09c547d6304623740ba658113268af6a62c7b337c196dd076c97bf349"
+  },
+  "backend": {
+    "contract": "STORYBOARD_SHOT_CONTEXT_V1",
+    "legacy_request_schemas_unchanged": true,
+    "exact_ordered_source_snapshot_mapping": true,
+    "preview_digest_and_execution_contract_bound": true,
+    "model_refresh_provenance_retained": true,
+    "complete_context_rejected_above_20000_codepoints": true,
+    "max_chapter_ids": 20,
+    "live_calls": "NOT_RUN",
+    "tests": "NOT_RUN"
+  },
+  "packaging": {
+    "manifest_added_only": [
+      "app/creative/storyboard_model.py"
+    ],
+    "actual_roots_closure": true,
+    "guard_sha256": "052e5486633653cbe21725ac0d10843f03efb77eae8757503e5e249721f36619",
+    "artifact_execution": "NOT_RUN"
+  },
+  "ui_findings": [
+    {
+      "finding": "Graph adapter omitted additive methods",
+      "status": "corrected; tests pending"
+    },
+    {
+      "finding": "Real GENERATING/CANCELLED/unavailable empty-note receipts rejected",
+      "status": "corrected; tests pending"
+    },
+    {
+      "finding": "Malformed successful receipts did not enter original uncertain owner",
+      "status": "corrected; tests pending"
+    },
+    {
+      "finding": "Own host busy invalidated admitted model completion",
+      "status": "modelAuthority separates busy/permission; mounted test pending"
+    },
+    {
+      "finding": "Malformed queued preview request/broker can crash render; digest/version and Unicode bound incomplete",
+      "status": "worker hardening requested; parent approval pending"
+    }
+  ]
+}

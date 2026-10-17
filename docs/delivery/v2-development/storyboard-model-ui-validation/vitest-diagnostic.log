@@ -1,0 +1,40 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-storyboard-model/frontend
+
+ ❯ src/creative/DirectorModelControls.storyboard-model.additive.test.tsx (49 tests | 2 failed | 47 skipped) 142ms
+   × requires advertised support, exact complete input and one-call consent without automatic calls 115ms
+     → expected "spy" to be called 1 times, but got 0 times
+   × admits a normal DOM dispatch click after direct-owner preview and consent 26ms
+     → expected "spy" to be called 1 times, but got 0 times
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/DirectorModelControls.storyboard-model.additive.test.tsx > requires advertised support, exact complete input and one-call consent without automatic calls
+AssertionError: expected "spy" to be called 1 times, but got 0 times
+ ❯ src/creative/DirectorModelControls.storyboard-model.additive.test.tsx:53:42
+     51|   expect((dispatch() as HTMLButtonElement).disabled).toBe(false);
+     52|   act(() => { click(); click(); });
+     53|   expect(client.dispatchStoryboardModel).toHaveBeenCalledTimes(1);
+       |                                          ^
+     54|   await screen.findByText('任务：job');
+     55|   expect(client.dispatchStoryboardModel).toHaveBeenCalledTimes(1); exp…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/creative/DirectorModelControls.storyboard-model.additive.test.tsx > admits a normal DOM dispatch click after direct-owner preview and consent
+AssertionError: expected "spy" to be called 1 times, but got 0 times
+ ❯ src/creative/DirectorModelControls.storyboard-model.additive.test.tsx:61:71
+     59|   const { client } = mount(); fireEvent.click(await ready()); await sc…
+     60|   fireEvent.click(consent()); expect((dispatch() as HTMLButtonElement)…
+     61|   fireEvent.click(dispatch()); expect(client.dispatchStoryboardModel).…
+       |                                                                       ^
+     62|   await screen.findByText('任务：job');
+     63| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 47 skipped (49)
+   Start at  12:38:57
+   Duration  1.33s (transform 364ms, setup 18ms, collect 641ms, tests 142ms, environment 309ms, prepare 58ms)
+
