@@ -1,4 +1,4 @@
-"""Explicit versioned Director actions; application construction stays opt-out.
+"""Explicit versioned Director actions behind original feature and Host guards.
 
 No background retries, implicit model calls on reads, alternate Job engine or
 raw private proposal projection. Original owners authorize and commit actions.

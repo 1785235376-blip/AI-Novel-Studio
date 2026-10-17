@@ -1,4 +1,4 @@
-"""Versioned Director observation adapter, not mounted by the application.
+"""Versioned Director observation adapter mounted by explicit application composition.
 
 Only the existing lifecycle owners read state. This adapter cannot preview,
 dispatch, publish, review, cancel, or restore an execution capability.
@@ -89,7 +89,7 @@ def create_director_owner_invoker(service, invoke, *, require_host_session, mode
 
 
 def create_director_observation_router(service, invoke, *, require_host_session, model_host_authority):
-    """Construction-time opt-in for verification; application default is off."""
+    """Construction-time opt-in; original runtime feature and Host guards remain authoritative."""
     router = APIRouter(route_class=DirectorObservationRoute)
     call = create_director_owner_invoker(service, invoke,
         require_host_session=require_host_session, model_host_authority=model_host_authority)
