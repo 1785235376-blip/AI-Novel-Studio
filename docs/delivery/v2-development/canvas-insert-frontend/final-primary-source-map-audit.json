@@ -1,0 +1,71 @@
+{
+  "verified_utc": "2026-10-17T09:02:44.146Z",
+  "receipts": [
+    {
+      "label": "canvas-insert-ui-r3",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2588,
+      "source_maps_match_first": true,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "current_source_mismatches": [],
+      "log_hash_matches": true
+    },
+    {
+      "label": "canvas-insert-type-r3",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2588,
+      "source_maps_match_first": true,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "current_source_mismatches": [],
+      "log_hash_matches": true
+    },
+    {
+      "label": "canvas-insert-build-r3",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2588,
+      "source_maps_match_first": true,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "current_source_mismatches": [],
+      "log_hash_matches": true
+    },
+    {
+      "label": "canvas-insert-token-r3",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2588,
+      "source_maps_match_first": true,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "current_source_mismatches": [],
+      "log_hash_matches": true
+    },
+    {
+      "label": "canvas-insert-file-origin-r1",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2588,
+      "source_maps_match_first": true,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "current_source_mismatches": [],
+      "log_hash_matches": true
+    },
+    {
+      "label": "canvas-insert-file-regression-r1",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2588,
+      "source_maps_match_first": true,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "current_source_mismatches": [],
+      "log_hash_matches": true
+    }
+  ]
+}

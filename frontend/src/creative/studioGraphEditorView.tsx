@@ -153,18 +153,24 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
       {kind === 'timeline_export' && <><Button disabled={!timelineEditor.canLoad} loading={timelineEditor.loading} onClick={() => void timelineEditor.loadRows()}>明确读取原时间线目录</Button><label>原时间线<select disabled={!editable || timelineEditor.loading} value={timelineEditor.choice} onChange={event => timelineEditor.choose(event.target.value)}><option value="">选择已有时间线</option>{timelineEditor.rows.map(row => <option key={row.id} value={row.id}>{row.title} · {row.id} · v{row.version}</option>)}</select></label>{timelineEditor.chosen && <p>确切来源摘要：<code>{timelineEditor.chosen.timeline_digest}</code></p>}<p>使用原时间线；新增节点不保存剪辑、不入队、不渲染。</p>{timelineEditor.error && <StatusMessage tone="error">{timelineEditor.error}</StatusMessage>}</>}
       {schemaRequired && draft.schema_version !== 3 && <p>添加可执行资产来源或媒体节点前，先明确升级当前草稿为 v3。</p>}
       <Button disabled={!editable || draft.nodes.length >= nodeLimit || schemaRequired && draft.schema_version !== 3 || ['media_generate', 'timeline_export'].includes(kind) && draft.nodes.filter(row => ['media_generate', 'timeline_export'].includes(row.definition_id)).length >= 4
-        || ['image_generate', 'image_upscale'].includes(kind) && draft.nodes.filter(row => ['image_generate', 'image_upscale'].includes(row.definition_id)).length >= 4 || ['director_plan', 'storyboard_plan'].includes(kind) && !planningDocuments.some(row => row.id === planningChoice && row.mode === (kind === 'director_plan' ? 'DIRECTOR' : 'STORYBOARD')) || kind === 'storyboard_shot' && !shotReceipt?.shots.some(shot => shot.shot_id === shotChoice) || videoGraph && ['video_generate', 'timeline_export'].includes(kind) && draft.nodes.filter(row => ['video_generate', 'timeline_export'].includes(row.definition_id)).length >= 4 || kind === 'asset_reference' && !assetChoice || kind === 'timeline_export' && !timelineEditor.chosen} onClick={addNode}>添加节点</Button>
+        || ['image_generate', 'image_upscale'].includes(kind) && draft.nodes.filter(row => ['image_generate', 'image_upscale'].includes(row.definition_id)).length >= 4 || ['director_plan', 'storyboard_plan'].includes(kind) && !planningDocuments.some(row => row.id === planningChoice && row.mode === (kind === 'director_plan' ? 'DIRECTOR' : 'STORYBOARD')) || kind === 'storyboard_shot' && !shotReceipt?.shots.some(shot => shot.shot_id === shotChoice) || videoGraph && ['video_generate', 'timeline_export'].includes(kind) && draft.nodes.filter(row => ['video_generate', 'timeline_export'].includes(row.definition_id)).length >= 4 || kind === 'asset_reference' && !assetChoice || kind === 'timeline_export' && !timelineEditor.chosen} onClick={() => addNode()}>添加节点</Button>
       <label>起始输出端口<select aria-label="起始输出端口" disabled={!editable} value={sourcePort} onChange={event => setSourcePort(event.target.value)}><option value="">选择输出端口</option>{draft.nodes.flatMap(row => (catalog.definitions.find(item => item.id === row.definition_id)?.outputs || []).map(port => <option key={portKey(row.id, port.id)} value={portKey(row.id, port.id)}>{GRAPH_NODE_LABELS[row.definition_id]} · {row.id} · {port.id} ({port.type})</option>))}</select></label>
       <label>目标输入端口<select aria-label="目标输入端口" disabled={!editable} value={targetPort} onChange={event => setTargetPort(event.target.value)}><option value="">选择输入端口</option>{draft.nodes.flatMap(row => (catalog.definitions.find(item => item.id === row.definition_id)?.inputs || []).map(port => <option key={portKey(row.id, port.id)} value={portKey(row.id, port.id)}>{GRAPH_NODE_LABELS[row.definition_id]} · {row.id} · {port.id} ({port.type})</option>))}</select></label>
       <Button disabled={!editable || !sourcePort || !targetPort || draft.edges.length >= catalog.limits.edges} onClick={connect}>连接所选端口</Button></section>
       {/* The controller's catalog is a union that differs only in the optional video-graph
           capability flags; the rail reads `definitions` / `limits` / `media_limits` only. */}
-      {canvas && <CanvasOpsRail catalog={catalog as StudioGraphCatalog} definition={draft} base={base?.definition} selected={selected}
+      {canvas && <CanvasOpsRail insertion={controller.positionedInsertion ? {
+        token: controller.positionedInsertion, position: controller.positionedInsertion.position,
+        issue: controller.insertionExpired ? '指定位置已失效；请取消或在当前画布重新选择位置。' : kind === 'text_generate' && draft.schema_version === 1
+          ? '指定位置添加不会自动升级 v1 图格式；请取消后使用原添加流程明确处理图格式。'
+          : assetLoading || planningLoading || shotLoading || timelineEditor.loading ? '来源正在读取，请等待完成后明确选择。' : undefined,
+        onCancel: () => controller.cancelPositionedInsertion(controller.positionedInsertion!),
+      } : undefined} catalog={catalog as StudioGraphCatalog} definition={draft} base={base?.definition} selected={selected}
         past={past.length} future={future.length} editable={editable} protectedNodeIds={protectedNodes} kind={kind}
         sourcePort={sourcePort} targetPort={targetPort} connectionExplanation={pendingConnectionIssue(draft, catalog.definitions, sourcePort, targetPort)}
         local={canvas.local} onLocal={canvas.onLocal}
         onKind={value => setKind(value as StudioGraphDefinitionId)} onSourcePort={setSourcePort} onTargetPort={setTargetPort}
-        onApplyLayout={controller.applyAutoLayout} onAddNode={addNode} onConnect={connect} onSelect={setSelected} onTravel={direction => travel(direction === 'REDO')} />}
+        onApplyLayout={controller.applyAutoLayout} onAddNode={() => addNode(controller.positionedInsertion)} onConnect={connect} onSelect={setSelected} onTravel={direction => travel(direction === 'REDO')} />}
       <section aria-label="节点复制预览">
         <h3>复制所选节点</h3>
         <Button disabled={!editable || dirty || !base || !selected.length} onClick={controller.captureSelectionForGraph}>捕获所选节点供同项目跨图复制</Button>
@@ -191,7 +197,9 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
           <Button onClick={controller.cancelSelectionCopy}>取消复制预览</Button>
         </div>}
       </section>
-      <GraphCanvas connectionScope={controller.connectionScope} onConnectionStage={controller.stageConnection}
+      <GraphCanvas insertionScope={canvas ? controller.insertionScope : undefined}
+        onInsertionInteraction={canvas ? controller.invalidatePositionedInsertion : undefined}
+        onRequestInsertion={canvas ? controller.requestPositionedInsertion : undefined} connectionScope={controller.connectionScope} onConnectionStage={controller.stageConnection}
         connectionIssue={(source, target) => connectionIssue(draft, catalog.definitions, { id: 'pending-connection',
           source_node_id: source.nodeId, source_port: source.portId, target_node_id: target.nodeId, target_port: target.portId })}
         preferencesSource={base} connectionNodeIds={connectionNodeIds(sourcePort, targetPort)} definition={draft} nodeDefinitions={catalog.definitions} selectedNodeIds={selected} onSelectionChange={setSelected} onDefinitionChange={change} readonly={!editable} busy={busy} protectedNodeIds={protectedNodes} interactionKey={`${identity}:${base?.id || 'new'}`} onPortSelect={port => controller.selectConnectionPort(port, controller.connectionScope)} />

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { graphCatalogForSchema } from '../creative/graphDraft';
 import { Badge, Button } from '../ui/primitives';
 import { canvasNodeBudget, filterNodes, nodeSearchIndex } from './canvasOps';
@@ -16,7 +16,11 @@ import './canvasOps.css';
  *   图格式、必填来源、各类数量上限与可编辑性；
  * - 节点上限原样取自目录声明，达到上限时说明并建议拆分工作流，绝不抬高上限。
  */
-export function NodePalettePanel({ catalog, definition, kind, editable, onKind, onAddNode }: NodePalettePanelProps) {
+export function NodePalettePanel({ catalog, definition, kind, editable, onKind, onAddNode, insertion }: NodePalettePanelProps) {
+  const searchRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (insertion) { searchRef.current?.focus(); searchRef.current?.scrollIntoView?.({ block: 'nearest' }); }
+  }, [insertion?.token]);
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<CanvasNodeCategory | 'ALL'>('ALL');
   const entries = useMemo(() => nodeSearchIndex(catalog), [catalog]);
@@ -36,11 +40,20 @@ export function NodePalettePanel({ catalog, definition, kind, editable, onKind, 
       <p className="canvas-ops__note">节点目录尚未读取：请先用「明确读取…节点目录」按需读取一次。目录读取由原创作图控制器发起，本面板自身不发任何请求。</p>
     </section>;
   }
-  return <section aria-label="节点面板">
+  return <section aria-label="节点面板" onKeyDown={event => {
+    if (insertion && event.key === 'Escape' && !event.nativeEvent.isComposing && event.keyCode !== 229) {
+      event.preventDefault(); event.stopPropagation(); insertion.onCancel();
+    }
+  }}>
     <h3>节点面板</h3>
+    {insertion && <div className="canvas-ops__note" role="status">
+      <p>在画布位置 {Math.round(insertion.position.x)}, {Math.round(insertion.position.y)} 添加节点。搜索并选择类型；需要来源时，使用上方原来源控件明确读取、选择，再点击添加。仅修改草稿，需明确保存。</p>
+      {insertion.issue && <p>{insertion.issue}</p>}
+      <Button onClick={insertion.onCancel}>取消指定位置添加</Button>
+    </div>}
     <div className="canvas-ops__row">
       <label className="canvas-ops__field"><span>搜索节点</span>
-        <input type="search" aria-label="搜索节点" value={query} maxLength={CANVAS_SEARCH_QUERY_MAX}
+        <input ref={searchRef} type="search" aria-label="搜索节点" value={query} maxLength={CANVAS_SEARCH_QUERY_MAX}
           placeholder="按中文名、机器码或端口搜索" onChange={event => setQuery(event.target.value)} />
       </label>
       <label className="canvas-ops__field"><span>节点分类</span>
@@ -77,7 +90,7 @@ export function NodePalettePanel({ catalog, definition, kind, editable, onKind, 
         </li>;
       })}</ul>}
     <div className="canvas-ops__actions">
-      <Button variant="primary" disabled={!editable || !selectedAllowed || budget.full} onClick={onAddNode}>
+      <Button variant="primary" disabled={!editable || !selectedAllowed || budget.full || !!insertion?.issue} onClick={onAddNode}>
         添加所选节点（由原控制器执行）
       </Button>
     </div>

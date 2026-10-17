@@ -1,0 +1,55 @@
+{
+  "status": "PASS",
+  "scope": "Static review and independent targeted UI/File checks; no browser geometry or accessibility execution",
+  "checks": [
+    {
+      "receipt": "docs/delivery/v2-development/canvas-insert-review-origin-r1.json",
+      "receipt_sha256": "b2ae89568f329e4b7dc1dc8c0477993ccdef7d64cc5e4924c6e28916e6ede498",
+      "status": "PASS",
+      "exit_code": 0,
+      "head": "e1e66cedeb7a140b6894850bc21a1e5ac7e06c16",
+      "source_count": 2588,
+      "sources_changed_during_check": false,
+      "before_equals_after": true,
+      "equals_primary_r3": true,
+      "equals_current": true,
+      "log_sha256_matches": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/canvas-insert-review-ui-r1.json",
+      "receipt_sha256": "d86a003d07df7ec548dc3a34da1c101dad6f5efeb9d9f7e7120fe9f0606f6bb7",
+      "status": "PASS",
+      "exit_code": 0,
+      "head": "e1e66cedeb7a140b6894850bc21a1e5ac7e06c16",
+      "source_count": 2588,
+      "sources_changed_during_check": false,
+      "before_equals_after": true,
+      "equals_primary_r3": true,
+      "equals_current": true,
+      "log_sha256_matches": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/canvas-insert-review-file-r1.json",
+      "receipt_sha256": "0c3c14408e34003182e02e99a7e0f805fae58634b7fe1e1c948ba1ae2a66d56c",
+      "status": "PASS",
+      "exit_code": 0,
+      "head": "e1e66cedeb7a140b6894850bc21a1e5ac7e06c16",
+      "source_count": 2588,
+      "sources_changed_during_check": false,
+      "before_equals_after": true,
+      "equals_primary_r3": true,
+      "equals_current": true,
+      "log_sha256_matches": true
+    }
+  ],
+  "tracked_old_test_changes": [],
+  "ui": {
+    "suites": 6,
+    "tests": 105,
+    "new_tests": 36
+  },
+  "file": {
+    "passed": 339,
+    "postgres_excluded": 20
+  }
+}

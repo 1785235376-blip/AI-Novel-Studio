@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Button, StatusMessage } from '../ui/primitives';
 import type { StudioGraphCatalog, StudioGraphDefinition } from '../creative/studioGraphTypes';
 import { autoLayout, classifyGraphChange, normalizeLocalCanvasState } from './canvasOps';
-import type { LocalCanvasState } from './canvasOpsTypes';
+import type { LocalCanvasState, PositionedPaletteInsertion } from './canvasOpsTypes';
 import { CanvasSelectionBar } from './CanvasSelectionBar';
 import { ChangeImpactNotice } from './ChangeImpactNotice';
 import { ConnectionAdvisorPanel } from './ConnectionAdvisorPanel';
@@ -14,6 +14,7 @@ import './canvasOps.css';
  * 所有变更都通过原控制器的回调完成，本组件自身不改图、不保存、不发请求。
  */
 export type CanvasOpsRailProps = {
+  insertion?: PositionedPaletteInsertion;
   catalog?: StudioGraphCatalog;
   definition: StudioGraphDefinition;
   base?: StudioGraphDefinition;
@@ -72,7 +73,7 @@ export function CanvasOpsRail(props: CanvasOpsRailProps) {
 
   return <section className="canvas-ops" aria-label="画布操作栏">
     {normalized.issue && <StatusMessage tone="warning">{normalized.issue}</StatusMessage>}
-    <NodePalettePanel catalog={catalog} definition={definition} kind={kind} editable={editable} onKind={onKind} onAddNode={onAddNode}/>
+    <NodePalettePanel insertion={props.insertion} catalog={catalog} definition={definition} kind={kind} editable={editable} onKind={onKind} onAddNode={onAddNode}/>
     <CanvasSelectionBar
       selected={selected} past={past} future={future} editable={editable} protectedNodeIds={protectedNodeIds}
       local={localState} onLocal={onLocal} onSelect={onSelect} onTravel={onTravel}

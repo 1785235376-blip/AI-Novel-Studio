@@ -2,6 +2,7 @@ import type { OpenStoryboardEditor } from './storyboardEditorHandoff';
 import { checkedStudioGraphDraft } from './studioGraphClient';
 import { graphSelectionCopy, type GraphSelectionCopy } from './graphSelectionCopy';
 import { autoLayout } from '../canvasops/canvasOps';
+import { clampGraphPosition } from './graphCanvasGeometry';
 import type { GraphDirectorSource } from './GraphDirectorConsole';
 import type { StoryboardReceipt } from './studioStoryboardContract';
 import { productionGraphDefinitions, type PlanningDocument } from './studioProductionGraphContract';
@@ -11,12 +12,14 @@ import { ApiError, apiErrorView, type Asset } from '../api';
 import type { ProductionProvider, StudioProductionClient } from './studioProductionClient';
 import { mediaProviderKey } from './useStudioMediaExecution';
 import type { StudioAsset, StudioClient } from './studioClient';
-import type { StudioGraphCatalog, StudioGraphDefinition, StudioGraphDefinitionId, StudioGraphRecord } from './studioGraphTypes';
+import type { StudioGraphCatalog, StudioGraphDefinition, StudioGraphDefinitionId, StudioGraphPosition, StudioGraphRecord } from './studioGraphTypes';
 import { GRAPH_VIDEO_OPERATIONS, GRAPH_IMAGE_OPERATIONS, GRAPH_MEDIA_OPERATIONS, type GraphImageOperation, type GraphMediaOperation } from './studioGraphTypes';
 import { blankGraph, connectionIssue, graphCatalogForSchema, graphId, imageGraphDefinitions, videoGraphDefinitions, retainsSavedAssetBindings } from './graphDraft';
 import { useStudioGraphTimelineEditor } from './useStudioGraphTimelineEditor';
 import { graphDraftBaselineMatches, graphDraftRecoverable, readStudioGraphLocalDraft, studioGraphDraftKey,
   type StudioGraphDraftOwner, type StudioGraphLocalDraft } from './studioGraphLocalDraft';
+
+type PositionedNodeRequest = { position: StudioGraphPosition; scope: object; restoreFocus: () => void };
 
 export type StudioGraphEditorSelection = { graphId?: string; runId?: string };
 export type StudioGraphEditorProps = {
@@ -130,6 +133,48 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const timelineEditor = useStudioGraphTimelineEditor({ client: client.graphs, node, editable, identity, isCurrent: current, isBusy: locked, read,
     update: parameters => { const selectedNode = draftRef.current.nodes.find(row => row.id === selected[0]); if (selectedNode?.definition_id !== 'timeline_export') return;
       change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === selectedNode.id ? { ...row, parameters } : row) }); } });
+  // A point is session intent, not a node command. Source choices remain editable;
+  // each Add closure separately fences the exact current source-selection render.
+  const [insertionGeneration, setInsertionGeneration] = useState(0);
+  const insertionValues = [connectionScope, timelineEditor.formDirty, insertionGeneration];
+  const insertionFence = useRef({ values: insertionValues, token: {} });
+  if (insertionValues.some((value, index) => !Object.is(value, insertionFence.current.values[index]))) {
+    insertionFence.current = { values: insertionValues, token: {} };
+  }
+  const insertionScope = insertionFence.current.token;
+  const [insertion, setInsertion] = useState<PositionedNodeRequest>();
+  const insertionRef = useRef<PositionedNodeRequest>();
+  // Keep expired intent visible and disabled until explicitly dismissed/replaced;
+  // never silently turn a positioned Add into the ordinary grid fallback.
+  const positionedInsertion = insertion;
+  const insertionExpired = !!insertion && (insertion.scope !== insertionScope || insertionRef.current !== insertion);
+  function invalidatePositionedInsertion() {
+    if (!insertionRef.current) return;
+    insertionFence.current = { values: insertionFence.current.values, token: {} };
+    setInsertionGeneration(value => value + 1);
+  }
+  const sourceValues = [kind, assets, assetChoice, planningDocuments, planningChoice, shotParent, shotReceipt, shotChoice,
+    timelineEditor.choice, timelineEditor.chosen, assetLoading, planningLoading, shotLoading, timelineEditor.loading];
+  const insertionSourceFence = useRef({ values: sourceValues, token: {} });
+  if (sourceValues.some((value, index) => !Object.is(value, insertionSourceFence.current.values[index]))) {
+    insertionSourceFence.current = { values: sourceValues, token: {} };
+  }
+  const insertionSourceToken = insertionSourceFence.current.token;
+  function insertionCurrent(scope: object) {
+    return scope === insertionScope && scope === insertionFence.current.token && active && editable
+      && connectionLive.current.current() && !connectionLive.current.locked() && !timelineEditor.formDirty
+      && draftRef.current === draft && baseRef.current === base;
+  }
+  function requestPositionedInsertion(position: StudioGraphPosition, scope: object, restoreFocus: () => void): boolean {
+    if (!insertionCurrent(scope) || !Number.isFinite(position.x) || !Number.isFinite(position.y)) return false;
+    const request = { position: { x: clampGraphPosition(position.x), y: clampGraphPosition(position.y) }, scope, restoreFocus };
+    insertionRef.current = request; setInsertion(request); return true;
+  }
+  function cancelPositionedInsertion(request: PositionedNodeRequest) {
+    if (insertionRef.current !== request) return;
+    insertionRef.current = undefined; setInsertion(undefined);
+    if (connectionLive.current.current() && !connectionLive.current.locked()) request.restoreFocus();
+  }
   const dirty = !same(draft, base?.definition || blankGraph()) || timelineEditor.formDirty;
   const independentKey = JSON.stringify([identity, base?.id, base?.version, draft]);
   const independentConfirmed = independentConsent !== '' && independentConsent === independentKey;
@@ -349,7 +394,13 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     catch (value) { if (current() && epoch === assetEpoch.current) setError(apiErrorView(value, '原资产目录读取失败。').message); }
     finally { if (current() && epoch === assetEpoch.current) setAssetLoading(false); }
   }
-  function addNode() {
+  function addNode(request?: PositionedNodeRequest) {
+    if (request && (request !== insertionRef.current || !insertionCurrent(request.scope)
+      || insertionSourceToken !== insertionSourceFence.current.token
+      || assetLoading || planningLoading || shotLoading || timelineEditor.loading
+      || kind === 'text_generate' && draft.schema_version === 1
+      || !catalog || !graphCatalogForSchema(catalog.definitions, draft.schema_version).some(row => row.id === kind))) return;
+
     const planning = planningDocuments.find(row => row.id === planningChoice && row.mode === (kind === 'director_plan' ? 'DIRECTOR' : 'STORYBOARD'));
     const spec = catalog?.definitions.find(row => row.id === kind), asset = assets.find(row => row.id === assetChoice);
     const media = kind === 'media_generate' || kind === 'media_review' || kind === 'timeline_export';
@@ -364,7 +415,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
       || ['image_generate', 'image_upscale'].includes(kind) && draft.nodes.filter(row => ['image_generate', 'image_upscale'].includes(row.definition_id)).length >= 4
       || kind === 'storyboard_shot' && (!shot || !shotFresh) || ['video_generate', 'timeline_export'].includes(kind) && video && draft.nodes.filter(row => ['video_generate', 'timeline_export'].includes(row.definition_id)).length >= 4 || ['director_plan', 'storyboard_plan'].includes(kind) && !planning || kind === 'asset_reference' && !asset || kind === 'timeline_export' && !timelineEditor.chosen) return;
     if (image && kind === 'asset_reference' && asset?.kind !== 'image') { setError('图片图只接受图片素材引用。'); return; }
-    const node = { id: graphId(), definition_id: kind, definition_version: 1 as const, enabled: true, position: { x: 24 + draft.nodes.length % 4 * 280, y: 24 + Math.floor(draft.nodes.length / 4) * 180 },
+    const node = { id: graphId(), definition_id: kind, definition_version: 1 as const, enabled: true, position: request ? { ...request.position } : { x: 24 + draft.nodes.length % 4 * 280, y: 24 + Math.floor(draft.nodes.length / 4) * 180 },
       parameters: kind === 'asset_reference' ? { asset_id: asset!.id, version: asset!.version, digest: asset!.sha256, kind: asset!.kind as 'image' | 'video' | 'audio' }
         : kind === 'media_generate' ? { operation_id: 'm5.image.t2i' as const, provider_id: '', model_id: '', prompt: '', parameters: {}, allow_cloud: false, license_note: '' }
         : kind === 'storyboard_shot' ? { shot_id: shot!.shot_id, shot_version: shot!.shot_version, shot_digest: shot!.shot_digest }
@@ -376,7 +427,12 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
         : kind === 'timeline_export' ? { timeline_snapshot: { id: timelineEditor.chosen!.id, version: timelineEditor.chosen!.version, digest: timelineEditor.chosen!.timeline_digest },
           edit_operations: [], source_bindings: [], export_profile: { preset: 'REVIEW_MP4' as const } }
         : structuredClone(spec.default_parameters || {}) };
-    change({ ...draft, schema_version: kind === 'text_generate' && draft.schema_version === 1 ? 2 : draft.schema_version, nodes: [...draft.nodes, node] }); setSelected([node.id]);
+    const next = { ...draft, schema_version: kind === 'text_generate' && draft.schema_version === 1 ? 2 as const : draft.schema_version, nodes: [...draft.nodes, node] };
+    change(next);
+    if (request && draftRef.current !== next) return;
+    if (request) { insertionRef.current = undefined; setInsertion(undefined); }
+    setSelected([node.id]);
+    if (request) request.restoreFocus();
   }
   function upgradeMediaSchema() {
     if (!editable || !current() || locked() || !mediaSchemaConsent || !catalog?.capabilities.media_execution || draft.schema_version >= 3) return;
@@ -616,6 +672,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     planningDocuments: current() ? planningDocuments : [], planningChoice: current() ? planningChoice : '', planningLoading, choosePlanningDocument, loadPlanningDocuments, loadProductionCatalog, updateProductionField, updateShotBinding, updateReferenceMetadata,
     discard, load, loadImageCatalog, change, applyAutoLayout, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
     setReplaceConfirmed, setCandidate, setDiscardConfirmed, setPendingNavigation, setKind, setAssetChoice,
+    insertionScope, positionedInsertion, insertionExpired, invalidatePositionedInsertion, requestPositionedInsertion, cancelPositionedInsertion,
     connectionScope, stageConnection, selectConnectionPort, setSourcePort, setTargetPort, setSelected, reportRunSelection, mediaSchemaConsent, setMediaSchemaConsent, upgradeMediaSchema, executionDirty, setExecutionDirty,
     imageSchemaConfirmed, confirmImageSchema, upgradeImageSchema, updateImagePrompt, updateImageReference,
     updateMediaField, updateMediaParameter, clearUnsupportedMediaParameters, clearMediaTrimInputs, timelineEditor,

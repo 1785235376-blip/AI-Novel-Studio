@@ -1,0 +1,4 @@
+2026-10-17T08:55:28Z
+Exit 127 before run_v2_checks.py or product execution.
+run-frontend-r2.sh line 16: /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r2/bin/python: No such file or directory
+Cause: label substitution also changed approved interpreter suffix r1 to r2. No r2 runner receipts were produced; no product sources changed.

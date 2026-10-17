@@ -29,6 +29,9 @@ export type GraphCanvasProps = {
   /** Advisory legality remains owned by the original graph editor, not the canvas. */
   connectionIssue?: (source: GraphCanvasPortSelection, target: GraphCanvasPortSelection) => string | undefined;
   connectionScope?: object;
+  insertionScope?: object;
+  onInsertionInteraction?: () => void;
+  onRequestInsertion?: (position: StudioGraphPosition, scope: object, restoreFocus: () => void) => boolean;
   onConnectionStage?: (source: GraphCanvasPortSelection, target: GraphCanvasPortSelection, scope: object) => boolean;
   protectedNodeIds?: readonly string[];
   /** Pending connection endpoints owned by the existing editor controller. */
@@ -61,7 +64,7 @@ type ConnectionPreview = { start: StudioGraphPosition; end: StudioGraphPosition;
 const sameIds = (a: readonly string[], b: readonly string[]) => a.length === b.length && a.every((id, index) => id === b[index]);
 
 export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSelectionChange, onDefinitionChange,
-  onPortSelect, connectionIssue, connectionScope, onConnectionStage, protectedNodeIds = [], connectionNodeIds = [], interactionKey, preferencesSource, readonly = false, busy = false }: GraphCanvasProps) {
+  onPortSelect, connectionIssue, connectionScope, onConnectionStage, insertionScope, onRequestInsertion, onInsertionInteraction, protectedNodeIds = [], connectionNodeIds = [], interactionKey, preferencesSource, readonly = false, busy = false }: GraphCanvasProps) {
   const blocked = readonly || busy;
   const [selectedNote, setSelectedNote] = useState<string | null>(null);
   useEffect(() => { setSelectedNote(null); }, [interactionKey, preferencesSource]);
@@ -76,6 +79,11 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
     connectionFence.current = { values: connectionValues, token: {} };
   }
   const connectionToken = connectionFence.current.token;
+  const focusValues = [interactionKey, preferencesSource, readonly, busy];
+  const focusFence = useRef({ values: focusValues, token: {} });
+  if (focusValues.some((value, index) => !Object.is(value, focusFence.current.values[index]))) {
+    focusFence.current = { values: focusValues, token: {} };
+  }
   const wheelUntil = useRef(0);
   const [preview, setPreview] = useState<{ source: StudioGraphDefinition; value: StudioGraphDefinition } | null>(null);
   const [marquee, setMarquee] = useState<GraphCanvasRect | null>(null);
@@ -244,6 +252,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
   const startGesture = (event: PointerEvent, kind: Gesture['kind'], ids: string[] = selected, anchorId = ids[0]) => {
     if (gesture.current || busy || (blocked && kind !== 'marquee')) return;
     event.preventDefault();
+    onInsertionInteraction?.();
     setAlignment(null);
     const rect = viewportRef.current!.getBoundingClientRect();
     gesture.current = { kind, pointerId: event.pointerId, source: definition, owner: interactionKey,
@@ -377,8 +386,27 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
     wheelUntil.current = 0;
   };
 
+  const requestInsertion = (point: StudioGraphPosition) => {
+    const element = viewportRef.current;
+    if (!element || blocked || gesture.current || validAlignment || preview || !insertionScope || !onRequestInsertion
+      || !Number.isFinite(point.x) || !Number.isFinite(point.y)) return false;
+    const world = graphScreenToWorld(point, definition.viewport);
+    if (!Number.isFinite(world.x) || !Number.isFinite(world.y)) return false;
+    const owner = liveViewOwner.current, focusToken = focusFence.current.token;
+    return onRequestInsertion({ x: clampGraphPosition(world.x), y: clampGraphPosition(world.y) }, insertionScope, () => {
+      if (element.isConnected && focusToken === focusFence.current.token && liveViewOwner.current.interactionKey === owner.interactionKey
+        && liveViewOwner.current.preferencesSource === owner.preferencesSource && !liveViewOwner.current.blocked) element.focus();
+    });
+  };
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     if (event.nativeEvent.isComposing || event.keyCode === 229 || isGraphEditableTarget(event.target)) return;
+    if ((event.key === 'ContextMenu' || event.shiftKey && event.key === 'F10') && !event.repeat
+      && !event.altKey && !event.ctrlKey && !event.metaKey && event.target === viewportRef.current) {
+      const rect = viewportRef.current.getBoundingClientRect();
+      if (Number.isFinite(rect.width) && Number.isFinite(rect.height) && rect.width > 0 && rect.height > 0
+        && requestInsertion({ x: rect.width / 2, y: rect.height / 2 })) event.preventDefault();
+      return;
+    }
     if (event.key === 'Escape') { event.preventDefault(); if (validAlignment) { setAlignment(null); return; } if (gesture.current) cancelGesture(); else onSelectionChange([]); return; }
     if (busy) return;
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'a') { event.preventDefault(); onSelectionChange(definition.nodes.map(node => node.id)); return; }
@@ -502,7 +530,16 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
     <div ref={viewportRef} className={`graph-canvas__viewport${tool === 'pan' ? ' is-pan-tool' : ''}${activeGesture === 'pan' ? ' is-panning' : ''}`}
       style={{ backgroundImage: showGrid ? undefined : 'none', backgroundSize: `${gridStep * visible.viewport.zoom}px ${gridStep * visible.viewport.zoom}px`,
         backgroundPosition: `${visible.viewport.x - gridStep * visible.viewport.zoom / 2}px ${visible.viewport.y - gridStep * visible.viewport.zoom / 2}px` }}
-      tabIndex={0} role="group" aria-label="节点图交互区域" aria-describedby={descriptionId}
+      tabIndex={0} role="group" aria-label="节点图交互区域" aria-describedby={descriptionId} aria-keyshortcuts={onRequestInsertion ? "Shift+F10" : undefined}
+      onContextMenu={event => {
+        // Only the blank viewport/world owns this action; preserve native menus
+        // and all controls, node/port/annotation/connection pointer behavior.
+        if (event.target !== event.currentTarget && !(event.target instanceof Element
+          && event.target.classList.contains('graph-canvas__world'))) return;
+        const rect = event.currentTarget.getBoundingClientRect();
+        if (!Number.isFinite(rect.left) || !Number.isFinite(rect.top) || !Number.isFinite(rect.width) || !Number.isFinite(rect.height) || rect.width <= 0 || rect.height <= 0) return;
+        if (requestInsertion({ x: event.clientX - rect.left, y: event.clientY - rect.top })) event.preventDefault();
+      }}
       onFocusCapture={event => {
         setFocusedNode((event.target as Element).closest('[data-graph-node-id]')?.getAttribute('data-graph-node-id') || null);
         setFocusedGroup((event.target as Element).closest('[data-graph-group-id]')?.getAttribute('data-graph-group-id') || null);

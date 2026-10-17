@@ -1,0 +1,65 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-timeline-waveform/frontend
+
+ ✓ src/creative/GraphCanvas.presentation.additive.test.tsx (71 tests) 4154ms
+   ✓ measured viewport rendering > filters 1200 display instances with bounded DOM, pages by keyboard and never writes while typing 704ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.presentation.additive.test.tsx (18 tests) 18737ms
+   ✓ independent studio graph content integration > captures a saved source, chooses another graph, reviews and pastes once with original save/reopen 1629ms
+   ✓ independent studio graph content integration > previews same-graph copies, invalidates edits, pastes once and saves/reopens through original history 1308ms
+   ✓ independent studio graph content integration > explicitly persists view preferences with one undo step and original save/reopen 1542ms
+   ✓ independent studio graph content integration > persists groups through original undo/save/reopen and inspector node deletion 1172ms
+   ✓ independent studio graph content integration > saves independent notes with original undo, redo, reopen and removal 1007ms
+   ✓ independent studio graph content integration > saves/reopens graph annotation with original undo, redo, removal and no model dispatch 836ms
+   ✓ independent studio graph content integration > guards departure when only an independent note is unsaved 444ms
+   ✓ independent studio graph content integration > warns before leaving when only the graph annotation changed 399ms
+   ✓ independent studio graph content integration > applies layout over dirty author text with one undo step, saves the camera, and restores both on reopen 948ms
+   ✓ independent studio graph content integration > commits snapped drag once through original undo/save/reopen without persisting view settings 1174ms
+   ✓ independent studio graph content integration > applies selected alignment with one undo, preserves dirty text, and saves/reopens original positions 1074ms
+   ✓ independent studio graph content integration > saves MiniMap camera via original history while preserving dirty author text and reopens it 784ms
+   ✓ independent studio graph content integration > searches current nodes without dispatch, then saves/reopens explicit camera navigation with dirty text and exact pins 828ms
+   ✓ independent studio graph content integration > restores each graph camera by stable ID and keeps dirty layout until explicit navigation consent 521ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 409, with explicit checked adoption only 1321ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 0, with explicit checked adoption only 1311ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 500, with explicit checked adoption only 1278ms
+   ✓ persists nested visual organization with undo, dirty leave warning, reopen and parent-node deletion promotion 1159ms
+ ✓ src/canvasops/canvasOpsPanels.test.tsx (25 tests) 609ms
+ ✓ src/ui/AppShell.test.tsx (19 tests) 251ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (9 tests) 4277ms
+   ✓ independent studio graph content integration > promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing 1023ms
+   ✓ independent studio graph content integration > saves an empty disconnected definition through the scoped owner and reopens it without creating a run 433ms
+   ✓ independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job 806ms
+   ✓ independent studio graph content integration > retains the CAS-conflicted draft until an explicit checked adoption of the separately fetched server version 646ms
+   ✓ independent studio graph content integration > protects unsaved graph input when leaving the graph content or fixed module switcher 505ms
+   ✓ independent studio graph content integration > displays redacted saved references without enabling a full-save or deletion roundtrip 324ms
+ ✓ src/creative/GraphCanvas.test.tsx (25 tests) 1252ms
+ ✓ src/creative/StudioGraphInsertion.additive.test.tsx (20 tests) 1191ms
+ ✓ src/creative/GraphCanvas.connection.additive.test.tsx (29 tests) 961ms
+ ✓ src/creative/StudioGraphDraftRecovery.test.tsx (11 tests) 2055ms
+   ✓ mounted text graph autosave and explicit recovery > autosaves local authoring, survives remount and restores only after a live owner check without executing 637ms
+ ✓ src/creative/graphSelectionCopyController.test.tsx (23 tests) 1371ms
+ ✓ src/creative/StudioGraphConnection.additive.test.tsx (15 tests) 1028ms
+ ✓ src/creative/StudioGraphDraftRecovery.notes.test.tsx (7 tests) 1116ms
+   ✓ cached presentation recovery inspection through the original controller > pages every one of 1024 eligible short notes with at most twenty textareas and no truncation 940ms
+ ✓ src/creative/GraphReadRevocation.regression.test.tsx (8 tests) 273ms
+ ✓ src/creative/GraphCanvas.insertion.additive.test.tsx (12 tests) 426ms
+ ✓ src/creative/graphCanvasGeometry.test.ts (9 tests) 13ms
+ ✓ src/creative/graphCanvasGeometry.presentation.additive.test.ts (9 tests) 8ms
+ ✓ src/creative/StudioGraphInsertion.palette.additive.test.tsx (4 tests) 593ms
+ ✓ src/canvasops/canvasOpsPanels.layout.additive.test.tsx (1 test) 259ms
+ ✓ src/creative/GraphCanvasLargeNotes.test.tsx (4 tests) 438ms
+ ✓ src/creative/GraphNodeNavigator.test.tsx (2 tests) 173ms
+ ✓ src/ui/primitives.test.tsx (4 tests) 83ms
+ ✓ src/creative/useStudioGraphEditor.storyboardAuthority.additive.test.tsx (1 test) 12ms
+ ✓ src/canvasops/canvasOps.test.ts (69 tests) 29ms
+ ✓ src/creative/graphDraft.test.ts (39 tests) 7ms
+ ✓ src/creative/graphCanvasPresentation.test.ts (15 tests) 12ms
+ ✓ src/creative/studioGraphLocalDraft.test.ts (6 tests) 8ms
+ ✓ src/creative/graphCanvasLargeNotes.test.ts (23 tests) 43ms
+ ✓ src/canvasops/canvasOps.layout.additive.test.ts (1 test) 3ms
+ ✓ src/creative/graphCanvasNotes.test.ts (3 tests) 10ms
+
+ Test Files  29 passed (29)
+      Tests  482 passed (482)
+   Start at  17:56:30
+   Duration  57.49s (transform 2.75s, setup 83ms, collect 6.80s, tests 39.39s, environment 6.61s, prepare 1.33s)
+

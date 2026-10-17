@@ -1,0 +1,401 @@
+{
+  "generated_utc": "2026-10-17T09:04:07.189Z",
+  "base_head": "e1e66cedeb7a140b6894850bc21a1e5ac7e06c16",
+  "branch": "work/dot-canvas-insert-20261017",
+  "summary": {
+    "primary_ui": {
+      "suites": 29,
+      "passed": 482,
+      "new_tests": 36
+    },
+    "independent_ui": {
+      "suites": 6,
+      "passed": 105,
+      "new_tests": 36
+    },
+    "primary_file": {
+      "passed": 339,
+      "postgresql_deselected": 20
+    },
+    "independent_file": {
+      "passed": 339,
+      "postgresql_deselected": 20
+    },
+    "final_source_count": 2588,
+    "all_nine_final_maps_equal_current": true,
+    "real_browser_geometry_accessibility": "NOT_RUN",
+    "build_warning": "Large chunks"
+  },
+  "final_receipts": [
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-ui-r3.json",
+      "sha256": "429b94d947402a8e7e890cf9f2a177bb9996a2e1092ec26e25f6a5b87c2b1036",
+      "status": "PASS",
+      "exit_code": 0,
+      "final_source_evidence": true,
+      "source_count": 2588,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/canvas-insert-ui-r3.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-type-r3.json",
+      "sha256": "409126f2d17210f43eea18618e424d91825ee64bb969b76ba6ab14cffc3b7507",
+      "status": "PASS",
+      "exit_code": 0,
+      "final_source_evidence": true,
+      "source_count": 2588,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/canvas-insert-type-r3.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-build-r3.json",
+      "sha256": "2d72204d0e646840629987af166eb5e4188dd6f2943f07b98062f7ca11aa20c4",
+      "status": "PASS",
+      "exit_code": 0,
+      "final_source_evidence": true,
+      "source_count": 2588,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/canvas-insert-build-r3.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-token-r3.json",
+      "sha256": "76e657447a88cc549fe47915979b31d56b937a9ae1ad1e9b07c07bd46dd8020c",
+      "status": "PASS",
+      "exit_code": 0,
+      "final_source_evidence": true,
+      "source_count": 2588,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/canvas-insert-token-r3.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-file-origin-r1.json",
+      "sha256": "1c1bbf7f0b29e755cbac7feda0136066b75e491631a6c23f6e6df7c8dac4d9b9",
+      "status": "PASS",
+      "exit_code": 0,
+      "final_source_evidence": true,
+      "source_count": 2588,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/canvas-insert-file-origin-r1.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-file-regression-r1.json",
+      "sha256": "e16cabe44cdd161fcd43f311a5f12f68405143c455b3a54ec7bb46e5e61c14da",
+      "status": "PASS",
+      "exit_code": 0,
+      "final_source_evidence": true,
+      "source_count": 2588,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/canvas-insert-file-regression-r1.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-review-origin-r1.json",
+      "sha256": "b2ae89568f329e4b7dc1dc8c0477993ccdef7d64cc5e4924c6e28916e6ede498",
+      "status": "PASS",
+      "exit_code": 0,
+      "final_source_evidence": true,
+      "source_count": 2588,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/canvas-insert-review-origin-r1.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-review-ui-r1.json",
+      "sha256": "d86a003d07df7ec548dc3a34da1c101dad6f5efeb9d9f7e7120fe9f0606f6bb7",
+      "status": "PASS",
+      "exit_code": 0,
+      "final_source_evidence": true,
+      "source_count": 2588,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/canvas-insert-review-ui-r1.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-review-file-r1.json",
+      "sha256": "0c3c14408e34003182e02e99a7e0f805fae58634b7fe1e1c948ba1ae2a66d56c",
+      "status": "PASS",
+      "exit_code": 0,
+      "final_source_evidence": true,
+      "source_count": 2588,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/canvas-insert-review-file-r1.log",
+      "log_hash_matches": true
+    }
+  ],
+  "historical_receipts": [
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-ui-r1.json",
+      "sha256": "2e77499cee9e7400805faaf9815e020cb0770280687bde5ece6eb7fa3694d6f3",
+      "status": "FAIL",
+      "exit_code": 1,
+      "final_source_evidence": false,
+      "source_count": 2588,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": false,
+      "current_source_mismatches": [
+        "frontend/src/creative/GraphCanvas.insertion.additive.test.tsx",
+        "frontend/src/creative/StudioGraphInsertion.additive.test.tsx"
+      ],
+      "log": "docs/delivery/v2-development/canvas-insert-ui-r1.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-ui-r2.json",
+      "sha256": "2734cca6c20a72bd424d0a378ea2cf73e280ebc3b529b090dbac27d78615dbf1",
+      "status": "PASS",
+      "exit_code": 0,
+      "final_source_evidence": false,
+      "source_count": 2588,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": false,
+      "current_source_mismatches": [
+        "frontend/src/creative/StudioGraphInsertion.additive.test.tsx"
+      ],
+      "log": "docs/delivery/v2-development/canvas-insert-ui-r2.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-type-r2.json",
+      "sha256": "fa5bb653f32de2d6671d10c593f94d5e3ff2af9aea509a064aa445453bae21e4",
+      "status": "FAIL",
+      "exit_code": 1,
+      "final_source_evidence": false,
+      "source_count": 2588,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": false,
+      "current_source_mismatches": [
+        "frontend/src/creative/StudioGraphInsertion.additive.test.tsx"
+      ],
+      "log": "docs/delivery/v2-development/canvas-insert-type-r2.log",
+      "log_hash_matches": true
+    }
+  ],
+  "retained_launcher_failure": {
+    "exit_code": 127,
+    "product_execution": false,
+    "runner_receipt": false,
+    "diagnosis": "Label substitution incorrectly changed interpreter r1 to nonexistent r2; launcher-only correction restored approved r1 interpreter.",
+    "log": "docs/delivery/v2-development/canvas-insert-frontend/r2-launch-failure.txt"
+  },
+  "artifacts": [
+    {
+      "path": "docs/CANVAS_POSITIONED_INSERT_HANDOFF.md",
+      "sha256": "9dc328d6a96e71b008729e98ce2452ba8bcab6e417d297ccea6e4832cc0c9d40"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-build-r3.json",
+      "sha256": "2d72204d0e646840629987af166eb5e4188dd6f2943f07b98062f7ca11aa20c4"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-build-r3.log",
+      "sha256": "36eaba8d05be74767d847bfc13884cf2d637e1c93a6b7fde151340cc73fc53c8"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-file-origin-r1.json",
+      "sha256": "1c1bbf7f0b29e755cbac7feda0136066b75e491631a6c23f6e6df7c8dac4d9b9"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-file-origin-r1.log",
+      "sha256": "a0dce9f290c00480017473fc1dbc4272abcd5679270f8e744ecb120ea2a43220"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-file-origin/file-regression-launcher.log",
+      "sha256": "b62c9206b3a5ec1685db05fb56aa2bee5cb214b94eb933852ec5a5cbf831d518"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-file-origin/normal-startup.json",
+      "sha256": "278fd16a308bd7540a343410f8bb95ea43f468277da92231cb736fd0f8e59ccb"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-file-origin/normal-startup.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-file-origin/origin-probe.py",
+      "sha256": "e3712b6b2415a51090293e7d4aa6325aa510970ed9ad59cf053152e00e6d6c6f"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-file-origin/proof-launcher.log",
+      "sha256": "8091e65d82fbb1a9a4cc05ebb646e79d870bb24211de8bebd9c2d967ec0fcba5"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-file-origin/run-file-regression.sh",
+      "sha256": "389ef471c8b830b08798f5ac5be1fef1e024531064aa791ff8d2f0e2752eddfc"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-file-origin/run-proof.sh",
+      "sha256": "8a28bfc7d9a54c4fe540d867bfff702e65f724ee119c1e315576c443a97e5653"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-file-regression-r1.json",
+      "sha256": "e16cabe44cdd161fcd43f311a5f12f68405143c455b3a54ec7bb46e5e61c14da"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-file-regression-r1.log",
+      "sha256": "ff8c154c485096e40fab1e69b3c1d28eedc15c0291579c7aaa447fb42ca82d8e"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-frontend/final-primary-source-map-audit.json",
+      "sha256": "79ac8b651214b3a7b5282918182a45bb2f9b0323c4796f509d4131569ce3ffae"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-frontend/r2-launch-failure.txt",
+      "sha256": "27d38e2d15bc5e56f0614263d369e6f9295096b172faf1f9ccf458a6787a4f58"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-frontend/run-frontend-r1.sh",
+      "sha256": "fc8fea062ecf00c899f093c3ad0482df93d5cecb5fab33d996781f71fd2c4fc1"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-frontend/run-frontend-r2.failed-launch.sh",
+      "sha256": "c79dacbe52ff2ddc45fd42a377d480146649bf049d0141bbee077dc68306dd85"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-frontend/run-frontend-r2.sh",
+      "sha256": "3afcbde360f0a714859dd98d03c5b765b2319738fecf319920d1803889da09c5"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-frontend/run-frontend-r3.sh",
+      "sha256": "1a7667b4e2d446939e6d5e558f2d34b4a42f3532c748d5fde323f763bc38e8bc"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-review-audit.json",
+      "sha256": "dea1cdf15468c4cc9f895f983f1c4c90d6f551bda66bec11989fbf379285921e"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-review-file-r1.json",
+      "sha256": "0c3c14408e34003182e02e99a7e0f805fae58634b7fe1e1c948ba1ae2a66d56c"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-review-file-r1.log",
+      "sha256": "679018129d270c1982e46863b9e358366fd3056c4e7f657f0ec6b227c504b7cc"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-review-origin-r1.json",
+      "sha256": "b2ae89568f329e4b7dc1dc8c0477993ccdef7d64cc5e4924c6e28916e6ede498"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-review-origin-r1.log",
+      "sha256": "cec8d716f08409599700cea5d76a8750a5b71f14923b8733bd9369f8f3378932"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-review-origin/normal-startup.json",
+      "sha256": "7291172dee3f71578e9beac5c78e8829caa3fac07dd1840135001b1bad00ea7c"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-review-origin/normal-startup.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-review-origin/origin-probe.py",
+      "sha256": "e3712b6b2415a51090293e7d4aa6325aa510970ed9ad59cf053152e00e6d6c6f"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-review-origin/proof-launcher.log",
+      "sha256": "03427487789a0817a4b54d1e009f0b978355396ea798c29d751dddeead24220c"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-review-origin/run-file-regression.sh",
+      "sha256": "748fe43c5eee328337abfaa5af42689774e4c6ee055421b239f6c3e5bee4bcc6"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-review-origin/run-proof.sh",
+      "sha256": "9fab99ca8fa019db2f2a01c1b61d75f0867ed3038056167503fa95e3636b4ac8"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-review-origin/run-ui-review.sh",
+      "sha256": "f9c1540b6a8cb2566e0e3abad2b1aecc25e06c6a19e5b57a72a16e7c6aa0bd1e"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-review-ui-r1.json",
+      "sha256": "d86a003d07df7ec548dc3a34da1c101dad6f5efeb9d9f7e7120fe9f0606f6bb7"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-review-ui-r1.log",
+      "sha256": "9431d1042798fa630246df409ec5d1d32f4b1aa856c501c500ea423f48711403"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-token-r3.json",
+      "sha256": "76e657447a88cc549fe47915979b31d56b937a9ae1ad1e9b07c07bd46dd8020c"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-token-r3.log",
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-type-r2.json",
+      "sha256": "fa5bb653f32de2d6671d10c593f94d5e3ff2af9aea509a064aa445453bae21e4"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-type-r2.log",
+      "sha256": "9dd90a2c60339acd259b226e030fc532f4a75f1b841c75a0236aeddeb486f7b5"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-type-r3.json",
+      "sha256": "409126f2d17210f43eea18618e424d91825ee64bb969b76ba6ab14cffc3b7507"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-type-r3.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-ui-r1.json",
+      "sha256": "2e77499cee9e7400805faaf9815e020cb0770280687bde5ece6eb7fa3694d6f3"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-ui-r1.log",
+      "sha256": "88116aec0f9481174f19acb25bd52fd0d5cbadf721f623a28872f543f64b0847"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-ui-r2.json",
+      "sha256": "2734cca6c20a72bd424d0a378ea2cf73e280ebc3b529b090dbac27d78615dbf1"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-ui-r2.log",
+      "sha256": "4b5ee7f2b391b709cc811749c182afc47413b5dbd9a9041de656a780ac5a9972"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-ui-r3.json",
+      "sha256": "429b94d947402a8e7e890cf9f2a177bb9996a2e1092ec26e25f6a5b87c2b1036"
+    },
+    {
+      "path": "docs/delivery/v2-development/canvas-insert-ui-r3.log",
+      "sha256": "fe84e9f264547d6494c0666930b71b0631021818c999def414962b778abfeee3"
+    }
+  ]
+}

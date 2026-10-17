@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-17T08:40:20Z",
+  "method": "Read-only GitHub connector REST GET",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "results": [
+    {
+      "endpoint": "branches/main",
+      "sha": "fed2404c8e30b44061b7139dced45b7f3301601c"
+    },
+    {
+      "endpoint": "pulls/47",
+      "sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "ref": "feature/v2-narrative-platform",
+      "draft": true,
+      "state": "open",
+      "updated_at": "2026-10-16T20:17:15Z"
+    },
+    {
+      "endpoint": "pulls/48",
+      "sha": "58bbaad11360330d51f49fc2bb78a955a26469f0",
+      "ref": "work/dot-usability-20261015",
+      "draft": true,
+      "state": "open",
+      "updated_at": "2026-10-16T07:42:27Z"
+    }
+  ]
+}

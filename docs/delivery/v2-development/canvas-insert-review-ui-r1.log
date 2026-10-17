@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-timeline-waveform/frontend
+
+ ✓ src/creative/GraphCanvas.test.tsx (25 tests) 1246ms
+ ✓ src/creative/StudioGraphInsertion.additive.test.tsx (20 tests) 1187ms
+ ✓ src/creative/GraphCanvas.connection.additive.test.tsx (29 tests) 1134ms
+ ✓ src/creative/StudioGraphConnection.additive.test.tsx (15 tests) 1053ms
+ ✓ src/creative/GraphCanvas.insertion.additive.test.tsx (12 tests) 556ms
+ ✓ src/creative/StudioGraphInsertion.palette.additive.test.tsx (4 tests) 657ms
+
+ Test Files  6 passed (6)
+      Tests  105 passed (105)
+   Start at  18:02:24
+   Duration  11.11s (transform 825ms, setup 49ms, collect 2.09s, tests 5.83s, environment 1.96s, prepare 328ms)
+

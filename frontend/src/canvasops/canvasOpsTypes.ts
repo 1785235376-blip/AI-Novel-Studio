@@ -207,7 +207,15 @@ export type CanvasOpsValidationProblem = { code: string; message: string };
  * 组件 props（仅呈现；所有变更都通过原控制器的回调）
  * ------------------------------------------------------------------ */
 
+export type PositionedPaletteInsertion = {
+  token: object;
+  position: StudioGraphPosition;
+  issue?: string;
+  onCancel: () => void;
+};
+
 export type NodePalettePanelProps = {
+  insertion?: PositionedPaletteInsertion;
   catalog?: StudioGraphCatalog;
   definition: StudioGraphDefinition;
   kind: string;
