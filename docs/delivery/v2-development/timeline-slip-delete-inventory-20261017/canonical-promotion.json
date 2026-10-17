@@ -1,0 +1,12 @@
+{
+  "source_checkpoint": "5935ff4b7115d6a2727491948bb47f0ddc8bd287",
+  "candidate_path": ".runtime/timeline-slip-delete-inventory/candidate-manifest-v2.json.gz",
+  "canonical_path": ".github/ci/coverage_manifest_v2.json.gz",
+  "prior_canonical_sha256": "9fbc659bfb66a9fcca2c4912fd81cd1c857e027d27604a6b7d68c85d0e4be930",
+  "candidate_sha256": "a4eb8eb1647b1cebac56ec7f592b6b34716359827fff17fab1ac76dd0f1d1ebe",
+  "canonical_sha256": "a4eb8eb1647b1cebac56ec7f592b6b34716359827fff17fab1ac76dd0f1d1ebe",
+  "independent_approval_sha256": "a0e7959fc5a2718cc510826375a3a9bbe350a9ef87c605dde09966d5db11c416",
+  "parent_approval_received": true,
+  "byte_exact": true,
+  "tests_executed": false
+}

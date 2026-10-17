@@ -1,0 +1,16 @@
+{
+  "status": "APPROVE_CANDIDATE_GENERATION",
+  "source_commit": "5935ff4b7115d6a2727491948bb47f0ddc8bd287",
+  "canonical_sha256": "9fbc659bfb66a9fcca2c4912fd81cd1c857e027d27604a6b7d68c85d0e4be930",
+  "raw_sha256": "51fa7e676aa57777caaadafe6245bb2ff383717ec93c572ce549def457b03ba1",
+  "rows": 16139,
+  "old_rows_exact": 16117,
+  "new_file_rows": 22,
+  "sources": 2606,
+  "protected_exact": 1289,
+  "companion_hashes": 11,
+  "canonical_unchanged": true,
+  "tests_executed": false,
+  "scope": "Approves owned candidate generation only; canonical promotion requires separate exact-byte review.",
+  "note": "Portable verifier declaration-order defect reported to worker; must be fixed before candidate verification."
+}

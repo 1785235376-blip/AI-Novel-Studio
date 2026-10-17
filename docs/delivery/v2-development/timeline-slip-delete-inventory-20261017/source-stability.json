@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "source_checkpoint": "5935ff4b7115d6a2727491948bb47f0ddc8bd287",
+  "complete_source_brackets": [
+    {
+      "phase": "review",
+      "entries": 2606,
+      "before_sha256": "5e05578bdf6b97fe211ba030d7e29899d2db9d1bd628b3022ad5cd226eb16eec",
+      "after_sha256": "5e05578bdf6b97fe211ba030d7e29899d2db9d1bd628b3022ad5cd226eb16eec",
+      "byte_identical": true
+    },
+    {
+      "phase": "candidate",
+      "entries": 2606,
+      "before_sha256": "5e05578bdf6b97fe211ba030d7e29899d2db9d1bd628b3022ad5cd226eb16eec",
+      "after_sha256": "5e05578bdf6b97fe211ba030d7e29899d2db9d1bd628b3022ad5cd226eb16eec",
+      "byte_identical": true
+    },
+    {
+      "phase": "confirmation",
+      "entries": 2606,
+      "before_sha256": "5e05578bdf6b97fe211ba030d7e29899d2db9d1bd628b3022ad5cd226eb16eec",
+      "after_sha256": "5e05578bdf6b97fe211ba030d7e29899d2db9d1bd628b3022ad5cd226eb16eec",
+      "byte_identical": true
+    }
+  ],
+  "tests_executed": false
+}

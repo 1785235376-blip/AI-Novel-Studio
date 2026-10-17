@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "normal_command": [
+    "-c",
+    "import sys; path=sys.argv[1]; globals()[\"__file__\"]=path; exec(compile(open(path).read(),path,\"exec\"))",
+    "docs/delivery/v2-development/timeline-slip-delete-origin/origin-probe.py",
+    "--parent"
+  ],
+  "actual_runner_command": [
+    "scripts/run_v2_checks.py",
+    "timeline-slip-delete-inventory-origin",
+    "--",
+    "python",
+    "-c",
+    "import sys; path=sys.argv[1]; globals()[\"__file__\"]=path; exec(compile(open(path).read(),path,\"exec\"))",
+    "docs/delivery/v2-development/timeline-slip-delete-origin/origin-probe.py",
+    "--child"
+  ],
+  "comparisons": [
+    {
+      "original": "docs/delivery/v2-development/timeline-slip-delete-origin/normal-startup.json",
+      "original_sha256": "f9d7d1873057ebbcab3aa6015ac5af5b897d55fedf71ba85e9969c72f8d611f7",
+      "recheck": "docs/delivery/v2-development/timeline-slip-delete-inventory-20261017/recheck-normal-startup.stdout.log",
+      "recheck_sha256": "84047c3090b5aa2a4b3e4cf73659ca9a5a956d8bf9fb9795206bb6958e9e517a",
+      "semantic_equal_except_utc": true
+    },
+    {
+      "original": "docs/delivery/v2-development/timeline-slip-delete-origin-r1.log",
+      "original_sha256": "1acaaefb3557a494cd143e0c603b1265b028d52c229fea00db4126c7e25dd9d2",
+      "recheck": "docs/delivery/v2-development/timeline-slip-delete-inventory-20261017/actual-runner-origin.log",
+      "recheck_sha256": "23bc2eea5081dfd8f3a9eb2a3aa912164f4ab325273936fce27f51d48124ce7a",
+      "semantic_equal_except_utc": true
+    }
+  ],
+  "probe_sha256": "e5c68040186dc860252f7b195ecae829a16aa8b0c1844d598c92d07fce765381",
+  "tests_executed": false,
+  "runtime_test_execution": "NOT_RUN"
+}

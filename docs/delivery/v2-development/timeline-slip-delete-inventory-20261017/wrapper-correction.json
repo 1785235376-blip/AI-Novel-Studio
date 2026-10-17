@@ -1,0 +1,8 @@
+{
+  "status": "REJECTED_WRAPPER_ASSERTIONS_CORRECTED",
+  "generator_changed": false,
+  "first_precollection_failure": "Overbroad textual substitution changed 2606 to 3606; generator did not run.",
+  "second_postcollection_failure": "Loaded wrapper retained erroneous 32139 row assertion; raw archived before failure, generator exited zero.",
+  "recovery": "Correct exact numeric assertions; repeat no-write review with unchanged generator.",
+  "tests_executed": false
+}
