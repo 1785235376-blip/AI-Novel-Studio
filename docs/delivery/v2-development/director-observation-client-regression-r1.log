@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/directorObservationClient.test.ts (30 tests) 13ms
+ ✓ src/creative/studioGraphDirectorClient.test.ts (14 tests) 15ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 175ms
+
+ Test Files  3 passed (3)
+      Tests  53 passed (53)
+   Start at  22:12:00
+   Duration  1.77s (transform 346ms, setup 24ms, collect 563ms, tests 203ms, environment 455ms, prepare 158ms)
+

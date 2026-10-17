@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/directorObservationClient.test.ts (30 tests) 12ms
+
+ Test Files  1 passed (1)
+      Tests  30 passed (30)
+   Start at  22:10:50
+   Duration  337ms (transform 108ms, setup 17ms, collect 115ms, tests 12ms, environment 0ms, prepare 62ms)
+

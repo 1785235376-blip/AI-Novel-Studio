@@ -1,0 +1,158 @@
+{
+  "source_commit": "0871c697c57abaee2d8fc0c6b9fb6f8269283031",
+  "status": "PRIMARY_VERIFIED_STAGED_CLIENT_NOT_MOUNTED",
+  "files": {
+    "docs/delivery/v2-development/director-observation-client-20261017/backend-artifact-reuse.json": {
+      "sha256": "6c9d1d7d278e6a17ddf7addacec76e75809b19dffcc52fee17c929a41f505e35",
+      "bytes": 7151
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/final-launch-r1.log": {
+      "sha256": "d04680326f3b85795bc1a9cd6df43f5a795d509e06e14ae57e37957ac748a6e7",
+      "bytes": 2612
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/inspect-retained-backend-artifacts.py": {
+      "sha256": "be7437a25f662b6b3edc45f981dc8b8ddaf8dfd48d8af78954ef03846098a56f",
+      "bytes": 4466
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/index.json": {
+      "sha256": "6c9d1d7d278e6a17ddf7addacec76e75809b19dffcc52fee17c929a41f505e35",
+      "bytes": 7151
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-sdist0/build.log": {
+      "sha256": "2612b50f3bb37f269c40f200cc8b19d5fdec690f3f83ee34be65fd7017852a41",
+      "bytes": 43970
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-sdist0/payload-inventory.json": {
+      "sha256": "5eb7abdff22d2ef341393ecc5e766b325337adfd0246315ed38ebca0f83dbb75",
+      "bytes": 87228
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-sdist0/sdist-receipt.json": {
+      "sha256": "a5edaace04d36ad0f048bdf32bf823ef203f25067a870e2abe57842970abd7dc",
+      "bytes": 118824
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-sdist0/stage-receipt.json": {
+      "sha256": "2948dc63ade5e70ee7812f8299ad4d2b1bc561120f7b4d4c6228cd0c1199baaa",
+      "bytes": 79078
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-sdist1/build.log": {
+      "sha256": "2612b50f3bb37f269c40f200cc8b19d5fdec690f3f83ee34be65fd7017852a41",
+      "bytes": 43970
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-sdist1/payload-inventory.json": {
+      "sha256": "5eb7abdff22d2ef341393ecc5e766b325337adfd0246315ed38ebca0f83dbb75",
+      "bytes": 87228
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-sdist1/sdist-receipt.json": {
+      "sha256": "95466d53fcdd926c0a227696de1b697756a67db8338569c2818b0d764a6991c5",
+      "bytes": 118824
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-sdist1/stage-receipt.json": {
+      "sha256": "2948dc63ade5e70ee7812f8299ad4d2b1bc561120f7b4d4c6228cd0c1199baaa",
+      "bytes": 79078
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-wheel0/build.log": {
+      "sha256": "da481135232fe34cde2ef79c1c4b484f544752da3ef2b930abab45888c42b821",
+      "bytes": 111833
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-wheel0/payload-inventory.json": {
+      "sha256": "e636a3de8b09a51b79270f75f7db4b8701b0019e588ccd81a695482ead0d09c7",
+      "bytes": 76319
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-wheel0/stage-receipt.json": {
+      "sha256": "2948dc63ade5e70ee7812f8299ad4d2b1bc561120f7b4d4c6228cd0c1199baaa",
+      "bytes": 79078
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-wheel0/wheel-receipt.json": {
+      "sha256": "a5ebc97937fc9f87a1e40064cd56caf7863731e3638d5cbd21a491af2db69ccb",
+      "bytes": 108397
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-wheel1/build.log": {
+      "sha256": "09af723fa01e722c6647ba6a75688d743192d6c91190b908e5585be8fd73bd40",
+      "bytes": 111833
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-wheel1/payload-inventory.json": {
+      "sha256": "e636a3de8b09a51b79270f75f7db4b8701b0019e588ccd81a695482ead0d09c7",
+      "bytes": 76319
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-wheel1/stage-receipt.json": {
+      "sha256": "2948dc63ade5e70ee7812f8299ad4d2b1bc561120f7b4d4c6228cd0c1199baaa",
+      "bytes": 79078
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-wheel1/wheel-receipt.json": {
+      "sha256": "62df7fab6a8a0bc52530a29e269915e33e1d96949cbc1cf277c4f56363c5847a",
+      "bytes": 108397
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/run-final-r1.sh": {
+      "sha256": "33c07487733f51720079022ca74fe158cb04955a5f87b7d613efd0913a626b80",
+      "bytes": 1183
+    },
+    "docs/delivery/v2-development/director-observation-client-20261017/wire-fixture-provenance.sha256": {
+      "sha256": "4b9ba2de18fc0479b33719612a7516e0e9ddaa9a7727cf7ad91fe2833c38b4b3",
+      "bytes": 321
+    },
+    "docs/delivery/v2-development/director-observation-client-build-r1.json": {
+      "sha256": "6e813a2cd1d389d428c64ba066a6bab0cb8b973a00a24a1c416d9d943431e2ff",
+      "bytes": 625534
+    },
+    "docs/delivery/v2-development/director-observation-client-build-r1.log": {
+      "sha256": "34d29be5e369d75cd39870fb5912edace2fbe01d230d2a12dd6f78052ac29b99",
+      "bytes": 1679
+    },
+    "docs/delivery/v2-development/director-observation-client-r1.json": {
+      "sha256": "93f8961fe1da2e520da56bad8d968bd5953f867af618551793471ca59d112bff",
+      "bytes": 625622
+    },
+    "docs/delivery/v2-development/director-observation-client-r1.log": {
+      "sha256": "a73a0f4c2bdaed7dc53c01a920caff40dcc00518c9282e3dba4c78ba8e458592",
+      "bytes": 335
+    },
+    "docs/delivery/v2-development/director-observation-client-regression-r1.json": {
+      "sha256": "f2763c0cbba71fbf43fde73db897d95da457aa17b3936bccb8f034f52bdfbcfe",
+      "bytes": 625861
+    },
+    "docs/delivery/v2-development/director-observation-client-regression-r1.log": {
+      "sha256": "dd46cad44295dbe5da9854226b0d8f671d52123ecc25b3947581d719f5380371",
+      "bytes": 478
+    },
+    "docs/delivery/v2-development/director-observation-client-regression-r2.json": {
+      "sha256": "c3a14a4419621bf84038de94f97e4e730f6e3e56b69ee0e849802d8421b53bf2",
+      "bytes": 625929
+    },
+    "docs/delivery/v2-development/director-observation-client-regression-r2.log": {
+      "sha256": "ef5435419eb18a6b25631a7b41f1fa2b9b76ea5cc42cac6832592597378bc8c5",
+      "bytes": 633
+    },
+    "docs/delivery/v2-development/director-observation-client-token-r1.json": {
+      "sha256": "336c93cb70067c8f5dee6a9913a4cb20d732f89d1feae018f63541cf2c1488a0",
+      "bytes": 625470
+    },
+    "docs/delivery/v2-development/director-observation-client-token-r1.log": {
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "bytes": 31
+    },
+    "docs/delivery/v2-development/director-observation-client-type-r1.json": {
+      "sha256": "58b2bf928984b38ced5e59d8c11574c883362423bfc35606efb0f50340995aab",
+      "bytes": 625532
+    },
+    "docs/delivery/v2-development/director-observation-client-type-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/director-observation-wire-fixture-r1.json": {
+      "sha256": "fef0358827f051ef000f45dca4a0b2209204f73c8e2fd239bdc2b31bd8e01373",
+      "bytes": 625281
+    },
+    "docs/delivery/v2-development/director-observation-wire-fixture-r1.log": {
+      "sha256": "b0c7ff99bd44e261ee5dec18ed3d09cc192be2597ebf5bfad6e414544c28ce41",
+      "bytes": 1189
+    },
+    "docs/delivery/v2-development/director-observation-wire-fixture-r2.json": {
+      "sha256": "8bf0b5424bae38fb3f075706077c2c83cedb600aa5ae98c8aaa87ea411503788",
+      "bytes": 625819
+    },
+    "docs/delivery/v2-development/director-observation-wire-fixture-r2.log": {
+      "sha256": "68b698d25ba1576b1154de427fc934e5eb72b90d5f41685daf1f0476a9fb8534",
+      "bytes": 1189
+    }
+  }
+}

@@ -1,0 +1,145 @@
+{
+  "status": "PASS_REUSED_BACKEND_ARCHIVE_PAYLOADS",
+  "fresh_packaging_tests": false,
+  "frontend_integration_acceptance": false,
+  "manifest_sha256": "77c0642c0562327caa6dbe4ac59a2d7788ca641f12c3cf52505c230134462a7e",
+  "archives": [
+    {
+      "archive": ".runtime/v2-checks/director-observation-packaging-r1/pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "kind": "sdist",
+      "sha256": "635895a6cd9a1e3c976fafd0fe1d690f0d3da5cf3646a9d34ca1486e405a350f",
+      "payload_file_count": 521,
+      "changed_modules": {
+        "app/jobs.py": {
+          "member": "ai_novel_studio-0.7.0/app/jobs.py",
+          "sha256": "8d76db6b09cd8efedecca565b9f550c3fdb2ef082bdb2d5d0fd0c81293aa46b2"
+        },
+        "app/creative/generation.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/generation.py",
+          "sha256": "c5ed3c2bc87f31a7dac9a2d0b5f2e106b8e5abe83ca1b5f6bf89e34a468878be"
+        },
+        "app/creative/director_terminal_evidence.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_terminal_evidence.py",
+          "sha256": "2d68c76a3cc26b7dd2b7b71b68cd1e26f3ece4610d4e5411ac7356a4a89ed7bf"
+        },
+        "app/creative/director_lifecycle.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_lifecycle.py",
+          "sha256": "667257bdfd76724e74813a336878e08d5be65465e7a8fba0a4d175faa070b176"
+        },
+        "app/creative/api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/api.py",
+          "sha256": "734f331834a621de4fe69dc9ffb8c54ab66a54f3370bcfb06ef08b2bd2400f7d"
+        },
+        "app/creative/director_observation_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_observation_api.py",
+          "sha256": "e6e4b6fdf534d84b37a99666f9ca6b6da6163cc7d53f38a2b615569f38c9212b"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-sdist0"
+    },
+    {
+      "archive": ".runtime/v2-checks/director-observation-packaging-r1/pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "kind": "sdist",
+      "sha256": "cbcc0c664e96b112535b867eafb6f18eb915f44372aec77c21eb80997244c91f",
+      "payload_file_count": 521,
+      "changed_modules": {
+        "app/jobs.py": {
+          "member": "ai_novel_studio-0.7.0/app/jobs.py",
+          "sha256": "8d76db6b09cd8efedecca565b9f550c3fdb2ef082bdb2d5d0fd0c81293aa46b2"
+        },
+        "app/creative/generation.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/generation.py",
+          "sha256": "c5ed3c2bc87f31a7dac9a2d0b5f2e106b8e5abe83ca1b5f6bf89e34a468878be"
+        },
+        "app/creative/director_terminal_evidence.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_terminal_evidence.py",
+          "sha256": "2d68c76a3cc26b7dd2b7b71b68cd1e26f3ece4610d4e5411ac7356a4a89ed7bf"
+        },
+        "app/creative/director_lifecycle.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_lifecycle.py",
+          "sha256": "667257bdfd76724e74813a336878e08d5be65465e7a8fba0a4d175faa070b176"
+        },
+        "app/creative/api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/api.py",
+          "sha256": "734f331834a621de4fe69dc9ffb8c54ab66a54f3370bcfb06ef08b2bd2400f7d"
+        },
+        "app/creative/director_observation_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_observation_api.py",
+          "sha256": "e6e4b6fdf534d84b37a99666f9ca6b6da6163cc7d53f38a2b615569f38c9212b"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-sdist1"
+    },
+    {
+      "archive": ".runtime/v2-checks/director-observation-packaging-r1/pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "kind": "wheel",
+      "sha256": "77aca674001bb4fa8be8e736383e91debd67c690631e1000b737ec6f42ce1688",
+      "payload_file_count": 517,
+      "changed_modules": {
+        "app/jobs.py": {
+          "member": "app/jobs.py",
+          "sha256": "8d76db6b09cd8efedecca565b9f550c3fdb2ef082bdb2d5d0fd0c81293aa46b2"
+        },
+        "app/creative/generation.py": {
+          "member": "app/creative/generation.py",
+          "sha256": "c5ed3c2bc87f31a7dac9a2d0b5f2e106b8e5abe83ca1b5f6bf89e34a468878be"
+        },
+        "app/creative/director_terminal_evidence.py": {
+          "member": "app/creative/director_terminal_evidence.py",
+          "sha256": "2d68c76a3cc26b7dd2b7b71b68cd1e26f3ece4610d4e5411ac7356a4a89ed7bf"
+        },
+        "app/creative/director_lifecycle.py": {
+          "member": "app/creative/director_lifecycle.py",
+          "sha256": "667257bdfd76724e74813a336878e08d5be65465e7a8fba0a4d175faa070b176"
+        },
+        "app/creative/api.py": {
+          "member": "app/creative/api.py",
+          "sha256": "734f331834a621de4fe69dc9ffb8c54ab66a54f3370bcfb06ef08b2bd2400f7d"
+        },
+        "app/creative/director_observation_api.py": {
+          "member": "app/creative/director_observation_api.py",
+          "sha256": "e6e4b6fdf534d84b37a99666f9ca6b6da6163cc7d53f38a2b615569f38c9212b"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-wheel0"
+    },
+    {
+      "archive": ".runtime/v2-checks/director-observation-packaging-r1/pytest/public-wheel1/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "kind": "wheel",
+      "sha256": "35ac18ec0df363d15d6a9d93611848d99d9ed34210368e045c90c09db2c33679",
+      "payload_file_count": 517,
+      "changed_modules": {
+        "app/jobs.py": {
+          "member": "app/jobs.py",
+          "sha256": "8d76db6b09cd8efedecca565b9f550c3fdb2ef082bdb2d5d0fd0c81293aa46b2"
+        },
+        "app/creative/generation.py": {
+          "member": "app/creative/generation.py",
+          "sha256": "c5ed3c2bc87f31a7dac9a2d0b5f2e106b8e5abe83ca1b5f6bf89e34a468878be"
+        },
+        "app/creative/director_terminal_evidence.py": {
+          "member": "app/creative/director_terminal_evidence.py",
+          "sha256": "2d68c76a3cc26b7dd2b7b71b68cd1e26f3ece4610d4e5411ac7356a4a89ed7bf"
+        },
+        "app/creative/director_lifecycle.py": {
+          "member": "app/creative/director_lifecycle.py",
+          "sha256": "667257bdfd76724e74813a336878e08d5be65465e7a8fba0a4d175faa070b176"
+        },
+        "app/creative/api.py": {
+          "member": "app/creative/api.py",
+          "sha256": "734f331834a621de4fe69dc9ffb8c54ab66a54f3370bcfb06ef08b2bd2400f7d"
+        },
+        "app/creative/director_observation_api.py": {
+          "member": "app/creative/director_observation_api.py",
+          "sha256": "e6e4b6fdf534d84b37a99666f9ca6b6da6163cc7d53f38a2b615569f38c9212b"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/director-observation-client-20261017/packaging-reuse-evidence/public-wheel1"
+    }
+  ],
+  "all_runtime_source_bytes_verified": true,
+  "application_imported": false,
+  "installed": false,
+  "extracted": false,
+  "windows_native_browser_postgres_acceptance": "NOT_RUN"
+}
