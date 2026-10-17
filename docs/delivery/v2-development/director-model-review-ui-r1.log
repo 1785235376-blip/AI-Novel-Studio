@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/IndependentDirectorModelReview.test.tsx (4 tests) 430ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  23:31:28
+   Duration  1.39s (transform 214ms, setup 17ms, collect 383ms, tests 430ms, environment 297ms, prepare 63ms)
+

@@ -1,0 +1,130 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/creative/IndependentDirectorModelReview.test.tsx (5 tests | 1 failed) 482ms
+   × does not discard edited local review when a read finds another adoption 84ms
+     → Unable to find a label with the text of: 模型导演草稿标题
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"独立分镜模型导演审核"[39m
+      [33mclass[39m=[32m"creative-model-controls"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m模型分析与人工审核[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m仅使用已验证、零费用的本地文字路由。生成建议保留来源、理由与不确定性；不会自动执行媒体或保存画布。[0m
+      [36m</p>[39m
+      [36m<p>[39m
+        [0m原分镜 [0m
+        [0m2f03127a-ec8e-46f9-bad0-edc3fb868353[0m
+        [0m · v[0m
+        [0m1[0m
+      [36m</p>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m读取原模型任务状态[0m
+      [36m</button>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+      [36m>[39m
+        [0mADOPTED_DRAFT[0m
+      [36m</span>[39m
+      [36m<p>[39m
+        [0m任务 [0m
+        [0m53e5f0c4-631b-44a3-b314-593945f3a4e5[0m
+        [0m · 结算 [0m
+        [0mSETTLED[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--success"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m已采用为独立导演 DRAFT，画布尚未保存。[0m
+      [36m</div>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m核对并打开模型导演草稿[0m
+      [36m</button>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  23:32:27
+   Duration  1.48s (transform 209ms, setup 17ms, collect 379ms, tests 482ms, environment 332ms, prepare 75ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/IndependentDirectorModelReview.test.tsx > does not discard edited local review when a read finds another adoption
+TestingLibraryElementError: Unable to find a label with the text of: 模型导演草稿标题
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"独立分镜模型导演审核"[39m
+      [33mclass[39m=[32m"creative-model-controls"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m模型分析与人工审核[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m仅使用已验证、零费用的本地文字路由。生成建议保留来源、理由与不确定性；不会自动执行媒体或保存画布。[0m
+      [36m</p>[39m
+      [36m<p>[39m
+        [0m原分镜 [0m
+        [0m2f03127a-ec8e-46f9-bad0-edc3fb868353[0m
+        [0m · v[0m
+        [0m1[0m
+      [36m</p>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m读取原模型任务状态[0m
+      [36m</button>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+      [36m>[39m
+        [0mADOPTED_DRAFT[0m
+      [36m</span>[39m
+      [36m<p>[39m
+        [0m任务 [0m
+        [0m53e5f0c4-631b-44a3-b314-593945f3a4e5[0m
+        [0m · 结算 [0m
+        [0mSETTLED[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--success"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m已采用为独立导演 DRAFT，画布尚未保存。[0m
+      [36m</div>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m核对并打开模型导演草稿[0m
+      [36m</button>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getAllByLabelText ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/queries/label-text.js:111:38
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/creative/IndependentDirectorModelReview.test.tsx:74:17
+     72|  e.json.mockResolvedValueOnce(remote as never);click('读取原模型任务状…
+     73|  await screen.findByText('ADOPTED_DRAFT');
+     74|  expect((screen.getByLabelText('模型导演草稿标题') as HTMLInputElement…
+       |                 ^
+     75|  expect(e.props.onDocument).not.toHaveBeenCalled();expect(screen.query…
+     76| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
