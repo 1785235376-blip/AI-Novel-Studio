@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "docs/delivery/v2-development/director-full-process-20261017/native-smoke.py", line 62, in <module>
+    with client:
+         ^^^^^^
+  File "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/httpx/_client.py", line 1283, in __enter__
+    raise RuntimeError(msg)
+RuntimeError: Cannot open a client instance more than once.
+{"status": "FAIL", "response_mocks": false, "development_sessions": false, "lifespan": "original", "model_requests": "NOT_REQUESTED", "browser": "NOT_RUN", "platform": "Linux cloud, not Windows", "processes": [{"pid": 8, "phase": "first", "port": 51007, "stopped": true}], "failure_type": "RuntimeError", "failure": "Cannot open a client instance more than once.", "calls": []}

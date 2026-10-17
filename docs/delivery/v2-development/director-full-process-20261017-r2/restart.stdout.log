@@ -1,0 +1,8 @@
+INFO:     127.0.0.1:57024 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57024 - "POST /api/packaged/bootstrap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57024 - "GET /api/projects/51f12604-70c8-414d-9349-0bd5e3f784b1/studio/graphs/e9b8957c-4d09-4e3c-b8fd-5674d2d1b935 HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:57024 - "POST /api/packaged/initial-workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57024 - "GET /api/projects/51f12604-70c8-414d-9349-0bd5e3f784b1/studio/graphs/e9b8957c-4d09-4e3c-b8fd-5674d2d1b935 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57024 - "GET /api/novels/51f12604-70c8-414d-9349-0bd5e3f784b1/experimental/creative/documents/c39d55ca-a461-4eac-ad9c-163049452692 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57024 - "PUT /api/novels/51f12604-70c8-414d-9349-0bd5e3f784b1/experimental/creative/documents/c39d55ca-a461-4eac-ad9c-163049452692 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57024 - "GET /api/projects/51f12604-70c8-414d-9349-0bd5e3f784b1/studio/graphs/e9b8957c-4d09-4e3c-b8fd-5674d2d1b935 HTTP/1.1" 200 OK

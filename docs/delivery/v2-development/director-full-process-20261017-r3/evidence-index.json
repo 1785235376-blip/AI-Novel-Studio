@@ -1,0 +1,14 @@
+{
+  "status": "PASS_ORIGINAL_RUNNER_AND_NATIVE_PROCESS",
+  "source_commit": "0c1729c",
+  "same_source_map_as_graph_native_gate": true,
+  "receipt_sha256": "c614a4109fb7a6a00aab95fa9a0ee57cd5674cbae6a8d07145295398ed6c177b",
+  "files": {
+    "first.stderr.log": "1cdb90da08491b5ddf7b4a1924e7317b29ef43d72cfd9b196ed4e573cf1ddbae",
+    "first.stdout.log": "1f7f90be8be096bc9fe9a1d88a9642df3d639ab3be04fa1a8a629a57d47eb26f",
+    "native-smoke.py": "096a2c60e2259c3b4c97f296cce85c86f0ae39f9906febea18e5ce95c685375b",
+    "restart.stderr.log": "7e4f54c0ce6fbf05323bd4224ec9c6f03fc4baea2f1d2bf3b54a9c79f3df099c",
+    "restart.stdout.log": "a88136bc82f91820a9d4b2ea0bb5445e9e44d145fb6d0ad3748d94d9e9402a11",
+    "result.json": "34baea1bd0963a1762746bb4b54cbb7a0af56155701556b8bf7849550c0ddd94"
+  }
+}

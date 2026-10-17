@@ -1,0 +1,9 @@
+INFO:     127.0.0.1:56434 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56434 - "POST /api/packaged/bootstrap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56434 - "GET /api/projects/acb4f900-281a-46e6-b012-7fb1b4ffe4d3/studio/graphs/43d42285-901a-4d9f-b413-4347de7ef827 HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:56434 - "POST /api/packaged/initial-workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56434 - "GET /api/projects/acb4f900-281a-46e6-b012-7fb1b4ffe4d3/studio/graphs/43d42285-901a-4d9f-b413-4347de7ef827 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56434 - "GET /api/v1/projects/acb4f900-281a-46e6-b012-7fb1b4ffe4d3/studio/graphs/43d42285-901a-4d9f-b413-4347de7ef827 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56434 - "GET /api/novels/acb4f900-281a-46e6-b012-7fb1b4ffe4d3/experimental/creative/documents/08f4088e-ac8d-4d93-99aa-0a308f17f90f HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56434 - "PUT /api/novels/acb4f900-281a-46e6-b012-7fb1b4ffe4d3/experimental/creative/documents/08f4088e-ac8d-4d93-99aa-0a308f17f90f HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56434 - "GET /api/projects/acb4f900-281a-46e6-b012-7fb1b4ffe4d3/studio/graphs/43d42285-901a-4d9f-b413-4347de7ef827 HTTP/1.1" 200 OK

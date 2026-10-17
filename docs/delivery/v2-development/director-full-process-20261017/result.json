@@ -1,0 +1,20 @@
+{
+  "status": "FAIL",
+  "response_mocks": false,
+  "development_sessions": false,
+  "lifespan": "original",
+  "model_requests": "NOT_REQUESTED",
+  "browser": "NOT_RUN",
+  "platform": "Linux cloud, not Windows",
+  "processes": [
+    {
+      "pid": 8,
+      "phase": "first",
+      "port": 51007,
+      "stopped": true
+    }
+  ],
+  "failure_type": "RuntimeError",
+  "failure": "Cannot open a client instance more than once.",
+  "calls": []
+}
