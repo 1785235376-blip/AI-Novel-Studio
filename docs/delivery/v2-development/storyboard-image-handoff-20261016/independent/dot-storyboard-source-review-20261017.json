@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-17T00:10:40.210Z",
+  "worktree": "/workspace/scratch/20a0022d2b33/studio-storyboard-handoff",
+  "base": "d11ea893a9deb4c2ceda23a4383f83054e9f25dd",
+  "source_files": [
+    {
+      "path": "frontend/src/creative/StudioStoryboardAssetHandoff.tsx",
+      "sha256": "3e217e832cbf02c65490f7d7181f873f4fe53fbf2cc070c79ba77cb4ff0ec9ae",
+      "git_blob": "b46802549141e90d21459aa290a0534e1ac0609c",
+      "matches_independent_snapshot": true
+    },
+    {
+      "path": "frontend/src/creative/useStoryboardProductionController.ts",
+      "sha256": "6c534b1bc30627dda8df84db41285f1d7ec2460bbfbe73f981ee89111f8d2219",
+      "git_blob": "b0ba5dcbec6063ba9b8fe1806bdef8afd254edc4",
+      "matches_independent_snapshot": true
+    },
+    {
+      "path": "frontend/src/creative/StoryboardProductionPanel.tsx",
+      "sha256": "51d1db373362f329cdc4904153d94e614eb80d9d826694f3b0398cff97f8f20a",
+      "git_blob": "b0bc42f1a8790dc576ca726c702dcb83e310d58a",
+      "matches_independent_snapshot": true
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioWorkspace.tsx",
+      "sha256": "1bc88c259d55786df03943092fe98b91267e4694eeb995673eb3404c99f0ae83",
+      "git_blob": "7f38e27192284d6156d61dff696795fbc3bb4446",
+      "matches_independent_snapshot": true
+    },
+    {
+      "path": "frontend/src/creative/StoryboardImageHandoff.additive.test.tsx",
+      "sha256": "5e5e78a1f59f497899f44ae58219263b4b8a62cbafb27e95d9c35d019c9c4dcf",
+      "git_blob": "ccdafb453251d90177a91dd7ffb6c31311bd1aa9",
+      "matches_independent_snapshot": true
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx",
+      "sha256": "0ddfa24ce081acf505be1756bb605d9d7b4440d9f1745c7763d40c694e25e746",
+      "git_blob": "6ed0169c98aa9103e7b48a92677ca78e9726dd89",
+      "matches_independent_snapshot": true
+    },
+    {
+      "path": "frontend/src/creative/StudioStoryboardAssetHandoff.additive.test.tsx",
+      "sha256": "2f0c3efaf380e0c352bb41d63fec6aa47f1cbe05bc1dcc0d5a0f8416c5d2d68c",
+      "git_blob": "9d69466a8c69d325a17ea8393fa01eb6c14b5128",
+      "matches_independent_snapshot": true
+    }
+  ],
+  "unchanged_boundaries": [
+    {
+      "path": ".github/ci/coverage_manifest.json.gz",
+      "sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+      "matches_base": true
+    },
+    {
+      "path": ".github/ci/coverage_manifest_v2.json.gz",
+      "sha256": "7ebea9c335c45a200ef07f2609e4cb1ad7113c6780400b143d122d7692a7a7b4",
+      "matches_base": true
+    },
+    {
+      "path": ".github/ci/suite_coverage.py",
+      "sha256": "570892af0975c125868710e250eb7f30cc5e51ba7cbef9429a3b0f8f10238da7",
+      "matches_base": true
+    },
+    {
+      "path": ".github/ci/coverage_reconcile.py",
+      "sha256": "f097904d51cc21cb6f1ce8dcc688f692cf89bdd473f3952605eba3b1ae02e66a",
+      "matches_base": true
+    },
+    {
+      "path": ".github/ci/postgres_gate.py",
+      "sha256": "d18ee804595ab98f8aec4c25745a7961e65a36755e318c8f4f257663b4358a8c",
+      "matches_base": true
+    },
+    {
+      "path": "scripts/extend_v2_coverage_manifest.py",
+      "sha256": "337466ae33d15b2aafaeb15f2191ccdb0c65b22274e1b4d98ba10501dd30135e",
+      "matches_base": true
+    },
+    {
+      "path": "scripts/run_v2_checks.py",
+      "sha256": "64cf16c26412c5a1e36a1d4fb799519111ad409f7594ae15aa0b158e53396cd5",
+      "matches_base": true
+    }
+  ],
+  "changed_tracked_source_paths": [
+    "frontend/src/creative/IndependentStudioWorkspace.tsx",
+    "frontend/src/creative/StoryboardProductionPanel.tsx",
+    "frontend/src/creative/useStoryboardProductionController.ts"
+  ],
+  "findings": "Reported stale wrapper admission, authority projection/retirement, post-success 4xx uncertainty, full shot/body/source provenance acceptance, legal authored shot ordering, and retired-loading issues are corrected in this snapshot with targeted tests.",
+  "result": "PASS: source slice ready for commit with byte-preserved evidence and final count updates.",
+  "acceptance": {
+    "focused_suites": 6,
+    "passed": 178,
+    "new_cases": 131,
+    "unchanged_regressions": 47,
+    "forced_typecheck": "PASS",
+    "production_build": "PASS with retained existing chunk-size warning",
+    "global_tokens": "PASS",
+    "scoped_tokens": "PASS",
+    "frontend_snapshot_count": 1274,
+    "sources_changed": false
+  },
+  "limitations": [
+    "UNKNOWN binding outcomes remain locked because original API has no request-specific recovery identifier. Current observations do not prove this request outcome.",
+    "Controlled frontend tests only; no real HTTP/File/PG/browser/native/provider/model/full-release acceptance."
+  ],
+  "independent_artifacts_prefix": "/tmp/dot-storyboard-independent-20261017"
+}

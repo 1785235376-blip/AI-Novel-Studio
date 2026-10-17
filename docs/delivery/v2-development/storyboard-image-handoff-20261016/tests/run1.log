@@ -1,0 +1,16 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-storyboard-handoff/frontend
+
+ ✓ src/creative/StoryboardProductionPanel.phase4.test.tsx (24 tests) 1127ms
+ ✓ src/creative/StoryboardImageHandoff.additive.test.tsx (36 tests) 5566ms
+ ✓ src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx (4 tests) 2221ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > keeps route/selection/inspection GET-only and sends one exact original-owner POST on final click 833ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > preserves dirty-navigation cancellation and requires explicit discard before entering 501ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > cancelled recipient closes only after dirty confirmation and never saves 470ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > source replacement after preview is rejected without any write 416ms
+
+ Test Files  3 passed (3)
+      Tests  64 passed (64)
+   Start at  08:49:38
+   Duration  13.09s (transform 1.77s, setup 27ms, collect 2.76s, tests 8.91s, environment 889ms, prepare 141ms)
+

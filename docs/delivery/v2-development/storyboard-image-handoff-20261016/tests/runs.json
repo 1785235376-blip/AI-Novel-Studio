@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "worktree": "/workspace/scratch/20a0022d2b33/studio-storyboard-handoff",
+  "working_directory": "frontend",
+  "base_commit": "d11ea893a9deb4c2ceda23a4383f83054e9f25dd",
+  "runner": "Vitest 2.1.9",
+  "run_policy": "Exclusive parent-granted windows; one worker; default timeouts; cache disabled. No installed packages, browser tests, paid calls, Python, pushes or commits.",
+  "final_unique_cases": 176,
+  "runs": [
+    {
+      "run": 1,
+      "started_utc": "2026-10-16T23:49:38Z",
+      "exit_code": 0,
+      "suites": 3,
+      "passed": 64,
+      "failed": 0,
+      "total": 64,
+      "source_changed": false,
+      "acceptance": "Historical stable intermediate run only; superseded by run3.",
+      "command": "./node_modules/.bin/vitest run src/creative/StoryboardImageHandoff.additive.test.tsx src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx src/creative/StoryboardProductionPanel.phase4.test.tsx --maxWorkers=1 --minWorkers=1 --no-file-parallelism --no-cache",
+      "source_snapshots": {
+        "before": "run1.before.sha256",
+        "after": "run1.after.sha256"
+      },
+      "raw_log": "run1.log",
+      "log_sha256": "2e977f3149844b767658308c52507b7940308d4ee453718895d48893607634b6"
+    },
+    {
+      "run": 2,
+      "started_utc": "2026-10-16T23:53:34Z",
+      "exit_code": 1,
+      "suites": 5,
+      "passed": 124,
+      "failed": 17,
+      "total": 141,
+      "source_changed": true,
+      "acceptance": "Diagnostic only, never acceptance. Runtime owner disclosed source edit overlap at 2026-10-16T23:53:46Z. All 17 failures were actual mounted-host entry retirement failures. Automatic production asset read acquired unrelated busy semaphore on handoff entry; fixed subsequently. Assertions were not weakened.",
+      "command": "./node_modules/.bin/vitest run src/creative/StoryboardImageHandoff.additive.test.tsx src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx src/creative/StoryboardProductionPanel.phase4.test.tsx src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx src/creative/IndependentStudioWorkspace.test.tsx --maxWorkers=1 --minWorkers=1 --no-file-parallelism --no-cache",
+      "source_snapshots": {
+        "before": "run2.before.sha256",
+        "after": "run2.after.sha256"
+      },
+      "raw_log": "run2.log",
+      "log_sha256": "eaad121905a470f3ee4aa335c24316179dc7e40e1493ac4817a93abcf4eaa364"
+    },
+    {
+      "run": 3,
+      "started_utc": "2026-10-16T23:56:15Z",
+      "exit_code": 0,
+      "suites": 5,
+      "passed": 145,
+      "failed": 0,
+      "total": 145,
+      "source_changed": false,
+      "acceptance": "Stable targeted verification:145 unique cases; retained historical receipt, superseded by expanded run4.",
+      "command": "./node_modules/.bin/vitest run src/creative/StoryboardImageHandoff.additive.test.tsx src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx src/creative/StoryboardProductionPanel.phase4.test.tsx src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx src/creative/IndependentStudioWorkspace.test.tsx --maxWorkers=1 --minWorkers=1 --no-file-parallelism --no-cache",
+      "source_snapshots": {
+        "before": "run3.before.sha256",
+        "after": "run3.after.sha256"
+      },
+      "raw_log": "run3.log",
+      "log_sha256": "8ff5c976117fd50d2e371a857f5969cee4d3daf596e10ac78f9fb691537b43a0"
+    },
+    {
+      "run": 4,
+      "started_utc": "2026-10-17T00:01:26Z",
+      "exit_code": 0,
+      "suites": 6,
+      "passed": 168,
+      "failed": 0,
+      "total": 168,
+      "source_changed": false,
+      "acceptance": "Stable expanded verification:168 unique cases, retained historical receipt superseded by run5.",
+      "command": "./node_modules/.bin/vitest run src/creative/StoryboardImageHandoff.additive.test.tsx src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx src/creative/StoryboardProductionPanel.phase4.test.tsx src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx src/creative/IndependentStudioWorkspace.test.tsx src/creative/StudioStoryboardAssetHandoff.additive.test.tsx --maxWorkers=1 --minWorkers=1 --no-file-parallelism --no-cache",
+      "source_snapshots": {
+        "before": "run4.before.sha256",
+        "after": "run4.after.sha256"
+      },
+      "raw_log": "run4.log",
+      "log_sha256": "074a5aa4e9ddb9964e08ecc7c36f4759d8d8b0e42015bde7cc998453965926a6"
+    },
+    {
+      "run": 5,
+      "started_utc": "2026-10-17T00:04:51Z",
+      "exit_code": 0,
+      "suites": 6,
+      "passed": 176,
+      "failed": 0,
+      "total": 176,
+      "source_changed": false,
+      "acceptance": "Final stable targeted verification:176 unique cases including129 additive and47 unchanged regressions. Adds owner-output ABA fences without treating callback identity as authority change. Do not sum reruns.",
+      "command": "./node_modules/.bin/vitest run src/creative/StoryboardImageHandoff.additive.test.tsx src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx src/creative/StoryboardProductionPanel.phase4.test.tsx src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx src/creative/IndependentStudioWorkspace.test.tsx src/creative/StudioStoryboardAssetHandoff.additive.test.tsx --maxWorkers=1 --minWorkers=1 --no-file-parallelism --no-cache",
+      "source_snapshots": {
+        "before": "run5.before.sha256",
+        "after": "run5.after.sha256"
+      },
+      "raw_log": "run5.log",
+      "log_sha256": "e6ff0556d1a2c8ef2760434ecff36d4537ef3fdaaa2756bfff876681d334e454"
+    }
+  ],
+  "typechecks": [
+    {
+      "attempt": "typecheck4",
+      "command": "./node_modules/.bin/tsc -b --force --pretty false",
+      "exit_code": 0,
+      "source_changed": false,
+      "raw_log": "typecheck4.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_snapshots": {
+        "before": "typecheck4.before.sha256",
+        "after": "typecheck4.after.sha256"
+      },
+      "note": "Forced full TypeScript check after adding direct wrapper tests; zero-byte stdout/stderr means no diagnostics."
+    },
+    {
+      "attempt": "typecheck5",
+      "command": "./node_modules/.bin/tsc -b --force --pretty false",
+      "exit_code": 0,
+      "source_changed": false,
+      "raw_log": "typecheck5.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_snapshots": {
+        "before": "typecheck5.before.sha256",
+        "after": "typecheck5.after.sha256"
+      },
+      "note": "Final forced full TypeScript check after owner-output ABA cases; no diagnostics."
+    }
+  ]
+}

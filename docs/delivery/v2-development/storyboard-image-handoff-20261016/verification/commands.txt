@@ -1,0 +1,11 @@
+# CWD frontend; each command runs sequentially, using already-linked dependencies.
+./node_modules/.bin/tsc -b --force --pretty false
+# Initial failure retained; explicit union-generic correction then new snapshot.
+./node_modules/.bin/tsc -b --force --pretty false
+./node_modules/.bin/vite build
+# CWD repository root
+node scripts/check_ui_design_tokens.mjs
+# Scoped raw-color scan: four runtime paths listed in source.final.before.sha256,
+# excluding test paths; regex /#[0-9a-f]{3,8}\b|\brgb\(|\bhsl\(/i, line by line.
+# CWD frontend
+sha256sum -c /tmp/storyboard-handoff-verification/source.final.before.sha256

@@ -1,0 +1,45 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-storyboard-handoff/frontend
+
+ ✓ src/creative/StoryboardProductionPanel.phase4.test.tsx (24 tests) 1227ms
+ ✓ src/creative/StoryboardImageHandoff.additive.test.tsx (82 tests) 11603ms
+ ✓ src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx (15 tests) 6929ms
+   ✓ mounted original asset browser to timeline handoff > routes a real browser reference into the original timeline preview and exact draft only after explicit acceptance 740ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 时间线模块 747ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 图片模块 708ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 视频模块 648ms
+   ✓ mounted asset browser to original image draft > requires an explicit 图片 operation choice and two metadata reads without dispatch 331ms
+   ✓ mounted asset browser to original image draft > requires an explicit 视频 operation choice and two metadata reads without dispatch 328ms
+   ✓ relationship inspection original asset navigation > re-reads exact original asset after explicit dirty discard and performs no writes 786ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"version":3} 412ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"} 426ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"novel_id":"other-project"} 388ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"deleted_at":"deleted"} 432ms
+   ✓ relationship inspection original asset navigation > retires inspection when the original selection goes A to B to A in one batch 526ms
+ ✓ src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx (19 tests) 6823ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > keeps route/selection/inspection GET-only and sends one exact original-owner POST on final click 679ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > preserves dirty-navigation cancellation and requires explicit discard before entering 468ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > cancelled recipient closes only after dirty confirmation and never saves 409ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > source replacement after preview is rejected without any write 340ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > real transport UNKNOWN network stays blocked after authoritative observation, never retries 373ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > real transport UNKNOWN 503 stays blocked after authoritative observation, never retries 387ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > real transport UNKNOWN invalid receipt stays blocked after authoritative observation, never retries 395ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > real transport UNKNOWN refresh failure stays blocked after authoritative observation, never retries 376ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > fences delayed authoritative source read after session ABA 313ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > fences delayed authoritative source read after branch ABA 312ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > fences delayed authoritative source read after project ABA 302ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > denied final source read clears the recipient and never posts a binding 314ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > real decoded save rejects document body and keeps the dispatched attempt locked 328ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > real decoded save rejects missing document shot and keeps the dispatched attempt locked 304ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > real decoded save rejects unrelated receipt shot and keeps the dispatched attempt locked 308ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > real decoded save rejects refresh 404 and keeps the dispatched attempt locked 317ms
+   ✓ real IndependentStudioWorkspace to original storyboard image binding > real decoded save rejects refresh 409 and keeps the dispatched attempt locked 335ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests) 1350ms
+   ✓ independent studio original owner integration > imports once and saves source provenance without chapters, models, or the legacy asset API 334ms
+ ✓ src/creative/StudioStoryboardAssetHandoff.additive.test.tsx (28 tests) 574ms
+
+ Test Files  6 passed (6)
+      Tests  176 passed (176)
+   Start at  09:04:51
+   Duration  35.40s (transform 1.87s, setup 41ms, collect 3.96s, tests 28.51s, environment 1.81s, prepare 299ms)
+

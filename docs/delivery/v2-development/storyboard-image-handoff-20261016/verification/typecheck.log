@@ -1,0 +1,7 @@
+src/creative/StudioStoryboardAssetHandoff.tsx(29,47): error TS2322: Type 'Promise<{ items: CreativeDocument[]; }> | Promise<CreativeDocument>' is not assignable to type 'Promise<{ items: CreativeDocument[]; }>'.
+  Type 'Promise<CreativeDocument>' is not assignable to type 'Promise<{ items: CreativeDocument[]; }>'.
+    Property 'items' is missing in type 'CreativeDocument' but required in type '{ items: CreativeDocument[]; }'.
+src/creative/StudioStoryboardAssetHandoff.tsx(32,22): error TS2339: Property 'id' does not exist on type 'never'.
+src/creative/StudioStoryboardAssetHandoff.tsx(32,41): error TS2339: Property 'mode' does not exist on type 'never'.
+src/creative/StudioStoryboardAssetHandoff.tsx(32,93): error TS2339: Property 'version' does not exist on type 'never'.
+src/creative/StudioStoryboardAssetHandoff.tsx(32,111): error TS2339: Property 'version' does not exist on type 'never'.

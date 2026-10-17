@@ -1,0 +1,9 @@
+{
+  "runtimeFiles": [
+    "frontend/src/creative/StudioStoryboardAssetHandoff.tsx",
+    "frontend/src/creative/useStoryboardProductionController.ts",
+    "frontend/src/creative/StoryboardProductionPanel.tsx",
+    "frontend/src/creative/IndependentStudioWorkspace.tsx"
+  ],
+  "rawColorFindings": []
+}

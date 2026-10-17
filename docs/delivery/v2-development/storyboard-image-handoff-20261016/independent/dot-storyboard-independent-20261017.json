@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "base_commit": "d11ea893a9deb4c2ceda23a4383f83054e9f25dd",
+  "worktree": "/workspace/scratch/20a0022d2b33/studio-storyboard-handoff",
+  "started_utc": "2026-10-17T00:08:50.508Z",
+  "finished_utc": "2026-10-17T00:09:58.670Z",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/creative/StoryboardImageHandoff.additive.test.tsx",
+    "src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx",
+    "src/creative/StudioStoryboardAssetHandoff.additive.test.tsx",
+    "src/creative/StoryboardProductionPanel.phase4.test.tsx",
+    "src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx",
+    "src/creative/IndependentStudioWorkspace.test.tsx",
+    "--maxWorkers=1",
+    "--minWorkers=1",
+    "--no-file-parallelism",
+    "--no-cache"
+  ],
+  "working_directory": "frontend",
+  "exit_code": 0,
+  "signal": null,
+  "policy": "One worker, default timeouts, cache disabled. Controlled frontend only.",
+  "followups": [
+    {
+      "name": "typecheck",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-b",
+        "--force",
+        "--pretty",
+        "false"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-storyboard-handoff/frontend",
+      "started_utc": "2026-10-17T00:09:26.752Z",
+      "finished_utc": "2026-10-17T00:09:52.088Z",
+      "exit_code": 0,
+      "signal": null,
+      "logfile": "/tmp/dot-storyboard-independent-20261017-typecheck.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "build",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-storyboard-handoff/frontend",
+      "started_utc": "2026-10-17T00:09:52.089Z",
+      "finished_utc": "2026-10-17T00:09:58.554Z",
+      "exit_code": 0,
+      "signal": null,
+      "logfile": "/tmp/dot-storyboard-independent-20261017-build.log",
+      "log_sha256": "e9e99bf7e93fcde95daa23f40a4b78669008e8fb956278b3ad1aa650bbc5b89a"
+    },
+    {
+      "name": "tokens-global",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/check_ui_design_tokens.mjs"
+      ],
+      "cwd": "/workspace/scratch/20a0022d2b33/studio-storyboard-handoff",
+      "started_utc": "2026-10-17T00:09:58.555Z",
+      "finished_utc": "2026-10-17T00:09:58.625Z",
+      "exit_code": 0,
+      "signal": null,
+      "logfile": "/tmp/dot-storyboard-independent-20261017-tokens-global.log",
+      "log_sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50"
+    }
+  ],
+  "rawColorFindings": [],
+  "source_count": 1274,
+  "changed_sources": [],
+  "sources_changed": false,
+  "before_sha256": "d772ee2a4d73948b29f586ea27e18e3732e3252ca28ceeb8f14a2c7f7b2fb1ce",
+  "after_sha256": "d772ee2a4d73948b29f586ea27e18e3732e3252ca28ceeb8f14a2c7f7b2fb1ce",
+  "log_sha256": "dd2f2554778595082e01cdfed31c88322d2afe33cac0dbc584bc8e6b33a74661",
+  "test_summary": [
+    " Test Files  6 passed (6)",
+    "      Tests  178 passed (178)",
+    "   Duration  35.91s (transform 1.87s, setup 38ms, collect 3.97s, tests 29.15s, environment 1.74s, prepare 278ms)"
+  ]
+}

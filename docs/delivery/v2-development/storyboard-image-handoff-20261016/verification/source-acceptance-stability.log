@@ -1,0 +1,7 @@
+src/creative/StudioStoryboardAssetHandoff.tsx: OK
+src/creative/useStoryboardProductionController.ts: OK
+src/creative/StoryboardProductionPanel.tsx: OK
+src/creative/IndependentStudioWorkspace.tsx: OK
+src/creative/StoryboardImageHandoff.additive.test.tsx: OK
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx: OK
+src/creative/StudioStoryboardAssetHandoff.additive.test.tsx: OK

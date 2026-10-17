@@ -6,6 +6,26 @@ import { useStoryboardProductionController, type StoryboardProductionProps } fro
 /** Replaceable Inspector/Preview. Opus can reskin without changing controller, source or review grants. */
 export function StoryboardProductionPanel(props: StoryboardProductionProps) {
   const state = useStoryboardProductionController(props), shot = state.selected;
+  if (props.exactImage && !state.available) return <Panel title="分镜图片接收已停用"><StatusMessage tone="warning">身份、项目或输入状态已变化，请关闭后重新核对。</StatusMessage></Panel>;
+  if (props.exactImage) return <Panel title="素材送入已有分镜">
+    <p>图片 {props.exactImage.reference.asset_id} · v{props.exactImage.reference.version} · {props.exactImage.reference.digest}</p>
+    <p>目标：{props.document.title} · v{props.document.version}</p>
+    {state.error && <StatusMessage tone="error">{state.error}</StatusMessage>}
+    {state.loading && <StatusMessage>正在核对原记录…</StatusMessage>}
+    {state.exactDone ? <StatusMessage>图片绑定已保存为新文档版本，旧分镜批准已撤销。</StatusMessage> : state.exactPending ? <>
+      <StatusMessage tone="warning">保存结果未知。保留本次图片与目标版本；不会自动重发，也不能再次保存。</StatusMessage>
+      <p>目标 {state.receipt?.document_snapshot.id || props.document.id} · 原版本 v{props.document.version} · 镜头 {state.selectedId}</p>
+      <Button disabled={state.locked} onClick={state.inspectExactAttempt}>读取原文档核对未知保存结果</Button>
+    </> : <>
+      <Button disabled={state.locked || !props.editable} onClick={state.read}>读取已有分镜回执</Button>
+      <Button disabled={state.locked || !props.editable} onClick={state.inspectExactImage}>核对传入图片精确版本</Button>
+      {state.exactSource && <p>已核对正式图片：{state.exactSource.filename} · v{state.exactSource.version}</p>}
+      {state.receipt && <label>明确选择已有镜头<select disabled={state.locked || !props.editable} value={state.selectedId} onChange={event => state.select(event.target.value)}><option value="">选择目标镜头</option>{state.receipt.shots.map(row => <option key={row.shot_id} value={row.shot_id}>SHOT {row.shot.number} · {row.shot_id} · v{row.shot_version}</option>)}</select></label>}
+      {shot && <p>{shot.shot.frame_prompt || shot.shot.action} · 镜头摘要 {shot.shot_digest}</p>}
+      <p>保存会创建新的分镜文档版本，并撤销旧分镜批准；不会改写镜头文本。</p>
+      <Button disabled={state.locked || !props.editable || !state.exactSource || !shot || state.uncertain} onClick={state.bindExactImage}>保存图片绑定并撤销旧批准</Button>
+    </>}
+  </Panel>;
   return <Panel title={props.document.mode === 'DIRECTOR' ? '导演控制建议' : '分镜生产检查器'}>
     <p>来源：{props.document.title} · v{props.document.version}。原文档保存、素材审核与生产任务分别操作。</p><Button disabled={state.locked || !!state.prepared} onClick={state.read}>明确读取已保存创作回执</Button>
     {state.loading && <StatusMessage>正在核对原记录…</StatusMessage>}{state.error && <StatusMessage tone="error">{state.error}</StatusMessage>}{state.uncertain && <StatusMessage tone="warning">版本或回执不确定，先读取原文档核对；不会自动重发写入。</StatusMessage>}
