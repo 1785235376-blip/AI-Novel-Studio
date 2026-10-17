@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "head": "5eb1c5a6cd90e9359ba164149debc492052a1bf0",
+  "checked_utc": "2026-10-17T00:14:42.408Z",
+  "status": "PASS_CANDIDATE_ONLY_RECOMMENDED",
+  "raw_sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+  "raw_rows": 15617,
+  "raw_equal_previous_full_classified_rows": true,
+  "source_map_entries": 2582,
+  "source_deltas": [
+    {
+      "path": "frontend/src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx",
+      "before": null,
+      "after": "0ddfa24ce081acf505be1756bb605d9d7b4440d9f1745c7763d40c694e25e746"
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioWorkspace.tsx",
+      "before": "11e1c7faff33ad6cba30884431f11a6f0abccc4da56eedfb65a960350ae84645",
+      "after": "1bc88c259d55786df03943092fe98b91267e4694eeb995673eb3404c99f0ae83"
+    },
+    {
+      "path": "frontend/src/creative/StoryboardImageHandoff.additive.test.tsx",
+      "before": null,
+      "after": "5e5e78a1f59f497899f44ae58219263b4b8a62cbafb27e95d9c35d019c9c4dcf"
+    },
+    {
+      "path": "frontend/src/creative/StoryboardProductionPanel.tsx",
+      "before": "bd55b49d1e74a289489dfb5313d07853cfb64ff7feba6003f805bf0187914863",
+      "after": "51d1db373362f329cdc4904153d94e614eb80d9d826694f3b0398cff97f8f20a"
+    },
+    {
+      "path": "frontend/src/creative/StudioStoryboardAssetHandoff.additive.test.tsx",
+      "before": null,
+      "after": "2f0c3efaf380e0c352bb41d63fec6aa47f1cbe05bc1dcc0d5a0f8416c5d2d68c"
+    },
+    {
+      "path": "frontend/src/creative/StudioStoryboardAssetHandoff.tsx",
+      "before": null,
+      "after": "3e217e832cbf02c65490f7d7181f873f4fe53fbf2cc070c79ba77cb4ff0ec9ae"
+    },
+    {
+      "path": "frontend/src/creative/useStoryboardProductionController.ts",
+      "before": "d8c78a8d40bd65dab3f81185b1dd3067950a27deb76e5ff657c17eec86316882",
+      "after": "6c534b1bc30627dda8df84db41285f1d7ec2460bbfbe73f981ee89111f8d2219"
+    }
+  ],
+  "protected_old_entries": 1268,
+  "immutable_files": 25,
+  "companion_files": 11,
+  "startup_current_root_parent_child": true,
+  "canonical_sha256": "7ebea9c335c45a200ef07f2609e4cb1ad7113c6780400b143d122d7692a7a7b4",
+  "canonical_unchanged": true,
+  "errors": []
+}

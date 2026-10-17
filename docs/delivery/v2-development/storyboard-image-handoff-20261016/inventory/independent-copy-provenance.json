@@ -1,0 +1,25 @@
+{
+  "artifacts": [
+    {
+      "source": "/tmp/dot-storyboard-commit-binding-20261017.json",
+      "destination": "independent-commit-binding.json",
+      "source_sha256": "1965c5a55c238fbff2b34c4c6e13d585f06284840afabe97d39ff31a2d592c93",
+      "copied_sha256": "1965c5a55c238fbff2b34c4c6e13d585f06284840afabe97d39ff31a2d592c93",
+      "exact_bytes": true
+    },
+    {
+      "source": "/tmp/dot-storyboard-inventory-review-20261017.json",
+      "destination": "independent-review.json",
+      "source_sha256": "54e51fa0129e3df09db97116e8a2cc1e9ed5c80c9966359bfeba9895a00eddb2",
+      "copied_sha256": "54e51fa0129e3df09db97116e8a2cc1e9ed5c80c9966359bfeba9895a00eddb2",
+      "exact_bytes": true
+    },
+    {
+      "source": "/tmp/dot-storyboard-candidate-review-20261017.json",
+      "destination": "independent-candidate-review.json",
+      "source_sha256": "15598e569e338a352536e27a1e330b6b6aa335c49a51ad228589ab999fa06d8e",
+      "copied_sha256": "15598e569e338a352536e27a1e330b6b6aa335c49a51ad228589ab999fa06d8e",
+      "exact_bytes": true
+    }
+  ]
+}

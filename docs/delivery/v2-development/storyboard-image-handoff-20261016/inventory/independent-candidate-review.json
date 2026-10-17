@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "checked_utc": "2026-10-17T00:16:32.644Z",
+  "status": "PASS_EXACT_CANDIDATE_PROMOTION_RECOMMENDED",
+  "candidate_sha256": "1c70badc1373260b7138dc6cda39f46eda390b0a8a102a8a8ea299e7b586bcac",
+  "canonical_old_sha256": "7ebea9c335c45a200ef07f2609e4cb1ad7113c6780400b143d122d7692a7a7b4",
+  "source_entries": 2582,
+  "raw_rows": 15617,
+  "raw_sha256": "b921230f2888db9f7be9fd32f1f3e3d2dfaf45c2ce528886897a17ba7fa78ede",
+  "all_rows_order_classifications_exact": true,
+  "changed_top_level_fields": [
+    "source_files",
+    "v2_extension"
+  ],
+  "extension_change_only": "collection_head",
+  "source_delta_entries": 7,
+  "protected_old_entries": 1268,
+  "companion_files": 11,
+  "canonical_unchanged": true,
+  "errors": []
+}

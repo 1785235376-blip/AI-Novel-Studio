@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-17T00:17:04.585Z",
+  "method": "Exact-byte copy of independently reviewed candidate after all source/companion and baseline digest rechecks",
+  "before_sha256": "7ebea9c335c45a200ef07f2609e4cb1ad7113c6780400b143d122d7692a7a7b4",
+  "after_sha256": "1c70badc1373260b7138dc6cda39f46eda390b0a8a102a8a8ea299e7b586bcac",
+  "candidate_sha256": "1c70badc1373260b7138dc6cda39f46eda390b0a8a102a8a8ea299e7b586bcac",
+  "exact_bytes": true,
+  "tests_executed": false
+}
