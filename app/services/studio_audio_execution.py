@@ -459,7 +459,7 @@ class StudioAudioExecution:
         self._authority(context)
         return self._validated_job(self.service.find(state, job_id), context)
 
-    def _validated_job(self, row, context):
+    def _validated_job(self, row, context, *, listing_diagnostics=False):
         """Validate an already located original-owner row without rescanning."""
         if not self._matches(row, context):
             raise _error("STUDIO_AUDIO_JOB_NOT_FOUND", "当前原项目 owner 中没有此音频任务", 404)
@@ -467,6 +467,23 @@ class StudioAudioExecution:
         # immutable bytes before permitting the historical marker-absent shape.
         # Queue/preview still use the strict fresh-command admission path.
         if row.get("request_sha256") != _digest({"body": row.get("_studio_body"), "context": row.get("context")}):
+            if listing_diagnostics:
+                # A matching owner's read-only history retains its original
+                # bounded shape/source diagnostics. This path ALWAYS rejects:
+                # it never admits decoded/normalised bytes in place of the raw
+                # immutable binding. get/execution/review keep hash-first errors.
+                try:
+                    diagnostic_body = _body_shape(row.get("_studio_body"))
+                    _binding(row.get("context"), diagnostic_body)
+                except AudiobookError as exc:
+                    if exc.code in {"STUDIO_AUDIO_OPERATION_UNSUPPORTED", "STUDIO_AUDIO_PROMPT_INVALID",
+                                    "STUDIO_AUDIO_SOURCE_INVALID", "STUDIO_AUDIO_SOURCE_BINDING_MISMATCH"}:
+                        raise
+                except ValueError as exc:
+                    if str(exc) == "CREATIVE_GRAPH_MEDIA_BINDING_INVALID":
+                        raise
+                except (TypeError, KeyError):
+                    pass
             raise _error("STUDIO_AUDIO_JOB_BINDING_CHANGED", "原音频任务绑定已变化，不能继续执行", 409)
         body = _body_shape(row.get("_studio_body")); binding = _binding(row.get("context"), body)
         provider = binding["provider_binding"] or {}
@@ -534,7 +551,7 @@ class StudioAudioExecution:
             if missing_id or not isinstance(job_id, str):
                 first = self._job(state, row["id"], context)
             else:
-                self._validated_job(first, context)
+                self._validated_job(first, context, listing_diagnostics=True)
             # Retain the existing denial when a foreign row owns the first
             # occurrence. A second matching receipt must not be silently
             # shadowed by that first occurrence, even if its bytes are equal.
