@@ -1,0 +1,66 @@
+{
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "original_source_head": "17c6500852359a99bfb023ae173e87d686c67829",
+  "source_code_commit": "3f49631",
+  "original_base": "5a6f697bccf2127b1bbfd62bb422311edc8c4afe",
+  "original_commits": 8,
+  "status": "PRIMARY_VERIFIED_TRANSPORT_PARTIAL_PRODUCT",
+  "application_routes_active": false,
+  "live_provider_browser_postgresql_windows_gpu": "NOT_RUN",
+  "independent_second_agent_review": "NOT_PERFORMED",
+  "backend": {
+    "passed": 271,
+    "postgres_only_deselected": 97
+  },
+  "frontend": {
+    "passed": 161,
+    "files": 8,
+    "typescript": "PASS",
+    "production_build": "PASS",
+    "token_guard": "PASS"
+  },
+  "public_packaging": {
+    "passed": 87,
+    "actual_wheels": 2,
+    "actual_sdists": 2,
+    "payload_readback": "PASS"
+  },
+  "secret_scan": {
+    "new_blobs": 209,
+    "text_bytes": 37122614,
+    "pattern_hits": 0,
+    "absolute_secret_absence_guaranteed": false
+  },
+  "payloads": [
+    {
+      "path": "artifacts/director-primary-20261017-17c6500/director.bundle",
+      "bytes": 1500509,
+      "sha256": "92fc57fe84f7a617feb5ba9371a1a5e3918b80f51280366bb97884bb6b5edd0e",
+      "git_blob_sha": "6a0826a9450765b0ffa9d5ee921ef7bdb3ca4c8f"
+    },
+    {
+      "path": "artifacts/director-primary-20261017-17c6500/public-sdist0/ai_novel_studio-0.7.0.tar.gz",
+      "bytes": 1601469,
+      "sha256": "c92aea48612b105d2b414832a6d117be7d27018741486356ab9388f659c88715",
+      "git_blob_sha": "cf1a78f18aad30a4a5c3bc09c21e217767253207"
+    },
+    {
+      "path": "artifacts/director-primary-20261017-17c6500/public-sdist1/ai_novel_studio-0.7.0.tar.gz",
+      "bytes": 1601405,
+      "sha256": "7596cfd20111170da55593f79bc7068d7cd008878d8da9ed593150c943edd150",
+      "git_blob_sha": "7f7972bd400dc6f71b0bbab8dfc910db902f9ea1"
+    },
+    {
+      "path": "artifacts/director-primary-20261017-17c6500/public-wheel0/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "bytes": 1875820,
+      "sha256": "904fbd19151890ac509ee740408eb119dd0e823b7cc5e4431076cbed893e2603",
+      "git_blob_sha": "999ed49ec3808a6023a31b121015709cac216cc4"
+    },
+    {
+      "path": "artifacts/director-primary-20261017-17c6500/public-wheel1/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "bytes": 1875820,
+      "sha256": "29c5043964ca9f4c0abc8775c4c7e8a75fd21a4c7c89661126cfe91f22c6b73f",
+      "git_blob_sha": "81040dd1bfd95b5bdc09abb27ef9baf4f92617f8"
+    }
+  ]
+}
