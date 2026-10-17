@@ -1,0 +1,78 @@
+{
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "source_head": "468457706f64d9b8cc793b9a6fa39fa4b354aa15",
+  "prerequisite": "17c6500852359a99bfb023ae173e87d686c67829",
+  "original_commits": 14,
+  "status": "PRIMARY_VERIFIED_CANDIDATE_PARTIAL_PRODUCT",
+  "production_director_routes_enabled": false,
+  "independent_review": "UNAVAILABLE",
+  "browser_postgres_windows_gpu_live_model": "NOT_ACCEPTED",
+  "director_checkpoint": {
+    "code": "bcf2dbf",
+    "evidence": "3e90ee6",
+    "backend_passed": 275,
+    "postgres_deselected": 97,
+    "frontend_passed": 332,
+    "frontend_files": 24
+  },
+  "audio_checkpoint": {
+    "code": "313051c",
+    "evidence": "25742db",
+    "listing_integrity_compatibility_passed": 79,
+    "contract_api_passed": 231,
+    "cpu_media_api_passed": 117,
+    "original_tests_changed": false,
+    "typescript_build_tokens": "PASS"
+  },
+  "latest_public_packaging": {
+    "passed": 87,
+    "wheels": 2,
+    "sdists": 2,
+    "actual_payload_readback": "PASS"
+  },
+  "inventory": {
+    "rows": 17505,
+    "sources": 2718,
+    "sha256": "80251092a5d769650dd2e2000625e2560ad1bdc776b54792898ca37d30419e4c",
+    "collection_is_not_execution": true
+  },
+  "scan": {
+    "new_blobs": 157,
+    "pattern_hits": 82,
+    "synthetic_inherited_test_id_hits": 82,
+    "unclassified_hits": 0,
+    "absolute_secret_absence_guaranteed": false
+  },
+  "payloads": [
+    {
+      "path": "artifacts/director-audio-primary-20261017-4684577/continuation.bundle",
+      "bytes": 2222771,
+      "sha256": "47140aee88c473f3705468132a29772d6bd462583f3958f9ee488d8298e4d58e",
+      "git_blob_sha": "0858993d1e4700520a177416b0aed60319278a85"
+    },
+    {
+      "path": "artifacts/director-audio-primary-20261017-4684577/public-sdist0/ai_novel_studio-0.7.0.tar.gz",
+      "bytes": 1601655,
+      "sha256": "4731f32a2e0b10ccfee1bfa5748f9b97cd795ade2ba226dc1ecfe21c570fabcb",
+      "git_blob_sha": "f7db3890e6d74f9b1e886cbf2a89b2386c34d3d4"
+    },
+    {
+      "path": "artifacts/director-audio-primary-20261017-4684577/public-sdist1/ai_novel_studio-0.7.0.tar.gz",
+      "bytes": 1601783,
+      "sha256": "521765b1761c00b8ca72d4d1b0ef6ecf6b8e3114d3afe670504ab543d57ef0b5",
+      "git_blob_sha": "473316c959951157de57f31d9957e93dcf51a819"
+    },
+    {
+      "path": "artifacts/director-audio-primary-20261017-4684577/public-wheel0/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "bytes": 1876176,
+      "sha256": "19e430c49321eb8180f58e6ca4ec5d1311890868cb183b3d804ab509e8f56e84",
+      "git_blob_sha": "b0854047b3fbbd9a0058a30fd69353ab9e8ea6ed"
+    },
+    {
+      "path": "artifacts/director-audio-primary-20261017-4684577/public-wheel1/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "bytes": 1876176,
+      "sha256": "a4ed7718e118b681e6ead0d3b2334def09b5c6d2d38f242e7ea2b7e790ad7658",
+      "git_blob_sha": "2cb5f60da4e56ac23ce1eaa9ebe6e47b7285ac7e"
+    }
+  ]
+}
