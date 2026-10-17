@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/ComicReadingOrder.additive.test.tsx (5 tests) 426ms
+   ✓ integrates with original layout history without saving or approving automatically 332ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  05:00:39
+   Duration  1.27s (transform 187ms, setup 19ms, collect 293ms, tests 426ms, environment 301ms, prepare 71ms)
+

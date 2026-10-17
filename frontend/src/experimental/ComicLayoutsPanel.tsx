@@ -1,3 +1,4 @@
+import { ComicReadingOrderPanel } from './ComicReadingOrderPanel';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
@@ -87,6 +88,10 @@ function ComicLayoutsContent({ client }: { client: ExperimentalClient }) {
       {available && !catalog.data!.screenplays.length && <EmptyState title="暂无镜头来源" detail="先在原剧本工作区建立剧本与镜头，再回来选择。" />}
       {document && available && !savedStale && <>
         {sourceChanged && <StatusMessage tone="warning">来源版本已变化。草稿输入仍保留，请重新选择当前来源再保存；旧画面已隐藏。</StatusMessage>}
+        <ComicReadingOrderPanel document={document} scope={catalog.data!} disabled={!duplicateAllowed} getRevision={() => editorGeneration.current} onApply={next => {
+          if (!currentEditor() || composing.current || !duplicateCurrent.current.allowed || duplicateCurrent.current.document !== document || duplicateCurrent.current.catalog !== catalog.data) return false;
+          edit(next); return true;
+        }} />
         <fieldset className="experimental-form" disabled={action.busy}>
           <Field label="漫画布局名称"><input maxLength={240} value={document.title} onChange={e => edit({ ...document, title: e.target.value })} /></Field>
           <Field label="布局预设"><select value={document.preset} onChange={e => { if (source) edit(comicPreset(source, e.target.value as ComicDocument['preset'], catalog.data!.presets[e.target.value as ComicDocument['preset']])); }}><option value="PAGE">页漫（最多前四个镜头，重排草稿）</option><option value="WEBTOON">纵向 Webtoon（最多前六个镜头，重排草稿）</option></select></Field>

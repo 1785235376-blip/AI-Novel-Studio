@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Coordinate-based comic reading-number repair (20:01 UTC)
+
+Comic layout now previews the exact original raster preflight's stable (y, x) order and, after separate confirmation, repairs only reading numbers through the original local edit/history owner. Coordinates, bubbles, original shot IDs, image snapshots and other author fields remain unchanged. It can fix duplicated/missing numbers but does not claim narrative order, solve overlap, approve assets or bypass original pixel preflight. Scope/catalog/editor-generation/IME changes retire pending application.
+
+Focused comic-reading-order-r2:5 new checks and TypeScript PASS, including original layout mount/undo and no write/approval. r1 also passed8 original panel checks but the new integration fixture lacked jsdom object-URL methods; fixed only that fixture and retained failure evidence. The latest TypeScript pass includes the final interactive feedback ownership change. Full/browser/raster acceptance remains deferred.
+
 ## Original-service interactive story backtracking (19:58 UTC)
 
 Interactive preview now exposes its chosen path and an explicit one-step back action. It sends the shorter complete path to the same original play endpoint; server source/version checks recompute conditions and variables. No client-side state restoration, story mutation, media playback or second narrative engine. Displayed paths and action callbacks are bound to the client/story/blocked generation and request epoch. Source changes hide prior private results immediately; stale late completions cannot claim the new preview was updated.
