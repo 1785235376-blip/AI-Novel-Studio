@@ -1,0 +1,54 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 181ms
+ ❯ src/creative/GraphDirectorModelAuthority.additive.test.tsx (30 tests | 10 failed) 364ms
+   × routes readStatus through its original parent owner without implicit calls 87ms
+     → Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+   × routes readAdoptedDraft through its original parent owner without implicit calls 15ms
+     → Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+   × routes readPreview through its original parent owner without implicit calls 13ms
+     → Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+   × routes readPending through its original parent owner without implicit calls 12ms
+     → Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+   × routes reconcileReview through its original parent owner without implicit calls 11ms
+     → Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+   × routes preview through its original parent owner without implicit calls 14ms
+     → Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+   × routes dispatch through its original parent owner without implicit calls 10ms
+     → Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+   × routes prepareReview through its original parent owner without implicit calls 10ms
+     → Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+   × routes review through its original parent owner without implicit calls 10ms
+     → Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+   × routes cancel through its original parent owner without implicit calls 10ms
+     → Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  10 failed | 29 passed (39)
+   Start at  23:20:52
+   Duration  1.19s (transform 169ms, setup 36ms, collect 426ms, tests 544ms, environment 664ms, prepare 115ms)
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/GraphDirectorModelAuthority.additive.test.tsx > routes readStatus through its original parent owner without implicit calls
+ FAIL  src/creative/GraphDirectorModelAuthority.additive.test.tsx > routes readAdoptedDraft through its original parent owner without implicit calls
+ FAIL  src/creative/GraphDirectorModelAuthority.additive.test.tsx > routes readPreview through its original parent owner without implicit calls
+ FAIL  src/creative/GraphDirectorModelAuthority.additive.test.tsx > routes readPending through its original parent owner without implicit calls
+ FAIL  src/creative/GraphDirectorModelAuthority.additive.test.tsx > routes reconcileReview through its original parent owner without implicit calls
+ FAIL  src/creative/GraphDirectorModelAuthority.additive.test.tsx > routes preview through its original parent owner without implicit calls
+ FAIL  src/creative/GraphDirectorModelAuthority.additive.test.tsx > routes dispatch through its original parent owner without implicit calls
+ FAIL  src/creative/GraphDirectorModelAuthority.additive.test.tsx > routes prepareReview through its original parent owner without implicit calls
+ FAIL  src/creative/GraphDirectorModelAuthority.additive.test.tsx > routes review through its original parent owner without implicit calls
+ FAIL  src/creative/GraphDirectorModelAuthority.additive.test.tsx > routes cancel through its original parent owner without implicit calls
+Error: Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+ ❯ src/creative/GraphDirectorModelAuthority.additive.test.tsx:53:49
+     51|   const beforeRead = vi.mocked(props.read).mock.calls.length;
+     52|   const beforeWrite = vi.mocked(props.mutate).mock.calls.length;
+     53|   await invoke(client, name); expect(model[name]).toHaveBeenCalledExac…
+       |                                                 ^
+     54|   const write = (writeMethods as readonly string[]).includes(name);
+     55|   expect(props.read).toHaveBeenCalledTimes(beforeRead + (write ? 0 : 1…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+

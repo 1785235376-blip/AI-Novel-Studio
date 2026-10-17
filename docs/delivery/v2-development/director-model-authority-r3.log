@@ -1,0 +1,43 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/directorModelClient.test.ts (35 tests) 36ms
+ ✓ src/creative/directorModelClient.capture.test.ts (2 tests) 13ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 237ms
+ ✓ src/creative/GraphDirectorModelAuthority.additive.test.tsx (32 tests) 448ms
+ ✓ src/creative/ReviewedDirectorCanvas.integration.test.tsx (1 test) 398ms
+   ✓ wires reviewed Creative DRAFT through original export/read, real editor/controller insertion, and explicit Graph Save 397ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 1162ms
+
+ Test Files  6 passed (6)
+      Tests  91 passed (91)
+   Start at  23:22:13
+   Duration  2.55s (transform 1.50s, setup 113ms, collect 2.92s, tests 2.29s, environment 1.63s, prepare 388ms)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2302 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-Bg9pZcT3.css      2.93 kB │ gzip:   0.82 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-BkplvLLE.css      4.23 kB │ gzip:   1.09 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-DRLVwzqD.css                      215.51 kB │ gzip:  27.26 kB
+dist/assets/Health-CX7rxy5b.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-CXEtFiRe.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/LocalTutorIntegration-DJXv6Sby.js      42.44 kB │ gzip:  13.78 kB
+dist/assets/style-DmVBBYLt.js                      45.12 kB │ gzip:   8.40 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-CdmOQeEO.js     772.77 kB │ gzip: 231.99 kB
+dist/assets/App-uPy1fwBg.js                     2,351.30 kB │ gzip: 700.00 kB
+✓ built in 6.81s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
