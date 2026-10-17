@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-prompt-workspace/frontend
+
+ ✓ src/prompt/PromptWorkspace.detailRace2.test.tsx (4 tests) 775ms
+ ✓ src/prompt/PromptWorkspace.scoping.test.tsx (3 tests) 720ms
+ ✓ src/prompt/PromptWorkspace.additive.test.tsx (6 tests) 582ms
+ ✓ src/prompt/PromptWorkspace.detailRace.test.tsx (4 tests) 641ms
+ ✓ src/prompt/PromptWorkspace.p0.test.tsx (10 tests) 768ms
+ ✓ src/prompt/PromptWorkspace.test.tsx (11 tests) 492ms
+ ✓ src/prompt/PromptWorkspace.p0c.test.tsx (6 tests) 457ms
+ ✓ src/prompt/PromptWorkspace.receiptReopen.test.tsx (11 tests) 1224ms
+ ✓ src/prompt/PromptEditorPanel.copy.test.tsx (13 tests) 352ms
+ ✓ src/prompt/PromptWorkspace.loadingOwner.test.tsx (1 test) 267ms
+ ✓ src/prompt/PromptRevisionDiff.test.tsx (9 tests) 552ms
+ ✓ src/prompt/PromptVersionHistory.test.tsx (7 tests) 164ms
+ ✓ src/prompt/PromptEditorPanel.usability.test.tsx (7 tests) 202ms
+ ✓ src/prompt/PromptWorkspace.strictmode.test.tsx (3 tests) 159ms
+ ✓ src/prompt/PromptWorkspace.p0i.test.tsx (2 tests) 281ms
+ ✓ src/prompt/promptContract.test.ts (12 tests) 7ms
+ ✓ src/prompt/promptProducerContract.test.ts (11 tests) 8ms
+ ✓ src/prompt/promptDraft.test.ts (12 tests) 6ms
+ ✓ src/prompt/promptDraft.pending.test.ts (9 tests) 4ms
+ ✓ src/prompt/promptDraft.aliasing.test.ts (8 tests) 5ms
+ ✓ src/prompt/promptDraft.settlement.test.ts (27 tests) 8ms
+
+ Test Files  21 passed (21)
+      Tests  176 passed (176)
+   Start at  18:11:06
+   Duration  17.93s (transform 406ms, setup 69ms, collect 2.02s, tests 7.68s, environment 4.69s, prepare 1.02s)
+

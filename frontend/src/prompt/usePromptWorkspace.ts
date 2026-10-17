@@ -22,8 +22,8 @@ import { createPromptClient, readPromptConflict } from './promptClient';
 import {
   beginSubmit, canSubmit, clearDraftMarker, clearDraftSlot, confirmSaved, discardDraft,
   draftScopeKey, editDraft, hasUnconfirmedWork, isInputLocked, markConflict, markRejected,
-  markUnknown, markerNotice, needsRebase, newDraft, readDraftMarker, rebaseDraft,
-  reconcileStashed, rememberDraftMarker, retryUnknown, stashDraft, takeDraft,
+  markUnknown, markerNotice, matchesSubmittedDraft, needsRebase, newDraft, readDraftMarker, rebaseDraft,
+  reconcileStashed, rememberDraftMarker, retryUnknown, settleStashedDraft, stashDraft, takeDraft,
   type Draft, type DraftContent,
 } from './promptDraft';
 import type { PromptEntry, PromptLibrary, PromptRevisionBody } from './promptTypes';
@@ -90,6 +90,11 @@ export function usePromptWorkspace(options: Options) {
   const identity = draftScopeKey(projectId, branchId, actor);
   const identityRef = useRef(identity);
   identityRef.current = identity;
+  // A scope A -> B -> A round trip must not revive an old write's authority.
+  const authority = useRef({ identity, client, generation: 0 });
+  if (authority.current.identity !== identity || authority.current.client !== client) {
+    authority.current = { identity, client, generation: authority.current.generation + 1 };
+  }
   // Which family's detail is currently open. `refresh()` only re-reads the LIBRARY, so
   // without this the version history and the comparison kept showing the pre-save revision
   // after a revision was saved — a real browser run could not reach 比较正文 at all.
@@ -115,7 +120,7 @@ export function usePromptWorkspace(options: Options) {
    */
   useEffect(() => {
     alive.current = true;
-    return () => { alive.current = false; };
+    return () => { alive.current = false; authority.current.generation += 1; };
   }, []);
   /**
    * A different identity invalidates in-flight reads; it must never inherit the previous
@@ -214,7 +219,7 @@ export function usePromptWorkspace(options: Options) {
         // The previous family's comparison belongs to that family. Leaving it in place would
         // show family A's plaintext diff under family B — reproduced in
         // PromptWorkspace.scoping.test.tsx before this fix.
-        return { ...prev, detail, draft, loading: false, conflictCode: null, fieldError: null,
+        return { ...prev, detail, draft, loading: false, conflictCode: draft.conflictCode, fieldError: null,
           compare: { from: null, to: null, loading: false, error: null } };
       });
     } catch (reason) {
@@ -296,6 +301,11 @@ export function usePromptWorkspace(options: Options) {
     if (submitted.state !== 'SUBMITTING' || !submitted.requestId) return;
     const requestId = submitted.requestId;
     const capturedIdentity = identityRef.current;
+    const capturedGeneration = authority.current.generation;
+    const stillAuthorized = () => alive.current && identityRef.current === capturedIdentity
+      && authority.current.generation === capturedGeneration;
+    const settleSlot = (settle: (draft: Draft) => Draft) =>
+      settleStashedDraft(projectId, branchId, actor, submitted, settle);
     const built = buildRequest(submitted.content, requestId);
     if (!built.ok) {
       setState(prev => ({ ...prev, draft: markRejected(prev.draft, built.field, built.message),
@@ -314,10 +324,11 @@ export function usePromptWorkspace(options: Options) {
       if (!alive.current) return;
       // The identity was revoked or replaced while the write was in flight: the result must
       // not be shown to whoever is looking now.
-      if (identityRef.current !== capturedIdentity) return;
+      if (!stillAuthorized()) return;
+      settleSlot(draft => confirmSaved(draft, receipt));
       setState(prev => {
         // The user moved to another draft: never misapply this receipt to it.
-        if (prev.draft.requestId !== requestId) return prev;
+        if (!stillAuthorized() || !matchesSubmittedDraft(prev.draft, submitted)) return prev;
         return { ...prev, draft: confirmSaved(prev.draft, receipt), fieldError: null };
       });
       // Re-read the authorised family so the panel shows server truth. A failure here only
@@ -335,7 +346,7 @@ export function usePromptWorkspace(options: Options) {
       // PromptWorkspace.detailRace.test.tsx case P0-1.
       const detailEpochBefore = detailEpoch.current;
       await refresh();
-      if (!alive.current) return;
+      if (!stillAuthorized()) return;
       if (detailEpoch.current !== detailEpochBefore) return;
       // The selection also changed (or completed elsewhere) while the refresh was in flight.
       if (detailFamilyRef.current !== openBefore) return;
@@ -346,8 +357,9 @@ export function usePromptWorkspace(options: Options) {
       const mine = ++detailEpoch.current;
       try {
         const fresh = await client.readFamily(receipt.familyId);
-        if (!alive.current || mine !== detailEpoch.current) return;
+        if (!stillAuthorized() || mine !== detailEpoch.current) return;
         setState(prev => {
+          if (!stillAuthorized()) return prev;
           // Re-check inside the updater: everything above ran before this moment, so the
           // selection could have moved again in between.
           const stillOpen = prev.detail?.familyId ?? null;
@@ -358,29 +370,31 @@ export function usePromptWorkspace(options: Options) {
         });
       } catch { /* the save is still confirmed; keep the previous detail */ }
     } catch (reason) {
-      if (!alive.current || identityRef.current !== capturedIdentity) return;
+      if (!stillAuthorized()) return;
       const status = reason instanceof ApiError ? reason.problem.status : null;
       const conflict = reason instanceof ApiError ? readPromptConflict(reason) : null;
-      setState(prev => {
-        if (prev.draft.requestId !== requestId) return prev;
+      const settle = (draft: Draft): Draft => {
         if (conflict) {
-          return { ...prev, draft: markConflict(prev.draft, conflict.code,
-            message(reason, '这个 Prompt 已被他人更新。')), conflictCode: conflict.code };
+          return markConflict(draft, conflict.code, message(reason, '这个 Prompt 已被他人更新。'));
         }
         // P0-F: a definite 4xx refusal is NOT an unknown outcome. Only 5xx / no status /
         // a transport failure leave the result genuinely unknown.
         if (status !== null && status >= 400 && status < 500) {
           // Bounded, actionable Chinese text — an unrecognised upstream code must not
           // surface as a raw message.
-          return { ...prev, draft: markRejected(prev.draft, `HTTP_${status}`,
-            `服务器明确拒绝了这次保存（HTTP ${status}）。你的草稿已保留，修正后可以重新提交。`),
-            fieldError: null };
+          return markRejected(draft, `HTTP_${status}`,
+            `服务器明确拒绝了这次保存（HTTP ${status}）。你的草稿已保留，修正后可以重新提交。`);
         }
-        return { ...prev, draft: markUnknown(prev.draft,
-          message(reason, '保存结果未知，请核对后再决定是否重试。')) };
+        return markUnknown(draft, message(reason, '保存结果未知，请核对后再决定是否重试。'));
+      };
+      settleSlot(settle);
+      setState(prev => {
+        if (!stillAuthorized() || !matchesSubmittedDraft(prev.draft, submitted)) return prev;
+        const draft = settle(prev.draft);
+        return { ...prev, draft, conflictCode: draft.conflictCode, fieldError: null };
       });
     }
-  }, [client, refresh]);
+  }, [client, refresh, projectId, branchId, actor]);
 
   const save = useCallback(() => {
     // Compute the snapshot OUTSIDE setState: a state updater is not guaranteed to run

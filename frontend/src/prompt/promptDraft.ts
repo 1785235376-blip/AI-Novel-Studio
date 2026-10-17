@@ -365,6 +365,35 @@ export function takeDraft(projectId: string, branchId: string | null, actor: str
     pending: stored.pending ? cloneContent(stored.pending) : null };
 }
 
+/** Match the exact frozen operation, not merely a family or a reused request id. */
+export function matchesSubmittedDraft(current: Draft, submitted: Draft): boolean {
+  return submitted.state === 'SUBMITTING' && submitted.requestId !== null
+    && isInputLocked(current) && current.key === submitted.key
+    && current.requestId === submitted.requestId && current.familyId === submitted.familyId
+    && current.baseAssetId === submitted.baseAssetId && current.baseRevision === submitted.baseRevision
+    && pendingMatchesContent(current) && pendingMatchesContent(submitted)
+    && pendingMatchesContent({ ...current, content: submitted.content });
+}
+
+/**
+ * Settle an existing session slot after navigation, without resurrecting a discarded or
+ * replaced draft. Callers must first check their mounted authority generation. No storage,
+ * network request, or automatic retry is performed here.
+ */
+export function settleStashedDraft(projectId: string, branchId: string | null, actor: string,
+  submitted: Draft, settle: (draft: Draft) => Draft): boolean {
+  const current = takeDraft(projectId, branchId, actor, submitted.key);
+  if (!current || !matchesSubmittedDraft(current, submitted)) return false;
+  const settled = settle(current);
+  if (settled.key !== current.key) {
+    // A created family must not overwrite an independently opened/replaced family slot.
+    if (takeDraft(projectId, branchId, actor, settled.key)) return false;
+    clearDraftSlot(projectId, branchId, actor, current.key);
+  }
+  stashDraft(projectId, branchId, actor, settled);
+  return true;
+}
+
 export function dropStashedDrafts(projectId: string, branchId: string | null, actor: string): void {
   const scope = draftScopeKey(projectId, branchId, actor);
   for (const stored of [...inMemoryDrafts.keys()]) {
