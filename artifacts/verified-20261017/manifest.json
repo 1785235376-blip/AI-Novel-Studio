@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "kind": "EXACT_INCREMENTAL_GIT_ARCHIVE_NOT_CI_PASS",
+  "verified_head": "5a6f697bccf2127b1bbfd62bb422311edc8c4afe",
+  "base_pr47": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+  "commit_count_since_base": 164,
+  "bundle": {
+    "bytes": 25976069,
+    "sha256": "87f2e0253fe7d5830df6d3c5fba6541d5bf9162683af7fd39b0025c3264e4789",
+    "ref": "refs/heads/work/dot-v2-integration-wave3-20261017",
+    "prerequisites": [
+      "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "045b865e5a003cac3333462d055f22099f6368d6"
+    ]
+  },
+  "artifacts": [
+    {
+      "sha256": "9da887820708136e126deb8686ca5a86e2874db9f1fe245ce5cf64fe6c4cf448",
+      "kind": "sdist",
+      "source_payloads": 512,
+      "members": 519,
+      "wheel_record_verified": false,
+      "bytes": 1593436,
+      "suggested_path": "artifacts/verified-20261017/public/public-sdist0/ai_novel_studio-0.7.0.tar.gz",
+      "source_head": "db6487b5eab7340433426fefcb5499122ec3d881",
+      "supplemental_head": "f4a6fed15cc52c0323e73f5e410e184c42bb5200"
+    },
+    {
+      "sha256": "35e0ddc901ba83894bec0aefae95f9d3bd27eb9e9969bc3ccbfd4cddf6184788",
+      "kind": "sdist",
+      "source_payloads": 512,
+      "members": 519,
+      "wheel_record_verified": false,
+      "bytes": 1593363,
+      "suggested_path": "artifacts/verified-20261017/public/public-sdist1/ai_novel_studio-0.7.0.tar.gz",
+      "source_head": "db6487b5eab7340433426fefcb5499122ec3d881",
+      "supplemental_head": "f4a6fed15cc52c0323e73f5e410e184c42bb5200"
+    },
+    {
+      "sha256": "478eba11ef27e0785124ac4de3a770f96c7a240f58d4c2e58dc9a3b625e87ee6",
+      "kind": "wheel",
+      "source_payloads": 511,
+      "members": 515,
+      "wheel_record_verified": true,
+      "bytes": 1865519,
+      "suggested_path": "artifacts/verified-20261017/public/public-wheel0/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "source_head": "db6487b5eab7340433426fefcb5499122ec3d881",
+      "supplemental_head": "f4a6fed15cc52c0323e73f5e410e184c42bb5200"
+    },
+    {
+      "sha256": "104e3d084334d043e7a3e39bf0174f5fcb06fdfdc77a2c90467d6531c01ed327",
+      "kind": "wheel",
+      "source_payloads": 511,
+      "members": 515,
+      "wheel_record_verified": true,
+      "bytes": 1865519,
+      "suggested_path": "artifacts/verified-20261017/public/public-wheel1/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "source_head": "db6487b5eab7340433426fefcb5499122ec3d881",
+      "supplemental_head": "f4a6fed15cc52c0323e73f5e410e184c42bb5200"
+    }
+  ],
+  "files": [
+    {
+      "path": "artifacts/verified-20261017/bundle/studio.bundle.part-000",
+      "bytes": 2097152,
+      "sha256": "5050b0a1f1e27a686ca5348152a00fdf82dedb9ff2a57c6a553c9fd0afc6a350",
+      "git_blob_sha": "11d784553dc2060e37d761cbbc091ed8cf88269a"
+    },
+    {
+      "path": "artifacts/verified-20261017/bundle/studio.bundle.part-001",
+      "bytes": 2097152,
+      "sha256": "2c236a2a5bed0a0ec2376163a6e7ff7b3a285de411d08f9bd6049bfd0952835d",
+      "git_blob_sha": "458504f326a4f697ae70626433e8230afea775f2"
+    },
+    {
+      "path": "artifacts/verified-20261017/bundle/studio.bundle.part-002",
+      "bytes": 2097152,
+      "sha256": "c6600329b612653f4a7267d1165cc526f0245b18c098fec54074d3dce179bd9a",
+      "git_blob_sha": "29223f58faf16115106ff9ed84e13812547cde18"
+    },
+    {
+      "path": "artifacts/verified-20261017/bundle/studio.bundle.part-003",
+      "bytes": 2097152,
+      "sha256": "1cad23aae7e3a6a4f39e4f4021efcbe158330f19dbe6350cba189ba869f092c1",
+      "git_blob_sha": "baeb6993989075828f1cb56c178893faaffc888d"
+    },
+    {
+      "path": "artifacts/verified-20261017/bundle/studio.bundle.part-004",
+      "bytes": 2097152,
+      "sha256": "4ca7922ade53691105a20635b0e7dc81a1dc8a3bf7784991856e49084a4444ae",
+      "git_blob_sha": "0ec1a75db06222c47c98188fd5cb72aea8c6ba21"
+    },
+    {
+      "path": "artifacts/verified-20261017/bundle/studio.bundle.part-005",
+      "bytes": 2097152,
+      "sha256": "61fd9b47140eb953db0ab288e68fe1aac68868a3fe3183ebde79cf1f968c63b0",
+      "git_blob_sha": "183082e0a49547d8d5f10862b39d6be191341dd5"
+    },
+    {
+      "path": "artifacts/verified-20261017/bundle/studio.bundle.part-006",
+      "bytes": 2097152,
+      "sha256": "5e68df94caae03802b256bcb3c3c75938476a97c660ffa68ffac551e57ce14cf",
+      "git_blob_sha": "716f28320b259ba78d08d52b7791f980de4c5b37"
+    },
+    {
+      "path": "artifacts/verified-20261017/bundle/studio.bundle.part-007",
+      "bytes": 2097152,
+      "sha256": "973ffe6d8a46327914f55197b044ee372781577c9f96732644f19d1f8d56af45",
+      "git_blob_sha": "22fdd98aa7d382de7fe5c926c5d5251eef7a6818"
+    },
+    {
+      "path": "artifacts/verified-20261017/bundle/studio.bundle.part-008",
+      "bytes": 2097152,
+      "sha256": "95ad19300a9fe532fca1a1975678649b99092ffc9791a5d8364c79daf3dde8bf",
+      "git_blob_sha": "ceeb0afba65f8f134431840647488486f9465455"
+    },
+    {
+      "path": "artifacts/verified-20261017/bundle/studio.bundle.part-009",
+      "bytes": 2097152,
+      "sha256": "81436aeb0dffafe896553e7fd92109b578a255a2dbeab5c62d92926bccdb9ed5",
+      "git_blob_sha": "8732d246ce064ed86a9e25c0a08e541c7c84f284"
+    },
+    {
+      "path": "artifacts/verified-20261017/bundle/studio.bundle.part-010",
+      "bytes": 2097152,
+      "sha256": "fd27d5687acd4c2c10a064b8ec4047be2fca3d65d42104e3045a72067f79a457",
+      "git_blob_sha": "2334ce431f7ec89bbec9ceee82f49a0f409e8a0a"
+    },
+    {
+      "path": "artifacts/verified-20261017/bundle/studio.bundle.part-011",
+      "bytes": 2097152,
+      "sha256": "b47f4ac41aa48a6df89e88e2e1a1b6fb59969c40e8c5089a86dbb992bce3545d",
+      "git_blob_sha": "8ca0ff9e7d726ac04850a4aef2bf33624f140b94"
+    },
+    {
+      "path": "artifacts/verified-20261017/bundle/studio.bundle.part-012",
+      "bytes": 810245,
+      "sha256": "0f23edcdb58bda4f91dce10e7afc76d272adbf25fb39c00f8777f1917958e668",
+      "git_blob_sha": "81bfa60dce9a8ab4c3e9891e821df8b61abca535"
+    },
+    {
+      "path": "artifacts/verified-20261017/public/public-sdist0/ai_novel_studio-0.7.0.tar.gz",
+      "bytes": 1593436,
+      "sha256": "9da887820708136e126deb8686ca5a86e2874db9f1fe245ce5cf64fe6c4cf448",
+      "git_blob_sha": "797e45d1492fdd1ff430a44b9bda6c79b17ccc5c"
+    },
+    {
+      "path": "artifacts/verified-20261017/public/public-sdist1/ai_novel_studio-0.7.0.tar.gz",
+      "bytes": 1593363,
+      "sha256": "35e0ddc901ba83894bec0aefae95f9d3bd27eb9e9969bc3ccbfd4cddf6184788",
+      "git_blob_sha": "2d44e8f770c1aae13e8ef8fb0a349e0da87efbe7"
+    },
+    {
+      "path": "artifacts/verified-20261017/public/public-wheel0/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "bytes": 1865519,
+      "sha256": "478eba11ef27e0785124ac4de3a770f96c7a240f58d4c2e58dc9a3b625e87ee6",
+      "git_blob_sha": "86d88e6ff2b3fe320f90738295b94abe01652aa2"
+    },
+    {
+      "path": "artifacts/verified-20261017/public/public-wheel1/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "bytes": 1865519,
+      "sha256": "104e3d084334d043e7a3e39bf0174f5fcb06fdfdc77a2c90467d6531c01ed327",
+      "git_blob_sha": "9d810c37a6424c84bca4d1bbcc41adaa98ae7f64"
+    }
+  ],
+  "ci": "INTENTIONALLY_SKIPPED_NOT_PASSED"
+}
