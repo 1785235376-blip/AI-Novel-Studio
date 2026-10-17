@@ -1,0 +1,11 @@
+{
+  "status": "PRIMARY_APPROVES_EXACT_CANDIDATE_PROMOTION",
+  "source_commit": "3e90ee60d2f5fd69e641ad2469e5882280a45afb",
+  "sha256": "330e3294dad5cde853c7068382e9fa2fa310969a7fc44a800cf3be1d6efb970e",
+  "source_files": 2717,
+  "rows": 17498,
+  "all_source_bytes_match_committed_git": true,
+  "prior_rows_order_classes_preserved": true,
+  "skip_maps_unchanged": true,
+  "tests_executed": false
+}

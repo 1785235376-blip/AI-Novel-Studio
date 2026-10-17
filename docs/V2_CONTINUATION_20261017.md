@@ -1,5 +1,20 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Latest serial Director continuation (14:55 UTC)
+
+The earlier integrated baseline below remains historical. New work is on `work/dot-director-transport-20261017`, source `bcf2dbf` with its runtime evidence at `3e90ee6`; it has not been merged into the prior integration branch or PR branches.
+
+Read `DIRECTOR_MODEL_TRANSPORT_PROGRESS.md` and `DIRECTOR_MODEL_CLIENT_PROGRESS.md` first. The original-owner versioned lifecycle, strict transport client, capability-gated original proposal-panel integration, uncertain-review preservation, exact adopted-DRAFT reopening and immutable Graph pin handoff are implemented candidates. Production application route activation is still off; actual browser, live-model and PostgreSQL acceptance remain open. The old transport-missing bullets below are superseded by those two detailed records, not by a full completion claim.
+
+Latest frozen gates: 275 backend passed / 97 PostgreSQL-only deselected; 332 frontend tests across 24 files; forced TypeScript, production build and token checks passed; 87 PUBLIC packaging checks and actual readback of two wheels/two sdists passed. Browser startup is blocked in this cloud executor; separate-agent quota remains unavailable while direct serial work continues.
+
+Canonical V2 inventory now has 17,498 rows and 2,717 source entries, SHA256 `330e3294dad5cde853c7068382e9fa2fa310969a7fc44a800cf3be1d6efb970e`. All prior 17,425 row dictionaries/order/classes remain exact; 73 new File-only rows were added. Three original-generator collections match. Forty-five original coverage/runner self-tests passed. This is inventory, not 17,498 passing tests. See `delivery/v2-development/director-model-inventory-20261017/README.md`.
+
+The explicitly approved archive through `17c6500` was appended to the public archive branch at `de872b5` and all eight payload files were remotely read back byte-for-byte. Later client/panel commits and their four newer packages have not been uploaded under that fixed earlier approval. No main/PR merge, force push, Release or paid call occurred. Older source commits remain in their Git bundle, not direct archive branch history.
+
+Completed owned test fixtures and disposable PUBLIC build copies were compacted into verified recoverable local archives. Original code, Git history, raw logs, package archives and checksums remain preserved.
+
+
 ## Status and scope
 
 This is an additive progress record, not a replacement for frozen product decisions or historical acceptance reports. The original A/B/U feature matrix must not be promoted wholesale to COMPLETE from these slices. Public release remains unaccepted.

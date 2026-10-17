@@ -1,0 +1,10 @@
+{
+  "status": "THREE_COLLECTIONS_IDENTICAL_CANONICAL_CONFIRMED",
+  "manifest_sha256": "330e3294dad5cde853c7068382e9fa2fa310969a7fc44a800cf3be1d6efb970e",
+  "raw_sha256": "0dd5bec2647f005645a652a00df576235259ac85593bc3f3603ebf74aa83db5c",
+  "rows": 17498,
+  "source_files": 2717,
+  "old_rows_exact": 17425,
+  "new_file_rows": 73,
+  "tests_executed": false
+}

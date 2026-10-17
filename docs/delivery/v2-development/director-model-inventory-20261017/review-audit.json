@@ -1,0 +1,359 @@
+{
+  "status": "PRIMARY_APPROVES_CANDIDATE_GENERATION",
+  "source_commit": "3e90ee60d2f5fd69e641ad2469e5882280a45afb",
+  "old_rows_preserved_exactly": 17425,
+  "new_rows": 73,
+  "new_classes": {
+    "file": 73
+  },
+  "protected_predecessor_sources_unchanged": 1360,
+  "changed_existing_sources": [
+    {
+      "path": "app/creative/api.py",
+      "before": "1dcfee252c2fd1926ccac0ca00b99ba98c822acd471d04f3de38867e3194908f",
+      "after": "b74317a85e21ed95d1ba64cdc01d084cc9953e6167128fb74cf35b1440a748b9"
+    },
+    {
+      "path": "app/creative/director_terminal_evidence.py",
+      "before": "f46c4ee428b4bfc3cfc137326e07c83a30c643d8a1cef4c7eaa70d84d36f146a",
+      "after": "2d68c76a3cc26b7dd2b7b71b68cd1e26f3ece4610d4e5411ac7356a4a89ed7bf"
+    },
+    {
+      "path": "app/creative/generation.py",
+      "before": "dfc727fdaef2ee1434216871bd4aa0d7fbfe62747b82c8532d84b9fdceaf6b08",
+      "after": "df9a952946c1e2e2ad93e9fb698db0f0fea52bebe8146d742d8927271d873421"
+    },
+    {
+      "path": "app/jobs.py",
+      "before": "f00b17895a84c4ba1334981e81289e7a152adfa2f87b6b3e6768ace33685d505",
+      "after": "8d76db6b09cd8efedecca565b9f550c3fdb2ef082bdb2d5d0fd0c81293aa46b2"
+    },
+    {
+      "path": "frontend/src/creative/AIDirectorPanel.tsx",
+      "before": "2e099e6baedf4a3fb66150e2d27735a37c72bea932266f5df244aafb65984af5",
+      "after": "b60f592d5639dbd5d9fcab64c2b8c251d5b3be928157ede955529c4e4102117e"
+    },
+    {
+      "path": "frontend/src/creative/GraphDirectorConsole.tsx",
+      "before": "e6f16e6cd8ccbecf05386d4b5808def43c74a0216e4f6e1e8aea460296f685b4",
+      "after": "1eee6c738aae2a897d6d85afe22ec51303a0f633b52e0c06170f093cd2239985"
+    },
+    {
+      "path": "frontend/src/creative/GraphDirectorProposalReview.tsx",
+      "before": "f75a71ba35e232e7df5c04fd0fe2efb92eb0893a50374f0a972afbf091959931",
+      "after": "648f5b696854a3dcd3ef1fde8536be7bec385db1a3a8e299de8fcc80f72e80cc"
+    },
+    {
+      "path": "frontend/src/creative/client.ts",
+      "before": "60d7fba09c547d6304623740ba658113268af6a62c7b337c196dd076c97bf349",
+      "after": "9b5424c363d063a2e325f77dfd8aab7c78dfab2e7514423a3bf92a5aea97b55b"
+    },
+    {
+      "path": "frontend/src/creative/directorCanvasHandoff.ts",
+      "before": "5f04cbe8117f1dfdf306ecd397d9ef1ba90f66d0e2600972840446ee16f458ae",
+      "after": "dbb55386525a52655f4eded158ceb486450d653bb06cfbd5efa79ec6e465a1a5"
+    },
+    {
+      "path": "frontend/src/creative/studioProductionGraphContract.ts",
+      "before": "69d6d1e6095fc3443b1f114b6719a7fbb4dc61e6d61521820f3e908e720ee7fd",
+      "after": "7408fe39100b3669892ce8f2557e6cad061d99ad0959d04bfe71985edb0f2b2d"
+    }
+  ],
+  "new_nodes": [
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_preview_observation_does_not_admit_a_job_or_reservation",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_status_and_exact_adoption_receipt_survive_fresh_host_restart",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_reconciliation_requires_exact_submitted_review_without_mutation[title]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_reconciliation_requires_exact_submitted_review_without_mutation[note]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_reconciliation_requires_exact_submitted_review_without_mutation[version]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_reconciliation_requires_exact_submitted_review_without_mutation[digest]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_current_authority_is_required_for_every_passive_receipt[status]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_current_authority_is_required_for_every_passive_receipt[adopted]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_current_authority_is_required_for_every_passive_receipt[reconcile]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_completed_passive_job_cannot_be_cancelled",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_live_cancellation_only_signals_then_original_worker_settles",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_explicit_queued_cancel_releases_original_reservation_without_dispatch",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_late_job_change_is_rejected_before_passive_receipt_returns[status]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_late_job_change_is_rejected_before_passive_receipt_returns[adopted]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_late_job_change_is_rejected_before_passive_receipt_returns[reconcile]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_late_job_change_rolls_back_review_without_creating_a_second_draft",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_uncertain_review_is_reconciled_exactly_without_repeating_adoption[False]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_uncertain_review_is_reconciled_exactly_without_repeating_adoption[True]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_persisted_signal_flag_does_not_restore_cancellation_authority",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_lifecycle_owner_additive.py::test_cooperative_cancel_arriving_inside_bounds_check_keeps_cancel_classification",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_capability_additive.py::test_advertisement_matches_actual_router_and_preserves_persistence[False]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_capability_additive.py::test_advertisement_matches_actual_router_and_preserves_persistence[True]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_capability_additive.py::test_unsupported_persistence_is_not_advertised",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_capability_additive.py::test_capability_still_requires_host_session",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_explicit_http_flow_adopts_once_and_reopens_from_original_owners",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_uncertain_review_response_requires_read_only_exact_reconciliation[False]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_uncertain_review_response_requires_read_only_exact_reconciliation[True]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_preview_denials_never_call_model_or_write_proposal[host]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_preview_denials_never_call_model_or_write_proposal[token]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_preview_denials_never_call_model_or_write_proposal[origin]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_preview_denials_never_call_model_or_write_proposal[forwarded]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_preview_denials_never_call_model_or_write_proposal[writer]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_preview_denials_never_call_model_or_write_proposal[scope]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_preview_denials_never_call_model_or_write_proposal[synthetic]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_preview_denials_never_call_model_or_write_proposal[synthetic-int]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_preview_denials_never_call_model_or_write_proposal[extra]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_preview_denials_never_call_model_or_write_proposal[boolean-version]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_reads_and_actions_are_not_implicitly_mounted",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_http_cancel_only_signals_owned_worker_and_retains_true_settlement[False]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_http_cancel_only_signals_owned_worker_and_retains_true_settlement[True]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_preview_does_not_grant_future_execution_authority[source]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_preview_does_not_grant_future_execution_authority[flag]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_preview_does_not_grant_future_execution_authority[host-session]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_pending_http_read_rechecks_generation_after_final_callback",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_unsupported_persistence_is_rejected_before_preview_side_effects",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_transport_additive.py::test_read_pending_does_not_publish_candidates_or_retry_a_job",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_model_wire_fixture_additive.py::test_capture_versioned_model_transport_json",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_preview_status_is_read_only_bounded_and_does_not_dispatch",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_exact_adopted_receipt_and_reconciliation_survive_restart",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_current_request_authority_denies_without_disclosure_or_writes[no_host]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_current_request_authority_denies_without_disclosure_or_writes[no_token]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_current_request_authority_denies_without_disclosure_or_writes[other_token]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_current_request_authority_denies_without_disclosure_or_writes[scope]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_current_request_authority_denies_without_disclosure_or_writes[origin]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_current_request_authority_denies_without_disclosure_or_writes[forwarded]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_current_request_authority_denies_without_disclosure_or_writes[revoked]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_invalid_review_body_never_echoes_submitted_text[body0]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_invalid_review_body_never_echoes_submitted_text[body1]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_invalid_review_body_never_echoes_submitted_text[None]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_oversized_body_is_bounded_before_owner_access",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_application_router_does_not_activate_observation_candidate",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_missing_incarnation_is_not_provisioned_by_observation",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_owner_result_is_strictly_validated_and_reauthorized[extra_private_field]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_owner_result_is_strictly_validated_and_reauthorized[late_authority_revocation]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_original_flags_remain_required_for_observation[narrative_production_v2]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_original_flags_remain_required_for_observation[ai_execution_v2]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_original_flags_remain_required_for_observation[model_broker_v2]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_original_flags_remain_required_for_observation[author_context_inspector_v2]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_constructor_opt_in_does_not_accept_truthy_non_boolean[true]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_constructor_opt_in_does_not_accept_truthy_non_boolean[1]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_constructor_opt_in_does_not_accept_truthy_non_boolean[None]",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_transport_additive.py::test_multilingual_review_over_one_megabyte_reaches_original_owner",
+      "backend": "file"
+    },
+    {
+      "nodeid": "tests/test_director_observation_wire_fixture_additive.py::test_capture_real_router_wire_contract",
+      "backend": "file"
+    }
+  ],
+  "raw_sha256": "0dd5bec2647f005645a652a00df576235259ac85593bc3f3603ebf74aa83db5c",
+  "independent_review": "UNAVAILABLE",
+  "tests_executed": false
+}
