@@ -1,0 +1,16 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-interactive-removal/frontend
+
+ ✓ src/experimental/InteractiveStoryPanel.removal.test.tsx (32 tests) 3862ms
+   ✓ previews exact ID and version, explicitly removes only that node, preserves dirty Unicode and saves through the original contract 319ms
+ ✓ src/experimental/InteractiveStoryPanel.additive.test.tsx (11 tests) 1199ms
+ ✓ src/experimental/InteractiveStoryPanel.membership.test.tsx (25 tests) 2156ms
+ ✓ src/experimental/InteractiveStoryPanel.test.tsx (11 tests) 1126ms
+ ✓ src/experimental/InteractiveStoryHistory.test.tsx (1 test) 91ms
+ ✓ src/experimental/interactiveNodeRemoval.test.ts (9 tests) 5ms
+
+ Test Files  6 passed (6)
+      Tests  89 passed (89)
+   Start at  20:00:23
+   Duration  11.64s (transform 216ms, setup 42ms, collect 679ms, tests 8.44s, environment 1.45s, prepare 286ms)
+
