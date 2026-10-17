@@ -1,0 +1,31 @@
+{
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+    "-c",
+    "import sys, site, json; print(json.dumps({'executable':sys.executable,'prefix':sys.prefix,'base_prefix':sys.base_prefix,'sys_path':sys.path,'meta_path':[getattr(x,'__module__',type(x).__module__)+'.'+getattr(x,'__name__',type(x).__name__) for x in sys.meta_path],'user_site_enabled':site.ENABLE_USER_SITE,'product_or_pytest_imported':any(k=='pytest' or k=='app' or k.startswith('app.') or k.startswith('local_interop') for k in sys.modules)},indent=2))"
+  ],
+  "cwd": "/workspace/scratch/20a0022d2b33/studio-storyboard-director",
+  "unset": [
+    "PYTHONHOME",
+    "PYTHONPATH",
+    "PYTHONSTARTUP",
+    "PYTHONUSERBASE",
+    "PYTEST_ADDOPTS",
+    "PYTEST_PLUGINS",
+    "DATABASE_URL",
+    "TEST_POSTGRES_DATABASE_URL",
+    "E2E_DATABASE_URL",
+    "COLLABORATION_DEV_SESSIONS_JSON",
+    "PACKAGED_RUNTIME_INSTANCE_ID",
+    "PACKAGED_BOOTSTRAP_SECRET",
+    "PACKAGED_CONTROL_PIPE"
+  ],
+  "set": {
+    "PYTHONNOUSERSITE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+    "PYTHON_DOTENV_DISABLED": "1",
+    "PACKAGED_WINDOWS_MODE": "false"
+  },
+  "exit_code": 0
+}

@@ -1,6 +1,15 @@
 # Frozen capability continuation ledger — 2026-10-16
 
-## Latest verified checkpoint — 2026-10-17 00:35 UTC
+## Latest bounded checkpoint — 2026-10-17 02:04 UTC
+
+Current source base is `00b305c9c784bd316a8c23a70a28157d19366f09`. Saved nonempty STORYBOARD now feeds the original Director proposal/review/save owners as transparent RULE_ASSISTED support: one note per authored shot, copied camera/duration/source evidence, explicit hypothetical prompts, separate human-reviewed DIRECTOR DRAFT and original explicit Graph pin/reopen. Original board, approvals, bindings and assets remain unchanged. See [the feature report](../storyboard_director_proposal.md) and [scoped evidence](../delivery/v2-development/storyboard-director-20261017/README.md).
+
+Primary frontend verification passed **88 unique mocked UI cases, including 19 new cases**, forced TypeScript, production build and token guard; full frontend source manifests remained stable. The earlier overlapping 86-case run and its new-fixture TypeScript failure remain in raw evidence and are not summed. Separately, primary backend verification passed **45 cases with 33 PostgreSQL cases deselected**. Independent final source review approved all five runtime files and two additive tests, with 1,273 protected entries unchanged. Repeated subset checks passed 60 UI cases (19 new plus 41 original) with 2,535 source/companion entries stable, and 19 backend cases with 18 PostgreSQL cases deselected and 2,524 source entries stable. These subsets overlap the primary totals and are not added. These are separate evidence layers, not browser/full E2E acceptance.
+
+STORYBOARD model preview/dispatch support remains **BLOCKED / not implemented**; model analysis remains the intended primary capability. This deterministic auxiliary slice does not complete intelligent analysis. Browser, desktop, model/provider quality, PostgreSQL, GPU and full feature/release acceptance remain open. The older blocked lifecycle candidate is unchanged; no paid/live model calls, remote push, merge, tag or release were performed. Historical evidence below remains preserved.
+
+
+## Previous verified checkpoint — 2026-10-17 00:35 UTC
 
 Current local base is `46fff4797f6110e130256566b397cb08586e56c1` (storyboard image-handoff inventory binding). The new measured-media caption import source is an uncommitted delta with independent source-slice approval, pending parent inventory/commit review and broader acceptance. Its bounded UI check passed 71 unique tests, including 38 new import tests; forced TypeScript, production build and the original token guard passed. The separate backend File/TestClient check passed 109 tests with 96 PostgreSQL cases deselected. Mock-transport jsdom UI and in-process backend evidence are separate and do not establish browser/full E2E acceptance. The original caption save owner still has no durable UNKNOWN write lock. See [the caption UI evidence](../delivery/v2-development/caption-import-ui-20261017/README.md) and [backend evidence](caption-import-preview-backend-20261017.md).
 

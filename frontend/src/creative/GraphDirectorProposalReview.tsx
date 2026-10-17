@@ -87,14 +87,14 @@ export function GraphDirectorProposalReview(props: Props) {
     requestLock.current = true; setLoading(true); report('loading', true); setError('');
     try {
       const result = await props.read(() => {
-        if (!current()) throw new Error('原剧本读取已过期，请重新打开导演审核。');
+        if (!current()) throw new Error('原来源读取已过期，请重新打开导演审核。');
         return props.client.list();
       });
       if (!current()) return;
       setDocuments(result.items); setOpen(true);
     } catch (reason) {
       if (!current()) return;
-      setError(apiErrorView(reason, '剧本来源读取失败，未创建导演建议。').message);
+      setError(apiErrorView(reason, '剧本或分镜来源读取失败，未创建导演建议。').message);
       if (reason instanceof ApiError && [401, 403].includes(reason.status)) denied();
     } finally {
       requestLock.current = false;
@@ -103,11 +103,12 @@ export function GraphDirectorProposalReview(props: Props) {
   }
   if (!props.active || !props.isCurrent() || initialClient.current !== props.client) return null;
   return <section aria-label="画布原导演建议审核">
-    <h3>原剧本 → 导演建议与人工审核</h3>
-    <p>读取原 Creative owner 已保存的剧本，复用原建议与审核队列。采用后是独立导演草稿；图节点绑定仍需明确选择和保存。</p>
+    <h3>原剧本 / 分镜 → 导演建议与人工审核</h3>
+    <p>读取原 Creative owner 已保存的剧本或分镜，复用原建议与审核队列。分镜仅支持规则辅助，不代表模型分析。采用后是独立导演草稿；图节点绑定仍需明确选择和保存。</p>
     <Button disabled={props.busy || loading || pending} onClick={() => void loadSources()}>
       {open ? '刷新原剧本来源' : '从已保存剧本打开导演建议审核'}
     </Button>
+    {!open && <Button disabled={props.busy || loading || pending} onClick={() => void loadSources()}>从已保存分镜打开导演建议审核</Button>}
     {open && <Button disabled={props.busy || pending} onClick={() => setOpen(false)}>收起导演建议审核</Button>}
     {loading && <StatusMessage>正在读取原剧本来源…</StatusMessage>}
     {error && <StatusMessage tone="error">{error}</StatusMessage>}

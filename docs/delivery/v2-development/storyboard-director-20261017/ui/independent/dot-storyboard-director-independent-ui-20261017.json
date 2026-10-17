@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "exit_code": 0,
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/creative/AIDirectorPanel.storyboard.additive.test.tsx",
+    "src/creative/AIDirectorPanel.test.tsx",
+    "src/creative/AIDirectorReopen.test.tsx",
+    "--maxWorkers=1",
+    "--minWorkers=1",
+    "--no-cache"
+  ],
+  "cwd": "/workspace/scratch/20a0022d2b33/studio-storyboard-director/frontend",
+  "head": "00b305c9c784bd316a8c23a70a28157d19366f09",
+  "started_utc": "2026-10-17T02:03:05.784Z",
+  "finished_utc": "2026-10-17T02:03:11.131Z",
+  "sources": 2535,
+  "changed": [],
+  "log": "/tmp/dot-storyboard-director-independent-ui-20261017.log",
+  "log_sha256": "74fdb35a88e862815113bc0818862e7049ff1b642085f0bb61c32b63ce8f478c",
+  "before": "/tmp/dot-storyboard-director-independent-ui-20261017-before.json",
+  "after": "/tmp/dot-storyboard-director-independent-ui-20261017-after.json"
+}

@@ -1,0 +1,17 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-storyboard-director/frontend
+
+ ✓ src/creative/AIDirectorReopen.test.tsx (31 tests) 1372ms
+ ✓ src/creative/AIDirectorPanel.storyboard.additive.test.tsx (17 tests) 678ms
+ ✓ src/creative/AIDirectorPanel.test.tsx (10 tests) 569ms
+ ✓ src/creative/AIDirectorPanel.reasoning.additive.test.tsx (2 tests) 339ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 168ms
+ ✓ src/creative/StudioGraphDirectorConsole.test.tsx (11 tests) 410ms
+ ✓ src/creative/AIDirectorFastReceipt.test.tsx (3 tests) 349ms
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 143ms
+
+ Test Files  8 passed (8)
+      Tests  86 passed (86)
+   Start at  10:58:55
+   Duration  9.55s (transform 367ms, setup 52ms, collect 1.58s, tests 4.03s, environment 2.54s, prepare 383ms)
+

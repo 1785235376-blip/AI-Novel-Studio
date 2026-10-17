@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-storyboard-director/frontend
+
+ ✓ src/creative/AIDirectorReopen.test.tsx (31 tests) 1405ms
+ ✓ src/creative/AIDirectorPanel.storyboard.additive.test.tsx (19 tests) 883ms
+ ✓ src/creative/AIDirectorPanel.test.tsx (10 tests) 565ms
+
+ Test Files  3 passed (3)
+      Tests  60 passed (60)
+   Start at  11:03:06
+   Duration  4.98s (transform 277ms, setup 19ms, collect 756ms, tests 2.85s, environment 844ms, prepare 139ms)
+

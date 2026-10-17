@@ -1,0 +1,27 @@
+# Saved storyboard to reviewed Director draft
+
+This bounded path adds saved, nonempty STORYBOARD documents to the existing rule-assisted Director proposal owner. It does not implement intelligent storyboard analysis. Model analysis remains the intended primary planning capability; these deterministic copying rules are auxiliary review scaffolding only. No model, provider, broker, job, render, media binding, source edit or automatic Graph run is triggered.
+
+The original Creative owner saves and orders shots. A proposal creates one Director note per authored shot, ordered by shot number, with the same number, scene, camera size/angle/motion and duration. It copies frame_prompt to note, action to shot_suggestion, color to color_palette, and available emotion/composition/lens/lighting. Pacing and blocking are explicitly labelled human-review prompts, never spatial correctness claims.
+
+Only storyboard proposals add provenance.source_mode=STORYBOARD, rule_version=storyboard-director-planning-v1 and source_shots. Each source_shots entry contains note_id, source_shot_id, source_number, scene_id, the complete source_shot snapshot, copied_fields (Director destination names), suggested_fields, and retained_source_only_fields. Dialogue, sound, environment, continuity, embedded notes and other unmapped fields remain in the exact source snapshot; they are not silently converted into operational Director fields. Review UI must disclose that boundary. Snapshot field values are not instructions.
+
+Mapped text is never truncated. frame_prompt/action exceeding 8000 characters, emotion exceeding 2000 characters, or values that Director validation would normalize are rejected with an actionable error. Edit and save the source before retrying. Existing screenplay behavior, row shape and output digests are unchanged.
+
+Review uses the existing proposal version CAS and exact output digest. Storyboard review retains each note ID, scene and authored shot number/order; note content may be edited. Adoption creates a separate DIRECTOR DRAFT via the original content-preparation owner, with the exact source document version/digest binding and unchanged source_shots provenance. It neither approves nor edits the source board, its image/video bindings, its approvals or its assets. The resulting Director can be explicitly pinned to the original Graph document_snapshot. Restart resolves the same proposal, draft and current pin; no automatic run exists.
+
+Model preview and dispatch validate the actual saved source mode before broker/preparer/job work. STORYBOARD sources are rejected; the screenplay-only model request strategy remains unchanged. UI must hide model controls for storyboard proposals. This is not live model quality, media output, GPU, PostgreSQL or desktop application acceptance.
+
+New tests: tests/test_v2_storyboard_director_proposal_loop.py. They use the original File workspace and Graph owners, persisted-byte comparisons, a formal image binding and approval, explicit human edits, reopen/pin, stale/archive checks, actor/scope isolation, exact-review gates, limits and model-admission tripwires. No video generation is needed: the absent video binding remains absent. Existing screenplay acceptance tests remain unmodified.
+
+## Verification checkpoint — 2026-10-17
+
+Base source commit: `00b305c9c784bd316a8c23a70a28157d19366f09`. The bounded primary frontend run passed **88 unique cases across eight suites**, including **19 additive storyboard cases**, plus forced TypeScript, production build and token guard. Full frontend source manifests were identical before/after the final run. [Raw frontend evidence](delivery/v2-development/storyboard-director-20261017/ui/README.md) retains the earlier overlapping 86-case checkpoint and its new-test generic typing failure; those 86 cases are not additional unique coverage.
+
+Separately, the primary backend run passed **45 cases with 33 PostgreSQL cases deselected**. These backend tests and mocked frontend tests are different evidence layers, not a joined browser E2E claim. [Backend evidence and limitations](delivery/v2-development/storyboard-director-20261017/README.md) include exact persisted-source and original-owner Graph pin/restart checks. Independent final source review approved the five runtime files and two additive test files, with zero drift among 1,273 protected entries. Repeated subsets passed 60 UI cases (19 new plus 41 unchanged) and 19 backend cases with 18 PostgreSQL cases deselected; these overlap the primary totals and are not summed. [Final approval and exact evidence](delivery/v2-development/storyboard-director-20261017/README.md#independent-final-source-approval) retain the checker-only no-index exit-code diagnostic separately from the earlier real test-fixture TypeScript failure.
+
+STORYBOARD model-source support is explicitly **BLOCKED / not implemented** for preview and dispatch. Model analysis remains the target capability; RULE_ASSISTED is bounded auxiliary support. Browser, desktop, real provider/model-quality, PostgreSQL, GPU, full feature and release acceptance remain open. No push, merge, tag or release was performed.
+
+## Preserved raw-log whitespace
+
+The full staged whitespace check reports three EOF blank lines in the exact primary and independent Vitest logs. They remain unchanged to preserve the original evidence. The separate source/test/documentation check excludes only raw `.log` files and passes; the full staged check is not represented as passing.

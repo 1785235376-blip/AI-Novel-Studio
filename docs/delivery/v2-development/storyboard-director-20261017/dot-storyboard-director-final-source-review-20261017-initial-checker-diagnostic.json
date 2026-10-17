@@ -1,0 +1,70 @@
+{
+  "status": "FAIL",
+  "utc": "2026-10-17T02:04:00.596Z",
+  "root": "/workspace/scratch/20a0022d2b33/studio-storyboard-director",
+  "head": "00b305c9c784bd316a8c23a70a28157d19366f09",
+  "source_sha256": {
+    "app/creative/proposals.py": "ca4b70d7ed30be6072e730aea2360650906b9805a0590cf6ad85798555afe1fa",
+    "app/creative/generation.py": "37b6ac843465bc091f452e66ba07d7f3e1233bb3a83a767ae5276d72d416ea47",
+    "tests/test_v2_storyboard_director_proposal_loop.py": "9d9a44a0522928a1040850137dbb9850ccf76f10f3b40e2d679c2bfca2d057d4",
+    "frontend/src/creative/AIDirectorPanel.tsx": "c43d2df0604fea99ff0b3b9c8be5827f82c73b6e99b138c77eead71fa19bb40e",
+    "frontend/src/creative/GraphDirectorProposalReview.tsx": "8efb4ba475038b1d89f0635e948c16f0903cd0c4f8fc499ce71a3fbf1d929428",
+    "frontend/src/creative/client.ts": "373285b58ae8cf087e25b229eba99299a9c5800b59d475656718330e0c1bf982",
+    "frontend/src/creative/AIDirectorPanel.storyboard.additive.test.tsx": "72beacb9ff37505b149599ecd1de32a3658a4d24fe7a649e92826569558cf74c"
+  },
+  "docs_sha256": {
+    "docs/storyboard_director_proposal.md": "9a0a6c25430e37d58361800d54b3bae901600effa08dbde8cdbba8489e21c812"
+  },
+  "backend": {
+    "receipt": "docs/delivery/v2-development/storyboard-director-independent-backend-20261017.json",
+    "receipt_sha256": "700988ee756b365569dd39b816efe19ac6da2871a26e812d818fb79fe5dba529",
+    "passed": 19,
+    "postgres_deselected": 18,
+    "source_count": 2524,
+    "source_stable": true,
+    "log_sha256": "4127bbec4d27174c4062fbc8c6985bd1defa68bf57b7acc2a0a43442659f592e"
+  },
+  "frontend": {
+    "receipt": "/tmp/dot-storyboard-director-independent-ui-20261017.json",
+    "receipt_sha256": "44eea2e85302ee6ac1a24437a90ac3804a9ae4ef0a319a56322fd6ace5c8978f",
+    "passed": 60,
+    "new_cases": 19,
+    "original_cases": 41,
+    "source_plus_companion_count": 2535,
+    "source_stable": true,
+    "log_sha256": "74fdb35a88e862815113bc0818862e7049ff1b642085f0bb61c32b63ce8f478c"
+  },
+  "old_protected_count": 1273,
+  "old_protected_drift": [],
+  "existing_source_delta": [
+    "app/creative/generation.py",
+    "app/creative/proposals.py",
+    "frontend/src/creative/AIDirectorPanel.tsx",
+    "frontend/src/creative/GraphDirectorProposalReview.tsx",
+    "frontend/src/creative/client.ts"
+  ],
+  "new_test_paths": [
+    "tests/test_v2_storyboard_director_proposal_loop.py",
+    "frontend/src/creative/AIDirectorPanel.storyboard.additive.test.tsx"
+  ],
+  "source_diff_check_exit": 0,
+  "errors": [
+    "new file whitespace tests/test_v2_storyboard_director_proposal_loop.py ",
+    "new file whitespace frontend/src/creative/AIDirectorPanel.storyboard.additive.test.tsx ",
+    "new file whitespace docs/storyboard_director_proposal.md "
+  ],
+  "reviewed_contract": [
+    "Original atomic proposal authority and exact saved source version/digest",
+    "Authored shot associations and unmapped source evidence preserved",
+    "Separate human-reviewed DIRECTOR DRAFT, no original board or formal bindings mutation",
+    "Backend actual STORYBOARD mode denies model preview/dispatch before downstream access",
+    "UI source mismatch denies model controls/routes and retains legacy screenplay",
+    "Retained identity/source callbacks plus same-batch edit/source/discard consent fences",
+    "Original UNKNOWN/no-replay and approved proposal versus DRAFT semantics preserved"
+  ],
+  "limits": [
+    "Rule-assisted copying and review mechanics only",
+    "No live model, semantic quality, media generation, PostgreSQL or browser acceptance",
+    "Original backend TestClient deprecation warning preserved"
+  ]
+}

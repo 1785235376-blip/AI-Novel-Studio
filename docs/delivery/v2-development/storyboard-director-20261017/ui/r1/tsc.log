@@ -1,0 +1,4 @@
+src/creative/AIDirectorPanel.storyboard.additive.test.tsx(31,127): error TS2322: Type 'Mock<(work: () => Promise<unknown>) => Promise<unknown>>' is not assignable to type '<T>(work: () => Promise<T>) => Promise<T>'.
+  Type 'Promise<unknown>' is not assignable to type 'Promise<T>'.
+    Type 'unknown' is not assignable to type 'T'.
+      'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.

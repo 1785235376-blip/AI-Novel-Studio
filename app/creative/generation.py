@@ -83,7 +83,9 @@ class DirectorModelCoordinator:
         guard()
         self._flags()
         row = self.proposals._owned(ctx.novel_id, ctx.scope, ctx.actor, rid, state)
-        self.proposals._current(ctx.novel_id, ctx.scope, row)
+        source = self.proposals._current(ctx.novel_id, ctx.scope, row)
+        if source["mode"] != "SCREENPLAY":
+            raise ValueError("CREATIVE_MODEL_SCREENPLAY_SOURCE_REQUIRED: storyboard proposals support rule-assisted human review only")
         if row["status"] in {"CANCELLED", "APPROVED"}:
             raise ValueError("CREATIVE_PROPOSAL_TERMINAL")
         if row.get("model_preview") and row.get("visual_target") != row["model_preview"].get("visual_target"):

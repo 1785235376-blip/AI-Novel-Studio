@@ -46,7 +46,9 @@ class DirectorProposalService:
 
     def _current(self, nid, scope, row):
         source = self.documents.get(nid, scope, row["source_document_id"])
-        if (source["mode"] != "SCREENPLAY" or source["version"] != row["source_version"]
+        expected_mode = row.get("provenance", {}).get("source_mode", "SCREENPLAY")
+        if (source["mode"] != expected_mode or source["mode"] not in {"SCREENPLAY", "STORYBOARD"}
+                or source["version"] != row["source_version"]
                 or self.documents.document_digest(source) != row["source_digest"]):
             raise StaleSourceError("CREATIVE_PROPOSAL_SOURCE_CHANGED")
         return source
@@ -108,10 +110,16 @@ class DirectorProposalService:
             guard()
             source = self.documents.get(nid, scope, body.source_document_id)
             check_version(source, body.expected_source_version)
-            if source["mode"] != "SCREENPLAY" or not source["scenes"]:
+            storyboard = source["mode"] == "STORYBOARD"
+            if storyboard and not source["shots"]:
+                raise ValueError("CREATIVE_PROPOSAL_STORYBOARD_SHOTS_REQUIRED: save at least one authored shot")
+            if source["mode"] not in {"SCREENPLAY", "STORYBOARD"} or not source["scenes"]:
                 raise ValueError("CREATIVE_PROPOSAL_SCREENPLAY_SCENES_REQUIRED")
             notes = []
-            for number, scene in enumerate(sorted(source["scenes"], key=lambda row: row["sequence"]), 1):
+            shot_sources = []
+            if storyboard:
+                notes, shot_sources = self._storyboard_notes(source)
+            for number, scene in enumerate([] if storyboard else sorted(source["scenes"], key=lambda row: row["sequence"]), 1):
                 # Copy explicitly authored emotion and delivery; suggestions
                 # remain visibly hypothetical and editable before adoption.
                 notes.append({"scene_id": scene["id"], "number": number,
@@ -130,6 +138,9 @@ class DirectorProposalService:
             provenance = {"method": "RULE_ASSISTED", "model_called": False, "provider_id": None,
                 "model_id": None, "model_version": None, "parameters": {"rule_version": "director-planning-v1"},
                 "input_digest": self.documents.document_digest(source), "quality_verification": "HUMAN_REVIEW_REQUIRED"}
+            if storyboard:
+                provenance.update(source_mode="STORYBOARD", source_shots=shot_sources,
+                                  parameters={"rule_version": "storyboard-director-planning-v1"})
             row = new_row(nid, scope, actor, {"status": "NEEDS_REVIEW", "title": title,
                 "project_incarnation": self.documents.store.incarnation(nid),
                 "source_document_id": source["id"], "source_version": source["version"],
@@ -144,6 +155,43 @@ class DirectorProposalService:
             guard()
             return self._public(row)
 
+    @staticmethod
+    def _storyboard_notes(source):
+        """Copy authored fields exactly; retain unmapped shot data with disclosure.
+
+        The source snapshot is evidence, not a claim that Director operational
+        fields represent every storyboard field. No spatial/model inference.
+        """
+        from .models import DirectorSceneNote
+        mapping = {"frame_prompt": "note", "action": "shot_suggestion",
+                   "shot_size": "shot_size", "camera_angle": "camera_angle",
+                   "camera_motion": "camera_motion", "duration_seconds": "duration_seconds",
+                   "emotion": "emotion", "composition": "composition", "lens": "lens",
+                   "lighting": "lighting", "color": "color_palette"}
+        notes, associations = [], []
+        for shot in sorted(source["shots"], key=lambda item: item["number"]):
+            copied = {target: shot[field] for field, target in mapping.items()
+                      if field in shot and shot[field] is not None}
+            raw = {**copied, "number": shot["number"], "scene_id": shot["scene_id"],
+                   "pacing": "待审建议：核对已写镜头时长与表演、剪辑节奏。",
+                   "blocking": "待审建议：人工核对人物位置、视线与镜头衔接；规则不验证空间。"}
+            try:
+                note = DirectorSceneNote.model_validate(raw).model_dump()
+            except ValueError as exc:
+                raise ValueError(f"CREATIVE_PROPOSAL_STORYBOARD_FIELD_LIMIT: shot {shot['id']}; "
+                                 "shorten frame_prompt/action to 8000 and emotion to 2000 characters before proposing; "
+                                 f"Director validation: {exc}") from exc
+            if any(note[field] != value for field, value in copied.items()):
+                raise ValueError(f"CREATIVE_PROPOSAL_STORYBOARD_FIELD_NORMALIZATION: shot {shot['id']}; "
+                                 "save text without surrounding whitespace before proposing")
+            notes.append(note)
+            associations.append({"note_id": note["id"], "source_shot_id": shot["id"],
+                "source_number": shot["number"], "scene_id": shot["scene_id"], "source_shot": deepcopy(shot),
+                "copied_fields": list(copied), "suggested_fields": ["pacing", "blocking"],
+                "retained_source_only_fields": [field for field in shot
+                    if field not in mapping and field not in {"id", "number", "scene_id"}]})
+        return notes, associations
+
     def review(self, nid, scope, actor, rid, value, *, guard=lambda: None):
         body = DirectorProposalReview.model_validate(value)
         with self.documents.store.transaction(nid, scope) as state:
@@ -155,6 +203,11 @@ class DirectorProposalService:
             if row["output_digest"] != body.reviewed_output_digest or director_output_digest(row["director_notes"], row.get("visual_target")) != row["output_digest"]:
                 raise ValueError("CREATIVE_PROPOSAL_EXACT_REVIEW_REQUIRED")
             guard()
+            if source["mode"] == "STORYBOARD":
+                expected = [(item["note_id"], item["scene_id"], item["source_number"])
+                            for item in row["provenance"]["source_shots"]]
+                if [(note.id, note.scene_id, note.number) for note in body.director_notes] != expected:
+                    raise ValueError("CREATIVE_PROPOSAL_STORYBOARD_ASSOCIATION_REQUIRED: retain each note ID, scene and authored shot order")
             if row.get("model_execution"):
                 if self.generation is None:
                     raise StaleSourceError("CREATIVE_MODEL_LIVE_AUTHORITY_REQUIRED")
