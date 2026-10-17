@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/StudioTimelineSourceReplacement.additive.test.tsx (11 tests) 773ms
+   ✓ wires the actual rail into source preview without save or execution 479ms
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  03:30:12
+   Duration  1.95s (transform 414ms, setup 23ms, collect 586ms, tests 773ms, environment 311ms, prepare 57ms)
+

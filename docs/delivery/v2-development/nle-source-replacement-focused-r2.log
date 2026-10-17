@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/StudioTimelineSourceReplacement.additive.test.tsx (11 tests) 769ms
+   ✓ wires the actual rail into source preview without save or execution 469ms
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  03:29:21
+   Duration  1.90s (transform 406ms, setup 19ms, collect 559ms, tests 769ms, environment 306ms, prepare 59ms)
+
+src/creative/nleSourceReplacement.ts(14,130): error TS2367: This comparison appears to be unintentional because the types '2 | undefined' and '1' have no overlap.

@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## NLE authoring rail connections (18:34 UTC)
+
+Connected two previously unhandled original NLE descriptors in StudioTimelineEditor. Exact clip.update source replacements now populate and reveal the existing formal-source inspector, retaining current source trim and requiring its original preview/confirmation/CAS before writing. Current catalog identity, locked track, draft/selection ownership and existing unsent source forms are respected; no automatic save. Subtitle rail insert/update/remove now reuse the original caption mapper and complete timeline validator, then the existing local change/undo/Save owner.
+
+Final nle-authoring-bridges-focused-r1:13 focused checks plus TypeScript PASS, including real mounted rail-to-inspector and rail-to-local-caption/undo flows with mocked transport. No native media execution or full acceptance claim. Earlier source-replacement-r1 failed on a new fixture missing the original mandatory video track; r2 exposed a real legacy-schema conditional error (undefined, not1), fixed in r3. Preserve all three receipts. No original validators or tests were weakened.
+
 ## Director conflict comparison (18:27 UTC)
 
 The original Director Console now displays a paginated read-only comparison of local author input and the explicitly inspected server candidate before discard/adoption. It compares title/source settings, visual targets, scene order/content/dialogue, director notes and authored evidence through an explicit field allowlist. Unknown metadata is excluded; long excerpts are bounded and rendered as escaped text. No merge, save, authority change or unknown-request resolution is inferred from equality. The existing discard consent and source/CAS owner remain unchanged.

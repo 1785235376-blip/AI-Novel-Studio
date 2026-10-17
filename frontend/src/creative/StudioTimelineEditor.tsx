@@ -1,3 +1,5 @@
+import { applyNleCaptionCommand } from './nleCaptionEditing';
+import { nleSourceReplacementIntent } from './nleSourceReplacement';
 import { selectionDuplicateOperations, sameSelectionDuplicateDescriptors } from '../nle/timelineSelectionDuplicate';
 import { selectionMoveOperations } from '../nle/timelineSelectionMove';
 import { StudioTimelineAssetPicker } from './StudioTimelineAssetPicker';
@@ -42,7 +44,8 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
   const [nlePlayhead, setNlePlayhead] = useState(0);
   const [nleView, setNleView] = useState({ startMs: 0, scale: 1 });
   const [nleNotice, setNleNotice] = useState('');
-  useEffect(() => { setPicked({}); setClipEdits({}); }, [props.client]);
+  const [sourceEditReveal, setSourceEditReveal] = useState(0);
+  useEffect(() => { setPicked({}); setClipEdits({}); setSourceEditReveal(0); }, [props.client]);
   const clipElements = useRef(new Map<string, HTMLElement>()), composing = useRef(false);
   const pickerOwner = useRef({ client: props.client, generation: 0 });
   if (pickerOwner.current.client !== props.client) pickerOwner.current = { client: props.client, generation: pickerOwner.current.generation + 1 };
@@ -108,7 +111,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       request={props.assetHandoff} draft={draft} canEdit={c.canEdit} isCurrent={props.isCurrent} getRevision={c.getHandoffRevision}
       readJob={(owner, id) => props.read(() => props.client.get(owner, id))}
       onApply={(trackId, asset, range) => c.change(input => appendTimelineAsset(input, trackId, asset, range))} />}
-    <StudioTimelineSourceEditPanel controller={c.sourceEdit} source={c.base} assets={props.assets} />
+    <StudioTimelineSourceEditPanel controller={c.sourceEdit} source={c.base} assets={props.assets} revealRequest={sourceEditReveal} />
     <fieldset disabled={locked}><legend>时间线参数</legend>
       <p>{extended ? '扩展编辑版本 2：可使用静态画面、速度、淡入淡出和片段音量。' : '原时间线版本：保存与渲染保持原有字段和行为。'}</p>
       {!extended && <Button onClick={c.upgradeTimeline}>明确采用扩展编辑（版本 2，需重新保存）</Button>}
@@ -271,6 +274,32 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       exportReceipt={c.exportPreview} limits={TIMELINE_LIMITS}
       waveform={{ ...waveform, onRequest: () => void waveform.request() }}
       onEdit={command => {
+        if (['caption.insert', 'caption.update', 'caption.remove'].includes(command.kind)) {
+          const live = latestReview.current;
+          if (live.props.client !== props.client || live.c.getHandoffRevision() !== reviewGeneration
+            || !live.props.isCurrent() || !live.c.canEdit || live.props.busy) return;
+          try {
+            const next = applyNleCaptionCommand(draft, command.kind, command.payload);
+            const applied = live.c.change(value => { value.timeline.captions = next.timeline.captions; });
+            setNleNotice(applied ? '字幕编辑已应用到本地时间线；可撤销，明确保存前不会写入服务端。' : '字幕编辑未应用，请核对当前编辑状态。');
+          } catch (reason) { setNleNotice(reason instanceof Error ? reason.message : '字幕编辑未应用。'); }
+          return;
+        }
+        if (command.kind === 'clip.update') {
+          const live = latestReview.current;
+          if (live.props.client !== props.client || live.c.getHandoffRevision() !== reviewGeneration
+            || selection.current.generation !== selectionGeneration || !live.props.isCurrent()
+            || JSON.stringify(selection.current.ids) !== JSON.stringify(nleClips)) return;
+          if (!live.c.sourceEdit.canPrepare || live.c.inputDirty || !live.c.base || live.c.sourceEdit.dirty) {
+            setNleNotice('先保存时间线草稿，并完成或清空现有正式素材操作，再准备替换。'); return;
+          }
+          try {
+            const intent = nleSourceReplacementIntent(draft.timeline, nleClips, live.props.assets, command.payload);
+            live.c.sourceEdit.change(intent); setSourceEditReveal(value => value + 1);
+            setNleNotice('已填入原“正式素材加入与替换”面板。请核对范围、预览，再明确保存；尚未替换素材或发送请求。');
+          } catch (reason) { setNleNotice(reason instanceof Error ? reason.message : '素材替换未准备，请核对原片段与素材版本。'); }
+          return;
+        }
         if (command.kind === 'clip.duplicate' && Array.isArray(command.payload)) {
           const live = latestReview.current;
           if (live.props.client !== props.client || live.c.getHandoffRevision() !== reviewGeneration

@@ -1,0 +1,99 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/creative/StudioTimelineSourceReplacement.additive.test.tsx (11 tests | 11 failed) 11ms
+   × maps exact current source to the original unsent inspector intent 6ms
+     → 时间线回执字段无效，请读取服务端核对。
+   × refuses version without preparing a replacement 1ms
+     → 时间线回执字段无效，请读取服务端核对。
+   × refuses digest without preparing a replacement 1ms
+     → 时间线回执字段无效，请读取服务端核对。
+   × refuses kind without preparing a replacement 0ms
+     → 时间线回执字段无效，请读取服务端核对。
+   × refuses deleted without preparing a replacement 0ms
+     → 时间线回执字段无效，请读取服务端核对。
+   × refuses extra without preparing a replacement 0ms
+     → 时间线回执字段无效，请读取服务端核对。
+   × refuses wrong clip without preparing a replacement 0ms
+     → 时间线回执字段无效，请读取服务端核对。
+   × refuses locked without preparing a replacement 0ms
+     → 时间线回执字段无效，请读取服务端核对。
+   × refuses unchanged without preparing a replacement 0ms
+     → 时间线回执字段无效，请读取服务端核对。
+   × wires the actual rail into source preview without save or execution 0ms
+     → 时间线回执字段无效，请读取服务端核对。
+   × preserves an existing source form and fences retained callbacks after edits 0ms
+     → 时间线回执字段无效，请读取服务端核对。
+
+ Test Files  1 failed (1)
+      Tests  11 failed (11)
+   Start at  03:28:30
+   Duration  1.12s (transform 393ms, setup 17ms, collect 554ms, tests 11ms, environment 292ms, prepare 68ms)
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 11 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/StudioTimelineSourceReplacement.additive.test.tsx > maps exact current source to the original unsent inspector intent
+Error: 时间线回执字段无效，请读取服务端核对。
+ ❯ Module.checkedTimelineRow src/creative/studioTimelineTypes.ts:189:11
+    187|       ...(receipt ? { transfer_receipt: receipt } : {}), ...(edit ? { …
+    188|   } catch {
+    189|     throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID',…
+       |           ^
+    190|   }
+    191| }
+ ❯ row src/creative/StudioTimelineSourceReplacement.additive.test.tsx:14:15
+ ❯ src/creative/StudioTimelineSourceReplacement.additive.test.tsx:20:92
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯
+
+ FAIL  src/creative/StudioTimelineSourceReplacement.additive.test.tsx > refuses version without preparing a replacement
+ FAIL  src/creative/StudioTimelineSourceReplacement.additive.test.tsx > refuses digest without preparing a replacement
+ FAIL  src/creative/StudioTimelineSourceReplacement.additive.test.tsx > refuses kind without preparing a replacement
+ FAIL  src/creative/StudioTimelineSourceReplacement.additive.test.tsx > refuses deleted without preparing a replacement
+ FAIL  src/creative/StudioTimelineSourceReplacement.additive.test.tsx > refuses extra without preparing a replacement
+ FAIL  src/creative/StudioTimelineSourceReplacement.additive.test.tsx > refuses wrong clip without preparing a replacement
+ FAIL  src/creative/StudioTimelineSourceReplacement.additive.test.tsx > refuses locked without preparing a replacement
+ FAIL  src/creative/StudioTimelineSourceReplacement.additive.test.tsx > refuses unchanged without preparing a replacement
+Error: 时间线回执字段无效，请读取服务端核对。
+ ❯ Module.checkedTimelineRow src/creative/studioTimelineTypes.ts:189:11
+    187|       ...(receipt ? { transfer_receipt: receipt } : {}), ...(edit ? { …
+    188|   } catch {
+    189|     throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID',…
+       |           ^
+    190|   }
+    191| }
+ ❯ row src/creative/StudioTimelineSourceReplacement.additive.test.tsx:14:15
+ ❯ src/creative/StudioTimelineSourceReplacement.additive.test.tsx:21:155
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯
+
+ FAIL  src/creative/StudioTimelineSourceReplacement.additive.test.tsx > wires the actual rail into source preview without save or execution
+Error: 时间线回执字段无效，请读取服务端核对。
+ ❯ Module.checkedTimelineRow src/creative/studioTimelineTypes.ts:189:11
+    187|       ...(receipt ? { transfer_receipt: receipt } : {}), ...(edit ? { …
+    188|   } catch {
+    189|     throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID',…
+       |           ^
+    190|   }
+    191| }
+ ❯ row src/creative/StudioTimelineSourceReplacement.additive.test.tsx:14:15
+ ❯ mount src/creative/StudioTimelineSourceReplacement.additive.test.tsx:19:36
+ ❯ src/creative/StudioTimelineSourceReplacement.additive.test.tsx:22:105
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯
+
+ FAIL  src/creative/StudioTimelineSourceReplacement.additive.test.tsx > preserves an existing source form and fences retained callbacks after edits
+Error: 时间线回执字段无效，请读取服务端核对。
+ ❯ Module.checkedTimelineRow src/creative/studioTimelineTypes.ts:189:11
+    187|       ...(receipt ? { transfer_receipt: receipt } : {}), ...(edit ? { …
+    188|   } catch {
+    189|     throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID',…
+       |           ^
+    190|   }
+    191| }
+ ❯ row src/creative/StudioTimelineSourceReplacement.additive.test.tsx:14:15
+ ❯ mount src/creative/StudioTimelineSourceReplacement.additive.test.tsx:19:36
+ ❯ src/creative/StudioTimelineSourceReplacement.additive.test.tsx:23:113
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/11]⎯
+

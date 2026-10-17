@@ -1,13 +1,16 @@
+import { useEffect, useRef } from 'react';
 import { Badge, Button, StatusMessage } from '../ui/primitives';
 import type { StudioAsset } from './studioClient';
 import type { StudioTimelineRow } from './studioTimelineTypes';
 import type { useStudioTimelineSourceEdit } from './useStudioTimelineSourceEdit';
 type Controller = ReturnType<typeof useStudioTimelineSourceEdit>;
 /** Replaceable source Inspector over the original Timeline edit controller. */
-export function StudioTimelineSourceEditPanel({ controller: c, source, assets }: { controller: Controller; source?: StudioTimelineRow; assets: StudioAsset[] }) {
+export function StudioTimelineSourceEditPanel({ controller: c, source, assets, revealRequest = 0 }: { controller: Controller; source?: StudioTimelineRow; assets: StudioAsset[]; revealRequest?: number }) {
+  const details = useRef<HTMLDetailsElement>(null);
+  useEffect(() => { if (revealRequest > 0 && details.current) { details.current.open = true; details.current.scrollIntoView?.({ block: 'nearest' }); } }, [revealRequest]);
   if (!c.available || !source) return null; const intent = c.intent, asset = assets.find(row => row.id === intent.asset_id), track = source.timeline.tracks.find(row => row.id === intent.track_id);
   const tracks = source.timeline.tracks.filter(row => asset?.kind === 'audio' ? row.kind === 'AUDIO' : row.kind === 'VIDEO');
-  return <section aria-label="正式素材时间线操作"><details><summary>正式素材加入与替换</summary><p>基于已保存 v{source.version}。新轨道和首片段在同一批次保存；替换保留原片段摆放与其他作者参数。</p>
+  return <section aria-label="正式素材时间线操作"><details ref={details}><summary>正式素材加入与替换</summary><p>基于已保存 v{source.version}。新轨道和首片段在同一批次保存；替换保留原片段摆放与其他作者参数。</p>
     {c.error && <StatusMessage tone="error">{c.error}</StatusMessage>}{c.notice && <StatusMessage>{c.notice}</StatusMessage>}
     <fieldset disabled={!c.canPrepare}><legend>正式素材来源</legend><label>加入或替换方式<select value={intent.mode} onChange={event => c.change({ mode: event.target.value as typeof intent.mode, track_id: '', clip_id: '' })}><option value="NEW_TRACK">新轨道与首个片段</option><option value="INSERT">加入已有轨道</option><option value="REPLACE">替换原片段来源</option></select></label>
       <label>当前正式素材<select value={intent.asset_id} onChange={event => c.change({ asset_id: event.target.value, track_id: '', clip_id: '', include_audio: false })}><option value="">明确选择当前版本</option>{assets.filter(row => !row.deleted_at && ['video', 'audio', 'image'].includes(row.kind)).map(row => <option key={row.id} value={row.id}>{row.filename} · v{row.version} · {row.kind}</option>)}</select></label>
