@@ -1,0 +1,16 @@
+{
+  "status": "PASS_INDEPENDENT_FINAL_INVENTORY_REVIEW",
+  "source_commit": "25689c4172ab8cf8dd3029aec3dfd83c4c3790e3",
+  "canonical_sha256": "91ca42f5ade25e97bb5e311e4b40d4a905ed57c90b170d7ce4e5c5f18421b2cf",
+  "raw_collection_sha256": "bdec41b0f979058f957328cc2824d81446f1061d91887c732a9b42d9791d9f69",
+  "three_collections_byte_identical": true,
+  "candidate_canonical_byte_identical": true,
+  "rows": 16720,
+  "old_rows_exact": 16608,
+  "new_rows": 112,
+  "source_entries": 2621,
+  "protected_entries_exact": 1301,
+  "companion_entries_exact": 11,
+  "tests_executed": false,
+  "review": "Independent final offline verifier passed all three origin/source/Git brackets, unchanged protected sources and fixture/PUBLIC guards. Direct cmp verified actual candidate equals canonical. Direct SHA256 verified all three raw collections identical. Only tracked change after reviewed source commit is canonical V2 inventory. Evidence index is generated after this record and must pass its closure verification. This is inventory-only, not execution or all-suite acceptance; five previously verified baseline listing failures remain unresolved."
+}

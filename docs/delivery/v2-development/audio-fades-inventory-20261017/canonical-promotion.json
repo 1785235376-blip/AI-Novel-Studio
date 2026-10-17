@@ -1,0 +1,12 @@
+{
+  "parent_approval_received": true,
+  "parent_authorization": "Explicitly authorize exact byte promotion reviewed candidate91ca42f5ade25e97bb5e311e4b40d4a905ed57c90b170d7ce4e5c5f18421b2cf tocanonical afterchecking predecessorunchanged. Verifyafterhash, then separate third originalnowrite/reviewer final gate, completeindex. No recompression/source edits.",
+  "byte_exact": true,
+  "predecessor_sha256": "b17c2d62c5c042e2a5881bc9e38494f99fc682fc26c73391bd9efdd88bea2179",
+  "candidate_path": ".runtime/audio-fades-inventory/candidate-manifest-v2.json.gz",
+  "canonical_path": ".github/ci/coverage_manifest_v2.json.gz",
+  "candidate_sha256": "91ca42f5ade25e97bb5e311e4b40d4a905ed57c90b170d7ce4e5c5f18421b2cf",
+  "canonical_sha256": "91ca42f5ade25e97bb5e311e4b40d4a905ed57c90b170d7ce4e5c5f18421b2cf",
+  "independent_approval_sha256": "0193d1e00c700580437a57160667a9c23eb594fac392c38e7434776da1b12541",
+  "source_commit": "25689c4172ab8cf8dd3029aec3dfd83c4c3790e3"
+}

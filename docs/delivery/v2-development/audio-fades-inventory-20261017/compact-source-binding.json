@@ -1,0 +1,106 @@
+{
+  "source_checkpoint": "25689c4172ab8cf8dd3029aec3dfd83c4c3790e3",
+  "baseline_manifest": {
+    "commit": "fb372d85f67dd32620ee20221e1aaa2b1e65bfba",
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "sha256": "b17c2d62c5c042e2a5881bc9e38494f99fc682fc26c73391bd9efdd88bea2179"
+  },
+  "complete_source_map_entries": 2621,
+  "complete_source_map_sha256": "086c825121a399b5955046ab38e980ef9a626c52b770843731678294b16486d3",
+  "source_delta": [
+    {
+      "path": "app/creative/production_execution.py",
+      "before": "fe93988089c13a97f0618fac97d4dedc0c4377740d41d117411d138bba15c35f",
+      "after": "6ea314248f1d427cab8abfd51f99c7b4b70fe8c029250b476456a2c0d3987916"
+    },
+    {
+      "path": "app/creative/production_execution_models.py",
+      "before": "ce59991daaad8e7626e0fad056c6ea3b9b3cd0243446d735777319d0bcfa6606",
+      "after": "906d8a95bc4dfe12b285bb12008d56d8764b4bab810025fe5708f222f77089fe"
+    },
+    {
+      "path": "app/services/studio_audio_execution.py",
+      "before": "42797a82e0acc458e4b5815bb3fe950028dea476c9bf280e7cdab86e3b5b2bcc",
+      "after": "daa9ce9662d41b97f5b44696daef8fc4d3a807d7530d039004121db65df7bed2"
+    },
+    {
+      "path": "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+      "before": "05b25d32f0cec494ca77928adc21f53000c6a0f74c532fd0d119b1adcdddc31e",
+      "after": "4d3ca3c356839f7835078811301246af3cd4539345a39bfba1351f2c9f3f2d58"
+    },
+    {
+      "path": "frontend/src/creative/studioAudioFades.additive.test.tsx",
+      "before": null,
+      "after": "46188579e253ab32d925df849cd73112368a7997001ff7c01100c8406fe9d1b4"
+    },
+    {
+      "path": "frontend/src/creative/studioProductionClient.ts",
+      "before": "1c374c942b0853b5bf70f387fe8018abed9b4a0f1bf418f69d25f24e8ec3a1ec",
+      "after": "d12311cb9b781d17fafd7225cc8e83a7b51cc61694ef61830f1e073327c6db86"
+    },
+    {
+      "path": "frontend/src/creative/useStudioMediaExecution.ts",
+      "before": "264b8bb9341eeb7dfb761fde1805ffc8edc12ed60a65795430691bfa35777be4",
+      "after": "ef168cd27118c168a7d1d8fc6b12825d7ccecea7bab3a689ba700fb58c0505f6"
+    },
+    {
+      "path": "tests/fixtures/studio_audio_fade_omission_v1.json",
+      "before": null,
+      "after": "1aa9100e0d3622b6d5a99019b5a7f33aa60e94173a9c962dce0a500c3a63c2d5"
+    },
+    {
+      "path": "tests/test_v2_audio_fade_api.py",
+      "before": null,
+      "after": "19fb82db96857e66c326701ed48cf906c4348fa40b5122ff791ee786642e5a60"
+    },
+    {
+      "path": "tests/test_v2_audio_fade_contract.py",
+      "before": null,
+      "after": "d60b5ff4f94e56f2a3134b8df911dc77587e93c63166ed6ce740da9cc63f52a8"
+    },
+    {
+      "path": "tests/test_v2_audio_fades_cpu.py",
+      "before": null,
+      "after": "f89180dfacb36557228042c475801d22150c502db84363c2640140389fc1b463"
+    }
+  ],
+  "expected_new_sources": [
+    "frontend/src/creative/studioAudioFades.additive.test.tsx",
+    "tests/fixtures/studio_audio_fade_omission_v1.json",
+    "tests/test_v2_audio_fade_api.py",
+    "tests/test_v2_audio_fade_contract.py",
+    "tests/test_v2_audio_fades_cpu.py"
+  ],
+  "protected_old_entries_exact": 1301,
+  "frontend_scripts_e2e_companion": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "raw_inventory": {
+    "path": "docs/delivery/v2-development/audio-fades-inventory-20261017/review-raw-collection.json",
+    "sha256": "bdec41b0f979058f957328cc2824d81446f1061d91887c732a9b42d9791d9f69",
+    "rows": 16720
+  },
+  "prior_raw_inventory": {
+    "path": "docs/delivery/v2-development/director-review-inventory-20261017/review-raw-collection.json",
+    "sha256": "f5a05a44c1608e732fd1ce09da6690f3988a89468004e3618a3877be54f99b0e",
+    "rows": 16608
+  },
+  "packaging_guard": {
+    "path": "packaging/public-build.json",
+    "before_sha256": "3261cc7549d58e5d8e84c69572a9475d9c416bfd487588ecfbec472e8695d37c",
+    "after_sha256": "3261cc7549d58e5d8e84c69572a9475d9c416bfd487588ecfbec472e8695d37c",
+    "outside_manifest": true,
+    "unchanged": true
+  },
+  "tests_executed": false
+}

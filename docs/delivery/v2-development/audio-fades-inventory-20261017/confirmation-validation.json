@@ -1,0 +1,26 @@
+{
+  "status": "INVENTORY_ONLY",
+  "head": "25689c4172ab8cf8dd3029aec3dfd83c4c3790e3",
+  "rows": 16720,
+  "raw_sha256": "bdec41b0f979058f957328cc2824d81446f1061d91887c732a9b42d9791d9f69",
+  "report_sha256": "ac03e450c1ccb409ba85e4f6b474a55d9db017af766a2d080391ce9861b126f2",
+  "all_old_rows_order_and_classifications_exact": 16608,
+  "new_rows": 112,
+  "new_backend_counts": {
+    "file": 31,
+    "postgres": 31,
+    "both": 50
+  },
+  "new_rows_by_file": {
+    "tests/test_v2_audio_fade_api.py": 36,
+    "tests/test_v2_audio_fade_contract.py": 50,
+    "tests/test_v2_audio_fades_cpu.py": 26
+  },
+  "protected_entries_exact": 1301,
+  "source_count": 2621,
+  "source_stable": true,
+  "companion_files": 11,
+  "canonical_unchanged": true,
+  "canonical_sha256": "91ca42f5ade25e97bb5e311e4b40d4a905ed57c90b170d7ce4e5c5f18421b2cf",
+  "tests_executed": false
+}
