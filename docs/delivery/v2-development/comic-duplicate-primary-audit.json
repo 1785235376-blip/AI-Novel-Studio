@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "receipts": [
+    "comic-duplicate-origin-final-before-r2",
+    "comic-duplicate-ui-r4",
+    "comic-duplicate-file-r2",
+    "comic-duplicate-type-r2",
+    "comic-duplicate-build-r1",
+    "comic-duplicate-tokens-r1",
+    "comic-duplicate-origin-final-after-r2"
+  ],
+  "identical_source_entries": 2614,
+  "all_before_after_source_maps_equal": true,
+  "log_hashes_verified": true,
+  "changed_source_sha256": {
+    "frontend/src/experimental/ComicLayoutsPanel.tsx": "68925731310eed114a1980a1134f2f27152d67c80b6fcd38925b51a05255113f",
+    "frontend/src/experimental/comicDuplication.ts": "ee6d29f51434fb767ee81d26b47ed80225e8620b538ff53c8b936cee94b2ef0a",
+    "frontend/src/experimental/comicDuplication.test.ts": "6a8bf18c39746caa30775a5a206265d09b663dbf4e18704c47dbe5efa35f78ae",
+    "frontend/src/experimental/ComicLayoutsPanel.duplicate.test.tsx": "eb9182b46eaa851c0727f26f76190406d10b6c8908786339d06865b0d4577ecd",
+    "tests/fixtures/comic_panel_duplicate.json": "69c4024e1ea9dacbe7ecd431ca9bf8deb4396b442310151952bf6d46ef389f4b",
+    "tests/test_comic_panel_duplicate.py": "52c4760f05d8eb88e08ca23afb3e3b70d321bb1cc6275af543cebd3582cc9faf"
+  },
+  "ui": "98 passed across 6 files",
+  "file": "83 passed, 2 skipped, 47 postgres-only deselected",
+  "limitations": [
+    "No pinned font available: real text rendering remains blocked; Unicode persistence/missing-font rejection pass.",
+    "No browser/Windows/PostgreSQL/model acceptance claimed.",
+    "Existing backend/client/renderer and old tests unchanged."
+  ]
+}

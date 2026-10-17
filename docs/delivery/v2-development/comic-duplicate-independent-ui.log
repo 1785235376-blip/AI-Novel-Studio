@@ -1,0 +1,17 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-comic-duplicate/frontend
+
+ ✓ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (25 tests) 3977ms
+   ✓ explicit preview discloses pins and applies one exact undoable copy through original CAS save 496ms
+   ✓ invalid destination never consumes IDs or changes history and cancel discards preview 319ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 714ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 1065ms
+ ✓ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests) 775ms
+ ✓ src/experimental/comicDuplication.test.ts (35 tests) 12ms
+ ✓ src/experimental/comicArrangement.test.ts (18 tests) 7ms
+
+ Test Files  6 passed (6)
+      Tests  98 passed (98)
+   Start at  20:01:55
+   Duration  9.66s (transform 266ms, setup 47ms, collect 690ms, tests 6.55s, environment 1.25s, prepare 315ms)
+

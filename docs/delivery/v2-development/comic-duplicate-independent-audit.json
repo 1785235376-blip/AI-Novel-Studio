@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "receipts": [
+    "comic-duplicate-origin-final-before-r2",
+    "comic-duplicate-ui-r4",
+    "comic-duplicate-file-r2",
+    "comic-duplicate-type-r2",
+    "comic-duplicate-build-r1",
+    "comic-duplicate-tokens-r1",
+    "comic-duplicate-origin-final-after-r2",
+    "comic-duplicate-independent-origin-before",
+    "comic-duplicate-independent-ui",
+    "comic-duplicate-independent-file",
+    "comic-duplicate-independent-origin-after"
+  ],
+  "identical_source_entries": 2614,
+  "all_before_after_and_current_source_maps_equal": true,
+  "log_hashes_verified": true,
+  "tracked_changed_paths": [
+    "frontend/src/experimental/ComicLayoutsPanel.tsx"
+  ],
+  "ui": "98 passed, 6 suites",
+  "file": "83 passed, 2 font skips, 47 PostgreSQL-only deselected, 2 existing warnings",
+  "scope": "Independent original-runner UI/File, natural and actual-child origin. No product edits, font substitute, PG, browser, Windows or installs."
+}

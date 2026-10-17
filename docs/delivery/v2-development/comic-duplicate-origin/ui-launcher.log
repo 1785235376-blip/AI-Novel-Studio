@@ -1,0 +1,31 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-comic-duplicate/frontend
+
+ ❯ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (0 test)
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 709ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 961ms
+ ✓ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests) 627ms
+ ✓ src/experimental/comicDuplication.test.ts (35 tests) 11ms
+ ✓ src/experimental/comicArrangement.test.ts (18 tests) 6ms
+
+ Test Files  1 failed | 5 passed (6)
+      Tests  73 passed (73)
+   Start at  19:55:57
+   Duration  5.14s (transform 249ms, setup 47ms, collect 355ms, tests 2.31s, environment 1.19s, prepare 275ms)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/experimental/ComicLayoutsPanel.duplicate.test.tsx [ src/experimental/ComicLayoutsPanel.duplicate.test.tsx ]
+TypeError: The URL must be of scheme file
+ ❯ src/experimental/ComicLayoutsPanel.duplicate.test.tsx:7:28
+      5| import { ComicLayoutsPanel } from './ComicLayoutsPanel';
+      6| import { experimentalClient } from './api';
+      7| const fixture = JSON.parse(readFileSync(new URL('../../../tests/fixtur…
+       |                            ^
+      8| const source = { id: 'screenplay', title: 'Source', edit_version: 1, s…
+      9| const preset = { width: 320, height: 640, safe_area: 8, segment_height…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+{"receipt": "docs/delivery/v2-development/comic-duplicate-ui-r1.json", "status": "FAIL"}
