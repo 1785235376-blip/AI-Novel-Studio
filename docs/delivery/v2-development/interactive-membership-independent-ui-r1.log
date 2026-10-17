@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-interactive-membership/frontend
+
+ ✓ src/experimental/InteractiveStoryPanel.additive.test.tsx (11 tests) 1066ms
+ ✓ src/experimental/InteractiveStoryPanel.membership.test.tsx (25 tests) 2184ms
+ ✓ src/experimental/InteractiveStoryPanel.test.tsx (11 tests) 1014ms
+ ✓ src/experimental/InteractiveStoryHistory.test.tsx (1 test) 81ms
+
+ Test Files  4 passed (4)
+      Tests  48 passed (48)
+   Start at  18:52:45
+   Duration  6.78s (transform 199ms, setup 29ms, collect 545ms, tests 4.35s, environment 1.16s, prepare 201ms)
+

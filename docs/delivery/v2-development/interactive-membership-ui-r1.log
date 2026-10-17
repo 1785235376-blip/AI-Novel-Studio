@@ -1,0 +1,14 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-interactive-membership/frontend
+
+ ✓ src/experimental/InteractiveStoryPanel.additive.test.tsx (11 tests) 1157ms
+ ✓ src/experimental/InteractiveStoryPanel.membership.test.tsx (25 tests) 2270ms
+   ✓ adds the exact unused ID/version with blank author fields, preserves dirty Unicode and saves only explicitly 323ms
+ ✓ src/experimental/InteractiveStoryPanel.test.tsx (11 tests) 1043ms
+ ✓ src/experimental/InteractiveStoryHistory.test.tsx (1 test) 79ms
+
+ Test Files  4 passed (4)
+      Tests  48 passed (48)
+   Start at  18:45:00
+   Duration  7.05s (transform 189ms, setup 25ms, collect 565ms, tests 4.55s, environment 1.21s, prepare 193ms)
+

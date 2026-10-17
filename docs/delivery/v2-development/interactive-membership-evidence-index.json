@@ -1,0 +1,311 @@
+{
+  "generated_utc": "2026-10-17T09:55:13.963Z",
+  "base_head": "39ba1c7bc6d8438cc7c7d59f5767ba67f97aca0a",
+  "branch": "work/dot-interactive-membership-20261017",
+  "summary": {
+    "primary_file": {
+      "passed": 83,
+      "postgres_deselected": 45
+    },
+    "independent_file": {
+      "passed": 83,
+      "postgres_deselected": 45
+    },
+    "primary_ui": {
+      "suites": 4,
+      "passed": 48,
+      "new_tests": 25
+    },
+    "independent_ui": {
+      "suites": 4,
+      "passed": 48
+    },
+    "forced_typescript": "PASS",
+    "production_build": "PASS",
+    "token_guard": "PASS (52 files)",
+    "final_source_count": 2602,
+    "all_nine_final_maps_equal_current": true,
+    "real_browser_visual_geometry_accessibility": "NOT_RUN",
+    "native_desktop": "NOT_RUN",
+    "target_engine": "NOT_RUN",
+    "postgres": "NOT_RUN",
+    "build_warning": "Large chunks",
+    "sparse_history": "All code/tests present; historical docs/delivery excluded; no claim to validate absent historical evidence"
+  },
+  "source_files": [
+    {
+      "path": "frontend/src/experimental/InteractiveStoryPanel.tsx",
+      "sha256": "1eacd83be11e2d567bb1ccbdcfad2829457cda311faec77abd080cecaca48564"
+    },
+    {
+      "path": "frontend/src/experimental/InteractiveStoryPanel.membership.test.tsx",
+      "sha256": "412ebd2e5e600a03d51ee6ac284c6bb2c7d608937e6ab22a757c6aa111c93761"
+    },
+    {
+      "path": "tests/test_interactive_membership_handoff.py",
+      "sha256": "e6d8398a23209858e95d02b13b3f0cd63fd0bb5dba28d26327426078d6e0e916"
+    }
+  ],
+  "final_receipts": [
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-file-origin-r1.json",
+      "sha256": "74e4d75f7313aa9a6b71e1fb414e1b2a26c012afe09cf96b92dcddbecf415123",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2602,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/interactive-membership-file-origin-r1.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-file-r1.json",
+      "sha256": "238ebd45e2d5e56ebffd575c0f4a4487bf287aca5cf7477e7a8ccd267f136b7a",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2602,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/interactive-membership-file-r1.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-ui-r1.json",
+      "sha256": "1c1208698b2cf736a7aa7280d7fb941c6386449d2b9d1833553d388bb1ad0686",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2602,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/interactive-membership-ui-r1.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-type-r1.json",
+      "sha256": "a16f6c40bdd4164760507d0e8269a9c3034c187a0f4fc935fea1d4c4f605a7f1",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2602,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/interactive-membership-type-r1.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-build-r1.json",
+      "sha256": "8176c496213e1cc7bd5aae50a1ea27bb36d08c802e1181dd5dbe001503a26304",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2602,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/interactive-membership-build-r1.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-tokens-r1.json",
+      "sha256": "b7d9252b4b5b537c54bf62d7bf482d5b4d85bd9eb29124aa0f96a8c6f38733f5",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2602,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/interactive-membership-tokens-r1.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-independent-origin-r1.json",
+      "sha256": "53f5a05fdd4bfbde69394d0b258666ac34fac42e5fb9ce2474e911378df61d3e",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2602,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/interactive-membership-independent-origin-r1.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-independent-file-r1.json",
+      "sha256": "36c9633a2f4b45566271a918b3febe0480074d5cfe6d70bddd0bc481ff58d05e",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2602,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/interactive-membership-independent-file-r1.log",
+      "log_hash_matches": true
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-independent-ui-r1.json",
+      "sha256": "b6866a86e911c78a03a27172af4aac3a91a546d1532793aa7777902161519533",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2602,
+      "before_after_equal": true,
+      "sources_changed_during_check": false,
+      "source_maps_equal_final": true,
+      "current_source_mismatches": [],
+      "log": "docs/delivery/v2-development/interactive-membership-independent-ui-r1.log",
+      "log_hash_matches": true
+    }
+  ],
+  "evidence_files": [
+    {
+      "path": "docs/INTERACTIVE_MEMBERSHIP_HANDOFF.md",
+      "bytes": 5631,
+      "sha256": "adeea102ffb327d9b51577293a4498c3cbda95f27f21d617e9526286b4bc7131"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-build-r1.json",
+      "bytes": 616680,
+      "sha256": "8176c496213e1cc7bd5aae50a1ea27bb36d08c802e1181dd5dbe001503a26304"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-build-r1.log",
+      "bytes": 1679,
+      "sha256": "2613477a364b06477a49b33315fa9b3fe4dcba3389c73d9f927f2f4ce99fd791"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-file-origin-r1.json",
+      "bytes": 616987,
+      "sha256": "74e4d75f7313aa9a6b71e1fb414e1b2a26c012afe09cf96b92dcddbecf415123"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-file-origin-r1.log",
+      "bytes": 10144,
+      "sha256": "46e070c4ad6962cd616230c2c141216ae874bebc58ff1fee5683830e28caa4b0"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-file-origin/normal-startup.json",
+      "bytes": 10076,
+      "sha256": "5029bc2c8ad3f0e2be2880bf880434ca527daacf63075b34dacd66cb030aa937"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-file-origin/normal-startup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-file-origin/origin-probe.py",
+      "bytes": 6681,
+      "sha256": "4cfd73263e689dd81b3bb7ba936c37236c9039a5d60dda8792c225d4b2766ddb"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-file-origin/proof-launcher.log",
+      "bytes": 10250,
+      "sha256": "c9860e10f760fb398e38e920dc1890c66156128e859673c69404466a734543e8"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-file-origin/run-checks.sh",
+      "bytes": 2098,
+      "sha256": "fe8666b882c1dadd6644404e7abbfe51a8723479c88bd565895551f50ff76b15"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-file-origin/run-proof.sh",
+      "bytes": 1234,
+      "sha256": "b7beb3e7fe128b325e275e41782ece9734f24741ddc9305efe962cad76364581"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-file-r1.json",
+      "bytes": 617195,
+      "sha256": "238ebd45e2d5e56ebffd575c0f4a4487bf287aca5cf7477e7a8ccd267f136b7a"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-file-r1.log",
+      "bytes": 1186,
+      "sha256": "4939061f2163b2c9979b75bca2e65cc2047fc4e5c8eaf5ddb958a3c7531b32fc"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-independent-file-r1.json",
+      "bytes": 617315,
+      "sha256": "36c9633a2f4b45566271a918b3febe0480074d5cfe6d70bddd0bc481ff58d05e"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-independent-file-r1.log",
+      "bytes": 1186,
+      "sha256": "c752b3b254429c886ef019771c79a1404fa778ca8c3315513abf9d36ff606919"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-independent-normal-startup.json",
+      "bytes": 10076,
+      "sha256": "ef0c3fd2e5e00554c0c6964678fe7c3de9d12ecc7673aee27f9e3b43069913b3"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-independent-normal-startup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-independent-origin-r1.json",
+      "bytes": 617050,
+      "sha256": "53f5a05fdd4bfbde69394d0b258666ac34fac42e5fb9ce2474e911378df61d3e"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-independent-origin-r1.log",
+      "bytes": 10144,
+      "sha256": "f4e46295775b1bc260fc42a00f9b80d9cedf714a123e3080ef22c64640fde0ea"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-independent-ui-r1.json",
+      "bytes": 617037,
+      "sha256": "b6866a86e911c78a03a27172af4aac3a91a546d1532793aa7777902161519533"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-independent-ui-r1.log",
+      "bytes": 577,
+      "sha256": "8f6afda2bbbb3574f61e581eb01dc7e5c69bc2cfbe32ed10b058c462c1c3da61"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-inventory-20261017/index-evidence.mjs",
+      "bytes": 4232,
+      "sha256": "639b16260ee2bf89396ec73b857dec0790b26199a34ada33ed51a5b14ccffa2c"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-tokens-r1.json",
+      "bytes": 616658,
+      "sha256": "b7d9252b4b5b537c54bf62d7bf482d5b4d85bd9eb29124aa0f96a8c6f38733f5"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-tokens-r1.log",
+      "bytes": 31,
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-type-r1.json",
+      "bytes": 616701,
+      "sha256": "a16f6c40bdd4164760507d0e8269a9c3034c187a0f4fc935fea1d4c4f605a7f1"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-type-r1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-ui-r1.json",
+      "bytes": 616929,
+      "sha256": "1c1208698b2cf736a7aa7280d7fb941c6386449d2b9d1833553d388bb1ad0686"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-membership-ui-r1.log",
+      "bytes": 699,
+      "sha256": "dd23dd5969ad63227738ebaaad7461b7a7bd803c544bf1a88395bdb6830c3525"
+    }
+  ],
+  "index_self_hash": "Not included to avoid recursive self-hash"
+}
