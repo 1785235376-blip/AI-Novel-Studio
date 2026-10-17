@@ -1,0 +1,12 @@
+{
+  "source_commit": "e5ebd59644b394048460da5c40b399a6dc3cc06d",
+  "parent_approval_received": true,
+  "parent_release": "Release exact 1bb20ce05257c94fe36b68acb3f68edb3137268643af7888dad68566c6f7619e bytepromotion, then separatethirdno-writeconfirmation, independentfinal/index/verifier. No sourcechanges.",
+  "method": "copy already independently approved bytes without regeneration",
+  "candidate_path": ".runtime/creative-lifecycle-inventory/candidate-manifest-v2.json.gz",
+  "candidate_sha256": "1bb20ce05257c94fe36b68acb3f68edb3137268643af7888dad68566c6f7619e",
+  "canonical_sha256": "1bb20ce05257c94fe36b68acb3f68edb3137268643af7888dad68566c6f7619e",
+  "predecessor_sha256": "1c4badba15edb75bc7c007ad55a393b784163ab11fbf0bec559649dd5504437a",
+  "byte_exact": true,
+  "independent_approval_sha256": "7b695efb0fdebbae35b3ce068c29e6ec6fa96947fa6b4466eeb438024c63b50b"
+}

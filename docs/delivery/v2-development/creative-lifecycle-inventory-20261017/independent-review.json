@@ -1,0 +1,21 @@
+{
+  "status": "APPROVE_CANDIDATE_GENERATION",
+  "source_commit": "e5ebd59644b394048460da5c40b399a6dc3cc06d",
+  "canonical_sha256": "1c4badba15edb75bc7c007ad55a393b784163ab11fbf0bec559649dd5504437a",
+  "candidate_generation_only": true,
+  "canonical_promotion_authorized": false,
+  "sources": 2614,
+  "prior_rows_exact": 16312,
+  "rows": 16495,
+  "new_rows": 183,
+  "new_rows_file_only": true,
+  "protected_entries_verified": 1296,
+  "companions_verified": 11,
+  "source_brackets_and_current_exact": true,
+  "tests_executed": false,
+  "raw_sha256": "6220856c9389db25999ca7a41d35e02f9d98606b9071240bc42f5d1a99feed14",
+  "compact_binding_sha256": "750e6aefba2eef0a185dfeab1ca1e5831aaada22f34a5d1af6228da223c45019",
+  "review_validation_sha256": "b6a06591f897f60bdb39f0065310e339eff615ac3fcff84be2a1cb4c482c4df5",
+  "portable_verifier": "check.mjs review passed",
+  "independent_checks": "Independent stdlib source derivation, complete raw row/order comparison, File-only additions, canonical unchanged and Git HEAD binding verified"
+}

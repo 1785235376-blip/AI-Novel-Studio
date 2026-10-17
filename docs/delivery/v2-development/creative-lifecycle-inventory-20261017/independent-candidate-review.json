@@ -1,0 +1,23 @@
+{
+  "status": "APPROVE_EXACT_CANDIDATE_PROMOTION",
+  "source_commit": "e5ebd59644b394048460da5c40b399a6dc3cc06d",
+  "candidate_path": ".runtime/creative-lifecycle-inventory/candidate-manifest-v2.json.gz",
+  "candidate_sha256": "1bb20ce05257c94fe36b68acb3f68edb3137268643af7888dad68566c6f7619e",
+  "canonical_before_sha256": "1c4badba15edb75bc7c007ad55a393b784163ab11fbf0bec559649dd5504437a",
+  "candidate_validation_sha256": "31532770cc6a363b863a628d7617180873e8f636237bec1827fe255471075af2",
+  "raw_sha256": "6220856c9389db25999ca7a41d35e02f9d98606b9071240bc42f5d1a99feed14",
+  "independent_review_sha256": "8ddcc3fe92a8dba7cc5045c5c0e804b4324e7d27161d7a16f8ced5af9162dedb",
+  "sources": 2614,
+  "rows": 16495,
+  "new_rows": 183,
+  "old_rows_exact": 16312,
+  "protected_entries_exact": 1296,
+  "companion_files_exact": 11,
+  "all_unaffected_manifest_fields_and_keys_preserved": true,
+  "second_raw_collection_byte_identical": true,
+  "source_brackets_current_and_provenance_verified": true,
+  "parent_release_still_required": true,
+  "tests_executed": false,
+  "portable_verifier": "check.mjs candidate passed",
+  "independent_checks": "Separate stdlib decompressed candidate source/node/full metadata-key preservation checks passed"
+}

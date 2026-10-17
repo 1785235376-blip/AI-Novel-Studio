@@ -1,0 +1,89 @@
+{
+  "source_checkpoint": "e5ebd59644b394048460da5c40b399a6dc3cc06d",
+  "baseline_manifest": {
+    "commit": "3087f53276e42c57bf4baed2a76fbf75380d947e",
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "sha256": "1c4badba15edb75bc7c007ad55a393b784163ab11fbf0bec559649dd5504437a"
+  },
+  "complete_source_map_entries": 2614,
+  "complete_source_map_sha256": "09a7e5b22f3d5874d5795fa92cb227b781ed4775652b65f10c30ffbfc28ada04",
+  "source_delta": [
+    {
+      "path": "app/creative/director_binding.py",
+      "before": "5201d6dbe7a0aacc3f22884ecb10291d976072ba970d51893142a58e287708c8",
+      "after": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88"
+    },
+    {
+      "path": "app/creative/generation.py",
+      "before": "e18d6afce39ceec60aff386312720209fad3e08309337f81531e7cdc06daf1ef",
+      "after": "af7f497c8c0edfe831b554c55986fb9ec8d2b9e6c7a3061021b71ad6ab2defaa"
+    },
+    {
+      "path": "app/creative/proposals.py",
+      "before": "ca4b70d7ed30be6072e730aea2360650906b9805a0590cf6ad85798555afe1fa",
+      "after": "1cc89432bded64802404511563bdc3834100e3a63b69aa333256802cc3e84ddc"
+    },
+    {
+      "path": "app/jobs.py",
+      "before": "49d60184f8dea30a76e175abecd224857f19b340a5f8ce17eec0150f640cf953",
+      "after": "c4c63a20c95da09bee922d4526d2691107f9845f9b2b0114282def1dd60f0ab5"
+    },
+    {
+      "path": "app/model_execution.py",
+      "before": "f6381603c595dd3f46c2811e4c4185ddcb8dc503bfd284c93cb8c43d57f155e4",
+      "after": "923bb10ac7e55dc67bf573ff4d0bb432bf1ea1f77413c8bde83069c7fb4e7ad3"
+    },
+    {
+      "path": "tests/creative_director_execution_fixture.py",
+      "before": null,
+      "after": "0626a4f03ec1ad66f46a160dcbdd0ccac09db6a56cfea30b4e67ff8b9a4ea41f"
+    },
+    {
+      "path": "tests/test_v2_creative_director_execution_lifecycle.py",
+      "before": null,
+      "after": "a0d137f6d69b7c50b9ec7bbd5dc4522ae50ddad51600fea21142ec3351917eeb"
+    },
+    {
+      "path": "tests/test_v2_creative_director_invocation.py",
+      "before": null,
+      "after": "8f30130eb19c5eb36ed99efe28aea79d3e3ed45118f46ccacf6cf434491db701"
+    }
+  ],
+  "expected_new_sources": [
+    "tests/creative_director_execution_fixture.py",
+    "tests/test_v2_creative_director_execution_lifecycle.py",
+    "tests/test_v2_creative_director_invocation.py"
+  ],
+  "protected_old_entries_exact": 1296,
+  "frontend_scripts_e2e_companion": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "raw_inventory": {
+    "path": "docs/delivery/v2-development/creative-lifecycle-inventory-20261017/review-raw-collection.json",
+    "sha256": "6220856c9389db25999ca7a41d35e02f9d98606b9071240bc42f5d1a99feed14",
+    "rows": 16495
+  },
+  "prior_raw_inventory": {
+    "path": "docs/delivery/v2-development/creative-binding-inventory-20261017/review-raw-collection.json",
+    "sha256": "9836e46cebcfcdb652271034e07128e9b726877dd700c978348022c9a77484e7",
+    "rows": 16312
+  },
+  "packaging_guard": {
+    "path": "packaging/public-build.json",
+    "before_sha256": "3261cc7549d58e5d8e84c69572a9475d9c416bfd487588ecfbec472e8695d37c",
+    "after_sha256": "3261cc7549d58e5d8e84c69572a9475d9c416bfd487588ecfbec472e8695d37c",
+    "outside_manifest": true,
+    "unchanged": true
+  },
+  "tests_executed": false
+}

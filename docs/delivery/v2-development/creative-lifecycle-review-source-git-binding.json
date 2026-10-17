@@ -1,0 +1,26 @@
+{
+  "status": "PASS_SOURCE_COMMIT_BINDING",
+  "head": "e5ebd59644b394048460da5c40b399a6dc3cc06d",
+  "parent": "3087f53276e42c57bf4baed2a76fbf75380d947e",
+  "committed_paths": 70,
+  "runner_sources_verified": 2552,
+  "runner_sources_tracked_and_committed_exact": true,
+  "golden_and_public_manifest_parent_equal": true,
+  "non_docs_changes": [
+    "app/creative/director_binding.py",
+    "app/creative/generation.py",
+    "app/creative/proposals.py",
+    "app/jobs.py",
+    "app/model_execution.py",
+    "tests/creative_director_execution_fixture.py",
+    "tests/test_v2_creative_director_execution_lifecycle.py",
+    "tests/test_v2_creative_director_invocation.py"
+  ],
+  "untracked_status": [
+    "?? docs/delivery/v2-development/creative-lifecycle-inventory-20261017/",
+    "?? docs/delivery/v2-development/creative-lifecycle-inventory-review-origin.json",
+    "?? docs/delivery/v2-development/creative-lifecycle-inventory-review-origin.log",
+    "?? frontend/node_modules"
+  ],
+  "independent_receipt": "docs/delivery/v2-development/creative-lifecycle-independent-r1.json"
+}
