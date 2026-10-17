@@ -38,7 +38,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
   const pickerOwner = useRef({ client: props.client, generation: 0 });
   if (pickerOwner.current.client !== props.client) pickerOwner.current = { client: props.client, generation: pickerOwner.current.generation + 1 };
   useEffect(() => { composing.current = false; }, [props.client]);
-  const latestReview = useRef({ c, props }); latestReview.current = { c, props };
+  const latestReview = useRef({ c, props, nleClips }); latestReview.current = { c, props, nleClips };
   const reviewGeneration = c.getHandoffRevision();
   const draft = c.draft;
   if (!draft) return <Panel title="时间线"><EmptyState title="当前时间线入口不可用" detail="请重新核对项目、身份与原可信会话。旧输入和回执不会跨身份显示。" /></Panel>;
@@ -255,10 +255,25 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       onEdit={command => {
         // Field names come from the mapper's REAL payloads (nle/timelineOps.ts):
         // clip.split {at_ms}, clip.duplicate/clip.move {start_ms, track_id}.
-        const payload = command.payload as { clip_id?: string; at_ms?: number; start_ms?: number; track_id?: string } | undefined;
+        const payload = command.payload as { op?: string; clip_id?: string; at_ms?: number; start_ms?: number; track_id?: string; in_ms?: number; out_ms?: number; ripple?: boolean } | undefined;
         const clipId = payload?.clip_id;
         const position = command.kind === 'clip.split' ? payload?.at_ms : payload?.start_ms;
         const track = clipId ? draft.timeline.tracks.find(row => row.clips.some(clip => clip.id === clipId)) : undefined;
+        // Trim has source in/out points, not a timeline position. Route it before
+        // the position-only operations and bind it to the reviewed live context.
+        if (command.kind === 'clip.trim') {
+          const live = latestReview.current;
+          if (live.props.client !== props.client || live.c.getHandoffRevision() !== reviewGeneration
+            || JSON.stringify(live.nleClips) !== JSON.stringify(nleClips) || !props.isCurrent()) return;
+          const firstSelected = draft.timeline.tracks.flatMap(row => row.clips).find(clip => nleClips.includes(clip.id));
+          if (!clipId || !track || firstSelected?.id !== clipId || payload?.op !== 'clip.trim'
+            || typeof payload.in_ms !== 'number' || typeof payload.out_ms !== 'number' || typeof payload.ripple !== 'boolean') {
+            setNleNotice('已拒绝裁剪：请重新选择原片段并填写整数毫秒入出点。'); return;
+          }
+          const applied = c.trimClip(track.id, clipId, payload.in_ms, payload.out_ms, payload.ripple);
+          setNleNotice(applied ? '裁剪已应用到本地草稿；波纹仅影响本轨道，保存前不会写入服务端。' : '裁剪未应用；请核对输入、轨道约束与当前编辑状态。');
+          return;
+        }
         if (!clipId || !track || typeof position !== 'number') {
           setNleNotice('已拒绝该编辑：缺少原 owner 需要的片段或位置；未执行任何更改。');
           return;

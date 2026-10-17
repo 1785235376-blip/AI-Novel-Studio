@@ -1,0 +1,21 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-timeline-trim/frontend
+
+ ✓ src/nle/timelineOps.test.ts (52 tests) 87ms
+ ✓ src/nle/nlePanels.test.tsx (18 tests) 416ms
+ ✓ src/creative/TimelineSourceEditing.phase6.test.tsx (21 tests) 774ms
+   ✓ Phase 6 original Timeline controller preserves source, locks and UNKNOWN > keeps old embedded clients functional and exposes explicit formal-source controls only when available 318ms
+ ✓ src/creative/StudioTimelineTrim.test.tsx (29 tests) 2499ms
+   ✓ mounted original inspector trim > routes trim without start/at position, supports one-step undo/redo and explicit Save 871ms
+ ✓ src/creative/StudioTimelineAssetHandoff.test.tsx (20 tests) 918ms
+   ✓ mounted original timeline draft owner > adds one exact pinned clip, supports one undo/redo, explicitly saves and reopens the original owner 318ms
+ ✓ src/creative/TimelineTransferReview.test.tsx (19 tests) 1674ms
+   ✓ locates the exact original mounted clip without saving, granting consent or discarding local controls 334ms
+ ✓ src/creative/studioBaselineTypeSafety.test.tsx (35 tests) 32ms
+ ✓ src/creative/ProductionTimeline.test.tsx (4 tests) 210ms
+
+ Test Files  8 passed (8)
+      Tests  198 passed (198)
+   Start at  13:46:58
+   Duration  12.41s (transform 803ms, setup 62ms, collect 1.82s, tests 6.61s, environment 2.54s, prepare 399ms)
+

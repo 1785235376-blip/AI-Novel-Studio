@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-timeline-trim/frontend
+
+ ✓ src/creative/StudioTimelineTrim.test.tsx (29 tests) 2524ms
+   ✓ mounted original inspector trim > routes trim without start/at position, supports one-step undo/redo and explicit Save 896ms
+
+ Test Files  1 passed (1)
+      Tests  29 passed (29)
+   Start at  13:48:41
+   Duration  3.58s (transform 361ms, setup 17ms, collect 504ms, tests 2.52s, environment 318ms, prepare 67ms)
+

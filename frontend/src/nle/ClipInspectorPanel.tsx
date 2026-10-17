@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
 import { editCommand, safeTimeline, selectedClipFacts, snapCandidates, snapClipStart } from './timelineOps';
 import type { NleEditRequest, NleMarks, NleRefusal } from './timelineOpsTypes';
@@ -44,13 +44,22 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
   const [outcome, setOutcome] = useState<Outcome>({ kind: 'IDLE' });
 
   const parsed = safeTimeline(props.timeline);
+  const facts = parsed.ok ? selectedClipFacts(parsed.timeline, props.selectedClipIds) : [];
+  const first = facts[0];
+  const selectionKey = JSON.stringify([props.selectedClipIds, first?.trackId, first?.clip]);
+  const contextKey = JSON.stringify([selectionKey, props.timeline]);
+  const latestContext = useRef({ contextKey, editable: props.editable });
+  latestContext.current = { contextKey, editable: props.editable };
+  useEffect(() => {
+    // Do not carry authored trim points or ripple consent to a different target.
+    // Ordinary rerenders keep the semantic key and preserve in-progress input.
+    setInMs(''); setOutMs(''); setRipple(false); setOutcome({ kind: 'IDLE' });
+  }, [selectionKey]);
   if (!parsed.ok) {
     return <section className="nle-clip" aria-label="片段属性"><StatusMessage tone="error">{parsed.message}</StatusMessage>
       <EmptyState title="片段属性不可用" detail="需要一份通过原时间线契约校验的时间线。" /></section>;
   }
   const timeline = parsed.timeline;
-  const facts = selectedClipFacts(timeline, props.selectedClipIds);
-  const first = facts[0];
   const snaps = snapCandidates({ timeline, playheadMs: props.playheadMs, marks: props.marks, selectedClipIds: props.selectedClipIds });
   const sameKindTracks = first ? timeline.tracks.filter(track => track.kind === first.trackKind) : [];
   const reset = () => {
@@ -63,7 +72,7 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
     setAssetDigest(first.clip.source_snapshot.digest); setRipple(false);
   };
   const generate = () => {
-    if (!first) return;
+    if (!first || !latestContext.current.editable || latestContext.current.contextKey !== contextKey) return;
     const context: Record<string, unknown> = {
       timeline, clipId: first.clip.id, atMs: numeric(atMs), inMs: numeric(inMs), outMs: numeric(outMs),
       startMs: numeric(startMs), offsetMs: numeric(offsetMs), ripple,
@@ -116,6 +125,8 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
           {sameKindTracks.filter(track => track.id !== first.trackId).map(track => <option key={track.id} value={track.id}>{track.kind === 'VIDEO' ? '视频' : '音频'} {track.order + 1}</option>)}
         </select></label>
         <label className="nle-clip__check"><input type="checkbox" checked={ripple} aria-label="波纹闭合间隙" onChange={event => setRipple(event.currentTarget.checked)} />波纹动作时明确闭合间隙</label>
+        <p>裁剪时勾选波纹，只按时长变化移动本轨道中从原片段终点开始的后续片段；其他轨道与字幕保持原位。</p>
+        <p>保存不会证明素材实际时长；实际素材入出点范围仍由原渲染服务读取媒体后校验。</p>
         <label>替换素材标识<input type="text" value={assetId} aria-label="替换素材标识" onChange={event => setAssetId(event.currentTarget.value)} /></label>
         <label>替换素材版本<input type="number" step={1} value={assetVersion} aria-label="替换素材版本" onChange={event => setAssetVersion(event.currentTarget.value)} /></label>
         <label>替换素材摘要<input type="text" value={assetDigest} aria-label="替换素材摘要" onChange={event => setAssetDigest(event.currentTarget.value)} /></label>

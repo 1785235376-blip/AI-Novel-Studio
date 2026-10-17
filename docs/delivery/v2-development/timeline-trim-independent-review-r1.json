@@ -1,0 +1,97 @@
+{
+  "status": "PASS_SCOPED_INDEPENDENT_REVIEW",
+  "canonical_sha256": "77e3673b72ca02a7d39dffbc7b0af56ff1041e62c4b5f699ea8243fd970863d2",
+  "canonical_source_count": 2601,
+  "canonical_node_count": 16101,
+  "canonical_changed_sources": [
+    "frontend/src/creative/StudioTimelineEditor.tsx",
+    "frontend/src/creative/useStudioTimelineEditor.ts",
+    "frontend/src/nle/ClipInspectorPanel.tsx"
+  ],
+  "tracked_diff": [
+    "frontend/src/creative/StudioTimelineEditor.tsx",
+    "frontend/src/creative/useStudioTimelineEditor.ts",
+    "frontend/src/nle/ClipInspectorPanel.tsx"
+  ],
+  "receipts": {
+    "origin": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2541,
+      "sources_changed": false,
+      "before_after_exact": true,
+      "equal_primary": true,
+      "log_hash_matches": true
+    },
+    "file": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2541,
+      "sources_changed": false,
+      "before_after_exact": true,
+      "equal_primary": true,
+      "log_hash_matches": true
+    },
+    "ui": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2541,
+      "sources_changed": false,
+      "before_after_exact": true,
+      "equal_primary": true,
+      "log_hash_matches": true
+    },
+    "types": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2541,
+      "sources_changed": false,
+      "before_after_exact": true,
+      "equal_primary": true,
+      "log_hash_matches": true
+    },
+    "build": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2541,
+      "sources_changed": false,
+      "before_after_exact": true,
+      "equal_primary": true,
+      "log_hash_matches": true
+    },
+    "tokens": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2541,
+      "sources_changed": false,
+      "before_after_exact": true,
+      "equal_primary": true,
+      "log_hash_matches": true
+    },
+    "independent-ui": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2541,
+      "sources_changed": false,
+      "before_after_exact": true,
+      "equal_primary": true,
+      "log_hash_matches": true
+    },
+    "independent-file": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2541,
+      "sources_changed": false,
+      "before_after_exact": true,
+      "equal_primary": true,
+      "log_hash_matches": true
+    }
+  },
+  "independent_executed": {
+    "ui": 29,
+    "file": 16,
+    "overlap_with_primary": true
+  },
+  "boundary": "Synthetic mounted/controller UI and File persistence; no browser, PostgreSQL, provider, real media, or rendering execution; Save does not prove measured source duration.",
+  "findings": "Semantic first-selected routing and source-duration disclaimer issues were resolved before freeze. No remaining blocker found."
+}

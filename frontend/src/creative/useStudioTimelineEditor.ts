@@ -242,6 +242,33 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
       setNotice('仅已更新本地时间线；原素材和服务端版本保留，需要明确保存。');
     } catch (reason) { setError(reason instanceof Error ? reason.message : '片段编辑无效，请核对边界与轨道重叠。'); }
   }
+  function trimClip(trackId: string, clipId: string, inMs: number, outMs: number, ripple: boolean,
+    revision: string, client: StudioProductionClient): boolean {
+    if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN'
+      || client !== latest.current.client || revision !== `${epoch.current}:${handoffGeneration.current}`) return false;
+    try {
+      const input = checkedTimelineDraft(cloneTimeline(draftRef.current));
+      const track = input.timeline.tracks.find(row => row.id === trackId), clip = track?.clips.find(row => row.id === clipId);
+      if (!track || !clip) throw new Error('找不到原裁剪片段，请重新选择。');
+      if (track.locked) throw new Error('该轨道已锁定，请先通过原服务明确解锁。');
+      if (!Number.isSafeInteger(inMs) || !Number.isSafeInteger(outMs) || typeof ripple !== 'boolean') throw new Error('裁剪需要整数毫秒入出点与明确的波纹选择。');
+      if (clip.in_ms === inMs && clip.out_ms === outMs) return false;
+      const previous = timelineClipDuration(clip), boundary = clip.start_ms + previous;
+      clip.in_ms = inMs; clip.out_ms = outMs;
+      // Same semantics as original studio_timeline_edit.py clip.trim/shift:
+      // only this track, at/after the OLD end, by the rendered duration delta.
+      if (ripple) {
+        const delta = timelineClipDuration(clip) - previous;
+        track.clips.forEach(row => { if (row.id !== clip.id && row.start_ms >= boundary) row.start_ms += delta; });
+      }
+      const checked = checkedTimelineDraft(input);
+      if (!change(value => { value.title = checked.title; value.timeline = checked.timeline; })) return false;
+      setNotice('裁剪已更新本地草稿；波纹只移动本轨道原片段终点起的后续片段，需要明确保存。');
+      return true;
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : '裁剪无效，请核对边界、淡入淡出与轨道重叠。'); return false;
+    }
+  }
   function createNew() {
     const unsaved = timelineInputKey(draftRef.current) !== baseline.current;
     if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN' || unsaved && consent.current.discard !== timelineInputKey(draftRef.current)) return;
@@ -401,6 +428,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     } catch (reason) { if (active(request)) handleError(reason, '原渲染任务读取失败，未知状态与请求标识仍保留。'); }
     finally { if (reading.current === abort) reading.current = undefined; finish(request); }
   }
+  const editRevision = `${epoch.current}:${handoffGeneration.current}`;
   return { draft: owns ? draft : undefined, base: owns ? base : undefined, rows: owns ? rows : [], candidate: owns ? candidate : undefined,
     failure: owns ? failure : undefined, attempt: owns ? attempt : undefined, error: owns ? error : '', notice: owns ? notice : '',
     denied: denied || !owns, pending, inputDirty, dirty, sourcesCurrent, canEdit, canRender, confirmed: confirmed === savedBinding,
@@ -411,6 +439,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     splitClip: (trackId: string, clipId: string, position: number) => editClip(trackId, clipId, 'split', position),
     duplicateClip: (trackId: string, clipId: string, position: number) => editClip(trackId, clipId, 'duplicate', position),
     moveClip: (trackId: string, clipId: string, targetId: string, position: number) => editClip(trackId, clipId, 'move', position, targetId),
+    trimClip: (trackId: string, clipId: string, inMs: number, outMs: number, ripple: boolean) => trimClip(trackId, clipId, inMs, outMs, ripple, editRevision, props.client),
     exportAvailable, exportProfile: owns ? exportProfile : { preset: 'REVIEW_MP4' } as TimelineExportProfile, exportPreview: owns ? exportPreview : undefined,
     exportConfirmed: owns && !!exportPreview && exportConfirmed === exportPreview.preview_digest, canPreviewExport, canExport,
     changeExportProfile, previewExport, exportTimeline, setTrackLocked, trackLockAvailable: !!props.client.timelineTrackLock,
