@@ -1,0 +1,13 @@
+{
+  "source_commit": "a4359fe82df3fa8aa7dbe5e4da469d75b170cb31",
+  "parent_approval_received": true,
+  "byte_exact": true,
+  "method": "copyFileSync; no recompression",
+  "candidate": ".runtime/parallel-integration-wave2-inventory/candidate-manifest-v2.json.gz",
+  "canonical": ".github/ci/coverage_manifest_v2.json.gz",
+  "candidate_sha256": "a76dd7d972e932fe8711e1d193068839813bf67c0dc87625af9fb9f97f58f2a9",
+  "canonical_sha256": "a76dd7d972e932fe8711e1d193068839813bf67c0dc87625af9fb9f97f58f2a9",
+  "predecessor_sha256": "851730e6ca406bd8c21abc2d44da9f3bb424a6112fbf4c1923f61969fd5d8da3",
+  "bytes": 642478,
+  "independent_approval_sha256": "7a18c0294927c5749062b65b99e55c9f40b98c0c0dcd9471476c053a74881481"
+}

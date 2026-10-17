@@ -1,0 +1,29 @@
+{
+  "status": "INVENTORY_ONLY",
+  "head": "a4359fe82df3fa8aa7dbe5e4da469d75b170cb31",
+  "rows": 17289,
+  "raw_sha256": "384f764513b65c3e408573e138679b7401b37bcd7e07fefbaa1decb65c6a4796",
+  "report_sha256": "2cf3e26704cf50eb223343c3ef43352ea09aede62800f25e286713a2a82801c1",
+  "all_old_rows_order_and_classifications_exact": 17112,
+  "new_rows": 177,
+  "new_backend_counts": {
+    "file": 79,
+    "postgres": 5,
+    "both": 93
+  },
+  "new_rows_by_file": {
+    "tests/test_comic_cover_framing.py": 48,
+    "tests/test_director_private_publication_races.py": 15,
+    "tests/test_director_terminal_evidence_contract.py": 40,
+    "tests/test_interactive_membership_handoff.py": 19,
+    "tests/test_restored_file_verification.py": 54,
+    "tests/test_wave2_generation_backup_restore_additive.py": 1
+  },
+  "protected_entries_exact": 1336,
+  "source_count": 2671,
+  "source_stable": true,
+  "companion_files": 11,
+  "canonical_unchanged": true,
+  "canonical_sha256": "851730e6ca406bd8c21abc2d44da9f3bb424a6112fbf4c1923f61969fd5d8da3",
+  "tests_executed": false
+}

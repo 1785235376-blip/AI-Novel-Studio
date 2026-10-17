@@ -1,0 +1,155 @@
+{
+  "source_checkpoint": "a4359fe82df3fa8aa7dbe5e4da469d75b170cb31",
+  "baseline_manifest": {
+    "commit": "d10b72c1bc2db33dc2dff85af4f31ede478cf1fc",
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "sha256": "851730e6ca406bd8c21abc2d44da9f3bb424a6112fbf4c1923f61969fd5d8da3"
+  },
+  "complete_source_map_entries": 2671,
+  "complete_source_map_sha256": "d18484a1842a5a1a834566e96078f9967e3f6cdd79a6932d6e0bde1ce1fdeea4",
+  "source_delta": [
+    {
+      "path": "app/backup_restore.py",
+      "before": "fd26994e6d07c2b862d3f282d7d1443ab7edd9e316c36cd2524bd3df7c01a250",
+      "after": "a0bfd17bd268581d41b7a0347e376f6c0895338b9cea16a7a86c2c8981cc6a62"
+    },
+    {
+      "path": "app/creative/director_terminal_evidence.py",
+      "before": null,
+      "after": "f064777fdade12050f9e755d677ab042c9f4d221c430f3dbd41f4142b9ea29e6"
+    },
+    {
+      "path": "app/creative/generation.py",
+      "before": "1020e41c6bbb199241d628e51ed35e1195c998b9a9ca784fecbdb6de2f83b6ae",
+      "after": "de925e29d345733a5b01171c31bcdff866f7f699d965d0e718b0e1a65046b1c9"
+    },
+    {
+      "path": "app/experimental/comic_layouts.py",
+      "before": "ed166d965d677350963454936c74bb2f44ac68fcc1671618fa76944aeb2dff96",
+      "after": "14322297e06e73861fc452d69737e894294db74b4f4d3c9903e5349180399a52"
+    },
+    {
+      "path": "app/jobs.py",
+      "before": "c4c63a20c95da09bee922d4526d2691107f9845f9b2b0114282def1dd60f0ab5",
+      "after": "f00b17895a84c4ba1334981e81289e7a152adfa2f87b6b3e6768ace33685d505"
+    },
+    {
+      "path": "app/model_execution.py",
+      "before": "923bb10ac7e55dc67bf573ff4d0bb432bf1ea1f77413c8bde83069c7fb4e7ad3",
+      "after": "f0fa804f1b7dd0f381bb610a67da46aa44706b01040891d9070a6952d270ac0b"
+    },
+    {
+      "path": "app/repositories/generation_repository.py",
+      "before": "e9a6ec9fd8913ad8bfbf3587397048edd6dc615ed2ae30453561351aba21ba6d",
+      "after": "2bd899bac38aaed894d126cad7fed942ced8b96f1b59a2a9ec01c30037193af6"
+    },
+    {
+      "path": "app/repositories/postgres/generation.py",
+      "before": "b09785110f50373740240c97f238b719f437cc5e12c1c0a11daef268338fdfca",
+      "after": "4afe05df476da7f361e06d3bc5dc490b2707cdc0045c3cc3172a3d3ac4b34446"
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.framing.test.tsx",
+      "before": null,
+      "after": "8fb8e2845e281b2d9c413c896ac1d5de8d0e45ecea60cc46baf43720a3345709"
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.tsx",
+      "before": "0bc6729b143da49462aff83a6f60324852c8428e22daae61c7b6061bed036dd0",
+      "after": "0dad4ecfb54af1ff92cbdadf2f0dc3ed688ae169a052d2226ac2b0166acdcd02"
+    },
+    {
+      "path": "frontend/src/experimental/InteractiveStoryPanel.membership.test.tsx",
+      "before": null,
+      "after": "412ebd2e5e600a03d51ee6ac284c6bb2c7d608937e6ab22a757c6aa111c93761"
+    },
+    {
+      "path": "frontend/src/experimental/InteractiveStoryPanel.tsx",
+      "before": "3e762f90137c48ed7fd9a64faeea53f85928e74a49d95fa8fbe84bbdb165e9a2",
+      "after": "1eacd83be11e2d567bb1ccbdcfad2829457cda311faec77abd080cecaca48564"
+    },
+    {
+      "path": "frontend/src/experimental/comicLayoutsClient.ts",
+      "before": "7dc2e55721ea4195b470cb1f9a9383716ab2c85dfe2c2b6cc1dacfa06758fa94",
+      "after": "8709cc3455178dd03cfd40f81c272801ecbd9e3b9054ad024276fccc18efc2ab"
+    },
+    {
+      "path": "tests/test_comic_cover_framing.py",
+      "before": null,
+      "after": "a12d82fb4413a39fd3135042e950c922920b698b77495069fc179e2f1171ec52"
+    },
+    {
+      "path": "tests/test_director_private_publication_races.py",
+      "before": null,
+      "after": "471e5bf024c5c89dea6819c1881e4b3bae702cee1999eaa939ec0958fed4f5df"
+    },
+    {
+      "path": "tests/test_director_terminal_evidence_contract.py",
+      "before": null,
+      "after": "32707ca4c0802b2909ec0cbde2757fb22d4110efe9f09fe2fe3f92dfb31a4745"
+    },
+    {
+      "path": "tests/test_interactive_membership_handoff.py",
+      "before": null,
+      "after": "e6d8398a23209858e95d02b13b3f0cd63fd0bb5dba28d26327426078d6e0e916"
+    },
+    {
+      "path": "tests/test_restored_file_verification.py",
+      "before": null,
+      "after": "2f66a923a30ad21560b35a626de34eb90f6e12510d079df930f62cbc6bc78b22"
+    },
+    {
+      "path": "tests/test_wave2_generation_backup_restore_additive.py",
+      "before": null,
+      "after": "68c7688f6d3acdc06cba210a7f4e304f3b2b709be5f2dde39ac46733e3e8147b"
+    }
+  ],
+  "expected_new_sources": [
+    "app/creative/director_terminal_evidence.py",
+    "frontend/src/experimental/ComicLayoutsPanel.framing.test.tsx",
+    "frontend/src/experimental/InteractiveStoryPanel.membership.test.tsx",
+    "tests/test_comic_cover_framing.py",
+    "tests/test_director_private_publication_races.py",
+    "tests/test_director_terminal_evidence_contract.py",
+    "tests/test_interactive_membership_handoff.py",
+    "tests/test_restored_file_verification.py",
+    "tests/test_wave2_generation_backup_restore_additive.py"
+  ],
+  "protected_old_entries_exact": 1336,
+  "frontend_scripts_e2e_companion": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "raw_inventory": {
+    "path": "docs/delivery/v2-development/parallel-integration-wave2-inventory-20261017/review-raw-collection.json",
+    "sha256": "384f764513b65c3e408573e138679b7401b37bcd7e07fefbaa1decb65c6a4796",
+    "rows": 17289
+  },
+  "prior_raw_inventory": {
+    "path": "docs/delivery/v2-development/parallel-integration-inventory-20261017/review-raw-collection.json",
+    "sha256": "cc01bf64fcfd0b108f2734c03c33dd8957261d773b64f7c827e1cf4661a474e9",
+    "rows": 17112
+  },
+  "packaging_guard": {
+    "path": "packaging/public-build.json",
+    "before_sha256": "c54c87073dbd7c09d4844c6b9884c1a466491b3a9e86064511fa1983acbc9178",
+    "after_sha256": "353b92aff6116d873ea4402a1ef627e7899214b46ba823a9b4300ba75c5d0448",
+    "outside_manifest": true,
+    "unchanged": false,
+    "approved_source_delta": true,
+    "added_entries": [
+      "app/creative/director_terminal_evidence.py"
+    ],
+    "predecessor_path": "docs/delivery/v2-development/parallel-integration-wave2-inventory-20261017/public-predecessor.json"
+  },
+  "tests_executed": false
+}

@@ -1,0 +1,15 @@
+{
+  "source_commit": "a4359fe82df3fa8aa7dbe5e4da469d75b170cb31",
+  "parent_reported_committed_source_hashes_verified": 2609,
+  "primary_complete_index": {
+    "path": "docs/delivery/v2-development/parallel-integration-wave2-20261017/complete-index.json",
+    "artifacts": 63,
+    "sha256": "94300177d2d22a428f7d5525fceb6a1c1b2e7ed2d2ad543bfa2c1844218d900c"
+  },
+  "independent_index": {
+    "path": "docs/delivery/v2-development/parallel-integration-wave2-independent-20261017/evidence-index.json",
+    "artifacts": 24,
+    "sha256": "89a000da0a0cc8753aa52813847352ed88a28c754225edf87caa1736de8528d7"
+  },
+  "scope": "Prior committed evidence binding only; no new execution claim"
+}
