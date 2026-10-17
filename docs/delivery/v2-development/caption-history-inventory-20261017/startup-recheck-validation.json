@@ -1,0 +1,35 @@
+{
+  "status": "PASS",
+  "normal_command": [
+    "-c",
+    "import sys; __file__='/workspace/scratch/20a0022d2b33/studio-caption-history/.runtime/caption-history-origin/origin-probe.py'; exec(compile(open('.runtime/caption-history-origin/origin-probe.py').read(),'.runtime/caption-history-origin/origin-probe.py','exec'))",
+    "--parent"
+  ],
+  "actual_runner_command": [
+    "scripts/run_v2_checks.py",
+    "caption-history-inventory-origin",
+    "--",
+    "python",
+    ".runtime/caption-history-origin/origin-probe.py",
+    "--child"
+  ],
+  "comparisons": [
+    {
+      "original": "docs/delivery/v2-development/caption-history-origin/normal-startup.json",
+      "original_sha256": "346baf54082c49451b1ccd9dfb7e942d322b65a5e9d56c7e514a2f735b36559d",
+      "recheck": "docs/delivery/v2-development/caption-history-inventory-20261017/recheck-normal-startup.stdout.log",
+      "recheck_sha256": "07a1776ba096520b5b7de917af2331c65c92e60125865ce87c53bdb68d26d1b5",
+      "semantic_equal_except_utc": true
+    },
+    {
+      "original": "docs/delivery/v2-development/caption-history-origin-r1.log",
+      "original_sha256": "932c69d2f7786c3b0b1d93a50ae4b8310fee3bef0911cbaadb4b85749e8e2a26",
+      "recheck": "docs/delivery/v2-development/caption-history-inventory-20261017/actual-runner-origin.log",
+      "recheck_sha256": "cb55751973e6cbf0dc92e1da06ffa7bf1086d3e2144cffbc660feb10470f9d75",
+      "semantic_equal_except_utc": true
+    }
+  ],
+  "probe_sha256": "ecdd5530d79c5943f8f16715d54be6e981f40d883629ff5056eb9523faaaaa06",
+  "tests_executed": false,
+  "runtime_test_execution": "NOT_RUN"
+}

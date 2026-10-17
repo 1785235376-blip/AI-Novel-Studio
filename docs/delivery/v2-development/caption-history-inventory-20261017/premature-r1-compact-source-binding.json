@@ -1,0 +1,76 @@
+{
+  "source_checkpoint": "554b33db16e4f125feb603783d7e68affc2a56e1",
+  "baseline_manifest": {
+    "commit": "0335e7a5c960804b8961530aba8d5b8690c5a5f1",
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "sha256": "bdc505005416221a5829a13aa12d303b43ebb2a20681bb54a1581ab90fa56c13"
+  },
+  "complete_source_map_entries": 2601,
+  "complete_source_map_sha256": "c119dbd7630325cbfe0c99fd070216c3ceec8344a3e2f6be76529913435f04d1",
+  "source_delta": [
+    {
+      "path": "app/experimental/subtitle_timeline.py",
+      "before": "cf6e4fb216ddb044b71bb1d5880ca03cc7e219e18fac5ae4c9aee0f47ba244ce",
+      "after": "5ffc37bb2c79301d69c83f6de91fefeae065a36efeb0f9757c566a1001a2975d"
+    },
+    {
+      "path": "app/experimental/subtitle_timeline_api.py",
+      "before": "384d1884703cca100eda0126ab00515c2d758ec0334d8e507cf0192ae6bcc932",
+      "after": "fa59f31cb9cb635ce0bd3fe8bc9febdc22c45e4ad853cefcfe915d5538c3cf71"
+    },
+    {
+      "path": "frontend/src/experimental/CaptionHistory.tsx",
+      "before": null,
+      "after": "9bf2dab16b0deda1872c221aca4da5640074e3568c90f73f09d495a78da66aeb"
+    },
+    {
+      "path": "frontend/src/experimental/SubtitleTimelinePanel.history.test.tsx",
+      "before": null,
+      "after": "497b622b7ce340ed088e6f2178fd934dd249a21d4218366507bfddfabcfcb320"
+    },
+    {
+      "path": "frontend/src/experimental/SubtitleTimelinePanel.tsx",
+      "before": "84914b2187f95939e621b4bbc02c108d54174c7aac4d1a0f142fff1d13b602d5",
+      "after": "50761a4c6cfd39b86767d034fdccadd59c2a8edccc7bf7c3097d997fa7e64830"
+    },
+    {
+      "path": "frontend/src/experimental/voiceSubtitleClient.ts",
+      "before": "afa7ee0c93bc9b8f6268d5183644a66c9f64e7b1ecfbcba7a6dc398fb6d49880",
+      "after": "d8bc54f6eca91bba59c2a17cc538a769ca990f4330d30d099593eb768fb83cc1"
+    },
+    {
+      "path": "tests/test_caption_history_additive.py",
+      "before": null,
+      "after": "28dd3ff6ec830f03ba223177fc561bf6383dd3f15b9ae853fd4d22312bd67bc3"
+    }
+  ],
+  "protected_old_entries_exact": 1285,
+  "frontend_scripts_e2e_companion": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "raw_inventory": {
+    "path": "docs/delivery/v2-development/caption-history-inventory-20261017/raw-collection.json",
+    "sha256": "a74ca86c430287220bb4e45f696da10e08b967d2805e58201e3926ea98a7ab76",
+    "rows": 16101
+  },
+  "prior_raw_inventory": {
+    "path": "docs/delivery/v2-development/storyboard-editor-inventory-20261017/raw-collection.json",
+    "sha256": "6f3a3fd59e460eedee499297f098dd4f3c47dff4fc837c37b5bea75607c8803a",
+    "rows": 15921
+  },
+  "prior_15142_inventory": {
+    "path": "docs/delivery/v2-development/ci-reconciliation-20261016/inventory/old-15142-collection-rows.json.gz",
+    "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+  },
+  "tests_executed": false
+}

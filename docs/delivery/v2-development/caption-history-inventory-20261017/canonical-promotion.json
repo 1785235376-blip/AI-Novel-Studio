@@ -1,0 +1,10 @@
+{
+  "source_checkpoint": "554b33db16e4f125feb603783d7e68affc2a56e1",
+  "canonical_before_sha256": "bdc505005416221a5829a13aa12d303b43ebb2a20681bb54a1581ab90fa56c13",
+  "candidate_sha256": "77e3673b72ca02a7d39dffbc7b0af56ff1041e62c4b5f699ea8243fd970863d2",
+  "canonical_sha256": "77e3673b72ca02a7d39dffbc7b0af56ff1041e62c4b5f699ea8243fd970863d2",
+  "independent_approval_sha256": "726f327455155b2c90f93f88de6b456b3f420247f96d3404e47f99b03be29d33",
+  "parent_approval_received": true,
+  "byte_exact": true,
+  "tests_executed": false
+}

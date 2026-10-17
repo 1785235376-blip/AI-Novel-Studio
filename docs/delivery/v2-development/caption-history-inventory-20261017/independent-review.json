@@ -1,0 +1,22 @@
+{
+  "status": "APPROVE_CANDIDATE_COLLECTION",
+  "utc": "2026-10-17T04:38:03.795Z",
+  "source_commit": "554b33db16e4f125feb603783d7e68affc2a56e1",
+  "canonical_unchanged_sha256": "bdc505005416221a5829a13aa12d303b43ebb2a20681bb54a1581ab90fa56c13",
+  "raw_sha256": "a74ca86c430287220bb4e45f696da10e08b967d2805e58201e3926ea98a7ab76",
+  "old_rows_full_fields_order_classification_exact": 15921,
+  "new_rows": 180,
+  "new_file_rows": 90,
+  "new_postgres_rows": 90,
+  "source_count": 2601,
+  "source_brackets_exact": true,
+  "protected_count": 1285,
+  "companions": 11,
+  "V1_unchanged": true,
+  "normal_actual_runner_origin_verified": true,
+  "tests_executed": false,
+  "notes": [
+    "First missing-__file__ normal-wrapper failure and premature collection preserved separately; accepted review follows passing origin recheck.",
+    "No candidate or canonical promotion has been approved by this gate."
+  ]
+}

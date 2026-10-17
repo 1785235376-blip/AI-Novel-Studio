@@ -1,0 +1,28 @@
+{
+  "status": "PASS_FINAL_CANONICAL_AND_EVIDENCE_REVIEW",
+  "utc": "2026-10-17T04:41:34.020Z",
+  "source_commit": "554b33db16e4f125feb603783d7e68affc2a56e1",
+  "canonical_sha256": "77e3673b72ca02a7d39dffbc7b0af56ff1041e62c4b5f699ea8243fd970863d2",
+  "raw_sha256": "a74ca86c430287220bb4e45f696da10e08b967d2805e58201e3926ea98a7ab76",
+  "all_three_raw_archives_byte_exact": true,
+  "all_six_source_snapshots_byte_exact": true,
+  "source_count": 2601,
+  "old_protected": 1285,
+  "refreshed_protected": 1287,
+  "companion": 11,
+  "old_rows": 15921,
+  "new_rows": 180,
+  "rows": 16101,
+  "reviewed_index_sha256": "02f6645f2f39cc948eecde08b5687fd3e1612face23cf4c9cf6a780273a3cb7a",
+  "indexed_payloads": 56,
+  "payload_bytes": 16176322,
+  "all_indexed_hashes_and_directory_closure": true,
+  "readonly_verifier_passed": true,
+  "tests_executed": false,
+  "notes": [
+    "Independent runtime evidence is recorded separately; inventory refresh executes collection only.",
+    "Initial missing-__file__ wrapper and premature collection are retained and excluded from accepted three-stage sequence.",
+    "This report binds the preceding index; refresh index once to include this unchanged report.",
+    "Source checkpoint stays 554b33db16e4f125feb603783d7e68affc2a56e1; final evidence Git commit remains parent responsibility."
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "status": "APPROVE_EXACT_CANDIDATE_PROMOTION",
+  "utc": "2026-10-17T04:39:46.526Z",
+  "source_commit": "554b33db16e4f125feb603783d7e68affc2a56e1",
+  "candidate_path": ".runtime/caption-history-inventory/candidate-manifest-v2.json.gz",
+  "candidate_sha256": "77e3673b72ca02a7d39dffbc7b0af56ff1041e62c4b5f699ea8243fd970863d2",
+  "canonical_before_sha256": "bdc505005416221a5829a13aa12d303b43ebb2a20681bb54a1581ab90fa56c13",
+  "raw_sha256": "a74ca86c430287220bb4e45f696da10e08b967d2805e58201e3926ea98a7ab76",
+  "old_rows": 15921,
+  "new_rows": 180,
+  "rows": 16101,
+  "sources": 2601,
+  "protected": 1285,
+  "companions": 11,
+  "review_candidate_complete_brackets_exact": true,
+  "portable_verifier": "PASS_INVENTORY_ONLY",
+  "all_source_git_blobs_verified": true,
+  "tests_executed": false,
+  "scope": "Approve only byte-exact copy of this candidate after parent release; confirmation collection and final closure still required."
+}

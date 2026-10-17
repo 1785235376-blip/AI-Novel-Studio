@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File ".runtime/caption-history-origin/origin-probe.py", line 68, in <module>
+    result={'status':'PASS_STARTUP_AND_EXPLICIT_PATHFINDER_ONLY','child': '--child' in sys.argv,'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'executable':sys.executable,'prefix':sys.prefix,'base_prefix':sys.base_prefix,'sys_path':sys.path,'meta_path':meta,'user_site_enabled':site.ENABLE_USER_SITE,'product_or_pytest_imported':False,'dependency_distributions':actual,'specs':specs,'probe_sha256':hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),'setup_receipt_sha256':hashlib.sha256((ENV/'setup-receipt.json').read_bytes()).hexdigest()}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                          ^^^^^^^^
+NameError: name '__file__' is not defined. Did you mean: '__name__'?
