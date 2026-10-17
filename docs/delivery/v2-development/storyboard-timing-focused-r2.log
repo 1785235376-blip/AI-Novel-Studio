@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/StoryboardTimingTools.additive.test.tsx (16 tests) 382ms
+   ✓ integrates with original canvas draft and save owner, including local undo 303ms
+
+ Test Files  1 passed (1)
+      Tests  16 passed (16)
+   Start at  03:22:31
+   Duration  1.22s (transform 116ms, setup 18ms, collect 267ms, tests 382ms, environment 316ms, prepare 57ms)
+

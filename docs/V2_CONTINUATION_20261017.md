@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Storyboard pacing tools (18:24 UTC)
+
+Original CreativeCanvas now supports per-scene/all-shot duration previews, uniform duration and exact-total weighted allocation, explicit local apply and one-step undo. Integer seconds stay within the original 1–600 limits; saturated shares redistribute, ties use authored order, and an unchanged total preserves existing durations. Shot IDs/order, continuity, director links, media and timeline stay untouched. Existing Save remains the sole persistence owner; source/draft/busy/scene changes retire pending actions and undo.
+
+Final targeted receipt storyboard-timing-focused-r3:17 PASS. Prior r2:16 PASS and TypeScript PASS; r3 refined bounded allocation and its tests, with broader type/build verification deferred to the next consolidated check. r1 failed only because the new test used the wrong existing Save button label; corrected test selector, preserved runtime and failed evidence. No live browser or backend persistence claim for this new authoring increment.
+
 ## Canvas dependency inspection (18:20 UTC)
 
 Added an upstream/downstream inspector directly to the original GraphCanvas. It traverses existing authored edges, shows shortest hop distance and exact port connections, supports direct-only filtering and paginated results, includes disabled nodes, and selects existing nodes without rewriting the graph or invoking execution. Iterative traversal handles cycles/dangling edges and a 5,000-node synthetic chain without recursion. Owner/draft/selection/busy changes retire old selection callbacks. This is authored-graph inspection, not an execution authorization or runtime impact guarantee.
