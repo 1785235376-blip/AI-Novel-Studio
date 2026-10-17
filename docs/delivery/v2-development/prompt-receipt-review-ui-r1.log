@@ -1,0 +1,31 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-prompt-workspace/frontend
+
+ ✓ src/prompt/PromptWorkspace.detailRace2.test.tsx (4 tests) 791ms
+ ✓ src/prompt/PromptWorkspace.scoping.test.tsx (3 tests) 722ms
+ ✓ src/prompt/PromptWorkspace.additive.test.tsx (6 tests) 612ms
+ ✓ src/prompt/PromptWorkspace.detailRace.test.tsx (4 tests) 616ms
+ ✓ src/prompt/PromptWorkspace.p0.test.tsx (10 tests) 689ms
+ ✓ src/prompt/PromptWorkspace.test.tsx (11 tests) 533ms
+ ✓ src/prompt/PromptWorkspace.p0c.test.tsx (6 tests) 505ms
+ ✓ src/prompt/PromptWorkspace.receiptReopen.test.tsx (11 tests) 1400ms
+   ✓ mounted save receipts survive family navigation > reopens A with its actual saved outcome and never changes B 326ms
+ ✓ src/prompt/PromptEditorPanel.copy.test.tsx (13 tests) 353ms
+ ✓ src/prompt/PromptWorkspace.loadingOwner.test.tsx (1 test) 272ms
+ ✓ src/prompt/PromptRevisionDiff.test.tsx (9 tests) 533ms
+ ✓ src/prompt/PromptVersionHistory.test.tsx (7 tests) 170ms
+ ✓ src/prompt/PromptEditorPanel.usability.test.tsx (7 tests) 216ms
+ ✓ src/prompt/PromptWorkspace.strictmode.test.tsx (3 tests) 181ms
+ ✓ src/prompt/PromptWorkspace.p0i.test.tsx (2 tests) 256ms
+ ✓ src/prompt/promptContract.test.ts (12 tests) 9ms
+ ✓ src/prompt/promptProducerContract.test.ts (11 tests) 9ms
+ ✓ src/prompt/promptDraft.test.ts (12 tests) 5ms
+ ✓ src/prompt/promptDraft.pending.test.ts (9 tests) 5ms
+ ✓ src/prompt/promptDraft.aliasing.test.ts (8 tests) 5ms
+ ✓ src/prompt/promptDraft.settlement.test.ts (27 tests) 10ms
+
+ Test Files  21 passed (21)
+      Tests  176 passed (176)
+   Start at  18:12:59
+   Duration  18.41s (transform 406ms, setup 66ms, collect 2.03s, tests 7.89s, environment 4.89s, prepare 1.05s)
+

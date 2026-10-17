@@ -1,0 +1,196 @@
+{
+  "schema": "prompt-receipt-reopen-evidence-index/1",
+  "baseline": "e1e66cedeb7a140b6894850bc21a1e5ac7e06c16",
+  "status": "READY_FOR_PARENT_INTEGRATION",
+  "runtime_files": [
+    "frontend/src/prompt/promptDraft.ts",
+    "frontend/src/prompt/usePromptWorkspace.ts"
+  ],
+  "new_test_files": [
+    "frontend/src/prompt/promptDraft.settlement.test.ts",
+    "frontend/src/prompt/PromptWorkspace.receiptReopen.test.tsx"
+  ],
+  "tests": {
+    "files": 21,
+    "passed": 176,
+    "new_cases": 38,
+    "unchanged_cases": 138,
+    "unchanged_old_modules": 19
+  },
+  "source_maps_identical_across_all_receipts": true,
+  "receipt_summaries": [
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-origin-r1.json",
+      "status": "PASS",
+      "source_count": 2587,
+      "sources_changed_during_check": false,
+      "log_sha256": "452cd54f08005f815fae7933ffc58c884276674fdc997615566ab20e57023e00"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-ui-r1.json",
+      "status": "PASS",
+      "source_count": 2587,
+      "sources_changed_during_check": false,
+      "log_sha256": "06966d74487796f452a951c42efe76c2e2f4b01d1bff944d934d2fd2e5ea651a"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-build-r1.json",
+      "status": "PASS",
+      "source_count": 2587,
+      "sources_changed_during_check": false,
+      "log_sha256": "b83018bc3eb9d5c546962450ab7f7413f383ad400e434508753f1673b9ac60de"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-review-origin-r1.json",
+      "status": "PASS",
+      "source_count": 2587,
+      "sources_changed_during_check": false,
+      "log_sha256": "243be99acb0bc2e5c3849aff63e7b8085514ba6211f38149546a07a69389696e"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-review-ui-r1.json",
+      "status": "PASS",
+      "source_count": 2587,
+      "sources_changed_during_check": false,
+      "log_sha256": "372e8d6534e4d05ed0d94352c22c141c87786d98612d388b45dc4cf5255d6618"
+    }
+  ],
+  "qualification": "Code/test-complete sparse worktree excludes historical docs/delivery. No full historical-document preservation or new live backend/browser/R3-GATE acceptance claim. Parent owns integration and commit.",
+  "files": [
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-build-r1.json",
+      "bytes": 612918,
+      "sha256": "f41c8db0abc8123cbac5b61eb933ca29d77fbd8ecc1836ff1b292a01ff20e51c"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-build-r1.log",
+      "bytes": 1710,
+      "sha256": "b83018bc3eb9d5c546962450ab7f7413f383ad400e434508753f1673b9ac60de"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-handoff.md",
+      "bytes": 5557,
+      "sha256": "fde59a9906762a1e6fcd778064b027df302f361e71eb26f14d0e5a7301d56c1d"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-origin/build-launcher.log",
+      "bytes": 1809,
+      "sha256": "f6669d870c60c9862e01992eb5baf7d60b3291f76adb9ac3ad225a2aa923422e"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-origin/normal-startup.json",
+      "bytes": 8566,
+      "sha256": "e51aa9e1192d35aa42a38bd6640f8ef0c9c3b4c55db07f17768b59e6cf17dd72"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-origin/normal-startup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-origin/origin-probe.py",
+      "bytes": 6506,
+      "sha256": "b53a5947f47f2a0ea990e81fa892a81fcf5a91a06d4a06074936322767c8ba6f"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-origin/proof-launcher.log",
+      "bytes": 8728,
+      "sha256": "cd59501c718a75c6efb2d42b1bde7a26eaf54771b6366fab5c974d0e2fcdea60"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-origin/run-proof.sh",
+      "bytes": 1048,
+      "sha256": "30143b47bc012aedf8cdb3ceb82039bd79eb71b7cc5006998203f1bc03d4fca7"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-origin/run-ui.sh",
+      "bytes": 635,
+      "sha256": "b2ad2da2985c24b9a19f622ee2df097553a27d379b0eafe3146aef3ce3ed3d7b"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-origin/ui-launcher.log",
+      "bytes": 1691,
+      "sha256": "751360e5d85a9f4700b68366726a8cd93b25f2cc98563b6e9a784e2cf24d8abe"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-origin-r1.json",
+      "bytes": 613077,
+      "sha256": "00a824aaca4f42ef53e53dcf422ac3616c26ceaeb8d98722696f5df23097deb4"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-origin-r1.log",
+      "bytes": 8628,
+      "sha256": "452cd54f08005f815fae7933ffc58c884276674fdc997615566ab20e57023e00"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-ui-r1.json",
+      "bytes": 612867,
+      "sha256": "759a852e1c72fee999fe540cc1b09607d97353154f69caf291805c75ff5a319d"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-reopen-ui-r1.log",
+      "bytes": 1595,
+      "sha256": "06966d74487796f452a951c42efe76c2e2f4b01d1bff944d934d2fd2e5ea651a"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-review-origin-r1/normal-startup.json",
+      "bytes": 8566,
+      "sha256": "0b1a041bc9af4a35a396d0fcc48166ca240509b4a86b568e83967396de4946e2"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-review-origin-r1/normal-startup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-review-origin-r1/origin-probe.py",
+      "bytes": 6506,
+      "sha256": "b53a5947f47f2a0ea990e81fa892a81fcf5a91a06d4a06074936322767c8ba6f"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-review-origin-r1/runner-launcher.log",
+      "bytes": 8728,
+      "sha256": "9cb6578821c6cdd1b579a63af66d6f9d11ce5e160f7d5dbc05e9692f76e452ed"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-review-origin-r1.json",
+      "bytes": 613080,
+      "sha256": "0b9db05024f8cad1a091e616d373ba5ac0dc914dedd4934b55eb7602da77dd68"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-review-origin-r1.log",
+      "bytes": 8628,
+      "sha256": "243be99acb0bc2e5c3849aff63e7b8085514ba6211f38149546a07a69389696e"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-review-ui-r1.json",
+      "bytes": 612931,
+      "sha256": "9e23d64decec01585bcd4a019372b7f20fa8cbf3ee98ee99171aaad9bfd39dee"
+    },
+    {
+      "path": "docs/delivery/v2-development/prompt-receipt-review-ui-r1.log",
+      "bytes": 1719,
+      "sha256": "372e8d6534e4d05ed0d94352c22c141c87786d98612d388b45dc4cf5255d6618"
+    },
+    {
+      "path": "frontend/src/prompt/PromptWorkspace.receiptReopen.test.tsx",
+      "bytes": 8583,
+      "sha256": "6126e58ca2cdc843b7c35bd6ae1e814a9190f7ed2e0b7860697792bfb07ab6b1"
+    },
+    {
+      "path": "frontend/src/prompt/promptDraft.settlement.test.ts",
+      "bytes": 4704,
+      "sha256": "37b6684d4596037f7a18e5d20e5eefb5f24d738c4c849927e7c0b35ee2ce4eb7"
+    },
+    {
+      "path": "frontend/src/prompt/promptDraft.ts",
+      "bytes": 18825,
+      "sha256": "0b3676aa2241a6c53287c68aaea1a3bf39babe3f9ab05e5268b8b0e949694414"
+    },
+    {
+      "path": "frontend/src/prompt/usePromptWorkspace.ts",
+      "bytes": 27634,
+      "sha256": "c7e4ef7b014e595219a4c2abb55ca631bfa5fdfb7664a137b0ca04e091e0aabb"
+    }
+  ]
+}
