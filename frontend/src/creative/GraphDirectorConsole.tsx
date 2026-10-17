@@ -8,6 +8,7 @@ import { GraphDirectorSourceImpact } from './GraphDirectorSourceImpact';
 import type { StudioGraphDefinition } from './studioGraphTypes';
 import { GraphDirectorStoryboardHandoff } from './GraphDirectorStoryboardHandoff';
 import { CreativeCanvas } from './CreativeCanvas';
+import { DirectorDraftComparison } from './DirectorDraftComparison';
 import type { creativeClient } from './client';
 import { creativeAuthoringProblems, documentInput, newDocument, type CreativeDocument, type CreativeInput } from './types';
 import type { PlanningSnapshot } from './studioProductionGraphContract';
@@ -243,7 +244,7 @@ export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey,
         onOpenStoryboard(request, () => originCurrent() && current() && authored === authorEpoch.current && selected === selection.current.generation && owns(generation));
       } : undefined} client={client} source={base} snapshot={snapshot} active={active && authorized} canCreate={editing && !dirty && storyboardAllowed} busy={busy || working} isCurrent={isCurrent} read={read} mutate={mutate} onPending={setHandoffPending} />}
       {(dirty || blocked) && <section aria-label="导演草稿处理"><p>导演草稿尚未保存或待核对，图编辑与运行暂时锁定。内容仅保留在本次页面中，关闭页面可能丢失。</p>
-        {candidate && <p>已核对服务端：{candidate.document.title} · v{candidate.document.version} · {candidate.pin.digest}</p>}
+        {candidate && <><p>已核对服务端：{candidate.document.title} · v{candidate.document.version} · {candidate.pin.digest}</p><DirectorDraftComparison local={draft} server={candidate.document} /></>}
         <label><input type="checkbox" checked={discardConfirmed} disabled={busy || working} onChange={event => setDiscardConfirmed(event.target.checked)} />{blocked && !candidate ? '确认仅放弃导演本地草稿，远端结果仍未知；再次创建前先核对目录' : '确认放弃导演本地草稿'}{candidate ? '并采用已核对原版本' : ''}</label>
         <Button disabled={!discardConfirmed || busy || working} onClick={discard}>处理导演本地草稿</Button>
       </section>}

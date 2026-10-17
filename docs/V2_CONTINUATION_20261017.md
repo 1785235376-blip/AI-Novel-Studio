@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Director conflict comparison (18:27 UTC)
+
+The original Director Console now displays a paginated read-only comparison of local author input and the explicitly inspected server candidate before discard/adoption. It compares title/source settings, visual targets, scene order/content/dialogue, director notes and authored evidence through an explicit field allowlist. Unknown metadata is excluded; long excerpts are bounded and rendered as escaped text. No merge, save, authority change or unknown-request resolution is inferred from equality. The existing discard consent and source/CAS owner remain unchanged.
+
+Focused director-draft-comparison-r1:5 new checks plus12 original console regressions and TypeScript PASS. This also type-checks the final storyboard timing allocator. Full suite/build/browser/inventory remain deferred.
+
 ## Storyboard pacing tools (18:24 UTC)
 
 Original CreativeCanvas now supports per-scene/all-shot duration previews, uniform duration and exact-total weighted allocation, explicit local apply and one-step undo. Integer seconds stay within the original 1–600 limits; saturated shares redistribute, ties use authored order, and an unchanged total preserves existing durations. Shot IDs/order, continuity, director links, media and timeline stay untouched. Existing Save remains the sole persistence owner; source/draft/busy/scene changes retire pending actions and undo.
