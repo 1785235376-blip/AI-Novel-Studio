@@ -1,0 +1,81 @@
+{
+  "source_checkpoint": "7c672d8b57d82b0ebcc9aada8b49adc8e895c66a",
+  "baseline_manifest": {
+    "commit": "e18ae7bff060c8eeddc5bd9d8f8673a14507a94a",
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "sha256": "f85eff91861041c2867f6a184286b0ab484f6d8765bcb96ca08639181daa09c4"
+  },
+  "complete_source_map_entries": 2647,
+  "complete_source_map_sha256": "a3e14e5a81015fd9fc358a53d51c6a7d017e861557eba9ca7331b8cbe1736cc6",
+  "source_delta": [
+    {
+      "path": "frontend/src/creative/GraphCanvas.connection.additive.test.tsx",
+      "before": null,
+      "after": "41298335998761a3f27755d9fc523ede6df8700808ea101ab9b11f28612d88e8"
+    },
+    {
+      "path": "frontend/src/creative/GraphCanvas.tsx",
+      "before": "152f5de859cd75cadc24840e7f519db183b1780ff0b03a95fd52fa3aee9dc5bc",
+      "after": "c3fb9b742722eef50000b5ce724ddb23d5ed672cd32cc1d4610fa0531605b79a"
+    },
+    {
+      "path": "frontend/src/creative/StudioGraphConnection.additive.test.tsx",
+      "before": null,
+      "after": "2a2c97b12d6349863ce3ff7ad3f215eec1cff3b3cca7425100ec4e6e517c6367"
+    },
+    {
+      "path": "frontend/src/creative/graphCanvas.css",
+      "before": "e9738d4df6b6bd5830987e293b35912f7df1a8cdddc9febe3e3757ee8f809b33",
+      "after": "8b47b99b11e038d91e1bb07bf7f47359606e689860ffb9c38b3a56e8dad0b196"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "before": "445417133af38473bf9497d0cb1c254d0970b5f2d07981a949cf6490b18862f5",
+      "after": "940a077fdda78912790e7741306c2c1b083ade45df5073eea4f2f7c3edffa3c9"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "before": "42888a40caa82e1a3dc5dde7b026ae998a692466f656678fa7ddb44f61c39739",
+      "after": "4fdfc21f817e130baa2d0106c5596848cfcb7aa301ffd2afd46a0c7b339b3a35"
+    }
+  ],
+  "expected_new_sources": [
+    "frontend/src/creative/GraphCanvas.connection.additive.test.tsx",
+    "frontend/src/creative/StudioGraphConnection.additive.test.tsx"
+  ],
+  "protected_old_entries_exact": 1322,
+  "frontend_scripts_e2e_companion": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "raw_inventory": {
+    "path": "docs/delivery/v2-development/canvas-connect-inventory-20261017/review-raw-collection.json",
+    "sha256": "b8b55ea25ed271890add0b077cdce56fefe08f546edf9604f5c752fdc230d4a2",
+    "rows": 16924
+  },
+  "prior_raw_inventory": {
+    "path": "docs/delivery/v2-development/timeline-duplicate-inventory-20261017/review-raw-collection.json",
+    "sha256": "b8b55ea25ed271890add0b077cdce56fefe08f546edf9604f5c752fdc230d4a2",
+    "rows": 16924
+  },
+  "packaging_guard": {
+    "path": "packaging/public-build.json",
+    "before_sha256": "57f657057a391fa9ebdd8586fba62262ea6f3bb5fb1e2fe71f0c5ff27ad573be",
+    "after_sha256": "57f657057a391fa9ebdd8586fba62262ea6f3bb5fb1e2fe71f0c5ff27ad573be",
+    "outside_manifest": true,
+    "unchanged": true,
+    "approved_source_delta": false,
+    "added_entries": [],
+    "predecessor_path": "docs/delivery/v2-development/canvas-connect-inventory-20261017/public-predecessor.json"
+  },
+  "tests_executed": false
+}

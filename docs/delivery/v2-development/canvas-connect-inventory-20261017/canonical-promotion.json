@@ -1,0 +1,11 @@
+{
+  "parent_approval_received": true,
+  "parent_approval_text": "Explicitly authorize exact byte promotion of reviewed candidate733c4625f0ef4b69c47574672bcbc7d8bd7d62c7cf1de2d336c438b4797a4eee after verifying canonical predecessorunchanged. Verifyresult, separate thirdoriginalnowrite, independentfinal/index. No recompression/source edits.",
+  "byte_exact": true,
+  "predecessor_sha256": "f85eff91861041c2867f6a184286b0ab484f6d8765bcb96ca08639181daa09c4",
+  "candidate_sha256": "733c4625f0ef4b69c47574672bcbc7d8bd7d62c7cf1de2d336c438b4797a4eee",
+  "canonical_sha256": "733c4625f0ef4b69c47574672bcbc7d8bd7d62c7cf1de2d336c438b4797a4eee",
+  "independent_approval_sha256": "5a4c788bbc512f5ba478f28bb6e80634c34a16832407ba2289c0444fdc6d64c9",
+  "candidate_path": ".runtime/canvas-connect-inventory/candidate-manifest-v2.json.gz",
+  "canonical_path": ".github/ci/coverage_manifest_v2.json.gz"
+}

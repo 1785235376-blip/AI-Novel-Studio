@@ -1,0 +1,14 @@
+{
+  "status": "APPROVE_EXACT_CANDIDATE_PROMOTION",
+  "source_commit": "7c672d8b57d82b0ebcc9aada8b49adc8e895c66a",
+  "candidate_sha256": "733c4625f0ef4b69c47574672bcbc7d8bd7d62c7cf1de2d336c438b4797a4eee",
+  "reviewer": "review_typed_canvas_connection",
+  "rows": 16924,
+  "new_rows": 0,
+  "sources": 2647,
+  "protected_old_entries": 1322,
+  "companions": 11,
+  "canonical_predecessor_sha256": "f85eff91861041c2867f6a184286b0ab484f6d8765bcb96ca08639181daa09c4",
+  "tests_executed": false,
+  "verification": "Candidate offline verifier passed; only top-level source_files and v2_extension differ, with collection_head the sole changed extension field. Exact rows/classifications, schema metadata, frozen guards, source brackets/Git blobs and predecessor preservation verified."
+}

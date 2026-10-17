@@ -1,0 +1,17 @@
+{
+  "status": "APPROVE_CANDIDATE_GENERATION",
+  "source_commit": "7c672d8b57d82b0ebcc9aada8b49adc8e895c66a",
+  "reviewer": "review_typed_canvas_connection",
+  "sources": 2647,
+  "protected_old_entries": 1322,
+  "companions": 11,
+  "rows": 16924,
+  "new_rows": 0,
+  "source_delta_paths": 6,
+  "new_ui_sources": 2,
+  "preserved_docs": 8460,
+  "raw_sha256": "b8b55ea25ed271890add0b077cdce56fefe08f546edf9604f5c752fdc230d4a2",
+  "canonical_sha256": "f85eff91861041c2867f6a184286b0ab484f6d8765bcb96ca08639181daa09c4",
+  "tests_executed": false,
+  "verification": "Inspected offline verifier and ran review mode; full row dictionaries/order/classifications, complete source brackets/Git blobs, companion closure, origin provenance and protected docs verified."
+}

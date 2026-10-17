@@ -1,0 +1,45 @@
+{
+  "head": "7c672d8b57d82b0ebcc9aada8b49adc8e895c66a",
+  "cwd": "/workspace/scratch/20a0022d2b33/studio-timeline-waveform",
+  "interpreter": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+  "unset": [
+    "PYTHONPATH",
+    "PYTHONHOME",
+    "PYTHONSTARTUP",
+    "PYTHONUSERBASE",
+    "PYTEST_ADDOPTS",
+    "PYTEST_PLUGINS",
+    "PACKAGED_RUNTIME_INSTANCE_ID",
+    "PACKAGED_BOOTSTRAP_SECRET",
+    "PACKAGED_CONTROL_PIPE",
+    "DATABASE_URL",
+    "TEST_POSTGRES_DATABASE_URL",
+    "E2E_DATABASE_URL",
+    "COLLABORATION_DEV_SESSIONS_JSON",
+    "PROMPT_PATH",
+    "PUBLIC_WHEEL_BUILD_PYTHON",
+    "PUBLIC_WHEEL_SOURCE",
+    "PUBLIC_SDIST_SOURCE"
+  ],
+  "also_unset_suffixes": [
+    "_API_KEY",
+    "_TOKEN",
+    "_SECRET"
+  ],
+  "set": {
+    "PYTHONNOUSERSITE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+    "PACKAGED_WINDOWS_MODE": "false",
+    "PYTHON_DOTENV_DISABLED": "1"
+  },
+  "args": [
+    "scripts/extend_v2_coverage_manifest.py",
+    "--report",
+    "docs/delivery/v2-development/canvas-connect-inventory-20261017/candidate-collection.json",
+    "--output",
+    ".runtime/canvas-connect-inventory/candidate-manifest-v2.json.gz",
+    "--write"
+  ],
+  "tests_executed": false
+}
