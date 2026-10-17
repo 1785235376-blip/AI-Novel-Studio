@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/StudioTimelineCloseGaps.additive.test.tsx (7 tests) 182ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  04:48:29
+   Duration  1.10s (transform 222ms, setup 17ms, collect 331ms, tests 182ms, environment 325ms, prepare 65ms)
+

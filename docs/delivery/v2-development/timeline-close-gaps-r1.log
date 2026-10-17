@@ -1,0 +1,64 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/creative/StudioTimelineCloseGaps.additive.test.tsx (6 tests | 2 failed) 188ms
+   × closes union gaps using actual speed while preserving authored order, overlap, sources and other tracks 12ms
+     → expected [ [ 'first', 1000 ], …(3) ] to deeply equal [ [ 'late', 3500 ], …(3) ]
+   × uses original controller change, undo and save without invoking render 65ms
+     → expected 1000 to be 3500 // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+   Start at  04:47:56
+   Duration  1.09s (transform 212ms, setup 16ms, collect 316ms, tests 188ms, environment 324ms, prepare 59ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/StudioTimelineCloseGaps.additive.test.tsx > closes union gaps using actual speed while preserving authored order, overlap, sources and other tracks
+AssertionError: expected [ [ 'first', 1000 ], …(3) ] to deeply equal [ [ 'late', 3500 ], …(3) ]
+
+- Expected
++ Received
+
+  Array [
+    Array [
+-     "late",
+-     3500,
+-   ],
+-   Array [
+      "first",
+      1000,
+    ],
+    Array [
+      "overlap",
+      1500,
+    ],
+    Array [
+      "speed",
+      2500,
++   ],
++   Array [
++     "late",
++     3500,
+    ],
+  ]
+
+ ❯ src/creative/StudioTimelineCloseGaps.additive.test.tsx:19:80
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/creative/StudioTimelineCloseGaps.additive.test.tsx > uses original controller change, undo and save without invoking render
+AssertionError: expected 1000 to be 3500 // Object.is equality
+
+- Expected
++ Received
+
+- 3500
++ 1000
+
+ ❯ src/creative/StudioTimelineCloseGaps.additive.test.tsx:50:232
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

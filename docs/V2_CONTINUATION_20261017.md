@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Explicit single-track gap closure (19:49 UTC)
+
+The existing multitrack editor now previews uncovered intervals on one selected unlocked track and applies a reviewed local shift through its original change/undo owner. Speed-adjusted durations and overlapping clip unions determine gaps; cross-dissolve overlap windows, source bindings, trim, authored clip order, other tracks, captions and project duration remain unchanged. Leading-gap closure is separately selectable. The UI explicitly warns that other tracks/captions do not follow and synchronization can change. Preview and consent are bound to the original draft/scope/revision; no save, render, upload or cross-track ripple occurs automatically.
+
+Focused timeline-close-gaps-r2:7 checks plus TypeScript PASS, including overlap/speed, transition preservation, locked track rejection, consent revocation, stale revision and original controller undo/redo. r1's new fixture assertion assumed pre-normalization clip order; corrected the fixture to explicitly test authored ordering and retained failure logs. No native renderer/browser acceptance; full suite/build remain deferred.
+
 ## Read-only graph configuration checklist (19:46 UTC)
 
 The original graph editor now exposes bounded, paginated local guidance and node-location actions for missing provider/model choices, original typed connection errors, and required execution inputs. The unchanged checkedStudioGraphDraft decoder supplies the sole local format verdict. Missing execution inputs are explicitly distinct from whether a disconnected authoring draft can be saved. Disabled nodes still surface incomplete provider fields because the original save contract validates them. Guidance never sends requests, echoes authored content, auto-fixes, changes routing or authorizes execution; original server version/authority/budget checks remain required. Old node-location callbacks retire on scope/draft/catalog/disabled changes.

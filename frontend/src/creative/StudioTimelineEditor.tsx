@@ -1,3 +1,4 @@
+import { StudioTimelineCloseGaps } from './StudioTimelineCloseGaps';
 import { applyNleCaptionCommand } from './nleCaptionEditing';
 import { nleSourceReplacementIntent } from './nleSourceReplacement';
 import { selectionDuplicateOperations, sameSelectionDuplicateDescriptors } from '../nle/timelineSelectionDuplicate';
@@ -124,6 +125,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       <Button disabled={draft.timeline.tracks.length >= 8 || draft.timeline.tracks.filter(track => track.kind === 'VIDEO').length >= 4} onClick={() => addTrack('VIDEO')}>添加视频轨道</Button>
       <Button disabled={draft.timeline.tracks.length >= 8 || draft.timeline.tracks.filter(track => track.kind === 'AUDIO').length >= 4} onClick={() => addTrack('AUDIO')}>添加音频轨道</Button>
     </fieldset>
+    <StudioTimelineCloseGaps draft={draft} scope={props.client} disabled={locked} isCurrent={props.isCurrent} getRevision={c.getHandoffRevision} onApply={next => c.change(input => { input.timeline = next.timeline; })} />
     {draft.timeline.tracks.map((track, index) => <fieldset key={track.id} disabled={locked}><legend>{track.kind === 'VIDEO' ? '视频' : '音频'}轨道 {index + 1}</legend>
       {extended && <><Badge tone={track.locked ? 'warning' : 'neutral'}>{track.locked ? '已保存的轨道锁' : '轨道可编辑'}</Badge>
         <Button disabled={!c.trackLockAvailable || c.inputDirty || !c.base || !c.sourcesCurrent} loading={c.pending === 'TRACK_LOCK'} onClick={() => void c.setTrackLocked(track.id, !track.locked)}>{track.locked ? '通过原服务明确解锁' : '通过原服务锁定此轨道'}</Button>
