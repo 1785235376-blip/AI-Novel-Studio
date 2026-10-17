@@ -1,0 +1,19 @@
+{
+  "status": "PASS_ADDITIVE_INVENTORY_REVIEW",
+  "source_commit": "d2898d709256cdf133b6a547ebb7479174a5eb06",
+  "old_rows": 17643,
+  "rows": 17647,
+  "source_count": 2726,
+  "new_rows_by_backend": {
+    "file": 4
+  },
+  "existing_sources_unchanged": true,
+  "new_source_paths": [
+    "tests/test_director_application_graph_handoff.py"
+  ],
+  "raw_collection_sha256": "8c35a3e343d27c26a2ea759bad464bc9261c7e599b41f38b9a99e724d01f2704",
+  "previous_rows_order_and_classifications_preserved": true,
+  "all_current_source_hashes_match_committed_git": true,
+  "old_skips_and_external_gates_unchanged": true,
+  "manifest_sha256": "2e2b18d9e7c1aa2461eb3bc95abf8f36c5732d07eeb2676f7a5c628f5aa58dd2"
+}

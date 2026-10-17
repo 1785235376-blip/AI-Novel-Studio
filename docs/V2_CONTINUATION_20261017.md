@@ -2,7 +2,7 @@
 
 ## Native Director → Graph persistence (17:20 UTC)
 
-Four native HTTP cases across both app prefixes now cover exact reviewed-DRAFT pin → Graph create/Save/CAS → fresh-owner reopen, optional explicit planning run and stale-source labels without repinning or a second model call. Final related scope58 PASS /5PGdeselected; forcedTS/build/token PASS. Runtime/UI sources unchanged from29df291; no browser/live-model or full release claim. See delivery/v2-development/director-application-graph-20261017/README.md.
+Four native HTTP cases across both app prefixes now cover exact reviewed-DRAFT pin → Graph create/Save/CAS → fresh-owner reopen, optional explicit planning run and stale-source labels without repinning or a second model call. Final related scope58 PASS /5PGdeselected; forcedTS/build/token PASS. Runtime/UI sources unchanged from29df291; no browser/live-model or full release claim. See delivery/v2-development/director-application-graph-20261017/README.md. Canonical inventory: 17,647 rows / 2,726 sources; four File cases added, all prior rows and source bytes preserved; three exact collections and45CIselftests PASS.
 
 ## Application host closure (17:05 UTC)
 
