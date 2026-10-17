@@ -268,6 +268,13 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
             try:
                 result = ({"items": generation.catalog(ctx)} if method == "catalog"
                           else getattr(generation, method)(ctx, rid, body, model_guard))
+                if method == "capabilities" and not adaptation and director_model_actions:
+                    try:
+                        generation._pending_repository()
+                    except ValueError:
+                        pass  # Never advertise unsupported durable persistence.
+                    else:
+                        result = {**result, "independent_director_contract": "CREATIVE_DIRECTOR_MODEL_V1"}
             except Exception:
                 model_guard()
                 raise

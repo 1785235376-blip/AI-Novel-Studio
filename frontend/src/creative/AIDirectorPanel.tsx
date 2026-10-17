@@ -1,5 +1,9 @@
 import { DirectorTargetPanel } from './DirectorTargetPanel';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { IndependentDirectorModelReview } from './IndependentDirectorModelReview';
+import type { DirectorModelClient } from './directorModelClient';
+import type { PlanningSnapshot } from './studioProductionGraphContract';
+import type { CreativeClient, DirectorModelRoute } from './client';
 import { ApiError } from '../api';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { DirectorModelControls, storyboardSourceMatches } from './DirectorModelControls';
@@ -7,7 +11,7 @@ import { DirectorFields, CreativeField } from './CreativeCanvas';
 import type { DirectorProposalClient, DirectorProposal } from './client';
 import { validDirectorGenre, type CreativeDocument, type DirectorSceneNote, type VisualTarget } from './types';
 import type { AssetSelection } from './AssetBrowser';
-type Props = { client: DirectorProposalClient; documents: CreativeDocument[]; canMutate: boolean; modelAuthority?: boolean; onDocument: (document: CreativeDocument) => void; onDenied: () => void; asset?: AssetSelection; onOpenModels?: () => void; environment?: React.ReactNode; onBusyChange?: (busy: boolean) => void; onPendingChange?: (pending: boolean) => void };
+type Props = { client: DirectorProposalClient; documents: CreativeDocument[]; canMutate: boolean; modelAuthority?: boolean; onDocument: (document: CreativeDocument, expectedSnapshot?: PlanningSnapshot) => void; onDenied: () => void; asset?: AssetSelection; onOpenModels?: () => void; environment?: React.ReactNode; onBusyChange?: (busy: boolean) => void; onPendingChange?: (pending: boolean) => void };
 
 /** A changed original-owner client retires all private drafts and late callbacks. */
 export function AIDirectorPanel(props: Props) {
@@ -19,6 +23,10 @@ export function AIDirectorPanel(props: Props) {
 function DirectorProposalPanel({ client, documents, canMutate, modelAuthority, onDocument, onDenied, asset, onOpenModels, environment, onBusyChange, onPendingChange }: Props) {
   const [proposals, setProposals] = useState<DirectorProposal[]>([]), [proposal, setProposal] = useState<DirectorProposal>(), [sourceId, setSourceId] = useState(''), [title, setTitle] = useState(''), [notes, setNotes] = useState<DirectorSceneNote[]>([]), [reviewed, setReviewed] = useState(false), [busy, setBusy] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState(''), [uncertain, setUncertain] = useState(false);
   const [preparedGoal, setPreparedGoal] = useState<VisualTarget>(), [goal, setGoal] = useState<VisualTarget>();
+  const [modelView, setModelView] = useState<{ model: DirectorModelClient; creative: Pick<CreativeClient, 'export'>; routes: DirectorModelRoute[]; source: PlanningSnapshot }>();
+  const [independentPending, setIndependentPending] = useState(false), independentPendingRef = useRef(false);
+  const independentChanged = useCallback((value: boolean) => { independentPendingRef.current = value; setIndependentPending(value); }, []);
+
   const [reviewDirty, setReviewDirty] = useState(false), [preparedDirty, setPreparedDirty] = useState(false);
   const [discardConfirmed, setDiscardConfirmed] = useState(false), [recoveryRows, setRecoveryRows] = useState<DirectorProposal[]>();
   const [unresolvedResult, setUnresolvedResult] = useState(false);
@@ -28,12 +36,12 @@ function DirectorProposalPanel({ client, documents, canMutate, modelAuthority, o
   const selection = useRef(0), reopening = useRef<AbortController>();
   // Retained DOM callbacks cannot borrow a later render's source, authority or draft.
   const admission = useRef(0), admittedRender = ++admission.current;
-  const admitsAction = () => live.current && admission.current === admittedRender;
+  const admitsAction = () => live.current && !independentPendingRef.current && admission.current === admittedRender;
   const edit = (change: () => void) => { if (!admitsAction() || lock.current) return; admission.current++; change(); };
   useEffect(() => { live.current = true; return () => { live.current = false; epoch.current++; }; }, []);
   useEffect(() => () => reopening.current?.abort(), []);
   useEffect(() => { onBusyChange?.(busy); return () => onBusyChange?.(false); }, [busy, onBusyChange]);
-  const localReviewPending = reviewed || reviewDirty;
+  const localReviewPending = reviewed || reviewDirty || independentPending;
   const pending = busy || uncertain || localReviewPending || preparedDirty;
   useEffect(() => { onPendingChange?.(pending); }, [pending, onPendingChange]);
   useEffect(() => () => onPendingChange?.(false), [onPendingChange]);
@@ -59,7 +67,7 @@ function DirectorProposalPanel({ client, documents, canMutate, modelAuthority, o
   const modelOrigin = useRef({ context: modelContext, generation: 0 });
   if (modelOrigin.current.context !== modelContext) modelOrigin.current = { context: modelContext, generation: modelOrigin.current.generation + 1 };
   const modelGeneration = modelOrigin.current.generation;
-  const select = (row: DirectorProposal) => { admission.current++; selection.current++; reopening.current?.abort(); setOpened(undefined); setProposal(row); setGoal(row.visual_target ? structuredClone(row.visual_target) : undefined); setNotes(structuredClone(row.director_notes)); setTitle(row.title); setReviewed(false); setReviewDirty(false); setDiscardConfirmed(false); setNotice(''); };
+  const select = (row: DirectorProposal) => { if (independentPendingRef.current) return; setModelView(undefined); admission.current++; selection.current++; reopening.current?.abort(); setOpened(undefined); setProposal(row); setGoal(row.visual_target ? structuredClone(row.visual_target) : undefined); setNotes(structuredClone(row.director_notes)); setTitle(row.title); setReviewed(false); setReviewDirty(false); setDiscardConfirmed(false); setNotice(''); };
   async function reconcile() {
     if (!live.current || lock.current || !uncertain) return;
     lock.current = true; setBusy(true); setRecoveryRows(undefined); setDiscardConfirmed(false);
@@ -120,6 +128,29 @@ function DirectorProposalPanel({ client, documents, canMutate, modelAuthority, o
       if (reopening.current === controller) { reopening.current = undefined; lock.current = false; if (live.current) setBusy(false); }
     }
   }
+  const privateModel = proposal?.unavailable_reason === 'CREATIVE_DIRECTOR_EXECUTION_UNAVAILABLE';
+  const independentEligible = !!proposal && !!proposalSource && proposalSource.mode === 'STORYBOARD'
+    && proposalSource.source_independent && proposalSource.id === proposal.source_document_id
+    && proposalSource.version === proposal.source_version && /^[a-f0-9]{64}$/.test(proposal.source_digest || '')
+    && !!client.independentDirector && !!client.modelCapabilities && !!client.export;
+  async function openIndependent() {
+    if (!admitsAction() || lock.current || !canMutate || uncertain || localReviewPending || !independentEligible || !proposal) return;
+    const selected = proposal, ticket = selection.current, generation = modelGeneration;
+    const current = () => live.current && ticket === selection.current && generation === modelOrigin.current.generation;
+    lock.current = true; setBusy(true); setError(''); setNotice('');
+    try {
+      const caps = await client.modelCapabilities!(); if (!current()) return;
+      if (caps.independent_director_contract !== 'CREATIVE_DIRECTOR_MODEL_V1') throw new Error('当前主机尚未启用完整独立分镜模型审核能力。');
+      const routes = await client.modelRoutes(); if (!current()) return;
+      const model = client.independentDirector!();
+      setModelView({ model, creative: { export: client.export! }, routes: routes.items,
+        source: { id: selected.source_document_id, version: selected.source_version, digest: selected.source_digest! } });
+    } catch (value) {
+      if (!current()) return;
+      setError(value instanceof Error ? value.message : '独立模型审核能力读取失败。');
+      if (value instanceof ApiError && [401, 403].includes(value.status)) onDenied();
+    } finally { lock.current = false; if (live.current) setBusy(false); }
+  }
   const run = async (action: () => Promise<void>, targetId: string | null = proposal?.id ?? null) => { if (!admitsAction() || lock.current || !canMutate || uncertain) return; lock.current = true; setBusy(true); setError(''); setNotice(''); try { await action(); } catch (value) { if (live.current) { setError(value instanceof ApiError ? `${value.message} (${value.problem.code})` : '操作回执不确定。请重新读取建议，勿重复创建或采用。'); setReviewed(false); if (!(value instanceof ApiError) || value.status >= 500 || value.status === 409) { setRecoveryTargetId(targetId); setUncertain(true); } if (value instanceof ApiError && (value.status === 401 || value.status === 403)) onDenied(); } } finally { lock.current = false; if (live.current) setBusy(false); } };
   // A fast receipt can release the lock before the second native double-click.
   // Keep one proposal per gesture; keyboard (0) and later single clicks (1) still work.
@@ -140,7 +171,12 @@ function DirectorProposalPanel({ client, documents, canMutate, modelAuthority, o
     </StatusMessage>}
     {localReviewPending && !uncertain && <StatusMessage tone="info">当前审核有未保存修改或确认。采用或明确放弃后，才能切换建议、准备新建议或读取替换内容。</StatusMessage>}
     <Panel title="建议审核队列" actions={<Button disabled={busy || uncertain} onClick={() => void read()}>刷新</Button>}><div className="creative-proposal-list">{proposals.map(row => <Button key={row.id} disabled={busy || uncertain || localReviewPending} aria-pressed={proposal?.id === row.id} onClick={() => { if (admitsAction() && !lock.current && !uncertain && !localReviewPending) select(row); }}>{row.title}<Badge>{row.status}</Badge></Button>)}</div>{!proposals.length && !error && <EmptyState title="没有待审导演建议" detail="手动编辑始终可用。只有明确核对并采用建议才会创建导演文档。" />}
-      {proposal && <section aria-label="导演建议审核"><p>来源 {proposal.source_document_id} · v{proposal.source_version} · {proposal.source_digest || '摘要未返回'} · 建议 v{proposal.version}</p>{proposal.status === 'APPROVED' && <section aria-label="已采用建议的原导演草稿"><p>建议 APPROVED：已采用为独立导演草稿。文档保存与制作审核状态仍由原文档确认。</p>{!linked(proposal) && <StatusMessage tone="warning">采用回执缺少原文档或来源摘要，请重新读取建议状态。</StatusMessage>}<Button disabled={busy || uncertain || !linked(proposal)} onClick={() => void reopen()}>核对并打开已采用的导演草稿</Button>{opened && <p>原文档 {opened.id} · v{opened.version} · {opened.status}</p>}</section>}<Badge tone="info">{proposal.provenance?.model_called ? '模型产出 · 需审核' : '本地规则辅助 · 未调用模型'}</Badge>{!modelSourceAllowed ? <StatusMessage tone="info">{sourceMismatch ? '来源类型记录不一致或缺失，模型操作已禁用；请重新读取原来源与建议。' : storyboardModelClient ? '来源标识、版本或逐镜头映射不一致，模型操作已禁用；请重新读取原来源与建议。' : 'STORYBOARD 当前仅支持 RULE_ASSISTED。模型分析尚未支持；未调用模型。'}</StatusMessage> : <DirectorModelControls key={storyboardProposal ? `${proposal.id}:${modelGeneration}` : proposal.id} client={client} proposal={proposal} source={proposalSource} disabled={busy || !canMutate || uncertain || localReviewPending} run={run} onUpdate={row => { if (!live.current || modelOrigin.current.generation !== modelGeneration) return; select(row); setProposals(rows => rows.map(item => item.id === row.id ? row : item)); }} />}
+      {proposal && !modelView && independentEligible && <Button disabled={busy || uncertain || localReviewPending || !canMutate} onClick={() => void openIndependent()}>打开独立分镜模型审核</Button>}
+      {proposal && privateModel && !modelView && <StatusMessage tone="info">此建议包含独立模型任务。请通过原模型状态读取，不使用规则辅助状态推断模型是否调用或审核完成。</StatusMessage>}
+      {proposal && modelView && <IndependentDirectorModelReview model={modelView.model} creative={modelView.creative} proposal={proposal}
+        source={modelView.source} routes={modelView.routes} canMutate={modelAuthority ?? canMutate} disabled={busy || !canMutate || uncertain}
+        onPending={independentChanged} onDenied={onDenied} onDocument={(document, pin) => onDocument(document, pin)} />}
+      {proposal && !modelView && !privateModel && <section aria-label="导演建议审核"><p>来源 {proposal.source_document_id} · v{proposal.source_version} · {proposal.source_digest || '摘要未返回'} · 建议 v{proposal.version}</p>{proposal.status === 'APPROVED' && <section aria-label="已采用建议的原导演草稿"><p>建议 APPROVED：已采用为独立导演草稿。文档保存与制作审核状态仍由原文档确认。</p>{!linked(proposal) && <StatusMessage tone="warning">采用回执缺少原文档或来源摘要，请重新读取建议状态。</StatusMessage>}<Button disabled={busy || uncertain || !linked(proposal)} onClick={() => void reopen()}>核对并打开已采用的导演草稿</Button>{opened && <p>原文档 {opened.id} · v{opened.version} · {opened.status}</p>}</section>}<Badge tone="info">{proposal.provenance?.model_called ? '模型产出 · 需审核' : '本地规则辅助 · 未调用模型'}</Badge>{!modelSourceAllowed ? <StatusMessage tone="info">{sourceMismatch ? '来源类型记录不一致或缺失，模型操作已禁用；请重新读取原来源与建议。' : storyboardModelClient ? '来源标识、版本或逐镜头映射不一致，模型操作已禁用；请重新读取原来源与建议。' : 'STORYBOARD 当前仅支持 RULE_ASSISTED。模型分析尚未支持；未调用模型。'}</StatusMessage> : <DirectorModelControls key={storyboardProposal ? `${proposal.id}:${modelGeneration}` : proposal.id} client={client} proposal={proposal} source={proposalSource} disabled={busy || !canMutate || uncertain || localReviewPending} run={run} onUpdate={row => { if (!live.current || modelOrigin.current.generation !== modelGeneration) return; select(row); setProposals(rows => rows.map(item => item.id === row.id ? row : item)); }} />}
         <p>{notes.length} 个候选镜头 · 预计总时长 {notes.every(note => Number.isInteger(note.duration_seconds) && note.duration_seconds >= 1 && note.duration_seconds <= 600) ? `${notes.reduce((sum, note) => sum + note.duration_seconds, 0)} 秒` : '待修正'}。仅为当前候选顺序的时长相加，不含备选方案，不代表成片时长。</p>
         {proposal.provenance?.source_mode === 'STORYBOARD' && <section aria-label="分镜来源与规则建议说明"><p>{proposal.provenance.model_called ? '下列是未编辑的已保存来源快照与最初规则种子字段记录，不代表模型候选的字段来源。模型候选与当前编辑值请在下方独立核对。' : '下列是未编辑的已保存来源快照。相机与时长直接复制，并非推断；当前候选编辑值请在下方核对。节奏与调度提示是假设，需人工确认。'}</p>{proposal.provenance.source_shots?.map(item => <details key={item.note_id}><summary>原分镜 #{item.source_number} · {item.source_shot_id} → {item.note_id}</summary><p>场景：{item.scene_id} · 景别：{item.source_shot.shot_size} · 机位：{item.source_shot.camera_angle} · 运镜：{item.source_shot.camera_motion} · 时长：{item.source_shot.duration_seconds} 秒</p><p>{proposal.provenance.model_called ? '最初规则种子复制字段：' : '复制字段：'}{item.copied_fields.join('、')}</p><p>{proposal.provenance.model_called ? '最初规则种子假设字段：' : '规则假设字段（需审核）：'}{item.suggested_fields.join('、')}</p><p>仅保留在来源记录、未映射为导演执行字段：{item.retained_source_only_fields.join('、') || '无'}</p><pre>{JSON.stringify(item.source_shot, null, 2)}</pre></details>)}</section>}
         <details><summary>规则辅助检查（原始候选）</summary><p>规则只检查已填写的镜头词汇。编辑后的取值需重新人工核对；轴线、视线和实际空间关系未知，不能据此判定连续性正确。</p>{proposal.rule_checks?.map(check => <p key={check.note_id}>{check.note_id}：{Object.entries(check.camera.classification).map(([field, code]) => `${field}: ${code}`).join(' · ')}</p>)}</details>

@@ -97,6 +97,7 @@ export function GraphDirectorProposalReview(props: Props) {
     } : undefined;
     return {
       ...(independentDirector ? { independentDirector } : {}),
+      ...(props.client.export ? { export: (id: string) => call(false, () => props.client.export!(id)) } : {}),
       proposals: signal => call(false, () => props.client.proposals(signal)),
       proposal: (id, signal) => call(false, () => props.client.proposal(id, signal)),
       get: (id, signal) => call(false, () => props.client.get(id, signal)),
