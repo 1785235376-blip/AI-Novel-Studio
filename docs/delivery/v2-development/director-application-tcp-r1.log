@@ -1,0 +1,132 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_____ test_actual_application_over_loopback_tcp_keeps_manual_review[/api] ______
+
+application_host = (namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-appli...ken': 'fixture-current-host-token'}, base='/api/novels/independent-director/experimental/creative/director-proposals'))
+
+    def test_actual_application_over_loopback_tcp_keeps_manual_review(application_host):
+        """Native HTTP transport, real File owners; provider response remains a fixture."""
+        import socket
+        import threading
+        import time
+        import httpx
+        import uvicorn
+        import app.main as main
+        e, m = application_host
+        listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        listener.bind(('127.0.0.1', 0))
+        listener.listen(32)
+        port = listener.getsockname()[1]
+        # Do not start optional interop workers; exercise the already composed app.
+        server = uvicorn.Server(uvicorn.Config(main.app, loop='asyncio', lifespan='off',
+            access_log=False, log_level='warning'))
+        thread = threading.Thread(target=lambda: server.run(sockets=[listener]), daemon=True)
+        try:
+            thread.start()
+            deadline = time.monotonic() + 10
+            while not server.started and thread.is_alive() and time.monotonic() < deadline:
+                time.sleep(.01)
+            assert server.started, 'Native loopback server did not start'
+            with httpx.Client(base_url=f'http://127.0.0.1:{port}', trust_env=False, timeout=10) as client:
+                m.client = client
+                candidate = pending(e, m)
+                assert len(e.requests) == 1
+>               assert e.coordinator._read_independent_adopted(e.ctx, e.row['id'], e.guard,
+                    host_authority=e.authority) is None
+
+tests/test_director_application_host_additive.py:127: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/creative/generation.py:1393: in _read_independent_adopted
+    result = self._adopted_receipt(ctx, row, binding, repository, guard, host_authority)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/generation.py:1346: in _adopted_receipt
+    receipt = validate_adoption(pending.get("adoption"))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = None
+
+    def validate_adoption(value):
+        try:
+            receipt = AdoptionReceipt.model_validate(value).model_dump()
+            if (receipt["approved_version"] != receipt["reviewed_version"] + 1
+                    or digest(receipt) != digest(value)):
+                raise ValueError("different exact receipt")
+            return receipt
+        except (ValueError, TypeError, KeyError, AttributeError):
+>           raise ValueError("CREATIVE_DIRECTOR_ADOPTION_RECEIPT_INVALID") from None
+E           ValueError: CREATIVE_DIRECTOR_ADOPTION_RECEIPT_INVALID
+
+app/creative/director_lifecycle.py:86: ValueError
+____ test_actual_application_over_loopback_tcp_keeps_manual_review[/api/v1] ____
+
+application_host = (namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-appli...': 'fixture-current-host-token'}, base='/api/v1/novels/independent-director/experimental/creative/director-proposals'))
+
+    def test_actual_application_over_loopback_tcp_keeps_manual_review(application_host):
+        """Native HTTP transport, real File owners; provider response remains a fixture."""
+        import socket
+        import threading
+        import time
+        import httpx
+        import uvicorn
+        import app.main as main
+        e, m = application_host
+        listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        listener.bind(('127.0.0.1', 0))
+        listener.listen(32)
+        port = listener.getsockname()[1]
+        # Do not start optional interop workers; exercise the already composed app.
+        server = uvicorn.Server(uvicorn.Config(main.app, loop='asyncio', lifespan='off',
+            access_log=False, log_level='warning'))
+        thread = threading.Thread(target=lambda: server.run(sockets=[listener]), daemon=True)
+        try:
+            thread.start()
+            deadline = time.monotonic() + 10
+            while not server.started and thread.is_alive() and time.monotonic() < deadline:
+                time.sleep(.01)
+            assert server.started, 'Native loopback server did not start'
+            with httpx.Client(base_url=f'http://127.0.0.1:{port}', trust_env=False, timeout=10) as client:
+                m.client = client
+                candidate = pending(e, m)
+                assert len(e.requests) == 1
+>               assert e.coordinator._read_independent_adopted(e.ctx, e.row['id'], e.guard,
+                    host_authority=e.authority) is None
+
+tests/test_director_application_host_additive.py:127: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/creative/generation.py:1393: in _read_independent_adopted
+    result = self._adopted_receipt(ctx, row, binding, repository, guard, host_authority)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/generation.py:1346: in _adopted_receipt
+    receipt = validate_adoption(pending.get("adoption"))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = None
+
+    def validate_adoption(value):
+        try:
+            receipt = AdoptionReceipt.model_validate(value).model_dump()
+            if (receipt["approved_version"] != receipt["reviewed_version"] + 1
+                    or digest(receipt) != digest(value)):
+                raise ValueError("different exact receipt")
+            return receipt
+        except (ValueError, TypeError, KeyError, AttributeError):
+>           raise ValueError("CREATIVE_DIRECTOR_ADOPTION_RECEIPT_INVALID") from None
+E           ValueError: CREATIVE_DIRECTOR_ADOPTION_RECEIPT_INVALID
+
+app/creative/director_lifecycle.py:86: ValueError
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_director_application_host_additive.py::test_actual_application_over_loopback_tcp_keeps_manual_review[/api]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_director_application_host_additive.py::test_actual_application_over_loopback_tcp_keeps_manual_review[/api]
+FAILED tests/test_director_application_host_additive.py::test_actual_application_over_loopback_tcp_keeps_manual_review[/api/v1]
+2 failed, 22 deselected, 2 warnings in 11.50s

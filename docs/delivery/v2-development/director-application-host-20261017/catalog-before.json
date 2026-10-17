@@ -1,0 +1,9 @@
+{
+  "git_head": "28507cae14566faed7b0057eb925bdef828cabe4",
+  "files": {
+    "API_CATALOG.json": "7bf604c6054300a11e06243d5ffbb15ec791266249a30d04a7303887ec8c7881",
+    "API_CATALOG.md": "9433c648bf511e49a9b1e2fc58aa971b07cfef0df3f4529c45588e4f4bdac72e",
+    "API_CATALOG_DETAIL.json.gz": "647fab1ae139a420bd20e68db768cef926950083114d7b58d227093caad414c5",
+    "API_OPENAPI.json.gz": "b82ff78accdb3bd3bf009fed2eb97c423a4f8640e4d163fcd0f36e72270c6817"
+  }
+}

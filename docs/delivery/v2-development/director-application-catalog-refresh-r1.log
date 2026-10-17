@@ -1,0 +1,3 @@
+{"operations": 2315, "added_this_refresh": 72, "removed": 0, "source_fingerprint": "bf9fc8d6c8101ea1d8accfd8e588eceb026e3afc24ae8e7eedf653863a8f7fb0"}
+/workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+  class GlossaryDocument(StrictModel):

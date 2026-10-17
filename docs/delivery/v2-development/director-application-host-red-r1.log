@@ -1,0 +1,108 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+___ test_actual_application_advertises_only_original_supported_actions[/api] ___
+
+application_host = (namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-appli...ken': 'fixture-current-host-token'}, base='/api/novels/independent-director/experimental/creative/director-proposals'))
+
+    def test_actual_application_advertises_only_original_supported_actions(application_host):
+        e, m = application_host
+        before = raw_bytes(e)
+        result = m.client.get(m.base + '/model-capabilities', headers=m.headers)
+        assert result.status_code == 200, result.text
+>       assert result.json().get('independent_director_contract') == 'CREATIVE_DIRECTOR_MODEL_V1'
+E       AssertionError: assert None == 'CREATIVE_DIRECTOR_MODEL_V1'
+E        +  where None = <built-in method get of dict object at 0x7f3bea9e56c0>('independent_director_contract')
+E        +    where <built-in method get of dict object at 0x7f3bea9e56c0> = {'live_model_quality': 'NOT_RUN', 'max_instruction_characters': 20000, 'max_source_chapter_ids': 20, 'source_chapter_anchor_required': True, ...}.get
+E        +      where {'live_model_quality': 'NOT_RUN', 'max_instruction_characters': 20000, 'max_source_chapter_ids': 20, 'source_chapter_anchor_required': True, ...} = json()
+E        +        where json = <Response [200 OK]>.json
+
+tests/test_director_application_host_additive.py:49: AssertionError
+_ test_actual_application_advertises_only_original_supported_actions[/api/v1] __
+
+application_host = (namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-appli...': 'fixture-current-host-token'}, base='/api/v1/novels/independent-director/experimental/creative/director-proposals'))
+
+    def test_actual_application_advertises_only_original_supported_actions(application_host):
+        e, m = application_host
+        before = raw_bytes(e)
+        result = m.client.get(m.base + '/model-capabilities', headers=m.headers)
+        assert result.status_code == 200, result.text
+>       assert result.json().get('independent_director_contract') == 'CREATIVE_DIRECTOR_MODEL_V1'
+E       AssertionError: assert None == 'CREATIVE_DIRECTOR_MODEL_V1'
+E        +  where None = <built-in method get of dict object at 0x7f3be83d7040>('independent_director_contract')
+E        +    where <built-in method get of dict object at 0x7f3be83d7040> = {'live_model_quality': 'NOT_RUN', 'max_instruction_characters': 20000, 'max_source_chapter_ids': 20, 'source_chapter_anchor_required': True, ...}.get
+E        +      where {'live_model_quality': 'NOT_RUN', 'max_instruction_characters': 20000, 'max_source_chapter_ids': 20, 'source_chapter_anchor_required': True, ...} = json()
+E        +        where json = <Response [200 OK]>.json
+
+tests/test_director_application_host_additive.py:49: AssertionError
+_____ test_actual_application_preview_to_review_uses_existing_owners[/api] _____
+
+application_host = (namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-appli...ken': 'fixture-current-host-token'}, base='/api/novels/independent-director/experimental/creative/director-proposals'))
+
+    def test_actual_application_preview_to_review_uses_existing_owners(application_host):
+        e, m = application_host
+>       candidate = pending(e, m)
+                    ^^^^^^^^^^^^^
+
+tests/test_director_application_host_additive.py:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_director_model_transport_additive.py:49: in pending
+    preview,state=completed(e,m)
+                  ^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+e = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-applic...firmed': True, 'runtime_config': {'management': 'EXTERNAL', 'type': 'LLAMA_CPP', 'endpoint': 'http://127.0.0.1:8999'}})
+m = namespace(client=<starlette.testclient.TestClient object at 0x7f3be82e59d0>, url='/api/novels/independent-director/exp...oken': 'fixture-current-host-token'}, base='/api/novels/independent-director/experimental/creative/director-proposals')
+
+    def completed(e,m):
+        e.wire_text=json.dumps(output(e))
+        response=m.client.post(m.url+'/preview',headers=m.headers,json=preview_request(e))
+>       assert response.status_code==200,response.text
+E       AssertionError: {"detail":"Not Found"}
+E       assert 404 == 200
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests/test_director_model_transport_additive.py:24: AssertionError
+___ test_actual_application_preview_to_review_uses_existing_owners[/api/v1] ____
+
+application_host = (namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-appli...': 'fixture-current-host-token'}, base='/api/v1/novels/independent-director/experimental/creative/director-proposals'))
+
+    def test_actual_application_preview_to_review_uses_existing_owners(application_host):
+        e, m = application_host
+>       candidate = pending(e, m)
+                    ^^^^^^^^^^^^^
+
+tests/test_director_application_host_additive.py:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_director_model_transport_additive.py:49: in pending
+    preview,state=completed(e,m)
+                  ^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+e = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-applic...firmed': True, 'runtime_config': {'management': 'EXTERNAL', 'type': 'LLAMA_CPP', 'endpoint': 'http://127.0.0.1:8999'}})
+m = namespace(client=<starlette.testclient.TestClient object at 0x7f3be9d51640>, url='/api/v1/novels/independent-director/...n': 'fixture-current-host-token'}, base='/api/v1/novels/independent-director/experimental/creative/director-proposals')
+
+    def completed(e,m):
+        e.wire_text=json.dumps(output(e))
+        response=m.client.post(m.url+'/preview',headers=m.headers,json=preview_request(e))
+>       assert response.status_code==200,response.text
+E       AssertionError: {"detail":"Not Found"}
+E       assert 404 == 200
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests/test_director_model_transport_additive.py:24: AssertionError
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_director_application_host_additive.py::test_actual_application_advertises_only_original_supported_actions[/api]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_director_application_host_additive.py::test_actual_application_advertises_only_original_supported_actions[/api]
+FAILED tests/test_director_application_host_additive.py::test_actual_application_advertises_only_original_supported_actions[/api/v1]
+FAILED tests/test_director_application_host_additive.py::test_actual_application_preview_to_review_uses_existing_owners[/api]
+FAILED tests/test_director_application_host_additive.py::test_actual_application_preview_to_review_uses_existing_owners[/api/v1]
+4 failed, 2 warnings in 9.36s

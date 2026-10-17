@@ -1,0 +1,130 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_actual_pg_host_neither_advertises_nor_executes_file_only_pending[/api-postgres] _
+
+rig = namespace(nid='v2-identical-title-lifecycle', scope={'mode': 'local', 'novel_id': 'v2-identical-title-lifecycle'}, act...size': 'CANONICAL', 'camera_motion': 'CANONICAL', 'lens': 'EMPTY', 'composition': 'EMPTY'}, 'canonical_ratio': 0.5}}]})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdb51e5d6a0>
+prefix = '/api'
+
+    @pytest.mark.postgres_backend_only
+    @pytest.mark.parametrize('rig', ['postgres'], indirect=True)
+    @pytest.mark.parametrize('prefix', ['/api', '/api/v1'])
+    def test_actual_pg_host_neither_advertises_nor_executes_file_only_pending(rig, monkeypatch, prefix):
+        import app.main as main
+        import app.api as legacy
+        import app.experimental.api as experimental
+        e = rig
+        e.actor = 'local-author'
+        e.documents = e.service
+        board(e)
+        forbidden = ForbiddenOwner()
+        manager = ForbiddenOwner()
+        manager.persistence = GenerationService(PostgresGenerationRepository(e.novels.novels.database))
+        jobs_before = manager.persistence.load_all()
+        e.service.proposals.generation = DirectorModelCoordinator(e.service.proposals, forbidden, forbidden, manager)
+        monkeypatch.setenv('EXPERIMENTAL_FEATURES', FLAGS)
+        monkeypatch.delenv('V1_ACCEPTANCE_MODE', raising=False)
+        sessions = TrustedSessionResolver()
+        sessions.register('synthetic-pg-host', SessionContext('pg-session', 'pg-client', e.actor, 'pg-workspace'))
+        monkeypatch.setattr(main, 'settings', replace(main.settings,
+            enable_packaged_runtime=False, enable_collaboration_runtime=False))
+        monkeypatch.setattr(legacy, 'settings', replace(legacy.settings,
+            enable_packaged_runtime=False, enable_collaboration_runtime=False))
+        monkeypatch.setattr(main, 'trusted_session_resolver', sessions)
+        monkeypatch.setattr(legacy, 'novel_service', e.novels)
+        for name, value in vars(e.service).items():
+            monkeypatch.setattr(experimental.creative_service, name, value)
+        client = TestClient(main.app, client=('127.0.0.1', 41000), base_url='http://127.0.0.1:8000')
+        base = prefix + f'/novels/{e.nid}/experimental/creative/director-proposals'
+        headers = {'X-Session-Token': 'synthetic-pg-host'}
+        before = deepcopy(e.store.read(e.nid, e.scope))
+        result = client.get(base + '/model-capabilities', headers=headers)
+        assert result.status_code == 200, result.text
+        assert 'independent_director_contract' not in result.json()
+        response = client.post(base + f'/{e.row["id"]}/model-v1/preview', headers=headers,
+                               json={'expected_version': 1, 'route_id': 'unused-route',
+                                     'allow_synthetic': False, 'max_output_tokens': 512, 'temperature': 0.0})
+        assert response.status_code == 409, response.text
+>       assert response.json() == {'detail': {'code': 'DIRECTOR_MODEL_ACTION_NOT_CONFIRMED'}}
+E       AssertionError: assert {'code': 'DIR...NFIRMED', ...} == {'detail': {'...T_CONFIRMED'}}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Left contains 4 more items:
+E         {'code': 'DIRECTOR_MODEL_ACTION_NOT_CONFIRMED',
+E          'details': {'code': 'DIRECTOR_MODEL_ACTION_NOT_CONFIRMED'},
+E          'message': 'DIRECTOR_MODEL_ACTION_NOT_CONFIRMED',
+E          'request_id': '574bf922-4a94-4539-8dfe-f82c1a163f3c'}
+E         Use -v to get more diff
+
+tests/test_director_application_postgres_boundary.py:56: AssertionError
+_ test_actual_pg_host_neither_advertises_nor_executes_file_only_pending[/api/v1-postgres] _
+
+rig = namespace(nid='v2-identical-title-lifecycle', scope={'mode': 'local', 'novel_id': 'v2-identical-title-lifecycle'}, act...size': 'CANONICAL', 'camera_motion': 'CANONICAL', 'lens': 'EMPTY', 'composition': 'EMPTY'}, 'canonical_ratio': 0.5}}]})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdb4bd89490>
+prefix = '/api/v1'
+
+    @pytest.mark.postgres_backend_only
+    @pytest.mark.parametrize('rig', ['postgres'], indirect=True)
+    @pytest.mark.parametrize('prefix', ['/api', '/api/v1'])
+    def test_actual_pg_host_neither_advertises_nor_executes_file_only_pending(rig, monkeypatch, prefix):
+        import app.main as main
+        import app.api as legacy
+        import app.experimental.api as experimental
+        e = rig
+        e.actor = 'local-author'
+        e.documents = e.service
+        board(e)
+        forbidden = ForbiddenOwner()
+        manager = ForbiddenOwner()
+        manager.persistence = GenerationService(PostgresGenerationRepository(e.novels.novels.database))
+        jobs_before = manager.persistence.load_all()
+        e.service.proposals.generation = DirectorModelCoordinator(e.service.proposals, forbidden, forbidden, manager)
+        monkeypatch.setenv('EXPERIMENTAL_FEATURES', FLAGS)
+        monkeypatch.delenv('V1_ACCEPTANCE_MODE', raising=False)
+        sessions = TrustedSessionResolver()
+        sessions.register('synthetic-pg-host', SessionContext('pg-session', 'pg-client', e.actor, 'pg-workspace'))
+        monkeypatch.setattr(main, 'settings', replace(main.settings,
+            enable_packaged_runtime=False, enable_collaboration_runtime=False))
+        monkeypatch.setattr(legacy, 'settings', replace(legacy.settings,
+            enable_packaged_runtime=False, enable_collaboration_runtime=False))
+        monkeypatch.setattr(main, 'trusted_session_resolver', sessions)
+        monkeypatch.setattr(legacy, 'novel_service', e.novels)
+        for name, value in vars(e.service).items():
+            monkeypatch.setattr(experimental.creative_service, name, value)
+        client = TestClient(main.app, client=('127.0.0.1', 41000), base_url='http://127.0.0.1:8000')
+        base = prefix + f'/novels/{e.nid}/experimental/creative/director-proposals'
+        headers = {'X-Session-Token': 'synthetic-pg-host'}
+        before = deepcopy(e.store.read(e.nid, e.scope))
+        result = client.get(base + '/model-capabilities', headers=headers)
+        assert result.status_code == 200, result.text
+        assert 'independent_director_contract' not in result.json()
+        response = client.post(base + f'/{e.row["id"]}/model-v1/preview', headers=headers,
+                               json={'expected_version': 1, 'route_id': 'unused-route',
+                                     'allow_synthetic': False, 'max_output_tokens': 512, 'temperature': 0.0})
+        assert response.status_code == 409, response.text
+>       assert response.json() == {'detail': {'code': 'DIRECTOR_MODEL_ACTION_NOT_CONFIRMED'}}
+E       AssertionError: assert {'code': 'DIR...NFIRMED', ...} == {'detail': {'...T_CONFIRMED'}}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Left contains 4 more items:
+E         {'code': 'DIRECTOR_MODEL_ACTION_NOT_CONFIRMED',
+E          'details': {'code': 'DIRECTOR_MODEL_ACTION_NOT_CONFIRMED'},
+E          'message': 'DIRECTOR_MODEL_ACTION_NOT_CONFIRMED',
+E          'request_id': 'd19327a9-a039-4c55-bd3f-f5b238c8c73a'}
+E         Use -v to get more diff
+
+tests/test_director_application_postgres_boundary.py:56: AssertionError
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_director_application_postgres_boundary.py::test_actual_pg_host_neither_advertises_nor_executes_file_only_pending[/api-postgres]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_director_application_postgres_boundary.py::test_actual_pg_host_neither_advertises_nor_executes_file_only_pending[/api-postgres]
+FAILED tests/test_director_application_postgres_boundary.py::test_actual_pg_host_neither_advertises_nor_executes_file_only_pending[/api/v1-postgres]
+2 failed, 2 warnings in 7.79s

@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Application host closure (17:05 UTC)
+
+Source 29df291 explicitly mounts original versioned Director adapters. Scoped final gates: 556 File, 235 real PostgreSQL, 399 frontend, TS/build/token and 87 PUBLIC checks pass with identical final source snapshots. Two native TCP cases pass with fixture model responses; private pending review remains File-only. Browser/live model/full V2 acceptance remain open. Read DIRECTOR_APPLICATION_HOST_PROGRESS.md and delivery/v2-development/director-application-host-20261017/README.md. Coverage inventory refresh follows.
+
+User approved the fixed fourteen-commit archive through 4684577 at 17:03 UTC. Upload is in progress; later source/evidence is not part of that payload.
+
 ## Current inventory / recovery point (16:21 UTC)
 
 Integrated V2 inventory: 17,617 rows, 2,723 source entries; SHA256 `cd2993426017f31058878d1d662e719479b131be17a0fc856cd7304313db735d`. Three original-generator raw collections match; all previous 17,505 complete rows and classifications remain exact, with 56 File + 56 PG cases added. 45 original CI self-tests passed. Read `delivery/v2-development/director-research-inventory-20261017/README.md`. This supersedes earlier inventory counts only, not the runtime acceptance boundaries.

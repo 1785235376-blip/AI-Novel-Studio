@@ -1,0 +1,15 @@
+{
+  "source_commit": "29df291bad2083743331f765a30422e690605e39",
+  "status": "PASS_SCOPED_GATES",
+  "source_count": 2663,
+  "receipts": {
+    "director-application-origin-before-r1": "50a03e4d829c9786db8d4a1bf97bb7f0dd87526f2415c01bb53004bd6def12f9",
+    "director-application-full-file-r1": "e8000c167cf028df42d5592155ff310ca933d2a254bfde13fad3dff52c25dee4",
+    "director-application-full-postgres-r1": "d0cc9bf633763417c382093eac3f72705e23bd0db92f093f8fa72c6e85713330",
+    "director-application-ui-r1": "4897ddf23cb3f7327eadb52575f1ff2340231d3b67095f3258193fff4c6fed07",
+    "director-application-public-wheel-r1": "3a81b4932a344fdf88be1d223d2762c61bb421e04edd8e50e59805f6a69a5348",
+    "director-application-public-sdist-binding-r1": "78ed9eab9d738cede1e1f558f770b3117ae96257113a3892bf28c1a08ba808a6",
+    "director-application-origin-after-r1": "5400eb8c10491aec498c7a19f487c8cf8e6a8bf5dfdb48bd4187c9aae17f4302"
+  },
+  "same_final_source_hashes": true
+}
