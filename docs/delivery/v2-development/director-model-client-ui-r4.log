@@ -1,0 +1,20 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/directorObservationClient.test.ts (30 tests) 30ms
+ ✓ src/creative/directorModelClient.test.ts (35 tests) 39ms
+ ✓ src/creative/client.test.ts (11 tests) 35ms
+ ✓ src/creative/directorModelPlanningContract.additive.test.ts (11 tests) 9ms
+ ✓ src/creative/studioGraphDirectorClient.test.ts (14 tests) 22ms
+ ✓ src/creative/directorModelClient.capture.test.ts (2 tests) 9ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 254ms
+ ✓ src/creative/StudioGraphDirectorConsole.test.tsx (11 tests) 507ms
+ ✓ src/creative/ReviewedDirectorCanvas.integration.test.tsx (1 test) 338ms
+   ✓ wires reviewed Creative DRAFT through original export/read, real editor/controller insertion, and explicit Graph Save 338ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 1157ms
+
+ Test Files  10 passed (10)
+      Tests  136 passed (136)
+   Start at  23:19:12
+   Duration  2.78s (transform 2.33s, setup 174ms, collect 4.79s, tests 2.40s, environment 1.95s, prepare 814ms)
+

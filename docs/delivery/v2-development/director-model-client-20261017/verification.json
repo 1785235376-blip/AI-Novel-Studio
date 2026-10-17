@@ -1,0 +1,28 @@
+{
+  "backend_reference": "17c6500852359a99bfb023ae173e87d686c67829",
+  "app_and_packaging_diff": "unchanged",
+  "packaging": "REUSED, not rerun",
+  "artifacts": [
+    {
+      "path": "artifacts/director-primary-20261017-17c6500/public-sdist0/ai_novel_studio-0.7.0.tar.gz",
+      "sha256": "c92aea48612b105d2b414832a6d117be7d27018741486356ab9388f659c88715"
+    },
+    {
+      "path": "artifacts/director-primary-20261017-17c6500/public-sdist1/ai_novel_studio-0.7.0.tar.gz",
+      "sha256": "7596cfd20111170da55593f79bc7068d7cd008878d8da9ed593150c943edd150"
+    },
+    {
+      "path": "artifacts/director-primary-20261017-17c6500/public-wheel0/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "sha256": "904fbd19151890ac509ee740408eb119dd0e823b7cc5e4431076cbed893e2603"
+    },
+    {
+      "path": "artifacts/director-primary-20261017-17c6500/public-wheel1/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "sha256": "29c5043964ca9f4c0abc8775c4c7e8a75fd21a4c7c89661126cfe91f22c6b73f"
+    }
+  ],
+  "ui_receipt": "director-model-client-ui-r4.json",
+  "ui_tests": 136,
+  "typescript_build_tokens": "director-model-client-type-r2.json",
+  "public_archive_commit": "de872b5e6c0fba6bf2ceee3046b8132332c45b3c",
+  "archive_excludes_this_slice": true
+}

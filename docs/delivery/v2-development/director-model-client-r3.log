@@ -1,0 +1,14 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/directorModelClient.test.ts (35 tests) 24ms
+ ✓ src/creative/client.test.ts (11 tests) 10ms
+ ✓ src/creative/directorObservationClient.test.ts (30 tests) 15ms
+ ✓ src/creative/directorModelPlanningContract.additive.test.ts (11 tests) 10ms
+ ✓ src/creative/directorModelClient.capture.test.ts (2 tests) 7ms
+
+ Test Files  5 passed (5)
+      Tests  89 passed (89)
+   Start at  23:09:35
+   Duration  1.40s (transform 266ms, setup 32ms, collect 404ms, tests 67ms, environment 1ms, prepare 286ms)
+

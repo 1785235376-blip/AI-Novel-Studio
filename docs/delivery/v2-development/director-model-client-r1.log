@@ -1,0 +1,28 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/creative/directorModelClient.test.ts (29 tests | 1 failed) 8ms
+   × explicit Director model transport client > issues exactly one request for each explicitly invoked action and accepts actual captured responses 6ms
+     → 模型操作的版本或来源回执不匹配。请核对原任务状态，不要重复提交。
+
+ Test Files  1 failed (3)
+      Tests  1 failed (29)
+   Start at  23:04:10
+   Duration  351ms (transform 115ms, setup 13ms, collect 130ms, tests 8ms, environment 0ms, prepare 60ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/directorModelClient.test.ts > explicit Director model transport client > issues exactly one request for each explicitly invoked action and accepts actual captured responses
+Error: 模型操作的版本或来源回执不匹配。请核对原任务状态，不要重复提交。
+ ❯ invalid src/creative/directorModelClient.ts:31:35
+     29|   title: string; director_notes: DirectorSceneNote[]; visual_target?: …
+     30| 
+     31| function invalid(): never { throw new ApiError({ status: 200, code: 'D…
+       |                                   ^
+     32|   message: '模型操作的版本或来源回执不匹配。请核对原任务状态，不要重复…
+     33| function object(value: unknown): Record<string, unknown> { if (!value …
+ ❯ Object.dispatch src/creative/directorModelClient.ts:130:136
+ ❯ src/creative/directorModelClient.test.ts:20:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
