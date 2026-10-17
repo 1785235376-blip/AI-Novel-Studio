@@ -1,0 +1,13 @@
+{
+  "parent_approval_received": true,
+  "byte_exact": true,
+  "source_commit": "4d6bbe985994c7a679d17bfddd600658a358bc76",
+  "candidate_path": ".runtime/parallel-integration-wave3-inventory/candidate-manifest-v2.json.gz",
+  "canonical_path": ".github/ci/coverage_manifest_v2.json.gz",
+  "previous_canonical_sha256": "a76dd7d972e932fe8711e1d193068839813bf67c0dc87625af9fb9f97f58f2a9",
+  "candidate_sha256": "6a94abca1ad6fe835e1ad483774b1fbfb660b6e599a69a2b48533ee2141abb77",
+  "canonical_sha256": "6a94abca1ad6fe835e1ad483774b1fbfb660b6e599a69a2b48533ee2141abb77",
+  "bytes": 646038,
+  "independent_approval_sha256": "75dc8ace2d3b1d982b9de6c2b671885d7e2731283685182194d624a40ae6809e",
+  "recompressed": false
+}

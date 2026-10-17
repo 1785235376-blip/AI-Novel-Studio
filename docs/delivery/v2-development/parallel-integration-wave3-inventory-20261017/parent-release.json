@@ -1,0 +1,5 @@
+{
+  "status": "APPROVE_FIRST_NOWRITE_COLLECTION",
+  "source_commit": "4d6bbe985994c7a679d17bfddd600658a358bc76",
+  "scope": "Parent authorizes FIRST no-write original collection only after guards ready. Stop for parent audit before candidate write. No canonical mutation authorized."
+}

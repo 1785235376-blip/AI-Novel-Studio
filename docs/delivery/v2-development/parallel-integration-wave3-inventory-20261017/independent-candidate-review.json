@@ -1,0 +1,12 @@
+{
+  "status": "APPROVE_EXACT_CANDIDATE_PROMOTION",
+  "source_commit": "4d6bbe985994c7a679d17bfddd600658a358bc76",
+  "candidate_sha256": "6a94abca1ad6fe835e1ad483774b1fbfb660b6e599a69a2b48533ee2141abb77",
+  "candidate_bytes": 646038,
+  "rows": 17425,
+  "source_files": 2691,
+  "old_rows_preserved": 17289,
+  "new_rows": 136,
+  "tests_executed": false,
+  "reviewer": "parent independent exact-byte/schema audit"
+}

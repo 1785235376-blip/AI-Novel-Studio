@@ -1,0 +1,224 @@
+{
+  "source_checkpoint": "4d6bbe985994c7a679d17bfddd600658a358bc76",
+  "baseline_manifest": {
+    "commit": "9325818bbd98ad086db64ca0266aca6e7c4223b8",
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "sha256": "a76dd7d972e932fe8711e1d193068839813bf67c0dc87625af9fb9f97f58f2a9"
+  },
+  "complete_source_map_entries": 2691,
+  "complete_source_map_sha256": "eec91182294759a07c300f8420a45946d014671d2d92d5610a781e126b30f35b",
+  "source_delta": [
+    {
+      "path": "app/creative/director_binding.py",
+      "before": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88",
+      "after": "294bfd27629edb84da855a1343fac264e848fabdd41dd4d95bee4f01381e5292"
+    },
+    {
+      "path": "app/creative/director_terminal_evidence.py",
+      "before": "f064777fdade12050f9e755d677ab042c9f4d221c430f3dbd41f4142b9ea29e6",
+      "after": "f46c4ee428b4bfc3cfc137326e07c83a30c643d8a1cef4c7eaa70d84d36f146a"
+    },
+    {
+      "path": "app/creative/generation.py",
+      "before": "de925e29d345733a5b01171c31bcdff866f7f699d965d0e718b0e1a65046b1c9",
+      "after": "dfc727fdaef2ee1434216871bd4aa0d7fbfe62747b82c8532d84b9fdceaf6b08"
+    },
+    {
+      "path": "app/creative/proposals.py",
+      "before": "5f0b70fedcad83fafa6927b0940adb7afa51c0621fb5c61d277fa7f5443751d8",
+      "after": "a27ac7da3cce6677c46565e3ada67dc54f5ffb58eadea0db54f437c929b6c407"
+    },
+    {
+      "path": "app/repositories/generation_repository.py",
+      "before": "2bd899bac38aaed894d126cad7fed942ced8b96f1b59a2a9ec01c30037193af6",
+      "after": "35698818863ffdd6b90e464fb506510438d20b9a5a3edb2b6caeeed08ae4254a"
+    },
+    {
+      "path": "frontend/src/creative/GraphDirectorCanvasHandoff.additive.test.tsx",
+      "before": null,
+      "after": "7a2ce57d22bfaa07988e42823b4e88250bb256a849389bdf1afd0f0fe3b06221"
+    },
+    {
+      "path": "frontend/src/creative/GraphDirectorConsole.tsx",
+      "before": "d389812cebf9cb10af563685f77d4df4137b3e67b86ce8349f8ff7087b8cc27f",
+      "after": "e6f16e6cd8ccbecf05386d4b5808def43c74a0216e4f6e1e8aea460296f685b4"
+    },
+    {
+      "path": "frontend/src/creative/ReviewedDirectorCanvas.integration.test.tsx",
+      "before": null,
+      "after": "39ed2037be573e764d9f115c873453776a6a373325e988416e49c145cd6610d3"
+    },
+    {
+      "path": "frontend/src/creative/directorCanvasHandoff.additive.test.tsx",
+      "before": null,
+      "after": "738bba7222cfc93bd408229ae4fbafb4753aa420dcbcb0baa8e4ab0226f27629"
+    },
+    {
+      "path": "frontend/src/creative/directorCanvasHandoff.ts",
+      "before": null,
+      "after": "5f04cbe8117f1dfdf306ecd397d9ef1ba90f66d0e2600972840446ee16f458ae"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditor.tsx",
+      "before": "71cff8ca1c2246c6cafb72ac57ebf07262edf23b37a5d5c53c8e2b4883e580c2",
+      "after": "32302008164d4378c4fd717dfa71fcfa3c66d358d975b980e125ecafa8286772"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "before": "8271feed2c02c81fd9233fdffe1da6cf95ee9d519d3dd0411c15662530d67b0b",
+      "after": "04d7d3b1359045cc5bf34eb9e50c33d9805a9fd763be3d563ec1bd23d3c6f0f8"
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.duplicate.test.tsx",
+      "before": null,
+      "after": "eb9182b46eaa851c0727f26f76190406d10b6c8908786339d06865b0d4577ecd"
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.tsx",
+      "before": "0dad4ecfb54af1ff92cbdadf2f0dc3ed688ae169a052d2226ac2b0166acdcd02",
+      "after": "68925731310eed114a1980a1134f2f27152d67c80b6fcd38925b51a05255113f"
+    },
+    {
+      "path": "frontend/src/experimental/InteractiveStoryPanel.removal.test.tsx",
+      "before": null,
+      "after": "88d2b4cf9a42ada4696394a95cada1282bae0fcc2b1c7749d79eedbf0e8cc6f4"
+    },
+    {
+      "path": "frontend/src/experimental/InteractiveStoryPanel.tsx",
+      "before": "1eacd83be11e2d567bb1ccbdcfad2829457cda311faec77abd080cecaca48564",
+      "after": "75f9458f05707a76e7936388f2a25d0857c109dc6147c0f9816cb933493973bf"
+    },
+    {
+      "path": "frontend/src/experimental/SubtitleTimelinePanel.offset.test.tsx",
+      "before": null,
+      "after": "bb76c24351be51598e32189b4d40baccdd45a20dad7cb0d3c69cdc5fc9584493"
+    },
+    {
+      "path": "frontend/src/experimental/SubtitleTimelinePanel.tsx",
+      "before": "50761a4c6cfd39b86767d034fdccadd59c2a8edccc7bf7c3097d997fa7e64830",
+      "after": "9588ff20a637ab864c222e5069260ce02b0adf010ef363fa23827baa8c7657b9"
+    },
+    {
+      "path": "frontend/src/experimental/captionTimingOffset.test.ts",
+      "before": null,
+      "after": "c7e8e7c019dd7abbd12332dcbfc4307d26767330d1ddeb43612bcffdf19cb1d7"
+    },
+    {
+      "path": "frontend/src/experimental/captionTimingOffset.ts",
+      "before": null,
+      "after": "0e318e8b04ebc27b55f6993320add8fefe598acd25501674aac9d5cf82bda647"
+    },
+    {
+      "path": "frontend/src/experimental/comicDuplication.test.ts",
+      "before": null,
+      "after": "6a8bf18c39746caa30775a5a206265d09b663dbf4e18704c47dbe5efa35f78ae"
+    },
+    {
+      "path": "frontend/src/experimental/comicDuplication.ts",
+      "before": null,
+      "after": "ee6d29f51434fb767ee81d26b47ed80225e8620b538ff53c8b936cee94b2ef0a"
+    },
+    {
+      "path": "frontend/src/experimental/interactiveNodeRemoval.test.ts",
+      "before": null,
+      "after": "6e59a1fd07e7dc7f54c4a0b26c91d739f1a6933a0a44f835db58dbbc9279c461"
+    },
+    {
+      "path": "frontend/src/experimental/interactiveNodeRemoval.ts",
+      "before": null,
+      "after": "1230eef8a893dac511e3ce440775b47b92c472e052f78dcc56cbebc1e3a173e9"
+    },
+    {
+      "path": "tests/fixtures/comic_panel_duplicate.json",
+      "before": null,
+      "after": "69c4024e1ea9dacbe7ecd431ca9bf8deb4396b442310151952bf6d46ef389f4b"
+    },
+    {
+      "path": "tests/test_caption_timing_offset_additive.py",
+      "before": null,
+      "after": "88dec88edef22790fb92b1e1ac82d4b9355411a25680f552b4217fb39247fb41"
+    },
+    {
+      "path": "tests/test_comic_panel_duplicate.py",
+      "before": null,
+      "after": "52c4760f05d8eb88e08ca23afb3e3b70d321bb1cc6275af543cebd3582cc9faf"
+    },
+    {
+      "path": "tests/test_director_durable_pending_review.py",
+      "before": null,
+      "after": "4d698df03d61d368a1cf8804dba5f91d046239a3bc7ca6053341c489bdaffd26"
+    },
+    {
+      "path": "tests/test_director_pending_file_races.py",
+      "before": null,
+      "after": "631e04cfe073013b9f170aaa703eee0296c7a0afac01c2dc503ff80f43a0b25a"
+    },
+    {
+      "path": "tests/test_interactive_removal_handoff.py",
+      "before": null,
+      "after": "52f9c3f2712dff9564fca394e50e409d7c71186c5e49517e03aa8508b88e99bd"
+    },
+    {
+      "path": "tests/test_wave3_pending_director_canvas_bridge.py",
+      "before": null,
+      "after": "9277b49c97d4d6cf1d759708d914d2b41f36ff8d4bc08ac491bcfe4f504c39da"
+    }
+  ],
+  "expected_new_sources": [
+    "frontend/src/creative/GraphDirectorCanvasHandoff.additive.test.tsx",
+    "frontend/src/creative/ReviewedDirectorCanvas.integration.test.tsx",
+    "frontend/src/creative/directorCanvasHandoff.additive.test.tsx",
+    "frontend/src/creative/directorCanvasHandoff.ts",
+    "frontend/src/experimental/ComicLayoutsPanel.duplicate.test.tsx",
+    "frontend/src/experimental/InteractiveStoryPanel.removal.test.tsx",
+    "frontend/src/experimental/SubtitleTimelinePanel.offset.test.tsx",
+    "frontend/src/experimental/captionTimingOffset.test.ts",
+    "frontend/src/experimental/captionTimingOffset.ts",
+    "frontend/src/experimental/comicDuplication.test.ts",
+    "frontend/src/experimental/comicDuplication.ts",
+    "frontend/src/experimental/interactiveNodeRemoval.test.ts",
+    "frontend/src/experimental/interactiveNodeRemoval.ts",
+    "tests/fixtures/comic_panel_duplicate.json",
+    "tests/test_caption_timing_offset_additive.py",
+    "tests/test_comic_panel_duplicate.py",
+    "tests/test_director_durable_pending_review.py",
+    "tests/test_director_pending_file_races.py",
+    "tests/test_interactive_removal_handoff.py",
+    "tests/test_wave3_pending_director_canvas_bridge.py"
+  ],
+  "protected_old_entries_exact": 1344,
+  "frontend_scripts_e2e_companion": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "raw_inventory": {
+    "path": "docs/delivery/v2-development/parallel-integration-wave3-inventory-20261017/review-raw-collection.json",
+    "sha256": "8489499d82e9ebeeeb6ae455dbd7ee7659f2a9ae56ef5b2b563f579d082984a3",
+    "rows": 17425
+  },
+  "prior_raw_inventory": {
+    "path": "docs/delivery/v2-development/parallel-integration-wave2-inventory-20261017/review-raw-collection.json",
+    "sha256": "384f764513b65c3e408573e138679b7401b37bcd7e07fefbaa1decb65c6a4796",
+    "rows": 17289
+  },
+  "packaging_guard": {
+    "path": "packaging/public-build.json",
+    "before_sha256": "353b92aff6116d873ea4402a1ef627e7899214b46ba823a9b4300ba75c5d0448",
+    "after_sha256": "353b92aff6116d873ea4402a1ef627e7899214b46ba823a9b4300ba75c5d0448",
+    "outside_manifest": true,
+    "unchanged": true,
+    "approved_source_delta": false,
+    "added_entries": [],
+    "predecessor_path": "docs/delivery/v2-development/parallel-integration-wave3-inventory-20261017/public-predecessor.json"
+  },
+  "tests_executed": false
+}

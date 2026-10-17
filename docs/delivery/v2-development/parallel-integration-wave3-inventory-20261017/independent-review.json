@@ -1,0 +1,12 @@
+{
+  "status": "APPROVE_CANDIDATE_GENERATION",
+  "source_commit": "4d6bbe985994c7a679d17bfddd600658a358bc76",
+  "source_git_blobs_verified": 2691,
+  "old_rows_preserved": 17289,
+  "new_rows": 136,
+  "rows": 17425,
+  "raw_sha256": "8489499d82e9ebeeeb6ae455dbd7ee7659f2a9ae56ef5b2b563f579d082984a3",
+  "canonical_unchanged": "a76dd7d972e932fe8711e1d193068839813bf67c0dc87625af9fb9f97f58f2a9",
+  "tests_executed": false,
+  "reviewer": "parent independent source and inventory audit"
+}
