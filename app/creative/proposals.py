@@ -223,27 +223,53 @@ class DirectorProposalService:
                     raise StaleSourceError("CREATIVE_MODEL_LIVE_AUTHORITY_REQUIRED")
                 from ..experimental.ux import ReadContext
                 self.generation.validate_result(ReadContext(nid, scope, actor), row)
-            # Omitting the review extension preserves an authored visual goal;
-            # an explicit null is the user's choice to clear it before adoption.
-            visual_target = body.visual_target if "visual_target" in body.model_fields_set else row.get("visual_target")
-            candidate = CreativeProductionDocumentIn(mode="DIRECTOR", title=body.title,
-                source_chapter_ids=source["source_chapter_ids"], scenes=source["scenes"],
-                director_notes=body.director_notes, visual_target=visual_target)
-            payload = self.documents.prepare_content(nid, scope, candidate,
-                source_documents={source["id"]: {"version": row["source_version"], "digest": row["source_digest"]}})
-            provenance = {**deepcopy(row["provenance"]), "proposal_id": row["id"],
-                "proposal_version": row["version"], "output_digest": row["output_digest"],
-                "reviewed_output_digest": director_output_digest(payload["director_notes"], payload.get("visual_target")), "reviewed_by": actor, "reviewed_at": now()}
-            document = new_row(nid, scope, actor, {**payload, "provenance": provenance})
-            state["collections"].setdefault(self.documents.COLLECTION, {})[document["id"]] = document
-            self.documents.assert_current(nid, scope, document)
-            self.documents.assert_capacity(state)
-            change_row(row, actor, body.expected_version, lambda current: current.update(
-                status="APPROVED", document_id=document["id"], reviewed_by=actor, reviewed_at=provenance["reviewed_at"]))
-            self._capacity(state)
-            guard()
-            self._current(nid, scope, row)
-            return {"proposal": self._public(row), "document": deepcopy(document)}
+            return self._adopt_review_locked(nid, scope, actor, state, row, source, body,
+                notes=row["director_notes"], output_digest=row["output_digest"], provenance=row["provenance"],
+                after_mutation=guard)
+
+    def _adopt_review_locked(self, nid, scope, actor, state, row, source, body, *,
+                             notes, output_digest, provenance, before_mutation=lambda: None,
+                             after_mutation=lambda: None, quota_view=None):
+        """Original review commit shared by already-authorized private callers.
+
+        Caller owns the original scope transaction and review authority. This
+        core never opens a transaction, strips a marker, or grants authority.
+        """
+        if quota_view is None:
+            quota_view = lambda: state
+        check_version(row, body.expected_version)
+        if row.get("document_id"):
+            raise ValueError("CREATIVE_PROPOSAL_NOT_REVIEWABLE")
+        if (output_digest != body.reviewed_output_digest
+                or director_output_digest(notes, row.get("visual_target")) != output_digest):
+            raise ValueError("CREATIVE_PROPOSAL_EXACT_REVIEW_REQUIRED")
+        if source["mode"] == "STORYBOARD":
+            expected = [(item["note_id"], item["scene_id"], item["source_number"])
+                        for item in row["provenance"]["source_shots"]]
+            if [(note.id, note.scene_id, note.number) for note in body.director_notes] != expected:
+                raise ValueError("CREATIVE_PROPOSAL_STORYBOARD_ASSOCIATION_REQUIRED: retain each note ID, scene and authored shot order")
+        # Omitting the review extension preserves an authored visual goal;
+        # an explicit null is the user's choice to clear it before adoption.
+        visual_target = body.visual_target if "visual_target" in body.model_fields_set else row.get("visual_target")
+        candidate = CreativeProductionDocumentIn(mode="DIRECTOR", title=body.title,
+            source_chapter_ids=source["source_chapter_ids"], scenes=source["scenes"],
+            director_notes=body.director_notes, visual_target=visual_target)
+        payload = self.documents.prepare_content(nid, scope, candidate,
+            source_documents={source["id"]: {"version": row["source_version"], "digest": row["source_digest"]}})
+        provenance = {**deepcopy(provenance), "proposal_id": row["id"],
+            "proposal_version": row["version"], "output_digest": output_digest,
+            "reviewed_output_digest": director_output_digest(payload["director_notes"], payload.get("visual_target")), "reviewed_by": actor, "reviewed_at": now()}
+        document = new_row(nid, scope, actor, {**payload, "provenance": provenance})
+        before_mutation()
+        state["collections"].setdefault(self.documents.COLLECTION, {})[document["id"]] = document
+        self.documents.assert_current(nid, scope, document)
+        self.documents.assert_capacity(quota_view())
+        change_row(row, actor, body.expected_version, lambda current: current.update(
+            status="APPROVED", document_id=document["id"], reviewed_by=actor, reviewed_at=provenance["reviewed_at"]))
+        self._capacity(quota_view())
+        after_mutation()
+        self._current(nid, scope, row)
+        return {"proposal": self._public(row), "document": deepcopy(document)}
 
     def cancel(self, nid, scope, actor, rid, value, *, guard=lambda: None):
         body = ProposalAction.model_validate(value)

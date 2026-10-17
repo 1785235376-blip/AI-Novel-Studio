@@ -1,0 +1,93 @@
+{
+  "status": "PASS_REAL_OFFLINE_ARTIFACTS",
+  "artifacts": [
+    {
+      "name": "public-wheel0",
+      "artifact": ".runtime/director-review-packaging-r2-pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "artifact_sha256": "ef877f0404afbc0ae55ee5f51d90ad59fa7bb2918accc4a3c4451fd7300e317b",
+      "actual_archived_module_hashes": {
+        "app/creative/generation.py": "1020e41c6bbb199241d628e51ed35e1195c998b9a9ca784fecbdb6de2f83b6ae",
+        "app/creative/proposals.py": "5f0b70fedcad83fafa6927b0940adb7afa51c0621fb5c61d277fa7f5443751d8",
+        "app/creative/storyboard_model.py": "253472b23c9704a5e31d5803a730ff01713570fcb3bf55f86347da5b4e54aa61",
+        "app/creative/director_binding.py": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88"
+      },
+      "receipts": [
+        {
+          "path": "docs/delivery/v2-development/director-review-origin/artifacts/public-wheel0/wheel-receipt.json",
+          "sha256": "ed8fbc00a951144116f2a1d1d99e6b51aff7c8cdb80fe857cde2a5f24c5cfe6f"
+        },
+        {
+          "path": "docs/delivery/v2-development/director-review-origin/artifacts/public-wheel0/stage-receipt.json",
+          "sha256": "adb4ee8f0daea35e0b8bb72603afec60ff4e0183b79248f5a388cd75b2a741d1"
+        }
+      ],
+      "installed_runtime_acceptance": false
+    },
+    {
+      "name": "public-wheel1",
+      "artifact": ".runtime/director-review-packaging-r2-pytest/public-wheel1/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "artifact_sha256": "3116e6e5b747e70a2caded2cd29c1791f0d7ef47778893d984aff23ecee6dc35",
+      "actual_archived_module_hashes": {
+        "app/creative/generation.py": "1020e41c6bbb199241d628e51ed35e1195c998b9a9ca784fecbdb6de2f83b6ae",
+        "app/creative/proposals.py": "5f0b70fedcad83fafa6927b0940adb7afa51c0621fb5c61d277fa7f5443751d8",
+        "app/creative/storyboard_model.py": "253472b23c9704a5e31d5803a730ff01713570fcb3bf55f86347da5b4e54aa61",
+        "app/creative/director_binding.py": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88"
+      },
+      "receipts": [
+        {
+          "path": "docs/delivery/v2-development/director-review-origin/artifacts/public-wheel1/wheel-receipt.json",
+          "sha256": "54c5e9cf5e21bb28727a4c1ae2ba42ef04e97c0451af081dd3f74d168b8216d4"
+        },
+        {
+          "path": "docs/delivery/v2-development/director-review-origin/artifacts/public-wheel1/stage-receipt.json",
+          "sha256": "adb4ee8f0daea35e0b8bb72603afec60ff4e0183b79248f5a388cd75b2a741d1"
+        }
+      ],
+      "installed_runtime_acceptance": false
+    },
+    {
+      "name": "public-sdist0",
+      "artifact": ".runtime/director-review-packaging-r2-pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "artifact_sha256": "b89e1527dea045715b59a1589ee8810bbe8596844f4af998cdad6641f5fded47",
+      "actual_archived_module_hashes": {
+        "app/creative/generation.py": "1020e41c6bbb199241d628e51ed35e1195c998b9a9ca784fecbdb6de2f83b6ae",
+        "app/creative/proposals.py": "5f0b70fedcad83fafa6927b0940adb7afa51c0621fb5c61d277fa7f5443751d8",
+        "app/creative/storyboard_model.py": "253472b23c9704a5e31d5803a730ff01713570fcb3bf55f86347da5b4e54aa61",
+        "app/creative/director_binding.py": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88"
+      },
+      "receipts": [
+        {
+          "path": "docs/delivery/v2-development/director-review-origin/artifacts/public-sdist0/sdist-receipt.json",
+          "sha256": "33b56ab6f999dda08c1db9d3a5166083ed9c77e2978b821d51b8c09d0c876141"
+        },
+        {
+          "path": "docs/delivery/v2-development/director-review-origin/artifacts/public-sdist0/stage-receipt.json",
+          "sha256": "adb4ee8f0daea35e0b8bb72603afec60ff4e0183b79248f5a388cd75b2a741d1"
+        }
+      ],
+      "installed_runtime_acceptance": false
+    },
+    {
+      "name": "public-sdist1",
+      "artifact": ".runtime/director-review-packaging-r2-pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "artifact_sha256": "fae98b5faeb69379ecad6d1589f95c02724640c9d0a0cb1bab8a11a98549087d",
+      "actual_archived_module_hashes": {
+        "app/creative/generation.py": "1020e41c6bbb199241d628e51ed35e1195c998b9a9ca784fecbdb6de2f83b6ae",
+        "app/creative/proposals.py": "5f0b70fedcad83fafa6927b0940adb7afa51c0621fb5c61d277fa7f5443751d8",
+        "app/creative/storyboard_model.py": "253472b23c9704a5e31d5803a730ff01713570fcb3bf55f86347da5b4e54aa61",
+        "app/creative/director_binding.py": "2019dd930064431db94049d55f776aea00250804e8d07307b1b5b3a85aafea88"
+      },
+      "receipts": [
+        {
+          "path": "docs/delivery/v2-development/director-review-origin/artifacts/public-sdist1/sdist-receipt.json",
+          "sha256": "41acd77ab61a8b4e7b8d877f6c3b1248c08a769c93c526a0d975dacdb82fd5fd"
+        },
+        {
+          "path": "docs/delivery/v2-development/director-review-origin/artifacts/public-sdist1/stage-receipt.json",
+          "sha256": "adb4ee8f0daea35e0b8bb72603afec60ff4e0183b79248f5a388cd75b2a741d1"
+        }
+      ],
+      "installed_runtime_acceptance": false
+    }
+  ]
+}

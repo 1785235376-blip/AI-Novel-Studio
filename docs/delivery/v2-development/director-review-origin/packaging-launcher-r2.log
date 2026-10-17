@@ -1,0 +1,6 @@
+........................................................................ [ 82%]
+...............                                                          [100%]
+87 passed in 39.52s
+
+{"receipt": "docs/delivery/v2-development/director-review-packaging-r2.json", "status": "PASS"}
+packaging/public-build.json: OK

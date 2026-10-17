@@ -1,0 +1,108 @@
+{
+  "status": "PASS_INDEPENDENT_SCOPED_REVIEW",
+  "source_count": 2554,
+  "unchanged_baseline_test_files": 660,
+  "primary_index_sha256": "c3649fd15bc4960cadc699e265940b67add6b436ecc2d1a778d416dbe37009ec",
+  "verified_primary_index_files": 44,
+  "verified_final_receipts": 7,
+  "artifacts": [
+    {
+      "path": ".runtime/director-review-packaging-r2-pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "sha256": "ef877f0404afbc0ae55ee5f51d90ad59fa7bb2918accc4a3c4451fd7300e317b",
+      "payload_entries_verified": 507,
+      "core_modules_match_current": true
+    },
+    {
+      "path": ".runtime/director-review-packaging-r2-pytest/public-wheel1/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "sha256": "3116e6e5b747e70a2caded2cd29c1791f0d7ef47778893d984aff23ecee6dc35",
+      "payload_entries_verified": 507,
+      "core_modules_match_current": true
+    },
+    {
+      "path": ".runtime/director-review-packaging-r2-pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "sha256": "b89e1527dea045715b59a1589ee8810bbe8596844f4af998cdad6641f5fded47",
+      "payload_entries_verified": 508,
+      "core_modules_match_current": true
+    },
+    {
+      "path": ".runtime/director-review-packaging-r2-pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "sha256": "fae98b5faeb69379ecad6d1589f95c02724640c9d0a0cb1bab8a11a98549087d",
+      "payload_entries_verified": 508,
+      "core_modules_match_current": true
+    }
+  ],
+  "installed_runtime_acceptance": false,
+  "independent_backend": {
+    "passed": 391,
+    "postgres_marked_deselected": 102,
+    "skipped": 0,
+    "seconds": 189.17,
+    "counts_overlap_primary": true
+  },
+  "receipts": [
+    {
+      "receipt": "docs/delivery/v2-development/director-review-independent-origin.json",
+      "receipt_sha256": "550a5da4d6a798126bdf74298989053597c545664f28178bba467baf66808b78",
+      "log": "docs/delivery/v2-development/director-review-independent-origin.log",
+      "log_sha256": "f95215387ae5419aaafc115617d2a88cb555b2c6f20c2396f3cbb932dcf56c1d",
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-c",
+        "import sys; path=sys.argv[1]; globals()[\"__file__\"]=path; exec(compile(open(path).read(),path,\"exec\"))",
+        "docs/delivery/v2-development/director-review-origin/origin-probe.py",
+        "--child"
+      ],
+      "source_count": 2554,
+      "source_bracket_unchanged": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-review-independent-backend.json",
+      "receipt_sha256": "fbd73cc5c3bb4b5ac56924e5b2e61da32348251155635bdea6e66bf60f79eb63",
+      "log": "docs/delivery/v2-development/director-review-independent-backend.log",
+      "log_sha256": "aa778a61627c22bcc839df6e3ea9a4cf73e4aa21e226258a55f933da8c2c6aac",
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_creative_director_review_contract.py",
+        "tests/test_v2_independent_director_adoption.py",
+        "tests/test_v2_director_proposal_reopen.py",
+        "tests/test_v2_storyboard_director_proposal_loop.py",
+        "tests/test_v2_director_model_planning.py",
+        "tests/test_v2_director_authority_reads.py",
+        "tests/test_v2_storyboard_model_contract.py",
+        "tests/test_v2_creative_director_execution_lifecycle.py",
+        "-m",
+        "not postgres_backend_only",
+        "-q",
+        "--basetemp=.runtime/director-review-independent-pytest"
+      ],
+      "source_count": 2554,
+      "source_bracket_unchanged": true
+    }
+  ],
+  "frozen_fixture_sha256": "640ca3823d83a378b9018a180957d375b9cef6b524f2e527f7e731236cfd90ac",
+  "findings": [],
+  "resolved_review_findings": [
+    "Condition acquired before raw scope and owner; bounded by original deadline; terminal publication cannot race review",
+    "No nested raw transactions; original shared review commit and owner-filtered quota view reused",
+    "Old parser error precedence preserved",
+    "Post-adoption public isolation and old-default strict-looking JSON denial tested",
+    "Safe provenance carries exact route model_version and route_fingerprint"
+  ],
+  "reviewed_contracts": [
+    "Explicit opt-in strict storyboard output; default V1 payload unchanged",
+    "Detached live candidates require original live result and settled zero ledger; no pending candidate persistence",
+    "Original ReviewDTO human edits, mapping/source/actor/scope/Host checks, final live reread and bounds immediately before insertion",
+    "One original scope-atomic separate DIRECTOR DRAFT with real source_documents; old live guard not reused after approval",
+    "Public marker/history and generic content fences remain closed; adopted DRAFT reopens through original document owner",
+    "Minimal scalar provenance only; no prompt/token/seal/full source_shots copy"
+  ],
+  "limits": [
+    "No durable pending review after expiry or restart",
+    "No PostgreSQL execution or lock certification",
+    "No live provider/model-quality acceptance",
+    "No browser/native/Windows/installed-package acceptance",
+    "No artifact rebuild, installation, merge, tag, release, or network action"
+  ]
+}
