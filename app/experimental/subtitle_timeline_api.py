@@ -1,7 +1,8 @@
+import re
 from fastapi import APIRouter, Header, HTTPException, Request, Response
 from .production_lineage_api import api_call, PrivateProductionRoute
 from .subtitle_processing import ProcessingCreateIn, ProcessingActionIn
-from .subtitle_timeline import SUBTITLE_FLAG, CaptionCreateIn, CaptionUpdateIn, CaptionSplitIn, CaptionMergeIn, CaptionImportPreviewIn
+from .subtitle_timeline import SUBTITLE_FLAG, CaptionCreateIn, CaptionUpdateIn, CaptionSplitIn, CaptionMergeIn, CaptionImportPreviewIn, CaptionHistoryPreviewIn
 
 
 def create_subtitle_timeline_router(service, authorize, require_flag, *, require_processing_host=None, model_host_authority=None):
@@ -39,6 +40,17 @@ def create_subtitle_timeline_router(service, authorize, require_flag, *, require
     @router.post("/records/{rid}/import-preview")
     def import_preview(nid:str,rid:str,body:CaptionImportPreviewIn,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
         return invoke(nid,x_session_token,x_branch_id,"domain.write",lambda a,s,g:service.import_preview(nid,s,a,rid,body,g))
+    @router.get("/records/{rid}/history")
+    def history(nid:str,rid:str,expected_version:str,before_version:str|None=None,limit:str="20",x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+        def positive(value):
+            if value is None:return None
+            if not re.fullmatch(r"[1-9][0-9]{0,15}", value):raise ValueError("CAPTION_HISTORY_PAGE_INVALID")
+            return int(value)
+        return invoke(nid,x_session_token,x_branch_id,"domain.read",lambda a,s,g:service.history(
+            nid,s,a,rid,positive(expected_version),positive(before_version),positive(limit),g))
+    @router.post("/records/{rid}/history-preview")
+    def history_preview(nid:str,rid:str,body:CaptionHistoryPreviewIn,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+        return invoke(nid,x_session_token,x_branch_id,"domain.write",lambda a,s,g:service.history_preview(nid,s,a,rid,body,g))
     @router.post("/records/{rid}/cues/{cid}/split")
     def split(nid:str,rid:str,cid:str,body:CaptionSplitIn,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
         return invoke(nid,x_session_token,x_branch_id,"domain.write",lambda a,s,g:(g(),service.split(nid,s,a,rid,cid,body))[1])

@@ -1,0 +1,180 @@
+{
+  "status": "PASS_SCOPED_INDEPENDENT_REVIEW",
+  "utc": "2026-10-17T04:34:05.571Z",
+  "head": "0335e7a5c960804b8961530aba8d5b8690c5a5f1",
+  "root": "/workspace/scratch/20a0022d2b33/studio-caption-history",
+  "protected": {
+    "canonical_sha256": "bdc505005416221a5829a13aa12d303b43ebb2a20681bb54a1581ab90fa56c13",
+    "count": 1285,
+    "mismatches": [],
+    "baseline_tracked_test_snapshot_count": 1270,
+    "baseline_test_drift": [],
+    "tracked_modified": [
+      "app/experimental/subtitle_timeline.py",
+      "app/experimental/subtitle_timeline_api.py",
+      "frontend/src/experimental/SubtitleTimelinePanel.tsx",
+      "frontend/src/experimental/voiceSubtitleClient.ts"
+    ]
+  },
+  "receipts": [
+    {
+      "label": "caption-history-backend-r2",
+      "status": "PASS",
+      "exit_code": 0,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_caption_history_additive.py",
+        "tests/test_caption_import_preview_additive.py",
+        "tests/test_r5_voice_subtitles.py",
+        "tests/test_r5_voice_subtitles_mounted.py",
+        "-m",
+        "not postgres_backend_only"
+      ],
+      "source_count": 2539,
+      "source_before_after_equal": true,
+      "sources_changed_during_check": false,
+      "log_hash_exact": true,
+      "current_source_mismatches": [],
+      "receipt_sha256": "efe2d75157978463b0718a92af7a18b274365009e23ad942ac6c7a130d478319"
+    },
+    {
+      "label": "caption-history-ui-r1",
+      "status": "PASS",
+      "exit_code": 0,
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && node_modules/.bin/vitest run --no-cache --maxWorkers=1 --minWorkers=1 src/experimental/SubtitleTimelinePanel.history.test.tsx src/experimental/SubtitleTimelinePanel.import.test.tsx src/experimental/VoiceSubtitlePanels.test.tsx src/experimental/VoiceSubtitlePanels.additive.test.tsx src/experimental/captionTransferReview.test.ts"
+      ],
+      "source_count": 2539,
+      "source_before_after_equal": true,
+      "sources_changed_during_check": false,
+      "log_hash_exact": true,
+      "current_source_mismatches": [],
+      "receipt_sha256": "f9d47fc6115895a9ada5a2e69bc3628c6320553ddfb4c1c4b95f2a053ec1a0c9"
+    },
+    {
+      "label": "caption-history-tsc-r1",
+      "status": "PASS",
+      "exit_code": 0,
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && node_modules/.bin/tsc -b --force"
+      ],
+      "source_count": 2539,
+      "source_before_after_equal": true,
+      "sources_changed_during_check": false,
+      "log_hash_exact": true,
+      "current_source_mismatches": [],
+      "receipt_sha256": "17a164412164aff92a8c0a8ee3967562f5abc5792af1a9a142f33ba193c2ff4a"
+    },
+    {
+      "label": "caption-history-build-r1",
+      "status": "PASS",
+      "exit_code": 0,
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && node_modules/.bin/vite build"
+      ],
+      "source_count": 2539,
+      "source_before_after_equal": true,
+      "sources_changed_during_check": false,
+      "log_hash_exact": true,
+      "current_source_mismatches": [],
+      "receipt_sha256": "b78c506a4885b74515095a0be5e96b9b074b237e29005f36d9c728374aed21be"
+    },
+    {
+      "label": "caption-history-tokens-r1",
+      "status": "PASS",
+      "exit_code": 0,
+      "command": [
+        "node",
+        "scripts/check_ui_design_tokens.mjs"
+      ],
+      "source_count": 2539,
+      "source_before_after_equal": true,
+      "sources_changed_during_check": false,
+      "log_hash_exact": true,
+      "current_source_mismatches": [],
+      "receipt_sha256": "ca140d19f2a8d5f28913947b287818e1f89b33715f4d77a8b6ddd56564514bc2"
+    },
+    {
+      "label": "caption-history-independent-backend-r1",
+      "status": "PASS",
+      "exit_code": 0,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_caption_history_additive.py",
+        "-m",
+        "not postgres_backend_only"
+      ],
+      "source_count": 2539,
+      "source_before_after_equal": true,
+      "sources_changed_during_check": false,
+      "log_hash_exact": true,
+      "current_source_mismatches": [],
+      "receipt_sha256": "2268f7530950e452f5487fc64aba731bf589b9614e83a0f595f417a66985f03d"
+    },
+    {
+      "label": "caption-history-independent-ui-r1",
+      "status": "PASS",
+      "exit_code": 0,
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && node_modules/.bin/vitest run --no-cache --maxWorkers=1 --minWorkers=1 src/experimental/SubtitleTimelinePanel.history.test.tsx"
+      ],
+      "source_count": 2539,
+      "source_before_after_equal": true,
+      "sources_changed_during_check": false,
+      "log_hash_exact": true,
+      "current_source_mismatches": [],
+      "receipt_sha256": "31ca3c809d69f5fcf447a40e1f8efb4cc08347ad399c6dfe2272a9975fcfe3f3"
+    }
+  ],
+  "independent_execution": {
+    "backend_passed": 90,
+    "backend_postgres_deselected": 90,
+    "ui_passed": 67,
+    "overlap_note": "Independent reruns overlap the primary 187 backend and 138 UI cases; not extra distinct coverage."
+  },
+  "review_findings": [
+    {
+      "finding": "Retained history confirmation/read closures survived list/page/preview reload.",
+      "resolution": "Fixed before verification with requestEpoch fencing and three-mode mounted regression."
+    },
+    {
+      "finding": "Retained pre-restoration save/split/merge handlers could omit restoration pin.",
+      "resolution": "Fixed before final primary and independent verification with semantic draft/admission epochs and regression tests."
+    }
+  ],
+  "verified_contracts": [
+    "Existing owner/store and original CAS mutation reused; ordinary PUT shape unchanged.",
+    "History metadata response is bounded, strict positive anchored cursors; persisted full-history memory and legacy records costs remain unchanged.",
+    "Historical identity/scope/creator/version validation; malformed/duplicate/bool versions rejected.",
+    "Historical cue validation checks normalized digest to reject lossy string/numeric coercion; no approval/task authority copied.",
+    "Historical own segment/speaker/source pins revalidated on preview and inside original CAS update; manual-edited or empty replacement does not bypass pin.",
+    "Original target media/asset/timebase/plan binding retained; source equivalence only, no whole-plan historical revision claim.",
+    "Read pre/post authorization/currentness and no-store route wrapper reused.",
+    "Explicit local replacement, dirty/split warning, provenance persistence, equal-cue no-op, failure draft retention and late/ABA/retained handler fences.",
+    "Shared primitives/classes used; no token/shell/protected UI source changed."
+  ],
+  "origin_proof": {
+    "normal": ".runtime/caption-history-origin/normal-startup.json",
+    "runner": "docs/delivery/v2-development/caption-history-origin-r1.json",
+    "summary": "Normal startup requires unset outer PYTHONPATH; actual original runner child uses its provided current-worktree PYTHONPATH. PathFinder traverses actual sys.path and returned package paths; no product imports in proof. Clean reconciliation interpreter only."
+  },
+  "limitations": [
+    "File/in-process TestClient and jsdom synthetic fixtures only. No real browser, screenshot geometry, socket server, PostgreSQL, model/provider, FFmpeg/live quality, release or push claim.",
+    "Backend r1 failed two aliases of an invalid new fixture; preserved raw failure and corrected only fixture to mounted direction change.",
+    "Current protected count 1285 includes earlier 1279 subset plus newer protected additions; it is not a test execution count."
+  ]
+}

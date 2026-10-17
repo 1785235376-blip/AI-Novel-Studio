@@ -62,6 +62,12 @@ class CaptionCreateIn(StrictModel):
 class CaptionUpdateIn(StrictModel):
     expected_version: int = Field(ge=1)
     cues: list[Cue] = Field(max_length=2000)
+    restore_history_version: int | None = Field(default=None, ge=1, strict=True)
+
+
+class CaptionHistoryPreviewIn(StrictModel):
+    expected_version: int = Field(ge=1, strict=True)
+    history_version: int = Field(ge=1, strict=True)
 
 
 class CaptionImportPreviewIn(StrictModel):
@@ -266,6 +272,11 @@ class SubtitleTimelineService(SubtitleProcessingMixin, DomainService):
         self._current(nid, scope, actor, rid)
         def change(row):
             self._current(nid, scope, actor, rid)
+            if data.restore_history_version is not None:
+                # Keep provenance even if the user edited the preview's cues.
+                # Validate against this transaction's original target, before
+                # recomputing the submitted replacement's own source pins.
+                self._historical(nid, scope, actor, row, data.restore_history_version)
             row["cues"] = [c.model_dump() for c in data.cues]
             row["segment_snapshots"], row["speakers"], row["sources"] = self._snapshot(nid, scope, actor, row.get("plan_id"), row["cues"])
             row["warnings"] = self._validate(row)
@@ -274,6 +285,98 @@ class SubtitleTimelineService(SubtitleProcessingMixin, DomainService):
             row["alignment_model"] = None
             row["processing_task_id"] = None
         return self.mutate(nid, scope, actor, self.COLLECTION, rid, data.expected_version, change)
+
+    def _history_rows(self, row):
+        history = row.get("history")
+        if not isinstance(history, list):
+            raise ValueError("CAPTION_HISTORY_INVALID")
+        seen = set()
+        for item in history:
+            if not isinstance(item, dict) or any(item.get(key) != row.get(key)
+                    for key in ("id", "novel_id", "scope", "created_by", "created_at")):
+                raise ValueError("CAPTION_HISTORY_IDENTITY_INVALID")
+            version = item.get("version")
+            if type(version) is not int or not 1 <= version < row["version"] or version in seen:
+                raise ValueError("CAPTION_HISTORY_VERSION_INVALID")
+            seen.add(version)
+        return history
+
+    def _historical(self, nid, scope, actor, row, version):
+        history = self._history_rows(row)
+        selected = next((item for item in history if item["version"] == version), None)
+        if selected is None:
+            raise FileNotFoundError("caption history version")
+        # Historical authority/status is never copied into the current target.
+        for key in ("asset_id", "asset_snapshot", "timebase", "plan_id", "media"):
+            if key not in selected or digest(selected[key]) != digest(row.get(key)):
+                raise ValueError("CAPTION_HISTORY_BINDING_INVALID")
+        cues = selected.get("cues")
+        if not isinstance(cues, list):
+            raise ValueError("CAPTION_HISTORY_CUES_INVALID")
+        validated = CaptionUpdateIn(expected_version=row["version"], cues=cues)
+        normalized = [cue.model_dump() for cue in validated.cues]
+        if digest(normalized) != digest(cues):
+            raise ValueError("CAPTION_HISTORY_CUES_LOSSY")
+        snapshots, speakers, sources = self._snapshot(nid, scope, actor, selected["plan_id"], normalized)
+        if any(key not in selected for key in ("segment_snapshots", "speakers", "sources")):
+            raise ValueError("CAPTION_HISTORY_SOURCES_INVALID")
+        if (snapshots != selected["segment_snapshots"] or speakers != selected["speakers"]
+                or sources != selected["sources"]):
+            raise StaleSourceError("CAPTION_HISTORY_SOURCE_CHANGED")
+        self.assert_sources(nid, selected["sources"], scope)
+        self._validate({**row, "cues": normalized})
+        return selected
+
+    def history(self, nid, scope, actor, rid, expected_version, before_version=None, limit=20, reauthorize=None):
+        if (type(expected_version) is not int or expected_version < 1 or type(limit) is not int
+                or not 1 <= limit <= 50 or (before_version is not None
+                and (type(before_version) is not int or not 1 <= before_version <= expected_version))):
+            raise ValueError("CAPTION_HISTORY_PAGE_INVALID")
+        row = self._current(nid, scope, actor, rid)
+        check_version(row, expected_version)
+        # This bounds the response only: the existing store still reads its
+        # original scope document and the legacy records DTO is unchanged.
+        history = sorted(self._history_rows(row), key=lambda item: item["version"], reverse=True)
+        candidates = [item for item in history if item["version"] < (before_version or expected_version)]
+        items = []
+        for item in candidates[:limit]:
+            if (not isinstance(item.get("updated_at"), str) or not 1 <= len(item["updated_at"]) <= 100
+                    or item.get("status") not in {"DRAFT", "APPROVED"}
+                    or item.get("timing_origin") not in {"MANUAL", "SYNTHETIC_FIXTURE", "MFA_WORD_INTERVALS",
+                        "MODEL_SEGMENT_TIMESTAMPS", "ADAPTER_CUE_ALIGNMENT"}
+                    or not isinstance(item.get("cues"), list) or len(item["cues"]) > 2000):
+                raise ValueError("CAPTION_HISTORY_METADATA_INVALID")
+            items.append({**{key: item[key] for key in ("version", "updated_at", "status", "timing_origin")},
+                          "cue_count": len(item["cues"])})
+        if reauthorize:
+            reauthorize()
+        current = self._current(nid, scope, actor, rid)
+        check_version(current, expected_version)
+        if digest(sorted(self._history_rows(current), key=lambda item: item["version"], reverse=True)) != digest(history):
+            raise StaleSourceError("CAPTION_HISTORY_CHANGED")
+        has_more = len(candidates) > limit
+        return {"record_id": rid, "expected_version": expected_version, "items": items,
+                "has_more": has_more, "next_before_version": items[-1]["version"] if has_more else None}
+
+    def history_preview(self, nid, scope, actor, rid, body, reauthorize=None):
+        data = CaptionHistoryPreviewIn.model_validate(body)
+        row = self._current(nid, scope, actor, rid)
+        check_version(row, data.expected_version)
+        selected = self._historical(nid, scope, actor, row, data.history_version)
+        cues = copy.deepcopy(selected["cues"])
+        warnings = self._validate({**row, "cues": cues})
+        binding = {key: selected[key] for key in ("asset_id", "asset_snapshot", "timebase", "plan_id",
+                   "segment_snapshots", "speakers", "sources")}
+        if reauthorize:
+            reauthorize()
+        current = self._current(nid, scope, actor, rid)
+        check_version(current, data.expected_version)
+        refreshed = self._historical(nid, scope, actor, current, data.history_version)
+        if digest(refreshed) != digest(selected):
+            raise StaleSourceError("CAPTION_HISTORY_CHANGED")
+        return {"record_id": rid, "expected_version": data.expected_version, "history_version": data.history_version,
+                **copy.deepcopy({key: selected[key] for key in ("asset_id", "asset_snapshot", "timebase", "plan_id")}),
+                "source_binding_digest": digest(binding), "cues": cues, "warnings": warnings}
 
     def import_preview(self, nid, scope, actor, rid, body, reauthorize=None):
         """Validate a replacement without writing a record, history, or task.

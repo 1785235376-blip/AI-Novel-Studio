@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-caption-history/frontend
+
+ ✓ src/experimental/SubtitleTimelinePanel.history.test.tsx (67 tests) 5029ms
+
+ Test Files  1 passed (1)
+      Tests  67 passed (67)
+   Start at  13:33:30
+   Duration  5.79s (transform 164ms, setup 18ms, collect 255ms, tests 5.03s, environment 287ms, prepare 54ms)
+

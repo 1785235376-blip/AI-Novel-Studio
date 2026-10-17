@@ -7,6 +7,8 @@ export type VoiceCatalog = {plans:AudioPlan[];mixes?:Row[];mixer?:string;profile
 export type CaptionCue = {id:string;start_tick:number;end_tick:number;text:string;segment_id:string|null;overlap_reason:string};
 export type CaptionTrack = Row & {title?:string;asset_id:string;timebase:{numerator:number;denominator:number};cues:CaptionCue[];media:{duration_seconds:{numerator:number;denominator:number};waveform:{status:string;peaks?:number[]}};warnings:{cue_id:string;code:string}[];speakers:Record<string,{name:string}>};
 export type CaptionImportPreview = {record_id:string;expected_version:number;asset_id:string;asset_snapshot:{version:number;digest:string};timebase:CaptionTrack['timebase'];content_sha256:string;format:'srt'|'vtt';byte_length:number;cues:CaptionCue[];warnings:CaptionTrack['warnings']};
+export type CaptionHistoryPage = {record_id:string;expected_version:number;items:{version:number;updated_at:string;status:string;timing_origin:string;cue_count:number}[];has_more:boolean;next_before_version:number|null};
+export type CaptionHistoryPreview = {record_id:string;expected_version:number;history_version:number;asset_id:string;asset_snapshot:{version:number;digest:string};timebase:CaptionTrack['timebase'];plan_id:string|null;source_binding_digest:string;cues:CaptionCue[];warnings:CaptionTrack['warnings']};
 export class CaptionImportError extends Error {}
 export const CAPTION_IMPORT_MAX_BYTES = 192000;
 export async function readCaptionImport(file:File) {
@@ -37,7 +39,9 @@ export function voiceSubtitleClient(client:ExperimentalClient) {
     tracks:(signal?:AbortSignal)=>client.get<{items:CaptionTrack[]}>('/subtitle-timeline/records',signal),
     createTrack:(body:unknown)=>client.post<CaptionTrack>('/subtitle-timeline/records',body),
     importPreview:(row:CaptionTrack,format:'srt'|'vtt',content_base64:string)=>client.post<CaptionImportPreview>(`/subtitle-timeline/records/${segment(row.id)}/import-preview`,{expected_version:row.version,format,content_base64}),
-    saveCues:(row:CaptionTrack,cues:CaptionCue[])=>client.put<CaptionTrack>(`/subtitle-timeline/records/${segment(row.id)}`,{expected_version:row.version,cues}),
+    captionHistory:(row:CaptionTrack,before?:number)=>client.get<CaptionHistoryPage>(`/subtitle-timeline/records/${segment(row.id)}/history?expected_version=${row.version}&limit=20${before===undefined?'':`&before_version=${before}`}`),
+    historyPreview:(row:CaptionTrack,version:number)=>client.post<CaptionHistoryPreview>(`/subtitle-timeline/records/${segment(row.id)}/history-preview`,{expected_version:row.version,history_version:version}),
+    saveCues:(row:CaptionTrack,cues:CaptionCue[],restoreHistoryVersion?:number)=>client.put<CaptionTrack>(`/subtitle-timeline/records/${segment(row.id)}`,{expected_version:row.version,cues,...(restoreHistoryVersion===undefined?{}:{restore_history_version:restoreHistoryVersion})}),
     split:(row:CaptionTrack,cue:CaptionCue,tick:number,left:string,right:string)=>client.post<CaptionTrack>(`/subtitle-timeline/records/${segment(row.id)}/cues/${segment(cue.id)}/split`,{expected_version:row.version,split_tick:tick,left_text:left,right_text:right}),
     merge:(row:CaptionTrack,cue:CaptionCue,next:CaptionCue)=>client.post<CaptionTrack>(`/subtitle-timeline/records/${segment(row.id)}/cues/${segment(cue.id)}/merge`,{expected_version:row.version,next_cue_id:next.id}),
     download:(row:CaptionTrack,format:'srt'|'vtt')=>client.blob(`/subtitle-timeline/records/${segment(row.id)}/file.${format}?expected_version=${row.version}`),
