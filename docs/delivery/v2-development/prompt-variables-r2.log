@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/prompt/PromptVariables.additive.test.tsx (7 tests) 170ms
+ ✓ src/prompt/PromptEditorPanel.copy.test.tsx (13 tests) 360ms
+
+ Test Files  2 passed (2)
+      Tests  20 passed (20)
+   Start at  04:55:03
+   Duration  1.17s (transform 141ms, setup 41ms, collect 353ms, tests 531ms, environment 665ms, prepare 141ms)
+

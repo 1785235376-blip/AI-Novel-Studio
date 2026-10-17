@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Literal Prompt variable filling (19:55 UTC)
+
+The original Prompt editor can explicitly fill bounded {{name}} placeholders in the current body, including Unicode variable names, with a full preview and separate confirmation. Replacement is literal, one-pass and UTF-8-byte bounded; no expressions, recursive expansion, file reads, model call, credential storage or separate template backend. Escaped markers remain unchanged. Values clear on source-owner/scope changes, stale previews and IME actions retire consent, and application calls only the original onEdit({text}) owner. Negative prompts, model settings, seed and references stay untouched; original Save creates revisions.
+
+Focused prompt-variables-r2:7 new checks plus13 original clipboard checks and TypeScript PASS. r1 caught a JSX brace syntax error in the new component; fixed runtime syntax and retained failed logs. No original test/validator weakening, native/browser or full-suite claim.
+
 ## Explicit single-track gap closure (19:49 UTC)
 
 The existing multitrack editor now previews uncovered intervals on one selected unlocked track and applies a reviewed local shift through its original change/undo owner. Speed-adjusted durations and overlapping clip unions determine gaps; cross-dissolve overlap windows, source bindings, trim, authored clip order, other tracks, captions and project duration remain unchanged. Leading-gap closure is separately selectable. The UI explicitly warns that other tracks/captions do not follow and synchronization can change. Preview and consent are bound to the original draft/scope/revision; no save, render, upload or cross-track ripple occurs automatically.

@@ -1,0 +1,36 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/prompt/PromptEditorPanel.copy.test.tsx (0 test)
+ ❯ src/prompt/PromptVariables.additive.test.tsx (0 test)
+
+ Test Files  2 failed (2)
+      Tests  no tests
+   Start at  04:54:23
+   Duration  737ms (transform 122ms, setup 43ms, collect 0ms, tests 0ms, environment 627ms, prepare 104ms)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/prompt/PromptEditorPanel.copy.test.tsx [ src/prompt/PromptEditorPanel.copy.test.tsx ]
+ FAIL  src/prompt/PromptVariables.additive.test.tsx [ src/prompt/PromptVariables.additive.test.tsx ]
+Error: Transform failed with 1 error:
+/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/prompt/PromptVariablesPanel.tsx:21:293: ERROR: Expected "}" but found "/"
+  Plugin: vite:esbuild
+  File: /workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/prompt/PromptVariablesPanel.tsx:21:293
+  
+  Expected "}" but found "/"
+  19 |    {parsed.error&&<StatusMessage tone="warning">{parsed.error}</StatusMessage>}
+  20 |    <fieldset disabled={props.disabled} onCompositionStart={()=>{ime.current=true;setComposing(true);reset();}} onCompositionEnd={()=>{ime.current=false;setComposing(false);reset();}}><legend>本次变量值（不会单独保存）</legend>
+  21 |     {parsed.names.map(name=><label key={name}>变量 {name}<textarea rows={2} maxLength={8192} value={Object.hasOwn(values,name)?values[name]:''} onChange={event=>{if(alive.current&&!live.current.disabled&&owner.current.token===token){reset();setValues({...values,[name]:event.target.value});}}/></label>)}
+     |                                                                                                                                                                                                                                                                                                       ^
+  22 |    </fieldset>
+  23 |    <Button disabled={props.disabled||composing||!!parsed.error||!parsed.names.length} onClick={()=>{if(!current())return;reset();try{const next={result:fillPromptVariables(props.text,values),token,edit:edit.current};proof.current=next;setPreview(next);}catch(reason){setError(reason instanceof Error?reason.message:'填写预览失败。');}}}>预览变量填写结果</Button>
+  
+ ❯ failureErrorWithLog ../../studio-usability/frontend/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:1472:15
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:755:50
+ ❯ responseCallbacks.<computed> ../../studio-usability/frontend/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:622:9
+ ❯ handleIncomingPacket ../../studio-usability/frontend/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:677:12
+ ❯ Socket.readFromStdout ../../studio-usability/frontend/node_modules/.pnpm/esbuild@0.21.5/node_modules/esbuild/lib/main.js:600:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+

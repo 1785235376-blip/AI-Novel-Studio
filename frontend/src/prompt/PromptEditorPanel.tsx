@@ -1,3 +1,4 @@
+import { PromptVariablesPanel } from './PromptVariablesPanel';
 /**
  * Prompt Editor（R3-U3-C2）。
  *
@@ -49,6 +50,9 @@ const bindingSummary = (entry: PromptEntry | null) => {
 export function PromptEditorPanel(props: Props) {
   const { draft, detail, mode, locked, busy, canSave, conflictCode, saveError, fieldError,
     onEdit, onSave, onRetry, onRebase, onDiscard } = props;
+  const [bodyComposing, setBodyComposing] = useState(false);
+  const bodyComposingRef = useRef(false);
+  useEffect(() => { bodyComposingRef.current = false; setBodyComposing(false); }, [draft.key, props.copyScopeKey]);
   const professional = mode === 'PROFESSIONAL';
   const status = draftStatus(draft);
   const fieldErrorId = useId();
@@ -126,7 +130,7 @@ export function PromptEditorPanel(props: Props) {
       )}
 
       <label htmlFor="prompt-text">正文</label>
-      <textarea ref={textRef} id="prompt-text" rows={8} value={draft.content.text} disabled={locked}
+      <textarea onCompositionStart={() => { bodyComposingRef.current = true; setBodyComposing(true); }} onCompositionEnd={() => { bodyComposingRef.current = false; setBodyComposing(false); }} ref={textRef} id="prompt-text" rows={8} value={draft.content.text} disabled={locked}
         aria-describedby={`prompt-text-hint ${byteCountId}${fieldError?.field === 'text' ? ` ${fieldErrorId}` : ''}`}
         aria-invalid={fieldError?.field === 'text' || excessBytes > 0}
         onChange={event => onEdit({ text: event.target.value })} />
@@ -149,6 +153,8 @@ export function PromptEditorPanel(props: Props) {
       {currentCopyFeedback === 'FAILED' && <StatusMessage tone="warning">
         无法自动复制。可选中正文后按 Ctrl+C 或 Command+C 手动复制；不会自动重试。
       </StatusMessage>}
+
+      <PromptVariablesPanel text={draft.content.text} owner={draft.content} scope={JSON.stringify([props.copyScopeKey,draft.key])} disabled={locked || busy || bodyComposing} onApply={text => { if (!bodyComposingRef.current && !locked && !busy) onEdit({text}); }} />
 
       <label htmlFor="prompt-negative">Negative Prompt</label>
       <textarea id="prompt-negative" rows={3} value={draft.content.negativePrompt} disabled={locked}
