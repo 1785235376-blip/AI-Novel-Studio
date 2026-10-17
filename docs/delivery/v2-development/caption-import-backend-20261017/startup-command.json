@@ -1,0 +1,32 @@
+{
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+    "/workspace/scratch/20a0022d2b33/studio-caption-import/.runtime/caption-import-origin/origin-probe.py"
+  ],
+  "cwd": "/workspace/scratch/20a0022d2b33/studio-caption-import",
+  "unset": [
+    "PYTHONHOME",
+    "PYTHONPATH",
+    "PYTHONSTARTUP",
+    "PYTHONUSERBASE",
+    "PYTEST_ADDOPTS",
+    "PYTEST_PLUGINS",
+    "DATABASE_URL",
+    "TEST_POSTGRES_DATABASE_URL",
+    "E2E_DATABASE_URL",
+    "COLLABORATION_DEV_SESSIONS_JSON",
+    "PACKAGED_RUNTIME_INSTANCE_ID",
+    "PACKAGED_BOOTSTRAP_SECRET",
+    "PACKAGED_CONTROL_PIPE"
+  ],
+  "set": {
+    "PYTHONNOUSERSITE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+    "PYTHON_DOTENV_DISABLED": "1",
+    "PACKAGED_WINDOWS_MODE": "false",
+    "PYTHONPATH": "/workspace/scratch/20a0022d2b33/studio-caption-import"
+  },
+  "exit_code": 0,
+  "reason": "Stdlib-only actual sys.path normal and child origin proof; no product or pytest imports."
+}

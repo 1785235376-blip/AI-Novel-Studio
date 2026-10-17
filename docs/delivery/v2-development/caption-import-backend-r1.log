@@ -1,0 +1,135 @@
+......F.................F............................FF................. [ 69%]
+...............................                                          [100%]
+=================================== FAILURES ===================================
+_ test_preview_rejects_unsupported_or_invalid_without_mutation[file-/api-1\n00:00:00,000 --> 00:00:01,000\ntrailing \n-srt-CAPTION_ROUND_TRIP_FAILED] _
+
+mounted = namespace(client=<starlette.testclient.TestClient object at 0x7f8c5b654dd0>, prefix='/api', base='/api/novels/r3-mount...import/app/api.py'>, main=<module 'app.main' from '/workspace/scratch/20a0022d2b33/studio-caption-import/app/main.py'>)
+content = '1\n00:00:00,000 --> 00:00:01,000\ntrailing \n', format = 'srt'
+error = 'CAPTION_ROUND_TRIP_FAILED'
+
+    @pytest.mark.parametrize("content,format,error", [
+        (srt("<b>markup</b>"), "srt", "CAPTION_PLAIN_NONEMPTY_TEXT_REQUIRED"),
+        (srt("x\x00"), "srt", "CAPTION_PLAIN_NONEMPTY_TEXT_REQUIRED"),
+        (srt("trailing "), "srt", "CAPTION_ROUND_TRIP_FAILED"),
+        (srt("a\u0085b"), "srt", "CAPTION_ROUND_TRIP_FAILED"),
+        (srt("a\u2028b"), "srt", "CAPTION_ROUND_TRIP_FAILED"),
+        (srt("a\u2029b"), "srt", "CAPTION_ROUND_TRIP_FAILED"),
+        (srt(end="00:00:00,000"), "srt", "greater_than_equal"),
+        (srt(start="00:00:01,000", end="00:00:01,000"), "srt", "CAPTION_REVERSED_TIME"),
+        (srt(end="00:00:05,000"), "srt", "CAPTION_OUT_OF_MEDIA_RANGE"),
+        (srt() + "\n2\n00:00:00,500 --> 00:00:01,500\noverlap\n", "srt", "CAPTION_OVERLAP_REQUIRES_REASON"),
+        (srt(start="00:00:01,000", end="00:00:02,000") + "\n2\n00:00:00,000 --> 00:00:00,500\nbackward\n", "srt", "CAPTION_ORDER_INVALID"),
+        ("WEBVTT metadata\n\n" + srt().replace(",", "."), "vtt", "STUDIO_SUBTITLE_VTT_PLAIN_HEADER_REQUIRED"),
+        ("WEBVTT\n\nNOTE metadata\nignored", "vtt", "STUDIO_SUBTITLE_NUMBERED_CUES_REQUIRED"),
+        ("WEBVTT\n\n1\n00:00:00.000 --> 00:00:01.000 align:start\nx", "vtt", "STUDIO_SUBTITLE_PLAIN_TIMING_REQUIRED"),
+        (srt().replace("00:00:01,000", "00:60:01,000"), "srt", "STUDIO_SUBTITLE_PLAIN_TIMING_REQUIRED"),
+        (srt().replace("\n", "\r"), "srt", "STUDIO_SUBTITLE_LINE_ENDINGS_INVALID"),
+        (b"\xff", "srt", "CAPTION_IMPORT_UTF8_REQUIRED"),
+        ("", "srt", "string_too_short"),
+    ])
+    def test_preview_rejects_unsupported_or_invalid_without_mutation(mounted, content, format, error):
+        e = mounted; row, _ = track(e)
+        before = copy.deepcopy(e.store.read(e.nid, e.scope))
+        response = e.client.post(endpoint(e, row), json=body(content, format))
+>       assert response.status_code == 422 and error in response.text
+E       assert (200 == 422)
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/test_caption_import_preview_additive.py:103: AssertionError
+_ test_preview_rejects_unsupported_or_invalid_without_mutation[file-/api/v1-1\n00:00:00,000 --> 00:00:01,000\ntrailing \n-srt-CAPTION_ROUND_TRIP_FAILED] _
+
+mounted = namespace(client=<starlette.testclient.TestClient object at 0x7f8c5b09e600>, prefix='/api/v1', base='/api/v1/novels/r3...import/app/api.py'>, main=<module 'app.main' from '/workspace/scratch/20a0022d2b33/studio-caption-import/app/main.py'>)
+content = '1\n00:00:00,000 --> 00:00:01,000\ntrailing \n', format = 'srt'
+error = 'CAPTION_ROUND_TRIP_FAILED'
+
+    @pytest.mark.parametrize("content,format,error", [
+        (srt("<b>markup</b>"), "srt", "CAPTION_PLAIN_NONEMPTY_TEXT_REQUIRED"),
+        (srt("x\x00"), "srt", "CAPTION_PLAIN_NONEMPTY_TEXT_REQUIRED"),
+        (srt("trailing "), "srt", "CAPTION_ROUND_TRIP_FAILED"),
+        (srt("a\u0085b"), "srt", "CAPTION_ROUND_TRIP_FAILED"),
+        (srt("a\u2028b"), "srt", "CAPTION_ROUND_TRIP_FAILED"),
+        (srt("a\u2029b"), "srt", "CAPTION_ROUND_TRIP_FAILED"),
+        (srt(end="00:00:00,000"), "srt", "greater_than_equal"),
+        (srt(start="00:00:01,000", end="00:00:01,000"), "srt", "CAPTION_REVERSED_TIME"),
+        (srt(end="00:00:05,000"), "srt", "CAPTION_OUT_OF_MEDIA_RANGE"),
+        (srt() + "\n2\n00:00:00,500 --> 00:00:01,500\noverlap\n", "srt", "CAPTION_OVERLAP_REQUIRES_REASON"),
+        (srt(start="00:00:01,000", end="00:00:02,000") + "\n2\n00:00:00,000 --> 00:00:00,500\nbackward\n", "srt", "CAPTION_ORDER_INVALID"),
+        ("WEBVTT metadata\n\n" + srt().replace(",", "."), "vtt", "STUDIO_SUBTITLE_VTT_PLAIN_HEADER_REQUIRED"),
+        ("WEBVTT\n\nNOTE metadata\nignored", "vtt", "STUDIO_SUBTITLE_NUMBERED_CUES_REQUIRED"),
+        ("WEBVTT\n\n1\n00:00:00.000 --> 00:00:01.000 align:start\nx", "vtt", "STUDIO_SUBTITLE_PLAIN_TIMING_REQUIRED"),
+        (srt().replace("00:00:01,000", "00:60:01,000"), "srt", "STUDIO_SUBTITLE_PLAIN_TIMING_REQUIRED"),
+        (srt().replace("\n", "\r"), "srt", "STUDIO_SUBTITLE_LINE_ENDINGS_INVALID"),
+        (b"\xff", "srt", "CAPTION_IMPORT_UTF8_REQUIRED"),
+        ("", "srt", "string_too_short"),
+    ])
+    def test_preview_rejects_unsupported_or_invalid_without_mutation(mounted, content, format, error):
+        e = mounted; row, _ = track(e)
+        before = copy.deepcopy(e.store.read(e.nid, e.scope))
+        response = e.client.post(endpoint(e, row), json=body(content, format))
+>       assert response.status_code == 422 and error in response.text
+E       assert (200 == 422)
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/test_caption_import_preview_additive.py:103: AssertionError
+_______ test_mounted_scope_permission_revocation_and_disabled[file-/api] _______
+
+mounted = namespace(client=<starlette.testclient.TestClient object at 0x7f8c5abdac00>, prefix='/api', base='/api/novels/r3-mount...rs={'X-Session-Token': 'viewer-664ca3da8fd442e1b2f48cbb3d7a3927', 'X-Branch-ID': 'b-664ca3da8fd442e1b2f48cbb3d7a3927'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8c5acadaf0>
+
+    def test_mounted_scope_permission_revocation_and_disabled(mounted, monkeypatch):
+        e = scoped(mounted, monkeypatch)
+>       row, _ = track(e, headers=e.headers)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_caption_import_preview_additive.py:170: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_caption_import_preview_additive.py:28: in track
+    asset = checked(e.client.post(e.prefix + f"/novels/{e.nid}/assets", headers=headers, json={
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [403 Forbidden]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"PROJECT_SCOPE_FORBIDDEN"},"code":"PROJECT_SCOPE_FORBIDDEN","message":"PROJECT_SCOPE_FORBIDDEN","details":{"code":"PROJECT_SCOPE_FORBIDDEN"},"request_id":"7ffddd67-f686-4462-8195-237c9db1085c"}
+E       assert 403 == 200
+E        +  where 403 = <Response [403 Forbidden]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_____ test_mounted_scope_permission_revocation_and_disabled[file-/api/v1] ______
+
+mounted = namespace(client=<starlette.testclient.TestClient object at 0x7f8c5abd8170>, prefix='/api/v1', base='/api/v1/novels/r3...rs={'X-Session-Token': 'viewer-bfe31b167e3043ebba02397000030773', 'X-Branch-ID': 'b-bfe31b167e3043ebba02397000030773'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8c5ab08a70>
+
+    def test_mounted_scope_permission_revocation_and_disabled(mounted, monkeypatch):
+        e = scoped(mounted, monkeypatch)
+>       row, _ = track(e, headers=e.headers)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_caption_import_preview_additive.py:170: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_caption_import_preview_additive.py:28: in track
+    asset = checked(e.client.post(e.prefix + f"/novels/{e.nid}/assets", headers=headers, json={
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [403 Forbidden]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"PROJECT_SCOPE_FORBIDDEN"},"code":"PROJECT_SCOPE_FORBIDDEN","message":"PROJECT_SCOPE_FORBIDDEN","details":{"code":"PROJECT_SCOPE_FORBIDDEN"},"request_id":"7a3c023a-ebdd-4160-91af-1c286a87e390"}
+E       assert 403 == 200
+E        +  where 403 = <Response [403 Forbidden]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_caption_import_preview_additive.py::test_preview_rejects_unsupported_or_invalid_without_mutation[file-/api-1\n00:00:00,000 --> 00:00:01,000\ntrailing \n-srt-CAPTION_ROUND_TRIP_FAILED]
+FAILED tests/test_caption_import_preview_additive.py::test_preview_rejects_unsupported_or_invalid_without_mutation[file-/api/v1-1\n00:00:00,000 --> 00:00:01,000\ntrailing \n-srt-CAPTION_ROUND_TRIP_FAILED]
+FAILED tests/test_caption_import_preview_additive.py::test_mounted_scope_permission_revocation_and_disabled[file-/api]
+FAILED tests/test_caption_import_preview_additive.py::test_mounted_scope_permission_revocation_and_disabled[file-/api/v1]
+4 failed, 99 passed, 90 deselected, 1 warning in 19.43s

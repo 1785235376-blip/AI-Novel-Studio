@@ -6,7 +6,10 @@ contracts; no real-model, phoneme, lip-sync or rendering quality claim.
 """
 from __future__ import annotations
 import array
+import base64
+import binascii
 import copy
+import hashlib
 from fractions import Fraction
 import io
 import re
@@ -19,6 +22,7 @@ from .common import DomainService, StaleSourceError, check_version
 from .flags import require_flag
 from .media import StrictModel, digest
 from ..media_files import inspect_media
+from ..services.studio_timeline_subtitles import MAX_SIDECAR_BYTES, parse_subtitle_cues
 from .subtitle_processing import SubtitleProcessingMixin
 
 SUBTITLE_FLAG = "subtitle_timeline_v2"
@@ -58,6 +62,12 @@ class CaptionCreateIn(StrictModel):
 class CaptionUpdateIn(StrictModel):
     expected_version: int = Field(ge=1)
     cues: list[Cue] = Field(max_length=2000)
+
+
+class CaptionImportPreviewIn(StrictModel):
+    expected_version: int = Field(ge=1)
+    format: Literal["srt", "vtt"]
+    content_base64: str = Field(min_length=1, max_length=256000)
 
 
 class CaptionSplitIn(StrictModel):
@@ -264,6 +274,53 @@ class SubtitleTimelineService(SubtitleProcessingMixin, DomainService):
             row["alignment_model"] = None
             row["processing_task_id"] = None
         return self.mutate(nid, scope, actor, self.COLLECTION, rid, data.expected_version, change)
+
+    def import_preview(self, nid, scope, actor, rid, body, reauthorize=None):
+        """Validate a replacement without writing a record, history, or task.
+
+        The digest binds exact uploaded bytes, before BOM/CRLF normalization.
+        Speaker labels stay plain text. Overlap cannot gain an invented reason.
+        """
+        data = CaptionImportPreviewIn.model_validate(body)
+        row = self._current(nid, scope, actor, rid)
+        check_version(row, data.expected_version)
+        try:
+            content = base64.b64decode(data.content_base64, validate=True)
+        except (ValueError, binascii.Error):
+            raise ValueError("CAPTION_IMPORT_BASE64_INVALID") from None
+        if len(content) > MAX_SIDECAR_BYTES:
+            raise ValueError("STUDIO_SUBTITLE_BYTE_LIMIT")
+        try:
+            text = content.decode("utf-8")
+        except UnicodeDecodeError:
+            raise ValueError("CAPTION_IMPORT_UTF8_REQUIRED") from None
+        sha256 = hashlib.sha256(content).hexdigest()
+        parsed = parse_subtitle_cues(text, data.format.upper())
+        base = row["timebase"]
+        cues = []
+        for index, cue in enumerate(parsed, 1):
+            ticks = [Fraction(cue[key] * base["numerator"], 1000 * base["denominator"])
+                     for key in ("start_ms", "end_ms")]
+            if any(tick.denominator != 1 for tick in ticks):
+                raise ValueError("CAPTION_IMPORT_TIME_UNREPRESENTABLE")
+            validated = Cue(id=f"import-{sha256[:24]}-{index}", start_tick=int(ticks[0]),
+                            end_tick=int(ticks[1]), text=cue["text"])
+            if validated.text != cue["text"]:
+                raise ValueError("CAPTION_ROUND_TRIP_FAILED")
+            cues.append(validated.model_dump())
+        candidate = {**row, "cues": cues, "speakers": {}}
+        warnings = self._validate(candidate)
+        # Original export read-back must preserve the imported text verbatim.
+        # No attribution is inferred from text or inherited from replaced cues.
+        render_captions(candidate, data.format)
+        if reauthorize:
+            reauthorize()
+        current = self._current(nid, scope, actor, rid)
+        check_version(current, data.expected_version)
+        return {"record_id": rid, "expected_version": row["version"], "asset_id": row["asset_id"],
+                "asset_snapshot": copy.deepcopy(row["asset_snapshot"]), "timebase": copy.deepcopy(base),
+                "content_sha256": sha256, "format": data.format, "byte_length": len(content),
+                "cues": cues, "warnings": warnings}
 
     def split(self, nid, scope, actor, rid, cid, body):
         data = CaptionSplitIn.model_validate(body); row = self._current(nid, scope, actor, rid)

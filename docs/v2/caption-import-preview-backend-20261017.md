@@ -1,0 +1,28 @@
+# B04 bounded caption import preview
+
+The existing measured-media caption owner now previews SRT/VTT replacements. No new store, task, approval, provider or model exists. Preview never persists: explicit local replacement and the original versioned save remain separate actions. Original save writes a new DRAFT and retains history.
+
+POST `/api[/v1]/novels/{nid}/experimental/subtitle-timeline/records/{rid}/import-preview` accepts `expected_version`, lowercase `format` (`srt` or `vtt`) and `content_base64`. Existing write authority, caption ownership, feature gates, scope and current media/speaker/source checks apply before parsing and again before returning. The response contains `record_id`, `expected_version`, `asset_id`, `asset_snapshot`, `timebase`, `content_sha256`, `format`, `byte_length`, `cues` and original heuristic `warnings`. SHA256 covers exact decoded bytes, including any UTF8 BOM and CRLF. No filename, path or URL is accepted.
+
+The shared pure lexical helper preserves original Timeline import semantics: 192,000 UTF8 bytes, 1–500 cues, consecutive numbered SRT cues, plain WEBVTT header, optional consecutive numeric VTT identifiers or no identifier, exact HH:MM:SS millisecond timestamps. UTF8/CJK/emoji/BOM/CRLF are supported. Bare CR, markup, styling, cue settings, arbitrary VTT identifiers and metadata blocks are rejected. Cue text is validated by the existing Caption Cue model; lexical parsing alone deliberately does not replace each owner's semantic validation.
+
+Milliseconds convert exactly using `milliseconds * numerator / (1000 * denominator)`. Every result must be an integer tick; fractional ticks fail with `CAPTION_IMPORT_TIME_UNREPRESENTABLE` rather than rounding. The 1000/1 default represents every supported timestamp. Other rational rates are supported only for representable timestamps. Original ordering, measured-duration, text and overlap validation apply. Overlap is rejected because the file subset supplies no author reason. Speaker labels remain literal text; no segment IDs are inferred.
+
+Errors use existing API envelopes: 422 `EXPERIMENTAL_INVALID` with parser/owner message (schema violations use FastAPI's existing 422 detail list), 409 `EXPERIMENTAL_SOURCE_STALE` or privacy-reduced `EXPERIMENTAL_VERSION_CONFLICT`, and existing authorization/ownership 403/404 behavior. Input base64 is capped at 256,000 characters before decoding. Byte/schema/cue/text limits remain independent.
+
+Tests are additive only. Synthetic PCM16 upload and in-process TestClient at both mounted prefixes exercise File persistence, preview non-mutation, original save, fresh service/store reopening and actual export bytes. They do not establish browser/file-picker, socket HTTP, PostgreSQL, FFmpeg or model acceptance. Test execution evidence is recorded separately after the parent grants a stable-source verification window.
+
+Preview additionally checks the original caption export/read-back contract. Text forms that it cannot preserve verbatim (such as final trailing whitespace or Unicode line separators) fail with `CAPTION_ROUND_TRIP_FAILED`; the importer does not trim or rewrite them. This checks eligibility only and stores no output file.
+
+## Verification, 2026-10-17
+
+Final owned-profile run `caption-import-backend-r3`: **109 passed, 96 PostgreSQL cases deselected**, with one existing Starlette/httpx deprecation warning. Both `/api` and `/api/v1` File-mounted paths ran in-process. The original runner captured full source hashes before and after; `sources_changed_during_check=false` for all three runs. No original tests, dependency manifests, guards, lifecycle/auth implementations or runner scripts were changed.
+
+The final four-suite command covers the new additive preview suite and unchanged `test_v2_caption_transfer_preflight.py`, `test_r5_voice_subtitles.py`, `test_r5_voice_subtitles_mounted.py`. A clean reviewed reconciliation interpreter ran via the original `scripts/run_v2_checks.py`, with owned `.runtime/v2-checks/caption-import-backend-r3` state and basetemp. Python startup/path/user-site injection, pytest injection, database URLs and packaged bootstrap settings were sanitized; dotenv/plugin autoload were disabled. Before execution an independent stdlib-only probe established normal-startup and actual-child current-worktree import origins without importing product modules or pytest.
+
+Retained failures are part of the evidence:
+- r1: 99 passed, 4 failed, 90 deselected. The original Cue model strips surrounding whitespace, so constructing a validated cue before checking export eligibility silently lost imported text. Preview now rejects any parsed-text/validated-text difference. The other failures were new-test branch asset setup using a project-only legacy upload route; scoped authorization tests now seed a real branch File asset through the original asset service, then use actual caption create/preview APIs. Local upload/save/export acceptance still uses the original asset API.
+- r2: 103 passed, 2 failed, 92 deselected. Only the new disabled-feature test expected 404 where original collaboration middleware returns 501 `COLLABORATION_ROUTE_NOT_ENABLED` first. The test now checks that exact existing boundary, and separate local disabled-feature/V1-override tests check the original 404 behavior. No guard implementation changed.
+- r3: 109 passed, 96 deselected, no failures. Cases added between runs explain the changed counts.
+
+Raw logs and full immutable source receipts remain at `docs/delivery/v2-development/caption-import-backend-r{1,2,3}.{log,json}`. The evidence index is `docs/delivery/v2-development/caption-import-backend-20261017/README.md`. No browser/file-picker, live socket HTTP, PostgreSQL, model, FFmpeg, release or push claim is made.

@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "root": "/workspace/scratch/20a0022d2b33/studio-caption-import",
+  "head": "46fff4797f6110e130256566b397cb08586e56c1",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/experimental/SubtitleTimelinePanel.import.test.tsx",
+    "--maxWorkers=1",
+    "--minWorkers=1",
+    "--no-file-parallelism",
+    "--no-cache"
+  ],
+  "cwd": "/workspace/scratch/20a0022d2b33/studio-caption-import/frontend",
+  "started": "2026-10-17T00:34:59.870Z",
+  "finished": "2026-10-17T00:35:02.914Z",
+  "exit_code": 0,
+  "source_count": 1275,
+  "source_stable": true,
+  "before_sha256": "e5684f47e60cce57578cf9ef1c6c4179edf64f94d5a0b420ab029c7e676ac5d0",
+  "after_sha256": "e5684f47e60cce57578cf9ef1c6c4179edf64f94d5a0b420ab029c7e676ac5d0",
+  "log_sha256": "fe451bd6a295297f9695ac09483d986b22bc754869ef1723965d788e7e46b1bd",
+  "log": "/tmp/dot-caption-independent-ui-20261017.log",
+  "timeouts": "unchanged default",
+  "worker_count": 1
+}

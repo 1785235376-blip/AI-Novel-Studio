@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-caption-import/frontend
+
+ ✓ src/experimental/SubtitleTimelinePanel.import.test.tsx (38 tests) 2002ms
+ ✓ src/experimental/VoiceSubtitlePanels.test.tsx (7 tests) 454ms
+ ✓ src/experimental/VoiceSubtitlePanels.additive.test.tsx (2 tests) 272ms
+ ✓ src/experimental/captionTransferReview.test.ts (24 tests) 15ms
+
+ Test Files  4 passed (4)
+      Tests  71 passed (71)
+   Start at  09:32:37
+   Duration  4.87s (transform 214ms, setup 33ms, collect 499ms, tests 2.74s, environment 906ms, prepare 199ms)
+

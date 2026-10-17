@@ -1,0 +1,28 @@
+{
+  "status": "PASS_STATIC_REVIEW_AWAITING_FOCUSED_EXECUTION",
+  "root": "/workspace/scratch/20a0022d2b33/studio-caption-import",
+  "head": "46fff4797f6110e130256566b397cb08586e56c1",
+  "source_sha256": {
+    "frontend/src/experimental/SubtitleTimelinePanel.tsx": "84914b2187f95939e621b4bbc02c108d54174c7aac4d1a0f142fff1d13b602d5",
+    "frontend/src/experimental/voiceSubtitleClient.ts": "afa7ee0c93bc9b8f6268d5183644a66c9f64e7b1ecfbcba7a6dc398fb6d49880",
+    "frontend/src/experimental/SubtitleTimelinePanel.import.test.tsx": "c04cf64b466f49f3496737772868a1ce86f137d826a9df74d76ad6dc7cc0552e"
+  },
+  "resolved_findings": [
+    "Split drafts now participate in synchronous revision retirement and explicit replacement disclosure.",
+    "Retired read busy state is owner-scoped; obsolete promises cannot block or clear fresh work.",
+    "Refresh and original save/split/merge/download starts synchronously retire old import callbacks."
+  ],
+  "checks": [
+    "Exact original {version,digest} asset_snapshot plus record/version/asset/timebase/file bytes SHA/length/format response binding.",
+    "Bounded UTF8 file read preserves BOM/CRLF bytes; no transformation or time rounding in frontend.",
+    "Known Cue field copy, bounded unique IDs and text, safe integer times, no segment/overlap attribution.",
+    "Explicit replacement fills only local unsaved cues; existing saveCues retains CAS ownership.",
+    "Late callbacks and async reads check current owner/selection/draft/admission and layout unmount lifetime.",
+    "Original protected tests untouched; new regression file only."
+  ],
+  "limitations": [
+    "UNKNOWN save assertion proves no automatic retry; original owner has no new durable unknown-result lock.",
+    "No browser/file-picker, PostgreSQL, media processing, or model-quality acceptance."
+  ],
+  "product_test_execution": false
+}

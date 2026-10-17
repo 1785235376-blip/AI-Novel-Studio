@@ -1,0 +1,29 @@
+{
+  "status": "PASS_STATIC_BACKEND_REVIEW",
+  "root": "/workspace/scratch/20a0022d2b33/studio-caption-import",
+  "head": "46fff4797f6110e130256566b397cb08586e56c1",
+  "sources": {
+    "app/experimental/subtitle_timeline.py": "cf6e4fb216ddb044b71bb1d5880ca03cc7e219e18fac5ae4c9aee0f47ba244ce",
+    "app/experimental/subtitle_timeline_api.py": "384d1884703cca100eda0126ab00515c2d758ec0334d8e507cf0192ae6bcc932",
+    "app/services/studio_timeline_subtitles.py": "244ff0be5447784977a446a4e237347a0a84340bd7f5ab3aa7af6cbd8c816055",
+    "tests/test_caption_import_preview_additive.py": "62acf9b757220acd78082ffcac63b4fccddd7dac268a8d8700a1fba2180a2a84"
+  },
+  "exact_lexical_extraction": true,
+  "original_import_normalization_retained": true,
+  "product_test_execution": false,
+  "findings": [
+    "Zero-time schema versus reversed-time test expectation corrected by owner before execution.",
+    "Owner execution identified inherited StrictModel whitespace normalization missed by initial static review; corrected preview-only by comparing raw parsed text to constructed Cue.text. Leading/trailing whitespace tests retained.",
+    "Original asset API does not support the scoped fixture upload; test now seeds original scoped AssetLibraryService and exercises the actual caption API with trusted sessions.",
+    "After r2, new tests were corrected to the existing collaboration-disabled 501 code; additional local feature-off/V1 override 404 assertions added. Runtime guards unchanged."
+  ],
+  "checks": [
+    "Original domain.write authority and private route retained, with pre-response guard.",
+    "Original owned _current, source snapshots, and expected_version checked before and after parse.",
+    "Exact bytes SHA256 and bounded base64/UTF8/cue parser; Fraction conversion has no rounding.",
+    "No persistence, task, model, provider, or file output calls in preview.",
+    "Original Cue validation and export/readback enforce plain text, ordering, duration, overlap, and roundtrip eligibility.",
+    "Preview rejects any inherited Cue text normalization before returning a draft."
+  ],
+  "origin_proof": ".runtime/caption-import-origin/startup-probe.json"
+}

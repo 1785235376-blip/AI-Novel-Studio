@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "head": "46fff4797f6110e130256566b397cb08586e56c1",
+  "canonical_sha256": "1c70badc1373260b7138dc6cda39f46eda390b0a8a102a8a8ea299e7b586bcac",
+  "protected_count": 1271,
+  "protected_mismatches": [],
+  "tracked_modified_paths": [
+    "app/experimental/subtitle_timeline.py",
+    "app/experimental/subtitle_timeline_api.py",
+    "app/services/studio_timeline_subtitles.py",
+    "frontend/src/experimental/SubtitleTimelinePanel.tsx",
+    "frontend/src/experimental/voiceSubtitleClient.ts"
+  ]
+}

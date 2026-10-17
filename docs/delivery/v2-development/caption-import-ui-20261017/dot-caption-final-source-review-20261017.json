@@ -1,0 +1,66 @@
+{
+  "status": "PASS_SOURCE_SLICE_REVIEW",
+  "head": "46fff4797f6110e130256566b397cb08586e56c1",
+  "source_sha256": {
+    "app/experimental/subtitle_timeline.py": "cf6e4fb216ddb044b71bb1d5880ca03cc7e219e18fac5ae4c9aee0f47ba244ce",
+    "app/experimental/subtitle_timeline_api.py": "384d1884703cca100eda0126ab00515c2d758ec0334d8e507cf0192ae6bcc932",
+    "app/services/studio_timeline_subtitles.py": "244ff0be5447784977a446a4e237347a0a84340bd7f5ab3aa7af6cbd8c816055",
+    "frontend/src/experimental/SubtitleTimelinePanel.tsx": "84914b2187f95939e621b4bbc02c108d54174c7aac4d1a0f142fff1d13b602d5",
+    "frontend/src/experimental/voiceSubtitleClient.ts": "afa7ee0c93bc9b8f6268d5183644a66c9f64e7b1ecfbcba7a6dc398fb6d49880",
+    "frontend/src/experimental/SubtitleTimelinePanel.import.test.tsx": "c04cf64b466f49f3496737772868a1ce86f137d826a9df74d76ad6dc7cc0552e",
+    "tests/test_caption_import_preview_additive.py": "62acf9b757220acd78082ffcac63b4fccddd7dac268a8d8700a1fba2180a2a84"
+  },
+  "backend": {
+    "receipt": "docs/delivery/v2-development/caption-import-independent-backend-20261017.json",
+    "receipt_sha256": "bd05eb48f8bc8bf92ab2f98ee22a6a89eac67ab25c76d81710db645add46459b",
+    "passes": 63,
+    "postgres_deselected": 62,
+    "source_count": 2522,
+    "source_stable": true,
+    "source_maps_equal": true,
+    "current_mismatches": [],
+    "log_hash_matches": true
+  },
+  "frontend": {
+    "status": "PASS",
+    "root": "/workspace/scratch/20a0022d2b33/studio-caption-import",
+    "head": "46fff4797f6110e130256566b397cb08586e56c1",
+    "command": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "src/experimental/SubtitleTimelinePanel.import.test.tsx",
+      "--maxWorkers=1",
+      "--minWorkers=1",
+      "--no-file-parallelism",
+      "--no-cache"
+    ],
+    "cwd": "/workspace/scratch/20a0022d2b33/studio-caption-import/frontend",
+    "started": "2026-10-17T00:34:59.870Z",
+    "finished": "2026-10-17T00:35:02.914Z",
+    "exit_code": 0,
+    "source_count": 1275,
+    "source_stable": true,
+    "before_sha256": "e5684f47e60cce57578cf9ef1c6c4179edf64f94d5a0b420ab029c7e676ac5d0",
+    "after_sha256": "e5684f47e60cce57578cf9ef1c6c4179edf64f94d5a0b420ab029c7e676ac5d0",
+    "log_sha256": "fe451bd6a295297f9695ac09483d986b22bc754869ef1723965d788e7e46b1bd",
+    "log": "/tmp/dot-caption-independent-ui-20261017.log",
+    "timeouts": "unchanged default",
+    "worker_count": 1
+  },
+  "protected": {
+    "count": 1271,
+    "mismatches": [],
+    "canonical_sha256": "1c70badc1373260b7138dc6cda39f46eda390b0a8a102a8a8ea299e7b586bcac"
+  },
+  "source_whitespace": [],
+  "limitations": [
+    "File and in-process mounted API only; no PostgreSQL/browser/native media/model acceptance.",
+    "No automatic retry is proven; original save owner still has no durable UNKNOWN reconciliation state."
+  ],
+  "resolved": [
+    "Preview-only raw-to-Cue equality prevents inherited whitespace rewriting.",
+    "Synchronous split/edit/operation/refresh generations retire stale import capabilities.",
+    "Owner-scoped pending read admission avoids obsolete-read liveness blockage."
+  ]
+}

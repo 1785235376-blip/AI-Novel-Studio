@@ -6,6 +6,20 @@ export type AudioPlan = Row & {title:string;segments?:AudioSegment[];needs_revie
 export type VoiceCatalog = {plans:AudioPlan[];mixes?:Row[];mixer?:string;profiles:Row[];characters:{id:string;name:string}[];tts:Record<string,unknown>};
 export type CaptionCue = {id:string;start_tick:number;end_tick:number;text:string;segment_id:string|null;overlap_reason:string};
 export type CaptionTrack = Row & {title?:string;asset_id:string;timebase:{numerator:number;denominator:number};cues:CaptionCue[];media:{duration_seconds:{numerator:number;denominator:number};waveform:{status:string;peaks?:number[]}};warnings:{cue_id:string;code:string}[];speakers:Record<string,{name:string}>};
+export type CaptionImportPreview = {record_id:string;expected_version:number;asset_id:string;asset_snapshot:{version:number;digest:string};timebase:CaptionTrack['timebase'];content_sha256:string;format:'srt'|'vtt';byte_length:number;cues:CaptionCue[];warnings:CaptionTrack['warnings']};
+export class CaptionImportError extends Error {}
+export const CAPTION_IMPORT_MAX_BYTES = 192000;
+export async function readCaptionImport(file:File) {
+  const format=file.name.toLowerCase().endsWith('.srt')?'srt':file.name.toLowerCase().endsWith('.vtt')?'vtt':null;
+  if(!format)throw new CaptionImportError('请选择 .srt 或 .vtt 文件。');
+  if(file.size===0||file.size>CAPTION_IMPORT_MAX_BYTES)throw new CaptionImportError('字幕文件须为 1–192000 字节。');
+  const buffer=await file.arrayBuffer();const bytes=new Uint8Array(buffer);
+  if(bytes.length!==file.size||bytes.length>CAPTION_IMPORT_MAX_BYTES)throw new CaptionImportError('字幕文件读取不完整。');
+  try { new TextDecoder('utf-8',{fatal:true}).decode(bytes); } catch { throw new CaptionImportError('字幕文件必须是有效 UTF-8。'); }
+  let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);
+  const digest=await crypto.subtle.digest('SHA-256',buffer);
+  return {format,content_base64:btoa(binary),byte_length:bytes.length,content_sha256:Array.from(new Uint8Array(digest),byte=>byte.toString(16).padStart(2,'0')).join('')} as const;
+}
 export function voiceSubtitleClient(client:ExperimentalClient) {
   return {
     voice: (signal?:AbortSignal)=>client.get<VoiceCatalog>('/voice-direction/catalog',signal),
@@ -22,6 +36,7 @@ export function voiceSubtitleClient(client:ExperimentalClient) {
     captionCatalog:(signal?:AbortSignal)=>client.get<{assets:Row[];plans:AudioPlan[]}>('/subtitle-timeline/catalog',signal),
     tracks:(signal?:AbortSignal)=>client.get<{items:CaptionTrack[]}>('/subtitle-timeline/records',signal),
     createTrack:(body:unknown)=>client.post<CaptionTrack>('/subtitle-timeline/records',body),
+    importPreview:(row:CaptionTrack,format:'srt'|'vtt',content_base64:string)=>client.post<CaptionImportPreview>(`/subtitle-timeline/records/${segment(row.id)}/import-preview`,{expected_version:row.version,format,content_base64}),
     saveCues:(row:CaptionTrack,cues:CaptionCue[])=>client.put<CaptionTrack>(`/subtitle-timeline/records/${segment(row.id)}`,{expected_version:row.version,cues}),
     split:(row:CaptionTrack,cue:CaptionCue,tick:number,left:string,right:string)=>client.post<CaptionTrack>(`/subtitle-timeline/records/${segment(row.id)}/cues/${segment(cue.id)}/split`,{expected_version:row.version,split_tick:tick,left_text:left,right_text:right}),
     merge:(row:CaptionTrack,cue:CaptionCue,next:CaptionCue)=>client.post<CaptionTrack>(`/subtitle-timeline/records/${segment(row.id)}/cues/${segment(cue.id)}/merge`,{expected_version:row.version,next_cue_id:next.id}),

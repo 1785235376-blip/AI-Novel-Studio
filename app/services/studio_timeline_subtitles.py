@@ -11,8 +11,8 @@ import re
 MAX_SIDECAR_BYTES = 192000
 
 
-def import_subtitles(timeline, content, format):
-    from .studio_timeline_render import normalize_studio_timeline
+def parse_subtitle_cues(content, format):
+    """Pure bounded lexical parser; each owner still validates its cue semantics."""
     if format not in {"SRT", "VTT"} or not isinstance(content, str):
         raise ValueError("STUDIO_SUBTITLE_FORMAT_INVALID")
     try:
@@ -51,6 +51,12 @@ def import_subtitles(timeline, content, format):
             h, m, s, ms = values[offset:offset + 4]
             return ((h * 60 + m) * 60 + s) * 1000 + ms
         cues.append({"start_ms": milliseconds(0), "end_ms": milliseconds(4), "text": "\n".join(lines[timing + 1:])})
+    return cues
+
+
+def import_subtitles(timeline, content, format):
+    from .studio_timeline_render import normalize_studio_timeline
+    cues = parse_subtitle_cues(content, format)
     result = copy.deepcopy(timeline)
     result["captions"] = cues
     return normalize_studio_timeline(result)

@@ -1,0 +1,26 @@
+{
+  "receipt": "docs/delivery/v2-development/caption-import-backend-r3.json",
+  "receipt_sha256": "f8be09734ab09ba70d8db26bd1dbecf85864225ac987ec922fbaed633f9dfbe7",
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-m",
+    "not postgres_backend_only",
+    "--basetemp",
+    ".runtime/v2-checks/caption-import-backend-r3/pytest-tmp",
+    "tests/test_caption_import_preview_additive.py",
+    "tests/test_v2_caption_transfer_preflight.py",
+    "tests/test_r5_voice_subtitles.py",
+    "tests/test_r5_voice_subtitles_mounted.py"
+  ],
+  "status": "PASS",
+  "exit_code": 0,
+  "source_count": 2522,
+  "source_maps_equal": true,
+  "source_stable": true,
+  "current_hash_mismatches": [],
+  "log_hash_matches": true,
+  "summary": "109 passed, 96 deselected, 1 warning in 18.48s"
+}
