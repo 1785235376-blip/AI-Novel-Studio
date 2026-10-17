@@ -1,0 +1,4 @@
+{
+  "note": "First parent extra-field audit incorrectly treated added_nodes as frozen despite 188 legitimate new tests and failed before writing approval. Corrected independent audit explicitly verifies both product_nodes and added_nodes preserve all predecessor order and add the identical 188 nodes only in four approved test files. Original packet checker had passed; candidate bytes unchanged.",
+  "raw_original_tool_output_archived": false
+}

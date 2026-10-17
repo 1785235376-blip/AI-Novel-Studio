@@ -1,0 +1,27 @@
+{
+  "status": "INVENTORY_ONLY",
+  "head": "33fb2af9ad97d0c4c84db99afb7beb24cbd9ed01",
+  "rows": 17112,
+  "raw_sha256": "cc01bf64fcfd0b108f2734c03c33dd8957261d773b64f7c827e1cf4661a474e9",
+  "report_sha256": "247a82a5f69f0bb504b5d05018a6af4bd6871974b7036cfc32c8e9ae3ccc91fd",
+  "all_old_rows_order_and_classifications_exact": 16924,
+  "new_rows": 188,
+  "new_backend_counts": {
+    "file": 63,
+    "postgres": 63,
+    "both": 62
+  },
+  "new_rows_by_file": {
+    "tests/test_terminology_portability.py": 45,
+    "tests/test_v2_audio_peak_api.py": 48,
+    "tests/test_v2_audio_peak_contract.py": 47,
+    "tests/test_v2_audio_peak_cpu.py": 48
+  },
+  "protected_entries_exact": 1327,
+  "source_count": 2662,
+  "source_stable": true,
+  "companion_files": 11,
+  "canonical_unchanged": true,
+  "canonical_sha256": "992aa33f830f8c6a4dc15438942d21c5bf834af69c2969562efd55a850411e0b",
+  "tests_executed": false
+}

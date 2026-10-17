@@ -1,0 +1,14 @@
+{
+  "parent_approval_received": true,
+  "byte_exact": true,
+  "source_commit": "33fb2af9ad97d0c4c84db99afb7beb24cbd9ed01",
+  "candidate_path": ".runtime/parallel-integration-inventory/candidate-manifest-v2.json.gz",
+  "canonical_path": ".github/ci/coverage_manifest_v2.json.gz",
+  "candidate_sha256": "851730e6ca406bd8c21abc2d44da9f3bb424a6112fbf4c1923f61969fd5d8da3",
+  "canonical_sha256": "851730e6ca406bd8c21abc2d44da9f3bb424a6112fbf4c1923f61969fd5d8da3",
+  "predecessor_sha256": "992aa33f830f8c6a4dc15438942d21c5bf834af69c2969562efd55a850411e0b",
+  "bytes": 634496,
+  "independent_approval_sha256": "1766e50602e6d9d68778aae33d79af8274a0055819251b311f8c8cea6c48d5d0",
+  "method": "Exact byte copy; no recompression",
+  "tests_executed": false
+}

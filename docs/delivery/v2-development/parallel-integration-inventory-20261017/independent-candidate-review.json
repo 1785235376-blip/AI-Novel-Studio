@@ -1,0 +1,10 @@
+{
+  "status": "APPROVE_EXACT_CANDIDATE_PROMOTION",
+  "source_commit": "33fb2af9ad97d0c4c84db99afb7beb24cbd9ed01",
+  "reviewer": "parent independent of inventory writer",
+  "candidate_sha256": "851730e6ca406bd8c21abc2d44da9f3bb424a6112fbf4c1923f61969fd5d8da3",
+  "byte_size": 634496,
+  "checker_result": "PASS_INVENTORY_ONLY",
+  "parent_added_node_audit": 188,
+  "tests_executed": false
+}

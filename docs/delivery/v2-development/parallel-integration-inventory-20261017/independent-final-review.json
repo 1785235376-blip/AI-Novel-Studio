@@ -1,0 +1,13 @@
+{
+  "status": "PASS_THREE_GATE_INVENTORY_ONLY",
+  "source_commit": "33fb2af9ad97d0c4c84db99afb7beb24cbd9ed01",
+  "reviewer": "parent independent of inventory writer",
+  "canonical_sha256": "851730e6ca406bd8c21abc2d44da9f3bb424a6112fbf4c1923f61969fd5d8da3",
+  "all_three_raw_sha256": "cc01bf64fcfd0b108f2734c03c33dd8957261d773b64f7c827e1cf4661a474e9",
+  "rows": 17112,
+  "old_rows": 16924,
+  "new_rows": 188,
+  "sources": 2662,
+  "tests_executed": false,
+  "checker_result": "PASS_INVENTORY_ONLY"
+}

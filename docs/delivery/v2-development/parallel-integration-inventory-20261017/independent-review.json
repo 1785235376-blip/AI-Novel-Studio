@@ -1,0 +1,12 @@
+{
+  "status": "APPROVE_CANDIDATE_GENERATION",
+  "source_commit": "33fb2af9ad97d0c4c84db99afb7beb24cbd9ed01",
+  "reviewer": "parent independent of inventory writer",
+  "git_source_paths_verified": 2662,
+  "checker_mode": "review",
+  "checker_result": "PASS_INVENTORY_ONLY",
+  "rows": 17112,
+  "old_rows": 16924,
+  "new_rows": 188,
+  "tests_executed": false
+}

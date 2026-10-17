@@ -1,0 +1,173 @@
+{
+  "source_checkpoint": "33fb2af9ad97d0c4c84db99afb7beb24cbd9ed01",
+  "baseline_manifest": {
+    "commit": "c61a5ebac07e0e7f06e13863eeb6de10e340d94f",
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "sha256": "992aa33f830f8c6a4dc15438942d21c5bf834af69c2969562efd55a850411e0b"
+  },
+  "complete_source_map_entries": 2662,
+  "complete_source_map_sha256": "608b59b0ddff383d8aa690da48d459d8ea63aa8d8a99248c7bd731e25f005a15",
+  "source_delta": [
+    {
+      "path": "app/creative/production_execution.py",
+      "before": "0475d0bde93f30103911c905b6aa67535bb025bc19b03d1b11a6bd3ecabafd3e",
+      "after": "f6128729b841424114b105d5d998dfecb71375ce8ccf714862e59c8cbd677f6a"
+    },
+    {
+      "path": "app/creative/production_execution_models.py",
+      "before": "9faf968ad7261f29fd1bf4c032cb2f519b95ad27d7d04a49cfa7c84ce394ecb7",
+      "after": "4aba9013da8987a5f00bc68e499648a5778f5c1cec42086278fdd86bf150d564"
+    },
+    {
+      "path": "app/experimental/multilingual_editions_api.py",
+      "before": "72450793e4b6bc2de2d0a99c8121186bf47eac194735457696a263994229ca55",
+      "after": "178889a22b67d5e3635a855d4b14aed9f64fac4a75233dc9e6acd0b80f88344a"
+    },
+    {
+      "path": "app/experimental/terminology_portability.py",
+      "before": null,
+      "after": "24a43548c5be3485f0691a61ed70ec9dcb316795680aeabcc783cb567f1c53da"
+    },
+    {
+      "path": "app/services/studio_audio_execution.py",
+      "before": "daa9ce9662d41b97f5b44696daef8fc4d3a807d7530d039004121db65df7bed2",
+      "after": "791f5e0dc9edcd3c53991440682199269601f45f13194d8b715a2bfdada45112"
+    },
+    {
+      "path": "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+      "before": "4d3ca3c356839f7835078811301246af3cd4539345a39bfba1351f2c9f3f2d58",
+      "after": "72fdf00eacfa35524b5e29ff446218d9f3fcadf7434a11634252768a9d347e26"
+    },
+    {
+      "path": "frontend/src/creative/studioAudioPeak.additive.test.tsx",
+      "before": null,
+      "after": "b9c90a9fbce5e44fdd642de76abd01c66a850231a58f7574c185c48c3ac3df61"
+    },
+    {
+      "path": "frontend/src/creative/studioProductionClient.ts",
+      "before": "b1d7e4f4996d9212dbc417f09a77f09a853956a36b87b6fc33a15d427f56721e",
+      "after": "168bdf55eb2a28c1d2a0fa8d3accd6fd6969ddd1afb092c3dc4cef57cd86e06a"
+    },
+    {
+      "path": "frontend/src/creative/useStudioMediaExecution.ts",
+      "before": "ef168cd27118c168a7d1d8fc6b12825d7ccecea7bab3a689ba700fb58c0505f6",
+      "after": "8daab8e645b44f9cb3d15d63bd2dbde1acb673a66bb4cbc2ade2ebe8e30b2fba"
+    },
+    {
+      "path": "frontend/src/experimental/MultilingualEditionsPanel.tsx",
+      "before": "35edff81c7fcfd088dcf29cafad2fd044b281f07f52af8017452fc8853cca8ba",
+      "after": "f7c3bc7c4147c9888fdba853dccae11125121fdb1c0308de13c81728d0f925b4"
+    },
+    {
+      "path": "frontend/src/experimental/TerminologyPortabilityPanel.test.tsx",
+      "before": null,
+      "after": "42499939a1d34201d14303ed54b85599a1eb42932b9be74aa5509481ba8a1d76"
+    },
+    {
+      "path": "frontend/src/experimental/TerminologyPortabilityPanel.tsx",
+      "before": null,
+      "after": "e9493805c0c9da4fd2bff71c4faccf0b2d6d6d8b33fa9757b8d8024f6cf6033e"
+    },
+    {
+      "path": "frontend/src/experimental/terminologyPortability.ts",
+      "before": null,
+      "after": "24d670d7c28cc218ba98025fe834ba66fbf27a35b5c7090cfe7f1a75eb2a20dc"
+    },
+    {
+      "path": "frontend/src/prompt/PromptWorkspace.receiptReopen.test.tsx",
+      "before": null,
+      "after": "6126e58ca2cdc843b7c35bd6ae1e814a9190f7ed2e0b7860697792bfb07ab6b1"
+    },
+    {
+      "path": "frontend/src/prompt/promptDraft.settlement.test.ts",
+      "before": null,
+      "after": "37b6684d4596037f7a18e5d20e5eefb5f24d738c4c849927e7c0b35ee2ce4eb7"
+    },
+    {
+      "path": "frontend/src/prompt/promptDraft.ts",
+      "before": "a0bd0f412663fb101f944ab2cc9452234fe6fe1bbdda6e6b52ef075519751f48",
+      "after": "0b3676aa2241a6c53287c68aaea1a3bf39babe3f9ab05e5268b8b0e949694414"
+    },
+    {
+      "path": "frontend/src/prompt/usePromptWorkspace.ts",
+      "before": "7baf2c8a432bd694fdd2056dc2030200d67a744a86f85755498e7bce23e937d9",
+      "after": "c7e4ef7b014e595219a4c2abb55ca631bfa5fdfb7664a137b0ca04e091e0aabb"
+    },
+    {
+      "path": "tests/fixtures/studio_audio_peak_omission_v1.json",
+      "before": null,
+      "after": "d818680bf5895014cd400671d5ed95d3ca61a8886cec4e58c2f8dfcc0c4dcc16"
+    },
+    {
+      "path": "tests/test_terminology_portability.py",
+      "before": null,
+      "after": "3c4584f4b36a8efc9f7e34b298fb9a0d31795b4c6bd53c311ad5a344145ec442"
+    },
+    {
+      "path": "tests/test_v2_audio_peak_api.py",
+      "before": null,
+      "after": "3527cea970d6fba286fa8853cddbbd78f2f853cea4ecb50106278fa9eea7b56d"
+    },
+    {
+      "path": "tests/test_v2_audio_peak_contract.py",
+      "before": null,
+      "after": "07b30e14e1bbb0d4599590e95c3ad88b033c067e661f3ecee7ae0604b7f640d7"
+    },
+    {
+      "path": "tests/test_v2_audio_peak_cpu.py",
+      "before": null,
+      "after": "c9624330ea07a8a83320e5fd539dd701d453c71a25966579196aae3ea0f796e8"
+    }
+  ],
+  "expected_new_sources": [
+    "app/experimental/terminology_portability.py",
+    "frontend/src/creative/studioAudioPeak.additive.test.tsx",
+    "frontend/src/experimental/TerminologyPortabilityPanel.test.tsx",
+    "frontend/src/experimental/TerminologyPortabilityPanel.tsx",
+    "frontend/src/experimental/terminologyPortability.ts",
+    "frontend/src/prompt/PromptWorkspace.receiptReopen.test.tsx",
+    "frontend/src/prompt/promptDraft.settlement.test.ts",
+    "tests/fixtures/studio_audio_peak_omission_v1.json",
+    "tests/test_terminology_portability.py",
+    "tests/test_v2_audio_peak_api.py",
+    "tests/test_v2_audio_peak_contract.py",
+    "tests/test_v2_audio_peak_cpu.py"
+  ],
+  "protected_old_entries_exact": 1327,
+  "frontend_scripts_e2e_companion": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "raw_inventory": {
+    "path": "docs/delivery/v2-development/parallel-integration-inventory-20261017/review-raw-collection.json",
+    "sha256": "cc01bf64fcfd0b108f2734c03c33dd8957261d773b64f7c827e1cf4661a474e9",
+    "rows": 17112
+  },
+  "prior_raw_inventory": {
+    "path": "docs/delivery/v2-development/canvas-insert-inventory-20261017/review-raw-collection.json",
+    "sha256": "b8b55ea25ed271890add0b077cdce56fefe08f546edf9604f5c752fdc230d4a2",
+    "rows": 16924
+  },
+  "packaging_guard": {
+    "path": "packaging/public-build.json",
+    "before_sha256": "57f657057a391fa9ebdd8586fba62262ea6f3bb5fb1e2fe71f0c5ff27ad573be",
+    "after_sha256": "c54c87073dbd7c09d4844c6b9884c1a466491b3a9e86064511fa1983acbc9178",
+    "outside_manifest": true,
+    "unchanged": false,
+    "approved_source_delta": true,
+    "added_entries": [
+      "app/experimental/terminology_portability.py"
+    ],
+    "predecessor_path": "docs/delivery/v2-development/parallel-integration-inventory-20261017/public-predecessor.json"
+  },
+  "tests_executed": false
+}
