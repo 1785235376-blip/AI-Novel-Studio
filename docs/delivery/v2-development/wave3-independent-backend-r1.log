@@ -1,0 +1,16 @@
+........................................................................ [ 20%]
+..............................................s......................... [ 40%]
+........................................................................ [ 60%]
+........................................................................ [ 80%]
+......................................................................   [100%]
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_wave3_pending_director_canvas_bridge.py::test_private_pending_edited_draft_exact_pin_and_canvas_survive_file_restart
+  /workspace/scratch/20a0022d2b33/studio-timeline-waveform/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+357 passed, 1 skipped, 196 deselected, 2 warnings in 115.63s (0:01:55)

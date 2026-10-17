@@ -1,0 +1,42 @@
+{
+  "status": "PASS_INDEPENDENT_ACTUAL_ARCHIVE_AUDIT",
+  "head": "db6487b5eab7340433426fefcb5499122ec3d881",
+  "archives": [
+    {
+      "archive": ".runtime/v2-checks/wave3-integration-packaging-r2/pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "sha256": "9da887820708136e126deb8686ca5a86e2874db9f1fe245ce5cf64fe6c4cf448",
+      "kind": "sdist",
+      "source_payloads": 512,
+      "members": 519,
+      "wheel_record_verified": false
+    },
+    {
+      "archive": ".runtime/v2-checks/wave3-integration-packaging-r2/pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "sha256": "35e0ddc901ba83894bec0aefae95f9d3bd27eb9e9969bc3ccbfd4cddf6184788",
+      "kind": "sdist",
+      "source_payloads": 512,
+      "members": 519,
+      "wheel_record_verified": false
+    },
+    {
+      "archive": ".runtime/v2-checks/wave3-integration-packaging-r2/pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "sha256": "478eba11ef27e0785124ac4de3a770f96c7a240f58d4c2e58dc9a3b625e87ee6",
+      "kind": "wheel",
+      "source_payloads": 511,
+      "members": 515,
+      "wheel_record_verified": true
+    },
+    {
+      "archive": ".runtime/v2-checks/wave3-integration-packaging-r2/pytest/public-wheel1/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "sha256": "104e3d084334d043e7a3e39bf0174f5fcb06fdfdc77a2c90467d6531c01ed327",
+      "kind": "wheel",
+      "source_payloads": 511,
+      "members": 515,
+      "wheel_record_verified": true
+    }
+  ],
+  "archive_count": 4,
+  "no_product_imports": true,
+  "no_extraction_install_or_archive_copy": true,
+  "script_sha256": "54bf3f883f870e554eae16d7a69ad67f9aea1d2ac42aef59e83597ee2d573c28"
+}

@@ -1,0 +1,13 @@
+{
+  "status": "FROZEN_AFTER_PARENT_RELEASE",
+  "head": "db6487b5eab7340433426fefcb5499122ec3d881",
+  "tree": "d7b6e74b9055d74f360fc35a19d6c9306e831bc9",
+  "source_count": 2625,
+  "changed_runtime": [
+    "app/creative/director_binding.py",
+    "app/creative/director_terminal_evidence.py",
+    "app/creative/generation.py",
+    "app/creative/proposals.py",
+    "app/repositories/generation_repository.py"
+  ]
+}

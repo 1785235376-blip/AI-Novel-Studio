@@ -1,0 +1,21 @@
+{
+  "state": "STATIC_SCOPE_RECONCILIATION_ONLY_NOT_EXECUTED",
+  "head": "0daf2e925617062c1a467379d09feb236b66a56c",
+  "backend_entries": 62,
+  "frontend_entries": 96,
+  "duplicates": {
+    "backend": [],
+    "frontend": []
+  },
+  "missing_fullroot": [
+    "tests/test_comic_panel_duplicate.py",
+    "frontend/src/experimental/ComicLayoutsPanel.duplicate.test.tsx",
+    "frontend/src/experimental/comicDuplication.test.ts"
+  ],
+  "pending_comic_source": [
+    "tests/test_comic_panel_duplicate.py",
+    "frontend/src/experimental/ComicLayoutsPanel.duplicate.test.tsx",
+    "frontend/src/experimental/comicDuplication.test.ts"
+  ],
+  "scope_sha256": "604ea02ef0b876f3d4dd2ce4ad74b8b94a61742f98284b4f14ede38624147bf7"
+}

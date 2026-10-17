@@ -1,0 +1,38 @@
+{
+  "status": "PASS_INDEPENDENT_WAVE3_TERMINAL",
+  "head": "db6487b5eab7340433426fefcb5499122ec3d881",
+  "tracked_paths": 12534,
+  "source_paths": 2625,
+  "backend_passed": 357,
+  "backend_font_skipped": 1,
+  "postgres_deselected": 196,
+  "ui_passed": 366,
+  "ui_files": 15,
+  "archive_count": 4,
+  "receipts": [
+    {
+      "stage": "origin-before",
+      "receipt": "docs/delivery/v2-development/wave3-independent-origin-before-r1.json",
+      "receipt_sha256": "df62254dc97cfb0115dbbd9474b3996bb908c050adfbc53bb7c738ffba47ad7c",
+      "log_sha256": "b00ca9b63188824b2c50c267f190d29cb05343d1520517ff3216fe4c5ab01bf4"
+    },
+    {
+      "stage": "backend",
+      "receipt": "docs/delivery/v2-development/wave3-independent-backend-r1.json",
+      "receipt_sha256": "25e44ae9c6e9f4f5f7ca035597460ea88a6c9b019b505016e39b700f6609bb4d",
+      "log_sha256": "a67cfe47533c7729b0daf64531bb2b49a953168fa432dc686399bb6b9c8c15b5"
+    },
+    {
+      "stage": "ui",
+      "receipt": "docs/delivery/v2-development/wave3-independent-ui-r1.json",
+      "receipt_sha256": "87c2b1ad2d7ec74d23c1f263eeb56548e5978582f342b802bbe9c01c8d745efd",
+      "log_sha256": "8c471769035a724b8ae47fc59d4c6c96431981b0172f3bfcbce86bfc24ed4041"
+    },
+    {
+      "stage": "origin-after",
+      "receipt": "docs/delivery/v2-development/wave3-independent-origin-after-r1.json",
+      "receipt_sha256": "3b79c85bf134ea39b7e1e3850c114803c9059eb9aedcfecbafb2e3aa4affa613",
+      "log_sha256": "074aa1738812a83b7bb1bdcb1fb44e37995bcba9838d218c57ab26d748f5ed23"
+    }
+  ]
+}

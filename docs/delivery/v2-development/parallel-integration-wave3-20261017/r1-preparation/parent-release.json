@@ -1,0 +1,21 @@
+{
+  "authorized": true,
+  "scope_final": true,
+  "baseline": "9325818bbd98ad086db64ca0266aca6e7c4223b8",
+  "head": "00da72746f60a12ce74e2e0fdfb13378842ffa45",
+  "feature_commits": [
+    "18df9d05bd6956ddb88b7fce2c4028ee6100f255",
+    "b5ab297c4f49a7743aa2dbf89af9781242e06687",
+    "97b3cf3b8587855ce02458c5d5d9cfb0ae0825d2",
+    "e8219aa16db3492050364df019b1ac2b36ab46f8"
+  ],
+  "changed_runtime": [
+    "app/creative/director_binding.py",
+    "app/creative/director_terminal_evidence.py",
+    "app/creative/generation.py",
+    "app/creative/proposals.py",
+    "app/repositories/generation_repository.py"
+  ],
+  "integration_test_commit": "9b72ff93b48dbed4c2631a83222843829ecb5505",
+  "packaging_build_exception": "Parent authorized existing hash-pinned build-only interpreter; fresh path/hash/origin proof mandatory, no installs"
+}

@@ -1,0 +1,28 @@
+{"status": "PASS_FREEZE", "head": "db6487b5eab7340433426fefcb5499122ec3d881", "tracked_paths": 12534, "source_paths": 2625}
+{
+  "status": "PASS_SCOPED_MERGED_WAVE3",
+  "head": "db6487b5eab7340433426fefcb5499122ec3d881",
+  "source_path_count": 2625,
+  "actual_log_summaries": {
+    "origin-before": [],
+    "comic-golden": [],
+    "backend": [
+      "1799 passed, 2 skipped, 697 deselected, 2 warnings in 330.83s (0:05:30)"
+    ],
+    "ui": [
+      "Test Files  96 passed (96)",
+      "Tests  1587 passed (1587)"
+    ],
+    "type": [],
+    "build": [
+      "\u2713 built in 6.33s"
+    ],
+    "token": [
+      "UI token guard PASS (52 files)"
+    ],
+    "packaging": [
+      "87 passed, 1 warning in 39.55s"
+    ],
+    "origin-after": []
+  }
+}

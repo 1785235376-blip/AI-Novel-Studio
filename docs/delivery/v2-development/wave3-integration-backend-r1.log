@@ -1,0 +1,59 @@
+F
+=================================== FAILURES ===================================
+_ test_private_pending_edited_draft_exact_pin_and_canvas_survive_file_restart __
+
+lifecycle = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-waveform/.runtime/v2-checks/wave3-integratio...firmed': True, 'runtime_config': {'management': 'EXTERNAL', 'type': 'LLAMA_CPP', 'endpoint': 'http://127.0.0.1:8999'}})
+
+    def test_private_pending_edited_draft_exact_pin_and_canvas_survive_file_restart(lifecycle):
+        from app.creative.graph import CreativeGraphService
+        from app.creative.graph_planning_nodes import execute_planning_local
+        from app.creative.service import document_digest
+        from app.experimental.common import StaleSourceError
+        from app.experimental.model_broker import ModelBrokerService
+        from app.repositories.file.generation import FileGenerationRepository
+        from app.repositories.file.novel import FileNovelRepository
+        from app.repository import FileRepository
+        from app.services.generation_service import GenerationService
+    
+        e = board(lifecycle)
+        source = deepcopy(e.source)
+        job, prepare_body = publish(e)
+        pending = prepare(e, prepare_body)
+        assert raw_proposal(e)['status'] == 'INTERNAL_MODEL_PENDING_REVIEW'
+        assert raw_proposal(e)['document_id'] is None
+        assert len(e.requests) == 1
+    
+        # A new File-backed coordinator reads the persisted pending candidate; this
+        # is not the old live-result adoption path or an in-memory candidate cache.
+        restart(e)
+        fresh_host(e)
+        assert read(e) == pending
+        jobs_before = deepcopy(e.persistence.load_all())
+        ledger_before = deepcopy(e.broker.ledger(e.nid, e.scope, e.actor))
+        assert [row['id'] for row in jobs_before] == [job.id]
+        assert len(ledger_before) == 1
+        human = review_body(pending)
+        human['director_notes'][0]['note'] = 'Human review: hold before the visitor turns.'
+        adopted = review(e, human)
+        director = deepcopy(adopted['document'])
+>       assert adopted['proposal']['status'] == 'APPROVED'
+E       AssertionError: assert 'MODEL_UNAVAILABLE' == 'APPROVED'
+E         
+E         - APPROVED
+E         + MODEL_UNAVAILABLE
+
+tests/test_wave3_pending_director_canvas_bridge.py:51: AssertionError
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  /workspace/scratch/20a0022d2b33/studio-timeline-waveform/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_wave3_pending_director_canvas_bridge.py::test_private_pending_edited_draft_exact_pin_and_canvas_survive_file_restart
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 697 deselected, 2 warnings in 12.55s

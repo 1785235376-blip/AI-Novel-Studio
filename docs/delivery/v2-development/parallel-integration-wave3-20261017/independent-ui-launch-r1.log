@@ -1,0 +1,30 @@
+{"status": "PASS_FREEZE", "head": "db6487b5eab7340433426fefcb5499122ec3d881", "tracked_paths": 12534, "source_paths": 2625}
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-timeline-waveform/frontend
+
+ ✓ src/experimental/SubtitleTimelinePanel.history.test.tsx (67 tests) 5515ms
+ ✓ src/experimental/InteractiveStoryPanel.removal.test.tsx (32 tests) 3832ms
+   ✓ previews exact ID and version, explicitly removes only that node, preserves dirty Unicode and saves through the original contract 310ms
+ ✓ src/experimental/SubtitleTimelinePanel.import.test.tsx (38 tests) 2402ms
+ ✓ src/experimental/InteractiveStoryPanel.membership.test.tsx (25 tests) 2155ms
+ ✓ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (25 tests) 3714ms
+   ✓ explicit preview discloses pins and applies one exact undoable copy through original CAS save 407ms
+ ✓ src/experimental/SubtitleTimelinePanel.offset.test.tsx (31 tests) 4008ms
+   ✓ previews exact before/after values, applies locally, undoes once, then saves via original CAS 343ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 674ms
+ ✓ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests) 682ms
+ ✓ src/creative/GraphDirectorStoryboardHandoff.test.tsx (7 tests) 251ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 179ms
+ ✓ src/experimental/InteractiveStoryHistory.test.tsx (1 test) 79ms
+ ✓ src/experimental/comicDuplication.test.ts (35 tests) 11ms
+ ✓ src/experimental/captionTimingOffset.test.ts (55 tests) 28ms
+ ✓ src/experimental/comicArrangement.test.ts (18 tests) 6ms
+ ✓ src/experimental/interactiveNodeRemoval.test.ts (9 tests) 5ms
+
+ Test Files  15 passed (15)
+      Tests  366 passed (366)
+   Start at  20:20:40
+   Duration  30.93s (transform 464ms, setup 57ms, collect 1.57s, tests 23.54s, environment 3.35s, prepare 705ms)
+
+
+{"receipt": "docs/delivery/v2-development/wave3-independent-ui-r1.json", "status": "PASS"}

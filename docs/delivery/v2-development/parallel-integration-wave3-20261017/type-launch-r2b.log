@@ -1,0 +1,3 @@
+{"status": "PASS_FREEZE", "head": "db6487b5eab7340433426fefcb5499122ec3d881", "tracked_paths": 12534, "source_paths": 2625}
+
+{"receipt": "docs/delivery/v2-development/wave3-integration-type-r2.json", "status": "PASS"}
