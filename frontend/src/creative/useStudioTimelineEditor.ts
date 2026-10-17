@@ -1,3 +1,5 @@
+import { changedRangeBeyondMeasurement, measuredBoundFromWaveform, measuredBoundKey, type TimelineMeasuredBound } from './timelineMeasuredBounds';
+import type { TimelineWaveform } from './studioTimelineWaveformTypes';
 import { selectionDuplicateOperations, type SelectionDuplicateIds } from '../nle/timelineSelectionDuplicate';
 import { selectionMoveOperations } from '../nle/timelineSelectionMove';
 import type { TimelineAssetHandoff } from './StudioTimelineAssetHandoff';
@@ -44,6 +46,8 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   const playbackGate = useRef(false);
   const sourceEditGate = useRef(false);
   const latest = useRef(props); latest.current = props;
+  const measuredBounds = useRef<{source:StudioTimelineRow;client:StudioProductionClient;values:Map<string,TimelineMeasuredBound>}>();
+  const [,setMeasurementRevision] = useState(0);
   // A handoff approval is bound to the original draft/target generation, not
   // merely equal JSON. Editing then undoing, or switching identical targets,
   // must still invalidate a metadata read that was already in flight.
@@ -51,7 +55,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   const handoffEnvironment = useRef([props.client, props.busy, props.canMutate, props.projectId, props.isCurrent(), !!props.isBusy?.()]);
   const environment = [props.client, props.busy, props.canMutate, props.projectId, props.isCurrent(), !!props.isBusy?.()];
   if (environment.some((value, index) => value !== handoffEnvironment.current[index])) {
-    handoffGeneration.current++; handoffEnvironment.current = environment;
+    handoffGeneration.current++; handoffEnvironment.current = environment; measuredBounds.current = undefined;
   }
   const alive = useRef(true), epoch = useRef(0), owner = useRef(props.client), reading = useRef<AbortController>();
   const slot = useRef<{ epoch: number; operation: Operation }>(), started = useRef(false), deniedRef = useRef(false);
@@ -181,9 +185,30 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     adopt(row, keepDraft);
     setNotice(keepDraft ? '输入保留，基于读取的版本继续编辑；需要你明确再次保存。' : '已采用读取的服务端时间线；没有再次保存或渲染。');
   }
+  function currentMeasuredBounds(): TimelineMeasuredBound[] {
+    const retained=measuredBounds.current;
+    if (!retained || retained.client!==latest.current.client || retained.source!==baseRef.current || !current()) return [];
+    return [...retained.values.values()].filter(bound=>latest.current.assets.some(asset=>!asset.deleted_at && asset.id===bound.snapshot.id
+      && asset.kind===bound.snapshot.asset_kind && asset.version===bound.snapshot.version && asset.sha256===bound.snapshot.digest));
+  }
+  function observeWaveformMeasurement(value:TimelineWaveform,source:StudioTimelineRow,client:StudioProductionClient):boolean {
+    if (blocked() || !latest.current.canMutate || client!==latest.current.client || source!==baseRef.current
+      || failureRef.current || attemptRef.current?.state==='UNKNOWN' || !timelineSourcesCurrent(source.timeline,latest.current.assets)) return false;
+    try {
+      const bound=measuredBoundFromWaveform(value,source);
+      if (latest.current.projectId && value.novel_id!==latest.current.projectId) return false;
+      const key=measuredBoundKey(bound.snapshot),existing=measuredBounds.current;
+      const values=existing?.source===source&&existing.client===client?existing.values:new Map<string,TimelineMeasuredBound>();
+      const old=values.get(key);
+      if(old?.frames===bound.frames&&old.sampleRate===bound.sampleRate)return true;
+      values.set(key,bound);measuredBounds.current={source,client,values};setMeasurementRevision(value=>value+1);return true;
+    } catch { return false; }
+  }
   function change(work: (input: StudioTimelineDraft) => void): boolean {
     if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN') return false;
     const input = cloneTimeline(draftRef.current); work(input);
+    const beyond=changedRangeBeyondMeasurement(draftRef.current,input,currentMeasuredBounds());
+    if(beyond){setError(`片段 ${beyond} 的新素材终点超过已读取的实测长度，未修改草稿。请缩短范围或重新核对原素材。`);return false;}
     const source = baseRef.current, lockedTracks = source?.timeline.tracks.filter(track => track.locked) ?? [];
     if (source && lockedTracks.length && (['duration_ms', 'width', 'height', 'fps'].some(key => input.timeline[key as 'duration_ms'] !== source.timeline[key as 'duration_ms'])
       || lockedTracks.some(track => JSON.stringify(input.timeline.tracks.find(row => row.id === track.id)) !== JSON.stringify(track)))) {
@@ -515,6 +540,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   return { draft: owns ? draft : undefined, base: owns ? base : undefined, rows: owns ? rows : [], candidate: owns ? candidate : undefined,
     failure: owns ? failure : undefined, attempt: owns ? attempt : undefined, error: owns ? error : '', notice: owns ? notice : '',
     denied: denied || !owns, pending, inputDirty, dirty, sourcesCurrent, canEdit, canRender, confirmed: confirmed === savedBinding,
+    measuredSourceCount: currentMeasuredBounds().length, observeWaveformMeasurement,
     getHandoffRevision: () => `${epoch.current}:${handoffGeneration.current}`,
     adoptConfirmed, discardConfirmed, change, reload, checkServer, adoptCandidate, createNew, discardDraft, save, render, checkRenderJob,
     canUndo: canEdit && historySize.undo > 0, canRedo: canEdit && historySize.redo > 0,

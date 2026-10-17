@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/TimelineMeasuredBounds.additive.test.tsx (6 tests) 201ms
+ ✓ src/creative/StudioTimelineTrim.test.tsx (29 tests) 2585ms
+   ✓ mounted original inspector trim > routes trim without start/at position, supports one-step undo/redo and explicit Save 964ms
+
+ Test Files  2 passed (2)
+      Tests  35 passed (35)
+   Start at  05:07:38
+   Duration  3.71s (transform 525ms, setup 33ms, collect 902ms, tests 2.79s, environment 601ms, prepare 126ms)
+

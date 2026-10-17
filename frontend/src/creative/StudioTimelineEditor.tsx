@@ -5,7 +5,7 @@ import { selectionDuplicateOperations, sameSelectionDuplicateDescriptors } from 
 import { selectionMoveOperations } from '../nle/timelineSelectionMove';
 import { StudioTimelineAssetPicker } from './StudioTimelineAssetPicker';
 import { appendTimelineAsset, StudioTimelineAssetHandoff } from './StudioTimelineAssetHandoff';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { TIMELINE_LIMITS, timelineClipDuration, timelineSourceState, type StudioTimelineClip, type StudioTimelineDraft, type StudioTimelineTrack } from './studioTimelineTypes';
 import { useStudioTimelineEditor, type StudioTimelineEditorProps } from './useStudioTimelineEditor';
@@ -61,6 +61,9 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
         && !live.c.denied && live.c.attempt?.state !== 'UNKNOWN' && live.c.sourcesCurrent
         && !live.c.transfer.locked && !live.c.playback.locked && !live.c.sourceEdit.locked;
     } });
+  useLayoutEffect(() => {
+    if (waveform.preview && c.base) c.observeWaveformMeasurement(waveform.preview,c.base,props.client);
+  }, [waveform.preview,c.base,props.client]);
   const draft = c.draft;
   if (!draft) return <Panel title="时间线"><EmptyState title="当前时间线入口不可用" detail="请重新核对项目、身份与原可信会话。旧输入和回执不会跨身份显示。" /></Panel>;
   const extended = draft.timeline.schema_version === 2;
@@ -268,6 +271,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
     {c.attempt && <StudioTimelineMeasurement measurement={c.attempt.measurement} />}
     {c.attempt && <Button disabled={readLocked} loading={c.pending === 'JOB'} onClick={() => void c.checkRenderJob()}>读取此请求的原渲染或导出回执</Button>}
     <p>这些入口已接入原 owner，当前代码的 Windows、媒体和完整产品验证仍待执行。</p>
+    {c.measuredSourceCount > 0 && <StatusMessage>已保留 {c.measuredSourceCount} 个当前来源的实测长度；新改的素材入出范围超界时，本地编辑会拒绝。未测来源仍是未知，最终保存与渲染由原服务核对。</StatusMessage>}
     {nleNotice && <StatusMessage tone="warning">{nleNotice}</StatusMessage>}
     <TimelineWorkspacePanel projectId={props.projectId || ''} identity={props.projectId || ''} timeline={draft.timeline}
       selectedClipIds={nleClips} playheadMs={nlePlayhead} viewStartMs={nleView.startMs} viewScale={nleView.scale}

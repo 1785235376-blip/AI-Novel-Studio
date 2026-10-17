@@ -1,5 +1,13 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Measured source-length feedback for local Timeline edits (20:09 UTC)
+
+The original Timeline controller can retain a strictly validated original PCM16 waveform receipt's full source frame count/sample rate for the current saved timeline and exact source snapshot. New or changed trim/slip/form ranges beyond that measured end are rejected before local history changes; values are never clamped. The same original change/undo owner remains in use. Measurements are ephemeral, bounded by current source pins, discarded on authority/environment changes, and not carried to a different saved timeline. Unknown source lengths remain unknown; unchanged prior author input is not silently rewritten.
+
+Important preserved boundary: generic backend Save still validates pins and author shape without decoding every source. The existing test showing a six-second WAV can be saved with a nine-second source span remains unchanged and passed. Rendering still checks actual source duration. This increment is conditional local feedback after an explicit valid measurement, not global backend duration enforcement.
+
+Focused timeline-measured-bounds-r1:6 new plus29 original trim checks and TypeScript PASS. Separate original File-owner check:4 cases PASS using genuine locally generated WAV, exact frame/half-open range proof, and the unchanged generic-Save limitation. UI/controller transport is mocked; these scopes do not establish a complete browser/native-media end-to-end run. Full suite/build remain deferred.
+
 ## Saved audio gain/fade waveform display estimate (20:05 UTC)
 
 The existing source-waveform panel retains its measured PCM16 source view and now offers an explicit second display for saved track/clip gain, mute and linear fades. The original strict waveform receipt and saved timeline validators bind the projection. Source sample frames map into speed-adjusted timeline time; each bucket uses its measured source peak multiplied by the maximum linear envelope within that bucket because the actual peak's sample position is unknown. Above-unity estimates remain in data and are only capped visually, with a warning. Source data, audio, timeline, history and executors are untouched.
