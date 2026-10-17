@@ -1,5 +1,9 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Native Creative follow-up (15:46 UTC)
+
+227 original Creative / Graph / supported Director PostgreSQL cases passed (712 deselected), on a third fresh database with unchanged original tests and source hashes. Persistence, restart, deletion/recreation and authority scopes are covered; the separate private Director pending repository remains File-only. See `delivery/v2-development/creative-current-native-20261017/README.md`. This later evidence is excluded from the fixed pending upload candidate.
+
 ## Native Audio follow-up (15:42 UTC)
 
 198 original PostgreSQL Audio cases passed (409 deselected) on a second fresh database, covering the original Audio modules and listing owner. Original tests and product code were unchanged; source hashes matched throughout and the owned server stopped. See `delivery/v2-development/audio-current-native-20261017/README.md`. This evidence remains outside the fixed pending fourteen-commit archive.
