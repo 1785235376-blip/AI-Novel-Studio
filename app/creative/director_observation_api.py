@@ -13,10 +13,13 @@ from fastapi.routing import APIRoute
 from ..experimental.ux import ReadContext
 from .director_lifecycle import AdoptionReceipt, StatusReceipt
 from .models import DirectorProposalReview
+from .proposals import DirectorProposalService
 
 
 class DirectorObservationRoute(APIRoute):
-    MAX_BODY = 1024 * 1024
+    # Reconciliation must accept the same bounded multilingual review payload
+    # as the original owner; a smaller arbitrary limit strands valid reviews.
+    MAX_BODY = DirectorProposalService.MAX_RECORD_BYTES
 
     def get_route_handler(self):
         handler = super().get_route_handler()
@@ -46,16 +49,10 @@ class DirectorObservationRoute(APIRoute):
         return bounded
 
 
-def create_director_observation_router(service, invoke, *, require_host_session, model_host_authority):
-    """The parent Creative router supplies its original scoped invoker.
-
-    The original router can opt in at construction for isolated verification.
-    Application callers keep the default disabled; this is not an HTTP option.
-    """
-    router = APIRouter(route_class=DirectorObservationRoute)
-
-    def observe(request, nid, token, branch, rid, action, body=None):
-        def operation(actor, scope, guard):
+def create_director_owner_invoker(service, invoke, *, require_host_session, model_host_authority):
+    """Shared request authority adapter; original owners retain all state changes."""
+    def call(request, nid, token, branch, rid, permission, kind, operation, *, error_code):
+        def authorized(actor, scope, guard):
             if require_host_session is None or model_host_authority is None:
                 raise HTTPException(403, {"code": "CREATIVE_MODEL_HOST_REQUIRED"})
             authority = model_host_authority(request, token)
@@ -73,30 +70,43 @@ def create_director_observation_router(service, invoke, *, require_host_session,
                 raise HTTPException(409, {"code": "CREATIVE_MODEL_NOT_CONFIGURED"})
             ctx = ReadContext(nid, scope, actor, token, branch)
             try:
-                if action == "status":
-                    raw = generation._read_independent_status(ctx, rid, current, host_authority=authority)
-                    result = StatusReceipt.model_validate(raw).model_dump()
-                elif action == "adopted":
-                    raw = generation._read_independent_adopted(ctx, rid, current, host_authority=authority)
-                    result = AdoptionReceipt.model_validate(raw).model_dump()
-                else:
-                    raw = generation._reconcile_independent_review(ctx, rid, body, current, host_authority=authority)
-                    result = AdoptionReceipt.model_validate(raw).model_dump()
+                result = operation(generation, ctx, current, authority)
                 current()
                 return {"contract": "DIRECTOR_OBSERVATION_V1", "project_id": nid,
-                        "scope": deepcopy(scope), "kind": "status" if action == "status" else "adopted-draft",
-                        "receipt": result}
+                        "scope": deepcopy(scope), "kind": kind, "receipt": result}
             except HTTPException:
                 current()
                 raise
             except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError):
                 current()
-                # No lower-owner exception text, raw Job, request or prompt.
-                raise HTTPException(409, {"code": "DIRECTOR_OBSERVATION_UNAVAILABLE"}) from None
+                raise HTTPException(409, {"code": error_code}) from None
 
-        # Read-only endpoints must not provision a missing incarnation marker.
+        # Proposals are created through their original owner first. Neither a
+        # read nor an action on an existing proposal may mint a new identity.
         with service.store.existing_owner_only():
-            return invoke(nid, token, branch, "domain.read", operation)
+            return invoke(nid, token, branch, permission, authorized)
+    return call
+
+
+def create_director_observation_router(service, invoke, *, require_host_session, model_host_authority):
+    """Construction-time opt-in for verification; application default is off."""
+    router = APIRouter(route_class=DirectorObservationRoute)
+    call = create_director_owner_invoker(service, invoke,
+        require_host_session=require_host_session, model_host_authority=model_host_authority)
+
+    def observe(request, nid, token, branch, rid, action, body=None):
+        def operation(generation, ctx, current, authority):
+            if action == "status":
+                raw = generation._read_independent_status(ctx, rid, current, host_authority=authority)
+                return StatusReceipt.model_validate(raw).model_dump()
+            if action == "adopted":
+                raw = generation._read_independent_adopted(ctx, rid, current, host_authority=authority)
+            else:
+                raw = generation._reconcile_independent_review(ctx, rid, body, current, host_authority=authority)
+            return AdoptionReceipt.model_validate(raw).model_dump()
+        return call(request, nid, token, branch, rid, "domain.read",
+            "status" if action == "status" else "adopted-draft", operation,
+            error_code="DIRECTOR_OBSERVATION_UNAVAILABLE")
 
     @router.get("/director-proposals/{rid}/model-v1/status")
     def status(nid: str, rid: str, request: Request,

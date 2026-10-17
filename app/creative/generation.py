@@ -1226,9 +1226,18 @@ class DirectorModelCoordinator:
         return deepcopy(candidate)
 
     def _read_independent_pending_review(self, ctx, rid, guard, *, host_authority):
-        with self._pending_transaction(ctx, rid, guard, host_authority) as (_, row, binding, repository, _):
+        from .director_terminal_evidence import PENDING_FIELD, validate_pending
+        with self._pending_transaction(ctx, rid, guard, host_authority) as (_, row, binding, repository, locks):
+            pending = validate_pending(row.get(PENDING_FIELD))
+            saved, _ = self._pending_history(ctx, row, binding, repository,
+                admitted_version=pending["admitted_version"], require_output=False)
             _, candidate = self._pending_candidate(ctx, row, binding, repository, guard, host_authority)
             self._pending_current(ctx, row, binding, guard, host_authority)
+            # Complete all semantic callbacks before taking the original leaf.
+            # A late generation change cannot escape as a fresh public receipt.
+            locked = locks.enter_context(repository._director_snapshot_leaf(saved["id"]))
+            if canonical(locked) != canonical(saved):
+                raise ValueError("CREATIVE_DIRECTOR_LIFECYCLE_OBSERVATION_CHANGED")
         return deepcopy(candidate)
 
     def _review_independent_pending(self, ctx, rid, value, guard, *, host_authority):
@@ -1453,6 +1462,24 @@ class DirectorModelCoordinator:
             settlement_state=ledger["status"], terminal_evidence_digest=terminal_digest, adoption=adoption).model_dump()
         self._pending_current(ctx, row, binding, guard, host_authority)
         return result, saved
+
+    def _read_independent_preview(self, ctx, rid, guard, *, host_authority):
+        """Fresh exact preview recovery; no dispatch, reservation or reprovision."""
+        with self.store.existing_owner_only():
+            self._pending_repository()
+            self._independent_host(host_authority); guard(); self._flags()
+            routing = self.proposals._owned(ctx.novel_id, ctx.scope, ctx.actor, rid,
+                self.store.store.read(ctx.novel_id, ctx.scope))
+            binding = self._independent_binding(ctx, rid,
+                (routing.get("model_preview") or {}).get("preview_digest", "0" * 64))
+            with self._independent_transaction(ctx, binding) as raw:
+                row = self.proposals._owned(ctx.novel_id, ctx.scope, ctx.actor, rid, raw)
+                if row.get("model_execution") or row.get("status") != "INTERNAL_MODEL_PREVIEW":
+                    raise ValueError("CREATIVE_DIRECTOR_LIFECYCLE_PREVIEW_CHANGED")
+                self._lifecycle_preview(ctx, row, binding, guard, host_authority)
+                result = deepcopy({key: value for key, value in row.items() if key != "history"})
+                self._pending_current(ctx, row, binding, guard, host_authority)
+            return result
 
     def _read_independent_status(self, ctx, rid, guard, *, host_authority):
         """Current-authorized passive observation; no refresh/dispatch/settlement."""

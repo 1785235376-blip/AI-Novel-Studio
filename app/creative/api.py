@@ -19,8 +19,9 @@ FLAG = "narrative_production_v2"
 
 
 def create_creative_router(service, authorize, require_flag, *, require_host_session=None, model_host_authority=None,
-                           director_observation=False):
-    if type(director_observation) is not bool:
+                           director_observation=False, director_model_actions=False):
+    if (type(director_observation) is not bool or type(director_model_actions) is not bool
+            or (director_model_actions and not director_observation)):
         raise ValueError("DIRECTOR_OBSERVATION_OPTION_INVALID")
     router = APIRouter(prefix="/novels/{nid}/experimental/creative", tags=["Creative Layer V2"],
                        route_class=PrivateProductionRoute)
@@ -382,5 +383,9 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
     if director_observation:
         from .director_observation_api import create_director_observation_router
         router.include_router(create_director_observation_router(service, invoke,
+            require_host_session=require_host_session, model_host_authority=model_host_authority))
+    if director_model_actions:
+        from .director_model_api import create_director_model_router
+        router.include_router(create_director_model_router(service, invoke,
             require_host_session=require_host_session, model_host_authority=model_host_authority))
     return router

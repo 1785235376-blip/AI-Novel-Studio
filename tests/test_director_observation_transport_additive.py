@@ -14,11 +14,13 @@ from app.model_center.discovery_authority import resolve_discovery_authority
 pytestmark = pytest.mark.file_backend_only
 
 
-def mounted(e, *, host=True):
+def mounted(e, *, host=True, actions=False, writer=True):
     permissions = []
     def authorize(nid, token, branch, permission):
         permissions.append(permission)
         e.guard()
+        if permission == 'domain.write' and not writer:
+            raise HTTPException(403, {'code': 'FIXTURE_WRITE_DENIED'})
         if nid != e.nid or branch is not None:
             raise HTTPException(403, {'code': 'FIXTURE_SCOPE_DENIED'})
         return e.actor, deepcopy(e.scope)
@@ -33,7 +35,7 @@ def mounted(e, *, host=True):
     from app.experimental.flags import require_flag
     app.include_router(create_creative_router(e.documents, authorize, require_flag,
         require_host_session=require_session if host else None,
-        model_host_authority=authority if host else None, director_observation=True))
+        model_host_authority=authority if host else None, director_observation=True, director_model_actions=actions))
     client = TestClient(app, client=('127.0.0.1', 41000), base_url='http://127.0.0.1:8000')
     prefix = f'/novels/{e.nid}/experimental/creative/director-proposals/{e.row["id"]}/model-v1'
     return SimpleNamespace(client=client, url=prefix, headers={'X-Session-Token':e.token}, permissions=permissions)
@@ -108,7 +110,7 @@ def test_invalid_review_body_never_echoes_submitted_text(lifecycle, body):
 def test_oversized_body_is_bounded_before_owner_access(lifecycle):
     e=board(lifecycle); preview(e); m=mounted(e); before=raw_bytes(e)
     result=m.client.post(m.url+'/reconcile-review',headers={**m.headers,'Content-Type':'application/json'},
-        content=b'"'+b'x'*(1024*1024)+b'"')
+        content=b'"'+b'x'*8_000_000+b'"')
     assert result.status_code==413
     assert result.json()=={'detail':{'code':'DIRECTOR_OBSERVATION_REQUEST_LIMIT'}}
     assert raw_bytes(e)==before and m.permissions==[] and e.requests==[]
@@ -164,3 +166,21 @@ def test_constructor_opt_in_does_not_accept_truthy_non_boolean(lifecycle,value):
     e=board(lifecycle)
     with pytest.raises(ValueError,match='DIRECTOR_OBSERVATION_OPTION_INVALID'):
         create_creative_router(e.documents,lambda *a:(e.actor,e.scope),lambda *a:None,director_observation=value)
+
+
+def test_multilingual_review_over_one_megabyte_reaches_original_owner(lifecycle):
+    import json
+    from app.creative.director_observation_api import DirectorObservationRoute
+    from app.creative.proposals import DirectorProposalService
+    assert DirectorObservationRoute.MAX_BODY==DirectorProposalService.MAX_RECORD_BYTES
+    e=board(lifecycle); preview(e); m=mounted(e); before=raw_bytes(e)
+    body={'expected_version':1,'reviewed_output_digest':'a'*64,'title':'Multilingual review',
+          'director_notes':[{'id':f'n{i}','number':i+1,'scene_id':'scene-1','note':'界'*8000} for i in range(50)]}
+    raw=json.dumps(body,ensure_ascii=False).encode()
+    assert 1024*1024 < len(raw) < DirectorObservationRoute.MAX_BODY
+    result=m.client.post(m.url+'/reconcile-review',headers={**m.headers,'Content-Type':'application/json'},content=raw)
+    # The current preview has not been adopted. It must reach the original
+    # exact-review owner and fail there, rather than reject a valid schema size.
+    assert result.status_code==409 and m.permissions
+    assert result.json()=={'detail':{'code':'DIRECTOR_OBSERVATION_UNAVAILABLE'}}
+    assert raw_bytes(e)==before and e.requests==[]

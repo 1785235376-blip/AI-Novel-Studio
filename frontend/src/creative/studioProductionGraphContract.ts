@@ -1,5 +1,5 @@
 import { ApiError } from '../api';
-import type { CreativeInput, VisualTarget, CreativeShot } from './types';
+import type { CreativeInput, VisualTarget, CreativeShot, DirectorPlanning, DirectorSceneNote } from './types';
 
 export type PlanningSnapshot = { id: string; version: number; digest: string };
 export type PlanningDocument = PlanningSnapshot & { title: string; mode: 'DIRECTOR' | 'STORYBOARD' };
@@ -33,22 +33,48 @@ export function checkedPlanningDocument(value: unknown): PlanningDocument {
   return { ...checkedPlanningSnapshot({ id: record.id, version: record.version, digest: record.digest }), title: string(record.title, 240, false), mode: record.mode };
 }
 export function checkedVisualTarget(value: unknown): VisualTarget {
-  const record = row(value); closed(record, ['style', 'atmosphere', 'reference_works', 'color', 'rhythm']); fields(record, ['style', 'atmosphere', 'color', 'rhythm']);
+  const record = row(value); closed(record, ['style', 'atmosphere', 'reference_works', 'color', 'rhythm'], ['genre']); fields(record, ['style', 'atmosphere', 'color', 'rhythm']);
+  if (record.genre != null) string(record.genre, 2000);
   array(record.reference_works, 20).forEach(value => string(value, 1000, false)); return record as VisualTarget;
 }
 function dialogue(value: unknown) { const record = row(value); closed(record, ['speaker', 'text', 'delivery']); fields(record, ['speaker', 'text', 'delivery']); }
+export function checkedDirectorPlanning(value: unknown): DirectorPlanning {
+  const record = row(value);
+  closed(record, ['rationale', 'sequence_reason', 'duration_reason', 'uncertainty', 'assumptions', 'alternatives', 'evidence']);
+  string(record.rationale, 4000, false);
+  for (const key of ['sequence_reason', 'duration_reason', 'uncertainty']) string(record[key], 2000, false);
+  const assumptions = array(record.assumptions, 12);
+  assumptions.forEach(value => string(value, 2000, false));
+  array(record.alternatives, 3).forEach(value => {
+    const item = row(value); closed(item, ['choice', 'tradeoff']);
+    string(item.choice, 2000, false); string(item.tradeoff, 2000, false);
+  });
+  const evidence = array(record.evidence, 12);
+  evidence.forEach(value => {
+    const item = row(value); closed(item, ['scene_id', 'field', 'dialogue_index', 'excerpt']);
+    string(item.scene_id, 240, false); string(item.excerpt, 2000, false);
+    if (!['action', 'dialogue', 'emotion', 'heading', 'location', 'time'].includes(item.field as string)) invalid();
+    if (item.dialogue_index !== null) integer(item.dialogue_index, 0, 199);
+  });
+  if (!evidence.length && !assumptions.length) invalid();
+  return structuredClone(record) as unknown as DirectorPlanning;
+}
 function note(value: unknown, ordered = false) {
   const record = row(value), required = ['id', 'note', 'shot_size', 'camera_angle', 'camera_motion', 'duration_seconds', 'emotion', 'pacing', 'performance', 'blocking', ...(ordered ? ['number', 'scene_id'] : [])];
-  closed(record, required, ['shot_suggestion', 'composition', 'lens', 'character_state', 'performances', 'lighting', 'color_palette', 'material', 'transition']);
+  closed(record, required, ['planning', 'shot_suggestion', 'composition', 'lens', 'character_state', 'performances', 'lighting', 'color_palette', 'material', 'transition']);
   fields(record, required.filter(key => !['duration_seconds', 'number'].includes(key))); integer(record.duration_seconds, 1, 600);
   string(record.emotion, 2000);
   if (ordered) integer(record.number, 1, 10000);
+  if (record.planning != null) checkedDirectorPlanning(record.planning);
   for (const key of ['shot_suggestion', 'composition', 'lens', 'character_state', 'lighting', 'color_palette', 'material', 'transition']) if (record[key] != null) string(record[key], limits[key]);
   if (record.performances != null) {
     const actors = array(record.performances, 100).map(value => { const actor = row(value); closed(actor, ['character', 'action', 'expression', 'state']); fields(actor, ['character', 'action', 'expression', 'state']); string(actor.action, 4000); return actor.character; });
     if (new Set(actors).size !== actors.length) invalid();
   }
   return record;
+}
+export function checkedDirectorSceneNote(value: unknown): DirectorSceneNote {
+  return structuredClone(note(value, true)) as unknown as DirectorSceneNote;
 }
 export function checkedCreativeShot(value: unknown): CreativeShot {
     const shot = row(value); const required = ['id', 'number', 'scene_id', 'shot_size', 'camera_angle', 'camera_motion', 'duration_seconds', 'frame_prompt', 'composition', 'lens', 'lighting', 'environment', 'sound', 'color', 'action', 'dialogue', 'sound_effect', 'director_notes'];
