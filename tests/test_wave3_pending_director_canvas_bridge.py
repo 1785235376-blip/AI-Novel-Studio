@@ -48,7 +48,8 @@ def test_private_pending_edited_draft_exact_pin_and_canvas_survive_file_restart(
     human['director_notes'][0]['note'] = 'Human review: hold before the visitor turns.'
     adopted = review(e, human)
     director = deepcopy(adopted['document'])
-    assert adopted['proposal']['status'] == 'APPROVED'
+    assert adopted['proposal']['status'] == 'MODEL_UNAVAILABLE'
+    assert raw_proposal(e)['status'] == 'APPROVED'
     assert director['mode'] == 'DIRECTOR' and director['status'] == 'DRAFT'
     assert director['director_notes'] == human['director_notes']
     assert director['provenance']['terminal_evidence_digest'] == prepare_body['terminal_evidence_digest']
