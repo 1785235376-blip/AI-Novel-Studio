@@ -1,4 +1,5 @@
 import type { ReviewedDirectorCanvasHandoff } from './directorCanvasHandoff';
+import { planningSourceFork } from './graphPlanningFork';
 import type { OpenStoryboardEditor } from './storyboardEditorHandoff';
 import { checkedStudioGraphDraft } from './studioGraphClient';
 import { graphSelectionCopy, type GraphSelectionCopy } from './graphSelectionCopy';
@@ -51,6 +52,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const [crossPreview, setCrossPreview] = useState<{ source: NonNullable<typeof copySource>; target: StudioGraphRecord; epoch: number; previewEpoch: number; draft: string; catalog: StudioGraphCatalog; result: GraphSelectionCopy }>();
   const copySourceEpoch = useRef(0), crossCopyEpoch = useRef(0);
   const [independentConsent, setIndependentConsent] = useState('');
+  const planningForkConsumed = useRef<object>();
   const [independentOrigin, setIndependentOrigin] = useState<{ identity: string; client: StudioClient; id: string; title: string; version: number; references: StudioGraphRecord['reference_states'] }>();
   const [past, setPast] = useState<StudioGraphDefinition[]>([]), [future, setFuture] = useState<StudioGraphDefinition[]>([]);
   const [loading, setLoading] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState(''), [blocked, setBlocked] = useState(false);
@@ -226,12 +228,26 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     try { checkedStudioGraphDraft(draftRef.current); } catch (reason) { setError(apiErrorView(reason, '当前完整草稿未通过原图校验，尚未准备新图。').message); return; }
     const source = baseRef.current;
     if (!source || source !== base || independentConsent !== JSON.stringify([identity, source.id, source.version, draftRef.current])) return;
-    const value = structuredClone(draftRef.current);
+    stageIndependentGraph(structuredClone(draftRef.current), source,
+      '已准备独立新图草稿，尚未写入。完整作者内容与原版本绑定保持；请明确保存，届时由原服务重新核对来源与容量。原图及历史未修改。');
+  }
+  function stageIndependentGraph(value: StudioGraphDefinition, source: StudioGraphRecord, message: string) {
     providerPicker.reset(); timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate();
     setIndependentOrigin({ identity, client, id: source.id, title: source.definition.title, version: source.version, references: structuredClone(source.reference_states) });
     setIndependentConsent(''); setBase(undefined); setDraft(value); setSelected([]); setPast([]); setFuture([]); setBlocked(false);
     setSourcePort(''); setTargetPort(''); setPendingNavigation(undefined); createRequest.current = graphId('graph'); reportSelection.current?.({});
-    setError(''); setNotice('已准备独立新图草稿，尚未写入。完整作者内容与原版本绑定保持；请明确保存，届时由原服务重新核对来源与容量。原图及历史未修改。');
+    setError(''); setNotice(message);
+  }
+  function preparePlanningGraphFork(document: PlanningDocument, scope: object): boolean {
+    if (scope !== verificationScope || planningForkConsumed.current === scope || !isVerificationCurrent()
+      || !connectionSelectionCurrent(connectionScope) || !base || !node || checking || timelineEditor.formDirty
+      || base.reference_states.find(value => value.node_id === node.id)?.state !== 'STALE') return false;
+    try {
+      const value = planningSourceFork(draftRef.current, node.id, document);
+      planningForkConsumed.current = scope;
+      stageIndependentGraph(value, base, '已准备使用所选更新来源的独立草稿，尚未保存。原图、历史及其他引用保持不变；请核对依赖后明确保存。');
+      return true;
+    } catch (reason) { setError(apiErrorView(reason, '无法准备更新来源草稿，原图保持不变。').message); return false; }
   }
 
   const replaceConfirmed = !!candidate && replaceConsent === candidateKey(candidate);
@@ -707,6 +723,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     providerPicker, sourceCopy, currentCrossCopy, captureSelectionForGraph, previewCrossGraphCopy, pasteCrossGraphCopy, clearGraphCopy: () => { copySourceEpoch.current++; crossCopyEpoch.current++; setCopySource(undefined); setCrossPreview(undefined); }, currentCopy, previewSelectionCopy, pasteSelectionCopy, cancelSelectionCopy: () => setCopyPreview(undefined),
     catalog: catalog ? { ...catalog, ...(pendingVideoCatalog ? { capabilities: { ...catalog.capabilities, video_graph: true, video_graph_schema_version: 5 as const, video_graph_evidence: 'LOCAL_REQUIRED' as const, storyboard_video_approval_required: true, automatic_video_dispatch: false } } : {}), definitions: graphCatalogForSchema(catalog.definitions, draft.schema_version) } : undefined,
     independentConfirmed, confirmIndependentGraph, prepareIndependentGraph, independentOrigin: visibleIndependentOrigin, historyFull,
+    planningForkScope: verificationScope, isPlanningForkCurrent: isVerificationCurrent, preparePlanningGraphFork,
     records, base, draft, selected, past, future, loading, error, notice, blocked,
     candidate, replaceConfirmed, checking, pendingNavigation, discardConfirmed, kind, sourcePort, targetPort,
     assets, assetChoice, assetLoading, preview, previewState, refreshPreview, downloadPreviewAsset, current, dirty, editable, protectedNodes, node,
