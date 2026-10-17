@@ -18,7 +18,10 @@ from .storyboard import (StoryboardApproval, ShotImageBinding, ShotImageRequest,
 FLAG = "narrative_production_v2"
 
 
-def create_creative_router(service, authorize, require_flag, *, require_host_session=None, model_host_authority=None):
+def create_creative_router(service, authorize, require_flag, *, require_host_session=None, model_host_authority=None,
+                           director_observation=False):
+    if type(director_observation) is not bool:
+        raise ValueError("DIRECTOR_OBSERVATION_OPTION_INVALID")
     router = APIRouter(prefix="/novels/{nid}/experimental/creative", tags=["Creative Layer V2"],
                        route_class=PrivateProductionRoute)
 
@@ -374,4 +377,10 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
         return invoke_adaptation(request, nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.adaptations.cancel(nid, scope, actor, rid, body, guard=guard))
 
+    # Construction-time candidate opt-in only. Application callers retain the
+    # default false; HTTP input cannot enable routes or model execution.
+    if director_observation:
+        from .director_observation_api import create_director_observation_router
+        router.include_router(create_director_observation_router(service, invoke,
+            require_host_session=require_host_session, model_host_authority=model_host_authority))
     return router
