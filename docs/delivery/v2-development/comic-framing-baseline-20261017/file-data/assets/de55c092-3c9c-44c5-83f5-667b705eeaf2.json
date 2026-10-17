@@ -1,0 +1,16 @@
+{
+  "id": "de55c092-3c9c-44c5-83f5-667b705eeaf2",
+  "novel_id": "r3-media-06c5db27b2a14d7288d0706a2f2c6b87",
+  "filename": "SYNTHETIC-LEGACY-COVER.png",
+  "kind": "image",
+  "media_type": "image/png",
+  "size": 244,
+  "sha256": "7c1e353f37c5f78896e1761337c09853520941dcd541a7512da47e040ef83cfb",
+  "branch_id": null,
+  "created_at": "2026-10-17T09:51:43.348381+00:00",
+  "updated_at": "2026-10-17T09:51:43.353366+00:00",
+  "version": 2,
+  "deleted_at": null,
+  "idempotency_key": null,
+  "approved_at": "2026-10-17T09:51:43.353018+00:00"
+}

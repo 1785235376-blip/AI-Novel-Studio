@@ -1,0 +1,60 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-comic-framing/frontend
+
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 805ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 923ms
+ ❯ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests | 1 failed) 530ms
+   × revokes displayed pixels warning consent and approval on framing edits 126ms
+     → expected "spy" to be called with arguments: [ 'blob:synthetic-framing' ]
+
+Received: 
+
+  1st spy call:
+
+  Array [
+    "blob:synthetic-framing",
++   0,
++   Array [
++     "blob:synthetic-framing",
++   ],
+  ]
+
+
+Number of calls: 1
+
+
+ Test Files  1 failed | 2 passed (4)
+      Tests  1 failed | 17 passed (20)
+   Start at  18:59:08
+   Duration  4.23s (transform 195ms, setup 31ms, collect 500ms, tests 2.26s, environment 886ms, prepare 146ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/experimental/ComicLayoutsPanel.framing.test.tsx > revokes displayed pixels warning consent and approval on framing edits
+AssertionError: expected "spy" to be called with arguments: [ 'blob:synthetic-framing' ]
+
+Received: 
+
+  1st spy call:
+
+  Array [
+    "blob:synthetic-framing",
++   0,
++   Array [
++     "blob:synthetic-framing",
++   ],
+  ]
+
+
+Number of calls: 1
+
+ ❯ src/experimental/ComicLayoutsPanel.framing.test.tsx:87:31
+     85|   expect(screen.queryByRole('img', { name: /漫画分段/ })).toBeNull();
+     86|   expect(screen.queryByRole('button', { name: '批准当前漫画布局' })).t…
+     87|   expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:synthetic-fra…
+       |                               ^
+     88|   expect((screen.getByRole('button', { name: '预检并渲染当前布局' }) a…
+     89| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
