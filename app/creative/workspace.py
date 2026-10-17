@@ -20,7 +20,7 @@ from ..experimental.production_lineage import LicenseDeclaration
 from ..media_files import inspect_image, inspect_media
 from ..services.v1_capability_service import CapabilityVersionConflict
 from .project_store import BINDING
-from .workspace_models import ManualAssetImport, ManualBinaryMask, StudioLineageInput, WorkspacePreferences, WorkspacePreferencesUpdate
+from .workspace_models import ManualModelReferenceImport, ManualAssetImport, ManualBinaryMask, StudioLineageInput, WorkspacePreferences, WorkspacePreferencesUpdate
 
 PREFERENCES = "creative_project_preferences_v2"
 FLAG = "narrative_production_v2"
@@ -311,6 +311,43 @@ class IndependentWorkspaceService:
         # Decode bounded local bytes before acquiring persistence locks. This
         # neither contacts a provider nor loads a model nor trusts MIME labels.
         measured = inspect_image(data) if body.kind == "image" else inspect_media(data, body.kind, guard=guard)
+        return self._persist_manual_import(nid, scope, actor, body, data, measured["media_type"], guard)
+
+    def import_model_reference(self, nid, scope, actor, value, guard=lambda: None):
+        from .model_reference_glb import inspect_static_glb
+        body = ManualModelReferenceImport.model_validate(value)
+        if not body.filename.lower().endswith(".glb"):
+            raise ValueError("MODEL_REFERENCE_GLB_FILENAME_REQUIRED")
+        guard()
+        try:
+            data = base64.b64decode(body.content_base64, validate=True)
+        except (ValueError, TypeError):
+            raise ValueError("MODEL_REFERENCE_GLB_BASE64_INVALID") from None
+        inspect_static_glb(data)
+        guard()
+        return self._persist_manual_import(nid, scope, actor, body, data, "model/gltf-binary", guard)
+
+    def inspect_model_reference(self, nid, scope, aid, guard=lambda: None):
+        from .model_reference_glb import MAX_BYTES, inspect_static_glb
+        from ..experimental.common import StaleSourceError
+        guard()
+        with self._asset_scope(nid, scope):
+            row = self._row(nid, scope, aid)
+            if row.get("kind") != "model" or row.get("media_type") != "model/gltf-binary":
+                raise ValueError("MODEL_REFERENCE_GLB_ASSET_REQUIRED")
+            snapshot = {"id": row["id"], "kind": "ASSET", "asset_kind": "model", "version": row["version"], "digest": row["sha256"]}
+            _, data = self.pinned_content(nid, scope, snapshot, max_bytes=MAX_BYTES, guard=guard)
+        inspection = inspect_static_glb(data)
+        guard()
+        with self._asset_scope(nid, scope):
+            current = self._row(nid, scope, aid)
+            if (current["version"], current["sha256"], current["kind"]) != (snapshot["version"], snapshot["digest"], "model"):
+                raise StaleSourceError("MODEL_REFERENCE_SOURCE_CHANGED")
+            guard()
+        return {"asset_snapshot": snapshot, "inspection": inspection}
+
+    def _persist_manual_import(self, nid, scope, actor, body, data, media_type, guard):
+        # Shared original asset owner, admission and idempotency for bounded manual imports.
         guard()
         with self._asset_scope(nid, scope):
             rows = self.assets.list(nid, branch_id=scope.get("branch_id"), include_deleted=True)
@@ -328,7 +365,7 @@ class IndependentWorkspaceService:
                     # without pretending its bytes still need allocating twice.
                     self.storage_admission.require(1)
             try:
-                row = self.assets.create(nid, body.filename, body.content_base64, measured["media_type"], body.kind,
+                row = self.assets.create(nid, body.filename, body.content_base64, media_type, body.kind,
                     body.idempotency_key, branch_id=scope.get("branch_id"), required_features=(FLAG,), guard=before_commit)
             except OSError as exc:
                 if exc.errno == errno.ENOSPC:

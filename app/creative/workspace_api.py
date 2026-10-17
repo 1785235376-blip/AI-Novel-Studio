@@ -10,7 +10,7 @@ from fastapi.exceptions import RequestValidationError
 from ..experimental.production_lineage_api import PrivateProductionRoute, api_call
 from .workspace import FLAG
 from .storage_admission import StudioStorageCapacityError
-from .workspace_models import (AssetRelationshipIn, AssetVersion, BlankProjectIn, ManualAssetImport, ManualBinaryMask,
+from .workspace_models import (AssetRelationshipIn, AssetVersion, BlankProjectIn, ManualModelReferenceImport, ManualAssetImport, ManualBinaryMask,
                                StudioLineageInput, WorkspacePreferencesUpdate)
 
 
@@ -18,8 +18,8 @@ def is_independent_studio_route(method, normalized_path):
     """Exact method/path admission; each handler still resolves full authority."""
     root = r"/api/projects/[^/]+/studio"
     patterns = {
-        "GET": root + r"(?:/(?:preferences|storage|references|relationships|production-contracts|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/download)?)?|director/workspace/[^/]+))?",
-        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/[^/]+/(?:restore|relationships|mask))?))",
+        "GET": root + r"(?:/(?:preferences|storage|references|relationships|production-contracts|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/(?:download|model-reference))?)?|director/workspace/[^/]+))?",
+        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/model-reference|/[^/]+/(?:restore|relationships|mask))?))",
         "PUT": root + r"/(?:preferences|assets/[^/]+/lineage)",
         "DELETE": root + r"/assets/[^/]+(?:/relationships/[^/]+)?",
     }
@@ -65,6 +65,30 @@ class ManualMaskRoute(PrivateProductionRoute):
                 return await handler(request)
             except RequestValidationError:
                 raise HTTPException(422, {"code": "IMAGE_MASK_REQUEST_INVALID"}, headers=headers) from None
+            except HTTPException as exc:
+                exc.headers = {**(exc.headers or {}), **headers}
+                raise
+        return checked
+
+
+class ModelReferenceImportRoute(PrivateProductionRoute):
+    MAX_BODY = 12 * 1024 * 1024
+
+    def get_route_handler(self):
+        handler = super().get_route_handler()
+        async def checked(request):
+            headers = {"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"}
+            try:
+                parts, total = [], 0
+                async for part in request.stream():
+                    total += len(part)
+                    if total > self.MAX_BODY:
+                        raise HTTPException(413, {"code": "MODEL_REFERENCE_REQUEST_LIMIT"}, headers=headers)
+                    parts.append(part)
+                request._body = b"".join(parts)
+                return await handler(request)
+            except RequestValidationError:
+                raise HTTPException(422, {"code": "MODEL_REFERENCE_REQUEST_INVALID"}, headers=headers) from None
             except HTTPException as exc:
                 exc.headers = {**(exc.headers or {}), **headers}
                 raise
@@ -196,6 +220,22 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return invoke(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.import_asset(nid, scope, actor, body, guard))
+
+    model_reference_router = APIRouter(route_class=ModelReferenceImportRoute)
+
+    @model_reference_router.post("/projects/{nid}/studio/assets/model-reference", status_code=201)
+    def import_model_reference(nid: str, body: ManualModelReferenceImport,
+                               x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid, x_session_token, x_branch_id, "domain.write",
+                      lambda actor, scope, guard: service.import_model_reference(nid, scope, actor, body, guard))
+
+    router.include_router(model_reference_router)
+
+    @router.get("/projects/{nid}/studio/assets/{aid}/model-reference")
+    def inspect_model_reference(nid: str, aid: str,
+                                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid, x_session_token, x_branch_id, "domain.read",
+                      lambda actor, scope, guard: service.inspect_model_reference(nid, scope, aid, guard))
 
     @router.get("/projects/{nid}/studio/assets/{aid}")
     def asset(nid: str, aid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

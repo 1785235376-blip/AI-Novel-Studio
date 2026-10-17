@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Static GLB original-Asset import/inspection API (20:24 UTC)
+
+Added a bounded actual GLB triangle-geometry parser and a separate explicit import contract over the original Asset/Storage/Lineage/project-incarnation owners. The old image/video/audio import DTO is unchanged. A bounded private POST persists validated binary bytes with original idempotency; a read-only GET rechecks exact source/authority after parsing and returns mesh-local metadata. No provider, URI resource opening, executable, model, renderer or second asset registry. See STATIC_GLB_REFERENCE_CONTRACT.md for the narrow supported subset and official specification reference.
+
+Final parser:19 focused cases PASS. File/router owner check:6 new plus2 original cases PASS, including genuine generated GLB, exact reopen, no read mutation, deletion/recreation isolation, positive fresh-owner import and revocation. This is API-only so far: UI, viewport, transformed bounds, frame export, other 3D formats, PostgreSQL and graph/DCC integration are not claimed. Full suite/build deferred.
+
 ## Measured source-length feedback for local Timeline edits (20:09 UTC)
 
 The original Timeline controller can retain a strictly validated original PCM16 waveform receipt's full source frame count/sample rate for the current saved timeline and exact source snapshot. New or changed trim/slip/form ranges beyond that measured end are rejected before local history changes; values are never clamped. The same original change/undo owner remains in use. Measurements are ephemeral, bounded by current source pins, discarded on authority/environment changes, and not carried to a different saved timeline. Unknown source lengths remain unknown; unchanged prior author input is not silently rewritten.

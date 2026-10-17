@@ -55,6 +55,14 @@ class ManualAssetImport(StrictModel):
     idempotency_key: str = Field(min_length=1, max_length=120)
 
 
+class ManualModelReferenceImport(StrictModel):
+    contract: Literal["studio-static-glb-import/1"]
+    filename: str = Field(min_length=1, max_length=255)
+    kind: Literal["model"] = "model"
+    content_base64: str = Field(min_length=1, max_length=4 * ((8 * 1024 * 1024 + 2) // 3))
+    idempotency_key: str = Field(min_length=1, max_length=120)
+
+
 class ManualBinaryMask(StrictModel):
     model_config = ConfigDict(extra="forbid", strict=True, str_strip_whitespace=False)
     contract: Literal["manual-binary-mask/1"]
