@@ -1,0 +1,10 @@
+{
+  "parent_approval_received": true,
+  "parent_approval_text": "Parentgate2auditPASS executedcandidatechecker, independentlyhashed/decompressedcandidate andcomparedall frozenmanifestfields. Wroteindependent-candidate-review.json+parent-candidate-check.log. Explicitauthorize exactcandidate992aa33f830f8c6a4dc15438942d21c5bf834af69c2969562efd55a850411e0b bytepromotion afterpredecessorrecheck; verifythen separatethirdoriginalnowrite. Stopforparentfinalaudit.",
+  "byte_exact": true,
+  "predecessor_sha256": "733c4625f0ef4b69c47574672bcbc7d8bd7d62c7cf1de2d336c438b4797a4eee",
+  "candidate_sha256": "992aa33f830f8c6a4dc15438942d21c5bf834af69c2969562efd55a850411e0b",
+  "canonical_sha256": "992aa33f830f8c6a4dc15438942d21c5bf834af69c2969562efd55a850411e0b",
+  "bytes": 627061,
+  "independent_approval_sha256": "63d6659488c222a35578d4d02a533b43fcc9b7095c8aaeff698d53221c45779d"
+}

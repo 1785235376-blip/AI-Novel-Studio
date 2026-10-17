@@ -1,0 +1,11 @@
+{
+  "status": "APPROVE_EXACT_CANDIDATE_PROMOTION",
+  "source_commit": "6ea323c087ac88ad280852b614c7bb54f4170dd2",
+  "reviewer": "parent independent of inventory writer",
+  "candidate_sha256": "992aa33f830f8c6a4dc15438942d21c5bf834af69c2969562efd55a850411e0b",
+  "byte_size": 627061,
+  "checker_mode": "candidate",
+  "checker_result": "PASS_INVENTORY_ONLY",
+  "frozen_manifest_fields_exact": true,
+  "tests_executed": false
+}
