@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Read-only graph configuration checklist (19:46 UTC)
+
+The original graph editor now exposes bounded, paginated local guidance and node-location actions for missing provider/model choices, original typed connection errors, and required execution inputs. The unchanged checkedStudioGraphDraft decoder supplies the sole local format verdict. Missing execution inputs are explicitly distinct from whether a disconnected authoring draft can be saved. Disabled nodes still surface incomplete provider fields because the original save contract validates them. Guidance never sends requests, echoes authored content, auto-fixes, changes routing or authorizes execution; original server version/authority/budget checks remain required. Old node-location callbacks retire on scope/draft/catalog/disabled changes.
+
+Focused graph-draft-checklist-r1:6 new checks plus9 storyboard starter checks and TypeScript PASS. Mocked/UI authoring only; full acceptance remains deferred.
+
 ## Approved storyboard-to-video starter (19:43 UTC)
 
 An explicitly selected empty v5 graph can now read the original storyboard directory, inspect an approved exact source version, choose one original shot, and assemble the existing storyboard_plan → storyboard_shot → video_generate → media_review chain. Exact shot/source version and digest remain pinned; bind_shot stays true. Provider/model remain blank and cloud stays false until the user configures them through existing controls. No automatic write, schema conversion, execution or approval. Original change/undo/Save and typed connection owners are reused.

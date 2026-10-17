@@ -1,3 +1,4 @@
+import { GraphDraftChecklist } from './GraphDraftChecklist';
 import { GraphStoryboardStarter } from './GraphStoryboardStarter';
 import { GraphStarterPanel } from './GraphStarterPanel';
 import { IMAGE_REFERENCE_PURPOSES, IMAGE_REFERENCE_PURPOSE_LABELS } from './studioImageRuntimeContract';
@@ -137,6 +138,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
       <Badge tone={dirty || blocked ? 'warning' : 'neutral'}>{base ? `v${base.version}` : '尚未保存'} · {dirty ? '未保存修改' : '无未保存修改'}</Badge>
       <div className="studio-graph-actions"><Button variant="primary" disabled={!editable || controller.historyFull || !draft.title.trim() || !!base && !dirty} onClick={() => void save()}>保存创作图</Button><Button disabled={!editable || !past.length} onClick={() => travel(false)}>撤销图编辑</Button><Button disabled={!editable || !future.length} onClick={() => travel(true)}>重做图编辑</Button><Button disabled={busy || !base} onClick={() => navigate(() => void open(base!.id))}>重新读取创作图</Button></div>
     </Panel>
+    {catalog && draft.nodes.length > 0 && <GraphDraftChecklist draft={draft} catalog={catalog.definitions} scope={controller.starterScope} disabled={busy || loading || props.denied || externalDirty || executionDirty} onSelect={setSelected} />}
     {loading && <StatusMessage>正在读取当前范围的节点目录…</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}{notice && <StatusMessage>{notice}</StatusMessage>}
     {catalog && draft.schema_version === 5 && !draft.nodes.length && !draft.edges.length && <GraphStoryboardStarter scope={controller.starterScope} disabled={!editable || timelineEditor.formDirty || !!controller.positionedInsertion} loading={planningLoading} documents={planningDocuments} onLoad={loadPlanningDocuments} onRead={controller.readStarterStoryboard} onApply={controller.applyStoryboardStarter} />}
     {catalog && draft.schema_version !== 5 && !draft.nodes.length && !draft.edges.length && <GraphStarterPanel draft={draft} catalog={catalog} scope={controller.starterScope} disabled={!editable || timelineEditor.formDirty || !!controller.positionedInsertion} onApply={controller.applyStarterGraph} />}
