@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "high_water": 1,
+  "allocations": {
+    "1": {
+      "state": "active",
+      "origin": "allocated",
+      "public_token": "1"
+    }
+  },
+  "legacy_provenance": "ALLOCATED"
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "age": null,
+    "role": "",
+    "personality": "Careful",
+    "goal": "",
+    "current_location": "",
+    "status": "ALIVE",
+    "name": "Alice",
+    "id": "alice",
+    "privacy_level": "LOCAL_ONLY",
+    "privacy_status": "UNKNOWN"
+  }
+]

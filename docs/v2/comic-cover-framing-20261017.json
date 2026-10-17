@@ -1,0 +1,471 @@
+{
+  "baseline_head": "d10b72c1bc2db33dc2dff85af4f31ede478cf1fc",
+  "scope": "B06 optional strict COVER crop-travel alignment, original owner",
+  "independent_review": "PASS_STATIC_ARTIFACT_LOG_REVIEW",
+  "independent_test_execution": "PASS_ORIGINAL_RUNNER_ORIGIN_GOLDEN_FILE_UI",
+  "backend": {
+    "passed": 63,
+    "skipped": 1,
+    "skip_reason": "Existing pinned-font test: no font supplied",
+    "deselected_postgres": 26
+  },
+  "ui": {
+    "passed": 38
+  },
+  "golden": {
+    "review_digest": "f067ebcff3b51d9a774631c090cb0a5d38c87f0d39aa4526526f760c49f1aed5",
+    "png_sha256": "f299606e9ab739c97742d7c41b5310f2096a9fb2236b7aedc4a32a2dcc6c03c0",
+    "zip_sha256": "b9eb214deb9bfa53ca64ab18f665c521bed0307debb69380f56796e780d612fb",
+    "status": "EXACT_WITHOUT_REAPPROVAL",
+    "hooks": []
+  },
+  "initial_direct_pytest": {
+    "status": "INVALID_PRIMARY_GATE_SETUP_FAILED",
+    "original_runner_receipt_exists": false,
+    "command": "env -u PYTHONPATH -u PYTHONHOME PYTHONDONTWRITEBYTECODE=1 /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python -m pytest -x -q -p no:cacheprovider --basetemp=/workspace/scratch/20a0022d2b33/comic-framing-verification-r1/pytest-data -m 'not postgres_backend_only' tests/test_comic_cover_framing.py tests/test_r5_comic_layouts.py tests/test_r5_comic_layouts_additive.py",
+    "reason": "Bypassed original runner; omitted owned app profile; default home read-only before first test body"
+  },
+  "source_sha256": {
+    "app/experimental/comic_layouts.py": "14322297e06e73861fc452d69737e894294db74b4f4d3c9903e5349180399a52",
+    "frontend/src/experimental/comicLayoutsClient.ts": "8709cc3455178dd03cfd40f81c272801ecbd9e3b9054ad024276fccc18efc2ab",
+    "frontend/src/experimental/ComicLayoutsPanel.tsx": "0dad4ecfb54af1ff92cbdadf2f0dc3ed688ae169a052d2226ac2b0166acdcd02",
+    "tests/test_comic_cover_framing.py": "a12d82fb4413a39fd3135042e950c922920b698b77495069fc179e2f1171ec52",
+    "frontend/src/experimental/ComicLayoutsPanel.framing.test.tsx": "8fb8e2845e281b2d9c413c896ac1d5de8d0e45ecea60cc46baf43720a3345709"
+  },
+  "evidence": [
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/backend.log",
+      "sha256": "d6a67a711c3e68c56794c90b68dee7d294f8e5207e490c8a3116bbb623591979",
+      "bytes": 2843
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/capture.log",
+      "sha256": "5823284548e1494d9cf2ccb2eb25db57fdadbfb3f8f2ac319ff0ec7f38f9b9fe",
+      "bytes": 1291
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/capture.py",
+      "sha256": "3b20022feb5ed51342a410678c20c28f46803fb45f4f7f51efef2b530aa560bb",
+      "bytes": 4086
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/expected.json",
+      "sha256": "3720b1d600d4bd0f7b42b33e45336c94d80ed2fcf2118c9041a5986dd4e1fa70",
+      "bytes": 11440
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/assets/de55c092-3c9c-44c5-83f5-667b705eeaf2.bin",
+      "sha256": "7c1e353f37c5f78896e1761337c09853520941dcd541a7512da47e040ef83cfb",
+      "bytes": 244
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/assets/de55c092-3c9c-44c5-83f5-667b705eeaf2.json",
+      "sha256": "25d7d6f8e2e050288f139ae1e549360f5524a8fd05cebae7812f53ada709b713",
+      "bytes": 539
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/experimental_v1/b4556345beda3c1951b4e0b4c351eef90ccd9f40fdbb87de9bdf1161097a5645.json",
+      "sha256": "91e2b33d3d1dcfd6ee3dd5f81ffca43fd9405f45ba4bfb2e9e7cd1b75996f469",
+      "bytes": 4170
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/canon.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/chapter_identity.json",
+      "sha256": "a24f6d322a43e0653012c7783332b1145412b55bf54e12ac497b4b30343e6d54",
+      "bytes": 201
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/chapters/chapter-0001.md",
+      "sha256": "1a00a6792acd62e4c3050e2c877568529691845454563414217e417e2eaee269",
+      "bytes": 76
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/characters/characters.json",
+      "sha256": "5a8a51a1d992318c44734728df04055b53f78bc2b915c2282026b00a16049813",
+      "bytes": 248
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/documents/chapter-0001.json",
+      "sha256": "33f049a2859f8718d9068553c44b86c9e2e12fd22696e1432cf30fb808372478",
+      "bytes": 645
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/foreshadowing.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/locations/locations.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/novel.json",
+      "sha256": "c6cfc98717f42eb3ad085594237ba670e94e1de6d15338d6822d4a4217d3ccbb",
+      "bytes": 230
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/outline.json",
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/relationships.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/scenes.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/screenplays.json",
+      "sha256": "0e4de12929fd773d17e91dba5b9203c1b8addc18065536e301dc9d438db03833",
+      "bytes": 3408
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/secrets.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/story_routes.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/story_state.json",
+      "sha256": "9311517ab46c099b0ccc36aaa4570330115dff5a767841875c8f4f8d017cab62",
+      "bytes": 60
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/summaries/index.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/timeline/events.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/file-data/novels/r3-media-06c5db27b2a14d7288d0706a2f2c6b87/volumes.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/fixed-center.png",
+      "sha256": "f299606e9ab739c97742d7c41b5310f2096a9fb2236b7aedc4a32a2dcc6c03c0",
+      "bytes": 989
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/golden.log",
+      "sha256": "760d9169903209866bf387c7804c359d9a6bac385565e88383eceb79b4f92aca",
+      "bytes": 266
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/implementation-frozen-r2.sha256",
+      "sha256": "55e46c8768a511bbf127ab787050ca1eee175a5baa5e4b6abcda821977936861",
+      "bytes": 555
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/origin.log",
+      "sha256": "cd68da44b52dccfacfbb96b9a88a22c619fd1855a7e4affebfccfe4abb10c6c8",
+      "bytes": 583
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/owner-approved.zip",
+      "sha256": "b9eb214deb9bfa53ca64ab18f665c521bed0307debb69380f56796e780d612fb",
+      "bytes": 2175
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/owner-center.png",
+      "sha256": "f299606e9ab739c97742d7c41b5310f2096a9fb2236b7aedc4a32a2dcc6c03c0",
+      "bytes": 989
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/run-checks-r1.sh",
+      "sha256": "406f3a303d3b36beb1bf12f40a08c1d0bcfbe8615ebdbd2d3b50e839723be8a4",
+      "bytes": 1066
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/run-file-r2.sh",
+      "sha256": "15c7e1a3f7c3a96cda5bdb8bf6d434d4f09a01232e40a11b7785a268b5d4690f",
+      "bytes": 1234
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/run-ui-r1.sh",
+      "sha256": "d5b5caeaac9682d536be443724b49001fec52423c945e2792121f49250522980",
+      "bytes": 972
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/run-ui-r2.sh",
+      "sha256": "6ee5580a493c3c8ec53e54a0a026c3e67c0a9070e17c2bdba77eb2661beb94c1",
+      "bytes": 972
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/synthetic-input.png",
+      "sha256": "7c1e353f37c5f78896e1761337c09853520941dcd541a7512da47e040ef83cfb",
+      "bytes": 244
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/verify.py",
+      "sha256": "5af31f0ca7ea2863b29119318c637d6cb7669ba62e55d4c7684860f85d836143",
+      "bytes": 2856
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-baseline-20261017/verify_legacy_portable.py",
+      "sha256": "17f35a34ceb8a110e0ed76e3c52d65149a883639182a7f6f73ebfff6429b903f",
+      "bytes": 2968
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-diff-r1.json",
+      "sha256": "ff6ac4e942a28d00bb063946b8d3abcca58004386c6030f8e7abe642dd1313ec",
+      "bytes": 616408,
+      "status": "PASS",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "sources_changed": false
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-file-r2.json",
+      "sha256": "8a9dcaca8685b96f176758f40b230c2d66afdec9bf3b4b85efa3a6a90e290360",
+      "bytes": 616795,
+      "status": "PASS",
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_comic_cover_framing.py",
+        "tests/test_r5_comic_layouts.py",
+        "tests/test_r5_comic_layouts_additive.py",
+        "-m",
+        "not postgres_backend_only",
+        "-q",
+        "-x",
+        "-p",
+        "no:cacheprovider",
+        "--basetemp=.runtime/v2-checks/comic-framing-file-r2/pytest"
+      ],
+      "exit_code": 0,
+      "sources_changed": false
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-origin-r2.json",
+      "sha256": "9e78e9eb635642dcae77d671afdce958e67e0998efeb9917a190e1b0d4eac681",
+      "bytes": 616727,
+      "status": "PASS",
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-c",
+        "import sys, PIL, pydantic, app.experimental.comic_layouts as c; print(sys.executable); print(sys.prefix); print(PIL.__version__, PIL.__file__); print(pydantic.__version__, pydantic.__file__); print(c.__file__)"
+      ],
+      "exit_code": 0,
+      "sources_changed": false
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-public-r1.json",
+      "sha256": "0dbfab3512f3551ecd33d61374587f86429750fe911669286479740f13f3fe8c",
+      "bytes": 616556,
+      "status": "PASS",
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "scripts/public_build.py",
+        "--source",
+        "."
+      ],
+      "exit_code": 0,
+      "sources_changed": false
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-tokens-r1.json",
+      "sha256": "d57aba06fbf4668adb2a02694c228206d905c6f5866294900ce0872ff9968626",
+      "bytes": 616442,
+      "status": "PASS",
+      "command": [
+        "node",
+        "scripts/check_ui_design_tokens.mjs"
+      ],
+      "exit_code": 0,
+      "sources_changed": false
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-type-build-r1.json",
+      "sha256": "75fd2ffb9f85bc4f014a0610081929c69bdd4f41a8bd64d492cdf78de6a184ed",
+      "bytes": 616564,
+      "status": "PASS",
+      "command": [
+        "bash",
+        "-c",
+        "set -e; cd frontend; node node_modules/typescript/bin/tsc -b --force; node node_modules/vite/bin/vite.js build"
+      ],
+      "exit_code": 0,
+      "sources_changed": false
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-ui-r1.json",
+      "sha256": "53cea04b4059a70742989e1f853f2191d7ee783500f3476e191dd5675aa465f0",
+      "bytes": 616677,
+      "status": "FAIL",
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && node node_modules/vitest/vitest.mjs run src/experimental/ComicLayoutsPanel.framing.test.tsx src/experimental/ComicLayoutsPanel.test.tsx src/experimental/ComicLayoutsPanel.additive.test.tsx src/experimental/comicArrangement.test.ts --maxWorkers=1 --minWorkers=1 --no-cache --bail=1"
+      ],
+      "exit_code": 1,
+      "sources_changed": false
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-ui-r2.json",
+      "sha256": "8131f56a0ba1591269f2e60a18e7396c0f0caeb5dad3a0f228e9d2a1ee251b97",
+      "bytes": 616677,
+      "status": "PASS",
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && node node_modules/vitest/vitest.mjs run src/experimental/ComicLayoutsPanel.framing.test.tsx src/experimental/ComicLayoutsPanel.test.tsx src/experimental/ComicLayoutsPanel.additive.test.tsx src/experimental/comicArrangement.test.ts --maxWorkers=1 --minWorkers=1 --no-cache --bail=1"
+      ],
+      "exit_code": 0,
+      "sources_changed": false
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-diff-r1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-file-r2.log",
+      "sha256": "6dc3c380b6d5314086555f5d5d30c7263b9a671aec5205e8dd4a8fb984c12ae6",
+      "bytes": 635
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-origin-r2.log",
+      "sha256": "cd68da44b52dccfacfbb96b9a88a22c619fd1855a7e4affebfccfe4abb10c6c8",
+      "bytes": 583
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-public-r1.log",
+      "sha256": "11e09217065f1aa5411b48b64feb07782268ff93e1f8806202ddd8544758b243",
+      "bytes": 76
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-tokens-r1.log",
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "bytes": 31
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-type-build-r1.log",
+      "sha256": "6b642210ab24ad14b9c889179e11c016aebe25fb1101f98f6f00fca950e59a70",
+      "bytes": 1679
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-ui-r1.log",
+      "sha256": "4e63bbc275ed0f7acc99f54c200300e3a109c9902a6b3f873f8d2b58d68b3420",
+      "bytes": 1814
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-ui-r2.log",
+      "sha256": "51c4470d5d3cb083d318df3df8a2d7ce2e5c9b2f21506ef2fdc4734907099add",
+      "bytes": 540
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-independent-file-r1.json",
+      "sha256": "321e638d973bed0c6e8fce7a91cff1a235c9dc38f1640be960e12962ad93a7e8",
+      "bytes": 616915,
+      "status": "PASS",
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_comic_cover_framing.py",
+        "tests/test_r5_comic_layouts.py",
+        "tests/test_r5_comic_layouts_additive.py",
+        "-m",
+        "not postgres_backend_only",
+        "-q",
+        "-x",
+        "-p",
+        "no:cacheprovider",
+        "--basetemp=.runtime/v2-checks/comic-framing-independent-file-r1/pytest"
+      ],
+      "exit_code": 0,
+      "sources_changed": false
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-independent-file-r1.log",
+      "sha256": "21719559bf6b9eb645321b72788e6432c4f6a7f53aca0bd13c81289b7e92d033",
+      "bytes": 635
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-independent-golden-r1.json",
+      "sha256": "f2e9551c95627f65804c07963eb61465dd5fe7950110e5dcc4d6ddab077070c7",
+      "bytes": 616686,
+      "status": "PASS",
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "/workspace/scratch/20a0022d2b33/comic-framing-independent-r1/verify.py"
+      ],
+      "exit_code": 0,
+      "sources_changed": false
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-independent-golden-r1.log",
+      "sha256": "760d9169903209866bf387c7804c359d9a6bac385565e88383eceb79b4f92aca",
+      "bytes": 266
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-independent-origin-r1.json",
+      "sha256": "88ee956772d014e73a6304ceaa5f398fdbb7f4cb51743403033b6a17b797be18",
+      "bytes": 616835,
+      "status": "PASS",
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-c",
+        "import sys, PIL, pydantic, app.experimental.comic_layouts as c; print(sys.executable); print(sys.prefix); print(PIL.__version__, PIL.__file__); print(pydantic.__version__, pydantic.__file__); print(c.__file__)"
+      ],
+      "exit_code": 0,
+      "sources_changed": false
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-independent-origin-r1.log",
+      "sha256": "cd68da44b52dccfacfbb96b9a88a22c619fd1855a7e4affebfccfe4abb10c6c8",
+      "bytes": 583
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-independent-ui-r1.json",
+      "sha256": "6cbe71395dd92b5ed5793cb16eae7579c60dc7865f11cb79562e77560b9060be",
+      "bytes": 616785,
+      "status": "PASS",
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && node node_modules/vitest/vitest.mjs run src/experimental/ComicLayoutsPanel.framing.test.tsx src/experimental/ComicLayoutsPanel.test.tsx src/experimental/ComicLayoutsPanel.additive.test.tsx src/experimental/comicArrangement.test.ts --maxWorkers=1 --minWorkers=1 --no-cache --bail=1"
+      ],
+      "exit_code": 0,
+      "sources_changed": false
+    },
+    {
+      "path": "docs/delivery/v2-development/comic-framing-independent-ui-r1.log",
+      "sha256": "4b9e47e038939e40eead109ebff5d02cd2dc97d3e8c3e785d4c98b52b87386d2",
+      "bytes": 540
+    }
+  ],
+  "not_verified": [
+    "browser/native input/visual geometry",
+    "Windows/GPU",
+    "provider/model artwork",
+    "professional print",
+    "real font output",
+    "PostgreSQL"
+  ],
+  "portable_verifier_execution": "NOT_RUN"
+}

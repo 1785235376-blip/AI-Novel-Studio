@@ -1,0 +1,32 @@
+{
+  "chapter_id": "r3-media-06c5db27b2a14d7288d0706a2f2c6b87:1",
+  "version": 1,
+  "document": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 1
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Chapter"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "Alice: “Hello.”\nThen a voice answered: “Unknown speaker.”"
+          }
+        ]
+      }
+    ]
+  },
+  "updated_at": "2026-10-17T09:51:43.338690+00:00",
+  "source": "MIGRATED"
+}

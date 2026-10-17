@@ -11,7 +11,7 @@ import json
 import math
 import zipfile
 from typing import Literal
-from pydantic import Field, model_validator
+from pydantic import Field, model_serializer, model_validator
 from .common import DomainService, StaleSourceError, check_version, now, new_row
 from .director import DirectorService
 from .media import StrictModel, digest
@@ -61,9 +61,21 @@ class ComicPanel(Rect):
     asset_id: str | None = Field(default=None, min_length=1, max_length=240)
     expected_asset_version: int | None = Field(default=None, ge=1, strict=True)
     fit: Literal['CONTAIN', 'COVER'] = 'CONTAIN'
+    cover_x_percent: int = Field(default=50, ge=0, le=100, strict=True)
+    cover_y_percent: int = Field(default=50, ge=0, le=100, strict=True)
     bubbles: list[Bubble] = Field(default_factory=list, max_length=12)
     image_brief: str = Field(default='', max_length=8000)
     appearance_references: list[AppearanceReference] = Field(default_factory=list, max_length=20)
+
+    @model_serializer(mode='wrap')
+    def preserve_legacy_framing(self, handler):
+        # Omission survives API normalization and history restore. Never migrate
+        # existing approval-bound documents merely by reading or saving them.
+        document = handler(self)
+        for field in ('cover_x_percent', 'cover_y_percent'):
+            if field not in self.model_fields_set:
+                document.pop(field, None)
+        return document
 
     @model_validator(mode='after')
     def references(self):
@@ -245,9 +257,16 @@ def compose(document, images, *, render=False):
             scale = (max if panel['fit'] == 'COVER' else min)(panel['width'] / image.width, panel['height'] / image.height)
             size = (max(1, round(image.width * scale)), max(1, round(image.height * scale)))
             offset = ((panel['width'] - size[0]) // 2, (panel['height'] - size[1]) // 2)
+            center_offset = offset
+            if panel['fit'] == 'COVER':
+                # Align over the available crop travel, preserving Python's
+                # negative floor rounding exactly at the legacy center (50).
+                offset = ((panel['width'] - size[0]) * panel.get('cover_x_percent', 50) // 100,
+                          (panel['height'] - size[1]) * panel.get('cover_y_percent', 50) // 100)
             placements[pid] = {'size': size, 'offset': offset}
             if size[0] * size[1] > MAX_IMAGE_PIXELS: issue('COMIC_IMAGE_RESAMPLE_LIMIT', pid)
-            if size[0] > panel['width'] or size[1] > panel['height']: issue('COMIC_CENTER_CROP', pid, 'WARNING')
+            if size[0] > panel['width'] or size[1] > panel['height']:
+                issue('COMIC_CENTER_CROP' if offset == center_offset else 'COMIC_POSITIONED_CROP', pid, 'WARNING')
         for bi, bubble in enumerate(panel['bubbles']):
             bid = bubble['id']
             if not _inside(bubble, panel, 8): issue('COMIC_BUBBLE_OUTSIDE_PANEL_SAFE_AREA', bid)

@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-comic-framing/frontend
+
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 676ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 948ms
+ ✓ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests) 686ms
+ ✓ src/experimental/comicArrangement.test.ts (18 tests) 7ms
+
+ Test Files  4 passed (4)
+      Tests  38 passed (38)
+   Start at  19:04:58
+   Duration  4.48s (transform 207ms, setup 43ms, collect 506ms, tests 2.32s, environment 930ms, prepare 203ms)
+
