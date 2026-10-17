@@ -1,0 +1,14 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 229ms
+ ✓ src/creative/GraphDirectorModelAuthority.additive.test.tsx (32 tests) 466ms
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 194ms
+ ✓ src/creative/IndependentDirectorModelReview.test.tsx (7 tests) 635ms
+ ✓ src/creative/AIDirectorPanel.test.tsx (10 tests) 629ms
+
+ Test Files  5 passed (5)
+      Tests  61 passed (61)
+   Start at  23:38:34
+   Duration  1.86s (transform 571ms, setup 63ms, collect 2.05s, tests 2.15s, environment 2.00s, prepare 341ms)
+

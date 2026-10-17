@@ -1,0 +1,72 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/GraphDirectorSourceImpact.test.tsx (19 tests) 344ms
+ ✓ src/creative/AIDirectorPanel.test.tsx (10 tests) 1031ms
+   ✓ AI director local proposal and explicit review > honestly prepares local rules without model calls and requires reviewed edited output before adoption 450ms
+ ✓ src/creative/IndependentDirectorModelReview.test.tsx (7 tests) 1157ms
+   ✓ runs explicit captured preview, model, human review and exact reopen with no construction-time request 345ms
+ ✓ src/creative/GraphDirectorCanvasHandoff.additive.test.tsx (15 tests) 1436ms
+ ✓ src/creative/AIDirectorPanel.storyboard.additive.test.tsx (19 tests) 1695ms
+   ✓ uses the original graph owner for saved storyboard → reviewed separate draft → verified reopen without mutating source 456ms
+ ✓ src/creative/GraphDirectorStoryboardHandoff.test.tsx (7 tests) 381ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 1855ms
+   ✓ optional mounted graph director source authoring > does no background reads, saves authored scenes through original owner and reopens exact source 314ms
+   ✓ optional mounted graph director source authoring > hands a saved human director to the existing storyboard owner and reopens its status 368ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 298ms
+ ✓ src/creative/DirectorModelControls.storyboard-model.additive.test.tsx (49 tests) 2542ms
+   ✓ actual graph owner forwards explicit model calls through mutation leases despite own busy renders 433ms
+   ✓ adopts source-bound empty-note CANCELLED receipts through the graph owner 302ms
+   ✓ adopts source-bound empty-note MODEL_UNAVAILABLE receipts through the graph owner 315ms
+ ✓ src/creative/AIDirectorReopen.test.tsx (31 tests) 2644ms
+ ✓ src/creative/AIDirectorPanel.reasoning.additive.test.tsx (2 tests) 591ms
+   ✓ AI director local proposal and explicit review > shows estimated totals and editable model reasoning separately from auxiliary rules 431ms
+ ✓ src/creative/GraphDirectorModelAuthority.additive.test.tsx (32 tests) 646ms
+ ✓ src/creative/AIDirectorFastReceipt.test.tsx (3 tests) 586ms
+   ✓ director proposal activation after a fast receipt > keeps one native double-click bound to its first proposal through edited human review 390ms
+ ✓ src/creative/AIDirectorIndependent.integration.test.tsx (3 tests) 677ms
+   ✓ mounts the versioned view only after explicit capability read and hands exact adopted pin to original parent 541ms
+ ✓ src/creative/directorModelClient.test.ts (35 tests) 42ms
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 219ms
+ ✓ src/creative/client.test.ts (11 tests) 26ms
+ ✓ src/creative/AIDirectorPanel.sourceLabels.additive.test.tsx (1 test) 119ms
+ ✓ src/creative/directorObservationClient.test.ts (30 tests) 21ms
+ ✓ src/creative/directorModelPlanningContract.additive.test.ts (11 tests) 12ms
+ ✓ src/creative/directorModelDraftHandoff.test.ts (15 tests) 17ms
+ ✓ src/creative/directorModelClient.capture.test.ts (2 tests) 6ms
+ ✓ src/creative/GraphDirectorAdoptionPin.additive.test.tsx (5 tests) 416ms
+ ✓ src/creative/ReviewedDirectorCanvas.integration.test.tsx (1 test) 318ms
+   ✓ wires reviewed Creative DRAFT through original export/read, real editor/controller insertion, and explicit Graph Save 317ms
+
+ Test Files  24 passed (24)
+      Tests  332 passed (332)
+   Start at  23:41:23
+   Duration  5.78s (transform 2.56s, setup 271ms, collect 9.21s, tests 17.08s, environment 8.60s, prepare 1.96s)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2304 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-Bg9pZcT3.css      2.93 kB │ gzip:   0.82 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-BkplvLLE.css      4.23 kB │ gzip:   1.09 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-DRLVwzqD.css                      215.51 kB │ gzip:  27.26 kB
+dist/assets/Health-sF_XqakX.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-BxJInCPY.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/LocalTutorIntegration-Da7jIj2e.js      42.44 kB │ gzip:  13.79 kB
+dist/assets/style-y5mO6l7j.js                      45.12 kB │ gzip:   8.40 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-zX24zLMt.js     772.77 kB │ gzip: 232.00 kB
+dist/assets/App-DS5enLai.js                     2,361.74 kB │ gzip: 702.78 kB
+✓ built in 6.85s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

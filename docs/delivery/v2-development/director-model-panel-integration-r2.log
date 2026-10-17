@@ -1,0 +1,16 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/AIDirectorIndependent.integration.test.tsx (3 tests) 417ms
+   ✓ mounts the versioned view only after explicit capability read and hands exact adopted pin to original parent 330ms
+ ✓ src/creative/IndependentDirectorModelReview.test.tsx (7 tests) 727ms
+ ✓ src/creative/AIDirectorPanel.test.tsx (10 tests) 689ms
+   ✓ AI director local proposal and explicit review > honestly prepares local rules without model calls and requires reviewed edited output before adoption 318ms
+
+ Test Files  3 passed (3)
+      Tests  20 passed (20)
+   Start at  23:40:07
+   Duration  1.96s (transform 447ms, setup 45ms, collect 1.49s, tests 1.83s, environment 1.18s, prepare 198ms)
+
+src/creative/AIDirectorIndependent.integration.test.tsx(29,58): error TS2345: Argument of type '{ localHostToken: string; }' is not assignable to parameter of type 'CollaborationContext'.
+  Property 'sessionToken' is missing in type '{ localHostToken: string; }' but required in type 'CollaborationContext'.

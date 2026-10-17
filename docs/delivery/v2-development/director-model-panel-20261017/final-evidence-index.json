@@ -1,0 +1,34 @@
+{
+  "status": "PRIMARY_GATES_PASS_WITH_EXPLICIT_LIMITS",
+  "identical_source_snapshots": true,
+  "receipts": [
+    {
+      "receipt": "docs/delivery/v2-development/director-model-panel-final-ui-r1.json",
+      "sha256": "86eedf4dd85d44d49cc7ac7a75e56c560f91e23b656329d14df9e8bf69598cc7",
+      "status": "PASS"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-model-panel-backend-r1.json",
+      "sha256": "622cb3e5532d0a81ba96fc114bc3e609b02816ab3b3c0b276801b5381922162f",
+      "status": "PASS"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-model-panel-packaging-r1.json",
+      "sha256": "5cbd816bf8b67c33afdd8e704acfcbfeb6e29f27271c85dada41c257edbac634",
+      "status": "PASS"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-model-panel-origin-before-r1.json",
+      "sha256": "858996735eec5661363958e00a30cabcff1b81cabb605630ae39fcd50e24b8ff",
+      "status": "PASS"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-model-panel-origin-after-r1.json",
+      "sha256": "2e32005e10971a823358ee82dfc9b8f887a885fd3c8eef30018138d2bb05ae27",
+      "status": "PASS"
+    }
+  ],
+  "production_route_activation": "NOT_ENABLED",
+  "browser": "BLOCKED",
+  "postgres": "NOT_RUN"
+}
