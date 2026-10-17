@@ -1,0 +1,34 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-canvas-handoff/frontend
+
+ ✓ src/creative/StudioProductionGraphEditor.director.additive.test.tsx (5 tests) 9984ms
+   ✓ Production Graph UI keeps original controller and execution authority > lays out already-saved Director pins without rewriting their source or executing 1344ms
+   ✓ authors a director in the canvas, saves its exact node pin and reopens the bound source 2460ms
+   ✓ requires an explicit original workspace navigation confirmation to abandon an UNKNOWN director create 791ms
+   ✓ keeps an UNKNOWN storyboard handoff pending through cancelled workspace navigation 1619ms
+   ✓ reviews an original screenplay proposal, explicitly pins the DRAFT and reopens both owners without model execution 3768ms
+ ✓ src/ui/AppShell.test.tsx (19 tests) 238ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 980ms
+ ✓ src/creative/StudioGraphInsertion.additive.test.tsx (20 tests) 1167ms
+ ✓ src/creative/StudioGraphConnection.additive.test.tsx (15 tests) 1024ms
+ ✓ src/creative/GraphDirectorSourceImpact.test.tsx (19 tests) 291ms
+ ✓ src/creative/GraphDirectorCanvasHandoff.additive.test.tsx (15 tests) 831ms
+ ✓ src/creative/StudioProductionGraphEditor.test.tsx (4 tests) 3495ms
+   ✓ Production Graph UI keeps original controller and execution authority > mounts the existing read-only Director Console in a selected Director graph node 1190ms
+   ✓ Production Graph UI keeps original controller and execution authority > explicitly binds authored documents, style and upscale parameters without dispatch 1283ms
+   ✓ Production Graph UI keeps original controller and execution authority > ignores late document references after a same-token Host replacement 439ms
+   ✓ Production Graph UI keeps original controller and execution authority > keeps Style inspector and controller bounds aligned to the backend 582ms
+ ✓ src/creative/GraphDirectorStoryboardHandoff.test.tsx (7 tests) 227ms
+ ✓ src/creative/directorCanvasHandoff.additive.test.tsx (13 tests) 715ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 162ms
+ ✓ src/creative/StudioGraphDirectorConsole.test.tsx (11 tests) 467ms
+ ✓ src/creative/ReviewedDirectorCanvas.integration.test.tsx (1 test) 292ms
+ ✓ src/creative/StudioGraphInsertion.palette.additive.test.tsx (4 tests) 735ms
+ ✓ src/creative/useStudioGraphEditor.storyboardAuthority.additive.test.tsx (1 test) 13ms
+ ✓ src/creative/studioGraphDirectorClient.test.ts (14 tests) 18ms
+
+ Test Files  16 passed (16)
+      Tests  169 passed (169)
+   Start at  20:27:21
+   Duration  33.25s (transform 2.37s, setup 86ms, collect 5.62s, tests 20.64s, environment 4.30s, prepare 737ms)
+

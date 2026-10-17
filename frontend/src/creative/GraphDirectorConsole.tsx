@@ -1,3 +1,4 @@
+import { reviewedDirectorSnapshot, type ReviewedDirectorReceipt, type ReviewedDirectorCanvasHandoff } from './directorCanvasHandoff';
 import type { OpenStoryboardEditor } from './storyboardEditorHandoff';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { GraphDirectorProposalReview, hasDirectorProposalReview, type GraphDirectorReviewSource } from './GraphDirectorProposalReview';
@@ -15,6 +16,7 @@ import './creative.css';
 export type GraphDirectorSource = Pick<ReturnType<typeof creativeClient>, 'create' | 'update' | 'export' | 'capabilities' | 'list' | 'derive' | 'history'> & GraphDirectorReviewSource;
 type Props = {
   client: GraphDirectorSource;
+  canvasHandoff?: ReviewedDirectorCanvasHandoff;
   pin?: PlanningSnapshot;
   selectionKey?: string;
   graph?: StudioGraphDefinition;
@@ -34,7 +36,17 @@ const samePin = (a: PlanningSnapshot, b: PlanningSnapshot) => a.id === b.id && a
 
 /** A mounted view of the original Creative owner. Only author drafts live here;
  * Graph retains its exact pin and all execution/review remains with its owners. */
-export function GraphDirectorConsole({ client, pin, selectionKey, graph, selectedNodeId, active, canMutate, busy, isCurrent, read, mutate, onDirtyChange, onOpenModels, onOpenStoryboard }: Props) {
+export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey, graph, selectedNodeId, active, canMutate, busy, isCurrent, read, mutate, onDirtyChange, onOpenModels, onOpenStoryboard }: Props) {
+  const [reviewed, setReviewed] = useState<ReviewedDirectorReceipt>();
+  const [reviewedPin, setReviewedPin] = useState<PlanningSnapshot>();
+  const verifiedIntent = useRef<{ pin: PlanningSnapshot; canvasScope: object | undefined; authored: number; selected: number; generation: number; canvasGeneration: number; receipt: ReviewedDirectorReceipt; isCanvasCurrent?: () => boolean; consumed: boolean }>();
+  const reviewedRef = useRef(reviewed); reviewedRef.current = reviewed;
+  const canvasLifetime = useRef({ scope: canvasHandoff?.verificationScope, generation: 0 });
+  if (canvasLifetime.current.scope !== canvasHandoff?.verificationScope) {
+    canvasLifetime.current = { scope: canvasHandoff?.verificationScope, generation: canvasLifetime.current.generation + 1 };
+  }
+  const composing = useRef(false);
+  const canvasRef = useRef(canvasHandoff); canvasRef.current = canvasHandoff;
   const [proposalPending, setProposalPending] = useState(false);
   const [handoffPending, setHandoffPending] = useState(false), [storyboardAllowed, setStoryboardAllowed] = useState(false);
   const [open, setOpen] = useState(false), [authorized, setAuthorized] = useState(false);
@@ -70,11 +82,12 @@ export function GraphDirectorConsole({ client, pin, selectionKey, graph, selecte
   useEffect(() => { if (reportedPending.current !== pending) { reportedPending.current = pending; onDirtyChange(pending); } }, [pending, onDirtyChange]);
   const editing = authorized && canMutate && active && !busy && !working && !blocked && !handoffPending && !proposalPending && isCurrent();
   const authorEpoch = useRef(0);
+  const renderedAuthorEpoch = authorEpoch.current;
   const mark = (value: boolean) => { authorEpoch.current++; setDirty(value); onDirtyChange(value || blocked || handoffPending || proposalPending); };
   const fail = (reason: unknown) => {
     setError(apiErrorView(reason, '导演文档操作未完成，请核对连接与原文档。').message);
     if (reason instanceof ApiError && [401, 403].includes(reason.status)) {
-      setAuthorized(false); setBase(undefined); setSnapshot(undefined); setCandidate(undefined); setDocuments([]); setChoice('');
+      setReviewed(undefined); setReviewedPin(undefined); setAuthorized(false); setBase(undefined); setSnapshot(undefined); setCandidate(undefined); setDocuments([]); setChoice('');
     }
   };
   async function reveal() {
@@ -101,11 +114,11 @@ export function GraphDirectorConsole({ client, pin, selectionKey, graph, selecte
   }
   function change(value: CreativeInput) {
     if (!editing || lock.current || value.mode !== 'DIRECTOR') return;
-    setDraft(value); mark(true); setNotice(''); setCandidate(undefined); setDiscardConfirmed(false);
+    setReviewedPin(undefined); setDraft(value); mark(true); setNotice(''); setCandidate(undefined); setDiscardConfirmed(false);
   }
   function fresh() {
     if (!editing || lock.current || pending) return;
-    setDraft(empty()); setBase(undefined); setSnapshot(undefined); setCandidate(undefined); setScene(undefined); setShot(undefined); setNotice('');
+    authorEpoch.current++; reviewedRef.current = undefined; setReviewed(undefined); setReviewedPin(undefined); setDraft(empty()); setBase(undefined); setSnapshot(undefined); setCandidate(undefined); setScene(undefined); setShot(undefined); setNotice('');
   }
   async function save() {
     if (!editing || lock.current || !dirty || !draft.title.trim() || creativeAuthoringProblems(draft).length) return;
@@ -116,7 +129,7 @@ export function GraphDirectorConsole({ client, pin, selectionKey, graph, selecte
       const row = await mutate(() => origin ? client.update(origin.id, origin.version, input) : client.create(input));
       if (!owns(generation) || ticket !== epoch.current) return;
       if (row.mode !== 'DIRECTOR' || typeof row.id !== 'string' || !row.id.trim() || !Number.isSafeInteger(row.version) || row.version < 1 || origin && (row.id !== origin.id || row.version !== origin.version + 1)) throw new Error('导演保存回执不匹配。');
-      setBase(row); setDraft(documentInput(row)); setSnapshot(undefined); setBlocked(false); mark(false);
+      reviewedRef.current = undefined; setReviewed(undefined); setReviewedPin(undefined); setBase(row); setDraft(documentInput(row)); setSnapshot(undefined); setBlocked(false); mark(false);
       setNotice(`导演原文档已保存 · v${row.version}。请读取原文档核对摘要；图绑定保持原版本。保存不批准、不调用模型。`);
     } catch (reason) {
       if (!owns(generation) || ticket !== epoch.current) return;
@@ -128,15 +141,24 @@ export function GraphDirectorConsole({ client, pin, selectionKey, graph, selecte
     } finally { lock.current = false; if (alive.current) { setWorking(false); setSaving(false); } }
   }
   async function inspect(target: string, selectedPin?: PlanningSnapshot) {
-    if (!current() || lock.current || busy || !target) return;
+    if (!current() || lock.current || busy || !target || renderedAuthorEpoch !== authorEpoch.current || reviewed !== reviewedRef.current) return;
     lock.current = true; setWorking(true); setError(''); setCandidate(undefined); setDiscardConfirmed(false);
-    const ticket = ++epoch.current, generation = scope.current.generation, selectedGeneration = selection.current.generation;
+    const ticket = ++epoch.current, generation = scope.current.generation, selectedGeneration = selection.current.generation, authored = authorEpoch.current, canvasScope = canvasHandoff?.verificationScope, canvasGeneration = canvasLifetime.current.generation;
+    verifiedIntent.current = undefined; setReviewedPin(undefined);
     try {
       const value = await read(() => client.export(target));
-      if (!owns(generation) || ticket !== epoch.current || selectedPin && (selectedGeneration !== selection.current.generation || !selectedPinRef.current || !samePin(selectedPin, selectedPinRef.current))) return;
+      if (!owns(generation) || ticket !== epoch.current || reviewed !== reviewedRef.current || authored !== authorEpoch.current || composing.current || canvasGeneration !== canvasLifetime.current.generation || canvasHandoff && !canvasHandoff.isVerificationCurrent() || canvasScope !== canvasRef.current?.verificationScope || selectedGeneration !== selection.current.generation || selectedPin && (!selectedPinRef.current || !samePin(selectedPin, selectedPinRef.current))) return;
       if (value.document.id !== target || value.document.mode !== 'DIRECTOR' || !Number.isSafeInteger(value.document.version)
         || value.document.version < 1 || !/^[a-f0-9]{64}$/.test(value.document_digest)) throw new Error('导演来源回执不完整。');
       const verified = { id: target, version: value.document.version, digest: value.document_digest };
+      if (reviewed?.id === target) {
+        const exact = reviewedDirectorSnapshot(reviewed, value.document, value.document_digest,
+          snapshot?.id === reviewed.id && snapshot.version === reviewed.version ? snapshot : undefined);
+        if (!pending) {
+          verifiedIntent.current = { pin: exact, canvasScope, authored, selected: selectedGeneration, generation, canvasGeneration, receipt: reviewed, isCanvasCurrent: canvasHandoff?.isVerificationCurrent, consumed: false };
+          setReviewedPin(exact);
+        }
+      }
       if (pending) setCandidate({ document: value.document, pin: verified });
       else { setBase(value.document); setDraft(documentInput(value.document)); setSnapshot(verified); setScene(undefined); setShot(undefined); }
       setNotice(selectedPin && !samePin(selectedPin, verified)
@@ -152,6 +174,25 @@ export function GraphDirectorConsole({ client, pin, selectionKey, graph, selecte
     if (blocked && !candidate) setNotice('仅放弃了本地草稿；远端保存结果仍未知。再次创建前先核对原文档目录，避免重复创建。');
     setCandidate(undefined); setBlocked(false); mark(false); setDiscardConfirmed(false); setError('');
   }
+  function proofCurrent() {
+    const proof = verifiedIntent.current;
+    return !!proof && !proof.consumed && proof.receipt === reviewedRef.current && proof.receipt.id === proof.pin.id && proof.receipt.version === proof.pin.version
+      && proof.canvasGeneration === canvasLifetime.current.generation && (!proof.isCanvasCurrent || proof.isCanvasCurrent()) && proof.pin === reviewedPin && proof.canvasScope === canvasRef.current?.verificationScope
+      && proof.authored === authorEpoch.current && proof.selected === selection.current.generation && owns(proof.generation);
+  }
+  function placeReviewed() {
+    if (!current() || !editing || lock.current || pending || composing.current || !proofCurrent() || !reviewedPin
+      || !base || base.status !== 'DRAFT' || base.id !== reviewedPin.id || base.version !== reviewedPin.version
+      || !canvasHandoff?.available) return;
+    lock.current = true; verifiedIntent.current!.consumed = true;
+    try {
+      if (!canvasHandoff.insert({ id: reviewedPin.id, version: reviewedPin.version, digest: reviewedPin.digest }, canvasHandoff.scope)) {
+        setError('画布目标或编辑状态已变化，请重新核对导演原文档版本后重试。'); return;
+      }
+      setError('');
+      setNotice('已添加审核后的导演草稿绑定，尚未保存创作图。请明确保存；没有自动连接、运行或修改原导演文档。');
+    } finally { lock.current = false; }
+  }
   if (!active || !isCurrent()) return null;
   if (ownerClient.current !== client) return <StatusMessage tone="warning">导演来源连接已改变，请重新打开工作区。</StatusMessage>;
   return <Panel title="画布导演总控台 · 可选">
@@ -160,7 +201,7 @@ export function GraphDirectorConsole({ client, pin, selectionKey, graph, selecte
       <Button disabled={pending || busy || working} onClick={() => setOpen(false)}>折叠导演总控台</Button>
       {!authorized && !working && <StatusMessage tone="warning">原 Creative owner 尚未授予导演编辑能力；仍可核对当前选中节点的来源。</StatusMessage>}
       <Button disabled={busy || working} onClick={() => void listDocuments()}>读取导演原文档目录</Button>
-      <label>总控台原导演文档<select value={choice} disabled={busy || working} onChange={event => setChoice(event.target.value)}>
+      <label>总控台原导演文档<select value={choice} disabled={busy || working} onChange={event => { authorEpoch.current++; setReviewedPin(undefined); setChoice(event.target.value); }}>
         <option value="">明确选择原文档</option>{documents.map(row => <option key={row.id} value={row.id}>{row.title} · v{row.version}</option>)}
       </select></label>
       <Button disabled={!choice || busy || working} onClick={() => void inspect(choice, pin?.id === choice ? pin : undefined)}>读取所选导演原文档</Button>
@@ -180,13 +221,22 @@ export function GraphDirectorConsole({ client, pin, selectionKey, graph, selecte
           if (!current() || dirty || blocked || handoffPending || lock.current) return;
           if (row.mode !== 'DIRECTOR' || row.status !== 'DRAFT' || !row.id || !Number.isSafeInteger(row.version) || row.version < 1)
             throw new Error('审核后的导演文档回执无效，请读取原建议状态。');
+          authorEpoch.current++; const receipt = { id: row.id, version: row.version }; reviewedRef.current = receipt; setReviewed(receipt); setReviewedPin(undefined);
           setBase(row); setDraft(documentInput(row)); setSnapshot(undefined); setCandidate(undefined);
           setScene(undefined); setShot(undefined); setDiscardConfirmed(false); setError('');
           setNotice(`已读取人工审核后的原导演草稿“${row.title}” · v${row.version}。请核对原文档摘要，再明确添加并保存画布节点；原图绑定保持不变。`);
         }} />}
+      {reviewed && canvasHandoff && <section aria-label="审核导演草稿画布放置">
+        <p>先核对导演原文档版本，再添加精确绑定。请在原节点目录明确选择支持导演节点的图格式，或明确新建图；这里不会升级或替换当前图。</p>
+        <Button disabled={!editing || pending || !proofCurrent() || !reviewedPin || !canvasHandoff.available}
+          onClick={placeReviewed}>将此审核草稿添加到画布</Button>
+      </section>}
+      <div onCompositionStartCapture={() => { composing.current = true; authorEpoch.current++; setReviewedPin(undefined); }}
+        onCompositionEndCapture={() => { composing.current = false; authorEpoch.current++; }}>
       <CreativeCanvas draft={draft} version={base?.version} dirty={dirty} canEdit={editing} busy={busy || working} saving={saving}
         selectedSceneId={scene} selectedShotId={shot} onScene={setScene} onShot={setShot} onChange={change}
         onSave={() => void save()} onNew={fresh} />
+      </div>
       {base && <GraphDirectorStoryboardHandoff canOpen={!dirty && !blocked && !proposalPending && storyboardAllowed} onOpenStoryboard={onOpenStoryboard ? (request, originCurrent) => {
         const authored = authorEpoch.current, selected = selection.current.generation, generation = scope.current.generation;
         onOpenStoryboard(request, () => originCurrent() && current() && authored === authorEpoch.current && selected === selection.current.generation && owns(generation));

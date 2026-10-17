@@ -1,0 +1,12 @@
+{
+  "executable": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+  "prefix": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1",
+  "runner": "/workspace/scratch/20a0022d2b33/studio-director-canvas-handoff/scripts/run_v2_checks.py",
+  "module_origins": {
+    "json": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py",
+    "pytest": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/pytest/__init__.py",
+    "pydantic": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/pydantic/__init__.py",
+    "PIL": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/PIL/__init__.py"
+  },
+  "product_imported": false
+}

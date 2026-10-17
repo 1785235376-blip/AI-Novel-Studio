@@ -1,0 +1,67 @@
+{
+  "executable": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+  "prefix": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1",
+  "runner": "/workspace/scratch/20a0022d2b33/studio-director-canvas-handoff/scripts/run_v2_checks.py",
+  "module_origins": {
+    "json": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py",
+    "pytest": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/pytest/__init__.py",
+    "pydantic": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/pydantic/__init__.py",
+    "PIL": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/PIL/__init__.py"
+  },
+  "product_imported": false
+}
+
+{"receipt": "docs/delivery/v2-development/director-canvas-origin-r1.json", "status": "PASS"}
+{
+  "baseline": "9b72ff93b48dbed4c2631a83222843829ecb5505",
+  "checked_paths": 1368,
+  "unchanged": true,
+  "failures": []
+}
+
+{"receipt": "docs/delivery/v2-development/director-canvas-original-tests-before-r1.json", "status": "PASS"}
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-canvas-handoff/frontend
+
+ ✓ src/creative/StudioProductionGraphEditor.director.additive.test.tsx (5 tests) 10267ms
+   ✓ Production Graph UI keeps original controller and execution authority > lays out already-saved Director pins without rewriting their source or executing 1466ms
+   ✓ authors a director in the canvas, saves its exact node pin and reopens the bound source 2622ms
+   ✓ requires an explicit original workspace navigation confirmation to abandon an UNKNOWN director create 706ms
+   ✓ keeps an UNKNOWN storyboard handoff pending through cancelled workspace navigation 1577ms
+   ✓ reviews an original screenplay proposal, explicitly pins the DRAFT and reopens both owners without model execution 3895ms
+ ✓ src/ui/AppShell.test.tsx (19 tests) 245ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 1056ms
+ ✓ src/creative/StudioGraphInsertion.additive.test.tsx (20 tests) 1187ms
+ ✓ src/creative/StudioGraphConnection.additive.test.tsx (15 tests) 1046ms
+ ✓ src/creative/GraphDirectorSourceImpact.test.tsx (19 tests) 221ms
+ ✓ src/creative/GraphDirectorCanvasHandoff.additive.test.tsx (15 tests) 821ms
+ ✓ src/creative/StudioProductionGraphEditor.test.tsx (4 tests) 3858ms
+   ✓ Production Graph UI keeps original controller and execution authority > mounts the existing read-only Director Console in a selected Director graph node 1320ms
+   ✓ Production Graph UI keeps original controller and execution authority > explicitly binds authored documents, style and upscale parameters without dispatch 1399ms
+   ✓ Production Graph UI keeps original controller and execution authority > ignores late document references after a same-token Host replacement 519ms
+   ✓ Production Graph UI keeps original controller and execution authority > keeps Style inspector and controller bounds aligned to the backend 618ms
+ ✓ src/creative/GraphDirectorStoryboardHandoff.test.tsx (7 tests) 253ms
+ ✓ src/creative/directorCanvasHandoff.additive.test.tsx (13 tests) 729ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 188ms
+ ✓ src/creative/StudioGraphDirectorConsole.test.tsx (11 tests) 481ms
+ ✓ src/creative/ReviewedDirectorCanvas.integration.test.tsx (1 test) 316ms
+   ✓ wires reviewed Creative DRAFT through original export/read, real editor/controller insertion, and explicit Graph Save 315ms
+ ✓ src/creative/StudioGraphInsertion.palette.additive.test.tsx (4 tests) 629ms
+ ✓ src/creative/useStudioGraphEditor.storyboardAuthority.additive.test.tsx (1 test) 13ms
+ ✓ src/creative/studioGraphDirectorClient.test.ts (14 tests) 14ms
+
+ Test Files  16 passed (16)
+      Tests  169 passed (169)
+   Start at  20:22:41
+   Duration  34.35s (transform 2.43s, setup 92ms, collect 5.71s, tests 21.32s, environment 4.53s, prepare 775ms)
+
+
+{"receipt": "docs/delivery/v2-development/director-canvas-ui-r1.json", "status": "PASS"}
+{
+  "baseline": "9b72ff93b48dbed4c2631a83222843829ecb5505",
+  "checked_paths": 1368,
+  "unchanged": true,
+  "failures": []
+}
+
+{"receipt": "docs/delivery/v2-development/director-canvas-original-tests-after-r1.json", "status": "PASS"}

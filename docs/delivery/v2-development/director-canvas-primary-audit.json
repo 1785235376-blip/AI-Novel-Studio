@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "receipts": [
+    "director-canvas-diff-r1.json",
+    "director-canvas-origin-r1.json",
+    "director-canvas-original-tests-after-r1.json",
+    "director-canvas-original-tests-before-r1.json",
+    "director-canvas-public-r1.json",
+    "director-canvas-tokens-r1.json",
+    "director-canvas-type-build-r1.json",
+    "director-canvas-ui-r1.json"
+  ],
+  "receipt_count": 8,
+  "identical_source_count": 2620,
+  "before_after_current_match": true,
+  "raw_log_hashes_match": true,
+  "primary_test_files": 16,
+  "primary_tests": 169,
+  "new_tests": 29,
+  "old_test_source_guard_paths": 1368,
+  "independent_execution": "PENDING",
+  "no_backend_provider_browser_pg_windows_claim": true
+}
