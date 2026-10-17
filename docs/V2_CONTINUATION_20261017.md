@@ -2,9 +2,9 @@
 
 ## Application host closure (17:05 UTC)
 
-Source 29df291 explicitly mounts original versioned Director adapters. Scoped final gates: 556 File, 235 real PostgreSQL, 399 frontend, TS/build/token and 87 PUBLIC checks pass with identical final source snapshots. Two native TCP cases pass with fixture model responses; private pending review remains File-only. Browser/live model/full V2 acceptance remain open. Read DIRECTOR_APPLICATION_HOST_PROGRESS.md and delivery/v2-development/director-application-host-20261017/README.md. Coverage inventory refresh follows.
+Source 29df291 explicitly mounts original versioned Director adapters. Scoped final gates: 556 File, 235 real PostgreSQL, 399 frontend, TS/build/token and 87 PUBLIC checks pass with identical final source snapshots. Two native TCP cases pass with fixture model responses; private pending review remains File-only. Browser/live model/full V2 acceptance remain open. Read DIRECTOR_APPLICATION_HOST_PROGRESS.md and delivery/v2-development/director-application-host-20261017/README.md. Coverage inventory refreshed: 17,643 rows / 2,725 source entries; all prior 17,617 rows retained, 24 File + 2 PG added; three identical collections and 45 CI self-tests pass. See delivery/v2-development/director-application-inventory-20261017/README.md.
 
-User approved the fixed fourteen-commit archive through 4684577 at 17:03 UTC. Upload is in progress; later source/evidence is not part of that payload.
+User approved the fixed fourteen-commit archive through 4684577 at 17:03 UTC. Upload completed at b00b9aa3a94e6aace2bf14b62b7b3bfa7e3dbf52; eight files were read back from the remote and verified byte-for-byte. Later source/evidence is not part of that payload.
 
 ## Current inventory / recovery point (16:21 UTC)
 

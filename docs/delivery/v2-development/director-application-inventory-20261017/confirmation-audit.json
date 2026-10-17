@@ -1,0 +1,31 @@
+{
+  "status": "PASS_ADDITIVE_INVENTORY_REVIEW",
+  "source_commit": "899e2d5cd5e85cb22b0ca09cfe9f63872413482e",
+  "old_rows": 17617,
+  "rows": 17643,
+  "source_count": 2725,
+  "new_rows_by_backend": {
+    "file": 24,
+    "postgres": 2
+  },
+  "changed_existing_sources": [
+    "API_CATALOG.json",
+    "API_CATALOG.md",
+    "API_CATALOG_DETAIL.json.gz",
+    "API_OPENAPI.json.gz",
+    "app/creative/director_model_api.py",
+    "app/creative/director_observation_api.py",
+    "app/experimental/api.py"
+  ],
+  "new_source_paths": [
+    "tests/test_director_application_host_additive.py",
+    "tests/test_director_application_postgres_boundary.py"
+  ],
+  "raw_collection_sha256": "6605d71a702fd529b5a018fcd206d72bfaa18490732ebc3325d5be0c185d6da7",
+  "previous_rows_order_and_classifications_preserved": true,
+  "all_current_source_hashes_match_committed_git": true,
+  "old_skips_and_external_gates_unchanged": true,
+  "manifest_sha256": "bc4e272424567a1773a35c5dd508994c2c0a31374dc0daa1f3df641cd97e4683",
+  "three_raw_collections_identical": true,
+  "ci_selftests": 45
+}
