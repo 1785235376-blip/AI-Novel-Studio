@@ -1,0 +1,134 @@
+{
+  "candidate_sha256": "45ffd6779b80f15695eff4b877258035fa367c8c7409b236e7b6a97dbeff910f",
+  "channels": [
+    {
+      "plateau_rms": 4030.1387660314363,
+      "windows": [
+        {
+          "end_ms": 60,
+          "expected_rms_ratio": 0.25154850935902434,
+          "observed_rms_ratio": 0.2516059301253076,
+          "relative_error": 0.00022826915742633005,
+          "start_ms": 40
+        },
+        {
+          "end_ms": 110,
+          "expected_rms_ratio": 0.5006062555519206,
+          "observed_rms_ratio": 0.5007635785437105,
+          "relative_error": 0.0003142649338578139,
+          "start_ms": 90
+        },
+        {
+          "end_ms": 160,
+          "expected_rms_ratio": 0.7504420523104631,
+          "observed_rms_ratio": 0.7506620802863584,
+          "relative_error": 0.00029319782282701543,
+          "start_ms": 140
+        },
+        {
+          "end_ms": 550,
+          "expected_rms_ratio": 1.0,
+          "observed_rms_ratio": 1.0,
+          "relative_error": 0.0,
+          "start_ms": 450
+        },
+        {
+          "end_ms": 770,
+          "expected_rms_ratio": 0.8003825746768866,
+          "observed_rms_ratio": 0.80016624658527,
+          "relative_error": 0.00027028086125421575,
+          "start_ms": 750
+        },
+        {
+          "end_ms": 860,
+          "expected_rms_ratio": 0.5004457612659434,
+          "observed_rms_ratio": 0.5002784732648463,
+          "relative_error": 0.00033427798583793186,
+          "start_ms": 840
+        },
+        {
+          "end_ms": 960,
+          "expected_rms_ratio": 0.16784917998085783,
+          "observed_rms_ratio": 0.16779081362897635,
+          "relative_error": 0.00034773093254389966,
+          "start_ms": 940
+        }
+      ]
+    },
+    {
+      "plateau_rms": 4030.1387660314363,
+      "windows": [
+        {
+          "end_ms": 60,
+          "expected_rms_ratio": 0.25154850935902434,
+          "observed_rms_ratio": 0.2516059301253076,
+          "relative_error": 0.00022826915742633005,
+          "start_ms": 40
+        },
+        {
+          "end_ms": 110,
+          "expected_rms_ratio": 0.5006062555519206,
+          "observed_rms_ratio": 0.5007635785437105,
+          "relative_error": 0.0003142649338578139,
+          "start_ms": 90
+        },
+        {
+          "end_ms": 160,
+          "expected_rms_ratio": 0.7504420523104631,
+          "observed_rms_ratio": 0.7506620802863584,
+          "relative_error": 0.00029319782282701543,
+          "start_ms": 140
+        },
+        {
+          "end_ms": 550,
+          "expected_rms_ratio": 1.0,
+          "observed_rms_ratio": 1.0,
+          "relative_error": 0.0,
+          "start_ms": 450
+        },
+        {
+          "end_ms": 770,
+          "expected_rms_ratio": 0.8003825746768866,
+          "observed_rms_ratio": 0.80016624658527,
+          "relative_error": 0.00027028086125421575,
+          "start_ms": 750
+        },
+        {
+          "end_ms": 860,
+          "expected_rms_ratio": 0.5004457612659434,
+          "observed_rms_ratio": 0.5002784732648463,
+          "relative_error": 0.00033427798583793186,
+          "start_ms": 840
+        },
+        {
+          "end_ms": 960,
+          "expected_rms_ratio": 0.16784917998085783,
+          "observed_rms_ratio": 0.16779081362897635,
+          "relative_error": 0.00034773093254389966,
+          "start_ms": 940
+        }
+      ]
+    }
+  ],
+  "expected_plateau_rms": 4242.640687119285,
+  "independent_decoded_frames": 22050,
+  "independent_decoded_pcm_sha256": "b9c0d1634fa69b9bcb4e0d58d596174cacd8fddffba61667ed2d0076f33f5a2f",
+  "measurement": {
+    "audio_codec": "mp3",
+    "bit_rate": 64000,
+    "byte_count": 8820,
+    "channels": 2,
+    "container": "mp3",
+    "container_duration_ms": 1071,
+    "decoded_pcm_bytes": 88200,
+    "decoded_pcm_sha256": "b9c0d1634fa69b9bcb4e0d58d596174cacd8fddffba61667ed2d0076f33f5a2f",
+    "duration_ms": 1000,
+    "output_sha256": "45ffd6779b80f15695eff4b877258035fa367c8c7409b236e7b6a97dbeff910f",
+    "profile_validation": "MP3_GAPLESS_PCM_VERIFIED",
+    "sample_rate": 22050,
+    "sample_width": 2,
+    "total_samples": 22050
+  },
+  "relative_rms_tolerance": 0.12,
+  "source_sha256": "586cabdc5459ec33fa1c1bfdd546c8b9665560ae02a1156bc615fb52d8f29cbf"
+}

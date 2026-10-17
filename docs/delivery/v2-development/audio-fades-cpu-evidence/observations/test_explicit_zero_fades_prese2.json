@@ -1,0 +1,47 @@
+{
+  "decoded_pcm_equal": true,
+  "explicit_zero": {
+    "candidate_sha256": "2a564ec121031f2c7f885d667a5db14694cdea0d2a6f576ac8f8c83715d6ce2c",
+    "independent_decoded_frames": 22050,
+    "independent_decoded_pcm_sha256": "a3833dbddcf028758c8ef246e53f637432b4e1f61158b74663d52833d66d375f",
+    "measurement": {
+      "audio_codec": "mp3",
+      "bit_rate": 64000,
+      "byte_count": 8820,
+      "channels": 1,
+      "container": "mp3",
+      "container_duration_ms": 1071,
+      "decoded_pcm_bytes": 44100,
+      "decoded_pcm_sha256": "a3833dbddcf028758c8ef246e53f637432b4e1f61158b74663d52833d66d375f",
+      "duration_ms": 1000,
+      "output_sha256": "2a564ec121031f2c7f885d667a5db14694cdea0d2a6f576ac8f8c83715d6ce2c",
+      "profile_validation": "MP3_GAPLESS_PCM_VERIFIED",
+      "sample_rate": 22050,
+      "sample_width": 2,
+      "total_samples": 22050
+    },
+    "source_sha256": "614ce92d515a8944d1f6c5aff4444cc1910af35a93009f08fde172070ee6e20d"
+  },
+  "omitted": {
+    "candidate_sha256": "2a564ec121031f2c7f885d667a5db14694cdea0d2a6f576ac8f8c83715d6ce2c",
+    "independent_decoded_frames": 22050,
+    "independent_decoded_pcm_sha256": "a3833dbddcf028758c8ef246e53f637432b4e1f61158b74663d52833d66d375f",
+    "measurement": {
+      "audio_codec": "mp3",
+      "bit_rate": 64000,
+      "byte_count": 8820,
+      "channels": 1,
+      "container": "mp3",
+      "container_duration_ms": 1071,
+      "decoded_pcm_bytes": 44100,
+      "decoded_pcm_sha256": "a3833dbddcf028758c8ef246e53f637432b4e1f61158b74663d52833d66d375f",
+      "duration_ms": 1000,
+      "output_sha256": "2a564ec121031f2c7f885d667a5db14694cdea0d2a6f576ac8f8c83715d6ce2c",
+      "profile_validation": "MP3_GAPLESS_PCM_VERIFIED",
+      "sample_rate": 22050,
+      "sample_width": 2,
+      "total_samples": 22050
+    },
+    "source_sha256": "614ce92d515a8944d1f6c5aff4444cc1910af35a93009f08fde172070ee6e20d"
+  }
+}

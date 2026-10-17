@@ -1,0 +1,76 @@
+{
+  "status": "PASS",
+  "tests": "13 passed, 13 PostgreSQL deselected",
+  "source_file_count": 2559,
+  "sources_changed_during_check": false,
+  "evidence_count": 12,
+  "observations": [
+    {
+      "path": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_lossless_linear_fa0/audio-fade-observation.json",
+      "sha256": "1b96a13bd84f157f3f962f1321d784a5df4168041ca775dfdc062048f3c309e8",
+      "max_absolute_lsb_error": 0.5366591080883154
+    },
+    {
+      "path": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_lossless_linear_fa1/audio-fade-observation.json",
+      "sha256": "876f01e0bf86c1e58638c795b3615a8c3d096e9bf2f305324ea31eba0c117ca9",
+      "max_absolute_lsb_error": 0.5366591080883154
+    },
+    {
+      "path": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_lossless_linear_fa2/audio-fade-observation.json",
+      "sha256": "099b6823730ead2cc88fa90bb12774bbd918b6cd685f30fe96e2d027be8bea25",
+      "max_absolute_lsb_error": 0.5366591080883154
+    },
+    {
+      "path": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_lossless_linear_fa3/audio-fade-observation.json",
+      "sha256": "755a93399accea05903c0bcbb33fbc9cab3fc1b028f36f9c9871d68c469577cc",
+      "max_absolute_lsb_error": 0.5366591080883154
+    },
+    {
+      "path": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_mp3_linear_fades_g0/audio-fade-observation.json",
+      "sha256": "c8531150ed32fccdd5b621b0d5b4c8e460f40c033090dd323a3ec8aa1e1dd50a",
+      "max_relative_rms_error": 0.0005048566436561613,
+      "plateau_rms": [
+        4030.1387660314363
+      ]
+    },
+    {
+      "path": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_mp3_linear_fades_g1/audio-fade-observation.json",
+      "sha256": "4406fd231991a0998fe4b1dc8c8aabb49f31d55247a0d368a2590eb3df43ef79",
+      "max_relative_rms_error": 0.00034773093254389966,
+      "plateau_rms": [
+        4030.1387660314363,
+        4030.1387660314363
+      ]
+    },
+    {
+      "path": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_one_sided_and_touc0/audio-fade-observation.json",
+      "sha256": "1f1d46cd47fa3c611f40925d6a523b0239bdb64917f43fb7cef035e06ca9f080",
+      "max_absolute_lsb_error": 0.5366591080883154
+    },
+    {
+      "path": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_one_sided_and_touc1/audio-fade-observation.json",
+      "sha256": "d99e7c7282b5b67b1d3da6347262d7b0bbf2d03b583cea965d037ff229d8abed",
+      "max_absolute_lsb_error": 0.5351473922901278
+    },
+    {
+      "path": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_one_sided_and_touc2/audio-fade-observation.json",
+      "sha256": "7a5f9213c14ee19b0dc200ad86e9b9ef19983708f0e14f32b23b6940423e8e5d",
+      "max_absolute_lsb_error": 0.5419501133792437
+    },
+    {
+      "path": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_explicit_zero_fades_prese0/audio-fade-observation.json",
+      "sha256": "0aae530f294dc2324f6d0ecd25fa5e114eb3401af9a3a135dcfc157dfa725f8d",
+      "decoded_pcm_equal": true
+    },
+    {
+      "path": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_explicit_zero_fades_prese1/audio-fade-observation.json",
+      "sha256": "9482fa3fcbc48aadfd803979861d03db7658c4b7eff5a36c0ed9a3e08d7cf96c",
+      "decoded_pcm_equal": true
+    },
+    {
+      "path": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_explicit_zero_fades_prese2/audio-fade-observation.json",
+      "sha256": "ee9578c7078dd3b60554105595ea3f25f73e9fe301ae5f2ab9dd6987ff0958d4",
+      "decoded_pcm_equal": true
+    }
+  ]
+}

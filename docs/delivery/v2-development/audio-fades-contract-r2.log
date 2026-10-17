@@ -1,0 +1,206 @@
+..................................................EEEEEEEEE              [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_mounted_strict_fades_reject_before_job_or_asset_creation[file-parameters0] _
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_fade_api.py, line 10
+  @pytest.mark.parametrize('parameters', [{'fade_in_ms': None}, {'fade_out_ms': True}, {'fade_in_ms': 10.0}, {'fade_out_ms': '10'}, {'fade_in_ms': -1}, {'fade_out_ms': 701}, {'fade_in_ms': 400, 'fade_out_ms': 301}])
+  def test_mounted_strict_fades_reject_before_job_or_asset_creation(audio_client, parameters):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_wav_controls_api.py, line 18
+  @pytest.fixture
+  def audio_client(client, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_independent_workspace_api.py, line 14
+  @pytest.fixture
+  def client(mounted, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py, line 70
+  @pytest.fixture(params=[
+      pytest.param("file", marks=pytest.mark.file_backend_only),
+      pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+  ])
+  def mounted(request, tmp_path, monkeypatch, prefix):
+E       fixture 'prefix' not found
+>       available fixtures: audio_client, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, client, doctest_namespace, monkeypatch, mounted, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py:70
+_ ERROR at setup of test_mounted_strict_fades_reject_before_job_or_asset_creation[file-parameters1] _
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_fade_api.py, line 10
+  @pytest.mark.parametrize('parameters', [{'fade_in_ms': None}, {'fade_out_ms': True}, {'fade_in_ms': 10.0}, {'fade_out_ms': '10'}, {'fade_in_ms': -1}, {'fade_out_ms': 701}, {'fade_in_ms': 400, 'fade_out_ms': 301}])
+  def test_mounted_strict_fades_reject_before_job_or_asset_creation(audio_client, parameters):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_wav_controls_api.py, line 18
+  @pytest.fixture
+  def audio_client(client, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_independent_workspace_api.py, line 14
+  @pytest.fixture
+  def client(mounted, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py, line 70
+  @pytest.fixture(params=[
+      pytest.param("file", marks=pytest.mark.file_backend_only),
+      pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+  ])
+  def mounted(request, tmp_path, monkeypatch, prefix):
+E       fixture 'prefix' not found
+>       available fixtures: audio_client, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, client, doctest_namespace, monkeypatch, mounted, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py:70
+_ ERROR at setup of test_mounted_strict_fades_reject_before_job_or_asset_creation[file-parameters2] _
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_fade_api.py, line 10
+  @pytest.mark.parametrize('parameters', [{'fade_in_ms': None}, {'fade_out_ms': True}, {'fade_in_ms': 10.0}, {'fade_out_ms': '10'}, {'fade_in_ms': -1}, {'fade_out_ms': 701}, {'fade_in_ms': 400, 'fade_out_ms': 301}])
+  def test_mounted_strict_fades_reject_before_job_or_asset_creation(audio_client, parameters):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_wav_controls_api.py, line 18
+  @pytest.fixture
+  def audio_client(client, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_independent_workspace_api.py, line 14
+  @pytest.fixture
+  def client(mounted, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py, line 70
+  @pytest.fixture(params=[
+      pytest.param("file", marks=pytest.mark.file_backend_only),
+      pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+  ])
+  def mounted(request, tmp_path, monkeypatch, prefix):
+E       fixture 'prefix' not found
+>       available fixtures: audio_client, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, client, doctest_namespace, monkeypatch, mounted, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py:70
+_ ERROR at setup of test_mounted_strict_fades_reject_before_job_or_asset_creation[file-parameters3] _
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_fade_api.py, line 10
+  @pytest.mark.parametrize('parameters', [{'fade_in_ms': None}, {'fade_out_ms': True}, {'fade_in_ms': 10.0}, {'fade_out_ms': '10'}, {'fade_in_ms': -1}, {'fade_out_ms': 701}, {'fade_in_ms': 400, 'fade_out_ms': 301}])
+  def test_mounted_strict_fades_reject_before_job_or_asset_creation(audio_client, parameters):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_wav_controls_api.py, line 18
+  @pytest.fixture
+  def audio_client(client, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_independent_workspace_api.py, line 14
+  @pytest.fixture
+  def client(mounted, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py, line 70
+  @pytest.fixture(params=[
+      pytest.param("file", marks=pytest.mark.file_backend_only),
+      pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+  ])
+  def mounted(request, tmp_path, monkeypatch, prefix):
+E       fixture 'prefix' not found
+>       available fixtures: audio_client, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, client, doctest_namespace, monkeypatch, mounted, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py:70
+_ ERROR at setup of test_mounted_strict_fades_reject_before_job_or_asset_creation[file-parameters4] _
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_fade_api.py, line 10
+  @pytest.mark.parametrize('parameters', [{'fade_in_ms': None}, {'fade_out_ms': True}, {'fade_in_ms': 10.0}, {'fade_out_ms': '10'}, {'fade_in_ms': -1}, {'fade_out_ms': 701}, {'fade_in_ms': 400, 'fade_out_ms': 301}])
+  def test_mounted_strict_fades_reject_before_job_or_asset_creation(audio_client, parameters):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_wav_controls_api.py, line 18
+  @pytest.fixture
+  def audio_client(client, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_independent_workspace_api.py, line 14
+  @pytest.fixture
+  def client(mounted, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py, line 70
+  @pytest.fixture(params=[
+      pytest.param("file", marks=pytest.mark.file_backend_only),
+      pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+  ])
+  def mounted(request, tmp_path, monkeypatch, prefix):
+E       fixture 'prefix' not found
+>       available fixtures: audio_client, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, client, doctest_namespace, monkeypatch, mounted, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py:70
+_ ERROR at setup of test_mounted_strict_fades_reject_before_job_or_asset_creation[file-parameters5] _
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_fade_api.py, line 10
+  @pytest.mark.parametrize('parameters', [{'fade_in_ms': None}, {'fade_out_ms': True}, {'fade_in_ms': 10.0}, {'fade_out_ms': '10'}, {'fade_in_ms': -1}, {'fade_out_ms': 701}, {'fade_in_ms': 400, 'fade_out_ms': 301}])
+  def test_mounted_strict_fades_reject_before_job_or_asset_creation(audio_client, parameters):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_wav_controls_api.py, line 18
+  @pytest.fixture
+  def audio_client(client, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_independent_workspace_api.py, line 14
+  @pytest.fixture
+  def client(mounted, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py, line 70
+  @pytest.fixture(params=[
+      pytest.param("file", marks=pytest.mark.file_backend_only),
+      pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+  ])
+  def mounted(request, tmp_path, monkeypatch, prefix):
+E       fixture 'prefix' not found
+>       available fixtures: audio_client, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, client, doctest_namespace, monkeypatch, mounted, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py:70
+_ ERROR at setup of test_mounted_strict_fades_reject_before_job_or_asset_creation[file-parameters6] _
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_fade_api.py, line 10
+  @pytest.mark.parametrize('parameters', [{'fade_in_ms': None}, {'fade_out_ms': True}, {'fade_in_ms': 10.0}, {'fade_out_ms': '10'}, {'fade_in_ms': -1}, {'fade_out_ms': 701}, {'fade_in_ms': 400, 'fade_out_ms': 301}])
+  def test_mounted_strict_fades_reject_before_job_or_asset_creation(audio_client, parameters):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_wav_controls_api.py, line 18
+  @pytest.fixture
+  def audio_client(client, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_independent_workspace_api.py, line 14
+  @pytest.fixture
+  def client(mounted, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py, line 70
+  @pytest.fixture(params=[
+      pytest.param("file", marks=pytest.mark.file_backend_only),
+      pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+  ])
+  def mounted(request, tmp_path, monkeypatch, prefix):
+E       fixture 'prefix' not found
+>       available fixtures: audio_client, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, client, doctest_namespace, monkeypatch, mounted, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py:70
+_ ERROR at setup of test_mounted_zero_and_absence_have_distinct_reviewed_identity[file] _
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_fade_api.py, line 20
+  def test_mounted_zero_and_absence_have_distinct_reviewed_identity(audio_client):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_wav_controls_api.py, line 18
+  @pytest.fixture
+  def audio_client(client, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_independent_workspace_api.py, line 14
+  @pytest.fixture
+  def client(mounted, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py, line 70
+  @pytest.fixture(params=[
+      pytest.param("file", marks=pytest.mark.file_backend_only),
+      pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+  ])
+  def mounted(request, tmp_path, monkeypatch, prefix):
+E       fixture 'prefix' not found
+>       available fixtures: audio_client, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, client, doctest_namespace, monkeypatch, mounted, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py:70
+_ ERROR at setup of test_mounted_fade_change_requires_new_preview_and_request_identity[file] _
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_fade_api.py, line 38
+  def test_mounted_fade_change_requires_new_preview_and_request_identity(audio_client):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_audio_wav_controls_api.py, line 18
+  @pytest.fixture
+  def audio_client(client, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_v2_independent_workspace_api.py, line 14
+  @pytest.fixture
+  def client(mounted, monkeypatch):
+file /workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py, line 70
+  @pytest.fixture(params=[
+      pytest.param("file", marks=pytest.mark.file_backend_only),
+      pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+  ])
+  def mounted(request, tmp_path, monkeypatch, prefix):
+E       fixture 'prefix' not found
+>       available fixtures: audio_client, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, client, doctest_namespace, monkeypatch, mounted, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-audio-fades/tests/test_r3_mounted_contracts.py:70
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR tests/test_v2_audio_fade_api.py::test_mounted_strict_fades_reject_before_job_or_asset_creation[file-parameters0]
+ERROR tests/test_v2_audio_fade_api.py::test_mounted_strict_fades_reject_before_job_or_asset_creation[file-parameters1]
+ERROR tests/test_v2_audio_fade_api.py::test_mounted_strict_fades_reject_before_job_or_asset_creation[file-parameters2]
+ERROR tests/test_v2_audio_fade_api.py::test_mounted_strict_fades_reject_before_job_or_asset_creation[file-parameters3]
+ERROR tests/test_v2_audio_fade_api.py::test_mounted_strict_fades_reject_before_job_or_asset_creation[file-parameters4]
+ERROR tests/test_v2_audio_fade_api.py::test_mounted_strict_fades_reject_before_job_or_asset_creation[file-parameters5]
+ERROR tests/test_v2_audio_fade_api.py::test_mounted_strict_fades_reject_before_job_or_asset_creation[file-parameters6]
+ERROR tests/test_v2_audio_fade_api.py::test_mounted_zero_and_absence_have_distinct_reviewed_identity[file]
+ERROR tests/test_v2_audio_fade_api.py::test_mounted_fade_change_requires_new_preview_and_request_identity[file]
+50 passed, 9 deselected, 1 warning, 9 errors in 5.37s

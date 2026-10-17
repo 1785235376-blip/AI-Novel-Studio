@@ -1,0 +1,208 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+_ test_malformed_tail_is_never_truncated_or_returned[_studio_body-value0-STUDIO_AUDIO_OPERATION_UNSUPPORTED] _
+
+audio = namespace(owner=<app.services.studio_audio_execution.StudioAudioExecution object at 0x7f922857af90>, context={'actor':...rror_code': None, 'receipt_digest': '9fadf93c59d750df41c4ec25daa1dbdc7ea7eb257f008d9d4b631a082971c5d6'}, nid='project')
+field = '_studio_body', value = {}, code = 'STUDIO_AUDIO_OPERATION_UNSUPPORTED'
+
+    @pytest.mark.parametrize("field,value,code", [
+        ("_studio_body", {}, "STUDIO_AUDIO_OPERATION_UNSUPPORTED"),
+        ("source_text", "Changed", "STUDIO_AUDIO_JOB_BINDING_CHANGED"),
+        ("source_sha256", "d" * 64, "STUDIO_AUDIO_JOB_BINDING_CHANGED"),
+        ("request_sha256", "d" * 64, "STUDIO_AUDIO_JOB_BINDING_CHANGED"),
+        ("request_digest", "d" * 64, "STUDIO_AUDIO_JOB_BINDING_CHANGED"),
+        ("branch_id", "another-branch", "STUDIO_AUDIO_JOB_BINDING_CHANGED"),
+        ("chapter_id", "chapter", "STUDIO_AUDIO_JOB_BINDING_CHANGED"),
+        ("operation_id", "m8.audio.music", "STUDIO_AUDIO_JOB_BINDING_CHANGED"),
+        ("provider_id", "other-provider", "STUDIO_AUDIO_JOB_BINDING_CHANGED"),
+        ("model_id", "other-model", "STUDIO_AUDIO_JOB_BINDING_CHANGED"),
+        ("version", True, "STUDIO_AUDIO_VERSION_INVALID"),
+        ("version", 0, "STUDIO_AUDIO_VERSION_INVALID"),
+    ])
+    def test_malformed_tail_is_never_truncated_or_returned(audio, field, value, code):
+        rows = history(audio, 601)
+        rows[-1][field] = value
+        save_rows(audio, rows)
+>       assert_error(code, lambda: listed(audio), 400 if code.endswith(("UNSUPPORTED", "VERSION_INVALID")) else 409)
+
+tests/test_v2_studio_audio_listing.py:117: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+code = 'STUDIO_AUDIO_OPERATION_UNSUPPORTED'
+operation = <function test_malformed_tail_is_never_truncated_or_returned.<locals>.<lambda> at 0x7f92281d99e0>
+status = 400
+
+    def assert_error(code, operation, status=409):
+        with pytest.raises(AudiobookError) as caught:
+            operation()
+>       assert (caught.value.code, caught.value.status) == (code, status)
+E       AssertionError: assert ('STUDIO_AUDI...CHANGED', 409) == ('STUDIO_AUDI...PPORTED', 400)
+E         
+E         At index 0 diff: 'STUDIO_AUDIO_JOB_BINDING_CHANGED' != 'STUDIO_AUDIO_OPERATION_UNSUPPORTED'
+E         Use -v to get more diff
+
+tests/test_v2_studio_audio_listing.py:63: AssertionError
+_ test_original_per_receipt_limits_still_apply_to_tail[prompt-STUDIO_AUDIO_PROMPT_INVALID] _
+
+audio = namespace(owner=<app.services.studio_audio_execution.StudioAudioExecution object at 0x7f9227c6b9e0>, context={'actor':...rror_code': None, 'receipt_digest': '898cc3329fa030d5156b4b0fe0788cf3c5202d920be2ad2545ec9252e372ef0d'}, nid='project')
+change = 'prompt', code = 'STUDIO_AUDIO_PROMPT_INVALID'
+
+    @pytest.mark.parametrize("change,code", [
+        ("prompt", "STUDIO_AUDIO_PROMPT_INVALID"),
+        ("sources", "STUDIO_AUDIO_SOURCE_INVALID"),
+        ("binding_bytes", "STUDIO_AUDIO_BINDING_LIMIT"),
+    ])
+    def test_original_per_receipt_limits_still_apply_to_tail(audio, change, code):
+        rows = history(audio, 3)
+        if change == "prompt":
+            rows[-1]["_studio_body"]["prompt"] = "x" * 16_001
+        elif change == "sources":
+            rows[-1]["_studio_body"]["source_snapshots"] = [{}] * 9
+        else:
+            rows[-1]["context"]["rights"]["license_note"] = "x" * (256 * 1024)
+        save_rows(audio, rows)
+>       assert_error(code, lambda: listed(audio), 400)
+
+tests/test_v2_studio_audio_listing.py:143: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+code = 'STUDIO_AUDIO_PROMPT_INVALID'
+operation = <function test_original_per_receipt_limits_still_apply_to_tail.<locals>.<lambda> at 0x7f92281db7e0>
+status = 400
+
+    def assert_error(code, operation, status=409):
+        with pytest.raises(AudiobookError) as caught:
+            operation()
+>       assert (caught.value.code, caught.value.status) == (code, status)
+E       AssertionError: assert ('STUDIO_AUDI...CHANGED', 409) == ('STUDIO_AUDI...INVALID', 400)
+E         
+E         At index 0 diff: 'STUDIO_AUDIO_JOB_BINDING_CHANGED' != 'STUDIO_AUDIO_PROMPT_INVALID'
+E         Use -v to get more diff
+
+tests/test_v2_studio_audio_listing.py:63: AssertionError
+_ test_original_per_receipt_limits_still_apply_to_tail[sources-STUDIO_AUDIO_SOURCE_INVALID] _
+
+audio = namespace(owner=<app.services.studio_audio_execution.StudioAudioExecution object at 0x7f9227c6b8c0>, context={'actor':...rror_code': None, 'receipt_digest': 'e4115813bebdf57c0a7de379f0ebe96b9ba3cb82c091d3d8cbfdf43d6c543daa'}, nid='project')
+change = 'sources', code = 'STUDIO_AUDIO_SOURCE_INVALID'
+
+    @pytest.mark.parametrize("change,code", [
+        ("prompt", "STUDIO_AUDIO_PROMPT_INVALID"),
+        ("sources", "STUDIO_AUDIO_SOURCE_INVALID"),
+        ("binding_bytes", "STUDIO_AUDIO_BINDING_LIMIT"),
+    ])
+    def test_original_per_receipt_limits_still_apply_to_tail(audio, change, code):
+        rows = history(audio, 3)
+        if change == "prompt":
+            rows[-1]["_studio_body"]["prompt"] = "x" * 16_001
+        elif change == "sources":
+            rows[-1]["_studio_body"]["source_snapshots"] = [{}] * 9
+        else:
+            rows[-1]["context"]["rights"]["license_note"] = "x" * (256 * 1024)
+        save_rows(audio, rows)
+>       assert_error(code, lambda: listed(audio), 400)
+
+tests/test_v2_studio_audio_listing.py:143: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+code = 'STUDIO_AUDIO_SOURCE_INVALID'
+operation = <function test_original_per_receipt_limits_still_apply_to_tail.<locals>.<lambda> at 0x7f92281d9a80>
+status = 400
+
+    def assert_error(code, operation, status=409):
+        with pytest.raises(AudiobookError) as caught:
+            operation()
+>       assert (caught.value.code, caught.value.status) == (code, status)
+E       AssertionError: assert ('STUDIO_AUDI...CHANGED', 409) == ('STUDIO_AUDI...INVALID', 400)
+E         
+E         At index 0 diff: 'STUDIO_AUDIO_JOB_BINDING_CHANGED' != 'STUDIO_AUDIO_SOURCE_INVALID'
+E         Use -v to get more diff
+
+tests/test_v2_studio_audio_listing.py:63: AssertionError
+________________ test_graph_binding_at_tail_is_still_validated _________________
+
+audio = namespace(owner=<app.services.studio_audio_execution.StudioAudioExecution object at 0x7f9227eb54c0>, context={'actor':...rror_code': None, 'receipt_digest': '2a4b5181cd504716b444cbc030e231bbf4cdd1ecf9f27569a36b2f4b24994a39'}, nid='project')
+
+    def test_graph_binding_at_tail_is_still_validated(audio):
+        rows = history(audio, 3)
+        rows[-1]["context"]["graph_binding"] = None
+        save_rows(audio, rows)
+        with pytest.raises(ValueError, match="^CREATIVE_GRAPH_MEDIA_BINDING_INVALID$"):
+>           listed(audio)
+
+tests/test_v2_studio_audio_listing.py:151: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_studio_audio_listing.py:57: in listed
+    return audio.owner.list(audio.nid, audio.context, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/studio_audio_execution.py:413: in list
+    self._validated_job(first, context)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.services.studio_audio_execution.StudioAudioExecution object at 0x7f9227eb54c0>
+row = {'_studio_body': {'model_id': 'fixture-tts', 'operation_id': 'm8.audio.speech', 'parameters': {'speech_rate': 1.0}, 'prompt': 'Local receipt fixture: 青', ...}, 'approval_status': 'PENDING', 'attempt': 0, 'branch_id': 'branch-a', ...}
+context = {'actor': 'author', 'incarnation': 'file:ea67bfe1-cf9a-4669-b6ea-51bc99fee57c', 'operation_id': 'm8.audio.speech', 'pr..._binding': {'capability': 'TTS', 'endpoint': 'http://127.0.0.1:9', 'local': True, 'model_id': 'fixture-tts', ...}, ...}
+
+    def _validated_job(self, row, context):
+        """Validate an already located original-owner row without rescanning."""
+        if not self._matches(row, context):
+            raise _error("STUDIO_AUDIO_JOB_NOT_FOUND", "当前原项目 owner 中没有此音频任务", 404)
+        # Only original owner storage reaches this decoder. Verify the raw
+        # immutable bytes before permitting the historical marker-absent shape.
+        # Queue/preview still use the strict fresh-command admission path.
+        if row.get("request_sha256") != _digest({"body": row.get("_studio_body"), "context": row.get("context")}):
+>           raise _error("STUDIO_AUDIO_JOB_BINDING_CHANGED", "原音频任务绑定已变化，不能继续执行", 409)
+E           app.services.audiobook_service.AudiobookError: 原音频任务绑定已变化，不能继续执行
+
+app/services/studio_audio_execution.py:348: AudiobookError
+
+During handling of the above exception, another exception occurred:
+
+audio = namespace(owner=<app.services.studio_audio_execution.StudioAudioExecution object at 0x7f9227eb54c0>, context={'actor':...rror_code': None, 'receipt_digest': '2a4b5181cd504716b444cbc030e231bbf4cdd1ecf9f27569a36b2f4b24994a39'}, nid='project')
+
+    def test_graph_binding_at_tail_is_still_validated(audio):
+        rows = history(audio, 3)
+        rows[-1]["context"]["graph_binding"] = None
+        save_rows(audio, rows)
+>       with pytest.raises(ValueError, match="^CREATIVE_GRAPH_MEDIA_BINDING_INVALID$"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: 
+E       - 原音频任务绑定已变化，不能继续执行
+E       + CREATIVE_GRAPH_MEDIA_BINDING_INVALID
+
+tests/test_v2_studio_audio_listing.py:150: AssertionError
+______ test_source_snapshot_binding_is_checked_without_refreshing_history ______
+
+audio = namespace(owner=<app.services.studio_audio_execution.StudioAudioExecution object at 0x7f9227eb5bb0>, context={'actor':...rror_code': None, 'receipt_digest': '611186ab282bcae67c39dabcdbf94823f32f3d5636e114adc634e0da9273a48b'}, nid='project')
+
+    def test_source_snapshot_binding_is_checked_without_refreshing_history(audio):
+        source = {"id": "document", "version": 3, "digest": "d" * 64, "kind": "CREATIVE_DOCUMENT"}
+        second = queued(audio.owner, {**audio.context, "request_id": "with-source"}, sources=[source])
+        assert listed(audio) == [audio.row, second]
+        second["context"]["sources"][0]["version"] += 1
+        save_rows(audio, [audio.row, second])
+>       assert_error("STUDIO_AUDIO_SOURCE_BINDING_MISMATCH", lambda: listed(audio))
+
+tests/test_v2_studio_audio_listing.py:160: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+code = 'STUDIO_AUDIO_SOURCE_BINDING_MISMATCH'
+operation = <function test_source_snapshot_binding_is_checked_without_refreshing_history.<locals>.<lambda> at 0x7f9227f732e0>
+status = 409
+
+    def assert_error(code, operation, status=409):
+        with pytest.raises(AudiobookError) as caught:
+            operation()
+>       assert (caught.value.code, caught.value.status) == (code, status)
+E       AssertionError: assert ('STUDIO_AUDI...CHANGED', 409) == ('STUDIO_AUDI...ISMATCH', 409)
+E         
+E         At index 0 diff: 'STUDIO_AUDIO_JOB_BINDING_CHANGED' != 'STUDIO_AUDIO_SOURCE_BINDING_MISMATCH'
+E         Use -v to get more diff
+
+tests/test_v2_studio_audio_listing.py:63: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_v2_studio_audio_listing.py::test_malformed_tail_is_never_truncated_or_returned[_studio_body-value0-STUDIO_AUDIO_OPERATION_UNSUPPORTED]
+FAILED tests/test_v2_studio_audio_listing.py::test_original_per_receipt_limits_still_apply_to_tail[prompt-STUDIO_AUDIO_PROMPT_INVALID]
+FAILED tests/test_v2_studio_audio_listing.py::test_original_per_receipt_limits_still_apply_to_tail[sources-STUDIO_AUDIO_SOURCE_INVALID]
+FAILED tests/test_v2_studio_audio_listing.py::test_graph_binding_at_tail_is_still_validated
+FAILED tests/test_v2_studio_audio_listing.py::test_source_snapshot_binding_is_checked_without_refreshing_history
+5 failed in 5.15s

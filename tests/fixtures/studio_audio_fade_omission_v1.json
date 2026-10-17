@@ -1,0 +1,1458 @@
+{
+  "source_commit": "fb372d85f67dd32620ee20221e1aaa2b1e65bfba",
+  "capture_exit": 0,
+  "capture_kind": "DATA_ONLY_SERIALIZATION_NO_EXECUTION",
+  "variants": {
+    "wav_omitted": {
+      "input": {
+        "operation_id": "m8.audio.trim",
+        "request_id": "legacy-trim",
+        "provider_id": null,
+        "model_id": null,
+        "prompt": "",
+        "parameters": {
+          "in_ms": 100,
+          "out_ms": 800
+        },
+        "allow_cloud": false,
+        "source_snapshots": [
+          {
+            "kind": "ASSET",
+            "asset_kind": "audio",
+            "id": "source-a",
+            "version": 1,
+            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "license_note": ""
+      },
+      "graph_binding": null,
+      "objects": {
+        "command": {
+          "operation_id": "m8.audio.trim",
+          "request_id": "legacy-trim",
+          "provider_id": null,
+          "model_id": null,
+          "prompt": "",
+          "parameters": {
+            "width": null,
+            "height": null,
+            "steps": null,
+            "seed": null,
+            "negative_prompt": null,
+            "size": null,
+            "quality": null,
+            "duration_seconds": null,
+            "frame_rate": null,
+            "voice_id": null,
+            "speech_rate": null,
+            "in_ms": 100,
+            "out_ms": 800
+          },
+          "source_snapshots": [
+            {
+              "id": "source-a",
+              "kind": "ASSET",
+              "version": 1,
+              "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "asset_kind": "audio",
+              "reference_only": true
+            }
+          ],
+          "allow_cloud": false,
+          "license_note": ""
+        },
+        "preview": {
+          "contract": "studio-production-preview/1",
+          "novel_id": "project",
+          "branch_id": null,
+          "operation_id": "m8.audio.trim",
+          "request_id": "legacy-trim",
+          "request_digest": "2f90a075e3dd51ee00549d77fe46e952ad71992ba989dc477168b3fedda86a6f",
+          "provider": null,
+          "sources": [
+            {
+              "snapshot": {
+                "id": "source-a",
+                "kind": "ASSET",
+                "version": 1,
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "asset_kind": "audio"
+              },
+              "measured": {
+                "duration_ms": 1000,
+                "sample_rate": 8000,
+                "channels": 1
+              }
+            }
+          ],
+          "execution_recipe": {
+            "contract": "studio-execution-recipe/1",
+            "operation_id": "m8.audio.trim",
+            "adapter": "LOCAL_FFMPEG",
+            "parameters": {
+              "in_ms": 100,
+              "out_ms": 800
+            },
+            "automatic_fallback": false,
+            "output_profile": "PCM_S16LE_WAV_48000_STEREO",
+            "recipe_digest": "bd7b3525f584ffcb10c5376c4822d02958233bd127ce5bae2ce7e2640dec8a3c"
+          },
+          "command": {
+            "operation_id": "m8.audio.trim",
+            "request_id": "legacy-trim",
+            "provider_id": null,
+            "model_id": null,
+            "prompt": "",
+            "parameters": {
+              "width": null,
+              "height": null,
+              "steps": null,
+              "seed": null,
+              "negative_prompt": null,
+              "size": null,
+              "quality": null,
+              "duration_seconds": null,
+              "frame_rate": null,
+              "voice_id": null,
+              "speech_rate": null,
+              "in_ms": 100,
+              "out_ms": 800
+            },
+            "source_snapshots": [
+              {
+                "id": "source-a",
+                "kind": "ASSET",
+                "version": 1,
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "asset_kind": "audio",
+                "reference_only": true
+              }
+            ],
+            "allow_cloud": false,
+            "license_note": ""
+          },
+          "product_acceptance": "LOCAL_REQUIRED",
+          "execution_available": true,
+          "automatic_dispatch": false,
+          "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+          "preview_digest": "f7ece5c37a5a892e09e83df4fb6874301bd218361a6270ac1f4f63e8da267aef"
+        },
+        "context": {
+          "actor": "author",
+          "scope_key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "incarnation": "file:legacy-fixture",
+          "request_id": "legacy-trim",
+          "operation_id": "m8.audio.trim",
+          "sources": [
+            {
+              "id": "source-a",
+              "kind": "ASSET",
+              "version": 1,
+              "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "asset_kind": "audio"
+            }
+          ],
+          "provider_binding": null,
+          "license_note": "",
+          "rights": {
+            "license_note": ""
+          },
+          "execution_recipe": {
+            "contract": "studio-execution-recipe/1",
+            "operation_id": "m8.audio.trim",
+            "adapter": "LOCAL_FFMPEG",
+            "parameters": {
+              "in_ms": 100,
+              "out_ms": 800
+            },
+            "automatic_fallback": false,
+            "output_profile": "PCM_S16LE_WAV_48000_STEREO",
+            "recipe_digest": "bd7b3525f584ffcb10c5376c4822d02958233bd127ce5bae2ce7e2640dec8a3c"
+          },
+          "request_digest": "2f90a075e3dd51ee00549d77fe46e952ad71992ba989dc477168b3fedda86a6f",
+          "command": {
+            "operation_id": "m8.audio.trim",
+            "request_id": "legacy-trim",
+            "provider_id": null,
+            "model_id": null,
+            "prompt": "",
+            "parameters": {
+              "width": null,
+              "height": null,
+              "steps": null,
+              "seed": null,
+              "negative_prompt": null,
+              "size": null,
+              "quality": null,
+              "duration_seconds": null,
+              "frame_rate": null,
+              "voice_id": null,
+              "speech_rate": null,
+              "in_ms": 100,
+              "out_ms": 800
+            },
+            "source_snapshots": [
+              {
+                "id": "source-a",
+                "kind": "ASSET",
+                "version": 1,
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "asset_kind": "audio",
+                "reference_only": true
+              }
+            ],
+            "allow_cloud": false,
+            "license_note": ""
+          }
+        },
+        "recipe": {
+          "contract": "studio-execution-recipe/1",
+          "operation_id": "m8.audio.trim",
+          "adapter": "LOCAL_FFMPEG",
+          "parameters": {
+            "in_ms": 100,
+            "out_ms": 800
+          },
+          "automatic_fallback": false,
+          "output_profile": "PCM_S16LE_WAV_48000_STEREO",
+          "recipe_digest": "bd7b3525f584ffcb10c5376c4822d02958233bd127ce5bae2ce7e2640dec8a3c"
+        },
+        "body": {
+          "operation_id": "m8.audio.trim",
+          "provider_id": null,
+          "model_id": null,
+          "prompt": "",
+          "parameters": {
+            "in_ms": 100,
+            "out_ms": 800
+          },
+          "source_snapshots": [
+            {
+              "id": "source-a",
+              "kind": "ASSET",
+              "version": 1,
+              "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "asset_kind": "audio"
+            }
+          ]
+        },
+        "receipt": {
+          "id": "audio-one",
+          "version": 1,
+          "request_digest": "2f90a075e3dd51ee00549d77fe46e952ad71992ba989dc477168b3fedda86a6f",
+          "status": "QUEUED",
+          "attempt": 0,
+          "dispatch_state": "NOT_SENT",
+          "publication_state": "NOT_STARTED",
+          "review_state": "NOT_READY",
+          "receipt_digest": "bba228aedc2f529f47cb3c222e745fa2f8a59f0edbfffd790027a1802c1e3e0c"
+        }
+      },
+      "canonical": {
+        "command": "{\"allow_cloud\":false,\"license_note\":\"\",\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"duration_seconds\":null,\"frame_rate\":null,\"height\":null,\"in_ms\":100,\"negative_prompt\":null,\"out_ms\":800,\"quality\":null,\"seed\":null,\"size\":null,\"speech_rate\":null,\"steps\":null,\"voice_id\":null,\"width\":null},\"prompt\":\"\",\"provider_id\":null,\"request_id\":\"legacy-trim\",\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"reference_only\":true,\"version\":1}]}",
+        "preview": "{\"automatic_dispatch\":false,\"branch_id\":null,\"command\":{\"allow_cloud\":false,\"license_note\":\"\",\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"duration_seconds\":null,\"frame_rate\":null,\"height\":null,\"in_ms\":100,\"negative_prompt\":null,\"out_ms\":800,\"quality\":null,\"seed\":null,\"size\":null,\"speech_rate\":null,\"steps\":null,\"voice_id\":null,\"width\":null},\"prompt\":\"\",\"provider_id\":null,\"request_id\":\"legacy-trim\",\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"reference_only\":true,\"version\":1}]},\"contract\":\"studio-production-preview/1\",\"execution_available\":true,\"execution_recipe\":{\"adapter\":\"LOCAL_FFMPEG\",\"automatic_fallback\":false,\"contract\":\"studio-execution-recipe/1\",\"operation_id\":\"m8.audio.trim\",\"output_profile\":\"PCM_S16LE_WAV_48000_STEREO\",\"parameters\":{\"in_ms\":100,\"out_ms\":800},\"recipe_digest\":\"bd7b3525f584ffcb10c5376c4822d02958233bd127ce5bae2ce7e2640dec8a3c\"},\"novel_id\":\"project\",\"operation_id\":\"m8.audio.trim\",\"output_policy\":\"PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW\",\"preview_digest\":\"f7ece5c37a5a892e09e83df4fb6874301bd218361a6270ac1f4f63e8da267aef\",\"product_acceptance\":\"LOCAL_REQUIRED\",\"provider\":null,\"request_digest\":\"2f90a075e3dd51ee00549d77fe46e952ad71992ba989dc477168b3fedda86a6f\",\"request_id\":\"legacy-trim\",\"sources\":[{\"measured\":{\"channels\":1,\"duration_ms\":1000,\"sample_rate\":8000},\"snapshot\":{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1}}]}",
+        "context": "{\"actor\":\"author\",\"command\":{\"allow_cloud\":false,\"license_note\":\"\",\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"duration_seconds\":null,\"frame_rate\":null,\"height\":null,\"in_ms\":100,\"negative_prompt\":null,\"out_ms\":800,\"quality\":null,\"seed\":null,\"size\":null,\"speech_rate\":null,\"steps\":null,\"voice_id\":null,\"width\":null},\"prompt\":\"\",\"provider_id\":null,\"request_id\":\"legacy-trim\",\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"reference_only\":true,\"version\":1}]},\"execution_recipe\":{\"adapter\":\"LOCAL_FFMPEG\",\"automatic_fallback\":false,\"contract\":\"studio-execution-recipe/1\",\"operation_id\":\"m8.audio.trim\",\"output_profile\":\"PCM_S16LE_WAV_48000_STEREO\",\"parameters\":{\"in_ms\":100,\"out_ms\":800},\"recipe_digest\":\"bd7b3525f584ffcb10c5376c4822d02958233bd127ce5bae2ce7e2640dec8a3c\"},\"incarnation\":\"file:legacy-fixture\",\"license_note\":\"\",\"operation_id\":\"m8.audio.trim\",\"provider_binding\":null,\"request_digest\":\"2f90a075e3dd51ee00549d77fe46e952ad71992ba989dc477168b3fedda86a6f\",\"request_id\":\"legacy-trim\",\"rights\":{\"license_note\":\"\"},\"scope_key\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"sources\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1}]}",
+        "recipe": "{\"adapter\":\"LOCAL_FFMPEG\",\"automatic_fallback\":false,\"contract\":\"studio-execution-recipe/1\",\"operation_id\":\"m8.audio.trim\",\"output_profile\":\"PCM_S16LE_WAV_48000_STEREO\",\"parameters\":{\"in_ms\":100,\"out_ms\":800},\"recipe_digest\":\"bd7b3525f584ffcb10c5376c4822d02958233bd127ce5bae2ce7e2640dec8a3c\"}",
+        "body": "{\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"in_ms\":100,\"out_ms\":800},\"prompt\":\"\",\"provider_id\":null,\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1}]}",
+        "receipt": "{\"attempt\":0,\"dispatch_state\":\"NOT_SENT\",\"id\":\"audio-one\",\"publication_state\":\"NOT_STARTED\",\"receipt_digest\":\"bba228aedc2f529f47cb3c222e745fa2f8a59f0edbfffd790027a1802c1e3e0c\",\"request_digest\":\"2f90a075e3dd51ee00549d77fe46e952ad71992ba989dc477168b3fedda86a6f\",\"review_state\":\"NOT_READY\",\"status\":\"QUEUED\",\"version\":1}"
+      },
+      "sha256": {
+        "command": "12113d9776ca251b2ffc03a22345193e58b140da7c8dc0a2a4085fc7f9dacf27",
+        "preview": "19b04991847981649d917e5b749aa228492b29d4444f8be944902d1231763eee",
+        "context": "55b1b56ece65433c194d132b0260619c69c9248d408267016c5644794534df10",
+        "recipe": "9a61de2abeab1f9f0a7d2dad304577f86765887a446531be3999356fcae19857",
+        "body": "3454b275911b098112c410938b336cf1499857276bccb03b575bb7eb5c955327",
+        "receipt": "7058621140ef0da0564dc701a6e0bc71d1938962f6ab56700913049dae2d549e"
+      },
+      "model_dump_json": "{\"operation_id\":\"m8.audio.trim\",\"request_id\":\"legacy-trim\",\"provider_id\":null,\"model_id\":null,\"prompt\":\"\",\"parameters\":{\"width\":null,\"height\":null,\"steps\":null,\"seed\":null,\"negative_prompt\":null,\"size\":null,\"quality\":null,\"duration_seconds\":null,\"frame_rate\":null,\"voice_id\":null,\"speech_rate\":null,\"in_ms\":100,\"out_ms\":800},\"source_snapshots\":[{\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1,\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"asset_kind\":\"audio\",\"reference_only\":true}],\"allow_cloud\":false,\"license_note\":\"\"}",
+      "request_sha256": "71f21f6bcc0a54198648a3978989decc59f0126071ac1b2067fdaee2f5e13c61",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "wav_controls": {
+      "input": {
+        "operation_id": "m8.audio.trim",
+        "request_id": "legacy-trim",
+        "provider_id": null,
+        "model_id": null,
+        "prompt": "",
+        "parameters": {
+          "in_ms": 100,
+          "out_ms": 800,
+          "gain_db": -6.020599913279624,
+          "sample_rate": 22050,
+          "channels": 1
+        },
+        "allow_cloud": false,
+        "source_snapshots": [
+          {
+            "kind": "ASSET",
+            "asset_kind": "audio",
+            "id": "source-a",
+            "version": 1,
+            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "license_note": ""
+      },
+      "graph_binding": null,
+      "objects": {
+        "command": {
+          "operation_id": "m8.audio.trim",
+          "request_id": "legacy-trim",
+          "provider_id": null,
+          "model_id": null,
+          "prompt": "",
+          "parameters": {
+            "width": null,
+            "height": null,
+            "steps": null,
+            "seed": null,
+            "negative_prompt": null,
+            "size": null,
+            "quality": null,
+            "duration_seconds": null,
+            "frame_rate": null,
+            "voice_id": null,
+            "speech_rate": null,
+            "in_ms": 100,
+            "out_ms": 800,
+            "gain_db": -6.020599913279624,
+            "sample_rate": 22050,
+            "channels": 1
+          },
+          "source_snapshots": [
+            {
+              "id": "source-a",
+              "kind": "ASSET",
+              "version": 1,
+              "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "asset_kind": "audio",
+              "reference_only": true
+            }
+          ],
+          "allow_cloud": false,
+          "license_note": ""
+        },
+        "preview": {
+          "contract": "studio-production-preview/1",
+          "novel_id": "project",
+          "branch_id": null,
+          "operation_id": "m8.audio.trim",
+          "request_id": "legacy-trim",
+          "request_digest": "0e77ff9b7aa44e29f4a43a973c4a02605fab920c788e00b1fa47e1f9767b558e",
+          "provider": null,
+          "sources": [
+            {
+              "snapshot": {
+                "id": "source-a",
+                "kind": "ASSET",
+                "version": 1,
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "asset_kind": "audio"
+              },
+              "measured": {
+                "duration_ms": 1000,
+                "sample_rate": 8000,
+                "channels": 1
+              }
+            }
+          ],
+          "execution_recipe": {
+            "contract": "studio-execution-recipe/1",
+            "operation_id": "m8.audio.trim",
+            "adapter": "LOCAL_FFMPEG",
+            "parameters": {
+              "in_ms": 100,
+              "out_ms": 800,
+              "gain_db": -6.020599913279624,
+              "sample_rate": 22050,
+              "channels": 1
+            },
+            "automatic_fallback": false,
+            "output_profile": "PCM_S16LE_WAV_22050_MONO",
+            "recipe_digest": "80f4a50ec80636aa12e7f7db73837e665243e5399e83440f944e6129931e28be"
+          },
+          "command": {
+            "operation_id": "m8.audio.trim",
+            "request_id": "legacy-trim",
+            "provider_id": null,
+            "model_id": null,
+            "prompt": "",
+            "parameters": {
+              "width": null,
+              "height": null,
+              "steps": null,
+              "seed": null,
+              "negative_prompt": null,
+              "size": null,
+              "quality": null,
+              "duration_seconds": null,
+              "frame_rate": null,
+              "voice_id": null,
+              "speech_rate": null,
+              "in_ms": 100,
+              "out_ms": 800,
+              "gain_db": -6.020599913279624,
+              "sample_rate": 22050,
+              "channels": 1
+            },
+            "source_snapshots": [
+              {
+                "id": "source-a",
+                "kind": "ASSET",
+                "version": 1,
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "asset_kind": "audio",
+                "reference_only": true
+              }
+            ],
+            "allow_cloud": false,
+            "license_note": ""
+          },
+          "product_acceptance": "LOCAL_REQUIRED",
+          "execution_available": true,
+          "automatic_dispatch": false,
+          "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+          "preview_digest": "2736f5ea7b9100eaf773d1c0277faf41c0192ab79254dab026e503e8bb7739ff"
+        },
+        "context": {
+          "actor": "author",
+          "scope_key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "incarnation": "file:legacy-fixture",
+          "request_id": "legacy-trim",
+          "operation_id": "m8.audio.trim",
+          "sources": [
+            {
+              "id": "source-a",
+              "kind": "ASSET",
+              "version": 1,
+              "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "asset_kind": "audio"
+            }
+          ],
+          "provider_binding": null,
+          "license_note": "",
+          "rights": {
+            "license_note": ""
+          },
+          "execution_recipe": {
+            "contract": "studio-execution-recipe/1",
+            "operation_id": "m8.audio.trim",
+            "adapter": "LOCAL_FFMPEG",
+            "parameters": {
+              "in_ms": 100,
+              "out_ms": 800,
+              "gain_db": -6.020599913279624,
+              "sample_rate": 22050,
+              "channels": 1
+            },
+            "automatic_fallback": false,
+            "output_profile": "PCM_S16LE_WAV_22050_MONO",
+            "recipe_digest": "80f4a50ec80636aa12e7f7db73837e665243e5399e83440f944e6129931e28be"
+          },
+          "request_digest": "0e77ff9b7aa44e29f4a43a973c4a02605fab920c788e00b1fa47e1f9767b558e",
+          "command": {
+            "operation_id": "m8.audio.trim",
+            "request_id": "legacy-trim",
+            "provider_id": null,
+            "model_id": null,
+            "prompt": "",
+            "parameters": {
+              "width": null,
+              "height": null,
+              "steps": null,
+              "seed": null,
+              "negative_prompt": null,
+              "size": null,
+              "quality": null,
+              "duration_seconds": null,
+              "frame_rate": null,
+              "voice_id": null,
+              "speech_rate": null,
+              "in_ms": 100,
+              "out_ms": 800,
+              "gain_db": -6.020599913279624,
+              "sample_rate": 22050,
+              "channels": 1
+            },
+            "source_snapshots": [
+              {
+                "id": "source-a",
+                "kind": "ASSET",
+                "version": 1,
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "asset_kind": "audio",
+                "reference_only": true
+              }
+            ],
+            "allow_cloud": false,
+            "license_note": ""
+          }
+        },
+        "recipe": {
+          "contract": "studio-execution-recipe/1",
+          "operation_id": "m8.audio.trim",
+          "adapter": "LOCAL_FFMPEG",
+          "parameters": {
+            "in_ms": 100,
+            "out_ms": 800,
+            "gain_db": -6.020599913279624,
+            "sample_rate": 22050,
+            "channels": 1
+          },
+          "automatic_fallback": false,
+          "output_profile": "PCM_S16LE_WAV_22050_MONO",
+          "recipe_digest": "80f4a50ec80636aa12e7f7db73837e665243e5399e83440f944e6129931e28be"
+        },
+        "body": {
+          "operation_id": "m8.audio.trim",
+          "provider_id": null,
+          "model_id": null,
+          "prompt": "",
+          "parameters": {
+            "in_ms": 100,
+            "out_ms": 800,
+            "gain_db": -6.020599913279624,
+            "sample_rate": 22050,
+            "channels": 1
+          },
+          "source_snapshots": [
+            {
+              "id": "source-a",
+              "kind": "ASSET",
+              "version": 1,
+              "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "asset_kind": "audio"
+            }
+          ]
+        },
+        "receipt": {
+          "id": "audio-one",
+          "version": 1,
+          "request_digest": "0e77ff9b7aa44e29f4a43a973c4a02605fab920c788e00b1fa47e1f9767b558e",
+          "status": "QUEUED",
+          "attempt": 0,
+          "dispatch_state": "NOT_SENT",
+          "publication_state": "NOT_STARTED",
+          "review_state": "NOT_READY",
+          "receipt_digest": "7d3579e81652725f9ec31fdce765338d650e0bdb57fec9750ec7f99c02c3b866"
+        }
+      },
+      "canonical": {
+        "command": "{\"allow_cloud\":false,\"license_note\":\"\",\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"channels\":1,\"duration_seconds\":null,\"frame_rate\":null,\"gain_db\":-6.020599913279624,\"height\":null,\"in_ms\":100,\"negative_prompt\":null,\"out_ms\":800,\"quality\":null,\"sample_rate\":22050,\"seed\":null,\"size\":null,\"speech_rate\":null,\"steps\":null,\"voice_id\":null,\"width\":null},\"prompt\":\"\",\"provider_id\":null,\"request_id\":\"legacy-trim\",\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"reference_only\":true,\"version\":1}]}",
+        "preview": "{\"automatic_dispatch\":false,\"branch_id\":null,\"command\":{\"allow_cloud\":false,\"license_note\":\"\",\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"channels\":1,\"duration_seconds\":null,\"frame_rate\":null,\"gain_db\":-6.020599913279624,\"height\":null,\"in_ms\":100,\"negative_prompt\":null,\"out_ms\":800,\"quality\":null,\"sample_rate\":22050,\"seed\":null,\"size\":null,\"speech_rate\":null,\"steps\":null,\"voice_id\":null,\"width\":null},\"prompt\":\"\",\"provider_id\":null,\"request_id\":\"legacy-trim\",\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"reference_only\":true,\"version\":1}]},\"contract\":\"studio-production-preview/1\",\"execution_available\":true,\"execution_recipe\":{\"adapter\":\"LOCAL_FFMPEG\",\"automatic_fallback\":false,\"contract\":\"studio-execution-recipe/1\",\"operation_id\":\"m8.audio.trim\",\"output_profile\":\"PCM_S16LE_WAV_22050_MONO\",\"parameters\":{\"channels\":1,\"gain_db\":-6.020599913279624,\"in_ms\":100,\"out_ms\":800,\"sample_rate\":22050},\"recipe_digest\":\"80f4a50ec80636aa12e7f7db73837e665243e5399e83440f944e6129931e28be\"},\"novel_id\":\"project\",\"operation_id\":\"m8.audio.trim\",\"output_policy\":\"PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW\",\"preview_digest\":\"2736f5ea7b9100eaf773d1c0277faf41c0192ab79254dab026e503e8bb7739ff\",\"product_acceptance\":\"LOCAL_REQUIRED\",\"provider\":null,\"request_digest\":\"0e77ff9b7aa44e29f4a43a973c4a02605fab920c788e00b1fa47e1f9767b558e\",\"request_id\":\"legacy-trim\",\"sources\":[{\"measured\":{\"channels\":1,\"duration_ms\":1000,\"sample_rate\":8000},\"snapshot\":{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1}}]}",
+        "context": "{\"actor\":\"author\",\"command\":{\"allow_cloud\":false,\"license_note\":\"\",\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"channels\":1,\"duration_seconds\":null,\"frame_rate\":null,\"gain_db\":-6.020599913279624,\"height\":null,\"in_ms\":100,\"negative_prompt\":null,\"out_ms\":800,\"quality\":null,\"sample_rate\":22050,\"seed\":null,\"size\":null,\"speech_rate\":null,\"steps\":null,\"voice_id\":null,\"width\":null},\"prompt\":\"\",\"provider_id\":null,\"request_id\":\"legacy-trim\",\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"reference_only\":true,\"version\":1}]},\"execution_recipe\":{\"adapter\":\"LOCAL_FFMPEG\",\"automatic_fallback\":false,\"contract\":\"studio-execution-recipe/1\",\"operation_id\":\"m8.audio.trim\",\"output_profile\":\"PCM_S16LE_WAV_22050_MONO\",\"parameters\":{\"channels\":1,\"gain_db\":-6.020599913279624,\"in_ms\":100,\"out_ms\":800,\"sample_rate\":22050},\"recipe_digest\":\"80f4a50ec80636aa12e7f7db73837e665243e5399e83440f944e6129931e28be\"},\"incarnation\":\"file:legacy-fixture\",\"license_note\":\"\",\"operation_id\":\"m8.audio.trim\",\"provider_binding\":null,\"request_digest\":\"0e77ff9b7aa44e29f4a43a973c4a02605fab920c788e00b1fa47e1f9767b558e\",\"request_id\":\"legacy-trim\",\"rights\":{\"license_note\":\"\"},\"scope_key\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"sources\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1}]}",
+        "recipe": "{\"adapter\":\"LOCAL_FFMPEG\",\"automatic_fallback\":false,\"contract\":\"studio-execution-recipe/1\",\"operation_id\":\"m8.audio.trim\",\"output_profile\":\"PCM_S16LE_WAV_22050_MONO\",\"parameters\":{\"channels\":1,\"gain_db\":-6.020599913279624,\"in_ms\":100,\"out_ms\":800,\"sample_rate\":22050},\"recipe_digest\":\"80f4a50ec80636aa12e7f7db73837e665243e5399e83440f944e6129931e28be\"}",
+        "body": "{\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"channels\":1,\"gain_db\":-6.020599913279624,\"in_ms\":100,\"out_ms\":800,\"sample_rate\":22050},\"prompt\":\"\",\"provider_id\":null,\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1}]}",
+        "receipt": "{\"attempt\":0,\"dispatch_state\":\"NOT_SENT\",\"id\":\"audio-one\",\"publication_state\":\"NOT_STARTED\",\"receipt_digest\":\"7d3579e81652725f9ec31fdce765338d650e0bdb57fec9750ec7f99c02c3b866\",\"request_digest\":\"0e77ff9b7aa44e29f4a43a973c4a02605fab920c788e00b1fa47e1f9767b558e\",\"review_state\":\"NOT_READY\",\"status\":\"QUEUED\",\"version\":1}"
+      },
+      "sha256": {
+        "command": "e6e9831e860fd5a01845f91c112bab98dee66f7f891da3a318a782734b4ff346",
+        "preview": "3f12b50a9e85d3ee1256e04372d6d5800e29f8a3a236117cb291b9f5bce8ebf4",
+        "context": "131bc6d4b8890a66b925d4a3365e055ac10a58f2f4c0f6830fe208b2dc3db268",
+        "recipe": "9f31a98b4dcf0878269816f16e578c386851fa49d36549e625cc6a3b345f98ae",
+        "body": "28614ead4b085e019138d7a3bfd92d359ec9f5d1348d2aac94e513d3dc0791d7",
+        "receipt": "88f508af6904edc26f25035f5259e3bc3cb2ac0064b4cde3fc80839e8f62869d"
+      },
+      "model_dump_json": "{\"operation_id\":\"m8.audio.trim\",\"request_id\":\"legacy-trim\",\"provider_id\":null,\"model_id\":null,\"prompt\":\"\",\"parameters\":{\"width\":null,\"height\":null,\"steps\":null,\"seed\":null,\"negative_prompt\":null,\"size\":null,\"quality\":null,\"duration_seconds\":null,\"frame_rate\":null,\"voice_id\":null,\"speech_rate\":null,\"in_ms\":100,\"out_ms\":800,\"gain_db\":-6.020599913279624,\"sample_rate\":22050,\"channels\":1},\"source_snapshots\":[{\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1,\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"asset_kind\":\"audio\",\"reference_only\":true}],\"allow_cloud\":false,\"license_note\":\"\"}",
+      "request_sha256": "14c3cf519ce95382aa942395554cc347b4d52d3ce999b8fbf3441e6e75c58f55",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "flac": {
+      "input": {
+        "operation_id": "m8.audio.trim",
+        "request_id": "legacy-trim",
+        "provider_id": null,
+        "model_id": null,
+        "prompt": "",
+        "parameters": {
+          "in_ms": 100,
+          "out_ms": 800,
+          "gain_db": -6.020599913279624,
+          "sample_rate": 22050,
+          "channels": 1,
+          "output_format": "FLAC"
+        },
+        "allow_cloud": false,
+        "source_snapshots": [
+          {
+            "kind": "ASSET",
+            "asset_kind": "audio",
+            "id": "source-a",
+            "version": 1,
+            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "license_note": ""
+      },
+      "graph_binding": null,
+      "objects": {
+        "command": {
+          "operation_id": "m8.audio.trim",
+          "request_id": "legacy-trim",
+          "provider_id": null,
+          "model_id": null,
+          "prompt": "",
+          "parameters": {
+            "width": null,
+            "height": null,
+            "steps": null,
+            "seed": null,
+            "negative_prompt": null,
+            "size": null,
+            "quality": null,
+            "duration_seconds": null,
+            "frame_rate": null,
+            "voice_id": null,
+            "speech_rate": null,
+            "in_ms": 100,
+            "out_ms": 800,
+            "gain_db": -6.020599913279624,
+            "sample_rate": 22050,
+            "channels": 1,
+            "output_format": "FLAC"
+          },
+          "source_snapshots": [
+            {
+              "id": "source-a",
+              "kind": "ASSET",
+              "version": 1,
+              "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "asset_kind": "audio",
+              "reference_only": true
+            }
+          ],
+          "allow_cloud": false,
+          "license_note": ""
+        },
+        "preview": {
+          "contract": "studio-production-preview/1",
+          "novel_id": "project",
+          "branch_id": null,
+          "operation_id": "m8.audio.trim",
+          "request_id": "legacy-trim",
+          "request_digest": "156465c45f74e9dde95e34dfc4f4d195a2a82f3951ef791a5b7267886e282a6c",
+          "provider": null,
+          "sources": [
+            {
+              "snapshot": {
+                "id": "source-a",
+                "kind": "ASSET",
+                "version": 1,
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "asset_kind": "audio"
+              },
+              "measured": {
+                "duration_ms": 1000,
+                "sample_rate": 8000,
+                "channels": 1
+              }
+            }
+          ],
+          "execution_recipe": {
+            "contract": "studio-execution-recipe/1",
+            "operation_id": "m8.audio.trim",
+            "adapter": "LOCAL_FFMPEG",
+            "parameters": {
+              "in_ms": 100,
+              "out_ms": 800,
+              "gain_db": -6.020599913279624,
+              "sample_rate": 22050,
+              "channels": 1,
+              "output_format": "FLAC"
+            },
+            "automatic_fallback": false,
+            "output_profile": "FLAC_S16_22050_MONO_COMPRESSION5",
+            "recipe_digest": "73bc6685dc65a0a762711be393414d8dee89ca553b579f21b7a35ffd698afebd"
+          },
+          "command": {
+            "operation_id": "m8.audio.trim",
+            "request_id": "legacy-trim",
+            "provider_id": null,
+            "model_id": null,
+            "prompt": "",
+            "parameters": {
+              "width": null,
+              "height": null,
+              "steps": null,
+              "seed": null,
+              "negative_prompt": null,
+              "size": null,
+              "quality": null,
+              "duration_seconds": null,
+              "frame_rate": null,
+              "voice_id": null,
+              "speech_rate": null,
+              "in_ms": 100,
+              "out_ms": 800,
+              "gain_db": -6.020599913279624,
+              "sample_rate": 22050,
+              "channels": 1,
+              "output_format": "FLAC"
+            },
+            "source_snapshots": [
+              {
+                "id": "source-a",
+                "kind": "ASSET",
+                "version": 1,
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "asset_kind": "audio",
+                "reference_only": true
+              }
+            ],
+            "allow_cloud": false,
+            "license_note": ""
+          },
+          "product_acceptance": "LOCAL_REQUIRED",
+          "execution_available": true,
+          "automatic_dispatch": false,
+          "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+          "preview_digest": "ac27793d7bd9540ab6cc3ea79b52a7c63e117080031c3bcd9ac706b0eb088466"
+        },
+        "context": {
+          "actor": "author",
+          "scope_key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "incarnation": "file:legacy-fixture",
+          "request_id": "legacy-trim",
+          "operation_id": "m8.audio.trim",
+          "sources": [
+            {
+              "id": "source-a",
+              "kind": "ASSET",
+              "version": 1,
+              "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "asset_kind": "audio"
+            }
+          ],
+          "provider_binding": null,
+          "license_note": "",
+          "rights": {
+            "license_note": ""
+          },
+          "execution_recipe": {
+            "contract": "studio-execution-recipe/1",
+            "operation_id": "m8.audio.trim",
+            "adapter": "LOCAL_FFMPEG",
+            "parameters": {
+              "in_ms": 100,
+              "out_ms": 800,
+              "gain_db": -6.020599913279624,
+              "sample_rate": 22050,
+              "channels": 1,
+              "output_format": "FLAC"
+            },
+            "automatic_fallback": false,
+            "output_profile": "FLAC_S16_22050_MONO_COMPRESSION5",
+            "recipe_digest": "73bc6685dc65a0a762711be393414d8dee89ca553b579f21b7a35ffd698afebd"
+          },
+          "request_digest": "156465c45f74e9dde95e34dfc4f4d195a2a82f3951ef791a5b7267886e282a6c",
+          "command": {
+            "operation_id": "m8.audio.trim",
+            "request_id": "legacy-trim",
+            "provider_id": null,
+            "model_id": null,
+            "prompt": "",
+            "parameters": {
+              "width": null,
+              "height": null,
+              "steps": null,
+              "seed": null,
+              "negative_prompt": null,
+              "size": null,
+              "quality": null,
+              "duration_seconds": null,
+              "frame_rate": null,
+              "voice_id": null,
+              "speech_rate": null,
+              "in_ms": 100,
+              "out_ms": 800,
+              "gain_db": -6.020599913279624,
+              "sample_rate": 22050,
+              "channels": 1,
+              "output_format": "FLAC"
+            },
+            "source_snapshots": [
+              {
+                "id": "source-a",
+                "kind": "ASSET",
+                "version": 1,
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "asset_kind": "audio",
+                "reference_only": true
+              }
+            ],
+            "allow_cloud": false,
+            "license_note": ""
+          }
+        },
+        "recipe": {
+          "contract": "studio-execution-recipe/1",
+          "operation_id": "m8.audio.trim",
+          "adapter": "LOCAL_FFMPEG",
+          "parameters": {
+            "in_ms": 100,
+            "out_ms": 800,
+            "gain_db": -6.020599913279624,
+            "sample_rate": 22050,
+            "channels": 1,
+            "output_format": "FLAC"
+          },
+          "automatic_fallback": false,
+          "output_profile": "FLAC_S16_22050_MONO_COMPRESSION5",
+          "recipe_digest": "73bc6685dc65a0a762711be393414d8dee89ca553b579f21b7a35ffd698afebd"
+        },
+        "body": {
+          "operation_id": "m8.audio.trim",
+          "provider_id": null,
+          "model_id": null,
+          "prompt": "",
+          "parameters": {
+            "in_ms": 100,
+            "out_ms": 800,
+            "gain_db": -6.020599913279624,
+            "sample_rate": 22050,
+            "channels": 1,
+            "output_format": "FLAC"
+          },
+          "source_snapshots": [
+            {
+              "id": "source-a",
+              "kind": "ASSET",
+              "version": 1,
+              "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "asset_kind": "audio"
+            }
+          ]
+        },
+        "receipt": {
+          "id": "audio-one",
+          "version": 1,
+          "request_digest": "156465c45f74e9dde95e34dfc4f4d195a2a82f3951ef791a5b7267886e282a6c",
+          "status": "QUEUED",
+          "attempt": 0,
+          "dispatch_state": "NOT_SENT",
+          "publication_state": "NOT_STARTED",
+          "review_state": "NOT_READY",
+          "receipt_digest": "c68c179a8edb62abd93e23186d5bb01ff9ab79ad062efe89ebe0d6cc458b67d4"
+        }
+      },
+      "canonical": {
+        "command": "{\"allow_cloud\":false,\"license_note\":\"\",\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"channels\":1,\"duration_seconds\":null,\"frame_rate\":null,\"gain_db\":-6.020599913279624,\"height\":null,\"in_ms\":100,\"negative_prompt\":null,\"out_ms\":800,\"output_format\":\"FLAC\",\"quality\":null,\"sample_rate\":22050,\"seed\":null,\"size\":null,\"speech_rate\":null,\"steps\":null,\"voice_id\":null,\"width\":null},\"prompt\":\"\",\"provider_id\":null,\"request_id\":\"legacy-trim\",\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"reference_only\":true,\"version\":1}]}",
+        "preview": "{\"automatic_dispatch\":false,\"branch_id\":null,\"command\":{\"allow_cloud\":false,\"license_note\":\"\",\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"channels\":1,\"duration_seconds\":null,\"frame_rate\":null,\"gain_db\":-6.020599913279624,\"height\":null,\"in_ms\":100,\"negative_prompt\":null,\"out_ms\":800,\"output_format\":\"FLAC\",\"quality\":null,\"sample_rate\":22050,\"seed\":null,\"size\":null,\"speech_rate\":null,\"steps\":null,\"voice_id\":null,\"width\":null},\"prompt\":\"\",\"provider_id\":null,\"request_id\":\"legacy-trim\",\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"reference_only\":true,\"version\":1}]},\"contract\":\"studio-production-preview/1\",\"execution_available\":true,\"execution_recipe\":{\"adapter\":\"LOCAL_FFMPEG\",\"automatic_fallback\":false,\"contract\":\"studio-execution-recipe/1\",\"operation_id\":\"m8.audio.trim\",\"output_profile\":\"FLAC_S16_22050_MONO_COMPRESSION5\",\"parameters\":{\"channels\":1,\"gain_db\":-6.020599913279624,\"in_ms\":100,\"out_ms\":800,\"output_format\":\"FLAC\",\"sample_rate\":22050},\"recipe_digest\":\"73bc6685dc65a0a762711be393414d8dee89ca553b579f21b7a35ffd698afebd\"},\"novel_id\":\"project\",\"operation_id\":\"m8.audio.trim\",\"output_policy\":\"PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW\",\"preview_digest\":\"ac27793d7bd9540ab6cc3ea79b52a7c63e117080031c3bcd9ac706b0eb088466\",\"product_acceptance\":\"LOCAL_REQUIRED\",\"provider\":null,\"request_digest\":\"156465c45f74e9dde95e34dfc4f4d195a2a82f3951ef791a5b7267886e282a6c\",\"request_id\":\"legacy-trim\",\"sources\":[{\"measured\":{\"channels\":1,\"duration_ms\":1000,\"sample_rate\":8000},\"snapshot\":{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1}}]}",
+        "context": "{\"actor\":\"author\",\"command\":{\"allow_cloud\":false,\"license_note\":\"\",\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"channels\":1,\"duration_seconds\":null,\"frame_rate\":null,\"gain_db\":-6.020599913279624,\"height\":null,\"in_ms\":100,\"negative_prompt\":null,\"out_ms\":800,\"output_format\":\"FLAC\",\"quality\":null,\"sample_rate\":22050,\"seed\":null,\"size\":null,\"speech_rate\":null,\"steps\":null,\"voice_id\":null,\"width\":null},\"prompt\":\"\",\"provider_id\":null,\"request_id\":\"legacy-trim\",\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"reference_only\":true,\"version\":1}]},\"execution_recipe\":{\"adapter\":\"LOCAL_FFMPEG\",\"automatic_fallback\":false,\"contract\":\"studio-execution-recipe/1\",\"operation_id\":\"m8.audio.trim\",\"output_profile\":\"FLAC_S16_22050_MONO_COMPRESSION5\",\"parameters\":{\"channels\":1,\"gain_db\":-6.020599913279624,\"in_ms\":100,\"out_ms\":800,\"output_format\":\"FLAC\",\"sample_rate\":22050},\"recipe_digest\":\"73bc6685dc65a0a762711be393414d8dee89ca553b579f21b7a35ffd698afebd\"},\"incarnation\":\"file:legacy-fixture\",\"license_note\":\"\",\"operation_id\":\"m8.audio.trim\",\"provider_binding\":null,\"request_digest\":\"156465c45f74e9dde95e34dfc4f4d195a2a82f3951ef791a5b7267886e282a6c\",\"request_id\":\"legacy-trim\",\"rights\":{\"license_note\":\"\"},\"scope_key\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"sources\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1}]}",
+        "recipe": "{\"adapter\":\"LOCAL_FFMPEG\",\"automatic_fallback\":false,\"contract\":\"studio-execution-recipe/1\",\"operation_id\":\"m8.audio.trim\",\"output_profile\":\"FLAC_S16_22050_MONO_COMPRESSION5\",\"parameters\":{\"channels\":1,\"gain_db\":-6.020599913279624,\"in_ms\":100,\"out_ms\":800,\"output_format\":\"FLAC\",\"sample_rate\":22050},\"recipe_digest\":\"73bc6685dc65a0a762711be393414d8dee89ca553b579f21b7a35ffd698afebd\"}",
+        "body": "{\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"channels\":1,\"gain_db\":-6.020599913279624,\"in_ms\":100,\"out_ms\":800,\"output_format\":\"FLAC\",\"sample_rate\":22050},\"prompt\":\"\",\"provider_id\":null,\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1}]}",
+        "receipt": "{\"attempt\":0,\"dispatch_state\":\"NOT_SENT\",\"id\":\"audio-one\",\"publication_state\":\"NOT_STARTED\",\"receipt_digest\":\"c68c179a8edb62abd93e23186d5bb01ff9ab79ad062efe89ebe0d6cc458b67d4\",\"request_digest\":\"156465c45f74e9dde95e34dfc4f4d195a2a82f3951ef791a5b7267886e282a6c\",\"review_state\":\"NOT_READY\",\"status\":\"QUEUED\",\"version\":1}"
+      },
+      "sha256": {
+        "command": "bc9344dffee5afde4c79414475160a272c162630ebed8232ebe2ba703f366b41",
+        "preview": "497f5c04691f95db4dee2cb97509102f4d951ca53484c209e3c77afe6ce6f7e6",
+        "context": "9d3abe4e2cafc291cb164df7d082b8f3136e88f40d6c86b35a27632bc38262aa",
+        "recipe": "40a2a8d0e6ee3ebbc736881a408b1b39f5975a41ba00141b62d5ad346ce3eb61",
+        "body": "88a5062e754ff17c120b34c01877fc5632d55b70e820d226c71370273a9bfda6",
+        "receipt": "d7b395b1a47747df2bb1209359587833e7508c7192ed7981663dd3e46588ce12"
+      },
+      "model_dump_json": "{\"operation_id\":\"m8.audio.trim\",\"request_id\":\"legacy-trim\",\"provider_id\":null,\"model_id\":null,\"prompt\":\"\",\"parameters\":{\"width\":null,\"height\":null,\"steps\":null,\"seed\":null,\"negative_prompt\":null,\"size\":null,\"quality\":null,\"duration_seconds\":null,\"frame_rate\":null,\"voice_id\":null,\"speech_rate\":null,\"in_ms\":100,\"out_ms\":800,\"gain_db\":-6.020599913279624,\"sample_rate\":22050,\"channels\":1,\"output_format\":\"FLAC\"},\"source_snapshots\":[{\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1,\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"asset_kind\":\"audio\",\"reference_only\":true}],\"allow_cloud\":false,\"license_note\":\"\"}",
+      "request_sha256": "bfb08ea7a9ac934d9bd641f55d084be69d028985a7b016d7f637ffa8214a907b",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "mp3": {
+      "input": {
+        "operation_id": "m8.audio.trim",
+        "request_id": "legacy-trim",
+        "provider_id": null,
+        "model_id": null,
+        "prompt": "",
+        "parameters": {
+          "in_ms": 100,
+          "out_ms": 800,
+          "gain_db": -6.020599913279624,
+          "sample_rate": 22050,
+          "channels": 1,
+          "output_format": "MP3"
+        },
+        "allow_cloud": false,
+        "source_snapshots": [
+          {
+            "kind": "ASSET",
+            "asset_kind": "audio",
+            "id": "source-a",
+            "version": 1,
+            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "license_note": "",
+        "audio_profile": "studio-audio-mp3/1"
+      },
+      "graph_binding": null,
+      "objects": {
+        "command": {
+          "operation_id": "m8.audio.trim",
+          "request_id": "legacy-trim",
+          "provider_id": null,
+          "model_id": null,
+          "prompt": "",
+          "parameters": {
+            "width": null,
+            "height": null,
+            "steps": null,
+            "seed": null,
+            "negative_prompt": null,
+            "size": null,
+            "quality": null,
+            "duration_seconds": null,
+            "frame_rate": null,
+            "voice_id": null,
+            "speech_rate": null,
+            "in_ms": 100,
+            "out_ms": 800,
+            "gain_db": -6.020599913279624,
+            "sample_rate": 22050,
+            "channels": 1,
+            "output_format": "MP3"
+          },
+          "source_snapshots": [
+            {
+              "id": "source-a",
+              "kind": "ASSET",
+              "version": 1,
+              "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "asset_kind": "audio",
+              "reference_only": true
+            }
+          ],
+          "allow_cloud": false,
+          "license_note": "",
+          "audio_profile": "studio-audio-mp3/1"
+        },
+        "preview": {
+          "contract": "studio-production-preview/1",
+          "novel_id": "project",
+          "branch_id": null,
+          "operation_id": "m8.audio.trim",
+          "request_id": "legacy-trim",
+          "request_digest": "62fd3ce9463845d830a90d6f92b1097c36f5d5f83968345ea52d2743444750db",
+          "provider": null,
+          "sources": [
+            {
+              "snapshot": {
+                "id": "source-a",
+                "kind": "ASSET",
+                "version": 1,
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "asset_kind": "audio"
+              },
+              "measured": {
+                "duration_ms": 1000,
+                "sample_rate": 8000,
+                "channels": 1
+              }
+            }
+          ],
+          "execution_recipe": {
+            "contract": "studio-execution-recipe/1",
+            "operation_id": "m8.audio.trim",
+            "adapter": "LOCAL_FFMPEG",
+            "parameters": {
+              "in_ms": 100,
+              "out_ms": 800,
+              "gain_db": -6.020599913279624,
+              "sample_rate": 22050,
+              "channels": 1,
+              "output_format": "MP3"
+            },
+            "automatic_fallback": false,
+            "output_profile": "MP3_LIBMP3LAME_22050_MONO_CBR64",
+            "audio_profile": "studio-audio-mp3/1",
+            "recipe_digest": "653c33584911fbcd02bb41b3c46f42c3f45f176b6c6df4506a765b2c530114e4"
+          },
+          "command": {
+            "operation_id": "m8.audio.trim",
+            "request_id": "legacy-trim",
+            "provider_id": null,
+            "model_id": null,
+            "prompt": "",
+            "parameters": {
+              "width": null,
+              "height": null,
+              "steps": null,
+              "seed": null,
+              "negative_prompt": null,
+              "size": null,
+              "quality": null,
+              "duration_seconds": null,
+              "frame_rate": null,
+              "voice_id": null,
+              "speech_rate": null,
+              "in_ms": 100,
+              "out_ms": 800,
+              "gain_db": -6.020599913279624,
+              "sample_rate": 22050,
+              "channels": 1,
+              "output_format": "MP3"
+            },
+            "source_snapshots": [
+              {
+                "id": "source-a",
+                "kind": "ASSET",
+                "version": 1,
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "asset_kind": "audio",
+                "reference_only": true
+              }
+            ],
+            "allow_cloud": false,
+            "license_note": "",
+            "audio_profile": "studio-audio-mp3/1"
+          },
+          "product_acceptance": "LOCAL_REQUIRED",
+          "execution_available": true,
+          "automatic_dispatch": false,
+          "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+          "preview_digest": "42b672e34460684b271a5f92da401d9b153cd65e7bdea89d1e35378be486b173"
+        },
+        "context": {
+          "actor": "author",
+          "scope_key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "incarnation": "file:legacy-fixture",
+          "request_id": "legacy-trim",
+          "operation_id": "m8.audio.trim",
+          "sources": [
+            {
+              "id": "source-a",
+              "kind": "ASSET",
+              "version": 1,
+              "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "asset_kind": "audio"
+            }
+          ],
+          "provider_binding": null,
+          "license_note": "",
+          "rights": {
+            "license_note": ""
+          },
+          "execution_recipe": {
+            "contract": "studio-execution-recipe/1",
+            "operation_id": "m8.audio.trim",
+            "adapter": "LOCAL_FFMPEG",
+            "parameters": {
+              "in_ms": 100,
+              "out_ms": 800,
+              "gain_db": -6.020599913279624,
+              "sample_rate": 22050,
+              "channels": 1,
+              "output_format": "MP3"
+            },
+            "automatic_fallback": false,
+            "output_profile": "MP3_LIBMP3LAME_22050_MONO_CBR64",
+            "audio_profile": "studio-audio-mp3/1",
+            "recipe_digest": "653c33584911fbcd02bb41b3c46f42c3f45f176b6c6df4506a765b2c530114e4"
+          },
+          "request_digest": "62fd3ce9463845d830a90d6f92b1097c36f5d5f83968345ea52d2743444750db",
+          "command": {
+            "operation_id": "m8.audio.trim",
+            "request_id": "legacy-trim",
+            "provider_id": null,
+            "model_id": null,
+            "prompt": "",
+            "parameters": {
+              "width": null,
+              "height": null,
+              "steps": null,
+              "seed": null,
+              "negative_prompt": null,
+              "size": null,
+              "quality": null,
+              "duration_seconds": null,
+              "frame_rate": null,
+              "voice_id": null,
+              "speech_rate": null,
+              "in_ms": 100,
+              "out_ms": 800,
+              "gain_db": -6.020599913279624,
+              "sample_rate": 22050,
+              "channels": 1,
+              "output_format": "MP3"
+            },
+            "source_snapshots": [
+              {
+                "id": "source-a",
+                "kind": "ASSET",
+                "version": 1,
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "asset_kind": "audio",
+                "reference_only": true
+              }
+            ],
+            "allow_cloud": false,
+            "license_note": "",
+            "audio_profile": "studio-audio-mp3/1"
+          }
+        },
+        "recipe": {
+          "contract": "studio-execution-recipe/1",
+          "operation_id": "m8.audio.trim",
+          "adapter": "LOCAL_FFMPEG",
+          "parameters": {
+            "in_ms": 100,
+            "out_ms": 800,
+            "gain_db": -6.020599913279624,
+            "sample_rate": 22050,
+            "channels": 1,
+            "output_format": "MP3"
+          },
+          "automatic_fallback": false,
+          "output_profile": "MP3_LIBMP3LAME_22050_MONO_CBR64",
+          "audio_profile": "studio-audio-mp3/1",
+          "recipe_digest": "653c33584911fbcd02bb41b3c46f42c3f45f176b6c6df4506a765b2c530114e4"
+        },
+        "body": {
+          "operation_id": "m8.audio.trim",
+          "provider_id": null,
+          "model_id": null,
+          "prompt": "",
+          "parameters": {
+            "in_ms": 100,
+            "out_ms": 800,
+            "gain_db": -6.020599913279624,
+            "sample_rate": 22050,
+            "channels": 1,
+            "output_format": "MP3"
+          },
+          "source_snapshots": [
+            {
+              "id": "source-a",
+              "kind": "ASSET",
+              "version": 1,
+              "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "asset_kind": "audio"
+            }
+          ],
+          "audio_profile": "studio-audio-mp3/1"
+        },
+        "receipt": {
+          "id": "audio-one",
+          "version": 1,
+          "request_digest": "62fd3ce9463845d830a90d6f92b1097c36f5d5f83968345ea52d2743444750db",
+          "status": "QUEUED",
+          "attempt": 0,
+          "dispatch_state": "NOT_SENT",
+          "publication_state": "NOT_STARTED",
+          "review_state": "NOT_READY",
+          "receipt_digest": "51c343c7e52bbfab343f511964323f4663a59ee087a9713e2d3a7d8a8e173f69"
+        }
+      },
+      "canonical": {
+        "command": "{\"allow_cloud\":false,\"audio_profile\":\"studio-audio-mp3/1\",\"license_note\":\"\",\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"channels\":1,\"duration_seconds\":null,\"frame_rate\":null,\"gain_db\":-6.020599913279624,\"height\":null,\"in_ms\":100,\"negative_prompt\":null,\"out_ms\":800,\"output_format\":\"MP3\",\"quality\":null,\"sample_rate\":22050,\"seed\":null,\"size\":null,\"speech_rate\":null,\"steps\":null,\"voice_id\":null,\"width\":null},\"prompt\":\"\",\"provider_id\":null,\"request_id\":\"legacy-trim\",\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"reference_only\":true,\"version\":1}]}",
+        "preview": "{\"automatic_dispatch\":false,\"branch_id\":null,\"command\":{\"allow_cloud\":false,\"audio_profile\":\"studio-audio-mp3/1\",\"license_note\":\"\",\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"channels\":1,\"duration_seconds\":null,\"frame_rate\":null,\"gain_db\":-6.020599913279624,\"height\":null,\"in_ms\":100,\"negative_prompt\":null,\"out_ms\":800,\"output_format\":\"MP3\",\"quality\":null,\"sample_rate\":22050,\"seed\":null,\"size\":null,\"speech_rate\":null,\"steps\":null,\"voice_id\":null,\"width\":null},\"prompt\":\"\",\"provider_id\":null,\"request_id\":\"legacy-trim\",\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"reference_only\":true,\"version\":1}]},\"contract\":\"studio-production-preview/1\",\"execution_available\":true,\"execution_recipe\":{\"adapter\":\"LOCAL_FFMPEG\",\"audio_profile\":\"studio-audio-mp3/1\",\"automatic_fallback\":false,\"contract\":\"studio-execution-recipe/1\",\"operation_id\":\"m8.audio.trim\",\"output_profile\":\"MP3_LIBMP3LAME_22050_MONO_CBR64\",\"parameters\":{\"channels\":1,\"gain_db\":-6.020599913279624,\"in_ms\":100,\"out_ms\":800,\"output_format\":\"MP3\",\"sample_rate\":22050},\"recipe_digest\":\"653c33584911fbcd02bb41b3c46f42c3f45f176b6c6df4506a765b2c530114e4\"},\"novel_id\":\"project\",\"operation_id\":\"m8.audio.trim\",\"output_policy\":\"PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW\",\"preview_digest\":\"42b672e34460684b271a5f92da401d9b153cd65e7bdea89d1e35378be486b173\",\"product_acceptance\":\"LOCAL_REQUIRED\",\"provider\":null,\"request_digest\":\"62fd3ce9463845d830a90d6f92b1097c36f5d5f83968345ea52d2743444750db\",\"request_id\":\"legacy-trim\",\"sources\":[{\"measured\":{\"channels\":1,\"duration_ms\":1000,\"sample_rate\":8000},\"snapshot\":{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1}}]}",
+        "context": "{\"actor\":\"author\",\"command\":{\"allow_cloud\":false,\"audio_profile\":\"studio-audio-mp3/1\",\"license_note\":\"\",\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"channels\":1,\"duration_seconds\":null,\"frame_rate\":null,\"gain_db\":-6.020599913279624,\"height\":null,\"in_ms\":100,\"negative_prompt\":null,\"out_ms\":800,\"output_format\":\"MP3\",\"quality\":null,\"sample_rate\":22050,\"seed\":null,\"size\":null,\"speech_rate\":null,\"steps\":null,\"voice_id\":null,\"width\":null},\"prompt\":\"\",\"provider_id\":null,\"request_id\":\"legacy-trim\",\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"reference_only\":true,\"version\":1}]},\"execution_recipe\":{\"adapter\":\"LOCAL_FFMPEG\",\"audio_profile\":\"studio-audio-mp3/1\",\"automatic_fallback\":false,\"contract\":\"studio-execution-recipe/1\",\"operation_id\":\"m8.audio.trim\",\"output_profile\":\"MP3_LIBMP3LAME_22050_MONO_CBR64\",\"parameters\":{\"channels\":1,\"gain_db\":-6.020599913279624,\"in_ms\":100,\"out_ms\":800,\"output_format\":\"MP3\",\"sample_rate\":22050},\"recipe_digest\":\"653c33584911fbcd02bb41b3c46f42c3f45f176b6c6df4506a765b2c530114e4\"},\"incarnation\":\"file:legacy-fixture\",\"license_note\":\"\",\"operation_id\":\"m8.audio.trim\",\"provider_binding\":null,\"request_digest\":\"62fd3ce9463845d830a90d6f92b1097c36f5d5f83968345ea52d2743444750db\",\"request_id\":\"legacy-trim\",\"rights\":{\"license_note\":\"\"},\"scope_key\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"sources\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1}]}",
+        "recipe": "{\"adapter\":\"LOCAL_FFMPEG\",\"audio_profile\":\"studio-audio-mp3/1\",\"automatic_fallback\":false,\"contract\":\"studio-execution-recipe/1\",\"operation_id\":\"m8.audio.trim\",\"output_profile\":\"MP3_LIBMP3LAME_22050_MONO_CBR64\",\"parameters\":{\"channels\":1,\"gain_db\":-6.020599913279624,\"in_ms\":100,\"out_ms\":800,\"output_format\":\"MP3\",\"sample_rate\":22050},\"recipe_digest\":\"653c33584911fbcd02bb41b3c46f42c3f45f176b6c6df4506a765b2c530114e4\"}",
+        "body": "{\"audio_profile\":\"studio-audio-mp3/1\",\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"channels\":1,\"gain_db\":-6.020599913279624,\"in_ms\":100,\"out_ms\":800,\"output_format\":\"MP3\",\"sample_rate\":22050},\"prompt\":\"\",\"provider_id\":null,\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1}]}",
+        "receipt": "{\"attempt\":0,\"dispatch_state\":\"NOT_SENT\",\"id\":\"audio-one\",\"publication_state\":\"NOT_STARTED\",\"receipt_digest\":\"51c343c7e52bbfab343f511964323f4663a59ee087a9713e2d3a7d8a8e173f69\",\"request_digest\":\"62fd3ce9463845d830a90d6f92b1097c36f5d5f83968345ea52d2743444750db\",\"review_state\":\"NOT_READY\",\"status\":\"QUEUED\",\"version\":1}"
+      },
+      "sha256": {
+        "command": "7c2c25544bb514e7c993b742a45db9edc4e6a0bfb41882113574dbd3fc0e2adb",
+        "preview": "fd82a1d3724fa21ca6c62f8de95c5f08c7750b3f2bbf6de0b277987b810314ce",
+        "context": "af9c0ded520a75ac092f8c3ac119d8837a75d8bec61e39570c47d0a6bb03510e",
+        "recipe": "0871894bc6a3af6ffa4bfe192c5bf2f85e78051830b60bad78ec237f90764f2d",
+        "body": "85d091a0a4f7fc3fb0aed4097f1325ba2392009eb56b6b6daad2ece52a4e47ed",
+        "receipt": "6a8695cfc105965edebc469f68ac5bf43a515a2e3aa311f7eb9107bb4e83a2c6"
+      },
+      "model_dump_json": "{\"operation_id\":\"m8.audio.trim\",\"request_id\":\"legacy-trim\",\"provider_id\":null,\"model_id\":null,\"prompt\":\"\",\"parameters\":{\"width\":null,\"height\":null,\"steps\":null,\"seed\":null,\"negative_prompt\":null,\"size\":null,\"quality\":null,\"duration_seconds\":null,\"frame_rate\":null,\"voice_id\":null,\"speech_rate\":null,\"in_ms\":100,\"out_ms\":800,\"gain_db\":-6.020599913279624,\"sample_rate\":22050,\"channels\":1,\"output_format\":\"MP3\"},\"source_snapshots\":[{\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1,\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"asset_kind\":\"audio\",\"reference_only\":true}],\"allow_cloud\":false,\"license_note\":\"\",\"audio_profile\":\"studio-audio-mp3/1\"}",
+      "request_sha256": "1d8600931ac41c6dc686369c62fed3b93543489fca5582d796d0b5327d5dea96",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "graph_trim": {
+      "input": {
+        "operation_id": "m8.audio.trim",
+        "request_id": "legacy-trim",
+        "provider_id": null,
+        "model_id": null,
+        "prompt": "",
+        "parameters": {
+          "in_ms": 100,
+          "out_ms": 800
+        },
+        "allow_cloud": false,
+        "source_snapshots": [
+          {
+            "kind": "ASSET",
+            "asset_kind": "audio",
+            "id": "source-a",
+            "version": 1,
+            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "license_note": ""
+      },
+      "graph_binding": {
+        "contract": "creative-graph-media-binding/1",
+        "run_id": "run-one",
+        "node_id": "Trim",
+        "graph_id": "graph-one",
+        "graph_version": 1,
+        "graph_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "run_request_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "input_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "preview_run_version": 1,
+        "command_digest": "12113d9776ca251b2ffc03a22345193e58b140da7c8dc0a2a4085fc7f9dacf27",
+        "attempt_digest": "6b2180cb385eda82a27910f8cafadc40b834bab9b96e07dc801ad3cd0f84f192"
+      },
+      "objects": {
+        "command": {
+          "operation_id": "m8.audio.trim",
+          "request_id": "legacy-trim",
+          "provider_id": null,
+          "model_id": null,
+          "prompt": "",
+          "parameters": {
+            "width": null,
+            "height": null,
+            "steps": null,
+            "seed": null,
+            "negative_prompt": null,
+            "size": null,
+            "quality": null,
+            "duration_seconds": null,
+            "frame_rate": null,
+            "voice_id": null,
+            "speech_rate": null,
+            "in_ms": 100,
+            "out_ms": 800
+          },
+          "source_snapshots": [
+            {
+              "id": "source-a",
+              "kind": "ASSET",
+              "version": 1,
+              "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "asset_kind": "audio",
+              "reference_only": true
+            }
+          ],
+          "allow_cloud": false,
+          "license_note": ""
+        },
+        "preview": {
+          "contract": "studio-production-preview/1",
+          "novel_id": "project",
+          "branch_id": null,
+          "operation_id": "m8.audio.trim",
+          "request_id": "legacy-trim",
+          "request_digest": "ad8cc1379958edd35c26e696a6d2e03efa429123545e908be75f05b5e0c71f0f",
+          "provider": null,
+          "sources": [
+            {
+              "snapshot": {
+                "id": "source-a",
+                "kind": "ASSET",
+                "version": 1,
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "asset_kind": "audio"
+              },
+              "measured": {
+                "duration_ms": 1000,
+                "sample_rate": 8000,
+                "channels": 1
+              }
+            }
+          ],
+          "execution_recipe": {
+            "contract": "studio-execution-recipe/1",
+            "operation_id": "m8.audio.trim",
+            "adapter": "LOCAL_FFMPEG",
+            "parameters": {
+              "in_ms": 100,
+              "out_ms": 800
+            },
+            "automatic_fallback": false,
+            "output_profile": "PCM_S16LE_WAV_48000_STEREO",
+            "recipe_digest": "bd7b3525f584ffcb10c5376c4822d02958233bd127ce5bae2ce7e2640dec8a3c"
+          },
+          "command": {
+            "operation_id": "m8.audio.trim",
+            "request_id": "legacy-trim",
+            "provider_id": null,
+            "model_id": null,
+            "prompt": "",
+            "parameters": {
+              "width": null,
+              "height": null,
+              "steps": null,
+              "seed": null,
+              "negative_prompt": null,
+              "size": null,
+              "quality": null,
+              "duration_seconds": null,
+              "frame_rate": null,
+              "voice_id": null,
+              "speech_rate": null,
+              "in_ms": 100,
+              "out_ms": 800
+            },
+            "source_snapshots": [
+              {
+                "id": "source-a",
+                "kind": "ASSET",
+                "version": 1,
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "asset_kind": "audio",
+                "reference_only": true
+              }
+            ],
+            "allow_cloud": false,
+            "license_note": ""
+          },
+          "product_acceptance": "LOCAL_REQUIRED",
+          "execution_available": true,
+          "automatic_dispatch": false,
+          "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+          "preview_digest": "3ccd1eec3d9c011d6da79ecdd9cbb6ca741c409e6261a59f53da91b833eb719e"
+        },
+        "context": {
+          "actor": "author",
+          "scope_key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "incarnation": "file:legacy-fixture",
+          "graph_binding": {
+            "contract": "creative-graph-media-binding/1",
+            "run_id": "run-one",
+            "node_id": "Trim",
+            "graph_id": "graph-one",
+            "graph_version": 1,
+            "graph_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "run_request_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "input_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "preview_run_version": 1,
+            "command_digest": "12113d9776ca251b2ffc03a22345193e58b140da7c8dc0a2a4085fc7f9dacf27",
+            "attempt_digest": "6b2180cb385eda82a27910f8cafadc40b834bab9b96e07dc801ad3cd0f84f192"
+          },
+          "request_id": "legacy-trim",
+          "operation_id": "m8.audio.trim",
+          "sources": [
+            {
+              "id": "source-a",
+              "kind": "ASSET",
+              "version": 1,
+              "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "asset_kind": "audio"
+            }
+          ],
+          "provider_binding": null,
+          "license_note": "",
+          "rights": {
+            "license_note": ""
+          },
+          "execution_recipe": {
+            "contract": "studio-execution-recipe/1",
+            "operation_id": "m8.audio.trim",
+            "adapter": "LOCAL_FFMPEG",
+            "parameters": {
+              "in_ms": 100,
+              "out_ms": 800
+            },
+            "automatic_fallback": false,
+            "output_profile": "PCM_S16LE_WAV_48000_STEREO",
+            "recipe_digest": "bd7b3525f584ffcb10c5376c4822d02958233bd127ce5bae2ce7e2640dec8a3c"
+          },
+          "request_digest": "ad8cc1379958edd35c26e696a6d2e03efa429123545e908be75f05b5e0c71f0f",
+          "command": {
+            "operation_id": "m8.audio.trim",
+            "request_id": "legacy-trim",
+            "provider_id": null,
+            "model_id": null,
+            "prompt": "",
+            "parameters": {
+              "width": null,
+              "height": null,
+              "steps": null,
+              "seed": null,
+              "negative_prompt": null,
+              "size": null,
+              "quality": null,
+              "duration_seconds": null,
+              "frame_rate": null,
+              "voice_id": null,
+              "speech_rate": null,
+              "in_ms": 100,
+              "out_ms": 800
+            },
+            "source_snapshots": [
+              {
+                "id": "source-a",
+                "kind": "ASSET",
+                "version": 1,
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "asset_kind": "audio",
+                "reference_only": true
+              }
+            ],
+            "allow_cloud": false,
+            "license_note": ""
+          }
+        },
+        "recipe": {
+          "contract": "studio-execution-recipe/1",
+          "operation_id": "m8.audio.trim",
+          "adapter": "LOCAL_FFMPEG",
+          "parameters": {
+            "in_ms": 100,
+            "out_ms": 800
+          },
+          "automatic_fallback": false,
+          "output_profile": "PCM_S16LE_WAV_48000_STEREO",
+          "recipe_digest": "bd7b3525f584ffcb10c5376c4822d02958233bd127ce5bae2ce7e2640dec8a3c"
+        },
+        "body": {
+          "operation_id": "m8.audio.trim",
+          "provider_id": null,
+          "model_id": null,
+          "prompt": "",
+          "parameters": {
+            "in_ms": 100,
+            "out_ms": 800
+          },
+          "source_snapshots": [
+            {
+              "id": "source-a",
+              "kind": "ASSET",
+              "version": 1,
+              "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "asset_kind": "audio"
+            }
+          ]
+        },
+        "receipt": {
+          "id": "audio-one",
+          "version": 1,
+          "request_digest": "ad8cc1379958edd35c26e696a6d2e03efa429123545e908be75f05b5e0c71f0f",
+          "status": "QUEUED",
+          "attempt": 0,
+          "dispatch_state": "NOT_SENT",
+          "publication_state": "NOT_STARTED",
+          "review_state": "NOT_READY",
+          "receipt_digest": "71390ce44276f5ed2ca04eb8e0c4965956a67e0d9887c78704898f71565d26ed"
+        }
+      },
+      "canonical": {
+        "command": "{\"allow_cloud\":false,\"license_note\":\"\",\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"duration_seconds\":null,\"frame_rate\":null,\"height\":null,\"in_ms\":100,\"negative_prompt\":null,\"out_ms\":800,\"quality\":null,\"seed\":null,\"size\":null,\"speech_rate\":null,\"steps\":null,\"voice_id\":null,\"width\":null},\"prompt\":\"\",\"provider_id\":null,\"request_id\":\"legacy-trim\",\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"reference_only\":true,\"version\":1}]}",
+        "preview": "{\"automatic_dispatch\":false,\"branch_id\":null,\"command\":{\"allow_cloud\":false,\"license_note\":\"\",\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"duration_seconds\":null,\"frame_rate\":null,\"height\":null,\"in_ms\":100,\"negative_prompt\":null,\"out_ms\":800,\"quality\":null,\"seed\":null,\"size\":null,\"speech_rate\":null,\"steps\":null,\"voice_id\":null,\"width\":null},\"prompt\":\"\",\"provider_id\":null,\"request_id\":\"legacy-trim\",\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"reference_only\":true,\"version\":1}]},\"contract\":\"studio-production-preview/1\",\"execution_available\":true,\"execution_recipe\":{\"adapter\":\"LOCAL_FFMPEG\",\"automatic_fallback\":false,\"contract\":\"studio-execution-recipe/1\",\"operation_id\":\"m8.audio.trim\",\"output_profile\":\"PCM_S16LE_WAV_48000_STEREO\",\"parameters\":{\"in_ms\":100,\"out_ms\":800},\"recipe_digest\":\"bd7b3525f584ffcb10c5376c4822d02958233bd127ce5bae2ce7e2640dec8a3c\"},\"novel_id\":\"project\",\"operation_id\":\"m8.audio.trim\",\"output_policy\":\"PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW\",\"preview_digest\":\"3ccd1eec3d9c011d6da79ecdd9cbb6ca741c409e6261a59f53da91b833eb719e\",\"product_acceptance\":\"LOCAL_REQUIRED\",\"provider\":null,\"request_digest\":\"ad8cc1379958edd35c26e696a6d2e03efa429123545e908be75f05b5e0c71f0f\",\"request_id\":\"legacy-trim\",\"sources\":[{\"measured\":{\"channels\":1,\"duration_ms\":1000,\"sample_rate\":8000},\"snapshot\":{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1}}]}",
+        "context": "{\"actor\":\"author\",\"command\":{\"allow_cloud\":false,\"license_note\":\"\",\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"duration_seconds\":null,\"frame_rate\":null,\"height\":null,\"in_ms\":100,\"negative_prompt\":null,\"out_ms\":800,\"quality\":null,\"seed\":null,\"size\":null,\"speech_rate\":null,\"steps\":null,\"voice_id\":null,\"width\":null},\"prompt\":\"\",\"provider_id\":null,\"request_id\":\"legacy-trim\",\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"reference_only\":true,\"version\":1}]},\"execution_recipe\":{\"adapter\":\"LOCAL_FFMPEG\",\"automatic_fallback\":false,\"contract\":\"studio-execution-recipe/1\",\"operation_id\":\"m8.audio.trim\",\"output_profile\":\"PCM_S16LE_WAV_48000_STEREO\",\"parameters\":{\"in_ms\":100,\"out_ms\":800},\"recipe_digest\":\"bd7b3525f584ffcb10c5376c4822d02958233bd127ce5bae2ce7e2640dec8a3c\"},\"graph_binding\":{\"attempt_digest\":\"6b2180cb385eda82a27910f8cafadc40b834bab9b96e07dc801ad3cd0f84f192\",\"command_digest\":\"12113d9776ca251b2ffc03a22345193e58b140da7c8dc0a2a4085fc7f9dacf27\",\"contract\":\"creative-graph-media-binding/1\",\"graph_digest\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"graph_id\":\"graph-one\",\"graph_version\":1,\"input_digest\":\"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\"node_id\":\"Trim\",\"preview_run_version\":1,\"run_id\":\"run-one\",\"run_request_digest\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\"},\"incarnation\":\"file:legacy-fixture\",\"license_note\":\"\",\"operation_id\":\"m8.audio.trim\",\"provider_binding\":null,\"request_digest\":\"ad8cc1379958edd35c26e696a6d2e03efa429123545e908be75f05b5e0c71f0f\",\"request_id\":\"legacy-trim\",\"rights\":{\"license_note\":\"\"},\"scope_key\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"sources\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1}]}",
+        "recipe": "{\"adapter\":\"LOCAL_FFMPEG\",\"automatic_fallback\":false,\"contract\":\"studio-execution-recipe/1\",\"operation_id\":\"m8.audio.trim\",\"output_profile\":\"PCM_S16LE_WAV_48000_STEREO\",\"parameters\":{\"in_ms\":100,\"out_ms\":800},\"recipe_digest\":\"bd7b3525f584ffcb10c5376c4822d02958233bd127ce5bae2ce7e2640dec8a3c\"}",
+        "body": "{\"model_id\":null,\"operation_id\":\"m8.audio.trim\",\"parameters\":{\"in_ms\":100,\"out_ms\":800},\"prompt\":\"\",\"provider_id\":null,\"source_snapshots\":[{\"asset_kind\":\"audio\",\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1}]}",
+        "receipt": "{\"attempt\":0,\"dispatch_state\":\"NOT_SENT\",\"id\":\"audio-one\",\"publication_state\":\"NOT_STARTED\",\"receipt_digest\":\"71390ce44276f5ed2ca04eb8e0c4965956a67e0d9887c78704898f71565d26ed\",\"request_digest\":\"ad8cc1379958edd35c26e696a6d2e03efa429123545e908be75f05b5e0c71f0f\",\"review_state\":\"NOT_READY\",\"status\":\"QUEUED\",\"version\":1}"
+      },
+      "sha256": {
+        "command": "12113d9776ca251b2ffc03a22345193e58b140da7c8dc0a2a4085fc7f9dacf27",
+        "preview": "25533da0ce68e31319666c3f3f7b3abf68547a404b6a222404a97c3d963adac4",
+        "context": "b0527ec7d1bb4023ee4a565c13f3354b8a171d206056a3300700381f29498ada",
+        "recipe": "9a61de2abeab1f9f0a7d2dad304577f86765887a446531be3999356fcae19857",
+        "body": "3454b275911b098112c410938b336cf1499857276bccb03b575bb7eb5c955327",
+        "receipt": "a0a47aa931d8118c1381f31e88dd6981076928d89dd1a11498856536fa6e539a"
+      },
+      "model_dump_json": "{\"operation_id\":\"m8.audio.trim\",\"request_id\":\"legacy-trim\",\"provider_id\":null,\"model_id\":null,\"prompt\":\"\",\"parameters\":{\"width\":null,\"height\":null,\"steps\":null,\"seed\":null,\"negative_prompt\":null,\"size\":null,\"quality\":null,\"duration_seconds\":null,\"frame_rate\":null,\"voice_id\":null,\"speech_rate\":null,\"in_ms\":100,\"out_ms\":800},\"source_snapshots\":[{\"id\":\"source-a\",\"kind\":\"ASSET\",\"version\":1,\"digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"asset_kind\":\"audio\",\"reference_only\":true}],\"allow_cloud\":false,\"license_note\":\"\"}",
+      "request_sha256": "e51f26921f5461bd0c32e0b85e9b81bf1935667d7bba22a5fd40d3d8d5d1901f",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

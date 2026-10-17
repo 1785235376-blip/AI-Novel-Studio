@@ -58,8 +58,8 @@ export type ProductionAction = { expected_version: number; expected_request_dige
 const operations: MediaOperation[] = ['m5.image.t2i', 'm5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale', 'm5.image.cutout', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v', 'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'];
 const owners: ProductionOwner[] = ['image', 'audio', 'video', 'timeline'];
 const states = ['QUEUED', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING', 'APPROVED', 'UNKNOWN', 'FAILED', 'CANCELLED'];
-const parameterKeys = ['scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format'];
-const trimControlKeys = ['gain_db', 'sample_rate', 'channels', 'output_format'];
+const parameterKeys = ['scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms'];
+const trimControlKeys = ['gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms'];
 const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const hex = (v: unknown): v is string => typeof v === 'string' && /^[a-f0-9]{64}$/.test(v);
 const identifier = (v: unknown): v is string => typeof v === 'string' && /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/.test(v);
@@ -88,22 +88,24 @@ function sameCutoutCommand(expected: RecordedMediaCommand, value: RecordedMediaC
       ['id', 'kind', 'version', 'digest', 'asset_kind'].every(key => (source as Record<string, unknown>)[key]
         === (expected.source_snapshots[index] as Record<string, unknown>)[key]));
 }
-type TrimParameters = Record<string, string | number> & { in_ms: number; out_ms: number; sample_rate?: number; channels?: number; output_format?: 'FLAC' | 'MP3' };
+type TrimParameters = Record<string, string | number> & { in_ms: number; out_ms: number; sample_rate?: number; channels?: number; output_format?: 'FLAC' | 'MP3'; fade_in_ms?: number; fade_out_ms?: number };
 function trimParameters(v: unknown, projected = false): TrimParameters {
   if (!record(v)) invalid();
   const result = {} as TrimParameters;
   for (const [key, value] of Object.entries(v)) {
     // Original preview projections include known null defaults. Never treat
     // those placeholders as requested controls or synthesize default values.
-    if (projected && value === null && parameterKeys.includes(key)) continue;
+    if (projected && value === null && parameterKeys.includes(key) && !['fade_in_ms', 'fade_out_ms'].includes(key)) continue;
     if (key === 'output_format') { if (value !== 'FLAC' && value !== 'MP3') invalid(); result.output_format = value; continue; }
     if (!['in_ms', 'out_ms', ...trimControlKeys].includes(key) || typeof value !== 'number' || !Number.isFinite(value)) invalid();
     if (key === 'gain_db' ? value < -60 || value > 12 : !Number.isSafeInteger(value)) invalid();
     if (key === 'sample_rate' && (value < 8000 || value > 96000) || key === 'channels' && value !== 1 && value !== 2) invalid();
+    if (['fade_in_ms', 'fade_out_ms'].includes(key) && (value < 0 || value > 120000)) invalid();
     result[key] = value;
   }
   if (!Number.isSafeInteger(result.in_ms) || !Number.isSafeInteger(result.out_ms)
     || result.in_ms < 0 || result.out_ms > 600000 || result.out_ms <= result.in_ms || result.out_ms - result.in_ms > 120000) invalid();
+  if ((result.fade_in_ms ?? 0) + (result.fade_out_ms ?? 0) > result.out_ms - result.in_ms) invalid();
   if (result.output_format === 'MP3' && (!AUDIO_MP3_SAMPLE_RATES.includes(result.sample_rate ?? 48000) || result.out_ms - result.in_ms < 10)) invalid();
   return result;
 }

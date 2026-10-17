@@ -1,0 +1,109 @@
+{
+  "status": "PASS_BYTE_IDENTICAL_PERSISTENCE",
+  "observations": 12,
+  "copied_files": [
+    {
+      "source": ".runtime/v2-checks/standalone-audio-fades-cpu/normal-startup-before.json",
+      "persisted": "docs/delivery/v2-development/audio-fades-cpu-evidence/normal-startup-before.json",
+      "sha256": "1caa336511fc51001bcfc79bbe8971029d6d402c5a485d891bb4ab84b12cce4f"
+    },
+    {
+      "source": ".runtime/v2-checks/standalone-audio-fades-cpu/native-provenance.txt",
+      "persisted": "docs/delivery/v2-development/audio-fades-cpu-evidence/native-provenance.txt",
+      "sha256": "b3ad95721f08b04d74b66fc52532e373ef6e608baa12c17f96110398802e6c06"
+    },
+    {
+      "source": ".runtime/v2-checks/standalone-audio-fades-cpu/evidence-summary.json",
+      "persisted": "docs/delivery/v2-development/audio-fades-cpu-evidence/evidence-summary.json",
+      "sha256": "679b42a0a5722b9c924069053d1661c936f958c6fb65dac84135ad050386e445"
+    },
+    {
+      "source": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_lossless_linear_fa0/audio-fade-observation.json",
+      "persisted": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_lossless_linear_fa0.json",
+      "sha256": "1b96a13bd84f157f3f962f1321d784a5df4168041ca775dfdc062048f3c309e8"
+    },
+    {
+      "source": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_lossless_linear_fa1/audio-fade-observation.json",
+      "persisted": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_lossless_linear_fa1.json",
+      "sha256": "876f01e0bf86c1e58638c795b3615a8c3d096e9bf2f305324ea31eba0c117ca9"
+    },
+    {
+      "source": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_lossless_linear_fa2/audio-fade-observation.json",
+      "persisted": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_lossless_linear_fa2.json",
+      "sha256": "099b6823730ead2cc88fa90bb12774bbd918b6cd685f30fe96e2d027be8bea25"
+    },
+    {
+      "source": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_lossless_linear_fa3/audio-fade-observation.json",
+      "persisted": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_lossless_linear_fa3.json",
+      "sha256": "755a93399accea05903c0bcbb33fbc9cab3fc1b028f36f9c9871d68c469577cc"
+    },
+    {
+      "source": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_mp3_linear_fades_g0/audio-fade-observation.json",
+      "persisted": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_mp3_linear_fades_g0.json",
+      "sha256": "c8531150ed32fccdd5b621b0d5b4c8e460f40c033090dd323a3ec8aa1e1dd50a"
+    },
+    {
+      "source": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_mp3_linear_fades_g1/audio-fade-observation.json",
+      "persisted": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_mp3_linear_fades_g1.json",
+      "sha256": "4406fd231991a0998fe4b1dc8c8aabb49f31d55247a0d368a2590eb3df43ef79"
+    },
+    {
+      "source": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_one_sided_and_touc0/audio-fade-observation.json",
+      "persisted": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_one_sided_and_touc0.json",
+      "sha256": "1f1d46cd47fa3c611f40925d6a523b0239bdb64917f43fb7cef035e06ca9f080"
+    },
+    {
+      "source": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_one_sided_and_touc1/audio-fade-observation.json",
+      "persisted": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_one_sided_and_touc1.json",
+      "sha256": "d99e7c7282b5b67b1d3da6347262d7b0bbf2d03b583cea965d037ff229d8abed"
+    },
+    {
+      "source": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_actual_one_sided_and_touc2/audio-fade-observation.json",
+      "persisted": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_one_sided_and_touc2.json",
+      "sha256": "7a5f9213c14ee19b0dc200ad86e9b9ef19983708f0e14f32b23b6940423e8e5d"
+    },
+    {
+      "source": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_explicit_zero_fades_prese0/audio-fade-observation.json",
+      "persisted": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_explicit_zero_fades_prese0.json",
+      "sha256": "0aae530f294dc2324f6d0ecd25fa5e114eb3401af9a3a135dcfc157dfa725f8d"
+    },
+    {
+      "source": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_explicit_zero_fades_prese1/audio-fade-observation.json",
+      "persisted": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_explicit_zero_fades_prese1.json",
+      "sha256": "9482fa3fcbc48aadfd803979861d03db7658c4b7eff5a36c0ed9a3e08d7cf96c"
+    },
+    {
+      "source": ".runtime/v2-checks/standalone-audio-fades-cpu-r1/pytest/test_explicit_zero_fades_prese2/audio-fade-observation.json",
+      "persisted": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_explicit_zero_fades_prese2.json",
+      "sha256": "ee9578c7078dd3b60554105595ea3f25f73e9fe301ae5f2ab9dd6987ff0958d4"
+    }
+  ],
+  "existing_runner_evidence": [
+    {
+      "path": "docs/delivery/v2-development/standalone-audio-fades-cpu-r1.json",
+      "sha256": "2fbeadbd3fe8af789edfa281944dc1e43741dda1e8c2bf6cfa77aafd34d6e9d4"
+    },
+    {
+      "path": "docs/delivery/v2-development/standalone-audio-fades-cpu-r1.log",
+      "sha256": "afc82f30dd43808d44a5c4de49d7b97f7efb1ec58336bcbe79f15305af16047e"
+    },
+    {
+      "path": "docs/delivery/v2-development/standalone-audio-fades-cpu-origin-before.json",
+      "sha256": "1c7e71ab4901929f8d9c85c6e8b26ad0cddf4dd93f11a7c25c727f9e5b638d75"
+    },
+    {
+      "path": "docs/delivery/v2-development/standalone-audio-fades-cpu-origin-before.log",
+      "sha256": "8a7c804e7e8a6e0ec3f15bb644718f7605982abd7613347d05cde71cc6e7fb3d"
+    },
+    {
+      "path": "docs/delivery/v2-development/standalone-audio-fades-cpu-origin-after.json",
+      "sha256": "5aacea88d5f35499801e5b3a74b0c1eaa0cd940eaf42ef3ee54e1a36c57b67d5"
+    },
+    {
+      "path": "docs/delivery/v2-development/standalone-audio-fades-cpu-origin-after.log",
+      "sha256": "c66b02e4069a8ebad786801645296a5b8cb69c8e0e63f3b61d3451b2462ff957"
+    }
+  ],
+  "interpretation": "MP3 envelope ratios are normalized to each decoded channel plateau RMS, and measure envelope shape. Absolute plateau RMS is separately checked against 6000/sqrt(2) with the prechosen 12% lossy tolerance. Neither is a subjective perceptual quality assessment.",
+  "limits": "CPU/File only. PostgreSQL, browser, native platform and subjective quality unrun. No binary media payloads persisted here."
+}

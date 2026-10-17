@@ -1,0 +1,68 @@
+{
+  "absolute_lsb_tolerance": 8,
+  "candidate_sha256": "8b541f7c53f2e1eb6629b495d5f72c4f1ecf133662d20fd3474ea9c13b1d1e99",
+  "expected_samples_by_ms": {
+    "100": 2000.0,
+    "160": 3200.0,
+    "40": 800.0,
+    "400": 4000.0,
+    "500": 4000.0,
+    "750": 3333.635676492819,
+    "850": 2000.3023431594856,
+    "950": 666.9690098261526
+  },
+  "fade_in_ms": 200,
+  "fade_out_ms": 300,
+  "independent_decoded_frames": 22050,
+  "independent_decoded_pcm_sha256": "ccb80acb0308f8645cf3e4f9ccaafbe6a9948299a4a731e22feecf07f6c9e0e6",
+  "maximum_absolute_error_per_channel": [
+    0.5366591080883154,
+    0.5366591080883154
+  ],
+  "measurement": {
+    "audio_codec": "pcm_s16le",
+    "byte_count": 88278,
+    "channels": 2,
+    "container": "wav",
+    "duration_ms": 1000,
+    "output_sha256": "8b541f7c53f2e1eb6629b495d5f72c4f1ecf133662d20fd3474ea9c13b1d1e99",
+    "profile_validation": "PCM_DECODED",
+    "sample_rate": 22050,
+    "sample_width": 2
+  },
+  "observed_samples_by_ms": {
+    "100": [
+      2000,
+      2000
+    ],
+    "160": [
+      3200,
+      3200
+    ],
+    "40": [
+      800,
+      800
+    ],
+    "400": [
+      4000,
+      4000
+    ],
+    "500": [
+      4000,
+      4000
+    ],
+    "750": [
+      3334,
+      3334
+    ],
+    "850": [
+      2000,
+      2000
+    ],
+    "950": [
+      667,
+      667
+    ]
+  },
+  "source_sha256": "b0d120bd5d5591e20fab5f9cd0c01d2f77588b2f1a60b35de5d2e046e325f87c"
+}

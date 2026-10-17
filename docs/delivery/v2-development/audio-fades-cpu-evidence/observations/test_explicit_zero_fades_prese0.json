@@ -1,0 +1,37 @@
+{
+  "decoded_pcm_equal": true,
+  "explicit_zero": {
+    "candidate_sha256": "2c0930826ff4c42506b1404be6a6eea68e40d2acbf60846ab911c746402b03eb",
+    "independent_decoded_frames": 22050,
+    "independent_decoded_pcm_sha256": "11aaa02ffe41b12d3a32632221e39131a0b9d2879cfe12cb43fe23493e62e5cd",
+    "measurement": {
+      "audio_codec": "pcm_s16le",
+      "byte_count": 44178,
+      "channels": 1,
+      "container": "wav",
+      "duration_ms": 1000,
+      "output_sha256": "2c0930826ff4c42506b1404be6a6eea68e40d2acbf60846ab911c746402b03eb",
+      "profile_validation": "PCM_DECODED",
+      "sample_rate": 22050,
+      "sample_width": 2
+    },
+    "source_sha256": "614ce92d515a8944d1f6c5aff4444cc1910af35a93009f08fde172070ee6e20d"
+  },
+  "omitted": {
+    "candidate_sha256": "2c0930826ff4c42506b1404be6a6eea68e40d2acbf60846ab911c746402b03eb",
+    "independent_decoded_frames": 22050,
+    "independent_decoded_pcm_sha256": "11aaa02ffe41b12d3a32632221e39131a0b9d2879cfe12cb43fe23493e62e5cd",
+    "measurement": {
+      "audio_codec": "pcm_s16le",
+      "byte_count": 44178,
+      "channels": 1,
+      "container": "wav",
+      "duration_ms": 1000,
+      "output_sha256": "2c0930826ff4c42506b1404be6a6eea68e40d2acbf60846ab911c746402b03eb",
+      "profile_validation": "PCM_DECODED",
+      "sample_rate": 22050,
+      "sample_width": 2
+    },
+    "source_sha256": "614ce92d515a8944d1f6c5aff4444cc1910af35a93009f08fde172070ee6e20d"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "absolute_lsb_tolerance": 8,
+  "candidate_sha256": "50309082e334c8afc935aa54818348032f4aae41d31cb36cbd93e7efef869bdd",
+  "expected_samples_by_ms": {
+    "100": 2000.0,
+    "160": 3200.0,
+    "40": 800.0,
+    "400": 4000.0,
+    "500": 4000.0,
+    "750": 3333.635676492819,
+    "850": 2000.3023431594856,
+    "950": 666.9690098261526
+  },
+  "fade_in_ms": 200,
+  "fade_out_ms": 300,
+  "independent_decoded_frames": 22050,
+  "independent_decoded_pcm_sha256": "ccb80acb0308f8645cf3e4f9ccaafbe6a9948299a4a731e22feecf07f6c9e0e6",
+  "maximum_absolute_error_per_channel": [
+    0.5366591080883154,
+    0.5366591080883154
+  ],
+  "measurement": {
+    "audio_codec": "flac",
+    "byte_count": 12375,
+    "channels": 2,
+    "container": "flac",
+    "decoded_pcm_bytes": 88200,
+    "decoded_pcm_sha256": "ccb80acb0308f8645cf3e4f9ccaafbe6a9948299a4a731e22feecf07f6c9e0e6",
+    "duration_ms": 1000,
+    "output_sha256": "50309082e334c8afc935aa54818348032f4aae41d31cb36cbd93e7efef869bdd",
+    "profile_validation": "FLAC_STREAMINFO_PCM_VERIFIED",
+    "sample_rate": 22050,
+    "sample_width": 2,
+    "streaminfo_md5": "f15fa02863c5d4454aa0c828e8c8b0bd",
+    "total_samples": 22050
+  },
+  "observed_samples_by_ms": {
+    "100": [
+      2000,
+      2000
+    ],
+    "160": [
+      3200,
+      3200
+    ],
+    "40": [
+      800,
+      800
+    ],
+    "400": [
+      4000,
+      4000
+    ],
+    "500": [
+      4000,
+      4000
+    ],
+    "750": [
+      3334,
+      3334
+    ],
+    "850": [
+      2000,
+      2000
+    ],
+    "950": [
+      667,
+      667
+    ]
+  },
+  "source_sha256": "b0d120bd5d5591e20fab5f9cd0c01d2f77588b2f1a60b35de5d2e046e325f87c"
+}

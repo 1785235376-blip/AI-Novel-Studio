@@ -1,0 +1,105 @@
+{
+  "status": "DRAFT_PENDING_CPU_FRONTEND_INDEPENDENT",
+  "baseline_commit": "fb372d85f67dd32620ee20221e1aaa2b1e65bfba",
+  "primary_results": {
+    "contract_api": "68 passed; 18 PostgreSQL-only deselected",
+    "audio_regression": "228 passed; 5 baseline-identical failures; 119 PostgreSQL-only deselected",
+    "baseline_reproduction": "same 5 failures on untouched baseline",
+    "owner_regression": "327 passed; 23 PostgreSQL-only deselected"
+  },
+  "pending": [
+    "CPU fades",
+    "frontend",
+    "independent review"
+  ],
+  "entries": [
+    {
+      "label": "audio-fades-origin",
+      "receipt": "docs/delivery/v2-development/audio-fades-origin.json",
+      "receipt_sha256": "9dad6662e3dc4a5bd92ad5c39cf1f7e857a1e255599dc9411820599ca6eda036",
+      "log": "docs/delivery/v2-development/audio-fades-origin.log",
+      "log_sha256": "4743cb9276359c148f4ff06a0401f89d1c95cfcb15c1c54500860206692cff14",
+      "exit_code": 0,
+      "head": "fb372d85f67dd32620ee20221e1aaa2b1e65bfba",
+      "source_unchanged": true,
+      "scope": "retained original-runner evidence"
+    },
+    {
+      "label": "audio-fades-baseline-capture",
+      "receipt": "docs/delivery/v2-development/audio-fades-baseline-capture.json",
+      "receipt_sha256": "1f22d3b5fa5c4d0ef24d569e4c51cfe89d1d4b0cb7a56d6660b68b744c42793f",
+      "log": "docs/delivery/v2-development/audio-fades-baseline-capture.log",
+      "log_sha256": "f52879828f6fee891d4e214de6adb850d8cf06dfdc33c5d4285ea5f74a4269b8",
+      "exit_code": 0,
+      "head": "fb372d85f67dd32620ee20221e1aaa2b1e65bfba",
+      "source_unchanged": true,
+      "scope": "data-only"
+    },
+    {
+      "label": "audio-fades-contract",
+      "receipt": "docs/delivery/v2-development/audio-fades-contract.json",
+      "receipt_sha256": "e8f77161b7bc1f4e2d3e10113effc84f163d0c29884f8a016a07ece1eb0bf495",
+      "log": "docs/delivery/v2-development/audio-fades-contract.log",
+      "log_sha256": "56799b6682cc207d83d5b9bd55cf127373f5395f9ab1b1b7b40b731e3b84582a",
+      "exit_code": 1,
+      "head": "fb372d85f67dd32620ee20221e1aaa2b1e65bfba",
+      "source_unchanged": true,
+      "scope": "retained original-runner evidence"
+    },
+    {
+      "label": "audio-fades-contract-r2",
+      "receipt": "docs/delivery/v2-development/audio-fades-contract-r2.json",
+      "receipt_sha256": "73cbb968e3db9366e3c7ab4a016bbaa01d74d6d9147abded9444a0e98fa1595a",
+      "log": "docs/delivery/v2-development/audio-fades-contract-r2.log",
+      "log_sha256": "aa36132c12bdc9e3ffd263fdbf4bcc3af85c387681d6f63c72257bb01d377d2d",
+      "exit_code": 1,
+      "head": "fb372d85f67dd32620ee20221e1aaa2b1e65bfba",
+      "source_unchanged": true,
+      "scope": "retained original-runner evidence"
+    },
+    {
+      "label": "audio-fades-contract-r3",
+      "receipt": "docs/delivery/v2-development/audio-fades-contract-r3.json",
+      "receipt_sha256": "9504b6b8a8de30508f4524790cece852e10d4f225ec49c799fd6d949cb95ca70",
+      "log": "docs/delivery/v2-development/audio-fades-contract-r3.log",
+      "log_sha256": "d6e529a20616f8cd478166da80593fa563329d85b7ced6387c9b2c6c9c81154b",
+      "exit_code": 0,
+      "head": "fb372d85f67dd32620ee20221e1aaa2b1e65bfba",
+      "source_unchanged": true,
+      "scope": "retained original-runner evidence"
+    },
+    {
+      "label": "audio-fades-audio-regression",
+      "receipt": "docs/delivery/v2-development/audio-fades-audio-regression.json",
+      "receipt_sha256": "5caa54b721c6294cb0f5baf370a18a87adbd23d49ff7d289c706f6ca68b10804",
+      "log": "docs/delivery/v2-development/audio-fades-audio-regression.log",
+      "log_sha256": "842c79bbf7c2afbca6c40dbd97340028a5497d1346fca44c4694d1160dd360cc",
+      "exit_code": 1,
+      "head": "fb372d85f67dd32620ee20221e1aaa2b1e65bfba",
+      "source_unchanged": true,
+      "scope": "retained original-runner evidence"
+    },
+    {
+      "label": "audio-fades-baseline-listing",
+      "receipt": "docs/delivery/v2-development/audio-fades-baseline-listing.json",
+      "receipt_sha256": "f5a132825ec2fa5389e165e7e3b1c9320434a52068218d43bcd47ed32e365e4d",
+      "log": "docs/delivery/v2-development/audio-fades-baseline-listing.log",
+      "log_sha256": "a60bb84b66fcd471fb5f40962f40dae735b3354f17e903a83de850bd74b56ad8",
+      "exit_code": 1,
+      "head": "fb372d85f67dd32620ee20221e1aaa2b1e65bfba",
+      "source_unchanged": true,
+      "scope": "retained original-runner evidence"
+    },
+    {
+      "label": "audio-fades-owner-regression",
+      "receipt": "docs/delivery/v2-development/audio-fades-owner-regression.json",
+      "receipt_sha256": "c7912be9033873a5f7be503c4b09c4fce07448df5b57ba146008b12d909929c2",
+      "log": "docs/delivery/v2-development/audio-fades-owner-regression.log",
+      "log_sha256": "dfc8c3d20c14bc4bad9eb83cdaaf08271e258d9fc7f997637d2ec25fa525c7c0",
+      "exit_code": 0,
+      "head": "fb372d85f67dd32620ee20221e1aaa2b1e65bfba",
+      "source_unchanged": true,
+      "scope": "retained original-runner evidence"
+    }
+  ]
+}

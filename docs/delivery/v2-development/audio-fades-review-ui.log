@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-audio-fades/frontend
+
+ ✓ src/creative/studioAudioFades.additive.test.tsx (29 tests) 804ms
+
+ Test Files  1 passed (1)
+      Tests  29 passed (29)
+   Start at  16:05:57
+   Duration  1.84s (transform 400ms, setup 19ms, collect 546ms, tests 804ms, environment 278ms, prepare 53ms)
+

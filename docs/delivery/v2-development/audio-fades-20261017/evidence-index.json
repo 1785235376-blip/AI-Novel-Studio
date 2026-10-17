@@ -1,0 +1,649 @@
+{
+  "status": "SCOPED_COMPLETE_WITH_FIVE_VERIFIED_PREEXISTING_FAILURES",
+  "baseline_commit": "fb372d85f67dd32620ee20221e1aaa2b1e65bfba",
+  "source_closure": {
+    "path": "docs/delivery/v2-development/audio-fades-20261017/final-source-sha256.json",
+    "count": 2559,
+    "sha256": "3f325c6867a38a607259ef9af52ea55ddb7f858aa8e72d515d50ad9e4708229a"
+  },
+  "primary_results": {
+    "contract_api": "68 passed; 18 PostgreSQL-only deselected",
+    "audio_regression": "228 passed; 5 baseline-identical failures; 119 PostgreSQL-only deselected",
+    "baseline_reproduction": "same 5 failures on untouched baseline",
+    "owner_regression": "327 passed; 23 PostgreSQL-only deselected",
+    "cpu": "13 passed; 13 PostgreSQL-only deselected",
+    "frontend": "337 passed across 14 suites including 29 new; forced TypeScript/build/52-file token guard passed",
+    "packaging": "87 passed; four actual archives verified"
+  },
+  "independent_results": {
+    "backend": "217 passed; 97 PostgreSQL-only deselected",
+    "frontend": "29 passed",
+    "overlap": "Independent reruns overlap primary cases; counts are not additive unique coverage.",
+    "archives": "All four actual archive hashes and every payload member independently checked, including changed backend modules."
+  },
+  "retained_failures": [
+    "audio-fades-contract: 50 passed, 9 missing-mounted setup errors",
+    "audio-fades-contract-r2: 50 passed, 9 PG deselected, 9 missing-prefix setup errors",
+    "audio-fades-audio-regression: 5 old listing precedence failures",
+    "audio-fades-baseline-listing: same 5 failures on untouched baseline"
+  ],
+  "limits": [
+    "No full-suite or full-release success claim",
+    "No PostgreSQL acceptance",
+    "No browser/desktop or live-provider/model acceptance",
+    "Golden capture is data-only fixed-hook serialization and constructed receipt input, not owner execution",
+    "Five pre-existing validation-precedence failures remain an unresolved separate contract decision"
+  ],
+  "files": [
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/baseline-provenance.md",
+      "bytes": 871,
+      "sha256": "d57ca0c2382c24d340ae6f575ec118bab333ed96d91f015962da4e598c088d72"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/capture-baseline.py",
+      "bytes": 4505,
+      "sha256": "96a3dcb3840221fd2df82cb25fb3975b15a4f618c8345cc64bbe84e1cf6addd8"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/evidence-index.draft.json",
+      "bytes": 4954,
+      "sha256": "783830d1aefe1592580199becad28d7f553b5ea198a290b77a1847b1f828b1c3"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/final-source-sha256.json",
+      "bytes": 296568,
+      "sha256": "3f325c6867a38a607259ef9af52ea55ddb7f858aa8e72d515d50ad9e4708229a"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/handoff.md",
+      "bytes": 7333,
+      "sha256": "05b3264ba6d029cf7058d6fec4d51b31069b869ecbc4f84ea2ec39d8cbf04fa9"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/independent-review.md",
+      "bytes": 5268,
+      "sha256": "2c95a5083d500fc499dc8395b08386e31bb2b64afd2e5be26ccea15135c783eb"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/native-prerequisites.txt",
+      "bytes": 3943,
+      "sha256": "4a10ea7ee06474a6681e03b8d48a87ce1db2730b8483daf7ed1c148dd46ac825"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/origin/explicit-origin.json",
+      "bytes": 20681,
+      "sha256": "c45839a75f76edd168d0f5cb02652c922bd03574d26bd171a643cf3d155b901c"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/origin/explicit-origin.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/origin/normal-startup-r2.json",
+      "bytes": 836,
+      "sha256": "ae6ce3ef421ffb70b8b689eecba060b17da01935d935fe15c1ce14748b6b12ce"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/origin/normal-startup.json",
+      "bytes": 1022,
+      "sha256": "a03c96f73106f36c59f0aca1c1b834b7a542f75b4ee9de61aa4884af53887e1c"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/origin/normal-startup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/origin/origin-probe.py",
+      "bytes": 6659,
+      "sha256": "970f2a857f27db3ffd81c7935e4be20ce1a7263221a73c4e5c8dbb7d5b40054f"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-build-interpreter.json",
+      "bytes": 1466,
+      "sha256": "83e48aa66fdb4d9c8fc52afae0415b311bcce5f51161a5589b6dd29289390859"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/index.json",
+      "bytes": 4507,
+      "sha256": "05b5b45c87c76ac5b6227d0e89bd29e7186e99c2161a0f2394b40d74a570b970"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-sdist0/build.log",
+      "bytes": 43462,
+      "sha256": "52fd8935fb8493614b475bf504666d403f19d8be54355bcc79e83d1318aae03d"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-sdist0/payload-inventory.json",
+      "bytes": 93410,
+      "sha256": "f1a92a5ce109a8c1ee711405a05cbb69c657a6cc5fdccd91fe8d7cef26a0df1d"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-sdist0/sdist-receipt.json",
+      "bytes": 117414,
+      "sha256": "2cb4ebc581830e7cd0943b72a56d5dae79935bf26708ee56766519ae9da40c86"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-sdist0/stage-receipt.json",
+      "bytes": 78172,
+      "sha256": "e4b657e0f7b51bd832470d5121a8509ae56ecfcf463c466df48992d8ce8e1f92"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-sdist1/build.log",
+      "bytes": 43462,
+      "sha256": "52fd8935fb8493614b475bf504666d403f19d8be54355bcc79e83d1318aae03d"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-sdist1/payload-inventory.json",
+      "bytes": 93410,
+      "sha256": "f1a92a5ce109a8c1ee711405a05cbb69c657a6cc5fdccd91fe8d7cef26a0df1d"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-sdist1/sdist-receipt.json",
+      "bytes": 117414,
+      "sha256": "662c5c5ce284daad91d8533dfdcdd8efa8572493a62809da98f8221b8aad5e17"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-sdist1/stage-receipt.json",
+      "bytes": 78172,
+      "sha256": "e4b657e0f7b51bd832470d5121a8509ae56ecfcf463c466df48992d8ce8e1f92"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-wheel0/build.log",
+      "bytes": 110465,
+      "sha256": "90857980fa2310966ccf833e0bc7ee5c0176de45f7966ede85f0bfff9e57e53e"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-wheel0/payload-inventory.json",
+      "bytes": 82577,
+      "sha256": "93f9cfe1bb4ed2d037cfc5e61ae03bd5106440181807a5484c8b639de36e18f3"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-wheel0/stage-receipt.json",
+      "bytes": 78172,
+      "sha256": "e4b657e0f7b51bd832470d5121a8509ae56ecfcf463c466df48992d8ce8e1f92"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-wheel0/wheel-receipt.json",
+      "bytes": 107119,
+      "sha256": "ffaabdf28b8edcbb930872565b351e7ed1b3b7fdb949db871c31e325fe08c40b"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-wheel1/build.log",
+      "bytes": 110465,
+      "sha256": "43b27dd66cac8a18046dd12a254605ae91ede80129d1176ba0d81760e36eb840"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-wheel1/payload-inventory.json",
+      "bytes": 82577,
+      "sha256": "93f9cfe1bb4ed2d037cfc5e61ae03bd5106440181807a5484c8b639de36e18f3"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-wheel1/stage-receipt.json",
+      "bytes": 78172,
+      "sha256": "e4b657e0f7b51bd832470d5121a8509ae56ecfcf463c466df48992d8ce8e1f92"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-wheel1/wheel-receipt.json",
+      "bytes": 107119,
+      "sha256": "e66db52363269d07aac55a35956fc899237afa2eff375116be0e73efaf6fb6be"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-launcher.log",
+      "bytes": 13346,
+      "sha256": "c6c85426be76ca7223c98dfce2d3fc8e10d060b23e214d74c005a4066198b0bc"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-manifest-before.sha256",
+      "bytes": 94,
+      "sha256": "d89059b0c1b37367f7f192187228abc0ad72e4026f26e0e972dc661b88a1fcbb"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/packaging-natural-startup.json",
+      "bytes": 637,
+      "sha256": "17dbc55d2c699296f72169b2199f2fe807d429e280331f9cb545bc7b3ea6e54f"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-20261017/run-packaging-r1.sh",
+      "bytes": 1742,
+      "sha256": "1ac4e756797841e97f019c934bba45a392fb4081f4bd66730112796d42377942"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-audio-regression-origin-after.json",
+      "bytes": 605817,
+      "sha256": "2cfda39d5cacb266f2b423bdd139124ff5c46983e503d7cb2d8a4d35c88fb385"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-audio-regression-origin-after.log",
+      "bytes": 6417,
+      "sha256": "fc91b7b124b5a42e4999982c90c5ac1111c897834fe26cd7031cb235a97f472c"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-audio-regression-origin-before.json",
+      "bytes": 605826,
+      "sha256": "1c8a9efba77e6dac5891967b65193ea58643e7fa52993539e5c655359f7c7a71"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-audio-regression-origin-before.log",
+      "bytes": 6417,
+      "sha256": "4fab3aeb78a7520456ce9f91d985587f9e579a1fe4baa0907af8aa8c6e6d4974"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-audio-regression.json",
+      "bytes": 606233,
+      "sha256": "5caa54b721c6294cb0f5baf370a18a87adbd23d49ff7d289c706f6ca68b10804"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-audio-regression.log",
+      "bytes": 13161,
+      "sha256": "842c79bbf7c2afbca6c40dbd97340028a5497d1346fca44c4694d1160dd360cc"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-baseline-capture.json",
+      "bytes": 604514,
+      "sha256": "1f22d3b5fa5c4d0ef24d569e4c51cfe89d1d4b0cb7a56d6660b68b744c42793f"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-baseline-capture.log",
+      "bytes": 12587,
+      "sha256": "f52879828f6fee891d4e214de6adb850d8cf06dfdc33c5d4285ea5f74a4269b8"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-baseline-listing-natural.json",
+      "bytes": 641,
+      "sha256": "43bc1832bd302365e2166b5dd046a8c804bd6bf0a1d9544038e41d7a4b21ca3d"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-baseline-listing-origin-after.json",
+      "bytes": 604688,
+      "sha256": "819a7472707abdc366b3b6ee506c09956ae6cdede1e16fb01da470be9a95b9df"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-baseline-listing-origin-after.log",
+      "bytes": 7405,
+      "sha256": "3824a9c570a83dc561293a9fd28c3d0a0d9d365bcb2b9c8580fcdfb4be4fdead"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-baseline-listing-origin-before.json",
+      "bytes": 604697,
+      "sha256": "9b630bf69d93af550474ba8eebe0d52e7ce0c7ad1505d86f592a7d2b2df74c87"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-baseline-listing-origin-before.log",
+      "bytes": 7405,
+      "sha256": "00a7f7b5e6e5f086ea474bfbcededd6ed3aad1f9aa99de1efa2c0bf810ca93d3"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-baseline-listing.json",
+      "bytes": 605315,
+      "sha256": "f5a132825ec2fa5389e165e7e3b1c9320434a52068218d43bcd47ed32e365e4d"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-baseline-listing.log",
+      "bytes": 12267,
+      "sha256": "a60bb84b66fcd471fb5f40962f40dae735b3354f17e903a83de850bd74b56ad8"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract-origin-after.json",
+      "bytes": 605745,
+      "sha256": "5f09cf59407921b70ef0852de426e8f64f46da4f069e7e4c07576ba5fcfe002a"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract-origin-after.log",
+      "bytes": 6417,
+      "sha256": "98db4ec2deb0d57da4997e9996fc313fc1b82f68a8df4232bd12c53feced7005"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract-origin-before.json",
+      "bytes": 605754,
+      "sha256": "186e4ff2d5b3b9543d2c62724ea8635730d70f590461ab860026d74a0e3425c3"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract-origin-before.log",
+      "bytes": 6417,
+      "sha256": "0932b15b17c00a5c66f5f086bda389b01628fde623e3ce05c623088780641261"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract-r2-origin-after.json",
+      "bytes": 605772,
+      "sha256": "5725c487a467fba9c77ce89d4dc3751193ad18a0512ade55cd2a66e1529c7f2d"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract-r2-origin-after.log",
+      "bytes": 6417,
+      "sha256": "aeaf124a104b3d51d8ae687fda19c29eee269640760c4b14a284cd743b7fb402"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract-r2-origin-before.json",
+      "bytes": 605781,
+      "sha256": "e41c46db1578f59f28d73ad227e736bffe43ccf3c0f2e9d123569b340b087a3d"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract-r2-origin-before.log",
+      "bytes": 6417,
+      "sha256": "a865eae456ae34f2bc2b491288437784b123cf807c3eaf7450b00e24116184cb"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract-r2.json",
+      "bytes": 605839,
+      "sha256": "73cbb968e3db9366e3c7ab4a016bbaa01d74d6d9147abded9444a0e98fa1595a"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract-r2.log",
+      "bytes": 16710,
+      "sha256": "aa36132c12bdc9e3ffd263fdbf4bcc3af85c387681d6f63c72257bb01d377d2d"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract-r3-origin-after.json",
+      "bytes": 605772,
+      "sha256": "03a4080d1b79bfe8edffd923f0c6c7b64c2aeb5f6b4003ec971570732fdc47ee"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract-r3-origin-after.log",
+      "bytes": 6417,
+      "sha256": "fec40d8c7c9c28f35f61ec04a6acf408644d0ae81111d19b5651e15510ac5aba"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract-r3-origin-before.json",
+      "bytes": 605781,
+      "sha256": "d2ac76e3b17abe2bda54b30d29eabb8ea01f8ed3ee3c6a922c6d1b64bbc7af83"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract-r3-origin-before.log",
+      "bytes": 6417,
+      "sha256": "1a51158d56a87bf549e2a76af03cca9296484afe6460d4f6e1872ce68e65c5b7"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract-r3.json",
+      "bytes": 605839,
+      "sha256": "9504b6b8a8de30508f4524790cece852e10d4f225ec49c799fd6d949cb95ca70"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract-r3.log",
+      "bytes": 730,
+      "sha256": "d6e529a20616f8cd478166da80593fa563329d85b7ced6387c9b2c6c9c81154b"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract.json",
+      "bytes": 605809,
+      "sha256": "e8f77161b7bc1f4e2d3e10113effc84f163d0c29884f8a016a07ece1eb0bf495"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-contract.log",
+      "bytes": 13677,
+      "sha256": "56799b6682cc207d83d5b9bd55cf127373f5395f9ab1b1b7b40b731e3b84582a"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-cpu-evidence/evidence-index.json",
+      "bytes": 6790,
+      "sha256": "ce00cc2b1b39a05ee8acd552efa022a7fd063dbc6d76a2af64eb5acd5807b8fc"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-cpu-evidence/evidence-summary.json",
+      "bytes": 3659,
+      "sha256": "679b42a0a5722b9c924069053d1661c936f958c6fb65dac84135ad050386e445"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-cpu-evidence/native-provenance.txt",
+      "bytes": 17326,
+      "sha256": "b3ad95721f08b04d74b66fc52532e373ef6e608baa12c17f96110398802e6c06"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-cpu-evidence/normal-startup-before.json",
+      "bytes": 2092,
+      "sha256": "1caa336511fc51001bcfc79bbe8971029d6d402c5a485d891bb4ab84b12cce4f"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_lossless_linear_fa0.json",
+      "bytes": 1291,
+      "sha256": "1b96a13bd84f157f3f962f1321d784a5df4168041ca775dfdc062048f3c309e8"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_lossless_linear_fa1.json",
+      "bytes": 1516,
+      "sha256": "876f01e0bf86c1e58638c795b3615a8c3d096e9bf2f305324ea31eba0c117ca9"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_lossless_linear_fa2.json",
+      "bytes": 1409,
+      "sha256": "099b6823730ead2cc88fa90bb12774bbd918b6cd685f30fe96e2d027be8bea25"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_lossless_linear_fa3.json",
+      "bytes": 1634,
+      "sha256": "755a93399accea05903c0bcbb33fbc9cab3fc1b028f36f9c9871d68c469577cc"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_mp3_linear_fades_g0.json",
+      "bytes": 2590,
+      "sha256": "c8531150ed32fccdd5b621b0d5b4c8e460f40c033090dd323a3ec8aa1e1dd50a"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_mp3_linear_fades_g1.json",
+      "bytes": 4215,
+      "sha256": "4406fd231991a0998fe4b1dc8c8aabb49f31d55247a0d368a2590eb3df43ef79"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_one_sided_and_touc0.json",
+      "bytes": 1291,
+      "sha256": "1f1d46cd47fa3c611f40925d6a523b0239bdb64917f43fb7cef035e06ca9f080"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_one_sided_and_touc1.json",
+      "bytes": 1256,
+      "sha256": "d99e7c7282b5b67b1d3da6347262d7b0bbf2d03b583cea965d037ff229d8abed"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_actual_one_sided_and_touc2.json",
+      "bytes": 1304,
+      "sha256": "7a5f9213c14ee19b0dc200ad86e9b9ef19983708f0e14f32b23b6940423e8e5d"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_explicit_zero_fades_prese0.json",
+      "bytes": 1430,
+      "sha256": "0aae530f294dc2324f6d0ecd25fa5e114eb3401af9a3a135dcfc157dfa725f8d"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_explicit_zero_fades_prese1.json",
+      "bytes": 1896,
+      "sha256": "9482fa3fcbc48aadfd803979861d03db7658c4b7eff5a36c0ed9a3e08d7cf96c"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-cpu-evidence/observations/test_explicit_zero_fades_prese2.json",
+      "bytes": 1886,
+      "sha256": "ee9578c7078dd3b60554105595ea3f25f73e9fe301ae5f2ab9dd6987ff0958d4"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-frontend-build-r1.json",
+      "bytes": 605592,
+      "sha256": "3e47d1fea72bc4e13483db30efc04c6b86be2a3de45e158bd2a578dace1f8973"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-frontend-build-r1.log",
+      "bytes": 1679,
+      "sha256": "5e13679d66230433afcb46d0a887357abc93c51ab5a534e014f6c22d85c65653"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-frontend-tests-r1.json",
+      "bytes": 606340,
+      "sha256": "4890be7f248ccb40a88909e52bd22379cc98ab3f7f4fcfb347f4055bc9fdfb66"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-frontend-tests-r1.log",
+      "bytes": 3745,
+      "sha256": "4cf30eaec5934e821496a69a0aa91cc763c369551a281fde2bb9442c37e853e9"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-frontend-tokens-r1.json",
+      "bytes": 605603,
+      "sha256": "72d50e6e54dc99ed153245987f4d1ffeb6d26f217fb12d3be224d4afabd0130b"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-frontend-tokens-r1.log",
+      "bytes": 31,
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-frontend-typecheck-r1.json",
+      "bytes": 605635,
+      "sha256": "0ede3670f00d9656963e336f95f0ca8d9c40b327bd2927f5ba44e55c4328691f"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-frontend-typecheck-r1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-origin.json",
+      "bytes": 604442,
+      "sha256": "9dad6662e3dc4a5bd92ad5c39cf1f7e857a1e255599dc9411820599ca6eda036"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-origin.log",
+      "bytes": 6417,
+      "sha256": "4743cb9276359c148f4ff06a0401f89d1c95cfcb15c1c54500860206692cff14"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-owner-regression-origin-after.json",
+      "bytes": 605817,
+      "sha256": "517b43b4244e1196bd4ae5d44a89cdee83aa669d4e2f6ce7d1a77a1915dca376"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-owner-regression-origin-after.log",
+      "bytes": 6417,
+      "sha256": "020f6496ebdcaa1737e8b9beec5544300800e2905a580b8793137687b0ff415c"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-owner-regression-origin-before.json",
+      "bytes": 605826,
+      "sha256": "1a3eecad97f6bd5ff583950c9a2a17c05fde82f2a217d1bb238c4ae1f1d0c5d8"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-owner-regression-origin-before.log",
+      "bytes": 6417,
+      "sha256": "4dc75912299be037247ab6e562a1cf8abc0bd919c09cf38662b49d162843c4a3"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-owner-regression.json",
+      "bytes": 606091,
+      "sha256": "c7912be9033873a5f7be503c4b09c4fce07448df5b57ba146008b12d909929c2"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-owner-regression.log",
+      "bytes": 1051,
+      "sha256": "dfc8c3d20c14bc4bad9eb83cdaaf08271e258d9fc7f997637d2ec25fa525c7c0"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-packaging-origin-after.json",
+      "bytes": 605754,
+      "sha256": "9d8c8ec27bb88918908ac68b33c81eaf60c9d63c5f14ddf003443553a908722c"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-packaging-origin-after.log",
+      "bytes": 6417,
+      "sha256": "cc97ea9549ebec165d35ec0526b2227a51885bd36d6877adef6082502048a55d"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-packaging-origin-before.json",
+      "bytes": 605763,
+      "sha256": "dc1bf2260ad612ff495d941a8292bb5cacd3f358a20d4a63bcc30cde4edf31b1"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-packaging-origin-before.log",
+      "bytes": 6417,
+      "sha256": "58c12bf4b80851c363aedd00ab93c7b77d3346542aa654f1e58d9fb1ba86f844"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-packaging-r1.json",
+      "bytes": 605954,
+      "sha256": "5946a0089a151059743b97e4496610897d6aad436f4fa0fa0565c89db9c6239d"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-packaging-r1.log",
+      "bytes": 180,
+      "sha256": "baff60652efce68fb7b0a99ceece1abfb5900b8ffa365d32b0013aa8d9794e33"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-review-backend.json",
+      "bytes": 606018,
+      "sha256": "dba06b1a4e00076f88b108c702ac7c430eac8bd57d67433bbe41ba4c5a7c7a62"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-review-backend.log",
+      "bytes": 971,
+      "sha256": "4690ea9e9bceae510cada1b15f51a92e0d512f6b90639f83626e8879ca9b9ce9"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-review-natural.json",
+      "bytes": 644,
+      "sha256": "9f404aa058429aae3a135f816fd1a3c4775eb93dedc8ed80831498ed58ffc492"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-review-origin-after.json",
+      "bytes": 605727,
+      "sha256": "df9ce1959252ef751ffbd2e568ca3016ec6043262e170534ab052093721e8ec9"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-review-origin-after.log",
+      "bytes": 6417,
+      "sha256": "47723c740bc7cda2777bef77659e5831d3b8ee24a777ad1445c255b048363c10"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-review-origin-before.json",
+      "bytes": 605736,
+      "sha256": "d06da13ca911f436e7295cf6d23c7cecf488f696f8de7b49272b404a1e62470e"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-review-origin-before.log",
+      "bytes": 6417,
+      "sha256": "7eba6f043352a133e04a8f02bd8841ac72647ee95346ea797ad04936f3f9db23"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-review-ui.json",
+      "bytes": 605608,
+      "sha256": "600c7e47716fef479a23b12cb5e82e5d0b88bcb61721a9b26f745af24ab88bd1"
+    },
+    {
+      "path": "docs/delivery/v2-development/audio-fades-review-ui.log",
+      "bytes": 333,
+      "sha256": "d7783ac083dc11324cafc4947566acc984e6e4234b77c4456221475a3e395390"
+    },
+    {
+      "path": "docs/delivery/v2-development/standalone-audio-fades-cpu-origin-after.json",
+      "bytes": 605799,
+      "sha256": "5aacea88d5f35499801e5b3a74b0c1eaa0cd940eaf42ef3ee54e1a36c57b67d5"
+    },
+    {
+      "path": "docs/delivery/v2-development/standalone-audio-fades-cpu-origin-after.log",
+      "bytes": 6417,
+      "sha256": "c66b02e4069a8ebad786801645296a5b8cb69c8e0e63f3b61d3451b2462ff957"
+    },
+    {
+      "path": "docs/delivery/v2-development/standalone-audio-fades-cpu-origin-before.json",
+      "bytes": 605808,
+      "sha256": "1c7e71ab4901929f8d9c85c6e8b26ad0cddf4dd93f11a7c25c727f9e5b638d75"
+    },
+    {
+      "path": "docs/delivery/v2-development/standalone-audio-fades-cpu-origin-before.log",
+      "bytes": 6417,
+      "sha256": "8a7c804e7e8a6e0ec3f15bb644718f7605982abd7613347d05cde71cc6e7fb3d"
+    },
+    {
+      "path": "docs/delivery/v2-development/standalone-audio-fades-cpu-r1.json",
+      "bytes": 605812,
+      "sha256": "2fbeadbd3fe8af789edfa281944dc1e43741dda1e8c2bf6cfa77aafd34d6e9d4"
+    },
+    {
+      "path": "docs/delivery/v2-development/standalone-audio-fades-cpu-r1.log",
+      "bytes": 115,
+      "sha256": "afc82f30dd43808d44a5c4de49d7b97f7efb1ec58336bcbe79f15305af16047e"
+    },
+    {
+      "path": "tests/fixtures/studio_audio_fade_omission_v1.json",
+      "bytes": 81151,
+      "sha256": "1aa9100e0d3622b6d5a99019b5a7f33aa60e94173a9c962dce0a500c3a63c2d5"
+    }
+  ]
+}

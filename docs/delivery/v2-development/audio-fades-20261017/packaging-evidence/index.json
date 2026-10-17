@@ -1,0 +1,90 @@
+{
+  "status": "PASS_OFFLINE_PUBLIC_ARCHIVE_INSPECTION",
+  "test_result": "87 passed",
+  "archives": [
+    {
+      "archive": ".runtime/v2-checks/audio-fades-packaging-r1/pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "sha256": "8e29f972db2bbe4dfc6b6355bb2cc9b71abb1177e99a0564940c68d01b1e133e",
+      "kind": "sdist",
+      "payload_file_count": 515,
+      "changed_modules": {
+        "app/creative/production_execution_models.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/production_execution_models.py",
+          "sha256": "906d8a95bc4dfe12b285bb12008d56d8764b4bab810025fe5708f222f77089fe"
+        },
+        "app/creative/production_execution.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/production_execution.py",
+          "sha256": "6ea314248f1d427cab8abfd51f99c7b4b70fe8c029250b476456a2c0d3987916"
+        },
+        "app/services/studio_audio_execution.py": {
+          "member": "ai_novel_studio-0.7.0/app/services/studio_audio_execution.py",
+          "sha256": "daa9ce9662d41b97f5b44696daef8fc4d3a807d7530d039004121db65df7bed2"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-sdist0"
+    },
+    {
+      "archive": ".runtime/v2-checks/audio-fades-packaging-r1/pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "sha256": "4ba3a422b3bdf6c21f95986a2aaf1da4976991e9c3e5745d0644ddbd207b46e0",
+      "kind": "sdist",
+      "payload_file_count": 515,
+      "changed_modules": {
+        "app/creative/production_execution_models.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/production_execution_models.py",
+          "sha256": "906d8a95bc4dfe12b285bb12008d56d8764b4bab810025fe5708f222f77089fe"
+        },
+        "app/creative/production_execution.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/production_execution.py",
+          "sha256": "6ea314248f1d427cab8abfd51f99c7b4b70fe8c029250b476456a2c0d3987916"
+        },
+        "app/services/studio_audio_execution.py": {
+          "member": "ai_novel_studio-0.7.0/app/services/studio_audio_execution.py",
+          "sha256": "daa9ce9662d41b97f5b44696daef8fc4d3a807d7530d039004121db65df7bed2"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-sdist1"
+    },
+    {
+      "archive": ".runtime/v2-checks/audio-fades-packaging-r1/pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "sha256": "c190745eb83e534905956384043cb14299bfefaa0d48669ed169cd1d3efcd4fc",
+      "kind": "wheel",
+      "payload_file_count": 511,
+      "changed_modules": {
+        "app/creative/production_execution_models.py": {
+          "member": "app/creative/production_execution_models.py",
+          "sha256": "906d8a95bc4dfe12b285bb12008d56d8764b4bab810025fe5708f222f77089fe"
+        },
+        "app/creative/production_execution.py": {
+          "member": "app/creative/production_execution.py",
+          "sha256": "6ea314248f1d427cab8abfd51f99c7b4b70fe8c029250b476456a2c0d3987916"
+        },
+        "app/services/studio_audio_execution.py": {
+          "member": "app/services/studio_audio_execution.py",
+          "sha256": "daa9ce9662d41b97f5b44696daef8fc4d3a807d7530d039004121db65df7bed2"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-wheel0"
+    },
+    {
+      "archive": ".runtime/v2-checks/audio-fades-packaging-r1/pytest/public-wheel1/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "sha256": "6246d885dec04880d373ff2662be2ce6b5bdbacce1eca25395192c7785f01490",
+      "kind": "wheel",
+      "payload_file_count": 511,
+      "changed_modules": {
+        "app/creative/production_execution_models.py": {
+          "member": "app/creative/production_execution_models.py",
+          "sha256": "906d8a95bc4dfe12b285bb12008d56d8764b4bab810025fe5708f222f77089fe"
+        },
+        "app/creative/production_execution.py": {
+          "member": "app/creative/production_execution.py",
+          "sha256": "6ea314248f1d427cab8abfd51f99c7b4b70fe8c029250b476456a2c0d3987916"
+        },
+        "app/services/studio_audio_execution.py": {
+          "member": "app/services/studio_audio_execution.py",
+          "sha256": "daa9ce9662d41b97f5b44696daef8fc4d3a807d7530d039004121db65df7bed2"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/audio-fades-20261017/packaging-evidence/public-wheel1"
+    }
+  ]
+}

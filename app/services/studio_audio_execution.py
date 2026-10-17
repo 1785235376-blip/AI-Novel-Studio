@@ -29,7 +29,8 @@ STUDIO_ORIGIN = "studio-audio-execution/1"
 CAPABILITIES = {"m8.audio.speech": "TTS", "m8.audio.music": "MUSIC", "m8.audio.effects": "SFX", "m8.audio.trim": "TRIM"}
 _ACTIVE: set[tuple[str, str, str]] = set()
 _ACTIVE_LOCK = threading.RLock()
-TRIM_CONTROLS = {"gain_db", "sample_rate", "channels", "output_format"}
+FADE_CONTROLS = {"fade_in_ms", "fade_out_ms"}
+TRIM_CONTROLS = {"gain_db", "sample_rate", "channels", "output_format"} | FADE_CONTROLS
 AUDIO_MP3_PROFILE = "studio-audio-mp3/1"
 
 
@@ -56,6 +57,25 @@ def trim_output_profile(parameters):
         rate = parameters.get("sample_rate", 48000)
         return f"MP3_LIBMP3LAME_{rate}_{channels}_CBR{bit_rate(rate) // 1000}"
     return f"PCM_S16LE_WAV_{parameters.get('sample_rate', 48000)}_{channels}"
+
+
+
+def _trim_filters(parameters):
+    """Linear fades in trimmed-output time, after gain and before output conversion.
+
+    No positive fade preserves the exact original gain-only (or empty) argv.
+    Resampling, channel conversion and encoding remain the original output options.
+    """
+    filters = [f"volume={parameters['gain_db']:.17g}dB"] if "gain_db" in parameters else []
+    fade_in, fade_out = parameters.get("fade_in_ms", 0), parameters.get("fade_out_ms", 0)
+    if fade_in or fade_out:
+        filters.append("asetpts=PTS-STARTPTS")
+        if fade_in:
+            filters.append(f"afade=t=in:st=0:d={fade_in / 1000:.3f}:curve=tri")
+        if fade_out:
+            start = parameters["out_ms"] - parameters["in_ms"] - fade_out
+            filters.append(f"afade=t=out:st={start / 1000:.3f}:d={fade_out / 1000:.3f}:curve=tri")
+    return ["-af", ",".join(filters)] if filters else []
 
 
 def _trim_measurement(value, parameters):
@@ -166,6 +186,11 @@ def _body_shape(value):
         start, end = parameters.get("in_ms"), parameters.get("out_ms")
         if type(start) is not int or type(end) is not int or not 0 <= start < end <= 600_000 or end - start > 120_000:
             raise _error("STUDIO_AUDIO_TRIM_RANGE_INVALID", "裁剪范围须在原音频内且最长 120 秒", 400)
+        for key in FADE_CONTROLS.intersection(parameters):
+            if type(parameters[key]) is not int or not 0 <= parameters[key] <= 120000:
+                raise _error("STUDIO_AUDIO_FADE_INVALID", "淡入淡出须为非负整数毫秒", 400)
+        if parameters.get("fade_in_ms", 0) + parameters.get("fade_out_ms", 0) > end - start:
+            raise _error("STUDIO_AUDIO_FADE_RANGE_INVALID", "淡入淡出总时长不得超过裁剪后时长", 400)
         gain, rate, channels = parameters.get("gain_db", 0), parameters.get("sample_rate", 48000), parameters.get("channels", 2)
         if (type(gain) not in {int, float} or not math.isfinite(gain) or not -60 <= gain <= 12
                 or type(rate) is not int or not 8000 <= rate <= 96000
@@ -243,7 +268,15 @@ def _binding(value, body):
                 or ("audio_profile" in captured) != ("audio_profile" in body)
                 or captured.get("audio_profile") != body.get("audio_profile")):
             raise _error("STUDIO_AUDIO_PROFILE_BINDING_CHANGED", "音频命令、请求与配方的版本绑定不一致", 409)
-    if "audio_profile" in body:
+    # Only fade-bearing requests gain this stricter existing-layer check.
+    # Historical omitted controls retain their original bytes and admission.
+    fade_bound = bool(FADE_CONTROLS.intersection(body["parameters"]))
+    for captured in (value.get("command"), value.get("execution_recipe")):
+        if isinstance(captured, dict) and isinstance(captured.get("parameters"), dict):
+            fade_bound = fade_bound or bool(FADE_CONTROLS.intersection(captured["parameters"]))
+    if fade_bound and ("command" not in value or "execution_recipe" not in value):
+        raise _error("STUDIO_AUDIO_FADE_BINDING_REQUIRED", "淡入淡出缺少原命令或配方绑定", 403)
+    if "audio_profile" in body or fade_bound:
         from ..creative.production_execution_models import MediaCommand
         try:
             command = MediaCommand.model_validate(value["command"])
@@ -258,7 +291,8 @@ def _binding(value, body):
                     or request_digest != value["request_digest"]):
                 raise ValueError("versioned command binding")
         except (ValueError, TypeError, KeyError):
-            raise _error("STUDIO_AUDIO_PROFILE_BINDING_CHANGED", "版本化音频命令与原请求摘要不一致", 409) from None
+            raise _error("STUDIO_AUDIO_FADE_BINDING_CHANGED" if fade_bound else "STUDIO_AUDIO_PROFILE_BINDING_CHANGED",
+                "音频命令与原请求摘要不一致", 409) from None
     if "execution_recipe" in value:
         recipe = value["execution_recipe"]
         fields = {"contract", "operation_id", "adapter", "parameters", "automatic_fallback", "recipe_digest"}
@@ -708,7 +742,7 @@ class StudioAudioExecution:
             source_path.write_bytes(data)
             if self._attempt(nid, claim, context, guard, source_guard) is None: raise _error("STUDIO_AUDIO_ATTEMPT_SUPERSEDED", "音频裁剪已取消或失效", 409)
             from .studio_timeline_export import run_guarded_process
-            filters = ["-af", f"volume={parameters['gain_db']:.17g}dB"] if "gain_db" in parameters else []
+            filters = _trim_filters(parameters)
             codec = ["-c:a", "flac", "-sample_fmt", "s16", "-compression_level", "5"] if flac else ["-c:a", "pcm_s16le"]
             if mp3:
                 from .studio_audio_mp3_profile import bit_rate
