@@ -1,0 +1,80 @@
+{
+  "status": "PASS",
+  "independent_suites": 16,
+  "independent_tests": 169,
+  "new_tests": 29,
+  "source_count": 2620,
+  "source_before_after_current_all_identical": true,
+  "receipt_and_log_maps_verified": [
+    {
+      "receipt": "docs/delivery/v2-development/director-canvas-diff-r1.json",
+      "sha256": "f8789891412f123a59494ca3dc79b214be645452e68617194a1a88d85467c7d6",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-canvas-origin-r1.json",
+      "sha256": "1a9383ebec8aed4652f13c4787b730c9509c226253fdc348bbced82c7a97c993",
+      "log_sha256": "cfa9299da482226ed7bbd93004d7404aab221e73155cf2a722857edb9a2e4945"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-canvas-original-tests-after-r1.json",
+      "sha256": "368f3fe5e8237e51b251b502ece496206fee8b2d11be38e374683b7cb2dd142c",
+      "log_sha256": "18e63b15beadaef2298c373d356002f8ad37140f257afd01c63e5afaf0851fce"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-canvas-original-tests-before-r1.json",
+      "sha256": "19080658dcb27e2ba4d97f19c5be930f289f1655e486bf8e332e06dbab4456cd",
+      "log_sha256": "18e63b15beadaef2298c373d356002f8ad37140f257afd01c63e5afaf0851fce"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-canvas-public-r1.json",
+      "sha256": "1b172e82d3801502f250cf80d38fd264f6113b1672a0d14b71747bc2f27ed1e2",
+      "log_sha256": "ce2cdb06edd43381f66cb69c30454f361f6793000f4ddefd6539c63f2c3c92ae"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-canvas-tokens-r1.json",
+      "sha256": "d1f01116db54a883034fa8eb9705b8c4a60eb4eae934b2fde5994717d4f922fa",
+      "log_sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-canvas-type-build-r1.json",
+      "sha256": "d25b87b4cf5e45ba6a89cbf78a30b9aaeeb8e023621d686ac94ba42558770d82",
+      "log_sha256": "62d1db4751ede4c9bacdf7c40d1c750eed56322c508dd8b3fbf7f80dd8f0170e"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-canvas-ui-r1.json",
+      "sha256": "2666e0b87ca633c764fb9a2ff2e68f871bdc5ba10c79615df11c7501764be59d",
+      "log_sha256": "11b9dcd2675a787eb7d658ccbc42b416332988d9f47039cb124b1a1933b829a6"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-canvas-independent-origin-r1.json",
+      "sha256": "66c0a1756a9a4e2de855f64c755f659eed0ad213d229aae8b78f6a2ff422a581",
+      "log_sha256": "cfa9299da482226ed7bbd93004d7404aab221e73155cf2a722857edb9a2e4945"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-canvas-independent-tests-before-r1.json",
+      "sha256": "862ece77fd7b3b676b8777e6ca73610950d2f03b231720227a997567c23d7a96",
+      "log_sha256": "18e63b15beadaef2298c373d356002f8ad37140f257afd01c63e5afaf0851fce"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-canvas-independent-ui-r1.json",
+      "sha256": "97d66615a7a81ee0a21f9cc79a0acddc0887d7bcfe16401c819db01d14b33dcd",
+      "log_sha256": "2cb3ed41e82150fe55b68883ffc7c9eea20cfd48132b752d50132a22d95adc89"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/director-canvas-independent-tests-after-r1.json",
+      "sha256": "5e2b19642ce71c53a74c05dd1e45262a37850c89dad8b25b602450abc5f4c33f",
+      "log_sha256": "18e63b15beadaef2298c373d356002f8ad37140f257afd01c63e5afaf0851fce"
+    }
+  ],
+  "primary_forced_typescript_vite_exact_source_verified": true,
+  "natural_actual_runner_child_origin_equal": true,
+  "product_imported": false,
+  "protected_test_paths_before_after": 1368,
+  "frozen_seven_sources_unchanged": true,
+  "actual_editor_console_controller_undo_reverify_readd_test": "PASS",
+  "changed_target_reverify_test": "PASS",
+  "source_edits": false,
+  "redundant_build_run": false,
+  "backend_provider_browser_pg_windows_run": false
+}

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+source /workspace/scratch/20a0022d2b33/director-canvas-handoff-verification-r1/environment.sh
+"$PY" "$PROOF/origin-proof.py" > "$PROOF/natural-origin-r1.json"
+"$PY" scripts/run_v2_checks.py director-canvas-origin-r1 -- python "$PROOF/origin-proof.py"
+"$PY" scripts/run_v2_checks.py director-canvas-original-tests-before-r1 -- python "$PROOF/original-test-guard.py"
+"$PY" scripts/run_v2_checks.py director-canvas-ui-r1 -- bash -c 'cd frontend && /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node node_modules/vitest/vitest.mjs run src/creative/directorCanvasHandoff.additive.test.tsx src/creative/GraphDirectorCanvasHandoff.additive.test.tsx src/creative/ReviewedDirectorCanvas.integration.test.tsx src/creative/GraphDirectorConsole.test.tsx src/creative/GraphDirectorProposalReview.test.tsx src/creative/GraphDirectorSourceImpact.test.tsx src/creative/GraphDirectorStoryboardHandoff.test.tsx src/creative/StudioGraphDirectorConsole.test.tsx src/creative/StudioGraphInsertion.additive.test.tsx src/creative/StudioGraphInsertion.palette.additive.test.tsx src/creative/StudioGraphConnection.additive.test.tsx src/creative/useStudioGraphEditor.storyboardAuthority.additive.test.tsx src/creative/studioGraphDirectorClient.test.ts src/creative/StudioProductionGraphEditor.test.tsx src/creative/StudioProductionGraphEditor.director.additive.test.tsx src/ui/AppShell.test.tsx --maxWorkers=1 --minWorkers=1 --no-cache --bail=1'
+"$PY" scripts/run_v2_checks.py director-canvas-original-tests-after-r1 -- python "$PROOF/original-test-guard.py"
