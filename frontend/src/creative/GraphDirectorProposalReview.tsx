@@ -5,6 +5,7 @@ import { AIDirectorPanel } from './AIDirectorPanel';
 import type { CreativeClient, DirectorProposalClient } from './client';
 import type { CreativeDocument } from './types';
 import type { DirectorModelClient } from './directorModelClient';
+import type { PlanningSnapshot } from './studioProductionGraphContract';
 
 export type GraphDirectorReviewSource = Pick<CreativeClient, 'list'> & Partial<DirectorProposalClient>;
 const methods = ['proposals', 'proposal', 'propose', 'review', 'cancelProposal', 'get',
@@ -19,7 +20,7 @@ type Props = {
   read: <T>(work: () => Promise<T>) => Promise<T>;
   mutate: <T>(work: () => Promise<T>) => Promise<T>;
   onPendingChange: (value: boolean) => void;
-  onDocument: (document: CreativeDocument) => void;
+  onDocument: (document: CreativeDocument, expectedSnapshot?: PlanningSnapshot) => void;
   onDenied: () => void;
   onOpenModels?: () => void;
 };
@@ -111,9 +112,9 @@ export function GraphDirectorProposalReview(props: Props) {
       refreshModel: (...args) => call(true, () => props.client.refreshModel(...args)),
     };
   }, [props.client]);
-  const acceptDocument = useCallback((document: CreativeDocument) => {
+  const acceptDocument = useCallback((document: CreativeDocument, expectedSnapshot?: PlanningSnapshot) => {
     if (!alive.current || !latest.current.active || !latest.current.isCurrent() || initialClient.current !== latest.current.client) return;
-    latest.current.onDocument(document);
+    latest.current.onDocument(document, expectedSnapshot ? { ...expectedSnapshot } : undefined);
   }, []);
   const denied = useCallback(() => {
     if (!alive.current || initialClient.current !== latest.current.client) return;

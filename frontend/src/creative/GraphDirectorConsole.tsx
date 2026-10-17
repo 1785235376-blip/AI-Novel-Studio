@@ -153,7 +153,7 @@ export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey,
       const verified = { id: target, version: value.document.version, digest: value.document_digest };
       if (reviewed?.id === target) {
         const exact = reviewedDirectorSnapshot(reviewed, value.document, value.document_digest,
-          snapshot?.id === reviewed.id && snapshot.version === reviewed.version ? snapshot : undefined);
+          reviewed.expectedSnapshot ?? (snapshot?.id === reviewed.id && snapshot.version === reviewed.version ? snapshot : undefined));
         if (!pending) {
           verifiedIntent.current = { pin: exact, canvasScope, authored, selected: selectedGeneration, generation, canvasGeneration, receipt: reviewed, isCanvasCurrent: canvasHandoff?.isVerificationCurrent, consumed: false };
           setReviewedPin(exact);
@@ -217,11 +217,12 @@ export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey,
         active={active} canMutate={canMutate && !dirty && !blocked && !handoffPending} busy={busy || working}
         isCurrent={isCurrent} read={read} mutate={mutate} onPendingChange={proposalChanged} onOpenModels={onOpenModels}
         onDenied={() => fail(new ApiError({ status: 403, code: 'PROJECT_SCOPE_FORBIDDEN', message: '导演审核来源当前不可读取。' }))}
-        onDocument={row => {
+        onDocument={(row, expectedSnapshot) => {
           if (!current() || dirty || blocked || handoffPending || lock.current) return;
           if (row.mode !== 'DIRECTOR' || row.status !== 'DRAFT' || !row.id || !Number.isSafeInteger(row.version) || row.version < 1)
             throw new Error('审核后的导演文档回执无效，请读取原建议状态。');
-          authorEpoch.current++; const receipt = { id: row.id, version: row.version }; reviewedRef.current = receipt; setReviewed(receipt); setReviewedPin(undefined);
+          const expected = expectedSnapshot ? reviewedDirectorSnapshot({ id: row.id, version: row.version }, row, expectedSnapshot.digest, expectedSnapshot) : undefined;
+          authorEpoch.current++; const receipt = { id: row.id, version: row.version, ...(expected ? { expectedSnapshot: expected } : {}) }; reviewedRef.current = receipt; setReviewed(receipt); setReviewedPin(undefined);
           setBase(row); setDraft(documentInput(row)); setSnapshot(undefined); setCandidate(undefined);
           setScene(undefined); setShot(undefined); setDiscardConfirmed(false); setError('');
           setNotice(`已读取人工审核后的原导演草稿“${row.title}” · v${row.version}。请核对原文档摘要，再明确添加并保存画布节点；原图绑定保持不变。`);

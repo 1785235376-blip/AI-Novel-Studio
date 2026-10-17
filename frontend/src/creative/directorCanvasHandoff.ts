@@ -9,7 +9,7 @@ export type ReviewedDirectorCanvasHandoff = {
   available: boolean;
   insert: (pin: PlanningSnapshot, scope: object) => boolean;
 };
-export type ReviewedDirectorReceipt = Pick<CreativeDocument, 'id' | 'version'>;
+export type ReviewedDirectorReceipt = Pick<CreativeDocument, 'id' | 'version'> & { expectedSnapshot?: PlanningSnapshot };
 
 export function reviewedDirectorSnapshot(receipt: ReviewedDirectorReceipt, document: CreativeDocument, digest: string, expected?: PlanningSnapshot): PlanningSnapshot {
   if (document.mode !== 'DIRECTOR' || document.status !== 'DRAFT'
