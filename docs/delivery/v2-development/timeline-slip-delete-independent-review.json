@@ -1,0 +1,196 @@
+{
+  "status": "SCOPED_REVIEW_PASS",
+  "reviewed_utc": "2026-10-17T05:08:09.700Z",
+  "scope": "Local NLE slip and explicit ripple-delete on original controller history and explicit Save",
+  "baseline": {
+    "head": "b40809baef392d3f818c37d2a5d768fb61432f4a",
+    "manifest": ".github/ci/coverage_manifest_v2.json.gz",
+    "manifest_sha256": "9fbc659bfb66a9fcca2c4912fd81cd1c857e027d27604a6b7d68c85d0e4be930",
+    "sources": 2603,
+    "rows": 16117,
+    "protected_sources": 1289
+  },
+  "canonical_changed_sources": [
+    "frontend/src/creative/StudioTimelineEditor.tsx",
+    "frontend/src/creative/useStudioTimelineEditor.ts",
+    "frontend/src/nle/ClipInspectorPanel.tsx"
+  ],
+  "receipts": [
+    {
+      "name": "ui-r3",
+      "path": "docs/delivery/v2-development/timeline-slip-delete-ui-r3.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "receipt_sha256": "92d17fdafeadfc7507fd8e1f4726cb6ccee76b62301029d5dffa26e062587f79",
+      "log": "docs/delivery/v2-development/timeline-slip-delete-ui-r3.log",
+      "log_sha256": "ba0a40d213a3046012a93799790a4ac8204b239428e9b03680f6f343eaabf2b4",
+      "log_hash_verified": true,
+      "source_count": 2544,
+      "sources_before_after_equal": true,
+      "sources_match_current": true,
+      "canonical_overlap": 2541,
+      "canonical_only": 62,
+      "additive_sources": [
+        "frontend/src/creative/StudioTimelineSlipDelete.additive.test.tsx",
+        "frontend/src/nle/ClipInspectorSlipDelete.additive.test.tsx",
+        "tests/test_v2_timeline_slip_delete_handoff.py"
+      ],
+      "protected_overlap": 1289,
+      "protected_changed": []
+    },
+    {
+      "name": "type-r3",
+      "path": "docs/delivery/v2-development/timeline-slip-delete-type-r3.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "receipt_sha256": "5aec2f0cc31eb1fe358ee5cd0ccbbb1834530a233d8e41e9c52a5624c3551aae",
+      "log": "docs/delivery/v2-development/timeline-slip-delete-type-r3.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_hash_verified": true,
+      "source_count": 2544,
+      "sources_before_after_equal": true,
+      "sources_match_current": true,
+      "canonical_overlap": 2541,
+      "canonical_only": 62,
+      "additive_sources": [
+        "frontend/src/creative/StudioTimelineSlipDelete.additive.test.tsx",
+        "frontend/src/nle/ClipInspectorSlipDelete.additive.test.tsx",
+        "tests/test_v2_timeline_slip_delete_handoff.py"
+      ],
+      "protected_overlap": 1289,
+      "protected_changed": []
+    },
+    {
+      "name": "build-r3",
+      "path": "docs/delivery/v2-development/timeline-slip-delete-build-r3.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "receipt_sha256": "28db5f7350d530e06f71b59c4a3e81eb0866f2f7ede15ea05748f2c7d4b8f588",
+      "log": "docs/delivery/v2-development/timeline-slip-delete-build-r3.log",
+      "log_sha256": "b893c5b3e931f473148272d72bad09175ca9a7d88c6511b7f43e68565b8bc101",
+      "log_hash_verified": true,
+      "source_count": 2544,
+      "sources_before_after_equal": true,
+      "sources_match_current": true,
+      "canonical_overlap": 2541,
+      "canonical_only": 62,
+      "additive_sources": [
+        "frontend/src/creative/StudioTimelineSlipDelete.additive.test.tsx",
+        "frontend/src/nle/ClipInspectorSlipDelete.additive.test.tsx",
+        "tests/test_v2_timeline_slip_delete_handoff.py"
+      ],
+      "protected_overlap": 1289,
+      "protected_changed": []
+    },
+    {
+      "name": "token-r3",
+      "path": "docs/delivery/v2-development/timeline-slip-delete-token-r3.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "receipt_sha256": "2b204735ced122529919f86277407242879d2321ae0a952fd22b4e38e1c4c8c8",
+      "log": "docs/delivery/v2-development/timeline-slip-delete-token-r3.log",
+      "log_sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "log_hash_verified": true,
+      "source_count": 2544,
+      "sources_before_after_equal": true,
+      "sources_match_current": true,
+      "canonical_overlap": 2541,
+      "canonical_only": 62,
+      "additive_sources": [
+        "frontend/src/creative/StudioTimelineSlipDelete.additive.test.tsx",
+        "frontend/src/nle/ClipInspectorSlipDelete.additive.test.tsx",
+        "tests/test_v2_timeline_slip_delete_handoff.py"
+      ],
+      "protected_overlap": 1289,
+      "protected_changed": []
+    },
+    {
+      "name": "independent-ui-r1",
+      "path": "docs/delivery/v2-development/timeline-slip-delete-independent-ui-r1.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "receipt_sha256": "62efcaa8c343b23e6065d53aa7cf1d4184ec46bcbefa9bca76d720ad9b9ccc81",
+      "log": "docs/delivery/v2-development/timeline-slip-delete-independent-ui-r1.log",
+      "log_sha256": "52f2aa2e71c0f8db7272dd4dde4ed44180efbf08e3e0ff5e281d17ac817dbc65",
+      "log_hash_verified": true,
+      "source_count": 2544,
+      "sources_before_after_equal": true,
+      "sources_match_current": true,
+      "canonical_overlap": 2541,
+      "canonical_only": 62,
+      "additive_sources": [
+        "frontend/src/creative/StudioTimelineSlipDelete.additive.test.tsx",
+        "frontend/src/nle/ClipInspectorSlipDelete.additive.test.tsx",
+        "tests/test_v2_timeline_slip_delete_handoff.py"
+      ],
+      "protected_overlap": 1289,
+      "protected_changed": []
+    },
+    {
+      "name": "independent-file-r1",
+      "path": "docs/delivery/v2-development/timeline-slip-delete-independent-file-r1.json",
+      "status": "FAIL",
+      "exit_code": 1,
+      "receipt_sha256": "4289a2b9e4eb5e8535f871c57b1e9279acfb0e48ad59a2cfa37544194d17cf79",
+      "log": "docs/delivery/v2-development/timeline-slip-delete-independent-file-r1.log",
+      "log_sha256": "d069aae50d595029d6c1658bd3009c3c1bc75bece3732ffbd7dd565b461970e2",
+      "log_hash_verified": true,
+      "source_count": 2544,
+      "sources_before_after_equal": true,
+      "sources_match_current": true,
+      "canonical_overlap": 2541,
+      "canonical_only": 62,
+      "additive_sources": [
+        "frontend/src/creative/StudioTimelineSlipDelete.additive.test.tsx",
+        "frontend/src/nle/ClipInspectorSlipDelete.additive.test.tsx",
+        "tests/test_v2_timeline_slip_delete_handoff.py"
+      ],
+      "protected_overlap": 1289,
+      "protected_changed": []
+    },
+    {
+      "name": "independent-file-r2",
+      "path": "docs/delivery/v2-development/timeline-slip-delete-independent-file-r2.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "receipt_sha256": "b394772635ff5d68c16991d7cc16a20831d7c8ad6d7c72451f341fdd542e39fd",
+      "log": "docs/delivery/v2-development/timeline-slip-delete-independent-file-r2.log",
+      "log_sha256": "971ef00c75250fbf7c2ee313eb810a6465f7c70eea289b6dde3ce689054a42f9",
+      "log_hash_verified": true,
+      "source_count": 2544,
+      "sources_before_after_equal": true,
+      "sources_match_current": true,
+      "canonical_overlap": 2541,
+      "canonical_only": 62,
+      "additive_sources": [
+        "frontend/src/creative/StudioTimelineSlipDelete.additive.test.tsx",
+        "frontend/src/nle/ClipInspectorSlipDelete.additive.test.tsx",
+        "tests/test_v2_timeline_slip_delete_handoff.py"
+      ],
+      "protected_overlap": 1289,
+      "protected_changed": []
+    }
+  ],
+  "independent_results": {
+    "ui_passed": 33,
+    "file_passed": 22,
+    "setup_failure_preserved": {
+      "receipt": "docs/delivery/v2-development/timeline-slip-delete-independent-file-r1.json",
+      "errors": 22,
+      "cause": "Reviewer omitted required owned --basetemp; all fixtures rejected /tmp before test bodies.",
+      "correction": "Fresh owned .runtime basetemp in r2, no source changes."
+    }
+  },
+  "review_findings": [
+    "No remaining scoped runtime defect identified.",
+    "Stale inspector consent closure found and corrected with synchronous authored-input generation fence; current callback and checkbox ABA regression pass.",
+    "Ruler marks no longer treated as verified source bounds; mapper optional sourceRange remains.",
+    "Controller preserves original slip/remove semantics, one local history entry, explicit Save and fail-closed guards."
+  ],
+  "limitations": [
+    "Save validates structure/source identity, not measured media duration.",
+    "Unapplied inspector inputs are not navigation-protected and UI documents this.",
+    "No browser/visual, PostgreSQL, provider, or real render execution.",
+    "Canonical inventory still unchanged; source commit and inventory gates pending."
+  ]
+}

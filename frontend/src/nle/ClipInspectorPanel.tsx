@@ -35,6 +35,9 @@ export type ClipInspectorPanelProps = {
 };
 
 export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
+  const inputGeneration = useRef(0);
+  const reviewedInputGeneration = inputGeneration.current;
+  const authored = (work: () => void) => { inputGeneration.current++; work(); };
   const [kind, setKind] = useState<string>('split');
   const [atMs, setAtMs] = useState(''), [inMs, setInMs] = useState(''), [outMs, setOutMs] = useState('');
   const [startMs, setStartMs] = useState(''), [offsetMs, setOffsetMs] = useState('');
@@ -51,9 +54,10 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
   const latestContext = useRef({ contextKey, editable: props.editable });
   latestContext.current = { contextKey, editable: props.editable };
   useEffect(() => {
-    // Do not carry authored trim points or ripple consent to a different target.
+    // Do not carry authored trim/slip points or ripple consent to a different target.
     // Ordinary rerenders keep the semantic key and preserve in-progress input.
-    setInMs(''); setOutMs(''); setRipple(false); setOutcome({ kind: 'IDLE' });
+    inputGeneration.current++;
+    setInMs(''); setOutMs(''); setOffsetMs(''); setRipple(false); setOutcome({ kind: 'IDLE' });
   }, [selectionKey]);
   if (!parsed.ok) {
     return <section className="nle-clip" aria-label="片段属性"><StatusMessage tone="error">{parsed.message}</StatusMessage>
@@ -64,6 +68,7 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
   const sameKindTracks = first ? timeline.tracks.filter(track => track.kind === first.trackKind) : [];
   const reset = () => {
     if (!first) return;
+    inputGeneration.current++;
     setAtMs(String(Math.min(timeline.duration_ms - 1, first.startMs + Math.floor(first.durationMs / 2))));
     setInMs(String(first.clip.in_ms)); setOutMs(String(first.clip.out_ms));
     setStartMs(String(Math.min(timeline.duration_ms - 1, first.endMs)));
@@ -72,7 +77,7 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
     setAssetDigest(first.clip.source_snapshot.digest); setRipple(false);
   };
   const generate = () => {
-    if (!first || !latestContext.current.editable || latestContext.current.contextKey !== contextKey) return;
+    if (inputGeneration.current !== reviewedInputGeneration || !first || !latestContext.current.editable || latestContext.current.contextKey !== contextKey) return;
     const context: Record<string, unknown> = {
       timeline, clipId: first.clip.id, atMs: numeric(atMs), inMs: numeric(inMs), outMs: numeric(outMs),
       startMs: numeric(startMs), offsetMs: numeric(offsetMs), ripple,
@@ -84,9 +89,7 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
     if (kind === 'source-replace') {
       context.sourceSnapshot = { id: assetId, kind: 'ASSET', asset_kind: first.sourceKind, version: numeric(assetVersion), digest: assetDigest };
     }
-    if (kind === 'slip' && props.marks.inMs !== null && props.marks.outMs !== null && props.marks.outMs > props.marks.inMs) {
-      context.sourceRange = { inMs: props.marks.inMs, outMs: props.marks.outMs };
-    }
+    // Ruler marks describe timeline time, never verified source-media bounds.
     const plan = editCommand(kind, context);
     if (!plan.ok) { setOutcome({ kind: 'REFUSED', refusal: plan }); return; }
     props.onEdit({ kind: plan.op, payload: plan.payload });
@@ -112,24 +115,26 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
         {snapClipStart(timeline, first.clip, first.startMs + 1, snaps).snapped ? ' · 片段起点会被吸附到真实边界' : ' · 片段起点无需吸附'}
       </p>
       <div className="nle-clip__form">
-        <label>请求的动作<select aria-label="请求的动作" value={kind} onChange={event => setKind(event.currentTarget.value)}>
+        <label>请求的动作<select aria-label="请求的动作" value={kind} onChange={event => authored(() => setKind(event.currentTarget.value))}>
           {ACTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
         </select></label>
-        <label>拆分位置（毫秒）<input type="number" step={1} value={atMs} aria-label="拆分位置（毫秒）" onChange={event => setAtMs(event.currentTarget.value)} /></label>
-        <label>裁剪入点（毫秒）<input type="number" step={1} value={inMs} aria-label="裁剪入点（毫秒）" onChange={event => setInMs(event.currentTarget.value)} /></label>
-        <label>裁剪出点（毫秒）<input type="number" step={1} value={outMs} aria-label="裁剪出点（毫秒）" onChange={event => setOutMs(event.currentTarget.value)} /></label>
-        <label>摆放或复制位置（毫秒）<input type="number" step={1} value={startMs} aria-label="摆放或复制位置（毫秒）" onChange={event => setStartMs(event.currentTarget.value)} /></label>
-        <label>滑移增量（毫秒，可为负）<input type="number" step={1} value={offsetMs} aria-label="滑移增量（毫秒）" onChange={event => setOffsetMs(event.currentTarget.value)} /></label>
-        <label>目标轨道<select aria-label="目标轨道" value={targetTrackId} onChange={event => setTargetTrackId(event.currentTarget.value)}>
+        <label>拆分位置（毫秒）<input type="number" step={1} value={atMs} aria-label="拆分位置（毫秒）" onChange={event => authored(() => setAtMs(event.currentTarget.value))} /></label>
+        <label>裁剪入点（毫秒）<input type="number" step={1} value={inMs} aria-label="裁剪入点（毫秒）" onChange={event => authored(() => setInMs(event.currentTarget.value))} /></label>
+        <label>裁剪出点（毫秒）<input type="number" step={1} value={outMs} aria-label="裁剪出点（毫秒）" onChange={event => authored(() => setOutMs(event.currentTarget.value))} /></label>
+        <label>摆放或复制位置（毫秒）<input type="number" step={1} value={startMs} aria-label="摆放或复制位置（毫秒）" onChange={event => authored(() => setStartMs(event.currentTarget.value))} /></label>
+        <label>滑移增量（毫秒，可为负）<input type="number" step={1} value={offsetMs} aria-label="滑移增量（毫秒）" onChange={event => authored(() => setOffsetMs(event.currentTarget.value))} /></label>
+        <label>目标轨道<select aria-label="目标轨道" value={targetTrackId} onChange={event => authored(() => setTargetTrackId(event.currentTarget.value))}>
           <option value={first.trackId}>原轨道</option>
           {sameKindTracks.filter(track => track.id !== first.trackId).map(track => <option key={track.id} value={track.id}>{track.kind === 'VIDEO' ? '视频' : '音频'} {track.order + 1}</option>)}
         </select></label>
-        <label className="nle-clip__check"><input type="checkbox" checked={ripple} aria-label="波纹闭合间隙" onChange={event => setRipple(event.currentTarget.checked)} />波纹动作时明确闭合间隙</label>
+        <label className="nle-clip__check"><input type="checkbox" checked={ripple} aria-label="波纹闭合间隙" onChange={event => authored(() => setRipple(event.currentTarget.checked))} />波纹动作时明确闭合间隙</label>
         <p>裁剪时勾选波纹，只按时长变化移动本轨道中从原片段终点开始的后续片段；其他轨道与字幕保持原位。</p>
+        <p>滑移只改变素材入出点；波纹删除只移动本轨道从原片段终点起的后续片段，其他轨道与字幕保持原位。</p>
+        <p>此面板中尚未生成编辑指令的输入不会成为时间线草稿，离开页面不会保护这些未应用输入。</p>
         <p>保存不会证明素材实际时长；实际素材入出点范围仍由原渲染服务读取媒体后校验。</p>
-        <label>替换素材标识<input type="text" value={assetId} aria-label="替换素材标识" onChange={event => setAssetId(event.currentTarget.value)} /></label>
-        <label>替换素材版本<input type="number" step={1} value={assetVersion} aria-label="替换素材版本" onChange={event => setAssetVersion(event.currentTarget.value)} /></label>
-        <label>替换素材摘要<input type="text" value={assetDigest} aria-label="替换素材摘要" onChange={event => setAssetDigest(event.currentTarget.value)} /></label>
+        <label>替换素材标识<input type="text" value={assetId} aria-label="替换素材标识" onChange={event => authored(() => setAssetId(event.currentTarget.value))} /></label>
+        <label>替换素材版本<input type="number" step={1} value={assetVersion} aria-label="替换素材版本" onChange={event => authored(() => setAssetVersion(event.currentTarget.value))} /></label>
+        <label>替换素材摘要<input type="text" value={assetDigest} aria-label="替换素材摘要" onChange={event => authored(() => setAssetDigest(event.currentTarget.value))} /></label>
       </div>
       <div className="nle-clip__actions">
         <Button disabled={!props.editable} onClick={reset}>以所选片段填入默认值</Button>

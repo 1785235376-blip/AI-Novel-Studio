@@ -255,7 +255,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       onEdit={command => {
         // Field names come from the mapper's REAL payloads (nle/timelineOps.ts):
         // clip.split {at_ms}, clip.duplicate/clip.move {start_ms, track_id}.
-        const payload = command.payload as { op?: string; clip_id?: string; at_ms?: number; start_ms?: number; track_id?: string; in_ms?: number; out_ms?: number; ripple?: boolean } | undefined;
+        const payload = command.payload as { op?: string; clip_id?: string; at_ms?: number; start_ms?: number; track_id?: string; in_ms?: number; out_ms?: number; offset_ms?: number; ripple?: boolean } | undefined;
         const clipId = payload?.clip_id;
         const position = command.kind === 'clip.split' ? payload?.at_ms : payload?.start_ms;
         const track = clipId ? draft.timeline.tracks.find(row => row.clips.some(clip => clip.id === clipId)) : undefined;
@@ -272,6 +272,22 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
           }
           const applied = c.trimClip(track.id, clipId, payload.in_ms, payload.out_ms, payload.ripple);
           setNleNotice(applied ? '裁剪已应用到本地草稿；波纹仅影响本轨道，保存前不会写入服务端。' : '裁剪未应用；请核对输入、轨道约束与当前编辑状态。');
+          return;
+        }
+        if (command.kind === 'clip.slip' || command.kind === 'clip.remove') {
+          const live = latestReview.current;
+          if (live.props.client !== props.client || live.c.getHandoffRevision() !== reviewGeneration
+            || JSON.stringify(live.nleClips) !== JSON.stringify(nleClips) || !props.isCurrent()) return;
+          const firstSelected = draft.timeline.tracks.flatMap(row => row.clips).find(clip => nleClips.includes(clip.id));
+          const keys = command.kind === 'clip.slip' ? ['op', 'clip_id', 'offset_ms'] : ['op', 'clip_id', 'ripple'];
+          if (!clipId || !track || firstSelected?.id !== clipId || payload?.op !== command.kind
+            || Object.keys(payload).length !== keys.length || Object.keys(payload).some(key => !keys.includes(key))
+            || (command.kind === 'clip.slip' ? !Number.isSafeInteger(payload.offset_ms) : payload.ripple !== true)) {
+            setNleNotice('已拒绝该编辑：请核对所选片段、整数滑移增量或明确的波纹删除确认。'); return;
+          }
+          const applied = command.kind === 'clip.slip' ? c.slipClip(track.id, clipId, payload.offset_ms!)
+            : c.rippleRemoveClip(track.id, clipId, payload.ripple!);
+          setNleNotice(applied ? '片段编辑已应用到本地草稿；保存前不会写入服务端。' : '片段编辑未应用；请核对输入、轨道约束与当前编辑状态。');
           return;
         }
         if (!clipId || !track || typeof position !== 'number') {

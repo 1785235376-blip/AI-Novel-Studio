@@ -1,0 +1,604 @@
+EEEEEEEEEEEEEEEEEEEEEE                                                   [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_signed_source_slip_preserves_rational_duration_and_explicit_save[500-file] _
+
+request = <SubRequest 'rig' for <Function test_signed_source_slip_preserves_rational_duration_and_explicit_save[500-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_signed_source_slip_preser0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8118637830>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_signed_source_slip_preser0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_signed_source_slip_preser0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_signed_source_slip_preser0').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_signed_source_slip_preserves_rational_duration_and_explicit_save[-600-file] _
+
+request = <SubRequest 'rig' for <Function test_signed_source_slip_preserves_rational_duration_and_explicit_save[-600-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_signed_source_slip_preser1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f811511f5c0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_signed_source_slip_preser1').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_signed_source_slip_preser1') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_signed_source_slip_preser1').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_signed_source_slip_preserves_rational_duration_and_explicit_save[1-file] _
+
+request = <SubRequest 'rig' for <Function test_signed_source_slip_preserves_rational_duration_and_explicit_save[1-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_signed_source_slip_preser2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114d21340>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_signed_source_slip_preser2').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_signed_source_slip_preser2') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_signed_source_slip_preser2').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_delete_exact_same_track_rendered_end_boundary_save_reopen[True-file] _
+
+request = <SubRequest 'rig' for <Function test_delete_exact_same_track_rendered_end_boundary_save_reopen[True-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_delete_exact_same_track_r0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114dab9b0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_delete_exact_same_track_r0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_delete_exact_same_track_r0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_delete_exact_same_track_r0').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_delete_exact_same_track_rendered_end_boundary_save_reopen[False-file] _
+
+request = <SubRequest 'rig' for <Function test_delete_exact_same_track_rendered_end_boundary_save_reopen[False-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_delete_exact_same_track_r1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114da9100>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_delete_exact_same_track_r1').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_delete_exact_same_track_r1') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_delete_exact_same_track_r1').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_zero_slip_returns_detached_equal_candidate_without_implicit_save[file] _
+
+request = <SubRequest 'rig' for <Function test_zero_slip_returns_detached_equal_candidate_without_implicit_save[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_zero_slip_returns_detache0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114da9a60>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_zero_slip_returns_detache0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_zero_slip_returns_detache0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_zero_slip_returns_detache0').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[negative-in-STUDIO_TIMELINE_INTEGER_INVALID-file] _
+
+request = <SubRequest 'rig' for <Function test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[negative-in-STUDIO_TIMELINE_INTEGER_INVALID-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114daa930>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original0').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[overflow-STUDIO_TIMELINE_INTEGER_INVALID-file] _
+
+request = <SubRequest 'rig' for <Function test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[overflow-STUDIO_TIMELINE_INTEGER_INVALID-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114dabc80>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original1').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original1') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original1').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[fractional-STUDIO_TIMELINE_EDIT_INTEGER_INVALID-file] _
+
+request = <SubRequest 'rig' for <Function test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[fractional-STUDIO_TIMELINE_EDIT_INTEGER_INVALID-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114c6ac60>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original2').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original2') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original2').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[boolean-offset-STUDIO_TIMELINE_EDIT_INTEGER_INVALID-file] _
+
+request = <SubRequest 'rig' for <Function test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[boolean-offset-STUDIO_TIMELINE_EDIT_INTEGER_INVALID-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114c6b6b0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original3').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original3') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original3').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[image-STUDIO_TIMELINE_EDIT_STILL_SLIP_INVALID-file] _
+
+request = <SubRequest 'rig' for <Function test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[image-STUDIO_TIMELINE_EDIT_STILL_SLIP_INVALID-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114c68e90>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original4').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original4') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original4').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[last-clip-STUDIO_TIMELINE_CLIP_LIMIT-file] _
+
+request = <SubRequest 'rig' for <Function test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[last-clip-STUDIO_TIMELINE_CLIP_LIMIT-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114c69790>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original5').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original5') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original5').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[boolean-ripple-STUDIO_TIMELINE_EDIT_BOOLEAN_INVALID-file] _
+
+request = <SubRequest 'rig' for <Function test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[boolean-ripple-STUDIO_TIMELINE_EDIT_BOOLEAN_INVALID-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114c6a360>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original6').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original6') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original6').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[locked-slip-STUDIO_TIMELINE_TRACK_LOCKED-file] _
+
+request = <SubRequest 'rig' for <Function test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[locked-slip-STUDIO_TIMELINE_TRACK_LOCKED-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original7')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114c6b410>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original7').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original7') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original7').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[locked-delete-STUDIO_TIMELINE_TRACK_LOCKED-file] _
+
+request = <SubRequest 'rig' for <Function test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[locked-delete-STUDIO_TIMELINE_TRACK_LOCKED-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original8')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114c6a270>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original8').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original8') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original8').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[transition-STUDIO_TIMELINE_TRANSITION_WINDOW_INVALID-file] _
+
+request = <SubRequest 'rig' for <Function test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[transition-STUDIO_TIMELINE_TRANSITION_WINDOW_INVALID-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original9')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114c6b800>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original9').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original9') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original9').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[overlap-STUDIO_TIMELINE_SAME_VIDEO_TRACK_OVERLAP-file] _
+
+request = <SubRequest 'rig' for <Function test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[overlap-STUDIO_TIMELINE_SAME_VIDEO_TRACK_OVERLAP-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original10')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114c698b0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original10').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original10') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_failed_batch_and_original10').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_whole_document_save_cannot_bypass_original_track_lock[slip-file] _
+
+request = <SubRequest 'rig' for <Function test_whole_document_save_cannot_bypass_original_track_lock[slip-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_whole_document_save_canno0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114c68f80>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_whole_document_save_canno0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_whole_document_save_canno0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_whole_document_save_canno0').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_whole_document_save_cannot_bypass_original_track_lock[delete-file] _
+
+request = <SubRequest 'rig' for <Function test_whole_document_save_cannot_bypass_original_track_lock[delete-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_whole_document_save_canno1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114c6ad20>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_whole_document_save_canno1').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_whole_document_save_canno1') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_whole_document_save_canno1').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_save_rejects_changed_source_pin_without_rebinding_or_revision[slip-file] _
+
+request = <SubRequest 'rig' for <Function test_save_rejects_changed_source_pin_without_rebinding_or_revision[slip-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_save_rejects_changed_sour0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8118636a50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_save_rejects_changed_sour0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_save_rejects_changed_sour0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_save_rejects_changed_sour0').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_save_rejects_changed_source_pin_without_rebinding_or_revision[delete-file] _
+
+request = <SubRequest 'rig' for <Function test_save_rejects_changed_source_pin_without_rebinding_or_revision[delete-file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_save_rejects_changed_sour1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114da9100>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_save_rejects_changed_sour1').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_save_rejects_changed_sour1') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_save_rejects_changed_sour1').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_save_checks_pins_without_claiming_measured_source_duration_validation[file] _
+
+request = <SubRequest 'rig' for <Function test_save_checks_pins_without_claiming_measured_source_duration_validation[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-19/test_save_checks_pins_without_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8114da9c40>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-timeline-slip-delete') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-19/test_save_checks_pins_without_0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-19/test_save_checks_pins_without_0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-19/test_save_checks_pins_without_0').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_signed_source_slip_preserves_rational_duration_and_explicit_save[500-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_signed_source_slip_preserves_rational_duration_and_explicit_save[-600-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_signed_source_slip_preserves_rational_duration_and_explicit_save[1-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_delete_exact_same_track_rendered_end_boundary_save_reopen[True-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_delete_exact_same_track_rendered_end_boundary_save_reopen[False-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_zero_slip_returns_detached_equal_candidate_without_implicit_save[file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[negative-in-STUDIO_TIMELINE_INTEGER_INVALID-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[overflow-STUDIO_TIMELINE_INTEGER_INVALID-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[fractional-STUDIO_TIMELINE_EDIT_INTEGER_INVALID-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[boolean-offset-STUDIO_TIMELINE_EDIT_INTEGER_INVALID-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[image-STUDIO_TIMELINE_EDIT_STILL_SLIP_INVALID-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[last-clip-STUDIO_TIMELINE_CLIP_LIMIT-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[boolean-ripple-STUDIO_TIMELINE_EDIT_BOOLEAN_INVALID-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[locked-slip-STUDIO_TIMELINE_TRACK_LOCKED-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[locked-delete-STUDIO_TIMELINE_TRACK_LOCKED-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[transition-STUDIO_TIMELINE_TRANSITION_WINDOW_INVALID-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_failed_batch_and_original_edit_leave_file_history_and_pins_unchanged[overlap-STUDIO_TIMELINE_SAME_VIDEO_TRACK_OVERLAP-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_whole_document_save_cannot_bypass_original_track_lock[slip-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_whole_document_save_cannot_bypass_original_track_lock[delete-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_save_rejects_changed_source_pin_without_rebinding_or_revision[slip-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_save_rejects_changed_source_pin_without_rebinding_or_revision[delete-file]
+ERROR tests/test_v2_timeline_slip_delete_handoff.py::test_save_checks_pins_without_claiming_measured_source_duration_validation[file]
+1 warning, 22 errors in 6.11s

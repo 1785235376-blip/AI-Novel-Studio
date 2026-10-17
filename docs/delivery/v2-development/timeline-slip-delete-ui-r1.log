@@ -1,0 +1,23 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-timeline-slip-delete/frontend
+
+ ✓ src/nle/timelineOps.test.ts (52 tests) 71ms
+ ✓ src/nle/nlePanels.test.tsx (18 tests) 399ms
+ ✓ src/creative/TimelineSourceEditing.phase6.test.tsx (21 tests) 734ms
+ ✓ src/creative/StudioTimelineSlipDelete.additive.test.tsx (29 tests) 3368ms
+   ✓ mounted original editor slip/delete Save undo and reopen > refuses extra fields, wrong targets and retained bridge callbacks after a draft generation change 709ms
+   ✓ mounted original editor slip/delete Save undo and reopen > routes slip without timeline position and persists only with original CAS 602ms
+   ✓ mounted original editor slip/delete Save undo and reopen > routes ripple without timeline position and persists only with original CAS 563ms
+ ✓ src/creative/StudioTimelineTrim.test.tsx (29 tests) 2496ms
+   ✓ mounted original inspector trim > routes trim without start/at position, supports one-step undo/redo and explicit Save 879ms
+ ✓ src/ui/AppShell.test.tsx (19 tests) 218ms
+ ✓ src/creative/StudioTimelineAssetHandoff.test.tsx (20 tests) 811ms
+ ✓ src/nle/ClipInspectorSlipDelete.additive.test.tsx (4 tests) 192ms
+ ✓ src/creative/ProductionTimeline.test.tsx (4 tests) 212ms
+ ✓ src/ui/primitives.test.tsx (4 tests) 71ms
+
+ Test Files  10 passed (10)
+      Tests  200 passed (200)
+   Start at  14:00:58
+   Duration  15.19s (transform 744ms, setup 56ms, collect 1.91s, tests 8.57s, environment 3.00s, prepare 479ms)
+

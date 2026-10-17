@@ -269,6 +269,38 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
       setError(reason instanceof Error ? reason.message : '裁剪无效，请核对边界、淡入淡出与轨道重叠。'); return false;
     }
   }
+  function slipOrRippleRemove(trackId: string, clipId: string, action: 'slip' | 'ripple-remove', offsetMs: number,
+    ripple: boolean, revision: string, client: StudioProductionClient): boolean {
+    if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN'
+      || client !== latest.current.client || revision !== `${epoch.current}:${handoffGeneration.current}`) return false;
+    try {
+      const input = checkedTimelineDraft(cloneTimeline(draftRef.current));
+      const track = input.timeline.tracks.find(row => row.id === trackId), clip = track?.clips.find(row => row.id === clipId);
+      if (!track || !clip) throw new Error('找不到原片段，请重新选择。');
+      if (track.locked) throw new Error('该轨道已锁定，请先通过原服务明确解锁。');
+      if (action === 'slip') {
+        if (clip.source_snapshot.asset_kind === 'image') throw new Error('静态画面没有可滑移的素材时间。');
+        if (!Number.isSafeInteger(offsetMs)) throw new Error('滑移需要整数毫秒增量。');
+        if (offsetMs === 0) return false;
+        clip.in_ms += offsetMs; clip.out_ms += offsetMs;
+      } else {
+        if (ripple !== true) throw new Error('波纹删除需要明确确认闭合间隙。');
+        if (track.clips.length <= 1) throw new Error('删除最后一个片段会留下空轨道；请先加入其他片段。');
+        const duration = timelineClipDuration(clip), boundary = clip.start_ms + duration;
+        track.clips = track.clips.filter(row => row.id !== clip.id);
+        track.clips.forEach(row => { if (row.start_ms >= boundary) row.start_ms -= duration; });
+      }
+      // Validate the complete result before publishing one history entry. Never
+      // repair dangling transitions or overlaps by silently changing neighbors.
+      const checked = checkedTimelineDraft(input);
+      if (!change(value => { value.title = checked.title; value.timeline = checked.timeline; })) return false;
+      setNotice(action === 'slip' ? '滑移已更新本地草稿；摆放与时长保持不变，需要明确保存。'
+        : '波纹删除已更新本地草稿；仅移动本轨道原片段终点起的后续片段，需要明确保存。');
+      return true;
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : '片段编辑无效，请核对素材范围、转场与轨道重叠。'); return false;
+    }
+  }
   function createNew() {
     const unsaved = timelineInputKey(draftRef.current) !== baseline.current;
     if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN' || unsaved && consent.current.discard !== timelineInputKey(draftRef.current)) return;
@@ -439,6 +471,8 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     splitClip: (trackId: string, clipId: string, position: number) => editClip(trackId, clipId, 'split', position),
     duplicateClip: (trackId: string, clipId: string, position: number) => editClip(trackId, clipId, 'duplicate', position),
     moveClip: (trackId: string, clipId: string, targetId: string, position: number) => editClip(trackId, clipId, 'move', position, targetId),
+    slipClip: (trackId: string, clipId: string, offsetMs: number) => slipOrRippleRemove(trackId, clipId, 'slip', offsetMs, false, editRevision, props.client),
+    rippleRemoveClip: (trackId: string, clipId: string, ripple: boolean) => slipOrRippleRemove(trackId, clipId, 'ripple-remove', 0, ripple, editRevision, props.client),
     trimClip: (trackId: string, clipId: string, inMs: number, outMs: number, ripple: boolean) => trimClip(trackId, clipId, inMs, outMs, ripple, editRevision, props.client),
     exportAvailable, exportProfile: owns ? exportProfile : { preset: 'REVIEW_MP4' } as TimelineExportProfile, exportPreview: owns ? exportPreview : undefined,
     exportConfirmed: owns && !!exportPreview && exportConfirmed === exportPreview.preview_digest, canPreviewExport, canExport,
