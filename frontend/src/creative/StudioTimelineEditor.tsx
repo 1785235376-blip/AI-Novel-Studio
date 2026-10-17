@@ -1,3 +1,4 @@
+import { selectionDuplicateOperations, sameSelectionDuplicateDescriptors } from '../nle/timelineSelectionDuplicate';
 import { selectionMoveOperations } from '../nle/timelineSelectionMove';
 import { StudioTimelineAssetPicker } from './StudioTimelineAssetPicker';
 import { appendTimelineAsset, StudioTimelineAssetHandoff } from './StudioTimelineAssetHandoff';
@@ -270,6 +271,30 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       exportReceipt={c.exportPreview} limits={TIMELINE_LIMITS}
       waveform={{ ...waveform, onRequest: () => void waveform.request() }}
       onEdit={command => {
+        if (command.kind === 'clip.duplicate' && Array.isArray(command.payload)) {
+          const live = latestReview.current;
+          if (live.props.client !== props.client || live.c.getHandoffRevision() !== reviewGeneration
+            || selection.current.generation !== selectionGeneration || !live.props.isCurrent()
+            || JSON.stringify(selection.current.ids) !== JSON.stringify(nleClips)) return;
+          try {
+            const operations = command.payload;
+            const first = operations[0];
+            const original = draft.timeline.tracks.flatMap(row => row.clips).find(clip => clip.id === first?.clip_id);
+            if (!original || typeof first.start_ms !== 'number') throw new Error('缺少原片段或整体复制位置。');
+            const offset = first.start_ms - original.start_ms;
+            const copies = operations.slice(0, nleClips.length);
+            if (copies.some(operation => !operation || typeof operation !== 'object' || operation.op !== 'clip.duplicate')) {
+              throw new Error('整体复制必须包含当前选择的全部复制指令。');
+            }
+            const newIds = Object.freeze(Object.fromEntries(copies.map(operation => [operation.clip_id, operation.new_clip_id])));
+            const expected = selectionDuplicateOperations(draft.timeline, nleClips, offset, newIds);
+            if (!sameSelectionDuplicateDescriptors(operations, expected)) throw new Error('整体复制必须完整对应当前选择、原轨道、同一增量与内部转场。');
+            const applied = c.duplicateSelection(nleClips, offset, newIds);
+            setNleNotice(applied ? '整体复制已应用到本地草稿；一次撤销可恢复，保存前不会写入服务端。'
+              : '整体复制未应用；请核对增量、原轨道约束与当前编辑状态。');
+          } catch (reason) { setNleNotice(reason instanceof Error ? reason.message : '已拒绝无效的整体复制批次。'); }
+          return;
+        }
         // An array is an explicit batch of existing clip.move descriptors, never a new backend operation.
         if (command.kind === 'clip.move' && Array.isArray(command.payload)) {
           const live = latestReview.current;

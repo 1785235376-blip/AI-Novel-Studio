@@ -1,0 +1,282 @@
+{
+  "status": "INDEXED_AFTER_SCOPED_INDEPENDENT_REVIEW",
+  "base_head": "feade20ce2f6671e5d5a16c0781896f3c5696927",
+  "final_source_count": 2583,
+  "final_sources_match_current": true,
+  "all_primary_independent_source_maps_equal": true,
+  "receipt_validation": {
+    "docs/delivery/v2-development/timeline-duplicate-build-r1.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2583,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-origin-r1.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2583,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-r1.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2583,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-regression-r1.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2583,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-file-r1.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2583,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-origin-r1.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2583,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-ui-r1.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2583,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/timeline-duplicate-token-r1.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2583,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/timeline-duplicate-type-r1.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2583,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/timeline-duplicate-ui-r1.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2583,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    }
+  },
+  "notes": [
+    "Independent counts repeat primary coverage.",
+    "No failed runs or post-verification source corrections in this slice.",
+    "Legacy single-copy divergence is unchanged.",
+    "40-operation/128000-byte guard triggers are unreachable for valid new UI inputs under the 30-total-clip bound; direct backend limits are tested separately.",
+    "Full collection inventory refresh is separate and not claimed by this index."
+  ],
+  "files": {
+    "docs/TIMELINE_SELECTED_DUPLICATE_HANDOFF.md": {
+      "sha256": "5c1a3d1f7b38c74918889c10fdcadc79a24e03f2f8c177a4873e5a514a8cc8d3",
+      "bytes": 8167
+    },
+    "docs/delivery/v2-development/timeline-duplicate-build-r1.json": {
+      "sha256": "850200a3388223ecc8ee7a2184fdf5f12e4607d9968a53856f9bfeae9e5eef90",
+      "bytes": 611735
+    },
+    "docs/delivery/v2-development/timeline-duplicate-build-r1.log": {
+      "sha256": "d4e1df2b2e5ada3bee42ecc985c4788fdb47c969a39857ca42851e7cf82d6a68",
+      "bytes": 1679
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-origin/file-launcher.log": {
+      "sha256": "8b3fd0bb3864b113ba7d3ed77adcbab102e9bdb101905234951336b2a2e56422",
+      "bytes": 810
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-origin/file-regression-launcher.log": {
+      "sha256": "8dd4c576a482ca305f1c42b89150d5ef5770631ab3a4a492ec41975e46e36357",
+      "bytes": 835
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-origin/normal-startup.json": {
+      "sha256": "99657903d1c926da7bc326e02fd7f74cc71c98d5a03898249649c54bc0eb0a40",
+      "bytes": 8159
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-origin/normal-startup.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-origin/origin-probe.py": {
+      "sha256": "0ce757434fad49a60ac0766c9633cafba96a1c66a9dc991cf5a31a0484359cab",
+      "bytes": 6483
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-origin/proof-launcher.log": {
+      "sha256": "a2370e95bdc277c625065c8e209b4faf09524e484d294064bb6a6940739bb0c8",
+      "bytes": 8324
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-origin/run-file-regression.sh": {
+      "sha256": "52edc78a8f194bcc123715c066fe18fcf984d6da08999cf3dae5b623f0aa7067",
+      "bytes": 994
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-origin/run-file.sh": {
+      "sha256": "b230bb92871d192a2583183cbc932016b7fa1dff1f802632b305152e4972cc55",
+      "bytes": 847
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-origin/run-proof.sh": {
+      "sha256": "b2b238c211f6c589309d137f6bcb23a02b2ec396a2d7cb6ed737346cc81b15e9",
+      "bytes": 1213
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-origin-r1.json": {
+      "sha256": "8719f4602b35c9fe20d94e82d40f86916f737d7b001bb728e3beb58ab1b28c9f",
+      "bytes": 612038
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-origin-r1.log": {
+      "sha256": "bd8d466df13bd6577f221cb6d85017fc5d9103747c6741f329434780b83772db",
+      "bytes": 8222
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-r1.json": {
+      "sha256": "a8b6500dacf435fd8fed71d39a2a61f38a45e7b5efb416932c6599265859d4f8",
+      "bytes": 611962
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-r1.log": {
+      "sha256": "594d9bd04c9b29f21d35921e781111fd50375a32293552238045f826c46fcdb6",
+      "bytes": 715
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-regression-r1.json": {
+      "sha256": "85bdf3435ffede50ac898f3b27063cf9c12c1268e896b9f52f12a75dda052c16",
+      "bytes": 612218
+    },
+    "docs/delivery/v2-development/timeline-duplicate-file-regression-r1.log": {
+      "sha256": "bd9102774145393f9bd7a4e178a138ace9256b2d4a80ca12092472e8e1f1ee8e",
+      "bytes": 729
+    },
+    "docs/delivery/v2-development/timeline-duplicate-frontend/launcher-build-r1.log": {
+      "sha256": "b8a665aef1083b7642d4dd0a54cc9734514162572166dccde163d696e391da68",
+      "bytes": 1775
+    },
+    "docs/delivery/v2-development/timeline-duplicate-frontend/launcher-token-r1.log": {
+      "sha256": "f9f929cf77a02f6c24f1e0e667e53bae7a153d279f55974d2adf62431891ad54",
+      "bytes": 127
+    },
+    "docs/delivery/v2-development/timeline-duplicate-frontend/launcher-type-r1.log": {
+      "sha256": "bf816514960ed615ad9314d61f6bfe06af0fd7243dcd01725579dc3007407824",
+      "bytes": 95
+    },
+    "docs/delivery/v2-development/timeline-duplicate-frontend/launcher-ui-r1.log": {
+      "sha256": "2d624f29a7851322ff59052f8cf62dd8d1d4a3f503230de48f38ff87a2d20990",
+      "bytes": 2994
+    },
+    "docs/delivery/v2-development/timeline-duplicate-frontend/run-frontend-r1.sh": {
+      "sha256": "e2bbc9ee3aa031a631be354d11d9ff04aae68fb06c4bb1fba57dab442d4e2d2e",
+      "bytes": 2134
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-file-r1.json": {
+      "sha256": "a2e3d2b7a9f2846580085a2014d1c9b911904f96324c69fed4b5f3c53fed9f4d",
+      "bytes": 612133
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-file-r1.log": {
+      "sha256": "998d62d08fd75d119c0132684692804800604873b147738b227bb64f5c6712e4",
+      "bytes": 715
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-origin/audit.py": {
+      "sha256": "2cc3caabe8279516e20c916c2cf4b4555e4c2b76dba5f9b0abf1888dbb38036f",
+      "bytes": 3736
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-origin/file-launcher.log": {
+      "sha256": "f29041f03e739cc85adf6453b8af1f7a807e7f2c099d576131d40817e0a0ad35",
+      "bytes": 822
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-origin/normal-startup.json": {
+      "sha256": "d652f1e5fd837c146d2fad909ed6cfca284c3a979f79024b28f39dd1e69deb94",
+      "bytes": 8159
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-origin/normal-startup.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-origin/origin-probe.py": {
+      "sha256": "0ce757434fad49a60ac0766c9633cafba96a1c66a9dc991cf5a31a0484359cab",
+      "bytes": 6483
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-origin/proof-launcher.log": {
+      "sha256": "e0fc8e20652d0d06e946e98806be566b6e3893e7894b892f53eb125826a5e89b",
+      "bytes": 8331
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-origin/run-file.sh": {
+      "sha256": "2aa34e7ff6a6d99bf75a7392826a75a61cff4aba8cbd3a482970d65c1ddb1ece",
+      "bytes": 915
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-origin/run-proof.sh": {
+      "sha256": "c177e9e9e67d6e95987f79f7bf21e9d3e8a86de18672a85a57af60237f157f5c",
+      "bytes": 1241
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-origin/run-ui.sh": {
+      "sha256": "beb5e3097f479cf19557c781a4d4e793e390736c563bb09bc3bbd9353a8e034a",
+      "bytes": 1150
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-origin/ui-launcher.log": {
+      "sha256": "a9096ab58a7f703868326b35ae5399beb23572f0140a8a12a65264bbf7ca96c7",
+      "bytes": 1641
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-origin-r1.json": {
+      "sha256": "d9acfbcbd5907afbfe74f2f2b278b806a64779a4ab53a117059da8714292105b",
+      "bytes": 612108
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-origin-r1.log": {
+      "sha256": "1244206f95ccaaeb6d48e98d2022fbb9a0f54d690f14eef7de3100427e8a4963",
+      "bytes": 8222
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-review.json": {
+      "sha256": "9a97677e107f1dd081eb495417eb28b4022ae87b035cf1d81b3b656d4765526f",
+      "bytes": 4769
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-ui-r1.json": {
+      "sha256": "4830d2e3c59e49831b17978b3410c69d53a16e85eb35c7f0c27bd8221686654c",
+      "bytes": 612213
+    },
+    "docs/delivery/v2-development/timeline-duplicate-independent-ui-r1.log": {
+      "sha256": "29ce318e5d208b5d48b59989baba07eb14bff42441f830770eaaecaf3d972254",
+      "bytes": 1536
+    },
+    "docs/delivery/v2-development/timeline-duplicate-token-r1.json": {
+      "sha256": "1d89d9215b21e6c7803701f888245785efc47e4d4b323fd4edd36d931e39f4c2",
+      "bytes": 611704
+    },
+    "docs/delivery/v2-development/timeline-duplicate-token-r1.log": {
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "bytes": 31
+    },
+    "docs/delivery/v2-development/timeline-duplicate-type-r1.json": {
+      "sha256": "7fdff2c64f74e308f8d31b797ec14518dbf9e978e9d28639599a1d4f31c3d305",
+      "bytes": 611733
+    },
+    "docs/delivery/v2-development/timeline-duplicate-type-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/timeline-duplicate-ui-r1.json": {
+      "sha256": "ee337baefdb87bb3183906c0e8833bbcdb6a416a96a3554d2ce8dcbb188227d9",
+      "bytes": 612500
+    },
+    "docs/delivery/v2-development/timeline-duplicate-ui-r1.log": {
+      "sha256": "0781bf3298fcf3e950440e2bc9ac1d7a1d3ca3e2e81f179b02b757a488b4abc8",
+      "bytes": 2901
+    }
+  }
+}

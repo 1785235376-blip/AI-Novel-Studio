@@ -1,0 +1,103 @@
+{
+  "status": "PASS_SCOPED_INDEPENDENT_REVIEW",
+  "utc": "2026-10-17T08:16:24.215576+00:00",
+  "base": "feade20ce2f6671e5d5a16c0781896f3c5696927",
+  "runtime_review": "Detached duplicate-all then copied-internal-transition updates, original complete validation and one change/history; exact authored IDs and recursive descriptor checking; guarded selection/input/draft/context/client/permission/busy/UNKNOWN/unmount generations; explicit original Save/CAS/source authority. Legacy single-clip duplicate left unchanged.",
+  "independent_results": {
+    "file": "53 passed (32 new + 21 existing selection), 1 existing warning",
+    "ui": "120 passed in 6 suites (66 new + 54 existing selection); repeated primary coverage, not additional unique tests"
+  },
+  "manifest_entries": 2583,
+  "baseline_manifest_entries": 2578,
+  "byte_exact_baseline_entries": 2575,
+  "baseline_changed_paths": [
+    "frontend/src/creative/StudioTimelineEditor.tsx",
+    "frontend/src/creative/useStudioTimelineEditor.ts",
+    "frontend/src/nle/ClipInspectorPanel.tsx"
+  ],
+  "new_manifest_paths": [
+    "frontend/src/creative/StudioTimelineSelectionDuplicate.additive.test.tsx",
+    "frontend/src/nle/ClipInspectorSelectionDuplicate.additive.test.tsx",
+    "frontend/src/nle/timelineSelectionDuplicate.additive.test.ts",
+    "frontend/src/nle/timelineSelectionDuplicate.ts",
+    "tests/test_v2_timeline_duplicate_handoff.py"
+  ],
+  "all_primary_and_independent_maps_equal": true,
+  "current_manifest_verified": true,
+  "origin": {
+    "probe_sha256": "0ce757434fad49a60ac0766c9633cafba96a1c66a9dc991cf5a31a0484359cab",
+    "normal_and_actual_child_specs_equal": true,
+    "product_or_pytest_imported": false
+  },
+  "receipts": [
+    {
+      "name": "timeline-duplicate-file-origin-r1",
+      "receipt_sha256": "8719f4602b35c9fe20d94e82d40f86916f737d7b001bb728e3beb58ab1b28c9f",
+      "log_sha256": "bd8d466df13bd6577f221cb6d85017fc5d9103747c6741f329434780b83772db",
+      "sources": 2583
+    },
+    {
+      "name": "timeline-duplicate-file-r1",
+      "receipt_sha256": "a8b6500dacf435fd8fed71d39a2a61f38a45e7b5efb416932c6599265859d4f8",
+      "log_sha256": "594d9bd04c9b29f21d35921e781111fd50375a32293552238045f826c46fcdb6",
+      "sources": 2583
+    },
+    {
+      "name": "timeline-duplicate-file-regression-r1",
+      "receipt_sha256": "85bdf3435ffede50ac898f3b27063cf9c12c1268e896b9f52f12a75dda052c16",
+      "log_sha256": "bd9102774145393f9bd7a4e178a138ace9256b2d4a80ca12092472e8e1f1ee8e",
+      "sources": 2583
+    },
+    {
+      "name": "timeline-duplicate-ui-r1",
+      "receipt_sha256": "ee337baefdb87bb3183906c0e8833bbcdb6a416a96a3554d2ce8dcbb188227d9",
+      "log_sha256": "0781bf3298fcf3e950440e2bc9ac1d7a1d3ca3e2e81f179b02b757a488b4abc8",
+      "sources": 2583
+    },
+    {
+      "name": "timeline-duplicate-type-r1",
+      "receipt_sha256": "7fdff2c64f74e308f8d31b797ec14518dbf9e978e9d28639599a1d4f31c3d305",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sources": 2583
+    },
+    {
+      "name": "timeline-duplicate-build-r1",
+      "receipt_sha256": "850200a3388223ecc8ee7a2184fdf5f12e4607d9968a53856f9bfeae9e5eef90",
+      "log_sha256": "d4e1df2b2e5ada3bee42ecc985c4788fdb47c969a39857ca42851e7cf82d6a68",
+      "sources": 2583
+    },
+    {
+      "name": "timeline-duplicate-token-r1",
+      "receipt_sha256": "1d89d9215b21e6c7803701f888245785efc47e4d4b323fd4edd36d931e39f4c2",
+      "log_sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "sources": 2583
+    },
+    {
+      "name": "timeline-duplicate-independent-origin-r1",
+      "receipt_sha256": "d9acfbcbd5907afbfe74f2f2b278b806a64779a4ab53a117059da8714292105b",
+      "log_sha256": "1244206f95ccaaeb6d48e98d2022fbb9a0f54d690f14eef7de3100427e8a4963",
+      "sources": 2583
+    },
+    {
+      "name": "timeline-duplicate-independent-file-r1",
+      "receipt_sha256": "a2e3d2b7a9f2846580085a2014d1c9b911904f96324c69fed4b5f3c53fed9f4d",
+      "log_sha256": "998d62d08fd75d119c0132684692804800604873b147738b227bb64f5c6712e4",
+      "sources": 2583
+    },
+    {
+      "name": "timeline-duplicate-independent-ui-r1",
+      "receipt_sha256": "4830d2e3c59e49831b17978b3410c69d53a16e85eb35c7f0c27bd8221686654c",
+      "log_sha256": "29ce318e5d208b5d48b59989baba07eb14bff42441f830770eaaecaf3d972254",
+      "sources": 2583
+    }
+  ],
+  "not_run": [
+    "PostgreSQL",
+    "browser visual/geometry",
+    "native/Windows/packaged runtime",
+    "render/media quality or measured source duration",
+    "provider/GPU",
+    "full E2E/release acceptance"
+  ],
+  "limit_boundary": "New UI valid selections cannot reach 40 operations/128000 bytes under 30 total clips and 240-character IDs; explicit guards retained, original backend direct limits tested."
+}

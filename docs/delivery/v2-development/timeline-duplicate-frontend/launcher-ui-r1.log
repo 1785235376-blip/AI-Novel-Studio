@@ -1,0 +1,38 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-timeline-waveform/frontend
+
+ ✓ src/nle/timelineOps.test.ts (52 tests) 81ms
+ ✓ src/creative/StudioTimelineSelectionDuplicate.additive.test.tsx (27 tests) 3623ms
+   ✓ mounted selected duplication route > duplicates whole selected track once, preserves generated IDs through Save and fresh GET/remount 1065ms
+   ✓ mounted selected duplication route > verifies exact nested transition fields before applying internal transition batches 408ms
+   ✓ mounted selected duplication route > rejects retained selection ABA callbacks and repeated mounted invocation 463ms
+   ✓ mounted selected duplication route > rejects missing, reordered, wrong-track, unequal-offset, extra-key and unauthorized-update descriptors 357ms
+ ✓ src/nle/nlePanels.test.tsx (18 tests) 386ms
+ ✓ src/creative/TimelineSourceEditing.phase6.test.tsx (21 tests) 739ms
+ ✓ src/creative/StudioTimelineSlipDelete.additive.test.tsx (29 tests) 3744ms
+   ✓ mounted original editor slip/delete Save undo and reopen > refuses extra fields, wrong targets and retained bridge callbacks after a draft generation change 681ms
+   ✓ mounted original editor slip/delete Save undo and reopen > routes slip without timeline position and persists only with original CAS 842ms
+   ✓ mounted original editor slip/delete Save undo and reopen > routes ripple without timeline position and persists only with original CAS 738ms
+ ✓ src/creative/StudioTimelineTrim.test.tsx (29 tests) 2648ms
+   ✓ mounted original inspector trim > routes trim without start/at position, supports one-step undo/redo and explicit Save 1015ms
+ ✓ src/creative/StudioTimelineSelectionMove.additive.test.tsx (32 tests) 3224ms
+   ✓ mounted selection move routing > moves the whole selected track, undoes atomically, and saves through original CAS 895ms
+   ✓ mounted selection move routing > refuses retained selection ABA callback while a fresh callback works 425ms
+ ✓ src/ui/AppShell.test.tsx (19 tests) 232ms
+ ✓ src/creative/StudioTimelineAssetHandoff.test.tsx (20 tests) 927ms
+   ✓ mounted original timeline draft owner > adds one exact pinned clip, supports one undo/redo, explicitly saves and reopens the original owner 309ms
+ ✓ src/nle/ClipInspectorSelectionDuplicate.additive.test.tsx (9 tests) 259ms
+ ✓ src/nle/ClipInspectorSlipDelete.additive.test.tsx (4 tests) 220ms
+ ✓ src/nle/ClipInspectorSelectionMove.additive.test.tsx (8 tests) 226ms
+ ✓ src/creative/ProductionTimeline.test.tsx (4 tests) 232ms
+ ✓ src/ui/primitives.test.tsx (4 tests) 81ms
+ ✓ src/nle/timelineSelectionDuplicate.additive.test.ts (30 tests) 13ms
+ ✓ src/nle/timelineSelectionMove.additive.test.ts (14 tests) 7ms
+
+ Test Files  16 passed (16)
+      Tests  320 passed (320)
+   Start at  17:13:22
+   Duration  26.21s (transform 887ms, setup 91ms, collect 2.63s, tests 16.64s, environment 4.22s, prepare 760ms)
+
+
+{"receipt": "docs/delivery/v2-development/timeline-duplicate-ui-r1.json", "status": "PASS"}

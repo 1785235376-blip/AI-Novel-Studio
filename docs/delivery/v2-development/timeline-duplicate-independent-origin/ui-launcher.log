@@ -1,0 +1,23 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-timeline-waveform/frontend
+
+ ✓ src/creative/StudioTimelineSelectionDuplicate.additive.test.tsx (27 tests) 3634ms
+   ✓ mounted selected duplication route > duplicates whole selected track once, preserves generated IDs through Save and fresh GET/remount 1066ms
+   ✓ mounted selected duplication route > verifies exact nested transition fields before applying internal transition batches 403ms
+   ✓ mounted selected duplication route > rejects retained selection ABA callbacks and repeated mounted invocation 475ms
+   ✓ mounted selected duplication route > rejects missing, reordered, wrong-track, unequal-offset, extra-key and unauthorized-update descriptors 366ms
+ ✓ src/creative/StudioTimelineSelectionMove.additive.test.tsx (32 tests) 3227ms
+   ✓ mounted selection move routing > moves the whole selected track, undoes atomically, and saves through original CAS 854ms
+   ✓ mounted selection move routing > refuses retained selection ABA callback while a fresh callback works 469ms
+ ✓ src/nle/ClipInspectorSelectionDuplicate.additive.test.tsx (9 tests) 259ms
+ ✓ src/nle/ClipInspectorSelectionMove.additive.test.tsx (8 tests) 229ms
+ ✓ src/nle/timelineSelectionDuplicate.additive.test.ts (30 tests) 13ms
+ ✓ src/nle/timelineSelectionMove.additive.test.ts (14 tests) 7ms
+
+ Test Files  6 passed (6)
+      Tests  120 passed (120)
+   Start at  17:15:48
+   Duration  10.74s (transform 521ms, setup 42ms, collect 1.08s, tests 7.37s, environment 1.22s, prepare 295ms)
+
+
+{"receipt": "docs/delivery/v2-development/timeline-duplicate-independent-ui-r1.json", "status": "PASS"}

@@ -1,3 +1,4 @@
+import { selectionDuplicateOperations, type SelectionDuplicateIds } from '../nle/timelineSelectionDuplicate';
 import { selectionMoveOperations } from '../nle/timelineSelectionMove';
 import type { TimelineAssetHandoff } from './StudioTimelineAssetHandoff';
 import { useEffect, useRef, useState } from 'react';
@@ -242,6 +243,35 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
       change(value => { value.title = checked.title; value.timeline = checked.timeline; });
       setNotice('仅已更新本地时间线；原素材和服务端版本保留，需要明确保存。');
     } catch (reason) { setError(reason instanceof Error ? reason.message : '片段编辑无效，请核对边界与轨道重叠。'); }
+  }
+  function duplicateSelection(clipIds: readonly string[], offsetMs: number, newIds: SelectionDuplicateIds,
+    revision: string, client: StudioProductionClient): boolean {
+    if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN'
+      || client !== latest.current.client || revision !== `${epoch.current}:${handoffGeneration.current}`) return false;
+    try {
+      const input = checkedTimelineDraft(cloneTimeline(draftRef.current));
+      const operations = selectionDuplicateOperations(input.timeline, clipIds, offsetMs, newIds);
+      // Mirror original clip.duplicate (strip outgoing relationship), then only
+      // restore copied internal transitions. Validate the complete result once.
+      for (const operation of operations) {
+        if (operation.op === 'clip.duplicate') {
+          const track = input.timeline.tracks.find(row => row.id === operation.track_id)!;
+          const copied = cloneTimeline(track.clips.find(clip => clip.id === operation.clip_id)!);
+          delete copied.transition_out;
+          copied.id = operation.new_clip_id; copied.start_ms = operation.start_ms;
+          track.clips.push(copied);
+        } else {
+          const copied = input.timeline.tracks.flatMap(track => track.clips).find(clip => clip.id === operation.clip_id)!;
+          Object.assign(copied, cloneTimeline(operation.changes));
+        }
+      }
+      const checked = checkedTimelineDraft(input);
+      if (!change(value => { value.title = checked.title; value.timeline = checked.timeline; })) return false;
+      setNotice('所选片段已整体复制到原轨道的本地草稿；仅复制选择内部转场，需要明确保存。');
+      return true;
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : '整体复制无效，请核对所选片段与原轨道约束。'); return false;
+    }
   }
   function moveSelection(clipIds: readonly string[], offsetMs: number, revision: string, client: StudioProductionClient): boolean {
     if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN'
@@ -494,6 +524,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     moveClip: (trackId: string, clipId: string, targetId: string, position: number) => editClip(trackId, clipId, 'move', position, targetId),
     slipClip: (trackId: string, clipId: string, offsetMs: number) => slipOrRippleRemove(trackId, clipId, 'slip', offsetMs, false, editRevision, props.client),
     rippleRemoveClip: (trackId: string, clipId: string, ripple: boolean) => slipOrRippleRemove(trackId, clipId, 'ripple-remove', 0, ripple, editRevision, props.client),
+    duplicateSelection: (clipIds: readonly string[], offsetMs: number, newIds: SelectionDuplicateIds) => duplicateSelection(clipIds, offsetMs, newIds, editRevision, props.client),
     moveSelection: (clipIds: readonly string[], offsetMs: number) => moveSelection(clipIds, offsetMs, editRevision, props.client),
     trimClip: (trackId: string, clipId: string, inMs: number, outMs: number, ripple: boolean) => trimClip(trackId, clipId, inMs, outMs, ripple, editRevision, props.client),
     exportAvailable, exportProfile: owns ? exportProfile : { preset: 'REVIEW_MP4' } as TimelineExportProfile, exportPreview: owns ? exportPreview : undefined,

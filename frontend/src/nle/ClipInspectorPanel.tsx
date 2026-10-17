@@ -1,3 +1,4 @@
+import { selectionDuplicateOperations, selectionDuplicateTargets } from './timelineSelectionDuplicate';
 import { selectionMoveOperations } from './timelineSelectionMove';
 import { useEffect, useRef, useState } from 'react';
 import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
@@ -39,6 +40,9 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
   const inputGeneration = useRef(0);
   const reviewedInputGeneration = inputGeneration.current;
   const authored = (work: () => void) => { inputGeneration.current++; work(); };
+  const [duplicateOffset, setDuplicateOffset] = useState('');
+  const [duplicateOutcome, setDuplicateOutcome] = useState('');
+  const duplicateConsumed = useRef('');
   const [selectionOffset, setSelectionOffset] = useState('');
   const [selectionOutcome, setSelectionOutcome] = useState('');
   const alive = useRef(true);
@@ -69,7 +73,7 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
     inputGeneration.current++;
     setSelectionOffset(''); setSelectionOutcome(''); setInMs(''); setOutMs(''); setOffsetMs(''); setRipple(false); setOutcome({ kind: 'IDLE' });
   }, [selectionKey]);
-  useEffect(() => { setSelectionOffset(''); setSelectionOutcome(''); }, [contextKey]);
+  useEffect(() => { setSelectionOffset(''); setSelectionOutcome(''); setDuplicateOffset(''); setDuplicateOutcome(''); }, [contextKey]);
   if (!parsed.ok) {
     return <section className="nle-clip" aria-label="片段属性"><StatusMessage tone="error">{parsed.message}</StatusMessage>
       <EmptyState title="片段属性不可用" detail="需要一份通过原时间线契约校验的时间线。" /></section>;
@@ -86,6 +90,23 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
     setOffsetMs('0'); setTargetTrackId(first.trackId);
     setAssetId(first.clip.source_snapshot.id); setAssetVersion(String(first.clip.source_snapshot.version));
     setAssetDigest(first.clip.source_snapshot.digest); setRipple(false);
+  };
+  const generateSelectionDuplicate = () => {
+    const consent = `${reviewedInputGeneration}:${reviewedContextGeneration}`;
+    if (!alive.current || !latestContext.current.editable || inputGeneration.current !== reviewedInputGeneration
+      || contextGeneration.current.generation !== reviewedContextGeneration || duplicateConsumed.current === consent) return;
+    duplicateConsumed.current = consent;
+    try {
+      const offset = numeric(duplicateOffset);
+      selectionDuplicateTargets(timeline, props.selectedClipIds, offset);
+      const newIds = Object.freeze(Object.fromEntries(props.selectedClipIds.map(id =>
+        [id, (props.newId ?? (() => globalThis.crypto.randomUUID()))()])));
+      const operations = selectionDuplicateOperations(timeline, props.selectedClipIds, offset, newIds);
+      props.onEdit({ kind: 'clip.duplicate', payload: operations });
+      setDuplicateOutcome(`已生成 ${props.selectedClipIds.length} 个复制片段、${operations.length} 项原编辑指令；应用结果见时间线提示，仍需明确保存。`);
+    } catch (reason) {
+      setDuplicateOutcome(`${reason instanceof Error ? reason.message : '整体复制输入无效。'} 请修改输入后再明确尝试。`);
+    }
   };
   const generateSelectionMove = () => {
     if (!alive.current || !latestContext.current.editable || inputGeneration.current !== reviewedInputGeneration
@@ -128,7 +149,7 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
         <div><dt>速度</dt><dd>{first.speedNum} / {first.speedDen}</dd></div>
         <div><dt>素材</dt><dd>{first.sourceKind} · v{first.clip.source_snapshot.version} · <code>{first.clip.source_snapshot.digest}</code></dd></div>
       </dl>
-      {facts.length > 1 && <Badge tone="info">已选择 {facts.length} 个片段；下方整体移动作用于全部选择，其他动作仍针对第一个片段</Badge>}
+      {facts.length > 1 && <Badge tone="info">已选择 {facts.length} 个片段；下方整体移动与整体复制作用于全部选择，其他动作仍针对第一个片段</Badge>}
       <div className="nle-clip__form">
         <label>整体移动增量（毫秒，可为负）<input type="number" step={1} value={selectionOffset} aria-label="整体移动增量（毫秒，可为负）"
           onChange={event => authored(() => setSelectionOffset(event.currentTarget.value))} /></label>
@@ -136,6 +157,13 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
       <Button disabled={!props.editable} onClick={generateSelectionMove}>整体移动所选片段</Button>
       <p>整体移动保持各自原轨道与相对间距，不移动未选片段或字幕，不改变时间线总长；一次撤销可恢复。</p>
       {selectionOutcome && <StatusMessage tone="info">{selectionOutcome}</StatusMessage>}
+      <div className="nle-clip__form">
+        <label>整体复制增量（毫秒，可为负或零）<input type="number" step={1} value={duplicateOffset} aria-label="整体复制增量（毫秒，可为负或零）"
+          onChange={event => authored(() => setDuplicateOffset(event.currentTarget.value))} /></label>
+      </div>
+      <Button disabled={!props.editable} onClick={generateSelectionDuplicate}>整体复制所选片段</Button>
+      <p>复制 {facts.length} 个所选片段到各自原轨道，保持相对间距；仅复制两端均已选择的内部转场，不复制通向未选片段的转场。原片段、字幕与时间线总长不变；一次撤销可恢复。</p>
+      {duplicateOutcome && <StatusMessage tone="info">{duplicateOutcome}</StatusMessage>}
       <p className="nle-clip__snap">吸附候选只来自真实边界：片段开始、片段结束、播放头与已设置的入/出点。播放头 {props.playheadMs} 毫秒。</p>
       <p className="nle-clip__snap" data-snap-count={snaps.candidates.length}>
         当前候选 {snaps.candidates.length} 个 · 容差 {snaps.toleranceMs} 毫秒
