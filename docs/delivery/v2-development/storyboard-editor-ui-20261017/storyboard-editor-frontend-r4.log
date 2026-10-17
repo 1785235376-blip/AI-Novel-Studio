@@ -1,0 +1,90 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff/frontend
+
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 4070ms
+   ✓ creative workspace protected manuscript and request boundaries > requires explicit server-version adoption and preserves the draft when adoption is cancelled 323ms
+ ✓ src/creative/CreativeWorkspace.saveState.regression.test.tsx (26 tests) 4280ms
+   ✓ Creative current document save-state ownership > keeps the exact draft blocked after conflict failure until explicit original-server adoption 303ms
+ ✓ src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx (23 tests) 33628ms
+   ✓ mounted graph → exact original storyboard editor navigation > keeps the originating IMAGE shell, exact target and original explicit version-aware save 1862ms
+   ✓ mounted graph → exact original storyboard editor navigation > keeps the originating VIDEO shell, exact target and original explicit version-aware save 1510ms
+   ✓ mounted graph → exact original storyboard editor navigation > keeps the original editor dirty draft when a fixed-module switch is cancelled 1229ms
+   ✓ mounted graph → exact original storyboard editor navigation > retires the hosted editor before an accepted dirty fixed-module switch and never revives it on return 1257ms
+   ✓ mounted graph → exact original storyboard editor navigation > retires an already mounted editor across external module A→B→A instead of reopening the old receipt 1226ms
+   ✓ mounted graph → exact original storyboard editor navigation > cancels dirty graph navigation before any final read or discard 1290ms
+   ✓ mounted graph → exact original storyboard editor navigation > keeps the graph and director mounted until both admission reads finish, then consumes the receipt without a second admission 1410ms
+   ✓ mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final network admission 1636ms
+   ✓ mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final 503 admission 1476ms
+   ✓ mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final digest admission 1473ms
+   ✓ mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final version admission 1447ms
+   ✓ mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final source binding admission 1466ms
+   ✓ mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final revoked capability admission 1521ms
+   ✓ mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final shot characters admission 1715ms
+   ✓ mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final shot emotion admission 1622ms
+   ✓ mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final shot note IDs admission 1403ms
+   ✓ mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final visual references admission 1566ms
+   ✓ mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final note planning admission 1663ms
+   ✓ mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final note performances admission 1504ms
+   ✓ mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final shot continuity admission 1516ms
+   ✓ mounted graph → exact original storyboard editor navigation > does not allow an edited director draft to silently replace the inspected source 1048ms
+   ✓ mounted graph → exact original storyboard editor navigation > ignores a late final export after cancel without discarding the graph 1420ms
+   ✓ mounted graph → exact original storyboard editor navigation > ignores a late final export after module ABA without discarding the graph 1365ms
+ ✓ src/creative/StudioProductionGraphEditor.director.additive.test.tsx (5 tests) 10667ms
+   ✓ Production Graph UI keeps original controller and execution authority > lays out already-saved Director pins without rewriting their source or executing 1363ms
+   ✓ authors a director in the canvas, saves its exact node pin and reopens the bound source 2972ms
+   ✓ requires an explicit original workspace navigation confirmation to abandon an UNKNOWN director create 791ms
+   ✓ keeps an UNKNOWN storyboard handoff pending through cancelled workspace navigation 1756ms
+   ✓ reviews an original screenplay proposal, explicitly pins the DRAFT and reopens both owners without model execution 3784ms
+ ✓ src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx (15 tests) 7415ms
+   ✓ mounted original asset browser to timeline handoff > routes a real browser reference into the original timeline preview and exact draft only after explicit acceptance 828ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 时间线模块 776ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 图片模块 749ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 视频模块 773ms
+   ✓ mounted asset browser to original image draft > requires an explicit 图片 operation choice and two metadata reads without dispatch 355ms
+   ✓ mounted asset browser to original image draft > requires an explicit 视频 operation choice and two metadata reads without dispatch 353ms
+   ✓ relationship inspection original asset navigation > re-reads exact original asset after explicit dirty discard and performs no writes 855ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"version":3} 429ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"} 442ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"novel_id":"other-project"} 405ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"deleted_at":"deleted"} 440ms
+   ✓ relationship inspection original asset navigation > retires inspection when the original selection goes A to B to A in one batch 541ms
+ ✓ src/creative/AIDirectorPanel.storyboard.additive.test.tsx (19 tests) 942ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 955ms
+ ✓ src/creative/StudioGraphProviderChoice.test.tsx (19 tests) 1108ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (9 tests) 4278ms
+   ✓ independent studio graph content integration > promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing 1079ms
+   ✓ independent studio graph content integration > saves an empty disconnected definition through the scoped owner and reopens it without creating a run 465ms
+   ✓ independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job 812ms
+   ✓ independent studio graph content integration > retains the CAS-conflicted draft until an explicit checked adoption of the separately fetched server version 639ms
+   ✓ independent studio graph content integration > protects unsaved graph input when leaving the graph content or fixed module switcher 416ms
+   ✓ independent studio graph content integration > displays redacted saved references without enabling a full-save or deletion roundtrip 316ms
+ ✓ src/creative/AIDirectorPanel.test.tsx (10 tests) 537ms
+ ✓ src/creative/StudioGraphDraftRecovery.test.tsx (11 tests) 2102ms
+   ✓ mounted text graph autosave and explicit recovery > autosaves local authoring, survives remount and restores only after a live owner check without executing 658ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests) 1420ms
+   ✓ independent studio original owner integration > imports once and saves source provenance without chapters, models, or the legacy asset API 317ms
+   ✓ independent studio original owner integration > retains uploaded v1 after a declaration failure and retries only the declaration 312ms
+ ✓ src/creative/StudioProductionGraphEditor.test.tsx (4 tests) 3671ms
+   ✓ Production Graph UI keeps original controller and execution authority > mounts the existing read-only Director Console in a selected Director graph node 1194ms
+   ✓ Production Graph UI keeps original controller and execution authority > explicitly binds authored documents, style and upscale parameters without dispatch 1389ms
+   ✓ Production Graph UI keeps original controller and execution authority > ignores late document references after a same-token Host replacement 470ms
+   ✓ Production Graph UI keeps original controller and execution authority > keeps Style inspector and controller bounds aligned to the backend 617ms
+ ✓ src/creative/StudioGraphDraftRecovery.notes.test.tsx (7 tests) 1119ms
+   ✓ cached presentation recovery inspection through the original controller > pages every one of 1024 eligible short notes with at most twenty textareas and no truncation 950ms
+ ✓ src/creative/GraphDirectorStoryboardHandoff.test.tsx (7 tests) 258ms
+ ✓ src/creative/CreativeWorkspace.storyboardIntake.additive.test.tsx (9 tests) 1058ms
+ ✓ src/creative/GraphReadRevocation.regression.test.tsx (8 tests) 261ms
+ ✓ src/creative/AIDirectorPanel.reasoning.additive.test.tsx (2 tests) 342ms
+ ✓ src/creative/StudioGraphDirectorConsole.test.tsx (11 tests) 430ms
+ ✓ src/creative/storyboardEditorHandoff.additive.test.tsx (19 tests) 181ms
+ ✓ src/creative/CreativeWorkspace.adoptionCommitRace.test.tsx (2 tests) 443ms
+ ✓ src/creative/CreativeWorkspace.productionSaveState.regression.test.tsx (1 test) 316ms
+   ✓ keeps real production dirty protection without labelling an unsubmitted production draft as saving 315ms
+ ✓ src/creative/useStudioGraphEditor.storyboardAuthority.additive.test.tsx (1 test) 13ms
+ ✓ src/creative/AIDirectorPanel.sourceLabels.additive.test.tsx (1 test) 87ms
+
+ Test Files  24 passed (24)
+      Tests  258 passed (258)
+   Start at  13:12:31
+   Duration  99.73s (transform 2.38s, setup 133ms, collect 8.71s, tests 79.58s, environment 7.20s, prepare 1.15s)
+

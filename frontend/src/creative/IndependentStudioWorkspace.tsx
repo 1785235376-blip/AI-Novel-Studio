@@ -1,3 +1,5 @@
+import { CreativeWorkspace } from './CreativeWorkspace';
+import { checkedStoryboardCapabilities, prepareStoryboardEditor, type OpenStoryboardEditor, type PreparedStoryboardEditor } from './storyboardEditorHandoff';
 import { StudioStoryboardAssetHandoff } from './StudioStoryboardAssetHandoff';
 import type { TimelineAssetHandoff } from './StudioTimelineAssetHandoff';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
@@ -74,6 +76,12 @@ export function IndependentStudioWorkspace(props: IndependentStudioProps) {
 }
 function IndependentStudioSession({ projectId, context, scope, actor, module, requestedAssetId, onModuleChange, onProjectChoice, onVerified, status }: IndependentStudioProps) {
   const query = useQueryClient();
+  const [editorSession, setEditorSession] = useState<{ prepared: PreparedStoryboardEditor; ticket: number; module: 'IMAGE' | 'VIDEO' }>();
+  const editorTicket = useRef(0), editorPreparing = useRef(false);
+  const pendingEditor = useRef<(() => Promise<void>)>();
+  const editorLocation = useRef(module);
+  if (editorLocation.current !== module) { editorLocation.current = module; editorTicket.current++; if (editorSession) setEditorSession(undefined); }
+
   const capturedHost = useRef({ ...useLocalHostSession.getState() });
   const watchHost = !context.sessionToken && !context.scope && !context.actor;
   const origin = useRef(signature(projectId, context));
@@ -255,7 +263,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const rememberGraphLocation = useCallback((selection: { graphId?: string; runId?: string }) => {
     if (current()) setGraphLocation(previous => previous.graphId === selection.graphId && previous.runId === selection.runId ? previous : selection);
   }, [current]);
-  const graph = useStudioGraphEditor({ active: graphView && overview?.project.entry_kind === 'NEUTRAL_STUDIO', denied, identity: cacheKey, client, directorSource, onOpenModels: () => navigate(() => onModuleChange('CONTROL')), providerSource: productionClient, canMutate: writable, canReview: overview?.capabilities.can_review === true && !denied, busy, externalDirty: preferenceDirty || lineageDirty || relationshipDirty, isCurrent: current, read: guarded, mutate: graphMutation,
+  const graph = useStudioGraphEditor({ active: !editorSession && graphView && overview?.project.entry_kind === 'NEUTRAL_STUDIO', denied, identity: cacheKey, client, directorSource, onOpenStoryboard: (request, isOriginCurrent) => openStoryboard(request, isOriginCurrent), onOpenModels: () => navigate(() => onModuleChange('CONTROL')), providerSource: productionClient, canMutate: writable, canReview: overview?.capabilities.can_review === true && !denied, busy, externalDirty: preferenceDirty || lineageDirty || relationshipDirty, isCurrent: current, read: guarded, mutate: graphMutation,
     draftOwner: studioGraphDraftOwner(projectId, overview?.project.incarnation, context, capturedHost.current),
     requestedGraphId: graphLocation.graphId, requestedRunId: graphLocation.runId, onSelectionChange: rememberGraphLocation, isBusy: operationPending });
   graphDirtyRef.current = graph.dirty;
@@ -378,6 +386,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   };
   const navigate = (action: () => void) => {
     if (!current()) return;
+    editorTicket.current++; pendingEditor.current = undefined;
     if (busyRef.current) { setNotice('当前操作尚未结束，请等待结果确认后再离开。'); return; }
     if (dirty || storyboardDirtyRef.current || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current || workflowDirtyRef.current || promptDirtyRef.current) { setDiscard(false); setPendingNavigation(() => action); return; }
     action();
@@ -426,12 +435,49 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
         .finally(() => { busyRef.current = false; if (current()) { setBusy(false); setReadingAsset(false); } });
     });
   };
+  const discardNavigationDrafts = () => {
+    setLineageDirty(false); setRelationshipDirty(false); setFormRevision(value => value + 1); preferenceController.discard(); graph.discard();
+    storyboardDraftChanged(false); setStoryboardHandoff(undefined); mediaDraftChanged(false); timelineDraftChanged(false); maskDraftChanged(false); promptDraftChanged(false); workflow.skip(); setProductionRevision(value => value + 1); setProductionJob(undefined);
+  };
+  const openStoryboard: OpenStoryboardEditor = (request, isOriginCurrent) => {
+    if (!current() || busyRef.current || editorPreparing.current || editorSession || !graphView || (module !== 'IMAGE' && module !== 'VIDEO') || !isOriginCurrent()) return;
+    const ticket = ++editorTicket.current, sourceSelection = selectionEpoch.current, originModule = module;
+    const valid = () => current() && editorTicket.current === ticket && editorLocation.current === originModule && sourceSelection === selectionEpoch.current && isOriginCurrent();
+    const prepare = async () => {
+      if (!valid() || busyRef.current || editorPreparing.current || pendingEditor.current !== prepare || preferenceController.pending) return;
+      editorPreparing.current = true; busyRef.current = true; setBusy(true); setNotice('正在核对原分镜，输入将在核对成功后才放弃。');
+      try {
+        const capabilities = await guarded(() => directorSource.capabilities());
+        if (!valid()) return;
+        checkedStoryboardCapabilities(capabilities);
+        const receipt = await guarded(() => directorSource.export(request.target.id));
+        if (!valid()) return;
+        const prepared = prepareStoryboardEditor(request, receipt, capabilities);
+        // No await between final validation and commit. The destination consumes this
+        // immutable prepared receipt, so a later network failure cannot lose drafts.
+        if (!valid()) return;
+        pendingEditor.current = undefined; setPendingNavigation(undefined); setDiscard(false);
+        busyRef.current = false; setBusy(false);
+        discardNavigationDrafts();
+        setEditorSession({ prepared, ticket, module: originModule });
+      } catch (reason) {
+        if (current() && editorTicket.current === ticket) setNotice(apiErrorView(reason, '未打开原分镜，未保存输入仍保留。').message);
+      } finally {
+        editorPreparing.current = false; busyRef.current = false;
+        if (alive.current) setBusy(false);
+      }
+    };
+    pendingEditor.current = prepare;
+    if (dirtyRef.current || promptDirtyRef.current || storyboardDirtyRef.current || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current || workflowDirtyRef.current) {
+      setDiscard(false); setPendingNavigation(() => () => {});
+    } else void prepare();
+  };
   const confirmNavigation = () => {
     if (!discard || !pendingNavigation || !current()) return;
     if (busyRef.current || preferenceController.pending) { setNotice('当前操作尚未结束，未放弃输入或离开。请先核对结果。'); return; }
+    if (pendingEditor.current) { void pendingEditor.current(); return; }
     const action = pendingNavigation; setPendingNavigation(undefined); setDiscard(false);
-    setLineageDirty(false); setRelationshipDirty(false); setFormRevision(value => value + 1); preferenceController.discard(); graph.discard();
-    storyboardDraftChanged(false); setStoryboardHandoff(undefined); mediaDraftChanged(false); timelineDraftChanged(false); maskDraftChanged(false); promptDraftChanged(false); workflow.skip(); setProductionRevision(value => value + 1); setProductionJob(undefined); action();
+    discardNavigationDrafts(); action();
   };
   const sidebar = <div className="independent-studio-sidebar"><h2>独立创作</h2><p>图片、视频和声音共享项目资产。连接其它模块由你决定。</p><Button onClick={() => navigate(onProjectChoice)}>返回项目列表</Button>
     <StudioWorkspacePreferencesForm controller={preferenceController} locked={storyboardDirty || graph.dirty || mediaDirty || timelineDirty || maskDirty} />
@@ -479,7 +525,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     {workspaceView === 'ASSETS' && <Panel title="独立素材工作区"><p>无需小说、章节或模型，导入素材即可保存和导出。</p><p>上传会保存文件，并记录“外部导入”；许可默认未指定，可在来源声明中补充。下载原始文件保留原格式，不进行重新编码。</p>{overview && <Badge tone="info">{!writable ? overview.capabilities.can_review === true ? '仅审核与读取' : '只读' : overview.capabilities.media_validator_configured ? '手工导入可用' : '媒体校验工具缺失'} · 不需要模型</Badge>}{overview && !overview.capabilities.media_validator_configured && <p>图片、视频和音频导入需要 FFmpeg / ffprobe 校验工具。当前可查看和导出已保存资产，未调用模型。</p>}</Panel>}
     {loading && <StatusMessage>正在核对项目与权限…</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}{notice && <StatusMessage>{notice}</StatusMessage>}
     {denied ? <EmptyState title="当前会话无权访问此项目" detail="私人预览已关闭。重新核对身份与范围后再打开。" /> : !overview && !loading ? <Button onClick={() => void refresh()}>重新读取项目</Button> : null}
-    {pendingNavigation && !denied && <section className="creative-navigation-confirm" role="alert"><p>{storyboardDirty ? '分镜图片接收输入或保存结果仍待核对。离开只放弃本地接收状态，不会取消已经发出的保存；返回后须核对原文档。' : mediaDirty || timelineDirty ? '制作输入尚未保存，或请求结果仍待核对。离开只放弃本地输入，不会取消远端任务；重新打开后先读取原任务回执。' : graph.directorPending ? '有未保存的创作图／导演输入。放弃只移除本地草稿，不代表远端写入失败；若保存回执未知，返回后先核对原文档目录，避免重复创建。' : graph.dirty ? '有未保存的创作图输入。可以继续编辑，或确认放弃后离开。' : preferenceController.blocked ? '偏好保存结果尚待核对。离开不代表请求失败，再次操作前仍需读取服务端版本。' : '有未保存的偏好、来源声明或资产关联。可以继续编辑，或确认放弃后离开。'}</p><label><input type="checkbox" disabled={busy || !!preferenceController.pending} checked={discard} onChange={event => setDiscard(event.target.checked)} />确认放弃未保存输入</label><Button disabled={!discard || busy || !!preferenceController.pending} onClick={confirmNavigation}>确认离开</Button><Button onClick={() => { setPendingNavigation(undefined); setDiscard(false); }}>继续编辑</Button></section>}
+    {pendingNavigation && !denied && <section className="creative-navigation-confirm" role="alert"><p>{storyboardDirty ? '分镜图片接收输入或保存结果仍待核对。离开只放弃本地接收状态，不会取消已经发出的保存；返回后须核对原文档。' : mediaDirty || timelineDirty ? '制作输入尚未保存，或请求结果仍待核对。离开只放弃本地输入，不会取消远端任务；重新打开后先读取原任务回执。' : graph.directorPending ? '有未保存的创作图／导演输入。放弃只移除本地草稿，不代表远端写入失败；若保存回执未知，返回后先核对原文档目录，避免重复创建。' : graph.dirty ? '有未保存的创作图输入。可以继续编辑，或确认放弃后离开。' : preferenceController.blocked ? '偏好保存结果尚待核对。离开不代表请求失败，再次操作前仍需读取服务端版本。' : '有未保存的偏好、来源声明或资产关联。可以继续编辑，或确认放弃后离开。'}</p><label><input type="checkbox" disabled={busy || !!preferenceController.pending} checked={discard} onChange={event => setDiscard(event.target.checked)} />确认放弃未保存输入</label><Button disabled={!discard || busy || !!preferenceController.pending} onClick={confirmNavigation}>确认离开</Button><Button onClick={() => { editorTicket.current++; pendingEditor.current = undefined; setPendingNavigation(undefined); setDiscard(false); }}>继续编辑</Button></section>}
     {pendingDeclaration && !denied && workspaceView === 'ASSETS' && <Button disabled={!writable || busy || lineageDirty || relationshipDirty} onClick={() => { if (busyRef.current || lineageDirtyRef.current || relationshipDirtyRef.current) return; busyRef.current = true; setBusy(true); void guarded(() => declared(pendingDeclaration)).then(asset => { refreshedAsset(asset); setPendingDeclaration(undefined); setNotice('资产与外部导入来源已保存。'); }).catch(reason => { if (current()) setNotice(apiErrorView(reason, '来源声明仍未保存，文件已保留。').message); }).finally(() => { busyRef.current = false; if (alive.current) setBusy(false); }); }}>仅重试外部导入声明</Button>}
     {graphView && overview && !denied && graph.content}
     {productionView && overview && !denied && !storyboardHandoff && <ProductionDashboard controller={workflow} selectedModuleId={workflowModule}
@@ -568,6 +614,12 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     }} />
   </>;
   const retiredNotice = <EmptyState title="身份已改变" detail="原范围的服务端信息已关闭。请重新核对身份与项目后打开工作区。" />;
+  if (editorSession && editorSession.module === module && editorSession.ticket === editorTicket.current && !denied && !identityRetired) return <CreativeWorkspace enabled novelId={projectId} context={context} scope={scope} actor={actor}
+    chapterCount={0} manuscriptReady={false} novelMain={null} novelSidebar={null} novelInspector={null} novelStatus={null} commonStatus={status}
+    storyboardHost={{ module: editorSession.module, prepared: editorSession.prepared, returnLabel: '返回独立创作图',
+      isCurrent: () => current() && editorTicket.current === editorSession.ticket && editorLocation.current === editorSession.module }}
+    onExit={() => { editorTicket.current++; setEditorSession(undefined); setNotice('已返回独立创作图；分镜沿原文档保存，图绑定未改变。'); }}
+    onModuleChange={next => { editorTicket.current++; setEditorSession(undefined); onModuleChange(next); }} />;
   return <AppShell module={module} onModuleChange={next => navigate(() => onModuleChange(next))} scope={identityRetired ? { workspace: '待核对', project: '待核对', storyline: '待核对', branch: '待核对' } : { ...scope, project: overview?.project.title || scope.project }} projectNoun={overview?.project.entry_kind === 'NEUTRAL_STUDIO' ? '项目' : undefined} actor={identityRetired ? '身份待核对' : actor} sidebar={identityRetired ? retiredNotice : sidebar} main={identityRetired ? graphView ? graph.content : retiredNotice : main}
     inspector={identityRetired ? graphView ? graph.inspector : retiredNotice : denied ? <EmptyState title="权限失效" detail="重新核对身份与项目范围后再打开。" /> : graphView ? graph.inspector : productionView ? <><Panel title="制作操作"><p>当前阶段：{productionStage}</p><p>在主工作区核对输入、版本、来源和审核要求。实际任务的权限、状态与回执由原执行入口确认。</p></Panel>{!storyboardHandoff && <ProductionInspectorPanel controller={workflow} selectedModuleId={workflowModule} selectedKind={workflowAssetKind} onSelectKind={setWorkflowAssetKind} modelSource={modelSource}/>}</> : <AssetInspector asset={selected} novelId={projectId} downloadAsset={adapter.download} isCurrent={current} showReferences={false} extra={extra} />}
     status={<>{identityRetired ? '身份已改变' : denied ? '权限失效' : loading ? '正在核对' : error ? '读取失败' : busy ? readingAsset || preferenceController.pending === 'READ' ? '读取中' : '操作中' : dirty || pendingDeclaration ? '未保存或待核对' : '已保存'} · {productionView ? '制作操作' : graphView ? '创作图' : '独立素材'} · 模型调用记录见运行回执{!identityRetired && status}</>} />;

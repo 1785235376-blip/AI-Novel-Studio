@@ -1,0 +1,117 @@
+{
+  "source_base": "93bc8b49502cdc388688143c9d830449c62d75e6",
+  "primary_r4": {
+    "suites": 24,
+    "tests": 258,
+    "typecheck": "PASS",
+    "build": "PASS",
+    "token_guard_files": 52,
+    "root_regular_files": 10009,
+    "root_before_after_equal": true
+  },
+  "separate_file_tests": 10,
+  "postgres_deselected": 7,
+  "independent_review": {
+    "status": "APPROVE_SCOPED_SOURCE_COMMIT",
+    "report": "../storyboard-editor-independent-review.json",
+    "ui_tests": 99,
+    "ui_suites": 8,
+    "new_ui": 53,
+    "original_ui": 46,
+    "file_tests": 3,
+    "postgres_deselected": 2,
+    "coverage": "overlapping subsets, not added to primary counts",
+    "source_files_stable": 2536,
+    "protected_files_unchanged": 1279
+  },
+  "artifacts": {
+    "storyboard-editor-frontend.log": {
+      "sha256": "bfaaf87e8752a63d4b6f408b14ca45e0a309a678472d38b1b3d9be76e393f58b",
+      "bytes": 179002
+    },
+    "storyboard-editor-frontend-r2.log": {
+      "sha256": "84789cb4e472b6ca34b19ba83f216600ba48fbd29d601b2a46b95c9e61e0c07d",
+      "bytes": 39791
+    },
+    "storyboard-editor-frontend-r3.log": {
+      "sha256": "f5cd3e9e0a06ce8dae383dee2118ba1b01a5dcc747d241fc8ce6904d6a7c2e3c",
+      "bytes": 10959
+    },
+    "storyboard-editor-frontend-r4.log": {
+      "sha256": "d31e31c2d482904d97cc2ed766a2cde50f6b7ac844d4328472f1061f45da8f6b",
+      "bytes": 10827
+    },
+    "storyboard-editor-baseline-label.log": {
+      "sha256": "48aba2fbb757376faa04bbeb2876eef00d958866552fa5f2bf3dbb492797f64c",
+      "bytes": 30125
+    },
+    "storyboard-editor-typecheck-r3.log": {
+      "sha256": "15a11b08049b048a691db55fe32891c50b035cee9cc0db18da0e807019fb197f",
+      "bytes": 1094
+    },
+    "storyboard-editor-typecheck-r4.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "storyboard-editor-build-r4.log": {
+      "sha256": "4b7cd1386f7d4c5dac22be7b95d230866e08b45094f678dafb52766dd1a3ccbf",
+      "bytes": 1679
+    },
+    "storyboard-editor-tokens-r4.log": {
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "bytes": 31
+    },
+    "storyboard-editor-ui-before.sha256": {
+      "sha256": "fa1df3cee3ad39adc3bcf21a5a8a01dcbfed03410f84f9c3dbb5ebafb11382b5",
+      "bytes": 135629
+    },
+    "storyboard-editor-ui-after-check.log": {
+      "sha256": "5fd189dd68c1bf3466c691cc1b770bef203ba0051fcde0bcd5c87c3064f128ce",
+      "bytes": 56145
+    },
+    "storyboard-editor-ui-r2-before.json": {
+      "sha256": "fda3de07bc2cd10c9132e3a019bae321cb4a61a11bf23d2e304c82b53c967b7f",
+      "bytes": 1474042
+    },
+    "storyboard-editor-ui-r2-after.json": {
+      "sha256": "fda3de07bc2cd10c9132e3a019bae321cb4a61a11bf23d2e304c82b53c967b7f",
+      "bytes": 1474042
+    },
+    "storyboard-editor-ui-r3-before.json": {
+      "sha256": "83170be49350a05e3dd30702bb94886de35e0473dc37a32791b3077cc9ea702d",
+      "bytes": 1474184
+    },
+    "storyboard-editor-ui-r3-after.json": {
+      "sha256": "83170be49350a05e3dd30702bb94886de35e0473dc37a32791b3077cc9ea702d",
+      "bytes": 1474184
+    },
+    "storyboard-editor-ui-r4-before.json": {
+      "sha256": "3d66cb324f2b2532057f1795b71f5b021cb4cdcac8605b47df5ac71e47b2cdb8",
+      "bytes": 1474184
+    },
+    "storyboard-editor-ui-r4-after.json": {
+      "sha256": "c74388cbeee443a8aab031128f58cfff72a66540525154bc13e62468c3ccf4be",
+      "bytes": 1474185
+    },
+    "origin/normal-startup.json": {
+      "sha256": "e214851897b01fa13d8136608d29b986baeb77957dc0103ca5669440f21d02e3",
+      "bytes": 805
+    },
+    "origin/origin-probe.py": {
+      "sha256": "07629f943ad4fd6a9d588ccfb23f6f6f4efd4b4fca39a9573575e4fd12cc6cd0",
+      "bytes": 6673
+    },
+    "origin/startup-probe.json": {
+      "sha256": "b0a02c1da0097acb19953a8cb60cc02eb020090c39ed21b732175bf1578c94e9",
+      "bytes": 21107
+    },
+    "dot-storyboard-editor-static-review-r1.json": {
+      "sha256": "f476f1b402646c8653e7f7ed406236be05452df8b47c196dd30508000f361b77",
+      "bytes": 2970
+    },
+    "storyboard-editor-independent-origin.json": {
+      "sha256": "7688a6a4814e786002d092ce58158253415abe36c3078cf942f56c4a6858a911",
+      "bytes": 21107
+    }
+  }
+}

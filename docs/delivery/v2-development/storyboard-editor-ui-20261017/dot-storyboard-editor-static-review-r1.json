@@ -1,0 +1,37 @@
+{
+  "status": "STATIC_APPROVE_SERIALIZED_VALIDATION",
+  "utc": "2026-10-17T04:01:24.817809+00:00",
+  "head": "93bc8b49502cdc388688143c9d830449c62d75e6",
+  "root": "/workspace/scratch/20a0022d2b33/studio-storyboard-editor-handoff",
+  "source_sha256": {
+    "frontend/src/creative/AssetBrowser.tsx": "48945cff9ae59c2154b5c9a31a67d3360c5b2b2b61a8c654d0b6bfd36aca0ca6",
+    "frontend/src/creative/CreativeCanvas.tsx": "a0a0436d1c61b93c48ffb0696399234e186d980831116593e3bcdc440ca00a02",
+    "frontend/src/creative/CreativeWorkspace.tsx": "290f6c5e92cc878675cfeacdb9824b760ec786afa04982161c4f47ae36bc41a7",
+    "frontend/src/creative/GraphDirectorConsole.tsx": "d389812cebf9cb10af563685f77d4df4137b3e67b86ce8349f8ff7087b8cc27f",
+    "frontend/src/creative/GraphDirectorStoryboardHandoff.tsx": "e64fea3aee0e661cbc69d6692f0a46276f129f6a1599f81f964ff271cc1f97c9",
+    "frontend/src/creative/IndependentStudioWorkspace.tsx": "22c0d335b9c5a207749d0f130ee6e03a655f20f80eb0dd010bcebce569556b22",
+    "frontend/src/creative/ProjectTimeline.tsx": "ac51d4de530c8f7e28cd2c6d13cb33859f8d2f824fb52a6a18f2dee1f5112071",
+    "frontend/src/creative/useStudioGraphEditor.tsx": "e0e7392372bc05f7b4cc23ca3dccabac61533d330a30a8f2728a311945fe1af1",
+    "frontend/src/creative/useStudioGraphEditorController.ts": "42888a40caa82e1a3dc5dde7b026ae998a692466f656678fa7ddb44f61c39739",
+    "frontend/src/creative/storyboardEditorHandoff.ts": "b70903797fbb0924afd4993766897406a0991cd4715b3b34fefa092cbd8744b9",
+    "frontend/src/creative/storyboardEditorHandoff.additive.test.tsx": "8ca3c2838e17fccf31611da44ff95d8ae3dc2077d32f0a12e33044eb20c23bb9",
+    "frontend/src/creative/CreativeWorkspace.storyboardIntake.additive.test.tsx": "7941c9368230a0f2b0d62c237b250c20c978879d900d3dbd8c73cc321ae10817",
+    "frontend/src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx": "1cb77394672e48f595f492ce3d8f58ac6d58bb71a36c27f8ab932e7575766c83",
+    "tests/test_v2_storyboard_editor_handoff_persistence.py": "1a462091d259bf8c95345b5f54e3b7ea6c3bcb47f3f0b664b99c807356d2bece"
+  },
+  "protected_count": 1279,
+  "protected_drift": [],
+  "checks": [
+    "same-module single original CreativeWorkspace shell replaces graph",
+    "capabilities then final exact export after consent before discard",
+    "complete prepared receipt deep-cloned/frozen and synchronous intake no second admission read",
+    "optional rendered nested fields validated before discard",
+    "busy semaphore released only in final synchronous discard/commit; pending callback consumed and editorPreparing retained",
+    "executionDirty prevents Open and retained callback epoch prevents ABA",
+    "destination dirty/blocked/in-flight replacement guarded",
+    "original NOVEL default behavior preserved via optional props",
+    "new real File test recreates owners and checks scope bytes/CAS/source/graph pins"
+  ],
+  "startup_proof": ".runtime/storyboard-editor-origin/startup-probe.json",
+  "product_tests": "NOT_RUN"
+}

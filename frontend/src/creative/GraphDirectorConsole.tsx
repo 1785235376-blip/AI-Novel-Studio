@@ -1,3 +1,4 @@
+import type { OpenStoryboardEditor } from './storyboardEditorHandoff';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { GraphDirectorProposalReview, hasDirectorProposalReview, type GraphDirectorReviewSource } from './GraphDirectorProposalReview';
 import { ApiError, apiErrorView } from '../api';
@@ -26,13 +27,14 @@ type Props = {
   mutate: <T>(work: () => Promise<T>) => Promise<T>;
   onDirtyChange: (dirty: boolean) => void;
   onOpenModels?: () => void;
+  onOpenStoryboard?: OpenStoryboardEditor;
 };
 const empty = (): CreativeInput => ({ ...newDocument('DIRECTOR'), source_independent: true });
 const samePin = (a: PlanningSnapshot, b: PlanningSnapshot) => a.id === b.id && a.version === b.version && a.digest === b.digest;
 
 /** A mounted view of the original Creative owner. Only author drafts live here;
  * Graph retains its exact pin and all execution/review remains with its owners. */
-export function GraphDirectorConsole({ client, pin, selectionKey, graph, selectedNodeId, active, canMutate, busy, isCurrent, read, mutate, onDirtyChange, onOpenModels }: Props) {
+export function GraphDirectorConsole({ client, pin, selectionKey, graph, selectedNodeId, active, canMutate, busy, isCurrent, read, mutate, onDirtyChange, onOpenModels, onOpenStoryboard }: Props) {
   const [proposalPending, setProposalPending] = useState(false);
   const [handoffPending, setHandoffPending] = useState(false), [storyboardAllowed, setStoryboardAllowed] = useState(false);
   const [open, setOpen] = useState(false), [authorized, setAuthorized] = useState(false);
@@ -67,7 +69,8 @@ export function GraphDirectorConsole({ client, pin, selectionKey, graph, selecte
   const reportedPending = useRef(false);
   useEffect(() => { if (reportedPending.current !== pending) { reportedPending.current = pending; onDirtyChange(pending); } }, [pending, onDirtyChange]);
   const editing = authorized && canMutate && active && !busy && !working && !blocked && !handoffPending && !proposalPending && isCurrent();
-  const mark = (value: boolean) => { setDirty(value); onDirtyChange(value || blocked || handoffPending || proposalPending); };
+  const authorEpoch = useRef(0);
+  const mark = (value: boolean) => { authorEpoch.current++; setDirty(value); onDirtyChange(value || blocked || handoffPending || proposalPending); };
   const fail = (reason: unknown) => {
     setError(apiErrorView(reason, '导演文档操作未完成，请核对连接与原文档。').message);
     if (reason instanceof ApiError && [401, 403].includes(reason.status)) {
@@ -184,7 +187,10 @@ export function GraphDirectorConsole({ client, pin, selectionKey, graph, selecte
       <CreativeCanvas draft={draft} version={base?.version} dirty={dirty} canEdit={editing} busy={busy || working} saving={saving}
         selectedSceneId={scene} selectedShotId={shot} onScene={setScene} onShot={setShot} onChange={change}
         onSave={() => void save()} onNew={fresh} />
-      {base && <GraphDirectorStoryboardHandoff client={client} source={base} snapshot={snapshot} active={active && authorized} canCreate={editing && !dirty && storyboardAllowed} busy={busy || working} isCurrent={isCurrent} read={read} mutate={mutate} onPending={setHandoffPending} />}
+      {base && <GraphDirectorStoryboardHandoff canOpen={!dirty && !blocked && !proposalPending && storyboardAllowed} onOpenStoryboard={onOpenStoryboard ? (request, originCurrent) => {
+        const authored = authorEpoch.current, selected = selection.current.generation, generation = scope.current.generation;
+        onOpenStoryboard(request, () => originCurrent() && current() && authored === authorEpoch.current && selected === selection.current.generation && owns(generation));
+      } : undefined} client={client} source={base} snapshot={snapshot} active={active && authorized} canCreate={editing && !dirty && storyboardAllowed} busy={busy || working} isCurrent={isCurrent} read={read} mutate={mutate} onPending={setHandoffPending} />}
       {(dirty || blocked) && <section aria-label="导演草稿处理"><p>导演草稿尚未保存或待核对，图编辑与运行暂时锁定。内容仅保留在本次页面中，关闭页面可能丢失。</p>
         {candidate && <p>已核对服务端：{candidate.document.title} · v{candidate.document.version} · {candidate.pin.digest}</p>}
         <label><input type="checkbox" checked={discardConfirmed} disabled={busy || working} onChange={event => setDiscardConfirmed(event.target.checked)} />{blocked && !candidate ? '确认仅放弃导演本地草稿，远端结果仍未知；再次创建前先核对目录' : '确认放弃导演本地草稿'}{candidate ? '并采用已核对原版本' : ''}</label>

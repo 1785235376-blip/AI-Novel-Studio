@@ -743,3 +743,27 @@ Independent caption follow-up (00:35 UTC): source-slice review approved; repeate
 **PARTIAL, bounded implementation:** additive capability, explicit contract preview/dispatch, full saved scene/shot context, exact source mapping, separate response envelope, retained refresh provenance and original human-reviewed DRAFT adoption are implemented on source base `abff2ee7acc842e87abd53e0858110669922f9bc`. Primary backend 173 passes (160 PostgreSQL deselections), mocked UI 126 passes, and actual PUBLIC artifact 3 passes are documented in the linked latest checkpoint. Independent final verification passed 90 backend cases (88 PostgreSQL deselections) and 61 UI cases (49 new, 12 original), with no protected or guard/companion drift. These are overlapping subsets, not additional unique counts. Protected old tests/guards are unchanged; old screenplay/adaptation schemas and bytes remain preserved.
 
 The direct-owner UI dispatch liveness bug discovered by the strengthened test was repaired with a commit-published admission token; ordinary-click dispatch and stale/duplicate/consent/authority fences now pass. This is a runtime fix backed by retained failing diagnostics, not merely a fixture correction. Independent boards still require a real chapter anchor, and 20 chapter IDs / 20,000 instruction characters are hard bounds rather than token-fit guarantees. Real provider/model quality and full browser/platform/PG/release acceptance remain **NOT_RUN / open**. No stage, commit, push, merge or release is claimed for this checkpoint.
+
+## Exact Director storyboard → original editor — 2026-10-17
+
+**PARTIAL, bounded implementation:** explicit inspected storyboard navigation now
+reuses the original CreativeWorkspace inside the originating independent IMAGE
+or VIDEO module. Exact source/target pins, post-consent final export validation,
+immutable prepared intake, single active write owner, and authority/ABA fences
+preserve drafts on cancellation or failed admission. Original explicit Save and
+dirty-exit consent remain authoritative; navigation performs no save, graph pin,
+approval, execution or model call. Hosted module exit retires the session.
+
+Source base `93bc8b49502cdc388688143c9d830449c62d75e6`; [primary evidence](../delivery/v2-development/storyboard-editor-ui-20261017/README.md):
+258 bounded UI tests in 24 suites passed, plus forced typecheck/build/token guard.
+Separate File-owner run passed 10 tests (7 PostgreSQL deselections). Final
+10,009-file root manifests are equal across execution. Earlier failure logs and
+qualified frontend-only R1 snapshot diagnostics remain retained. An inherited
+SCREENPLAY option-label regression was reproduced on the clean base, then its
+legacy label restored while keeping the STORYBOARD cue; protected tests were
+unchanged. [Independent verification](../delivery/v2-development/storyboard-editor-independent-review.json)
+approved the scoped source: 99 UI and 3 File passes (2 PostgreSQL deselections),
+overlapping the primary selections; all 2,536 source files and 1,279 protected
+files matched their closure checks. Browser E2E, live HTTP/socket,
+PG, provider/model quality, target-platform and full-release acceptance remain
+NOT_RUN/open. No stage, commit, push or release is claimed; prior gates remain.

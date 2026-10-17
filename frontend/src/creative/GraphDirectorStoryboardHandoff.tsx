@@ -3,9 +3,11 @@ import { ApiError, apiErrorView } from '../api';
 import { Button, StatusMessage } from '../ui/primitives';
 import type { GraphDirectorSource } from './GraphDirectorConsole';
 import type { CreativeDocument } from './types';
+import { storyboardEditorRequest, validStoryboardDocument, type OpenStoryboardEditor } from './storyboardEditorHandoff';
 import type { PlanningSnapshot } from './studioProductionGraphContract';
 type Props = {
   client: GraphDirectorSource; source: CreativeDocument; snapshot?: PlanningSnapshot;
+  onOpenStoryboard?: OpenStoryboardEditor; canOpen?: boolean;
   active: boolean; canCreate: boolean; busy: boolean; isCurrent: () => boolean;
   read: <T>(work: () => Promise<T>) => Promise<T>;
   mutate: <T>(work: () => Promise<T>) => Promise<T>; onPending: (value: boolean) => void;
@@ -16,8 +18,9 @@ export function GraphDirectorStoryboardHandoff(props: Props) {
   const [confirmed, setConfirmed] = useState(false), [working, setWorking] = useState(false), [unknown, setUnknown] = useState(false);
   const [error, setError] = useState(''), [rows, setRows] = useState<CreativeDocument[]>([]);
   const [result, setResult] = useState<{ document: CreativeDocument; digest?: string }>();
+  const openEpoch = useRef(0);
   const alive = useRef(true), lock = useRef(false), current = useRef(props); current.current = props;
-  const key = JSON.stringify([source.id, source.version, snapshot, active]);
+  const key = JSON.stringify([source.id, source.version, snapshot, active, props.canOpen, !!props.onOpenStoryboard]);
   const identity = useRef({ key, client, generation: 0 });
   if (identity.current.key !== key || identity.current.client !== client) identity.current = { key, client, generation: identity.current.generation + 1 };
   const valid = (generation: number) => alive.current && current.current.active && current.current.isCurrent() && generation === identity.current.generation;
@@ -46,6 +49,7 @@ export function GraphDirectorStoryboardHandoff(props: Props) {
   async function inspect(id?: string) {
     if (!active || !current.current.isCurrent() || busy || lock.current) return;
     const generation = identity.current.generation;
+    openEpoch.current++;
     lock.current = true; setWorking(true); setError(''); setResult(undefined);
     try {
       if (!id) {
@@ -54,12 +58,20 @@ export function GraphDirectorStoryboardHandoff(props: Props) {
       } else {
         const value = await read(() => client.export(id));
         if (!valid(generation)) return;
-        if (value.document?.id !== id || !Array.isArray(value.document.shots) || !linked(value.document) || !Number.isSafeInteger(value.document.version) || value.document.version < 1 || !/^[a-f0-9]{64}$/.test(value.document_digest)) throw new Error('分镜来源回执无效。');
+        if (value.document?.id !== id || !validStoryboardDocument(value.document) || !linked(value.document) || !Number.isSafeInteger(value.document.version) || value.document.version < 1 || !/^[a-f0-9]{64}$/.test(value.document_digest)) throw new Error('分镜来源回执无效。');
         setResult({ document: value.document, digest: value.document_digest });
         // An older sibling cannot settle an uncertain create operation.
       }
     } catch (reason) { if (valid(generation)) { setRows([]); setError(apiErrorView(reason, '分镜状态读取失败。').message); } }
     finally { lock.current = false; if (alive.current) setWorking(false); }
+  }
+  function openEditor() {
+    if (current.current.canOpen === false || !result?.digest || !snapshot || !props.onOpenStoryboard || busy || working || lock.current || !matches(result.document) || !valid(identity.current.generation)) return;
+    const generation = identity.current.generation, ticket = ++openEpoch.current;
+    try {
+      const request = storyboardEditorRequest(result.document, result.digest, snapshot);
+      props.onOpenStoryboard(request, () => valid(generation) && ticket === openEpoch.current);
+    } catch (reason) { setError(apiErrorView(reason, '无法打开此分镜，请重新核对原文档。').message); }
   }
   if (!active) return null;
   return <section aria-label="导演到分镜交接">
@@ -78,6 +90,7 @@ export function GraphDirectorStoryboardHandoff(props: Props) {
       <p>导演来源：v{result.document.source_documents?.[source.id]?.version} · {result.document.source_documents?.[source.id]?.digest}</p>
       {!matches(result.document) && <StatusMessage tone="warning">此分镜绑定另一导演版本；不会自动覆盖或重绑。</StatusMessage>}
       <Button disabled={busy || working} onClick={() => void inspect(result.document.id)}>核对分镜原文档版本</Button>
+      {props.onOpenStoryboard && <Button disabled={!result.digest || !matches(result.document) || props.canOpen === false || busy || working} onClick={openEditor}>在原分镜编辑器打开</Button>}
       <ol>{result.document.shots.map(shot => <li key={shot.id}>Shot {shot.number} · {shot.id} · {shot.duration_seconds} 秒 · {shot.shot_size} / {shot.camera_motion}<p>{shot.frame_prompt || shot.action}</p></li>)}</ol>
       <p>后续编辑、复审与制作沿原分镜工作区进行；这里只回显文档状态，不代表任务完成或素材获批。在原制作节点目录明确添加分镜节点后，才会形成新的图绑定。</p>
     </aside>}
