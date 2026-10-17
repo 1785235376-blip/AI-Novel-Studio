@@ -1,0 +1,16 @@
+{
+  "status": "PASS_ORIGINAL_POSTGRES_RUNNER_AND_NATIVE_PROCESS",
+  "source_commit": "872ab72",
+  "source_equal_file_smoke": true,
+  "runtime_receipt_sha256": "6e148f9d500ed50746330cd0381acc57fe98bb2602494f4cfc4c305f9f33e00e",
+  "check_receipt_sha256": "73314491241756f2cbfd89f44acdbdd7df765c2f4edcfd6cda4eb4c82ff1d29e",
+  "files": {
+    "README.md": "7219a7b1b0a54db997abf7eadc26b11773137923b966bbc4d53be2eb0a415d42",
+    "first.stderr.log": "e9e591f4f8f8623200f8ced300d268f81d4621a319f44ab532bc62115e5861e6",
+    "first.stdout.log": "4e8e385fba2147e9eb90f79aecd4a9222d66f70fb7b28968b6fe40a9814f6e4b",
+    "native-smoke.py": "736a71e1bde3bb4065ba65f3e0ebb1fbe5a8e28fd335ff48dbcf8f295b7e86ea",
+    "restart.stderr.log": "ea55cb73e167dab109f97ee9e70079a14d8f3c61d6de1a55d4cb3d83bde6ea7f",
+    "restart.stdout.log": "1c725760ee3c3c82fa4645dd37c065eb1339619074ed2e56acbfb189dcd6b5aa",
+    "result.json": "4be749ad0deef16cef59d7f412228ad17a5623dbaaa8fd32e07412d9214ee94e"
+  }
+}

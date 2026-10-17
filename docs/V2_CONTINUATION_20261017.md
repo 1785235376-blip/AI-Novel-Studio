@@ -1,5 +1,9 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Real PostgreSQL full-process persistence (17:30 UTC)
+
+The original PostgreSQL wrapper and full app lifecycle passed the same manual Director → Graph save → complete app restart → exact readback → stale-source flow. Fresh database v2_director_native_app_20261017_r1,20original migrations, original bootstrap/branch authority, no injected service/mock. Both app PIDs and PG stopped. Actual PG app correctly withholds independent model-review advertisement; that lifecycle remains File-only. See delivery/v2-development/director-full-process-postgres-20261017-r1/README.md.
+
 ## Original full-process persistence (17:28 UTC)
 
 Native Linux source-run app in packaged-trust mode completed actual startup → original one-shot bootstrap → branch-scoped manual Director/Graph save → full process shutdown/restart → fresh-session exact readback → stale source labeling. No service rebinding, development registry or response mocks; no model requested. Both owned processes stopped and original-runner source hashes stayed exact. See delivery/v2-development/director-full-process-20261017-r3/README.md. This is not browser, Windows installer or live-model acceptance.

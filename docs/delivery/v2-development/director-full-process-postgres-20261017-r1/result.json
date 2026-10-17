@@ -1,0 +1,180 @@
+{
+  "status": "PASS_FULL_PROCESS_POSTGRES_MANUAL_DIRECTOR_GRAPH",
+  "response_mocks": false,
+  "development_sessions": false,
+  "lifespan": "original",
+  "model_requests": "NOT_REQUESTED",
+  "browser": "NOT_RUN",
+  "platform": "Linux cloud, not Windows",
+  "processes": [
+    {
+      "pid": 22,
+      "phase": "first",
+      "port": 36487,
+      "stopped": true
+    },
+    {
+      "pid": 868,
+      "phase": "restart",
+      "port": 51001,
+      "stopped": true
+    }
+  ],
+  "actual_application_director_advertisement": false,
+  "saved": {
+    "project_id": "2186ad7d-1572-45e4-9c19-0f33b8535d49",
+    "branch_id": "60c82b95-6516-44bc-8baa-ebcad833fca6",
+    "document_pin": {
+      "id": "da13e604-9317-4f57-83bd-e25eb273bab8",
+      "version": 1,
+      "digest": "0ff877a0a6892a5d533de301fe7e5e28fb831f3c1e472ff8b4064292e7e65f92"
+    },
+    "graph": {
+      "id": "fea2e03e-77ee-41df-90a5-bd05bb9e258f",
+      "version": 1,
+      "definition": {
+        "schema_version": 4,
+        "title": "SYNTHETIC persisted Director graph",
+        "nodes": [
+          {
+            "id": "director",
+            "definition_id": "director_plan",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 0.0,
+              "y": 0.0
+            },
+            "parameters": {
+              "document_snapshot": {
+                "id": "da13e604-9317-4f57-83bd-e25eb273bab8",
+                "version": 1,
+                "digest": "0ff877a0a6892a5d533de301fe7e5e28fb831f3c1e472ff8b4064292e7e65f92"
+              }
+            }
+          }
+        ],
+        "edges": [],
+        "viewport": {
+          "x": 0.0,
+          "y": 0.0,
+          "zoom": 1.0
+        }
+      },
+      "definition_digest": "a7ead2c195394bf47a3e1d2809f1dc2fc6934455418e01e153fe59bebdd45abb",
+      "execution_digest": "b87fa275c6157d8ce744550d01a07058179a7d7cbd8bed30406657d722b30550",
+      "created_at": "2026-10-17T17:30:25.812964+00:00",
+      "updated_at": "2026-10-17T17:30:25.812964+00:00",
+      "can_edit": true,
+      "reference_states": [
+        {
+          "node_id": "director",
+          "state": "CURRENT"
+        }
+      ],
+      "capacity": {
+        "history_used": 0,
+        "history_limit": 80,
+        "record_bytes": 1324,
+        "record_limit_bytes": 2000000
+      },
+      "project_id": "2186ad7d-1572-45e4-9c19-0f33b8535d49",
+      "scope": {
+        "mode": "collaboration",
+        "novel_id": "2186ad7d-1572-45e4-9c19-0f33b8535d49",
+        "workspace_id": "workspace-a",
+        "storyline_id": "8595a3be-1dbf-4248-a21e-9fc6a261b660",
+        "branch_id": "60c82b95-6516-44bc-8baa-ebcad833fca6"
+      }
+    }
+  },
+  "restart_readback_equal": true,
+  "stale_source_preserved_pin": true,
+  "calls": [
+    {
+      "method": "GET",
+      "path": "/api/workspaces",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/api/packaged/initial-workspace",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/collaboration/admin/workspaces/workspace-a/projects",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/admin/workspaces/workspace-a/navigation",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/2186ad7d-1572-45e4-9c19-0f33b8535d49/studio/activate",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/2186ad7d-1572-45e4-9c19-0f33b8535d49/experimental/creative/director-proposals/model-capabilities",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/2186ad7d-1572-45e4-9c19-0f33b8535d49/experimental/creative/documents",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/2186ad7d-1572-45e4-9c19-0f33b8535d49/studio/graphs/planning-documents",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/2186ad7d-1572-45e4-9c19-0f33b8535d49/studio/graphs",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/2186ad7d-1572-45e4-9c19-0f33b8535d49/studio/graphs/fea2e03e-77ee-41df-90a5-bd05bb9e258f",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/2186ad7d-1572-45e4-9c19-0f33b8535d49/studio/graphs/fea2e03e-77ee-41df-90a5-bd05bb9e258f",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/api/packaged/initial-workspace",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/2186ad7d-1572-45e4-9c19-0f33b8535d49/studio/graphs/fea2e03e-77ee-41df-90a5-bd05bb9e258f",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/2186ad7d-1572-45e4-9c19-0f33b8535d49/studio/graphs/fea2e03e-77ee-41df-90a5-bd05bb9e258f",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/2186ad7d-1572-45e4-9c19-0f33b8535d49/experimental/creative/documents/da13e604-9317-4f57-83bd-e25eb273bab8",
+      "status": 200
+    },
+    {
+      "method": "PUT",
+      "path": "/api/novels/2186ad7d-1572-45e4-9c19-0f33b8535d49/experimental/creative/documents/da13e604-9317-4f57-83bd-e25eb273bab8",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/2186ad7d-1572-45e4-9c19-0f33b8535d49/studio/graphs/fea2e03e-77ee-41df-90a5-bd05bb9e258f",
+      "status": 200
+    }
+  ]
+}

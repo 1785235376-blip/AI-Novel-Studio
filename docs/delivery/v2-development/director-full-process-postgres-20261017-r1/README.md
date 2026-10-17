@@ -1,0 +1,7 @@
+# Real PostgreSQL full-process manual Director / Graph acceptance
+
+The unchanged original PostgreSQL runner created a new empty database v2_director_native_app_20261017_r1, applied all20 original migrations, verified the live PostgreSQL17.11 identity/OID and started the original source application with its full lifespan. Original one-shot packaged bootstrap, membership/project/branch owners and HTTP routes were used without response mocks, development sessions, raw-data insertion or service rebinding. This is Linux source-run packaged-trust mode, not an installed Windows product.
+
+A manually authored Director and its exact Graph pin were created through real HTTP. The app fully shut down and a second process reopened the same PostgreSQL data. The old token was refused, a newly bootstrapped session read the same document/Graph through both API prefixes, and an explicit later Director edit produced a STALE label while preserving the saved graph pin/version. Both app processes and the owned PG server stopped. The database remains retained.
+
+Original runner status PASS and source maps equal the preceding File full-process smoke. The actual PG app correctly does not advertise independent model review: private pending/terminal evidence remains File-only. No model was requested, so this does not establish PG AI-review support or provider quality. Browser, GPU, Windows installer, complete advanced capabilities and release remain separate.
