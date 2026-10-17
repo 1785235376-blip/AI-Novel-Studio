@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "source_maps_match_primary_before_after_current": true,
+  "original_runner_conftest_old_tests_unchanged": true,
+  "checks": [
+    {
+      "receipt": "restored-verifier-independent-origin-r1.json",
+      "source_files": 2601,
+      "log_sha256": "548e9d07003ef119da146b459a03ffe9b9bacd7aa2312d8c8393e29b55d8da04"
+    },
+    {
+      "receipt": "restored-verifier-independent-r1.json",
+      "source_files": 2601,
+      "log_sha256": "1b722375b84dc8ade322e740a77e144cbcaa92fac36b018a2b4e7acf100bc778"
+    }
+  ],
+  "natural_origin_log_sha256": "961cf79bebf3234ec5c2bd963cea95f3d3820b097c75ed452320f4ee113ce80d",
+  "app_sha256": "a0bfd17bd268581d41b7a0347e376f6c0895338b9cea16a7a86c2c8981cc6a62",
+  "test_sha256": "2f66a923a30ad21560b35a626de34eb90f6e12510d079df930f62cbc6bc78b22"
+}
