@@ -1,0 +1,104 @@
+{
+  "status": "PASS_SCOPED_INDEPENDENT_REVIEW",
+  "utc": "2026-10-17T07:27:23.082082+00:00",
+  "base": "3eb1dfeeba1c94a259aab62ca5d0d05e4f803d16",
+  "branch": "work/dot-timeline-selection-20261017",
+  "runtime_review": "Detached same-track apply-all then original final validation; one change/history entry; explicit original Save/CAS/GET; selection/context ABA guards; no backend mutation.",
+  "independent_results": {
+    "file": "72 passed, 1 PostgreSQL-only deselected, 1 existing warning",
+    "ui": "112 passed in 5 suites, including 54 new selection cases; overlaps primary totals"
+  },
+  "manifest_entries": 2564,
+  "baseline_manifest_entries": 2559,
+  "byte_exact_baseline_entries": 2556,
+  "baseline_changed_paths": [
+    "frontend/src/creative/StudioTimelineEditor.tsx",
+    "frontend/src/creative/useStudioTimelineEditor.ts",
+    "frontend/src/nle/ClipInspectorPanel.tsx"
+  ],
+  "new_manifest_paths": [
+    "frontend/src/creative/StudioTimelineSelectionMove.additive.test.tsx",
+    "frontend/src/nle/ClipInspectorSelectionMove.additive.test.tsx",
+    "frontend/src/nle/timelineSelectionMove.additive.test.ts",
+    "frontend/src/nle/timelineSelectionMove.ts",
+    "tests/test_v2_timeline_selection_handoff.py"
+  ],
+  "current_manifest_verified": true,
+  "primary_final_and_independent_manifests_equal": true,
+  "origin": {
+    "probe_sha256": "71d879f23e35669fb125030543cd38fcc1288ecd6052cd655eb88f7ab56c9396",
+    "normal_and_actual_child_specs_equal": true,
+    "product_or_pytest_imported": false
+  },
+  "receipts": [
+    {
+      "name": "timeline-selection-ui-r2",
+      "receipt_sha256": "f61b2ea943cbdfd1496f17e4fee13c884b8e2adccd5f6f3263cfb0518f2b759d",
+      "log_sha256": "521a0aa6588d7610d926aac75eb28dd563b59a8fd3ba40172f11fc960465b645",
+      "sources": 2564,
+      "exit_code": 0
+    },
+    {
+      "name": "timeline-selection-type-r2",
+      "receipt_sha256": "a1339402e989730e4588711d00c9c0f149821f9a9ec2eda0ebd5b5c6012464bf",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sources": 2564,
+      "exit_code": 0
+    },
+    {
+      "name": "timeline-selection-build-r2",
+      "receipt_sha256": "a92142d2b922bcac9267eebee7ae191e741a475f08f6c6433f17b6805e58fb96",
+      "log_sha256": "cb31a7b986a5c9dc67602f02b3937b8d6ae098a2f50a8874ec6df289890f2217",
+      "sources": 2564,
+      "exit_code": 0
+    },
+    {
+      "name": "timeline-selection-token-r2",
+      "receipt_sha256": "4d6a76978ada073dd1fef317dba5626b2fd05d9e5674df7467704ca06468f0d9",
+      "log_sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "sources": 2564,
+      "exit_code": 0
+    },
+    {
+      "name": "timeline-selection-independent-origin-r1",
+      "receipt_sha256": "366d45479d45217ca201828907c3d684db66a1a50edd4731df882b0875cc2221",
+      "log_sha256": "d30def97ca3aa3bf8dd8e3e7d5f86cf7a4dae0901312605b8e2df4190e1e5324",
+      "sources": 2564,
+      "exit_code": 0
+    },
+    {
+      "name": "timeline-selection-independent-file-r1",
+      "receipt_sha256": "24a014cbb4a064ea64b59a82522d3bfe8ffbf17a264c49a9177a1d687f354474",
+      "log_sha256": "c989cc60b6d1fba822477fa10491cee4bef88f6b2a53c4513ed9c1ddc86a0f1f",
+      "sources": 2564,
+      "exit_code": 0
+    },
+    {
+      "name": "timeline-selection-independent-ui-r1",
+      "receipt_sha256": "533bfd7f1808f22e6b32a7f0a11ded5302ccd01da7357d0b63ef4be3e3d97ee2",
+      "log_sha256": "406b4bc33796dc383fb9091490086ae9b9ee31c6f43aa546f7d365858c3cc329",
+      "sources": 2564,
+      "exit_code": 0
+    }
+  ],
+  "earlier_file_r2_to_final_delta": [
+    "frontend/src/creative/StudioTimelineSelectionMove.additive.test.tsx",
+    "frontend/src/nle/timelineSelectionMove.additive.test.ts"
+  ],
+  "retained_history": [
+    "Pre-run descriptor fixture lacked required track muted/gain fields; repaired before primary execution.",
+    "Primary UI r1 passed but invalid-array it.each tables spread rows; affected rejection cases were not valid intended coverage. Forced TypeScript r1 failed. Two new test tables only corrected to {ids}; final UI/type/build/token rerun passed.",
+    "Primary File r1 origin pairing used different probe bytes between natural and runner child. Both current-root, but not a single unchanged-probe proof. Unique primary File r2 and independent proofs supersede that pairing.",
+    "Primary File r2 preceded only the two new frontend test table fixes; independent full File rerun closes final whole-manifest gap."
+  ],
+  "not_run": [
+    "PostgreSQL",
+    "browser visual/geometry",
+    "native/Windows/packaged runtime",
+    "render/media quality or measured source duration",
+    "provider/GPU",
+    "full E2E/release acceptance"
+  ],
+  "git_diff_check": 0,
+  "no_remaining_scoped_blocker": true
+}

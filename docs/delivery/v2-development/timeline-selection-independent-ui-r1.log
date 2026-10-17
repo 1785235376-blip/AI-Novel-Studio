@@ -1,0 +1,20 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-timeline-selection/frontend
+
+ ✓ src/creative/StudioTimelineSlipDelete.additive.test.tsx (29 tests) 3292ms
+   ✓ mounted original editor slip/delete Save undo and reopen > refuses extra fields, wrong targets and retained bridge callbacks after a draft generation change 570ms
+   ✓ mounted original editor slip/delete Save undo and reopen > routes slip without timeline position and persists only with original CAS 647ms
+   ✓ mounted original editor slip/delete Save undo and reopen > routes ripple without timeline position and persists only with original CAS 586ms
+ ✓ src/creative/StudioTimelineTrim.test.tsx (29 tests) 2487ms
+   ✓ mounted original inspector trim > routes trim without start/at position, supports one-step undo/redo and explicit Save 867ms
+ ✓ src/creative/StudioTimelineSelectionMove.additive.test.tsx (32 tests) 3099ms
+   ✓ mounted selection move routing > moves the whole selected track, undoes atomically, and saves through original CAS 802ms
+   ✓ mounted selection move routing > refuses retained selection ABA callback while a fresh callback works 412ms
+ ✓ src/nle/ClipInspectorSelectionMove.additive.test.tsx (8 tests) 202ms
+ ✓ src/nle/timelineSelectionMove.additive.test.ts (14 tests) 7ms
+
+ Test Files  5 passed (5)
+      Tests  112 passed (112)
+   Start at  16:26:25
+   Duration  12.21s (transform 475ms, setup 37ms, collect 1.02s, tests 9.09s, environment 1.20s, prepare 252ms)
+

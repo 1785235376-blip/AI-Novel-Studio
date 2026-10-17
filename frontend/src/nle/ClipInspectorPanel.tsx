@@ -1,3 +1,4 @@
+import { selectionMoveOperations } from './timelineSelectionMove';
 import { useEffect, useRef, useState } from 'react';
 import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
 import { editCommand, safeTimeline, selectedClipFacts, snapCandidates, snapClipStart } from './timelineOps';
@@ -38,6 +39,10 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
   const inputGeneration = useRef(0);
   const reviewedInputGeneration = inputGeneration.current;
   const authored = (work: () => void) => { inputGeneration.current++; work(); };
+  const [selectionOffset, setSelectionOffset] = useState('');
+  const [selectionOutcome, setSelectionOutcome] = useState('');
+  const alive = useRef(true);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; inputGeneration.current++; }; }, []);
   const [kind, setKind] = useState<string>('split');
   const [atMs, setAtMs] = useState(''), [inMs, setInMs] = useState(''), [outMs, setOutMs] = useState('');
   const [startMs, setStartMs] = useState(''), [offsetMs, setOffsetMs] = useState('');
@@ -51,14 +56,20 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
   const first = facts[0];
   const selectionKey = JSON.stringify([props.selectedClipIds, first?.trackId, first?.clip]);
   const contextKey = JSON.stringify([selectionKey, props.timeline]);
+  const contextGeneration = useRef({ key: contextKey, editable: props.editable, generation: 0 });
+  if (contextGeneration.current.key !== contextKey || contextGeneration.current.editable !== props.editable) {
+    contextGeneration.current = { key: contextKey, editable: props.editable, generation: contextGeneration.current.generation + 1 };
+  }
+  const reviewedContextGeneration = contextGeneration.current.generation;
   const latestContext = useRef({ contextKey, editable: props.editable });
   latestContext.current = { contextKey, editable: props.editable };
   useEffect(() => {
     // Do not carry authored trim/slip points or ripple consent to a different target.
     // Ordinary rerenders keep the semantic key and preserve in-progress input.
     inputGeneration.current++;
-    setInMs(''); setOutMs(''); setOffsetMs(''); setRipple(false); setOutcome({ kind: 'IDLE' });
+    setSelectionOffset(''); setSelectionOutcome(''); setInMs(''); setOutMs(''); setOffsetMs(''); setRipple(false); setOutcome({ kind: 'IDLE' });
   }, [selectionKey]);
+  useEffect(() => { setSelectionOffset(''); setSelectionOutcome(''); }, [contextKey]);
   if (!parsed.ok) {
     return <section className="nle-clip" aria-label="片段属性"><StatusMessage tone="error">{parsed.message}</StatusMessage>
       <EmptyState title="片段属性不可用" detail="需要一份通过原时间线契约校验的时间线。" /></section>;
@@ -75,6 +86,15 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
     setOffsetMs('0'); setTargetTrackId(first.trackId);
     setAssetId(first.clip.source_snapshot.id); setAssetVersion(String(first.clip.source_snapshot.version));
     setAssetDigest(first.clip.source_snapshot.digest); setRipple(false);
+  };
+  const generateSelectionMove = () => {
+    if (!alive.current || !latestContext.current.editable || inputGeneration.current !== reviewedInputGeneration
+      || contextGeneration.current.generation !== reviewedContextGeneration) return;
+    try {
+      const operations = selectionMoveOperations(timeline, props.selectedClipIds, numeric(selectionOffset));
+      props.onEdit({ kind: 'clip.move', payload: operations });
+      setSelectionOutcome(`已生成 ${operations.length} 项原 clip.move 指令；应用结果见时间线提示，仍需明确保存。`);
+    } catch (reason) { setSelectionOutcome(reason instanceof Error ? reason.message : '整体移动输入无效。'); }
   };
   const generate = () => {
     if (inputGeneration.current !== reviewedInputGeneration || !first || !latestContext.current.editable || latestContext.current.contextKey !== contextKey) return;
@@ -108,7 +128,14 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
         <div><dt>速度</dt><dd>{first.speedNum} / {first.speedDen}</dd></div>
         <div><dt>素材</dt><dd>{first.sourceKind} · v{first.clip.source_snapshot.version} · <code>{first.clip.source_snapshot.digest}</code></dd></div>
       </dl>
-      {facts.length > 1 && <Badge tone="info">已选择 {facts.length} 个片段；这里只显示并按第一个片段生成指令</Badge>}
+      {facts.length > 1 && <Badge tone="info">已选择 {facts.length} 个片段；下方整体移动作用于全部选择，其他动作仍针对第一个片段</Badge>}
+      <div className="nle-clip__form">
+        <label>整体移动增量（毫秒，可为负）<input type="number" step={1} value={selectionOffset} aria-label="整体移动增量（毫秒，可为负）"
+          onChange={event => authored(() => setSelectionOffset(event.currentTarget.value))} /></label>
+      </div>
+      <Button disabled={!props.editable} onClick={generateSelectionMove}>整体移动所选片段</Button>
+      <p>整体移动保持各自原轨道与相对间距，不移动未选片段或字幕，不改变时间线总长；一次撤销可恢复。</p>
+      {selectionOutcome && <StatusMessage tone="info">{selectionOutcome}</StatusMessage>}
       <p className="nle-clip__snap">吸附候选只来自真实边界：片段开始、片段结束、播放头与已设置的入/出点。播放头 {props.playheadMs} 毫秒。</p>
       <p className="nle-clip__snap" data-snap-count={snaps.candidates.length}>
         当前候选 {snaps.candidates.length} 个 · 容差 {snaps.toleranceMs} 毫秒

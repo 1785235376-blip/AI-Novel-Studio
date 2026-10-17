@@ -1,3 +1,4 @@
+import { selectionMoveOperations } from '../nle/timelineSelectionMove';
 import type { TimelineAssetHandoff } from './StudioTimelineAssetHandoff';
 import { useEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
@@ -46,8 +47,8 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   // merely equal JSON. Editing then undoing, or switching identical targets,
   // must still invalidate a metadata read that was already in flight.
   const handoffGeneration = useRef(0);
-  const handoffEnvironment = useRef([props.client, props.busy, props.canMutate]);
-  const environment = [props.client, props.busy, props.canMutate];
+  const handoffEnvironment = useRef([props.client, props.busy, props.canMutate, props.projectId, props.isCurrent(), !!props.isBusy?.()]);
+  const environment = [props.client, props.busy, props.canMutate, props.projectId, props.isCurrent(), !!props.isBusy?.()];
   if (environment.some((value, index) => value !== handoffEnvironment.current[index])) {
     handoffGeneration.current++; handoffEnvironment.current = environment;
   }
@@ -241,6 +242,26 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
       change(value => { value.title = checked.title; value.timeline = checked.timeline; });
       setNotice('仅已更新本地时间线；原素材和服务端版本保留，需要明确保存。');
     } catch (reason) { setError(reason instanceof Error ? reason.message : '片段编辑无效，请核对边界与轨道重叠。'); }
+  }
+  function moveSelection(clipIds: readonly string[], offsetMs: number, revision: string, client: StudioProductionClient): boolean {
+    if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN'
+      || client !== latest.current.client || revision !== `${epoch.current}:${handoffGeneration.current}`) return false;
+    try {
+      const input = checkedTimelineDraft(cloneTimeline(draftRef.current));
+      const operations = selectionMoveOperations(input.timeline, clipIds, offsetMs);
+      if (offsetMs === 0) return false;
+      // One detached result: intermediate overlap is allowed by the original batch owner.
+      for (const operation of operations) {
+        const track = input.timeline.tracks.find(row => row.id === operation.track_id)!;
+        track.clips.find(clip => clip.id === operation.clip_id)!.start_ms = operation.start_ms;
+      }
+      const checked = checkedTimelineDraft(input);
+      if (!change(value => { value.title = checked.title; value.timeline = checked.timeline; })) return false;
+      setNotice('所选片段已整体移动到本地草稿，保持各自原轨道；需要明确保存。');
+      return true;
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : '整体移动无效，请核对所选片段与原轨道约束。'); return false;
+    }
   }
   function trimClip(trackId: string, clipId: string, inMs: number, outMs: number, ripple: boolean,
     revision: string, client: StudioProductionClient): boolean {
@@ -473,6 +494,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     moveClip: (trackId: string, clipId: string, targetId: string, position: number) => editClip(trackId, clipId, 'move', position, targetId),
     slipClip: (trackId: string, clipId: string, offsetMs: number) => slipOrRippleRemove(trackId, clipId, 'slip', offsetMs, false, editRevision, props.client),
     rippleRemoveClip: (trackId: string, clipId: string, ripple: boolean) => slipOrRippleRemove(trackId, clipId, 'ripple-remove', 0, ripple, editRevision, props.client),
+    moveSelection: (clipIds: readonly string[], offsetMs: number) => moveSelection(clipIds, offsetMs, editRevision, props.client),
     trimClip: (trackId: string, clipId: string, inMs: number, outMs: number, ripple: boolean) => trimClip(trackId, clipId, inMs, outMs, ripple, editRevision, props.client),
     exportAvailable, exportProfile: owns ? exportProfile : { preset: 'REVIEW_MP4' } as TimelineExportProfile, exportPreview: owns ? exportPreview : undefined,
     exportConfirmed: owns && !!exportPreview && exportConfirmed === exportPreview.preview_digest, canPreviewExport, canExport,

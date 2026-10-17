@@ -1,3 +1,4 @@
+import { selectionMoveOperations } from '../nle/timelineSelectionMove';
 import { StudioTimelineAssetPicker } from './StudioTimelineAssetPicker';
 import { appendTimelineAsset, StudioTimelineAssetHandoff } from './StudioTimelineAssetHandoff';
 import { useEffect, useRef, useState } from 'react';
@@ -30,6 +31,12 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
   const [clipEdits, setClipEdits] = useState<Record<string, { split?: number; position?: number; target?: string }>>({});
   // UX-06 rail state: local view/selection only; it never writes the timeline.
   const [nleClips, setNleClips] = useState<string[]>([]);
+  const selection = useRef({ ids: [] as string[], generation: 0 });
+  const selectClips = (ids: string[]) => {
+    if (JSON.stringify(ids) !== JSON.stringify(selection.current.ids)) selection.current.generation++;
+    selection.current.ids = [...ids]; setNleClips([...ids]);
+  };
+  const selectionGeneration = selection.current.generation;
   const [nlePlayhead, setNlePlayhead] = useState(0);
   const [nleView, setNleView] = useState({ startMs: 0, scale: 1 });
   const [nleNotice, setNleNotice] = useState('');
@@ -249,10 +256,35 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
     {nleNotice && <StatusMessage tone="warning">{nleNotice}</StatusMessage>}
     <TimelineWorkspacePanel projectId={props.projectId || ''} identity={props.projectId || ''} timeline={draft.timeline}
       selectedClipIds={nleClips} playheadMs={nlePlayhead} viewStartMs={nleView.startMs} viewScale={nleView.scale}
-      editable={c.canEdit} onSelectClips={setNleClips} onPlayhead={setNlePlayhead}
+      editable={c.canEdit} onSelectClips={selectClips} onPlayhead={setNlePlayhead}
       onView={next => setNleView({ startMs: next.startMs, scale: next.scale })}
       exportReceipt={c.exportPreview} limits={TIMELINE_LIMITS}
       onEdit={command => {
+        // An array is an explicit batch of existing clip.move descriptors, never a new backend operation.
+        if (command.kind === 'clip.move' && Array.isArray(command.payload)) {
+          const live = latestReview.current;
+          if (live.props.client !== props.client || live.c.getHandoffRevision() !== reviewGeneration
+            || selection.current.generation !== selectionGeneration || !live.props.isCurrent()
+            || JSON.stringify(selection.current.ids) !== JSON.stringify(nleClips)) return;
+          try {
+            const operations = command.payload;
+            const first = operations[0];
+            const original = draft.timeline.tracks.flatMap(row => row.clips).find(clip => clip.id === first?.clip_id);
+            if (!original || typeof first.start_ms !== 'number') throw new Error('缺少原片段或整体移动位置。');
+            const offset = first.start_ms - original.start_ms;
+            const expected = selectionMoveOperations(draft.timeline, nleClips, offset);
+            if (operations.length !== expected.length || operations.some((operation, index) =>
+              !operation || typeof operation !== 'object' || Array.isArray(operation)
+              || Object.keys(operation).length !== 4 || Object.keys(operation).some(key => !['op', 'clip_id', 'track_id', 'start_ms'].includes(key))
+              || Object.entries(expected[index]).some(([key, value]) => operation[key] !== value))) {
+              throw new Error('整体移动必须完整对应当前选择、原轨道与同一增量。');
+            }
+            const applied = c.moveSelection(nleClips, offset);
+            setNleNotice(applied ? '整体移动已应用到本地草稿；一次撤销可恢复，保存前不会写入服务端。'
+              : '整体移动未应用；请核对增量、原轨道约束与当前编辑状态。');
+          } catch (reason) { setNleNotice(reason instanceof Error ? reason.message : '已拒绝无效的整体移动批次。'); }
+          return;
+        }
         // Field names come from the mapper's REAL payloads (nle/timelineOps.ts):
         // clip.split {at_ms}, clip.duplicate/clip.move {start_ms, track_id}.
         const payload = command.payload as { op?: string; clip_id?: string; at_ms?: number; start_ms?: number; track_id?: string; in_ms?: number; out_ms?: number; offset_ms?: number; ripple?: boolean } | undefined;

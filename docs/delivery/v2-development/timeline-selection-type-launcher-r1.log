@@ -1,0 +1,9 @@
+src/creative/StudioTimelineSelectionMove.additive.test.tsx(76,125): error TS2345: Argument of type '(ids: string | undefined) => Promise<void>' is not assignable to parameter of type '(...args: [] | [string, string] | [string]) => Awaitable<void>'.
+  Types of parameters 'ids' and 'args' are incompatible.
+    Type '[] | [string, string] | [string]' is not assignable to type '[ids: string | undefined]'.
+      Type '[]' is not assignable to type '[ids: string | undefined]'.
+        Source has 0 element(s) but target requires 1.
+src/creative/StudioTimelineSelectionMove.additive.test.tsx(78,65): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'readonly string[]'.
+  Type 'undefined' is not assignable to type 'readonly string[]'.
+
+{"receipt": "docs/delivery/v2-development/timeline-selection-type-r1.json", "status": "FAIL"}

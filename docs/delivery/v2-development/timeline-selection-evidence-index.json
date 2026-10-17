@@ -1,0 +1,345 @@
+{
+  "status": "INDEXED_AFTER_SCOPED_INDEPENDENT_REVIEW",
+  "base_head": "3eb1dfeeba1c94a259aab62ca5d0d05e4f803d16",
+  "final_source_count": 2564,
+  "final_sources_match_current": true,
+  "notes": [
+    "Independent counts overlap primary coverage.",
+    "r1 origin proof has different natural-startup and child probe hashes; r2 and independent fresh proofs are authoritative.",
+    "r1 UI nominal invalid-selection array cases did not exercise intended arrays; TypeScript r1 failed; corrected new tables are verified by r2 and independent runs.",
+    "Primary File r2 differs only at two subsequently corrected frontend tests; independent File runs exact final full-source map."
+  ],
+  "receipt_validation": {
+    "docs/delivery/v2-development/timeline-selection-build-r2.json": {
+      "exit_code": 0,
+      "source_count": 2564,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/timeline-selection-file-r1.json": {
+      "exit_code": 0,
+      "source_count": 2564,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": [
+        "frontend/src/creative/StudioTimelineSelectionMove.additive.test.tsx",
+        "frontend/src/nle/timelineSelectionMove.additive.test.ts"
+      ]
+    },
+    "docs/delivery/v2-development/timeline-selection-file-r2.json": {
+      "exit_code": 0,
+      "source_count": 2564,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": [
+        "frontend/src/creative/StudioTimelineSelectionMove.additive.test.tsx",
+        "frontend/src/nle/timelineSelectionMove.additive.test.ts"
+      ]
+    },
+    "docs/delivery/v2-development/timeline-selection-independent-file-r1.json": {
+      "exit_code": 0,
+      "source_count": 2564,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/timeline-selection-independent-origin-r1.json": {
+      "exit_code": 0,
+      "source_count": 2564,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/timeline-selection-independent-ui-r1.json": {
+      "exit_code": 0,
+      "source_count": 2564,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/timeline-selection-origin-file-r2.json": {
+      "exit_code": 0,
+      "source_count": 2564,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": [
+        "frontend/src/creative/StudioTimelineSelectionMove.additive.test.tsx",
+        "frontend/src/nle/timelineSelectionMove.additive.test.ts"
+      ]
+    },
+    "docs/delivery/v2-development/timeline-selection-origin-r1.json": {
+      "exit_code": 0,
+      "source_count": 2564,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": [
+        "frontend/src/creative/StudioTimelineSelectionMove.additive.test.tsx",
+        "frontend/src/nle/timelineSelectionMove.additive.test.ts"
+      ]
+    },
+    "docs/delivery/v2-development/timeline-selection-token-r2.json": {
+      "exit_code": 0,
+      "source_count": 2564,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/timeline-selection-type-r1.json": {
+      "exit_code": 1,
+      "source_count": 2564,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": [
+        "frontend/src/creative/StudioTimelineSelectionMove.additive.test.tsx",
+        "frontend/src/nle/timelineSelectionMove.additive.test.ts"
+      ]
+    },
+    "docs/delivery/v2-development/timeline-selection-type-r2.json": {
+      "exit_code": 0,
+      "source_count": 2564,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    },
+    "docs/delivery/v2-development/timeline-selection-ui-r1.json": {
+      "exit_code": 0,
+      "source_count": 2564,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": [
+        "frontend/src/creative/StudioTimelineSelectionMove.additive.test.tsx",
+        "frontend/src/nle/timelineSelectionMove.additive.test.ts"
+      ]
+    },
+    "docs/delivery/v2-development/timeline-selection-ui-r2.json": {
+      "exit_code": 0,
+      "source_count": 2564,
+      "pre_equals_post": true,
+      "log_hash_verified": true,
+      "differences_from_final_source_map": []
+    }
+  },
+  "files": {
+    "docs/TIMELINE_SELECTION_MOVE_HANDOFF.md": {
+      "sha256": "0577985377ea80a342cd75c641ecfb7a5ff26c9511ced811eb5b11fe396c6d9c",
+      "bytes": 8684
+    },
+    "docs/delivery/v2-development/timeline-selection-build-launcher-r2.log": {
+      "sha256": "6e50dc692843ce774fc2cefdcad81332dcda8193df14f269209d2f60a8437345",
+      "bytes": 1775
+    },
+    "docs/delivery/v2-development/timeline-selection-build-r2.json": {
+      "sha256": "a92142d2b922bcac9267eebee7ae191e741a475f08f6c6433f17b6805e58fb96",
+      "bytes": 606940
+    },
+    "docs/delivery/v2-development/timeline-selection-build-r2.log": {
+      "sha256": "cb31a7b986a5c9dc67602f02b3937b8d6ae098a2f50a8874ec6df289890f2217",
+      "bytes": 1679
+    },
+    "docs/delivery/v2-development/timeline-selection-file-r1.json": {
+      "sha256": "92a7e3dfc06f6751a7e56b352e29e5efc978a4380d43a4e9f70ac43650657786",
+      "bytes": 607354
+    },
+    "docs/delivery/v2-development/timeline-selection-file-r1.log": {
+      "sha256": "9e879fa24ae99c0bb3de7ef15c37a068f40b49661f97864fe54c02123a5b0ce0",
+      "bytes": 729
+    },
+    "docs/delivery/v2-development/timeline-selection-file-r2.json": {
+      "sha256": "2b29b2604418ef6ce39c185c389f0947391895441b8c5925aedb61aef1ab5842",
+      "bytes": 607354
+    },
+    "docs/delivery/v2-development/timeline-selection-file-r2.log": {
+      "sha256": "0d523d93023b9c3b385caf58b43cc211006f6118d9daac979ec507073c4055f5",
+      "bytes": 729
+    },
+    "docs/delivery/v2-development/timeline-selection-independent-file-r1.json": {
+      "sha256": "24a014cbb4a064ea64b59a82522d3bfe8ffbf17a264c49a9177a1d687f354474",
+      "bytes": 607474
+    },
+    "docs/delivery/v2-development/timeline-selection-independent-file-r1.log": {
+      "sha256": "c989cc60b6d1fba822477fa10491cee4bef88f6b2a53c4513ed9c1ddc86a0f1f",
+      "bytes": 729
+    },
+    "docs/delivery/v2-development/timeline-selection-independent-origin/launcher.log": {
+      "sha256": "db7007bfe37856e06bb8d0f6ce569c978bfc8a4eed3d877015d0a379b0d7ad4e",
+      "bytes": 10771
+    },
+    "docs/delivery/v2-development/timeline-selection-independent-origin/normal-startup.json": {
+      "sha256": "4ebd68c0d11f6f226b2517c6b4779d49fe35c08ce1a48690642cf5c63462cea5",
+      "bytes": 8178
+    },
+    "docs/delivery/v2-development/timeline-selection-independent-origin/normal-startup.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/timeline-selection-independent-origin/origin-probe.py": {
+      "sha256": "71d879f23e35669fb125030543cd38fcc1288ecd6052cd655eb88f7ab56c9396",
+      "bytes": 6484
+    },
+    "docs/delivery/v2-development/timeline-selection-independent-origin/run.sh": {
+      "sha256": "82833c98c5f9520d4dd91887ba75238a8261ea7c5450267d00de698f0411ec41",
+      "bytes": 1980
+    },
+    "docs/delivery/v2-development/timeline-selection-independent-origin-r1.json": {
+      "sha256": "366d45479d45217ca201828907c3d684db66a1a50edd4731df882b0875cc2221",
+      "bytes": 607313
+    },
+    "docs/delivery/v2-development/timeline-selection-independent-origin-r1.log": {
+      "sha256": "d30def97ca3aa3bf8dd8e3e7d5f86cf7a4dae0901312605b8e2df4190e1e5324",
+      "bytes": 8242
+    },
+    "docs/delivery/v2-development/timeline-selection-independent-review.json": {
+      "sha256": "7b99e01f42aaec84a6412041562330345a3c06490c98c675a13851f699318165",
+      "bytes": 4750
+    },
+    "docs/delivery/v2-development/timeline-selection-independent-ui-r1.json": {
+      "sha256": "533bfd7f1808f22e6b32a7f0a11ded5302ccd01da7357d0b63ef4be3e3d97ee2",
+      "bytes": 607341
+    },
+    "docs/delivery/v2-development/timeline-selection-independent-ui-r1.log": {
+      "sha256": "406b4bc33796dc383fb9091490086ae9b9ee31c6f43aa546f7d365858c3cc329",
+      "bytes": 1479
+    },
+    "docs/delivery/v2-development/timeline-selection-origin/FILE-EVIDENCE.md": {
+      "sha256": "a646eb92e14086b2ef72c7b96a0784cfe79c7e8d23cee727cc77ea392b1a310e",
+      "bytes": 2667
+    },
+    "docs/delivery/v2-development/timeline-selection-origin/file-launcher-r2.log": {
+      "sha256": "ef0ed50bf46085a7bcb90c22578c191e1091b42e7b56bfbec24cd6f0913078c9",
+      "bytes": 824
+    },
+    "docs/delivery/v2-development/timeline-selection-origin/file-launcher.log": {
+      "sha256": "a1ddb61c0a527e855b83b9da42cdac423d5b9997958723d168d98fd7b799c6b8",
+      "bytes": 824
+    },
+    "docs/delivery/v2-development/timeline-selection-origin/launcher-file-r2.log": {
+      "sha256": "3a01d7cdc80883e860d46c232bc27e4ecf7d7223b82c6e1c4e22eecb2b2c6cce",
+      "bytes": 8344
+    },
+    "docs/delivery/v2-development/timeline-selection-origin/launcher.log": {
+      "sha256": "6159c44420ac8b9483d7431cfac315aeb2b2d65d30642b7278bbce5dbab9228a",
+      "bytes": 6484
+    },
+    "docs/delivery/v2-development/timeline-selection-origin/normal-startup-file-r2.json": {
+      "sha256": "42ae2ecee5060672d0d2949be701c4087081627d02aebb6df2b7fdbb01e41481",
+      "bytes": 8178
+    },
+    "docs/delivery/v2-development/timeline-selection-origin/normal-startup-file-r2.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/timeline-selection-origin/normal-startup.json": {
+      "sha256": "7374a05fd8a6a0451f94e12b866c5918601b02d8ba00c634b49b7f1daed7d92d",
+      "bytes": 8178
+    },
+    "docs/delivery/v2-development/timeline-selection-origin/normal-startup.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/timeline-selection-origin/origin-probe-file-r2.py": {
+      "sha256": "71d879f23e35669fb125030543cd38fcc1288ecd6052cd655eb88f7ab56c9396",
+      "bytes": 6484
+    },
+    "docs/delivery/v2-development/timeline-selection-origin/origin-probe.py": {
+      "sha256": "93692647be0059d24c72d28fc537b31b0980e471634b9599b0b1e83231f599e2",
+      "bytes": 6087
+    },
+    "docs/delivery/v2-development/timeline-selection-origin/run-file-r2.sh": {
+      "sha256": "bafe5d05e4d1c4b55393cb29f9eb66f9f69157eba89ec8b68235646a848e5806",
+      "bytes": 1034
+    },
+    "docs/delivery/v2-development/timeline-selection-origin/run-file.sh": {
+      "sha256": "441dba0abb844adcb0244d44c58acb18ba49184c86c0c2426f72c559ba469d94",
+      "bytes": 1034
+    },
+    "docs/delivery/v2-development/timeline-selection-origin/run-frontend.sh": {
+      "sha256": "9e60bf2ae41228354455994bfd922aba74f91b9c0c5196814af551cf63d767b8",
+      "bytes": 2477
+    },
+    "docs/delivery/v2-development/timeline-selection-origin/run-proof-file-r2.sh": {
+      "sha256": "b23a0c012f7573c48d7a33fdd22033a3e19ed0241a6b8b6df04b3c5967059b00",
+      "bytes": 1383
+    },
+    "docs/delivery/v2-development/timeline-selection-origin/run-proof.sh": {
+      "sha256": "1a63bfc2819d3ceb79592ef2a7c8814592bf8fd8d78803ff38e6c450d25fc8cd",
+      "bytes": 1354
+    },
+    "docs/delivery/v2-development/timeline-selection-origin-file-r2.json": {
+      "sha256": "37730064a8f4b0d098ee3a20ec3bbf0d3a67c7d31d4586b6f39f83fddee6dbe6",
+      "bytes": 607246
+    },
+    "docs/delivery/v2-development/timeline-selection-origin-file-r2.log": {
+      "sha256": "ca4967317d8bb3e8bff56e6c2174c3a046362566dfb617155f7ec165bc4370e8",
+      "bytes": 8242
+    },
+    "docs/delivery/v2-development/timeline-selection-origin-r1.json": {
+      "sha256": "3d62498a9c126be80a7a044435ff4339888ca3e0f95b863a293fd2d03ad5eacd",
+      "bytes": 607193
+    },
+    "docs/delivery/v2-development/timeline-selection-origin-r1.log": {
+      "sha256": "25377a44e4dc6c40e3cc4f922e533da840c9084cec9881b025b7c5e89eef07b0",
+      "bytes": 6387
+    },
+    "docs/delivery/v2-development/timeline-selection-token-launcher-r2.log": {
+      "sha256": "4d4280bd69e6dc9a88423a2bd1a3c05ab615db37253cdef54a5ff4122e436809",
+      "bytes": 127
+    },
+    "docs/delivery/v2-development/timeline-selection-token-r2.json": {
+      "sha256": "4d6a76978ada073dd1fef317dba5626b2fd05d9e5674df7467704ca06468f0d9",
+      "bytes": 606909
+    },
+    "docs/delivery/v2-development/timeline-selection-token-r2.log": {
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "bytes": 31
+    },
+    "docs/delivery/v2-development/timeline-selection-type-launcher-r1.log": {
+      "sha256": "b876e76a8836af1eb424ce3eb5f5f46ef4723e9ca429d351b6d850cfe9a4689f",
+      "bytes": 871
+    },
+    "docs/delivery/v2-development/timeline-selection-type-launcher-r2.log": {
+      "sha256": "447d73c6e1aa99fcc86c149f8843026d0049f0e3df44314bf3a96527d2fa9cff",
+      "bytes": 95
+    },
+    "docs/delivery/v2-development/timeline-selection-type-r1.json": {
+      "sha256": "aa568ffbf751f41430887ef715b07cdb582f299631b561eb1e57d700635de95a",
+      "bytes": 606938
+    },
+    "docs/delivery/v2-development/timeline-selection-type-r1.log": {
+      "sha256": "d50822019dbd069b4ac87d761a0568f4222f8e2ba61851f5caf52ffc535bfb44",
+      "bytes": 776
+    },
+    "docs/delivery/v2-development/timeline-selection-type-r2.json": {
+      "sha256": "a1339402e989730e4588711d00c9c0f149821f9a9ec2eda0ebd5b5c6012464bf",
+      "bytes": 606938
+    },
+    "docs/delivery/v2-development/timeline-selection-type-r2.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/timeline-selection-ui-launcher-r1.log": {
+      "sha256": "9eb122281ad685f0864071c60be61851448aebbc72463cc5474dbdb3ec696afb",
+      "bytes": 2234
+    },
+    "docs/delivery/v2-development/timeline-selection-ui-launcher-r2.log": {
+      "sha256": "e34c43d4e819fd129be21dd48caf155e2c3c76a4252d5a861a29aef3b58fe2aa",
+      "bytes": 2234
+    },
+    "docs/delivery/v2-development/timeline-selection-ui-r1.json": {
+      "sha256": "f141c5e74d6f3e09e0c168dd19c5058ede94c93b531988dcba3e6873e44150e2",
+      "bytes": 607531
+    },
+    "docs/delivery/v2-development/timeline-selection-ui-r1.log": {
+      "sha256": "eda308367ff88b0538ce25fda2996e1874164feee18a84d221178260fb09560d",
+      "bytes": 2141
+    },
+    "docs/delivery/v2-development/timeline-selection-ui-r2.json": {
+      "sha256": "f61b2ea943cbdfd1496f17e4fee13c884b8e2adccd5f6f3263cfb0518f2b759d",
+      "bytes": 607531
+    },
+    "docs/delivery/v2-development/timeline-selection-ui-r2.log": {
+      "sha256": "521a0aa6588d7610d926aac75eb28dd563b59a8fd3ba40172f11fc960465b645",
+      "bytes": 2141
+    }
+  }
+}

@@ -1,0 +1,29 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-timeline-selection/frontend
+
+ ✓ src/nle/timelineOps.test.ts (52 tests) 81ms
+ ✓ src/nle/nlePanels.test.tsx (18 tests) 437ms
+ ✓ src/creative/TimelineSourceEditing.phase6.test.tsx (21 tests) 776ms
+   ✓ Phase 6 original Timeline controller preserves source, locks and UNKNOWN > keeps old embedded clients functional and exposes explicit formal-source controls only when available 315ms
+ ✓ src/creative/StudioTimelineSlipDelete.additive.test.tsx (29 tests) 3208ms
+   ✓ mounted original editor slip/delete Save undo and reopen > refuses extra fields, wrong targets and retained bridge callbacks after a draft generation change 514ms
+   ✓ mounted original editor slip/delete Save undo and reopen > routes slip without timeline position and persists only with original CAS 651ms
+   ✓ mounted original editor slip/delete Save undo and reopen > routes ripple without timeline position and persists only with original CAS 571ms
+ ✓ src/creative/StudioTimelineTrim.test.tsx (29 tests) 2434ms
+   ✓ mounted original inspector trim > routes trim without start/at position, supports one-step undo/redo and explicit Save 820ms
+ ✓ src/creative/StudioTimelineSelectionMove.additive.test.tsx (32 tests) 3054ms
+   ✓ mounted selection move routing > moves the whole selected track, undoes atomically, and saves through original CAS 765ms
+   ✓ mounted selection move routing > refuses retained selection ABA callback while a fresh callback works 408ms
+ ✓ src/ui/AppShell.test.tsx (19 tests) 237ms
+ ✓ src/creative/StudioTimelineAssetHandoff.test.tsx (20 tests) 875ms
+ ✓ src/nle/ClipInspectorSlipDelete.additive.test.tsx (4 tests) 221ms
+ ✓ src/nle/ClipInspectorSelectionMove.additive.test.tsx (8 tests) 209ms
+ ✓ src/creative/ProductionTimeline.test.tsx (4 tests) 188ms
+ ✓ src/ui/primitives.test.tsx (4 tests) 79ms
+ ✓ src/nle/timelineSelectionMove.additive.test.ts (14 tests) 6ms
+
+ Test Files  13 passed (13)
+      Tests  254 passed (254)
+   Start at  16:22:49
+   Duration  19.81s (transform 860ms, setup 79ms, collect 2.21s, tests 11.80s, environment 3.51s, prepare 648ms)
+
