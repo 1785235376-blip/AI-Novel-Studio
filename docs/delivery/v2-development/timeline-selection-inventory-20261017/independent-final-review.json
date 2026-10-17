@@ -1,0 +1,23 @@
+{
+  "status": "PASS_INDEPENDENT_FINAL_INVENTORY_REVIEW",
+  "gate": 3,
+  "source_commit": "5de3919edf2969f8583c2d82603fd1057b63d65b",
+  "utc": "2026-10-17T07:33:19.110Z",
+  "canonical_sha256": "e1e075039869cde2734ea4329aa68f3b5edeebfa74de7afd6cf296670d039e3c",
+  "raw_collection_sha256": "3c49e9bb2374e6545154e39d7ebd1deb050712211f128541c2db64913099d80d",
+  "three_collections_byte_identical": true,
+  "source_count": 2626,
+  "total_rows": 16741,
+  "old_rows_exact": 16720,
+  "new_file_only_rows": 21,
+  "protected_predecessor_entries": 1306,
+  "companion_files": 11,
+  "existing_docs_preserved": 8044,
+  "independent_candidate_approval_sha256": "a15a270be0a23971fbed0e3e35b53cd437e3cf8e8430ade947c18e1498619f86",
+  "confirmation_validation_sha256": "23636e59daafb4ec57d05ad81670a0128076a81ce72648cce6058b47482c6828",
+  "verifier_sha256": "edb65de56edcbb6036d2a7d4b4b8aae1c00b5bc0ee56b6c77bf43963881ec160",
+  "offline_final_verifier": "PASS_INVENTORY_ONLY",
+  "only_tracked_change_from_source_commit": ".github/ci/coverage_manifest_v2.json.gz",
+  "tests_executed": false,
+  "scope": "Inventory collection closure only. Does not change runtime verification boundaries or resolve prior Audio listing failures. Evidence indexing and final Git binding follow this gate."
+}

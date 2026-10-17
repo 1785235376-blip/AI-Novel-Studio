@@ -1,0 +1,24 @@
+{
+  "status": "INVENTORY_ONLY",
+  "head": "5de3919edf2969f8583c2d82603fd1057b63d65b",
+  "rows": 16741,
+  "raw_sha256": "3c49e9bb2374e6545154e39d7ebd1deb050712211f128541c2db64913099d80d",
+  "report_sha256": "df0165740d52d7fc3aae72a17d731ba77d7a986b5bf346978e5fc043da2ef6db",
+  "all_old_rows_order_and_classifications_exact": 16720,
+  "new_rows": 21,
+  "new_backend_counts": {
+    "file": 21,
+    "postgres": 0,
+    "both": 0
+  },
+  "new_rows_by_file": {
+    "tests/test_v2_timeline_selection_handoff.py": 21
+  },
+  "protected_entries_exact": 1306,
+  "source_count": 2626,
+  "source_stable": true,
+  "companion_files": 11,
+  "canonical_unchanged": true,
+  "canonical_sha256": "91ca42f5ade25e97bb5e311e4b40d4a905ed57c90b170d7ce4e5c5f18421b2cf",
+  "tests_executed": false
+}

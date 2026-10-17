@@ -1,0 +1,91 @@
+{
+  "source_checkpoint": "5de3919edf2969f8583c2d82603fd1057b63d65b",
+  "baseline_manifest": {
+    "commit": "3eb1dfeeba1c94a259aab62ca5d0d05e4f803d16",
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "sha256": "91ca42f5ade25e97bb5e311e4b40d4a905ed57c90b170d7ce4e5c5f18421b2cf"
+  },
+  "complete_source_map_entries": 2626,
+  "complete_source_map_sha256": "31e3d9c0c234d4547ab1539dcc30b0ad54bddeb97d49e428f29722f0a90276a8",
+  "source_delta": [
+    {
+      "path": "frontend/src/creative/StudioTimelineEditor.tsx",
+      "before": "beb43de44aeaa953f920bb49abcdfffb550e15e439999178fc82512eef08c97f",
+      "after": "be4fbd0943589f8a022a4e41a070306bcf83265324c7624a7a157a63666cf49c"
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineSelectionMove.additive.test.tsx",
+      "before": null,
+      "after": "a420dd159077ce9e7ebb64d25ecf9a4579998223991a57633900ea1ed7549923"
+    },
+    {
+      "path": "frontend/src/creative/useStudioTimelineEditor.ts",
+      "before": "0a79f448859c7b45a8d3bb30d57c370e016ff2fc74812b13b3fe588d22dfc840",
+      "after": "4ac580a96521698e6cd58becaa073f40008146191ea4eba5b03bfae9c130606b"
+    },
+    {
+      "path": "frontend/src/nle/ClipInspectorPanel.tsx",
+      "before": "3d9498d2eceace27348794d0e54904f30334007fdb6dde1fc59a9a9b00b5d4eb",
+      "after": "143890f858322b85eebeb73eb3a99220463064c15b397f5d5832560e76524878"
+    },
+    {
+      "path": "frontend/src/nle/ClipInspectorSelectionMove.additive.test.tsx",
+      "before": null,
+      "after": "a207792c2c60a0f3975400fd77c169ef2bb31bb5a1f5f929cb3df6cd15b27bb2"
+    },
+    {
+      "path": "frontend/src/nle/timelineSelectionMove.additive.test.ts",
+      "before": null,
+      "after": "fc420d0ad9cd3f3b9ef4c5cbd9fb4bdbe77c68d250c9f23b7bc10e0f35bcf364"
+    },
+    {
+      "path": "frontend/src/nle/timelineSelectionMove.ts",
+      "before": null,
+      "after": "d5f5a904fadda6b0652958f7dd0ad10c5bcefcf3e7e8f9ddac37d353ec4e0ab7"
+    },
+    {
+      "path": "tests/test_v2_timeline_selection_handoff.py",
+      "before": null,
+      "after": "109c926731e01486f40acfab145e9876c00ef8ed6964eeb7f4f965eab96fab32"
+    }
+  ],
+  "expected_new_sources": [
+    "frontend/src/creative/StudioTimelineSelectionMove.additive.test.tsx",
+    "frontend/src/nle/ClipInspectorSelectionMove.additive.test.tsx",
+    "frontend/src/nle/timelineSelectionMove.additive.test.ts",
+    "frontend/src/nle/timelineSelectionMove.ts",
+    "tests/test_v2_timeline_selection_handoff.py"
+  ],
+  "protected_old_entries_exact": 1306,
+  "frontend_scripts_e2e_companion": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "raw_inventory": {
+    "path": "docs/delivery/v2-development/timeline-selection-inventory-20261017/review-raw-collection.json",
+    "sha256": "3c49e9bb2374e6545154e39d7ebd1deb050712211f128541c2db64913099d80d",
+    "rows": 16741
+  },
+  "prior_raw_inventory": {
+    "path": "docs/delivery/v2-development/audio-fades-inventory-20261017/review-raw-collection.json",
+    "sha256": "bdec41b0f979058f957328cc2824d81446f1061d91887c732a9b42d9791d9f69",
+    "rows": 16720
+  },
+  "packaging_guard": {
+    "path": "packaging/public-build.json",
+    "before_sha256": "3261cc7549d58e5d8e84c69572a9475d9c416bfd487588ecfbec472e8695d37c",
+    "after_sha256": "3261cc7549d58e5d8e84c69572a9475d9c416bfd487588ecfbec472e8695d37c",
+    "outside_manifest": true,
+    "unchanged": true
+  },
+  "tests_executed": false
+}

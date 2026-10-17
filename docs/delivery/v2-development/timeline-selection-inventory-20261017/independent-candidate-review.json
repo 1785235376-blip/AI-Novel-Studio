@@ -1,0 +1,20 @@
+{
+  "status": "APPROVE_EXACT_CANDIDATE_PROMOTION",
+  "source_commit": "5de3919edf2969f8583c2d82603fd1057b63d65b",
+  "gate": 2,
+  "utc": "2026-10-17T07:31:46.589Z",
+  "candidate_path": ".runtime/timeline-selection-inventory/candidate-manifest-v2.json.gz",
+  "candidate_sha256": "e1e075039869cde2734ea4329aa68f3b5edeebfa74de7afd6cf296670d039e3c",
+  "canonical_predecessor_sha256": "91ca42f5ade25e97bb5e311e4b40d4a905ed57c90b170d7ce4e5c5f18421b2cf",
+  "verifier_sha256": "edb65de56edcbb6036d2a7d4b4b8aae1c00b5bc0ee56b6c77bf43963881ec160",
+  "candidate_validation_sha256": "b3edefcafc477af57f22570511317552a1fc13f05e25a361f8e017a7694409e6",
+  "verification": "Independent offline candidate verifier passed: exact source and node maps, frozen metadata and field closure, prior row dictionaries/order/classifications, source brackets/origins/Git bindings and document preservation.",
+  "sources": 2626,
+  "rows": 16741,
+  "old_rows_exact": 16720,
+  "new_file_rows": 21,
+  "protected_entries": 1306,
+  "companions": 11,
+  "tests_executed": false,
+  "scope": "Technical approval of these exact candidate bytes only; parent authorization remains required before promotion. No canonical edit performed by reviewer."
+}

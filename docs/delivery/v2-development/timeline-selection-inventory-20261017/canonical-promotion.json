@@ -1,0 +1,12 @@
+{
+  "parent_approval_received": true,
+  "parent_authorization": "Explicitly authorize exact byte promotion of reviewed candidate e1e075039869cde2734ea4329aa68f3b5edeebfa74de7afd6cf296670d039e3c to canonical after verifying predecessor unchanged. Verify resulting hash, separate third original no-write confirmation, reviewer final gate and complete indexed verifier. No source edits or recompression.",
+  "byte_exact": true,
+  "predecessor_sha256": "91ca42f5ade25e97bb5e311e4b40d4a905ed57c90b170d7ce4e5c5f18421b2cf",
+  "candidate_path": ".runtime/timeline-selection-inventory/candidate-manifest-v2.json.gz",
+  "canonical_path": ".github/ci/coverage_manifest_v2.json.gz",
+  "candidate_sha256": "e1e075039869cde2734ea4329aa68f3b5edeebfa74de7afd6cf296670d039e3c",
+  "canonical_sha256": "e1e075039869cde2734ea4329aa68f3b5edeebfa74de7afd6cf296670d039e3c",
+  "independent_approval_sha256": "a15a270be0a23971fbed0e3e35b53cd437e3cf8e8430ade947c18e1498619f86",
+  "source_commit": "5de3919edf2969f8583c2d82603fd1057b63d65b"
+}
