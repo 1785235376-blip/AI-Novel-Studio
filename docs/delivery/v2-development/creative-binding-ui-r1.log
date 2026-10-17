@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-creative-binding/frontend
+
+ ✓ src/creative/DirectorModelControls.storyboard-model.additive.test.tsx (49 tests) 1205ms
+ ✓ src/creative/GraphModelExecutionPanel.test.tsx (18 tests) 908ms
+ ✓ src/creative/GraphDirectorStoryboardHandoff.test.tsx (7 tests) 293ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 180ms
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 140ms
+ ✓ src/creative/studioGraphDirectorClient.test.ts (14 tests) 16ms
+
+ Test Files  6 passed (6)
+      Tests  100 passed (100)
+   Start at  14:35:59
+   Duration  6.79s (transform 780ms, setup 51ms, collect 1.53s, tests 2.74s, environment 1.47s, prepare 291ms)
+

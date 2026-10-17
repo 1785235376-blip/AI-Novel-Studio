@@ -1,0 +1,38 @@
+{
+  "status": "PASS_SCOPED_INDEPENDENT_REVIEW",
+  "baseline_commit": "e011a0de0a21ddb2833b2689d76caf917165e706",
+  "independent_execution": {
+    "receipt": "docs/delivery/v2-development/creative-binding-independent-r1.json",
+    "receipt_sha256": "1d39afceeea5184db6022fbb831d83e36e74ff1dd902469eb99bfea54b4bc5fc",
+    "passed": 134,
+    "postgres_marked_deselected": 77,
+    "skipped": 0,
+    "scope": [
+      "new binding foundation including actual prechange goldens",
+      "new original-owner persistence",
+      "previously omitted protected model broker"
+    ]
+  },
+  "reviewed_not_rerun": [
+    "primary backend 496 passed / 390 PostgreSQL-marked excluded",
+    "actual offline PUBLIC packaging 87 passed / no skips",
+    "forced TypeScript, production build, token guard",
+    "frontend 100 tests / 6 suites"
+  ],
+  "verified": [
+    "all 2549 runner-tracked source hashes unchanged during checks and current",
+    "all previous tracked sources unchanged except three reviewed runtime files; five new source/fixture files",
+    "PUBLIC manifest separately checked: exact standard new module addition only; manifest outside runner source map",
+    "actual bytes of new module in two real wheel and two real sdist artifacts match source and receipt hashes",
+    "frozen fixture SHA256 640ca3823d83a378b9018a180957d375b9cef6b524f2e527f7e731236cfd90ac and exact Graph/SCREENPLAY digests",
+    "read-only initial independent source race fixed with original scope-before-owner transaction",
+    "raw null marker and preparation stripping prevented; concrete content/review/invocation barriers tested"
+  ],
+  "limits": [
+    "No real PostgreSQL execution; shared classifier and existing SQL reviewed only",
+    "No browser, live provider, desktop, or new public dispatch evidence",
+    "New domain intentionally inert; digest and persisted record do not confer execution authority",
+    "Independent foundation/persistence reruns overlap primary coverage; totals must not be added as unique cases"
+  ],
+  "blocking_findings": []
+}

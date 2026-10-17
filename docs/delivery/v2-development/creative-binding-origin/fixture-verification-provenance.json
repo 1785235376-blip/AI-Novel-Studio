@@ -1,0 +1,382 @@
+{
+  "status": "PASS_ACTUAL_UNCHANGED_BUILDERS",
+  "root": "/workspace/scratch/20a0022d2b33/studio-creative-binding",
+  "executable": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+  "product_modules": {
+    "app": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/__init__.py",
+      "sha256": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e"
+    },
+    "app.agents": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/agents.py",
+      "sha256": "634a140d1f84d07400e47c9ba502cc6174b1cc5aa82cad480a314f2c7baa3687"
+    },
+    "app.author_request": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/author_request.py",
+      "sha256": "98ad49bf9e4c8f91b2adce36a07f32e62e441d40c175cff5e9210f60204f7138"
+    },
+    "app.authorization": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/authorization.py",
+      "sha256": "65bc7ed78c3ebbb7b0efce71d2c473e19cac4ee1dc51d2f10f1030413a58007a"
+    },
+    "app.chapter_identity": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/chapter_identity.py",
+      "sha256": "87949c7fb5313004a23d88af3556e1b0e2f0f74b3faa33e35aff6ae856e6559e"
+    },
+    "app.config": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/config.py",
+      "sha256": "9a8ce72a9c99840448ceafa05cf4e9cd6181740da11a210947e8411b9d7e8718"
+    },
+    "app.context": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/context.py",
+      "sha256": "ce65b6a07eb9c0aa8a0c662a1a9a478afa7bab10b0468dcfa052c33c1cc17876"
+    },
+    "app.context_pack_v2": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/context_pack_v2.py",
+      "sha256": "4b53ebb7e479854a2c1079af3f5fada27548521b86252ab172c6f04c30026e4f"
+    },
+    "app.context_policy": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/context_policy.py",
+      "sha256": "057d0c4663189101e8ee44bbe7f2b3ecb3a93f437f25e7e0317fa06a3d0d3cb9"
+    },
+    "app.document": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/document.py",
+      "sha256": "70ecdf6f175cada0f0bcbcf0dfc1d7aa7a419895263741154dc4f0e7717d4f49"
+    },
+    "app.experimental": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/experimental/__init__.py",
+      "sha256": "737a87c497146972d1cc905f0076f076d5414a8093066146a5bac6b190d788f3"
+    },
+    "app.experimental.character_author_context": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/experimental/character_author_context.py",
+      "sha256": "8ab58d124a70f69c91b4b564703c1109d10671847e126e3264e5b03c1f77c5a3"
+    },
+    "app.experimental.common": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/experimental/common.py",
+      "sha256": "e69739dbefb4fd71e5ac8945f76a534b77bca5cd8252648304a5724ab39127a0"
+    },
+    "app.experimental.flags": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/experimental/flags.py",
+      "sha256": "571fd87488c5b744dcb043e04b55e039f824b29dec308e8660aa6fef5f7983b0"
+    },
+    "app.experimental.planning": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/experimental/planning.py",
+      "sha256": "40ecff9069b2f1e6fe2cbdb09fb1d19f35ff00da1de653ae4542cee03cc4069b"
+    },
+    "app.experimental.search_sources": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/experimental/search_sources.py",
+      "sha256": "faa9c7b743da282fa5fc4dffedeb401d9e6774c6ce8bf132856f0a60c2c6771c"
+    },
+    "app.experimental.ux": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/experimental/ux.py",
+      "sha256": "78cb8a539811a8ab7d43a944897b400c5d4142201f62a6b92d5ce02cfe2d42ce"
+    },
+    "app.experimental.workspace_interaction": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/experimental/workspace_interaction.py",
+      "sha256": "c7bf0ee9ad31f3d718d62920bb988e09c596408bc0b02d6266547e72241b6659"
+    },
+    "app.export_formats": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/export_formats.py",
+      "sha256": "c1e62d7c3cbebac42ff70a3e6f1c0e4ffecd3b5fc3fd355e7acd022e2f27a98a"
+    },
+    "app.file_project_lifecycle": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/file_project_lifecycle.py",
+      "sha256": "75d23e972b8302e3a711c75ba950a96cccc301f59ba580bfb8efc5dd4e121c62"
+    },
+    "app.idempotency": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/idempotency.py",
+      "sha256": "dfd0f939aa20f799d5c02bd4ee11033e616fa6736c83a09206063e157dca7e03"
+    },
+    "app.import_parsers": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/import_parsers.py",
+      "sha256": "8838eba5abe4909cb507749ef67d7a6690ebaca7ccffaa09aabff5aa4b168576"
+    },
+    "app.industry_export_formats": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/industry_export_formats.py",
+      "sha256": "4e26f355faa3b8d5c4b496f5537c317e01ad9784cdad055cc8bf1c2503794134"
+    },
+    "app.lore": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/lore/__init__.py",
+      "sha256": "d98f33239a543cc4eadc79a90c3394da7827fadc0fe94b77ce4a793fea242df4"
+    },
+    "app.lore.context_intelligence": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/lore/context_intelligence.py",
+      "sha256": "53a6335990868f42e750ec5fa19d9e1329341b88700e3c3c5bb63047e281c13b"
+    },
+    "app.lore.context_view": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/lore/context_view.py",
+      "sha256": "6c857b0a6c2dead6e75b09c8eeca6810a28d53296c992df87630d8525094fb59"
+    },
+    "app.lore.enums": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/lore/enums.py",
+      "sha256": "640b82690b00a31e3aaf7da2c6b95cb5949855a713b89cefba90791eaabd36ff"
+    },
+    "app.lore.schemas": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/lore/schemas.py",
+      "sha256": "2f03db0d13c096551f69b76906ca48289bb0e1f7c21830b605ab2f9984ed21e5"
+    },
+    "app.lore.validators": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/lore/validators.py",
+      "sha256": "4caa6681df7497b34eed9386200527fe15ea38e19923c86e43d496c07299ffb5"
+    },
+    "app.manuscript_sources": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/manuscript_sources.py",
+      "sha256": "3095bcbe132ab3ff2507e008c6cfd2f8a98da87364a3c983f4e2f43ef27d27a7"
+    },
+    "app.model_execution": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/model_execution.py",
+      "sha256": "605bbc84cf63c321c6d2c9d5a7533e54bde6d97c19ba9a8050c1764b1bcdb42c"
+    },
+    "app.model_provider_contracts": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/model_provider_contracts.py",
+      "sha256": "f334ad095b101c3a67fd84a098d434dcd6a4564d244b5df58b2334393765d860"
+    },
+    "app.model_runtime": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/model_runtime.py",
+      "sha256": "b7eda6aec3a65af15107e0ae13aa05d361dc96508122ff1177dc9ba6e4a54584"
+    },
+    "app.models": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/models/__init__.py",
+      "sha256": "4999e1bb65bd43fff8566a6584dbce069450cc3669b845d51681a9757bff6f11"
+    },
+    "app.models.lore": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/models/lore.py",
+      "sha256": "a0a24be904e1f9bb030bdd9b680bbcbd08231a2a5cb3db6a956504e526e4445b"
+    },
+    "app.narrative_context": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/narrative_context.py",
+      "sha256": "f932074f186f69f75f53fec27a16a5624e27b233f66aee0ff262f34627dd290f"
+    },
+    "app.pdf_export": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/pdf_export.py",
+      "sha256": "d5cdd4b67b05d3ade30dc6f554b016520fb359c1dd39144a46a205ec2a8dde47"
+    },
+    "app.plugin_contracts": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/plugin_contracts.py",
+      "sha256": "ddfbecd8502b57be4418c91818ec7d8dea2e84bfd2ac019bad6e7805f1cd5227"
+    },
+    "app.plugin_discovery": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/plugin_discovery.py",
+      "sha256": "b136754fa3407c88eeea7a5b64157dda00725dac3c21243cc4c2ea50196b6dc7"
+    },
+    "app.privacy": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/privacy.py",
+      "sha256": "b974aa809d395f3282c9dd3670b2fd8687457f12ba2b4a8510fa3625d63c3557"
+    },
+    "app.providers": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/providers.py",
+      "sha256": "7074ab1edf533b10c655b79971829f18bd9a7d0b613c20c36223ca2d8e6c86bc"
+    },
+    "app.repositories": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/__init__.py",
+      "sha256": "065accc874c34a216239d588d5a17b842accf9d61cfb0ab2c9d6145534ab051e"
+    },
+    "app.repositories.adaptation_versions": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/adaptation_versions.py",
+      "sha256": "367d2fa1eab2f1cb8470131b3a4c3ca8609b695ff4e8d34f9cab701556e0add3"
+    },
+    "app.repositories.authorization_interfaces": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/authorization_interfaces.py",
+      "sha256": "7eb4d441f125fa26925b19ff5a7414867e83721ba090197b3e786a0b59f245d3"
+    },
+    "app.repositories.bundle": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/bundle.py",
+      "sha256": "c863ee00d6c0afa6265b65709c9e26d894903308391b3c6651cde7ba02758cc7"
+    },
+    "app.repositories.canon_repository": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/canon_repository.py",
+      "sha256": "02bc9f3b06d4e157f0e9c53ab4d24c19090714ad5a310376de8543f64267d7b2"
+    },
+    "app.repositories.chapter_repository": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/chapter_repository.py",
+      "sha256": "fbe3054032838f2d3eab141177817fb72c6a7c48d117fbe9f5e61ffe4bd720e1"
+    },
+    "app.repositories.factory": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/factory.py",
+      "sha256": "1ac019e8bad752e0a6958bc28a2cded86cd69fa35a8e1564056b2505345da1bc"
+    },
+    "app.repositories.file": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/file/__init__.py",
+      "sha256": "b5bc83dd7643488e8e9db539710b1974d24d597bccb2ac1c9438e6ec83d19ef3"
+    },
+    "app.repositories.file.canon": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/file/canon.py",
+      "sha256": "442562346426bfaaefdca194b3c8a73c4a46ab02190e6a9a2a8c051f8567f6e8"
+    },
+    "app.repositories.file.chapter": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/file/chapter.py",
+      "sha256": "a03e81df19cddfece331b604d8965c07d9c5433bf4a0e11c40a24a20ae79c33f"
+    },
+    "app.repositories.file.continuity": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/file/continuity.py",
+      "sha256": "51f1a261813425f11ffb49a3da3801424d0934f8f724ed4c92934f780609be39"
+    },
+    "app.repositories.file.finding_lock": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/file/finding_lock.py",
+      "sha256": "30ff20f522e7f9bf186f07a6b30e1864764e4e5d3e9590e9de14030ee3f13b89"
+    },
+    "app.repositories.file.generation": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/file/generation.py",
+      "sha256": "3cebdcdb793850e3b474cdc015a5077ff7f0dd9e654a254d9aa5b633abf4fb65"
+    },
+    "app.repositories.file.lore": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/file/lore.py",
+      "sha256": "f214f2f52ec551aa9781065824995dccfb6b0b896a29301cf3b6ed5be44d11ef"
+    },
+    "app.repositories.file.mutation_coordinator": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/file/mutation_coordinator.py",
+      "sha256": "6f23aa5802ff58ec68724a0437f6bbcf89789f59f5d05c72cc762b0e9f2884f0"
+    },
+    "app.repositories.file.narrative": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/file/narrative.py",
+      "sha256": "d96f2f8339b3f891ad70b87da72e04b67867c6e0f3d3e0fdc4084caf73f99ad2"
+    },
+    "app.repositories.file.novel": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/file/novel.py",
+      "sha256": "2a1699a11363f639f838419164f8b6f795a6b81089bccba236af5ee92c2dec4d"
+    },
+    "app.repositories.generation_repository": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/generation_repository.py",
+      "sha256": "75d392c7d7f1cf554065deef78e1fc34dea9e2f420c5512317853f474f525df2"
+    },
+    "app.repositories.identity_interfaces": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/identity_interfaces.py",
+      "sha256": "cdc6eee509d3f3b3d9c71fd55fbd32c354a2a224fabee84f8e9d186d8421f8b7"
+    },
+    "app.repositories.interfaces": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/interfaces.py",
+      "sha256": "b27aaa6acc8ff206adcc3fdad97b21ce4d96ef9faab571819a3ba44f0257db71"
+    },
+    "app.repositories.lore_interfaces": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/lore_interfaces.py",
+      "sha256": "ede87302f2cb37970097da8e1dbe90f4804cf3f7561e2e8994640fbcb495766c"
+    },
+    "app.repositories.novel_repository": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/novel_repository.py",
+      "sha256": "33e9519e4d49811ef334eaa0991d1b0cebe00b263322a9538d1c7ce0d964b8c3"
+    },
+    "app.repositories.postgres": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/postgres/__init__.py",
+      "sha256": "c48cc4e6684561f82a482c0b74c994de565abb3f3a0e2a2469e588ccc11214f9"
+    },
+    "app.repositories.postgres.canon": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/postgres/canon.py",
+      "sha256": "a16af9575e9cdc22090eab874b8f8e7482b738ed144107cb30a21d3c97d536df"
+    },
+    "app.repositories.postgres.chapter": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/postgres/chapter.py",
+      "sha256": "73f6ff4de4ebc14a39cf2a01063c9e6d1529681512643a58e1eda1b8823b47de"
+    },
+    "app.repositories.postgres.common": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/postgres/common.py",
+      "sha256": "83047224efbfb34dcc3c421c083f5624bea0038289099003ccb7d53e41c930a9"
+    },
+    "app.repositories.postgres.generation": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/postgres/generation.py",
+      "sha256": "b09785110f50373740240c97f238b719f437cc5e12c1c0a11daef268338fdfca"
+    },
+    "app.repositories.postgres.lore": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/postgres/lore.py",
+      "sha256": "28f9971be0e66d7bd9ff5a9ab90499858d695b8f867bbdbfdd951f63b8096757"
+    },
+    "app.repositories.postgres.models": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/postgres/models.py",
+      "sha256": "55c8184a6acad2d9bf4d7d3838f4bbb12a53c693ad157482c95049e348ea1966"
+    },
+    "app.repositories.postgres.novel": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/postgres/novel.py",
+      "sha256": "d74cdb9b924f617e2554af5308ad63c71373566e55e863591aef821288674382"
+    },
+    "app.repositories.postgres.serialization": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/postgres/serialization.py",
+      "sha256": "dc8db6b7139e89d61d85aa7b610e3c609f85cf1814d41f39b9ad2a14b5705cb9"
+    },
+    "app.repositories.postgres.session": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/postgres/session.py",
+      "sha256": "681de0ce9a2bde2933935d1cfbdc6b695f4cdeddae9c83d9507b608d78bed3e9"
+    },
+    "app.repositories.screenplay_versions": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/screenplay_versions.py",
+      "sha256": "44e20a611d6ed6eb3f9a385ad244509438f99f9782a0f1260650f6a163af32af"
+    },
+    "app.repositories.story_record_versions": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/story_record_versions.py",
+      "sha256": "af242c568f6cbec82e0e88cd606407095cf332e33fb962393fa7aea82d73d5cf"
+    },
+    "app.repositories.structured_cas": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repositories/structured_cas.py",
+      "sha256": "51062aa96ed33449a39709c0cebe4157d64cbccc3182e2bdc8f8a58f33f7e944"
+    },
+    "app.repository": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/repository.py",
+      "sha256": "b72108f416345ae02fb32847fb5b278e936c97318bd61f60b9396b265ff5bd80"
+    },
+    "app.runtime_events": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/runtime_events.py",
+      "sha256": "cc5ab2298a6731e82c9a12a48983dc956c259be67d468d0ae442da100122213e"
+    },
+    "app.services": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/services/__init__.py",
+      "sha256": "ebde975a810ad851d27680e104ad36a497093c8b86eb4e9dfb8f0eba524813a5"
+    },
+    "app.services.canon_service": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/services/canon_service.py",
+      "sha256": "f1d985bcd028a39147a1548dacebfdf5508ec8e226faff696cb7b050e513b843"
+    },
+    "app.services.chapter_service": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/services/chapter_service.py",
+      "sha256": "30430822dd30f6ef0eac50f708941797801d099f842c357d4bc25c04ecfd9900"
+    },
+    "app.services.context_service": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/services/context_service.py",
+      "sha256": "184c44949b85b9815528c1b0ef6ca15b0f5cf2e83decd38ef1b5bc7279869cc4"
+    },
+    "app.services.context_snapshot_service": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/services/context_snapshot_service.py",
+      "sha256": "cc1c32a28725acb69cf732063233e4489868dc0b2b3b337c65dbee04912ed13c"
+    },
+    "app.services.export_resource_snapshot": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/services/export_resource_snapshot.py",
+      "sha256": "b6acf794fa5d7d7849d9bfd332fdf16ac789e6f7f232dbd55d4b42706ecdc88b"
+    },
+    "app.services.generation_service": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/services/generation_service.py",
+      "sha256": "359702264f8c4bc23fd14aaef564b39cbe454522b18875f7f77e5f03fd352f67"
+    },
+    "app.services.lore_service": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/services/lore_service.py",
+      "sha256": "3eb39d278406894027052c5e15c068c949a5f88758b90d7cf3fb857d38c192cd"
+    },
+    "app.services.memory_service": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/services/memory_service.py",
+      "sha256": "2904e6cc5016b9bbb4274f521da4cbc8028c1dc046d0b4f65d29a6601f9bae82"
+    },
+    "app.services.novel_service": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/services/novel_service.py",
+      "sha256": "7c80efe13490b1ee3fd69c33d6e122e33e3e244929403bf52ad316058ff32abd"
+    },
+    "app.services.v1_capability_service": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/services/v1_capability_service.py",
+      "sha256": "4844ba77d191517e0c24f3180b51171bc2b52fcdcc5d16f372f80d77e9e46fb4"
+    },
+    "app.source_privacy": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/source_privacy.py",
+      "sha256": "8a541344bef69f37d3703c7e4755a8ada338a6f7e761b92d6ca56a4a2ebf87ab"
+    },
+    "app.stable_identity": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/stable_identity.py",
+      "sha256": "6e87a8aeb85e4040774c461719115230f1e6e82928816173aa6f4c44962f1b59"
+    },
+    "app.storage": {
+      "path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/app/storage.py",
+      "sha256": "5375c80375270fe90caa20770d5dd88589793fe8785712755c382dc99e20d1ec"
+    }
+  },
+  "prompt_path": "/workspace/scratch/20a0022d2b33/studio-creative-binding/prompts/plot_planner/system.md",
+  "prompt_sha256": "7cbd9060fd7e89bf302622d12963e36ded7bce5e95b2e4d1c323e7f37588b9af",
+  "capture_script_sha256": "44c66ac3ede647d32faea6eefd51872d543c20687fd906eb2946bdd3d22f9655",
+  "authority_recreated": false,
+  "provider_or_adapter_invoked": false,
+  "network_or_database_used": false,
+  "frozen_fixture_sha256": "640ca3823d83a378b9018a180957d375b9cef6b524f2e527f7e731236cfd90ac"
+}

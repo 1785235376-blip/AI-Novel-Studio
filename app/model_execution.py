@@ -163,6 +163,39 @@ def _binding_digest(job, request, synthetic_allowed):
     return graph_request_payload_digest(job, _payload(request), synthetic_allowed)
 
 
+def creative_director_request_payload_digest(job, payload, synthetic_allowed, *, route_fingerprint):
+    """Domain-separated passive data hash; never prepares or authorizes a call."""
+    import re
+    from .creative.director_binding import creative_director_job_binding
+    if (type(synthetic_allowed) is not bool or not isinstance(route_fingerprint, str)
+            or re.fullmatch(r"[0-9a-f]{64}", route_fingerprint) is None
+            or type(payload) is not dict):
+        raise ValueError("CREATIVE_DIRECTOR_REQUEST_INVALID")
+    fields = ("id", "novel_id", "actor_id", "scope", "operation", "experimental_origin",
+              "chapter_id", "profile", "creative_director_binding", "graph_binding", "adaptation_binding")
+    binding = creative_director_job_binding({key: getattr(job, key, None) for key in fields},
+                                           require_request_digest=False)
+    if (payload.get("provider_id") != job.requested_provider
+            or payload.get("model_id") != job.requested_model):
+        raise ValueError("CREATIVE_DIRECTOR_REQUEST_ROUTE_MISMATCH")
+    value = {"domain": "creative-director-request/1", "request": payload,
+        "job_id": job.id, "project_id": job.novel_id, "actor_id": job.actor_id,
+        "scope": job.scope, "creative_director_binding": binding,
+        "operation": job.operation, "origin": job.experimental_origin,
+        "profile": job.profile, "chapter_id": job.chapter_id,
+        "provider_id": job.requested_provider, "model_id": job.requested_model,
+        "route_fingerprint": route_fingerprint, "synthetic_allowed": synthetic_allowed,
+        "max_output_bytes": job.generation_max_output_bytes, "deadline": job.generation_deadline}
+    return sha256(json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"),
+                             allow_nan=False).encode()).hexdigest()
+
+
+def _require_graph_only_invocation(job):
+    from .creative.director_binding import is_creative_director_job
+    if is_creative_director_job(job):
+        raise ValueError("GRAPH_PREPARED_DOMAIN_INVALID")
+
+
 @dataclass(frozen=True, slots=True)
 class PreparedTextInvocation:
     request: TextGenerationRequest
@@ -172,9 +205,11 @@ class PreparedTextInvocation:
 
     @classmethod
     def bind(cls, job, request, adapter, synthetic_allowed):
+        _require_graph_only_invocation(job)
         return cls(request, adapter, _binding_digest(job, request, synthetic_allowed), synthetic_allowed)
 
     def validate_job(self, job):
+        _require_graph_only_invocation(job)
         GraphRequestBinding.model_validate(job.graph_binding)
         if (job.operation != "graph_text" or job.chapter_id is not None or job.profile != "LOCAL_ONLY"
                 or self.request.job_id != job.id or self.request.cancellation is not job.cancelled

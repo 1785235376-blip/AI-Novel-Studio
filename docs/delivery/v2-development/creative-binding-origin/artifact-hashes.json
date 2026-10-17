@@ -1,0 +1,45 @@
+{
+  "status": "PASS_REAL_OFFLINE_ARTIFACTS",
+  "artifacts": [
+    {
+      "name": "public-wheel0",
+      "artifact": ".runtime/creative-binding-packaging-r1-pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "artifact_sha256": "deeddbf6537a33b0ed6ff6d3473c6e3ad3b6d8b8b472247bbfe9942294d34ed6",
+      "new_module_sha256": "5201d6dbe7a0aacc3f22884ecb10291d976072ba970d51893142a58e287708c8",
+      "payload_file_count": 507,
+      "saved_receipt": "docs/delivery/v2-development/creative-binding-origin/artifacts/public-wheel0/wheel-receipt.json",
+      "receipt_sha256": "c2d0423c2096b044007db3bbc253d8222098afa8c867954d965a49ef3e0965dc",
+      "stage_receipt_sha256": "2f851acbaf4f9f70da78e5c6a2bccaa41a9f73ad980d86fc6f992cca06892c7b"
+    },
+    {
+      "name": "public-wheel1",
+      "artifact": ".runtime/creative-binding-packaging-r1-pytest/public-wheel1/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "artifact_sha256": "57af65f29b2e8b373869869fac564820992f2b79ae2e10fa9aeaa86a0177bd7e",
+      "new_module_sha256": "5201d6dbe7a0aacc3f22884ecb10291d976072ba970d51893142a58e287708c8",
+      "payload_file_count": 507,
+      "saved_receipt": "docs/delivery/v2-development/creative-binding-origin/artifacts/public-wheel1/wheel-receipt.json",
+      "receipt_sha256": "99b8acf510e447b6a544062649cb574d46810c00006cb2d2e24881912a39f353",
+      "stage_receipt_sha256": "2f851acbaf4f9f70da78e5c6a2bccaa41a9f73ad980d86fc6f992cca06892c7b"
+    },
+    {
+      "name": "public-sdist0",
+      "artifact": ".runtime/creative-binding-packaging-r1-pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "artifact_sha256": "a1eb257390c47881e514994a79a18fa3aadeb30465fd6ffc17a6e17e4e3f99b4",
+      "new_module_sha256": "5201d6dbe7a0aacc3f22884ecb10291d976072ba970d51893142a58e287708c8",
+      "payload_file_count": 508,
+      "saved_receipt": "docs/delivery/v2-development/creative-binding-origin/artifacts/public-sdist0/sdist-receipt.json",
+      "receipt_sha256": "416d93098f9719eda993d39ebf8d22cec4d16d6cc84caf92f33ac37f63c2d4e2",
+      "stage_receipt_sha256": "2f851acbaf4f9f70da78e5c6a2bccaa41a9f73ad980d86fc6f992cca06892c7b"
+    },
+    {
+      "name": "public-sdist1",
+      "artifact": ".runtime/creative-binding-packaging-r1-pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "artifact_sha256": "f8d046db79b80a41ec8e0a8c18a9de86d3fd02b1590f75a123b3b3f69765715f",
+      "new_module_sha256": "5201d6dbe7a0aacc3f22884ecb10291d976072ba970d51893142a58e287708c8",
+      "payload_file_count": 508,
+      "saved_receipt": "docs/delivery/v2-development/creative-binding-origin/artifacts/public-sdist1/sdist-receipt.json",
+      "receipt_sha256": "c2b67cddd47caeb2869b28e2722be0e12d86dba299939a58a440931325d3a65d",
+      "stage_receipt_sha256": "2f851acbaf4f9f70da78e5c6a2bccaa41a9f73ad980d86fc6f992cca06892c7b"
+    }
+  ]
+}

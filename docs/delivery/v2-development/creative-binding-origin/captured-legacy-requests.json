@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "graph": {
+    "job": {
+      "id": "11111111-1111-4111-8111-111111111111",
+      "novel_id": "baseline-project",
+      "actor_id": "baseline-author",
+      "scope": {
+        "mode": "local",
+        "novel_id": "baseline-project"
+      },
+      "profile": "LOCAL_ONLY",
+      "requested_provider": "mock",
+      "requested_model": "mock-writer",
+      "operation": "graph_text",
+      "chapter_id": null,
+      "graph_binding": {
+        "graph_id": "baseline-graph",
+        "graph_version": 1,
+        "run_id": "baseline-run",
+        "node_id": "text",
+        "project_incarnation": "file:22222222-2222-4222-8222-222222222222",
+        "input_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "reviewed_preview_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "route_fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "generation_max_output_bytes": 32000,
+      "generation_deadline": "2030-01-02T03:04:05+00:00"
+    },
+    "payload": {
+      "provider_id": "mock",
+      "model_id": "mock-writer",
+      "prompt": "Golden graph prompt: 夜色。",
+      "system_instruction": null,
+      "context": {},
+      "parameters": {
+        "temperature": 0.0,
+        "max_output_tokens": 256,
+        "stop_sequences": []
+      },
+      "structured_output_schema": null,
+      "metadata": {
+        "purpose": "creative_graph_model"
+      }
+    },
+    "synthetic_allowed": true,
+    "expected_digest": "c4543d9eb1914c395d38e08088642f407a20fec9c2345d6d01c039972ddf280c"
+  },
+  "screenplay": {
+    "job": {
+      "id": "11111111-1111-4111-8111-111111111111",
+      "novel_id": "baseline-project",
+      "actor_id": "baseline-author",
+      "scope": {
+        "mode": "local",
+        "novel_id": "baseline-project"
+      },
+      "profile": "LOCAL_ONLY",
+      "requested_provider": "mock",
+      "requested_model": "mock-writer",
+      "chapter_id": "baseline-chapter",
+      "operation": "brainstorm",
+      "instruction": "Adapt the saved selection into screenplay scenes.",
+      "source": "A visitor pauses at the doorway.",
+      "style": "",
+      "base_chapter_version": 7,
+      "base_chapter_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "workspace_id": null,
+      "session_id": null,
+      "creation_records": [],
+      "request_scope": {
+        "source_mode": "SELECTION_ONLY",
+        "include_automatic_context": false,
+        "include_style_reference": false,
+        "include_plan_reference": false
+      },
+      "author_input_digest": null,
+      "reviewed_variant": null,
+      "character_viewpoint": null,
+      "revision_selection_binding": null
+    },
+    "payload": {
+      "provider_id": "mock",
+      "model_id": "mock-writer",
+      "prompt": "---\nname: plot_planner\nversion: 0.1.0\ndescription: 生成章节 Beat Sheet\nlast_updated: 2026-08-09\nmodel_notes: Hybrid/Quality 可用云端强模型\n---\n依据 Context Pack 生成可执行 Beat Sheet。列出场景目标、冲突、信息释放、情绪变化、伏笔动作和结尾钩子；不得引入未批准事实或泄露 forbidden_secrets。\n\n\n\nTASK:\nReturn concise story options. Adapt the saved selection into screenplay scenes.\n\nCONTEXT:\n{}\n\nSOURCE:\nA visitor pauses at the doorway.",
+      "system_instruction": null,
+      "context": {},
+      "parameters": {
+        "temperature": null,
+        "max_output_tokens": null,
+        "stop_sequences": []
+      },
+      "structured_output_schema": null,
+      "metadata": {
+        "purpose": "brainstorm"
+      }
+    },
+    "cloud": false,
+    "expected_digest": "103b4c3fb49325ec39c4dca51e08ecb216e6ee76cdf6407f8715d2a0a9b0fe48"
+  }
+}

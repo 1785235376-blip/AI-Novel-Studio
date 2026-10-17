@@ -12,6 +12,14 @@ class GenerationProjectIdentityError(ValueError):
 
 
 def graph_job_binding(item):
+    from ..creative.director_binding import is_creative_director_job, creative_director_job_binding
+    # Classify the disjoint passive domain before either existing executable
+    # branch. A mixed or incomplete identity never chooses a fallback engine.
+    if is_creative_director_job(item):
+        try:
+            return creative_director_job_binding(item)
+        except ValueError:
+            raise GenerationProjectIdentityError("GENERATION_CREATIVE_DIRECTOR_BINDING_INVALID") from None
     # Keep the existing project-owner persistence fence for a source-bound
     # Creative proposal as well. This is not a synthetic Graph identity.
     if item.get("adaptation_binding") is not None or item.get("experimental_origin") == "creative_adaptation_model":
@@ -54,9 +62,12 @@ def graph_job_binding(item):
 
 
 def check_graph_job_update(previous, item):
+    from ..creative.director_binding import is_creative_director_job
+    keys = ("novel_id", "actor_id", "scope", "graph_binding", "adaptation_binding", "expected_request_digest")
+    if is_creative_director_job(item) or (previous is not None and is_creative_director_job(previous)):
+        keys += ("creative_director_binding", "operation", "experimental_origin", "chapter_id")
     if previous is not None and (graph_job_binding(previous) is None or any(
-            previous.get(key) != item.get(key) for key in
-            ("novel_id", "actor_id", "scope", "graph_binding", "adaptation_binding", "expected_request_digest"))):
+            previous.get(key) != item.get(key) for key in keys)):
         raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
 
 

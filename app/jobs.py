@@ -16,6 +16,7 @@ from .authorization import AuthorizationScope,ScopeKind
 from .model_runtime import TextGenerationRequest,TextModelNodeInput,TextGenerationParameters,ModelRuntimeError,RuntimeErrorCode
 from .router import Route
 from .privacy import normalize_privacy
+from .creative.director_binding import is_creative_director_job
 
 # Compatibility facade for V0.3 tests and extensions that patched app.jobs.repo.
 # Job business logic never reads it directly; it is only a File-mode composition root.
@@ -59,12 +60,16 @@ class Job:
     adaptation_publication:dict|None=None
     author_preparation_guard:object=field(default=None,repr=False)
     graph_binding:dict|None=None
+    creative_director_binding:dict|None=None
     prepared_text_invocation:object=field(default=None,repr=False)
     def public(self):
         result = {k:getattr(self,k) for k in ("id","operation","novel_id","chapter_id","instruction","profile","source","requested_provider","requested_model","style","status","output","error","error_code","provider","model","issues","latency_ms","base_chapter_version","variant_group_id","variant_index","actor_id","session_id","client_id","workspace_id","scope","scope_type","scope_id","correlation_id","context_snapshot_id","created_at","updated_at","creation_records","usage","usage_status","execution_mode","provider_reference_id","route_decisions")}
         if self.adaptation_binding is not None: result["adaptation_binding"] = dict(self.adaptation_binding)
         if self.adaptation_publication is not None: result["adaptation_publication"] = dict(self.adaptation_publication)
         if self.graph_binding is not None: result["graph_binding"] = dict(self.graph_binding)
+        if self.creative_director_binding is not None:
+            from copy import deepcopy
+            result["creative_director_binding"] = deepcopy(self.creative_director_binding)
         if self.generation_max_output_bytes is not None or self.generation_deadline is not None:
             result.update(generation_max_output_bytes=self.generation_max_output_bytes, generation_deadline=self.generation_deadline)
         if self.generation_bound_failure is not None: result["generation_bound_failure"] = self.generation_bound_failure
@@ -153,6 +158,9 @@ def mark_generation_origin(job, origin):
 
 
 def generation_content_available(job):
+    # Passive Creative evidence has no executable or content-serving authority,
+    # even if a caller supplies forged live hooks or a Graph invocation.
+    if is_creative_director_job(job): return False
     try: required = generation_required_features(job)
     except ValueError: return False
     if not required: return True
@@ -192,6 +200,9 @@ def require_generation_content(job):
 
 
 def require_whole_generation_acceptance(job):
+    if is_creative_director_job(job):
+        from fastapi import HTTPException
+        raise HTTPException(409, {"code": "CREATIVE_DIRECTOR_EXECUTION_UNAVAILABLE"})
     required = generation_required_features(job)
     origin = getattr(job, "experimental_origin", None)
     if "narrative_production_v2" in required:
@@ -243,6 +254,7 @@ def validate_generation_bounds(job):
 
 
 def check_generation_bounds(job, *, delta="", completion_text=None):
+    _deny_creative_director_execution(job)
     if ((getattr(job, "experimental_origin", None) in {"creative_director_model", "narrative_task_model", "creative_graph_model", "creative_adaptation_model"}
             or getattr(job, "adaptation_binding", None) is not None)
             and not job.cancelled.is_set() and not generation_content_available(job)):
@@ -271,6 +283,11 @@ def check_generation_bounds(job, *, delta="", completion_text=None):
         raise ValueError(code)
 
 
+def _deny_creative_director_execution(job):
+    if is_creative_director_job(job):
+        raise ValueError("CREATIVE_DIRECTOR_EXECUTION_UNAVAILABLE")
+
+
 class JobManager:
     transient_fields={"author_preparation_guard", "prepared_text_invocation", "cancelled", "condition", "request_authorization", "author_context_resolver", "character_context_resolver", "before_dispatch", "on_terminal", "_terminal_hook_called"}
     terminal={"COMPLETED","FAILED","CANCELLED","ACCEPTED","REJECTED","ACCEPTING","ACCEPTANCE_UNCERTAIN"}
@@ -292,6 +309,10 @@ class JobManager:
                 self._restore_job(item)
 
     def _restore_job(self, item):
+        if is_creative_director_job(item):
+            from .repositories.generation_repository import graph_job_binding
+            try: graph_job_binding(item)
+            except ValueError: return
         recovered = item.get("status") in {"SETTLING", "RUNNING", "GENERATING", "QUEUED", "PREPARED"}
         if item.get("status") == "SETTLING":
             item.update(status="FAILED", error_code="GENERATION_SETTLEMENT_RECOVERY_REQUIRED",
@@ -334,6 +355,9 @@ class JobManager:
         return self.contexts.save_snapshot(job.chapter_id, chapter.get("version", 0), context, prompt_version, model, **metadata)
 
     def prepare_job(self,operation,payload,actor=None,scope=None,request_authorization=None):
+        # Check raw reserved keys before ordinary Author input drops them.
+        _deny_creative_director_execution(payload)
+        _deny_creative_director_execution({"operation": operation})
         requested_provider=payload.get("provider_id");requested_model=payload.get("model_id")
         if bool(requested_provider)!=bool(requested_model):raise ValueError("provider_id and model_id must be selected together")
         job=Job(str(uuid.uuid4()),operation,payload["novel_id"],payload["chapter_id"],payload.get("instruction",""),payload.get("profile","LOCAL_ONLY"),payload.get("source",payload.get("selected_text","")),requested_provider,requested_model,payload.get("style",""))
@@ -404,6 +428,7 @@ class JobManager:
         return job
 
     def _guard_graph_request(self, job, *, dispatch=False):
+        _deny_creative_director_execution(job)
         # Bounds validation includes the full prepared-request and live-source
         # authority check for this exact origin. Do not let origin mutation
         # select the legacy bounds-only branch after removing duplicate reads.
@@ -450,6 +475,7 @@ class JobManager:
 
     def start_prepared(self, job):
         """Start the exact validated instance once, never rebuild its payload."""
+        _deny_creative_director_execution(job)
         from .experimental.character_author_context import is_character_job
         if job.status != "PREPARED": raise ValueError("GENERATION_JOB_NOT_PREPARED")
         if job.graph_binding is not None or job.operation == "graph_text":
@@ -566,6 +592,7 @@ class JobManager:
         return chapter
 
     def prepare_author_request(self, job, route):
+        _deny_creative_director_execution(job)
         cloud = runtime.is_remote_text_provider(route.provider)
         chapter = self._validate_outbound_sources(job, cloud)
         from .experimental.character_author_context import is_character_job, resolve_character_author_context
@@ -604,6 +631,7 @@ class JobManager:
         return chapter, dict(request.context), request
 
     def _guard_author_request(self, job, route, *, dispatch=False):
+        _deny_creative_director_execution(job)
         check_generation_bounds(job)
         cloud = runtime.is_remote_text_provider(route.provider)
         self._validate_outbound_sources(job, cloud)
@@ -668,6 +696,9 @@ class JobManager:
                     job.error = "模型任务已结束，但结算记录未能确认保存。请核对调度记录，不要自动重试。"
 
     def _run(self,job):
+        # Outside try/finally: no terminal callback, persistence, or provider
+        # path may be reached by directly handing this inert domain to a worker.
+        _deny_creative_director_execution(job)
         started=time.monotonic()
         try:
             if job.cancelled.is_set():self._cancel_execution(job);return
@@ -855,6 +886,8 @@ class JobManager:
             heartbeat=time.monotonic()
             if status in self.terminal:return
     def accept(self,jid,accepted_output=None,actor=None,scope=None,expected_version=None):
+        passive = self.get(jid)
+        if is_creative_director_job(passive): require_generation_content(passive)
         from .repositories.file.mutation_coordinator import workspace_mutation
         from .repositories.chapter_repository import VersionConflict
         from pathlib import Path

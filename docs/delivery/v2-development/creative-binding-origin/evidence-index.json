@@ -1,0 +1,527 @@
+{
+  "status": "PASS_COMPLETE_SCOPED_EVIDENCE",
+  "baseline_commit": "e011a0de0a21ddb2833b2689d76caf917165e706",
+  "source_files_current": 2549,
+  "baseline_changed_source_paths": [
+    "app/jobs.py",
+    "app/model_execution.py",
+    "app/repositories/generation_repository.py"
+  ],
+  "baseline_added_source_paths": [
+    "app/creative/director_binding.py",
+    "tests/fixtures/creative_binding_legacy_requests.json",
+    "tests/test_v2_creative_director_binding.py",
+    "tests/test_v2_creative_director_binding_packaging.py",
+    "tests/test_v2_creative_director_binding_persistence.py"
+  ],
+  "separate_public_manifest_sha256": "3261cc7549d58e5d8e84c69572a9475d9c416bfd487588ecfbec472e8695d37c",
+  "frozen_fixture_sha256": "640ca3823d83a378b9018a180957d375b9cef6b524f2e527f7e731236cfd90ac",
+  "prior_ledger_chronology_preserved": true,
+  "primary": {
+    "backend_passed": 496,
+    "backend_deselected": 390,
+    "packaging_passed": 87,
+    "packaging_skipped": 0,
+    "ui_passed": 100,
+    "ui_files": 6,
+    "types_build_tokens": "PASS"
+  },
+  "independent": {
+    "passed": 134,
+    "postgres_marked_deselected": 77,
+    "skipped": 0,
+    "overlaps_primary": true,
+    "report": "docs/delivery/v2-development/creative-binding-independent-review.json",
+    "report_sha256": "fb69dc5d8f899d270d85211f273b63a88db5ec80b051ff1e3f6a41673f55e735",
+    "artifacts_inspected_not_rebuilt": true
+  },
+  "limits": [
+    "standalone Director preview/dispatch unavailable",
+    "no PostgreSQL execution",
+    "no browser/native/Windows/packaged-runtime acceptance",
+    "no live-provider/model-quality acceptance",
+    "no full product/release acceptance"
+  ],
+  "receipts": [
+    {
+      "receipt": "docs/delivery/v2-development/creative-binding-origin-r1.json",
+      "receipt_sha256": "7d0aee8e3a67878dee3df18c7f3dde5bd4bcf64afe58152e5ef5d05387f616c4",
+      "log": "docs/delivery/v2-development/creative-binding-origin-r1.log",
+      "log_sha256": "7f39d48ce6249cc700a07e7a99cb912b6df0684f04537dc6ecab05c969a79d33",
+      "source_count": 2544,
+      "sources_unchanged": true,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-c",
+        "import sys; path=sys.argv[1]; globals()[\"__file__\"]=path; exec(compile(open(path).read(),path,\"exec\"))",
+        "docs/delivery/v2-development/creative-binding-origin/origin-probe.py",
+        "--child"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-binding-baseline-capture-r1.json",
+      "receipt_sha256": "1158f72f16d0bba4c5a212b26fad47578cb537ecafb3b98f3e05b7545d278167",
+      "log": "docs/delivery/v2-development/creative-binding-baseline-capture-r1.log",
+      "log_sha256": "91c55a61b4ba9c38bea91015e3f104411ca72785a154616ec642488992de1f2f",
+      "source_count": 2544,
+      "sources_unchanged": true,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-c",
+        "import sys; path=sys.argv[1]; globals()[\"__file__\"]=path; exec(compile(open(path).read(),path,\"exec\"))",
+        "docs/delivery/v2-development/creative-binding-origin/capture-legacy-requests.py"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-binding-baseline-fixture-r1.json",
+      "receipt_sha256": "a963e8c76dcb6ec0629572c03d3e4ccb1cb6593552e626948d8deec81eb57b62",
+      "log": "docs/delivery/v2-development/creative-binding-baseline-fixture-r1.log",
+      "log_sha256": "e70b6a773309fb4be39439157d395af8c1760062d5a1a3ef6c1a42378167cbeb",
+      "source_count": 2545,
+      "sources_unchanged": true,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-c",
+        "import sys; path=sys.argv[1]; globals()[\"__file__\"]=path; exec(compile(open(path).read(),path,\"exec\"))",
+        "docs/delivery/v2-development/creative-binding-origin/capture-legacy-requests.py",
+        "--verify-fixture"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-binding-origin-r2.json",
+      "receipt_sha256": "3d9300877ff09763482a0f38b85289833980913b637097e9c75c5140fd229810",
+      "log": "docs/delivery/v2-development/creative-binding-origin-r2.log",
+      "log_sha256": "792dec1dcf1d8e291728b61777340fde8901ed5173ce7183fa86047baae148fa",
+      "source_count": 2549,
+      "sources_unchanged": true,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-c",
+        "import sys; path=sys.argv[1]; globals()[\"__file__\"]=path; exec(compile(open(path).read(),path,\"exec\"))",
+        "docs/delivery/v2-development/creative-binding-origin/origin-probe.py",
+        "--child"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-binding-backend-r1.json",
+      "receipt_sha256": "4466f345bff24837107a304f4a54124a3850b2f260ebb776a193072f7c48c5cf",
+      "log": "docs/delivery/v2-development/creative-binding-backend-r1.log",
+      "log_sha256": "0ba81f226e4c45ecea1badc016eaed56006a88199b6aa12d3c30b9969734057c",
+      "source_count": 2549,
+      "sources_unchanged": true,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_creative_director_binding.py",
+        "tests/test_v2_creative_director_binding_persistence.py",
+        "tests/test_v2_model_execution.py",
+        "tests/test_v2_generation_incarnation.py",
+        "tests/test_shared_generation_terminal_protocol.py",
+        "tests/test_r4_generation_origin_guards.py",
+        "tests/test_r4_generation_origin_regression.py",
+        "tests/test_r4_broker_cancel_dispatch.py",
+        "tests/test_r4_broker_mounted.py",
+        "tests/test_v2_source_adaptation.py",
+        "tests/test_v2_storyboard_model_contract.py",
+        "-m",
+        "not postgres_backend_only",
+        "-q",
+        "--basetemp=.runtime/creative-binding-backend-r1-pytest"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-binding-packaging-r1.json",
+      "receipt_sha256": "b6e3c7462708436338e30cde9a3de3b13755d714eaa9c6ec1896309462220f29",
+      "log": "docs/delivery/v2-development/creative-binding-packaging-r1.log",
+      "log_sha256": "73963913dcbfd6c31be47e0b48366965f8890a371896a12f05c975d0b2e1ba5f",
+      "source_count": 2549,
+      "sources_unchanged": true,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_creative_director_binding_packaging.py",
+        "tests/test_public_build_profile.py",
+        "tests/test_public_wheel_artifact.py",
+        "tests/test_public_sdist_artifact.py",
+        "-m",
+        "not postgres_backend_only",
+        "-q",
+        "--basetemp=.runtime/creative-binding-packaging-r1-pytest"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-binding-types-r1.json",
+      "receipt_sha256": "fbea9a9c978d8696351fd37da39fc1a3a57740125b627333984a5b10211efcf9",
+      "log": "docs/delivery/v2-development/creative-binding-types-r1.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_count": 2549,
+      "sources_unchanged": true,
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && node node_modules/typescript/bin/tsc -b --force"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-binding-build-r1.json",
+      "receipt_sha256": "0f31d0eba1e244811d32d1626d91a70dd22f78891c5c609cf03195f1dfd5511e",
+      "log": "docs/delivery/v2-development/creative-binding-build-r1.log",
+      "log_sha256": "20e5125c56628aea5bf23b76b65f115193a4feb6a7087c9940ca0962a68f46a0",
+      "source_count": 2549,
+      "sources_unchanged": true,
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && node node_modules/vite/bin/vite.js build"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-binding-tokens-r1.json",
+      "receipt_sha256": "74cc873108586acf907900670bc19c98f98ef3585d0d80b66505d135f5836b19",
+      "log": "docs/delivery/v2-development/creative-binding-tokens-r1.log",
+      "log_sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "source_count": 2549,
+      "sources_unchanged": true,
+      "command": [
+        "node",
+        "scripts/check_ui_design_tokens.mjs"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-binding-ui-r1.json",
+      "receipt_sha256": "7e5647e941f45b6d050dd3ee7d931bd7472221bbd01e28be080b0d41f2d91aae",
+      "log": "docs/delivery/v2-development/creative-binding-ui-r1.log",
+      "log_sha256": "af5a681caeaf20c991ddf8fe41ffb12f39a28bc9442c239a9c44209ec94be85e",
+      "source_count": 2549,
+      "sources_unchanged": true,
+      "command": [
+        "bash",
+        "-c",
+        "cd frontend && node node_modules/vitest/vitest.mjs run --config vite.config.ts --maxWorkers=1 --minWorkers=1 --no-cache src/creative/DirectorModelControls.test.tsx src/creative/DirectorModelControls.storyboard-model.additive.test.tsx src/creative/GraphDirectorStoryboardHandoff.test.tsx src/creative/GraphDirectorProposalReview.test.tsx src/creative/GraphModelExecutionPanel.test.tsx src/creative/studioGraphDirectorClient.test.ts"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-binding-independent-origin-r1.json",
+      "receipt_sha256": "0886331bd5eb50d753d67871c36dacb6ddd6f3a92373a6c0ed491b9d9a8d96a7",
+      "log": "docs/delivery/v2-development/creative-binding-independent-origin-r1.log",
+      "log_sha256": "9ca8aecddafbd49afcfd1075c296a6130c0fb1faae815732f70ee896540c0df8",
+      "source_count": 2549,
+      "sources_unchanged": true,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-c",
+        "import sys; path=sys.argv[1]; globals()[\"__file__\"]=path; exec(compile(open(path).read(),path,\"exec\"))",
+        "docs/delivery/v2-development/creative-binding-origin/origin-probe.py",
+        "--child"
+      ]
+    },
+    {
+      "receipt": "docs/delivery/v2-development/creative-binding-independent-r1.json",
+      "receipt_sha256": "1d39afceeea5184db6022fbb831d83e36e74ff1dd902469eb99bfea54b4bc5fc",
+      "log": "docs/delivery/v2-development/creative-binding-independent-r1.log",
+      "log_sha256": "ffe5da4e07b27f7db4a3b31b0b8fec14d2b67cc9b83fa3a15131e6ebeeaff307",
+      "source_count": 2549,
+      "sources_unchanged": true,
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_v2_creative_director_binding.py",
+        "tests/test_v2_creative_director_binding_persistence.py",
+        "tests/test_r4_model_broker.py",
+        "-m",
+        "not postgres_backend_only",
+        "-q",
+        "--basetemp=.runtime/creative-binding-independent-r1-pytest"
+      ]
+    }
+  ],
+  "files": {
+    "docs/CREATIVE_DIRECTOR_BINDING_FOUNDATION.md": {
+      "sha256": "cc97a2886f80721b62b2fd0a0addb552ca2437bbe1aca496b3cb1fc4e352fca5",
+      "bytes": 10401
+    },
+    "docs/delivery/v2-development/creative-binding-backend-r1.json": {
+      "sha256": "4466f345bff24837107a304f4a54124a3850b2f260ebb776a193072f7c48c5cf",
+      "bytes": 603920
+    },
+    "docs/delivery/v2-development/creative-binding-backend-r1.log": {
+      "sha256": "0ba81f226e4c45ecea1badc016eaed56006a88199b6aa12d3c30b9969734057c",
+      "bytes": 1223
+    },
+    "docs/delivery/v2-development/creative-binding-baseline-capture-r1.json": {
+      "sha256": "1158f72f16d0bba4c5a212b26fad47578cb537ecafb3b98f3e05b7545d278167",
+      "bytes": 602313
+    },
+    "docs/delivery/v2-development/creative-binding-baseline-capture-r1.log": {
+      "sha256": "91c55a61b4ba9c38bea91015e3f104411ca72785a154616ec642488992de1f2f",
+      "bytes": 6591
+    },
+    "docs/delivery/v2-development/creative-binding-baseline-fixture-r1.json": {
+      "sha256": "a963e8c76dcb6ec0629572c03d3e4ccb1cb6593552e626948d8deec81eb57b62",
+      "bytes": 602593
+    },
+    "docs/delivery/v2-development/creative-binding-baseline-fixture-r1.log": {
+      "sha256": "e70b6a773309fb4be39439157d395af8c1760062d5a1a3ef6c1a42378167cbeb",
+      "bytes": 6591
+    },
+    "docs/delivery/v2-development/creative-binding-build-r1.json": {
+      "sha256": "0f31d0eba1e244811d32d1626d91a70dd22f78891c5c609cf03195f1dfd5511e",
+      "bytes": 603200
+    },
+    "docs/delivery/v2-development/creative-binding-build-r1.log": {
+      "sha256": "20e5125c56628aea5bf23b76b65f115193a4feb6a7087c9940ca0962a68f46a0",
+      "bytes": 1679
+    },
+    "docs/delivery/v2-development/creative-binding-independent-origin-r1.json": {
+      "sha256": "0886331bd5eb50d753d67871c36dacb6ddd6f3a92373a6c0ed491b9d9a8d96a7",
+      "bytes": 603559
+    },
+    "docs/delivery/v2-development/creative-binding-independent-origin-r1.log": {
+      "sha256": "9ca8aecddafbd49afcfd1075c296a6130c0fb1faae815732f70ee896540c0df8",
+      "bytes": 6365
+    },
+    "docs/delivery/v2-development/creative-binding-independent-r1.json": {
+      "sha256": "1d39afceeea5184db6022fbb831d83e36e74ff1dd902469eb99bfea54b4bc5fc",
+      "bytes": 603573
+    },
+    "docs/delivery/v2-development/creative-binding-independent-r1.log": {
+      "sha256": "ffe5da4e07b27f7db4a3b31b0b8fec14d2b67cc9b83fa3a15131e6ebeeaff307",
+      "bytes": 810
+    },
+    "docs/delivery/v2-development/creative-binding-independent-review.json": {
+      "sha256": "fb69dc5d8f899d270d85211f273b63a88db5ec80b051ff1e3f6a41673f55e735",
+      "bytes": 2034
+    },
+    "docs/delivery/v2-development/creative-binding-origin/artifact-hashes.json": {
+      "sha256": "d579a6f6ec8340448f87ba05f6d900016f5a40a9afc0a412886b4287a60d7c72",
+      "bytes": 2859
+    },
+    "docs/delivery/v2-development/creative-binding-origin/artifacts/public-sdist0/build.log": {
+      "sha256": "52fd8935fb8493614b475bf504666d403f19d8be54355bcc79e83d1318aae03d",
+      "bytes": 43462
+    },
+    "docs/delivery/v2-development/creative-binding-origin/artifacts/public-sdist0/sdist-receipt.json": {
+      "sha256": "416d93098f9719eda993d39ebf8d22cec4d16d6cc84caf92f33ac37f63c2d4e2",
+      "bytes": 117414
+    },
+    "docs/delivery/v2-development/creative-binding-origin/artifacts/public-sdist0/stage-receipt.json": {
+      "sha256": "2f851acbaf4f9f70da78e5c6a2bccaa41a9f73ad980d86fc6f992cca06892c7b",
+      "bytes": 78172
+    },
+    "docs/delivery/v2-development/creative-binding-origin/artifacts/public-sdist1/build.log": {
+      "sha256": "52fd8935fb8493614b475bf504666d403f19d8be54355bcc79e83d1318aae03d",
+      "bytes": 43462
+    },
+    "docs/delivery/v2-development/creative-binding-origin/artifacts/public-sdist1/sdist-receipt.json": {
+      "sha256": "c2b67cddd47caeb2869b28e2722be0e12d86dba299939a58a440931325d3a65d",
+      "bytes": 117414
+    },
+    "docs/delivery/v2-development/creative-binding-origin/artifacts/public-sdist1/stage-receipt.json": {
+      "sha256": "2f851acbaf4f9f70da78e5c6a2bccaa41a9f73ad980d86fc6f992cca06892c7b",
+      "bytes": 78172
+    },
+    "docs/delivery/v2-development/creative-binding-origin/artifacts/public-wheel0/build.log": {
+      "sha256": "c6bf51ecff0dce9f3132456b4de466a81961cad8648673dd5e27a77c6c656c4d",
+      "bytes": 110465
+    },
+    "docs/delivery/v2-development/creative-binding-origin/artifacts/public-wheel0/stage-receipt.json": {
+      "sha256": "2f851acbaf4f9f70da78e5c6a2bccaa41a9f73ad980d86fc6f992cca06892c7b",
+      "bytes": 78172
+    },
+    "docs/delivery/v2-development/creative-binding-origin/artifacts/public-wheel0/wheel-receipt.json": {
+      "sha256": "c2d0423c2096b044007db3bbc253d8222098afa8c867954d965a49ef3e0965dc",
+      "bytes": 107119
+    },
+    "docs/delivery/v2-development/creative-binding-origin/artifacts/public-wheel1/build.log": {
+      "sha256": "be53c3526dc292fb42136f8f82bf2499e2064f5c5757d7bf73505b82bc932a0a",
+      "bytes": 110465
+    },
+    "docs/delivery/v2-development/creative-binding-origin/artifacts/public-wheel1/stage-receipt.json": {
+      "sha256": "2f851acbaf4f9f70da78e5c6a2bccaa41a9f73ad980d86fc6f992cca06892c7b",
+      "bytes": 78172
+    },
+    "docs/delivery/v2-development/creative-binding-origin/artifacts/public-wheel1/wheel-receipt.json": {
+      "sha256": "99b8acf510e447b6a544062649cb574d46810c00006cb2d2e24881912a39f353",
+      "bytes": 107119
+    },
+    "docs/delivery/v2-development/creative-binding-origin/backend-launcher-r1.log": {
+      "sha256": "5df0baf163def35309d241291b3e66f7d3de7d979b509840e89930bc024e369c",
+      "bytes": 7779
+    },
+    "docs/delivery/v2-development/creative-binding-origin/backend-normal-startup-r1.json": {
+      "sha256": "f9e84a30a4e1ac6362fee1a59ee0dc1cf16785b9afad95d184418b5d40413c6f",
+      "bytes": 6303
+    },
+    "docs/delivery/v2-development/creative-binding-origin/backend-normal-startup-r1.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/creative-binding-origin/baseline-source-freeze.json": {
+      "sha256": "ddb6ee32e61762d7f22d827c6313969062e351a357374695c081a756602adbe3",
+      "bytes": 747
+    },
+    "docs/delivery/v2-development/creative-binding-origin/capture-launcher.log": {
+      "sha256": "a5b2674633e4841cb2094caf2eb163761a9de65bbe9ab37de9aff6e2ae6b6f31",
+      "bytes": 6696
+    },
+    "docs/delivery/v2-development/creative-binding-origin/capture-legacy-requests.py": {
+      "sha256": "44c66ac3ede647d32faea6eefd51872d543c20687fd906eb2946bdd3d22f9655",
+      "bytes": 5014
+    },
+    "docs/delivery/v2-development/creative-binding-origin/capture-provenance.json": {
+      "sha256": "34b41a0bc2f8294c704a71bb457d6b8a60190a4f14f7cc93ca59ffed32c4693c",
+      "bytes": 21557
+    },
+    "docs/delivery/v2-development/creative-binding-origin/captured-legacy-requests.json": {
+      "sha256": "640ca3823d83a378b9018a180957d375b9cef6b524f2e527f7e731236cfd90ac",
+      "bytes": 3770
+    },
+    "docs/delivery/v2-development/creative-binding-origin/check-artifacts.py": {
+      "sha256": "c5724ca946833c5141bda127a1ca145aa016a10a1ebf75610b15b32f676440dd",
+      "bytes": 1538
+    },
+    "docs/delivery/v2-development/creative-binding-origin/check-capture.py": {
+      "sha256": "67bc8023db2e93a1c7e7bf68cdb81c24182592167f06ce58ff159b4b0d44cccd",
+      "bytes": 1805
+    },
+    "docs/delivery/v2-development/creative-binding-origin/core-freeze-r1.sha256": {
+      "sha256": "dd8eab64694af4619f4bae439a1ede690ae704045ff0b24a5a7443e7330af9dc",
+      "bytes": 815
+    },
+    "docs/delivery/v2-development/creative-binding-origin/fixture-launcher.log": {
+      "sha256": "8f4a2379812d9eb8c2852f5facdb487ece02126687618e086f8a3ac0dabc0caf",
+      "bytes": 6696
+    },
+    "docs/delivery/v2-development/creative-binding-origin/fixture-verification-provenance.json": {
+      "sha256": "bef8c4a1cb89b6ede5d8dc3282ae5f553ff60fca83a3ad521859f013eb0b2133",
+      "bytes": 21652
+    },
+    "docs/delivery/v2-development/creative-binding-origin/frontend-launcher-r1.log": {
+      "sha256": "4e421b98f105c4b359d670df8a92699bdca468ba52dfddfe4ef3ae688dc20327",
+      "bytes": 2795
+    },
+    "docs/delivery/v2-development/creative-binding-origin/independent-normal-startup-r1.json": {
+      "sha256": "a575873a2067607a133639a484c92a12d23df15d3a7f48606bf60b492d471ca2",
+      "bytes": 6303
+    },
+    "docs/delivery/v2-development/creative-binding-origin/index-evidence.py": {
+      "sha256": "dc3cc73b79c35d1632858a047d68639fd035cf0bad1bfb8493efe1b6ca7d9d50",
+      "bytes": 4502
+    },
+    "docs/delivery/v2-development/creative-binding-origin/launcher.log": {
+      "sha256": "8b1f10a8b1e05e61dd1dfc22acedbdda58973a61ae95db924b4dc8de47d843bc",
+      "bytes": 6460
+    },
+    "docs/delivery/v2-development/creative-binding-origin/normal-startup.json": {
+      "sha256": "090575cba1f60dd35c654ce25bc9a7ed5393757fde1fb5a2509e8ea17fc104a8",
+      "bytes": 6303
+    },
+    "docs/delivery/v2-development/creative-binding-origin/normal-startup.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/creative-binding-origin/origin-probe.py": {
+      "sha256": "f512fc286f6d45e19297d68a7b156b45ceb9891e2fa3ca78192284d2984b2704",
+      "bytes": 6085
+    },
+    "docs/delivery/v2-development/creative-binding-origin/packaging-interpreter-probe.py": {
+      "sha256": "99e3fd75effce3b27fe22b9878c793ba4a9aed3db4494d14177869036e2dc35c",
+      "bytes": 1378
+    },
+    "docs/delivery/v2-development/creative-binding-origin/packaging-interpreter-provenance.json": {
+      "sha256": "143617bcf52579d306e329a9ba5fa87822e5aad6918251f7cefc1448fe676827",
+      "bytes": 1364
+    },
+    "docs/delivery/v2-development/creative-binding-origin/packaging-launcher-r1.log": {
+      "sha256": "8bcc780592aba4540e81d0b6a9a4ce7ed0a183d4ea4311367410db784a8c0580",
+      "bytes": 310
+    },
+    "docs/delivery/v2-development/creative-binding-origin/packaging-manifest-before.sha256": {
+      "sha256": "d89059b0c1b37367f7f192187228abc0ad72e4026f26e0e972dc661b88a1fcbb",
+      "bytes": 94
+    },
+    "docs/delivery/v2-development/creative-binding-origin/public-manifest-delta.patch": {
+      "sha256": "33fead6a03aad620cb8495187bf3e96464210a88c849281c70ec795b0e2ebfb4",
+      "bytes": 475
+    },
+    "docs/delivery/v2-development/creative-binding-origin/run-backend-r1.sh": {
+      "sha256": "d9756df801ffa254eefd77070da3fbbcba08c591ca064d31fe03e1df3c16fdb2",
+      "bytes": 1923
+    },
+    "docs/delivery/v2-development/creative-binding-origin/run-capture.sh": {
+      "sha256": "b40750de807e6661e372a237f86fafdc92e7f5991440da1a71c47db6d9aa306e",
+      "bytes": 884
+    },
+    "docs/delivery/v2-development/creative-binding-origin/run-frontend-r1.sh": {
+      "sha256": "4e3fb11d2744e3a28db5a2d37ea26c31c7c097d492976f265b9bb919629a5193",
+      "bytes": 1473
+    },
+    "docs/delivery/v2-development/creative-binding-origin/run-packaging-r1.sh": {
+      "sha256": "7d60199be08d946431d38234b5f3de003745df8c309863bc1b239f3e8ef4b94b",
+      "bytes": 1490
+    },
+    "docs/delivery/v2-development/creative-binding-origin/run-proof.sh": {
+      "sha256": "0bbc3b72955afc9d042e65dbdadf797debab4a9d7362ac64b4a194b93377f2e7",
+      "bytes": 1344
+    },
+    "docs/delivery/v2-development/creative-binding-origin-r1.json": {
+      "sha256": "7d0aee8e3a67878dee3df18c7f3dde5bd4bcf64afe58152e5ef5d05387f616c4",
+      "bytes": 602227
+    },
+    "docs/delivery/v2-development/creative-binding-origin-r1.log": {
+      "sha256": "7f39d48ce6249cc700a07e7a99cb912b6df0684f04537dc6ecab05c969a79d33",
+      "bytes": 6365
+    },
+    "docs/delivery/v2-development/creative-binding-origin-r2.json": {
+      "sha256": "3d9300877ff09763482a0f38b85289833980913b637097e9c75c5140fd229810",
+      "bytes": 603451
+    },
+    "docs/delivery/v2-development/creative-binding-origin-r2.log": {
+      "sha256": "792dec1dcf1d8e291728b61777340fde8901ed5173ce7183fa86047baae148fa",
+      "bytes": 6365
+    },
+    "docs/delivery/v2-development/creative-binding-packaging-r1.json": {
+      "sha256": "b6e3c7462708436338e30cde9a3de3b13755d714eaa9c6ec1896309462220f29",
+      "bytes": 603592
+    },
+    "docs/delivery/v2-development/creative-binding-packaging-r1.log": {
+      "sha256": "73963913dcbfd6c31be47e0b48366965f8890a371896a12f05c975d0b2e1ba5f",
+      "bytes": 180
+    },
+    "docs/delivery/v2-development/creative-binding-tokens-r1.json": {
+      "sha256": "74cc873108586acf907900670bc19c98f98ef3585d0d80b66505d135f5836b19",
+      "bytes": 603178
+    },
+    "docs/delivery/v2-development/creative-binding-tokens-r1.log": {
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "bytes": 31
+    },
+    "docs/delivery/v2-development/creative-binding-types-r1.json": {
+      "sha256": "fbea9a9c978d8696351fd37da39fc1a3a57740125b627333984a5b10211efcf9",
+      "bytes": 603207
+    },
+    "docs/delivery/v2-development/creative-binding-types-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/creative-binding-ui-r1.json": {
+      "sha256": "7e5647e941f45b6d050dd3ee7d931bd7472221bbd01e28be080b0d41f2d91aae",
+      "bytes": 603548
+    },
+    "docs/delivery/v2-development/creative-binding-ui-r1.log": {
+      "sha256": "af5a681caeaf20c991ddf8fe41ffb12f39a28bc9442c239a9c44209ec94be85e",
+      "bytes": 711
+    },
+    "docs/v2/frozen-capability-ledger-20261016.md": {
+      "sha256": "7e08fdaf6145e3ca904c816d11ecefad67a312286cc11bb555575320ab345d02",
+      "bytes": 128118
+    },
+    "tests/fixtures/creative_binding_legacy_requests.json": {
+      "sha256": "640ca3823d83a378b9018a180957d375b9cef6b524f2e527f7e731236cfd90ac",
+      "bytes": 3770
+    }
+  }
+}

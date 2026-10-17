@@ -1,0 +1,10 @@
+--- ../studio-timeline-slip-delete/packaging/public-build.json	2026-10-17 13:56:59.689109278 +0900
++++ packaging/public-build.json	2026-10-17 14:27:43.475578793 +0900
+@@ -67,6 +67,7 @@
+     "app/creative/bible_workspace.py",
+     "app/creative/camera_language.py",
+     "app/creative/content_policy.py",
++    "app/creative/director_binding.py",
+     "app/creative/director_intent.py",
+     "app/creative/director_workspace.py",
+     "app/creative/director_workspace_api.py",

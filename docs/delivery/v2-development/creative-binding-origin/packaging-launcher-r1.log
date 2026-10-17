@@ -1,0 +1,6 @@
+........................................................................ [ 82%]
+...............                                                          [100%]
+87 passed in 39.87s
+
+{"receipt": "docs/delivery/v2-development/creative-binding-packaging-r1.json", "status": "PASS"}
+packaging/public-build.json: OK
