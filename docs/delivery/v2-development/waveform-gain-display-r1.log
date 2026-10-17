@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/nle/TimelineWaveformPanel.additive.test.tsx (13 tests) 253ms
+ ✓ src/nle/TimelineWaveformGain.additive.test.tsx (7 tests) 262ms
+
+ Test Files  2 passed (2)
+      Tests  20 passed (20)
+   Start at  05:04:25
+   Duration  1.07s (transform 156ms, setup 21ms, collect 368ms, tests 516ms, environment 721ms, prepare 118ms)
+

@@ -1,7 +1,10 @@
+import { useMemo, useRef, useState } from 'react';
+import { projectWaveformGain } from '../creative/timelineWaveformGain';
+import type { StudioTimelineRow } from '../creative/studioTimelineTypes';
 import { Button, StatusMessage } from '../ui/primitives';
 import { waveformTimelineCoordinate, type TimelineWaveform } from '../creative/studioTimelineWaveformTypes';
 
-export type TimelineWaveformPanelProps = { available: boolean; canRequest: boolean; pending: boolean; preview?: TimelineWaveform;
+export type TimelineWaveformPanelProps = { available: boolean; canRequest: boolean; pending: boolean; preview?: TimelineWaveform; source?: StudioTimelineRow;
   error: string; unavailable: string; onRequest: () => void };
 /** Presentation only: measured source peaks, no network, decoding, playback or editing. */
 export function TimelineWaveformPanel(props: TimelineWaveformPanelProps) {
@@ -25,6 +28,10 @@ export function TimelineWaveformPanel(props: TimelineWaveformPanelProps) {
       || Array.from(candidate.peaks).some(peak => typeof peak !== 'number' || !Number.isFinite(peak) || peak < 0 || peak > 1 || !Number.isInteger(peak * 32768))) candidate = undefined;
   }
   const value = candidate;
+  const projected=useMemo(()=>{if(!props.preview||!props.source)return undefined;try{return projectWaveformGain(props.preview,props.source);}catch{return undefined;}},[props.preview,props.source]);
+  const [showGain,setShowGain]=useState<{preview:TimelineWaveform;source:StudioTimelineRow}>();
+  const live=useRef(props);live.current=props;
+  const gainVisible=!!projected&&!!value&&showGain?.preview===props.preview&&showGain?.source===props.source;
   const width = 512, height = 96;
   const duration = value ? (value.clip.out_ms - value.clip.in_ms) * value.clip.speed_den / value.clip.speed_num : 0;
   const x = (frame: number) => {
@@ -51,7 +58,18 @@ export function TimelineWaveformPanel(props: TimelineWaveformPanelProps) {
       </svg>
       <p className="nle-workspace__note">{value.peaks.length} 个源峰值 · {value.channels} 声道 · {value.sample_rate} Hz · 源总长 {value.duration_seconds.num}/{value.duration_seconds.den} 秒</p>
       <p className="nle-workspace__note">源采样范围 [{value.start_frame}, {value.end_frame}) · 裁剪 [{value.clip.in_ms}, {value.clip.out_ms}) 毫秒 · 时间线起点 {value.clip.start_ms} 毫秒 · 速度 {value.clip.speed_num}/{value.clip.speed_den}</p>
-      <p className="nle-workspace__note">未应用静音、片段/轨道音量或淡入淡出。多声道取绝对峰值，不代表实际混音响度；Windows 原生验证仍待执行。</p>
+      {projected&&props.source&&<section aria-label="片段音量与淡化显示投影">
+        <label><input type="checkbox" checked={gainVisible} onChange={event=>{if(live.current.preview!==props.preview||live.current.source!==props.source)return;setShowGain(event.target.checked?{preview:value,source:props.source!}:undefined);}}/>显示已保存片段的增益与淡化估算</label>
+        {gainVisible&&<><p className="nle-workspace__note">合计增益 {projected.gainDb} dB · {projected.muted?'已静音':'未静音'} · 淡入 {projected.fadeIn} 毫秒 · 淡出 {projected.fadeOut} 毫秒。</p>
+          <svg role="img" aria-label="增益与淡化的显示估算包络" viewBox={`0 0 ${width} ${height}`} width="100%" height={height} preserveAspectRatio="none">
+            <title>源桶峰值乘该桶内最大线性淡化系数；未测量渲染后 PCM</title>
+            {projected.peaks.map((peak,index)=>{const start=value.start_frame+index*value.samples_per_bucket,end=Math.min(value.end_frame,start+value.samples_per_bucket),shown=Math.min(1,peak);return <rect key={start} x={x(start)} y={height/2-shown*height/2} width={Math.max(0,x(end)-x(start))} height={shown*height} fill="currentColor" data-estimated-peak={peak}/>;})}
+          </svg>
+          {!!projected.aboveUnity&&<StatusMessage tone="warning">{projected.aboveUnity} 个估算桶超过 0 dBFS，图形仅限幅显示，未修改音频。请通过原渲染试听核对峰值。</StatusMessage>}
+          <p className="nle-workspace__note">这是源包络的显示估算，不是实际混音波形或响度测量。峰值在桶内的位置未知，按桶内最大线性系数估算；不模拟重采样、变速处理、声道相位或其他轨道叠加，也不保证实际输出峰值。编辑后需保存并重新读取。</p>
+        </>}
+      </section>}
+      <p className="nle-workspace__note">上方原始源包络未应用静音、片段/轨道音量或淡入淡出。多声道取绝对峰值，不代表实际混音响度；Windows 原生验证仍待执行。</p>
     </>}
   </section>;
 }

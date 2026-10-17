@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Saved audio gain/fade waveform display estimate (20:05 UTC)
+
+The existing source-waveform panel retains its measured PCM16 source view and now offers an explicit second display for saved track/clip gain, mute and linear fades. The original strict waveform receipt and saved timeline validators bind the projection. Source sample frames map into speed-adjusted timeline time; each bucket uses its measured source peak multiplied by the maximum linear envelope within that bucket because the actual peak's sample position is unknown. Above-unity estimates remain in data and are only capped visually, with a warning. Source data, audio, timeline, history and executors are untouched.
+
+The UI states this is not rendered PCM, mixed waveform, loudness or an actual-output peak bound: resampling, time-stretch, phase and other tracks are not simulated. Editing requires saving and explicitly re-reading original peaks. Focused waveform-gain-display-r1:7 new plus13 original view checks and TypeScript PASS; no native audio quality/browser claim.
+
 ## Coordinate-based comic reading-number repair (20:01 UTC)
 
 Comic layout now previews the exact original raster preflight's stable (y, x) order and, after separate confirmation, repairs only reading numbers through the original local edit/history owner. Coordinates, bubbles, original shot IDs, image snapshots and other author fields remain unchanged. It can fix duplicated/missing numbers but does not claim narrative order, solve overlap, approve assets or bypass original pixel preflight. Scope/catalog/editor-generation/IME changes retire pending application.

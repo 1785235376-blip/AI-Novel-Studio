@@ -274,7 +274,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       editable={c.canEdit} onSelectClips={selectClips} onPlayhead={setNlePlayhead}
       onView={next => setNleView({ startMs: next.startMs, scale: next.scale })}
       exportReceipt={c.exportPreview} limits={TIMELINE_LIMITS}
-      waveform={{ ...waveform, onRequest: () => void waveform.request() }}
+      waveform={{ ...waveform, source: c.base, onRequest: () => void waveform.request() }}
       onEdit={command => {
         if (['caption.insert', 'caption.update', 'caption.remove'].includes(command.kind)) {
           const live = latestReview.current;
