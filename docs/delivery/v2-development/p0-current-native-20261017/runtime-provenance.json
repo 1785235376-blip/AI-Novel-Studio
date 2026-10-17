@@ -1,0 +1,31 @@
+{
+  "postgres_version": "17.11 (Debian 17.11-0+deb13u1)",
+  "packages": [
+    {
+      "filename": "postgresql-17_17.11-0+deb13u1_amd64.deb",
+      "source": "https://deb.debian.org/debian/pool/main/p/postgresql-17/postgresql-17_17.11-0+deb13u1_amd64.deb",
+      "sha256": "d2ce1ddffafa783f9acda4c92c86fc21e8288bff3782d739294f14fa797d7886"
+    },
+    {
+      "filename": "postgresql-client-17_17.11-0+deb13u1_amd64.deb",
+      "source": "https://deb.debian.org/debian/pool/main/p/postgresql-17/postgresql-client-17_17.11-0+deb13u1_amd64.deb",
+      "sha256": "9d8558f8dd57c8e92e218a20698383575d53742ca3f9e7c2b7fe5f246d5216ae"
+    }
+  ],
+  "original_signed_package_provenance": {
+    "inrelease_source": "https://deb.debian.org/debian/dists/trixie/InRelease",
+    "packages_source": "https://deb.debian.org/debian/dists/trixie/main/binary-amd64/Packages.xz",
+    "archive_signatures": "Verified with gpg and pre-existing /usr/share/keyrings/debian-archive-keyring.gpg",
+    "debian_stable_trixie_signing_fingerprint": "41587F7DB8C774BCCF131416762F67A0B2C39DE4",
+    "packages_index_sha256": "Verified against signed InRelease",
+    "deb_sha256": "Both packages verified against Packages index"
+  },
+  "current_package_hashes_verified": true,
+  "new_cluster": "/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/director-acceptance-pgdata-20261017",
+  "old_cluster_untouched": true,
+  "loopback_tcp_probe": "PASS",
+  "unix_socket_probe": "BLOCKED_ERRNO_1",
+  "postgres_uses_tcp_only": true,
+  "current_source_head": "468457706f64d9b8cc793b9a6fa39fa4b354aa15",
+  "product_code_tests_unchanged": true
+}

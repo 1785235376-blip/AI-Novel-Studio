@@ -1,5 +1,10 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Native P0 follow-up (15:34 UTC)
+
+Without changing the code or original tests at 4684577, real PostgreSQL 17.11 passed 38 P0 retirement/incarnation tests and File passed 43. A new empty disposable database received the 20 original migrations; its exact live identity was checked and the owned server stopped successfully. Actual persisted authority/bindings, same-public-ID recreation, positive new users, create/link rollback and generation isolation were exercised. See `delivery/v2-development/p0-current-native-20261017/README.md`. This supersedes the earlier lack of fresh PG proof for this P0 scope only; it does not make the File-only Director pending lifecycle PG-capable or establish complete V2 acceptance.
+
+
 ## Latest Audio diagnostic closure (15:16 UTC)
 
 Source fix `313051c`, evidence `25742db`: the five previously recorded Audio-listing diagnostic failures are resolved in their unchanged original tests. Matching-owner listing retains specific bounded shape/source errors while get/execution/review preserve hash-first admission. Valid-shape tampering still fails and stored bytes are unchanged. See `AUDIO_LISTING_DIAGNOSTIC_PRECEDENCE.md`; the historical unresolved Audio bullet below is superseded by this scoped result, not a globally green claim.
