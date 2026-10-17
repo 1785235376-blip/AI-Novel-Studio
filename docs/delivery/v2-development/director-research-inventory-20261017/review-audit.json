@@ -1,0 +1,10 @@
+{
+  "status": "PASS_ADDITIVE_COLLECTION_ONLY",
+  "previous_rows": 17505,
+  "new_rows": 17617,
+  "old_full_rows_including_classification_preserved_in_order": true,
+  "added_file": 56,
+  "added_postgres": 56,
+  "raw_sha256": "a168e4cca73df65bd4a10124a6824e300e31dffec7caf898f19e297d6c6d9393",
+  "tests_executed": false
+}

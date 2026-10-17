@@ -1,0 +1,10 @@
+{
+  "status": "PASS_THREE_MATCHING_COLLECTIONS",
+  "raw_sha256": "a168e4cca73df65bd4a10124a6824e300e31dffec7caf898f19e297d6c6d9393",
+  "manifest_sha256": "cd2993426017f31058878d1d662e719479b131be17a0fc856cd7304313db735d",
+  "source_checkpoint": "d701497",
+  "nodes": 17617,
+  "sources": 2723,
+  "tests_executed_by_collection": false,
+  "original_ci_self_tests_passed": 45
+}

@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Current inventory / recovery point (16:21 UTC)
+
+Integrated V2 inventory: 17,617 rows, 2,723 source entries; SHA256 `cd2993426017f31058878d1d662e719479b131be17a0fc856cd7304313db735d`. Three original-generator raw collections match; all previous 17,505 complete rows and classifications remain exact, with 56 File + 56 PG cases added. 45 original CI self-tests passed. Read `delivery/v2-development/director-research-inventory-20261017/README.md`. This supersedes earlier inventory counts only, not the runtime acceptance boundaries.
+
+Next substantive Director gap: the application host still does not mount the versioned independent model adapter by default; private pending storage remains File-only. Do not label that production end-to-end feature finished from constructor opt-in tests. Continue using original owners and actual host/session authority, and keep unsupported backends fail-closed. The fixed fourteen-commit archive request through 4684577 remains pending and unchanged.
+
 ## Integrated Research follow-up (16:15 UTC)
 
 Historical exact-location inspection is integrated with existing Director and Audio owners at b7eddfc. Primary checks: 526 File, 233 real PostgreSQL, 399 UI, forced TypeScript/production build/token guard, and 87 original PUBLIC packaging checks passed. Four actual archives were read against current runtime source; before/after origin and all final gate source hashes match. Scope and limits: `delivery/v2-development/director-research-integration-20261017/README.md`. Inventory reconciliation is pending. This later work is outside the fixed fourteen-commit upload request.

@@ -1,0 +1,23 @@
+{
+  "status": "PASS_PRIMARY_PROMOTION",
+  "sha256": "cd2993426017f31058878d1d662e719479b131be17a0fc856cd7304313db735d",
+  "nodes": 17617,
+  "sources": 2723,
+  "all_source_hashes_match_committed_git": true,
+  "old_source_changes": [
+    "app/experimental/api.py",
+    "app/experimental/research_library.py",
+    "app/experimental/research_library_api.py",
+    "frontend/src/experimental/ResearchLibraryPanel.tsx",
+    "frontend/src/experimental/researchLibraryClient.ts"
+  ],
+  "new_source_paths": [
+    "frontend/src/experimental/ResearchHistoricalInspector.test.tsx",
+    "frontend/src/experimental/ResearchHistoricalInspector.tsx",
+    "tests/test_research_historical_inspection.py",
+    "tests/test_research_historical_inspection_mounted.py",
+    "tests/test_research_history_incarnation_additive.py"
+  ],
+  "old_nodes_and_skips_preserved": true,
+  "tests_executed": false
+}
