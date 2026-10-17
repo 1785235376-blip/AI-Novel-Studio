@@ -1,0 +1,26 @@
+{
+  "source_checkpoint": "c7b01d0c503ac944cf078b55b845f76df7d428fa",
+  "complete_source_brackets": [
+    {
+      "phase": "review",
+      "entries": 2611,
+      "byte_identical": true,
+      "before_sha256": "0f82e7bc40b8af06e27f5446df32cc809fde069f0e40e4ce108b1f13e073cc08",
+      "after_sha256": "0f82e7bc40b8af06e27f5446df32cc809fde069f0e40e4ce108b1f13e073cc08"
+    },
+    {
+      "phase": "candidate",
+      "entries": 2611,
+      "byte_identical": true,
+      "before_sha256": "0f82e7bc40b8af06e27f5446df32cc809fde069f0e40e4ce108b1f13e073cc08",
+      "after_sha256": "0f82e7bc40b8af06e27f5446df32cc809fde069f0e40e4ce108b1f13e073cc08"
+    },
+    {
+      "phase": "confirmation",
+      "entries": 2611,
+      "byte_identical": true,
+      "before_sha256": "0f82e7bc40b8af06e27f5446df32cc809fde069f0e40e4ce108b1f13e073cc08",
+      "after_sha256": "0f82e7bc40b8af06e27f5446df32cc809fde069f0e40e4ce108b1f13e073cc08"
+    }
+  ]
+}

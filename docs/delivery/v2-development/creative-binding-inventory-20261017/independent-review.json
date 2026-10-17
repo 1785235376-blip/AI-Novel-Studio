@@ -1,0 +1,25 @@
+{
+  "status": "APPROVE_CANDIDATE_GENERATION",
+  "source_commit": "c7b01d0c503ac944cf078b55b845f76df7d428fa",
+  "review_raw_sha256": "9836e46cebcfcdb652271034e07128e9b726877dd700c978348022c9a77484e7",
+  "canonical_unchanged_sha256": "a4eb8eb1647b1cebac56ec7f592b6b34716359827fff17fab1ac76dd0f1d1ebe",
+  "source_count": 2611,
+  "old_full_rows_exact": 16139,
+  "new_rows": 173,
+  "new_backend_counts": {
+    "both": 54,
+    "file": 62,
+    "postgres": 57
+  },
+  "total_rows": 16312,
+  "protected_prior_sources": 1292,
+  "companions": 11,
+  "checks": [
+    "Independent raw prior full dictionaries/order comparison",
+    "Independent source hashes/count/exact delta against predecessor",
+    "Reviewed and ran offline check.mjs review",
+    "PUBLIC manifest separately exact additive module guard",
+    "Canonical remains predecessor; no candidate or promotion yet"
+  ],
+  "tests_executed": false
+}

@@ -1,0 +1,17 @@
+{
+  "status": "PASS_FINAL_INVENTORY_REVIEW",
+  "source_commit": "c7b01d0c503ac944cf078b55b845f76df7d428fa",
+  "canonical_sha256": "1c4badba15edb75bc7c007ad55a393b784163ab11fbf0bec559649dd5504437a",
+  "raw_sha256": "9836e46cebcfcdb652271034e07128e9b726877dd700c978348022c9a77484e7",
+  "source_count": 2611,
+  "total_rows": 16312,
+  "prior_full_rows_preserved": 16139,
+  "new_rows": 173,
+  "protected_old_sources": 1292,
+  "companion_files": 11,
+  "all_three_raw_bytes_identical": true,
+  "all_six_source_snapshots_identical": true,
+  "canonical_equals_approved_candidate": true,
+  "tests_executed": false,
+  "evidence_index_pending": true
+}

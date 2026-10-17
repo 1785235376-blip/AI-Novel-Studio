@@ -1,0 +1,9 @@
+{
+  "parent_approval_received": true,
+  "parent_release": "Release byte-exact promotion of 1c4badba15edb75bc7c007ad55a393b784163ab11fbf0bec559649dd5504437a, then separate third no-write confirmation, independent final closure and index/verifier. No source changes.",
+  "source_commit": "c7b01d0c503ac944cf078b55b845f76df7d428fa",
+  "independent_approval_sha256": "6465c8620c9052103d047ad89e44f249e589959c2736346474d512154ccb319c",
+  "candidate_sha256": "1c4badba15edb75bc7c007ad55a393b784163ab11fbf0bec559649dd5504437a",
+  "canonical_sha256": "1c4badba15edb75bc7c007ad55a393b784163ab11fbf0bec559649dd5504437a",
+  "byte_exact": true
+}

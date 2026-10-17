@@ -1,0 +1,91 @@
+{
+  "source_checkpoint": "c7b01d0c503ac944cf078b55b845f76df7d428fa",
+  "baseline_manifest": {
+    "commit": "e011a0de0a21ddb2833b2689d76caf917165e706",
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "sha256": "a4eb8eb1647b1cebac56ec7f592b6b34716359827fff17fab1ac76dd0f1d1ebe"
+  },
+  "complete_source_map_entries": 2611,
+  "complete_source_map_sha256": "0f82e7bc40b8af06e27f5446df32cc809fde069f0e40e4ce108b1f13e073cc08",
+  "source_delta": [
+    {
+      "path": "app/creative/director_binding.py",
+      "before": null,
+      "after": "5201d6dbe7a0aacc3f22884ecb10291d976072ba970d51893142a58e287708c8"
+    },
+    {
+      "path": "app/jobs.py",
+      "before": "1e5115381a3861453e3c70ec498e11885106c33b012f7b9c1636429f4707acbb",
+      "after": "49d60184f8dea30a76e175abecd224857f19b340a5f8ce17eec0150f640cf953"
+    },
+    {
+      "path": "app/model_execution.py",
+      "before": "605bbc84cf63c321c6d2c9d5a7533e54bde6d97c19ba9a8050c1764b1bcdb42c",
+      "after": "f6381603c595dd3f46c2811e4c4185ddcb8dc503bfd284c93cb8c43d57f155e4"
+    },
+    {
+      "path": "app/repositories/generation_repository.py",
+      "before": "75d392c7d7f1cf554065deef78e1fc34dea9e2f420c5512317853f474f525df2",
+      "after": "e9a6ec9fd8913ad8bfbf3587397048edd6dc615ed2ae30453561351aba21ba6d"
+    },
+    {
+      "path": "tests/fixtures/creative_binding_legacy_requests.json",
+      "before": null,
+      "after": "640ca3823d83a378b9018a180957d375b9cef6b524f2e527f7e731236cfd90ac"
+    },
+    {
+      "path": "tests/test_v2_creative_director_binding.py",
+      "before": null,
+      "after": "56c1973e1b68b3a1923a6dd53128b036cd98d5bb13be212836c01b16386dd0c2"
+    },
+    {
+      "path": "tests/test_v2_creative_director_binding_packaging.py",
+      "before": null,
+      "after": "3cb20470e57283eed380e03580c0d05e8f0fb6aea02f7382be1b46916e15dcb1"
+    },
+    {
+      "path": "tests/test_v2_creative_director_binding_persistence.py",
+      "before": null,
+      "after": "c7881fe9b4161a97611fb87c3363bfb3250bcc6c04bb1383030c2d981659228b"
+    }
+  ],
+  "expected_new_sources": [
+    "app/creative/director_binding.py",
+    "tests/fixtures/creative_binding_legacy_requests.json",
+    "tests/test_v2_creative_director_binding.py",
+    "tests/test_v2_creative_director_binding_packaging.py",
+    "tests/test_v2_creative_director_binding_persistence.py"
+  ],
+  "protected_old_entries_exact": 1292,
+  "frontend_scripts_e2e_companion": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "raw_inventory": {
+    "path": "docs/delivery/v2-development/creative-binding-inventory-20261017/review-raw-collection.json",
+    "sha256": "9836e46cebcfcdb652271034e07128e9b726877dd700c978348022c9a77484e7",
+    "rows": 16312
+  },
+  "prior_raw_inventory": {
+    "path": "docs/delivery/v2-development/timeline-slip-delete-inventory-20261017/raw-collection.json",
+    "sha256": "51fa7e676aa57777caaadafe6245bb2ff383717ec93c572ce549def457b03ba1",
+    "rows": 16139
+  },
+  "packaging_guard": {
+    "path": "packaging/public-build.json",
+    "before_sha256": "4c8e6acb27d4c636da3f230290903da459deb90363181dade58ad766810134c8",
+    "after_sha256": "3261cc7549d58e5d8e84c69572a9475d9c416bfd487588ecfbec472e8695d37c",
+    "outside_manifest": true,
+    "exact_single_module_addition": "app/creative/director_binding.py"
+  },
+  "tests_executed": false
+}

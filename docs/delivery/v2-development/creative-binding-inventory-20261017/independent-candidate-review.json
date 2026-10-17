@@ -1,0 +1,16 @@
+{
+  "status": "APPROVE_EXACT_CANDIDATE_PROMOTION",
+  "source_commit": "c7b01d0c503ac944cf078b55b845f76df7d428fa",
+  "candidate_sha256": "1c4badba15edb75bc7c007ad55a393b784163ab11fbf0bec559649dd5504437a",
+  "raw_sha256": "9836e46cebcfcdb652271034e07128e9b726877dd700c978348022c9a77484e7",
+  "source_count": 2611,
+  "total_rows": 16312,
+  "canonical_still_predecessor": true,
+  "checks": [
+    "Offline candidate checker PASS",
+    "Independent parsed candidate sources/nodes/frozen added nodes/preserved fields",
+    "Review and candidate raw/source brackets byte exact",
+    "Canonical unchanged before promotion"
+  ],
+  "tests_executed": false
+}
