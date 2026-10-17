@@ -1,0 +1,53 @@
+{
+  "status": "PASS_PRIMARY_SCOPED_VERIFICATION",
+  "source_commit": "49762e65bb5a6325d9b9a19ebc1a15c24bf9b0c1",
+  "same_sources_across_final_gates": true,
+  "source_count": 2634,
+  "unchanged_original_protected_paths": 1408,
+  "receipts": {
+    "research-history-file-r5": {
+      "sha256": "4e775f4d40c0c04cf4ef2693a95fbc5e8050b4a927cff028e3bd726da06875cb",
+      "status": "PASS"
+    },
+    "research-history-postgres-r2": {
+      "sha256": "dae27da18e58b4b29318dfeee70eda96ffc6560aa58b7120c9ed99bf5b9ba4eb",
+      "status": "PASS"
+    },
+    "research-history-build-r2": {
+      "sha256": "bf19ee8647d4e2bee791df3fd21585f1257e65e647cf0fda4f222b32a8a816b1",
+      "status": "PASS"
+    },
+    "research-history-public-profile-r1": {
+      "sha256": "8f4d844ab5aa6e570af275c5698fa2f23c91ad398f223eb9552061ad3092e3f7",
+      "status": "PASS"
+    },
+    "research-history-public-wheel-r1": {
+      "sha256": "b9b91d8e1a196830d8633a3d4cf7c58992dbc5982e1b75317f0ae60c9dbcd026",
+      "status": "PASS"
+    },
+    "research-history-public-sdist-r1": {
+      "sha256": "1bc19071f067023eb74c4d1543f23c8adff38b89663cf1384b60602e4400979d",
+      "status": "PASS"
+    },
+    "research-history-public-binding-r1": {
+      "sha256": "6128d8153fc9f2d2f8a30d09084e4887cd2b065e1894cd15ba031a07f3ad4bf9",
+      "status": "PASS"
+    },
+    "research-history-origin-r3": {
+      "sha256": "0a4d7ef85ac057de4f4f875ea87769b0be99c0389b5f6f6500dabc4a06137f7c",
+      "status": "PASS"
+    }
+  },
+  "earlier_origin_r2_difference": {
+    "files": [
+      "frontend/src/experimental/ResearchHistoricalInspector.test.tsx"
+    ],
+    "reason": "new UI test CollaborationContext required sessionToken; later build and all final receipts use corrected test",
+    "product_code_changed": false
+  },
+  "independent_agent_review": "UNAVAILABLE_PREVIEW_LIMIT",
+  "browser_visual_geometry": "BLOCKED_ENVIRONMENT",
+  "integrated_inventory": "PENDING",
+  "integration": "PENDING",
+  "full_product_acceptance": "NOT_CLAIMED"
+}
