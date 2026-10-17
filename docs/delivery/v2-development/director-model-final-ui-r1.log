@@ -1,0 +1,17 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/studioStoryboardContract.phase4.test.ts (52 tests) 34ms
+ ✓ src/creative/studioProductionGraphClient.test.ts (17 tests) 23ms
+ ✓ src/creative/directorObservationClient.test.ts (30 tests) 12ms
+ ✓ src/creative/studioGraphDirectorClient.test.ts (14 tests) 15ms
+ ✓ src/creative/directorModelPlanningContract.additive.test.ts (11 tests) 7ms
+ ✓ src/creative/GraphDirectorCanvasHandoff.additive.test.tsx (15 tests) 901ms
+ ✓ src/creative/directorCanvasHandoff.additive.test.tsx (13 tests) 725ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 158ms
+
+ Test Files  8 passed (8)
+      Tests  161 passed (161)
+   Start at  22:50:00
+   Duration  5.84s (transform 914ms, setup 38ms, collect 1.59s, tests 1.87s, environment 986ms, prepare 394ms)
+

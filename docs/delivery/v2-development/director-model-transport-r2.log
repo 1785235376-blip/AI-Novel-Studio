@@ -1,0 +1,37 @@
+..................F
+=================================== FAILURES ===================================
+_____ test_preview_does_not_grant_future_execution_authority[host-session] _____
+
+lifecycle = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-model-...firmed': True, 'runtime_config': {'management': 'EXTERNAL', 'type': 'LLAMA_CPP', 'endpoint': 'http://127.0.0.1:8999'}})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f630d6a82f0>
+change = 'host-session'
+
+    @pytest.mark.parametrize('change',['source','flag','host-session'])
+    def test_preview_does_not_grant_future_execution_authority(lifecycle,monkeypatch,change):
+        e=board(lifecycle);m=mounted(e,actions=True)
+        p=m.client.post(m.url+'/preview',headers=m.headers,json=preview_request(e)).json()['receipt']
+        if change=='source':
+            source=deepcopy(e.source)
+            source['shots'][0]['action']='Changed after preview'
+            e.documents.update(e.nid,e.scope,e.actor,source['id'],source['version'],{
+                key:source[key] for key in ['mode','source_independent','title','scenes','shots']},reauthorize=e.guard)
+        if change=='flag':monkeypatch.setenv('EXPERIMENTAL_FEATURES','')
+>       if change=='host-session':e.sessions.unregister(e.token)
+                                  ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'TrustedSessionResolver' object has no attribute 'unregister'. Did you mean: 'register'?
+
+tests/test_director_model_transport_additive.py:182: AttributeError
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_director_model_transport_additive.py::test_explicit_http_flow_adopts_once_and_reopens_from_original_owners
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_director_model_transport_additive.py::test_preview_does_not_grant_future_execution_authority[host-session]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 18 passed, 2 warnings in 14.84s

@@ -1,0 +1,43 @@
+F
+=================================== FAILURES ===================================
+_______ test_pending_http_read_rechecks_generation_after_final_callback ________
+
+lifecycle = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-model-...firmed': True, 'runtime_config': {'management': 'EXTERNAL', 'type': 'LLAMA_CPP', 'endpoint': 'http://127.0.0.1:8999'}})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca2efd1c40>
+
+    def test_pending_http_read_rechecks_generation_after_final_callback(lifecycle,monkeypatch):
+        e=board(lifecycle);m=mounted(e,actions=True);pending(e,m)
+        job=next(iter(e.manager.jobs.values()))
+        original=e.coordinator._pending_current;calls=0
+        def changed(*args,**kwargs):
+            nonlocal calls
+            result=original(*args,**kwargs)
+            if args[1]['status']=='INTERNAL_MODEL_PENDING_REVIEW':
+                calls+=1
+                if calls==2:
+                    saved=e.persistence.get(job.id);saved.update(status='FAILED',output='');e.persistence.save(saved)
+            return result
+        monkeypatch.setattr(e.coordinator,'_pending_current',changed)
+        before=raw_bytes(e)
+        response=m.client.get(m.url+'/pending-review',headers=m.headers)
+        assert calls>=2
+>       assert response.status_code==409,response.text
+E       AssertionError: {"contract":"DIRECTOR_OBSERVATION_V1","project_id":"independent-director","scope":{"mode":"local","novel_id":"independent-director"},"kind":"pending-review","receipt":{"contract":"DIRECTOR_MODEL_PENDING_REVIEW_V1","proposal_id":"1913e9c3-9f57-405f-849e-72f8e3827c3f","expected_version":5,"director_notes":[{"id":"e3fc293a-53ce-475e-a349-153723e3142a","note":"Candidate interpretation","shot_size":"MEDIUM","camera_angle":"","camera_motion":"","duration_seconds":5,"emotion":"","pacing":"","performance":"","blocking":"","planning":{"rationale":"Consider a reaction beat","sequence_reason":"Follow the authored order","duration_reason":"Tentative timing","evidence":[{"scene_id":"scene-a","field":"action","dialogue_index":null,"excerpt":"A visitor waits."}],"assumptions":["Camera placement needs human review"],"uncertainty":"Physical geography remains unverified","alternatives":[{"choice":"Hold wider","tradeoff":"Less facial detail"}]},"number":1,"scene_id":"scene-a"},{"id":"89af95c0-fb63-46ed-93c8-6207c513b439","note":"Candidate interpretation","shot_size":"MEDIUM","camera_angle":"","camera_motion":"","duration_seconds":5,"emotion":"","pacing":"","performance":"","blocking":"","planning":{"rationale":"Consider a reaction beat","sequence_reason":"Follow the authored order","duration_reason":"Tentative timing","evidence":[{"scene_id":"scene-b","field":"action","dialogue_index":null,"excerpt":"A door opens."}],"assumptions":["Camera placement needs human review"],"uncertainty":"Physical geography remains unverified","alternatives":[{"choice":"Hold wider","tradeoff":"Less facial detail"}]},"number":2,"scene_id":"scene-b"}],"output_digest":"b132a70ac825c38739be9417f9b056e2db1043c13cdae6ab0936cc9987df91bd","visual_target":null,"provenance":{"method":"MODEL_ASSISTED","model_called":true,"provider_id":"fixture-local-provider","model_id":"fixture-local-text","model_version":"fixture-model-evidence","route_fingerprint":"173daa299f59c26c655d88ddacf523be63f0e87d678d147f9e97ac3502ad65fd","synthetic":false,"parameters":{"max_output_tokens":512,"temperature":0.0},"source_mode":"STORYBOARD","source_document_id":"5bcdcfa3-6bab-43b2-a9a2-3129c3def9c5","source_version":1,"source_digest":"93dab21db218ebfaa82ec1187ffbfdf859c82844a2a1803f2670f32076de4ea1","source_mapping":[{"source_shot_id":"shot-a","note_id":"e3fc293a-53ce-475e-a349-153723e3142a","scene_id":"scene-a","source_number":1},{"source_shot_id":"shot-b","note_id":"89af95c0-fb63-46ed-93c8-6207c513b439","scene_id":"scene-b","source_number":2}],"job_id":"d80181f6-0684-4d2e-b2e8-37a292e9daae","request_digest":"cac8e9d4417e904bee18f1c9415c054d45ef6856e7beae9b404571f2403e7e95","preview_digest":"8080349e43c82e98a4c0c5d7e00bdaa40e752d0d858c03fb0d80533643d971e0","candidate_output_digest":"b132a70ac825c38739be9417f9b056e2db1043c13cdae6ab0936cc9987df91bd","terminal_evidence_digest":"278bde2b4a610baf615f7cfc25064540d220a48749dd759bd25f49fe6b92228c","quality_verification":"HUMAN_REVIEW_REQUIRED"}}}
+E       assert 200 == 409
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/test_director_model_transport_additive.py:206: AssertionError
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_director_model_transport_additive.py::test_pending_http_read_rechecks_generation_after_final_callback
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_director_model_transport_additive.py::test_pending_http_read_rechecks_generation_after_final_callback
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 2 warnings in 7.00s

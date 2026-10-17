@@ -1,0 +1,302 @@
+{
+  "source_commit": "3f49631107591e6da2e36d8e8b9327247ab3a5e1",
+  "status": "PRIMARY_VERIFIED_TRANSPORT_APPLICATION_NOT_ACTIVATED",
+  "files": {
+    "docs/delivery/v2-development/director-model-final-backend-r1.json": {
+      "sha256": "6cf9165f91d8725df88c83e2dda628dcc9950cda1fe3264b5f59d974ad08f5b7",
+      "bytes": 627715
+    },
+    "docs/delivery/v2-development/director-model-final-backend-r1.log": {
+      "sha256": "f9bdbb3d17d5d1e3c56ce25df5558bafd5325ac18143d91d37cce880151be404",
+      "bytes": 1351
+    },
+    "docs/delivery/v2-development/director-model-final-build-r1.json": {
+      "sha256": "91539cd742d1a368c0652c4069592ed561bd1f6bc04d0283c78cbe73e33409ac",
+      "bytes": 626979
+    },
+    "docs/delivery/v2-development/director-model-final-build-r1.log": {
+      "sha256": "2e3ed43ce756c0d408d14072338ca458fa3ee7580718e9416bc5b56a5c237582",
+      "bytes": 1679
+    },
+    "docs/delivery/v2-development/director-model-final-origin-before-r1.json": {
+      "sha256": "1ce09c562de9091c52a49a1ee89c2e901a1705ecd675414208d508101b3dfbda",
+      "bytes": 627258
+    },
+    "docs/delivery/v2-development/director-model-final-origin-before-r1.log": {
+      "sha256": "d9eb62727a9c2bba7d196671ba49d0f52e3134e168e97128b78fe9261acc601b",
+      "bytes": 13262
+    },
+    "docs/delivery/v2-development/director-model-final-token-r1.json": {
+      "sha256": "14d3e61b002b58504060b65553d944feb74a492d397c575ee76b8f46c776a2a2",
+      "bytes": 626915
+    },
+    "docs/delivery/v2-development/director-model-final-token-r1.log": {
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "bytes": 31
+    },
+    "docs/delivery/v2-development/director-model-final-type-r1.json": {
+      "sha256": "f0fcaa59bf0363f8b7ba0c3e500d83136250a10caa1f4e3c388d3e1a5c9e3bac",
+      "bytes": 626977
+    },
+    "docs/delivery/v2-development/director-model-final-type-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/director-model-final-ui-r1.json": {
+      "sha256": "6bf1ad2d2a9621b7f4e6171da6657b33ec18c6448a05ca7acf2132391850efb9",
+      "bytes": 627464
+    },
+    "docs/delivery/v2-development/director-model-final-ui-r1.log": {
+      "sha256": "f655efd7eacd12c43ee53f52bde2d83376f18bcdb587ca6e047b66be14d4892e",
+      "bytes": 859
+    },
+    "docs/delivery/v2-development/director-model-origin-after-r2.json": {
+      "sha256": "6e4905402806da8ef2b646927ca5e80666cfa6cb92562f790f5749eda1d66ecc",
+      "bytes": 627195
+    },
+    "docs/delivery/v2-development/director-model-origin-after-r2.log": {
+      "sha256": "41b9a48dc03343d586e6fcece8eb1316cbec159a0d10acf304eec98e1e6e61ad",
+      "bytes": 13262
+    },
+    "docs/delivery/v2-development/director-model-origin-before-r2.json": {
+      "sha256": "0b09766421ffeb5c75d86fc21aef6f5806b4194cfccb2bb9d76eff700e80e823",
+      "bytes": 627204
+    },
+    "docs/delivery/v2-development/director-model-origin-before-r2.log": {
+      "sha256": "bdc91e10d803820bc39b9c69bbaf8170670147fbd5540e363590c034a0b6f1ef",
+      "bytes": 13262
+    },
+    "docs/delivery/v2-development/director-model-packaging-r1.json": {
+      "sha256": "5f982bdf0293b475ad624d11af4f710045d0691984469170d9e440352cc7857a",
+      "bytes": 627394
+    },
+    "docs/delivery/v2-development/director-model-packaging-r1.log": {
+      "sha256": "0c5640bf646596f9382041bfcb512c968f78d6ff54b482a6dce2fe879e7f6f09",
+      "bytes": 2301
+    },
+    "docs/delivery/v2-development/director-model-packaging-r2.json": {
+      "sha256": "88aade21b89fc38ae74dac90845b6242f1e5e0b5aace72570fb9055cd37cce61",
+      "bytes": 627394
+    },
+    "docs/delivery/v2-development/director-model-packaging-r2.log": {
+      "sha256": "040c2b593faf0e605f74e501b4e0569ee6e6a74e33d7dfffb26ffa4a244df84b",
+      "bytes": 715
+    },
+    "docs/delivery/v2-development/director-model-pending-leaf-red-r1.json": {
+      "sha256": "1bf86c75ea926ab8879e43b0c432836cd0a1b03e555c164423d7e6c56032602f",
+      "bytes": 626549
+    },
+    "docs/delivery/v2-development/director-model-pending-leaf-red-r1.log": {
+      "sha256": "e7e5eb4ffb6aa0336c166bc357fce606ebb2a474f9440d077b59bef987ddb351",
+      "bytes": 5804
+    },
+    "docs/delivery/v2-development/director-model-planning-r1.json": {
+      "sha256": "67f2271b784f2d42d9bfa8bbd994b3d9970631aa392f47d3e377b36cf4e11ce3",
+      "bytes": 627158
+    },
+    "docs/delivery/v2-development/director-model-planning-r1.log": {
+      "sha256": "58943cb57e702af7f56fba6c39b52e6e46fc952a1fb5081e6e77084faa5bfbe1",
+      "bytes": 346
+    },
+    "docs/delivery/v2-development/director-model-planning-r2.json": {
+      "sha256": "ee8988ff828a5c8ee9cdea95c239e2119714cdce9121e084301a117b8b2c871e",
+      "bytes": 627209
+    },
+    "docs/delivery/v2-development/director-model-planning-r2.log": {
+      "sha256": "b7080c47708eaad75ab0dcea40d561723e4cf33a58b3484cf1e279cfcc363e8e",
+      "bytes": 492
+    },
+    "docs/delivery/v2-development/director-model-planning-red-r1.json": {
+      "sha256": "ffdb9809310e248071bc0d96a1247a5184bbf658c1e7d2de684746fb6a41a628",
+      "bytes": 627143
+    },
+    "docs/delivery/v2-development/director-model-planning-red-r1.log": {
+      "sha256": "7ce1234a5ab015dcde948dc7e52b1989f30803d11ffc3e583feb3ca54417f747",
+      "bytes": 1767
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/actual-artifact-inspection-r2.json": {
+      "sha256": "c7be833d3636eadf4efe3864bf1f6147f41d6857fdb185aae8e500443133faf6",
+      "bytes": 8819
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/build-interpreter-r1.json": {
+      "sha256": "5eb43fe60486b4ce3cfe1c6850c5b64cc281302048d41a84082589d478345520",
+      "bytes": 1484
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/build-interpreter-r2.json": {
+      "sha256": "5eb43fe60486b4ce3cfe1c6850c5b64cc281302048d41a84082589d478345520",
+      "bytes": 1484
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/final-launch-r1.log": {
+      "sha256": "cf4b37fee3a9c349cd1215dddcaf47028a60e3d229c7db15282827d41c43e883",
+      "bytes": 20173
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/frozen-source-r1.json": {
+      "sha256": "7dba54c672337d1d9ced55f24a539137e228f4591528d2f3ad02e0ceb022f523",
+      "bytes": 1408
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/frozen-source-r2.json": {
+      "sha256": "1d9078139f65330deb23ad2ef95a0d64858d79adaf72bfa3bf0afa9bfe0a6ef5",
+      "bytes": 1408
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/inspect-artifacts-r2.py": {
+      "sha256": "3b0cad2be431d935a79d314571100344162c0a315c3a6c81b7789f9cf788a4eb",
+      "bytes": 4461
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/inspect-artifacts.py": {
+      "sha256": "cd848ac336bac548b008cd15f0f3f2303faeb0ad055b785cba628f006a28fffd",
+      "bytes": 4458
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/manifest-packaging-input-r1.sha256": {
+      "sha256": "fc3f5569c1b77b9649d3813c16327fa743041344de4eebc5753b0c62d7bd651f",
+      "bytes": 94
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/manifest-packaging-input-r2.sha256": {
+      "sha256": "038f08e48a7f4e7ab089280d2b112cf9cc4835c5d6e2836ecf529fde094cb210",
+      "bytes": 94
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/natural-startup-r1.json": {
+      "sha256": "7a0eff3e3cab5ca846e92951c0e7d69bfd658e0855cc153382522f10eaa1b221",
+      "bytes": 13198
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/origin-probe.py": {
+      "sha256": "ca28bffe67db49e7372b4dca9d841e2287eebacf234d348fc3012c92c0cfe241",
+      "bytes": 7364
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-evidence-r2/index.json": {
+      "sha256": "c7be833d3636eadf4efe3864bf1f6147f41d6857fdb185aae8e500443133faf6",
+      "bytes": 8819
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-evidence-r2/public-sdist0/build.log": {
+      "sha256": "4f0ef8d45c5ca1843c90a35fb48fbea958dcad428cdca7ab7ab7f487f4d0321d",
+      "bytes": 44141
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-evidence-r2/public-sdist0/payload-inventory.json": {
+      "sha256": "15ee7c07b852a50b2abf4c97222924683840b1bc1b43c4cfdfc2276648f5cdaf",
+      "bytes": 87573
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-evidence-r2/public-sdist0/sdist-receipt.json": {
+      "sha256": "8d0a615ea8bb65c6986ea201d739cac755323774e50c7999f6c2a7041361ea26",
+      "bytes": 119300
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-evidence-r2/public-sdist0/stage-receipt.json": {
+      "sha256": "42b50d00fefac25b1e3f2c9cf057356d6526491c6edb6d9e4f96757d63098df7",
+      "bytes": 79383
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-evidence-r2/public-sdist1/build.log": {
+      "sha256": "4f0ef8d45c5ca1843c90a35fb48fbea958dcad428cdca7ab7ab7f487f4d0321d",
+      "bytes": 44141
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-evidence-r2/public-sdist1/payload-inventory.json": {
+      "sha256": "15ee7c07b852a50b2abf4c97222924683840b1bc1b43c4cfdfc2276648f5cdaf",
+      "bytes": 87573
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-evidence-r2/public-sdist1/sdist-receipt.json": {
+      "sha256": "1671e2f07825911e33a08f0e373f7aac3e96b5e47c4c3fd850a0033e203e169d",
+      "bytes": 119300
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-evidence-r2/public-sdist1/stage-receipt.json": {
+      "sha256": "42b50d00fefac25b1e3f2c9cf057356d6526491c6edb6d9e4f96757d63098df7",
+      "bytes": 79383
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-evidence-r2/public-wheel0/build.log": {
+      "sha256": "f3fa297bea3f08b11a59b07a4d0b186b1d16dc3be15fd62fc78c462d8c402827",
+      "bytes": 112284
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-evidence-r2/public-wheel0/payload-inventory.json": {
+      "sha256": "4455f5a2793c5e21bbbdaa9987ee8cf73c699ff82fa4f4f334350cd15f0516bf",
+      "bytes": 76620
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-evidence-r2/public-wheel0/stage-receipt.json": {
+      "sha256": "42b50d00fefac25b1e3f2c9cf057356d6526491c6edb6d9e4f96757d63098df7",
+      "bytes": 79383
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-evidence-r2/public-wheel0/wheel-receipt.json": {
+      "sha256": "4c2afcec62e29ed1d6634275f41575c8973a4f58d9abb9308cce94c106c61af2",
+      "bytes": 108829
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-evidence-r2/public-wheel1/build.log": {
+      "sha256": "a518525717d157d58944a1001fed44a1560d44ffc180f8b5f8fe982dce368311",
+      "bytes": 112284
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-evidence-r2/public-wheel1/payload-inventory.json": {
+      "sha256": "4455f5a2793c5e21bbbdaa9987ee8cf73c699ff82fa4f4f334350cd15f0516bf",
+      "bytes": 76620
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-evidence-r2/public-wheel1/stage-receipt.json": {
+      "sha256": "42b50d00fefac25b1e3f2c9cf057356d6526491c6edb6d9e4f96757d63098df7",
+      "bytes": 79383
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-evidence-r2/public-wheel1/wheel-receipt.json": {
+      "sha256": "6353a286daedb0ce4e236ec7b9d3aae125920d2e9e3130ecf32d76510b81f5bb",
+      "bytes": 108829
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-interpreter-probe.py": {
+      "sha256": "99e3fd75effce3b27fe22b9878c793ba4a9aed3db4494d14177869036e2dc35c",
+      "bytes": 1378
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/packaging-launch-r2.log": {
+      "sha256": "7853d2d529481a187e5ffc047099022bc68a5dc8136bd562a60567092c7a6254",
+      "bytes": 27566
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/run-final-r1.sh": {
+      "sha256": "68b644148672ab1b67119dc340f4074bfb03eb23885e9c53748d0d76f44ba645",
+      "bytes": 3927
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/run-packaging-r2.sh": {
+      "sha256": "f796c077c21590ff24eb3c131e7ad90496729bd7e954ad3e8b5858546c33b290",
+      "bytes": 1918
+    },
+    "docs/delivery/v2-development/director-model-transport-20261017/wire-fixture-provenance.sha256": {
+      "sha256": "dd8a50901b650a618df1e4d397cd981379ea71fa403ee4b9f8c2dec8d96d1b44",
+      "bytes": 303
+    },
+    "docs/delivery/v2-development/director-model-transport-r1.json": {
+      "sha256": "edab09b2cac58203f6ac4efd582fe1ee7eab0a65e998db99012a3b6253c61294",
+      "bytes": 626475
+    },
+    "docs/delivery/v2-development/director-model-transport-r1.log": {
+      "sha256": "355a364f20bd8e145050ac8c39ab6291132e67e2ccaa8ca6f88f3a126cba73cf",
+      "bytes": 1084
+    },
+    "docs/delivery/v2-development/director-model-transport-r2.json": {
+      "sha256": "3294560166f10af95101bb635dcf78c31dd8de18317ed8107f7f3886b9df77f9",
+      "bytes": 626475
+    },
+    "docs/delivery/v2-development/director-model-transport-r2.log": {
+      "sha256": "980915053091f734abaef6afec9d8ce1a3c4981c2a780e3f15bacbf3397b2da5",
+      "bytes": 2870
+    },
+    "docs/delivery/v2-development/director-model-transport-r3.json": {
+      "sha256": "97d0000485e1e50e026a35fcfe66f80c08d7e39301f50beb4adcfb1d6dd9a880",
+      "bytes": 626632
+    },
+    "docs/delivery/v2-development/director-model-transport-r3.log": {
+      "sha256": "cb543848fdbffbb44c103a3c4ee07c30b3c4920d19b713dcb71a33668feb2e3b",
+      "bytes": 1256
+    },
+    "docs/delivery/v2-development/director-model-transport-r4.json": {
+      "sha256": "2bc3411560f4ae123d8899fb88d15b92d0c3b36e760a3a3165b580d4429cbc47",
+      "bytes": 626530
+    },
+    "docs/delivery/v2-development/director-model-transport-r4.log": {
+      "sha256": "9648e560bdd80742e6d4318befd8a240a5f1b6a729543bf80aefa01719b64f88",
+      "bytes": 1084
+    },
+    "docs/delivery/v2-development/director-model-wire-fixture-r1.json": {
+      "sha256": "a5ac272650f1668998781a1556233d3a1e85a136a0222ebbf780c626249f9dc5",
+      "bytes": 626709
+    },
+    "docs/delivery/v2-development/director-model-wire-fixture-r1.log": {
+      "sha256": "58eae297ced55eea3f71a8621f4b3d7d38bd054b3846bc7a1fcc144881ef8f83",
+      "bytes": 1176
+    },
+    "docs/delivery/v2-development/director-observation-body-bound-r1.json": {
+      "sha256": "71554cf1ed21b984390e737d52eea5234b6aa28a0334c56eea73c57254036e4a",
+      "bytes": 625786
+    },
+    "docs/delivery/v2-development/director-observation-body-bound-r1.log": {
+      "sha256": "136fda787663a484b4cae3af42182c1ad27ba7814f58a948118539450f0c62e8",
+      "bytes": 1084
+    }
+  }
+}
