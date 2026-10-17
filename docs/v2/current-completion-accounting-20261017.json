@@ -1,0 +1,1168 @@
+{
+  "source_commit": "b498c472587851799bd3e2783a7dd705c492254f",
+  "purpose": "Owner requested percentage; reconcile denominator without inventing completion weights.",
+  "advanced_package_denominator": 39,
+  "groups": {
+    "U": 16,
+    "A": 13,
+    "B": 10
+  },
+  "scope": "A/B/U only. Infinite canvas/Director and internal/public isolation overlap these rows and add requirements; do not sum them into a total without a reconciled acceptance rubric.",
+  "package_source_coverage": {
+    "with_verified_original_source_references": 39,
+    "total": 39,
+    "meaning": "Source presence only, not implementation or acceptance percentage."
+  },
+  "overall_v2_completion_percentage": null,
+  "reason": "Full package acceptance and remaining effort are not weighted or freshly measured. Historical PARTIAL rows are deliberately preserved; passing tests are not feature units.",
+  "packages": [
+    {
+      "id": "U02",
+      "name": "Loss-resistant editing and visible save state",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "frontend/src/drafts.ts",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/Editor.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/ui/SaveControls.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/autosave/durable.py",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Native OS power-loss and Windows interactive validation are NOT_RUN; never-persisted input cannot be guaranteed recoverable.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "U01",
+      "name": "Resume the previous workspace",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "frontend/src/store.ts",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/novel/EntryExperience.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/ux.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/WorkspaceToolsPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Browser storage can be cleared; fallback is explicit project selection plus the server workspace. Unsupported branch manuscript adapters remain fail-closed. Functional save/reopen/export and viewport/action-hit verification passed at bf0ec2b0; native desktop acceptance is separate.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "U03",
+      "name": "Search, commands and recents",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "frontend/src/ui/FeatureLauncher.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/visual_memory_index.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/lore/context_view.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/ux.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/WorkspaceToolsPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Cache bounded to 8 scopes, 2M characters/2000 records and 50 results per page. Collaboration branch manuscript storage is not implemented; no base-source fallback. Hosted incremental/search journeys and real PG passed at 4e476ce.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "U07",
+      "name": "Unified task center and honest progress",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/jobs.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/application/task_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/ui/taskSummary.ts",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/novel/AgentActivityCenter.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/ux.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/api.py",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Original task projection and exact original Draft/Diff recovery passed hosted execution. Universal domain-specific deep links/retries remain bounded by each original authority.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "U08",
+      "name": "Context and privacy inspector",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "frontend/src/novel/AiContextPreviewPanel.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/agent_context_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/context_snapshot_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/source_privacy.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/author_request.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/author_context_api.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/novel/AuthorRequestPreviewPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Anonymous automatic source bundles cannot be decomposed and remain whole-bundle controls. Independent duplicate user/manuscript text is not semantic DLP. Cloud/budgeted variant group admission remains unavailable; real inference quality NOT_RUN.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "U09",
+      "name": "Local AI diagnostic and setup guidance",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/model_center/discovery.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/model_center/discovery_probes.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/ui/LocalAiDiscovery.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/media.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/local_ai_inspection.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/WorkflowInspectionPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Unregistered runtime families stay ADAPTER_REQUIRED. No imported workflow execution or local environment modification; real GPU and model/runtime acceptance are NOT_RUN.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "U12",
+      "name": "Actionable errors and private diagnostic export",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/structured_log.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/runtime_diagnostics.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/api.ts",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/novel/RuntimeDiagnostics.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/ux.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/WorkspaceToolsPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Diagnostic coverage is allowlisted and bounded, not complete cross-module event coverage. Export is explicit/local; no automatic upload.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "U04",
+      "name": "Focus, reference split and inspiration",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "frontend/src/Editor.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/novel/ResearchPanel.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/writing_focus.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/WritingFocusPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Persistent paragraph locks and restored original reference/preference pointers are implemented; native input remains NOT_RUN. Unsupported branch manuscript adapters fail closed.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "U10",
+      "name": "Scenario onboarding and progressive disclosure",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "frontend/src/novel/EntryExperience.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/ui/FeatureLauncher.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/ui/LocalAiDiscovery.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/WorkspaceToolsPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "One sample per actor/workspace. Original create without a returned receipt stays UNKNOWN rather than being replayed; confirmed partial projects remain available for manual recovery. Functional save/reopen/export and viewport/action-hit verification passed at bf0ec2b0; native desktop acceptance is separate.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "U13",
+      "name": "Chinese input, accessibility and scale",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "frontend/src/Editor.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/tests/visual",
+          "git_object_type": "tree"
+        },
+        {
+          "path": "scripts",
+          "git_object_type": "tree"
+        }
+      ],
+      "historical_remaining_scope": "Source-specific Linux rendering/search measurements retained; visible-editor geometry and action targets passed hosted execution. Native Windows, physical latency, screen reader and OS zoom remain NOT_RUN.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "A04",
+      "name": "Temporal semantic story graph",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/experimental/world.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/planning.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/imports.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/story_graph.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/StoryGraphPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Deterministic reviewed relations, not universal semantic understanding; branch manuscript source adapter remains unavailable.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "A05",
+      "name": "Character knowledge and mind state",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/experimental/world.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/lore/context_intelligence.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/agent_context_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/story_graph.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/StoryGraphPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Character-only continue/brainstorm uses reviewed local-only knowledge. Advanced character selection/rewrite and actual model-quality evaluation remain unavailable or unverified.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "A06",
+      "name": "Explainable model broker",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/provider_runtime_v2_routing_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/provider_routing_policy_v2.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/model_center/service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/provider_profiles.py",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "No fabricated quality ranking. Actual configured-model quality and paid-billing acceptance remain NOT_RUN. Optional cloud execution remains explicitly restricted.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "A07",
+      "name": "Model benchmark and capability evidence",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/model_center/discovery.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/model_center/runtime_profiles.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "tests/test_r4_registered_local_media.py",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "VIDEO_WORKFLOW lacks equivalent proven-local current broker admission and remains explicit import-only. Missing hardware/usage/cold-start measurements are unknown; real GPU/model quality remains NOT_RUN.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "A09",
+      "name": "Asset lineage and derived relationships",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/services/asset_library_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/media.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/export_resource_snapshot.py",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Only recorded dependency evidence is known; unmapped dependencies and license judgements remain unknown.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "A13",
+      "name": "Production manifest and controlled replay",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/jobs.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/asset_library_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/media.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "tests/test_r4_registered_local_media.py",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Trusted original model hash is used only when observed; absent/historical hashes remain unknown and block exact reconstruction. A seed never promises GPU byte equality. Cloud replay coordinator remains optional unimplemented.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "U06",
+      "name": "Change impact and selective refresh",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/experimental/common.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/asset_library_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/audiobook.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "tests/test_r4_registered_local_media.py",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Audio/subtitle/video nodes are not generically executable via image refresh. Unknown upstream money usage requires explicit original ledger reconciliation; no fake zero actual cost.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "A02",
+      "name": "Style metrics and drift",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/services/creation_workbench_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/novel/CreationWorkbenchPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "No calibrated quality probabilities or real-model interpretation. Additional language metrics need separately defined methods.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "A03",
+      "name": "Evidence-based narrative judge",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/experimental/world.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/lore/continuity.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/narrative_finding_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/narrative_judge_model.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "docs/r4_registered_judge_execution.md",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "One bounded model job per rule run, 18k-character input, 32KiB output and120s deadline. Independence remains UNVERIFIED; actual literary quality is NOT_RUN.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "A01",
+      "name": "Bounded story simulation",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/experimental/planning.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/world.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/story_simulator_model.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "docs/r4_story_simulator_model_execution.md",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "No automatic Canon/manuscript write or factual future probability. Local registered route/configuration and known zero rates are required; model/GPU quality remains NOT_RUN.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "A10",
+      "name": "Layered research library",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "frontend/src/novel/ResearchPanel.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/import_parsers.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/memory_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/imports.py",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "OCR/vector/vision adapters absent; actual public-web compatibility and native Windows containment are not verified.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "A11",
+      "name": "Revision intelligence and partial changes",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/document_revision.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/repositories/screenplay_versions.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/chapter_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/RevisionPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Branch-isolated manuscript writing remains unavailable; local original-CAS partial changes are implemented. Model quality is NOT_RUN.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "U05",
+      "name": "Selection assistant and partial accept",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "frontend/src/novel/AiWritingPanel.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/generation_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/Editor.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Actual model quality and native input are NOT_RUN; branch manuscript sources fail closed.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "U11",
+      "name": "Reading, proofreading and publishing checks",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "frontend/src/novel/ExportPanel.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/export_job_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/release_readiness.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/reader_preflight.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/ReaderPreflightPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Native target reader/layout and full typography validation remain separate from deterministic preflight and internal reader.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "U15",
+      "name": "Writing goals and controlled notices",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "frontend/src/novel/NovelOverviewPanel.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/ui/taskSummary.ts",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/v1_capability_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/writing_sessions.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/WritingSessionPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Reminders occur only while the task center is open; no OS/background/external notification claim.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "A08",
+      "name": "Camera grammar and scene direction",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/services/screenplay_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/novel/DirectorShotCard.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/director.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/DirectorPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Manual reviewed shot direction is implemented; real visual/model production quality is NOT_RUN.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "A12",
+      "name": "OTIO and NLE exchange",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/industry_export_formats.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/export_job_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/video_assembly_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/timeline_exchange.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/TimelineExchangePanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Official OTIO parser executes; target NLE applications and interoperability acceptance remain NOT_RUN.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "B03",
+      "name": "Voice direction and speaker attribution",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/experimental/audiobook.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/AudiobookPanel.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/audio_production_store.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/voice_direction.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/VoiceDirectionPanel.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "tests/test_r5_pause_aware_audio.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/tests/e2e/r4-pause-aware-audio.spec.ts",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Real voice/TTS quality, cloned-reference voice consent, ASR/phoneme alignment and cloud-budgeted coordinator remain unavailable/unverified. Legacy bindings retain measured millisecond precision until rebound.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "B04",
+      "name": "Subtitle editing and timeline",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/industry_export_formats.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/audiobook_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/audiobook.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/subtitle_timeline.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/SubtitleTimelinePanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "ASR/forced alignment, subtitle burn-in and target subtitle applications are not implemented/verified.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "U14",
+      "name": "Portable project, relink and safe cleanup",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/backup_restore.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/export_resource_snapshot.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/asset_library_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/portable_projects.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/PortableProjectsPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Selected portable subset is not complete project backup; original backup remains authoritative for full history/Canon. Collaboration restore unsupported. Actual native packaging/large user archives remain acceptance gates.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "U16",
+      "name": "Safe batch preflight",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/workflow.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/inbox.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/asset_task_worker.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/safe_batches.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/SafeBatchesPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Paid/unknown-price routes are held or unavailable; no cloud execution, voice-quality or GPU claim. Unknown settlement remains an explicit reconciliation state.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "B01",
+      "name": "Declarative template library",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/experimental/planning.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/teams.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/workflow_recipes.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/plugin_package_manager.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/template_library.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/TemplateLibraryPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Eight versioned local templates. Planning/workflow use real original records; other categories remain editable briefs. Remote market/sync disabled. ",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "B02",
+      "name": "Custom agents and workflow SDK",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/experimental/teams.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/workflow.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/workflow_api.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/plugin_capability_policy.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/declarative_agents.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/DeclarativeAgentsPanel.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/declarative_model.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "docs/delivery/post-v1-r4-r5-ux/B02_BOUND_MODEL_RECEIPT.md",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Only registered allowlisted data nodes; no executable plugin, dynamic import or arbitrary tool authority. LOCAL_ONLY known-zero configured route required; model quality NOT_RUN.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "B05",
+      "name": "Multilingual revisions and terminology",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/services/chapter_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/document_revision.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/store.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/multilingual_editions.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/MultilingualEditionsPanel.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/multilingual_translation.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "docs/r5_multilingual_translation_execution.md",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "No auto-retranslation after source edits. Current source/edition/price/route receipts required; unknown jobs are not replayed. Actual translation/RTL/font/target-language quality acceptance remains source-specific NOT_RUN.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "B06",
+      "name": "Comic and Webtoon layouts",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "frontend/src/novel/ImageInfiniteCanvas.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/asset_library_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/comic_layouts.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/ComicLayoutsPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Actual approved-image raster and CJK preview/export browser loop passed at 4e476ce. Model art quality and external production typography acceptance remain NOT_RUN.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "B07",
+      "name": "Interactive narrative export",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/experimental/planning.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/novel/StoryRouteEditor.test.tsx",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/interactive_story.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/InteractiveStoryPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Bounded two-ending stories with neutral/RenPy text-menu export. Media references are manifests, not deployed assets; external engine runtime NOT_RUN.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "B08",
+      "name": "Writer room and team review",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/collaboration.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/collaboration_api.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/inbox.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/services/creation_workbench_service.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/writer_room.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/WriterRoomPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Asynchronous assignment/comment/review packages implemented; real-time co-editing and branch manuscript reader are unavailable. ",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "B09",
+      "name": "Project fork and merge",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/collaboration.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/document_revision.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/repositories/scoped_narrative.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/project_forks.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/ProjectForksPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Collaboration branch IDs have no branch-manuscript repository/writer authority. No substitution of base manuscript, new parallel manuscript store or arbitrary target-project merge. Unsupported entity domains remain explicit.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    },
+    {
+      "id": "B10",
+      "name": "Offline synchronization foundation",
+      "historical_package_state": "PARTIAL",
+      "current_full_package_acceptance": "NOT_ESTABLISHED",
+      "current_source_references": [
+        {
+          "path": "app/collaboration.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/backup_restore.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/store.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "app/experimental/offline_sync.py",
+          "git_object_type": "blob"
+        },
+        {
+          "path": "frontend/src/experimental/OfflineSyncPanel.tsx",
+          "git_object_type": "blob"
+        }
+      ],
+      "historical_remaining_scope": "Automatic/cloud transport and real collaboration-branch manuscript sync require a distinct supported source authority/transport. No silent fallback or cross-domain inference.",
+      "current_scope_note": "Original owners are present; this is not full runtime or quality acceptance. Later bounded slices must be read separately."
+    }
+  ],
+  "current_bounded_results": {
+    "P0": "Real File and PostgreSQL retirement/incarnation/positive-user regression evidence exists; full platform release not established.",
+    "Director": "Application mount plus File/native TCP preview-job-human-review-draft-readback verified with synthetic provider reply. File-only pending; actual browser and model quality open.",
+    "Research": "Exact historical inspection added and real File/PG scoped tests passed; old legacy routes not globally reclassified.",
+    "PUBLIC": "87 original package checks and four actual artifact inspections pass at29df291; complete internal mature mode not established."
+  }
+}
