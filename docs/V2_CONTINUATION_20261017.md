@@ -2,7 +2,7 @@
 
 ## Explicit updated-source Graph fork (17:49 UTC)
 
-Source3c977f1 adds inspected-version consent for a STALE Director/Storyboard node, preparing a separate unsaved graph with only that pin updated. Original graph/history and other author content remain unchanged; original Save/create and UNKNOWN behavior retain ownership.450UI checks, TS/build/token and separate real File/PG full-process fork/restart checks pass on identical final sources.32new tests, no backend/original-test changes. Four prior backend packages reread, not rebuilt. Read CANVAS_PLANNING_SOURCE_FORK.md and delivery/v2-development/graph-planning-fork-20261017/README.md. Coverage source inventory update follows.
+Source3c977f1 adds inspected-version consent for a STALE Director/Storyboard node, preparing a separate unsaved graph with only that pin updated. Original graph/history and other author content remain unchanged; original Save/create and UNKNOWN behavior retain ownership.450UI checks, TS/build/token and separate real File/PG full-process fork/restart checks pass on identical final sources.32new tests, no backend/original-test changes. Four prior backend packages reread, not rebuilt. Read CANVAS_PLANNING_SOURCE_FORK.md and delivery/v2-development/graph-planning-fork-20261017/README.md. Coverage source inventory reconciled: all 17,647 backend rows unchanged, 2,730 source entries; exactly two existing runtime changes and four additions. Three equal collections and45original CI self-tests pass; see delivery/v2-development/graph-planning-fork-inventory-20261017/README.md.
 
 ## Real PostgreSQL full-process persistence (17:30 UTC)
 

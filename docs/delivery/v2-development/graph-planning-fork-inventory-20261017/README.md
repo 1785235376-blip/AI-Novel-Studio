@@ -1,0 +1,5 @@
+# Updated-source fork source inventory
+
+Canonical V2 retains all 17647 backend collection rows byte-for-byte, including order and classification. It now has 2730 source entries; SHA256 187a2357320c7c805787b819e58c7409b9fb5d2537656b5a6c5f06e8225aad5a. Three original-generator raw collections are identical (8c35a3e343d27c26a2ea759bad464bc9261c7e599b41f38b9a99e724d01f2704). Exactly two existing runtime source hashes changed (Graph controller/view); four source entries were added (two runtime modules and two frontend test files). All current hashes match committed Git source 9621118e062e3a7f9bf5000c42407835ad1ec6f8. Original protected tests, backend, skip map and external gates remain unchanged.
+
+45 original CI runner/coverage self-tests passed.32 new frontend test cases are tracked by their source files and the450-case UI receipt, not falsely counted as new backend nodes. Runtime evidence is separate in graph-planning-fork-20261017. This inventory is not a whole-product test count or completion percentage.

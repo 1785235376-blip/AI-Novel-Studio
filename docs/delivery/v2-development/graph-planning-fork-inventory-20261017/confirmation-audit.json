@@ -1,0 +1,25 @@
+{
+  "status": "PASS_ADDITIVE_SOURCE_INVENTORY_REVIEW",
+  "source_commit": "9621118e062e3a7f9bf5000c42407835ad1ec6f8",
+  "old_rows": 17647,
+  "rows": 17647,
+  "source_count": 2730,
+  "new_backend_rows": 0,
+  "existing_source_changes": [
+    "frontend/src/creative/studioGraphEditorView.tsx",
+    "frontend/src/creative/useStudioGraphEditorController.ts"
+  ],
+  "new_source_paths": [
+    "frontend/src/creative/GraphPlanningFork.test.tsx",
+    "frontend/src/creative/GraphPlanningFork.tsx",
+    "frontend/src/creative/StudioGraphPlanningFork.test.tsx",
+    "frontend/src/creative/graphPlanningFork.ts"
+  ],
+  "raw_collection_sha256": "8c35a3e343d27c26a2ea759bad464bc9261c7e599b41f38b9a99e724d01f2704",
+  "all_previous_rows_exact": true,
+  "all_current_source_hashes_match_committed_git": true,
+  "old_skips_and_external_gates_unchanged": true,
+  "manifest_sha256": "187a2357320c7c805787b819e58c7409b9fb5d2537656b5a6c5f06e8225aad5a",
+  "three_raw_collections_identical": true,
+  "ci_selftests": 45
+}
