@@ -1,0 +1,160 @@
+{
+  "preview": {
+    "contract": "DIRECTOR_OBSERVATION_V1",
+    "project_id": "independent-director",
+    "scope": {
+      "mode": "local",
+      "novel_id": "independent-director"
+    },
+    "kind": "status",
+    "receipt": {
+      "contract": "CREATIVE_DIRECTOR_STATUS_V1",
+      "proposal_id": "b69d823e-4197-41a5-82fd-b818e51eaa68",
+      "version": 2,
+      "phase": "PREVIEW",
+      "job_id": null,
+      "request_digest": null,
+      "reviewed_preview_digest": "de9ade3992bf40d64b7d665e284e70662e15a27a121fce7f569c5193654f7f12",
+      "cancellation_requested": false,
+      "cancellation_confirmed": false,
+      "dispatch_state": "NOT_DISPATCHED",
+      "settlement_state": "NOT_APPLICABLE",
+      "upstream_cancellation_guaranteed": false,
+      "terminal_evidence_digest": null,
+      "adoption": null,
+      "automatic_retry": false
+    }
+  },
+  "completed": {
+    "contract": "DIRECTOR_OBSERVATION_V1",
+    "project_id": "independent-director",
+    "scope": {
+      "mode": "local",
+      "novel_id": "independent-director"
+    },
+    "kind": "status",
+    "receipt": {
+      "contract": "CREATIVE_DIRECTOR_STATUS_V1",
+      "proposal_id": "854569da-2f4a-44d4-8a89-927f43a346fa",
+      "version": 4,
+      "phase": "COMPLETED",
+      "job_id": "710c0c53-4058-42ba-acbd-77ee5d534ab7",
+      "request_digest": "ba46adf9a516dfee8e358dfde5395ad8ff0e6ab21285ada69f519aa17c86e2a0",
+      "reviewed_preview_digest": "322f5095218f506ab8ad95fc597e65b12275358531f8703f41b1001086930ccd",
+      "cancellation_requested": false,
+      "cancellation_confirmed": false,
+      "dispatch_state": "DISPATCHED",
+      "settlement_state": "SETTLED",
+      "upstream_cancellation_guaranteed": false,
+      "terminal_evidence_digest": "fa84cf02a903dbe7f358cfc550c58617ab981efb129591b6dba5244875b9d11e",
+      "adoption": null,
+      "automatic_retry": false
+    }
+  },
+  "pending": {
+    "contract": "DIRECTOR_OBSERVATION_V1",
+    "project_id": "independent-director",
+    "scope": {
+      "mode": "local",
+      "novel_id": "independent-director"
+    },
+    "kind": "status",
+    "receipt": {
+      "contract": "CREATIVE_DIRECTOR_STATUS_V1",
+      "proposal_id": "854569da-2f4a-44d4-8a89-927f43a346fa",
+      "version": 5,
+      "phase": "PENDING_REVIEW",
+      "job_id": "710c0c53-4058-42ba-acbd-77ee5d534ab7",
+      "request_digest": "ba46adf9a516dfee8e358dfde5395ad8ff0e6ab21285ada69f519aa17c86e2a0",
+      "reviewed_preview_digest": "322f5095218f506ab8ad95fc597e65b12275358531f8703f41b1001086930ccd",
+      "cancellation_requested": false,
+      "cancellation_confirmed": false,
+      "dispatch_state": "DISPATCHED",
+      "settlement_state": "SETTLED",
+      "upstream_cancellation_guaranteed": false,
+      "terminal_evidence_digest": "fa84cf02a903dbe7f358cfc550c58617ab981efb129591b6dba5244875b9d11e",
+      "adoption": null,
+      "automatic_retry": false
+    }
+  },
+  "adopted": {
+    "contract": "DIRECTOR_OBSERVATION_V1",
+    "project_id": "independent-director",
+    "scope": {
+      "mode": "local",
+      "novel_id": "independent-director"
+    },
+    "kind": "adopted-draft",
+    "receipt": {
+      "contract": "CREATIVE_DIRECTOR_ADOPTED_DRAFT_V1",
+      "proposal_id": "854569da-2f4a-44d4-8a89-927f43a346fa",
+      "reviewed_version": 5,
+      "approved_version": 6,
+      "reviewed_by": "director-host-actor",
+      "review_action_digest": "e403a16ea1d0100288d1a7ffeb2f04bd719ed5ad055dff82b7142b4eee83fe98",
+      "candidate_output_digest": "e0967517b0b97ac928d096ce57efc9b442ec45277910ed8d3a93ddab9b17b4e0",
+      "reviewed_output_digest": "e0967517b0b97ac928d096ce57efc9b442ec45277910ed8d3a93ddab9b17b4e0",
+      "source_document_id": "d951d3f1-3010-4560-b9cc-1fbbdcf0638a",
+      "source_version": 1,
+      "source_digest": "fe5121347ba98711ff666fd974b1e4c72576667eb9079ec2c2c587395812c1d9",
+      "job_id": "710c0c53-4058-42ba-acbd-77ee5d534ab7",
+      "request_digest": "ba46adf9a516dfee8e358dfde5395ad8ff0e6ab21285ada69f519aa17c86e2a0",
+      "terminal_evidence_digest": "fa84cf02a903dbe7f358cfc550c58617ab981efb129591b6dba5244875b9d11e",
+      "document": {
+        "document_id": "cea4c318-4f2e-4267-8870-85eb6b5801d8",
+        "version": 1,
+        "digest": "af316c429d0dfa61e5b5fb5bd7ab6f48369b07f02f3602d19c12c8536400676d",
+        "mode": "DIRECTOR",
+        "status": "DRAFT"
+      }
+    }
+  },
+  "adopted_status": {
+    "contract": "DIRECTOR_OBSERVATION_V1",
+    "project_id": "independent-director",
+    "scope": {
+      "mode": "local",
+      "novel_id": "independent-director"
+    },
+    "kind": "status",
+    "receipt": {
+      "contract": "CREATIVE_DIRECTOR_STATUS_V1",
+      "proposal_id": "854569da-2f4a-44d4-8a89-927f43a346fa",
+      "version": 6,
+      "phase": "ADOPTED_DRAFT",
+      "job_id": "710c0c53-4058-42ba-acbd-77ee5d534ab7",
+      "request_digest": "ba46adf9a516dfee8e358dfde5395ad8ff0e6ab21285ada69f519aa17c86e2a0",
+      "reviewed_preview_digest": "322f5095218f506ab8ad95fc597e65b12275358531f8703f41b1001086930ccd",
+      "cancellation_requested": false,
+      "cancellation_confirmed": false,
+      "dispatch_state": "DISPATCHED",
+      "settlement_state": "SETTLED",
+      "upstream_cancellation_guaranteed": false,
+      "terminal_evidence_digest": "fa84cf02a903dbe7f358cfc550c58617ab981efb129591b6dba5244875b9d11e",
+      "adoption": {
+        "contract": "CREATIVE_DIRECTOR_ADOPTED_DRAFT_V1",
+        "proposal_id": "854569da-2f4a-44d4-8a89-927f43a346fa",
+        "reviewed_version": 5,
+        "approved_version": 6,
+        "reviewed_by": "director-host-actor",
+        "review_action_digest": "e403a16ea1d0100288d1a7ffeb2f04bd719ed5ad055dff82b7142b4eee83fe98",
+        "candidate_output_digest": "e0967517b0b97ac928d096ce57efc9b442ec45277910ed8d3a93ddab9b17b4e0",
+        "reviewed_output_digest": "e0967517b0b97ac928d096ce57efc9b442ec45277910ed8d3a93ddab9b17b4e0",
+        "source_document_id": "d951d3f1-3010-4560-b9cc-1fbbdcf0638a",
+        "source_version": 1,
+        "source_digest": "fe5121347ba98711ff666fd974b1e4c72576667eb9079ec2c2c587395812c1d9",
+        "job_id": "710c0c53-4058-42ba-acbd-77ee5d534ab7",
+        "request_digest": "ba46adf9a516dfee8e358dfde5395ad8ff0e6ab21285ada69f519aa17c86e2a0",
+        "terminal_evidence_digest": "fa84cf02a903dbe7f358cfc550c58617ab981efb129591b6dba5244875b9d11e",
+        "document": {
+          "document_id": "cea4c318-4f2e-4267-8870-85eb6b5801d8",
+          "version": 1,
+          "digest": "af316c429d0dfa61e5b5fb5bd7ab6f48369b07f02f3602d19c12c8536400676d",
+          "mode": "DIRECTOR",
+          "status": "DRAFT"
+        }
+      },
+      "automatic_retry": false
+    }
+  }
+}
