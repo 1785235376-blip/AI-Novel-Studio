@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/GraphPlanningFork.multiple.additive.test.tsx (1 test) 93ms
+ ✓ src/creative/GraphPlanningFork.test.tsx (20 tests) 214ms
+ ✓ src/creative/StudioGraphPlanningFork.test.tsx (12 tests) 1369ms
+   ✓ original controller owns updated-source independent drafts > mounts the inspector flow and uses explicit original Save after consent 736ms
+
+ Test Files  3 passed (3)
+      Tests  33 passed (33)
+   Start at  03:00:38
+   Duration  3.39s (transform 1.12s, setup 54ms, collect 2.10s, tests 1.67s, environment 1.02s, prepare 171ms)
+

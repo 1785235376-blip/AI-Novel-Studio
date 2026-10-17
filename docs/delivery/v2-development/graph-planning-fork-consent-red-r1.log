@@ -1,0 +1,64 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/creative/GraphPlanningFork.multiple.additive.test.tsx (1 test | 1 failed) 89ms
+   × rejects a retained prepare callback after consent is explicitly withdrawn 88ms
+     → expected "spy" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st spy call:
+
+    Array [
+      Object {
+        "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "id": "source",
+        "mode": "DIRECTOR",
+        "title": "Updated source",
+        "version": 3,
+      },
+      Object {},
+    ]
+
+
+Number of calls: 1
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  02:59:19
+   Duration  811ms (transform 116ms, setup 17ms, collect 186ms, tests 89ms, environment 279ms, prepare 57ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/GraphPlanningFork.multiple.additive.test.tsx > rejects a retained prepare callback after consent is explicitly withdrawn
+AssertionError: expected "spy" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st spy call:
+
+    Array [
+      Object {
+        "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "id": "source",
+        "mode": "DIRECTOR",
+        "title": "Updated source",
+        "version": 3,
+      },
+      Object {},
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/creative/GraphPlanningFork.multiple.additive.test.tsx:23:23
+     21|   fireEvent.click(consent);
+     22|   act(() => click());
+     23|   expect(prepare).not.toHaveBeenCalled();
+       |                       ^
+     24| });
+     25| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

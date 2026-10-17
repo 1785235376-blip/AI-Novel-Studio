@@ -226,7 +226,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
       <GraphPlanningFork client={client.graphs} pin={node.parameters.document_snapshot}
         mode={node.definition_id === 'director_plan' ? 'DIRECTOR' : 'STORYBOARD'} scope={controller.planningForkScope}
         disabled={!editable || checking || timelineEditor.formDirty} isCurrent={controller.isPlanningForkCurrent}
-        read={read} prepare={controller.preparePlanningGraphFork} />}
+        read={read} prepare={controller.preparePlanningGraphFork} references={controller.planningForkReferences} />}
     {node.definition_id === 'director_plan' && <StudioGraphDirectorConsole client={client.graphs} nodeId={node.id}
       snapshot={node.parameters.document_snapshot} identity={identity} active={props.active && !props.denied}
       referenceState={referenceState} isCurrent={current} read={read} />}

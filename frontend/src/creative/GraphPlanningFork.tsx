@@ -3,6 +3,7 @@ import { apiErrorView } from '../api';
 import { Button, StatusMessage } from '../ui/primitives';
 import type { StudioGraphClient } from './studioGraphClient';
 import { checkedPlanningDocument, type PlanningDocument, type PlanningSnapshot } from './studioProductionGraphContract';
+import type { PlanningSourceReference } from './graphPlanningFork';
 
 type Props = {
   client: Pick<StudioGraphClient, 'planningDocuments'>;
@@ -12,7 +13,8 @@ type Props = {
   disabled: boolean;
   isCurrent: () => boolean;
   read: <T>(work: () => Promise<T>) => Promise<T>;
-  prepare: (document: PlanningDocument, scope: object) => boolean;
+  references?: readonly PlanningSourceReference[];
+  prepare: (document: PlanningDocument, scope: object, nodeIds?: readonly string[]) => boolean;
 };
 
 export function GraphPlanningFork(props: Props) {
@@ -20,8 +22,11 @@ export function GraphPlanningFork(props: Props) {
   const alive = useRef(true), locked = useRef(false), sequence = useRef(0), consumed = useRef<object>();
   const request = useRef<AbortController>();
   const [loading, setLoading] = useState(false), [error, setError] = useState('');
-  const [preview, setPreview] = useState<{ document: PlanningDocument; scope: object; ticket: object }>();
-  const [consent, setConsent] = useState<object>();
+  const [preview, updatePreview] = useState<{ document: PlanningDocument; scope: object; ticket: object; all: boolean; references: PlanningSourceReference[] }>();
+  const [consent, updateConsent] = useState<object>();
+  const previewRef = useRef<typeof preview>(), consentRef = useRef<object>();
+  const setPreview = (value: typeof preview) => { previewRef.current = value; updatePreview(value); };
+  const setConsent = (value: object | undefined) => { consentRef.current = value; updateConsent(value); };
   useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; sequence.current++; }; }, []);
   useLayoutEffect(() => {
     sequence.current++; request.current?.abort(); locked.current = false;
@@ -47,7 +52,10 @@ export function GraphPlanningFork(props: Props) {
       if (document.mode !== props.mode || document.version <= props.pin.version || document.digest === props.pin.digest) {
         throw new Error('当前目录没有同一来源的更新版本；原图与草稿保持不变。');
       }
-      setPreview({ document, scope, ticket: {} });
+      const references = (props.references || []).filter(value => value.snapshot.id === document.id
+        && value.snapshot.version < document.version && value.snapshot.digest !== document.digest)
+        .map(value => ({ nodeId: value.nodeId, snapshot: { ...value.snapshot } }));
+      setPreview({ document, scope, ticket: {}, all: false, references });
     } catch (reason) {
       if (current(scope) && sequence.current === sequenceId) setError(apiErrorView(reason, '未能核对来源，原图与草稿保持不变。').message);
     } finally {
@@ -65,13 +73,24 @@ export function GraphPlanningFork(props: Props) {
     {visible && <>
       <p>{visible.document.title}：v{props.pin.version} → v{visible.document.version}</p>
       <p>原摘要：{props.pin.digest}</p><p>新摘要：{visible.document.digest}</p>
-      <p>其他节点、连接与作者内容保留；不会自动更新其他引用、重建分镜、运行模型或继承旧运行／审核。保存和执行仍会重新校验来源与依赖。</p>
+      {visible.references.length > 1 && <>
+        <label><input type="checkbox" checked={visible.all} disabled={props.disabled || loading} onChange={event => {
+          if (!current(visible.scope) || previewRef.current !== visible || live.current.disabled || locked.current) return;
+          setConsent(undefined); setPreview({ ...visible, all: event.target.checked, ticket: {} });
+        }} />同时更新这份来源的全部旧引用（{visible.references.length} 个节点）</label>
+        {visible.all && <ul aria-label="将更新的来源节点">{visible.references.map(value => <li key={value.nodeId}>
+          {value.nodeId}：v{value.snapshot.version} → v{visible.document.version}
+        </li>)}</ul>}
+      </>}
+      <p>默认只更新所选节点；可明确选择上列同来源旧引用。其他节点、连接与作者内容保留，不重建分镜、不运行模型、不继承旧运行／审核。保存和执行仍会重新校验来源与依赖。</p>
       <label><input type="checkbox" checked={consent === visible.ticket} disabled={props.disabled || loading}
-        onChange={event => { if (current(visible.scope) && !live.current.disabled && !locked.current) setConsent(event.target.checked ? visible.ticket : undefined); }} />确认以这份更新来源准备独立新图草稿，保留原图</label>
+        onChange={event => { if (current(visible.scope) && previewRef.current === visible && !live.current.disabled && !locked.current) setConsent(event.target.checked ? visible.ticket : undefined); }} />确认以这份更新来源准备独立新图草稿，保留原图</label>
       <Button disabled={props.disabled || loading || consent !== visible.ticket} onClick={() => {
-        if (!current(visible.scope) || live.current.disabled || locked.current || consent !== visible.ticket || consumed.current === visible.ticket) return;
+        if (!current(visible.scope) || previewRef.current !== visible || live.current.disabled || locked.current || consentRef.current !== visible.ticket || consumed.current === visible.ticket) return;
         consumed.current = visible.ticket;
-        if (props.prepare(visible.document, visible.scope)) { setPreview(undefined); setConsent(undefined); }
+        const accepted = visible.all ? props.prepare(visible.document, visible.scope, visible.references.map(value => value.nodeId))
+          : props.prepare(visible.document, visible.scope);
+        if (accepted) { setPreview(undefined); setConsent(undefined); }
         else { setPreview(undefined); setConsent(undefined); setError('当前图或权限已变化，请重新核对来源。'); }
       }}>准备使用更新来源的独立草稿</Button>
     </>}

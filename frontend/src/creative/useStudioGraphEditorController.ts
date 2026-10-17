@@ -1,5 +1,5 @@
 import type { ReviewedDirectorCanvasHandoff } from './directorCanvasHandoff';
-import { planningSourceFork } from './graphPlanningFork';
+import { planningSourceFork, planningSourceReferences } from './graphPlanningFork';
 import type { OpenStoryboardEditor } from './storyboardEditorHandoff';
 import { checkedStudioGraphDraft } from './studioGraphClient';
 import { graphSelectionCopy, type GraphSelectionCopy } from './graphSelectionCopy';
@@ -238,12 +238,13 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     setSourcePort(''); setTargetPort(''); setPendingNavigation(undefined); createRequest.current = graphId('graph'); reportSelection.current?.({});
     setError(''); setNotice(message);
   }
-  function preparePlanningGraphFork(document: PlanningDocument, scope: object): boolean {
+  const planningForkReferences = (() => { try { return node ? planningSourceReferences(draft, node.id) : []; } catch { return []; } })();
+  function preparePlanningGraphFork(document: PlanningDocument, scope: object, nodeIds?: readonly string[]): boolean {
     if (scope !== verificationScope || planningForkConsumed.current === scope || !isVerificationCurrent()
       || !connectionSelectionCurrent(connectionScope) || !base || !node || checking || timelineEditor.formDirty
       || base.reference_states.find(value => value.node_id === node.id)?.state !== 'STALE') return false;
     try {
-      const value = planningSourceFork(draftRef.current, node.id, document);
+      const value = planningSourceFork(draftRef.current, node.id, document, nodeIds);
       planningForkConsumed.current = scope;
       stageIndependentGraph(value, base, '已准备使用所选更新来源的独立草稿，尚未保存。原图、历史及其他引用保持不变；请核对依赖后明确保存。');
       return true;
@@ -723,7 +724,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     providerPicker, sourceCopy, currentCrossCopy, captureSelectionForGraph, previewCrossGraphCopy, pasteCrossGraphCopy, clearGraphCopy: () => { copySourceEpoch.current++; crossCopyEpoch.current++; setCopySource(undefined); setCrossPreview(undefined); }, currentCopy, previewSelectionCopy, pasteSelectionCopy, cancelSelectionCopy: () => setCopyPreview(undefined),
     catalog: catalog ? { ...catalog, ...(pendingVideoCatalog ? { capabilities: { ...catalog.capabilities, video_graph: true, video_graph_schema_version: 5 as const, video_graph_evidence: 'LOCAL_REQUIRED' as const, storyboard_video_approval_required: true, automatic_video_dispatch: false } } : {}), definitions: graphCatalogForSchema(catalog.definitions, draft.schema_version) } : undefined,
     independentConfirmed, confirmIndependentGraph, prepareIndependentGraph, independentOrigin: visibleIndependentOrigin, historyFull,
-    planningForkScope: verificationScope, isPlanningForkCurrent: isVerificationCurrent, preparePlanningGraphFork,
+    planningForkScope: verificationScope, isPlanningForkCurrent: isVerificationCurrent, preparePlanningGraphFork, planningForkReferences,
     records, base, draft, selected, past, future, loading, error, notice, blocked,
     candidate, replaceConfirmed, checking, pendingNavigation, discardConfirmed, kind, sourcePort, targetPort,
     assets, assetChoice, assetLoading, preview, previewState, refreshPreview, downloadPreviewAsset, current, dirty, editable, protectedNodes, node,

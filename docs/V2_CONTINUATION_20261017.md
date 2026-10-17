@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Feature-first cadence and multiple source references (18:07 UTC)
+
+User explicitly prioritizes completing functionality before consolidated full testing. Retain focused checks and critical safety/save regressions; defer repeated broad suites, packaging and coverage source refresh. Current fully reconciled inventory is c03b369, not proof of later source hashes.
+
+The planning-source fork now optionally updates all older same-source references after listing their versions and explicit renewed consent. Current/unrelated references stay unchanged; no automatic write/run. A true retained-consent RED was fixed using synchronous live consent/preview fences. Focused42 UI checks plus TypeScript pass; raw receipts graph-planning-fork-consent-red-r1, consent-green-r1 and multiple-focused-r1 retain chronology. Full regression and production rebuild are deferred, not passed.
+
 ## Explicit updated-source Graph fork (17:49 UTC)
 
 Source3c977f1 adds inspected-version consent for a STALE Director/Storyboard node, preparing a separate unsaved graph with only that pin updated. Original graph/history and other author content remain unchanged; original Save/create and UNKNOWN behavior retain ownership.450UI checks, TS/build/token and separate real File/PG full-process fork/restart checks pass on identical final sources.32new tests, no backend/original-test changes. Four prior backend packages reread, not rebuilt. Read CANVAS_PLANNING_SOURCE_FORK.md and delivery/v2-development/graph-planning-fork-20261017/README.md. Coverage source inventory reconciled: all 17,647 backend rows unchanged, 2,730 source entries; exactly two existing runtime changes and four additions. Three equal collections and45original CI self-tests pass; see delivery/v2-development/graph-planning-fork-inventory-20261017/README.md.
