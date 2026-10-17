@@ -4,6 +4,7 @@ import { reviewCaptionTransfer } from './captionTransferReview';
 import { CaptionHistory } from './CaptionHistory';
 import { CaptionTextReplace } from './CaptionTextReplace';
 import { CaptionBurnIn } from './CaptionBurnIn';
+import { CaptionRecognition } from './CaptionRecognition';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
 import { Details, ErrorMessage, Field, ResourceState, useResource } from './shared';
@@ -58,6 +59,7 @@ function CaptionEditor({client,current,video,plans,available,refresh,admissionEp
  <CaptionHistory client={client} row={captured} cues={cues} binding={JSON.stringify({current,captured,available,unavailable,draftEpoch:draftEpoch.current,admissionEpoch:admissionEpoch.current})} disabled={!!unavailable} dirty={dirty||splitDirty} draftEpoch={draftEpoch} admissionEpoch={admissionEpoch} replace={(value,version)=>{setRestoreHistoryVersion(version);setCues(value);setSplit({});}}/>
  <CaptionImport client={client} row={captured} binding={JSON.stringify({current,captured,available,unavailable,draftEpoch:draftEpoch.current,admissionEpoch:admissionEpoch.current})} disabled={!!unavailable} dirty={dirty||splitDirty} draftEpoch={draftEpoch} admissionEpoch={admissionEpoch} replace={value=>{setRestoreHistoryVersion(undefined);setCues(value);setSplit({});}}/>
  <CaptionOffset row={captured} cues={cues} binding={JSON.stringify({current,captured,available,unavailable})} disabled={!!unavailable} draftEpoch={draftEpoch} admissionEpoch={admissionEpoch} replace={setCues}/>
+ <CaptionRecognition client={client} row={captured} binding={JSON.stringify({current,captured,available,unavailable})} disabled={!!unavailable||dirty||splitDirty} onApplied={refresh}/>
  {video && <CaptionBurnIn client={client} row={captured} binding={JSON.stringify({current,captured,available,unavailable})} disabled={!!unavailable||dirty||splitDirty}/>}
  <CaptionTextReplace row={captured} cues={cues} binding={JSON.stringify({current,captured,available,unavailable})}
    disabled={!!unavailable||splitDirty} draftEpoch={draftEpoch} admissionEpoch={admissionEpoch} replace={setCues}/>

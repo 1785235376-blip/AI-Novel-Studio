@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/CaptionRecognition.additive.test.tsx (12 tests) 259ms
+ ✓ src/experimental/CaptionBurnIn.additive.test.tsx (12 tests) 342ms
+
+ Test Files  2 passed (2)
+      Tests  24 passed (24)
+   Start at  03:47:40
+   Duration  1.25s (transform 276ms, setup 41ms, collect 593ms, tests 601ms, environment 603ms, prepare 123ms)
+

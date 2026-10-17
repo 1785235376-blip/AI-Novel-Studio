@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Local ASR and forced-alignment authoring surface (18:49 UTC)
+
+Added the missing explicit UI over original subtitle processing routes for ASR and FORCED_ALIGNMENT. The catalog must report a real, local, CONTRACT_VERIFIED operation; synthetic/cloud/unconfigured routes are excluded. Creation does not execute. Alignment sends only explicitly entered original text; transcript edits/composition invalidate consent. Execution results show validated cue ticks/text in pages. A separate digest-bound approval calls the original service, which must return the exact next caption version; the UI requests a refresh and does not overwrite local input automatically. Existing caption-history ownership is unchanged. Dirty/scope/source lifetime, unknown create and uncertain action protections match the burn-in surface.
+
+Focused caption-recognition-ui-focused-r1:12 new checks plus12 burn-in checks and TypeScript PASS. Transport is mocked; real ASR/MFA model quality, native host route admission and browser interaction remain unverified by this increment. No model installation, cloud fallback, new executor or backend changes.
+
 ## Explicit subtitle burn-in workspace (18:44 UTC)
 
 Added the missing UI over existing SubtitleTimelineService processing endpoints and the existing host-configured FFmpeg adapter. Current saved video captions can explicitly read capability/tasks, queue without execution, separately execute, inspect result metadata, approve/reject, cancel/recover/resume and download approved bytes with MIME/size/SHA verification. No installation, new executor, cloud call or automatic action. Synthetic adapters are excluded. Source/actor/draft lifetime and separate live consents fence callbacks. Unknown creates cannot be replayed; uncertain task actions require an explicit adoption of a strictly newer original task state. The original backend remains sole authority for source validation, review and byte ownership.
