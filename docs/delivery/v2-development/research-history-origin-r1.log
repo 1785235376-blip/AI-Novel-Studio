@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "docs/delivery/v2-development/research-history-20261017/origin-probe.py", line 59, in <module>
+    locate('app.creative.'+module,creative_paths)
+  File "docs/delivery/v2-development/research-history-20261017/origin-probe.py", line 37, in locate
+    require(spec is not None, 'missing explicit spec: ' + fullname)
+  File "docs/delivery/v2-development/research-history-20261017/origin-probe.py", line 13, in require
+    raise AssertionError(message)
+AssertionError: missing explicit spec: app.creative.director_lifecycle

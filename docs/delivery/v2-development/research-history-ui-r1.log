@@ -1,0 +1,18 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-research-history/frontend
+
+ ✓ src/experimental/researchEvidenceLocation.test.ts (25 tests) 7ms
+ ✓ src/experimental/ResearchLibraryPanel.additive.test.tsx (2 tests) 397ms
+   ✓ locates page-only evidence in the original source without claiming extracted text 367ms
+ ✓ src/experimental/ResearchLibraryPanel.continuation.test.tsx (3 tests) 620ms
+   ✓ replaces original file bytes against the selected source version 349ms
+ ✓ src/experimental/ResearchHistoricalInspector.test.tsx (18 tests) 710ms
+ ✓ src/experimental/ResearchLibraryPanel.test.tsx (10 tests) 1108ms
+ ✓ src/experimental/ResearchLibraryPanel.location.test.tsx (9 tests) 1501ms
+   ✓ locates the exact second-page original paragraph, preserves draft, and saves only explicit original-owner selection 524ms
+
+ Test Files  6 passed (6)
+      Tests  67 passed (67)
+   Start at  00:51:41
+   Duration  2.44s (transform 331ms, setup 60ms, collect 1.28s, tests 4.34s, environment 2.00s, prepare 423ms)
+

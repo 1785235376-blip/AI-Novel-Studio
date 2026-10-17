@@ -1,0 +1,95 @@
+{
+  "status": "PASS_OFFLINE_PUBLIC_ARCHIVE_INSPECTION",
+  "manifest_sha256": "353b92aff6116d873ea4402a1ef627e7899214b46ba823a9b4300ba75c5d0448",
+  "archives": [
+    {
+      "archive": ".runtime/v2-checks/research-history-public-binding-r1/pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "kind": "sdist",
+      "sha256": "43857814bc522f14b2ee91cac9a0d999cd208504badf90720f4fe25ed5239731",
+      "payload_file_count": 519,
+      "changed_modules": {
+        "app/experimental/api.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/api.py",
+          "sha256": "9b4be0e877d12b8eb9b7b08b14a6c82f96cc0c4ab53b1811f6ba9f21227665d5"
+        },
+        "app/experimental/research_library.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/research_library.py",
+          "sha256": "8037d2cd28f1c4446f4fb1103011b71b1e874d0d9e3340cd23a7c12c8d8ef59f"
+        },
+        "app/experimental/research_library_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/research_library_api.py",
+          "sha256": "aaeadea66db767d91eda467990923fe91357f08df8f63310e52e3aa0cf7c4618"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/research-history-20261017/packaging-evidence-r1/research-history-public-binding-r1__public-sdist0"
+    },
+    {
+      "archive": ".runtime/v2-checks/research-history-public-binding-r1/pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "kind": "wheel",
+      "sha256": "8cdc2f523eb9cc567b39cc703751d62ed45fea363ca66c9f0fa8049f3f92f198",
+      "payload_file_count": 515,
+      "changed_modules": {
+        "app/experimental/api.py": {
+          "member": "app/experimental/api.py",
+          "sha256": "9b4be0e877d12b8eb9b7b08b14a6c82f96cc0c4ab53b1811f6ba9f21227665d5"
+        },
+        "app/experimental/research_library.py": {
+          "member": "app/experimental/research_library.py",
+          "sha256": "8037d2cd28f1c4446f4fb1103011b71b1e874d0d9e3340cd23a7c12c8d8ef59f"
+        },
+        "app/experimental/research_library_api.py": {
+          "member": "app/experimental/research_library_api.py",
+          "sha256": "aaeadea66db767d91eda467990923fe91357f08df8f63310e52e3aa0cf7c4618"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/research-history-20261017/packaging-evidence-r1/research-history-public-binding-r1__public-wheel0"
+    },
+    {
+      "archive": ".runtime/v2-checks/research-history-public-sdist-r1/pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "kind": "sdist",
+      "sha256": "bbee8508f89b6b432be4fa0403cc31ca92686ab258838ceafdfe7504b1ee44f3",
+      "payload_file_count": 519,
+      "changed_modules": {
+        "app/experimental/api.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/api.py",
+          "sha256": "9b4be0e877d12b8eb9b7b08b14a6c82f96cc0c4ab53b1811f6ba9f21227665d5"
+        },
+        "app/experimental/research_library.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/research_library.py",
+          "sha256": "8037d2cd28f1c4446f4fb1103011b71b1e874d0d9e3340cd23a7c12c8d8ef59f"
+        },
+        "app/experimental/research_library_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/research_library_api.py",
+          "sha256": "aaeadea66db767d91eda467990923fe91357f08df8f63310e52e3aa0cf7c4618"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/research-history-20261017/packaging-evidence-r1/research-history-public-sdist-r1__public-sdist0"
+    },
+    {
+      "archive": ".runtime/v2-checks/research-history-public-wheel-r1/pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "kind": "wheel",
+      "sha256": "aa629734177203a81ed1b79907fb1e2976b4dca5ccc32d9bed475858c8911987",
+      "payload_file_count": 515,
+      "changed_modules": {
+        "app/experimental/api.py": {
+          "member": "app/experimental/api.py",
+          "sha256": "9b4be0e877d12b8eb9b7b08b14a6c82f96cc0c4ab53b1811f6ba9f21227665d5"
+        },
+        "app/experimental/research_library.py": {
+          "member": "app/experimental/research_library.py",
+          "sha256": "8037d2cd28f1c4446f4fb1103011b71b1e874d0d9e3340cd23a7c12c8d8ef59f"
+        },
+        "app/experimental/research_library_api.py": {
+          "member": "app/experimental/research_library_api.py",
+          "sha256": "aaeadea66db767d91eda467990923fe91357f08df8f63310e52e3aa0cf7c4618"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/research-history-20261017/packaging-evidence-r1/research-history-public-wheel-r1__public-wheel0"
+    }
+  ],
+  "all_runtime_source_bytes_verified": true,
+  "application_imported": false,
+  "installed": false,
+  "extracted": false,
+  "artifact_installation_and_native_execution": "NOT_RUN"
+}
