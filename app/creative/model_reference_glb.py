@@ -93,6 +93,10 @@ def inspect_static_glb(data: bytes):
                               parse_constant=lambda value: _fail("MODEL_REFERENCE_GLB_NUMBER_INVALID"))
     except (UnicodeError, json.JSONDecodeError, RecursionError):
         _fail("MODEL_REFERENCE_GLB_JSON_INVALID")
+    except ValueError as error:
+        if str(error).startswith("MODEL_REFERENCE_GLB_"):
+            raise
+        _fail("MODEL_REFERENCE_GLB_JSON_INVALID")
     _object(document)
     _inspect_json(document)
     asset = _object(document.get("asset"))

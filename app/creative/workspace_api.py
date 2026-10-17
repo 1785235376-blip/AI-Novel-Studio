@@ -79,13 +79,13 @@ class ModelReferenceImportRoute(PrivateProductionRoute):
         async def checked(request):
             headers = {"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"}
             try:
-                parts, total = [], 0
+                payload, total = bytearray(), 0
                 async for part in request.stream():
                     total += len(part)
                     if total > self.MAX_BODY:
                         raise HTTPException(413, {"code": "MODEL_REFERENCE_REQUEST_LIMIT"}, headers=headers)
-                    parts.append(part)
-                request._body = b"".join(parts)
+                    payload.extend(part)
+                request._body = bytes(payload)
                 return await handler(request)
             except RequestValidationError:
                 raise HTTPException(422, {"code": "MODEL_REFERENCE_REQUEST_INVALID"}, headers=headers) from None

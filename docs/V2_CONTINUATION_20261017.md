@@ -1,5 +1,9 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Bounded GLB request buffering (20:36 UTC)
+
+The new GLB-only private POST now accumulates bounded request bytes in a bytearray rather than retaining an unbounded count of tiny chunk objects. The existing 12 MiB byte cap and original media routes are unchanged. Non-schema JSON numeric conversion errors are reduced to the private GLB JSON-invalid code; deliberate bounded parser codes remain intact. Focused original parser plus private router check:20 PASS. No full-suite claim.
+
 ## Explicit static GLB import/inspection UI (20:33 UTC)
 
 The existing independent Asset workspace now mounts the dedicated GLB form without requiring FFmpeg or a model. Selecting a bounded local file does not upload; explicit save uses the original captured transport and existing workspace mutation lock. The client checks the returned asset size/SHA-256 against the selected bytes. Unknown-result retry preserves the original idempotency key in the workspace. Source declaration stays a second original-owner operation; failed declaration can be retried without reimporting. Exact selected-asset inspection is explicit, closed-contract decoded and retired across scope/source changes. Download, declarations and lifecycle remain the existing Asset UI.
