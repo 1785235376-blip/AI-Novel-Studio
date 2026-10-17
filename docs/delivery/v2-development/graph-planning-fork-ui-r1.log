@@ -1,0 +1,34 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/creative/GraphPlanningFork.test.tsx (18 tests | 1 failed) 227ms
+   × explicit source inspection and consent > does no initial read/write and requires inspected-version consent 119ms
+     → Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+ ✓ src/creative/StudioGraphCapacityContinuation.test.tsx (10 tests) 3951ms
+   ✓ original graph capacity and explicit independent draft preparation > shows server usage, keeps the full draft editable at history capacity and writes only on original Save 975ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_HISTORY_CAPACITY 348ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_SCOPE_CAPACITY 344ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_COLLECTION_CAPACITY 308ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps the full unsaved independent draft and request after a known create refusal 399ms
+   ✓ original graph capacity and explicit independent draft preparation > freezes an unknown create and recovers the exact base-null snapshot and request after remount 540ms
+   ✓ original graph capacity and explicit independent draft preparation > retains stale version labels and exact pins without upgrading or approving them 329ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 27 passed (28)
+   Start at  02:37:58
+   Duration  6.05s (transform 1.09s, setup 36ms, collect 1.92s, tests 4.18s, environment 621ms, prepare 107ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/GraphPlanningFork.test.tsx > explicit source inspection and consent > does no initial read/write and requires inspected-version consent
+Error: Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+ ❯ src/creative/GraphPlanningFork.test.tsx:62:25
+     60|     expect(button('准备使用更新来源的独立草稿')).toHaveProperty('disab…
+     61|     prepare(); expect(props.prepare).not.toHaveBeenCalled(); confirm()…
+     62|     expect(props.prepare).toHaveBeenCalledExactlyOnceWith(next, props.…
+       |                         ^
+     63|     expect(client.planningDocuments).toHaveBeenCalledTimes(1);
+     64|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,0 +1,23 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/GraphPlanningFork.test.tsx (18 tests) 221ms
+ ✓ src/creative/StudioGraphPlanningFork.test.tsx (11 tests) 674ms
+ ✓ src/creative/StudioGraphCapacityContinuation.test.tsx (10 tests) 3677ms
+   ✓ original graph capacity and explicit independent draft preparation > shows server usage, keeps the full draft editable at history capacity and writes only on original Save 912ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_HISTORY_CAPACITY 332ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_SCOPE_CAPACITY 318ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_COLLECTION_CAPACITY 322ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps the full unsaved independent draft and request after a known create refusal 354ms
+   ✓ original graph capacity and explicit independent draft preparation > freezes an unknown create and recovers the exact base-null snapshot and request after remount 511ms
+
+ Test Files  3 passed (3)
+      Tests  39 passed (39)
+   Start at  02:40:25
+   Duration  5.64s (transform 1.41s, setup 48ms, collect 2.63s, tests 4.57s, environment 1.04s, prepare 185ms)
+
+src/creative/GraphPlanningFork.test.tsx(66,170): error TS2345: Argument of type '(documents: PlanningDocument | { mode: string; id: string; version: number; digest: string; title: string; } | undefined) => Promise<void>' is not assignable to parameter of type '(...args: [] | [PlanningDocument, PlanningDocument] | [{ mode: string; id: string; version: number; digest: string; title: string; }]) => Awaitable<void>'.
+  Types of parameters 'documents' and 'args' are incompatible.
+    Type '[] | [PlanningDocument, PlanningDocument] | [{ mode: string; id: string; version: number; digest: string; title: string; }]' is not assignable to type '[documents: PlanningDocument | { mode: string; id: string; version: number; digest: string; title: string; } | undefined]'.
+      Type '[]' is not assignable to type '[documents: PlanningDocument | { mode: string; id: string; version: number; digest: string; title: string; } | undefined]'.
+        Source has 0 element(s) but target requires 1.

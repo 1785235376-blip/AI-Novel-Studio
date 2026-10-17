@@ -1,0 +1,247 @@
+{
+  "status": "PASS_FULL_PROCESS_FILE_UPDATED_SOURCE_FORK",
+  "response_mocks": false,
+  "development_sessions": false,
+  "lifespan": "original",
+  "model_requests": "NOT_REQUESTED",
+  "browser": "NOT_RUN",
+  "platform": "Linux cloud, not Windows",
+  "processes": [
+    {
+      "pid": 7,
+      "phase": "first",
+      "port": 41583,
+      "stopped": true
+    },
+    {
+      "pid": 9,
+      "phase": "restart",
+      "port": 52059,
+      "stopped": true
+    },
+    {
+      "pid": 11,
+      "phase": "fork-restart",
+      "port": 44425,
+      "stopped": true
+    }
+  ],
+  "actual_application_director_advertisement": true,
+  "saved": {
+    "project_id": "9921ee96-60a4-4602-87bc-c16ad6cb769f",
+    "branch_id": "3d30b0ab-7ef2-4057-a698-3d45054c3919",
+    "document_pin": {
+      "id": "f1ca15e6-7d70-4f76-85bb-287cdc4da348",
+      "version": 1,
+      "digest": "3b3daed021d4cbb08e0566d30804e96399db5e995cfd547eb7177b707f4aca3e"
+    },
+    "graph": {
+      "id": "cd5ec9f5-aa9a-43c4-ac80-e3d69f31fa52",
+      "version": 1,
+      "definition": {
+        "schema_version": 4,
+        "title": "SYNTHETIC persisted Director graph",
+        "nodes": [
+          {
+            "id": "director",
+            "definition_id": "director_plan",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 0.0,
+              "y": 0.0
+            },
+            "parameters": {
+              "document_snapshot": {
+                "id": "f1ca15e6-7d70-4f76-85bb-287cdc4da348",
+                "version": 1,
+                "digest": "3b3daed021d4cbb08e0566d30804e96399db5e995cfd547eb7177b707f4aca3e"
+              }
+            }
+          }
+        ],
+        "edges": [],
+        "viewport": {
+          "x": 0.0,
+          "y": 0.0,
+          "zoom": 1.0
+        }
+      },
+      "definition_digest": "f1d4c805c58efea0dc1ab40b5ab599cc111399a93051857b9c7983d1e8b1d6dd",
+      "execution_digest": "5cbc876f9a69d15ac677fd4e005a825529808be0cf35efb49679d76eafe2417b",
+      "created_at": "2026-10-17T17:45:44.255306+00:00",
+      "updated_at": "2026-10-17T17:45:44.255306+00:00",
+      "can_edit": true,
+      "reference_states": [
+        {
+          "node_id": "director",
+          "state": "CURRENT"
+        }
+      ],
+      "capacity": {
+        "history_used": 0,
+        "history_limit": 80,
+        "record_bytes": 1320,
+        "record_limit_bytes": 2000000
+      },
+      "project_id": "9921ee96-60a4-4602-87bc-c16ad6cb769f",
+      "scope": {
+        "mode": "collaboration",
+        "novel_id": "9921ee96-60a4-4602-87bc-c16ad6cb769f",
+        "workspace_id": "workspace-a",
+        "storyline_id": "eb83147d-3685-4ce6-b861-04f484c813ae",
+        "branch_id": "3d30b0ab-7ef2-4057-a698-3d45054c3919"
+      }
+    }
+  },
+  "restart_readback_equal": true,
+  "stale_source_preserved_pin": true,
+  "updated_source_fork": {
+    "old_graph_preserved": true,
+    "new_graph_reopened": true,
+    "source_pin": {
+      "id": "f1ca15e6-7d70-4f76-85bb-287cdc4da348",
+      "version": 2,
+      "digest": "78834ba4a379702223d9d55320aa8f14de8ae2ca3270225370906a4221d36153"
+    },
+    "new_graph_id": "37dc47fb-829d-4239-acf1-9edfcc2c5d92",
+    "no_runs_created": true
+  },
+  "calls": [
+    {
+      "method": "GET",
+      "path": "/api/workspaces",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/api/packaged/initial-workspace",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/collaboration/admin/workspaces/workspace-a/projects",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/collaboration/admin/workspaces/workspace-a/navigation",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/activate",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/9921ee96-60a4-4602-87bc-c16ad6cb769f/experimental/creative/director-proposals/model-capabilities",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/9921ee96-60a4-4602-87bc-c16ad6cb769f/experimental/creative/documents",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs/planning-documents",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs/cd5ec9f5-aa9a-43c4-ac80-e3d69f31fa52",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs/cd5ec9f5-aa9a-43c4-ac80-e3d69f31fa52",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/api/packaged/initial-workspace",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs/cd5ec9f5-aa9a-43c4-ac80-e3d69f31fa52",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs/cd5ec9f5-aa9a-43c4-ac80-e3d69f31fa52",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/9921ee96-60a4-4602-87bc-c16ad6cb769f/experimental/creative/documents/f1ca15e6-7d70-4f76-85bb-287cdc4da348",
+      "status": 200
+    },
+    {
+      "method": "PUT",
+      "path": "/api/novels/9921ee96-60a4-4602-87bc-c16ad6cb769f/experimental/creative/documents/f1ca15e6-7d70-4f76-85bb-287cdc4da348",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs/cd5ec9f5-aa9a-43c4-ac80-e3d69f31fa52",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs/planning-documents",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs/cd5ec9f5-aa9a-43c4-ac80-e3d69f31fa52",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/9921ee96-60a4-4602-87bc-c16ad6cb769f/experimental/creative/documents/f1ca15e6-7d70-4f76-85bb-287cdc4da348",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs/cd5ec9f5-aa9a-43c4-ac80-e3d69f31fa52/runs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs/37dc47fb-829d-4239-acf1-9edfcc2c5d92/runs",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/packaged/initial-workspace",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs/cd5ec9f5-aa9a-43c4-ac80-e3d69f31fa52",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs/37dc47fb-829d-4239-acf1-9edfcc2c5d92",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs/37dc47fb-829d-4239-acf1-9edfcc2c5d92",
+      "status": 200
+    }
+  ]
+}

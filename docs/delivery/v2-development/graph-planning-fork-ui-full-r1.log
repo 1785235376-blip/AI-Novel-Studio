@@ -1,0 +1,106 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/AIDirectorPanel.test.tsx (10 tests) 1233ms
+   ✓ AI director local proposal and explicit review > honestly prepares local rules without model calls and requires reviewed edited output before adoption 569ms
+ ✓ src/creative/AIDirectorPanel.storyboard.additive.test.tsx (19 tests) 1393ms
+   ✓ uses the original graph owner for saved storyboard → reviewed separate draft → verified reopen without mutating source 412ms
+ ✓ src/experimental/ResearchLibraryPanel.test.tsx (10 tests) 1544ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 1841ms
+   ✓ optional mounted graph director source authoring > hands a saved human director to the existing storyboard owner and reopens its status 492ms
+ ✓ src/creative/DirectorModelControls.storyboard-model.additive.test.tsx (49 tests) 2447ms
+   ✓ actual graph owner forwards explicit model calls through mutation leases despite own busy renders 374ms
+   ✓ adopts source-bound empty-note CANCELLED receipts through the graph owner 327ms
+   ✓ adopts source-bound empty-note MODEL_UNAVAILABLE receipts through the graph owner 309ms
+ ✓ src/creative/AIDirectorReopen.test.tsx (31 tests) 2495ms
+ ✓ src/creative/GraphDirectorSourceImpact.test.tsx (19 tests) 405ms
+ ✓ src/creative/GraphDirectorStoryboardHandoff.test.tsx (7 tests) 368ms
+ ✓ src/creative/GraphDirectorCanvasHandoff.additive.test.tsx (15 tests) 1440ms
+   ✓ does not insert on review or export; explicit add sends only the scalar pin once and never saves either owner 336ms
+ ✓ src/creative/IndependentDirectorModelReview.test.tsx (7 tests) 1101ms
+   ✓ runs explicit captured preview, model, human review and exact reopen with no construction-time request 419ms
+ ✓ src/experimental/ResearchLibraryPanel.location.test.tsx (9 tests) 2114ms
+   ✓ locates the exact second-page original paragraph, preserves draft, and saves only explicit original-owner selection 731ms
+ ✓ src/creative/GraphPlanningFork.test.tsx (20 tests) 332ms
+ ✓ src/experimental/ResearchHistoricalInspector.test.tsx (18 tests) 1062ms
+   ✓ mounts only for the selected active history owner and discards pending selection ABA 319ms
+ ✓ src/creative/StudioGraphPlanningFork.test.tsx (12 tests) 1942ms
+   ✓ original controller owns updated-source independent drafts > mounts the inspector flow and uses explicit original Save after consent 1203ms
+ ✓ src/creative/AIDirectorPanel.reasoning.additive.test.tsx (2 tests) 611ms
+   ✓ AI director local proposal and explicit review > shows estimated totals and editable model reasoning separately from auxiliary rules 385ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 316ms
+ ✓ src/creative/GraphDirectorModelAuthority.additive.test.tsx (32 tests) 628ms
+ ✓ src/creative/AIDirectorFastReceipt.test.tsx (3 tests) 652ms
+   ✓ director proposal activation after a fast receipt > keeps one native double-click bound to its first proposal through edited human review 482ms
+ ✓ src/creative/AIDirectorIndependent.integration.test.tsx (3 tests) 881ms
+   ✓ mounts the versioned view only after explicit capability read and hands exact adopted pin to original parent 735ms
+ ✓ src/creative/StudioGraphCapacityContinuation.test.tsx (10 tests) 5984ms
+   ✓ original graph capacity and explicit independent draft preparation > shows server usage, keeps the full draft editable at history capacity and writes only on original Save 1549ms
+   ✓ original graph capacity and explicit independent draft preparation > distinguishes unavailable capacity from zero usage 399ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_HISTORY_CAPACITY 656ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_SCOPE_CAPACITY 509ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_COLLECTION_CAPACITY 389ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps the full unsaved independent draft and request after a known create refusal 435ms
+   ✓ original graph capacity and explicit independent draft preparation > freezes an unknown create and recovers the exact base-null snapshot and request after remount 956ms
+   ✓ original graph capacity and explicit independent draft preparation > retains stale version labels and exact pins without upgrading or approving them 462ms
+   ✓ original graph capacity and explicit independent draft preparation > retires the independent definition and origin on denial without transmitting it 377ms
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 247ms
+ ✓ src/creative/ReviewedDirectorCanvas.integration.test.tsx (1 test) 725ms
+   ✓ wires reviewed Creative DRAFT through original export/read, real editor/controller insertion, and explicit Graph Save 724ms
+ ✓ src/experimental/ResearchLibraryPanel.continuation.test.tsx (3 tests) 874ms
+   ✓ replaces original file bytes against the selected source version 450ms
+ ✓ src/creative/directorModelClient.test.ts (35 tests) 48ms
+ ✓ src/creative/client.test.ts (11 tests) 24ms
+ ✓ src/creative/directorObservationClient.test.ts (30 tests) 15ms
+ ✓ src/creative/directorModelDraftHandoff.test.ts (15 tests) 17ms
+ ✓ src/experimental/ResearchLibraryPanel.additive.test.tsx (2 tests) 406ms
+   ✓ locates page-only evidence in the original source without claiming extracted text 361ms
+ ✓ src/experimental/researchEvidenceLocation.test.ts (25 tests) 8ms
+ ✓ src/creative/directorModelPlanningContract.additive.test.ts (11 tests) 9ms
+ ✓ src/creative/AIDirectorPanel.sourceLabels.additive.test.tsx (1 test) 138ms
+ ✓ src/creative/GraphDirectorAdoptionPin.additive.test.tsx (5 tests) 505ms
+ ✓ src/creative/directorModelClient.capture.test.ts (2 tests) 8ms
+ ✓ src/creative/StudioProductionGraphEditor.test.tsx (4 tests) 6027ms
+   ✓ Production Graph UI keeps original controller and execution authority > mounts the existing read-only Director Console in a selected Director graph node 2269ms
+   ✓ Production Graph UI keeps original controller and execution authority > explicitly binds authored documents, style and upscale parameters without dispatch 2442ms
+   ✓ Production Graph UI keeps original controller and execution authority > ignores late document references after a same-token Host replacement 530ms
+   ✓ Production Graph UI keeps original controller and execution authority > keeps Style inspector and controller bounds aligned to the backend 785ms
+ ✓ src/creative/StudioProductionGraphEditor.director.additive.test.tsx (5 tests) 12775ms
+   ✓ Production Graph UI keeps original controller and execution authority > lays out already-saved Director pins without rewriting their source or executing 2407ms
+   ✓ authors a director in the canvas, saves its exact node pin and reopens the bound source 3783ms
+   ✓ requires an explicit original workspace navigation confirmation to abandon an UNKNOWN director create 855ms
+   ✓ keeps an UNKNOWN storyboard handoff pending through cancelled workspace navigation 1765ms
+   ✓ reviews an original screenplay proposal, explicitly pins the DRAFT and reopens both owners without model execution 3964ms
+
+ Test Files  35 passed (35)
+      Tests  450 passed (450)
+   Start at  02:46:33
+   Duration  20.20s (transform 7.76s, setup 547ms, collect 23.91s, tests 50.62s, environment 14.08s, prepare 2.87s)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2307 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-Bg9pZcT3.css      2.93 kB │ gzip:   0.82 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-BkplvLLE.css      4.23 kB │ gzip:   1.09 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-DRLVwzqD.css                      215.51 kB │ gzip:  27.26 kB
+dist/assets/Health-CG5DUIQ9.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-DitiKTO9.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/LocalTutorIntegration-Cxr0fUY6.js      42.44 kB │ gzip:  13.79 kB
+dist/assets/style-DdURfFMV.js                      45.12 kB │ gzip:   8.40 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-CvxqdYDB.js     776.78 kB │ gzip: 233.18 kB
+dist/assets/App-B0p3F0hh.js                     2,366.39 kB │ gzip: 704.13 kB
+✓ built in 6.79s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

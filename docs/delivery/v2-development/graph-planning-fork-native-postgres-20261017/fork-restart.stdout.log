@@ -1,0 +1,6 @@
+INFO:     127.0.0.1:33808 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33808 - "POST /api/packaged/bootstrap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33808 - "POST /api/packaged/initial-workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33808 - "GET /api/projects/942e017c-f805-4e87-aa09-859fc3357d50/studio/graphs/320c9287-b15c-460d-9dd9-939a2c5ee661 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33808 - "GET /api/projects/942e017c-f805-4e87-aa09-859fc3357d50/studio/graphs/bd1c7252-fe71-4a0c-a757-07e32a2380aa HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33808 - "GET /api/v1/projects/942e017c-f805-4e87-aa09-859fc3357d50/studio/graphs/bd1c7252-fe71-4a0c-a757-07e32a2380aa HTTP/1.1" 200 OK

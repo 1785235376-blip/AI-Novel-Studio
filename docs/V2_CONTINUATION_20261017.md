@@ -1,5 +1,9 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Explicit updated-source Graph fork (17:49 UTC)
+
+Source3c977f1 adds inspected-version consent for a STALE Director/Storyboard node, preparing a separate unsaved graph with only that pin updated. Original graph/history and other author content remain unchanged; original Save/create and UNKNOWN behavior retain ownership.450UI checks, TS/build/token and separate real File/PG full-process fork/restart checks pass on identical final sources.32new tests, no backend/original-test changes. Four prior backend packages reread, not rebuilt. Read CANVAS_PLANNING_SOURCE_FORK.md and delivery/v2-development/graph-planning-fork-20261017/README.md. Coverage source inventory update follows.
+
 ## Real PostgreSQL full-process persistence (17:30 UTC)
 
 The original PostgreSQL wrapper and full app lifecycle passed the same manual Director → Graph save → complete app restart → exact readback → stale-source flow. Fresh database v2_director_native_app_20261017_r1,20original migrations, original bootstrap/branch authority, no injected service/mock. Both app PIDs and PG stopped. Actual PG app correctly withholds independent model-review advertisement; that lifecycle remains File-only. See delivery/v2-development/director-full-process-postgres-20261017-r1/README.md.

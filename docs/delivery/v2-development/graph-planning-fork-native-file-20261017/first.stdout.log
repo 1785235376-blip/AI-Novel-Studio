@@ -1,0 +1,12 @@
+INFO:     127.0.0.1:42450 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42450 - "POST /api/packaged/bootstrap HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42450 - "GET /api/workspaces HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:42450 - "POST /api/packaged/initial-workspace HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42450 - "POST /api/collaboration/admin/workspaces/workspace-a/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:42450 - "GET /api/collaboration/admin/workspaces/workspace-a/navigation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42450 - "POST /api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/activate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42450 - "GET /api/novels/9921ee96-60a4-4602-87bc-c16ad6cb769f/experimental/creative/director-proposals/model-capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42450 - "POST /api/novels/9921ee96-60a4-4602-87bc-c16ad6cb769f/experimental/creative/documents HTTP/1.1" 201 Created
+INFO:     127.0.0.1:42450 - "GET /api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs/planning-documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42450 - "POST /api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs HTTP/1.1" 201 Created
+INFO:     127.0.0.1:42450 - "GET /api/projects/9921ee96-60a4-4602-87bc-c16ad6cb769f/studio/graphs/cd5ec9f5-aa9a-43c4-ac80-e3d69f31fa52 HTTP/1.1" 200 OK

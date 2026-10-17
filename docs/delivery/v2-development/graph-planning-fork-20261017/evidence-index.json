@@ -1,0 +1,25 @@
+{
+  "status": "PASS_SCOPED_PRIMARY_VERIFICATION",
+  "source_commit": "3c977f15be9a6c9b7d74cee38a1ced17c9b492ce",
+  "same_final_source_maps": true,
+  "changed_existing_sources": [
+    "frontend/src/creative/studioGraphEditorView.tsx",
+    "frontend/src/creative/useStudioGraphEditorController.ts"
+  ],
+  "new_sources": [
+    "frontend/src/creative/GraphPlanningFork.test.tsx",
+    "frontend/src/creative/GraphPlanningFork.tsx",
+    "frontend/src/creative/StudioGraphPlanningFork.test.tsx",
+    "frontend/src/creative/graphPlanningFork.ts"
+  ],
+  "original_tests_gates_and_backend_unchanged": true,
+  "receipts": {
+    "graph-planning-fork-ui-r4": "5447c938b994963529ce6e2e191fe688f805f074bf09ff2f4d94f4e55bb9a29b",
+    "graph-planning-fork-ui-full-r1": "584f0a74c95968288888a1e5107e0f4947be88a3f31a2af3ea387530be37f14e",
+    "graph-planning-fork-native-file-r1": "e769126a4e3d4221e408ea1847f76c2018a4990dbf895515facb5e7a290e5fec",
+    "graph-planning-fork-native-postgres-r1": "60590e9f62f00ec4d056ae4c98ecbdca632f6c7066d4dab2bd940113a7b629e8"
+  },
+  "packaging": "Four prior backend artifacts reread against unchanged current included source; not newly built UI packages.",
+  "browser": "BLOCKED_NOT_RUN",
+  "independent_review": "UNAVAILABLE_PRIMARY_ONLY"
+}

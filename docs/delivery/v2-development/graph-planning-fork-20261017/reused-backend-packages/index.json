@@ -1,0 +1,95 @@
+{
+  "status": "PASS_OFFLINE_PUBLIC_ARCHIVE_INSPECTION",
+  "manifest_sha256": "64ca4899566b3dae07192732ecba083e95244f8a625b9152f8c08602bfcc8400",
+  "archives": [
+    {
+      "archive": ".runtime/v2-checks/director-application-public-sdist-binding-r1/pytest/public-sdist0/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "kind": "sdist",
+      "sha256": "bc35589fbbf7d8c374d9d5d1dba3214a36554d0fd3d3ec97c5684cc8644acda7",
+      "payload_file_count": 523,
+      "changed_modules": {
+        "app/experimental/api.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/api.py",
+          "sha256": "d3b34dd92541be0fb6187f24d306880056fe16c29f94a9c576bc36c5f009bb68"
+        },
+        "app/creative/director_model_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_model_api.py",
+          "sha256": "310b4d6c86bd9e71cdcef8128089e33de28a2d1eb0020ed6e1ccc08a7810f20a"
+        },
+        "app/creative/director_observation_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_observation_api.py",
+          "sha256": "8085398e4b040e79997074cc3a289bf3b4ba57ec1882d4ab952bc5a3438342a2"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/graph-planning-fork-20261017/reused-backend-packages/director-application-public-sdist-binding-r1__public-sdist0"
+    },
+    {
+      "archive": ".runtime/v2-checks/director-application-public-sdist-binding-r1/pytest/public-sdist1/sdists/ai_novel_studio-0.7.0.tar.gz",
+      "kind": "sdist",
+      "sha256": "47146a734f126e77000c6f24987bc1fc64a2417a411694bfc14ac75076712b87",
+      "payload_file_count": 523,
+      "changed_modules": {
+        "app/experimental/api.py": {
+          "member": "ai_novel_studio-0.7.0/app/experimental/api.py",
+          "sha256": "d3b34dd92541be0fb6187f24d306880056fe16c29f94a9c576bc36c5f009bb68"
+        },
+        "app/creative/director_model_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_model_api.py",
+          "sha256": "310b4d6c86bd9e71cdcef8128089e33de28a2d1eb0020ed6e1ccc08a7810f20a"
+        },
+        "app/creative/director_observation_api.py": {
+          "member": "ai_novel_studio-0.7.0/app/creative/director_observation_api.py",
+          "sha256": "8085398e4b040e79997074cc3a289bf3b4ba57ec1882d4ab952bc5a3438342a2"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/graph-planning-fork-20261017/reused-backend-packages/director-application-public-sdist-binding-r1__public-sdist1"
+    },
+    {
+      "archive": ".runtime/v2-checks/director-application-public-sdist-binding-r1/pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "kind": "wheel",
+      "sha256": "67602b0f6a53da191c134b41f7c8b5e1c26eb4893c304f2927386af9e122d0dc",
+      "payload_file_count": 519,
+      "changed_modules": {
+        "app/experimental/api.py": {
+          "member": "app/experimental/api.py",
+          "sha256": "d3b34dd92541be0fb6187f24d306880056fe16c29f94a9c576bc36c5f009bb68"
+        },
+        "app/creative/director_model_api.py": {
+          "member": "app/creative/director_model_api.py",
+          "sha256": "310b4d6c86bd9e71cdcef8128089e33de28a2d1eb0020ed6e1ccc08a7810f20a"
+        },
+        "app/creative/director_observation_api.py": {
+          "member": "app/creative/director_observation_api.py",
+          "sha256": "8085398e4b040e79997074cc3a289bf3b4ba57ec1882d4ab952bc5a3438342a2"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/graph-planning-fork-20261017/reused-backend-packages/director-application-public-sdist-binding-r1__public-wheel0"
+    },
+    {
+      "archive": ".runtime/v2-checks/director-application-public-wheel-r1/pytest/public-wheel0/wheels/ai_novel_studio-0.7.0-py3-none-any.whl",
+      "kind": "wheel",
+      "sha256": "b88c057ede202fed9ba2b6c1b5ad6149fc59f657a624b753f561dcd566209804",
+      "payload_file_count": 519,
+      "changed_modules": {
+        "app/experimental/api.py": {
+          "member": "app/experimental/api.py",
+          "sha256": "d3b34dd92541be0fb6187f24d306880056fe16c29f94a9c576bc36c5f009bb68"
+        },
+        "app/creative/director_model_api.py": {
+          "member": "app/creative/director_model_api.py",
+          "sha256": "310b4d6c86bd9e71cdcef8128089e33de28a2d1eb0020ed6e1ccc08a7810f20a"
+        },
+        "app/creative/director_observation_api.py": {
+          "member": "app/creative/director_observation_api.py",
+          "sha256": "8085398e4b040e79997074cc3a289bf3b4ba57ec1882d4ab952bc5a3438342a2"
+        }
+      },
+      "durable_evidence": "docs/delivery/v2-development/graph-planning-fork-20261017/reused-backend-packages/director-application-public-wheel-r1__public-wheel0"
+    }
+  ],
+  "all_runtime_source_bytes_verified": true,
+  "application_imported": false,
+  "installed": false,
+  "extracted": false,
+  "artifact_installation_and_native_execution": "NOT_RUN"
+}
