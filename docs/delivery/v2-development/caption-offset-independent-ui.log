@@ -1,0 +1,17 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-caption-offset/frontend
+
+ ✓ src/experimental/SubtitleTimelinePanel.history.test.tsx (67 tests) 5279ms
+ ✓ src/experimental/SubtitleTimelinePanel.import.test.tsx (38 tests) 2355ms
+ ✓ src/experimental/SubtitleTimelinePanel.offset.test.tsx (31 tests) 3955ms
+   ✓ previews exact before/after values, applies locally, undoes once, then saves via original CAS 349ms
+ ✓ src/experimental/VoiceSubtitlePanels.test.tsx (7 tests) 560ms
+ ✓ src/experimental/VoiceSubtitlePanels.additive.test.tsx (2 tests) 278ms
+ ✓ src/experimental/captionTimingOffset.test.ts (55 tests) 19ms
+ ✓ src/experimental/captionTransferReview.test.ts (24 tests) 10ms
+
+ Test Files  7 passed (7)
+      Tests  224 passed (224)
+   Start at  19:50:49
+   Duration  15.79s (transform 250ms, setup 45ms, collect 739ms, tests 12.46s, environment 1.45s, prepare 326ms)
+
