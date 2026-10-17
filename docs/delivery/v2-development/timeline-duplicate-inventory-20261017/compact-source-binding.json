@@ -1,0 +1,94 @@
+{
+  "source_checkpoint": "881231d07bd300893bbc494e7913a4029c558d23",
+  "baseline_manifest": {
+    "commit": "feade20ce2f6671e5d5a16c0781896f3c5696927",
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "sha256": "835210459b56ac40948631ba6ac228bb98732ab2d723d49cb3266222917126a4"
+  },
+  "complete_source_map_entries": 2645,
+  "complete_source_map_sha256": "c7b5bbf23c86c1be6b9515d7bed15dada0f7c81d44064592de4c4274e932a713",
+  "source_delta": [
+    {
+      "path": "frontend/src/creative/StudioTimelineEditor.tsx",
+      "before": "8f430ad79ed9b81ccbbc0c6df73b763c20d0032dd90c1717feb77e942028797d",
+      "after": "2a33f3cb9833c8d76f69325b3705535c969be624ebbf8417159deb7b01128c30"
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineSelectionDuplicate.additive.test.tsx",
+      "before": null,
+      "after": "d0bbf797d59aa8d1dc9ee36893364012387db0d69ecc770d2ffaa1f171fc3fe4"
+    },
+    {
+      "path": "frontend/src/creative/useStudioTimelineEditor.ts",
+      "before": "4ac580a96521698e6cd58becaa073f40008146191ea4eba5b03bfae9c130606b",
+      "after": "eea585f097c3a455efd9ec8ff20a83d8a70eff9b642f974b2357183c159ddd3a"
+    },
+    {
+      "path": "frontend/src/nle/ClipInspectorPanel.tsx",
+      "before": "143890f858322b85eebeb73eb3a99220463064c15b397f5d5832560e76524878",
+      "after": "bf51a6354b82337e1d7c37b2f7f682d29caae6c36016b8e2f960dace03fd090a"
+    },
+    {
+      "path": "frontend/src/nle/ClipInspectorSelectionDuplicate.additive.test.tsx",
+      "before": null,
+      "after": "69e13e8c4720303964d94e23a2c1ba7eec032b3964ea036031e2ac8991b57f71"
+    },
+    {
+      "path": "frontend/src/nle/timelineSelectionDuplicate.additive.test.ts",
+      "before": null,
+      "after": "dd68393922b9bba3230a5148dbeafa9d4ca8a04e50d9fed8276b787af51f7cff"
+    },
+    {
+      "path": "frontend/src/nle/timelineSelectionDuplicate.ts",
+      "before": null,
+      "after": "c4bb3b27e0ec3d122b90e08a6152af1900c81b8a7016f346a6cd33d819cb9f0e"
+    },
+    {
+      "path": "tests/test_v2_timeline_duplicate_handoff.py",
+      "before": null,
+      "after": "720d68b9440d440d6c5871061989aeb57234312a1919063ee14a6207087c8edd"
+    }
+  ],
+  "expected_new_sources": [
+    "frontend/src/creative/StudioTimelineSelectionDuplicate.additive.test.tsx",
+    "frontend/src/nle/ClipInspectorSelectionDuplicate.additive.test.tsx",
+    "frontend/src/nle/timelineSelectionDuplicate.additive.test.ts",
+    "frontend/src/nle/timelineSelectionDuplicate.ts",
+    "tests/test_v2_timeline_duplicate_handoff.py"
+  ],
+  "protected_old_entries_exact": 1318,
+  "frontend_scripts_e2e_companion": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "raw_inventory": {
+    "path": "docs/delivery/v2-development/timeline-duplicate-inventory-20261017/review-raw-collection.json",
+    "sha256": "b8b55ea25ed271890add0b077cdce56fefe08f546edf9604f5c752fdc230d4a2",
+    "rows": 16924
+  },
+  "prior_raw_inventory": {
+    "path": "docs/delivery/v2-development/timeline-waveform-inventory-20261017/review-raw-collection.json",
+    "sha256": "080e617e9aee0483a57ac59bcd25b93251cc8c2c88452018629aad5537e92334",
+    "rows": 16892
+  },
+  "packaging_guard": {
+    "path": "packaging/public-build.json",
+    "before_sha256": "57f657057a391fa9ebdd8586fba62262ea6f3bb5fb1e2fe71f0c5ff27ad573be",
+    "after_sha256": "57f657057a391fa9ebdd8586fba62262ea6f3bb5fb1e2fe71f0c5ff27ad573be",
+    "outside_manifest": true,
+    "unchanged": true,
+    "approved_source_delta": false,
+    "added_entries": [],
+    "predecessor_path": "docs/delivery/v2-development/timeline-duplicate-inventory-20261017/public-predecessor.json"
+  },
+  "tests_executed": false
+}

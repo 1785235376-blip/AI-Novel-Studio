@@ -1,0 +1,11 @@
+{
+  "parent_approval_received": true,
+  "parent_approval_text": "Explicit authorization to promote exact reviewed candidate f85eff91861041c2867f6a184286b0ab484f6d8765bcb96ca08639181daa09c4 bytes to canonical after predecessor hash check. Verify result, run separate third no-write original collection, independent final and index closure. No recompression or source edits.",
+  "byte_exact": true,
+  "predecessor_sha256": "835210459b56ac40948631ba6ac228bb98732ab2d723d49cb3266222917126a4",
+  "candidate_sha256": "f85eff91861041c2867f6a184286b0ab484f6d8765bcb96ca08639181daa09c4",
+  "canonical_sha256": "f85eff91861041c2867f6a184286b0ab484f6d8765bcb96ca08639181daa09c4",
+  "independent_approval_sha256": "fd35d9969f12df5a969478e21b6688aebda263d72e1684a00c2eed0698357608",
+  "candidate_path": ".runtime/timeline-duplicate-inventory/candidate-manifest-v2.json.gz",
+  "canonical_path": ".github/ci/coverage_manifest_v2.json.gz"
+}

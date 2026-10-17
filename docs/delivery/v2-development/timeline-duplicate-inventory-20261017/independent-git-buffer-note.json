@@ -1,0 +1,6 @@
+{
+  "status": "READ_ONLY_AUDIT_RETRY",
+  "first_attempt": "Node execFileSync git ls-tree -r -z without maxBuffer hit ENOBUFS at default ~1MiB; no approval or source file written.",
+  "correction": "Set maxBuffer to 40 MiB and repeat read-only Git binding audit.",
+  "tests_executed": false
+}
