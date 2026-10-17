@@ -1,0 +1,68 @@
+{
+  "status": "DEPENDENCY_SETUP_AND_STARTUP_PROOF_PASS_INDEPENDENTLY_REVIEWED",
+  "created_utc": "2026-10-16T22:52:37.048892+00:00",
+  "interpreter": "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+  "environment": {
+    "unset": [
+      "PYTHONHOME",
+      "PYTHONPATH",
+      "PYTHONSTARTUP",
+      "PYTHONUSERBASE",
+      "PYTEST_ADDOPTS",
+      "PYTEST_PLUGINS",
+      "PACKAGED_RUNTIME_INSTANCE_ID",
+      "PACKAGED_BOOTSTRAP_SECRET",
+      "PACKAGED_CONTROL_PIPE"
+    ],
+    "set": {
+      "PYTHONNOUSERSITE": "1",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+      "PACKAGED_WINDOWS_MODE": "false"
+    },
+    "root_binding": "For actual runner commands use current reconciliation cwd; run_v2_checks sets PROJECT_ROOT and PYTHONPATH to that root before its child. For startup-only proofs set PYTHONPATH explicitly to current root after clearing inherited values."
+  },
+  "attempts": [
+    {
+      "label": "initial",
+      "exit_code": 1,
+      "boundary": "Stdlib-only probe failed constructing dotted namespace spec; no product/pytest import.",
+      "script": "origin-probe.py",
+      "stdout": "startup-probe.json",
+      "stderr": "startup-probe.stderr.log"
+    },
+    {
+      "label": "r2",
+      "exit_code": 0,
+      "boundary": "Explicit-root availability and child proof; superseded by actual-sys.path precedence proof.",
+      "script": "origin-probe-r2.py",
+      "stdout": "startup-probe-r2.json",
+      "stderr": "startup-probe-r2.stderr.log"
+    },
+    {
+      "label": "r3",
+      "exit_code": 0,
+      "boundary": "Actual sys.path precedence, exact root package/namespace/child origins and dependency origins; startup and real child proof; no product/pytest import.",
+      "script": "origin-probe-r3.py",
+      "stdout": "startup-probe-r3.json",
+      "stderr": "startup-probe-r3.stderr.log"
+    }
+  ],
+  "artifacts": {
+    "setup-receipt.json": "02ccf5581e0ed9726af44dda40eb02dcbbce8e2ea5d5f08a7648e723f4a82d58",
+    "origin-probe.py": "59e675390305026f6645fef71b21f369e42191dd415693fbd455cdadec552900",
+    "startup-probe.json": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "startup-probe.stderr.log": "ea858d19df75146fd1f271e1fe4b830f4df9ebb5c42ad37687b9c918517fcf90",
+    "origin-probe-r2.py": "d598cc0821e8ffc17277614e7c9f93b77040c758b67f9d42fc6453ee679f050f",
+    "startup-probe-r2.json": "497a897a297a93ab99d103b3d2dbcb1ef340a21dc33a8e98d0b79660b27c049c",
+    "startup-probe-r2.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "origin-probe-r3.py": "4ef7f51f4e9a7263776317e3c6a4c73e6a6822e13b0cf986d2575a433a16f25d",
+    "startup-probe-r3.json": "a560190e48c9d058250fba40b267d9431fce570ac300f5c23536f5264a122ee5",
+    "startup-probe-r3.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "tests_executed_by_setup": false,
+  "collection_executed": false,
+  "old_candidate_executed": false,
+  "old_venv_mutated": false,
+  "independent_review": "/tmp/dot-independent-dependency-copy-review-20261016.json"
+}
