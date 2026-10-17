@@ -15,3 +15,11 @@ Backend application and packaging sources are unchanged from 17c6500. The four p
 Next: bind the versioned client to the original Director review UI with stale-action and authority fences, exact uncertain submission retention, explicit Graph handoff and mounted/browser validation. Application routes remain disabled by default until the user-facing integration is verified.
 
 The earlier eight-commit archive through 17c6500 was publicly uploaded and read back at archive commit de872b5. This new client slice was not part of that approved fixed payload. Main and PR development branches were not changed.
+
+## Original Graph review authority binding
+
+The original GraphDirectorProposalReview now passes the optional model factory through its existing read/mutate owners. Factory construction makes no network request. All ten model operations are explicitly classified; read-only reconciliation stays on the read owner despite its HTTP POST shape. Retained clients and late responses are fenced against project/client lifetime changes and mutation-context changes, including A→denied→A.
+
+A new mounted boundary test reproduced the latter revival bug in the first wrapper implementation: retained pending reads and reviews resolved after permission was removed then restored. An independent generation counter now retires that earlier context. The RED receipt is retained. This is a UI admission fence, not a substitute for backend authorization. The earlier test run also recorded ten failures from an unsupported new test matcher; that matcher was replaced by separate count and argument assertions without changing old tests.
+
+The final boundary scope passed 91 tests across six files, followed by forced TypeScript, production build and token checks (`director-model-authority-r3`). There is no visible layout change and no new product route activation in this slice. New tests validate parent-owner routing, denied writes, late receipts and retained-client retirement. The next step remains the visible versioned workflow and real-browser verification.

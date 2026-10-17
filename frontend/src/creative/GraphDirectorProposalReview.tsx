@@ -4,6 +4,7 @@ import { Button, StatusMessage } from '../ui/primitives';
 import { AIDirectorPanel } from './AIDirectorPanel';
 import type { CreativeClient, DirectorProposalClient } from './client';
 import type { CreativeDocument } from './types';
+import type { DirectorModelClient } from './directorModelClient';
 
 export type GraphDirectorReviewSource = Pick<CreativeClient, 'list'> & Partial<DirectorProposalClient>;
 const methods = ['proposals', 'proposal', 'propose', 'review', 'cancelProposal', 'get',
@@ -32,6 +33,9 @@ export function GraphDirectorProposalReview(props: Props) {
   const alive = useRef(true), initialClient = useRef(props.client);
   const latest = useRef(props); latest.current = props;
   const life = useRef({ active: props.active, client: props.client, generation: 0 });
+  const modelAuthority = useRef({ allowed: props.canMutate, generation: 0 });
+  if (modelAuthority.current.allowed !== props.canMutate)
+    modelAuthority.current = { allowed: props.canMutate, generation: modelAuthority.current.generation + 1 };
   if (life.current.active !== props.active || life.current.client !== props.client)
     life.current = { active: props.active, client: props.client, generation: life.current.generation + 1 };
   const requests = useRef(0), requestLock = useRef(false);
@@ -58,7 +62,40 @@ export function GraphDirectorProposalReview(props: Props) {
       assertCurrent(generation);
       return result;
     };
+    const independentDirector = props.client.independentDirector ? () => {
+      const generation = life.current.generation;
+      const authorityGeneration = modelAuthority.current.generation;
+      assertCurrent(generation);
+      const original = props.client.independentDirector!();
+      const assertModelCurrent = () => {
+        assertCurrent(generation);
+        if (modelAuthority.current.generation !== authorityGeneration)
+          throw new ApiError({ status: 403, code: 'STUDIO_GRAPH_SCOPE_MISMATCH', message: '审核上下文已变化，请重新打开模型审核。' });
+      };
+      const invoke = async <T,>(write: boolean, work: () => Promise<T>) => {
+        // A retained factory result cannot borrow a later active lifetime.
+        assertModelCurrent();
+        const result = await call(write, () => { assertModelCurrent(); return work(); });
+        assertModelCurrent();
+        if (write && !latest.current.canMutate)
+          throw new ApiError({ status: 403, code: 'STUDIO_GRAPH_SCOPE_MISMATCH', message: '审核权限已变化，请重新核对原任务状态。' });
+        return result;
+      };
+      return {
+        readStatus: (...args) => invoke(false, () => original.readStatus(...args)),
+        readAdoptedDraft: (...args) => invoke(false, () => original.readAdoptedDraft(...args)),
+        readPreview: (...args) => invoke(false, () => original.readPreview(...args)),
+        readPending: (...args) => invoke(false, () => original.readPending(...args)),
+        reconcileReview: (...args) => invoke(false, () => original.reconcileReview(...args)),
+        preview: (...args) => invoke(true, () => original.preview(...args)),
+        dispatch: (...args) => invoke(true, () => original.dispatch(...args)),
+        prepareReview: (...args) => invoke(true, () => original.prepareReview(...args)),
+        review: (...args) => invoke(true, () => original.review(...args)),
+        cancel: (...args) => invoke(true, () => original.cancel(...args)),
+      } satisfies DirectorModelClient;
+    } : undefined;
     return {
+      ...(independentDirector ? { independentDirector } : {}),
       proposals: signal => call(false, () => props.client.proposals(signal)),
       proposal: (id, signal) => call(false, () => props.client.proposal(id, signal)),
       get: (id, signal) => call(false, () => props.client.get(id, signal)),
