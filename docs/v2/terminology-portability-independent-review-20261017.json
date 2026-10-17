@@ -1,0 +1,118 @@
+{
+  "review": "B05 terminology portability independent review",
+  "utc": "2026-10-17T09:20:10.866800+00:00",
+  "decision": "PASS_WITH_EXPLICIT_LIMITS",
+  "baseline": "e1e66cedeb7a140b6894850bc21a1e5ac7e06c16",
+  "independent_runs": {
+    "origin": "terminology-origin-review-r1",
+    "new_owner": "30 passed; 15 actual-PG deselected",
+    "unchanged_owner": "79 passed; 72 actual-PG deselected",
+    "ui": "58 passed in 6 files"
+  },
+  "receipts": [
+    {
+      "path": "docs/delivery/v2-development/terminology-build-r1.json",
+      "sha256": "c05d93a83d1d9a32e83643a8fdae58ef5b38f6ab39341f672132e4ce63b39b67",
+      "status": "PASS",
+      "source_count": 2590,
+      "current_source_mismatches": [],
+      "log_sha256_verified": true
+    },
+    {
+      "path": "docs/delivery/v2-development/terminology-origin-r3.json",
+      "sha256": "7c77589cb4b4ff69f6c4b1fe292d118843d264fb1d04e0fd25d57ae9a3746565",
+      "status": "PASS",
+      "source_count": 2590,
+      "current_source_mismatches": [],
+      "log_sha256_verified": true
+    },
+    {
+      "path": "docs/delivery/v2-development/terminology-origin-review-r1.json",
+      "sha256": "915e4bb4f128d5a9cc92039285b24f0d9abd9739fc8ca351db2043a37deeda68",
+      "status": "PASS",
+      "source_count": 2590,
+      "current_source_mismatches": [],
+      "log_sha256_verified": true
+    },
+    {
+      "path": "docs/delivery/v2-development/terminology-owner-r1.json",
+      "sha256": "957a20a37895fa9d68db3c0d10031bbb40eb0933f6b106b44e501ff7cae9b85e",
+      "status": "PASS",
+      "source_count": 2590,
+      "current_source_mismatches": [],
+      "log_sha256_verified": true
+    },
+    {
+      "path": "docs/delivery/v2-development/terminology-owner-review-r1.json",
+      "sha256": "184fd9ab48a5afc142d918c6a548e71f5291c13f994e4012697e046560d4c9c2",
+      "status": "PASS",
+      "source_count": 2590,
+      "current_source_mismatches": [],
+      "log_sha256_verified": true
+    },
+    {
+      "path": "docs/delivery/v2-development/terminology-regression-r1.json",
+      "sha256": "2dd5c80776ad6db50ddc52669116324e468ec26378469d72cfd8f3d0dd68887e",
+      "status": "PASS",
+      "source_count": 2590,
+      "current_source_mismatches": [],
+      "log_sha256_verified": true
+    },
+    {
+      "path": "docs/delivery/v2-development/terminology-regression-review-r1.json",
+      "sha256": "7657930ad3b1de62dd55fe640dc1f170510c7c41b0f4d0b64acce029eb20e834",
+      "status": "PASS",
+      "source_count": 2590,
+      "current_source_mismatches": [],
+      "log_sha256_verified": true
+    },
+    {
+      "path": "docs/delivery/v2-development/terminology-token-r1.json",
+      "sha256": "1c125c3e5cf4669562b0a09d1d11d960c60aa5ed19a57896854156f0fb734d82",
+      "status": "PASS",
+      "source_count": 2590,
+      "current_source_mismatches": [],
+      "log_sha256_verified": true
+    },
+    {
+      "path": "docs/delivery/v2-development/terminology-type-r1.json",
+      "sha256": "5f87d56a2b0605e23fbcf68f035cce35068350e8e7a6b60130a875514874fa43",
+      "status": "PASS",
+      "source_count": 2590,
+      "current_source_mismatches": [],
+      "log_sha256_verified": true
+    },
+    {
+      "path": "docs/delivery/v2-development/terminology-ui-r1.json",
+      "sha256": "f02e170f37f9ce6511dd80ac232919475a228daefc36bacb96b853e8aca8b22b",
+      "status": "PASS",
+      "source_count": 2590,
+      "current_source_mismatches": [],
+      "log_sha256_verified": true
+    },
+    {
+      "path": "docs/delivery/v2-development/terminology-ui-review-r1.json",
+      "sha256": "94af143ad3b47547094a0b6936fc6585fe0d6511164fa3f29bcdae4609d37b35",
+      "status": "PASS",
+      "source_count": 2590,
+      "current_source_mismatches": [],
+      "log_sha256_verified": true
+    }
+  ],
+  "public_manifest_sha256": "c54c87073dbd7c09d4844c6b9884c1a466491b3a9e86064511fa1983acbc9178",
+  "closed_findings": [
+    "Receipt binds original project incarnation and edition immutable identity, with nonprovision owner lease held through original commit.",
+    "UNKNOWN requires explicit live authorized GET reconciliation; generation compare-clear and epoch fencing prevent stale completion clearing newer admissions.",
+    "Otherwise-valid root, nested and escaped duplicate keys rejected server-side without writes; raw file bytes retained for canonical server validation.",
+    "Literal FEFF and NEL behavior verified through actual RuleIn validator; no silent trimming/normalization."
+  ],
+  "limits": [
+    "Current sparse source snapshot contains 2590 hashed source files; historical docs/delivery omitted intentionally; no full-history closure claim.",
+    "Original File Studio project identity must already exist; portability does not provision a marker. Old B05 tools unchanged.",
+    "UNKNOWN late-commit test proves a selected sequential interleaving and original CAS; not actual concurrent HTTP/transaction stress.",
+    "Client unknown latch is per captured client/edition, not durable across application restart. No automatic POST replay.",
+    "Actual PostgreSQL, browser/visual/native, provider/model, hosted CI and integrated PUBLIC packaging NOT_RUN here.",
+    "B05 remains PARTIAL; P0 BLOCKED / R3-GATE HOLD unchanged."
+  ],
+  "product_files_modified_by_reviewer": []
+}

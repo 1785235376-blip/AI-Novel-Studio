@@ -71,6 +71,24 @@ def create_multilingual_editions_router(service, authorize, require_flag, *, pre
         data = await body(request, RuleIn); actor, scope, again = access(nid, x_session_token, x_branch_id, response)
         result = api_call(service.add_rule, nid, scope, actor, eid, data, reauthorize=again); again(); return result
 
+    from .terminology_portability import TerminologyPortability, GlossaryPreviewIn, GlossaryAdoptIn
+    glossary = TerminologyPortability(service)
+
+    @router.post('/{eid}/glossary/preview')
+    async def glossary_preview(nid: str, eid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        data = await body(request, GlossaryPreviewIn); actor, scope, again = access(nid, x_session_token, x_branch_id, response)
+        result = api_call(glossary.preview, nid, scope, actor, eid, data, reauthorize=again); again(); return result
+
+    @router.post('/{eid}/glossary/adopt')
+    async def glossary_adopt(nid: str, eid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        data = await body(request, GlossaryAdoptIn); actor, scope, again = access(nid, x_session_token, x_branch_id, response)
+        result = api_call(glossary.adopt, nid, scope, actor, eid, data, reauthorize=again); again(); return result
+
+    @router.post('/{eid}/glossary/export')
+    async def glossary_export(nid: str, eid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        data = await body(request, VersionIn); actor, scope, again = access(nid, x_session_token, x_branch_id, response)
+        result = api_call(glossary.export, nid, scope, actor, eid, data, reauthorize=again); again(); return result
+
     @router.post('/{eid}/rules/{rid}/review')
     async def review_rule(nid: str, eid: str, rid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         data = await body(request, RuleReviewIn); actor, scope, again = access(nid, x_session_token, x_branch_id, response, 'domain.review')

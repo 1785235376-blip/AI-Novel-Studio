@@ -1,0 +1,4 @@
+usage: run_v2_checks.py [-h] [--postgres-url POSTGRES_URL]
+                        [--collaboration-runtime]
+                        label ...
+run_v2_checks.py: error: unrecognized arguments: --label
