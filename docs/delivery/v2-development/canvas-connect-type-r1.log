@@ -1,0 +1,2 @@
+src/creative/GraphCanvas.tsx(298,21): error TS2339: Property 'connection' does not exist on type 'never'.
+src/creative/StudioGraphConnection.additive.test.tsx(73,46): error TS2322: Type '0' is not assignable to type '40'.

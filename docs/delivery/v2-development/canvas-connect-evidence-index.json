@@ -1,0 +1,270 @@
+{
+  "status": "INDEXED_AFTER_SCOPED_INDEPENDENT_REVIEW",
+  "base_head": "e18ae7bff060c8eeddc5bd9d8f8673a14507a94a",
+  "final_source_count": 2585,
+  "final_sources_match_current": true,
+  "all_primary_independent_source_maps_equal": true,
+  "primary_frontend": {
+    "ui_modules": 26,
+    "ui_tests": 446,
+    "new_tests": 44,
+    "forced_typescript": "PASS",
+    "vite_build": "PASS_WITH_LARGE_CHUNK_WARNING",
+    "token_files": 52
+  },
+  "primary_file": {
+    "passed": 339,
+    "postgres_deselected": 20,
+    "skipped": 0,
+    "scope": "Unchanged original persistence/API/contract/schema baseline; not browser drag E2E"
+  },
+  "independent": {
+    "ui_modules": 8,
+    "ui_tests": 211,
+    "new_tests_included": 44,
+    "file_passed": 339,
+    "postgres_deselected": 20,
+    "skipped": 0,
+    "counts_overlap_primary": true
+  },
+  "receipt_validation": {
+    "docs/delivery/v2-development/canvas-connect-ui-r2.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2585,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/canvas-connect-type-r2.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2585,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/canvas-connect-build-r2.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2585,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/canvas-connect-token-r2.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2585,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/canvas-connect-file-origin-r1.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2585,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/canvas-connect-file-regression-r1.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2585,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/canvas-connect-independent-origin-r1.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2585,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/canvas-connect-independent-ui-r1.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2585,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/canvas-connect-independent-file-r1.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2585,
+      "pre_equals_post": true,
+      "equals_final_sources": true,
+      "log_hash_verified": true
+    }
+  },
+  "retained_attempt_validation": {
+    "docs/delivery/v2-development/canvas-connect-ui-r1.json": {
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 2585,
+      "pre_equals_post": true,
+      "equals_final_sources": false,
+      "log_hash_verified": true
+    },
+    "docs/delivery/v2-development/canvas-connect-type-r1.json": {
+      "status": "FAIL",
+      "exit_code": 1,
+      "source_count": 2585,
+      "pre_equals_post": true,
+      "equals_final_sources": false,
+      "log_hash_verified": true
+    }
+  },
+  "notes": [
+    "Valid pointer drop stages existing pending source/target; only original explicit Connect creates an edge.",
+    "Original geometry, validator, Connect implementation, backend and existing tests unchanged.",
+    "r1 UI passed; r1 forced TypeScript failed. Narrow runtime return-value and new capacity-fixture fixes reviewed before frozen r2 rerun.",
+    "Historical r1 snapshots differ from final sources and are retained as earlier evidence, not final-source proofs.",
+    "All nine final receipt maps are equal and current; independent counts repeat primary coverage.",
+    "Real-browser pointer capture, visual regression and actual browser geometry NOT RUN. jsdom geometry/hit tests and mocked save/reopen are synthetic.",
+    "File tests cover original persistence/API contracts separately from pointer interaction.",
+    "No prior indexed ledger or delivery document changed; full collection inventory is separate."
+  ],
+  "files": {
+    "docs/CANVAS_TYPED_CONNECTION_HANDOFF.md": {
+      "sha256": "7a10547df1959efce45518de50cd3922b0892fbe78f684c029caf06120948f18",
+      "bytes": 8058
+    },
+    "docs/delivery/v2-development/canvas-connect-build-r2.json": {
+      "sha256": "876520ed6a3c818988a74550d501a7c21f39376ea71d7bab0a82755cfa3c0e99",
+      "bytes": 612249
+    },
+    "docs/delivery/v2-development/canvas-connect-build-r2.log": {
+      "sha256": "7e669315d594f0fba9bb607c9cc308c86c6396c1e80515f9ac0703d45ade9219",
+      "bytes": 1679
+    },
+    "docs/delivery/v2-development/canvas-connect-file-origin/file-regression-launcher.log": {
+      "sha256": "939382ed5ef1891b18eb23bcd3931215e99999acf84db42169390d92779ced4f",
+      "bytes": 537
+    },
+    "docs/delivery/v2-development/canvas-connect-file-origin/normal-startup.json": {
+      "sha256": "4c0ec219994067b2c2a26dbb1f7cd30933e3aaddab18f312f99d05470c2473c2",
+      "bytes": 8524
+    },
+    "docs/delivery/v2-development/canvas-connect-file-origin/normal-startup.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/canvas-connect-file-origin/origin-probe.py": {
+      "sha256": "e3712b6b2415a51090293e7d4aa6325aa510970ed9ad59cf053152e00e6d6c6f",
+      "bytes": 6486
+    },
+    "docs/delivery/v2-development/canvas-connect-file-origin/proof-launcher.log": {
+      "sha256": "b0e59416420965f4e5bc0bb4839b7fd0f9a907726b6ae8c1f04fd8fec55f7c43",
+      "bytes": 8685
+    },
+    "docs/delivery/v2-development/canvas-connect-file-origin/run-file-regression.sh": {
+      "sha256": "060053d5354300d0c9b5825fd697b65af7bd3b5935726d857ecd59227d072122",
+      "bytes": 999
+    },
+    "docs/delivery/v2-development/canvas-connect-file-origin/run-proof.sh": {
+      "sha256": "5730d15628412459fe05d3f6881e9d22773f2753d897039a7c42c4455bf66dc6",
+      "bytes": 1197
+    },
+    "docs/delivery/v2-development/canvas-connect-file-origin-r1.json": {
+      "sha256": "ed32aaf5540357a6be321d4876c10315b4ea0e317a3fccb47d7d28786ffbffb3",
+      "bytes": 612548
+    },
+    "docs/delivery/v2-development/canvas-connect-file-origin-r1.log": {
+      "sha256": "517ed1ae20990be2cca045c1bfac0d7070c6a50a11791518bcfe3221a5c877aa",
+      "bytes": 8587
+    },
+    "docs/delivery/v2-development/canvas-connect-file-regression-r1.json": {
+      "sha256": "1e974fe360b7d3d05afa4c937c750605e45c2c1c9438cdbe004892b43513023e",
+      "bytes": 612741
+    },
+    "docs/delivery/v2-development/canvas-connect-file-regression-r1.log": {
+      "sha256": "7d244102a8d97b7ba5d02cf2cce1f30d4d51c180c2bf65a86d5c547725ef3758",
+      "bytes": 435
+    },
+    "docs/delivery/v2-development/canvas-connect-frontend/run-frontend-r1.sh": {
+      "sha256": "0ddf0097658dc196337cbe2c11465fa167e36bfb444fc404e45ea288f999c291",
+      "bytes": 2776
+    },
+    "docs/delivery/v2-development/canvas-connect-frontend/run-frontend-r2.sh": {
+      "sha256": "189691c79cd9ca7b0338fe1e3a83c675731204af3591ee4fa0a8723f5f6e1bfb",
+      "bytes": 2776
+    },
+    "docs/delivery/v2-development/canvas-connect-independent/normal-startup.json": {
+      "sha256": "bcfd7a628bcad7048b9e2a16c482ee1f296ae188fe36510cc806137bd6048a2e",
+      "bytes": 8524
+    },
+    "docs/delivery/v2-development/canvas-connect-independent/run.sh": {
+      "sha256": "ec81da3a9026454105ad0eff91aeee64f5a932682c22a017a1695fe628436555",
+      "bytes": 2176
+    },
+    "docs/delivery/v2-development/canvas-connect-independent-file-r1.json": {
+      "sha256": "01cd3ce764cce681cb9ee86df0637b50b5a8bec96f30607ed090faa3cdd6243a",
+      "bytes": 612751
+    },
+    "docs/delivery/v2-development/canvas-connect-independent-file-r1.log": {
+      "sha256": "30a0ab91e0b8b4cf7687357197d6f39ad18996f87a96fcba43eead771a06131d",
+      "bytes": 435
+    },
+    "docs/delivery/v2-development/canvas-connect-independent-origin-r1.json": {
+      "sha256": "6469391dbcf216e3deccf42530c2bd98335e905bbb09c3b16547f453a692193c",
+      "bytes": 612611
+    },
+    "docs/delivery/v2-development/canvas-connect-independent-origin-r1.log": {
+      "sha256": "a0a41eb09dccbb090820a6fd3c85f0dbd093cb548460e862b2156a5327abe687",
+      "bytes": 8587
+    },
+    "docs/delivery/v2-development/canvas-connect-independent-ui-r1.json": {
+      "sha256": "ed884ffc03cd7d3920bbe5b14466f02c34db52d69491785fa11a652bc0a7f935",
+      "bytes": 612799
+    },
+    "docs/delivery/v2-development/canvas-connect-independent-ui-r1.log": {
+      "sha256": "43c13d75f39708e40dce006d20b6ef9a20f0f6515bb446c6c04324d7653b8691",
+      "bytes": 993
+    },
+    "docs/delivery/v2-development/canvas-connect-token-r2.json": {
+      "sha256": "2465becced18f8f9d7fb181d0d837c2fafbce77f2036459d3c8fa78481c2d706",
+      "bytes": 612282
+    },
+    "docs/delivery/v2-development/canvas-connect-token-r2.log": {
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "bytes": 31
+    },
+    "docs/delivery/v2-development/canvas-connect-type-r1.json": {
+      "sha256": "9824adb03133b17a5ce6f9c48688c1eea1698976ee4a7950ee71873fa6137817",
+      "bytes": 612247
+    },
+    "docs/delivery/v2-development/canvas-connect-type-r1.log": {
+      "sha256": "b7470d884eb6d00db68937b07565145b448ebe016de3b342f27c55dafcde5fe7",
+      "bytes": 222
+    },
+    "docs/delivery/v2-development/canvas-connect-type-r2.json": {
+      "sha256": "335c4d67d173c5a0270a0dc9f5d5794014ed4749ddd7a7b75379ae964ca0e468",
+      "bytes": 612247
+    },
+    "docs/delivery/v2-development/canvas-connect-type-r2.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/delivery/v2-development/canvas-connect-ui-r1.json": {
+      "sha256": "6cf4e980d8c0f86ef8848194bb3f06fb95b7b1180cf2b7a789068fcfd61aadb8",
+      "bytes": 613505
+    },
+    "docs/delivery/v2-development/canvas-connect-ui-r1.log": {
+      "sha256": "c3b44d11a441e9fe3c8d5b70ccc9f11ce48d8501a24c8da4bd9b04337fc6a83f",
+      "bytes": 5979
+    },
+    "docs/delivery/v2-development/canvas-connect-ui-r2.json": {
+      "sha256": "3aad9b4aba8fb0149f3e5e87ae00254b90ec8f23690dd8d00c39ecbaf52b2be0",
+      "bytes": 613505
+    },
+    "docs/delivery/v2-development/canvas-connect-ui-r2.log": {
+      "sha256": "885ddf820012b170e6e4883df82461ed851537439164d5d1c558841cc769db74",
+      "bytes": 5980
+    }
+  }
+}

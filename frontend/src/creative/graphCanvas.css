@@ -75,3 +75,9 @@
 .graph-canvas__note.is-selected{border-color:var(--color-selection-border)}
 .graph-canvas__note>.ui-button{flex:none;justify-content:flex-start;border-bottom:var(--border-default);cursor:grab}
 .graph-canvas__note>p{margin:0;padding:var(--space-2);font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;overflow:auto;user-select:text}
+
+/* Temporary connection guidance uses the existing selection/status tokens. */
+.graph-canvas__edges>path.graph-canvas__connection-preview{stroke:var(--color-accent-primary);stroke-dasharray:8 4}
+.graph-canvas__edges>path.graph-canvas__connection-preview.is-invalid{stroke:var(--color-status-error)}
+.graph-canvas__port.ui-button.is-connection-compatible{background:var(--color-selection-bg);box-shadow:inset 0 0 0 1px var(--color-selection-border)}
+.graph-canvas__port.ui-button.is-connection-invalid{box-shadow:inset 0 0 0 1px var(--color-status-error)}

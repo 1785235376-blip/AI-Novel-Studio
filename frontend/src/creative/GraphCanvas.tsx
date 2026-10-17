@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, KeyboardEvent, PointerEvent } from 'react';
 import { Hand, MousePointer2, Trash2, ZoomIn, ZoomOut } from 'lucide-react';
 import { Badge, Button } from '../ui/primitives';
@@ -7,7 +7,7 @@ import type { StudioGraphDefinition, StudioGraphPosition, StudioGraphViewPrefere
 import {
   GRAPH_MAX_ZOOM, GRAPH_MIN_ZOOM, GRAPH_NODE_HEADER_HEIGHT, GRAPH_NODE_WIDTH, GRAPH_PORT_ROW_HEIGHT,
   alignGraphNodes, clampGraphPosition, snapGraphNodes, graphEdgePath, graphNodeHeight, graphNodesInScreenRect,
-  graphSelectionRect, isGraphEditableTarget, moveGraphNodes, removeGraphNodes, zoomGraphAt,
+  graphSelectionRect, graphPortPosition, graphScreenToWorld, isGraphEditableTarget, moveGraphNodes, removeGraphNodes, zoomGraphAt,
 } from './graphCanvasGeometry';
 import type { GraphAlignment, GraphCanvasNodeDefinition, GraphCanvasRect } from './graphCanvasGeometry';
 import { collapseGraphDisplay, createGraphDisplayIndex, projectGraphDisplay, projectGraphMiniMap, GRAPH_VIEW_OVERSCAN } from './graphCanvasPresentation';
@@ -26,6 +26,10 @@ export type GraphCanvasProps = {
   /** Pointer gestures preview locally, then publish one record. Wheel bursts record their first change only. */
   onDefinitionChange: (definition: StudioGraphDefinition, record?: boolean) => void;
   onPortSelect?: (selection: GraphCanvasPortSelection) => void;
+  /** Advisory legality remains owned by the original graph editor, not the canvas. */
+  connectionIssue?: (source: GraphCanvasPortSelection, target: GraphCanvasPortSelection) => string | undefined;
+  connectionScope?: object;
+  onConnectionStage?: (source: GraphCanvasPortSelection, target: GraphCanvasPortSelection, scope: object) => boolean;
   protectedNodeIds?: readonly string[];
   /** Pending connection endpoints owned by the existing editor controller. */
   connectionNodeIds?: readonly string[];
@@ -38,7 +42,7 @@ export type GraphCanvasProps = {
 };
 
 type Gesture = {
-  kind: 'drag' | 'pan' | 'marquee';
+  kind: 'drag' | 'pan' | 'marquee' | 'connection';
   pointerId: number;
   source: StudioGraphDefinition;
   owner: GraphCanvasProps['interactionKey'];
@@ -50,20 +54,32 @@ type Gesture = {
   snapStep: number | null;
   rect?: GraphCanvasRect;
   moved: boolean;
+  connection?: { port: GraphCanvasPortSelection; scope: object; fence: object };
 };
+type ConnectionPreview = { start: StudioGraphPosition; end: StudioGraphPosition; target?: GraphCanvasPortSelection; issue?: string };
 
 const sameIds = (a: readonly string[], b: readonly string[]) => a.length === b.length && a.every((id, index) => id === b[index]);
 
 export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSelectionChange, onDefinitionChange,
-  onPortSelect, protectedNodeIds = [], connectionNodeIds = [], interactionKey, preferencesSource, readonly = false, busy = false }: GraphCanvasProps) {
+  onPortSelect, connectionIssue, connectionScope, onConnectionStage, protectedNodeIds = [], connectionNodeIds = [], interactionKey, preferencesSource, readonly = false, busy = false }: GraphCanvasProps) {
   const blocked = readonly || busy;
   const [selectedNote, setSelectedNote] = useState<string | null>(null);
   useEffect(() => { setSelectedNote(null); }, [interactionKey, preferencesSource]);
   const viewportRef = useRef<HTMLDivElement>(null);
   const gesture = useRef<Gesture | null>(null);
+  const [connectionPreview, setConnectionPreview] = useState<ConnectionPreview | null>(null);
+  const [connectionMessage, setConnectionMessage] = useState('');
+  const suppressPortClick = useRef(false);
+  const connectionValues = [definition, interactionKey, preferencesSource, blocked, connectionScope, JSON.stringify(nodeDefinitions)];
+  const connectionFence = useRef({ values: connectionValues, token: {} });
+  if (connectionValues.some((value, index) => !Object.is(value, connectionFence.current.values[index]))) {
+    connectionFence.current = { values: connectionValues, token: {} };
+  }
+  const connectionToken = connectionFence.current.token;
   const wheelUntil = useRef(0);
   const [preview, setPreview] = useState<{ source: StudioGraphDefinition; value: StudioGraphDefinition } | null>(null);
   const [marquee, setMarquee] = useState<GraphCanvasRect | null>(null);
+  const measuredViewport = useRef<{ width: number; height: number } | null>(null);
   const [viewportSize, setViewportSize] = useState<{ width: number; height: number } | null>(null);
   const [focusedGroup, setFocusedGroup] = useState<string | null>(null);
   const [fold, setFold] = useState<{ owner: GraphCanvasProps['interactionKey'];
@@ -100,7 +116,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
   const displayIndex = useMemo(() => createGraphDisplayIndex(visible.nodes, visible.edges, nodeDefinitions, visible.presentation?.groups), [visible.nodes, visible.edges, nodeDefinitions, visible.presentation?.groups]);
   const allNodeIds = useMemo(() => new Set(definition.nodes.map(node => node.id)), [definition.nodes]);
   const selected = selectedNodeIds.filter(id => allNodeIds.has(id));
-  const retained = [...selected, ...(gesture.current?.ids || []), ...connectionNodeIds, ...(focusedNode ? [focusedNode] : [])];
+  const retained = [...selected, ...(gesture.current?.ids || []), ...connectionNodeIds, ...(connectionPreview?.target ? [connectionPreview.target.nodeId] : []), ...(focusedNode ? [focusedNode] : [])];
   const collapse = collapseGraphDisplay(displayIndex, visible.edges, collapsedGroups, retained);
   // Expansion for an interaction anchor is permanent until explicitly collapsed again.
   const effectiveCollapseKey = JSON.stringify([...collapse.collapsedIds]);
@@ -131,6 +147,9 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
     if (!element) return;
     const measure = () => {
       const { width, height } = element.getBoundingClientRect();
+      const previousSize = measuredViewport.current;
+      if (previousSize && (previousSize.width !== width || previousSize.height !== height) && gesture.current?.kind === 'connection') cancelGesture();
+      measuredViewport.current = { width, height };
       setViewportSize(previous => previous?.width === width && previous.height === height ? previous : { width, height });
     };
     measure();
@@ -149,19 +168,46 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
   const cancelGesture = useCallback(() => {
     const current = gesture.current;
     gesture.current = null;
+    if (current?.kind === 'connection') suppressPortClick.current = true;
+    setConnectionPreview(null);
     setPreview(null); setMarquee(null); setActiveGesture(null);
     if (current) releaseCapture(current.pointerId);
   }, [releaseCapture]);
 
   useEffect(() => {
     cancelGesture();
+    const element = viewportRef.current;
     return () => {
       const current = gesture.current;
       gesture.current = null;
-      if (current) releaseCapture(current.pointerId);
+      // The ref may already be detached during passive unmount cleanup.
+      try { if (current && element?.hasPointerCapture?.(current.pointerId)) element.releasePointerCapture(current.pointerId); } catch { /* Already released. */ }
     };
   }, [definition, interactionKey, readonly, busy, cancelGesture, releaseCapture]);
 
+  useLayoutEffect(() => {
+    if (gesture.current?.kind === 'connection') cancelGesture();
+    setConnectionMessage('');
+  }, [connectionToken, cancelGesture]);
+  useEffect(() => {
+    const cancelConnection = () => { if (gesture.current?.kind === 'connection') cancelGesture(); };
+    const escape = (event: globalThis.KeyboardEvent) => {
+      if (event.key === 'Escape' && gesture.current?.kind === 'connection') {
+        event.preventDefault(); event.stopPropagation(); cancelGesture();
+      }
+    };
+    const resetClick = () => { suppressPortClick.current = false; };
+    window.addEventListener('keydown', escape, true);
+    window.addEventListener('scroll', cancelConnection, true);
+    window.addEventListener('resize', cancelConnection);
+    window.addEventListener('pointerdown', resetClick, true);
+    return () => {
+      window.removeEventListener('keydown', escape, true);
+      window.removeEventListener('scroll', cancelConnection, true);
+      window.removeEventListener('resize', cancelConnection);
+      window.removeEventListener('pointerdown', resetClick, true);
+    };
+  }, [cancelGesture]);
   useEffect(() => { wheelUntil.current = 0; }, [interactionKey, readonly, busy]);
 
   useEffect(() => {
@@ -207,12 +253,64 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
     setActiveGesture(kind);
     if (kind === 'marquee') setMarquee({ ...gesture.current.start, width: 0, height: 0 });
     try { viewportRef.current?.setPointerCapture?.(event.pointerId); } catch { cancelGesture(); }
+    return gesture.current;
+  };
+
+  const orderedConnection = (first: GraphCanvasPortSelection, second: GraphCanvasPortSelection) =>
+    first.direction === 'output' ? { source: first, target: second } : { source: second, target: first };
+  const explainConnection = (first: GraphCanvasPortSelection, second: GraphCanvasPortSelection) => {
+    if (first.direction === second.direction) return '请选择真实的输出端口和输入端口。';
+    const pair = orderedConnection(first, second);
+    return connectionIssue?.(pair.source, pair.target);
+  };
+  const hitPort = (x: number, y: number): GraphCanvasPortSelection | undefined => {
+    const hit = document.elementFromPoint?.(x, y)?.closest<HTMLButtonElement>('button[data-graph-port]');
+    if (!hit || hit.disabled || !viewportRef.current?.contains(hit)) return;
+    const nodeId = hit.closest('[data-graph-node-id]')?.getAttribute('data-graph-node-id');
+    const portId = hit.getAttribute('data-graph-port'), direction = hit.getAttribute('data-graph-direction');
+    if (!nodeId || !portId || (direction !== 'input' && direction !== 'output')) return;
+    const node = definition.nodes.find(value => value.id === nodeId);
+    const descriptor = node && displayIndex.descriptors.get(node.definition_id);
+    if (!(direction === 'input' ? descriptor?.inputs : descriptor?.outputs)?.some(port => port.id === portId)) return;
+    return { nodeId, portId, direction };
+  };
+  const connectionAt = (current: Gesture, x: number, y: number): ConnectionPreview | null => {
+    const connection = current.connection;
+    if (!connection || connection.fence !== connectionFence.current.token || blocked) return null;
+    const node = definition.nodes.find(value => value.id === connection.port.nodeId);
+    const anchor = node && graphPortPosition(node, displayIndex.descriptors.get(node.definition_id), connection.port.direction, connection.port.portId);
+    if (!anchor) return null;
+    const rect = viewportRef.current!.getBoundingClientRect();
+    const target = hitPort(x, y);
+    const targetNode = target && definition.nodes.find(value => value.id === target.nodeId);
+    const end = target && targetNode ? graphPortPosition(targetNode, displayIndex.descriptors.get(targetNode.definition_id), target.direction, target.portId) : null;
+    const point = end || graphScreenToWorld({ x: x - rect.left, y: y - rect.top }, definition.viewport);
+    return { start: connection.port.direction === 'output' ? anchor : point,
+      end: connection.port.direction === 'output' ? point : anchor, target,
+      issue: target ? explainConnection(connection.port, target) : undefined };
+  };
+  const startConnection = (event: PointerEvent, port: GraphCanvasPortSelection) => {
+    event.stopPropagation();
+    if (event.button !== 0 || event.altKey || tool === 'pan' || blocked || gesture.current
+      || !connectionScope || !onConnectionStage || !connectionIssue) return;
+    event.currentTarget instanceof HTMLElement && event.currentTarget.focus();
+    const started = startGesture(event, 'connection', [port.nodeId], port.nodeId);
+    if (!started) return;
+    started.connection = { port, scope: connectionScope, fence: connectionToken };
+    setConnectionMessage('');
+    setConnectionPreview(connectionAt(started, event.clientX, event.clientY));
   };
 
   const moveGesture = (event: PointerEvent<HTMLDivElement>) => {
     const current = gesture.current;
     if (!current || current.pointerId !== event.pointerId) return;
     if (current.source !== definition || current.owner !== interactionKey || busy || (blocked && current.kind !== 'marquee')) { cancelGesture(); return; }
+    if (current.kind === 'connection') {
+      current.moved ||= Math.hypot(event.clientX - current.start.x, event.clientY - current.start.y) >= 4;
+      const next = connectionAt(current, event.clientX, event.clientY);
+      if (!next) { cancelGesture(); return; }
+      setConnectionPreview(next); return;
+    }
     if (current.kind === 'marquee') {
       const rect = event.currentTarget.getBoundingClientRect();
       current.rect = graphSelectionRect(current.start, { x: event.clientX - rect.left, y: event.clientY - rect.top });
@@ -230,6 +328,22 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
   const finishGesture = (event: PointerEvent<HTMLDivElement>) => {
     const current = gesture.current;
     if (!current || current.pointerId !== event.pointerId) return;
+    if (current.kind === 'connection') {
+      const next = connectionAt(current, event.clientX, event.clientY);
+      current.moved ||= Math.hypot(event.clientX - current.start.x, event.clientY - current.start.y) >= 4;
+      cancelGesture();
+      if (!next || !current.connection) return;
+      // Capture retargets the browser click to the viewport. Select here exactly
+      // once, then suppress its physical click while preserving keyboard clicks.
+      if (!current.moved) { onPortSelect?.(current.connection.port); return; }
+      if (!next.target) { setConnectionMessage('连接已取消；请拖到真实的输入或输出端口。'); return; }
+      if (next.issue) { setConnectionMessage(next.issue); return; }
+      const pair = orderedConnection(current.connection.port, next.target);
+      if (onConnectionStage?.(pair.source, pair.target, current.connection.scope)) {
+        setConnectionMessage('已选择连接端口；请点击“连接所选端口”确认。');
+      }
+      return;
+    }
     const valid = current.source === definition && current.owner === interactionKey && !busy && (!blocked || current.kind === 'marquee');
     cancelGesture();
     if (!valid) return;
@@ -436,6 +550,8 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
         })}
         <svg className="graph-canvas__edges" aria-hidden="true">
           <defs><marker id={markerId} viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" /></marker></defs>
+          {connectionPreview && <path data-testid="graph-connection-preview" className={`graph-canvas__connection-preview${connectionPreview.issue ? ' is-invalid' : ''}`}
+            d={graphEdgePath(connectionPreview.start, connectionPreview.end)} />}
           {display.edges.map(edge => <path key={edge.id} data-graph-edge-id={edge.id} d={graphEdgePath(edge.start, edge.end)} markerEnd={`url(#${markerId})`} />)}
         </svg>
         <GraphNoteCards definition={definition} blocked={blocked || !!activeGesture} owner={interactionKey}
@@ -465,7 +581,15 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
                   {ports?.map(port => {
                     const text = <><span className="graph-canvas__port-dot" aria-hidden="true" /><span className="graph-canvas__port-copy"><span>{direction === 'input' ? '输入' : '输出'} · {port.label || port.id}{port.required ? ' *' : ''}</span><small>{port.type}</small></span></>;
                     const ariaLabel = `${label} ${node.id} ${direction === 'input' ? '输入' : '输出'}端口 ${port.label || port.id} · ${port.type}${port.required ? ' · 必需' : ''}`;
-                    return onPortSelect ? <Button type="button" variant="ghost" key={port.id} data-graph-port={port.id} className="graph-canvas__port" aria-label={ariaLabel} disabled={blocked} onPointerDown={event => event.stopPropagation()} onClick={() => onPortSelect({ nodeId: node.id, portId: port.id, direction })}>{text}</Button>
+                    const endpoint = { nodeId: node.id, portId: port.id, direction };
+                    const dragging = gesture.current?.connection;
+                    const compatible = !!dragging && dragging.fence === connectionToken && !explainConnection(dragging.port, endpoint);
+                    const hovered = connectionPreview?.target?.nodeId === node.id && connectionPreview.target.portId === port.id && connectionPreview.target.direction === direction;
+                    return onPortSelect ? <Button type="button" variant="ghost" key={port.id} data-graph-port={port.id} data-graph-direction={direction}
+                      data-connection-compatible={dragging ? compatible : undefined}
+                      className={`graph-canvas__port${compatible ? ' is-connection-compatible' : ''}${hovered && connectionPreview?.issue ? ' is-connection-invalid' : ''}`}
+                      aria-label={ariaLabel} disabled={blocked} onPointerDown={event => startConnection(event, endpoint)}
+                      onClick={event => { if (event.detail !== 0 && suppressPortClick.current) { suppressPortClick.current = false; return; } onPortSelect(endpoint); }}>{text}</Button>
                       : <span key={port.id} className="graph-canvas__port" aria-label={ariaLabel}>{text}</span>;
                   })}
                 </div>;
@@ -478,6 +602,9 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       {marquee && <div className="graph-canvas__marquee" data-testid="graph-selection-marquee" style={marquee} />}
       {!definition.nodes.length && !definition.presentation?.notes?.length && <p className="graph-canvas__empty">从节点目录添加第一个节点，再选择输入和输出端口连接。</p>}
     </div>
+    {(connectionPreview || connectionMessage) && <p className="graph-canvas__help" role="status" aria-live="polite">
+      {connectionPreview ? connectionPreview.issue || '拖到兼容端口以选择连接；松开后仍需点击“连接所选端口”。' : connectionMessage}
+    </p>}
     {showMiniMap && <div className="graph-canvas__minimap-row">
       <Button type="button" variant="ghost" className="graph-canvas__minimap" aria-label="小地图导航" aria-describedby={`${descriptionId}-minimap`}
         disabled={blocked || !miniMap.camera || !miniMap.cards.length} onKeyDown={event => {

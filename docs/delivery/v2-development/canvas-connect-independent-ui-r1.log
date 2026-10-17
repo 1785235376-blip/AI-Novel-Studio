@@ -1,0 +1,18 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-timeline-waveform/frontend
+
+ ✓ src/creative/GraphCanvas.presentation.additive.test.tsx (71 tests) 3952ms
+   ✓ measured viewport rendering > filters 1200 display instances with bounded DOM, pages by keyboard and never writes while typing 684ms
+ ✓ src/creative/GraphCanvas.test.tsx (25 tests) 1304ms
+ ✓ src/creative/GraphCanvas.connection.additive.test.tsx (29 tests) 1083ms
+ ✓ src/creative/graphSelectionCopyController.test.tsx (23 tests) 1390ms
+ ✓ src/creative/StudioGraphConnection.additive.test.tsx (15 tests) 1058ms
+ ✓ src/creative/GraphReadRevocation.regression.test.tsx (8 tests) 234ms
+ ✓ src/creative/useStudioGraphEditor.storyboardAuthority.additive.test.tsx (1 test) 16ms
+ ✓ src/creative/graphDraft.test.ts (39 tests) 9ms
+
+ Test Files  8 passed (8)
+      Tests  211 passed (211)
+   Start at  17:37:56
+   Duration  14.57s (transform 910ms, setup 86ms, collect 2.11s, tests 9.04s, environment 2.00s, prepare 373ms)
+

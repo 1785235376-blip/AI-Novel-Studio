@@ -82,6 +82,39 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const current = useCallback(() => alive.current && isCurrent(), [isCurrent]);
   const locked = () => busy || recoveryBusy || saving.current || !!isBusy?.();
   const editable = !!catalog && canMutate && !denied && !busy && !recoveryBusy && !externalDirty && !executionDirty && !blocked && base?.can_edit !== false && current();
+  // A fresh token denotes an actual authority transition, including A → B → A.
+  // Unrelated selection/status renders preserve it; callbacks also recheck live locks.
+  const connectionAuthority = [identity, client, ownerKey, base, draft, catalog, active, denied, canMutate,
+    busy, recoveryBusy, externalDirty, executionDirty, blocked, editable, current()];
+  const connectionFence = useRef({ values: connectionAuthority, token: {} });
+  if (connectionAuthority.some((value, index) => !Object.is(value, connectionFence.current.values[index]))) {
+    connectionFence.current = { values: connectionAuthority, token: {} };
+  }
+  const connectionScope = connectionFence.current.token;
+  const connectionLive = useRef({ current, locked });
+  connectionLive.current = { current, locked };
+  function connectionSelectionCurrent(scope: object): boolean {
+    return scope === connectionFence.current.token && scope === connectionScope && active && editable
+      && connectionLive.current.current() && !connectionLive.current.locked()
+      && draftRef.current === draft && baseRef.current === base && !!catalog;
+  }
+  function selectConnectionPort(port: { nodeId: string; portId: string; direction: 'input' | 'output' }, scope: object) {
+    if (!connectionSelectionCurrent(scope)) return;
+    const node = draft.nodes.find(value => value.id === port.nodeId);
+    const descriptor = node && graphCatalogForSchema(catalog!.definitions, draft.schema_version).find(value => value.id === node.definition_id);
+    if (!(port.direction === 'output' ? descriptor?.outputs : descriptor?.inputs)?.some(value => value.id === port.portId)) return;
+    (port.direction === 'output' ? setSourcePort : setTargetPort)(JSON.stringify([port.nodeId, port.portId]));
+  }
+  function stageConnection(source: { nodeId: string; portId: string; direction: 'input' | 'output' },
+    target: { nodeId: string; portId: string; direction: 'input' | 'output' }, scope: object): boolean {
+    if (!connectionSelectionCurrent(scope) || !catalog || source.direction !== 'output' || target.direction !== 'input') return false;
+    const edge = { id: 'pending-connection', source_node_id: source.nodeId, source_port: source.portId,
+      target_node_id: target.nodeId, target_port: target.portId };
+    if (connectionIssue(draft, catalog.definitions, edge)) return false;
+    setSourcePort(JSON.stringify([source.nodeId, source.portId]));
+    setTargetPort(JSON.stringify([target.nodeId, target.portId]));
+    return true;
+  }
   const recoveryFence = useRef({ ownerKey, busy, externalDirty, executionDirty, canMutate });
   recoveryFence.current = { ownerKey, busy, externalDirty, executionDirty, canMutate };
   const node = draft.nodes.find(row => row.id === selected[0]);
@@ -583,7 +616,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     planningDocuments: current() ? planningDocuments : [], planningChoice: current() ? planningChoice : '', planningLoading, choosePlanningDocument, loadPlanningDocuments, loadProductionCatalog, updateProductionField, updateShotBinding, updateReferenceMetadata,
     discard, load, loadImageCatalog, change, applyAutoLayout, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
     setReplaceConfirmed, setCandidate, setDiscardConfirmed, setPendingNavigation, setKind, setAssetChoice,
-    setSourcePort, setTargetPort, setSelected, reportRunSelection, mediaSchemaConsent, setMediaSchemaConsent, upgradeMediaSchema, executionDirty, setExecutionDirty,
+    connectionScope, stageConnection, selectConnectionPort, setSourcePort, setTargetPort, setSelected, reportRunSelection, mediaSchemaConsent, setMediaSchemaConsent, upgradeMediaSchema, executionDirty, setExecutionDirty,
     imageSchemaConfirmed, confirmImageSchema, upgradeImageSchema, updateImagePrompt, updateImageReference,
     updateMediaField, updateMediaParameter, clearUnsupportedMediaParameters, clearMediaTrimInputs, timelineEditor,
   };
