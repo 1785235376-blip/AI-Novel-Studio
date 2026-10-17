@@ -1,0 +1,18 @@
+{
+  "status": "FROZEN_FRONTEND_ONLY_SUPPLEMENT",
+  "head": "f4a6fed15cc52c0323e73f5e410e184c42bb5200",
+  "tree": "6b74fa47ce0ac77f994f6e8961529f8b48d67664",
+  "feature_commit": "a557889b473f0b2976369a0805115fcd02ee8a56",
+  "accepted_backend_head": "db6487b5eab7340433426fefcb5499122ec3d881",
+  "evidence_baseline": "550396ae4de489e21c41288335dae557bbd5dbfa",
+  "exact_frontend_delta": [
+    "frontend/src/creative/GraphDirectorCanvasHandoff.additive.test.tsx",
+    "frontend/src/creative/GraphDirectorConsole.tsx",
+    "frontend/src/creative/ReviewedDirectorCanvas.integration.test.tsx",
+    "frontend/src/creative/directorCanvasHandoff.additive.test.tsx",
+    "frontend/src/creative/directorCanvasHandoff.ts",
+    "frontend/src/creative/useStudioGraphEditor.tsx",
+    "frontend/src/creative/useStudioGraphEditorController.ts"
+  ],
+  "backend_paths_byte_identical": 1478
+}

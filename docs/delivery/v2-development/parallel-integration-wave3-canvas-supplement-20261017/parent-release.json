@@ -1,0 +1,1 @@
+{"authorized":true,"head":"f4a6fed15cc52c0323e73f5e410e184c42bb5200","feature_commit":"a557889b473f0b2976369a0805115fcd02ee8a56","scope":"Fresh complete UI union, forced TS, Vite, token, origin/full-tree guards and in-place archive payload reuse audit only; no backend rerun or archive rebuild."}

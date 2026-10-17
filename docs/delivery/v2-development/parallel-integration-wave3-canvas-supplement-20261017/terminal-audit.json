@@ -1,0 +1,58 @@
+{
+  "status": "PASS_FRONTEND_ONLY_SUPPLEMENT",
+  "head": "f4a6fed15cc52c0323e73f5e410e184c42bb5200",
+  "tree": "6b74fa47ce0ac77f994f6e8961529f8b48d67664",
+  "source_count": 2629,
+  "tracked_count": 12689,
+  "backend_paths_byte_identical": 1478,
+  "backend_tests_rerun": false,
+  "packaging_tests_rerun": false,
+  "archive_rebuilt": false,
+  "historical_accepted_head": "db6487b5eab7340433426fefcb5499122ec3d881",
+  "historical_complete_index_sha256": "e8ef9024afb01efee4d78daefdf9f0b3fb34a1d63e30ac9f593ec1474d51eda5",
+  "receipts": {
+    "origin-before": {
+      "receipt": "docs/delivery/v2-development/wave3-canvas-supplement-origin-before-r1.json",
+      "sha256": "df9fd95bc363f478dd7b58b3556cb91afc0a725a2cd9afe67de8db424fd767dd",
+      "log": "docs/delivery/v2-development/wave3-canvas-supplement-origin-before-r1.log",
+      "log_sha256": "86867bb693094b1aea4e45311a5eac627dbc6ca87bdda72dc94323e71eaea6ea"
+    },
+    "ui": {
+      "receipt": "docs/delivery/v2-development/wave3-canvas-supplement-ui-r1.json",
+      "sha256": "a0f4559b00476611aedda9f08f1b8efd98d8a96149c5854fc4153a6f18b76022",
+      "log": "docs/delivery/v2-development/wave3-canvas-supplement-ui-r1.log",
+      "log_sha256": "58c0a582e6155803c041cb85401ff877b2f3c69b2f8fe81dbb04338ef4cd8cb5"
+    },
+    "type": {
+      "receipt": "docs/delivery/v2-development/wave3-canvas-supplement-type-r1.json",
+      "sha256": "05bbe8f0cf62efe1367040610d9fc1a1d87cb7254a5168c818a62fd91d39d7a7",
+      "log": "docs/delivery/v2-development/wave3-canvas-supplement-type-r1.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "build": {
+      "receipt": "docs/delivery/v2-development/wave3-canvas-supplement-build-r1.json",
+      "sha256": "c261692bed2a6b566b79153e00153f5ebeefb181cb2bb4076a22942a3637255d",
+      "log": "docs/delivery/v2-development/wave3-canvas-supplement-build-r1.log",
+      "log_sha256": "e5e11d4e22848de5cd8b6eb7c8b0070c2dc78128eaa31c37fe67c99077354c1e"
+    },
+    "token": {
+      "receipt": "docs/delivery/v2-development/wave3-canvas-supplement-token-r1.json",
+      "sha256": "e029e2fd08c2c33e308dd6c5b6588d3fe26dc762c5635514667ba589f68f11c7",
+      "log": "docs/delivery/v2-development/wave3-canvas-supplement-token-r1.log",
+      "log_sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50"
+    },
+    "archive": {
+      "receipt": "docs/delivery/v2-development/wave3-canvas-supplement-archive-r1.json",
+      "sha256": "e708cfd9ae39b72fc33db0e7d2191cc28fb3b7e6ee549de7fd3df76b8661d53d",
+      "log": "docs/delivery/v2-development/wave3-canvas-supplement-archive-r1.log",
+      "log_sha256": "b799db0a54e8f88543bd62678e13004726b03da5d4467f813bd83a0c32a84f61"
+    },
+    "origin-after": {
+      "receipt": "docs/delivery/v2-development/wave3-canvas-supplement-origin-after-r1.json",
+      "sha256": "a203cd69a3f95d082aa7743827129d35feb22e4e65a480f0fe4b7c8f83ca56bb",
+      "log": "docs/delivery/v2-development/wave3-canvas-supplement-origin-after-r1.log",
+      "log_sha256": "b2062a914214edb16fa55b6d96d8001de7741396797c46628f0178f296948baf"
+    }
+  },
+  "archive_audit_sha256": "b799db0a54e8f88543bd62678e13004726b03da5d4467f813bd83a0c32a84f61"
+}

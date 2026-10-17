@@ -1,0 +1,179 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-timeline-waveform/frontend
+
+ ✓ src/creative/GraphCanvas.presentation.additive.test.tsx (71 tests) 3977ms
+   ✓ measured viewport rendering > filters 1200 display instances with bounded DOM, pages by keyboard and never writes while typing 647ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.presentation.additive.test.tsx (18 tests) 18825ms
+   ✓ independent studio graph content integration > captures a saved source, chooses another graph, reviews and pastes once with original save/reopen 1544ms
+   ✓ independent studio graph content integration > previews same-graph copies, invalidates edits, pastes once and saves/reopens through original history 1358ms
+   ✓ independent studio graph content integration > explicitly persists view preferences with one undo step and original save/reopen 1450ms
+   ✓ independent studio graph content integration > persists groups through original undo/save/reopen and inspector node deletion 1146ms
+   ✓ independent studio graph content integration > saves independent notes with original undo, redo, reopen and removal 920ms
+   ✓ independent studio graph content integration > saves/reopens graph annotation with original undo, redo, removal and no model dispatch 820ms
+   ✓ independent studio graph content integration > guards departure when only an independent note is unsaved 435ms
+   ✓ independent studio graph content integration > warns before leaving when only the graph annotation changed 406ms
+   ✓ independent studio graph content integration > applies layout over dirty author text with one undo step, saves the camera, and restores both on reopen 966ms
+   ✓ independent studio graph content integration > commits snapped drag once through original undo/save/reopen without persisting view settings 1175ms
+   ✓ independent studio graph content integration > applies selected alignment with one undo, preserves dirty text, and saves/reopens original positions 1216ms
+   ✓ independent studio graph content integration > saves MiniMap camera via original history while preserving dirty author text and reopens it 858ms
+   ✓ independent studio graph content integration > searches current nodes without dispatch, then saves/reopens explicit camera navigation with dirty text and exact pins 936ms
+   ✓ independent studio graph content integration > restores each graph camera by stable ID and keeps dirty layout until explicit navigation consent 552ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 409, with explicit checked adoption only 1338ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 0, with explicit checked adoption only 1280ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 500, with explicit checked adoption only 1218ms
+   ✓ persists nested visual organization with undo, dirty leave warning, reopen and parent-node deletion promotion 1206ms
+ ✓ src/canvasops/canvasOpsPanels.test.tsx (25 tests) 577ms
+ ✓ src/creative/DirectorModelControls.storyboard-model.additive.test.tsx (49 tests) 1255ms
+ ✓ src/experimental/SubtitleTimelinePanel.history.test.tsx (67 tests) 5496ms
+ ✓ src/creative/StudioProductionGraphEditor.director.additive.test.tsx (5 tests) 10358ms
+   ✓ Production Graph UI keeps original controller and execution authority > lays out already-saved Director pins without rewriting their source or executing 1386ms
+   ✓ authors a director in the canvas, saves its exact node pin and reopens the bound source 2705ms
+   ✓ requires an explicit original workspace navigation confirmation to abandon an UNKNOWN director create 837ms
+   ✓ keeps an UNKNOWN storyboard handoff pending through cancelled workspace navigation 1679ms
+   ✓ reviews an original screenplay proposal, explicitly pins the DRAFT and reopens both owners without model execution 3750ms
+ ✓ src/experimental/InteractiveStoryPanel.removal.test.tsx (32 tests) 3944ms
+   ✓ previews exact ID and version, explicitly removes only that node, preserves dirty Unicode and saves through the original contract 354ms
+ ✓ src/creative/IndependentStudioAudioWav.test.tsx (28 tests) 8608ms
+   ✓ WAV controls through the original mounted production workspace > keeps blank controls absent, original defaults explicit, and preview/queue/execute separate 440ms
+   ✓ WAV controls through the original mounted production workspace > executes explicit controls, shows only measured WAV output, byte-checks privately and requires explicit review 621ms
+   ✓ WAV controls through the original mounted production workspace > keeps the shared workspace locked while executing and never submits a duplicate execution 349ms
+   ✓ WAV controls through the original mounted production workspace > recovers the original UNKNOWN WAV reservation without reexecution or automatic review 317ms
+   ✓ WAV controls through the original mounted production workspace > rejects private candidate size outside the verified output measurement 426ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches host ABA 435ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches host-rebind ABA 437ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches project ABA 414ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches actor ABA 457ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches branch ABA 444ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches session ABA 439ms
+   ✓ WAV controls through the original mounted production workspace > ignores a candidate response arriving after project identity ABA 367ms
+ ✓ src/experimental/SubtitleTimelinePanel.import.test.tsx (38 tests) 2335ms
+ ✓ src/creative/GraphModelExecutionPanel.test.tsx (18 tests) 814ms
+ ✓ src/experimental/InteractiveStoryPanel.additive.test.tsx (11 tests) 1146ms
+ ✓ src/experimental/InteractiveStoryPanel.membership.test.tsx (25 tests) 2148ms
+ ✓ src/experimental/TerminologyPortabilityPanel.test.tsx (20 tests) 388ms
+ ✓ src/creative/StudioImageRuntimeProduction.test.tsx (6 tests) 3081ms
+   ✓ image runtime source roles through the mounted original workspace > records weighted references without automatic queue, execution or review and invalidates old preview consent on weight edit 482ms
+   ✓ image runtime source roles through the mounted original workspace > binds base then mask, preserves explicit candidate byte verification and separate review 589ms
+   ✓ image runtime source roles through the mounted original workspace > requires fresh cloud consent after reference weights change and never falls back or sends automatically 1246ms
+   ✓ image runtime source roles through the mounted original workspace > retains exact request identity after lost create and recovers only by original read 352ms
+ ✓ src/ui/AppShell.test.tsx (19 tests) 228ms
+ ✓ src/experimental/InteractiveStoryPanel.test.tsx (11 tests) 1094ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 1067ms
+ ✓ src/prompt/PromptWorkspace.detailRace2.test.tsx (4 tests) 848ms
+ ✓ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (25 tests) 4004ms
+   ✓ explicit preview discloses pins and applies one exact undoable copy through original CAS save 428ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (9 tests) 4032ms
+   ✓ independent studio graph content integration > promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing 983ms
+   ✓ independent studio graph content integration > saves an empty disconnected definition through the scoped owner and reopens it without creating a run 420ms
+   ✓ independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job 776ms
+   ✓ independent studio graph content integration > retains the CAS-conflicted draft until an explicit checked adoption of the separately fetched server version 604ms
+   ✓ independent studio graph content integration > protects unsaved graph input when leaving the graph content or fixed module switcher 409ms
+ ✓ src/prompt/PromptWorkspace.scoping.test.tsx (3 tests) 712ms
+ ✓ src/creative/GraphCanvas.test.tsx (25 tests) 1217ms
+ ✓ src/creative/StudioGraphInsertion.additive.test.tsx (20 tests) 1211ms
+ ✓ src/experimental/SubtitleTimelinePanel.offset.test.tsx (31 tests) 4026ms
+   ✓ previews exact before/after values, applies locally, undoes once, then saves via original CAS 342ms
+ ✓ src/experimental/MultilingualEditionsPanel.test.tsx (10 tests) 1081ms
+   ✓ manual bilingual save→review→exact acceptance with RTL and no model calls 420ms
+ ✓ src/creative/studioAudioMp3Contract.test.tsx (32 tests) 347ms
+ ✓ src/prompt/PromptWorkspace.additive.test.tsx (6 tests) 506ms
+ ✓ src/prompt/PromptWorkspace.detailRace.test.tsx (4 tests) 609ms
+ ✓ src/creative/studioAudioFades.additive.test.tsx (29 tests) 776ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 833ms
+ ✓ src/creative/GraphCanvas.connection.additive.test.tsx (29 tests) 1124ms
+ ✓ src/creative/StudioGraphDraftRecovery.test.tsx (11 tests) 2015ms
+   ✓ mounted text graph autosave and explicit recovery > autosaves local authoring, survives remount and restores only after a live owner check without executing 644ms
+ ✓ src/creative/graphSelectionCopyController.test.tsx (23 tests) 1386ms
+ ✓ src/creative/studioAudioPeak.additive.test.tsx (23 tests) 624ms
+ ✓ src/experimental/VoiceSubtitlePanels.test.tsx (7 tests) 463ms
+ ✓ src/creative/studioCpuCutoutContract.test.ts (52 tests) 29ms
+ ✓ src/creative/StudioMediaRouteChoice.test.tsx (9 tests) 447ms
+ ✓ src/creative/StudioImageAssetHandoff.test.tsx (22 tests) 1241ms
+ ✓ src/experimental/LanguageTranslationPanel.test.tsx (5 tests) 738ms
+   ✓ adoption updates visible saved draft while requiring separate submit and review 414ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 954ms
+ ✓ src/creative/studioAudioWavContract.test.ts (86 tests) 58ms
+ ✓ src/creative/StudioGraphConnection.additive.test.tsx (15 tests) 1023ms
+ ✓ src/prompt/PromptWorkspace.p0.test.tsx (10 tests) 665ms
+ ✓ src/prompt/PromptWorkspace.test.tsx (11 tests) 453ms
+ ✓ src/creative/GraphDirectorSourceImpact.test.tsx (19 tests) 239ms
+ ✓ src/creative/GraphDirectorCanvasHandoff.additive.test.tsx (15 tests) 817ms
+ ✓ src/creative/StudioVideoAssetHandoff.test.tsx (26 tests) 1449ms
+ ✓ src/creative/StudioProductionGraphEditor.test.tsx (4 tests) 3588ms
+   ✓ Production Graph UI keeps original controller and execution authority > mounts the existing read-only Director Console in a selected Director graph node 1184ms
+   ✓ Production Graph UI keeps original controller and execution authority > explicitly binds authored documents, style and upscale parameters without dispatch 1369ms
+   ✓ Production Graph UI keeps original controller and execution authority > ignores late document references after a same-token Host replacement 466ms
+   ✓ Production Graph UI keeps original controller and execution authority > keeps Style inspector and controller bounds aligned to the backend 568ms
+ ✓ src/prompt/PromptWorkspace.p0c.test.tsx (6 tests) 412ms
+ ✓ src/creative/StudioGraphDraftRecovery.notes.test.tsx (7 tests) 1107ms
+   ✓ cached presentation recovery inspection through the original controller > pages every one of 1024 eligible short notes with at most twenty textareas and no truncation 929ms
+ ✓ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests) 626ms
+ ✓ src/creative/StudioReferenceRoute.compatibility.test.tsx (5 tests) 408ms
+ ✓ src/experimental/MultilingualEditionsPanel.additive.test.tsx (6 tests) 519ms
+   ✓ locates the exact duplicate Unicode segment, shows rule versions, then saves through the original owner 308ms
+ ✓ src/prompt/PromptWorkspace.receiptReopen.test.tsx (11 tests) 1220ms
+ ✓ src/creative/GraphDirectorStoryboardHandoff.test.tsx (7 tests) 255ms
+ ✓ src/prompt/PromptEditorPanel.copy.test.tsx (13 tests) 344ms
+ ✓ src/creative/GraphReadRevocation.regression.test.tsx (8 tests) 248ms
+ ✓ src/creative/directorCanvasHandoff.additive.test.tsx (13 tests) 715ms
+ ✓ src/creative/studioAudioFlacContract.phase6.test.tsx (18 tests) 195ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 178ms
+ ✓ src/creative/StudioGraphDirectorConsole.test.tsx (11 tests) 433ms
+ ✓ src/creative/GraphCanvas.insertion.additive.test.tsx (12 tests) 453ms
+ ✓ src/prompt/PromptWorkspace.loadingOwner.test.tsx (1 test) 238ms
+ ✓ src/creative/graphCanvasGeometry.test.ts (9 tests) 13ms
+ ✓ src/prompt/PromptRevisionDiff.test.tsx (9 tests) 429ms
+ ✓ src/creative/StudioImageUpscaleProduction.test.tsx (2 tests) 159ms
+ ✓ src/creative/graphCanvasGeometry.presentation.additive.test.ts (9 tests) 6ms
+ ✓ src/creative/ReviewedDirectorCanvas.integration.test.tsx (1 test) 293ms
+ ✓ src/creative/StudioGraphInsertion.palette.additive.test.tsx (4 tests) 613ms
+ ✓ src/canvasops/canvasOpsPanels.layout.additive.test.tsx (1 test) 272ms
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 138ms
+ ✓ src/prompt/PromptVersionHistory.test.tsx (7 tests) 155ms
+ ✓ src/prompt/PromptEditorPanel.usability.test.tsx (7 tests) 214ms
+ ✓ src/experimental/TranslationMemoryPanel.test.tsx (4 tests) 136ms
+ ✓ src/creative/GraphCanvasLargeNotes.test.tsx (4 tests) 524ms
+ ✓ src/prompt/PromptWorkspace.strictmode.test.tsx (3 tests) 163ms
+ ✓ src/experimental/TerminologyIssueNavigator.test.tsx (13 tests) 195ms
+ ✓ src/prompt/PromptWorkspace.p0i.test.tsx (2 tests) 231ms
+ ✓ src/experimental/VoiceSubtitlePanels.additive.test.tsx (2 tests) 290ms
+ ✓ src/creative/GraphNodeNavigator.test.tsx (2 tests) 183ms
+ ✓ src/ui/primitives.test.tsx (4 tests) 81ms
+ ✓ src/creative/useStudioGraphEditor.storyboardAuthority.additive.test.tsx (1 test) 12ms
+ ✓ src/experimental/InteractiveStoryHistory.test.tsx (1 test) 82ms
+ ✓ src/creative/studioAudioFlacContract.formatVariant.additive.test.ts (1 test) 4ms
+ ✓ src/canvasops/canvasOps.test.ts (69 tests) 33ms
+ ✓ src/creative/graphDraft.test.ts (39 tests) 8ms
+ ✓ src/creative/graphCanvasPresentation.test.ts (15 tests) 16ms
+ ✓ src/prompt/promptContract.test.ts (12 tests) 9ms
+ ✓ src/prompt/promptProducerContract.test.ts (11 tests) 9ms
+ ✓ src/experimental/comicDuplication.test.ts (35 tests) 16ms
+ ✓ src/prompt/promptDraft.test.ts (12 tests) 6ms
+ ✓ src/creative/studioGraphDirectorClient.test.ts (14 tests) 29ms
+ ✓ src/prompt/promptDraft.pending.test.ts (9 tests) 4ms
+ ✓ src/creative/studioGraphLocalDraft.test.ts (6 tests) 8ms
+ ✓ src/experimental/captionTimingOffset.test.ts (55 tests) 21ms
+ ✓ src/creative/graphCanvasLargeNotes.test.ts (23 tests) 49ms
+ ✓ src/prompt/promptDraft.aliasing.test.ts (8 tests) 6ms
+ ✓ src/prompt/promptDraft.settlement.test.ts (27 tests) 9ms
+ ✓ src/experimental/captionTransferReview.test.ts (24 tests) 10ms
+ ✓ src/experimental/comicArrangement.test.ts (18 tests) 7ms
+ ✓ src/creative/studioAudioReceiptContext.compatibility.test.ts (21 tests) 6ms
+ ✓ src/canvasops/canvasOps.layout.additive.test.ts (1 test) 3ms
+ ✓ src/creative/graphCanvasNotes.test.ts (3 tests) 9ms
+ ✓ src/experimental/interactiveNodeRemoval.test.ts (9 tests) 7ms
+
+ Test Files  104 passed (104)
+      Tests  1667 passed (1667)
+   Start at  20:30:23
+   Duration  173.06s (transform 3.71s, setup 253ms, collect 16.05s, tests 114.67s, environment 25.29s, prepare 5.01s)
+
+stderr | src/experimental/MultilingualEditionsPanel.additive.test.tsx > does not select a matching rule version from duplicate IDs
+Warning: Encountered two children with the same key, `duplicate`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at section
+    at Panel (/workspace/scratch/20a0022d2b33/studio-timeline-waveform/frontend/src/ui/primitives.tsx:36:18)
+    at Terminology (/workspace/scratch/20a0022d2b33/studio-timeline-waveform/frontend/src/experimental/MultilingualEditionsPanel.tsx:912:24)
+    at section
+    at EditionsBody (/workspace/scratch/20a0022d2b33/studio-timeline-waveform/frontend/src/experimental/MultilingualEditionsPanel.tsx:31:25)
+    at MultilingualEditionsPanel (/workspace/scratch/20a0022d2b33/studio-timeline-waveform/frontend/src/experimental/MultilingualEditionsPanel.tsx:22:38)
+
