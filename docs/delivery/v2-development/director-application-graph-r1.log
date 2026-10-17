@@ -1,0 +1,116 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+______ test_reviewed_director_pin_saves_and_reopens_over_actual_app[/api] ______
+
+application_host = (namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-appli...ken': 'fixture-current-host-token'}, base='/api/novels/independent-director/experimental/creative/director-proposals'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f78f765b050>
+
+    def test_reviewed_director_pin_saves_and_reopens_over_actual_app(application_host, monkeypatch):
+        import app.main as main
+        import app.experimental.api as experimental
+        from app.services.asset_library_service import AssetLibraryService
+        from app.creative.graph import CreativeGraphService
+        from app.creative.workspace import IndependentWorkspaceService
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+    
+        e, m = application_host
+        monkeypatch.setenv('EXPERIMENTAL_FEATURES', FLAGS + ',asset_lineage_v2')
+        workspace = experimental.independent_workspace_service
+        assets = AssetLibraryService(e.root)
+        # Rebind owned synthetic storage on captured original application objects.
+        # Original HTTP authority, validation, graph persistence and CAS stay intact.
+        for name, value in [('creative', e.documents), ('store', e.documents.store),
+                            ('novels', e.novels), ('assets', assets)]:
+            monkeypatch.setattr(workspace, name, value)
+        graph = experimental.creative_graph_service
+        monkeypatch.setattr(graph, 'store', e.documents.store)
+        monkeypatch.setattr(graph, 'workspace', workspace)
+        prefix = m.base.split('/novels/', 1)[0]
+        base = prefix + f'/projects/{e.nid}/studio'
+        with native_client(main.app) as client:
+            m.client = client
+            candidate = pending(e, m)
+            body = review_body(candidate)
+            result = client.post(m.url + '/review', headers=m.headers, json=body)
+            assert result.status_code == 200, result.text
+            receipt = result.json()['receipt']['document']
+            pin = {'id': receipt['document_id'], 'version': receipt['version'], 'digest': receipt['digest']}
+            source = deepcopy(e.documents.get(e.nid, e.scope, pin['id']))
+            activation = client.post(base + '/activate', headers=m.headers)
+            assert activation.status_code == 200, activation.text
+            definition = {'schema_version': 4, 'title': 'Reviewed Director planning', 'nodes': [
+                {'id': 'reviewed-director', 'definition_id': 'director_plan',
+                 'parameters': {'document_snapshot': pin}, 'position': {'x': 120, 'y': 80}}], 'edges': []}
+            created = client.post(base + '/graphs', headers=m.headers,
+                json={'request_id': 'reviewed-director-pin', 'definition': definition})
+>           assert created.status_code == 201, created.text
+E           AssertionError: {"detail":{"code":"EXPERIMENTAL_NOT_FOUND"},"code":"EXPERIMENTAL_NOT_FOUND","message":"EXPERIMENTAL_NOT_FOUND","details":{"code":"EXPERIMENTAL_NOT_FOUND"},"request_id":"a07956a0-6cb7-4efb-a31f-80e289f967b3"}
+E           assert 404 == 201
+E            +  where 404 = <Response [404 Not Found]>.status_code
+
+tests/test_director_application_graph_handoff.py:84: AssertionError
+____ test_reviewed_director_pin_saves_and_reopens_over_actual_app[/api/v1] _____
+
+application_host = (namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-appli...': 'fixture-current-host-token'}, base='/api/v1/novels/independent-director/experimental/creative/director-proposals'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f78f739fc80>
+
+    def test_reviewed_director_pin_saves_and_reopens_over_actual_app(application_host, monkeypatch):
+        import app.main as main
+        import app.experimental.api as experimental
+        from app.services.asset_library_service import AssetLibraryService
+        from app.creative.graph import CreativeGraphService
+        from app.creative.workspace import IndependentWorkspaceService
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+    
+        e, m = application_host
+        monkeypatch.setenv('EXPERIMENTAL_FEATURES', FLAGS + ',asset_lineage_v2')
+        workspace = experimental.independent_workspace_service
+        assets = AssetLibraryService(e.root)
+        # Rebind owned synthetic storage on captured original application objects.
+        # Original HTTP authority, validation, graph persistence and CAS stay intact.
+        for name, value in [('creative', e.documents), ('store', e.documents.store),
+                            ('novels', e.novels), ('assets', assets)]:
+            monkeypatch.setattr(workspace, name, value)
+        graph = experimental.creative_graph_service
+        monkeypatch.setattr(graph, 'store', e.documents.store)
+        monkeypatch.setattr(graph, 'workspace', workspace)
+        prefix = m.base.split('/novels/', 1)[0]
+        base = prefix + f'/projects/{e.nid}/studio'
+        with native_client(main.app) as client:
+            m.client = client
+            candidate = pending(e, m)
+            body = review_body(candidate)
+            result = client.post(m.url + '/review', headers=m.headers, json=body)
+            assert result.status_code == 200, result.text
+            receipt = result.json()['receipt']['document']
+            pin = {'id': receipt['document_id'], 'version': receipt['version'], 'digest': receipt['digest']}
+            source = deepcopy(e.documents.get(e.nid, e.scope, pin['id']))
+            activation = client.post(base + '/activate', headers=m.headers)
+            assert activation.status_code == 200, activation.text
+            definition = {'schema_version': 4, 'title': 'Reviewed Director planning', 'nodes': [
+                {'id': 'reviewed-director', 'definition_id': 'director_plan',
+                 'parameters': {'document_snapshot': pin}, 'position': {'x': 120, 'y': 80}}], 'edges': []}
+            created = client.post(base + '/graphs', headers=m.headers,
+                json={'request_id': 'reviewed-director-pin', 'definition': definition})
+>           assert created.status_code == 201, created.text
+E           AssertionError: {"detail":{"code":"EXPERIMENTAL_NOT_FOUND"},"code":"EXPERIMENTAL_NOT_FOUND","message":"EXPERIMENTAL_NOT_FOUND","details":{"code":"EXPERIMENTAL_NOT_FOUND"},"request_id":"8467ca51-7ed7-4d6b-8ca9-2c59fb85f609"}
+E           assert 404 == 201
+E            +  where 404 = <Response [404 Not Found]>.status_code
+
+tests/test_director_application_graph_handoff.py:84: AssertionError
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_director_application_graph_handoff.py::test_reviewed_director_pin_saves_and_reopens_over_actual_app[/api]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_director_application_graph_handoff.py::test_reviewed_director_pin_saves_and_reopens_over_actual_app[/api]
+FAILED tests/test_director_application_graph_handoff.py::test_reviewed_director_pin_saves_and_reopens_over_actual_app[/api/v1]
+2 failed, 2 warnings in 13.10s

@@ -1,5 +1,9 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Native Director → Graph persistence (17:20 UTC)
+
+Four native HTTP cases across both app prefixes now cover exact reviewed-DRAFT pin → Graph create/Save/CAS → fresh-owner reopen, optional explicit planning run and stale-source labels without repinning or a second model call. Final related scope58 PASS /5PGdeselected; forcedTS/build/token PASS. Runtime/UI sources unchanged from29df291; no browser/live-model or full release claim. See delivery/v2-development/director-application-graph-20261017/README.md.
+
 ## Application host closure (17:05 UTC)
 
 Source 29df291 explicitly mounts original versioned Director adapters. Scoped final gates: 556 File, 235 real PostgreSQL, 399 frontend, TS/build/token and 87 PUBLIC checks pass with identical final source snapshots. Two native TCP cases pass with fixture model responses; private pending review remains File-only. Browser/live model/full V2 acceptance remain open. Read DIRECTOR_APPLICATION_HOST_PROGRESS.md and delivery/v2-development/director-application-host-20261017/README.md. Coverage inventory refreshed: 17,643 rows / 2,725 source entries; all prior 17,617 rows retained, 24 File + 2 PG added; three identical collections and 45 CI self-tests pass. See delivery/v2-development/director-application-inventory-20261017/README.md.

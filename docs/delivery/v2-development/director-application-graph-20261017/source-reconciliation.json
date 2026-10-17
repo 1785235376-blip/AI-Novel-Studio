@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "prior_source_commit": "29df291bad2083743331f765a30422e690605e39",
+  "only_new_source": [
+    "tests/test_director_application_graph_handoff.py"
+  ],
+  "prior_runtime_frontend_tests_unchanged": true,
+  "current_final_receipts": {
+    "director-application-graph-final-r1": "d28d2961f4237b5be4cbe7929874c0df97dd1f2ea131a0badf4ab494d0ee2ca8",
+    "director-application-graph-build-r1": "0943bebe24a23619632b12e95dadba7b26d8835c47cf4c3f3790fe9922c8eb3a"
+  }
+}
