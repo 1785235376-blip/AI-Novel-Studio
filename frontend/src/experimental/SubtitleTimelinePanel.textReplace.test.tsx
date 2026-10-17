@@ -1,0 +1,29 @@
+// @vitest-environment jsdom
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+import { SubtitleTimelinePanel } from './SubtitleTimelinePanel';
+import { experimentalClient } from './api';
+import { previewCaptionTextReplacement } from './captionTextReplace';
+const cue={id:'first',start_tick:100,end_tick:200,text:'小雨.* 小雨',segment_id:null,overlap_reason:''};
+const track={id:'track',version:3,title:'Captions',asset_id:'audio',asset_snapshot:{version:1,digest:'media'},plan_id:null,timebase:{numerator:1000,denominator:1},media:{duration_seconds:{numerator:5,denominator:1},waveform:{status:'UNAVAILABLE'}},cues:[cue,{...cue,id:'second',start_tick:300,end_tick:400,text:'小雨'}],speakers:{},warnings:[],stale:false};
+let fetchMock:ReturnType<typeof vi.fn>;
+beforeEach(()=>{fetchMock=vi.fn(async(url:string,init?:RequestInit)=>new Response(JSON.stringify(init?.method==='PUT'?{...track,version:4,cues:JSON.parse(String(init.body)).cues}:url.endsWith('/catalog')?{assets:[],plans:[]}:{items:[track]})));vi.stubGlobal('fetch',fetchMock);});
+afterEach(()=>{cleanup();vi.restoreAllMocks();vi.unstubAllGlobals();});
+const button=(name:string)=>screen.getByRole('button',{name});
+const text=()=>screen.getByLabelText('字幕 1 文本') as HTMLTextAreaElement;
+const writes=()=>fetchMock.mock.calls.filter(([,init])=>init?.method==='PUT');
+const mount=async()=>{render(<SubtitleTimelinePanel client={experimentalClient('novel',{sessionToken:'trusted',scope:{branchId:'main'} as any})}/>);await screen.findByLabelText('字幕 1 文本');};
+const preview=()=>{fireEvent.change(screen.getByLabelText('字幕查找文本'),{target:{value:'小雨'}});fireEvent.change(screen.getByLabelText('字幕替换文本'),{target:{value:'晴天'}});fireEvent.click(button('预览字幕文本替换'));};
+const consent=()=>screen.getByLabelText('确认应用全部已列出的替换，仅修改本地字幕');
+const apply=()=>button('应用字幕文本替换（尚未保存）');
+const handler=(element:HTMLElement,name='onClick')=>(element as any)[Object.keys(element).find(k=>k.startsWith('__reactProps$'))!][name];
+it('literal Unicode replacement preserves timing and source input',()=>{const before=structuredClone(track);const result=previewCaptionTextReplacement(track,track.cues,'小雨','🌤');expect(result.occurrences).toBe(3);expect(result.cues).toEqual(track.cues.map(c=>({...c,text:c.text.replaceAll('小雨','🌤')})));expect(track).toEqual(before);expect(previewCaptionTextReplacement(track,track.cues,'.*','字').cues[0].text).toBe('小雨字 小雨');});
+it.each(['','<x>','\u0001','\n\n'])('rejects invalid resulting text atomically: %j',replacement=>{const before=structuredClone(track);expect(()=>previewCaptionTextReplacement(track,track.cues,'小雨',replacement)).toThrow();expect(track).toEqual(before);});
+it('bounds expansion before application and rejects invalid timing',()=>{expect(()=>previewCaptionTextReplacement(track,[{...cue,text:'x'.repeat(10000)}],'x','yy')).toThrow();expect(()=>previewCaptionTextReplacement(track,[{...cue,end_tick:999999}],'小雨','晴天')).toThrow();});
+it('previews, explicitly applies, undoes, then persists only through existing save',async()=>{await mount();preview();expect(text().value).toBe(cue.text);expect((apply() as HTMLButtonElement).disabled).toBe(true);fireEvent.click(consent());fireEvent.click(apply());expect(text().value).toBe('晴天.* 晴天');expect(writes()).toHaveLength(0);fireEvent.click(button('撤销上次本地文本替换'));expect(text().value).toBe(cue.text);fireEvent.click(button('预览字幕文本替换'));fireEvent.click(consent());fireEvent.click(apply());fireEvent.click(button('保存字幕版本'));await waitFor(()=>expect(writes()).toHaveLength(1));expect(JSON.parse(String(writes()[0][1]?.body))).toEqual({expected_version:3,cues:track.cues.map(c=>({...c,text:c.text.replaceAll('小雨','晴天')}))});});
+it('withdrawn consent fences retained callbacks before repaint',async()=>{await mount();preview();fireEvent.click(consent());const retained=handler(apply()),withdraw=handler(consent(),'onChange');act(()=>{withdraw({target:{checked:false}});retained();});expect(text().value).toBe(cue.text);expect(writes()).toHaveLength(0);});
+it.each(['draft','input','composition','split'])('retires preview on %s changes',async kind=>{await mount();preview();fireEvent.click(consent());const retained=handler(apply());if(kind==='draft')fireEvent.change(text(),{target:{value:'new draft'}});if(kind==='input')fireEvent.change(screen.getByLabelText('字幕替换文本'),{target:{value:'风'}});if(kind==='composition')fireEvent.compositionStart(screen.getByLabelText('字幕查找文本'));if(kind==='split')fireEvent.change(screen.getByLabelText('字幕 1 拆分左文'),{target:{value:'draft'}});act(()=>retained());expect(text().value).toBe(kind==='draft'?'new draft':cue.text);expect(writes()).toHaveLength(0);});
+it('retained apply cannot apply twice and undo cannot overwrite subsequent edits',async()=>{await mount();preview();fireEvent.click(consent());const retained=handler(apply());act(()=>{retained();retained();});expect(text().value).toBe('晴天.* 晴天');const undo=handler(button('撤销上次本地文本替换'));fireEvent.change(text(),{target:{value:'later'}});act(()=>undo());expect(text().value).toBe('later');});
+it('reports no changes without dirtying or saving the draft',async()=>{await mount();fireEvent.change(screen.getByLabelText('字幕查找文本'),{target:{value:'absent'}});fireEvent.click(button('预览字幕文本替换'));expect(screen.getByText('没有需要替换的文字，本地字幕保持不变。')).toBeTruthy();expect(text().value).toBe(cue.text);expect(writes()).toHaveLength(0);});
+
+it('fresh preview remains usable after unchanged composition and repeated no-op',async()=>{await mount();preview();fireEvent.compositionStart(screen.getByLabelText('字幕查找文本'));fireEvent.compositionEnd(screen.getByLabelText('字幕查找文本'));fireEvent.click(button('预览字幕文本替换'));fireEvent.click(consent());fireEvent.click(apply());expect(text().value).toBe('晴天.* 晴天');fireEvent.click(button('预览字幕文本替换'));fireEvent.click(button('预览字幕文本替换'));expect(screen.getByText('没有需要替换的文字，本地字幕保持不变。')).toBeTruthy();});

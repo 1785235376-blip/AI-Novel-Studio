@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Subtitle literal find/replace (18:17 UTC)
+
+Added local subtitle text find/replace with full before/after preview, explicit consent, bounded literal Unicode replacement, and one-step local undo. Existing timing, speaker/media bindings and historical restoration provenance remain; persistence uses the existing Save and CAS owner. Source/authority/draft changes retire stale actions, and unfinished split inputs pause replacement. No new network action or backend owner.
+
+Focused receipt caption-text-replace-focused-r1: 14 new checks plus 31 existing offset regressions, and TypeScript PASS. Final receipt r2: 15 focused checks and TypeScript PASS after ensuring unchanged IME/no-op input still rerenders revision controls. No full suite, production rebuild, browser acceptance or source-inventory refresh was claimed; deferred to consolidated testing per user direction.
+
 ## Feature-first cadence and multiple source references (18:07 UTC)
 
 User explicitly prioritizes completing functionality before consolidated full testing. Retain focused checks and critical safety/save regressions; defer repeated broad suites, packaging and coverage source refresh. Current fully reconciled inventory is c03b369, not proof of later source hashes.

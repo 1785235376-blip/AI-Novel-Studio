@@ -2,6 +2,7 @@ import { useId, useLayoutEffect, useMemo, useRef, useState, type SetStateAction 
 import { previewCaptionTimingOffset, type CaptionTimingOffset } from './captionTimingOffset';
 import { reviewCaptionTransfer } from './captionTransferReview';
 import { CaptionHistory } from './CaptionHistory';
+import { CaptionTextReplace } from './CaptionTextReplace';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
 import { Details, ErrorMessage, Field, ResourceState, useResource } from './shared';
@@ -56,6 +57,8 @@ function CaptionEditor({client,current,plans,available,refresh,admissionEpoch}:{
  <CaptionHistory client={client} row={captured} cues={cues} binding={JSON.stringify({current,captured,available,unavailable,draftEpoch:draftEpoch.current,admissionEpoch:admissionEpoch.current})} disabled={!!unavailable} dirty={dirty||splitDirty} draftEpoch={draftEpoch} admissionEpoch={admissionEpoch} replace={(value,version)=>{setRestoreHistoryVersion(version);setCues(value);setSplit({});}}/>
  <CaptionImport client={client} row={captured} binding={JSON.stringify({current,captured,available,unavailable,draftEpoch:draftEpoch.current,admissionEpoch:admissionEpoch.current})} disabled={!!unavailable} dirty={dirty||splitDirty} draftEpoch={draftEpoch} admissionEpoch={admissionEpoch} replace={value=>{setRestoreHistoryVersion(undefined);setCues(value);setSplit({});}}/>
  <CaptionOffset row={captured} cues={cues} binding={JSON.stringify({current,captured,available,unavailable})} disabled={!!unavailable} draftEpoch={draftEpoch} admissionEpoch={admissionEpoch} replace={setCues}/>
+ <CaptionTextReplace row={captured} cues={cues} binding={JSON.stringify({current,captured,available,unavailable})}
+   disabled={!!unavailable||splitDirty} draftEpoch={draftEpoch} admissionEpoch={admissionEpoch} replace={setCues}/>
  {waveform?.status==='MEASURED_PCM16_PEAKS'&&waveform.peaks?<details className="experimental-details"><summary>实测 PCM16 波形</summary><svg role="img" aria-label="实际音频采样峰值波形" viewBox={`0 0 ${waveform.peaks.length} 100`} width="100%" height="100" preserveAspectRatio="none"><path stroke="currentColor" fill="none" d={waveform.peaks.map((p,i)=>`M${i} ${50-p*50}V${50+p*50}`).join(' ')}/></svg><p>峰值包络；不是语音或单词对齐。</p></details>:<p>此媒体无可用实测波形，仍可人工编辑时间。</p>}
  <ol aria-label="字幕轨道预览">{cues.map(c=><li key={c.id}>{c.start_tick} → {c.end_tick} tick · {c.segment_id?current.speakers?.[c.segment_id]?.name||'说话人待刷新':'无说话人标签'} · {c.text}</li>)}</ol>
  {cues.map((cue,index)=><article className="experimental-record" key={cue.id}><h4>字幕 {index+1}</h4><div className="experimental-grid"><Field label={`字幕 ${index+1} 开始 tick`}><input type="number" min={0} disabled={unavailable} value={cue.start_tick} onChange={e=>edit(index,'start_tick',Number(e.target.value))}/></Field><Field label={`字幕 ${index+1} 结束 tick`}><input type="number" min={1} disabled={unavailable} value={cue.end_tick} onChange={e=>edit(index,'end_tick',Number(e.target.value))}/></Field></div>

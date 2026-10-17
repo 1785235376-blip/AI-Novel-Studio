@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/SubtitleTimelinePanel.textReplace.test.tsx (14 tests) 1554ms
+   ✓ previews, explicitly applies, undoes, then persists only through existing save 495ms
+ ✓ src/experimental/SubtitleTimelinePanel.offset.test.tsx (31 tests) 4753ms
+   ✓ previews exact before/after values, applies locally, undoes once, then saves via original CAS 457ms
+
+ Test Files  2 passed (2)
+      Tests  45 passed (45)
+   Start at  03:15:39
+   Duration  5.74s (transform 257ms, setup 33ms, collect 661ms, tests 6.31s, environment 733ms, prepare 139ms)
+
