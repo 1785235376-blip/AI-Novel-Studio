@@ -1,0 +1,19 @@
+{
+  "status": "PASS_FINAL_INVENTORY_CLOSURE",
+  "source_commit": "2769466ff15dccf50ceabddee4522007ba07088f",
+  "canonical_sha256": "9fbc659bfb66a9fcca2c4912fd81cd1c857e027d27604a6b7d68c85d0e4be930",
+  "raw_sha256": "789504f1031399ce63865f4dfbe42766747fd797adeb8bbcc89305941e2ed23f",
+  "old_full_rows_order_classifications_exact": 16101,
+  "total_rows": 16117,
+  "new_file_rows": 16,
+  "source_count": 2603,
+  "protected_entries_exact": 1287,
+  "companion_files_exact": 11,
+  "six_full_source_brackets_exact": true,
+  "v1_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "promotion_matches_independent_approved_bytes": true,
+  "independently_executed_final_portable_verifier": "PASS_INVENTORY_ONLY",
+  "evidence_index_before_this_report": "44 files verified; refresh index to include this unchanged report before final commit",
+  "tests_executed": false,
+  "boundary": "Inventory collection and read-only verification only. No new runtime coverage, browser, PostgreSQL, provider, real media, or rendering claim."
+}

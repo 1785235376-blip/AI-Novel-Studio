@@ -1,0 +1,66 @@
+{
+  "source_checkpoint": "2769466ff15dccf50ceabddee4522007ba07088f",
+  "baseline_manifest": {
+    "commit": "ca067c42c95d35fab5bce612cf2095555e990cba",
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "sha256": "77e3673b72ca02a7d39dffbc7b0af56ff1041e62c4b5f699ea8243fd970863d2"
+  },
+  "complete_source_map_entries": 2603,
+  "complete_source_map_sha256": "4e3c5b26a3c21d395e1f2f81b23ea6f8c2db391b6e7327245d87907b610baf8b",
+  "source_delta": [
+    {
+      "path": "frontend/src/creative/StudioTimelineEditor.tsx",
+      "before": "2bc968401095407d97f5c6c8717d214cbd27af50364ed512d04cb8cc96c7c66f",
+      "after": "4e787f25577d4541ccf1067cbfe0eaac94b46824fbc46cd0051404387e0ce7f8"
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineTrim.test.tsx",
+      "before": null,
+      "after": "267273008a0394ce993b333a72f91f74bae1628c3c791ea786b178efba82cf9d"
+    },
+    {
+      "path": "frontend/src/creative/useStudioTimelineEditor.ts",
+      "before": "1ebd9d517095a6c094756ebe1feddb065e7436bcbda4ce79dd24b3a294994a93",
+      "after": "cc807816676e751fbb4c3a347fb22e092fe43faac618b0ffce8a63280dda03bd"
+    },
+    {
+      "path": "frontend/src/nle/ClipInspectorPanel.tsx",
+      "before": "d5bb9ab5bb99ead24855b4673801c7a770b4099de4e62555adae8f4963ef6872",
+      "after": "053ec8c3c37176098d19945461dc81d77d5ae78d67d154481cd3cf4e989e9406"
+    },
+    {
+      "path": "tests/test_v2_timeline_trim_handoff.py",
+      "before": null,
+      "after": "83e7ff75200d51704ea823254b591c3318dec649d71b2987f7c0b368f29bf5f3"
+    }
+  ],
+  "protected_old_entries_exact": 1287,
+  "frontend_scripts_e2e_companion": {
+    "frontend/e2e/README.md": "8903141dcb9443e85de1ed50a8fce179d7dd01c6530fce81beb23189528d4170",
+    "frontend/e2e/prompt-acceptance-s0.spec.ts": "f91a3b94c53e5b5cf5bd2d66cfacedce2793780c436391f76dfd74cc083b99e5",
+    "frontend/e2e/prompt-workspace-acceptance.spec.ts": "7cf6b2f0abf2894be826cd95b8185e76898198a6363c84a1d34c9d61150287ff",
+    "frontend/e2e/promptAcceptanceEntry.ts": "077502b015222a0eb37afd457a3ba3067279f5e77826f2565c8cf753fc59ce74",
+    "frontend/e2e/studio-release-acceptance.spec.ts": "3a7bfaaa565d27febd527a1c6258e062414f121f59a7f75e5de0a9c46835d9ad",
+    "frontend/scripts/benchmark-canvas-notes.mjs": "1690c23f07f2302fb2f15bc56225418e4d520dea694c39d7b0a04ceb991954d5",
+    "frontend/scripts/benchmark-graph-display.mjs": "ccd74ecb3ea3c4716328f4492084eac220756d7fed024b0e17fc61de2bf9fad5",
+    "frontend/scripts/check-test-discovery.mjs": "35acf0b795525ea639fdcff4be17f15fda3222fa43872dc72720ed14843f660d",
+    "frontend/scripts/local_interop_browser_host.py": "f2e313afd45b7f58fb8ab98c63afcabfc056c761bf3d03bb6d363215f2f53060",
+    "frontend/scripts/measure_interop_bundle.mjs": "a36b828e3a91718e95032a28669a0ef97d17c6bf004ac542eb723b775408fd65",
+    "frontend/scripts/run-experimental-http.mjs": "63ffa58c95cbd62f5f1f57a57b333ca8bfbc57cfb46e094e7222bf84206e977f"
+  },
+  "raw_inventory": {
+    "path": "docs/delivery/v2-development/timeline-trim-inventory-20261017/raw-collection.json",
+    "sha256": "789504f1031399ce63865f4dfbe42766747fd797adeb8bbcc89305941e2ed23f",
+    "rows": 16117
+  },
+  "prior_raw_inventory": {
+    "path": "docs/delivery/v2-development/caption-history-inventory-20261017/raw-collection.json",
+    "sha256": "a74ca86c430287220bb4e45f696da10e08b967d2805e58201e3926ea98a7ab76",
+    "rows": 16101
+  },
+  "prior_15142_inventory": {
+    "path": "docs/delivery/v2-development/ci-reconciliation-20261016/inventory/old-15142-collection-rows.json.gz",
+    "sha256": "8a63aa4ad872695d1699816910647dec8070f2566f9a8aea3eb3943ffa9bbd34"
+  },
+  "tests_executed": false
+}

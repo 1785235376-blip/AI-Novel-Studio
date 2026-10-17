@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "normal_command": [
+    "-c",
+    "import sys; path=sys.argv[1]; globals()[\"__file__\"]=path; exec(compile(open(path).read(),path,\"exec\"))",
+    "docs/delivery/v2-development/timeline-trim-origin/origin-probe.py",
+    "--parent"
+  ],
+  "actual_runner_command": [
+    "scripts/run_v2_checks.py",
+    "timeline-trim-inventory-origin",
+    "--",
+    "python",
+    "-c",
+    "import sys; path=sys.argv[1]; globals()[\"__file__\"]=path; exec(compile(open(path).read(),path,\"exec\"))",
+    "docs/delivery/v2-development/timeline-trim-origin/origin-probe.py",
+    "--child"
+  ],
+  "comparisons": [
+    {
+      "original": "docs/delivery/v2-development/timeline-trim-origin/normal-startup.json",
+      "original_sha256": "cd2dfd3ae1eb2e324d536bac98a366d9e6f88fe051ab484504ae626b80425634",
+      "recheck": "docs/delivery/v2-development/timeline-trim-inventory-20261017/recheck-normal-startup.stdout.log",
+      "recheck_sha256": "2933970804cb5e6c8017c0e205c2a584a632a9d42a697b96a1ac86dddd2962a0",
+      "semantic_equal_except_utc": true
+    },
+    {
+      "original": "docs/delivery/v2-development/timeline-trim-origin-r1.log",
+      "original_sha256": "459efcf8ce4072003a3638dc09c8baac182936182d6abfb80285647e1e7aab04",
+      "recheck": "docs/delivery/v2-development/timeline-trim-inventory-20261017/actual-runner-origin.log",
+      "recheck_sha256": "744cd7492561b63523b9c6ec345933fb28545365626da72abfddd6d6d750f4a2",
+      "semantic_equal_except_utc": true
+    }
+  ],
+  "probe_sha256": "e420c0a198cae77ea6af427b960c68ef8ca8a352d03980706d1bf2d06ee4554e",
+  "tests_executed": false,
+  "runtime_test_execution": "NOT_RUN"
+}
