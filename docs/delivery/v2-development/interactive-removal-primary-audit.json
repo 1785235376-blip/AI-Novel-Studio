@@ -1,0 +1,45 @@
+{
+  "status": "PASS",
+  "receipts": [
+    {
+      "receipt": "docs/delivery/v2-development/interactive-removal-build-r1.json",
+      "sha256": "a3ddc073fa43886db945e148a36eadac91a3b7cae0a37bcb1d07ab3df7c5b81e",
+      "source_count": 2613,
+      "source_and_log_verified": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/interactive-removal-file-origin-r1.json",
+      "sha256": "25a5ec7c4c42b8a9ba09ed11286b93ed29484ba3619eb0abe8b58f8c4f4991ce",
+      "source_count": 2613,
+      "source_and_log_verified": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/interactive-removal-file-r1.json",
+      "sha256": "d6b0f8aa4a68df102aaadbad9d9c60cb4d69816b6a98fbfdcf0f9a3d1b800f16",
+      "source_count": 2613,
+      "source_and_log_verified": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/interactive-removal-tokens-r1.json",
+      "sha256": "b87aae51ac1d0bc5565308b94956e0f42fe023c09cf3a0297fb7c138822bee00",
+      "source_count": 2613,
+      "source_and_log_verified": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/interactive-removal-type-r1.json",
+      "sha256": "852fb58100ac6ee730588ded95c9d3bba124e68c39b0a67eb33484a1155cf3ab",
+      "source_count": 2613,
+      "source_and_log_verified": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/interactive-removal-ui-r1.json",
+      "sha256": "b565703e94179f74b3c9da45a0d5f50dde091ecbb63288ffdd97dc1325c19fb4",
+      "source_count": 2613,
+      "source_and_log_verified": true
+    }
+  ],
+  "identical_source_maps": true,
+  "natural_startup_verified": true,
+  "old_test_changes": false,
+  "runtime_changes_after_static_review": false
+}

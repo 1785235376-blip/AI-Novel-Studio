@@ -1,0 +1,80 @@
+{
+  "status": "INDEPENDENT_PASS",
+  "utc": "2026-10-17T11:00:50.553251+00:00",
+  "source_count": 2613,
+  "protected_files_verified": 31,
+  "prior_evidence_unchanged": true,
+  "sources_unchanged": true,
+  "file_result": "85 passed, 45 PostgreSQL deselected, normal conftest",
+  "ui_result": "89 passed across six files",
+  "receipts": [
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin-r1.json",
+      "sha256": "a12835e020a82407121a2b61a5bb45f2e65406eb9eb70379836fa7fc0fd5e654",
+      "log": "docs/delivery/v2-development/interactive-removal-independent-origin-r1.log",
+      "log_sha256": "73fa5b4dd8f6516b55e5ae59a12082782bc7681825a0182fb66e4390f90750bb",
+      "status": "PASS"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-file-r1.json",
+      "sha256": "87f9572cbb61c70aa9b942a14bb6702fff4171bcf04af4e58f658f931c312003",
+      "log": "docs/delivery/v2-development/interactive-removal-independent-file-r1.log",
+      "log_sha256": "6a32d3356e04b2da32d3cbe0c9d1b6147427432e81fd68262a33578427df45c2",
+      "status": "PASS"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-ui-r1.json",
+      "sha256": "3e5bb714417d2c9e90cba7dcef07a6cdb60166663c96573fa9e0d979e13a6d68",
+      "log": "docs/delivery/v2-development/interactive-removal-independent-ui-r1.log",
+      "log_sha256": "58c2c3bc7e296f4f53c058167c355202d8679b287f8c064d0e9e0299bfc4a172",
+      "status": "PASS"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/file-launcher.log",
+      "sha256": "9c66723984864237a51e145c0e192d9587c8a08474948865e663ebb89f3c4604"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/normal-startup.json",
+      "sha256": "ed4da89a0b22ea76c1a8c7c31e39997cd574c63847a1c0558d906ff41706e438"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/normal-startup.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/origin-probe.py",
+      "sha256": "27ac53ae327138a2e9dc7ce730f8d14aca55019f159ea506c0517066bcc153e5"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/proof-launcher.log",
+      "sha256": "f8aa75896e36f31b65b911bcf9486131a7bf788275de4588af496b80be504092"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/protected-before.json",
+      "sha256": "0666f13851f3cba043d9fc981e2a0b8fc6cb12b2c2eb94247777145163fdb508"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/run-checks.sh",
+      "sha256": "3fae6cfd982345e3ba288f32fc2e83088f8a8a1dc7f3b9efe5555c70955ecf24"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/run-proof.sh",
+      "sha256": "ea9b5a2cf09e3d4c118e769cc4f2306b0430a15537c86fa424fa2b020a1d8c13"
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/ui-launcher.log",
+      "sha256": "58c48c131f8cc71e81bf317bcdc2c44637f8cf852d1ce995ab9e8cdbe0b80261"
+    }
+  ],
+  "not_run": [
+    "browser",
+    "Windows",
+    "PostgreSQL",
+    "target engine",
+    "providers",
+    "push"
+  ],
+  "type_build_tokens": "Primary PASS receipts verified; not independently rerun"
+}

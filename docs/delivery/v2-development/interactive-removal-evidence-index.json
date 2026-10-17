@@ -1,0 +1,278 @@
+{
+  "schema": "interactive-removal-evidence/1",
+  "baseline": "b5f52c823b4df58ffe69ec309bfc2fc0e4a114fe",
+  "branch": "work/dot-interactive-removal-20261017",
+  "status": "PRIMARY_AND_INDEPENDENT_PASS_LOCAL_COMMIT_AUTHORIZED",
+  "source_count": 2613,
+  "frozen_sources": [
+    {
+      "path": "frontend/src/experimental/InteractiveStoryPanel.tsx",
+      "sha256": "75f9458f05707a76e7936388f2a25d0857c109dc6147c0f9816cb933493973bf",
+      "bytes": 36005
+    },
+    {
+      "path": "frontend/src/experimental/interactiveNodeRemoval.ts",
+      "sha256": "1230eef8a893dac511e3ce440775b47b92c472e052f78dcc56cbebc1e3a173e9",
+      "bytes": 1726
+    },
+    {
+      "path": "frontend/src/experimental/interactiveNodeRemoval.test.ts",
+      "sha256": "6e59a1fd07e7dc7f54c4a0b26c91d739f1a6933a0a44f835db58dbbc9279c461",
+      "bytes": 3036
+    },
+    {
+      "path": "frontend/src/experimental/InteractiveStoryPanel.removal.test.tsx",
+      "sha256": "88d2b4cf9a42ada4696394a95cada1282bae0fcc2b1c7749d79eedbf0e8cc6f4",
+      "bytes": 20741
+    },
+    {
+      "path": "tests/test_interactive_removal_handoff.py",
+      "sha256": "52f9c3f2712dff9564fca394e50e409d7c71186c5e49517e03aa8508b88e99bd",
+      "bytes": 5606
+    }
+  ],
+  "evidence": [
+    {
+      "path": "docs/INTERACTIVE_REMOVAL_HANDOFF.md",
+      "sha256": "991a37e3e0c24313d7661ad3e7e55222675685733575d0ab21637d3dd505e15f",
+      "bytes": 7165
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-build-r1.json",
+      "sha256": "a3ddc073fa43886db945e148a36eadac91a3b7cae0a37bcb1d07ab3df7c5b81e",
+      "bytes": 619368
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-build-r1.log",
+      "sha256": "2213b706f424338178950c651de5ebdf524d9d4709b81de5372e7aaf7663e989",
+      "bytes": 1679
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-file-origin-r1.json",
+      "sha256": "25a5ec7c4c42b8a9ba09ed11286b93ed29484ba3619eb0abe8b58f8c4f4991ce",
+      "bytes": 619672
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-file-origin-r1.log",
+      "sha256": "7f111303842e5859af24711496b64488a4fe41531b4d9afc6b62623640876631",
+      "bytes": 10057
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-file-origin/build-launcher.log",
+      "sha256": "8574c70d2c2a1761f04794058770d7938800edb4efb2366401fe634255b6f555",
+      "bytes": 1776
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-file-origin/file-launcher.log",
+      "sha256": "1c32ee5af725921f42aa1321bda8e679edf07124cfcab0d689c63c7227986724",
+      "bytes": 1284
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-file-origin/normal-startup.json",
+      "sha256": "81e969fff1f2639cca02a641052e155391b02e45dd92677cfb5e989384d004c3",
+      "bytes": 9992
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-file-origin/normal-startup.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-file-origin/origin-probe.py",
+      "sha256": "27ac53ae327138a2e9dc7ce730f8d14aca55019f159ea506c0517066bcc153e5",
+      "bytes": 6678
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-file-origin/proof-launcher.log",
+      "sha256": "7b8f50bcf8ce0989838f26c4709100be467cbbd0404c108879d06ae67620b155",
+      "bytes": 10160
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-file-origin/run-checks.sh",
+      "sha256": "e6622f37d6e4b60cd87bd695d3804dfbf226ad090d56afc346d8d5cac531f0a0",
+      "bytes": 2220
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-file-origin/run-proof.sh",
+      "sha256": "06aada50aeb2d19b34995ab684a15fa38d13c8157f7037d6749aff6213db0228",
+      "bytes": 1219
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-file-origin/tokens-launcher.log",
+      "sha256": "76bc9c26992c0d6f7742bb828f963b74415383d887286f323f44763b6f8d7fab",
+      "bytes": 129
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-file-origin/type-launcher.log",
+      "sha256": "61f78fc9200eebb336f80fb7eb54e3aab5c8f37e984637f3c04fd016f5736a2b",
+      "bytes": 96
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-file-origin/ui-launcher.log",
+      "sha256": "01df31f454fb3f27b91a65b959a15b958fd49349ff98efe265899b9d1721d676",
+      "bytes": 958
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-file-r1.json",
+      "sha256": "d6b0f8aa4a68df102aaadbad9d9c60cb4d69816b6a98fbfdcf0f9a3d1b800f16",
+      "bytes": 619926
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-file-r1.log",
+      "sha256": "99c91b01582fabeaeca523b65be1906231ba7b3cb4166e913fff8b8273405ce0",
+      "bytes": 1188
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-audit.json",
+      "sha256": "ae22ed8e4b1a19903f5752d77982770d297eaf5b87ba7c09086b939f3626c088",
+      "bytes": 3518
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-file-r1.json",
+      "sha256": "87f9572cbb61c70aa9b942a14bb6702fff4171bcf04af4e58f658f931c312003",
+      "bytes": 620046
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-file-r1.log",
+      "sha256": "6a32d3356e04b2da32d3cbe0c9d1b6147427432e81fd68262a33578427df45c2",
+      "bytes": 1188
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin-r1.json",
+      "sha256": "a12835e020a82407121a2b61a5bb45f2e65406eb9eb70379836fa7fc0fd5e654",
+      "bytes": 619742
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin-r1.log",
+      "sha256": "73fa5b4dd8f6516b55e5ae59a12082782bc7681825a0182fb66e4390f90750bb",
+      "bytes": 10057
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/file-launcher.log",
+      "sha256": "9c66723984864237a51e145c0e192d9587c8a08474948865e663ebb89f3c4604",
+      "bytes": 1296
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/normal-startup.json",
+      "sha256": "ed4da89a0b22ea76c1a8c7c31e39997cd574c63847a1c0558d906ff41706e438",
+      "bytes": 9992
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/normal-startup.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/origin-probe.py",
+      "sha256": "27ac53ae327138a2e9dc7ce730f8d14aca55019f159ea506c0517066bcc153e5",
+      "bytes": 6678
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/proof-launcher.log",
+      "sha256": "f8aa75896e36f31b65b911bcf9486131a7bf788275de4588af496b80be504092",
+      "bytes": 10167
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/protected-before.json",
+      "sha256": "0666f13851f3cba043d9fc981e2a0b8fc6cb12b2c2eb94247777145163fdb508",
+      "bytes": 4331
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/run-checks.sh",
+      "sha256": "3fae6cfd982345e3ba288f32fc2e83088f8a8a1dc7f3b9efe5555c70955ecf24",
+      "bytes": 2299
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/run-proof.sh",
+      "sha256": "ea9b5a2cf09e3d4c118e769cc4f2306b0430a15537c86fa424fa2b020a1d8c13",
+      "bytes": 1247
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-origin/ui-launcher.log",
+      "sha256": "58c48c131f8cc71e81bf317bcdc2c44637f8cf852d1ce995ab9e8cdbe0b80261",
+      "bytes": 970
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-ui-r1.json",
+      "sha256": "3e5bb714417d2c9e90cba7dcef07a6cdb60166663c96573fa9e0d979e13a6d68",
+      "bytes": 619829
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-independent-ui-r1.log",
+      "sha256": "58c2c3bc7e296f4f53c058167c355202d8679b287f8c064d0e9e0299bfc4a172",
+      "bytes": 864
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-primary-audit.json",
+      "sha256": "59c7ba8839f92f6bad491275630311ff5508025aa0f94ae16368c12642f7950f",
+      "bytes": 1667
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-tokens-r1.json",
+      "sha256": "b87aae51ac1d0bc5565308b94956e0f42fe023c09cf3a0297fb7c138822bee00",
+      "bytes": 619346
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-tokens-r1.log",
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+      "bytes": 31
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-type-r1.json",
+      "sha256": "852fb58100ac6ee730588ded95c9d3bba124e68c39b0a67eb33484a1155cf3ab",
+      "bytes": 619389
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-type-r1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-ui-r1.json",
+      "sha256": "b565703e94179f74b3c9da45a0d5f50dde091ecbb63288ffdd97dc1325c19fb4",
+      "bytes": 619721
+    },
+    {
+      "path": "docs/delivery/v2-development/interactive-removal-ui-r1.log",
+      "sha256": "2b5e219dd0eafafd63138bfd15bd6c506c4357613b3341015cb7fabdeb653088",
+      "bytes": 864
+    }
+  ],
+  "primary_results": {
+    "file_passed": 85,
+    "postgres_deselected": 45,
+    "ui_passed": 89,
+    "ui_files": 6,
+    "forced_typescript": "PASS",
+    "vite_build": "PASS_WITH_EXISTING_CHUNK_ADVISORY",
+    "token_guard": "PASS_52_FILES",
+    "natural_and_runner_child_provenance": "PASS",
+    "source_and_log_hash_audit": "PASS"
+  },
+  "static_review": {
+    "status": "APPROVED",
+    "fixes": [
+      "Fence reverse-order retained edit/save/revert/navigation callbacks before side effects.",
+      "Separate composition-boundary removal/admission invalidation from final Unicode text-edit authority."
+    ]
+  },
+  "limits": [
+    "Browser visual/geometry/accessibility NOT_RUN",
+    "Windows/native desktop NOT_RUN",
+    "Target engine NOT_RUN",
+    "PostgreSQL deselected, not passed",
+    "Providers NOT_RUN",
+    "No publication/push",
+    "Historical sparse-excluded delivery evidence not verified",
+    "Local commit authorized; publication/push not authorized"
+  ],
+  "independent_results": {
+    "file_passed": 85,
+    "postgres_deselected": 45,
+    "ui_passed": 89,
+    "ui_files": 6,
+    "natural_and_runner_child_provenance": "PASS",
+    "source_and_log_hash_audit": "PASS",
+    "type_build_tokens": "Primary receipts verified, not independently rerun"
+  }
+}
