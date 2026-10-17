@@ -3,6 +3,7 @@ export type Citation = { source_id: string; source_version: number; paragraph: n
 export type ResearchMeta = { title: string; author: string; source: string; source_version: string; usage_notes: string; access: 'PRIVATE' | 'PROJECT' };
 export type Source = ResearchMeta & { status?: string; content_sha256?: string;  id: string; version: number; origin: string; format: string; filename: string; accessed_at: string; extraction_status: string; paragraph_count: number; page_citations?: Citation[]; warnings: string[]; paragraphs?: { paragraph: number; page: number | null; text: string; citation: Citation }[] };
 export type Evidence = { citation: Citation; title: string; author: string; text: string; page: number | null; paragraph: number; source: string; not_understood?: boolean; warning?: string };
+export type HistoricalInspection = { historical_citation: Citation; current_version: number; text: string; page: number | null; historical_only: true; not_understood: boolean; usable_as_current_evidence: false };
 export type Note = { id: string; version: number; title: string; text: string; citations: Citation[]; evidence: Evidence[] };
 export type SettingDraft = { id: string; version: number; title: string; status: 'REVIEW' | 'RESEARCH_REVIEWED'; data: { description: string }; evidence: Evidence[]; canon_promotion_available: false };
 const seg = encodeURIComponent;
@@ -15,6 +16,7 @@ export function researchLibraryClient(client: ExperimentalClient) {
     importFile: (metadata: ResearchMeta, filename: string, content_base64: string) => client.post<Source>(base + '/sources/import', { ...metadata, filename, content_base64 }),
     fetchWeb: (metadata: ResearchMeta, url: string) => client.post<Source>(base + '/sources/fetch-webpage', { ...metadata, url, confirm_fetch: true }),
     edit: (row: Source, metadata: ResearchMeta) => client.put<Source>(`${base}/sources/${seg(row.id)}`, { ...metadata, expected_version: row.version }),
+    inspectHistory: (ref: Citation, currentVersion: number, signal?: AbortSignal) => client.get<HistoricalInspection>(`${base}/sources/${seg(ref.source_id)}/history/${ref.source_version}/inspect?expected_current_version=${currentVersion}&paragraph=${ref.paragraph}&quote_sha256=${seg(ref.quote_sha256)}${ref.page === undefined ? '' : `&page=${ref.page}`}`, signal),
     historicalOriginal: (id: string, version: number) => client.blob(`${base}/sources/${seg(id)}/history/${version}/original`),
     noteRepairs: (signal?: AbortSignal) => client.get<{ items: Note[] }>(base + '/note-repairs', signal),
     archive: (signal?: AbortSignal) => client.get<{ items: Source[] }>(base + '/sources-archive', signal),

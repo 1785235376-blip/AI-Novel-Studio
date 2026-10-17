@@ -95,10 +95,22 @@ class AdoptIn(StrictInput):
 
 
 class ResearchLibraryService(DomainService):
-    def __init__(self, store, novels, chapters, *, legacy=None, world=None):
+    def __init__(self, store, novels, chapters, *, legacy=None, world=None, historical_inspection=False):
         super().__init__(store, novels, chapters)
         self.legacy, self.world = legacy, world
         self.vision_provider = None
+        self.historical_inspection = historical_inspection
+
+    def history_identity(self, nid, *, provision=False):
+        """Reuse the original project owner; observations never provision identity."""
+        if not self.historical_inspection:
+            raise FileNotFoundError(nid)
+        from ..creative.project_store import CreativeProjectStore
+        owner = CreativeProjectStore(self.store)
+        if provision:
+            return owner.incarnation(nid)
+        with owner.existing_owner_only():
+            return owner.incarnation(nid)
 
     @staticmethod
     def _visible(row, actor):
@@ -106,7 +118,7 @@ class ResearchLibraryService(DomainService):
 
     @staticmethod
     def _public(row, details=False):
-        excluded = {'content_base64', 'history', 'paragraphs'}
+        excluded = {'content_base64', 'history', 'paragraphs', 'research_project_incarnation'}
         value = {key: copy.deepcopy(item) for key, item in row.items() if key not in excluded}
         if details: value['paragraphs'] = [{**copy.deepcopy(paragraph), 'citation': ResearchLibraryService._cite(row, paragraph)} for paragraph in row.get('paragraphs', [])]
         value['page_citations'] = [ResearchLibraryService._page_cite(row, page) for page in row.get('unread_pages', [])] if details else []
@@ -157,13 +169,17 @@ class ResearchLibraryService(DomainService):
         if not row.get('content_base64'): raise FileNotFoundError(rid)
         return base64.b64decode(row['content_base64']), row['filename']
 
-    def _save_source(self, nid, scope, actor, meta, extraction, *, filename='', encoded='', guard):
+    def _save_source(self, nid, scope, actor, meta, extraction, *, filename='', encoded='', guard, expected_identity=None):
         self.novels.get(nid)
         payload = {**meta, **extraction, 'filename': filename, 'content_base64': encoded,
                    'origin': 'LOCAL_IMPORT' if encoded else 'EXPLICIT_WEB_FETCH',
                    'status': 'ACTIVE', 'accessed_at': now(), 'privacy_level': 'LOCAL_ONLY'}
         with self.store.transaction(nid, scope) as state:
             guard()
+            if self.historical_inspection:
+                if self.history_identity(nid) != expected_identity:
+                    raise FileNotFoundError(nid)
+                payload['research_project_incarnation'] = expected_identity
             rows = collection(state, SOURCES)
             if len(rows) >= MAX_SOURCES: raise ValueError('RESEARCH_SOURCE_LIMIT')
             if sum(len(row.get('content_base64', '')) + sum(len(p['text']) for p in row.get('paragraphs', [])) for row in rows.values()) + len(encoded) + sum(len(p['text']) for p in extraction['paragraphs']) > MAX_STORED_BYTES:
@@ -172,26 +188,30 @@ class ResearchLibraryService(DomainService):
             rows[row['id']] = row
             self._storage_limit(state)
             guard()
+            if self.historical_inspection and self.history_identity(nid) != expected_identity:
+                raise FileNotFoundError(nid)
             return self._public(row, True)
 
     def import_file(self, nid, scope, actor, value, *, guard):
         body = FileIn.model_validate(value)
         guard()
+        identity = self.history_identity(nid, provision=True) if self.historical_inspection else None
         try: raw = decode_base64(body.content_base64)
         except ValueError as exc: raise ValueError('RESEARCH_BASE64_INVALID') from exc
         extraction = extract_document(body.filename, raw)
         guard()
         meta = MetadataIn.model_validate(body.model_dump(exclude={'filename', 'content_base64'})).model_dump()
-        return self._save_source(nid, scope, actor, meta, extraction, filename=body.filename, encoded=body.content_base64, guard=guard)
+        return self._save_source(nid, scope, actor, meta, extraction, filename=body.filename, encoded=body.content_base64, guard=guard, expected_identity=identity)
 
     def import_web(self, nid, scope, actor, value, *, guard):
         body = WebIn.model_validate(value)
         guard()
+        identity = self.history_identity(nid, provision=True) if self.historical_inspection else None
         extraction = fetch_webpage(body.url, guard=guard)
         guard()
         meta = MetadataIn.model_validate(body.model_dump(exclude={'url', 'confirm_fetch'})).model_dump()
         meta['source'] = extraction['final_url']
-        return self._save_source(nid, scope, actor, meta, extraction, guard=guard)
+        return self._save_source(nid, scope, actor, meta, extraction, guard=guard, expected_identity=identity)
 
     def edit_source(self, nid, scope, actor, rid, value, *, guard):
         body = EditIn.model_validate(value)
@@ -242,6 +262,45 @@ class ResearchLibraryService(DomainService):
         # Current visibility never grants access to older private revisions.
         return {'items': [self._public(value) for value in [*row.get('history', []), snapshot(row)]],
                 'current_version': row['version'], 'restore_creates_new_version': True}
+
+    def inspect_history(self, nid, scope, actor, rid, expected_current_version, value):
+        """One exact historical location, never current evidence or a rebind."""
+        identity = self.history_identity(nid)
+        ref = CitationIn.model_validate(value).model_dump(exclude_none=True)
+        state = self.store.read(nid, scope)
+        row = self._owned_source(nid, scope, actor, rid, state)
+        if (row.get('research_project_incarnation') != identity
+                or row.get('status') != 'ACTIVE' or row.get('id') != rid
+                or row['version'] != expected_current_version or ref['source_id'] != rid
+                or ref['source_version'] >= row['version']):
+            raise FileNotFoundError(rid)
+        matches = [item for item in row.get('history', []) if item.get('version') == ref['source_version']]
+        if len(matches) != 1: raise FileNotFoundError(rid)
+        revision = matches[0]
+        if any(revision.get(key) != expected for key, expected in {
+                'id': rid, 'novel_id': nid, 'scope': scope, 'created_by': actor,
+                'created_at': row.get('created_at'), 'status': 'ACTIVE',
+                'research_project_incarnation': identity}.items()):
+            raise FileNotFoundError(rid)
+        text, page = '', ref.get('page')
+        if ref['paragraph'] == 0:
+            if page not in revision.get('unread_pages', []) or self._page_cite(revision, page) != ref:
+                raise FileNotFoundError(rid)
+        else:
+            matches = [p for p in revision.get('paragraphs', []) if p.get('paragraph') == ref['paragraph']]
+            if len(matches) != 1: raise FileNotFoundError(rid)
+            paragraph = matches[0]
+            text, page = paragraph.get('text'), paragraph.get('page')
+            if (not isinstance(text, str) or len(text) > 8000 or self._cite(revision, paragraph) != ref
+                    or (page is not None and (type(page) is not int or not 1 <= page <= 1000))):
+                raise FileNotFoundError(rid)
+        # Deliberately omit source metadata, other paragraphs, files and current
+        # evidence fields. This result cannot be used by citation consumers.
+        if self.history_identity(nid) != identity:
+            raise FileNotFoundError(rid)
+        return {'historical_citation': ref, 'current_version': row['version'],
+                'text': text, 'page': page, 'historical_only': True,
+                'not_understood': ref['paragraph'] == 0, 'usable_as_current_evidence': False}
 
     def historical_original(self, nid, scope, actor, rid, version):
         state = self.store.read(nid, scope)

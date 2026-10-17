@@ -67,6 +67,8 @@ def create_research_library_router(service, authorize, require_flag):
                 raise HTTPException(403, {'code': 'RESEARCH_AUTHORITY_CHANGED'})
             return identity
         actor, scope = access()
+        historical = fn == service.inspect_history
+        identity = invoke(service.history_identity, nid) if historical else None
         def guard():
             if access() != (actor, scope): raise HTTPException(403, {'code': 'RESEARCH_AUTHORITY_CHANGED'})
         if mutation:
@@ -79,6 +81,8 @@ def create_research_library_router(service, authorize, require_flag):
             guard()
             result = invoke(fn, nid, scope, actor, *args)
             guard()
+            if historical and invoke(service.history_identity, nid) != identity:
+                raise HTTPException(404, {'code': 'EXPERIMENTAL_NOT_FOUND'})
             return result
 
     @router.get('/sources')
@@ -103,6 +107,17 @@ def create_research_library_router(service, authorize, require_flag):
     def source_history(nid: str, rid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         response.headers['Cache-Control'] = 'no-store'
         return run(nid, x_session_token, x_branch_id, service.source_history, rid)
+
+    @router.get('/sources/{rid}/history/{version}/inspect')
+    def inspect_history(nid: str, rid: str, version: int,
+                        expected_current_version: int = Query(ge=1),
+                        paragraph: int = Query(ge=0, le=5000),
+                        quote_sha256: str = Query(pattern=r'^[a-f0-9]{64}$'),
+                        page: int | None = Query(default=None, ge=1, le=1000),
+                        x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return run(nid, x_session_token, x_branch_id, service.inspect_history, rid, expected_current_version,
+                   {'source_id': rid, 'source_version': version, 'paragraph': paragraph,
+                    'page': page, 'quote_sha256': quote_sha256})
 
     @router.get('/sources/{rid}/history/{version}/original')
     def historical_original(nid: str, rid: str, version: int, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
