@@ -1,0 +1,42 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/StudioTimelinePlaybackOptions.additive.test.tsx (5 tests) 174ms
+ ✓ src/creative/studioBaselineTypeSafety.test.tsx (35 tests) 49ms
+ ✓ src/creative/ProductionTimeline.test.tsx (4 tests) 217ms
+
+ Test Files  3 passed (3)
+      Tests  44 passed (44)
+   Start at  15:52:34
+   Duration  1.26s (transform 342ms, setup 30ms, collect 769ms, tests 441ms, environment 1.18s, prepare 176ms)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2366 modules transformed.
+rendering chunks...
+computing gzip size...
+../.runtime/v2-checks/timeline-review-playback-ui-20261018-r1/dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+../.runtime/v2-checks/timeline-review-playback-ui-20261018-r1/dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+../.runtime/v2-checks/timeline-review-playback-ui-20261018-r1/dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+../.runtime/v2-checks/timeline-review-playback-ui-20261018-r1/dist/assets/ExperimentalWorkbench-BkplvLLE.css      4.23 kB │ gzip:   1.09 kB
+../.runtime/v2-checks/timeline-review-playback-ui-20261018-r1/dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+../.runtime/v2-checks/timeline-review-playback-ui-20261018-r1/dist/assets/App-DRLVwzqD.css                      215.51 kB │ gzip:  27.26 kB
+../.runtime/v2-checks/timeline-review-playback-ui-20261018-r1/dist/assets/Health-K5yzxg_U.js                      0.99 kB │ gzip:   0.57 kB
+../.runtime/v2-checks/timeline-review-playback-ui-20261018-r1/dist/assets/index-DbvQHboy.js                      30.15 kB │ gzip:  10.01 kB
+../.runtime/v2-checks/timeline-review-playback-ui-20261018-r1/dist/assets/style-CCgty0fs.js                      45.12 kB │ gzip:   8.40 kB
+../.runtime/v2-checks/timeline-review-playback-ui-20261018-r1/dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+../.runtime/v2-checks/timeline-review-playback-ui-20261018-r1/dist/assets/LocalTutorIntegration-BzL239oF.js      47.64 kB │ gzip:  15.65 kB
+../.runtime/v2-checks/timeline-review-playback-ui-20261018-r1/dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+../.runtime/v2-checks/timeline-review-playback-ui-20261018-r1/dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+../.runtime/v2-checks/timeline-review-playback-ui-20261018-r1/dist/assets/ExperimentalWorkbench-CvE-EqKV.js     814.90 kB │ gzip: 244.26 kB
+../.runtime/v2-checks/timeline-review-playback-ui-20261018-r1/dist/assets/App-Ca7jLJKQ.js                     2,499.10 kB │ gzip: 746.65 kB
+✓ built in 7.48s
+
+(!) outDir /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/timeline-review-playback-ui-20261018-r1/dist is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

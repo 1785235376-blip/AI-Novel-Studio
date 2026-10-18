@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Button, StatusMessage } from '../ui/primitives';
+import { StudioTimelinePlaybackOptions } from './StudioTimelinePlaybackOptions';
 import type { StudioTimelinePlaybackController } from './useStudioTimelinePlayback';
 
 /** Replaceable playback view; authority, cache and receipts stay in controller. */
@@ -30,6 +31,8 @@ export function StudioTimelinePlaybackPanel({ controller: c }: { controller: Stu
     {c.visible && <><video ref={media} key={c.visible.url} src={c.visible.url} controls preload="metadata" playsInline width="640" style={{ maxWidth: '100%' }} aria-label="已核验的时间线缓存视频"
       onTimeUpdate={event => { if (event.currentTarget.currentSrc === c.visible?.url) c.reportPosition(c.visible.key, event.currentTarget.currentTime); }}
       onError={() => c.visible && c.reportMediaError(c.visible.key)} />
+      <StudioTimelinePlaybackOptions key={JSON.stringify([c.visible.key, c.visible.url, c.visible.jobVersion])}
+        media={media} url={c.visible.url} identity={JSON.stringify([c.visible.key, c.visible.digest, c.visible.jobVersion])} />
       <label>时间定位<input type="range" min={0} max={c.visible.durationMs} step={1} value={c.positionMs} onChange={event => seek(Number(event.currentTarget.value))} /></label>
       <p>{(c.positionMs / 1000).toFixed(3)} / {(c.visible.durationMs / 1000).toFixed(3)} 秒 · {c.visible.bytes} 字节</p>
       <Button onClick={() => seek(Math.max(0, c.positionMs - 5000))}>后退 5 秒</Button><Button onClick={() => seek(c.positionMs + 5000)}>前进 5 秒</Button>
