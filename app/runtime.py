@@ -56,6 +56,28 @@ class Runtime:
         if bailian_model:
             self.register_bailian_text_route(bailian_model, os.getenv("ALIYUN_BAILIAN_REGION", "cn-beijing"))
 
+        ocr_fields = {key: os.getenv(variable, '').strip() for key, variable in {
+            'executable': 'LOCAL_OCR_EXECUTABLE', 'executable_sha256': 'LOCAL_OCR_EXECUTABLE_SHA256',
+            'traineddata': 'LOCAL_OCR_TRAINEDDATA', 'model_sha256': 'LOCAL_OCR_MODEL_SHA256',
+            'language': 'LOCAL_OCR_LANGUAGE'}.items()}
+        if any(ocr_fields.values()):
+            if not all(ocr_fields.values()): raise ValueError('LOCAL_OCR_COMPLETE_HOST_CONFIGURATION_REQUIRED')
+            self.register_local_ocr_route(**ocr_fields)
+
+    def register_local_ocr_route(self, *, executable, executable_sha256,
+                                 traineddata, model_sha256, language):
+        """Trusted host bootstrap only. No download, discovery or inference."""
+        from pathlib import Path
+        from .local_tesseract_ocr import LocalTesseractOCRProvider
+        provider_id = 'local-tesseract-ocr'
+        adapter = LocalTesseractOCRProvider(provider_id=provider_id, model_id=language,
+            executable=Path(executable), executable_sha256=executable_sha256,
+            traineddata=Path(traineddata), model_sha256=model_sha256, language=language)
+        self.provider_registry.register(ProviderDescriptor(provider_id, 'Local Tesseract OCR', 'local',
+            frozenset({Modality.VISION}), True, True, 'pinned_native_unverified_quality'), adapter, replace=True)
+        self.model_registry.register(ModelDescriptor(language, provider_id, 'Local OCR (' + language + ')',
+            Modality.VISION, frozenset({'OCR'})), replace=True)
+
     def register_bailian_text_route(self, model_id: str, region: str = "cn-beijing"):
         """Explicit host bootstrap preset. Registration never probes or generates."""
         from .bailian_text_preset import BailianTextProvider

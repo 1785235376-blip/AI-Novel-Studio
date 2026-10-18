@@ -600,7 +600,9 @@ class ResearchLibraryService(DomainService):
         self.novels.get(nid)
         from .research_vision import ResearchVisionCapability
         capability = ResearchVisionCapability.model_validate(self.vision_provider.capability).model_dump() if self.vision_provider else None
+        native = self.native_ocr.status() if self.native_ocr is not None else {'status': 'NOT_CONFIGURED', 'routes': []}
         return {'status': 'CONFIGURED' if capability and capability['verification'] == 'MOCK_ONLY' and capability['local'] else 'NOT_CONFIGURED', 'capability': capability,
+                'native_ocr': native,
                 'runtime_admission': 'NOT_CONFIGURED', 'durable_worker': False,
                 'model_quality': 'NOT_RUN', 'automatic_canon': False, 'review_required': True,
                 'operations': ['OCR', 'SCAN_PDF_VISION', 'IMAGE_UNDERSTANDING', 'CHART_UNDERSTANDING', 'TABLE_UNDERSTANDING']}

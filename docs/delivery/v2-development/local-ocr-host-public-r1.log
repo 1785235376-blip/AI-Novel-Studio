@@ -1,0 +1,8 @@
+.........                                                                [100%]
+=============================== warnings summary ===============================
+tests/test_local_ocr_host_bootstrap_additive.py::test_host_explicit_configuration_registers_without_running
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+9 passed, 1 warning in 15.81s

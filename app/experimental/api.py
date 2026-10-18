@@ -346,6 +346,8 @@ from .research_library import ResearchLibraryService
 from .research_library_api import create_research_library_router
 research_library_service = ResearchLibraryService(store, legacy_api.novel_service, legacy_api.chapter_service,
     legacy=legacy_api.v1_capability_service, world=world_service, historical_inspection=True)
+from .research_native_ocr import NativeResearchOCRCoordinator
+research_native_ocr = NativeResearchOCRCoordinator(research_library_service, model_broker_service, legacy_api.jobs)
 embedding_service.research = research_library_service
 model_broker_service.vision_resolver = lambda: research_library_service.vision_provider if 'research_library_v2' in enabled_flags() else None
 from ..author_context_sources import NativeAuthorSources

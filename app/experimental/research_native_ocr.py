@@ -59,6 +59,19 @@ class NativeResearchOCRCoordinator:
             raise ValueError('RESEARCH_OCR_OWNER_ALREADY_CONFIGURED')
         research.native_ocr = self
 
+    def status(self):
+        from .flags import enabled_flags
+        from .research_ocr_execution import FLAGS
+        ready = set(FLAGS).issubset(enabled_flags())
+        routes = self.broker.candidates(local_ocr_only=True) if ready else []
+        return {'status': 'CONFIGURED' if routes else 'NOT_CONFIGURED',
+            'operations': ['OCR'], 'media_types': ['image/png', 'image/jpeg'],
+            'review_required': True, 'automatic_canon': False, 'model_quality': 'NOT_RUN',
+            'routes': [{'provider_id': row['provider_id'], 'model_id': row['model_id'],
+                'display_name': row['display_name'],
+                'languages': row['identity']['native_ocr_binding']['route']['languages']}
+                for row in routes]}
+
     @contextmanager
     def lease(self, nid, identity):
         with self.owner.existing_owner_only(), self.owner.owner_lease(nid) as current:
