@@ -1,0 +1,139 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "272e02c7d801d4e3f1cbd99b84fb68d0a0d96e89",
+      "path": "API_CATALOG.json",
+      "bytes": 1456408,
+      "sha256": "0f4ec6d36b8cce884e66f989a7b47c9d4967569f7ecd77c131c2a09f13b67226"
+    },
+    {
+      "blob": "084e1d9302e29b018241367336e0c98836be0261",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 597851,
+      "sha256": "c9d6089ea27ebfdb8174ce3ea46002ead8f4ae452f189a5d2c17aa8b1de8c15b"
+    },
+    {
+      "blob": "ce5f2b7b86bfaa2593c83afa5fda6e8f865a3d20",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 129475,
+      "sha256": "b03dbc787c5fe45c9130c868f03e1a606bd296b5bae5b4110297d3bd9a6b4a39"
+    },
+    {
+      "blob": "26fe5d85046a9f41da207c74553305e2e3be3573",
+      "path": "app/creative/canvas_view_models.py",
+      "bytes": 4578,
+      "sha256": "d211d3b2509b8c5db191c2fe28db056ac983660f853f703ceaded8f0f81b3d4e"
+    },
+    {
+      "blob": "8433a9673a3a121511454f9c30c24d61e525ced3",
+      "path": "docs/delivery/v2-development/canvas-grid-file.json",
+      "bytes": 700135,
+      "sha256": "534e1a8ffa85e8f077607d149641f0240439e69c7ea7852f7784d441e1fff817"
+    },
+    {
+      "blob": "d4743f542ee8f4a30c47a0981abbe338daa0fcb2",
+      "path": "docs/delivery/v2-development/canvas-grid-file.log",
+      "bytes": 636,
+      "sha256": "7c9746da2709a8c8a9b0cc479e1a714a6335d556b243669c6fd89ae380708292"
+    },
+    {
+      "blob": "1c1a7de501a2d00fdc6110894b240a54ebf57a08",
+      "path": "docs/delivery/v2-development/canvas-grid-pg-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "49e6bc01997a994ff29b4659d0306f6d23352875836bf5ffddf230ceebd8d44c"
+    },
+    {
+      "blob": "0c8f1fa22e904f50d3de7baab220d3b1859f5b3e",
+      "path": "docs/delivery/v2-development/canvas-grid-pg.json",
+      "bytes": 700192,
+      "sha256": "c1db19f04819517cd388a92a62579975ce1c1a62f5a4ec81a4d64b8e6ccfd365"
+    },
+    {
+      "blob": "818894489dd5aff40b0e1bd83dbd81bc63da9625",
+      "path": "docs/delivery/v2-development/canvas-grid-pg.log",
+      "bytes": 641,
+      "sha256": "ebf866a5b61a9c199b0c2e4bc2204fe8bc087de86ef802a80f00044bb8edc689"
+    },
+    {
+      "blob": "7e70c793e03cbb3daff4ee6c1319e9c2782667bf",
+      "path": "docs/delivery/v2-development/canvas-grid-public.json",
+      "bytes": 700314,
+      "sha256": "5dd07871f2621be27dca4fabfd969fec0e194053a9777ff657702e0fbb62ac5e"
+    },
+    {
+      "blob": "d8aa6116619ad5efc73843b43ffebf36a3755b12",
+      "path": "docs/delivery/v2-development/canvas-grid-public.log",
+      "bytes": 634,
+      "sha256": "7ec7828645e8da18287759781adb815bb9851e89f686b2824ccd401bcf5aef02"
+    },
+    {
+      "blob": "8fe9b5f4f5ef28a48cd9b2f9729853add6def2d6",
+      "path": "docs/delivery/v2-development/canvas-grid-ui.json",
+      "bytes": 700115,
+      "sha256": "2d51d6d0a7c7e905ba302de158adec5dfa38b393afde0d448411e9a60e529d4c"
+    },
+    {
+      "blob": "5ccc57631ba557f529d5b14fbae1356f567d843b",
+      "path": "docs/delivery/v2-development/canvas-grid-ui.log",
+      "bytes": 2188,
+      "sha256": "dfafbceb02ac6d0021dcbbc14b5e11f99f618cdf1afb0a50d8bda45c806066c3"
+    },
+    {
+      "blob": "a17824a7345ce544484930e7e2b5f2030ef68179",
+      "path": "docs/v2/MEDIA_CANVAS_GRID_SNAP.md",
+      "bytes": 1785,
+      "sha256": "d47b501298954c361b45fc9e589d8b7b9708d0c64de186b2cb008bb39a98163d"
+    },
+    {
+      "blob": "6eaba17e2c0957074e9462d4f8caf1c936298f0f",
+      "path": "frontend/src/creative/MediaCardViewport.additive.test.tsx",
+      "bytes": 6821,
+      "sha256": "06a0618b5b90a3d5a041afc10a6e94d850a96ed0e00a95b1e78a2a7bbd7b4bad"
+    },
+    {
+      "blob": "1ea6afea4662b8cb497d19241ab1b3647fcb42ca",
+      "path": "frontend/src/creative/MediaCardViewport.tsx",
+      "bytes": 10601,
+      "sha256": "841af8eee6b14ed9ad738d2c89e220294ed36daecfe9b720f635a482772998cb"
+    },
+    {
+      "blob": "4eb23d9b18fe11f1256ad42067b724c4e70a822e",
+      "path": "frontend/src/creative/mediaCanvas.css",
+      "bytes": 2212,
+      "sha256": "331c9e10edd51051058205b03aff5197759811da03e87f70b5658fd09273bb0f"
+    },
+    {
+      "blob": "d3cd048b496916acb3980aef9c4fe67109fdb837",
+      "path": "frontend/src/creative/mediaCanvasGrid.additive.test.ts",
+      "bytes": 1902,
+      "sha256": "41e50e3b70b386fd00d7dbdb101750067b29c3a2ae782fdd24fbb39109a6f8c5"
+    },
+    {
+      "blob": "bfb89e5fdcfea9189d1ffd2a7b45d4524a1ee579",
+      "path": "frontend/src/creative/mediaCanvasSelection.ts",
+      "bytes": 2705,
+      "sha256": "be005760311eb8ff372b12bf79f648fc26311d5234a51faf23b7aa06845cf3c1"
+    },
+    {
+      "blob": "ff5701c83ebdb6675fbb49b28e428da8ed8308b3",
+      "path": "frontend/src/creative/studioCanvasViewClient.ts",
+      "bytes": 9966,
+      "sha256": "905c71531b55dac4b156b1e9223ff968f407208f5245be015ac3f4bf85b32ba0"
+    },
+    {
+      "blob": "64eac20129a2af389b0d44886e10895a6b3a404c",
+      "path": "tests/test_canvas_grid_options_additive.py",
+      "bytes": 2510,
+      "sha256": "a13d90a875a310f91bf216a961306af3be0a58a5c56d593a22ef6dd9d77fae5c"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
