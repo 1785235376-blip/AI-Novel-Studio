@@ -1,0 +1,931 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "84513ec120fc06b08b1b08a4e77be143f9dff4c3",
+      "path": "API_CATALOG.json",
+      "bytes": 1456645,
+      "sha256": "ee6a16b0a416caa7c1bee2044051dae67ed5a97be95edacc4334eeaf1d9867db"
+    },
+    {
+      "blob": "53171c1c3581dd7db32eea84187658167bd9afed",
+      "path": "API_CATALOG.md",
+      "bytes": 389157,
+      "sha256": "fad1172c737ade717a9463731aa6bb241bcfecfed68315495f26fc2769ea08a2"
+    },
+    {
+      "blob": "cf46984f59029f0574ee432d42f5d4587606153d",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 599879,
+      "sha256": "4daafd59661addb6bc7fa04d9fe6b24a3e6a69530b6b41107bd4d6f43e3bd6a9"
+    },
+    {
+      "blob": "3f7c29561325aa487c1507eca6bd80795cf9467d",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 129513,
+      "sha256": "7a36d170ab34677c8208f3768bd8d376a67938f09b70649c24761627ec91562f"
+    },
+    {
+      "blob": "5ec1e05c88c89d70de1b4a48ca0ba24bbb672724",
+      "path": "app/creative/adaptation_models.py",
+      "bytes": 5080,
+      "sha256": "7885e3f6ff7f0be6b9d6b184d6b5446b8cc38643a73a4b402d78ce06ba6cf772"
+    },
+    {
+      "blob": "f7860f2761fe0573f2196f499f4f07e2400da4e8",
+      "path": "app/creative/director_camera_geometry.py",
+      "bytes": 1940,
+      "sha256": "90e5e2f94e6afa2c7b96e20e66d9f5320f9716309a6c7be2ef9e874da49554f7"
+    },
+    {
+      "blob": "efd357502308ae3b37e10c26ca8a2f89783e949e",
+      "path": "app/creative/director_workspace.py",
+      "bytes": 2781,
+      "sha256": "3630d0b366791ae625a8d9f5bd433a6c095bef5528dcd29d640a9393923d0391"
+    },
+    {
+      "blob": "b640e60718ac8b76b705668d89ba455b50a066aa",
+      "path": "app/creative/models.py",
+      "bytes": 22728,
+      "sha256": "980e8e18758d7277d692feac1a93c692c9d6374439b92b1769694a918ece0535"
+    },
+    {
+      "blob": "e87ededa04365441b4af2b8147439f482e656b60",
+      "path": "app/creative/service.py",
+      "bytes": 30601,
+      "sha256": "ffad60b26f5bf680643932e08602d0fcb64464f8a1f47ae568f247614c490f35"
+    },
+    {
+      "blob": "1bb72c2fe6db1a8ab2194b8a60db0adc425d3f6a",
+      "path": "app/services/finding_review_service.py",
+      "bytes": 18532,
+      "sha256": "d714913641e575a806a9a0de6431974596f4d4aff406a2965d98ad0af70202ca"
+    },
+    {
+      "blob": "3818db852c26e1b3dcbc576ff5cdfc03dc41640b",
+      "path": "app/services/narrative_progress_projection.py",
+      "bytes": 4446,
+      "sha256": "ed58801751141e581aafba91f3a9ac6a7228f0869e39db5ea888f1b1986a4d38"
+    },
+    {
+      "blob": "8d01121b9163094ce8c3be284153f1b075e18076",
+      "path": "app/services/studio_timeline_edit.py",
+      "bytes": 15666,
+      "sha256": "19ae3a3ff2bde9de3f84fbae0c82c56a097be989fab72ed06c2602eafda672a5"
+    },
+    {
+      "blob": "6161481afa425736b974f34c0c98a5b93c7f62c7",
+      "path": "app/services/studio_timeline_exchange.py",
+      "bytes": 20672,
+      "sha256": "44e5ad36c5a6a3b7a9e18fc215e4f85ba17d593170c9c61a87336e9f7a561fd3"
+    },
+    {
+      "blob": "a43b031c46d65bf48b1e00b143615a279a39c6ce",
+      "path": "app/services/studio_timeline_render.py",
+      "bytes": 30250,
+      "sha256": "638b83bb63f2dee009c5c689a8fd3b47505d0247386a7abbe428c573081690b0"
+    },
+    {
+      "blob": "2abafa36a107923e822f19ad06df5355ca29788e",
+      "path": "app/services/studio_timeline_schema.py",
+      "bytes": 13455,
+      "sha256": "fa7750fadef67a519c8a1b37b828f689f7075c5556a706ee79a642fd2dd2d8be"
+    },
+    {
+      "blob": "1cf8de2a56ac034ab351831132fce471f4e14b64",
+      "path": "app/workflow_api.py",
+      "bytes": 14532,
+      "sha256": "0eca8e006171b9b03bdc5d6bcb3b18cda17709588f48978289948454d7c5b147"
+    },
+    {
+      "blob": "71dfe64042e8f8f66a3f5c79096cb6396fd5676c",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 19402,
+      "sha256": "87b5ce57579200e1955feb627deb8358161de154569af470dacd907a31dbc4c9"
+    },
+    {
+      "blob": "8c2cafd00284e91d2fbaa6361b332d0421b20c06",
+      "path": "docs/delivery/v2-development/basic-clip-color-20261018.md",
+      "bytes": 9794,
+      "sha256": "e1d0d95eade65114cacdbac8fd488adee34857dd46e89a38a0e0a5189e4d13e5"
+    },
+    {
+      "blob": "636c54272022b600ec847f37ec63cfd8b2eaeac0",
+      "path": "docs/delivery/v2-development/basic-color-api-debug1-20261018.json",
+      "bytes": 708841,
+      "sha256": "95063bec0a8e88c123b54d11eba8040a60b7aa409fc9f8c1a30ea401f86dc385"
+    },
+    {
+      "blob": "e551570e89e833529e12c5d470d168eca4800a5f",
+      "path": "docs/delivery/v2-development/basic-color-api-debug1-20261018.log",
+      "bytes": 1074,
+      "sha256": "98719ba857b6dc34cbdd7618119ffb659de28615287800bb6573efaf0f5b7f8e"
+    },
+    {
+      "blob": "4a807a8e6fd257fd3ecaf9ae6c2ad71ac708f601",
+      "path": "docs/delivery/v2-development/basic-color-cpu-evidence-20261018/after.mp4",
+      "bytes": 3131,
+      "sha256": "eceadb75f918aa2bb6349c101b0d0bffffd121caf6663769c57a622a3f69b3c2"
+    },
+    {
+      "blob": "13f0dd8c5d39e06d700f9e6aecd0f0eb9a4d8a20",
+      "path": "docs/delivery/v2-development/basic-color-cpu-evidence-20261018/after.png",
+      "bytes": 173,
+      "sha256": "698e7bd87ad5f04a1efbf3ed07478ed02d544f91ebacd662b41726f58eeb9ee3"
+    },
+    {
+      "blob": "9a2efb3d4c481f659897af6190cb4bfda0d965ee",
+      "path": "docs/delivery/v2-development/basic-color-cpu-evidence-20261018/basic-color-proof.json",
+      "bytes": 593,
+      "sha256": "1b90d30b66868a71d6c5428610a47ddace39f43899a0dc5ee60fc3e1f9e1cf53"
+    },
+    {
+      "blob": "d70c38a49f1fa8b882b8c0476480be5ba6b1e413",
+      "path": "docs/delivery/v2-development/basic-color-cpu-evidence-20261018/before.mp4",
+      "bytes": 3129,
+      "sha256": "101c18875c966f0419c754637cf3ffb6f254de09c6d5dce6956e6398e6e90ff0"
+    },
+    {
+      "blob": "8c935e79499a370bd99f7a5a45a6008530918334",
+      "path": "docs/delivery/v2-development/basic-color-cpu-evidence-20261018/before.png",
+      "bytes": 173,
+      "sha256": "c4acf87a817192eb0ad5e9b0380e015ac3d7ceb7091c0fb2527dd09de8386534"
+    },
+    {
+      "blob": "2e4cd4eab60b816888c7b4cdec11e5588fcb1371",
+      "path": "docs/delivery/v2-development/basic-color-cpu-evidence-20261018/brightness.mp4",
+      "bytes": 2293,
+      "sha256": "b71200cda719dfa826efd7332e81ef8510f9d05affacbc9908ccfc8293e0c622"
+    },
+    {
+      "blob": "842f38ae171559d3e63c71c397221b7084a8bb6e",
+      "path": "docs/delivery/v2-development/basic-color-cpu-evidence-20261018/colored-dissolve-proof.json",
+      "bytes": 264,
+      "sha256": "bdfa712ee8314ead55e1750ef30c4d403df36b02cc12770f82e724f9e61544dd"
+    },
+    {
+      "blob": "ed8f0643a6beda6b021fe85b6721738c4029cf7f",
+      "path": "docs/delivery/v2-development/basic-color-cpu-evidence-20261018/contrast.mp4",
+      "bytes": 2294,
+      "sha256": "686ae00bf9decc40522b28ccdeda1a06f23369ee2f32b6e58bcf20d7ce3a9f8f"
+    },
+    {
+      "blob": "764692440dfa26a92c8bee04c8c260ee59f2d90f",
+      "path": "docs/delivery/v2-development/basic-color-cpu-evidence-20261018/image-controls-proof.json",
+      "bytes": 1029,
+      "sha256": "c0080d83af75402c3930dfb4437b5baf7bba5accf1c6b83ad33a941ff92a7635"
+    },
+    {
+      "blob": "189fbf87f3fa316200301edbbd641400fc4fdce9",
+      "path": "docs/delivery/v2-development/basic-color-cpu-evidence-20261018/legacy-byte-proof.json",
+      "bytes": 544,
+      "sha256": "9494f9f00e7995063c4b9a0547736312e89f23bd014ae3c9e83ffd342d643d60"
+    },
+    {
+      "blob": "869ba51c9ddb3839fe0cd88e27bfeb30af4cc7ec",
+      "path": "docs/delivery/v2-development/basic-color-cpu-evidence-20261018/manifest.json",
+      "bytes": 2009,
+      "sha256": "e728b67f82bcb84dc5e42e94f7da14cb2df3f32da72a2c94c606ede056f50a39"
+    },
+    {
+      "blob": "c3ecf7c9557b270e3b12d8d194d2077155f1fb42",
+      "path": "docs/delivery/v2-development/basic-color-cpu-evidence-20261018/saturation.mp4",
+      "bytes": 2292,
+      "sha256": "8a73af747862764aafbe426d1e3f4dbe12d02e2dd43700154d74aa8a43c49a83"
+    },
+    {
+      "blob": "5109a63673866cf9f7fa140d16471cfe9ed157d5",
+      "path": "docs/delivery/v2-development/basic-color-cpu-evidence-20261018/source-swatches.png",
+      "bytes": 144,
+      "sha256": "5926b6b51f1973c6852e95be5fc7d9de57435076e08ec733f4a8c2bc17438d21"
+    },
+    {
+      "blob": "61011fb238d9fb4f22a70c9e32bf440201a45d89",
+      "path": "docs/delivery/v2-development/basic-color-cpu-evidence-20261018/uncolored-dissolve-proof.json",
+      "bytes": 262,
+      "sha256": "0ae8db5723f24b677d65e82c9d8ec02565b868bfb92f0d2e774e02cc17faac39"
+    },
+    {
+      "blob": "aa07b763c7fea8be6fdabd4253c6e8140f2c2585",
+      "path": "docs/delivery/v2-development/basic-color-cpu-evidence-20261018/video-controls-proof.json",
+      "bytes": 1029,
+      "sha256": "122ad4f2e35ed004722d3d5735245198b781981b8d853fa06d29edf04cfdee0c"
+    },
+    {
+      "blob": "82f290ca5b176f496816d3dd153b9bd00bd0c680",
+      "path": "docs/delivery/v2-development/basic-color-dissolve-debug-20261018.json",
+      "bytes": 707490,
+      "sha256": "a735a2189cf119a5821019c61899f370c85b1b441596dae57eda9155a14110d8"
+    },
+    {
+      "blob": "1563ba8471a83b91f96f5ccd0268016b40abf100",
+      "path": "docs/delivery/v2-development/basic-color-dissolve-debug-20261018.log",
+      "bytes": 4262,
+      "sha256": "4706af2b1a4549f45ba0fc4cdc113124e4136625079ac769d23b724fdc84969b"
+    },
+    {
+      "blob": "a6523d52044a1a9c33bdc75f4acc11d7f1446544",
+      "path": "docs/delivery/v2-development/basic-color-dissolve-debug2-20261018.json",
+      "bytes": 708338,
+      "sha256": "4d118c2cc5f286d8fd01b30ae01fa74d8fe3fc916ec20d467db0b429727db537"
+    },
+    {
+      "blob": "942a5272e8f94debea47d46d97d0dfe12e77cffe",
+      "path": "docs/delivery/v2-development/basic-color-dissolve-debug2-20261018.log",
+      "bytes": 613,
+      "sha256": "d4131efddd9bdc318045ba7d31f4b8db241bb6f4eed2938f8a617f7d8254d83a"
+    },
+    {
+      "blob": "aa57cfb481c6d558f8943f6094ba0a16842b76ac",
+      "path": "docs/delivery/v2-development/basic-color-file-debug1-20261018.json",
+      "bytes": 706700,
+      "sha256": "95b8c1051611812f08dcfeba77113874a138611e2c8fd515c7dfd4e269baeba3"
+    },
+    {
+      "blob": "92753cf1d0d9f68452f5f0f83676a4094a86da89",
+      "path": "docs/delivery/v2-development/basic-color-file-debug1-20261018.log",
+      "bytes": 7420,
+      "sha256": "5b877331053a1a5238ff6fec4c76fe96a7c4e72804f939b8989f1c16a32a848e"
+    },
+    {
+      "blob": "6ddde3263095e4ca7e683b2a8bf0851f411d27d4",
+      "path": "docs/delivery/v2-development/basic-color-file-debug2-20261018.json",
+      "bytes": 707214,
+      "sha256": "272d71281cd222b60ffc0c28cf7c59680b12b9e9b77b9485c95ad20c60825798"
+    },
+    {
+      "blob": "6e75d6af947b3fe5a922983b263090e0cec7e611",
+      "path": "docs/delivery/v2-development/basic-color-file-debug2-20261018.log",
+      "bytes": 8098,
+      "sha256": "2c5d45a2e2c0618dedd78d4044d33c1379571606dfd8c4d54f2972c4fd5cfa46"
+    },
+    {
+      "blob": "06e9018faf6e9379f5f4a655236f36194fa4720f",
+      "path": "docs/delivery/v2-development/basic-color-file-final-20261018.json",
+      "bytes": 709268,
+      "sha256": "bff5f6912fc233a64c2afca5cefaedbb5b8b8576702c8a38dca078a659198e92"
+    },
+    {
+      "blob": "0ce044b89a0b0ca0d13829f026d92eda5fb45adf",
+      "path": "docs/delivery/v2-development/basic-color-file-final-20261018.log",
+      "bytes": 1159,
+      "sha256": "7e5b60922a05047395a86b5fc469e8eb4498efa6c22c2483eca3d461b37ccbd1"
+    },
+    {
+      "blob": "e0a4d8f096b6335be317b4ffdabd4a3ba7ddefea",
+      "path": "docs/delivery/v2-development/basic-color-pg-final-20261018-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "f485af1383c5d9dbea6020ba6989ac333b5e3b6f1ddb4591100b23c470d834ea"
+    },
+    {
+      "blob": "569aed7812fd46e3126110ceaf5b68de061fc67e",
+      "path": "docs/delivery/v2-development/basic-color-pg-final-20261018.json",
+      "bytes": 709042,
+      "sha256": "eb66d5ad0d89bee69fcdac7a50fa64f05ac223cf3b2336bc5f3fc0317638b768"
+    },
+    {
+      "blob": "1301a84232e954024cfb289bea702c6e11b05c50",
+      "path": "docs/delivery/v2-development/basic-color-pg-final-20261018.log",
+      "bytes": 1072,
+      "sha256": "30b824690a9111950e52ffdf1cdc6b1ad7f91514a9f436e4643a9cda12fba07e"
+    },
+    {
+      "blob": "b0ba8cd958389c0301b101bd069c1b2a914fc6f8",
+      "path": "docs/delivery/v2-development/basic-color-transition-debug3-20261018.json",
+      "bytes": 709054,
+      "sha256": "f0a43e818fabe0a8ffd8634aeac948def043d987d5e714853988c45fc23bfb31"
+    },
+    {
+      "blob": "b7880457eb65703044340965555c99923ae16526",
+      "path": "docs/delivery/v2-development/basic-color-transition-debug3-20261018.log",
+      "bytes": 636,
+      "sha256": "b9ceeead53338743d370032551513a97f128cd1e273f0df3502d0af8baec0728"
+    },
+    {
+      "blob": "84b8daf2c6b989b68857e643d696b32a4e912876",
+      "path": "docs/delivery/v2-development/basic-color-ui-debug1-20261018.json",
+      "bytes": 707061,
+      "sha256": "06a2fbd4d794c67233be416383af575f43e4ffdaa5d99f7767f90dc420d1fdf2"
+    },
+    {
+      "blob": "ce65cb1bd2c401f2bae9f30eb8706610b1bf8170",
+      "path": "docs/delivery/v2-development/basic-color-ui-debug1-20261018.log",
+      "bytes": 1422,
+      "sha256": "0c72c2e67b8f72d06cd7cdffc57554eb46429132c348e0cad30a594f613fa3c1"
+    },
+    {
+      "blob": "d2128c61558a6df5feaa25e3245fd3cba548df93",
+      "path": "docs/delivery/v2-development/basic-color-ui-debug2-20261018.json",
+      "bytes": 707167,
+      "sha256": "f9449f1bb58c5bad64a10c694a3d94bb8a7a856e96598d666fb8633d64bafb1d"
+    },
+    {
+      "blob": "6a27a42b781f85bb789b83f9833aa532954b9b44",
+      "path": "docs/delivery/v2-development/basic-color-ui-debug2-20261018.log",
+      "bytes": 639,
+      "sha256": "e12d24c1809d7db1aa7a88838ff314528fc16d643122491abf90e65b148a5b3a"
+    },
+    {
+      "blob": "165c83c0f666fab4a317f2a48452d42b7b4c3917",
+      "path": "docs/delivery/v2-development/basic-color-uncolored-dissolve-debug-20261018.json",
+      "bytes": 708531,
+      "sha256": "e1b00d3b9f3670bf69c57904910d696668a92450a5d3cbd3d0c800f529100c7c"
+    },
+    {
+      "blob": "f8b0a5cf5af9297d5959c963dd7078cc780a6628",
+      "path": "docs/delivery/v2-development/basic-color-uncolored-dissolve-debug-20261018.log",
+      "bytes": 3520,
+      "sha256": "405d03fe7359fc1bbbafafed4e9c9c4a6c6bd45e86756de1350e571830d9ad4a"
+    },
+    {
+      "blob": "03587a132f2362d9e33d165e33ae4d1c96f97897",
+      "path": "docs/delivery/v2-development/director-camera-file-debug.json",
+      "bytes": 706917,
+      "sha256": "2c8d380318762b715ce0b81363db7ac4419c0a6b3856cdb31ea28e063b5d80f2"
+    },
+    {
+      "blob": "330d83987d88247b4d72868e2450c89de806e555",
+      "path": "docs/delivery/v2-development/director-camera-file-debug.log",
+      "bytes": 50947,
+      "sha256": "a439bb81be11989fc885e1c33d8323584c32c9b9c814df6fc077f02c7464ab10"
+    },
+    {
+      "blob": "77c7297caf5b31b2d53dc649635d08dc798194c9",
+      "path": "docs/delivery/v2-development/director-camera-file-debug2.json",
+      "bytes": 707279,
+      "sha256": "0e118ec50a9ba809e6455871489ef40df2fa76bdfca2c7f2ed3876adbe1cbf37"
+    },
+    {
+      "blob": "eee6976436b0844653946022b7c0dabe0b013dcc",
+      "path": "docs/delivery/v2-development/director-camera-file-debug2.log",
+      "bytes": 3367,
+      "sha256": "5038ff178c8886ef9dd4bfe49c78fec25b25e7fc264afb57f2a35be8859fb98b"
+    },
+    {
+      "blob": "c0643fd82f3baf48c1dcd553430cf6be88f132e6",
+      "path": "docs/delivery/v2-development/director-camera-file-debug3.json",
+      "bytes": 708565,
+      "sha256": "40a43dfc06ba886e05b869946b733563961079163f6fa09bfc9a3677b4e58b29"
+    },
+    {
+      "blob": "5edb48895c4f0b9cd79181b9195656b50d24f1a5",
+      "path": "docs/delivery/v2-development/director-camera-file-debug3.log",
+      "bytes": 1125,
+      "sha256": "4f0e29cc0c111d3957a8b052040d4326b1b1dc3f3a9fa192ceed1576736e8319"
+    },
+    {
+      "blob": "cb5bca9d43f2e83462161b375f60a1eb98bf84a5",
+      "path": "docs/delivery/v2-development/director-camera-file-final-20261018.json",
+      "bytes": 709107,
+      "sha256": "8c8acb0b53993ccf14707bb37056de759eeed7c4ea9ed87ef6fffe7340d534f2"
+    },
+    {
+      "blob": "e86b772bbe4f3905bf55647b53b5da8ee5ee5766",
+      "path": "docs/delivery/v2-development/director-camera-file-final-20261018.log",
+      "bytes": 1125,
+      "sha256": "9e832ac0629da9c30a909e40656f0e968b767ede17f7a4646dee5daacd2985e7"
+    },
+    {
+      "blob": "384d29b760f21685f0c3d5f70d6f45704a48d8ae",
+      "path": "docs/delivery/v2-development/director-camera-file-final2-20261018.json",
+      "bytes": 709117,
+      "sha256": "e277c07e5d6dc44a83c139811112cde35171413ace165fa030ae12f79c8cc2c0"
+    },
+    {
+      "blob": "4d61b6e76362bbb24ea2541a26c0a59ca823330a",
+      "path": "docs/delivery/v2-development/director-camera-file-final2-20261018.log",
+      "bytes": 1125,
+      "sha256": "cacdb6c5ea47ccd90aafddbb952e74f8fe1fcd78d58db3fdb03a37bb950111f4"
+    },
+    {
+      "blob": "7302a5c5d27818bbbfdd7619c2f3087013cb0328",
+      "path": "docs/delivery/v2-development/director-camera-file-stable-20261018.json",
+      "bytes": 709117,
+      "sha256": "32a5d994def4dcc7fde80acaac2fbd41d5d371e5ab14c4a2f7fd13de2d07fdb6"
+    },
+    {
+      "blob": "aca7ac29f2132a46fc7fea7b40419159dc8bb2d3",
+      "path": "docs/delivery/v2-development/director-camera-file-stable-20261018.log",
+      "bytes": 1125,
+      "sha256": "e712e9db32a880efaf8c22f1eb67b087e1727848f31d88378c4b9b8a5da4a022"
+    },
+    {
+      "blob": "09ae4458870a00cb29935892790a979e3e87baba",
+      "path": "docs/delivery/v2-development/director-camera-geometry-20261018.md",
+      "bytes": 886,
+      "sha256": "1198facadbcab28fb29cca268e908f387ccba3c317cd40a9aadb2b96524985cb"
+    },
+    {
+      "blob": "827ac4a7d1dfd2c963bfa557e78646e786871276",
+      "path": "docs/delivery/v2-development/director-camera-postgres-final-20261018-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "a48935c38f53beee3bc69a62eee3e123c0f586999ca8f46f310cd88304dc4c1d"
+    },
+    {
+      "blob": "0d154da122acb3f5f3f160c4fc368c9b66bab98c",
+      "path": "docs/delivery/v2-development/director-camera-postgres-final-20261018.json",
+      "bytes": 709267,
+      "sha256": "fcbc70b18e1bce356816a12b2965b1eb7b2fc4847895d15c757f5aee674b7565"
+    },
+    {
+      "blob": "d7944301c7ae619ba614f81c246a8631bd913e93",
+      "path": "docs/delivery/v2-development/director-camera-postgres-final-20261018.log",
+      "bytes": 1085,
+      "sha256": "93df9d843c1c84387c7fe9c565ef99b8eaa1bbae2dd1a5c48a175be355d903cb"
+    },
+    {
+      "blob": "c9f4c4d7121414e9e92aeef854b09b2cc6376fdb",
+      "path": "docs/delivery/v2-development/director-camera-ui-stable-20261018.json",
+      "bytes": 709189,
+      "sha256": "7d49f8a4391b84cc908b3ac7b0f032578bae9b49b23930940a5b8527c3a39f5c"
+    },
+    {
+      "blob": "94b1b7bbc5eb640e1b46a0ce782e09fc9c0d283b",
+      "path": "docs/delivery/v2-development/director-camera-ui-stable-20261018.log",
+      "bytes": 1201,
+      "sha256": "ff4f28004f5665144730e80f3e6a2bd6bb35176a7da986973b7d925ef2dcc304"
+    },
+    {
+      "blob": "2ff34a7bfcc2459d06e48c18ace889d00f6276b9",
+      "path": "docs/delivery/v2-development/director-color-authority-wave-20261018.md",
+      "bytes": 2801,
+      "sha256": "cd1cc213e52c89667f7cfa83955bc4c379b22313976d5d836d44c9cf60b76513"
+    },
+    {
+      "blob": "b17505067ddc4ade2e754fd5e438dad23d031f31",
+      "path": "docs/delivery/v2-development/director-color-depth-ui-final.json",
+      "bytes": 709353,
+      "sha256": "ef21b1bdaebcafdc50adce821c9ee612f0846e1b484176691c6e1146167e0fee"
+    },
+    {
+      "blob": "a8e272683acaba95480d7185d7c7f4074fd0afd0",
+      "path": "docs/delivery/v2-development/director-color-depth-ui-final.log",
+      "bytes": 3619,
+      "sha256": "511624d2c096d7265e80defd092251137c5d8fee29150c51586490870c3ca50a"
+    },
+    {
+      "blob": "bdda61bfc4e6a98062aa2be579c31105a172a814",
+      "path": "docs/delivery/v2-development/director-color-progress-public.json",
+      "bytes": 709138,
+      "sha256": "43d1693d8c86345aac39462a6b357d5568f3fe4648970d42ce4924884bbbdfdd"
+    },
+    {
+      "blob": "7154762c83da2c55f42d198ea82472022fdb4d51",
+      "path": "docs/delivery/v2-development/director-color-progress-public.log",
+      "bytes": 634,
+      "sha256": "15b722ce9bb19e153cddf2d857b23aa7c125c320e6d1ce09efcd65b3b954b0fb"
+    },
+    {
+      "blob": "e380e94ab9ca1c96fbd72b0e8b78f602e4e30b42",
+      "path": "docs/delivery/v2-development/narrative-progress-file-debug1-20261018.json",
+      "bytes": 708984,
+      "sha256": "1f89991a72da7dfa9a6f7520cc3b836dac0e1a0186f18a3a0310a2415c0badcf"
+    },
+    {
+      "blob": "9cf16ed6a9f1a189b8294e627da16551093a137c",
+      "path": "docs/delivery/v2-development/narrative-progress-file-debug1-20261018.log",
+      "bytes": 5675,
+      "sha256": "adb8dd3ee520a9cabaec6078cebe459d634efc2f96bbc905912326ae5b854560"
+    },
+    {
+      "blob": "45bca4b6813951d257729602166fa63160ace71b",
+      "path": "docs/delivery/v2-development/narrative-progress-file-debug2-20261018.json",
+      "bytes": 709110,
+      "sha256": "d0b95e01f1b1b01065e437d36a9fbc5a622bf929e793e3c6a418725f96a07d40"
+    },
+    {
+      "blob": "e6429e108b23fdfc8c41eb971c4e02212bdc0d7e",
+      "path": "docs/delivery/v2-development/narrative-progress-file-debug2-20261018.log",
+      "bytes": 1228,
+      "sha256": "b7d1e976aa0b8e6767194815150fc9dffcd965dbf120426e0febdc8ffd1fadb9"
+    },
+    {
+      "blob": "a95542f5805ce1997e1d59fe16e4166ab828e6cd",
+      "path": "docs/delivery/v2-development/narrative-progress-file-final-20261018.json",
+      "bytes": 709100,
+      "sha256": "c68b91ba0c693b5820fe2aef0fcfb01865f4016a85eef220c4b3723614f1c6c0"
+    },
+    {
+      "blob": "dc77f88cbc1ff8be9d16e7939036c10449377cc4",
+      "path": "docs/delivery/v2-development/narrative-progress-file-final-20261018.log",
+      "bytes": 1228,
+      "sha256": "b29bb02e46164ad5219d890ac9d525445ab5e1d473a06e42712513af8c2bfb33"
+    },
+    {
+      "blob": "7132b584d597e026a40f95a2c5a0457b046dca74",
+      "path": "docs/delivery/v2-development/narrative-progress-file-fixture-final-20261018.json",
+      "bytes": 709140,
+      "sha256": "d7838447ba14c70ad5dfc1c498fe808ff96d86c12dad715ec10c6407d94cf3ce"
+    },
+    {
+      "blob": "11460ca8d5f3ac54d5d72eb6cb4d521aae4a1b14",
+      "path": "docs/delivery/v2-development/narrative-progress-file-fixture-final-20261018.log",
+      "bytes": 1091,
+      "sha256": "74044fdfe0121efb337e225b391e49f0b61ff74f4d4889051bfe2b0e4ce3e8c3"
+    },
+    {
+      "blob": "8b2332006c0439760336fec383fd92ea217835e5",
+      "path": "docs/delivery/v2-development/narrative-progress-file-red-20261018.json",
+      "bytes": 707974,
+      "sha256": "6bdaa3891409c65e7c51f073c18e1b21fd5399f6c06d817ea1691fa40cfcd838"
+    },
+    {
+      "blob": "ad7ac34ddbf8645181a04ee25d08ed6789de95d5",
+      "path": "docs/delivery/v2-development/narrative-progress-file-red-20261018.log",
+      "bytes": 4924,
+      "sha256": "c496a0a56c8b1e9a69ad6c41dfd373e8817822d8c62a3f8503c9e47178025586"
+    },
+    {
+      "blob": "95e74e140bfe96fbda94f5c09114bdf7e28e179e",
+      "path": "docs/delivery/v2-development/narrative-progress-pg-final-20261018-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "f2b33ac015fa93fd19a48b731a0b4aabe302c0aa818dabae781fef5fd6392b0f"
+    },
+    {
+      "blob": "30ed81d5f15846de543a7c6b086d6ee914304682",
+      "path": "docs/delivery/v2-development/narrative-progress-pg-final-20261018.json",
+      "bytes": 709235,
+      "sha256": "8787431bdb46df898d7463e7315f4dadd73b8dba9cff30301db13b0a7f6b2d81"
+    },
+    {
+      "blob": "9436c8d96ec47540390d364d1b1e1acf72fc86f9",
+      "path": "docs/delivery/v2-development/narrative-progress-pg-final-20261018.log",
+      "bytes": 3923,
+      "sha256": "73ff940882ecaccacf49fd70bf4ec2b5350535b055b2a18990c9ba0bb3293c42"
+    },
+    {
+      "blob": "3f8f05ee9971552b4ffc81af9739622e517c2848",
+      "path": "docs/delivery/v2-development/narrative-progress-pg-fixture-final-20261018-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "351fc061d96ad1ab4dffa067ba5281fd17065b4c82aa948c39e060827eff1bf4"
+    },
+    {
+      "blob": "9be70bb12cead75dd96fcbb08365a8c285950cf6",
+      "path": "docs/delivery/v2-development/narrative-progress-pg-fixture-final-20261018.json",
+      "bytes": 709315,
+      "sha256": "4bfc00f823db0451b04440c92b424540431c6b1fd7d4636b9af469a32d87a2a3"
+    },
+    {
+      "blob": "30e34af4f7c37544dea4d59e9651abe10ec11f61",
+      "path": "docs/delivery/v2-development/narrative-progress-pg-fixture-final-20261018.log",
+      "bytes": 1155,
+      "sha256": "d620a56b1e9e9d3447487b15342bd7ed3e2bd8036323def8a3ac6df7aead5cf8"
+    },
+    {
+      "blob": "6386ebb91578e6ba4adf8458a151fd704298b651",
+      "path": "docs/delivery/v2-development/narrative-progress-projection-20261018.md",
+      "bytes": 6033,
+      "sha256": "7470df8842bf91f83cb1116e8912be09e6073846c757931c1dd917edac4c73e6"
+    },
+    {
+      "blob": "10c665a25853d2754930bc6cc4ce4f490f5a3df5",
+      "path": "docs/delivery/v2-development/offline-sync-depth-green-20261018.json",
+      "bytes": 706837,
+      "sha256": "528da6a95dcf961e4d6b8266318bcfa5d06ca51f6b06f1053e7acf6ecf794020"
+    },
+    {
+      "blob": "2317704a54f11a1bde7f6d5635aa4c47409938e0",
+      "path": "docs/delivery/v2-development/offline-sync-depth-green-20261018.log",
+      "bytes": 401,
+      "sha256": "1e8fef76285832508ecf4814f7f3f1a777392444de0c338d75481599a8d6848b"
+    },
+    {
+      "blob": "9089b1262fbd0288b884b706f061f7e86cdd67e4",
+      "path": "docs/delivery/v2-development/offline-sync-depth-hardening-20261018.md",
+      "bytes": 2833,
+      "sha256": "e2d888619458599d8fe933f2e1988ad2b02bbd8cd9c42a72c2b3e2e5eecbe85b"
+    },
+    {
+      "blob": "0d6c29056a8bf1ef4701267660eaac70470608e2",
+      "path": "docs/delivery/v2-development/offline-sync-depth-red-20261018.json",
+      "bytes": 706285,
+      "sha256": "c8ae196a787f2dafb792af71537db5fd3403449be905d2d6851db0b6ba01ed10"
+    },
+    {
+      "blob": "8e3babb6a67e5ffa5274543d545b179d24fce188",
+      "path": "docs/delivery/v2-development/offline-sync-depth-red-20261018.log",
+      "bytes": 2213,
+      "sha256": "9168d727b2f2cc25671e429ac8ec243914a245fc4fa3620e45d9e3cbbfefb759"
+    },
+    {
+      "blob": "5c7e23d6416bcbb68751a205dfbee80638161ab8",
+      "path": "docs/delivery/v2-development/offline-sync-depth-red-direct-20261018.json",
+      "bytes": 706370,
+      "sha256": "bb702f93769e6d01795b263170c4076b895157b1d15b1dd0bc172fe2132448ff"
+    },
+    {
+      "blob": "acd30be1820b66a4263b46566ab5215955af9b23",
+      "path": "docs/delivery/v2-development/offline-sync-depth-red-direct-20261018.log",
+      "bytes": 3697,
+      "sha256": "350256da89c7d9052cb01d7089ba65cfc3623144f90ab9a0677373c05f3eb978"
+    },
+    {
+      "blob": "a816c29f73c88eebc2d07ca6aeff2f1d94ab6362",
+      "path": "docs/delivery/v2-development/workflow-agent-authority-controls-debug1-20261018.json",
+      "bytes": 709272,
+      "sha256": "b343b036b1899b5201af92102c2782e5f62df76dcd8f88d72adec2e24faf38e1"
+    },
+    {
+      "blob": "9d0b0c52edb9defc6c9ba9c472ea562dcd4d7993",
+      "path": "docs/delivery/v2-development/workflow-agent-authority-controls-debug1-20261018.log",
+      "bytes": 981,
+      "sha256": "6abefffe90c842c51f8607612aa539ad4b7242f06e3d675bdb93f5d57cb208a6"
+    },
+    {
+      "blob": "254bced8711a9d9b7e73d76f0b18d0b5088417da",
+      "path": "docs/delivery/v2-development/workflow-agent-authority-controls-debug2-20261018.json",
+      "bytes": 709311,
+      "sha256": "1593ffc08ab6de9e3a9b7cf9753ad9d548cb4232631f746da8af7cb75b2487d0"
+    },
+    {
+      "blob": "d9acc131a041659916037746ff6a49d83a1d125f",
+      "path": "docs/delivery/v2-development/workflow-agent-authority-controls-debug2-20261018.log",
+      "bytes": 982,
+      "sha256": "3b2ae8d8c05559cfb35fa349ee384dc8355bf81ebe41bbe61a1082e3304e5e42"
+    },
+    {
+      "blob": "8d504989f93c0b163c9ca160809ddc7c64bd1a02",
+      "path": "docs/delivery/v2-development/workflow-agent-authority-file-final-20261018.json",
+      "bytes": 709261,
+      "sha256": "3d050d1af2e47579a6cd7bbf21423bed607ab84ddafeb8ef034693c735985fb8"
+    },
+    {
+      "blob": "568b09ac8f6fd2ed45a13bf7be06ad9e89b73b24",
+      "path": "docs/delivery/v2-development/workflow-agent-authority-file-final-20261018.log",
+      "bytes": 982,
+      "sha256": "a0aa42cd1e091267698012c7dcbf45da8c4c8d8873bee960f4341759828f1225"
+    },
+    {
+      "blob": "daaccd319dd394fcb378416941c088c3ae6843c7",
+      "path": "docs/delivery/v2-development/workflow-agent-authority-fix-20261018.md",
+      "bytes": 7032,
+      "sha256": "0af926e044ed506803c089a1d38004491aef55f7f5b83b34f3e0ff2d55f26b97"
+    },
+    {
+      "blob": "6393c1f5d9c1e8b745b9a928737fc3ee14376fe3",
+      "path": "docs/delivery/v2-development/workflow-agent-authority-green-debug-20261018.json",
+      "bytes": 709095,
+      "sha256": "d266ed9b30a6b9066a94a9e80577b4ceed9a70db794ef880efd706db68d5ecb6"
+    },
+    {
+      "blob": "59377cfadde95acb4d287ec0e9ba51fa4d22bfae",
+      "path": "docs/delivery/v2-development/workflow-agent-authority-green-debug-20261018.log",
+      "bytes": 980,
+      "sha256": "abdae04247c73e5731bcf38ba104ad806d8cead09a9dba7686fca2ae91808401"
+    },
+    {
+      "blob": "b5dc2cf79b241c162509c7000b4a179684fa5bf2",
+      "path": "docs/delivery/v2-development/workflow-agent-authority-red-20261018.json",
+      "bytes": 709015,
+      "sha256": "be39a7dce7a8ded147a06c0450a532db0211a9b220a7dadf2de72c028f29f57f"
+    },
+    {
+      "blob": "a8be74d77c8fde2f9a07d0501046cc20c2e6fa09",
+      "path": "docs/delivery/v2-development/workflow-agent-authority-red-20261018.log",
+      "bytes": 3533,
+      "sha256": "fcd6c150e083d0e72865eb29dee4749bd2db852794cbd8450ec3a261be2ae175"
+    },
+    {
+      "blob": "2771a3749f025533267297e8242ea97e36cabf6c",
+      "path": "docs/delivery/v2-development/workflow-agent-authority-red-observation-20261018.json",
+      "bytes": 1389,
+      "sha256": "c53d18fcf476336d59509285eb90779eba54d7818a6c3d04ffca7ad66d7595fc"
+    },
+    {
+      "blob": "c133d0697c6bb0feb9827d0854320b6ca5949dad",
+      "path": "docs/v2/CURRENT_DEVELOPMENT_GAPS_20261018.md",
+      "bytes": 12394,
+      "sha256": "0c42fdfa22b225bbedf316c81d1da4e412dde16b6784a9d5080fa590473129e9"
+    },
+    {
+      "blob": "4beec7f27ed08a504806d24f4b534313198132d3",
+      "path": "frontend/src/creative/CameraGrammarEditor.additive.test.tsx",
+      "bytes": 11025,
+      "sha256": "6b85ee5555d34813e13cf666b43633189cb0c0df7a6c27f9cbf702ebaf03db59"
+    },
+    {
+      "blob": "a464e8f005d3842536403bd441021810000133a4",
+      "path": "frontend/src/creative/CameraGrammarEditor.tsx",
+      "bytes": 7438,
+      "sha256": "50766796ffb0193c7bf353732cd95b79b4157b0722532084a6479e2fd5e2861d"
+    },
+    {
+      "blob": "d7f7d0f559dfc7a064620d63122aba6a164b8054",
+      "path": "frontend/src/creative/CreativeCanvas.tsx",
+      "bytes": 27563,
+      "sha256": "48663a548af04c974b5d0301372c01fd05487c22f033787a81225b525b3616ee"
+    },
+    {
+      "blob": "a9fa8b2a2c808a1a19fd207ef08da1390317041e",
+      "path": "frontend/src/creative/StudioTimelineBasicColor.additive.test.tsx",
+      "bytes": 11626,
+      "sha256": "550665b22402e0f5aba8fb7d38346ca9c70f4222bd3e0fa14137919333195070"
+    },
+    {
+      "blob": "72fcb4d2aa435b89690d6218ead8657c821a2d9a",
+      "path": "frontend/src/creative/StudioTimelineEditor.tsx",
+      "bytes": 51622,
+      "sha256": "365f56e6f5fffa605e6b296096863987ed1e3dcae15d494a28f2ad549b88766c"
+    },
+    {
+      "blob": "9b78d7e820d08478671a0fac7327eabf7e2c8cfa",
+      "path": "frontend/src/creative/StudioTimelineTransferPanel.tsx",
+      "bytes": 8929,
+      "sha256": "7261bbab71e58491b2bda5b76f664a1828df04384dd1c67e302f18ab552de9b0"
+    },
+    {
+      "blob": "2ec3380b6255399ab2cb072e21dd2bd71c8fc2ad",
+      "path": "frontend/src/creative/cameraGeometry.testFixture.ts",
+      "bytes": 1348,
+      "sha256": "483721b235396ef4d1206b3958d1589e635927dd8e168c299d226c68f68c537d"
+    },
+    {
+      "blob": "2bc6b98ff2e3e4c71a52aa2509fdd5a327eb2a52",
+      "path": "frontend/src/creative/cameraGrammar.ts",
+      "bytes": 3405,
+      "sha256": "b6edf140af13d63fb8dca6b34ac4032696a26d8f6cf93e5fe7c04f370fe217c3"
+    },
+    {
+      "blob": "60b7c507f722c3867a093805232376d44e1796e8",
+      "path": "frontend/src/creative/directorDraftComparison.ts",
+      "bytes": 4610,
+      "sha256": "295169f7ba789d83552958a04e8eb6070a3ec96f25d7df340c5e2e354310e24a"
+    },
+    {
+      "blob": "de11a3d6b59bd401f6412c9813eb262e17e6a8f6",
+      "path": "frontend/src/creative/directorModelClient.ts",
+      "bytes": 18541,
+      "sha256": "a3020e1108c1df0bea52defb6136ca0596b294731370e8e8eada4d1382a3bd85"
+    },
+    {
+      "blob": "9e0bb0ee388a197ff8c8d130be2fddf52db9f624",
+      "path": "frontend/src/creative/storyboardEditorHandoff.ts",
+      "bytes": 7428,
+      "sha256": "d9c9f55659365e54905a6bc0b36faa414916cdfa21325f9653c8e82d1acf84db"
+    },
+    {
+      "blob": "749307a2d10c9e0025e35bd525fbd4f1a46f496e",
+      "path": "frontend/src/creative/studioGraphClient.ts",
+      "bytes": 107894,
+      "sha256": "2de3fc9913cfb67064a386abe9392bb8a809fecfc36125762acfbedcd26edd1e"
+    },
+    {
+      "blob": "65be91454b45a483de3c72b76427bbae3304b355",
+      "path": "frontend/src/creative/studioProductionGraphContract.ts",
+      "bytes": 11359,
+      "sha256": "3a97067aa57b0c607a51681fc29b21d88cfd0d20fc47b5775832cbd4149cac5a"
+    },
+    {
+      "blob": "c5dc025fb0673a8dbec3dbafa79f5418b8b50e1e",
+      "path": "frontend/src/creative/studioTimelineTypes.ts",
+      "bytes": 21360,
+      "sha256": "60b3d9943e7870738c285f89adcf4be7316ef3d10dd8d8f454fc2399b420ed56"
+    },
+    {
+      "blob": "8733ffcda86755eb7c0a1811f8ba5f48c1898393",
+      "path": "frontend/src/creative/types.ts",
+      "bytes": 7773,
+      "sha256": "9d1dbeb12200f3f9f69bc0077d9cc62b9caf96ad989f20692815836928f62040"
+    },
+    {
+      "blob": "202cb5a81f431876db26d40089e7a83336f94ca3",
+      "path": "frontend/src/director/DirectorCameraEvidence.additive.test.tsx",
+      "bytes": 6498,
+      "sha256": "cdbabfc7c6282e93b28a020800b78c7b9aa521496e8ab0070fb8a4db4d5f27e5"
+    },
+    {
+      "blob": "edacf1ff9a625eb8ef522d0d320937a175b3429d",
+      "path": "frontend/src/director/DirectorCameraEvidencePanel.tsx",
+      "bytes": 2852,
+      "sha256": "398832b5510876b039c9beddfe492be06a9f1fc1672038d041a364d3db2bc682"
+    },
+    {
+      "blob": "aaac1e26bdf878c05eb2763af87e39a3776aae9d",
+      "path": "frontend/src/director/DirectorWorkspace.tsx",
+      "bytes": 7059,
+      "sha256": "1354c8433f48a94111ea3cbbecf9d6ebff733ead5d6101e30e65ee92b45ba76a"
+    },
+    {
+      "blob": "48012b94ee3565ba5f4940b45d7ea710ca25a3f6",
+      "path": "frontend/src/director/directorCameraEvidence.ts",
+      "bytes": 7071,
+      "sha256": "8896a57cd983203045d162380189278c59b56cd48c4d1006cf666e10b3f24144"
+    },
+    {
+      "blob": "ef06e640a763b3e13aab765cbcf08b7e4e2ebb1b",
+      "path": "frontend/src/director/directorWorkspaceContract.ts",
+      "bytes": 20974,
+      "sha256": "afab71f0a8cb755dc0bc616e67474b99fb3342d66eced3b6fe2c2a45f4176bc9"
+    },
+    {
+      "blob": "66dc0a1b5a794d05bc79162a50ee56980dbcddf6",
+      "path": "frontend/src/director/directorWorkspaceTypes.ts",
+      "bytes": 7537,
+      "sha256": "e124481c7fd7cbe8ab2610577bba7834e0c890593812d30c6247a49bf82dc267"
+    },
+    {
+      "blob": "2caf2eb28edaaf72a87399244c16ea84581632ff",
+      "path": "frontend/src/experimental/OfflineSyncReceive.test.tsx",
+      "bytes": 21572,
+      "sha256": "abc323e6fcd50afab8fdcb0ebb21e8690f3e77aa2d9362b263bbfe9ab8f129ad"
+    },
+    {
+      "blob": "b1ec2ae354fce387f77a56e9e37f2d973edf2ebb",
+      "path": "frontend/src/experimental/offlineSyncFile.test.ts",
+      "bytes": 8748,
+      "sha256": "2b4915c568a1c54413b98c59597851cb0bbabed8e7f4a17b89f3be41a3edf321"
+    },
+    {
+      "blob": "d0812ff96fd460ce90c267756698292003c5cecd",
+      "path": "frontend/src/experimental/offlineSyncFile.ts",
+      "bytes": 4104,
+      "sha256": "c9fc3031019ff88b288f2daa47ac74dea88f1ba8da91bba93819536939183136"
+    },
+    {
+      "blob": "16890ff989f239ed7ab45e35e0b77ea88f807a54",
+      "path": "frontend/src/nle/ClipColorPanel.tsx",
+      "bytes": 3791,
+      "sha256": "82941457b210d1712f4e648773c30614a80ff605fcd4805357f3f6e01ae9a18e"
+    },
+    {
+      "blob": "006314643257c40036cdd19ce3df07fa560a1419",
+      "path": "frontend/src/nle/ClipInspectorPanel.tsx",
+      "bytes": 15962,
+      "sha256": "ee35550362c9ff4deef9bf38a86c128716386cb049519bf9f478eb9d648de1aa"
+    },
+    {
+      "blob": "f0b70cfe1d3e8b720f508c384f9afbe1fd61d282",
+      "path": "frontend/src/nle/TimelineWorkspacePanel.tsx",
+      "bytes": 5651,
+      "sha256": "88adbf7a2fd227eded15152ef6404a6166d6032bc9a15204f4d96826b1c8e29b"
+    },
+    {
+      "blob": "1e977275558a673bf57202642dca35ef6d907530",
+      "path": "frontend/src/nle/timelineClipColor.ts",
+      "bytes": 2046,
+      "sha256": "2ff01d5f970f2cae36e496e53b7a12a604e208da548416d9f18d315a91f1b2ce"
+    },
+    {
+      "blob": "b3450ebbde8be6ba5ec908508038925f91650d9d",
+      "path": "frontend/src/nle/timelineOps.ts",
+      "bytes": 62991,
+      "sha256": "fef498a5a6e290ca56c943298b0e1c43b5b27015c396ce44462fd1cbeb2cdbf0"
+    },
+    {
+      "blob": "32f848c0a578d83f0aef52c932ee287220aeb26b",
+      "path": "frontend/src/nle/timelineOpsTypes.ts",
+      "bytes": 15098,
+      "sha256": "f649add81e8b2cdd7e6dc760320d77ff829b11daf6f00eb13a9927d4d9b7c3b1"
+    },
+    {
+      "blob": "bc3e3d99b81e878392fa6098adebbc8d89dc5450",
+      "path": "packaging/public-build.json",
+      "bytes": 23991,
+      "sha256": "68b2faeec033c2dee91369e6e93e97be3ccc192638ecde37b352b99275b8f7d1"
+    },
+    {
+      "blob": "969d82986de65a3741c471b40686af0d9964a52d",
+      "path": "tests/test_surface_finding_review.py",
+      "bytes": 18168,
+      "sha256": "3211d6c7812bdbc4f7c873b6d75bfc6e33c6cf972104df932e94cfa16c978133"
+    },
+    {
+      "blob": "fc96d0721859711789c79c296f9a0e0184704047",
+      "path": "tests/test_v2_director_camera_geometry.py",
+      "bytes": 15471,
+      "sha256": "28f9a96ddf61aa046bf24ca97a0c1fbbf908b1220a7d393f3f67d80c6a9d4e28"
+    },
+    {
+      "blob": "18cb5a6920420886a370fe571c242a44ff18d91b",
+      "path": "tests/test_v2_narrative_progress_projection.py",
+      "bytes": 11860,
+      "sha256": "505179018129f5cf04040534038ecbdc258577b8587e70bbc8cebda62b4aca74"
+    },
+    {
+      "blob": "da870918519eee5d57db1015072012d19e196ccc",
+      "path": "tests/test_v2_timeline_basic_color.py",
+      "bytes": 23999,
+      "sha256": "501eba9768e662f1a4410ef1b285b3bc9bfaff67c215f0886cd99a8bc3e8ee3b"
+    },
+    {
+      "blob": "5d7794f119182b483c25dc3e6655707e686a5b1c",
+      "path": "tests/test_v2_timeline_basic_color_api.py",
+      "bytes": 4617,
+      "sha256": "10084b32f4139ed725cd9a53bbedd7f2f1ac952ef8e429db6d4df662ebb014c1"
+    },
+    {
+      "blob": "ab675ac31544ade1a3ee638862e5aa513c6ab6f4",
+      "path": "tests/test_workflow_agent_authority.py",
+      "bytes": 20905,
+      "sha256": "c25dfc9cf01b65476ae53de10a52aa51b85ad6c5aad35c8e726b195c62c50fb3"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
