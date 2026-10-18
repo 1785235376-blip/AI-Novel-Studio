@@ -80,6 +80,22 @@ def create_production_execution_router(service, invoke, *, require_host_session,
 
     call = create_production_invoker(invoke, require_host_session=require_host_session, model_host_authority=model_host_authority)
 
+    from .comic_image_generation import ComicImageRequest, ComicImageAdopt
+
+    @router.post("/projects/{nid}/studio/production/comic-pages/{rid}/panels/{panel_id}/image-request")
+    def comic_image_request(nid: str, rid: str, panel_id: str, request: Request, body: ComicImageRequest,
+                            x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        with service.store.existing_owner_only():
+            return call(request, nid, x_session_token, x_branch_id, "domain.read",
+                lambda actor, scope, guard: service._comic_owner().image_request(nid, scope, actor, rid, panel_id, body, guard))
+
+    @router.post("/projects/{nid}/studio/production/comic-pages/{rid}/panels/{panel_id}/adopt-image")
+    def comic_image_adopt(nid: str, rid: str, panel_id: str, request: Request, body: ComicImageAdopt,
+                          x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        with service.store.existing_owner_only():
+            return call(request, nid, x_session_token, x_branch_id, "domain.write",
+                lambda actor, scope, guard: service._comic_owner().adopt(nid, scope, actor, rid, panel_id, body, guard))
+
     waveform_router = APIRouter(route_class=TimelineWaveformRoute)
 
     @waveform_router.post("/projects/{nid}/studio/production/timelines/{tid}/waveform-preview")

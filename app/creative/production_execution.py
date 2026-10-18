@@ -50,6 +50,7 @@ class ProductionExecutionService:
         self.video_owner, self.video_providers, self.video_configs = video_owner, video_providers, video_configs
         self.audio_store, self.vault, self.transport = audio_store, vault, transport
         self.benchmark_video = None
+        self.comic_images = None
         from ..services.studio_video_execution import StudioVideoExecution
         self.video = StudioVideoExecution(video_owner)
         from .graph_asset_inputs import GraphAssetInputs
@@ -63,6 +64,15 @@ class ProductionExecutionService:
         from .timeline_waveform import TimelineWaveform
         self.timeline_waveform = TimelineWaveform(self)
         self.workspace.creative.configure_storyboard_production(self)
+
+    def configure_comic(self, comic):
+        from .comic_image_generation import ComicImageGeneration
+        self.comic_images = ComicImageGeneration(self, comic)
+
+    def _comic_owner(self):
+        if self.comic_images is None:
+            raise ValueError("COMIC_ORIGINAL_PRODUCTION_OWNER_REQUIRED")
+        return self.comic_images
 
     def timeline_playback_preview(self, nid, scope, actor, tid, value, guard):
         return self.timeline_playback.preview(nid, scope, actor, tid, value, guard)
@@ -126,6 +136,8 @@ class ProductionExecutionService:
 
     def source(self, nid, scope, snapshot, guard, *, inspection_guard=None):
         guard()
+        if snapshot["kind"] == "COMIC_PANEL":
+            return self._comic_owner().source(nid, scope, snapshot, guard)
         if snapshot["kind"] == "CREATIVE_DOCUMENT":
             row = self.workspace.creative.get(nid, scope, snapshot["id"])
             if (row["version"], self.workspace.creative.document_digest(row)) != (snapshot["version"], snapshot["digest"]):
@@ -244,6 +256,8 @@ class ProductionExecutionService:
             raise ValueError("STUDIO_IMAGE_CUTOUT_PROOF_CHANGED")
 
     def _sources_current(self, nid, scope, context, guard):
+        if any(source["kind"] == "COMIC_PANEL" for source in context["sources"]):
+            return [self._comic_owner().current(nid, scope, context, guard)]
         if context.get("storyboard_speech") is not None:
             from .storyboard import validate_speech_command
             command = MediaCommand.model_validate(context["command"])
@@ -475,7 +489,8 @@ class ProductionExecutionService:
                 and any(getattr(command.parameters, key) is not None for key in ("gain_db", "sample_rate", "channels", "output_format", "fade_in_ms", "fade_out_ms", "target_peak_dbfs"))):
             raise ValueError("STUDIO_AUDIO_CONTROLS_STANDALONE_ONLY")
         if command.operation_id in {"m5.image.cutout", "m5.image.inpaint"}: guard = self._cutout_guard(guard)
-        context = self._base(nid, scope, actor, guard)
+        with (self.store.existing_owner_only() if any(source.kind == "COMIC_PANEL" for source in command.source_snapshots) else nullcontext()):
+            context = self._base(nid, scope, actor, guard)
         if benchmark_binding is not None:
             from ..experimental.model_benchmark_video import validate_binding
             if graph_binding is not None or command.operation_id != "m7.video.t2v" or command.source_snapshots or command.allow_cloud:
@@ -492,6 +507,8 @@ class ProductionExecutionService:
             from .storyboard import validate_speech_command
             validate_speech_command(self.workspace.creative.get(nid, scope,
                 command.storyboard_speech.document_snapshot.id), command)
+        if any(source.kind == "COMIC_PANEL" for source in command.source_snapshots) and graph_binding is not None:
+            raise ValueError("STUDIO_COMIC_STANDALONE_ONLY")
         if graph_binding is not None:
             from .graph_media_binding import validate_graph_binding
             context["graph_binding"] = validate_graph_binding(graph_binding, context)
@@ -645,7 +662,10 @@ class ProductionExecutionService:
         context["command"] = copy.deepcopy(preview["command"]) if command.operation_id == "m5.image.cutout" else command.model_dump()
         branch = scope.get("branch_id")
         if command.operation_id.startswith("m5."):
-            if command.operation_id in {"m5.image.cutout", "m5.image.inpaint"}:
+            if any(source["kind"] == "COMIC_PANEL" for source in context["sources"]):
+                row = self._image(actor).create_studio(nid, branch, actor, payload, context, guard,
+                    source_phase=lambda: self._comic_owner().queue_phase(nid, scope, context, guard))
+            elif command.operation_id in {"m5.image.cutout", "m5.image.inpaint"}:
                 guard = self._cutout_guard(guard)
                 row = self._image(actor).create_studio(nid, branch, actor, payload, context, guard,
                     source_phase=lambda: self._cutout_queue_phase(nid, scope, context, guard))
@@ -1253,8 +1273,24 @@ class ProductionExecutionService:
                 result['video_adoption_receipt'] = receipt
         return result
 
+    @contextmanager
+    def _publication_asset_phase(self, nid, scope, actor, context, guard):
+        if any(source["kind"] == "COMIC_PANEL" for source in context["sources"]):
+            from ..repositories.file.mutation_coordinator import workspace_mutation
+            # Recheck Comic's mixed original-upload and Studio asset pins under
+            # one asset lock, before entering the result's bound namespace.
+            with self.workspace.assets._lock, workspace_mutation(self.workspace.assets.root, "asset-library"):
+                self._comic_owner().current(nid, scope, context, guard)
+                with self.workspace._asset_scope(nid, scope):
+                    yield
+        else:
+            with self.workspace._asset_scope(nid, scope):
+                yield
+
     def _callbacks(self, nid, scope, actor, context, guard, *, graph_source_guard=None):
         def timeline_current(document):
+            if any(source["kind"] == "COMIC_PANEL" for source in context["sources"]):
+                self._comic_owner().current(nid, scope, context, guard)
             if context.get("benchmark_binding") is not None:
                 if self.benchmark_video is None: raise ValueError("BENCHMARK_VIDEO_OWNER_UNAVAILABLE")
                 self.benchmark_video.publication_guard(nid, scope, actor, context, document)
@@ -1278,7 +1314,7 @@ class ProductionExecutionService:
                 graph_asset_guard = timeline_current(document)
                 for source in context["sources"]:
                     if source["kind"] != "ASSET": self.source(nid, scope, source, guard)
-                with self.workspace._asset_scope(nid, scope):
+                with self._publication_asset_phase(nid, scope, actor, context, guard):
                     if self.store.incarnation(nid) != context["incarnation"]: raise StaleSourceError("STUDIO_OWNER_CHANGED")
                     if graph_asset_guard is not None: graph_asset_guard()
                     if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint"}: self._cutout_inputs(nid, scope, context, guard, under_asset_lease=True)
@@ -1317,7 +1353,7 @@ class ProductionExecutionService:
                 graph_asset_guard = timeline_current(document)
                 for source in context["sources"]:
                     if source["kind"] != "ASSET": self.source(nid, scope, source, guard)
-                asset_phase = nullcontext() if shared_phase else self.workspace._asset_scope(nid, scope)
+                asset_phase = nullcontext() if shared_phase else self._publication_asset_phase(nid, scope, actor, context, guard)
                 with asset_phase:
                     if self.store.incarnation(nid) != context["incarnation"]: raise StaleSourceError("STUDIO_OWNER_CHANGED")
                     if graph_asset_guard is not None: graph_asset_guard()
@@ -1331,6 +1367,8 @@ class ProductionExecutionService:
                     origin = candidate.get("_studio_result_origin", {})
                     if context.get("storyboard_speech") is not None and origin != self._media_result_origin(context, provenance["source_job_id"]):
                         raise ValueError("STUDIO_STORYBOARD_SPEECH_CANDIDATE_CHANGED")
+                    if any(source["kind"] == "COMIC_PANEL" for source in context["sources"]) and origin != self._media_result_origin(context, provenance["job_id"]):
+                        raise ValueError("COMIC_IMAGE_CANDIDATE_ORIGIN_CHANGED")
                     if origin.get("graph_binding") != context.get("graph_binding") or any(origin.get(k) != context.get(k) for k in ("scope_key", "incarnation", "actor", "request_digest")):
                         raise ValueError("STUDIO_CANDIDATE_OWNER_MISMATCH")
                     def commit(): guard(); job_guard()
@@ -1453,7 +1491,7 @@ class ProductionExecutionService:
                     if not settings.enable_cloud or not command.allow_cloud: raise ValueError("STUDIO_CLOUD_DISABLED")
         guard()
         def before_send(*args):
-            if context.get("storyboard_speech") is not None:
+            if context.get("storyboard_speech") is not None or any(source["kind"] == "COMIC_PANEL" for source in context["sources"]):
                 self._sources_current(nid, scope, context, guard)
             if context.get("graph_binding") is not None:
                 if graph_guard is None: raise ValueError("CREATIVE_GRAPH_MEDIA_DISPATCH_GUARD_REQUIRED")

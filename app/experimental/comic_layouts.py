@@ -429,7 +429,65 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
 
     def _director(self): return DirectorService(self.store, self.novels, self.chapters, self.screenplays)
 
+    @contextmanager
+    def _studio_asset_scope(self, nid, scope):
+        owner = self._independent_owner()
+        with owner.existing_owner_only():
+            expected = {'novel_id': nid, 'branch_id': scope.get('branch_id'),
+                'scope_key': self.store.key(nid, scope), 'incarnation': self._independent_identity(nid)}
+            active = getattr(self.assets._scope, 'binding', None)
+            if active is not None and active != expected:
+                raise FileNotFoundError('comic asset owner unavailable')
+            with (nullcontext() if active is not None else self.assets.project_scope(nid, scope.get('branch_id'),
+                    lambda: owner.owner_lease(nid), scope_key=expected['scope_key'])):
+                yield
+
+    @staticmethod
+    def _studio_image_review(asset):
+        from ..creative.workspace import IndependentWorkspaceService
+        origin, proof = asset.get('_studio_result_origin'), asset.get('_origin_provenance')
+        if not isinstance(origin, dict) or not isinstance(proof, dict):
+            raise ValueError('COMIC_USE_ORIGINAL_GENERATION_REVIEW')
+        IndependentWorkspaceService._production_asset_ids(origin)
+        from ..creative.production_contracts import ProductionSourceSnapshot
+        for source in origin['sources']:
+            ProductionSourceSnapshot.model_validate(source)
+        receipt = {key: value for key, value in proof.items() if key not in {'receipt_digest', 'human_review', 'review_actor'}}
+        if (asset.get('_owner_actor_id') is not None or not asset.get('approved_at')
+                or proof.get('contract') != 'studio-image-execution/1' or proof.get('human_review') != 'EXPLICIT_APPROVAL'
+                or proof.get('review_actor') != origin.get('actor') or proof.get('job_id') != origin.get('job_id')
+                or not str(origin.get('operation_id', '')).startswith('m5.image.')
+                or asset.get('source_job_id') != origin.get('job_id')
+                or any(proof.get(key) != origin.get(key) or asset.get(key) != origin.get(key) for key in ('provider_id', 'model_id'))
+                or proof.get('request_digest') != origin.get('request_digest')
+                or proof.get('source_snapshots') != origin.get('sources')
+                or proof.get('candidate_asset_id') != asset['id'] or proof.get('output_digest') != asset['sha256']
+                or type(proof.get('candidate_asset_version')) is not int
+                or asset.get('version') != proof['candidate_asset_version'] + 1
+                or proof.get('receipt_digest') != digest(receipt)):
+            raise ValueError('COMIC_USE_ORIGINAL_GENERATION_REVIEW')
+
     def _asset(self, nid, scope, actor, aid, *, approved=True, pixel_budget=None):
+        # Original unbound uploads retain their namespace. A second read uses
+        # only the actual current project owner; no asset self-declaration can
+        # select an incarnation, and private candidates never enter Comic.
+        active = getattr(self.assets._scope, 'binding', None)
+        if active is not None:
+            with self._studio_asset_scope(nid, scope):
+                asset = self.assets.get(aid, branch_id=scope.get('branch_id'), actor_id=actor)
+                self._studio_image_review(asset)
+                return self._read_asset(nid, scope, actor, aid, approved=approved, pixel_budget=pixel_budget)
+        try:
+            return self._read_asset(nid, scope, actor, aid, approved=approved, pixel_budget=pixel_budget)
+        except FileNotFoundError:
+            if self.independent_store is None:
+                raise
+        with self._studio_asset_scope(nid, scope):
+            asset = self.assets.get(aid, branch_id=scope.get('branch_id'), actor_id=actor)
+            self._studio_image_review(asset)
+            return self._read_asset(nid, scope, actor, aid, approved=approved, pixel_budget=pixel_budget)
+
+    def _read_asset(self, nid, scope, actor, aid, *, approved=True, pixel_budget=None):
         asset = self.assets.get(aid, branch_id=scope.get('branch_id'), actor_id=actor)
         if asset.get('novel_id') != nid or asset.get('branch_id') != scope.get('branch_id'): raise FileNotFoundError(aid)
         if asset['media_type'] not in {'image/png', 'image/jpeg', 'image/webp'}: raise ValueError('COMIC_STATIC_RASTER_REQUIRED')
@@ -511,7 +569,17 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
 
     def catalog(self, nid, scope, actor):
         base = self._director().catalog(nid, scope, actor); assets = []
-        for asset in self.assets.list(nid, branch_id=scope.get('branch_id'), actor_id=actor):
+        candidates = self.assets.list(nid, branch_id=scope.get('branch_id'), actor_id=actor)
+        if self.independent_store is not None:
+            try:
+                with self._studio_asset_scope(nid, scope):
+                    for asset in self.assets.list(nid, branch_id=scope.get('branch_id'), actor_id=actor):
+                        try: self._studio_image_review(asset)
+                        except ValueError: continue
+                        candidates.append(asset)
+            except FileNotFoundError:
+                pass
+        for asset in candidates:
             try: row, _ = self._asset(nid, scope, actor, asset['id'], approved=False)
             except (FileNotFoundError, ValueError): continue
             assets.append({k: row[k] for k in ('id', 'filename', 'version')} | {'approved': bool(row.get('approved_at')), 'manual_review_available': self._manual(row)})
@@ -652,6 +720,32 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
                 saved = new_row(nid, scope, actor, payload)
                 state['collections'].setdefault(self.RECORDS, {})[saved['id']] = saved
                 guard()
+            saved = copy.deepcopy(saved)
+        return self._view(nid, scope, actor, saved)
+
+    def adopt_generated_image(self, nid, scope, actor, rid, panel_id, expected_version, approved_asset, guard):
+        """Private adapter entry: only an already approved original job result.
+
+        The callback checks the immutable original Image approval under this
+        owner transaction. It never promotes, dispatches, or changes job state.
+        """
+        with self._independent_transaction(nid, scope) as state:
+            row = state['collections'].get(self.RECORDS, {}).get(rid)
+            if row is None or row.get('created_by') != actor or row.get('novel_id') != nid or row.get('scope') != scope:
+                raise FileNotFoundError(rid)
+            check_version(row, expected_version)
+            if len(row['history']) >= 100: raise ValueError('COMIC_REVISION_LIMIT_CREATE_NEW_LAYOUT')
+            self._current(nid, scope, actor, row)
+            asset = approved_asset()
+            document = copy.deepcopy(row['document'])
+            panel = next((p for p in document['panels'] if p['id'] == panel_id), None)
+            if panel is None: raise FileNotFoundError(panel_id)
+            panel['asset_id'], panel['expected_asset_version'] = asset['id'], asset['version']
+            payload = self._payload(nid, scope, actor, document)
+            self._current(nid, scope, actor, payload)
+            approved_asset(); guard()
+            saved = change_row(row, actor, expected_version, lambda current: current.update(payload))
+            guard()
             saved = copy.deepcopy(saved)
         return self._view(nid, scope, actor, saved)
 

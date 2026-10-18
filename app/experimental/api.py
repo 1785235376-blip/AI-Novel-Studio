@@ -721,6 +721,7 @@ studio_production_service = ProductionExecutionService(independent_workspace_ser
     legacy_api.image_job_service, asset_provider_registry, legacy_api.video_assembly_service,
     legacy_api.screenplay_service.video_providers, legacy_api._video_provider_configs,
     audio_production_store, legacy_api.credential_vault, studio_media_transport)
+studio_production_service.configure_comic(comic_layouts_service)
 model_benchmark_service.configure_video(studio_production_service)
 creative_graph_service.configure_media(studio_production_service)
 from ..creative.bible_workspace import BibleWorkspaceService

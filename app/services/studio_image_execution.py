@@ -128,21 +128,34 @@ def _context(value, body, actor):
         raise ValueError("STUDIO_IMAGE_SOURCES_INVALID")
     seen = set()
     for source in sources:
-        if (not isinstance(source, dict) or set(source) - {"id", "kind", "version", "digest", "asset_kind"}
+        if (not isinstance(source, dict) or set(source) - {"id", "kind", "version", "digest", "asset_kind", "comic_panel"}
                 or not {"id", "kind", "version", "digest"}.issubset(source)):
             raise ValueError("STUDIO_IMAGE_SOURCE_INVALID")
         _text(source["id"]); _require_version(source["version"]); _require_digest(source["digest"])
-        if source["kind"] not in {"ASSET", "CREATIVE_DOCUMENT"}:
+        if source["kind"] not in {"ASSET", "CREATIVE_DOCUMENT", "COMIC_PANEL"}:
             raise ValueError("STUDIO_IMAGE_SOURCE_KIND_INVALID")
         if source["kind"] == "ASSET":
             if source.get("asset_kind") not in {"image", "video", "audio"}:
                 raise ValueError("STUDIO_IMAGE_SOURCE_ASSET_KIND_INVALID")
         elif source.get("asset_kind") is not None:
             raise ValueError("STUDIO_IMAGE_SOURCE_KIND_INVALID")
+        if source["kind"] == "COMIC_PANEL" or "comic_panel" in source:
+            from ..creative.production_contracts import ProductionSourceSnapshot
+            ProductionSourceSnapshot.model_validate(source)
+            if (body["operation_id"] != "m5.image.t2i" or len(sources) != 1
+                    or any(source["comic_panel"][key] != value[key] for key in ("actor", "scope_key", "incarnation"))):
+                raise ValueError("STUDIO_COMIC_SOURCE_CONTEXT_CHANGED")
         identity = (source["kind"], source["id"])
         if identity in seen:
             raise ValueError("STUDIO_IMAGE_SOURCE_DUPLICATE")
         seen.add(identity)
+    if any(source["kind"] == "COMIC_PANEL" for source in sources):
+        from ..creative.production_execution_models import MediaCommand
+        from ..creative.production_execution import digest
+        command = MediaCommand.model_validate(value.get("command"))
+        if (command.allow_cloud or digest(body["prompt"]) != sources[0]["comic_panel"]["brief_digest"]
+                or value.get("graph_binding") is not None):
+            raise ValueError("STUDIO_COMIC_SOURCE_CONTEXT_CHANGED")
     images = [source for source in sources if source.get("asset_kind") == "image"]
     if body["operation_id"] == "m5.image.i2i" and not 1 <= len(images) <= 5:
         raise ValueError("STUDIO_IMAGE_REFERENCE_COUNT_INVALID")
@@ -330,7 +343,8 @@ def create(service, nid, branch, actor, body, context, guard, *, source_phase=No
         row["binding_digest"] = _binding(row)
         rows.append(row)
         return copy.deepcopy(row)
-    if body["operation_id"] in {"m5.image.cutout", "m5.image.inpaint", "m5.image.upscale"}:
+    if (body["operation_id"] in {"m5.image.cutout", "m5.image.inpaint", "m5.image.upscale"}
+            or any(source["kind"] == "COMIC_PANEL" for source in context["sources"])):
         if not callable(source_phase):
             raise ValueError("STUDIO_IMAGE_UPSCALE_SOURCE_PHASE_REQUIRED" if body["operation_id"] == "m5.image.upscale"
                 else "STUDIO_IMAGE_CUTOUT_SOURCE_PHASE_REQUIRED")

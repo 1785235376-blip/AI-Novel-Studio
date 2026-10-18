@@ -194,6 +194,11 @@ class _MediaCommandShape(ExecutionModel):
             if (source.kind != "CREATIVE_DOCUMENT" or (source.id, source.version, source.digest) !=
                     (pin.id, pin.version, pin.digest)):
                 raise ValueError("STUDIO_STORYBOARD_SPEECH_SOURCE_PIN_REQUIRED")
+        comic = [s for s in self.source_snapshots if s.kind == "COMIC_PANEL"]
+        if comic and (len(self.source_snapshots) != 1 or self.operation_id != "m5.image.t2i"
+                or self.allow_cloud or self.image_source is not None or self.image_references is not None
+                or self.mask_source is not None or self.storyboard_shot is not None or self.storyboard_speech is not None):
+            raise ValueError("STUDIO_COMIC_EXPLICIT_LOCAL_T2I_ONLY")
         p = self.parameters.model_dump(exclude_none=True)
         allowed = {
             "m5.image.t2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},
@@ -271,7 +276,7 @@ class _MediaCommandShape(ExecutionModel):
             raise ValueError("STUDIO_IMAGE_REFERENCE_LIMIT")
         if not required and self.operation_id not in {"m8.audio.trim", "m5.image.cutout"} and assets:
             raise ValueError("STUDIO_OPERATION_UNUSED_ASSET_REFERENCE")
-        if any(s.kind not in {"ASSET", "CREATIVE_DOCUMENT"} for s in self.source_snapshots):
+        if any(s.kind not in {"ASSET", "CREATIVE_DOCUMENT", "COMIC_PANEL"} for s in self.source_snapshots):
             raise ValueError("STUDIO_OPERATION_SOURCE_OWNER_UNSUPPORTED")
         return self
 

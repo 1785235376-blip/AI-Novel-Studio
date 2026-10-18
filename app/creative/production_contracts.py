@@ -9,7 +9,7 @@ from __future__ import annotations
 from fractions import Fraction
 from typing import Annotated, Literal
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field, JsonValue, model_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, JsonValue, model_serializer, model_validator
 
 CONTRACT = "studio-production-operation-contracts/1"
 EVIDENCE = "NOT_EVALUATED_BY_THIS_ENDPOINT"
@@ -45,18 +45,38 @@ class StrictContract(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True, allow_inf_nan=False)
 
 
+class ComicPanelSource(StrictContract):
+    panel_id: str = Field(pattern=r"^[A-Za-z0-9_-]{1,80}$")
+    panel_digest: Digest
+    brief_digest: Digest
+    actor: Name
+    scope_key: Digest
+    incarnation: str = Field(pattern=r"^(?:file|postgres):[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$")
+
+
 class ProductionSourceSnapshot(StrictContract):
     """Reference only; ASSET requires asset_kind and other source kinds forbid it."""
     id: Name
-    kind: Literal["CHAPTER", "CREATIVE_DOCUMENT", "ASSET", "TIMELINE", "CAPTION"]
+    kind: Literal["CHAPTER", "CREATIVE_DOCUMENT", "ASSET", "TIMELINE", "CAPTION", "COMIC_PANEL"]
     version: int = Field(ge=1, strict=True)
     digest: Digest
     asset_kind: Literal["text", "image", "video", "audio"] | None = Field(default=None,
         description="ASSET 时必须提供原资产 kind；其他来源种类不得填写。此值仍须由原服务重新校验。")
     reference_only: Literal[True] = True
+    comic_panel: ComicPanelSource | None = None
+
+    @model_serializer(mode="wrap")
+    def preserve_legacy_source(self, handler):
+        value = handler(self)
+        if self.comic_panel is None:
+            value.pop("comic_panel", None)
+        return value
 
     @model_validator(mode="after")
     def asset_kind_binding(self):
+        if (self.kind != "COMIC_PANEL" and "comic_panel" in self.model_fields_set
+                or (self.kind == "COMIC_PANEL") != (self.comic_panel is not None)):
+            raise ValueError("PRODUCTION_COMIC_PANEL_BINDING_REQUIRED")
         if (self.kind == "ASSET") != (self.asset_kind is not None):
             raise ValueError("PRODUCTION_SOURCE_ASSET_KIND_MISMATCH")
         return self

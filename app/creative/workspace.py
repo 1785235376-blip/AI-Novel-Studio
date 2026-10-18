@@ -232,10 +232,17 @@ class IndependentWorkspaceService:
                 or not isinstance(origin.get("sources"), list)):
             raise ValueError("CREATIVE_PRODUCTION_ORIGIN_INVALID")
         if any(not isinstance(source, dict) or not isinstance(source.get("kind"), str)
-               or source["kind"] not in {"ASSET", "CREATIVE_DOCUMENT"}
+               or source["kind"] not in {"ASSET", "CREATIVE_DOCUMENT", "COMIC_PANEL"}
                or not isinstance(source.get("id"), str) or not source["id"]
                for source in origin["sources"]):
             raise ValueError("CREATIVE_PRODUCTION_ORIGIN_INVALID")
+        if any(source["kind"] == "COMIC_PANEL" for source in origin["sources"]):
+            from .production_contracts import ProductionSourceSnapshot
+            if len(origin["sources"]) != 1 or origin["operation_id"] != "m5.image.t2i" or "graph_binding" in origin:
+                raise ValueError("CREATIVE_PRODUCTION_COMIC_ORIGIN_INVALID")
+            source = ProductionSourceSnapshot.model_validate(origin["sources"][0])
+            if any(getattr(source.comic_panel, key) != origin.get(key) for key in ("actor", "scope_key", "incarnation")):
+                raise ValueError("CREATIVE_PRODUCTION_COMIC_ORIGIN_INVALID")
         return list(dict.fromkeys(source["id"] for source in origin["sources"] if source["kind"] == "ASSET"))
 
     def _production_declaration(self, row):
