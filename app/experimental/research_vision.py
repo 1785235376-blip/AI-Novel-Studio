@@ -157,7 +157,7 @@ class PreparedResearchOCRSource:
     read. Real Research dispatch remains closed in ReviewAdapterJobs.
     """
 
-    def __init__(self, service, nid, scope, actor, source_id, source_version, guard):
+    def __init__(self, service, nid, scope, actor, source_id, source_version, guard, *, page=None):
         import copy
         from .research_library import ResearchLibraryService
         if (not isinstance(service, ResearchLibraryService)
@@ -165,11 +165,13 @@ class PreparedResearchOCRSource:
                 or not isinstance(nid, str) or not nid or not isinstance(actor, str) or not actor
                 or not isinstance(scope, dict) or scope.get('novel_id') != nid
                 or not isinstance(source_id, str) or not source_id
-                or type(source_version) is not int or source_version < 1):
+                or type(source_version) is not int or source_version < 1
+                or page is not None and (type(page) is not int or not 1 <= page <= 1000)):
             raise ValueError('RESEARCH_OCR_SOURCE_AUTHORITY_REQUIRED')
         self._service, self._nid, self._actor = service, nid, actor
         self._scope = copy.deepcopy(scope)
         self._source_id, self._source_version, self._guard = source_id, source_version, guard
+        self._page = page
         self._binding = None
         self._read()
 
@@ -190,8 +192,14 @@ class PreparedResearchOCRSource:
             raise StaleSourceError('RESEARCH_OCR_SOURCE_CHANGED')
         metadata = row.get('image_metadata') or {}
         image_format = metadata.get('format')
-        if row.get('format') != 'IMAGE' or image_format not in {'PNG', 'JPEG'}:
+        pdf = row.get('format') == 'PDF'
+        if pdf:
+            if self._page is None:
+                raise ValueError('RESEARCH_PDF_OCR_EXPLICIT_PAGE_REQUIRED')
+        elif row.get('format') != 'IMAGE' or image_format not in {'PNG', 'JPEG'}:
             raise ValueError('RESEARCH_OCR_PNG_OR_JPEG_REQUIRED')
+        elif self._page not in {None, 1}:
+            raise ValueError('RESEARCH_OCR_IMAGE_PAGE_INVALID')
         encoded = row.get('content_base64')
         # Reject before decoding; the original import may allow larger sources.
         if not isinstance(encoded, str) or len(encoded) > 4 * ((4 * 1024 * 1024 + 2) // 3):
@@ -207,6 +215,11 @@ class PreparedResearchOCRSource:
             'source_id': self._source_id, 'source_version': self._source_version,
             'source_digest': source_digest, 'access': row.get('access'),
             'media_type': 'image/png' if image_format == 'PNG' else 'image/jpeg', 'page': 1}
+        if pdf:
+            if not content.startswith(b'%PDF-'):
+                raise ValueError('RESEARCH_PDF_OCR_INVALID_BYTES')
+            binding.update(contract='research-pdf-ocr-source/1', source_kind='PDF',
+                media_type='application/pdf', page=self._page)
         if self._binding is not None and binding != self._binding:
             raise StaleSourceError('RESEARCH_OCR_SOURCE_CHANGED')
         self._guard()

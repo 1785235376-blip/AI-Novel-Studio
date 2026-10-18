@@ -1,0 +1,9 @@
+# Passive PDF Research source and job identity
+
+2026-10-18. A separate `RESEARCH_PDF_OCR_JOB_V1` strict frozen binding extends the original source-bound generation persistence owner with PDF media type and an explicit page (1–1000). The legacy IMAGE binding and serialization have no new defaults or fields. Original generation updates reject reassignment of PDF page, source, actor, scope or project incarnation. Reopened records do not gain execution authority.
+
+The original `PreparedResearchOCRSource` can capture a PDF only with an explicit page, preserving original bytes/digest and checking current source version, actor, scope and incarnation on every read. Existing image calls retain their original binding. Source preparation is read-only, performs no OCR and does not create jobs.
+
+Evidence: `research-pdf-identity-file` 37 passed / 37 deselected; actual PostgreSQL `research-pdf-identity-pg` 37 passed / 37 deselected. PostgreSQL 17.11 reused disposable UTF-8 database OID 16384 and stopped cleanly. Cases include original IMAGE regressions, passive restart, page reassignment rejection, source revocation and same-public-ID recreation with fresh-owner positive validation. `research-pdf-identity-public`: 6 passed, including actual public wheel and catalog. API count 2375, fingerprint `dd2b45970a5f37ad24565e0e43c1006b324252104afa84c14858648ea161e1fa`.
+
+No Research PDF dispatch is enabled in this slice. The original executor still validates IMAGE bindings; the broker still admits exact image-native adapters only. Page existence beyond the 1–1000 envelope is checked by the pinned renderer during an eventual admitted execution; source preparation does not claim to parse or rasterize the page. End-to-end PDF job/review/citation publication remains pending. Generic scan/image/chart understanding remains synthetic-only.

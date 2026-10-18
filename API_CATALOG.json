@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "176c657c6e0fe90b2132d00ab988296805c706199bb17319be1f6c4e414a6e7f",
+  "application_source_fingerprint_sha256": "dd2b45970a5f37ad24565e0e43c1006b324252104afa84c14858648ea161e1fa",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -199,9 +199,9 @@
     "app/experimental/research_library.py": "181cac6c6d7c41c054282a5664adc47a8e05db7b25ce5ab10ccf939a73cbbc8a",
     "app/experimental/research_library_api.py": "8ebe0936b8a0a971636c77cb6092f2920578616d8645219d249c05b312feaf8e",
     "app/experimental/research_native_ocr.py": "b5442e18c4ff324bd276ccce32e9399725de974428af5a3d05d5639e60769697",
-    "app/experimental/research_ocr_binding.py": "03df4334ebee685e7b656e8a3b816b61107dc518193ed8084133764be6ee8774",
+    "app/experimental/research_ocr_binding.py": "279df7b728b26b744bcebac8c3889da7082087563ec379b6d2128257ed812cf3",
     "app/experimental/research_ocr_execution.py": "689b362c8353977472452cb05326e9190f0ef62897d3f35a1d86156d2709e758",
-    "app/experimental/research_vision.py": "8b079127265864d5d32b7eff6be9683073f926eaf445016ac90d917b5abb1497",
+    "app/experimental/research_vision.py": "fbb3138d008857009b64c3f8386e7b6056a48a74397cecea1f7ada6cfdd53619",
     "app/experimental/review_adapter_jobs.py": "9d7ce859d83df979912b8a721ddfb514b133299f7af6c32742ef9772987a41ce",
     "app/experimental/review_adapter_projection.py": "f74f33866b8a5c166b0c3ded49d102874bfc56423f719f5288e39dca41ab60a8",
     "app/experimental/revision_intelligence.py": "d9210090e0a253a1a9f92655e823bd115354413e756cbff7088a5615dbc30dfd",
@@ -513,7 +513,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "811ce225db8362103028aa04057adf93350501a13f423222afc61070df259195",
+    "sha256": "4a2c667841d5a4e909c6a8b518387002e6a030c69d0cb2c9876a3b6e5b28b040",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",

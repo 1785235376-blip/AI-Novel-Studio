@@ -62,6 +62,19 @@ class ResearchOCRJobBinding(_Frozen):
         return self
 
 
+class ResearchPDFOCRJobBinding(ResearchOCRJobBinding):
+    """Versioned PDF identity; legacy IMAGE serialization remains byte-for-byte."""
+    contract: Literal['RESEARCH_PDF_OCR_JOB_V1']
+    source_kind: Literal['PDF']
+    media_type: Literal['application/pdf']
+    page: int = Field(ge=1, le=1000)
+
+
+def parse_research_ocr_binding(value):
+    model = ResearchPDFOCRJobBinding if isinstance(value, dict) and value.get('contract') == 'RESEARCH_PDF_OCR_JOB_V1' else ResearchOCRJobBinding
+    return model.model_validate(value)
+
+
 def is_research_ocr_job(value):
     get = value.get if isinstance(value, dict) else lambda key, default=None: getattr(value, key, default)
     return (('research_ocr_binding' in value if isinstance(value, dict)
@@ -71,7 +84,7 @@ def is_research_ocr_job(value):
 
 def research_ocr_job_binding(item):
     try:
-        binding = ResearchOCRJobBinding.model_validate(item.get('research_ocr_binding'))
+        binding = parse_research_ocr_binding(item.get('research_ocr_binding'))
         if (item.get('operation') != OPERATION or item.get('experimental_origin') != ORIGIN
                 or item.get('chapter_id') is not None or item.get('graph_binding') is not None
                 or item.get('adaptation_binding') is not None or 'creative_director_binding' in item
