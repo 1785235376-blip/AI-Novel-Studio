@@ -1,0 +1,9 @@
+# Original Director nodes in a bounded comparison deck
+
+2026-10-18. The existing Graph workspace can retain up to three Director node consoles at once, each reusing `StudioGraphDirectorConsole` and the original source-pinned `DirectorWorkspace`. Selecting a node for comparison does not fetch; each console is explicitly expanded before its original read. There is no additional document owner, model execution or write API.
+
+The deck preserves original node order and exact document snapshots. Closing a window unmounts its private projection and local-only camera choices; source pins, graph versions, client authority or project changes reset selection. Stale/unavailable bindings retain the original console's fail-closed messages. The limit bounds simultaneous readers without silently evicting another user's selected comparison.
+
+Evidence: director-compare-final, 54 checks passed plus TypeScript, Vite production build and original shared-token guard. Existing single-console, reviewed Director handoff, media-card Graph handoff and starter-controller regressions remain passing. The new client-authority replacement test genuinely failed before the fix: an expanded old window survived client replacement and began reading through the new client. The deck now tracks client identity independently of serialized document pins and resets the inner lifetime. The unchanged assertion passes; director-compare-client-repro failure evidence is retained.
+
+This is a read-only comparison affordance, not three concurrent model jobs, persisted authoring drafts, automatic director decisions or a finished professional workbench. Browser pixels, responsive visual layout and full-product end-to-end acceptance remain unverified. No backend or database contract changed; the original source-read owner continues to validate version/digest/permissions.

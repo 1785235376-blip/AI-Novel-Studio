@@ -1,0 +1,84 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/creative/GraphDirectorCompareDeck.additive.test.tsx (4 tests | 1 failed) 353ms
+   × replacing the client authority clears selection without reading through the new client 42ms
+     → expected <section …(1)>…(2)</section> to be null
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  22:40:38
+   Duration  1.18s (transform 166ms, setup 16ms, collect 262ms, tests 353ms, environment 294ms, prepare 54ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/GraphDirectorCompareDeck.additive.test.tsx > replacing the client authority clears selection without reading through the new client
+AssertionError: expected <section …(1)>…(2)</section> to be null
+
+- Expected: 
+null
+
++ Received: 
+<section
+  aria-label="导演对照 director1"
+>
+  <h4>
+    director1
+     · v
+    1
+  </h4>
+  <section
+    aria-label="图节点导演控制台"
+  >
+    <button
+      aria-expanded="true"
+      class="ui-button ui-button--secondary"
+    >
+      收起导演控制台
+    </button>
+    <p>
+      控制台只读原导演意图与连续性提示。展开及刷新会核对绑定版本和摘要；连接、执行、审核仍由原图与任务服务处理。
+    </p>
+    <section
+      class="ui-panel"
+    >
+      <header>
+        <h2>
+          导演工作台
+        </h2>
+        <button
+          class="ui-button ui-button--secondary"
+          disabled=""
+        >
+          重新读取原文档
+        </button>
+      </header>
+      <p
+        class="director-workspace__scope"
+      >
+        只读决策台：导演意图、镜头卡与连续性都来自既有 owner 的投影。修改仍然在原文档界面完成。重新读取或切换文档会清空本次镜头语言草稿。
+      </p>
+      <p
+        class="director-workspace__loading"
+      >
+        <span
+          aria-label="处理中"
+          class="ui-spinner ui-spinner--sm"
+          role="progressbar"
+        />
+         正在读取原文档…
+      </p>
+    </section>
+  </section>
+</section>
+
+ ❯ src/creative/GraphDirectorCompareDeck.additive.test.tsx:34:52
+     32|  const props=fixture();const view=render(<GraphDirectorCompareDeck {..…
+     33|  const replacement=fixture().client;view.rerender(<GraphDirectorCompar…
+     34|  expect(screen.queryByLabelText('导演对照 director1')).toBeNull();expe…
+       |                                                    ^
+     35| });
+     36| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
