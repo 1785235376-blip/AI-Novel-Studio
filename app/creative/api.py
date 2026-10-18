@@ -253,6 +253,20 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
             "X-Content-SHA256": result["sha256"],
         })
 
+    @router.get("/documents/{rid}/storyboard-sheet-export")
+    def storyboard_sheet_export(nid: str, rid: str, expected_version: int = Query(ge=1),
+                              x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        result = invoke(nid, x_session_token, x_branch_id, "domain.read",
+                        lambda actor, scope, guard: service.export_storyboard_sheet(nid, scope, rid,
+                            expected_version, reauthorize=guard))
+        return Response(result["content"], media_type=result["media_type"], headers={
+            "Content-Disposition": f'attachment; filename="{result["filename"]}"',
+            "X-Creative-Document-Version": str(result["document_version"]),
+            "X-Creative-Document-Digest": result["document_digest"],
+            "X-Content-SHA256": result["sha256"],
+            "Cache-Control": "no-store",
+        })
+
     @router.get("/director-proposals")
     def proposals(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return invoke(nid, x_session_token, x_branch_id, "domain.read",

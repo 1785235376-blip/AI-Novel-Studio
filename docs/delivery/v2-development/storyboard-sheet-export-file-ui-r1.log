@@ -1,0 +1,54 @@
+........................                                                 [100%]
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_storyboard_sheet_export_additive.py::test_original_saved_owner_exports_ordered_shots_and_preserves_source[file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+24 passed, 11 deselected, 2 warnings in 5.34s
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/DirectorSheetExport.additive.test.tsx (2 tests) 46ms
+ ✓ src/creative/StoryboardSheetExport.additive.test.tsx (2 tests) 86ms
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 3646ms
+
+ Test Files  3 passed (3)
+      Tests  33 passed (33)
+   Start at  16:23:14
+   Duration  5.50s (transform 1.10s, setup 60ms, collect 1.97s, tests 3.78s, environment 956ms, prepare 170ms)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2366 modules transformed.
+rendering chunks...
+computing gzip size...
+../.runtime/v2-checks/storyboard-sheet-export-file-ui-r1/dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+../.runtime/v2-checks/storyboard-sheet-export-file-ui-r1/dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+../.runtime/v2-checks/storyboard-sheet-export-file-ui-r1/dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+../.runtime/v2-checks/storyboard-sheet-export-file-ui-r1/dist/assets/ExperimentalWorkbench-BkplvLLE.css      4.23 kB │ gzip:   1.09 kB
+../.runtime/v2-checks/storyboard-sheet-export-file-ui-r1/dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+../.runtime/v2-checks/storyboard-sheet-export-file-ui-r1/dist/assets/App-DRLVwzqD.css                      215.51 kB │ gzip:  27.26 kB
+../.runtime/v2-checks/storyboard-sheet-export-file-ui-r1/dist/assets/Health-BR3gu-1A.js                      0.99 kB │ gzip:   0.57 kB
+../.runtime/v2-checks/storyboard-sheet-export-file-ui-r1/dist/assets/index-vlWzoN9s.js                      30.15 kB │ gzip:  10.01 kB
+../.runtime/v2-checks/storyboard-sheet-export-file-ui-r1/dist/assets/style-Dq3B_07R.js                      45.12 kB │ gzip:   8.40 kB
+../.runtime/v2-checks/storyboard-sheet-export-file-ui-r1/dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+../.runtime/v2-checks/storyboard-sheet-export-file-ui-r1/dist/assets/LocalTutorIntegration-C8Ln46BY.js      47.64 kB │ gzip:  15.65 kB
+../.runtime/v2-checks/storyboard-sheet-export-file-ui-r1/dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+../.runtime/v2-checks/storyboard-sheet-export-file-ui-r1/dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+../.runtime/v2-checks/storyboard-sheet-export-file-ui-r1/dist/assets/ExperimentalWorkbench-LXfysbTw.js     815.02 kB │ gzip: 244.32 kB
+../.runtime/v2-checks/storyboard-sheet-export-file-ui-r1/dist/assets/App-Bm9yjSEo.js                     2,499.62 kB │ gzip: 746.77 kB
+✓ built in 6.91s
+
+(!) outDir /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/storyboard-sheet-export-file-ui-r1/dist is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
