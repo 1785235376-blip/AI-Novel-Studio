@@ -1,0 +1,6 @@
+{
+  "source_head": "94239d2f673a2128b17e505b77da8bb1821080b2",
+  "prerequisite": "6990d74b46693eb490dc1e22670e82a59ceec738",
+  "bundle": "continuation.bundle",
+  "scope": "Explicit original Graph / completed run / review-node picker for personal briefs. No automatic execution or adoption. 12 focused UI tests, TypeScript and production build passed; existing large-chunk warning retained. See docs/REVIEWED_GRAPH_PERSONAL_BRIEF.md."
+}
