@@ -36,7 +36,7 @@ class TimelineWaveform:
             raise
 
     @staticmethod
-    def _measure(data, clip, guard):
+    def _measure(data, clip, guard, *, bounds_only=False):
         guard()
         if len(data) > MAX_BYTES:
             raise ValueError("STUDIO_WAVEFORM_LIMIT")
@@ -54,12 +54,17 @@ class TimelineWaveform:
                     raise ValueError("STUDIO_WAVEFORM_LIMIT")
                 start = (clip["in_ms"] * rate + 999) // 1000
                 end = (clip["out_ms"] * rate + 999) // 1000
-                if not 0 <= start < end <= frames:
+                within = 0 <= start < end <= frames
+                if not bounds_only and not within:
                     raise ValueError("STUDIO_WAVEFORM_CLIP_RANGE_INVALID")
-                envelope = pcm16_envelope(wav, frame_start=start, frame_end=end, strict=True, guard=guard)
+                envelope = pcm16_envelope(wav, frame_start=0 if bounds_only else start, frame_end=frames if bounds_only else end, strict=True, guard=guard)
                 result = {"frame_count": frames, "sample_rate": rate, "channels": channels,
                           "duration_seconds": {"num": frames, "den": rate},
                           "start_frame": start, "end_frame": end, **envelope}
+                if bounds_only:
+                    result = {"frame_count":frames,"sample_rate":rate,"channels":channels,
+                        "duration_seconds":{"num":frames,"den":rate},"maximum_out_ms":frames*1000//rate,
+                        "requested_start_frame":start,"requested_end_frame":end,"within_source":within}
         except (wave.Error, EOFError, struct.error):
             guard()
             raise ValueError("STUDIO_WAVEFORM_INVALID") from None
@@ -72,7 +77,11 @@ class TimelineWaveform:
         with self.service.store.existing_owner_only():
             return self._preview(nid, scope, actor, tid, value, guard)
 
-    def _preview(self, nid, scope, actor, tid, value, guard):
+    def source_bounds(self, nid, scope, actor, tid, value, guard):
+        with self.service.store.existing_owner_only():
+            return self._preview(nid, scope, actor, tid, value, guard, bounds_only=True)
+
+    def _preview(self, nid, scope, actor, tid, value, guard, *, bounds_only=False):
         body = TimelineWaveformPreview.model_validate(value)
         service = self.service
         context = service._base(nid, scope, actor, guard)
@@ -93,7 +102,7 @@ class TimelineWaveform:
             if track["kind"] != "AUDIO" or clip["source_snapshot"] != source:
                 raise StaleSourceError("STUDIO_TIMELINE_SOURCE_CHANGED")
             _, data = self._content(nid, scope, source, guard)
-            measured = self._measure(data, clip, guard)
+            measured = self._measure(data, clip, guard, bounds_only=True) if bounds_only else self._measure(data, clip, guard)
             # Detect external binary/metadata replacement during measurement as
             # well as ordinary owner mutations (which the phase already fences).
             self._content(nid, scope, source, guard)
@@ -108,6 +117,8 @@ class TimelineWaveform:
                       "status": "MEASURED_PCM16_PEAKS", "scope": "CLIP_SOURCE_ENVELOPE",
                       "clip": {key: clip.get(key, 1) for key in ("in_ms", "out_ms", "start_ms", "speed_num", "speed_den")},
                       **measured}
+            if bounds_only:
+                result.update(contract="studio-timeline-source-bounds/1", status="MEASURED_PCM16_SOURCE_BOUNDS", scope="SOURCE_DURATION_ONLY")
         # The original phase caches its leased owner. Check again only after
         # release so a same-thread injected retirement cannot hide in that cache.
         if service.store.incarnation(nid) != context["incarnation"]:

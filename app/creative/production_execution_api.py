@@ -90,6 +90,13 @@ def create_production_execution_router(service, invoke, *, require_host_session,
             return call(request, nid, x_session_token, x_branch_id, "domain.read",
                         lambda actor, scope, guard: service.timeline_waveform_preview(nid, scope, actor, tid, body, guard))
 
+    @waveform_router.post("/projects/{nid}/studio/production/timelines/{tid}/source-bounds")
+    def source_bounds(nid: str, tid: str, request: Request, body: TimelineWaveformPreview,
+                      x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        with service.store.existing_owner_only():
+            return call(request, nid, x_session_token, x_branch_id, "domain.read",
+                        lambda actor, scope, guard: service.timeline_source_bounds(nid, scope, actor, tid, body, guard))
+
     router.include_router(waveform_router)
 
     @router.get("/projects/{nid}/studio/production/providers")

@@ -65,6 +65,9 @@ class ProductionExecutionService:
     def timeline_playback_preview(self, nid, scope, actor, tid, value, guard):
         return self.timeline_playback.preview(nid, scope, actor, tid, value, guard)
 
+    def timeline_source_bounds(self, nid, scope, actor, tid, value, guard):
+        return self.timeline_waveform.source_bounds(nid, scope, actor, tid, value, guard)
+
     def timeline_waveform_preview(self, nid, scope, actor, tid, value, guard):
         return self.timeline_waveform.preview(nid, scope, actor, tid, value, guard)
 

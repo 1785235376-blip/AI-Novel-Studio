@@ -1,3 +1,4 @@
+import {checkedTimelineSourceBounds,timelineSourceBoundsRequest} from './studioTimelineSourceBounds';
 import { checkedVideoReference, checkedVideoRecipe, checkedVideoCapabilities, sameVideoReference, storyboardShotFields, sameStoryboardShot, type VideoReference, type VideoCapabilities } from './studioVideoRuntimeContract';
 import type { ShotPin } from './studioStoryboardContract';
 import { checkedCutoutProof, type CutoutProcessingProof } from './studioCutoutContract';
@@ -469,6 +470,11 @@ export function studioProductionClient(projectId: string, context: Collaboration
     async timelineRender(id: string, body: { expected_version: number; reviewed_timeline_digest: string; request_id: string }) {
       return job(await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(id)}/render`, 'POST', body, undefined, body.request_id));
     },
+    async timelineSourceBounds(source: StudioTimelineRow, clipId: string, signal?: AbortSignal) {
+      const body=timelineSourceBoundsRequest(source,clipId);
+      const value=await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/source-bounds`,'POST',body,signal);
+      return checkedTimelineSourceBounds(value,source,clipId,{novelId:projectId,branchId:branch});
+    },
     async timelineWaveformPreview(source: StudioTimelineRow, clipId: string, signal?: AbortSignal) {
       const body = timelineWaveformRequest(source, clipId);
       const raw = await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/waveform-preview`, 'POST', body, signal);
@@ -557,7 +563,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
   };
 }
 type CompleteProductionClient = ReturnType<typeof studioProductionClient>;
-type TimelineExportMethods = 'timelineWaveformPreview' | 'timelineExportPreview' | 'timelineExport' | 'timelineTransferPreview' | 'timelineTransferImport' | 'timelineTransferAttachment' | 'timelineTrackLock' | 'timelinePlaybackPreview' | 'timelinePlaybackBuild' | 'timelinePlaybackAttestation' | 'timelineEdit';
+type TimelineExportMethods = 'timelineSourceBounds' | 'timelineWaveformPreview' | 'timelineExportPreview' | 'timelineExport' | 'timelineTransferPreview' | 'timelineTransferImport' | 'timelineTransferAttachment' | 'timelineTrackLock' | 'timelinePlaybackPreview' | 'timelinePlaybackBuild' | 'timelinePlaybackAttestation' | 'timelineEdit';
 // Existing embedded clients keep their original media/render surface. Export
 // controls require both additive methods before becoming available.
 export type StudioProductionClient = Omit<CompleteProductionClient, TimelineExportMethods> & Partial<Pick<CompleteProductionClient, TimelineExportMethods>>;

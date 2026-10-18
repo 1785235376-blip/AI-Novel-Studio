@@ -1,3 +1,4 @@
+import {useStudioTimelineSourceBounds} from './useStudioTimelineSourceBounds';
 import { StudioTimelineCloseGaps } from './StudioTimelineCloseGaps';
 import { applyNleCaptionCommand } from './nleCaptionEditing';
 import { nleSourceReplacementIntent } from './nleSourceReplacement';
@@ -53,14 +54,16 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
   useEffect(() => { composing.current = false; }, [props.client]);
   const latestReview = useRef({ c, props, nleClips }); latestReview.current = { c, props, nleClips };
   const reviewGeneration = c.getHandoffRevision();
-  const waveform = useStudioTimelineWaveform({ props, source: c.base, selectedClipIds: nleClips,
+  const observationOptions = { props, source: c.base, selectedClipIds: nleClips,
     getSelectionGeneration: () => selection.current.generation, getRevision: c.getHandoffRevision,
     isReady: () => {
       const live = latestReview.current;
       return live.c.canEdit && !!live.c.base && !live.c.inputDirty && !live.c.dirty && !live.c.failure && !live.c.pending
         && !live.c.denied && live.c.attempt?.state !== 'UNKNOWN' && live.c.sourcesCurrent
         && !live.c.transfer.locked && !live.c.playback.locked && !live.c.sourceEdit.locked;
-    } });
+    } };
+  const waveform = useStudioTimelineWaveform(observationOptions);
+  const sourceBounds = useStudioTimelineSourceBounds(observationOptions);
   useLayoutEffect(() => {
     if (waveform.preview && c.base) c.observeWaveformMeasurement(waveform.preview,c.base,props.client);
   }, [waveform.preview,c.base,props.client]);
@@ -273,6 +276,10 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
     <p>这些入口已接入原 owner，当前代码的 Windows、媒体和完整产品验证仍待执行。</p>
     {c.measuredSourceCount > 0 && <StatusMessage>已保留 {c.measuredSourceCount} 个当前来源的实测长度；新改的素材入出范围超界时，本地编辑会拒绝。未测来源仍是未知，最终保存与渲染由原服务核对。</StatusMessage>}
     {nleNotice && <StatusMessage tone="warning">{nleNotice}</StatusMessage>}
+    <section aria-label="音频源时长核对"><Button disabled={!sourceBounds.canRequest} onClick={()=>void sourceBounds.request()}>核对所选音频源时长</Button><p>仅支持当前保存片段的 PCM16 WAV（8 MiB、十分钟内）。核对实际源采样长度；不修改裁剪、不保存、不执行渲染。</p>
+      {sourceBounds.unavailable&&<p>{sourceBounds.unavailable}</p>}{sourceBounds.pending&&<StatusMessage>正在核对源文件长度…</StatusMessage>}{sourceBounds.error&&<StatusMessage tone="warning">{sourceBounds.error}</StatusMessage>}
+      {sourceBounds.preview&&<StatusMessage tone={sourceBounds.preview.within_source?'info':'warning'}>源文件 {sourceBounds.preview.frame_count} 帧 / {sourceBounds.preview.sample_rate} Hz；整数毫秒出点最多 {sourceBounds.preview.maximum_out_ms} ms。{sourceBounds.preview.within_source?'当前源入出范围在实测长度内。':'当前保存的源入出范围越界，请手动调整后重新保存。'} 此结果只说明源时长，不代表全时间线验收。</StatusMessage>}
+    </section>
     <TimelineWorkspacePanel projectId={props.projectId || ''} identity={props.projectId || ''} timeline={draft.timeline}
       selectedClipIds={nleClips} playheadMs={nlePlayhead} viewStartMs={nleView.startMs} viewScale={nleView.scale}
       editable={c.canEdit} onSelectClips={selectClips} onPlayhead={setNlePlayhead}
