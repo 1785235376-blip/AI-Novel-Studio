@@ -1,16 +1,16 @@
 # Studio V2 current continuation checkpoint
 
-Updated 2026-10-18 20:19 UTC. This document inventories bounded additions, not a
+Updated 2026-10-18 20:25 UTC. This document inventories bounded additions, not a
 replacement for the frozen feature matrix or a V2 percentage/Release declaration.
 The source pin below identifies the latest bounded implementation; archive and product heads remain distinct.
 
 ## Source and publication
 
-Current checkpoint: 2026-10-18 20:19 UTC. Working branch:
+Current checkpoint: 2026-10-18 20:25 UTC. Working branch:
 work/dot-recovered-20261018. Latest committed product source is
-560bdcc5f1f626351150c4586e17957422680873 (chapter-only authored audience comparison).
+7fad622f9cec1c4a8455f4f97412fcfa22dc9641 (mounted IMAGE API/ORA raster attachment).
 Latest byte-verified public archive is
-cfe6ef459f7cc1bb49a611a8b1bed0b36dc2201e on
+321f498d6023508e972da86d2330484c9d34f1d3 on
 archive/verified-studio-v2-20261017-5a6f697. Archive HEAD and product HEAD are
 different identities; the archive stores prerequisite-bound incremental bundles.
 The restored local source contains the integrated working product, whereas the
@@ -357,3 +357,14 @@ File53 plus mountedFile2, realPG31 with one File-only skip, UI42, TS/build/token
 and PUBLIC6 pass. Actual simulated reader feedback is not implemented.
 Previous source994d0d6b archived as cfe6ef459f7cc1bb49a611a8b1bed0b36dc2201e:
 13 paths/4,788,862 bytes verified against exact parent e57446be.
+
+## 20:25 UTC mounted IMAGE backend and ORA attachment
+
+Product 7fad622f9cec1c4a8455f4f97412fcfa22dc9641 mounts authorized IMAGE API
+and adds server-only reviewed ORA raster attachment. Fourteen unique Director
+mounted scenarios and14 ORA cases have actualPG evidence; overlapping runs
+explicitly distinguished. PUBLIC6 passes;3106source hashes match. Both frontend
+closures and real inference/external-app acceptance remain open.
+
+Prior source899a2566 archived as321f498d6023508e972da86d2330484c9d34f1d3:
+13 paths/5,262,941 bytes anonymously verified against parentcfe6ef4.
