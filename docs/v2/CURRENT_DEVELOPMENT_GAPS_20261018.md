@@ -64,3 +64,11 @@ Historical branch-adapter statements are not automatically current: experimental
 No additional concrete code omission was established in the bounded inspection of U01/U02/U05/U08/U09/U10/U11/U12/U13/U15. This is not a completion claim: native IME, screen reader, publishing layout and hardware/model acceptance were not run. U03 has bounded lexical search and module navigation; global index breadth differs from complete semantic search. OS/background notifications are not automatically required merely because notices are in-app.
 
 FS/CORE inspection covered interaction, review, branch-reader integration, generation selection/context and asset storage. Other FS/CORE rows were not fully audited, including Canon, continuity, foreshadowing, import, planning, realtime, SDK, universe, visual, broader research and export internals. No whole-product percentage is derived from this bounded audit.
+
+## Superseding implementation slices after the audit
+
+At source 3fe05b171e05f777dba6553c3fad185592b72774, the bounded independent AUDIO timeline gap above has been implemented: schema-3 audio-only tracks, original editing/CAS/history, explicit PCM16/48kHz/stereo WAV preview and reviewed export. Actual File and PostgreSQL output has 96,000 stereo frames / 384,044 bytes / zero video streams. Original output budgets remain; the WAV profile limits renderable duration to 136,533 ms. This does not complete every Audio feature or target-platform acceptance. See ../delivery/v2-development/audio-only-timeline-mixdown-20261018.md.
+
+The U07 independent Tasks consumer gap is partially closed at the same source: original Studio image/video jobs are listed and exact receipt opening uses the existing production panel. Other owners and Graph runs remain out of this bounded projection. See ../STUDIO_PRODUCTION_TASK_REOPENING.md. No generic task cancellation/review is applied to these owners.
+
+Original node-removal impact confirmation and bounded offline JSON file intake were completed at 33e7ad09 and 4924980d, integrated verification at 91a3f328. Therefore B10 file intake is no longer a pending implementation item; broader offline/asset/branch/transport limits still apply.
