@@ -25,7 +25,7 @@ The container and accessor interpretation follows the [Khronos glTF 2.0 specific
 - Earlier parser/owner receipts are retained; their totals overlap the final cases and must not be summed as new capability counts.
 - Router tests mount the real router with a constrained test authorization callback. They are not full application/desktop session acceptance.
 - UI import/inspection now mounts in the original Asset workspace: explicit file save, byte/hash-bound receipt, original idempotent retry, separate source declaration and exact source inspection. static-glb-ui-r3:7 mounted/unit checks and TypeScript PASS; transport is mocked.
-- PostgreSQL, actual browser, full scene viewport, transformed scene bounds, production frame export, GLTF/OBJ/FBX/USD, Blender/UE interoperability and graph/reference integration remain NOT_RUN or NOT_IMPLEMENTED for this slice. No M10/full-V2 completion claim.
+- PostgreSQL, actual browser, material/animation viewport, production frame export, GLTF/OBJ/FBX/USD, Blender/UE interoperability and graph/reference integration remain NOT_RUN or NOT_IMPLEMENTED for this slice. No M10/full-V2 completion claim.
 
 ## Explicit mesh-local diagnostic increment (20:49 UTC)
 
@@ -36,3 +36,15 @@ The original Asset panel explicitly requests this geometry, validates source/dig
 An explicit SVG diagnostic download requires the original manual_export capability. It contains only numeric projected geometry and fixed text; it does not create a formal Image asset, PNG, video frame or production render. Original metadata v1 preview_available/frame_export_available flags remain false for full-scene/production capabilities; the narrow mesh diagnostic has its own explicit contract.
 
 Evidence: static-glb-mesh-owner-r1 has 28 focused Python checks; static-glb-mesh-final-r1 has 7 File/router and 4 UI checks plus TypeScript; static-glb-mesh-workspace-r1 has 2 mounted original-workspace checks; static-glb-mesh-export-gate-r1 has 7 focused/mounted checks plus TypeScript. These overlap, are not additive acceptance counts, and do not replace PostgreSQL/browser/full product acceptance. No full suite or production build was repeated.
+
+## Explicit static scene transform diagnostic (2026-10-18)
+
+GET /api/projects/{nid}/studio/assets/{aid}/model-reference/scene-preview uses the same exact binary pin and final original-authority recheck. The new studio-static-glb-scene-preview/1 receipt is separate from unchanged mesh-local metadata. It selects a declared default scene, or the sole scene; multiple scenes without a declared default fail with an explicit selection-required code. No scene is silently chosen from an ambiguous list.
+
+The bounded implementation checks a forest of strict node trees, valid roots and node references, mutually exclusive matrix/TRS, finite bounded values and unit quaternions (within 1e-5, normalized for evaluation). It applies column-major matrices, local T*R*S and parent-world composition. Repeated mesh instances get separately transformed positions and recomputed world bounds. Cycles, multiple parents, invalid affine transforms, unsupported node extensions, overflows and empty scenes fail without partial geometry. It is still not a complete glTF validator; cameras/materials/textures/animation are not evaluated.
+
+These conventions follow the [Khronos node tutorial](https://github.com/KhronosGroup/glTF-Tutorials/blob/main/gltfTutorial/gltfTutorial_004_ScenesNodes.md) and [glTF 2.0 scene hierarchy specification](https://github.com/KhronosGroup/glTF/blob/main/specification/2.0/Specification.adoc), consulted through their indexed primary-source excerpts on2026-10-18; the registry HTML request timed out. No external runtime/dependency was added.
+
+Expanded scene limits are4096 positions,2048 triangles and128 primitives. The prior mesh decode limits also apply before scene expansion, including unused meshes; this conservative limitation is deliberate, not silent decimation. UI offers an explicit coordinate-space selection/read, reuses the original diagnostic renderer/export gate, and discards late responses on space/source replacement. Scene SVG labels that transforms were applied while materials/animation were not. Painter-sort occlusion remains approximate; no production frame/asset is created.
+
+Evidence:static-glb-scene-r1 has44 focused parser/owner checks; static-glb-scene-ui-r2 has2 File/router checks plus11 UI checks and TypeScript; final static-glb-scene-mount-r2 has11 UI checks and TypeScript including the actual workspace scene path. These overlap. First router fixture omitted required constructor callbacks; first scene mount fixture incorrectly paired zero-node metadata with a node instance. Both fixtures were corrected with valid setup/actual scene-bearing GLB bytes, not weakened decoders; failed receipts retained. No real browser, PostgreSQL, Blender/UE interchange or live renderer acceptance.

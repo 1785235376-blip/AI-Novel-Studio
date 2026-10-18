@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Bounded GLB static scene transforms and UI (2026-10-18 03:04 UTC)
+
+Added a separate read-only scene-preview contract and explicit coordinate-space mode to the original GLB Asset diagnostic. It validates strict node trees and finite matrix/TRS, composes parent/world transforms, expands bounded mesh instances, and recomputes selected-scene world bounds. Default/sole-scene selection is explicit; ambiguous or oversized/invalid scenes fail rather than returning partial geometry. Original mesh-local metadata/endpoint remain unchanged. No material/texture/animation/camera rendering, external resource, model or GPU processing.
+
+The actual Asset workspace now wires the scene read through its existing guard/client. The shared view supports both coordinate spaces, aborts old reads across mode/source changes, and uses original export authority for diagnostic-only SVG. See STATIC_GLB_REFERENCE_CONTRACT.md for math references and exact limits. Final11 focused/mounted UI checks+TypeScript PASS; prior44 parser/owner checks and2 scene File/router checks PASS (overlapping evidence). Browser/DCC/PG/full product acceptance remains open.
+
 ## Personal writing-brief candidate bridge (2026-10-18 02:54 UTC)
 
 Added a code-owned “writing brief organization” starter to the existing schema2/3 text Graph: original text_input→text_generate→human_review nodes only, with visible bounded author instruction and no route selection or automatic call. After explicit original Graph execution/review, users can manually copy the four-field JSON into the original personal brief composer. The new importer rejects duplicate/escaped-duplicate keys, extra authority/identity/license fields, non-string/nested values and oversized data. It shows the four original/candidate fields and requires a separate replace confirmation. IME, edits, disabled/inactive ABA and original field changes retire stale approval.

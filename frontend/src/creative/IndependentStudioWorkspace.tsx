@@ -527,6 +527,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     {workspaceView === 'ASSETS' && overview && !denied && <StudioModelReferencePanel scope={client} assets={rows} blocked={busy || dirty} canImport={writable && overview.capabilities.manual_import === true} canExport={overview.capabilities.manual_export === true} isCurrent={current}
       onInspect={asset => guarded(() => client.inspectModelReference(asset))}
       onMesh={(asset,signal) => guarded(() => client.inspectModelMesh(asset,signal),signal)}
+      onScene={(asset,signal) => guarded(() => client.inspectModelScene(asset,signal),signal)}
       onImport={async body => {
         if (!current() || !writable || overview.capabilities.manual_import !== true || busyRef.current || dirtyRef.current) throw new Error('请先处理当前输入并核对项目写入权限。');
         busyRef.current = true; setBusy(true); setNotice('');

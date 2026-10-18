@@ -327,7 +327,7 @@ class IndependentWorkspaceService:
         guard()
         return self._persist_manual_import(nid, scope, actor, body, data, "model/gltf-binary", guard)
 
-    def inspect_model_reference(self, nid, scope, aid, guard=lambda: None, *, mesh_preview=False):
+    def inspect_model_reference(self, nid, scope, aid, guard=lambda: None, *, mesh_preview=False, scene_preview=False):
         from .model_reference_glb import MAX_BYTES, inspect_static_glb
         from ..experimental.common import StaleSourceError
         guard()
@@ -337,10 +337,11 @@ class IndependentWorkspaceService:
                 raise ValueError("MODEL_REFERENCE_GLB_ASSET_REQUIRED")
             snapshot = {"id": row["id"], "kind": "ASSET", "asset_kind": "model", "version": row["version"], "digest": row["sha256"]}
             _, data = self.pinned_content(nid, scope, snapshot, max_bytes=MAX_BYTES, guard=guard)
-        if type(mesh_preview) is not bool:
+        if type(mesh_preview) is not bool or type(scene_preview) is not bool or mesh_preview and scene_preview:
             raise ValueError("MODEL_REFERENCE_GLB_PREVIEW_OPTION_INVALID")
-        parsed = inspect_static_glb(data, include_geometry=True) if mesh_preview else inspect_static_glb(data)
-        inspection = parsed["inspection"] if mesh_preview else parsed
+        parsed = (inspect_static_glb(data, include_geometry=True, include_scene=True) if scene_preview else
+                  inspect_static_glb(data, include_geometry=True) if mesh_preview else inspect_static_glb(data))
+        inspection = parsed["inspection"] if mesh_preview or scene_preview else parsed
         guard()
         with self._asset_scope(nid, scope):
             current = self._row(nid, scope, aid)
@@ -348,7 +349,8 @@ class IndependentWorkspaceService:
                 raise StaleSourceError("MODEL_REFERENCE_SOURCE_CHANGED")
             guard()
         return {"asset_snapshot": snapshot, "inspection": inspection,
-                **({"mesh_preview": parsed["mesh_preview"]} if mesh_preview else {})}
+                **({"mesh_preview": parsed["mesh_preview"]} if mesh_preview else {}),
+                **({"scene_preview": parsed["scene_preview"]} if scene_preview else {})}
 
     def _persist_manual_import(self, nid, scope, actor, body, data, media_type, guard):
         # Shared original asset owner, admission and idempotency for bounded manual imports.

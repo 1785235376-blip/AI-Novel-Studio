@@ -70,8 +70,8 @@ def _inspect_json(value):
             _fail("MODEL_REFERENCE_GLB_NUMBER_INVALID")
 
 
-def inspect_static_glb(data: bytes, *, include_geometry=False):
-    if type(include_geometry) is not bool:
+def inspect_static_glb(data: bytes, *, include_geometry=False, include_scene=False):
+    if type(include_geometry) is not bool or type(include_scene) is not bool or include_scene and not include_geometry:
         _fail("MODEL_REFERENCE_GLB_PREVIEW_OPTION_INVALID")
     if not isinstance(data, bytes) or not 28 <= len(data) <= MAX_BYTES:
         _fail("MODEL_REFERENCE_GLB_SIZE_INVALID")
@@ -151,8 +151,10 @@ def inspect_static_glb(data: bytes, *, include_geometry=False):
     meshes = _array(document.get("meshes"), 64, required=True)
     vertices = indices = primitives = triangles = 0
     preview_primitives = []
+    preview_meshes = []
     minimum, maximum = [math.inf] * 3, [-math.inf] * 3
     for raw in meshes:
+        preview_meshes.append([])
         mesh = _object(raw)
         if mesh.get("weights"):
             _fail("MODEL_REFERENCE_GLB_MORPH_UNSUPPORTED")
@@ -207,8 +209,10 @@ def inspect_static_glb(data: bytes, *, include_geometry=False):
                     _fail("MODEL_REFERENCE_GLB_PREVIEW_LIMIT")
                 if "indices" not in primitive:
                     preview_indices = list(range(count))
-                preview_primitives.append({"positions": preview_positions,
-                    "triangles": [preview_indices[index:index + 3] for index in range(0, element_count, 3)]})
+                geometry = {"positions": preview_positions,
+                    "triangles": [preview_indices[index:index + 3] for index in range(0, element_count, 3)]}
+                preview_primitives.append(geometry)
+                preview_meshes[-1].append(geometry)
     nodes = _array(document.get("nodes", []), 256)
     for node in nodes:
         node = _object(node)
@@ -224,6 +228,9 @@ def inspect_static_glb(data: bytes, *, include_geometry=False):
             "full_gltf_conformance_verified": False, "external_resources_loaded": False,
             "model_called": False, "preview_available": False, "frame_export_available": False}
 
+    if include_scene:
+        from .model_reference_scene import scene_geometry
+        return {"inspection": inspection, "scene_preview": scene_geometry(document, preview_meshes)}
     if include_geometry:
         return {"inspection": inspection, "mesh_preview": {
             "contract": "studio-static-glb-mesh-preview/1", "space": "MESH_LOCAL_UNTRANSFORMED",
