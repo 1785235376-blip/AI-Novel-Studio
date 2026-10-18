@@ -40,6 +40,8 @@ class DirectorProposalService:
         # live host ownership never retain a stale storage binding.
         state = state if state is not None else self.documents.store.read(nid, scope)
         row = state["collections"].get(self.COLLECTION, {}).get(rid)
+        if row is not None and row.get("contract") == "DIRECTOR_IMAGE_PROPOSAL_V3":
+            raise FileNotFoundError(rid)  # V3 only through its private original-owner coordinator.
         if (row is None or row.get("created_by") != actor or row.get("novel_id") != nid
                 or row.get("scope") != scope):
             raise FileNotFoundError(rid)

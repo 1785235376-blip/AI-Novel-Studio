@@ -31,6 +31,7 @@ from .common import DomainService, StaleSourceError, check_version, change_row, 
 from .store import canonical
 
 FEATURE = 'model_broker_v2'
+IMAGE_PROFILE = 'LOCAL_VISION_IMAGE_UNDERSTANDING_V3'
 
 # Routing recipes reference the existing owners; they are never model entries.
 NARRATIVE_TASK_CAPABILITIES = {
@@ -247,11 +248,12 @@ class ModelBrokerService(DomainService):
             facts['hardware_hash'] = digest([asdict(profiles[pid]) for pid in center_model.hardware_profiles if pid in profiles]) if isinstance(profiles, dict) and center_model.hardware_profiles else None
         return facts, reasons
 
-    def candidates(self, *, local_text_only=False, local_ocr_only=False, local_vision_only=False):
+    def candidates(self, *, local_text_only=False, local_ocr_only=False, local_vision_only=False, vision_authority=None):
         if local_vision_only:
             if local_text_only or local_ocr_only: raise ValueError('BROKER_CANDIDATE_PROFILE_CONFLICT')
             from .local_vision_broker import candidates
-            return candidates(self.runtime)
+            return candidates(self.runtime, broker=self, authority=vision_authority)
+        if vision_authority is not None: raise ValueError('BROKER_IMAGE_PROFILE_REQUIRED')
         if local_ocr_only:
             if local_text_only: raise ValueError('BROKER_CANDIDATE_PROFILE_CONFLICT')
             from .native_ocr_broker import candidates
@@ -419,11 +421,19 @@ class ModelBrokerService(DomainService):
         except Exception:
             return {'state': 'UNAVAILABLE', 'ram_mib': None, 'vram_mib': None, 'free_memory': None}
 
-    def current_route(self, route_id, *, local_text_only=False, local_ocr_only=False):
-        candidates = self.candidates(local_ocr_only=True) if local_ocr_only else self.candidates(local_text_only=True) if local_text_only else self.candidates()
+    def current_route(self, route_id, *, local_text_only=False, local_ocr_only=False, local_vision_only=False, vision_authority=None):
+        if local_vision_only and (local_text_only or local_ocr_only): raise ValueError('BROKER_CANDIDATE_PROFILE_CONFLICT')
+        if vision_authority is not None and not local_vision_only: raise ValueError('BROKER_IMAGE_PROFILE_REQUIRED')
+        candidates = self.candidates(local_vision_only=True, vision_authority=vision_authority) if local_vision_only else self.candidates(local_ocr_only=True) if local_ocr_only else self.candidates(local_text_only=True) if local_text_only else self.candidates()
         route = next((r for r in candidates if r['route_id'] == route_id), None)
         if not route: raise ValueError('BROKER_ROUTE_NOT_REGISTERED')
         return route
+
+    def _assert_image_authority(self, authority, nid, scope, actor, *, row=None, current=True, owner_lease=None):
+        from .local_vision_broker import assert_authority
+        if not callable(owner_lease): raise ValueError('BROKER_IMAGE_OWNER_REQUIRED')
+        return assert_authority(self, authority, nid=nid, scope=scope, actor=actor,
+                                row=row, current=current)
 
     def _native_ocr_owner(self, nid):
         from ..creative.project_store import CreativeProjectStore
@@ -436,10 +446,10 @@ class ModelBrokerService(DomainService):
 
     def _native_ocr_rows(self, nid, rows):
         rows = list(rows)
-        if not any('native_ocr_incarnation' in row for row in rows): return rows
+        if not any('native_ocr_incarnation' in row or 'director_image_incarnation' in row for row in rows): return rows
         current = self._native_ocr_owner(nid)
-        return [row for row in rows if 'native_ocr_incarnation' not in row
-                or current is not None and row['native_ocr_incarnation'] == current]
+        return [row for row in rows if all(key not in row or current is not None and row[key] == current
+                for key in ('native_ocr_incarnation', 'director_image_incarnation'))]
 
     def budget(self, nid, scope):
         doc = self.store.read(nid, scope)
@@ -514,8 +524,14 @@ class ModelBrokerService(DomainService):
                            'privacy_level': effective_source_privacy(chapter, scope.get('branch_id'))}
         return result
 
-    def preview(self, nid, scope, actor, value, guard=lambda: None, route_guard=None, *, local_text_only=False, local_ocr_only=False, owner_lease=None):
+    def preview(self, nid, scope, actor, value, guard=lambda: None, route_guard=None, *, local_text_only=False, local_ocr_only=False, local_vision_only=False, vision_authority=None, owner_lease=None):
         body = BrokerRequest.model_validate(value)
+        image_authority = None
+        if local_vision_only:
+            if local_text_only or local_ocr_only: raise ValueError('BROKER_CANDIDATE_PROFILE_CONFLICT')
+            image_authority = self._assert_image_authority(vision_authority, nid, scope, actor, owner_lease=owner_lease)
+        elif vision_authority is not None:
+            raise ValueError('BROKER_IMAGE_PROFILE_REQUIRED')
         native_owner = self._native_ocr_owner(nid) if local_ocr_only else None
         if local_ocr_only and (native_owner is None or not callable(owner_lease)):
             raise ValueError('BROKER_NATIVE_OCR_OWNER_REQUIRED')
@@ -529,7 +545,11 @@ class ModelBrokerService(DomainService):
             raise ValueError('BROKER_LOCAL_TEXT_PROFILE_REQUIRED')
         if local_ocr_only and (local_text_only or body.capability != 'VISION' or body.profile != 'LOCAL_ONLY' or body.allow_cloud_fallback or body.allow_synthetic or body.chapter_ids or body.context_tokens or body.task_type is not None):
             raise ValueError('BROKER_LOCAL_OCR_PROFILE_REQUIRED')
-        candidates = self.candidates(local_ocr_only=True) if local_ocr_only else self.candidates(local_text_only=True) if local_text_only else self.candidates()
+        if local_vision_only and (body.capability != 'VISION' or body.profile != 'LOCAL_ONLY'
+                or body.allow_cloud_fallback or body.allow_synthetic or body.chapter_ids
+                or body.context_tokens or body.task_type != 'FRAME_ANALYSIS'):
+            raise ValueError('BROKER_IMAGE_PROFILE_REQUIRED')
+        candidates = self.candidates(local_vision_only=True, vision_authority=vision_authority) if local_vision_only else self.candidates(local_ocr_only=True) if local_ocr_only else self.candidates(local_text_only=True) if local_text_only else self.candidates()
         hardware = self.hardware_capacity() if body.min_host_ram_mib or body.min_host_vram_mib else {'state': 'NOT_REQUESTED', 'free_memory': None}
         evidence = self.evidence_reader(nid, scope) if callable(self.evidence_reader) else []
         for route in candidates:
@@ -614,7 +634,12 @@ class ModelBrokerService(DomainService):
                        'balanced_factors': ['CURRENT_COST_RANK', 'CURRENT_LATENCY_RANK', 'CLOUD_PENALTY'] if body.policy == 'BALANCED' else [],
                        'unknown_metrics': 'RANK_LAST', 'cloud_fallback_preapproved': body.allow_cloud_fallback,
                        'license_confirmation_required': body.require_confirmed_license}}
-        if local_text_only:
+        if local_vision_only:
+            payload['candidate_profile'] = IMAGE_PROFILE
+            payload['director_image_incarnation'] = image_authority.incarnation
+            payload['director_image_binding_digest'] = image_authority.binding_digest
+            payload['will_send'].update(author_request_preview_required=False, director_image_preview_required=True)
+        elif local_text_only:
             payload['candidate_profile'] = 'LOCAL_TEXT_ONLY_V1'
         elif local_ocr_only:
             payload['candidate_profile'] = 'LOCAL_NATIVE_OCR_ONLY_V1'
@@ -622,6 +647,8 @@ class ModelBrokerService(DomainService):
             payload['will_send'].update(author_request_preview_required=False, research_ocr_preview_required=True)
         with self._owned_transaction(nid, scope, owner_lease) as doc:
             guard()
+            if local_vision_only:
+                self._assert_image_authority(vision_authority, nid, scope, actor, owner_lease=owner_lease)
             if local_ocr_only and self._native_ocr_owner(nid) != native_owner:
                 raise StaleSourceError('BROKER_NATIVE_OCR_OWNER_CHANGED')
             row = new_row(nid, scope, actor, payload)
@@ -631,14 +658,23 @@ class ModelBrokerService(DomainService):
     def decisions(self, nid, scope, actor):
         return sorted((r for r in self._native_ocr_rows(nid, self.list(nid, scope, self.DECISIONS)) if r['created_by'] == actor), key=lambda r: r['created_at'], reverse=True)[:100]
 
-    def _assert_preview(self, nid, scope, actor, row):
+    def _assert_preview(self, nid, scope, actor, row, *, vision_authority=None, owner_lease=None):
+        if row.get('candidate_profile') == IMAGE_PROFILE:
+            self._assert_image_authority(vision_authority, nid, scope, actor, row=row, owner_lease=owner_lease)
+            request = BrokerRequest.model_validate(row['request'])
+            if (request.capability != 'VISION' or request.profile != 'LOCAL_ONLY'
+                    or request.allow_cloud_fallback or request.allow_synthetic or request.chapter_ids
+                    or request.context_tokens or request.task_type != 'FRAME_ANALYSIS'):
+                raise ValueError('BROKER_IMAGE_PROFILE_REQUIRED')
+        elif vision_authority is not None:
+            raise ValueError('BROKER_IMAGE_PROFILE_REQUIRED')
         if row.get('candidate_profile') == 'LOCAL_NATIVE_OCR_ONLY_V1' and (not row.get('native_ocr_incarnation') or row['native_ocr_incarnation'] != self._native_ocr_owner(nid)):
             raise StaleSourceError('BROKER_NATIVE_OCR_OWNER_CHANGED')
         if row['created_by'] != actor: raise ValueError('BROKER_ACTOR_MISMATCH')
         if row['status'] != 'PREVIEW' or not row.get('chosen'): raise ValueError('BROKER_LEGAL_PREVIEW_REQUIRED')
         if row['sources'] != self._sources(nid, scope, row['request']['chapter_ids']): raise StaleSourceError('BROKER_SOURCES_CHANGED')
         profile = row.get('candidate_profile')
-        current = self.current_route(row['chosen']['route_id'], local_ocr_only=True) if profile == 'LOCAL_NATIVE_OCR_ONLY_V1' else self.current_route(row['chosen']['route_id'], local_text_only=True) if profile == 'LOCAL_TEXT_ONLY_V1' else self.current_route(row['chosen']['route_id'])
+        current = self.current_route(row['chosen']['route_id'], local_vision_only=True, vision_authority=vision_authority) if profile == IMAGE_PROFILE else self.current_route(row['chosen']['route_id'], local_ocr_only=True) if profile == 'LOCAL_NATIVE_OCR_ONLY_V1' else self.current_route(row['chosen']['route_id'], local_text_only=True) if profile == 'LOCAL_TEXT_ONLY_V1' else self.current_route(row['chosen']['route_id'])
         if not current['available'] or current['fingerprint'] != row['chosen']['fingerprint'] or current['binding_hash'] != row['chosen']['binding_hash']:
             raise StaleSourceError('BROKER_ROUTE_CHANGED')
         constraints = row['request']
@@ -656,20 +692,27 @@ class ModelBrokerService(DomainService):
                 assert_current_manuscript_egress(self.chapters_for(scope), self.novels, nid, self.chapters_for(scope).get(cid), scope.get('branch_id'))
         return current
 
-    def reserve(self, nid, scope, actor, preview_id, expected_version, idempotency_key, job_id, guard=lambda: None, authorization_digest=None, *, owner_lease=None):
+    def reserve(self, nid, scope, actor, preview_id, expected_version, idempotency_key, job_id, guard=lambda: None, authorization_digest=None, *, owner_lease=None, vision_authority=None):
         if not idempotency_key or len(idempotency_key) > 160 or not job_id or len(job_id) > 160: raise ValueError('BROKER_RESERVATION_ID_REQUIRED')
         row = self.get(nid, scope, self.DECISIONS, preview_id)
         if row.get('candidate_profile') == 'LOCAL_NATIVE_OCR_ONLY_V1' and not callable(owner_lease):
             raise ValueError('BROKER_NATIVE_OCR_OWNER_REQUIRED')
         check_version(row, expected_version)
-        self._assert_preview(nid, scope, actor, row)
+        self._assert_preview(nid, scope, actor, row, vision_authority=vision_authority, owner_lease=owner_lease)
         guard()
-        key = digest([actor, idempotency_key, row['native_ocr_incarnation']]) if row.get('candidate_profile') == 'LOCAL_NATIVE_OCR_ONLY_V1' else digest([actor, idempotency_key])
+        if row.get('candidate_profile') == IMAGE_PROFILE and authorization_digest != vision_authority.binding_digest:
+            raise ValueError('BROKER_IMAGE_AUTHORITY_MISMATCH')
+        key = digest([IMAGE_PROFILE, actor, idempotency_key, row['director_image_incarnation']]) if row.get('candidate_profile') == IMAGE_PROFILE else digest([actor, idempotency_key, row['native_ocr_incarnation']]) if row.get('candidate_profile') == 'LOCAL_NATIVE_OCR_ONLY_V1' else digest([actor, idempotency_key])
         with self._owned_transaction(nid, scope, owner_lease) as doc:
             guard()
+            if row.get('candidate_profile') == IMAGE_PROFILE:
+                self._assert_preview(nid, scope, actor, row, vision_authority=vision_authority, owner_lease=owner_lease)
             ledger = doc['collections'].setdefault(self.LEDGER, {})
             old = ledger.get(key)
             if old:
+                if row.get('candidate_profile') == IMAGE_PROFILE:
+                    self._assert_image_authority(vision_authority, nid, scope, actor, row=old, owner_lease=owner_lease)
+                    if old['job_id'] != job_id: raise ValueError('BROKER_IDEMPOTENCY_MISMATCH')
                 if old['preview_id'] != preview_id or old.get('authorization_digest') != authorization_digest or (authorization_digest is None and old['job_id'] != job_id): raise ValueError('BROKER_IDEMPOTENCY_MISMATCH')
                 return copy.deepcopy(old)
             budget = self.budget(nid, scope)
@@ -687,22 +730,34 @@ class ModelBrokerService(DomainService):
                 'reserve_microusd': amount, 'accounted_microusd': amount, 'actual_microusd': None,
                 'currency': 'USD', 'price': price, 'cost_state': 'RESERVED_ESTIMATE' if amount is not None else 'UNKNOWN',
                 'dispatched': False, 'overrun': False})
+            if row.get('candidate_profile') == IMAGE_PROFILE:
+                entry.update(candidate_profile=IMAGE_PROFILE, director_image_incarnation=row['director_image_incarnation'],
+                             director_image_binding_digest=row['director_image_binding_digest'])
             if row.get('candidate_profile') == 'LOCAL_NATIVE_OCR_ONLY_V1':
                 entry['native_ocr_incarnation'] = row['native_ocr_incarnation']
             entry['id'] = key
             ledger[key] = entry
             return copy.deepcopy(entry)
 
-    def guard_dispatch(self, nid, scope, actor, reservation_id, job_id, guard=lambda: None, *, owner_lease=None):
+    def guard_dispatch(self, nid, scope, actor, reservation_id, job_id, guard=lambda: None, *, owner_lease=None, vision_authority=None):
         entry = self.get(nid, scope, self.LEDGER, reservation_id)
         if entry['job_id'] != job_id or entry['created_by'] != actor: raise ValueError('BROKER_RESERVATION_AUTHORITY_MISMATCH')
         row = self.get(nid, scope, self.DECISIONS, entry['preview_id'])
+        if entry.get('candidate_profile') == IMAGE_PROFILE or 'director_image_incarnation' in entry:
+            self._assert_image_authority(vision_authority, nid, scope, actor, row=entry, owner_lease=owner_lease)
+            if row.get('candidate_profile') != IMAGE_PROFILE:
+                raise ValueError('BROKER_IMAGE_PROFILE_REQUIRED')
         if row.get('candidate_profile') == 'LOCAL_NATIVE_OCR_ONLY_V1' and not callable(owner_lease):
             raise ValueError('BROKER_NATIVE_OCR_OWNER_REQUIRED')
-        self._assert_preview(nid, scope, actor, row)
+        self._assert_preview(nid, scope, actor, row, vision_authority=vision_authority, owner_lease=owner_lease)
         with self._owned_transaction(nid, scope, owner_lease) as doc:
             guard()
             entry = doc['collections'][self.LEDGER][reservation_id]
+            if row.get('candidate_profile') == IMAGE_PROFILE:
+                self._assert_preview(nid, scope, actor, row, vision_authority=vision_authority, owner_lease=owner_lease)
+                self._assert_image_authority(vision_authority, nid, scope, actor, row=entry, owner_lease=owner_lease)
+                if entry.get('authorization_digest') != vision_authority.binding_digest:
+                    raise ValueError('BROKER_IMAGE_AUTHORITY_MISMATCH')
             if entry['status'] not in {'RESERVED', 'DISPATCHED'}: raise ValueError('BROKER_RESERVATION_TERMINAL')
             current_price = self._price(row['chosen'], doc['collections'].get(self.PRICES, {}))
             if current_price != entry['price']: raise StaleSourceError('BROKER_PRICE_CHANGED')
@@ -710,7 +765,7 @@ class ModelBrokerService(DomainService):
                 change_row(entry, actor, entry['version'], lambda r: r.update(status='DISPATCHED', dispatched=True, dispatched_at=now()))
             return copy.deepcopy(entry)
 
-    def finalize(self, nid, scope, actor, reservation_id, job_id, status, usage=None, *, owner_lease=None):
+    def finalize(self, nid, scope, actor, reservation_id, job_id, status, usage=None, *, owner_lease=None, vision_authority=None):
         """Host job-completion seam. Never exposed as a caller-supplied bill API.
 
         May finish accounting after permission/feature revocation, but cannot
@@ -720,6 +775,12 @@ class ModelBrokerService(DomainService):
         with self._owned_transaction(nid, scope, owner_lease) as doc:
             entry = doc['collections'].get(self.LEDGER, {}).get(reservation_id)
             if not entry or entry['job_id'] != job_id or entry['created_by'] != actor: raise ValueError('BROKER_RESERVATION_AUTHORITY_MISMATCH')
+            if entry.get('candidate_profile') == IMAGE_PROFILE or 'director_image_incarnation' in entry:
+                self._assert_image_authority(vision_authority, nid, scope, actor, row=entry, current=False, owner_lease=owner_lease)
+                if entry.get('authorization_digest') != vision_authority.binding_digest:
+                    raise ValueError('BROKER_IMAGE_AUTHORITY_MISMATCH')
+            elif vision_authority is not None:
+                raise ValueError('BROKER_IMAGE_PROFILE_REQUIRED')
             if 'native_ocr_incarnation' in entry and not callable(owner_lease):
                 raise ValueError('BROKER_NATIVE_OCR_OWNER_REQUIRED')
             if not self._native_ocr_rows(nid, [entry]): raise StaleSourceError('BROKER_NATIVE_OCR_OWNER_CHANGED')
@@ -727,13 +788,17 @@ class ModelBrokerService(DomainService):
             actual = None
             price = entry['price'] or {}
             if not entry['dispatched']: actual = 0
+            elif entry.get('candidate_profile') == IMAGE_PROFILE:
+                # This adapter supplies no billable usage. Even caller-supplied
+                # token counts or estimated zero cannot establish an invoice.
+                actual = None
             elif price.get('actual_known_zero'): actual = 0
             elif status == 'COMPLETED' and usage and all(isinstance(usage.get(k), int) and not isinstance(usage[k], bool) and usage[k] >= 0 for k in ('input_tokens', 'output_tokens')) and all(price.get(k) is not None for k in ('input_per_million_microusd', 'output_per_million_microusd')):
                 actual = (usage['input_tokens'] * price['input_per_million_microusd'] + usage['output_tokens'] * price['output_per_million_microusd'] + 999999) // 1000000
             values = {'status': 'RELEASED' if not entry['dispatched'] else 'SETTLED' if actual is not None else 'UNKNOWN_UPSTREAM',
                       'job_status': status, 'actual_microusd': actual,
                       'accounted_microusd': actual if actual is not None else entry['reserve_microusd'],
-                      'cost_state': 'KNOWN_LOCAL_PROVIDER_ZERO' if entry['dispatched'] and price.get('zero_kind') == 'LOCAL_PROVIDER_FEE' and price.get('actual_known_zero') else 'KNOWN_SYNTHETIC_ZERO' if entry['dispatched'] and price.get('actual_known_zero') else 'CALCULATED_FROM_REPORTED_USAGE' if actual is not None and entry['dispatched'] else 'NOT_DISPATCHED' if not entry['dispatched'] else 'UNKNOWN_UPSTREAM',
+                      'cost_state': 'UNKNOWN_UPSTREAM' if entry['dispatched'] and entry.get('candidate_profile') == IMAGE_PROFILE else 'KNOWN_LOCAL_PROVIDER_ZERO' if entry['dispatched'] and price.get('zero_kind') == 'LOCAL_PROVIDER_FEE' and price.get('actual_known_zero') else 'KNOWN_SYNTHETIC_ZERO' if entry['dispatched'] and price.get('actual_known_zero') else 'CALCULATED_FROM_REPORTED_USAGE' if actual is not None and entry['dispatched'] else 'NOT_DISPATCHED' if not entry['dispatched'] else 'UNKNOWN_UPSTREAM',
                       'overrun': actual is not None and entry['reserve_microusd'] is not None and actual > entry['reserve_microusd']}
             change_row(entry, actor, entry['version'], lambda r: r.update(values))
             return copy.deepcopy(entry)
@@ -786,6 +851,8 @@ class ModelBrokerService(DomainService):
         body = ReconcileInput.model_validate(value)
         def update(row):
             guard()
+            if 'director_image_incarnation' in row or row.get('candidate_profile') == IMAGE_PROFILE:
+                raise ValueError('BROKER_IMAGE_RECONCILIATION_OWNER_REQUIRED')
             if 'native_ocr_incarnation' in row:
                 raise ValueError('BROKER_NATIVE_OCR_RECONCILIATION_OWNER_REQUIRED')
             if row['created_by'] != actor: raise ValueError('BROKER_RESERVATION_AUTHORITY_MISMATCH')

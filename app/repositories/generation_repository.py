@@ -12,6 +12,8 @@ class GenerationProjectIdentityError(ValueError):
 
 
 def graph_job_binding(item):
+    from ..creative.director_image_binding import is_image_job, job_binding
+    if is_image_job(item): return job_binding(item)
     from ..experimental.research_ocr_binding import is_research_ocr_job, research_ocr_job_binding
     # Reuse the original source-bound persistence owner without fake Graph IDs.
     if is_research_ocr_job(item):
@@ -70,6 +72,9 @@ def graph_job_binding(item):
 
 def check_graph_job_update(previous, item):
     from ..creative.director_binding import is_creative_director_job
+    from ..creative.director_image_binding import is_image_job
+    image_keys = ("director_image_binding", "operation", "experimental_origin", "chapter_id", "profile",
+        "requested_provider", "requested_model", "generation_deadline", "generation_max_output_bytes", "source", "instruction") if is_image_job(item) or (previous is not None and is_image_job(previous)) else ()
     keys = ("novel_id", "actor_id", "scope", "graph_binding", "adaptation_binding", "expected_request_digest")
     from ..experimental.research_ocr_binding import is_research_ocr_job
     if is_research_ocr_job(item) or (previous is not None and is_research_ocr_job(previous)):
@@ -79,6 +84,7 @@ def check_graph_job_update(previous, item):
             raise GenerationProjectIdentityError("GENERATION_RESEARCH_OCR_EVIDENCE_CHANGED")
     if is_creative_director_job(item) or (previous is not None and is_creative_director_job(previous)):
         keys += ("creative_director_binding", "operation", "experimental_origin", "chapter_id")
+    keys += image_keys
     if previous is not None and (graph_job_binding(previous) is None or any(
             previous.get(key) != item.get(key) for key in keys)):
         raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
@@ -131,6 +137,7 @@ class GenerationRepository:
     def save(self,item:dict):
         from .file.mutation_coordinator import workspace_mutation
         from ..creative.director_terminal_evidence import preserve_evidence
+        from ..creative.director_image_terminal import preserve as preserve_image
         path = self._job_path(item["id"])
         binding = graph_job_binding(item)
         if binding is None:
@@ -138,13 +145,13 @@ class GenerationRepository:
                 previous = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
                 if previous is not None and graph_job_binding(previous) is not None:
                     raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
-                saved = preserve_evidence(previous, item)
+                saved = preserve_image(previous, preserve_evidence(previous, item))
                 atomic_write(path,json.dumps(saved,ensure_ascii=False,indent=2))
             return
         with self._graph_owner(item, binding), workspace_mutation(self.root, self._write_key(path)):
             previous = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
             check_graph_job_update(previous, item)
-            saved = preserve_evidence(previous, item)
+            saved = preserve_image(previous, preserve_evidence(previous, item))
             atomic_write(path,json.dumps(saved,ensure_ascii=False,indent=2))
 
     def _publish_director_terminal(self, job, capability, evidence):

@@ -17,6 +17,7 @@ from .model_runtime import TextGenerationRequest,TextModelNodeInput,TextGenerati
 from .router import Route
 from .privacy import normalize_privacy
 from .creative.director_binding import is_creative_director_job
+from .creative.director_image_binding import is_image_job
 from .experimental.research_ocr_binding import is_research_ocr_job
 
 # Compatibility facade for V0.3 tests and extensions that patched app.jobs.repo.
@@ -62,6 +63,9 @@ class Job:
     author_preparation_guard:object=field(default=None,repr=False)
     graph_binding:dict|None=None
     creative_director_binding:dict|None=None
+    director_image_binding:dict|None=None
+    director_image_terminal_v3:dict|None=None
+    director_image_authority:object=field(default=None,repr=False)
     research_ocr_binding:dict|None=None
     research_ocr_output_evidence:dict|None=None
     research_ocr_execution_authority:object=field(default=None,repr=False)
@@ -70,6 +74,11 @@ class Job:
     prepared_text_invocation:object=field(default=None,repr=False)
     def public(self):
         result = {k:getattr(self,k) for k in ("id","operation","novel_id","chapter_id","instruction","profile","source","requested_provider","requested_model","style","status","output","error","error_code","provider","model","issues","latency_ms","base_chapter_version","variant_group_id","variant_index","actor_id","session_id","client_id","workspace_id","scope","scope_type","scope_id","correlation_id","context_snapshot_id","created_at","updated_at","creation_records","usage","usage_status","execution_mode","provider_reference_id","route_decisions")}
+        if self.director_image_binding is not None:
+            from copy import deepcopy
+            result["director_image_binding"] = deepcopy(self.director_image_binding)
+        if self.director_image_terminal_v3 is not None:
+            result["director_image_terminal_v3"] = deepcopy(self.director_image_terminal_v3)
         if self.adaptation_binding is not None: result["adaptation_binding"] = dict(self.adaptation_binding)
         if self.adaptation_publication is not None: result["adaptation_publication"] = dict(self.adaptation_publication)
         if self.graph_binding is not None: result["graph_binding"] = dict(self.graph_binding)
@@ -172,6 +181,7 @@ def mark_generation_origin(job, origin):
 
 
 def generation_content_available(job):
+    if is_image_job(job): return False  # Only the private pending-review owner may expose V3 content.
     if _is_research_ocr_execution(job): return False
     # Passive Creative evidence has no executable or content-serving authority,
     # even if a caller supplies forged live hooks or a Graph invocation.
@@ -215,6 +225,7 @@ def require_generation_content(job):
 
 
 def require_whole_generation_acceptance(job):
+    if is_image_job(job): raise ValueError("DIRECTOR_IMAGE_ADOPTION_NOT_INTEGRATED")
     if _is_research_ocr_execution(job):
         from fastapi import HTTPException
         raise HTTPException(409, {"code": "RESEARCH_OCR_EXECUTION_UNAVAILABLE"})
@@ -324,6 +335,7 @@ def check_generation_bounds(job, *, delta="", completion_text=None):
 
 
 def _deny_creative_director_execution(job):
+    if is_image_job(job): raise ValueError("DIRECTOR_IMAGE_PRIVATE_OWNER_REQUIRED")
     if _is_research_ocr_execution(job):
         raise ValueError("RESEARCH_OCR_EXECUTION_UNAVAILABLE")
     if _is_creative_execution(job):
@@ -370,7 +382,7 @@ def _isolated_generation(job):
 
 
 class JobManager:
-    transient_fields={"research_ocr_execution_authority", "creative_director_cancel_requested", "creative_execution_authority", "author_preparation_guard", "prepared_text_invocation", "cancelled", "condition", "request_authorization", "author_context_resolver", "character_context_resolver", "before_dispatch", "on_terminal", "_terminal_hook_called"}
+    transient_fields={"director_image_authority","research_ocr_execution_authority", "creative_director_cancel_requested", "creative_execution_authority", "author_preparation_guard", "prepared_text_invocation", "cancelled", "condition", "request_authorization", "author_context_resolver", "character_context_resolver", "before_dispatch", "on_terminal", "_terminal_hook_called"}
     terminal={"COMPLETED","FAILED","CANCELLED","ACCEPTED","REJECTED","ACCEPTING","ACCEPTANCE_UNCERTAIN"}
     def __init__(self,generations=None,chapters=None,contexts=None,canon=None,memory_extractor=None,snapshot_required=None,collaboration_updates=None):
         if generations is None and repo is not None and repo is not getattr(repositories.novels, "backend", None):
@@ -390,7 +402,7 @@ class JobManager:
                 self._restore_job(item)
 
     def _restore_job(self, item):
-        if is_creative_director_job(item) or _is_research_ocr_execution(item):
+        if is_image_job(item) or is_creative_director_job(item) or _is_research_ocr_execution(item):
             from .repositories.generation_repository import graph_job_binding
             try: graph_job_binding(item)
             except ValueError: return
@@ -400,14 +412,24 @@ class JobManager:
                 error="服务重启中断了结算确认。已保留草稿与费用占用，请核对调度记录，不会自动重放。",
                 dispatch_hooks_required=True, terminal_hook_status="MISSING_RECONCILIATION_REQUIRED")
         elif item.get("status") in {"RUNNING","GENERATING","QUEUED","PREPARED"}:item["status"]="FAILED";item["error"]="服务重启导致生成中断，请重新生成。"
+        if recovered and is_image_job(item):
+            item.update(output='',error_code='DIRECTOR_IMAGE_RESTART_UNKNOWN',
+                error='Execution interrupted; reconcile original accounting. No automatic replay.',
+                terminal_hook_status='MISSING_RECONCILIATION_REQUIRED')
         try:self.jobs[item["id"]]=Job(**{k:v for k,v in item.items() if k in Job.__dataclass_fields__ and k not in self.transient_fields})
         except Exception:return
         # Recovery is a durable state transition. A later reader/restart
         # must not see the interrupted task as still executing or reviewable.
         if recovered:
-            if is_creative_director_job(self.jobs[item["id"]]) or _is_research_ocr_execution(self.jobs[item["id"]]): self.jobs[item["id"]].output = ""
+            if is_image_job(self.jobs[item["id"]]) or is_creative_director_job(self.jobs[item["id"]]) or _is_research_ocr_execution(self.jobs[item["id"]]): self.jobs[item["id"]].output = ""
             self._persist(self.jobs[item["id"]])
     def _persist(self,job):
+        if is_image_job(job) and job.director_image_authority is not None:
+            from .creative.director_image_execution import _DirectorImageCapability, IDENTITY
+            authority = job.director_image_authority
+            if (type(authority) is not _DirectorImageCapability or authority.job is not job or authority.manager is not self
+                    or any(getattr(job,key) != authority.identity[key] for key in IDENTITY)):
+                raise ValueError('DIRECTOR_IMAGE_PERSISTENCE_IDENTITY_CHANGED')
         from .experimental.research_ocr_execution import _ResearchOCRCapability
         ocr = getattr(job, "research_ocr_execution_authority", None)
         if type(ocr) is _ResearchOCRCapability and (ocr.job is not job or ocr.manager is not self
@@ -637,7 +659,20 @@ class JobManager:
         capability.started = True
         return self._start_prepared_validated(job)
 
+    def _prepare_director_image_job(self, capability):
+        from .creative.director_image_execution import prepare
+        return prepare(self, capability)
+
+    def _start_director_image_job(self, job):
+        from .creative.director_image_execution import require_capability
+        capability = require_capability(self, job, started=False)
+        capability.started = True
+        return self._start_prepared_validated(job)
+
     def _start_prepared_validated(self, job):
+        if is_image_job(job):
+            from .creative.director_image_execution import require_capability
+            require_capability(self, job, started=True)
         if _is_research_ocr_execution(job):
             from .experimental.research_ocr_execution import require_capability
             require_capability(self, job, started=True)
@@ -836,6 +871,15 @@ class JobManager:
         with job.condition:
             if job._terminal_hook_called or job.terminal_hook_status is not None: return
             terminal_hook = job.on_terminal
+            if is_image_job(job):
+                from .creative.director_image_execution import _DirectorImageCapability
+                capability = job.director_image_authority
+                if type(capability) is not _DirectorImageCapability or capability.job is not job or capability.manager is not self:
+                    return
+                terminal_hook = capability.terminal_hook
+                if job.on_terminal is not terminal_hook or job.before_dispatch is not capability.before_hook:
+                    job.output = ''; job.status = 'FAILED'
+                    job.error_code = 'DIRECTOR_IMAGE_AUTHORITY_CHANGED'
             if _is_research_ocr_execution(job):
                 from .experimental.research_ocr_execution import _ResearchOCRCapability
                 capability = job.research_ocr_execution_authority
@@ -886,6 +930,9 @@ class JobManager:
                     job.error = "模型任务已结束，但结算记录未能确认保存。请核对调度记录，不要自动重试。"
 
     def _run(self,job):
+        if is_image_job(job):
+            from .creative.director_image_execution import run
+            return run(self, job)
         if _is_research_ocr_execution(job):
             from .experimental.research_ocr_execution import run
             return run(self, job)
@@ -1116,6 +1163,7 @@ class JobManager:
 
     def cancel(self,jid):
         job=self.get(jid)
+        if is_image_job(job): raise ValueError("DIRECTOR_IMAGE_PRIVATE_CANCELLATION_REQUIRED")
         # The cooperative signal stays responsive during a slow settlement.
         # The locked transition rechecks state before changing it, so this can
         # never turn a completed/reviewed draft back into cancellation.

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "4490059fd55b50fb2e1c79f3f4272425bc971b42ae9010f23000d1763603186b",
+  "application_source_fingerprint_sha256": "c970e594ba614c08d6268bdbbb407f83e013e7057c9d0f130e5f4df15262a39a",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -69,8 +69,12 @@
     "app/creative/content_policy.py": "65e0b56b63673b200c612eaa3df21b033b7b673b5e6fbe1ecaac9c761a458bbd",
     "app/creative/director_binding.py": "7b260f6a9b74c492042e05c0ab5f37b6c0b81eb95f9a7949894e175a7d3d909c",
     "app/creative/director_camera_geometry.py": "90e5e2f94e6afa2c7b96e20e66d9f5320f9716309a6c7be2ef9e874da49554f7",
+    "app/creative/director_image_binding.py": "aadba9842f0e3c0637e61d401c0faad218535bc6a758c53d6e0a74e04a60e169",
+    "app/creative/director_image_execution.py": "d4c4f73d57268eb482efa466b4aff0fb79bad69963ad829ed80e66597f6dc3e1",
+    "app/creative/director_image_generation.py": "bd0f5a09ade6a71aa74418f36368969ff68cb6c753ca8a24a427bad7b7417414",
     "app/creative/director_image_preview.py": "d68e475fd36dffcca857bd36170d606220c7abd7a3cd97201c6c553d6b5fe6d4",
     "app/creative/director_image_source.py": "223a9145c42051eb65ba10306fdfaf93605a4dc49b9298eea0526e6d16f85169",
+    "app/creative/director_image_terminal.py": "86dd4070c39b8da3bb8a8970b2d26a81b32a438fc146d3f97fbb15f466f6fa52",
     "app/creative/director_intent.py": "ad7bf83887f602cd2558342f243bfb7924b62613ef8e909d599f1c0d5b05bb8c",
     "app/creative/director_lifecycle.py": "667257bdfd76724e74813a336878e08d5be65465e7a8fba0a4d175faa070b176",
     "app/creative/director_model_api.py": "de4416d73b31d15ad9bb688741932b89cd1022afaac95d713d7920df2d17a60e",
@@ -115,7 +119,7 @@
     "app/creative/prompt_authoring_api.py": "58ee2ae1c887713bb99c9a94b81dbfb15bb87768e6962dc4258bb212876de32a",
     "app/creative/prompt_authoring_models.py": "65910c9e90fc2ec0f651f23a3b3e5e5764ef2a2ee0eb66ee9d233934e7a1bb2d",
     "app/creative/prompt_workspace.py": "e371478f9028ff3a77aaf59e79dc301f53d6a7fa28520edd42dac47ceed529e9",
-    "app/creative/proposals.py": "a27ac7da3cce6677c46565e3ada67dc54f5ffb58eadea0db54f437c929b6c407",
+    "app/creative/proposals.py": "70f10a8e080b04d851c505084a20c247497d2e0a9fa1465fb12d15c4a982b96c",
     "app/creative/screenplay_export.py": "375783b05774b262aa0a7984db7efc4928d5a18ce96812a817c104802bff9b81",
     "app/creative/screenplay_model.py": "db26a4786ea8a3cd9b4a5cbd1aa80049e481a4a1a83c5b6f22466867c5ee887e",
     "app/creative/screenplay_presets.py": "61e6e69de513e7c918661c2ccd55ecefc672a593295663c3bc84998aac8f8b5e",
@@ -182,13 +186,13 @@
     "app/experimental/legacy_inbox.py": "225e10b2b3e5fce91427eaa7f1ece4f2a9bcbd5081043c5b300e988e1286f8f3",
     "app/experimental/local_ai_inspection.py": "716018b540aec2ba800b7657304b3126db31d6ce4cb87f7d296ae16a36cef6fd",
     "app/experimental/local_ai_inspection_api.py": "30b11ffa176b9d63f1250dfd5f8708a36ac077f58954dd698aec22ffa7f9109d",
-    "app/experimental/local_vision_broker.py": "97e794613fa8a393e8d05123a7ccd3cd516f8c6cea72ae13bb53359a06d3c7da",
+    "app/experimental/local_vision_broker.py": "cff9c7e5cbc219998ad5e9bc82272a58e14e1b3b7bdfb0bed4931726db6cb87a",
     "app/experimental/media.py": "6e9f66e5f278d4e8dc3ebf59739a4ee1693ed295a25cde0d968d8574c70d9aac",
     "app/experimental/media_api.py": "f6ae47cabb59d127172397984b6a075b2db6d5b2c9043590db3beb1d7decc082",
     "app/experimental/model_benchmark.py": "cedf56042fe3ac6d447333711b7e2fe81c5ad93ebf2df1264b8dfeffb55f1804",
     "app/experimental/model_benchmark_api.py": "5026d9fde113c0120e7412af072176d286cdc0005d4c6e6067c44c53513c366c",
     "app/experimental/model_benchmark_video.py": "8364c3e24251fbb14e0f4d006fc2087d6fa7943887066919fb9f41174618ae4a",
-    "app/experimental/model_broker.py": "2373e077e35fb33ad6e67ba855cc944d4a9931aef379a89b1507ce33088e8c64",
+    "app/experimental/model_broker.py": "3bee5232112942bfe0bbc36a0a36e9eeb5b06031bddf17faf1184d3fb1909ef2",
     "app/experimental/model_broker_api.py": "746119904d78f7a83b8754118a597ee4da581ba66c3970ec034d4862c5db3d2b",
     "app/experimental/multilingual_editions.py": "a7c5c1db905462ed41d9e3c89465f6e9b407c8fd902b556b6c2d255ebde010f1",
     "app/experimental/multilingual_editions_api.py": "178889a22b67d5e3635a855d4b14aed9f64fac4a75233dc9e6acd0b80f88344a",
@@ -206,8 +210,9 @@
     "app/experimental/planning_model_api.py": "e8fb4d9612d3b9f8361845910b4698ea5cb6d400310d60b0b50572d454ae0585",
     "app/experimental/portable_projects.py": "57378f5cfb1a23baba14f5a38a61ac0b650d15255269958aeb038a313733a553",
     "app/experimental/portable_projects_api.py": "1815f81bff750283f38ee3efbcab74dd5e913ba64acc999ea30e5576a92ca09c",
-    "app/experimental/production_lineage.py": "56b97f2de1d1e56cd3a68d8576a77ec175086fdcc393ae8479fac10ed81e8cdb",
-    "app/experimental/production_lineage_api.py": "4554b2b5204c0e75f19814dbf38991b39828fde2b46e0fa932d4a2c46a02e787",
+    "app/experimental/production_lineage.py": "bff98dcd702088d6bd98ab8ba6b286a366febbe8c914af7a9e9f249cf61769c8",
+    "app/experimental/production_lineage_api.py": "3037da31e65f93465a53d67f742ce679cdf12dfe2d5a14debc56e433c61544b5",
+    "app/experimental/production_passport.py": "98605681badff5e5508fcc049c51ac564e9167dfa2a4527346f0647b017dd295",
     "app/experimental/project_forks.py": "d8e190bcc635c1c473e4de1bdcdd76435ba7eaecd89ca2578f4c77c19a57b364",
     "app/experimental/project_forks_api.py": "e4c99eebb4b933406d27a170a6e05e58e78cc7bc9c3839c4748cf978763bda2f",
     "app/experimental/provider_profiles.py": "c45496630c7987ddb9fdd55a4275f1ef24786cab82ddf4e686690269b2ea649a",
@@ -282,7 +287,7 @@
     "app/identity.py": "66387f126e24040c7b145cd25f8b83e38e3386cf4d2d2c06d15f9eb5a34a30b9",
     "app/import_parsers.py": "8838eba5abe4909cb507749ef67d7a6690ebaca7ccffaa09aabff5aa4b168576",
     "app/industry_export_formats.py": "4e26f355faa3b8d5c4b496f5537c317e01ad9784cdad055cc8bf1c2503794134",
-    "app/jobs.py": "58291dcc8d17fbd4f255dc6df5f2a4bff40b2bb18f52e4cc3323b7e72e17be50",
+    "app/jobs.py": "5a5803f53173752b31471e3649fb134a76d1267b6e45418157634db8a8553ba9",
     "app/knowledge_extraction.py": "b5b2cc447d16bb7768a28c6e96872fdc25b97a3a3d947ab497448858c7f77f73",
     "app/local_interop/__init__.py": "a36a95760b06e4987f0301349edcdb62ccf003c9c10ececaba8fbd3eac87e51a",
     "app/local_interop/api.py": "5c6e1c57ec1fe87c740b6b3abe4f5b010d915a363e7ea6a454921bfdcb2e76fd",
@@ -414,7 +419,7 @@
     "app/repositories/file/narrative.py": "d96f2f8339b3f891ad70b87da72e04b67867c6e0f3d3e0fdc4084caf73f99ad2",
     "app/repositories/file/novel.py": "2a1699a11363f639f838419164f8b6f795a6b81089bccba236af5ee92c2dec4d",
     "app/repositories/file/scope.py": "b3f664468ab78a0398ca90ee008f4395c055aedd8fc1539139088f15abecbffc",
-    "app/repositories/generation_repository.py": "c50afcdf887f8a549f059037d247e1095f797839ed488da71020950a2b7d903d",
+    "app/repositories/generation_repository.py": "81d670bacddaf0055673f9d54b2fb86e9b4a86f61ad93df64879b462bf8ad2a7",
     "app/repositories/identity_interfaces.py": "cdc6eee509d3f3b3d9c71fd55fbd32c354a2a224fabee84f8e9d186d8421f8b7",
     "app/repositories/interfaces.py": "b27aaa6acc8ff206adcc3fdad97b21ce4d96ef9faab571819a3ba44f0257db71",
     "app/repositories/lore_interfaces.py": "ede87302f2cb37970097da8e1dbe90f4804cf3f7561e2e8994640fbcb495766c",
@@ -424,7 +429,7 @@
     "app/repositories/postgres/chapter.py": "73f6ff4de4ebc14a39cf2a01063c9e6d1529681512643a58e1eda1b8823b47de",
     "app/repositories/postgres/common.py": "83047224efbfb34dcc3c421c083f5624bea0038289099003ccb7d53e41c930a9",
     "app/repositories/postgres/continuity.py": "98c410e0f171e29570df279201c4be351f18240932178bc4f6c20f73c4e7420a",
-    "app/repositories/postgres/generation.py": "43be020ca739ab876aa7b5ec011ff35ba08db271e633c22a4684d1d93b5f495d",
+    "app/repositories/postgres/generation.py": "c58108ead26173d104460b09762820b25d6d507256bfd1c185feb4af031e92b7",
     "app/repositories/postgres/identity.py": "f9f39c516e768f5f8b59cc8d512e4e9e0bd6e427f04ac1cc432f2ddc8ea9ac23",
     "app/repositories/postgres/lore.py": "28f9971be0e66d7bd9ff5a9ab90499858d695b8f867bbdbfdd951f63b8096757",
     "app/repositories/postgres/models.py": "55c8184a6acad2d9bf4d7d3838f4bbb12a53c693ad157482c95049e348ea1966",
@@ -526,9 +531,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 612,
+    "added": 614,
     "changed_contract": 24,
-    "current_method_paths": 2445,
+    "current_method_paths": 2447,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -545,7 +550,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "5d705d5b6cc296e5fc4473bd6739154368484fae5b7ec72b795e4135f0f56944",
+    "sha256": "69d55ce978db93338d2bc95673ce2b3bea128d9f24105579a204cd95659e26fa",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -3925,6 +3930,17 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "7d2eeb0d98c57688abf82b46626e32599f8d2388cc2889b236823c901d727164",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/production/manifests/{rid}/outputs/{pid}/passport",
+      "operation_id": "passport_api_novels__nid__experimental_production_manifests__rid__outputs__pid__passport_get",
+      "owner_ref": "47521f39e9649b6b90dd307f7bf6008a0764868f16912d13c3d40091a8083d17",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "176077ba96b449a9bc00e306e1d1c6ecd48002c20ac4eb37bc1ca8ff5e52877a",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -9638,6 +9654,17 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "f5b57f216da8da733f649a3571b32a0720a0ab817cbff96aa236137604319dd6",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/production/manifests/{rid}/outputs/{pid}/passport",
+      "operation_id": "passport_api_v1_novels__nid__experimental_production_manifests__rid__outputs__pid__passport_get",
+      "owner_ref": "47521f39e9649b6b90dd307f7bf6008a0764868f16912d13c3d40091a8083d17",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "d4335add699c1d8c59b0a81f51a71645dea46ef96b58060ce32302c9f5877411",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {

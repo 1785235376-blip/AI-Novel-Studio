@@ -548,6 +548,10 @@ class ProductionLineageService(DomainService):
             self.broker.finalize(nid, scope, actor, reservation_id, row["task_id"], "CANCELLED")
         return self._replay_view(nid, scope, row)
 
+    def passport(self, nid, scope, rid, pid, expected_version, guard=lambda: None):
+        from .production_passport import export_passport
+        return export_passport(self, nid, scope, rid, pid, expected_version, guard)
+
     def export(self, nid, scope, rid):
         row = self.get(nid, scope, self.MANIFESTS, rid)
         # No free-form strings from user/model/runtime configuration cross this

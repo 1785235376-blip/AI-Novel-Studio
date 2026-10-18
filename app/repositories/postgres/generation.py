@@ -37,6 +37,7 @@ class PostgresGenerationRepository:
 
     @committed_change("TASK")
     def save(self,item):
+        from ...creative.director_image_terminal import preserve as preserve_image
         from ...creative.director_terminal_evidence import FIELD, preserve_evidence
         if FIELD in item:
             raise ValueError("CREATIVE_DIRECTOR_TERMINAL_POSTGRES_UNSUPPORTED")
@@ -44,7 +45,8 @@ class PostgresGenerationRepository:
             binding = graph_job_binding(item)
             novel_uuid = self._graph_owner(session, item, binding) if binding is not None else None
             iid=external_uuid(item["id"]);row=session.scalar(select(GenerationJobModel).where(GenerationJobModel.id == iid).with_for_update());chapter_uuid=None
-            item = preserve_evidence(self._payload(row) if row is not None else None, item)
+            item = preserve_image(self._payload(row) if row is not None else None,
+                preserve_evidence(self._payload(row) if row is not None else None, item))
             if binding is None and row is not None and graph_job_binding(self._payload(row)) is not None:
                 raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
             if binding is None and item.get("novel_id"):novel_uuid=novel_or_raise(session,item["novel_id"]).id

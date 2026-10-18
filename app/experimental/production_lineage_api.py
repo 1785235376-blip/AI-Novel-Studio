@@ -1,5 +1,5 @@
 """Mounted, current-authority A09/A13 routes; exports never return raw prompts."""
-from fastapi import APIRouter, Header
+from fastapi import APIRouter, Header, Query, Response
 from fastapi.routing import APIRoute
 from starlette.exceptions import HTTPException
 from pydantic import Field
@@ -103,6 +103,19 @@ def create_production_lineage_router(service, authorize, require_flag):
     def export(nid: str, rid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         _, scope = access(nid, x_session_token, x_branch_id, manifest=True)
         return api_call(service.export, nid, scope, rid)
+
+    @router.get("/manifests/{rid}/outputs/{pid}/passport")
+    def passport(nid: str, rid: str, pid: str, expected_version: int = Query(ge=1),
+                 x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        actor, scope = access(nid, x_session_token, x_branch_id, manifest=True)
+        def guard():
+            if access(nid, x_session_token, x_branch_id, manifest=True) != (actor, scope):
+                raise ValueError("PRODUCTION_AUTHORITY_CHANGED")
+        raw = api_call(service.passport, nid, scope, rid, pid, expected_version, guard)
+        response = Response(raw, media_type="application/zip", headers={
+            "Content-Disposition": 'attachment; filename="production-passport-unsigned.zip"'})
+        guard()
+        return response
 
     @router.post("/manifests/{rid}/replay", status_code=201)
     def replay(nid: str, rid: str, body: ReplayInput, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
