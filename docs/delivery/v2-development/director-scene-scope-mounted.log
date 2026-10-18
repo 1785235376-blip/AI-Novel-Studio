@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/DirectorSceneScopePanel.additive.test.tsx (7 tests) 834ms
+   ✓ mounted Director console keeps parent editing locked for child intent and reopens explicitly 453ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  22:54:53
+   Duration  1.54s (transform 407ms, setup 16ms, collect 151ms, tests 834ms, environment 305ms, prepare 62ms)
+

@@ -377,15 +377,31 @@ class DirectorModelOutput(StrictCreativeModel):
     director_notes: list[DirectorModelNote] = Field(min_length=1, max_length=200)
 
 
+class DirectorScopeDerivation(StrictCreativeModel):
+    source_digest: str = Field(pattern=r"^[a-f0-9]{64}$", strict=True)
+    responsibility: str = Field(min_length=1, max_length=120, strict=True)
+    scene_ids: list[Identifier] = Field(min_length=1, max_length=200)
+
+    @model_validator(mode="after")
+    def explicit_scope(self):
+        if (not self.responsibility.strip() or any(ord(c) < 32 or ord(c) == 127 for c in self.responsibility)
+                or len(set(self.scene_ids)) != len(self.scene_ids)):
+            raise ValueError("CREATIVE_DIRECTOR_SCOPE_INVALID")
+        return self
+
+
 class CreativeDocumentDerive(StrictCreativeModel):
     expected_version: int = Field(ge=1, strict=True)
-    mode: Literal["SCREENPLAY", "STORYBOARD", "PRODUCTION"]
+    mode: Literal["SCREENPLAY", "STORYBOARD", "PRODUCTION", "DIRECTOR"]
     title: str | None = Field(default=None, min_length=1, max_length=240, strict=True)
     shot_policy: Literal["SCENE", "DIRECTOR_NOTES"] = "SCENE"
     script_policy: Literal["TEXT_CHUNKS"] | None = None
+    director_scope: DirectorScopeDerivation | None = None
 
     @model_validator(mode="after")
     def shot_policy_mode(self):
+        if (self.mode == "DIRECTOR") != (self.director_scope is not None):
+            raise ValueError("CREATIVE_DIRECTOR_SCOPE_REQUIRED")
         if (self.mode == "SCREENPLAY") != (self.script_policy == "TEXT_CHUNKS"):
             raise ValueError("CREATIVE_SCRIPT_DERIVATION_POLICY_REQUIRED")
         if self.shot_policy != "SCENE" and self.mode != "STORYBOARD":

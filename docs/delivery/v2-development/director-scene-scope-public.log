@@ -1,0 +1,8 @@
+......                                                                   [100%]
+=============================== warnings summary ===============================
+tests/test_surface_api_catalog.py::test_catalog_is_bound_to_every_current_application_source
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+6 passed, 1 warning in 6.22s

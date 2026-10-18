@@ -1,3 +1,4 @@
+import { DirectorSceneScopePanel } from './DirectorSceneScopePanel';
 import {DirectorSheetExportPanel} from './DirectorSheetExportPanel';
 import {directorDraftBackup} from './directorDraftBackup';
 import {downloadPortableBlob} from '../experimental/portableProjectsClient';
@@ -17,7 +18,7 @@ import { creativeAuthoringProblems, documentInput, newDocument, type CreativeDoc
 import type { PlanningSnapshot } from './studioProductionGraphContract';
 import './creative.css';
 
-export type GraphDirectorSource = Pick<ReturnType<typeof creativeClient>, 'create' | 'update' | 'export' | 'capabilities' | 'list' | 'derive' | 'history'> & GraphDirectorReviewSource & Partial<Pick<ReturnType<typeof creativeClient>, 'directorSheetExport'>>;
+export type GraphDirectorSource = Pick<ReturnType<typeof creativeClient>, 'create' | 'update' | 'export' | 'capabilities' | 'list' | 'derive' | 'history'> & GraphDirectorReviewSource & Partial<Pick<ReturnType<typeof creativeClient>, 'directorSheetExport' | 'deriveDirectorScope'>>;
 type Props = {
   client: GraphDirectorSource;
   canvasHandoff?: ReviewedDirectorCanvasHandoff;
@@ -52,6 +53,7 @@ export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey,
   const composing = useRef(false);
   const canvasRef = useRef(canvasHandoff); canvasRef.current = canvasHandoff;
   const [proposalPending, setProposalPending] = useState(false);
+  const [scopePending, setScopePending] = useState(false);
   const [handoffPending, setHandoffPending] = useState(false), [storyboardAllowed, setStoryboardAllowed] = useState(false);
   const [open, setOpen] = useState(false), [authorized, setAuthorized] = useState(false);
   const [draft, setDraft] = useState<CreativeInput>(empty), [base, setBase] = useState<CreativeDocument>();
@@ -74,20 +76,20 @@ export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey,
   const owns = (generation: number) => current() && scope.current.generation === generation;
   useEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; }; }, []);
   useEffect(() => { if (!active) epoch.current++; }, [active]);
-  const pending = dirty || blocked || handoffPending || proposalPending;
-  const pendingInputs = useRef({ dirty, blocked, handoffPending, onDirtyChange });
-  pendingInputs.current = { dirty, blocked, handoffPending, onDirtyChange };
+  const pending = dirty || blocked || handoffPending || proposalPending || scopePending;
+  const pendingInputs = useRef({ dirty, blocked, handoffPending, scopePending, onDirtyChange });
+  pendingInputs.current = { dirty, blocked, handoffPending, scopePending, onDirtyChange };
   const proposalChanged = useCallback((value: boolean) => {
     setProposalPending(value);
     const input = pendingInputs.current;
-    input.onDirtyChange(value || input.dirty || input.blocked || input.handoffPending);
+    input.onDirtyChange(value || input.dirty || input.blocked || input.handoffPending || input.scopePending);
   }, []);
   const reportedPending = useRef(false);
   useEffect(() => { if (reportedPending.current !== pending) { reportedPending.current = pending; onDirtyChange(pending); } }, [pending, onDirtyChange]);
-  const editing = authorized && canMutate && active && !busy && !working && !blocked && !handoffPending && !proposalPending && isCurrent();
+  const editing = authorized && canMutate && active && !busy && !working && !blocked && !handoffPending && !proposalPending && !scopePending && isCurrent();
   const authorEpoch = useRef(0);
   const renderedAuthorEpoch = authorEpoch.current;
-  const mark = (value: boolean) => { authorEpoch.current++; setDirty(value); onDirtyChange(value || blocked || handoffPending || proposalPending); };
+  const mark = (value: boolean) => { authorEpoch.current++; setDirty(value); onDirtyChange(value || blocked || handoffPending || proposalPending || scopePending); };
   const fail = (reason: unknown) => {
     setError(apiErrorView(reason, '导演文档操作未完成，请核对连接与原文档。').message);
     if (reason instanceof ApiError && [401, 403].includes(reason.status)) {
@@ -218,7 +220,7 @@ export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey,
       {notice && <StatusMessage>{notice}</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}
       {working && <StatusMessage>正在读取或保存原导演文档…</StatusMessage>}
       {authorized && hasDirectorProposalReview(client) && <GraphDirectorProposalReview client={client}
-        active={active} canMutate={canMutate && !dirty && !blocked && !handoffPending} busy={busy || working}
+        active={active} canMutate={canMutate && !dirty && !blocked && !handoffPending && !scopePending} busy={busy || working}
         isCurrent={isCurrent} read={read} mutate={mutate} onPendingChange={proposalChanged} onOpenModels={onOpenModels}
         onDenied={() => fail(new ApiError({ status: 403, code: 'PROJECT_SCOPE_FORBIDDEN', message: '导演审核来源当前不可读取。' }))}
         onDocument={(row, expectedSnapshot) => {
@@ -242,6 +244,9 @@ export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey,
         selectedSceneId={scene} selectedShotId={shot} onScene={setScene} onShot={setShot} onChange={change}
         onSave={() => void save()} onNew={fresh} />
       </div>
+      {base && snapshot && client.deriveDirectorScope && <DirectorSceneScopePanel source={base} snapshot={snapshot} request={client.deriveDirectorScope}
+        available={authorized && active && canMutate && !dirty && !blocked && !handoffPending && !proposalPending && !working}
+        busy={busy || working} isCurrent={current} mutate={mutate} onPending={setScopePending} onOpen={id => { if (current() && !pending) void inspect(id); }} />}
       {base && client.directorSheetExport && <DirectorSheetExportPanel document={base} available={authorized && active && !pending && !busy && !working} isCurrent={current} request={client.directorSheetExport} onDenied={() => fail(new ApiError({status:403,code:'PROJECT_SCOPE_FORBIDDEN',message:'当前导演文档不可导出。'}))}/>}
       {base && <GraphDirectorStoryboardHandoff canOpen={!dirty && !blocked && !proposalPending && storyboardAllowed} onOpenStoryboard={onOpenStoryboard ? (request, originCurrent) => {
         const authored = authorEpoch.current, selected = selection.current.generation, generation = scope.current.generation;

@@ -1,3 +1,5 @@
+import { directorSceneScopeBody, checkedDirectorSceneScopeResult } from './directorSceneScope';
+import type { PlanningSnapshot } from './studioProductionGraphContract';
 import { parseScreenplayPresets, type ScreenplayPresetCatalog } from './screenplayPresets';
 import { createStoryboardClient } from './studioStoryboardClient';
 import { createDirectorModelClient } from './directorModelClient';
@@ -76,6 +78,11 @@ export function creativeClient(novelId: string, context: CollaborationContext) {
     create: (body: CreativeInput) => request<CreativeDocument>(`${base}/documents`, 'POST', body),
     update: (id: string, version: number, body: CreativeInput) => request<CreativeDocument>(`${base}/documents/${encodeURIComponent(id)}`, 'PUT', { ...body, expected_version: version }),
     derive: (source: CreativeDocument, mode: 'STORYBOARD' | 'PRODUCTION', shotPolicy?: 'DIRECTOR_NOTES') => request<CreativeDocument>(`${base}/documents/${encodeURIComponent(source.id)}/derive`, 'POST', { expected_version: source.version, mode, ...(shotPolicy ? { shot_policy: shotPolicy } : {}) }),
+    deriveDirectorScope: async (source: CreativeDocument, snapshot: PlanningSnapshot, responsibility: string, scenes: string[]) => {
+      const body = directorSceneScopeBody(source, snapshot, responsibility, scenes);
+      const result = await request<unknown>(`${base}/documents/${encodeURIComponent(source.id)}/derive`, 'POST', body);
+      return checkedDirectorSceneScopeResult(result, source, snapshot, responsibility, scenes);
+    },
     deriveScriptScreenplay: (source: CreativeDocument) => request<CreativeDocument>(`${base}/documents/${encodeURIComponent(source.id)}/derive`, 'POST', { expected_version: source.version, mode: 'SCREENPLAY', script_policy: 'TEXT_CHUNKS' }),
     restore: (source: CreativeDocument, restoreVersion: number) => request<CreativeDocument>(`${base}/documents/${encodeURIComponent(source.id)}/restore`, 'POST', { expected_version: source.version, restore_version: restoreVersion }),
     history: (id: string, signal?: AbortSignal) => request<CreativeHistory>(`${base}/documents/${encodeURIComponent(id)}/history`, 'GET', undefined, signal),

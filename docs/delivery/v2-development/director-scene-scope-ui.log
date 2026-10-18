@@ -1,0 +1,27 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/creative/DirectorSceneScopePanel.additive.test.tsx (5 tests | 1 failed) 298ms
+   × does not replay an uncertain create and preserves a pending intent 53ms
+     → expected "spy" to be called 1 times, but got 2 times
+ ✓ src/creative/GraphDirectorStoryboardHandoff.test.tsx (7 tests) 377ms
+ ✓ src/creative/GraphDirectorCanvasHandoff.additive.test.tsx (15 tests) 1660ms
+   ✓ does not insert on review or export; explicit add sends only the scalar pin once and never saves either owner 310ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 1924ms
+   ✓ optional mounted graph director source authoring > rejects A→B→A source reads and a changed node with the same source pin 336ms
+   ✓ optional mounted graph director source authoring > hands a saved human director to the existing storyboard owner and reopens its status 454ms
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 38 passed (39)
+   Start at  22:52:57
+   Duration  3.69s (transform 981ms, setup 98ms, collect 2.22s, tests 4.26s, environment 1.66s, prepare 305ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/DirectorSceneScopePanel.additive.test.tsx > does not replay an uncertain create and preserves a pending intent
+AssertionError: expected "spy" to be called 1 times, but got 2 times
+ ❯ src/creative/DirectorSceneScopePanel.additive.test.tsx:20:303
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

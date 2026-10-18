@@ -338,6 +338,26 @@ class CreativeService(DomainService):
             source = self.get(nid, scope, rid)
             from ..experimental.common import check_version
             check_version(source, body.expected_version)
+            if body.mode == "DIRECTOR":
+                selection = body.director_scope
+                if source["mode"] != "DIRECTOR" or selection is None:
+                    raise ValueError("CREATIVE_DIRECTOR_SCOPE_SOURCE_REQUIRED")
+                if document_digest(source) != selection.source_digest:
+                    raise StaleSourceError("CREATIVE_DIRECTOR_SCOPE_SOURCE_CHANGED")
+                chosen = set(selection.scene_ids)
+                if not chosen.issubset({scene["id"] for scene in source["scenes"]}):
+                    raise ValueError("CREATIVE_DIRECTOR_SCOPE_SCENE_UNKNOWN")
+                scenes = [copy.deepcopy(scene) for scene in source["scenes"] if scene["id"] in chosen]
+                chapters = {scene.get("source_chapter_id") for scene in scenes} - {None}
+                content = {"mode": "DIRECTOR", "title": body.title or source["title"][:100] + " · " + selection.responsibility,
+                    "source_chapter_ids": [cid for cid in source["source_chapter_ids"] if cid in chapters],
+                    "scenes": scenes, "director_notes": [copy.deepcopy(note) for note in source.get("director_notes", []) if note["scene_id"] in chosen]}
+                if source.get("visual_target") is not None:
+                    content["visual_target"] = copy.deepcopy(source["visual_target"])
+                return self._record_derivation(nid, scope, actor, source, content, state,
+                    {"rule_version": "creative-director-scene-scope-v1", "responsibility": selection.responsibility,
+                     "scene_ids": [scene["id"] for scene in scenes], "copied_approval": False,
+                     "execution_authority": False}, reauthorize)
             if body.mode == "SCREENPLAY":
                 if source["mode"] != "SCRIPT" or not source.get("script"):
                     raise ValueError("CREATIVE_SCRIPT_SOURCE_REQUIRED")
