@@ -1,0 +1,61 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "c2b5b1259f7233c3a8351f6df36bab5affaf6d4f",
+      "path": "docs/MEDIA_CANVAS_LOCAL_HISTORY.md",
+      "bytes": 1205,
+      "sha256": "004e7b9a0df8c1c988c47d882a0b5a45236ee6918830576654bc797e189539ec"
+    },
+    {
+      "blob": "db6b0f7cd69fb9599ab5980544f70816e8d89a95",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 11709,
+      "sha256": "4aeffdf7bdfbf5eb94b13449766d96d5b859c6152d85a1cfa4bb0508e5722725"
+    },
+    {
+      "blob": "bb4372e64d272744c99f33a76c38442867e8185f",
+      "path": "docs/delivery/v2-development/media-canvas-history.json",
+      "bytes": 690121,
+      "sha256": "172de0d27d0b42a3f3c7a460e8caf94b0caca6a0c8ba3217cc209d7f7ebf4369"
+    },
+    {
+      "blob": "45fe43448648548fea766f8097809882d9662ace",
+      "path": "docs/delivery/v2-development/media-canvas-history.log",
+      "bytes": 2195,
+      "sha256": "870082ff66b25a2d574543ed97e2b5761a8e1cf39ccb18956af6a610d0a351a5"
+    },
+    {
+      "blob": "defcec839c3996a9cce80d45504c09966a3f98df",
+      "path": "frontend/src/creative/MediaCanvasViewPanel.additive.test.tsx",
+      "bytes": 8402,
+      "sha256": "3cb30a48d846654723aad2dd490fe1f120f63893fab9c4c250cf55d07074a81f"
+    },
+    {
+      "blob": "6e1e8f97be1429ea9603c38a34b1a44d800d348e",
+      "path": "frontend/src/creative/MediaCanvasViewPanel.tsx",
+      "bytes": 11921,
+      "sha256": "21467bf0a171fb5f28f20ba03c227e5b248438c5043771c9b95cc375f35f035b"
+    },
+    {
+      "blob": "2386b443122d08ec48161ff258a36112a16448ee",
+      "path": "frontend/src/creative/mediaCanvasHistory.additive.test.ts",
+      "bytes": 1806,
+      "sha256": "656cad49fe82f51d55caf1a7359e389aa93f903485d33ba207ce8fc495e1c5ef"
+    },
+    {
+      "blob": "c32363dbb57811004ec4617e2fbcd59b1b581a8b",
+      "path": "frontend/src/creative/mediaCanvasHistory.ts",
+      "bytes": 1709,
+      "sha256": "4690f0f762ad2f20b8b1cb31e9474c487e9f88ad8439bfa38053d799a6af982c"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
