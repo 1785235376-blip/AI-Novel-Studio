@@ -196,12 +196,12 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/novels/{nid}/experimental/creative/director-proposals/model-routes` | `app/creative/api.py:326` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}` | `app/creative/api.py:342` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/adopted-draft` | `app/creative/director_observation_api.py:119` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/pending-review` | `app/creative/director_model_api.py:81` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/preview` | `app/creative/director_model_api.py:66` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/pending-review` | `app/creative/director_model_api.py:96` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/preview` | `app/creative/director_model_api.py:81` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/status` | `app/creative/director_observation_api.py:114` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/adopted-draft` | `app/creative/director_observation_api.py:119` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/pending-review` | `app/creative/director_model_api.py:81` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/preview` | `app/creative/director_model_api.py:66` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/pending-review` | `app/creative/director_model_api.py:96` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/preview` | `app/creative/director_model_api.py:81` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/status` | `app/creative/director_observation_api.py:114` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/creative/documents` | `app/creative/api.py:118` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/creative/documents/{rid}` | `app/creative/api.py:128` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -682,12 +682,12 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/model-routes` | `app/creative/api.py:326` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}` | `app/creative/api.py:342` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/adopted-draft` | `app/creative/director_observation_api.py:119` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/pending-review` | `app/creative/director_model_api.py:81` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/preview` | `app/creative/director_model_api.py:66` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/pending-review` | `app/creative/director_model_api.py:96` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/preview` | `app/creative/director_model_api.py:81` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/status` | `app/creative/director_observation_api.py:114` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/adopted-draft` | `app/creative/director_observation_api.py:119` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/pending-review` | `app/creative/director_model_api.py:81` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/preview` | `app/creative/director_model_api.py:66` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/pending-review` | `app/creative/director_model_api.py:96` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/preview` | `app/creative/director_model_api.py:81` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/status` | `app/creative/director_observation_api.py:114` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/creative/documents` | `app/creative/api.py:118` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}` | `app/creative/api.py:128` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1199,12 +1199,12 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/novels/{nid}/experimental/change-impact/query` | `app/experimental/change_impact_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/change-impact/refreshes/{rid}/cancel` | `app/experimental/change_impact_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/change-impact/refreshes/{rid}/execute` | `app/experimental/change_impact_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/comic-layouts/author-archive/inspect` | `app/experimental/comic_author_archive_api.py:107` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/novels/{nid}/experimental/comic-layouts/author-archive/restore` | `app/experimental/comic_author_archive_api.py:112` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/author-archive/inspect` | `app/experimental/comic_author_archive_api.py:107` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/author-archive/restore` | `app/experimental/comic_author_archive_api.py:112` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/comic-layouts/books` | `app/experimental/comic_layouts_api.py:60` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/author-archive-preview` | `app/experimental/comic_author_archive_api.py:92` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/author-archive-preview` | `app/experimental/comic_author_archive_api.py:92` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/epub-publication-preflight` | `app/experimental/comic_layouts_api.py:102` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/export-author-archive` | `app/experimental/comic_author_archive_api.py:97` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/export-author-archive` | `app/experimental/comic_author_archive_api.py:97` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/export-cbz` | `app/experimental/comic_layouts_api.py:80` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/export-epub` | `app/experimental/comic_layouts_api.py:106` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/export-page-archive` | `app/experimental/comic_layouts_api.py:119` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1241,18 +1241,18 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/novels/{nid}/experimental/creative/director-proposals` | `app/creative/api.py:288` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/cancel` | `app/creative/api.py:352` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/dispatch` | `app/creative/api.py:361` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/cancel` | `app/creative/director_model_api.py:91` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/dispatch` | `app/creative/director_model_api.py:71` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/prepare-review` | `app/creative/director_model_api.py:76` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/preview` | `app/creative/director_model_api.py:61` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/cancel` | `app/creative/director_model_api.py:106` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/dispatch` | `app/creative/director_model_api.py:86` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/prepare-review` | `app/creative/director_model_api.py:91` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/preview` | `app/creative/director_model_api.py:76` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/reconcile-review` | `app/creative/director_observation_api.py:124` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/review` | `app/creative/director_model_api.py:86` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/cancel` | `app/creative/director_model_api.py:91` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/dispatch` | `app/creative/director_model_api.py:71` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/prepare-review` | `app/creative/director_model_api.py:76` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/preview` | `app/creative/director_model_api.py:61` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/review` | `app/creative/director_model_api.py:101` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/cancel` | `app/creative/director_model_api.py:106` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/dispatch` | `app/creative/director_model_api.py:86` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/prepare-review` | `app/creative/director_model_api.py:91` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/preview` | `app/creative/director_model_api.py:76` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/reconcile-review` | `app/creative/director_observation_api.py:124` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/review` | `app/creative/director_model_api.py:86` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/review` | `app/creative/director_model_api.py:101` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/preview` | `app/creative/api.py:357` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/refresh` | `app/creative/api.py:365` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/review` | `app/creative/api.py:347` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1830,12 +1830,12 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/v1/novels/{nid}/experimental/change-impact/query` | `app/experimental/change_impact_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/change-impact/refreshes/{rid}/cancel` | `app/experimental/change_impact_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/change-impact/refreshes/{rid}/execute` | `app/experimental/change_impact_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/author-archive/inspect` | `app/experimental/comic_author_archive_api.py:107` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/author-archive/restore` | `app/experimental/comic_author_archive_api.py:112` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/author-archive/inspect` | `app/experimental/comic_author_archive_api.py:107` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/author-archive/restore` | `app/experimental/comic_author_archive_api.py:112` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books` | `app/experimental/comic_layouts_api.py:60` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/author-archive-preview` | `app/experimental/comic_author_archive_api.py:92` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/author-archive-preview` | `app/experimental/comic_author_archive_api.py:92` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/epub-publication-preflight` | `app/experimental/comic_layouts_api.py:102` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/export-author-archive` | `app/experimental/comic_author_archive_api.py:97` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/export-author-archive` | `app/experimental/comic_author_archive_api.py:97` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/export-cbz` | `app/experimental/comic_layouts_api.py:80` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/export-epub` | `app/experimental/comic_layouts_api.py:106` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/export-page-archive` | `app/experimental/comic_layouts_api.py:119` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1872,18 +1872,18 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals` | `app/creative/api.py:288` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/cancel` | `app/creative/api.py:352` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/dispatch` | `app/creative/api.py:361` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/cancel` | `app/creative/director_model_api.py:91` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/dispatch` | `app/creative/director_model_api.py:71` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/prepare-review` | `app/creative/director_model_api.py:76` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/preview` | `app/creative/director_model_api.py:61` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/cancel` | `app/creative/director_model_api.py:106` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/dispatch` | `app/creative/director_model_api.py:86` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/prepare-review` | `app/creative/director_model_api.py:91` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/preview` | `app/creative/director_model_api.py:76` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/reconcile-review` | `app/creative/director_observation_api.py:124` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/review` | `app/creative/director_model_api.py:86` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/cancel` | `app/creative/director_model_api.py:91` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/dispatch` | `app/creative/director_model_api.py:71` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/prepare-review` | `app/creative/director_model_api.py:76` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/preview` | `app/creative/director_model_api.py:61` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v1/review` | `app/creative/director_model_api.py:101` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/cancel` | `app/creative/director_model_api.py:106` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/dispatch` | `app/creative/director_model_api.py:86` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/prepare-review` | `app/creative/director_model_api.py:91` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/preview` | `app/creative/director_model_api.py:76` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/reconcile-review` | `app/creative/director_observation_api.py:124` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/review` | `app/creative/director_model_api.py:86` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/model-v2/review` | `app/creative/director_model_api.py:101` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/preview` | `app/creative/api.py:357` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/refresh` | `app/creative/api.py:365` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/review` | `app/creative/api.py:347` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
