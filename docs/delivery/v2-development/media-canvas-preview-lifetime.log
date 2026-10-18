@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/canvasAssetPreview.additive.test.ts (10 tests) 11ms
+ ✓ src/creative/CanvasAssetPreview.additive.test.tsx (7 tests) 55ms
+
+ Test Files  2 passed (2)
+      Tests  17 passed (17)
+   Start at  21:02:01
+   Duration  824ms (transform 150ms, setup 26ms, collect 213ms, tests 66ms, environment 316ms, prepare 123ms)
+

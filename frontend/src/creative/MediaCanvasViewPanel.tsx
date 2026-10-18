@@ -1,3 +1,4 @@
+import { CanvasAssetPreview } from './CanvasAssetPreview';
 import { MediaCardViewport } from './MediaCardViewport';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button, StatusMessage } from '../ui/primitives';
@@ -49,7 +50,7 @@ export function MediaCanvasViewPanel(props: Props) {
   const card = draft.cards.find(c => c.id === selected);
   if (!props.active || props.denied || !client) return null;
   return <section className="media-canvas" aria-label="独立媒体素材画布">
-    <h3>媒体素材画布</h3><p>独立保存素材引用与位置。此视图不执行生成，也不改变执行图；素材内容预览仍在原素材面板中进行。</p>
+    <h3>媒体素材画布</h3><p>独立保存素材引用与位置。此视图不执行生成，也不改变执行图；选择卡片后可按需核验预览，仍复用原素材面板。</p>
     <div className="creative-actions">
       <Button disabled={pending || props.busy || props.externalDirty} onClick={() => void work(false, () => client.list(), value => setRows(value.items))}>读取已存画布</Button>
       <Button disabled={!editable || draft.cards.some(c => !c.asset)} onClick={() => {
@@ -79,6 +80,7 @@ export function MediaCanvasViewPanel(props: Props) {
     <MediaCardViewport definition={draft} states={states} selected={selected} query={query} owner={token} disabled={!editable} isCurrent={current} onSelect={setSelected} onChange={edit} onSize={setSize} />
     {card && <div className="creative-actions"><span>选中 {card.id}</span>{(['x', 'y'] as const).map(axis => <label key={axis}>卡片 {axis}<input type="number" value={card.position[axis]} disabled={!editable} onChange={e => edit({ ...draftRef.current, cards: draftRef.current.cards.map(c => c.id === card.id ? { ...c, position: { ...c.position, [axis]: clampGraphPosition(e.target.valueAsNumber) } } : c) })} /></label>)}
       <Button disabled={!editable} onClick={() => { edit({ ...draftRef.current, cards: draftRef.current.cards.filter(c => c.id !== card.id) }); setSelected(''); }}>移除此引用卡片</Button></div>}
+    {card?.asset && <CanvasAssetPreview key={card.id} reference={card.asset} owner={token} client={props.client} disabled={pending || props.busy || props.externalDirty} isCurrent={current} read={props.read} />}
     {error && <StatusMessage tone="warning">{error}</StatusMessage>}{notice && <p role="status">{notice}</p>}
   </section>;
 }
