@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "bf28bd5d40e4540b1f7ede76c9c41fff159869d05010fd1967947b74fa8a5596",
+  "application_source_fingerprint_sha256": "de7b3d510115d7ef00cda67c8f3a9abc7b441c5837e145d19c6dfb33aa2df516",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -129,7 +129,7 @@
     "app/document_revision.py": "d0a3085d6c453d78196b93eae9ae66b775db9508c53ab49961513f5bc33036f5",
     "app/experimental/__init__.py": "737a87c497146972d1cc905f0076f076d5414a8093066146a5bac6b190d788f3",
     "app/experimental/adaptation_projection.py": "dbc51d4bbf0f44b0defb57d7f9a19491d4abf9f18645c13f6241e1600682e91e",
-    "app/experimental/api.py": "01f387196b088d886f46862e25557f04a27151d487510e8d39672d6c5316b6a9",
+    "app/experimental/api.py": "8318c3e407680ff3560fc892ec5ad50c8f1368026d982f7b21d94d36905fd6aa",
     "app/experimental/audiobook.py": "822155147b635156fcca184155b80846a7c39efde5b025df7688337d98c63115",
     "app/experimental/audiobook_api.py": "02b07bb4bf12c169d4fc73e0033cc7e558f5fed4f966d3cbf54f4cf65b205ef7",
     "app/experimental/author_context_api.py": "00b8f1a33e4220bb2b1f3b1def6a1ec8ae7d20a8cbc87530304c5c0b87e4fc5a",
@@ -168,7 +168,7 @@
     "app/experimental/media_api.py": "f6ae47cabb59d127172397984b6a075b2db6d5b2c9043590db3beb1d7decc082",
     "app/experimental/model_benchmark.py": "6e83e208626a0db55b8f6111421aedae2ecca1dfcba782cc70979205ee6a9a53",
     "app/experimental/model_benchmark_api.py": "d88856750b9fdb4b9226422783c811e77740723fcdab343b0d1263391c6965c0",
-    "app/experimental/model_broker.py": "067b4826d57b07ae8ddc65dabdfce03f8ce7f173e5799a5665b461fab3979e29",
+    "app/experimental/model_broker.py": "492a7a2c2f30e628c61dbd9fe3d08a10bc133f13bfe74054c874dd724a6a0b28",
     "app/experimental/model_broker_api.py": "e39bc52d60df0cf18e6e0c2fd05f4ae26a40613ba25d9f37758be159c52ce2ed",
     "app/experimental/multilingual_editions.py": "a7c5c1db905462ed41d9e3c89465f6e9b407c8fd902b556b6c2d255ebde010f1",
     "app/experimental/multilingual_editions_api.py": "178889a22b67d5e3635a855d4b14aed9f64fac4a75233dc9e6acd0b80f88344a",
@@ -194,8 +194,8 @@
     "app/experimental/reader_sources.py": "dce77103b022d84664368197e7f9350d7a657d291c8ebe4bf047e58270989273",
     "app/experimental/research_extract.py": "70662a3ad21ae785291396b2a1bede5181c871bfe3b779f4375076848c86ef6d",
     "app/experimental/research_library.py": "181cac6c6d7c41c054282a5664adc47a8e05db7b25ce5ab10ccf939a73cbbc8a",
-    "app/experimental/research_library_api.py": "c7747e3f7c3810b8c3a34e7428e9deb3697d8af0c6aeb97d248110c116f541fd",
-    "app/experimental/research_native_ocr.py": "0aa93f81d6f12aca751b8a0ff0ee98c969403028bf933456c9c0fbbbf5ef51fb",
+    "app/experimental/research_library_api.py": "8ebe0936b8a0a971636c77cb6092f2920578616d8645219d249c05b312feaf8e",
+    "app/experimental/research_native_ocr.py": "b5442e18c4ff324bd276ccce32e9399725de974428af5a3d05d5639e60769697",
     "app/experimental/research_ocr_binding.py": "03df4334ebee685e7b656e8a3b816b61107dc518193ed8084133764be6ee8774",
     "app/experimental/research_ocr_execution.py": "689b362c8353977472452cb05326e9190f0ef62897d3f35a1d86156d2709e758",
     "app/experimental/research_vision.py": "8b079127265864d5d32b7eff6be9683073f926eaf445016ac90d917b5abb1497",
@@ -489,9 +489,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 532,
+    "added": 534,
     "changed_contract": 24,
-    "current_method_paths": 2365,
+    "current_method_paths": 2367,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -508,7 +508,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "ca4e7d3cdfb88e5879e4a921da22bcc53cf56a4c8c8e4de54d74374c7beeb0a8",
+    "sha256": "d9f83a5ca9175f611d7cd80bced72177156c50604d206f7bbe9e9a873d20d762",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -16274,6 +16274,18 @@
     },
     {
       "method": "POST",
+      "path": "/api/novels/{nid}/experimental/research-library/analysis/jobs/{rid}/native-recover",
+      "operation_id": "native_recover_api_novels__nid__experimental_research_library_analysis_jobs__rid__native_recover_post",
+      "owner_ref": "b88cd931a469f6b9befc7f3f3ce5c7203ad5deb8d251ae1f40b26723a3085cc5",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "281238f20dd7cdaaad3fd68574d606eda92b80a03054cb320056a42e4dcb0f96",
+      "schema_graph_sha256": "d63dc44cc89740d592cc72ecc289976e2913f5b6dd8c86b0b51a4c59916eea66"
+    },
+    {
+      "method": "POST",
       "path": "/api/novels/{nid}/experimental/research-library/analysis/jobs/{rid}/{action}",
       "operation_id": "analysis_action_api_novels__nid__experimental_research_library_analysis_jobs__rid___action__post",
       "owner_ref": "1a5b3ee51c95056c6fcc78310d1ae6128cd1817c6fd19d2a53dd3bc1f5810199",
@@ -23240,6 +23252,18 @@
       ],
       "operation_sha256": "1c13f2703310f8a1777b90009de78cb6e4fc34ddb9e690a3b1ed826988a793d8",
       "schema_graph_sha256": "73c5714bd865ae377ec4678fd77ff6397ac557447d286990351f6424d548a09a"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/research-library/analysis/jobs/{rid}/native-recover",
+      "operation_id": "native_recover_api_v1_novels__nid__experimental_research_library_analysis_jobs__rid__native_recover_post",
+      "owner_ref": "b88cd931a469f6b9befc7f3f3ce5c7203ad5deb8d251ae1f40b26723a3085cc5",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "0b8a197cccec5d7bdf449f6523af1b6034090795daf75e3df3cdd654e52c9301",
+      "schema_graph_sha256": "d63dc44cc89740d592cc72ecc289976e2913f5b6dd8c86b0b51a4c59916eea66"
     },
     {
       "method": "POST",

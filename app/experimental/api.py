@@ -353,7 +353,7 @@ model_broker_service.vision_resolver = lambda: research_library_service.vision_p
 from ..author_context_sources import NativeAuthorSources
 author_preparer.native_sources = NativeAuthorSources(legacy_api, world_service, story_graph_service,
     research_library_service, authorize, require_flag)
-router.include_router(create_research_library_router(research_library_service, authorize, require_flag))
+router.include_router(create_research_library_router(research_library_service, authorize, require_flag, require_inspection_host_session))
 
 
 from .revision_intelligence import RevisionIntelligenceService

@@ -7,6 +7,7 @@ holds; neither cancellations nor replays silently create fresh budgets.
 from __future__ import annotations
 
 import copy
+import re
 import hashlib
 from types import CodeType
 import platform
@@ -732,6 +733,46 @@ class ModelBrokerService(DomainService):
     def ledger(self, nid, scope, actor):
         return sorted((r for r in self._native_ocr_rows(nid, self.list(nid, scope, self.LEDGER)) if r['created_by'] == actor), key=lambda r: r['created_at'], reverse=True)[:100]
 
+
+    def reconcile_native_ocr(self, nid, scope, actor, rid, expected_version, job_id,
+                             authorization_digest, recovery_id, evidence_note, *, guard, owner_lease):
+        """Trusted native owner only; no generic bill or automatic replay API."""
+        if not callable(owner_lease) or not callable(guard):
+            raise ValueError('BROKER_NATIVE_OCR_OWNER_REQUIRED')
+        if (not isinstance(recovery_id, str) or not re.fullmatch(r'[a-f0-9]{64}', recovery_id)
+                or not isinstance(authorization_digest, str) or not re.fullmatch(r'[a-f0-9]{64}', authorization_digest)
+                or not isinstance(evidence_note, str) or not evidence_note.strip() or len(evidence_note) > 500):
+            raise ValueError('BROKER_NATIVE_OCR_RECOVERY_EVIDENCE_REQUIRED')
+        with self._owned_transaction(nid, scope, owner_lease) as doc:
+            guard()
+            row = doc['collections'].get(self.LEDGER, {}).get(rid)
+            if (not row or row.get('created_by') != actor or row.get('job_id') != job_id
+                    or row.get('authorization_digest') != authorization_digest
+                    or not row.get('native_ocr_incarnation') or not self._native_ocr_rows(nid, [row])):
+                raise ValueError('BROKER_NATIVE_OCR_RECOVERY_IDENTITY_MISMATCH')
+            decision = doc['collections'].get(self.DECISIONS, {}).get(row['preview_id'], {})
+            price = row.get('price') or {}
+            if (decision.get('candidate_profile') != 'LOCAL_NATIVE_OCR_ONLY_V1'
+                    or decision.get('native_ocr_incarnation') != row['native_ocr_incarnation']
+                    or decision.get('created_by') != actor
+                    or price.get('actual_known_zero') is not True or price.get('zero_kind') != 'LOCAL_PROVIDER_FEE'
+                    or type(row.get('reserve_microusd')) is not int or row['reserve_microusd'] != 0
+                    or row.get('actual_microusd') not in {None, 0} or row.get('accounted_microusd') not in {None, 0}):
+                raise ValueError('BROKER_NATIVE_OCR_ZERO_FEE_REQUIRED')
+            if row.get('native_recovery_id') == recovery_id:
+                return copy.deepcopy(row)
+            check_version(row, expected_version)
+            if row['status'] not in {'RESERVED', 'DISPATCHED', 'UNKNOWN_UPSTREAM', 'SETTLED', 'RELEASED'}:
+                raise ValueError('BROKER_NATIVE_OCR_RECOVERY_STATE_INVALID')
+            status = row['status'] if row['status'] in {'SETTLED', 'RELEASED'} else 'RECONCILED'
+            change_row(row, actor, expected_version, lambda target: target.update(
+                status=status, actual_microusd=0, accounted_microusd=0,
+                cost_state='KNOWN_LOCAL_PROVIDER_ZERO', native_recovery_id=recovery_id,
+                reconciliation_note=evidence_note, original_executor_stopped_confirmed=True,
+                reconciliation_source='TRUSTED_HOST_CONFIRMED_LOCAL_EXECUTOR_STOPPED',
+                automatic_replay=False, overrun=False, overrun_acknowledged=True))
+            guard()
+            return copy.deepcopy(row)
 
     def reconcile(self, nid, scope, actor, rid, value, guard=lambda: None, allow_orphan=False):
         body = ReconcileInput.model_validate(value)

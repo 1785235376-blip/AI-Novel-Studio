@@ -7,7 +7,7 @@ from pydantic import Field
 
 from .common import api_call
 from .research_vision import ResearchAnalysisIn
-from .research_native_ocr import NativeOCRPreviewIn, NativeOCRDispatchIn, NativeResearchOCRCoordinator
+from .research_native_ocr import NativeOCRPreviewIn, NativeOCRDispatchIn, NativeOCRRecoveryIn, NativeResearchOCRCoordinator
 from .research_library import FileIn, WebIn, EditIn, CitationIn, NoteIn, AdoptIn, StrictInput, ReplaceFileIn, RestoreSourceIn, EditNoteIn
 
 
@@ -19,7 +19,7 @@ class ContextIn(StrictInput):
     citations: list[CitationIn] = Field(min_length=1, max_length=20)
 
 
-def create_research_library_router(service, authorize, require_flag):
+def create_research_library_router(service, authorize, require_flag, require_host_session=None):
     class BoundedResearchRoute(APIRoute):
         def get_route_handler(self):
             handler = super().get_route_handler()
@@ -31,6 +31,9 @@ def create_research_library_router(service, authorize, require_flag):
                     for flag in FLAGS: require_flag(flag)
                 authorize(request.path_params['nid'], request.headers.get('X-Session-Token'),
                           request.headers.get('X-Branch-ID'), 'domain.write')
+                if request.url.path.endswith('/native-recover'):
+                    if not callable(require_host_session): raise HTTPException(409, {'code': 'RESEARCH_OCR_HOST_RECOVERY_UNAVAILABLE'})
+                    require_host_session(request.headers.get('X-Session-Token'))
                 if request.method in {'POST', 'PUT'}:
                     limit = 6 * 1024 * 1024
                     size = request.headers.get('content-length')
@@ -263,6 +266,19 @@ def create_research_library_router(service, authorize, require_flag):
         return Response(content, media_type='text/plain; charset=utf-8', headers={
             'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
             'Content-Disposition': 'attachment; filename="research-ocr.txt"'})
+
+    @router.post('/analysis/jobs/{rid}/native-recover')
+    def native_recover(nid: str, rid: str, body: NativeOCRRecoveryIn,
+                       x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        controller = native_controller()
+        def recover_owned(nid, scope, actor, rid, value, *, guard):
+            def current():
+                guard()
+                if not callable(require_host_session): raise HTTPException(409, {'code': 'RESEARCH_OCR_HOST_RECOVERY_UNAVAILABLE'})
+                require_host_session(x_session_token)
+            return controller.recover(nid, scope, actor, rid, value, guard=current)
+        return run(nid, x_session_token, x_branch_id, recover_owned,
+                   rid, body.model_dump(), mutation=True)
 
     @router.post('/analysis/jobs/{rid}/native-preview')
     def native_preview(nid: str, rid: str, body: NativeOCRPreviewIn,

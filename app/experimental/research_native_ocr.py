@@ -10,7 +10,8 @@ from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from hashlib import sha256
 from uuid import uuid4
-from pydantic import Field
+from typing import Literal
+from pydantic import Field, model_validator
 
 from .research_library import StrictInput, ResearchLibraryService
 from .research_vision import (PreparedResearchOCRSource, ResearchVisionInput,
@@ -34,6 +35,20 @@ class NativeOCRDispatchIn(StrictInput):
     expected_version: int = Field(ge=1, strict=True)
     reviewed_preview_digest: str = Field(pattern=r'^[a-f0-9]{64}$')
     idempotency_key: str = Field(pattern=r'^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$')
+
+
+class NativeOCRRecoveryIn(StrictInput):
+    expected_version: int = Field(ge=1, strict=True)
+    reservation_version: int = Field(ge=1, strict=True)
+    original_executor_stopped_confirmed: Literal[True]
+    evidence_note: str = Field(min_length=1, max_length=500)
+
+    @model_validator(mode='before')
+    @classmethod
+    def explicit_confirmation(cls, value):
+        if not isinstance(value, dict) or value.get('original_executor_stopped_confirmed') is not True:
+            raise ValueError('RESEARCH_OCR_EXECUTOR_STOP_CONFIRMATION_REQUIRED')
+        return value
 
 
 class NativeResearchOCRCoordinator:
@@ -266,8 +281,89 @@ class NativeResearchOCRCoordinator:
             result.update(status='INTERRUPTED', persisted_status=row['status'],
                 recovery={'code': 'RESEARCH_OCR_EXECUTOR_NOT_RESUMABLE', 'automatic_resume': False,
                     'budget_hold_retained': ledger['status'] in {'RESERVED', 'DISPATCHED', 'UNKNOWN_UPSTREAM'},
-                    'explicit_host_recovery_required': True})
+                    'explicit_host_recovery_required': True, 'reservation_version': ledger['version']})
         return result
+
+    def recover(self, nid, scope, actor, rid, value, *, guard):
+        from .research_ocr_binding import ResearchOCRJobBinding
+        body = NativeOCRRecoveryIn.model_validate(value)
+        if not body.evidence_note.strip(): raise ValueError('RESEARCH_OCR_RECOVERY_EVIDENCE_REQUIRED')
+        guard(); original = self.rows._row(nid, scope, actor, rid)
+        execution = deepcopy(original.get('native_ocr_execution'))
+        if not execution: raise ValueError('RESEARCH_OCR_RECOVERY_NOT_REQUIRED')
+        binding = ResearchOCRJobBinding.model_validate(execution['binding'])
+        if (binding.project_id != nid or binding.actor_id != actor or binding.scope.model_dump() != scope):
+            raise ValueError('RESEARCH_OCR_RECOVERY_IDENTITY_MISMATCH')
+        lease = lambda: self.lease(nid, binding.project_incarnation)
+        recovery_id = digest(['native-ocr-recovery-v1', rid, actor, binding.project_incarnation, execution['generation_id'], execution['expected_request_digest']])
+        def response(row):
+            return {'id': row['id'], 'version': row['version'], 'status': row['status'],
+                'recovery_recorded': True, 'automatic_resume': False, 'automatic_replay': False}
+        def inactive():
+            guard()
+            try: job = self.manager.get(execution['generation_id'])
+            except KeyError: job = None
+            if job is None:
+                try: self.manager.persistence.get(execution['generation_id'])
+                except KeyError:
+                    ledger = self.broker.get(nid, scope, self.broker.LEDGER, execution['reservation_id'])
+                    if ledger.get('dispatched') or ledger['status'] not in {'RESERVED', 'RELEASED', 'RECONCILED'}:
+                        raise ValueError('RESEARCH_OCR_RECOVERY_JOB_RECORD_REQUIRED')
+                    return
+                raise ValueError('RESEARCH_OCR_RECOVERY_REOPEN_OWNER_REQUIRED')
+            from .research_ocr_execution import _ResearchOCRCapability
+            authority = getattr(job, 'research_ocr_execution_authority', None)
+            if authority is not None and (type(authority) is not _ResearchOCRCapability
+                    or authority.manager is not self.manager or authority.job is not job or not authority.finished):
+                raise ValueError('RESEARCH_OCR_EXECUTOR_STILL_ACTIVE')
+            if authority is None and (callable(job.on_terminal) or callable(job.before_dispatch)):
+                raise ValueError('RESEARCH_OCR_RECOVERY_REOPEN_OWNER_REQUIRED')
+            if (job.id != execution['generation_id'] or job.actor_id != actor
+                    or job.novel_id != nid or job.scope != scope or job.operation != 'research_ocr'
+                    or job.experimental_origin != 'research_ocr_model'):
+                raise ValueError('RESEARCH_OCR_RECOVERY_JOB_MISMATCH')
+            try: persisted = self.manager.persistence.get(job.id)
+            except KeyError: raise ValueError('RESEARCH_OCR_RECOVERY_JOB_RECORD_REQUIRED') from None
+            if (job.status not in {'COMPLETED', 'FAILED', 'CANCELLED'}
+                    or persisted.get('status') != job.status or job.research_ocr_binding != execution['binding']
+                    or persisted.get('research_ocr_binding') != execution['binding']
+                    or job.expected_request_digest != execution['expected_request_digest']
+                    or persisted.get('expected_request_digest') != execution['expected_request_digest']):
+                raise ValueError('RESEARCH_OCR_RECOVERY_JOB_MISMATCH')
+        with self.broker._owned_transaction(nid, scope, lease) as state:
+            if self.rows._row(nid, scope, actor, rid, state) != original:
+                raise StaleSourceError('RESEARCH_OCR_RECOVERY_CHANGED')
+            inactive()
+            if execution.get('recovery_id') == recovery_id:
+                ledger = self.broker.get(nid, scope, self.broker.LEDGER, execution['reservation_id'])
+                if (ledger.get('native_recovery_id') != recovery_id or ledger.get('created_by') != actor
+                        or ledger.get('job_id') != execution['generation_id']
+                        or ledger.get('authorization_digest') != execution['expected_request_digest']
+                        or ledger.get('native_ocr_incarnation') != binding.project_incarnation):
+                    raise ValueError('RESEARCH_OCR_RECOVERY_RECEIPT_MISMATCH')
+                return response(original)
+        self.rows._version(original, body.expected_version)
+        if original['status'] not in {'RUNNING', 'FAILED', 'CANCELLED', 'INVALIDATED'}:
+            raise ValueError('RESEARCH_OCR_RECOVERY_NOT_REQUIRED')
+        execution['recovery_id'] = recovery_id
+        values = {'status': original['status'] if original['status'] in {'CANCELLED', 'INVALIDATED'} else 'FAILED',
+            'result': None, 'result_digest': None, 'execution_token': None, 'native_ocr_preview': None,
+            'error_code': 'RESEARCH_OCR_RECOVERED_NO_REPLAY', 'native_ocr_execution': execution}
+        candidate = deepcopy(original)
+        bounded_change(candidate, actor, body.expected_version, values)
+        def current():
+            inactive()
+            latest = self.rows._row(nid, scope, actor, rid)
+            self.rows._version(latest, body.expected_version)
+            if latest != original: raise StaleSourceError('RESEARCH_OCR_RECOVERY_CHANGED')
+        self.broker.reconcile_native_ocr(nid, scope, actor, execution['reservation_id'],
+            body.reservation_version, execution['generation_id'], execution['expected_request_digest'],
+            recovery_id, body.evidence_note, guard=current, owner_lease=lease)
+        with self.broker._owned_transaction(nid, scope, lease) as state:
+            current(); row = self.rows._row(nid, scope, actor, rid, state)
+            bounded_change(row, actor, body.expected_version, values)
+            inactive()
+            return response(row)
 
     def export_reviewed(self, nid, scope, actor, rid, expected_version, result_digest):
         row = self._row(nid, scope, actor, rid)

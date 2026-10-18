@@ -117,3 +117,27 @@ it('shows an interrupted receipt and retained hold without replaying it',async()
  expect(screen.queryByRole('button',{name:'确认执行 OCR'})).toBeNull();
  expect(calls.every(method=>method==='GET')).toBe(true);
 });
+it('requires explicit stopped-process confirmation and evidence before native recovery',async()=>{
+ const posts:{url:string;body:any}[]=[];
+ let row:any={...initial,status:'INTERRUPTED',recovery:{code:'RESEARCH_OCR_EXECUTOR_NOT_RESUMABLE',budget_hold_retained:true,explicit_host_recovery_required:true,reservation_version:2}};
+ vi.stubGlobal('fetch',vi.fn(async(url:string,options:RequestInit)=>{
+  if(options.method==='POST'){
+   posts.push({url,body:JSON.parse(String(options.body))});
+   row={...initial,status:'FAILED',version:2};
+   return response({id:'ocr-one',version:2,status:'FAILED',recovery_recorded:true,automatic_replay:false});
+  }
+  if(url.endsWith('/status'))return response({native_ocr:{status:'NOT_CONFIGURED',routes:[]}});
+  return response(url.endsWith('/jobs')?{items:[row]}:row);
+ }));
+ render(<ResearchNativeOCRPanel client={client()} source={source}/>);
+ fireEvent.click(await screen.findByRole('button',{name:'打开 OCR 记录 ocr-one'}));
+ const button=await screen.findByRole('button',{name:'确认停止后处理中断记录'});
+ expect((button as HTMLButtonElement).disabled).toBe(true);
+ fireEvent.change(screen.getByLabelText('停止原执行器的核对说明'),{target:{value:'已关闭旧执行器并核对没有继续运行的进程。'}});
+ expect((button as HTMLButtonElement).disabled).toBe(true);
+ fireEvent.click(screen.getByRole('checkbox',{name:'我已确认原执行器和相关进程停止，不会继续写入结果'}));
+ fireEvent.click(button);
+ await screen.findByText('已记录人工恢复；没有重新运行识别。');
+ expect(posts).toHaveLength(1);expect(posts[0].url.endsWith('/native-recover')).toBe(true);
+ expect(posts[0].body).toEqual({expected_version:1,reservation_version:2,original_executor_stopped_confirmed:true,evidence_note:'已关闭旧执行器并核对没有继续运行的进程。'});
+});
