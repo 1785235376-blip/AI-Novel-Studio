@@ -1,0 +1,18 @@
+{
+  "source_head": "dacb268a9aeb417e3b82aa44900585f484182c9f",
+  "prerequisite": "5a9fc376648edcff4f3266a94b8ffb7def48dcd1",
+  "source_branch": "work/dot-director-transport-20261017",
+  "commits": [
+    "da75e4fa426276f929f14e2fe9464a98b5dd4d41",
+    "20815818faedda8ac5259f8b2af759938c80a343",
+    "8bdcea1c5fdedc54e83feef10e897b7b075e08ba",
+    "8af50cc67f74a31d88f8dda3de8dc86dcea19e96",
+    "dacb268a9aeb417e3b82aa44900585f484182c9f"
+  ],
+  "status": "FOCUSED_SCREENPLAY_FILE_HTTP_AND_MOUNTED_UI_CHECKS",
+  "full_acceptance": "NOT_ESTABLISHED",
+  "new_test_packages": 0,
+  "full_regression": "DEFERRED",
+  "production_build": "DEFERRED",
+  "live_model_browser_postgresql": "NOT_RUN"
+}
