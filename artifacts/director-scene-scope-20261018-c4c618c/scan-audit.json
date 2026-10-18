@@ -1,0 +1,157 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "c24da79332035f7aebb0acb4d4396f35ea6903e0",
+      "path": "API_CATALOG.json",
+      "bytes": 1456408,
+      "sha256": "663461fdf40ce0a1adc7babbcde70e3ac776fb4ce6284910ae5562ada11c412c"
+    },
+    {
+      "blob": "d1214b1761cb7cde07a627d8ab64aed90d5dbedb",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 597617,
+      "sha256": "016dfdc692b1195fe9559eb3a14408acc28adf6e288d39183522c6cff16a5de7"
+    },
+    {
+      "blob": "d55e98fdb10eb02c747d6276b04a11b2bb6ce142",
+      "path": "app/creative/models.py",
+      "bytes": 21262,
+      "sha256": "8195b9724570574ce18af0ff6c10eb885d9687077c34e686a9469253226b2890"
+    },
+    {
+      "blob": "07e36034df2d7b8b4350d6645bb1dc48da5bcde1",
+      "path": "app/creative/service.py",
+      "bytes": 30506,
+      "sha256": "0f6fb2f943ef70de1832e5807e457aaddc4fddbe111bc13adbda01fb5888bc72"
+    },
+    {
+      "blob": "9f99573e04cc905666f7c01e9bbe5412c0ec4c5c",
+      "path": "docs/DIRECTOR_SCENE_SCOPE_DERIVATION.md",
+      "bytes": 3890,
+      "sha256": "3250901a1fef53d2b7b7b4e72f04e9e242126d353c134f1fcd2666809fd3352f"
+    },
+    {
+      "blob": "38d9c746a0a27ed5703cd7307aee1c7f3bf75fad",
+      "path": "docs/delivery/v2-development/director-scene-scope-file.json",
+      "bytes": 697460,
+      "sha256": "a108d77fbaa6e63411150d3453a6bb935376ac927ff306f6fc6eff55de374fb2"
+    },
+    {
+      "blob": "3f4093ffaa2ee12889aed56765f198ba16d13095",
+      "path": "docs/delivery/v2-development/director-scene-scope-file.log",
+      "bytes": 1081,
+      "sha256": "b07e10170c6f8911e3272f286e4948174da2936cb244cfa133be5e212b868c58"
+    },
+    {
+      "blob": "d203945cba00bdc6c915a7bc81f7025e9f5100f2",
+      "path": "docs/delivery/v2-development/director-scene-scope-mounted.json",
+      "bytes": 698058,
+      "sha256": "5fe6d46fce7af8a91faff90c3da964f5b39fb0b7bb56fb079ea8237224264d8d"
+    },
+    {
+      "blob": "0a264fdd1126ea41f9e241a55bf730db37cc6c75",
+      "path": "docs/delivery/v2-development/director-scene-scope-mounted.log",
+      "bytes": 450,
+      "sha256": "d47548199ac49501e50e76d3e68896c5183c774ac4ccec075510ff9fcf721bd5"
+    },
+    {
+      "blob": "01b80c1ea66dd4c1ffb480d7445ee0a769f0d1bd",
+      "path": "docs/delivery/v2-development/director-scene-scope-pg-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "c8a8ccf3f756e6931e20fbf874f15ce7493a4dc299ccc2347d9ad6cf206a1d82"
+    },
+    {
+      "blob": "e565790c592ae0a86f079ac15c3b73485d81ded0",
+      "path": "docs/delivery/v2-development/director-scene-scope-pg.json",
+      "bytes": 697517,
+      "sha256": "51c069047ae74ec5e3276538419aad9dcff566cb354ac43e0a0d382a2bcee0cc"
+    },
+    {
+      "blob": "cd1c35ac385cfd1a660876749213ace3c7a3835b",
+      "path": "docs/delivery/v2-development/director-scene-scope-pg.log",
+      "bytes": 1085,
+      "sha256": "8619954c2231477e3e665606e51af994ed328b51d0edac77cad08dd84445a9e4"
+    },
+    {
+      "blob": "e04dbd051f1b3686bb3115522986d6281eef4b87",
+      "path": "docs/delivery/v2-development/director-scene-scope-public.json",
+      "bytes": 698390,
+      "sha256": "8856fc9f64e43b6ae120d66678b2344adf8295a873af487ec29c2385ea6c4f86"
+    },
+    {
+      "blob": "b61f9049c61fedf25030a44ba5ea5482f9b3e4dc",
+      "path": "docs/delivery/v2-development/director-scene-scope-public.log",
+      "bytes": 605,
+      "sha256": "d734ee5d8c6421504ca1f65c15fae47250672a5165b1194f1637cf0ee3e4f28f"
+    },
+    {
+      "blob": "e10aea07ba8e68de0b4243384529b6af8b1d8358",
+      "path": "docs/delivery/v2-development/director-scene-scope-ui-final.json",
+      "bytes": 698299,
+      "sha256": "f94fbc680344e0f2ca94b23a4de52ca1bc02d2e6e05bdfbf971378a52678097a"
+    },
+    {
+      "blob": "59441ad0770afe5768986ce954a39f11ce7070e9",
+      "path": "docs/delivery/v2-development/director-scene-scope-ui-final.log",
+      "bytes": 2277,
+      "sha256": "6b2029c4bd6fd354e1cbeba8a37bf17ca2e448f8d449c6ac97a1f0e862c90355"
+    },
+    {
+      "blob": "8505e272c90a8632128e3f5f6fdf57f2114a30ff",
+      "path": "docs/delivery/v2-development/director-scene-scope-ui.json",
+      "bytes": 698245,
+      "sha256": "de421411e8d95c049fddf11cc3b277886d867ff198c1301481eaa461fc277699"
+    },
+    {
+      "blob": "1d934b87c2fda1b31d92c64edf71e7662af25c74",
+      "path": "docs/delivery/v2-development/director-scene-scope-ui.log",
+      "bytes": 1563,
+      "sha256": "a8f3b0f65f20319dbfed34ab2454926ff8f879857cbd922af257eb3b2b311ad0"
+    },
+    {
+      "blob": "429f395c1b76cb82fc7d4f9d5038d598632e73c2",
+      "path": "frontend/src/creative/DirectorSceneScopePanel.additive.test.tsx",
+      "bytes": 7710,
+      "sha256": "d7045a026003cb6cec35144d94d5ba9286340edbef2b7646c485a99cb42f8c0a"
+    },
+    {
+      "blob": "62b69ea8f49b2364619f9a08d8929e634cd213bc",
+      "path": "frontend/src/creative/DirectorSceneScopePanel.tsx",
+      "bytes": 5815,
+      "sha256": "98b0c5821a68853f3c93f5d0dd5a92aeda178b80bebd661cf8eb8a6b38df1314"
+    },
+    {
+      "blob": "e2f665bc91c38317681f84e049510a3333adb3b9",
+      "path": "frontend/src/creative/GraphDirectorConsole.tsx",
+      "bytes": 25005,
+      "sha256": "7bacf53ef11db6bbe5aa39a180ecdb28b1ffa358911d77d1cab20e6a5033435f"
+    },
+    {
+      "blob": "0ca7239924a4f6a63c879c9c2ba7ec232ffb0664",
+      "path": "frontend/src/creative/client.ts",
+      "bytes": 17931,
+      "sha256": "b31b2dd8d7bb6899aad64edbcbf4a7f6d795de30ade44703f158977cfcf4a0d2"
+    },
+    {
+      "blob": "79017f11a87779f1dafd710a5671a14c9b317a52",
+      "path": "frontend/src/creative/directorSceneScope.ts",
+      "bytes": 2956,
+      "sha256": "2695f8bb5b8a0bf9fe1a078108f8a041438651f1dea65210b86f42fc6a3bdb5f"
+    },
+    {
+      "blob": "24410113218439f483d8ace4a6e35b25dc169db3",
+      "path": "tests/test_director_scene_scope_derivation_additive.py",
+      "bytes": 4168,
+      "sha256": "d5979b5595b4dd638eae4b8bbeb82ef119201e65add0ab9034c42c2f8b059f55"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
