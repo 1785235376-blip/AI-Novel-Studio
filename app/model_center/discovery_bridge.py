@@ -544,6 +544,8 @@ class LocalDiscoveryBridge:
             return 'REGISTERED'
 
     def __call__(self, candidate):
+        from ..local_ollama_vision import sync_vision_registration
+        sync_vision_registration(self, candidate)
         provider_id = candidate['provider_id']
         enabled = bool(candidate.get('enabled'))
         if 'TEXT' in candidate.get('verified_capabilities', []) or self.runtime.model_registry.contains(provider_id, candidate['id']):

@@ -2,11 +2,18 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import type { ExperimentalClient } from './api';
 import type { RoomMember, RoomTask, TaskFields } from './writerRoomClient';
 
+export const styleDimensions = ['writing_tone', 'camera_language', 'composition', 'color', 'linework_halftone', 'character_design', 'sound', 'music_theme'] as const;
+export type StyleDimension = typeof styleDimensions[number];
+export type StyleRules = Partial<Record<StyleDimension, string>>;
+export type StylePin = { id: string; version: number; digest: string };
+export type StyleTarget = { level: 'GLOBAL' | 'CHAPTER' | 'SCENE' | 'SHOT'; chapter?: StylePin; document?: StylePin; scene_id?: string; shot_id?: string };
+export type StyleDNA = { schema_version: 1; global_rules: StyleRules; overrides: { target: StyleTarget; rules: StyleRules }[] };
+export type StyleResolution = { style_source: StylePin; target: StyleTarget; effective: Partial<Record<StyleDimension, { value: string; level: string; source: unknown }>>; contributors: unknown[]; conflicts: unknown[]; uncovered_dimensions: StyleDimension[]; coverage: string; semantic_conflicts_verified: false; execution_ready: false; model_called: false; target_mutated: false; limitations: string[] };
 export type StyleOperation = 'continue' | 'rewrite' | 'polish' | 'brainstorm' | 'review';
 export const styleOperationLabels: Record<StyleOperation, string> = { continue: '续写', rewrite: '重写', polish: '润色', brainstorm: '脑暴', review: '审阅' };
-export type ReviewChapter = { id: string; title: string; version: number; characters?: number };
-export type StyleProfileInput = { title: string; instructions: string; rules: string[]; chapter_ids: string[]; character_ids: string[] };
-export type StyleProfile = StyleProfileInput & { id: string; version: number; status: 'DRAFT' | 'APPROVED' | 'ARCHIVED'; stale?: boolean; privacy_level?: string };
+export type ReviewChapter = { id: string; title: string; version: number; characters?: number; content_digest?: string };
+export type StyleProfileInput = { title: string; instructions: string; rules: string[]; chapter_ids: string[]; character_ids: string[]; style_dna?: StyleDNA };
+export type StyleProfile = StyleProfileInput & { id: string; version: number; status: 'DRAFT' | 'APPROVED' | 'ARCHIVED'; stale?: boolean; privacy_level?: string; style_dna_resolution?: { stale: boolean; source_digest: string; execution_adoption: string } };
 export type StyleCatalog = { styles: StyleProfile[]; chapters: ReviewChapter[]; characters: { id: string; name: string }[]; operations: StyleOperation[] };
 export type StyleSample = { chapter_id: string; expected_version: number; start: number; end: number | null };
 export type StyleAnalysisInput = { style_id: string; expected_style_version: number; language: 'zh' | 'en'; samples: StyleSample[]; comparison?: { chapter_id: string; expected_version: number; language: 'zh' | 'en' }; operations: StyleOperation[] };
@@ -33,6 +40,11 @@ export function styleReviewClient(client: ExperimentalClient) {
     createProfile: (body: StyleProfileInput) => client.post<StyleProfile>('/style-analysis/profiles', body),
     updateProfile: (id: string, version: number, body: StyleProfileInput) => client.put<StyleProfile>(`/style-analysis/profiles/${segment(id)}`, { ...body, expected_version: version }),
     transitionProfile: (row: StyleProfile, action: 'approve' | 'archive') => client.post<StyleProfile>(`/style-analysis/profiles/${segment(row.id)}/${action}`, { expected_version: row.version }),
+    resolveStyle: (row: StyleProfile, target: StyleTarget) => {
+      const digest = row.style_dna_resolution?.source_digest;
+      if (!digest || row.style_dna_resolution?.stale || row.status !== 'APPROVED') throw new Error('请刷新并核对已审核的当前风格来源。');
+      return client.post<StyleResolution>(`/style-analysis/profiles/${segment(row.id)}/resolve`, { expected_version: row.version, expected_digest: digest, target });
+    },
     analyses: (signal?: AbortSignal) => client.get<{ items: StyleAnalysis[] }>('/style-analysis/analyses', signal),
     analyze: (body: StyleAnalysisInput) => client.post<StyleAnalysis>('/style-analysis/analyses', body),
     analysis: (id: string, signal?: AbortSignal) => client.get<StyleAnalysis>(`/style-analysis/analyses/${segment(id)}`, signal),

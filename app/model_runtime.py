@@ -15,6 +15,7 @@ from .stable_identity import IdentityMutationError, StableIdentityStore, canonic
 if TYPE_CHECKING:
     from .audio_processing_runtime import AudioProcessingProvider
     from .vision_ocr_runtime import VisionOCRProvider
+    from .vision_analysis_runtime import VisionAnalysisProvider
 
 
 class Modality(str, Enum):
@@ -229,11 +230,11 @@ class LegacyTextProviderAdapter:
 
 class ProviderRegistry:
     def __init__(self, identity_store: StableIdentityStore | None = None) -> None:
-        self._providers: dict[str, TextProvider | AudioProcessingProvider | VisionOCRProvider] = {}
+        self._providers: dict[str, TextProvider | AudioProcessingProvider | VisionOCRProvider | VisionAnalysisProvider] = {}
         self._descriptors: dict[str, ProviderDescriptor] = {}
         self.identity_store = identity_store
 
-    def register(self, descriptor: ProviderDescriptor, provider: TextProvider | AudioProcessingProvider | VisionOCRProvider, *, replace: bool = False) -> None:
+    def register(self, descriptor: ProviderDescriptor, provider: TextProvider | AudioProcessingProvider | VisionOCRProvider | VisionAnalysisProvider, *, replace: bool = False) -> None:
         if descriptor.provider_id in self._providers and not replace:
             raise ValueError(f"provider already registered: {descriptor.provider_id}")
         if self.identity_store is not None:
@@ -246,7 +247,7 @@ class ProviderRegistry:
         self._providers[descriptor.provider_id] = provider
         self._descriptors[descriptor.provider_id] = descriptor
 
-    def resolve(self, provider_id: str) -> TextProvider | AudioProcessingProvider | VisionOCRProvider:
+    def resolve(self, provider_id: str) -> TextProvider | AudioProcessingProvider | VisionOCRProvider | VisionAnalysisProvider:
         try:
             descriptor, provider = self._descriptors[provider_id], self._providers[provider_id]
         except KeyError as exc:
@@ -391,3 +392,7 @@ class GenerationRuntime:
         # This constructs a typed seam only. Research dispatch remains separately gated.
         from .vision_ocr_runtime import VisionOCRModelNode
         self.vision_ocr_node = VisionOCRModelNode(providers, models)
+        # Independent IMAGE_UNDERSTANDING node; no provider registration or Job
+        # admission is implied, and original TEXT/OCR routes are unchanged.
+        from .vision_analysis_runtime import VisionAnalysisModelNode
+        self.vision_analysis_node = VisionAnalysisModelNode(providers, models)

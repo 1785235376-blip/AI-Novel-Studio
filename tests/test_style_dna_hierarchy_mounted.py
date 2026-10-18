@@ -288,3 +288,29 @@ def _postgres_session_revocation_serializes_after_read(e, monkeypatch, generic):
     assert denied.status_code in (401, 403), denied.text
     assert 'Quiet strings' not in denied.text and 'style_dna' not in denied.text
     assert path.read_bytes() == before
+
+
+@pytest.mark.parametrize('restriction', ['hidden', 'secret'])
+def test_style_catalog_exact_chapter_pins_exclude_private_sources(style_http, monkeypatch, restriction):
+    from app.source_privacy import content_digest
+    e = style_http
+    result = checked(e.client.get(e.base + '/style-analysis/catalog'))
+    source = next(row for row in result['chapters'] if row['id'] == e.chapter['id'])
+    assert source['version'] == e.chapter['version']
+    assert source['content_digest'] == content_digest(e.chapter)
+    assert 'content' not in source
+    target = {'level': 'CHAPTER', 'chapter': {'id': source['id'], 'version': source['version'], 'digest': source['content_digest']}}
+    body = {**payload(), 'style_dna': {'global_rules': {'color': 'Amber'},
+        'overrides': [{'target': target, 'rules': {'color': 'Blue'}}]}}
+    profile = checked(e.client.post(e.base + '/style-analysis/profiles', json=body), 201)
+    checked(e.client.post(e.base + '/style-analysis/profiles/' + profile['id'] + '/approve', json={'expected_version': profile['version']}))
+    current = next(row for row in checked(e.client.get(e.base + '/style-analysis/catalog'))['styles'] if row['id'] == profile['id'])
+    resolved = checked(e.client.post(e.base + '/style-analysis/profiles/' + profile['id'] + '/resolve', json={
+        'expected_version': current['version'], 'expected_digest': current['style_dna_resolution']['source_digest'], 'target': target}))
+    assert resolved['effective']['color']['value'] == 'Blue'
+    assert resolved['effective']['color']['level'] == 'CHAPTER'
+    original = e.chapters.get
+    monkeypatch.setattr(e.chapters, 'get', lambda cid: {
+        **original(cid), **({restriction: True} if cid == e.chapter['id'] else {})})
+    result = checked(e.client.get(e.base + '/style-analysis/catalog'))
+    assert all(row['id'] != e.chapter['id'] for row in result['chapters'])

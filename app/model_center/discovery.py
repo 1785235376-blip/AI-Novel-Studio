@@ -904,8 +904,15 @@ class LocalDiscoveryService:
             raise ValueError('LOCAL_AI_' + reason)
         return current['evidence']
 
-    def check_ollama_dispatch(self, candidate):
-        checked = self.ollama_metadata_check(candidate['runtime_config'], candidate['model_name'])
+    def check_ollama_dispatch(self, candidate, *, metadata_client=None, guard=None):
+        if guard is not None: guard()
+        if metadata_client is None:
+            checked = self.ollama_metadata_check(candidate['runtime_config'], candidate['model_name'])
+        else:
+            from ..providers import OllamaProvider
+            checked = read_ollama_local_metadata(metadata_client, candidate['runtime_config']['endpoint'],
+                candidate['model_name'], OllamaProvider(candidate['runtime_config']['endpoint']).list_models)
+        if guard is not None: guard()
         previous = candidate.get('evidence', {}).get('locality_fingerprint')
         reason = (checked['locality_blockers'] or ['OLLAMA_IDENTITY_CHANGED'])[0]
         if checked['source_locality'] != 'LOCAL_VERIFIED' or not previous or checked['locality_fingerprint'] != previous:

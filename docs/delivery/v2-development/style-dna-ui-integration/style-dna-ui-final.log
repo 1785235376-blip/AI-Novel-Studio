@@ -1,0 +1,14 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-style-dna-work/frontend
+
+ ✓ src/experimental/StyleReviewPanels.test.tsx (16 tests) 1325ms
+ ✓ src/experimental/StyleDNAEditor.test.tsx (10 tests) 469ms
+ ✓ src/experimental/StyleAnalysisModelPanel.test.tsx (7 tests) 243ms
+ ✓ src/experimental/StyleReviewPanels.additive.test.tsx (1 test) 219ms
+ ✓ src/experimental/StyleComparisonReview.test.tsx (8 tests) 175ms
+
+ Test Files  5 passed (5)
+      Tests  42 passed (42)
+   Start at  04:20:43
+   Duration  5.65s (transform 251ms, setup 35ms, collect 737ms, tests 2.43s, environment 1.54s, prepare 242ms)
+

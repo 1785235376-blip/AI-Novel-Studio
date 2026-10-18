@@ -1,0 +1,112 @@
+[WebServer] (node:24) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:47) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › tests/visual/design-system.spec.ts:14:124 › shell geometry 1024x768 (2ms)
+(node:60) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 [chromium] › tests/visual/design-system.spec.ts:14:124 › shell geometry 1366x768 (2ms)
+(node:75) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 [chromium] › tests/visual/design-system.spec.ts:14:124 › shell geometry 1440x900 (1ms)
+(node:87) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  4 [chromium] › tests/visual/design-system.spec.ts:14:124 › shell geometry 1920x1080 (1ms)
+
+
+  1) [chromium] › tests/visual/design-system.spec.ts:14:124 › shell geometry 1024x768 ──────────────
+
+    Error: browserType.launch: Executable doesn't exist at /home/agent/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ../.runtime/style-dna-ui-geometry/design-system-shell-geometry-1024x768-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../.runtime/style-dna-ui-geometry/design-system-shell-geometry-1024x768-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../.runtime/style-dna-ui-geometry/design-system-shell-geometry-1024x768-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests/visual/design-system.spec.ts:14:124 › shell geometry 1366x768 ──────────────
+
+    Error: browserType.launch: Executable doesn't exist at /home/agent/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ../.runtime/style-dna-ui-geometry/design-system-shell-geometry-1366x768-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../.runtime/style-dna-ui-geometry/design-system-shell-geometry-1366x768-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../.runtime/style-dna-ui-geometry/design-system-shell-geometry-1366x768-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › tests/visual/design-system.spec.ts:14:124 › shell geometry 1440x900 ──────────────
+
+    Error: browserType.launch: Executable doesn't exist at /home/agent/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ../.runtime/style-dna-ui-geometry/design-system-shell-geometry-1440x900-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../.runtime/style-dna-ui-geometry/design-system-shell-geometry-1440x900-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../.runtime/style-dna-ui-geometry/design-system-shell-geometry-1440x900-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium] › tests/visual/design-system.spec.ts:14:124 › shell geometry 1920x1080 ─────────────
+
+    Error: browserType.launch: Executable doesn't exist at /home/agent/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ../.runtime/style-dna-ui-geometry/design-system-shell-geometry-1920x1080-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../.runtime/style-dna-ui-geometry/design-system-shell-geometry-1920x1080-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../.runtime/style-dna-ui-geometry/design-system-shell-geometry-1920x1080-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    [chromium] › tests/visual/design-system.spec.ts:14:124 › shell geometry 1024x768 ───────────────
+    [chromium] › tests/visual/design-system.spec.ts:14:124 › shell geometry 1366x768 ───────────────
+    [chromium] › tests/visual/design-system.spec.ts:14:124 › shell geometry 1440x900 ───────────────
+    [chromium] › tests/visual/design-system.spec.ts:14:124 › shell geometry 1920x1080 ──────────────

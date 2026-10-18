@@ -247,7 +247,11 @@ class ModelBrokerService(DomainService):
             facts['hardware_hash'] = digest([asdict(profiles[pid]) for pid in center_model.hardware_profiles if pid in profiles]) if isinstance(profiles, dict) and center_model.hardware_profiles else None
         return facts, reasons
 
-    def candidates(self, *, local_text_only=False, local_ocr_only=False):
+    def candidates(self, *, local_text_only=False, local_ocr_only=False, local_vision_only=False):
+        if local_vision_only:
+            if local_text_only or local_ocr_only: raise ValueError('BROKER_CANDIDATE_PROFILE_CONFLICT')
+            from .local_vision_broker import candidates
+            return candidates(self.runtime)
         if local_ocr_only:
             if local_text_only: raise ValueError('BROKER_CANDIDATE_PROFILE_CONFLICT')
             from .native_ocr_broker import candidates

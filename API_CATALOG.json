@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "b7f6e260fd2a5d83bc3d973f07f5d6856c9654b6e50380bba0394564f9caed5d",
+  "application_source_fingerprint_sha256": "1c8f74cdbbe89a5ebf241070271349ca79d64bdf6939aea48e05b202f7cb2b38",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -179,12 +179,13 @@
     "app/experimental/legacy_inbox.py": "225e10b2b3e5fce91427eaa7f1ece4f2a9bcbd5081043c5b300e988e1286f8f3",
     "app/experimental/local_ai_inspection.py": "716018b540aec2ba800b7657304b3126db31d6ce4cb87f7d296ae16a36cef6fd",
     "app/experimental/local_ai_inspection_api.py": "30b11ffa176b9d63f1250dfd5f8708a36ac077f58954dd698aec22ffa7f9109d",
+    "app/experimental/local_vision_broker.py": "97e794613fa8a393e8d05123a7ccd3cd516f8c6cea72ae13bb53359a06d3c7da",
     "app/experimental/media.py": "6e9f66e5f278d4e8dc3ebf59739a4ee1693ed295a25cde0d968d8574c70d9aac",
     "app/experimental/media_api.py": "f6ae47cabb59d127172397984b6a075b2db6d5b2c9043590db3beb1d7decc082",
     "app/experimental/model_benchmark.py": "cedf56042fe3ac6d447333711b7e2fe81c5ad93ebf2df1264b8dfeffb55f1804",
     "app/experimental/model_benchmark_api.py": "5026d9fde113c0120e7412af072176d286cdc0005d4c6e6067c44c53513c366c",
     "app/experimental/model_benchmark_video.py": "8364c3e24251fbb14e0f4d006fc2087d6fa7943887066919fb9f41174618ae4a",
-    "app/experimental/model_broker.py": "a3ec2da85357178fe7631695bf577ccd661b85956c5feb2c7f9a0b188efb41ad",
+    "app/experimental/model_broker.py": "2373e077e35fb33ad6e67ba855cc944d4a9931aef379a89b1507ce33088e8c64",
     "app/experimental/model_broker_api.py": "746119904d78f7a83b8754118a597ee4da581ba66c3970ec034d4862c5db3d2b",
     "app/experimental/multilingual_editions.py": "a7c5c1db905462ed41d9e3c89465f6e9b407c8fd902b556b6c2d255ebde010f1",
     "app/experimental/multilingual_editions_api.py": "178889a22b67d5e3635a855d4b14aed9f64fac4a75233dc9e6acd0b80f88344a",
@@ -234,7 +235,7 @@
     "app/experimental/story_simulator_api.py": "c7bf7280792e25b512f91a7a795397714146e352bf11ebd1baae5119269b3549",
     "app/experimental/story_simulator_model.py": "3a00495eceae20a2b9658c714bda036aa9b44e01d9af8ccc4f8fd938915915f9",
     "app/experimental/structured_forks.py": "e827360e94cef6d910745db38f9d27eb7824e539f436e1ed6c93b0aeefc8c614",
-    "app/experimental/style_analysis.py": "f3ae5886536db1ed93fe35cfdc54c9115d8e0e23991fa3774f76945e82aea922",
+    "app/experimental/style_analysis.py": "084906d77bdbe6dffcc65cfce6c99a4c9462972eb1ecd17ed1a128cb363fbfa4",
     "app/experimental/style_analysis_api.py": "f05ce1e4e2f570384acbced2a241e62c8abe49a01367abd82b49cc9a195da8ac",
     "app/experimental/style_analysis_model.py": "928ea0d9c5da3c4ad7367c8b687352123deaa1508b10a7ad4fbb45634e4f1151",
     "app/experimental/style_dna.py": "d7fd06a4e201caccb9eb5308e6884fe3d076b343da4785a85fa068c30b5c7b23",
@@ -289,6 +290,7 @@
     "app/local_interop/provider.py": "017e9f134521f802772984896202802704f4c787a559ad8dffd686d24ee08e18",
     "app/local_interop/synthetic_tutor.py": "dfd16434f7d6f99d1be0932a6d144a47a0c28fb2deb0d791aebf2f065db617e2",
     "app/local_interop/transport.py": "132c7e9af560512012b8aa0e0e89ca5ef0024c1527b7ab7b8b2b425ac232fc4a",
+    "app/local_ollama_vision.py": "aaa0fc65fd5db413ee9eee0ef8eef190e76a3551176d233e128bec559ba56f57",
     "app/local_pdf_ocr.py": "8958e900dd7ebe5fa142f6b5702a6a28d229d8af8d0d01ce3c95db42b0825760",
     "app/local_pdf_raster.py": "4702fab42cbf0810a935b7bb99f1b7468dd2508444926834ba24e70fe5eaf8f1",
     "app/local_tesseract_ocr.py": "be44f680deed59fd840d8450df8574a611ae28ff0cd3fada45ec66ae9317a588",
@@ -310,10 +312,10 @@
     "app/migrate_file_to_postgres.py": "f1607b0ee9bba1de64c092cb080cb1fdf5e140626a8ad2bc520523467821f818",
     "app/model_center/__init__.py": "034f5d7bcdc5a548765d66dfe6442411e8680b3f761e6c38f310b475c3a8ac0b",
     "app/model_center/api.py": "ed96ac9ea6a99f7998698afbd8888ec5bde93eab3cb0a04adc42f4243b2a616c",
-    "app/model_center/discovery.py": "848023756247c0a530517e7ff67899ffcbddc5f0f6c75343a6916a7042559f92",
+    "app/model_center/discovery.py": "0c9ae30b8531f2629254cb948be76b8b2110f869a631cef91bda9507f720d476",
     "app/model_center/discovery_api.py": "9e1f85d34a9e7df8d0e3faeace6cbbb82c5fa7129a522240a50a3cb2e75b51f6",
     "app/model_center/discovery_authority.py": "752a810dad0001d4239516a4e76ae08dfd0f5a74e0fffe15236a6fe125c605c9",
-    "app/model_center/discovery_bridge.py": "a57919a3aba5b58ebcbbb0940f013ad7bf4d011f13981cd27494b3321fb628a4",
+    "app/model_center/discovery_bridge.py": "1afc402f5638c67978465ba1e08da2ef8263adeb9e8423d0e2dbf388423db3e5",
     "app/model_center/discovery_environment.py": "25604fe938fd5420e218565ce31346f685cce8c604471097b550cc628dcaf031",
     "app/model_center/discovery_onboarding_types.py": "51b65d835b8414220d4790417a97889410914a488b9df04382c9952d53f12cce",
     "app/model_center/discovery_prerequisites.py": "8e9f6910e0ad39e4ec46602278f3cb7de5501a180937e92271bd06a5668dfd80",
@@ -332,7 +334,7 @@
     "app/model_center/whisper_runtime.py": "fc26647f00759f34d95c7140f95316f2c184833507151956d0ef5cba1e519ab2",
     "app/model_execution.py": "f0fa804f1b7dd0f381bb610a67da46aa44706b01040891d9070a6952d270ac0b",
     "app/model_provider_contracts.py": "f334ad095b101c3a67fd84a098d434dcd6a4564d244b5df58b2334393765d860",
-    "app/model_runtime.py": "65ded313f9f2f18da446cece4db296eda3e2bfa44e24e8b0a09edae2567c355e",
+    "app/model_runtime.py": "7c3196f542ebc5ec03291544e653e732b4b381cb0a84e8441bad2d8e297aeac4",
     "app/models/__init__.py": "4999e1bb65bd43fff8566a6584dbce069450cc3669b845d51681a9757bff6f11",
     "app/models/lore.py": "a0a24be904e1f9bb030bdd9b680bbcbd08231a2a5cb3db6a956504e526e4445b",
     "app/narrative.py": "fb23dbe4b233c506225d5e08726a8a32f70fd90a511fdefd3814033720b9ce25",
@@ -513,6 +515,7 @@
     "app/style_dna_contract.py": "54370bce3698e06c82e87f69e2a9a65f5d6b64ec56f6f436644c33f1bedb9b3d",
     "app/trusted_sessions.py": "11f2520cade262fae3317e23c4379b0d376359faecc1df33160a4f1ba80c67bd",
     "app/video_assembly_api.py": "4b9fafc79e883ae13824289ebb75c87efcd8fc6c7a7204275c676555597b55a4",
+    "app/vision_analysis_runtime.py": "e54e50cb1283d43421e8b6b882c73345e18d62d596b2051df3299d18b69ecda2",
     "app/vision_ocr_runtime.py": "9c52b712e99fa6b545ac7f2335502957880eaf3ad098030a577e933c345d7c30",
     "app/visual_workflow.py": "a5ad2b66b50289603df914bead47ecc12e351d15c4fc957192af9693382206c7",
     "app/workflow.py": "c8f65bfcc73b454038a177aeb519b2e3cd032d8f9ed57fe4bb8b50d0d3e607ef",
@@ -539,7 +542,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "3b553a6e51511c7ffafaf29a9f49ba4c1d71a4a4a23407f4fa9149abfb8f7e85",
+    "sha256": "caadac487f6dfed7c56e8410945d0141ee46435b0477c4d2e48a803799facb26",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -2547,7 +2550,8 @@
       "operation_id": "books_api_novels__nid__experimental_comic_layouts_books_get",
       "owner_ref": "629cc73bf07175a7d30ce237084963dd4a6864d9060b778f0a345ce6ffe60896",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "5baa483b7865ed4817d250956a6d56343ef8e01ab0ee8379602a56a140b5bbd7",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -8247,7 +8251,8 @@
       "operation_id": "books_api_v1_novels__nid__experimental_comic_layouts_books_get",
       "owner_ref": "629cc73bf07175a7d30ce237084963dd4a6864d9060b778f0a345ce6ffe60896",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "f0ba071345ccb846a7da7fc0e787dc356beddd934353d6a070334e1442a23db0",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -14589,7 +14594,8 @@
       "operation_id": "create_book_api_novels__nid__experimental_comic_layouts_books_post",
       "owner_ref": "d9da45c813c1e24dc60b3b17d8bd455d9e3f9527857d180e12e0d76f579fbc59",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "efc495f2803d44be2a58b5034f1127705a5ae18fb9f7cc688887664bca1f9696",
       "schema_graph_sha256": "a9d70fece9cefdc23c67c7e2b0e2d18575bde0d92459cc5d3f7e0970143c3fa8"
@@ -14600,7 +14606,8 @@
       "operation_id": "book_page_api_novels__nid__experimental_comic_layouts_books__rid__pages_post",
       "owner_ref": "aca410455902a0c740b85d31c79b25e965457931adebd07f029c1c08f93a088b",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "b1fe978e054390b3124443811bac35f4a5ab227e3f631a7f8f40bcd681185f41",
       "schema_graph_sha256": "4d27f314e45fa117043abdf10fc3937c725c50b954ed2c05a9a6350d52e7a01b"
@@ -14611,7 +14618,8 @@
       "operation_id": "restore_book_api_novels__nid__experimental_comic_layouts_books__rid__restore_post",
       "owner_ref": "77a5ac7f7e75aaa7b50496837abf6f0733778733e83d713adcb90c1e1e302763",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "9bba496c7d012151c7d87dc13f4868e95ee8b01999b89a3f015e7b0e063d8338",
       "schema_graph_sha256": "cca0767e1850389c967e85a7b70fd4cd3b9e85c7e81546c416fd2daf51886ed2"
@@ -17576,7 +17584,8 @@
       "operation_id": "resolve_api_novels__nid__experimental_style_analysis_profiles__rid__resolve_post",
       "owner_ref": "bafce6966464522282154627469c80e332bde1972d55b1864f999093ce4928da",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "61c96f82ab0fd4db95587a40bc4fc2bece4107ecafd11dea8a21f0a163abf5b9",
       "schema_graph_sha256": "99f7d80452fae953dcb4c30e1484e0326ad3fa7ac9ba464434ebb88b605cc553"
@@ -21830,7 +21839,8 @@
       "operation_id": "create_book_api_v1_novels__nid__experimental_comic_layouts_books_post",
       "owner_ref": "d9da45c813c1e24dc60b3b17d8bd455d9e3f9527857d180e12e0d76f579fbc59",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "967e8850fe2450dbeeb1f5d187a1d1279b64486c39ad8a5442e4f77d8dfcd85f",
       "schema_graph_sha256": "a9d70fece9cefdc23c67c7e2b0e2d18575bde0d92459cc5d3f7e0970143c3fa8"
@@ -21841,7 +21851,8 @@
       "operation_id": "book_page_api_v1_novels__nid__experimental_comic_layouts_books__rid__pages_post",
       "owner_ref": "aca410455902a0c740b85d31c79b25e965457931adebd07f029c1c08f93a088b",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "f4ca296fed9d3807a66bfef4a0b06bca4f47f6b0f2004f706b937827fc3b2f75",
       "schema_graph_sha256": "4d27f314e45fa117043abdf10fc3937c725c50b954ed2c05a9a6350d52e7a01b"
@@ -21852,7 +21863,8 @@
       "operation_id": "restore_book_api_v1_novels__nid__experimental_comic_layouts_books__rid__restore_post",
       "owner_ref": "77a5ac7f7e75aaa7b50496837abf6f0733778733e83d713adcb90c1e1e302763",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "facd89828456b5c3d54ce3db797c9e2b0462aefcae1038809e338a6bec760cc1",
       "schema_graph_sha256": "cca0767e1850389c967e85a7b70fd4cd3b9e85c7e81546c416fd2daf51886ed2"
@@ -24817,7 +24829,8 @@
       "operation_id": "resolve_api_v1_novels__nid__experimental_style_analysis_profiles__rid__resolve_post",
       "owner_ref": "bafce6966464522282154627469c80e332bde1972d55b1864f999093ce4928da",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "7dbd8858627bbf4b8dcddd8e8c2cc94f24b21a273bfc818474ee981acc23c10e",
       "schema_graph_sha256": "99f7d80452fae953dcb4c30e1484e0326ad3fa7ac9ba464434ebb88b605cc553"
@@ -27949,7 +27962,8 @@
       "operation_id": "update_book_api_novels__nid__experimental_comic_layouts_books__rid__put",
       "owner_ref": "c9be9646f725143fd1286c6e65c12f3a7aabcc7caaa7bc70d8f59b93bbeb4057",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "ee9f82747f1d81d086fcaa556d0997141e3742c9c7ec7dd0a566b36445474b56",
       "schema_graph_sha256": "c0ec7129a073652de07655b51d6816fbd5198ed2f3304f6b400c3d22aca870be"
@@ -29030,7 +29044,8 @@
       "operation_id": "update_book_api_v1_novels__nid__experimental_comic_layouts_books__rid__put",
       "owner_ref": "c9be9646f725143fd1286c6e65c12f3a7aabcc7caaa7bc70d8f59b93bbeb4057",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "a0d1b65ead3edded5e19bdd76ad949125e379263ceb32af23296052b22ed8750",
       "schema_graph_sha256": "c0ec7129a073652de07655b51d6816fbd5198ed2f3304f6b400c3d22aca870be"

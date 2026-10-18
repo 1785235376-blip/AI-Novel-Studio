@@ -208,10 +208,26 @@ class StyleAnalysisService(SourceFencedService):
             raise FileNotFoundError(rid)
         return row
 
+    def style_chapter_catalog(self, nid, scope):
+        # List summaries are not canonical manuscript bytes. Read only already
+        # scoped candidates through the original chapter owner for exact pins.
+        result = []
+        owner = self.chapters_for(scope)
+        for candidate in self.chapter_catalog(nid, scope):
+            try:
+                row = owner.get(candidate['id'])
+            except FileNotFoundError:
+                continue
+            if (row.get('novel_id') != nid or row.get('branch_id') != scope.get('branch_id')
+                    or row.get('hidden') or row.get('secret')):
+                continue
+            result.append({**candidate, 'version': row['version'], 'content_digest': content_digest(row)})
+        return result
+
     def catalog(self, nid, scope):
         rows = self.creation.list_records(nid, scope, "STYLE")["items"]
         return {"styles": [{k: v for k, v in row.items() if k != "history"} for row in rows],
-                "chapters": self.chapter_catalog(nid, scope),
+                "chapters": self.style_chapter_catalog(nid, scope),
                 "characters": [{"id": r["id"], "name": r.get("name", r["id"])} for r in self.novels.data_set(nid, "characters") if not r.get("branch_id") or r.get("branch_id") == scope.get("branch_id")],
                 "operations": list(OPERATIONS), "model_called": False}
 

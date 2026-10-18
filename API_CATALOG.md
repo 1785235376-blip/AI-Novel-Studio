@@ -174,7 +174,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/novels/{nid}/experimental/branch-manuscript/sources` | `app/experimental/branch_manuscript_api.py:206` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/change-impact/refreshes` | `app/experimental/change_impact_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/change-impact/sources` | `app/experimental/change_impact_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/novels/{nid}/experimental/comic-layouts/books` | `app/experimental/comic_layouts_api.py:54` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/novels/{nid}/experimental/comic-layouts/books` | `app/experimental/comic_layouts_api.py:54` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/comic-layouts/catalog` | `app/experimental/comic_layouts_api.py:74` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/comic-layouts/images/{aid}` | `app/experimental/comic_layouts_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/comic-layouts/records` | `app/experimental/comic_layouts_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -649,7 +649,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/v1/novels/{nid}/experimental/branch-manuscript/sources` | `app/experimental/branch_manuscript_api.py:206` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/change-impact/refreshes` | `app/experimental/change_impact_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/change-impact/sources` | `app/experimental/change_impact_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/novels/{nid}/experimental/comic-layouts/books` | `app/experimental/comic_layouts_api.py:54` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/v1/novels/{nid}/experimental/comic-layouts/books` | `app/experimental/comic_layouts_api.py:54` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/comic-layouts/catalog` | `app/experimental/comic_layouts_api.py:74` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/comic-layouts/images/{aid}` | `app/experimental/comic_layouts_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/comic-layouts/records` | `app/experimental/comic_layouts_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1177,9 +1177,9 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/novels/{nid}/experimental/change-impact/query` | `app/experimental/change_impact_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/change-impact/refreshes/{rid}/cancel` | `app/experimental/change_impact_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/change-impact/refreshes/{rid}/execute` | `app/experimental/change_impact_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/comic-layouts/books` | `app/experimental/comic_layouts_api.py:58` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/pages` | `app/experimental/comic_layouts_api.py:66` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/restore` | `app/experimental/comic_layouts_api.py:70` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/books` | `app/experimental/comic_layouts_api.py:58` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/pages` | `app/experimental/comic_layouts_api.py:66` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/restore` | `app/experimental/comic_layouts_api.py:70` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/comic-layouts/images/{aid}/approve` | `app/experimental/comic_layouts_api.py:86` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/comic-layouts/records` | `app/experimental/comic_layouts_api.py:90` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}/approve` | `app/experimental/comic_layouts_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1426,7 +1426,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/novels/{nid}/experimental/style-analysis/analyses/{rid}/opinions/{opinion_id}/review` | `app/experimental/style_analysis_api.py:108` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/style-analysis/profiles` | `app/experimental/style_analysis_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/style-analysis/profiles/{rid}/preview` | `app/experimental/style_analysis_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/style-analysis/profiles/{rid}/resolve` | `app/experimental/style_analysis_api.py:58` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/style-analysis/profiles/{rid}/resolve` | `app/experimental/style_analysis_api.py:58` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/style-analysis/profiles/{rid}/{action}` | `app/experimental/style_analysis_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/subtitle-timeline/processing/tasks` | `app/experimental/subtitle_timeline_api.py:70` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/subtitle-timeline/processing/tasks/{rid}/{action}` | `app/experimental/subtitle_timeline_api.py:73` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1780,9 +1780,9 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/v1/novels/{nid}/experimental/change-impact/query` | `app/experimental/change_impact_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/change-impact/refreshes/{rid}/cancel` | `app/experimental/change_impact_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/change-impact/refreshes/{rid}/execute` | `app/experimental/change_impact_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books` | `app/experimental/comic_layouts_api.py:58` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/pages` | `app/experimental/comic_layouts_api.py:66` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/restore` | `app/experimental/comic_layouts_api.py:70` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books` | `app/experimental/comic_layouts_api.py:58` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/pages` | `app/experimental/comic_layouts_api.py:66` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/restore` | `app/experimental/comic_layouts_api.py:70` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/comic-layouts/images/{aid}/approve` | `app/experimental/comic_layouts_api.py:86` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/comic-layouts/records` | `app/experimental/comic_layouts_api.py:90` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}/approve` | `app/experimental/comic_layouts_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -2029,7 +2029,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/v1/novels/{nid}/experimental/style-analysis/analyses/{rid}/opinions/{opinion_id}/review` | `app/experimental/style_analysis_api.py:108` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/style-analysis/profiles` | `app/experimental/style_analysis_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/style-analysis/profiles/{rid}/preview` | `app/experimental/style_analysis_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/style-analysis/profiles/{rid}/resolve` | `app/experimental/style_analysis_api.py:58` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/style-analysis/profiles/{rid}/resolve` | `app/experimental/style_analysis_api.py:58` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/style-analysis/profiles/{rid}/{action}` | `app/experimental/style_analysis_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/subtitle-timeline/processing/tasks` | `app/experimental/subtitle_timeline_api.py:70` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/subtitle-timeline/processing/tasks/{rid}/{action}` | `app/experimental/subtitle_timeline_api.py:73` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -2290,7 +2290,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | PUT | `/api/novels/{nid}/experimental/audiobook/plans/{rid}/segments/{sid}/audio` | `app/experimental/audiobook_api.py:65` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/novels/{nid}/experimental/branch-manuscript/chapters/{cid}` | `app/experimental/branch_manuscript_api.py:160` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/novels/{nid}/experimental/change-impact/locks` | `app/experimental/change_impact_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| PUT | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}` | `app/experimental/comic_layouts_api.py:62` | FULL_RECOVERY_ADDED_ROUTE |
+| PUT | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}` | `app/experimental/comic_layouts_api.py:62` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}` | `app/experimental/comic_layouts_api.py:94` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/novels/{nid}/experimental/creative/documents/{rid}` | `app/creative/api.py:128` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/novels/{nid}/experimental/declarative-agents/definitions/{rid}` | `app/experimental/declarative_agents_api.py:47` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -2380,7 +2380,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | PUT | `/api/v1/novels/{nid}/experimental/audiobook/plans/{rid}/segments/{sid}/audio` | `app/experimental/audiobook_api.py:65` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters/{cid}` | `app/experimental/branch_manuscript_api.py:160` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/v1/novels/{nid}/experimental/change-impact/locks` | `app/experimental/change_impact_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| PUT | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}` | `app/experimental/comic_layouts_api.py:62` | FULL_RECOVERY_ADDED_ROUTE |
+| PUT | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}` | `app/experimental/comic_layouts_api.py:62` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}` | `app/experimental/comic_layouts_api.py:94` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}` | `app/creative/api.py:128` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/v1/novels/{nid}/experimental/declarative-agents/definitions/{rid}` | `app/experimental/declarative_agents_api.py:47` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
