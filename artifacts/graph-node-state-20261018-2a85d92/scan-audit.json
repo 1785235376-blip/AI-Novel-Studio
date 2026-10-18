@@ -1,0 +1,67 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "58ee22bc4e9a2463e11e4599ac7bc898bd784268",
+      "path": "docs/GRAPH_NODE_STATE_IMPACT_PREVIEW.md",
+      "bytes": 1775,
+      "sha256": "dec5f65fc0947dff8fb8cbaebf0fb4c6587004cffdb8b70c523f28881d67bec9"
+    },
+    {
+      "blob": "5b9ee2aebf4e9b062f1c2d51b533dc8869c7aa21",
+      "path": "docs/delivery/v2-development/graph-node-state-ui.json",
+      "bytes": 700933,
+      "sha256": "f2576cec17663971383dcc210b546b8ae78c8b90ae5f9ee295a25f8b6c6e1103"
+    },
+    {
+      "blob": "086d5a05d53d9970945b6584d1912264e49aa7ea",
+      "path": "docs/delivery/v2-development/graph-node-state-ui.log",
+      "bytes": 2204,
+      "sha256": "76dc3cf4ae8d6afd7d7598a40cb29a78afea99d31ae32e64a720f36ea18f6633"
+    },
+    {
+      "blob": "5fb76a0a3a8c0e8657fe604e721bde1553026f41",
+      "path": "docs/v2/MASTER_ROADMAP_SOURCE_RECONCILIATION_20261018.md",
+      "bytes": 4045,
+      "sha256": "afae328d6e59a70da20ffd7301e21098a651fc8d768153ebf999cf5d6e00983e"
+    },
+    {
+      "blob": "40f916b3547dac1bd0fb53e2f400b33b1f50667e",
+      "path": "frontend/src/creative/GraphNodeStateControl.additive.test.tsx",
+      "bytes": 6303,
+      "sha256": "4291f4790d7c41a57d2fabfe2f677fe13a78fdfe4ecff94abcc4e7640374ae51"
+    },
+    {
+      "blob": "6c607ee58765cf9d8ff61e2226d5e39d367830b4",
+      "path": "frontend/src/creative/GraphNodeStateControl.tsx",
+      "bytes": 3682,
+      "sha256": "f9285440aed57dd1f305ebf25dce6bb2f5bb43f37a7512d577136ca3f6364600"
+    },
+    {
+      "blob": "0cb8fd32b77a6f1a5e91dae22b2698dc18c07747",
+      "path": "frontend/src/creative/graphDisconnectImpact.ts",
+      "bytes": 972,
+      "sha256": "121f15018fc740b830128d018271cfc672735a09c48a0617217d8e75a09f6136"
+    },
+    {
+      "blob": "a544fb29a1660f70972b5a0977ca3148be9eb40e",
+      "path": "frontend/src/creative/graphNodeStateImpact.ts",
+      "bytes": 2106,
+      "sha256": "5fa77bcb6f1ad626323ca2ee570d2d4e323943b63d2f34ebabfcd69367e17e71"
+    },
+    {
+      "blob": "1cfbe36883102899c61bb4af6e425db2c50c5c61",
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "bytes": 57007,
+      "sha256": "8058d61d33221ee6d297e0b8cda8f4093e17f7a6ff7dbf6a0c762f4810db2165"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
