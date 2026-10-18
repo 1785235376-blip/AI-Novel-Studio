@@ -1,0 +1,28 @@
+{
+  "observed_utc": "2026-10-18T11:11:26Z",
+  "product_head": "49ef1caaf401a2ca43d4b6d7aeed9490fcba4664",
+  "upstream_pr48_head": "58bbaad11360330d51f49fc2bb78a955a26469f0",
+  "direct_ancestry": false,
+  "patch_equivalent_commits": [
+    "cb7ccded938f60a8b5f936061a742e7bb848c4e8",
+    "2163ec11494be9c0d1a58ba4e14c2ff5b9d2d307",
+    "6822b894ad6891308f84e1e8c118d665141d5fc3",
+    "5833e3f122234b60930545cb78717a05bccb768d",
+    "26d9e00bbbabafad4085dc04330be9bf42e0b325",
+    "2a2e9a0bb8500932ef4e036255afd23a04e1df78",
+    "58bbaad11360330d51f49fc2bb78a955a26469f0"
+  ],
+  "identical_tree_local_ancestors": [
+    {
+      "upstream_commit": "fa658666869a48a7c1f9a3e46c896ce8bb8a6e79",
+      "local_ancestor": "28bf733def23f0541e5a053c552bc87145f5465a",
+      "identical_tree": "7221f5a2af2187770d75fb5cf68c3ec6fe131d19"
+    },
+    {
+      "upstream_commit": "aa95c407a42252a1ccd6f060b343c2be2f31c049",
+      "local_ancestor": "953fcbe75e622838e934dcc7b73ddb4515d3e3cd",
+      "identical_tree": "b80bfe91b285ce09c930b1835415233ffe6add5e"
+    }
+  ],
+  "boundary": "Source-history equivalence only. Current product has later changes. No new functional acceptance, PR update, merge or force push."
+}
