@@ -394,8 +394,8 @@ Product 35d9167f63cc462052fcff3b30445a76654b95e8 adds exact saved dialogue → o
 
 Prior source 9a3b3a51 archived as 0ea2c08e889dd7aba5d0df68d0ae944289c33e2a, exact parent ce99a289: 14 artifacts / 5,565,777 bytes verified. Current independent Comic PDF slice remains unintegrated.
 
-##21:43 UTC bounded Comic PDF reading copy
+## 21:43 UTC bounded Comic PDF reading copy
 
-Product 36a2ff56f81d03b04dc76ecb62b1f2f6cce6381d adds exact-pinned ordered raster PDF, explicit DPI and disclosed roughly2.7M aggregate-pixel limit. File150, realPG143 with exact14-table cleanup, UI317 in18suites, TS/build/token and PUBLIC6 pass. All3150 final source hashes match. Poppler26.05.0 independently rendered3 synthetic original-owner pages: dimensions match,CJK legible; rendering is not pixel-exact. See docs/delivery/v2-development/comic-pdf-integration-20261018.md. Windows/browser/print/fullV2 acceptance remains open.
+Product 36a2ff56f81d03b04dc76ecb62b1f2f6cce6381d adds exact-pinned ordered raster PDF, explicit DPI and disclosed roughly 2.7M aggregate-pixel limit. File 150, real PG 143 with exact 14-table cleanup, UI 317 in 18 suites, TS/build/token and PUBLIC 6 pass. All 3150 final source hashes match. Poppler 26.05.0 independently rendered 3 synthetic original-owner pages: dimensions match, CJK legible; rendering is not pixel-exact. See docs/delivery/v2-development/comic-pdf-integration-20261018.md. Windows/browser/print/full V2 acceptance remains open.
 
-Prior source6daeac8f archived as7897be0666d3fa86bd75b8023e6f393446d4e70d, parent0ea2c08e:14artifacts/5568770bytes verified. Local-text selective Graph cache reuse is independent ongoing work, unintegrated.
+Prior source 6daeac8f archived as 7897be0666d3fa86bd75b8023e6f393446d4e70d, parent 0ea2c08e: 14 artifacts / 5,568,770 bytes verified. Local-text selective Graph cache reuse is independent ongoing work, unintegrated.
