@@ -1,5 +1,13 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Independent screenplay private lifecycle (2026-10-18 02:36 UTC)
+
+The explicit screenplay preview now feeds the original private Job/broker/coordinator path under its V2 source discriminator. Frozen scene/note associations survive preview clearing and are validated again against the exact original source. Original persisted terminal evidence accepts the discriminated V1 storyboard or V2 screenplay identity without relaxing either pair. Exact historical completion can publish pending candidates, reopen under fresh Host authority after restart, accept explicit human edits, save an original Director DRAFT and reopen it. Existing source/incarnation, host, local known-zero provider, reservation, digest and no-replay protections remain in the original owners.
+
+A new actual File lifecycle test exercised all those steps with fixture adapter output, one invocation and one ledger entry. It is not live-model quality or browser acceptance. Focused new and relevant unchanged binding/persistence/pending-review/HTTP checks:283 PASS,57 SKIPPED (environment-gated cases, not acceptance). Earlier21 targeted checks PASS. Full suite/build/TypeScript were not repeated for this backend-only slice.
+
+Public model-v1 adapters now explicitly reject a V2 source before side effects; they do not mislabel screenplay prompts as STORYBOARD. The old V1 binding schema remains STORYBOARD-only. The next slice must expose a versioned screenplay transport and reuse the existing review UI/client with exact discriminated receipts. Generic SCRIPT remains separate. No end-user screenplay UI completion claim yet.
+
 ## Explicit private screenplay preview precursor (2026-10-18 02:31 UTC)
 
 The original Director coordinator now has an explicit internal screenplay-preview method using a separate passive CREATIVE_DIRECTOR_SCREENPLAY_SOURCE_V2 binding. It retains original Host/actor checks, original source/incarnation leases and original local known-zero broker preview. Exact scene/note associations are frozen inside the preview digest before the existing preview transition clears candidate notes. No model is called, no job is admitted, and execution_available is explicitly false. Legacy job binding, dispatcher, transport and UI remain STORYBOARD-only. Public proposal projection keeps private prompt/model state hidden using the existing MODEL_UNAVAILABLE projection.

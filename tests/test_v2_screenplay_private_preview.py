@@ -1,4 +1,4 @@
-"""Real original File/broker preview only; dispatch deliberately unavailable."""
+"""Original File/broker preview with unchanged V1 public transport boundary."""
 import json
 import pytest
 from creative_director_execution_fixture import lifecycle, raw_proposal
@@ -37,14 +37,12 @@ def test_explicit_original_preview_binds_scene_ids_before_notes_clear(lifecycle)
     assert not e.manager.jobs
     # No accidental activation of old dispatcher or public proposal projection.
     with pytest.raises(ValueError):
-        e.coordinator._dispatch_independent(e.ctx,e.row['id'], {
-            'expected_version': stored['version'], 'reviewed_preview_digest': p['preview_digest']},
-            e.guard,host_authority=e.authority)
+        e.coordinator._require_independent_transport_v1(e.ctx, e.row['id'])
     public = e.documents.proposals.get(e.nid,e.scope,e.actor,e.row['id'])
     assert public['status'] == 'MODEL_UNAVAILABLE'
     assert public['model_preview'] is None and public['model_execution'] is None
     assert public['director_notes'] == [] and 'provenance' not in public
-    assert p['execution_available'] is False
+    assert p['execution_available'] is True
     assert not e.manager.jobs
 
 

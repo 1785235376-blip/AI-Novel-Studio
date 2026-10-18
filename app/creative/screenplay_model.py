@@ -30,7 +30,7 @@ class DirectorScreenplaySceneOutput(StrictCreativeModel):
     director_notes: list[DirectorScreenplaySceneNote] = Field(min_length=1, max_length=200)
 
 
-def screenplay_source_mapping(row, source):
+def screenplay_source_mapping(row, source, *, frozen_mapping=None):
     """Bind one existing proposal note per exact authored scene, without IDs minted.
 
     Caller supplies an original-owner snapshot, not request data. This function
@@ -54,6 +54,17 @@ def screenplay_source_mapping(row, source):
         raise ValueError("CREATIVE_MODEL_SCREENPLAY_SOURCE_MISMATCH")
     scenes = sorted(authored.scenes, key=lambda scene: scene.sequence)
     notes = row.get("director_notes")
+    if frozen_mapping is not None:
+        if not isinstance(frozen_mapping, list) or len(frozen_mapping) != len(scenes):
+            raise ValueError("CREATIVE_MODEL_SCREENPLAY_ASSOCIATION_CHANGED")
+        notes = []
+        for number, (item, scene) in enumerate(zip(frozen_mapping, scenes), 1):
+            if (not isinstance(item, dict) or set(item) != {"note_id", "scene_id", "source_sequence", "number"}
+                    or type(item["source_sequence"]) is not int or item["source_sequence"] != scene.sequence
+                    or type(item["number"]) is not int or item["number"] != number
+                    or item["scene_id"] != scene.id):
+                raise ValueError("CREATIVE_MODEL_SCREENPLAY_ASSOCIATION_CHANGED")
+            notes.append({"id": item["note_id"], "scene_id": item["scene_id"], "number": number})
     if not isinstance(notes, list) or len(notes) != len(scenes):
         raise ValueError("CREATIVE_MODEL_SCREENPLAY_ASSOCIATION_CHANGED")
     mapping = []
@@ -88,9 +99,13 @@ def screenplay_prompt_data(row, source):
     return data
 
 
-def parse_screenplay_output(row, source, output, *, max_output_bytes=128_000):
-    mapping = screenplay_source_mapping(row, source)
+def parse_screenplay_output(row, source, output, *, max_output_bytes=128_000, frozen_mapping=None):
     raw = _decode_director_output(output, max_output_bytes=max_output_bytes)
+    return validate_screenplay_output(row, source, raw, frozen_mapping=frozen_mapping)
+
+
+def validate_screenplay_output(row, source, raw, *, frozen_mapping=None):
+    mapping = screenplay_source_mapping(row, source, frozen_mapping=frozen_mapping)
     parsed = DirectorScreenplaySceneOutput.model_validate(raw, strict=True)
     if (parsed.source_document_id != source["id"] or parsed.source_version != source["version"]
             or parsed.source_digest != row["source_digest"]):

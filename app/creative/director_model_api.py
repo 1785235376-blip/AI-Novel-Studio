@@ -17,6 +17,7 @@ def create_director_model_router(service, invoke, *, require_host_session, model
 
     def action(request, nid, token, branch, rid, method, body=None):
         def operation(generation, ctx, current, authority):
+            generation._require_independent_transport_v1(ctx, rid)
             # Durable terminal evidence is currently implemented by the File
             # owner only. Reject unsupported backends before preview writes.
             generation._pending_repository()

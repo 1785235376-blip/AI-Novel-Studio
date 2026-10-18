@@ -458,13 +458,15 @@ class DirectorModelCoordinator:
             raise ValueError("CREATIVE_DIRECTOR_HOST_AUTHORITY_REQUIRED")
         host_authority.guard()
 
-    def _independent_binding(self, ctx, rid, reviewed_preview_digest="0" * 64, *, screenplay=False):
+    def _independent_binding(self, ctx, rid, reviewed_preview_digest="0" * 64, *, screenplay=None):
         from .director_binding import CreativeDirectorBinding, CreativeDirectorScreenplayBinding
-        if type(screenplay) is not bool:
+        if screenplay is not None and type(screenplay) is not bool:
             raise ValueError("CREATIVE_DIRECTOR_SOURCE_OPTION_INVALID")
         # Raw read never provisions a missing Creative File marker.
         state = self.store.store.read(ctx.novel_id, ctx.scope)
         row = self.proposals._owned(ctx.novel_id, ctx.scope, ctx.actor, rid, state)
+        if screenplay is None:
+            screenplay = ((row.get("model_preview") or {}).get("source_binding") or {}).get("contract") == "CREATIVE_DIRECTOR_SCREENPLAY_SOURCE_V2"
         model = CreativeDirectorScreenplayBinding if screenplay else CreativeDirectorBinding
         return model(contract="CREATIVE_DIRECTOR_SCREENPLAY_SOURCE_V2" if screenplay else "CREATIVE_DIRECTOR_SOURCE_V1",
             source_kind="SCREENPLAY" if screenplay else "STORYBOARD",
@@ -549,7 +551,7 @@ class DirectorModelCoordinator:
             host_authority=host_authority, output_contract=STORYBOARD_CONTRACT)
 
     def _preview_independent_screenplay(self, ctx, rid, value, guard, *, host_authority):
-        """Internal explicit preview precursor; no V1 dispatch/read compatibility."""
+        """Internal explicit screenplay preview; public V1 transport remains separate."""
         from .screenplay_model import SCREENPLAY_CONTRACT
         return self._preview_independent_contract(ctx, rid, value, guard,
             host_authority=host_authority, output_contract=SCREENPLAY_CONTRACT)
@@ -629,7 +631,7 @@ class DirectorModelCoordinator:
                 # Preview clears candidate notes below. Freeze the exact scene/
                 # note association in its digest, never reconstruct by new IDs.
                 preview["source_mapping"] = deepcopy(data["source_mapping"])
-                preview["execution_available"] = False
+                preview["execution_available"] = True
         preview["preview_digest"] = digest(preview)
         # Original Creative transaction retains its original history/incarnation.
         with self._independent_transaction(ctx, binding) as raw:
@@ -668,7 +670,8 @@ class DirectorModelCoordinator:
         with self._independent_checkpoint(ctx, rid, guard, host_authority, binding) as (row, _):
             self._independent_version(row, body.expected_version)
             preview = deepcopy(row.get("model_preview"))
-            if (not preview or preview.get("contract") != CREATIVE_DIRECTOR_INTERNAL_CONTRACT
+            if (not preview or preview.get("execution_available") is not True
+                    or preview.get("contract") != CREATIVE_DIRECTOR_INTERNAL_CONTRACT
                     or preview.get("host_principal") != host_authority.principal
                     or preview.get("preview_digest") != body.reviewed_preview_digest
                     or digest({key: val for key, val in preview.items() if key != "preview_digest"}) != body.reviewed_preview_digest
@@ -911,13 +914,46 @@ class DirectorModelCoordinator:
         finally:
             condition.release()
 
+    @staticmethod
+    def _independent_source_contract(mode):
+        if mode == "STORYBOARD": return STORYBOARD_CONTRACT
+        if mode == "SCREENPLAY":
+            from .screenplay_model import SCREENPLAY_CONTRACT
+            return SCREENPLAY_CONTRACT
+        raise ValueError("CREATIVE_MODEL_SOURCE_CONTRACT_MISMATCH")
+
+    @staticmethod
+    def _independent_mapping(row, source):
+        if source["mode"] == "STORYBOARD": return source_mapping(row, source)
+        from .screenplay_model import screenplay_source_mapping, SCREENPLAY_CONTRACT
+        preview = row.get("model_preview") or {}
+        if preview.get("output_contract") != SCREENPLAY_CONTRACT or not isinstance(preview.get("source_mapping"), list):
+            raise ValueError("CREATIVE_MODEL_SCREENPLAY_ASSOCIATION_CHANGED")
+        return screenplay_source_mapping(row, source, frozen_mapping=preview["source_mapping"])
+
+    @staticmethod
+    def _independent_parse_output(row, source, output):
+        if source["mode"] == "STORYBOARD":
+            return _parse_director_output(row, source, output, max_output_bytes=MAX_OUTPUT_BYTES)
+        from .screenplay_model import parse_screenplay_output
+        mapping = DirectorModelCoordinator._independent_mapping(row, source)
+        return parse_screenplay_output(row, source, output, max_output_bytes=MAX_OUTPUT_BYTES, frozen_mapping=mapping)
+
+    def _require_independent_transport_v1(self, ctx, rid):
+        row = self.proposals._owned(ctx.novel_id, ctx.scope, ctx.actor, rid)
+        preview = row.get("model_preview")
+        if preview is not None:
+            binding = preview.get("source_binding") or {}
+            if binding.get("contract") != "CREATIVE_DIRECTOR_SOURCE_V1" or binding.get("source_kind") != "STORYBOARD":
+                raise ValueError("DIRECTOR_MODEL_TRANSPORT_SOURCE_VERSION_UNSUPPORTED")
+
     def _independent_candidates_locked(self, ctx, rid, row, source, guard, host_authority):
         """Read only through the original live result seam; never trust a receipt."""
         preview = row.get("model_preview") or {}
-        if preview.get("output_contract") != STORYBOARD_CONTRACT:
+        if preview.get("output_contract") != self._independent_source_contract(source["mode"]):
             raise ValueError("CREATIVE_DIRECTOR_REVIEW_OUTPUT_CONTRACT_REQUIRED")
         result = self._read_independent_result(ctx, rid, guard, host_authority=host_authority)
-        notes = _parse_director_output(row, source, result["text"], max_output_bytes=MAX_OUTPUT_BYTES)
+        notes = self._independent_parse_output(row, source, result["text"])
         output_digest = director_output_digest(notes, row.get("visual_target"))
         job = self.manager.get(result["job_id"])
         route = self._independent_policy(ctx, preview)
@@ -926,9 +962,9 @@ class DirectorModelCoordinator:
             "model_version": route.get("identity", {}).get("model_version"),
             "route_fingerprint": route["fingerprint"],
             "synthetic": route["synthetic"], "parameters": deepcopy(preview["parameters"]),
-            "source_mode": "STORYBOARD", "source_document_id": source["id"],
+            "source_mode": source["mode"], "source_document_id": source["id"],
             "source_version": source["version"], "source_digest": row["source_digest"],
-            "source_mapping": source_mapping(row, source), "job_id": result["job_id"],
+            "source_mapping": DirectorModelCoordinator._independent_mapping(row, source), "job_id": result["job_id"],
             "reservation_id": result["accounting"]["id"], "request_digest": result["request_digest"],
             "preview_digest": result["preview_digest"],
             "raw_output_digest": hashlib.sha256(result["text"].encode("utf-8")).hexdigest(),
@@ -1062,7 +1098,7 @@ class DirectorModelCoordinator:
         from ..model_execution import creative_director_request_payload_digest
         preview, execution = row.get("model_preview") or {}, row.get("model_execution") or {}
         if (preview.get("contract") != CREATIVE_DIRECTOR_INTERNAL_CONTRACT
-                or preview.get("output_contract") != STORYBOARD_CONTRACT
+                or preview.get("output_contract") != self._independent_source_contract(binding.source_kind)
                 or preview.get("preview_digest") != digest({key: value for key, value in preview.items() if key != "preview_digest"})
                 or preview.get("visual_target") != row.get("visual_target")):
             raise ValueError("CREATIVE_DIRECTOR_PENDING_PREVIEW_CHANGED")
@@ -1083,7 +1119,7 @@ class DirectorModelCoordinator:
                 or canonical(evidence["source_binding"]) != canonical(binding.model_dump())
                 or admission != {"proposal_id": row["id"], "proposal_version": admitted_version,
                     "preview_id": preview["broker_preview_id"], "preview_version": preview["broker_preview_version"],
-                    "preview_digest": preview["preview_digest"], "output_contract": STORYBOARD_CONTRACT}
+                    "preview_digest": preview["preview_digest"], "output_contract": self._independent_source_contract(binding.source_kind)}
                 or route["route_id"] != preview["route_id"]
                 or route["fingerprint"] != preview["route_fingerprint"]
                 or route["binding_hash"] != preview["route_binding_hash"]
@@ -1133,9 +1169,9 @@ class DirectorModelCoordinator:
             "provider_id": evidence["route"]["provider_id"], "model_id": evidence["route"]["model_id"],
             "model_version": route.get("identity", {}).get("model_version"),
             "route_fingerprint": evidence["route"]["fingerprint"], "synthetic": evidence["route"]["synthetic"],
-            "parameters": deepcopy(evidence["route"]["parameters"]), "source_mode": "STORYBOARD",
+            "parameters": deepcopy(evidence["route"]["parameters"]), "source_mode": source["mode"],
             "source_document_id": source["id"], "source_version": source["version"],
-            "source_digest": row["source_digest"], "source_mapping": source_mapping(row, source),
+            "source_digest": row["source_digest"], "source_mapping": DirectorModelCoordinator._independent_mapping(row, source),
             "job_id": evidence["job_id"], "reservation_id": evidence["accounting"]["reservation_id"],
             "request_digest": evidence["request_digest"], "preview_digest": evidence["admission"]["preview_digest"],
             "raw_output_digest": evidence["output_digest"], "candidate_output_digest": output_digest,
@@ -1155,16 +1191,21 @@ class DirectorModelCoordinator:
         source, route = self._pending_current(ctx, row, binding, guard, host_authority)
         _, evidence = self._pending_history(ctx, row, binding, repository,
             admitted_version=pending["admitted_version"], require_output=False)
-        mapping = source_mapping(row, source)
+        mapping = DirectorModelCoordinator._independent_mapping(row, source)
         notes = row.get("director_notes")
         if not isinstance(notes, list) or len(notes) != len(mapping):
             raise ValueError("CREATIVE_DIRECTOR_PENDING_CANDIDATES_CHANGED")
         # Revalidate saved parsed schema and scene evidence without retaining
         # a second raw-output string or requiring the original output to remain.
-        parsed = _validate_director_output(row, source, {"source_contract": STORYBOARD_CONTRACT,
+        candidate_raw = {"source_contract": self._independent_source_contract(source["mode"]),
             "source_document_id": source["id"], "source_version": source["version"], "source_digest": row["source_digest"],
-            "director_notes": [{**note, "source_shot_id": association["source_shot_id"]}
-                for note, association in zip(notes, mapping)]})
+            "director_notes": [{**note, **({"source_shot_id": association["source_shot_id"]}
+                if source["mode"] == "STORYBOARD" else {})} for note, association in zip(notes, mapping)]}
+        if source["mode"] == "SCREENPLAY":
+            from .screenplay_model import validate_screenplay_output
+            parsed = validate_screenplay_output(row, source, candidate_raw, frozen_mapping=mapping)
+        else:
+            parsed = _validate_director_output(row, source, candidate_raw)
         output_digest = director_output_digest(parsed, row.get("visual_target"))
         provenance = self._pending_provenance(row, source, route, evidence, output_digest)
         if (canonical(parsed) != canonical(notes) or pending["output_digest"] != output_digest
@@ -1212,7 +1253,7 @@ class DirectorModelCoordinator:
                         or route["provider_id"] != evidence["route"]["provider_id"]
                         or route["model_id"] != evidence["route"]["model_id"]):
                     raise ValueError("CREATIVE_DIRECTOR_PENDING_ROUTE_CHANGED")
-                notes = _parse_director_output(row, source, saved["output"], max_output_bytes=MAX_OUTPUT_BYTES)
+                notes = self._independent_parse_output(row, source, saved["output"])
                 output_digest = director_output_digest(notes, row.get("visual_target"))
                 provenance = self._pending_provenance(row, source, route, evidence, output_digest)
                 pending = validate_pending({"contract": PENDING_CONTRACT, "schema_version": 1,
@@ -1311,7 +1352,7 @@ class DirectorModelCoordinator:
         preview = row.get("model_preview") or {}
         unreviewed = binding.model_dump(); unreviewed["reviewed_preview_digest"] = "0" * 64
         if (preview.get("contract") != CREATIVE_DIRECTOR_INTERNAL_CONTRACT
-                or preview.get("output_contract") != STORYBOARD_CONTRACT
+                or preview.get("output_contract") != self._independent_source_contract(binding.source_kind)
                 or preview.get("allow_synthetic") is not False or route["synthetic"] is not False
                 or preview.get("preview_digest") != digest({k: v for k, v in preview.items() if k != "preview_digest"})
                 or canonical(preview.get("source_binding")) != canonical(unreviewed)

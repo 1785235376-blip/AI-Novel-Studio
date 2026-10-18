@@ -96,6 +96,7 @@ def create_director_observation_router(service, invoke, *, require_host_session,
 
     def observe(request, nid, token, branch, rid, action, body=None):
         def operation(generation, ctx, current, authority):
+            generation._require_independent_transport_v1(ctx, rid)
             if action == "status":
                 raw = generation._read_independent_status(ctx, rid, current, host_authority=authority)
                 return StatusReceipt.model_validate(raw).model_dump()

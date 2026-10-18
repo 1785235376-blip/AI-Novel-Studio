@@ -64,9 +64,12 @@ class CreativeDirectorBinding(_Frozen):
 
 
 class CreativeDirectorScreenplayBinding(CreativeDirectorBinding):
-    """Explicit passive V2 source; legacy job admission remains V1-only."""
+    """Explicit V2 source; V1 discriminator remains STORYBOARD-only."""
     contract: Literal["CREATIVE_DIRECTOR_SCREENPLAY_SOURCE_V2"]
     source_kind: Literal["SCREENPLAY"]
+
+
+CreativeDirectorSourceBinding = Annotated[CreativeDirectorBinding | CreativeDirectorScreenplayBinding, Field(discriminator="contract")]
 
 
 def _passive_source_binding(value):
@@ -87,7 +90,7 @@ def is_creative_director_job(value):
 def creative_director_job_binding(item, *, require_request_digest=True):
     """Validate passive identity and digest syntax, not payload equality/consent."""
     try:
-        binding = CreativeDirectorBinding.model_validate(item.get("creative_director_binding"))
+        binding = _passive_source_binding(item.get("creative_director_binding"))
         if (item.get("operation") != CREATIVE_DIRECTOR_OPERATION
                 or item.get("experimental_origin") != CREATIVE_DIRECTOR_ORIGIN
                 or item.get("chapter_id") is not None

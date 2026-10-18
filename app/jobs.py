@@ -494,11 +494,11 @@ class JobManager:
             prompt, max_output_bytes, deadline, synthetic_allowed, max_output_tokens=512, temperature=0.0):
         """Closed original coordinator seam; never called by Author/Graph/public routes."""
         from copy import deepcopy
-        from .creative.director_binding import CreativeDirectorBinding, CREATIVE_DIRECTOR_ORIGIN, CREATIVE_DIRECTOR_OPERATION
+        from .creative.director_binding import _passive_source_binding, CREATIVE_DIRECTOR_ORIGIN, CREATIVE_DIRECTOR_OPERATION
         from .model_execution import _CreativeDirectorCapability, LocalModelInvocation, PreparedTextInvocation, graph_prompt_digest
         if type(capability) is not _CreativeDirectorCapability or capability.manager is not self:
             raise ValueError("CREATIVE_DIRECTOR_EXECUTION_UNAVAILABLE")
-        binding = CreativeDirectorBinding.model_validate(request_binding)
+        binding = _passive_source_binding(request_binding)
         capability.host.guard(); capability.preparation()
         for flag in GENERATION_ORIGINS[CREATIVE_DIRECTOR_ORIGIN]:
             from .experimental.flags import require_flag

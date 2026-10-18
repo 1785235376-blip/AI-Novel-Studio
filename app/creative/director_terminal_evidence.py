@@ -18,7 +18,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from .director_binding import CreativeDirectorBinding, creative_director_job_binding
+from .director_binding import CreativeDirectorSourceBinding, creative_director_job_binding
 
 FIELD = "_creative_director_terminal_evidence"
 CONTRACT = "CREATIVE_DIRECTOR_TERMINAL_HISTORY_V1"
@@ -86,7 +86,7 @@ class TerminalEvidence(_Strict):
     job_id: str
     operation: Literal["creative_director_text"]
     origin: Literal["creative_director_source_model"]
-    source_binding: CreativeDirectorBinding
+    source_binding: CreativeDirectorSourceBinding
     request_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
     output_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
     output_bytes: int = Field(ge=1, le=128000)

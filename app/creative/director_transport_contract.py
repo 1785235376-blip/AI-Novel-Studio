@@ -101,6 +101,8 @@ def project_preview(row):
     preview = row['model_preview']
     route = preview['broker_decision']['chosen']
     binding = preview['source_binding']
+    if binding.get('contract') != 'CREATIVE_DIRECTOR_SOURCE_V1' or binding.get('source_kind') != 'STORYBOARD':
+        raise ValueError('DIRECTOR_MODEL_TRANSPORT_SOURCE_VERSION_UNSUPPORTED')
     if preview['allow_synthetic'] is not False or route['synthetic'] is not False:
         raise ValueError('DIRECTOR_MODEL_NON_SYNTHETIC_REQUIRED')
     return PreviewReceipt(proposal_id=row['id'], version=row['version'],
