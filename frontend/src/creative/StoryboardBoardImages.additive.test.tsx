@@ -135,6 +135,6 @@ describe('existing CreativeCanvas integration, without browser visual acceptance
     expect(screen.getAllByLabelText('分镜画布')).toHaveLength(1); expect(screen.getByLabelText('画面描述').closest('fieldset')?.disabled).toBe(true);
     expect(screen.getByRole('button', { name: '后移镜头 1' }).hasAttribute('disabled')).toBe(true); expect(screen.getByText('未绑定正式图片')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: /SHOT 02/ })); expect(within(comparison).getByText('Saved frame 2')).toBeTruthy(); expect(within(comparison).queryByRole('img')).toBeNull(); expect(changed).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole('button', { name: '镜头列表', exact: true })); expect(screen.queryByRole('img')).toBeNull(); expect(revokeUrl).toHaveBeenCalledTimes(2);
+    fireEvent.click(screen.getByRole('button', { name: /^镜头列表$/ })); expect(screen.queryByRole('img')).toBeNull(); expect(revokeUrl).toHaveBeenCalledTimes(2);
   });
 });

@@ -1,0 +1,54 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-storyboard-images-verified/frontend
+
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 5119ms
+   ✓ creative workspace protected manuscript and request boundaries > reloads saved content after confirmed discard and immediate workbench reopen 424ms
+   ✓ creative workspace protected manuscript and request boundaries > does not replace a blocked dirty draft when a recovery reread discovers its uncertain creation 367ms
+   ✓ creative workspace protected manuscript and request boundaries > requires explicit server-version adoption and preserves the draft when adoption is cancelled 349ms
+   ✓ creative workspace protected manuscript and request boundaries > reorders storyboard shots without replacing their identities and saves their new sequence 306ms
+ ✓ src/creative/CreativeWorkspace.saveState.regression.test.tsx (26 tests) 6090ms
+   ✓ Creative current document save-state ownership > hydrates a fresh saved document without inventing dirty content or a write 345ms
+   ✓ Creative current document save-state ownership > treats identical nested objects as clean when their server key order differs from the editor order 311ms
+   ✓ Creative current document save-state ownership > does not let an exact title undo hide a different unsaved nested scene change 303ms
+   ✓ Creative current document save-state ownership > adopts the actual normalized server response as both input and CAS base after saving 451ms
+   ✓ Creative current document save-state ownership > keeps the exact draft blocked after network failure until explicit original-server adoption 388ms
+   ✓ Creative current document save-state ownership > keeps the exact draft blocked after conflict failure until explicit original-server adoption 401ms
+ ✓ src/creative/CreativeAuthoringFields.test.tsx (12 tests) 1975ms
+   ✓ Full-document authoring uses the original save and history flow > updates all preserved content once with expected_version, reopens it, and restores previous genre/time as a new version 513ms
+   ✓ Full-document authoring uses the original save and history flow > retains genre/time on a save conflict until explicit server replacement 405ms
+ ✓ src/creative/StoryboardBoardImages.additive.test.tsx (24 tests) 1726ms
+   ✓ existing CreativeCanvas integration, without browser visual acceptance > renders actual image elements on existing cards and compares saved text while preserving read-only authoring 345ms
+ ✓ src/creative/GenericScriptWorkspace.test.tsx (9 tests) 1655ms
+   ✓ standalone Script uses original Creative workspace > creates an explicitly independent script in the existing five-stage shell 477ms
+ ✓ src/creative/CreativeWorkspace.storyboardIntake.additive.test.tsx (9 tests) 1216ms
+ ✓ src/creative/CreativeStoryboardContinuity.phase4.test.tsx (4 tests) 466ms
+ ✓ src/creative/CreativeProductionCanvas.test.tsx (3 tests) 391ms
+ ✓ src/creative/storyboardImagePreview.additive.test.ts (78 tests) 174ms
+ ✓ src/creative/storyboardImageRaster.additive.test.ts (63 tests) 185ms
+ ✓ src/creative/CreativeWorkspace.productionSaveState.regression.test.tsx (1 test) 347ms
+   ✓ keeps real production dirty protection without labelling an unsubmitted production draft as saving 346ms
+ ✓ src/creative/studioClient.test.ts (38 tests) 22ms
+ ✓ src/creative/studioStoryboardContract.phase4.test.ts (52 tests) 40ms
+ ✓ src/creative/studioProductionGraphClient.test.ts (17 tests) 21ms
+ ✓ src/creative/studioClient.boundedDownload.additive.test.ts (38 tests) 93ms
+ ✓ src/creative/studioStoryboardContinuityFields.additive.test.ts (6 tests) 17ms
+
+ Test Files  16 passed (16)
+      Tests  409 passed (409)
+   Start at  02:56:42
+   Duration  16.04s (transform 1.86s, setup 84ms, collect 6.17s, tests 19.54s, environment 3.02s, prepare 847ms)
+
+src/creative/StoryboardBoardImages.additive.test.tsx(138,64): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(role: ByRoleMatcher, options?: ByRoleOptions | undefined): HTMLElement', gave the following error.
+    Object literal may only specify known properties, and 'exact' does not exist in type 'ByRoleOptions'.
+  Overload 2 of 2, '(role: ByRoleMatcher, options?: ByRoleOptions | undefined): HTMLElement', gave the following error.
+    Object literal may only specify known properties, and 'exact' does not exist in type 'ByRoleOptions'.
+src/creative/storyboardImagePreview.ts(107,93): error TS18048: 'same' is possibly 'undefined'.
+src/creative/storyboardImagePreview.ts(107,147): error TS2345: Argument of type 'StoryboardShot | undefined' is not assignable to parameter of type 'StoryboardShot'.
+  Type 'undefined' is not assignable to type 'StoryboardShot'.
+src/creative/storyboardImagePreview.ts(109,91): error TS18048: 'same' is possibly 'undefined'.
+src/creative/storyboardImagePreview.ts(116,18): error TS18048: 'same' is possibly 'undefined'.
+src/creative/storyboardImagePreview.ts(116,18): error TS18047: 'same.image_asset' is possibly 'null'.
+src/creative/storyboardImagePreview.ts(121,94): error TS18048: 'same' is possibly 'undefined'.
+src/creative/storyboardImagePreview.ts(121,148): error TS2345: Argument of type 'StoryboardShot | undefined' is not assignable to parameter of type 'StoryboardShot'.
+  Type 'undefined' is not assignable to type 'StoryboardShot'.

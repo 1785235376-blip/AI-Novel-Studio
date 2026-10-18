@@ -102,23 +102,24 @@ export async function renderStoryboardImage(blob: Blob, dimensions: { width: num
 export async function loadStoryboardImage(access: StoryboardImageAccess, receipt: StoryboardReceipt, row: StoryboardShot, size: 320 | 1024,
   current: () => boolean, signal: AbortSignal): Promise<Blob> {
   const same = receipt.shots.find(item => item.shot_id === row.shot_id);
-  if (receipt.document_snapshot.id !== access.document.id || receipt.document_snapshot.version !== access.document.version || !same || !same.image_asset || canonical(same) !== canonical(row)) sourceChanged();
+  if (receipt.document_snapshot.id !== access.document.id || receipt.document_snapshot.version !== access.document.version || !same || !same.image_asset || canonical(same) !== canonical(row)) return sourceChanged();
+  const image = same.image_asset;
   await verifyStoryboardImageDocument(access, current, signal);
-  const first = exactAsset(await boundedStoryboardRead(access, child => access.studio.asset(same.image_asset!.asset_id, child), current, signal), same, access);
+  const first = exactAsset(await boundedStoryboardRead(access, child => access.studio.asset(image.asset_id, child), current, signal), same, access);
   assertStoryboardImageCurrent(current, signal);
-  const blob = await boundedStoryboardRead(access, child => access.studio.downloadBounded(same.image_asset!.asset_id, STORYBOARD_IMAGE_BYTES, child), current, signal);
+  const blob = await boundedStoryboardRead(access, child => access.studio.downloadBounded(image.asset_id, STORYBOARD_IMAGE_BYTES, child), current, signal);
   assertStoryboardImageCurrent(current, signal);
   if (blob.size !== first.size || blob.type.toLowerCase() !== first.media_type) throw new StoryboardImageError('INTEGRITY', '图片字节数或格式与原资产不一致，未显示预览。');
   const bytes = new Uint8Array(await blob.arrayBuffer()); assertStoryboardImageCurrent(current, signal);
   if (!globalThis.crypto?.subtle) throw new StoryboardImageError('UNSUPPORTED', '当前浏览器无法核验图片内容摘要，预览已停止。');
   const digest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)), value => value.toString(16).padStart(2, '0')).join('');
   assertStoryboardImageCurrent(current, signal);
-  if (digest !== same.image_asset.digest) throw new StoryboardImageError('INTEGRITY', '图片内容摘要不一致，未显示预览。');
+  if (digest !== image.digest) throw new StoryboardImageError('INTEGRITY', '图片内容摘要不一致，未显示预览。');
   let dimensions: { width: number; height: number };
   try { dimensions = inspectStoryboardRaster(bytes, first.media_type); }
   catch { throw new StoryboardImageError('UNSUPPORTED', '图片不符合静态安全预览范围（每边最多 4096、总计 4,194,304 像素；动画、部分元数据和编码不支持）。没有转换或修改原图。'); }
   const rendered = await renderStoryboardImage(blob, dimensions, size, current, signal);
-  const second = exactAsset(await boundedStoryboardRead(access, child => access.studio.asset(same.image_asset!.asset_id, child), current, signal), same, access);
+  const second = exactAsset(await boundedStoryboardRead(access, child => access.studio.asset(image.asset_id, child), current, signal), same, access);
   assertStoryboardImageCurrent(current, signal);
   if (second.size !== first.size || second.media_type !== first.media_type) throw new StoryboardImageError('ASSET_CHANGED', '正式图片元数据已变化，请重新读取。');
   await verifyStoryboardImageDocument(access, current, signal);

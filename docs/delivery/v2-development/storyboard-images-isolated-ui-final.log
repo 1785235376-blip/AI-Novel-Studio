@@ -1,0 +1,64 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-storyboard-images-verified/frontend
+
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 4692ms
+   ✓ creative workspace protected manuscript and request boundaries > exposes all five keyboard-accessible modes while the manuscript stays mounted 336ms
+   ✓ creative workspace protected manuscript and request boundaries > requires explicit server-version adoption and preserves the draft when adoption is cancelled 334ms
+ ✓ src/creative/CreativeWorkspace.saveState.regression.test.tsx (26 tests) 5165ms
+   ✓ Creative current document save-state ownership > hydrates a fresh saved document without inventing dirty content or a write 400ms
+   ✓ Creative current document save-state ownership > names other-stage real dirty drafts while preserving the saved current document and the original exit guard 319ms
+   ✓ Creative current document save-state ownership > adopts the actual normalized server response as both input and CAS base after saving 379ms
+   ✓ Creative current document save-state ownership > keeps the exact draft blocked after network failure until explicit original-server adoption 306ms
+   ✓ Creative current document save-state ownership > keeps the exact draft blocked after conflict failure until explicit original-server adoption 302ms
+ ✓ src/creative/CreativeAuthoringFields.test.tsx (12 tests) 1765ms
+   ✓ Full-document authoring uses the original save and history flow > updates all preserved content once with expected_version, reopens it, and restores previous genre/time as a new version 474ms
+   ✓ Full-document authoring uses the original save and history flow > retains genre/time on a save conflict until explicit server replacement 391ms
+ ✓ src/creative/StoryboardBoardImages.additive.test.tsx (24 tests) 1738ms
+   ✓ existing CreativeCanvas integration, without browser visual acceptance > renders actual image elements on existing cards and compares saved text while preserving read-only authoring 353ms
+ ✓ src/creative/CreativeWorkspace.storyboardIntake.additive.test.tsx (9 tests) 1275ms
+ ✓ src/creative/GenericScriptWorkspace.test.tsx (9 tests) 1835ms
+   ✓ standalone Script uses original Creative workspace > creates an explicitly independent script in the existing five-stage shell 508ms
+ ✓ src/creative/CreativeStoryboardContinuity.phase4.test.tsx (4 tests) 422ms
+ ✓ src/creative/CreativeProductionCanvas.test.tsx (3 tests) 313ms
+ ✓ src/creative/storyboardImagePreview.additive.test.ts (78 tests) 173ms
+ ✓ src/creative/storyboardImageRaster.additive.test.ts (63 tests) 169ms
+ ✓ src/creative/CreativeWorkspace.productionSaveState.regression.test.tsx (1 test) 351ms
+   ✓ keeps real production dirty protection without labelling an unsubmitted production draft as saving 350ms
+ ✓ src/creative/studioStoryboardContract.phase4.test.ts (52 tests) 47ms
+ ✓ src/creative/studioClient.test.ts (38 tests) 28ms
+ ✓ src/creative/studioClient.boundedDownload.additive.test.ts (38 tests) 95ms
+ ✓ src/creative/studioProductionGraphClient.test.ts (17 tests) 21ms
+ ✓ src/creative/studioStoryboardContinuityFields.additive.test.ts (6 tests) 17ms
+
+ Test Files  16 passed (16)
+      Tests  409 passed (409)
+   Start at  02:59:45
+   Duration  15.50s (transform 1.80s, setup 87ms, collect 6.08s, tests 18.11s, environment 3.31s, prepare 907ms)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2426 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-BkplvLLE.css      4.23 kB │ gzip:   1.09 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-DDGk9-SA.css                      219.19 kB │ gzip:  27.69 kB
+dist/assets/Health-Btp_eGsc.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-mBcUYXAj.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/style-PDS8JYdn.js                      45.12 kB │ gzip:   8.40 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/LocalTutorIntegration-CtQ3e1FS.js      47.64 kB │ gzip:  15.65 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-BSFyzyfL.js     847.34 kB │ gzip: 254.49 kB
+dist/assets/App-ugK6dPQT.js                     2,701.10 kB │ gzip: 810.02 kB
+✓ built in 7.27s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
