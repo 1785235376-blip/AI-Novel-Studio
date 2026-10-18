@@ -1,0 +1,12 @@
+{
+  "source_head": "80b42c81b593a58ee5f330415054b576135930c2",
+  "prerequisite": "8e4a7a47cc8584d043499a489d75d303fefb5aba",
+  "unchanged_file_regression": 159,
+  "fresh_postgres_checks": 23,
+  "fresh_database_oid": 31303,
+  "postgres_original_http_checks": 1,
+  "postgres_commit_boundary_checks": 2,
+  "provider_wire": "MOCKED_NO_EXTERNAL_MODEL_CALL",
+  "all_postgres_servers_stopped": true,
+  "full_v2_release": "NOT_CLAIMED"
+}
