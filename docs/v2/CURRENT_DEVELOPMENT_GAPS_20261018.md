@@ -72,3 +72,17 @@ At source 3fe05b171e05f777dba6553c3fad185592b72774, the bounded independent AUDI
 The U07 independent Tasks consumer gap is partially closed at the same source: original Studio image/video jobs are listed and exact receipt opening uses the existing production panel. Other owners and Graph runs remain out of this bounded projection. See ../STUDIO_PRODUCTION_TASK_REOPENING.md. No generic task cancellation/review is applied to these owners.
 
 Original node-removal impact confirmation and bounded offline JSON file intake were completed at 33e7ad09 and 4924980d, integrated verification at 91a3f328. Therefore B10 file intake is no longer a pending implementation item; broader offline/asset/branch/transport limits still apply.
+
+## 16:32 superseding audit and implementation
+
+Source 501ff11b implements authored camera geometry in original Director/Storyboard consumers, basic VIDEO clip color, implicit reviewed narrative progress and original workflow Agent authority callbacks. Geometry is supplementary authored evidence, not video/image analysis. Basic color is not advanced grading. Original red failures and precise File/PG coverage are retained in ../delivery/v2-development/director-color-authority-wave-20261018.md. Archive 7b9f70727fb9a21b2e4df4fc9f3da0d914440727 is anonymously verified.
+
+The bounded FS/CORE review now additionally identifies these concrete gaps:
+- FS_CANON: newly accepted mainline generation produces a placeholder candidate without exact accepted chapter version/digest. Review UI already exists; producer provenance and meaningful proposal extraction need work.
+- FS_PLANNING: mounted layered generation is mock-only. A local model bridge is now under development, reusing original owners and explicit preview/approval, not the separate unsafe direct execution path.
+- FS_VISUAL: review adapter execution is MOCK_ONLY and no complete visual-check authoring consumer was found. Approved visual memory and source-bound receipts do exist.
+- CORE_MODELS: discovery, registration and diagnostics exist; controlled download/pause/resume/integrity/cleanup remain disabled.
+- CORE_EXPORT: current portable export is not a restorable whole-Creative package with Graph and Timeline relationships; offline backup is a separate existing capability.
+- FS_IMPORT: real parsers and reviewed checkpoint apply exist, but semantic extraction uses a local heuristic path.
+
+FS_REALTIME retains original deferred production-cloud scope; do not purchase hosting. FS_UNIVERSE has bounded immutable snapshot references. FS_CONTINUITY, STORY_DATABASE, TIMELINE and CORE_CREATION have mounted source/review/CAS paths; no additional concrete omission was established in this bounded review. SDK declarative recipes and trusted adapters exist; executable plugins are intentionally denied. Native Windows NamedPipe transport exists; target integration remains a separate acceptance boundary. Neither this inspection nor the structural index is a whole-product completion percentage.
