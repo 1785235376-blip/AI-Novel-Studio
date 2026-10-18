@@ -1,0 +1,67 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "41a08285eb259f6b41453cc81492a716b1de6eac",
+      "path": "docs/MEDIA_CANVAS_SEARCH_LOCATION.md",
+      "bytes": 1378,
+      "sha256": "57269eba35632fa7dfe794839b85dc74c38f738b3c4e1eb8e6daeb8744337ba5"
+    },
+    {
+      "blob": "e947579cfec8c6a7eb9875fe779d02b67d2a01e6",
+      "path": "docs/delivery/v2-development/media-canvas-search.json",
+      "bytes": 697178,
+      "sha256": "3f754683cae982bb58a405f4c5929e85a03402951ae8e4766a74b36fefbe1275"
+    },
+    {
+      "blob": "0ddaecf735caf41f8c4c0fb487a318f11c711eb1",
+      "path": "docs/delivery/v2-development/media-canvas-search.log",
+      "bytes": 2270,
+      "sha256": "71005457feca6c0072221267afbdfe440be6015db8945e6003d1d6e3b7567149"
+    },
+    {
+      "blob": "3e9f12a4c478ac0b9ad1a53d32425538ef01ba98",
+      "path": "frontend/src/creative/MediaCanvasViewPanel.additive.test.tsx",
+      "bytes": 10819,
+      "sha256": "050d38b0ca3c9cb56cb1c69c4c490498d71510d08c29c06d6e3742b76571956c"
+    },
+    {
+      "blob": "4e4d528fb6dd314b2f69487bd68c32517f4bcb43",
+      "path": "frontend/src/creative/MediaCanvasViewPanel.tsx",
+      "bytes": 14628,
+      "sha256": "e87a73dde4bad86550506024562bea7664c3ad9881d6236524193eeecb2b0a93"
+    },
+    {
+      "blob": "6ee143fbdc71ef8d34187e227b2cb8160abfab3d",
+      "path": "frontend/src/creative/MediaCardViewport.tsx",
+      "bytes": 9327,
+      "sha256": "94aa360f03e78ecaf5d22ba4721ef1cf057f356401b5a2d24a28a0f71234713a"
+    },
+    {
+      "blob": "dddf7cccf75d85c987209660db290b7cd022c62c",
+      "path": "frontend/src/creative/mediaCanvasGeometry.ts",
+      "bytes": 2765,
+      "sha256": "6046f554af9aea4820a3451e3e4cbef96779fc14fbdc3e3c41f582d167d5c1fb"
+    },
+    {
+      "blob": "5d93680c23e0920ae94fc6cebb5fef49a8b415c2",
+      "path": "frontend/src/creative/mediaCanvasSearch.additive.test.ts",
+      "bytes": 2160,
+      "sha256": "0387c6f5ece610ce77b91c7f1b2c17987caaca1aadb73f1c4588d45cbb890cdd"
+    },
+    {
+      "blob": "801b02cae8d6a434e89747e8674adc372a521e5f",
+      "path": "frontend/src/creative/mediaCanvasSearch.ts",
+      "bytes": 1693,
+      "sha256": "26394d89de5e34e5c83ea4bbce9bccb5df200a7ade67f1a7574e29b1e4a004ba"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
