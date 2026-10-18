@@ -1,0 +1,295 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "6823d082d9f9b5434b3090e86010193d5b77808e",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 44644,
+      "sha256": "9e75c0d7397312eae74af5c53e3e383866222b5492f11c9e0c56d5e22b8a98e6"
+    },
+    {
+      "blob": "4f6b93a8ba7a9012bc409231fe53cdc5a618c6c2",
+      "path": "docs/delivery/v2-development/selected-split-differential-bootstrap-failure.json",
+      "bytes": 756168,
+      "sha256": "dd0081548001c59fb117778a2d8b07387e4b80121ab6a84059c4d3fd551c8d5a"
+    },
+    {
+      "blob": "cf9b69fcf59c45cb9717a89b1e2642e82b22be40",
+      "path": "docs/delivery/v2-development/selected-split-differential-bootstrap-failure.log",
+      "bytes": 2303,
+      "sha256": "3660a4213e51dc2bdf7f4624d58f8b9e514868b2e13ddbde39dd73dd42d354b2"
+    },
+    {
+      "blob": "4acdd1bcc16a39bbf18decf50b54f9ab6883002e",
+      "path": "docs/delivery/v2-development/selected-split-differential-file.json",
+      "bytes": 756070,
+      "sha256": "9004370ee8cd309e16522c786f01285c9b350c7824e2e0004166771b4ce35226"
+    },
+    {
+      "blob": "b9de93240fdee587cc9df5f3e5b05e1c1e1ac1b3",
+      "path": "docs/delivery/v2-development/selected-split-differential-file.log",
+      "bytes": 99,
+      "sha256": "923a92eb948ff2a9334645640fca786ff7e56638aa50b8bc736308d5503b012f"
+    },
+    {
+      "blob": "7770cf0ee55d9ebd347a7f58672990c3ebd5740d",
+      "path": "docs/delivery/v2-development/selected-split-final-differential.json",
+      "bytes": 756079,
+      "sha256": "daf9588250ec4155d8768c7f9b2b09d34428e73394298c4fd94fcf0b87b9770d"
+    },
+    {
+      "blob": "448e989c335f15d523cf1d9e3241a8e6a9caf0fc",
+      "path": "docs/delivery/v2-development/selected-split-final-focused.json",
+      "bytes": 756356,
+      "sha256": "1a6f0a4260132751a044e7095602e33d883b6fe260893071ceecb450d6105653"
+    },
+    {
+      "blob": "6bbdf7b36f351f2f71fbc2ba0e8aff570bd59181",
+      "path": "docs/delivery/v2-development/selected-split-final-focused.log",
+      "bytes": 2315,
+      "sha256": "ab58699581a1e4a4260e9125a8dcbeb1f4017faa4da00f772ae751ef166e251b"
+    },
+    {
+      "blob": "37d621936cb073a73f34c092181541b609b42624",
+      "path": "docs/delivery/v2-development/selected-split-final-types.json",
+      "bytes": 755875,
+      "sha256": "1b0577c2e78a20a19f8024955db2e426476f951da07c18db2f5d9218b7c25427"
+    },
+    {
+      "blob": "a81f26e00a38fc03975a733eaf68a0d65b5a5eb6",
+      "path": "docs/delivery/v2-development/selected-split-frontend-focused.json",
+      "bytes": 756150,
+      "sha256": "7ca169871964e6176ac81609c6405d5fd01ec3f24156feaefd4b2e404f05f04a"
+    },
+    {
+      "blob": "43a2c22a0a5010db5b664fdedfad784f502b9aa6",
+      "path": "docs/delivery/v2-development/selected-split-frontend-focused.log",
+      "bytes": 1745,
+      "sha256": "596e2e6b8a3d25019309f216052eb3d264b9a8e43944a28f2b73a82e8e416a9d"
+    },
+    {
+      "blob": "3ea414328f919ff60ba588fd400d9fab15c09629",
+      "path": "docs/delivery/v2-development/selected-split-inspector-regression.json",
+      "bytes": 756143,
+      "sha256": "5c2c8573fedc407750b80f4924eb3597ac35ad3084fe762c9163cde15dd1e84a"
+    },
+    {
+      "blob": "4421967cac05f1118ebc8a460d383b0574b83bca",
+      "path": "docs/delivery/v2-development/selected-split-inspector-regression.log",
+      "bytes": 4054,
+      "sha256": "dd2201b5078ca674e7f818352d0ba3d9f958feac0e319118640b01e94b66d821"
+    },
+    {
+      "blob": "a2edf53443035268ef5fae28ba0dac4ea1df999e",
+      "path": "docs/delivery/v2-development/selected-split-report.md",
+      "bytes": 2402,
+      "sha256": "b6c9da3a577bc60c20da6bcc102ad63348c7aa234dbd52b2d3508e26a672a97b"
+    },
+    {
+      "blob": "924efb926275debd66d7eca76ce3a809c35a5da0",
+      "path": "docs/delivery/v2-development/selected-split-review-fixes.json",
+      "bytes": 756176,
+      "sha256": "11b33f019548a8176dff953c65e9e41d21a121502dd175e5eaeae25efd979d97"
+    },
+    {
+      "blob": "d6909d97ad6c00f9fa51d3f4bab1645bc17cb8ba",
+      "path": "docs/delivery/v2-development/selected-split-review-fixes.log",
+      "bytes": 1273,
+      "sha256": "eaf37a51fa8431a7854f6b8b627d581f76af22d6e9518762783057f10a3f9ceb"
+    },
+    {
+      "blob": "f153e203227d2abef42e0f872fd61154293b249f",
+      "path": "docs/delivery/v2-development/selected-split-types.json",
+      "bytes": 755822,
+      "sha256": "1a3dabd177a526e63ce7954e2ab9427f7c25f9dfcaa010626e8bf655ad4c35b9"
+    },
+    {
+      "blob": "f9c55e438092a1d11cf7a52815e202b4bda06d43",
+      "path": "docs/delivery/v2-development/selected-split-verified-types-tokens.json",
+      "bytes": 756012,
+      "sha256": "b165a7cd500c9157607c87b85dc17b64d78f40657274e742db9cf7d91151996b"
+    },
+    {
+      "blob": "5662d2b3876e62e097cf75872fc2b8eb549fc9e0",
+      "path": "docs/delivery/v2-development/storyboard-return-focused.json",
+      "bytes": 632085,
+      "sha256": "d636e61367aa35bc1bb47ce217c675327b36dc438f95dc40eb1765b81e676b5b"
+    },
+    {
+      "blob": "58c3088c675841912b343d7d051d842adc07ded6",
+      "path": "docs/delivery/v2-development/storyboard-return-focused.log",
+      "bytes": 850,
+      "sha256": "0704c2e9a26d4e55b2f03a466a0bb28306086c1b5ad1206cc1b5fd140e670f3d"
+    },
+    {
+      "blob": "c36f8d1c0a32b1541d369b08a1bde9bda3e1714f",
+      "path": "docs/delivery/v2-development/storyboard-return-tokens.json",
+      "bytes": 631705,
+      "sha256": "c1df6547fdc9a2fe365c251ebe6f71999fd35329b905d2e49b5f11cbfb4923d6"
+    },
+    {
+      "blob": "2761e96e13b4cfdffd9bd15546b36dd7b0a72d18",
+      "path": "docs/delivery/v2-development/storyboard-return-types.json",
+      "bytes": 631706,
+      "sha256": "fe34d6faaea44fcd9812cd92ac8e8f66e153273db9b7e8df56a1e6aa6493ef26"
+    },
+    {
+      "blob": "3ce5a37ab8be89e380e474af18e1372134409b02",
+      "path": "docs/delivery/v2-development/storyboard-split-evidence-reuse.json",
+      "bytes": 942,
+      "sha256": "263cbe6c7d49239f325fe01d5896f782f4b07959716f8699b208ce8431f1fe6a"
+    },
+    {
+      "blob": "f387fdc23c9e8e955229245f8cae489b780cbaaf",
+      "path": "docs/delivery/v2-development/storyboard-split-integration-20261018.md",
+      "bytes": 5102,
+      "sha256": "8b0cbd6d50db2162d389ea5976d55ae78ec94c0d5870b69aa6a9c1b637bea52a"
+    },
+    {
+      "blob": "4ca61d02f23c00689a0185774df159a725ce142f",
+      "path": "docs/delivery/v2-development/storyboard-split-integration-frontend.json",
+      "bytes": 762420,
+      "sha256": "271103c5466117146812c9b0bef1343bb61e859829728e6d8d5e40422ee7d8f2"
+    },
+    {
+      "blob": "b6c60da8a51c02b9600684b16ee788b46486fe03",
+      "path": "docs/delivery/v2-development/storyboard-split-integration-frontend.log",
+      "bytes": 5041,
+      "sha256": "bb96347a1bb8d91e7700bad9db17de10a271bb696e9efe71273c2b7b78e6f0d5"
+    },
+    {
+      "blob": "ba8410a53dd4b8144fad28ff3f7ea67ebc6be781",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 796158,
+      "sha256": "1429aa34ef14f95b2b598093475b8842ab21cfbe1a9d6068335212782aafd410"
+    },
+    {
+      "blob": "933355d64c4d59b4b2af8d1bf9c364081ce07d77",
+      "path": "frontend/src/creative/GraphDirectorConsole.test.tsx",
+      "bytes": 16066,
+      "sha256": "15589fba16a96a77818556f7b61b72e7dea439771b0cc9e4e7d5aca937a7aced"
+    },
+    {
+      "blob": "a8c43746670b513e5bf27100be51ad1ebb655af0",
+      "path": "frontend/src/creative/GraphDirectorConsole.tsx",
+      "bytes": 32557,
+      "sha256": "d6f4c2dcdb4d84b5470edc8a82c8f3d2aaf0ac18cca90e2c74a8eaa081ddc3e8"
+    },
+    {
+      "blob": "da8cb5895ddfce1145d678c275c7d7b3c670b4e1",
+      "path": "frontend/src/creative/GraphDirectorStoryboardHandoff.test.tsx",
+      "bytes": 13402,
+      "sha256": "f24cdb68b20d62de6623be8bbd5e2726907880c9e2e14244c4369787b794a5e1"
+    },
+    {
+      "blob": "d68045282f25128a9a49be9b5b221aafca4cbc6a",
+      "path": "frontend/src/creative/GraphDirectorStoryboardHandoff.tsx",
+      "bytes": 12214,
+      "sha256": "3f6af2441bc8108c50da6186702242a8e151169204de35eb5041ad76e99b90a5"
+    },
+    {
+      "blob": "dbb2ebe0dbca53c261d395c207205943acba9e76",
+      "path": "frontend/src/creative/StudioTimelineEditor.tsx",
+      "bytes": 54277,
+      "sha256": "25977ac1daff6e7141b7065f366872a108c98516571cbe6327f0b9a9c79e0d66"
+    },
+    {
+      "blob": "4912523c86d0f192e80cfe05b1f467af97638175",
+      "path": "frontend/src/creative/StudioTimelineSelectionSplit.additive.test.tsx",
+      "bytes": 14450,
+      "sha256": "9ef5916379717fa5024d8ce3d534c09a30fb58237ef6e805d5f8d46bc9013231"
+    },
+    {
+      "blob": "589b81970961eea9e88f822760b4ea55e6964ee2",
+      "path": "frontend/src/creative/TimelineTransferReview.test.tsx",
+      "bytes": 15294,
+      "sha256": "7f46090966163278748714ef1746cbf364e4f2feb08007b1787c6a02075b4c55"
+    },
+    {
+      "blob": "0fc7b4de3d4cb22c8499d5d14f58760a1ddf910c",
+      "path": "frontend/src/creative/directorCanvasHandoff.additive.test.tsx",
+      "bytes": 10029,
+      "sha256": "791f1a192524d91839917d5bb822bfd97e1e2ae5199299f2b2f06200aa14e9d6"
+    },
+    {
+      "blob": "cfadc503c72c662cc8de0bd3956e7dc7e0f4b5d7",
+      "path": "frontend/src/creative/directorCanvasHandoff.ts",
+      "bytes": 1413,
+      "sha256": "c86a43b520c7f3465ba0e8d13c5ff197b3c4473bfbfb9509d3fc2f66a283595b"
+    },
+    {
+      "blob": "6838c1cd516dd697072b110848c8ea42f3e0cba2",
+      "path": "frontend/src/creative/storyboardCanvasHandoff.test.ts",
+      "bytes": 1487,
+      "sha256": "9be5966749a12c74202b0252e4da178b2fd55b41d82222f4cd9246afc0af4f91"
+    },
+    {
+      "blob": "b9882a2714035c165481b758de6272752de2c1df",
+      "path": "frontend/src/creative/storyboardCanvasHandoff.ts",
+      "bytes": 1396,
+      "sha256": "fac40f245e7ff1dbcb7dd72df601dfec75f46594b7fc6a338974c2b82248a816"
+    },
+    {
+      "blob": "be6f1b32927811dc0455fa8841e0f70b00ac086a",
+      "path": "frontend/src/creative/useStudioGraphEditor.tsx",
+      "bytes": 5379,
+      "sha256": "2d440790341ae90d1b7b9b07b76c91ab39fd5f95fcb021348418499fc617610c"
+    },
+    {
+      "blob": "ad5805b4d9339ad99576fdf578d4d99fd0cbdb6d",
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "bytes": 87670,
+      "sha256": "1760e5791b54dcb3fd60ce0266f581f0f023513ccdd71dc7f8b6a3cf390f0eeb"
+    },
+    {
+      "blob": "7debdab09954481ca6fc0b19e875570731da1c14",
+      "path": "frontend/src/creative/useStudioTimelineEditor.ts",
+      "bytes": 54013,
+      "sha256": "45097e61958e764293305f4b1cc05b8cb0307564ca9cb19d80ced9e414cffbf0"
+    },
+    {
+      "blob": "d253bbd90392a0d846c9f3b13e9dd564df82c8bb",
+      "path": "frontend/src/nle/ClipInspectorPanel.tsx",
+      "bytes": 19179,
+      "sha256": "b6b6a590feb265271975899b6d941a0abeadc1159a6cb0e4806b02aa0660ce4d"
+    },
+    {
+      "blob": "b53c9a07faaece4690344062783bf72a191d6cba",
+      "path": "frontend/src/nle/TimelineWorkspacePanel.tsx",
+      "bytes": 5739,
+      "sha256": "db27db23bb9300b696542b7bfbe221ae5aac9425fb1d66b474bd05b9d0023987"
+    },
+    {
+      "blob": "500e6657592195ec6869d8055539bf9055fcac36",
+      "path": "frontend/src/nle/nlePanels.test.tsx",
+      "bytes": 19117,
+      "sha256": "b34b8c5e6b2ad8addd9ddbb315f94a743adef6fc6152191d957ec1decdc108f5"
+    },
+    {
+      "blob": "4912410da60d0725eda72829461c5ea58d1531ec",
+      "path": "frontend/src/nle/timelineSelectionSplit.additive.test.ts",
+      "bytes": 4209,
+      "sha256": "97af979a8052cd31ba05a19504cb81c6cc8337499fcd7f26ff3c1057e0258f5b"
+    },
+    {
+      "blob": "607d54ca90ddd6c50b1982cd81e91c15f483f5f2",
+      "path": "frontend/src/nle/timelineSelectionSplit.ts",
+      "bytes": 5464,
+      "sha256": "e7870f947a4f7b16fb77c7277decfd8d291264b75fca2e49163641a22567cae3"
+    },
+    {
+      "blob": "c6d1d8c340b47b83be755a6749f91c106e75ed16",
+      "path": "tests/test_v2_timeline_split_differential.py",
+      "bytes": 8072,
+      "sha256": "b67d62c511675007eb6947ad69734b22b4dc8ddcebc388b0d013de73cfcb6714"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
