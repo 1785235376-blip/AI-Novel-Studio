@@ -21,6 +21,10 @@ class PreviewInput(_Strict):
         return value
 
 
+class ScreenplayPreviewInput(PreviewInput):
+    planning_mode: Literal['MULTI_SHOT_V1'] | None = None
+
+
 class DispatchInput(_Strict):
     expected_version: int = Field(ge=1)
     reviewed_preview_digest: Digest
@@ -119,6 +123,31 @@ class ScreenplayPendingReceipt(PendingReceipt):
     provenance: ScreenplayPendingProvenance
 
 
+class ScreenplayAllowedSlot(_Strict):
+    note_id: Identifier
+    scene_id: Identifier
+    source_sequence: int = Field(ge=1, le=10000)
+    slot: int = Field(ge=1, le=3)
+
+
+class ScreenplayShotPlanPreviewReceipt(ScreenplayPreviewReceipt):
+    contract: Literal['DIRECTOR_SCREENPLAY_MODEL_PREVIEW_V3'] = 'DIRECTOR_SCREENPLAY_MODEL_PREVIEW_V3'
+    planning_mode: Literal['MULTI_SHOT_V1'] = 'MULTI_SHOT_V1'
+    allowed_source_mapping: list[ScreenplayAllowedSlot] = Field(min_length=3, max_length=6)
+
+
+class ScreenplayShotPlanPendingProvenance(ScreenplayPendingProvenance):
+    output_contract: Literal['INDEPENDENT_SCREENPLAY_SHOT_PLAN_V1']
+    allowed_source_mapping: list[ScreenplayAllowedSlot] = Field(min_length=3, max_length=6)
+    source_mapping: list[ScreenplaySourceMapping] = Field(min_length=1, max_length=6)
+
+
+class ScreenplayShotPlanPendingReceipt(ScreenplayPendingReceipt):
+    contract: Literal['DIRECTOR_SCREENPLAY_MODEL_PENDING_REVIEW_V3'] = 'DIRECTOR_SCREENPLAY_MODEL_PENDING_REVIEW_V3'
+    provenance: ScreenplayShotPlanPendingProvenance
+    director_notes: list[DirectorSceneNote] = Field(min_length=1, max_length=6)
+
+
 def project_preview(row, *, screenplay=False):
     if type(screenplay) is not bool: raise ValueError("DIRECTOR_MODEL_TRANSPORT_OPTION_INVALID")
     preview = row['model_preview']
@@ -130,8 +159,11 @@ def project_preview(row, *, screenplay=False):
         raise ValueError('DIRECTOR_MODEL_TRANSPORT_SOURCE_VERSION_UNSUPPORTED')
     if preview['allow_synthetic'] is not False or route['synthetic'] is not False:
         raise ValueError('DIRECTOR_MODEL_NON_SYNTHETIC_REQUIRED')
-    model = ScreenplayPreviewReceipt if screenplay else PreviewReceipt
-    return model(proposal_id=row['id'], version=row['version'],
+    from .screenplay_model import SHOT_PLAN_CONTRACT
+    shot_plan = screenplay and preview.get('output_contract') == SHOT_PLAN_CONTRACT
+    model = ScreenplayShotPlanPreviewReceipt if shot_plan else ScreenplayPreviewReceipt if screenplay else PreviewReceipt
+    extra = {'allowed_source_mapping': preview['allowed_source_mapping']} if shot_plan else {}
+    return model(**extra, proposal_id=row['id'], version=row['version'],
         reviewed_preview_digest=preview['preview_digest'], prompt=preview['prompt'],
         parameters=preview['parameters'], route_id=preview['route_id'], route_fingerprint=preview['route_fingerprint'],
         provider_id=route['provider_id'], model_id=route['model_id'],
@@ -144,8 +176,10 @@ def project_pending(candidate, *, screenplay=False):
     provenance = candidate['provenance']
     # Reservation internals, raw output digest and any future fields are not
     # automatically added to the public projection.
-    provenance_model = ScreenplayPendingProvenance if screenplay else PendingProvenance
-    model = ScreenplayPendingReceipt if screenplay else PendingReceipt
+    from .screenplay_model import SHOT_PLAN_CONTRACT
+    shot_plan = screenplay and provenance.get('output_contract') == SHOT_PLAN_CONTRACT
+    provenance_model = ScreenplayShotPlanPendingProvenance if shot_plan else ScreenplayPendingProvenance if screenplay else PendingProvenance
+    model = ScreenplayShotPlanPendingReceipt if shot_plan else ScreenplayPendingReceipt if screenplay else PendingReceipt
     selected = {key: provenance[key] for key in provenance_model.model_fields}
     return model(**{key: candidate[key] for key in ('proposal_id', 'expected_version',
         'director_notes', 'output_digest', 'visual_target')}, provenance=selected).model_dump()

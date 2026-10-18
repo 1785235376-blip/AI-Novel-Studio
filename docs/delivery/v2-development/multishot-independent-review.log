@@ -1,0 +1,90 @@
+.............................F.........................                  [100%]
+=================================== FAILURES ===================================
+________ test_opt_in_multishot_http_restart_review_and_original_derive _________
+
+lifecycle = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-model-shot-planning/.runtime/multishot-independent-re...firmed': True, 'runtime_config': {'management': 'EXTERNAL', 'type': 'LLAMA_CPP', 'endpoint': 'http://127.0.0.1:8999'}})
+
+    def test_opt_in_multishot_http_restart_review_and_original_derive(lifecycle):
+        """Injected synthetic wire only; this is lifecycle validation, not inference acceptance."""
+        from test_v2_screenplay_shot_plan import shot_output
+        from app.creative.screenplay_model import SHOT_PLAN_CONTRACT, screenplay_allowed_slots
+        e = lifecycle
+        e.source = e.documents.create(e.nid, e.scope, e.actor, {
+            'mode': 'SCREENPLAY', 'source_independent': True, 'title': 'Two authored scenes',
+            'scenes': [{'id': 'second', 'sequence': 8, 'heading': 'HALL', 'action': 'The door opens.'},
+                       {'id': 'first', 'sequence': 3, 'heading': 'ROOM', 'action': 'The visitor waits.'}]})
+        e.row = e.documents.proposals.create(e.nid, e.scope, e.actor,
+            {'source_document_id': e.source['id'], 'expected_source_version': e.source['version']})
+        original = deepcopy(e.source); original_digest = e.documents.document_digest(original)
+        e.wire_text = json.dumps(shot_output(e.source, e.row))
+        allowed = screenplay_allowed_slots(e.row, e.source)
+        m = mounted(e, actions=True); m.url = m.url.replace('/model-v1', '/model-v2')
+        first = m.client.post(m.url+'/preview', headers=m.headers,
+            json={**preview_request(e), 'planning_mode': 'MULTI_SHOT_V1', 'max_output_tokens': 2048})
+        assert first.status_code == 200, first.text
+        p = first.json()['receipt']
+        assert p['contract'] == 'DIRECTOR_SCREENPLAY_MODEL_PREVIEW_V3'
+        assert p['allowed_source_mapping'] == allowed and not e.requests
+        assert 'source_mapping' not in p
+        dispatch_body = {'expected_version': p['version'], 'reviewed_preview_digest': p['reviewed_preview_digest']}
+        dispatched = m.client.post(m.url+'/dispatch', headers=m.headers, json=dispatch_body)
+        assert dispatched.status_code in (200, 409), dispatched.text
+        assert len(e.manager.jobs) == 1
+        job = wait(e, next(iter(e.manager.jobs.values())))
+        assert job.status == 'COMPLETED' and job.terminal_hook_status == 'COMPLETED'
+        status = m.client.get(m.url+'/status', headers=m.headers).json()['receipt']
+        assert status['phase'] == 'COMPLETED'
+        restart(e); fresh_host(e); m = mounted(e, actions=True); m.url = m.url.replace('/model-v1', '/model-v2')
+        pending = m.client.post(m.url+'/prepare-review', headers=m.headers, json={
+            'expected_version': status['version'], 'terminal_evidence_digest': status['terminal_evidence_digest']})
+        assert pending.status_code == 200, pending.text
+        c = pending.json()['receipt']
+        assert c['contract'] == 'DIRECTOR_SCREENPLAY_MODEL_PENDING_REVIEW_V3'
+        assert len(c['director_notes']) == len(c['provenance']['source_mapping']) == 4
+        assert c['provenance']['allowed_source_mapping'] == allowed
+        assert c['provenance']['output_contract'] == SHOT_PLAN_CONTRACT
+        restart(e); fresh_host(e); m = mounted(e, actions=True); m.url = m.url.replace('/model-v1', '/model-v2')
+        assert m.client.get(m.url+'/pending-review', headers=m.headers).json() == pending.json()
+        human = review_body(c)
+        for change in ('id', 'scene_id', 'number', 'omit', 'reorder'):
+            invalid = deepcopy(human)
+            if change in ('id', 'scene_id'): invalid['director_notes'][0][change] = 'changed'
+            if change == 'number': invalid['director_notes'][0]['number'] = 6
+            if change == 'omit': invalid['director_notes'].pop()
+            if change == 'reorder': invalid['director_notes'].reverse()
+            before = raw_bytes(e)
+            assert m.client.post(m.url+'/review', headers=m.headers, json=invalid).status_code == 409
+            assert raw_bytes(e) == before
+        human['director_notes'][0]['note'] = 'Human revised dramatic beat'
+        human['director_notes'][0]['duration_seconds'] = 12
+        adopted = m.client.post(m.url+'/review', headers=m.headers, json=human)
+        assert adopted.status_code == 200, adopted.text
+        receipt = adopted.json()['receipt']
+        assert receipt['document']['status'] == 'DRAFT'
+        draft = e.documents.get(e.nid, e.scope, receipt['document']['document_id'])
+        assert draft['director_notes'][0]['note'] == human['director_notes'][0]['note']
+        assert draft['source_documents'][original['id']] == {'version': original['version'], 'digest': original_digest}
+        board = e.documents.derive(e.nid, e.scope, e.actor, draft['id'], {
+            'expected_version': draft['version'], 'mode': 'STORYBOARD', 'shot_policy': 'DIRECTOR_NOTES'})
+        assert len(board['shots']) == 4
+        assert [(s['scene_id'], s['director_note_ids']) for s in board['shots']] == [
+            (n['scene_id'], [n['id']]) for n in draft['director_notes']]
+        assert board['source_documents'][draft['id']] == {'version': draft['version'], 'digest': e.documents.document_digest(draft)}
+>       assert board['source_documents'][original['id']] == draft['source_documents'][original['id']]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: '381b2807-15b3-4413-a650-f90a564e8384'
+
+tests/test_v2_screenplay_model_transport.py:132: KeyError
+=============================== warnings summary ===============================
+../studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_v2_screenplay_shot_plan.py::test_model_selects_three_plus_one_and_can_skip_slots[file]
+  /workspace/scratch/20a0022d2b33/studio-model-shot-planning/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_screenplay_model_transport.py::test_opt_in_multishot_http_restart_review_and_original_derive
+1 failed, 54 passed, 2 warnings in 13.68s

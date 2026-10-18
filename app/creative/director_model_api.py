@@ -3,10 +3,10 @@
 No background retries, implicit model calls on reads, alternate Job engine or
 raw private proposal projection. Original owners authorize and commit actions.
 """
-from fastapi import APIRouter, Header, Request
+from fastapi import APIRouter, Header, Request, HTTPException
 from .director_observation_api import DirectorObservationRoute, create_director_owner_invoker
 from .director_lifecycle import AdoptionReceipt, CancelInput, StatusReceipt
-from .director_transport_contract import PreviewInput, DispatchInput, PrepareInput, project_preview, project_pending
+from .director_transport_contract import PreviewInput, ScreenplayPreviewInput, DispatchInput, PrepareInput, project_preview, project_pending
 from .models import DirectorProposalReview
 
 
@@ -25,7 +25,15 @@ def create_director_model_router(service, invoke, *, require_host_session, model
             generation._pending_repository()
             if method == 'preview':
                 preview_method = generation._preview_independent_screenplay if screenplay else generation._preview_independent_review
-                row = preview_method(ctx, rid, body.model_dump(), current, host_authority=authority)
+                payload = body.model_dump()
+                if payload.get("planning_mode") is None:
+                    payload.pop("planning_mode", None)
+                try:
+                    row = preview_method(ctx, rid, payload, current, host_authority=authority)
+                except ValueError as exc:
+                    if str(exc) == "CREATIVE_MODEL_SHOT_PLAN_REQUIRES_ONE_OR_TWO_SCENES":
+                        raise HTTPException(409, {"code": str(exc)}) from None
+                    raise
                 return project_preview(row, screenplay=screenplay)
             if method == 'read-preview':
                 row = generation._read_independent_preview(ctx, rid, current, host_authority=authority)
@@ -36,7 +44,12 @@ def create_director_model_router(service, invoke, *, require_host_session, model
                 raw = generation._read_independent_status(ctx, rid, current, host_authority=authority)
                 return StatusReceipt.model_validate(raw).model_dump()
             if method == 'prepare-review':
-                raw = generation._prepare_independent_pending_review(ctx, rid, body.model_dump(), current, host_authority=authority)
+                try:
+                    raw = generation._prepare_independent_pending_review(ctx, rid, body.model_dump(), current, host_authority=authority)
+                except ValueError as exc:
+                    if str(exc) == "CREATIVE_MODEL_SHOT_PLAN_INVALID_OR_INCOMPLETE_JSON":
+                        raise HTTPException(409, {"code": str(exc)}) from None
+                    raise
                 return project_pending(raw, screenplay=screenplay)
             if method == 'pending-review':
                 raw = generation._read_independent_pending_review(ctx, rid, current, host_authority=authority)
@@ -58,8 +71,10 @@ def create_director_model_router(service, invoke, *, require_host_session, model
         return call(request, nid, token, branch, rid, permission, kind, operation,
             error_code='DIRECTOR_MODEL_ACTION_NOT_CONFIRMED')
 
+    preview_input = ScreenplayPreviewInput if screenplay else PreviewInput
+
     @router.post(f'/director-proposals/{{rid}}/{model_path}/preview')
-    def preview(nid: str, rid: str, request: Request, body: PreviewInput,
+    def preview(nid: str, rid: str, request: Request, body: preview_input,
                 x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return action(request,nid,x_session_token,x_branch_id,rid,'preview',body)
 

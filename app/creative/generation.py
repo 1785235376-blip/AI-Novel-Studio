@@ -552,9 +552,13 @@ class DirectorModelCoordinator:
 
     def _preview_independent_screenplay(self, ctx, rid, value, guard, *, host_authority):
         """Internal explicit screenplay preview; public V1 transport remains separate."""
-        from .screenplay_model import SCREENPLAY_CONTRACT
+        from .screenplay_model import SCREENPLAY_CONTRACT, SHOT_PLAN_CONTRACT, MULTI_SHOT_MODE
+        value = dict(value)
+        mode = value.pop("planning_mode", None)
+        if mode is not None and mode != MULTI_SHOT_MODE:
+            raise ValueError("CREATIVE_MODEL_SCREENPLAY_PLANNING_MODE_INVALID")
         return self._preview_independent_contract(ctx, rid, value, guard,
-            host_authority=host_authority, output_contract=SCREENPLAY_CONTRACT)
+            host_authority=host_authority, output_contract=SHOT_PLAN_CONTRACT if mode else SCREENPLAY_CONTRACT)
 
     def _preview_independent(self, ctx, rid, value, guard, *, host_authority):
         """Preserve the original V1 free-text internal draft request unchanged."""
@@ -575,8 +579,8 @@ class DirectorModelCoordinator:
             temperature: float = Field(default=0.0, ge=0, le=2, allow_inf_nan=False)
         body = Input.model_validate(value)
         self._independent_host(host_authority); guard(); self._flags()
-        from .screenplay_model import SCREENPLAY_CONTRACT, screenplay_prompt_data
-        binding = self._independent_binding(ctx, rid, screenplay=output_contract == SCREENPLAY_CONTRACT)
+        from .screenplay_model import SCREENPLAY_CONTRACT, SHOT_PLAN_CONTRACT, screenplay_prompt_data, screenplay_shot_plan_prompt_data
+        binding = self._independent_binding(ctx, rid, screenplay=output_contract in (SCREENPLAY_CONTRACT, SHOT_PLAN_CONTRACT))
         with self._independent_checkpoint(ctx, rid, guard, host_authority, binding) as (row, source):
             self._independent_version(row, body.expected_version)
             if row.get("model_execution"):
@@ -591,7 +595,9 @@ class DirectorModelCoordinator:
                 "storyboard": {"title": source["title"], "scenes": deepcopy(source["scenes"]), "shots": deepcopy(source["shots"])},
                 "visual_target": visual_target}
             if output_contract is not None:
-                if output_contract == SCREENPLAY_CONTRACT:
+                if output_contract == SHOT_PLAN_CONTRACT:
+                    data = screenplay_shot_plan_prompt_data(row, source)
+                elif output_contract == SCREENPLAY_CONTRACT:
                     data = screenplay_prompt_data(row, source)
                 elif output_contract == STORYBOARD_CONTRACT:
                     data = _storyboard_prompt_data(row, source)
@@ -627,6 +633,8 @@ class DirectorModelCoordinator:
             "model_called": False, "automatic_retry": False, "allow_cloud_fallback": False}
         if output_contract is not None:
             preview["output_contract"] = output_contract
+            if output_contract == SHOT_PLAN_CONTRACT:
+                preview["allowed_source_mapping"] = deepcopy(data["allowed_source_mapping"])
             if output_contract == SCREENPLAY_CONTRACT:
                 # Preview clears candidate notes below. Freeze the exact scene/
                 # note association in its digest, never reconstruct by new IDs.
@@ -924,18 +932,23 @@ class DirectorModelCoordinator:
             condition.release()
 
     @staticmethod
-    def _independent_source_contract(mode):
+    def _independent_source_contract(mode, row=None):
         if mode == "STORYBOARD": return STORYBOARD_CONTRACT
         if mode == "SCREENPLAY":
-            from .screenplay_model import SCREENPLAY_CONTRACT
+            from .screenplay_model import SCREENPLAY_CONTRACT, SHOT_PLAN_CONTRACT
+            if row is not None and (row.get("model_preview") or {}).get("output_contract") == SHOT_PLAN_CONTRACT:
+                return SHOT_PLAN_CONTRACT
             return SCREENPLAY_CONTRACT
         raise ValueError("CREATIVE_MODEL_SOURCE_CONTRACT_MISMATCH")
 
     @staticmethod
-    def _independent_mapping(row, source):
+    def _independent_mapping(row, source, notes=None):
         if source["mode"] == "STORYBOARD": return source_mapping(row, source)
-        from .screenplay_model import screenplay_source_mapping, SCREENPLAY_CONTRACT
+        from .screenplay_model import screenplay_source_mapping, SCREENPLAY_CONTRACT, SHOT_PLAN_CONTRACT, screenplay_selected_mapping
         preview = row.get("model_preview") or {}
+        if preview.get("output_contract") == SHOT_PLAN_CONTRACT:
+            return screenplay_selected_mapping(row, source, row.get("director_notes") if notes is None else notes,
+                frozen_mapping=preview.get("allowed_source_mapping"))
         if preview.get("output_contract") != SCREENPLAY_CONTRACT or not isinstance(preview.get("source_mapping"), list):
             raise ValueError("CREATIVE_MODEL_SCREENPLAY_ASSOCIATION_CHANGED")
         return screenplay_source_mapping(row, source, frozen_mapping=preview["source_mapping"])
@@ -944,7 +957,11 @@ class DirectorModelCoordinator:
     def _independent_parse_output(row, source, output):
         if source["mode"] == "STORYBOARD":
             return _parse_director_output(row, source, output, max_output_bytes=MAX_OUTPUT_BYTES)
-        from .screenplay_model import parse_screenplay_output
+        from .screenplay_model import parse_screenplay_output, parse_screenplay_shot_plan_output, SHOT_PLAN_CONTRACT
+        preview = row.get("model_preview") or {}
+        if preview.get("output_contract") == SHOT_PLAN_CONTRACT:
+            return parse_screenplay_shot_plan_output(row, source, output, max_output_bytes=MAX_OUTPUT_BYTES,
+                frozen_mapping=preview.get("allowed_source_mapping"))
         mapping = DirectorModelCoordinator._independent_mapping(row, source)
         return parse_screenplay_output(row, source, output, max_output_bytes=MAX_OUTPUT_BYTES, frozen_mapping=mapping)
 
@@ -965,7 +982,7 @@ class DirectorModelCoordinator:
     def _independent_candidates_locked(self, ctx, rid, row, source, guard, host_authority):
         """Read only through the original live result seam; never trust a receipt."""
         preview = row.get("model_preview") or {}
-        if preview.get("output_contract") != self._independent_source_contract(source["mode"]):
+        if preview.get("output_contract") != self._independent_source_contract(source["mode"], row):
             raise ValueError("CREATIVE_DIRECTOR_REVIEW_OUTPUT_CONTRACT_REQUIRED")
         result = self._read_independent_result(ctx, rid, guard, host_authority=host_authority)
         notes = self._independent_parse_output(row, source, result["text"])
@@ -979,7 +996,8 @@ class DirectorModelCoordinator:
             "synthetic": route["synthetic"], "parameters": deepcopy(preview["parameters"]),
             "source_mode": source["mode"], "source_document_id": source["id"],
             "source_version": source["version"], "source_digest": row["source_digest"],
-            "source_mapping": DirectorModelCoordinator._independent_mapping(row, source), "job_id": result["job_id"],
+            "source_mapping": DirectorModelCoordinator._independent_mapping(row, source, notes), "job_id": result["job_id"],
+            **DirectorModelCoordinator._shot_plan_provenance(row),
             "reservation_id": result["accounting"]["id"], "request_digest": result["request_digest"],
             "preview_digest": result["preview_digest"],
             "raw_output_digest": hashlib.sha256(result["text"].encode("utf-8")).hexdigest(),
@@ -1005,6 +1023,7 @@ class DirectorModelCoordinator:
         with self._independent_review_transaction(ctx, rid, guard, host_authority) as (raw, row, source, job, binding):
             self._independent_version(row, body.expected_version)
             candidate = self._independent_candidates_locked(ctx, rid, row, source, guard, host_authority)
+            self._check_shot_plan_review(row, candidate, body)
             def before_mutation():
                 fresh = self._independent_candidates_locked(ctx, rid, row, source, guard, host_authority)
                 if fresh != candidate or self.manager.get(job.id) is not job:
@@ -1114,7 +1133,7 @@ class DirectorModelCoordinator:
         from ..model_execution import creative_director_request_payload_digest
         preview, execution = row.get("model_preview") or {}, row.get("model_execution") or {}
         if (preview.get("contract") != CREATIVE_DIRECTOR_INTERNAL_CONTRACT
-                or preview.get("output_contract") != self._independent_source_contract(binding.source_kind)
+                or preview.get("output_contract") != self._independent_source_contract(binding.source_kind, row)
                 or preview.get("preview_digest") != digest({key: value for key, value in preview.items() if key != "preview_digest"})
                 or preview.get("visual_target") != row.get("visual_target")):
             raise ValueError("CREATIVE_DIRECTOR_PENDING_PREVIEW_CHANGED")
@@ -1135,7 +1154,7 @@ class DirectorModelCoordinator:
                 or canonical(evidence["source_binding"]) != canonical(binding.model_dump())
                 or admission != {"proposal_id": row["id"], "proposal_version": admitted_version,
                     "preview_id": preview["broker_preview_id"], "preview_version": preview["broker_preview_version"],
-                    "preview_digest": preview["preview_digest"], "output_contract": self._independent_source_contract(binding.source_kind)}
+                    "preview_digest": preview["preview_digest"], "output_contract": self._independent_source_contract(binding.source_kind, row)}
                 or route["route_id"] != preview["route_id"]
                 or route["fingerprint"] != preview["route_fingerprint"]
                 or route["binding_hash"] != preview["route_binding_hash"]
@@ -1179,7 +1198,16 @@ class DirectorModelCoordinator:
         return saved, evidence
 
     @staticmethod
-    def _pending_provenance(row, source, route, evidence, output_digest):
+    def _shot_plan_provenance(row):
+        from .screenplay_model import SHOT_PLAN_CONTRACT
+        preview = row.get("model_preview") or {}
+        if preview.get("output_contract") != SHOT_PLAN_CONTRACT:
+            return {}
+        return {"output_contract": SHOT_PLAN_CONTRACT,
+            "allowed_source_mapping": deepcopy(preview["allowed_source_mapping"])}
+
+    @staticmethod
+    def _pending_provenance(row, source, route, evidence, output_digest, notes=None):
         from .director_terminal_evidence import digest as history_digest
         return {"method": "MODEL_ASSISTED", "model_called": True,
             "provider_id": evidence["route"]["provider_id"], "model_id": evidence["route"]["model_id"],
@@ -1187,7 +1215,8 @@ class DirectorModelCoordinator:
             "route_fingerprint": evidence["route"]["fingerprint"], "synthetic": evidence["route"]["synthetic"],
             "parameters": deepcopy(evidence["route"]["parameters"]), "source_mode": source["mode"],
             "source_document_id": source["id"], "source_version": source["version"],
-            "source_digest": row["source_digest"], "source_mapping": DirectorModelCoordinator._independent_mapping(row, source),
+            "source_digest": row["source_digest"], "source_mapping": DirectorModelCoordinator._independent_mapping(row, source, notes),
+            **DirectorModelCoordinator._shot_plan_provenance(row),
             "job_id": evidence["job_id"], "reservation_id": evidence["accounting"]["reservation_id"],
             "request_digest": evidence["request_digest"], "preview_digest": evidence["admission"]["preview_digest"],
             "raw_output_digest": evidence["output_digest"], "candidate_output_digest": output_digest,
@@ -1213,17 +1242,21 @@ class DirectorModelCoordinator:
             raise ValueError("CREATIVE_DIRECTOR_PENDING_CANDIDATES_CHANGED")
         # Revalidate saved parsed schema and scene evidence without retaining
         # a second raw-output string or requiring the original output to remain.
-        candidate_raw = {"source_contract": self._independent_source_contract(source["mode"]),
+        candidate_raw = {"source_contract": self._independent_source_contract(source["mode"], row),
             "source_document_id": source["id"], "source_version": source["version"], "source_digest": row["source_digest"],
             "director_notes": [{**note, **({"source_shot_id": association["source_shot_id"]}
                 if source["mode"] == "STORYBOARD" else {})} for note, association in zip(notes, mapping)]}
         if source["mode"] == "SCREENPLAY":
-            from .screenplay_model import validate_screenplay_output
-            parsed = validate_screenplay_output(row, source, candidate_raw, frozen_mapping=mapping)
+            from .screenplay_model import validate_screenplay_output, validate_screenplay_shot_plan_output, SHOT_PLAN_CONTRACT
+            if candidate_raw["source_contract"] == SHOT_PLAN_CONTRACT:
+                parsed = validate_screenplay_shot_plan_output(row, source, candidate_raw,
+                    frozen_mapping=row["model_preview"]["allowed_source_mapping"])
+            else:
+                parsed = validate_screenplay_output(row, source, candidate_raw, frozen_mapping=mapping)
         else:
             parsed = _validate_director_output(row, source, candidate_raw)
         output_digest = director_output_digest(parsed, row.get("visual_target"))
-        provenance = self._pending_provenance(row, source, route, evidence, output_digest)
+        provenance = self._pending_provenance(row, source, route, evidence, output_digest, notes)
         if (canonical(parsed) != canonical(notes) or pending["output_digest"] != output_digest
                 or row.get("output_digest") != output_digest
                 or pending["terminal_evidence_digest"] != history_digest(evidence)
@@ -1271,7 +1304,7 @@ class DirectorModelCoordinator:
                     raise ValueError("CREATIVE_DIRECTOR_PENDING_ROUTE_CHANGED")
                 notes = self._independent_parse_output(row, source, saved["output"])
                 output_digest = director_output_digest(notes, row.get("visual_target"))
-                provenance = self._pending_provenance(row, source, route, evidence, output_digest)
+                provenance = self._pending_provenance(row, source, route, evidence, output_digest, notes)
                 pending = validate_pending({"contract": PENDING_CONTRACT, "schema_version": 1,
                     "proposal_id": rid, "admitted_version": body.expected_version,
                     "published_version": body.expected_version + 1,
@@ -1316,6 +1349,14 @@ class DirectorModelCoordinator:
                 raise ValueError("CREATIVE_DIRECTOR_LIFECYCLE_OBSERVATION_CHANGED")
         return deepcopy(candidate)
 
+    @staticmethod
+    def _check_shot_plan_review(row, candidate, body):
+        from .screenplay_model import SHOT_PLAN_CONTRACT
+        if (row.get("model_preview") or {}).get("output_contract") == SHOT_PLAN_CONTRACT:
+            expected = [(n["id"], n["scene_id"], n["number"]) for n in candidate["director_notes"]]
+            if [(n.id, n.scene_id, n.number) for n in body.director_notes] != expected:
+                raise ValueError("CREATIVE_MODEL_SHOT_PLAN_REVIEW_ASSOCIATION_REQUIRED")
+
     def _review_independent_pending(self, ctx, rid, value, guard, *, host_authority):
         from .models import DirectorProposalReview
         from .director_terminal_evidence import PENDING_FIELD
@@ -1324,6 +1365,7 @@ class DirectorModelCoordinator:
         with self._pending_transaction(ctx, rid, guard, host_authority) as (raw, row, binding, repository, locks):
             self._independent_version(row, body.expected_version)
             source, candidate = self._pending_candidate(ctx, row, binding, repository, guard, host_authority)
+            self._check_shot_plan_review(row, candidate, body)
             saved, _ = self._pending_history(ctx, row, binding, repository,
                 admitted_version=row[PENDING_FIELD]["admitted_version"], require_output=False)
             def before_mutation():
@@ -1368,7 +1410,7 @@ class DirectorModelCoordinator:
         preview = row.get("model_preview") or {}
         unreviewed = binding.model_dump(); unreviewed["reviewed_preview_digest"] = "0" * 64
         if (preview.get("contract") != CREATIVE_DIRECTOR_INTERNAL_CONTRACT
-                or preview.get("output_contract") != self._independent_source_contract(binding.source_kind)
+                or preview.get("output_contract") != self._independent_source_contract(binding.source_kind, row)
                 or preview.get("allow_synthetic") is not False or route["synthetic"] is not False
                 or preview.get("preview_digest") != digest({k: v for k, v in preview.items() if k != "preview_digest"})
                 or canonical(preview.get("source_binding")) != canonical(unreviewed)
