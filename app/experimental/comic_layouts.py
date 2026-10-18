@@ -14,6 +14,7 @@ from contextlib import contextmanager, ExitStack, nullcontext
 from typing import Literal
 from pydantic import Field, model_serializer, model_validator
 from .comic_collections import ComicCollectionsMixin
+from .comic_layers import ComicLayerStack, validate_references, iter_layer_images, composite_layer, MAX_LAYER_SOURCE_PIXELS, MAX_LAYER_PIXELS, ora_decode_budget, consume_decode_pixels
 from .common import DomainService, StaleSourceError, check_version, now, new_row, change_row
 from .director import DirectorService
 from .media import StrictModel, digest
@@ -104,16 +105,24 @@ class LayoutIn(StrictModel):
     safe_area: int = Field(default=24, ge=0, le=128, strict=True)
     segment_height: int = Field(default=1120, ge=320, le=2400, strict=True)
     panels: list[ComicPanel] = Field(max_length=24)
+    layer_stack: ComicLayerStack | None = None
 
     @model_serializer(mode='wrap')
     def preserve_legacy_source_mode(self, handler):
         document = handler(self)
-        if 'source_mode' not in self.model_fields_set:
-            document.pop('source_mode', None)
+        for field in ('source_mode', 'layer_stack'):
+            if field not in self.model_fields_set:
+                document.pop(field, None)
         return document
 
     @model_validator(mode='after')
     def bounded(self):
+        if 'layer_stack' in self.model_fields_set:
+            if self.layer_stack is None:
+                raise ValueError('COMIC_LAYER_STACK_REQUIRED')
+            if any(ord(c) < 32 or 0xD800 <= ord(c) <= 0xDFFF or ord(c) in (0xFFFE, 0xFFFF) for c in self.title):
+                raise ValueError('COMIC_LAYER_TITLE_INVALID')
+            validate_references(self.layer_stack, self.panels)
         if self.source_mode == 'INDEPENDENT':
             if self.screenplay_id is not None or self.expected_screenplay_version is not None or any(p.shot_id is not None for p in self.panels):
                 raise ValueError('COMIC_INDEPENDENT_SOURCE_CONFLICT')
@@ -182,12 +191,18 @@ def font_status():
         return {'available': False, 'code': str(error)}
 
 
-def _image(data):
+def _image(data, *, pixel_budget=None):
     from PIL import Image, UnidentifiedImageError
     try:
         with Image.open(io.BytesIO(data)) as image:
             if image.format not in {'PNG', 'JPEG', 'WEBP'} or image.width * image.height > MAX_IMAGE_PIXELS or getattr(image, 'n_frames', 1) != 1:
                 raise ValueError('COMIC_STATIC_RASTER_LIMIT')
+            if pixel_budget is not None:
+                pixels = image.width * image.height
+                if pixels > pixel_budget[0]:
+                    raise ValueError('COMIC_LAYER_SOURCE_PIXEL_LIMIT_64000000')
+                pixel_budget[0] -= pixels
+            consume_decode_pixels(image.width * image.height)
             image.load()
             # Explicit EXIF orientation normalization for both preview/export.
             from PIL import ImageOps
@@ -260,6 +275,7 @@ def compose(document, images, *, render=False):
         except ValueError as error: issue(str(error), 'font')
     frame = {'x': 0, 'y': 0, 'width': document['width'], 'height': document['height']}
     panels = document['panels']; text = {}; placements = {}
+    pixel_budget = [MAX_LAYER_SOURCE_PIXELS] if 'layer_stack' in document else None
     if sorted(p['order'] for p in panels) != list(range(1, len(panels) + 1)):
         issue('COMIC_READING_ORDER_CONFLICT', 'panels')
     if [p['id'] for p in sorted(panels, key=lambda p: (p['y'], p['x']))] != [p['id'] for p in sorted(panels, key=lambda p: p['order'])]:
@@ -272,7 +288,7 @@ def compose(document, images, *, render=False):
         blank = panel.get('artwork_mode', 'IMAGE') == 'BLANK'
         if source is None and not blank: issue('COMIC_MISSING_APPROVED_IMAGE', pid)
         elif source is not None and ready['available']:
-            image = _image(source)
+            image = _image(source, pixel_budget=pixel_budget)
             scale = (max if panel['fit'] == 'COVER' else min)(panel['width'] / image.width, panel['height'] / image.height)
             size = (max(1, round(image.width * scale)), max(1, round(image.height * scale)))
             offset = ((panel['width'] - size[0]) // 2, (panel['height'] - size[1]) // 2)
@@ -299,23 +315,34 @@ def compose(document, images, *, render=False):
     segments = [{'index': i, 'y': y, 'width': document['width'], 'height': min(document['segment_height'], document['height'] - y)}
                 for i, y in enumerate(range(0, document['height'], document['segment_height']))]
     result = {'issues': issues, 'segments': segments, 'placements': placements, 'can_render': not any(i['severity'] == 'BLOCKER' for i in issues), 'geometry': 'INTEGER_PAGE_PIXELS_V1'}
+    if 'layer_stack' in document:
+        result['layer_profile'] = 'NATIVE_REFERENCE_LAYERS_V1'
+        if sum(p['size'][0] * p['size'][1] for p in placements.values()) > MAX_LAYER_PIXELS:
+            issue('COMIC_LAYER_RESAMPLE_PIXEL_LIMIT_64000000', 'layers')
+            result['can_render'] = False
     if not render or not result['can_render']: return result, []
     from PIL import Image, ImageDraw
-    canvas = Image.new('RGB', (document['width'], document['height']), 'white')
-    draw = ImageDraw.Draw(canvas)
-    for panel in sorted(panels, key=lambda p: p['order']):
-        if panel.get('artwork_mode', 'IMAGE') != 'BLANK':
-            placement = placements[panel['id']]; source = _image(images[panel['asset_id']])
-            resized = source.resize(placement['size'], Image.Resampling.LANCZOS)
-            panel_image = Image.new('RGBA', (panel['width'], panel['height']), 'white')
-            panel_image.alpha_composite(resized, placement['offset'])
-            canvas.paste(panel_image.convert('RGB'), (panel['x'], panel['y']))
-        draw.rectangle((panel['x'], panel['y'], panel['x'] + panel['width'] - 1, panel['y'] + panel['height'] - 1), outline='black', width=2)
-        for bubble in panel['bubbles']:
-            box = (bubble['x'], bubble['y'], bubble['x'] + bubble['width'] - 1, bubble['y'] + bubble['height'] - 1)
-            draw.rounded_rectangle(box, radius=16 if bubble['kind'] == 'DIALOGUE' else 0, fill='white', outline='black', width=2)
-            font, lines, line_height = text[bubble['id']]
-            for i, line in enumerate(lines): draw.text((bubble['x'] + 12, bubble['y'] + 12 + i * line_height), line, font=font, fill='black', anchor='lt')
+    if 'layer_stack' in document:
+        canvas = Image.new('RGBA', (document['width'], document['height']), 'white')
+        for item, x, y, surface in iter_layer_images(document, images, placements, text):
+            composite_layer(canvas, item, x, y, surface)
+        canvas = canvas.convert('RGB')
+    else:
+        canvas = Image.new('RGB', (document['width'], document['height']), 'white')
+        draw = ImageDraw.Draw(canvas)
+        for panel in sorted(panels, key=lambda p: p['order']):
+            if panel.get('artwork_mode', 'IMAGE') != 'BLANK':
+                placement = placements[panel['id']]; source = _image(images[panel['asset_id']])
+                resized = source.resize(placement['size'], Image.Resampling.LANCZOS)
+                panel_image = Image.new('RGBA', (panel['width'], panel['height']), 'white')
+                panel_image.alpha_composite(resized, placement['offset'])
+                canvas.paste(panel_image.convert('RGB'), (panel['x'], panel['y']))
+            draw.rectangle((panel['x'], panel['y'], panel['x'] + panel['width'] - 1, panel['y'] + panel['height'] - 1), outline='black', width=2)
+            for bubble in panel['bubbles']:
+                box = (bubble['x'], bubble['y'], bubble['x'] + bubble['width'] - 1, bubble['y'] + bubble['height'] - 1)
+                draw.rounded_rectangle(box, radius=16 if bubble['kind'] == 'DIALOGUE' else 0, fill='white', outline='black', width=2)
+                font, lines, line_height = text[bubble['id']]
+                for i, line in enumerate(lines): draw.text((bubble['x'] + 12, bubble['y'] + 12 + i * line_height), line, font=font, fill='black', anchor='lt')
     output = []
     for segment in segments:
         stream = io.BytesIO(); canvas.crop((0, segment['y'], document['width'], segment['y'] + segment['height'])).save(stream, format='PNG', compress_level=9)
@@ -389,7 +416,7 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
 
     def _director(self): return DirectorService(self.store, self.novels, self.chapters, self.screenplays)
 
-    def _asset(self, nid, scope, actor, aid, *, approved=True):
+    def _asset(self, nid, scope, actor, aid, *, approved=True, pixel_budget=None):
         asset = self.assets.get(aid, branch_id=scope.get('branch_id'), actor_id=actor)
         if asset.get('novel_id') != nid or asset.get('branch_id') != scope.get('branch_id'): raise FileNotFoundError(aid)
         if asset['media_type'] not in {'image/png', 'image/jpeg', 'image/webp'}: raise ValueError('COMIC_STATIC_RASTER_REQUIRED')
@@ -412,7 +439,7 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
                 frontier.append(parent_row)
         asset['_comic_source_privacy'] = privacy
         content = self.assets.content(aid, branch_id=scope.get('branch_id'), actor_id=actor)
-        if renderer_status()['available']: _image(content)
+        if renderer_status()['available']: _image(content, pixel_budget=pixel_budget)
         return asset, content
 
     def _binding(self, asset):
@@ -461,15 +488,19 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
         characters = {cid for p in body.panels for cid in p.character_ids} | {b.character_id for p in body.panels for b in p.bubbles if b.character_id}
         character_sources = director._character_sources(nid, scope, characters)
         assets = {}
+        pixel_budget = [MAX_LAYER_SOURCE_PIXELS] if body.layer_stack is not None else None
+        def bind(aid, version, code):
+            # Legacy validation order stays unchanged. Opted-in reference layers
+            # bound each distinct source before decoding; repeated pins reuse it.
+            if pixel_budget is None or aid not in assets:
+                asset, _ = self._asset(nid, scope, actor, aid, pixel_budget=pixel_budget)
+                assets[aid] = self._binding(asset)
+            if version != assets[aid]['version']: raise StaleSourceError(code)
         for panel in body.panels:
             if panel.asset_id:
-                asset, _ = self._asset(nid, scope, actor, panel.asset_id)
-                if panel.expected_asset_version != asset['version']: raise StaleSourceError('COMIC_ASSET_VERSION_CHANGED')
-                assets[panel.asset_id] = self._binding(asset)
+                bind(panel.asset_id, panel.expected_asset_version, 'COMIC_ASSET_VERSION_CHANGED')
             for reference in panel.appearance_references:
-                asset, _ = self._asset(nid, scope, actor, reference.asset_id)
-                if reference.expected_asset_version != asset['version']: raise StaleSourceError('COMIC_APPEARANCE_ASSET_VERSION_CHANGED')
-                assets[reference.asset_id] = self._binding(asset)
+                bind(reference.asset_id, reference.expected_asset_version, 'COMIC_APPEARANCE_ASSET_VERSION_CHANGED')
         return {**({'project_incarnation': self._independent_identity(nid)} if independent and bind_independent else {}), 'document': document, 'screenplay_version': source['edit_version'] if source is not None else None, 'source_evidence': director.evidence(nid, scope, source) if source is not None else {'sources': {}, 'privacy': {}},
                 'character_sources': character_sources, 'asset_sources': assets,
                 'scene_ids': {p.id: shots[p.shot_id].get('scene_id') if p.shot_id in shots else None for p in body.panels}, 'status': 'DRAFT', 'approval': None}
@@ -489,8 +520,9 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
         if director._character_sources(nid, scope, row['character_sources']) != row['character_sources']:
             raise StaleSourceError('COMIC_SOURCE_CHANGED')
         images = {}
+        pixel_budget = [MAX_LAYER_SOURCE_PIXELS] if 'layer_stack' in row['document'] else None
         for aid, binding in row['asset_sources'].items():
-            asset, data = self._asset(nid, scope, actor, aid)
+            asset, data = self._asset(nid, scope, actor, aid, pixel_budget=pixel_budget)
             if self._binding(asset) != binding: raise StaleSourceError('COMIC_ASSET_CHANGED')
             images[aid] = data
             if sum(map(len, images.values())) > MAX_OUTPUT: raise ValueError('COMIC_SOURCE_BYTES_LIMIT')
@@ -629,3 +661,24 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
         if self.preflight(nid, scope, actor, rid, expected_version)['review_digest'] != report['review_digest']: raise StaleSourceError('COMIC_EXPORT_SOURCE_CHANGED')
         if len(stream.getvalue()) > MAX_OUTPUT: raise ValueError('COMIC_EXPORT_SIZE_LIMIT')
         return stream.getvalue()
+
+    def export_ora(self, nid, scope, actor, rid, expected_version, guard=lambda: None):
+        with ora_decode_budget():
+            return self._export_ora(nid, scope, actor, rid, expected_version, guard)
+
+    def _export_ora(self, nid, scope, actor, rid, expected_version, guard):
+        from .comic_ora import encode_ora
+        row = self._row(nid, scope, actor, rid); check_version(row, expected_version)
+        if 'layer_stack' not in row['document']:
+            raise ValueError('COMIC_EXPLICIT_LAYER_STACK_REQUIRED')
+        report = self.preflight(nid, scope, actor, rid, expected_version)
+        if row['status'] != 'APPROVED' or (row.get('approval') or {}).get('digest') != report['review_digest']:
+            raise ValueError('COMIC_CURRENT_EXPLICIT_APPROVAL_REQUIRED')
+        if not report['can_render']: raise ValueError('COMIC_PREFLIGHT_BLOCKED')
+        guard(); images = self._current(nid, scope, actor, row)
+        result = encode_ora(row['document'], images, report, expected_version)
+        guard(); latest = self._row(nid, scope, actor, rid); check_version(latest, expected_version)
+        self._current(nid, scope, actor, latest)
+        if self.preflight(nid, scope, actor, rid, expected_version)['review_digest'] != report['review_digest']:
+            raise StaleSourceError('COMIC_EXPORT_SOURCE_CHANGED')
+        return result

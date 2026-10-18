@@ -1,3 +1,4 @@
+import { comicLayersError } from './comicLayers';
 import type { ComicDocument, ComicRect } from './comicLayoutsClient';
 
 export type ComicArrangement = { document?: ComicDocument; error?: string; changed: boolean };
@@ -10,6 +11,7 @@ export function arrangeComicVertically(document: ComicDocument): ComicArrangemen
   const fail = (error: string): ComicArrangement => ({ error, changed: false });
   const validId = (value: unknown) => typeof value === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(value);
   if (!document || typeof document !== 'object' || !Array.isArray(document.panels) || document.panels.some(p => !p || typeof p !== 'object' || !validId(p.id) || !Array.isArray(p.bubbles) || p.bubbles.length > 12 || p.bubbles.some(b => !b || typeof b !== 'object' || !validId(b.id)))) return fail('格框或气泡结构与标识无效，请重新打开有效布局。');
+  const layerError = comicLayersError(document); if (layerError) return fail(layerError);
   const bubbles = document.panels.flatMap(p => p.bubbles);
   if (bubbles.length > 80 || new Set(bubbles.map(b => b.id)).size !== bubbles.length) return fail('气泡标识不能重复，且总数不能超过 80。');
   if (!integer(document.width, 320, 1600) || !integer(document.height, 320, 12000) || document.width * document.height > 16000000 || !integer(document.safe_area, 0, 128)) return fail('请先修正页面尺寸与安全区。');

@@ -1,3 +1,4 @@
+import { comicLayersError, duplicateComicLayers } from './comicLayers';
 import type { ComicCatalog, ComicDocument, ComicPanel, ComicRect } from './comicLayoutsClient';
 
 export type ComicDuplicateTarget = { sourceId: string; x: number; y: number };
@@ -15,6 +16,7 @@ export function previewComicDuplicate(document: ComicDocument, catalog: ComicCat
   const fail = (error: string): ComicDuplicatePreview => ({ error });
   if (!document || !Array.isArray(document.panels) || !document.panels.length || document.panels.length >= 24) return fail('复制后最多 24 个格框。');
   if (!integer(document.width, 320, 1600) || !integer(document.height, 320, 12000) || document.width * document.height > 16000000 || !integer(document.safe_area, 0, 128) || !integer(document.segment_height, 320, 2400)) return fail('请先修正页面尺寸、安全区与分段高度。');
+  const layerError = comicLayersError(document); if (layerError) return fail(layerError);
   const panels = document.panels;
   if (panels.some(p => !p || !id(p.id) || !Array.isArray(p.bubbles) || p.bubbles.length > 12 || p.bubbles.some(b => !b || !id(b.id) || typeof b.text !== 'string'))) return fail('格框或气泡结构无效。');
   if (panels.some(p => p.appearance_references !== undefined && (!Array.isArray(p.appearance_references) || p.appearance_references.some(ref => !ref || typeof ref !== 'object')))) return fail('外观引用结构无效，请重新打开有效布局。');
@@ -50,5 +52,8 @@ export function applyComicDuplicate(document: ComicDocument, catalog: ComicCatal
   const existing = new Set(document.panels.flatMap(p => [p.id, ...p.bubbles.map(b => b.id)]));
   if (ids.bubbles.length !== preview.panel.bubbles.length || fresh.some(value => !id(value) || existing.has(value)) || new Set(fresh).size !== fresh.length) return { error: '新格框或气泡标识冲突，请重新预览后再应用。' };
   const panel = { ...preview.panel, id: ids.panel, bubbles: preview.panel.bubbles.map((b, i) => ({ ...b, id: ids.bubbles[i] })) };
-  return { document: { ...document, panels: [...document.panels, panel] } };
+  try {
+    const source = document.panels.find(p => p.id === target.sourceId)!;
+    return { document: duplicateComicLayers(document, { ...document, panels: [...document.panels, panel] }, source.id, panel.id, new Map(source.bubbles.map((bubble, index) => [bubble.id, panel.bubbles[index].id]))) };
+  } catch (error) { return { error: error instanceof Error ? error.message : '无法复制图层；草稿未改变。' }; }
 }

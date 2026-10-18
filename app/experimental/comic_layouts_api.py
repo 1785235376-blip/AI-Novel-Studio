@@ -114,4 +114,7 @@ def create_comic_layouts_router(service, authorize, require_flag):
     @router.get('/records/{rid}/export')
     def export(nid: str, rid: str, expected_version: int = Query(ge=1), x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return invoke(nid, x_session_token, x_branch_id, 'domain.read', lambda a,s,g: Response(service.export(nid,s,a,rid,expected_version,g), media_type='application/zip', headers={'Content-Disposition': 'attachment; filename="comic-segments.zip"'}))
+    @router.get('/records/{rid}/export-ora')
+    def export_ora(nid: str, rid: str, expected_version: int = Query(ge=1), x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid, x_session_token, x_branch_id, 'domain.read', lambda a,s,g: Response(service.export_ora(nid,s,a,rid,expected_version,g), media_type='image/openraster', headers={'Content-Disposition': 'attachment; filename="comic-page.ora"'}))
     return router

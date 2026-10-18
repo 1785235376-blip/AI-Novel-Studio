@@ -182,9 +182,14 @@ class ComicCollectionsMixin:
                 source = self._book_page(nid, scope, actor, body.source_layout_id, state)
                 check_version(source, body.expected_source_version)
                 page_document = copy.deepcopy(source['document'])
+                remap = {}
                 for panel in page_document['panels']:
-                    panel['id'] = new_id()
-                    for bubble in panel['bubbles']: bubble['id'] = new_id()
+                    old_id = panel['id']; panel['id'] = new_id(); remap[('PANEL', old_id)] = panel['id']
+                    for bubble in panel['bubbles']:
+                        old_id = bubble['id']; bubble['id'] = new_id(); remap[('BUBBLE', old_id)] = bubble['id']
+                for item in page_document.get('layer_stack', {}).get('items', []):
+                    item['id'] = 'layer_' + new_id()
+                    item['target_id'] = remap[(item['kind'].split('_')[0], item['target_id'])]
             else:
                 page_document = {'title': '空白漫画页', 'source_mode': 'INDEPENDENT', 'panels': []}
             payload = self._payload(nid, scope, actor, page_document)
