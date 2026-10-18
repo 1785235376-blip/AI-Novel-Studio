@@ -1,3 +1,4 @@
+import { ComicGeometryEditor } from './ComicGeometryEditor';
 import { ComicOraImportPanel } from './ComicOraImportPanel';
 import { ComicLayersPanel } from './ComicLayersPanel';
 import { comicLayersError, reconcileComicLayers } from './comicLayers';
@@ -132,6 +133,7 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
           if (!currentEditor() || composing.current || !duplicateCurrent.current.allowed || duplicateCurrent.current.document !== document || duplicateCurrent.current.catalog !== catalog.data) return false;
           edit(next); return true;
         }} />
+        <ComicGeometryEditor document={document} disabled={!duplicateAllowed || !!layerError || treeDirty || oraDirty} getRevision={() => editorGeneration.current} isCurrent={() => currentEditor() && !composing.current && duplicateCurrent.current.allowed && !treeDirtyRef.current && !oraDirtyRef.current} onApply={edit} />
         <ComicLayersPanel document={document} disabled={busy || sourceChanged || (!!row && !savedCurrent)} onChange={edit} />
         {layerEditError && <StatusMessage tone="warning">{layerEditError}</StatusMessage>}
         <fieldset className="experimental-form" disabled={busy}>
