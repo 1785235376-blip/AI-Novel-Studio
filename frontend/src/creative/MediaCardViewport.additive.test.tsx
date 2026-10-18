@@ -41,3 +41,8 @@ it('captures only explicit Ctrl-wheel and preserves the anchor using original zo
 // These owner/gesture tests do not exercise bitmap pixels; the dedicated minimap test checks drawing calls.
 beforeEach(() => { vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null); });
 afterEach(() => vi.restoreAllMocks());
+it('renders a collapsed group affordance instead of hidden cards and stages explicit expansion', () => {
+ const p = props(); p.definition.groups = [{ id: 'Group', name: 'Scene group', card_ids: ['Card'], collapsed: true }]; render(<MediaCardViewport {...p} />);
+ expect(document.querySelectorAll('[data-media-card]')).toHaveLength(0); expect(document.querySelectorAll('[data-media-group]')).toHaveLength(1);
+ fireEvent.click(screen.getByText('展开 Scene group · 1 张')); expect(p.onChange).toHaveBeenCalledTimes(1); expect(p.onChange.mock.calls[0][0].groups[0].collapsed).toBe(false); expect(p.onChange.mock.calls[0][0].cards).toEqual(p.definition.cards);
+});

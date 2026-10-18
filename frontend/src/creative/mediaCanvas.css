@@ -14,3 +14,6 @@
 .media-canvas__minimap{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap}
 .media-canvas__minimap canvas{width:200px;height:120px;border:var(--border-default);border-radius:var(--radius-sm);cursor:pointer}
 .media-canvas__minimap canvas:focus-visible{outline:2px solid var(--color-border-focus)}
+
+.media-canvas__group{position:absolute;box-sizing:border-box;border:var(--border-default);border-radius:var(--radius-lg);pointer-events:none}
+.media-canvas__group>.ui-button{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:auto;background:var(--color-bg-surface)}

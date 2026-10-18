@@ -3,7 +3,7 @@
 These records never describe execution ports, edges, jobs or model authority.
 """
 from typing import Literal
-from pydantic import Field, model_validator, field_validator
+from pydantic import Field, model_validator, field_validator, model_serializer
 from .graph_models import Strict, Id, RequestId, Position, Viewport, AssetParameters
 
 CANVAS_VIEWS = 'creative_canvas_views_v2'
@@ -16,11 +16,45 @@ class CanvasAssetCard(Strict):
     position: Position
     asset: AssetParameters
 
+class CanvasDisplayGroup(Strict):
+    id: Id
+    name: str = Field(min_length=1, max_length=80, strict=True)
+    card_ids: list[Id] = Field(default_factory=list, max_length=MAX_CANVAS_CARDS, strict=True)
+    parent_id: Id | None = None
+    collapsed: bool = Field(default=False, strict=True)
+
+    @model_serializer(mode='wrap')
+    def absent_parent(self, handler):
+        value = handler(self)
+        if self.parent_id is None: value.pop('parent_id', None)
+        return value
+
+    @model_validator(mode='after')
+    def unique_members(self):
+        if not self.name.strip() or len(set(self.card_ids)) != len(self.card_ids):
+            raise ValueError('CREATIVE_CANVAS_GROUP_INVALID')
+        return self
+
 class CanvasViewDefinition(Strict):
     schema_version: Literal[1] = 1
     title: str = Field(min_length=1,max_length=160)
     cards: list[CanvasAssetCard] = Field(default_factory=list,max_length=MAX_CANVAS_CARDS)
     viewport: Viewport = Field(default_factory=Viewport)
+    groups: list[CanvasDisplayGroup] | None = Field(default=None, min_length=1, max_length=64, strict=True)
+
+    @model_serializer(mode='wrap')
+    def preserve_legacy_definition(self, handler):
+        value = handler(self)
+        if self.groups is None: value.pop('groups', None)
+        return value
+
+    @model_validator(mode='before')
+    @classmethod
+    def absent_not_null(cls, value):
+        if isinstance(value, dict) and 'groups' in value and value['groups'] is None:
+            raise ValueError('CREATIVE_CANVAS_GROUP_INVALID')
+        return value
+
 
     @field_validator('schema_version', mode='before')
     @classmethod
@@ -33,6 +67,19 @@ class CanvasViewDefinition(Strict):
         from ..experimental.store import canonical
         if not self.title.strip() or len({card.id for card in self.cards}) != len(self.cards):
             raise ValueError('CREATIVE_CANVAS_CARD_ID_OR_TITLE_INVALID')
+        groups = {group.id: group for group in self.groups or []}
+        if len(groups) != len(self.groups or []):
+            raise ValueError('CREATIVE_CANVAS_GROUP_ID_INVALID')
+        cards = {card.id for card in self.cards}; members = set()
+        for group in groups.values():
+            if any(member not in cards or member in members for member in group.card_ids):
+                raise ValueError('CREATIVE_CANVAS_GROUP_MEMBER_INVALID')
+            members.update(group.card_ids)
+            seen = {group.id}; parent_id = group.parent_id
+            while parent_id is not None:
+                if parent_id not in groups or parent_id in seen or len(seen) >= 8:
+                    raise ValueError('CREATIVE_CANVAS_GROUP_PARENT_INVALID')
+                seen.add(parent_id); parent_id = groups[parent_id].parent_id
         if len(canonical(self.model_dump()).encode('utf-8')) > MAX_CANVAS_DEFINITION_BYTES:
             raise ValueError('CREATIVE_CANVAS_DEFINITION_CAPACITY')
         return self

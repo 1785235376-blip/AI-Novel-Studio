@@ -4,7 +4,8 @@ import type { StudioGraphOwner } from './studioGraphTypes';
 
 export type CanvasAssetReference = { asset_id: string; version: number; digest: string; kind: 'image' | 'video' | 'audio' };
 export type CanvasCard = { id: string; position: { x: number; y: number }; asset?: CanvasAssetReference };
-export type CanvasDefinition = { schema_version: 1; title: string; cards: CanvasCard[]; viewport: { x: number; y: number; zoom: number } };
+export type CanvasDisplayGroup = { id: string; name: string; card_ids: string[]; parent_id?: string; collapsed: boolean };
+export type CanvasDefinition = { schema_version: 1; title: string; cards: CanvasCard[]; viewport: { x: number; y: number; zoom: number }; groups?: CanvasDisplayGroup[] };
 export type CanvasReferenceState = { card_id: string; state: 'CURRENT_METADATA' | 'STALE' | 'UNAVAILABLE'; filename?: string };
 export type CanvasViewRecord = StudioGraphOwner & { id: string; version: number; definition: CanvasDefinition; definition_digest: string;
   created_at: string; updated_at: string; reference_states: CanvasReferenceState[]; execution_authority: false; binary_content_verified: false;
@@ -22,7 +23,7 @@ function position(v: unknown) { const r = object(v); keys(r, ['x', 'y']); return
 function reference(v: unknown): CanvasAssetReference { const r = object(v); keys(r, ['asset_id', 'version', 'digest', 'kind']); if (!['image', 'video', 'audio'].includes(r.kind as string)) invalid();
   return { asset_id: text(r.asset_id), version: integer(r.version), digest: digest(r.digest), kind: r.kind as CanvasAssetReference['kind'] }; }
 export function checkedCanvasDefinition(v: unknown, writable = false): CanvasDefinition {
-  const r = object(v); keys(r, ['schema_version', 'title', 'cards', 'viewport']); if (r.schema_version !== 1) invalid();
+  const r = object(v); keys(r, ['schema_version', 'title', 'cards', 'viewport', 'groups']); if (r.schema_version !== 1) invalid();
   const cards = list(r.cards, 1000).map(v => { const c = object(v); keys(c, ['id', 'position', 'asset']); const id = text(c.id, 64);
     if (!/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(id) || writable && c.asset === undefined) invalid();
     return { id, position: position(c.position), ...(c.asset === undefined ? {} : { asset: reference(c.asset) }) }; });
@@ -30,6 +31,22 @@ export function checkedCanvasDefinition(v: unknown, writable = false): CanvasDef
   const view = object(r.viewport); keys(view, ['x', 'y', 'zoom']);
   const result: CanvasDefinition = { schema_version: 1, title: text(r.title, 160), cards,
     viewport: { x: number(view.x, -100_000, 100_000), y: number(view.y, -100_000, 100_000), zoom: number(view.zoom, .35, 2.5) } };
+  if (r.groups !== undefined) {
+    const groups = list(r.groups, 64).map(v => { const g = object(v); keys(g, ['id', 'name', 'card_ids', 'parent_id', 'collapsed']); const id = text(g.id, 64);
+      if (!/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(id) || typeof g.collapsed !== 'boolean') invalid();
+      const ids = list(g.card_ids, 1000).map(v => text(v, 64));
+      const parent = g.parent_id === undefined ? undefined : text(g.parent_id, 64);
+      return { id, name: text(g.name, 80), card_ids: ids, ...(parent === undefined ? {} : { parent_id: parent }), collapsed: g.collapsed };
+    });
+    if (!groups.length || new Set(groups.map(g => g.id)).size !== groups.length) invalid();
+    const byId = new Map(groups.map(g => [g.id, g])), members = new Set<string>(), cardIds = new Set(cards.map(c => c.id));
+    for (const group of groups) {
+      for (const id of group.card_ids) { if (!cardIds.has(id) || members.has(id)) invalid(); members.add(id); }
+      const seen = new Set([group.id]); let parent = group.parent_id;
+      while (parent !== undefined) { if (!byId.has(parent) || seen.has(parent) || seen.size >= 8) invalid(); seen.add(parent); parent = byId.get(parent)!.parent_id; }
+    }
+    result.groups = groups;
+  }
   if (new TextEncoder().encode(JSON.stringify(result)).length > 512_000) invalid();
   return result;
 }

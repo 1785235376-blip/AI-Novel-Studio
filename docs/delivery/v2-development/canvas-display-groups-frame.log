@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/MediaCardViewport.additive.test.tsx (12 tests) 112ms
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  21:10:54
+   Duration  1.08s (transform 152ms, setup 22ms, collect 286ms, tests 112ms, environment 391ms, prepare 58ms)
+

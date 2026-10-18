@@ -1,3 +1,5 @@
+import { MediaCanvasGroupTools } from './MediaCanvasGroupTools';
+import { removeCanvasCard } from './mediaCanvasGroups';
 import { CanvasAssetPreview } from './CanvasAssetPreview';
 import { MediaCardViewport } from './MediaCardViewport';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -77,9 +79,10 @@ export function MediaCanvasViewPanel(props: Props) {
       {(['x', 'y'] as const).map(axis => <label key={axis}>视口 {axis}<input type="number" min={-100000} max={100000} value={draft.viewport[axis]} disabled={!editable} onChange={e => edit({ ...draftRef.current, viewport: { ...draftRef.current.viewport, [axis]: clampGraphPosition(e.target.valueAsNumber) } })} /></label>)}
       <label>缩放<input type="number" step="0.1" min="0.35" max="2.5" value={draft.viewport.zoom} disabled={!editable} onChange={e => edit({ ...draftRef.current, viewport: { ...draftRef.current.viewport, zoom: clampGraphZoom(e.target.valueAsNumber) } })} /></label>
     </div>
+    <MediaCanvasGroupTools definition={draft} selectedCard={selected} owner={token} disabled={!editable} isCurrent={current} onChange={edit} />
     <MediaCardViewport definition={draft} states={states} selected={selected} query={query} owner={token} disabled={!editable} isCurrent={current} onSelect={setSelected} onChange={edit} onSize={setSize} />
     {card && <div className="creative-actions"><span>选中 {card.id}</span>{(['x', 'y'] as const).map(axis => <label key={axis}>卡片 {axis}<input type="number" value={card.position[axis]} disabled={!editable} onChange={e => edit({ ...draftRef.current, cards: draftRef.current.cards.map(c => c.id === card.id ? { ...c, position: { ...c.position, [axis]: clampGraphPosition(e.target.valueAsNumber) } } : c) })} /></label>)}
-      <Button disabled={!editable} onClick={() => { edit({ ...draftRef.current, cards: draftRef.current.cards.filter(c => c.id !== card.id) }); setSelected(''); }}>移除此引用卡片</Button></div>}
+      <Button disabled={!editable} onClick={() => { edit(removeCanvasCard(draftRef.current, card.id)); setSelected(''); }}>移除此引用卡片</Button></div>}
     {card?.asset && <CanvasAssetPreview key={card.id} reference={card.asset} owner={token} client={props.client} disabled={pending || props.busy || props.externalDirty} isCurrent={current} read={props.read} />}
     {error && <StatusMessage tone="warning">{error}</StatusMessage>}{notice && <p role="status">{notice}</p>}
   </section>;
