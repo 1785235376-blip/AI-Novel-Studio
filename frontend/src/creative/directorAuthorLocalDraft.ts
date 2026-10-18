@@ -3,7 +3,7 @@ import type { CreativeInput, CreativeDocument } from './types';
 import type { PlanningSnapshot } from './studioProductionGraphContract';
 
 export type DirectorAuthorLocalDraft = {
-  schema_version: 1; owner: StudioGraphDraftOwner; saved_at: string;
+  schema_version: 1; recovery_id: string; owner: StudioGraphDraftOwner; saved_at: string;
   base: { id: string; version: number; digest?: string } | null;
   draft: CreativeInput; uncertain: boolean;
 };
@@ -58,8 +58,8 @@ export function directorAuthorDraftKey(owner: StudioGraphDraftOwner): string {
   if (owner.mode === 'local' && [owner.actorWorkspaceId, owner.workspaceId, owner.storylineId, owner.branchId].some(Boolean)) invalid();
   return `studio-director-author:v1:${studioGraphDraftKey(owner)}`;
 }
-export function encodeDirectorAuthorDraft(owner: StudioGraphDraftOwner, draft: CreativeInput, base: CreativeDocument | undefined, pin: PlanningSnapshot | undefined, uncertain: boolean): string {
-  const value: DirectorAuthorLocalDraft = { schema_version: 1, owner, saved_at: new Date().toISOString(), uncertain,
+export function encodeDirectorAuthorDraft(owner: StudioGraphDraftOwner, draft: CreativeInput, base: CreativeDocument | undefined, pin: PlanningSnapshot | undefined, uncertain: boolean, recoveryId: string = crypto.randomUUID()): string {
+  const value: DirectorAuthorLocalDraft = { schema_version: 1, recovery_id: recoveryId, owner, saved_at: new Date().toISOString(), uncertain,
     base: base ? { id: base.id, version: base.version, ...(pin?.id === base.id && pin.version === base.version ? { digest: pin.digest } : {}) } : null,
     draft: checkedDirectorAuthorInput(draft) };
   const raw = JSON.stringify(value); readDirectorAuthorDraft(raw, owner); return raw;
@@ -67,8 +67,8 @@ export function encodeDirectorAuthorDraft(owner: StudioGraphDraftOwner, draft: C
 export function readDirectorAuthorDraft(raw: string, owner: StudioGraphDraftOwner): DirectorAuthorLocalDraft {
   if (raw.length > LIMIT || new TextEncoder().encode(raw).byteLength > LIMIT) invalid();
   const row = object(JSON.parse(raw));
-  if (Object.keys(row).sort().join() !== ['schema_version', 'owner', 'saved_at', 'base', 'draft', 'uncertain'].sort().join()
-    || row.schema_version !== 1 || directorAuthorDraftKey(object(row.owner) as StudioGraphDraftOwner) !== directorAuthorDraftKey(owner)
+  if (Object.keys(row).sort().join() !== ['schema_version', 'recovery_id', 'owner', 'saved_at', 'base', 'draft', 'uncertain'].sort().join()
+    || row.schema_version !== 1 || typeof row.recovery_id !== 'string' || !/^[a-f0-9-]{36}$/.test(row.recovery_id) || directorAuthorDraftKey(object(row.owner) as StudioGraphDraftOwner) !== directorAuthorDraftKey(owner)
     || typeof row.uncertain !== 'boolean' || typeof row.saved_at !== 'string' || !Number.isFinite(Date.parse(row.saved_at))) invalid();
   let base: DirectorAuthorLocalDraft['base'] = null;
   if (row.base !== null) {
@@ -77,5 +77,5 @@ export function readDirectorAuthorDraft(raw: string, owner: StudioGraphDraftOwne
       || b.digest !== undefined && (typeof b.digest !== 'string' || !/^[a-f0-9]{64}$/.test(b.digest))) invalid();
     base = { id: b.id as string, version: b.version as number, ...(b.digest ? { digest: b.digest as string } : {}) };
   }
-  return { schema_version: 1, owner: { ...owner }, saved_at: row.saved_at as string, uncertain: row.uncertain as boolean, base, draft: checkedDirectorAuthorInput(row.draft) };
+  return { schema_version: 1, recovery_id: row.recovery_id as string, owner: { ...owner }, saved_at: row.saved_at as string, uncertain: row.uncertain as boolean, base, draft: checkedDirectorAuthorInput(row.draft) };
 }

@@ -146,11 +146,13 @@ export function GraphDirectorConsole({ draftOwner, verifyDraftOwner, registerRec
   }
   async function save() {
     if (!editing || lock.current || !dirty || !draft.title.trim() || creativeAuthoringProblems(draft).length) return;
-    lock.current = true; setWorking(true); setSaving(true); setBlocked(true); setError('');
-    setNotice('保存请求已提交，结果核对完成前不会重复写入。');
-    recovery.persist(draft, base, snapshot, true);
+    lock.current = true; setWorking(true); setSaving(true); setError('');
     const input = documentInput(draft), origin = base, generation = scope.current.generation, ticket = ++epoch.current;
     try {
+      const protectedSave = draftOwner ? await recovery.prepareSave(draft, base, snapshot) : true;
+      if (!owns(generation) || ticket !== epoch.current) return;
+      if (!protectedSave) { setError('本机恢复保护未完成，未提交服务器保存。输入仍保留，请下载备份后核对恢复状态。'); return; }
+      setBlocked(true); setNotice('保存请求已提交，结果核对完成前不会重复写入。');
       const row = await mutate(() => origin ? client.update(origin.id, origin.version, input) : client.create(input));
       if (!owns(generation) || ticket !== epoch.current) return;
       if (row.mode !== 'DIRECTOR' || typeof row.id !== 'string' || !row.id.trim() || !Number.isSafeInteger(row.version) || row.version < 1 || origin && (row.id !== origin.id || row.version !== origin.version + 1)) throw new Error('导演保存回执不匹配。');

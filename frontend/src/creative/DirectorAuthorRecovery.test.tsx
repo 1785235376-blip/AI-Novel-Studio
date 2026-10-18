@@ -25,7 +25,7 @@ const title = () => screen.getByLabelText('文档标题') as HTMLInputElement;
 async function open() { click('打开导演总控台'); await waitFor(() => expect(screen.getByLabelText('文档标题')).toBeTruthy()); }
 const stored = () => { const keys = Object.keys(localStorage).filter(k => k.startsWith(prefix)); return keys.map(k => localStorage.getItem(k)!).at(-1) ?? null; };
 const seed = (base?: CreativeDocument, uncertain = false) => localStorage.setItem(key, encodeDirectorAuthorDraft(owner, draft(), base, base ? pin : undefined, uncertain));
-beforeEach(() => localStorage.clear());
+beforeEach(() => { localStorage.clear(); Object.defineProperty(navigator, 'locks', { configurable: true, value: { request: vi.fn(async (_name, _options, callback) => callback({ name: _name })) } }); });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 describe('Director author recovery', () => {
   it('retains incomplete input including an active IME edit, then explicitly revalidates on remount without writes', async () => {
@@ -139,4 +139,70 @@ it('revoked source authorization hides recovered content and preserves its quara
   vi.mocked(client.export).mockRejectedValue(new ApiError({ status: 403, code: 'DENIED', message: 'No access' }));
   click('核对导演原文档版本'); await screen.findByText(/内容已隐藏/);
   expect(screen.queryByDisplayValue(draft().title)).toBeNull(); expect(stored()).toContain(draft().title);
+});
+it('fails closed before dispatch when save-time quota prevents UNKNOWN protection, including after remount', async () => {
+  const { props, client } = setup(); let view = render(<GraphDirectorConsole {...props} />); await open();
+  fireEvent.change(title(), { target: { value: 'Quota before dispatch' } }); await waitFor(() => expect(stored()).not.toBeNull());
+  expect(readDirectorAuthorDraft(stored()!, owner).uncertain).toBe(false);
+  vi.mocked(client.create).mockImplementation(async () => { throw new Error('server committed, ACK lost'); });
+  const original = Storage.prototype.setItem;
+  const failSnapshot = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, k, v) {
+    if (k.startsWith(prefix)) throw new DOMException('full', 'QuotaExceededError'); original.call(this, k, v);
+  });
+  click('保存草稿'); await screen.findByText(/本机恢复保护未完成，未提交服务器保存/);
+  expect(client.create).not.toHaveBeenCalled(); expect(title().value).toBe('Quota before dispatch');
+  failSnapshot.mockRestore(); view.unmount(); view = render(<GraphDirectorConsole {...props} />); await open();
+  click('核对并恢复导演作者草稿'); await waitFor(() => expect(title().value).toBe('Quota before dispatch'));
+  expect((screen.getByRole('button', { name: '保存草稿' }) as HTMLButtonElement).disabled).toBe(true);
+  click('保存草稿'); expect(client.create).not.toHaveBeenCalled();
+});
+it('a halted recovery writer cannot dispatch a save, even when the server stub would commit and lose ACK', async () => {
+  localStorage.setItem(key, '{broken'); const { props, client } = setup();
+  vi.mocked(client.create).mockImplementation(async () => { throw new Error('server committed, ACK lost'); });
+  render(<GraphDirectorConsole {...props} />); await open(); await screen.findByText(/格式损坏/);
+  fireEvent.change(title(), { target: { value: 'Do not dispatch' } }); click('保存草稿');
+  await screen.findByText(/本机恢复保护未完成，未提交服务器保存/); expect(client.create).not.toHaveBeenCalled(); expect(localStorage.getItem(key)).toBe('{broken');
+});
+it('a restored false sibling cannot permit duplicate create after a real dispatched write loses its ACK', async () => {
+  seed(); const original = localStorage.getItem(key)!; localStorage.setItem(`${prefix}sibling`, original);
+  const { props, client } = setup(); vi.mocked(client.create).mockImplementation(async () => { throw new Error('server committed, ACK lost'); });
+  let view = render(<GraphDirectorConsole {...props} />); await open(); click('核对并恢复导演作者草稿');
+  await waitFor(() => expect(title().value).toBe(draft().title)); click('保存草稿');
+  await screen.findByText(/保存冲突或回执不确定/); expect(client.create).toHaveBeenCalledTimes(1);
+  expect(localStorage.getItem(`${prefix}sibling`)).toBe(original); // Competing immutable input was not destroyed.
+  view.unmount(); view = render(<GraphDirectorConsole {...props} />); await open(); click('核对并恢复导演作者草稿');
+  await waitFor(() => expect(title().value).toBe(draft().title));
+  expect((screen.getByRole('button', { name: '保存草稿' }) as HTMLButtonElement).disabled).toBe(true);
+  click('保存草稿'); expect(client.create).toHaveBeenCalledTimes(1);
+});
+it('requires real browser lock support rather than pretending localStorage comparison is atomic', async () => {
+  Object.defineProperty(navigator, 'locks', { configurable: true, value: undefined });
+  const { props, client } = setup(); render(<GraphDirectorConsole {...props} />); await open();
+  fireEvent.change(title(), { target: { value: 'No lock' } }); click('保存草稿'); await screen.findByText(/无法安全协调跨页面保存/);
+  expect(client.create).not.toHaveBeenCalled(); expect(title().value).toBe('No lock');
+});
+it.each([16, 17])('keeps explicit recovery and discard usable at %i snapshots without deleting competing inputs', async count => {
+  for (let i = 0; i < count; i++) localStorage.setItem(`${prefix}${String(i).padStart(2, '0')}`, encodeDirectorAuthorDraft(owner, draft(), undefined, undefined, false));
+  const { props, client } = setup(); render(<GraphDirectorConsole {...props} />); await open(); click('核对并恢复导演作者草稿');
+  await waitFor(() => expect(title().value).toBe(draft().title)); expect(Object.keys(localStorage).filter(k => k.startsWith(prefix))).toHaveLength(count);
+  fireEvent.click(screen.getByLabelText('确认放弃导演本地草稿')); click('处理导演本地草稿');
+  expect(Object.keys(localStorage).filter(k => k.startsWith(prefix))).toHaveLength(count - 1); expect(client.create).not.toHaveBeenCalled();
+});
+it('uses exclusive Web Lock admission to allow only one concurrent save from a shared recovered lineage', async () => {
+  seed(); let held = false;
+  const request = vi.fn(async (_name: string, _options: unknown, callback: (lock: object | null) => Promise<boolean>) => {
+    if (held) return callback(null);
+    held = true; try { return await callback({ name: _name }); } finally { held = false; }
+  });
+  Object.defineProperty(navigator, 'locks', { configurable: true, value: { request } });
+  const common = { owner, available: true, isCurrent: () => true, dirty: false, uncertain: false, draft: newDocument('DIRECTOR') };
+  const a = renderHook(p => useDirectorAuthorRecovery(p), { initialProps: common });
+  const b = renderHook(p => useDirectorAuthorRecovery(p), { initialProps: common });
+  act(() => { a.result.current.consume(a.result.current.candidate!); b.result.current.consume(b.result.current.candidate!); });
+  a.rerender({ ...common, dirty: true, draft: draft() }); b.rerender({ ...common, dirty: true, draft: draft() });
+  let outcomes: boolean[] = [];
+  await act(async () => { outcomes = await Promise.all([a.result.current.prepareSave(draft()), b.result.current.prepareSave(draft())]); });
+  expect(outcomes).toEqual([true, false]);
+  expect(request.mock.calls.every(call => JSON.stringify(call[1]) === JSON.stringify({ mode: 'exclusive', ifAvailable: true }))).toBe(true);
+  expect(Object.keys(localStorage).filter(k => k.includes(':attempt:'))).toHaveLength(1);
 });
