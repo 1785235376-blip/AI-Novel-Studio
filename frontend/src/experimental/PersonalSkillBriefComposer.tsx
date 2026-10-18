@@ -1,3 +1,5 @@
+import {ReviewedGraphBriefImport} from './ReviewedGraphBriefImport';
+import type {BriefGraphReader,GraphBriefSource} from './reviewedGraphBrief';
 import { BriefCandidateImport } from './BriefCandidateImport';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { api } from '../api';
@@ -6,9 +8,10 @@ import { Field } from './shared';
 import { briefFields, emptyBrief, personalBriefPackage, projectWritingPreset, type BriefIdentity, type PresetSource } from './personalSkillBrief';
 
 type Resource = PresetSource & { name: string };
-type Props = { active?: boolean; busy: boolean; onInvalidate: () => void; onPrepare: (text: string) => void; onClose: () => void };
-export function PersonalSkillBriefComposer({ active = true, busy, onInvalidate, onPrepare, onClose }: Props) {
+type Props = { graphReader?:BriefGraphReader; active?: boolean; busy: boolean; onInvalidate: () => void; onPrepare: (text: string) => void; onClose: () => void };
+export function PersonalSkillBriefComposer({ graphReader, active = true, busy, onInvalidate, onPrepare, onClose }: Props) {
   const [identity, setIdentity] = useState<BriefIdentity>({ id: 'personal-', title: '', version: '1.0.0', author: '', license: '' });
+  const [graphSource,setGraphSource]=useState<GraphBriefSource>();
   const [unverifiedModelCandidate,setUnverifiedModelCandidate]=useState(false);
   const [text, setText] = useState(emptyBrief), [source, setSource] = useState<PresetSource>();
   const [plugins, setPlugins] = useState<{ id: string; name: string }[]>([]), [plugin, setPlugin] = useState('');
@@ -48,17 +51,19 @@ export function PersonalSkillBriefComposer({ active = true, busy, onInvalidate, 
       const selected = resources.find(row => row.resourceId === resource); if (!selected) return;
       const result = await api.pluginResource(selected.pluginId, selected.resourceId);
       if (!current(ticket)) return;
-      const projected = projectWritingPreset(result, selected); onInvalidate(); setText(projected.text); setUnverifiedModelCandidate(false); setSource(projected.source); setOmitted(projected.omitted);
+      const projected = projectWritingPreset(result, selected); onInvalidate(); setText(projected.text); setUnverifiedModelCandidate(false); setGraphSource(undefined); setSource(projected.source); setOmitted(projected.omitted);
       setNotice('已替换下方四项内容。请修改、填写个人身份与许可后再预检；原资源保持不变。');
     })}>读取预设并替换四项内容</Button>
     <p>仅采用用途、写作目标、约束、检查清单。参数提示与其他字段不会成为执行控制，也不自动采用。</p>
     {source && <><p>已采用来源：{source.pluginId} / {source.resourceId} · SHA-256 {source.sha256}。这是已读取内容的引用，不代表发布者认证或后续同步。</p><p>未采用字段：{omitted.join('、') || '无'}</p></>}
     <div className="experimental-grid">{([['id', '个人简报标识'], ['title', '个人简报标题'], ['version', '个人简报版本'], ['author', '个人简报作者'], ['license', '个人简报许可声明']] as const).map(([key, label]) => <Field key={key} label={label}><input disabled={busy || loading} maxLength={key === 'id' ? 80 : 160} value={identity[key]} onChange={event => { changed(); setIdentity({ ...identity, [key]: event.target.value }); }} /></Field>)}</div>
     <p>许可需自行明确填写，不从来源发布者推断；不确定时请先核对。personal- 标识与原包分开，更新内容需递增版本。</p>
-    <BriefCandidateImport active={active} disabled={busy||loading} current={text} onApply={value=>{changed();setText(value);setSource(undefined);setOmitted([]);setUnverifiedModelCandidate(true);setNotice('已替换四项正文，候选来源未经验证。请核对身份与许可，再进入原预检安装流程。');}}/>
+    {graphReader&&<ReviewedGraphBriefImport reader={graphReader} active={active} disabled={busy||loading} current={text} onApply={value=>{changed();setText(value.text);setGraphSource(value.source);setSource(undefined);setOmitted([]);setUnverifiedModelCandidate(false);setNotice('已采用原审核文本引用，仍需填写个人身份与许可并预检安装。');}}/>}
+    {graphSource&&<p>原审核来源：{graphSource.run_id} / {graphSource.review_node_id} · SHA-256 {graphSource.text_sha256}。下方可继续修改；引用不认证发布者、不授予执行权限。</p>}
+    <BriefCandidateImport active={active} disabled={busy||loading} current={text} onApply={value=>{changed();setText(value);setSource(undefined);setOmitted([]);setUnverifiedModelCandidate(true);setGraphSource(undefined);setNotice('已替换四项正文，候选来源未经验证。请核对身份与许可，再进入原预检安装流程。');}}/>
     {unverifiedModelCandidate&&<p>正文含用户提供的模型整理候选；不声明模型或来源已核验。</p>}
     {briefFields.map(([key, label]) => <Field key={key} label={`简报${label}`}><textarea disabled={busy || loading} rows={3} maxLength={8000} value={text[key]} onChange={event => { changed(); setText({ ...text, [key]: event.target.value }); }} /></Field>)}
-    <Button disabled={busy || loading} onClick={() => { try { const value = personalBriefPackage(identity, text, source, unverifiedModelCandidate); changed(); onPrepare(JSON.stringify(value, null, 2)); setNotice('已填入下方模板目录 JSON。请预检比较，再确认安装；尚未保存。'); } catch (value) { setError(value instanceof Error ? value.message : '简报无效。'); } }}>填入简报安装预览</Button>
+    <Button disabled={busy || loading} onClick={() => { try { const value = personalBriefPackage(identity, text, source, unverifiedModelCandidate,graphSource); changed(); onPrepare(JSON.stringify(value, null, 2)); setNotice('已填入下方模板目录 JSON。请预检比较，再确认安装；尚未保存。'); } catch (value) { setError(value instanceof Error ? value.message : '简报无效。'); } }}>填入简报安装预览</Button>
     {loading && <StatusMessage>正在重新读取来源…</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}{notice && <StatusMessage>{notice}</StatusMessage>}
   </Panel>;
 }

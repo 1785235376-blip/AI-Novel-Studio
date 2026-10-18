@@ -1,0 +1,18 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/BriefCandidateImport.additive.test.tsx (4 tests) 312ms
+ ✓ src/experimental/ReviewedGraphBriefImport.additive.test.tsx (11 tests) 379ms
+ ✓ src/experimental/TemplateCopyEditing.test.tsx (3 tests) 923ms
+   ✓ saves structured edits through original CAS owner and reopens content and provenance 730ms
+ ✓ src/experimental/PersonalSkillBriefComposer.test.tsx (17 tests) 1257ms
+
+ Test Files  4 passed (4)
+      Tests  35 passed (35)
+   Start at  14:43:06
+   Duration  2.32s (transform 933ms, setup 47ms, collect 2.71s, tests 2.87s, environment 1.27s, prepare 243ms)
+
+src/experimental/ReviewedGraphBriefImport.additive.test.tsx(19,59): error TS2322: Type 'Mock<(url: string) => Promise<unknown>>' is not assignable to type '<T>(url: string, method?: string | undefined, body?: unknown, signal?: AbortSignal | undefined, idempotencyKey?: string | undefined) => Promise<T>'.
+  Type 'Promise<unknown>' is not assignable to type 'Promise<T>'.
+    Type 'unknown' is not assignable to type 'T'.
+      'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.

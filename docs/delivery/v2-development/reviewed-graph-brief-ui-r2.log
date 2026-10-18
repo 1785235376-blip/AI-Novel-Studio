@@ -1,0 +1,44 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/BriefCandidateImport.additive.test.tsx (4 tests) 111ms
+ ✓ src/experimental/ReviewedGraphBriefImport.additive.test.tsx (11 tests) 197ms
+ ✓ src/experimental/TemplateCopyEditing.test.tsx (3 tests) 526ms
+   ✓ saves structured edits through original CAS owner and reopens content and provenance 393ms
+ ✓ src/experimental/PersonalSkillBriefComposer.test.tsx (17 tests) 942ms
+
+ Test Files  4 passed (4)
+      Tests  35 passed (35)
+   Start at  14:43:56
+   Duration  1.74s (transform 495ms, setup 59ms, collect 1.36s, tests 1.78s, environment 1.23s, prepare 237ms)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2355 modules transformed.
+rendering chunks...
+computing gzip size...
+../.runtime/v2-checks/reviewed-graph-brief-ui-r2/dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+../.runtime/v2-checks/reviewed-graph-brief-ui-r2/dist/assets/LocalTutorIntegration-Bg9pZcT3.css      2.93 kB │ gzip:   0.82 kB
+../.runtime/v2-checks/reviewed-graph-brief-ui-r2/dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+../.runtime/v2-checks/reviewed-graph-brief-ui-r2/dist/assets/ExperimentalWorkbench-BkplvLLE.css      4.23 kB │ gzip:   1.09 kB
+../.runtime/v2-checks/reviewed-graph-brief-ui-r2/dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+../.runtime/v2-checks/reviewed-graph-brief-ui-r2/dist/assets/App-DRLVwzqD.css                      215.51 kB │ gzip:  27.26 kB
+../.runtime/v2-checks/reviewed-graph-brief-ui-r2/dist/assets/Health-CNxJ3QUZ.js                      0.99 kB │ gzip:   0.57 kB
+../.runtime/v2-checks/reviewed-graph-brief-ui-r2/dist/assets/index-BK7uk61V.js                      30.15 kB │ gzip:  10.01 kB
+../.runtime/v2-checks/reviewed-graph-brief-ui-r2/dist/assets/LocalTutorIntegration-CQRRBLp0.js      42.44 kB │ gzip:  13.79 kB
+../.runtime/v2-checks/reviewed-graph-brief-ui-r2/dist/assets/style-4vZIKGJ9.js                      45.12 kB │ gzip:   8.40 kB
+../.runtime/v2-checks/reviewed-graph-brief-ui-r2/dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+../.runtime/v2-checks/reviewed-graph-brief-ui-r2/dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+../.runtime/v2-checks/reviewed-graph-brief-ui-r2/dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+../.runtime/v2-checks/reviewed-graph-brief-ui-r2/dist/assets/ExperimentalWorkbench-BfQsAWgt.js     811.82 kB │ gzip: 243.51 kB
+../.runtime/v2-checks/reviewed-graph-brief-ui-r2/dist/assets/App-tkhW_MFE.js                     2,479.50 kB │ gzip: 741.12 kB
+✓ built in 6.62s
+
+(!) outDir /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/reviewed-graph-brief-ui-r2/dist is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

@@ -1,3 +1,4 @@
+import type {BriefGraphReader} from './reviewedGraphBrief';
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { editableSections, editSection, templateHistoryDiff } from './templateCopyEditing';
 import { PersonalSkillBriefComposer } from './PersonalSkillBriefComposer';
@@ -9,7 +10,7 @@ import { templateLibraryClient, type TemplateComparison, type TemplateInstance, 
 let sequence = 0;
 const requestId = () => globalThis.crypto.randomUUID();
 const labels: Record<string, string> = { planning: '章节结构', character: '人物档案', screenplay: '剧本', storyboard: '分镜', review: '审核流程', workflow: 'Workflow', safe_batch: '安全批处理参数', novel: '小说', genre: '类型', world: '世界', agent: 'Agent', story_structure: '故事结构' };
-export function TemplateLibraryPanel(props: { client: ExperimentalClient; onNavigate?: (value: WorkspaceNavigation) => void }) {
+export function TemplateLibraryPanel(props: { client: ExperimentalClient; graphReader?:BriefGraphReader; onNavigate?: (value: WorkspaceNavigation) => void }) {
   const key = useMemo(() => ++sequence, [props.client]); return <LibraryBody key={key} {...props} />;
 }
 function PackagePreview({ value }: { value: TemplatePackage }) {
@@ -26,7 +27,7 @@ function PackagePreview({ value }: { value: TemplatePackage }) {
     <p>依赖：{value.manifest.dependencies.join('、') || '无'} · 来源：{value.manifest.provenance}</p>
   </figure>;
 }
-function LibraryBody({ client, onNavigate }: { client: ExperimentalClient; onNavigate?: (value: WorkspaceNavigation) => void }) {
+function LibraryBody({ client, onNavigate, graphReader }: { client: ExperimentalClient; graphReader?:BriefGraphReader; onNavigate?: (value: WorkspaceNavigation) => void }) {
   const api = useMemo(() => templateLibraryClient(client), [client]);
   const catalog = useResource(signal => api.catalog(signal), [api]);
   const copies = useResource(signal => api.instances(signal), [api]);
@@ -55,7 +56,7 @@ function LibraryBody({ client, onNavigate }: { client: ExperimentalClient; onNav
     <div className="experimental-actions"><h3>本地模板库</h3><Badge>离线 · 声明式数据</Badge><Button disabled={action.busy} onClick={() => { catalog.reload(); copies.reload(); setPreview(undefined); setCompare(undefined); }}>刷新模板目录</Button></div>
     <p>模板安装不运行脚本、不启用工具或模型。只接收不超过 128 KB 的 JSON 目录包；ZIP、外部图片、路径与远程下载均不支持。许可是提供方声明，尚未进行商业法律审核。</p>
     <Button disabled={action.busy} onClick={() => { importEpoch.current++; setPreview(undefined); setCompose(value => !value); }}>{compose ? '收起个人简报' : '编写个人写作简报'}</Button>
-    <div hidden={!compose}><PersonalSkillBriefComposer active={compose} busy={action.busy} onInvalidate={() => { importEpoch.current++; setPreview(undefined); }} onClose={() => setCompose(false)} onPrepare={value => { importEpoch.current++; setRaw(value); setPreview(undefined); }} /></div>
+    <div hidden={!compose}><PersonalSkillBriefComposer graphReader={graphReader} active={compose} busy={action.busy} onInvalidate={() => { importEpoch.current++; setPreview(undefined); }} onClose={() => setCompose(false)} onPrepare={value => { importEpoch.current++; setRaw(value); setPreview(undefined); }} /></div>
     <Panel title="离线目录与预览">
       <ResourceState loading={catalog.loading} error={catalog.error} empty={!allEntries.length} />
       <div className="experimental-grid"><Field label="模板类型"><select value={type} onChange={e => { setType(e.target.value); setSelected(''); }}><option value="">全部类型</option>{allTypes.map(t => <option key={t} value={t}>{labels[t] || t}</option>)}</select></Field><label><input type="checkbox" checked={favorites} onChange={e => { setFavorites(e.target.checked); setSelected(''); }} />只看收藏</label></div>

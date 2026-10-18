@@ -1,3 +1,4 @@
+import type {GraphBriefSource} from './reviewedGraphBrief';
 import type { TemplatePackage } from './templateLibraryClient';
 
 export const briefFields = [
@@ -32,14 +33,14 @@ export function projectWritingPreset(value: unknown, selected: PresetSource): { 
   return { text, source: { pluginId: selected.pluginId, resourceId: selected.resourceId, sha256: selected.sha256 }, omitted: Object.keys(data).filter(key => !briefFields.some(([field]) => field === key)) };
 }
 
-export function personalBriefPackage(identity: BriefIdentity, text: BriefText, source?: PresetSource, unverifiedModelCandidate=false): TemplatePackage {
+export function personalBriefPackage(identity: BriefIdentity, text: BriefText, source?: PresetSource, unverifiedModelCandidate=false, graphSource?:GraphBriefSource): TemplatePackage {
   if (!/^personal-[a-z0-9][a-z0-9-]{0,70}$/.test(identity.id)) throw new Error('个人标识需以 personal- 开头，只含小写字母、数字与连字符，总长不超过 80。');
   if (!/^\d{1,4}\.\d{1,4}\.\d{1,4}$/.test(identity.version)) throw new Error('版本需为三个数字段，例如 1.0.0；修改已有内容需使用新版本。');
   for (const field of ['title', 'author', 'license'] as const) {
     if (!identity[field].trim() || identity[field].length > 160) throw new Error('请填写标题、作者与许可声明，每项最多 160 字。');
   }
   if (briefFields.some(([key]) => !bounded(text[key], 8000)) || !briefFields.some(([key]) => text[key].trim())) throw new Error('请填写至少一项简报内容，每项最多 8000 字。');
-  const provenance = unverifiedModelCandidate ? 'PERSONAL_USER_SUPPLIED_MODEL_CANDIDATE_UNVERIFIED' : source ? JSON.stringify({ kind: 'PERSONAL_TEXT_PROJECTION', ...source, publisher_verified: false }) : 'PERSONAL_SELF_WRITTEN_DECLARATION';
+  const provenance = graphSource ? JSON.stringify(graphSource) : unverifiedModelCandidate ? 'PERSONAL_USER_SUPPLIED_MODEL_CANDIDATE_UNVERIFIED' : source ? JSON.stringify({ kind: 'PERSONAL_TEXT_PROJECTION', ...source, publisher_verified: false }) : 'PERSONAL_SELF_WRITTEN_DECLARATION';
   if (provenance.length > 1000) throw new Error('来源标识过长，无法保存。');
   const result: TemplatePackage = {
     schema_version: 1,

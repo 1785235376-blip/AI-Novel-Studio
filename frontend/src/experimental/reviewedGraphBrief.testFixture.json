@@ -1,0 +1,163 @@
+{
+  "graph": {
+    "id": "ce2fd750-0f9a-4240-bb1f-fa65fa3c97e9",
+    "version": 1,
+    "definition": {
+      "schema_version": 3,
+      "title": "Independent local graph",
+      "nodes": [
+        {
+          "id": "text",
+          "definition_id": "text_input",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "parameters": {
+            "text": "{\"purpose\": \"保留作者约束\", \"writing_goals\": \"完成日式场景短片\", \"constraints\": \"不自动执行模型\", \"checklist\": \"核对来源与许可\"}"
+          }
+        },
+        {
+          "id": "prepare",
+          "definition_id": "draft_prepare",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "parameters": {}
+        },
+        {
+          "id": "review",
+          "definition_id": "human_review",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "parameters": {}
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1",
+          "source_node_id": "text",
+          "source_port": "text",
+          "target_node_id": "prepare",
+          "target_port": "text"
+        },
+        {
+          "id": "e2",
+          "source_node_id": "prepare",
+          "source_port": "draft",
+          "target_node_id": "review",
+          "target_port": "draft"
+        }
+      ],
+      "viewport": {
+        "x": 0.0,
+        "y": 0.0,
+        "zoom": 1.0
+      }
+    },
+    "definition_digest": "14c3bab3da62fcbe1fb8ee8069e4b1d3f738869fe1851817ce886ac6d4e83a3a",
+    "execution_digest": "6a1b44198004ff9c9b22917585ccca6d8c475f49d34f5638cd643f4c6e429037",
+    "created_at": "2026-10-18T05:42:18.859574+00:00",
+    "updated_at": "2026-10-18T05:42:18.859574+00:00",
+    "can_edit": true,
+    "reference_states": [],
+    "capacity": {
+      "history_used": 0,
+      "history_limit": 80,
+      "record_bytes": 1718,
+      "record_limit_bytes": 2000000
+    },
+    "project_id": "v2-independent-b9dc7d2e7d5143c08479d91dc44a255c",
+    "scope": {
+      "mode": "local",
+      "novel_id": "v2-independent-b9dc7d2e7d5143c08479d91dc44a255c"
+    }
+  },
+  "run": {
+    "id": "2141d84f-4318-4e19-bac5-2e2a50bd8d6a",
+    "version": 3,
+    "graph_id": "ce2fd750-0f9a-4240-bb1f-fa65fa3c97e9",
+    "graph_version": 1,
+    "status": "SUCCEEDED",
+    "current_node_id": null,
+    "cache": {
+      "hits": 0,
+      "misses": 2,
+      "mode": "SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY"
+    },
+    "created_at": "2026-10-18T05:42:18.870317+00:00",
+    "updated_at": "2026-10-18T05:42:18.970641+00:00",
+    "reviewed": true,
+    "project_id": "v2-independent-b9dc7d2e7d5143c08479d91dc44a255c",
+    "scope": {
+      "mode": "local",
+      "novel_id": "v2-independent-b9dc7d2e7d5143c08479d91dc44a255c"
+    },
+    "stale": false,
+    "timeout_seconds": 3600,
+    "deadline_at": "2026-10-18T06:42:18.870296+00:00",
+    "node_states": {
+      "prepare": {
+        "status": "SUCCEEDED",
+        "reviewed": true,
+        "output": {
+          "draft": {
+            "origin": "USER_SUPPLIED",
+            "plan": [
+              {
+                "beat": "{\"purpose\": \"保留作者约束\", \"writing_goals\": \"完成日式场景短片\", \"constraints\": \"不自动执行模型\", \"checklist\": \"核对来源与许可\"}",
+                "sequence": 1
+              }
+            ],
+            "text": "{\"purpose\": \"保留作者约束\", \"writing_goals\": \"完成日式场景短片\", \"constraints\": \"不自动执行模型\", \"checklist\": \"核对来源与许可\"}"
+          }
+        },
+        "error": null
+      },
+      "review": {
+        "status": "SUCCEEDED",
+        "reviewed": true,
+        "output": {
+          "reviewed_draft": {
+            "text": "{\"purpose\": \"保留作者约束\", \"writing_goals\": \"完成日式场景短片\", \"constraints\": \"不自动执行模型\", \"checklist\": \"核对来源与许可\"}",
+            "origin": "USER_SUPPLIED",
+            "plan": [
+              {
+                "sequence": 1,
+                "beat": "{\"purpose\": \"保留作者约束\", \"writing_goals\": \"完成日式场景短片\", \"constraints\": \"不自动执行模型\", \"checklist\": \"核对来源与许可\"}"
+              }
+            ]
+          }
+        },
+        "error": null
+      },
+      "text": {
+        "status": "SUCCEEDED",
+        "reviewed": true,
+        "output": {
+          "text": "{\"purpose\": \"保留作者约束\", \"writing_goals\": \"完成日式场景短片\", \"constraints\": \"不自动执行模型\", \"checklist\": \"核对来源与许可\"}"
+        },
+        "error": null
+      }
+    },
+    "review": null,
+    "model_called": false,
+    "external_calls": 0,
+    "applied": false
+  },
+  "text": {
+    "purpose": "保留作者约束",
+    "writing_goals": "完成日式场景短片",
+    "constraints": "不自动执行模型",
+    "checklist": "核对来源与许可"
+  }
+}
