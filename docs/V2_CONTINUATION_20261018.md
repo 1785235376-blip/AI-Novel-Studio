@@ -10,7 +10,7 @@ Current checkpoint: 2026-10-18 18:20 UTC. Working branch:
 work/dot-recovered-20261018. Latest committed product source is
 e96b749ad7cd6eab29befe0db051c9e1fbf4a060 (bounded camera/benchmark wave).
 Latest byte-verified public archive is
-0e5cd80918e8022bee1f94f9295b22c206e0ac77 on
+1d7e2309c94627b9a5b3bc5542aacb1d01c874a6 on
 archive/verified-studio-v2-20261017-5a6f697. Archive HEAD and product HEAD are
 different identities; the archive stores prerequisite-bound incremental bundles.
 The restored local source contains the integrated working product, whereas the
@@ -220,3 +220,31 @@ Product be9a72314b785da31b3400001a89cf4d64b64402 is archived at 5252f72e1d9ccf6a
 This is partial Model Center transfer infrastructure. Production manifests/destination are empty, no provisioning UI/loader exists, and Windows fails closed. No current catalog model has become downloadable. Exact trusted metadata, destination provisioning, Windows support and real upstream acceptance remain open. See docs/model_center_controlled_transfers.md and delivery/v2-development/model-transfer-integration-summary-20261018.md. Do not mark remaining group7 or M3 complete.
 
 Next active implementation: bounded opt-in saved-shot image thumbnails and text/image comparison in original CreativeCanvas board, authenticated exact formal Asset pins and bounded image resources. VIDEO_WORKFLOW benchmark is undergoing read-only design review, not implementation yet. No main merge, Release, actual model download or paid service.
+
+## 18:31 UTC archive and overnight continuation
+
+Archive 1d7e2309c94627b9a5b3bc5542aacb1d01c874a6 was independently read back:
+13 files / 5,279,074 bytes, exact parent 0e5cd80918e8022bee1f94f9295b22c206e0ac77,
+pinned source 1c4bd7b383ffb35ca9e311ee30ffed3372b5c78f. All bytes/SHA256/Git
+blob identities matched. Dirty later work was excluded. PUBLIC stage 575 files
+and 552 wheel source members matched frozen product e96b749a.
+
+Active lanes are Story/Impact fact-use integration (with independent security
+review), model-free independent Comic editing inside Image, and additive Director
+intent controls. Each owns separate files; shared composition/build/publication
+remains coordinated. None of these in-progress lanes is claimed complete.
+
+## 18:52 UTC bounded development checkpoint
+
+Product e66c53138989de1aff021994110c2083900f0aec integrates exact reviewed
+story-fact/shot impact, model-free independent Comic and authored Director
+audience/platform/budget constraints. Root UI203/TypeScript/Vite/token, PUBLIC6
+and retirement File33 passed. Actual Story/Comic/Director PostgreSQL evidence and
+limits are in docs/delivery/v2-development/story-comic-director-integration-20261018.md.
+All3049 source paths from final PUBLIC receipt match the committed product.
+No formal V2 completion or percentage follows from these bounded checks.
+
+Next independent work: original-owner Style DNA hierarchy in an isolated worktree,
+Comic book/chapter/page collections, and a separate additive Director IMAGE/vision
+contract seam in an isolated worktree. No actual model calls are authorized by
+test fixtures; unsupported vision must remain explicitly unavailable.

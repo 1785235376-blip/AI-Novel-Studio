@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T18:26:29Z",
+  "updated_at_utc": "2026-10-18T18:52:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -20531,9 +20531,17 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Cross-media fact bindings, author conflict decisions and branch/time-state checks are not yet evidenced end to end across Comic/Storyboard/Video.",
+      "gap": "Temporal reasoning, wider medium coverage, author conflict workflow and complete branch/time-state acceptance remain.",
       "next_action": "Extend the original fact view with one approved fact and exact Creative/Shot/Asset bindings; prove before/after time-state and cross-project refusal.",
-      "evidence_scope": "This reconciliation maps source and prior evidence; it runs no product test and does not certify the full new requirement."
+      "evidence_scope": "Bounded integration evidence at exact product SHA; full requirement is not accepted.",
+      "bounded_evidence": [
+        {
+          "product_sha": "e66c53138989de1aff021994110c2083900f0aec",
+          "summary": "Explicit approved WORLD_FACT pointers now bind modern Creative storyboard shots with original-epoch/read/review fences.",
+          "report": "docs/delivery/v2-development/story-comic-director-integration-20261018.md",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "DIF-02",
@@ -20564,9 +20572,17 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Evidence-bound direct/indirect semantic effects, keep decisions and cost across Text/Comic/Video/Audio/Timeline are not a complete integrated path.",
+      "gap": "Transitive Graph/Timeline/Export impact, persisted preservation decisions and meaningful resource estimation remain.",
       "next_action": "Link the first Story fact to exact downstream targets and reasons; preview keep/rebuild choices and prove unaffected digests stay unchanged.",
-      "evidence_scope": "This reconciliation maps source and prior evidence; it runs no product test and does not certify the full new requirement."
+      "evidence_scope": "Bounded integration evidence at exact product SHA; full requirement is not accepted.",
+      "bounded_evidence": [
+        {
+          "product_sha": "e66c53138989de1aff021994110c2083900f0aec",
+          "summary": "Read-only fact-use impact reports exact current/stale shot and verified formal asset evidence; no regeneration.",
+          "report": "docs/delivery/v2-development/story-comic-director-integration-20261018.md",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "DIF-03",
@@ -20928,9 +20944,17 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Existing Comic requires screenplay_id and panel.shot_id and is mounted in ExperimentalWorkbench; blank Image-owned Comic is missing from this inspected path.",
+      "gap": "Full workflow integration and IMAGE-only role compatibility remain; current original NOVEL grant is still required.",
       "next_action": "Add Image Studio Comic entry and original-owner blank-project creation without fabricated screenplay/shot or model dependency.",
-      "evidence_scope": "Existing B06 capabilities only satisfy bounded parts; no new Comic requirement is accepted by this mapping."
+      "evidence_scope": "Bounded integration evidence at exact product SHA; full requirement is not accepted.",
+      "bounded_evidence": [
+        {
+          "product_sha": "e66c53138989de1aff021994110c2083900f0aec",
+          "summary": "Image contains a source-free blank Comic entry using the original owner, persisted page edits and reopen.",
+          "report": "docs/delivery/v2-development/story-comic-director-integration-20261018.md",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "IMAGE-COMIC-02",
@@ -20962,9 +20986,17 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Existing bounded layout save/history is reusable; book/chapter/page/layer tree, split/merge/recovery and complete conflict behavior need expansion.",
+      "gap": "Book/chapter/multiple-page hierarchy, full layer model and complete tree operations remain.",
       "next_action": "Extend existing versioned Comic records and compatible history rather than create another project/Asset store.",
-      "evidence_scope": "Existing B06 capabilities only satisfy bounded parts; no new Comic requirement is accepted by this mapping."
+      "evidence_scope": "Bounded integration evidence at exact product SHA; full requirement is not accepted.",
+      "bounded_evidence": [
+        {
+          "product_sha": "e66c53138989de1aff021994110c2083900f0aec",
+          "summary": "Original independent page/panel/bubble structure can be edited, saved, reopened and restored.",
+          "report": "docs/delivery/v2-development/story-comic-director-integration-20261018.md",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "IMAGE-COMIC-03",
@@ -21199,9 +21231,17 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Structured Bubble position/text/font-size exists; full tails/shapes/typography/vertical layout/read-order controls remain to be built or verified.",
+      "gap": "Bubble tails, vertical typesetting, richer alignment/spacing and full typography acceptance remain.",
       "next_action": "Keep text independently editable and saved; changing dialogue must not trigger image generation.",
-      "evidence_scope": "Existing B06 capabilities only satisfy bounded parts; no new Comic requirement is accepted by this mapping."
+      "evidence_scope": "Bounded integration evidence at exact product SHA; full requirement is not accepted.",
+      "bounded_evidence": [
+        {
+          "product_sha": "e66c53138989de1aff021994110c2083900f0aec",
+          "summary": "Existing structured multilingual bubbles are editable on intentional blank pages without a model or renderer.",
+          "report": "docs/delivery/v2-development/story-comic-director-integration-20261018.md",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "IMAGE-COMIC-10",
@@ -21833,6 +21873,17 @@
       "acceptance_status": "NOT_ACCEPTED",
       "gap": "No same-candidate full scenario execution is established by this reconciliation.",
       "next_action": "Maintain scenario data and expected outputs now; execute full independent same-SHA acceptance with the authorized target environments."
+    }
+  ],
+  "subsequent_bounded_waves": [
+    {
+      "product_sha": "e66c53138989de1aff021994110c2083900f0aec",
+      "report": "docs/delivery/v2-development/story-comic-director-integration-20261018.md",
+      "root_frontend_tests": 203,
+      "root_public_checks": 6,
+      "real_postgres": "Story99 plus focused1; Comic57 plus targeted20 with explicit skips; Director2. Overlapping counts not additive.",
+      "scope": "Story fact use, independent Comic, authored Director constraints",
+      "acceptance": "PARTIAL_NOT_RELEASE"
     }
   ]
 }
