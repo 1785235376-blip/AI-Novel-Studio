@@ -1,0 +1,73 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "7903ddb81eacc3a25d66f079d7e8a9fd9e1588ed",
+      "path": "docs/DIRECTOR_NOTE_REMOVAL.md",
+      "bytes": 1900,
+      "sha256": "5b74460e05e2019fc4d7fa3b1d32683d09aee6d8fdad9e47a7fdb283dfd52ceb"
+    },
+    {
+      "blob": "bb9ff4fe383c606d85002d3a98bbbcd89d85093b",
+      "path": "docs/delivery/v2-development/director-note-removal-pg-r1-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "b18541001fd2d7f762f27a617c82e89de9c7670140ac0087a8d175ff1016dbc1"
+    },
+    {
+      "blob": "90ec8f0b4e727b112416e0cb37be42dfd1687d53",
+      "path": "docs/delivery/v2-development/director-note-removal-pg-r1.json",
+      "bytes": 679216,
+      "sha256": "9889e5159a4de5b33d97491fc5cbc8b6f1e7b0d512785f83287c0c4b1ec492d5"
+    },
+    {
+      "blob": "d7ba7c7cd7d1460f333ddfd89b03e2b22edf8308",
+      "path": "docs/delivery/v2-development/director-note-removal-pg-r1.log",
+      "bytes": 1067,
+      "sha256": "5729be7e293f97e08033f1818ab7d17d4cd2cd76dbd740b703de1666860ad3e9"
+    },
+    {
+      "blob": "a8394e0dc7c1658aafa2332fd41482a26a4bb99f",
+      "path": "docs/delivery/v2-development/director-note-removal-r1.json",
+      "bytes": 679370,
+      "sha256": "ea9e84ba77e49edac453f09e52e145905999cbc73cb2501e1695cc8f45df5478"
+    },
+    {
+      "blob": "ab648fb00c7e00a26573c1ec6e8cd7736cb225af",
+      "path": "docs/delivery/v2-development/director-note-removal-r1.log",
+      "bytes": 3254,
+      "sha256": "15217dc568668c69b2f92996357816a96d7376d4f95de23236e7ea10c4992fb8"
+    },
+    {
+      "blob": "494b2ee200c83186cda4c8aa7cafaedcf37640d6",
+      "path": "frontend/src/creative/DirectorNoteActions.additive.test.tsx",
+      "bytes": 5883,
+      "sha256": "ef13fd3832ce64f27dd97ecc9d9abc59b4ecd448309e83bbcb62100d78fd9f9b"
+    },
+    {
+      "blob": "ea799b988e932f1dca52e30dd9cc4b67d366a43d",
+      "path": "frontend/src/creative/DirectorNoteActions.tsx",
+      "bytes": 3053,
+      "sha256": "24ad4c812044be862cfea295f1d49d51970c54a3ff666c839fdcaec31794e746"
+    },
+    {
+      "blob": "8814c839aa2612507aa8fbd185d85fe8b33a9147",
+      "path": "frontend/src/creative/directorNoteEditing.ts",
+      "bytes": 1961,
+      "sha256": "59db298bdfe2716a614b5bd43630a8a32dd0dcacdb9707fc1decfbc6c9cd48da"
+    },
+    {
+      "blob": "c575ded294d10eae0a2fd1de4e953709eab6243b",
+      "path": "tests/test_director_note_removal_additive.py",
+      "bytes": 1903,
+      "sha256": "4217a5597f3c3f82b67b5fe06578751dfa62281fb1f72a0ee38fe8ed73514839"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
