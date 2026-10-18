@@ -1,0 +1,817 @@
+................F...........F.EEEEEEEEEEEEEEEEEEEEEEEEEE                 [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_real_wheel_matches_public_stage_and_keeps_standard_inputs _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+__ ERROR at setup of test_real_metadata_keeps_declared_dependencies_external ___
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_standard_payload_missing_or_tampered_fails_even_with_valid_record[missing-app/creative/content_policy.py] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_standard_payload_missing_or_tampered_fails_even_with_valid_record[missing-app/project_retirement.py] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_standard_payload_missing_or_tampered_fails_even_with_valid_record[tampered-app/creative/content_policy.py] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_standard_payload_missing_or_tampered_fails_even_with_valid_record[tampered-app/project_retirement.py] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_inert_extra_or_forbidden_payloads_fail[studio_private_extensions/inert_sentinel.py-PUBLIC_PRIVATE_ARCHIVE] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_inert_extra_or_forbidden_payloads_fail[app/unreviewed_inert_sentinel.py-PUBLIC_WHEEL_CLOSURE_MISMATCH] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_inert_extra_or_forbidden_payloads_fail[app/unreviewed_inert_native.so-PUBLIC_WHEEL_CLOSURE_MISMATCH] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_inert_extra_or_forbidden_payloads_fail[../inert_sentinel.py-PUBLIC_WHEEL_UNSAFE_PATH] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_inert_extra_or_forbidden_payloads_fail[/inert_sentinel.py-PUBLIC_WHEEL_UNSAFE_PATH] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_exact_record_coverage_digests_lengths_and_self_row[missing] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_exact_record_coverage_digests_lengths_and_self_row[extra] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_exact_record_coverage_digests_lengths_and_self_row[digest] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_exact_record_coverage_digests_lengths_and_self_row[length] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_exact_record_coverage_digests_lengths_and_self_row[self] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+______________ ERROR at setup of test_duplicate_zip_member_fails _______________
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_wheel_metadata_cannot_claim_a_different_platform[Root-Is-Purelib: true-Root-Is-Purelib: false] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_wheel_metadata_cannot_claim_a_different_platform[Root-Is-Purelib: true-Root-Is-Purelib: true\nRoot-Is-Purelib: false] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_wheel_metadata_cannot_claim_a_different_platform[Wheel-Version: 1.0-Wheel-Version: 9.0] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_metadata_dependency_tampering_fails_with_self_consistent_record[added] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_metadata_dependency_tampering_fails_with_self_consistent_record[missing] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_metadata_dependency_tampering_fails_with_self_consistent_record[replaced] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_metadata_dependency_tampering_fails_with_self_consistent_record[extra] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+_ ERROR at setup of test_metadata_dependency_tampering_fails_with_self_consistent_record[duplicate] _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+___ ERROR at setup of test_symlink_member_cannot_substitute_a_standard_file ____
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+=================================== FAILURES ===================================
+______________ test_actual_repo_manifest_and_disposable_artifact _______________
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest/test_actual_repo_manifest_and_0')
+
+    def test_actual_repo_manifest_and_disposable_artifact(tmp_path):
+        manifest = build.load_manifest(ROOT / 'packaging/public-build.json')
+>       receipt = build.stage_public(ROOT, tmp_path / 'public', manifest)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_build_profile.py:117: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+______________ test_actual_docker_stage_has_only_manifest_inputs _______________
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/continued-features-public-wheel-r1/pytest/test_actual_docker_stage_has_o0')
+
+    def test_actual_docker_stage_has_only_manifest_inputs(tmp_path):
+        manifest = build.load_manifest(ROOT / 'packaging/public-build.json')
+>       receipt = build.stage_public(ROOT, tmp_path / 'docker', manifest, docker=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_build_profile.py:193: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/public_build.py:373: in stage_public
+    files = check_source(source, manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:116: in check_source
+    fail(f'PUBLIC_SOURCE_CLOSURE: added={sorted(set(files)-expected)} missing={sorted(expected-set(files))}')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = "PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/mo...model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]"
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_SOURCE_CLOSURE: added=['app/bailian_text_preset.py', 'app/creative/model_reference_depth.py', 'app/creative/model_reference_glb.py', 'app/creative/model_reference_materials.py', 'app/creative/model_reference_scene.py', 'app/creative/screenplay_model.py'] missing=[]
+
+scripts/public_build.py:44: ValueError
+=============================== warnings summary ===============================
+tests/test_public_build_profile.py::test_public_stage_excludes_private_and_hashes_actual_contents
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_public_build_profile.py::test_actual_repo_manifest_and_disposable_artifact
+FAILED tests/test_public_build_profile.py::test_actual_docker_stage_has_only_manifest_inputs
+ERROR tests/test_public_wheel_artifact.py::test_real_wheel_matches_public_stage_and_keeps_standard_inputs
+ERROR tests/test_public_wheel_artifact.py::test_real_metadata_keeps_declared_dependencies_external
+ERROR tests/test_public_wheel_artifact.py::test_standard_payload_missing_or_tampered_fails_even_with_valid_record[missing-app/creative/content_policy.py]
+ERROR tests/test_public_wheel_artifact.py::test_standard_payload_missing_or_tampered_fails_even_with_valid_record[missing-app/project_retirement.py]
+ERROR tests/test_public_wheel_artifact.py::test_standard_payload_missing_or_tampered_fails_even_with_valid_record[tampered-app/creative/content_policy.py]
+ERROR tests/test_public_wheel_artifact.py::test_standard_payload_missing_or_tampered_fails_even_with_valid_record[tampered-app/project_retirement.py]
+ERROR tests/test_public_wheel_artifact.py::test_inert_extra_or_forbidden_payloads_fail[studio_private_extensions/inert_sentinel.py-PUBLIC_PRIVATE_ARCHIVE]
+ERROR tests/test_public_wheel_artifact.py::test_inert_extra_or_forbidden_payloads_fail[app/unreviewed_inert_sentinel.py-PUBLIC_WHEEL_CLOSURE_MISMATCH]
+ERROR tests/test_public_wheel_artifact.py::test_inert_extra_or_forbidden_payloads_fail[app/unreviewed_inert_native.so-PUBLIC_WHEEL_CLOSURE_MISMATCH]
+ERROR tests/test_public_wheel_artifact.py::test_inert_extra_or_forbidden_payloads_fail[../inert_sentinel.py-PUBLIC_WHEEL_UNSAFE_PATH]
+ERROR tests/test_public_wheel_artifact.py::test_inert_extra_or_forbidden_payloads_fail[/inert_sentinel.py-PUBLIC_WHEEL_UNSAFE_PATH]
+ERROR tests/test_public_wheel_artifact.py::test_exact_record_coverage_digests_lengths_and_self_row[missing]
+ERROR tests/test_public_wheel_artifact.py::test_exact_record_coverage_digests_lengths_and_self_row[extra]
+ERROR tests/test_public_wheel_artifact.py::test_exact_record_coverage_digests_lengths_and_self_row[digest]
+ERROR tests/test_public_wheel_artifact.py::test_exact_record_coverage_digests_lengths_and_self_row[length]
+ERROR tests/test_public_wheel_artifact.py::test_exact_record_coverage_digests_lengths_and_self_row[self]
+ERROR tests/test_public_wheel_artifact.py::test_duplicate_zip_member_fails - ...
+ERROR tests/test_public_wheel_artifact.py::test_wheel_metadata_cannot_claim_a_different_platform[Root-Is-Purelib: true-Root-Is-Purelib: false]
+ERROR tests/test_public_wheel_artifact.py::test_wheel_metadata_cannot_claim_a_different_platform[Root-Is-Purelib: true-Root-Is-Purelib: true\nRoot-Is-Purelib: false]
+ERROR tests/test_public_wheel_artifact.py::test_wheel_metadata_cannot_claim_a_different_platform[Wheel-Version: 1.0-Wheel-Version: 9.0]
+ERROR tests/test_public_wheel_artifact.py::test_metadata_dependency_tampering_fails_with_self_consistent_record[added]
+ERROR tests/test_public_wheel_artifact.py::test_metadata_dependency_tampering_fails_with_self_consistent_record[missing]
+ERROR tests/test_public_wheel_artifact.py::test_metadata_dependency_tampering_fails_with_self_consistent_record[replaced]
+ERROR tests/test_public_wheel_artifact.py::test_metadata_dependency_tampering_fails_with_self_consistent_record[extra]
+ERROR tests/test_public_wheel_artifact.py::test_metadata_dependency_tampering_fails_with_self_consistent_record[duplicate]
+ERROR tests/test_public_wheel_artifact.py::test_symlink_member_cannot_substitute_a_standard_file
+2 failed, 28 passed, 1 warning, 26 errors in 6.21s
