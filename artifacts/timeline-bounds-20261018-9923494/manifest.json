@@ -1,0 +1,6 @@
+{
+  "source_head": "9923494cb6cb810de73b064705e7f87c531ff5fd",
+  "prerequisite": "94239d2f673a2128b17e505b77da8bb1821080b2",
+  "bundle": "continuation.bundle",
+  "scope": "Explicit original-owner PCM16 source-duration diagnostic, including saved ranges that exceed actual source length. Generic Save unchanged; no automatic trim/save/render. File 100, genuine PostgreSQL 4, UI 33, TypeScript and production build passed. Initial new re-export defect receipt retained. See docs/TIMELINE_SOURCE_BOUNDS.md."
+}
