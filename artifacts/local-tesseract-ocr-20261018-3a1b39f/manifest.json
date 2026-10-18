@@ -1,0 +1,6 @@
+{
+  "source_head": "3a1b39f269d0aa74a30eceb71317715246070f70",
+  "prerequisite": "2afac05acae34e5568728097d971e7d412ca217a",
+  "bundle": "continuation.bundle",
+  "scope": "Pinned native Tesseract adapter through the original VisionOCRModelNode. Actual installed English OCR smoke passed; focused regression and actual offline PUBLIC wheel checks passed. Research JobManager integration remains unfinished and real Research dispatch stays disabled."
+}
