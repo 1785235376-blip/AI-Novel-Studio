@@ -1,0 +1,37 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/modelcenter/ModelCenterInjectedSafety.additive.test.tsx (6 tests) 39ms
+ ❯ src/modelcenter/NativeTextPresetPanel.additive.test.tsx (11 tests | 1 failed) 131ms
+   × uses the original project-scope validation even for local hints 11ms
+     → expected false to be true // Object.is equality
+ ✓ src/modelcenter/BailianPresetPanel.additive.test.tsx (5 tests) 108ms
+ ✓ src/modelcenter/ModelCenterPanel.additive.test.tsx (7 tests) 403ms
+ ✓ src/modelcenter/ModelCenterPanel.test.tsx (20 tests) 583ms
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 48 passed (49)
+   Start at  16:38:07
+   Duration  1.58s (transform 404ms, setup 62ms, collect 1.32s, tests 1.26s, environment 1.97s, prepare 378ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/modelcenter/NativeTextPresetPanel.additive.test.tsx > uses the original project-scope validation even for local hints
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/modelcenter/NativeTextPresetPanel.additive.test.tsx:44:69
+     42| it('uses the original project-scope validation even for local hints',(…
+     43|  render(<NativeTextPresetPanel {...props} scope={{projectId:'other-pro…
+     44|  expect((screen.getByRole('button') as HTMLButtonElement).disabled).to…
+       |                                                                     ^
+     45|  expect(props.transport.json).not.toHaveBeenCalled();
+     46| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

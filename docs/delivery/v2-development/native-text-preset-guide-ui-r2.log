@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/modelcenter/ModelCenterInjectedSafety.additive.test.tsx (6 tests) 52ms
+ ✓ src/modelcenter/NativeTextPresetPanel.additive.test.tsx (11 tests) 102ms
+ ✓ src/modelcenter/BailianPresetPanel.additive.test.tsx (5 tests) 100ms
+ ✓ src/modelcenter/ModelCenterPanel.additive.test.tsx (7 tests) 299ms
+ ✓ src/modelcenter/ModelCenterPanel.test.tsx (20 tests) 457ms
+
+ Test Files  5 passed (5)
+      Tests  49 passed (49)
+   Start at  16:39:16
+   Duration  1.31s (transform 342ms, setup 69ms, collect 1.01s, tests 1.01s, environment 1.73s, prepare 327ms)
+
+src/modelcenter/NativeTextPresetPanel.additive.test.tsx(43,43): error TS2739: Type '{ projectId: string; }' is missing the following properties from type 'Scope': workspaceId, storylineId, branchId
