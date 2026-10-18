@@ -19,7 +19,7 @@ from test_vision_ocr_runtime_additive import Provider
 from test_research_ocr_job_persistence_additive import reopen
 
 
-def setup(e, monkeypatch, provider=None, content=None, *, terminal_error=False):
+def setup(e, monkeypatch, provider=None, content=None, *, terminal_error=False, on_result=None):
     from app.experimental.flags import runtime_dependencies
     required=set(FLAGS);dependencies=runtime_dependencies()
     while True:
@@ -47,15 +47,14 @@ def setup(e, monkeypatch, provider=None, content=None, *, terminal_error=False):
         if terminal_error:raise OSError('synthetic settlement failure')
     job=manager._prepare_research_ocr_job(source=source,node=node,binding=binding,provider_id=pid,model_id=mid,
         deadline=(datetime.now(timezone.utc)+timedelta(seconds=60)).isoformat(),
-        before_dispatch=lambda:calls.append('dispatch'),on_terminal=terminal)
+        before_dispatch=lambda:calls.append('dispatch'),on_terminal=terminal,on_result=on_result)
     return SimpleNamespace(service=service,row=row,source=source,node=node,provider=provider,manager=manager,job=job,calls=calls)
 
 
 def wait(e):
     deadline=time.monotonic()+20
     while time.monotonic()<deadline:
-        if e.job.research_ocr_execution_authority._result is not None:return
-        if e.job.status in {'FAILED','CANCELLED'} and e.job.terminal_hook_status is not None:return
+        if e.job.research_ocr_execution_authority.finished:return
         time.sleep(.01)
     raise AssertionError('OCR worker did not terminate')
 

@@ -9,6 +9,7 @@ from __future__ import annotations
 from copy import deepcopy
 from datetime import datetime, timezone
 import time
+from threading import get_ident
 
 from .research_ocr_binding import ResearchOCRJobBinding
 from .research_vision import PreparedResearchOCRSource
@@ -25,17 +26,20 @@ IDENTITY = ('id', 'operation', 'novel_id', 'chapter_id', 'profile', 'actor_id', 
 
 
 class _ResearchOCRCapability:
-    def __init__(self, manager, job, source, node, before_dispatch, on_terminal):
+    def __init__(self, manager, job, source, node, before_dispatch, on_terminal, on_result=None):
         if (type(source) is not PreparedResearchOCRSource or type(node) is not VisionOCRModelNode
-                or not callable(before_dispatch) or not callable(on_terminal)):
+                or not callable(before_dispatch) or not callable(on_terminal)
+                or on_result is not None and not callable(on_result)):
             raise ValueError('RESEARCH_OCR_LIVE_OWNER_REQUIRED')
         self.manager, self.job, self.source, self.node = manager, job, source, node
         self.before_dispatch, self.on_terminal = before_dispatch, on_terminal
+        self.on_result = on_result
         self.authorizer, self.cancellation = job.request_authorization, job.cancelled
         self.persistence = manager.persistence
         self.provider = node.providers.resolve(job.requested_provider)
         self.identity = {key: deepcopy(getattr(job, key)) for key in IDENTITY}
-        self.started = self.worker_claimed = False
+        self.started = self.worker_claimed = self.finished = False
+        self.worker_thread = None
         self._result = None
 
     def current(self):
@@ -75,6 +79,8 @@ class _ResearchOCRCapability:
         self.current()
 
     def result(self):
+        if not self.finished and self.worker_thread != get_ident():
+            raise ValueError('RESEARCH_OCR_PUBLICATION_PENDING')
         self.current()
         job = self.job
         if (self._result is None or job.status != 'COMPLETED' or job.terminal_hook_status != 'COMPLETED'
@@ -89,7 +95,7 @@ class _ResearchOCRCapability:
 
 
 def prepare(manager, *, source, node, binding, provider_id, model_id, deadline,
-            before_dispatch, on_terminal, max_output_bytes=128000):
+            before_dispatch, on_terminal, max_output_bytes=128000, on_result=None):
     from uuid import uuid4
     from ..jobs import Job
     parsed = ResearchOCRJobBinding.model_validate(binding)
@@ -102,7 +108,7 @@ def prepare(manager, *, source, node, binding, provider_id, model_id, deadline,
         request_authorization=source.validate_current if type(source) is PreparedResearchOCRSource else None)
     job.expected_request_digest = audio_digest({'binding': parsed.model_dump(), 'provider_id': provider_id,
         'model_id': model_id, 'deadline': deadline, 'max_output_bytes': max_output_bytes})
-    job.research_ocr_execution_authority = _ResearchOCRCapability(manager, job, source, node, before_dispatch, on_terminal)
+    job.research_ocr_execution_authority = _ResearchOCRCapability(manager, job, source, node, before_dispatch, on_terminal, on_result)
     job.research_ocr_execution_authority.current()
     return job
 
@@ -124,6 +130,7 @@ def run(manager, job):
         if capability.worker_claimed:
             raise ValueError('RESEARCH_OCR_WORKER_ALREADY_CLAIMED')
         capability.worker_claimed = True
+        capability.worker_thread = get_ident()
     started = time.monotonic()
     response = None
     try:
@@ -161,6 +168,12 @@ def run(manager, job):
             if job.status == 'COMPLETED':
                 capability.current()
                 capability._result = deepcopy(response)
+                if capability.on_result is not None:
+                    # The original review owner receives only a verified,
+                    # detached result after job persistence and settlement.
+                    # Its own transaction and receipt validation remain required.
+                    capability.on_result(capability.result())
+                    capability.result()  # Recheck authority and durable identity after the callback.
         except Exception:
             job.output = ''; job.status = 'FAILED'; job.execution_outcome = 'FAILED'
             job.error_code = 'RESEARCH_OCR_TERMINAL_UNCONFIRMED'
@@ -168,4 +181,6 @@ def run(manager, job):
             capability._result = None
             try: manager._persist(job)
             except Exception: pass  # Original owner may have been deleted; never recreate it.
-        with job.condition: job.condition.notify_all()
+        with job.condition:
+            capability.finished = True
+            job.condition.notify_all()
