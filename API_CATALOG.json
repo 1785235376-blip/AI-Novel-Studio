@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "2d07c66c89321fbce7b8fc4b3ac3cb9a7ef5fb3831459f977f356c3b937a1c7b",
+  "application_source_fingerprint_sha256": "ad9e7e0c8882681f08b586bf9cdcb18464df43a9cd5f76a6de5491620ba2e15e",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -166,12 +166,13 @@
     "app/experimental/comic_collections.py": "a59462a099c7227489ff72222b3a79c81895d69ef2cf8dac8645166abba6cc54",
     "app/experimental/comic_layers.py": "a3571681d406e4d077ac97384d7604eeb7b96305c60b92ffbb594ff35895412c",
     "app/experimental/comic_layouts.py": "fa3b54bccb1331ed8346f39506006d4b507a37ac1ce75900f1a5174868ab9039",
-    "app/experimental/comic_layouts_api.py": "0aa69a1d919d1f78c296e5676b950fc9f1fc56b1f77b5aa7f327e6d032668328",
+    "app/experimental/comic_layouts_api.py": "b4a8ea9b59568df49bb5e2e23ec3b30985211c4df64ec4b6a06424fe9b7cb2b8",
     "app/experimental/comic_ora.py": "fa96c64f31e62ac2a1f7e8bd23cface286b013f14bae3128560fefdec0dcb2a3",
     "app/experimental/comic_ora_api.py": "e698a697db1350c23d7453a1cd1e0ce0e6ace0ebe2f7c65e9190c3527d13a8f4",
     "app/experimental/comic_ora_import.py": "8ca8be11f383b181a9a109e213bf616a4ef21c6b2721aec1e4b439054221a964",
     "app/experimental/comic_ora_staging.py": "0865fa366ab1ecc6f8bbc27f41d7170478d79595c763d75ef513e9ff866c8a09",
-    "app/experimental/comic_publication.py": "14e78f617ca49c1fdfd5fb3147073227f0e6dab08eebcc97b087ac5132a8995e",
+    "app/experimental/comic_page_archive_codec.py": "6a5b98537432b2072f623dfefce3c1e6e0ba81dac4e7040b9b116535bb953136",
+    "app/experimental/comic_publication.py": "795c1493de2f880bf4c0691b4f933cf0e7424f786c6d6da9f155895c2c963357",
     "app/experimental/comic_publication_budget.py": "6a2806372b1944f2840af17f1593eb677b7c3d1238f58f971ae2c7379200d3ac",
     "app/experimental/common.py": "e69739dbefb4fd71e5ac8945f76a534b77bca5cd8252648304a5724ab39127a0",
     "app/experimental/declarative_adapter_sdk.py": "8783ff8a17478dbd13023951176567904ab8c4985fc90aaf80a7fa1a7b707bc1",
@@ -543,9 +544,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 672,
+    "added": 676,
     "changed_contract": 24,
-    "current_method_paths": 2505,
+    "current_method_paths": 2509,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -562,7 +563,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "bfb018e2e194a601fea0aa3f245807ef9332a423128fad3f65b6804101bcecf3",
+    "sha256": "2a38c3bba5d5dd3567951cce949daa7867dea8791cbbc9d25ae1465337d66c90",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -14898,6 +14899,17 @@
     },
     {
       "method": "POST",
+      "path": "/api/novels/{nid}/experimental/comic-layouts/books/{rid}/export-page-archive",
+      "operation_id": "book_export_page_archive_api_novels__nid__experimental_comic_layouts_books__rid__export_page_archive_post",
+      "owner_ref": "db5009605dc36c63763fb0b06369f55dc8fd4eb57174a0daaa0b56a8fa0daa2d",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "b67bce266772b3934a3a1602d0abab21e8187912279840840f274418e1cadb0c",
+      "schema_graph_sha256": "a52da01f4c8435678d456e7576cbbc18ba26c0ba9c665f0660b503ae26cc836c"
+    },
+    {
+      "method": "POST",
       "path": "/api/novels/{nid}/experimental/comic-layouts/books/{rid}/export-pdf",
       "operation_id": "book_export_pdf_api_novels__nid__experimental_comic_layouts_books__rid__export_pdf_post",
       "owner_ref": "3735fe96c2fa238516b543a9dbcb7b3d548e2f0815316d64e82715ec53399e2f",
@@ -14907,6 +14919,17 @@
       ],
       "operation_sha256": "64454107d04e3b81e34f03f051f0f1b48c5fca9dafa8ae1c3fb491c7d79efc9a",
       "schema_graph_sha256": "04e6a0b31e64bced3157da31e92e286c685e7a28245ecf883b3f8b00423a90fa"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/comic-layouts/books/{rid}/page-archive-preflight",
+      "operation_id": "book_page_archive_preflight_api_novels__nid__experimental_comic_layouts_books__rid__page_archive_preflight_post",
+      "owner_ref": "2ea2ee9b84edcf895439be9a511cdf647e0ca8d887330c1c1e605c7843cc3339",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "75c921f9fbaa5a8c309074d2ee495f8116787c35834a39a34026a8833fcb9292",
+      "schema_graph_sha256": "c8059ff7a10cc2f2f91d0c907147858eed7a087178ee1cffe526b1f15b464a0a"
     },
     {
       "method": "POST",
@@ -22383,6 +22406,17 @@
     },
     {
       "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/export-page-archive",
+      "operation_id": "book_export_page_archive_api_v1_novels__nid__experimental_comic_layouts_books__rid__export_page_archive_post",
+      "owner_ref": "db5009605dc36c63763fb0b06369f55dc8fd4eb57174a0daaa0b56a8fa0daa2d",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "cbb9e4d57d9f3ad447c03220f1e29cb7f51ef26c46f4d9190dc4e6c2c4e13f32",
+      "schema_graph_sha256": "a52da01f4c8435678d456e7576cbbc18ba26c0ba9c665f0660b503ae26cc836c"
+    },
+    {
+      "method": "POST",
       "path": "/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/export-pdf",
       "operation_id": "book_export_pdf_api_v1_novels__nid__experimental_comic_layouts_books__rid__export_pdf_post",
       "owner_ref": "3735fe96c2fa238516b543a9dbcb7b3d548e2f0815316d64e82715ec53399e2f",
@@ -22392,6 +22426,17 @@
       ],
       "operation_sha256": "aa80441353c2ff56687e6715f86a7bd624b1f49135e3f64a1af79f3bd4460397",
       "schema_graph_sha256": "04e6a0b31e64bced3157da31e92e286c685e7a28245ecf883b3f8b00423a90fa"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/page-archive-preflight",
+      "operation_id": "book_page_archive_preflight_api_v1_novels__nid__experimental_comic_layouts_books__rid__page_archive_preflight_post",
+      "owner_ref": "2ea2ee9b84edcf895439be9a511cdf647e0ca8d887330c1c1e605c7843cc3339",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "f54af1b70894df441f50b3e04e65f2b868837684294acc7670def0572600fbfe",
+      "schema_graph_sha256": "c8059ff7a10cc2f2f91d0c907147858eed7a087178ee1cffe526b1f15b464a0a"
     },
     {
       "method": "POST",

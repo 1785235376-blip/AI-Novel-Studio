@@ -178,6 +178,7 @@
     "app/experimental/comic_ora_api.py",
     "app/experimental/comic_ora_import.py",
     "app/experimental/comic_ora_staging.py",
+    "app/experimental/comic_page_archive_codec.py",
     "app/experimental/comic_publication.py",
     "app/experimental/comic_publication_budget.py",
     "app/experimental/common.py",
