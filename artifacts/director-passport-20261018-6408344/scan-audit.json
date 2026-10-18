@@ -1,0 +1,295 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "77239c572721a08fb1dc7148121690fc6e6ba8c5",
+      "path": "API_CATALOG.json",
+      "bytes": 1503630,
+      "sha256": "9cdee872e39c67deec0efda7a4ef73d654a71742356ff3736993c6048817d296"
+    },
+    {
+      "blob": "ebb328a0db546b1f77c4c2aa86801353dae2ef48",
+      "path": "API_CATALOG.md",
+      "bytes": 401793,
+      "sha256": "20f63789eee72e3bd06225fbfd59cc5032a4862e3fbd586714d792122d97c4e1"
+    },
+    {
+      "blob": "7eab27b739639ad8ab02bdf5480907d745e40691",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 621062,
+      "sha256": "69d55ce978db93338d2bc95673ce2b3bea128d9f24105579a204cd95659e26fa"
+    },
+    {
+      "blob": "5851e70bfb33f31816a55ff01125b676c83b07ad",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 133973,
+      "sha256": "ae6f43aeb54c70c072983faebf3c2510dcf6b0445ab69ba08a451e22d49ad6d6"
+    },
+    {
+      "blob": "2ea04806ecb222f6fa6f8f4cb2e566cf322daf26",
+      "path": "app/creative/director_image_binding.py",
+      "bytes": 2145,
+      "sha256": "aadba9842f0e3c0637e61d401c0faad218535bc6a758c53d6e0a74e04a60e169"
+    },
+    {
+      "blob": "2247e72623611fc30d974ef78504eaf199b2e907",
+      "path": "app/creative/director_image_execution.py",
+      "bytes": 8848,
+      "sha256": "d4c4f73d57268eb482efa466b4aff0fb79bad69963ad829ed80e66597f6dc3e1"
+    },
+    {
+      "blob": "bab952cd6542f4ae3a00157b4bebabefa1402211",
+      "path": "app/creative/director_image_generation.py",
+      "bytes": 12157,
+      "sha256": "bd0f5a09ade6a71aa74418f36368969ff68cb6c753ca8a24a427bad7b7417414"
+    },
+    {
+      "blob": "059eed0b7f00d711b6769cc19adeda6bedefd4d2",
+      "path": "app/creative/director_image_terminal.py",
+      "bytes": 6192,
+      "sha256": "86dd4070c39b8da3bb8a8970b2d26a81b32a438fc146d3f97fbb15f466f6fa52"
+    },
+    {
+      "blob": "312d1e1efd85c9fa3b718474030e80201f8748c5",
+      "path": "app/creative/proposals.py",
+      "bytes": 18660,
+      "sha256": "70f10a8e080b04d851c505084a20c247497d2e0a9fa1465fb12d15c4a982b96c"
+    },
+    {
+      "blob": "56245a8544801ada98e429de558d206ce6e99aff",
+      "path": "app/experimental/local_vision_broker.py",
+      "bytes": 6558,
+      "sha256": "cff9c7e5cbc219998ad5e9bc82272a58e14e1b3b7bdfb0bed4931726db6cb87a"
+    },
+    {
+      "blob": "d27eeaf7a887ce581e1c14d42c87368e8652e2de",
+      "path": "app/experimental/model_broker.py",
+      "bytes": 64028,
+      "sha256": "3bee5232112942bfe0bbc36a0a36e9eeb5b06031bddf17faf1184d3fb1909ef2"
+    },
+    {
+      "blob": "3d2fb4d57cee36792deed9451769fe920ca80109",
+      "path": "app/experimental/production_lineage.py",
+      "bytes": 39106,
+      "sha256": "bff98dcd702088d6bd98ab8ba6b286a366febbe8c914af7a9e9f249cf61769c8"
+    },
+    {
+      "blob": "1a643800babfb6aed71ca6a7d10124793c167a7e",
+      "path": "app/experimental/production_lineage_api.py",
+      "bytes": 7543,
+      "sha256": "3037da31e65f93465a53d67f742ce679cdf12dfe2d5a14debc56e433c61544b5"
+    },
+    {
+      "blob": "0e0973f8e0a76fe459188b11605215544cbe89fa",
+      "path": "app/experimental/production_passport.py",
+      "bytes": 14071,
+      "sha256": "98605681badff5e5508fcc049c51ac564e9167dfa2a4527346f0647b017dd295"
+    },
+    {
+      "blob": "dc47fb1e20211a82bfdd3a8fb621a9194bc5ad8c",
+      "path": "app/jobs.py",
+      "bytes": 98918,
+      "sha256": "5a5803f53173752b31471e3649fb134a76d1267b6e45418157634db8a8553ba9"
+    },
+    {
+      "blob": "baca6ae0f0a2357010a8098f6ac360a654911630",
+      "path": "app/repositories/generation_repository.py",
+      "bytes": 14701,
+      "sha256": "81d670bacddaf0055673f9d54b2fb86e9b4a86f61ad93df64879b462bf8ad2a7"
+    },
+    {
+      "blob": "d890f5e9843e593d7619df11c7c65dbf55c2b56d",
+      "path": "app/repositories/postgres/generation.py",
+      "bytes": 13328,
+      "sha256": "c58108ead26173d104460b09762820b25d6d507256bfd1c185feb4af031e92b7"
+    },
+    {
+      "blob": "13e285e660855728331b9d7b56b351d2a92ab73b",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 33805,
+      "sha256": "8b04159f70929f8419310874b3270efd151dd4725ae95736838314a42253eb12"
+    },
+    {
+      "blob": "5f573000257571e79c952fab365c0b6a11f66278",
+      "path": "docs/delivery/v2-development/director-image-jobs-reviewed-v1.json",
+      "bytes": 732616,
+      "sha256": "f08a52b7410837e4a6f6f16df8131ce9ff998ceba63acf74cc4eb6903e56d666"
+    },
+    {
+      "blob": "fbe94ef6ba559a3e4202db5d63c099513977fdbd",
+      "path": "docs/delivery/v2-development/director-image-jobs-reviewed-v1.log",
+      "bytes": 1490,
+      "sha256": "b91eaa047208856f99cc1ed36ece2202e6ae7e67e0df97651f5cedc957b39a60"
+    },
+    {
+      "blob": "46736e35c9f9a90c3de6336dcc294d3053c0f117",
+      "path": "docs/delivery/v2-development/director-passport-committed-source-verification.json",
+      "bytes": 174,
+      "sha256": "f8a01ef5650c4906f7240e53c42f59fef4de471fe605d38e79c422ef4f4a312c"
+    },
+    {
+      "blob": "71707c74eb963a9baa9347e3523da952c5ea9de8",
+      "path": "docs/delivery/v2-development/director-passport-integration-20261018.md",
+      "bytes": 3966,
+      "sha256": "c958649acbd20264bfbc1d48fcef778bbd52eeb7ea9845eac20b85b76fbdacb8"
+    },
+    {
+      "blob": "57be0ae4e370aba6ac465cebc93403b6e3e0bd7e",
+      "path": "docs/delivery/v2-development/director-passport-integration-file.json",
+      "bytes": 738731,
+      "sha256": "be490bcd6c78d6942fe36cd1fd8295012a92cc8b57b735214467d1c5d60aeeb1"
+    },
+    {
+      "blob": "e1e08bcd20c641b0c05b4500bcf2bfc7be1d1ed2",
+      "path": "docs/delivery/v2-development/director-passport-integration-file.log",
+      "bytes": 1058,
+      "sha256": "8016343ec7b13eb4773e4bd532ee17ad89da3a8ed629e1b82008b6afa61f6542"
+    },
+    {
+      "blob": "a565e896495be8ab2478868115622ee453ef9d2e",
+      "path": "docs/delivery/v2-development/director-passport-integration-postgres-cleanup.json",
+      "bytes": 1642,
+      "sha256": "9744761751467e20ab3093e2cfd6048e612f75bc8f628e7348bbd82854531afc"
+    },
+    {
+      "blob": "9967ea8f818db886eee482b98e7a84319a73a114",
+      "path": "docs/delivery/v2-development/director-passport-integration-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "d39070179ee5358b781012f060e8b451354732615de934edfa5b2da717d5cb0c"
+    },
+    {
+      "blob": "ef50b50124fe9a875126f1259914901330c12ed2",
+      "path": "docs/delivery/v2-development/director-passport-integration-postgres.json",
+      "bytes": 738614,
+      "sha256": "8d9f86d7c4574732fb792fcbe6e6d08373e183cb7c6ab5290dabadf469c918b1"
+    },
+    {
+      "blob": "a1162349175f5dca04583b5bb9c6361bfe9a270a",
+      "path": "docs/delivery/v2-development/director-passport-integration-postgres.log",
+      "bytes": 1121,
+      "sha256": "9ca8201b85cc84778730d0787ff4f69e9b69cb49304a4b1a232a45e077f2d60f"
+    },
+    {
+      "blob": "e6af856f4b09d1b9591a5f744956a49b0dc66560",
+      "path": "docs/delivery/v2-development/director-passport-integration-public.json",
+      "bytes": 738870,
+      "sha256": "c5b3622d4196bdc1f647379a8b3519edf89407ce52ed1eac49815b7602cf55dc"
+    },
+    {
+      "blob": "8a925de6359afbe893d7141a8b98946fb32b4972",
+      "path": "docs/delivery/v2-development/director-passport-integration-public.log",
+      "bytes": 634,
+      "sha256": "306e5dcb5956c3ee697740d2671e648d8778929d937ed82cec967fe4754c52e4"
+    },
+    {
+      "blob": "1ae34b77daa87983bcdc2dac4946157f234a50de",
+      "path": "docs/delivery/v2-development/director-passport-integration-ui.json",
+      "bytes": 738619,
+      "sha256": "18da7eec9a801e2f41bd07130a28b4790b14186e38786c77147cfd7c2dc82853"
+    },
+    {
+      "blob": "764b208532c42d36b5f51bba4522a4d769bd2c01",
+      "path": "docs/delivery/v2-development/director-passport-integration-ui.log",
+      "bytes": 2126,
+      "sha256": "088ed2c01d90bfe4eb13bbd6fadbd52717eab5390b7a889901351b90156f9666"
+    },
+    {
+      "blob": "85598046c4f1aaabb841d0b5b032530449b3551e",
+      "path": "docs/delivery/v2-development/passport-sidecar/README.md",
+      "bytes": 3356,
+      "sha256": "9f3e882ab5ff1a0c71002b2795c68879c28e15961abe8966f9e88afe89eef5bf"
+    },
+    {
+      "blob": "69dbe284a86ed5eb036a9395914bc64c6bf68694",
+      "path": "docs/delivery/v2-development/passport-sidecar/backend-file-final.log",
+      "bytes": 210,
+      "sha256": "a5790b76337b11dd1840ad83767558f32031f4b15930363062467c77c5904245"
+    },
+    {
+      "blob": "714a4dc37e92023c5fc9d12dba2c8545fbe77b0b",
+      "path": "docs/delivery/v2-development/passport-sidecar/backend-file-final.xml",
+      "bytes": 7131,
+      "sha256": "d9f1badd0def4cebe86c0e9f8ce9e559e81295dcbf9f909be130ecd076085e5a"
+    },
+    {
+      "blob": "7bfff9d17cee23a17a48e9e2a9362dbd4298e423",
+      "path": "docs/delivery/v2-development/passport-sidecar/backend-file.log",
+      "bytes": 208,
+      "sha256": "95eb3ba44be6ac4aaa933b2a3bddfca355be4c9da4659ab15300bcf0b3727843"
+    },
+    {
+      "blob": "d1f3846ed7d5c08409f6220bbaffbe6a31b478b9",
+      "path": "docs/delivery/v2-development/passport-sidecar/backend-file.xml",
+      "bytes": 6206,
+      "sha256": "b4c0b7186f11d8f4709d36e39e6bb3f9bfca3b9d856f2d907ac53f01b9b204b8"
+    },
+    {
+      "blob": "5c995abdf1df13c874e43e990630cee792b973e1",
+      "path": "docs/delivery/v2-development/passport-sidecar/frontend-vitest.log",
+      "bytes": 745,
+      "sha256": "023e1957ccc80b47146d546b8468b941f82159d85934e8acd573fe44685528da"
+    },
+    {
+      "blob": "7586fac706bcba7b950b2a059afb4572fdf379ce",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_director_passport_postgres.py",
+      "bytes": 1636,
+      "sha256": "1a92964e1ea525692cdc9fcfe689829c3ea9355ac1dadb51c3d94d35be630195"
+    },
+    {
+      "blob": "dc607b6c2151b655cc7f86604ee28329c61a5c19",
+      "path": "docs/development/director_image_jobs_v3.md",
+      "bytes": 5446,
+      "sha256": "965605b45628bd29e63a0e872da5bf3bbca0e4ec8597f4654552afba76a13c48"
+    },
+    {
+      "blob": "2470281e3f7c94585646a96ac0013340c79e9f9e",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 776093,
+      "sha256": "ce24b6eed3684529aba3048f6f4b65dfdec5d37edc4632f507b8d9a4526f05db"
+    },
+    {
+      "blob": "cca66c1000b55faee04d78bd0e639ad01d58c9f2",
+      "path": "frontend/src/experimental/ProductionLineagePanel.tsx",
+      "bytes": 27774,
+      "sha256": "8bf1306b5b9c1de0b08a54f888d88e6f286cf444534f6409c0473c16484904de"
+    },
+    {
+      "blob": "441fa2b629abd986afb33d8383ce9a4e87195a9c",
+      "path": "frontend/src/experimental/ProductionPassportSidecar.test.tsx",
+      "bytes": 15407,
+      "sha256": "b639457126b0a089d252ca7988a457c74bd2e79aee31acc8708121b1b53a28e4"
+    },
+    {
+      "blob": "2c5a312b46413e18db5268f3d72757ec2c5c1a24",
+      "path": "frontend/src/experimental/ProductionPassportSidecar.tsx",
+      "bytes": 7482,
+      "sha256": "fbc914d2dd89a5bd570330b8e8228796887b7e6d053386a11d878da38f568942"
+    },
+    {
+      "blob": "dc9cac2bf3b5e309e5cd57bed37775ad639478e0",
+      "path": "packaging/public-build.json",
+      "bytes": 25488,
+      "sha256": "bf77879ab6bee6cf425f6dc63df979a03f7d12aa5738c6702bdce4e452b27676"
+    },
+    {
+      "blob": "854f32576af0c5a5c12e988237a1073979f2704c",
+      "path": "tests/test_director_image_jobs_additive.py",
+      "bytes": 15611,
+      "sha256": "bd3ed3665d55ccb6797f885aa4d678e5ed2b1ee98b79a35c1abd3a6a34ce880c"
+    },
+    {
+      "blob": "10698ce1be3d6af47b245495127081e48c6f62fc",
+      "path": "tests/test_production_passport_sidecar.py",
+      "bytes": 13031,
+      "sha256": "7e83bb6e49a3aa2e342febd1e94404472d6cb63a087bd43391f33ec37d246249"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
