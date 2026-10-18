@@ -1,0 +1,79 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "5e79111029a16489724bf48dff3759fbeb871178",
+      "path": "docs/DIRECTOR_TIMING_TOOLS.md",
+      "bytes": 2116,
+      "sha256": "a5856fd38f2e600ddfb40ccf00843dea41b7ddeec1eae425bc7c3fd2f16f1d59"
+    },
+    {
+      "blob": "eb2d0bb1727d23ec6f96f55b7afadd0beb755893",
+      "path": "docs/delivery/v2-development/director-timing-pg-r1-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "bffda93b22966e461a207b092395f16bd229c9c4f04dba61424a342d78abe8ec"
+    },
+    {
+      "blob": "b3f4fe49f21101506925dce4c6e8d01f70dec2f5",
+      "path": "docs/delivery/v2-development/director-timing-pg-r1.json",
+      "bytes": 681232,
+      "sha256": "8605857518d610daa242626d8ea5bf4fab436e221ebae50981d8c48f37322e4b"
+    },
+    {
+      "blob": "66ceded845904e9fff95cac68d4f22dc9a3c77e3",
+      "path": "docs/delivery/v2-development/director-timing-pg-r1.log",
+      "bytes": 1067,
+      "sha256": "d394390e419fe4b6c34ddc795d202e083da3efa9f393634d5cac2684c625ce3d"
+    },
+    {
+      "blob": "250cd2d59040732a7d8c2c3182ec5b94d1b9cf2c",
+      "path": "docs/delivery/v2-development/director-timing-r1.json",
+      "bytes": 681439,
+      "sha256": "bfc6acb7827444e05cde60087cb3ee9293cfeee7623cdf3b1eeab7bda4a30ece"
+    },
+    {
+      "blob": "8281f9eec845ea2a98cbac81122fadab223f7a6a",
+      "path": "docs/delivery/v2-development/director-timing-r1.log",
+      "bytes": 3683,
+      "sha256": "13beff06b04fc36643e501214b257e2a6b3591adf5210c64f178282dc182facf"
+    },
+    {
+      "blob": "f3a053e40e9f7e49951591ea1d15b0e9ad985b66",
+      "path": "frontend/src/creative/CreativeCanvas.tsx",
+      "bytes": 26825,
+      "sha256": "7815775fa21a86178782129233f1ab47087b8a6c8293dc28bde5617181c6de7e"
+    },
+    {
+      "blob": "42993c77efbe7f4197a40ff75df146f8af2b6aab",
+      "path": "frontend/src/creative/DirectorTimingTools.additive.test.tsx",
+      "bytes": 4984,
+      "sha256": "91f3a861c5a6de746e8d82d68b178497ea6fc2f4213924593f03ecb40460cc9c"
+    },
+    {
+      "blob": "ea9694f7fdd06faf228083fae05ec5cb8b30591e",
+      "path": "frontend/src/creative/StoryboardTimingTools.tsx",
+      "bytes": 5921,
+      "sha256": "4b0203edc382b01ba0e92e2888df01e8e1dd1844fbb442a0e58b19bbfafed95a"
+    },
+    {
+      "blob": "f75a47bd6259dee863f392d36ca7f3b60c62b58c",
+      "path": "frontend/src/creative/storyboardTiming.ts",
+      "bytes": 4056,
+      "sha256": "74ed299064343dfedb53795b8f7efc00cced93ed39433281c7c70b5d3312a6d3"
+    },
+    {
+      "blob": "9c281095c45b884eefac84c845be9975dd41518d",
+      "path": "tests/test_director_note_removal_additive.py",
+      "bytes": 3408,
+      "sha256": "1c47f85eda76b260390985b5a4b2a332ef89105cf21e7aa82f3cac1828026509"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
