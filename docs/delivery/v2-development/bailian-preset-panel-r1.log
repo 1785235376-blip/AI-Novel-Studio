@@ -1,0 +1,93 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/modelcenter/BailianPresetPanel.additive.test.tsx (4 tests) 121ms
+ ✓ src/modelcenter/ModelCenterPanel.additive.test.tsx (7 tests) 289ms
+ ✓ src/modelcenter/ModelCenterPanel.test.tsx (20 tests) 444ms
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+ Test Files  3 passed (3)
+      Tests  31 passed (31)
+     Errors  1 error
+   Start at  12:50:04
+   Duration  1.33s (transform 254ms, setup 51ms, collect 840ms, tests 854ms, environment 902ms, prepare 203ms)
+
+stderr | src/modelcenter/BailianPresetPanel.additive.test.tsx > mounts in the existing model center without adding automatic calls and denies foreign project scope
+Error: Uncaught [TypeError: Cannot read properties of undefined (reading 'length')]
+    at reportException (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12) TypeError: Cannot read properties of undefined (reading 'length')
+    at Module.capabilityMatrix (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/modelcenter/modelCenterOps.ts:64:68)
+    at /workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/modelcenter/ModelCenterPanel.tsx:76:53
+    at updateMemo (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:16427:19)
+    at Object.useMemo (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:17067:16)
+    at Proxy.useMemo (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react@18.3.1/node_modules/react/cjs/react.development.js:1650:21)
+    at ModelCenterPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/modelcenter/ModelCenterPanel.tsx:76:18)
+    at renderWithHooks (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at updateFunctionComponent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19617:20)
+    at beginWork (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+Error: Uncaught [TypeError: Cannot read properties of undefined (reading 'length')]
+    at reportException (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12) TypeError: Cannot read properties of undefined (reading 'length')
+    at Module.capabilityMatrix (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/modelcenter/modelCenterOps.ts:64:68)
+    at /workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/modelcenter/ModelCenterPanel.tsx:76:53
+    at updateMemo (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:16427:19)
+    at Object.useMemo (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:17067:16)
+    at Proxy.useMemo (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react@18.3.1/node_modules/react/cjs/react.development.js:1650:21)
+    at ModelCenterPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/modelcenter/ModelCenterPanel.tsx:76:18)
+    at renderWithHooks (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at updateFunctionComponent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19617:20)
+    at beginWork (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+The above error occurred in the <ModelCenterPanel> component:
+
+    at ModelCenterPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/modelcenter/ModelCenterPanel.tsx:98:22)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+TypeError: Cannot read properties of undefined (reading 'length')
+ ❯ Module.capabilityMatrix src/modelcenter/modelCenterOps.ts:64:68
+     62| 
+     63| export function capabilityMatrix(catalog: ModelCenterCatalogPayload): …
+     64|   const runtimeObservationAvailable = catalog.capability_snapshots.len…
+       |                                                                    ^
+     65|   const rows: CapabilityMatrixRow[] = catalog.models.map(model => {
+     66|     const candidates = runtimesFor(model, catalog);
+ ❯ src/modelcenter/ModelCenterPanel.tsx:76:53
+ ❯ updateMemo ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:16427:19
+ ❯ Object.useMemo ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:17067:16
+ ❯ Proxy.useMemo ../../studio-usability/frontend/node_modules/.pnpm/react@18.3.1/node_modules/react/cjs/react.development.js:1650:21
+ ❯ ModelCenterPanel src/modelcenter/ModelCenterPanel.tsx:76:18
+ ❯ renderWithHooks ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ❯ updateFunctionComponent ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ❯ beginWork ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ❯ beginWork$1 ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27465:14
+
+This error originated in "src/modelcenter/BailianPresetPanel.additive.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "mounts in the existing model center without adding automatic calls and denies foreign project scope". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+

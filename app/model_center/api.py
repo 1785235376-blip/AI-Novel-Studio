@@ -64,6 +64,13 @@ def create_model_center_router(
             return HTTPException(409, {"code": "RUNTIME_CONFIG_INVALID"})
         return HTTPException(409, {"code": str(exc)})
 
+    @router.get("/provider-presets/bailian-text")
+    def bailian_text_preset():
+        # Public constants only; no host settings, key state, model inventory,
+        # remote probe, registration or execution. Existing runtime owns setup.
+        from ..bailian_text_preset import bailian_preset_catalog
+        return bailian_preset_catalog()
+
     @router.get("/models")
     def models(x_session_token: str | None = Header(default=None, alias="X-Session-Token")):
         authorization = mutation_authorization(x_session_token) if mutation_authorization else {}

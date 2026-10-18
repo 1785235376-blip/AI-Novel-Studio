@@ -242,6 +242,7 @@ async def collaboration_fail_closed(request,call_next):
             r"/api/audit",
             r"/api/model-center/(?:models(?:/[^/]+)?|runtimes(?:/[^/]+(?:/(?:validate|start|stop|configuration|diagnostics|logs|capabilities))?)?|pipelines|health)",
         ))
+        capability_route = capability_route or (method == "GET" and normalized_path == "/api/model-center/provider-presets/bailian-text")
         if capability_route:
             token = request.headers.get("X-Session-Token")
             if not token:

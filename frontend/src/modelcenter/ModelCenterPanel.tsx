@@ -1,3 +1,4 @@
+import { BailianPresetPanel } from './BailianPresetPanel';
 /**
  * UX-07 组合根：`ModelCenterPanel`。
  *
@@ -112,6 +113,7 @@ export function ModelCenterPanel(props: ModelCenterPanelProps) {
         canReRead={controller.canRead} onReRead={() => void controller.reload()} />
 
       <ProviderKeyState credentials={controller.credentials} />
+      <BailianPresetPanel {...props} />
 
       <div className="model-center__actions">
         <Button disabled variant="ghost">下载模型（不可用：原 owner 没有下载端点）</Button>

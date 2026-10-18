@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/modelcenter/BailianPresetPanel.additive.test.tsx (5 tests) 100ms
+ ✓ src/modelcenter/ModelCenterPanel.additive.test.tsx (7 tests) 353ms
+ ✓ src/modelcenter/ModelCenterPanel.test.tsx (20 tests) 514ms
+
+ Test Files  3 passed (3)
+      Tests  32 passed (32)
+   Start at  12:51:14
+   Duration  1.36s (transform 243ms, setup 58ms, collect 773ms, tests 967ms, environment 932ms, prepare 182ms)
+

@@ -1,3 +1,4 @@
+import { checkedBailianPresets, type BailianPresetCatalog } from './bailianPresetContract';
 /**
  * UX-07 只读客户端。
  *
@@ -40,6 +41,7 @@ export type ModelCenterReadResult = {
 };
 
 export type ModelCenterClient = {
+  bailianPresets: (signal?: AbortSignal) => Promise<BailianPresetCatalog>;
   read: (signal?: AbortSignal) => Promise<ModelCenterReadResult>;
   /** 只读凭据状态；**不**改动任何密钥，也永不返回值。 */
   credential: (provider: string, signal?: AbortSignal) => Promise<ModelCenterCredentialState | undefined>;
@@ -88,6 +90,10 @@ export function createModelCenterClient(
 
   return {
     decodeHardware: modelCenterHardware,
+    bailianPresets: async (signal?: AbortSignal) => {
+      if (foreign()) throw rejected();
+      return checkedBailianPresets(await transport.json<unknown>('/api/model-center/provider-presets/bailian-text', 'GET', undefined, signal));
+    },
     credential: async (provider: string, signal?: AbortSignal): Promise<ModelCenterCredentialState | undefined> => {
       if (typeof provider !== 'string' || !provider.trim() || provider.length > MODEL_CENTER_BOUNDS.id) return undefined;
       try {

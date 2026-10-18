@@ -36,3 +36,15 @@ class BailianTextProvider(OpenAICompatibleTextProvider):
 
     def _payload(self, request, stream):
         return {**super()._payload(request, stream), 'enable_thinking': False}
+
+
+def bailian_preset_catalog():
+    """Public, non-secret host-configuration hints, never current configuration."""
+    labels={'cn-beijing':'中国北京','ap-southeast-1':'新加坡','us-east-1':'美国弗吉尼亚','cn-hongkong':'中国香港'}
+    return {'contract':'studio-bailian-text-preset-catalog/1','provider_id':'aliyun-bailian',
+        'regions':[{'id':region,'label':labels[region],'base_url':url} for region,url in BAILIAN_REGION_URLS.items()],
+        'region_variable':'ALIYUN_BAILIAN_REGION','model_variable':'ALIYUN_BAILIAN_MODEL',
+        'endpoint_family':'DASHSCOPE_SHARED_PAY_AS_YOU_GO','modality':'TEXT','enable_thinking':False,
+        'model_id_required':True,'current_configuration_included':False,'credential_value_included':False,
+        'configuration_applied':False,'network_called':False,'model_called':False,
+        'official_reference':'https://www.alibabacloud.com/help/en/model-studio/base-url'}
