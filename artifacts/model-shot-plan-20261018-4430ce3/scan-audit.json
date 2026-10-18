@@ -1,0 +1,301 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "edd450bb9737b2e946d0365f36fdd6278045d164",
+      "path": "API_CATALOG.json",
+      "bytes": 1551866,
+      "sha256": "415e2cc17c7b2a869df7d1e96c2905c0d35a50903df9ed5bc3988a04549f3e6f"
+    },
+    {
+      "blob": "d1a8095f3579ed95a16882decebabf65cbb75da2",
+      "path": "API_CATALOG.md",
+      "bytes": 415992,
+      "sha256": "6c2c75f9535e41f1387d924e3c9ef698ebcfe9b4c5897baac2b9782d9ef15718"
+    },
+    {
+      "blob": "f2fc8ae2df9bdb9bd33dd0ded8f94ea0829ac133",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 640387,
+      "sha256": "f4b954c1ab40e27b6563eb08b182f1681d236a9a39762683d822dba296ac4df1"
+    },
+    {
+      "blob": "012b546b3a73409b4402a5ec43d0e9c1db970b09",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 138351,
+      "sha256": "e3c6fb12c7d80f3ea37ebb6d2084051f44ea7fc8b60b788d1189183166795010"
+    },
+    {
+      "blob": "17d4f079bb425deec56c8b70f24a7ad8367c565e",
+      "path": "app/creative/director_model_api.py",
+      "bytes": 7220,
+      "sha256": "52bc83759e7d383946b088532f6040b34ae2c94c02f6d49d1b41baf354213dda"
+    },
+    {
+      "blob": "e154499dbde0aa2959ed372392df54332137a69d",
+      "path": "app/creative/director_transport_contract.py",
+      "bytes": 7967,
+      "sha256": "aaf73a75f33bcddf3d6b783f86ce8f911425a3723951116bc26c3cc1e87b7379"
+    },
+    {
+      "blob": "3dae313d3e756d02e770f568262cad4fe6aeff6f",
+      "path": "app/creative/generation.py",
+      "bytes": 118057,
+      "sha256": "976972fb3b9eb6d7234136fa899c9c2137da3f70a17157080c389254c776797d"
+    },
+    {
+      "blob": "dfe06aff5f41a7f5791a8204f45ee4f080837b03",
+      "path": "app/creative/screenplay_model.py",
+      "bytes": 13622,
+      "sha256": "955b3797028549995d5a6b9718d0343c7e32aa84b49ef952328ad7a520f55bce"
+    },
+    {
+      "blob": "067678034a4b645316f2b2a6fb38e74a4f080696",
+      "path": "contracts/independent-screenplay-shot-plan-v1.md",
+      "bytes": 3282,
+      "sha256": "b4e3dd14c7747682e57dcb7392718fee02e1927617ded310561e86619f4b96b7"
+    },
+    {
+      "blob": "88c2931fdd44ba71df10ea69c77812ab2291e3d7",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 45586,
+      "sha256": "32bf577c0c17fd4ec7a7f5208c9fd8fd6280136fb1e2327fcdebd503e82ff19d"
+    },
+    {
+      "blob": "096de862d1b83c70762f307cbd2dbefac0131a02",
+      "path": "docs/delivery/v2-development/model-shot-plan-integration-20261018.md",
+      "bytes": 5472,
+      "sha256": "9cd9322d6b72f92e4789fb8294996277d86971b7e051388914de7500117c4575"
+    },
+    {
+      "blob": "b77bdafa4b83c0ff5c938cc7f9aabe7f0a476bfb",
+      "path": "docs/delivery/v2-development/model-shot-plan-integration-frontend.json",
+      "bytes": 763841,
+      "sha256": "c9bdca594ada7ef52f9aa76e5eb6519d29d2dba3345ca1c60b938d83178d0dcb"
+    },
+    {
+      "blob": "8d85ecf2d5d920d49220897a8e5dc29d63bc27f7",
+      "path": "docs/delivery/v2-development/model-shot-plan-integration-frontend.log",
+      "bytes": 2921,
+      "sha256": "62870e6433622c2ba89dc76a861090a8a73e75e59bfa143344113d4c6fd04203"
+    },
+    {
+      "blob": "f14396d473efd3cd34f555ab683093593e749d0c",
+      "path": "docs/delivery/v2-development/model-shot-plan-integration-postgres-cleanup.json",
+      "bytes": 307565,
+      "sha256": "3d45c93b3684e320545f2059216f1e842850f1a9261007e1a1955e1ae3dbce49"
+    },
+    {
+      "blob": "5e16a7454299a76cc69c9565a8123d139d5e28a5",
+      "path": "docs/delivery/v2-development/model-shot-plan-integration-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "6f8a59b7fba722134e47aed1a5b5ce15426bd49f1a301671ede703bd0cf439d0"
+    },
+    {
+      "blob": "919ea36143e59510f12d9f84e2812fb1b807271a",
+      "path": "docs/delivery/v2-development/model-shot-plan-integration-postgres.json",
+      "bytes": 763376,
+      "sha256": "9503533cc300dde46851e2ea05646ac888ff21d16c443d0c9e98e4368d2224bc"
+    },
+    {
+      "blob": "78f84770630eb383a5b0cc8d82718373ecd09400",
+      "path": "docs/delivery/v2-development/model-shot-plan-integration-postgres.log",
+      "bytes": 679,
+      "sha256": "47f0d43f09b719569751ded279cc6b91f74ea9dbb7f6eb30d7fb78f746330d0e"
+    },
+    {
+      "blob": "9f460a9e04e8761d0a48adec370e70a7e181474c",
+      "path": "docs/delivery/v2-development/model-shot-plan-integration-public-final.json",
+      "bytes": 763692,
+      "sha256": "b149375c60e2f7c6cc95ca0db691a783c30e52d9256d79b1b0ef666e685bef2c"
+    },
+    {
+      "blob": "f41663c3428ac9b9cd0de9ee44dd353e829b6f23",
+      "path": "docs/delivery/v2-development/model-shot-plan-integration-public-final.log",
+      "bytes": 634,
+      "sha256": "2dea3824f662ab9a0c901c1f9f5f1f3a5dc88c1091b186bfcf0efa86adac6269"
+    },
+    {
+      "blob": "8cfcaa096f36d0da4d76bd5325f0410088ef213d",
+      "path": "docs/delivery/v2-development/model-shot-plan-integration-public.json",
+      "bytes": 763632,
+      "sha256": "edd3b1f4dd53d91205e2e4e9699c63b4584df15996b1e1dba47e2e358872d385"
+    },
+    {
+      "blob": "c48d2223e28ff68e0fd24bb6f96087de3cea3a23",
+      "path": "docs/delivery/v2-development/model-shot-plan-integration-public.log",
+      "bytes": 3771,
+      "sha256": "3b4972907086305761408d80e492c29beaf12ab3a17b2d262a9d04efb508b4ca"
+    },
+    {
+      "blob": "cee37a3ab3dcb9f44a17c6bf1beb0aa19915af88",
+      "path": "docs/delivery/v2-development/model-shot-plan-source-reconciliation.json",
+      "bytes": 915,
+      "sha256": "8b83feb4f340bf5082d0acd4b88564cb002b1af219cca328ccce53d8ff7c8c65"
+    },
+    {
+      "blob": "a14ca805c3a32cbd80603e4614b36c7a3d35a1c0",
+      "path": "docs/delivery/v2-development/multishot-baseline.json",
+      "bytes": 761632,
+      "sha256": "ea2b6db4fe9bdf081873d674e12b942f4885f5bddee1221bcf6b8e5c7c4e69b9"
+    },
+    {
+      "blob": "7024a037c23b59ace023742d0b4f7962b6f6b5d5",
+      "path": "docs/delivery/v2-development/multishot-baseline.log",
+      "bytes": 45142,
+      "sha256": "e7bfd60d4ab281a137a9355b4229c22e6151bdde41b7a8e6763392be9224497f"
+    },
+    {
+      "blob": "42b1d2535c17f7bc5111826f62e5c62db0cde01f",
+      "path": "docs/delivery/v2-development/multishot-focused.json",
+      "bytes": 762828,
+      "sha256": "fae6a4dcadb35f9e5af342d5114f8f4167cfdaa0345d64ed27723f54b18236c9"
+    },
+    {
+      "blob": "14624bc5fbcf2fb02c36c8b251a65b77fdfbfe84",
+      "path": "docs/delivery/v2-development/multishot-focused.log",
+      "bytes": 1063,
+      "sha256": "a298d5c93c4ecd284f83822b0509f29677f2612dcf257509b49797d6fbdd6fa0"
+    },
+    {
+      "blob": "69b43879a43c7979a9c43ab0fff62bf9925e2487",
+      "path": "docs/delivery/v2-development/multishot-implementation.md",
+      "bytes": 3130,
+      "sha256": "69ebcb6913faeb65f792460d5ab6dcc6e8b638a0388909dec9bd35c047d6a1db"
+    },
+    {
+      "blob": "008292b9d2abfc09108f8826b6b936fa9d909f45",
+      "path": "docs/delivery/v2-development/multishot-independent-final.json",
+      "bytes": 763553,
+      "sha256": "3d28c89edfb32693c10c98af03c365a7def11e1f64d2385b047583641bafcf74"
+    },
+    {
+      "blob": "d4d8ed80d4ab634d2962c0762c1c74aa6ee9d9e7",
+      "path": "docs/delivery/v2-development/multishot-independent-final.log",
+      "bytes": 1078,
+      "sha256": "6eaa4af8c499b1dc70dc5cde92d90c251d626c61f0369d4f20b3083e783f1541"
+    },
+    {
+      "blob": "0b02c84dc3bc78be0ea1358b18ba088f2dba923b",
+      "path": "docs/delivery/v2-development/multishot-independent-frozen.json",
+      "bytes": 763563,
+      "sha256": "0a0283f64aff77fd546fa1220308aa3406ba408f6a1ea8877ea8baeb30d1a827"
+    },
+    {
+      "blob": "16bbdb77b0fd638400ede471366edcdc6ecc7991",
+      "path": "docs/delivery/v2-development/multishot-independent-frozen.log",
+      "bytes": 1078,
+      "sha256": "ebc6c3541b8fba1bdc948c636c012e93d9932a4c24d70736b5e8c35d457b92e9"
+    },
+    {
+      "blob": "20d3baceac66a87e44d02fcffa4df84037c0879f",
+      "path": "docs/delivery/v2-development/multishot-independent-legacy.json",
+      "bytes": 763196,
+      "sha256": "da30d3d4195ca29618dbd4bed4d684df7333118e55820a65ee70ba0322a22c6d"
+    },
+    {
+      "blob": "d296f468a44ad76679720a57b95bcf775701e77c",
+      "path": "docs/delivery/v2-development/multishot-independent-legacy.log",
+      "bytes": 1175,
+      "sha256": "d4f421d7e1e1cfde2346b327cbb9affba3a48efda3b12289c2675d1595a8a6bc"
+    },
+    {
+      "blob": "36a94f2abc5f549118b8af050650941663699a3b",
+      "path": "docs/delivery/v2-development/multishot-independent-review.json",
+      "bytes": 762998,
+      "sha256": "3a2bd70b014ee93af6e90d6664d25f7b6ee1d8f20f2d7056506bb34616e46cbb"
+    },
+    {
+      "blob": "b8ce0a81e6135674aa8e0d4ebea225e091758117",
+      "path": "docs/delivery/v2-development/multishot-independent-review.log",
+      "bytes": 6923,
+      "sha256": "4c9cc70e57014d55ed858abcd854ecf8aa70994bb93770a16b6c719c69597811"
+    },
+    {
+      "blob": "123d583f04bb3d16ae88e55cf92735fe0bc6c84a",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_model_shot_plan_postgres.py",
+      "bytes": 1725,
+      "sha256": "00bc0576be5924da8cfdb3d9c872e5acec4f5e10ced725322ac1691f9c7e34b7"
+    },
+    {
+      "blob": "6865a448d29763fe59e2f8686b946c488f75ee4b",
+      "path": "docs/storyboard_director_proposal.md",
+      "bytes": 6276,
+      "sha256": "c3adb114f065773897095689826b64a3c7ce916477e6a4068063bd84cbc08da8"
+    },
+    {
+      "blob": "b4f1a6dc809808233bcc27e21faf3ca2e4a9605a",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 798050,
+      "sha256": "0ee388f79590c0032bf9db96300872640b3efe7e6273f58063164ae0aa92156b"
+    },
+    {
+      "blob": "f931db8e472cb9370ffdcb723772bc2d6b87115e",
+      "path": "frontend/src/creative/IndependentDirectorModelReview.multishot.additive.test.tsx",
+      "bytes": 12380,
+      "sha256": "57efbefc34441175e9308d5c36bf4d74284e6af78c62b45c2fc6ebc9d240d62f"
+    },
+    {
+      "blob": "4ae50a759031ba6f6fbfde0d5d08a2d1ebc2e1ea",
+      "path": "frontend/src/creative/IndependentDirectorModelReview.tsx",
+      "bytes": 15146,
+      "sha256": "2a9ab1dd2a9c133c1a9af8d4515c7ac7f6cc492c22b12b024fb3c24a8caca72e"
+    },
+    {
+      "blob": "4b6ac910acfefb83ef2be2b858fd89df49aeb65c",
+      "path": "frontend/src/creative/directorModelClient.ts",
+      "bytes": 21927,
+      "sha256": "4a2241e9c063598080c9a64fd00890153c982b86004d027af398d8fb4bb636f5"
+    },
+    {
+      "blob": "b3a8d6c930007d63988dd501d64589fab5483c48",
+      "path": "frontend/src/creative/directorScreenplayMultiShot.capture.test.ts",
+      "bytes": 3144,
+      "sha256": "1bc98c08b303a8f6c7e4a5e2775b9f8662318a260e00906ab347955ed2fc68cc"
+    },
+    {
+      "blob": "a9022382146cba3cf79fee14457790f17c5ca631",
+      "path": "frontend/src/creative/directorScreenplayMultiShot.testFixtures.ts",
+      "bytes": 3062,
+      "sha256": "18e4dafed0d535a0423028ecbb76bb85a24f1510c7043ce2e0807edef2b858ae"
+    },
+    {
+      "blob": "f5aa5bee09b9412d6e7a40cb8f424c4a32546cd0",
+      "path": "frontend/src/creative/directorScreenplayMultiShotClient.additive.test.ts",
+      "bytes": 11408,
+      "sha256": "8c4c2759aae9fecd42247ce60083785828e6b74b22ff868ad1595ea5716cdb40"
+    },
+    {
+      "blob": "bfc8d8dfd27b9a5fa45e53a6a4a9f5faf1b24096",
+      "path": "frontend/src/creative/directorScreenplayMultiShotWire.testFixture.json",
+      "bytes": 50076,
+      "sha256": "332b82aa5de08708d309ba6272ea376aa8aedaff7340dc2cf848cab3bfae124f"
+    },
+    {
+      "blob": "37adfc62712f19e4f48c2489b55ac380e3e606c7",
+      "path": "packaging/public-build.json",
+      "bytes": 26276,
+      "sha256": "3c4eb1ea44c4c54ee7668be1e5986cbf711c6325872ddb0939902a416aa798c4"
+    },
+    {
+      "blob": "9c32ba619375a61bc5306f0efa3c687b7d331242",
+      "path": "tests/test_v2_screenplay_model_transport.py",
+      "bytes": 15910,
+      "sha256": "bb3583425b459f180525b5202b7b7929004a23ba11151981c98c2797b376b81e"
+    },
+    {
+      "blob": "69cae093a4096129f5f6f0dd5bd9d590e498266d",
+      "path": "tests/test_v2_screenplay_shot_plan.py",
+      "bytes": 6182,
+      "sha256": "243b061bc51510689ada80d43424dc900646a4a1e1dd98a045e7d719e861b4d6"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
