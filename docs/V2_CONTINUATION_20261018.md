@@ -405,3 +405,9 @@ Prior source 6daeac8f archived as 7897be0666d3fa86bd75b8023e6f393446d4e70d, pare
 Product bb2bdb73ae53a78b33e13ec1a71813e65d1064dd adds default-off schema1 local-text historical reuse with recursive invalidation and fresh approval; legacy false/omitted behavior remains. File378, final realPG117 with exact14-table cleanup, UI506 in23suites, TS/build/token and PUBLIC6 pass. Final PG matches3152 source files; UI/PUBLIC predate only test teardown. Initial old-fixture cleanup failure and exact owned repair are retained. See docs/delivery/v2-development/graph-local-reuse-integration-20261018.md. No model/media cache or measured speedup claimed.
 
 Previous sourceffbfc595 archived as36ff75ceac27edf8125d965575995f1495306886, parent7897be06:14artifacts/5228534bytes verified. JPEG/WebP Comic page archive remains independent work, unintegrated.
+
+## 22:14 UTC bounded JPEG/WebP page archives
+
+Product 3a33b6d3fdf8c964ee1281178d6edb0bcece9e9e adds exact approved-source JPEG/WebP reading-copy ZIPs with1,048,576 aggregate-pixel admission and scoped64MiB streaming. File239 plus affected94 are overlapping and explicitly reconciled; realPG102 restores exact14-table hashes; UI294 and source-matched types/build/token evidence reused; PUBLIC6 passes. Final PG/PUBLIC match3158 source files. See docs/delivery/v2-development/comic-page-archive-integration-20261018.md. No long-book/print/real-reader acceptance claim.
+
+Previous source1ccbce1c archived as a946bafd7dd2d1ef171c389ba8b1e2af23966b7f, parent36ff75ce:14 artifacts /5,527,238 bytes verified. Fixed-layout EPUB remains independent unintegrated work.

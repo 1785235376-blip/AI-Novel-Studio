@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T22:03:00Z",
+  "updated_at_utc": "2026-10-18T22:14:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -21663,9 +21663,9 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Ordered full-page CBZ and bounded raster PDF reading copies implemented. PDF roughly2.7M aggregate pixel ceiling is explicit. Independent synthetic cloud Poppler rendering checked; Windows/browser/print acceptance, JPEG/WebP, EPUB and editable native archive remain open.",
-      "next_action": "Continue remaining formats and real target/platform acceptance; do not imply full-size print/PDF-X support.",
-      "evidence_scope": "Bounded original publication owner; see docs/delivery/v2-development/comic-pdf-integration-20261018.md"
+      "gap": "Ordered PNG CBZ, bounded raster PDF and JPEG/WebP ZIP reading copies implemented. PDF roughly2.7M and page-codec1,048,576aggregate-pixel limits explicit. EPUB and editable native archive, long/high-resolution and independent target/platform acceptance remain open.",
+      "next_action": "Continue remaining EPUB/native formats and actual viewer/platform acceptance without print/PDF-X claims.",
+      "evidence_scope": "Bounded original publication owners; see docs/delivery/v2-development/comic-page-archive-integration-20261018.md"
     },
     {
       "id": "IMAGE-COMIC-19",
@@ -22098,11 +22098,31 @@
         "Browser/Windows/runtime acceptance remains open"
       ],
       "failure_retained": "Initial PG assertions all passed but old fixture leaked8 synthetic scopes; exact rows restored and finally teardown added without changing assertions, full rerun passes."
+    },
+    {
+      "product_sha": "3a33b6d3fdf8c964ee1281178d6edb0bcece9e9e",
+      "report": "docs/delivery/v2-development/comic-page-archive-integration-20261018.md",
+      "scope": "Ordered bounded JPEG/WebP page reading-copy ZIPs and opt-in capped download streaming",
+      "file_tests_full_before_affected_recheck": 239,
+      "file_tests_affected_recheck": 94,
+      "counts_overlap": true,
+      "postgres_tests": 102,
+      "postgres_exact_14_table_cleanup": true,
+      "ui_tests": 294,
+      "public_tests": 6,
+      "source_paths": 3158,
+      "frontend_source_paths_reconciled": 1637,
+      "formal_acceptance": false,
+      "limits": [
+        "1,048,576aggregate pixels;8pages and2048side are independent bounds",
+        "JPEG quality100 remains lossy; no print/color-profile promise",
+        "No Windows/actual reader/browser acceptance"
+      ]
     }
   ],
   "current_checkpoint": {
-    "product_sha": "bb2bdb73ae53a78b33e13ec1a71813e65d1064dd",
-    "report": "docs/delivery/v2-development/graph-local-reuse-integration-20261018.md",
+    "product_sha": "3a33b6d3fdf8c964ee1281178d6edb0bcece9e9e",
+    "report": "docs/delivery/v2-development/comic-page-archive-integration-20261018.md",
     "source_identity_section": "Historical initial reconciliation baseline, not current HEAD",
     "all_fixed_ids_accepted": false
   }
