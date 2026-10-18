@@ -1,0 +1,541 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "39df3dbea902714a8c6d85253e0df5007152ed2c",
+      "path": "API_CATALOG.json",
+      "bytes": 1537123,
+      "sha256": "c0d47f2a9f02e5dfd1159386c680eb2e6b41bc84f996862e1a3c509e11d0b7c0"
+    },
+    {
+      "blob": "caf9df30943a027cb6a4c105ff8fd3830c158323",
+      "path": "API_CATALOG.md",
+      "bytes": 411555,
+      "sha256": "e28e44d7720a33f1913545705b321da77268a323f18ba3347a745b084a4bced6"
+    },
+    {
+      "blob": "87c26b5584511a6d5150a28d1b70bb920b4c5f49",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 634282,
+      "sha256": "242f25ef14e572059a9751a18d1c8c69daa14875157d6371d2d935a62356d467"
+    },
+    {
+      "blob": "7c0fc6443b589f1c964416e7d4d7de82af05d7ad",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 136774,
+      "sha256": "81e8de76bca7be0fa75a2ad0612b13b067a6f9846f0305f0033ae7150639c177"
+    },
+    {
+      "blob": "b74a97cac9d98cf770f05e01d17bb9c759c4d408",
+      "path": "app/experimental/comic_layouts.py",
+      "bytes": 46820,
+      "sha256": "fa3b54bccb1331ed8346f39506006d4b507a37ac1ce75900f1a5174868ab9039"
+    },
+    {
+      "blob": "4f8b9a6b5d959e8c557a2d4f8ac3cbd71170a94d",
+      "path": "app/experimental/comic_layouts_api.py",
+      "bytes": 9416,
+      "sha256": "5e3eac7e387c6e44460f933481eb06fe36cc4172aca7d62bea7d195a52f3ec58"
+    },
+    {
+      "blob": "20e88b108be6215461175cde1634ba1d78d206d6",
+      "path": "app/experimental/comic_publication.py",
+      "bytes": 9514,
+      "sha256": "6448cc73a380d87baa9dbcd85d619fe8e884e2001ca2f31a80e9ad54a23d923e"
+    },
+    {
+      "blob": "5140677ec8b29595bb8b706e9f27e60015c9d530",
+      "path": "app/experimental/comic_publication_budget.py",
+      "bytes": 2128,
+      "sha256": "3dc012700303cd2e56ecf255bb352216be7a78ded88e7fde0af7ef8475be85fe"
+    },
+    {
+      "blob": "187a7a8dba31368f58ecee9887890e4893e59ccc",
+      "path": "app/experimental/ink_export.py",
+      "bytes": 8226,
+      "sha256": "9ad00df804bbba9159b8b3fd409b09189380612705aa3faaf3392488b22b0eb0"
+    },
+    {
+      "blob": "636449d148bf28fc12e91c37aea8a3bcfdf22155",
+      "path": "app/experimental/interactive_story.py",
+      "bytes": 51007,
+      "sha256": "3655c164f8b1e33829afbdadab9ac9e23385cc38c3f52e9d048030cb287c8238"
+    },
+    {
+      "blob": "025ded0655ca44fdb8d865ac405d9557da156384",
+      "path": "app/experimental/subtitle_processing.py",
+      "bytes": 35851,
+      "sha256": "591ca957f9d19865c3b45e06e703130a2fffa9569bf0893e62e37fde7189022d"
+    },
+    {
+      "blob": "950eb6a9280cff469a62e611cfada17ec1872f13",
+      "path": "docs/COMIC_PUBLICATION_CBZ_SLICE.md",
+      "bytes": 5037,
+      "sha256": "fd45f9b0fe6bd153b28abd2298a4fd8a6453596f5e07174987361160eaefb641"
+    },
+    {
+      "blob": "710ba15af5c534ce22839862628f54d61e1f6d12",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 37773,
+      "sha256": "71c94e50fc203648e326e31b1aee00677930f7079b3571f852be24b9dc6f3fe4"
+    },
+    {
+      "blob": "5383ddf413a14afebfe6bd88e0126d7bbb71c11e",
+      "path": "docs/delivery/v2-development/audio-admission-baseline-check.json",
+      "bytes": 746128,
+      "sha256": "72fb3dcda6bba9d7f42d9c0fa9e8580037bda6f12510c89a45ffd5448e96b63c"
+    },
+    {
+      "blob": "673f22ce35b0891ddfc08a9a2bd3d393327bff8b",
+      "path": "docs/delivery/v2-development/audio-admission-baseline-check.log",
+      "bytes": 2676,
+      "sha256": "e35aba7bbae501307bb488ab3746877e71151da5bfee34a01d4d7af2d28d58cc"
+    },
+    {
+      "blob": "22644541e7e88e10c46515ef9e9f853e9ca4023f",
+      "path": "docs/delivery/v2-development/audio-admission-compat-file.json",
+      "bytes": 336654,
+      "sha256": "759872f63e6c2d98ffe155714a746e480928787e0217c8df1f490798c7274af4"
+    },
+    {
+      "blob": "bf40e3d5c85ab00e54886d80b715ec79034f2388",
+      "path": "docs/delivery/v2-development/audio-admission-compat-file.log",
+      "bytes": 1104,
+      "sha256": "56cdb1b7398ec1dac9e8d64f91adb4c8ed466ed5202dfc6dcf933275d4ad6e12"
+    },
+    {
+      "blob": "00f22702c5fad7fc4b376e9631035d98bc4df9e6",
+      "path": "docs/delivery/v2-development/audio-admission-compat-regression-file.json",
+      "bytes": 336641,
+      "sha256": "a6c2f43506a63773396ee00fab4caf047dc8e16cfaea531d2ff350e940ca18b1"
+    },
+    {
+      "blob": "45b5687235f2da03500498ce978e482d6640cee6",
+      "path": "docs/delivery/v2-development/audio-admission-compat-regression-file.log",
+      "bytes": 1121,
+      "sha256": "84f9f88fec45cb49f2a6fe48560b1ad066e39a011caa6193e64a9308a33f9b76"
+    },
+    {
+      "blob": "dbed8be17c5a502a5d075649b4f9341645f6fd38",
+      "path": "docs/delivery/v2-development/comic-publication-backend-final.json",
+      "bytes": 743012,
+      "sha256": "0a81b2a65d9716d0e7bd74234bd056a7e01b1d6c2819e24202b48ffdeb109a48"
+    },
+    {
+      "blob": "ee1988809709db97ba28ba43cf6b821a25566f74",
+      "path": "docs/delivery/v2-development/comic-publication-backend-final.log",
+      "bytes": 1244,
+      "sha256": "bbfc74853090dd456efc33339c51601b34822b674ec46f826268fdf316f4ef7e"
+    },
+    {
+      "blob": "46c6f15329656004f80a3b96e0bd0f9e8a6c93da",
+      "path": "docs/delivery/v2-development/comic-publication-frontend-frozen.json",
+      "bytes": 742753,
+      "sha256": "8035242d5e9508e4a9afd6ac1ef7f193d518f1edcd58731005319ce1323bae86"
+    },
+    {
+      "blob": "23905eb3481983666d40b0da41f630b011090fbd",
+      "path": "docs/delivery/v2-development/comic-publication-frontend-frozen.log",
+      "bytes": 4175,
+      "sha256": "2c20089675f0ea1497769b6e174da7a60e6b4ca0b15779c5da2dbd9c0f55c822"
+    },
+    {
+      "blob": "1a5273781a0841da58a89f3c8f9635664c94a354",
+      "path": "docs/delivery/v2-development/comic-publication-typescript-frozen.json",
+      "bytes": 742594,
+      "sha256": "3c971789d1e5d5b02f3b15018be268cd801866d0f16e83cc5cfaa0125750f6a3"
+    },
+    {
+      "blob": "1572e665fd9af7576cc75378597b84eca8037ed0",
+      "path": "docs/delivery/v2-development/director-recovery-integration-frontend.json",
+      "bytes": 750611,
+      "sha256": "8b7a46295148197d65870306ac1a4b8295a1e1787a562454edeab5ff71a8d8e9"
+    },
+    {
+      "blob": "09aae9d7f385cf5a314705cc3d518110dec62315",
+      "path": "docs/delivery/v2-development/director-recovery-integration-frontend.log",
+      "bytes": 10998,
+      "sha256": "05b7da133affbcc300daf6542319250104b5906b430387ac143da756a6108a0c"
+    },
+    {
+      "blob": "d6d4ac3bcadc433ec2e0e05af96e96b7015f7e18",
+      "path": "docs/delivery/v2-development/exchange-fixture-residue-inspect-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "b9700a5c834df15c03ce189192edf176335e7ba67e129acda047160ce3e8b86d"
+    },
+    {
+      "blob": "7adc6095df0ab5411e9f67280d86783e99d5ed89",
+      "path": "docs/delivery/v2-development/exchange-fixture-residue-inspect.json",
+      "bytes": 748822,
+      "sha256": "a9324f465629bf102da98d696b4cc4eb83dade31d7c609cdebe6d19ec093d6d4"
+    },
+    {
+      "blob": "30d105bb9f46ac44cd27c7a654e168adf610da79",
+      "path": "docs/delivery/v2-development/exchange-fixture-residue-inspect.log",
+      "bytes": 6967,
+      "sha256": "635abad210384070b82b75e6a00ae71e23ff485f843ce022fa5afde34c11088c"
+    },
+    {
+      "blob": "f677db9ee5dc40fba77be6767020db6a9b829374",
+      "path": "docs/delivery/v2-development/exchange-owned-fixture-cleanup-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "b0ba09e3008f8bcc3b0c7c0d1891abe5595bb70c29830101461922ec2e57d6cc"
+    },
+    {
+      "blob": "d35ab91bb317a54674a8ae7735204d86e7f48965",
+      "path": "docs/delivery/v2-development/exchange-owned-fixture-cleanup-proof.json",
+      "bytes": 264,
+      "sha256": "2058c50bcb0a3420e28959b9238523a8ead03b60c2848fe1590f8a3b77e990c5"
+    },
+    {
+      "blob": "d581ffe3b5fbe272413efc85e483d2787a09ee4a",
+      "path": "docs/delivery/v2-development/exchange-owned-fixture-cleanup.json",
+      "bytes": 748848,
+      "sha256": "e19ccae2502433b7cade57e33815682219682df445f3c8099ab4f39b5ee2941f"
+    },
+    {
+      "blob": "06ae43d5772d0cd2e77f66ddc1c95be2822a4ef8",
+      "path": "docs/delivery/v2-development/exchange-owned-fixture-cleanup.log",
+      "bytes": 146,
+      "sha256": "b64e81b178aa6ed253336e36927ebda881f085a284feeb324c6f2a5714def296"
+    },
+    {
+      "blob": "ec77a82eb14aa26f97eb1867f7d1187df93b8660",
+      "path": "docs/delivery/v2-development/exchange-publication-file.json",
+      "bytes": 749956,
+      "sha256": "ad30e6a6dc61e9693e73e59313a8ea316376849fbe1fd531a2c95d3c000a333b"
+    },
+    {
+      "blob": "c556d133c840c32292e8a05012880b65ff8fbb5a",
+      "path": "docs/delivery/v2-development/exchange-publication-file.log",
+      "bytes": 1359,
+      "sha256": "5cbe00063e96b7769314420f71c29cff499ade95ff579384262d64a05dd841f9"
+    },
+    {
+      "blob": "516b7228da2a1ae2a35509bea6ca9f650d8f413a",
+      "path": "docs/delivery/v2-development/exchange-publication-final-postgres-cleanup.json",
+      "bytes": 307769,
+      "sha256": "4e8136c7c5a2ccace3e8d39057235d5e1aa0b214cf09271fab75c781adc2ebca"
+    },
+    {
+      "blob": "6a106fd8bc4c45c7916690e6c5894cc8cc62b0b7",
+      "path": "docs/delivery/v2-development/exchange-publication-final-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "6b8bcf14baf72c01de1f93f7e54ed9a3361673ac3a2ec2e812bd8ad8d6f90e0d"
+    },
+    {
+      "blob": "a6eecc5a218c609b0d239fc7ced8e23dc73d2638",
+      "path": "docs/delivery/v2-development/exchange-publication-final-postgres.json",
+      "bytes": 750630,
+      "sha256": "163ade1a02b973bd1bfde583279bf3e1f24b9dee818647cec1ea2506f905ed22"
+    },
+    {
+      "blob": "6124fedff290285f490d28b9184920d14677bfae",
+      "path": "docs/delivery/v2-development/exchange-publication-final-postgres.log",
+      "bytes": 1190,
+      "sha256": "25b4bbf364b8d30d7e02a44a64c88bf218829621dba882f7007de970541c58dd"
+    },
+    {
+      "blob": "9c089d4a6999c6fc09cd02b8ff08e1c67d312afa",
+      "path": "docs/delivery/v2-development/exchange-publication-frontend.json",
+      "bytes": 749641,
+      "sha256": "ccc792a784e9336ecb494d83ac1cc03b1984ea5e2cb73ef0d7fee03aecea9cbb"
+    },
+    {
+      "blob": "126a1fa97175f6a84db3770e60fb4b3dbffaa795",
+      "path": "docs/delivery/v2-development/exchange-publication-frontend.log",
+      "bytes": 10213,
+      "sha256": "57c1666378da0aa6906813d545931815e0eacd152844a9d532caec04d83a3a70"
+    },
+    {
+      "blob": "be12e6e9e4caac2fa8ea46f660d1a45ff68e234e",
+      "path": "docs/delivery/v2-development/exchange-publication-postgres-cleanup.json",
+      "bytes": 308980,
+      "sha256": "ff7836a7314a6fdf1377d396a28f7a22a5c266f7115dce5ccbf37444b19de6a6"
+    },
+    {
+      "blob": "ce66c27bb57f0a4ea97b9ef8ec73905514949a0c",
+      "path": "docs/delivery/v2-development/exchange-publication-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "d939311023e266ace90f0c38a0f1288dc7ccb534fff5037055e0b3a8a41ad343"
+    },
+    {
+      "blob": "f0394032a0e66e2f6bcd2362f8a0faf7a7feb874",
+      "path": "docs/delivery/v2-development/exchange-publication-postgres.json",
+      "bytes": 749552,
+      "sha256": "00b7a8e54ee2edf537ead4f705c2d8a6bef1ac624827356aea9523222a846304"
+    },
+    {
+      "blob": "b6fa7a05c2a68ade9716a6c60f1eb72bd40b1e57",
+      "path": "docs/delivery/v2-development/exchange-publication-postgres.log",
+      "bytes": 1636,
+      "sha256": "84a955c84c4affa8c9952ed2e40feeca4a13733074fe5b0159b26023cdf3b20a"
+    },
+    {
+      "blob": "a0fb59eb0cb189e1c9a0e03fe863e3c4e52a433d",
+      "path": "docs/delivery/v2-development/exchange-publication-public-build.json",
+      "bytes": 750166,
+      "sha256": "2cb60019a3529a8c226bb22b532989d997b97468c6364b6bbb5d80b883fc4bcd"
+    },
+    {
+      "blob": "67ea897970bbde89b559007d2c3df5e545108db6",
+      "path": "docs/delivery/v2-development/exchange-publication-public-build.log",
+      "bytes": 634,
+      "sha256": "1e4bee82e1755aca13a705cce625c4740173b406bb53876fa87d11832deb9076"
+    },
+    {
+      "blob": "d9a759363bc4b2e30c7db754b2608a53ad521f04",
+      "path": "docs/delivery/v2-development/exchange-recovery-integration-20261018.md",
+      "bytes": 5464,
+      "sha256": "97cf6f86fc25d3c2caf57d4c6ee303a859c4fc4f37ad5a16e283876529863719"
+    },
+    {
+      "blob": "c3dd88d6167f8a250fbf16b04d82cbd2341e8455",
+      "path": "docs/delivery/v2-development/style-vision-integration/cleanup_exchange_owned_fixtures.py",
+      "bytes": 2864,
+      "sha256": "e85bf8068c2974aedf68ec4eaf18d893d382539fcdf6e721139956b56adbaae8"
+    },
+    {
+      "blob": "c83c3a5ea6bcd85e349669a0aa07cec3581d1168",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_exchange_publication_final_postgres.py",
+      "bytes": 1908,
+      "sha256": "c70514b59fd7b737913a4d7d970c981c086a8a71f1c17ebb858da760d8610a15"
+    },
+    {
+      "blob": "289ad85b830ddf845a363b04a03c8a5bc84acf00",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_exchange_publication_postgres.py",
+      "bytes": 1896,
+      "sha256": "33b9e137db93d9fc106eafa3d60dd5eb7769825601b0ca23cb49656d773d6928"
+    },
+    {
+      "blob": "9d55d743a002d35053b82f6d32567950cef8a5fd",
+      "path": "docs/development/storyverse-ink-evidence/clean-baseline-audio-failure.log",
+      "bytes": 2720,
+      "sha256": "692ddcffd35df5613968b48e99fe9170bfa1b96e7f9d2533feb42f807ef48d51"
+    },
+    {
+      "blob": "4f323440abd618f2f6e84ac85dabe9583e9abc5d",
+      "path": "docs/development/storyverse-ink-evidence/file-regression.log",
+      "bytes": 1226,
+      "sha256": "086b681c3a23c023974d007faa0ebf663888afdc974afd6441dd68b71d5d04f0"
+    },
+    {
+      "blob": "a674d9c26b4a15511a73a48268a5b868ec412267",
+      "path": "docs/development/storyverse-ink-evidence/initial-regression-audio-failure.log",
+      "bytes": 2851,
+      "sha256": "79c49ecf39f17ee0f37586093903a4b78f7e2f072e2d0255e2ecd20fe6a5a52a"
+    },
+    {
+      "blob": "a1b26bd8f0c7d016838b04751d02f3d6f9caa920",
+      "path": "docs/development/storyverse-ink-evidence/ink-runtime.log",
+      "bytes": 1049,
+      "sha256": "71f3c39c141da685f644a5692ab64df02f2d8c3a5019ff1348f9acd8cba8e27a"
+    },
+    {
+      "blob": "fd9e4db6c022dc6f53dba843d87d8ed6c6073503",
+      "path": "docs/development/storyverse-ink-evidence/typecheck.log",
+      "bytes": 47,
+      "sha256": "1941dc50dd063c7a1449cd92e51b66706faae48370ea97541f66e725bb768bcd"
+    },
+    {
+      "blob": "0c4572b250192179f929f2bb601bbd9f3d1a9cb9",
+      "path": "docs/development/storyverse-ink-evidence/ui.log",
+      "bytes": 1210,
+      "sha256": "d7b1b7668fede7434ec2194c16c68486d0bdd8d6c9f2b251cfb2d0cfa0fedad6"
+    },
+    {
+      "blob": "9897c919ca78b1a07da5abe5586e83cb2c12c566",
+      "path": "docs/development/storyverse_ink_exchange_v1.md",
+      "bytes": 6205,
+      "sha256": "bdebbe689790d7e3e30544af9ece83b89cd7a09450377cdcae4f7d85d6e4a5ba"
+    },
+    {
+      "blob": "eec13a5c4d1020c12da1d5a471971e30705e0571",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 780965,
+      "sha256": "91aedb94957257fc30a868e32ec5cc74d930a6f24f410505179a86516cd925fb"
+    },
+    {
+      "blob": "d4142b68eff367b9a8e85cf88ffefcb130204bd0",
+      "path": "frontend/src/creative/DirectorAuthorRecovery.test.tsx",
+      "bytes": 20017,
+      "sha256": "77c273319f45c31c2da477292c42567a76c4a9708f9d773ebe8455d13d2e6861"
+    },
+    {
+      "blob": "4b1cf0bee44a11f35a8b483303a5fed7e5ae157a",
+      "path": "frontend/src/creative/DirectorAuthorRecoveryPanel.tsx",
+      "bytes": 1695,
+      "sha256": "d73b1270d185a695fe7a28f49b090f83ddf1079aaf7d09c456761351c11030e6"
+    },
+    {
+      "blob": "ad787124670f3cd8cedd25820d1573eef6d0b85c",
+      "path": "frontend/src/creative/GraphDirectorConsole.tsx",
+      "bytes": 32020,
+      "sha256": "3160bf8b41ed75964209fd6708947b1699383b957bbce271cc0cd9f11487bbfd"
+    },
+    {
+      "blob": "22f22cd802c6790e53595afea42abb9ab54356ca",
+      "path": "frontend/src/creative/StudioComicPanel.tsx",
+      "bytes": 2705,
+      "sha256": "be44db504a3bb9718c2d303fb3c803a2eeaf7222c41392db5852db64092d3eaf"
+    },
+    {
+      "blob": "5ba004064cef3d54e7e802044e568b6861e0aa94",
+      "path": "frontend/src/creative/directorAuthorLocalDraft.ts",
+      "bytes": 7980,
+      "sha256": "4386e62658e9677c4cdb7dda4f23a8a0cbeffec16bf4930396545bab09e8bf6a"
+    },
+    {
+      "blob": "e0e86730fe8a5f0003ef57437fdea85014448756",
+      "path": "frontend/src/creative/studioClient.ts",
+      "bytes": 38256,
+      "sha256": "6e642f8a7c66a17d322ea0d67e0d7241cd71a9e1ee0e3335cb3d2714c5d81e4a"
+    },
+    {
+      "blob": "7300a9529e4bc6ed4bed0bfb5684a49b2d80f214",
+      "path": "frontend/src/creative/useDirectorAuthorRecovery.ts",
+      "bytes": 10138,
+      "sha256": "9f0f6490987db3f5e5bac8fcee15422576dab384459a7b2103b1849d4b78330e"
+    },
+    {
+      "blob": "f826e4d3d2e19dd4b89a7973cff4e527c9bbf2c9",
+      "path": "frontend/src/creative/useStudioGraphEditor.tsx",
+      "bytes": 5318,
+      "sha256": "9588cd37966ab31e3d37624d709e6e4298ad5122238f3fc1df8863344c746382"
+    },
+    {
+      "blob": "cfa927d8fcb212bd3eb8f5ea950e51a05aab6db3",
+      "path": "frontend/src/experimental/ComicCollectionTree.tsx",
+      "bytes": 17352,
+      "sha256": "67cd72ef0add6642f6db50c177c0b257063fd41de9e77ed14fc78e1c393d72dd"
+    },
+    {
+      "blob": "7183e9ab0a1cd065b3f8df59e72a3aeed0282ecc",
+      "path": "frontend/src/experimental/ComicPublicationPanel.test.tsx",
+      "bytes": 17591,
+      "sha256": "5e392fa5f5a4b1057db5aca1a366b19d73ef03fbf84c1261ed0972c06951a894"
+    },
+    {
+      "blob": "e6539800536b908bb57857b19b665c33c651c7ec",
+      "path": "frontend/src/experimental/ComicPublicationPanel.tsx",
+      "bytes": 9953,
+      "sha256": "73b2ebba1bab17bc895d6504ab1f811e1a6d0a456e8afe608a819a2a0a2b76ab"
+    },
+    {
+      "blob": "f8231eaaa92f7c5ad3cbef3367307934d5b877a8",
+      "path": "frontend/src/experimental/InteractiveStoryPanel.test.tsx",
+      "bytes": 17403,
+      "sha256": "ba04b8ba1b7959eff97235e75846f3b5f8e265a7ff64ad39a889c8a22fb7561c"
+    },
+    {
+      "blob": "767bd278e323941c31aed5cf382db04bfd54ebe5",
+      "path": "frontend/src/experimental/InteractiveStoryPanel.tsx",
+      "bytes": 36946,
+      "sha256": "5295cc350467e3e6fc015d31498e01c052d3414d52e4b601bd9474484a338e7c"
+    },
+    {
+      "blob": "5fc0d668731a562bbfdddfac44d387fed726c6de",
+      "path": "frontend/src/experimental/api.ts",
+      "bytes": 4253,
+      "sha256": "fd094f09150f17f3fc60b1e495f11ae86cd977c2d90ab994e30458b79bc370d9"
+    },
+    {
+      "blob": "a1ba6cf4e831efbdcbcdc59652b49239df8cb6e4",
+      "path": "frontend/src/experimental/comicLayoutsClient.publication.test.ts",
+      "bytes": 4818,
+      "sha256": "6ce72b81b17d9a7d51f6b6c7a5799a378f35072683b3f668d21af836fc9066f4"
+    },
+    {
+      "blob": "812b8f4393c4ba1420f74db840839af9b1c52a9e",
+      "path": "frontend/src/experimental/comicLayoutsClient.ts",
+      "bytes": 10618,
+      "sha256": "a3ef7ad9ffed75270e770513ed1ebfa379e19ed3d9948b57e8115cc96e1dcc11"
+    },
+    {
+      "blob": "bd3cb051a63f28b288aa61a127ab8fc2ad5329d2",
+      "path": "frontend/src/experimental/interactiveStoryClient.ts",
+      "bytes": 5215,
+      "sha256": "856f9b9970c37a81c2b4c2b9f4acf2031bd4a8b24bced2c5eff4d1dd00867e08"
+    },
+    {
+      "blob": "e7a36ff0454868260df61590a8f1bbb5533b99e1",
+      "path": "packaging/public-build.json",
+      "bytes": 25981,
+      "sha256": "faf8fcc95a570a646bb2ccd62bcfde8df27c15c02f72aaab8c702a5d1b144d0d"
+    },
+    {
+      "blob": "e9e31043e4929e5ebe71e54846d0da1659cdcc2c",
+      "path": "scripts/prepare_inkjs_test_dependency.py",
+      "bytes": 1703,
+      "sha256": "f55cdae854352b85c58859b53747156c85653912e820129ad4860a64eb2b7e1d"
+    },
+    {
+      "blob": "2488eee692740a6e3857539a705307d9f928cf80",
+      "path": "scripts/verify_ink_runtime.cjs",
+      "bytes": 2240,
+      "sha256": "867329d69ca4aa5d5eccd9786f1805ec8637bc65c3a1e74772a740f4078c391e"
+    },
+    {
+      "blob": "42a09f78cd18025610b0d3adbc2f7273610652cc",
+      "path": "tests/test_comic_publication.py",
+      "bytes": 14703,
+      "sha256": "3ea2410791cf0978eb0623cd02b815570ef74a86863f05bc6fb616c0ea9e7a56"
+    },
+    {
+      "blob": "f425c23cc6ffec4392b07a9e3f97745353c6e9cf",
+      "path": "tests/test_comic_publication_layers.py",
+      "bytes": 4532,
+      "sha256": "defea8ffb8dfb6c80ada48f3154bc7c7bfde79502be75dd279aa750ad6f9608e"
+    },
+    {
+      "blob": "ab00f7b404f2da31c0d4690c0ac1b54292ce79a2",
+      "path": "tests/test_storyverse_ink_exchange.py",
+      "bytes": 12106,
+      "sha256": "2f70be7a2201a5a2c2978b28fd8b85d960f19e976803f8015bf6bcba6c3ec405"
+    },
+    {
+      "blob": "804ac81232ee5ff01229f962084cfa65835aa3dd",
+      "path": "tests/test_subtitle_catalog_admission_compatibility.py",
+      "bytes": 4650,
+      "sha256": "912fe4a064bc07e26f371adb5d3bf1e81ee4fd666f99d16337712acb8096ea50"
+    },
+    {
+      "blob": "40f6dd3fa5e8edd29856af096e5cfa6d0c27a278",
+      "path": "tests/test_surface_freeze_media_engine_adapters.py",
+      "bytes": 36781,
+      "sha256": "04e6714a0c6391ae0a8ca3ec4c1209e33a749e570b65b3af46b22c15c2f4d918"
+    },
+    {
+      "blob": "0615364c88b2f25f9350ec5b8fb4287ef163ca56",
+      "path": "frontend/src/creative/DirectorAuthorRecovery.test.tsx",
+      "bytes": 13664,
+      "sha256": "c0ecdbda8676163d83fb55f547cf8d20f4a18c9305cf5f4b905afa36ba685893"
+    },
+    {
+      "blob": "33873dc66f328180df35371ac00460a23326784b",
+      "path": "frontend/src/creative/GraphDirectorConsole.tsx",
+      "bytes": 31739,
+      "sha256": "b05f11ae2d55c6dd493f177a4e75b6b804f78ce75daba3d4445fc386ebc79ff1"
+    },
+    {
+      "blob": "9b94e5130d38928efe573aabac1fe9f4e019d694",
+      "path": "frontend/src/creative/directorAuthorLocalDraft.ts",
+      "bytes": 7754,
+      "sha256": "e4dfef74c9658516db195e9348f9ce08ea163b30d303c2e816fefcc8e6e2816a"
+    },
+    {
+      "blob": "736a8822c363dda4f9906d159b07d2287023c20a",
+      "path": "frontend/src/creative/useDirectorAuthorRecovery.ts",
+      "bytes": 6788,
+      "sha256": "bdfdb9a03b39b7cb98115bf10811aca85a2ab32bb1093a1dfa34d6c18f904b42"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
