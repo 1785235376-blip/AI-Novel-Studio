@@ -1,0 +1,28 @@
+{
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "source_head": "311adda1b9259f0d5c5786c1b15687503f4c61b1",
+  "prerequisite": "7a9e7457d360d2c3f2379b0767a94def458f408d",
+  "source_branch": "work/dot-recovered-20261018",
+  "publication": "archive only; no main merge or Release",
+  "scope": "authoring-font-closure",
+  "product_commit": "79fbb1e5d80574e513cd51c09b54118b12c80d90",
+  "standalone_report": {
+    "archive_path": "IMAGE_ORA_WORKFLOW_REPORT.md",
+    "source_path": "docs/delivery/v2-development/image-ora-workflow-integration-20261018.md",
+    "source_commit": "311adda1b9259f0d5c5786c1b15687503f4c61b1",
+    "sha256": "4f186038c4b9825fc9caa5ab381401b7e605e212ea688b30f16103b3e4e5558c",
+    "copy": "byte-exact committed source"
+  },
+  "archive_file_count": 14,
+  "exclusions": [
+    "17 MB font cache",
+    "third-party dependency wheel uploads"
+  ],
+  "acceptance_open": [
+    "native Windows",
+    "browser visual/geometry",
+    "real model quality/performance",
+    "actual external-editor ORA roundtrip",
+    "general multilingual typography"
+  ]
+}

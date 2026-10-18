@@ -1,0 +1,569 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "e7f64134fa77f778bb9c035eb0f4020eebccae0d",
+      "path": "API_CATALOG.json",
+      "bytes": 1533682,
+      "sha256": "1495cfde6d785265b09b47d1e85f25d78e99f70cc5afa6cee0bcc148c941f5d8"
+    },
+    {
+      "blob": "db2fd2efcc82efa14f617e8f459bdaf945d142b2",
+      "path": "API_CATALOG.md",
+      "bytes": 410363,
+      "sha256": "cf2a4f69a3ce4c16d6c6afde8e49bfdcfd0abf7f75b7b3f9dfcde351d809a4dd"
+    },
+    {
+      "blob": "49ca7612d3291da3336d3bffefed5f329085fb83",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 633044,
+      "sha256": "388d4eac9eb866957cc6980a6fe96491122af0b62063ede2f48d538fad525041"
+    },
+    {
+      "blob": "5c7ebd9c70b999d87cdbad4b2de299047df239f2",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 136465,
+      "sha256": "8c5c8980c691f8c13cce864e031a4e3de02a7668fa4677e598131dd9df7d2a06"
+    },
+    {
+      "blob": "33f6599d13a5e518c24ddd5afc4f59b2e02cf842",
+      "path": "app/creative/director_image_generation.py",
+      "bytes": 25225,
+      "sha256": "314d95c052da8132b7e51c8ec447a84f9b16c43227839d602995de8d7bf0d5c3"
+    },
+    {
+      "blob": "342e5654d5991bdd71214abd1b70ae70c64d658a",
+      "path": "app/experimental/api.py",
+      "bytes": 42881,
+      "sha256": "a49f64c80a243e58e5a19393f49f2d11125bf9f7814a67d2fb20a71fd34dba91"
+    },
+    {
+      "blob": "26babb91ed3ef4fe34314ecbf0e1f28e6fa266ec",
+      "path": "app/experimental/comic_ora_api.py",
+      "bytes": 8309,
+      "sha256": "e698a697db1350c23d7453a1cd1e0ce0e6ace0ebe2f7c65e9190c3527d13a8f4"
+    },
+    {
+      "blob": "8fccc7044faa7c0a8cb1d7c65dadb493d591d18f",
+      "path": "app/experimental/comic_ora_import.py",
+      "bytes": 18026,
+      "sha256": "8ca8be11f383b181a9a109e213bf616a4ef21c6b2721aec1e4b439054221a964"
+    },
+    {
+      "blob": "7a0b0e1be2fa803dbbae5b69acc641ac92553eca",
+      "path": "app/experimental/comic_ora_staging.py",
+      "bytes": 25670,
+      "sha256": "0865fa366ab1ecc6f8bbc27f41d7170478d79595c763d75ef513e9ff866c8a09"
+    },
+    {
+      "blob": "2bf4be4be6913248218dc3e38d221d5c0f07ae3a",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 36862,
+      "sha256": "4d1d0b6d755a8ffaec02759cddf4426ca9fa0d41d19cdc915ba078e7265899c8"
+    },
+    {
+      "blob": "b025963f3ecbcec6eccdb8fb6d7f4cfa877f325c",
+      "path": "docs/delivery/v2-development/comic-ora-api-file.json",
+      "bytes": 738975,
+      "sha256": "153011c4edbf27e3d60f94165126dcbf7965290b8c080ad9038e0009a24c7254"
+    },
+    {
+      "blob": "bd306acd35bb0c3f3ecc1691674fa8aaf063352e",
+      "path": "docs/delivery/v2-development/comic-ora-api-file.log",
+      "bytes": 1456,
+      "sha256": "8b5e7caa3520dda6cf08e0d3e9ff0ed40471448b1a1809fb770f70e83018e5c0"
+    },
+    {
+      "blob": "40f3d59215751509ccfe8cd5dac013eeb3c99a2f",
+      "path": "docs/delivery/v2-development/comic-ora-mounted-report.md",
+      "bytes": 5746,
+      "sha256": "0b12221036aa6ba81e99f6987df9d0e39de05221eeea832ff9c79499ea13e32e"
+    },
+    {
+      "blob": "ff0d13de1d5f455fb81f1c8bcfb3d847b46dea52",
+      "path": "docs/delivery/v2-development/comic-ora-ui-final.json",
+      "bytes": 41048,
+      "sha256": "6e068484632fe3f69acb87fbc7f2564022dbd5c74fc4636d0718d751da22f318"
+    },
+    {
+      "blob": "745f6cee6f69b25ed56c40be0f511c1a2b1813e8",
+      "path": "docs/delivery/v2-development/comic-ora-ui-final.log",
+      "bytes": 51,
+      "sha256": "4ecc91d53256ea3168bf4aef04a21a81b04014d70d0bd9ff004865f752678e34"
+    },
+    {
+      "blob": "ff15aad3a275d4c8cd1ac7582c42ace36cd856a8",
+      "path": "docs/delivery/v2-development/comic-windows-closure-green.json",
+      "bytes": 225253,
+      "sha256": "3be23311730ac1ccd856c35ce60657c944a260be1a19a96846da2f7da668e0da"
+    },
+    {
+      "blob": "16eac8778a0f1fb2d45b28b71f8691543f7d7652",
+      "path": "docs/delivery/v2-development/comic-windows-closure-green.log",
+      "bytes": 99,
+      "sha256": "db150d1058afd2dee25e534faa3bafd8a6fe7cae5b1c977a946aeaba4d137293"
+    },
+    {
+      "blob": "c66eb7bcf7585811aca2dba431cc8aa0cce454a1",
+      "path": "docs/delivery/v2-development/comic-windows-closure-red.json",
+      "bytes": 225246,
+      "sha256": "8b7ae7d395cc9e85700e13aeeb19e24f776ceb8901599d186306370370d81be5"
+    },
+    {
+      "blob": "331dcdbdcb0b43d9fc5193458c1e3d452c112f94",
+      "path": "docs/delivery/v2-development/comic-windows-closure-red.log",
+      "bytes": 1667,
+      "sha256": "9a30d87bb92ddbf28db0f073d44430c82cf6b36df83339ba3c4a60c43c4163ca"
+    },
+    {
+      "blob": "ee1b2952cf2ab8e35c947caac3c177593ffd57d7",
+      "path": "docs/delivery/v2-development/director-image-ui-integration.json",
+      "bytes": 744886,
+      "sha256": "6d22a969af460976303c185278f77aa3f7d74ff73adc3ad5f009e8917a48f597"
+    },
+    {
+      "blob": "72f59e9420903baf6e756da3ecbf8d3e402d8291",
+      "path": "docs/delivery/v2-development/director-image-ui-integration.log",
+      "bytes": 2252,
+      "sha256": "5204f897d442f93dcf515917484a91711e8768b41b1c9e5f258cc4aeba34caeb"
+    },
+    {
+      "blob": "eb75a0088aaa6301ac47ec786f2ff4c3c6dfad0b",
+      "path": "docs/delivery/v2-development/director-image-ui/final-tests.log",
+      "bytes": 4700,
+      "sha256": "811db42d42080c64e37dbd2fc696dc813dc7a056f6f53957d5fc1c33f5dfa35b"
+    },
+    {
+      "blob": "9c0626d989ab1d4a58d0f1c116c118cd5bc28a0a",
+      "path": "docs/delivery/v2-development/director-passive-recovery-file.json",
+      "bytes": 742345,
+      "sha256": "ba46b18dbb90419f7f6e660ee5f1209d0c71a36bdd18c93cf8e535053563d8de"
+    },
+    {
+      "blob": "97baae8a468e857de02fe41dc82b5cae4b3f2eed",
+      "path": "docs/delivery/v2-development/director-passive-recovery-file.log",
+      "bytes": 1081,
+      "sha256": "24f2d4d7b834001151ab2e9cee9854db1956fa9367596b6b423b83e96cad1fd3"
+    },
+    {
+      "blob": "f8f8c53c1d8f989baea3ba27a175d74c1339b067",
+      "path": "docs/delivery/v2-development/director-passive-recovery-postgres-cleanup.json",
+      "bytes": 1584,
+      "sha256": "d71e40140cc15e712a695a338c81c4b846a32829c9966b5afba35baa7909dd43"
+    },
+    {
+      "blob": "a1ca126b6e87cbf8c16e38ab90dccf92013e23e7",
+      "path": "docs/delivery/v2-development/director-passive-recovery-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "b62393542630d07bddcca678c8e663c19e74abeb0c952cdbd5867bcba8e2743b"
+    },
+    {
+      "blob": "7714add7df79106658e74256eab54146f00a3761",
+      "path": "docs/delivery/v2-development/director-passive-recovery-postgres.json",
+      "bytes": 742285,
+      "sha256": "48092ff0b3366177320ae6f3c1c27506e5aa8953d195eb67cb9c5f89ac756da7"
+    },
+    {
+      "blob": "641495bc2bd1106b854fe32a7dee945b73a062ef",
+      "path": "docs/delivery/v2-development/director-passive-recovery-postgres.log",
+      "bytes": 1134,
+      "sha256": "a55610a106a740ec641408908e1cef3d3430fd97e07d3e0653e1733e5cd04d01"
+    },
+    {
+      "blob": "8e9f20cb3dad5db1f22110dd4c92f434278d4c0c",
+      "path": "docs/delivery/v2-development/image-ora-workflow-committed-source-verification.json",
+      "bytes": 175,
+      "sha256": "a0b64241cc83ab88a0d7b887a88a2786fb64aae4c177bce4af9a97cc3d8fd8b1"
+    },
+    {
+      "blob": "6ddd4a59a838fec00f00016f80878cb0af9eb031",
+      "path": "docs/delivery/v2-development/image-ora-workflow-integration-20261018.md",
+      "bytes": 5222,
+      "sha256": "4f186038c4b9825fc9caa5ab381401b7e605e212ea688b30f16103b3e4e5558c"
+    },
+    {
+      "blob": "ccf3fc44004d7f20d609636bae8e2eff8f26cca0",
+      "path": "docs/delivery/v2-development/image-ora-workflow-integration-public.json",
+      "bytes": 746340,
+      "sha256": "dcccc6aaa382b6c5bc2867d249e502b4b971d43692e755b8f342d61e5d9452cf"
+    },
+    {
+      "blob": "b28445d7990970dff587f277b6e2ef7957fefbc7",
+      "path": "docs/delivery/v2-development/image-ora-workflow-integration-public.log",
+      "bytes": 634,
+      "sha256": "53388fc95b1ec219ba854380947b7141c899a8b4682bb0439f2b40a54b713a95"
+    },
+    {
+      "blob": "1ee9f9d47f9c604be6a470d613815fc6636887e2",
+      "path": "docs/delivery/v2-development/image-ora-workflow-integration-ui.json",
+      "bytes": 746526,
+      "sha256": "6065d64456b510852a182ade2853c00c06198615f7105f7588424e322e7fb03c"
+    },
+    {
+      "blob": "990a5745010e848cf5523ad0fed1aa807315d5d8",
+      "path": "docs/delivery/v2-development/image-ora-workflow-integration-ui.log",
+      "bytes": 6248,
+      "sha256": "2d89371f8829c9311346e4436a3d859df9f68de0d2a871ca4706756b9078d5dd"
+    },
+    {
+      "blob": "027c7f7459ca857bb03785b732db997993a2b5b8",
+      "path": "docs/delivery/v2-development/ora-mounted-integration-file.json",
+      "bytes": 744823,
+      "sha256": "8c6c7faa78b0b4939503099bb8a3a20bdbe36e2c37a7a5eb0c9baff89f88ac1b"
+    },
+    {
+      "blob": "49135b3ddd4c06f736355ffedd0206b260709dc6",
+      "path": "docs/delivery/v2-development/ora-mounted-integration-file.log",
+      "bytes": 1042,
+      "sha256": "3fe5723faf83b7ffccd67b5938912b6867f5659f7efdc67758a90c9a85b18e36"
+    },
+    {
+      "blob": "d6bafa7e6c8a9d76a48a1b988383046748e5f739",
+      "path": "docs/delivery/v2-development/ora-mounted-integration-postgres-cleanup.json",
+      "bytes": 307684,
+      "sha256": "044be5c1ac95169e1c0539aed5d6cf894e8bbfc3859f1b90e4ca2c866e915535"
+    },
+    {
+      "blob": "6e92eba0159bdae01adceff98b398d72ad9e51a3",
+      "path": "docs/delivery/v2-development/ora-mounted-integration-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "36887ee92f4e52beae613fcf2919e9773b25c02310bae69fe4a02205e5ddf259"
+    },
+    {
+      "blob": "f15674ec50ef3513f005fdf510da92e86619bc72",
+      "path": "docs/delivery/v2-development/ora-mounted-integration-postgres.json",
+      "bytes": 744764,
+      "sha256": "eba127ad675f022822711fb13ee0aad84fc34438f4d1a00ec68d32d74a67f2ee"
+    },
+    {
+      "blob": "2d9f4fde03044d54a72e31f6a005b9309197f36c",
+      "path": "docs/delivery/v2-development/ora-mounted-integration-postgres.log",
+      "bytes": 1095,
+      "sha256": "e271a1f3b82abafcaf65a3d1fc2681701d2c868df9c1b2d8e7e5e0abe74a4569"
+    },
+    {
+      "blob": "9f623f99eaf3b4145cc0487b6b18f6def9251e88",
+      "path": "docs/delivery/v2-development/pinned-cjk-original-font-20261018-2042.json",
+      "bytes": 745459,
+      "sha256": "243aec779bfbfaa1c138edcf7a8ab5de5f08dc89ea340a647278a894d4ce97b1"
+    },
+    {
+      "blob": "060cfb870b5017112cec1da4d7965d2d604d4b91",
+      "path": "docs/delivery/v2-development/pinned-cjk-original-font-20261018-2042.log",
+      "bytes": 618,
+      "sha256": "dc7a6bb847b76579c49728ac7b8bff77b982d4926e932bb19fb7817bf67fed1d"
+    },
+    {
+      "blob": "2a2927ca8f80845544b723f0d8503a340b59c684",
+      "path": "docs/delivery/v2-development/pinned-cjk-original-font-artifacts-20261018/comic-cjk-proof.json",
+      "bytes": 1773,
+      "sha256": "ecdcd68383181b7668563c1798b353a48c229288c53e8a141ad1608285798a05"
+    },
+    {
+      "blob": "98cf820db4b8d29aa51b1cc34c85e9fe060e0537",
+      "path": "docs/delivery/v2-development/pinned-cjk-original-font-artifacts-20261018/comic-cjk-verified.zip",
+      "bytes": 76974,
+      "sha256": "cd38e7f91cb6eff0fe28f93339561adfec967f275dcb8fa7cb9caf4578627144"
+    },
+    {
+      "blob": "84a51c06ddcaadf9f1482890b0421ee9ac07ff62",
+      "path": "docs/delivery/v2-development/pinned-cjk-original-font-postgres-cleanup.json",
+      "bytes": 1687,
+      "sha256": "940de16325f4b010a0bda629bb00ddeff99be3ef74a9f15e0adc0743451ad5bb"
+    },
+    {
+      "blob": "5c5a47d49cde82b0ed8511f9028b03273d76193e",
+      "path": "docs/delivery/v2-development/pinned-cjk-original-font-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "8e4bca159513950c48cabb5c6ca19b64ed018ceaecf47605f1abdb5e2e27d01a"
+    },
+    {
+      "blob": "725ada6653bfbf4c1f8da7d38a786d43aa8e7aeb",
+      "path": "docs/delivery/v2-development/pinned-cjk-original-font-postgres.json",
+      "bytes": 746528,
+      "sha256": "d1dd5ce051af82c1abcd1f553754124f7b145c0f312d21fa3f2cf45fa3d9d8f1"
+    },
+    {
+      "blob": "5fd86915c87cd4e68d35442cd9d3f6ed3f4a4f57",
+      "path": "docs/delivery/v2-development/pinned-cjk-original-font-postgres.log",
+      "bytes": 681,
+      "sha256": "87f1ec14ed2a4a73099a82ce57149f5ffa9ff945225adeec0cdf74c7c31ab530"
+    },
+    {
+      "blob": "5e552de1583068045243d28958c4c1b8cfdd791d",
+      "path": "docs/delivery/v2-development/pinned-cjk-original-font-provenance-20261018.json",
+      "bytes": 2722,
+      "sha256": "e52475c5aafcb3b22df509d6682507e4fc3ef7374484e01a1dd0f44a36eb67d7"
+    },
+    {
+      "blob": "7b12c1082bf62e94a9e59743854f3d22e6032273",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_director_passive_postgres.py",
+      "bytes": 1587,
+      "sha256": "3c1d21b38423fee14a7d1ced46df6d6def0dd9062fb0c95d35a89d0bc64c2233"
+    },
+    {
+      "blob": "f711a22f3ac2d06372c2d750594382ebb58dbb6c",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_ora_mounted_postgres.py",
+      "bytes": 1825,
+      "sha256": "58297136d3e0f3053ba303703d5d5185390c3b94a9d6569cf97088624d2bb4f8"
+    },
+    {
+      "blob": "f2658363c0ac11741849bc165f7c2604fd4bb57a",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_pinned_cjk_postgres.py",
+      "bytes": 1739,
+      "sha256": "d82a1f5f3d30056c908e9e79470873175afcf8e1c77f59a942c85cfa5633539f"
+    },
+    {
+      "blob": "fbf24280d4d3b42c5f038d1ad16b37c94e8f9624",
+      "path": "docs/delivery/v2-development/windows-comic-font-integration.json",
+      "bytes": 746151,
+      "sha256": "8916dafb0fa8ce411b8afb4f3e719039477d690985b6acaf58b1b28bf6dd9035"
+    },
+    {
+      "blob": "6f85711803e7f86720d381268ae340577513d1cd",
+      "path": "docs/development/director_image_mounted_v3.md",
+      "bytes": 3969,
+      "sha256": "028bc1b9a0ca9bbe6df539988c28eb7b85a66fece776b9f3911dc5c4923326ed"
+    },
+    {
+      "blob": "3acde40f39af5d86504b2fa9ca83d90c1df362e9",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 779702,
+      "sha256": "ca53f158246984d4ce54cba6dd1eb1714cc59a60e5793f6d4372e09555ef35b6"
+    },
+    {
+      "blob": "ad3b53c99bdfd81e8361937c326c4f07de70e171",
+      "path": "frontend/src/App.tsx",
+      "bytes": 166140,
+      "sha256": "4bd5b553ea08ef0c38b668f39083795368886ca31ca1edd9612690a2b6d1c98b"
+    },
+    {
+      "blob": "2d36e972c348cdf5060935599e1c048beada8542",
+      "path": "frontend/src/creative/DirectorImageReviewPanel.test.tsx",
+      "bytes": 13414,
+      "sha256": "a2ff5e4d6d38e7f9c052dd42939b3624e10f10374d73c3d0948a378facb8f9fe"
+    },
+    {
+      "blob": "367fabfa12c31d4c6ff54a3f6225e60eb355a0cd",
+      "path": "frontend/src/creative/DirectorImageReviewPanel.tsx",
+      "bytes": 26883,
+      "sha256": "8f92cf1acd30075aa9bf096832403502da3adfa74ca621c8b8d72772e3d9078f"
+    },
+    {
+      "blob": "d38cb67725ae4db70dc82304c2d79f535439f067",
+      "path": "frontend/src/creative/GraphDirectorConsole.tsx",
+      "bytes": 27026,
+      "sha256": "300ed845ee59eb9cb4f9269d696290d728be7733d22ba1f3a702fd7b1f86fe73"
+    },
+    {
+      "blob": "b4bf0516930822d07c454d43f5d4e4b10e7d048b",
+      "path": "frontend/src/creative/GraphDirectorImage.integration.test.tsx",
+      "bytes": 7323,
+      "sha256": "5c5c129a11f0c4589e2206041f8938e18c24e48c08360db75193e585eaab5f2b"
+    },
+    {
+      "blob": "12457b3c77355ff269f95a41e6e0e38f13877619",
+      "path": "frontend/src/creative/IndependentStudioWorkspace.comic.test.tsx",
+      "bytes": 12148,
+      "sha256": "6ce22ca38fdde788cce6c1518e349b40b2c4ff0630538acaf9ba93ea7f4ea9a6"
+    },
+    {
+      "blob": "8ab4e7157d108454d3e1887a9e31181916de08eb",
+      "path": "frontend/src/creative/IndependentStudioWorkspace.directorImage.additive.test.tsx",
+      "bytes": 8634,
+      "sha256": "3475a90b8392b30a3b85d28954247d3128e6466d7c43e6b906b1aaa821cc6529"
+    },
+    {
+      "blob": "b64cc2b0dfce96d2f89d34ae2bdaa5202eaa2848",
+      "path": "frontend/src/creative/IndependentStudioWorkspace.tsx",
+      "bytes": 74474,
+      "sha256": "8f62c9655a3b96b36e2d1740225360aec56351cea0f286f51b0b56e00fea0e4f"
+    },
+    {
+      "blob": "304a4ce5b05933dd8c4bf315a0fd96867729f2aa",
+      "path": "frontend/src/creative/client.ts",
+      "bytes": 18851,
+      "sha256": "895b57e9a39b72f86a91c2fd117cb51661f258392733e8ce9fd038415dc0d584"
+    },
+    {
+      "blob": "27b4ae21a0d4e545450b33464a876726cb4b5175",
+      "path": "frontend/src/creative/directorImage.testFixtures.ts",
+      "bytes": 4423,
+      "sha256": "938b8cfd5fb66c4cd5f1c4b267843872e6015a467fe2b08eb8e76e4a046cf6c8"
+    },
+    {
+      "blob": "59c5301d955a30e89d999a825f0118db6e683b98",
+      "path": "frontend/src/creative/directorImageClient.test.ts",
+      "bytes": 9055,
+      "sha256": "0d0e52e181470e7b177d2645d398bfb7ffd5edd8970f8d4e2587b0411b3746b0"
+    },
+    {
+      "blob": "7792c221c3f31367217b29fc8e40bdd4dfdf39b8",
+      "path": "frontend/src/creative/directorImageClient.ts",
+      "bytes": 16715,
+      "sha256": "cdaccb4ac57f9855feb886f1f68ed125f1f9fa608d9001aff8e910810c145103"
+    },
+    {
+      "blob": "7ea4463696a9f4aef8f195a9fb87fd411fdde983",
+      "path": "frontend/src/creative/useStudioGraphEditor.tsx",
+      "bytes": 4512,
+      "sha256": "3cb797408a6636855923bc6a38911b0ff3e5b10752e536e65194f610366f8dab"
+    },
+    {
+      "blob": "65e32458a515d75d153b900ddd03013a3cdeb695",
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "bytes": 86819,
+      "sha256": "8c2ccb3aaf6ea8698e4074d0e7f195936b692f5cad3397d7c0ab595eb7e51492"
+    },
+    {
+      "blob": "31feca1e8e8485c58b16d22354dca156bbe97945",
+      "path": "frontend/src/experimental/ComicLayersPanel.tsx",
+      "bytes": 4976,
+      "sha256": "327183f82346274c31995fe01344c6a0a3a63acf0a3d302420516b2329d9c0e2"
+    },
+    {
+      "blob": "249f48a5e871e1d9a34765c7c53bbe0c72e02e22",
+      "path": "frontend/src/experimental/ComicLayoutsPanel.additive.test.tsx",
+      "bytes": 10597,
+      "sha256": "45cf25fec7c2161a268eec4e37a56674bc756cc10071fa0630d4865c7ebe8eba"
+    },
+    {
+      "blob": "fc2bda495aa72837b4818e589a4cdb141f3f7b45",
+      "path": "frontend/src/experimental/ComicLayoutsPanel.duplicate.test.tsx",
+      "bytes": 15355,
+      "sha256": "83362b60c47f233728e5781e24b3b934f433aeef0fa2955ab37696997f2e017c"
+    },
+    {
+      "blob": "80e8cd268f39353d9e3837e1e907a7dd39349080",
+      "path": "frontend/src/experimental/ComicLayoutsPanel.tsx",
+      "bytes": 42076,
+      "sha256": "0f5b9d8fae8c964aa6f0af82045f30f4df791b07e54697394d8a797865ebebe9"
+    },
+    {
+      "blob": "8f8c09f3093d7dd530295345d85b7159acca88ad",
+      "path": "frontend/src/experimental/ComicOraImportPanel.test.tsx",
+      "bytes": 14771,
+      "sha256": "18a2eda5e350dc2bd50b3fb718076a778915b70439e7cb3e8b70c60a3692e742"
+    },
+    {
+      "blob": "f8a58bfed906124d0e41c7e8325170ae32628578",
+      "path": "frontend/src/experimental/ComicOraImportPanel.tsx",
+      "bytes": 12906,
+      "sha256": "462384504db052b948665af398fb04228d3b928053c1e1b5d4c3cbd570d32c77"
+    },
+    {
+      "blob": "6f135d6adf36b00ac0f89583f9d180f61bff55b0",
+      "path": "frontend/src/experimental/comicLayers.ts",
+      "bytes": 8584,
+      "sha256": "3676f2b08e35d5b4c52aca7b11908f8733327c88e9b2227d5e35e197d777d90b"
+    },
+    {
+      "blob": "e256b0fa1a89ce1ec319719b3b2ad26a333269ea",
+      "path": "frontend/src/experimental/comicLayoutsClient.ts",
+      "bytes": 8627,
+      "sha256": "388621f1955c05ce61fc57f23c57802d2a974de676a13332f1676a4db63cb9d3"
+    },
+    {
+      "blob": "86063a65712744f71427d647c7b9b3b348ed2234",
+      "path": "frontend/src/experimental/comicOraClient.test.ts",
+      "bytes": 963,
+      "sha256": "220c25364c1ab5af21ed088020ad592fcde970410f4e8c707ba021b6b12babe7"
+    },
+    {
+      "blob": "0496f5f0ee94be25e9aef5cca30dc87b3076e409",
+      "path": "frontend/src/experimental/comicOraClient.ts",
+      "bytes": 3192,
+      "sha256": "3bdf3a2258ab6d54951b706746bc9d4f7f13737328f9a0919e7150305bb6e351"
+    },
+    {
+      "blob": "6fde9bf6eadeebf4200fd47ed4b636b43fcdcfb3",
+      "path": "frontend/src/experimental/comicRasterLayers.test.ts",
+      "bytes": 4065,
+      "sha256": "57b2929375da0a1f21dce30efcb77aaea6d8687bd07b3dd6d7f9bd77aa5d4b75"
+    },
+    {
+      "blob": "5f48dd860ba8dfaa2c8f515f2a8c7c63b1f3c2e8",
+      "path": "packaging/public-build.json",
+      "bytes": 25846,
+      "sha256": "1177b38afe240246f36c55ad7ee6e6e6658e68dbf2a7766dfc1133e80d0db5e6"
+    },
+    {
+      "blob": "dba357bd7a299fd4d70fdc8fbd82356a4dcf3eac",
+      "path": "packaging/requirements-windows.lock.txt",
+      "bytes": 3469,
+      "sha256": "6098d453ad74dcd538f8fd0e425504b042178e55be9a46b158219d37e6d903cd"
+    },
+    {
+      "blob": "37993ddee435406f89c75a9a82e7d092961cd526",
+      "path": "packaging/windows-runtime-inputs.json",
+      "bytes": 37405,
+      "sha256": "9f6745808bd7c695980b49e6093268cce656bcc2892f912e2ad83eb5049b195b"
+    },
+    {
+      "blob": "c33c12d223687ca0e2ea190d663b214628ce76c0",
+      "path": "scripts/verify_windows_base.py",
+      "bytes": 13705,
+      "sha256": "cedb0f826f445d17c16e1db1ee8659756d6e77aa30869faa202eb7135820ebed"
+    },
+    {
+      "blob": "21a57b8ec04b3fba658ee06f0498b20c70576dd0",
+      "path": "tests/test_comic_ora_api.py",
+      "bytes": 13129,
+      "sha256": "68ce4e0abba4ac7fe4faa159dad373f1ba134eb497731ad74687254e5fd0a299"
+    },
+    {
+      "blob": "522b58ff02c72879cde705c1e6b0573ca6dbb0ca",
+      "path": "tests/test_comic_ora_mounted_authority.py",
+      "bytes": 3724,
+      "sha256": "a389ae3cbebfeca913b8c8a1d561a9d30d4d8f304fc3c885d013a524ed33e2e3"
+    },
+    {
+      "blob": "7c07f979075f5263c10bb82e32e6a092edcc16b1",
+      "path": "tests/test_director_image_mounted_additive.py",
+      "bytes": 11477,
+      "sha256": "8142de7c9dfea0c4759b7c51ab385d5eadc7dfe42a1705be328a699da68d3ccc"
+    },
+    {
+      "blob": "fc69f941d60a8afcec5138afb32080e52a2a9b25",
+      "path": "tests/test_r2_windows_base_inputs.py",
+      "bytes": 8151,
+      "sha256": "b2cac00884f1c1c00ca735b313cfee9316365dfbc6cee6fc1d012616ec7a5936"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false,
+  "additional_expanded_scan": [
+    {
+      "path": "docs/delivery/v2-development/pinned-cjk-original-font-artifacts-20261018/comic-cjk-verified.zip!segment-001.png",
+      "bytes": 48492,
+      "sha256": "4148eb7fae1c15fd6d885f96e650f3bc540b25491442459ea3fff8117a7d4d87"
+    },
+    {
+      "path": "docs/delivery/v2-development/pinned-cjk-original-font-artifacts-20261018/comic-cjk-verified.zip!segment-002.png",
+      "bytes": 22550,
+      "sha256": "cd8de5c2474e8dfb905bced4d0bc3dcb0fc3512951c735fb66b0feff35f77e86"
+    },
+    {
+      "path": "docs/delivery/v2-development/pinned-cjk-original-font-artifacts-20261018/comic-cjk-verified.zip!manifest.json",
+      "bytes": 1118,
+      "sha256": "cad57c82def270221b92f29002691a972b2a0f305586dbb1ba4a2e3a37cdc265"
+    },
+    {
+      "path": "docs/delivery/v2-development/pinned-cjk-original-font-artifacts-20261018/comic-cjk-verified.zip!OFL.txt",
+      "bytes": 4388,
+      "sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9"
+    },
+    {
+      "path": "IMAGE_ORA_WORKFLOW_REPORT.md",
+      "bytes": 5222,
+      "sha256": "4f186038c4b9825fc9caa5ab381401b7e605e212ea688b30f16103b3e4e5558c"
+    }
+  ],
+  "scope_note": "New Git blobs, expanded gzip, expanded project wheel, frontend payload, and committed ZIP proof contents scanned. Proof PNG/ZIP/OFL retained only in the committed incremental bundle. No font cache or dependency wheel upload."
+}
