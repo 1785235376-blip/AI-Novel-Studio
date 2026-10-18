@@ -1,0 +1,8 @@
+.................                                                        [100%]
+=============================== warnings summary ===============================
+tests/test_v2_screenplay_scene_contract.py::test_original_file_source_exact_mapping_prompt_and_output_without_writes[file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+17 passed, 1 warning in 5.38s

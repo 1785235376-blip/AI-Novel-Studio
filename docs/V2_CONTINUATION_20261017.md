@@ -1,5 +1,13 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Independent screenplay scene contract precursor (2026-10-18 02:28 UTC)
+
+Added passive screenplay_model.py with a separate INDEPENDENT_SCREENPLAY_SCENE_CONTEXT_V1 contract. Against genuine original File-created independent SCREENPLAY documents and proposals, it binds exact source digest/version/incarnation and existing note IDs to authored scene order, builds a bounded untrusted-source prompt without fake chapters/shots, and strictly validates one output note per scene plus original excerpt evidence and required reasoning/uncertainty. Seventeen focused checks PASS, including malformed output, changed source/association, prompt/output limits, duplicate JSON and unchanged original STORYBOARD binding. No File writes occur during this passive processing.
+
+This precursor is NOT wired to dispatch, public transport or UI. The current independent private model path remains STORYBOARD-only. Next integration must freeze scene associations before the original preview intentionally clears director_notes, bind a versioned source discriminator through broker/job/terminal/pending review contracts, and keep publication/history isolation. Generic SCRIPT text remains a different unstructured source and is not silently converted into SCREENPLAY. No model quality, new executable end-to-end flow, PostgreSQL or browser claim.
+
+The prior four GLB commits through5a9fc37 are now remotely archived at3d52f8dac6b3efd53b173290fc02780248836e3b in artifacts/static-glb-20261017-5a9fc37. Five files,584849bytes, exact remote bytes and checksums verified. User was notified after waking; no main merge or Release.
+
 ## Bounded mesh-local diagnostic and explicit SVG export (20:49 UTC)
 
 The original GLB Asset path now returns strictly bounded, exact-source numeric geometry through a separate read-only contract. The existing panel explicitly loads it, offers orthographic wireframe/gray yaw/pitch views, and exports only a diagnostic SVG when original manual_export authority is present. Scope/source replacement aborts old reads; strict decoding checks counts, bounds and topology. Oversized previews fail clearly without silently decimating or invalidating a metadata-supported stored model.
