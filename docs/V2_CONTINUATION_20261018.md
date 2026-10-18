@@ -435,3 +435,9 @@ Previous source26354565 archived asfc629c8e3296e6c8652af12d6d4d5c33066ff007, par
 Product f0d7fa56024f4f47d6fe8a68fc5310c119769f68 closes explicit verified Director-derived Storyboard DRAFT→current Graph insertion through original history/save, and adds reviewed atomic selected-clip split with exact playhead, rational speed, fades/transitions and stale preallocation guards. Existing single-split transition divergence narrowly corrected. Root213 tests in15 suites plus full TS/Vite/token PASS; all3184 source hashes stable. Additional12 actual TS→original Python checks are pure, not persisted File acceptance. Backend runtime unchanged; evidence reused. See docs/delivery/v2-development/storyboard-split-integration-20261018.md. Browser/model/full V2 acceptance remains open.
 
 Previous source9752db6a verified at archive8c789eaee1f63f86caabe92daa1b853178d0700b, parentfc629c8e:14 files /4,548,104 bytes. No main/PR source merge or Release.
+
+## 23:30 UTC opt-in model-led screenplay shot planning
+
+Product 04cfb12fe24f451ddb341a0f29faee83e3a6d617 adds explicit bounded1–2 scene multi-shot planning through original LOCAL_ONLY Broker/Job/pending/human-review/Director owners. Model selects1–3 notes per scene≤6; existing derive yields associated Shots. Frozen File53, PG source/parser27 with exact14-table cleanup, UI150/9suites+TS/Vite/token, PUBLIC6 pass;3190recorded source hashes match. Actual model quality/browser/full PG model lifecycle remain untested. Initial Docker contract-list omission fixed without weakening closure; old default request/preview digests preserved. See docs/delivery/v2-development/model-shot-plan-integration-20261018.md.
+
+Prior source41a3c14d verified at archivec7572d018c931d92f474e6bfe83d7f860811b25d, parent8c789eae:14files/4,305,772bytes. User's morning status question answered, with archive-only delivery and full-V2 limits clearly stated.

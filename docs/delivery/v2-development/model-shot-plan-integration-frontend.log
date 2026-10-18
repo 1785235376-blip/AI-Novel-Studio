@@ -1,0 +1,47 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/directorScreenplayClient.additive.test.ts (8 tests) 11ms
+ ✓ src/creative/directorScreenplayMultiShot.capture.test.ts (2 tests) 14ms
+ ✓ src/creative/directorScreenplayMultiShotClient.additive.test.ts (52 tests) 48ms
+ ✓ src/creative/directorModelClient.test.ts (35 tests) 46ms
+ ✓ src/creative/GraphDirectorModelAuthority.additive.test.tsx (32 tests) 412ms
+ ✓ src/creative/directorModelClient.capture.test.ts (2 tests) 8ms
+ ✓ src/creative/IndependentDirectorModelReview.test.tsx (7 tests) 775ms
+ ✓ src/creative/AIDirectorScreenplay.integration.test.tsx (3 tests) 491ms
+   ✓ mounts the versioned view only after explicit capability read and hands exact adopted pin to original parent 364ms
+ ✓ src/creative/IndependentDirectorModelReview.multishot.additive.test.tsx (9 tests) 1106ms
+   ✓ shows the selected four-shot/two-scene plan and updates estimated timing without changing frozen IDs or order 309ms
+
+ Test Files  9 passed (9)
+      Tests  150 passed (150)
+   Start at  08:28:18
+   Duration  2.59s (transform 1.82s, setup 153ms, collect 4.17s, tests 2.91s, environment 1.73s, prepare 674ms)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2459 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-cKwZaTd1.css      3.88 kB │ gzip:   1.02 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-B-sblpo2.css                      220.74 kB │ gzip:  27.90 kB
+dist/assets/Health-Bw3UY8Jg.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-PobVxYOT.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/style-DU7Z7-EZ.js                      45.12 kB │ gzip:   8.41 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/LocalTutorIntegration-sRZDlvOF.js      47.64 kB │ gzip:  15.65 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-n1rOmNBe.js     848.16 kB │ gzip: 254.11 kB
+dist/assets/App-DUUl2eoz.js                     2,930.11 kB │ gzip: 880.12 kB
+✓ built in 7.31s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

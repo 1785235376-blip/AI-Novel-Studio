@@ -1,0 +1,26 @@
+{
+  "multishot-independent-frozen": {
+    "source_paths": 3190,
+    "sources_changed_during_check": false,
+    "mismatches": [],
+    "receipt_sha256": "0a0283f64aff77fd546fa1220308aa3406ba408f6a1ea8877ea8baeb30d1a827"
+  },
+  "model-shot-plan-integration-postgres": {
+    "source_paths": 3190,
+    "sources_changed_during_check": false,
+    "mismatches": [],
+    "receipt_sha256": "9503533cc300dde46851e2ea05646ac888ff21d16c443d0c9e98e4368d2224bc"
+  },
+  "model-shot-plan-integration-public-final": {
+    "source_paths": 3190,
+    "sources_changed_during_check": false,
+    "mismatches": [],
+    "receipt_sha256": "b149375c60e2f7c6cc95ca0db691a783c30e52d9256d79b1b0ef666e685bef2c"
+  },
+  "model-shot-plan-integration-frontend": {
+    "source_paths": 3190,
+    "sources_changed_during_check": false,
+    "mismatches": [],
+    "receipt_sha256": "c9bdca594ada7ef52f9aa76e5eb6519d29d2dba3345ca1c60b938d83178d0dcb"
+  }
+}

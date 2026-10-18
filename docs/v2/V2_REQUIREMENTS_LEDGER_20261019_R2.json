@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T23:13:00Z",
+  "updated_at_utc": "2026-10-18T23:30:37.983777+00:00",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -1162,34 +1162,28 @@
   ],
   "latest_bounded_wave": {
     "status": "COMMITTED_PARTIAL_REQUIREMENT_REUSE_NOT_FULL_NEW_ID_CLOSURE",
-    "product_sha": "f0d7fa56024f4f47d6fe8a68fc5310c119769f68",
-    "report": "docs/delivery/v2-development/storyboard-split-integration-20261018.md",
+    "product_sha": "04cfb12fe24f451ddb341a0f29faee83e3a6d617",
+    "report": "docs/delivery/v2-development/model-shot-plan-integration-20261018.md",
     "reported_evidence": {
-      "combined_ui_tests": 213,
-      "suites": 15,
+      "file_tests": 53,
+      "postgres_source_proposal_parser_tests": 27,
+      "postgres_model_job_lifecycle": "NOT_RUN",
+      "exact_14_table_cleanup": true,
+      "ui_tests": 150,
+      "ui_suites": 9,
       "typescript_vite_token": true,
-      "source_paths": 3184,
-      "actual_typescript_original_python_differential": 12,
-      "differential_is_pure_not_persistence": true,
-      "backend_runtime_unchanged": true,
-      "formal_browser_acceptance": false
+      "public_tests": 6,
+      "recorded_source_paths": 3190,
+      "real_model_inference": "NOT_RUN"
     },
     "items": [
       {
-        "area": "Verified Director-derived Storyboard DRAFT return to current canvas",
+        "area": "Opt-in model-led independent screenplay multi-shot planning",
         "maps_to": [
-          "CONSOLE-05",
-          "SHOT-05"
+          "DIR-04",
+          "SHOT-06"
         ],
-        "boundary": "Explicit original-owner unconnected planning pin insertion, undo/save/reopen. No automatic approval, generation or full intelligent Director closure."
-      },
-      {
-        "area": "Reviewed selected Timeline split and single-split transition compatibility",
-        "maps_to": [
-          "EDIT-02",
-          "EDIT-06"
-        ],
-        "boundary": "Exact playhead, selected affected/skipped clips, original atomic local history and CAS save; pure parity tests, no new live media/persistence acceptance."
+        "boundary": "1–2 scenes, model selects1–3 shots each≤6 total, existing LOCAL_ONLY known-zero Job/Broker/review/adoption; synthetic wire lifecycle, no real model-quality or full intelligent Director acceptance."
       }
     ],
     "formal_acceptance": false
@@ -7786,7 +7780,15 @@
           }
         ],
         "current_verification": "NOT_REASSESSED"
-      }
+      },
+      "bounded_evidence": [
+        {
+          "product_sha": "04cfb12fe24f451ddb341a0f29faee83e3a6d617",
+          "report": "docs/delivery/v2-development/model-shot-plan-integration-20261018.md",
+          "summary": "Opt-in model-led independent screenplay multi-shot planning. 1–2 scenes, model selects1–3 shots each≤6 total, existing LOCAL_ONLY known-zero Job/Broker/review/adoption; synthetic wire lifecycle, no real model-quality or full intelligent Director acceptance.",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "DIR-05",
@@ -8277,6 +8279,12 @@
           "product_sha": "79fbb1e5d80574e513cd51c09b54118b12c80d90",
           "summary": "Original authoring console IMAGE preview/dispatch/recovery/declaration/review/adoption UI with real host/Graph dirty guards. Injected execution tests; real model/visual acceptance open.",
           "report": "docs/delivery/v2-development/image-ora-workflow-integration-20261018.md",
+          "formal_acceptance": false
+        },
+        {
+          "product_sha": "04cfb12fe24f451ddb341a0f29faee83e3a6d617",
+          "report": "docs/delivery/v2-development/model-shot-plan-integration-20261018.md",
+          "summary": "Opt-in model-led independent screenplay multi-shot planning. 1–2 scenes, model selects1–3 shots each≤6 total, existing LOCAL_ONLY known-zero Job/Broker/review/adoption; synthetic wire lifecycle, no real model-quality or full intelligent Director acceptance.",
           "formal_acceptance": false
         }
       ]
@@ -22306,11 +22314,39 @@
         }
       ],
       "formal_acceptance": false
+    },
+    {
+      "status": "COMMITTED_PARTIAL_REQUIREMENT_REUSE_NOT_FULL_NEW_ID_CLOSURE",
+      "product_sha": "04cfb12fe24f451ddb341a0f29faee83e3a6d617",
+      "report": "docs/delivery/v2-development/model-shot-plan-integration-20261018.md",
+      "reported_evidence": {
+        "file_tests": 53,
+        "postgres_source_proposal_parser_tests": 27,
+        "postgres_model_job_lifecycle": "NOT_RUN",
+        "exact_14_table_cleanup": true,
+        "ui_tests": 150,
+        "ui_suites": 9,
+        "typescript_vite_token": true,
+        "public_tests": 6,
+        "recorded_source_paths": 3190,
+        "real_model_inference": "NOT_RUN"
+      },
+      "items": [
+        {
+          "area": "Opt-in model-led independent screenplay multi-shot planning",
+          "maps_to": [
+            "DIR-04",
+            "SHOT-06"
+          ],
+          "boundary": "1–2 scenes, model selects1–3 shots each≤6 total, existing LOCAL_ONLY known-zero Job/Broker/review/adoption; synthetic wire lifecycle, no real model-quality or full intelligent Director acceptance."
+        }
+      ],
+      "formal_acceptance": false
     }
   ],
   "current_checkpoint": {
-    "product_sha": "f0d7fa56024f4f47d6fe8a68fc5310c119769f68",
-    "report": "docs/delivery/v2-development/storyboard-split-integration-20261018.md",
+    "product_sha": "04cfb12fe24f451ddb341a0f29faee83e3a6d617",
+    "report": "docs/delivery/v2-development/model-shot-plan-integration-20261018.md",
     "source_identity_section": "Historical initial reconciliation baseline, not current HEAD",
     "all_fixed_ids_accepted": false
   },

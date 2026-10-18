@@ -1,0 +1,9 @@
+...........................                                              [100%]
+=============================== warnings summary ===============================
+tests/test_v2_screenplay_shot_plan.py::test_model_selects_three_plus_one_and_can_skip_slots[postgres]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+27 passed, 27 deselected, 1 warning in 6.38s
+{"exit_code": 0, "exact_row_hashes_equal": true}

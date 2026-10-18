@@ -1,0 +1,68 @@
+.EE...                                                                   [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_real_wheel_matches_public_stage_and_keeps_standard_inputs _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/model-shot-plan-integration-public/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:375: in stage_public
+    files.update(check_docker_inputs(source, manifest))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:102: in check_docker_inputs
+    fail('PUBLIC_DOCKER_SOURCE_CLOSURE')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = 'PUBLIC_DOCKER_SOURCE_CLOSURE'
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_DOCKER_SOURCE_CLOSURE
+
+scripts/public_build.py:44: ValueError
+__ ERROR at setup of test_real_metadata_keeps_declared_dependencies_external ___
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...-transport/.runtime/v2-checks/model-shot-plan-integration-public/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:76: in build_distribution
+    receipt = build.stage_public(source, stage, manifest, docker=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:375: in stage_public
+    files.update(check_docker_inputs(source, manifest))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:102: in check_docker_inputs
+    fail('PUBLIC_DOCKER_SOURCE_CLOSURE')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = 'PUBLIC_DOCKER_SOURCE_CLOSURE'
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_DOCKER_SOURCE_CLOSURE
+
+scripts/public_build.py:44: ValueError
+=============================== warnings summary ===============================
+tests/test_public_continued_features_additive.py::test_current_standard_feature_modules_are_explicitly_in_public_manifest
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR tests/test_public_wheel_artifact.py::test_real_wheel_matches_public_stage_and_keeps_standard_inputs
+ERROR tests/test_public_wheel_artifact.py::test_real_metadata_keeps_declared_dependencies_external
+4 passed, 1 warning, 2 errors in 5.51s
