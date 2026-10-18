@@ -102,7 +102,8 @@ class Runtime:
         if provider_id not in configs or not model_id or len(model_id)>200:
             raise ValueError("explicit supported native provider and model required")
         cls,url,key_env=configs[provider_id]
-        configured=credential_vault.has(provider_id) or (not settings.enable_packaged_runtime and bool(os.getenv(key_env)))
+        packaged = settings.enable_packaged_runtime or os.getenv("PACKAGED_WINDOWS_MODE", "").lower() in {"1", "true", "yes", "on"}
+        configured=credential_vault.has(provider_id) or (not packaged and bool(os.getenv(key_env)))
         adapter=cls(CompatibleProviderConfig(provider_id,url,key_env))
         self.provider_registry.register(ProviderDescriptor(provider_id,provider_id.title(),"remote",frozenset({Modality.TEXT}),configured,configured,"configured_unverified" if configured else "not_configured"),adapter,replace=True)
         self.model_registry.register(ModelDescriptor(model_id,provider_id,model_id,Modality.TEXT,frozenset({"generate","stream"}),streaming=True),replace=True)

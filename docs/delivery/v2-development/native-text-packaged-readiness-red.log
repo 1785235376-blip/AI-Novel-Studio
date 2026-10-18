@@ -1,0 +1,60 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_packaged_host_readiness_does_not_advertise_environment_credentials[claude-ANTHROPIC_API_KEY] _
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/native-text-packaged-readiness-red/pytest/test_packaged_host_readiness_d0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3493201e50>
+provider = 'claude', variable = 'ANTHROPIC_API_KEY'
+
+    @pytest.mark.parametrize('provider,variable', [('claude', 'ANTHROPIC_API_KEY'), ('gemini', 'GEMINI_API_KEY')])
+    def test_packaged_host_readiness_does_not_advertise_environment_credentials(tmp_path, monkeypatch, provider, variable):
+        import app.runtime as runtime_module
+        from app.stable_identity import StableIdentityStore
+        from app.credential_vault import credential_vault
+        monkeypatch.setattr(runtime_module, 'settings', replace(runtime_module.settings, enable_packaged_runtime=False, enable_cloud=False))
+        monkeypatch.setenv('PACKAGED_WINDOWS_MODE', 'true')
+        monkeypatch.setenv(variable, 'synthetic-test-key')
+        monkeypatch.setattr(credential_vault, 'has', lambda _: False)
+        with patch('httpx.Client.send', side_effect=AssertionError('No network during registration')):
+            runtime = runtime_module.Runtime(StableIdentityStore(tmp_path / 'identity.json'))
+            runtime.register_native_text_route(provider, 'explicit-test-model')
+        descriptor = next(row for row in runtime.provider_registry.descriptors() if row.provider_id == provider)
+>       assert not descriptor.configured and not descriptor.available
+E       AssertionError: assert (not True)
+E        +  where True = ProviderDescriptor(provider_id='claude', display_name='Claude', provider_type='remote', supported_modalities=frozenset...=True, available=True, health_status='configured_unverified', identity_id=UUID('4d4275f7-3b25-416f-b1dc-7ec9a1ebeb2f')).configured
+
+tests/test_native_text_packaged_readiness_additive.py:20: AssertionError
+_ test_packaged_host_readiness_does_not_advertise_environment_credentials[gemini-GEMINI_API_KEY] _
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/native-text-packaged-readiness-red/pytest/test_packaged_host_readiness_d1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f34930dd610>
+provider = 'gemini', variable = 'GEMINI_API_KEY'
+
+    @pytest.mark.parametrize('provider,variable', [('claude', 'ANTHROPIC_API_KEY'), ('gemini', 'GEMINI_API_KEY')])
+    def test_packaged_host_readiness_does_not_advertise_environment_credentials(tmp_path, monkeypatch, provider, variable):
+        import app.runtime as runtime_module
+        from app.stable_identity import StableIdentityStore
+        from app.credential_vault import credential_vault
+        monkeypatch.setattr(runtime_module, 'settings', replace(runtime_module.settings, enable_packaged_runtime=False, enable_cloud=False))
+        monkeypatch.setenv('PACKAGED_WINDOWS_MODE', 'true')
+        monkeypatch.setenv(variable, 'synthetic-test-key')
+        monkeypatch.setattr(credential_vault, 'has', lambda _: False)
+        with patch('httpx.Client.send', side_effect=AssertionError('No network during registration')):
+            runtime = runtime_module.Runtime(StableIdentityStore(tmp_path / 'identity.json'))
+            runtime.register_native_text_route(provider, 'explicit-test-model')
+        descriptor = next(row for row in runtime.provider_registry.descriptors() if row.provider_id == provider)
+>       assert not descriptor.configured and not descriptor.available
+E       AssertionError: assert (not True)
+E        +  where True = ProviderDescriptor(provider_id='gemini', display_name='Gemini', provider_type='remote', supported_modalities=frozenset...=True, available=True, health_status='configured_unverified', identity_id=UUID('99712e82-0470-4df4-85dd-4fe79ccde5e4')).configured
+
+tests/test_native_text_packaged_readiness_additive.py:20: AssertionError
+=============================== warnings summary ===============================
+tests/test_native_text_packaged_readiness_additive.py::test_packaged_host_readiness_does_not_advertise_environment_credentials[claude-ANTHROPIC_API_KEY]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_native_text_packaged_readiness_additive.py::test_packaged_host_readiness_does_not_advertise_environment_credentials[claude-ANTHROPIC_API_KEY]
+FAILED tests/test_native_text_packaged_readiness_additive.py::test_packaged_host_readiness_does_not_advertise_environment_credentials[gemini-GEMINI_API_KEY]
+2 failed, 1 warning in 4.06s

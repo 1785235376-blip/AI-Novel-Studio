@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "de7b3d510115d7ef00cda67c8f3a9abc7b441c5837e145d19c6dfb33aa2df516",
+  "application_source_fingerprint_sha256": "e91a0f52adad17a199f0fa20d422c18bcb2565a10dadc77937305d92f4879af3",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -410,7 +410,7 @@
     "app/review.py": "eef02b474f4dac471542dba4b071b501d4babac64512415276ca93b4667c77ba",
     "app/revision_constraints.py": "7e7cfa66ca5cccbb5a1b4952282f08e3115a62e2c90db36063ff0a2cf9f35441",
     "app/router.py": "3beaa3c71faca91042a06d38347a821057343bb720b3296e34490144173876ea",
-    "app/runtime.py": "039a519076cfaf579b1d9148cad8591994b1f4394ceba57f1873aeb5e3fa9bf6",
+    "app/runtime.py": "d0a51728976cc6f935bb473a86b7c9b73cc2e3f6f363c8a834b1d31d977119f6",
     "app/runtime_diagnostics.py": "554221723160a2470eb1bec0c1575baf8d6a92266985c349a0140f96bf132124",
     "app/runtime_events.py": "cc5ab2298a6731e82c9a12a48983dc956c259be67d468d0ae442da100122213e",
     "app/services/__init__.py": "ebde975a810ad851d27680e104ad36a497093c8b86eb4e9dfb8f0eba524813a5",
@@ -508,7 +508,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "d9f83a5ca9175f611d7cd80bced72177156c50604d206f7bbe9e9a873d20d762",
+    "sha256": "a87704e7e1d2911f48aa961bf813b35ccab8dd8f914c36153e8ded52f72392cf",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",

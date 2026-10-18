@@ -1,0 +1,8 @@
+.....................................                                    [100%]
+=============================== warnings summary ===============================
+tests/test_native_text_packaged_readiness_additive.py::test_packaged_host_readiness_does_not_advertise_environment_credentials[claude-ANTHROPIC_API_KEY]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+37 passed, 1 warning in 5.91s
