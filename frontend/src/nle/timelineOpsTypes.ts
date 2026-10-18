@@ -23,7 +23,7 @@ import type {
 export type { StudioTimeline, StudioTimelineCaption, StudioTimelineClip, StudioTimelineSource, StudioTimelineTrack };
 
 /** 原 owner 的时间基数：整数毫秒 + 整数帧率。本面只读，不改变它。 */
-export type NleTimebase = { durationMs: number; fps: number };
+export type NleTimebase = { durationMs: number; fps: number; mediaKind?: never } | { durationMs: number; mediaKind: 'AUDIO'; fps?: never };
 
 /**
  * 原 owner 的上限（冻结字面量）。`frontend/src/creative/studioTimelineTypes.ts` 的
@@ -155,7 +155,7 @@ export type NleRulerTick = {
   major: boolean;
   label: string;
   /** 由整数毫秒基派生（`floor(ms * fps / 1000)`），不是权威帧边界。 */
-  frame: number;
+  frame?: number;
 };
 export type NleRuler = {
   window: NleViewWindow;

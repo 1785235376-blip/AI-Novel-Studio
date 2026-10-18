@@ -9,13 +9,14 @@ import './timelineWorkspace.css';
  */
 export type ExportDeliveryPanelProps = {
   exportReceipt?: unknown;
+  mediaKind?: 'VIDEO' | 'AUDIO';
   limits?: unknown;
   usage?: NleUsage;
 };
 
 export function ExportDeliveryPanel(props: ExportDeliveryPanelProps) {
   const status = exportStatus(props.exportReceipt);
-  const notice = limitsNotice(props.limits, props.usage ?? null);
+  const notice = limitsNotice(props.limits, props.usage ?? null, props.mediaKind);
   return <section className="nle-delivery" aria-label="交付" data-stage={status.stage} data-delivery-ready={status.deliveryReady}>
     <h3>预览与交付</h3>
     <p className="nle-delivery__head" data-requested-quality={status.requestedQuality ?? 'NONE'}>{status.head}</p>
@@ -28,13 +29,13 @@ export function ExportDeliveryPanel(props: ExportDeliveryPanelProps) {
     </dl>
     <div className="nle-delivery__qualities">
       <div className="nle-delivery__quality" data-quality="PREVIEW" data-present={status.previewQuality !== null}>
-        <h4>审核预览画质</h4>
+        <h4>{props.mediaKind === 'AUDIO' ? '试听预览' : '审核预览画质'}</h4>
         {status.previewQuality
           ? <><p>{status.previewQuality.label}</p><p>{status.previewQuality.detail}</p><Badge tone="warning">{status.previewQuality.preset}</Badge></>
           : <p>本次不是审核预览预设。</p>}
       </div>
       <div className="nle-delivery__quality" data-quality="FINAL" data-present={status.finalExportQuality !== null}>
-        <h4>交付成片画质</h4>
+        <h4>{props.mediaKind === 'AUDIO' ? '音频交付配置' : '交付成片画质'}</h4>
         {status.finalExportQuality
           ? <><p>{status.finalExportQuality.label}</p><p>{status.finalExportQuality.detail}</p><Badge tone="info">{status.finalExportQuality.preset}</Badge></>
           : <p>没有交付预设的回执；预设本身不代表已经产成交付成片。</p>}

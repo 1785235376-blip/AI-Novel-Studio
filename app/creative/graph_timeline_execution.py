@@ -45,6 +45,8 @@ class GraphTimelineExecution:
         row = self.owner._owned_timeline(nid, scope, actor, snapshot["id"], context, document)
         if (row["version"], row["timeline_digest"]) != (snapshot["version"], snapshot["digest"]):
             raise StaleSourceError("STUDIO_TIMELINE_CHANGED")
+        if row["timeline"].get("schema_version") == 3:
+            raise ValueError("CREATIVE_GRAPH_TIMELINE_VIDEO_REQUIRED")
         return row, context
 
     def _sources(self, nid, scope, timeline, guard):

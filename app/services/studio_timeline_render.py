@@ -75,7 +75,7 @@ def normalize_studio_timeline(value):
     """
     if isinstance(value, dict) and "schema_version" in value:
         from .studio_timeline_schema import normalize_timeline_v2
-        return normalize_timeline_v2(value)
+        return normalize_timeline_v2(value, audio_only=value.get("schema_version") == 3)
     row = _object(value, ("duration_ms", "width", "height", "fps", "tracks", "captions"),
                   ("duration_ms", "tracks"))
     duration = _integer(row["duration_ms"], 1, MAX_DURATION_MS)
@@ -260,7 +260,7 @@ def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_p
     source_guard(snapshot) rechecks scope/version/hash and returns data, measured,
     snapshot and original row. No callback is invoked under an assembly lock.
     """
-    from .studio_timeline_export import compiler_profile, require_encoders, probe_media_file, prove_output, run_guarded_process
+    from .studio_timeline_export import compiler_profile, require_encoders, probe_media_file, prove_output, run_guarded_process, validate_export_admission
     timeline = normalize_studio_timeline(timeline)
     if not callable(source_guard) or not callable(guard):
         raise ValueError("STUDIO_TIMELINE_SOURCE_GUARD_REQUIRED")
@@ -268,9 +268,12 @@ def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_p
     if not decoder:
         raise MediaValidationError("MEDIA_VALIDATOR_NOT_CONFIGURED")
     _integer(max_bytes, 1, 25 * 1024 * 1024)
-    compiled = compiler_profile({"preset": "REVIEW_MP4"} if export_profile is None else export_profile,
+    audio_only = timeline.get("schema_version") == 3
+    profile = {"preset": "AUDIO_WAV_PCM16" if audio_only else "REVIEW_MP4"} if export_profile is None else export_profile
+    validate_export_admission(timeline, profile, max_bytes)
+    compiled = compiler_profile(profile,
                                 duration_ms=timeline["duration_ms"], max_bytes=max_bytes)
-    enriched = timeline.get("schema_version") == 2
+    enriched = timeline.get("schema_version") in (2, 3)
     verified, total_bytes = {}, 0
     for snapshot in studio_sources(timeline):
         guard()
@@ -338,11 +341,12 @@ def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_p
             if not any(isinstance(stream, dict) and stream.get("codec_type") == "audio" for stream in probe["streams"]):
                 raise MediaValidationError("STUDIO_TIMELINE_VIDEO_AUDIO_STREAM_REQUIRED")
         duration = _seconds(timeline["duration_ms"])
-        command = [decoder, "-nostdin", "-v", "error", "-xerror", "-threads", "1",
-                   "-f", "lavfi", "-i", f"color=c=black:s={timeline['width']}x{timeline['height']}:r={timeline['fps']}:d={duration}"]
-        filters = ["[0:v]setpts=PTS-STARTPTS[vbase]",
-                   f"anullsrc=r=48000:cl=stereo,atrim=duration={duration}[abase]"]
-        video, audio, index = "vbase", ["abase"], 1
+        command = [decoder, "-nostdin", "-v", "error", "-xerror", "-threads", "1"]
+        filters = [f"anullsrc=r=48000:cl=stereo,atrim=duration={duration}[abase]"]
+        if not audio_only:
+            command += ["-f", "lavfi", "-i", f"color=c=black:s={timeline['width']}x{timeline['height']}:r={timeline['fps']}:d={duration}"]
+            filters.insert(0, "[0:v]setpts=PTS-STARTPTS[vbase]")
+        video, audio, index = "vbase", ["abase"], 0 if audio_only else 1
         transition_proof = []
         for track in timeline["tracks"]:
             transitions = {clip["id"]: clip["transition_out"] for clip in track["clips"] if "transition_out" in clip}
@@ -437,26 +441,34 @@ def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_p
                 index += 1
             if transitions and not track["muted"]:
                 video = _dissolve_track(filters, video, visuals)
-        if timeline["captions"]:
+        if timeline.get("captions"):
             captions = directory / "captions.srt"
             captions.write_text("\n\n".join(f"{number}\n{_cue_time(cue['start_ms'])} --> {_cue_time(cue['end_ms'])}\n{cue['text']}"
                                               for number, cue in enumerate(timeline["captions"], 1)) + "\n", encoding="utf-8")
             filters.append(f"[{video}]subtitles=filename=captions.srt:charenc=UTF-8[vcaption]"); video = "vcaption"
+        # Preserve the historical video filter byte-for-byte. Audio-only WAV
+        # compensates limiter delay and disables auto boost so authored gain
+        # and placement are retained for samples below the safety ceiling.
+        limiter = "alimiter=limit=0.95:level=0:latency=1" if audio_only else "alimiter=limit=0.95"
         filters.append("".join(f"[{label}]" for label in audio)
-                       + f"amix=inputs={len(audio)}:duration=first:dropout_transition=0:normalize=0,alimiter=limit=0.95[aout]")
+                       + f"amix=inputs={len(audio)}:duration=first:dropout_transition=0:normalize=0,{limiter}[aout]")
         output = directory / ("timeline." + compiled["extension"])
-        command += ["-filter_complex_threads", "1", "-filter_complex", ";".join(filters), "-map", f"[{video}]", "-map", "[aout]",
-                    "-t", duration, *compiled["options"], "-pix_fmt", "yuv420p", "-r", str(timeline["fps"]),
-                    "-ar", "48000", "-ac", "2", "-threads", "1", "-fs", str(max_bytes + 1), "-y", str(output)]
+        command += ["-filter_complex_threads", "1", "-filter_complex", ";".join(filters)]
+        if not audio_only:
+            command += ["-map", f"[{video}]"]
+        command += ["-map", "[aout]", "-t", duration, *compiled["options"]]
+        if not audio_only:
+            command += ["-pix_fmt", "yuv420p", "-r", str(timeline["fps"])]
+        command += ["-ar", "48000", "-ac", "2", "-threads", "1", "-fs", str(max_bytes + 1), "-y", str(output)]
         guard()
         sources_current()
         run_guarded_process(command, cwd=directory, guard=guard, timeout=RENDER_TIMEOUT_SECONDS)
         if not output.is_file() or output.stat().st_size > max_bytes:
             raise MediaValidationError("STUDIO_TIMELINE_OUTPUT_BYTES_LIMIT")
         data = output.read_bytes()
-        measured = inspect_media(data, "video", guard=guard)
-        audio_measurement = inspect_media(data, "audio", guard=guard)
-        tolerance = max(100, math.ceil(2000 / timeline["fps"]))
+        measured = inspect_media(data, "audio" if audio_only else "video", guard=guard)
+        audio_measurement = measured if audio_only else inspect_media(data, "audio", guard=guard)
+        tolerance = 1 if audio_only else max(100, math.ceil(2000 / timeline["fps"]))
         if (abs(measured["duration_ms"] - timeline["duration_ms"]) > tolerance
                 or abs(audio_measurement["duration_ms"] - timeline["duration_ms"]) > tolerance):
             raise MediaValidationError("STUDIO_TIMELINE_OUTPUT_DURATION_MISMATCH")

@@ -1,0 +1,114 @@
+F.............F                                                          [100%]
+=================================== FAILURES ===================================
+______ test_audio_edit_reopen_actual_playback_wav_review_and_export[file] ______
+
+audio_timeline = namespace(nid='v2-independent-98b194a567c9474c8823ec2d96cd55bf', scope={'mode': 'local', 'novel_id': 'v2-independent-9...98b3ab2f8189095050c4be1500f798', 'output_digest': '6592240064781d5f44950e9167cbda2a87742ee6f64d836a0c1cfc7116f22b90'}})
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/audio-only-file-debug-20261018/tmp/test_audio_edit_reopen_actual_0')
+
+    def test_audio_edit_reopen_actual_playback_wav_review_and_export(audio_timeline, tmp_path):
+        e = audio_timeline
+        e.row = e.production.timeline_edit(e.nid, e.scope, e.actor, e.row['id'], edit_body(e.row, [
+            {'op': 'clip.trim', 'clip_id': 'low', 'in_ms': 100, 'out_ms': 1600, 'ripple': False},
+            {'op': 'clip.update', 'clip_id': 'low', 'changes': {'gain_db': -3, 'fade_in_ms': 100, 'fade_out_ms': 100}},
+            {'op': 'clip.update', 'clip_id': 'high', 'changes': {'fade_in_ms': 100, 'fade_out_ms': 100}},
+        ], 'audio-edit'), lambda: None)
+        fresh = production(e, reopened(e))
+        assert fresh.timeline_get(e.nid, e.scope, e.actor, e.row['id'], lambda: None) == e.row
+        assert set(e.row['timeline']) == {'schema_version', 'media_kind', 'duration_ms', 'tracks'}
+        preview = fresh.timeline_playback_preview(e.nid, e.scope, e.actor, e.row['id'], reviewed(e), lambda: None)
+        assert preview['cache_state'] == 'MISSING' and preview['job'] is None
+        assert preview['export_preview']['export_profile'] == PROFILE
+        assert not fresh.list(e.nid, e.scope, e.actor, lambda: None)['items']
+        built = fresh.timeline_playback_build(e.nid, e.scope, e.actor, e.row['id'],
+            {**reviewed(e), 'reviewed_playback_digest': preview['playback_digest']}, lambda: None)
+        job = built['job']; assert job['status'] == 'SUCCEEDED', job
+        assert job['output_candidate']['kind'] == 'audio'
+        assert job['execution_recipe']['export_profile'] == PROFILE
+>       assert job['media_measurement']['sample_count'] == 96000
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'sample_count'
+
+tests/test_v2_audio_only_timeline.py:107: KeyError
+________ test_audio_profile_sample_budget_exact_kind_and_legacy_digests ________
+
+    @pytest.mark.file_backend_only
+    def test_audio_profile_sample_budget_exact_kind_and_legacy_digests():
+        row = normalize_studio_timeline(bare())
+        assert normalize_studio_timeline(row) == row
+        assert compiler_profile(PROFILE, duration_ms=2000, max_bytes=CAP)['estimated_max_bytes'] == 384044
+        boundary = (CAP - 44) // 192
+        assert compiler_profile(PROFILE, duration_ms=boundary, max_bytes=CAP)['estimated_max_bytes'] <= CAP
+        with pytest.raises(ValueError, match='BYTES_BUDGET_EXCEEDED'): compiler_profile(PROFILE, duration_ms=boundary+1, max_bytes=CAP)
+        with pytest.raises(ValueError): normalize_export_profile({**PROFILE, 'sample_rate': 44100})
+        with pytest.raises(ValueError, match='MEDIA_KIND_MISMATCH'): validate_export_admission(row, {'preset': 'REVIEW_MP4'}, CAP)
+        assert bound_timeline_output_kind({'export_profile': PROFILE, 'export_profile_digest': export_profile_digest(PROFILE)}) == 'audio'
+        assert bound_timeline_output_kind({'kind': 'audio'}) == 'video'
+        with pytest.raises(ValueError): bound_timeline_output_kind({'export_profile': PROFILE, 'export_profile_digest': '0' * 64})
+        fixture = json.loads((Path(__file__).resolve().parents[1] / 'frontend/src/creative/fixtures/phase5.capture.timeline-created.json').read_text())['timeline']
+        normalized = normalize_studio_timeline(fixture['timeline'])
+        assert normalized == fixture['timeline'] and timeline_digest(normalized) == fixture['timeline_digest']
+        with pytest.raises(ValueError, match='MEDIA_KIND_MISMATCH'): validate_export_admission(normalized, PROFILE, CAP)
+        for version in (None, 2):
+            audio = bare(); audio.pop('media_kind')
+            if version: audio['schema_version'] = version
+            else: audio.pop('schema_version')
+>           with pytest.raises(ValueError, match='VIDEO_TRACK_REQUIRED'): normalize_studio_timeline(audio)
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_audio_only_timeline.py:208: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/services/studio_timeline_render.py:93: in normalize_studio_timeline
+    track = _object(raw, ("id", "kind", "order", "muted", "gain_db", "clips"),
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'clips': [{'id': 'low', 'in_ms': 0, 'out_ms': 1500, 'source_snapshot': {'asset_kind': 'audio', 'digest': 'aaaaaaaaaaa...aaaaaaaaaaaaaaaaaaaaaaaa', 'id': 'tone', 'kind': 'ASSET', ...}, ...}], 'id': 'voice', 'kind': 'AUDIO', 'order': 0, ...}
+allowed = ('id', 'kind', 'order', 'muted', 'gain_db', 'clips')
+required = ('id', 'kind', 'order', 'clips')
+
+    def _object(value, allowed, required=()):
+        if not isinstance(value, dict) or set(value) - set(allowed) or set(required) - set(value):
+>           raise ValueError("STUDIO_TIMELINE_FIELDS_INVALID")
+E           ValueError: STUDIO_TIMELINE_FIELDS_INVALID
+
+app/services/studio_timeline_render.py:30: ValueError
+
+During handling of the above exception, another exception occurred:
+
+    @pytest.mark.file_backend_only
+    def test_audio_profile_sample_budget_exact_kind_and_legacy_digests():
+        row = normalize_studio_timeline(bare())
+        assert normalize_studio_timeline(row) == row
+        assert compiler_profile(PROFILE, duration_ms=2000, max_bytes=CAP)['estimated_max_bytes'] == 384044
+        boundary = (CAP - 44) // 192
+        assert compiler_profile(PROFILE, duration_ms=boundary, max_bytes=CAP)['estimated_max_bytes'] <= CAP
+        with pytest.raises(ValueError, match='BYTES_BUDGET_EXCEEDED'): compiler_profile(PROFILE, duration_ms=boundary+1, max_bytes=CAP)
+        with pytest.raises(ValueError): normalize_export_profile({**PROFILE, 'sample_rate': 44100})
+        with pytest.raises(ValueError, match='MEDIA_KIND_MISMATCH'): validate_export_admission(row, {'preset': 'REVIEW_MP4'}, CAP)
+        assert bound_timeline_output_kind({'export_profile': PROFILE, 'export_profile_digest': export_profile_digest(PROFILE)}) == 'audio'
+        assert bound_timeline_output_kind({'kind': 'audio'}) == 'video'
+        with pytest.raises(ValueError): bound_timeline_output_kind({'export_profile': PROFILE, 'export_profile_digest': '0' * 64})
+        fixture = json.loads((Path(__file__).resolve().parents[1] / 'frontend/src/creative/fixtures/phase5.capture.timeline-created.json').read_text())['timeline']
+        normalized = normalize_studio_timeline(fixture['timeline'])
+        assert normalized == fixture['timeline'] and timeline_digest(normalized) == fixture['timeline_digest']
+        with pytest.raises(ValueError, match='MEDIA_KIND_MISMATCH'): validate_export_admission(normalized, PROFILE, CAP)
+        for version in (None, 2):
+            audio = bare(); audio.pop('media_kind')
+            if version: audio['schema_version'] = version
+            else: audio.pop('schema_version')
+>           with pytest.raises(ValueError, match='VIDEO_TRACK_REQUIRED'): normalize_studio_timeline(audio)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E            Regex: 'VIDEO_TRACK_REQUIRED'
+E            Input: 'STUDIO_TIMELINE_FIELDS_INVALID'
+
+tests/test_v2_audio_only_timeline.py:208: AssertionError
+=============================== warnings summary ===============================
+tests/test_v2_audio_only_timeline.py::test_audio_edit_reopen_actual_playback_wav_review_and_export[file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_audio_only_timeline.py::test_audio_edit_reopen_actual_playback_wav_review_and_export[file]
+FAILED tests/test_v2_audio_only_timeline.py::test_audio_profile_sample_budget_exact_kind_and_legacy_digests
+2 failed, 13 passed, 3 deselected, 1 warning in 6.19s

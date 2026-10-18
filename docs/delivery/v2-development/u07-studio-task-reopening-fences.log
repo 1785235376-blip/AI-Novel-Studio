@@ -1,0 +1,169 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/taskcenter/TaskOwnerResult.test.tsx (29 tests) 172ms
+ ❯ src/taskcenter/StudioProductionTasks.test.tsx (47 tests | 1 failed) 1726ms
+   × Studio task reopening lifetime fences > reads once during StrictMode mount 1008ms
+     → Unable to find role="button" and name `/打开原制作任务 cutout-job/`
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"Studio 图片与视频任务"[39m
+      [33mclass[39m=[32m"ui-panel task-center"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<h2>[39m
+          [0mStudio 图片与视频任务[0m
+        [36m</h2>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m重新读取 Studio 制作任务[0m
+        [36m</button>[39m
+      [36m</header>[39m
+      [36m<p>[39m
+        [0m读取当前项目的原图片、视频制作回执。打开会先核对所选版本，再进入原制作面板；不会执行任务、审核候选或替换制作输入。[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-empty"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [36m<strong>[39m
+          [0m尚未读取 Studio 制作任务[0m
+        [36m</strong>[39m
+        [36m<p>[39m
+          [0m请明确重新读取当前项目；读取不会创建或执行任务。[0m
+        [36m</p>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"Studio 图片与视频任务"[39m
+      [33mclass[39m=[32m"ui-panel task-center"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<h2>[39m
+          [0mStudio 图片与视频任务[0m
+        [36m</h2>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m重新读取 Studio 制作任务[0m
+        [36m</button>[39m
+      [36m</header>[39m
+      [36m<p>[39m
+        [0m读取当前项目的原图片、视频制作回执。打开会先核对所选版本，再进入原制作面板；不会执行任务、审核候选或替换制作输入。[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-empty"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [36m<strong>[39m
+          [0m尚未读取 Studio 制作任务[0m
+        [36m</strong>[39m
+        [36m<p>[39m
+          [0m请明确重新读取当前项目；读取不会创建或执行任务。[0m
+        [36m</p>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 75 passed (76)
+   Start at  00:46:10
+   Duration  3.04s (transform 626ms, setup 31ms, collect 983ms, tests 1.90s, environment 631ms, prepare 140ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/taskcenter/StudioProductionTasks.test.tsx > Studio task reopening lifetime fences > reads once during StrictMode mount
+TestingLibraryElementError: Unable to find role="button" and name `/打开原制作任务 cutout-job/`
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"Studio 图片与视频任务"[39m
+      [33mclass[39m=[32m"ui-panel task-center"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<h2>[39m
+          [0mStudio 图片与视频任务[0m
+        [36m</h2>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m重新读取 Studio 制作任务[0m
+        [36m</button>[39m
+      [36m</header>[39m
+      [36m<p>[39m
+        [0m读取当前项目的原图片、视频制作回执。打开会先核对所选版本，再进入原制作面板；不会执行任务、审核候选或替换制作输入。[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-empty"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [36m<strong>[39m
+          [0m尚未读取 Studio 制作任务[0m
+        [36m</strong>[39m
+        [36m<p>[39m
+          [0m请明确重新读取当前项目；读取不会创建或执行任务。[0m
+        [36m</p>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"Studio 图片与视频任务"[39m
+      [33mclass[39m=[32m"ui-panel task-center"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<h2>[39m
+          [0mStudio 图片与视频任务[0m
+        [36m</h2>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m重新读取 Studio 制作任务[0m
+        [36m</button>[39m
+      [36m</header>[39m
+      [36m<p>[39m
+        [0m读取当前项目的原图片、视频制作回执。打开会先核对所选版本，再进入原制作面板；不会执行任务、审核候选或替换制作输入。[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-empty"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [36m<strong>[39m
+          [0m尚未读取 Studio 制作任务[0m
+        [36m</strong>[39m
+        [36m<p>[39m
+          [0m请明确重新读取当前项目；读取不会创建或执行任务。[0m
+        [36m</p>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/taskcenter/StudioProductionTasks.test.tsx:133:18
+    131|   it('reads once during StrictMode mount', async () => {
+    132|     const original = props(); render(<StrictMode><StudioProductionTask…
+    133|     await screen.findByRole('button', { name: /打开原制作任务 cutout-j…
+       |                  ^
+    134|   });
+    135|   it('coalesces repeated open and refresh clicks synchronously', async…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

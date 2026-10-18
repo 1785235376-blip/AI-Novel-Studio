@@ -1,18 +1,27 @@
-"""Closed version-two timeline; version-one receipts are never rewritten."""
+"""Closed video schema two and explicit audio-only schema three.
+
+Historical schema-one/two normalized bytes and defaults are never rewritten.
+"""
 from __future__ import annotations
 
 import math
 
 
-def normalize_timeline_v2(value):
+def normalize_timeline_v2(value, *, audio_only=False):
     # Imported on demand by the original normalizer, after its helpers exist.
     from .studio_timeline_render import (_object, _integer, _identity, _boolean,
         MAX_DURATION_MS, MAX_CLIPS, MAX_CAPTION_CHARACTERS, clip_duration_ms)
     import re
 
-    row = _object(value, ("schema_version", "duration_ms", "width", "height", "fps", "tracks", "captions"),
-                  ("schema_version", "duration_ms", "tracks"))
-    if type(row["schema_version"]) is not int or row["schema_version"] != 2:
+    if audio_only:
+        row = _object(value, ("schema_version", "media_kind", "duration_ms", "tracks"),
+                      ("schema_version", "media_kind", "duration_ms", "tracks"))
+        if row["media_kind"] != "AUDIO":
+            raise ValueError("STUDIO_TIMELINE_AUDIO_KIND_REQUIRED")
+    else:
+        row = _object(value, ("schema_version", "duration_ms", "width", "height", "fps", "tracks", "captions"),
+                      ("schema_version", "duration_ms", "tracks"))
+    if type(row["schema_version"]) is not int or row["schema_version"] != (3 if audio_only else 2):
         raise ValueError("STUDIO_TIMELINE_SCHEMA_INVALID")
     duration = _integer(row["duration_ms"], 1, MAX_DURATION_MS)
     width, height = _integer(row.get("width", 1280), 16, 1920), _integer(row.get("height", 720), 16, 1080)
@@ -42,6 +51,8 @@ def normalize_timeline_v2(value):
         tid, kind, order = _identity(track["id"]), track["kind"], _integer(track["order"], 0, 7)
         if not isinstance(kind, str) or kind not in counts or tid in ids or order in orders:
             raise ValueError("STUDIO_TIMELINE_TRACK_ID_ORDER_KIND_INVALID")
+        if audio_only and kind != "AUDIO":
+            raise ValueError("STUDIO_TIMELINE_AUDIO_TRACK_REQUIRED")
         ids.add(tid); orders.add(order); counts[kind] += 1
         if counts[kind] > 4:
             raise ValueError("STUDIO_TIMELINE_TRACK_KIND_LIMIT")
@@ -152,6 +163,9 @@ def normalize_timeline_v2(value):
         # New optional fields stay absent from old saved schema-two records, so
         # normalization does not rewrite their canonical digest or history.
         tracks.append(normalized_track)
+    if audio_only:
+        return {"schema_version": 3, "media_kind": "AUDIO", "duration_ms": duration,
+                "tracks": sorted(tracks, key=lambda track: track["order"])}
     if not counts["VIDEO"]:
         raise ValueError("STUDIO_TIMELINE_VIDEO_TRACK_REQUIRED")
     raw_captions = row.get("captions", [])

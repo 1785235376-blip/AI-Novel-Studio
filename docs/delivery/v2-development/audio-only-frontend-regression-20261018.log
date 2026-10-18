@@ -1,0 +1,51 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/nle/timelineOps.test.ts (52 tests) 76ms
+ ✓ src/creative/studioAudioTimeline.additive.test.tsx (33 tests) 694ms
+ ✓ src/creative/StudioTimelineSelectionDuplicate.additive.test.tsx (27 tests) 3764ms
+   ✓ mounted selected duplication route > duplicates whole selected track once, preserves generated IDs through Save and fresh GET/remount 1125ms
+   ✓ mounted selected duplication route > verifies exact nested transition fields before applying internal transition batches 416ms
+   ✓ mounted selected duplication route > rejects retained selection ABA callbacks and repeated mounted invocation 495ms
+   ✓ mounted selected duplication route > rejects missing, reordered, wrong-track, unequal-offset, extra-key and unauthorized-update descriptors 397ms
+ ✓ src/nle/nlePanels.test.tsx (18 tests) 390ms
+ ✓ src/creative/TimelineSourceEditing.phase6.test.tsx (21 tests) 760ms
+   ✓ Phase 6 original Timeline controller preserves source, locks and UNKNOWN > keeps old embedded clients functional and exposes explicit formal-source controls only when available 309ms
+ ✓ src/creative/StudioTimelineSlipDelete.additive.test.tsx (29 tests) 3449ms
+   ✓ mounted original editor slip/delete Save undo and reopen > refuses extra fields, wrong targets and retained bridge callbacks after a draft generation change 613ms
+   ✓ mounted original editor slip/delete Save undo and reopen > routes slip without timeline position and persists only with original CAS 661ms
+   ✓ mounted original editor slip/delete Save undo and reopen > routes ripple without timeline position and persists only with original CAS 692ms
+ ✓ src/creative/StudioTimelineTrim.test.tsx (29 tests) 2544ms
+   ✓ mounted original inspector trim > routes trim without start/at position, supports one-step undo/redo and explicit Save 944ms
+ ✓ src/creative/StudioTimelineSelectionMove.additive.test.tsx (32 tests) 3468ms
+   ✓ mounted selection move routing > moves the whole selected track, undoes atomically, and saves through original CAS 978ms
+   ✓ mounted selection move routing > refuses retained selection ABA callback while a fresh callback works 506ms
+ ✓ src/creative/StudioTimelineAssetHandoff.test.tsx (20 tests) 993ms
+   ✓ mounted original timeline draft owner > adds one exact pinned clip, supports one undo/redo, explicitly saves and reopens the original owner 354ms
+ ✓ src/creative/TimelineTransferReview.test.tsx (19 tests) 2208ms
+   ✓ locates the exact original mounted clip without saving, granting consent or discarding local controls 434ms
+ ✓ src/creative/StudioTimelineWaveform.additive.test.tsx (29 tests) 620ms
+   ✓ original mounted timeline integration > requires saved clean single selection and preserves local history and saved payload 544ms
+ ✓ src/creative/StudioTimelineSourceReplacement.additive.test.tsx (13 tests) 1330ms
+   ✓ wires the actual rail into source preview without save or execution 568ms
+   ✓ routes actual subtitle-rail add/remove into one-step local undo without requests 302ms
+ ✓ src/creative/StudioTimelineCloseGaps.additive.test.tsx (7 tests) 169ms
+ ✓ src/nle/ClipInspectorSelectionDuplicate.additive.test.tsx (9 tests) 303ms
+ ✓ src/creative/TimelineMeasuredBounds.additive.test.tsx (6 tests) 197ms
+ ✓ src/nle/ClipInspectorSlipDelete.additive.test.tsx (4 tests) 215ms
+ ✓ src/creative/StudioTimelinePlaybackOptions.additive.test.tsx (5 tests) 126ms
+ ✓ src/nle/ClipInspectorSelectionMove.additive.test.tsx (8 tests) 232ms
+ ✓ src/creative/TimelineSourceBoundsRepair.additive.test.tsx (4 tests) 61ms
+ ✓ src/creative/TimelineSourceBounds.additive.test.tsx (4 tests) 27ms
+ ✓ src/nle/TimelineWaveformPanel.additive.test.tsx (13 tests) 190ms
+ ✓ src/nle/TimelineWaveformGain.additive.test.tsx (7 tests) 194ms
+ ✓ src/creative/StudioTimelineShortMedia.bridge.test.tsx (1 test) 97ms
+ ✓ src/nle/timelineSelectionDuplicate.additive.test.ts (30 tests) 23ms
+ ✓ src/creative/studioTimelineWaveformContract.additive.test.ts (24 tests) 43ms
+ ✓ src/nle/timelineSelectionMove.additive.test.ts (14 tests) 7ms
+
+ Test Files  26 passed (26)
+      Tests  458 passed (458)
+   Start at  00:48:36
+   Duration  38.09s (transform 1.44s, setup 138ms, collect 4.41s, tests 22.18s, environment 6.97s, prepare 1.26s)
+

@@ -29,6 +29,7 @@ function server(options: { overview?: StudioOverview; override?: Override } = {}
     if (url === `${base}/prompts` && init.method === 'GET') return response({ ...emptyPromptLibrary, project_id: id, scope: { mode: 'local', novel_id: id } });
     if (url === `${base}/assets` && init.method === 'GET') return response({ items: saved });
     if (url.startsWith(`${base}/assets?`)) return response({ items: saved });
+    if (url === `${base}/production/jobs` && init.method === 'GET') return response({ items: [] });
     if (url === `${base}/assets` && init.method === 'POST') { saved = [asset()]; return response(saved[0], 201); }
     if (url.endsWith('/lineage')) { saved = [asset(2)]; return response(saved[0]); }
     if (url.endsWith('/download')) return response({});
@@ -119,7 +120,8 @@ describe('mounted TaskCenter original owner routing', () => {
     fireEvent.click(screen.getByRole('button', { name: '定位原任务结果' }));
     expect(fetchMock.mock.calls.filter(([url]) => url.endsWith('/experimental/media/tasks'))).toHaveLength(1);
     expect(screen.getByRole('button', { name: '任务中心' }).getAttribute('aria-pressed')).toBe('true');
-    expect(fetchMock.mock.calls.some(([url]) => url.includes('/production/jobs'))).toBe(false);
+    expect(fetchMock.mock.calls.filter(([url]) => url === `${base}/production/jobs`)).toHaveLength(1);
+    expect(fetchMock.mock.calls.some(([url]) => url.includes('/production/jobs/'))).toBe(false);
     fireEvent.click(screen.getByRole('button', { name: '素材工作区' }));
     expect(screen.queryByLabelText('原任务与候选记录')).toBeNull();
     expect(fetchMock.mock.calls.some(([, init]) => init.method !== 'GET')).toBe(false);
@@ -129,7 +131,9 @@ describe('mounted TaskCenter original owner routing', () => {
     mount(); await ready(); fireEvent.click(screen.getByRole('button', { name: '任务中心' }));
     fireEvent.click(await screen.findByRole('button', { name: '定位原任务结果' }));
     await screen.findByText(/此来源没有接入/);
-    expect(fetchMock.mock.calls.some(([url]) => url.includes('/experimental/media/') || url.includes('/production/jobs'))).toBe(false);
+    expect(fetchMock.mock.calls.filter(([url]) => url === `${base}/production/jobs`)).toHaveLength(1);
+    expect(fetchMock.mock.calls.some(([url]) => url.includes('/experimental/media/') || url.includes('/production/jobs/'))).toBe(false);
+    expect(fetchMock.mock.calls.some(([, init]) => init.method !== 'GET')).toBe(false);
   });
 });
 

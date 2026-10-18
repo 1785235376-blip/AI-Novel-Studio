@@ -6,10 +6,10 @@ import { checkedImageUpscaleProof, type ImageUpscaleProof, checkedImageRecipeCom
 import { maskDimension } from './studioManualMaskContract';
 import { ApiError, type CollaborationContext } from '../api';
 import { studioTransport } from './studioClient';
-import { checkedTimeline, checkedTimelineRow, type StudioTimeline, type StudioTimelineRow } from './studioTimelineTypes';
+import { checkedTimeline, checkedTimelineRow, timelineSources, type StudioTimeline, type StudioTimelineRow } from './studioTimelineTypes';
 import { checkedTimelineTransferInput, checkedTimelineTransferPreview, timelineTransferInputDigest, type TimelineTransferInput, type TimelineTransferPreview } from './studioTimelineTransferTypes';
 import { checkedTimelineExportPreview, checkedTimelineExportProfile, type TimelineExportProfile } from './studioTimelineExportTypes';
-import { checkedTimelinePlayback, type TimelinePlayback } from './studioTimelinePlaybackTypes';
+import { timelinePlaybackMediaType, checkedTimelinePlayback, type TimelinePlayback } from './studioTimelinePlaybackTypes';
 import { checkedTimelineWaveform, timelineWaveformRequest } from './studioTimelineWaveformTypes';
 import { checkedTimelineSourceRequest, checkedTimelineSourceEffect, type TimelineSourceEditRequest } from './studioTimelineSourceEditContract';
 
@@ -30,11 +30,11 @@ export type ProductionPreview = { contract: 'studio-production-preview/1'; novel
   execution_recipe: ProductionRecipe; product_acceptance: 'LOCAL_REQUIRED'; execution_available: true; automatic_dispatch: false; output_policy: 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW' };
 export type ProductionRecipe = { contract: 'studio-execution-recipe/1'; operation_id: string; adapter: string; recipe_digest: string; automatic_fallback: false; [key: string]: unknown };
 // Shared receipt projection retains the existing timeline consumer type name.
-// The decoder validates the two owners independently; WAV fields are trim-only.
+// The decoder validates audio trimming and audio/video timelines independently.
 export type TimelineMediaMeasurement = { duration_ms?: number; byte_count?: number; width?: number; height?: number; fps?: number;
   video_codec?: string; audio_codec?: string; sample_rate?: number; channels?: number; container?: 'mp4' | 'webm' | 'wav' | 'flac' | 'mp3';
   profile_validation?: 'NATIVE_FFPROBE_EXACT' | 'PCM_DECODED' | 'FLAC_STREAMINFO_PCM_VERIFIED' | 'MP3_GAPLESS_PCM_VERIFIED'; render_profile?: string; export_profile?: TimelineExportProfile;
-  sample_width?: 2; peak_normalization?: AudioPeakProof; output_sha256?: string; total_samples?: number; decoded_pcm_bytes?: number; streaminfo_md5?: string; decoded_pcm_sha256?: string; bit_rate?: number; container_duration_ms?: number };
+  sample_count?: number; bits_per_sample?: 16; sample_width?: 2; peak_normalization?: AudioPeakProof; output_sha256?: string; total_samples?: number; decoded_pcm_bytes?: number; streaminfo_md5?: string; decoded_pcm_sha256?: string; bit_rate?: number; container_duration_ms?: number };
 export type AudioPeakProof = { contract: 'studio-audio-sample-peak/1'; source_sha256: string; selected_pcm_sha256: string; selected_frames: number;
   source_peak_s16: number; target_peak_dbfs: number; normalization_gain_db: number; manual_gain_db: number; output_peak_s16: number; output_frames: number; output_pcm_sha256: string };
 export type AudioWavMeasurement = { duration_ms: number; byte_count: number; sample_rate: number; channels: 1 | 2; sample_width: 2;
@@ -223,6 +223,20 @@ function recipe(v: unknown, operation: unknown): ProductionRecipe {
 function measurement(v: unknown, owner: unknown, executionRecipe: ProductionRecipe, operation: unknown, command: unknown, candidate: unknown): TimelineMediaMeasurement | null | undefined {
   if (v === undefined || v === null) return v;
   if (owner === 'audio' && operation === 'm8.audio.trim') return audioMeasurement(v, executionRecipe, command, candidate);
+  if (owner === 'timeline' && record(executionRecipe.timeline) && executionRecipe.timeline.schema_version === 3) {
+    const timeline = checkedTimeline(executionRecipe.timeline);
+    const expectedProfile = checkedTimelineExportProfile(executionRecipe.export_profile);
+    if (expectedProfile.preset !== 'AUDIO_WAV_PCM16' || executionRecipe.output_profile !== expectedProfile.preset
+      || !record(v) || Object.keys(v).length !== 11
+      || Object.keys(v).some(key => !['duration_ms', 'byte_count', 'audio_codec', 'sample_rate', 'channels', 'container', 'profile_validation', 'render_profile', 'export_profile', 'sample_count', 'bits_per_sample'].includes(key))
+      || typeof v.duration_ms !== 'number' || !Number.isSafeInteger(v.duration_ms) || v.duration_ms <= 0 || v.duration_ms !== timeline.duration_ms
+      || typeof v.byte_count !== 'number' || !Number.isSafeInteger(v.byte_count) || v.byte_count < 1 || v.byte_count > 25 * 1024 * 1024
+      || v.audio_codec !== 'pcm_s16le' || v.sample_rate !== 48000 || v.channels !== 2 || v.container !== 'wav'
+      || v.profile_validation !== 'NATIVE_FFPROBE_EXACT' || v.render_profile !== 'STUDIO_MULTITRACK_LOCAL_FFMPEG_AUDIO_WAV_PCM16'
+      || v.bits_per_sample !== 16 || v.sample_count !== timeline.duration_ms * 48 || v.byte_count !== 44 + timeline.duration_ms * 48 * 4
+      || JSON.stringify(checkedTimelineExportProfile(v.export_profile)) !== JSON.stringify(expectedProfile)) invalid();
+    return v as TimelineMediaMeasurement;
+  }
   if (owner !== 'timeline' || !record(v) || Object.keys(v).some(key => !['duration_ms', 'byte_count', 'width', 'height', 'fps', 'video_codec', 'audio_codec',
     'sample_rate', 'channels', 'container', 'profile_validation', 'render_profile', 'export_profile'].includes(key))) invalid();
   const bounds: Record<string, [number, number]> = { duration_ms: [1, 36000000], byte_count: [1, 25 * 1024 * 1024], width: [16, 1920], height: [16, 1080], sample_rate: [1, 384000], channels: [1, 32] };
@@ -245,7 +259,7 @@ function measurement(v: unknown, owner: unknown, executionRecipe: ProductionReci
     if (v.video_codec !== expected[0] || v.audio_codec !== expected[1] || v.container !== expected[2] || v.sample_rate !== 48000 || v.channels !== 2) invalid();
     try {
       const timeline = checkedTimeline(executionRecipe.timeline);
-      if (v.width !== timeline.width || v.height !== timeline.height || Math.abs((v.fps as number) - timeline.fps) > 0.001
+      if (timeline.schema_version === 3 || v.width !== timeline.width || v.height !== timeline.height || Math.abs((v.fps as number) - timeline.fps) > 0.001
         || Math.abs((v.duration_ms as number) - timeline.duration_ms) > Math.max(100, Math.ceil(2000 / timeline.fps))) invalid();
     } catch { return invalid(); }
   }
@@ -295,7 +309,19 @@ export function studioProductionClient(projectId: string, context: Collaboration
     const executionRecipe = recipe(v.execution_recipe, v.operation_id);
     measurement(v.media_measurement, v.owner, executionRecipe, v.operation_id, v.command, v.output_candidate);
     if (v.approved_asset_version !== null && !revision(v.approved_asset_version)) invalid();
-    if (v.owner === 'timeline') { if (v.command !== null || v.provider !== null) invalid(); }
+    if (v.owner === 'timeline') {
+      if (v.command !== null || v.provider !== null) invalid();
+      if (record(executionRecipe.timeline) && executionRecipe.timeline.schema_version === 3) {
+        const audioTimeline = checkedTimeline(executionRecipe.timeline), expectedSources = timelineSources(audioTimeline);
+        if (executionRecipe.adapter !== 'LOCAL_FFMPEG' || Object.keys(executionRecipe).length !== 8
+          || Object.keys(executionRecipe).some(key => !['contract', 'operation_id', 'adapter', 'output_profile', 'timeline', 'export_profile', 'automatic_fallback', 'recipe_digest'].includes(key))
+          || !Array.isArray(v.sources) || v.sources.length !== expectedSources.length
+          || v.sources.some((source, index) => !record(source) || Object.keys(source).length !== 5
+            || Object.entries(expectedSources[index]).some(([key, value]) => (source as unknown as Record<string, unknown>)[key] !== value))
+          || executionRecipe.output_profile !== 'AUDIO_WAV_PCM16' || checkedTimelineExportProfile(executionRecipe.export_profile).preset !== 'AUDIO_WAV_PCM16'
+          || v.output_candidate !== null && ((v.output_candidate as Record<string, unknown>).kind !== 'audio' || v.media_measurement == null)) invalid();
+      }
+    }
     else {
       const c = v.command;
       if (!record(c) || c.operation_id !== v.operation_id || c.request_id !== v.request_id || typeof c.prompt !== 'string' || c.prompt.length > 16000
@@ -344,7 +370,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
   function timeline(v: unknown): StudioTimelineRow {
     if (!record(v)) invalid(); scoped(v);
     if (!identifier(v.id) || !revision(v.version) || !hex(v.timeline_digest) || typeof v.title !== 'string' || v.title.length > 240 || !record(v.timeline)
-      || !Array.isArray(v.timeline.tracks) || v.timeline.tracks.length > 8 || !Array.isArray(v.timeline.captions) || v.timeline.captions.length > 500) invalid();
+      || !Array.isArray(v.timeline.tracks) || v.timeline.tracks.length > 8 || v.timeline.schema_version !== 3 && (!Array.isArray(v.timeline.captions) || v.timeline.captions.length > 500)) invalid();
     return checkedTimelineRow(v);
   }
   async function action(owner: ProductionOwner, id: string, operation: 'execute' | 'refresh' | 'cancel' | 'reconcile' | 'review', body: ProductionAction & { reviewed_output_digest?: string }, expected?: ProductionJob) {
@@ -507,11 +533,12 @@ export function studioProductionClient(projectId: string, context: Collaboration
         || proof.asset_version !== (expected.status === 'APPROVED' ? expected.approved_asset_version : expected.output_candidate.version)
         || proof.sha256 !== expected.output_candidate.digest || proof.byte_count !== expected.media_measurement?.byte_count
         || typeof proof.byte_count !== 'number' || !Number.isSafeInteger(proof.byte_count) || proof.byte_count < 1 || proof.byte_count > 25 * 1024 * 1024
-        || proof.media_type !== 'video/mp4' || proof.product_acceptance !== 'LOCAL_REQUIRED') invalid();
+        || proof.media_type !== timelinePlaybackMediaType(checked) || proof.product_acceptance !== 'LOCAL_REQUIRED') invalid();
       return { sha256: proof.sha256 as string, byte_count: proof.byte_count, asset_version: proof.asset_version as number };
     },
     async timelineExportPreview(source: StudioTimelineRow, profile: TimelineExportProfile) {
       const normalized = checkedTimelineExportProfile(profile);
+      if ((source.timeline.schema_version === 3) !== (normalized.preset === 'AUDIO_WAV_PCM16')) invalid();
       const raw = await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/export-preview`, 'POST', {
         expected_version: source.version, reviewed_timeline_digest: source.timeline_digest, export_profile: normalized });
       const result = checkedTimelineExportPreview(raw, source, normalized), executionRecipe = recipe(result.execution_recipe, 'm9.timeline.multitrack');
@@ -522,6 +549,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
       return result;
     },
     async timelineExport(source: StudioTimelineRow, profile: TimelineExportProfile, requestId: string, reviewedExportDigest: string) {
+      if ((source.timeline.schema_version === 3) !== (checkedTimelineExportProfile(profile).preset === 'AUDIO_WAV_PCM16')) invalid();
       const result = job(await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/export`, 'POST', {
         expected_version: source.version, reviewed_timeline_digest: source.timeline_digest, export_profile: checkedTimelineExportProfile(profile),
         request_id: requestId, reviewed_export_digest: reviewedExportDigest }, undefined, requestId));

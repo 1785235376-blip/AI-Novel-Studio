@@ -1,0 +1,23 @@
+{
+  "baseline_commit": "91a3f328eec5b7a9076595a5640932aa3b77987c",
+  "proofs": [
+    {
+      "schema": 1,
+      "timeline_digest": "76929068770d335aaf5bbb148bec7dafe50b016c542bafe8cd6dabbd0c4539c3",
+      "output_sha256": "94a96a20bef739d7e2fc6b7118f80d1faa930033597cab7f3e39eba56ccfc781",
+      "output_bytes": 14266,
+      "normalized_equal": true,
+      "actual_output_bytes_equal": true,
+      "measurement_equal": true
+    },
+    {
+      "schema": 2,
+      "timeline_digest": "f715ebfd25c394a8338fbe135b1cd8439fd43560dc2d684ef560b5da851c2f5c",
+      "output_sha256": "53a1fc373d56201f37bbf5aa66c965c7267c43476c4cd46dd47a0c644627ff83",
+      "output_bytes": 14266,
+      "normalized_equal": true,
+      "actual_output_bytes_equal": true,
+      "measurement_equal": true
+    }
+  ]
+}

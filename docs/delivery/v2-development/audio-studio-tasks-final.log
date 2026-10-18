@@ -1,0 +1,54 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/taskcenter/TaskOwnerResult.test.tsx (29 tests) 200ms
+ ✓ src/taskcenter/StudioProductionTasks.test.tsx (48 tests) 877ms
+ ✓ src/creative/studioAudioTimeline.additive.test.tsx (34 tests) 835ms
+ ✓ src/taskcenter/IndependentStudioProductionTasks.test.tsx (8 tests) 1982ms
+   ✓ actual independent Studio Tasks to original production panel > reopens the exact image receipt through the mounted shared shell 498ms
+ ✓ src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx (15 tests) 8466ms
+   ✓ mounted original asset browser to timeline handoff > routes a real browser reference into the original timeline preview and exact draft only after explicit acceptance 859ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 时间线模块 884ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 图片模块 737ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 视频模块 814ms
+   ✓ mounted asset browser to original image draft > requires an explicit 图片 operation choice and two metadata reads without dispatch 466ms
+   ✓ mounted asset browser to original image draft > requires an explicit 视频 operation choice and two metadata reads without dispatch 419ms
+   ✓ relationship inspection original asset navigation > re-reads exact original asset after explicit dirty discard and performs no writes 969ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"version":3} 502ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"} 564ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"novel_id":"other-project"} 515ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"deleted_at":"deleted"} 469ms
+   ✓ relationship inspection original asset navigation > retires inspection when the original selection goes A to B to A in one batch 636ms
+
+ Test Files  5 passed (5)
+      Tests  134 passed (134)
+   Start at  00:51:31
+   Duration  13.15s (transform 3.94s, setup 72ms, collect 10.41s, tests 12.36s, environment 1.92s, prepare 330ms)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2408 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-BkplvLLE.css      4.23 kB │ gzip:   1.09 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-lgva31eI.css                      217.73 kB │ gzip:  27.49 kB
+dist/assets/Health-CDZTFXH0.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-BKpOHbK-.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/style-1qvESyje.js                      45.12 kB │ gzip:   8.41 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/LocalTutorIntegration-BKlyh1Ay.js      47.64 kB │ gzip:  15.65 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-CX5AzWlZ.js     830.68 kB │ gzip: 249.45 kB
+dist/assets/App-DYsl0g_x.js                     2,605.14 kB │ gzip: 778.71 kB
+✓ built in 7.46s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

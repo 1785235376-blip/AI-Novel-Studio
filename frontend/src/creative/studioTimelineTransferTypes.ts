@@ -69,6 +69,7 @@ export function checkedTimelineTransferPreview(value: unknown, original: StudioT
     || Object.keys(apps).some(k => !['Resolve', 'Premiere'].includes(k)) || apps.Resolve !== 'NOT_RUN' || apps.Premiere !== 'NOT_RUN') invalid();
   let timeline: StudioTimeline;
   try { timeline = checkedTimeline(value.timeline); } catch { return invalid(); }
+  if (timeline.schema_version === 3 || original.timeline.schema_version === 3) invalid();
   const expected = timelineSources(timeline);
   if (!Array.isArray(value.sources) || value.sources.length !== expected.length || value.sources.some((raw, index) => {
     const actual = source(raw); return Object.keys(actual).some(k => actual[k as keyof StudioTimelineSource] !== expected[index][k as keyof StudioTimelineSource]);

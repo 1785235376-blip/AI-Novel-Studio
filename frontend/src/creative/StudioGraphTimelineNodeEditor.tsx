@@ -4,7 +4,7 @@ import type { StudioGraphTimelineEditorController } from './useStudioGraphTimeli
 import { graphTimelinePorts } from './studioGraphTimelineContract';
 import { timelineExportPresets, type TimelineExportPreset } from './studioTimelineExportTypes';
 
-const presetLabels: Record<TimelineExportPreset, string> = { REVIEW_MP4: '审核 MP4', DELIVERY_H264_MP4: 'H.264 MP4', DELIVERY_VP9_WEBM: 'VP9 WebM' };
+const presetLabels: Record<Exclude<TimelineExportPreset, 'AUDIO_WAV_PCM16'>, string> = { REVIEW_MP4: '审核 MP4', DELIVERY_H264_MP4: 'H.264 MP4', DELIVERY_VP9_WEBM: 'VP9 WebM' };
 /** Basic replaceable controls; the controller owns the exact source and closed operation list. */
 export function StudioGraphTimelineNodeEditor({ node, state, editable, connectedPorts }: { node: StudioGraphNode;
   state: StudioGraphTimelineEditorController; editable: boolean; connectedPorts: string[] }) {
@@ -24,7 +24,7 @@ export function StudioGraphTimelineNodeEditor({ node, state, editable, connected
     {!state.bound && <StatusMessage tone="warning">尚未读取到与此绑定完全一致的原时间线。请明确读取目录；当前版本变更不会自动更新绑定。</StatusMessage>}
     {state.bound && <p>{state.bound.timeline.tracks.length} 轨道 · {state.bound.timeline.duration_ms} 毫秒 · {state.bound.timeline.width}×{state.bound.timeline.height} · {state.bound.timeline.fps} fps</p>}
     <fieldset disabled={!editable || state.loading}><legend>导出编码配置</legend>
-      <label>输出预设<select value={profile?.preset || 'REVIEW_MP4'} onChange={event => state.setPreset(event.target.value as TimelineExportPreset)}>{timelineExportPresets.map(preset => <option key={preset} value={preset}>{presetLabels[preset]}</option>)}</select></label>
+      <label>输出预设<select value={profile?.preset || 'REVIEW_MP4'} onChange={event => state.setPreset(event.target.value as TimelineExportPreset)}>{timelineExportPresets.filter((preset): preset is Exclude<TimelineExportPreset, 'AUDIO_WAV_PCM16'> => preset !== 'AUDIO_WAV_PCM16').map(preset => <option key={preset} value={preset}>{presetLabels[preset]}</option>)}</select></label>
       {profile && profile.preset !== 'REVIEW_MP4' && <>{(['video_bitrate_kbps', 'audio_bitrate_kbps', 'crf'] as const).map(key => <label key={key}>{key === 'video_bitrate_kbps' ? '视频码率 kbps' : key === 'audio_bitrate_kbps' ? '音频码率 kbps' : 'CRF'}<input type="number" step={1} min={key === 'crf' ? 0 : key === 'video_bitrate_kbps' ? 100 : 32} max={key === 'crf' ? profile.preset === 'DELIVERY_VP9_WEBM' ? 63 : 51 : key === 'video_bitrate_kbps' ? 20000 : 320} value={profile[key] ?? ''} onChange={event => state.setProfileField(key, event.target.value)} /></label>)}</>}
     </fieldset>
     <fieldset disabled={!editable || !state.bound || state.loading}><legend>Graph 素材端口到片段的绑定</legend>

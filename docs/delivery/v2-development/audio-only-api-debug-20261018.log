@@ -1,0 +1,42 @@
+............FF                                                           [100%]
+=================================== FAILURES ===================================
+___ test_audio_http_rejects_video_profile_and_capacity_before_job[file-/api] ___
+
+audio_mix_client = namespace(client=<starlette.testclient.TestClient object at 0x7f357e76e930>, prefix='/api', base='/api/projects/r3-mou...'expected_version': 1, 'reviewed_timeline_digest': 'd3ad452c70771a9fab65955d67867481975b5643fd44fb6d537c06e1c8c8e368'})
+
+    def test_audio_http_rejects_video_profile_and_capacity_before_job(audio_mix_client):
+        e = audio_mix_client
+        response = e.client.post(e.timeline_base + '/export-preview', headers=e.headers,
+            json={**e.reviewed, 'export_profile': {'preset': 'REVIEW_MP4'}})
+>       assert response.status_code == 400 and response.json()['detail']['code'] == 'STUDIO_TIMELINE_EXPORT_MEDIA_KIND_MISMATCH'
+E       assert (422 == 400)
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_v2_audio_only_timeline_api.py:78: AssertionError
+_ test_audio_http_rejects_video_profile_and_capacity_before_job[file-/api/v1] __
+
+audio_mix_client = namespace(client=<starlette.testclient.TestClient object at 0x7f357e72d7f0>, prefix='/api/v1', base='/api/v1/projects/...'expected_version': 1, 'reviewed_timeline_digest': 'be166391698aa8b1445f984ec1eb8f77d32d88d617a1f5d6d14a867032e0ac18'})
+
+    def test_audio_http_rejects_video_profile_and_capacity_before_job(audio_mix_client):
+        e = audio_mix_client
+        response = e.client.post(e.timeline_base + '/export-preview', headers=e.headers,
+            json={**e.reviewed, 'export_profile': {'preset': 'REVIEW_MP4'}})
+>       assert response.status_code == 400 and response.json()['detail']['code'] == 'STUDIO_TIMELINE_EXPORT_MEDIA_KIND_MISMATCH'
+E       assert (422 == 400)
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_v2_audio_only_timeline_api.py:78: AssertionError
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_v2_audio_only_timeline_api.py::test_audio_http_explicit_preview_build_attest_review_download[file-/api]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_audio_only_timeline_api.py::test_audio_http_rejects_video_profile_and_capacity_before_job[file-/api]
+FAILED tests/test_v2_audio_only_timeline_api.py::test_audio_http_rejects_video_profile_and_capacity_before_job[file-/api/v1]
+2 failed, 12 passed, 14 deselected, 2 warnings in 11.79s

@@ -30,7 +30,7 @@ export function appendTimelineAsset(draft: StudioTimelineDraft, trackId: string,
     start_ms: placement, in_ms: asset.kind === 'image' ? 0 : range!.in_ms,
     out_ms: asset.kind === 'image' ? Math.min(1000, draft.timeline.duration_ms - placement) : range!.out_ms,
     ...(track.kind === 'VIDEO' ? { x: 0, y: 0, width: draft.timeline.width, height: draft.timeline.height } : {}),
-    ...(draft.timeline.schema_version === 2 ? { speed_num: 1, speed_den: 1, muted: false, gain_db: 0, fade_in_ms: 0, fade_out_ms: 0,
+    ...([2, 3].includes(draft.timeline.schema_version ?? 1) ? { speed_num: 1, speed_den: 1, muted: false, gain_db: 0, fade_in_ms: 0, fade_out_ms: 0,
       ...(track.kind === 'VIDEO' ? { opacity: 1, include_audio: false } : {}) } : {}) });
 }
 

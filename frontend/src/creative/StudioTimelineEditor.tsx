@@ -70,7 +70,8 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
   }, [waveform.preview,c.base,props.client]);
   const draft = c.draft;
   if (!draft) return <Panel title="时间线"><EmptyState title="当前时间线入口不可用" detail="请重新核对项目、身份与原可信会话。旧输入和回执不会跨身份显示。" /></Panel>;
-  const extended = draft.timeline.schema_version === 2;
+  const audioOnly = draft.timeline.schema_version === 3, videoTimeline = draft.timeline.schema_version === 3 ? undefined : draft.timeline;
+  const extended = draft.timeline.schema_version === 2 || audioOnly;
   const sourceFits = (track: StudioTimelineTrack, kind: string) => track.kind === 'AUDIO' ? kind === 'audio' : kind === 'video' || extended && kind === 'image';
   const editControl = (clipId: string, values: { split?: number; position?: number; target?: string }) => setClipEdits(rows => ({ ...rows, [clipId]: { ...rows[clipId], ...values } }));
   const changeTrack = (id: string, work: (track: StudioTimelineTrack, draft: StudioTimelineDraft) => void) => c.change(input => {
@@ -80,9 +81,10 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
     const clip = track.clips.find(row => row.id === clipId); if (clip) work(clip);
   });
   const addTrack = (kind: 'VIDEO' | 'AUDIO') => c.change(input => {
+    if (input.timeline.schema_version === 3 && kind !== 'AUDIO') return;
     if (input.timeline.tracks.length >= 8 || input.timeline.tracks.filter(track => track.kind === kind).length >= 4) return;
     input.timeline.tracks.push({ id: crypto.randomUUID(), kind, order: input.timeline.tracks.length, muted: false, gain_db: 0, clips: [],
-      ...(input.timeline.schema_version === 2 ? { role: kind === 'VIDEO' ? 'PRIMARY' as const : 'DIALOGUE' as const } : {}) });
+      ...([2, 3].includes(input.timeline.schema_version ?? 1) ? { role: kind === 'VIDEO' ? 'PRIMARY' as const : 'DIALOGUE' as const } : {}) });
   });
   const moveTrack = (id: string, direction: -1 | 1) => c.change(input => {
     const tracks = input.timeline.tracks, index = tracks.findIndex(track => track.id === id), target = index + direction;
@@ -92,8 +94,8 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
   const locked = !c.canEdit || props.busy;
   const readLocked = c.denied || props.busy || !!c.pending || c.transfer.locked || c.playback.locked || c.sourceEdit.locked;
   const clipsCount = draft.timeline.tracks.reduce((sum, track) => sum + track.clips.length, 0);
-  return <Panel title="多轨时间线" aria-label="Studio 多轨时间线编辑器" onCompositionStart={() => { composing.current = true; }} onCompositionEnd={() => { composing.current = false; }} actions={<Button loading={c.pending === 'LIST'} disabled={readLocked} onClick={() => void c.reload()}>刷新时间线列表</Button>}>
-    <p>选择已有视频和音频素材，设定裁剪与摆放。视频按轨道顺序叠放，音频轨道混音；视频自身声音只在扩展编辑中明确加入。总长最多十分钟，产物仍须在制作任务中预览和人工审核。</p>
+  return <Panel title={audioOnly ? "音频多轨时间线" : "多轨时间线"} aria-label="Studio 多轨时间线编辑器" onCompositionStart={() => { composing.current = true; }} onCompositionEnd={() => { composing.current = false; }} actions={<Button loading={c.pending === 'LIST'} disabled={readLocked} onClick={() => void c.reload()}>刷新时间线列表</Button>}>
+    <p>{audioOnly ? '选择已有音频素材，设定裁剪、摆放、增益和淡入淡出。最多四条音频轨道、三十个片段、十分钟；明确试听与 WAV 导出后，产物仍须在制作任务中人工审核。' : '选择已有视频和音频素材，设定裁剪与摆放。视频按轨道顺序叠放，音频轨道混音；视频自身声音只在扩展编辑中明确加入。总长最多十分钟，产物仍须在制作任务中预览和人工审核。'}</p>
     <label>读取已保存时间线<select disabled={readLocked} value={c.candidate?.id ?? c.base?.id ?? ''} onChange={event => { if (event.currentTarget.value) void c.checkServer(event.currentTarget.value); }}>
       <option value="">选择时间线后核对</option>{c.rows.map(row => <option key={row.id} value={row.id}>{row.title} · v{row.version}</option>)}
     </select></label>
@@ -104,11 +106,11 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
     {c.failure && <StatusMessage tone="warning">{c.failure === 'CONFLICT' ? '服务端版本已变化。输入保留，请读取并核对版本后人工采用或保留草稿。' : '保存结果不确定，不能直接重复保存。请读取服务端版本；新建请求没有已知标识时，刷新列表并选择候选。'}</StatusMessage>}
     {c.error && <StatusMessage tone="error">{c.error}</StatusMessage>}{c.notice && <StatusMessage>{c.notice}</StatusMessage>}
     {c.candidate && <section aria-label="核对服务端时间线">
-      <h3>{c.candidate.title} · v{c.candidate.version}</h3><p>{seconds(c.candidate.timeline.duration_ms)} · {c.candidate.timeline.width} × {c.candidate.timeline.height} · {c.candidate.timeline.fps} fps · {c.candidate.timeline.tracks.length} 条轨道</p>
+      <h3>{c.candidate.title} · v{c.candidate.version}</h3><p>{seconds(c.candidate.timeline.duration_ms)}{c.candidate.timeline.schema_version === 3 ? ' · 纯音频' : ` · ${c.candidate.timeline.width} × ${c.candidate.timeline.height} · ${c.candidate.timeline.fps} fps`} · {c.candidate.timeline.tracks.length} 条轨道</p>
       <ul>{c.candidate.timeline.tracks.map(track => <li key={track.id}>{track.kind === 'VIDEO' ? '视频' : '音频'}轨道 {track.order + 1} · {track.clips.length} 个片段 · {track.muted ? '隐藏或静音' : '参与渲染'}{track.kind === 'AUDIO' ? ` · ${track.gain_db} dB` : ''}
         <ul>{track.clips.map(clip => <li key={clip.id}>{props.assets.find(asset => asset.id === clip.source_snapshot.id)?.filename ?? '素材不可用'} · v{clip.source_snapshot.version} · 放入 {seconds(clip.start_ms)} · 裁剪 {seconds(clip.in_ms)} 至 {seconds(clip.out_ms)}</li>)}</ul>
       </li>)}</ul>
-      <p>字幕：{c.candidate.timeline.captions.map(cue => `${seconds(cue.start_ms)}—${seconds(cue.end_ms)} ${cue.text}`).join('；') || '无'}</p>
+      {c.candidate.timeline.schema_version !== 3 && <p>字幕：{c.candidate.timeline.captions.map(cue => `${seconds(cue.start_ms)}—${seconds(cue.end_ms)} ${cue.text}`).join('；') || '无'}</p>}
       <details><summary>版本绑定摘要</summary><code>{c.candidate.timeline_digest}</code></details>
       <p>读取的候选不证明原保存或渲染请求已完成；采用服务端值会替换当前编辑内容。</p>
       <label><input type="checkbox" checked={c.adoptConfirmed} disabled={readLocked} onChange={event => c.setAdoptConfirmed(event.currentTarget.checked)} />已核对服务端内容与本地输入，确认以下选择</label>
@@ -119,17 +121,17 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       request={props.assetHandoff} draft={draft} canEdit={c.canEdit} isCurrent={props.isCurrent} getRevision={c.getHandoffRevision}
       readJob={(owner, id) => props.read(() => props.client.get(owner, id))}
       onApply={(trackId, asset, range) => c.change(input => appendTimelineAsset(input, trackId, asset, range))} />}
-    <StudioTimelineSourceEditPanel controller={c.sourceEdit} source={c.base} assets={props.assets} revealRequest={sourceEditReveal} />
+    <StudioTimelineSourceEditPanel controller={c.sourceEdit} source={c.base} assets={audioOnly ? props.assets.filter(asset => asset.kind === 'audio') : props.assets} revealRequest={sourceEditReveal} />
     <fieldset disabled={locked}><legend>时间线参数</legend>
-      <p>{extended ? '扩展编辑版本 2：可使用静态画面、速度、淡入淡出和片段音量。' : '原时间线版本：保存与渲染保持原有字段和行为。'}</p>
+      <p>{audioOnly ? '音频编辑版本 3：独立音频轨道，支持裁剪、速度、淡入淡出和片段音量。' : extended ? '扩展编辑版本 2：可使用静态画面、速度、淡入淡出和片段音量。' : '原时间线版本：保存与渲染保持原有字段和行为。'}</p>
       {!extended && <Button onClick={c.upgradeTimeline}>明确采用扩展编辑（版本 2，需重新保存）</Button>}
       <label>名称<input maxLength={240} value={draft.title} onChange={event => { const title = event.currentTarget.value; c.change(input => { input.title = title; }); }} /></label>
       <NumberField label="总长（毫秒）" value={draft.timeline.duration_ms} min={1} max={600000} onChange={value => c.change(input => { input.timeline.duration_ms = value; })} />
-      <NumberField label="画面宽度" value={draft.timeline.width} min={16} max={1920} step={2} onChange={value => c.change(input => { input.timeline.width = value; })} />
-      <NumberField label="画面高度" value={draft.timeline.height} min={16} max={1080} step={2} onChange={value => c.change(input => { input.timeline.height = value; })} />
-      <NumberField label="帧率" value={draft.timeline.fps} min={1} max={60} onChange={value => c.change(input => { input.timeline.fps = value; })} />
-      <p>1000 毫秒为一秒。更改画面大小后请核对各视频片段的位置与尺寸，素材实际时长由原服务校验。</p>
-      <Button disabled={draft.timeline.tracks.length >= 8 || draft.timeline.tracks.filter(track => track.kind === 'VIDEO').length >= 4} onClick={() => addTrack('VIDEO')}>添加视频轨道</Button>
+      {videoTimeline && <><NumberField label="画面宽度" value={videoTimeline.width} min={16} max={1920} step={2} onChange={value => c.change(input => { if (input.timeline.schema_version !== 3) input.timeline.width = value; })} />
+      <NumberField label="画面高度" value={videoTimeline.height} min={16} max={1080} step={2} onChange={value => c.change(input => { if (input.timeline.schema_version !== 3) input.timeline.height = value; })} />
+      <NumberField label="帧率" value={videoTimeline.fps} min={1} max={60} onChange={value => c.change(input => { if (input.timeline.schema_version !== 3) input.timeline.fps = value; })} />
+      <p>1000 毫秒为一秒。更改画面大小后请核对各视频片段的位置与尺寸，素材实际时长由原服务校验。</p></>}
+      {!audioOnly && <Button disabled={draft.timeline.tracks.length >= 8 || draft.timeline.tracks.filter(track => track.kind === 'VIDEO').length >= 4} onClick={() => addTrack('VIDEO')}>添加视频轨道</Button>}
       <Button disabled={draft.timeline.tracks.length >= 8 || draft.timeline.tracks.filter(track => track.kind === 'AUDIO').length >= 4} onClick={() => addTrack('AUDIO')}>添加音频轨道</Button>
     </fieldset>
     <StudioTimelineCloseGaps draft={draft} scope={props.client} disabled={locked} isCurrent={props.isCurrent} getRevision={c.getHandoffRevision} onApply={next => c.change(input => { input.timeline = next.timeline; })} />
@@ -176,7 +178,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
           <NumberField label="淡入（毫秒）" value={clip.fade_in_ms ?? 0} max={timelineClipDuration(clip)} onChange={value => changeClip(track.id, clip.id, row => { row.fade_in_ms = value; })} />
           <NumberField label="淡出（毫秒）" value={clip.fade_out_ms ?? 0} max={timelineClipDuration(clip)} onChange={value => changeClip(track.id, clip.id, row => { row.fade_out_ms = value; })} />
           <label><input type="checkbox" checked={clip.muted ?? false} onChange={event => { const muted = event.currentTarget.checked; changeClip(track.id, clip.id, row => { row.muted = muted; }); }} />{track.kind === 'VIDEO' ? '隐藏此片段及其声音' : '此片段静音'}</label>
-          {track.kind === 'VIDEO' && <><NumberField label="不透明度" value={clip.opacity ?? 1} max={1} step={0.05} onChange={value => changeClip(track.id, clip.id, row => { row.opacity = value; })} />
+          {track.kind === 'VIDEO' && videoTimeline && <><NumberField label="不透明度" value={clip.opacity ?? 1} max={1} step={0.05} onChange={value => changeClip(track.id, clip.id, row => { row.opacity = value; })} />
             <label><input type="checkbox" checked={clip.include_audio ?? false} disabled={clip.source_snapshot.asset_kind === 'image' && !clip.include_audio} onChange={event => { const include = event.currentTarget.checked; changeClip(track.id, clip.id, row => { row.include_audio = include; }); }} />明确加入此视频原声（静态画面保持关闭）</label>
             <label>交叉溶解到下一片段<select value={clip.transition_out?.to_clip_id ?? ''} onChange={event => {
               const targetId = event.currentTarget.value; changeClip(track.id, clip.id, row => {
@@ -187,20 +189,20 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
               });
             }}><option value="">无交叉溶解</option>{track.clips.filter(item => item.start_ms > clip.start_ms).sort((left, right) => left.start_ms - right.start_ms).slice(0, 1)
               .map(item => <option key={item.id} value={item.id}>{item.id}</option>)}</select></label>
-            {clip.transition_out && <NumberField label="两源交叉溶解窗口（毫秒）" value={clip.transition_out.duration_ms} min={Math.ceil(2000 / draft.timeline.fps)} max={10000}
+            {clip.transition_out && <NumberField label="两源交叉溶解窗口（毫秒）" value={clip.transition_out.duration_ms} min={Math.ceil(2000 / videoTimeline.fps)} max={10000}
               onChange={value => changeClip(track.id, clip.id, row => { if (row.transition_out) row.transition_out.duration_ms = value; })} />}
             <p>转场需两个相邻片段准确重叠，同位置、尺寸与不透明度；窗口至少两帧且小于两片段时长。转场片段不能另外淡入淡出或静音；修改摆放后须重新核对窗口。</p></>}
           <NumberField label={track.kind === 'VIDEO' ? '原声音量（dB；未加入原声时保持 0）' : '片段音量（dB）'} value={clip.gain_db ?? 0} min={-60} max={12} step={0.1} onChange={value => changeClip(track.id, clip.id, row => { row.gain_db = value; })} />
           <p>渲染时长 {seconds(timelineClipDuration(clip))}；淡入与淡出总长不能超过此长度。</p>
         </details>}
-        {track.kind === 'VIDEO' && <details><summary>画面位置与尺寸</summary>
-          <NumberField label="画面左侧位置" value={clip.x ?? 0} max={draft.timeline.width - 16} onChange={value => changeClip(track.id, clip.id, row => { row.x = value; })} />
-          <NumberField label="画面顶部位置" value={clip.y ?? 0} max={draft.timeline.height - 16} onChange={value => changeClip(track.id, clip.id, row => { row.y = value; })} />
-          <NumberField label="片段宽度" value={clip.width ?? draft.timeline.width} min={16} max={draft.timeline.width} step={2} onChange={value => changeClip(track.id, clip.id, row => { row.width = value; })} />
-          <NumberField label="片段高度" value={clip.height ?? draft.timeline.height} min={16} max={draft.timeline.height} step={2} onChange={value => changeClip(track.id, clip.id, row => { row.height = value; })} />
+        {track.kind === 'VIDEO' && videoTimeline && <details><summary>画面位置与尺寸</summary>
+          <NumberField label="画面左侧位置" value={clip.x ?? 0} max={videoTimeline.width - 16} onChange={value => changeClip(track.id, clip.id, row => { row.x = value; })} />
+          <NumberField label="画面顶部位置" value={clip.y ?? 0} max={videoTimeline.height - 16} onChange={value => changeClip(track.id, clip.id, row => { row.y = value; })} />
+          <NumberField label="片段宽度" value={clip.width ?? videoTimeline.width} min={16} max={videoTimeline.width} step={2} onChange={value => changeClip(track.id, clip.id, row => { row.width = value; })} />
+          <NumberField label="片段高度" value={clip.height ?? videoTimeline.height} min={16} max={videoTimeline.height} step={2} onChange={value => changeClip(track.id, clip.id, row => { row.height = value; })} />
           {extended && <><label><input type="checkbox" checked={!!clip.crop} onChange={event => {
             const enabled = event.currentTarget.checked; changeClip(track.id, clip.id, row => {
-              if (enabled) row.crop = { x: 0, y: 0, width: row.width ?? draft.timeline.width, height: row.height ?? draft.timeline.height };
+              if (enabled) row.crop = { x: 0, y: 0, width: row.width ?? videoTimeline.width, height: row.height ?? videoTimeline.height };
               else delete row.crop;
             });
           }} />明确裁剪素材原始像素区域</label><p>裁剪发生在缩放之前。实际素材尺寸由原渲染服务核对，参数越界会拒绝执行。</p>
@@ -224,16 +226,16 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       </section>)}
       </fieldset>
     </fieldset>)}
-    <fieldset disabled={locked}><legend>字幕（可选，作者输入的纯文字）</legend>
+    {videoTimeline && <fieldset disabled={locked}><legend>字幕（可选，作者输入的纯文字）</legend>
       <p>字幕不代表模型转录。每条一至八行，不接受空行、样式标记或文件路径。</p>
-      <Button disabled={draft.timeline.captions.length >= 500} onClick={() => c.change(input => { input.timeline.captions.push({ start_ms: 0, end_ms: Math.min(1000, input.timeline.duration_ms), text: '' }); })}>添加字幕</Button>
-      {draft.timeline.captions.map((cue, index) => <section key={index} aria-label={`字幕 ${index + 1}`}>
-        <NumberField label={`字幕 ${index + 1} 开始（毫秒）`} value={cue.start_ms} max={draft.timeline.duration_ms - 1} onChange={value => c.change(input => { input.timeline.captions[index].start_ms = value; })} />
-        <NumberField label={`字幕 ${index + 1} 结束（毫秒）`} value={cue.end_ms} min={1} max={draft.timeline.duration_ms} onChange={value => c.change(input => { input.timeline.captions[index].end_ms = value; })} />
-        <label>字幕文字<textarea maxLength={1000} value={cue.text} onChange={event => { const text = event.currentTarget.value; c.change(input => { input.timeline.captions[index].text = text; }); }} /></label>
-        <Button variant="danger" onClick={() => c.change(input => { input.timeline.captions.splice(index, 1); })}>移除此字幕</Button>
+      <Button disabled={videoTimeline.captions.length >= 500} onClick={() => c.change(input => { if (input.timeline.schema_version !== 3) input.timeline.captions.push({ start_ms: 0, end_ms: Math.min(1000, input.timeline.duration_ms), text: '' }); })}>添加字幕</Button>
+      {videoTimeline.captions.map((cue, index) => <section key={index} aria-label={`字幕 ${index + 1}`}>
+        <NumberField label={`字幕 ${index + 1} 开始（毫秒）`} value={cue.start_ms} max={draft.timeline.duration_ms - 1} onChange={value => c.change(input => { if (input.timeline.schema_version !== 3) input.timeline.captions[index].start_ms = value; })} />
+        <NumberField label={`字幕 ${index + 1} 结束（毫秒）`} value={cue.end_ms} min={1} max={draft.timeline.duration_ms} onChange={value => c.change(input => { if (input.timeline.schema_version !== 3) input.timeline.captions[index].end_ms = value; })} />
+        <label>字幕文字<textarea maxLength={1000} value={cue.text} onChange={event => { const text = event.currentTarget.value; c.change(input => { if (input.timeline.schema_version !== 3) input.timeline.captions[index].text = text; }); }} /></label>
+        <Button variant="danger" onClick={() => c.change(input => { if (input.timeline.schema_version !== 3) input.timeline.captions.splice(index, 1); })}>移除此字幕</Button>
       </section>)}
-    </fieldset>
+    </fieldset>}
     <details><summary>时间布局（参数预览）</summary><p>这是裁剪、摆放和叠放参数，不是已经渲染的媒体预览。实际画面与声音请从原制作任务的私有候选中核对。</p>
       <table><thead><tr><th scope="col">轨道</th><th scope="col">素材版本</th><th scope="col">裁剪范围</th><th scope="col">时间线范围</th><th scope="col">状态</th></tr></thead>
         <tbody>{draft.timeline.tracks.flatMap(track => track.clips.map(clip => <tr key={clip.id}><th scope="row">{track.kind === 'VIDEO' ? '视频' : '音频'} {track.order + 1}</th>
@@ -245,7 +247,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
     <p>撤销与重做只在当前本地草稿中保留最多五十步，不回退已保存版本或原渲染、导出任务。</p>
     <Button variant="primary" loading={c.pending === 'SAVE'} disabled={locked || !c.inputDirty && !!c.base} onClick={() => void c.save()}>保存时间线</Button>
     {c.inputDirty && !c.failure && <><label><input type="checkbox" disabled={readLocked || c.attempt?.state === 'UNKNOWN'} checked={c.discardConfirmed} onChange={event => c.setDiscardConfirmed(event.currentTarget.checked)} />确认放弃本地未保存内容</label><Button disabled={readLocked || !c.discardConfirmed || c.attempt?.state === 'UNKNOWN'} onClick={c.discardDraft}>放弃本地编辑</Button></>}
-    {c.base && <section aria-label="确认本地时间线渲染"><h3>本地渲染</h3>
+    {c.base && !audioOnly && <section aria-label="确认本地时间线渲染"><h3>本地渲染</h3>
       <p>绑定已保存 v{c.base.version}。不调用模型；输出 MP4，画面与音频按原渲染服务处理，素材保留原样。</p>
       <details><summary>当前保存摘要</summary><code>{c.base.timeline_digest}</code></details>
       {!c.sourcesCurrent && <StatusMessage tone="warning">素材有变化或不可用，请重新选择对应素材并保存新版本。</StatusMessage>}
@@ -253,7 +255,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       <Button loading={c.pending === 'RENDER'} disabled={!c.canRender} onClick={() => void c.render()}>明确渲染此保存版本</Button>
     </section>}
     <StudioTimelineExportPanel controller={c} />
-    <StudioTimelineTransferPanel controller={c.transfer} assets={props.assets} onLocate={(preview, path) => {
+    {!audioOnly && <StudioTimelineTransferPanel controller={c.transfer} assets={props.assets} onLocate={(preview, path) => {
       const now = latestReview.current;
       if (now.c !== c || now.props.client !== props.client || !props.isCurrent() || composing.current || readLocked
         || props.isBusy?.() || c.getHandoffRevision() !== reviewGeneration
@@ -269,7 +271,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       if (!element?.isConnected) return;
       element.focus(); element.scrollIntoView?.({ block: 'nearest' });
       setNleClips([target.clip.id]); setNlePlayhead(target.clip.start_ms);
-    }} />
+    }} />}
     <StudioTimelinePlaybackPanel controller={c.playback} />
     {c.attempt && <StatusMessage tone={c.attempt.state === 'UNKNOWN' ? 'warning' : 'info'}>{c.attempt.state === 'UNKNOWN' ? '渲染或导出结果仍需核对，请从制作任务读取原回执；不会再次发送此请求。' : '此快照与配置的请求已有回执，不会从这里重复发起。'} 原请求：<code>{c.attempt.requestId}</code>{c.attempt.exportProfile && <> · 导出 {c.attempt.exportProfile.preset}</>}</StatusMessage>}
     {c.attempt && <StudioTimelineMeasurement measurement={c.attempt.measurement} />}
@@ -286,16 +288,18 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       selectedClipIds={nleClips} playheadMs={nlePlayhead} viewStartMs={nleView.startMs} viewScale={nleView.scale}
       editable={c.canEdit} onSelectClips={selectClips} onPlayhead={setNlePlayhead}
       onView={next => setNleView({ startMs: next.startMs, scale: next.scale })}
-      exportReceipt={c.exportPreview} limits={TIMELINE_LIMITS}
+      exportReceipt={c.exportPreview} limits={{ duration_ms: TIMELINE_LIMITS.duration, tracks: audioOnly ? TIMELINE_LIMITS.kindTracks : TIMELINE_LIMITS.tracks,
+        tracks_per_kind: TIMELINE_LIMITS.kindTracks, clips: TIMELINE_LIMITS.clips, ...(audioOnly ? {} : { captions: TIMELINE_LIMITS.captions, caption_characters: TIMELINE_LIMITS.captionCharacters }) }}
       waveform={{ ...waveform, source: c.base, onRequest: () => void waveform.request() }}
       onEdit={command => {
         if (['caption.insert', 'caption.update', 'caption.remove'].includes(command.kind)) {
+          if (audioOnly) return;
           const live = latestReview.current;
           if (live.props.client !== props.client || live.c.getHandoffRevision() !== reviewGeneration
             || !live.props.isCurrent() || !live.c.canEdit || live.props.busy) return;
           try {
             const next = applyNleCaptionCommand(draft, command.kind, command.payload);
-            const applied = live.c.change(value => { value.timeline.captions = next.timeline.captions; });
+            const applied = live.c.change(value => { if (value.timeline.schema_version !== 3) value.timeline.captions = next.timeline.captions; });
             setNleNotice(applied ? '字幕编辑已应用到本地时间线；可撤销，明确保存前不会写入服务端。' : '字幕编辑未应用，请核对当前编辑状态。');
           } catch (reason) { setNleNotice(reason instanceof Error ? reason.message : '字幕编辑未应用。'); }
           return;

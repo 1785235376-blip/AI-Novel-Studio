@@ -35,7 +35,7 @@ export function useStudioGraphTimelineEditor(props: Props) {
     const source = latest.current, method = source.client.graphTimelineList; if (!current() || source.isBusy() || pending.current || !method) return;
     const abort = new AbortController(), request = ++epoch.current; pending.current = abort; setLoading(true); setError('');
     try { const result = await source.read(() => method(abort.signal));
-      if (current() && request === epoch.current && latest.current.client === source.client && !abort.signal.aborted) { setRows(result.items); setChoice(''); }
+      if (current() && request === epoch.current && latest.current.client === source.client && !abort.signal.aborted) { setRows(result.items.filter(row => row.timeline.schema_version !== 3)); setChoice(''); }
     } catch (reason) { if (current() && request === epoch.current && !abort.signal.aborted) setError(apiErrorView(reason, '原时间线读取失败，已有图绑定保持。').message); }
     finally { if (request === epoch.current) { pending.current = undefined; if (alive.current) setLoading(false); } }
   }
@@ -48,7 +48,7 @@ export function useStudioGraphTimelineEditor(props: Props) {
     update({ timeline_snapshot: { id: chosen.id, version: chosen.version, digest: chosen.timeline_digest }, edit_operations: [], source_bindings: [], export_profile: { preset: 'REVIEW_MP4' } });
   }
   function choose(value: string) { if (!current() || latest.current.isBusy() || pending.current) return; setChoice(value); }
-  function setPreset(preset: TimelineExportPreset) { if (!canEdit() || !latest.current.node) return;
+  function setPreset(preset: TimelineExportPreset) { if (!canEdit() || !latest.current.node || preset === 'AUDIO_WAV_PCM16') return;
     update({ ...latest.current.node.parameters, export_profile: checkedTimelineExportProfile({ preset }) }); }
   function setProfileField(key: 'video_bitrate_kbps' | 'audio_bitrate_kbps' | 'crf', value: string) {
     if (!latest.current.node?.parameters.export_profile || value === '') return;

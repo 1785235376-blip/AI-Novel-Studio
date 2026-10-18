@@ -27,6 +27,8 @@ class TimelineTransfer:
         row = self.owner._owned_timeline(nid, scope, actor, tid, context, document)
         if (row["version"], row["timeline_digest"]) != (body.expected_version, body.reviewed_timeline_digest):
             raise StaleSourceError("STUDIO_TIMELINE_CHANGED")
+        if row["timeline"].get("schema_version") == 3:
+            raise ValueError("STUDIO_TIMELINE_AUDIO_TRANSFER_UNSUPPORTED")
         report, bindings, attachment = [], [], None
         timeline = copy.deepcopy(row["timeline"])
         if body.format == "OTIO":

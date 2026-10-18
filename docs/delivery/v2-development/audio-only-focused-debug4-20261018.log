@@ -1,0 +1,72 @@
+...............FF...............                                         [100%]
+=================================== FAILURES ===================================
+__ test_audio_all_muted_is_exact_silence_without_any_video_input_or_map[file] __
+
+audio_timeline = namespace(nid='v2-independent-a993c0e42dfc40af85e0f7721ea2c779', scope={'mode': 'local', 'novel_id': 'v2-independent-a...44007be64a1796aae0ec419b13c491', 'output_digest': '88825331502902d38189634867461a7db5740ed2e39d6b3192eff209c6f90965'}})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f6858e072c0>
+
+    def test_audio_all_muted_is_exact_silence_without_any_video_input_or_map(audio_timeline, monkeypatch):
+        e = audio_timeline
+        e.row = e.production.timeline_edit(e.nid, e.scope, e.actor, e.row['id'], edit_body(e.row,
+            [{'op': 'track.update', 'track_id': identity, 'changes': {'muted': True}} for identity in ('voice', 'music')]), lambda: None)
+        from app.services import studio_timeline_export as native
+        run = native.run_guarded_process; commands = []
+        def observe(arguments, **kwargs):
+            if str(arguments[-1]).endswith('timeline.wav'): commands.append(arguments)
+            return run(arguments, **kwargs)
+        monkeypatch.setattr(native, 'run_guarded_process', observe)
+        job = e.production.timeline_render(e.nid, e.scope, e.actor, e.row['id'],
+            {**reviewed(e), 'request_id': 'all-muted'}, lambda: None)
+>       assert job['status'] == 'SUCCEEDED' and len(commands) == 1
+E       AssertionError: assert ('SUCCEEDED' == 'SUCCEEDED'
+E         
+E           SUCCEEDED and 2 == 1)
+E        +  where 2 = len([['/usr/bin/ffmpeg', '-nostdin', '-v', 'error', '-xerror', '-threads', ...], ['/usr/bin/ffprobe', '-v', 'error', '-protocol_whitelist', 'file,pipe', '-print_format', ...]])
+
+tests/test_v2_audio_only_timeline.py:229: AssertionError
+_ test_audio_actual_native_finish_respects_original_source_and_cancel_fences[file-source] _
+
+audio_timeline = namespace(nid='v2-independent-92e208788e1a42788dd2e15495fac579', scope={'mode': 'local', 'novel_id': 'v2-independent-9...'created_at': '2026-10-18T15:47:27.078633+00:00', 'updated_at': '2026-10-18T15:47:27.078633+00:00', 'branch_id': None})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f6858dbb1a0>
+change = 'source'
+
+    @pytest.mark.parametrize('change', ['source', 'cancel'])
+    def test_audio_actual_native_finish_respects_original_source_and_cancel_fences(audio_timeline, monkeypatch, change):
+        e = audio_timeline
+        from app.services import studio_timeline_export as native
+        run = native.run_guarded_process; observed = []
+        def interrupt(arguments, **kwargs):
+            result = run(arguments, **kwargs)
+            if str(arguments[-1]).endswith('timeline.wav'):
+                observed.append(True)
+                if change == 'source':
+                    with e.service._asset_scope(e.nid, e.scope):
+                        e.assets.update_metadata(e.first['id'], {'scene_id': 'changed-during-render'}, expected_version=e.first['version'])
+                else:
+                    job = e.production.list(e.nid, e.scope, e.actor, lambda: None)['items'][0]
+                    assert e.production.cancel(e.nid, e.scope, e.actor, 'timeline', job['id'], action(job), lambda: None)['status'] == 'CANCELLED'
+            return result
+        monkeypatch.setattr(native, 'run_guarded_process', interrupt)
+        job = e.production.timeline_render(e.nid, e.scope, e.actor, e.row['id'],
+            {**reviewed(e), 'request_id': 'native-fence'}, lambda: None)
+>       assert observed == [True] and job['status'] == ('FAILED' if change == 'source' else 'CANCELLED')
+E       assert ([True, True] == [True]
+E         
+E         Left contains one more item: True
+E         Use -v to get more diff)
+
+tests/test_v2_audio_only_timeline.py:256: AssertionError
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_v2_audio_only_timeline.py::test_audio_edit_reopen_actual_playback_wav_review_and_export[file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_audio_only_timeline.py::test_audio_all_muted_is_exact_silence_without_any_video_input_or_map[file]
+FAILED tests/test_v2_audio_only_timeline.py::test_audio_actual_native_finish_respects_original_source_and_cancel_fences[file-source]
+2 failed, 30 passed, 20 deselected, 2 warnings in 15.00s

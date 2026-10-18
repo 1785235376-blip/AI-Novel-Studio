@@ -10,7 +10,10 @@ export type StudioTimelineClip = { id: string; source_snapshot: StudioTimelineSo
 export type StudioTimelineTrack = { id: string; kind: 'VIDEO' | 'AUDIO'; order: number; muted: boolean; gain_db: number;
   role?: 'PRIMARY' | 'OVERLAY' | 'DIALOGUE' | 'MUSIC' | 'EFFECTS'; locked?: boolean; clips: StudioTimelineClip[] };
 export type StudioTimelineCaption = { start_ms: number; end_ms: number; text: string };
-export type StudioTimeline = { schema_version?: 2; duration_ms: number; width: number; height: number; fps: number; tracks: StudioTimelineTrack[]; captions: StudioTimelineCaption[] };
+export type StudioVideoTimeline = { schema_version?: 2; media_kind?: never; duration_ms: number; width: number; height: number; fps: number; tracks: StudioTimelineTrack[]; captions: StudioTimelineCaption[] };
+export type StudioAudioTimeline = { schema_version: 3; media_kind: 'AUDIO'; duration_ms: number; tracks: StudioTimelineTrack[]; width?: never; height?: never; fps?: never; captions?: never };
+export type StudioTimeline = StudioVideoTimeline | StudioAudioTimeline;
+export const isAudioTimeline = (timeline: StudioTimeline): timeline is StudioAudioTimeline => timeline.schema_version === 3;
 export type StudioTimelineDraft = { title: string; timeline: StudioTimeline };
 export type TimelineTransferReceipt = { operation: 'TRANSFER_IMPORT'; request_id: string; input_version: number; input_digest: string;
   output_digest: string; preview_digest: string; format: 'OTIO' | 'SRT' | 'VTT'; transfer_input_digest: string; acknowledge_losses: boolean };
@@ -24,7 +27,9 @@ export const cloneTimeline = <T,>(value: T): T => JSON.parse(JSON.stringify(valu
 export const timelineInputKey = (value: StudioTimelineDraft) => JSON.stringify(value);
 export const timelineBinding = (value: StudioTimelineRow) => `${value.id}:${value.version}:${value.timeline_digest}`;
 export const timelineClipDuration = (clip: StudioTimelineClip) => (clip.out_ms - clip.in_ms) * (clip.speed_den ?? 1) / (clip.speed_num ?? 1);
-export const newTimelineDraft = (): StudioTimelineDraft => ({ title: '未命名时间线', timeline: { duration_ms: 5000, width: 1280, height: 720, fps: 24, tracks: [], captions: [] } });
+export const newTimelineDraft = (mediaKind: 'VIDEO' | 'AUDIO' = 'VIDEO'): StudioTimelineDraft => mediaKind === 'AUDIO'
+  ? { title: '未命名音频时间线', timeline: { schema_version: 3, media_kind: 'AUDIO', duration_ms: 5000, tracks: [] } }
+  : { title: '未命名时间线', timeline: { duration_ms: 5000, width: 1280, height: 720, fps: 24, tracks: [], captions: [] } };
 
 function object(value: unknown, allowed?: readonly string[]): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value) || allowed && Object.keys(value).some(key => !allowed.includes(key))) throw new Error('时间线字段不符合原渲染接口。');
@@ -55,17 +60,20 @@ function compareText(left: string, right: string): number {
 
 /** Pure closed DTO validation for the form; the original server remains authoritative. */
 export function checkedTimeline(value: unknown): StudioTimeline {
-  const row = object(value, ['schema_version', 'duration_ms', 'width', 'height', 'fps', 'tracks', 'captions']);
-  const extended = row.schema_version === 2;
-  if ('schema_version' in row && !extended) throw new Error('时间线版本无效；旧时间线保持原字段，扩展时间线使用版本 2。');
-  const duration = integer(row.duration_ms, 1, TIMELINE_LIMITS.duration), width = integer(row.width, 16, 1920), height = integer(row.height, 16, 1080), fps = integer(row.fps, 1, 60);
-  if (width % 2 || height % 2) throw new Error('画面宽高需要为偶数。');
-  if (!Array.isArray(row.tracks) || !row.tracks.length || row.tracks.length > TIMELINE_LIMITS.tracks) throw new Error('请至少添加一条视频轨道，最多八条轨道。');
+  const raw = object(value), audioOnly = raw.schema_version === 3;
+  const row = object(value, audioOnly ? ['schema_version', 'media_kind', 'duration_ms', 'tracks'] : ['schema_version', 'duration_ms', 'width', 'height', 'fps', 'tracks', 'captions']);
+  const extended = row.schema_version === 2 || audioOnly;
+  if ('schema_version' in row && !extended || audioOnly && row.media_kind !== 'AUDIO') throw new Error('时间线版本或媒体类型无效；音频时间线必须明确使用版本 3 与 AUDIO。');
+  const duration = integer(row.duration_ms, 1, TIMELINE_LIMITS.duration);
+  // Audio has no canvas or frame rate. These locals are only used in guarded video branches.
+  const width = audioOnly ? undefined : integer(row.width, 16, 1920), height = audioOnly ? undefined : integer(row.height, 16, 1080), fps = audioOnly ? undefined : integer(row.fps, 1, 60);
+  if (!audioOnly && (width! % 2 || height! % 2)) throw new Error('画面宽高需要为偶数。');
+  if (!Array.isArray(row.tracks) || !row.tracks.length || row.tracks.length > (audioOnly ? TIMELINE_LIMITS.kindTracks : TIMELINE_LIMITS.tracks)) throw new Error(audioOnly ? '请至少添加一条音频轨道，最多四条轨道。' : '请至少添加一条视频轨道，最多八条轨道。');
   const trackIds = new Set<string>(), orders = new Set<number>(), clipIds = new Set<string>(), sources = new Map<string, string>();
   let videos = 0, audios = 0, clipsCount = 0;
   const tracks = row.tracks.map(raw => {
     const track = object(raw, ['id', 'kind', 'order', 'muted', 'gain_db', 'clips', ...(extended ? ['role', 'locked'] : [])]), tid = id(track.id), order = integer(track.order, 0, 7);
-    if (track.kind !== 'VIDEO' && track.kind !== 'AUDIO' || trackIds.has(tid) || orders.has(order)) throw new Error('轨道类型、标识或叠放顺序无效。');
+    if (audioOnly && track.kind !== 'AUDIO' || track.kind !== 'VIDEO' && track.kind !== 'AUDIO' || trackIds.has(tid) || orders.has(order)) throw new Error('轨道类型、标识或叠放顺序无效。');
     const kind = track.kind;
     const role = defaulted(track, 'role', kind === 'VIDEO' ? 'PRIMARY' : 'DIALOGUE');
     if (extended && !(kind === 'VIDEO' ? ['PRIMARY', 'OVERLAY'] : ['DIALOGUE', 'MUSIC', 'EFFECTS']).includes(String(role))) throw new Error('轨道用途与类型不一致。');
@@ -97,7 +105,7 @@ export function checkedTimeline(value: unknown): StudioTimeline {
         fade_in_ms: integer(defaulted(clip, 'fade_in_ms', 0), 0, length), fade_out_ms: integer(defaulted(clip, 'fade_out_ms', 0), 0, length) });
       if ((output.fade_in_ms ?? 0) + (output.fade_out_ms ?? 0) > length) throw new Error('淡入和淡出总长不能超过片段的渲染时长。');
       if (kind === 'VIDEO') {
-        const x = integer(clip.x, 0, width - 16), y = integer(clip.y, 0, height - 16), cw = integer(clip.width, 16, width - x), ch = integer(clip.height, 16, height - y);
+        const x = integer(clip.x, 0, width! - 16), y = integer(clip.y, 0, height! - 16), cw = integer(clip.width, 16, width! - x), ch = integer(clip.height, 16, height! - y);
         if (cw % 2 || ch % 2) throw new Error('视频片段尺寸需要为偶数，并位于画面之内。');
         Object.assign(output, { x, y, width: cw, height: ch });
         if (extended) {
@@ -114,7 +122,7 @@ export function checkedTimeline(value: unknown): StudioTimeline {
             const transition = object(clip.transition_out, ['kind', 'to_clip_id', 'duration_ms']);
             if (transition.kind !== 'CROSS_DISSOLVE') throw new Error('当前仅支持明确的交叉溶解转场。');
             output.transition_out = { kind: 'CROSS_DISSOLVE', to_clip_id: id(transition.to_clip_id),
-              duration_ms: integer(transition.duration_ms, Math.ceil(2000 / fps), 10000) };
+              duration_ms: integer(transition.duration_ms, Math.ceil(2000 / fps!), 10000) };
           }
         }
       } else if (['x', 'y', 'width', 'height', 'opacity', 'include_audio', 'crop', 'transition_out'].some(key => key in clip)) throw new Error('音频片段没有画面位置、尺寸、透明度、像素裁剪、转场或视频原声设置。');
@@ -140,6 +148,7 @@ export function checkedTimeline(value: unknown): StudioTimeline {
     return { id: tid, kind, order, muted, gain_db: gain, clips, ...(extended ? { role } : {}),
       ...('locked' in track ? { locked: flag(track.locked) } : {}) } as StudioTimelineTrack;
   }).sort((left, right) => left.order - right.order);
+  if (audioOnly) return { schema_version: 3, media_kind: 'AUDIO', duration_ms: duration, tracks };
   if (!videos) throw new Error('时间线至少需要一条视频轨道。');
   if (!Array.isArray(row.captions) || row.captions.length > TIMELINE_LIMITS.captions) throw new Error('字幕最多五百条。');
   let characters = 0;
@@ -152,7 +161,7 @@ export function checkedTimeline(value: unknown): StudioTimeline {
     if (characters > TIMELINE_LIMITS.captionCharacters) throw new Error('字幕总文字超过三万二千字。');
     return { start_ms: start, end_ms: end, text };
   }).sort((left, right) => left.start_ms - right.start_ms || left.end_ms - right.end_ms || compareText(left.text, right.text));
-  return { ...(extended ? { schema_version: 2 as const } : {}), duration_ms: duration, width, height, fps, tracks, captions };
+  return { ...(extended ? { schema_version: 2 as const } : {}), duration_ms: duration, width: width!, height: height!, fps: fps!, tracks, captions };
 }
 
 export function checkedTimelineDraft(value: StudioTimelineDraft): StudioTimelineDraft {

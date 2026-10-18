@@ -107,11 +107,13 @@ export function safeTimeline(value: unknown): NleTimelineCheck {
 }
 
 export function timebaseOf(timeline: StudioTimeline): NleTimebase {
-  return { durationMs: timeline.duration_ms, fps: timeline.fps };
+  return timeline.schema_version === 3 ? { durationMs: timeline.duration_ms, mediaKind: 'AUDIO' } : { durationMs: timeline.duration_ms, fps: timeline.fps };
 }
 
 export function validateTimebase(value: unknown): NleOk<NleTimebase> | NleRefusal {
   const row = plainObject(value);
+  if (row?.mediaKind === 'AUDIO' && Object.keys(row).every(key => ['durationMs', 'mediaKind'].includes(key))
+    && isInteger(row.durationMs) && row.durationMs >= 1 && row.durationMs <= NLE_OWNER_LIMITS.durationMs) return { ok: true, value: { durationMs: row.durationMs, mediaKind: 'AUDIO' } };
   if (!row || Object.keys(row).some(key => key !== 'durationMs' && key !== 'fps')
     || !isInteger(row.durationMs) || row.durationMs < 1 || row.durationMs > NLE_OWNER_LIMITS.durationMs
     || !isInteger(row.fps) || row.fps < NLE_OWNER_LIMITS.fpsMin || row.fps > NLE_OWNER_LIMITS.fpsMax) {
@@ -176,7 +178,7 @@ export function rulerTicks(window: NleViewWindow, timebase: NleTimebase, widthPx
     const ms = index * minorStepMs;
     if (ms > range.endMs) break;
     if (ticks.length >= NLE_RULER_MAX_TICKS) { truncated = true; break; }
-    ticks.push({ index: ticks.length, ms, major: ms % stepMs === 0, label: rulerLabel(ms), frame: frameIndex(ms, timebase.fps) });
+    ticks.push({ index: ticks.length, ms, major: ms % stepMs === 0, label: rulerLabel(ms), ...(timebase.mediaKind === 'AUDIO' ? {} : { frame: frameIndex(ms, timebase.fps) }) });
   }
   return { window: { startMs: range.startMs, scale: window.scale }, range, stepMs, minorStepMs, ticks, truncated };
 }
@@ -677,6 +679,7 @@ export function captionCommand(kind: string, context: unknown): NleEditPlan {
   const parsed = safeTimeline(row.timeline);
   if (!parsed.ok) return nleRefusal(NLE_CODES.timelineInvalid, '字幕指令需要当前通过原契约校验的时间线。');
   const current = parsed.timeline;
+  if (current.schema_version === 3) return nleRefusal(NLE_CODES.captionShapeInvalid, '纯音频时间线没有字幕轨道。');
   const index = row.index;
   if (kind === 'caption-remove') {
     if (!isInteger(index) || index < 0 || index >= current.captions.length) {
@@ -707,6 +710,7 @@ export function captionCommand(kind: string, context: unknown): NleEditPlan {
       : message.includes('三万二千') ? NLE_CODES.captionCharacterLimit : NLE_CODES.captionShapeInvalid;
     return nleRefusal(code, message);
   }
+  if (normalized.schema_version === 3) return nleRefusal(NLE_CODES.captionShapeInvalid, '纯音频时间线没有字幕轨道。');
   const kept = normalized.captions.find(cue => cue.start_ms === caption.start_ms && cue.end_ms === caption.end_ms && cue.text === caption.text);
   if (!kept) return nleRefusal(NLE_CODES.captionShapeInvalid, '字幕内容未被原时间线契约接受。');
   if (kind === 'caption-insert') return finishPlan('caption-insert', 'caption.insert', { op: 'caption.insert', caption: kept });
@@ -876,7 +880,7 @@ export function exportStatus(receipt: unknown): NleExportStatus {
   const quality = preview ? 'PREVIEW' : 'FINAL';
   const presetFact = preview
     ? { quality: 'PREVIEW' as const, preset, label: '审核预览画质（mpeg4 / aac，原审核策略）', detail: `审核 MP4 是代理/审核画质，${NLE_OWNER_LIMITS.renderTimeoutSeconds} 秒渲染超时，不是交付成片。` }
-    : { quality: 'FINAL' as const, preset, label: `${preset === 'DELIVERY_H264_MP4' ? 'H.264 MP4' : 'VP9 WebM'} 交付画质`, detail: '交付预设是编码目标；产物仍是私有候选，需要人工审核后才能成为正式素材。' };
+    : { quality: 'FINAL' as const, preset, label: preset === 'AUDIO_WAV_PCM16' ? 'PCM16 WAV · 48 kHz · 立体声交付配置' : `${preset === 'DELIVERY_H264_MP4' ? 'H.264 MP4' : 'VP9 WebM'} 交付画质`, detail: '交付预设是编码目标；产物仍是私有候选，需要人工审核后才能成为正式素材。' };
   const stage: NleExportStage = row.state === 'UNKNOWN' ? 'DISPATCHED_UNKNOWN' : row.state === 'RETURNED' ? 'RECEIPT_RETURNED' : 'PREVIEW_CHECKED';
   const warnings = [
     ...(preview ? ['审核 MP4 只是预览画质；交付画质需要另行选择交付预设。'] : []),
@@ -911,7 +915,7 @@ const USAGE_KEYS = ['tracks', 'clips', 'durationMs', 'captions', 'captionCharact
 type RowSpec = { key: string; label: string; ownerLimit: number; unit: string; source: string; used: number | null };
 
 /** 在用户触界**之前**说明既有上限，并建议拆分；绝不提高任何上限。 */
-export function limitsNotice(limits: unknown = null, usage: unknown = null): NleLimitsNotice {
+export function limitsNotice(limits: unknown = null, usage: unknown = null, mediaKind: 'VIDEO' | 'AUDIO' = 'VIDEO'): NleLimitsNotice {
   const offered = limits === null || limits === undefined ? {} : closedObject(limits, OFFERED_LIMIT_KEYS);
   const used = usage === null || usage === undefined ? {} : closedObject(usage, USAGE_KEYS);
   if (offered === null || used === null) {
@@ -919,7 +923,7 @@ export function limitsNotice(limits: unknown = null, usage: unknown = null): Nle
       raiseRefused: false, refusedRaises: [], code: NLE_CODES.limitsShapeInvalid };
   }
   const ownerOf: Record<string, number> = {
-    duration_ms: NLE_OWNER_LIMITS.durationMs, tracks: NLE_OWNER_LIMITS.tracks, tracks_per_kind: NLE_OWNER_LIMITS.tracksPerKind,
+    duration_ms: NLE_OWNER_LIMITS.durationMs, tracks: mediaKind === 'AUDIO' ? NLE_OWNER_LIMITS.tracksPerKind : NLE_OWNER_LIMITS.tracks, tracks_per_kind: NLE_OWNER_LIMITS.tracksPerKind,
     clips: NLE_OWNER_LIMITS.clips, captions: NLE_OWNER_LIMITS.captions, caption_characters: NLE_OWNER_LIMITS.captionCharacters,
     single_asset_bytes: NLE_OWNER_LIMITS.singleAssetBytes, max_output_bytes: NLE_OWNER_LIMITS.singleAssetBytes,
     total_source_bytes: NLE_OWNER_LIMITS.totalSourceBytes, render_timeout_seconds: NLE_OWNER_LIMITS.renderTimeoutSeconds,
@@ -938,7 +942,7 @@ export function limitsNotice(limits: unknown = null, usage: unknown = null): Nle
     return isInteger(value) && value >= 0 ? value : null;
   };
   const specs: RowSpec[] = [
-    { key: 'tracks', label: '轨道总数', ownerLimit: NLE_OWNER_LIMITS.tracks, unit: '条', source: NLE_LIMIT_SOURCES.timeline, used: usageValue('tracks') },
+    { key: 'tracks', label: '轨道总数', ownerLimit: mediaKind === 'AUDIO' ? NLE_OWNER_LIMITS.tracksPerKind : NLE_OWNER_LIMITS.tracks, unit: '条', source: NLE_LIMIT_SOURCES.timeline, used: usageValue('tracks') },
     { key: 'tracks_per_kind', label: '每类轨道', ownerLimit: NLE_OWNER_LIMITS.tracksPerKind, unit: '条', source: NLE_LIMIT_SOURCES.timeline, used: null },
     { key: 'clips', label: '片段总数', ownerLimit: NLE_OWNER_LIMITS.clips, unit: '个', source: NLE_LIMIT_SOURCES.timeline, used: usageValue('clips') },
     { key: 'duration_ms', label: '时间线总长', ownerLimit: NLE_OWNER_LIMITS.durationMs, unit: '毫秒', source: NLE_LIMIT_SOURCES.timeline, used: usageValue('durationMs') },
@@ -951,7 +955,7 @@ export function limitsNotice(limits: unknown = null, usage: unknown = null): Nle
     { key: 'edit_operations_per_batch', label: '单批编辑操作', ownerLimit: NLE_OWNER_LIMITS.editOperationsPerBatch, unit: '个', source: NLE_LIMIT_SOURCES.edit, used: null },
     { key: 'edit_batch_bytes', label: '单批编辑字节', ownerLimit: NLE_OWNER_LIMITS.editBatchBytes, unit: '字节', source: NLE_LIMIT_SOURCES.edit, used: null },
   ];
-  const rows: NleLimitRow[] = specs.map(spec => {
+  const rows: NleLimitRow[] = specs.filter(spec => mediaKind !== 'AUDIO' || !['captions', 'caption_characters', 'subtitle_sidecar_bytes'].includes(spec.key)).map(spec => {
     const usedValue = spec.used;
     const remaining = usedValue === null ? null : Math.max(0, spec.ownerLimit - usedValue);
     const ratio = usedValue === null ? null : usedValue / spec.ownerLimit;
@@ -978,8 +982,8 @@ export function timelineUsage(timeline: StudioTimeline, assetBytes: { largestAss
   const clips = timeline.tracks.reduce((total, track) => total + track.clips.length, 0);
   return {
     tracks: timeline.tracks.length, clips, durationMs: timeline.duration_ms,
-    captions: timeline.captions.length,
-    captionCharacters: timeline.captions.reduce((total, cue) => total + cue.text.length, 0),
+    captions: (timeline.captions?.length ?? 0),
+    captionCharacters: (timeline.captions?.reduce((total, cue) => total + cue.text.length, 0) ?? 0),
     ...assetBytes,
   };
 }

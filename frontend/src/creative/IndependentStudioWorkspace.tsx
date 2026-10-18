@@ -1,3 +1,4 @@
+import { StudioProductionTasksPanel } from '../taskcenter/StudioProductionTasks';
 import { StudioModelReferencePanel } from './StudioModelReferencePanel';
 import { CreativeWorkspace } from './CreativeWorkspace';
 import { checkedStoryboardCapabilities, prepareStoryboardEditor, type OpenStoryboardEditor, type PreparedStoryboardEditor } from './storyboardEditorHandoff';
@@ -504,6 +505,19 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
         navigate(() => { if (current() && epoch === selectionEpoch.current && !busyRef.current) setTaskTarget(previous => previous && JSON.stringify(previous.target) === JSON.stringify(target) ? previous : { id: crypto.randomUUID(), target: structuredClone(target) }); });
       }}
       onUnavailable={deny} />}
+    {workspaceView === 'TASKS' && !denied && !identityRetired && <StudioProductionTasksPanel
+      projectId={projectId} branchId={context.scope?.branchId ?? null} identity={cacheKey} client={productionClient}
+      active={workspaceView === 'TASKS' && !denied && !identityRetired} denied={denied || identityRetired}
+      busy={busy} isBusy={operationPending} isCurrent={current} read={guarded} onUnavailable={deny}
+      onOpen={(job, isSelectionCurrent) => {
+        if (!isSelectionCurrent() || !current() || busyRef.current) return;
+        const epoch = selectionEpoch.current;
+        navigate(() => {
+          if (!isSelectionCurrent() || !current() || busyRef.current || epoch !== selectionEpoch.current) return;
+          setTaskTarget(undefined); setStoryboardHandoff(undefined); setAssetHandoff(undefined); setMediaHandoff(undefined);
+          setProductionJob({ client: productionClient, job }); setWorkspaceView('PRODUCTION');
+        });
+      }} />}
     {workspaceView === 'TASKS' && !denied && !identityRetired && taskTarget && <TaskOwnerResult key={taskTarget.id}
       projectId={projectId} scope={context.scope} identity={cacheKey} target={taskTarget.target} transport={taskTransport}
       busy={busy} isCurrent={current} read={guarded} onClose={() => setTaskTarget(undefined)} />}
@@ -583,7 +597,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
         canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} canReview={overview.capabilities.can_review === true}
         busy={busy} isBusy={operationPending} isCurrent={current} read={guarded} mutate={graphMutation} cutoutExecution={cutoutExecution}
         onDirtyChange={mediaDraftChanged} onUnavailable={deny} externalJob={productionJob?.client === productionClient ? productionJob.job : undefined} onApproved={productionApproved} onOpenApprovedAsset={openApprovedAsset} />
-      <StudioTimelineEditor key={`timeline:${cacheKey}:${productionRevision}`} client={productionClient} assets={rows} projectId={projectId} assetHandoff={assetHandoff}
+      <StudioTimelineEditor key={`timeline:${cacheKey}:${productionRevision}:${module}`} mediaKind={module === 'AUDIO' ? 'AUDIO' : 'VIDEO'} client={productionClient} assets={rows} projectId={projectId} assetHandoff={assetHandoff}
         canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} busy={busy} isBusy={operationPending}
         isCurrent={current} read={guarded} mutate={graphMutation} onDirtyChange={timelineDraftChanged} onUnavailable={deny}
         onJob={job => { if (current()) setProductionJob({ client: productionClient, job }); }} />

@@ -131,6 +131,7 @@ export function checkedGraphTimelineParameters(value: unknown): GraphTimelinePar
   if (new Set(source_bindings.map(row => row.port)).size !== source_bindings.length || new Set(source_bindings.map(row => row.clip_id)).size !== source_bindings.length) invalid();
   const edit_operations = checkedGraphTimelineEdits(raw.edit_operations === undefined ? [] : raw.edit_operations);
   if (edit_operations.length + source_bindings.length > 40) invalid();
+  if (checkedTimelineExportProfile(raw.export_profile).preset === 'AUDIO_WAV_PCM16') invalid();
   return { timeline_snapshot: checkedGraphTimelineSnapshot(raw.timeline_snapshot), edit_operations,
     source_bindings, export_profile: checkedTimelineExportProfile(raw.export_profile) };
 }

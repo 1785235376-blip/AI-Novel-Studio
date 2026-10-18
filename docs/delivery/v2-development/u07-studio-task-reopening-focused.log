@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/taskcenter/TaskOwnerResult.test.tsx (29 tests) 196ms
+ ✓ src/taskcenter/StudioProductionTasks.test.tsx (44 tests) 797ms
+
+ Test Files  2 passed (2)
+      Tests  73 passed (73)
+   Start at  00:45:12
+   Duration  2.33s (transform 791ms, setup 36ms, collect 1.16s, tests 993ms, environment 657ms, prepare 185ms)
+

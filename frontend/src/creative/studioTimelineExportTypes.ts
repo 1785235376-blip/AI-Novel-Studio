@@ -2,7 +2,7 @@ import { ApiError } from '../api';
 import type { ProductionRecipe } from './studioProductionClient';
 import { checkedTimeline, timelineSources, type StudioTimelineRow, type StudioTimelineSource } from './studioTimelineTypes';
 
-export type TimelineExportPreset = 'REVIEW_MP4' | 'DELIVERY_H264_MP4' | 'DELIVERY_VP9_WEBM';
+export type TimelineExportPreset = 'REVIEW_MP4' | 'DELIVERY_H264_MP4' | 'DELIVERY_VP9_WEBM' | 'AUDIO_WAV_PCM16';
 export type TimelineExportProfile = { preset: TimelineExportPreset; video_bitrate_kbps?: number; audio_bitrate_kbps?: number; crf?: number };
 export type TimelineExportInput = { expected_version: number; reviewed_timeline_digest: string; export_profile: TimelineExportProfile };
 export type TimelineExportPreview = { contract: 'studio-timeline-export-preview/1'; timeline_snapshot: { id: string; version: number; digest: string };
@@ -10,14 +10,15 @@ export type TimelineExportPreview = { contract: 'studio-timeline-export-preview/
   limits: { max_output_bytes: number; render_timeout_seconds: number }; preview_digest: string; model_called: false;
   automatic_replay: false; product_acceptance: 'LOCAL_REQUIRED' };
 
-export const timelineExportPresets: TimelineExportPreset[] = ['REVIEW_MP4', 'DELIVERY_H264_MP4', 'DELIVERY_VP9_WEBM'];
+export const AUDIO_TIMELINE_MAX_WAV_DURATION_MS = Math.floor((25 * 1024 * 1024 - 44) / (48000 * 2 * 2 / 1000));
+export const timelineExportPresets: TimelineExportPreset[] = ['REVIEW_MP4', 'DELIVERY_H264_MP4', 'DELIVERY_VP9_WEBM', 'AUDIO_WAV_PCM16'];
 export function checkedTimelineExportProfile(value: unknown): TimelineExportProfile {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('请明确选择导出配置。');
   const row = value as Record<string, unknown>;
   if (!timelineExportPresets.includes(row.preset as TimelineExportPreset) || Object.keys(row).some(key => !['preset', 'video_bitrate_kbps', 'audio_bitrate_kbps', 'crf'].includes(key))) throw new Error('导出配置字段无效。');
-  if (row.preset === 'REVIEW_MP4') {
+  if (row.preset === 'REVIEW_MP4' || row.preset === 'AUDIO_WAV_PCM16') {
     if (Object.keys(row).some(key => key !== 'preset')) throw new Error('审核 MP4 使用原渲染配置，不接受交付编码参数。');
-    return { preset: 'REVIEW_MP4' };
+    return { preset: row.preset };
   }
   const vp9 = row.preset === 'DELIVERY_VP9_WEBM';
   const number = (key: string, fallback: number, min: number, max: number) => {
@@ -51,6 +52,7 @@ export function checkedTimelineExportPreview(value: unknown, source: StudioTimel
   let normalized: TimelineExportProfile;
   try { normalized = checkedTimelineExportProfile(row.export_profile); if (timelineExportKey(normalized) !== timelineExportKey(profile)) invalid(); }
   catch { return invalid(); }
+  if ((source.timeline.schema_version === 3) !== (normalized.preset === 'AUDIO_WAV_PCM16')) invalid();
   const recipe = row.execution_recipe as Record<string, unknown> | null;
   if (!recipe || typeof recipe !== 'object' || Array.isArray(recipe) || Object.keys(recipe).some(key => !['contract', 'operation_id', 'adapter', 'output_profile', 'timeline', 'export_profile', 'automatic_fallback', 'recipe_digest'].includes(key))
     || recipe.contract !== 'studio-execution-recipe/1' || recipe.operation_id !== 'm9.timeline.multitrack' || recipe.adapter !== 'LOCAL_FFMPEG'

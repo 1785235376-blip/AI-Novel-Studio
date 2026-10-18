@@ -15,6 +15,7 @@ from urllib.parse import urlsplit
 from ..experimental.common import StaleSourceError, new_row, change_row
 from ..experimental.store import canonical
 from ..media_files import inspect_image, inspect_media
+from ..services.studio_timeline_export import bound_timeline_output_kind
 from ..services.v1_capability_service import CapabilityVersionConflict
 from .production_execution_models import (MediaCommand, MediaCreate, ProviderSelection, TimelineSave, TimelineRender,
     TimelineEdit, TimelineRestore, TimelineExportPreview, TimelineExport)
@@ -603,7 +604,7 @@ class ProductionExecutionService:
             "execution_recipe": copy.deepcopy(context.get("execution_recipe")),
             "media_measurement": {key: copy.deepcopy(row["measured"][key]) for key in
                 ("duration_ms", "byte_count", "width", "height", "fps", "video_codec", "audio_codec", "sample_rate", "channels",
-                 "container", "profile_validation", "render_profile", "export_profile") if key in row.get("measured", {})}
+                 "container", "profile_validation", "render_profile", "export_profile", "sample_count", "bits_per_sample") if key in row.get("measured", {})}
                 if owner == "timeline" and isinstance(row.get("measured"), dict) else
                 copy.deepcopy(row.get("measured")) if owner == "audio" and context.get("operation_id") == "m8.audio.trim"
                 and context.get("graph_binding") is None else None,
@@ -713,7 +714,7 @@ class ProductionExecutionService:
                     "request_digest": row["request_digest"], "output_digest": candidate["digest"],
                     "candidate_version": candidate["version"], "review_actor": actor}
                 if (meta.get("version") != expected_version or meta.get("sha256") != candidate["digest"]
-                        or meta.get("kind") != "video" or meta.get("deleted_at")
+                        or meta.get("kind") != bound_timeline_output_kind(context) or candidate.get("kind") != bound_timeline_output_kind(context) or meta.get("deleted_at")
                         or meta.get("novel_id") != nid or meta.get("branch_id") != scope.get("branch_id")
                         or meta.get("_required_features") != [FLAG]
                         or meta.get("_studio_result_origin") != origin or meta.get("source_job_id") != jid
@@ -972,7 +973,7 @@ class ProductionExecutionService:
                 if len(matches) != 1: raise ValueError("STUDIO_TIMELINE_RECOVERY_CANDIDATE_AMBIGUOUS")
                 asset = matches[0]
                 origin = self._timeline_result_origin(context, captured["id"])
-                if (asset.get("kind") != "video" or asset.get("novel_id") != nid or asset.get("branch_id") != scope.get("branch_id")
+                if (asset.get("kind") != bound_timeline_output_kind(context) or asset.get("novel_id") != nid or asset.get("branch_id") != scope.get("branch_id")
                         or asset.get("_owner_actor_id") != actor or asset.get("deleted_at") or asset.get("_required_features") != [FLAG]
                         or type(asset.get("version")) is not int or asset["version"] != 1 or asset.get("_origin_provenance") is not None
                         or asset.get("sha256") != captured["output_digest"] or asset.get("source_job_id") != captured["id"]
@@ -1112,7 +1113,7 @@ class ProductionExecutionService:
                 and meta.get("_origin_provenance") == {**provenance, "review_actor": actor}
                 and meta.get("version") == candidate["version"] + 1)
             private_current = meta.get("_owner_actor_id") == actor and meta.get("version") == candidate["version"]
-            if (meta.get("sha256") != candidate["digest"] or meta.get("kind") != "video" or meta.get("deleted_at")
+            if (meta.get("sha256") != candidate["digest"] or meta.get("kind") != bound_timeline_output_kind(context) or candidate.get("kind") != bound_timeline_output_kind(context) or meta.get("deleted_at")
                     or meta.get("_studio_result_origin") != self._timeline_result_origin(context, jid)
                     or meta.get("novel_id") != nid or meta.get("branch_id") != scope.get("branch_id")
                     or meta.get("source_job_id") != jid or meta.get("_required_features") != [FLAG]
@@ -1220,6 +1221,8 @@ class ProductionExecutionService:
                 self._timeline_context_current(nid, scope, actor, context, document)
             return asset_guard
         def publish(data, kind, filename, measured, jid, job_guard=lambda: None):
+            if context.get("timeline_snapshot") and kind != bound_timeline_output_kind(context):
+                raise ValueError("STUDIO_TIMELINE_OUTPUT_KIND_MISMATCH")
             # The source document is leased before assets -> project. Never
             # query the scope/job store while holding the asset/project lease.
             with self.store.source_lease(nid, scope) as document:
@@ -1647,6 +1650,15 @@ class ProductionExecutionService:
         row = self.timeline_get(nid, scope, actor, tid, guard)
         if row["version"] != body.expected_version or row["timeline_digest"] != body.reviewed_timeline_digest:
             raise StaleSourceError("STUDIO_TIMELINE_CHANGED")
+        if row["timeline"].get("schema_version") == 3:
+            # The legacy render command still uses the original export owner,
+            # but audio always binds the explicit closed WAV profile.
+            preview_body = {"expected_version": body.expected_version,
+                "reviewed_timeline_digest": body.reviewed_timeline_digest,
+                "export_profile": {"preset": "AUDIO_WAV_PCM16"}}
+            preview = self.timeline_export_preview(nid, scope, actor, tid, preview_body, guard)
+            return self.timeline_export(nid, scope, actor, tid,
+                {**preview_body, "request_id": body.request_id, "reviewed_export_digest": preview["preview_digest"]}, guard)
         context = self._base(nid, scope, actor, guard)
         context.update(request_id=body.request_id, operation_id="m9.timeline.multitrack", sources=studio_sources(row["timeline"]),
             timeline_snapshot={"id": tid, "version": row["version"], "digest": row["timeline_digest"]}, provider_binding=None, license_note="", rights={"license_note": ""})

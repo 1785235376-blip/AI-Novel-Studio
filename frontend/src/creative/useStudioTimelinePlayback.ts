@@ -2,12 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
 import type { StudioTimelineEditorProps } from './useStudioTimelineEditor';
 import type { ProductionJob } from './studioProductionClient';
-import { playbackJobMatches, type TimelinePlayback } from './studioTimelinePlaybackTypes';
+import { timelinePlaybackMediaType, playbackJobMatches, type TimelinePlayback } from './studioTimelinePlaybackTypes';
+import { AUDIO_TIMELINE_MAX_WAV_DURATION_MS } from './studioTimelineExportTypes';
 import { timelineBinding, timelineSourcesCurrent, type StudioTimelineRow } from './studioTimelineTypes';
 
 type Options = { props: StudioTimelineEditorProps; source?: StudioTimelineRow; isReady: () => boolean;
   onGateChange: (value: boolean) => void; onAuthorityLost: () => void };
-type Entry = { key: string; url: string; bytes: number; digest: string; jobVersion: number; source: StudioTimelineRow; durationMs: number };
+type Entry = { mediaType?: 'audio/wav' | 'video/mp4'; key: string; url: string; bytes: number; digest: string; jobVersion: number; source: StudioTimelineRow; durationMs: number };
 type Attempt = { source: StudioTimelineRow; preview: TimelinePlayback };
 /** Private two-entry/50MiB encoded-file cache. Original exports remain their owner. */
 export function useStudioTimelinePlayback(options: Options) {
@@ -70,11 +71,13 @@ export function useStudioTimelinePlayback(options: Options) {
   }
   async function previewPlayback() {
     const source = latest.current.source, method = latest.current.props.client.timelinePlaybackPreview;
-    if (!source || !method) return; const request = begin('PREVIEW'); if (!request) return;
+    if (!source || !method) return;
+    if (source.timeline.schema_version === 3 && source.timeline.duration_ms > AUDIO_TIMELINE_MAX_WAV_DURATION_MS) { setError('当前音频时间线超出固定 WAV 的 25 MiB 上限，请缩短至 136533 毫秒以内并保存。'); return; }
+    const request = begin('PREVIEW'); if (!request) return;
     const abort = new AbortController(); reading.current = abort; clearVisible();
     try { const value = await latest.current.props.mutate(() => latest.current.props.read(() => method(source, abort.signal)));
       if (!active(request) || !sourceCurrent(source)) return; adoptProof(value);
-      setNotice(value.job ? '已读取同一原缓存任务；不会重新编码。核对后可载入已存在的候选。' : '尚无原缓存任务。确认后才执行一次本地 H.264/AAC 渲染。');
+      setNotice(value.job ? '已读取同一原缓存任务；不会重新编码。核对后可载入已存在的候选。' : value.export_preview.export_profile.preset === 'AUDIO_WAV_PCM16' ? '尚无原缓存任务。确认后才执行一次本地 PCM16 WAV 渲染。' : '尚无原缓存任务。确认后才执行一次本地 H.264/AAC 渲染。');
     } catch (reason) { if (active(request)) fail(reason); }
     finally { if (reading.current === abort) reading.current = undefined; finish(request); }
   }
@@ -143,12 +146,12 @@ export function useStudioTimelinePlayback(options: Options) {
       }
       if (!entry) {
         const blob = await request.client.candidate(latestJob);
-        if (blob.type !== 'video/mp4' || !blob.size || blob.size > 25 * 1024 * 1024
+        if (blob.type !== timelinePlaybackMediaType(value) || !blob.size || blob.size > 25 * 1024 * 1024
           || blob.size !== latestJob.media_measurement?.byte_count) throw new Error('缓存候选的类型或容量证明不完整。');
         const hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', await blob.arrayBuffer())), byte => byte.toString(16).padStart(2, '0')).join('');
         if (hash !== latestJob.output_candidate.digest) throw new Error('缓存候选的实际摘要不一致。');
         if (!active(request) || !sourceCurrent(source)) return;
-        entry = { key: value.cache_key, url: URL.createObjectURL(blob), bytes: blob.size, digest: hash,
+        entry = { mediaType: timelinePlaybackMediaType(value), key: value.cache_key, url: URL.createObjectURL(blob), bytes: blob.size, digest: hash,
           jobVersion: latestJob.version, source, durationMs: source.timeline.duration_ms };
       }
       cache.current.delete(entry.key); cache.current.set(entry.key, entry);

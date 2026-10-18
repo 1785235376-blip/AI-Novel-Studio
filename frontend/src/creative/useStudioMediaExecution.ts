@@ -590,6 +590,9 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       const digest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', await blob.arrayBuffer())), byte => byte.toString(16).padStart(2, '0')).join('');
       if (!stillBound()) return;
       if (job.operation_id === 'm5.image.cutout' && (blob.type !== 'image/png' || blob.size !== job.processing_proof?.output_bytes)) throw invalid('本地抠图候选与处理证明不一致，不可审核。');
+      if (job.owner === 'timeline' && job.execution_recipe.output_profile === 'AUDIO_WAV_PCM16'
+        && (job.output_candidate.kind !== 'audio' || blob.type !== 'audio/wav' || blob.size !== job.media_measurement?.byte_count))
+        throw invalid('音频时间线 WAV 候选与绑定的输出配置或实际测量不一致，不可审核。');
       if (job.operation_id === 'm8.audio.trim' && job.media_measurement?.profile_validation === 'PCM_DECODED'
         && (blob.size !== job.media_measurement.byte_count || !['audio/wav', 'audio/x-wav', 'audio/wave'].includes(blob.type))) throw invalid('本地 WAV 候选与实际输出测量不一致，不可审核。');
       if (job.operation_id === 'm8.audio.trim' && job.media_measurement?.profile_validation === 'FLAC_STREAMINFO_PCM_VERIFIED'

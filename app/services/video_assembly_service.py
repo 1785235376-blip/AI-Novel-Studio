@@ -449,6 +449,8 @@ class VideoAssemblyService:
 
     @staticmethod
     def _studio_candidate(novel_id, branch_id, actor_id, job_id, context, asset, output_digest):
+        from .studio_timeline_export import bound_timeline_output_kind
+        expected_kind = bound_timeline_output_kind(context)
         expected_origin = {"contract": "studio-production-result/1", "job_id": job_id,
             **{key: context[key] for key in ("scope_key", "incarnation", "actor", "request_digest", "operation_id", "sources")},
             "provider_id": None, "model_id": None, "license_note": context.get("license_note", "")}
@@ -460,7 +462,7 @@ class VideoAssemblyService:
             expected_origin["graph_binding"] = copy.deepcopy(graph_binding)
         if (not isinstance(asset, dict) or not isinstance(asset.get("id"), str)
                 or type(asset.get("version")) is not int or asset["version"] < 1
-                or asset.get("sha256") != output_digest or asset.get("kind") != "video"
+                or asset.get("sha256") != output_digest or asset.get("kind") != expected_kind
                 or asset.get("novel_id") != novel_id or asset.get("branch_id") != branch_id
                 or asset.get("_owner_actor_id") != actor_id or asset.get("deleted_at")
                 or asset.get("source_job_id") != job_id or asset.get("_required_features") != ["narrative_production_v2"]
@@ -468,7 +470,7 @@ class VideoAssemblyService:
                 or asset.get("_project_binding") != {"novel_id": novel_id, "branch_id": branch_id,
                     "scope_key": context["scope_key"], "incarnation": context["incarnation"]}):
             raise ValueError("STUDIO_TIMELINE_PUBLICATION_RECEIPT_INVALID")
-        return {"id": asset["id"], "version": asset["version"], "digest": asset["sha256"], "kind": "video"}
+        return {"id": asset["id"], "version": asset["version"], "digest": asset["sha256"], "kind": expected_kind}
 
     def _prepare_studio_inputs(self, novel_id, branch_id, actor_id, timeline, *, context, export_profile=None):
         """Pure original input normalization and digest, with no source/tool I/O."""
@@ -486,7 +488,7 @@ class VideoAssemblyService:
             if (context.get("export_profile") != export_profile
                     or context.get("export_profile_digest") != export_profile_digest(export_profile)):
                 raise ValueError("STUDIO_TIMELINE_EXPORT_CONTEXT_CHANGED")
-        elif "export_profile" in context or "export_profile_digest" in context:
+        elif "export_profile" in context or "export_profile_digest" in context or definition.get("schema_version") == 3:
             raise ValueError("STUDIO_TIMELINE_EXPORT_CONTEXT_CHANGED")
         request_id, request_digest = context.get("request_id"), context.get("request_digest")
         if (not isinstance(request_id, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,99}", request_id)
@@ -587,10 +589,12 @@ class VideoAssemblyService:
                         or current.get("phase") != "PUBLICATION_READY" or current["request_digest"] != request_digest
                         or current.get("receipt_digest") != publication_digest):
                     raise ValueError("STUDIO_TIMELINE_PUBLICATION_ATTEMPT_CHANGED")
+            from .studio_timeline_export import bound_timeline_output_kind
+            expected_kind = bound_timeline_output_kind(context)
             suffix = measured.get("extension")
-            if suffix not in {"mp4", "webm"}:
+            if suffix not in ({"wav"} if expected_kind == "audio" else {"mp4", "webm"}):
                 raise ValueError("STUDIO_TIMELINE_OUTPUT_CONTAINER_INVALID")
-            asset = publish(data, "video", f"studio-timeline-{job_id}.{suffix}", measured, job_id, job_current)
+            asset = publish(data, expected_kind, f"studio-timeline-{job_id}.{suffix}", measured, job_id, job_current)
             candidate = self._studio_candidate(novel_id, branch_id, actor_id, job_id, context, asset, hashlib.sha256(data).hexdigest())
             row = self._studio_mutate(novel_id, branch_id, actor_id, job_id, row["version"],
                 lambda value: value.update(output_candidate=candidate, phase="CANDIDATE_RECORDED"), context=context)

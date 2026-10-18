@@ -9,7 +9,7 @@ import type { StudioAsset } from './studioClient';
 import type { StudioProductionClient } from './studioProductionClient';
 import { checkedTimeline, checkedTimelineDraft, checkedTimelineList, checkedTimelineRow, cloneTimeline, newTimelineDraft, timelineBinding,
   timelineClipDuration, timelineFailure, timelineInputKey, timelineSources, timelineSourcesCurrent, type StudioTimeline, type StudioTimelineDraft, type StudioTimelineRow, type StudioTimelineSource } from './studioTimelineTypes';
-import { checkedTimelineExportPreview, checkedTimelineExportProfile, timelineExportKey, type TimelineExportProfile, type TimelineExportPreview } from './studioTimelineExportTypes';
+import { AUDIO_TIMELINE_MAX_WAV_DURATION_MS, checkedTimelineExportPreview, checkedTimelineExportProfile, timelineExportKey, type TimelineExportProfile, type TimelineExportPreview } from './studioTimelineExportTypes';
 import { useStudioTimelineTransfer } from './useStudioTimelineTransfer';
 import { useStudioTimelinePlayback } from './useStudioTimelinePlayback';
 import { useStudioTimelineSourceEdit } from './useStudioTimelineSourceEdit';
@@ -21,6 +21,7 @@ export type StudioTimelineEditorProps = {
   onDirtyChange: (dirty: boolean) => void; onJob: (job: StudioTimelineJob) => void; onUnavailable: () => void;
   /** UX-PRODUCT batch 3 (UX-06): display-only project identity for the editing rail. */
   projectId?: string;
+  mediaKind?: 'VIDEO' | 'AUDIO';
   assetHandoff?: TimelineAssetHandoff;
 };
 type Operation = 'LIST' | 'GET' | 'SAVE' | 'RENDER' | 'JOB' | 'EXPORT_PREVIEW' | 'EXPORT' | 'TRACK_LOCK';
@@ -30,7 +31,7 @@ type Attempt = { binding: string; requestId: string; state: 'UNKNOWN' | 'RETURNE
 
 /** Owns the CAS/draft boundary; the presentation can be replaced independently. */
 export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
-  const [draft, setDraft] = useState<StudioTimelineDraft>(newTimelineDraft), [base, setBase] = useState<StudioTimelineRow>();
+  const [draft, setDraft] = useState<StudioTimelineDraft>(() => newTimelineDraft(props.mediaKind)), [base, setBase] = useState<StudioTimelineRow>();
   const [rows, setRows] = useState<StudioTimelineRow[]>([]), [candidate, setCandidate] = useState<StudioTimelineRow>();
   const [pending, setPending] = useState<Operation>(), [failure, setFailure] = useState<'CONFLICT' | 'UNKNOWN'>();
   const [error, setError] = useState(''), [notice, setNotice] = useState(''), [denied, setDenied] = useState(false);
@@ -38,13 +39,14 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   const [attempt, setAttempt] = useState<Attempt>();
   const [historySize, setHistorySize] = useState({ undo: 0, redo: 0 });
   const history = useRef<{ undo: StudioTimelineDraft[]; redo: StudioTimelineDraft[] }>({ undo: [], redo: [] });
-  const [exportProfile, setExportProfile] = useState<TimelineExportProfile>({ preset: 'REVIEW_MP4' });
+  const [exportProfile, setExportProfile] = useState<TimelineExportProfile>(() => ({ preset: props.mediaKind === 'AUDIO' ? 'AUDIO_WAV_PCM16' : 'REVIEW_MP4' }));
   const [exportPreview, setExportPreview] = useState<TimelineExportPreview>(), [exportConfirmed, setExportConfirmed] = useState('');
   const exportRef = useRef<{ profile: TimelineExportProfile; preview?: TimelineExportPreview; consent: string }>({ profile: exportProfile, consent: '' });
   const reservedBindings = useRef(new Set<string>());
   const transferGate = useRef(false);
   const playbackGate = useRef(false);
   const sourceEditGate = useRef(false);
+  const mode = props.mediaKind ?? 'VIDEO', modeOwner = useRef(mode);
   const latest = useRef(props); latest.current = props;
   const measuredBounds = useRef<{source:StudioTimelineRow;client:StudioProductionClient;values:Map<string,TimelineMeasuredBound>}>();
   const [,setMeasurementRevision] = useState(0);
@@ -62,16 +64,16 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   const consent = useRef({ render: '', adopt: '', discard: '' });
   const draftRef = useRef(draft), baseRef = useRef(base), candidateRef = useRef(candidate), failureRef = useRef(failure), attemptRef = useRef(attempt);
   draftRef.current = draft; baseRef.current = base; candidateRef.current = candidate; failureRef.current = failure; attemptRef.current = attempt;
-  const baseline = useRef(timelineInputKey(newTimelineDraft()));
-  const current = () => alive.current && !deniedRef.current && owner.current === latest.current.client && latest.current.isCurrent();
+  const baseline = useRef(timelineInputKey(newTimelineDraft(latest.current.mediaKind)));
+  const current = () => alive.current && !deniedRef.current && owner.current === latest.current.client && modeOwner.current === (latest.current.mediaKind ?? 'VIDEO') && latest.current.isCurrent();
   const blocked = () => !!slot.current || transferGate.current || playbackGate.current || sourceEditGate.current || latest.current.busy || !!latest.current.isBusy?.() || !current();
-  const owns = owner.current === props.client && props.isCurrent() && !denied;
+  const owns = owner.current === props.client && modeOwner.current === mode && props.isCurrent() && !denied;
   const inputDirty = timelineInputKey(draft) !== baseline.current;
   const uncertainRender = !!attempt && attempt.state === 'UNKNOWN';
   const sourcesCurrent = timelineSourcesCurrent(draft.timeline, props.assets);
-  const transfer = useStudioTimelineTransfer({ props: { ...props, isCurrent: current }, source: owns ? base : undefined,
-    canOperate: owns && props.canMutate && !props.busy && !pending && !failure && !uncertainRender && !playbackGate.current && !sourceEditGate.current && !!base && !inputDirty && sourcesCurrent,
-    isReady: () => !blocked() && latest.current.canMutate && !!baseRef.current && !failureRef.current && attemptRef.current?.state !== 'UNKNOWN'
+  const transfer = useStudioTimelineTransfer({ props: { ...props, isCurrent: current }, source: owns && mode !== 'AUDIO' ? base : undefined,
+    canOperate: mode !== 'AUDIO' && owns && props.canMutate && !props.busy && !pending && !failure && !uncertainRender && !playbackGate.current && !sourceEditGate.current && !!base && !inputDirty && sourcesCurrent,
+    isReady: () => (latest.current.mediaKind ?? 'VIDEO') !== 'AUDIO' && !blocked() && latest.current.canMutate && !!baseRef.current && !failureRef.current && attemptRef.current?.state !== 'UNKNOWN'
       && timelineInputKey(draftRef.current) === baseline.current && timelineSourcesCurrent(baseRef.current.timeline, latest.current.assets),
     onAdopt: row => adopt(row), onAuthorityLost: loseAuthority, onGateChange: value => { handoffGeneration.current++; transferGate.current = value; } });
   const playback = useStudioTimelinePlayback({ props: { ...props, isCurrent: current }, source: owns ? base : undefined,
@@ -87,11 +89,11 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   const canEdit = owns && props.canMutate && !props.busy && !pending && !failure && !uncertainRender && !transfer.locked && !playback.locked && !sourceEdit.locked;
   const savedBinding = base ? timelineBinding(base) : '';
   const renderedThisSnapshot = reservedBindings.current.has(savedBinding);
-  const canRender = canEdit && !!base && !inputDirty && confirmed === savedBinding && sourcesCurrent && !renderedThisSnapshot && !uncertainRender;
+  const canRender = mode !== 'AUDIO' && canEdit && !!base && !inputDirty && confirmed === savedBinding && sourcesCurrent && !renderedThisSnapshot && !uncertainRender;
   let exportKey = ''; try { exportKey = timelineExportKey(exportProfile); } catch { /* The form may hold an incomplete number while editing. */ }
   const exportBinding = `${savedBinding}:export:${exportKey}`;
   const exportAvailable = !!props.client.timelineExportPreview && !!props.client.timelineExport;
-  const canPreviewExport = canEdit && exportAvailable && !!base && !inputDirty && sourcesCurrent && !uncertainRender && !!exportKey;
+  const canPreviewExport = (base?.timeline.schema_version !== 3 || base.timeline.duration_ms <= AUDIO_TIMELINE_MAX_WAV_DURATION_MS) && canEdit && exportAvailable && !!base && !inputDirty && sourcesCurrent && !uncertainRender && !!exportKey;
   const canExport = canPreviewExport && !!exportPreview && exportConfirmed === exportPreview.preview_digest
     && exportPreview.timeline_snapshot.id === base?.id && exportPreview.timeline_snapshot.version === base?.version
     && exportPreview.timeline_snapshot.digest === base?.timeline_digest && !reservedBindings.current.has(exportBinding);
@@ -101,27 +103,27 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     if (slot.current?.operation === 'LIST') { slot.current = undefined; started.current = false; }
   }; }, []);
   useEffect(() => {
-    owner.current = props.client; deniedRef.current = false; epoch.current++; reading.current?.abort(); reading.current = undefined; slot.current = undefined; started.current = false;
-    const input = newTimelineDraft(); handoffGeneration.current++; draftRef.current = input; baseRef.current = undefined; candidateRef.current = undefined; failureRef.current = undefined; attemptRef.current = undefined;
+    owner.current = props.client; modeOwner.current = mode; deniedRef.current = false; epoch.current++; reading.current?.abort(); reading.current = undefined; slot.current = undefined; started.current = false;
+    const input = newTimelineDraft(latest.current.mediaKind); handoffGeneration.current++; draftRef.current = input; baseRef.current = undefined; candidateRef.current = undefined; failureRef.current = undefined; attemptRef.current = undefined;
     baseline.current = timelineInputKey(input); setDraft(input); setBase(undefined); setRows([]); setCandidate(undefined); setFailure(undefined); setAttempt(undefined); setPending(undefined);
     consent.current = { render: '', adopt: '', discard: '' };
     clearHistory();
-    reservedBindings.current.clear(); exportRef.current.profile = { preset: 'REVIEW_MP4' }; setExportProfile(exportRef.current.profile); clearExportPreview();
+    reservedBindings.current.clear(); exportRef.current.profile = { preset: mode === 'AUDIO' ? 'AUDIO_WAV_PCM16' : 'REVIEW_MP4' }; setExportProfile(exportRef.current.profile); clearExportPreview();
     setDenied(false); setError(''); setNotice(''); setConfirmed(''); setAdoptConfirmed(false); setDiscardConfirmed(false);
     return () => { epoch.current++; reading.current?.abort(); };
-  }, [props.client]);
+  }, [props.client, mode]);
   useEffect(() => { props.onDirtyChange(dirty); }, [dirty, props.onDirtyChange]);
   useEffect(() => () => latest.current.onDirtyChange(false), []);
   useEffect(() => {
     // Automatic read only. StrictMode cleanup invalidates the first callback;
     // a replacement setup can make its own bounded list request.
     if (!started.current && !blocked()) { started.current = true; void reload(); }
-  }, [props.client, props.busy]);
+  }, [props.client, props.busy, mode]);
 
   function loseAuthority() {
     deniedRef.current = true; epoch.current++; reading.current?.abort(); slot.current = undefined;
     baseRef.current = undefined; candidateRef.current = undefined; failureRef.current = undefined; attemptRef.current = undefined;
-    draftRef.current = newTimelineDraft(); baseline.current = timelineInputKey(draftRef.current);
+    draftRef.current = newTimelineDraft(latest.current.mediaKind); baseline.current = timelineInputKey(draftRef.current);
     consent.current = { render: '', adopt: '', discard: '' };
     clearHistory();
     reservedBindings.current.clear(); clearExportPreview();
@@ -162,7 +164,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     const abort = new AbortController(); reading.current = abort;
     try {
       const list = checkedTimelineList(await latest.current.mutate(() => latest.current.read(() => request.client.timelineList(abort.signal))));
-      if (active(request)) { setRows(list); setNotice('列表已读取；不会替换本地时间线。选择后读取并核对。'); }
+      if (active(request)) { setRows(list.filter(row => (row.timeline.schema_version === 3) === (mode === 'AUDIO'))); setNotice('列表已读取；不会替换本地时间线。选择后读取并核对。'); }
     } catch (reason) { if (active(request)) handleError(reason, '时间线列表读取失败。'); }
     finally { if (reading.current === abort) reading.current = undefined; finish(request); }
   }
@@ -173,6 +175,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     try {
       const row = checkedTimelineRow(await latest.current.mutate(() => latest.current.read(() => request.client.timelineGet(id, abort.signal))), id);
       if (!active(request)) return;
+      if ((row.timeline.schema_version === 3) !== (mode === 'AUDIO')) throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '时间线媒体类型与当前工作区不一致，请从对应工作区读取。' });
       const source = baseRef.current;
       if (source?.id === row.id && (row.version < source.version || row.version === source.version && (row.timeline_digest !== source.timeline_digest || timelineInputKey({ title: row.title, timeline: row.timeline }) !== timelineInputKey({ title: source.title, timeline: source.timeline })))) throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '读取的时间线版本回退或同版本内容改变，请重新核对。' });
       candidateRef.current = row; setCandidate(row); setNotice('已读取服务端时间线。核对内容后人工采用；读取本身不会覆盖草稿，也不证明先前渲染完成。');
@@ -207,6 +210,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   function change(work: (input: StudioTimelineDraft) => void): boolean {
     if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN') return false;
     const input = cloneTimeline(draftRef.current); work(input);
+    if ((input.timeline.schema_version === 3) !== ((latest.current.mediaKind ?? 'VIDEO') === 'AUDIO')) return false;
     const beyond=changedRangeBeyondMeasurement(draftRef.current,input,currentMeasuredBounds());
     if(beyond){setError(`片段 ${beyond} 的新素材终点超过已读取的实测长度，未修改草稿。请缩短范围或重新核对原素材。`);return false;}
     const source = baseRef.current, lockedTracks = source?.timeline.tracks.filter(track => track.locked) ?? [];
@@ -225,6 +229,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     exportRef.current.preview = undefined; exportRef.current.consent = ''; setExportPreview(undefined); setExportConfirmed('');
   }
   function changeExportProfile(profile: TimelineExportProfile) {
+    if ((draftRef.current.timeline.schema_version === 3) !== (profile.preset === 'AUDIO_WAV_PCM16')) return;
     if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN') return;
     exportRef.current.profile = { ...profile }; setExportProfile(exportRef.current.profile); clearExportPreview(); setError(''); setNotice('');
   }
@@ -256,7 +261,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
         const right = { ...cloneTimeline(clip), id: crypto.randomUUID(), start_ms: position, in_ms: clip.in_ms + mediaOffset };
         if (clip.source_snapshot.asset_kind === 'image') { clip.out_ms = offset; right.in_ms = 0; right.out_ms = duration - offset; }
         else clip.out_ms = right.in_ms;
-        if (input.timeline.schema_version === 2) { clip.fade_out_ms = 0; right.fade_in_ms = 0; }
+        if (input.timeline.schema_version === 2 || input.timeline.schema_version === 3) { clip.fade_out_ms = 0; right.fade_in_ms = 0; }
         track.clips.push(right);
       } else if (action === 'duplicate') {
         target.clips.push({ ...cloneTimeline(clip), id: crypto.randomUUID(), start_ms: position });
@@ -380,7 +385,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   function createNew() {
     const unsaved = timelineInputKey(draftRef.current) !== baseline.current;
     if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN' || unsaved && consent.current.discard !== timelineInputKey(draftRef.current)) return;
-    const input = newTimelineDraft(); handoffGeneration.current++; draftRef.current = input; baseRef.current = undefined; baseline.current = timelineInputKey(input); candidateRef.current = undefined;
+    const input = newTimelineDraft(latest.current.mediaKind); handoffGeneration.current++; draftRef.current = input; baseRef.current = undefined; baseline.current = timelineInputKey(input); candidateRef.current = undefined;
     consent.current = { render: '', adopt: '', discard: '' };
     clearHistory();
     clearExportPreview();
@@ -389,7 +394,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   function discardDraft() {
     if (blocked() || consent.current.discard !== timelineInputKey(draftRef.current) || timelineInputKey(draftRef.current) === baseline.current || failureRef.current || attemptRef.current?.state === 'UNKNOWN') return;
     const source = baseRef.current;
-    const input = source ? { title: source.title, timeline: cloneTimeline(source.timeline) } : newTimelineDraft();
+    const input = source ? { title: source.title, timeline: cloneTimeline(source.timeline) } : newTimelineDraft(latest.current.mediaKind);
     handoffGeneration.current++; draftRef.current = input; setDraft(input); baseline.current = timelineInputKey(input); setConfirmed(''); setAdoptConfirmed(false); setDiscardConfirmed(false); candidateRef.current = undefined; setCandidate(undefined);
     consent.current = { render: '', adopt: '', discard: '' };
     clearHistory();
@@ -415,7 +420,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   async function setTrackLocked(trackId: string, locked: boolean) {
     const source = baseRef.current, method = latest.current.client.timelineTrackLock;
     if (!source || !method || blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN'
-      || timelineInputKey(draftRef.current) !== baseline.current || source.timeline.schema_version !== 2
+      || timelineInputKey(draftRef.current) !== baseline.current || ![2, 3].includes(source.timeline.schema_version ?? 1)
       || !timelineSourcesCurrent(source.timeline, latest.current.assets)) return;
     const track = source.timeline.tracks.find(row => row.id === trackId);
     if (!track || (track.locked ?? false) === locked) return;
@@ -434,7 +439,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   }
   async function render() {
     const source = baseRef.current;
-    if (!source || blocked() || !latest.current.canMutate || failureRef.current || timelineInputKey(draftRef.current) !== baseline.current || consent.current.render !== timelineBinding(source) || !timelineSourcesCurrent(source.timeline, latest.current.assets)) return;
+    if (!source || source.timeline.schema_version === 3 || blocked() || !latest.current.canMutate || failureRef.current || timelineInputKey(draftRef.current) !== baseline.current || consent.current.render !== timelineBinding(source) || !timelineSourcesCurrent(source.timeline, latest.current.assets)) return;
     const binding = timelineBinding(source);
     if (reservedBindings.current.has(binding) || attemptRef.current?.state === 'UNKNOWN') return;
     const requestId = crypto.randomUUID(), request = begin('RENDER'); if (!request) return;
@@ -462,8 +467,10 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     const source = baseRef.current, previewMethod = latest.current.client.timelineExportPreview;
     if (!source || !previewMethod || !latest.current.client.timelineExport || blocked() || !latest.current.canMutate || failureRef.current
       || timelineInputKey(draftRef.current) !== baseline.current || attemptRef.current?.state === 'UNKNOWN' || !timelineSourcesCurrent(source.timeline, latest.current.assets)) return;
+    if (source.timeline.schema_version === 3 && source.timeline.duration_ms > AUDIO_TIMELINE_MAX_WAV_DURATION_MS) { setError('当前音频时间线超出固定 WAV 的 25 MiB 上限，请缩短至 136533 毫秒以内并保存。'); return; }
     let profile: TimelineExportProfile;
-    try { profile = checkedTimelineExportProfile(exportRef.current.profile); }
+    try { profile = checkedTimelineExportProfile(exportRef.current.profile);
+      if ((source.timeline.schema_version === 3) !== (profile.preset === 'AUDIO_WAV_PCM16')) throw new Error('导出格式与当前时间线媒体类型不一致。'); }
     catch (reason) { setError(reason instanceof Error ? reason.message : '导出配置无效。'); return; }
     const request = begin('EXPORT_PREVIEW'); if (!request) return;
     try {
@@ -567,7 +574,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
       if (value) latest.current.onDirtyChange(true);
     },
     upgradeTimeline: () => change(input => {
-      if (input.timeline.schema_version === 2) return;
+      if (input.timeline.schema_version === 2 || input.timeline.schema_version === 3) return;
       input.timeline.schema_version = 2;
       input.timeline.tracks.forEach(track => {
         track.role = track.kind === 'VIDEO' ? 'PRIMARY' : 'DIALOGUE';

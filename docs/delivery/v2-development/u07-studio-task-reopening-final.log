@@ -1,0 +1,27 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/taskcenter/TaskOwnerResult.test.tsx (29 tests) 205ms
+ ✓ src/taskcenter/StudioProductionTasks.test.tsx (47 tests) 794ms
+ ✓ src/taskcenter/IndependentStudioProductionTasks.test.tsx (8 tests) 2178ms
+   ✓ actual independent Studio Tasks to original production panel > reopens the exact image receipt through the mounted shared shell 616ms
+   ✓ actual independent Studio Tasks to original production panel > keeps the existing dirty-navigation confirmation and cancel behavior 370ms
+ ✓ src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx (15 tests) 8485ms
+   ✓ mounted original asset browser to timeline handoff > routes a real browser reference into the original timeline preview and exact draft only after explicit acceptance 1037ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 时间线模块 970ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 图片模块 798ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 视频模块 828ms
+   ✓ mounted asset browser to original image draft > requires an explicit 图片 operation choice and two metadata reads without dispatch 415ms
+   ✓ mounted asset browser to original image draft > requires an explicit 视频 operation choice and two metadata reads without dispatch 371ms
+   ✓ relationship inspection original asset navigation > re-reads exact original asset after explicit dirty discard and performs no writes 1037ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"version":3} 518ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"} 459ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"novel_id":"other-project"} 417ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"deleted_at":"deleted"} 464ms
+   ✓ relationship inspection original asset navigation > retires inspection when the original selection goes A to B to A in one batch 596ms
+
+ Test Files  4 passed (4)
+      Tests  99 passed (99)
+   Start at  00:48:54
+   Duration  13.23s (transform 3.44s, setup 58ms, collect 9.49s, tests 11.66s, environment 1.36s, prepare 268ms)
+

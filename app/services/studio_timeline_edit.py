@@ -49,7 +49,7 @@ def require_timeline_lock_preservation(current, replacement):
     locked = [row for row in before["tracks"] if row.get("locked") is True]
     if not locked:
         return after
-    if any(before.get(key) != after.get(key) for key in ("schema_version", "duration_ms", "width", "height", "fps")):
+    if any(before.get(key) != after.get(key) for key in ("schema_version", "media_kind", "duration_ms", "width", "height", "fps")):
         raise ValueError("STUDIO_TIMELINE_TRACK_LOCKED")
     by_id = {row["id"]: row for row in after["tracks"]}
     if any(by_id.get(row["id"]) != row for row in locked):
@@ -106,18 +106,18 @@ def apply_timeline_edits(timeline, operations):
                 raise ValueError("STUDIO_TIMELINE_EDIT_EMPTY")
             # Explicit upgrade only; newer editing fields are never injected
             # into existing saved timelines by an implicit normalization step.
-            if "schema_version" in changes and changes["schema_version"] != 2:
+            if "schema_version" in changes and (changes["schema_version"] != 2 or result.get("schema_version") == 3):
                 raise ValueError("STUDIO_TIMELINE_EDIT_SCHEMA_UPGRADE_REQUIRED")
             if (any(row.get("locked") is True for row in result["tracks"])
                     and any(key in changes and changes[key] != result.get(key)
-                        for key in ("schema_version", "duration_ms", "width", "height", "fps"))):
+                        for key in ("schema_version", "media_kind", "duration_ms", "width", "height", "fps"))):
                 raise ValueError("STUDIO_TIMELINE_TRACK_LOCKED")
             result.update(deepcopy(changes))
         elif operation == "track.insert":
             body = _fields(raw, ("op", "track"))
             _fields(body["track"], ("id", "kind", "order", "clips"), ("muted", "gain_db", "role", "locked"))
             _id(body["track"]["id"])
-            if "locked" in body["track"] and result.get("schema_version") != 2:
+            if "locked" in body["track"] and result.get("schema_version") not in (2, 3):
                 raise ValueError("STUDIO_TIMELINE_EDIT_SCHEMA_UPGRADE_REQUIRED")
             if "locked" in body["track"] and type(body["track"]["locked"]) is not bool:
                 raise ValueError("STUDIO_TIMELINE_EDIT_BOOLEAN_INVALID")
@@ -137,7 +137,7 @@ def apply_timeline_edits(timeline, operations):
             if not changes:
                 raise ValueError("STUDIO_TIMELINE_EDIT_EMPTY")
             row = track(body["track_id"])
-            if "locked" in changes and result.get("schema_version") != 2:
+            if "locked" in changes and result.get("schema_version") not in (2, 3):
                 raise ValueError("STUDIO_TIMELINE_EDIT_SCHEMA_UPGRADE_REQUIRED")
             if "locked" in changes and type(changes["locked"]) is not bool:
                 raise ValueError("STUDIO_TIMELINE_EDIT_BOOLEAN_INVALID")
@@ -263,6 +263,8 @@ def apply_timeline_edits(timeline, operations):
             delta = _integer(body["offset_ms"])
             clip.update(in_ms=clip["in_ms"] + delta, out_ms=clip["out_ms"] + delta)
         elif operation in {"caption.insert", "caption.update", "caption.remove"}:
+            if result.get("schema_version") == 3:
+                raise ValueError("STUDIO_TIMELINE_AUDIO_CAPTIONS_UNSUPPORTED")
             required = ("op", "caption") if operation == "caption.insert" else ("op", "index", "caption") if operation == "caption.update" else ("op", "index")
             body = _fields(raw, required)
             if operation == "caption.insert":

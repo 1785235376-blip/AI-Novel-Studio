@@ -30,7 +30,8 @@ const isCurrent = (asset: StudioAsset) => !asset.deleted_at && ['video', 'audio'
 export function prepareTimelineSourceEdit(source: StudioTimelineRow, assets: StudioAsset[], intent: TimelineSourceIntent, ids: { track: string; clip: string }): TimelineSourceOperation[] {
   if (!timelineSourcesCurrent(source.timeline, assets)) throw new Error('原时间线素材版本已变化，请先核对并保存当前来源。');
   const asset = assets.find(row => row.id === intent.asset_id && isCurrent(row)); if (!asset) throw new Error('请选择当前可访问的正式视频、音频或图片版本。');
-  const extended = source.timeline.schema_version === 2, kind = asset.kind as StudioTimelineSource['asset_kind'];
+  const extended = [2, 3].includes(source.timeline.schema_version ?? 1), kind = asset.kind as StudioTimelineSource['asset_kind'];
+  if (source.timeline.schema_version === 3 && kind !== 'audio') throw new Error('音频时间线只能加入音频素材。');
   if (kind === 'image' && !extended) throw new Error('静态图片需要先明确采用扩展时间线版本 2 并保存。');
   if (![intent.start_ms, intent.in_ms, intent.out_ms].every(Number.isSafeInteger) || intent.start_ms < 0 || intent.in_ms < 0 || intent.out_ms <= intent.in_ms || intent.out_ms > 36_000_000 || typeof intent.include_audio !== 'boolean') throw new Error('请明确填写有效摆放时间和来源起止范围。');
   if (kind === 'image' && intent.in_ms !== 0 || intent.include_audio && (kind !== 'video' || !extended)) throw new Error('图片入点为零；视频原音轨仅在扩展视频片段中明确加入。');

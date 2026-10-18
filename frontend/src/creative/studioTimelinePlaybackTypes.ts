@@ -26,7 +26,8 @@ export function checkedTimelinePlayback(value: unknown, source: StudioTimelineRo
   if (!limits || typeof limits.max_output_bytes !== 'number' || !Number.isSafeInteger(limits.max_output_bytes)) invalid();
   const video = Math.min(1500, Math.max(100, Math.floor((limits.max_output_bytes - 128000) * 8 / (source.timeline.duration_ms / 1000 * 1.10) / 1000) - 97));
   const preview = checkedTimelineExportPreview(row.export_preview, source,
-    { preset: 'DELIVERY_H264_MP4', video_bitrate_kbps: video, audio_bitrate_kbps: 96, crf: 28 });
+    source.timeline.schema_version === 3 ? { preset: 'AUDIO_WAV_PCM16' }
+      : { preset: 'DELIVERY_H264_MP4', video_bitrate_kbps: video, audio_bitrate_kbps: 96, crf: 28 });
   const job = row.job === null ? null : decodeJob(row.job);
   if (job && (job.owner !== 'timeline' || job.id !== row.job_id || job.request_id !== row.request_id || job.operation_id !== 'm9.timeline.multitrack'
     || canonical(job.timeline_snapshot) !== canonical(preview.timeline_snapshot)
@@ -40,4 +41,9 @@ export function playbackJobMatches(job: ProductionJob, playback: TimelinePlaybac
     && canonical(job.timeline_snapshot) === canonical(playback.export_preview.timeline_snapshot)
     && canonical(job.sources) === canonical(playback.export_preview.sources)
     && canonical(job.execution_recipe) === canonical(playback.export_preview.execution_recipe);
+}
+
+/** Playback MIME is derived from the exact validated bound export recipe. */
+export function timelinePlaybackMediaType(playback: TimelinePlayback): 'audio/wav' | 'video/mp4' {
+  return playback.export_preview.export_profile.preset === 'AUDIO_WAV_PCM16' ? 'audio/wav' : 'video/mp4';
 }

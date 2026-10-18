@@ -33,7 +33,7 @@ export function StudioTimelineTransferPanel({ controller: c, assets, onLocate }:
     </fieldset>
     {c.pending === 'FILE' && <StatusMessage tone="info">正在读取所选文件到本轮交换草稿。</StatusMessage>}
     <Button loading={c.pending === 'PREVIEW'} disabled={!c.canOperate || c.direction === 'IMPORT' && (!c.content.trim() || c.format === 'OTIO' && (!c.mappings.length || c.mappings.some(row => !row.assetId)))} onClick={() => void c.previewTransfer()}>读取转换预览</Button>
-    {c.preview && <section aria-label="转换预览"><h4>待确认预览</h4>
+    {c.preview && c.preview.timeline.schema_version !== 3 && <section aria-label="转换预览"><h4>待确认预览</h4>
       <p>{c.preview.timeline.tracks.length} 条轨道 · {c.preview.timeline.tracks.reduce((sum, track) => sum + track.clips.length, 0)} 个片段 · {c.preview.timeline.captions.length} 条字幕 · {(c.preview.timeline.duration_ms / 1000).toFixed(3)} 秒</p>
       <details><summary>片段、素材与字幕</summary>{c.preview.timeline.tracks.map(track => <div key={track.id}>
         <p>{track.kind === 'VIDEO' ? '视频' : '音频'}轨道 {track.order + 1} · {track.role ?? '原用途'} · {track.locked ? '锁定' : '可编辑'} · {track.muted ? '隐藏或静音' : '参与渲染'} · {track.gain_db} dB</p><ul>{track.clips.map(clip => <li key={clip.id}>

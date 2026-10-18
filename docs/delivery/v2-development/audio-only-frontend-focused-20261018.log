@@ -1,0 +1,19 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/nle/timelineOps.test.ts (52 tests) 76ms
+ ✓ src/creative/studioAudioTimeline.additive.test.tsx (34 tests) 734ms
+ ✓ src/nle/nlePanels.test.tsx (18 tests) 394ms
+ ✓ src/ui/AppShell.test.tsx (19 tests) 258ms
+ ✓ src/creative/studioAudioMp3Contract.test.tsx (32 tests) 342ms
+ ✓ src/creative/studioAudioFades.additive.test.tsx (29 tests) 746ms
+ ✓ src/creative/StudioGraphTrackAuthoring.additive.test.tsx (5 tests) 106ms
+ ✓ src/ui/AppShell.projectNoun.test.tsx (12 tests) 127ms
+ ✓ src/creative/StudioGraphTimelineOrder.additive.test.tsx (3 tests) 74ms
+ ✓ tests/uiContracts.test.ts (5 tests) 3ms
+
+ Test Files  10 passed (10)
+      Tests  209 passed (209)
+   Start at  00:50:31
+   Duration  9.07s (transform 894ms, setup 53ms, collect 1.95s, tests 2.86s, environment 2.62s, prepare 457ms)
+

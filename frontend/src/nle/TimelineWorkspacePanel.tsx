@@ -43,9 +43,9 @@ export function TimelineWorkspacePanel(props: TimelineWorkspacePanelProps) {
   };
   return <Panel title="多轨剪辑与交付" aria-label="多轨剪辑、预览与交付">
     <p className="nle-workspace__scope" data-editable={props.editable}>
-      项目 {bounded(props.projectId, 240)} · 身份 {bounded(props.identity, 240)} · 总长 {timebase.durationMs} 毫秒 · {timebase.fps} fps · {timeline.tracks.length} 条轨道 · {usage.clips} 个片段 · 字幕 {usage.captions} 条
+      项目 {bounded(props.projectId, 240)} · 身份 {bounded(props.identity, 240)} · 总长 {timebase.durationMs} 毫秒{timebase.mediaKind === 'AUDIO' ? ' · 纯音频' : ` · ${timebase.fps} fps`} · {timeline.tracks.length} 条轨道 · {usage.clips} 个片段{timeline.schema_version !== 3 && <> · 字幕 {usage.captions} 条</>}
     </p>
-    <p className="nle-workspace__note">时间基仍是原 owner 的整数毫秒与整数比速度；预览画质与交付画质分开陈述；缩略图与波形按需读取，不在每次拖动时解码素材。</p>
+    <p className="nle-workspace__note">{timeline.schema_version === 3 ? '音频时间基使用整数毫秒与整数比速度；试听与正式交付分开确认。波形按需读取，不在每次拖动时解码素材。' : '时间基仍是原 owner 的整数毫秒与整数比速度；预览画质与交付画质分开陈述；缩略图与波形按需读取，不在每次拖动时解码素材。'}</p>
     <div className="nle-workspace__marks">
       <Button disabled={!props.editable} onClick={() => mark('IN')}>以播放头设入点</Button>
       <Button disabled={!props.editable} onClick={() => mark('OUT')}>以播放头设出点</Button>
@@ -62,8 +62,8 @@ export function TimelineWorkspacePanel(props: TimelineWorkspacePanelProps) {
     <ClipInspectorPanel timeline={timeline} selectedClipIds={props.selectedClipIds} playheadMs={props.playheadMs}
       marks={marks} editable={props.editable} onEdit={props.onEdit} />
     {props.waveform && <TimelineWaveformPanel {...props.waveform} />}
-    <SubtitleTrackPanel timeline={timeline} subtitles={props.subtitles} editable={props.editable} onEdit={props.onEdit} />
-    <ExportDeliveryPanel exportReceipt={props.exportReceipt} limits={props.limits} usage={usage} />
+    {timeline.schema_version !== 3 && <SubtitleTrackPanel timeline={timeline} subtitles={props.subtitles} editable={props.editable} onEdit={props.onEdit} />}
+    <ExportDeliveryPanel mediaKind={timeline.schema_version === 3 ? 'AUDIO' : 'VIDEO'} exportReceipt={props.exportReceipt} limits={props.limits} usage={usage} />
     <p className="nle-workspace__foot">本批次不改变已保存的时间线契约、不提高任何上限、不做调色与合成；本地 Windows、真实媒体与重型渲染验收仍待执行。</p>
   </Panel>;
 }

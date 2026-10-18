@@ -3,7 +3,7 @@ import { StatusMessage } from '../ui/primitives';
 
 /** Session-only review controls; these never change timeline speed or export jobs. */
 export function StudioTimelinePlaybackOptions({ media, url, identity }: {
-  media: RefObject<HTMLVideoElement>; url: string; identity: string;
+  media: RefObject<HTMLMediaElement>; url: string; identity: string;
 }) {
   const [rate, setRate] = useState(1), [loop, setLoop] = useState(false), [error, setError] = useState('');
   const alive = useRef(true);

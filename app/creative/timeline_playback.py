@@ -71,6 +71,8 @@ class TimelinePlayback:
         budget = service.workspace.assets.MAX_BYTES
         video = min(1500, max(100, int((budget - 128000) * 8 / (seconds * 1.10) / 1000) - 97))
         profile = {"preset": "DELIVERY_H264_MP4", "video_bitrate_kbps": video, "audio_bitrate_kbps": 96, "crf": 28}
+        if row["timeline"].get("schema_version") == 3:
+            profile = {"preset": "AUDIO_WAV_PCM16"}
         preview = service.timeline_export_preview(nid, scope, actor, tid,
             {**body.model_dump(), "export_profile": profile}, guard)
         engines = _engines()
