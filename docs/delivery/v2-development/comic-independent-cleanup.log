@@ -1,0 +1,13 @@
+....................ssssss                                               [100%]
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_comic_independent.py::test_blank_page_mounted_save_reopen_text_history_and_cas[postgres-/api]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+20 passed, 6 skipped, 32 deselected, 2 warnings in 12.30s
+{"purpose": "Exact orphan scopes created by Comic epoch test before teardown correction", "deleted": [{"scope_key": "4066ed0402df5f9c64a425f56cfa7d5af3b811af0cc0a8b1358aabcb00e02193", "novel_id": "comic-epoch-fbb6d9345e0e466db15baebe8723224d"}, {"scope_key": "879e7ffb8719a45e137ec6b523dba4362fb03bc0557706f3a48d971971e9e452", "novel_id": "comic-epoch-26b025c8e0584d66adf171e99486bfa1"}], "before": [{"scope_key": "4066ed0402df5f9c64a425f56cfa7d5af3b811af0cc0a8b1358aabcb00e02193", "novel_id": "comic-epoch-fbb6d9345e0e466db15baebe8723224d"}, {"scope_key": "879e7ffb8719a45e137ec6b523dba4362fb03bc0557706f3a48d971971e9e452", "novel_id": "comic-epoch-26b025c8e0584d66adf171e99486bfa1"}], "after_prior_cleanup": 0, "regression_command": ["/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/bin/python", "-m", "pytest", "tests/test_comic_independent.py", "-m", "postgres_backend_only", "-p", "no:cacheprovider", "--basetemp=.runtime/v2-checks/comic-independent-cleanup/pytest", "-q"], "regression_exit_code": 0, "after_regressions_scope_count": 0, "after_regressions_project_count": 0}

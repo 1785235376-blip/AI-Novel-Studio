@@ -1,0 +1,34 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 942ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests) 1834ms
+   ✓ independent studio original owner integration > imports once and saves source provenance without chapters, models, or the legacy asset API 475ms
+   ✓ independent studio original owner integration > retains uploaded v1 after a declaration failure and retries only the declaration 385ms
+   ✓ independent studio original owner integration > preserves a preference draft on CAS conflict and does not hide modules or run jobs 320ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 1354ms
+   ✓ explicit arrangement preview applies one undoable edit and saves only through original owner 334ms
+   ✓ retained apply cannot cross record, source or owner ABA 325ms
+ ✓ src/creative/IndependentStudioWorkspace.comic.test.tsx (3 tests) 2010ms
+   ✓ Image subview creates a source-free page, edits a bubble, saves and reopens without a model or renderer 1577ms
+ ✓ src/experimental/comicDuplication.test.ts (36 tests) 14ms
+ ✓ src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx (15 tests) 9785ms
+   ✓ mounted original asset browser to timeline handoff > routes a real browser reference into the original timeline preview and exact draft only after explicit acceptance 1161ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 时间线模块 1019ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 图片模块 1027ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 视频模块 974ms
+   ✓ mounted asset browser to original image draft > requires an explicit 图片 operation choice and two metadata reads without dispatch 455ms
+   ✓ mounted asset browser to original image draft > requires an explicit 视频 operation choice and two metadata reads without dispatch 470ms
+   ✓ relationship inspection original asset navigation > re-reads exact original asset after explicit dirty discard and performs no writes 1110ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"version":3} 624ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"} 519ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"novel_id":"other-project"} 473ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"deleted_at":"deleted"} 583ms
+   ✓ relationship inspection original asset navigation > retires inspection when the original selection goes A to B to A in one batch 657ms
+ ✓ src/experimental/comicArrangement.test.ts (18 tests) 8ms
+
+ Test Files  7 passed (7)
+      Tests  94 passed (94)
+   Start at  03:38:50
+   Duration  15.65s (transform 4.00s, setup 70ms, collect 9.40s, tests 15.95s, environment 1.76s, prepare 391ms)
+

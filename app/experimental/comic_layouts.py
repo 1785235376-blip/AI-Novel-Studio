@@ -10,9 +10,10 @@ import io
 import json
 import math
 import zipfile
+from contextlib import contextmanager, ExitStack, nullcontext
 from typing import Literal
 from pydantic import Field, model_serializer, model_validator
-from .common import DomainService, StaleSourceError, check_version, now, new_row
+from .common import DomainService, StaleSourceError, check_version, now, new_row, change_row
 from .director import DirectorService
 from .media import StrictModel, digest
 from ..source_privacy import source_privacy_status
@@ -55,7 +56,8 @@ class AppearanceReference(StrictModel):
 
 class ComicPanel(Rect):
     id: str = Field(pattern=r'^[A-Za-z0-9_-]{1,80}$')
-    shot_id: str = Field(min_length=1, max_length=240)
+    shot_id: str | None = Field(default=None, min_length=1, max_length=240)
+    artwork_mode: Literal['IMAGE', 'BLANK'] = 'IMAGE'
     order: int = Field(ge=1, le=24, strict=True)
     character_ids: list[str] = Field(default_factory=list, max_length=20)
     asset_id: str | None = Field(default=None, min_length=1, max_length=240)
@@ -72,13 +74,15 @@ class ComicPanel(Rect):
         # Omission survives API normalization and history restore. Never migrate
         # existing approval-bound documents merely by reading or saving them.
         document = handler(self)
-        for field in ('cover_x_percent', 'cover_y_percent'):
+        for field in ('cover_x_percent', 'cover_y_percent', 'artwork_mode'):
             if field not in self.model_fields_set:
                 document.pop(field, None)
         return document
 
     @model_validator(mode='after')
     def references(self):
+        if self.artwork_mode == 'BLANK' and (self.asset_id is not None or self.expected_asset_version is not None):
+            raise ValueError('COMIC_BLANK_PANEL_HAS_IMAGE')
         ids = [ref.character_id for ref in self.appearance_references]
         if len(set(ids)) != len(ids): raise ValueError('COMIC_DUPLICATE_APPEARANCE_CHARACTER')
         if set(ids) - set(self.character_ids): raise ValueError('COMIC_APPEARANCE_CHARACTER_NOT_IN_PANEL')
@@ -89,18 +93,31 @@ class ComicPanel(Rect):
 
 class LayoutIn(StrictModel):
     title: str = Field(min_length=1, max_length=240)
-    screenplay_id: str = Field(min_length=1, max_length=240)
-    expected_screenplay_version: int = Field(ge=1, strict=True)
+    source_mode: Literal['SCREENPLAY', 'INDEPENDENT'] = 'SCREENPLAY'
+    screenplay_id: str | None = Field(default=None, min_length=1, max_length=240)
+    expected_screenplay_version: int | None = Field(default=None, ge=1, strict=True)
     preset: Literal['PAGE', 'WEBTOON'] = 'PAGE'
     font_family: Literal['NOTO_SANS_SC_OFL'] = 'NOTO_SANS_SC_OFL'
     width: int = Field(default=800, ge=320, le=1600, strict=True)
     height: int = Field(default=1120, ge=320, le=12000, strict=True)
     safe_area: int = Field(default=24, ge=0, le=128, strict=True)
     segment_height: int = Field(default=1120, ge=320, le=2400, strict=True)
-    panels: list[ComicPanel] = Field(min_length=1, max_length=24)
+    panels: list[ComicPanel] = Field(max_length=24)
+
+    @model_serializer(mode='wrap')
+    def preserve_legacy_source_mode(self, handler):
+        document = handler(self)
+        if 'source_mode' not in self.model_fields_set:
+            document.pop('source_mode', None)
+        return document
 
     @model_validator(mode='after')
     def bounded(self):
+        if self.source_mode == 'INDEPENDENT':
+            if self.screenplay_id is not None or self.expected_screenplay_version is not None or any(p.shot_id is not None for p in self.panels):
+                raise ValueError('COMIC_INDEPENDENT_SOURCE_CONFLICT')
+        elif self.screenplay_id is None or self.expected_screenplay_version is None or not self.panels or any(p.shot_id is None for p in self.panels):
+            raise ValueError('COMIC_SCREENPLAY_SOURCE_REQUIRED')
         if self.width * self.height > MAX_PIXELS:
             raise ValueError('COMIC_PIXEL_LIMIT_16000000')
         if len({p.id for p in self.panels}) != len(self.panels):
@@ -251,8 +268,9 @@ def compose(document, images, *, render=False):
         if not _inside(panel, frame, document['safe_area']): issue('COMIC_PANEL_OUTSIDE_SAFE_AREA', pid)
         if any(_overlap(panel, p) for p in panels[:index]): issue('COMIC_PANEL_OVERLAP', pid)
         source = images.get(panel.get('asset_id'))
-        if source is None: issue('COMIC_MISSING_APPROVED_IMAGE', pid)
-        elif ready['available']:
+        blank = panel.get('artwork_mode', 'IMAGE') == 'BLANK'
+        if source is None and not blank: issue('COMIC_MISSING_APPROVED_IMAGE', pid)
+        elif source is not None and ready['available']:
             image = _image(source)
             scale = (max if panel['fit'] == 'COVER' else min)(panel['width'] / image.width, panel['height'] / image.height)
             size = (max(1, round(image.width * scale)), max(1, round(image.height * scale)))
@@ -285,11 +303,12 @@ def compose(document, images, *, render=False):
     canvas = Image.new('RGB', (document['width'], document['height']), 'white')
     draw = ImageDraw.Draw(canvas)
     for panel in sorted(panels, key=lambda p: p['order']):
-        placement = placements[panel['id']]; source = _image(images[panel['asset_id']])
-        resized = source.resize(placement['size'], Image.Resampling.LANCZOS)
-        panel_image = Image.new('RGBA', (panel['width'], panel['height']), 'white')
-        panel_image.alpha_composite(resized, placement['offset'])
-        canvas.paste(panel_image.convert('RGB'), (panel['x'], panel['y']))
+        if panel.get('artwork_mode', 'IMAGE') != 'BLANK':
+            placement = placements[panel['id']]; source = _image(images[panel['asset_id']])
+            resized = source.resize(placement['size'], Image.Resampling.LANCZOS)
+            panel_image = Image.new('RGBA', (panel['width'], panel['height']), 'white')
+            panel_image.alpha_composite(resized, placement['offset'])
+            canvas.paste(panel_image.convert('RGB'), (panel['x'], panel['y']))
         draw.rectangle((panel['x'], panel['y'], panel['x'] + panel['width'] - 1, panel['y'] + panel['height'] - 1), outline='black', width=2)
         for bubble in panel['bubbles']:
             box = (bubble['x'], bubble['y'], bubble['x'] + bubble['width'] - 1, bubble['y'] + bubble['height'] - 1)
@@ -310,9 +329,62 @@ def compose(document, images, *, render=False):
 class ComicLayoutsService(DomainService):
     RECORDS = 'comic_layouts_v2'
 
-    def __init__(self, store, novels, chapters, screenplays, assets, *, lineage=None):
+    def __init__(self, store, novels, chapters, screenplays, assets, *, lineage=None, independent_store=None):
         super().__init__(store, novels, chapters)
         self.screenplays, self.assets, self.lineage = screenplays, assets, lineage
+        self.independent_store = independent_store
+
+    @staticmethod
+    def _independent(row):
+        return row['document'].get('source_mode', 'SCREENPLAY') == 'INDEPENDENT'
+
+    def _independent_owner(self):
+        owner = self.independent_store
+        if owner is None or owner.store is not self.store:
+            raise ValueError('COMIC_ORIGINAL_PROJECT_OWNER_UNAVAILABLE')
+        return owner
+
+    def _independent_identity(self, nid):
+        # Reads and existing mutations must never initialize a missing marker.
+        self.novels.get(nid)
+        owner = self._independent_owner()
+        with owner.existing_owner_only():
+            return owner.incarnation(nid)
+
+    def _check_independent_identity(self, nid, row):
+        if self._independent(row) and (not row.get('project_incarnation')
+                or row['project_incarnation'] != self._independent_identity(nid)):
+            raise FileNotFoundError('comic owner unavailable')
+
+    @contextmanager
+    def _independent_transaction(self, nid, scope, *, create=False):
+        self.novels.get(nid)
+        owner = self._independent_owner()
+        # Original scope -> original project lease. The project lease outlives
+        # the raw scope commit; no copied store, registry widening or lock namespace.
+        with (nullcontext() if create else owner.existing_owner_only()):
+            with ExitStack() as lifecycle:
+                with self.store.transaction(nid, scope) as state:
+                    # Asset content rechecks below use the original asset lock.
+                    # Acquire it before the project lease, matching asset -> project
+                    # writers and avoiding an inversion during review/save.
+                    lifecycle.enter_context(self.assets._lock)
+                    lifecycle.enter_context(workspace_mutation(self.assets.root, 'asset-library'))
+                    lifecycle.enter_context(owner.owner_lease(nid))
+                    self.novels.get(nid)
+                    yield state
+
+    def mutate(self, nid, scope, actor, collection, rid, expected_version, callback):
+        original = self._row(nid, scope, actor, rid)
+        if not self._independent(original):
+            return super().mutate(nid, scope, actor, collection, rid, expected_version, callback)
+        with self._independent_transaction(nid, scope) as state:
+            row = state['collections'].get(collection, {}).get(rid)
+            if row is None or row.get('novel_id') != nid or row.get('scope') != scope or row.get('created_by') != actor:
+                raise FileNotFoundError(rid)
+            self._check_independent_identity(nid, row)
+            change_row(row, actor, expected_version, callback)
+            return copy.deepcopy(row)
 
     def _director(self): return DirectorService(self.store, self.novels, self.chapters, self.screenplays)
 
@@ -377,12 +449,14 @@ class ComicLayoutsService(DomainService):
                 'appearance_reference_policy': 'ORIGINAL_APPROVED_ASSET_VERSION_PINNED',
                 'image_brief_policy': 'HUMAN_AUTHORED_DECLARATION_NO_GENERATION'}
 
-    def _payload(self, nid, scope, actor, value):
+    def _payload(self, nid, scope, actor, value, *, bind_independent=True):
         body = LayoutIn.model_validate(value); document = body.model_dump(); director = self._director()
-        source = director.screenplay(nid, scope, body.screenplay_id)
-        if source['edit_version'] != body.expected_screenplay_version: raise StaleSourceError('COMIC_SCREENPLAY_CHANGED')
-        shots = {shot['id']: shot for shot in source.get('shots', [])}
-        if any(p.shot_id not in shots for p in body.panels): raise ValueError('COMIC_UNKNOWN_SHOT')
+        self.novels.get(nid)
+        independent = body.source_mode == 'INDEPENDENT'
+        source = None if independent else director.screenplay(nid, scope, body.screenplay_id)
+        if source is not None and source['edit_version'] != body.expected_screenplay_version: raise StaleSourceError('COMIC_SCREENPLAY_CHANGED')
+        shots = {shot['id']: shot for shot in source.get('shots', [])} if source is not None else {}
+        if not independent and any(p.shot_id not in shots for p in body.panels): raise ValueError('COMIC_UNKNOWN_SHOT')
         characters = {cid for p in body.panels for cid in p.character_ids} | {b.character_id for p in body.panels for b in p.bubbles if b.character_id}
         character_sources = director._character_sources(nid, scope, characters)
         assets = {}
@@ -395,13 +469,23 @@ class ComicLayoutsService(DomainService):
                 asset, _ = self._asset(nid, scope, actor, reference.asset_id)
                 if reference.expected_asset_version != asset['version']: raise StaleSourceError('COMIC_APPEARANCE_ASSET_VERSION_CHANGED')
                 assets[reference.asset_id] = self._binding(asset)
-        return {'document': document, 'screenplay_version': source['edit_version'], 'source_evidence': director.evidence(nid, scope, source),
+        return {**({'project_incarnation': self._independent_identity(nid)} if independent and bind_independent else {}), 'document': document, 'screenplay_version': source['edit_version'] if source is not None else None, 'source_evidence': director.evidence(nid, scope, source) if source is not None else {'sources': {}, 'privacy': {}},
                 'character_sources': character_sources, 'asset_sources': assets,
-                'scene_ids': {p.id: shots[p.shot_id].get('scene_id') for p in body.panels}, 'status': 'DRAFT', 'approval': None}
+                'scene_ids': {p.id: shots[p.shot_id].get('scene_id') if p.shot_id in shots else None for p in body.panels}, 'status': 'DRAFT', 'approval': None}
 
     def _current(self, nid, scope, actor, row):
-        director = self._director(); source = director.screenplay(nid, scope, row['document']['screenplay_id'])
-        if source['edit_version'] != row['screenplay_version'] or director.evidence(nid, scope, source) != row['source_evidence'] or director._character_sources(nid, scope, row['character_sources']) != row['character_sources']:
+        self.novels.get(nid)
+        self._check_independent_identity(nid, row)
+        director = self._director()
+        if row['document'].get('source_mode', 'SCREENPLAY') != 'INDEPENDENT':
+            source = director.screenplay(nid, scope, row['document']['screenplay_id'])
+            if source['edit_version'] != row['screenplay_version'] or director.evidence(nid, scope, source) != row['source_evidence']:
+                raise StaleSourceError('COMIC_SOURCE_CHANGED')
+        elif (row['document'].get('screenplay_id') is not None or row['document'].get('expected_screenplay_version') is not None
+              or row['screenplay_version'] is not None or row['source_evidence'] != {'sources': {}, 'privacy': {}}
+              or any(p.get('shot_id') is not None for p in row['document']['panels'])):
+            raise StaleSourceError('COMIC_INDEPENDENT_SOURCE_CONFLICT')
+        if director._character_sources(nid, scope, row['character_sources']) != row['character_sources']:
             raise StaleSourceError('COMIC_SOURCE_CHANGED')
         images = {}
         for aid, binding in row['asset_sources'].items():
@@ -414,6 +498,7 @@ class ComicLayoutsService(DomainService):
     def _row(self, nid, scope, actor, rid):
         row = self.get(nid, scope, self.RECORDS, rid)
         if row['created_by'] != actor: raise FileNotFoundError(rid)
+        self._check_independent_identity(nid, row)
         return row
 
     def _view(self, nid, scope, actor, row):
@@ -424,10 +509,44 @@ class ComicLayoutsService(DomainService):
                 'history_versions': [h['version'] for h in row['history']], 'automatic_promotion': False}
 
     def records(self, nid, scope, actor):
-        return {'items': [self._view(nid, scope, actor, row) for row in self.list(nid, scope, self.RECORDS) if row['created_by'] == actor]}
+        items = []
+        for row in self.list(nid, scope, self.RECORDS):
+            if row['created_by'] != actor: continue
+            try: self._check_independent_identity(nid, row)
+            except (FileNotFoundError, ValueError): continue
+            items.append(self._view(nid, scope, actor, row))
+        return {'items': items}
 
     def save(self, nid, scope, actor, value, guard=lambda: None, rid=None, expected_version=None):
-        payload = self._payload(nid, scope, actor, value)
+        body = LayoutIn.model_validate(value)
+        if rid:
+            original = self._row(nid, scope, actor, rid)
+            if self._independent(original) != (body.source_mode == 'INDEPENDENT'):
+                raise ValueError('COMIC_SOURCE_MODE_IMMUTABLE_CREATE_NEW_LAYOUT')
+        if body.source_mode == 'INDEPENDENT':
+            # Only a valid explicit create may establish the original project epoch.
+            payload = self._payload(nid, scope, actor, body, bind_independent=False)
+            guard()
+            with self._independent_transaction(nid, scope, create=rid is None) as state:
+                guard()
+                if rid:
+                    current = state['collections'].get(self.RECORDS, {}).get(rid)
+                    if current is None or current.get('novel_id') != nid or current.get('scope') != scope or current.get('created_by') != actor:
+                        raise FileNotFoundError(rid)
+                    self._check_independent_identity(nid, current)
+                    check_version(current, expected_version)
+                    if len(current['history']) >= 100: raise ValueError('COMIC_REVISION_LIMIT_CREATE_NEW_LAYOUT')
+                payload['project_incarnation'] = self._independent_identity(nid)
+                guard(); self._current(nid, scope, actor, payload)
+                if rid:
+                    saved = change_row(current, actor, expected_version, lambda row: row.update(payload))
+                else:
+                    saved = new_row(nid, scope, actor, payload)
+                    state['collections'].setdefault(self.RECORDS, {})[saved['id']] = saved
+                guard()
+                saved = copy.deepcopy(saved)
+            return self._view(nid, scope, actor, saved)
+        payload = self._payload(nid, scope, actor, body)
         if rid:
             def update(row):
                 if row['created_by'] != actor: raise FileNotFoundError(rid)
@@ -456,6 +575,7 @@ class ComicLayoutsService(DomainService):
         report, _ = compose(row['document'], images)
         binding = {'layout_id': rid, 'actor': actor, 'scope': scope, 'document': row['document'], 'source_evidence': row['source_evidence'],
                    'character_sources': row['character_sources'], 'asset_sources': row['asset_sources'], 'font': font_status(), 'renderer': renderer_status(), 'report': report}
+        if self._independent(row): binding['project_incarnation'] = row['project_incarnation']
         return {**report, 'review_digest': digest(binding), 'version': row['version'], 'status': row['status'], 'draft': row['status'] != 'APPROVED', 'font': binding['font']}
 
     def approve(self, nid, scope, actor, rid, expected_version, review_digest, acknowledge_warnings, guard=lambda: None):

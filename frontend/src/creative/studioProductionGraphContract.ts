@@ -34,8 +34,12 @@ export function checkedPlanningDocument(value: unknown): PlanningDocument {
   return { ...checkedPlanningSnapshot({ id: record.id, version: record.version, digest: record.digest }), title: string(record.title, 240, false), mode: record.mode };
 }
 export function checkedVisualTarget(value: unknown): VisualTarget {
-  const record = row(value); closed(record, ['style', 'atmosphere', 'reference_works', 'color', 'rhythm'], ['genre']); fields(record, ['style', 'atmosphere', 'color', 'rhythm']);
+  const record = row(value); closed(record, ['style', 'atmosphere', 'reference_works', 'color', 'rhythm'], ['genre', 'target_audience', 'target_platform', 'production_budget_constraints']); fields(record, ['style', 'atmosphere', 'color', 'rhythm']);
   if (record.genre != null) string(record.genre, 2000);
+  for (const key of ['target_audience', 'target_platform', 'production_budget_constraints']) {
+    const value = record[key];
+    if (value != null && (typeof value !== 'string' || Array.from(value).length > 2000 || /[\u0000\u007f]/.test(value))) invalid();
+  }
   array(record.reference_works, 20).forEach(value => string(value, 1000, false)); return record as VisualTarget;
 }
 function dialogue(value: unknown) { const record = row(value); closed(record, ['speaker', 'text', 'delivery']); fields(record, ['speaker', 'text', 'delivery']); }

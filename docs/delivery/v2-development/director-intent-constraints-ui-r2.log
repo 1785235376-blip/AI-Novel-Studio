@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ tests/uiContracts.test.ts (5 tests) 5ms
+ ✓ src/creative/directorModelPlanningContract.additive.test.ts (11 tests) 7ms
+ ✓ src/creative/DirectorIntentConstraints.test.tsx (3 tests) 360ms
+ ✓ src/creative/AIDirectorPanel.test.tsx (10 tests) 758ms
+ ✓ src/creative/IndependentDirectorModelReview.test.tsx (7 tests) 854ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 1405ms
+
+ Test Files  6 passed (6)
+      Tests  48 passed (48)
+   Start at  03:36:53
+   Duration  2.73s (transform 856ms, setup 102ms, collect 2.64s, tests 3.39s, environment 1.48s, prepare 438ms)
+

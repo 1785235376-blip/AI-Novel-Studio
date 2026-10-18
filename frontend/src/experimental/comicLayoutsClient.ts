@@ -5,8 +5,8 @@ import type { RefNode } from '../novel/useMultimodalWorkspacePersistence';
 export type ComicRect = Pick<RefNode, 'x' | 'y'> & { width: number; height: number };
 export type ComicBubble = ComicRect & { id: string; kind: 'DIALOGUE' | 'NARRATION'; text: string; character_id: string | null; font_size: number };
 export type ComicAppearanceReference = { character_id: string; asset_id: string; expected_asset_version: number; note: string };
-export type ComicPanel = ComicRect & { id: string; shot_id: string; order: number; character_ids: string[]; asset_id: string | null; expected_asset_version: number | null; fit: 'CONTAIN' | 'COVER'; cover_x_percent?: number; cover_y_percent?: number; bubbles: ComicBubble[]; image_brief?: string; appearance_references?: ComicAppearanceReference[] };
-export type ComicDocument = { title: string; screenplay_id: string; expected_screenplay_version: number; preset: 'PAGE' | 'WEBTOON'; font_family: 'NOTO_SANS_SC_OFL'; width: number; height: number; safe_area: number; segment_height: number; panels: ComicPanel[] };
+export type ComicPanel = ComicRect & { id: string; shot_id: string | null; artwork_mode?: 'IMAGE' | 'BLANK'; order: number; character_ids: string[]; asset_id: string | null; expected_asset_version: number | null; fit: 'CONTAIN' | 'COVER'; cover_x_percent?: number; cover_y_percent?: number; bubbles: ComicBubble[]; image_brief?: string; appearance_references?: ComicAppearanceReference[] };
+export type ComicDocument = { title: string; source_mode?: 'SCREENPLAY' | 'INDEPENDENT'; screenplay_id: string | null; expected_screenplay_version: number | null; preset: 'PAGE' | 'WEBTOON'; font_family: 'NOTO_SANS_SC_OFL'; width: number; height: number; safe_area: number; segment_height: number; panels: ComicPanel[] };
 export type ComicRecord = { id: string; version: number; status: string; stale: boolean; document?: ComicDocument; history_versions?: number[]; scene_ids?: Record<string, string> };
 export type ComicAsset = { id: string; filename: string; version: number; approved: boolean; manual_review_available: boolean };
 export type ComicCatalog = { screenplays: DirectorScreenplay[]; characters: { id: string; name: string }[]; assets: ComicAsset[]; presets: Record<'PAGE' | 'WEBTOON', { width: number; height: number; safe_area: number; segment_height: number }>; renderer: { available: boolean; code?: string }; font: { available: boolean; code?: string } };
@@ -38,4 +38,9 @@ export function comicPreset(source: DirectorScreenplay, preset: 'PAGE' | 'WEBTOO
   const height = Math.floor((settings.height - inset * 2 - (shots.length - 1) * gap) / Math.max(1, shots.length));
   return { title: `${source.title} · 漫画草稿`, screenplay_id: source.id, expected_screenplay_version: source.edit_version, preset, font_family: 'NOTO_SANS_SC_OFL', ...settings,
     panels: shots.map((shot, i) => ({ id: `panel-${i + 1}`, shot_id: shot.id, order: i + 1, x: inset, y: inset + i * (height + gap), width: settings.width - inset * 2, height, character_ids: [], asset_id: null, expected_asset_version: null, fit: 'CONTAIN', bubbles: [], image_brief: '', appearance_references: [] })) };
+}
+
+/** An explicit authored page; never fabricate screenplay, shot or image bindings. */
+export function blankComic(preset: 'PAGE' | 'WEBTOON', settings: ComicCatalog['presets']['PAGE']): ComicDocument {
+  return { title: '空白漫画页', source_mode: 'INDEPENDENT', screenplay_id: null, expected_screenplay_version: null, preset, font_family: 'NOTO_SANS_SC_OFL', ...settings, panels: [] };
 }

@@ -1,0 +1,3 @@
+pg_ctl: no server running
+
+pg_ctl_exit_code=3

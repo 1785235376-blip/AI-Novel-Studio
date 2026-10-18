@@ -8,7 +8,7 @@ from __future__ import annotations
 from typing import Annotated, ClassVar, Literal
 from uuid import uuid4
 
-from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, model_serializer, model_validator
+from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, field_validator, model_serializer, model_validator
 
 from ..experimental.director import CameraGrammar
 
@@ -59,17 +59,26 @@ class OptionalProductionFields(StrictCreativeModel):
 class DirectorVisualTarget(OptionalProductionFields):
     """The existing authored director intent.
 
-    `genre` is an opt-in extension: it is omitted from serialization while unset,
+    Intent extensions are opt-in: they are omitted from serialization while unset,
     so an existing stored `visual_target` keeps its exact shape and digest and no
     document is force-upgraded.
     """
-    production_optional_fields = ("genre",)
+    production_optional_fields = ("genre", "target_audience", "target_platform", "production_budget_constraints")
     style: str = Field(default="", max_length=2000, strict=True)
     atmosphere: str = Field(default="", max_length=2000, strict=True)
     reference_works: list[Annotated[str, Field(min_length=1, max_length=1000, strict=True)]] = Field(default_factory=list, max_length=20)
     color: str = Field(default="", max_length=2000, strict=True)
     rhythm: str = Field(default="", max_length=2000, strict=True)
     genre: str | None = Field(default=None, max_length=2000, strict=True)
+    target_audience: str | None = Field(default=None, max_length=2000, strict=True)
+    target_platform: str | None = Field(default=None, max_length=2000, strict=True)
+    # Authored advisory constraints, never measured costs or spend authority.
+    production_budget_constraints: str | None = Field(default=None, max_length=2000, strict=True)
+
+    @field_validator("target_audience", "target_platform", "production_budget_constraints")
+    @classmethod
+    def blank_constraint_is_unset(cls, value):
+        return value if value is not None and value.strip() else None
 
 
 class DirectorPerformance(StrictCreativeModel):

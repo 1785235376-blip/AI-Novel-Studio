@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/directorModelPlanningContract.additive.test.ts (11 tests) 9ms
+ ✓ src/creative/DirectorIntentConstraints.test.tsx (3 tests) 370ms
+   ✓ authored Director audience/platform/budget constraints > edits, explicitly saves and reopens through the original graph Director console 313ms
+ ✓ src/creative/IndependentDirectorModelReview.test.tsx (7 tests) 823ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 1586ms
+   ✓ optional mounted graph director source authoring > hands a saved human director to the existing storyboard owner and reopens its status 334ms
+
+ Test Files  4 passed (4)
+      Tests  33 passed (33)
+   Start at  03:35:20
+   Duration  2.85s (transform 719ms, setup 50ms, collect 1.94s, tests 2.79s, environment 1.07s, prepare 264ms)
+

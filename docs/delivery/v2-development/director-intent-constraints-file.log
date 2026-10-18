@@ -1,0 +1,67 @@
+.................E...........Es..ss..................................... [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_file_proposal_prompt_review_edit_reopen_and_stale_bindings[file] _
+
+request = <SubRequest 'rig' for <Function test_file_proposal_prompt_review_edit_reopen_and_stale_bindings[file]>>
+tmp_path = PosixPath('/tmp/director-intent-constraints-pytest/test_file_proposal_prompt_revi0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f2dcb3fabd0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/director-intent-constraints-pytest/test_file_proposal_prompt_revi0').is_relative_to
+E        +      where PosixPath('/tmp/director-intent-constraints-pytest/test_file_proposal_prompt_revi0') = resolve()
+E        +        where resolve = PosixPath('/tmp/director-intent-constraints-pytest/test_file_proposal_prompt_revi0').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+_ ERROR at setup of test_original_explicit_adoption_keeps_planning_and_source_immutable[file] _
+
+request = <SubRequest 'rig' for <Function test_original_explicit_adoption_keeps_planning_and_source_immutable[file]>>
+tmp_path = PosixPath('/tmp/director-intent-constraints-pytest/test_original_explicit_adoptio0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/director-intent-constraints-pytest/test_original_explicit_adoptio0').is_relative_to
+E        +      where PosixPath('/tmp/director-intent-constraints-pytest/test_original_explicit_adoptio0') = resolve()
+E        +        where resolve = PosixPath('/tmp/director-intent-constraints-pytest/test_original_explicit_adoptio0').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_director_intent_constraints_additive.py::test_legacy_serialization_and_five_response_schemas_keep_exact_identity
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR tests/test_director_intent_constraints_additive.py::test_file_proposal_prompt_review_edit_reopen_and_stale_bindings[file]
+ERROR tests/test_v2_director_model_planning.py::test_original_explicit_adoption_keeps_planning_and_source_immutable[file]
+67 passed, 3 skipped, 2 warnings, 2 errors in 11.07s

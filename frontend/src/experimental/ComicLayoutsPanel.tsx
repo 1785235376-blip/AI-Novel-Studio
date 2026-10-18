@@ -5,23 +5,25 @@ import type { ExperimentalClient } from './api';
 import { ErrorMessage, Field, ResourceState, useResource } from './shared';
 import { useReviewAction } from './styleReviewClient';
 import { saveOtioFile } from './timelineExchangeClient';
-import { comicLayoutsClient, comicPreset, comicIssueLabel, type ComicDocument, type ComicRecord, type ComicPreflight, type ComicPanel, type ComicRect } from './comicLayoutsClient';
+import { comicLayoutsClient, comicPreset, blankComic, comicIssueLabel, type ComicDocument, type ComicRecord, type ComicPreflight, type ComicPanel, type ComicRect } from './comicLayoutsClient';
 import './comicLayouts.css';
 import { arrangeComicVertically, type ComicArrangement } from './comicArrangement';
 import { applyComicDuplicate, previewComicDuplicate, type ComicDuplicateTarget } from './comicDuplication';
 import type { ComicCatalog } from './comicLayoutsClient';
 type DuplicateIntent = { target: ComicDuplicateTarget; base: ComicDocument; catalog: ComicCatalog; ticket: number; error?: string };
 let nextScope = 0;
-export function ComicLayoutsPanel({ client }: { client: ExperimentalClient }) {
+type ComicPanelProps = { client: ExperimentalClient; onDirtyChange?: (dirty: boolean) => void; onBusyChange?: (busy: boolean) => void; isOwnerCurrent?: () => boolean };
+export function ComicLayoutsPanel({ client, ...props }: ComicPanelProps) {
   const identity = useMemo(() => ++nextScope, [client]);
-  return <ComicLayoutsContent key={identity} client={client} />;
+  return <ComicLayoutsContent key={identity} client={client} {...props} />;
 }
-function ComicLayoutsContent({ client }: { client: ExperimentalClient }) {
+function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurrent }: ComicPanelProps) {
   const api = useMemo(() => comicLayoutsClient(client), [client]);
   const catalog = useResource(signal => api.catalog(signal), [api]); const records = useResource(signal => api.records(signal), [api]);
   const action = useReviewAction(); const epoch = useRef(0);
   const [document, setDocument] = useState<ComicDocument>(); const [row, setRow] = useState<ComicRecord>();
-  const [past, setPast] = useState<ComicDocument[]>([]); const [future, setFuture] = useState<ComicDocument[]>([]); const [dirty, setDirty] = useState(false);
+  const [past, setPast] = useState<ComicDocument[]>([]); const [future, setFuture] = useState<ComicDocument[]>([]); const [dirty, storeDirty] = useState(false);
+  const setDirty = (value: boolean) => { onDirtyChange?.(value); storeDirty(value); };
   const [report, setReport] = useState<ComicPreflight>(); const [segments, setSegments] = useState<string[]>([]); const [loadedSegments, setLoadedSegments] = useState<number[]>([]); const [previewFailed, setPreviewFailed] = useState(false); const [width, setWidth] = useState(360); const [reviewed, setReviewed] = useState(false);
   const [assetId, setAssetId] = useState(''); const [assetUrl, setAssetUrl] = useState(''); const [assetLoaded, setAssetLoaded] = useState(false); const [assetReviewed, setAssetReviewed] = useState(false);
   const [arrangement, setArrangement] = useState<{ result: ComicArrangement; ticket: number; base: ComicDocument }>();
@@ -32,12 +34,13 @@ function ComicLayoutsContent({ client }: { client: ExperimentalClient }) {
   const renderedGeneration = editorGeneration.current;
   // A callback owns the document generation it rendered. Consume that ownership
   // synchronously, before React paints, for edits, navigation and async admission.
-  const currentEditor = () => arrangementAlive.current && renderedGeneration === editorGeneration.current && !actionPending.current && !action.busy;
+  const currentEditor = () => (isOwnerCurrent?.() ?? true) && arrangementAlive.current && renderedGeneration === editorGeneration.current && !actionPending.current && !action.busy;
   const duplicateCurrent = useRef<{ document?: ComicDocument; catalog?: ComicCatalog; allowed: boolean; intent?: DuplicateIntent }>({ allowed: false });
   const [restoreVersion, setRestoreVersion] = useState('');
   const available = !catalog.loading && !catalog.error && !!catalog.data; const rowsReady = !records.loading && !records.error && !!records.data;
   const source = available ? catalog.data!.screenplays.find(s => s.id === document?.screenplay_id) : undefined;
-  const sourceChanged = !!document && (!source || source.edit_version !== document.expected_screenplay_version);
+  const independent = document?.source_mode === 'INDEPENDENT';
+  const sourceChanged = !!document && !independent && (!source || source.edit_version !== document.expected_screenplay_version);
   const savedCurrent = !!row && rowsReady && records.data!.items.some(r => r.id === row.id && r.version === row.version && !r.stale);
   const savedStale = !!row && rowsReady && records.data!.items.some(r => r.id === row.id && r.stale);
   const asset = available ? catalog.data!.assets.find(a => a.id === assetId) : undefined;
@@ -52,6 +55,8 @@ function ComicLayoutsContent({ client }: { client: ExperimentalClient }) {
   useEffect(() => () => { segments.forEach(URL.revokeObjectURL); }, [segments]);
   useEffect(() => () => { if (assetUrl) URL.revokeObjectURL(assetUrl); }, [assetUrl]);
   const invalidate = () => { editorGeneration.current++; epoch.current++; arrangementEpoch.current++; setArrangement(undefined); cancelDuplicate(); setReport(undefined); setSegments([]); setLoadedSegments([]); setPreviewFailed(false); setReviewed(false); };
+  useEffect(() => { onDirtyChange?.(dirty); }, [dirty, onDirtyChange]);
+  useEffect(() => () => { onDirtyChange?.(false); onBusyChange?.(false); }, [onDirtyChange, onBusyChange]);
   const edit = (next: ComicDocument) => { if (!currentEditor()) return; if (document) setPast(values => [...values.slice(-29), document]); setDocument(next); setFuture([]); setDirty(true); invalidate(); };
   // Only admitted async completions call commitLoad/refreshResources directly.
   const commitLoad = (next: ComicRecord) => { invalidate(); setRow(next); setDocument(next.document); setPast([]); setFuture([]); setDirty(false); setRestoreVersion(''); };
@@ -60,9 +65,9 @@ function ComicLayoutsContent({ client }: { client: ExperimentalClient }) {
   const refresh = () => { if (currentEditor()) refreshResources(); };
   const runAction: typeof action.run = async (operation, message) => {
     if (!currentEditor() || composing.current) return;
-    editorGeneration.current++; actionPending.current = true; arrangementEpoch.current++; setArrangement(undefined); cancelDuplicate();
-    try { await action.run(operation, message); }
-    finally { actionPending.current = false; }
+    editorGeneration.current++; actionPending.current = true; onBusyChange?.(true); arrangementEpoch.current++; setArrangement(undefined); cancelDuplicate();
+    try { await action.run(isCurrent => operation(() => isCurrent() && (isOwnerCurrent?.() ?? true)), message); }
+    finally { actionPending.current = false; onBusyChange?.(false); }
   };
   const patchPanel = (id: string, patch: Partial<ComicPanel>) => document && edit({ ...document, panels: document.panels.map(p => p.id === id ? { ...p, ...patch } : p) });
   const runPreview = () => void runAction(async isCurrent => {
@@ -72,7 +77,7 @@ function ComicLayoutsContent({ client }: { client: ExperimentalClient }) {
   });
   return <section className="experimental-section" aria-label="漫画与 Webtoon 排版" onCompositionStartCapture={() => { composing.current = true; setIsComposing(true); cancelDuplicate(); }} onCompositionEndCapture={() => { composing.current = false; setIsComposing(false); }}>
     <div className="experimental-actions"><h3>漫画与 Webtoon 排版</h3><Badge>草稿 · 本地栅格渲染</Badge><Button disabled={action.busy || catalog.loading || records.loading} onClick={refresh}>刷新漫画来源与记录</Button></div>
-    <p>复用原剧本镜头、人物与资产库。生成图片和排版分开；缺图会阻止预览和导出，测试素材不代表最终美术。</p>
+    <p>复用原剧本镜头、人物与资产库。生成图片和排版分开；空白页和纯文字格可独立编辑保存；需要图片的格框缺图时仍阻止预览与导出。</p>
     <ResourceState loading={catalog.loading} error={catalog.error} />{!!action.error && <ErrorMessage error={action.error} />}{action.notice && <StatusMessage tone="success">{action.notice}</StatusMessage>}
     {available && (!catalog.data!.font.available || !catalog.data!.renderer.available) && <StatusMessage tone="warning">{!catalog.data!.renderer.available ? '漫画渲染组件未就绪。' : ''}{!catalog.data!.font.available ? '未找到已校验的 OFL 中文字体。带文字布局不能预览或导出；请由环境维护者准备项目的固定版本字体，不会使用缺字方框代替。' : ''}</StatusMessage>}
     {available && <Panel title="核对原图库中的用户图片">
@@ -84,8 +89,9 @@ function ComicLayoutsContent({ client }: { client: ExperimentalClient }) {
       </>}
     </Panel>}
     <Panel title="布局草稿与手工编辑">
+      <Button disabled={!available || action.busy} onClick={() => { if (!currentEditor()) return; invalidate(); setRow(undefined); setDocument(blankComic('PAGE', catalog.data!.presets.PAGE)); setPast([]); setFuture([]); setDirty(true); }}>新建空白漫画页</Button>
       <Field label="漫画来源剧本"><select disabled={!available || action.busy} value={document?.screenplay_id || ''} onChange={e => { if (!currentEditor()) return; const source = catalog.data?.screenplays.find(s => s.id === e.target.value); invalidate(); setRow(undefined); setDocument(source ? comicPreset(source, 'PAGE', catalog.data!.presets.PAGE) : undefined); setPast([]); setFuture([]); setDirty(true); }}><option value="">选择已有镜头的剧本</option>{available && catalog.data!.screenplays.map(s => <option key={s.id} value={s.id}>{s.title} · v{s.edit_version}</option>)}</select></Field>
-      {available && !catalog.data!.screenplays.length && <EmptyState title="暂无镜头来源" detail="先在原剧本工作区建立剧本与镜头，再回来选择。" />}
+      {available && !catalog.data!.screenplays.length && <EmptyState title="暂无镜头来源" detail="可以直接新建空白漫画页；从剧本改编时再选择已有镜头。" />}
       {document && available && !savedStale && <>
         {sourceChanged && <StatusMessage tone="warning">来源版本已变化。草稿输入仍保留，请重新选择当前来源再保存；旧画面已隐藏。</StatusMessage>}
         <ComicReadingOrderPanel document={document} scope={catalog.data!} disabled={!duplicateAllowed} getRevision={() => editorGeneration.current} onApply={next => {
@@ -94,7 +100,7 @@ function ComicLayoutsContent({ client }: { client: ExperimentalClient }) {
         }} />
         <fieldset className="experimental-form" disabled={action.busy}>
           <Field label="漫画布局名称"><input maxLength={240} value={document.title} onChange={e => edit({ ...document, title: e.target.value })} /></Field>
-          <Field label="布局预设"><select value={document.preset} onChange={e => { if (source) edit(comicPreset(source, e.target.value as ComicDocument['preset'], catalog.data!.presets[e.target.value as ComicDocument['preset']])); }}><option value="PAGE">页漫（最多前四个镜头，重排草稿）</option><option value="WEBTOON">纵向 Webtoon（最多前六个镜头，重排草稿）</option></select></Field>
+          <Field label="布局预设"><select value={document.preset} onChange={e => { const preset = e.target.value as ComicDocument['preset']; if (independent) edit({ ...document, preset, ...catalog.data!.presets[preset] }); else if (source) edit(comicPreset(source, preset, catalog.data!.presets[preset])); }}><option value="PAGE">页漫（最多前四个镜头，重排草稿）</option><option value="WEBTOON">纵向 Webtoon（最多前六个镜头，重排草稿）</option></select></Field>
           <Field label="漫画字体"><select value={document.font_family} onChange={() => {}}><option value="NOTO_SANS_SC_OFL">Noto Sans SC · 已固定版本的 SIL OFL 1.1 字体</option></select></Field>
           <div className="experimental-grid">{(['width', 'height', 'safe_area', 'segment_height'] as const).map((key, i) => <Field key={key} label={['页面宽度', '页面高度', '页面安全区', '导出分段高度'][i]}><input type="number" step={1} min={key === 'safe_area' ? 0 : 320} max={key === 'width' ? 1600 : key === 'height' ? 12000 : key === 'safe_area' ? 128 : 2400} value={document[key]} onChange={e => edit({ ...document, [key]: Number(e.target.value) })} /></Field>)}</div>
           <div className="experimental-actions"><Button disabled={!past.length} onClick={() => { if (!currentEditor() || !past.length) return; const next = past.at(-1)!; setPast(past.slice(0, -1)); setFuture([document, ...future]); setDocument(next); setDirty(true); invalidate(); }}>撤销本地排版</Button><Button disabled={!future.length} onClick={() => { if (!currentEditor() || !future.length) return; setPast([...past, document]); setDocument(future[0]); setFuture(future.slice(1)); setDirty(true); invalidate(); }}>重做本地排版</Button></div>
@@ -149,9 +155,10 @@ function ComicLayoutsContent({ client }: { client: ExperimentalClient }) {
               const next = { base: document, catalog: catalog.data!, target: { sourceId: panel.id, x: panel.x, y: Math.max(...document.panels.map(p => p.y + p.height)) + 16 }, ticket: ++duplicateEpoch.current };
               duplicateCurrent.current.intent = next; setDuplicate(next);
             }}>预览复制格框 {index + 1}</Button><div className="experimental-grid">
-            <Field label={`格框 ${index + 1} 镜头`}><select value={panel.shot_id} onChange={e => patchPanel(panel.id, { shot_id: e.target.value })}>{source && source.shots.map(shot => <option key={shot.id} value={shot.id}>镜头 {shot.number} · 场景 {shot.scene_id}</option>)}</select></Field>
+            {!independent && <Field label={`格框 ${index + 1} 镜头`}><select value={panel.shot_id || ''} onChange={e => patchPanel(panel.id, { shot_id: e.target.value })}>{source && source.shots.map(shot => <option key={shot.id} value={shot.id}>镜头 {shot.number} · 场景 {shot.scene_id}</option>)}</select></Field>}
             <Field label={`格框 ${index + 1} 阅读顺序`}><input type="number" min={1} max={24} step={1} value={panel.order} onChange={e => patchPanel(panel.id, { order: Number(e.target.value) })} /></Field>
-            <Field label={`格框 ${index + 1} 已批准图片`}><select value={panel.asset_id || ''} onChange={e => { const asset = catalog.data!.assets.find(a => a.id === e.target.value); patchPanel(panel.id, { asset_id: asset?.id || null, expected_asset_version: asset?.version || null }); }}><option value="">缺图，导出将阻止</option>{catalog.data!.assets.filter(a => a.approved).map(a => <option key={a.id} value={a.id}>{a.filename} · v{a.version}</option>)}</select></Field>
+            <Field label={`格框 ${index + 1} 画面类型`}><select value={panel.artwork_mode || 'IMAGE'} onChange={e => patchPanel(panel.id, { artwork_mode: e.target.value as 'IMAGE' | 'BLANK', ...(e.target.value === 'BLANK' ? { asset_id: null, expected_asset_version: null } : {}) })}><option value="IMAGE">需要已批准图片</option><option value="BLANK">有意留白 / 纯文字格</option></select></Field>
+            <Field label={`格框 ${index + 1} 已批准图片`}><select disabled={panel.artwork_mode === 'BLANK'} value={panel.asset_id || ''} onChange={e => { const asset = catalog.data!.assets.find(a => a.id === e.target.value); patchPanel(panel.id, { asset_id: asset?.id || null, expected_asset_version: asset?.version || null }); }}><option value="">缺图，导出将阻止</option>{catalog.data!.assets.filter(a => a.approved).map(a => <option key={a.id} value={a.id}>{a.filename} · v{a.version}</option>)}</select></Field>
             <Field label={`格框 ${index + 1} 图片缩放`}><select value={panel.fit} onChange={e => patchPanel(panel.id, { fit: e.target.value as ComicPanel['fit'] })}><option value="CONTAIN">完整显示，允许留白</option><option value="COVER">裁切填满（可调位置，需审核）</option></select></Field>
             <Field label={`格框 ${index + 1} 裁切水平位置 (%)`}><input type="number" min={0} max={100} step={1} disabled={panel.fit !== 'COVER'} value={panel.cover_x_percent ?? 50} onChange={e => { const value = e.target.valueAsNumber; if (Number.isInteger(value) && value >= 0 && value <= 100) patchPanel(panel.id, { cover_x_percent: value }); }} /></Field>
             <Field label={`格框 ${index + 1} 裁切垂直位置 (%)`}><input type="number" min={0} max={100} step={1} disabled={panel.fit !== 'COVER'} value={panel.cover_y_percent ?? 50} onChange={e => { const value = e.target.valueAsNumber; if (Number.isInteger(value) && value >= 0 && value <= 100) patchPanel(panel.id, { cover_y_percent: value }); }} /></Field>
@@ -182,12 +189,12 @@ function ComicLayoutsContent({ client }: { client: ExperimentalClient }) {
               <RectFields label={`格框 ${index + 1} 气泡 ${bi + 1}`} value={bubble} onChange={patch => patchPanel(panel.id, { bubbles: panel.bubbles.map(b => b.id === bubble.id ? { ...b, ...patch } : b) })} />
               <Button onClick={() => patchPanel(panel.id, { bubbles: panel.bubbles.filter(b => b.id !== bubble.id) })}>移除格框 {index + 1} 气泡 {bi + 1}</Button>
             </fieldset>)}
-            <div className="experimental-actions"><Button disabled={panel.bubbles.length >= 12} onClick={() => patchPanel(panel.id, { bubbles: [...panel.bubbles, { id: globalThis.crypto.randomUUID(), kind: 'DIALOGUE', text: '输入对白', character_id: null, font_size: 32, x: panel.x + 16, y: panel.y + 16, width: Math.max(48, panel.width - 32), height: Math.min(160, Math.max(48, panel.height - 32)) }] })}>添加格框 {index + 1} 气泡</Button><Button disabled={document.panels.length === 1} onClick={() => edit({ ...document, panels: document.panels.filter(p => p.id !== panel.id).map((p, i) => ({ ...p, order: i + 1 })) })}>移除格框 {index + 1}</Button></div>
+            <div className="experimental-actions"><Button disabled={panel.bubbles.length >= 12} onClick={() => patchPanel(panel.id, { bubbles: [...panel.bubbles, { id: globalThis.crypto.randomUUID(), kind: 'DIALOGUE', text: '输入对白', character_id: null, font_size: 32, x: panel.x + 16, y: panel.y + 16, width: Math.max(48, panel.width - 32), height: Math.min(160, Math.max(48, panel.height - 32)) }] })}>添加格框 {index + 1} 气泡</Button><Button disabled={!independent && document.panels.length === 1} onClick={() => edit({ ...document, panels: document.panels.filter(p => p.id !== panel.id).map((p, i) => ({ ...p, order: i + 1 })) })}>移除格框 {index + 1}</Button></div>
           </article>)}
-          <Button disabled={document.panels.length >= 24 || !source?.shots.length} onClick={() => source && edit({ ...document, panels: [...document.panels, { id: globalThis.crypto.randomUUID(), shot_id: source.shots[0].id, order: document.panels.length + 1, x: document.safe_area, y: document.safe_area, width: document.width - document.safe_area * 2, height: 320, character_ids: [], asset_id: null, expected_asset_version: null, fit: 'CONTAIN', bubbles: [], image_brief: '', appearance_references: [] }] })}>添加格框（手工定位）</Button>
+          <Button disabled={document.panels.length >= 24 || (!independent && !source?.shots.length)} onClick={() => (independent || source) && edit({ ...document, panels: [...document.panels, { id: globalThis.crypto.randomUUID(), shot_id: independent ? null : source!.shots[0].id, ...(independent ? { artwork_mode: 'BLANK' as const } : {}), order: document.panels.length + 1, x: document.safe_area, y: document.safe_area, width: document.width - document.safe_area * 2, height: 320, character_ids: [], asset_id: null, expected_asset_version: null, fit: 'CONTAIN', bubbles: [], image_brief: '', appearance_references: [] }] })}>添加格框（手工定位）</Button>
         </fieldset>
         <p>安全区与坐标以页面像素为准，阅读顺序支持从上到下、同一行从左到右。新增格框或气泡可能重叠，预检会阻止越界与文字溢出。切换预设会重排草稿，可撤销。</p>
-        <Button disabled={action.busy || sourceChanged || !document.panels.length || !document.title.trim()} onClick={() => void runAction(async isCurrent => { const saved = await api.save(document, row); if (isCurrent()) { commitLoad(saved); records.reload(); } }, '布局已保存为待审草稿。原剧本与图片未改写。')}>保存漫画布局草稿</Button>
+        <Button disabled={action.busy || sourceChanged || (!independent && !document.panels.length) || !document.title.trim()} onClick={() => void runAction(async isCurrent => { const saved = await api.save(document, row); if (isCurrent()) { commitLoad(saved); records.reload(); } }, '布局已保存为待审草稿。原剧本与图片未改写。')}>保存漫画布局草稿</Button>
       </>}
     </Panel>
     <Panel title="已保存布局与版本"><ResourceState loading={records.loading} error={records.error} />{rowsReady && !records.data!.items.length && <EmptyState title="还没有漫画布局" detail="选择来源并保存草稿后，核对预检和实际像素，再显式批准导出。" />}

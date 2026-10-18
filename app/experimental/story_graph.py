@@ -7,6 +7,7 @@ projections are built from explicit approved knowledge events before serializati
 from __future__ import annotations
 
 from copy import deepcopy
+from contextlib import contextmanager, ExitStack
 from typing import Literal
 
 from pydantic import Field, model_validator
@@ -220,6 +221,48 @@ class StoryGraphService(WorldService):
     supports_graph = True
     INDEX = 'story_graph_index'
     MAX_RECORDS = 5000
+
+    def configure_creation_owner(self, owner):
+        """Use the original project lease only for newly authored graph records.
+
+        Reads/reviews never adopt old records into a new incarnation. This is
+        server configuration, never an input field or a new project registry.
+        """
+        self.creation_owner = owner
+
+    def create_record(self, nid, scope, actor, value, *, reauthorize=lambda: None):
+        # Reject malformed or already-denied calls before creating an owner marker.
+        payload = self._payload(value)
+        reauthorize()
+        if getattr(self, 'creation_owner', None) is not None:
+            # Validate current references before initialization where possible;
+            # the original create transaction captures them again under lease.
+            self.novels.get(nid)
+            self._capture(nid, scope, payload, self.store.read(nid, scope))
+            reauthorize()
+        return super().create_record(nid, scope, actor, value, reauthorize=reauthorize)
+
+    @contextmanager
+    def _creation_transaction(self, nid, scope):
+        owner = getattr(self, 'creation_owner', None)
+        if owner is None:
+            with super()._creation_transaction(nid, scope) as transaction:
+                yield transaction
+            return
+        # Resolve the original current backing store, including when its owner
+        # dependencies are rebound. No alternate data root or authority is read.
+        if owner.store is not self.store:
+            from ..creative.project_store import CreativeProjectStore
+            owner = CreativeProjectStore(self.store)
+        # Keep World on its original active raw transaction so index refreshes
+        # read the newly created record. Hold the existing project lease through
+        # the raw atomic commit, in the original scope -> project lock order.
+        with ExitStack() as lifecycle:
+            with self.store.transaction(nid, scope) as state:
+                incarnation = lifecycle.enter_context(owner.owner_lease(nid))
+                yield state, {'story_project_incarnation': incarnation}
+                if owner.incarnation(nid) != incarnation:
+                    raise StaleSourceError('STORY_GRAPH_PROJECT_CHANGED')
 
     def _payload(self, value):
         return StoryRecordIn.model_validate(value.model_dump() if hasattr(value, 'model_dump') else value).model_dump()

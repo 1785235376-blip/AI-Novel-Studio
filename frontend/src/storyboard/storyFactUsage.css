@@ -1,0 +1,4 @@
+.story-fact-usage { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.story-fact-usage p { overflow-wrap: anywhere; }
+.story-fact-usage label { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.story-fact-usage select, .story-fact-usage textarea { min-width: 0; max-width: 100%; }

@@ -1,0 +1,39 @@
+{
+  "purpose": "Exact orphan scopes created by Comic epoch test before teardown correction",
+  "deleted": [
+    {
+      "scope_key": "4066ed0402df5f9c64a425f56cfa7d5af3b811af0cc0a8b1358aabcb00e02193",
+      "novel_id": "comic-epoch-fbb6d9345e0e466db15baebe8723224d"
+    },
+    {
+      "scope_key": "879e7ffb8719a45e137ec6b523dba4362fb03bc0557706f3a48d971971e9e452",
+      "novel_id": "comic-epoch-26b025c8e0584d66adf171e99486bfa1"
+    }
+  ],
+  "before": [
+    {
+      "scope_key": "4066ed0402df5f9c64a425f56cfa7d5af3b811af0cc0a8b1358aabcb00e02193",
+      "novel_id": "comic-epoch-fbb6d9345e0e466db15baebe8723224d"
+    },
+    {
+      "scope_key": "879e7ffb8719a45e137ec6b523dba4362fb03bc0557706f3a48d971971e9e452",
+      "novel_id": "comic-epoch-26b025c8e0584d66adf171e99486bfa1"
+    }
+  ],
+  "after_prior_cleanup": 0,
+  "regression_command": [
+    "/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_comic_independent.py",
+    "-m",
+    "postgres_backend_only",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=.runtime/v2-checks/comic-independent-cleanup/pytest",
+    "-q"
+  ],
+  "regression_exit_code": 0,
+  "after_regressions_scope_count": 0,
+  "after_regressions_project_count": 0
+}

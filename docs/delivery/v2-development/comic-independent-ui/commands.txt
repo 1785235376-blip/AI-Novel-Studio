@@ -1,0 +1,18 @@
+Working directory: studio-director-transport
+Node PATH=/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/usr/bin:/bin
+
+Initial options failure (no tests ran):
+frontend/node_modules/.bin/vitest run --root frontend src/creative/IndependentStudioWorkspace.comic.test.tsx src/experimental/ComicLayoutsPanel.test.tsx src/experimental/ComicLayoutsPanel.additive.test.tsx src/experimental/comicDuplication.test.ts src/experimental/comicArrangement.test.ts --maxWorkers=2
+
+Fixture failure (URL.revokeObjectURL missing from jsdom setup):
+Same command with --maxWorkers=2 --minWorkers=1. Preserved fixture-url-api-failure.log. Added URL API spies to new test fixture; no runtime workaround.
+
+Passing run (94 tests; includes independent blank-panel duplication):
+frontend/node_modules/.bin/vitest run --root frontend src/creative/IndependentStudioWorkspace.comic.test.tsx src/creative/IndependentStudioWorkspace.test.tsx src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx src/experimental/ComicLayoutsPanel.test.tsx src/experimental/ComicLayoutsPanel.additive.test.tsx src/experimental/comicDuplication.test.ts src/experimental/comicArrangement.test.ts --maxWorkers=2 --minWorkers=1
+
+TypeScript (exit 0, no output):
+frontend/node_modules/.bin/tsc --noEmit -p frontend/tsconfig.json
+
+Visual/geometry attempt (5 browser-launch failures, no visual assertions ran):
+frontend/node_modules/.bin/playwright test --config frontend/playwright.visual.config.ts --grep 'shell geometry|image workspace visual baseline'
+Missing preinstalled Chromium headless shell. No browser installation, screenshots or baseline updates performed. This is NOT visual acceptance or end-to-end product evidence.

@@ -41,6 +41,8 @@ class CreativeService(DomainService):
         self.adaptations = AdaptationService(self)
         from .storyboard import StoryboardWorkspace
         self.storyboards = StoryboardWorkspace(self)
+        from .story_fact_bindings import CreativeStoryFacts
+        self.story_facts = CreativeStoryFacts(self)
 
     @property
     def store(self):

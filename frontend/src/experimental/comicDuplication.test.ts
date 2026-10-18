@@ -85,3 +85,13 @@ it.each([null, {}, 'bad', [null]])('rejects malformed appearance reference conta
   expect(previewComicDuplicate(document, catalog, target).error).toMatch(/外观引用结构/);
   expect(applyComicDuplicate(document, catalog, target, fixture.ids).document).toBeUndefined();
 });
+it('copies independent blank panels without inventing screenplay, shot or image bindings', () => {
+  const { document, catalog, target } = setup();
+  document.source_mode = 'INDEPENDENT'; document.screenplay_id = null; document.expected_screenplay_version = null;
+  document.panels.forEach(panel => { panel.shot_id = null; panel.artwork_mode = 'BLANK'; panel.asset_id = null; panel.expected_asset_version = null; });
+  catalog.screenplays = [];
+  const next = applyComicDuplicate(document, catalog, target, fixture.ids).document!;
+  expect(next.panels[1]).toMatchObject({ shot_id: null, artwork_mode: 'BLANK', asset_id: null, expected_asset_version: null, bubbles: [{ text: document.panels[0].bubbles[0].text }] });
+  document.panels[0].shot_id = 'invented';
+  expect(previewComicDuplicate(document, catalog, target).error).toBeTruthy();
+});

@@ -7,6 +7,7 @@ an assertion of model-level semantic understanding.
 from __future__ import annotations
 
 from copy import deepcopy
+from contextlib import contextmanager
 import math
 from typing import Any, Literal
 
@@ -296,6 +297,12 @@ class WorldService(DomainService):
         links, entities, refs = self._references(nid, scope, payload, state)
         return {"sources": sources, "effective_chapter": number, "links": links, "entity_sources": entities, "semantic_sources": refs}
 
+    @staticmethod
+    def _fresh_capture_fields(row):
+        """Original capture fields shared by bounded read-only projections."""
+        return ("effective_chapter", "entity_sources", "semantic_sources",
+                *(["effective_until"] if "effective_until" in row else []))
+
     def _assert_fresh(self, nid, scope, row, state, seen=None):
         # Research-derived drafts are visible only through the current-author
         # A10 projection. Generic world/graph/context cannot promote or reuse.
@@ -312,7 +319,7 @@ class WorldService(DomainService):
             capture = self._capture(nid, scope, row, state)
         except (ValueError, FileNotFoundError, KeyError) as exc:
             raise StaleSourceError("world reference changed or is no longer approved") from exc
-        for field in ("effective_chapter", "entity_sources", "semantic_sources", *(["effective_until"] if "effective_until" in row else [])):
+        for field in self._fresh_capture_fields(row):
             if capture[field] != row[field]:
                 raise StaleSourceError("world source or narrative order changed")
         for rid in row["semantic_sources"]:
@@ -339,14 +346,20 @@ class WorldService(DomainService):
         if not self._visible_kind(row): raise FileNotFoundError(rid)
         return self._decorate(nid, scope, row, state)
 
+    @contextmanager
+    def _creation_transaction(self, nid, scope):
+        """Original transaction; extensions may add server-owned creation provenance."""
+        with self.store.transaction(nid, scope) as state:
+            yield state, {}
+
     def create_record(self, nid, scope, actor, value, *, reauthorize=lambda: None):
         payload = self._payload(value)
         self.novels.get(nid)
-        with self.store.transaction(nid, scope) as state:
+        with self._creation_transaction(nid, scope) as (state, provenance):
             reauthorize()
             self._validate_create_capacity(state)
             captured = self._capture(nid, scope, payload, state)
-            row = new_row(nid, scope, actor, {**payload, **captured, "status": "REVIEW", "canon_state": "CANDIDATE", "privacy_state": "LOCAL_ONLY"})
+            row = new_row(nid, scope, actor, {**payload, **captured, **provenance, "status": "REVIEW", "canon_state": "CANDIDATE", "privacy_state": "LOCAL_ONLY"})
             self._assert_fresh(nid, scope, row, state)
             collection(state, self.RECORDS)[row["id"]] = row
             self._after_record_mutation(state, row, actor)

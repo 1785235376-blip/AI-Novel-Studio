@@ -1,0 +1,29 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+RangeError: options.minThreads and options.maxThreads must not conflict
+ ❯ new Tinypool ../../studio-usability/frontend/node_modules/.pnpm/tinypool@1.1.1/node_modules/tinypool/dist/index.js:745:120
+ ❯ createForksPool ../../studio-usability/frontend/node_modules/.pnpm/vitest@2.1.9_@types+node@22.13.10_jsdom@25.0.1/node_modules/vitest/dist/chunks/resolveConfig.rBxzbVsl.js:6756:16
+ ❯ forks ../../studio-usability/frontend/node_modules/.pnpm/vitest@2.1.9_@types+node@22.13.10_jsdom@25.0.1/node_modules/vitest/dist/chunks/resolveConfig.rBxzbVsl.js:7664:20
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/vitest@2.1.9_@types+node@22.13.10_jsdom@25.0.1/node_modules/vitest/dist/chunks/resolveConfig.rBxzbVsl.js:7690:27
+ ❯ executeTests ../../studio-usability/frontend/node_modules/.pnpm/vitest@2.1.9_@types+node@22.13.10_jsdom@25.0.1/node_modules/vitest/dist/chunks/resolveConfig.rBxzbVsl.js:7681:5
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/vitest@2.1.9_@types+node@22.13.10_jsdom@25.0.1/node_modules/vitest/dist/chunks/cli-api.DqsSTaIi.js:10818:9
+ ❯ Vitest.runFiles ../../studio-usability/frontend/node_modules/.pnpm/vitest@2.1.9_@types+node@22.13.10_jsdom@25.0.1/node_modules/vitest/dist/chunks/cli-api.DqsSTaIi.js:10840:12
+ ❯ Vitest.start ../../studio-usability/frontend/node_modules/.pnpm/vitest@2.1.9_@types+node@22.13.10_jsdom@25.0.1/node_modules/vitest/dist/chunks/cli-api.DqsSTaIi.js:10682:7
+ ❯ startVitest ../../studio-usability/frontend/node_modules/.pnpm/vitest@2.1.9_@types+node@22.13.10_jsdom@25.0.1/node_modules/vitest/dist/chunks/cli-api.DqsSTaIi.js:11848:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+ Test Files  no tests
+      Tests  no tests
+     Errors  1 error
+   Start at  03:31:16
+   Duration  35ms (transform 0ms, setup 0ms, collect 0ms, tests 0ms, environment 0ms, prepare 0ms)
+

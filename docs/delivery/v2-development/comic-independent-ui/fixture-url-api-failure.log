@@ -1,0 +1,311 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 821ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 302ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 1195ms
+   ✓ explicit arrangement preview applies one undoable edit and saves only through original owner 345ms
+ ✓ src/experimental/comicDuplication.test.ts (35 tests) 13ms
+stderr | src/creative/IndependentStudioWorkspace.comic.test.tsx > Image subview creates a source-free page, edits a bubble, saves and reopens without a model or renderer
+Error: Uncaught [TypeError: undefined is not a function]
+    at reportException (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at reportUncaughtErrorInDEV (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22877:5)
+    at captureCommitPhaseError (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27165:5) TypeError: undefined is not a function
+    at Array.forEach (<anonymous>)
+    at /workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:55:36
+    at safelyCallDestroy (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5)
+    at commitHookEffectListUnmount (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11)
+    at commitPassiveUnmountOnFiber (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25073:11)
+    at commitPassiveUnmountEffects_complete (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25046:7)
+    at commitPassiveUnmountEffects_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25035:7)
+    at commitPassiveUnmountEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3)
+    at flushPassiveEffectsImpl (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3)
+    at flushPassiveEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+The above error occurred in the <ComicLayoutsContent> component:
+
+    at ComicLayoutsContent (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:33:32)
+    at ComicLayoutsPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:24:30)
+    at StudioComicPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/creative/StudioComicPanel.tsx:13:29)
+    at section
+    at Panel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/ui/primitives.tsx:36:18)
+    at div
+    at section
+    at main
+    at div
+    at AppShell (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/ui/AppShell.tsx:145:3)
+    at IndependentStudioSession (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/creative/IndependentStudioWorkspace.tsx:128:37)
+    at IndependentStudioWorkspace (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/creative/IndependentStudioWorkspace.tsx:121:111)
+    at QueryClientProvider (file:///workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/@tanstack+react-query@5.101.4_react@18.3.1/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+Error: Uncaught [TypeError: undefined is not a function]
+    at reportException (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at reportUncaughtErrorInDEV (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22877:5)
+    at captureCommitPhaseError (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27165:5) TypeError: undefined is not a function
+    at Array.forEach (<anonymous>)
+    at /workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:55:36
+    at safelyCallDestroy (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5)
+    at commitHookEffectListUnmount (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11)
+    at commitPassiveUnmountInsideDeletedTreeOnFiber (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25140:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25087:5)
+    at commitPassiveUnmountEffects_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24995:11)
+    at commitPassiveUnmountEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3)
+    at flushPassiveEffectsImpl (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3)
+    at flushPassiveEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+The above error occurred in the <ComicLayoutsContent> component:
+
+    at ComicLayoutsContent (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:33:32)
+    at ComicLayoutsPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:24:30)
+    at StudioComicPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/creative/StudioComicPanel.tsx:13:29)
+    at section
+    at Panel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/ui/primitives.tsx:36:18)
+    at div
+    at section
+    at main
+    at div
+    at AppShell (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/ui/AppShell.tsx:145:3)
+    at IndependentStudioSession (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/creative/IndependentStudioWorkspace.tsx:128:37)
+    at IndependentStudioWorkspace (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/creative/IndependentStudioWorkspace.tsx:121:111)
+    at QueryClientProvider (file:///workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/@tanstack+react-query@5.101.4_react@18.3.1/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/creative/IndependentStudioWorkspace.comic.test.tsx > denied Comic scope is explicit and does not look like an empty project
+Error: Uncaught [TypeError: undefined is not a function]
+    at reportException (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at reportUncaughtErrorInDEV (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22877:5)
+    at captureCommitPhaseError (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27165:5) TypeError: undefined is not a function
+    at Array.forEach (<anonymous>)
+    at /workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:55:36
+    at safelyCallDestroy (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5)
+    at commitHookEffectListUnmount (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11)
+    at commitPassiveUnmountInsideDeletedTreeOnFiber (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25140:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25087:5)
+    at commitPassiveUnmountEffects_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24995:11)
+    at commitPassiveUnmountEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3)
+    at flushPassiveEffectsImpl (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3)
+    at flushPassiveEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+The above error occurred in the <ComicLayoutsContent> component:
+
+    at ComicLayoutsContent (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:33:32)
+    at ComicLayoutsPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:24:30)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+ ❯ src/creative/IndependentStudioWorkspace.comic.test.tsx (3 tests | 3 failed) 1693ms
+   × Image subview creates a source-free page, edits a bubble, saves and reopens without a model or renderer 399ms
+     → undefined is not a function
+     → undefined is not a function
+   × denied Comic scope is explicit and does not look like an empty project 1113ms
+     → Unable to find an element with the text: /当前身份或分支没有漫画访问权限/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+  [36m<div />[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+  [36m<div />[39m
+[36m</body>[39m
+   × dirty comic blocks closing until the existing workspace discard confirmation 179ms
+     → undefined is not a function
+     → undefined is not a function
+stderr | src/creative/IndependentStudioWorkspace.comic.test.tsx > dirty comic blocks closing until the existing workspace discard confirmation
+Error: Uncaught [TypeError: undefined is not a function]
+    at reportException (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at reportUncaughtErrorInDEV (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22877:5)
+    at captureCommitPhaseError (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27165:5) TypeError: undefined is not a function
+    at Array.forEach (<anonymous>)
+    at /workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:55:36
+    at safelyCallDestroy (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5)
+    at commitHookEffectListUnmount (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11)
+    at commitPassiveUnmountOnFiber (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25073:11)
+    at commitPassiveUnmountEffects_complete (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25046:7)
+    at commitPassiveUnmountEffects_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25035:7)
+    at commitPassiveUnmountEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3)
+    at flushPassiveEffectsImpl (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3)
+    at flushPassiveEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+The above error occurred in the <ComicLayoutsContent> component:
+
+    at ComicLayoutsContent (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:33:32)
+    at ComicLayoutsPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:24:30)
+    at StudioComicPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/creative/StudioComicPanel.tsx:13:29)
+    at section
+    at Panel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/ui/primitives.tsx:36:18)
+    at div
+    at section
+    at main
+    at div
+    at AppShell (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/ui/AppShell.tsx:145:3)
+    at IndependentStudioSession (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/creative/IndependentStudioWorkspace.tsx:128:37)
+    at IndependentStudioWorkspace (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/creative/IndependentStudioWorkspace.tsx:121:111)
+    at QueryClientProvider (file:///workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/@tanstack+react-query@5.101.4_react@18.3.1/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+Error: Uncaught [TypeError: undefined is not a function]
+    at reportException (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at reportUncaughtErrorInDEV (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22877:5)
+    at captureCommitPhaseError (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27165:5) TypeError: undefined is not a function
+    at Array.forEach (<anonymous>)
+    at /workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:55:36
+    at safelyCallDestroy (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5)
+    at commitHookEffectListUnmount (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11)
+    at commitPassiveUnmountInsideDeletedTreeOnFiber (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25140:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25087:5)
+    at commitPassiveUnmountEffects_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24995:11)
+    at commitPassiveUnmountEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3)
+    at flushPassiveEffectsImpl (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3)
+    at flushPassiveEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+The above error occurred in the <ComicLayoutsContent> component:
+
+    at ComicLayoutsContent (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:33:32)
+    at ComicLayoutsPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:24:30)
+    at StudioComicPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/creative/StudioComicPanel.tsx:13:29)
+    at section
+    at Panel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/ui/primitives.tsx:36:18)
+    at div
+    at section
+    at main
+    at div
+    at AppShell (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/ui/AppShell.tsx:145:3)
+    at IndependentStudioSession (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/creative/IndependentStudioWorkspace.tsx:128:37)
+    at IndependentStudioWorkspace (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/creative/IndependentStudioWorkspace.tsx:121:111)
+    at QueryClientProvider (file:///workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/@tanstack+react-query@5.101.4_react@18.3.1/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+ ✓ src/experimental/comicArrangement.test.ts (18 tests) 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/IndependentStudioWorkspace.comic.test.tsx > Image subview creates a source-free page, edits a bubble, saves and reopens without a model or renderer
+ FAIL  src/creative/IndependentStudioWorkspace.comic.test.tsx > dirty comic blocks closing until the existing workspace discard confirmation
+TypeError: undefined is not a function
+ ❯ src/experimental/ComicLayoutsPanel.tsx:55:36
+
+ ❯ safelyCallDestroy ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5
+ ❯ commitHookEffectListUnmount ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11
+ ❯ commitPassiveUnmountOnFiber ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25073:11
+ ❯ commitPassiveUnmountEffects_complete ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25046:7
+ ❯ commitPassiveUnmountEffects_begin ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25035:7
+ ❯ commitPassiveUnmountEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3
+ ❯ flushPassiveEffectsImpl ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3
+ ❯ flushPassiveEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/creative/IndependentStudioWorkspace.comic.test.tsx > Image subview creates a source-free page, edits a bubble, saves and reopens without a model or renderer
+ FAIL  src/creative/IndependentStudioWorkspace.comic.test.tsx > dirty comic blocks closing until the existing workspace discard confirmation
+TypeError: undefined is not a function
+ ❯ src/experimental/ComicLayoutsPanel.tsx:55:36
+
+ ❯ safelyCallDestroy ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5
+ ❯ commitHookEffectListUnmount ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11
+ ❯ commitPassiveUnmountInsideDeletedTreeOnFiber ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25140:11
+ ❯ commitPassiveUnmountEffectsInsideOfDeletedTree_begin ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25087:5
+ ❯ commitPassiveUnmountEffects_begin ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24995:11
+ ❯ commitPassiveUnmountEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3
+ ❯ flushPassiveEffectsImpl ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3
+ ❯ flushPassiveEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/creative/IndependentStudioWorkspace.comic.test.tsx > denied Comic scope is explicit and does not look like an empty project
+TestingLibraryElementError: Unable to find an element with the text: /当前身份或分支没有漫画访问权限/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+  [36m<div />[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+  [36m<div />[39m
+[36m</body>[39m
+ ❯ waitForWrapper ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/creative/IndependentStudioWorkspace.comic.test.tsx:70:16
+     68|   denied = true; mount();
+     69|   fireEvent.click(await screen.findByRole('button', { name: '打开漫画…
+     70|   await screen.findByText(/当前身份或分支没有漫画访问权限/);
+       |                ^
+     71|   expect(screen.queryByRole('button', { name: '新建空白漫画页' })).toB…
+     72|   expect(fetcher.mock.calls.every(([, init]) => init.method === 'GET')…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+TypeError: undefined is not a function
+ ❯ src/experimental/ComicLayoutsPanel.tsx:55:36
+
+ ❯ safelyCallDestroy ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5
+ ❯ commitHookEffectListUnmount ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11
+ ❯ commitPassiveUnmountInsideDeletedTreeOnFiber ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25140:11
+ ❯ commitPassiveUnmountEffectsInsideOfDeletedTree_begin ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25087:5
+ ❯ commitPassiveUnmountEffects_begin ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24995:11
+ ❯ commitPassiveUnmountEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3
+ ❯ flushPassiveEffectsImpl ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3
+ ❯ flushPassiveEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14
+
+This error originated in "src/creative/IndependentStudioWorkspace.comic.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "denied Comic scope is explicit and does not look like an empty project". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  3 failed | 67 passed (70)
+     Errors  1 error
+   Start at  03:31:24
+   Duration  7.72s (transform 2.92s, setup 51ms, collect 4.37s, tests 3.73s, environment 901ms, prepare 270ms)
+

@@ -1,0 +1,11 @@
+{
+  "app/experimental/comic_layouts.py": "986a6b3413bdb9142d5b26720d8f9c93ed2df18dcca2bc25751832deec4e44c8",
+  "frontend/src/experimental/ComicLayoutsPanel.tsx": "88ecde5759daec328572dd3a77363ec402607e0486714474dc71d0f3b482ddb8",
+  "frontend/src/experimental/comicLayoutsClient.ts": "5d2820525f5ec41de63b06ee96719bb3181a1684f36e7a5757a2a9e17b87a12e",
+  "frontend/src/experimental/comicDuplication.ts": "a3e957805973d7176222ff23a863ac0b988a7099b56f10731cb3175ebf91bbf0",
+  "frontend/src/experimental/comicDuplication.test.ts": "0270b254989378173e52f799e828797d398d077000809fa49eb1c64f08d2f6dd",
+  "frontend/src/creative/IndependentStudioWorkspace.tsx": "8bce20db1ec414dd5c324debf28352725c5e15b739f3088872117c0a5f651f6a",
+  "frontend/src/creative/StudioComicPanel.tsx": "b8c9cd10adf6e281322025caf6a6e77f92bd30ce7bc13dbd114042fc7053ffd4",
+  "frontend/src/creative/IndependentStudioWorkspace.comic.test.tsx": "30812571cfb498865413b59a953ad9607d830603b2abd26ff69d21a0191423c4",
+  "tests/test_comic_independent.py": "4c49cac3ab2e91e6552d22b3a41161de08c27620da16e3d11d01b8c8b1c16463"
+}

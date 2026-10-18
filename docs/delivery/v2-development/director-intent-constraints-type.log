@@ -1,0 +1,6 @@
+frontend/src/creative/DirectorIntentConstraints.test.tsx(41,7): error TS2322: Type 'Mock<() => Promise<{ enabled: boolean; can_mutate: boolean; modes: string[]; }>>' is not assignable to type '(signal?: AbortSignal) => Promise<CreativeCapabilities>'.
+  Type 'Promise<{ enabled: boolean; can_mutate: boolean; modes: string[]; }>' is not assignable to type 'Promise<CreativeCapabilities>'.
+    Type '{ enabled: boolean; can_mutate: boolean; modes: string[]; }' is not assignable to type 'CreativeCapabilities'.
+      Types of property 'modes' are incompatible.
+        Type 'string[]' is not assignable to type 'CreativeMode[]'.
+          Type 'string' is not assignable to type 'CreativeMode'.

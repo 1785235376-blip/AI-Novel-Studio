@@ -1,12 +1,13 @@
 import { Button, Badge } from '../ui/primitives';
 import { useId } from 'react';
-import { creativeTextLength, validDirectorGenre, type VisualTarget } from './types';
+import { creativeTextLength, directorConstraintFields, validDirectorGenre, type VisualTarget } from './types';
 import { CreativeField } from './CreativeCanvas';
 
 const emptyTarget = (): VisualTarget => ({ style: '', atmosphere: '', reference_works: [], color: '', rhythm: '' });
 /** View-only goal editor. Original document versioning and explicit save own persistence. */
 export function DirectorTargetPanel({ value, onChange, prefix = '' }: { prefix?: string; value?: VisualTarget | null; onChange: (value?: VisualTarget) => void }) {
   const target = value || emptyTarget();
+  const constraintsHint = useId();
   const genreHint = useId(), genreLength = creativeTextLength(target.genre);
   const update = (patch: Partial<VisualTarget>) => onChange({ ...target, ...patch });
   return <section className="creative-visual-target" aria-label={`${prefix}项目视觉目标`}>
@@ -14,6 +15,16 @@ export function DirectorTargetPanel({ value, onChange, prefix = '' }: { prefix?:
     <p>导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。</p>
     <div className="creative-form-grid"><div><CreativeField label={`${prefix}文档类型 / 题材`}><input value={target.genre ?? ''} aria-invalid={!validDirectorGenre(target)} aria-describedby={genreHint} onChange={event => update({ genre: event.target.value })} /></CreativeField><p id={genreHint}>{genreLength} / 2000 字符{!validDirectorGenre(target) ? '，超出上限，请缩短后保存。' : '；仅属于此文档，留空表示未设定。'}</p></div><CreativeField label={`${prefix}视觉风格`}><input maxLength={2000} value={target.style} onChange={event => update({ style: event.target.value })} /></CreativeField>
       <CreativeField label={`${prefix}整体氛围`}><input maxLength={2000} value={target.atmosphere} onChange={event => update({ atmosphere: event.target.value })} /></CreativeField></div>
+    <details><summary>展开受众、平台与制作预算约束</summary>
+      <p id={constraintsHint}>仅记录作者目标，供模型分析与人工审核参考。费用和可行性尚未核实；不代表付款、资源准入或执行授权。留空表示未设定。</p>
+      <div className="creative-form-grid">{directorConstraintFields.map(({ key, label }) => {
+        const length = creativeTextLength(target[key]);
+        return <div key={key}><CreativeField label={`${prefix}${label}`}><textarea rows={2} value={target[key] ?? ''}
+          aria-invalid={length > 2000} aria-describedby={`${constraintsHint} ${constraintsHint}-${key}`}
+          onChange={event => { const { [key]: _old, ...rest } = target; onChange(event.target.value.trim() ? { ...rest, [key]: event.target.value } : rest); }} />
+        </CreativeField><p id={`${constraintsHint}-${key}`}>{length} / 2000 字符{length > 2000 ? '，超出上限，请缩短后保存。' : ''}</p></div>;
+      })}</div>
+    </details>
     <details><summary>展开色彩、节奏与参考作品</summary><div className="creative-form-grid">
       <CreativeField label={`${prefix}色彩目标`}><input maxLength={2000} value={target.color} onChange={event => update({ color: event.target.value })} /></CreativeField>
       <CreativeField label={`${prefix}节奏目标`}><input maxLength={2000} value={target.rhythm} onChange={event => update({ rhythm: event.target.value })} /></CreativeField>

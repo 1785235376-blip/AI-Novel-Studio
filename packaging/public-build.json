@@ -127,6 +127,8 @@
     "app/creative/script_export.py",
     "app/creative/service.py",
     "app/creative/storage_admission.py",
+    "app/creative/story_fact_api.py",
+    "app/creative/story_fact_bindings.py",
     "app/creative/storyboard.py",
     "app/creative/storyboard_model.py",
     "app/creative/text_assets.py",

@@ -17,7 +17,7 @@ export const SCRIPT_PURPOSES = [
 export type ScriptPurpose = typeof SCRIPT_PURPOSES[number]['id'];
 export type ScriptContent = { purpose: ScriptPurpose; body: string };
 export type Dialogue = { speaker: string; text: string; delivery: string };
-export type VisualTarget = { style: string; atmosphere: string; reference_works: string[]; color: string; rhythm: string; genre?: string | null };
+export type VisualTarget = { style: string; atmosphere: string; reference_works: string[]; color: string; rhythm: string; genre?: string | null; target_audience?: string | null; target_platform?: string | null; production_budget_constraints?: string | null };
 export type DirectorPerformance = { character: string; action: string; expression: string; state: string };
 export type DirectorPlanning = { rationale: string; sequence_reason: string; duration_reason: string; uncertainty: string; assumptions: string[]; alternatives: { choice: string; tradeoff: string }[]; evidence: { scene_id: string; field: string; dialogue_index: number | null; excerpt: string }[] };
 export type DirectorNote = { id: string; note: string; shot_size: string; camera_angle: string; camera_motion: string; duration_seconds: number; emotion: string; pacing: string; performance: string; camera_grammar?: CameraGrammar | null;
@@ -51,9 +51,17 @@ export function newDocument(mode: CreativeMode, chapterId?: string): CreativeInp
 // Existing optional owner limits count Unicode code points, not UTF-16 units.
 export const creativeTextLength = (value?: string | null) => Array.from(value || '').length;
 export const validDirectorGenre = (target?: VisualTarget | null) => creativeTextLength(target?.genre) <= 2000;
+export const directorConstraintFields = [
+  { key: 'target_audience', label: '目标受众' },
+  { key: 'target_platform', label: '目标平台' },
+  { key: 'production_budget_constraints', label: '制作预算约束（作者设定）' },
+] as const;
+export const validDirectorIntent = (target?: VisualTarget | null) => validDirectorGenre(target)
+  && directorConstraintFields.every(({ key }) => creativeTextLength(target?.[key]) <= 2000);
 export function creativeAuthoringProblems(value: CreativeInput): string[] {
   return [
     ...(!validDirectorGenre(value.visual_target) ? ['文档类型 / 题材超过 2000 字符'] : []),
+    ...directorConstraintFields.filter(({ key }) => creativeTextLength(value.visual_target?.[key]) > 2000).map(({ label }) => `${label}超过 2000 字符`),
     ...value.shots.filter(shot => creativeTextLength(shot.continuity?.time) > 4000).map(shot => `镜头 ${shot.number} 的时间连续性超过 4000 字符`),
     ...[...value.director_notes, ...value.shots, ...value.scenes.flatMap(scene => scene.director_notes), ...value.shots.flatMap(shot => shot.director_notes)]
       .filter(row => row.camera_grammar != null && !validCameraGrammar(row.camera_grammar))

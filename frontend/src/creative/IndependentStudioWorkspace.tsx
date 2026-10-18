@@ -1,3 +1,4 @@
+import { StudioComicPanel } from './StudioComicPanel';
 import { StudioVideoReferencePanel } from './StudioVideoReferencePanel';
 import { StudioProductionTasksPanel } from '../taskcenter/StudioProductionTasks';
 import { StudioModelReferencePanel } from './StudioModelReferencePanel';
@@ -111,6 +112,10 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   useEffect(() => { if (workspaceView !== 'TASKS') setTaskTarget(undefined); }, [workspaceView]);
   const [storyboardHandoff, setStoryboardHandoff] = useState<TimelineAssetHandoff & { selectionEpoch: number }>();
   const [storyboardDirty, setStoryboardDirty] = useState(false), storyboardDirtyRef = useRef(false);
+  const [comicOpen, setComicOpen] = useState(false), [comicDirty, setComicDirty] = useState(false);
+  const comicDirtyRef = useRef(false), comicBusyRef = useRef(false);
+  const comicDraftChanged = useCallback((value: boolean) => { comicDirtyRef.current = value; setComicDirty(value); }, []);
+  const comicBusyChanged = useCallback((value: boolean) => { comicBusyRef.current = value; }, []);
   const storyboardOperation = useRef(false);
   const storyboardOwnsOperation = useCallback(() => storyboardOperation.current, []);
   const storyboardDraftChanged = useCallback((value: boolean) => { storyboardDirtyRef.current = value; setStoryboardDirty(value); }, []);
@@ -296,7 +301,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     ...context, scope: context.scope ? { ...context.scope } : undefined }), projectId),
     [projectId, context.sessionToken, context.actor?.id, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
   const entry = useStudioEntry({ client: entryClient, identity: cacheKey, active: startVisible, projectId });
-  const dirty = storyboardDirty || preferenceDirty || lineageDirty || relationshipDirty || graph.dirty || mediaDirty || timelineDirty || maskDirty || workflowDirty;
+  const dirty = comicDirty || storyboardDirty || preferenceDirty || lineageDirty || relationshipDirty || graph.dirty || mediaDirty || timelineDirty || maskDirty || workflowDirty;
   const dirtyRef = useRef(dirty); dirtyRef.current = dirty;
   const lineageDirtyRef = useRef(lineageDirty); lineageDirtyRef.current = lineageDirty;
   const relationshipDirtyRef = useRef(relationshipDirty); relationshipDirtyRef.current = relationshipDirty;
@@ -392,8 +397,8 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const navigate = (action: () => void) => {
     if (!current()) return;
     editorTicket.current++; pendingEditor.current = undefined;
-    if (busyRef.current) { setNotice('当前操作尚未结束，请等待结果确认后再离开。'); return; }
-    if (dirty || storyboardDirtyRef.current || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current || workflowDirtyRef.current || promptDirtyRef.current) { setDiscard(false); setPendingNavigation(() => action); return; }
+    if (busyRef.current || comicBusyRef.current) { setNotice('当前操作尚未结束，请等待结果确认后再离开。'); return; }
+    if (dirty || comicDirtyRef.current || storyboardDirtyRef.current || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current || workflowDirtyRef.current || promptDirtyRef.current) { setDiscard(false); setPendingNavigation(() => action); return; }
     action();
   };
   const relationshipEpoch = selectionEpoch.current;
@@ -441,6 +446,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     });
   };
   const discardNavigationDrafts = () => {
+    setComicOpen(false); comicDraftChanged(false);
     setLineageDirty(false); setRelationshipDirty(false); setFormRevision(value => value + 1); preferenceController.discard(); graph.discard();
     storyboardDraftChanged(false); setStoryboardHandoff(undefined); mediaDraftChanged(false); timelineDraftChanged(false); maskDraftChanged(false); promptDraftChanged(false); workflow.skip(); setProductionRevision(value => value + 1); setProductionJob(undefined);
   };
@@ -497,6 +503,10 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const relationshipReview = relationshipReviewEpoch !== undefined && relationshipReviewEpoch === selectionEpoch.current;
   const main = <div className="independent-studio">
     {overview && !denied && <div className="studio-graph-actions" aria-label="独立工作区内容"><Button aria-pressed={workspaceView === 'START'} onClick={() => navigate(() => setWorkspaceView('START'))}>创作开始</Button><Button aria-pressed={workspaceView === 'TASKS'} onClick={() => navigate(() => setWorkspaceView('TASKS'))}>任务中心</Button><Button aria-pressed={workspaceView === 'ASSETS'} onClick={() => navigate(() => setWorkspaceView('ASSETS'))}>素材工作区</Button>{interfaceMode === 'PROFESSIONAL' && <Button aria-pressed={graphView} onClick={() => navigate(() => setWorkspaceView('GRAPH'))}>创作图</Button>}<Button aria-pressed={productionView} onClick={() => navigate(() => setWorkspaceView('PRODUCTION'))}>制作操作</Button><InterfaceModeSwitch mode={interfaceMode} onChange={changeInterfaceMode} /></div>}
+    {module === 'IMAGE' && workspaceView === 'ASSETS' && overview && !denied && !identityRetired && <Panel title="漫画制作 Comic">
+      <Button aria-expanded={comicOpen} onClick={() => navigate(() => setComicOpen(!comicOpen))}>{comicOpen ? '关闭漫画制作' : '打开漫画制作'}</Button>
+      {comicOpen && <StudioComicPanel projectId={projectId} context={context} isCurrent={current} onDirtyChange={comicDraftChanged} onBusyChange={comicBusyChanged} />}
+    </Panel>}
     {workspaceView === 'TASKS' && !denied && <TaskCenterPanel projectId={projectId}
       transport={studioTransport({ ...context, scope: context.scope ? { ...context.scope } : undefined })}
       scope={context.scope} identity={cacheKey} active={workspaceView === 'TASKS' && !denied && !identityRetired}

@@ -1,0 +1,9 @@
+{
+  "run_exit_code": 130,
+  "status": "INTERRUPTED_TEST_SELF_BLOCK",
+  "original_receipt_retained": true,
+  "exact_fixture_cleanup": {
+    "scope_key": "90dd47ab62cd37e486745cb2e34e4a4792dd872336b64ea79e995dc5b964f28e",
+    "novel_id": "v2-independent-6b2b0f8a0faf4fa2bca9afa5599fb206"
+  }
+}

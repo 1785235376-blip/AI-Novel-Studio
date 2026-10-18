@@ -70,6 +70,9 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
         call = create_production_invoker(invoke, require_host_session=require_host_session, model_host_authority=model_host_authority)
         return call(request, nid, token, branch, permission, callback)
 
+    from .story_fact_api import create_story_fact_router
+    router.include_router(create_story_fact_router(service, storyboard_call, access, require_flag))
+
     @router.get("/capabilities")
     def capabilities(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         def operation():

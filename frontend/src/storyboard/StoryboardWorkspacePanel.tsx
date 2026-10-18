@@ -12,6 +12,7 @@ import { DirectorGoalPanel } from './DirectorGoalPanel';
 import { ShotDetailPanel } from './ShotDetailPanel';
 import { PromptAdoptionDisclosure } from './PromptAdoptionDisclosure';
 import { PromptAdoptionWritePanel } from './PromptAdoptionWritePanel';
+import { StoryFactUsagePanel } from './StoryFactUsagePanel';
 import { ShotList } from './ShotList';
 import { ShotSendToPanel } from './ShotSendToPanel';
 import { useStoryboardWorkspace } from './useStoryboardWorkspace';
@@ -198,6 +199,21 @@ export function StoryboardWorkspacePanel(props: StoryboardWorkspacePanelProps) {
             setAdoptionRefresh(value => value + 1);
             controller.toast('已回读确认 Prompt 采用；可查看固定的 Prompt 采用来源。');
           }}
+        />
+        <StoryFactUsagePanel
+          projectId={props.projectId} identity={JSON.stringify([props.identity, props.scope])}
+          transport={props.transport} read={props.read} mutate={props.mutate}
+          enabled={props.active && !props.denied && props.isCurrent() && (!props.scope || props.scope.projectId === props.projectId)}
+          writable={props.writable === true} busy={props.busy || controller.loading} isCurrent={props.isCurrent}
+          target={controller.receipt && controller.selected ? {
+            document_id: controller.receipt.document_snapshot.id,
+            document_version: controller.receipt.document_snapshot.version,
+            document_digest: controller.receipt.document_snapshot.digest,
+            scene_id: controller.selected.shot.shot.scene_id,
+            shot_id: controller.selected.shot.shot_id,
+            shot_version: controller.selected.shot.shot_version,
+            shot_digest: controller.selected.shot.shot_digest,
+          } : null}
         />
         <ShotSendToPanel
           row={controller.selected}

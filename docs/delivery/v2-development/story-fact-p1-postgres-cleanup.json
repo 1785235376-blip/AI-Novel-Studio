@@ -1,0 +1,28 @@
+{
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_v2_story_fact_bindings.py",
+    "tests/test_v2_story_fact_bindings_api.py",
+    "tests/test_r4_story_graph.py",
+    "tests/test_r4_change_impact.py",
+    "tests/test_r4_story_graph_mounted.py",
+    "tests/test_v2_storyboard_workspace.py",
+    "tests/test_director_intent_constraints_additive.py",
+    "-m",
+    "postgres_backend_only",
+    "-q",
+    "--basetemp",
+    ".runtime/story-fact-p1-postgres-rerun"
+  ],
+  "exit_code": 0,
+  "before_scope_count": 1,
+  "after_scope_count": 1,
+  "before_project_count": 1,
+  "after_project_count": 1,
+  "new_scope_rows": [],
+  "missing_scope_rows": [],
+  "new_projects": [],
+  "missing_projects": []
+}

@@ -326,6 +326,13 @@ def project_director_intent(document: Mapping[str, Any]) -> dict[str, Any]:
         "required_fields": list(INTENT_FIELDS),
         "fields": fields,
         "dimensions": dimensions,
+        "production_constraints": {
+            "advisory_only": True, "execution_authority": False,
+            "cost_status": "UNKNOWN", "feasibility_status": "UNKNOWN",
+            "fields": [_record(field, _text(target.get(field)), f"visual_target.{field}",
+                               f"DirectorVisualTarget.{field}") for field in
+                       ("target_audience", "target_platform", "production_budget_constraints")],
+        },
     }
 
 
