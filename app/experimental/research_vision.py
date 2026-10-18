@@ -98,6 +98,22 @@ class SyntheticResearchVisionProvider:
                 'warnings': ['MOCK_ONLY: synthetic result, not source evidence.']}
 
 
+def bind_research_analysis_result(value, raw, capability):
+    """Reuse the original result/citation shape for synthetic and native owners."""
+    from .planning import digest
+    capability = ResearchVisionCapability.model_validate(capability)
+    result = ResearchAnalysisResult.model_validate(raw).model_dump()
+    for block in result['blocks']:
+        if value.pages and block['page'] not in value.pages: raise ValueError('RESEARCH_ANALYSIS_PAGE_MISMATCH')
+        if value.media_format == 'IMAGE' and block['page'] != 1: raise ValueError('RESEARCH_ANALYSIS_PAGE_MISMATCH')
+        block['citation'] = {'source_id': value.source_id, 'source_version': value.source_version,
+            'source_digest': value.source_digest, 'page': block['page'],
+            'result_digest': digest(block), 'layer': 'RESEARCH_DERIVED'}
+    result.update(verification=capability.verification, original_unchanged=True, automatic_canon=False,
+                  model_quality='NOT_RUN')
+    return result
+
+
 def research_analysis_jobs(service):
     from .common import StaleSourceError
     from .review_adapter_jobs import ReviewAdapterJobs
@@ -126,15 +142,7 @@ def research_analysis_jobs(service):
         capability = ResearchVisionCapability.model_validate(provider.capability)
         if request['operation'] not in capability.operations: raise ValueError('RESEARCH_ANALYSIS_OPERATION_UNSUPPORTED')
         guard()
-        result = ResearchAnalysisResult.model_validate(provider.analyze(value, request['operation'], guard)).model_dump()
-        for block in result['blocks']:
-            if value.pages and block['page'] not in value.pages: raise ValueError('RESEARCH_ANALYSIS_PAGE_MISMATCH')
-            if value.media_format == 'IMAGE' and block['page'] != 1: raise ValueError('RESEARCH_ANALYSIS_PAGE_MISMATCH')
-            block['citation'] = {'source_id': value.source_id, 'source_version': value.source_version,
-                                 'source_digest': value.source_digest, 'page': block['page'],
-                                 'result_digest': digest(block), 'layer': 'RESEARCH_DERIVED'}
-        result.update(verification=capability.verification, original_unchanged=True, automatic_canon=False,
-                      model_quality='NOT_RUN')
+        result = bind_research_analysis_result(value, provider.analyze(value, request['operation'], guard), capability)
         guard(); return result
 
     return ReviewAdapterJobs(service, 'research_analysis_jobs', source,

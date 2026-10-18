@@ -154,7 +154,7 @@ def run(manager, job):
         job.output = ''
         cancelled = job.cancelled.is_set() or isinstance(exc, ModelRuntimeError) and exc.code == RuntimeErrorCode.CANCELLED
         job.status = job.execution_outcome = 'CANCELLED' if cancelled else 'FAILED'
-        job.error_code = exc.code.value if isinstance(exc, ModelRuntimeError) else 'RESEARCH_OCR_EXECUTION_FAILED'
+        job.error_code = 'CANCELLED' if cancelled else exc.code.value if isinstance(exc, ModelRuntimeError) else 'RESEARCH_OCR_EXECUTION_FAILED'
         job.error = 'OCR 未完成，未发布识别结果。'
     finally:
         job.latency_ms = int((time.monotonic() - started) * 1000)
@@ -175,8 +175,8 @@ def run(manager, job):
                     capability.on_result(capability.result())
                     capability.result()  # Recheck authority and durable identity after the callback.
         except Exception:
-            job.output = ''; job.status = 'FAILED'; job.execution_outcome = 'FAILED'
-            job.error_code = 'RESEARCH_OCR_TERMINAL_UNCONFIRMED'
+            job.output = ''; job.status = 'CANCELLED' if job.cancelled.is_set() else 'FAILED'; job.execution_outcome = job.status
+            job.error_code = 'CANCELLED' if job.cancelled.is_set() else 'RESEARCH_OCR_TERMINAL_UNCONFIRMED'
             job.error = 'OCR 结果未能确认保存，请核对原任务，不能自动重放。'
             capability._result = None
             try: manager._persist(job)

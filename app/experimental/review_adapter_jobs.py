@@ -83,7 +83,7 @@ class ReviewAdapterJobs:
         # Reserved cancellation does not redisclose a revoked source.
         # Keep the recovery receipt useful, but never return old lineage/results.
         if minimal or row['status'] in {'CANCELLED', 'INVALIDATED', 'STALE'}:
-            hidden |= {'request', 'source_snapshot', 'model', 'result_digest'}
+            hidden |= {'request', 'source_snapshot', 'model', 'result_digest', 'native_ocr_preview', 'native_ocr_execution'}
         value = copy.deepcopy({key: item for key, item in row.items() if key not in hidden})
         if minimal:
             value['result'] = None
@@ -104,6 +104,8 @@ class ReviewAdapterJobs:
         value.update(recovery_required=row['status'] == 'RUNNING', automatic_resume=False,
                      automatic_canon=False, model_quality='NOT_RUN',
                      executor='SYNTHETIC_IN_PROCESS', durable_worker=False, runtime_admission='NOT_CONFIGURED')
+        if row.get('native_ocr_preview') or row.get('native_ocr_execution'):
+            value.update(executor='ORIGINAL_JOBMANAGER_NATIVE_OCR', runtime_admission='HOST_ONLY_LOCAL_OCR')
         return value
 
     def get(self, nid, scope, actor, rid):

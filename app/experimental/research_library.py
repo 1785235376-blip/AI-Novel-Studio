@@ -101,6 +101,7 @@ class ResearchLibraryService(DomainService):
         super().__init__(store, novels, chapters)
         self.legacy, self.world = legacy, world
         self.vision_provider = None
+        self.native_ocr = None
         self.historical_inspection = historical_inspection
 
     def history_identity(self, nid, *, provision=False):
@@ -640,4 +641,10 @@ class ResearchLibraryService(DomainService):
         def current_guard():
             guard()
             self._analysis_owner(nid, scope, actor, rid)
+            row = self.get(nid, scope, 'research_analysis_jobs', rid)
+            if action == 'review' and row.get('native_ocr_execution'):
+                from .research_native_ocr import NativeResearchOCRCoordinator
+                if type(self.native_ocr) is not NativeResearchOCRCoordinator or self.native_ocr.research is not self:
+                    raise ValueError('RESEARCH_OCR_ORIGINAL_OWNERS_REQUIRED')
+                self.native_ocr.validate_review(nid, scope, actor, row)
         return research_analysis_jobs(self).action(nid, scope, actor, rid, action, expected_version, current_guard)

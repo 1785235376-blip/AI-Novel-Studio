@@ -202,6 +202,7 @@
     "app/experimental/research_extract.py",
     "app/experimental/research_library.py",
     "app/experimental/research_library_api.py",
+    "app/experimental/research_native_ocr.py",
     "app/experimental/research_ocr_binding.py",
     "app/experimental/research_ocr_execution.py",
     "app/experimental/research_vision.py",
