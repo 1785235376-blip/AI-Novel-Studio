@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T20:02:00Z",
+  "updated_at_utc": "2026-10-18T20:09:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -21492,7 +21492,7 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Native reference layer editing and true ORA export exist. Live pixel preview, original-Asset import/review/attachment/recovery and actual target-application roundtrip remain open.",
+      "gap": "Native layers/export, pure ORA preview and private original-Asset staging/status/resume exist. Explicit review/page attachment, mounted UI and target-application roundtrip remain open.",
       "next_action": "Persist independent editable source layers and implement real ORA export/import/re-edit with loss receipts.",
       "evidence_scope": "Existing B06 capabilities only satisfy bounded parts; no new Comic requirement is accepted by this mapping.",
       "bounded_evidence": [
@@ -21506,6 +21506,12 @@
           "product_sha": "b02ef383287ea3f01ead4e50887caa1cfb172c48",
           "summary": "Pure bounded flat-raster ORA parse/recomposition with explicit untrusted sidecar/loss report; no mounted import, staging, approval or attachment.",
           "report": "docs/delivery/v2-development/navigation-ora-preview-integration-20261018.md",
+          "formal_acceptance": false
+        },
+        {
+          "product_sha": "2a9287733aea93bdda4dd2de27c3021b46dc6ded",
+          "summary": "Private first-commit original Asset origin, exact planned-ID crash reconciliation, current-incarnation orphan quotas and File/PG verification. No promotion/page attachment or mounted route.",
+          "report": "docs/delivery/v2-development/ora-staging-integration-20261018.md",
           "formal_acceptance": false
         }
       ]
@@ -21969,8 +21975,8 @@
     }
   ],
   "current_checkpoint": {
-    "product_sha": "0d72d692dfa56f6a47d8050d12eaf98e364c9e05",
-    "report": "docs/delivery/v2-development/director-passport-integration-20261018.md",
+    "product_sha": "2a9287733aea93bdda4dd2de27c3021b46dc6ded",
+    "report": "docs/delivery/v2-development/ora-staging-integration-20261018.md",
     "source_identity_section": "Historical initial reconciliation baseline, not the current HEAD",
     "all_fixed_ids_accepted": false
   }

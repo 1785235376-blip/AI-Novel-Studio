@@ -1,0 +1,364 @@
+FFFFFFFFF                                                                [100%]
+=================================== FAILURES ===================================
+__________ test_real_private_staging_status_resume_and_no_page[file] ___________
+
+rig = namespace(nid='v2-independent-366b168bfba34c1cbe486ed8ce65bee2', scope={'mode': 'local', 'novel_id': 'v2-independent-3...IdentityRepository object at 0x7f7da30817c0>), create_project=<function rig.<locals>.create_project at 0x7f7da70d6020>)
+staging = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da30fef90>
+
+    def test_real_private_staging_status_resume_and_no_page(rig, staging):
+>       row = prepare(rig, staging)
+              ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comic_ora_staging.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_comic_ora_staging.py:32: in prepare
+    return staging.prepare(rig.nid, rig.scope, rig.actor, raw,
+app/experimental/comic_ora_staging.py:70: in prepare
+    self._authority(nid, scope, actor, guard)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da30fef90>
+nid = 'v2-independent-366b168bfba34c1cbe486ed8ce65bee2'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-366b168bfba34c1cbe486ed8ce65bee2'}
+actor = 'local-studio-author'
+guard = <function prepare.<locals>.<lambda> at 0x7f7da30f5e40>
+
+    def _authority(self, nid, scope, actor, guard):
+        guard()
+        self.store.key(nid, scope)
+        if not isinstance(actor, str) or not 1 <= len(actor) <= 240 or any(ord(c) < 32 or ord(c) == 127 for c in actor):
+            raise ValueError('COMIC_ORA_ACTOR_INVALID')
+        from .flags import enabled_flags
+>       if not FEATURES.issubset(enabled_flags()): raise ValueError('COMIC_ORA_FEATURES_REQUIRED')
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ValueError: COMIC_ORA_FEATURES_REQUIRED
+
+app/experimental/comic_ora_staging.py:37: ValueError
+_____ test_asset_metadata_failure_exact_id_cleanup_and_resume[file-False] ______
+
+rig = namespace(nid='v2-independent-5c710db631604f25b8cad0516e7e88f4', scope={'mode': 'local', 'novel_id': 'v2-independent-5...IdentityRepository object at 0x7f7da30ff470>), create_project=<function rig.<locals>.create_project at 0x7f7da70d5ee0>)
+staging = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da2ff1b50>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7da30fcc20>
+after_commit = False
+
+    @pytest.mark.parametrize('after_commit', [False, True])
+    def test_asset_metadata_failure_exact_id_cleanup_and_resume(rig, staging, monkeypatch, after_commit):
+>       row = prepare(rig, staging); aid = row['steps'][0]['asset_id']
+              ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comic_ora_staging.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_comic_ora_staging.py:32: in prepare
+    return staging.prepare(rig.nid, rig.scope, rig.actor, raw,
+app/experimental/comic_ora_staging.py:70: in prepare
+    self._authority(nid, scope, actor, guard)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da2ff1b50>
+nid = 'v2-independent-5c710db631604f25b8cad0516e7e88f4'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-5c710db631604f25b8cad0516e7e88f4'}
+actor = 'local-studio-author'
+guard = <function prepare.<locals>.<lambda> at 0x7f7da2fdf060>
+
+    def _authority(self, nid, scope, actor, guard):
+        guard()
+        self.store.key(nid, scope)
+        if not isinstance(actor, str) or not 1 <= len(actor) <= 240 or any(ord(c) < 32 or ord(c) == 127 for c in actor):
+            raise ValueError('COMIC_ORA_ACTOR_INVALID')
+        from .flags import enabled_flags
+>       if not FEATURES.issubset(enabled_flags()): raise ValueError('COMIC_ORA_FEATURES_REQUIRED')
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ValueError: COMIC_ORA_FEATURES_REQUIRED
+
+app/experimental/comic_ora_staging.py:37: ValueError
+______ test_asset_metadata_failure_exact_id_cleanup_and_resume[file-True] ______
+
+rig = namespace(nid='v2-independent-4e414409546e4ed4b3c4ccddf984f4d1', scope={'mode': 'local', 'novel_id': 'v2-independent-4...IdentityRepository object at 0x7f7da30fd670>), create_project=<function rig.<locals>.create_project at 0x7f7da2fdf1a0>)
+staging = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da2ff2a50>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7da30fcbf0>
+after_commit = True
+
+    @pytest.mark.parametrize('after_commit', [False, True])
+    def test_asset_metadata_failure_exact_id_cleanup_and_resume(rig, staging, monkeypatch, after_commit):
+>       row = prepare(rig, staging); aid = row['steps'][0]['asset_id']
+              ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comic_ora_staging.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_comic_ora_staging.py:32: in prepare
+    return staging.prepare(rig.nid, rig.scope, rig.actor, raw,
+app/experimental/comic_ora_staging.py:70: in prepare
+    self._authority(nid, scope, actor, guard)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da2ff2a50>
+nid = 'v2-independent-4e414409546e4ed4b3c4ccddf984f4d1'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-4e414409546e4ed4b3c4ccddf984f4d1'}
+actor = 'local-studio-author'
+guard = <function prepare.<locals>.<lambda> at 0x7f7da2fdf6a0>
+
+    def _authority(self, nid, scope, actor, guard):
+        guard()
+        self.store.key(nid, scope)
+        if not isinstance(actor, str) or not 1 <= len(actor) <= 240 or any(ord(c) < 32 or ord(c) == 127 for c in actor):
+            raise ValueError('COMIC_ORA_ACTOR_INVALID')
+        from .flags import enabled_flags
+>       if not FEATURES.issubset(enabled_flags()): raise ValueError('COMIC_ORA_FEATURES_REQUIRED')
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ValueError: COMIC_ORA_FEATURES_REQUIRED
+
+app/experimental/comic_ora_staging.py:37: ValueError
+____ test_scope_failure_after_asset_commit_reconciles_exact_id[file-False] _____
+
+rig = namespace(nid='v2-independent-dc764769aee84eb5a183e00a7e09f4b6', scope={'mode': 'local', 'novel_id': 'v2-independent-d...IdentityRepository object at 0x7f7da30fe750>), create_project=<function rig.<locals>.create_project at 0x7f7da2fdc720>)
+staging = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da2ff3c80>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7da30fe570>
+after_commit = False
+
+    @pytest.mark.parametrize('after_commit', [False, True])
+    def test_scope_failure_after_asset_commit_reconciles_exact_id(rig, staging, monkeypatch, after_commit):
+>       row = prepare(rig, staging); original = rig.raw_store.transaction
+              ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comic_ora_staging.py:85: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_comic_ora_staging.py:32: in prepare
+    return staging.prepare(rig.nid, rig.scope, rig.actor, raw,
+app/experimental/comic_ora_staging.py:70: in prepare
+    self._authority(nid, scope, actor, guard)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da2ff3c80>
+nid = 'v2-independent-dc764769aee84eb5a183e00a7e09f4b6'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-dc764769aee84eb5a183e00a7e09f4b6'}
+actor = 'local-studio-author'
+guard = <function prepare.<locals>.<lambda> at 0x7f7da2fdfec0>
+
+    def _authority(self, nid, scope, actor, guard):
+        guard()
+        self.store.key(nid, scope)
+        if not isinstance(actor, str) or not 1 <= len(actor) <= 240 or any(ord(c) < 32 or ord(c) == 127 for c in actor):
+            raise ValueError('COMIC_ORA_ACTOR_INVALID')
+        from .flags import enabled_flags
+>       if not FEATURES.issubset(enabled_flags()): raise ValueError('COMIC_ORA_FEATURES_REQUIRED')
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ValueError: COMIC_ORA_FEATURES_REQUIRED
+
+app/experimental/comic_ora_staging.py:37: ValueError
+_____ test_scope_failure_after_asset_commit_reconciles_exact_id[file-True] _____
+
+rig = namespace(nid='v2-independent-bdfc3893aedb4d29b862db22baa0eb38', scope={'mode': 'local', 'novel_id': 'v2-independent-b...IdentityRepository object at 0x7f7da2ff2060>), create_project=<function rig.<locals>.create_project at 0x7f7da2fdf2e0>)
+staging = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da2ff4980>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7da2ff1a30>
+after_commit = True
+
+    @pytest.mark.parametrize('after_commit', [False, True])
+    def test_scope_failure_after_asset_commit_reconciles_exact_id(rig, staging, monkeypatch, after_commit):
+>       row = prepare(rig, staging); original = rig.raw_store.transaction
+              ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comic_ora_staging.py:85: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_comic_ora_staging.py:32: in prepare
+    return staging.prepare(rig.nid, rig.scope, rig.actor, raw,
+app/experimental/comic_ora_staging.py:70: in prepare
+    self._authority(nid, scope, actor, guard)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da2ff4980>
+nid = 'v2-independent-bdfc3893aedb4d29b862db22baa0eb38'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-bdfc3893aedb4d29b862db22baa0eb38'}
+actor = 'local-studio-author'
+guard = <function prepare.<locals>.<lambda> at 0x7f7da2fc0680>
+
+    def _authority(self, nid, scope, actor, guard):
+        guard()
+        self.store.key(nid, scope)
+        if not isinstance(actor, str) or not 1 <= len(actor) <= 240 or any(ord(c) < 32 or ord(c) == 127 for c in actor):
+            raise ValueError('COMIC_ORA_ACTOR_INVALID')
+        from .flags import enabled_flags
+>       if not FEATURES.issubset(enabled_flags()): raise ValueError('COMIC_ORA_FEATURES_REQUIRED')
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ValueError: COMIC_ORA_FEATURES_REQUIRED
+
+app/experimental/comic_ora_staging.py:37: ValueError
+______________ test_prepare_lost_ack_and_concurrent_resume[file] _______________
+
+rig = namespace(nid='v2-independent-ecde7824e52441e2945e98d4f5c7bcb9', scope={'mode': 'local', 'novel_id': 'v2-independent-e...IdentityRepository object at 0x7f7da30fe330>), create_project=<function rig.<locals>.create_project at 0x7f7da30f5c60>)
+staging = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da2ff1f40>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7da94f1070>
+
+    def test_prepare_lost_ack_and_concurrent_resume(rig, staging, monkeypatch):
+        original = rig.raw_store.transaction
+        @contextmanager
+        def lost(*args, **kwargs):
+            with original(*args, **kwargs) as state: yield state
+            raise OSError('lost prepare acknowledgement')
+        monkeypatch.setattr(rig.raw_store, 'transaction', lost)
+>       with pytest.raises(OSError): prepare(rig, staging)
+                                     ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comic_ora_staging.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_comic_ora_staging.py:32: in prepare
+    return staging.prepare(rig.nid, rig.scope, rig.actor, raw,
+app/experimental/comic_ora_staging.py:70: in prepare
+    self._authority(nid, scope, actor, guard)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da2ff1f40>
+nid = 'v2-independent-ecde7824e52441e2945e98d4f5c7bcb9'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-ecde7824e52441e2945e98d4f5c7bcb9'}
+actor = 'local-studio-author'
+guard = <function prepare.<locals>.<lambda> at 0x7f7da2fde020>
+
+    def _authority(self, nid, scope, actor, guard):
+        guard()
+        self.store.key(nid, scope)
+        if not isinstance(actor, str) or not 1 <= len(actor) <= 240 or any(ord(c) < 32 or ord(c) == 127 for c in actor):
+            raise ValueError('COMIC_ORA_ACTOR_INVALID')
+        from .flags import enabled_flags
+>       if not FEATURES.issubset(enabled_flags()): raise ValueError('COMIC_ORA_FEATURES_REQUIRED')
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ValueError: COMIC_ORA_FEATURES_REQUIRED
+
+app/experimental/comic_ora_staging.py:37: ValueError
+______________ test_hash_scope_actor_and_quota_fail_closed[file] _______________
+
+rig = namespace(nid='v2-independent-a55dc3b2ad544f68957638d8078cefb3', scope={'mode': 'local', 'novel_id': 'v2-independent-a...IdentityRepository object at 0x7f7da30fd580>), create_project=<function rig.<locals>.create_project at 0x7f7da30f6ac0>)
+staging = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da2ff07d0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7da30fcf80>
+
+    def test_hash_scope_actor_and_quota_fail_closed(rig, staging, monkeypatch):
+        raw = archive()
+        with pytest.raises(ValueError, match='PREVIEW_CHANGED'):
+>           staging.prepare(rig.nid, rig.scope, rig.actor, raw, archive_sha256='0'*64, request_key='key', guard=lambda: None)
+
+tests/test_comic_ora_staging.py:123: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/experimental/comic_ora_staging.py:70: in prepare
+    self._authority(nid, scope, actor, guard)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da2ff07d0>
+nid = 'v2-independent-a55dc3b2ad544f68957638d8078cefb3'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-a55dc3b2ad544f68957638d8078cefb3'}
+actor = 'local-studio-author'
+guard = <function test_hash_scope_actor_and_quota_fail_closed.<locals>.<lambda> at 0x7f7da30f4b80>
+
+    def _authority(self, nid, scope, actor, guard):
+        guard()
+        self.store.key(nid, scope)
+        if not isinstance(actor, str) or not 1 <= len(actor) <= 240 or any(ord(c) < 32 or ord(c) == 127 for c in actor):
+            raise ValueError('COMIC_ORA_ACTOR_INVALID')
+        from .flags import enabled_flags
+>       if not FEATURES.issubset(enabled_flags()): raise ValueError('COMIC_ORA_FEATURES_REQUIRED')
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ValueError: COMIC_ORA_FEATURES_REQUIRED
+
+app/experimental/comic_ora_staging.py:37: ValueError
+
+During handling of the above exception, another exception occurred:
+
+rig = namespace(nid='v2-independent-a55dc3b2ad544f68957638d8078cefb3', scope={'mode': 'local', 'novel_id': 'v2-independent-a...IdentityRepository object at 0x7f7da30fd580>), create_project=<function rig.<locals>.create_project at 0x7f7da30f6ac0>)
+staging = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da2ff07d0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7da30fcf80>
+
+    def test_hash_scope_actor_and_quota_fail_closed(rig, staging, monkeypatch):
+        raw = archive()
+>       with pytest.raises(ValueError, match='PREVIEW_CHANGED'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E        Regex: 'PREVIEW_CHANGED'
+E        Input: 'COMIC_ORA_FEATURES_REQUIRED'
+
+tests/test_comic_ora_staging.py:122: AssertionError
+_____ test_owner_deletion_serializes_real_commit_then_blocks_resume[file] ______
+
+rig = namespace(nid='v2-independent-e1ffa1a0423b4d529331c1af9c6373e7', scope={'mode': 'local', 'novel_id': 'v2-independent-e...IdentityRepository object at 0x7f7da30fcb30>), create_project=<function rig.<locals>.create_project at 0x7f7da2fdc9a0>)
+staging = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da2ff6a80>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7da30fcb90>
+
+    def test_owner_deletion_serializes_real_commit_then_blocks_resume(rig, staging, monkeypatch):
+>       row = prepare(rig, staging)
+              ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comic_ora_staging.py:138: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_comic_ora_staging.py:32: in prepare
+    return staging.prepare(rig.nid, rig.scope, rig.actor, raw,
+app/experimental/comic_ora_staging.py:70: in prepare
+    self._authority(nid, scope, actor, guard)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da2ff6a80>
+nid = 'v2-independent-e1ffa1a0423b4d529331c1af9c6373e7'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-e1ffa1a0423b4d529331c1af9c6373e7'}
+actor = 'local-studio-author'
+guard = <function prepare.<locals>.<lambda> at 0x7f7da2fc00e0>
+
+    def _authority(self, nid, scope, actor, guard):
+        guard()
+        self.store.key(nid, scope)
+        if not isinstance(actor, str) or not 1 <= len(actor) <= 240 or any(ord(c) < 32 or ord(c) == 127 for c in actor):
+            raise ValueError('COMIC_ORA_ACTOR_INVALID')
+        from .flags import enabled_flags
+>       if not FEATURES.issubset(enabled_flags()): raise ValueError('COMIC_ORA_FEATURES_REQUIRED')
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ValueError: COMIC_ORA_FEATURES_REQUIRED
+
+app/experimental/comic_ora_staging.py:37: ValueError
+_____ test_unrelated_asset_survives_failed_stage_and_origin_conflict[file] _____
+
+rig = namespace(nid='v2-independent-4b9c0b74fa9242bdad6cddea4075367d', scope={'mode': 'local', 'novel_id': 'v2-independent-4...IdentityRepository object at 0x7f7da2ff19d0>), create_project=<function rig.<locals>.create_project at 0x7f7da2fdeac0>)
+staging = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da2ff4290>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7da2ff0f20>
+
+    def test_unrelated_asset_survives_failed_stage_and_origin_conflict(rig, staging, monkeypatch):
+        from test_v2_independent_workspace import import_asset
+        other = import_asset(rig)
+>       row = prepare(rig, staging)
+              ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comic_ora_staging.py:171: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_comic_ora_staging.py:32: in prepare
+    return staging.prepare(rig.nid, rig.scope, rig.actor, raw,
+app/experimental/comic_ora_staging.py:70: in prepare
+    self._authority(nid, scope, actor, guard)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7f7da2ff4290>
+nid = 'v2-independent-4b9c0b74fa9242bdad6cddea4075367d'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-4b9c0b74fa9242bdad6cddea4075367d'}
+actor = 'local-studio-author'
+guard = <function prepare.<locals>.<lambda> at 0x7f7da2fde700>
+
+    def _authority(self, nid, scope, actor, guard):
+        guard()
+        self.store.key(nid, scope)
+        if not isinstance(actor, str) or not 1 <= len(actor) <= 240 or any(ord(c) < 32 or ord(c) == 127 for c in actor):
+            raise ValueError('COMIC_ORA_ACTOR_INVALID')
+        from .flags import enabled_flags
+>       if not FEATURES.issubset(enabled_flags()): raise ValueError('COMIC_ORA_FEATURES_REQUIRED')
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ValueError: COMIC_ORA_FEATURES_REQUIRED
+
+app/experimental/comic_ora_staging.py:37: ValueError
+=============================== warnings summary ===============================
+tests/test_comic_ora_staging.py::test_real_private_staging_status_resume_and_no_page[file]
+  /workspace/scratch/20a0022d2b33/studio-comic-layers-work/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_comic_ora_staging.py::test_real_private_staging_status_resume_and_no_page[file]
+FAILED tests/test_comic_ora_staging.py::test_asset_metadata_failure_exact_id_cleanup_and_resume[file-False]
+FAILED tests/test_comic_ora_staging.py::test_asset_metadata_failure_exact_id_cleanup_and_resume[file-True]
+FAILED tests/test_comic_ora_staging.py::test_scope_failure_after_asset_commit_reconciles_exact_id[file-False]
+FAILED tests/test_comic_ora_staging.py::test_scope_failure_after_asset_commit_reconciles_exact_id[file-True]
+FAILED tests/test_comic_ora_staging.py::test_prepare_lost_ack_and_concurrent_resume[file]
+FAILED tests/test_comic_ora_staging.py::test_hash_scope_actor_and_quota_fail_closed[file]
+FAILED tests/test_comic_ora_staging.py::test_owner_deletion_serializes_real_commit_then_blocks_resume[file]
+FAILED tests/test_comic_ora_staging.py::test_unrelated_asset_survives_failed_stage_and_origin_conflict[file]
+9 failed, 9 deselected, 1 warning in 5.11s

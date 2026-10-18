@@ -1,16 +1,16 @@
 # Studio V2 current continuation checkpoint
 
-Updated 2026-10-18 20:02 UTC. This document inventories bounded additions, not a
+Updated 2026-10-18 20:09 UTC. This document inventories bounded additions, not a
 replacement for the frozen feature matrix or a V2 percentage/Release declaration.
 The source pin below identifies the latest bounded implementation; archive and product heads remain distinct.
 
 ## Source and publication
 
-Current checkpoint: 2026-10-18 20:02 UTC. Working branch:
+Current checkpoint: 2026-10-18 20:09 UTC. Working branch:
 work/dot-recovered-20261018. Latest committed product source is
-0d72d692dfa56f6a47d8050d12eaf98e364c9e05 (internal IMAGE jobs/unsigned Passport).
+2a9287733aea93bdda4dd2de27c3021b46dc6ded (private ORA staging/recovery).
 Latest byte-verified public archive is
-114f61aaa8366a2477ded75a3d394d1d41ba778e on
+8996f8a2d0c53a591e4f887fb30f314e1177f53e on
 archive/verified-studio-v2-20261017-5a6f697. Archive HEAD and product HEAD are
 different identities; the archive stores prerequisite-bound incremental bundles.
 The restored local source contains the integrated working product, whereas the
@@ -326,3 +326,16 @@ does not authenticate a signer or certify copyright. See the full bounded report
 Previous source a30d8267 was publicly archived as
 114f61aaa8366a2477ded75a3d394d1d41ba778e, exact parent40bd8897:
 13 paths/5,073,297 bytes independently verified. No normal source branch update.
+
+## 20:09 UTC private ORA staging checkpoint
+
+Product 2a9287733aea93bdda4dd2de27c3021b46dc6ded implements private original
+Asset staging, exact planned-ID recovery and retained-orphan quota accounting.
+Final File68, real PG18, PUBLIC6 passed. Initial File fixture timestamp failure is
+preserved and explained; production digest checks unchanged. Frontend source
+unchanged. Review/page attachment and upload UI remain unimplemented.
+
+Prior source64083447 was archived as8996f8a2d0c53a591e4f887fb30f314e1177f53e,
+exact parent114f61a:13 paths/4,946,353 bytes anonymously verified. No main or normal
+source branch changed. Next isolated work: explicit human-cost IMAGE adoption,
+ORA review/attachment and chapter-only author-entered Audience comparison.

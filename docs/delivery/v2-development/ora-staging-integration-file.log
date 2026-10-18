@@ -1,0 +1,52 @@
+F................                                                        [100%]
+=================================== FAILURES ===================================
+__________ test_real_private_staging_status_resume_and_no_page[file] ___________
+
+rig = namespace(nid='v2-independent-1cad778c18cb43288f1eb19599d4833b', scope={'mode': 'local', 'novel_id': 'v2-independent-1...IdentityRepository object at 0x7fda00056c30>), create_project=<function rig.<locals>.create_project at 0x7fda03fdd3a0>)
+staging = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7fd9fff08860>
+
+    def test_real_private_staging_status_resume_and_no_page(rig, staging):
+        row = prepare(rig, staging)
+        assert not list(rig.assets.root.glob('*.bin'))
+        result = stage(rig, staging, row)
+        assert result['status'] == 'STAGED_PRIVATE_REVIEW_PENDING'
+>       assert stage(rig, adapter(reopened(rig)), row) == result
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comic_ora_staging.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_comic_ora_staging.py:37: in stage
+    return staging.stage(rig.nid, rig.scope, rig.actor, row['id'], raw or archive(), guard=lambda: None, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7fd9ffefbe60>
+nid = 'v2-independent-1cad778c18cb43288f1eb19599d4833b'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-1cad778c18cb43288f1eb19599d4833b'}
+actor = 'local-studio-author', rid = 'ead5f9ad-2554-4955-aca0-d045b8314b99'
+raw = b'PK\x03\x04\x14\x00\x00\x00\x00\x00\xd2(S]\xc7\x9a\xf0\x8c\x10\x00\x00\x00\x10\x00\x00\x00\x08\x00\x00\x00mimetypeima...x12\x04\x00\x00Thumbnails/thumbnail.pngPK\x05\x06\x00\x00\x00\x00\x05\x00\x05\x00*\x01\x00\x00\x96\x05\x00\x00\x00\x00'
+
+    def stage(self, nid, scope, actor, rid, raw, *, max_steps=1, guard):
+        """Explicit bounded stage/resume. Reselect identical archive after restart."""
+        self._authority(nid, scope, actor, guard)
+        if type(max_steps) is not int or not 1 <= max_steps <= MAX_BATCH: raise ValueError('COMIC_ORA_BATCH_LIMIT')
+        parsed = preview_ora(raw)
+        completed = 0
+        for index, layer in enumerate(parsed.layers):
+            with self._transaction(nid, scope, actor, guard) as (state, incarnation):
+                row = self._receipt(state, rid, nid, scope, actor, incarnation)
+                if (row['archive_sha256'] != parsed.report['archive_sha256']
+>                       or len(row['steps']) != len(parsed.layers)): raise ValueError('COMIC_ORA_PREVIEW_CHANGED')
+                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                       ValueError: COMIC_ORA_PREVIEW_CHANGED
+
+app/experimental/comic_ora_staging.py:150: ValueError
+=============================== warnings summary ===============================
+tests/test_comic_ora_staging.py::test_real_private_staging_status_resume_and_no_page[file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_comic_ora_staging.py::test_real_private_staging_status_resume_and_no_page[file]
+1 failed, 16 passed, 17 deselected, 1 warning in 6.09s

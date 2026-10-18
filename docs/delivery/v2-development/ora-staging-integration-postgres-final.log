@@ -1,0 +1,9 @@
+..................                                                       [100%]
+=============================== warnings summary ===============================
+tests/test_comic_ora_staging.py::test_real_private_staging_status_resume_and_no_page[postgres]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+18 passed, 18 deselected, 1 warning in 8.00s
+{"exit_code": 0, "exact_row_hashes_equal": true}
