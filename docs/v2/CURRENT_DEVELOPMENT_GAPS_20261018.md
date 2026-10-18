@@ -17,7 +17,7 @@ The source normalizer was also probed read-only with the existing clean dependen
 | Editing | Real tracks/edit operations/captions/FFmpeg render/preview cache/history and OTIO transfer | Basic color adjustment and caption styling; their fields are currently rejected by the closed schema |
 | 3D | Bounded GLB, transformed mesh/material inspection, diagnostic orbit view, CPU clay/depth PNG and reviewed image Asset output | Actual authored-camera extraction/export and concrete minimal Blender/UE exchange; diagnostic yaw/pitch projection is not authored camera data |
 
-Evidence pointers: app/creative/adaptation_models.py and adaptation_generation.py; app/creative/production_execution_models.py; app/services/studio_image_provider_recipes.py; frontend/src/creative/StudioManualMaskPanel.tsx; app/creative/proposals.py and director_model_api.py; app/creative/models.py and graph_models.py; frontend/src/storyboard/ShotCard.tsx; app/services/studio_video_provider.py; app/services/studio_timeline_schema.py, studio_timeline_edit.py and studio_timeline_renderer.py; app/model_reference_scene.py and model_reference_depth.py.
+Evidence pointers: app/creative/adaptation_models.py and adaptation_generation.py; app/creative/production_execution_models.py; app/services/studio_image_provider_recipes.py; frontend/src/creative/StudioManualMaskPanel.tsx; app/creative/proposals.py and director_model_api.py; app/creative/models.py and graph_models.py; frontend/src/storyboard/ShotCard.tsx; app/services/studio_video_provider.py; app/services/studio_timeline_schema.py, studio_timeline_edit.py and studio_timeline_renderer.py; app/creative/model_reference_scene.py and model_reference_depth.py.
 
 ## Advanced capability gaps and corrections
 
