@@ -48,3 +48,7 @@
 3. 当前候选包的各实际分发形态及 PUBLIC/PRIVATE 专项核验、完整回归和精确源码/包身份。PUBLIC wheel 通过不自动等于 Windows/Docker/installer/zip/sdist 全部通过；正式发布另需批准。
 
 原附录明确延后的完整 DCC、自动绑定、Resolve 级调色、实时高级音频/声音克隆、生产云与实时协作，不凭名称缺席就另加成当前必做整套产品。
+
+## 17:31 增量更正
+
+产品源码 033a4f6a 已补第5组中的低分辨率真实采样参考帧闭环：正式 Video → 明确采样时间窗 → 实际解码帧/PTS → 人工确认 → 原 Asset owner 首次提交来源齐全的 Image → 原 I2V 交接。显示和保存均为最长边320px的相同PNG；不是高分辨率提帧、语义关键帧、动作/姿态/深度分析，也没有把选段偷偷应用到 V2V。故第5组从该子能力缺失变为部分补齐，不将整组划掉或直接把13改为12。已核验归档：50b4e54afc67694f3e7900efedc36145cc33c1de。详见 ../delivery/v2-development/video-reference-isolated-summary-20261018.md。

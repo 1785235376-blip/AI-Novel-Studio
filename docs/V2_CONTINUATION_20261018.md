@@ -182,3 +182,11 @@ Product eb1a52577bc9aa3e33933f782312fa8b29c5f92e is archived at f7739d58bb681861
 Ordered multi-chapter screenplay adaptation and direct saved Graph/Timeline asset usage queries are implemented with the precise boundaries in delivery/v2-development/ordered-adaptation-usages-wave-20261018.md. Adaptation real PG 190 and usage PG 18 passed; both servers stopped with cleanup. Earlier overlapping File runs and unrelated concurrent edits are documented honestly; no whole-V2 acceptance claim.
 
 Next active slice is CPU sampled video reference preparation: exact formal Video asset, bounded sampling interval, timestamped decoded frames, explicit selected-frame review, first-commit derived Image asset, and existing I2V handoff. This does not yet implement V2V interval cropping, motion/pose/depth or semantic camera analysis. No model execution is needed or authorized for its checks.
+
+## 17:31 sampled reference checkpoint
+
+Product 033a4f6a258473857c5d0ecba56be564563871f2 is archived at 50b4e54afc67694f3e7900efedc36145cc33c1de, parent f7739d58bb68186117887172060ec1b17f75a14d. Anonymous readback verified all 12 files / 5,086,938 bytes. Isolated worktree validation excluded unfinished Model Center changes: File187, UI71 + TypeScript/Vite/token, PUBLIC6 passed, with real PG45 on identical backend. Compared3001 verified source paths against committed Git blobs with zero mismatches. Original isolated TS failure is retained; subsequent type/test-only fix passed.
+
+See delivery/v2-development/video-reference-isolated-summary-20261018.md for actual-PTS sampled video references and strict limitations. This is a partial closure of remaining group5, not full Video preparation. Catalog2401 fingerprint82b5ec4f5f29bc8fbccd638ef74668dffa23939b691026c3cec81646a1a8abb1.
+
+Model Center single-file transfer mechanism is currently in development with synthetic tests only. Empty reviewed source catalog/destination and POSIX-only safety mean it cannot be described as working downloads for current Windows/catalog models. Windows support, trusted production manifests and actual upstream acceptance remain separate; no real model downloads, fees or credentials were used.
