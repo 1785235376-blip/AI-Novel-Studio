@@ -67,6 +67,8 @@
     "app/creative/bible_projection.py",
     "app/creative/bible_workspace.py",
     "app/creative/camera_language.py",
+    "app/creative/canvas_view_models.py",
+    "app/creative/canvas_views.py",
     "app/creative/content_policy.py",
     "app/creative/director_binding.py",
     "app/creative/director_intent.py",

@@ -1,0 +1,41 @@
+.F...................................................................... [ 25%]
+........................................................................ [ 51%]
+........................................................................ [ 76%]
+..................................................................       [100%]
+=================================== FAILURES ===================================
+_ test_current_asset_metadata_stale_deleted_masking_and_explicit_removal[file] _
+
+rig = namespace(nid='v2-independent-9bba36d051854acd90d1d6d9cf01ae61', scope={'mode': 'local', 'novel_id': 'v2-independent-9...IdentityRepository object at 0x7f5eea09dc70>), create_project=<function rig.<locals>.create_project at 0x7f5eed0ea340>)
+
+    def test_current_asset_metadata_stale_deleted_masking_and_explicit_removal(rig):
+        e=rig;asset=import_asset(e);graph=owner(e);created=create(e,graph,definition([asset]))
+>       e.assets.update_metadata(asset['id'],{'parameters':{'synthetic':'changed'}},expected_version=asset['version'])
+
+tests/test_creative_canvas_views_additive.py:39: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/services/asset_library_service.py:941: in update_metadata
+    meta = self.get(asset_id, branch_id=branch_id, actor_id=actor_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.services.asset_library_service.AssetLibraryService object at 0x7f5ee9ecbb90>
+asset_id = '7c8f0716-5763-48e6-a841-8d5cea9229ed'
+
+    def get(self, asset_id: str, *, branch_id: str | None = None, include_deleted: bool = False, actor_id: str | None = None):
+        if branch_id is not None:
+            self._identifier(branch_id, "branch_id")
+        meta = self._load(asset_id)
+        if not self._in_scope(meta, branch_id, actor_id) or (meta.get("deleted_at") and not include_deleted):
+>           raise FileNotFoundError(asset_id)
+E           FileNotFoundError: 7c8f0716-5763-48e6-a841-8d5cea9229ed
+
+app/services/asset_library_service.py:838: FileNotFoundError
+=============================== warnings summary ===============================
+tests/test_creative_canvas_views_additive.py::test_thousand_real_reference_cards_save_reopen_without_binary_or_execution[file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_creative_canvas_views_additive.py::test_current_asset_metadata_stale_deleted_masking_and_explicit_removal[file]
+1 failed, 281 passed, 16 deselected, 1 warning in 8.75s

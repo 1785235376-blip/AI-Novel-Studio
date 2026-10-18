@@ -14,6 +14,7 @@ from ..experimental.common import StaleSourceError, change_row, check_version, n
 from ..experimental.store import canonical
 from ..services.v1_capability_service import V1CapabilityService
 from .project_store import CreativeProjectStore, BINDING
+from .canvas_view_models import CANVAS_VIEWS, MAX_CANVAS_VIEWS
 from .graph_models import (
     DEFINITIONS, GraphInput, GraphCreate, GraphSave, GraphPreflight, GraphMediaPreflight, parse_graph_preflight,
     MAX_NODES, MAX_EDGES, MAX_DEFINITION_BYTES, MAX_OUTPUT_BYTES, MAX_GRAPHS,
@@ -49,6 +50,8 @@ class CreativeGraphService:
         self.media_runtime = None
         from .graph_asset_inputs import GraphAssetInputs
         self.asset_inputs = GraphAssetInputs(self)
+        from .canvas_views import CreativeCanvasViews
+        self.canvas_views = CreativeCanvasViews(self)
 
     def configure_models(self, broker, manager):
         from .ai_execution import CreativeGraphNodeRuntime
@@ -111,7 +114,10 @@ class CreativeGraphService:
 
     @staticmethod
     def _capacity(state):
-        collections = {name: state["collections"].get(name, {}) for name in (GRAPHS, RUNS)}
+        names = (GRAPHS, RUNS) + ((CANVAS_VIEWS,) if state["collections"].get(CANVAS_VIEWS) else ())
+        collections = {name: state["collections"].get(name, {}) for name in names}
+        if len(collections.get(CANVAS_VIEWS, {})) > MAX_CANVAS_VIEWS:
+            raise ValueError("CREATIVE_CANVAS_COLLECTION_CAPACITY")
         if len(collections[GRAPHS]) > MAX_GRAPHS or len(collections[RUNS]) > MAX_RUNS:
             raise ValueError("CREATIVE_GRAPH_COLLECTION_CAPACITY")
         for rows in collections.values():
