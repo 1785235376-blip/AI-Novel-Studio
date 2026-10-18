@@ -1,0 +1,12 @@
+{
+  "git_blob_scan": {
+    "counts": {},
+    "scanned": 23,
+    "blobs": 24,
+    "total_bytes": 4786125,
+    "max_blob": 660890,
+    "hits": []
+  },
+  "expanded_synthetic_snapshot_members_scanned": 74,
+  "expanded_snapshot_pattern_hits": 0
+}

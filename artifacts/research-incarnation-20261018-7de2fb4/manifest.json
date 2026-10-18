@@ -1,0 +1,10 @@
+{
+  "source_head": "7de2fb4bc9c266ceba5754e943a5796567a52609",
+  "prerequisite": "7ce7f00671c1ee6ac909b9da8c74c2c090daf0df",
+  "source_branch": "work/dot-director-transport-20261017",
+  "file_tests": 104,
+  "postgres_tests": 104,
+  "postgres_database_oid": 29071,
+  "persisted_snapshots": 74,
+  "full_v2_release": "NOT_CLAIMED"
+}
