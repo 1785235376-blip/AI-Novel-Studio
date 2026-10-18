@@ -1,0 +1,12 @@
+{
+  "scope": "all new Git blobs including failed/raw logs and receipts",
+  "result": {
+    "counts": {},
+    "scanned": 30,
+    "blobs": 30,
+    "total_bytes": 4734083,
+    "max_blob": 658115,
+    "hits": []
+  },
+  "limitations": "Pattern scan is not proof of absence of secrets; all new test identities and model names are synthetic."
+}
