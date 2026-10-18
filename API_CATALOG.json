@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "0581733a9255a039bce6704b83559df0debf20e3d9089a1e714233091c9128ca",
+  "application_source_fingerprint_sha256": "e9320bbce33c50d24ceac6dd843726f5dd87120e1e7c394ed9584b0a51d27c80",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -165,13 +165,13 @@
     "app/experimental/comic_collections.py": "a59462a099c7227489ff72222b3a79c81895d69ef2cf8dac8645166abba6cc54",
     "app/experimental/comic_layers.py": "a3571681d406e4d077ac97384d7604eeb7b96305c60b92ffbb594ff35895412c",
     "app/experimental/comic_layouts.py": "fa3b54bccb1331ed8346f39506006d4b507a37ac1ce75900f1a5174868ab9039",
-    "app/experimental/comic_layouts_api.py": "5e3eac7e387c6e44460f933481eb06fe36cc4172aca7d62bea7d195a52f3ec58",
+    "app/experimental/comic_layouts_api.py": "0aa69a1d919d1f78c296e5676b950fc9f1fc56b1f77b5aa7f327e6d032668328",
     "app/experimental/comic_ora.py": "fa96c64f31e62ac2a1f7e8bd23cface286b013f14bae3128560fefdec0dcb2a3",
     "app/experimental/comic_ora_api.py": "e698a697db1350c23d7453a1cd1e0ce0e6ace0ebe2f7c65e9190c3527d13a8f4",
     "app/experimental/comic_ora_import.py": "8ca8be11f383b181a9a109e213bf616a4ef21c6b2721aec1e4b439054221a964",
     "app/experimental/comic_ora_staging.py": "0865fa366ab1ecc6f8bbc27f41d7170478d79595c763d75ef513e9ff866c8a09",
-    "app/experimental/comic_publication.py": "6448cc73a380d87baa9dbcd85d619fe8e884e2001ca2f31a80e9ad54a23d923e",
-    "app/experimental/comic_publication_budget.py": "3dc012700303cd2e56ecf255bb352216be7a78ded88e7fde0af7ef8475be85fe",
+    "app/experimental/comic_publication.py": "14e78f617ca49c1fdfd5fb3147073227f0e6dab08eebcc97b087ac5132a8995e",
+    "app/experimental/comic_publication_budget.py": "6a2806372b1944f2840af17f1593eb677b7c3d1238f58f971ae2c7379200d3ac",
     "app/experimental/common.py": "e69739dbefb4fd71e5ac8945f76a534b77bca5cd8252648304a5724ab39127a0",
     "app/experimental/declarative_adapter_sdk.py": "8783ff8a17478dbd13023951176567904ab8c4985fc90aaf80a7fa1a7b707bc1",
     "app/experimental/declarative_agents.py": "2e106fad1a3b403cad889a27db9626edeffe5f01107452c6f1c73316b77e50b8",
@@ -382,7 +382,7 @@
     "app/packaging/static_frontend.py": "e37af49288d6bbb5651599114525bd2dceea7a7f0da8b12d1089096e2c045a94",
     "app/packaging/versioning.py": "7707eff234074de7bf597d2f8d69430899de66dd0ce1448c8505bf41ae4becae",
     "app/packaging/windows_primitives.py": "5a858e2fddedfc18dd55eea457bc46e713d59f60c0456e13872f47ca4600ef86",
-    "app/pdf_export.py": "d5cdd4b67b05d3ade30dc6f554b016520fb359c1dd39144a46a205ec2a8dde47",
+    "app/pdf_export.py": "3564271cec4eff882d42a05231bae5e291add3b45da703856c0607b9aa7175ef",
     "app/pending_canon_review_api.py": "f4aa362516f2d10d07d34486987613fe17c46c86630f685d8d3bb3bc7dd0f3aa",
     "app/planning_extraction.py": "b176ed17b90577ef800a5a45416fb30c7a9fb6943b1f6fb893b8f6df693994f2",
     "app/plugin_capability_policy.py": "ceac5bd1d3757b63e80c1f4fa2d1e1c1c2a4d0a530d96115c611f4facf421dee",
@@ -542,9 +542,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 668,
+    "added": 672,
     "changed_contract": 24,
-    "current_method_paths": 2501,
+    "current_method_paths": 2505,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -561,7 +561,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "3e7acbb64571ac27e8b4828484d43b3299d189bf16e4e554c0d381956f29f100",
+    "sha256": "f1102b557799629aa028e955f6e5f3341351d7ad8c57b02e92bdf72e03c6b0e8",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -14897,6 +14897,17 @@
     },
     {
       "method": "POST",
+      "path": "/api/novels/{nid}/experimental/comic-layouts/books/{rid}/export-pdf",
+      "operation_id": "book_export_pdf_api_novels__nid__experimental_comic_layouts_books__rid__export_pdf_post",
+      "owner_ref": "3735fe96c2fa238516b543a9dbcb7b3d548e2f0815316d64e82715ec53399e2f",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "64454107d04e3b81e34f03f051f0f1b48c5fca9dafa8ae1c3fb491c7d79efc9a",
+      "schema_graph_sha256": "04e6a0b31e64bced3157da31e92e286c685e7a28245ecf883b3f8b00423a90fa"
+    },
+    {
+      "method": "POST",
       "path": "/api/novels/{nid}/experimental/comic-layouts/books/{rid}/pages",
       "operation_id": "book_page_api_novels__nid__experimental_comic_layouts_books__rid__pages_post",
       "owner_ref": "aca410455902a0c740b85d31c79b25e965457931adebd07f029c1c08f93a088b",
@@ -14906,6 +14917,17 @@
       ],
       "operation_sha256": "b1fe978e054390b3124443811bac35f4a5ab227e3f631a7f8f40bcd681185f41",
       "schema_graph_sha256": "4d27f314e45fa117043abdf10fc3937c725c50b954ed2c05a9a6350d52e7a01b"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/comic-layouts/books/{rid}/pdf-publication-preflight",
+      "operation_id": "book_pdf_preflight_api_novels__nid__experimental_comic_layouts_books__rid__pdf_publication_preflight_post",
+      "owner_ref": "f6760c439a8f815d560c361789011effcb2916564d39f61e761ac52e3f37246e",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "51ab36c9020d9e2fd132cc6fe5abde4e9f5dc92d09e5266d53d72b75a88b94d8",
+      "schema_graph_sha256": "cce7743ca628a06a15f4e8177107d700517cd5ac6b48f9af90002e65351596ed"
     },
     {
       "method": "POST",
@@ -15501,7 +15523,8 @@
       "operation_id": "storyboard_audio_request_api_novels__nid__experimental_creative_documents__rid__shots__shot_id__audio_request_post",
       "owner_ref": "8abd14323153733cfb403972c6cb918745ec8ad840f4186181782c391c2d40cd",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "ab7cff94baf19726a5dce1975faae97b521df954a5ab1b734475ada0535c6a0b",
       "schema_graph_sha256": "f409a59f287f5717e5975f3d14e44045530c9ac7f9c44a9a348e2f90bae4f86b"
@@ -22357,6 +22380,17 @@
     },
     {
       "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/export-pdf",
+      "operation_id": "book_export_pdf_api_v1_novels__nid__experimental_comic_layouts_books__rid__export_pdf_post",
+      "owner_ref": "3735fe96c2fa238516b543a9dbcb7b3d548e2f0815316d64e82715ec53399e2f",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "aa80441353c2ff56687e6715f86a7bd624b1f49135e3f64a1af79f3bd4460397",
+      "schema_graph_sha256": "04e6a0b31e64bced3157da31e92e286c685e7a28245ecf883b3f8b00423a90fa"
+    },
+    {
+      "method": "POST",
       "path": "/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/pages",
       "operation_id": "book_page_api_v1_novels__nid__experimental_comic_layouts_books__rid__pages_post",
       "owner_ref": "aca410455902a0c740b85d31c79b25e965457931adebd07f029c1c08f93a088b",
@@ -22366,6 +22400,17 @@
       ],
       "operation_sha256": "f4ca296fed9d3807a66bfef4a0b06bca4f47f6b0f2004f706b937827fc3b2f75",
       "schema_graph_sha256": "4d27f314e45fa117043abdf10fc3937c725c50b954ed2c05a9a6350d52e7a01b"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/pdf-publication-preflight",
+      "operation_id": "book_pdf_preflight_api_v1_novels__nid__experimental_comic_layouts_books__rid__pdf_publication_preflight_post",
+      "owner_ref": "f6760c439a8f815d560c361789011effcb2916564d39f61e761ac52e3f37246e",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "4b1280c69a5ba616db9a2f0d076c226418c5f0265907e237e98a728a4b62bcf8",
+      "schema_graph_sha256": "cce7743ca628a06a15f4e8177107d700517cd5ac6b48f9af90002e65351596ed"
     },
     {
       "method": "POST",
@@ -22961,7 +23006,8 @@
       "operation_id": "storyboard_audio_request_api_v1_novels__nid__experimental_creative_documents__rid__shots__shot_id__audio_request_post",
       "owner_ref": "8abd14323153733cfb403972c6cb918745ec8ad840f4186181782c391c2d40cd",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "7c499581397e3147c36747cfc3f5ac8a7ffa37d7a471c822cba82ae53d13a741",
       "schema_graph_sha256": "f409a59f287f5717e5975f3d14e44045530c9ac7f9c44a9a348e2f90bae4f86b"
