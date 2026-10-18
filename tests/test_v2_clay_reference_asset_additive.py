@@ -162,3 +162,15 @@ def test_original_quota_and_storage_admission_remain_authoritative(rig,monkeypat
     monkeypatch.setattr(e.service.storage_admission,'require',lambda *a:(_ for _ in ()).throw(StudioStorageCapacityError('CREATIVE_STORAGE_LOW_SPACE')))
     with pytest.raises(StudioStorageCapacityError):save(e,source,request)
     assert files(e)==before
+
+
+@pytest.mark.parametrize("rig", [pytest.param("file", marks=pytest.mark.file_backend_only)], indirect=True)
+def test_real_file_wire_for_client_decoder(rig):
+    e=rig
+    assert e.backend=="file"
+    from pathlib import Path
+    import os
+    source,review,request=prepared(e);result=save(e,source,request)
+    target=Path(os.environ['NOVEL_DATA_PATH']).parent/'clay-save-wire.json'
+    target.write_text(json.dumps({'source':source,'review':review,'result':result},ensure_ascii=False,indent=2)+'\n')
+    assert result['asset']['sha256']==review['clay_export']['png_sha256']

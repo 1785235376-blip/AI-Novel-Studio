@@ -1,3 +1,5 @@
+import {CLAY_ASSET_CONTRACT,checkedClayAssetResult,type ClayAssetOrigin} from './studioModelClaySaveContract';
+import type {ModelClayExport} from './studioModelClayContract';
 import { checkedModelClay } from './studioModelClayContract';
 import { checkedModelMaterials } from './studioModelMaterialsContract';
 import { checkedDepthCamera, checkedModelDepth, type ModelDepthCamera } from './studioModelDepthContract';
@@ -41,7 +43,7 @@ export type StudioLineageOrigin = 'ORIGINAL_INPUT' | 'GENERATED_RESULT' | 'DERIV
 export type StudioLineageLink = { id?: string; label?: string; version?: number; digest?: string; state: string };
 /** The existing production-lineage projection, not a second asset owner. */
 export type ProductionLineage = AssetProvenance;
-export type StudioAsset = Asset & { version: number; manual_mask?: StudioMaskReceipt; provenance?: Asset['provenance'] & { source_task_id?: string | null } };
+export type StudioAsset = Asset & { version: number; model_reference?: ClayAssetOrigin; manual_mask?: StudioMaskReceipt; provenance?: Asset['provenance'] & { source_task_id?: string | null } };
 export type StudioReferenceKind = AssetRelationshipReferenceKind;
 export type StudioReference = AssetRelationshipReference;
 export type StudioReferences = { items: StudioReference[]; read_only: true; content_copied: false };
@@ -358,6 +360,16 @@ export function studioClient(projectId: string, context: CollaborationContext) {
     inspectModelMesh: (asset: StudioAsset, signal?: AbortSignal) => transport.json<unknown>(`${assetUrl(asset.id)}/model-reference/mesh-preview`, 'GET', undefined, signal).then(value => checkedModelMeshPreview(value,checkedAsset(asset))),
     inspectModelMaterials: (asset: StudioAsset, signal?: AbortSignal) => transport.json<unknown>(`${assetUrl(asset.id)}/model-reference/materials`, 'GET', undefined, signal).then(value => checkedModelMaterials(value,checkedAsset(asset))),
     inspectModelScene: (asset: StudioAsset, signal?: AbortSignal) => transport.json<unknown>(`${assetUrl(asset.id)}/model-reference/scene-preview`, 'GET', undefined, signal).then(value => checkedModelScenePreview(value,checkedAsset(asset))),
+    saveModelClay: async (asset: StudioAsset, review: ModelClayExport, key: string) => {
+      const source=structuredClone(checkedModelReferenceAsset(checkedAsset(asset)));
+      const checked=await checkedModelClay(review,source,{yaw:review.clay_export.yaw,pitch:review.clay_export.pitch});
+      if(!/^[A-Za-z0-9][A-Za-z0-9_-]{0,119}$/.test(key))throw new Error('灰模保存请求标识无效。');
+      const value=await transport.json<unknown>(`${assetUrl(source.id)}/model-reference/clay-save`,'POST',{
+        contract:CLAY_ASSET_CONTRACT,source_version:source.version,source_sha256:source.sha256,
+        yaw:checked.clay_export.yaw,pitch:checked.clay_export.pitch,reviewed_png_sha256:checked.clay_export.png_sha256,
+        confirm_reference:true,idempotency_key:key},undefined,key);
+      const result=checkedClayAssetResult(value,source,checked);checkedAsset(result.asset);return result;
+    },
     exportModelClay: async (asset: StudioAsset, camera: ModelDepthCamera, signal?: AbortSignal) => {
       const source=structuredClone(checkedModelReferenceAsset(checkedAsset(asset))),view=checkedDepthCamera(camera);
       const value=await transport.json<unknown>(`${assetUrl(source.id)}/model-reference/clay-export`, 'POST', {contract:'studio-static-glb-clay-export/1',source_version:source.version,source_sha256:source.sha256,...view},signal);

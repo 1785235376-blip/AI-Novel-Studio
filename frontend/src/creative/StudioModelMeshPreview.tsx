@@ -1,3 +1,4 @@
+import type {ModelClayExport} from './studioModelClayContract';
 import { StudioModelDepthExport, type ModelDepthRequest, type ModelClayRequest } from './StudioModelDepthExport';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button, StatusMessage } from '../ui/primitives';
@@ -5,7 +6,7 @@ import { downloadPortableBlob } from '../experimental/portableProjectsClient';
 import { checkedModelMeshPreview, checkedModelScenePreview, modelReferenceError, type ModelMeshPreview, type ModelScenePreview } from './studioModelReferenceContract';
 import { meshFacePoints, modelMeshSvg, projectModelMesh } from './modelMeshProjection';
 import type { StudioAsset } from './studioClient';
-type Props={scope:object;asset:StudioAsset;disabled:boolean;canExport?:boolean;isCurrent:()=>boolean;read:(asset:StudioAsset,signal:AbortSignal)=>Promise<ModelMeshPreview>;onDepth?:ModelDepthRequest;onClay?:ModelClayRequest;readScene?:(asset:StudioAsset,signal:AbortSignal)=>Promise<ModelScenePreview>};
+type Props={scope:object;asset:StudioAsset;disabled:boolean;canExport?:boolean;canSaveClay?:boolean;onSaveClay?:(asset:StudioAsset,review:ModelClayExport)=>Promise<void>;isCurrent:()=>boolean;read:(asset:StudioAsset,signal:AbortSignal)=>Promise<ModelMeshPreview>;onDepth?:ModelDepthRequest;onClay?:ModelClayRequest;readScene?:(asset:StudioAsset,signal:AbortSignal)=>Promise<ModelScenePreview>};
 export function StudioModelMeshPreview(props:Props){
  const [space,setSpace]=useState<'mesh'|'scene'>('mesh');
  const [state,setState]=useState<{token:object;value?:ModelMeshPreview|ModelScenePreview;error?:string;pending?:boolean}>(),[yaw,setYaw]=useState(35),[pitch,setPitch]=useState(25),[wire,setWire]=useState(true);
@@ -28,7 +29,7 @@ export function StudioModelMeshPreview(props:Props){
    <label><input type="checkbox" checked={wire} disabled={props.disabled||pending} onChange={event=>{if(current())setWire(event.target.checked);}}/>线框显示（关闭后为灰阶示意）</label>
    <svg role="img" aria-label={space==='scene'?'实际 GLB 静态场景几何示意':'实际 GLB 网格局部几何示意'} viewBox="0 0 512 384" width="100%" height="384"><title>{space==='scene'?'静态场景诊断，不含材质与动画':'网格局部诊断，不含场景变换与材质'}</title>{faces.map((face,index)=><polygon key={index} points={meshFacePoints(face)} fill={wire?'none':`rgb(${face.shade},${face.shade},${face.shade})`} stroke="currentColor" strokeWidth="0.7"/>)}</svg>
    <Button disabled={props.disabled||pending||props.canExport!==true} onClick={()=>{if(!current()||live.current.disabled||live.current.canExport!==true||active.current||rendered.current.faces!==faces||rendered.current.wire!==wire)return;try{downloadPortableBlob(new Blob([modelMeshSvg(faces,wire,space==='scene')],{type:'image/svg+xml'}),`${space}-diagnostic-${props.asset.id}.svg`);}catch{setState({token,value:receipt,error:'诊断图下载未完成，可明确重试。'});}}}>{space==='scene'?'下载当前场景诊断 SVG':'下载当前网格诊断 SVG'}</Button>
-   {space==='scene'&&props.onClay&&<StudioModelDepthExport kind="clay" scope={props.scope} asset={props.asset} yaw={yaw} pitch={pitch} disabled={props.disabled||pending} canExport={props.canExport} isCurrent={current} request={props.onClay}/>}
+   {space==='scene'&&props.onClay&&<StudioModelDepthExport kind="clay" scope={props.scope} asset={props.asset} yaw={yaw} pitch={pitch} disabled={props.disabled||pending} canExport={props.canExport} isCurrent={current} request={props.onClay} canSave={props.canSaveClay} onSave={props.onSaveClay}/>}
    {space==='scene'&&props.onDepth&&<StudioModelDepthExport scope={props.scope} asset={props.asset} yaw={yaw} pitch={pitch} disabled={props.disabled||pending} canExport={props.canExport} isCurrent={current} request={props.onDepth}/>}
    <p>SVG 导出仅含这些数值几何和当前视角，不会创建正式图片资产或改写模型；不是 PNG、视频帧或最终画面。</p>
   </>}

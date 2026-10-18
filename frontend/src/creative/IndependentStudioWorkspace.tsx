@@ -161,6 +161,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const promptDraftChanged = useCallback((value: boolean) => { promptDirtyRef.current = value; setPromptDirty(value); }, []);
   const timelineDraftChanged = useCallback((value: boolean) => { timelineDirtyRef.current = value; setTimelineDirty(value); }, []);
   const verifiedCallback = useRef(onVerified); verifiedCallback.current = onVerified;
+  const lastClaySave = useRef<{body:string;key:string;unknown:boolean}>();
   const lastImport = useRef<{ body: string; key: string }>();
   const sameStudioIdentity = useCallback(() => {
     const state = useStudio.getState();
@@ -530,6 +531,23 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       onScene={(asset,signal) => guarded(() => client.inspectModelScene(asset,signal),signal)}
       onDepth={(asset,camera,signal) => guarded(() => client.exportModelDepth(asset,camera,signal),signal)}
       onClay={(asset,camera,signal) => guarded(() => client.exportModelClay(asset,camera,signal),signal)}
+      canSaveClay={writable}
+      onSaveClay={async (asset,review) => {
+        if(!current()||!writable||busyRef.current||dirtyRef.current)throw new Error('请先处理当前输入并核对写入权限。');
+        const identity=JSON.stringify([asset.id,asset.version,asset.sha256,review.clay_export]);
+        if(lastClaySave.current?.unknown&&lastClaySave.current.body!==identity)throw new Error('上次灰模保存结果未知，请回到相同素材和视角核对，不要另建请求。');
+        if(lastClaySave.current?.body!==identity)lastClaySave.current={body:identity,key:crypto.randomUUID(),unknown:false};
+        const request=lastClaySave.current;
+        try {
+          request.unknown=true;
+          const result=await graphMutation(()=>client.saveModelClay(asset,review,request.key));
+          if(!current())return;request.unknown=false;refreshedAsset(result.asset);
+          setNotice(result.receipt.replayed?'已核对原来的灰模参考素材，未重复创建。':'灰模参考已保存到素材库，保留原 GLB 版本与摘要；未调用模型。');
+        } catch(reason) {
+          if(current())setNotice('灰模保存结果未确认。请先核对素材库，或回到相同视角重新预览并确认；本会话将复用原请求。刷新页面前请先核对，避免重复创建。');
+          throw reason;
+        } finally {if(current())invalidateStorage();}
+      }}
       onMaterials={(asset,signal) => guarded(() => client.inspectModelMaterials(asset,signal),signal)}
       onImport={async body => {
         if (!current() || !writable || overview.capabilities.manual_import !== true || busyRef.current || dirtyRef.current) throw new Error('请先处理当前输入并核对项目写入权限。');
