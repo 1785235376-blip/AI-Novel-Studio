@@ -171,6 +171,7 @@
     "app/experimental/change_impact_api.py",
     "app/experimental/character_author_context.py",
     "app/experimental/comic_collections.py",
+    "app/experimental/comic_epub_package.py",
     "app/experimental/comic_layers.py",
     "app/experimental/comic_layouts.py",
     "app/experimental/comic_layouts_api.py",
