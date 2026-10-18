@@ -1,0 +1,1784 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/directorScreenplayClient.additive.test.ts (8 tests) 16ms
+ ✓ src/creative/directorModelClient.test.ts (35 tests) 30ms
+ ✓ src/creative/AIDirectorIndependent.integration.test.tsx (3 tests) 399ms
+   ✓ mounts the versioned view only after explicit capability read and hands exact adopted pin to original parent 314ms
+ ✓ src/creative/AIDirectorScreenplay.integration.test.tsx (3 tests) 407ms
+   ✓ mounts the versioned view only after explicit capability read and hands exact adopted pin to original parent 325ms
+ ✓ src/creative/IndependentDirectorModelReview.test.tsx (7 tests) 672ms
+ ❯ src/creative/AIDirectorReopen.test.tsx (31 tests | 1 failed) 2509ms
+   × original director proposal linked-draft reopen > preserves edits across queue, new-proposal and optional-model replacement until explicit discard 1023ms
+     → Unable to find role="button" and name "预览模型输入"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-label[39m=[32m"AI 导演面板"[39m
+      [33mclass[39m=[32m"creative-director-panel"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"creative-eyebrow"[39m
+        [36m>[39m
+          [0mAI Director[0m
+        [36m</span>[39m
+        [36m<h2>[39m
+          [0m导演协作与审核[0m
+        [36m</h2>[39m
+      [36m</header>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m从已保存剧本或分镜准备导演建议[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<p>[39m
+          [0m本地规则辅助会整理场景调度草案。不会调用模型；采用后新增独立导演文档。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m本地规则辅助（RULE_ASSISTED）整理待审草案。分镜按已写镜头序号逐镜头复制相机与时长，并提供待核对的调度提示；这不是模型分析。采用后新增独立导演 DRAFT，原分镜、资产和画布绑定不变。[0m
+        [36m</p>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"creative-field"[39m
+        [36m>[39m
+          [36m<span>[39m
+            [0m导演建议来源剧本或分镜[0m
+          [36m</span>[39m
+          [36m<select>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择已保存剧本或分镜[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"screenplay"[39m
+            [36m>[39m
+              [0mSource screenplay[0m
+              [0m · v[0m
+              [0m4[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<details>[39m
+          [36m<summary>[39m
+            [0m本次导演建议的视觉目标（可选）[0m
+          [36m</summary>[39m
+          [36m<fieldset>[39m
+            [36m<section[39m
+              [33maria-label[39m=[32m"建议准备 项目视觉目标"[39m
+              [33mclass[39m=[32m"creative-visual-target"[39m
+            [36m>[39m
+              [36m<header[39m
+                [33mclass[39m=[32m"creative-actions"[39m
+              [36m>[39m
+                [36m<h3>[39m
+                  [0m项目视觉目标[0m
+                [36m</h3>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+                [36m>[39m
+                  [0m尚未设定[0m
+                [36m</span>[39m
+              [36m</header>[39m
+              [36m<p>[39m
+                [0m导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。[0m
+              [36m</p>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"creative-form-grid"[39m
+              [36m>[39m
+                [36m<div>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"creative-field"[39m
+                  [36m>[39m
+                    [36m<span>[39m
+                      [0m建议准备 文档类型 / 题材[0m
+                    [36m</span>[39m
+                    [36m<input[39m
+                      [33maria-describedby[39m=[32m":r1p:"[39m
+                      [33maria-invalid[39m=[32m"false"[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m/>[39m
+                  [36m</label>[39m
+                  [36m<p[39m
+                    [33mid[39m=[32m":r1p:"[39m
+                  [36m>[39m
+                    [0m0[0m
+                    [0m / 2000 字符[0m
+                    [0m；仅属于此文档，留空表示未设定。[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<label[39m
+                  [33mclass[39m=[32m"creative-field"[39m
+                [36m>[39m
+                  [36m<span>[39m
+                    [0m建议准备 视觉风格[0m
+                  [36m</span>[39m
+                  [36m<input[39m
+                    [33mmaxlength[39m=[32m"2000"[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m/>[39m
+                [36m</label>[39m
+                [36m<label[39m
+                  [33mclass[39m=[32m"creative-field"[39m
+                [36m>[39m
+                  [36m<span>[39m
+                    [0m建议准备 整体氛围[0m
+                  [36m</span>[39m
+                  [36m<input[39m
+                    [33mmaxlength[39m=[32m"2000"[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m/>[39m
+                [36m</label>[39m
+              [36m</div>[39m
+              [36m<details>[39m
+                [36m<summary>[39m
+                  [0m展开色彩、节奏与参考作品[0m
+                [36m</summary>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"creative-form-grid"[39m
+                [36m>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"creative-field"[39m
+                  [36m>[39m
+                    [36m<span>[39m
+                      [0m建议准备 色彩目标[0m
+                    [36m</span>[39m
+                    [36m<input[39m
+                      [33mmaxlength[39m=[32m"2000"[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m/>[39m
+                  [36m</label>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"creative-field"[39m
+                  [36m>[39m
+                    [36m<span>[39m
+                      [0m建议准备 节奏目标[0m
+                    [36m</span>[39m
+                    [36m<input[39m
+                      [33mmaxlength[39m=[32m"2000"[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m/>[39m
+                  [36m</label>[39m
+                [36m</div>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                [36m>[39m
+                  [0m添加参考作品[0m
+                [36m</button>[39m
+                [36m<ul />[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                  [33mdisabled[39m=[32m""[39m
+                [36m>[39m
+                  [0m移除此文档视觉目标[0m
+                [36m</button>[39m
+              [36m</details>[39m
+            [36m</section>[39m
+          [36m</fieldset>[39m
+        [36m</details>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m准备待审导演建议[0m
+        [36m</button>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m建议审核队列[0m
+          [36m</h2>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m刷新[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"creative-proposal-list"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-pressed[39m=[32m"true"[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0mAccepted direction[0m
+            [36m<span[39m
+              [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+            [36m>[39m
+              [0mNEEDS_REVIEW[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-pressed[39m=[32m"false"[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0mAnother direction[0m
+            [36m<span[39m
+              [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+            [36m>[39m
+              [0mNEEDS_REVIEW[0m
+            [36m</span>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m打开独立剧本模型审核[0m
+        [36m</button>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"导演建议审核"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0m来源 [0m
+            [0mscreenplay[0m
+            [0m · v[0m
+            [0m4[0m
+            [0m · [0m
+            [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [0m · 建议 v[0m
+            [0m2[0m
+          [36m</p>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--info"[39m
+          [36m>[39m
+            [0m本地规则辅助 · 未调用模型[0m
+          [36m</span>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0m独立剧本请使用上方的独立模型审核入口；不会借用小说章节调用模型。[0m
+          [36m</div>[39m
+          [36m<p>[39m
+            [0m0[0m
+            [0m 个候选镜头 · 预计总时长 [0m
+            [0m0 秒[0m
+            [0m。仅为当前候选顺序的时长相加，不含备选方案，不代表成片时长。[0m
+          [36m</p>[39m
+          [36m<details>[39m
+            [36m<summary>[39m
+              [0m规则辅助检查（原始候选）[0m
+            [36m</summary>[39m
+            [36m<p>[39m
+              [0m规则只检查已填写的镜头词汇。编辑后的取值需重新人工核对；轴线、视线和实际空间关系未知，不能据此判定连续性正确。[0m
+            [36m</p>[39m
+          [36m</details>[39m
+          [36m<fieldset>[39m
+            [36m<legend[39m
+              [33mclass[39m=[32m"creative-sr-only"[39m
+            [36m>[39m
+              [0m建议内容[0m
+            [36m</legend>[39m
+            [36m<details>[39m
+              [36m<summary>[39m
+                [0m审核视觉目标[0m
+              [36m</summary>[39m
+              [36m<section[39m
+                [33maria-label[39m=[32m"建议审核 项目视觉目标"[39m
+                [33mclass[39m=[32m"creative-visual-target"[39m
+              [36m>[39m
+                [36m<header[39m
+                  [33mclass[39m=[32m"creative-actions"[39m
+                [36m>[39m
+                  [36m<h3>[39m
+                    [0m项目视觉目标[0m
+                  [36m</h3>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+                  [36m>[39m
+                    [0m尚未设定[0m
+                  [36m</span>[39m
+                [36m</header>[39m
+                [36m<p>[39m
+                  [0m导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。[0m
+                [36m</p>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"creative-form-grid"[39m
+                [36m>[39m
+                  [36m<div>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"creative-field"[39m
+                    [36m>[39m
+                      [36m<span>[39m
+                        [0m建议审核 文档类型 / 题材[0m
+                      [36m</span>[39m
+                      [36m<input[39m
+                        [33maria-describedby[39m=[32m":r1q:"[39m
+                        [33maria-invalid[39m=[32m"false"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                    [36m</label>[39m
+                    [36m<p[39m
+                      [33mid[39m=[32m":r1q:"[39m
+                    [36m>[39m
+                      [0m0[0m
+                      [0m / 2000 字符[0m
+                      [0m；仅属于此文档，留空表示未设定。[0m
+                    [36m</p>[39m
+                  [36m</div>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"creative-field"[39m
+                  [36m>[39m
+                    [36m<span>[39m
+                      [0m建议审核 视觉风格[0m
+                    [36m</span>[39m
+                    [36m<input[39m
+                      [33mmaxlength[39m=[32m"2000"[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m/>[39m
+                  [36m</label>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"creative-field"[39m
+                  [36m>[39m
+                    [36m<span>[39m
+                      [0m建议审核 整体氛围[0m
+                    [36m</span>[39m
+                    [36m<input[39m
+                      [33mmaxlength[39m=[32m"2000"[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m/>[39m
+                  [36m</label>[39m
+                [36m</div>[39m
+                [36m<details>[39m
+                  [36m<summary>[39m
+                    [0m展开色彩、节奏与参考作品[0m
+                  [36m</summary>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"creative-form-grid"[39m
+                  [36m>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"creative-field"[39m
+                    [36m>[39m
+                      [36m<span>[39m
+                        [0m建议审核 色彩目标[0m
+                      [36m</span>[39m
+                      [36m<input[39m
+                        [33mmaxlength[39m=[32m"2000"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                    [36m</label>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"creative-field"[39m
+                    [36m>[39m
+                      [36m<span>[39m
+                        [0m建议审核 节奏目标[0m
+                      [36m</span>[39m
+                      [36m<input[39m
+                        [33mmaxlength[39m=[32m"2000"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                    [36m</label>[39m
+                  [36m</div>[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                  [36m>[39m
+                    [0m添加参考作品[0m
+                  [36m</button>[39m
+                  [36m<ul />[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                    [33mdisabled[39m=[32m""[39m
+                  [36m>[39m
+                    [0m移除此文档视觉目标[0m
+                  [36m</button>[39m
+                [36m</details>[39m
+              [36m</section>[39m
+            [36m</details>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"creative-field"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0m采用后的导演文档标题[0m
+              [36m</span>[39m
+              [36m<input[39m
+                [33mmaxlength[39m=[32m"240"[39m
+                [33mvalue[39m=[32m"Accepted direction"[39m
+              [36m/>[39m
+            [36m</label>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"creative-review-check"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33mtype[39m=[32m"checkbox"[39m
+              [36m/>[39m
+              [0m已核对来源、场面调度与导演建议；创建独立导演文档[0m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"creative-actions"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+                [33mdisabled[39m=[32m""[39m
+              [36m>[39m
+                [0m审核并采用[0m
+              [36m</button>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [36m>[39m
+                [0m取消建议[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</fieldset>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m模型与执行能力[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<p>[39m
+          [0m模型调用需要已配置且可用的 Provider。此工作区不会自动启动模型或渲染音视频。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m打开模型控制中心[0m
+        [36m</button>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33maria-label[39m=[32m"AI 导演面板"[39m
+        [33mclass[39m=[32m"creative-director-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"creative-eyebrow"[39m
+          [36m>[39m
+            [0mAI Director[0m
+          [36m</span>[39m
+          [36m<h2>[39m
+            [0m导演协作与审核[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"ui-panel"[39m
+        [36m>[39m
+          [36m<header>[39m
+            [36m<h2>[39m
+              [0m从已保存剧本或分镜准备导演建议[0m
+            [36m</h2>[39m
+          [36m</header>[39m
+          [36m<p>[39m
+            [0m本地规则辅助会整理场景调度草案。不会调用模型；采用后新增独立导演文档。[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m本地规则辅助（RULE_ASSISTED）整理待审草案。分镜按已写镜头序号逐镜头复制相机与时长，并提供待核对的调度提示；这不是模型分析。采用后新增独立导演 DRAFT，原分镜、资产和画布绑定不变。[0m
+          [36m</p>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"creative-field"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m导演建议来源剧本或分镜[0m
+            [36m</span>[39m
+            [36m<select>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m""[39m
+              [36m>[39m
+                [0m选择已保存剧本或分镜[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"screenplay"[39m
+              [36m>[39m
+                [0mSource screenplay[0m
+                [0m · v[0m
+                [0m4[0m
+              [36m</option>[39m
+            [36m</select>[39m
+          [36m</label>[39m
+          [36m<details>[39m
+            [36m<summary>[39m
+              [0m本次导演建议的视觉目标（可选）[0m
+            [36m</summary>[39m
+            [36m<fieldset>[39m
+              [36m<section[39m
+                [33maria-label[39m=[32m"建议准备 项目视觉目标"[39m
+                [33mclass[39m=[32m"creative-visual-target"[39m
+              [36m>[39m
+                [36m<header[39m
+                  [33mclass[39m=[32m"creative-actions"[39m
+                [36m>[39m
+                  [36m<h3>[39m
+                    [0m项目视觉目标[0m
+                  [36m</h3>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+                  [36m>[39m
+                    [0m尚未设定[0m
+                  [36m</span>[39m
+                [36m</header>[39m
+                [36m<p>[39m
+                  [0m导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。[0m
+                [36m</p>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"creative-form-grid"[39m
+                [36m>[39m
+                  [36m<div>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"creative-field"[39m
+                    [36m>[39m
+                      [36m<span>[39m
+                        [0m建议准备 文档类型 / 题材[0m
+                      [36m</span>[39m
+                      [36m<input[39m
+                        [33maria-describedby[39m=[32m":r1p:"[39m
+                        [33maria-invalid[39m=[32m"false"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                    [36m</label>[39m
+                    [36m<p[39m
+                      [33mid[39m=[32m":r1p:"[39m
+                    [36m>[39m
+                      [0m0[0m
+                      [0m / 2000 字符[0m
+                      [0m；仅属于此文档，留空表示未设定。[0m
+                    [36m</p>[39m
+                  [36m</div>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"creative-field"[39m
+                  [36m>[39m
+                    [36m<span>[39m
+                      [0m建议准备 视觉风格[0m
+                    [36m</span>[39m
+                    [36m<input[39m
+                      [33mmaxlength[39m=[32m"2000"[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m/>[39m
+                  [36m</label>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"creative-field"[39m
+                  [36m>[39m
+                    [36m<span>[39m
+                      [0m建议准备 整体氛围[0m
+                    [36m</span>[39m
+                    [36m<input[39m
+                      [33mmaxlength[39m=[32m"2000"[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m/>[39m
+                  [36m</label>[39m
+                [36m</div>[39m
+                [36m<details>[39m
+                  [36m<summary>[39m
+                    [0m展开色彩、节奏与参考作品[0m
+                  [36m</summary>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"creative-form-grid"[39m
+                  [36m>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"creative-field"[39m
+                    [36m>[39m
+                      [36m<span>[39m
+                        [0m建议准备 色彩目标[0m
+                      [36m</span>[39m
+                      [36m<input[39m
+                        [33mmaxlength[39m=[32m"2000"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                    [36m</label>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"creative-field"[39m
+                    [36m>[39m
+                      [36m<span>[39m
+                        [0m建议准备 节奏目标[0m
+                      [36m</span>[39m
+                      [36m<input[39m
+                        [33mmaxlength[39m=[32m"2000"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                    [36m</label>[39m
+                  [36m</div>[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                  [36m>[39m
+                    [0m添加参考作品[0m
+                  [36m</button>[39m
+                  [36m<ul />[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                    [33mdisabled[39m=[32m""[39m
+                  [36m>[39m
+                    [0m移除此文档视觉目标[0m
+                  [36m</button>[39m
+                [36m</details>[39m
+              [36m</section>[39m
+            [36m</fieldset>[39m
+          [36m</details>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m准备待审导演建议[0m
+          [36m</button>[39m
+        [36m</section>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"ui-panel"[39m
+        [36m>[39m
+          [36m<header>[39m
+            [36m<h2>[39m
+              [0m建议审核队列[0m
+            [36m</h2>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m刷新[0m
+            [36m</button>[39m
+          [36m</header>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"creative-proposal-list"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-pressed[39m=[32m"true"[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0mAccepted direction[0m
+              [36m<span[39m
+                [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+              [36m>[39m
+                [0mNEEDS_REVIEW[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-pressed[39m=[32m"false"[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0mAnother direction[0m
+              [36m<span[39m
+                [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+              [36m>[39m
+                [0mNEEDS_REVIEW[0m
+              [36m</span>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开独立剧本模型审核[0m
+          [36m</button>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"导演建议审核"[39m
+          [36m>[39m
+            [36m<p>[39m
+              [0m来源 [0m
+              [0mscreenplay[0m
+              [0m · v[0m
+              [0m4[0m
+              [0m · [0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+              [0m · 建议 v[0m
+              [0m2[0m
+            [36m</p>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"ui-badge ui-badge--info"[39m
+            [36m>[39m
+              [0m本地规则辅助 · 未调用模型[0m
+            [36m</span>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+              [33mrole[39m=[32m"status"[39m
+            [36m>[39m
+              [0m独立剧本请使用上方的独立模型审核入口；不会借用小说章节调用模型。[0m
+            [36m</div>[39m
+            [36m<p>[39m
+              [0m0[0m
+              [0m 个候选镜头 · 预计总时长 [0m
+              [0m0 秒[0m
+              [0m。仅为当前候选顺序的时长相加，不含备选方案，不代表成片时长。[0m
+            [36m</p>[39m
+            [36m<details>[39m
+              [36m<summary>[39m
+                [0m规则辅助检查（原始候选）[0m
+              [36m</summary>[39m
+              [36m<p>[39m
+                [0m规则只检查已填写的镜头词汇。编辑后的取值需重新人工核对；轴线、视线和实际空间关系未知，不能据此判定连续性正确。[0m
+              [36m</p>[39m
+            [36m</details>[39m
+            [36m<fieldset>[39m
+              [36m<legend[39m
+                [33mclass[39m=[32m"creative-sr-only"[39m
+              [36m>[39m
+                [0m建议内容[0m
+              [36m</legend>[39m
+              [36m<details>[39m
+                [36m<summary>[39m
+                  [0m审核视觉目标[0m
+                [36m</summary>[39m
+                [36m<section[39m
+                  [33maria-label[39m=[32m"建议审核 项目视觉目标"[39m
+                  [33mclass[39m=[32m"creative-visual-target"[39m
+                [36m>[39m
+                  [36m<header[39m
+                    [33mclass[39m=[32m"creative-actions"[39m
+                  [36m>[39m
+                    [36m<h3>[39m
+                      [0m项目视觉目标[0m
+                    [36m</h3>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+                    [36m>[39m
+                      [0m尚未设定[0m
+                    [36m</span>[39m
+                  [36m</header>[39m
+                  [36m<p>[39m
+                    [0m导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。[0m
+                  [36m</p>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"creative-form-grid"[39m
+                  [36m>[39m
+                    [36m<div>[39m
+                      [36m<label[39m
+                        [33mclass[39m=[32m"creative-field"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m建议审核 文档类型 / 题材[0m
+                        [36m</span>[39m
+                        [36m<input[39m
+                          [33maria-describedby[39m=[32m":r1q:"[39m
+                          [33maria-invalid[39m=[32m"false"[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<p[39m
+                        [33mid[39m=[32m":r1q:"[39m
+                      [36m>[39m
+                        [0m0[0m
+                        [0m / 2000 字符[0m
+                        [0m；仅属于此文档，留空表示未设定。[0m
+                      [36m</p>[39m
+                    [36m</div>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"creative-field"[39m
+                    [36m>[39m
+                      [36m<span>[39m
+                        [0m建议审核 视觉风格[0m
+                      [36m</span>[39m
+                      [36m<input[39m
+                        [33mmaxlength[39m=[32m"2000"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                    [36m</label>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"creative-field"[39m
+                    [36m>[39m
+                      [36m<span>[39m
+                        [0m建议审核 整体氛围[0m
+                      [36m</span>[39m
+                      [36m<input[39m
+                        [33mmaxlength[39m=[32m"2000"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                    [36m</label>[39m
+                  [36m</div>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0m展开色彩、节奏与参考作品[0m
+                    [36m</summary>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"creative-form-grid"[39m
+                    [36m>[39m
+                      [36m<label[39m
+                        [33mclass[39m=[32m"creative-field"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m建议审核 色彩目标[0m
+                        [36m</span>[39m
+                        [36m<input[39m
+                          [33mmaxlength[39m=[32m"2000"[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label[39m
+                        [33mclass[39m=[32m"creative-field"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m建议审核 节奏目标[0m
+                        [36m</span>[39m
+                        [36m<input[39m
+                          [33mmaxlength[39m=[32m"2000"[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                    [36m</div>[39m
+                    [36m<button[39m
+                      [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                    [36m>[39m
+                      [0m添加参考作品[0m
+                    [36m</button>[39m
+                    [36m<ul />[39m
+                    [36m<button[39m
+                      [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                      [33mdisabled[39m=[32m""[39m
+                    [36m>[39m
+                      [0m移除此文档视觉目标[0m
+                    [36m</button>[39m
+                  [36m</details>[39m
+                [36m</section>[39m
+              [36m</details>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"creative-field"[39m
+              [36m>[39m
+                [36m<span>[39m
+                  [0m采用后的导演文档标题[0m
+                [36m</span>[39m
+                [36m<input[39m
+                  [33mmaxlength[39m=[32m"240"[39m
+                  [33mvalue[39m=[32m"Accepted direction"[39m
+                [36m/>[39m
+              [36m</label>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"creative-review-check"[39m
+              [36m>[39m
+                [36m<input[39m
+                  [33mtype[39m=[32m"checkbox"[39m
+                [36m/>[39m
+                [0m已核对来源、场面调度与导演建议；创建独立导演文档[0m
+              [36m</label>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"creative-actions"[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+                  [33mdisabled[39m=[32m""[39m
+                [36m>[39m
+                  [0m审核并采用[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                [36m>[39m
+                  [0m取消建议[0m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</fieldset>[39m
+          [36m</section>[39m
+        [36m</section>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"ui-panel"[39m
+        [36m>[39m
+          [36m<header>[39m
+            [36m<h2>[39m
+              [0m模型与执行能力[0m
+            [36m</h2>[39m
+          [36m</header>[39m
+          [36m<p>[39m
+            [0m模型调用需要已配置且可用的 Provider。此工作区不会自动启动模型或渲染音视频。[0m
+          [36m</p>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开模型控制中心[0m
+          [36m</button>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+
+ Test Files  1 failed | 5 passed (6)
+      Tests  1 failed | 86 passed (87)
+   Start at  11:40:31
+   Duration  3.61s (transform 617ms, setup 67ms, collect 2.06s, tests 4.03s, environment 1.50s, prepare 383ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/AIDirectorReopen.test.tsx > original director proposal linked-draft reopen > preserves edits across queue, new-proposal and optional-model replacement until explicit discard
+TestingLibraryElementError: Unable to find role="button" and name "预览模型输入"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-label[39m=[32m"AI 导演面板"[39m
+      [33mclass[39m=[32m"creative-director-panel"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"creative-eyebrow"[39m
+        [36m>[39m
+          [0mAI Director[0m
+        [36m</span>[39m
+        [36m<h2>[39m
+          [0m导演协作与审核[0m
+        [36m</h2>[39m
+      [36m</header>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m从已保存剧本或分镜准备导演建议[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<p>[39m
+          [0m本地规则辅助会整理场景调度草案。不会调用模型；采用后新增独立导演文档。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m本地规则辅助（RULE_ASSISTED）整理待审草案。分镜按已写镜头序号逐镜头复制相机与时长，并提供待核对的调度提示；这不是模型分析。采用后新增独立导演 DRAFT，原分镜、资产和画布绑定不变。[0m
+        [36m</p>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"creative-field"[39m
+        [36m>[39m
+          [36m<span>[39m
+            [0m导演建议来源剧本或分镜[0m
+          [36m</span>[39m
+          [36m<select>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择已保存剧本或分镜[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"screenplay"[39m
+            [36m>[39m
+              [0mSource screenplay[0m
+              [0m · v[0m
+              [0m4[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<details>[39m
+          [36m<summary>[39m
+            [0m本次导演建议的视觉目标（可选）[0m
+          [36m</summary>[39m
+          [36m<fieldset>[39m
+            [36m<section[39m
+              [33maria-label[39m=[32m"建议准备 项目视觉目标"[39m
+              [33mclass[39m=[32m"creative-visual-target"[39m
+            [36m>[39m
+              [36m<header[39m
+                [33mclass[39m=[32m"creative-actions"[39m
+              [36m>[39m
+                [36m<h3>[39m
+                  [0m项目视觉目标[0m
+                [36m</h3>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+                [36m>[39m
+                  [0m尚未设定[0m
+                [36m</span>[39m
+              [36m</header>[39m
+              [36m<p>[39m
+                [0m导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。[0m
+              [36m</p>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"creative-form-grid"[39m
+              [36m>[39m
+                [36m<div>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"creative-field"[39m
+                  [36m>[39m
+                    [36m<span>[39m
+                      [0m建议准备 文档类型 / 题材[0m
+                    [36m</span>[39m
+                    [36m<input[39m
+                      [33maria-describedby[39m=[32m":r1p:"[39m
+                      [33maria-invalid[39m=[32m"false"[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m/>[39m
+                  [36m</label>[39m
+                  [36m<p[39m
+                    [33mid[39m=[32m":r1p:"[39m
+                  [36m>[39m
+                    [0m0[0m
+                    [0m / 2000 字符[0m
+                    [0m；仅属于此文档，留空表示未设定。[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<label[39m
+                  [33mclass[39m=[32m"creative-field"[39m
+                [36m>[39m
+                  [36m<span>[39m
+                    [0m建议准备 视觉风格[0m
+                  [36m</span>[39m
+                  [36m<input[39m
+                    [33mmaxlength[39m=[32m"2000"[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m/>[39m
+                [36m</label>[39m
+                [36m<label[39m
+                  [33mclass[39m=[32m"creative-field"[39m
+                [36m>[39m
+                  [36m<span>[39m
+                    [0m建议准备 整体氛围[0m
+                  [36m</span>[39m
+                  [36m<input[39m
+                    [33mmaxlength[39m=[32m"2000"[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m/>[39m
+                [36m</label>[39m
+              [36m</div>[39m
+              [36m<details>[39m
+                [36m<summary>[39m
+                  [0m展开色彩、节奏与参考作品[0m
+                [36m</summary>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"creative-form-grid"[39m
+                [36m>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"creative-field"[39m
+                  [36m>[39m
+                    [36m<span>[39m
+                      [0m建议准备 色彩目标[0m
+                    [36m</span>[39m
+                    [36m<input[39m
+                      [33mmaxlength[39m=[32m"2000"[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m/>[39m
+                  [36m</label>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"creative-field"[39m
+                  [36m>[39m
+                    [36m<span>[39m
+                      [0m建议准备 节奏目标[0m
+                    [36m</span>[39m
+                    [36m<input[39m
+                      [33mmaxlength[39m=[32m"2000"[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m/>[39m
+                  [36m</label>[39m
+                [36m</div>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                [36m>[39m
+                  [0m添加参考作品[0m
+                [36m</button>[39m
+                [36m<ul />[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                  [33mdisabled[39m=[32m""[39m
+                [36m>[39m
+                  [0m移除此文档视觉目标[0m
+                [36m</button>[39m
+              [36m</details>[39m
+            [36m</section>[39m
+          [36m</fieldset>[39m
+        [36m</details>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m准备待审导演建议[0m
+        [36m</button>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m建议审核队列[0m
+          [36m</h2>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m刷新[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"creative-proposal-list"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-pressed[39m=[32m"true"[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0mAccepted direction[0m
+            [36m<span[39m
+              [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+            [36m>[39m
+              [0mNEEDS_REVIEW[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-pressed[39m=[32m"false"[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0mAnother direction[0m
+            [36m<span[39m
+              [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+            [36m>[39m
+              [0mNEEDS_REVIEW[0m
+            [36m</span>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m打开独立剧本模型审核[0m
+        [36m</button>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"导演建议审核"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0m来源 [0m
+            [0mscreenplay[0m
+            [0m · v[0m
+            [0m4[0m
+            [0m · [0m
+            [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+            [0m · 建议 v[0m
+            [0m2[0m
+          [36m</p>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--info"[39m
+          [36m>[39m
+            [0m本地规则辅助 · 未调用模型[0m
+          [36m</span>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0m独立剧本请使用上方的独立模型审核入口；不会借用小说章节调用模型。[0m
+          [36m</div>[39m
+          [36m<p>[39m
+            [0m0[0m
+            [0m 个候选镜头 · 预计总时长 [0m
+            [0m0 秒[0m
+            [0m。仅为当前候选顺序的时长相加，不含备选方案，不代表成片时长。[0m
+          [36m</p>[39m
+          [36m<details>[39m
+            [36m<summary>[39m
+              [0m规则辅助检查（原始候选）[0m
+            [36m</summary>[39m
+            [36m<p>[39m
+              [0m规则只检查已填写的镜头词汇。编辑后的取值需重新人工核对；轴线、视线和实际空间关系未知，不能据此判定连续性正确。[0m
+            [36m</p>[39m
+          [36m</details>[39m
+          [36m<fieldset>[39m
+            [36m<legend[39m
+              [33mclass[39m=[32m"creative-sr-only"[39m
+            [36m>[39m
+              [0m建议内容[0m
+            [36m</legend>[39m
+            [36m<details>[39m
+              [36m<summary>[39m
+                [0m审核视觉目标[0m
+              [36m</summary>[39m
+              [36m<section[39m
+                [33maria-label[39m=[32m"建议审核 项目视觉目标"[39m
+                [33mclass[39m=[32m"creative-visual-target"[39m
+              [36m>[39m
+                [36m<header[39m
+                  [33mclass[39m=[32m"creative-actions"[39m
+                [36m>[39m
+                  [36m<h3>[39m
+                    [0m项目视觉目标[0m
+                  [36m</h3>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+                  [36m>[39m
+                    [0m尚未设定[0m
+                  [36m</span>[39m
+                [36m</header>[39m
+                [36m<p>[39m
+                  [0m导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。[0m
+                [36m</p>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"creative-form-grid"[39m
+                [36m>[39m
+                  [36m<div>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"creative-field"[39m
+                    [36m>[39m
+                      [36m<span>[39m
+                        [0m建议审核 文档类型 / 题材[0m
+                      [36m</span>[39m
+                      [36m<input[39m
+                        [33maria-describedby[39m=[32m":r1q:"[39m
+                        [33maria-invalid[39m=[32m"false"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                    [36m</label>[39m
+                    [36m<p[39m
+                      [33mid[39m=[32m":r1q:"[39m
+                    [36m>[39m
+                      [0m0[0m
+                      [0m / 2000 字符[0m
+                      [0m；仅属于此文档，留空表示未设定。[0m
+                    [36m</p>[39m
+                  [36m</div>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"creative-field"[39m
+                  [36m>[39m
+                    [36m<span>[39m
+                      [0m建议审核 视觉风格[0m
+                    [36m</span>[39m
+                    [36m<input[39m
+                      [33mmaxlength[39m=[32m"2000"[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m/>[39m
+                  [36m</label>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"creative-field"[39m
+                  [36m>[39m
+                    [36m<span>[39m
+                      [0m建议审核 整体氛围[0m
+                    [36m</span>[39m
+                    [36m<input[39m
+                      [33mmaxlength[39m=[32m"2000"[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m/>[39m
+                  [36m</label>[39m
+                [36m</div>[39m
+                [36m<details>[39m
+                  [36m<summary>[39m
+                    [0m展开色彩、节奏与参考作品[0m
+                  [36m</summary>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"creative-form-grid"[39m
+                  [36m>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"creative-field"[39m
+                    [36m>[39m
+                      [36m<span>[39m
+                        [0m建议审核 色彩目标[0m
+                      [36m</span>[39m
+                      [36m<input[39m
+                        [33mmaxlength[39m=[32m"2000"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                    [36m</label>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"creative-field"[39m
+                    [36m>[39m
+                      [36m<span>[39m
+                        [0m建议审核 节奏目标[0m
+                      [36m</span>[39m
+                      [36m<input[39m
+                        [33mmaxlength[39m=[32m"2000"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                    [36m</label>[39m
+                  [36m</div>[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                  [36m>[39m
+                    [0m添加参考作品[0m
+                  [36m</button>[39m
+                  [36m<ul />[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                    [33mdisabled[39m=[32m""[39m
+                  [36m>[39m
+                    [0m移除此文档视觉目标[0m
+                  [36m</button>[39m
+                [36m</details>[39m
+              [36m</section>[39m
+            [36m</details>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"creative-field"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0m采用后的导演文档标题[0m
+              [36m</span>[39m
+              [36m<input[39m
+                [33mmaxlength[39m=[32m"240"[39m
+                [33mvalue[39m=[32m"Accepted direction"[39m
+              [36m/>[39m
+            [36m</label>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"creative-review-check"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33mtype[39m=[32m"checkbox"[39m
+              [36m/>[39m
+              [0m已核对来源、场面调度与导演建议；创建独立导演文档[0m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"creative-actions"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+                [33mdisabled[39m=[32m""[39m
+              [36m>[39m
+                [0m审核并采用[0m
+              [36m</button>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [36m>[39m
+                [0m取消建议[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</fieldset>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m模型与执行能力[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<p>[39m
+          [0m模型调用需要已配置且可用的 Provider。此工作区不会自动启动模型或渲染音视频。[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m打开模型控制中心[0m
+        [36m</button>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33maria-label[39m=[32m"AI 导演面板"[39m
+        [33mclass[39m=[32m"creative-director-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"creative-eyebrow"[39m
+          [36m>[39m
+            [0mAI Director[0m
+          [36m</span>[39m
+          [36m<h2>[39m
+            [0m导演协作与审核[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"ui-panel"[39m
+        [36m>[39m
+          [36m<header>[39m
+            [36m<h2>[39m
+              [0m从已保存剧本或分镜准备导演建议[0m
+            [36m</h2>[39m
+          [36m</header>[39m
+          [36m<p>[39m
+            [0m本地规则辅助会整理场景调度草案。不会调用模型；采用后新增独立导演文档。[0m
+          [36m</p>[39m
+          [36m<p>[39m
+            [0m本地规则辅助（RULE_ASSISTED）整理待审草案。分镜按已写镜头序号逐镜头复制相机与时长，并提供待核对的调度提示；这不是模型分析。采用后新增独立导演 DRAFT，原分镜、资产和画布绑定不变。[0m
+          [36m</p>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"creative-field"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m导演建议来源剧本或分镜[0m
+            [36m</span>[39m
+            [36m<select>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m""[39m
+              [36m>[39m
+                [0m选择已保存剧本或分镜[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"screenplay"[39m
+              [36m>[39m
+                [0mSource screenplay[0m
+                [0m · v[0m
+                [0m4[0m
+              [36m</option>[39m
+            [36m</select>[39m
+          [36m</label>[39m
+          [36m<details>[39m
+            [36m<summary>[39m
+              [0m本次导演建议的视觉目标（可选）[0m
+            [36m</summary>[39m
+            [36m<fieldset>[39m
+              [36m<section[39m
+                [33maria-label[39m=[32m"建议准备 项目视觉目标"[39m
+                [33mclass[39m=[32m"creative-visual-target"[39m
+              [36m>[39m
+                [36m<header[39m
+                  [33mclass[39m=[32m"creative-actions"[39m
+                [36m>[39m
+                  [36m<h3>[39m
+                    [0m项目视觉目标[0m
+                  [36m</h3>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+                  [36m>[39m
+                    [0m尚未设定[0m
+                  [36m</span>[39m
+                [36m</header>[39m
+                [36m<p>[39m
+                  [0m导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。[0m
+                [36m</p>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"creative-form-grid"[39m
+                [36m>[39m
+                  [36m<div>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"creative-field"[39m
+                    [36m>[39m
+                      [36m<span>[39m
+                        [0m建议准备 文档类型 / 题材[0m
+                      [36m</span>[39m
+                      [36m<input[39m
+                        [33maria-describedby[39m=[32m":r1p:"[39m
+                        [33maria-invalid[39m=[32m"false"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                    [36m</label>[39m
+                    [36m<p[39m
+                      [33mid[39m=[32m":r1p:"[39m
+                    [36m>[39m
+                      [0m0[0m
+                      [0m / 2000 字符[0m
+                      [0m；仅属于此文档，留空表示未设定。[0m
+                    [36m</p>[39m
+                  [36m</div>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"creative-field"[39m
+                  [36m>[39m
+                    [36m<span>[39m
+                      [0m建议准备 视觉风格[0m
+                    [36m</span>[39m
+                    [36m<input[39m
+                      [33mmaxlength[39m=[32m"2000"[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m/>[39m
+                  [36m</label>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"creative-field"[39m
+                  [36m>[39m
+                    [36m<span>[39m
+                      [0m建议准备 整体氛围[0m
+                    [36m</span>[39m
+                    [36m<input[39m
+                      [33mmaxlength[39m=[32m"2000"[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m/>[39m
+                  [36m</label>[39m
+                [36m</div>[39m
+                [36m<details>[39m
+                  [36m<summary>[39m
+                    [0m展开色彩、节奏与参考作品[0m
+                  [36m</summary>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"creative-form-grid"[39m
+                  [36m>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"creative-field"[39m
+                    [36m>[39m
+                      [36m<span>[39m
+                        [0m建议准备 色彩目标[0m
+                      [36m</span>[39m
+                      [36m<input[39m
+                        [33mmaxlength[39m=[32m"2000"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                    [36m</label>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"creative-field"[39m
+                    [36m>[39m
+                      [36m<span>[39m
+                        [0m建议准备 节奏目标[0m
+                      [36m</span>[39m
+                      [36m<input[39m
+                        [33mmaxlength[39m=[32m"2000"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                    [36m</label>[39m
+                  [36m</div>[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                  [36m>[39m
+                    [0m添加参考作品[0m
+                  [36m</button>[39m
+                  [36m<ul />[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                    [33mdisabled[39m=[32m""[39m
+                  [36m>[39m
+                    [0m移除此文档视觉目标[0m
+                  [36m</button>[39m
+                [36m</details>[39m
+              [36m</section>[39m
+            [36m</fieldset>[39m
+          [36m</details>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m准备待审导演建议[0m
+          [36m</button>[39m
+        [36m</section>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"ui-panel"[39m
+        [36m>[39m
+          [36m<header>[39m
+            [36m<h2>[39m
+              [0m建议审核队列[0m
+            [36m</h2>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m刷新[0m
+            [36m</button>[39m
+          [36m</header>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"creative-proposal-list"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-pressed[39m=[32m"true"[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0mAccepted direction[0m
+              [36m<span[39m
+                [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+              [36m>[39m
+                [0mNEEDS_REVIEW[0m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-pressed[39m=[32m"false"[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0mAnother direction[0m
+              [36m<span[39m
+                [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+              [36m>[39m
+                [0mNEEDS_REVIEW[0m
+              [36m</span>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开独立剧本模型审核[0m
+          [36m</button>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"导演建议审核"[39m
+          [36m>[39m
+            [36m<p>[39m
+              [0m来源 [0m
+              [0mscreenplay[0m
+              [0m · v[0m
+              [0m4[0m
+              [0m · [0m
+              [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+              [0m · 建议 v[0m
+              [0m2[0m
+            [36m</p>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"ui-badge ui-badge--info"[39m
+            [36m>[39m
+              [0m本地规则辅助 · 未调用模型[0m
+            [36m</span>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+              [33mrole[39m=[32m"status"[39m
+            [36m>[39m
+              [0m独立剧本请使用上方的独立模型审核入口；不会借用小说章节调用模型。[0m
+            [36m</div>[39m
+            [36m<p>[39m
+              [0m0[0m
+              [0m 个候选镜头 · 预计总时长 [0m
+              [0m0 秒[0m
+              [0m。仅为当前候选顺序的时长相加，不含备选方案，不代表成片时长。[0m
+            [36m</p>[39m
+            [36m<details>[39m
+              [36m<summary>[39m
+                [0m规则辅助检查（原始候选）[0m
+              [36m</summary>[39m
+              [36m<p>[39m
+                [0m规则只检查已填写的镜头词汇。编辑后的取值需重新人工核对；轴线、视线和实际空间关系未知，不能据此判定连续性正确。[0m
+              [36m</p>[39m
+            [36m</details>[39m
+            [36m<fieldset>[39m
+              [36m<legend[39m
+                [33mclass[39m=[32m"creative-sr-only"[39m
+              [36m>[39m
+                [0m建议内容[0m
+              [36m</legend>[39m
+              [36m<details>[39m
+                [36m<summary>[39m
+                  [0m审核视觉目标[0m
+                [36m</summary>[39m
+                [36m<section[39m
+                  [33maria-label[39m=[32m"建议审核 项目视觉目标"[39m
+                  [33mclass[39m=[32m"creative-visual-target"[39m
+                [36m>[39m
+                  [36m<header[39m
+                    [33mclass[39m=[32m"creative-actions"[39m
+                  [36m>[39m
+                    [36m<h3>[39m
+                      [0m项目视觉目标[0m
+                    [36m</h3>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+                    [36m>[39m
+                      [0m尚未设定[0m
+                    [36m</span>[39m
+                  [36m</header>[39m
+                  [36m<p>[39m
+                    [0m导演目标随当前文档版本保存。明确建立分镜草稿时才传递到新文档；修改目标不会自动改写场景或执行媒体。[0m
+                  [36m</p>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"creative-form-grid"[39m
+                  [36m>[39m
+                    [36m<div>[39m
+                      [36m<label[39m
+                        [33mclass[39m=[32m"creative-field"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m建议审核 文档类型 / 题材[0m
+                        [36m</span>[39m
+                        [36m<input[39m
+                          [33maria-describedby[39m=[32m":r1q:"[39m
+                          [33maria-invalid[39m=[32m"false"[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<p[39m
+                        [33mid[39m=[32m":r1q:"[39m
+                      [36m>[39m
+                        [0m0[0m
+                        [0m / 2000 字符[0m
+                        [0m；仅属于此文档，留空表示未设定。[0m
+                      [36m</p>[39m
+                    [36m</div>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"creative-field"[39m
+                    [36m>[39m
+                      [36m<span>[39m
+                        [0m建议审核 视觉风格[0m
+                      [36m</span>[39m
+                      [36m<input[39m
+                        [33mmaxlength[39m=[32m"2000"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                    [36m</label>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"creative-field"[39m
+                    [36m>[39m
+                      [36m<span>[39m
+                        [0m建议审核 整体氛围[0m
+                      [36m</span>[39m
+                      [36m<input[39m
+                        [33mmaxlength[39m=[32m"2000"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                    [36m</label>[39m
+                  [36m</div>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0m展开色彩、节奏与参考作品[0m
+                    [36m</summary>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"creative-form-grid"[39m
+                    [36m>[39m
+                      [36m<label[39m
+                        [33mclass[39m=[32m"creative-field"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m建议审核 色彩目标[0m
+                        [36m</span>[39m
+                        [36m<input[39m
+                          [33mmaxlength[39m=[32m"2000"[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label[39m
+                        [33mclass[39m=[32m"creative-field"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m建议审核 节奏目标[0m
+                        [36m</span>[39m
+                        [36m<input[39m
+                          [33mmaxlength[39m=[32m"2000"[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                    [36m</div>[39m
+                    [36m<button[39m
+                      [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                    [36m>[39m
+                      [0m添加参考作品[0m
+                    [36m</button>[39m
+                    [36m<ul />[39m
+                    [36m<button[39m
+                      [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                      [33mdisabled[39m=[32m""[39m
+                    [36m>[39m
+                      [0m移除此文档视觉目标[0m
+                    [36m</button>[39m
+                  [36m</details>[39m
+                [36m</section>[39m
+              [36m</details>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"creative-field"[39m
+              [36m>[39m
+                [36m<span>[39m
+                  [0m采用后的导演文档标题[0m
+                [36m</span>[39m
+                [36m<input[39m
+                  [33mmaxlength[39m=[32m"240"[39m
+                  [33mvalue[39m=[32m"Accepted direction"[39m
+                [36m/>[39m
+              [36m</label>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"creative-review-check"[39m
+              [36m>[39m
+                [36m<input[39m
+                  [33mtype[39m=[32m"checkbox"[39m
+                [36m/>[39m
+                [0m已核对来源、场面调度与导演建议；创建独立导演文档[0m
+              [36m</label>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"creative-actions"[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"ui-button ui-button--primary"[39m
+                  [33mdisabled[39m=[32m""[39m
+                [36m>[39m
+                  [0m审核并采用[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                [36m>[39m
+                  [0m取消建议[0m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</fieldset>[39m
+          [36m</section>[39m
+        [36m</section>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"ui-panel"[39m
+        [36m>[39m
+          [36m<header>[39m
+            [36m<h2>[39m
+              [0m模型与执行能力[0m
+            [36m</h2>[39m
+          [36m</header>[39m
+          [36m<p>[39m
+            [0m模型调用需要已配置且可用的 Provider。此工作区不会自动启动模型或渲染音视频。[0m
+          [36m</p>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开模型控制中心[0m
+          [36m</button>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/creative/AIDirectorReopen.test.tsx:178:27
+    176|       if (url.endsWith('/model-routes')) return response({ items: [{ r…
+    177|     } });
+    178|     await select(); await waitFor(() => expect((screen.getByRole('butt…
+       |                           ^
+    179|     fireEvent.change(screen.getByLabelText('采用后的导演文档标题'), { …
+    180|     for (const name of [/Accepted direction/, /Another direction/, '准…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

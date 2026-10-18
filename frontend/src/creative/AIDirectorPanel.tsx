@@ -23,7 +23,7 @@ export function AIDirectorPanel(props: Props) {
 function DirectorProposalPanel({ client, documents, canMutate, modelAuthority, onDocument, onDenied, asset, onOpenModels, environment, onBusyChange, onPendingChange }: Props) {
   const [proposals, setProposals] = useState<DirectorProposal[]>([]), [proposal, setProposal] = useState<DirectorProposal>(), [sourceId, setSourceId] = useState(''), [title, setTitle] = useState(''), [notes, setNotes] = useState<DirectorSceneNote[]>([]), [reviewed, setReviewed] = useState(false), [busy, setBusy] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState(''), [uncertain, setUncertain] = useState(false);
   const [preparedGoal, setPreparedGoal] = useState<VisualTarget>(), [goal, setGoal] = useState<VisualTarget>();
-  const [modelView, setModelView] = useState<{ model: DirectorModelClient; creative: Pick<CreativeClient, 'export'>; routes: DirectorModelRoute[]; source: PlanningSnapshot }>();
+  const [modelView, setModelView] = useState<{ model: DirectorModelClient; creative: Pick<CreativeClient, 'export'>; routes: DirectorModelRoute[]; source: PlanningSnapshot; sourceMode: 'STORYBOARD' | 'SCREENPLAY' }>();
   const [independentPending, setIndependentPending] = useState(false), independentPendingRef = useRef(false);
   const independentChanged = useCallback((value: boolean) => { independentPendingRef.current = value; setIndependentPending(value); }, []);
 
@@ -129,7 +129,7 @@ function DirectorProposalPanel({ client, documents, canMutate, modelAuthority, o
     }
   }
   const privateModel = proposal?.unavailable_reason === 'CREATIVE_DIRECTOR_EXECUTION_UNAVAILABLE';
-  const independentEligible = !!proposal && !!proposalSource && proposalSource.mode === 'STORYBOARD'
+  const independentEligible = !!proposal && !!proposalSource && ['STORYBOARD','SCREENPLAY'].includes(proposalSource.mode)
     && proposalSource.source_independent && proposalSource.id === proposal.source_document_id
     && proposalSource.version === proposal.source_version && /^[a-f0-9]{64}$/.test(proposal.source_digest || '')
     && !!client.independentDirector && !!client.modelCapabilities && !!client.export;
@@ -140,10 +140,12 @@ function DirectorProposalPanel({ client, documents, canMutate, modelAuthority, o
     lock.current = true; setBusy(true); setError(''); setNotice('');
     try {
       const caps = await client.modelCapabilities!(); if (!current()) return;
-      if (caps.independent_director_contract !== 'CREATIVE_DIRECTOR_MODEL_V1') throw new Error('当前主机尚未启用完整独立分镜模型审核能力。');
+      const sourceMode = proposalSource?.mode === 'SCREENPLAY' ? 'SCREENPLAY' : 'STORYBOARD';
+      if (sourceMode === 'SCREENPLAY' && caps.independent_screenplay_contract !== 'CREATIVE_DIRECTOR_SCREENPLAY_MODEL_V2') throw new Error('当前主机尚未启用独立剧本模型审核能力。');
+      if (sourceMode === 'STORYBOARD' && caps.independent_director_contract !== 'CREATIVE_DIRECTOR_MODEL_V1') throw new Error('当前主机尚未启用完整独立分镜模型审核能力。');
       const routes = await client.modelRoutes(); if (!current()) return;
-      const model = client.independentDirector!();
-      setModelView({ model, creative: { export: client.export! }, routes: routes.items,
+      const model = client.independentDirector!(sourceMode);
+      setModelView({ model, sourceMode, creative: { export: client.export! }, routes: routes.items,
         source: { id: selected.source_document_id, version: selected.source_version, digest: selected.source_digest! } });
     } catch (value) {
       if (!current()) return;
@@ -171,10 +173,10 @@ function DirectorProposalPanel({ client, documents, canMutate, modelAuthority, o
     </StatusMessage>}
     {localReviewPending && !uncertain && <StatusMessage tone="info">当前审核有未保存修改或确认。采用或明确放弃后，才能切换建议、准备新建议或读取替换内容。</StatusMessage>}
     <Panel title="建议审核队列" actions={<Button disabled={busy || uncertain} onClick={() => void read()}>刷新</Button>}><div className="creative-proposal-list">{proposals.map(row => <Button key={row.id} disabled={busy || uncertain || localReviewPending} aria-pressed={proposal?.id === row.id} onClick={() => { if (admitsAction() && !lock.current && !uncertain && !localReviewPending) select(row); }}>{row.title}<Badge>{row.status}</Badge></Button>)}</div>{!proposals.length && !error && <EmptyState title="没有待审导演建议" detail="手动编辑始终可用。只有明确核对并采用建议才会创建导演文档。" />}
-      {proposal && !modelView && independentEligible && <Button disabled={busy || uncertain || localReviewPending || !canMutate} onClick={() => void openIndependent()}>打开独立分镜模型审核</Button>}
+      {proposal && !modelView && independentEligible && <Button disabled={busy || uncertain || localReviewPending || !canMutate} onClick={() => void openIndependent()}>{proposalSource?.mode === 'SCREENPLAY' ? '打开独立剧本模型审核' : '打开独立分镜模型审核'}</Button>}
       {proposal && privateModel && !modelView && <StatusMessage tone="info">此建议包含独立模型任务。请通过原模型状态读取，不使用规则辅助状态推断模型是否调用或审核完成。</StatusMessage>}
       {proposal && modelView && <IndependentDirectorModelReview model={modelView.model} creative={modelView.creative} proposal={proposal}
-        source={modelView.source} routes={modelView.routes} canMutate={modelAuthority ?? canMutate} disabled={busy || !canMutate || uncertain}
+        source={modelView.source} sourceMode={modelView.sourceMode} routes={modelView.routes} canMutate={modelAuthority ?? canMutate} disabled={busy || !canMutate || uncertain}
         onPending={independentChanged} onDenied={onDenied} onDocument={(document, pin) => onDocument(document, pin)} />}
       {proposal && !modelView && !privateModel && <section aria-label="导演建议审核"><p>来源 {proposal.source_document_id} · v{proposal.source_version} · {proposal.source_digest || '摘要未返回'} · 建议 v{proposal.version}</p>{proposal.status === 'APPROVED' && <section aria-label="已采用建议的原导演草稿"><p>建议 APPROVED：已采用为独立导演草稿。文档保存与制作审核状态仍由原文档确认。</p>{!linked(proposal) && <StatusMessage tone="warning">采用回执缺少原文档或来源摘要，请重新读取建议状态。</StatusMessage>}<Button disabled={busy || uncertain || !linked(proposal)} onClick={() => void reopen()}>核对并打开已采用的导演草稿</Button>{opened && <p>原文档 {opened.id} · v{opened.version} · {opened.status}</p>}</section>}<Badge tone="info">{proposal.provenance?.model_called ? '模型产出 · 需审核' : '本地规则辅助 · 未调用模型'}</Badge>{!modelSourceAllowed ? <StatusMessage tone="info">{sourceMismatch ? '来源类型记录不一致或缺失，模型操作已禁用；请重新读取原来源与建议。' : storyboardModelClient ? '来源标识、版本或逐镜头映射不一致，模型操作已禁用；请重新读取原来源与建议。' : 'STORYBOARD 当前仅支持 RULE_ASSISTED。模型分析尚未支持；未调用模型。'}</StatusMessage> : <DirectorModelControls key={storyboardProposal ? `${proposal.id}:${modelGeneration}` : proposal.id} client={client} proposal={proposal} source={proposalSource} disabled={busy || !canMutate || uncertain || localReviewPending} run={run} onUpdate={row => { if (!live.current || modelOrigin.current.generation !== modelGeneration) return; select(row); setProposals(rows => rows.map(item => item.id === row.id ? row : item)); }} />}
         <p>{notes.length} 个候选镜头 · 预计总时长 {notes.every(note => Number.isInteger(note.duration_seconds) && note.duration_seconds >= 1 && note.duration_seconds <= 600) ? `${notes.reduce((sum, note) => sum + note.duration_seconds, 0)} 秒` : '待修正'}。仅为当前候选顺序的时长相加，不含备选方案，不代表成片时长。</p>

@@ -93,7 +93,8 @@ function status(value: unknown, proposal: string): DirectorStatusReceipt {
 }
 
 /** Captures scope; inject the existing credential-bearing transport, never discover one. */
-export function createDirectorObservationClient(projectId: string, transport: StudioGraphTransport, scope?: CollaborationContext['scope']) {
+export function createDirectorObservationClient(projectId: string, transport: StudioGraphTransport, scope?: CollaborationContext['scope'], modelPath: 'model-v1' | 'model-v2' = 'model-v1') {
+  if(modelPath!=='model-v1'&&modelPath!=='model-v2') invalid();
   const project = id(projectId), captured = scope ? { ...scope } : undefined;
   if (captured && captured.projectId !== project) invalid(true);
   const expected: Record<string, string> = captured ? { mode: 'collaboration', novel_id: project,
@@ -111,13 +112,13 @@ export function createDirectorObservationClient(projectId: string, transport: St
   return {
     async readStatus(proposalId: string, signal?: AbortSignal): Promise<DirectorStatusReceipt> {
       const proposal = id(proposalId);
-      const raw = await transport.json<unknown>(`${base}/${encodeURIComponent(proposal)}/model-v1/status`, 'GET', undefined, signal);
+      const raw = await transport.json<unknown>(`${base}/${encodeURIComponent(proposal)}/${modelPath}/status`, 'GET', undefined, signal);
       if (signal?.aborted) throw new DOMException('The read was cancelled.', 'AbortError');
       return status(envelope(raw, 'status'), proposal);
     },
     async readAdoptedDraft(proposalId: string, signal?: AbortSignal): Promise<DirectorAdoptionReceipt> {
       const proposal = id(proposalId);
-      const raw = await transport.json<unknown>(`${base}/${encodeURIComponent(proposal)}/model-v1/adopted-draft`, 'GET', undefined, signal);
+      const raw = await transport.json<unknown>(`${base}/${encodeURIComponent(proposal)}/${modelPath}/adopted-draft`, 'GET', undefined, signal);
       if (signal?.aborted) throw new DOMException('The read was cancelled.', 'AbortError');
       return adoption(envelope(raw, 'adopted-draft'), proposal);
     },

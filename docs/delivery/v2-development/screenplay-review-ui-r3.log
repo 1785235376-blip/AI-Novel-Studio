@@ -1,0 +1,17 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/directorScreenplayClient.additive.test.ts (8 tests) 11ms
+ ✓ src/creative/directorModelClient.test.ts (35 tests) 24ms
+ ✓ src/creative/AIDirectorIndependent.integration.test.tsx (3 tests) 415ms
+   ✓ mounts the versioned view only after explicit capability read and hands exact adopted pin to original parent 304ms
+ ✓ src/creative/AIDirectorScreenplay.integration.test.tsx (3 tests) 432ms
+   ✓ mounts the versioned view only after explicit capability read and hands exact adopted pin to original parent 314ms
+ ✓ src/creative/IndependentDirectorModelReview.test.tsx (7 tests) 602ms
+ ✓ src/creative/AIDirectorReopen.test.tsx (31 tests) 1487ms
+
+ Test Files  6 passed (6)
+      Tests  87 passed (87)
+   Start at  11:41:09
+   Duration  2.54s (transform 625ms, setup 89ms, collect 1.95s, tests 2.97s, environment 1.43s, prepare 359ms)
+

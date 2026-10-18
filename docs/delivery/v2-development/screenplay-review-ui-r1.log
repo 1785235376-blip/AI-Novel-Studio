@@ -1,0 +1,96 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/directorScreenplayClient.additive.test.ts (8 tests) 13ms
+ ✓ src/creative/directorModelClient.test.ts (35 tests) 28ms
+ ✓ src/creative/AIDirectorIndependent.integration.test.tsx (3 tests) 430ms
+   ✓ mounts the versioned view only after explicit capability read and hands exact adopted pin to original parent 344ms
+ ❯ src/creative/AIDirectorScreenplay.integration.test.tsx (3 tests | 2 failed) 444ms
+   × mounts the versioned view only after explicit capability read and hands exact adopted pin to original parent 342ms
+     → expected { expected_version: 5, …(3) } to deeply equal { expected_version: 5, …(3) }
+   × does not fall back to legacy model writes when the host has not advertised this contract 55ms
+     → expected [ { …(3) } ] to have a length of +0 but got 1
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  2 failed | 47 passed (49)
+   Start at  11:39:48
+   Duration  1.63s (transform 533ms, setup 47ms, collect 1.44s, tests 915ms, environment 755ms, prepare 255ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/AIDirectorScreenplay.integration.test.tsx > mounts the versioned view only after explicit capability read and hands exact adopted pin to original parent
+AssertionError: expected { expected_version: 5, …(3) } to deeply equal { expected_version: 5, …(3) }
+
+- Expected
++ Received
+
+  Object {
+    "director_notes": Array [
+      Object {
+        "blocking": "待人工确认人物位置、视线和出入方向；文字不足以确定实际空间。",
+        "camera_angle": "EYE_LEVEL",
+        "camera_motion": "STATIC",
+        "duration_seconds": 5,
+        "emotion": "",
+        "id": "27433adc-d231-41f7-8e7a-733ef787d38b",
+-       "note": "HTTP human-reviewed screenplay",
++       "note": "待审建议：先核对场景目的与人物关系，再选择景别和机位。",
+        "number": 1,
+        "pacing": "待审建议：对白后保留反应停顿；时长由表演与剪辑试排确定。",
+        "performance": "",
+        "planning": Object {
+          "alternatives": Array [
+            Object {
+              "choice": "Hold wide",
+              "tradeoff": "Less detail",
+            },
+          ],
+          "assumptions": Array [
+            "Camera placement unverified",
+          ],
+          "duration_reason": "Tentative timing",
+          "evidence": Array [
+            Object {
+              "dialogue_index": null,
+              "excerpt": "A visitor waits.",
+              "field": "action",
+              "scene_id": "scene-a",
+            },
+          ],
+          "rationale": "Consider a reaction",
+          "sequence_reason": "Follow authored order",
+          "uncertainty": "Geometry unknown",
+        },
+        "scene_id": "scene-a",
+        "shot_size": "MEDIUM",
+      },
+    ],
+    "expected_version": 5,
+    "reviewed_output_digest": "4e47cca8e8931f1d4ba349c9e18895c5549efd6c38be16978b2e38cbb70d0996",
+    "title": "Explicit human-reviewed direction",
+  }
+
+ ❯ src/creative/AIDirectorScreenplay.integration.test.tsx:48:30
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/creative/AIDirectorScreenplay.integration.test.tsx > does not fall back to legacy model writes when the host has not advertised this contract
+AssertionError: expected [ { …(3) } ] to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/creative/AIDirectorScreenplay.integration.test.tsx:53:64
+     51|  const e=setup({enabled:false});await select();click('打开独立剧本模型…
+     52|  expect(screen.queryByRole('region',{name:'独立剧本模型导演审核'})).to…
+     53|  expect(e.requests.filter(r=>r.url.endsWith('/model-routes'))).toHaveL…
+       |                                                                ^
+     54| });
+     55| it('does not label an original private task as uncalled rule output or…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

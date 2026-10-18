@@ -7,7 +7,7 @@ import { isPackagedDesktopHost } from '../packagedHost';
 import type { CreativeAsset, CreativeCapabilities, CreativeDocument, CreativeInput, CreativeReferences, CreativeShot, DirectorSceneNote, VisualTarget } from './types';
 
 export const STORYBOARD_SOURCE_CONTRACT = 'STORYBOARD_SHOT_CONTEXT_V1' as const;
-export type DirectorModelCapabilities = { independent_director_contract?: string; storyboard_source_contract?: string; storyboard_preview_suffix?: string; storyboard_dispatch_suffix?: string; token_fit_guaranteed?: boolean };
+export type DirectorModelCapabilities = { independent_director_contract?: string; independent_screenplay_contract?: string; storyboard_source_contract?: string; storyboard_preview_suffix?: string; storyboard_dispatch_suffix?: string; token_fit_guaranteed?: boolean };
 export type DirectorModelRoute = { route_id: string; provider_id: string; model_id: string; model_version?: string | null; synthetic: boolean; available: boolean; reasons: string[] };
 export type DirectorModelPreview = { preview_digest: string; execution_available: boolean; model_called: false; allow_cloud_fallback: false; automatic_retry: false; timeout_seconds: number; max_output_bytes?: number; source_strategy: string; source_contract?: string; source_mode?: string; author?: { instruction?: string }; source_document_id?: string; source_version?: number; input_digest?: string; source_mapping?: { source_shot_id: string; note_id: string; scene_id: string; source_number: number }[]; token_fit_guaranteed?: boolean; request: Record<string, unknown>; broker: { chosen?: { provider_id?: string; model_id?: string; price?: { reserve_microusd?: number } } | null } };
 export type DirectorSourceShot = { note_id: string; source_shot_id: string; source_number: number; scene_id: string; source_shot: CreativeShot; copied_fields: string[]; suggested_fields: string[]; retained_source_only_fields: string[] };
@@ -64,7 +64,7 @@ export function creativeClient(novelId: string, context: CollaborationContext) {
   return {
     // Lazy and request-free. Reuse the already captured original transport;
     // constructing an ordinary legacy client does not activate new endpoints.
-    independentDirector: () => createDirectorModelClient(novelId, { json: request }, directorScope),
+    independentDirector: (sourceMode: 'STORYBOARD' | 'SCREENPLAY' = 'STORYBOARD') => createDirectorModelClient(novelId, { json: request }, directorScope, sourceMode),
     ...createStoryboardClient(novelId, base, branch ?? null, request),
     capabilities: (signal?: AbortSignal) => request<CreativeCapabilities>(`${base}/capabilities`, 'GET', undefined, signal),
     screenplayPresets: async (signal?: AbortSignal): Promise<ScreenplayPresetCatalog> => parseScreenplayPresets(await request<unknown>(`${base}/screenplay-presets`, 'GET', undefined, signal)),

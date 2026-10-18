@@ -6,23 +6,25 @@ import { createDirectorObservationClient, checkedDirectorAdoptionReceipt, checke
 import { checkedDirectorSceneNote, checkedPlanningSnapshot, checkedVisualTarget, type PlanningSnapshot } from './studioProductionGraphContract';
 import type { DirectorSceneNote, VisualTarget } from './types';
 
+export type DirectorSourceMode = 'STORYBOARD' | 'SCREENPLAY';
+export type DirectorSourceMapping = { note_id: string; scene_id: string } & ({ source_shot_id: string; source_number: number } | { source_sequence: number; number: number });
 export type DirectorPreviewRequest = { expected_version: number; route_id: string; allow_synthetic?: false; max_output_tokens?: number; temperature?: number };
 export type DirectorPreviewReceipt = {
-  contract: 'DIRECTOR_MODEL_PREVIEW_V1'; proposal_id: string; version: number; reviewed_preview_digest: string;
+  contract: 'DIRECTOR_MODEL_PREVIEW_V1' | 'DIRECTOR_SCREENPLAY_MODEL_PREVIEW_V2'; proposal_id: string; version: number; reviewed_preview_digest: string;
   prompt: string; parameters: { max_output_tokens: number; temperature: number }; route_id: string;
   route_fingerprint: string; provider_id: string; model_id: string;
-  source_document_id: string; source_version: number; source_digest: string; source_mode: 'STORYBOARD';
+  source_document_id: string; source_version: number; source_digest: string; source_mode: DirectorSourceMode;
   local_only: true; reserve_microusd: 0; model_called: false; automatic_retry: false; quality_verification: 'NOT_RUN';
 };
 export type DirectorPendingProvenance = {
   method: 'MODEL_ASSISTED'; model_called: true; provider_id: string; model_id: string; model_version: string | null;
-  route_fingerprint: string; synthetic: false; parameters: DirectorPreviewReceipt['parameters']; source_mode: 'STORYBOARD';
+  route_fingerprint: string; synthetic: false; parameters: DirectorPreviewReceipt['parameters']; source_mode: DirectorSourceMode;
   source_document_id: string; source_version: number; source_digest: string;
-  source_mapping: { source_shot_id: string; note_id: string; scene_id: string; source_number: number }[];
+  source_mapping: DirectorSourceMapping[];
   job_id: string; request_digest: string; preview_digest: string; candidate_output_digest: string;
   terminal_evidence_digest: string; quality_verification: 'HUMAN_REVIEW_REQUIRED';
 };
-export type DirectorPendingReceipt = { contract: 'DIRECTOR_MODEL_PENDING_REVIEW_V1'; proposal_id: string;
+export type DirectorPendingReceipt = { contract: 'DIRECTOR_MODEL_PENDING_REVIEW_V1' | 'DIRECTOR_SCREENPLAY_MODEL_PENDING_REVIEW_V2'; proposal_id: string;
   expected_version: number; director_notes: DirectorSceneNote[]; output_digest: string;
   visual_target: VisualTarget | null; provenance: DirectorPendingProvenance };
 export type DirectorReviewSubmission = { expected_version: number; reviewed_output_digest: string;
@@ -42,45 +44,59 @@ function parameters(value: unknown): DirectorPreviewReceipt['parameters'] {
   if(typeof r.temperature!=='number'||!Number.isFinite(r.temperature)||r.temperature<0||r.temperature>2) invalid();
   return {max_output_tokens:integer(r.max_output_tokens,1,2048),temperature:r.temperature};
 }
-function source(row: Record<string,unknown>, expected: PlanningSnapshot) {
-  if(row.source_mode!=='STORYBOARD'||row.source_document_id!==expected.id||row.source_version!==expected.version||row.source_digest!==expected.digest) invalid();
+function source(row: Record<string,unknown>, expected: PlanningSnapshot, mode: DirectorSourceMode) {
+  if(row.source_mode!==mode||row.source_document_id!==expected.id||row.source_version!==expected.version||row.source_digest!==expected.digest) invalid();
 }
-function previewReceipt(value: unknown,proposal: string,expected: PlanningSnapshot): DirectorPreviewReceipt {
+function previewReceipt(value: unknown,proposal: string,expected: PlanningSnapshot, mode: DirectorSourceMode = 'STORYBOARD'): DirectorPreviewReceipt {
   const r=object(value);closed(r,['contract','proposal_id','version','reviewed_preview_digest','prompt','parameters','route_id','route_fingerprint',
     'provider_id','model_id','source_document_id','source_version','source_digest','source_mode','local_only','reserve_microusd',
     'model_called','automatic_retry','quality_verification']);
-  if(r.contract!=='DIRECTOR_MODEL_PREVIEW_V1'||r.proposal_id!==proposal||r.local_only!==true||r.reserve_microusd!==0
+  if(r.contract!==(mode==='SCREENPLAY'?'DIRECTOR_SCREENPLAY_MODEL_PREVIEW_V2':'DIRECTOR_MODEL_PREVIEW_V1')||r.proposal_id!==proposal||r.local_only!==true||r.reserve_microusd!==0
     ||r.model_called!==false||r.automatic_retry!==false||r.quality_verification!=='NOT_RUN') invalid();
-  source(r,expected);
-  return {contract:r.contract,proposal_id:proposal,version:integer(r.version),reviewed_preview_digest:hash(r.reviewed_preview_digest),
+  source(r,expected,mode);
+  return {contract:mode==='SCREENPLAY'?'DIRECTOR_SCREENPLAY_MODEL_PREVIEW_V2':'DIRECTOR_MODEL_PREVIEW_V1',proposal_id:proposal,version:integer(r.version),reviewed_preview_digest:hash(r.reviewed_preview_digest),
     prompt:text(r.prompt,8_000_000),parameters:parameters(r.parameters),route_id:text(r.route_id),route_fingerprint:hash(r.route_fingerprint),
     provider_id:text(r.provider_id),model_id:text(r.model_id),source_document_id:expected.id,source_version:expected.version,source_digest:expected.digest,
-    source_mode:'STORYBOARD',local_only:true,reserve_microusd:0,model_called:false,automatic_retry:false,quality_verification:'NOT_RUN'};
+    source_mode:mode,local_only:true,reserve_microusd:0,model_called:false,automatic_retry:false,quality_verification:'NOT_RUN'};
 }
-function pendingReceipt(value: unknown,proposal: string,expected: PlanningSnapshot): DirectorPendingReceipt {
+function pendingReceipt(value: unknown,proposal: string,expected: PlanningSnapshot, mode: DirectorSourceMode = 'STORYBOARD'): DirectorPendingReceipt {
   const r=object(value);closed(r,['contract','proposal_id','expected_version','director_notes','output_digest','visual_target','provenance']);
-  if(r.contract!=='DIRECTOR_MODEL_PENDING_REVIEW_V1'||r.proposal_id!==proposal||!Array.isArray(r.director_notes)||!r.director_notes.length||r.director_notes.length>200) invalid();
+  if(r.contract!==(mode==='SCREENPLAY'?'DIRECTOR_SCREENPLAY_MODEL_PENDING_REVIEW_V2':'DIRECTOR_MODEL_PENDING_REVIEW_V1')||r.proposal_id!==proposal||!Array.isArray(r.director_notes)||!r.director_notes.length||r.director_notes.length>200) invalid();
   const notes=r.director_notes.map(checkedDirectorSceneNote), p=object(r.provenance);
   closed(p,['method','model_called','provider_id','model_id','model_version','route_fingerprint','synthetic','parameters','source_mode',
     'source_document_id','source_version','source_digest','source_mapping','job_id','request_digest','preview_digest','candidate_output_digest','terminal_evidence_digest','quality_verification']);
   if(p.method!=='MODEL_ASSISTED'||p.model_called!==true||p.synthetic!==false||p.quality_verification!=='HUMAN_REVIEW_REQUIRED') invalid();
-  source(p,expected);
+  source(p,expected,mode);
   if(!Array.isArray(p.source_mapping)||p.source_mapping.length!==notes.length) invalid();
-  const mapping=p.source_mapping.map((value,index)=>{
-    const m=object(value);closed(m,['source_shot_id','note_id','scene_id','source_number']);
-    const result={source_shot_id:text(m.source_shot_id),note_id:text(m.note_id),scene_id:text(m.scene_id),source_number:integer(m.source_number,1,10000)};
-    const note=notes[index];
-    if(note.id!==result.note_id||note.scene_id!==result.scene_id||note.number!==result.source_number||!note.planning) invalid();
+  const mapping: DirectorSourceMapping[]=p.source_mapping.map((value,index)=>{
+    const m=object(value), note=notes[index];
+    const common={note_id:text(m.note_id),scene_id:text(m.scene_id)};
+    let result: DirectorSourceMapping;
+    if(mode==='SCREENPLAY') {
+      closed(m,['note_id','scene_id','source_sequence','number']);
+      result={...common,source_sequence:integer(m.source_sequence,1,10000),number:integer(m.number,1,200)};
+      if(result.number!==index+1||note.number!==result.number) invalid();
+    } else {
+      closed(m,['source_shot_id','note_id','scene_id','source_number']);
+      result={...common,source_shot_id:text(m.source_shot_id),source_number:integer(m.source_number,1,10000)};
+      if(note.number!==result.source_number) invalid();
+    }
+    if(note.id!==result.note_id||note.scene_id!==result.scene_id||!note.planning) invalid();
     if(note.planning.evidence.some(e=>e.scene_id!==note.scene_id||(e.field==='dialogue' ? e.dialogue_index===null : e.dialogue_index!==null))) invalid();
     return result;
   });
-  if(new Set(mapping.map(m=>m.note_id)).size!==notes.length||new Set(mapping.map(m=>m.source_shot_id)).size!==notes.length) invalid();
+  if(new Set(mapping.map(m=>m.note_id)).size!==notes.length
+    ||new Set(mapping.map(m=>'source_shot_id' in m?m.source_shot_id:m.scene_id)).size!==notes.length) invalid();
+  if(mode==='SCREENPLAY') {
+    const sequences=mapping.map(m=>'source_sequence' in m?m.source_sequence:0);
+    if(sequences.some((n,i)=>i>0&&n<=sequences[i-1])) invalid();
+  }
   const output=hash(r.output_digest);if(hash(p.candidate_output_digest)!==output) invalid();
-  return {contract:r.contract,proposal_id:proposal,expected_version:integer(r.expected_version),director_notes:notes,output_digest:output,
+  return {contract:mode==='SCREENPLAY'?'DIRECTOR_SCREENPLAY_MODEL_PENDING_REVIEW_V2':'DIRECTOR_MODEL_PENDING_REVIEW_V1',proposal_id:proposal,expected_version:integer(r.expected_version),director_notes:notes,output_digest:output,
     visual_target:r.visual_target===null?null:structuredClone(checkedVisualTarget(r.visual_target)),
     provenance:{method:'MODEL_ASSISTED',model_called:true,provider_id:text(p.provider_id),model_id:text(p.model_id),
       model_version:p.model_version===null?null:text(p.model_version,1000,true),route_fingerprint:hash(p.route_fingerprint),synthetic:false,
-      parameters:parameters(p.parameters),source_mode:'STORYBOARD',source_document_id:expected.id,source_version:expected.version,source_digest:expected.digest,
+      parameters:parameters(p.parameters),source_mode:mode,source_document_id:expected.id,source_version:expected.version,source_digest:expected.digest,
       source_mapping:mapping,job_id:text(p.job_id),request_digest:hash(p.request_digest),preview_digest:hash(p.preview_digest),candidate_output_digest:output,
       terminal_evidence_digest:hash(p.terminal_evidence_digest),quality_verification:'HUMAN_REVIEW_REQUIRED'}};
 }
@@ -92,9 +108,9 @@ export function checkedDirectorReviewSubmission(value: unknown): DirectorReviewS
     ...(Object.hasOwn(r,'visual_target')&&r.visual_target!==undefined?{visual_target:r.visual_target===null?null:structuredClone(checkedVisualTarget(r.visual_target))}:{})};
 }
 
-function reviewExpectation(proposal: string, candidate: DirectorPendingReceipt, body: DirectorReviewSubmission): DirectorPendingReceipt {
+function reviewExpectation(proposal: string, candidate: DirectorPendingReceipt, body: DirectorReviewSubmission, mode: DirectorSourceMode): DirectorPendingReceipt {
   const candidateRow=object(candidate), p=object(candidateRow.provenance);
-  const expected=pendingReceipt(candidateRow,proposal,checkedPlanningSnapshot({id:p.source_document_id,version:p.source_version,digest:p.source_digest},true));
+  const expected=pendingReceipt(candidateRow,proposal,checkedPlanningSnapshot({id:p.source_document_id,version:p.source_version,digest:p.source_digest},true),mode);
   if(body.expected_version!==expected.expected_version||body.reviewed_output_digest!==expected.output_digest) invalid();
   return expected;
 }
@@ -105,14 +121,16 @@ function assertAdoptionSource(receipt: DirectorAdoptionReceipt, expected: Direct
 }
 export { pendingReceipt as checkedDirectorPendingReceipt };
 
-export function createDirectorModelClient(projectId: string, transport: StudioGraphTransport, scope?: CollaborationContext['scope']) {
+export function createDirectorModelClient(projectId: string, transport: StudioGraphTransport, scope?: CollaborationContext['scope'], mode: DirectorSourceMode = 'STORYBOARD') {
+  if(mode!=='STORYBOARD'&&mode!=='SCREENPLAY') invalid();
+  const modelPath=mode==='SCREENPLAY'?'model-v2':'model-v1';
   const project=text(projectId), captured=scope?{...scope}:undefined;
   if(captured&&captured.projectId!==project) invalid();
   const expected: Record<string,string>=captured?{mode:'collaboration',novel_id:project,workspace_id:text(captured.workspaceId),storyline_id:text(captured.storylineId),branch_id:text(captured.branchId)}:{mode:'local',novel_id:project};
   const base=`/api/novels/${encodeURIComponent(project)}/experimental/creative/director-proposals`;
-  const reads=createDirectorObservationClient(project,transport,captured);
+  const reads=createDirectorObservationClient(project,transport,captured,modelPath);
   async function call(proposal: string, suffix: string, method: 'GET'|'POST', body: unknown, kind: string, signal?: AbortSignal): Promise<unknown> {
-    text(proposal);const value=await transport.json<unknown>(`${base}/${encodeURIComponent(proposal)}/model-v1/${suffix}`,method,body,signal);
+    text(proposal);const value=await transport.json<unknown>(`${base}/${encodeURIComponent(proposal)}/${modelPath}/${suffix}`,method,body,signal);
     if(signal?.aborted) throw new DOMException('The read was cancelled.','AbortError');
     const r=object(value);closed(r,['contract','project_id','scope','kind','receipt']);const owner=object(r.scope);
     if(r.contract!=='DIRECTOR_OBSERVATION_V1'||r.kind!==kind||r.project_id!==project||Object.keys(owner).length!==Object.keys(expected).length
@@ -127,17 +145,17 @@ export function createDirectorModelClient(projectId: string, transport: StudioGr
       if(r.allow_synthetic!==undefined&&r.allow_synthetic!==false) invalid();
       const body={expected_version:integer(r.expected_version),route_id:text(r.route_id,160),allow_synthetic:false,
         ...parameters({max_output_tokens:r.max_output_tokens??512,temperature:r.temperature??0})};
-      const result=previewReceipt(await call(proposal,'preview','POST',body,'preview'),proposal,pin);
+      const result=previewReceipt(await call(proposal,'preview','POST',body,'preview'),proposal,pin,mode);
       if(result.version!==body.expected_version+1||result.route_id!==body.route_id
         ||result.parameters.max_output_tokens!==body.max_output_tokens||result.parameters.temperature!==body.temperature) invalid();
       return result;
     },
     async readPreview(proposal: string, sourcePin: PlanningSnapshot, signal?: AbortSignal): Promise<DirectorPreviewReceipt> {
       const pin=checkedPlanningSnapshot(sourcePin,true);
-      return previewReceipt(await call(proposal,'preview','GET',undefined,'preview',signal),proposal,pin);
+      return previewReceipt(await call(proposal,'preview','GET',undefined,'preview',signal),proposal,pin,mode);
     },
     async dispatch(proposal: string, sourcePin: PlanningSnapshot, preview: DirectorPreviewReceipt): Promise<DirectorStatusReceipt> {
-      const pin=checkedPlanningSnapshot(sourcePin,true), frozen=previewReceipt(preview,proposal,pin);
+      const pin=checkedPlanningSnapshot(sourcePin,true), frozen=previewReceipt(preview,proposal,pin,mode);
       const raw=await call(proposal,'dispatch','POST',{expected_version:frozen.version,reviewed_preview_digest:frozen.reviewed_preview_digest},'status');
       const result=checkedDirectorStatusReceipt(raw,proposal);
       // Original owner commits admission, then its reservation binding.
@@ -148,24 +166,24 @@ export function createDirectorModelClient(projectId: string, transport: StudioGr
       const pin=checkedPlanningSnapshot(sourcePin,true), frozen=checkedDirectorStatusReceipt(status,proposal);
       if(frozen.phase!=='COMPLETED'||frozen.terminal_evidence_digest===null) invalid();
       const raw=await call(proposal,'prepare-review','POST',{expected_version:frozen.version,terminal_evidence_digest:frozen.terminal_evidence_digest},'pending-review');
-      const result=pendingReceipt(raw,proposal,pin), p=result.provenance;
+      const result=pendingReceipt(raw,proposal,pin,mode), p=result.provenance;
       if(result.expected_version!==frozen.version+1||p.job_id!==frozen.job_id||p.request_digest!==frozen.request_digest
         ||p.preview_digest!==frozen.reviewed_preview_digest||p.terminal_evidence_digest!==frozen.terminal_evidence_digest) invalid();
       return result;
     },
     async readPending(proposal: string, sourcePin: PlanningSnapshot, signal?: AbortSignal): Promise<DirectorPendingReceipt> {
       const pin=checkedPlanningSnapshot(sourcePin,true);
-      return pendingReceipt(await call(proposal,'pending-review','GET',undefined,'pending-review',signal),proposal,pin);
+      return pendingReceipt(await call(proposal,'pending-review','GET',undefined,'pending-review',signal),proposal,pin,mode);
     },
     async review(proposal: string, submission: DirectorReviewSubmission, pending: DirectorPendingReceipt): Promise<DirectorAdoptionReceipt> {
-      const body=checkedDirectorReviewSubmission(submission), expected=reviewExpectation(proposal,pending,body);
+      const body=checkedDirectorReviewSubmission(submission), expected=reviewExpectation(proposal,pending,body,mode);
       const result=checkedDirectorAdoptionReceipt(await call(proposal,'review','POST',body,'adopted-draft'),proposal);
       if(result.reviewed_version!==body.expected_version||result.candidate_output_digest!==body.reviewed_output_digest) invalid();
       assertAdoptionSource(result,expected);
       return result;
     },
     async reconcileReview(proposal: string, submission: DirectorReviewSubmission, pending: DirectorPendingReceipt, signal?: AbortSignal): Promise<DirectorAdoptionReceipt> {
-      const body=checkedDirectorReviewSubmission(submission), expected=reviewExpectation(proposal,pending,body);
+      const body=checkedDirectorReviewSubmission(submission), expected=reviewExpectation(proposal,pending,body,mode);
       // This POST is the server's exact read-only reconciliation endpoint.
       const result=checkedDirectorAdoptionReceipt(await call(proposal,'reconcile-review','POST',body,'adopted-draft',signal),proposal);
       if(result.reviewed_version!==body.expected_version||result.candidate_output_digest!==body.reviewed_output_digest) invalid();

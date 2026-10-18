@@ -1,5 +1,13 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Existing Director review UI accepts independent screenplay (2026-10-18 02:42 UTC)
+
+The original AI Director panel now offers an explicit independent screenplay review entry. It requires the new advertised screenplay capability, captures SCREENPLAY mode in the existing scoped client, and routes every action/read to model-v2. Existing preview/human consent/status/review/uncertain-result recovery/adopted-DRAFT handoff controls are reused. V1 remains the default client for storyboard. Strict decoders reject mixed discriminators/source modes, wrong source pins, invented shot keys and malformed/duplicate scene mappings. Reopened drafts still pass the original digest/pin handoff.
+
+The new mounted UI test uses actual captured V2 HTTP receipts, performs an explicit human note edit, submits exactly the captured review, and passes the original adopted pin to its parent. No new shell, primitive, token or styling. New and existing focused client/UI/draft-preservation checks:87 PASS plus TypeScript. The genuine File HTTP loop was independently verified in the prior49-test slice; this mounted React test uses mocked transport and does not combine them into a browser E2E claim. Browser visual/geometry acceptance remains unavailable, full production build deferred.
+
+Earlier UI receipts are preserved: r1 exposed a missing explicit human edit in the new fixture and an incorrect assumption that no pre-existing legacy route read occurred; r2 caught a compatibility regression from suppressing the original optional controls. That suppression was reverted, the existing tests were not changed, and the new test now verifies no additional route read/fallback after denied V2 capability. Existing legacy UI/owners remain intact; they do not receive V2 model requests. Generic unstructured SCRIPT, live-model quality and final product acceptance remain open.
+
 ## Versioned screenplay HTTP transport (2026-10-18 02:39 UTC)
 
 The same Director adapter factories now explicitly compose model-v2 routes for SCREENPLAY under the existing construction-time action/observation flags and Host/actor guards. V1 remains STORYBOARD-only. V2 preview/pending receipts have distinct closed discriminators and scene mappings rather than fabricated shot IDs. Original status, cancellation, terminal evidence, human review, read-only reconciliation and DRAFT owners are reused. Durable capability advertisement includes the new screenplay contract only when the original backend supports pending persistence.

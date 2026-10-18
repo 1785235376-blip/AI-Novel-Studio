@@ -13,7 +13,7 @@ import type { CreativeDocument } from './types';
 type Props = {
   model: DirectorModelClient; creative: Pick<CreativeClient, 'export'>;
   proposal: { id: string; version: number; title: string };
-  source: PlanningSnapshot; routes: DirectorModelRoute[];
+  source: PlanningSnapshot; sourceMode?: 'STORYBOARD' | 'SCREENPLAY'; routes: DirectorModelRoute[];
   canMutate: boolean; disabled: boolean;
   onDocument: (document: CreativeDocument, pin: PlanningSnapshot) => void;
   onPending: (pending: boolean) => void; onDenied: () => void;
@@ -21,7 +21,7 @@ type Props = {
 
 /** View state only. All execution, persistence and review stay with original owners. */
 export function IndependentDirectorModelReview(props: Props) {
-  const identity = JSON.stringify([props.proposal.id, props.proposal.version, props.source, props.canMutate]);
+  const identity = JSON.stringify([props.proposal.id, props.proposal.version, props.source, props.sourceMode, props.canMutate]);
   const origin = useRef({ model: props.model, creative: props.creative, identity, generation: 0 });
   if (origin.current.model !== props.model || origin.current.creative !== props.creative || origin.current.identity !== identity)
     origin.current = { model: props.model, creative: props.creative, identity, generation: origin.current.generation + 1 };
@@ -84,7 +84,7 @@ function ModelReview(props: Props) {
     setUncertain(false);
   }
   if (revoked) return <StatusMessage tone="warning">原模型审核已拒绝访问。请重新验证身份后打开。</StatusMessage>;
-  return <section className="creative-model-controls" aria-label="独立分镜模型导演审核">
+  return <section className="creative-model-controls" aria-label={props.sourceMode === 'SCREENPLAY' ? '独立剧本模型导演审核' : '独立分镜模型导演审核'}>
     <h3>模型分析与人工审核</h3><p>仅使用已验证、零费用的本地文字路由。生成建议保留来源、理由与不确定性；不会自动执行媒体或保存画布。</p>
     <p>原分镜 {props.source.id} · v{props.source.version}</p>
     {error && <StatusMessage tone="error">{error}</StatusMessage>}
@@ -102,7 +102,7 @@ function ModelReview(props: Props) {
         if (!route?.available || route.synthetic) return;
         const value = await props.model.preview(props.proposal.id, props.source, { expected_version: props.proposal.version, route_id: route.route_id });
         current(); setPreview(value); setInputChecked(false);
-      })}>预览独立分镜模型输入</Button>
+      })}>{props.sourceMode === 'SCREENPLAY' ? '预览独立剧本模型输入' : '预览独立分镜模型输入'}</Button>
     </>}
     {preview && (!status || status.phase === 'PREVIEW') && <>
       <Badge tone="info">预览尚未调用模型</Badge><p>{preview.provider_id} / {preview.model_id} · 最高费用 0 USD</p>
