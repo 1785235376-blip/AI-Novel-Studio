@@ -399,3 +399,9 @@ Prior source 9a3b3a51 archived as 0ea2c08e889dd7aba5d0df68d0ae944289c33e2a, exac
 Product 36a2ff56f81d03b04dc76ecb62b1f2f6cce6381d adds exact-pinned ordered raster PDF, explicit DPI and disclosed roughly 2.7M aggregate-pixel limit. File 150, real PG 143 with exact 14-table cleanup, UI 317 in 18 suites, TS/build/token and PUBLIC 6 pass. All 3150 final source hashes match. Poppler 26.05.0 independently rendered 3 synthetic original-owner pages: dimensions match, CJK legible; rendering is not pixel-exact. See docs/delivery/v2-development/comic-pdf-integration-20261018.md. Windows/browser/print/full V2 acceptance remains open.
 
 Prior source 6daeac8f archived as 7897be0666d3fa86bd75b8023e6f393446d4e70d, parent 0ea2c08e: 14 artifacts / 5,568,770 bytes verified. Local-text selective Graph cache reuse is independent ongoing work, unintegrated.
+
+## 22:03 UTC verified local Graph dependency reuse
+
+Product bb2bdb73ae53a78b33e13ec1a71813e65d1064dd adds default-off schema1 local-text historical reuse with recursive invalidation and fresh approval; legacy false/omitted behavior remains. File378, final realPG117 with exact14-table cleanup, UI506 in23suites, TS/build/token and PUBLIC6 pass. Final PG matches3152 source files; UI/PUBLIC predate only test teardown. Initial old-fixture cleanup failure and exact owned repair are retained. See docs/delivery/v2-development/graph-local-reuse-integration-20261018.md. No model/media cache or measured speedup claimed.
+
+Previous sourceffbfc595 archived as36ff75ceac27edf8125d965575995f1495306886, parent7897be06:14artifacts/5228534bytes verified. JPEG/WebP Comic page archive remains independent work, unintegrated.

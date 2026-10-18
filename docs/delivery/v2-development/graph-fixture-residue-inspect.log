@@ -1,0 +1,266 @@
+{
+  "workspaces": [
+    {
+      "id": "w-c7ce88a3dd2546f4aef3c41aaae69ab8",
+      "payload": {
+        "id": "w-c7ce88a3dd2546f4aef3c41aaae69ab8",
+        "name": "Mounted workspace",
+        "created_at": "2026-10-18T21:56:42.662256+00:00",
+        "updated_at": "2026-10-18T21:56:42.662265+00:00"
+      }
+    },
+    {
+      "id": "w-578bfe9a8cf64123883ae3dc3de1b750",
+      "payload": {
+        "id": "w-578bfe9a8cf64123883ae3dc3de1b750",
+        "name": "Mounted workspace",
+        "created_at": "2026-10-18T21:56:43.868104+00:00",
+        "updated_at": "2026-10-18T21:56:43.868111+00:00"
+      }
+    },
+    {
+      "id": "w-ce3af6d37dfd4a47a6699c38596937d0",
+      "payload": {
+        "id": "w-ce3af6d37dfd4a47a6699c38596937d0",
+        "name": "Mounted workspace",
+        "created_at": "2026-10-18T21:56:45.996612+00:00",
+        "updated_at": "2026-10-18T21:56:45.996618+00:00"
+      }
+    },
+    {
+      "id": "w-a4676a6da2e64f7ab7f03565c223b4fe",
+      "payload": {
+        "id": "w-a4676a6da2e64f7ab7f03565c223b4fe",
+        "name": "Mounted workspace",
+        "created_at": "2026-10-18T21:56:47.056152+00:00",
+        "updated_at": "2026-10-18T21:56:47.056159+00:00"
+      }
+    },
+    {
+      "id": "w-67292efe668a418f90b73eb1ed20bfa0",
+      "payload": {
+        "id": "w-67292efe668a418f90b73eb1ed20bfa0",
+        "name": "Mounted workspace",
+        "created_at": "2026-10-18T21:56:48.103745+00:00",
+        "updated_at": "2026-10-18T21:56:48.103753+00:00"
+      }
+    },
+    {
+      "id": "w-13cb1ebc03e34a7a8bc3f890daae63e2",
+      "payload": {
+        "id": "w-13cb1ebc03e34a7a8bc3f890daae63e2",
+        "name": "Mounted workspace",
+        "created_at": "2026-10-18T21:56:49.156014+00:00",
+        "updated_at": "2026-10-18T21:56:49.156026+00:00"
+      }
+    },
+    {
+      "id": "w-5ef0f76d4ccc494a8594f0a8871d1180",
+      "payload": {
+        "id": "w-5ef0f76d4ccc494a8594f0a8871d1180",
+        "name": "Mounted workspace",
+        "created_at": "2026-10-18T21:56:51.993412+00:00",
+        "updated_at": "2026-10-18T21:56:51.993420+00:00"
+      }
+    },
+    {
+      "id": "w-37d2c1fb5945415f9cec6912e26bf512",
+      "payload": {
+        "id": "w-37d2c1fb5945415f9cec6912e26bf512",
+        "name": "Mounted workspace",
+        "created_at": "2026-10-18T21:57:04.080570+00:00",
+        "updated_at": "2026-10-18T21:57:04.080580+00:00"
+      }
+    }
+  ],
+  "audit_scopes": [
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-c7ce88a3dd2546f4aef3c41aaae69ab8",
+      "project_id": "r3-mounted-3e7363d4c97a44c88d4eeecbc7efacd4",
+      "storyline_id": "s-c7ce88a3dd2546f4aef3c41aaae69ab8",
+      "workspace_id": "w-c7ce88a3dd2546f4aef3c41aaae69ab8"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-c7ce88a3dd2546f4aef3c41aaae69ab8",
+      "project_id": "r3-mounted-3e7363d4c97a44c88d4eeecbc7efacd4",
+      "storyline_id": "s-c7ce88a3dd2546f4aef3c41aaae69ab8",
+      "workspace_id": "w-c7ce88a3dd2546f4aef3c41aaae69ab8"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-c7ce88a3dd2546f4aef3c41aaae69ab8",
+      "project_id": "r3-mounted-3e7363d4c97a44c88d4eeecbc7efacd4",
+      "storyline_id": "s-c7ce88a3dd2546f4aef3c41aaae69ab8",
+      "workspace_id": "w-c7ce88a3dd2546f4aef3c41aaae69ab8"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-578bfe9a8cf64123883ae3dc3de1b750",
+      "project_id": "r3-mounted-88cf1350d52944df9d0ad8c89b5656b5",
+      "storyline_id": "s-578bfe9a8cf64123883ae3dc3de1b750",
+      "workspace_id": "w-578bfe9a8cf64123883ae3dc3de1b750"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-578bfe9a8cf64123883ae3dc3de1b750",
+      "project_id": "r3-mounted-88cf1350d52944df9d0ad8c89b5656b5",
+      "storyline_id": "s-578bfe9a8cf64123883ae3dc3de1b750",
+      "workspace_id": "w-578bfe9a8cf64123883ae3dc3de1b750"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-578bfe9a8cf64123883ae3dc3de1b750",
+      "project_id": "r3-mounted-88cf1350d52944df9d0ad8c89b5656b5",
+      "storyline_id": "s-578bfe9a8cf64123883ae3dc3de1b750",
+      "workspace_id": "w-578bfe9a8cf64123883ae3dc3de1b750"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-ce3af6d37dfd4a47a6699c38596937d0",
+      "project_id": "r3-mounted-0312e49f407e4cc985256f8c5c1c7aa3",
+      "storyline_id": "s-ce3af6d37dfd4a47a6699c38596937d0",
+      "workspace_id": "w-ce3af6d37dfd4a47a6699c38596937d0"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-ce3af6d37dfd4a47a6699c38596937d0",
+      "project_id": "r3-mounted-0312e49f407e4cc985256f8c5c1c7aa3",
+      "storyline_id": "s-ce3af6d37dfd4a47a6699c38596937d0",
+      "workspace_id": "w-ce3af6d37dfd4a47a6699c38596937d0"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-a4676a6da2e64f7ab7f03565c223b4fe",
+      "project_id": "r3-mounted-d203ca05296c4b4cb6affa1edbcdcd4c",
+      "storyline_id": "s-a4676a6da2e64f7ab7f03565c223b4fe",
+      "workspace_id": "w-a4676a6da2e64f7ab7f03565c223b4fe"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-a4676a6da2e64f7ab7f03565c223b4fe",
+      "project_id": "r3-mounted-d203ca05296c4b4cb6affa1edbcdcd4c",
+      "storyline_id": "s-a4676a6da2e64f7ab7f03565c223b4fe",
+      "workspace_id": "w-a4676a6da2e64f7ab7f03565c223b4fe"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-67292efe668a418f90b73eb1ed20bfa0",
+      "project_id": "r3-mounted-a69b75b653974b66b16007807254c508",
+      "storyline_id": "s-67292efe668a418f90b73eb1ed20bfa0",
+      "workspace_id": "w-67292efe668a418f90b73eb1ed20bfa0"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-67292efe668a418f90b73eb1ed20bfa0",
+      "project_id": "r3-mounted-a69b75b653974b66b16007807254c508",
+      "storyline_id": "s-67292efe668a418f90b73eb1ed20bfa0",
+      "workspace_id": "w-67292efe668a418f90b73eb1ed20bfa0"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-13cb1ebc03e34a7a8bc3f890daae63e2",
+      "project_id": "r3-mounted-b8e44b7f53b2437fa5c1b221079ba789",
+      "storyline_id": "s-13cb1ebc03e34a7a8bc3f890daae63e2",
+      "workspace_id": "w-13cb1ebc03e34a7a8bc3f890daae63e2"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-13cb1ebc03e34a7a8bc3f890daae63e2",
+      "project_id": "r3-mounted-b8e44b7f53b2437fa5c1b221079ba789",
+      "storyline_id": "s-13cb1ebc03e34a7a8bc3f890daae63e2",
+      "workspace_id": "w-13cb1ebc03e34a7a8bc3f890daae63e2"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-5ef0f76d4ccc494a8594f0a8871d1180",
+      "project_id": "r3-mounted-984e027a470942b990c4045c770c917b",
+      "storyline_id": "s-5ef0f76d4ccc494a8594f0a8871d1180",
+      "workspace_id": "w-5ef0f76d4ccc494a8594f0a8871d1180"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-5ef0f76d4ccc494a8594f0a8871d1180",
+      "project_id": "r3-mounted-984e027a470942b990c4045c770c917b",
+      "storyline_id": "s-5ef0f76d4ccc494a8594f0a8871d1180",
+      "workspace_id": "w-5ef0f76d4ccc494a8594f0a8871d1180"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-5ef0f76d4ccc494a8594f0a8871d1180",
+      "project_id": "r3-mounted-984e027a470942b990c4045c770c917b",
+      "storyline_id": "s-5ef0f76d4ccc494a8594f0a8871d1180",
+      "workspace_id": "w-5ef0f76d4ccc494a8594f0a8871d1180"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-5ef0f76d4ccc494a8594f0a8871d1180",
+      "project_id": "r3-mounted-984e027a470942b990c4045c770c917b",
+      "storyline_id": "s-5ef0f76d4ccc494a8594f0a8871d1180",
+      "workspace_id": "w-5ef0f76d4ccc494a8594f0a8871d1180"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-5ef0f76d4ccc494a8594f0a8871d1180",
+      "project_id": "r3-mounted-984e027a470942b990c4045c770c917b",
+      "storyline_id": "s-5ef0f76d4ccc494a8594f0a8871d1180",
+      "workspace_id": "w-5ef0f76d4ccc494a8594f0a8871d1180"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-5ef0f76d4ccc494a8594f0a8871d1180",
+      "project_id": "r3-mounted-984e027a470942b990c4045c770c917b",
+      "storyline_id": "s-5ef0f76d4ccc494a8594f0a8871d1180",
+      "workspace_id": "w-5ef0f76d4ccc494a8594f0a8871d1180"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-37d2c1fb5945415f9cec6912e26bf512",
+      "project_id": "r3-mounted-07285c31cbc44e8ea3eb7297da77a472",
+      "storyline_id": "s-37d2c1fb5945415f9cec6912e26bf512",
+      "workspace_id": "w-37d2c1fb5945415f9cec6912e26bf512"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-37d2c1fb5945415f9cec6912e26bf512",
+      "project_id": "r3-mounted-07285c31cbc44e8ea3eb7297da77a472",
+      "storyline_id": "s-37d2c1fb5945415f9cec6912e26bf512",
+      "workspace_id": "w-37d2c1fb5945415f9cec6912e26bf512"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-37d2c1fb5945415f9cec6912e26bf512",
+      "project_id": "r3-mounted-07285c31cbc44e8ea3eb7297da77a472",
+      "storyline_id": "s-37d2c1fb5945415f9cec6912e26bf512",
+      "workspace_id": "w-37d2c1fb5945415f9cec6912e26bf512"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-37d2c1fb5945415f9cec6912e26bf512",
+      "project_id": "r3-mounted-07285c31cbc44e8ea3eb7297da77a472",
+      "storyline_id": "s-37d2c1fb5945415f9cec6912e26bf512",
+      "workspace_id": "w-37d2c1fb5945415f9cec6912e26bf512"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-37d2c1fb5945415f9cec6912e26bf512",
+      "project_id": "r3-mounted-07285c31cbc44e8ea3eb7297da77a472",
+      "storyline_id": "s-37d2c1fb5945415f9cec6912e26bf512",
+      "workspace_id": "w-37d2c1fb5945415f9cec6912e26bf512"
+    },
+    {
+      "kind": "BRANCH",
+      "branch_id": "b-37d2c1fb5945415f9cec6912e26bf512",
+      "project_id": "r3-mounted-07285c31cbc44e8ea3eb7297da77a472",
+      "storyline_id": "s-37d2c1fb5945415f9cec6912e26bf512",
+      "workspace_id": "w-37d2c1fb5945415f9cec6912e26bf512"
+    }
+  ],
+  "counts": {
+    "workspaces": 8,
+    "users": 16,
+    "workspace_memberships": 16,
+    "authorization_audit_events": 26
+  }
+}

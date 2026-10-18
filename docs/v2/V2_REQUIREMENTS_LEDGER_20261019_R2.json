@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T21:43:00Z",
+  "updated_at_utc": "2026-10-18T22:03:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -5698,11 +5698,11 @@
           }
         ]
       },
-      "code_status": "NOT_REASSESSED",
+      "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": null,
+      "gap": "Explicit opt-in schema1 local-text historical dependency reuse is implemented with exact historical review/output proof and fresh destination approval. Models/media/external assets and schemas2–5 excluded; no measured speedup. Full selective cache remains open.",
       "gap_assessment": "Original row is a historical source-specific inventory; current full behavior and remaining gap are not reassessed by this indexing pass.",
-      "next_action": "Inspect the original owner and latest bounded evidence; reconcile this exact requirement without inheriting old MISSING or completion claims.",
+      "next_action": "Extend only with equivalent original owner/source/cost/runtime proof and actual target acceptance; preserve exact admitted-version and UNKNOWN fences.",
       "historical_evidence": {
         "status": "MISSING",
         "source_refs": [
@@ -5720,7 +5720,8 @@
           }
         ],
         "current_verification": "NOT_REASSESSED"
-      }
+      },
+      "evidence_scope": "Bounded verified reuse only; see docs/delivery/v2-development/graph-local-reuse-integration-20261018.md"
     },
     {
       "id": "GRAPH-21",
@@ -22077,11 +22078,31 @@
         "Flattened raster only, no editable text/layers",
         "No Windows/browser/screen-reader/print/PDF-X acceptance"
       ]
+    },
+    {
+      "product_sha": "bb2bdb73ae53a78b33e13ec1a71813e65d1064dd",
+      "report": "docs/delivery/v2-development/graph-local-reuse-integration-20261018.md",
+      "scope": "Default-off verified local-text Graph dependency reuse; original exact-version execution and fresh approval preserved",
+      "file_tests": 378,
+      "postgres_tests": 117,
+      "postgres_exact_14_table_cleanup": true,
+      "ui_tests": 506,
+      "ui_suites": 23,
+      "public_tests": 6,
+      "source_paths": 3152,
+      "formal_acceptance": false,
+      "limits": [
+        "Only entire schema1 local graph",
+        "No model/media/asset cache or cached approval",
+        "Historical recomputation is not measured speed improvement",
+        "Browser/Windows/runtime acceptance remains open"
+      ],
+      "failure_retained": "Initial PG assertions all passed but old fixture leaked8 synthetic scopes; exact rows restored and finally teardown added without changing assertions, full rerun passes."
     }
   ],
   "current_checkpoint": {
-    "product_sha": "36a2ff56f81d03b04dc76ecb62b1f2f6cce6381d",
-    "report": "docs/delivery/v2-development/comic-pdf-integration-20261018.md",
+    "product_sha": "bb2bdb73ae53a78b33e13ec1a71813e65d1064dd",
+    "report": "docs/delivery/v2-development/graph-local-reuse-integration-20261018.md",
     "source_identity_section": "Historical initial reconciliation baseline, not current HEAD",
     "all_fixed_ids_accepted": false
   }

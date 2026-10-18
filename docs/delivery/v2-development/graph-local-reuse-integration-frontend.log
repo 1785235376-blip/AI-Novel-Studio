@@ -1,0 +1,90 @@
+Frozen integration HEAD: 10cde2815fd7031b3c9d8fa43e8ad6879155b5e4
+=== Graph run/client/execution, failure navigation, Director IMAGE and recovery regression ===
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/DirectorImageReviewPanel.test.tsx (11 tests) 1173ms
+   ✓ mounted IMAGE review lifetime and separate explicit actions > makes no mount-time request; keeps dispatch, blank cost and note adoption separate 332ms
+ ✓ src/creative/GraphTextAssetPanel.test.tsx (13 tests) 896ms
+ ✓ src/creative/GraphRunPanel.test.tsx (48 tests) 1459ms
+ ✓ src/creative/GraphModelExecutionPanel.test.tsx (18 tests) 1457ms
+ ✓ src/creative/GraphReadRevocation.regression.test.tsx (8 tests) 562ms
+ ✓ src/creative/DirectorAuthorRecovery.test.tsx (22 tests) 1774ms
+   ✓ Director author recovery > retains incomplete input including an active IME edit, then explicitly revalidates on remount without writes 339ms
+   ✓ a restored false sibling cannot permit duplicate create after a real dispatched write loses its ACK 316ms
+ ✓ src/creative/MediaCanvasRecovery.additive.test.tsx (12 tests) 412ms
+ ✓ src/creative/StudioGraphDraftRecovery.notes.test.tsx (7 tests) 1657ms
+   ✓ cached presentation recovery inspection through the original controller > pages every one of 1024 eligible short notes with at most twenty textareas and no truncation 1316ms
+ ✓ src/creative/GraphTextExecutionReceipt.test.tsx (4 tests) 106ms
+ ✓ src/creative/studioGraphVideoContract.phase4.test.ts (31 tests) 46ms
+ ✓ src/creative/studioGraphClient.test.ts (61 tests) 50ms
+ ✓ src/creative/studioGraphModelClient.test.ts (36 tests) 39ms
+ ✓ src/creative/studioImageGraphClient.test.ts (14 tests) 24ms
+ ✓ src/creative/studioGraphTextExecutionReceiptClient.test.ts (84 tests) 44ms
+ ✓ src/creative/studioProductionGraphClient.test.ts (17 tests) 43ms
+ ✓ src/creative/StudioGraphDraftRecovery.test.tsx (11 tests) 2994ms
+   ✓ mounted text graph autosave and explicit recovery > autosaves local authoring, survives remount and restores only after a live owner check without executing 1144ms
+   ✓ mounted text graph autosave and explicit recovery > rechecks a saved baseline exactly and keeps the original CAS version for explicit save 327ms
+   ✓ mounted text graph autosave and explicit recovery > preserves a lost-create request identity and uncertainty across reload instead of replaying it 342ms
+ ✓ src/creative/studioGraphTextAssetClient.test.ts (57 tests) 41ms
+ ✓ src/creative/studioGraphTransportForwarding.test.ts (8 tests) 21ms
+ ✓ src/creative/GraphFailureNavigation.additive.test.tsx (9 tests) 1103ms
+   ✓ mounts the original run-to-inspector path and focuses the exact failed node 575ms
+ ✓ src/creative/studioGraphDirectorClient.test.ts (14 tests) 19ms
+ ✓ src/creative/StudioGraphCapacityContinuation.test.tsx (10 tests) 5202ms
+   ✓ original graph capacity and explicit independent draft preparation > shows server usage, keeps the full draft editable at history capacity and writes only on original Save 1518ms
+   ✓ original graph capacity and explicit independent draft preparation > distinguishes unavailable capacity from zero usage 345ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_HISTORY_CAPACITY 350ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_SCOPE_CAPACITY 502ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps input editable after a known atomic quota refusal: CREATIVE_GRAPH_COLLECTION_CAPACITY 517ms
+   ✓ original graph capacity and explicit independent draft preparation > keeps the full unsaved independent draft and request after a known create refusal 466ms
+   ✓ original graph capacity and explicit independent draft preparation > freezes an unknown create and recovers the exact base-null snapshot and request after remount 683ms
+   ✓ original graph capacity and explicit independent draft preparation > retains stale version labels and exact pins without upgrading or approving them 333ms
+ ✓ src/creative/GraphDirectorImage.integration.test.tsx (2 tests) 4952ms
+   ✓ protects IMAGE cost and note inputs from real canvas click, Escape, node directory and console reads 4541ms
+   ✓ keeps normal read-only graph selection available when there is no IMAGE intent 409ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (9 tests) 5210ms
+   ✓ independent studio graph content integration > promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing 1201ms
+   ✓ independent studio graph content integration > saves an empty disconnected definition through the scoped owner and reopens it without creating a run 585ms
+   ✓ independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job 1041ms
+   ✓ independent studio graph content integration > retains the CAS-conflicted draft until an explicit checked adoption of the separately fetched server version 706ms
+   ✓ independent studio graph content integration > protects unsaved graph input when leaving the graph content or fixed module switcher 554ms
+   ✓ independent studio graph content integration > displays redacted saved references without enabling a full-save or deletion roundtrip 419ms
+
+ Test Files  23 passed (23)
+      Tests  506 passed (506)
+   Start at  06:56:13
+   Duration  12.50s (transform 8.45s, setup 288ms, collect 23.70s, tests 29.28s, environment 6.38s, prepare 1.69s)
+
+=== Full TypeScript build mode ===
+=== Vite production build frontend/dist ===
+vite v6.4.3 building for production...
+transforming...
+✓ 2450 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-cKwZaTd1.css      3.88 kB │ gzip:   1.02 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-ipe-r0uF.css                      219.84 kB │ gzip:  27.79 kB
+dist/assets/Health-BCViPf3X.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-B9KoEWnM.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/style-B1Ezs3CP.js                      45.12 kB │ gzip:   8.40 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/LocalTutorIntegration-BjUzamCp.js      47.64 kB │ gzip:  15.65 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-CH0QMzeQ.js     848.16 kB │ gzip: 254.11 kB
+dist/assets/App-W7Psbmsr.js                     2,880.68 kB │ gzip: 865.17 kB
+✓ built in 7.94s
+=== UI token guard ===
+UI token guard PASS (52 files)
+=== Source/test whitespace ===
+Browser visual/geometry NOT RUN: known Chromium availability/sandbox blocker, no retries requested.
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

@@ -1,0 +1,13 @@
+{
+  "identity": [
+    "v2_recovered_ocr_export_20261018",
+    16384
+  ],
+  "removed_exact_synthetic_rows": {
+    "authorization_audit_events": 26,
+    "workspace_memberships": 16,
+    "users": 16,
+    "workspaces": 8
+  },
+  "pre_test_hash_multisets_restored": true
+}
