@@ -1,0 +1,1398 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/ProductionLineagePanel.additive.test.tsx (1 test) 141ms
+ ✓ src/experimental/ChangeImpactPanel.test.tsx (8 tests) 587ms
+ ✓ src/experimental/ProductionLineagePanel.test.tsx (11 tests) 891ms
+ ✓ src/experimental/ProductionLineagePanel.navigationCompatibility.test.tsx (15 tests) 1091ms
+ ✓ src/experimental/StudioUsagesPanel.test.tsx (53 tests) 1359ms
+   ✓ StudioUsagesPanel exact read-only bounded coverage > labels bounded truncation and never follows it with extra requests 449ms
+ ❯ src/experimental/StudioUsagesPanel.integration.test.tsx (5 tests | 1 failed) 1542ms
+   × Studio usage integration stays separate from original impact contracts > shows Studio only for ASSET sources and keeps its consumers out of original selection/lock/preflight targets 1136ms
+     → Unable to find role="button" and name "读取 Studio 使用位置"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33mclass[39m=[32m"ui-panel"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<h2>[39m
+          [0m修改影响与选择性更新[0m
+        [36m</h2>[39m
+      [36m</header>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m显示现有故事图谱、规划、资产血缘和生产来源中实际记录的关联。缺失关系保持未知。原稿、Canon 和已满意成果不会自动改写。[0m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-actions"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新可访问来源[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新更新任务[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-field"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mfor[39m=[32m":ro:"[39m
+        [36m>[39m
+          [0m发生修改的来源[0m
+        [36m</label>[39m
+        [36m<select[39m
+          [33mid[39m=[32m":ro:"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择章节、角色、关系或资产[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"ASSET:asset"[39m
+          [36m>[39m
+            [0m资产[0m
+            [0m · [0m
+            [0mImage asset[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"CHAPTER:chapter"[39m
+          [36m>[39m
+            [0m章节[0m
+            [0m · [0m
+            [0mChapter source[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</div>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"修改影响清单"[39m
+        [33mclass[39m=[32m"experimental-section"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-actions"[39m
+        [36m>[39m
+          [36m<h3>[39m
+            [0mImage asset[0m
+            [0m 的已记录依赖[0m
+          [36m</h3>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m重新读取影响与版本[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-status-message ui-status-message--success"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [0m已锁定满意成果，选择性更新会跳过它。[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"确切依赖"[39m
+          [33mclass[39m=[32m"experimental-section"[39m
+        [36m>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"experimental-record"[39m
+          [36m>[39m
+            [36m<h3>[39m
+              [0m媒体任务[0m
+              [0m · [0m
+              [0mOriginal task[0m
+            [36m</h3>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-actions"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ui-badge ui-badge--warning"[39m
+              [36m>[39m
+                [0m待更新 / 待核对[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+              [36m>[39m
+                [0mv[0m
+                [0m3[0m
+                [0m · [0m
+                [0mSUCCEEDED[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"experimental-check"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33mtype[39m=[32m"checkbox"[39m
+              [36m/>[39m
+              [0m选择更新 [0m
+              [0mOriginal task[0m
+              [0m · [0m
+              [0moriginal-task[0m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-actions"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [36m>[39m
+                [0m锁定满意成果[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<details>[39m
+              [36m<summary>[39m
+                [0m确切关联与来源证据[0m
+              [36m</summary>[39m
+            [36m</details>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [0m模型推断影响：未运行。未记录的关系：未知。角色改名仅跟随稳定 ID 显示；全文替换需要独立预览，此处不会改正文。[0m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m预检选中的 [0m
+          [0m0[0m
+          [0m 项[0m
+        [36m</button>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"Studio 直接使用位置（只读）"[39m
+          [33mclass[39m=[32m"experimental-section"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-actions"[39m
+          [36m>[39m
+            [36m<h3>[39m
+              [0mStudio 直接使用位置（只读）[0m
+            [36m</h3>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0m重新读取 Studio 使用位置[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0m仅覆盖当前资产在已保存图定义节点和时间线片段中的直接引用；不递归包含衍生资产、未保存编辑或推断关系。其他依赖：未知。这里只读，不会自动重新生成、锁定、更新或审核产物。[0m
+          [36m</div>[39m
+          [36m<p>[39m
+            [0m有界读取：每类最多 200 条。返回条数不是所有依赖的总数。[0m
+          [36m</p>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"Studio 图定义使用覆盖"[39m
+            [33mclass[39m=[32m"experimental-section"[39m
+          [36m>[39m
+            [36m<h4>[39m
+              [0mStudio 图定义[0m
+            [36m</h4>[39m
+            [36m<p>[39m
+              [0m本次返回 [0m
+              [0m1[0m
+              [0m 条已授权直接引用。[0m
+            [36m</p>[39m
+            [36m<article[39m
+              [33maria-label[39m=[32m"CREATIVE_GRAPH studio-graph exact-node"[39m
+              [33mclass[39m=[32m"experimental-record"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"experimental-actions"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+                [36m>[39m
+                  [0mCREATIVE_GRAPH[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+                [36m>[39m
+                  [0mCURRENT · 已保存引用与当前来源一致[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<dl[39m
+                [33mclass[39m=[32m"experimental-meta"[39m
+              [36m>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m使用方 ID[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0mstudio-graph[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m使用方版本[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0mv[0m
+                    [0m3[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m使用方摘要[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0mcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m定义 ID[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0masset_reference[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m节点 ID[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0mexact-node[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+              [36m</dl>[39m
+              [36m<details[39m
+                [33mclass[39m=[32m"experimental-details"[39m
+              [36m>[39m
+                [36m<summary>[39m
+                  [0m已保存引用与当前资产证据[0m
+                [36m</summary>[39m
+                [36m<dl[39m
+                  [33mclass[39m=[32m"experimental-meta"[39m
+                [36m>[39m
+                  [36m<div>[39m
+                    [36m<dt>[39m
+                      [0m已保存引用[0m
+                    [36m</dt>[39m
+                    [36m<dd>[39m
+                      [0mASSET · [0m
+                      [0masset[0m
+                      [0m · [0m
+                      [0mimage[0m
+                      [0m · v[0m
+                      [0m2[0m
+                      [0m · [0m
+                      [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+                    [36m</dd>[39m
+                  [36m</div>[39m
+                  [36m<div>[39m
+                    [36m<dt>[39m
+                      [0m当前资产[0m
+                    [36m</dt>[39m
+                    [36m<dd>[39m
+                      [0mASSET · [0m
+                      [0masset[0m
+                      [0m · [0m
+                      [0mimage[0m
+                      [0m · v[0m
+                      [0m2[0m
+                      [0m · [0m
+                      [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+                    [36m</dd>[39m
+                  [36m</div>[39m
+                [36m</dl>[39m
+              [36m</details>[39m
+            [36m</article>[39m
+          [36m</section>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"Studio 时间线使用覆盖"[39m
+            [33mclass[39m=[32m"experimental-section"[39m
+          [36m>[39m
+            [36m<h4>[39m
+              [0mStudio 时间线[0m
+            [36m</h4>[39m
+            [36m<p>[39m
+              [0m本次返回 [0m
+              [0m0[0m
+              [0m 条已授权直接引用。[0m
+            [36m</p>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ui-empty"[39m
+              [33mrole[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<strong>[39m
+                [0m没有已记录的直接引用[0m
+              [36m</strong>[39m
+              [36m<p>[39m
+                [0m这是本次授权读取的空结果；未保存编辑、衍生资产和其他依赖仍未知。[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</section>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"选择性更新历史"[39m
+        [33mclass[39m=[32m"experimental-section"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m可恢复的原执行器任务[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0m尚未准备更新。预检不会自动开始任务。[0m
+        [36m</p>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33mclass[39m=[32m"ui-panel"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<h2>[39m
+          [0m修改影响与选择性更新[0m
+        [36m</h2>[39m
+      [36m</header>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m显示现有故事图谱、规划、资产血缘和生产来源中实际记录的关联。缺失关系保持未知。原稿、Canon 和已满意成果不会自动改写。[0m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-actions"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新可访问来源[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新更新任务[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-field"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mfor[39m=[32m":ro:"[39m
+        [36m>[39m
+          [0m发生修改的来源[0m
+        [36m</label>[39m
+        [36m<select[39m
+          [33mid[39m=[32m":ro:"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择章节、角色、关系或资产[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"ASSET:asset"[39m
+          [36m>[39m
+            [0m资产[0m
+            [0m · [0m
+            [0mImage asset[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"CHAPTER:chapter"[39m
+          [36m>[39m
+            [0m章节[0m
+            [0m · [0m
+            [0mChapter source[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</div>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"修改影响清单"[39m
+        [33mclass[39m=[32m"experimental-section"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-actions"[39m
+        [36m>[39m
+          [36m<h3>[39m
+            [0mImage asset[0m
+            [0m 的已记录依赖[0m
+          [36m</h3>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m重新读取影响与版本[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-status-message ui-status-message--success"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [0m已锁定满意成果，选择性更新会跳过它。[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"确切依赖"[39m
+          [33mclass[39m=[32m"experimental-section"[39m
+        [36m>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"experimental-record"[39m
+          [36m>[39m
+            [36m<h3>[39m
+              [0m媒体任务[0m
+              [0m · [0m
+              [0mOriginal task[0m
+            [36m</h3>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-actions"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ui-badge ui-badge--warning"[39m
+              [36m>[39m
+                [0m待更新 / 待核对[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+              [36m>[39m
+                [0mv[0m
+                [0m3[0m
+                [0m · [0m
+                [0mSUCCEEDED[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"experimental-check"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33mtype[39m=[32m"checkbox"[39m
+              [36m/>[39m
+              [0m选择更新 [0m
+              [0mOriginal task[0m
+              [0m · [0m
+              [0moriginal-task[0m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-actions"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [36m>[39m
+                [0m锁定满意成果[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<details>[39m
+              [36m<summary>[39m
+                [0m确切关联与来源证据[0m
+              [36m</summary>[39m
+            [36m</details>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [0m模型推断影响：未运行。未记录的关系：未知。角色改名仅跟随稳定 ID 显示；全文替换需要独立预览，此处不会改正文。[0m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m预检选中的 [0m
+          [0m0[0m
+          [0m 项[0m
+        [36m</button>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"Studio 直接使用位置（只读）"[39m
+          [33mclass[39m=[32m"experimental-section"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-actions"[39m
+          [36m>[39m
+            [36m<h3>[39m
+              [0mStudio 直接使用位置（只读）[0m
+            [36m</h3>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0m重新读取 Studio 使用位置[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0m仅覆盖当前资产在已保存图定义节点和时间线片段中的直接引用；不递归包含衍生资产、未保存编辑或推断关系。其他依赖：未知。这里只读，不会自动重新生成、锁定、更新或审核产物。[0m
+          [36m</div>[39m
+          [36m<p>[39m
+            [0m有界读取：每类最多 200 条。返回条数不是所有依赖的总数。[0m
+          [36m</p>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"Studio 图定义使用覆盖"[39m
+            [33mclass[39m=[32m"experimental-section"[39m
+          [36m>[39m
+            [36m<h4>[39m
+              [0mStudio 图定义[0m
+            [36m</h4>[39m
+            [36m<p>[39m
+              [0m本次返回 [0m
+              [0m1[0m
+              [0m 条已授权直接引用。[0m
+            [36m</p>[39m
+            [36m<article[39m
+              [33maria-label[39m=[32m"CREATIVE_GRAPH studio-graph exact-node"[39m
+              [33mclass[39m=[32m"experimental-record"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"experimental-actions"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+                [36m>[39m
+                  [0mCREATIVE_GRAPH[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+                [36m>[39m
+                  [0mCURRENT · 已保存引用与当前来源一致[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<dl[39m
+                [33mclass[39m=[32m"experimental-meta"[39m
+              [36m>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m使用方 ID[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0mstudio-graph[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m使用方版本[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0mv[0m
+                    [0m3[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m使用方摘要[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0mcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m定义 ID[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0masset_reference[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m节点 ID[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0mexact-node[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+              [36m</dl>[39m
+              [36m<details[39m
+                [33mclass[39m=[32m"experimental-details"[39m
+              [36m>[39m
+                [36m<summary>[39m
+                  [0m已保存引用与当前资产证据[0m
+                [36m</summary>[39m
+                [36m<dl[39m
+                  [33mclass[39m=[32m"experimental-meta"[39m
+                [36m>[39m
+                  [36m<div>[39m
+                    [36m<dt>[39m
+                      [0m已保存引用[0m
+                    [36m</dt>[39m
+                    [36m<dd>[39m
+                      [0mASSET · [0m
+                      [0masset[0m
+                      [0m · [0m
+                      [0mimage[0m
+                      [0m · v[0m
+                      [0m2[0m
+                      [0m · [0m
+                      [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+                    [36m</dd>[39m
+                  [36m</div>[39m
+                  [36m<div>[39m
+                    [36m<dt>[39m
+                      [0m当前资产[0m
+                    [36m</dt>[39m
+                    [36m<dd>[39m
+                      [0mASSET · [0m
+                      [0masset[0m
+                      [0m · [0m
+                      [0mimage[0m
+                      [0m · v[0m
+                      [0m2[0m
+                      [0m · [0m
+                      [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+                    [36m</dd>[39m
+                  [36m</div>[39m
+                [36m</dl>[39m
+              [36m</details>[39m
+            [36m</article>[39m
+          [36m</section>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"Studio 时间线使用覆盖"[39m
+            [33mclass[39m=[32m"experimental-section"[39m
+          [36m>[39m
+            [36m<h4>[39m
+              [0mStudio 时间线[0m
+            [36m</h4>[39m
+            [36m<p>[39m
+              [0m本次返回 [0m
+              [0m0[0m
+              [0m 条已授权直接引用。[0m
+            [36m</p>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ui-empty"[39m
+              [33mrole[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<strong>[39m
+                [0m没有已记录的直接引用[0m
+              [36m</strong>[39m
+              [36m<p>[39m
+                [0m这是本次授权读取的空结果；未保存编辑、衍生资产和其他依赖仍未知。[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</section>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"选择性更新历史"[39m
+        [33mclass[39m=[32m"experimental-section"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m可恢复的原执行器任务[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0m尚未准备更新。预检不会自动开始任务。[0m
+        [36m</p>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+ Test Files  1 failed | 5 passed (6)
+      Tests  1 failed | 92 passed (93)
+   Start at  01:58:43
+   Duration  2.62s (transform 577ms, setup 78ms, collect 1.92s, tests 5.61s, environment 2.60s, prepare 458ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/experimental/StudioUsagesPanel.integration.test.tsx > Studio usage integration stays separate from original impact contracts > shows Studio only for ASSET sources and keeps its consumers out of original selection/lock/preflight targets
+TestingLibraryElementError: Unable to find role="button" and name "读取 Studio 使用位置"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33mclass[39m=[32m"ui-panel"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<h2>[39m
+          [0m修改影响与选择性更新[0m
+        [36m</h2>[39m
+      [36m</header>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m显示现有故事图谱、规划、资产血缘和生产来源中实际记录的关联。缺失关系保持未知。原稿、Canon 和已满意成果不会自动改写。[0m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-actions"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新可访问来源[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新更新任务[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-field"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mfor[39m=[32m":ro:"[39m
+        [36m>[39m
+          [0m发生修改的来源[0m
+        [36m</label>[39m
+        [36m<select[39m
+          [33mid[39m=[32m":ro:"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择章节、角色、关系或资产[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"ASSET:asset"[39m
+          [36m>[39m
+            [0m资产[0m
+            [0m · [0m
+            [0mImage asset[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"CHAPTER:chapter"[39m
+          [36m>[39m
+            [0m章节[0m
+            [0m · [0m
+            [0mChapter source[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</div>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"修改影响清单"[39m
+        [33mclass[39m=[32m"experimental-section"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-actions"[39m
+        [36m>[39m
+          [36m<h3>[39m
+            [0mImage asset[0m
+            [0m 的已记录依赖[0m
+          [36m</h3>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m重新读取影响与版本[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-status-message ui-status-message--success"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [0m已锁定满意成果，选择性更新会跳过它。[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"确切依赖"[39m
+          [33mclass[39m=[32m"experimental-section"[39m
+        [36m>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"experimental-record"[39m
+          [36m>[39m
+            [36m<h3>[39m
+              [0m媒体任务[0m
+              [0m · [0m
+              [0mOriginal task[0m
+            [36m</h3>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-actions"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ui-badge ui-badge--warning"[39m
+              [36m>[39m
+                [0m待更新 / 待核对[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+              [36m>[39m
+                [0mv[0m
+                [0m3[0m
+                [0m · [0m
+                [0mSUCCEEDED[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"experimental-check"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33mtype[39m=[32m"checkbox"[39m
+              [36m/>[39m
+              [0m选择更新 [0m
+              [0mOriginal task[0m
+              [0m · [0m
+              [0moriginal-task[0m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-actions"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [36m>[39m
+                [0m锁定满意成果[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<details>[39m
+              [36m<summary>[39m
+                [0m确切关联与来源证据[0m
+              [36m</summary>[39m
+            [36m</details>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [0m模型推断影响：未运行。未记录的关系：未知。角色改名仅跟随稳定 ID 显示；全文替换需要独立预览，此处不会改正文。[0m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m预检选中的 [0m
+          [0m0[0m
+          [0m 项[0m
+        [36m</button>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"Studio 直接使用位置（只读）"[39m
+          [33mclass[39m=[32m"experimental-section"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-actions"[39m
+          [36m>[39m
+            [36m<h3>[39m
+              [0mStudio 直接使用位置（只读）[0m
+            [36m</h3>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0m重新读取 Studio 使用位置[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0m仅覆盖当前资产在已保存图定义节点和时间线片段中的直接引用；不递归包含衍生资产、未保存编辑或推断关系。其他依赖：未知。这里只读，不会自动重新生成、锁定、更新或审核产物。[0m
+          [36m</div>[39m
+          [36m<p>[39m
+            [0m有界读取：每类最多 200 条。返回条数不是所有依赖的总数。[0m
+          [36m</p>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"Studio 图定义使用覆盖"[39m
+            [33mclass[39m=[32m"experimental-section"[39m
+          [36m>[39m
+            [36m<h4>[39m
+              [0mStudio 图定义[0m
+            [36m</h4>[39m
+            [36m<p>[39m
+              [0m本次返回 [0m
+              [0m1[0m
+              [0m 条已授权直接引用。[0m
+            [36m</p>[39m
+            [36m<article[39m
+              [33maria-label[39m=[32m"CREATIVE_GRAPH studio-graph exact-node"[39m
+              [33mclass[39m=[32m"experimental-record"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"experimental-actions"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+                [36m>[39m
+                  [0mCREATIVE_GRAPH[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+                [36m>[39m
+                  [0mCURRENT · 已保存引用与当前来源一致[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<dl[39m
+                [33mclass[39m=[32m"experimental-meta"[39m
+              [36m>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m使用方 ID[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0mstudio-graph[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m使用方版本[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0mv[0m
+                    [0m3[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m使用方摘要[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0mcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m定义 ID[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0masset_reference[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m节点 ID[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0mexact-node[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+              [36m</dl>[39m
+              [36m<details[39m
+                [33mclass[39m=[32m"experimental-details"[39m
+              [36m>[39m
+                [36m<summary>[39m
+                  [0m已保存引用与当前资产证据[0m
+                [36m</summary>[39m
+                [36m<dl[39m
+                  [33mclass[39m=[32m"experimental-meta"[39m
+                [36m>[39m
+                  [36m<div>[39m
+                    [36m<dt>[39m
+                      [0m已保存引用[0m
+                    [36m</dt>[39m
+                    [36m<dd>[39m
+                      [0mASSET · [0m
+                      [0masset[0m
+                      [0m · [0m
+                      [0mimage[0m
+                      [0m · v[0m
+                      [0m2[0m
+                      [0m · [0m
+                      [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+                    [36m</dd>[39m
+                  [36m</div>[39m
+                  [36m<div>[39m
+                    [36m<dt>[39m
+                      [0m当前资产[0m
+                    [36m</dt>[39m
+                    [36m<dd>[39m
+                      [0mASSET · [0m
+                      [0masset[0m
+                      [0m · [0m
+                      [0mimage[0m
+                      [0m · v[0m
+                      [0m2[0m
+                      [0m · [0m
+                      [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+                    [36m</dd>[39m
+                  [36m</div>[39m
+                [36m</dl>[39m
+              [36m</details>[39m
+            [36m</article>[39m
+          [36m</section>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"Studio 时间线使用覆盖"[39m
+            [33mclass[39m=[32m"experimental-section"[39m
+          [36m>[39m
+            [36m<h4>[39m
+              [0mStudio 时间线[0m
+            [36m</h4>[39m
+            [36m<p>[39m
+              [0m本次返回 [0m
+              [0m0[0m
+              [0m 条已授权直接引用。[0m
+            [36m</p>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ui-empty"[39m
+              [33mrole[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<strong>[39m
+                [0m没有已记录的直接引用[0m
+              [36m</strong>[39m
+              [36m<p>[39m
+                [0m这是本次授权读取的空结果；未保存编辑、衍生资产和其他依赖仍未知。[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</section>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"选择性更新历史"[39m
+        [33mclass[39m=[32m"experimental-section"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m可恢复的原执行器任务[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0m尚未准备更新。预检不会自动开始任务。[0m
+        [36m</p>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33mclass[39m=[32m"ui-panel"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<h2>[39m
+          [0m修改影响与选择性更新[0m
+        [36m</h2>[39m
+      [36m</header>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m显示现有故事图谱、规划、资产血缘和生产来源中实际记录的关联。缺失关系保持未知。原稿、Canon 和已满意成果不会自动改写。[0m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-actions"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新可访问来源[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新更新任务[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-field"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mfor[39m=[32m":ro:"[39m
+        [36m>[39m
+          [0m发生修改的来源[0m
+        [36m</label>[39m
+        [36m<select[39m
+          [33mid[39m=[32m":ro:"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择章节、角色、关系或资产[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"ASSET:asset"[39m
+          [36m>[39m
+            [0m资产[0m
+            [0m · [0m
+            [0mImage asset[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"CHAPTER:chapter"[39m
+          [36m>[39m
+            [0m章节[0m
+            [0m · [0m
+            [0mChapter source[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</div>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"修改影响清单"[39m
+        [33mclass[39m=[32m"experimental-section"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-actions"[39m
+        [36m>[39m
+          [36m<h3>[39m
+            [0mImage asset[0m
+            [0m 的已记录依赖[0m
+          [36m</h3>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m重新读取影响与版本[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-status-message ui-status-message--success"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [0m已锁定满意成果，选择性更新会跳过它。[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"确切依赖"[39m
+          [33mclass[39m=[32m"experimental-section"[39m
+        [36m>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"experimental-record"[39m
+          [36m>[39m
+            [36m<h3>[39m
+              [0m媒体任务[0m
+              [0m · [0m
+              [0mOriginal task[0m
+            [36m</h3>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-actions"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ui-badge ui-badge--warning"[39m
+              [36m>[39m
+                [0m待更新 / 待核对[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+              [36m>[39m
+                [0mv[0m
+                [0m3[0m
+                [0m · [0m
+                [0mSUCCEEDED[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"experimental-check"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33mtype[39m=[32m"checkbox"[39m
+              [36m/>[39m
+              [0m选择更新 [0m
+              [0mOriginal task[0m
+              [0m · [0m
+              [0moriginal-task[0m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"experimental-actions"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [36m>[39m
+                [0m锁定满意成果[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<details>[39m
+              [36m<summary>[39m
+                [0m确切关联与来源证据[0m
+              [36m</summary>[39m
+            [36m</details>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [0m模型推断影响：未运行。未记录的关系：未知。角色改名仅跟随稳定 ID 显示；全文替换需要独立预览，此处不会改正文。[0m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m预检选中的 [0m
+          [0m0[0m
+          [0m 项[0m
+        [36m</button>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"Studio 直接使用位置（只读）"[39m
+          [33mclass[39m=[32m"experimental-section"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-actions"[39m
+          [36m>[39m
+            [36m<h3>[39m
+              [0mStudio 直接使用位置（只读）[0m
+            [36m</h3>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0m重新读取 Studio 使用位置[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0m仅覆盖当前资产在已保存图定义节点和时间线片段中的直接引用；不递归包含衍生资产、未保存编辑或推断关系。其他依赖：未知。这里只读，不会自动重新生成、锁定、更新或审核产物。[0m
+          [36m</div>[39m
+          [36m<p>[39m
+            [0m有界读取：每类最多 200 条。返回条数不是所有依赖的总数。[0m
+          [36m</p>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"Studio 图定义使用覆盖"[39m
+            [33mclass[39m=[32m"experimental-section"[39m
+          [36m>[39m
+            [36m<h4>[39m
+              [0mStudio 图定义[0m
+            [36m</h4>[39m
+            [36m<p>[39m
+              [0m本次返回 [0m
+              [0m1[0m
+              [0m 条已授权直接引用。[0m
+            [36m</p>[39m
+            [36m<article[39m
+              [33maria-label[39m=[32m"CREATIVE_GRAPH studio-graph exact-node"[39m
+              [33mclass[39m=[32m"experimental-record"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"experimental-actions"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+                [36m>[39m
+                  [0mCREATIVE_GRAPH[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+                [36m>[39m
+                  [0mCURRENT · 已保存引用与当前来源一致[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<dl[39m
+                [33mclass[39m=[32m"experimental-meta"[39m
+              [36m>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m使用方 ID[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0mstudio-graph[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m使用方版本[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0mv[0m
+                    [0m3[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m使用方摘要[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0mcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m定义 ID[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0masset_reference[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<dt>[39m
+                    [0m节点 ID[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0mexact-node[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+              [36m</dl>[39m
+              [36m<details[39m
+                [33mclass[39m=[32m"experimental-details"[39m
+              [36m>[39m
+                [36m<summary>[39m
+                  [0m已保存引用与当前资产证据[0m
+                [36m</summary>[39m
+                [36m<dl[39m
+                  [33mclass[39m=[32m"experimental-meta"[39m
+                [36m>[39m
+                  [36m<div>[39m
+                    [36m<dt>[39m
+                      [0m已保存引用[0m
+                    [36m</dt>[39m
+                    [36m<dd>[39m
+                      [0mASSET · [0m
+                      [0masset[0m
+                      [0m · [0m
+                      [0mimage[0m
+                      [0m · v[0m
+                      [0m2[0m
+                      [0m · [0m
+                      [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+                    [36m</dd>[39m
+                  [36m</div>[39m
+                  [36m<div>[39m
+                    [36m<dt>[39m
+                      [0m当前资产[0m
+                    [36m</dt>[39m
+                    [36m<dd>[39m
+                      [0mASSET · [0m
+                      [0masset[0m
+                      [0m · [0m
+                      [0mimage[0m
+                      [0m · v[0m
+                      [0m2[0m
+                      [0m · [0m
+                      [0maaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[0m
+                    [36m</dd>[39m
+                  [36m</div>[39m
+                [36m</dl>[39m
+              [36m</details>[39m
+            [36m</article>[39m
+          [36m</section>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"Studio 时间线使用覆盖"[39m
+            [33mclass[39m=[32m"experimental-section"[39m
+          [36m>[39m
+            [36m<h4>[39m
+              [0mStudio 时间线[0m
+            [36m</h4>[39m
+            [36m<p>[39m
+              [0m本次返回 [0m
+              [0m0[0m
+              [0m 条已授权直接引用。[0m
+            [36m</p>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ui-empty"[39m
+              [33mrole[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<strong>[39m
+                [0m没有已记录的直接引用[0m
+              [36m</strong>[39m
+              [36m<p>[39m
+                [0m这是本次授权读取的空结果；未保存编辑、衍生资产和其他依赖仍未知。[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</section>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"选择性更新历史"[39m
+        [33mclass[39m=[32m"experimental-section"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m可恢复的原执行器任务[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0m尚未准备更新。预检不会自动开始任务。[0m
+        [36m</p>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/experimental/StudioUsagesPanel.integration.test.tsx:85:18
+     83|     fireEvent.click(screen.getByRole('button', { name: '锁定满意成果' …
+     84|     await waitFor(() => expect(api.put).toHaveBeenCalledWith('/change-…
+     85|     await screen.findByRole('button', { name: '读取 Studio 使用位置' }…
+       |                  ^
+     86|     expect(screen.queryByText('studio-graph')).toBeNull();
+     87|     expect(studioCalls(api)).toHaveLength(2);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

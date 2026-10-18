@@ -1,0 +1,52 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/SourceAdaptationPanel.test.tsx (33 tests) 1321ms
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 4219ms
+   ✓ creative workspace protected manuscript and request boundaries > requires explicit server-version adoption and preserves the draft when adoption is cancelled 368ms
+ ✓ src/experimental/StudioUsagesPanel.test.tsx (53 tests) 1016ms
+   ✓ StudioUsagesPanel exact read-only bounded coverage > labels bounded truncation and never follows it with extra requests 404ms
+ ✓ src/creative/CreativeWorkspace.saveState.regression.test.tsx (26 tests) 5065ms
+   ✓ Creative current document save-state ownership > hydrates a fresh saved document without inventing dirty content or a write 313ms
+   ✓ Creative current document save-state ownership > adopts the actual normalized server response as both input and CAS base after saving 302ms
+   ✓ Creative current document save-state ownership > keeps the exact draft blocked after network failure until explicit original-server adoption 310ms
+   ✓ Creative current document save-state ownership > keeps the exact draft blocked after conflict failure until explicit original-server adoption 388ms
+ ✓ src/experimental/ProductionLineagePanel.test.tsx (11 tests) 659ms
+ ✓ src/experimental/ProductionLineagePanel.navigationCompatibility.test.tsx (15 tests) 826ms
+ ✓ src/experimental/StudioUsagesPanel.integration.test.tsx (6 tests) 451ms
+ ✓ src/experimental/ChangeImpactPanel.test.tsx (8 tests) 366ms
+ ✓ src/experimental/ProductionLineagePanel.additive.test.tsx (1 test) 107ms
+ ✓ src/creative/client.test.ts (11 tests) 9ms
+
+ Test Files  10 passed (10)
+      Tests  193 passed (193)
+   Start at  02:03:18
+   Duration  11.55s (transform 1.59s, setup 59ms, collect 3.36s, tests 14.04s, environment 3.02s, prepare 542ms)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2417 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-BkplvLLE.css      4.23 kB │ gzip:   1.09 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-lgva31eI.css                      217.73 kB │ gzip:  27.49 kB
+dist/assets/Health-Dh-R_yu4.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-CIjrCL3K.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/style-B2zFYdBP.js                      45.12 kB │ gzip:   8.40 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/LocalTutorIntegration-B5fsJYTq.js      47.64 kB │ gzip:  15.65 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-Cc-Cgf9N.js     847.34 kB │ gzip: 254.49 kB
+dist/assets/App-JT428tSK.js                     2,643.82 kB │ gzip: 790.86 kB
+✓ built in 7.76s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

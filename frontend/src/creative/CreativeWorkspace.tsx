@@ -13,7 +13,7 @@ import { ScreenplayPresetPanel } from './ScreenplayPresetPanel';
 import { instantiateScreenplayPreset, type ScreenplayPreset } from './screenplayPresets';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { AIEnvironmentSummary } from '../AIEnvironmentSummary';
-import { ApiError, type Chapter, type CollaborationContext } from '../api';
+import { api, ApiError, type Chapter, type CollaborationContext } from '../api';
 import { AppShell, type ScopeLabels, type StudioModule } from '../ui/AppShell';
 import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
 import { creativeClient, type CreativeHistory } from './client';
@@ -38,15 +38,16 @@ function canonicalInput(value: unknown): unknown {
   return value;
 }
 const sameInput = (value: CreativeInput, base: CreativeDocument) => JSON.stringify(canonicalInput(documentInput(value))) === JSON.stringify(canonicalInput(documentInput(base)));
-export type CreativeWorkspaceProps = { storyboardHost?: StoryboardEditorHost; enabled: boolean; novelId: string; context: CollaborationContext; scope: ScopeLabels; actor: string; chapter?: Chapter; chapterCount: number; manuscriptReady: boolean; novelMain: ReactNode; novelSidebar: ReactNode; novelInspector: ReactNode; novelStatus: ReactNode; commonStatus?: ReactNode; onExit: () => void; onModuleChange: (module: StudioModule) => void; onGlobalSearch?: () => void };
+export type CreativeWorkspaceProps = { storyboardHost?: StoryboardEditorHost; enabled: boolean; novelId: string; context: CollaborationContext; scope: ScopeLabels; actor: string; chapter?: Chapter; savedChapters?: Chapter[]; savedChaptersReady?: boolean; onRefreshSavedChapters?: () => void; chapterCount: number; manuscriptReady: boolean; novelMain: ReactNode; novelSidebar: ReactNode; novelInspector: ReactNode; novelStatus: ReactNode; commonStatus?: ReactNode; onExit: () => void; onModuleChange: (module: StudioModule) => void; onGlobalSearch?: () => void };
 /** This route supplies module content to the one protected AppShell. It never owns manuscript writes. */
 export function CreativeWorkspace(props: CreativeWorkspaceProps) {
   const identity = JSON.stringify([props.novelId, props.context.sessionToken, props.context.localHostToken, props.context.actor?.id, props.context.scope]);
   if (!props.enabled) return <EmptyState title="V2 创作工作台未启用" detail="实验功能默认关闭，V1 验收模式不加载此工作台。" />;
   return <CreativeWorkspaceSession key={identity} {...props} />;
 }
-function CreativeWorkspaceSession({ novelId, context, scope, actor, chapter, chapterCount, manuscriptReady, novelMain, novelSidebar, novelInspector, novelStatus, commonStatus, onExit, onModuleChange, onGlobalSearch, storyboardHost }: CreativeWorkspaceProps) {
+function CreativeWorkspaceSession({ novelId, context, scope, actor, chapter, savedChapters, savedChaptersReady, onRefreshSavedChapters, chapterCount, manuscriptReady, novelMain, novelSidebar, novelInspector, novelStatus, commonStatus, onExit, onModuleChange, onGlobalSearch, storyboardHost }: CreativeWorkspaceProps) {
   const client = useMemo(() => creativeClient(novelId, context), [novelId, context.sessionToken, context.localHostToken, context.actor?.id, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
+  const loadSavedChapter = useCallback((id: string) => api.chapter(id, context), [client]);
   const [intake] = useState(() => {
     if (!storyboardHost) return undefined;
     try {
@@ -196,7 +197,7 @@ function CreativeWorkspaceSession({ novelId, context, scope, actor, chapter, cha
     {loading && <StatusMessage>正在核对创作文档与权限…</StatusMessage>}{!storyboardHost && !loading && !denied && (!capabilities || (capabilities.enabled && !documentsReady)) && <Button onClick={() => void read()}>重试读取工作台</Button>}
     {capabilities && !capabilities.enabled && <EmptyState title="服务端尚未启用创作 V2" detail="请由管理员启用 narrative_production_v2。当前工作台不会写入创作文档。" />}
     {!denied && mode === 'SCREENPLAY' && capabilities?.source_adaptation === 'HOST_SESSION_REQUIRED' && <StatusMessage tone="info">来源改编需要已验证的可信 Host 会话。普通手工创作仍可使用。</StatusMessage>}
-    {!denied && capabilities?.source_adaptation === 'REVIEWED_LOCAL_MODEL' && <div className="creative-adaptation-slot" hidden={mode !== 'SCREENPLAY'}><SourceAdaptationPanel client={client} chapter={chapter} sourceReady={manuscriptReady} canMutate={capabilities.can_mutate && !busy && !mutationLock.current && !productionDirty} onBusyChange={setDirectorBusy} onDraftChange={keepAdaptationDraft} onDenied={deny} onDocument={row => { if (revoked.current) return; setDocuments(rows => [...rows.filter(item => item.id !== row.id), row]); openDocument(row); }} /></div>}
+    {!denied && capabilities?.source_adaptation === 'REVIEWED_LOCAL_MODEL' && <div className="creative-adaptation-slot" hidden={mode !== 'SCREENPLAY'}><SourceAdaptationPanel client={client} chapter={chapter} savedChapters={savedChapters} savedChaptersReady={savedChaptersReady} loadSavedChapter={loadSavedChapter} onRefreshSavedChapters={onRefreshSavedChapters} sourceReady={manuscriptReady} canMutate={capabilities.can_mutate && !busy && !mutationLock.current && !productionDirty} onBusyChange={setDirectorBusy} onDraftChange={keepAdaptationDraft} onDenied={deny} onDocument={row => { if (revoked.current) return; setDocuments(rows => [...rows.filter(item => item.id !== row.id), row]); openDocument(row); }} /></div>}
     {denied ? <EmptyState title="访问已锁定" detail="当前身份不可继续查看或写入创作文档。原正文的权限和草稿恢复仍由小说工作区管理。" /> : <><div id="creative-canvas-NOVEL" role="tabpanel" aria-labelledby="creative-stage-NOVEL" hidden={mode !== 'NOVEL'}>{novelMain}</div>{mode !== 'NOVEL' && <section id={`creative-canvas-${mode}`} role="tabpanel" aria-labelledby={`creative-stage-${mode}`}>
       {draft?.blocked && <section className="creative-conflict" role="alert"><strong>需要核对版本 · 本地草稿仍保留</strong><p>不会自动覆盖服务端，也不会自动重试不确定的写入。</p><Button disabled={busy} onClick={() => void checkServer()}>核对服务端版本</Button><Button onClick={() => download(draft.value, 'creative-unsaved-draft.json')}>导出保留草稿</Button>{!draft.base && <><label><input type="checkbox" checked={discardChecked} onChange={e => setDiscardChecked(e.target.checked)} />已核对文档列表，放弃本地未保存草稿</label><Button disabled={!discardChecked || busy} onClick={() => { setDraft({ value: newDocument(mode, manuscriptReady ? chapter?.id : undefined), dirty: false }); setNotice(''); setError(''); }}>放弃此草稿</Button></>}</section>}
       {serverCandidate && <section className="creative-conflict" aria-label="服务端版本核对"><h3>服务端 v{serverCandidate.version} · {serverCandidate.title}</h3><p>{serverCandidate.scenes.length} 场景 · {serverCandidate.shots.length} 镜头</p><details><summary>查看服务端完整内容</summary><pre>{JSON.stringify(documentInput(serverCandidate), null, 2)}</pre></details><label><input type="checkbox" checked={discardChecked} onChange={e => setDiscardChecked(e.target.checked)} />已核对并确认用服务端版本替换当前本地草稿</label><Button disabled={!discardChecked} onClick={() => { setDraft({ value: documentInput(serverCandidate), base: serverCandidate, dirty: false }); setServerCandidate(undefined); setHistory(undefined); setRestoreVersion(undefined); setError(''); setNotice('已采用核对后的服务端版本。'); }}>使用核对后的服务端版本</Button><Button onClick={() => setServerCandidate(undefined)}>保留本地草稿</Button></section>}

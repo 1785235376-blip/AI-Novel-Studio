@@ -15,11 +15,12 @@ from ..experimental.flags import require_flag
 from ..experimental.model_broker import BrokerRequest
 from ..experimental.store import canonical
 from ..jobs import mark_generation_origin
-from .adaptation_models import AdaptationJobBinding, AdaptationOutput, AdaptationPreview
+from .adaptation_models import AdaptationJobBinding, AdaptationOutput, AdaptationPreview, OrderedAdaptationOutput
 from .ai_execution import ModelRouter
 from .generation import REQUIRED_FLAGS, known_zero
 from .models import DirectorModelDispatch, ProposalAction
 from .proposals import digest
+from .adaptation_sources import is_ordered, chapter_ids, ordered_fields, author_sources, ordered_context
 
 MAX_OUTPUT_BYTES = 128000
 TIMEOUT_SECONDS = 180
@@ -90,14 +91,17 @@ class AdaptationModelCoordinator:
                 "change, omission and inference. Source quotes must be exact substrings. Mark invented details as "
                 "INFERENCE for human review. Use stable scene/change IDs. Do not claim factual fidelity or execute tools. "
                 "Leave source_chapter_id null, characters and director_notes empty; the host owns source links.",
-            "user_direction": row["instruction"], "output_schema": AdaptationOutput.model_json_schema()})
+            "user_direction": row["instruction"], "output_schema": (OrderedAdaptationOutput if is_ordered(row) else AdaptationOutput).model_json_schema(),
+            **({"source_mode": "ORDERED_CHAPTERS", "ordered_source_ids": chapter_ids(row),
+                "source_rules": "Adapt the complete explicit_sources chapter items in their supplied order. source_ordinal is their 1-based position. Each scene and change must refer to exactly one supplied chapter; never merge chapters in one scene. Report at least one change for every chapter, including OMISSION for entirely omitted chapters. Quotes must be exact substrings of that indicated chapter. The primary manuscript source is intentionally empty."} if is_ordered(row) else {})})
         if len(instruction) > 20000:
             raise ValueError("ADAPTATION_INPUT_LIMIT")
         return AuthorPreviewInput(novel_id=ctx.novel_id, chapter_id=row["chapter_id"],
             chapter_version=row["source_version"], operation="brainstorm", instruction=instruction,
-            source=row["selected_text"], profile="LOCAL_ONLY", provider_id=route["provider_id"], model_id=route["model_id"],
-            request_scope={"source_mode": "SELECTION_ONLY", "include_automatic_context": False,
-                           "include_style_reference": False, "include_plan_reference": False})
+            source="" if is_ordered(row) else row["selected_text"], profile="LOCAL_ONLY", provider_id=route["provider_id"], model_id=route["model_id"],
+            request_scope={"source_mode": "NONE" if is_ordered(row) else "SELECTION_ONLY", "include_automatic_context": False,
+                           "include_style_reference": False, "include_plan_reference": False,
+                           **({"added_sources": author_sources(row)} if is_ordered(row) else {})})
 
     def preview(self, ctx, rid, value, guard):
         body = AdaptationPreview.model_validate(value)
@@ -112,19 +116,21 @@ class AdaptationModelCoordinator:
         self.router.guard_route(route, synthetic_allowed=body.allow_synthetic)
         author = self._author(ctx, row, route)
         prepared = self.preparer.prepare_preview(ctx.novel_id, author, ctx.token, ctx.branch)
+        if is_ordered(row) and dict(prepared.request.context) != ordered_context(row["sources"]):
+            raise StaleSourceError("ADAPTATION_EXACT_ORDERED_CONTEXT_REQUIRED")
         author = author.model_copy(update={"preview_digest": request_digest(prepared.request, prepared.job, False)})
         def current():
             check_version(self._current(ctx, rid, guard), body.expected_version)
         decision = self.broker.preview(ctx.novel_id, ctx.scope, ctx.actor,
-            BrokerRequest(task_type="SCREENPLAY_ADAPTATION", chapter_ids=[row["chapter_id"]], profile="LOCAL_ONLY",
+            BrokerRequest(task_type="SCREENPLAY_ADAPTATION", chapter_ids=chapter_ids(row), profile="LOCAL_ONLY",
                 policy="CUSTOM", preferred_route=body.route_id, max_cost_microusd=0,
                 allow_synthetic=body.allow_synthetic, allow_cloud_fallback=False, require_confirmed_license=True),
             current, route_guard=lambda selected: self.router.guard_route(selected, synthetic_allowed=body.allow_synthetic),
             local_text_only=True, owner_lease=self._owner_lease(ctx, row))
         preview = {"author": author.model_dump(mode="json"), "request": request_payload(prepared.request),
             "broker_preview_id": decision["id"], "broker_preview_version": decision["version"], "broker": decision,
-            "input_digest": row["source_digest"], "selection_digest": row["selection_digest"],
-            "source_strategy": "EXACT_SAVED_SELECTION_NO_IMPLICIT_CONTEXT", "allow_synthetic": body.allow_synthetic,
+            "input_digest": row["ordered_sources_digest"] if is_ordered(row) else row["source_digest"], "selection_digest": row["selection_digest"],
+            "source_strategy": "EXACT_ORDERED_SAVED_CHAPTERS_NO_IMPLICIT_CONTEXT" if is_ordered(row) else "EXACT_SAVED_SELECTION_NO_IMPLICIT_CONTEXT", "allow_synthetic": body.allow_synthetic,
             "max_output_bytes": MAX_OUTPUT_BYTES, "timeout_seconds": TIMEOUT_SECONDS,
             "model_called": False, "automatic_retry": False, "allow_cloud_fallback": False,
             "asset_archive": self.proposals.assets.limits() if self.proposals.assets else {"available": False},
@@ -174,7 +180,7 @@ class AdaptationModelCoordinator:
         job.adaptation_binding = AdaptationJobBinding(proposal_id=rid, project_id=ctx.novel_id,
             actor_id=ctx.actor, scope=deepcopy(ctx.scope), project_incarnation=row["project_incarnation"],
             chapter_id=row["chapter_id"], source_version=row["source_version"], source_digest=row["source_digest"],
-            preview_digest=preview["preview_digest"], archive=archive).model_dump(exclude_none=True)
+            preview_digest=preview["preview_digest"], archive=archive, **ordered_fields(row)).model_dump(exclude_none=True)
         binding = deepcopy(job.adaptation_binding)
         intent = {**archive, "job_id": job.id, "preview_digest": preview["preview_digest"]}
         job.generation_max_output_bytes = MAX_OUTPUT_BYTES
@@ -189,6 +195,7 @@ class AdaptationModelCoordinator:
             active = self._current(ctx, rid, guard)
             execution = active.get("model_execution") or {}
             if (active.get("model_preview") != preview or active["source_digest"] != binding["source_digest"]
+                    or ordered_fields(active) != ordered_fields(row)
                     or active.get("model_asset_intent") != intent
                     or job.adaptation_binding != binding or job.experimental_origin != "creative_adaptation_model"
                     or canonical({key: getattr(job, key) for key in identity_fields}) != identity
@@ -411,9 +418,9 @@ class AdaptationModelCoordinator:
                         "synthetic": route["synthetic"], "parameters": row["model_preview"]["request"]["parameters"],
                         "prompt": row["model_preview"]["request"]["prompt"], "job_id": job.id, "reservation_id": ledger["id"],
                         "request_digest": job.expected_request_digest, "preview_digest": row["model_preview"]["preview_digest"],
-                        "input_digest": row["source_digest"], "selection_digest": row["selection_digest"],
+                        "input_digest": row["ordered_sources_digest"] if is_ordered(row) else row["source_digest"], "selection_digest": row["selection_digest"],
                         "raw_output_digest": digest(job.output), "generated_at": ledger["updated_at"],
-                        "quality_verification": "HUMAN_REVIEW_REQUIRED"}
+                        "quality_verification": "HUMAN_REVIEW_REQUIRED", **ordered_fields(row)}
             else:
                 execution.update(status="DISCARDED", failure_code=job.error_code or "ADAPTATION_NO_VERIFIED_OUTPUT")
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:

@@ -157,6 +157,23 @@ def create_production_execution_router(service, invoke, *, require_host_session,
     def reconcile(nid: str, owner: Owner, jid: str, request: Request, body: MediaJobAction, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return call(request, nid, x_session_token, x_branch_id, "domain.write", lambda actor, scope, guard: service.reconcile(nid, scope, actor, owner, jid, body, guard))
 
+    @router.get("/novels/{nid}/experimental/production/assets/{aid}/studio-timeline-usages")
+    def asset_usages(nid: str, aid: str, request: Request,
+                     x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        from .asset_usages import timeline_asset_usages
+        def observe(actor, scope, guard):
+            try:
+                return timeline_asset_usages(service, nid, scope, actor, aid, guard)
+            except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError):
+                guard()
+                raise HTTPException(409, {"code": "STUDIO_TIMELINE_USAGE_UNAVAILABLE"}) from None
+        with service.store.existing_owner_only():
+            try:
+                return call(request, nid, x_session_token, x_branch_id, "domain.read",
+                    observe)
+            except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError):
+                raise HTTPException(409, {"code": "STUDIO_TIMELINE_USAGE_UNAVAILABLE"}) from None
+
     @router.get("/projects/{nid}/studio/production/timelines")
     def timelines(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return call(request, nid, x_session_token, x_branch_id, "domain.read", lambda actor, scope, guard: service.timeline_list(nid, scope, actor, guard))

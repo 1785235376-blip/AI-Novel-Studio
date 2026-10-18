@@ -1,0 +1,79 @@
+......................................................................F. [ 85%]
+F...........                                                             [100%]
+=================================== FAILURES ===================================
+________ test_original_timeline_schema_compatibility[/api-legacy-file] _________
+
+usages = namespace(client=<starlette.testclient.TestClient object at 0x7f6c756bf9e0>, prefix='/api', base='/api/novels/r3-mount...ranch_id': None}, usage_base='/api/novels/r3-mounted-52e8aebdd11c4f59bf550bcf123d7768/experimental/production/assets/')
+schema = 'legacy'
+
+    @pytest.mark.parametrize('schema', ['legacy', 'audio'])
+    def test_original_timeline_schema_compatibility(usages, schema):
+        e = usages
+        pin = deepcopy(e.timeline['timeline']['tracks'][0]['clips'][0]['source_snapshot'])
+        value = {'duration_ms': 1000, 'tracks': [{'id': 'voice', 'kind': 'AUDIO', 'order': 0,
+            'clips': [{'id': 'clip', 'source_snapshot': pin, 'start_ms': 0, 'in_ms': 0, 'out_ms': 100}]}]}
+        if schema == 'audio': value.update(schema_version=3, media_kind='AUDIO')
+        else:
+            value['tracks'].append({'id': 'video', 'kind': 'VIDEO', 'order': 1, 'clips': [
+                {'id': 'still', 'source_snapshot': {**pin, 'id': e.visual['id'], 'asset_kind': 'image', 'digest': e.visual['sha256']},
+                 'start_ms': 0, 'in_ms': 0, 'out_ms': 100}]})
+>       saved = checked(e.client.post(e.studio_base + '/production/timelines', headers=e.headers,
+            json={'expected_version': 0, 'title': 'Schema fixture', 'timeline': value}), 201)
+
+tests/test_v2_studio_asset_usages_api.py:201: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 201
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"STUDIO_TIMELINE_SOURCE_INVALID"},"code":"EXPERIMENTAL_INVALID","message":"STUDIO_TIMELINE_SOURCE_INVALID","details":{"code":"EXPERIMENTAL_INVALID","message":"STUDIO_TIMELINE_SOURCE_INVALID"},"request_id":"9502873b-caaf-40af-b043-582480f11c23"}
+E       assert 422 == 201
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_______ test_original_timeline_schema_compatibility[/api/v1-legacy-file] _______
+
+usages = namespace(client=<starlette.testclient.TestClient object at 0x7f6c756d10a0>, prefix='/api/v1', base='/api/v1/novels/r3...ch_id': None}, usage_base='/api/v1/novels/r3-mounted-bfcc363ba06c4711b000bc9eaa2ac9f3/experimental/production/assets/')
+schema = 'legacy'
+
+    @pytest.mark.parametrize('schema', ['legacy', 'audio'])
+    def test_original_timeline_schema_compatibility(usages, schema):
+        e = usages
+        pin = deepcopy(e.timeline['timeline']['tracks'][0]['clips'][0]['source_snapshot'])
+        value = {'duration_ms': 1000, 'tracks': [{'id': 'voice', 'kind': 'AUDIO', 'order': 0,
+            'clips': [{'id': 'clip', 'source_snapshot': pin, 'start_ms': 0, 'in_ms': 0, 'out_ms': 100}]}]}
+        if schema == 'audio': value.update(schema_version=3, media_kind='AUDIO')
+        else:
+            value['tracks'].append({'id': 'video', 'kind': 'VIDEO', 'order': 1, 'clips': [
+                {'id': 'still', 'source_snapshot': {**pin, 'id': e.visual['id'], 'asset_kind': 'image', 'digest': e.visual['sha256']},
+                 'start_ms': 0, 'in_ms': 0, 'out_ms': 100}]})
+>       saved = checked(e.client.post(e.studio_base + '/production/timelines', headers=e.headers,
+            json={'expected_version': 0, 'title': 'Schema fixture', 'timeline': value}), 201)
+
+tests/test_v2_studio_asset_usages_api.py:201: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 201
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"STUDIO_TIMELINE_SOURCE_INVALID"},"code":"EXPERIMENTAL_INVALID","message":"STUDIO_TIMELINE_SOURCE_INVALID","details":{"code":"EXPERIMENTAL_INVALID","message":"STUDIO_TIMELINE_SOURCE_INVALID"},"request_id":"676e304f-8921-4aa4-ad99-d74bb3fd9ae6"}
+E       assert 422 == 201
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_v2_studio_asset_usages_api.py::test_exact_graph_pin_and_timeline_clip_are_separate_read_only_views[/api-1-file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_studio_asset_usages_api.py::test_original_timeline_schema_compatibility[/api-legacy-file]
+FAILED tests/test_v2_studio_asset_usages_api.py::test_original_timeline_schema_compatibility[/api/v1-legacy-file]
+2 failed, 82 passed, 2 warnings in 28.01s

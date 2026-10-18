@@ -6,9 +6,10 @@ from fastapi import HTTPException
 from ..author_request import chapter_digest
 from ..experimental.common import StaleSourceError, change_row, check_version, new_row, now
 from ..experimental.store import canonical
-from .adaptation_models import AdaptationIn, AdaptationOutput, AdaptationReview
+from .adaptation_models import AdaptationIn, AdaptationOutput, AdaptationReview, OrderedAdaptationOutput
 from .models import CreativeDocumentIn, ProposalAction
 from .proposals import digest
+from .adaptation_sources import is_ordered, chapter_ids, ordered_fields, snapshot, validate_snapshots
 
 
 class AdaptationService:
@@ -30,6 +31,20 @@ class AdaptationService:
     def _current(self, nid, scope, row):
         if row["project_incarnation"] != self.documents.store.incarnation(nid):
             raise StaleSourceError("ADAPTATION_PROJECT_CHANGED")
+        if is_ordered(row):
+            validate_snapshots(row["sources"], row["ordered_sources_digest"])
+            sources, privacy = self.documents._chapter_evidence(nid, scope, chapter_ids(row))
+            try:
+                current = [snapshot(self.documents.chapters_for(scope).get(source["chapter_id"]), index, scope)
+                    for index, source in enumerate(row["sources"], 1)]
+            except ValueError:
+                raise StaleSourceError("ADAPTATION_SOURCE_CHANGED") from None
+            if (current != row["sources"] or sources != row["source_evidence"] or privacy != row["source_privacy"]
+                    or any(row[key] != current[0][key] for key in ("chapter_id", "source_version", "source_digest", "selected_text", "selection_digest"))):
+                raise StaleSourceError("ADAPTATION_SOURCE_CHANGED")
+            return self.documents.chapters_for(scope).get(row["chapter_id"])
+        if "sources" in row or "ordered_sources_digest" in row:
+            raise StaleSourceError("ADAPTATION_SOURCE_MODE_CHANGED")
         sources, privacy = self.documents._chapter_evidence(nid, scope, [row["chapter_id"]])
         chapter = self.documents.chapters_for(scope).get(row["chapter_id"])
         if (sources != row["source_evidence"] or privacy != row["source_privacy"]
@@ -99,14 +114,27 @@ class AdaptationService:
             raise ValueError("ADAPTATION_TITLE_REQUIRED")
         with self.documents.store.transaction(nid, scope) as state:
             guard()
-            sources, privacy = self.documents._chapter_evidence(nid, scope, [body.chapter_id])
-            chapter = self.documents.chapters_for(scope).get(body.chapter_id)
-            check_version(chapter, body.expected_source_version)
-            selected = body.selected_text or chapter["content"]
+            ordered = {}
+            if body.sources is not None:
+                sources, privacy = self.documents._chapter_evidence(nid, scope, [source.chapter_id for source in body.sources])
+                snapshots = []
+                for ordinal, source in enumerate(body.sources, 1):
+                    saved = self.documents.chapters_for(scope).get(source.chapter_id)
+                    check_version(saved, source.expected_source_version)
+                    snapshots.append(snapshot(saved, ordinal, scope))
+                validate_snapshots(snapshots, digest(snapshots))
+                ordered = {"source_mode": "ORDERED_CHAPTERS", "sources": snapshots, "ordered_sources_digest": digest(snapshots)}
+                chapter = self.documents.chapters_for(scope).get(snapshots[0]["chapter_id"])
+                selected = chapter["content"]
+            else:
+                sources, privacy = self.documents._chapter_evidence(nid, scope, [body.chapter_id])
+                chapter = self.documents.chapters_for(scope).get(body.chapter_id)
+                check_version(chapter, body.expected_source_version)
+                selected = body.selected_text or chapter["content"]
             if not selected.strip() or selected not in chapter["content"] or len(selected) > 64000:
                 raise ValueError("ADAPTATION_SAVED_SELECTION_REQUIRED_OR_TOO_LARGE")
             row = new_row(nid, scope, actor, {"status": "DRAFT", "title": body.title,
-                "instruction": body.instruction, "chapter_id": body.chapter_id,
+                "instruction": body.instruction, "chapter_id": chapter["id"], **ordered,
                 "source_version": chapter["version"], "source_digest": chapter_digest(chapter),
                 "source_evidence": sources, "source_privacy": privacy, "selected_text": selected,
                 "selection_digest": digest(selected), "project_incarnation": self.documents.store.incarnation(nid),
@@ -121,10 +149,27 @@ class AdaptationService:
 
     @staticmethod
     def validate_output(row, value):
-        output = AdaptationOutput.model_validate(value, strict=True)
-        for change in output.report.changes:
-            if change.source_quote and change.source_quote not in row["selected_text"]:
-                raise ValueError("ADAPTATION_QUOTE_NOT_IN_SELECTED_SOURCE")
+        model = OrderedAdaptationOutput if is_ordered(row) else AdaptationOutput
+        if hasattr(value, "model_dump"):
+            value = value.model_dump()
+        output = model.model_validate(value, strict=True)
+        if is_ordered(row):
+            sources = {source["ordinal"]: source for source in row["sources"]}
+            scenes = {scene.id: scene for scene in output.scenes}
+            if any(scene.source_ordinal not in sources for scene in output.scenes):
+                raise ValueError("ADAPTATION_UNKNOWN_SOURCE_ORDINAL")
+            if {change.source_ordinal for change in output.report.changes} != set(sources):
+                raise ValueError("ADAPTATION_SOURCE_REPORT_COVERAGE_REQUIRED")
+            for change in output.report.changes:
+                source = sources.get(change.source_ordinal)
+                if source is None or any(scenes[sid].source_ordinal != change.source_ordinal for sid in change.scene_ids):
+                    raise ValueError("ADAPTATION_UNKNOWN_OR_CROSS_SOURCE_CHANGE")
+                if change.source_quote and change.source_quote not in source["selected_text"]:
+                    raise ValueError("ADAPTATION_QUOTE_NOT_IN_SELECTED_SOURCE")
+        else:
+            for change in output.report.changes:
+                if change.source_quote and change.source_quote not in row["selected_text"]:
+                    raise ValueError("ADAPTATION_QUOTE_NOT_IN_SELECTED_SOURCE")
         result = output.model_dump()
         result["scenes"].sort(key=lambda scene: scene["sequence"])
         if len(canonical(result).encode()) > 128000:
@@ -160,14 +205,16 @@ class AdaptationService:
             from ..experimental.ux import ReadContext
             self.generation.validate_result(ReadContext(nid, scope, actor), row)
             output = self.validate_output(row, body.output)
-            scenes = [{**scene, "source_chapter_id": row["chapter_id"]} for scene in output["scenes"]]
+            scenes = [{**{key: value for key, value in scene.items() if key != "source_ordinal"},
+                "source_chapter_id": row["sources"][scene["source_ordinal"] - 1]["chapter_id"] if is_ordered(row) else row["chapter_id"]}
+                for scene in output["scenes"]]
             content = self.documents.prepare_content(nid, scope, CreativeDocumentIn(mode="SCREENPLAY",
-                title=body.title, source_chapter_ids=[row["chapter_id"]], scenes=scenes))
+                title=body.title, source_chapter_ids=chapter_ids(row), scenes=scenes))
             provenance = {**deepcopy(row["provenance"]), "proposal_id": rid,
                 "proposal_version": row["version"], "generated_output_digest": row["output_digest"],
                 "reviewed_output_digest": digest(output), "difference_report": output["report"],
                 "report_document_version": 1, "report_semantics": "ORIGINAL_REVIEWED_ADAPTATION_NOT_LATER_EDIT_FIDELITY",
-                "reviewed_by": actor, "reviewed_at": now()}
+                "reviewed_by": actor, "reviewed_at": now(), **ordered_fields(row)}
             document = new_row(nid, scope, actor, {**content, "provenance": provenance})
             state["collections"].setdefault(self.documents.COLLECTION, {})[document["id"]] = document
             self.documents.assert_current(nid, scope, document)

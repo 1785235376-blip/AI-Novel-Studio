@@ -1,0 +1,300 @@
+...F....F.............................FFFF....F.F.....F.F.........       [100%]
+=================================== FAILURES ===================================
+_ test_exact_graph_pin_and_timeline_clip_are_separate_read_only_views[/api-4-file] _
+
+usages = namespace(client=<starlette.testclient.TestClient object at 0x7f80166dd9d0>, prefix='/api', base='/api/novels/r3-mount...ranch_id': None}, usage_base='/api/novels/r3-mounted-6a0146d216074df596d8da2bc86b816d/experimental/production/assets/')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f801c2124e0>
+schema = 4
+
+    @pytest.mark.parametrize('schema', [1, 2, 3, 4, 5])
+    def test_exact_graph_pin_and_timeline_clip_are_separate_read_only_views(usages, monkeypatch, schema):
+>       e = usages; saved = graph(e, schema, nodes=2); forbid(monkeypatch, e)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_studio_asset_usages_api.py:64: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_studio_asset_usages_api.py:39: in graph
+    return checked(e.client.post(e.studio_base + '/graphs', headers=headers or e.headers, json={
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 201
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":[{"type":"literal_error","loc":["body","definition","function-after[validate_graph(), GraphInput]","schema_version"],"msg":"Input should be 1","input":4,"ctx":{"expected":"1"}},{"type":"literal_error","loc":["body","definition","function-after[validate_graph(), GraphModelInput]","schema_version"],"msg":"Input should be 2","input":4,"ctx":{"expected":"2"}},{"type":"literal_error","loc":["body","definition","function-after[media_capacity(), function-after[validate_graph(), GraphMediaInput]]","schema_version"],"msg":"Input should be 3","input":4,"ctx":{"expected":"3"}},{"type":"literal_error","loc":["body","definition","function-after[image_capacity(), function-after[validate_graph(), GraphImageInput]]","nodes",0,"kind"],"msg":"Input should be 'image'","input":"audio","ctx":{"expected":"'image'"}},{"type":"literal_error","loc":["body","definition","function-after[image_capacity(), function-after[validate_graph(), GraphImageInput]]","nodes",1,"kind"],"msg":"Input should be 'image'","input":"audio","ctx":{"expected":"'image'"}},{"type":"literal_error","loc":["body","definition","function-after[video_capacity(), function-after[validate_graph(), GraphVideoInput]]","schema_version"],"msg":"Input should be 5","input":4,"ctx":{"expected":"5"}}]}
+E       assert 422 == 201
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_ test_exact_graph_pin_and_timeline_clip_are_separate_read_only_views[/api/v1-4-file] _
+
+usages = namespace(client=<starlette.testclient.TestClient object at 0x7f801e97cda0>, prefix='/api/v1', base='/api/v1/novels/r3...ch_id': None}, usage_base='/api/v1/novels/r3-mounted-e8cb4f5e6e8645d9be3d75400af1f4f1/experimental/production/assets/')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f801d575010>
+schema = 4
+
+    @pytest.mark.parametrize('schema', [1, 2, 3, 4, 5])
+    def test_exact_graph_pin_and_timeline_clip_are_separate_read_only_views(usages, monkeypatch, schema):
+>       e = usages; saved = graph(e, schema, nodes=2); forbid(monkeypatch, e)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_studio_asset_usages_api.py:64: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_studio_asset_usages_api.py:39: in graph
+    return checked(e.client.post(e.studio_base + '/graphs', headers=headers or e.headers, json={
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [422 Unprocessable Entity]>, status = 201
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":[{"type":"literal_error","loc":["body","definition","function-after[validate_graph(), GraphInput]","schema_version"],"msg":"Input should be 1","input":4,"ctx":{"expected":"1"}},{"type":"literal_error","loc":["body","definition","function-after[validate_graph(), GraphModelInput]","schema_version"],"msg":"Input should be 2","input":4,"ctx":{"expected":"2"}},{"type":"literal_error","loc":["body","definition","function-after[media_capacity(), function-after[validate_graph(), GraphMediaInput]]","schema_version"],"msg":"Input should be 3","input":4,"ctx":{"expected":"3"}},{"type":"literal_error","loc":["body","definition","function-after[image_capacity(), function-after[validate_graph(), GraphImageInput]]","nodes",0,"kind"],"msg":"Input should be 'image'","input":"audio","ctx":{"expected":"'image'"}},{"type":"literal_error","loc":["body","definition","function-after[image_capacity(), function-after[validate_graph(), GraphImageInput]]","nodes",1,"kind"],"msg":"Input should be 'image'","input":"audio","ctx":{"expected":"'image'"}},{"type":"literal_error","loc":["body","definition","function-after[video_capacity(), function-after[validate_graph(), GraphVideoInput]]","schema_version"],"msg":"Input should be 5","input":4,"ctx":{"expected":"5"}}]}
+E       assert 422 == 201
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+__ test_actor_private_usage_is_not_an_empty_global_inventory[/api-graph-file] __
+
+usages = namespace(client=<starlette.testclient.TestClient object at 0x7f8015986930>, prefix='/api', base='/api/novels/r3-mount...ranch_id': None}, usage_base='/api/novels/r3-mounted-6ddce57f10ae439fac2b9d9e167acd22/experimental/production/assets/')
+owner = 'graph'
+
+    @pytest.mark.parametrize('owner', ['graph', 'timeline'])
+    def test_actor_private_usage_is_not_an_empty_global_inventory(usages, owner):
+        e = usages; graph(e, 1)
+        other = 'other-' + uuid4().hex
+        e.sessions.register(other, SessionContext('other-session', 'other-client', 'other-actor', 'other-workspace'))
+        result = checked(get(e, owner, headers={'X-Session-Token': other}))
+>       assert result['items'] == [] and result['other_dependencies'] == 'UNKNOWN'
+E       AssertionError: assert ([{'current_so...7f2418', ...}] == []
+E         
+E         Left contains one more item: {'current_source': {'asset_kind': 'audio', 'digest': 'c726d333dd159a31423f3480dbb1c5c4a9dfcd30efe1f7e12ade390dc92e8908... 'e3c8053bfc3b22d0a98a01c8b40ee64ef5b83771a78b7656f649306e7318c992', 'id': '042c0077-d8c5-407d-a8f0-08d5f97f2418', ...}
+E         Use -v to get more diff)
+
+tests/test_v2_studio_asset_usages_api.py:107: AssertionError
+_ test_actor_private_usage_is_not_an_empty_global_inventory[/api-timeline-file] _
+
+usages = namespace(client=<starlette.testclient.TestClient object at 0x7f8016503830>, prefix='/api', base='/api/novels/r3-mount...ranch_id': None}, usage_base='/api/novels/r3-mounted-1355a2d4cce7445ab29304f59d430090/experimental/production/assets/')
+owner = 'timeline'
+
+    @pytest.mark.parametrize('owner', ['graph', 'timeline'])
+    def test_actor_private_usage_is_not_an_empty_global_inventory(usages, owner):
+        e = usages; graph(e, 1)
+        other = 'other-' + uuid4().hex
+        e.sessions.register(other, SessionContext('other-session', 'other-client', 'other-actor', 'other-workspace'))
+        result = checked(get(e, owner, headers={'X-Session-Token': other}))
+>       assert result['items'] == [] and result['other_dependencies'] == 'UNKNOWN'
+E       AssertionError: assert ([{'clip_id': ...6b10fe', ...}] == []
+E         
+E         Left contains one more item: {'clip_id': 'measured', 'current_source': {'asset_kind': 'audio', 'digest': 'c726d333dd159a31423f3480dbb1c5c4a9dfcd30e... '5e0df55a5c03ea74c8933643a3dae046654c2fbb262a172c5ed80e320a93399b', 'id': '3d43d574-667b-4e85-a86f-18b5496b10fe', ...}
+E         Use -v to get more diff)
+
+tests/test_v2_studio_asset_usages_api.py:107: AssertionError
+_ test_actor_private_usage_is_not_an_empty_global_inventory[/api/v1-graph-file] _
+
+usages = namespace(client=<starlette.testclient.TestClient object at 0x7f80159ca9c0>, prefix='/api/v1', base='/api/v1/novels/r3...ch_id': None}, usage_base='/api/v1/novels/r3-mounted-f87e71fc8ea04071be91b3cdf168247f/experimental/production/assets/')
+owner = 'graph'
+
+    @pytest.mark.parametrize('owner', ['graph', 'timeline'])
+    def test_actor_private_usage_is_not_an_empty_global_inventory(usages, owner):
+        e = usages; graph(e, 1)
+        other = 'other-' + uuid4().hex
+        e.sessions.register(other, SessionContext('other-session', 'other-client', 'other-actor', 'other-workspace'))
+        result = checked(get(e, owner, headers={'X-Session-Token': other}))
+>       assert result['items'] == [] and result['other_dependencies'] == 'UNKNOWN'
+E       AssertionError: assert ([{'current_so...1858c8', ...}] == []
+E         
+E         Left contains one more item: {'current_source': {'asset_kind': 'audio', 'digest': 'c726d333dd159a31423f3480dbb1c5c4a9dfcd30efe1f7e12ade390dc92e8908... '0064ba22d60081638b3260b486f3c60a81a1bdae2cf8779edd62508dfb6c143b', 'id': '82d4e28b-0f3b-4ff2-9c73-b5ee0d1858c8', ...}
+E         Use -v to get more diff)
+
+tests/test_v2_studio_asset_usages_api.py:107: AssertionError
+_ test_actor_private_usage_is_not_an_empty_global_inventory[/api/v1-timeline-file] _
+
+usages = namespace(client=<starlette.testclient.TestClient object at 0x7f80159cb9e0>, prefix='/api/v1', base='/api/v1/novels/r3...ch_id': None}, usage_base='/api/v1/novels/r3-mounted-258260687ce34eb38860bc6b98b9d437/experimental/production/assets/')
+owner = 'timeline'
+
+    @pytest.mark.parametrize('owner', ['graph', 'timeline'])
+    def test_actor_private_usage_is_not_an_empty_global_inventory(usages, owner):
+        e = usages; graph(e, 1)
+        other = 'other-' + uuid4().hex
+        e.sessions.register(other, SessionContext('other-session', 'other-client', 'other-actor', 'other-workspace'))
+        result = checked(get(e, owner, headers={'X-Session-Token': other}))
+>       assert result['items'] == [] and result['other_dependencies'] == 'UNKNOWN'
+E       AssertionError: assert ([{'clip_id': ...f0cb50', ...}] == []
+E         
+E         Left contains one more item: {'clip_id': 'measured', 'current_source': {'asset_kind': 'audio', 'digest': 'c726d333dd159a31423f3480dbb1c5c4a9dfcd30e... '92735790ef5fe65c7edfd78f5bb65e1fc5e68ae05cb2e31a404267c55a267c8b', 'id': '430beb7a-be9a-49d4-9c80-1b0e16f0cb50', ...}
+E         Use -v to get more diff)
+
+tests/test_v2_studio_asset_usages_api.py:107: AssertionError
+_______ test_mid_read_change_discards_every_row[/api-revoke-graph-file] ________
+
+usages = namespace(client=<starlette.testclient.TestClient object at 0x7f80159f5f40>, prefix='/api', base='/api/novels/r3-mount...ranch_id': None}, usage_base='/api/novels/r3-mounted-f2be7ba9e66f417dbc82d18cdbcd5f69/experimental/production/assets/')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f801596c500>
+owner = 'graph', change = 'revoke'
+
+    @pytest.mark.parametrize('owner', ['graph', 'timeline'])
+    @pytest.mark.parametrize('change', ['source-version', 'source-digest', 'revoke', 'aba'])
+    def test_mid_read_change_discards_every_row(usages, monkeypatch, owner, change):
+        e = usages; graph(e, 1)
+        target = e.graphs if owner == 'graph' else e.production
+        name = 'list' if owner == 'graph' else 'timeline_list'
+        original = getattr(target, name); calls = []
+        def altered(*args, **kwargs):
+            result = original(*args, **kwargs)
+            if not calls:
+                calls.append(True)
+                if change.startswith('source-'):
+                    original_row = e.studio._row
+                    def changed(*args, **kwargs):
+                        row = deepcopy(original_row(*args, **kwargs))
+                        if row['id'] == e.source['id']:
+                            if change == 'source-version': row['version'] += 1
+                            else: row['sha256'] = '0' * 64
+                        return row
+                    monkeypatch.setattr(e.studio, '_row', changed)
+                else:
+                    e.sessions.revoke(e.host)
+                    if change == 'aba': e.sessions.register(e.host, e.session)
+            return result
+        monkeypatch.setattr(target, name, altered)
+        before = durable_files(e.root); response = get(e, owner)
+>       assert response.status_code in {401, 403, 409}, response.text
+E       AssertionError: {"owner":"CREATIVE_GRAPH","items":[{"owner":"CREATIVE_GRAPH","id":"6a50d009-a3cf-4400-8045-6ec8e2e578a4","version":1,"digest":"953ed3a20c79fb01eace6ab438ebc22e813e5ed5b7eb923088868f31ef5ea085","node_id":"Pin00","definition_id":"asset_reference","source":{"kind":"ASSET","id":"46572f2d-9b8a-4ef6-bade-86b01bc339ca","version":1,"digest":"c726d333dd159a31423f3480dbb1c5c4a9dfcd30efe1f7e12ade390dc92e8908","asset_kind":"audio"},"current_source":{"kind":"ASSET","id":"46572f2d-9b8a-4ef6-bade-86b01bc339ca","version":1,"digest":"c726d333dd159a31423f3480dbb1c5c4a9dfcd30efe1f7e12ade390dc92e8908","asset_kind":"audio"},"state":"CURRENT"}],"coverage":"EXACT_SAVED_DIRECT_ASSET_REFERENCES","truncated":false,"limit":200,"read_only":true,"automatic_regeneration":false,"other_dependencies":"UNKNOWN"}
+E       assert 200 in {401, 403, 409}
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/test_v2_studio_asset_usages_api.py:136: AssertionError
+_________ test_mid_read_change_discards_every_row[/api-aba-graph-file] _________
+
+usages = namespace(client=<starlette.testclient.TestClient object at 0x7f801583a420>, prefix='/api', base='/api/novels/r3-mount...ranch_id': None}, usage_base='/api/novels/r3-mounted-a10cc906abc44d2fb7dd237e063fdb3e/experimental/production/assets/')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f801583ab10>
+owner = 'graph', change = 'aba'
+
+    @pytest.mark.parametrize('owner', ['graph', 'timeline'])
+    @pytest.mark.parametrize('change', ['source-version', 'source-digest', 'revoke', 'aba'])
+    def test_mid_read_change_discards_every_row(usages, monkeypatch, owner, change):
+        e = usages; graph(e, 1)
+        target = e.graphs if owner == 'graph' else e.production
+        name = 'list' if owner == 'graph' else 'timeline_list'
+        original = getattr(target, name); calls = []
+        def altered(*args, **kwargs):
+            result = original(*args, **kwargs)
+            if not calls:
+                calls.append(True)
+                if change.startswith('source-'):
+                    original_row = e.studio._row
+                    def changed(*args, **kwargs):
+                        row = deepcopy(original_row(*args, **kwargs))
+                        if row['id'] == e.source['id']:
+                            if change == 'source-version': row['version'] += 1
+                            else: row['sha256'] = '0' * 64
+                        return row
+                    monkeypatch.setattr(e.studio, '_row', changed)
+                else:
+                    e.sessions.revoke(e.host)
+                    if change == 'aba': e.sessions.register(e.host, e.session)
+            return result
+        monkeypatch.setattr(target, name, altered)
+        before = durable_files(e.root); response = get(e, owner)
+>       assert response.status_code in {401, 403, 409}, response.text
+E       AssertionError: {"owner":"CREATIVE_GRAPH","items":[{"owner":"CREATIVE_GRAPH","id":"df6e0b6d-87ad-4037-8fb6-de3ad826ee5c","version":1,"digest":"16c5b865f44af98823bb00c2764b122fa5d1d409fc93673fd89bfceb43796c5a","node_id":"Pin00","definition_id":"asset_reference","source":{"kind":"ASSET","id":"95189b50-7af0-4b7b-8cf9-f16348d9025b","version":1,"digest":"c726d333dd159a31423f3480dbb1c5c4a9dfcd30efe1f7e12ade390dc92e8908","asset_kind":"audio"},"current_source":{"kind":"ASSET","id":"95189b50-7af0-4b7b-8cf9-f16348d9025b","version":1,"digest":"c726d333dd159a31423f3480dbb1c5c4a9dfcd30efe1f7e12ade390dc92e8908","asset_kind":"audio"},"state":"CURRENT"}],"coverage":"EXACT_SAVED_DIRECT_ASSET_REFERENCES","truncated":false,"limit":200,"read_only":true,"automatic_regeneration":false,"other_dependencies":"UNKNOWN"}
+E       assert 200 in {401, 403, 409}
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/test_v2_studio_asset_usages_api.py:136: AssertionError
+______ test_mid_read_change_discards_every_row[/api/v1-revoke-graph-file] ______
+
+usages = namespace(client=<starlette.testclient.TestClient object at 0x7f80159add60>, prefix='/api/v1', base='/api/v1/novels/r3...ch_id': None}, usage_base='/api/v1/novels/r3-mounted-328442994c1a4f6f9f53869313d01133/experimental/production/assets/')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f80158395e0>
+owner = 'graph', change = 'revoke'
+
+    @pytest.mark.parametrize('owner', ['graph', 'timeline'])
+    @pytest.mark.parametrize('change', ['source-version', 'source-digest', 'revoke', 'aba'])
+    def test_mid_read_change_discards_every_row(usages, monkeypatch, owner, change):
+        e = usages; graph(e, 1)
+        target = e.graphs if owner == 'graph' else e.production
+        name = 'list' if owner == 'graph' else 'timeline_list'
+        original = getattr(target, name); calls = []
+        def altered(*args, **kwargs):
+            result = original(*args, **kwargs)
+            if not calls:
+                calls.append(True)
+                if change.startswith('source-'):
+                    original_row = e.studio._row
+                    def changed(*args, **kwargs):
+                        row = deepcopy(original_row(*args, **kwargs))
+                        if row['id'] == e.source['id']:
+                            if change == 'source-version': row['version'] += 1
+                            else: row['sha256'] = '0' * 64
+                        return row
+                    monkeypatch.setattr(e.studio, '_row', changed)
+                else:
+                    e.sessions.revoke(e.host)
+                    if change == 'aba': e.sessions.register(e.host, e.session)
+            return result
+        monkeypatch.setattr(target, name, altered)
+        before = durable_files(e.root); response = get(e, owner)
+>       assert response.status_code in {401, 403, 409}, response.text
+E       AssertionError: {"owner":"CREATIVE_GRAPH","items":[{"owner":"CREATIVE_GRAPH","id":"c70d6f3b-2393-4193-9193-d815bad63de7","version":1,"digest":"caa6d7117746fa4bf4b7c05ca29f87cb8ff48e18cce94bd5356e6f078a526f65","node_id":"Pin00","definition_id":"asset_reference","source":{"kind":"ASSET","id":"04de1246-3d00-4936-bf7a-2ed2a8869e48","version":1,"digest":"c726d333dd159a31423f3480dbb1c5c4a9dfcd30efe1f7e12ade390dc92e8908","asset_kind":"audio"},"current_source":{"kind":"ASSET","id":"04de1246-3d00-4936-bf7a-2ed2a8869e48","version":1,"digest":"c726d333dd159a31423f3480dbb1c5c4a9dfcd30efe1f7e12ade390dc92e8908","asset_kind":"audio"},"state":"CURRENT"}],"coverage":"EXACT_SAVED_DIRECT_ASSET_REFERENCES","truncated":false,"limit":200,"read_only":true,"automatic_regeneration":false,"other_dependencies":"UNKNOWN"}
+E       assert 200 in {401, 403, 409}
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/test_v2_studio_asset_usages_api.py:136: AssertionError
+_______ test_mid_read_change_discards_every_row[/api/v1-aba-graph-file] ________
+
+usages = namespace(client=<starlette.testclient.TestClient object at 0x7f8015991c70>, prefix='/api/v1', base='/api/v1/novels/r3...ch_id': None}, usage_base='/api/v1/novels/r3-mounted-16a2966b48244072b706902c3adf28ea/experimental/production/assets/')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f80159926c0>
+owner = 'graph', change = 'aba'
+
+    @pytest.mark.parametrize('owner', ['graph', 'timeline'])
+    @pytest.mark.parametrize('change', ['source-version', 'source-digest', 'revoke', 'aba'])
+    def test_mid_read_change_discards_every_row(usages, monkeypatch, owner, change):
+        e = usages; graph(e, 1)
+        target = e.graphs if owner == 'graph' else e.production
+        name = 'list' if owner == 'graph' else 'timeline_list'
+        original = getattr(target, name); calls = []
+        def altered(*args, **kwargs):
+            result = original(*args, **kwargs)
+            if not calls:
+                calls.append(True)
+                if change.startswith('source-'):
+                    original_row = e.studio._row
+                    def changed(*args, **kwargs):
+                        row = deepcopy(original_row(*args, **kwargs))
+                        if row['id'] == e.source['id']:
+                            if change == 'source-version': row['version'] += 1
+                            else: row['sha256'] = '0' * 64
+                        return row
+                    monkeypatch.setattr(e.studio, '_row', changed)
+                else:
+                    e.sessions.revoke(e.host)
+                    if change == 'aba': e.sessions.register(e.host, e.session)
+            return result
+        monkeypatch.setattr(target, name, altered)
+        before = durable_files(e.root); response = get(e, owner)
+>       assert response.status_code in {401, 403, 409}, response.text
+E       AssertionError: {"owner":"CREATIVE_GRAPH","items":[{"owner":"CREATIVE_GRAPH","id":"601f2aa4-26c5-488b-906e-ff0dbd3e094d","version":1,"digest":"9262f7a1aae30de9ad28f3a7989ac10fcd1a276eef947e540af29e628ef4d6d5","node_id":"Pin00","definition_id":"asset_reference","source":{"kind":"ASSET","id":"0319b6d1-711d-4098-b297-f7543d4d6a7c","version":1,"digest":"c726d333dd159a31423f3480dbb1c5c4a9dfcd30efe1f7e12ade390dc92e8908","asset_kind":"audio"},"current_source":{"kind":"ASSET","id":"0319b6d1-711d-4098-b297-f7543d4d6a7c","version":1,"digest":"c726d333dd159a31423f3480dbb1c5c4a9dfcd30efe1f7e12ade390dc92e8908","asset_kind":"audio"},"state":"CURRENT"}],"coverage":"EXACT_SAVED_DIRECT_ASSET_REFERENCES","truncated":false,"limit":200,"read_only":true,"automatic_regeneration":false,"other_dependencies":"UNKNOWN"}
+E       assert 200 in {401, 403, 409}
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/test_v2_studio_asset_usages_api.py:136: AssertionError
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_v2_studio_asset_usages_api.py::test_exact_graph_pin_and_timeline_clip_are_separate_read_only_views[/api-1-file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_studio_asset_usages_api.py::test_exact_graph_pin_and_timeline_clip_are_separate_read_only_views[/api-4-file]
+FAILED tests/test_v2_studio_asset_usages_api.py::test_exact_graph_pin_and_timeline_clip_are_separate_read_only_views[/api/v1-4-file]
+FAILED tests/test_v2_studio_asset_usages_api.py::test_actor_private_usage_is_not_an_empty_global_inventory[/api-graph-file]
+FAILED tests/test_v2_studio_asset_usages_api.py::test_actor_private_usage_is_not_an_empty_global_inventory[/api-timeline-file]
+FAILED tests/test_v2_studio_asset_usages_api.py::test_actor_private_usage_is_not_an_empty_global_inventory[/api/v1-graph-file]
+FAILED tests/test_v2_studio_asset_usages_api.py::test_actor_private_usage_is_not_an_empty_global_inventory[/api/v1-timeline-file]
+FAILED tests/test_v2_studio_asset_usages_api.py::test_mid_read_change_discards_every_row[/api-revoke-graph-file]
+FAILED tests/test_v2_studio_asset_usages_api.py::test_mid_read_change_discards_every_row[/api-aba-graph-file]
+FAILED tests/test_v2_studio_asset_usages_api.py::test_mid_read_change_discards_every_row[/api/v1-revoke-graph-file]
+FAILED tests/test_v2_studio_asset_usages_api.py::test_mid_read_change_discards_every_row[/api/v1-aba-graph-file]
+10 failed, 56 passed, 2 warnings in 15.19s

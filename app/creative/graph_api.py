@@ -37,7 +37,7 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
             return True
         return any(protected_result(item) for item in value.get("items", []))
 
-    def graph_invoke(nid, token, branch, permission, callback, request, *, model_input=False, target=None):
+    def graph_invoke(nid, token, branch, permission, callback, request, *, model_input=False, target=None, inspection_host=False):
         def checked(actor, scope, guard):
             def host_required():
                 if model_input:
@@ -51,11 +51,12 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
                 record = service._owned(nid, scope, actor, target[0], target[1])
                 return bool(record.get("model_execution_contract") or record.get("graph_schema_version") in {3, 4, 5}
                     or record.get("definition", {}).get("schema_version") in {2, 3, 4, 5})
-            authority = capture_host(request, token) if host_required() else None
+            authority = capture_host(request, token) if inspection_host or host_required() else None
             def current():
                 guard()
                 if authority is not None:
-                    require_execution()
+                    if not inspection_host or host_required():
+                        require_execution()
                     if require_host_session is None:
                         raise HTTPException(403, {"code": "CREATIVE_MODEL_HOST_REQUIRED"})
                     require_host_session(token); authority.guard()
@@ -119,6 +120,25 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
                 current(); raise
             current(); return result
         return invoke(nid, token, branch, permission, operation)
+
+    @router.get("/novels/{nid}/experimental/production/assets/{aid}/studio-graph-usages")
+    def asset_usages(nid: str, aid: str, request: Request,
+                     x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        from .asset_usages import graph_asset_usages
+        def observe(actor, scope, guard):
+            try:
+                return graph_asset_usages(service, nid, scope, actor, aid, guard)
+            except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError):
+                guard()
+                raise HTTPException(409, {"code": "STUDIO_GRAPH_USAGE_UNAVAILABLE"}) from None
+        # Observation must never mint a missing File project incarnation.
+        with service.store.existing_owner_only():
+            try:
+                return graph_invoke(nid, x_session_token, x_branch_id, "domain.read",
+                    observe,
+                    request, target=("list",), inspection_host=True)
+            except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError):
+                raise HTTPException(409, {"code": "STUDIO_GRAPH_USAGE_UNAVAILABLE"}) from None
 
     @router.post("/projects/{nid}/studio/graph-runs/{rid}/media/preview")
     def media_preview(nid: str, rid: str, request: Request, body: MediaNodeRequest, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

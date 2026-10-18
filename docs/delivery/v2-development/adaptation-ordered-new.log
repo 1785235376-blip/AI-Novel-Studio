@@ -1,0 +1,112 @@
+FF............................                                           [100%]
+=================================== FAILURES ===================================
+___ test_ordered_exact_preview_execute_archive_review_and_reopen[file-/api] ____
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fb9bcfbdb80>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7fb9bd57c7d0>, creative_base='/api/novels/r3-mounted-f2fed354f8984f9cb0ff6c9870929862/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb9bcdb5eb0>
+
+    def test_ordered_exact_preview_execute_archive_review_and_reopen(creative_model, monkeypatch):
+        e = creative_model
+        selected = list(reversed(chapters(e)))
+        unrelated = e.chapters.create(e.nid, {"title": "Unselected", "content": "UNSELECTED_PRIVATE_SENTINEL"})
+        row, calls, sources = prepared(e, monkeypatch, selected)
+        preview = row["model_preview"]
+        assert not calls and preview["input_digest"] == row["ordered_sources_digest"]
+        assert preview["author"]["source"] == ""
+        assert preview["author"]["request_scope"]["source_mode"] == "NONE"
+        assert preview["broker"]["request"]["chapter_ids"] == [source["id"] for source in sources]
+        context = preview["request"]["context"]
+        assert list(context) == ["explicit_sources"]
+        assert [item["text"] for item in context["explicit_sources"]["items"]] == [source["content"] for source in sources]
+        assert all(item["truncated"] is False for item in context["explicit_sources"]["items"])
+        assert "UNSELECTED_PRIVATE_SENTINEL" not in preview["request"]["prompt"]
+        completed = settle(e, dispatch(e, row))
+        assert completed["status"] == "NEEDS_REVIEW", completed
+        asset, = archived(e, completed)
+        assert asset["_text_result_origin"]["schema_version"] == 2
+        assert asset["_text_execution_receipt"]["schema_version"] == 2
+        original = raw(e, completed, asset)
+        reopen(e, monkeypatch)
+        reopened = read(e, completed)
+        assert reopened["asset_output"]["state"] == "DRAFT" and len(calls) == 1
+        adopted = checked(review(e, reopened))
+        doc = adopted["document"]
+        assert doc["source_chapter_ids"] == [source["id"] for source in sources]
+        assert [scene["source_chapter_id"] for scene in doc["scenes"]] == doc["source_chapter_ids"]
+        assert all("source_ordinal" not in scene for scene in doc["scenes"])
+        assert doc["provenance"]["ordered_sources_digest"] == row["ordered_sources_digest"]
+        assert raw(e, completed, archived(e, completed)[0]) == original
+        assert [e.chapters.get(source["id"]) for source in sources] == sources
+>       assert e.chapters.get(unrelated["id"])["content"] == "UNSELECTED_PRIVATE_SENTINEL"
+E       AssertionError: assert '# Unselected..._SENTINEL\n\n' == 'UNSELECTED_PRIVATE_SENTINEL'
+E         
+E         + # Unselected
+E         + 
+E         - UNSELECTED_PRIVATE_SENTINEL
+E         + UNSELECTED_PRIVATE_SENTINEL
+E         ?                            +
+E         +
+
+tests/test_v2_ordered_adaptation.py:77: AssertionError
+__ test_ordered_exact_preview_execute_archive_review_and_reopen[file-/api/v1] __
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fb9b66aafc0>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7fb9bd57c7d0>, creative_base='/api/v1/novels/r3-mounted-4faf9b1cd4644386abbbea4cf3caeb46/experimental/creative')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb9b6533200>
+
+    def test_ordered_exact_preview_execute_archive_review_and_reopen(creative_model, monkeypatch):
+        e = creative_model
+        selected = list(reversed(chapters(e)))
+        unrelated = e.chapters.create(e.nid, {"title": "Unselected", "content": "UNSELECTED_PRIVATE_SENTINEL"})
+        row, calls, sources = prepared(e, monkeypatch, selected)
+        preview = row["model_preview"]
+        assert not calls and preview["input_digest"] == row["ordered_sources_digest"]
+        assert preview["author"]["source"] == ""
+        assert preview["author"]["request_scope"]["source_mode"] == "NONE"
+        assert preview["broker"]["request"]["chapter_ids"] == [source["id"] for source in sources]
+        context = preview["request"]["context"]
+        assert list(context) == ["explicit_sources"]
+        assert [item["text"] for item in context["explicit_sources"]["items"]] == [source["content"] for source in sources]
+        assert all(item["truncated"] is False for item in context["explicit_sources"]["items"])
+        assert "UNSELECTED_PRIVATE_SENTINEL" not in preview["request"]["prompt"]
+        completed = settle(e, dispatch(e, row))
+        assert completed["status"] == "NEEDS_REVIEW", completed
+        asset, = archived(e, completed)
+        assert asset["_text_result_origin"]["schema_version"] == 2
+        assert asset["_text_execution_receipt"]["schema_version"] == 2
+        original = raw(e, completed, asset)
+        reopen(e, monkeypatch)
+        reopened = read(e, completed)
+        assert reopened["asset_output"]["state"] == "DRAFT" and len(calls) == 1
+        adopted = checked(review(e, reopened))
+        doc = adopted["document"]
+        assert doc["source_chapter_ids"] == [source["id"] for source in sources]
+        assert [scene["source_chapter_id"] for scene in doc["scenes"]] == doc["source_chapter_ids"]
+        assert all("source_ordinal" not in scene for scene in doc["scenes"])
+        assert doc["provenance"]["ordered_sources_digest"] == row["ordered_sources_digest"]
+        assert raw(e, completed, archived(e, completed)[0]) == original
+        assert [e.chapters.get(source["id"]) for source in sources] == sources
+>       assert e.chapters.get(unrelated["id"])["content"] == "UNSELECTED_PRIVATE_SENTINEL"
+E       AssertionError: assert '# Unselected..._SENTINEL\n\n' == 'UNSELECTED_PRIVATE_SENTINEL'
+E         
+E         + # Unselected
+E         + 
+E         - UNSELECTED_PRIVATE_SENTINEL
+E         + UNSELECTED_PRIVATE_SENTINEL
+E         ?                            +
+E         +
+
+tests/test_v2_ordered_adaptation.py:77: AssertionError
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_v2_ordered_adaptation.py::test_ordered_exact_preview_execute_archive_review_and_reopen[file-/api]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_ordered_adaptation.py::test_ordered_exact_preview_execute_archive_review_and_reopen[file-/api]
+FAILED tests/test_v2_ordered_adaptation.py::test_ordered_exact_preview_execute_archive_review_and_reopen[file-/api/v1]
+2 failed, 28 passed, 30 deselected, 2 warnings in 31.11s

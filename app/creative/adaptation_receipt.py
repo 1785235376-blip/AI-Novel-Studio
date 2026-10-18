@@ -85,11 +85,60 @@ def encode_receipt(value):
         _fail()
 
 
+def _hash(value):
+    return sha256(canonical(value).encode("utf-8")).hexdigest()
+
+
+def validate_ordered_sources(sources, ordered_sources_digest):
+    """Closed, bounded snapshots of the original native CHAPTER context."""
+    _digest(ordered_sources_digest)
+    if not isinstance(sources, list) or not 2 <= len(sources) <= 16:
+        _fail()
+    seen, total = set(), 0
+    for ordinal, source in enumerate(sources, 1):
+        _keys(source, "ordinal chapter_id source_version source_digest selected_text selection_digest native_source_digest native_item")
+        if type(source["ordinal"]) is not int or source["ordinal"] != ordinal:
+            _fail()
+        _chapter_identifier(source["chapter_id"])
+        _version(source["source_version"])
+        for key in ("source_digest", "selection_digest", "native_source_digest"):
+            _digest(source[key])
+        body = source["selected_text"]
+        if (source["chapter_id"] in seen or not isinstance(body, str) or not body.strip()
+                or len(body) > 8000 or source["selection_digest"] != _hash(body)):
+            _fail()
+        seen.add(source["chapter_id"]); total += len(body)
+        item = source["native_item"]
+        _keys(item, "kind id version label source_digest citation evidence privacy_level text layer untrusted_data instructions_allowed truncated truncation_reason")
+        if (item["kind"] != "CHAPTER" or item["id"] != source["chapter_id"]
+                or type(item["version"]) is not int or item["version"] != source["source_version"]
+                or item["source_digest"] != source["native_source_digest"] or item["text"] != body
+                or item["citation"] is not None or canonical(item["evidence"]) != canonical({
+                    "chapter_id": source["chapter_id"], "chapter_version": source["source_version"]})
+                or item["privacy_level"] not in ("LOCAL_ONLY", "CLOUD_ALLOWED", "REDACT_BEFORE_CLOUD")
+                or item["layer"] != "AUTHOR_REFERENCE" or item["untrusted_data"] is not True
+                or item["instructions_allowed"] is not False or item["truncated"] is not False
+                or item["truncation_reason"] is not None):
+            _fail()
+        _text(item["label"])
+    if total > 32000 or _hash(sources) != ordered_sources_digest:
+        _fail()
+    return deepcopy(sources)
+
+
+def ordered_context(sources):
+    return {"explicit_sources": {"items": [deepcopy(source["native_item"]) for source in sources],
+        "untrusted_data": True, "instructions_allowed": False,
+        "scope": "EXPLICIT_REVIEWED_ADDITIONS", "research_is_canon": False}}
+
+
 def validate_source(value):
+    ordered = isinstance(value, dict) and value.get("schema_version") == 2
     _keys(value, "schema_version contract proposal_id source_proposal_version chapter_id source_version "
-        "source_digest selection_digest job_id output_digest preview_digest produced_at",
+        "source_digest selection_digest job_id output_digest preview_digest produced_at" +
+        (" sources ordered_sources_digest" if ordered else ""),
         "ADAPTATION_TEXT_SOURCE_RECEIPT_INVALID")
-    if type(value["schema_version"]) is not int or value["schema_version"] != 1 or value["contract"] != ASSET_CONTRACT:
+    if type(value["schema_version"]) is not int or value["schema_version"] != (2 if ordered else 1) or value["contract"] != ASSET_CONTRACT:
         _fail("ADAPTATION_TEXT_SOURCE_RECEIPT_INVALID")
     for key in ("proposal_id", "job_id"):
         _identifier(value[key])
@@ -98,15 +147,24 @@ def validate_source(value):
         _version(value[key])
     for key in ("source_digest", "selection_digest", "output_digest", "preview_digest"):
         _digest(value[key])
+    if ordered:
+        sources = validate_ordered_sources(value["sources"], value["ordered_sources_digest"])
+        if any(value[key] != sources[0][key] for key in
+                ("chapter_id", "source_version", "source_digest", "selection_digest")):
+            _fail()
     _stamp(value["produced_at"])
     return deepcopy(value)
 
 
-def validate_request(value, *, provider_id, model_id):
+def validate_request(value, *, provider_id, model_id, source=None):
+    expected_context = {}
+    if source is not None and source.get("schema_version") == 2:
+        sources = validate_ordered_sources(source["sources"], source["ordered_sources_digest"])
+        expected_context = ordered_context(sources)
     _keys(value, "provider_id model_id prompt system_instruction context parameters structured_output_schema metadata")
     if (value["provider_id"] != provider_id or value["model_id"] != model_id
             or value["system_instruction"] is not None or value["structured_output_schema"] is not None
-            or value["context"] != {} or value["metadata"] != {"purpose": "brainstorm"}):
+            or (canonical(value["context"]) != canonical(expected_context) if expected_context else value["context"] != {}) or value["metadata"] != {"purpose": "brainstorm"}):
         _fail()
     _text(provider_id)
     _text(model_id)
@@ -144,7 +202,7 @@ def receipt_payload(request, chosen, origin, *, execution_mode, request_digest, 
     establish the original owners and current actor/Host/source authority.
     """
     identity = chosen.get("identity") or {}
-    return {"schema_version": 1, "contract": CONTRACT, "request": deepcopy(request),
+    return {"schema_version": origin["schema_version"], "contract": CONTRACT, "request": deepcopy(request),
         "request_payload_sha256": sha256(canonical(request).encode("utf-8")).hexdigest(),
         "prompt_sha256": sha256(request["prompt"].encode("utf-8")).hexdigest(),
         "provider_id": chosen["provider_id"], "model_id": chosen["model_id"],
@@ -174,14 +232,14 @@ def validate_receipt(value, *, source, provider_id, model_id, parameters):
     _keys(value, "schema_version contract request request_payload_sha256 prompt_sha256 provider_id model_id "
         "route_id route_fingerprint route_identity model_evidence request_digest execution_mode workflow "
         "generation_bounds terminal quality_verification")
-    if (type(value["schema_version"]) is not int or value["schema_version"] != 1
+    if (type(value["schema_version"]) is not int or value["schema_version"] != source["schema_version"]
             or value["contract"] != CONTRACT or value["workflow"] != source
             or value["provider_id"] != provider_id or value["model_id"] != model_id
             or value["quality_verification"] != "NOT_RUN"):
         _fail()
     if len(encode_receipt(value)) > MAX_BYTES:
         _fail("ADAPTATION_TEXT_EXECUTION_RECEIPT_LIMIT")
-    request = validate_request(value["request"], provider_id=provider_id, model_id=model_id)
+    request = validate_request(value["request"], provider_id=provider_id, model_id=model_id, source=source)
     for key in ("request_payload_sha256", "prompt_sha256", "route_id", "route_fingerprint", "request_digest"):
         _digest(value[key])
     if (value["request_payload_sha256"] != sha256(canonical(request).encode("utf-8")).hexdigest()

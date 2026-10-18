@@ -6,13 +6,42 @@ from pydantic import Field, model_validator, model_serializer
 from .models import Identifier, ProposalAction, Scene, StrictCreativeModel
 
 
-class AdaptationIn(StrictCreativeModel):
+class AdaptationSourceIn(StrictCreativeModel):
     chapter_id: Identifier
     expected_source_version: int = Field(ge=1, strict=True)
+
+
+class AdaptationSourceSnapshot(StrictCreativeModel):
+    ordinal: int = Field(ge=1, le=16, strict=True)
+    chapter_id: Identifier
+    source_version: int = Field(ge=1, strict=True)
+    source_digest: str = Field(pattern=r"^[0-9a-f]{64}$", strict=True)
+    selected_text: str = Field(min_length=1, max_length=8000, strict=True)
+    selection_digest: str = Field(pattern=r"^[0-9a-f]{64}$", strict=True)
+    native_source_digest: str = Field(pattern=r"^[0-9a-f]{64}$", strict=True)
+    native_item: dict
+
+
+class AdaptationIn(StrictCreativeModel):
+    chapter_id: Identifier | None = None
+    expected_source_version: int | None = Field(default=None, ge=1, strict=True)
+    sources: list[AdaptationSourceIn] | None = Field(default=None, min_length=2, max_length=16)
     title: str = Field(min_length=1, max_length=240, strict=True)
     instruction: str = Field(default="", max_length=4000, strict=True)
     # Empty means the complete saved chapter, never an implicit context tail.
     selected_text: str = Field(default="", max_length=64000, strict=True)
+
+
+    @model_validator(mode="after")
+    def source_choice(self):
+        if self.sources is not None:
+            if self.chapter_id is not None or self.expected_source_version is not None or self.selected_text:
+                raise ValueError("ADAPTATION_EXCLUSIVE_SOURCE_MODE_REQUIRED")
+            if len({source.chapter_id for source in self.sources}) != len(self.sources):
+                raise ValueError("ADAPTATION_DUPLICATE_SOURCE")
+        elif self.chapter_id is None or self.expected_source_version is None:
+            raise ValueError("ADAPTATION_SOURCE_REQUIRED")
+        return self
 
 
 class AdaptedScene(Scene):
@@ -70,10 +99,27 @@ class AdaptationOutput(StrictCreativeModel):
         return self
 
 
+class OrderedAdaptedScene(AdaptedScene):
+    source_ordinal: int = Field(ge=1, le=16, strict=True)
+
+
+class OrderedAdaptationChange(AdaptationChange):
+    source_ordinal: int = Field(ge=1, le=16, strict=True)
+
+
+class OrderedAdaptationReport(AdaptationReport):
+    changes: list[OrderedAdaptationChange] = Field(min_length=1, max_length=100)
+
+
+class OrderedAdaptationOutput(AdaptationOutput):
+    scenes: list[OrderedAdaptedScene] = Field(min_length=1, max_length=100)
+    report: OrderedAdaptationReport
+
+
 class AdaptationReview(ProposalAction):
     reviewed_output_digest: str = Field(pattern=r"^[0-9a-f]{64}$", strict=True)
     title: str = Field(min_length=1, max_length=240, strict=True)
-    output: AdaptationOutput
+    output: AdaptationOutput | OrderedAdaptationOutput
 
 
 class AdaptationPreview(ProposalAction):
@@ -100,11 +146,28 @@ class AdaptationJobBinding(StrictCreativeModel):
     source_digest: str = Field(pattern=r"^[0-9a-f]{64}$", strict=True)
     preview_digest: str = Field(pattern=r"^[0-9a-f]{64}$", strict=True)
     archive: AdaptationArchiveBinding | None = None
+    sources: list[AdaptationSourceSnapshot] | None = Field(default=None, min_length=2, max_length=16)
+    ordered_sources_digest: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$", strict=True)
+
+    @model_validator(mode="after")
+    def ordered_binding(self):
+        if (self.sources is None) != (self.ordered_sources_digest is None):
+            raise ValueError("ADAPTATION_ORDERED_BINDING_REQUIRED")
+        if self.sources is not None:
+            from .adaptation_sources import validate_snapshots
+            values = [source.model_dump() for source in self.sources]
+            validate_snapshots(values, self.ordered_sources_digest)
+            first = self.sources[0]
+            if (self.chapter_id, self.source_version, self.source_digest) != (first.chapter_id, first.source_version, first.source_digest):
+                raise ValueError("ADAPTATION_ANCHOR_CHANGED")
+        return self
 
     @model_serializer(mode="wrap")
     def preserve_legacy_shape(self, handler):
         result = handler(self)
         if self.archive is None: result.pop("archive", None)
+        if self.sources is None:
+            result.pop("sources", None); result.pop("ordered_sources_digest", None)
         return result
 
 

@@ -1,9 +1,11 @@
 # Source-aware screenplay adaptation (TEXT-13, bounded chapter/archive slices)
 
-Status: **PARTIAL**. One saved chapter, or an exact substring selected from that
-saved chapter, may become a private model proposal and an automatically archived
-private TextAsset. Multi-chapter ranges and full model-quality acceptance remain
-follow-on work. The original AssetLibrary owns every new admitted result.
+Status: **PARTIAL**. One saved chapter or its exact saved substring, and a bounded
+ordered selection of 2–16 complete saved chapters, may become a private model
+proposal and an automatically archived private TextAsset. Larger inputs,
+per-chapter partial selections in the ordered mode, cross-chapter merged scenes,
+and full real-model quality acceptance remain follow-on work. The original
+AssetLibrary owns every new admitted result.
 
 ## Existing owners
 
@@ -143,3 +145,60 @@ default 2048-token scenario. The script never downloads a model or repairs/retri
 its output. Invalid real structured output retains exact private raw evidence and
 fails the structured acceptance; an explicit test-client review does not certify
 human literary quality. Consult the stage report for actually executed results.
+
+
+## Bounded ordered chapter adaptation
+
+The same create endpoint accepts either the original single-chapter fields or
+`sources: [{chapter_id, expected_source_version}, ...]` with title/instruction.
+Mixed source modes, duplicates, fewer than two or more than sixteen chapters
+are rejected. Every chapter must be complete, saved, available in the current
+project/branch, at most 8,000 Unicode characters, and the aggregate at most 32,000
+characters. Existing encoded prompt/request/receipt/storage limits also apply;
+no source is truncated, substituted, automatically rebased or retried.
+
+Creative snapshots preserve the exact requested order, chapter versions/digests,
+full text/selection digests, native Author source fingerprints and complete
+native source projections. A digest binds the ordered array. All chapters and
+privacy evidence are checked at creation, preview, admission, dispatch, result,
+archive recovery, read and review. Changing only the second chapter invalidates
+the whole proposal just as changing the anchor does.
+
+This mode uses the original AuthorPreparer with `source_mode: NONE`, no primary
+manuscript source, and ordered explicit CHAPTER references through the existing
+NativeAuthorSources resolver. Automatic context, style and plan references are
+disabled. Preview checks the actual complete context against the snapshots and
+rejects truncation. Broker admission names every chapter. The original Job keeps
+the first chapter as its anchor and carries a typed, exact ordered-source binding.
+There is still only one original execution, settlement and raw output asset.
+
+Every scene and report change carries a 1-based `source_ordinal`. Each scene has
+one source chapter; change links cannot cross chapters, and quotes must match the
+indicated chapter. Every selected chapter must appear in the difference report,
+including an omission entry for a wholly omitted chapter. The host supplies the
+adopted scene's `source_chapter_id`; model-supplied links remain prohibited.
+Input order is exact, while reviewed scene sequence can interleave chapter
+sources. The reviewed screenplay records all source chapters and the ordered
+provenance manifest without modifying the novel or Canon.
+
+Existing archive contract names remain unchanged. Ordered origin/execution
+receipts use schema version 2, with closed snapshots and an exact chapter-only
+explicit context; legacy schema version 1 retains its empty-context validation.
+Reopening recovers the same durable original result without model replay.
+
+The UI reuses the existing scoped chapter list and bounded chapter-detail reads.
+Details are necessary because list projections can normalize trailing newlines.
+Saved/reopened proposals are checked against all original sources independently
+of the active manuscript editor. Uncertain or stale writes preserve unsaved
+review edits; these edits remain in page memory until adopted or explicitly
+exported, and are not claimed to survive a browser restart.
+
+Verification receipts: `adaptation-ordered-baseline.json` (295 File tests),
+`adaptation-ordered-lifecycle.json` (74 File/passive tests), and
+`ordered-receipt-focused.json` (172 File/passive tests) under
+`docs/delivery/v2-development/`. These runs overlap and must not be added as a
+unique-test total. PostgreSQL was deselected in these worker runs. Frontend
+focused tests passed; browser geometry/visual execution remains blocked by the
+missing bundled Chromium. No model inference, model download, or paid API was
+used for this slice; synthetic protocol acceptance is not literary-quality
+acceptance.

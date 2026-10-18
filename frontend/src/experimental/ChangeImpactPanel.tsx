@@ -4,6 +4,7 @@ import type { ExperimentalClient } from './api';
 import { Field, ResourceState, useAction, useResource } from './shared';
 import { changeImpactClient, type ImpactNode, type ImpactPreflight, type ImpactRefresh, type ImpactSource } from './changeImpactClient';
 import type { WorkspaceNavigation } from './uxClient';
+import { StudioUsagesPanel } from './StudioUsagesPanel';
 
 type Props = { client: ExperimentalClient; onNavigate?: (target: WorkspaceNavigation) => void; readOnly?: boolean };
 const kinds: Record<string, string> = { CHAPTER: '章节', CHARACTER: '角色', WORLD_RECORD: '世界关系 / 知识', ASSET: '资产', PLANNING_NODE: '规划', PLANNING_PROPOSAL: '规划建议', MEDIA_BRIEF: '媒体需求', MEDIA_TASK: '媒体任务', AUDIO_PLAN: '配音计划', SUBTITLES: '字幕视图', EXPORT: '清单导出视图', SHOT: '镜头', SCREENPLAY_SCENE: '剧本场景', STORYBOARD_FRAME: '分镜卡片', MOTION_TASK: '视频任务', AUDIO_MIX: '混音候选' };
@@ -30,12 +31,13 @@ function RefreshCard({ api, row, reload, onNavigate }: { api: ReturnType<typeof 
   </article>;
 }
 
-function ImpactSelection({ source, api, onPrepared, onNavigate }: { source: ImpactSource; api: ReturnType<typeof changeImpactClient>; onPrepared: () => void; onNavigate?: Props['onNavigate'] }) {
+function ImpactSelection({ source, api, client, onPrepared, onNavigate }: { source: ImpactSource; api: ReturnType<typeof changeImpactClient>; client: ExperimentalClient; onPrepared: () => void; onNavigate?: Props['onNavigate'] }) {
   const resource = useResource(() => api.query(source), [api, source.id, source.kind]);
   const [selected, setSelected] = useState<string[]>([]), [preflight, setPreflight] = useState<ImpactPreflight>(), [key, setKey] = useState('');
+  const [usageRevision, setUsageRevision] = useState(0);
   const action = useAction(), alive = useRef(true);
   useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
-  const invalidate = () => { setSelected([]); setPreflight(undefined); setKey(''); resource.reload(); };
+  const invalidate = () => { setSelected([]); setPreflight(undefined); setKey(''); setUsageRevision(value => value + 1); resource.reload(); };
   const lock = (node: ImpactNode) => action.run(async () => { await api.lock(node); if (alive.current) invalidate(); }, node.locked ? '已解锁。下次更新仍需重新预检。' : '已锁定满意成果，选择性更新会跳过它。');
   const check = () => action.run(async () => {
     setPreflight(undefined); setKey('');
@@ -44,7 +46,7 @@ function ImpactSelection({ source, api, onPrepared, onNavigate }: { source: Impa
   }, '已核对选中节点、当前来源、权限、隐私和可知费用。');
   const prepare = () => preflight && action.run(async () => {
     await api.prepare(preflight, key);
-    if (alive.current) { setPreflight(undefined); setSelected([]); onPrepared(); resource.reload(); }
+    if (alive.current) { setPreflight(undefined); setSelected([]); setUsageRevision(value => value + 1); onPrepared(); resource.reload(); }
   }, '已建立新来源快照与原执行器任务。尚未运行，原成果保留。');
   return <section className="experimental-section" aria-label="修改影响清单">
     <div className="experimental-actions"><h3>{source.label} 的已记录依赖</h3><Button disabled={resource.loading || action.busy} onClick={invalidate}>重新读取影响与版本</Button></div>
@@ -68,6 +70,7 @@ function ImpactSelection({ source, api, onPrepared, onNavigate }: { source: Impa
         <StatusMessage tone="warning">支持合成测试与已登记本地封面 / 分镜路线，真实模型效果未验。每次执行仍重新检查权限、来源、隐私和预算；不会批准产物或替换旧成果。</StatusMessage>
         <Button disabled={action.busy || !preflight.ready} onClick={prepare}>仅准备这些选中更新</Button>
       </section>}
+      {source.kind === 'ASSET' && <StudioUsagesPanel key={JSON.stringify([source.id, resource.data.source.binding, usageRevision])} client={client} assetId={source.id} sourceIdentity={JSON.stringify(resource.data.source.binding)} />}
     </>}
   </section>;
 }
@@ -84,7 +87,7 @@ function ImpactWorkspace({ client, onNavigate }: Props) {
     <ResourceState loading={sources.loading} error={sources.error} />
     {!!sources.error && <StatusMessage>当前范围没有作者编辑权限，或依赖功能未启用。请保留原稿并在有权限的范围重试。</StatusMessage>}
     {sources.data && !sources.loading && !sources.error && <Field label="发生修改的来源"><select value={sourceKey} onChange={event => setSourceKey(event.target.value)}><option value="">选择章节、角色、关系或资产</option>{sources.data.items.map(item => <option key={`${item.kind}:${item.id}`} value={`${item.kind}:${item.id}`}>{kinds[item.kind]} · {item.label}</option>)}</select></Field>}
-    {source && !sources.loading && !sources.error && <ImpactSelection key={sourceKey} source={source} api={api} onPrepared={refreshes.reload} onNavigate={onNavigate} />}
+    {source && !sources.loading && !sources.error && <ImpactSelection key={sourceKey} source={source} api={api} client={client} onPrepared={refreshes.reload} onNavigate={onNavigate} />}
     <section className="experimental-section" aria-label="选择性更新历史"><h3>可恢复的原执行器任务</h3><ResourceState loading={refreshes.loading} error={refreshes.error} />{refreshes.data && !refreshes.loading && !refreshes.error && <>{refreshes.data.items.length ? refreshes.data.items.map(row => <RefreshCard key={row.id} api={api} row={row} reload={refreshes.reload} onNavigate={onNavigate} />) : <p>尚未准备更新。预检不会自动开始任务。</p>}</>}</section>
   </Panel>;
 }

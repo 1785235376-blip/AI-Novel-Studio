@@ -21,7 +21,7 @@ from .proposals import digest
 from .adaptation_models import AdaptationArchiveBinding, AdaptationJobBinding, terminal_publication
 from .adaptation_receipt import (ASSET_CONTRACT, CONTRACT, PUBLICATION_CONTRACT, REVIEW_CONTRACT,
     FEATURES, MAX_OUTPUT_BYTES, MAX_PROMPT_BYTES, MAX_REQUEST_BYTES, MAX_BYTES, MAX_METADATA_BYTES,
-    asset_parameters, receipt_payload, validate_receipt, public_receipt)
+    asset_parameters, receipt_payload, validate_receipt, public_receipt, validate_ordered_sources, validate_request)
 
 _phase = ContextVar("adaptation_asset_authority", default=None)
 
@@ -103,11 +103,20 @@ class AdaptationAssets:
         self.proposals._current(ctx.novel_id, ctx.scope, row)
         self.intent(row)
         preview = row["model_preview"]
+        ordered = row.get("source_mode") == "ORDERED_CHAPTERS"
+        if ordered:
+            sources = validate_ordered_sources(row["sources"], row["ordered_sources_digest"])
+            if any(row[key] != sources[0][key] for key in
+                    ("chapter_id", "source_version", "source_digest", "selection_digest", "selected_text")):
+                raise StaleSourceError("ADAPTATION_ARCHIVE_SELECTION_CHANGED")
+            validate_request(preview["request"], provider_id=preview["request"]["provider_id"],
+                model_id=preview["request"]["model_id"], source={"schema_version": 2,
+                    "sources": sources, "ordered_sources_digest": row["ordered_sources_digest"]})
         if (preview.get("preview_digest") != digest({key: value for key, value in preview.items() if key != "preview_digest"})
                 or row["selection_digest"] != digest(row["selected_text"])
                 or preview.get("selection_digest") != row["selection_digest"]
-                or preview.get("input_digest") != row["source_digest"]
-                or preview.get("author", {}).get("source") != row["selected_text"]):
+                or preview.get("input_digest") != (row["ordered_sources_digest"] if ordered else row["source_digest"])
+                or preview.get("author", {}).get("source") != ("" if ordered else row["selected_text"])):
             raise StaleSourceError("ADAPTATION_ARCHIVE_SELECTION_CHANGED")
         if row["status"] == "CANCELLED" or (row.get("model_execution") or {}).get("status") in {"CANCELLED", "UNKNOWN"}:
             raise StaleSourceError("ADAPTATION_ARCHIVE_NO_VERIFIED_RESULT")
@@ -118,11 +127,13 @@ class AdaptationAssets:
             row["created_by"], row["id"], row["model_asset_intent"]]).encode()).hexdigest()
 
     def _origin_payload(self, row, version, job_id, output_digest, produced_at):
-        return {"schema_version": 1, "contract": ASSET_CONTRACT, "proposal_id": row["id"],
+        ordered = row.get("source_mode") == "ORDERED_CHAPTERS"
+        return {"schema_version": 2 if ordered else 1, "contract": ASSET_CONTRACT, "proposal_id": row["id"],
             "source_proposal_version": version, "chapter_id": row["chapter_id"], "source_version": row["source_version"],
             "source_digest": row["source_digest"], "selection_digest": row["selection_digest"],
             "job_id": job_id, "output_digest": output_digest,
-            "preview_digest": row["model_preview"]["preview_digest"], "produced_at": produced_at}
+            "preview_digest": row["model_preview"]["preview_digest"], "produced_at": produced_at,
+            **({"sources": deepcopy(row["sources"]), "ordered_sources_digest": row["ordered_sources_digest"]} if ordered else {})}
 
     def parameters(self, row):
         return asset_parameters(row["model_preview"]["request"], row["model_preview"]["broker"]["chosen"])
@@ -160,7 +171,9 @@ class AdaptationAssets:
         binding = AdaptationJobBinding(proposal_id=row["id"], project_id=row["novel_id"], actor_id=row["created_by"],
             scope=row["scope"], project_incarnation=row["project_incarnation"], chapter_id=row["chapter_id"],
             source_version=row["source_version"], source_digest=row["source_digest"],
-            preview_digest=row["model_preview"]["preview_digest"], archive=self.intent(row)).model_dump(exclude_none=True)
+            preview_digest=row["model_preview"]["preview_digest"], archive=self.intent(row),
+            **({"sources": row["sources"], "ordered_sources_digest": row["ordered_sources_digest"]}
+                if row.get("source_mode") == "ORDERED_CHAPTERS" else {})).model_dump(exclude_none=True)
         fields = ("id", "novel_id", "chapter_id", "actor_id", "session_id", "workspace_id", "scope", "operation",
             "experimental_origin", "required_experimental_features", "adaptation_binding", "adaptation_publication",
             "graph_binding", "expected_request_digest", "requested_provider", "requested_model", "provider", "model",
@@ -174,7 +187,8 @@ class AdaptationAssets:
                 or job.profile != "LOCAL_ONLY" or job.generation_max_output_bytes != MAX_OUTPUT_BYTES
                 or job.generation_deadline != row["model_execution"]["deadline"]
                 or job.base_chapter_version != row["source_version"] or job.base_chapter_digest != row["source_digest"]
-                or job.source != row["selected_text"] or job.cancelled.is_set()):
+                or job.source != ("" if row.get("source_mode") == "ORDERED_CHAPTERS" else row["selected_text"])
+                or job.cancelled.is_set()):
             raise StaleSourceError("ADAPTATION_DURABLE_PUBLICATION_REQUIRED")
         preview = row["model_preview"]
         from ..experimental.author_context_api import AuthorPreviewInput
