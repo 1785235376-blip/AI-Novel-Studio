@@ -1,0 +1,307 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "9fb88791b95f98696a92dd2f4750bc776480af0e",
+      "path": "API_CATALOG.json",
+      "bytes": 1522509,
+      "sha256": "766a3af61c2697b15de75477492beb15a485655fbdec1d7c7fbedf05f77e2fdf"
+    },
+    {
+      "blob": "67246263b4467f07caf89a16990f15d4e733e01f",
+      "path": "API_CATALOG.md",
+      "bytes": 407024,
+      "sha256": "deb0b7e68dd08d53e8f7e4a490bc87cd68c4178262b9a14cdd33524248f79ba6"
+    },
+    {
+      "blob": "4990f0c68769c28af52ab94ca9cac7056dee2dc9",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 630076,
+      "sha256": "e9f5403e0ae3df33c030fdc7b4252fd426048d62348b85566579d2225c3916a3"
+    },
+    {
+      "blob": "afdd8f2ddfe58754586dd58f41ccaf0d407858c2",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 136053,
+      "sha256": "e4973a13e3f56028448012d3b7ce64b420e4acf3cabe2912692fd4063945a13b"
+    },
+    {
+      "blob": "57f0293058723cbebcd89021d3a97b7079b67500",
+      "path": "app/creative/api.py",
+      "bytes": 29901,
+      "sha256": "65c6f3cb49d44abad870ebc7282bdb369c5f1c41c110535ea90b2e9a4b9d644b"
+    },
+    {
+      "blob": "c529c7034231943e5c4b59e2259cec7de3343746",
+      "path": "app/creative/director_image_api.py",
+      "bytes": 8776,
+      "sha256": "011b451b5e3f991018a23f4847dd2ba2db46d8d703db18d3804e7a2a861cabe2"
+    },
+    {
+      "blob": "ed2702d332a10850a57f7a6ae084ac1230ae3e47",
+      "path": "app/creative/director_image_generation.py",
+      "bytes": 25103,
+      "sha256": "00d805767aa10775d683f1cb086f89e25fbb1f10a6398857e34c4ea7ed1893e1"
+    },
+    {
+      "blob": "cfeedae2c72afb4e54b841f359853444318b2598",
+      "path": "app/experimental/api.py",
+      "bytes": 42527,
+      "sha256": "06634192038fb57945df8612ae91eaf6c2a13a023deac7d63a8c7aeed99894f5"
+    },
+    {
+      "blob": "7fd6d54a8aceb4cc18822f21d80284fb92498c51",
+      "path": "app/experimental/comic_collections.py",
+      "bytes": 12568,
+      "sha256": "a59462a099c7227489ff72222b3a79c81895d69ef2cf8dac8645166abba6cc54"
+    },
+    {
+      "blob": "4ec42039d2c55f923c6f9b24bdd25ed4ca2c0bd4",
+      "path": "app/experimental/comic_layers.py",
+      "bytes": 6641,
+      "sha256": "a3571681d406e4d077ac97384d7604eeb7b96305c60b92ffbb594ff35895412c"
+    },
+    {
+      "blob": "cec98ebcd4390b34b2ef3c9a20fbf4a06f276300",
+      "path": "app/experimental/comic_layouts.py",
+      "bytes": 46412,
+      "sha256": "c3d671572b4db2c0fac62dcbf8e6c319b8bcd04d6d1d1bad8c24f5ceb2f1af8f"
+    },
+    {
+      "blob": "880d7a35b8302ad4bc41ca747af09d6c67f330e2",
+      "path": "app/experimental/comic_ora.py",
+      "bytes": 4137,
+      "sha256": "fa96c64f31e62ac2a1f7e8bd23cface286b013f14bae3128560fefdec0dcb2a3"
+    },
+    {
+      "blob": "2bef8796573b0c1ec967278f2b3c3a5d47863a32",
+      "path": "app/experimental/comic_ora_staging.py",
+      "bytes": 23918,
+      "sha256": "3e7298f0d1535579efd211131861d7aad858463d550f8e028e44d19fe26b0074"
+    },
+    {
+      "blob": "5798dd0ea606a47212bc7d2817cb3d75d1148728",
+      "path": "app/services/asset_library_service.py",
+      "bytes": 78691,
+      "sha256": "6e7b9ab09531d0432a099ef07b6b89908dc76447b3bb00ac8bf4e4c641961a3c"
+    },
+    {
+      "blob": "f7dafa366e63a27fcd36bed098ccc94c40cfa2e7",
+      "path": "app/services/comic_ora_origin.py",
+      "bytes": 4490,
+      "sha256": "ef81fa0d05211a19c68bcd80d9f38bb03e0fddabaa5adf3df91e05f8d24dad36"
+    },
+    {
+      "blob": "5daca3550fa336c257275ca4de22014a6a88496f",
+      "path": "docs/COMIC_ORA_REVIEW_ATTACHMENT_SLICE.md",
+      "bytes": 4114,
+      "sha256": "7b8a9861ce5b52aef1a6fa508e4826a0fa3ee52e0267486c827d47d66db51fd6"
+    },
+    {
+      "blob": "39463786e7978eb052a07f603401f54b6dc85761",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 36137,
+      "sha256": "f353df85ca9db71983799a0dd26c90f879ec93c06be2e4bb2b73081d3fec7ce2"
+    },
+    {
+      "blob": "426bca92a1f1d6c4635b0a6cb24b5e3631c8d5f4",
+      "path": "docs/delivery/v2-development/comic-ora-review-first.json",
+      "bytes": 734938,
+      "sha256": "8baffc086c1a1adc81e157131788bd4ac96536ae831d13f2f2b91c3942e5f8e3"
+    },
+    {
+      "blob": "3f4a22723fd16f956af5838e3cc75920f2797773",
+      "path": "docs/delivery/v2-development/comic-ora-review-first.log",
+      "bytes": 646,
+      "sha256": "ab232d5884927d82ddb32b106b6e58206bb354fe32cb7ad5fc1a9b4358aa89e4"
+    },
+    {
+      "blob": "440fe989ffbcaeba126481940c771b1a76193021",
+      "path": "docs/delivery/v2-development/comic-ora-review-frozen.json",
+      "bytes": 735225,
+      "sha256": "00130c7e95c59c235e0ce0d09b9dd8a37d8a0061b2482d43b5f129c53e26a1c5"
+    },
+    {
+      "blob": "d9f25f3781d5839ae84ff1f318eca8d80fa77bdc",
+      "path": "docs/delivery/v2-development/comic-ora-review-frozen.log",
+      "bytes": 1583,
+      "sha256": "75145b10976c0d98e6ec885da638003f30615d7c85494c6fb8e08f35584777da"
+    },
+    {
+      "blob": "a6ee1d09c2c09ea517ff317d31de8d8b1efb47c5",
+      "path": "docs/delivery/v2-development/comic-ora-review-second.json",
+      "bytes": 734987,
+      "sha256": "fa9840afd0f5937ed1176349d208ace031ae94fff569244b8d30e3bba1b897dd"
+    },
+    {
+      "blob": "752aabd370dddfccb114db5780b37965b910144d",
+      "path": "docs/delivery/v2-development/comic-ora-review-second.log",
+      "bytes": 1178,
+      "sha256": "4422aa4270e3b007bf38ecf842f37f44e699f983468721bdd42aae4b8fa82766"
+    },
+    {
+      "blob": "1317407ac9b44875278a9fec3d9ce6de41b4c1ec",
+      "path": "docs/delivery/v2-development/director-mounted-integration-file.json",
+      "bytes": 742114,
+      "sha256": "fec12b22e7eaac28e241b0d56614e61e973ca6ae11f139ce973e270b15d1e716"
+    },
+    {
+      "blob": "739b8468394a8bfcaaaf0c105cbb7be56e1224da",
+      "path": "docs/delivery/v2-development/director-mounted-integration-file.log",
+      "bytes": 1053,
+      "sha256": "eeeeee6c8ec8a419258d76a84280b8ee5d460b6bbeef7730e9d547796b967c07"
+    },
+    {
+      "blob": "82ce5322fbc77c13b86eaafec3a2484580c8400b",
+      "path": "docs/delivery/v2-development/director-mounted-target-file.json",
+      "bytes": 742363,
+      "sha256": "9314790edb5600d715ee25d0714d9c3f888a02fc5fe867a8b8e49b7587808765"
+    },
+    {
+      "blob": "ee1fdcb9d56f9fcfdca49d6dc32bff0d3752781e",
+      "path": "docs/delivery/v2-development/director-mounted-target-file.log",
+      "bytes": 1057,
+      "sha256": "1f1b5d77f0694c1494d60ff05346d51e10303f6079d50c7ba2a1308cbf40af74"
+    },
+    {
+      "blob": "910345469ab2e7648abbb1f4c5debb36462fe707",
+      "path": "docs/delivery/v2-development/director-mounted-target-postgres-cleanup.json",
+      "bytes": 1620,
+      "sha256": "491fb3c1dd87f76765aff4027eb0266f26a5449a401e792fb0b2e39f07e4e996"
+    },
+    {
+      "blob": "13349a7b82396790ef127f26080de972d8529131",
+      "path": "docs/delivery/v2-development/director-mounted-target-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "ad37730ac75293f13adcad06437897dd9fec1502c4929b52b07b145b5a3ced51"
+    },
+    {
+      "blob": "e4a8818ac44881e94ccb9da0f71bd38f2e2df48d",
+      "path": "docs/delivery/v2-development/director-mounted-target-postgres.json",
+      "bytes": 742266,
+      "sha256": "25d3b1f37cf7cb55cf1d87205f6b2b10efa06e49195f3600dccece4001682b53"
+    },
+    {
+      "blob": "ae9a06c8e9dd7c9cc3093859fec16c30f587f215",
+      "path": "docs/delivery/v2-development/director-mounted-target-postgres.log",
+      "bytes": 1110,
+      "sha256": "93de637c49b5af66ecf47b0667b6de8a773806e9de3b969e0d1e9e3f5bf4eb3d"
+    },
+    {
+      "blob": "8f377d91f3bc8d639b979fbf728be3250e4fd6f6",
+      "path": "docs/delivery/v2-development/mounted-director-ora-committed-source-verification.json",
+      "bytes": 177,
+      "sha256": "00b85722035cd32f9761ede9e5306211212d3f050ac3ad72934fccdde73bc59e"
+    },
+    {
+      "blob": "d749787ea46551985d77db087fcde0750dea9780",
+      "path": "docs/delivery/v2-development/mounted-director-ora-integration-20261018.md",
+      "bytes": 3612,
+      "sha256": "9d5bf3bb092e3c2ab30a0a634fefbc1761854350e13ffc2b3aff1bbb3bd766b5"
+    },
+    {
+      "blob": "63691344682fa4ab0226842727a41c49ddbf343d",
+      "path": "docs/delivery/v2-development/mounted-director-ora-integration-postgres-cleanup.json",
+      "bytes": 1601,
+      "sha256": "d53a893e11b2c0121a8b2655cf1e7cb34488f6224b45a712d44391e968768782"
+    },
+    {
+      "blob": "9b4a327f790bfde7c089cbb7063463b8bbec90d1",
+      "path": "docs/delivery/v2-development/mounted-director-ora-integration-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "a4935a6c6e9c3d1bb0f18a98c52c8ef254b8be246b21247677715a78d857dd17"
+    },
+    {
+      "blob": "e3adb4eb7ee6c4c4f77c811bfded7d2b8bffa3cd",
+      "path": "docs/delivery/v2-development/mounted-director-ora-integration-postgres.json",
+      "bytes": 742352,
+      "sha256": "59bb7bcad6754039457c2c415bc6cffcea876a80fa75083176f7130f85502154"
+    },
+    {
+      "blob": "739b837f2a34b2723d7737013f4b48c0a94d43d8",
+      "path": "docs/delivery/v2-development/mounted-director-ora-integration-postgres.log",
+      "bytes": 1106,
+      "sha256": "415b627d85a4450a722ae08253329d8a15c96330c37800fd49779ae96e382581"
+    },
+    {
+      "blob": "ed1130ba43f018a734dec78019ac7cce46df2959",
+      "path": "docs/delivery/v2-development/mounted-director-ora-integration-public.json",
+      "bytes": 742608,
+      "sha256": "5fcf632fd8b68ca8bac9d693eb8b7590fcab09d2aa151044a9d8c5fe36fb707c"
+    },
+    {
+      "blob": "dbcc84c0026f8d747476b113ecad2f897e0a1574",
+      "path": "docs/delivery/v2-development/mounted-director-ora-integration-public.log",
+      "bytes": 634,
+      "sha256": "66528a53f5ae974e5194c43fd15725ca53e24bf36bad8a6f7c623868ec099629"
+    },
+    {
+      "blob": "739de87776b2c6e8350b44c1364ff67e89b36095",
+      "path": "docs/delivery/v2-development/ora-review-integration-file.json",
+      "bytes": 742345,
+      "sha256": "f7a69adaec4bba9518a5b49df4db670e1573ce0a71b734a89eb19ef34dd6300c"
+    },
+    {
+      "blob": "ebc7cd366b4925b28083dd557c5dbe6e901dfb36",
+      "path": "docs/delivery/v2-development/ora-review-integration-file.log",
+      "bytes": 648,
+      "sha256": "dfe09636d870336e8c33f87e83c35a15900a7b4097e4e420494cec0754f98df1"
+    },
+    {
+      "blob": "606ff71fa10a218984d8e58a46c182ef6b06e5b1",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_director_mounted_postgres.py",
+      "bytes": 1555,
+      "sha256": "ef0e693b0f76db92b08662f3f2603140e4344518835259d83eb94a0cb439927b"
+    },
+    {
+      "blob": "cfc82943210196aae4840bb6f46d92ed5fd4aa8e",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_director_target_postgres.py",
+      "bytes": 1621,
+      "sha256": "ee9a7afc69ceafd440bcb24b4555131a5a56079b6cd593c0503ef3e4aa5343b0"
+    },
+    {
+      "blob": "1c23808d4c7dac86d6bb18f5885b486489720bc1",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_mounted_director_ora_postgres.py",
+      "bytes": 1603,
+      "sha256": "0381af5e51d6d16ca4c4bf07421b35ee16434fb9ddbbfd1401c1d370e0f291e8"
+    },
+    {
+      "blob": "e770e4e74ef8c326d8ce40583adb7e737b030454",
+      "path": "docs/development/director_image_mounted_v3.md",
+      "bytes": 2404,
+      "sha256": "37aff0ee55990143d83f2e16c4761f729afcfa374663979384e3307a5ea75c1c"
+    },
+    {
+      "blob": "aea29982fd4446d8baa78c354f3f9042d2c2b914",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 778370,
+      "sha256": "1558091fba567837cb5a0e86f63111b7ea64ae0c4034336b0ed93f4fd60e7d93"
+    },
+    {
+      "blob": "8653d583888d848d01e220be119fb5b2024bc2b4",
+      "path": "packaging/public-build.json",
+      "bytes": 25805,
+      "sha256": "44db443ec65818db6fde84bc1a4b6c02bc4d007f4f5f5c2d2722df253efcfc69"
+    },
+    {
+      "blob": "58b15f57c5e428cc33b483e62eede56647c9d393",
+      "path": "tests/test_comic_ora_review_attach.py",
+      "bytes": 14973,
+      "sha256": "77769627023656c83cdb70be06f840b9e82f36b4d3e4b60b4cfb8b136baa9cdc"
+    },
+    {
+      "blob": "deabf8cb6d5b438543075b5564fc9392a1bb978b",
+      "path": "tests/test_director_image_mounted_additive.py",
+      "bytes": 9907,
+      "sha256": "097d1dff97f6f3192d88e8d43dc9281031066ef35d7b862a88b5f1e916b80c5c"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
