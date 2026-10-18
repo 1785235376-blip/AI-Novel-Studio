@@ -1,3 +1,4 @@
+import { graphFailureGuidance } from './graphFailureGuidance';
 import { Badge, Button, StatusMessage } from '../ui/primitives';
 import { GRAPH_STATUS_LABELS } from './studioGraphLabels';
 import { GraphModelExecutionPanel } from './GraphModelExecutionPanel';
@@ -9,7 +10,7 @@ import type { StudioGraphRunController, StudioGraphRunPanelProps } from './useSt
 export function studioGraphRunView(controller: StudioGraphRunController, props: StudioGraphRunPanelProps) {
   const { client, graph, dirty, canMutate, canReview, modelExecutionEnabled = false } = props;
   const { preflight, reviewed, outputReviewed, runs, selected, error, notice, loading, uncertain, note,
-    creationUncertain, locked, modelLocked, canReadRuns, canSelectRun, terminal, current, inspect, listRuns, openRun, createRun,
+    creationUncertain, canLocateNode, locateNode, locked, modelLocked, canReadRuns, canSelectRun, terminal, current, inspect, listRuns, openRun, createRun,
     action, canAction, reviewPreflight, reviewOutput, changeNote, modelAction, mediaAction, modelUnavailable, readModel } = controller;
   return <section className="studio-graph-run" aria-label="创作图运行与审核">
     <h3>节点运行</h3><p>先核对保存图与节点范围。前置节点使用原工作流；模型和媒体节点分别预览、确认与执行。媒体 schema 3 核对原资产版本与内容，审核后才供下游采用。</p>
@@ -24,6 +25,7 @@ export function studioGraphRunView(controller: StudioGraphRunController, props: 
       {uncertain && <StatusMessage tone="warning">版本或回执不确定。请先重新读取运行，不会自动重复动作。</StatusMessage>}
       <Button disabled={!canReadRuns} onClick={() => void openRun(selected.id)}>重新读取当前运行</Button>
       <ul>{Object.entries(selected.node_states).map(([id, state]) => <li key={id}>{id} · {GRAPH_STATUS_LABELS[state.status] || state.status}{state.error && <span> · {state.error.code}</span>}
+        {(state.error || ['FAILED', 'SKIPPED', 'REJECTED'].includes(state.status)) && <div><p>{graphFailureGuidance(state.error?.code)}</p><Button disabled={!canLocateNode(id)} onClick={() => locateNode(id)}>检查节点 {id}</Button><p>仅选择当前保存图中的同版本节点，不执行或重试任务。</p></div>}
         {state.output?.reviewed_draft && <details><summary>此节点已批准的文字输出</summary><pre>{state.output.reviewed_draft.text}</pre>{state.output.reviewed_draft.direction && <p>{state.output.reviewed_draft.direction.note}</p>}<p>这是原人工审核节点的回执。媒体输入仍须核对对应私有文字档案与原任务，不能据此认定整张图已验收。</p></details>}
         <ProductionGraphOutputPreview output={state.output} />
       </li>)}</ul>

@@ -215,6 +215,16 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const isVerificationCurrent = () => verificationScope === reviewedVerificationFence.current.token
     && reviewedNavigation === selectedEpoch.current && reviewedSelection === reviewedSelectionEpoch.current && draftRef.current === draft && baseRef.current === base
     && connectionLive.current.current();
+  const nodeInspectorRef = useRef<HTMLElement>(null);
+  function locateRunNode(nodeId: string, graph: StudioGraphRecord): boolean {
+    if (connectionScope !== connectionFence.current.token || !isVerificationCurrent() || !active || denied || !current() || locked()
+      || externalDirty || executionDirty || blocked || timelineEditor.formDirty || imageSelectionFence.current?.()
+      || graph !== baseRef.current || !same(draftRef.current, graph.definition)
+      || !graph.definition.nodes.some(row => row.id === nodeId)) return false;
+    setSelected([nodeId]);
+    nodeInspectorRef.current?.focus();
+    return true;
+  }
   const reviewedDirectorHandoff: ReviewedDirectorCanvasHandoff = {
     scope: reviewedScope,
     verificationScope, isVerificationCurrent,
@@ -792,7 +802,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     discard, load, loadImageCatalog, change, applyAutoLayout, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
     setReplaceConfirmed, setCandidate, setDiscardConfirmed, setPendingNavigation, setKind, setAssetChoice,
     canvasAssetHandoff, reviewedDirectorHandoff, insertionScope, positionedInsertion, insertionExpired, invalidatePositionedInsertion, requestPositionedInsertion, cancelPositionedInsertion,
-    connectionScope, stageConnection, selectConnectionPort, setSourcePort, setTargetPort, setSelected, reportRunSelection, mediaSchemaConsent, setMediaSchemaConsent, upgradeMediaSchema, executionDirty, setExecutionDirty,
+    nodeInspectorRef, locateRunNode, connectionScope, stageConnection, selectConnectionPort, setSourcePort, setTargetPort, setSelected, reportRunSelection, mediaSchemaConsent, setMediaSchemaConsent, upgradeMediaSchema, executionDirty, setExecutionDirty,
     imageSchemaConfirmed, confirmImageSchema, upgradeImageSchema, updateImagePrompt, updateImageReference,
     updateMediaField, updateMediaParameter, clearUnsupportedMediaParameters, clearMediaTrimInputs, timelineEditor,
   };

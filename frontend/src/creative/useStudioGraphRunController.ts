@@ -9,6 +9,7 @@ import type { GraphMediaAction, GraphMediaActionEvidence } from './useStudioGrap
 export type StudioGraphRunPanelProps = {
   client: StudioGraphClient; graph?: StudioGraphRecord; targetNodeIds: string[]; dirty: boolean; busy: boolean;
   canMutate: boolean; canReview: boolean; modelExecutionEnabled?: boolean; mediaExecutionEnabled?: boolean;
+  onLocateNode?: (nodeId: string, graph: StudioGraphRecord) => boolean;
   requestedRunId?: string; onRunSelectionChange?: (runId?: string) => void;
   onDirtyChange?: (dirty: boolean) => void;
   isCurrent: () => boolean; read: <T>(work: () => Promise<T>, signal?: AbortSignal) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;
@@ -34,6 +35,12 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
   const alive = useRef(true), revoked = useRef(false), sequence = useRef(0), pending = useRef<Operation>();
   const latest = useRef(props); latest.current = props;
   const selectedRef = useRef(selected); selectedRef.current = selected;
+  const navigationValues = [props.client, props.graph, props.onLocateNode, props.busy, props.dirty, props.isCurrent, props.isCurrent(), selected];
+  const navigationFence = useRef({ values: navigationValues, token: {} });
+  if (navigationValues.some((value, index) => !Object.is(value, navigationFence.current.values[index]))) {
+    navigationFence.current = { values: navigationValues, token: {} };
+  }
+  const navigationScope = navigationFence.current.token;
   const preflightRef = useRef(preflight); preflightRef.current = preflight;
   const preflightConsentRef = useRef(preflightConsent); preflightConsentRef.current = preflightConsent;
   const outputConsentRef = useRef(outputConsent); outputConsentRef.current = outputConsent;
@@ -62,6 +69,8 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
       if (!replacesList && !replacesSelection) return;
       cancelRead(previous);
     }
+    // Retire captured navigation even when a read resolves in the same React batch.
+    navigationFence.current = { values: navigationFence.current.values, token: {} };
     const operation = { id: ++sequence.current, kind, client: latest.current.client, owner: ownerRef.current, controller: new AbortController() };
     pending.current = operation; setPendingKind(kind); return operation;
   }
@@ -331,6 +340,19 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
     } finally { finish(operation); }
   }
   function changeNote(value: string) { if (current() && (!pending.current || pending.current.kind === 'LIST') && !latest.current.busy && !latest.current.dirty) { noteRef.current = value.slice(0, 1000); setNote(noteRef.current); } }
+  // A saved run only locates nodes in its exact current graph; retained callbacks
+  // cannot silently target a newer selection, client or graph lifetime.
+  function canLocateNode(nodeId: string) {
+    const source = latest.current, run = selectedRef.current, graph = source.graph;
+    return navigationScope === navigationFence.current.token && !!source.onLocateNode && current() && !source.busy && !source.dirty && !pending.current
+      && !!graph && !!run && run === selected && !run.stale && run.graph_id === graph.id
+      && run.graph_version === graph.version && !!run.node_states[nodeId]
+      && graph.definition.nodes.some(node => node.id === nodeId);
+  }
+  function locateNode(nodeId: string) {
+    if (!canLocateNode(nodeId)) return;
+    latest.current.onLocateNode?.(nodeId, latest.current.graph!);
+  }
   const locked = props.busy || props.dirty || !!pendingKind && pendingKind !== 'LIST' || !current();
   const key = preflightKey(preflight), outputKey = reviewIdentity(selected);
   const reviewed = !!key && key === preflightConsent, outputReviewed = !!outputKey && outputKey === outputConsent;
@@ -341,7 +363,7 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
     canReadRuns: !!props.graph && !props.busy && !pendingKind && current(),
     canSelectRun: !!props.graph && !props.busy && (!pendingKind || ['LIST', 'OPEN', 'RESTORE'].includes(pendingKind)) && current(),
     loading: ['INSPECT', 'LIST', 'OPEN', 'RESTORE'].includes(pendingKind ?? ''), pendingKind,
-    terminal: terminalRun(selected), current, inspect, listRuns, openRun, createRun, action, canAction,
+    terminal: terminalRun(selected), canLocateNode, locateNode, current, inspect, listRuns, openRun, createRun, action, canAction,
     reviewPreflight, reviewOutput, changeNote, modelAction, mediaAction, modelUnavailable, readModel };
 }
 export type StudioGraphRunController = ReturnType<typeof useStudioGraphRunController>;

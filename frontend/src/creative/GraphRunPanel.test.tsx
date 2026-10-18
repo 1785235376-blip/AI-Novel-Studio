@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
-import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, renderHook, screen, waitFor, within } from '@testing-library/react';
 import type { ComponentProps } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ApiError } from '../api';
+import { useStudioGraphRunController } from './useStudioGraphRunController';
 import { GraphRunPanel } from './GraphRunPanel';
 import type { StudioGraphPreflight, StudioGraphRecord, StudioGraphRun } from './studioGraphTypes';
 
@@ -213,4 +214,63 @@ describe('late run and preflight response fences', () => {
     await act(async () => pending.resolve(reviewRun()));
     expect(screen.queryByRole('region', { name: '当前创作图运行' })).toBeNull(); expect(screen.queryByText('Current reviewed candidate')).toBeNull();
   });
+});
+
+describe('failed node inspection stays on the exact original graph', () => {
+  const failed = (fields: Partial<StudioGraphRun> = {}) => run({ status: 'FAILED', node_states: {
+    source: { status: 'FAILED', output: null, error: { code: 'CREATIVE_GRAPH_TEXT_REQUIRED' } },
+    draft: { status: 'SKIPPED', output: null, error: null },
+  }, ...fields });
+  it('offers truthful guidance and explicit selection without executing, creating or retrying', async () => {
+    const onLocateNode = vi.fn(() => true), { client, props } = setup({ onLocateNode });
+    client.getRun.mockResolvedValue(failed()); await selectRun();
+    expect(screen.getByText(/在节点检查器补充作者文本/)).toBeTruthy();
+    expect(screen.getByText(/结果未知时保留原请求身份/)).toBeTruthy();
+    click('检查节点 source'); expect(onLocateNode).toHaveBeenCalledWith('source', props.graph);
+    expect(client.action).not.toHaveBeenCalled(); expect(client.createRun).not.toHaveBeenCalled();
+    expect(client.dispatchModel).not.toHaveBeenCalled();
+  });
+  it.each([{ stale: true }, { graph_version: 3 }, { node_states: { missing: { status: 'FAILED' as const, error: null, output: null } } }])('never locates a stale or absent node: %j', async fields => {
+    const onLocateNode = vi.fn(() => true), { client } = setup({ onLocateNode });
+    client.getRun.mockResolvedValue(failed(fields)); await selectRun();
+    const control = screen.getAllByRole('button', { name: /^检查节点 / })[0] as HTMLButtonElement;
+    expect(control.disabled).toBe(true); fireEvent.click(control); expect(onLocateNode).not.toHaveBeenCalled();
+  });
+  it('blocks navigation during dirty inputs or pending reads and hides rows after authority loss', async () => {
+    let current = true;
+    const onLocateNode = vi.fn(() => true), { client, rerender } = setup({ onLocateNode, isCurrent: () => current });
+    client.getRun.mockResolvedValue(failed()); await selectRun();
+    rerender({ dirty: true }); expect(button('检查节点 source').disabled).toBe(true);
+    rerender({ dirty: false }); const pending = deferred<StudioGraphRun>(); client.getRun.mockReturnValue(pending.promise);
+    click('重新读取当前运行'); expect(screen.queryByRole('button', { name: '检查节点 source' })).toBeNull();
+    current = false; rerender({}); expect(screen.queryByRole('button', { name: '检查节点 source' })).toBeNull();
+    await act(async () => pending.resolve(failed())); expect(onLocateNode).not.toHaveBeenCalled();
+  });
+});
+
+it('retires retained location callbacks across same-version graph, callback and run ABA transitions', async () => {
+  const onLocateNode = vi.fn(() => true), { props, client, unmount } = setup({ onLocateNode }); unmount();
+  const value = run({ status: 'FAILED' }); client.getRun.mockResolvedValue(value);
+  const hook = renderHook(input => useStudioGraphRunController(input), { initialProps: props });
+  await act(() => hook.result.current.openRun(value.id));
+  const first = hook.result.current.locateNode;
+  hook.rerender({ ...props, graph: structuredClone(props.graph) });
+  act(() => first('source')); expect(onLocateNode).not.toHaveBeenCalled();
+  hook.rerender(props); act(() => first('source')); expect(onLocateNode).not.toHaveBeenCalled();
+  const second = hook.result.current.locateNode;
+  hook.rerender({ ...props, onLocateNode: vi.fn(() => true) }); hook.rerender(props);
+  act(() => second('source')); expect(onLocateNode).not.toHaveBeenCalled();
+  const third = hook.result.current.locateNode;
+  await act(() => hook.result.current.openRun(value.id));
+  act(() => third('source')); expect(onLocateNode).not.toHaveBeenCalled();
+  act(() => hook.result.current.locateNode('source')); expect(onLocateNode).toHaveBeenCalledOnce();
+});
+
+it('permanently retires navigation across a rendered authority loss and return', async () => {
+  let allowed = true;
+  const onLocateNode = vi.fn(() => true), { props, unmount } = setup({ onLocateNode, isCurrent: () => allowed }); unmount();
+  const hook = renderHook(input => useStudioGraphRunController(input), { initialProps: props });
+  await act(() => hook.result.current.openRun('run_one')); const locate = hook.result.current.locateNode;
+  allowed = false; hook.rerender(props); allowed = true; hook.rerender(props);
+  act(() => locate('source')); expect(onLocateNode).not.toHaveBeenCalled();
 });
