@@ -1,0 +1,102 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/creative/StudioGraphTrackAuthoring.additive.test.tsx (5 tests | 5 failed) 8ms
+   × stages an exact original audio track update without saving or execution 5ms
+     → 时间参数或尺寸需要是 0 至 624 的整数。
+   × preserves schema1 by omitting role and keeps video track gain zero 1ms
+     → 素材类型或摘要无效。
+   × does not unlock a locked track and refuses stale form handlers after source replacement 0ms
+     → 时间参数或尺寸需要是 0 至 624 的整数。
+   × offers track form through the original node panel and requires explicit addition 0ms
+     → 时间参数或尺寸需要是 0 至 624 的整数。
+   × switching clip and track forms requires reselecting the target and does not reuse clip gain 0ms
+     → 时间参数或尺寸需要是 0 至 624 的整数。
+ ✓ src/creative/StudioGraphTimelineOrder.additive.test.tsx (3 tests) 100ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  5 failed | 3 passed (8)
+   Start at  12:44:32
+   Duration  1.03s (transform 195ms, setup 32ms, collect 584ms, tests 108ms, environment 690ms, prepare 141ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/StudioGraphTrackAuthoring.additive.test.tsx > stages an exact original audio track update without saving or execution
+Error: 时间参数或尺寸需要是 0 至 624 的整数。
+ ❯ integer src/creative/studioTimelineTypes.ts:34:102
+     32| }
+     33| function integer(value: unknown, min: number, max: number): number {
+     34|   if (typeof value !== 'number' || !Number.isSafeInteger(value) || val…
+       |                                                                                                      ^
+     35|   return value;
+     36| }
+ ❯ src/creative/studioTimelineTypes.ts:100:19
+ ❯ src/creative/studioTimelineTypes.ts:77:31
+ ❯ Module.checkedTimeline src/creative/studioTimelineTypes.ts:66:29
+ ❯ setup src/creative/StudioGraphTrackAuthoring.additive.test.tsx:10:90
+ ❯ src/creative/StudioGraphTrackAuthoring.additive.test.tsx:13:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/creative/StudioGraphTrackAuthoring.additive.test.tsx > preserves schema1 by omitting role and keeps video track gain zero
+Error: 素材类型或摘要无效。
+ ❯ src/creative/studioTimelineTypes.ts:84:217
+
+ ❯ src/creative/studioTimelineTypes.ts:77:31
+ ❯ Module.checkedTimeline src/creative/studioTimelineTypes.ts:66:29
+ ❯ setup src/creative/StudioGraphTrackAuthoring.additive.test.tsx:10:90
+ ❯ src/creative/StudioGraphTrackAuthoring.additive.test.tsx:16:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/creative/StudioGraphTrackAuthoring.additive.test.tsx > does not unlock a locked track and refuses stale form handlers after source replacement
+Error: 时间参数或尺寸需要是 0 至 624 的整数。
+ ❯ integer src/creative/studioTimelineTypes.ts:34:102
+     32| }
+     33| function integer(value: unknown, min: number, max: number): number {
+     34|   if (typeof value !== 'number' || !Number.isSafeInteger(value) || val…
+       |                                                                                                      ^
+     35|   return value;
+     36| }
+ ❯ src/creative/studioTimelineTypes.ts:100:19
+ ❯ src/creative/studioTimelineTypes.ts:77:31
+ ❯ Module.checkedTimeline src/creative/studioTimelineTypes.ts:66:29
+ ❯ setup src/creative/StudioGraphTrackAuthoring.additive.test.tsx:10:90
+ ❯ src/creative/StudioGraphTrackAuthoring.additive.test.tsx:19:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/creative/StudioGraphTrackAuthoring.additive.test.tsx > offers track form through the original node panel and requires explicit addition
+Error: 时间参数或尺寸需要是 0 至 624 的整数。
+ ❯ integer src/creative/studioTimelineTypes.ts:34:102
+     32| }
+     33| function integer(value: unknown, min: number, max: number): number {
+     34|   if (typeof value !== 'number' || !Number.isSafeInteger(value) || val…
+       |                                                                                                      ^
+     35|   return value;
+     36| }
+ ❯ src/creative/studioTimelineTypes.ts:100:19
+ ❯ src/creative/studioTimelineTypes.ts:77:31
+ ❯ Module.checkedTimeline src/creative/studioTimelineTypes.ts:66:29
+ ❯ setup src/creative/StudioGraphTrackAuthoring.additive.test.tsx:10:90
+ ❯ src/creative/StudioGraphTrackAuthoring.additive.test.tsx:23:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/creative/StudioGraphTrackAuthoring.additive.test.tsx > switching clip and track forms requires reselecting the target and does not reuse clip gain
+Error: 时间参数或尺寸需要是 0 至 624 的整数。
+ ❯ integer src/creative/studioTimelineTypes.ts:34:102
+     32| }
+     33| function integer(value: unknown, min: number, max: number): number {
+     34|   if (typeof value !== 'number' || !Number.isSafeInteger(value) || val…
+       |                                                                                                      ^
+     35|   return value;
+     36| }
+ ❯ src/creative/studioTimelineTypes.ts:100:19
+ ❯ src/creative/studioTimelineTypes.ts:77:31
+ ❯ Module.checkedTimeline src/creative/studioTimelineTypes.ts:66:29
+ ❯ setup src/creative/StudioGraphTrackAuthoring.additive.test.tsx:10:90
+ ❯ src/creative/StudioGraphTrackAuthoring.additive.test.tsx:27:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+

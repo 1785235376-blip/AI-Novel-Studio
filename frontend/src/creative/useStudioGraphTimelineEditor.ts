@@ -7,10 +7,10 @@ import { checkedGraphTimelineEdits, checkedGraphTimelineParameters, graphTimelin
 import { checkedTimelineExportProfile, type TimelineExportPreset } from './studioTimelineExportTypes';
 import type { StudioTimelineRow } from './studioTimelineTypes';
 
-type Form = { owner: string; operation: 'clip.trim' | 'clip.move' | 'clip.split' | 'clip.duplicate' | 'clip.slip' | 'clip.update' | 'clip.remove';
-  clip_id: string; track_id: string; in_ms: string; out_ms: string; start_ms: string; at_ms: string; offset_ms: string;
+type Form = { owner: string; operation: 'clip.trim' | 'clip.move' | 'clip.split' | 'clip.duplicate' | 'clip.slip' | 'clip.update' | 'clip.remove' | 'track.update';
+  clip_id: string; track_id: string; role: string; source: string; in_ms: string; out_ms: string; start_ms: string; at_ms: string; offset_ms: string;
   speed_num: string; speed_den: string; opacity: string; gain_db: string; fade_in_ms: string; fade_out_ms: string; muted: boolean; include_audio: boolean; ripple: boolean };
-const empty = (): Form => ({ owner: '', operation: 'clip.trim', clip_id: '', track_id: '', in_ms: '0', out_ms: '1000', start_ms: '0', at_ms: '500', offset_ms: '0',
+const empty = (): Form => ({ owner: '', operation: 'clip.trim', clip_id: '', track_id: '', role: '', source: '', in_ms: '0', out_ms: '1000', start_ms: '0', at_ms: '500', offset_ms: '0',
   speed_num: '1', speed_den: '1', opacity: '1', gain_db: '0', fade_in_ms: '0', fade_out_ms: '0', muted: false, include_audio: false, ripple: false });
 type Props = { client: StudioGraphClient; node?: StudioGraphNode; editable: boolean; identity: string; isCurrent: () => boolean; isBusy: () => boolean;
   read: <T>(work: () => Promise<T>) => Promise<T>; update: (parameters: StudioGraphParameters) => void };
@@ -27,6 +27,8 @@ export function useStudioGraphTimelineEditor(props: Props) {
   const operations = props.node?.parameters.edit_operations || [], bindings = props.node?.parameters.source_bindings || [];
   const clips = bound?.timeline.tracks.flatMap(track => track.clips.map(clip => ({ clip, track }))) || [];
   const formDirty = !!form.owner;
+  const sourceKey = (node: StudioGraphNode) => JSON.stringify([props.identity, node.parameters.timeline_snapshot]);
+  const formMatches = (node: StudioGraphNode) => !form.owner || form.owner === node.id && form.source === sourceKey(node);
   useEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; pending.current?.abort(); }; }, []);
   useLayoutEffect(() => { epoch.current++; pending.current?.abort(); pending.current = undefined; setRows([]); setChoice(''); setLoading(false); setError(''); setForm(empty()); }, [props.client, props.identity]);
   async function loadRows() {
@@ -57,28 +59,45 @@ export function useStudioGraphTimelineEditor(props: Props) {
     const next = (node.parameters.source_bindings || []).filter(row => row.port !== port);
     update({ ...node.parameters, source_bindings: [...next, ...(clipId ? [{ port, clip_id: clipId }] : [])].sort((left, right) => left.port.localeCompare(right.port)) });
   }
+  const latestForm = useRef(form); latestForm.current = form;
+  function formCurrent() { return listCurrent() && latestForm.current === form; }
   function changeForm<K extends keyof Form>(key: K, value: Form[K]) {
-    const node = latest.current.node; if (!canEdit() || !node || node.definition_id !== 'timeline_export' || form.owner && form.owner !== node.id || key === 'owner') return;
-    setForm(row => ({ ...row, owner: node.id, [key]: value }));
+    const node = latest.current.node; if (!formCurrent() || !node || node.definition_id !== 'timeline_export' || !formMatches(node) || key === 'owner' || key === 'source') return;
+    if (key === 'operation' && (value === 'track.update' || form.operation === 'track.update')) {
+      setForm(row => ({ ...row, owner: node.id, source: sourceKey(node), operation: value as Form['operation'], clip_id: '', track_id: '', role: '', muted: false, gain_db: '0' }));
+    } else setForm(row => ({ ...row, owner: node.id, source: sourceKey(node), [key]: value }));
   }
   function selectClip(id: string) {
-    const node = latest.current.node, source = clips.find(row => row.clip.id === id); if (!canEdit() || !node || !source || form.owner && form.owner !== node.id) return;
+    const node = latest.current.node, source = clips.find(row => row.clip.id === id); if (!formCurrent() || !node || !source || !formMatches(node)) return;
     const clip = source.clip;
-    setForm(row => ({ ...row, owner: node.id, clip_id: id, track_id: source.track.id, in_ms: String(clip.in_ms), out_ms: String(clip.out_ms), start_ms: String(clip.start_ms),
+    setForm(row => ({ ...row, owner: node.id, source: sourceKey(node), clip_id: id, track_id: source.track.id, in_ms: String(clip.in_ms), out_ms: String(clip.out_ms), start_ms: String(clip.start_ms),
       at_ms: String(clip.start_ms + 500), speed_num: String(clip.speed_num ?? 1), speed_den: String(clip.speed_den ?? 1), opacity: String(clip.opacity ?? 1),
       gain_db: String(clip.gain_db ?? 0), muted: clip.muted === true, include_audio: clip.include_audio === true,
       fade_in_ms: String(clip.fade_in_ms ?? 0), fade_out_ms: String(clip.fade_out_ms ?? 0) }));
   }
+  function selectTrack(id: string) {
+    const node = latest.current.node, track = bound?.timeline.tracks.find(row => row.id === id);
+    if (!formCurrent() || !node || !track || !formMatches(node)) return;
+    setForm(row => ({ ...row, owner: node.id, source: sourceKey(node), track_id: id, role: track.role || (track.kind === 'VIDEO' ? 'PRIMARY' : 'DIALOGUE'), gain_db: String(track.gain_db), muted: track.muted }));
+  }
   function resetForm() { setForm(empty()); setError(''); }
   function clearForm() { if (!current() || latest.current.isBusy() || pending.current) return; resetForm(); }
   function append() {
-    const node = latest.current.node; if (!canEdit() || !node || node.id !== form.owner || !form.clip_id) return;
+    const node = latest.current.node; if (!formCurrent() || !node || node.id !== form.owner || !formMatches(node) || form.operation !== 'track.update' && !form.clip_id) return;
     try {
       const number = (key: keyof Form) => { const raw = form[key]; if (typeof raw !== 'string' || raw.trim() === '' || !Number.isFinite(Number(raw))) throw new Error('请填入准确的剪辑数值。'); return Number(raw); };
       let operation: GraphTimelineEdit;
       const op = form.operation, clip_id = form.clip_id;
       if (op === 'clip.update' && bound?.timeline.schema_version !== 2) throw new Error('速度、音量与淡入淡出需要先在原时间线编辑器明确升级为 schema2。');
-      if (op === 'clip.trim') operation = { op, clip_id, in_ms: number('in_ms'), out_ms: number('out_ms'), ripple: form.ripple };
+      if (op === 'track.update') {
+        const track = bound?.timeline.tracks.find(row => row.id === form.track_id);
+        if (!track || track.locked) throw new Error('请读取并选择未锁定的原轨道；锁定须先在原时间线中明确解除。');
+        const roles = track.kind === 'VIDEO' ? ['PRIMARY', 'OVERLAY'] : ['DIALOGUE', 'MUSIC', 'EFFECTS'];
+        if (bound?.timeline.schema_version === 2 && !roles.includes(form.role)) throw new Error('轨道用途与轨道类型不一致。');
+        operation = { op, track_id: track.id, changes: { muted: form.muted, gain_db: track.kind === 'AUDIO' ? number('gain_db') : 0,
+          ...(bound?.timeline.schema_version === 2 ? { role: form.role as 'PRIMARY' | 'OVERLAY' | 'DIALOGUE' | 'MUSIC' | 'EFFECTS' } : {}) } };
+      }
+      else if (op === 'clip.trim') operation = { op, clip_id, in_ms: number('in_ms'), out_ms: number('out_ms'), ripple: form.ripple };
       else if (op === 'clip.move' || op === 'clip.duplicate') operation = { op, clip_id, track_id: form.track_id, start_ms: number('start_ms'), ...(op === 'clip.duplicate' ? { new_clip_id: graphId('clip') } : {}) } as GraphTimelineEdit;
       else if (op === 'clip.split') operation = { op, clip_id, at_ms: number('at_ms'), new_clip_id: graphId('clip') };
       else if (op === 'clip.slip') operation = { op, clip_id, offset_ms: number('offset_ms') };
@@ -110,8 +129,8 @@ export function useStudioGraphTimelineEditor(props: Props) {
     const next = [...edits], [selected] = next.splice(index, 1); next.splice(destination, 0, selected);
     update({ ...node.parameters, edit_operations: next });
   }
-  return { rows, choice, chosen, bound, loading, error, form, formDirty, formOwnerMatches: !form.owner || form.owner === props.node?.id,
+  return { rows, choice, chosen, bound, loading, error, form, formDirty, formOwnerMatches: !form.owner || !!props.node && formMatches(props.node),
     clips, operations, bindings, canLoad: typeof props.client.graphTimelineList === 'function' && !loading && !props.isBusy() && props.isCurrent(),
-    choose, loadRows, bindChosen, setPreset, setProfileField, bindSource, changeForm, selectClip, clearForm, resetForm, append, removeOperation, moveOperation };
+    choose, loadRows, bindChosen, setPreset, setProfileField, bindSource, changeForm, selectClip, selectTrack, clearForm, resetForm, append, removeOperation, moveOperation };
 }
 export type StudioGraphTimelineEditorController = ReturnType<typeof useStudioGraphTimelineEditor>;
