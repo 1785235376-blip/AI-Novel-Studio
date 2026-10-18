@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "e9320bbce33c50d24ceac6dd843726f5dd87120e1e7c394ed9584b0a51d27c80",
+  "application_source_fingerprint_sha256": "2d07c66c89321fbce7b8fc4b3ac3cb9a7ef5fb3831459f977f356c3b937a1c7b",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -87,14 +87,15 @@
     "app/creative/director_workspace.py": "3630d0b366791ae625a8d9f5bd433a6c095bef5528dcd29d640a9393923d0391",
     "app/creative/director_workspace_api.py": "1791c6e8183b4478c3fc8ec54785a007442a3fa54275400bd9f26414d2c21b46",
     "app/creative/generation.py": "fd9b14806a91d86f410923bb7cd38ce9365ddeaaa9ced1fe1034bdf7017a9173",
-    "app/creative/graph.py": "2071dd83c2a1673a60eae6618ce04e07420277c5ee99096048543d4119278df0",
+    "app/creative/graph.py": "392dbec6603fec44c7d395f3bd33be0c448866bbdd080921978d9c9d3389f85d",
     "app/creative/graph_api.py": "8725d220b4ec889b4ebe16b90fbc721aed1a499c0a85d8cdb1d83f44a529c50e",
     "app/creative/graph_asset_inputs.py": "b98af4c3be45bf22eb8dcde285e47b8f74a585a482c3f9bded2d5330adef53a6",
-    "app/creative/graph_execution.py": "bb8c3edafb92e5f57a9a0078e4b99a1ce34ea604bcc1d02afcc03df0228af991",
+    "app/creative/graph_execution.py": "77a24a0533b8807a5ff2c753e652174e4e9536cf4071cc98db80d2d6b1d05804",
     "app/creative/graph_image_nodes.py": "85aec65641c179dcb9d17311e2720b2be88eac85b0887a01fd964f13d8940de1",
+    "app/creative/graph_local_reuse.py": "28d78f739bc4ae87807b926fd2532ea2b7e88485e18f5154f6f2ae77367c605b",
     "app/creative/graph_media_binding.py": "4608bd98219a7d1eebf0dbd4eb2191e9d6c62a9a194db2857d409998ee944689",
     "app/creative/graph_media_execution.py": "e8bacda6630543a658d7d2aa2668b6f9e706df38272dd21bdc4d40764a193fab",
-    "app/creative/graph_models.py": "a294844ac4fa3e2a2d5e3f0fab4a2ba3eb180a61a738fd691bf3a3bdd6b0363d",
+    "app/creative/graph_models.py": "4b41d5ddb28e99f5d4893b27ac63db379bc0cd782efc071265ba80daed4889d1",
     "app/creative/graph_planning_nodes.py": "1f12910cc7bd159361b96e8c39e6f25ee0141181a18ab92110083a97dd71ccf9",
     "app/creative/graph_timeline_execution.py": "902bee9fb0e9632d9131af8c196fb2eb5368c55fafd5cc26e7ec1200e084ac4f",
     "app/creative/graph_video_nodes.py": "67987609fbe5a7d07706021b23bf82bd14308ec73cf2098134817ee7f0d71acf",
@@ -561,7 +562,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "f1102b557799629aa028e955f6e5f3341351d7ad8c57b02e92bdf72e03c6b0e8",
+    "sha256": "bfb018e2e194a601fea0aa3f245807ef9332a423128fad3f65b6804101bcecf3",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -14901,7 +14902,8 @@
       "operation_id": "book_export_pdf_api_novels__nid__experimental_comic_layouts_books__rid__export_pdf_post",
       "owner_ref": "3735fe96c2fa238516b543a9dbcb7b3d548e2f0815316d64e82715ec53399e2f",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "64454107d04e3b81e34f03f051f0f1b48c5fca9dafa8ae1c3fb491c7d79efc9a",
       "schema_graph_sha256": "04e6a0b31e64bced3157da31e92e286c685e7a28245ecf883b3f8b00423a90fa"
@@ -14924,7 +14926,8 @@
       "operation_id": "book_pdf_preflight_api_novels__nid__experimental_comic_layouts_books__rid__pdf_publication_preflight_post",
       "owner_ref": "f6760c439a8f815d560c361789011effcb2916564d39f61e761ac52e3f37246e",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "51ab36c9020d9e2fd132cc6fe5abde4e9f5dc92d09e5266d53d72b75a88b94d8",
       "schema_graph_sha256": "cce7743ca628a06a15f4e8177107d700517cd5ac6b48f9af90002e65351596ed"
@@ -20029,7 +20032,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "62d5b8f99c46a37be5a9ac7949eb204196d0194e6b7cfd8c67e2e2b717cd399b",
-      "schema_graph_sha256": "c7be08e96cf9bb7e8bfded6d5555087ac493e247bede0d1d01a5edbbd9d1c370"
+      "schema_graph_sha256": "a36388d3148e10b6d43c879999956e5309fefda16a1168b67b8113b757bc82b3"
     },
     {
       "method": "POST",
@@ -22384,7 +22387,8 @@
       "operation_id": "book_export_pdf_api_v1_novels__nid__experimental_comic_layouts_books__rid__export_pdf_post",
       "owner_ref": "3735fe96c2fa238516b543a9dbcb7b3d548e2f0815316d64e82715ec53399e2f",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "aa80441353c2ff56687e6715f86a7bd624b1f49135e3f64a1af79f3bd4460397",
       "schema_graph_sha256": "04e6a0b31e64bced3157da31e92e286c685e7a28245ecf883b3f8b00423a90fa"
@@ -22407,7 +22411,8 @@
       "operation_id": "book_pdf_preflight_api_v1_novels__nid__experimental_comic_layouts_books__rid__pdf_publication_preflight_post",
       "owner_ref": "f6760c439a8f815d560c361789011effcb2916564d39f61e761ac52e3f37246e",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "4b1280c69a5ba616db9a2f0d076c226418c5f0265907e237e98a728a4b62bcf8",
       "schema_graph_sha256": "cce7743ca628a06a15f4e8177107d700517cd5ac6b48f9af90002e65351596ed"
@@ -27512,7 +27517,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "355951a172ca68a153112dd1faecf274bef77df8ec99335f2840fb7ee092e5cb",
-      "schema_graph_sha256": "c7be08e96cf9bb7e8bfded6d5555087ac493e247bede0d1d01a5edbbd9d1c370"
+      "schema_graph_sha256": "a36388d3148e10b6d43c879999956e5309fefda16a1168b67b8113b757bc82b3"
     },
     {
       "method": "POST",
