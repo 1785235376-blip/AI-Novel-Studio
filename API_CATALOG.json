@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "bc94b8833ed4f03b20d5566a9d9954b3c4ad8a179ee4625b00248fbe5fc24fa4",
+  "application_source_fingerprint_sha256": "0cffb6cd9b7da52c73b4474346ed440763361f215c61f21d95afdfba6e6dacd1",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -61,7 +61,7 @@
     "app/creative/bible_workspace.py": "7cc860a3b0be2575c2089771f7f49ac59fb798ebe1fea3ba4f7bbe82c8f198ce",
     "app/creative/camera_language.py": "66acb20f44aa8f7d82d808bdf1b8afe46401f4545efd2e281231b80f69fb1917",
     "app/creative/canvas_view_api.py": "aab57d8c1d3b114795daf82c5bae49cdc6b573697dc0867f6e9bf80d57d89c8c",
-    "app/creative/canvas_view_models.py": "5b3c1bb9db88137da710632e22770ae12913f58bb6b7f742a70782464e95d208",
+    "app/creative/canvas_view_models.py": "d211d3b2509b8c5db191c2fe28db056ac983660f853f703ceaded8f0f81b3d4e",
     "app/creative/canvas_views.py": "a0a91051d94052e109b80b061f7b402a383d6a7aeddf5dbf0235050d97709a9f",
     "app/creative/content_policy.py": "65e0b56b63673b200c612eaa3df21b033b7b673b5e6fbe1ecaac9c761a458bbd",
     "app/creative/director_binding.py": "7b260f6a9b74c492042e05c0ab5f37b6c0b81eb95f9a7949894e175a7d3d909c",
@@ -513,7 +513,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "016dfdc692b1195fe9559eb3a14408acc28adf6e288d39183522c6cff16a5de7",
+    "sha256": "c9d6089ea27ebfdb8174ce3ea46002ead8f4ae452f189a5d2c17aa8b1de8c15b",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -18699,7 +18699,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d145b2ce58ac998e2d7a3748f4cd1dad254db16554164d963dd4ba2c2a1eace1",
-      "schema_graph_sha256": "78ebed7e35c50d1708ce764be9bf4040d4bf66e91d809b94d99a5b1aa25b83b7"
+      "schema_graph_sha256": "70ad3dbde2ffc2a94d3018bac6f1a8cf8a87a3fd3b5483f0d0f1e89785763818"
     },
     {
       "method": "POST",
@@ -25692,7 +25692,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "9f1da9cf6e094e096846a1f55b12863b5c543128fe786bce6282400a44efd35a",
-      "schema_graph_sha256": "78ebed7e35c50d1708ce764be9bf4040d4bf66e91d809b94d99a5b1aa25b83b7"
+      "schema_graph_sha256": "70ad3dbde2ffc2a94d3018bac6f1a8cf8a87a3fd3b5483f0d0f1e89785763818"
     },
     {
       "method": "POST",
@@ -27878,7 +27878,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d8a9d3d65971c91f9a9bd8e32f2ac87c749d242330920cbf071374ca6dd193e9",
-      "schema_graph_sha256": "19d7fbaaaf0ad7e36723fce5cb29c3d56eea5f6ed8aef9b83f4ddb033517f4c6"
+      "schema_graph_sha256": "4800a092d6731186050bf4095c0823a38686c745028a9064ab4c80e145e1ee54"
     },
     {
       "method": "PUT",
@@ -28948,7 +28948,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "9004237ef6cbceb562a8b01a4c815fd7b7cdd338da00021c0e0e992ed467c064",
-      "schema_graph_sha256": "19d7fbaaaf0ad7e36723fce5cb29c3d56eea5f6ed8aef9b83f4ddb033517f4c6"
+      "schema_graph_sha256": "4800a092d6731186050bf4095c0823a38686c745028a9064ab4c80e145e1ee54"
     },
     {
       "method": "PUT",

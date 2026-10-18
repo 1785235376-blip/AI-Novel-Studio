@@ -18,3 +18,13 @@ export function translateCanvasCards(definition: CanvasDefinition, ids: readonly
   if (!x && !y) return definition;
   return { ...definition, cards: definition.cards.map(c => selected.has(c.id) ? { ...c, position: { x: c.position.x + x, y: c.position.y + y } } : c) };
 }
+
+/** Snap the grabbed anchor in world coordinates, keeping cohort offsets and existing bounds. */
+export function dragCanvasCards(definition: CanvasDefinition, ids: readonly string[], anchor: string, dx: number, dy: number): CanvasDefinition {
+  const step = definition.view_options?.snap_step, card = definition.cards.find(c => c.id === anchor);
+  if (!card || !ids.includes(anchor)) return definition;
+  if (!step) return translateCanvasCards(definition, ids, dx, dy);
+  return translateCanvasCards(definition, ids,
+    Math.round((card.position.x + dx) / step) * step - card.position.x,
+    Math.round((card.position.y + dy) / step) * step - card.position.y);
+}

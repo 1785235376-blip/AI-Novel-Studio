@@ -48,3 +48,11 @@ it('renders a collapsed group affordance instead of hidden cards and stages expl
 });
 it('moves a multi-selected cohort without reducing selection on completed drag', () => { const p = props(); p.definition.cards.push({ id: 'Other', position: { x: 200, y: 20 } }); render(<MediaCardViewport {...p} selection={['Card', 'Other']} />); down(screen.getByText('Card')); move(100, 60); up(); const changed = p.onChange.mock.calls[0][0]; expect(changed.cards.map((c: any) => c.position)).toEqual([{ x: 60, y: 50 }, { x: 250, y: 50 }]); fireEvent.click(screen.getByText('Card')); expect(p.onSelect).not.toHaveBeenCalled(); });
 it('reports modifier selection without editing the saved definition', () => { const p = props(); render(<MediaCardViewport {...p} />); fireEvent.click(screen.getByText('Card'), { shiftKey: true }); expect(p.onSelect).toHaveBeenCalledWith('Card', true); expect(p.onChange).not.toHaveBeenCalled(); });
+it('stages explicit grid options and snaps the drag at zoom without snapping pan', () => {
+ const p = props(); p.definition.view_options = { grid: true, snap_step: 16 }; render(<MediaCardViewport {...p} />);
+ expect(area().style.backgroundSize).toBe('32px 32px');
+ down(screen.getByText('Card')); move(24, 24); up(); expect(p.onChange.mock.calls[0][0].cards[0].position).toEqual({ x: 16, y: 32 });
+ down(area()); move(7, 11); up(); expect(p.onChange.mock.calls[1][0].viewport).toEqual({ x: 7, y: 11, zoom: 2 });
+ fireEvent.click(screen.getByLabelText('显示网格')); expect(p.onChange.mock.calls[2][0].view_options).toEqual({ grid: false, snap_step: 16 });
+ fireEvent.change(screen.getByLabelText('拖动吸附'), { target: { value: '24' } }); expect(p.onChange.mock.calls[3][0].view_options.snap_step).toBe(24);
+});

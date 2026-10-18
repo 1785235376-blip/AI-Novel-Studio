@@ -35,6 +35,17 @@ class CanvasDisplayGroup(Strict):
             raise ValueError('CREATIVE_CANVAS_GROUP_INVALID')
         return self
 
+class CanvasViewOptions(Strict):
+    grid: bool = Field(strict=True)
+    snap_step: Literal[8, 16, 24, 32] | None
+
+    @field_validator('snap_step', mode='before')
+    @classmethod
+    def exact_step(cls, value):
+        if value is not None and (type(value) is not int or value not in (8, 16, 24, 32)):
+            raise ValueError('CREATIVE_CANVAS_SNAP_INVALID')
+        return value
+
 class CanvasViewDefinition(Strict):
     schema_version: Literal[1] = 1
     title: str = Field(min_length=1,max_length=160)
@@ -42,10 +53,13 @@ class CanvasViewDefinition(Strict):
     viewport: Viewport = Field(default_factory=Viewport)
     groups: list[CanvasDisplayGroup] | None = Field(default=None, min_length=1, max_length=64, strict=True)
 
+    view_options: CanvasViewOptions | None = None
+
     @model_serializer(mode='wrap')
     def preserve_legacy_definition(self, handler):
         value = handler(self)
         if self.groups is None: value.pop('groups', None)
+        if self.view_options is None: value.pop('view_options', None)
         return value
 
     @model_validator(mode='before')
@@ -53,6 +67,8 @@ class CanvasViewDefinition(Strict):
     def absent_not_null(cls, value):
         if isinstance(value, dict) and 'groups' in value and value['groups'] is None:
             raise ValueError('CREATIVE_CANVAS_GROUP_INVALID')
+        if isinstance(value, dict) and 'view_options' in value and value['view_options'] is None:
+            raise ValueError('CREATIVE_CANVAS_OPTIONS_INVALID')
         return value
 
 

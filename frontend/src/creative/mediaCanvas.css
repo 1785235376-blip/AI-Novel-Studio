@@ -17,3 +17,5 @@
 
 .media-canvas__group{position:absolute;box-sizing:border-box;border:var(--border-default);border-radius:var(--radius-lg);pointer-events:none}
 .media-canvas__group>.ui-button{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:auto;background:var(--color-bg-surface)}
+
+.media-canvas__viewport--grid{background-image:linear-gradient(to right,var(--color-border-default) 1px,transparent 1px),linear-gradient(to bottom,var(--color-border-default) 1px,transparent 1px)}

@@ -1,4 +1,4 @@
-import { translateCanvasCards } from './mediaCanvasSelection';
+import { dragCanvasCards, translateCanvasCards } from './mediaCanvasSelection';
 import { canvasGroupFrames, replaceCanvasGroups } from './mediaCanvasGroups';
 import { MediaCanvasMiniMap } from './MediaCanvasMiniMap';
 import { useLayoutEffect, useRef, useState } from 'react';
@@ -54,7 +54,7 @@ export function MediaCardViewport(props: Props) {
     const x = event.clientX - g.start.x, y = event.clientY - g.start.y;
     if (!Number.isFinite(x) || !Number.isFinite(y) || !g.moved && Math.abs(x) + Math.abs(y) < 3) return;
     g.moved = true;
-    g.latest = g.card ? translateCanvasCards(g.source, g.cards, x / g.source.viewport.zoom, y / g.source.viewport.zoom)
+    g.latest = g.card ? dragCanvasCards(g.source, g.cards, g.card, x / g.source.viewport.zoom, y / g.source.viewport.zoom)
       : { ...g.source, viewport: { ...g.source.viewport, x: clampGraphPosition(g.source.viewport.x + x), y: clampGraphPosition(g.source.viewport.y + y) } };
     setPreview({ token, value: g.latest });
   }
@@ -64,7 +64,14 @@ export function MediaCardViewport(props: Props) {
     if (!cancel && g.moved && g.token === token && current()) { suppressClick.current = true; live.current.onChange(g.latest); if (g.card && !props.selection?.includes(g.card)) live.current.onSelect(g.card); }
     if (event.currentTarget.hasPointerCapture?.(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
   }
-  return <><div className="media-canvas__viewport" ref={root} aria-label="媒体卡片视口" tabIndex={0}
+  const options = definition.view_options ?? { grid: false, snap_step: null };
+  const gridSize = (options.snap_step ?? 16) * definition.viewport.zoom;
+  return <><div aria-label="画布网格设置">
+    <label><input type="checkbox" checked={options.grid} disabled={props.disabled} onChange={event => { if (current() && !gesture.current) props.onChange({ ...props.definition, view_options: { ...options, grid: event.target.checked } }); }} />显示网格</label>
+    <label>拖动吸附<select value={options.snap_step ?? ''} disabled={props.disabled} onChange={event => { if (!current() || gesture.current) return; const step = event.target.value === '' ? null : Number(event.target.value); if (step !== null && ![8, 16, 24, 32].includes(step)) return; props.onChange({ ...props.definition, view_options: { ...options, snap_step: step as typeof options.snap_step } }); }}>
+      <option value="">关闭</option>{([8, 16, 24, 32] as const).map(step => <option key={step} value={step}>{step} 世界单位</option>)}
+    </select></label>
+  </div><div className={`media-canvas__viewport${options.grid ? ' media-canvas__viewport--grid' : ''}`} style={options.grid ? { backgroundSize: `${gridSize}px ${gridSize}px`, backgroundPosition: `${definition.viewport.x}px ${definition.viewport.y}px` } : undefined} ref={root} aria-label="媒体卡片视口" tabIndex={0}
     onPointerDown={start} onPointerMove={move} onPointerUp={event => finish(event)} onPointerCancel={event => finish(event, true)} onLostPointerCapture={event => finish(event, true)}
     onKeyDown={event => {
       if (event.key === 'Escape') { gesture.current = undefined; setPreview(undefined); return; }
