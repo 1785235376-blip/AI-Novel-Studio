@@ -1,0 +1,223 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "fcf5bb628f362988fd715c8272310a1377b088b0",
+      "path": "API_CATALOG.json",
+      "bytes": 1501861,
+      "sha256": "e3a2e3599b406556568d08eb942ff60dca3ad07cf0e59d6212c596817614f384"
+    },
+    {
+      "blob": "f5f4a935d10934ee0536da82acd6ab5d0a2dd837",
+      "path": "API_CATALOG.md",
+      "bytes": 401446,
+      "sha256": "ce3a8ed6862d471ed3f2a45613512dcca4866d5854b11836c314113dabbc89bf"
+    },
+    {
+      "blob": "62ae3c1be2638846a658b4619548c218b8fa22d9",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 620504,
+      "sha256": "5d705d5b6cc296e5fc4473bd6739154368484fae5b7ec72b795e4135f0f56944"
+    },
+    {
+      "blob": "4f2f48790b0e054452c15deedfcb9b6578ab42d3",
+      "path": "app/experimental/comic_ora_import.py",
+      "bytes": 17772,
+      "sha256": "4599ce5a67ebbfd06a60d66d062ff4c83be6b5f09375c34e5e0841730926a18a"
+    },
+    {
+      "blob": "842264cc988c94e2b3266704bc2ebc684a3f5250",
+      "path": "docs/COMIC_ORA_PREVIEW_SLICE.md",
+      "bytes": 2932,
+      "sha256": "2e572d01d694b9047fd28998987901bf297383f00ff4b137e11f8384c090822a"
+    },
+    {
+      "blob": "3ab14426f89d6d382a01760cb5aed15b3c4278d5",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 33074,
+      "sha256": "782e6d0815d6ecfe539e055dcbb233721b2598b46795eb3b0339ce4c18a8f8db"
+    },
+    {
+      "blob": "9c5b2ea9179c496dec2e2b8ef4b6156f282d58f6",
+      "path": "docs/delivery/v2-development/comic-ora-parser-final.json",
+      "bytes": 734010,
+      "sha256": "f45ad3834f9ebee0e741b7628e16e1b2ab53b01265cdb2061e9ba884a981f270"
+    },
+    {
+      "blob": "ecc9bfd83b3f2f945d9bfe784c4129186f1f21c5",
+      "path": "docs/delivery/v2-development/comic-ora-parser-final.log",
+      "bytes": 1014,
+      "sha256": "90d212cc317e69178b703131aa6db9271ae5bcc877320179d7e4169c1b0ff492"
+    },
+    {
+      "blob": "004b20464a4af82da8b1aaeccbe4e07cb9f6f946",
+      "path": "docs/delivery/v2-development/comic-ora-parser-first.json",
+      "bytes": 734010,
+      "sha256": "c407096150407e7b1fdd6cc3dd06218ca736b39580ea133f1a36d348ef17b51e"
+    },
+    {
+      "blob": "bf9ef441f0957abe651f4b4fe17605a1a7900733",
+      "path": "docs/delivery/v2-development/comic-ora-parser-first.log",
+      "bytes": 934,
+      "sha256": "8615469e6362806085f863097387250b8c4b581a3f15f9234a7c816df3a7a2ce"
+    },
+    {
+      "blob": "559ee19c82f90ef547a39e78cf2c5cbbaafed2e3",
+      "path": "docs/delivery/v2-development/comic-ora-parser-frozen.json",
+      "bytes": 734020,
+      "sha256": "6f6169d4e927382de5f39903cf74855e11d0c0326ad068caa0b12f09f9583da3"
+    },
+    {
+      "blob": "cfea52d4c1710604f39bd051e8109984237bc91b",
+      "path": "docs/delivery/v2-development/comic-ora-parser-frozen.log",
+      "bytes": 1014,
+      "sha256": "a57629adc9579778398ca5de0c8c6bf8f6d988ff30e1f95060c0e9289fb728d4"
+    },
+    {
+      "blob": "8d843531dbb8711f90876e47b794f78191f305d1",
+      "path": "docs/delivery/v2-development/navigation-ora-committed-source-verification.json",
+      "bytes": 171,
+      "sha256": "c46d1b84553477687938a4deec9f178022815be6e17fc9b5bbbd08bd3b858d94"
+    },
+    {
+      "blob": "e335fdf64f2957784dabc8c9283254be2f24196e",
+      "path": "docs/delivery/v2-development/navigation-ora-integration-public.json",
+      "bytes": 736682,
+      "sha256": "08539847c63062aa7a81ff24426582520c8fff17072f8e3ad76e0f77d2e27861"
+    },
+    {
+      "blob": "7a67f3db642c18bc63fd5dac5b20efa523c73660",
+      "path": "docs/delivery/v2-development/navigation-ora-preview-integration-20261018.md",
+      "bytes": 3607,
+      "sha256": "658ccd1d2985b99d9912588d9922bec6422f385be8fbe05c10a368b1c3ba015e"
+    },
+    {
+      "blob": "fb8fae39d374623424037270eadb4af6946fbf1f",
+      "path": "docs/delivery/v2-development/ora-preview-integration-file.json",
+      "bytes": 736443,
+      "sha256": "d9d6dbdc75138c76762b9581b55409c22d115f7668e5149b83b918ecc8e2a551"
+    },
+    {
+      "blob": "013f362ede9e5f6b81417f945879f088e54460ce",
+      "path": "docs/delivery/v2-development/ora-preview-integration-file.log",
+      "bytes": 1015,
+      "sha256": "3f11b218525323fdc16e3e9f53034aec31309bbe72732a3c80c316fc0d1bbe01"
+    },
+    {
+      "blob": "bb6c5747accdccbbaecb719ec1ef4d632ee370b3",
+      "path": "docs/delivery/v2-development/style-composition-final.log",
+      "bytes": 218662,
+      "sha256": "556fbc4286b91f0baefe6100808cfd4c96053efc8474ee65c482f9b692f18363"
+    },
+    {
+      "blob": "837accd9ff445aa3eb83d064cc5bb6dc81c1deec",
+      "path": "docs/delivery/v2-development/style-composition-tests.log",
+      "bytes": 1214,
+      "sha256": "5ac756a522b22b17a77261135a4885fcf800af7d5ed3b010b2178a4661b35194"
+    },
+    {
+      "blob": "bf3f672cfc07d59365da935d8e540cc8ff386909",
+      "path": "docs/delivery/v2-development/style-navigation-integration-ui.json",
+      "bytes": 736178,
+      "sha256": "0ddad36f80d4dc356ab2cd5c5b43a9922192b09552c4a8d4946debcd39cdf8e1"
+    },
+    {
+      "blob": "0f8f10782ef51b01a94a10056c94a9e074049080",
+      "path": "docs/delivery/v2-development/style-navigation-integration-ui.log",
+      "bytes": 3280,
+      "sha256": "d5f7430882d4eae38b1dd371a1e5e6b779c3d6e21bcdaa118b7fc9ad8c067c03"
+    },
+    {
+      "blob": "cb32578ae84c9ec6c0236e027e3b457ecb2ba86e",
+      "path": "docs/delivery/v2-development/style-navigation-original-regressions.json",
+      "bytes": 736252,
+      "sha256": "6ee14d04b7709de2d76966250dba645f8316cabe3166fe356013ea9bf1467722"
+    },
+    {
+      "blob": "e78ffd17f6178aa7610493e53db0870641e7f51d",
+      "path": "docs/delivery/v2-development/style-navigation-original-regressions.log",
+      "bytes": 4750,
+      "sha256": "410dbdb7be5466efe0c00dc7ff41aeed4171d97f736731011e8adbf89c1ed96a"
+    },
+    {
+      "blob": "dcdcaf75f27b289f6ad6519058f78ffd3f147470",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 775111,
+      "sha256": "e972c25ac3360b0a1e97e1fccf8d786116628a43c12990a136db0afe8abd6896"
+    },
+    {
+      "blob": "f710a1477f1727c05ad71809de7cdffa65ec2ca5",
+      "path": "frontend/src/App.tsx",
+      "bytes": 165850,
+      "sha256": "5003a125a6778a5661bccaf9152845acca8a92954d1d3d002ab756f7464b5ced"
+    },
+    {
+      "blob": "71da2eeed87c7c0053e7946dc931faeefea2cd0f",
+      "path": "frontend/src/AppStyleDNANavigation.test.tsx",
+      "bytes": 17649,
+      "sha256": "d6207a1a20d5cfa399e49e0b196f76bac2da746f7c4f98ed278e9ff7370fce65"
+    },
+    {
+      "blob": "68b4f416b4b96f56875a214faf75b6241078a9cf",
+      "path": "frontend/src/creative/CreativeWorkspace.tsx",
+      "bytes": 44755,
+      "sha256": "c0881b2e33f50c4b09ae1a673e5ef1db22c958d0e383059dd05561d08fb91d05"
+    },
+    {
+      "blob": "f25babd3c3a057bea7413f618f01926597d07124",
+      "path": "frontend/src/experimental/ExperimentalWorkbench.styleNavigation.test.tsx",
+      "bytes": 3760,
+      "sha256": "6bf9f56e37f16ef805126c5cf6bee0027e2928b96077780c54b0b4cdda546c24"
+    },
+    {
+      "blob": "3ec7421d4b7842947a3aba21cdeaeacf29c5cc60",
+      "path": "frontend/src/experimental/ExperimentalWorkbench.tsx",
+      "bytes": 16352,
+      "sha256": "edfa3f8f52eff85ef51830bd7a1b8cb03184a387db5a1dea45726c29aa398f5a"
+    },
+    {
+      "blob": "0a5cc4610b25faac788d7268dc7eda458426dfcd",
+      "path": "frontend/src/experimental/StyleAnalysisPanel.tsx",
+      "bytes": 26704,
+      "sha256": "f0bf7664b44c6dd98c3d757e631f2e14aeec3ebd53106fbf3d0c0902a6af3b52"
+    },
+    {
+      "blob": "9e3947823e3459922d252d308b44674564ab8fba",
+      "path": "frontend/src/experimental/StyleDNAEditor.tsx",
+      "bytes": 14939,
+      "sha256": "138ce7f81d7e5651e6d4827247e8df4a650e790d0e1e2dd6e6132cd91649c3f7"
+    },
+    {
+      "blob": "12b5a595366cefa5a1b26fc44f365cfedd024efc",
+      "path": "frontend/src/experimental/StyleDNALeaveGuard.test.tsx",
+      "bytes": 5982,
+      "sha256": "796cf08128f5af7da784fe820f8771e21962c8914d07dcab29426e141b759ac1"
+    },
+    {
+      "blob": "c5bc3e30210f5a1f769990e78e107575abc723d0",
+      "path": "frontend/src/experimental/useStyleDNALeaveGuard.tsx",
+      "bytes": 6369,
+      "sha256": "afc7c4abe94f15d3450acb2372c45ecfb7b24043ccdca4f82bb7949311ae1d5f"
+    },
+    {
+      "blob": "e761c762983203773f7b4eee6cf4607715db28c9",
+      "path": "packaging/public-build.json",
+      "bytes": 25251,
+      "sha256": "83fefa49f20e52f70e4262597d77487e17c05ffbf88475cd4b35730836fec306"
+    },
+    {
+      "blob": "73d6c9c5873c4c27b7d6928de472de87029c120c",
+      "path": "tests/test_comic_ora_import.py",
+      "bytes": 12379,
+      "sha256": "09657e6887f7dd7363669f45fb1809dfe25037848ce5c389099519dffabe88d8"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
