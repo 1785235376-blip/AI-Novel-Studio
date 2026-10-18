@@ -1,0 +1,6 @@
+{
+  "app/experimental/comic_collections.py": "67fcb97bb296e4423d18f79af8e46b5d12e2a0cb3ae2d3bdffa1dccbff21591f",
+  "app/experimental/comic_layouts.py": "251f7b8b4f4d6ce64f7404a056727153831c20dd9d6e5455ca386685166a3e05",
+  "app/experimental/comic_layouts_api.py": "ef83632fc0df3adc058301d82abcbbbc773e46b8e941690930dfc4d2cd521ca3",
+  "tests/test_comic_collections.py": "0059d6476156fe7974adfde87c5a43b166b8a313ef27507f856fe66037f2e47e"
+}

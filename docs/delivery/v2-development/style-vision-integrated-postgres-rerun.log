@@ -1,0 +1,41 @@
+..........................................F................              [100%]
+=================================== FAILURES ===================================
+_____________ test_missing_owner_never_provisions_marker[postgres] _____________
+
+rig = namespace(nid='v2-independent-1215e4191da645cfbbbb0e1117c66243', scope={'mode': 'local', 'novel_id': 'v2-independent-1...IdentityRepository object at 0x7f3462d49880>), create_project=<function rig.<locals>.create_project at 0x7f3462d88f40>)
+
+    def test_missing_owner_never_provisions_marker(rig):
+        asset = import_asset(rig)
+        marker = rig.root / 'novels' / rig.nid / 'creative_project_v2.json'
+>       marker.unlink()
+
+tests/test_director_image_foundation_additive.py:87: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/style-vision-integrated-postgr...ytest/test_missing_owner_never_provi0/novels/v2-independent-1215e4191da645cfbbbb0e1117c66243/creative_project_v2.json')
+missing_ok = False
+
+    def unlink(self, missing_ok=False):
+        """
+        Remove this file or link.
+        If the path is a directory, use rmdir() instead.
+        """
+        try:
+>           os.unlink(self)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/style-vision-integrated-postgres-rerun/pytest/test_missing_owner_never_provi0/novels/v2-independent-1215e4191da645cfbbbb0e1117c66243/creative_project_v2.json'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1342: FileNotFoundError
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_style_dna_hierarchy.py::test_persisted_original_owner_restart_hierarchy_and_no_target_mutation[postgres]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_director_image_foundation_additive.py::test_missing_owner_never_provisions_marker[postgres]
+1 failed, 58 passed, 76 deselected, 2 warnings in 23.22s
+{"exit_code": 1, "exact_row_hashes_equal": true}

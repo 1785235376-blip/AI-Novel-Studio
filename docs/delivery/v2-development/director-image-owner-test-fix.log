@@ -1,0 +1,8 @@
+.                                                                        [100%]
+=============================== warnings summary ===============================
+tests/test_director_image_foundation_additive.py::test_missing_owner_never_provisions_marker[file]
+  /workspace/scratch/20a0022d2b33/studio-director-vision-work/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1 passed, 54 deselected, 1 warning in 4.84s

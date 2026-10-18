@@ -1,0 +1,252 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/experimental/ComicCollectionTree.test.tsx (10 tests | 3 failed) 66427ms
+   × enforces chapter and page bounds locally and keeps all collection actions blocked by a dirty page 64659ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   × integrates aggregate dirty state and explicit page and structure discard before leaving an active collection 70ms
+     → undefined is not a function
+     → undefined is not a function
+   × integrates book-page completion with the existing page editor without self-invalidating its owner fence 1049ms
+     → Unable to find an element with the display value: 页面 created-3.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+  [36m<div />[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+  [36m<div />[39m
+[36m</body>[39m
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 2 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+ Test Files  1 failed (1)
+      Tests  3 failed | 7 passed (10)
+     Errors  2 errors
+   Start at  03:59:06
+   Duration  67.27s (transform 190ms, setup 16ms, collect 285ms, tests 66.43s, environment 296ms, prepare 59ms)
+
+stderr | src/experimental/ComicCollectionTree.test.tsx > integrates aggregate dirty state and explicit page and structure discard before leaving an active collection
+Error: Uncaught [TypeError: undefined is not a function]
+    at reportException (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at reportUncaughtErrorInDEV (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22877:5)
+    at captureCommitPhaseError (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27165:5) TypeError: undefined is not a function
+    at Array.forEach (<anonymous>)
+    at /workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:62:36
+    at safelyCallDestroy (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5)
+    at commitHookEffectListUnmount (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11)
+    at commitPassiveUnmountOnFiber (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25073:11)
+    at commitPassiveUnmountEffects_complete (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25046:7)
+    at commitPassiveUnmountEffects_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25035:7)
+    at commitPassiveUnmountEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3)
+    at flushPassiveEffectsImpl (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3)
+    at flushPassiveEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+The above error occurred in the <ComicLayoutsContent> component:
+
+    at ComicLayoutsContent (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:36:32)
+    at ComicLayoutsPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:27:30)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+Error: Uncaught [TypeError: undefined is not a function]
+    at reportException (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at reportUncaughtErrorInDEV (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22877:5)
+    at captureCommitPhaseError (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27165:5) TypeError: undefined is not a function
+    at Array.forEach (<anonymous>)
+    at /workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:62:36
+    at safelyCallDestroy (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5)
+    at commitHookEffectListUnmount (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11)
+    at commitPassiveUnmountInsideDeletedTreeOnFiber (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25140:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25087:5)
+    at commitPassiveUnmountEffects_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24995:11)
+    at commitPassiveUnmountEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3)
+    at flushPassiveEffectsImpl (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3)
+    at flushPassiveEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+The above error occurred in the <ComicLayoutsContent> component:
+
+    at ComicLayoutsContent (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:36:32)
+    at ComicLayoutsPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:27:30)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/experimental/ComicCollectionTree.test.tsx > integrates book-page completion with the existing page editor without self-invalidating its owner fence
+Error: Uncaught [TypeError: undefined is not a function]
+    at reportException (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at reportUncaughtErrorInDEV (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22877:5)
+    at captureCommitPhaseError (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27165:5) TypeError: undefined is not a function
+    at Array.forEach (<anonymous>)
+    at /workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:62:36
+    at safelyCallDestroy (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5)
+    at commitHookEffectListUnmount (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11)
+    at commitPassiveUnmountOnFiber (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25073:11)
+    at commitPassiveUnmountEffects_complete (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25046:7)
+    at commitPassiveUnmountEffects_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25035:7)
+    at commitPassiveUnmountEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3)
+    at flushPassiveEffectsImpl (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3)
+    at flushPassiveEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+The above error occurred in the <ComicLayoutsContent> component:
+
+    at ComicLayoutsContent (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:36:32)
+    at ComicLayoutsPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:27:30)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+Error: Uncaught [TypeError: undefined is not a function]
+    at reportException (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at reportUncaughtErrorInDEV (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22877:5)
+    at captureCommitPhaseError (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27165:5) TypeError: undefined is not a function
+    at Array.forEach (<anonymous>)
+    at /workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:62:36
+    at safelyCallDestroy (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5)
+    at commitHookEffectListUnmount (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11)
+    at commitPassiveUnmountInsideDeletedTreeOnFiber (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25140:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25087:5)
+    at commitPassiveUnmountEffects_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24995:11)
+    at commitPassiveUnmountEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3)
+    at flushPassiveEffectsImpl (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3)
+    at flushPassiveEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+The above error occurred in the <ComicLayoutsContent> component:
+
+    at ComicLayoutsContent (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:36:32)
+    at ComicLayoutsPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:27:30)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/experimental/ComicCollectionTree.test.tsx > enforces chapter and page bounds locally and keeps all collection actions blocked by a dirty page
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/experimental/ComicCollectionTree.test.tsx > integrates aggregate dirty state and explicit page and structure discard before leaving an active collection
+TypeError: undefined is not a function
+ ❯ src/experimental/ComicLayoutsPanel.tsx:62:36
+
+ ❯ safelyCallDestroy ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5
+ ❯ commitHookEffectListUnmount ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11
+ ❯ commitPassiveUnmountOnFiber ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25073:11
+ ❯ commitPassiveUnmountEffects_complete ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25046:7
+ ❯ commitPassiveUnmountEffects_begin ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25035:7
+ ❯ commitPassiveUnmountEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3
+ ❯ flushPassiveEffectsImpl ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3
+ ❯ flushPassiveEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/experimental/ComicCollectionTree.test.tsx > integrates aggregate dirty state and explicit page and structure discard before leaving an active collection
+TypeError: undefined is not a function
+ ❯ src/experimental/ComicLayoutsPanel.tsx:62:36
+
+ ❯ safelyCallDestroy ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5
+ ❯ commitHookEffectListUnmount ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11
+ ❯ commitPassiveUnmountInsideDeletedTreeOnFiber ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25140:11
+ ❯ commitPassiveUnmountEffectsInsideOfDeletedTree_begin ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25087:5
+ ❯ commitPassiveUnmountEffects_begin ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24995:11
+ ❯ commitPassiveUnmountEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3
+ ❯ flushPassiveEffectsImpl ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3
+ ❯ flushPassiveEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/experimental/ComicCollectionTree.test.tsx > integrates book-page completion with the existing page editor without self-invalidating its owner fence
+TestingLibraryElementError: Unable to find an element with the display value: 页面 created-3.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+  [36m<div />[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+  [36m<div />[39m
+[36m</body>[39m
+ ❯ waitForWrapper ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/experimental/ComicCollectionTree.test.tsx:151:16
+    149|   const h = harness(); const onBusy = vi.fn(); render(<ComicLayoutsPan…
+    150|   fireEvent.click(screen.getByRole('button', { name: '在章节 1 新建空…
+    151|   await screen.findByDisplayValue('页面 created-3');
+       |                ^
+    152|   expect(h.writes()).toHaveLength(1); expect(onBusy).toHaveBeenCalledW…
+    153| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+TypeError: undefined is not a function
+ ❯ src/experimental/ComicLayoutsPanel.tsx:62:36
+
+ ❯ safelyCallDestroy ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5
+ ❯ commitHookEffectListUnmount ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11
+ ❯ commitPassiveUnmountOnFiber ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25073:11
+ ❯ commitPassiveUnmountEffects_complete ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25046:7
+ ❯ commitPassiveUnmountEffects_begin ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25035:7
+ ❯ commitPassiveUnmountEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3
+ ❯ flushPassiveEffectsImpl ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3
+ ❯ flushPassiveEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14
+
+This error originated in "src/experimental/ComicCollectionTree.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "integrates book-page completion with the existing page editor without self-invalidating its owner fence". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+TypeError: undefined is not a function
+ ❯ src/experimental/ComicLayoutsPanel.tsx:62:36
+
+ ❯ safelyCallDestroy ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5
+ ❯ commitHookEffectListUnmount ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11
+ ❯ commitPassiveUnmountInsideDeletedTreeOnFiber ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25140:11
+ ❯ commitPassiveUnmountEffectsInsideOfDeletedTree_begin ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25087:5
+ ❯ commitPassiveUnmountEffects_begin ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24995:11
+ ❯ commitPassiveUnmountEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3
+ ❯ flushPassiveEffectsImpl ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3
+ ❯ flushPassiveEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14
+
+This error originated in "src/experimental/ComicCollectionTree.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "integrates book-page completion with the existing page editor without self-invalidating its owner fence". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+

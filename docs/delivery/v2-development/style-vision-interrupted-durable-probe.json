@@ -1,0 +1,48 @@
+{
+  "current_counts": {
+    "novels": 2,
+    "experimental_scope_documents": 1
+  },
+  "baseline_counts": {
+    "novels": 1,
+    "experimental_scope_documents": 1
+  },
+  "extra": {
+    "novels": [
+      {
+        "id": "32802152-0da5-4aef-a409-5ecce8d60a91",
+        "slug": "r3-mounted-dae7e39b0c9145149a893148c5f5e105",
+        "title": "Synthetic mounted R3",
+        "metadata": {
+          "genre": "",
+          "status": "Writing",
+          "story_routes": [
+            {
+              "id": "main-route",
+              "title": "Main route"
+            }
+          ],
+          "style_profile": {}
+        },
+        "created_at": "2026-10-18T19:03:38.439577+00:00",
+        "updated_at": "2026-10-18T19:03:38.468531+00:00",
+        "workspace_id": "w-e823dd4901354f4cb4a71a5a805d2364",
+        "chapter_identity_provenance": "ALLOCATED"
+      }
+    ],
+    "experimental_scope_documents": []
+  },
+  "missing": {
+    "novels": [],
+    "experimental_scope_documents": []
+  },
+  "row_sha256": {
+    "novels": [
+      "8c000d5fe12d276cb1157822f1a70ec234c7f498792619eca033a114553f6d62",
+      "1dfe7aa816262f32b0f6bd78569860c59f1a9a3231eb1f5a93ea31897c43ba7e"
+    ],
+    "experimental_scope_documents": [
+      "0bdf29f5104aa53f7c8c9c767fb13f9eded5973f7961d0ec9ecc5b052091c335"
+    ]
+  }
+}

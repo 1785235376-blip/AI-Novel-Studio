@@ -1,0 +1,100 @@
+FF..............................                                         [100%]
+=================================== FAILURES ===================================
+________ test_mounted_book_order_copy_remove_restore_reopen[file-/api] _________
+
+mounted = namespace(client=<starlette.testclient.TestClient object at 0x7f56a0d31760>, prefix='/api', base='/api/novels/r3-mount...odule 'app.main' from '/workspace/scratch/20a0022d2b33/studio-director-transport/app/main.py'>, comic_test_projects=[])
+
+    def test_mounted_book_order_copy_remove_restore_reopen(mounted):
+        e = mounted; service = e.experimental.comic_layouts_service
+        book = create_book(e); path = e.base + '/comic-layouts/books/' + book['id']
+        result = checked(e.client.post(path + '/pages', json={'expected_version': 1, 'chapter_id': 'one'}), 201)
+        page, book = result['page'], result['book']
+        body = {**blank(), 'panels': [panel()]}
+        page = service.save(e.nid, e.scope, 'local-author', body, rid=page['id'], expected_version=page['version'])
+        original = copy.deepcopy(service._row(e.nid, e.scope, 'local-author', page['id']))
+        result = checked(e.client.post(path + '/pages', json={'expected_version': book['version'], 'chapter_id': 'two',
+                    'source_layout_id': page['id'], 'expected_source_version': page['version']}), 201)
+        copied, book = result['page'], result['book']; copy_id = copied['id']
+        assert copied['id'] != page['id'] and copied['status'] == 'DRAFT' and copied['version'] == 1
+        a, b = page['document']['panels'][0], copied['document']['panels'][0]
+        assert a['id'] != b['id'] and a['bubbles'][0]['id'] != b['bubbles'][0]['id']
+        assert {k:v for k,v in a.items() if k not in ('id','bubbles')} == {k:v for k,v in b.items() if k not in ('id','bubbles')}
+        assert {k:v for k,v in a['bubbles'][0].items() if k != 'id'} == {k:v for k,v in b['bubbles'][0].items() if k != 'id'}
+        assert 'cover_x_percent' not in b
+        assert service._row(e.nid, e.scope, 'local-author', page['id']) == original
+        reordered = fields(book, {page['id']: page['version'], copy_id: 1})
+        reordered['chapters'].reverse()
+        reordered['chapters'][0]['pages'] = [copy_id, page['id']]; reordered['chapters'][1]['pages'] = []
+        book = checked(e.client.put(path, json=reordered)); keep_version = book['version']
+        removed = fields(book); removed['chapters'] = []
+        book = checked(e.client.put(path, json=removed))
+        assert len(service.records(e.nid, e.scope, 'local-author')['items']) == 2
+        restored = checked(e.client.post(path + '/restore', json={'expected_version': book['version'], 'target_version': keep_version}))
+        assert restored['chapters'] == reordered['chapters'] and restored['snapshot_scope'] == 'STRUCTURE_ONLY'
+        store = ExperimentalStore(e.root, e.backend, e.url)
+        reopened = ComicLayoutsService(store, e.novels, e.chapters, e.screenplays, e.assets, independent_store=CreativeProjectStore(store))
+        assert reopened.books(e.nid, e.scope, 'local-author')['items'] == [restored]
+        assert set(store.read(e.nid, e.scope)['collections']) == {'comic_layouts_v2', 'comic_page_collections_v1'}
+>       assert e.chapters.list(e.nid) == [] and e.screenplays.list(e.nid) == [] and e.assets.list(e.nid) == []
+E       AssertionError: assert ([{'content': ...: False, ...}] == []
+E         
+E         Left contains one more item: {'content': '# The gate\n\nAlice said: “Let us enter.”\nThe city gate opened.', 'document': {'content': [{'attrs': {'l...type': 'paragraph'}], 'type': 'doc'}, 'id': 'r3-mounted-0776a9f014bb4045af87ba555ab7b9b2:1', 'is_archived': False, ...}
+E         Use -v to get more diff)
+
+tests/test_comic_collections.py:60: AssertionError
+_______ test_mounted_book_order_copy_remove_restore_reopen[file-/api/v1] _______
+
+mounted = namespace(client=<starlette.testclient.TestClient object at 0x7f569f409760>, prefix='/api/v1', base='/api/v1/novels/r3...odule 'app.main' from '/workspace/scratch/20a0022d2b33/studio-director-transport/app/main.py'>, comic_test_projects=[])
+
+    def test_mounted_book_order_copy_remove_restore_reopen(mounted):
+        e = mounted; service = e.experimental.comic_layouts_service
+        book = create_book(e); path = e.base + '/comic-layouts/books/' + book['id']
+        result = checked(e.client.post(path + '/pages', json={'expected_version': 1, 'chapter_id': 'one'}), 201)
+        page, book = result['page'], result['book']
+        body = {**blank(), 'panels': [panel()]}
+        page = service.save(e.nid, e.scope, 'local-author', body, rid=page['id'], expected_version=page['version'])
+        original = copy.deepcopy(service._row(e.nid, e.scope, 'local-author', page['id']))
+        result = checked(e.client.post(path + '/pages', json={'expected_version': book['version'], 'chapter_id': 'two',
+                    'source_layout_id': page['id'], 'expected_source_version': page['version']}), 201)
+        copied, book = result['page'], result['book']; copy_id = copied['id']
+        assert copied['id'] != page['id'] and copied['status'] == 'DRAFT' and copied['version'] == 1
+        a, b = page['document']['panels'][0], copied['document']['panels'][0]
+        assert a['id'] != b['id'] and a['bubbles'][0]['id'] != b['bubbles'][0]['id']
+        assert {k:v for k,v in a.items() if k not in ('id','bubbles')} == {k:v for k,v in b.items() if k not in ('id','bubbles')}
+        assert {k:v for k,v in a['bubbles'][0].items() if k != 'id'} == {k:v for k,v in b['bubbles'][0].items() if k != 'id'}
+        assert 'cover_x_percent' not in b
+        assert service._row(e.nid, e.scope, 'local-author', page['id']) == original
+        reordered = fields(book, {page['id']: page['version'], copy_id: 1})
+        reordered['chapters'].reverse()
+        reordered['chapters'][0]['pages'] = [copy_id, page['id']]; reordered['chapters'][1]['pages'] = []
+        book = checked(e.client.put(path, json=reordered)); keep_version = book['version']
+        removed = fields(book); removed['chapters'] = []
+        book = checked(e.client.put(path, json=removed))
+        assert len(service.records(e.nid, e.scope, 'local-author')['items']) == 2
+        restored = checked(e.client.post(path + '/restore', json={'expected_version': book['version'], 'target_version': keep_version}))
+        assert restored['chapters'] == reordered['chapters'] and restored['snapshot_scope'] == 'STRUCTURE_ONLY'
+        store = ExperimentalStore(e.root, e.backend, e.url)
+        reopened = ComicLayoutsService(store, e.novels, e.chapters, e.screenplays, e.assets, independent_store=CreativeProjectStore(store))
+        assert reopened.books(e.nid, e.scope, 'local-author')['items'] == [restored]
+        assert set(store.read(e.nid, e.scope)['collections']) == {'comic_layouts_v2', 'comic_page_collections_v1'}
+>       assert e.chapters.list(e.nid) == [] and e.screenplays.list(e.nid) == [] and e.assets.list(e.nid) == []
+E       AssertionError: assert ([{'content': ...: False, ...}] == []
+E         
+E         Left contains one more item: {'content': '# The gate\n\nAlice said: “Let us enter.”\nThe city gate opened.', 'document': {'content': [{'attrs': {'l...type': 'paragraph'}], 'type': 'doc'}, 'id': 'r3-mounted-e8e40003976041ebb76ef48c058514d7:1', 'is_archived': False, ...}
+E         Use -v to get more diff)
+
+tests/test_comic_collections.py:60: AssertionError
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_comic_collections.py::test_mounted_book_order_copy_remove_restore_reopen[file-/api]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_comic_collections.py::test_mounted_book_order_copy_remove_restore_reopen[file-/api]
+FAILED tests/test_comic_collections.py::test_mounted_book_order_copy_remove_restore_reopen[file-/api/v1]
+2 failed, 30 passed, 24 deselected, 2 warnings in 9.45s

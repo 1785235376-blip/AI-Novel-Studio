@@ -1,0 +1,14 @@
+..........................ssss..........................ssssss.......... [ 90%]
+........                                                                 [100%]
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_comic_collections.py::test_mounted_book_order_copy_remove_restore_reopen[postgres-/api]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+70 passed, 10 skipped, 94 deselected, 2 warnings in 32.24s
+{"exit_code": 0, "exact_cleanup_equal": true, "before_counts": {"novels": 1, "experimental_scope_documents": 1}, "after_counts": {"novels": 1, "experimental_scope_documents": 1}}

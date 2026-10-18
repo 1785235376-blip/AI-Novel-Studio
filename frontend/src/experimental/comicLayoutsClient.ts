@@ -8,12 +8,21 @@ export type ComicAppearanceReference = { character_id: string; asset_id: string;
 export type ComicPanel = ComicRect & { id: string; shot_id: string | null; artwork_mode?: 'IMAGE' | 'BLANK'; order: number; character_ids: string[]; asset_id: string | null; expected_asset_version: number | null; fit: 'CONTAIN' | 'COVER'; cover_x_percent?: number; cover_y_percent?: number; bubbles: ComicBubble[]; image_brief?: string; appearance_references?: ComicAppearanceReference[] };
 export type ComicDocument = { title: string; source_mode?: 'SCREENPLAY' | 'INDEPENDENT'; screenplay_id: string | null; expected_screenplay_version: number | null; preset: 'PAGE' | 'WEBTOON'; font_family: 'NOTO_SANS_SC_OFL'; width: number; height: number; safe_area: number; segment_height: number; panels: ComicPanel[] };
 export type ComicRecord = { id: string; version: number; status: string; stale: boolean; document?: ComicDocument; history_versions?: number[]; scene_ids?: Record<string, string> };
+export type ComicChapter = { id: string; title: string; pages: string[] };
+export type ComicBookDocument = { title: string; chapters: ComicChapter[] };
+export type ComicBook = { id: string; version: number; stale: boolean; title?: string; chapters?: ComicChapter[]; history_versions?: number[] };
+export type ComicBookPageResult = { book: ComicBook; page: ComicRecord };
 export type ComicAsset = { id: string; filename: string; version: number; approved: boolean; manual_review_available: boolean };
 export type ComicCatalog = { screenplays: DirectorScreenplay[]; characters: { id: string; name: string }[]; assets: ComicAsset[]; presets: Record<'PAGE' | 'WEBTOON', { width: number; height: number; safe_area: number; segment_height: number }>; renderer: { available: boolean; code?: string }; font: { available: boolean; code?: string } };
 export type ComicPreflight = { issues: { code: string; target: string; severity: string }[]; segments: { index: number; width: number; height: number; y: number }[]; can_render: boolean; review_digest: string; version: number; status: string };
 const path = (row: ComicRecord) => `/comic-layouts/records/${encodeURIComponent(row.id)}`;
 export function comicLayoutsClient(client: ExperimentalClient) {
   return {
+    books: (signal?: AbortSignal) => client.get<{ items: ComicBook[] }>('/comic-layouts/books', signal),
+    createBook: (title: string) => client.post<ComicBook>('/comic-layouts/books', { title, chapters: [] }),
+    saveBook: (book: ComicBook, document: ComicBookDocument, expected_page_versions: Record<string, number>) => client.put<ComicBook>(`/comic-layouts/books/${encodeURIComponent(book.id)}`, { ...document, expected_version: book.version, expected_page_versions }),
+    createBookPage: (book: ComicBook, chapter_id: string, source?: ComicRecord) => client.post<ComicBookPageResult>(`/comic-layouts/books/${encodeURIComponent(book.id)}/pages`, { expected_version: book.version, chapter_id, ...(source ? { source_layout_id: source.id, expected_source_version: source.version } : {}) }),
+    restoreBook: (book: ComicBook, target_version: number) => client.post<ComicBook>(`/comic-layouts/books/${encodeURIComponent(book.id)}/restore`, { expected_version: book.version, target_version }),
     catalog: (signal?: AbortSignal) => client.get<ComicCatalog>('/comic-layouts/catalog', signal),
     records: (signal?: AbortSignal) => client.get<{ items: ComicRecord[] }>('/comic-layouts/records', signal),
     image: (id: string) => client.blob(`/comic-layouts/images/${encodeURIComponent(id)}`),

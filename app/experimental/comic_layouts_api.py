@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from pydantic import Field
 from .comic_layouts import LayoutIn, LayoutEdit
+from .comic_collections import ComicBookIn, ComicBookEdit, ComicBookPageIn
 from .media import StrictModel
 from .production_lineage_api import PrivateProductionRoute, api_call
 
@@ -49,6 +50,26 @@ def create_comic_layouts_router(service, authorize, require_flag):
         def guard():
             if access() != (actor, scope): raise HTTPException(403, {'code': 'COMIC_AUTHORITY_CHANGED'})
         result = api_call(callback, actor, scope, guard); guard(); return result
+
+    @router.get('/books')
+    def books(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid, x_session_token, x_branch_id, 'domain.read', lambda a,s,g: service.books(nid,s,a))
+
+    @router.post('/books', status_code=201)
+    def create_book(nid: str, body: ComicBookIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid, x_session_token, x_branch_id, 'domain.write', lambda a,s,g: service.save_book(nid,s,a,body,g))
+
+    @router.put('/books/{rid}')
+    def update_book(nid: str, rid: str, body: ComicBookEdit, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid, x_session_token, x_branch_id, 'domain.write', lambda a,s,g: service.save_book(nid,s,a,body.model_dump(exclude={'expected_version'}),g,rid,body.expected_version))
+
+    @router.post('/books/{rid}/pages', status_code=201)
+    def book_page(nid: str, rid: str, body: ComicBookPageIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid, x_session_token, x_branch_id, 'domain.write', lambda a,s,g: service.book_page(nid,s,a,rid,body,g))
+
+    @router.post('/books/{rid}/restore')
+    def restore_book(nid: str, rid: str, body: RestoreIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid, x_session_token, x_branch_id, 'domain.write', lambda a,s,g: service.restore_book(nid,s,a,rid,body.expected_version,body.target_version,g))
 
     @router.get('/catalog')
     def catalog(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

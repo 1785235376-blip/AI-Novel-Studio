@@ -13,6 +13,7 @@ import zipfile
 from contextlib import contextmanager, ExitStack, nullcontext
 from typing import Literal
 from pydantic import Field, model_serializer, model_validator
+from .comic_collections import ComicCollectionsMixin
 from .common import DomainService, StaleSourceError, check_version, now, new_row, change_row
 from .director import DirectorService
 from .media import StrictModel, digest
@@ -326,7 +327,7 @@ def compose(document, images, *, render=False):
     return result, output
 
 
-class ComicLayoutsService(DomainService):
+class ComicLayoutsService(ComicCollectionsMixin, DomainService):
     RECORDS = 'comic_layouts_v2'
 
     def __init__(self, store, novels, chapters, screenplays, assets, *, lineage=None, independent_store=None):

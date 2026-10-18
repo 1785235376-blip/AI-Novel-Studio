@@ -1,0 +1,333 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/experimental/ComicCollectionTree.test.tsx (11 tests | 1 failed) 2089ms
+   × creates blank and duplicate pages only from a saved structure and sends exact source version once 1046ms
+     → Unable to find role="button" and name "在章节 2 新建空白页"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33mclass[39m=[32m"ui-panel"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<h2>[39m
+          [0m漫画书 · 章节 · 页面[0m
+        [36m</h2>[39m
+      [36m</header>[39m
+      [36m<div>[39m
+        [36m<p>[39m
+          [0m手工组织独立漫画页。最多 20 本书，每本书最多 20 章、100 页；结构恢复只恢复章节与页面归属，不恢复页面内容。移除章节或页面不会删除已保存布局。同一页面可被多本书引用，编辑会影响所有引用它的书；复制页面会创建独立副本。[0m
+        [36m</p>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-status-message ui-status-message--success"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [0m已复制为新的待审页面，原页面保持不变。[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-actions"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m刷新漫画书[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r1k:"[39m
+          [36m>[39m
+            [0m新漫画书名称[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33mid[39m=[32m":r1k:"[39m
+            [33mmaxlength[39m=[32m"240"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m创建漫画书[0m
+        [36m</button>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"漫画书列表"[39m
+        [36m>[39m
+          [36m<ul>[39m
+            [36m<li>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ui-status-message ui-status-message--warning"[39m
+                [33mrole[39m=[32m"status"[39m
+              [36m>[39m
+                [0m漫画书来源或授权已变化，旧标题与结构已隐藏。[0m
+              [36m</div>[39m
+            [36m</li>[39m
+          [36m</ul>[39m
+        [36m</nav>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-status-message ui-status-message--warning"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [0m当前书版本已变化或不可用，旧结构已隐藏。若有本地修改，请明确放弃后重新打开当前版本。[0m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m漫画书 · 章节 · 页面[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div>[39m
+          [36m<p>[39m
+            [0m手工组织独立漫画页。最多 20 本书，每本书最多 20 章、100 页；结构恢复只恢复章节与页面归属，不恢复页面内容。移除章节或页面不会删除已保存布局。同一页面可被多本书引用，编辑会影响所有引用它的书；复制页面会创建独立副本。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-status-message ui-status-message--success"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0m已复制为新的待审页面，原页面保持不变。[0m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m刷新漫画书[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-field"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m":r1k:"[39m
+            [36m>[39m
+              [0m新漫画书名称[0m
+            [36m</label>[39m
+            [36m<input[39m
+              [33mid[39m=[32m":r1k:"[39m
+              [33mmaxlength[39m=[32m"240"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m创建漫画书[0m
+          [36m</button>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"漫画书列表"[39m
+          [36m>[39m
+            [36m<ul>[39m
+              [36m<li>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"ui-status-message ui-status-message--warning"[39m
+                  [33mrole[39m=[32m"status"[39m
+                [36m>[39m
+                  [0m漫画书来源或授权已变化，旧标题与结构已隐藏。[0m
+                [36m</div>[39m
+              [36m</li>[39m
+            [36m</ul>[39m
+          [36m</nav>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-status-message ui-status-message--warning"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0m当前书版本已变化或不可用，旧结构已隐藏。若有本地修改，请明确放弃后重新打开当前版本。[0m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  04:01:07
+   Duration  2.95s (transform 211ms, setup 21ms, collect 308ms, tests 2.09s, environment 274ms, prepare 63ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/experimental/ComicCollectionTree.test.tsx > creates blank and duplicate pages only from a saved structure and sends exact source version once
+TestingLibraryElementError: Unable to find role="button" and name "在章节 2 新建空白页"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33mclass[39m=[32m"ui-panel"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<h2>[39m
+          [0m漫画书 · 章节 · 页面[0m
+        [36m</h2>[39m
+      [36m</header>[39m
+      [36m<div>[39m
+        [36m<p>[39m
+          [0m手工组织独立漫画页。最多 20 本书，每本书最多 20 章、100 页；结构恢复只恢复章节与页面归属，不恢复页面内容。移除章节或页面不会删除已保存布局。同一页面可被多本书引用，编辑会影响所有引用它的书；复制页面会创建独立副本。[0m
+        [36m</p>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-status-message ui-status-message--success"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [0m已复制为新的待审页面，原页面保持不变。[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-actions"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m刷新漫画书[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r1k:"[39m
+          [36m>[39m
+            [0m新漫画书名称[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33mid[39m=[32m":r1k:"[39m
+            [33mmaxlength[39m=[32m"240"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m创建漫画书[0m
+        [36m</button>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"漫画书列表"[39m
+        [36m>[39m
+          [36m<ul>[39m
+            [36m<li>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ui-status-message ui-status-message--warning"[39m
+                [33mrole[39m=[32m"status"[39m
+              [36m>[39m
+                [0m漫画书来源或授权已变化，旧标题与结构已隐藏。[0m
+              [36m</div>[39m
+            [36m</li>[39m
+          [36m</ul>[39m
+        [36m</nav>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-status-message ui-status-message--warning"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [0m当前书版本已变化或不可用，旧结构已隐藏。若有本地修改，请明确放弃后重新打开当前版本。[0m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m漫画书 · 章节 · 页面[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div>[39m
+          [36m<p>[39m
+            [0m手工组织独立漫画页。最多 20 本书，每本书最多 20 章、100 页；结构恢复只恢复章节与页面归属，不恢复页面内容。移除章节或页面不会删除已保存布局。同一页面可被多本书引用，编辑会影响所有引用它的书；复制页面会创建独立副本。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-status-message ui-status-message--success"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0m已复制为新的待审页面，原页面保持不变。[0m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m刷新漫画书[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-field"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m":r1k:"[39m
+            [36m>[39m
+              [0m新漫画书名称[0m
+            [36m</label>[39m
+            [36m<input[39m
+              [33mid[39m=[32m":r1k:"[39m
+              [33mmaxlength[39m=[32m"240"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m创建漫画书[0m
+          [36m</button>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"漫画书列表"[39m
+          [36m>[39m
+            [36m<ul>[39m
+              [36m<li>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"ui-status-message ui-status-message--warning"[39m
+                  [33mrole[39m=[32m"status"[39m
+                [36m>[39m
+                  [0m漫画书来源或授权已变化，旧标题与结构已隐藏。[0m
+                [36m</div>[39m
+              [36m</li>[39m
+            [36m</ul>[39m
+          [36m</nav>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ui-status-message ui-status-message--warning"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0m当前书版本已变化或不可用，旧结构已隐藏。若有本地修改，请明确放弃后重新打开当前版本。[0m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/experimental/ComicCollectionTree.test.tsx:89:9
+     87|   expect(h.writes()).toHaveLength(1); expect(JSON.parse(String(h.write…
+     88|   expect(h.props.onPageCreated).toHaveBeenCalledTimes(1);
+     89|   await waitFor(() => expect((screen.getByRole('button', { name: '在章…
+       |         ^
+     90|   fireEvent.click(screen.getByRole('button', { name: '在章节 2 新建空…
+     91|   await screen.findByText(/已在章节中创建空白待审页面/);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

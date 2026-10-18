@@ -10,7 +10,8 @@ import re
 import uuid
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, model_serializer
+from ..style_dna_contract import StyleDNA
 
 from .common import DomainService, StaleSourceError, new_row, check_version, change_row, now
 from .planning import StrictModel, collection, require_row, digest, entity_sources
@@ -29,6 +30,14 @@ class StyleProfileIn(StrictModel):
     rules: list[str] = Field(default_factory=list, max_length=50)
     chapter_ids: list[str] = Field(default_factory=list, max_length=20)
     character_ids: list[str] = Field(default_factory=list, max_length=50)
+    style_dna: StyleDNA | None = None
+
+    @model_serializer(mode="wrap")
+    def omit_legacy_extension(self, handler):
+        value = handler(self)
+        if self.style_dna is None and "style_dna" not in self.model_fields_set:
+            value.pop("style_dna", None)
+        return value
 
 
 class StyleProfileEditIn(StyleProfileIn):
@@ -187,6 +196,12 @@ class StyleAnalysisService(SourceFencedService):
         self.creation = creation
         self.model_coordinator = None
 
+    def resolve_style(self, nid, scope, rid, value, reauthorize=lambda: None):
+        if self.creation.style_dna_service is None:
+            raise FileNotFoundError('style authority unavailable')
+        return self.creation.style_dna_service.resolve(nid, scope, rid,
+            value.model_dump() if hasattr(value, 'model_dump') else value, reauthorize)
+
     def profile(self, nid, scope, rid):
         row = self.creation.get_record(nid, scope, rid)
         if row["kind"] != "STYLE":
@@ -210,7 +225,7 @@ class StyleAnalysisService(SourceFencedService):
         reauthorize()
         self.capture(nid, scope, payload["chapter_ids"])
         entity_sources(self, nid, scope, {"character_ids": payload["character_ids"]})
-        return self.creation.save_record(nid, scope, actor, body, rid, getattr(data, "expected_version", None))
+        return self.creation.save_record(nid, scope, actor, body, rid, getattr(data, "expected_version", None), reauthorize=reauthorize)
 
     def transition(self, nid, scope, actor, rid, action, version, reauthorize=lambda: None):
         row = self.profile(nid, scope, rid)
@@ -219,7 +234,7 @@ class StyleAnalysisService(SourceFencedService):
         if action == "approve":
             self.capture(nid, scope, row["chapter_ids"], row["source_versions"])
         reauthorize()
-        return self.creation.transition_record(nid, scope, actor, rid, action, version)
+        return self.creation.transition_record(nid, scope, actor, rid, action, version, reauthorize=reauthorize)
 
     def _fresh(self, nid, scope, row):
         self.assert_capture(nid, scope, row["sources"])
@@ -297,6 +312,8 @@ class StyleAnalysisService(SourceFencedService):
     def analyze(self, nid, scope, actor, value, reauthorize=lambda: None):
         data = StyleAnalysisIn.model_validate(value.model_dump() if hasattr(value, "model_dump") else value)
         profile = self.profile(nid, scope, data.style_id)
+        if profile.get('style_dna'):
+            raise ValueError('STYLE_DNA_LEGACY_ANALYSIS_NOT_SUPPORTED')
         check_version(profile, data.expected_style_version)
         if profile["status"] == "ARCHIVED": raise ValueError("archived style cannot be analyzed")
         sample_ids = [s.chapter_id for s in data.samples]
@@ -353,6 +370,8 @@ class StyleAnalysisService(SourceFencedService):
     def preview(self, nid, scope, rid, value, reauthorize=lambda: None):
         data = StylePreviewIn.model_validate(value.model_dump() if hasattr(value, "model_dump") else value)
         profile = self.profile(nid, scope, rid)
+        if profile.get('style_dna'):
+            raise ValueError('STYLE_DNA_EXECUTION_ADOPTION_NOT_SUPPORTED')
         check_version(profile, data.expected_version)
         self.capture(nid, scope, profile["chapter_ids"], profile["source_versions"])
         if profile["character_ids"] and data.character_id not in profile["character_ids"]:

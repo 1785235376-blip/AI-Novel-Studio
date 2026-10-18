@@ -3710,7 +3710,8 @@ def _workbench_authority_lease(nid, token, actor_id, scope):
             leases.enter_context(repository.authority_lease(actor.workspace_id))
         yield
 
-router.include_router(create_workbench_router(creation_workbench_service, _workbench_authorize))
+router.include_router(create_workbench_router(creation_workbench_service, _workbench_authorize,
+    authority_lease=_workbench_authority_lease))
 
 from .finding_review_api import create_finding_review_router
 from .services.finding_review_service import FindingReviewService

@@ -1,0 +1,7 @@
+{
+  "pg_ctl_exit_code": 3,
+  "pg_ctl_stdout": "pg_ctl: no server running\n",
+  "pg_ctl_stderr": "",
+  "tcp_connect_ex": 111,
+  "pid_file_exists": false
+}

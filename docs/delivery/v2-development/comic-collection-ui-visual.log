@@ -1,0 +1,398 @@
+
+Running 15 tests using 1 worker
+
+  ✘   1 [chromium] › frontend/tests/visual/design-system.spec.ts:8:31 › novel workspace visual baseline (2ms)
+  ✘   2 [chromium] › frontend/tests/visual/design-system.spec.ts:8:31 › image workspace visual baseline (2ms)
+  ✘   3 [chromium] › frontend/tests/visual/design-system.spec.ts:8:31 › video workspace visual baseline (2ms)
+  ✘   4 [chromium] › frontend/tests/visual/design-system.spec.ts:14:124 › shell geometry 1024x768 (2ms)
+  ✘   5 [chromium] › frontend/tests/visual/design-system.spec.ts:14:124 › shell geometry 1366x768 (2ms)
+  ✘   6 [chromium] › frontend/tests/visual/design-system.spec.ts:14:124 › shell geometry 1440x900 (1ms)
+  ✘   7 [chromium] › frontend/tests/visual/design-system.spec.ts:14:124 › shell geometry 1920x1080 (2ms)
+  ✘   8 [chromium] › frontend/tests/visual/design-system.spec.ts:25:1 › compact desktop keeps the workspace within the viewport (2ms)
+  ✘   9 [chromium] › frontend/tests/visual/design-system.spec.ts:33:1 › production NOVEL route uses the frozen AppShell (1ms)
+  ✘  10 [chromium] › frontend/tests/visual/design-system.spec.ts:105:1 › production conflict compare and manual resolution visual (2ms)
+  ✘  11 [chromium] › frontend/tests/visual/design-system.spec.ts:113:1 › production revision detail restore preview and conflict visual (1ms)
+  ✘  12 [chromium] › frontend/tests/visual/local-ai-discovery.spec.ts:50:1 › Local AI requires each explicit lifecycle action before routing (1ms)
+  ✘  13 [chromium] › frontend/tests/visual/local-ai-discovery.spec.ts:78:3 › Local AI preserves shell and model geometry 1366x768 (2ms)
+  ✘  14 [chromium] › frontend/tests/visual/local-ai-discovery.spec.ts:78:3 › Local AI preserves shell and model geometry 1440x900 (1ms)
+  ✘  15 [chromium] › frontend/tests/visual/local-ai-discovery.spec.ts:78:3 › Local AI preserves shell and model geometry 1920x1080 (1ms)
+
+
+  1) [chromium] › frontend/tests/visual/design-system.spec.ts:8:31 › novel workspace visual baseline 
+
+    Error: browserType.launch: Executable doesn't exist at /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/comic-collection-ui-visual/xdg-cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: frontend/test-results/geometry/design-system-novel-workspace-visual-baseline-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    frontend/test-results/geometry/design-system-novel-workspace-visual-baseline-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace frontend/test-results/geometry/design-system-novel-workspace-visual-baseline-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › frontend/tests/visual/design-system.spec.ts:8:31 › image workspace visual baseline 
+
+    Error: browserType.launch: Executable doesn't exist at /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/comic-collection-ui-visual/xdg-cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: frontend/test-results/geometry/design-system-image-workspace-visual-baseline-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    frontend/test-results/geometry/design-system-image-workspace-visual-baseline-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace frontend/test-results/geometry/design-system-image-workspace-visual-baseline-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › frontend/tests/visual/design-system.spec.ts:8:31 › video workspace visual baseline 
+
+    Error: browserType.launch: Executable doesn't exist at /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/comic-collection-ui-visual/xdg-cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: frontend/test-results/geometry/design-system-video-workspace-visual-baseline-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    frontend/test-results/geometry/design-system-video-workspace-visual-baseline-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace frontend/test-results/geometry/design-system-video-workspace-visual-baseline-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium] › frontend/tests/visual/design-system.spec.ts:14:124 › shell geometry 1024x768 ─────
+
+    Error: browserType.launch: Executable doesn't exist at /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/comic-collection-ui-visual/xdg-cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: frontend/test-results/geometry/design-system-shell-geometry-1024x768-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    frontend/test-results/geometry/design-system-shell-geometry-1024x768-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace frontend/test-results/geometry/design-system-shell-geometry-1024x768-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [chromium] › frontend/tests/visual/design-system.spec.ts:14:124 › shell geometry 1366x768 ─────
+
+    Error: browserType.launch: Executable doesn't exist at /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/comic-collection-ui-visual/xdg-cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: frontend/test-results/geometry/design-system-shell-geometry-1366x768-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    frontend/test-results/geometry/design-system-shell-geometry-1366x768-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace frontend/test-results/geometry/design-system-shell-geometry-1366x768-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [chromium] › frontend/tests/visual/design-system.spec.ts:14:124 › shell geometry 1440x900 ─────
+
+    Error: browserType.launch: Executable doesn't exist at /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/comic-collection-ui-visual/xdg-cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: frontend/test-results/geometry/design-system-shell-geometry-1440x900-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    frontend/test-results/geometry/design-system-shell-geometry-1440x900-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace frontend/test-results/geometry/design-system-shell-geometry-1440x900-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) [chromium] › frontend/tests/visual/design-system.spec.ts:14:124 › shell geometry 1920x1080 ────
+
+    Error: browserType.launch: Executable doesn't exist at /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/comic-collection-ui-visual/xdg-cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: frontend/test-results/geometry/design-system-shell-geometry-1920x1080-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    frontend/test-results/geometry/design-system-shell-geometry-1920x1080-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace frontend/test-results/geometry/design-system-shell-geometry-1920x1080-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8) [chromium] › frontend/tests/visual/design-system.spec.ts:25:1 › compact desktop keeps the workspace within the viewport 
+
+    Error: browserType.launch: Executable doesn't exist at /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/comic-collection-ui-visual/xdg-cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: frontend/test-results/geometry/design-system-compact-desk-8e64e-rkspace-within-the-viewport-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    frontend/test-results/geometry/design-system-compact-desk-8e64e-rkspace-within-the-viewport-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace frontend/test-results/geometry/design-system-compact-desk-8e64e-rkspace-within-the-viewport-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  9) [chromium] › frontend/tests/visual/design-system.spec.ts:33:1 › production NOVEL route uses the frozen AppShell 
+
+    Error: browserType.launch: Executable doesn't exist at /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/comic-collection-ui-visual/xdg-cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: frontend/test-results/geometry/design-system-production-N-025c5-te-uses-the-frozen-AppShell-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    frontend/test-results/geometry/design-system-production-N-025c5-te-uses-the-frozen-AppShell-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace frontend/test-results/geometry/design-system-production-N-025c5-te-uses-the-frozen-AppShell-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  10) [chromium] › frontend/tests/visual/design-system.spec.ts:105:1 › production conflict compare and manual resolution visual 
+
+    Error: browserType.launch: Executable doesn't exist at /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/comic-collection-ui-visual/xdg-cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: frontend/test-results/geometry/design-system-production-c-eb287-nd-manual-resolution-visual-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    frontend/test-results/geometry/design-system-production-c-eb287-nd-manual-resolution-visual-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace frontend/test-results/geometry/design-system-production-c-eb287-nd-manual-resolution-visual-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  11) [chromium] › frontend/tests/visual/design-system.spec.ts:113:1 › production revision detail restore preview and conflict visual 
+
+    Error: browserType.launch: Executable doesn't exist at /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/comic-collection-ui-visual/xdg-cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: frontend/test-results/geometry/design-system-production-r-548a3-preview-and-conflict-visual-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    frontend/test-results/geometry/design-system-production-r-548a3-preview-and-conflict-visual-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace frontend/test-results/geometry/design-system-production-r-548a3-preview-and-conflict-visual-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  12) [chromium] › frontend/tests/visual/local-ai-discovery.spec.ts:50:1 › Local AI requires each explicit lifecycle action before routing 
+
+    Error: browserType.launch: Executable doesn't exist at /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/comic-collection-ui-visual/xdg-cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: frontend/test-results/geometry/local-ai-discovery-Local-A-10f0b-cycle-action-before-routing-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    frontend/test-results/geometry/local-ai-discovery-Local-A-10f0b-cycle-action-before-routing-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace frontend/test-results/geometry/local-ai-discovery-Local-A-10f0b-cycle-action-before-routing-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  13) [chromium] › frontend/tests/visual/local-ai-discovery.spec.ts:78:3 › Local AI preserves shell and model geometry 1366x768 
+
+    Error: browserType.launch: Executable doesn't exist at /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/comic-collection-ui-visual/xdg-cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: frontend/test-results/geometry/local-ai-discovery-Local-A-163b5-and-model-geometry-1366x768-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    frontend/test-results/geometry/local-ai-discovery-Local-A-163b5-and-model-geometry-1366x768-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace frontend/test-results/geometry/local-ai-discovery-Local-A-163b5-and-model-geometry-1366x768-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  14) [chromium] › frontend/tests/visual/local-ai-discovery.spec.ts:78:3 › Local AI preserves shell and model geometry 1440x900 
+
+    Error: browserType.launch: Executable doesn't exist at /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/comic-collection-ui-visual/xdg-cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: frontend/test-results/geometry/local-ai-discovery-Local-A-0c229-and-model-geometry-1440x900-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    frontend/test-results/geometry/local-ai-discovery-Local-A-0c229-and-model-geometry-1440x900-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace frontend/test-results/geometry/local-ai-discovery-Local-A-0c229-and-model-geometry-1440x900-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  15) [chromium] › frontend/tests/visual/local-ai-discovery.spec.ts:78:3 › Local AI preserves shell and model geometry 1920x1080 
+
+    Error: browserType.launch: Executable doesn't exist at /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/comic-collection-ui-visual/xdg-cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: frontend/test-results/geometry/local-ai-discovery-Local-A-be9a7-nd-model-geometry-1920x1080-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    frontend/test-results/geometry/local-ai-discovery-Local-A-be9a7-nd-model-geometry-1920x1080-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace frontend/test-results/geometry/local-ai-discovery-Local-A-be9a7-nd-model-geometry-1920x1080-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  15 failed
+    [chromium] › frontend/tests/visual/design-system.spec.ts:8:31 › novel workspace visual baseline 
+    [chromium] › frontend/tests/visual/design-system.spec.ts:8:31 › image workspace visual baseline 
+    [chromium] › frontend/tests/visual/design-system.spec.ts:8:31 › video workspace visual baseline 
+    [chromium] › frontend/tests/visual/design-system.spec.ts:14:124 › shell geometry 1024x768 ──────
+    [chromium] › frontend/tests/visual/design-system.spec.ts:14:124 › shell geometry 1366x768 ──────
+    [chromium] › frontend/tests/visual/design-system.spec.ts:14:124 › shell geometry 1440x900 ──────
+    [chromium] › frontend/tests/visual/design-system.spec.ts:14:124 › shell geometry 1920x1080 ─────
+    [chromium] › frontend/tests/visual/design-system.spec.ts:25:1 › compact desktop keeps the workspace within the viewport 
+    [chromium] › frontend/tests/visual/design-system.spec.ts:33:1 › production NOVEL route uses the frozen AppShell 
+    [chromium] › frontend/tests/visual/design-system.spec.ts:105:1 › production conflict compare and manual resolution visual 
+    [chromium] › frontend/tests/visual/design-system.spec.ts:113:1 › production revision detail restore preview and conflict visual 
+    [chromium] › frontend/tests/visual/local-ai-discovery.spec.ts:50:1 › Local AI requires each explicit lifecycle action before routing 
+    [chromium] › frontend/tests/visual/local-ai-discovery.spec.ts:78:3 › Local AI preserves shell and model geometry 1366x768 
+    [chromium] › frontend/tests/visual/local-ai-discovery.spec.ts:78:3 › Local AI preserves shell and model geometry 1440x900 
+    [chromium] › frontend/tests/visual/local-ai-discovery.spec.ts:78:3 › Local AI preserves shell and model geometry 1920x1080 
+[WebServer] (node:19) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+(node:37) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:52) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:64) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:76) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:88) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:100) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:124) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:148) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:160) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:172) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:184) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:208) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

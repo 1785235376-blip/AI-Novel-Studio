@@ -1,6 +1,8 @@
 """Author-only, server-gated style metric and explicit model-opinion operations."""
+from contextlib import contextmanager, nullcontext
 from fastapi import APIRouter, Header, HTTPException, Response
 from pydantic import Field
+from ..style_dna_contract import StyleResolutionIn
 from .common import api_call
 from .planning import StrictModel
 from .style_analysis import FEATURE, StyleProfileIn, StyleProfileEditIn, StyleAnalysisIn, StylePreviewIn
@@ -8,7 +10,7 @@ from .style_analysis import FEATURE, StyleProfileIn, StyleProfileEditIn, StyleAn
 class StyleActionIn(StrictModel):
     expected_version: int = Field(ge=1)
 
-def create_style_analysis_router(service, authorize, require_flag, *, preparer=None, manager=None, broker=None, require_host_session=None):
+def create_style_analysis_router(service, authorize, require_flag, *, preparer=None, manager=None, broker=None, require_host_session=None, authority_lease=None):
     from .narrative_judge_model import JudgeModelActionIn, JudgeModelPreviewIn, JudgeModelDispatchIn
     from .style_analysis_model import StyleAnalysisModelCoordinator, StyleOpinionReviewIn
     from .ux import ReadContext
@@ -24,26 +26,45 @@ def create_style_analysis_router(service, authorize, require_flag, *, preparer=N
             if authorize(nid, token, branch, permission) != initial:
                 raise HTTPException(409, {'code': 'STYLE_AUTHORITY_CHANGED'})
         return (*initial, again)
+    @contextmanager
+    def authority(nid, token, actor, scope, again, *, required=False):
+        if required and authority_lease is None:
+            raise HTTPException(409, {"code": "STYLE_DNA_AUTHORITY_LEASE_REQUIRED"})
+        with (authority_lease(nid, token, actor, scope) if authority_lease else nullcontext()):
+            again()
+            try:
+                yield
+            finally:
+                again()
     @router.get('/catalog')
     def catalog(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        _, scope, again = access(nid, x_session_token, x_branch_id, response)
-        result = api_call(service.catalog, nid, scope); again(); return result
+        actor, scope, again = access(nid, x_session_token, x_branch_id, response)
+        with authority(nid, x_session_token, actor, scope, again):
+            result = api_call(service.catalog, nid, scope); again(); return result
     @router.post('/profiles', status_code=201)
     def create(nid: str, body: StyleProfileIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         actor, scope, again = access(nid, x_session_token, x_branch_id, response)
-        result = api_call(service.save_profile, nid, scope, actor, body, reauthorize=again); again(); return result
+        with authority(nid, x_session_token, actor, scope, again, required=body.style_dna is not None):
+            result = api_call(service.save_profile, nid, scope, actor, body, reauthorize=again); again(); return result
     @router.put('/profiles/{rid}')
     def edit(nid: str, rid: str, body: StyleProfileEditIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         actor, scope, again = access(nid, x_session_token, x_branch_id, response)
-        result = api_call(service.save_profile, nid, scope, actor, body, rid, reauthorize=again); again(); return result
+        with authority(nid, x_session_token, actor, scope, again, required=body.style_dna is not None or bool(api_call(service.profile, nid, scope, rid).get('style_dna'))):
+            result = api_call(service.save_profile, nid, scope, actor, body, rid, reauthorize=again); again(); return result
     @router.post('/profiles/{rid}/preview')
     def preview(nid: str, rid: str, body: StylePreviewIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         _, scope, again = access(nid, x_session_token, x_branch_id, response)
         result = api_call(service.preview, nid, scope, rid, body, reauthorize=again); again(); return result
+    @router.post('/profiles/{rid}/resolve')
+    def resolve(nid: str, rid: str, body: StyleResolutionIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        actor, scope, again = access(nid, x_session_token, x_branch_id, response, 'domain.read')
+        with authority(nid, x_session_token, actor, scope, again, required=True):
+            result = api_call(service.resolve_style, nid, scope, rid, body, reauthorize=again); again(); return result
     @router.post('/profiles/{rid}/{action}')
     def transition(nid: str, rid: str, action: str, body: StyleActionIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         actor, scope, again = access(nid, x_session_token, x_branch_id, response, 'domain.review')
-        result = api_call(service.transition, nid, scope, actor, rid, action, body.expected_version, reauthorize=again); again(); return result
+        with authority(nid, x_session_token, actor, scope, again, required=bool(api_call(service.profile, nid, scope, rid).get('style_dna'))):
+            result = api_call(service.transition, nid, scope, actor, rid, action, body.expected_version, reauthorize=again); again(); return result
     @router.get('/analyses')
     def analyses(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         _, scope, again = access(nid, x_session_token, x_branch_id, response)

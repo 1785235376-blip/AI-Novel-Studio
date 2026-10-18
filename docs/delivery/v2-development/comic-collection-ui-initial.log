@@ -1,0 +1,22 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/ComicReadingOrder.additive.test.tsx (5 tests) 686ms
+   ✓ integrates with original layout history without saving or approving automatically 551ms
+ ✓ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests) 1074ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 1136ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 375ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 1554ms
+   ✓ explicit arrangement preview applies one undoable edit and saves only through original owner 489ms
+   ✓ retained apply cannot cross record, source or owner ABA 303ms
+ ✓ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (25 tests) 5658ms
+   ✓ explicit preview discloses pins and applies one exact undoable copy through original CAS save 764ms
+   ✓ invalid destination never consumes IDs or changes history and cancel discards preview 501ms
+   ✓ retained apply callbacks cannot survive edit, coordinate replacement, cancel, or repeat 389ms
+   ✓ refresh, stale catalog pins, source ABA and client/scope replacement fence retained callbacks 346ms
+
+ Test Files  5 passed (5)
+      Tests  50 passed (50)
+   Start at  03:56:05
+   Duration  6.76s (transform 413ms, setup 79ms, collect 1.77s, tests 10.11s, environment 1.95s, prepare 434ms)
+

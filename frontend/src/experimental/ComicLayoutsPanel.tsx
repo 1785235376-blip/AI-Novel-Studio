@@ -1,3 +1,4 @@
+import { ComicCollectionTree } from './ComicCollectionTree';
 import { ComicReadingOrderPanel } from './ComicReadingOrderPanel';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
@@ -11,6 +12,7 @@ import { arrangeComicVertically, type ComicArrangement } from './comicArrangemen
 import { applyComicDuplicate, previewComicDuplicate, type ComicDuplicateTarget } from './comicDuplication';
 import type { ComicCatalog } from './comicLayoutsClient';
 type DuplicateIntent = { target: ComicDuplicateTarget; base: ComicDocument; catalog: ComicCatalog; ticket: number; error?: string };
+const EMPTY_COMIC_RECORDS: ComicRecord[] = [];
 let nextScope = 0;
 type ComicPanelProps = { client: ExperimentalClient; onDirtyChange?: (dirty: boolean) => void; onBusyChange?: (busy: boolean) => void; isOwnerCurrent?: () => boolean };
 export function ComicLayoutsPanel({ client, ...props }: ComicPanelProps) {
@@ -23,7 +25,12 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
   const action = useReviewAction(); const epoch = useRef(0);
   const [document, setDocument] = useState<ComicDocument>(); const [row, setRow] = useState<ComicRecord>();
   const [past, setPast] = useState<ComicDocument[]>([]); const [future, setFuture] = useState<ComicDocument[]>([]); const [dirty, storeDirty] = useState(false);
-  const setDirty = (value: boolean) => { onDirtyChange?.(value); storeDirty(value); };
+  const [treeDirty, storeTreeDirty] = useState(false), [treeBusy, storeTreeBusy] = useState(false), [collectionActive, setCollectionActive] = useState(false);
+  const pageDirtyRef = useRef(false), treeDirtyRef = useRef(false), treeBusyRef = useRef(false), collectionActiveRef = useRef(false);
+  const setDirty = (value: boolean) => { pageDirtyRef.current = value; onDirtyChange?.(value || treeDirtyRef.current); storeDirty(value); };
+  const navigationBlocked = treeDirty || (collectionActive && dirty);
+  const navigationAllowed = () => !treeDirtyRef.current && !(collectionActiveRef.current && pageDirtyRef.current);
+  const busy = action.busy || treeBusy;
   const [report, setReport] = useState<ComicPreflight>(); const [segments, setSegments] = useState<string[]>([]); const [loadedSegments, setLoadedSegments] = useState<number[]>([]); const [previewFailed, setPreviewFailed] = useState(false); const [width, setWidth] = useState(360); const [reviewed, setReviewed] = useState(false);
   const [assetId, setAssetId] = useState(''); const [assetUrl, setAssetUrl] = useState(''); const [assetLoaded, setAssetLoaded] = useState(false); const [assetReviewed, setAssetReviewed] = useState(false);
   const [arrangement, setArrangement] = useState<{ result: ComicArrangement; ticket: number; base: ComicDocument }>();
@@ -34,7 +41,7 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
   const renderedGeneration = editorGeneration.current;
   // A callback owns the document generation it rendered. Consume that ownership
   // synchronously, before React paints, for edits, navigation and async admission.
-  const currentEditor = () => (isOwnerCurrent?.() ?? true) && arrangementAlive.current && renderedGeneration === editorGeneration.current && !actionPending.current && !action.busy;
+  const currentEditor = () => (isOwnerCurrent?.() ?? true) && arrangementAlive.current && renderedGeneration === editorGeneration.current && !actionPending.current && !treeBusyRef.current && !action.busy;
   const duplicateCurrent = useRef<{ document?: ComicDocument; catalog?: ComicCatalog; allowed: boolean; intent?: DuplicateIntent }>({ allowed: false });
   const [restoreVersion, setRestoreVersion] = useState('');
   const available = !catalog.loading && !catalog.error && !!catalog.data; const rowsReady = !records.loading && !records.error && !!records.data;
@@ -44,8 +51,8 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
   const savedCurrent = !!row && rowsReady && records.data!.items.some(r => r.id === row.id && r.version === row.version && !r.stale);
   const savedStale = !!row && rowsReady && records.data!.items.some(r => r.id === row.id && r.stale);
   const asset = available ? catalog.data!.assets.find(a => a.id === assetId) : undefined;
-  arrangementAllowed.current = available && !sourceChanged && !savedStale && !action.busy;
-  const duplicateAllowed = available && rowsReady && !sourceChanged && !savedStale && (!row || savedCurrent) && !action.busy && !isComposing;
+  arrangementAllowed.current = available && !sourceChanged && !savedStale && !busy;
+  const duplicateAllowed = available && rowsReady && !sourceChanged && !savedStale && (!row || savedCurrent) && !busy && !isComposing;
   duplicateCurrent.current = { document, catalog: catalog.data, allowed: duplicateAllowed, intent: duplicate };
   const cancelDuplicate = () => { duplicateEpoch.current++; duplicateCurrent.current.intent = undefined; setDuplicate(undefined); };
   const currentDuplicate = (intent: DuplicateIntent) => currentEditor() && !composing.current && duplicateCurrent.current.allowed && duplicateCurrent.current.intent === intent && intent.ticket === duplicateEpoch.current && intent.base === duplicateCurrent.current.document && intent.catalog === duplicateCurrent.current.catalog;
@@ -55,19 +62,19 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
   useEffect(() => () => { segments.forEach(URL.revokeObjectURL); }, [segments]);
   useEffect(() => () => { if (assetUrl) URL.revokeObjectURL(assetUrl); }, [assetUrl]);
   const invalidate = () => { editorGeneration.current++; epoch.current++; arrangementEpoch.current++; setArrangement(undefined); cancelDuplicate(); setReport(undefined); setSegments([]); setLoadedSegments([]); setPreviewFailed(false); setReviewed(false); };
-  useEffect(() => { onDirtyChange?.(dirty); }, [dirty, onDirtyChange]);
+  useEffect(() => { onDirtyChange?.(dirty || treeDirty); }, [dirty, treeDirty, onDirtyChange]);
   useEffect(() => () => { onDirtyChange?.(false); onBusyChange?.(false); }, [onDirtyChange, onBusyChange]);
   const edit = (next: ComicDocument) => { if (!currentEditor()) return; if (document) setPast(values => [...values.slice(-29), document]); setDocument(next); setFuture([]); setDirty(true); invalidate(); };
   // Only admitted async completions call commitLoad/refreshResources directly.
   const commitLoad = (next: ComicRecord) => { invalidate(); setRow(next); setDocument(next.document); setPast([]); setFuture([]); setDirty(false); setRestoreVersion(''); };
-  const load = (next: ComicRecord) => { if (currentEditor()) commitLoad(next); };
+  const load = (next: ComicRecord) => { if (currentEditor() && navigationAllowed()) commitLoad(next); };
   const refreshResources = () => { invalidate(); setAssetUrl(''); setAssetLoaded(false); setAssetReviewed(false); catalog.reload(); records.reload(); };
-  const refresh = () => { if (currentEditor()) refreshResources(); };
+  const refresh = () => { if (currentEditor() && navigationAllowed()) refreshResources(); };
   const runAction: typeof action.run = async (operation, message) => {
     if (!currentEditor() || composing.current) return;
     editorGeneration.current++; actionPending.current = true; onBusyChange?.(true); arrangementEpoch.current++; setArrangement(undefined); cancelDuplicate();
     try { await action.run(isCurrent => operation(() => isCurrent() && (isOwnerCurrent?.() ?? true)), message); }
-    finally { actionPending.current = false; onBusyChange?.(false); }
+    finally { actionPending.current = false; if (arrangementAlive.current && (isOwnerCurrent?.() ?? true)) onBusyChange?.(treeBusyRef.current); }
   };
   const patchPanel = (id: string, patch: Partial<ComicPanel>) => document && edit({ ...document, panels: document.panels.map(p => p.id === id ? { ...p, ...patch } : p) });
   const runPreview = () => void runAction(async isCurrent => {
@@ -76,21 +83,29 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
     if (result.can_render) { const blobs = await Promise.all(result.segments.map(segment => api.segment(row, segment.index))); if (isCurrent() && ticket === epoch.current) setSegments(blobs.map(blob => URL.createObjectURL(blob))); }
   });
   return <section className="experimental-section" aria-label="漫画与 Webtoon 排版" onCompositionStartCapture={() => { composing.current = true; setIsComposing(true); cancelDuplicate(); }} onCompositionEndCapture={() => { composing.current = false; setIsComposing(false); }}>
-    <div className="experimental-actions"><h3>漫画与 Webtoon 排版</h3><Badge>草稿 · 本地栅格渲染</Badge><Button disabled={action.busy || catalog.loading || records.loading} onClick={refresh}>刷新漫画来源与记录</Button></div>
+    <div className="experimental-actions"><h3>漫画与 Webtoon 排版</h3><Badge>草稿 · 本地栅格渲染</Badge><Button disabled={busy || navigationBlocked || catalog.loading || records.loading} onClick={refresh}>刷新漫画来源与记录</Button></div>
     <p>复用原剧本镜头、人物与资产库。生成图片和排版分开；空白页和纯文字格可独立编辑保存；需要图片的格框缺图时仍阻止预览与导出。</p>
     <ResourceState loading={catalog.loading} error={catalog.error} />{!!action.error && <ErrorMessage error={action.error} />}{action.notice && <StatusMessage tone="success">{action.notice}</StatusMessage>}
     {available && (!catalog.data!.font.available || !catalog.data!.renderer.available) && <StatusMessage tone="warning">{!catalog.data!.renderer.available ? '漫画渲染组件未就绪。' : ''}{!catalog.data!.font.available ? '未找到已校验的 OFL 中文字体。带文字布局不能预览或导出；请由环境维护者准备项目的固定版本字体，不会使用缺字方框代替。' : ''}</StatusMessage>}
     {available && <Panel title="核对原图库中的用户图片">
-      <Field label="待核对的原图片"><select disabled={action.busy} value={assetId} onChange={e => { if (!currentEditor()) return; editorGeneration.current++; cancelDuplicate(); epoch.current++; setAssetId(e.target.value); setAssetUrl(''); setAssetLoaded(false); setAssetReviewed(false); }}><option value="">选择图片</option>{catalog.data!.assets.map(a => <option key={a.id} value={a.id}>{a.filename} · v{a.version}{a.approved ? ' · 已批准' : ' · 待审'}</option>)}</select></Field>
-      {asset && <><Button disabled={action.busy} onClick={() => void runAction(async isCurrent => { const ticket = epoch.current; const blob = await api.image(asset.id); if (isCurrent() && ticket === epoch.current) { setAssetUrl(URL.createObjectURL(blob)); setAssetLoaded(false); setAssetReviewed(false); } })}>查看原图片像素</Button>
+      <Field label="待核对的原图片"><select disabled={busy} value={assetId} onChange={e => { if (!currentEditor()) return; editorGeneration.current++; cancelDuplicate(); epoch.current++; setAssetId(e.target.value); setAssetUrl(''); setAssetLoaded(false); setAssetReviewed(false); }}><option value="">选择图片</option>{catalog.data!.assets.map(a => <option key={a.id} value={a.id}>{a.filename} · v{a.version}{a.approved ? ' · 已批准' : ' · 待审'}</option>)}</select></Field>
+      {asset && <><Button disabled={busy} onClick={() => void runAction(async isCurrent => { const ticket = epoch.current; const blob = await api.image(asset.id); if (isCurrent() && ticket === epoch.current) { setAssetUrl(URL.createObjectURL(blob)); setAssetLoaded(false); setAssetReviewed(false); } })}>查看原图片像素</Button>
         {assetUrl && <img className="comic-source-preview" src={assetUrl} alt={`待审原图片：${asset.filename}`} onLoad={() => setAssetLoaded(true)} onError={() => setAssetLoaded(false)} />}
-        {!asset.approved && asset.manual_review_available && <><label className="experimental-check"><input type="checkbox" disabled={!assetLoaded || action.busy} checked={assetReviewed} onChange={e => setAssetReviewed(e.target.checked)} />已查看此用户图片，并确认可用于漫画排版</label><Button disabled={action.busy || !assetReviewed || !assetLoaded} onClick={() => void runAction(async isCurrent => { await api.approveImage(asset); if (isCurrent()) refreshResources(); }, '已记录原图库图片的人工批准。请重新选取当前素材版本。')}>批准此用户图片</Button></>}
+        {!asset.approved && asset.manual_review_available && <><label className="experimental-check"><input type="checkbox" disabled={!assetLoaded || busy} checked={assetReviewed} onChange={e => setAssetReviewed(e.target.checked)} />已查看此用户图片，并确认可用于漫画排版</label><Button disabled={busy || !assetReviewed || !assetLoaded} onClick={() => void runAction(async isCurrent => { await api.approveImage(asset); if (isCurrent()) refreshResources(); }, '已记录原图库图片的人工批准。请重新选取当前素材版本。')}>批准此用户图片</Button></>}
         {!asset.approved && !asset.manual_review_available && <StatusMessage>此图片必须回原生成任务进行审核，不能在排版区绕过。</StatusMessage>}
       </>}
     </Panel>}
+    <ComicCollectionTree client={client} records={records.data?.items || EMPTY_COMIC_RECORDS} recordsReady={rowsReady} pageDirty={dirty} externalBusy={action.busy} selectedPageId={row?.id}
+      isOwnerCurrent={() => arrangementAlive.current && (isOwnerCurrent?.() ?? true)} getOwnerRevision={() => editorGeneration.current}
+      onActiveChange={value => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true)) return; editorGeneration.current++; collectionActiveRef.current = value; setCollectionActive(value); }}
+      onDirtyChange={value => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true)) return; editorGeneration.current++; treeDirtyRef.current = value; storeTreeDirty(value); onDirtyChange?.(pageDirtyRef.current || value); }}
+      onBusyChange={value => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true)) return; editorGeneration.current++; treeBusyRef.current = value; storeTreeBusy(value); onBusyChange?.(actionPending.current || value); }}
+      onOpenPage={load} onPageCreated={page => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true) || pageDirtyRef.current || treeDirtyRef.current) return; commitLoad(page); records.reload(); }} />
     <Panel title="布局草稿与手工编辑">
-      <Button disabled={!available || action.busy} onClick={() => { if (!currentEditor()) return; invalidate(); setRow(undefined); setDocument(blankComic('PAGE', catalog.data!.presets.PAGE)); setPast([]); setFuture([]); setDirty(true); }}>新建空白漫画页</Button>
-      <Field label="漫画来源剧本"><select disabled={!available || action.busy} value={document?.screenplay_id || ''} onChange={e => { if (!currentEditor()) return; const source = catalog.data?.screenplays.find(s => s.id === e.target.value); invalidate(); setRow(undefined); setDocument(source ? comicPreset(source, 'PAGE', catalog.data!.presets.PAGE) : undefined); setPast([]); setFuture([]); setDirty(true); }}><option value="">选择已有镜头的剧本</option>{available && catalog.data!.screenplays.map(s => <option key={s.id} value={s.id}>{s.title} · v{s.edit_version}</option>)}</select></Field>
+      {navigationBlocked && <StatusMessage tone="warning">集合中有未保存修改。请先保存或明确放弃页面及书结构，再切换布局或来源。</StatusMessage>}
+      {dirty && <Button disabled={busy} onClick={() => { if (!currentEditor() || composing.current) return; if (row) commitLoad(row); else { invalidate(); setDocument(undefined); setPast([]); setFuture([]); setDirty(false); } }}>放弃当前页面修改</Button>}
+      <Button disabled={!available || busy || navigationBlocked} onClick={() => { if (!currentEditor() || !navigationAllowed()) return; invalidate(); setRow(undefined); setDocument(blankComic('PAGE', catalog.data!.presets.PAGE)); setPast([]); setFuture([]); setDirty(true); }}>新建空白漫画页</Button>
+      <Field label="漫画来源剧本"><select disabled={!available || busy || navigationBlocked} value={document?.screenplay_id || ''} onChange={e => { if (!currentEditor() || !navigationAllowed()) return; const source = catalog.data?.screenplays.find(s => s.id === e.target.value); invalidate(); setRow(undefined); setDocument(source ? comicPreset(source, 'PAGE', catalog.data!.presets.PAGE) : undefined); setPast([]); setFuture([]); setDirty(true); }}><option value="">选择已有镜头的剧本</option>{available && catalog.data!.screenplays.map(s => <option key={s.id} value={s.id}>{s.title} · v{s.edit_version}</option>)}</select></Field>
       {available && !catalog.data!.screenplays.length && <EmptyState title="暂无镜头来源" detail="可以直接新建空白漫画页；从剧本改编时再选择已有镜头。" />}
       {document && available && !savedStale && <>
         {sourceChanged && <StatusMessage tone="warning">来源版本已变化。草稿输入仍保留，请重新选择当前来源再保存；旧画面已隐藏。</StatusMessage>}
@@ -98,7 +113,7 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
           if (!currentEditor() || composing.current || !duplicateCurrent.current.allowed || duplicateCurrent.current.document !== document || duplicateCurrent.current.catalog !== catalog.data) return false;
           edit(next); return true;
         }} />
-        <fieldset className="experimental-form" disabled={action.busy}>
+        <fieldset className="experimental-form" disabled={busy}>
           <Field label="漫画布局名称"><input maxLength={240} value={document.title} onChange={e => edit({ ...document, title: e.target.value })} /></Field>
           <Field label="布局预设"><select value={document.preset} onChange={e => { const preset = e.target.value as ComicDocument['preset']; if (independent) edit({ ...document, preset, ...catalog.data!.presets[preset] }); else if (source) edit(comicPreset(source, preset, catalog.data!.presets[preset])); }}><option value="PAGE">页漫（最多前四个镜头，重排草稿）</option><option value="WEBTOON">纵向 Webtoon（最多前六个镜头，重排草稿）</option></select></Field>
           <Field label="漫画字体"><select value={document.font_family} onChange={() => {}}><option value="NOTO_SANS_SC_OFL">Noto Sans SC · 已固定版本的 SIL OFL 1.1 字体</option></select></Field>
@@ -194,22 +209,22 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
           <Button disabled={document.panels.length >= 24 || (!independent && !source?.shots.length)} onClick={() => (independent || source) && edit({ ...document, panels: [...document.panels, { id: globalThis.crypto.randomUUID(), shot_id: independent ? null : source!.shots[0].id, ...(independent ? { artwork_mode: 'BLANK' as const } : {}), order: document.panels.length + 1, x: document.safe_area, y: document.safe_area, width: document.width - document.safe_area * 2, height: 320, character_ids: [], asset_id: null, expected_asset_version: null, fit: 'CONTAIN', bubbles: [], image_brief: '', appearance_references: [] }] })}>添加格框（手工定位）</Button>
         </fieldset>
         <p>安全区与坐标以页面像素为准，阅读顺序支持从上到下、同一行从左到右。新增格框或气泡可能重叠，预检会阻止越界与文字溢出。切换预设会重排草稿，可撤销。</p>
-        <Button disabled={action.busy || sourceChanged || (!independent && !document.panels.length) || !document.title.trim()} onClick={() => void runAction(async isCurrent => { const saved = await api.save(document, row); if (isCurrent()) { commitLoad(saved); records.reload(); } }, '布局已保存为待审草稿。原剧本与图片未改写。')}>保存漫画布局草稿</Button>
+        <Button disabled={busy || sourceChanged || (!independent && !document.panels.length) || !document.title.trim()} onClick={() => void runAction(async isCurrent => { const saved = await api.save(document, row); if (isCurrent()) { commitLoad(saved); records.reload(); } }, '布局已保存为待审草稿。原剧本与图片未改写。')}>保存漫画布局草稿</Button>
       </>}
     </Panel>
     <Panel title="已保存布局与版本"><ResourceState loading={records.loading} error={records.error} />{rowsReady && !records.data!.items.length && <EmptyState title="还没有漫画布局" detail="选择来源并保存草稿后，核对预检和实际像素，再显式批准导出。" />}
-      {rowsReady && records.data!.items.map(record => <article className="experimental-record" key={record.id}><strong>{record.document?.title || '来源不可用的历史布局'}</strong> <Badge>{record.status} · v{record.version}</Badge>{record.stale ? <StatusMessage tone="warning">来源、授权或图片已变化，旧布局内容和导出已隐藏。</StatusMessage> : <Button disabled={action.busy} onClick={() => load(record)}>打开布局 {record.document?.title}</Button>}</article>)}
-      {row && savedCurrent && <><Field label="恢复布局历史版本"><select disabled={action.busy} value={restoreVersion} onChange={e => setRestoreVersion(e.target.value)}><option value="">选择要恢复的版本</option>{row.history_versions?.map(v => <option key={v} value={v}>v{v}</option>)}</select></Field><Button disabled={action.busy || !restoreVersion} onClick={() => void runAction(async isCurrent => { const restored = await api.restore(row, Number(restoreVersion)); if (isCurrent()) { commitLoad(restored); records.reload(); } }, '已新增恢复后的草稿版本，必须重新审核。')}>恢复为新的布局草稿</Button></>}
+      {rowsReady && records.data!.items.map(record => <article className="experimental-record" key={record.id}><strong>{record.document?.title || '来源不可用的历史布局'}</strong> <Badge>{record.status} · v{record.version}</Badge>{record.stale ? <StatusMessage tone="warning">来源、授权或图片已变化，旧布局内容和导出已隐藏。</StatusMessage> : <Button disabled={busy || navigationBlocked} onClick={() => load(record)}>打开布局 {record.document?.title}</Button>}</article>)}
+      {row && savedCurrent && <><Field label="恢复布局历史版本"><select disabled={busy || navigationBlocked} value={restoreVersion} onChange={e => setRestoreVersion(e.target.value)}><option value="">选择要恢复的版本</option>{row.history_versions?.map(v => <option key={v} value={v}>v{v}</option>)}</select></Field><Button disabled={busy || navigationBlocked || !restoreVersion} onClick={() => { if (!navigationAllowed()) return; void runAction(async isCurrent => { const restored = await api.restore(row, Number(restoreVersion)); if (isCurrent()) { commitLoad(restored); records.reload(); } }, '已新增恢复后的草稿版本，必须重新审核。'); }}>恢复为新的布局草稿</Button></>}
     </Panel>
     {document && row && available && savedCurrent && !sourceChanged && <Panel title="真实分段预览与审核导出">
       {dirty && <StatusMessage tone="warning">存在未保存调整。请先保存草稿，再读取当前版本的预检。</StatusMessage>}
-      <Button disabled={action.busy || dirty} onClick={runPreview}>预检并渲染当前布局</Button>
+      <Button disabled={busy || dirty} onClick={runPreview}>预检并渲染当前布局</Button>
       {report && !dirty && <><p>当前审核版本 v{report.version}。预览使用与导出相同的 PNG 字节，屏宽只改变显示比例。</p>{report.issues.length ? <ul>{report.issues.map((issue, i) => <li key={i}><Badge tone={issue.severity === 'BLOCKER' ? 'error' : 'warning'}>{issue.severity}</Badge> {comicIssueLabel[issue.code] || issue.code} · {issue.target}</li>)}</ul> : <StatusMessage>预检未发现支持范围内的阻塞。</StatusMessage>}
         <Field label="漫画预览屏宽"><select value={width} onChange={e => setWidth(Number(e.target.value))}>{[320, 360, 768, 800].map(v => <option key={v} value={v}>{v} px</option>)}</select></Field>
         <div className="comic-preview-viewport"><div className="comic-preview" style={{ width }} aria-label="实际漫画分段像素">{segments.map((url, i) => <img key={url} src={url} alt={`漫画分段 ${i + 1}，${row.status === 'APPROVED' ? '已批准布局' : '待审草稿'}`} width={report.segments[i].width} height={report.segments[i].height} onLoad={() => setLoadedSegments(loaded => loaded.includes(i) ? loaded : [...loaded, i])} onError={() => { setPreviewFailed(true); setReviewed(false); }} />)}</div></div>
         {previewFailed && <StatusMessage tone="error">分段图片显示失败，请重新预检；未显示的画面不能批准。</StatusMessage>}
-        {row.status !== 'APPROVED' && <><label className="experimental-check"><input type="checkbox" checked={reviewed} disabled={action.busy || !report.can_render || !segments.length || previewFailed || loadedSegments.length !== segments.length} onChange={e => setReviewed(e.target.checked)} />已核对图片、阅读顺序、所有裁切与分段警告，并批准此布局版本</label><Button disabled={action.busy || !reviewed || !report.can_render || !segments.length || previewFailed || loadedSegments.length !== segments.length} onClick={() => void runAction(async isCurrent => { const approved = await api.approve(row, report); if (isCurrent()) { commitLoad(approved); records.reload(); } }, '此布局版本已显式批准。请重新渲染已批准版本后下载；不会自动发布。')}>批准当前漫画布局</Button></>}
-        <Button disabled={action.busy || row.status !== 'APPROVED' || !report.can_render || !segments.length || previewFailed || loadedSegments.length !== segments.length} onClick={() => void runAction(async isCurrent => { const ticket = epoch.current; const blob = await api.download(row); if (isCurrent() && ticket === epoch.current) saveOtioFile(blob, 'comic-segments.zip'); }, '已生成分段 PNG、校验清单与适用字体许可的 ZIP 副本。没有发布或自动回写资产。')}>下载已批准漫画分段</Button>
+        {row.status !== 'APPROVED' && <><label className="experimental-check"><input type="checkbox" checked={reviewed} disabled={busy || !report.can_render || !segments.length || previewFailed || loadedSegments.length !== segments.length} onChange={e => setReviewed(e.target.checked)} />已核对图片、阅读顺序、所有裁切与分段警告，并批准此布局版本</label><Button disabled={busy || !reviewed || !report.can_render || !segments.length || previewFailed || loadedSegments.length !== segments.length} onClick={() => void runAction(async isCurrent => { const approved = await api.approve(row, report); if (isCurrent()) { commitLoad(approved); records.reload(); } }, '此布局版本已显式批准。请重新渲染已批准版本后下载；不会自动发布。')}>批准当前漫画布局</Button></>}
+        <Button disabled={busy || row.status !== 'APPROVED' || !report.can_render || !segments.length || previewFailed || loadedSegments.length !== segments.length} onClick={() => void runAction(async isCurrent => { const ticket = epoch.current; const blob = await api.download(row); if (isCurrent() && ticket === epoch.current) saveOtioFile(blob, 'comic-segments.zip'); }, '已生成分段 PNG、校验清单与适用字体许可的 ZIP 副本。没有发布或自动回写资产。')}>下载已批准漫画分段</Button>
       </>}
     </Panel>}
   </section>;

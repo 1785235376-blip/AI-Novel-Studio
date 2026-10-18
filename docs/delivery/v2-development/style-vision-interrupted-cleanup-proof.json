@@ -1,0 +1,11 @@
+{
+  "exact_synthetic_id": "32802152-0da5-4aef-a409-5ecce8d60a91",
+  "exact_slug": "r3-mounted-dae7e39b0c9145149a893148c5f5e105",
+  "before_row_sha256": "1dfe7aa816262f32b0f6bd78569860c59f1a9a3231eb1f5a93ea31897c43ba7e",
+  "owner": "PostgresNovelRepository.delete",
+  "baseline_restored": true,
+  "after_counts": {
+    "novels": 1,
+    "experimental_scope_documents": 1
+  }
+}

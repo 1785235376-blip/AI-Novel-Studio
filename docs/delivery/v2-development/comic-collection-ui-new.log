@@ -1,0 +1,1974 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/experimental/ComicCollectionTree.test.tsx (10 tests | 3 failed) 55950ms
+   × enforces chapter and page bounds locally and keeps all collection actions blocked by a dirty page 53119ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   × integrates aggregate dirty state and explicit page and structure discard before leaving an active collection 1078ms
+     → Unable to find a label with the text of: 漫画书名称
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"漫画与 Webtoon 排版"[39m
+      [33mclass[39m=[32m"experimental-section"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-actions"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m漫画与 Webtoon 排版[0m
+        [36m</h3>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m草稿 · 本地栅格渲染[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新漫画来源与记录[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<p>[39m
+        [0m复用原剧本镜头、人物与资产库。生成图片和排版分开；空白页和纯文字格可独立编辑保存；需要图片的格框缺图时仍阻止预览与导出。[0m
+      [36m</p>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m核对原图库中的用户图片[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r7s:"[39m
+          [36m>[39m
+            [0m待核对的原图片[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r7s:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择图片[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m漫画书 · 章节 · 页面[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div>[39m
+          [36m<p>[39m
+            [0m手工组织独立漫画页。最多 20 本书，每本书最多 20 章、100 页；结构恢复只恢复章节与页面归属，不恢复页面内容。移除章节或页面不会删除已保存布局。同一页面可被多本书引用，编辑会影响所有引用它的书；复制页面会创建独立副本。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m刷新漫画书[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-field"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m":r7q:"[39m
+            [36m>[39m
+              [0m新漫画书名称[0m
+            [36m</label>[39m
+            [36m<input[39m
+              [33mid[39m=[32m":r7q:"[39m
+              [33mmaxlength[39m=[32m"240"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m创建漫画书[0m
+          [36m</button>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"漫画书列表"[39m
+          [36m>[39m
+            [36m<ul>[39m
+              [36m<li>[39m
+                [36m<button[39m
+                  [33maria-pressed[39m=[32m"false"[39m
+                  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                [36m>[39m
+                  [0m打开漫画书 [0m
+                  [0m测试漫画书[0m
+                [36m</button>[39m
+              [36m</li>[39m
+            [36m</ul>[39m
+          [36m</nav>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m布局草稿与手工编辑[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m新建空白漫画页[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r7r:"[39m
+          [36m>[39m
+            [0m漫画来源剧本[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r7r:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择已有镜头的剧本[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无镜头来源[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m可以直接新建空白漫画页；从剧本改编时再选择已有镜头。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m已保存布局与版本[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 p1[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m4[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 p1[0m
+          [36m</button>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 p2[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m6[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 p2[0m
+          [36m</button>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 free[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m2[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 free[0m
+          [36m</button>[39m
+        [36m</article>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"漫画与 Webtoon 排版"[39m
+      [33mclass[39m=[32m"experimental-section"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-actions"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m漫画与 Webtoon 排版[0m
+        [36m</h3>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m草稿 · 本地栅格渲染[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新漫画来源与记录[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<p>[39m
+        [0m复用原剧本镜头、人物与资产库。生成图片和排版分开；空白页和纯文字格可独立编辑保存；需要图片的格框缺图时仍阻止预览与导出。[0m
+      [36m</p>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m核对原图库中的用户图片[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r7s:"[39m
+          [36m>[39m
+            [0m待核对的原图片[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r7s:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择图片[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m漫画书 · 章节 · 页面[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div>[39m
+          [36m<p>[39m
+            [0m手工组织独立漫画页。最多 20 本书，每本书最多 20 章、100 页；结构恢复只恢复章节与页面归属，不恢复页面内容。移除章节或页面不会删除已保存布局。同一页面可被多本书引用，编辑会影响所有引用它的书；复制页面会创建独立副本。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m刷新漫画书[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-field"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m":r7q:"[39m
+            [36m>[39m
+              [0m新漫画书名称[0m
+            [36m</label>[39m
+            [36m<input[39m
+              [33mid[39m=[32m":r7q:"[39m
+              [33mmaxlength[39m=[32m"240"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m创建漫画书[0m
+          [36m</button>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"漫画书列表"[39m
+          [36m>[39m
+            [36m<ul>[39m
+              [36m<li>[39m
+                [36m<button[39m
+                  [33maria-pressed[39m=[32m"false"[39m
+                  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                [36m>[39m
+                  [0m打开漫画书 [0m
+                  [0m测试漫画书[0m
+                [36m</button>[39m
+              [36m</li>[39m
+            [36m</ul>[39m
+          [36m</nav>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m布局草稿与手工编辑[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m新建空白漫画页[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r7r:"[39m
+          [36m>[39m
+            [0m漫画来源剧本[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r7r:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择已有镜头的剧本[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无镜头来源[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m可以直接新建空白漫画页；从剧本改编时再选择已有镜头。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m已保存布局与版本[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 p1[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m4[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 p1[0m
+          [36m</button>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 p2[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m6[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 p2[0m
+          [36m</button>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 free[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m2[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 free[0m
+          [36m</button>[39m
+        [36m</article>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+     → undefined is not a function
+   × integrates book-page completion with the existing page editor without self-invalidating its owner fence 1025ms
+     → Unable to find a label with the text of: 漫画书名称
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"漫画与 Webtoon 排版"[39m
+      [33mclass[39m=[32m"experimental-section"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-actions"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m漫画与 Webtoon 排版[0m
+        [36m</h3>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m草稿 · 本地栅格渲染[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新漫画来源与记录[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<p>[39m
+        [0m复用原剧本镜头、人物与资产库。生成图片和排版分开；空白页和纯文字格可独立编辑保存；需要图片的格框缺图时仍阻止预览与导出。[0m
+      [36m</p>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m核对原图库中的用户图片[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r7v:"[39m
+          [36m>[39m
+            [0m待核对的原图片[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r7v:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择图片[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m漫画书 · 章节 · 页面[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div>[39m
+          [36m<p>[39m
+            [0m手工组织独立漫画页。最多 20 本书，每本书最多 20 章、100 页；结构恢复只恢复章节与页面归属，不恢复页面内容。移除章节或页面不会删除已保存布局。同一页面可被多本书引用，编辑会影响所有引用它的书；复制页面会创建独立副本。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m刷新漫画书[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-field"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m":r7t:"[39m
+            [36m>[39m
+              [0m新漫画书名称[0m
+            [36m</label>[39m
+            [36m<input[39m
+              [33mid[39m=[32m":r7t:"[39m
+              [33mmaxlength[39m=[32m"240"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m创建漫画书[0m
+          [36m</button>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"漫画书列表"[39m
+          [36m>[39m
+            [36m<ul>[39m
+              [36m<li>[39m
+                [36m<button[39m
+                  [33maria-pressed[39m=[32m"false"[39m
+                  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                [36m>[39m
+                  [0m打开漫画书 [0m
+                  [0m测试漫画书[0m
+                [36m</button>[39m
+              [36m</li>[39m
+            [36m</ul>[39m
+          [36m</nav>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m布局草稿与手工编辑[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m新建空白漫画页[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r7u:"[39m
+          [36m>[39m
+            [0m漫画来源剧本[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r7u:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择已有镜头的剧本[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无镜头来源[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m可以直接新建空白漫画页；从剧本改编时再选择已有镜头。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m已保存布局与版本[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 p1[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m4[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 p1[0m
+          [36m</button>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 p2[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m6[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 p2[0m
+          [36m</button>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 free[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m2[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 free[0m
+          [36m</button>[39m
+        [36m</article>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"漫画与 Webtoon 排版"[39m
+      [33mclass[39m=[32m"experimental-section"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-actions"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m漫画与 Webtoon 排版[0m
+        [36m</h3>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m草稿 · 本地栅格渲染[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新漫画来源与记录[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<p>[39m
+        [0m复用原剧本镜头、人物与资产库。生成图片和排版分开；空白页和纯文字格可独立编辑保存；需要图片的格框缺图时仍阻止预览与导出。[0m
+      [36m</p>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m核对原图库中的用户图片[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r7v:"[39m
+          [36m>[39m
+            [0m待核对的原图片[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r7v:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择图片[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m漫画书 · 章节 · 页面[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div>[39m
+          [36m<p>[39m
+            [0m手工组织独立漫画页。最多 20 本书，每本书最多 20 章、100 页；结构恢复只恢复章节与页面归属，不恢复页面内容。移除章节或页面不会删除已保存布局。同一页面可被多本书引用，编辑会影响所有引用它的书；复制页面会创建独立副本。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m刷新漫画书[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-field"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m":r7t:"[39m
+            [36m>[39m
+              [0m新漫画书名称[0m
+            [36m</label>[39m
+            [36m<input[39m
+              [33mid[39m=[32m":r7t:"[39m
+              [33mmaxlength[39m=[32m"240"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m创建漫画书[0m
+          [36m</button>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"漫画书列表"[39m
+          [36m>[39m
+            [36m<ul>[39m
+              [36m<li>[39m
+                [36m<button[39m
+                  [33maria-pressed[39m=[32m"false"[39m
+                  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                [36m>[39m
+                  [0m打开漫画书 [0m
+                  [0m测试漫画书[0m
+                [36m</button>[39m
+              [36m</li>[39m
+            [36m</ul>[39m
+          [36m</nav>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m布局草稿与手工编辑[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m新建空白漫画页[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r7u:"[39m
+          [36m>[39m
+            [0m漫画来源剧本[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r7u:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择已有镜头的剧本[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无镜头来源[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m可以直接新建空白漫画页；从剧本改编时再选择已有镜头。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m已保存布局与版本[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 p1[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m4[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 p1[0m
+          [36m</button>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 p2[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m6[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 p2[0m
+          [36m</button>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 free[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m2[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 free[0m
+          [36m</button>[39m
+        [36m</article>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+     → undefined is not a function
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 7 passed (10)
+   Start at  03:57:47
+   Duration  56.97s (transform 247ms, setup 26ms, collect 366ms, tests 55.95s, environment 352ms, prepare 80ms)
+
+stderr | src/experimental/ComicCollectionTree.test.tsx > integrates aggregate dirty state and explicit page and structure discard before leaving an active collection
+Error: Uncaught [TypeError: undefined is not a function]
+    at reportException (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at reportUncaughtErrorInDEV (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22877:5)
+    at captureCommitPhaseError (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27165:5) TypeError: undefined is not a function
+    at Array.forEach (<anonymous>)
+    at /workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:62:36
+    at safelyCallDestroy (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5)
+    at commitHookEffectListUnmount (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11)
+    at commitPassiveUnmountInsideDeletedTreeOnFiber (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25140:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25087:5)
+    at commitPassiveUnmountEffects_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24995:11)
+    at commitPassiveUnmountEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3)
+    at flushPassiveEffectsImpl (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3)
+    at flushPassiveEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+The above error occurred in the <ComicLayoutsContent> component:
+
+    at ComicLayoutsContent (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:36:32)
+    at ComicLayoutsPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:27:30)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/experimental/ComicCollectionTree.test.tsx > integrates book-page completion with the existing page editor without self-invalidating its owner fence
+Error: Uncaught [TypeError: undefined is not a function]
+    at reportException (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at reportUncaughtErrorInDEV (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22877:5)
+    at captureCommitPhaseError (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27165:5) TypeError: undefined is not a function
+    at Array.forEach (<anonymous>)
+    at /workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:62:36
+    at safelyCallDestroy (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5)
+    at commitHookEffectListUnmount (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11)
+    at commitPassiveUnmountInsideDeletedTreeOnFiber (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25140:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25087:5)
+    at commitPassiveUnmountEffects_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24995:11)
+    at commitPassiveUnmountEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3)
+    at flushPassiveEffectsImpl (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3)
+    at flushPassiveEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+The above error occurred in the <ComicLayoutsContent> component:
+
+    at ComicLayoutsContent (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:36:32)
+    at ComicLayoutsPanel (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/experimental/ComicLayoutsPanel.tsx:27:30)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/experimental/ComicCollectionTree.test.tsx > enforces chapter and page bounds locally and keeps all collection actions blocked by a dirty page
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/experimental/ComicCollectionTree.test.tsx > integrates aggregate dirty state and explicit page and structure discard before leaving an active collection
+TestingLibraryElementError: Unable to find a label with the text of: 漫画书名称
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"漫画与 Webtoon 排版"[39m
+      [33mclass[39m=[32m"experimental-section"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-actions"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m漫画与 Webtoon 排版[0m
+        [36m</h3>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m草稿 · 本地栅格渲染[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新漫画来源与记录[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<p>[39m
+        [0m复用原剧本镜头、人物与资产库。生成图片和排版分开；空白页和纯文字格可独立编辑保存；需要图片的格框缺图时仍阻止预览与导出。[0m
+      [36m</p>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m核对原图库中的用户图片[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r7s:"[39m
+          [36m>[39m
+            [0m待核对的原图片[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r7s:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择图片[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m漫画书 · 章节 · 页面[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div>[39m
+          [36m<p>[39m
+            [0m手工组织独立漫画页。最多 20 本书，每本书最多 20 章、100 页；结构恢复只恢复章节与页面归属，不恢复页面内容。移除章节或页面不会删除已保存布局。同一页面可被多本书引用，编辑会影响所有引用它的书；复制页面会创建独立副本。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m刷新漫画书[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-field"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m":r7q:"[39m
+            [36m>[39m
+              [0m新漫画书名称[0m
+            [36m</label>[39m
+            [36m<input[39m
+              [33mid[39m=[32m":r7q:"[39m
+              [33mmaxlength[39m=[32m"240"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m创建漫画书[0m
+          [36m</button>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"漫画书列表"[39m
+          [36m>[39m
+            [36m<ul>[39m
+              [36m<li>[39m
+                [36m<button[39m
+                  [33maria-pressed[39m=[32m"false"[39m
+                  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                [36m>[39m
+                  [0m打开漫画书 [0m
+                  [0m测试漫画书[0m
+                [36m</button>[39m
+              [36m</li>[39m
+            [36m</ul>[39m
+          [36m</nav>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m布局草稿与手工编辑[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m新建空白漫画页[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r7r:"[39m
+          [36m>[39m
+            [0m漫画来源剧本[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r7r:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择已有镜头的剧本[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无镜头来源[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m可以直接新建空白漫画页；从剧本改编时再选择已有镜头。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m已保存布局与版本[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 p1[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m4[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 p1[0m
+          [36m</button>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 p2[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m6[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 p2[0m
+          [36m</button>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 free[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m2[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 free[0m
+          [36m</button>[39m
+        [36m</article>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"漫画与 Webtoon 排版"[39m
+      [33mclass[39m=[32m"experimental-section"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-actions"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m漫画与 Webtoon 排版[0m
+        [36m</h3>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m草稿 · 本地栅格渲染[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新漫画来源与记录[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<p>[39m
+        [0m复用原剧本镜头、人物与资产库。生成图片和排版分开；空白页和纯文字格可独立编辑保存；需要图片的格框缺图时仍阻止预览与导出。[0m
+      [36m</p>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m核对原图库中的用户图片[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r7s:"[39m
+          [36m>[39m
+            [0m待核对的原图片[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r7s:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择图片[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m漫画书 · 章节 · 页面[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div>[39m
+          [36m<p>[39m
+            [0m手工组织独立漫画页。最多 20 本书，每本书最多 20 章、100 页；结构恢复只恢复章节与页面归属，不恢复页面内容。移除章节或页面不会删除已保存布局。同一页面可被多本书引用，编辑会影响所有引用它的书；复制页面会创建独立副本。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m刷新漫画书[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-field"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m":r7q:"[39m
+            [36m>[39m
+              [0m新漫画书名称[0m
+            [36m</label>[39m
+            [36m<input[39m
+              [33mid[39m=[32m":r7q:"[39m
+              [33mmaxlength[39m=[32m"240"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m创建漫画书[0m
+          [36m</button>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"漫画书列表"[39m
+          [36m>[39m
+            [36m<ul>[39m
+              [36m<li>[39m
+                [36m<button[39m
+                  [33maria-pressed[39m=[32m"false"[39m
+                  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                [36m>[39m
+                  [0m打开漫画书 [0m
+                  [0m测试漫画书[0m
+                [36m</button>[39m
+              [36m</li>[39m
+            [36m</ul>[39m
+          [36m</nav>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m布局草稿与手工编辑[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m新建空白漫画页[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r7r:"[39m
+          [36m>[39m
+            [0m漫画来源剧本[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r7r:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择已有镜头的剧本[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无镜头来源[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m可以直接新建空白漫画页；从剧本改编时再选择已有镜头。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m已保存布局与版本[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 p1[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m4[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 p1[0m
+          [36m</button>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 p2[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m6[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 p2[0m
+          [36m</button>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 free[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m2[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 free[0m
+          [36m</button>[39m
+        [36m</article>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ openBook src/experimental/ComicCollectionTree.test.tsx:41:119
+
+ ❯ src/experimental/ComicCollectionTree.test.tsx:134:128
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/experimental/ComicCollectionTree.test.tsx > integrates aggregate dirty state and explicit page and structure discard before leaving an active collection
+ FAIL  src/experimental/ComicCollectionTree.test.tsx > integrates book-page completion with the existing page editor without self-invalidating its owner fence
+TypeError: undefined is not a function
+ ❯ src/experimental/ComicLayoutsPanel.tsx:62:36
+
+ ❯ safelyCallDestroy ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22971:5
+ ❯ commitHookEffectListUnmount ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23139:11
+ ❯ commitPassiveUnmountInsideDeletedTreeOnFiber ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25140:11
+ ❯ commitPassiveUnmountEffectsInsideOfDeletedTree_begin ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:25087:5
+ ❯ commitPassiveUnmountEffects_begin ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24995:11
+ ❯ commitPassiveUnmountEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24980:3
+ ❯ flushPassiveEffectsImpl ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27077:3
+ ❯ flushPassiveEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/experimental/ComicCollectionTree.test.tsx > integrates book-page completion with the existing page editor without self-invalidating its owner fence
+TestingLibraryElementError: Unable to find a label with the text of: 漫画书名称
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"漫画与 Webtoon 排版"[39m
+      [33mclass[39m=[32m"experimental-section"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-actions"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m漫画与 Webtoon 排版[0m
+        [36m</h3>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m草稿 · 本地栅格渲染[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新漫画来源与记录[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<p>[39m
+        [0m复用原剧本镜头、人物与资产库。生成图片和排版分开；空白页和纯文字格可独立编辑保存；需要图片的格框缺图时仍阻止预览与导出。[0m
+      [36m</p>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m核对原图库中的用户图片[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r7v:"[39m
+          [36m>[39m
+            [0m待核对的原图片[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r7v:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择图片[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m漫画书 · 章节 · 页面[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div>[39m
+          [36m<p>[39m
+            [0m手工组织独立漫画页。最多 20 本书，每本书最多 20 章、100 页；结构恢复只恢复章节与页面归属，不恢复页面内容。移除章节或页面不会删除已保存布局。同一页面可被多本书引用，编辑会影响所有引用它的书；复制页面会创建独立副本。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m刷新漫画书[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-field"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m":r7t:"[39m
+            [36m>[39m
+              [0m新漫画书名称[0m
+            [36m</label>[39m
+            [36m<input[39m
+              [33mid[39m=[32m":r7t:"[39m
+              [33mmaxlength[39m=[32m"240"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m创建漫画书[0m
+          [36m</button>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"漫画书列表"[39m
+          [36m>[39m
+            [36m<ul>[39m
+              [36m<li>[39m
+                [36m<button[39m
+                  [33maria-pressed[39m=[32m"false"[39m
+                  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                [36m>[39m
+                  [0m打开漫画书 [0m
+                  [0m测试漫画书[0m
+                [36m</button>[39m
+              [36m</li>[39m
+            [36m</ul>[39m
+          [36m</nav>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m布局草稿与手工编辑[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m新建空白漫画页[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r7u:"[39m
+          [36m>[39m
+            [0m漫画来源剧本[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r7u:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择已有镜头的剧本[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无镜头来源[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m可以直接新建空白漫画页；从剧本改编时再选择已有镜头。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m已保存布局与版本[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 p1[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m4[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 p1[0m
+          [36m</button>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 p2[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m6[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 p2[0m
+          [36m</button>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 free[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m2[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 free[0m
+          [36m</button>[39m
+        [36m</article>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"漫画与 Webtoon 排版"[39m
+      [33mclass[39m=[32m"experimental-section"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"experimental-actions"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m漫画与 Webtoon 排版[0m
+        [36m</h3>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+        [36m>[39m
+          [0m草稿 · 本地栅格渲染[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m刷新漫画来源与记录[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<p>[39m
+        [0m复用原剧本镜头、人物与资产库。生成图片和排版分开；空白页和纯文字格可独立编辑保存；需要图片的格框缺图时仍阻止预览与导出。[0m
+      [36m</p>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m核对原图库中的用户图片[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r7v:"[39m
+          [36m>[39m
+            [0m待核对的原图片[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r7v:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择图片[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m漫画书 · 章节 · 页面[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<div>[39m
+          [36m<p>[39m
+            [0m手工组织独立漫画页。最多 20 本书，每本书最多 20 章、100 页；结构恢复只恢复章节与页面归属，不恢复页面内容。移除章节或页面不会删除已保存布局。同一页面可被多本书引用，编辑会影响所有引用它的书；复制页面会创建独立副本。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-actions"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [36m>[39m
+              [0m刷新漫画书[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"experimental-field"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m":r7t:"[39m
+            [36m>[39m
+              [0m新漫画书名称[0m
+            [36m</label>[39m
+            [36m<input[39m
+              [33mid[39m=[32m":r7t:"[39m
+              [33mmaxlength[39m=[32m"240"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m创建漫画书[0m
+          [36m</button>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"漫画书列表"[39m
+          [36m>[39m
+            [36m<ul>[39m
+              [36m<li>[39m
+                [36m<button[39m
+                  [33maria-pressed[39m=[32m"false"[39m
+                  [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+                [36m>[39m
+                  [0m打开漫画书 [0m
+                  [0m测试漫画书[0m
+                [36m</button>[39m
+              [36m</li>[39m
+            [36m</ul>[39m
+          [36m</nav>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m布局草稿与手工编辑[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m新建空白漫画页[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"experimental-field"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mfor[39m=[32m":r7u:"[39m
+          [36m>[39m
+            [0m漫画来源剧本[0m
+          [36m</label>[39m
+          [36m<select[39m
+            [33mid[39m=[32m":r7u:"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择已有镜头的剧本[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ui-empty"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m暂无镜头来源[0m
+          [36m</strong>[39m
+          [36m<p>[39m
+            [0m可以直接新建空白漫画页；从剧本改编时再选择已有镜头。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"ui-panel"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2>[39m
+            [0m已保存布局与版本[0m
+          [36m</h2>[39m
+        [36m</header>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 p1[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m4[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 p1[0m
+          [36m</button>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 p2[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m6[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 p2[0m
+          [36m</button>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"experimental-record"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m页面 free[0m
+          [36m</strong>[39m
+          [0m [0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ui-badge ui-badge--neutral"[39m
+          [36m>[39m
+            [0mDRAFT[0m
+            [0m · v[0m
+            [0m2[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m打开布局 [0m
+            [0m页面 free[0m
+          [36m</button>[39m
+        [36m</article>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ openBook src/experimental/ComicCollectionTree.test.tsx:41:119
+
+ ❯ src/experimental/ComicCollectionTree.test.tsx:149:125
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+

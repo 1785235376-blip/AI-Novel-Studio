@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/ui/AppShell.projectNoun.test.tsx (12 tests) 228ms
+ ✓ src/ui/AppShell.test.tsx (19 tests) 351ms
+ ✓ src/experimental/ComicReadingOrder.additive.test.tsx (5 tests) 957ms
+   ✓ integrates with original layout history without saving or approving automatically 752ms
+ ✓ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests) 1503ms
+   ✓ shows legacy center without injecting fields when opening and saving a legacy document 559ms
+   ✓ uses original undo redo and CAS save while retaining inactive values through fit toggles 322ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 1699ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 542ms
+   ✓ approved-review ticket clears when geometry changes; preview widths do not rerender geometry 321ms
+   ✓ approves only displayed current pixels with exact digest and downloads only the approved version 350ms
+ ✓ src/experimental/ComicCollectionTree.test.tsx (13 tests) 2066ms
+   ✓ integrates aggregate dirty state and explicit page and structure discard before leaving an active collection 317ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 2171ms
+   ✓ explicit arrangement preview applies one undoable edit and saves only through original owner 789ms
+   ✓ cancel, edits, refresh and client replacement discard arrangement consent 494ms
+ ✓ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (25 tests) 6068ms
+   ✓ explicit preview discloses pins and applies one exact undoable copy through original CAS save 1363ms
+   ✓ invalid destination never consumes IDs or changes history and cancel discards preview 361ms
+   ✓ retained apply callbacks cannot survive edit, coordinate replacement, cancel, or repeat 377ms
+   ✓ refresh, stale catalog pins, source ABA and client/scope replacement fence retained callbacks 361ms
+
+ Test Files  8 passed (8)
+      Tests  94 passed (94)
+   Start at  04:03:45
+   Duration  7.45s (transform 742ms, setup 245ms, collect 3.31s, tests 15.04s, environment 4.41s, prepare 683ms)
+

@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/ui/AppShell.projectNoun.test.tsx (12 tests) 202ms
+ ✓ src/ui/AppShell.test.tsx (19 tests) 388ms
+ ✓ src/experimental/ComicReadingOrder.additive.test.tsx (5 tests) 978ms
+   ✓ integrates with original layout history without saving or approving automatically 768ms
+ ✓ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests) 1432ms
+   ✓ shows legacy center without injecting fields when opening and saving a legacy document 459ms
+   ✓ uses original undo redo and CAS save while retaining inactive values through fit toggles 305ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 1468ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 509ms
+   ✓ approves only displayed current pixels with exact digest and downloads only the approved version 314ms
+ ✓ src/experimental/ComicCollectionTree.test.tsx (13 tests) 2007ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 2122ms
+   ✓ explicit arrangement preview applies one undoable edit and saves only through original owner 698ms
+   ✓ cancel, edits, refresh and client replacement discard arrangement consent 367ms
+   ✓ retained arrangement apply is fenced after cancellation, edits and repeat invocation 351ms
+   ✓ retained apply cannot cross record, source or owner ABA 346ms
+ ✓ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (25 tests) 6196ms
+   ✓ explicit preview discloses pins and applies one exact undoable copy through original CAS save 1014ms
+   ✓ invalid destination never consumes IDs or changes history and cancel discards preview 625ms
+   ✓ retained apply callbacks cannot survive edit, coordinate replacement, cancel, or repeat 432ms
+   ✓ refresh, stale catalog pins, source ABA and client/scope replacement fence retained callbacks 465ms
+
+ Test Files  8 passed (8)
+      Tests  94 passed (94)
+   Start at  04:02:01
+   Duration  7.39s (transform 670ms, setup 227ms, collect 3.01s, tests 14.79s, environment 3.54s, prepare 596ms)
+
