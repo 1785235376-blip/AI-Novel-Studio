@@ -1,0 +1,133 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "9822a465d811bcc98fc8e02525cd4ce8a28d0ff1",
+      "path": "docs/MEDIA_CANVAS_GESTURES.md",
+      "bytes": 1602,
+      "sha256": "54434b657fc630a887d90f541aca60546868860dd82637c33d00407403e1b819"
+    },
+    {
+      "blob": "8fc6554883a44e93c888a867919df73ea87d572b",
+      "path": "docs/MEDIA_CANVAS_MINIMAP.md",
+      "bytes": 1417,
+      "sha256": "46e2cac692bbb46cf45349d1c349e5df14437834d54cde1fe201508049b985f6"
+    },
+    {
+      "blob": "7db329c8cf4927c257e9637cc1bedbcc9bd17788",
+      "path": "docs/delivery/v2-development/media-canvas-gestures.json",
+      "bytes": 686648,
+      "sha256": "a7d425e73727a7d5bf51b8c3b97d906d1fca9a4e5b4933c01ae802f932497b55"
+    },
+    {
+      "blob": "e3594b13c20926377355fdba7ad0ad447c4013d9",
+      "path": "docs/delivery/v2-development/media-canvas-gestures.log",
+      "bytes": 2264,
+      "sha256": "51a600ae67776f24286b503d6a57739e282ffd9fea9ac3cdc859937fd210836f"
+    },
+    {
+      "blob": "eb964ca9f3db9c4e90cc561d9531636b6a1dd7f5",
+      "path": "docs/delivery/v2-development/media-canvas-minimap-final.json",
+      "bytes": 687251,
+      "sha256": "e90f496559c05629653a19690c411d395bc2f083e40959c03597759fe5b02612"
+    },
+    {
+      "blob": "aaebe5c6cff43ea656f4c5e148ee7133a6a3ee9f",
+      "path": "docs/delivery/v2-development/media-canvas-minimap-final.log",
+      "bytes": 2335,
+      "sha256": "4e9ec65e65dea475ac540a01889ed6f626b77cb2d9eee9f5cf6b0f6ff2b92898"
+    },
+    {
+      "blob": "dfb14fc5478aa694877d559987148b5d618e6762",
+      "path": "docs/delivery/v2-development/media-canvas-minimap.json",
+      "bytes": 687146,
+      "sha256": "092dbf69bb81372e14bab34c4be7ab171b3380d5fc2c5726a84899b38c5fa08f"
+    },
+    {
+      "blob": "d072a32bb3832c751faf015dece1db9ca783658e",
+      "path": "docs/delivery/v2-development/media-canvas-minimap.log",
+      "bytes": 146704,
+      "sha256": "f95c0c50ae88f30db968dd07e71d82f7d4d5a8ab3b5396a617a9c9a8737743ce"
+    },
+    {
+      "blob": "c4074b685a04484b77252fb9ead1d7fd4cd3969e",
+      "path": "frontend/src/creative/MediaCanvasMiniMap.additive.test.tsx",
+      "bytes": 2732,
+      "sha256": "29e8ffe61d41dbbfc55a450a903dbf864b69b145406ebdd8dc300871ef1f1195"
+    },
+    {
+      "blob": "69f818cb586a0d23c00e6b20c142e28f3d5b39fc",
+      "path": "frontend/src/creative/MediaCanvasMiniMap.tsx",
+      "bytes": 3607,
+      "sha256": "5f10c2399adab3a8ba38e0917cf3d00df64e418830d9a5b4f6361618bb1d9935"
+    },
+    {
+      "blob": "d5fe4e83a46102c8275b7880894d881369f4591f",
+      "path": "frontend/src/creative/MediaCanvasOwner.integration.test.tsx",
+      "bytes": 2298,
+      "sha256": "2ea981a948e1039cf234fec2cabcc2455f2d9347c1805152fdda7765716716db"
+    },
+    {
+      "blob": "9d6943421126a7e8dddb4c1df07c05a68d2f78cf",
+      "path": "frontend/src/creative/MediaCanvasViewPanel.additive.test.tsx",
+      "bytes": 6939,
+      "sha256": "94b89be7e97f95859b214a95a7860268860d51d978824518649be1c45d0994c8"
+    },
+    {
+      "blob": "f4dd6264b4e3fabbb61b8d7a7c47cc6d3bf0acb2",
+      "path": "frontend/src/creative/MediaCanvasViewPanel.tsx",
+      "bytes": 9538,
+      "sha256": "e68744d7a8e4553c86a3d01ed63b9198938bc5027ea2eff5a45ad00a03c6b2e6"
+    },
+    {
+      "blob": "f6728c5cc26d97bc30d426217634e9abb85d9e3f",
+      "path": "frontend/src/creative/MediaCardViewport.additive.test.tsx",
+      "bytes": 4505,
+      "sha256": "fd17f72500adde61ec6fcf1c846877b2a897ab17e7048e2f2c5afb4d8452ccbb"
+    },
+    {
+      "blob": "b59f68ce9dec28a427ab4688bcdf1d44e5e0f688",
+      "path": "frontend/src/creative/MediaCardViewport.tsx",
+      "bytes": 7810,
+      "sha256": "ccb3afd1cfce31c349a615d5bafd8854897b2dedd55969540beb892d189e5ca8"
+    },
+    {
+      "blob": "ff3359fab9cbf2b98b22e61b4427edb0aefcd241",
+      "path": "frontend/src/creative/mediaCanvas.css",
+      "bytes": 1710,
+      "sha256": "f2ff4fa87394b244f7807b0bd4daba6bf37046180a178c5496d78207b47a38ff"
+    },
+    {
+      "blob": "b456712871b7d6853cc32e4172041c695b92d671",
+      "path": "frontend/src/creative/mediaCanvasGeometry.ts",
+      "bytes": 2420,
+      "sha256": "c122ffdbf5ebcef85d64706b94819dbcb245b72cdfbeb58563fe3edc002b9e21"
+    },
+    {
+      "blob": "3248b832d537c7d19b0d6b6db58ec7bd58cd207b",
+      "path": "frontend/src/creative/MediaCardViewport.additive.test.tsx",
+      "bytes": 4258,
+      "sha256": "8901e32fe0bc519ae60c5110f6a8a96201ca5a521ddab6439d9a60dfdaf0d8e7"
+    },
+    {
+      "blob": "4b231ef24a8e49f1394321a0485e7836e6e246cd",
+      "path": "frontend/src/creative/MediaCardViewport.tsx",
+      "bytes": 7549,
+      "sha256": "4e22dba0acb84de66e5a9c5b4aeae1c3fc0641fdbf0e93287fe9a3651e8221a8"
+    },
+    {
+      "blob": "010604c8a225382342c03d987d38896c032576d6",
+      "path": "frontend/src/creative/mediaCanvas.css",
+      "bytes": 1399,
+      "sha256": "723866672eb50dd77f8a7983725fd670dd5c2eca6f25d4ab11a0fa3e9da5be0d"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
