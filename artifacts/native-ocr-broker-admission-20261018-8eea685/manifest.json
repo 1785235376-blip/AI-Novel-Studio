@@ -1,0 +1,6 @@
+{
+  "source_head": "8eea685d9533e84e41ec91f99fed9a59ac9191a0",
+  "prerequisite": "3b758e4bfe4309a1b3085077da2c417be9fcb38c",
+  "bundle": "continuation.bundle",
+  "scope": "Private native OCR profile in original broker with real preview, reservation, dispatch and zero-provider-fee settlement. Actual native OCR and incarnation-isolated ledger checks pass on File and PostgreSQL. Generic Vision availability and public Research dispatch remain closed. Includes retained failures, focused regressions and actual PUBLIC wheel evidence."
+}
