@@ -172,12 +172,17 @@ class SubtitleProcessingMixin:
         self._processing_flags()
         adapters = self._processing_registry()
         configured = [asdict(a.definition) for a in adapters.values()]
+        model_admitted = any(self._processing_ready(a, 'ASR') and
+            a.definition.verification == 'CONTRACT_VERIFIED' for a in adapters.values())
         return {'schema': 'ai-novel-subtitle-processing/1', 'owner': 'subtitle_timeline_v2',
             'operations': [{'operation': operation, 'status': ('CONTRACT_VERIFIED' if any(self._processing_ready(a, operation) and a.definition.verification == 'CONTRACT_VERIFIED' for a in adapters.values()) else 'MOCK_ONLY') if any(self._processing_ready(a, operation) for a in adapters.values()) else 'NOT_CONFIGURED',
                             'runtime_verification': 'NOT_RUN'} for operation in OPERATIONS],
             'adapters': configured, 'input_schema': ProcessingCreateIn.model_json_schema(),
-            'model_runtime_admission': 'ORIGINAL_AUDIO_MODEL_NODE_EXPLICIT_REGISTERED_LOCAL_ROUTE_REQUIRED',
-            'model_runtime_admission_state': 'EXPLICIT_REGISTERED_LOCAL_ROUTE' if any(self._processing_ready(a, 'ASR') and a.definition.verification == 'CONTRACT_VERIFIED' for a in adapters.values()) else 'NOT_CONFIGURED',
+            # Preserve the schema-1 unconfigured contract separately from the route requirement.
+            'model_runtime_admission': ('ORIGINAL_AUDIO_MODEL_NODE_EXPLICIT_REGISTERED_LOCAL_ROUTE_REQUIRED'
+                if model_admitted else 'NOT_CONFIGURED_ORIGINAL_MEDIA_RUNTIME_REQUIRED'),
+            'model_runtime_admission_state': 'EXPLICIT_REGISTERED_LOCAL_ROUTE' if model_admitted else 'NOT_CONFIGURED',
+            'model_runtime_admission_requirement': 'ORIGINAL_AUDIO_MODEL_NODE_EXPLICIT_REGISTERED_LOCAL_ROUTE_REQUIRED',
             'synthetic_execution': 'TRUSTED_HOST_FIXTURES_ONLY_NOT_A_MODEL_RUNTIME',
             'third_party_execution': 'DENY_ALL', 'privacy': 'LOCAL_ONLY',
             'max_media_bytes': MAX_MEDIA_BYTES, 'max_scope_render_bytes': MAX_SCOPE_RENDER_BYTES,
