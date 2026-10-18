@@ -30,6 +30,7 @@ export function IndependentDirectorModelReview(props: Props) {
 }
 
 function ModelReview(props: Props) {
+  const [multiShot, setMultiShot] = useState(false);
   const [preview, setPreview] = useState<DirectorPreviewReceipt>();
   const [status, setStatus] = useState<DirectorStatusReceipt>();
   const [pending, setPending] = useState<DirectorPendingReceipt>();
@@ -86,7 +87,7 @@ function ModelReview(props: Props) {
   if (revoked) return <StatusMessage tone="warning">原模型审核已拒绝访问。请重新验证身份后打开。</StatusMessage>;
   return <section className="creative-model-controls" aria-label={props.sourceMode === 'SCREENPLAY' ? '独立剧本模型导演审核' : '独立分镜模型导演审核'}>
     <h3>模型分析与人工审核</h3><p>仅使用已验证、零费用的本地文字路由。生成建议保留来源、理由与不确定性；不会自动执行媒体或保存画布。</p>
-    <p>原分镜 {props.source.id} · v{props.source.version}</p>
+    <p>{props.sourceMode === 'SCREENPLAY' ? '原剧本' : '原分镜'} {props.source.id} · v{props.source.version}</p>
     {error && <StatusMessage tone="error">{error}</StatusMessage>}
     {uncertain && <StatusMessage tone="warning">操作回执不确定。保留当前内容，不会自动重试；请读取原任务或核对刚才的审核提交。</StatusMessage>}
     {readConflict && !submitted && <StatusMessage tone="warning">原任务状态已变化，本地审核仍保留。
@@ -95,17 +96,22 @@ function ModelReview(props: Props) {
     </StatusMessage>}
     <Button disabled={busy || props.disabled} onClick={() => void run(false, reopen)}>读取原模型任务状态</Button>
     {!preview && !status && !uncertain && <>
+      {props.sourceMode === 'SCREENPLAY' && <><CreativeField label="剧本镜头规划方式"><select value={multiShot ? 'MULTI_SHOT_V1' : 'SCENE_V2'} disabled={busy || props.disabled} onChange={event => edit(() => setMultiShot(event.target.value === 'MULTI_SHOT_V1'))}>
+        <option value="SCENE_V2">逐场景建议（默认，每场景一条）</option>
+        <option value="MULTI_SHOT_V1">多镜头规划（每场景 1–3 个候选镜头）</option>
+      </select></CreativeField><p>多镜头规划需明确选择，适用于 1–2 个来源场景。模型从固定候选位置中选择镜头；单次输出受长度上限限制，不会自动补写或重试。</p></>}
       <CreativeField label="独立导演本地路由"><select value={routeId} disabled={busy || props.disabled} onChange={event => edit(() => setRouteId(event.target.value))}>
         <option value="">明确选择本地路由</option>{props.routes.filter(row => !row.synthetic).map(row => <option key={row.route_id} value={row.route_id} disabled={!row.available}>{row.provider_id} / {row.model_id}</option>)}
       </select></CreativeField>
       <Button disabled={busy || props.disabled || !route?.available || route.synthetic} onClick={() => void run(true, async () => {
         if (!route?.available || route.synthetic) return;
-        const value = await props.model.preview(props.proposal.id, props.source, { expected_version: props.proposal.version, route_id: route.route_id });
+        const value = await props.model.preview(props.proposal.id, props.source, { expected_version: props.proposal.version, route_id: route.route_id,
+          ...(props.sourceMode === 'SCREENPLAY' && multiShot ? { planning_mode: 'MULTI_SHOT_V1' as const, max_output_tokens: 2048 } : {}) });
         current(); setPreview(value); setInputChecked(false);
       })}>{props.sourceMode === 'SCREENPLAY' ? '预览独立剧本模型输入' : '预览独立分镜模型输入'}</Button>
     </>}
     {preview && (!status || status.phase === 'PREVIEW') && <>
-      <Badge tone="info">预览尚未调用模型</Badge><p>{preview.provider_id} / {preview.model_id} · 最高费用 0 USD</p>
+      <Badge tone="info">预览尚未调用模型</Badge>{preview.planning_mode === 'MULTI_SHOT_V1' && <Badge>多镜头规划 · 待模型选择候选</Badge>}<p>{preview.provider_id} / {preview.model_id} · 最高费用 0 USD</p>
       <details><summary>核对完整输入与参数</summary><pre>{preview.prompt}</pre><pre>{JSON.stringify(preview.parameters, null, 2)}</pre></details>
       <label><input type="checkbox" checked={inputChecked} disabled={busy || uncertain || props.disabled} onChange={event => { if (admitted()) setInputChecked(event.target.checked); }} />已核对输入，允许调用一次本地模型</label>
       <Button disabled={busy || uncertain || props.disabled || !inputChecked} onClick={() => void run(true, async () => {
@@ -119,6 +125,14 @@ function ModelReview(props: Props) {
     </>}
     {draft && pending && !adopted && <fieldset disabled={busy || uncertain || readConflict || props.disabled}>
       <legend>模型候选人工审核</legend>
+      {pending.contract === 'DIRECTOR_SCREENPLAY_MODEL_PENDING_REVIEW_V3' && <section aria-label="多镜头候选摘要">
+        <p>{new Set(draft.director_notes.map(note => note.scene_id)).size} 个来源场景 · {draft.director_notes.length} 个候选镜头 · 估算总时长 {draft.director_notes.reduce((total, note) => total + note.duration_seconds, 0)} 秒</p>
+        {[...new Set(draft.director_notes.map(note => note.scene_id))].map(sceneId => {
+          const selected = draft.director_notes.filter(note => note.scene_id === sceneId), mapping = pending.provenance.source_mapping.find(row => row.scene_id === sceneId);
+          return <p key={sceneId}>场景 {mapping && 'source_sequence' in mapping ? mapping.source_sequence : sceneId} · {selected.length} 个候选镜头 · 估算 {selected.reduce((total, note) => total + note.duration_seconds, 0)} 秒</p>;
+        })}
+        <p>时长为规划估算，质量尚未验证。本次审核保留候选镜头 ID、所属场景及顺序。</p>
+      </section>}
       <CreativeField label="模型导演草稿标题"><input value={draft.title} maxLength={240} onChange={event => edit(() => setDraft({ ...draft, title: event.target.value }))} /></CreativeField>
       <DirectorTargetPanel prefix="模型审核 " value={draft.visual_target} onChange={value => edit(() => setDraft({ ...draft, visual_target: value ?? null }))} />
       {draft.director_notes.map((note, index) => <details key={note.id}><summary>模型调度 #{note.number}</summary><DirectorFields prefix={`模型 ${index + 1} `} value={note} onChange={value => edit(() => setDraft({ ...draft, director_notes: draft.director_notes.map(row => row.id === value.id ? value : row) }))} /></details>)}
