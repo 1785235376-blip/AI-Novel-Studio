@@ -2,7 +2,7 @@
 
 Complete mounted source inventory. This catalog is a source map, not a runtime verification verdict.
 
-Starting method/path operations: 1833. Current: 2513. Added: 680. Removed: 0.
+Starting method/path operations: 1833. Current: 2521. Added: 688. Removed: 0.
 
 The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json.gz; API_CATALOG.json binds its digest and all application sources. Original aliases are listed separately.
 
@@ -1199,10 +1199,14 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/novels/{nid}/experimental/change-impact/query` | `app/experimental/change_impact_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/change-impact/refreshes/{rid}/cancel` | `app/experimental/change_impact_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/change-impact/refreshes/{rid}/execute` | `app/experimental/change_impact_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/author-archive/inspect` | `app/experimental/comic_author_archive_api.py:107` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/author-archive/restore` | `app/experimental/comic_author_archive_api.py:112` | FULL_RECOVERY_ADDED_ROUTE |
 | POST | `/api/novels/{nid}/experimental/comic-layouts/books` | `app/experimental/comic_layouts_api.py:60` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/epub-publication-preflight` | `app/experimental/comic_layouts_api.py:102` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/author-archive-preview` | `app/experimental/comic_author_archive_api.py:92` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/epub-publication-preflight` | `app/experimental/comic_layouts_api.py:102` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/export-author-archive` | `app/experimental/comic_author_archive_api.py:97` | FULL_RECOVERY_ADDED_ROUTE |
 | POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/export-cbz` | `app/experimental/comic_layouts_api.py:80` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/export-epub` | `app/experimental/comic_layouts_api.py:106` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/export-epub` | `app/experimental/comic_layouts_api.py:106` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/export-page-archive` | `app/experimental/comic_layouts_api.py:119` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/export-pdf` | `app/experimental/comic_layouts_api.py:93` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/comic-layouts/books/{rid}/page-archive-preflight` | `app/experimental/comic_layouts_api.py:115` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1826,10 +1830,14 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/v1/novels/{nid}/experimental/change-impact/query` | `app/experimental/change_impact_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/change-impact/refreshes/{rid}/cancel` | `app/experimental/change_impact_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/change-impact/refreshes/{rid}/execute` | `app/experimental/change_impact_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/author-archive/inspect` | `app/experimental/comic_author_archive_api.py:107` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/author-archive/restore` | `app/experimental/comic_author_archive_api.py:112` | FULL_RECOVERY_ADDED_ROUTE |
 | POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books` | `app/experimental/comic_layouts_api.py:60` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/epub-publication-preflight` | `app/experimental/comic_layouts_api.py:102` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/author-archive-preview` | `app/experimental/comic_author_archive_api.py:92` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/epub-publication-preflight` | `app/experimental/comic_layouts_api.py:102` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/export-author-archive` | `app/experimental/comic_author_archive_api.py:97` | FULL_RECOVERY_ADDED_ROUTE |
 | POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/export-cbz` | `app/experimental/comic_layouts_api.py:80` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/export-epub` | `app/experimental/comic_layouts_api.py:106` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/export-epub` | `app/experimental/comic_layouts_api.py:106` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/export-page-archive` | `app/experimental/comic_layouts_api.py:119` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/export-pdf` | `app/experimental/comic_layouts_api.py:93` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/comic-layouts/books/{rid}/page-archive-preflight` | `app/experimental/comic_layouts_api.py:115` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
