@@ -73,7 +73,7 @@ Intermediate checkpoints, internal builds and test runs are allowed and must be 
 | Gate | Status | Reason |
 | --- | --- | --- |
 | G1 | PARTIAL | Owners preserved in the tree; backup/restore not re-proven this round |
-| G2 | PARTIAL | Round-1 complete File suite (two shards): 10089 passed / 190 failed / 14 errors / 4866 skipped. Round 2 triaged all 203 failed/error nodes: 66 now pass under required profiles, 131 are explicit Windows/POSIX-platform skips, 2 remain OPEN (D-09, D-18) and 2 are intermittent (D-17). Focused real-PostgreSQL subset: 118 passed, 0 failed; full PG suite BLOCKED_ENVIRONMENT (D-07) |
+| G2 | PARTIAL | Complete File suite re-run in round 2: **27 failed / 10021 passed / 5094 skipped / 13 errors** (was 190 failed / 14 errors). 37 remaining nodes are suites run without their required runner profile/flag (verified passing there); 2 OPEN (D-09, D-18), 2 intermittent harness cases (D-17, D-19). Focused real-PostgreSQL subset: 118 passed, 0 failed; full PG suite BLOCKED_ENVIRONMENT (D-07) |
 | G3 | PASS (after fix) | `pnpm test` 4303 passed / 8 skipped / 0 failed after excluding Playwright e2e specs from Vitest (D-01); build and token lint pass |
 | G4 | PARTIAL | System Edge 152: visual/geometry/Local-AI 15/15 PASS; creative-workbench journeys 8 failed at launcher precondition (D-10); live-backend E2E not executed |
 | G5 | PARTIAL | Real CPU media/comic paths exist; acceptance artifacts not fully regenerated this round |

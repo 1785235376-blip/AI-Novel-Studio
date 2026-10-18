@@ -23,9 +23,25 @@
     "bytes": 25746,
     "sha256": "bc391bafaeba98cbc089cf5a18559ba537aa97b8089dbb592ed84482ef16861c"
   },
+  "round2-complete-file-suite.log.gz": {
+    "bytes": 6353,
+    "sha256": "fe1b0d26151327a33260b642d0f3bedb457a9aa1e13475a60df87bae1c7ffc7b"
+  },
+  "round2-complete-file-suite.xml.gz": {
+    "bytes": 243629,
+    "sha256": "8630b5f2a925df96b831fe79c64329e56df47875f08b062ba9e19af465dd39dc"
+  },
+  "round2-new-failure-isolation.log.gz": {
+    "bytes": 361,
+    "sha256": "032ba0bec1ac66fbcfdbad93d1532ec2cabadc7f6ad93ddc6f4937d2dd10ceda"
+  },
+  "round2-r3-import-profile-pass.log.gz": {
+    "bytes": 361,
+    "sha256": "cc7b37d32436214ba432792afd0ae85a07507dbb8194272b7b9020f04d2da15b"
+  },
   "round2-triage-summary.md": {
-    "bytes": 1132,
-    "sha256": "429b8436208bc7e761925dec679bdedee6a90e5bb7c3c80784ac5f3c26266bb6"
+    "bytes": 1523,
+    "sha256": "a884db5932e8cc0daf036a58aecf541a54e9500fe133fb60cf66436d4bc239ca"
   },
   "round3i-adoption-pass.log.gz": {
     "bytes": 404,

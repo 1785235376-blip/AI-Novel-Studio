@@ -17,3 +17,11 @@ Key results:
 - Authority commit leases with PYTHONPATH: 11 passed.
 - Real-text runner on Windows: 97 skipped with explicit POSIX-only reason.
 - Catalog + interop contracts + engineering guards: 208 passed.
+
+
+Complete round-2 File suite re-run (single isolated process):
+
+27 failed, 10021 passed, 5094 skipped, 13 errors, 3 deselected, 5 subtests passed in 2831.98 s. 
+Remaining nodes: 24 revocation (needs collaboration profile; 22/24 pass there, 2 intermittent), 
+12 round3i profile errors (pass under their profiles), 1 r3-import profile error (22 passed in profile), 
+D-09, D-18, D-19.
