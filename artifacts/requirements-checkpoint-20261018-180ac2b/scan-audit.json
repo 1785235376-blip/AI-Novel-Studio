@@ -1,0 +1,19 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "1502f8cf1ed0f5f7910d89f4b667e367757ae7c1",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 17501,
+      "sha256": "aaf0381860a447cf7fc1f2cbab16ab6a0327408059cdf6d3837d3821ac5aa56e"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
