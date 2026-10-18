@@ -1,0 +1,1621 @@
+running bdist_wheel
+running build
+running build_py
+creating build/lib/local_interop_desktop
+copying local_interop_desktop/lifecycle.py -> build/lib/local_interop_desktop
+copying local_interop_desktop/acceptance.py -> build/lib/local_interop_desktop
+copying local_interop_desktop/events.py -> build/lib/local_interop_desktop
+copying local_interop_desktop/transport.py -> build/lib/local_interop_desktop
+copying local_interop_desktop/__init__.py -> build/lib/local_interop_desktop
+copying local_interop_desktop/providers.py -> build/lib/local_interop_desktop
+copying local_interop_desktop/identity.py -> build/lib/local_interop_desktop
+copying local_interop_desktop/testing.py -> build/lib/local_interop_desktop
+copying local_interop_desktop/diagnostics.py -> build/lib/local_interop_desktop
+creating build/lib/local_interop_protocol
+copying local_interop_protocol/validation.py -> build/lib/local_interop_protocol
+copying local_interop_protocol/generate_contracts.py -> build/lib/local_interop_protocol
+copying local_interop_protocol/models.py -> build/lib/local_interop_protocol
+copying local_interop_protocol/__init__.py -> build/lib/local_interop_protocol
+creating build/lib/app
+copying app/plugin_package_manager.py -> build/lib/app
+copying app/context_policy.py -> build/lib/app
+copying app/industry_export_formats.py -> build/lib/app
+copying app/repository.py -> build/lib/app
+copying app/collaboration_admin_contracts.py -> build/lib/app
+copying app/agents.py -> build/lib/app
+copying app/context_pack_v2.py -> build/lib/app
+copying app/main.py -> build/lib/app
+copying app/context.py -> build/lib/app
+copying app/structured_log.py -> build/lib/app
+copying app/plugin_worker_process.py -> build/lib/app
+copying app/visual_workflow.py -> build/lib/app
+copying app/provider_runtime_v2_contracts.py -> build/lib/app
+copying app/collaboration_api.py -> build/lib/app
+copying app/provider_runtime_v2_model_center_snapshot_bridge.py -> build/lib/app
+copying app/plugin_catalog.py -> build/lib/app
+copying app/author_request.py -> build/lib/app
+copying app/manuscript_sources.py -> build/lib/app
+copying app/router.py -> build/lib/app
+copying app/workflow.py -> build/lib/app
+copying app/runtime_events.py -> build/lib/app
+copying app/vision_ocr_runtime.py -> build/lib/app
+copying app/privacy.py -> build/lib/app
+copying app/document_revision.py -> build/lib/app
+copying app/runtime.py -> build/lib/app
+copying app/actor_context.py -> build/lib/app
+copying app/model_provider_contracts.py -> build/lib/app
+copying app/audio_processing_runtime.py -> build/lib/app
+copying app/native_text_providers.py -> build/lib/app
+copying app/knowledge_extraction.py -> build/lib/app
+copying app/agent_catalog.py -> build/lib/app
+copying app/provider_runtime_v2_routing_service.py -> build/lib/app
+copying app/local_whisper_cpp.py -> build/lib/app
+copying app/chapter_identity.py -> build/lib/app
+copying app/asset_lifecycle_api.py -> build/lib/app
+copying app/generation_stream.py -> build/lib/app
+copying app/plugin_contracts.py -> build/lib/app
+copying app/model_execution.py -> build/lib/app
+copying app/plugin_runtime_contracts.py -> build/lib/app
+copying app/release_readiness.py -> build/lib/app
+copying app/plugin_trust_contracts.py -> build/lib/app
+copying app/storage.py -> build/lib/app
+copying app/narrative_detection.py -> build/lib/app
+copying app/openai_compatible.py -> build/lib/app
+copying app/runtime_diagnostics.py -> build/lib/app
+copying app/audio_provider_config.py -> build/lib/app
+copying app/net_safety.py -> build/lib/app
+copying app/video_assembly_api.py -> build/lib/app
+copying app/migrate_file_to_postgres.py -> build/lib/app
+copying app/plugin_discovery.py -> build/lib/app
+copying app/audio_providers.py -> build/lib/app
+copying app/narrative_context.py -> build/lib/app
+copying app/packaged_profile.py -> build/lib/app
+copying app/creation_workbench_api.py -> build/lib/app
+copying app/plugin_capability_policy.py -> build/lib/app
+copying app/export_formats.py -> build/lib/app
+copying app/trusted_sessions.py -> build/lib/app
+copying app/workflow_recipes.py -> build/lib/app
+copying app/project_retirement.py -> build/lib/app
+copying app/provider_routing_policy_v2.py -> build/lib/app
+copying app/idempotency.py -> build/lib/app
+copying app/ai_planning_api.py -> build/lib/app
+copying app/audio_production_store.py -> build/lib/app
+copying app/document.py -> build/lib/app
+copying app/media_files.py -> build/lib/app
+copying app/bailian_text_preset.py -> build/lib/app
+copying app/story_record_api.py -> build/lib/app
+copying app/finding_review_api.py -> build/lib/app
+copying app/plugin_signature_policy.py -> build/lib/app
+copying app/collaboration_contracts.py -> build/lib/app
+copying app/author_context_sources.py -> build/lib/app
+copying app/plugin_management_api.py -> build/lib/app
+copying app/plugin_test_worker_bootstrap.py -> build/lib/app
+copying app/workflow_api.py -> build/lib/app
+copying app/collaboration_admin.py -> build/lib/app
+copying app/stable_identity.py -> build/lib/app
+copying app/local_tesseract_ocr.py -> build/lib/app
+copying app/__init__.py -> build/lib/app
+copying app/api.py -> build/lib/app
+copying app/plugin_test_worker_supervisor.py -> build/lib/app
+copying app/jobs.py -> build/lib/app
+copying app/providers.py -> build/lib/app
+copying app/import_parsers.py -> build/lib/app
+copying app/asset_providers.py -> build/lib/app
+copying app/revision_constraints.py -> build/lib/app
+copying app/narrative.py -> build/lib/app
+copying app/identity.py -> build/lib/app
+copying app/planning_extraction.py -> build/lib/app
+copying app/model_runtime.py -> build/lib/app
+copying app/dependencies.py -> build/lib/app
+copying app/collaboration.py -> build/lib/app
+copying app/adaptation_api.py -> build/lib/app
+copying app/pdf_export.py -> build/lib/app
+copying app/credential_vault.py -> build/lib/app
+copying app/media_frames.py -> build/lib/app
+copying app/provider_support.py -> build/lib/app
+copying app/asset_provider_config.py -> build/lib/app
+copying app/plugin_test_worker.py -> build/lib/app
+copying app/file_project_lifecycle.py -> build/lib/app
+copying app/plugin_worker_protocol.py -> build/lib/app
+copying app/pending_canon_review_api.py -> build/lib/app
+copying app/source_privacy.py -> build/lib/app
+copying app/review.py -> build/lib/app
+copying app/config.py -> build/lib/app
+copying app/provider_runtime_v2_host_hardware_inventory.py -> build/lib/app
+copying app/asset_worker_config.py -> build/lib/app
+copying app/compare_context_backends.py -> build/lib/app
+copying app/authorization.py -> build/lib/app
+copying app/backup_restore.py -> build/lib/app
+creating build/lib/app/lore
+copying app/lore/continuity_rules.py -> build/lib/app/lore
+copying app/lore/enums.py -> build/lib/app/lore
+copying app/lore/context_view.py -> build/lib/app/lore
+copying app/lore/continuity.py -> build/lib/app/lore
+copying app/lore/context_intelligence.py -> build/lib/app/lore
+copying app/lore/schemas.py -> build/lib/app/lore
+copying app/lore/memory_agent.py -> build/lib/app/lore
+copying app/lore/__init__.py -> build/lib/app/lore
+copying app/lore/continuity_engine.py -> build/lib/app/lore
+copying app/lore/validators.py -> build/lib/app/lore
+creating build/lib/app/experimental
+copying app/experimental/local_ai_inspection_api.py -> build/lib/app/experimental
+copying app/experimental/story_graph_api.py -> build/lib/app/experimental
+copying app/experimental/model_broker.py -> build/lib/app/experimental
+copying app/experimental/declarative_agents.py -> build/lib/app/experimental
+copying app/experimental/voice_direction.py -> build/lib/app/experimental
+copying app/experimental/writer_room_realtime.py -> build/lib/app/experimental
+copying app/experimental/reader_preflight.py -> build/lib/app/experimental
+copying app/experimental/production_lineage_api.py -> build/lib/app/experimental
+copying app/experimental/reader_sources.py -> build/lib/app/experimental
+copying app/experimental/change_impact_api.py -> build/lib/app/experimental
+copying app/experimental/planning.py -> build/lib/app/experimental
+copying app/experimental/subtitle_timeline.py -> build/lib/app/experimental
+copying app/experimental/native_ocr_broker.py -> build/lib/app/experimental
+copying app/experimental/adaptation_projection.py -> build/lib/app/experimental
+copying app/experimental/safe_batches_api.py -> build/lib/app/experimental
+copying app/experimental/finding_review_composition.py -> build/lib/app/experimental
+copying app/experimental/declarative_agents_api.py -> build/lib/app/experimental
+copying app/experimental/writing_sessions_api.py -> build/lib/app/experimental
+copying app/experimental/branch_manuscript_composition.py -> build/lib/app/experimental
+copying app/experimental/workspace_interaction.py -> build/lib/app/experimental
+copying app/experimental/inbox.py -> build/lib/app/experimental
+copying app/experimental/timeline_exchange.py -> build/lib/app/experimental
+copying app/experimental/model_broker_api.py -> build/lib/app/experimental
+copying app/experimental/interactive_story_api.py -> build/lib/app/experimental
+copying app/experimental/review_adapter_jobs.py -> build/lib/app/experimental
+copying app/experimental/subtitle_asr.py -> build/lib/app/experimental
+copying app/experimental/embeddings_api.py -> build/lib/app/experimental
+copying app/experimental/writing_focus.py -> build/lib/app/experimental
+copying app/experimental/structured_forks.py -> build/lib/app/experimental
+copying app/experimental/branch_manuscript_api.py -> build/lib/app/experimental
+copying app/experimental/media.py -> build/lib/app/experimental
+copying app/experimental/planning_api.py -> build/lib/app/experimental
+copying app/experimental/offline_sync_production.py -> build/lib/app/experimental
+copying app/experimental/comic_layouts.py -> build/lib/app/experimental
+copying app/experimental/visual_identity.py -> build/lib/app/experimental
+copying app/experimental/portable_projects_api.py -> build/lib/app/experimental
+copying app/experimental/writing_sessions.py -> build/lib/app/experimental
+copying app/experimental/declarative_model.py -> build/lib/app/experimental
+copying app/experimental/local_ai_inspection.py -> build/lib/app/experimental
+copying app/experimental/first_use.py -> build/lib/app/experimental
+copying app/experimental/director_api.py -> build/lib/app/experimental
+copying app/experimental/multilingual_translation.py -> build/lib/app/experimental
+copying app/experimental/story_simulator_api.py -> build/lib/app/experimental
+copying app/experimental/research_ocr_binding.py -> build/lib/app/experimental
+copying app/experimental/style_analysis_model.py -> build/lib/app/experimental
+copying app/experimental/subtitle_alignment.py -> build/lib/app/experimental
+copying app/experimental/multilingual_editions_api.py -> build/lib/app/experimental
+copying app/experimental/offline_sync.py -> build/lib/app/experimental
+copying app/experimental/style_analysis_api.py -> build/lib/app/experimental
+copying app/experimental/safe_batches.py -> build/lib/app/experimental
+copying app/experimental/portable_projects.py -> build/lib/app/experimental
+copying app/experimental/research_vision.py -> build/lib/app/experimental
+copying app/experimental/teams_api.py -> build/lib/app/experimental
+copying app/experimental/audiobook.py -> build/lib/app/experimental
+copying app/experimental/subtitle_alignment_native.py -> build/lib/app/experimental
+copying app/experimental/writer_room.py -> build/lib/app/experimental
+copying app/experimental/subtitle_processing.py -> build/lib/app/experimental
+copying app/experimental/template_library.py -> build/lib/app/experimental
+copying app/experimental/comic_layouts_api.py -> build/lib/app/experimental
+copying app/experimental/research_extract.py -> build/lib/app/experimental
+copying app/experimental/author_context_api.py -> build/lib/app/experimental
+copying app/experimental/store.py -> build/lib/app/experimental
+copying app/experimental/ux_api.py -> build/lib/app/experimental
+copying app/experimental/imports.py -> build/lib/app/experimental
+copying app/experimental/revision_intelligence_api.py -> build/lib/app/experimental
+copying app/experimental/embeddings.py -> build/lib/app/experimental
+copying app/experimental/research_native_ocr.py -> build/lib/app/experimental
+copying app/experimental/workspace_task_owners.py -> build/lib/app/experimental
+copying app/experimental/revision_intelligence_model.py -> build/lib/app/experimental
+copying app/experimental/media_api.py -> build/lib/app/experimental
+copying app/experimental/subtitle_timeline_api.py -> build/lib/app/experimental
+copying app/experimental/writer_room_api.py -> build/lib/app/experimental
+copying app/experimental/narrative_judge.py -> build/lib/app/experimental
+copying app/experimental/capabilities.py -> build/lib/app/experimental
+copying app/experimental/terminology_portability.py -> build/lib/app/experimental
+copying app/experimental/story_simulator_model.py -> build/lib/app/experimental
+copying app/experimental/multilingual_editions.py -> build/lib/app/experimental
+copying app/experimental/template_library_api.py -> build/lib/app/experimental
+copying app/experimental/world.py -> build/lib/app/experimental
+copying app/experimental/research_library.py -> build/lib/app/experimental
+copying app/experimental/director.py -> build/lib/app/experimental
+copying app/experimental/inbox_api.py -> build/lib/app/experimental
+copying app/experimental/interactive_story.py -> build/lib/app/experimental
+copying app/experimental/__init__.py -> build/lib/app/experimental
+copying app/experimental/api.py -> build/lib/app/experimental
+copying app/experimental/timeline_exchange_api.py -> build/lib/app/experimental
+copying app/experimental/ux.py -> build/lib/app/experimental
+copying app/experimental/production_lineage.py -> build/lib/app/experimental
+copying app/experimental/narrative_judge_api.py -> build/lib/app/experimental
+copying app/experimental/narrative_judge_model.py -> build/lib/app/experimental
+copying app/experimental/voice_direction_api.py -> build/lib/app/experimental
+copying app/experimental/research_ocr_execution.py -> build/lib/app/experimental
+copying app/experimental/subtitle_host_config.py -> build/lib/app/experimental
+copying app/experimental/vector_index.py -> build/lib/app/experimental
+copying app/experimental/writing_focus_api.py -> build/lib/app/experimental
+copying app/experimental/imports_api.py -> build/lib/app/experimental
+copying app/experimental/revision_intelligence.py -> build/lib/app/experimental
+copying app/experimental/declarative_adapter_sdk.py -> build/lib/app/experimental
+copying app/experimental/research_library_api.py -> build/lib/app/experimental
+copying app/experimental/legacy_inbox.py -> build/lib/app/experimental
+copying app/experimental/story_simulator.py -> build/lib/app/experimental
+copying app/experimental/story_graph.py -> build/lib/app/experimental
+copying app/experimental/safe_batch_voice.py -> build/lib/app/experimental
+copying app/experimental/search_sources.py -> build/lib/app/experimental
+copying app/experimental/reader_preflight_api.py -> build/lib/app/experimental
+copying app/experimental/author_task_projection.py -> build/lib/app/experimental
+copying app/experimental/character_author_context.py -> build/lib/app/experimental
+copying app/experimental/style_analysis.py -> build/lib/app/experimental
+copying app/experimental/common.py -> build/lib/app/experimental
+copying app/experimental/subtitle_burn_in.py -> build/lib/app/experimental
+copying app/experimental/review_adapter_projection.py -> build/lib/app/experimental
+copying app/experimental/model_benchmark.py -> build/lib/app/experimental
+copying app/experimental/audiobook_api.py -> build/lib/app/experimental
+copying app/experimental/safe_batch_contracts.py -> build/lib/app/experimental
+copying app/experimental/world_api.py -> build/lib/app/experimental
+copying app/experimental/offline_sync_api.py -> build/lib/app/experimental
+copying app/experimental/first_use_api.py -> build/lib/app/experimental
+copying app/experimental/flags.py -> build/lib/app/experimental
+copying app/experimental/provider_profiles.py -> build/lib/app/experimental
+copying app/experimental/change_impact.py -> build/lib/app/experimental
+copying app/experimental/teams.py -> build/lib/app/experimental
+copying app/experimental/project_forks_api.py -> build/lib/app/experimental
+copying app/experimental/model_benchmark_api.py -> build/lib/app/experimental
+copying app/experimental/project_forks.py -> build/lib/app/experimental
+creating build/lib/app/model_center
+copying app/model_center/runtime_profiles.py -> build/lib/app/model_center
+copying app/model_center/discovery_api.py -> build/lib/app/model_center
+copying app/model_center/domain.py -> build/lib/app/model_center
+copying app/model_center/service.py -> build/lib/app/model_center
+copying app/model_center/whisper_runtime.py -> build/lib/app/model_center
+copying app/model_center/discovery_prerequisites.py -> build/lib/app/model_center
+copying app/model_center/discovery_probes.py -> build/lib/app/model_center
+copying app/model_center/discovery_authority.py -> build/lib/app/model_center
+copying app/model_center/discovery_environment.py -> build/lib/app/model_center
+copying app/model_center/discovery_scope.py -> build/lib/app/model_center
+copying app/model_center/discovery_bridge.py -> build/lib/app/model_center
+copying app/model_center/__init__.py -> build/lib/app/model_center
+copying app/model_center/api.py -> build/lib/app/model_center
+copying app/model_center/runtime_observation.py -> build/lib/app/model_center
+copying app/model_center/discovery_types.py -> build/lib/app/model_center
+copying app/model_center/discovery.py -> build/lib/app/model_center
+copying app/model_center/discovery_onboarding_types.py -> build/lib/app/model_center
+creating build/lib/app/models
+copying app/models/lore.py -> build/lib/app/models
+copying app/models/__init__.py -> build/lib/app/models
+creating build/lib/app/application
+copying app/application/task_service.py -> build/lib/app/application
+copying app/application/audit_service.py -> build/lib/app/application
+copying app/application/runtime_service.py -> build/lib/app/application
+copying app/application/collaboration_service.py -> build/lib/app/application
+copying app/application/events.py -> build/lib/app/application
+copying app/application/contracts.py -> build/lib/app/application
+copying app/application/persistence.py -> build/lib/app/application
+creating build/lib/app/services
+copying app/services/pcm16_envelope.py -> build/lib/app/services
+copying app/services/studio_image_control_contract.py -> build/lib/app/services
+copying app/services/studio_audio_execution.py -> build/lib/app/services
+copying app/services/identity_service.py -> build/lib/app/services
+copying app/services/ai_planning_service.py -> build/lib/app/services
+copying app/services/finding_review_service.py -> build/lib/app/services
+copying app/services/studio_audio_mp3_profile.py -> build/lib/app/services
+copying app/services/harness_process_service.py -> build/lib/app/services
+copying app/services/pending_canon_review_service.py -> build/lib/app/services
+copying app/services/import_review_service.py -> build/lib/app/services
+copying app/services/studio_timeline_schema.py -> build/lib/app/services
+copying app/services/import_apply_service.py -> build/lib/app/services
+copying app/services/membership_authorization_service.py -> build/lib/app/services
+copying app/services/image_job_service.py -> build/lib/app/services
+copying app/services/canon_service.py -> build/lib/app/services
+copying app/services/agent_job_service.py -> build/lib/app/services
+copying app/services/context_service.py -> build/lib/app/services
+copying app/services/video_assembly_service.py -> build/lib/app/services
+copying app/services/export_resource_snapshot.py -> build/lib/app/services
+copying app/services/studio_image_execution.py -> build/lib/app/services
+copying app/services/narrative_finding_service.py -> build/lib/app/services
+copying app/services/studio_model_reference_origin.py -> build/lib/app/services
+copying app/services/studio_timeline_edit.py -> build/lib/app/services
+copying app/services/studio_image_mask_authoring.py -> build/lib/app/services
+copying app/services/user_preference_service.py -> build/lib/app/services
+copying app/services/studio_image_upscale_contract.py -> build/lib/app/services
+copying app/services/narrative_state_service.py -> build/lib/app/services
+copying app/services/visual_memory_index.py -> build/lib/app/services
+copying app/services/adaptation_service.py -> build/lib/app/services
+copying app/services/collaboration_scope_service.py -> build/lib/app/services
+copying app/services/continuity_finding_service.py -> build/lib/app/services
+copying app/services/memory_service.py -> build/lib/app/services
+copying app/services/asset_library_service.py -> build/lib/app/services
+copying app/services/asset_task_worker.py -> build/lib/app/services
+copying app/services/narrative_proposal_service.py -> build/lib/app/services
+copying app/services/agent_context_service.py -> build/lib/app/services
+copying app/services/branch_manuscript_service.py -> build/lib/app/services
+copying app/services/screenplay_service.py -> build/lib/app/services
+copying app/services/context_snapshot_service.py -> build/lib/app/services
+copying app/services/studio_video_provider_recipes.py -> build/lib/app/services
+copying app/services/lore_service.py -> build/lib/app/services
+copying app/services/generation_service.py -> build/lib/app/services
+copying app/services/studio_timeline_export.py -> build/lib/app/services
+copying app/services/__init__.py -> build/lib/app/services
+copying app/services/audiobook_service.py -> build/lib/app/services
+copying app/services/studio_video_execution.py -> build/lib/app/services
+copying app/services/export_snapshot_authority.py -> build/lib/app/services
+copying app/services/harness_context_adapter.py -> build/lib/app/services
+copying app/services/export_job_service.py -> build/lib/app/services
+copying app/services/studio_video_provider.py -> build/lib/app/services
+copying app/services/studio_audio_trim_profiles.py -> build/lib/app/services
+copying app/services/authorization_service.py -> build/lib/app/services
+copying app/services/harness_access_audit_service.py -> build/lib/app/services
+copying app/services/studio_timeline_render.py -> build/lib/app/services
+copying app/services/novel_service.py -> build/lib/app/services
+copying app/services/studio_image_provider_recipes.py -> build/lib/app/services
+copying app/services/studio_timeline_subtitles.py -> build/lib/app/services
+copying app/services/studio_timeline_exchange.py -> build/lib/app/services
+copying app/services/v1_capability_service.py -> build/lib/app/services
+copying app/services/chapter_service.py -> build/lib/app/services
+copying app/services/creation_workbench_service.py -> build/lib/app/services
+copying app/services/studio_image_cutout.py -> build/lib/app/services
+creating build/lib/app/creative
+copying app/creative/production_execution.py -> build/lib/app/creative
+copying app/creative/timeline_transfer.py -> build/lib/app/creative
+copying app/creative/director_intent.py -> build/lib/app/creative
+copying app/creative/director_workspace_api.py -> build/lib/app/creative
+copying app/creative/director_workspace.py -> build/lib/app/creative
+copying app/creative/bible_api.py -> build/lib/app/creative
+copying app/creative/screenplay_model.py -> build/lib/app/creative
+copying app/creative/content_policy.py -> build/lib/app/creative
+copying app/creative/screenplay_export.py -> build/lib/app/creative
+copying app/creative/service.py -> build/lib/app/creative
+copying app/creative/graph_timeline_execution.py -> build/lib/app/creative
+copying app/creative/timeline_waveform.py -> build/lib/app/creative
+copying app/creative/director_sheet_export.py -> build/lib/app/creative
+copying app/creative/prompt_adoption_api.py -> build/lib/app/creative
+copying app/creative/bible_projection.py -> build/lib/app/creative
+copying app/creative/workspace_api.py -> build/lib/app/creative
+copying app/creative/model_reference_materials.py -> build/lib/app/creative
+copying app/creative/prompt_authoring_models.py -> build/lib/app/creative
+copying app/creative/director_lifecycle.py -> build/lib/app/creative
+copying app/creative/workspace_relationships.py -> build/lib/app/creative
+copying app/creative/adaptation_models.py -> build/lib/app/creative
+copying app/creative/graph_execution.py -> build/lib/app/creative
+copying app/creative/proposals.py -> build/lib/app/creative
+copying app/creative/prompt_authoring.py -> build/lib/app/creative
+copying app/creative/adaptation_generation.py -> build/lib/app/creative
+copying app/creative/workspace.py -> build/lib/app/creative
+copying app/creative/workspace_models.py -> build/lib/app/creative
+copying app/creative/prompt_workspace.py -> build/lib/app/creative
+copying app/creative/storage_admission.py -> build/lib/app/creative
+copying app/creative/adaptation.py -> build/lib/app/creative
+copying app/creative/graph_api.py -> build/lib/app/creative
+copying app/creative/generation.py -> build/lib/app/creative
+copying app/creative/production_contract_api.py -> build/lib/app/creative
+copying app/creative/project_store.py -> build/lib/app/creative
+copying app/creative/graph_models.py -> build/lib/app/creative
+copying app/creative/text_assets.py -> build/lib/app/creative
+copying app/creative/adaptation_receipt.py -> build/lib/app/creative
+copying app/creative/camera_language.py -> build/lib/app/creative
+copying app/creative/director_model_api.py -> build/lib/app/creative
+copying app/creative/prompt_adoption.py -> build/lib/app/creative
+copying app/creative/script_export.py -> build/lib/app/creative
+copying app/creative/production_execution_api.py -> build/lib/app/creative
+copying app/creative/models.py -> build/lib/app/creative
+copying app/creative/graph_asset_inputs.py -> build/lib/app/creative
+copying app/creative/production_workflow.py -> build/lib/app/creative
+copying app/creative/prompt_api.py -> build/lib/app/creative
+copying app/creative/director_terminal_evidence.py -> build/lib/app/creative
+copying app/creative/ai_execution.py -> build/lib/app/creative
+copying app/creative/director_observation_api.py -> build/lib/app/creative
+copying app/creative/screenplay_presets.py -> build/lib/app/creative
+copying app/creative/__init__.py -> build/lib/app/creative
+copying app/creative/production_contracts.py -> build/lib/app/creative
+copying app/creative/storyboard.py -> build/lib/app/creative
+copying app/creative/api.py -> build/lib/app/creative
+copying app/creative/production_workflow_models.py -> build/lib/app/creative
+copying app/creative/model_reference_depth.py -> build/lib/app/creative
+copying app/creative/bible_workspace.py -> build/lib/app/creative
+copying app/creative/production_execution_models.py -> build/lib/app/creative
+copying app/creative/graph_video_nodes.py -> build/lib/app/creative
+copying app/creative/prompt_authoring_api.py -> build/lib/app/creative
+copying app/creative/prompt_asset.py -> build/lib/app/creative
+copying app/creative/graph_media_binding.py -> build/lib/app/creative
+copying app/creative/timeline_playback.py -> build/lib/app/creative
+copying app/creative/graph_media_execution.py -> build/lib/app/creative
+copying app/creative/model_reference_glb.py -> build/lib/app/creative
+copying app/creative/graph.py -> build/lib/app/creative
+copying app/creative/adaptation_assets.py -> build/lib/app/creative
+copying app/creative/storyboard_model.py -> build/lib/app/creative
+copying app/creative/graph_planning_nodes.py -> build/lib/app/creative
+copying app/creative/graph_image_nodes.py -> build/lib/app/creative
+copying app/creative/production_workflow_api.py -> build/lib/app/creative
+copying app/creative/model_reference_scene.py -> build/lib/app/creative
+copying app/creative/text_execution_receipt.py -> build/lib/app/creative
+copying app/creative/director_transport_contract.py -> build/lib/app/creative
+copying app/creative/director_binding.py -> build/lib/app/creative
+creating build/lib/app/packaging
+copying app/packaging/launch_profiles.py -> build/lib/app/packaging
+copying app/packaging/windows_primitives.py -> build/lib/app/packaging
+copying app/packaging/versioning.py -> build/lib/app/packaging
+copying app/packaging/packaged_desktop_host.py -> build/lib/app/packaging
+copying app/packaging/packaged_desktop_launcher.py -> build/lib/app/packaging
+copying app/packaging/postgres_migrations.py -> build/lib/app/packaging
+copying app/packaging/paths.py -> build/lib/app/packaging
+copying app/packaging/static_frontend.py -> build/lib/app/packaging
+copying app/packaging/database_bootstrap.py -> build/lib/app/packaging
+copying app/packaging/desktop_bridge.py -> build/lib/app/packaging
+copying app/packaging/__init__.py -> build/lib/app/packaging
+copying app/packaging/runtime_identity.py -> build/lib/app/packaging
+copying app/packaging/runtime_lifecycle.py -> build/lib/app/packaging
+copying app/packaging/local_session_bootstrap.py -> build/lib/app/packaging
+copying app/packaging/bootstrap_api.py -> build/lib/app/packaging
+copying app/packaging/packaged_processes.py -> build/lib/app/packaging
+copying app/packaging/host_uplink.py -> build/lib/app/packaging
+copying app/packaging/packaged_launcher.py -> build/lib/app/packaging
+copying app/packaging/control_pipe.py -> build/lib/app/packaging
+copying app/packaging/initial_workspace.py -> build/lib/app/packaging
+creating build/lib/app/local_interop
+copying app/local_interop/errors.py -> build/lib/app/local_interop
+copying app/local_interop/chapter_ids.py -> build/lib/app/local_interop
+copying app/local_interop/synthetic_tutor.py -> build/lib/app/local_interop
+copying app/local_interop/transport.py -> build/lib/app/local_interop
+copying app/local_interop/provider.py -> build/lib/app/local_interop
+copying app/local_interop/desktop.py -> build/lib/app/local_interop
+copying app/local_interop/__init__.py -> build/lib/app/local_interop
+copying app/local_interop/api.py -> build/lib/app/local_interop
+copying app/local_interop/host.py -> build/lib/app/local_interop
+creating build/lib/app/repositories
+copying app/repositories/canon_repository.py -> build/lib/app/repositories
+copying app/repositories/scoped_narrative.py -> build/lib/app/repositories
+copying app/repositories/adaptation_versions.py -> build/lib/app/repositories
+copying app/repositories/chapter_repository.py -> build/lib/app/repositories
+copying app/repositories/branch_manuscript.py -> build/lib/app/repositories
+copying app/repositories/authorization_interfaces.py -> build/lib/app/repositories
+copying app/repositories/structured_cas.py -> build/lib/app/repositories
+copying app/repositories/generation_repository.py -> build/lib/app/repositories
+copying app/repositories/factory.py -> build/lib/app/repositories
+copying app/repositories/screenplay_versions.py -> build/lib/app/repositories
+copying app/repositories/lore_interfaces.py -> build/lib/app/repositories
+copying app/repositories/identity_interfaces.py -> build/lib/app/repositories
+copying app/repositories/__init__.py -> build/lib/app/repositories
+copying app/repositories/story_record_versions.py -> build/lib/app/repositories
+copying app/repositories/bundle.py -> build/lib/app/repositories
+copying app/repositories/novel_repository.py -> build/lib/app/repositories
+copying app/repositories/interfaces.py -> build/lib/app/repositories
+creating build/lib/app/autosave
+copying app/autosave/scheduler.py -> build/lib/app/autosave
+copying app/autosave/coordinator.py -> build/lib/app/autosave
+copying app/autosave/contracts.py -> build/lib/app/autosave
+copying app/autosave/durable.py -> build/lib/app/autosave
+copying app/autosave/dirty_state.py -> build/lib/app/autosave
+creating build/lib/app/repositories/postgres
+copying app/repositories/postgres/scope.py -> build/lib/app/repositories/postgres
+copying app/repositories/postgres/serialization.py -> build/lib/app/repositories/postgres
+copying app/repositories/postgres/canon.py -> build/lib/app/repositories/postgres
+copying app/repositories/postgres/novel.py -> build/lib/app/repositories/postgres
+copying app/repositories/postgres/chapter.py -> build/lib/app/repositories/postgres
+copying app/repositories/postgres/lore.py -> build/lib/app/repositories/postgres
+copying app/repositories/postgres/continuity.py -> build/lib/app/repositories/postgres
+copying app/repositories/postgres/generation.py -> build/lib/app/repositories/postgres
+copying app/repositories/postgres/models.py -> build/lib/app/repositories/postgres
+copying app/repositories/postgres/__init__.py -> build/lib/app/repositories/postgres
+copying app/repositories/postgres/narrative.py -> build/lib/app/repositories/postgres
+copying app/repositories/postgres/identity.py -> build/lib/app/repositories/postgres
+copying app/repositories/postgres/common.py -> build/lib/app/repositories/postgres
+copying app/repositories/postgres/session.py -> build/lib/app/repositories/postgres
+creating build/lib/app/repositories/file
+copying app/repositories/file/finding_lock.py -> build/lib/app/repositories/file
+copying app/repositories/file/scope.py -> build/lib/app/repositories/file
+copying app/repositories/file/canon.py -> build/lib/app/repositories/file
+copying app/repositories/file/novel.py -> build/lib/app/repositories/file
+copying app/repositories/file/chapter.py -> build/lib/app/repositories/file
+copying app/repositories/file/lore.py -> build/lib/app/repositories/file
+copying app/repositories/file/continuity.py -> build/lib/app/repositories/file
+copying app/repositories/file/generation.py -> build/lib/app/repositories/file
+copying app/repositories/file/mutation_coordinator.py -> build/lib/app/repositories/file
+copying app/repositories/file/__init__.py -> build/lib/app/repositories/file
+copying app/repositories/file/narrative.py -> build/lib/app/repositories/file
+copying app/repositories/file/identity.py -> build/lib/app/repositories/file
+running egg_info
+creating ai_novel_studio.egg-info
+writing ai_novel_studio.egg-info/PKG-INFO
+writing dependency_links to ai_novel_studio.egg-info/dependency_links.txt
+writing requirements to ai_novel_studio.egg-info/requires.txt
+writing top-level names to ai_novel_studio.egg-info/top_level.txt
+writing manifest file 'ai_novel_studio.egg-info/SOURCES.txt'
+reading manifest file 'ai_novel_studio.egg-info/SOURCES.txt'
+writing manifest file 'ai_novel_studio.egg-info/SOURCES.txt'
+installing to build/bdist.linux-x86_64/wheel
+running install
+running install_lib
+creating build/bdist.linux-x86_64/wheel
+creating build/bdist.linux-x86_64/wheel/local_interop_desktop
+copying build/lib/local_interop_desktop/lifecycle.py -> build/bdist.linux-x86_64/wheel/./local_interop_desktop
+copying build/lib/local_interop_desktop/acceptance.py -> build/bdist.linux-x86_64/wheel/./local_interop_desktop
+copying build/lib/local_interop_desktop/events.py -> build/bdist.linux-x86_64/wheel/./local_interop_desktop
+copying build/lib/local_interop_desktop/transport.py -> build/bdist.linux-x86_64/wheel/./local_interop_desktop
+copying build/lib/local_interop_desktop/__init__.py -> build/bdist.linux-x86_64/wheel/./local_interop_desktop
+copying build/lib/local_interop_desktop/providers.py -> build/bdist.linux-x86_64/wheel/./local_interop_desktop
+copying build/lib/local_interop_desktop/identity.py -> build/bdist.linux-x86_64/wheel/./local_interop_desktop
+copying build/lib/local_interop_desktop/testing.py -> build/bdist.linux-x86_64/wheel/./local_interop_desktop
+copying build/lib/local_interop_desktop/diagnostics.py -> build/bdist.linux-x86_64/wheel/./local_interop_desktop
+creating build/bdist.linux-x86_64/wheel/local_interop_protocol
+copying build/lib/local_interop_protocol/validation.py -> build/bdist.linux-x86_64/wheel/./local_interop_protocol
+copying build/lib/local_interop_protocol/generate_contracts.py -> build/bdist.linux-x86_64/wheel/./local_interop_protocol
+copying build/lib/local_interop_protocol/models.py -> build/bdist.linux-x86_64/wheel/./local_interop_protocol
+copying build/lib/local_interop_protocol/__init__.py -> build/bdist.linux-x86_64/wheel/./local_interop_protocol
+creating build/bdist.linux-x86_64/wheel/app
+copying build/lib/app/plugin_package_manager.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/context_policy.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/industry_export_formats.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/repository.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/collaboration_admin_contracts.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/agents.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/context_pack_v2.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/main.py -> build/bdist.linux-x86_64/wheel/./app
+creating build/bdist.linux-x86_64/wheel/app/lore
+copying build/lib/app/lore/continuity_rules.py -> build/bdist.linux-x86_64/wheel/./app/lore
+copying build/lib/app/lore/enums.py -> build/bdist.linux-x86_64/wheel/./app/lore
+copying build/lib/app/lore/context_view.py -> build/bdist.linux-x86_64/wheel/./app/lore
+copying build/lib/app/lore/continuity.py -> build/bdist.linux-x86_64/wheel/./app/lore
+copying build/lib/app/lore/context_intelligence.py -> build/bdist.linux-x86_64/wheel/./app/lore
+copying build/lib/app/lore/schemas.py -> build/bdist.linux-x86_64/wheel/./app/lore
+copying build/lib/app/lore/memory_agent.py -> build/bdist.linux-x86_64/wheel/./app/lore
+copying build/lib/app/lore/__init__.py -> build/bdist.linux-x86_64/wheel/./app/lore
+copying build/lib/app/lore/continuity_engine.py -> build/bdist.linux-x86_64/wheel/./app/lore
+copying build/lib/app/lore/validators.py -> build/bdist.linux-x86_64/wheel/./app/lore
+copying build/lib/app/context.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/structured_log.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/plugin_worker_process.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/visual_workflow.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/provider_runtime_v2_contracts.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/collaboration_api.py -> build/bdist.linux-x86_64/wheel/./app
+creating build/bdist.linux-x86_64/wheel/app/experimental
+copying build/lib/app/experimental/local_ai_inspection_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/story_graph_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/model_broker.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/declarative_agents.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/voice_direction.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/writer_room_realtime.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/reader_preflight.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/production_lineage_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/reader_sources.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/change_impact_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/planning.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/subtitle_timeline.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/native_ocr_broker.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/adaptation_projection.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/safe_batches_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/finding_review_composition.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/declarative_agents_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/writing_sessions_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/branch_manuscript_composition.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/workspace_interaction.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/inbox.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/timeline_exchange.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/model_broker_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/interactive_story_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/review_adapter_jobs.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/subtitle_asr.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/embeddings_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/writing_focus.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/structured_forks.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/branch_manuscript_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/media.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/planning_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/offline_sync_production.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/comic_layouts.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/visual_identity.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/portable_projects_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/writing_sessions.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/declarative_model.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/local_ai_inspection.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/first_use.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/director_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/multilingual_translation.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/story_simulator_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/research_ocr_binding.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/style_analysis_model.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/subtitle_alignment.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/multilingual_editions_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/offline_sync.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/style_analysis_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/safe_batches.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/portable_projects.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/research_vision.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/teams_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/audiobook.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/subtitle_alignment_native.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/writer_room.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/subtitle_processing.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/template_library.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/comic_layouts_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/research_extract.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/author_context_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/store.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/ux_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/imports.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/revision_intelligence_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/embeddings.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/research_native_ocr.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/workspace_task_owners.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/revision_intelligence_model.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/media_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/subtitle_timeline_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/writer_room_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/narrative_judge.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/capabilities.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/terminology_portability.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/story_simulator_model.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/multilingual_editions.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/template_library_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/world.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/research_library.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/director.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/inbox_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/interactive_story.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/__init__.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/timeline_exchange_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/ux.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/production_lineage.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/narrative_judge_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/narrative_judge_model.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/voice_direction_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/research_ocr_execution.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/subtitle_host_config.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/vector_index.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/writing_focus_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/imports_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/revision_intelligence.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/declarative_adapter_sdk.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/research_library_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/legacy_inbox.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/story_simulator.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/story_graph.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/safe_batch_voice.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/search_sources.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/reader_preflight_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/author_task_projection.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/character_author_context.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/style_analysis.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/common.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/subtitle_burn_in.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/review_adapter_projection.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/model_benchmark.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/audiobook_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/safe_batch_contracts.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/world_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/offline_sync_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/first_use_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/flags.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/provider_profiles.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/change_impact.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/teams.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/project_forks_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/model_benchmark_api.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/experimental/project_forks.py -> build/bdist.linux-x86_64/wheel/./app/experimental
+copying build/lib/app/provider_runtime_v2_model_center_snapshot_bridge.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/plugin_catalog.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/author_request.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/manuscript_sources.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/router.py -> build/bdist.linux-x86_64/wheel/./app
+creating build/bdist.linux-x86_64/wheel/app/model_center
+copying build/lib/app/model_center/runtime_profiles.py -> build/bdist.linux-x86_64/wheel/./app/model_center
+copying build/lib/app/model_center/discovery_api.py -> build/bdist.linux-x86_64/wheel/./app/model_center
+copying build/lib/app/model_center/domain.py -> build/bdist.linux-x86_64/wheel/./app/model_center
+copying build/lib/app/model_center/service.py -> build/bdist.linux-x86_64/wheel/./app/model_center
+copying build/lib/app/model_center/whisper_runtime.py -> build/bdist.linux-x86_64/wheel/./app/model_center
+copying build/lib/app/model_center/discovery_prerequisites.py -> build/bdist.linux-x86_64/wheel/./app/model_center
+copying build/lib/app/model_center/discovery_probes.py -> build/bdist.linux-x86_64/wheel/./app/model_center
+copying build/lib/app/model_center/discovery_authority.py -> build/bdist.linux-x86_64/wheel/./app/model_center
+copying build/lib/app/model_center/discovery_environment.py -> build/bdist.linux-x86_64/wheel/./app/model_center
+copying build/lib/app/model_center/discovery_scope.py -> build/bdist.linux-x86_64/wheel/./app/model_center
+copying build/lib/app/model_center/discovery_bridge.py -> build/bdist.linux-x86_64/wheel/./app/model_center
+copying build/lib/app/model_center/__init__.py -> build/bdist.linux-x86_64/wheel/./app/model_center
+copying build/lib/app/model_center/api.py -> build/bdist.linux-x86_64/wheel/./app/model_center
+copying build/lib/app/model_center/runtime_observation.py -> build/bdist.linux-x86_64/wheel/./app/model_center
+copying build/lib/app/model_center/discovery_types.py -> build/bdist.linux-x86_64/wheel/./app/model_center
+copying build/lib/app/model_center/discovery.py -> build/bdist.linux-x86_64/wheel/./app/model_center
+copying build/lib/app/model_center/discovery_onboarding_types.py -> build/bdist.linux-x86_64/wheel/./app/model_center
+creating build/bdist.linux-x86_64/wheel/app/models
+copying build/lib/app/models/lore.py -> build/bdist.linux-x86_64/wheel/./app/models
+copying build/lib/app/models/__init__.py -> build/bdist.linux-x86_64/wheel/./app/models
+copying build/lib/app/workflow.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/runtime_events.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/vision_ocr_runtime.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/privacy.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/document_revision.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/runtime.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/actor_context.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/model_provider_contracts.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/audio_processing_runtime.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/native_text_providers.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/knowledge_extraction.py -> build/bdist.linux-x86_64/wheel/./app
+creating build/bdist.linux-x86_64/wheel/app/application
+copying build/lib/app/application/task_service.py -> build/bdist.linux-x86_64/wheel/./app/application
+copying build/lib/app/application/audit_service.py -> build/bdist.linux-x86_64/wheel/./app/application
+copying build/lib/app/application/runtime_service.py -> build/bdist.linux-x86_64/wheel/./app/application
+copying build/lib/app/application/collaboration_service.py -> build/bdist.linux-x86_64/wheel/./app/application
+copying build/lib/app/application/events.py -> build/bdist.linux-x86_64/wheel/./app/application
+copying build/lib/app/application/contracts.py -> build/bdist.linux-x86_64/wheel/./app/application
+copying build/lib/app/application/persistence.py -> build/bdist.linux-x86_64/wheel/./app/application
+copying build/lib/app/agent_catalog.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/provider_runtime_v2_routing_service.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/local_whisper_cpp.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/chapter_identity.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/asset_lifecycle_api.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/generation_stream.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/plugin_contracts.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/model_execution.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/plugin_runtime_contracts.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/release_readiness.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/plugin_trust_contracts.py -> build/bdist.linux-x86_64/wheel/./app
+creating build/bdist.linux-x86_64/wheel/app/services
+copying build/lib/app/services/pcm16_envelope.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_image_control_contract.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_audio_execution.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/identity_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/ai_planning_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/finding_review_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_audio_mp3_profile.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/harness_process_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/pending_canon_review_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/import_review_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_timeline_schema.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/import_apply_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/membership_authorization_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/image_job_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/canon_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/agent_job_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/context_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/video_assembly_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/export_resource_snapshot.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_image_execution.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/narrative_finding_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_model_reference_origin.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_timeline_edit.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_image_mask_authoring.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/user_preference_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_image_upscale_contract.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/narrative_state_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/visual_memory_index.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/adaptation_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/collaboration_scope_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/continuity_finding_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/memory_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/asset_library_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/asset_task_worker.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/narrative_proposal_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/agent_context_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/branch_manuscript_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/screenplay_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/context_snapshot_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_video_provider_recipes.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/lore_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/generation_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_timeline_export.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/__init__.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/audiobook_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_video_execution.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/export_snapshot_authority.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/harness_context_adapter.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/export_job_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_video_provider.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_audio_trim_profiles.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/authorization_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/harness_access_audit_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_timeline_render.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/novel_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_image_provider_recipes.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_timeline_subtitles.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_timeline_exchange.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/v1_capability_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/chapter_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/creation_workbench_service.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/services/studio_image_cutout.py -> build/bdist.linux-x86_64/wheel/./app/services
+copying build/lib/app/storage.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/narrative_detection.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/openai_compatible.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/runtime_diagnostics.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/audio_provider_config.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/net_safety.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/video_assembly_api.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/migrate_file_to_postgres.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/plugin_discovery.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/audio_providers.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/narrative_context.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/packaged_profile.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/creation_workbench_api.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/plugin_capability_policy.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/export_formats.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/trusted_sessions.py -> build/bdist.linux-x86_64/wheel/./app
+creating build/bdist.linux-x86_64/wheel/app/creative
+copying build/lib/app/creative/production_execution.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/timeline_transfer.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/director_intent.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/director_workspace_api.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/director_workspace.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/bible_api.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/screenplay_model.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/content_policy.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/screenplay_export.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/service.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/graph_timeline_execution.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/timeline_waveform.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/director_sheet_export.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/prompt_adoption_api.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/bible_projection.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/workspace_api.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/model_reference_materials.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/prompt_authoring_models.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/director_lifecycle.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/workspace_relationships.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/adaptation_models.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/graph_execution.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/proposals.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/prompt_authoring.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/adaptation_generation.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/workspace.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/workspace_models.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/prompt_workspace.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/storage_admission.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/adaptation.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/graph_api.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/generation.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/production_contract_api.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/project_store.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/graph_models.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/text_assets.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/adaptation_receipt.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/camera_language.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/director_model_api.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/prompt_adoption.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/script_export.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/production_execution_api.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/models.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/graph_asset_inputs.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/production_workflow.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/prompt_api.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/director_terminal_evidence.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/ai_execution.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/director_observation_api.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/screenplay_presets.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/__init__.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/production_contracts.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/storyboard.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/api.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/production_workflow_models.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/model_reference_depth.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/bible_workspace.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/production_execution_models.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/graph_video_nodes.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/prompt_authoring_api.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/prompt_asset.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/graph_media_binding.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/timeline_playback.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/graph_media_execution.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/model_reference_glb.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/graph.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/adaptation_assets.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/storyboard_model.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/graph_planning_nodes.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/graph_image_nodes.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/production_workflow_api.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/model_reference_scene.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/text_execution_receipt.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/director_transport_contract.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/creative/director_binding.py -> build/bdist.linux-x86_64/wheel/./app/creative
+copying build/lib/app/workflow_recipes.py -> build/bdist.linux-x86_64/wheel/./app
+creating build/bdist.linux-x86_64/wheel/app/packaging
+copying build/lib/app/packaging/launch_profiles.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/windows_primitives.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/versioning.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/packaged_desktop_host.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/packaged_desktop_launcher.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/postgres_migrations.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/paths.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/static_frontend.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/database_bootstrap.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/desktop_bridge.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/__init__.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/runtime_identity.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/runtime_lifecycle.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/local_session_bootstrap.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/bootstrap_api.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/packaged_processes.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/host_uplink.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/packaged_launcher.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/control_pipe.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/packaging/initial_workspace.py -> build/bdist.linux-x86_64/wheel/./app/packaging
+copying build/lib/app/project_retirement.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/provider_routing_policy_v2.py -> build/bdist.linux-x86_64/wheel/./app
+creating build/bdist.linux-x86_64/wheel/app/local_interop
+copying build/lib/app/local_interop/errors.py -> build/bdist.linux-x86_64/wheel/./app/local_interop
+copying build/lib/app/local_interop/chapter_ids.py -> build/bdist.linux-x86_64/wheel/./app/local_interop
+copying build/lib/app/local_interop/synthetic_tutor.py -> build/bdist.linux-x86_64/wheel/./app/local_interop
+copying build/lib/app/local_interop/transport.py -> build/bdist.linux-x86_64/wheel/./app/local_interop
+copying build/lib/app/local_interop/provider.py -> build/bdist.linux-x86_64/wheel/./app/local_interop
+copying build/lib/app/local_interop/desktop.py -> build/bdist.linux-x86_64/wheel/./app/local_interop
+copying build/lib/app/local_interop/__init__.py -> build/bdist.linux-x86_64/wheel/./app/local_interop
+copying build/lib/app/local_interop/api.py -> build/bdist.linux-x86_64/wheel/./app/local_interop
+copying build/lib/app/local_interop/host.py -> build/bdist.linux-x86_64/wheel/./app/local_interop
+copying build/lib/app/idempotency.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/ai_planning_api.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/audio_production_store.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/document.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/media_files.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/bailian_text_preset.py -> build/bdist.linux-x86_64/wheel/./app
+creating build/bdist.linux-x86_64/wheel/app/repositories
+copying build/lib/app/repositories/canon_repository.py -> build/bdist.linux-x86_64/wheel/./app/repositories
+copying build/lib/app/repositories/scoped_narrative.py -> build/bdist.linux-x86_64/wheel/./app/repositories
+copying build/lib/app/repositories/adaptation_versions.py -> build/bdist.linux-x86_64/wheel/./app/repositories
+copying build/lib/app/repositories/chapter_repository.py -> build/bdist.linux-x86_64/wheel/./app/repositories
+creating build/bdist.linux-x86_64/wheel/app/repositories/postgres
+copying build/lib/app/repositories/postgres/scope.py -> build/bdist.linux-x86_64/wheel/./app/repositories/postgres
+copying build/lib/app/repositories/postgres/serialization.py -> build/bdist.linux-x86_64/wheel/./app/repositories/postgres
+copying build/lib/app/repositories/postgres/canon.py -> build/bdist.linux-x86_64/wheel/./app/repositories/postgres
+copying build/lib/app/repositories/postgres/novel.py -> build/bdist.linux-x86_64/wheel/./app/repositories/postgres
+copying build/lib/app/repositories/postgres/chapter.py -> build/bdist.linux-x86_64/wheel/./app/repositories/postgres
+copying build/lib/app/repositories/postgres/lore.py -> build/bdist.linux-x86_64/wheel/./app/repositories/postgres
+copying build/lib/app/repositories/postgres/continuity.py -> build/bdist.linux-x86_64/wheel/./app/repositories/postgres
+copying build/lib/app/repositories/postgres/generation.py -> build/bdist.linux-x86_64/wheel/./app/repositories/postgres
+copying build/lib/app/repositories/postgres/models.py -> build/bdist.linux-x86_64/wheel/./app/repositories/postgres
+copying build/lib/app/repositories/postgres/__init__.py -> build/bdist.linux-x86_64/wheel/./app/repositories/postgres
+copying build/lib/app/repositories/postgres/narrative.py -> build/bdist.linux-x86_64/wheel/./app/repositories/postgres
+copying build/lib/app/repositories/postgres/identity.py -> build/bdist.linux-x86_64/wheel/./app/repositories/postgres
+copying build/lib/app/repositories/postgres/common.py -> build/bdist.linux-x86_64/wheel/./app/repositories/postgres
+copying build/lib/app/repositories/postgres/session.py -> build/bdist.linux-x86_64/wheel/./app/repositories/postgres
+copying build/lib/app/repositories/branch_manuscript.py -> build/bdist.linux-x86_64/wheel/./app/repositories
+copying build/lib/app/repositories/authorization_interfaces.py -> build/bdist.linux-x86_64/wheel/./app/repositories
+copying build/lib/app/repositories/structured_cas.py -> build/bdist.linux-x86_64/wheel/./app/repositories
+copying build/lib/app/repositories/generation_repository.py -> build/bdist.linux-x86_64/wheel/./app/repositories
+copying build/lib/app/repositories/factory.py -> build/bdist.linux-x86_64/wheel/./app/repositories
+copying build/lib/app/repositories/screenplay_versions.py -> build/bdist.linux-x86_64/wheel/./app/repositories
+copying build/lib/app/repositories/lore_interfaces.py -> build/bdist.linux-x86_64/wheel/./app/repositories
+copying build/lib/app/repositories/identity_interfaces.py -> build/bdist.linux-x86_64/wheel/./app/repositories
+copying build/lib/app/repositories/__init__.py -> build/bdist.linux-x86_64/wheel/./app/repositories
+copying build/lib/app/repositories/story_record_versions.py -> build/bdist.linux-x86_64/wheel/./app/repositories
+creating build/bdist.linux-x86_64/wheel/app/repositories/file
+copying build/lib/app/repositories/file/finding_lock.py -> build/bdist.linux-x86_64/wheel/./app/repositories/file
+copying build/lib/app/repositories/file/scope.py -> build/bdist.linux-x86_64/wheel/./app/repositories/file
+copying build/lib/app/repositories/file/canon.py -> build/bdist.linux-x86_64/wheel/./app/repositories/file
+copying build/lib/app/repositories/file/novel.py -> build/bdist.linux-x86_64/wheel/./app/repositories/file
+copying build/lib/app/repositories/file/chapter.py -> build/bdist.linux-x86_64/wheel/./app/repositories/file
+copying build/lib/app/repositories/file/lore.py -> build/bdist.linux-x86_64/wheel/./app/repositories/file
+copying build/lib/app/repositories/file/continuity.py -> build/bdist.linux-x86_64/wheel/./app/repositories/file
+copying build/lib/app/repositories/file/generation.py -> build/bdist.linux-x86_64/wheel/./app/repositories/file
+copying build/lib/app/repositories/file/mutation_coordinator.py -> build/bdist.linux-x86_64/wheel/./app/repositories/file
+copying build/lib/app/repositories/file/__init__.py -> build/bdist.linux-x86_64/wheel/./app/repositories/file
+copying build/lib/app/repositories/file/narrative.py -> build/bdist.linux-x86_64/wheel/./app/repositories/file
+copying build/lib/app/repositories/file/identity.py -> build/bdist.linux-x86_64/wheel/./app/repositories/file
+copying build/lib/app/repositories/bundle.py -> build/bdist.linux-x86_64/wheel/./app/repositories
+copying build/lib/app/repositories/novel_repository.py -> build/bdist.linux-x86_64/wheel/./app/repositories
+copying build/lib/app/repositories/interfaces.py -> build/bdist.linux-x86_64/wheel/./app/repositories
+copying build/lib/app/story_record_api.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/finding_review_api.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/plugin_signature_policy.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/collaboration_contracts.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/author_context_sources.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/plugin_management_api.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/plugin_test_worker_bootstrap.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/workflow_api.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/collaboration_admin.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/stable_identity.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/local_tesseract_ocr.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/__init__.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/api.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/plugin_test_worker_supervisor.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/jobs.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/providers.py -> build/bdist.linux-x86_64/wheel/./app
+creating build/bdist.linux-x86_64/wheel/app/autosave
+copying build/lib/app/autosave/scheduler.py -> build/bdist.linux-x86_64/wheel/./app/autosave
+copying build/lib/app/autosave/coordinator.py -> build/bdist.linux-x86_64/wheel/./app/autosave
+copying build/lib/app/autosave/contracts.py -> build/bdist.linux-x86_64/wheel/./app/autosave
+copying build/lib/app/autosave/durable.py -> build/bdist.linux-x86_64/wheel/./app/autosave
+copying build/lib/app/autosave/dirty_state.py -> build/bdist.linux-x86_64/wheel/./app/autosave
+copying build/lib/app/import_parsers.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/asset_providers.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/revision_constraints.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/narrative.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/identity.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/planning_extraction.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/model_runtime.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/dependencies.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/collaboration.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/adaptation_api.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/pdf_export.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/credential_vault.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/media_frames.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/provider_support.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/asset_provider_config.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/plugin_test_worker.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/file_project_lifecycle.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/plugin_worker_protocol.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/pending_canon_review_api.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/source_privacy.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/review.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/config.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/provider_runtime_v2_host_hardware_inventory.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/asset_worker_config.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/compare_context_backends.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/authorization.py -> build/bdist.linux-x86_64/wheel/./app
+copying build/lib/app/backup_restore.py -> build/bdist.linux-x86_64/wheel/./app
+running install_data
+creating build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data
+creating build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/cancel-request.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/cancel-result.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/capability-negotiation.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/capability.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/case-candidate.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/common.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/context-capsule.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/context-evidence.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/diagnostic.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/discovery.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/error.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/event.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/handoff-result.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/handoff.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/handshake.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/heartbeat.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/hello-result.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/model-registry.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/parity-manifest.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/product.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/session-open-request.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/session-open-result.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/session.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/task-requirement.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/transport-request.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/transport-response.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/tutor-request.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/tutor-response.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/verifier-request.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/verifier-result.schema.json -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/protocol.ts -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/protocol.rs -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+copying contracts/local-interop/v1/README.md -> build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1
+running install_egg_info
+Copying ai_novel_studio.egg-info to build/bdist.linux-x86_64/wheel/./ai_novel_studio-0.7.0-py3.12.egg-info
+running install_scripts
+creating build/bdist.linux-x86_64/wheel/ai_novel_studio-0.7.0.dist-info/WHEEL
+creating '/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/native-ocr-commit-lease-public-r1/pytest/public-wheel0/wheels/.tmp-yfmw8u39/ai_novel_studio-0.7.0-py3-none-any.whl' and adding 'build/bdist.linux-x86_64/wheel' to it
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/README.md'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/cancel-request.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/cancel-result.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/capability-negotiation.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/capability.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/case-candidate.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/common.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/context-capsule.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/context-evidence.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/diagnostic.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/discovery.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/error.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/event.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/handoff-result.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/handoff.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/handshake.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/heartbeat.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/hello-result.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/model-registry.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/parity-manifest.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/product.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/protocol.rs'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/protocol.ts'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/session-open-request.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/session-open-result.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/session.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/task-requirement.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/transport-request.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/transport-response.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/tutor-request.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/tutor-response.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/verifier-request.schema.json'
+adding 'ai_novel_studio-0.7.0.data/data/contracts/local-interop/v1/verifier-result.schema.json'
+adding 'app/__init__.py'
+adding 'app/actor_context.py'
+adding 'app/adaptation_api.py'
+adding 'app/agent_catalog.py'
+adding 'app/agents.py'
+adding 'app/ai_planning_api.py'
+adding 'app/api.py'
+adding 'app/asset_lifecycle_api.py'
+adding 'app/asset_provider_config.py'
+adding 'app/asset_providers.py'
+adding 'app/asset_worker_config.py'
+adding 'app/audio_processing_runtime.py'
+adding 'app/audio_production_store.py'
+adding 'app/audio_provider_config.py'
+adding 'app/audio_providers.py'
+adding 'app/author_context_sources.py'
+adding 'app/author_request.py'
+adding 'app/authorization.py'
+adding 'app/backup_restore.py'
+adding 'app/bailian_text_preset.py'
+adding 'app/chapter_identity.py'
+adding 'app/collaboration.py'
+adding 'app/collaboration_admin.py'
+adding 'app/collaboration_admin_contracts.py'
+adding 'app/collaboration_api.py'
+adding 'app/collaboration_contracts.py'
+adding 'app/compare_context_backends.py'
+adding 'app/config.py'
+adding 'app/context.py'
+adding 'app/context_pack_v2.py'
+adding 'app/context_policy.py'
+adding 'app/creation_workbench_api.py'
+adding 'app/credential_vault.py'
+adding 'app/dependencies.py'
+adding 'app/document.py'
+adding 'app/document_revision.py'
+adding 'app/export_formats.py'
+adding 'app/file_project_lifecycle.py'
+adding 'app/finding_review_api.py'
+adding 'app/generation_stream.py'
+adding 'app/idempotency.py'
+adding 'app/identity.py'
+adding 'app/import_parsers.py'
+adding 'app/industry_export_formats.py'
+adding 'app/jobs.py'
+adding 'app/knowledge_extraction.py'
+adding 'app/local_tesseract_ocr.py'
+adding 'app/local_whisper_cpp.py'
+adding 'app/main.py'
+adding 'app/manuscript_sources.py'
+adding 'app/media_files.py'
+adding 'app/media_frames.py'
+adding 'app/migrate_file_to_postgres.py'
+adding 'app/model_execution.py'
+adding 'app/model_provider_contracts.py'
+adding 'app/model_runtime.py'
+adding 'app/narrative.py'
+adding 'app/narrative_context.py'
+adding 'app/narrative_detection.py'
+adding 'app/native_text_providers.py'
+adding 'app/net_safety.py'
+adding 'app/openai_compatible.py'
+adding 'app/packaged_profile.py'
+adding 'app/pdf_export.py'
+adding 'app/pending_canon_review_api.py'
+adding 'app/planning_extraction.py'
+adding 'app/plugin_capability_policy.py'
+adding 'app/plugin_catalog.py'
+adding 'app/plugin_contracts.py'
+adding 'app/plugin_discovery.py'
+adding 'app/plugin_management_api.py'
+adding 'app/plugin_package_manager.py'
+adding 'app/plugin_runtime_contracts.py'
+adding 'app/plugin_signature_policy.py'
+adding 'app/plugin_test_worker.py'
+adding 'app/plugin_test_worker_bootstrap.py'
+adding 'app/plugin_test_worker_supervisor.py'
+adding 'app/plugin_trust_contracts.py'
+adding 'app/plugin_worker_process.py'
+adding 'app/plugin_worker_protocol.py'
+adding 'app/privacy.py'
+adding 'app/project_retirement.py'
+adding 'app/provider_routing_policy_v2.py'
+adding 'app/provider_runtime_v2_contracts.py'
+adding 'app/provider_runtime_v2_host_hardware_inventory.py'
+adding 'app/provider_runtime_v2_model_center_snapshot_bridge.py'
+adding 'app/provider_runtime_v2_routing_service.py'
+adding 'app/provider_support.py'
+adding 'app/providers.py'
+adding 'app/release_readiness.py'
+adding 'app/repository.py'
+adding 'app/review.py'
+adding 'app/revision_constraints.py'
+adding 'app/router.py'
+adding 'app/runtime.py'
+adding 'app/runtime_diagnostics.py'
+adding 'app/runtime_events.py'
+adding 'app/source_privacy.py'
+adding 'app/stable_identity.py'
+adding 'app/storage.py'
+adding 'app/story_record_api.py'
+adding 'app/structured_log.py'
+adding 'app/trusted_sessions.py'
+adding 'app/video_assembly_api.py'
+adding 'app/vision_ocr_runtime.py'
+adding 'app/visual_workflow.py'
+adding 'app/workflow.py'
+adding 'app/workflow_api.py'
+adding 'app/workflow_recipes.py'
+adding 'app/application/audit_service.py'
+adding 'app/application/collaboration_service.py'
+adding 'app/application/contracts.py'
+adding 'app/application/events.py'
+adding 'app/application/persistence.py'
+adding 'app/application/runtime_service.py'
+adding 'app/application/task_service.py'
+adding 'app/autosave/contracts.py'
+adding 'app/autosave/coordinator.py'
+adding 'app/autosave/dirty_state.py'
+adding 'app/autosave/durable.py'
+adding 'app/autosave/scheduler.py'
+adding 'app/creative/__init__.py'
+adding 'app/creative/adaptation.py'
+adding 'app/creative/adaptation_assets.py'
+adding 'app/creative/adaptation_generation.py'
+adding 'app/creative/adaptation_models.py'
+adding 'app/creative/adaptation_receipt.py'
+adding 'app/creative/ai_execution.py'
+adding 'app/creative/api.py'
+adding 'app/creative/bible_api.py'
+adding 'app/creative/bible_projection.py'
+adding 'app/creative/bible_workspace.py'
+adding 'app/creative/camera_language.py'
+adding 'app/creative/content_policy.py'
+adding 'app/creative/director_binding.py'
+adding 'app/creative/director_intent.py'
+adding 'app/creative/director_lifecycle.py'
+adding 'app/creative/director_model_api.py'
+adding 'app/creative/director_observation_api.py'
+adding 'app/creative/director_sheet_export.py'
+adding 'app/creative/director_terminal_evidence.py'
+adding 'app/creative/director_transport_contract.py'
+adding 'app/creative/director_workspace.py'
+adding 'app/creative/director_workspace_api.py'
+adding 'app/creative/generation.py'
+adding 'app/creative/graph.py'
+adding 'app/creative/graph_api.py'
+adding 'app/creative/graph_asset_inputs.py'
+adding 'app/creative/graph_execution.py'
+adding 'app/creative/graph_image_nodes.py'
+adding 'app/creative/graph_media_binding.py'
+adding 'app/creative/graph_media_execution.py'
+adding 'app/creative/graph_models.py'
+adding 'app/creative/graph_planning_nodes.py'
+adding 'app/creative/graph_timeline_execution.py'
+adding 'app/creative/graph_video_nodes.py'
+adding 'app/creative/model_reference_depth.py'
+adding 'app/creative/model_reference_glb.py'
+adding 'app/creative/model_reference_materials.py'
+adding 'app/creative/model_reference_scene.py'
+adding 'app/creative/models.py'
+adding 'app/creative/production_contract_api.py'
+adding 'app/creative/production_contracts.py'
+adding 'app/creative/production_execution.py'
+adding 'app/creative/production_execution_api.py'
+adding 'app/creative/production_execution_models.py'
+adding 'app/creative/production_workflow.py'
+adding 'app/creative/production_workflow_api.py'
+adding 'app/creative/production_workflow_models.py'
+adding 'app/creative/project_store.py'
+adding 'app/creative/prompt_adoption.py'
+adding 'app/creative/prompt_adoption_api.py'
+adding 'app/creative/prompt_api.py'
+adding 'app/creative/prompt_asset.py'
+adding 'app/creative/prompt_authoring.py'
+adding 'app/creative/prompt_authoring_api.py'
+adding 'app/creative/prompt_authoring_models.py'
+adding 'app/creative/prompt_workspace.py'
+adding 'app/creative/proposals.py'
+adding 'app/creative/screenplay_export.py'
+adding 'app/creative/screenplay_model.py'
+adding 'app/creative/screenplay_presets.py'
+adding 'app/creative/script_export.py'
+adding 'app/creative/service.py'
+adding 'app/creative/storage_admission.py'
+adding 'app/creative/storyboard.py'
+adding 'app/creative/storyboard_model.py'
+adding 'app/creative/text_assets.py'
+adding 'app/creative/text_execution_receipt.py'
+adding 'app/creative/timeline_playback.py'
+adding 'app/creative/timeline_transfer.py'
+adding 'app/creative/timeline_waveform.py'
+adding 'app/creative/workspace.py'
+adding 'app/creative/workspace_api.py'
+adding 'app/creative/workspace_models.py'
+adding 'app/creative/workspace_relationships.py'
+adding 'app/experimental/__init__.py'
+adding 'app/experimental/adaptation_projection.py'
+adding 'app/experimental/api.py'
+adding 'app/experimental/audiobook.py'
+adding 'app/experimental/audiobook_api.py'
+adding 'app/experimental/author_context_api.py'
+adding 'app/experimental/author_task_projection.py'
+adding 'app/experimental/branch_manuscript_api.py'
+adding 'app/experimental/branch_manuscript_composition.py'
+adding 'app/experimental/capabilities.py'
+adding 'app/experimental/change_impact.py'
+adding 'app/experimental/change_impact_api.py'
+adding 'app/experimental/character_author_context.py'
+adding 'app/experimental/comic_layouts.py'
+adding 'app/experimental/comic_layouts_api.py'
+adding 'app/experimental/common.py'
+adding 'app/experimental/declarative_adapter_sdk.py'
+adding 'app/experimental/declarative_agents.py'
+adding 'app/experimental/declarative_agents_api.py'
+adding 'app/experimental/declarative_model.py'
+adding 'app/experimental/director.py'
+adding 'app/experimental/director_api.py'
+adding 'app/experimental/embeddings.py'
+adding 'app/experimental/embeddings_api.py'
+adding 'app/experimental/finding_review_composition.py'
+adding 'app/experimental/first_use.py'
+adding 'app/experimental/first_use_api.py'
+adding 'app/experimental/flags.py'
+adding 'app/experimental/imports.py'
+adding 'app/experimental/imports_api.py'
+adding 'app/experimental/inbox.py'
+adding 'app/experimental/inbox_api.py'
+adding 'app/experimental/interactive_story.py'
+adding 'app/experimental/interactive_story_api.py'
+adding 'app/experimental/legacy_inbox.py'
+adding 'app/experimental/local_ai_inspection.py'
+adding 'app/experimental/local_ai_inspection_api.py'
+adding 'app/experimental/media.py'
+adding 'app/experimental/media_api.py'
+adding 'app/experimental/model_benchmark.py'
+adding 'app/experimental/model_benchmark_api.py'
+adding 'app/experimental/model_broker.py'
+adding 'app/experimental/model_broker_api.py'
+adding 'app/experimental/multilingual_editions.py'
+adding 'app/experimental/multilingual_editions_api.py'
+adding 'app/experimental/multilingual_translation.py'
+adding 'app/experimental/narrative_judge.py'
+adding 'app/experimental/narrative_judge_api.py'
+adding 'app/experimental/narrative_judge_model.py'
+adding 'app/experimental/native_ocr_broker.py'
+adding 'app/experimental/offline_sync.py'
+adding 'app/experimental/offline_sync_api.py'
+adding 'app/experimental/offline_sync_production.py'
+adding 'app/experimental/planning.py'
+adding 'app/experimental/planning_api.py'
+adding 'app/experimental/portable_projects.py'
+adding 'app/experimental/portable_projects_api.py'
+adding 'app/experimental/production_lineage.py'
+adding 'app/experimental/production_lineage_api.py'
+adding 'app/experimental/project_forks.py'
+adding 'app/experimental/project_forks_api.py'
+adding 'app/experimental/provider_profiles.py'
+adding 'app/experimental/reader_preflight.py'
+adding 'app/experimental/reader_preflight_api.py'
+adding 'app/experimental/reader_sources.py'
+adding 'app/experimental/research_extract.py'
+adding 'app/experimental/research_library.py'
+adding 'app/experimental/research_library_api.py'
+adding 'app/experimental/research_native_ocr.py'
+adding 'app/experimental/research_ocr_binding.py'
+adding 'app/experimental/research_ocr_execution.py'
+adding 'app/experimental/research_vision.py'
+adding 'app/experimental/review_adapter_jobs.py'
+adding 'app/experimental/review_adapter_projection.py'
+adding 'app/experimental/revision_intelligence.py'
+adding 'app/experimental/revision_intelligence_api.py'
+adding 'app/experimental/revision_intelligence_model.py'
+adding 'app/experimental/safe_batch_contracts.py'
+adding 'app/experimental/safe_batch_voice.py'
+adding 'app/experimental/safe_batches.py'
+adding 'app/experimental/safe_batches_api.py'
+adding 'app/experimental/search_sources.py'
+adding 'app/experimental/store.py'
+adding 'app/experimental/story_graph.py'
+adding 'app/experimental/story_graph_api.py'
+adding 'app/experimental/story_simulator.py'
+adding 'app/experimental/story_simulator_api.py'
+adding 'app/experimental/story_simulator_model.py'
+adding 'app/experimental/structured_forks.py'
+adding 'app/experimental/style_analysis.py'
+adding 'app/experimental/style_analysis_api.py'
+adding 'app/experimental/style_analysis_model.py'
+adding 'app/experimental/subtitle_alignment.py'
+adding 'app/experimental/subtitle_alignment_native.py'
+adding 'app/experimental/subtitle_asr.py'
+adding 'app/experimental/subtitle_burn_in.py'
+adding 'app/experimental/subtitle_host_config.py'
+adding 'app/experimental/subtitle_processing.py'
+adding 'app/experimental/subtitle_timeline.py'
+adding 'app/experimental/subtitle_timeline_api.py'
+adding 'app/experimental/teams.py'
+adding 'app/experimental/teams_api.py'
+adding 'app/experimental/template_library.py'
+adding 'app/experimental/template_library_api.py'
+adding 'app/experimental/terminology_portability.py'
+adding 'app/experimental/timeline_exchange.py'
+adding 'app/experimental/timeline_exchange_api.py'
+adding 'app/experimental/ux.py'
+adding 'app/experimental/ux_api.py'
+adding 'app/experimental/vector_index.py'
+adding 'app/experimental/visual_identity.py'
+adding 'app/experimental/voice_direction.py'
+adding 'app/experimental/voice_direction_api.py'
+adding 'app/experimental/workspace_interaction.py'
+adding 'app/experimental/workspace_task_owners.py'
+adding 'app/experimental/world.py'
+adding 'app/experimental/world_api.py'
+adding 'app/experimental/writer_room.py'
+adding 'app/experimental/writer_room_api.py'
+adding 'app/experimental/writer_room_realtime.py'
+adding 'app/experimental/writing_focus.py'
+adding 'app/experimental/writing_focus_api.py'
+adding 'app/experimental/writing_sessions.py'
+adding 'app/experimental/writing_sessions_api.py'
+adding 'app/local_interop/__init__.py'
+adding 'app/local_interop/api.py'
+adding 'app/local_interop/chapter_ids.py'
+adding 'app/local_interop/desktop.py'
+adding 'app/local_interop/errors.py'
+adding 'app/local_interop/host.py'
+adding 'app/local_interop/provider.py'
+adding 'app/local_interop/synthetic_tutor.py'
+adding 'app/local_interop/transport.py'
+adding 'app/lore/__init__.py'
+adding 'app/lore/context_intelligence.py'
+adding 'app/lore/context_view.py'
+adding 'app/lore/continuity.py'
+adding 'app/lore/continuity_engine.py'
+adding 'app/lore/continuity_rules.py'
+adding 'app/lore/enums.py'
+adding 'app/lore/memory_agent.py'
+adding 'app/lore/schemas.py'
+adding 'app/lore/validators.py'
+adding 'app/model_center/__init__.py'
+adding 'app/model_center/api.py'
+adding 'app/model_center/discovery.py'
+adding 'app/model_center/discovery_api.py'
+adding 'app/model_center/discovery_authority.py'
+adding 'app/model_center/discovery_bridge.py'
+adding 'app/model_center/discovery_environment.py'
+adding 'app/model_center/discovery_onboarding_types.py'
+adding 'app/model_center/discovery_prerequisites.py'
+adding 'app/model_center/discovery_probes.py'
+adding 'app/model_center/discovery_scope.py'
+adding 'app/model_center/discovery_types.py'
+adding 'app/model_center/domain.py'
+adding 'app/model_center/runtime_observation.py'
+adding 'app/model_center/runtime_profiles.py'
+adding 'app/model_center/service.py'
+adding 'app/model_center/whisper_runtime.py'
+adding 'app/models/__init__.py'
+adding 'app/models/lore.py'
+adding 'app/packaging/__init__.py'
+adding 'app/packaging/bootstrap_api.py'
+adding 'app/packaging/control_pipe.py'
+adding 'app/packaging/database_bootstrap.py'
+adding 'app/packaging/desktop_bridge.py'
+adding 'app/packaging/host_uplink.py'
+adding 'app/packaging/initial_workspace.py'
+adding 'app/packaging/launch_profiles.py'
+adding 'app/packaging/local_session_bootstrap.py'
+adding 'app/packaging/packaged_desktop_host.py'
+adding 'app/packaging/packaged_desktop_launcher.py'
+adding 'app/packaging/packaged_launcher.py'
+adding 'app/packaging/packaged_processes.py'
+adding 'app/packaging/paths.py'
+adding 'app/packaging/postgres_migrations.py'
+adding 'app/packaging/runtime_identity.py'
+adding 'app/packaging/runtime_lifecycle.py'
+adding 'app/packaging/static_frontend.py'
+adding 'app/packaging/versioning.py'
+adding 'app/packaging/windows_primitives.py'
+adding 'app/repositories/__init__.py'
+adding 'app/repositories/adaptation_versions.py'
+adding 'app/repositories/authorization_interfaces.py'
+adding 'app/repositories/branch_manuscript.py'
+adding 'app/repositories/bundle.py'
+adding 'app/repositories/canon_repository.py'
+adding 'app/repositories/chapter_repository.py'
+adding 'app/repositories/factory.py'
+adding 'app/repositories/generation_repository.py'
+adding 'app/repositories/identity_interfaces.py'
+adding 'app/repositories/interfaces.py'
+adding 'app/repositories/lore_interfaces.py'
+adding 'app/repositories/novel_repository.py'
+adding 'app/repositories/scoped_narrative.py'
+adding 'app/repositories/screenplay_versions.py'
+adding 'app/repositories/story_record_versions.py'
+adding 'app/repositories/structured_cas.py'
+adding 'app/repositories/file/__init__.py'
+adding 'app/repositories/file/canon.py'
+adding 'app/repositories/file/chapter.py'
+adding 'app/repositories/file/continuity.py'
+adding 'app/repositories/file/finding_lock.py'
+adding 'app/repositories/file/generation.py'
+adding 'app/repositories/file/identity.py'
+adding 'app/repositories/file/lore.py'
+adding 'app/repositories/file/mutation_coordinator.py'
+adding 'app/repositories/file/narrative.py'
+adding 'app/repositories/file/novel.py'
+adding 'app/repositories/file/scope.py'
+adding 'app/repositories/postgres/__init__.py'
+adding 'app/repositories/postgres/canon.py'
+adding 'app/repositories/postgres/chapter.py'
+adding 'app/repositories/postgres/common.py'
+adding 'app/repositories/postgres/continuity.py'
+adding 'app/repositories/postgres/generation.py'
+adding 'app/repositories/postgres/identity.py'
+adding 'app/repositories/postgres/lore.py'
+adding 'app/repositories/postgres/models.py'
+adding 'app/repositories/postgres/narrative.py'
+adding 'app/repositories/postgres/novel.py'
+adding 'app/repositories/postgres/scope.py'
+adding 'app/repositories/postgres/serialization.py'
+adding 'app/repositories/postgres/session.py'
+adding 'app/services/__init__.py'
+adding 'app/services/adaptation_service.py'
+adding 'app/services/agent_context_service.py'
+adding 'app/services/agent_job_service.py'
+adding 'app/services/ai_planning_service.py'
+adding 'app/services/asset_library_service.py'
+adding 'app/services/asset_task_worker.py'
+adding 'app/services/audiobook_service.py'
+adding 'app/services/authorization_service.py'
+adding 'app/services/branch_manuscript_service.py'
+adding 'app/services/canon_service.py'
+adding 'app/services/chapter_service.py'
+adding 'app/services/collaboration_scope_service.py'
+adding 'app/services/context_service.py'
+adding 'app/services/context_snapshot_service.py'
+adding 'app/services/continuity_finding_service.py'
+adding 'app/services/creation_workbench_service.py'
+adding 'app/services/export_job_service.py'
+adding 'app/services/export_resource_snapshot.py'
+adding 'app/services/export_snapshot_authority.py'
+adding 'app/services/finding_review_service.py'
+adding 'app/services/generation_service.py'
+adding 'app/services/harness_access_audit_service.py'
+adding 'app/services/harness_context_adapter.py'
+adding 'app/services/harness_process_service.py'
+adding 'app/services/identity_service.py'
+adding 'app/services/image_job_service.py'
+adding 'app/services/import_apply_service.py'
+adding 'app/services/import_review_service.py'
+adding 'app/services/lore_service.py'
+adding 'app/services/membership_authorization_service.py'
+adding 'app/services/memory_service.py'
+adding 'app/services/narrative_finding_service.py'
+adding 'app/services/narrative_proposal_service.py'
+adding 'app/services/narrative_state_service.py'
+adding 'app/services/novel_service.py'
+adding 'app/services/pcm16_envelope.py'
+adding 'app/services/pending_canon_review_service.py'
+adding 'app/services/screenplay_service.py'
+adding 'app/services/studio_audio_execution.py'
+adding 'app/services/studio_audio_mp3_profile.py'
+adding 'app/services/studio_audio_trim_profiles.py'
+adding 'app/services/studio_image_control_contract.py'
+adding 'app/services/studio_image_cutout.py'
+adding 'app/services/studio_image_execution.py'
+adding 'app/services/studio_image_mask_authoring.py'
+adding 'app/services/studio_image_provider_recipes.py'
+adding 'app/services/studio_image_upscale_contract.py'
+adding 'app/services/studio_model_reference_origin.py'
+adding 'app/services/studio_timeline_edit.py'
+adding 'app/services/studio_timeline_exchange.py'
+adding 'app/services/studio_timeline_export.py'
+adding 'app/services/studio_timeline_render.py'
+adding 'app/services/studio_timeline_schema.py'
+adding 'app/services/studio_timeline_subtitles.py'
+adding 'app/services/studio_video_execution.py'
+adding 'app/services/studio_video_provider.py'
+adding 'app/services/studio_video_provider_recipes.py'
+adding 'app/services/user_preference_service.py'
+adding 'app/services/v1_capability_service.py'
+adding 'app/services/video_assembly_service.py'
+adding 'app/services/visual_memory_index.py'
+adding 'local_interop_desktop/__init__.py'
+adding 'local_interop_desktop/acceptance.py'
+adding 'local_interop_desktop/diagnostics.py'
+adding 'local_interop_desktop/events.py'
+adding 'local_interop_desktop/identity.py'
+adding 'local_interop_desktop/lifecycle.py'
+adding 'local_interop_desktop/providers.py'
+adding 'local_interop_desktop/testing.py'
+adding 'local_interop_desktop/transport.py'
+adding 'local_interop_protocol/__init__.py'
+adding 'local_interop_protocol/generate_contracts.py'
+adding 'local_interop_protocol/models.py'
+adding 'local_interop_protocol/validation.py'
+adding 'ai_novel_studio-0.7.0.dist-info/METADATA'
+adding 'ai_novel_studio-0.7.0.dist-info/WHEEL'
+adding 'ai_novel_studio-0.7.0.dist-info/top_level.txt'
+adding 'ai_novel_studio-0.7.0.dist-info/RECORD'
+removing build/bdist.linux-x86_64/wheel
+ai_novel_studio-0.7.0-py3-none-any.whl
+APPLICATION_IMPORTS=NONE NETWORK=NONE
+warning: build_py: byte-compiling is disabled, skipping.
+
+warning: install_lib: byte-compiling is disabled, skipping.
+

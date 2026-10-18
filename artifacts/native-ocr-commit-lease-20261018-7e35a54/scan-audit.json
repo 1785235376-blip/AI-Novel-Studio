@@ -1,0 +1,103 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "3f260eb74298759fc100fd9598b478fb8026e551",
+      "path": "API_CATALOG.json",
+      "bytes": 1450100,
+      "sha256": "7619ca33740c0236b92266084e2e49e79b28962490ae1d966cd0421c97213539"
+    },
+    {
+      "blob": "0ab67507d22ec7c244895e8be0fc772d4b4a9d78",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 593572,
+      "sha256": "ca4e7d3cdfb88e5879e4a921da22bcc53cf56a4c8c8e4de54d74374c7beeb0a8"
+    },
+    {
+      "blob": "27a3be4d67806794c86913798158d361d6be7e9a",
+      "path": "app/experimental/research_library.py",
+      "bytes": 38472,
+      "sha256": "181cac6c6d7c41c054282a5664adc47a8e05db7b25ce5ab10ccf939a73cbbc8a"
+    },
+    {
+      "blob": "85b1d7849e61e747e2b3eedeb85738367a9b346b",
+      "path": "app/experimental/research_native_ocr.py",
+      "bytes": 22098,
+      "sha256": "0aa93f81d6f12aca751b8a0ff0ee98c969403028bf933456c9c0fbbbf5ef51fb"
+    },
+    {
+      "blob": "f5557a145449b9ca2cb14e973396c0ac007a7c9c",
+      "path": "docs/RESEARCH_OCR_COMMIT_LEASE_FIX.md",
+      "bytes": 2353,
+      "sha256": "befcac604cb6cc6fa15a71bf56b9f0f9e05f15c76afd77419bc064bc37618b09"
+    },
+    {
+      "blob": "38b5193aa85ace30d12457020b2961ae958d37a6",
+      "path": "docs/delivery/v2-development/native-ocr-commit-lease-file-r1.json",
+      "bytes": 678870,
+      "sha256": "c481abe99e7a768f4b381ad73b9481752dfab0b5787f3cc98f8a2e5d482f03dc"
+    },
+    {
+      "blob": "b2177c217d9a6948b09c921e9220bc2be31b9203",
+      "path": "docs/delivery/v2-development/native-ocr-commit-lease-file-r1.log",
+      "bytes": 1079,
+      "sha256": "5baac1f16abf8fd44885764ff70241b213d995bda100635601df69c73043497f"
+    },
+    {
+      "blob": "b4759095e186a1f93f284d0e79a8e61811a5284f",
+      "path": "docs/delivery/v2-development/native-ocr-commit-lease-pg-r1-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "a1f37c89eb5dd2b5b949c6122cf6669efe69adc53c7e6486e26f6b0ccccf8330"
+    },
+    {
+      "blob": "007efda5a8a8a4c58a7539d91b2ae23189d8c21a",
+      "path": "docs/delivery/v2-development/native-ocr-commit-lease-pg-r1.json",
+      "bytes": 678927,
+      "sha256": "5a0e47f4c2cfc8d2bb20dfa3c6c5ccb88829fb0a535ee65418d983fcc83d5ab4"
+    },
+    {
+      "blob": "2258a4ecfc2fb41d3d01e80f19b3c82f40f7c29a",
+      "path": "docs/delivery/v2-development/native-ocr-commit-lease-pg-r1.log",
+      "bytes": 1083,
+      "sha256": "fb7d7479cbc6b880757024d1d3291a3956f2926be40f6f56642a782d12f38ee5"
+    },
+    {
+      "blob": "7f34e011ffdab41ebefd48b8d42c83eeb7e2f768",
+      "path": "docs/delivery/v2-development/native-ocr-commit-lease-public-r1.json",
+      "bytes": 679078,
+      "sha256": "5edc25539fa881fdb6820d7b5264a0b1ce96a115555e78f665ea2e35ef8e2d66"
+    },
+    {
+      "blob": "13b5ae0a3197bb335ccd569b4d8da42a27d8e512",
+      "path": "docs/delivery/v2-development/native-ocr-commit-lease-public-r1.log",
+      "bytes": 1067,
+      "sha256": "111b760653c187a80b7186483581f9bcd59fe28f25993b75435180b87248d25f"
+    },
+    {
+      "blob": "8fb0509a179600fe61d6923b05a1ed04286c6710",
+      "path": "docs/delivery/v2-development/native-ocr-commit-lease-red.json",
+      "bytes": 678695,
+      "sha256": "82c347bde287fc802147a9e5ab18b276da497b6e749fce18bc9d9e5646f36766"
+    },
+    {
+      "blob": "65504e0a7a844f2fd677a28db7ff4bf62f361a73",
+      "path": "docs/delivery/v2-development/native-ocr-commit-lease-red.log",
+      "bytes": 4784,
+      "sha256": "41b96dbfbbb9caaeafe4830aa7327ab2f1b1df6ef788852b1cde76f1a5e2ff6d"
+    },
+    {
+      "blob": "d7f28ae9f70c75bb0a4c0cc6fd841fcfe0d4a9af",
+      "path": "tests/test_research_native_ocr_coordinator_additive.py",
+      "bytes": 11737,
+      "sha256": "0e2ae68a3362eafbddeb3cfc3f3816b3196e41d6d24cc23c514c2832e892d176"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
