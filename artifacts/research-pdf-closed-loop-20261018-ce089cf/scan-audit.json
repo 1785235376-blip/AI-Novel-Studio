@@ -1,0 +1,235 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "09957538114b0822c44d768f3c86371030f508b8",
+      "path": "API_CATALOG.json",
+      "bytes": 1456408,
+      "sha256": "a32531379cb0b1e5069cea3de762b9ddd57c599992fac635d6f44f682d41dc08"
+    },
+    {
+      "blob": "084f78708d1cec3f347b965dbf52a82729aedb9b",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 597371,
+      "sha256": "26ee6f449cdbbea05d32bf0f06f8fb833eedd23d05051f4f6d75962b3f4ea6d4"
+    },
+    {
+      "blob": "c29a04abd5c153fef0a611bda5ed656b0a3a3fdd",
+      "path": "app/experimental/native_ocr_broker.py",
+      "bytes": 3194,
+      "sha256": "c10f56cc45a399a777be0d3fdfc9a9870562f57b780b30aecf08925cd1df6994"
+    },
+    {
+      "blob": "e56c471a5e5a73c35357463f553b538ddf06dfea",
+      "path": "app/experimental/research_native_ocr.py",
+      "bytes": 30520,
+      "sha256": "105fd220f163cd87e4d796553db3c3f69a90bbb378d987b02bad674ddc5e4f2d"
+    },
+    {
+      "blob": "1d33366261b06fe1c204ebe3ab64bbaa93755fd1",
+      "path": "app/experimental/research_ocr_binding.py",
+      "bytes": 6254,
+      "sha256": "03ae410d858b376bdcb2217e160bf2ad3b599ef02364bf7d893269416a63aeea"
+    },
+    {
+      "blob": "c973046abfead21aa344d513541a14dae00de2b9",
+      "path": "app/experimental/research_ocr_execution.py",
+      "bytes": 11334,
+      "sha256": "13c876b7e02da58e149f4eb16c98f7e12f8b129b512067fad21bfa3bb806a398"
+    },
+    {
+      "blob": "de7d6fffee7aad88d4bbd2958d1a873645970928",
+      "path": "app/jobs.py",
+      "bytes": 94200,
+      "sha256": "ade14c3ef71d1826e4a93f113bfa9a931ea8919746bf81a7f32521464bd47504"
+    },
+    {
+      "blob": "b6f12d7e4f6c4e9f2a5fca935b578327f9f00732",
+      "path": "app/repositories/generation_repository.py",
+      "bytes": 14037,
+      "sha256": "c50afcdf887f8a549f059037d247e1095f797839ed488da71020950a2b7d903d"
+    },
+    {
+      "blob": "35cc9be61b08df5afa008e551c69a9c320b9eb6d",
+      "path": "app/runtime.py",
+      "bytes": 19529,
+      "sha256": "f865cfdc2df1b645776a31eba1491a4fed0e520ab630749f6f0cc75e1bdb4d3c"
+    },
+    {
+      "blob": "4eebbf9d76ed5b120a40bc86a1cc5999d10453e7",
+      "path": "docs/RESEARCH_PDF_NATIVE_OCR_CLOSED_LOOP.md",
+      "bytes": 4898,
+      "sha256": "3696915a631c77c1066f552c38908d8cd42c74012519c4ec254a7eb3b6bfab8c"
+    },
+    {
+      "blob": "13a439dc94c20fcd45591f47cfc73c6884275e4d",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 14008,
+      "sha256": "dce2c358089c44f77521b8d6731edf5c596acfaf7e70c4bbfce1828ba69bb72d"
+    },
+    {
+      "blob": "6e291812b29c7383255f955cac4bfaaac95d91ed",
+      "path": "docs/delivery/v2-development/research-pdf-coordinator-file.json",
+      "bytes": 695102,
+      "sha256": "6e5160a3e11ad095aad4391ad1c32a44fdb6f4a92b068ccb8ddf0e9eb11e32ea"
+    },
+    {
+      "blob": "6ce1986d9ea40deceba694936193b39f59e1bea1",
+      "path": "docs/delivery/v2-development/research-pdf-coordinator-file.log",
+      "bytes": 1067,
+      "sha256": "da3074d52e03a3ae30e7688b6013fc780d6b50f118fe2c3c240c9f76cf921f79"
+    },
+    {
+      "blob": "e9961e99af7660acf55a15b63e59f5bafc7c5403",
+      "path": "docs/delivery/v2-development/research-pdf-integration-file.json",
+      "bytes": 695757,
+      "sha256": "7ae592d6b92df3bcc19439eab1f6dc52a5b90e5b33ec73278d75d2c2d5a1b894"
+    },
+    {
+      "blob": "04e5ab612e5769e6815fcc30fbb18ab71fff9c30",
+      "path": "docs/delivery/v2-development/research-pdf-integration-file.log",
+      "bytes": 1067,
+      "sha256": "789d1e31cf5357f93ea155b6c1f46eaa3c42f12797d269b69000b4e7b7d5110e"
+    },
+    {
+      "blob": "0d1666b704d4dfe2c5e0314084a8afd309135031",
+      "path": "docs/delivery/v2-development/research-pdf-integration-pg-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "2d075d11b8abaffaf49e63db62b9ffe6343265cb1a24297913111f83fe0fdc3a"
+    },
+    {
+      "blob": "0c64fc57c3e9d86ce9b852c09096ccad41b99880",
+      "path": "docs/delivery/v2-development/research-pdf-integration-pg.json",
+      "bytes": 695666,
+      "sha256": "b36866c62c60ff53703d57ff58105e2515798613523c0ff11f8ca66dccabf31f"
+    },
+    {
+      "blob": "dae86c779a38bfac6866d51884039a422c2c2a99",
+      "path": "docs/delivery/v2-development/research-pdf-integration-pg.log",
+      "bytes": 1071,
+      "sha256": "93e8ed0aedcf97dedff1dd0d053c356adc979513550d14fd49dad6adfae21a48"
+    },
+    {
+      "blob": "0792a180211da1051324214892a19da488c9b8ea",
+      "path": "docs/delivery/v2-development/research-pdf-integration-public.json",
+      "bytes": 695596,
+      "sha256": "ccbda8e4a038b5b54dcae816e23d7ff30150ae5b69ae82ccf1b1a656e18d1f8d"
+    },
+    {
+      "blob": "cc83dae9edff2d65b691e3bb5ff2b85e10ad9c18",
+      "path": "docs/delivery/v2-development/research-pdf-integration-public.log",
+      "bytes": 605,
+      "sha256": "e0dadf5d70d2a6577bef1d56dae9745060c98fc92004063cca9981101e97b36f"
+    },
+    {
+      "blob": "86310b19fa06133b5e9fd2e2d59e3ec442ae4e10",
+      "path": "docs/delivery/v2-development/research-pdf-job-file.json",
+      "bytes": 694716,
+      "sha256": "9940e64d606de04066d4986b9d1834378b3556e505ad766b3b69f125bd882ede"
+    },
+    {
+      "blob": "47e1f4c590455ede53657f606aec3321de4fe582",
+      "path": "docs/delivery/v2-development/research-pdf-job-file.log",
+      "bytes": 1076,
+      "sha256": "554ed2aaa87b3c9ee3ba2981fa79c4d406d8bc2e8b765cdf4da4eac742a0935f"
+    },
+    {
+      "blob": "6834422400dd1af0fd0122dd1ef1d5ee10710dfb",
+      "path": "docs/delivery/v2-development/research-pdf-job-pg-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "d024d90b566525089c3254bdd5f698f07e7e171a859f8e3997898446ae75ad33"
+    },
+    {
+      "blob": "c0166dbf191429c932c5fb8dc0f5c949141b51f9",
+      "path": "docs/delivery/v2-development/research-pdf-job-pg.json",
+      "bytes": 694773,
+      "sha256": "1a786456f1f24b4d640193f32701e0f5dd837c88574e7bd4c82c69dc22e89209"
+    },
+    {
+      "blob": "19ad2fc587ac6d19fc7917c7f33e796a15fa7c92",
+      "path": "docs/delivery/v2-development/research-pdf-job-pg.log",
+      "bytes": 1081,
+      "sha256": "d400fd9d277b1555f75305c6e37b3240ddaa94d06f72af6a8852620148aab776"
+    },
+    {
+      "blob": "655d1f2c06df2a1a2d00dc17b193284c0a232377",
+      "path": "docs/delivery/v2-development/research-pdf-ui-final.json",
+      "bytes": 695279,
+      "sha256": "3912a16a86e329846b4ab47e82d900ca9554833b0b7084f665c339a3e6195b05"
+    },
+    {
+      "blob": "9daf3990d000665fe9a4b4f4c4802047eee777d3",
+      "path": "docs/delivery/v2-development/research-pdf-ui-final.log",
+      "bytes": 2204,
+      "sha256": "7de1d5ae63c0a57f535e73d61ed2e5d8df4d5a81ae13fac762df7b044a3bdbac"
+    },
+    {
+      "blob": "6bf60230605981b2467f4eae2f8b6ef4c78d2800",
+      "path": "docs/delivery/v2-development/research-pdf-ui.json",
+      "bytes": 695225,
+      "sha256": "8448e6252642ed287119e08eff51f85f598032ba9965638a50380607eddcd0b0"
+    },
+    {
+      "blob": "1ef6d192b11fe82207c543ed94fec5cc9c7abc7b",
+      "path": "docs/delivery/v2-development/research-pdf-ui.log",
+      "bytes": 5092,
+      "sha256": "7d6731554df913c6fd56a9fcce5a26543aeef99d93af5260b2ba22b8a2c74366"
+    },
+    {
+      "blob": "e3a7e07a92079dee3f4eab10d87f083bab99f59d",
+      "path": "frontend/src/experimental/ResearchLibraryPanel.tsx",
+      "bytes": 35576,
+      "sha256": "d2d55f242e05a7b3829fc7954fc7584009ba054226c442c98a67c8a75d98e40e"
+    },
+    {
+      "blob": "94a77ac18e82650ad3142be2fabe44ec1fe8027c",
+      "path": "frontend/src/experimental/ResearchNativeOCRPanel.tsx",
+      "bytes": 9939,
+      "sha256": "635bc75c07701cd2ca084a431de594b3f57c0988f140b3bd2690466780ebab1f"
+    },
+    {
+      "blob": "2b9dd9a86cd93738fee07fcf923a9a5e3e67691d",
+      "path": "frontend/src/experimental/ResearchPDFOCRPanel.test.tsx",
+      "bytes": 5170,
+      "sha256": "e444a7b429e33352952f16f85994cd31c6193675fd75f15894623dd727ce2644"
+    },
+    {
+      "blob": "08f81783768bc36b2a670f63d55096340250f6ed",
+      "path": "frontend/src/experimental/researchNativeOCRClient.ts",
+      "bytes": 4379,
+      "sha256": "7f17beb0419b1f54c1318abe983f582b51edf18837479f46965f269045bb9efe"
+    },
+    {
+      "blob": "0a30743de6c7d2d6cb45516dd6390adbc3374b6a",
+      "path": "tests/test_local_pdf_ocr_additive.py",
+      "bytes": 6280,
+      "sha256": "4dbadf9711edbadae51b11b92dc8e92a249ad04ce1e31e5c5ded59a79866becb"
+    },
+    {
+      "blob": "55f67f1e4fea079494467af1a92e47620a555747",
+      "path": "tests/test_local_pdf_ocr_host_additive.py",
+      "bytes": 1692,
+      "sha256": "afcdf47f984294aaa3da25611f8099444b5ec60bec499828d80b1c00f5b28775"
+    },
+    {
+      "blob": "385539d169a8b2f661bb4689c387c25c4eda6312",
+      "path": "tests/test_research_pdf_ocr_coordinator_additive.py",
+      "bytes": 5812,
+      "sha256": "593bd95d72e117b64788a8b5779e43907829077d6290d221e01b214e464e2421"
+    },
+    {
+      "blob": "23cad97828945e8cec05c3829737be27d5670eb5",
+      "path": "tests/test_research_pdf_ocr_execution_additive.py",
+      "bytes": 4000,
+      "sha256": "6e67f6ae36443ab7a658f86fd4eb858938317b303af56e3ce994a18ec7018c5b"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
