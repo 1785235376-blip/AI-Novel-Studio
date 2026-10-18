@@ -1,5 +1,6 @@
 import { promoteOrphanGroups, visualGroupMembers } from './graphVisualHierarchy';
-import { useEffect, useId, useState } from 'react';
+import { changeVisualMembership } from './graphVisualMembership';
+import { useEffect, useId, useRef, useState } from 'react';
 import { Button } from '../ui/primitives';
 import type { StudioGraphDefinition } from './studioGraphTypes';
 
@@ -14,9 +15,15 @@ type Props = {
 /** All persisted content stays in the original graph. Only the pending name is local. */
 export function GraphVisualGroups({ definition, selected, blocked, interactionKey, onChange, onSelect }: Props) {
   const labelId = useId();
+  const alive = useRef(true);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   const [name, setName] = useState('');
   const [choice, setChoice] = useState('');
   const [parentChoice, setParentChoice] = useState('');
+  const values = [definition, JSON.stringify(selected), blocked, interactionKey, name, choice, parentChoice];
+  const fence = useRef({ values, consumed: false });
+  if (values.some((value, index) => !Object.is(value, fence.current.values[index]))) fence.current = { values, consumed: false };
+  const token = fence.current;
   const groups = definition.presentation?.groups || [];
   const chosen = groups.find(group => group.id === choice);
   useEffect(() => { setChoice(''); setName(''); setParentChoice(''); }, [definition, interactionKey, blocked]);
@@ -24,8 +31,11 @@ export function GraphVisualGroups({ definition, selected, blocked, interactionKe
   const members = new Set(groups.flatMap(group => group.node_ids));
   const validSelection = selected.length > 0 && selected.length <= 24 && new Set(selected).size === selected.length
     && selected.every(id => definition.nodes.some(node => node.id === id) && !members.has(id));
+  const moveMembers = changeVisualMembership(definition, selected, choice, 'move');
+  const removeMembers = changeVisualMembership(definition, selected, choice, 'remove');
   function write(nextGroups: typeof groups) {
-    if (blocked) return;
+    if (blocked || !alive.current || fence.current !== token || token.consumed) return;
+    token.consumed = true;
     const next: StudioGraphDefinition = { ...definition, presentation: { ...definition.presentation } };
     if (nextGroups.length) next.presentation!.groups = nextGroups;
     else delete next.presentation!.groups;
@@ -73,8 +83,14 @@ export function GraphVisualGroups({ definition, selected, blocked, interactionKe
         }));
       }}>应用父组</Button>
     </div>}
-    {chosen && <p className="graph-canvas__help">直属成员：{chosen.node_ids.join('、')}</p>}
-    <p className="graph-canvas__help">最多 24 组，名称 1–80 个 Unicode 字符。每个节点只能属于一组；先移除原组才能重新分组。选择成员后拖动任一所选节点可整体移动；删节点同步清理成员，空组自动移除。通过保存创作图持久化，可撤销。折叠是下方独立的临时视图操作；视觉嵌套最多两层（顶层＋子组），非运行子工作流。父组选择、边框与折叠包含子组成员；移除父组或其直属节点清空时，子组提升至顶层且保留节点。小地图仍显示原节点，无子画布隔离。</p>
+    {chosen && <>
+      <div className="graph-canvas__toolbar">
+        <Button disabled={blocked || !moveMembers} onClick={() => { if (moveMembers) write(moveMembers); }}>将所选节点移入当前组</Button>
+        <Button disabled={blocked || !removeMembers} onClick={() => { if (removeMembers) write(removeMembers); }}>将所选节点移出当前组</Button>
+      </div>
+      <p className="graph-canvas__help">直属成员：{chosen.node_ids.join('、')}。移入会从原组转移成员；空组移除，子组提升至顶层。移出只取消当前组的直属成员关系，不删除节点。</p>
+    </>}
+    <p className="graph-canvas__help">最多 24 组，名称 1–80 个 Unicode 字符。每个节点只能属于一组；可选择现有组后移入或移出所选节点。选择成员后拖动任一所选节点可整体移动；删节点同步清理成员，空组自动移除。通过保存创作图持久化，可撤销。折叠是下方独立的临时视图操作；视觉嵌套最多两层（顶层＋子组），非运行子工作流。父组选择、边框与折叠包含子组成员；移除父组或其直属节点清空时，子组提升至顶层且保留节点。小地图仍显示原节点，无子画布隔离。</p>
     {name && !validName && <p role="alert" className="graph-canvas__help">请输入非空且不超过 80 个字符的名称。</p>}
   </section>;
 }
