@@ -1,0 +1,295 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "ed77ee80fd3c1a46fd2dc5fcba06f3d3c6185457",
+      "path": "API_CATALOG.json",
+      "bytes": 1546492,
+      "sha256": "a91440f0e85698b77203181fefea97f7f0bcdeac4d34fa598bd5bcb9a32cc016"
+    },
+    {
+      "blob": "c52ef3bd16513e395c98194c79f6d658fdf9c3e2",
+      "path": "API_CATALOG.md",
+      "bytes": 414274,
+      "sha256": "28c80b1cb903ecb8482c0d5015006749a755ccd392de765cbb1921d39a1d2369"
+    },
+    {
+      "blob": "b8701097c2ea0ff4aced7b58e4d54b37ded5920e",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 638339,
+      "sha256": "883123720d367ca45f41550538f2cd34539393e236c32c70afad75fb46a99536"
+    },
+    {
+      "blob": "44ee5a99d55c23bd4d19d9551f7ae2c83310a695",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 138018,
+      "sha256": "80f2126987f65412144fd224b5d9cd46effd5f173493b151db2ae0cd033d9718"
+    },
+    {
+      "blob": "2e871f1e586e4396ef4e4380a036be158f5b67e4",
+      "path": "app/experimental/comic_epub_package.py",
+      "bytes": 7859,
+      "sha256": "dcef7ce40f74060844ab8f7a71e4729dffc1acc405e27adb70c99a2c7d8f234c"
+    },
+    {
+      "blob": "8c11c1238cde502caa8ba3b25028f4c5fd244431",
+      "path": "app/experimental/comic_layouts_api.py",
+      "bytes": 12777,
+      "sha256": "7ccbb13526200eb8c0fb4f6a089eed6bd392719b888b9a6de36e446eb010d926"
+    },
+    {
+      "blob": "7144ddc6402dcb8f7b0c9a7fccba063fee2f801b",
+      "path": "app/experimental/comic_publication.py",
+      "bytes": 22004,
+      "sha256": "0ab0b6fd37c316cb77c7d1f587d60ff16b65bc77af3f6e9c7aa57493dc23cb46"
+    },
+    {
+      "blob": "155589d80c43a4e02794ab7a54acf9d02320de2b",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 41897,
+      "sha256": "81ca3da204ea17de1b784714f67b6a62e79539371599ac3e5a08751189020ecf"
+    },
+    {
+      "blob": "75f54b7fef074800bcb5ef7b69983f90d55807fa",
+      "path": "docs/delivery/v2-development/comic-epub-backend-compat.json",
+      "bytes": 751287,
+      "sha256": "16b935c118fd8ca14a204bd835890903f290b2b940a08350f208e01658666cb7"
+    },
+    {
+      "blob": "da2d8cd86770431500f991095a43f441812c737b",
+      "path": "docs/delivery/v2-development/comic-epub-backend-compat.log",
+      "bytes": 2210,
+      "sha256": "93b86e4b22c4482583ccc18d276ebdff47444f65d26dc4f1f8d66da467a1f65c"
+    },
+    {
+      "blob": "9837566b030d63014b56515e13397a8791019fa4",
+      "path": "docs/delivery/v2-development/comic-epub-backend-repeat-canceled.json",
+      "bytes": 511,
+      "sha256": "0ef2b3675628580c543022889127a7a503ae83b60245284a46c8db2c6fbda03b"
+    },
+    {
+      "blob": "36c3b172666105b1316e562b6785e69f26169ba4",
+      "path": "docs/delivery/v2-development/comic-epub-backend-source-reconciliation.json",
+      "bytes": 599,
+      "sha256": "b1158d8951438ecb1dcfe2e803a13dca924848436d21a416e774594a894f5008"
+    },
+    {
+      "blob": "e94ab5b10a39499543da0c619d52168a1fdc4fbc",
+      "path": "docs/delivery/v2-development/comic-epub-backend.json",
+      "bytes": 750784,
+      "sha256": "f27aab0dbda67cd08783c520a30adc2baa47424cb382619f4544da7193c57c71"
+    },
+    {
+      "blob": "f1320e4c5d735aa9440c994a91ff30b33d3b75ff",
+      "path": "docs/delivery/v2-development/comic-epub-backend.log",
+      "bytes": 1345,
+      "sha256": "b005700857b389735140c7d6e0f0e0ea687f4b43247d6ad1b1f2cc947305dfb2"
+    },
+    {
+      "blob": "70722a06f4cb73ee0818c1283b4e93f24b280e39",
+      "path": "docs/delivery/v2-development/comic-epub-fixed-layout-report.md",
+      "bytes": 6643,
+      "sha256": "4c95019543c893d9f5bea89ffaf4402aeef0411c17f5ef8d8a07c774aff6e4ce"
+    },
+    {
+      "blob": "69d5529444b9628d4e4def9f832bfc5f714a68b7",
+      "path": "docs/delivery/v2-development/comic-epub-frontend-build-final.json",
+      "bytes": 750973,
+      "sha256": "2bb26895e273c1c4beece01402f3e0a9aa09eab766a0b8cbf1f5e6b12d058e2a"
+    },
+    {
+      "blob": "0f281c0e789dee901f1665594c4b389f721f33cb",
+      "path": "docs/delivery/v2-development/comic-epub-frontend-build-final.log",
+      "bytes": 1710,
+      "sha256": "b5db26ea2f382bc60ec08383ea1d42726c3b0ba352ef065396ed68d91adbc171"
+    },
+    {
+      "blob": "d7489860c62730e6906482e8d1e6c061e444a67d",
+      "path": "docs/delivery/v2-development/comic-epub-frontend-build.json",
+      "bytes": 750918,
+      "sha256": "21227fa9f21816692104116c138124794733f6827d18dd6d0a8ed60257f23d39"
+    },
+    {
+      "blob": "5078936772fcf13eef9ac663ced2244ef4273ca9",
+      "path": "docs/delivery/v2-development/comic-epub-frontend-build.log",
+      "bytes": 1710,
+      "sha256": "c2a7fe6c1c942e3093f1f69b357addec0d5f470f9f0bb3e96895cdbd0a3fa4ad"
+    },
+    {
+      "blob": "70985c6aee271487477297159ef3b87300e11eaa",
+      "path": "docs/delivery/v2-development/comic-epub-frontend-final.json",
+      "bytes": 751337,
+      "sha256": "f628260b3c36821b7243690a87192abfe602e849dc0be32d9c0bef31830e0051"
+    },
+    {
+      "blob": "aff6fc61d7ed6efc92b55f1699d264ca9df29016",
+      "path": "docs/delivery/v2-development/comic-epub-frontend-final.log",
+      "bytes": 1392,
+      "sha256": "c10bb116a1e3646b678b81cc05c08f4f39973e3db09214a8cfba2d0e1029200c"
+    },
+    {
+      "blob": "6adb4a6a6c0f28c9c67e55c39b4d4fab58ae26a6",
+      "path": "docs/delivery/v2-development/comic-epub-frontend.json",
+      "bytes": 751283,
+      "sha256": "9c4a7da43121044025fbdbd78c1ca7065ea904bc114f94ce266fb97853117407"
+    },
+    {
+      "blob": "30e07d3f920057d76a49ec517759f5ac3a5ad9ae",
+      "path": "docs/delivery/v2-development/comic-epub-frontend.log",
+      "bytes": 1262,
+      "sha256": "f13e343b9b03452df2e9af92455aadb7724ec7b14d80d854363b866266b64ec2"
+    },
+    {
+      "blob": "725a39007ba21db9e649a2a75fe14164a8929d4c",
+      "path": "docs/delivery/v2-development/comic-epub-integrated-frontend-proof.json",
+      "bytes": 3017,
+      "sha256": "9b969c71b347006256efc0f09d6ec76e64bf06ebd60574145399729c483296e6"
+    },
+    {
+      "blob": "ddeae838740e3da7d336013a52f68d5488dd3000",
+      "path": "docs/delivery/v2-development/comic-epub-integration-20261018.md",
+      "bytes": 5287,
+      "sha256": "bf1143697d7688b8197e9790fdbb5c7ecef50b765c8ea7fdbb888ea1dc71d1fc"
+    },
+    {
+      "blob": "f1f819bb43e677f29663eb4bf63e4a08013ef79f",
+      "path": "docs/delivery/v2-development/comic-epub-integration-postgres-cleanup.json",
+      "bytes": 307849,
+      "sha256": "d6c9b7443b3d62d2ab318bd9e64529a5c67f831ac8ac39d39502d0054c921d67"
+    },
+    {
+      "blob": "f7b1e4b849b39ee5d6eb5e2e3617c70b134d5de9",
+      "path": "docs/delivery/v2-development/comic-epub-integration-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "ce79ff8b00ccc001443ead2173c1453d70724406898e896e27dde7a11ad45303"
+    },
+    {
+      "blob": "fae24aed064cf0cbdc6aceaf5eb2cdc16cdb5eca",
+      "path": "docs/delivery/v2-development/comic-epub-integration-postgres.json",
+      "bytes": 756616,
+      "sha256": "507a95e1318ff0889d83c3ca14ea5d125c8864ae50913a374078a1566559091c"
+    },
+    {
+      "blob": "c32ec8deb2717ca5f1d9dcc3871053faf91cd027",
+      "path": "docs/delivery/v2-development/comic-epub-integration-postgres.log",
+      "bytes": 1630,
+      "sha256": "2e7b298e58140d2d3753c6ff470a05f38db6f9f0a3d6d5a48d562c31cb5f572d"
+    },
+    {
+      "blob": "004664bd47e36225a2a1c616b08b52538b237500",
+      "path": "docs/delivery/v2-development/comic-epub-public-build.json",
+      "bytes": 756306,
+      "sha256": "cbf346bb4aee7d90cbffcb611d77f2eaa2c8cf5581b6919e89d37c9d8c857195"
+    },
+    {
+      "blob": "940733c1b3fa8f5de362a12de8ab77024e4dee71",
+      "path": "docs/delivery/v2-development/comic-epub-public-build.log",
+      "bytes": 634,
+      "sha256": "3552d5aefb7bb957c6426f71774e3466c346f2285ae0d447705a09302124bab0"
+    },
+    {
+      "blob": "90673433bf85c4821d565df8bd177172409a168a",
+      "path": "docs/delivery/v2-development/epub-review-final.json",
+      "bytes": 750770,
+      "sha256": "9a8ff2c9e4a91fb23b385945d4a4779e9fe1284e4b8be835c4cfe64f26ed27b9"
+    },
+    {
+      "blob": "e0a65a37e6eeabf73599d67cf2ecf6ed5edb53a9",
+      "path": "docs/delivery/v2-development/epub-review-final.log",
+      "bytes": 6731,
+      "sha256": "52478f21321910b75cfb8117c732907289a977d2d36704796fe955f2e2216363"
+    },
+    {
+      "blob": "218d67ae06df48b5b3c38c9160ae150d3cc88f0c",
+      "path": "docs/delivery/v2-development/epub-review-independent.json",
+      "bytes": 750682,
+      "sha256": "7cb1f3b23eda2e5bc6005dd71d5dc541f80e97ac6bfe61a6a491847edad6d00a"
+    },
+    {
+      "blob": "54dace056c07f0dd6aea972c1854cb2946dcd4e1",
+      "path": "docs/delivery/v2-development/epub-review-independent.log",
+      "bytes": 84003,
+      "sha256": "0a903964fd1dbaffa30a6c7aba28589db22d2c678dd4fff3410224dc8289233d"
+    },
+    {
+      "blob": "d7c631924d86ae8bf79f3df2aba38fb4c33b9a95",
+      "path": "docs/delivery/v2-development/epub-review-verified.json",
+      "bytes": 750938,
+      "sha256": "174275ffd3d327da30174df3082b99d0e206859897efa52170b981fb071816d4"
+    },
+    {
+      "blob": "4cc16495950aae652a77dd062f64b85d7fafc74d",
+      "path": "docs/delivery/v2-development/epub-review-verified.log",
+      "bytes": 1176,
+      "sha256": "854e71adf6aee5c3becdf4ab3f7d8b96cedbef6d01738401460b558b9d3c3b41"
+    },
+    {
+      "blob": "1cc3e1633336969b98bb7d4918115e4081e08d6b",
+      "path": "docs/delivery/v2-development/project-retirement-evidence-reconciliation-20261018.md",
+      "bytes": 4704,
+      "sha256": "672375fe62906d9b7727e365a9ef3479484900ebda0daeeae068fc8e137ab78b"
+    },
+    {
+      "blob": "de74cc004e4cd523e95e9f7db4c69303647bc5b6",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_comic_epub_postgres.py",
+      "bytes": 1989,
+      "sha256": "934dc958695183a05700982df6e46d996ba6f6442e0f4ac5d3556e80a363d422"
+    },
+    {
+      "blob": "c90f32d497ef4cbe3481494102f8dff04b9bf76b",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 785989,
+      "sha256": "e37f43d06f4746ea241fe490a52ae571dd2e61bcdbbf613e16e68cad375abe13"
+    },
+    {
+      "blob": "aaea97888d0381399ec04d7ce95e8c39165e0579",
+      "path": "frontend/src/experimental/ComicPublicationPanel.epub.test.tsx",
+      "bytes": 21311,
+      "sha256": "c283bf5ad80905e3cd06f01a52e5ca213fd1f4085c3d067b1575869d12f38ff6"
+    },
+    {
+      "blob": "2535d2ed35ad2ff152067e2d6ffb3a7bae326397",
+      "path": "frontend/src/experimental/ComicPublicationPanel.tsx",
+      "bytes": 27280,
+      "sha256": "06a2ecd808f270593f5d3fe01dd5181f5216fa18fbb2dc03db6b5230af927aa9"
+    },
+    {
+      "blob": "85fd0af52a54440ee2ce6f8381f742cd54030825",
+      "path": "frontend/src/experimental/comicLayoutsClient.epub.test.ts",
+      "bytes": 8895,
+      "sha256": "e4690fa7fdd500c1084c904d7ffc2ee7a023704679cfc64b98760e8c8879d132"
+    },
+    {
+      "blob": "ec90a22b6a23123d6cb0592f112319beda37f325",
+      "path": "frontend/src/experimental/comicLayoutsClient.publication.test.ts",
+      "bytes": 10259,
+      "sha256": "489998aa893b4f67fc8121558158584caee86faeed344b8b3445d2762d8d84d8"
+    },
+    {
+      "blob": "d800b2c9831801f6cbfd0f289d59442987a1e89b",
+      "path": "frontend/src/experimental/comicLayoutsClient.ts",
+      "bytes": 19294,
+      "sha256": "5c9446978069916b1dc4783752a0f5569293020f45737e55867aa3d6817d6315"
+    },
+    {
+      "blob": "bce5c60d4190446fab4bf84a7b8fe451d2094fef",
+      "path": "packaging/public-build.json",
+      "bytes": 26120,
+      "sha256": "af8112af31e409c775d2a1ca2cd02be2ea78ce7f7f5c618fd79854ce3a5e2e69"
+    },
+    {
+      "blob": "deeeb3a5b7b1b8109c503343ce3f7a25c157e5e1",
+      "path": "tests/test_comic_publication_epub.py",
+      "bytes": 17212,
+      "sha256": "2a104fe61573c9699eeac51720e4fe91456fb81a35facaa5322faae6c54e15ca"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
