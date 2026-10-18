@@ -127,3 +127,24 @@ and retain failures. Continue serially while worker quota is unavailable.
 - Existing archive d834820d contains through 535c06c3; the newest integration slice is being archived separately. Do not assume an archive HEAD is product source.
 - Main and draft PR #47/#48 remain unchanged at the SHA values above. No additional fees or paid cloud/model calls.
 - Next development focus returns to the professional Director/Graph workspace gaps. Display-card groups are not executable nested graphs. Preserve original bounded execution owners and current source/approval identity when adding any bridge.
+
+## 14:26 continuation and requirements-source recovery
+
+Source through ebaa6d55b7f13a56928f3939508b3c4051d69c80 is committed. Anonymous remote verification confirms archive 8e07964cb07542e1ce25e395b276269b8dbe6be7, parent f460c0d268806aa1e230db11f96b4deb44c65fd1, exact 12 files / 4,607,551 bytes, SHA256 and Git blob identities. This archive contains the incremental source bundle, original logs/reports, PUBLIC test wheel and frontend test build. It is not a release or PR update.
+
+New bounded work since 13:30:
+- a6757404: exact current Asset-reference handoff from a saved media view into the original Graph draft, explicit confirmation and no automatic edge/model execution.
+- b36a492a: up to three original source-pinned Director consoles for explicit side-by-side comparison, with independent source/owner fences. Not autonomous parallel directors.
+- bde00836: whole-definition media-card search and explicit offscreen location; collapsed ancestors open without deleting group membership.
+- c4c618c6 and 5f939617: explicit selected-scene Director child drafts through original Creative derive, preserved source references/provenance and no copied approval or execution authority; generated OpenAPI component follow-through included.
+- f385bb95: connection-disconnect structural impact preview before confirmed local change. Node removal/disable paths are not covered by this slice.
+- 0e779476: explicit local media-view draft recovery, original owner/incarnation checks, exact saved base and current Asset pins, no replay of uncertain writes.
+- ebaa6d55: optional persisted grid and bounded world-coordinate drag snapping; legacy absent settings preserve serialization. File 24, actual PG 10, frontend 29 plus TypeScript/Vite, PUBLIC/catalog 6 targeted checks passed. Grid pixels and complete real-browser behavior remain unaccepted.
+
+The newly attached 167-line / 31,398-byte continuation TXT was read in full and compared byte-for-byte with docs/v2/frozen-product-anchor-20261016.txt. SHA256: ebabfe5314d9ed4535814baaca295ec6db0f17e5541d4dc35a6ed16805c129f4. It confirms existing frozen directions; it is not the separately referenced original 904-line Master Roadmap.
+
+The original AI_NOVEL_STUDIO_V2_MASTER_ROADMAP.txt has been located in file metadata (71,777 bytes, originally generated 2026-10-09). Its content read was denied by selected-folder scope. The user has been asked to reattach that specific file. Do not treat metadata, search snippets, an earlier summary, or this continuation TXT as a full reading of the original roadmap. Do not route around the denied file access. Whole-scope reconciliation remains pending that original source.
+
+Current catalog: 2375 operations, fingerprint 0cffb6cd9b7da52c73b4474346ed440763361f215c61f21d95afdfba6e6dacd1. Updated catalog, detail gzip and full OpenAPI gzip are committed. Existing API path set is unchanged by grid options.
+
+Remaining development still includes unified professional Director workflow depth, executable nested subgraphs, cross-project exact-reference rebinding, additional change-impact paths, production cross-device sync, and private Mature implementation not evidenced in accessible public source. These are examples, not an exhaustive replacement for the master roadmap. Whole-product percentage remains unestablished. Browser/Windows/real-model quality and final product acceptance are separate from pure implementation status. Do not turn the 101 structural inventory rows into a completion percentage.
