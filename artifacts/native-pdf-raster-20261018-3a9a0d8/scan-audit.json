@@ -1,0 +1,67 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "f001ea617cd6972fd4867b0c468b30267e7e2b85",
+      "path": "API_CATALOG.json",
+      "bytes": 1456312,
+      "sha256": "8fe7f34c713db07c40830214d115eb162ecb4e029a62673315fc68d5e9ff6ee8"
+    },
+    {
+      "blob": "1eee0d189064144f63f90dd088e645bb2c83b7a7",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 597189,
+      "sha256": "7c66dc4922696607290bb182d30b457c62dc535268c1fde109e5cdb45d042b21"
+    },
+    {
+      "blob": "3e8a6cbd80de8b62f2d69f972d7e38d219597e37",
+      "path": "app/local_pdf_raster.py",
+      "bytes": 6417,
+      "sha256": "4702fab42cbf0810a935b7bb99f1b7468dd2508444926834ba24e70fe5eaf8f1"
+    },
+    {
+      "blob": "dccd823380b4b527ad400abdb6f96626bb367e90",
+      "path": "docs/NATIVE_PDF_PAGE_RASTER.md",
+      "bytes": 2773,
+      "sha256": "f992106ac15927a846df345aaed608f87ac2444bc77cdaea7d2abe377ac114e7"
+    },
+    {
+      "blob": "e00bfabcb7073bc3d2a892c3d987e2277ce90e3c",
+      "path": "docs/delivery/v2-development/native-pdf-raster.json",
+      "bytes": 693841,
+      "sha256": "56a6c644e9698a5ba7d4b89cb46658bd8e55ab8cb094720e8b90355c0b095889"
+    },
+    {
+      "blob": "bd8270ef4ea3a782655a94920635abca2f9de4ad",
+      "path": "docs/delivery/v2-development/native-pdf-raster.log",
+      "bytes": 611,
+      "sha256": "3a3d95c4fce7f575b2b9936bf9f45073391eef9242190c35a0ea40eac822bd5d"
+    },
+    {
+      "blob": "24d8827276cb9b9f3716eddd60c291ab7f08eb04",
+      "path": "packaging/public-build.json",
+      "bytes": 23862,
+      "sha256": "cd39daea76deb46f4dedad050f5c8f5f2ed3ee741bdadc55b6d69e70d434771f"
+    },
+    {
+      "blob": "941a4697d2d5bff1239a033d7e5e7bdfa2dfa082",
+      "path": "tests/fixtures/native_pdf_page_smoke.pdf",
+      "bytes": 52542,
+      "sha256": "3f05b02ae02694ba4a58a04c667302a878bde097534ab0166d762d0256a72af5"
+    },
+    {
+      "blob": "c3d8ad0802420b2025e013d5c816b2d42c5812be",
+      "path": "tests/test_local_pdf_raster_additive.py",
+      "bytes": 4763,
+      "sha256": "8f96f1ff3ce3811542592de23ea94b4c1116596949611ac41f98d9add75cfaad"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
