@@ -60,6 +60,7 @@ export function useDirectorWorkspace(client: DirectorWorkspaceClient | null): Di
     const controller = new AbortController();
     pending.current = controller;
     setState('LOADING');
+    setProjection(null);
     setProblem(null);
     try {
       const result = await client.readDirectorWorkspace(documentId, controller.signal);

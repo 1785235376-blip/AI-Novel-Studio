@@ -15,10 +15,11 @@ import type { CameraLanguageUsage, ShotCardProjection } from './directorWorkspac
 
 const NOT_PROVIDED = '原文档未提供';
 
-export function ShotCardPanel({ card, vocabulary, selected = false, onSelect, onDraftCamera }: {
+export function ShotCardPanel({ card, vocabulary, selected = false, onSelect, onDraftCamera, cameraDraft }: {
   card: ShotCardProjection;
   vocabulary: CameraLanguageUsage['vocabulary'];
   selected?: boolean;
+  cameraDraft?: Record<string, string>;
   onSelect?: (shotId: string) => void;
   onDraftCamera?: (shotId: string, field: string, value: string) => void;
 }) {
@@ -31,6 +32,7 @@ export function ShotCardPanel({ card, vocabulary, selected = false, onSelect, on
     return <CameraLanguageControl
       field={field}
       storedValue={stored}
+      draftValue={cameraDraft?.[field]}
       code={code}
       members={vocabulary[field]?.members ?? []}
       onDraft={onDraftCamera ? (name, value) => onDraftCamera(card.shot_id, name, value) : undefined}

@@ -19,9 +19,10 @@ export const CAMERA_FIELD_LABELS: Record<string, string> = {
   shot_size: '景别', camera_motion: '摄影机运动', lens: '镜头', composition: '构图',
 };
 
-export function CameraLanguageControl({ field, storedValue, code, members, disabled, onDraft }: {
+export function CameraLanguageControl({ field, storedValue, code, members, disabled, onDraft, draftValue }: {
   field: string;
   storedValue: string;
+  draftValue?: string;
   code: ShotValueCode;
   members: string[];
   disabled?: boolean;
@@ -36,14 +37,15 @@ export function CameraLanguageControl({ field, storedValue, code, members, disab
     <select
       className="director-camera__select"
       aria-label={label}
-      value={storedValue}
+      value={draftValue ?? storedValue}
       disabled={readOnly}
-      onChange={event => onDraft?.(field, event.target.value)}
+      onChange={event => { if (!readOnly) onDraft?.(field, event.target.value); }}
     >
       <option value="">原文档未提供</option>
       {members.map(member => <option key={member} value={member}>{member}</option>)}
-      {legacy && <option value={storedValue}>{storedValue}（旧写法保留）</option>}
+      {legacy && <option value={draftValue ?? storedValue}>{storedValue}（旧写法保留）</option>}
     </select>
+    {draftValue !== undefined && <span>本地草稿；原值：{storedValue || '未填写'}</span>}
     {code === 'CANONICAL' && <Badge tone="success">规范取值</Badge>}
     {legacy && <Badge tone="warning">旧写法保留</Badge>}
     {code === 'EMPTY' && <Badge tone="neutral">未填写</Badge>}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Badge, Button, Panel, Spinner, StatusMessage } from '../ui/primitives';
 import { ContinuityPanel } from './ContinuityPanel';
@@ -6,7 +6,7 @@ import { DirectorIntentPanel } from './DirectorIntentPanel';
 import { ShotCardPanel } from './ShotCardPanel';
 import { cameraVocabulary } from './directorWorkspaceContract';
 import { useDirectorWorkspace } from './useDirectorWorkspace';
-import type { DirectorWorkspaceClient } from './directorWorkspaceTypes';
+import type { DirectorWorkspaceClient, DirectorWorkspaceProjection } from './directorWorkspaceTypes';
 
 import './directorWorkspace.css';
 
@@ -21,15 +21,21 @@ import './directorWorkspace.css';
  * 不执行任何模型或渲染：`visual_target` / `director_notes` 的 authoring 仍然发生在
  * 原文档界面。
  */
-export function DirectorWorkspace({ client, documentId, active = true }: {
-  client: DirectorWorkspaceClient | null;
-  documentId: string | null;
-  active?: boolean;
-}) {
+type WorkspaceProps = { client: DirectorWorkspaceClient | null; documentId: string | null; active?: boolean };
+export function DirectorWorkspace(props: WorkspaceProps) {
+  // A new authority/client, document or activation lifetime must not inherit
+  // another session's visible projection or unsaved camera choices.
+  const identity = useRef({ client: props.client, id: props.documentId, active: props.active ?? true, generation: 0 });
+  if (identity.current.client !== props.client || identity.current.id !== props.documentId || identity.current.active !== (props.active ?? true)) {
+    identity.current = { client: props.client, id: props.documentId, active: props.active ?? true, generation: identity.current.generation + 1 };
+  }
+  return <DirectorWorkspaceSession key={identity.current.generation} {...props} />;
+}
+function DirectorWorkspaceSession({ client, documentId, active = true }: WorkspaceProps) {
   const controller = useDirectorWorkspace(client);
   const [selectedShotId, setSelectedShotId] = useState<string | null>(null);
   /** 本地镜头语言草稿：只存在于本次会话，绝不写回原文档。 */
-  const [cameraDraft, setCameraDraft] = useState<Record<string, string>>({});
+  const [draft, setDraft] = useState<{ source: DirectorWorkspaceProjection; values: Record<string, string> }>();
   const { read, reset } = controller;
 
   useEffect(() => {
@@ -37,13 +43,16 @@ export function DirectorWorkspace({ client, documentId, active = true }: {
     void read(documentId);
   }, [active, documentId, read, reset]);
 
-  const projection = controller.projection;
+  const projection = active && controller.projection?.document.id === documentId ? controller.projection : null;
+  const currentProjection = useRef(projection); currentProjection.current = projection;
+  useEffect(() => () => { currentProjection.current = null; }, []);
+  const cameraDraft = draft?.source === projection ? draft.values : {};
   const draftCount = Object.keys(cameraDraft).length;
 
   return <Panel title="导演工作台" actions={<Button disabled={!active || !documentId || controller.state === 'LOADING'}
-      onClick={() => documentId && void read(documentId)}>重新读取原文档</Button>}>
+      onClick={() => { if (documentId) { setDraft(undefined); setSelectedShotId(null); void read(documentId); } }}>重新读取原文档</Button>}>
     <p className="director-workspace__scope">
-      只读决策台：导演意图、镜头卡与连续性都来自既有 owner 的投影。修改仍然在原文档界面完成。
+      只读决策台：导演意图、镜头卡与连续性都来自既有 owner 的投影。修改仍然在原文档界面完成。重新读取或切换文档会清空本次镜头语言草稿。
     </p>
 
     {!documentId && <StatusMessage tone="info">
@@ -78,8 +87,18 @@ export function DirectorWorkspace({ client, documentId, active = true }: {
               vocabulary={cameraVocabulary(projection.director_intent)}
               selected={card.shot_id === selectedShotId}
               onSelect={setSelectedShotId}
-              onDraftCamera={(shotId, field, value) =>
-                setCameraDraft(current => ({ ...current, [`${shotId}:${field}`]: value }))}
+              cameraDraft={Object.fromEntries(Object.entries(cameraDraft).filter(([key]) => key.startsWith(`${card.shot_id}:`)).map(([key, value]) => [key.slice(card.shot_id.length + 1), value]))}
+              onDraftCamera={(shotId, field, value) => {
+                if (currentProjection.current !== projection || !projection || shotId !== card.shot_id
+                  || !['shot_size', 'camera_motion', 'lens', 'composition'].includes(field)) return;
+                const stored = card.camera[field as keyof typeof card.camera];
+                if (value !== '' && value !== stored && !cameraVocabulary(projection.director_intent)[field]?.members.includes(value)) return;
+                setDraft(current => {
+                  const values = { ...(current?.source === projection ? current.values : {}) }, key = `${shotId}:${field}`;
+                  if (value === stored) delete values[key]; else values[key] = value;
+                  return { source: projection, values };
+                });
+              }}
             />)}</ul>}
       </section>
 
@@ -87,6 +106,7 @@ export function DirectorWorkspace({ client, documentId, active = true }: {
         本地镜头语言草稿 {draftCount} 项（仅本次会话，未写入原文档）。
         {Object.entries(cameraDraft).map(([key, value]) => <span key={key}> {key}={value}；</span>)}
         请在原文档界面确认后再保存。
+        <Button onClick={() => { if (currentProjection.current === projection) setDraft(undefined); }}>清除本次镜头语言草稿</Button>
       </StatusMessage>}
 
       <ContinuityPanel panel={projection.continuity} />
