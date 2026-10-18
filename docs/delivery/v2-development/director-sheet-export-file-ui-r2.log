@@ -1,0 +1,24 @@
+..................                                                       [100%]
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_director_sheet_export_additive.py::test_saved_director_csv_reopens_quotes_unicode_and_formula_cells_without_writes[file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+18 passed, 5 deselected, 2 warnings in 5.40s
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/DirectorSheetExport.additive.test.tsx (2 tests) 39ms
+ ✓ src/creative/ScreenplayExportPanel.test.tsx (7 tests) 145ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 979ms
+
+ Test Files  3 passed (3)
+      Tests  21 passed (21)
+   Start at  14:15:31
+   Duration  2.08s (transform 541ms, setup 53ms, collect 1.23s, tests 1.16s, environment 862ms, prepare 165ms)
+

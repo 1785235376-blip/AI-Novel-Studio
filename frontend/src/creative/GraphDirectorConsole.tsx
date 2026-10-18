@@ -1,3 +1,4 @@
+import {DirectorSheetExportPanel} from './DirectorSheetExportPanel';
 import {directorDraftBackup} from './directorDraftBackup';
 import {downloadPortableBlob} from '../experimental/portableProjectsClient';
 import { reviewedDirectorSnapshot, type ReviewedDirectorReceipt, type ReviewedDirectorCanvasHandoff } from './directorCanvasHandoff';
@@ -16,7 +17,7 @@ import { creativeAuthoringProblems, documentInput, newDocument, type CreativeDoc
 import type { PlanningSnapshot } from './studioProductionGraphContract';
 import './creative.css';
 
-export type GraphDirectorSource = Pick<ReturnType<typeof creativeClient>, 'create' | 'update' | 'export' | 'capabilities' | 'list' | 'derive' | 'history'> & GraphDirectorReviewSource;
+export type GraphDirectorSource = Pick<ReturnType<typeof creativeClient>, 'create' | 'update' | 'export' | 'capabilities' | 'list' | 'derive' | 'history'> & GraphDirectorReviewSource & Partial<Pick<ReturnType<typeof creativeClient>, 'directorSheetExport'>>;
 type Props = {
   client: GraphDirectorSource;
   canvasHandoff?: ReviewedDirectorCanvasHandoff;
@@ -241,6 +242,7 @@ export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey,
         selectedSceneId={scene} selectedShotId={shot} onScene={setScene} onShot={setShot} onChange={change}
         onSave={() => void save()} onNew={fresh} />
       </div>
+      {base && client.directorSheetExport && <DirectorSheetExportPanel document={base} available={authorized && active && !pending && !busy && !working} isCurrent={current} request={client.directorSheetExport} onDenied={() => fail(new ApiError({status:403,code:'PROJECT_SCOPE_FORBIDDEN',message:'当前导演文档不可导出。'}))}/>}
       {base && <GraphDirectorStoryboardHandoff canOpen={!dirty && !blocked && !proposalPending && storyboardAllowed} onOpenStoryboard={onOpenStoryboard ? (request, originCurrent) => {
         const authored = authorEpoch.current, selected = selection.current.generation, generation = scope.current.generation;
         onOpenStoryboard(request, () => originCurrent() && current() && authored === authorEpoch.current && selected === selection.current.generation && owns(generation));

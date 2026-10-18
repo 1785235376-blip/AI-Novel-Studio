@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/screenplayExportClient.test.ts (7 tests) 12ms
+ ✓ src/creative/scriptExportClient.test.ts (5 tests) 15ms
+
+ Test Files  2 passed (2)
+      Tests  12 passed (12)
+   Start at  14:15:45
+   Duration  492ms (transform 199ms, setup 27ms, collect 459ms, tests 27ms, environment 0ms, prepare 147ms)
+

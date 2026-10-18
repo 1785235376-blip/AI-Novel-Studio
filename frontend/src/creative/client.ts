@@ -44,22 +44,23 @@ export function creativeClient(novelId: string, context: CollaborationContext) {
   async function request<T>(url: string, method = 'GET', body?: unknown, signal?: AbortSignal): Promise<T> {
     return (await responseFor(url, method, body, signal)).json() as Promise<T>;
   }
-  async function verifiedTextExport(source: CreativeDocument, format: string, kind: 'SCREENPLAY' | 'SCRIPT', signal?: AbortSignal): Promise<ScreenplayDownload> {
-    const formats: Record<string, [string, string]> = { ...(kind === 'SCREENPLAY' ? { fountain: ['text/x-fountain', 'fountain'] as [string, string], epub: ['application/epub+zip', 'epub'] as [string, string] } : { txt: ['text/plain', 'txt'] as [string, string] }), docx: ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'docx'], markdown: ['text/markdown', 'md'] };
+  async function verifiedTextExport(source: CreativeDocument, format: string, kind: 'SCREENPLAY' | 'SCRIPT' | 'DIRECTOR', signal?: AbortSignal): Promise<ScreenplayDownload> {
+    const formats: Record<string, [string, string]> = kind === 'DIRECTOR' ? { csv: ['text/csv', 'csv'] } : { ...(kind === 'SCREENPLAY' ? { fountain: ['text/x-fountain', 'fountain'] as [string, string], epub: ['application/epub+zip', 'epub'] as [string, string] } : { txt: ['text/plain', 'txt'] as [string, string] }), docx: ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'docx'], markdown: ['text/markdown', 'md'] };
     const invalid = () => new ApiError({ status: 502, code: 'CREATIVE_EXPORT_RECEIPT_INVALID', message: '导出文件与当前版本不一致或校验失败。未下载文件，请重新核对已保存版本。' });
     if (source.mode !== kind || !formats[format] || !Number.isSafeInteger(source.version) || source.version < 1) throw invalid();
-    const response = await responseFor(`${base}/documents/${encodeURIComponent(source.id)}/${kind === 'SCRIPT' ? 'script' : 'screenplay'}-export?format=${format}&expected_version=${source.version}`, 'GET', undefined, signal);
+    const response = await responseFor(`${base}/documents/${encodeURIComponent(source.id)}/${kind === 'DIRECTOR' ? 'director-sheet' : kind === 'SCRIPT' ? 'script' : 'screenplay'}-export?${kind === 'DIRECTOR' ? '' : `format=${format}&`}expected_version=${source.version}`, 'GET', undefined, signal);
     const [mime, extension] = formats[format];
     const digest = response.headers.get('X-Creative-Document-Digest') || '', hash = response.headers.get('X-Content-SHA256') || '';
     if (response.headers.get('X-Creative-Document-Version') !== String(source.version) || !/^[a-f0-9]{64}$/.test(digest) || !/^[a-f0-9]{64}$/.test(hash)
         || response.headers.get('Content-Type')?.split(';')[0].trim() !== mime) throw invalid();
+    const maximum = kind === 'DIRECTOR' ? 2_000_000 : 8_000_000;
     const declared = response.headers.get('Content-Length');
-    if (declared !== null && (!/^\d+$/.test(declared) || Number(declared) > 8_000_000)) throw invalid();
+    if (declared !== null && (!/^\d+$/.test(declared) || Number(declared) > maximum)) throw invalid();
     const bytes = await response.arrayBuffer();
-    if (!bytes.byteLength || bytes.byteLength > 8_000_000 || signal?.aborted) throw invalid();
+    if (!bytes.byteLength || bytes.byteLength > maximum || signal?.aborted) throw invalid();
     const actual = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))).map(value => value.toString(16).padStart(2, '0')).join('');
     if (actual !== hash || signal?.aborted) throw invalid();
-    return { blob: new Blob([bytes], { type: mime }), filename: `creative-${kind === 'SCRIPT' ? 'script' : 'screenplay'}-v${source.version}.${extension}`, documentVersion: source.version, documentDigest: digest, sha256: hash };
+    return { blob: new Blob([bytes], { type: mime }), filename: `creative-${kind === 'DIRECTOR' ? 'director-sheet' : kind === 'SCRIPT' ? 'script' : 'screenplay'}-v${source.version}.${extension}`, documentVersion: source.version, documentDigest: digest, sha256: hash };
   }
   return {
     // Lazy and request-free. Reuse the already captured original transport;
@@ -77,6 +78,7 @@ export function creativeClient(novelId: string, context: CollaborationContext) {
     history: (id: string, signal?: AbortSignal) => request<CreativeHistory>(`${base}/documents/${encodeURIComponent(id)}/history`, 'GET', undefined, signal),
     export: (id: string) => request<{ document: CreativeDocument; document_digest: string; format: string; boundary: string }>(`${base}/documents/${encodeURIComponent(id)}/export`),
     screenplayExport: (source: CreativeDocument, format: ScreenplayExportFormat, signal?: AbortSignal) => verifiedTextExport(source, format, 'SCREENPLAY', signal),
+    directorSheetExport: (source: CreativeDocument, signal?: AbortSignal) => verifiedTextExport(source, 'csv', 'DIRECTOR', signal),
     scriptExport: (source: CreativeDocument, format: ScriptExportFormat, signal?: AbortSignal) => verifiedTextExport(source, format, 'SCRIPT', signal),
     references: (signal?: AbortSignal) => request<CreativeReferences>(`${root}/creation-reference-data`, 'GET', undefined, signal),
     assets: (signal?: AbortSignal) => request<CreativeAsset[]>(`${root}/assets`, 'GET', undefined, signal),

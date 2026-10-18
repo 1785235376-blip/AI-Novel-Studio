@@ -454,6 +454,10 @@ class CreativeService(DomainService):
         from . import script_export
         return self._export_saved(nid, scope, rid, expected_version, format, script_export.render, reauthorize)
 
+    def export_director_sheet(self, nid, scope, rid, expected_version, *, reauthorize=lambda: None):
+        from .director_sheet_export import render
+        return self._export_saved(nid, scope, rid, expected_version, 'csv', render, reauthorize)
+
     def _export_saved(self, nid, scope, rid, expected_version, format, render, reauthorize):
         """Encode outside store transactions, then recheck the original snapshot."""
         from ..experimental.common import check_version
