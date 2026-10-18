@@ -27,7 +27,9 @@ SHA256 0fa7530806476c6a8e4e53e207e468ea6c6ed93b55f3a155796c8fde694b0fd8.
 Its appendix B includes SPEC-2026.10.19-r1. DIF-01..12 and
 IMAGE-COMIC-01..20 join the same formal V2 gate alongside the original frozen
 requirements. Old grouped gap counts and percentages are historical and cannot
-measure this expanded release scope. The fixed-ID reconciliation is being updated.
+measure this expanded release scope. The fixed-ID reconciliation is recorded in
+docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json and its companion scope report.
+Its 425 linked IDs are an index, not equally weighted features or a percentage denominator.
 No new requirement is accepted merely because it has a similarly named owner.
 
 Camera and video benchmark work is committed after targeted File/PostgreSQL,

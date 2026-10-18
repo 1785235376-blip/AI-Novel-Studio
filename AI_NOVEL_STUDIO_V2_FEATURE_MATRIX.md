@@ -2177,3 +2177,7 @@ commands, actual codec/source/output hashes and the retained development failure
 are in `docs/delivery/v2-development/short-media-handoff-20261016/README.md`.
 This is local CPU and mounted component evidence; browser, PostgreSQL, real-model,
 GPU, external-NLE and release acceptance remain separate.
+
+## Expanded V2 release scope — 2026-10-19 r2
+
+The historical rows above retain their original source and verification boundaries. Current expanded-scope reconciliation is indexed in the [canonical fixed-ID ledger](docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json) and [concise scope report](docs/v2/V2_SCOPE_RECONCILIATION_20261019_R2.md). All DIF-01–12 and IMAGE-COMIC-01–20 are mandatory for the same formal V2 release. Do not carry historical completion/missing labels forward without current source evidence or count overlapping IDs as a progress denominator.
