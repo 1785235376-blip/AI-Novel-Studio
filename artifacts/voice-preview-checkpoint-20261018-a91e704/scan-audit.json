@@ -1,0 +1,103 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "1f43db0d2a3453ee9e1eb8cb311779ecaa1eb6fc",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 7640,
+      "sha256": "0fd2d894938ac7bed08ee0421d56a45902ccfe8f0f9ad01dc73698ce244c18e1"
+    },
+    {
+      "blob": "a7edbe1d8219abc3ecd498cb9f1c758d029d5967",
+      "path": "docs/VOICE_PRONUNCIATION_PREVIEW.md",
+      "bytes": 2093,
+      "sha256": "86333183519159da15a4222af3839b913bedd8bd4d84bc12801d8b5f3930203d"
+    },
+    {
+      "blob": "356c8d97e40d214b8225f3cb84aa81a6ae13d27a",
+      "path": "docs/delivery/v2-development/voice-pronunciation-preview-mounted-r2.json",
+      "bytes": 680401,
+      "sha256": "7cf0f0f76e23f1f835a3c735f61919217e879ead6c3ded6bf6472e3703d28da9"
+    },
+    {
+      "blob": "de72610299a04cfd250b15c74e50c93dad8fdc56",
+      "path": "docs/delivery/v2-development/voice-pronunciation-preview-mounted-r2.log",
+      "bytes": 335,
+      "sha256": "dff8eabaa795c32381fa2ee61c94ce35cdbdb0be330e852dc312163131a8a011"
+    },
+    {
+      "blob": "eab1b3ded3ab3ab14aa80935ca79b11633be3789",
+      "path": "docs/delivery/v2-development/voice-pronunciation-preview-r1.json",
+      "bytes": 680778,
+      "sha256": "4d01b85642ce5f51dca2d7001715c46c1569efe6b2a20a7f21138ae4de416bca"
+    },
+    {
+      "blob": "fe5aaa13398fd74a2a69a23e7f768d429f00b15f",
+      "path": "docs/delivery/v2-development/voice-pronunciation-preview-r1.log",
+      "bytes": 3009,
+      "sha256": "c6a6334add4f57a8f5cb055f45e13ae8121a9fbea7404c731329c8f5b1fc2dcc"
+    },
+    {
+      "blob": "19d7d567cf6f91cb979e39be4c1fb4cebe8ff889",
+      "path": "docs/v2/current-source-inventory-20261018-late.json",
+      "bytes": 197506,
+      "sha256": "581489387586eb9cfc492e1627baae8ebd9e610b7b69aac513d40ba31c37d570"
+    },
+    {
+      "blob": "1724f82ef6d3a6bde66c08cbc3fb2d97890400c8",
+      "path": "frontend/src/experimental/PronunciationPreview.additive.test.tsx",
+      "bytes": 1852,
+      "sha256": "8c752bfc75699c19688fda8874eb8435d6c283c97f42eab78dc5d7b7c9884d4d"
+    },
+    {
+      "blob": "fef3cea2028437d6d2a6aeb39187cab7e85ec278",
+      "path": "frontend/src/experimental/PronunciationPreview.tsx",
+      "bytes": 996,
+      "sha256": "ee46ccf1af0c9d836a04fb2e63cb8f630ed8e21ed2b6612c4cfe0c3cf86ba3e7"
+    },
+    {
+      "blob": "b984da617259e99aca3ddffc3b93d4c2a38512eb",
+      "path": "frontend/src/experimental/VoiceDirectionPanel.tsx",
+      "bytes": 17652,
+      "sha256": "7a8545db55541b0ecddbb936c62d2add2b6bb2997c6a359b2f7dab19bd8e7693"
+    },
+    {
+      "blob": "d6f5c350ce8465282d6e674fe919fb3777944847",
+      "path": "frontend/src/experimental/VoiceSubtitlePanels.test.tsx",
+      "bytes": 10760,
+      "sha256": "6fcced095a628e8ddd9e17ac9eb983b1e7be6b73b6adfd00fd41ac92c13c415b"
+    },
+    {
+      "blob": "cd3a5d1c74788c07c4260cc0cb2ef38f2d125525",
+      "path": "frontend/src/experimental/voicePronunciation.testFixture.json",
+      "bytes": 549,
+      "sha256": "f66783dbe6af3a2fa2c9b3a2f622c46e12e7fe72ff345910a0ce54800ffe684a"
+    },
+    {
+      "blob": "d10744c4c0dc25c30c2f4cb840272f71188832a3",
+      "path": "frontend/src/experimental/voicePronunciation.ts",
+      "bytes": 2293,
+      "sha256": "f371c159684b62844c1074d43d77ab788e457d2fc58c1c36e52ef76ae6b89919"
+    },
+    {
+      "blob": "5889b3c68f5357c52d6cf5bd80917deb21da6009",
+      "path": "scripts/inventory_v2_continuation.py",
+      "bytes": 7122,
+      "sha256": "af0d35cf4bada7e63f8126fe582768078281643ca5eca9da6cd9a44c7ce9ea10"
+    },
+    {
+      "blob": "df5a2bf40c76483c35bd7ee22548714c5c6effcf",
+      "path": "tests/test_voice_pronunciation_preview_contract.py",
+      "bytes": 725,
+      "sha256": "7c0204cf7dd0bb6e66d9afe2b884ba66118e96b296bc0c09c849af6d0b717cf3"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
