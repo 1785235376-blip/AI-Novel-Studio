@@ -358,8 +358,17 @@ class IndependentWorkspaceService:
     def export_model_depth(self, nid, scope, aid, value, guard=lambda: None):
         from .workspace_models import StaticSceneDepthExport
         from .model_reference_depth import render_depth
-        from ..experimental.common import StaleSourceError
         body = StaticSceneDepthExport.model_validate(value)
+        return self._export_model_diagnostic(nid,scope,aid,body,render_depth,"depth_export",guard)
+
+    def export_model_clay(self, nid, scope, aid, value, guard=lambda: None):
+        from .workspace_models import StaticSceneClayExport
+        from .model_reference_depth import render_clay
+        body = StaticSceneClayExport.model_validate(value)
+        return self._export_model_diagnostic(nid,scope,aid,body,render_clay,"clay_export",guard)
+
+    def _export_model_diagnostic(self, nid, scope, aid, body, renderer, proof_key, guard):
+        from ..experimental.common import StaleSourceError
         guard()
         with self._asset_scope(nid, scope):
             incarnation = self.store.incarnation(nid)
@@ -376,7 +385,7 @@ class IndependentWorkspaceService:
             count += 1
             if count % 32 == 0: guard()
         guard()
-        png, proof = render_depth(inspected["scene_preview"], body.yaw, body.pitch, checkpoint=checkpoint)
+        png, proof = renderer(inspected["scene_preview"], body.yaw, body.pitch, checkpoint=checkpoint)
         guard()
         with self._asset_scope(nid, scope):
             row = self._row(nid, scope, aid)
@@ -384,7 +393,7 @@ class IndependentWorkspaceService:
                     or (row["version"], row["sha256"]) != (body.source_version, body.source_sha256)):
                 raise StaleSourceError("MODEL_REFERENCE_SOURCE_CHANGED")
             guard()
-        return {"asset_snapshot": pin, "depth_export": proof, "content_base64": base64.b64encode(png).decode("ascii")}
+        return {"asset_snapshot": pin, proof_key: proof, "content_base64": base64.b64encode(png).decode("ascii")}
 
     def _persist_manual_import(self, nid, scope, actor, body, data, media_type, guard):
         # Shared original asset owner, admission and idempotency for bounded manual imports.

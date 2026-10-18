@@ -107,3 +107,7 @@ class StaticSceneDepthExport(StrictModel):
     source_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     yaw: float = Field(default=35.0, ge=-180, le=180, allow_inf_nan=False)
     pitch: float = Field(default=25.0, ge=-89, le=89, allow_inf_nan=False)
+
+
+class StaticSceneClayExport(StaticSceneDepthExport):
+    contract: Literal["studio-static-glb-clay-export/1"]
