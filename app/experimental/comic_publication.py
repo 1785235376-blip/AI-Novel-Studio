@@ -1,4 +1,4 @@
-"""Ordered flattened CBZ copies from the original current Comic book/page owner.
+"""Ordered flattened CBZ/PDF copies from the original current Comic book/page owner.
 
 No persistence, queue, source promotion or new approval authority lives here.
 """
@@ -28,6 +28,35 @@ class PagePin(StrictModel):
 class PublicationExportIn(PublicationIn):
     pages: list[PagePin] = Field(min_length=1, max_length=100)
     publication_digest: str = Field(pattern=r'^[a-f0-9]{64}$')
+
+
+class PDFPublicationIn(PublicationIn):
+    # Required caller choice: physical scale, never a print-quality assertion.
+    dpi: int = Field(ge=36, le=600, strict=True)
+
+
+class PDFPublicationExportIn(PDFPublicationIn, PublicationExportIn):
+    pass
+
+
+PDF_LOSSES = ['FLATTENED_RGB_RASTER_PAGES', 'NO_EDITABLE_LAYERS_OR_TEXT',
+              'DIRECTION_METADATA_DOES_NOT_REORDER_PAGES_OR_PANELS',
+              'CALLER_SELECTED_DPI_NOT_PRINT_QUALITY', 'NO_BLEED_OR_PDF_A_PDF_X_CONFORMANCE',
+              'SOURCE_IMAGE_RIGHTS_NOT_VERIFIED', 'EXTERNAL_READER_VALIDATION_NOT_RUN']
+
+
+def _pdf_admission(rows, dpi):
+    from app.pdf_export import raster_pdf_bounds
+    from . import comic_publication_budget as budget
+    # PDF 1.4 default user-space MediaBox limit, without a /UserUnit extension.
+    if any(max(r['document']['width'], r['document']['height']) * 72 / dpi > 14400 for r in rows):
+        raise ValueError('COMIC_PUBLICATION_PDF_PAGE_SIZE_LIMIT')
+    work, output = raster_pdf_bounds((r['document']['width'], r['document']['height']) for r in rows)
+    if work > budget.MAX_PDF_WORK_BYTES:
+        raise ValueError('COMIC_PUBLICATION_PDF_LIMIT')
+    if output > MAX_ARCHIVE_BYTES:
+        raise ValueError('COMIC_PUBLICATION_ARCHIVE_LIMIT')
+    return work
 
 
 LOSSES = ['FLATTENED_RGB_PNG_PAGES', 'NO_EDITABLE_LAYERS_OR_TEXT',
@@ -67,6 +96,8 @@ def _locked_snapshot(service, nid, scope, actor, rid, request, guard):
         rows.append(row)
     if sum(r['document']['width'] * r['document']['height'] for r in rows) > MAX_PAGE_PIXELS:
         raise ValueError('COMIC_PUBLICATION_PAGE_PIXEL_LIMIT')
+    if isinstance(request, PDFPublicationIn):
+        _pdf_admission(rows, request.dpi)
     pages = []
     for row in rows:
         guard()
@@ -79,14 +110,31 @@ def _locked_snapshot(service, nid, scope, actor, rid, request, guard):
     binding = {'book_id': rid, 'book_version': book['version'], 'book': book['document'],
                'project_incarnation': book['project_incarnation'], 'actor': actor, 'scope': scope,
                'pages': pages, 'reading_direction': request.reading_direction, 'format': 'comic-cbz-v1'}
+    if isinstance(request, PDFPublicationIn):
+        binding.update(format='comic-pdf-raster-v1', dpi=request.dpi)
     guard()
     # Prevent a structure change during the preflight itself.
     latest = service._book_row(nid, scope, actor, rid)
     check_version(latest, request.expected_version)
     if latest['document'] != book['document']:
         raise StaleSourceError('COMIC_PUBLICATION_CHANGED')
-    return book, rows, {'book_version': book['version'], 'reading_direction': request.reading_direction,
+    receipt = {'book_version': book['version'], 'reading_direction': request.reading_direction,
                         'pages': pages, 'publication_digest': digest(binding), 'page_count': len(pages), 'losses': LOSSES}
+    if isinstance(request, PDFPublicationIn):
+        from . import comic_publication_budget as budget
+        receipt['pdf_limits'] = {
+            'max_pdf_work_bytes': budget.MAX_PDF_WORK_BYTES,
+            'max_output_bytes': MAX_ARCHIVE_BYTES,
+            'total_page_pixels': sum(r['document']['width'] * r['document']['height'] for r in rows),
+            'max_total_page_pixels_for_page_count': max(0, min(MAX_PAGE_PIXELS,
+                (budget.MAX_PDF_WORK_BYTES - (len(rows) + 4) * 1024 * 1024) // 192,
+                (MAX_ARCHIVE_BYTES - len(rows) * 65536 - 4 * 1024 * 1024) // 4)),
+        }
+        receipt.update(format='comic-pdf-raster-v1', dpi=request.dpi, losses=PDF_LOSSES,
+                       page_dimensions=[{'width_pixels': r['document']['width'], 'height_pixels': r['document']['height'],
+                           'width_points': r['document']['width'] * 72 / request.dpi,
+                           'height_points': r['document']['height'] * 72 / request.dpi} for r in rows])
+    return book, rows, receipt
 
 
 def publication_preflight(service, nid, scope, actor, rid, value, guard=lambda: None):
@@ -137,7 +185,7 @@ def _render_work(document, report):
 
 
 def export_cbz(service, nid, scope, actor, rid, value, guard=lambda: None):
-    from .comic_layouts import compose, licensed_font
+    from .comic_layouts import licensed_font
     request = PublicationExportIn.model_validate(value)
     with publication_budget():
         book, rows, receipt = _snapshot(service, nid, scope, actor, rid, request, guard)
@@ -156,25 +204,69 @@ def export_cbz(service, nid, scope, actor, rid, value, guard=lambda: None):
         with zipfile.ZipFile(stream, 'w') as archive:
             for index, (row, pin) in enumerate(zip(rows, receipt['pages'])):
                 guard()
-                images = service._current(nid, scope, actor, row)
-                report, _ = compose(row['document'], images)
-                if not report['can_render']:
-                    raise ValueError('COMIC_PREFLIGHT_BLOCKED')
-                # Covers canvas, segment encoder inputs, and actual resampling.
-                consume('render', _render_work(row['document'], report))
-                report, segments = compose(row['document'], images, render=True)
-                data = _full_page(row['document'], report, segments)
+                data = _render_page(service, nid, scope, actor, row)
                 filename = f'{index + 1:04}.png'
                 put(archive, filename, data)
                 manifest['pages'].append({'filename': filename, 'sha256': hashlib.sha256(data).hexdigest(),
                     'version': pin['version'], 'review_digest': pin['review_digest'],
                     'width': row['document']['width'], 'height': row['document']['height'],
                     'safe_area_pixels': row['document']['safe_area']})
-                del images, segments, data
+                del data
             put(archive, 'manifest.json', json.dumps(manifest, ensure_ascii=False, sort_keys=True).encode())
             if any(p['bubbles'] for row in rows for p in row['document']['panels']):
                 put(archive, 'OFL.txt', licensed_font()[1])
         # No byte escapes until every page and source has been rechecked globally.
+        final = _snapshot(service, nid, scope, actor, rid, request, guard)[2]
+        if final != receipt:
+            raise StaleSourceError('COMIC_PUBLICATION_CHANGED')
+        guard()
+        return stream.getvalue(), receipt['publication_digest']
+
+
+def _render_page(service, nid, scope, actor, row):
+    from .comic_layouts import compose
+    images = service._current(nid, scope, actor, row)
+    report, _ = compose(row['document'], images)
+    if not report['can_render']:
+        raise ValueError('COMIC_PREFLIGHT_BLOCKED')
+    consume('render', _render_work(row['document'], report))
+    report, segments = compose(row['document'], images, render=True)
+    return _full_page(row['document'], report, segments)
+
+
+def pdf_publication_preflight(service, nid, scope, actor, rid, value, guard=lambda: None):
+    request = PDFPublicationIn.model_validate(value)
+    with publication_budget():
+        return _snapshot(service, nid, scope, actor, rid, request, guard)[2]
+
+
+def export_pdf(service, nid, scope, actor, rid, value, guard=lambda: None):
+    from app.pdf_export import RasterPDFCopy
+    request = PDFPublicationExportIn.model_validate(value)
+    with publication_budget():
+        book, rows, receipt = _snapshot(service, nid, scope, actor, rid, request, guard)
+        if request.publication_digest != receipt['publication_digest'] or [p.model_dump() for p in request.pages] != receipt['pages']:
+            raise StaleSourceError('COMIC_PUBLICATION_CHANGED')
+        # Reserve all ReportLab pixel copies and whole-document serialization
+        # BEFORE creating its canvas or rendering any pages. This is additional
+        # to the shared source/decode/render/PNG/output budget, not a replacement.
+        consume('pdf', _pdf_admission(rows, request.dpi))
+        stream = BoundedBuffer()
+        public_receipt = {k: receipt[k] for k in ('format', 'dpi', 'reading_direction', 'page_count',
+                                                 'page_dimensions', 'publication_digest', 'losses')}
+        public_receipt.update(page_order='SAVED_CHAPTER_THEN_PAGE_ORDER', automatic_publication=False)
+        writer = RasterPDFCopy(stream, title=book['document']['title'],
+                               receipt=json.dumps(public_receipt, ensure_ascii=True, sort_keys=True))
+        for row in rows:
+            guard()
+            data = _render_page(service, nid, scope, actor, row)
+            width, height = row['document']['width'], row['document']['height']
+            consume('decode', width * height)
+            writer.page(data, width, height, request.dpi)
+            del data
+        writer.finish()
+        # Serialization cannot release bytes before full current-source, privacy,
+        # approval, owner incarnation and actor/scope authorization revalidation.
         final = _snapshot(service, nid, scope, actor, rid, request, guard)[2]
         if final != receipt:
             raise StaleSourceError('COMIC_PUBLICATION_CHANGED')

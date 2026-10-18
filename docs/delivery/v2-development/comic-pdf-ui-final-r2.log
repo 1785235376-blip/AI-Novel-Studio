@@ -1,0 +1,24 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/comic-pdf-slice/frontend
+
+ ✓ src/experimental/ComicCollectionTree.test.tsx (13 tests) 1335ms
+ ✓ src/ui/AppShell.test.tsx (19 tests) 248ms
+ ✓ src/experimental/ComicPublicationPanel.test.tsx (72 tests) 6941ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 1074ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 302ms
+ ✓ src/experimental/comicLayoutsClient.publication.test.ts (33 tests) 29ms
+ ✓ src/creative/IndependentStudioWorkspace.comic.test.tsx (7 tests) 5668ms
+   ✓ Image subview creates a source-free page, edits a bubble, saves and reopens without a model or renderer 1887ms
+   ✓ dirty comic blocks closing until the existing workspace discard confirmation 501ms
+   ✓ selected ORA File reaches the actual Image close guard and survives cancelled navigation 572ms
+   ✓ unsaved ORA license reaches the actual host guard and survives page save dirty cleanup 1267ms
+   ✓ standalone RASTER edits block New/Open/Source until explicit discard without book membership 879ms
+   ✓ same-batch retained host Close observes synchronous ORA dirty before React rerenders 442ms
+ ✓ src/ui/primitives.test.tsx (4 tests) 75ms
+
+ Test Files  7 passed (7)
+      Tests  156 passed (156)
+   Start at  06:37:33
+   Duration  13.71s (transform 3.38s, setup 61ms, collect 5.28s, tests 15.37s, environment 2.11s, prepare 354ms)
+
+UI token guard PASS (52 files)

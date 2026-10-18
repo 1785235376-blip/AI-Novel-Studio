@@ -1,4 +1,4 @@
-"""Request-local publication work limits; inert outside a CBZ request."""
+"""Request-local publication work limits; inert outside a publication request."""
 from contextlib import contextmanager
 from contextvars import ContextVar
 import io
@@ -8,13 +8,14 @@ MAX_DECODE_PIXELS = 256_000_000
 MAX_SOURCE_BYTES = 256 * 1024 * 1024
 MAX_RENDER_PIXELS = 256_000_000
 MAX_ARCHIVE_BYTES = 64 * 1024 * 1024
+MAX_PDF_WORK_BYTES = 512 * 1024 * 1024
 MAX_BUFFER_WRITE_BYTES = 192 * 1024 * 1024
 _remaining = ContextVar('comic_publication_work', default=None)
 
 
 @contextmanager
 def publication_budget():
-    token = _remaining.set({'decode': MAX_DECODE_PIXELS, 'source': MAX_SOURCE_BYTES, 'render': MAX_RENDER_PIXELS, 'encoded': MAX_BUFFER_WRITE_BYTES})
+    token = _remaining.set({'decode': MAX_DECODE_PIXELS, 'source': MAX_SOURCE_BYTES, 'render': MAX_RENDER_PIXELS, 'encoded': MAX_BUFFER_WRITE_BYTES, 'pdf': MAX_PDF_WORK_BYTES})
     try:
         yield
     finally:

@@ -1,0 +1,59 @@
+........................................................................ [ 48%]
+...F.................................................................... [ 96%]
+......                                                                   [100%]
+=================================== FAILURES ===================================
+___________ test_cjk_bubbles_flatten_to_original_exact_pixels[file] ____________
+
+rig = namespace(nid='v2-independent-8b44d552ba544a868bab5dd0c144ea79', scope={'mode': 'local', 'novel_id': 'v2-independent-8...IdentityRepository object at 0x7ff76c766ae0>), create_project=<function rig.<locals>.create_project at 0x7ff7678582c0>)
+staging = <app.experimental.comic_ora_staging.ComicOraStaging object at 0x7ff7678e5d30>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7ff76787a600>
+
+    def test_cjk_bubbles_flatten_to_original_exact_pixels(rig, staging, monkeypatch):
+        import os
+        from app.experimental.comic_layouts import licensed_font
+        from app.experimental.comic_publication import _render_page
+        font = os.environ.get('R2_TEST_FONT_FILE')
+        if font: monkeypatch.setenv('AI_NOVEL_STUDIO_PDF_FONT', font)
+        try: licensed_font()
+        except ValueError: pytest.skip('verified pinned OFL font required')
+        service = staging.comic
+        document = {'title': 'Text page', 'source_mode': 'INDEPENDENT', 'width': 640, 'height': 640,
+            'panels': [{'id': 'p', 'order': 1, 'artwork_mode': 'BLANK', 'x': 24, 'y': 24, 'width': 592, 'height': 592,
+                        'bubbles': [{'id': 'b', 'text': '原始对白', 'x': 40, 'y': 40, 'width': 500, 'height': 200}]}]}
+        target = approved(service, rig, service.save(rig.nid, rig.scope, rig.actor, document))
+>       original = _render_page(service, rig.nid, rig.scope, rig.actor, target)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comic_publication_pdf.py:249: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/experimental/comic_publication.py:228: in _render_page
+    images = service._current(nid, scope, actor, row)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/experimental/comic_layouts.py:560: in _current
+    self._check_independent_identity(nid, row)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.experimental.comic_layouts.ComicLayoutsService object at 0x7ff7678e5cd0>
+nid = 'v2-independent-8b44d552ba544a868bab5dd0c144ea79'
+row = {'automatic_promotion': False, 'document': {'expected_screenplay_version': None, 'font_family': 'NOTO_SANS_SC_OFL', 'h...eight': 200, 'id': 'b', ...}], ...}], ...}, 'history_versions': [1], 'id': 'f2fb7e27-363c-4bc5-989f-deab3bb20f7b', ...}
+
+    def _check_independent_identity(self, nid, row):
+        if self._independent(row) and (not row.get('project_incarnation')
+                or row['project_incarnation'] != self._independent_identity(nid)):
+>           raise FileNotFoundError('comic owner unavailable')
+E           FileNotFoundError: comic owner unavailable
+
+app/experimental/comic_layouts.py:398: FileNotFoundError
+=============================== warnings summary ===============================
+../studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_comic_publication_pdf.py::test_actual_ordered_raster_pdf_dimensions_receipt_and_no_mutation[file-/api]
+  /workspace/scratch/20a0022d2b33/comic-pdf-slice/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_comic_publication_pdf.py::test_cjk_bubbles_flatten_to_original_exact_pixels[file]
+1 failed, 149 passed, 143 deselected, 2 warnings in 27.68s

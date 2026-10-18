@@ -657,3 +657,72 @@ def novel_to_pdf(
     if progress_callback:
         progress_callback(92, "PDF 文件已生成")
     return payload
+
+
+class RasterPDFCopy:
+    """ReportLab reading-copy sink for already flattened, bounded RGB PNG pages.
+
+    The caller must admit ALL pages with ``raster_pdf_bounds`` before creating
+    this sink, and account for PNG decoding and the reserved PDF work separately.
+    No manuscript/font exporter, files, global ReportLab settings or queue is used.
+    """
+
+    def __init__(self, stream, *, title: str, receipt: str):
+        from reportlab.pdfgen.canvas import Canvas
+        self._canvas = Canvas(stream, invariant=1, pageCompression=0, pdfVersion=(1, 4))
+        self._canvas.setTitle(title)
+        self._canvas.setAuthor('AI Novel Studio')
+        self._canvas.setSubject(receipt)
+        self._canvas.setCreator('AI Novel Studio raster reading copy')
+        self._page_number = 0
+
+    def page(self, png: bytes, width: int, height: int, dpi: int):
+        from PIL import Image
+        from reportlab.lib.utils import ImageReader
+        from reportlab.pdfbase.pdfdoc import PDFImageXObject
+        with Image.open(io.BytesIO(png)) as image:
+            if image.format != 'PNG' or image.mode != 'RGB' or image.size != (width, height):
+                raise ValueError('COMIC_PUBLICATION_SEGMENTS_INVALID')
+            image.load()
+            points = (width * 72 / dpi, height * 72 / dpi)
+            self._canvas.setPageSize(points)
+            # Canvas.drawImage deduplicates by raw RGB bytes WITHOUT geometry.
+            # Equal byte strings at 320x640 and 640x320 are different rasters!
+            # Register a unique image XObject per ordered page using ReportLab's
+            # same PDFImageXObject encoder; no cache, global settings or paths.
+            self._page_number += 1
+            name = f'ComicPage{self._page_number}'
+            image_object = PDFImageXObject(name, ImageReader(image), mask=None)
+            self._canvas._doc.addForm(name, image_object)
+            self._canvas.saveState()
+            self._canvas.scale(*points)
+            self._canvas.doForm(name)
+            self._canvas.restoreState()
+            self._canvas.showPage()
+
+    def finish(self):
+        self._canvas.save()
+
+
+def raster_pdf_bounds(dimensions):
+    """Conservative whole-request work/output admission for the raster sink.
+
+    ReportLab 4's RGB path retains zlib (optionally ASCII85) image streams and
+    serializes before writing to the destination. A bounded destination alone
+    therefore does NOT bound its work. For P pixels, RGB/Pillow, tobytes, digest
+    concatenation, zlib worst-case expansion, ASCII85 (including Python fallback
+    objects), retained streams, PDFStream/indirect-object concatenations, final
+    PDFFile join and destination/getvalue copies are reserved together at 192P.
+    One MiB/page plus 4 MiB covers bounded dictionaries, xref, page commands and
+    receipt metadata. This is cumulative allocation-work admission, not an RSS
+    guarantee for Python/the renderer. No fonts, text layout or attachments occur.
+
+    Zlib's worst-case RGB size followed by ASCII85 stays below 4P+1KiB per
+    page at the owner's supported geometries. 64KiB/page + 4MiB also bounds
+    structural/metadata bytes; it is checked before serialization, not after.
+    """
+    dimensions = tuple(dimensions)
+    pixels = sum(width * height for width, height in dimensions)
+    count = len(dimensions)
+    return (192 * pixels + count * 1024 * 1024 + 4 * 1024 * 1024,
+            4 * pixels + count * 65536 + 4 * 1024 * 1024)

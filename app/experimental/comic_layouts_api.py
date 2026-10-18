@@ -7,7 +7,7 @@ from pydantic import Field
 from .comic_layouts import LayoutIn, LayoutEdit
 from .comic_collections import ComicBookIn, ComicBookEdit, ComicBookPageIn
 from .media import StrictModel
-from .comic_publication import PublicationIn, PublicationExportIn, publication_preflight, export_cbz
+from .comic_publication import PublicationIn, PublicationExportIn, publication_preflight, export_cbz, PDFPublicationIn, PDFPublicationExportIn, pdf_publication_preflight, export_pdf
 import hashlib
 from .production_lineage_api import PrivateProductionRoute, api_call
 
@@ -83,6 +83,19 @@ def create_comic_layouts_router(service, authorize, require_flag):
             data, receipt = export_cbz(service,nid,scope,actor,rid,body,guard)
             return Response(data, media_type='application/vnd.comicbook+zip', headers={
                 'Content-Disposition': 'attachment; filename="comic-book.cbz"',
+                'X-Comic-Publication-Digest': receipt, 'X-Content-SHA256': hashlib.sha256(data).hexdigest()})
+        return invoke(nid, x_session_token, x_branch_id, 'domain.read', output)
+
+    @router.post('/books/{rid}/pdf-publication-preflight')
+    def book_pdf_preflight(nid: str, rid: str, body: PDFPublicationIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid, x_session_token, x_branch_id, 'domain.read', lambda a,s,g: pdf_publication_preflight(service,nid,s,a,rid,body,g))
+
+    @router.post('/books/{rid}/export-pdf')
+    def book_export_pdf(nid: str, rid: str, body: PDFPublicationExportIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        def output(actor, scope, guard):
+            data, receipt = export_pdf(service,nid,scope,actor,rid,body,guard)
+            return Response(data, media_type='application/pdf', headers={
+                'Content-Disposition': 'attachment; filename="comic-book.pdf"',
                 'X-Comic-Publication-Digest': receipt, 'X-Content-SHA256': hashlib.sha256(data).hexdigest()})
         return invoke(nid, x_session_token, x_branch_id, 'domain.read', output)
 
