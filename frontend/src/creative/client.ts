@@ -76,6 +76,7 @@ export function creativeClient(novelId: string, context: CollaborationContext) {
     create: (body: CreativeInput) => request<CreativeDocument>(`${base}/documents`, 'POST', body),
     update: (id: string, version: number, body: CreativeInput) => request<CreativeDocument>(`${base}/documents/${encodeURIComponent(id)}`, 'PUT', { ...body, expected_version: version }),
     derive: (source: CreativeDocument, mode: 'STORYBOARD' | 'PRODUCTION', shotPolicy?: 'DIRECTOR_NOTES') => request<CreativeDocument>(`${base}/documents/${encodeURIComponent(source.id)}/derive`, 'POST', { expected_version: source.version, mode, ...(shotPolicy ? { shot_policy: shotPolicy } : {}) }),
+    deriveScriptScreenplay: (source: CreativeDocument) => request<CreativeDocument>(`${base}/documents/${encodeURIComponent(source.id)}/derive`, 'POST', { expected_version: source.version, mode: 'SCREENPLAY', script_policy: 'TEXT_CHUNKS' }),
     restore: (source: CreativeDocument, restoreVersion: number) => request<CreativeDocument>(`${base}/documents/${encodeURIComponent(source.id)}/restore`, 'POST', { expected_version: source.version, restore_version: restoreVersion }),
     history: (id: string, signal?: AbortSignal) => request<CreativeHistory>(`${base}/documents/${encodeURIComponent(id)}/history`, 'GET', undefined, signal),
     export: (id: string) => request<{ document: CreativeDocument; document_digest: string; format: string; boundary: string }>(`${base}/documents/${encodeURIComponent(id)}/export`),

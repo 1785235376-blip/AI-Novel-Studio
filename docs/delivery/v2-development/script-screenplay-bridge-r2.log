@@ -1,0 +1,29 @@
+..............                                                           [100%]
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_script_screenplay_bridge_additive.py::test_exact_text_and_source_survive_original_save_reopen_and_downstream_stage[file-short]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+14 passed, 8 deselected, 2 warnings in 6.69s
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/ScriptScreenplayBridge.additive.test.tsx (7 tests) 98ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 1269ms
+ ✓ src/creative/GenericScriptWorkspace.test.tsx (9 tests) 1548ms
+   ✓ standalone Script uses original Creative workspace > creates an explicitly independent script in the existing five-stage shell 417ms
+
+ Test Files  3 passed (3)
+      Tests  28 passed (28)
+   Start at  19:59:53
+   Duration  3.44s (transform 1.31s, setup 46ms, collect 2.20s, tests 2.92s, environment 924ms, prepare 167ms)
+
+src/creative/GenericScriptWorkspace.test.tsx(78,157): error TS18048: 'init' is possibly 'undefined'.
+src/creative/GenericScriptWorkspace.test.tsx(81,50): error TS18048: 'init' is possibly 'undefined'.
+src/creative/GenericScriptWorkspace.test.tsx(81,180): error TS2532: Object is possibly 'undefined'.
+src/creative/GenericScriptWorkspace.test.tsx(86,266): error TS18048: 'init' is possibly 'undefined'.

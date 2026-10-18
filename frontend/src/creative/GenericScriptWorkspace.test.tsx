@@ -2,7 +2,7 @@
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CreativeWorkspace, type CreativeWorkspaceProps } from './CreativeWorkspace';
-import { newDocument, SCRIPT_PURPOSES, type CreativeDocument } from './types';
+import { newDocument, newScene, SCRIPT_PURPOSES, type CreativeDocument } from './types';
 const body = '  独立口播稿。\n\n不修改小说正文。\n';
 const saved = (version = 1): CreativeDocument => ({ ...newDocument('SCRIPT'), id:'script-1', title:'独立脚本', source_independent:true, script:{purpose:'PODCAST',body}, version, status:'DRAFT', actor_id:'author', created_at:'2026-10-10T00:00:00Z', updated_at:'2026-10-10T00:00:00Z', source_evidence:{} });
 function props(): CreativeWorkspaceProps { return { enabled:true, novelId:'empty-project', context:{sessionToken:'author'}, scope:{workspace:'工作区',project:'空项目',storyline:'故事线',branch:'主线'},actor:'作者',chapterCount:0,manuscriptReady:false,novelMain:<div>小说正文编辑器</div>,novelSidebar:<div>章节树</div>,novelInspector:<div>正文信息</div>,novelStatus:<span>无正文修改</span>,onExit:vi.fn(),onModuleChange:vi.fn() }; }
@@ -71,4 +71,17 @@ describe('standalone Script uses original Creative workspace',()=>{
   let resolve!:(value:unknown)=>void;const fetch=server({rows:[saved()],write:()=>new Promise(done=>{resolve=done;})});const original=props(), view=render(<CreativeWorkspace {...original}/>);await open();fireEvent.change(screen.getByLabelText('通用脚本内容'),{target:{value:'旧项目稿'}});fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));
   await waitFor(()=>expect(fetch.mock.calls.some(([,init])=>init?.method==='PUT')).toBe(true));view.rerender(<CreativeWorkspace {...original} novelId="another-project"/>);await act(async()=>resolve(response({...saved(2),title:'旧项目迟到结果'})));await open();expect(screen.queryByText('旧项目迟到结果')).toBeNull();expect(screen.queryByText('已保存“旧项目迟到结果” · v2')).toBeNull();
  });
+});
+it('stages a saved Script through the original derive route only after confirmation and opens exact source-bound text',async()=>{
+ const target:CreativeDocument={...newDocument('SCREENPLAY'),id:'staged-screenplay',title:'Staged script',source_independent:false,scenes:[{...newScene(1),id:'text-1',heading:'脚本文本段 1',action:body}],version:1,status:'DRAFT',actor_id:'author',created_at:'',updated_at:'',source_evidence:{},source_documents:{'script-1':{version:1,digest:'a'.repeat(64)}}};
+ const fetch=server({rows:[saved()],write:()=>response(target)});render(<CreativeWorkspace {...props()}/>);await open();
+ const create=screen.getByRole('button',{name:'确认建立剧本底稿'}) as HTMLButtonElement;expect(create.disabled).toBe(true);expect(fetch.mock.calls.every(([,init])=>init?.method==='GET')).toBe(true);
+ fireEvent.click(screen.getByLabelText('确认从此已保存版本建立独立的新剧本底稿'));fireEvent.click(create);
+ await screen.findByText(/已从当前已保存版本建立“Staged script”/);
+ const writes=fetch.mock.calls.filter(([,init])=>init?.method==='POST');expect(writes).toHaveLength(1);expect(writes[0][0]).toMatch(/\/script-1\/derive$/);expect(JSON.parse(String(writes[0][1]?.body))).toEqual({expected_version:1,mode:'SCREENPLAY',script_policy:'TEXT_CHUNKS'});
+ expect((screen.getByLabelText('动作与叙事') as HTMLTextAreaElement).value).toBe(body);expect(screen.queryByLabelText('通用脚本内容')).toBeNull();
+});
+it('retains original Script and blocks automatic retry when a staging receipt does not preserve its source',async()=>{
+ const fetch=server({rows:[saved()],write:()=>response({...saved(),mode:'SCREENPLAY',id:'bad-receipt',scenes:[]})});render(<CreativeWorkspace {...props()}/>);await open();fireEvent.click(screen.getByLabelText('确认从此已保存版本建立独立的新剧本底稿'));fireEvent.click(screen.getByRole('button',{name:'确认建立剧本底稿'}));
+ await screen.findByText('需要核对版本 · 本地草稿仍保留');expect((screen.getByLabelText('通用脚本内容') as HTMLTextAreaElement).value).toBe(body);expect((screen.getByRole('button',{name:'确认建立剧本底稿'}) as HTMLButtonElement).disabled).toBe(true);expect(fetch.mock.calls.filter(([,init])=>init?.method==='POST')).toHaveLength(1);
 });

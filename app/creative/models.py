@@ -379,12 +379,15 @@ class DirectorModelOutput(StrictCreativeModel):
 
 class CreativeDocumentDerive(StrictCreativeModel):
     expected_version: int = Field(ge=1, strict=True)
-    mode: Literal["STORYBOARD", "PRODUCTION"]
+    mode: Literal["SCREENPLAY", "STORYBOARD", "PRODUCTION"]
     title: str | None = Field(default=None, min_length=1, max_length=240, strict=True)
     shot_policy: Literal["SCENE", "DIRECTOR_NOTES"] = "SCENE"
+    script_policy: Literal["TEXT_CHUNKS"] | None = None
 
     @model_validator(mode="after")
     def shot_policy_mode(self):
+        if (self.mode == "SCREENPLAY") != (self.script_policy == "TEXT_CHUNKS"):
+            raise ValueError("CREATIVE_SCRIPT_DERIVATION_POLICY_REQUIRED")
         if self.shot_policy != "SCENE" and self.mode != "STORYBOARD":
             raise ValueError("CREATIVE_SHOT_POLICY_MODE_REQUIRED")
         return self

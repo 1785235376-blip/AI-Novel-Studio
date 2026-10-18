@@ -338,6 +338,20 @@ class CreativeService(DomainService):
             source = self.get(nid, scope, rid)
             from ..experimental.common import check_version
             check_version(source, body.expected_version)
+            if body.mode == "SCREENPLAY":
+                if source["mode"] != "SCRIPT" or not source.get("script"):
+                    raise ValueError("CREATIVE_SCRIPT_SOURCE_REQUIRED")
+                text = source["script"]["body"]
+                # Exact code-point chunks, not semantic screenplay adaptation.
+                chunks = [text[offset:offset + 16000] for offset in range(0, len(text), 16000)]
+                content = {"mode": "SCREENPLAY", "title": body.title or source["title"][:220] + " · 剧本底稿",
+                    "source_chapter_ids": source["source_chapter_ids"],
+                    "scenes": [{"sequence": index + 1, "heading": f"脚本文本段 {index + 1}", "action": chunk}
+                               for index, chunk in enumerate(chunks)]}
+                return self._record_derivation(nid, scope, actor, source, content, state,
+                    {"rule_version": "creative-script-text-chunks-v1", "script_policy": "TEXT_CHUNKS",
+                     "source_purpose": source["script"]["purpose"], "max_scene_codepoints": 16000,
+                     "semantic_scene_analysis": False}, reauthorize)
             if ((body.mode == "STORYBOARD" and source["mode"] not in {"SCREENPLAY", "DIRECTOR"})
                     or (body.mode == "PRODUCTION" and source["mode"] != "STORYBOARD")):
                 raise ValueError("CREATIVE_DERIVATION_STAGE_INVALID")
@@ -384,21 +398,25 @@ class CreativeService(DomainService):
                 content["shots"] = source["shots"]
                 content["video_plan"] = {"segments": [{"shot_id": shot["id"], "duration_seconds": shot["duration_seconds"]}
                     for shot in sorted(source["shots"], key=lambda item: item["number"])]}
-            source_digest = document_digest(source)
-            payload = self.prepare_content(nid, scope, content,
-                source_documents={source["id"]: {"version": source["version"], "digest": source_digest}})
-            payload["provenance"] = {"method": "STRUCTURED_DERIVATION", "model_called": False,
-                "source_mode": source["mode"], "source_document_id": source["id"],
-                "source_version": source["version"], "input_digest": source_digest,
-                "parameters": ({"rule_version": "creative-director-shots-v1", "shot_policy": "DIRECTOR_NOTES"}
-                               if body.shot_policy == "DIRECTOR_NOTES" else {"rule_version": "creative-stage-copy-v1"}),
-                "quality_verification": "HUMAN_REVIEW_REQUIRED"}
-            row = new_row(nid, scope, actor, payload)
-            state["collections"].setdefault(self.COLLECTION, {})[row["id"]] = row
-            self.assert_current(nid, scope, row)
-            self.assert_capacity(state)
-            reauthorize()
-            return copy.deepcopy(row)
+            return self._record_derivation(nid, scope, actor, source, content, state,
+                {"rule_version": "creative-director-shots-v1", "shot_policy": "DIRECTOR_NOTES"}
+                if body.shot_policy == "DIRECTOR_NOTES" else {"rule_version": "creative-stage-copy-v1"}, reauthorize)
+
+    def _record_derivation(self, nid, scope, actor, source, content, state, parameters, reauthorize):
+        """Original derive transaction only; one Creative owner and source fence."""
+        source_digest = document_digest(source)
+        payload = self.prepare_content(nid, scope, content,
+            source_documents={source["id"]: {"version": source["version"], "digest": source_digest}})
+        payload["provenance"] = {"method": "STRUCTURED_DERIVATION", "model_called": False,
+            "source_mode": source["mode"], "source_document_id": source["id"],
+            "source_version": source["version"], "input_digest": source_digest,
+            "parameters": parameters, "quality_verification": "HUMAN_REVIEW_REQUIRED"}
+        row = new_row(nid, scope, actor, payload)
+        state["collections"].setdefault(self.COLLECTION, {})[row["id"]] = row
+        self.assert_current(nid, scope, row)
+        self.assert_capacity(state)
+        reauthorize()
+        return copy.deepcopy(row)
 
     def restore(self, nid, scope, actor, rid, expected_version, restore_version, *, reauthorize=lambda: None):
         """Restore an earlier current-source draft as a new CAS revision."""
