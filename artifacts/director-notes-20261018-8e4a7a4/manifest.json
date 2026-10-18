@@ -1,0 +1,8 @@
+{
+  "source_head": "8e4a7a47cc8584d043499a489d75d303fefb5aba",
+  "prerequisite": "b7f5e5ea282326d4130fce6af0e5c8c4ab8f4322",
+  "focused_ui_tests": 17,
+  "typescript": "PASS",
+  "retained_failed_receipt": "director-note-order-ui-r1",
+  "full_v2_release": "NOT_CLAIMED"
+}
