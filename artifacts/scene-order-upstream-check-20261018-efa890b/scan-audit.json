@@ -1,0 +1,91 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "dc5bbe23c09f7a349e187e8bcb5fe5ee147cba10",
+      "path": "docs/CREATIVE_SCENE_ORDER.md",
+      "bytes": 1858,
+      "sha256": "550256db0338f2a78bbc5c59e29d15351cb0c7537dae06481bdb1c4fd664cda0"
+    },
+    {
+      "blob": "35cdc63ef8325f932b7568e52c50c64b229e0c64",
+      "path": "docs/PR48_SOURCE_LINEAGE.md",
+      "bytes": 1421,
+      "sha256": "5b040b6d7ca506aadcb2b60e6e85f046aa0ceaa87e4cea514a48f95b27d01f44"
+    },
+    {
+      "blob": "498d0f67ec814815e4c989b0f7d61e5c6613a70c",
+      "path": "docs/delivery/v2-development/creative-scene-order-pg-r1-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "7da6886633595a3dab951324c4974ac22bba7bdaa4552d00bbc58c729c6f545a"
+    },
+    {
+      "blob": "5b16b8ba2843b9aecaab429285a04ffe8fac9189",
+      "path": "docs/delivery/v2-development/creative-scene-order-pg-r1.json",
+      "bytes": 683021,
+      "sha256": "9d5b9a1f0ef47cec84f0c6dbf517c7131b7afa03f3b07649ca3a03b62960b610"
+    },
+    {
+      "blob": "c3e0dca2ab070361b5d08227d010325cf6ea2ef7",
+      "path": "docs/delivery/v2-development/creative-scene-order-pg-r1.log",
+      "bytes": 1083,
+      "sha256": "db453474a42daaf9b268a78d87cd90e708c36f1eca10e1343281577baebc2fe6"
+    },
+    {
+      "blob": "ec3e2439a844ce4f5b8b787915e20f8ccc193908",
+      "path": "docs/delivery/v2-development/creative-scene-order-r1.json",
+      "bytes": 683218,
+      "sha256": "7244ad58dbef61bfa2c9f2ce75e88849947ec8720a6dcb3b2c45f537c0954fc8"
+    },
+    {
+      "blob": "78e350dede0c0fa1d74c894fa17082bc7973857d",
+      "path": "docs/delivery/v2-development/creative-scene-order-r1.log",
+      "bytes": 3624,
+      "sha256": "6e6981be0b35d8eeb4e0c810ca6612cf7feff9d29a3c36c4a73b5dc23efb9e26"
+    },
+    {
+      "blob": "4d7623d8a6c2171b8fa5c27da4dfa111955098b5",
+      "path": "docs/v2/pr48-source-lineage-20261018.json",
+      "bytes": 1198,
+      "sha256": "a0a14c512b2d07f34a315c9319f6fede4be909edaf9dfb19f62530e641598e06"
+    },
+    {
+      "blob": "5a3d36e12d150975c3f64f6d785e105e149ed9d2",
+      "path": "frontend/src/creative/CreativeCanvas.tsx",
+      "bytes": 27028,
+      "sha256": "a888db1e0f24f7a5b5fe59fd735931b01b9fe4ed1992de718202dace542e392c"
+    },
+    {
+      "blob": "de67383d429afd021075900e3c8149608d992c2d",
+      "path": "frontend/src/creative/SceneOrderActions.additive.test.tsx",
+      "bytes": 3300,
+      "sha256": "8b0215e2929b0e95ce81fd50c060c14dde342120e0ae9d4b89f56cb7168bc843"
+    },
+    {
+      "blob": "c8764674a874c607057ecf3197434dbf5d92ff79",
+      "path": "frontend/src/creative/SceneOrderActions.tsx",
+      "bytes": 1936,
+      "sha256": "ed11f8d862052ceaf00031279d9e97edb934f88e2affb11d040ae788c9b41d86"
+    },
+    {
+      "blob": "9a784cfee21d13d62aadeae6d0f021e66f85e051",
+      "path": "frontend/src/creative/sceneOrdering.ts",
+      "bytes": 1137,
+      "sha256": "b4fac75cc1e307180113d0172c7f0ade326057f8aea9768c04ba7422bd2a7f3b"
+    },
+    {
+      "blob": "ff5584420259cbed4a6092352ab0661c6b1fb8f8",
+      "path": "tests/test_creative_scene_order_additive.py",
+      "bytes": 1547,
+      "sha256": "ffddcd46d92ef7327d7810d329ebc765c37c7877607bfeadc63d353a7445471d"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
