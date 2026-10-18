@@ -806,6 +806,60 @@ class ModelBrokerService(DomainService):
     def ledger(self, nid, scope, actor):
         return sorted((r for r in self._native_ocr_rows(nid, self.list(nid, scope, self.LEDGER)) if r['created_by'] == actor), key=lambda r: r['created_at'], reverse=True)[:100]
 
+    def declare_director_image_cost_in_state(self, nid, scope, actor, state,
+                                            reservation_id, value, *, terminal, guard):
+        """Original ledger mutation within the IMAGE coordinator transaction.
+
+        The coordinator supplies terminal evidence validated against the saved
+        original job and keeps current source/target/host authority leased.
+        This is not a generic reconciliation, invoice, or orphan recovery API.
+        """
+        from .director_image_accounting import (
+            DECLARATION_FIELD, DirectorImageCostDeclarationInput, terminal_accounting,
+            declaration_proof, declaration_changes, validate_director_image_cost_resolution)
+        from ..creative.director_image_generation import _owner
+        body = DirectorImageCostDeclarationInput.model_validate(value)
+        if not callable(guard): raise ValueError('BROKER_IMAGE_OWNER_REQUIRED')
+        key = self.store.key(nid, scope)
+        if getattr(self.store._local, 'active', {}).get(key) is not state:
+            raise ValueError('BROKER_IMAGE_SCOPE_TRANSACTION_REQUIRED')
+        guard()
+        original = terminal_accounting(nid, scope, actor, terminal)
+        owner = _owner.get()
+        if not isinstance(owner, tuple) or len(owner) != 2 or owner[1] != digest(terminal['binding']):
+            raise ValueError('BROKER_IMAGE_OWNER_REQUIRED')
+        if original['id'] != reservation_id:
+            raise ValueError('BROKER_IMAGE_RESERVATION_IDENTITY_MISMATCH')
+        if body.reviewed_terminal_digest != digest(terminal):
+            raise ValueError('BROKER_IMAGE_EXACT_TERMINAL_REVIEW_REQUIRED')
+        ledger = state['collections'].get(self.LEDGER, {})
+        row = ledger.get(reservation_id)
+        if not isinstance(row, dict): raise FileNotFoundError(reservation_id)
+        # Request IDs are fenced to the same actor and actual project owner,
+        # even when a caller accidentally selects a second reservation.
+        for other in ledger.values():
+            proof = other.get(DECLARATION_FIELD) if isinstance(other, dict) else None
+            if (isinstance(proof, dict) and proof.get('request_id') == body.request_id
+                    and other.get('created_by') == actor
+                    and other.get('director_image_incarnation') == original['director_image_incarnation']
+                    and other.get('id') != reservation_id):
+                raise ValueError('BROKER_IMAGE_DECLARATION_IDEMPOTENCY_MISMATCH')
+        if DECLARATION_FIELD in row:
+            proof = validate_director_image_cost_resolution(nid, scope, actor, row, terminal=terminal)
+            if proof['request_digest'] != digest(body.model_dump()):
+                raise ValueError('BROKER_IMAGE_DECLARATION_IDEMPOTENCY_MISMATCH')
+            guard()
+            return copy.deepcopy(row)
+        check_version(row, body.expected_version)
+        if canonical(row) != canonical(original):
+            raise ValueError('BROKER_IMAGE_TERMINAL_ACCOUNTING_CHANGED')
+        proof = declaration_proof(body, terminal, original)
+        values = declaration_changes(body, proof, original)
+        change_row(row, actor, body.expected_version, lambda target: target.update(values))
+        validate_director_image_cost_resolution(nid, scope, actor, row, terminal=terminal)
+        guard()
+        return copy.deepcopy(row)
+
 
     def reconcile_native_ocr(self, nid, scope, actor, rid, expected_version, job_id,
                              authorization_digest, recovery_id, evidence_note, *, guard, owner_lease):

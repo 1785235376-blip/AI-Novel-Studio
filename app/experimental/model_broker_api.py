@@ -65,8 +65,13 @@ def create_model_broker_router(service, authorize, require_flag, require_host_se
         return True
 
     def recovery_ledger(entry):
-        return {key: entry.get(key) for key in ('id', 'job_id', 'version', 'status', 'dispatched',
+        result = {key: entry.get(key) for key in ('id', 'job_id', 'version', 'status', 'dispatched',
             'currency', 'cost_state', 'accounted_microusd', 'actual_microusd')}
+        if entry.get('cost_state') == 'HUMAN_DECLARED_LOCAL_COST':
+            result.update(measurement_verified=False, evidence_kind='HUMAN_DECLARED_LOCAL_COST',
+                declared_microusd=entry.get('declared_microusd'),
+                actual_microusd_semantics=entry.get('actual_microusd_semantics'))
+        return result
 
     def public_job(current):
         if current is None: return None

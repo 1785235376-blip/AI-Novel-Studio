@@ -1,4 +1,4 @@
-"""Unmounted IMAGE V3 coordinator over original owners; adoption unavailable."""
+"""Unmounted IMAGE coordinator over original execution and human-review owners."""
 from contextlib import contextmanager, ExitStack
 from contextvars import ContextVar
 from copy import deepcopy
@@ -39,7 +39,7 @@ class DirectorImageCoordinator:
             raise ValueError('DIRECTOR_IMAGE_TARGET_CHANGED')
         return document
 
-    def check(self, binding, guard, host):
+    def check(self, binding, guard, host, *, target_override=None):
         self.basic(guard,host)
         source = binding.source
         if _owner.get() == (id(self),digest(binding.model_dump())):
@@ -50,11 +50,11 @@ class DirectorImageCoordinator:
                 max_bytes=MAX_IMAGE_BYTES,guard=lambda:self.basic(guard,host))
             if sha256(content).hexdigest() != source.asset.sha256 or len(content) != source.byte_count or row['media_type'] != source.media_type:
                 raise ValueError('DIRECTOR_IMAGE_SOURCE_CHANGED')
-            self.target(source,binding.target)
+            self.target(source,target_override or binding.target)
         else:
             with self.sources.read(source.project_id,source.scope.model_dump(),source.actor_id,source.asset.model_dump(),
                     guard=lambda:self.basic(guard,host),expected=source.model_dump()):
-                self.target(source,binding.target)
+                self.target(source,target_override or binding.target)
         self.basic(guard,host)
 
     def owner_lease(self, binding):
@@ -109,6 +109,10 @@ class DirectorImageCoordinator:
     def _row(self, nid, scope, actor, rid):
         row = self.store.read(nid,scope)['collections'].get(COLLECTION,{}).get(rid)
         if not row or row.get('contract') != CONTRACT or row.get('created_by') != actor or row.get('scope') != scope:
+            raise FileNotFoundError(rid)
+        binding = ImageBinding.model_validate(row['binding'])
+        if (binding.source.actor_id != actor or binding.source.project_id != nid
+                or binding.source.scope.model_dump() != scope):
             raise FileNotFoundError(rid)
         return row
 
@@ -178,5 +182,119 @@ class DirectorImageCoordinator:
         job.cancelled.set()
         return {'job_id':job.id,'state':'CANCELLATION_REQUESTED','upstream_stopped':False}
 
-    def adopt(self,*args,**kwargs):
-        raise ValueError('DIRECTOR_IMAGE_ADOPTION_NOT_INTEGRATED')
+    def declare_cost(self,nid,scope,actor,rid,value,*,host,guard):
+        from .director_image_adoption import terminal_for
+        row = self._row(nid,scope,actor,rid)
+        binding = ImageBinding.model_validate(row['binding'])
+        with self.transaction(binding,guard,host) as state:
+            current = state['collections'][COLLECTION][rid]
+            if current['status'] not in {'DISPATCHED','PENDING_REVIEW'}:
+                raise ValueError('DIRECTOR_IMAGE_DECLARATION_UNAVAILABLE')
+            saved,evidence = terminal_for(self,current,binding)
+            result = self.broker.declare_director_image_cost_in_state(
+                nid,scope,actor,state,current['reservation_id'],value,
+                terminal=evidence,guard=lambda:self.basic(guard,host))
+        return result
+
+    def review(self,nid,scope,actor,rid,*,host,guard):
+        from .director_image_adoption import terminal_for
+        from ..experimental.director_image_accounting import validate_director_image_cost_resolution
+        row = self._row(nid,scope,actor,rid)
+        binding = ImageBinding.model_validate(row['binding'])
+        with self.transaction(binding,guard,host) as state:
+            current = state['collections'][COLLECTION][rid]
+            if current['status'] not in {'DISPATCHED','PENDING_REVIEW'}:
+                raise ValueError('DIRECTOR_IMAGE_REVIEW_UNAVAILABLE')
+            saved,evidence = terminal_for(self,current,binding)
+            ledger = state['collections'][self.broker.LEDGER][current['reservation_id']]
+            resolution = validate_director_image_cost_resolution(nid,scope,actor,ledger,terminal=evidence)
+            result = {'contract':'DIRECTOR_IMAGE_REVIEW_V1','proposal_id':rid,
+                'proposal_version':current['version'],'target':binding.target.model_dump(),
+                'terminal_digest':digest(evidence),'accounting_digest':digest(ledger),
+                'accounting':deepcopy(resolution),'measurement_verified':False,
+                'advice':parse_advice(saved['output']),'observations_verified':False,
+                'adoption_available':True,'human_review_required':True}
+        return result
+
+    def adopt(self,nid=None,scope=None,actor=None,rid=None,value=None,*,host=None,guard=None):
+        # No-argument legacy callers remain blocked; adoption requires an explicit
+        # authenticated human input, never a passive pending record.
+        if value is None: raise ValueError('DIRECTOR_IMAGE_ADOPTION_NOT_INTEGRATED')
+        from .director_image_adoption import ImageAdoptionInput, terminal_for
+        from ..experimental.director_image_accounting import validate_director_image_cost_resolution
+        from .models import CreativeProductionDocumentIn, DirectorSceneNote
+        from ..experimental.common import now
+        from uuid import uuid4
+        body = ImageAdoptionInput.model_validate(value)
+        if (not body.note.strip() or any(type(i) is not int for i in body.selected_suggestions)
+                or len(set(body.selected_suggestions)) != len(body.selected_suggestions)):
+            raise ValueError('DIRECTOR_IMAGE_REVIEW_INVALID')
+        self.basic(guard,host)
+        row = self._row(nid,scope,actor,rid)
+        binding = ImageBinding.model_validate(row['binding'])
+        want = digest({'input':body.model_dump(),'actor':actor,'scope':scope,'proposal_id':rid})
+        with ExitStack() as leases:
+            with self.store.store.transaction(nid,scope) as state:
+                leases.enter_context(self.owner_lease(binding)())
+                self.basic(guard,host)
+                current = state['collections'][COLLECTION][rid]
+                if (current.get('created_by') != actor or current.get('scope') != scope
+                        or current.get('binding') != binding.model_dump()):
+                    raise ValueError('DIRECTOR_IMAGE_AUTHORITY_CHANGED')
+                receipt = current.get('adoption_receipt')
+                if receipt is not None:
+                    if receipt['request_id'] != body.request_id or receipt['request_digest'] != want:
+                        raise ValueError('DIRECTOR_IMAGE_ADOPTION_REQUEST_REUSED')
+                    document = self.documents.get(nid,scope,binding.target.document_id)
+                    proofs = [proof for snapshot in [document,*document.get('history',[])]
+                        for proof in snapshot.get('prompt_adoptions',[]) if isinstance(proof,dict)]
+                    if (receipt.get('proof') not in proofs
+                            or receipt['proof'].get('request_digest') != want
+                            or receipt['proof'].get('proposal_id') != rid):
+                        raise ValueError('DIRECTOR_IMAGE_ADOPTION_RECEIPT_INVALID')
+                    # A historical receipt never grants current source or target authority.
+                    result = {**deepcopy(receipt),'replayed':True,'historical':True}
+                else:
+                    self.check(binding,guard,host)
+                    check_version(current,body.expected_version)
+                    if current['status'] not in {'DISPATCHED','PENDING_REVIEW'} or body.target != binding.target:
+                        raise ValueError('DIRECTOR_IMAGE_TARGET_CHANGED')
+                    saved,evidence = terminal_for(self,current,binding)
+                    ledger = state['collections'][self.broker.LEDGER][current['reservation_id']]
+                    resolution = validate_director_image_cost_resolution(nid,scope,actor,ledger,terminal=evidence)
+                    if digest(evidence) != body.reviewed_terminal_digest or digest(ledger) != body.reviewed_accounting_digest:
+                        raise ValueError('DIRECTOR_IMAGE_REVIEW_CHANGED')
+                    advice = parse_advice(saved['output'])
+                    if any(i < 0 or i >= len(advice['suggestions']) for i in body.selected_suggestions):
+                        raise ValueError('DIRECTOR_IMAGE_REVIEW_INVALID')
+                    document = self.target(binding.source,binding.target)
+                    content = {k:deepcopy(document[k]) for k in CreativeProductionDocumentIn.model_fields if k in document}
+                    notes = content.setdefault('director_notes',[])
+                    number = max((n['number'] for n in notes),default=0)+1
+                    note = DirectorSceneNote(id=str(uuid4()),number=number,scene_id=body.target.scene_id,note=body.note).model_dump()
+                    notes.append(note)
+                    proof = {'contract':'DIRECTOR_IMAGE_ADOPTION_PROOF_V1','request_id':body.request_id,
+                        'request_digest':want,'proposal_id':rid,'document_id':body.target.document_id,
+                        'scene_id':body.target.scene_id,'note_id':note['id'],'source':binding.source.model_dump(),
+                        'target_before':body.target.model_dump(),'terminal_digest':digest(evidence),
+                        'accounting_digest':digest(ledger),'accounting':deepcopy(resolution),
+                        'measurement_verified':False,'observations_verified':False,
+                        'selected_suggestions':body.selected_suggestions,'adopted_note_digest':digest(body.note),
+                        'adopted_by':actor,'adopted_at':now(),'result_version':body.target.version+1}
+                    updated,committed = self.documents.revise_in_state(nid,scope,actor,state,
+                        body.target.document_id,body.target.version,content,
+                        reauthorize=lambda:self.basic(guard,host),expected_digest=body.target.digest,server_proof=proof)
+                    if committed != proof or updated['version'] != proof['result_version']:
+                        raise ValueError('DIRECTOR_IMAGE_ADOPTION_PROOF_INVALID')
+                    after = ImageTarget(document_id=updated['id'],version=updated['version'],
+                        digest=self.documents.document_digest(updated),scene_id=body.target.scene_id)
+                    self.check(binding,guard,host,target_override=after)
+                    receipt = {'contract':'DIRECTOR_IMAGE_ADOPTION_RECEIPT_V1','request_id':body.request_id,
+                        'request_digest':want,'proposal_id':rid,'target':after.model_dump(),
+                        'proof':proof,'measurement_verified':False,'accounting':deepcopy(resolution)}
+                    change_row(current,actor,body.expected_version,lambda r:r.update(
+                        status='ADOPTED',adoption_receipt=receipt,adoption_available=False))
+                    result = {**deepcopy(receipt),'replayed':False,'historical':False}
+                self.basic(guard,host)
+                self.documents.proposals._capacity(self.store._view(state,binding.source.project_incarnation))
+        return {**result,'committed':True}
