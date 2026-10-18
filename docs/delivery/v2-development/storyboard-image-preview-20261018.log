@@ -1,0 +1,53 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/CreativeProductionCanvas.test.tsx (3 tests) 356ms
+ ✓ src/creative/CreativeStoryboardContinuity.phase4.test.tsx (4 tests) 432ms
+ ✓ src/creative/storyboardImagePreview.additive.test.ts (78 tests) 238ms
+ ✓ src/creative/storyboardImageRaster.additive.test.ts (63 tests) 225ms
+ ✓ src/creative/StoryboardBoardImages.additive.test.tsx (24 tests) 1994ms
+   ✓ existing CreativeCanvas integration, without browser visual acceptance > renders actual image elements on existing cards and compares saved text while preserving read-only authoring 581ms
+ ✓ src/creative/CreativeWorkspace.productionSaveState.regression.test.tsx (1 test) 694ms
+   ✓ keeps real production dirty protection without labelling an unsubmitted production draft as saving 692ms
+ ✓ src/creative/studioStoryboardContract.phase4.test.ts (52 tests) 108ms
+ ✓ src/creative/studioClient.test.ts (38 tests) 109ms
+ ✓ src/creative/studioClient.boundedDownload.additive.test.ts (38 tests) 184ms
+ ✓ src/creative/studioProductionGraphClient.test.ts (17 tests) 103ms
+ ✓ src/creative/studioStoryboardContinuityFields.additive.test.ts (6 tests) 24ms
+ ✓ src/creative/CreativeWorkspace.storyboardIntake.additive.test.tsx (9 tests) 2742ms
+   ✓ prepared original storyboard editor intake > renders exactly one original IMAGE editor without first-document bootstrap or writes 611ms
+   ✓ prepared original storyboard editor intake > saves only after explicit user edit and Save through original expected_version update 334ms
+   ✓ prepared original storyboard editor intake > uses original dirty return consent and cancellation preserves the draft 779ms
+   ✓ prepared original storyboard editor intake > preserves blocked target on a new request after an uncertain explicit Save 357ms
+ ✓ src/creative/GenericScriptWorkspace.test.tsx (9 tests) 3292ms
+   ✓ standalone Script uses original Creative workspace > creates an explicitly independent script in the existing five-stage shell 878ms
+   ✓ standalone Script uses original Creative workspace > reopens the actual saved Script and keeps its type when starting another document 438ms
+   ✓ standalone Script uses original Creative workspace > retains the dirty Script when changing modes or cancelling exit 401ms
+   ✓ standalone Script uses original Creative workspace > restores reviewed Script history with the current CAS version, preserving original versions 353ms
+   ✓ standalone Script uses original Creative workspace > drops an old identity’s late saved Script after project navigation 330ms
+ ✓ src/creative/CreativeAuthoringFields.test.tsx (12 tests) 3716ms
+   ✓ Existing-owner genre and shot time authoring > authors time independently of scene time and ordinary lighting, and retains it when only links clear 320ms
+   ✓ Existing-owner genre and shot time authoring > counts Unicode code points and keeps over-limit 时间连续性 text recoverable 417ms
+   ✓ Full-document authoring uses the original save and history flow > creates a Director document with genre and no unauthored extensions 498ms
+   ✓ Full-document authoring uses the original save and history flow > updates all preserved content once with expected_version, reopens it, and restores previous genre/time as a new version 1012ms
+   ✓ Full-document authoring uses the original save and history flow > retains genre/time on a save conflict until explicit server replacement 506ms
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 6046ms
+   ✓ creative workspace protected manuscript and request boundaries > recovers saved SCREENPLAY when its stage is selected before the initial reads finish 820ms
+   ✓ creative workspace protected manuscript and request boundaries > recovers saved PRODUCTION when its stage is selected before the initial reads finish 490ms
+   ✓ creative workspace protected manuscript and request boundaries > keeps an explicit new document, including an untouched draft, across stage and source changes 442ms
+   ✓ creative workspace protected manuscript and request boundaries > reloads saved content after confirmed discard and immediate workbench reopen 474ms
+   ✓ creative workspace protected manuscript and request boundaries > requires explicit server-version adoption and preserves the draft when adoption is cancelled 351ms
+ ✓ src/creative/CreativeWorkspace.saveState.regression.test.tsx (26 tests) 7004ms
+   ✓ Creative current document save-state ownership > hydrates a fresh saved document without inventing dirty content or a write 1024ms
+   ✓ Creative current document save-state ownership > projects the current saved Creative version instead of an unrelated novel loading status 440ms
+   ✓ Creative current document save-state ownership > returns to clean only after a real title edit is restored exactly to the saved payload 459ms
+   ✓ Creative current document save-state ownership > keeps real frame whitespace changes dirty and preserves every entered character 312ms
+   ✓ Creative current document save-state ownership > adopts the actual normalized server response as both input and CAS base after saving 334ms
+   ✓ Creative current document save-state ownership > keeps the exact draft blocked after network failure until explicit original-server adoption 330ms
+   ✓ Creative current document save-state ownership > keeps the exact draft blocked after conflict failure until explicit original-server adoption 325ms
+
+ Test Files  16 passed (16)
+      Tests  409 passed (409)
+   Start at  02:54:45
+   Duration  10.61s (transform 3.95s, setup 352ms, collect 17.22s, tests 27.27s, environment 5.83s, prepare 1.68s)
+

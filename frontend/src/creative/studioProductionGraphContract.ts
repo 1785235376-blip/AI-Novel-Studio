@@ -86,8 +86,13 @@ export function checkedCreativeShot(value: unknown): CreativeShot {
     if (shot.characters != null) strings(shot.characters, 100); if (shot.emotion != null) string(shot.emotion, 4000);
     if (shot.video_generation_hint != null) string(shot.video_generation_hint, 4000);
     array(shot.dialogue, 200).forEach(dialogue); array(shot.director_notes, 100).forEach(value => note(value)); if (shot.director_note_ids != null) strings(shot.director_note_ids, 100);
-    if (shot.continuity != null) { const continuity = row(shot.continuity); closed(continuity, ['characters', 'outfit', 'environment', 'camera'], ['previous_shot_id', 'next_shot_id']);
+    if (shot.continuity != null) { const continuity = row(shot.continuity); closed(continuity, ['characters', 'outfit', 'environment', 'camera'], ['previous_shot_id', 'next_shot_id', 'time', 'lighting']);
       for (const key of ['characters', 'outfit', 'environment', 'camera']) string(continuity[key], 4000);
+      // Match the original ShotContinuity optional fields: null/absent or strict
+      // strings of at most 4000 Unicode code points. Do not add missing keys.
+      for (const key of ['time', 'lighting']) if (Object.hasOwn(continuity, key) && continuity[key] !== null) {
+        const value = continuity[key]; if (typeof value !== 'string' || Array.from(value).length > 4000) invalid();
+      }
       for (const key of ['previous_shot_id', 'next_shot_id']) if (continuity[key] != null && string(continuity[key], 240, false) === shot.id) invalid(); }
     return shot as CreativeShot;
 }

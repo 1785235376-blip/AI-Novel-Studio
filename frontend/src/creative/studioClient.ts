@@ -245,23 +245,35 @@ export function studioTransport(context: CollaborationContext) {
     ? (context.localHostToken ?? useLocalHostSession.getState().token) : '');
   const branch = scope?.branchId;
 
-  async function response(url: string, method = 'GET', body?: unknown, signal?: AbortSignal, idempotencyKey?: string): Promise<Response> {
+  // Only the preview-specific path opts into bounded bodies and redirect rejection.
+  // Existing JSON and generic download callers retain their transport contract.
+  function cancelBody(result: Response): void {
+    try { void result.body?.cancel().catch(() => undefined); } catch { /* Best-effort cleanup, without exposing transport details. */ }
+  }
+  async function response(url: string, method = 'GET', body?: unknown, signal?: AbortSignal, idempotencyKey?: string, bounded = false): Promise<Response> {
     const headers: Record<string, string> = { 'Content-Type': 'application/json', 'X-Request-ID': crypto.randomUUID() };
     if (token) headers['X-Session-Token'] = token;
     if (branch) headers['X-Branch-Id'] = branch;
     if (method !== 'GET') headers['Idempotency-Key'] = idempotencyKey ?? crypto.randomUUID();
     let result: Response;
     try {
-      result = await fetch(url, { method, headers, signal, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
+      result = await fetch(url, { method, headers, signal, ...(bounded ? { redirect: 'error' as const } : {}), ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
     } catch (error) {
       if (signal?.aborted || (error instanceof Error && error.name === 'AbortError')) {
         throw new DOMException('请求已取消。', 'AbortError');
       }
       throw new ApiError({ status: 0, code: 'STUDIO_NETWORK_FAILED', message: '连接未完成。请检查连接状态后重试。' });
     }
+    if (bounded && (signal?.aborted || result.redirected || ['opaque', 'opaqueredirect', 'error'].includes(result.type))) {
+      cancelBody(result);
+      if (signal?.aborted) throw new DOMException('请求已取消。', 'AbortError');
+      throw new ApiError({ status: result.status, code: 'STUDIO_RESPONSE_INVALID', message: '文件响应不可用，请重新读取。' });
+    }
     if (!result.ok) {
       let raw: unknown;
-      try { raw = await result.json(); } catch { /* Never expose HTML, provider details or paths. */ }
+      // Error bodies also must not bypass the preview byte limit.
+      if (bounded) cancelBody(result);
+      else try { raw = await result.json(); } catch { /* Never expose HTML, provider details or paths. */ }
       const record = raw && typeof raw === 'object' ? raw as Record<string, unknown> : undefined;
       const detail = record?.detail && typeof record.detail === 'object' ? record.detail as Record<string, unknown> : undefined;
       const code = record?.code ?? detail?.code;
@@ -288,6 +300,70 @@ export function studioTransport(context: CollaborationContext) {
       const result = await response(url, method, body, signal, idempotencyKey);
       try { return await result.blob(); }
       catch { throw new ApiError({ status: result.status, code: 'STUDIO_RESPONSE_INVALID', message: '文件未能读取，请重试下载。' }); }
+    },
+    async boundedBlob(url: string, maxBytes: number, signal?: AbortSignal): Promise<Blob> {
+      if (!Number.isSafeInteger(maxBytes) || maxBytes < 1 || maxBytes > 8 * 1024 * 1024) {
+        throw new ApiError({ status: 400, code: 'STUDIO_DOWNLOAD_LIMIT_INVALID', message: '预览文件大小上限无效。' });
+      }
+      if (signal?.aborted) throw new DOMException('请求已取消。', 'AbortError');
+      const result = await response(url, 'GET', undefined, signal, undefined, true);
+      const tooLarge = () => new ApiError({ status: result.status, code: 'STUDIO_DOWNLOAD_TOO_LARGE', message: '文件超过预览大小上限。' });
+      const invalid = () => new ApiError({ status: result.status, code: 'STUDIO_RESPONSE_INVALID', message: '文件未能安全读取，请重试预览。' });
+      const declaredLength = result.headers.get('Content-Length');
+      // A declared size can reject early; only actual streamed bytes can admit it.
+      if (declaredLength !== null && /^\d+$/.test(declaredLength) && Number(declaredLength) > maxBytes) {
+        cancelBody(result);
+        throw tooLarge();
+      }
+      if (!result.body || typeof result.body.getReader !== 'function') {
+        cancelBody(result);
+        throw invalid();
+      }
+      let reader: ReadableStreamDefaultReader<Uint8Array>;
+      try { reader = result.body.getReader(); }
+      catch { cancelBody(result); throw invalid(); }
+      let canceled = false;
+      const cancelReader = () => {
+        if (canceled) return;
+        canceled = true;
+        try { void reader.cancel().catch(() => undefined); } catch { /* Cleanup cannot replace the sanitized failure. */ }
+      };
+      let rejectAbort!: (reason: DOMException) => void;
+      const aborted = new Promise<never>((_resolve, reject) => { rejectAbort = reject; });
+      const onAbort = () => {
+        cancelReader();
+        rejectAbort(new DOMException('请求已取消。', 'AbortError'));
+      };
+      signal?.addEventListener('abort', onAbort, { once: true });
+      try {
+        const readBytes = async () => {
+          let size = 0;
+          // One capped buffer also bounds bookkeeping for tiny or empty chunks.
+          // Copying admits no oversized or mutable external backing buffers.
+          const bytes = new Uint8Array(maxBytes);
+          while (true) {
+            if (signal?.aborted) throw new DOMException('请求已取消。', 'AbortError');
+            const { done, value } = await reader.read();
+            if (signal?.aborted) throw new DOMException('请求已取消。', 'AbortError');
+            if (done) break;
+            if (!(value instanceof Uint8Array)) throw invalid();
+            if (value.byteLength > maxBytes - size) throw tooLarge();
+            bytes.set(value, size);
+            size += value.byteLength;
+          }
+          return new Blob([bytes.subarray(0, size)], { type: result.headers.get('Content-Type') || '' });
+        };
+        // Race once, rather than retaining an abort-promise reaction per chunk.
+        return await Promise.race([readBytes(), aborted]);
+      } catch (error) {
+        cancelReader();
+        if (signal?.aborted || (error instanceof Error && error.name === 'AbortError')) throw new DOMException('请求已取消。', 'AbortError');
+        if (error instanceof ApiError) throw error;
+        throw invalid();
+      } finally {
+        signal?.removeEventListener('abort', onAbort);
+        try { reader.releaseLock(); } catch { /* A broken reader must not mask the original result. */ }
+      }
     },
   };
 }
@@ -405,6 +481,7 @@ export function studioClient(projectId: string, context: CollaborationContext) {
     asset: (id: string, signal?: AbortSignal) => transport.json<StudioAsset>(assetUrl(id), 'GET', undefined, signal).then(checkedAsset),
     lineage: (id: string, body: StudioLineageInput) => transport.json<StudioAsset>(`${assetUrl(id)}/lineage`, 'PUT', { ...body, expected_version: version(body.expected_version, 1) }).then(checkedAsset),
     download: (id: string, signal?: AbortSignal) => transport.blob(`${assetUrl(id)}/download`, 'GET', undefined, signal),
+    downloadBounded: (id: string, maxBytes: number, signal?: AbortSignal) => transport.boundedBlob(`${assetUrl(id)}/download`, maxBytes, signal),
     createMask: async (sourceId: string, input: StudioMaskInput, signal?: AbortSignal) => {
       if (signal?.aborted) throw new DOMException('请求已取消。', 'AbortError');
       const id = relationText(sourceId, 240, true);
