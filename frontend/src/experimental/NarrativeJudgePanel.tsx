@@ -5,6 +5,7 @@ import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitive
 import type { ExperimentalClient } from './api';
 import { NarrativeJudgeRevisionTaskPanel } from './NarrativeJudgeRevisionTaskPanel';
 import { NarrativeJudgeModelPanel } from './NarrativeJudgeModelPanel';
+import { AudienceReviewPanel } from './AudienceReviewPanel';
 import { ErrorMessage, Field, ResourceState, useResource } from './shared';
 import type { WorkspaceNavigation } from './uxClient';
 import { styleReviewClient, useReviewAction, type JudgeFinding, type JudgeRun, type StyleReviewClient } from './styleReviewClient';
@@ -26,6 +27,7 @@ function NarrativeJudgeBody({ client, chapter, onNavigate, requestedJobId, onPre
   const [decision, setDecision] = useState(''), [category, setCategory] = useState('');
   const [reviewDrafts, setReviewDrafts] = useState<Record<string, { reason: string; linkRevision: boolean }>>({});
   const [dismissedJob, setDismissedJob] = useState<string>();
+  const [audienceOpened, setAudienceOpened] = useState(false);
   useLayoutEffect(() => { setDismissedJob(undefined); }, [requestedJobId]);
   const targetJob = requestedJobId && requestedJobId !== dismissedJob ? requestedJobId : undefined;
   const matches = targetJob && !runs.loading && !runs.error && runs.data?.requestedJobId === requestedJobId
@@ -57,6 +59,7 @@ function NarrativeJudgeBody({ client, chapter, onNavigate, requestedJobId, onPre
       <Button onClick={() => { setDismissedJob(targetJob); setRunId(''); }}>退出原任务定位</Button></section>}
     <ResourceState loading={catalog.loading} error={catalog.error} />
     {!!catalog.error && <StatusMessage tone="warning">请核对本机会话、当前分支权限和功能开关后刷新；尚未提交的选择与审核理由保留在本页。</StatusMessage>}
+    <details className="experimental-details" onToggle={event => { if (event.currentTarget.open) setAudienceOpened(true); }}><summary>目标读者比较（作者填写）</summary>{audienceOpened && <AudienceReviewPanel client={client} chapter={chapter} onNavigate={onNavigate} />}</details>
     <Panel title="选择审阅范围">
       <Field label="审阅规则集"><select disabled={!ready || action.busy} value={rubricId} onChange={e => { epoch.current++; setRubricId(e.target.value); }}><option value="">请选择规则集</option>{ready && catalog.data!.rubrics.map(row => <option key={row.id} value={row.id}>{row.title} · v{row.version}</option>)}</select></Field>
       {rubric && <><h4>本次检查范围</h4><ul>{rubric.checks.map((check, index) => <li key={index}>{checkLabels[check] || check}</li>)}</ul><h4>判断边界</h4><ul>{rubric.limitations.map((limit, index) => <li key={index}>{limit}</li>)}</ul></>}

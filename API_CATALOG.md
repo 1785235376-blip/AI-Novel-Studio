@@ -2,7 +2,7 @@
 
 Complete mounted source inventory. This catalog is a source map, not a runtime verification verdict.
 
-Starting method/path operations: 1833. Current: 2447. Added: 614. Removed: 0.
+Starting method/path operations: 1833. Current: 2457. Added: 624. Removed: 0.
 
 The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json.gz; API_CATALOG.json binds its digest and all application sources. Original aliases are listed separately.
 
@@ -258,9 +258,12 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/novels/{nid}/experimental/model-broker/jobs/{reservation_id}` | `app/experimental/model_broker_api.py:244` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/model-broker/status` | `app/experimental/model_broker_api.py:111` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/model-broker/task-capabilities` | `app/experimental/model_broker_api.py:124` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/narrative-judge/audience/catalog` | `app/experimental/audience_review_api.py:16` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/novels/{nid}/experimental/narrative-judge/audience/comparisons` | `app/experimental/audience_review_api.py:31` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/novels/{nid}/experimental/narrative-judge/audience/source/{chapter_id}` | `app/experimental/audience_review_api.py:21` | FULL_RECOVERY_ADDED_ROUTE |
 | GET | `/api/novels/{nid}/experimental/narrative-judge/catalog` | `app/experimental/narrative_judge_api.py:26` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/narrative-judge/findings/{rid}/revision-task` | `app/experimental/narrative_judge_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/novels/{nid}/experimental/narrative-judge/model/catalog` | `app/experimental/narrative_judge_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/narrative-judge/model/catalog` | `app/experimental/narrative_judge_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/narrative-judge/runs` | `app/experimental/narrative_judge_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}` | `app/experimental/narrative_judge_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/offline-sync/catalog` | `app/experimental/offline_sync_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -735,9 +738,12 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/v1/novels/{nid}/experimental/model-broker/jobs/{reservation_id}` | `app/experimental/model_broker_api.py:244` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/model-broker/status` | `app/experimental/model_broker_api.py:111` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/model-broker/task-capabilities` | `app/experimental/model_broker_api.py:124` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/narrative-judge/audience/catalog` | `app/experimental/audience_review_api.py:16` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/v1/novels/{nid}/experimental/narrative-judge/audience/comparisons` | `app/experimental/audience_review_api.py:31` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/v1/novels/{nid}/experimental/narrative-judge/audience/source/{chapter_id}` | `app/experimental/audience_review_api.py:21` | FULL_RECOVERY_ADDED_ROUTE |
 | GET | `/api/v1/novels/{nid}/experimental/narrative-judge/catalog` | `app/experimental/narrative_judge_api.py:26` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/narrative-judge/findings/{rid}/revision-task` | `app/experimental/narrative_judge_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/novels/{nid}/experimental/narrative-judge/model/catalog` | `app/experimental/narrative_judge_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/narrative-judge/model/catalog` | `app/experimental/narrative_judge_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/narrative-judge/runs` | `app/experimental/narrative_judge_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}` | `app/experimental/narrative_judge_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/offline-sync/catalog` | `app/experimental/offline_sync_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1295,13 +1301,15 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/novels/{nid}/experimental/model-broker/ledger/{reservation_id}/reconcile` | `app/experimental/model_broker_api.py:233` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/model-broker/preview` | `app/experimental/model_broker_api.py:149` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/model-broker/task-preview` | `app/experimental/model_broker_api.py:137` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/narrative-judge/audience/comparisons` | `app/experimental/audience_review_api.py:36` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/narrative-judge/audience/source/{chapter_id}/prepare` | `app/experimental/audience_review_api.py:26` | FULL_RECOVERY_ADDED_ROUTE |
 | POST | `/api/novels/{nid}/experimental/narrative-judge/findings/{rid}/review` | `app/experimental/narrative_judge_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/narrative-judge/findings/{rid}/revision-task` | `app/experimental/narrative_judge_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/narrative-judge/runs` | `app/experimental/narrative_judge_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/cancel` | `app/experimental/narrative_judge_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/dispatch` | `app/experimental/narrative_judge_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/preview` | `app/experimental/narrative_judge_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/refresh` | `app/experimental/narrative_judge_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/cancel` | `app/experimental/narrative_judge_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/dispatch` | `app/experimental/narrative_judge_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/preview` | `app/experimental/narrative_judge_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/refresh` | `app/experimental/narrative_judge_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/offline-sync/channels` | `app/experimental/offline_sync_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/offline-sync/channels/{rid}/queue` | `app/experimental/offline_sync_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/offline-sync/channels/{rid}/receive` | `app/experimental/offline_sync_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1898,13 +1906,15 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/v1/novels/{nid}/experimental/model-broker/ledger/{reservation_id}/reconcile` | `app/experimental/model_broker_api.py:233` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/model-broker/preview` | `app/experimental/model_broker_api.py:149` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/model-broker/task-preview` | `app/experimental/model_broker_api.py:137` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/audience/comparisons` | `app/experimental/audience_review_api.py:36` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/audience/source/{chapter_id}/prepare` | `app/experimental/audience_review_api.py:26` | FULL_RECOVERY_ADDED_ROUTE |
 | POST | `/api/v1/novels/{nid}/experimental/narrative-judge/findings/{rid}/review` | `app/experimental/narrative_judge_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/narrative-judge/findings/{rid}/revision-task` | `app/experimental/narrative_judge_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs` | `app/experimental/narrative_judge_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/cancel` | `app/experimental/narrative_judge_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/dispatch` | `app/experimental/narrative_judge_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/preview` | `app/experimental/narrative_judge_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/refresh` | `app/experimental/narrative_judge_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/cancel` | `app/experimental/narrative_judge_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/dispatch` | `app/experimental/narrative_judge_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/preview` | `app/experimental/narrative_judge_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/refresh` | `app/experimental/narrative_judge_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/offline-sync/channels` | `app/experimental/offline_sync_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/offline-sync/channels/{rid}/queue` | `app/experimental/offline_sync_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/offline-sync/channels/{rid}/receive` | `app/experimental/offline_sync_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |

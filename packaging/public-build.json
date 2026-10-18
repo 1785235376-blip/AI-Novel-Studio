@@ -156,6 +156,8 @@
     "app/experimental/__init__.py",
     "app/experimental/adaptation_projection.py",
     "app/experimental/api.py",
+    "app/experimental/audience_review.py",
+    "app/experimental/audience_review_api.py",
     "app/experimental/audiobook.py",
     "app/experimental/audiobook_api.py",
     "app/experimental/author_context_api.py",

@@ -156,6 +156,16 @@ class NarrativeJudgeService(SourceFencedService):
 
     def _fresh(self, nid, scope, receipt):
         self.assert_capture(nid, scope, receipt["sources"])
+        if receipt.get('audience'):
+            from ..creative.project_store import CreativeProjectStore
+            owner = CreativeProjectStore(self.store)
+            with owner.existing_owner_only():
+                if owner.incarnation(nid) != receipt.get('audience_project_incarnation'):
+                    raise StaleSourceError('AUDIENCE_PROJECT_CHANGED')
+            _, chapters = self.capture(nid, scope, list(receipt['sources']))
+            if any(c.get('hidden') or c.get('secret') or c.get('archived_at') or c.get('is_archived') for c in chapters.values()):
+                raise StaleSourceError('source unavailable')
+            return
         if self._context_fingerprint(nid, scope, list(receipt["sources"])) != receipt["context_digest"]:
             raise StaleSourceError("reviewed world or planning context changed")
 
@@ -183,7 +193,7 @@ class NarrativeJudgeService(SourceFencedService):
         return finding
 
     def _public(self, nid, scope, receipt):
-        result = {k: deepcopy(v) for k, v in receipt.items() if k not in {"sources", "context_digest", "finding_ids", "history", "request"}}
+        result = {k: deepcopy(v) for k, v in receipt.items() if k not in {"sources", "context_digest", "finding_ids", "history", "request", "audience_project_incarnation"}}
         try:
             self._fresh(nid, scope, receipt)
         except (ValueError, FileNotFoundError):
@@ -196,7 +206,7 @@ class NarrativeJudgeService(SourceFencedService):
         return result
 
     def runs(self, nid, scope):
-        return [self._public(nid, scope, row) for row in self.list(nid, scope, self.RUNS)]
+        return [self._public(nid, scope, row) for row in self.list(nid, scope, self.RUNS) if not row.get("audience")]
 
     def run(self, nid, scope, rid):
         return self._public(nid, scope, require_row(self.store.read(nid, scope), self.RUNS, rid))
@@ -306,6 +316,8 @@ class NarrativeJudgeService(SourceFencedService):
         Stable per-job finding IDs recover a sidecar write without reexecuting
         the model. All output is validated before the first review-thread write.
         """
+        if previous.get('audience'):
+            raise ValueError('AUDIENCE_AUTHOR_COMPARISON_NO_MODEL')
         nid, scope, actor, run_id = ctx.novel_id, ctx.scope, ctx.actor, previous['id']
         if opinions is None and execution == previous.get('model_execution'):
             self._fresh(nid, scope, previous); guard()
@@ -352,15 +364,20 @@ class NarrativeJudgeService(SourceFencedService):
         return self.run(nid, scope, run_id)
 
     def review(self, nid, scope, actor, rid, value, reauthorize=lambda: None):
+        from .audience_review import audience_review_lease
         data = JudgeReviewIn.model_validate(value.model_dump() if hasattr(value, 'model_dump') else value)
         if bool(data.revision_chapter_id) != bool(data.revision_version): raise ValueError('revision linkage requires both chapter and version')
-        with self.creation.store._lock, workspace_mutation(self.creation.store.root, 'creation-workbench'):
+        with self.creation.store._lock, workspace_mutation(self.creation.store.root, 'creation-workbench'), audience_review_lease(self, nid, scope, rid):
             rows = self.creation._rows('review_threads')
             row = self.creation._find(rows, nid, scope, rid)
             info = row.get('narrative_judge')
             if not info: raise FileNotFoundError(rid)
             receipt = require_row(self.store.read(nid, scope), self.RUNS, info['run_id'])
             self._fresh(nid, scope, receipt)
+            if receipt.get('audience'):
+                if not data.reason.strip(): raise ValueError('nonblank author decision reason required')
+                if len(row.get('history', [])) >= 100:
+                    raise ValueError('AUDIENCE_HISTORY_LIMIT: retained history remains readable')
             check_version({key: row[key] for key in ('id', 'version', 'status')}, data.expected_version)
             if info['decision'] == 'INTENTIONAL' and data.action not in {'intentional', 'reopen'}:
                 raise ValueError('reopen an intentional finding before changing its decision')
@@ -375,6 +392,8 @@ class NarrativeJudgeService(SourceFencedService):
             propagate = data.action == 'intentional' or (data.action == 'reopen' and info['decision'] == 'INTENTIONAL')
             targets = [target for target in rows if self.creation._match(target, nid, scope)
                        and target.get('narrative_judge', {}).get('issue_key') == info['issue_key']] if propagate else [row]
+            if receipt.get('audience') and any(len(target.get('history', [])) >= 100 for target in targets):
+                raise ValueError('AUDIENCE_HISTORY_LIMIT: retained history remains readable')
             for target in targets:
                 details = target['narrative_judge']
                 details['decision'] = {'review': 'REVIEWED', 'accept': 'ACCEPTED', 'ignore': 'IGNORED', 'intentional': 'INTENTIONAL', 'reopen': 'PENDING'}[data.action]
@@ -428,6 +447,7 @@ class NarrativeJudgeService(SourceFencedService):
     def list_review_items(self, nid, scope):
         output = []
         for receipt in self.list(nid, scope, self.RUNS):
+            if receipt.get("audience"): continue  # Dedicated author-feedback surface, not model review inbox.
             run = self._public(nid, scope, receipt)
             if run["stale"]: continue
             for row in run["findings"]:

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "642e1c03ab0fa156a2a0a922f5d264fd5715dc4d32372d9ffb8096f80fc67304",
+  "application_source_fingerprint_sha256": "b65dfffae3758b7184834c65b9f3d128049b46f043dd0795f1d549d4d8194e3c",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -149,6 +149,8 @@
     "app/experimental/__init__.py": "737a87c497146972d1cc905f0076f076d5414a8093066146a5bac6b190d788f3",
     "app/experimental/adaptation_projection.py": "dbc51d4bbf0f44b0defb57d7f9a19491d4abf9f18645c13f6241e1600682e91e",
     "app/experimental/api.py": "d0eb7aa8ca189bcbbff62dc172c179c2fff5a7d6a519c1ad94b044fb20c5f072",
+    "app/experimental/audience_review.py": "1ba78d647d62715830a346dfc368c506d0becb0d295d4283651b6595f7774b20",
+    "app/experimental/audience_review_api.py": "bb9bfb116c682c6ecab43731baa96fb1e1d92d61d046fd91025190462ce5c14e",
     "app/experimental/audiobook.py": "822155147b635156fcca184155b80846a7c39efde5b025df7688337d98c63115",
     "app/experimental/audiobook_api.py": "02b07bb4bf12c169d4fc73e0033cc7e558f5fed4f966d3cbf54f4cf65b205ef7",
     "app/experimental/author_context_api.py": "00b8f1a33e4220bb2b1f3b1def6a1ec8ae7d20a8cbc87530304c5c0b87e4fc5a",
@@ -200,8 +202,8 @@
     "app/experimental/multilingual_editions.py": "a7c5c1db905462ed41d9e3c89465f6e9b407c8fd902b556b6c2d255ebde010f1",
     "app/experimental/multilingual_editions_api.py": "178889a22b67d5e3635a855d4b14aed9f64fac4a75233dc9e6acd0b80f88344a",
     "app/experimental/multilingual_translation.py": "05c748da13d81848f24a1ff3ad0f7c8864509a169b11e6f9298b962087f9e0a3",
-    "app/experimental/narrative_judge.py": "fd5899475b8e88f3046e51a3a07fbf465e61db1ee24f32f739ef3217b1450634",
-    "app/experimental/narrative_judge_api.py": "026fa976a00f9c004236a5042353b092d103e15b064ec360029780f36fcb2bdc",
+    "app/experimental/narrative_judge.py": "57565b9aa616fafd28a229e41b53f8d5712b091671bcd4bb82bd3a09c758f754",
+    "app/experimental/narrative_judge_api.py": "66a974e6dbf98a7d298d7a01af33f584157ab1f5795a8286a2173dc73f20cfdf",
     "app/experimental/narrative_judge_model.py": "20e6790fb7f6cedcc1f9abaa756bd1f323211c88d487cdb5d8c7228eeea8f2a8",
     "app/experimental/native_ocr_broker.py": "c10f56cc45a399a777be0d3fdfc9a9870562f57b780b30aecf08925cd1df6994",
     "app/experimental/offline_sync.py": "26e3cb21e1e23da999676a0855d64e135d50de2e605b69d3d7f5675901010f67",
@@ -535,9 +537,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 614,
+    "added": 624,
     "changed_contract": 24,
-    "current_method_paths": 2447,
+    "current_method_paths": 2457,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -554,7 +556,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "f838cc7a915eebe0d742bf24828eeee235e7a7c4c433e14aa21836fdad8eb8ed",
+    "sha256": "b47f45de16d7c10d0ce5961177160563b0e00ec1e6d54fa5863e1cb00f9b6d3e",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -3562,6 +3564,39 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "5928ee88d0e1e161d709bca91caa8584bcaab260816933705deda37357a6e09f",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/narrative-judge/audience/catalog",
+      "operation_id": "catalog_api_novels__nid__experimental_narrative_judge_audience_catalog_get",
+      "owner_ref": "7a22b5deed92bb3658e805cb796a03cebe8959fa654c78577bbfbfe741c78ea1",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "97c60f4260029c06b8cf8d5300c6784a65c439893428d5f2e3d92c44db805098",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/narrative-judge/audience/comparisons",
+      "operation_id": "comparisons_api_novels__nid__experimental_narrative_judge_audience_comparisons_get",
+      "owner_ref": "2dfae4d285dc7af4d3466606ca38ae4b023710c5be5d5117c9a1703315a21b37",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "6e8801af90020fd83f49c7bf5ba0cd849779082a6f641bc8340e4ae0a5d577db",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/narrative-judge/audience/source/{chapter_id}",
+      "operation_id": "source_api_novels__nid__experimental_narrative_judge_audience_source__chapter_id__get",
+      "owner_ref": "14872c7ed884284306289457c7d50b858e0ac1f85ed99865bc1cde671fb0b2b2",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "f2f2f96e53d6de8cd8fb494ac366d1da030f41d7de8849af6f3657e4484d7fdb",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -9287,6 +9322,39 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "77a43c9859ca0541b6e94901553ac963c46a7caccf3b0395af34a01c1a4c3661",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/narrative-judge/audience/catalog",
+      "operation_id": "catalog_api_v1_novels__nid__experimental_narrative_judge_audience_catalog_get",
+      "owner_ref": "7a22b5deed92bb3658e805cb796a03cebe8959fa654c78577bbfbfe741c78ea1",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "1ae4be49e108701b09205d9501abc7806a208b1591208535bf56bef88cef9e5b",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/narrative-judge/audience/comparisons",
+      "operation_id": "comparisons_api_v1_novels__nid__experimental_narrative_judge_audience_comparisons_get",
+      "owner_ref": "2dfae4d285dc7af4d3466606ca38ae4b023710c5be5d5117c9a1703315a21b37",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "a75d5658810e0383d0f9edf4183bab8764ee087b4d4fa6254b5409637fb805c2",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/narrative-judge/audience/source/{chapter_id}",
+      "operation_id": "source_api_v1_novels__nid__experimental_narrative_judge_audience_source__chapter_id__get",
+      "owner_ref": "14872c7ed884284306289457c7d50b858e0ac1f85ed99865bc1cde671fb0b2b2",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "c7631922009684dac1bebf61724caec1da245e74e4f22d88a6c1d4d12bb7d745",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -16017,6 +16085,28 @@
       ],
       "operation_sha256": "2ebfe5f1427200813e51c906bc156ff77848e14b4a4af240f9c8e3288ff14374",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/narrative-judge/audience/comparisons",
+      "operation_id": "create_api_novels__nid__experimental_narrative_judge_audience_comparisons_post",
+      "owner_ref": "748964cf6520e8a06ada30e9d0c0ddb92226cdfd245bfc256533a02d40d72a7f",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "2662355af410c03e6483271bd2550ef3e11b21cce0e05b1a0f0f433664093ab5",
+      "schema_graph_sha256": "90949dfeac2197fe74b38d8f9bc9073c64e8126ec6b3c8a873810f0e2eb60b44"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/narrative-judge/audience/source/{chapter_id}/prepare",
+      "operation_id": "prepare_source_api_novels__nid__experimental_narrative_judge_audience_source__chapter_id__prepare_post",
+      "owner_ref": "79a102ee00494656a6d8beeef68b4c399b7c28f6404b983ae2b6a3d6393b2b3b",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "721aee898895a41f7918c27a62f61ffd612d036ce32b453f53c44b28f0e0ea2d",
+      "schema_graph_sha256": "abadde62cdf98d9492773683a3beaa71eb7efa7a3efd1fa66086c26caac6abd2"
     },
     {
       "method": "POST",
@@ -23262,6 +23352,28 @@
       ],
       "operation_sha256": "35e11e960b67d6e1e7a06ddceac702a5216af5bb86dcad303fe5362d86c644fa",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/narrative-judge/audience/comparisons",
+      "operation_id": "create_api_v1_novels__nid__experimental_narrative_judge_audience_comparisons_post",
+      "owner_ref": "748964cf6520e8a06ada30e9d0c0ddb92226cdfd245bfc256533a02d40d72a7f",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "2d239bf4da4d12fe7367de4e9edbc40804333d820096382551e9918c28e8b9d3",
+      "schema_graph_sha256": "90949dfeac2197fe74b38d8f9bc9073c64e8126ec6b3c8a873810f0e2eb60b44"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/narrative-judge/audience/source/{chapter_id}/prepare",
+      "operation_id": "prepare_source_api_v1_novels__nid__experimental_narrative_judge_audience_source__chapter_id__prepare_post",
+      "owner_ref": "79a102ee00494656a6d8beeef68b4c399b7c28f6404b983ae2b6a3d6393b2b3b",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "90b4834cbd3c700decd476055bdb761af51a76501762e081b9e4f9b1a68a1667",
+      "schema_graph_sha256": "abadde62cdf98d9492773683a3beaa71eb7efa7a3efd1fa66086c26caac6abd2"
     },
     {
       "method": "POST",

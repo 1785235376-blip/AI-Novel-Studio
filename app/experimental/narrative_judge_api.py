@@ -65,8 +65,13 @@ def create_narrative_judge_router(service, authorize, require_flag, *, preparer=
         ctx, current = revision_access(nid, x_session_token, x_branch_id, response)
         result = api_call(service.create_revision_task, ctx, rid, body, current); current(); return result
 
-    def model_access(nid, token, branch, response):
+    def model_access(nid, token, branch, response, rid=None):
         actor, scope, again = access(nid, token, branch, response)
+        if rid is not None:
+            from .planning import require_row
+            row = api_call(require_row, service.store.read(nid, scope), service.RUNS, rid)
+            if row.get('audience'):
+                raise HTTPException(409, {'code': 'AUDIENCE_AUTHOR_COMPARISON_NO_MODEL'})
         if service.model_coordinator is None or not callable(require_host_session):
             raise HTTPException(409, {'code': 'JUDGE_REGISTERED_MODEL_EXECUTOR_UNAVAILABLE'})
         def current():
@@ -81,22 +86,24 @@ def create_narrative_judge_router(service, authorize, require_flag, *, preparer=
 
     @router.post('/runs/{rid}/model/preview')
     def model_preview(nid: str, rid: str, body: JudgeModelPreviewIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        ctx, current = model_access(nid, x_session_token, x_branch_id, response)
+        ctx, current = model_access(nid, x_session_token, x_branch_id, response, rid)
         result = api_call(service.model_coordinator.preview, ctx, rid, body, current); current(); return result
 
     @router.post('/runs/{rid}/model/dispatch')
     def model_dispatch(nid: str, rid: str, body: JudgeModelDispatchIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        ctx, current = model_access(nid, x_session_token, x_branch_id, response)
+        ctx, current = model_access(nid, x_session_token, x_branch_id, response, rid)
         result = api_call(service.model_coordinator.dispatch, ctx, rid, body, current); current(); return result
 
     @router.post('/runs/{rid}/model/refresh')
     def model_refresh(nid: str, rid: str, body: JudgeModelActionIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        ctx, current = model_access(nid, x_session_token, x_branch_id, response)
+        ctx, current = model_access(nid, x_session_token, x_branch_id, response, rid)
         result = api_call(service.model_coordinator.refresh, ctx, rid, body, current); current(); return result
 
     @router.post('/runs/{rid}/model/cancel')
     def model_cancel(nid: str, rid: str, body: JudgeModelActionIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        ctx, current = model_access(nid, x_session_token, x_branch_id, response)
+        ctx, current = model_access(nid, x_session_token, x_branch_id, response, rid)
         result = api_call(service.model_coordinator.cancel, ctx, rid, body, current); current(); return result
 
+    from .audience_review_api import mount_audience_review
+    mount_audience_review(router, service, access)
     return router
