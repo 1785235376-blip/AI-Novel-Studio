@@ -319,8 +319,32 @@ from test_r3_mounted_contracts import mounted, prefix, checked, scoped
 from test_r3_media_support import wav_bytes
 
 
-def test_production_mounted_processing_real_membership_and_origin_flags(mounted, monkeypatch):
-    e=scoped(mounted,monkeypatch); service=e.experimental.subtitle_timeline_service;adapter=SyntheticAdapter()
+@pytest.fixture
+def mounted_processing_scope(mounted, monkeypatch):
+    """Own only the collaboration identities created by this exact mounted test."""
+    e = mounted
+    try:
+        scoped(e, monkeypatch)
+        yield e
+    finally:
+        if e.backend == 'postgres' and hasattr(e, 'workspace'):
+            # The scoped helper creates fresh UUID-suffixed workspace/users.
+            # Remove these exact rows even after an assertion/setup failure;
+            # never clear shared/default workspaces or another fixture's users.
+            with e.store._connect() as connection:
+                for table in ('domain_role_assignments', 'permission_assignments', 'authorization_audit_events'):
+                    connection.execute(f"DELETE FROM {table} WHERE payload->'scope'->>'workspace_id'=%s AND payload->'scope'->>'project_id'=%s", (e.workspace, e.nid))
+                connection.execute('DELETE FROM workspace_memberships WHERE workspace_id=%s AND user_id IN (%s,%s)', (e.workspace, e.lead, e.viewer))
+                for table in ('storyline_branches', 'storylines'):
+                    connection.execute(f"DELETE FROM {table} WHERE payload->>'workspace_id'=%s AND payload->>'project_id'=%s", (e.workspace, e.nid))
+                connection.execute('DELETE FROM project_workspaces WHERE project_id=%s AND workspace_id=%s', (e.nid, e.workspace))
+                connection.execute("UPDATE novels SET workspace_id='default-workspace' WHERE slug=%s AND workspace_id=%s", (e.nid, e.workspace))
+                connection.execute('DELETE FROM workspaces WHERE id=%s', (e.workspace,))
+                connection.execute('DELETE FROM users WHERE id IN (%s,%s)', (e.lead, e.viewer))
+
+
+def test_production_mounted_processing_real_membership_and_origin_flags(mounted_processing_scope, monkeypatch):
+    e=mounted_processing_scope; service=e.experimental.subtitle_timeline_service;adapter=SyntheticAdapter()
     monkeypatch.setattr(service,'_processing_adapters',{adapter.definition.adapter_id:adapter})
     asset=e.assets.create(e.nid,'branch.wav',base64.b64encode(wav_bytes(2000)).decode(),'audio/wav','audio',branch_id=e.branch)
     base=e.base+'/subtitle-timeline'
