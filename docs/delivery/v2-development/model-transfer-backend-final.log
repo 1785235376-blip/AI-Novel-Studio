@@ -1,0 +1,110 @@
+........................................................................ [ 15%]
+........................................................................ [ 30%]
+........................................................................ [ 46%]
+........................................................................ [ 61%]
+........................................................................ [ 77%]
+........................................................................ [ 92%]
+......EsEEEsssEsEsEEEsssEs..ss..ss                                       [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_admission_measures_only_original_asset_filesystem_and_exposes_no_paths[file] _
+tests/test_v2_independent_workspace.py:108: in rig
+    assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E   AssertionError: assert False
+E    +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E    +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-22/test_admission_measures_only_o0').is_relative_to
+E    +      where PosixPath('/tmp/pytest-of-agent/pytest-22/test_admission_measures_only_o0') = resolve()
+E    +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-22/test_admission_measures_only_o0').resolve
+_ ERROR at setup of test_low_disk_rejects_before_any_binary_or_metadata_write[file-0] _
+tests/test_v2_independent_workspace.py:108: in rig
+    assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E   AssertionError: assert False
+E    +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E    +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-22/test_low_disk_rejects_before_a0').is_relative_to
+E    +      where PosixPath('/tmp/pytest-of-agent/pytest-22/test_low_disk_rejects_before_a0') = resolve()
+E    +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-22/test_low_disk_rejects_before_a0').resolve
+_ ERROR at setup of test_low_disk_rejects_before_any_binary_or_metadata_write[file-1] _
+tests/test_v2_independent_workspace.py:108: in rig
+    assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E   AssertionError: assert False
+E    +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E    +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-22/test_low_disk_rejects_before_a1').is_relative_to
+E    +      where PosixPath('/tmp/pytest-of-agent/pytest-22/test_low_disk_rejects_before_a1') = resolve()
+E    +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-22/test_low_disk_rejects_before_a1').resolve
+_ ERROR at setup of test_low_disk_rejects_before_any_binary_or_metadata_write[file-67108864] _
+tests/test_v2_independent_workspace.py:108: in rig
+    assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E   AssertionError: assert False
+E    +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E    +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-22/test_low_disk_rejects_before_a2').is_relative_to
+E    +      where PosixPath('/tmp/pytest-of-agent/pytest-22/test_low_disk_rejects_before_a2') = resolve()
+E    +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-22/test_low_disk_rejects_before_a2').resolve
+_ ERROR at setup of test_disk_exhaustion_after_staging_cleans_only_new_uncommitted_binary[file] _
+tests/test_v2_independent_workspace.py:108: in rig
+    assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E   AssertionError: assert False
+E    +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E    +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-22/test_disk_exhaustion_after_sta0').is_relative_to
+E    +      where PosixPath('/tmp/pytest-of-agent/pytest-22/test_disk_exhaustion_after_sta0') = resolve()
+E    +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-22/test_disk_exhaustion_after_sta0').resolve
+_ ERROR at setup of test_committed_idempotent_retry_requires_no_new_disk_allocation[file] _
+tests/test_v2_independent_workspace.py:108: in rig
+    assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E   AssertionError: assert False
+E    +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E    +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-22/test_committed_idempotent_retr0').is_relative_to
+E    +      where PosixPath('/tmp/pytest-of-agent/pytest-22/test_committed_idempotent_retr0') = resolve()
+E    +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-22/test_committed_idempotent_retr0').resolve
+_ ERROR at setup of test_unavailable_disk_fails_closed_without_private_filesystem_details[file-failure0] _
+tests/test_v2_independent_workspace.py:108: in rig
+    assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E   AssertionError: assert False
+E    +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E    +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-22/test_unavailable_disk_fails_cl0').is_relative_to
+E    +      where PosixPath('/tmp/pytest-of-agent/pytest-22/test_unavailable_disk_fails_cl0') = resolve()
+E    +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-22/test_unavailable_disk_fails_cl0').resolve
+_ ERROR at setup of test_unavailable_disk_fails_closed_without_private_filesystem_details[file-failure1] _
+tests/test_v2_independent_workspace.py:108: in rig
+    assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E   AssertionError: assert False
+E    +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E    +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-22/test_unavailable_disk_fails_cl1').is_relative_to
+E    +      where PosixPath('/tmp/pytest-of-agent/pytest-22/test_unavailable_disk_fails_cl1') = resolve()
+E    +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-22/test_unavailable_disk_fails_cl1').resolve
+_ ERROR at setup of test_unavailable_disk_fails_closed_without_private_filesystem_details[file-failure2] _
+tests/test_v2_independent_workspace.py:108: in rig
+    assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E   AssertionError: assert False
+E    +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E    +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-22/test_unavailable_disk_fails_cl2').is_relative_to
+E    +      where PosixPath('/tmp/pytest-of-agent/pytest-22/test_unavailable_disk_fails_cl2') = resolve()
+E    +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-22/test_unavailable_disk_fails_cl2').resolve
+_ ERROR at setup of test_real_enospc_metadata_failure_preserves_existing_owner_assets[file] _
+tests/test_v2_independent_workspace.py:108: in rig
+    assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E   AssertionError: assert False
+E    +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E    +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-22/test_real_enospc_metadata_fail0').is_relative_to
+E    +      where PosixPath('/tmp/pytest-of-agent/pytest-22/test_real_enospc_metadata_fail0') = resolve()
+E    +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-22/test_real_enospc_metadata_fail0').resolve
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR tests/test_v2_storage_admission.py::test_admission_measures_only_original_asset_filesystem_and_exposes_no_paths[file]
+ERROR tests/test_v2_storage_admission.py::test_low_disk_rejects_before_any_binary_or_metadata_write[file-0]
+ERROR tests/test_v2_storage_admission.py::test_low_disk_rejects_before_any_binary_or_metadata_write[file-1]
+ERROR tests/test_v2_storage_admission.py::test_low_disk_rejects_before_any_binary_or_metadata_write[file-67108864]
+ERROR tests/test_v2_storage_admission.py::test_disk_exhaustion_after_staging_cleans_only_new_uncommitted_binary[file]
+ERROR tests/test_v2_storage_admission.py::test_committed_idempotent_retry_requires_no_new_disk_allocation[file]
+ERROR tests/test_v2_storage_admission.py::test_unavailable_disk_fails_closed_without_private_filesystem_details[file-failure0]
+ERROR tests/test_v2_storage_admission.py::test_unavailable_disk_fails_closed_without_private_filesystem_details[file-failure1]
+ERROR tests/test_v2_storage_admission.py::test_unavailable_disk_fails_closed_without_private_filesystem_details[file-failure2]
+ERROR tests/test_v2_storage_admission.py::test_real_enospc_metadata_failure_preserves_existing_owner_assets[file]
+442 passed, 14 skipped, 2 warnings, 10 errors in 19.51s

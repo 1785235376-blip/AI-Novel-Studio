@@ -1,0 +1,42 @@
+.........................................FF.                             [100%]
+=================================== FAILURES ===================================
+______ test_publication_collision_does_not_overwrite_or_delete_user_file _______
+tests/test_model_center_transfers.py:347: in test_publication_collision_does_not_overwrite_or_delete_user_file
+    row, _ = start(svc); done = settled(svc, row['id'])
+             ^^^^^^^^^^
+tests/test_model_center_transfers.py:63: in start
+    preview = svc.preview(source_id, 'principal-one', guard)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/model_center/transfers.py:228: in preview
+    source = self._source(source_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+app/model_center/transfers.py:90: in _source
+    self._ready()
+app/model_center/transfers.py:81: in _ready
+    raise TransferError('MODEL_TRANSFER_PLATFORM_UNSUPPORTED')
+E   app.model_center.transfer_types.TransferError: MODEL_TRANSFER_PLATFORM_UNSUPPORTED
+_ test_publication_detects_leaf_swap_inside_link_boundary_without_deleting_it __
+tests/test_model_center_transfers.py:364: in test_publication_detects_leaf_swap_inside_link_boundary_without_deleting_it
+    row, _ = start(svc); done = settled(svc, row['id'])
+             ^^^^^^^^^^
+tests/test_model_center_transfers.py:63: in start
+    preview = svc.preview(source_id, 'principal-one', guard)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/model_center/transfers.py:228: in preview
+    source = self._source(source_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+app/model_center/transfers.py:90: in _source
+    self._ready()
+app/model_center/transfers.py:81: in _ready
+    raise TransferError('MODEL_TRANSFER_PLATFORM_UNSUPPORTED')
+E   app.model_center.transfer_types.TransferError: MODEL_TRANSFER_PLATFORM_UNSUPPORTED
+=============================== warnings summary ===============================
+tests/test_model_center_transfers.py::test_default_owner_has_no_source_destination_or_side_effect
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_model_center_transfers.py::test_publication_collision_does_not_overwrite_or_delete_user_file
+FAILED tests/test_model_center_transfers.py::test_publication_detects_leaf_swap_inside_link_boundary_without_deleting_it
+2 failed, 42 passed, 1 warning in 5.11s

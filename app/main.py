@@ -9,6 +9,7 @@ from .config import settings
 from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
 from .model_center.api import create_model_center_router
 from .model_center.discovery_api import PRIVATE_HEADERS as DISCOVERY_PRIVATE_HEADERS, create_local_discovery_router
+from .model_center.transfer_api import create_model_transfer_router
 from .model_center.discovery_authority import resolve_discovery_authority
 from .collaboration_api import create_collaboration_router
 from .collaboration_admin import create_collaboration_admin_router
@@ -71,6 +72,7 @@ async def app_lifespan(_app):
         # Lifecycle failure does not stop the remaining product shutdown owners.
         local_interop_host.closed = True
     harness_process_service.stop()
+    model_center_service.transfers.close()
     model_center_service.lifecycle.stop_all()
 
 app=FastAPI(title="AI Novel Studio",version=__version__,lifespan=app_lifespan)
@@ -193,6 +195,12 @@ async def collaboration_fail_closed(request,call_next):
     if normalized_request_path.startswith("/api/model-center/local-ai"):
         # Every endpoint has the same trusted Host/session dependency; do not
         # make discovery anonymous via the legacy collaboration allowlist.
+        return await call_next(request)
+    if normalized_request_path == "/api/model-center/transfers" or normalized_request_path.startswith("/api/model-center/transfers/"):
+        # Host-global V2 operations use the same independent current Host
+        # resolver as discovery. This classification skips only the project
+        # collaboration allowlist; every route still checks live Host/session,
+        # direct origin/forwarded-header provenance and V2 feature admission.
         return await call_next(request)
     if collaboration:
         path=request.url.path; normalized_path=_normalized_api_path(path); method=request.method
@@ -361,11 +369,14 @@ app.include_router(experimental_router, prefix="/api")
 app.include_router(experimental_router, prefix="/api/v1")
 app.include_router(create_model_center_router(model_center_service, mutation_authorization=_model_center_mutation_authorization))
 app.include_router(create_model_center_router(model_center_service, prefix="/api/v1/model-center", mutation_authorization=_model_center_mutation_authorization))
+app.include_router(create_model_transfer_router(model_center_service.transfers, host_authorization=_local_discovery_host_authority))
+app.include_router(create_model_transfer_router(model_center_service.transfers, prefix="/api/v1/model-center/transfers", host_authorization=_local_discovery_host_authority))
 @app.middleware("http")
 async def local_discovery_private_cache(request: Request, call_next):
     response = await call_next(request)
     path = _normalized_api_path(request.url.path)
-    if path == "/api/model-center/local-ai" or path.startswith("/api/model-center/local-ai/"):
+    if (path == "/api/model-center/local-ai" or path.startswith("/api/model-center/local-ai/")
+            or path == "/api/model-center/transfers" or path.startswith("/api/model-center/transfers/")):
         response.headers.update(DISCOVERY_PRIVATE_HEADERS)
     return response
 

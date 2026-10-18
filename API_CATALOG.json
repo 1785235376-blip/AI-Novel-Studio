@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "82b5ec4f5f29bc8fbccd638ef74668dffa23939b691026c3cec81646a1a8abb1",
+  "application_source_fingerprint_sha256": "c89b2d50cd9edb15954084a7da62fb6c33bdca274082bf9d2bb83ae3ceab1759",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -294,7 +294,7 @@
     "app/lore/memory_agent.py": "00449fdafa51de7790400fa083cd69fa1e9cf92f2ce524cd80c6c4c40d53031b",
     "app/lore/schemas.py": "2f03db0d13c096551f69b76906ca48289bb0e1f7c21830b605ab2f9984ed21e5",
     "app/lore/validators.py": "4caa6681df7497b34eed9386200527fe15ea38e19923c86e43d496c07299ffb5",
-    "app/main.py": "98923bc416fefd7a8cb5cbd0fbe0da2954e3a80e164e0fde1e7b29773ff24d04",
+    "app/main.py": "f1681e92a3de5d89ea818aa907f6e8701ec00fc61403119c2ded4792665ab963",
     "app/manuscript_sources.py": "3095bcbe132ab3ff2507e008c6cfd2f8a98da87364a3c983f4e2f43ef27d27a7",
     "app/media_files.py": "a3ddca3d9d705a31fd8c4312a48c9dcee21be35a5bce6d55ba901377a39a6e87",
     "app/media_frames.py": "478cf6c2af5268cb7fea3a7547d9fb60531636e56e0ed2caaf5b3fd8587dacc0",
@@ -314,7 +314,12 @@
     "app/model_center/domain.py": "67d10aea8d1ef6036b4585c6921d93d37c38ac80ad6a826eb238690477a3a87d",
     "app/model_center/runtime_observation.py": "4be244e74cc477bd5a21c3ca680de2768fd8d36a23e55b8bd42e8022b072a7ab",
     "app/model_center/runtime_profiles.py": "e47f7bc7f05f025563bf4a35fda8311b2d3509a4d1e73e3dbd4c8026f3ce61f8",
-    "app/model_center/service.py": "a6736db944161b0b95a63a7181bc5eb5326cdc30bbfb234ea1a128514b7576fa",
+    "app/model_center/service.py": "0df5ff36ebdbb677398321dff0ea23e6d8a5ce0ac692997d88529fe74e2666b9",
+    "app/model_center/transfer_api.py": "ad993af9a68748ea7c0f8557fe55c17b16bfaa9f058f2f17d05e281a169ff3fa",
+    "app/model_center/transfer_files.py": "649fbb027a796f24bb37216a6a89dada13ddaf702fc741c9b6b5f5e69b22c250",
+    "app/model_center/transfer_transport.py": "12f720f74726e0eaa36448be6f5f2a4cd797d557f9bb45af69153ec0bfb2b04d",
+    "app/model_center/transfer_types.py": "8a601ded17cf5e3faf8cd6ad411dfeb98b5580a7c0a22097f9201703195ff709",
+    "app/model_center/transfers.py": "71da0edf0677ed48ffe69275ff035bace9c6dd2c7efa7ef5fae8908f133135bd",
     "app/model_center/whisper_runtime.py": "fc26647f00759f34d95c7140f95316f2c184833507151956d0ef5cba1e519ab2",
     "app/model_execution.py": "f0fa804f1b7dd0f381bb610a67da46aa44706b01040891d9070a6952d270ac0b",
     "app/model_provider_contracts.py": "f334ad095b101c3a67fd84a098d434dcd6a4564d244b5df58b2334393765d860",
@@ -505,9 +510,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 568,
+    "added": 584,
     "changed_contract": 24,
-    "current_method_paths": 2401,
+    "current_method_paths": 2417,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -524,7 +529,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "1a9a3c9120b1a55d5845a164df96929a4b80e38e453e721b4df6c198bc8b9358",
+    "sha256": "8541ec220556cf6b161b5225b9e3c74165e6af28198dc7c53a66cccdf5179062",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -1971,6 +1976,17 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "c65f521f973f95d0456564d1f4963554bb6f256206a8452bc6759872b2288fa3",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/model-center/transfers",
+      "operation_id": "snapshot_api_model_center_transfers_get",
+      "owner_ref": "ef30b55d889a5b71f158a15fd06265921e495cb55e3513c3324808012a0406d4",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "7201adbcd3959d35d09bd39570ab32a787b864f841ae295f5c7082df3b2cfd5a",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -7588,6 +7604,17 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "21cae072bc9d37cd9622d36e9d59b50171ae4a9ccd3adf63f972096218deec29",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/model-center/transfers",
+      "operation_id": "snapshot_api_v1_model_center_transfers_get",
+      "owner_ref": "ef30b55d889a5b71f158a15fd06265921e495cb55e3513c3324808012a0406d4",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "c7b0eec019f0bfda44789e417db9b6c46aec786efc4a7a45fa9d5dc4d4b1d139",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -13570,6 +13597,83 @@
     },
     {
       "method": "POST",
+      "path": "/api/model-center/transfers/preview",
+      "operation_id": "preview_api_model_center_transfers_preview_post",
+      "owner_ref": "c259ff33d13357c0f680daffbe5756430fd3de2a07d95d025e1be5282015436f",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "882b386270e5b828b1823e81d8155588276d5c9ab8054d72179d757bd68dd21b",
+      "schema_graph_sha256": "1795e483c1ae8923efce3a45ba433532e46e190fbaf9f0bb9fd4267e40ca94d9"
+    },
+    {
+      "method": "POST",
+      "path": "/api/model-center/transfers/start",
+      "operation_id": "start_api_model_center_transfers_start_post",
+      "owner_ref": "32112d1e823b3cf28600a42a49e33edc0b0fae5694fc4b49768e9d1042c23071",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "3bd4955421d26e10c72d827037f4e6b3768ddca012512687401901dc2a0c58b1",
+      "schema_graph_sha256": "5cdb1b5364ebce5a2d9946c02e12e46189f25210020ad57d77279093ce0d199b"
+    },
+    {
+      "method": "POST",
+      "path": "/api/model-center/transfers/{identifier}/cancel",
+      "operation_id": "cancel_api_model_center_transfers__identifier__cancel_post",
+      "owner_ref": "e9fa12dac10ef0bb9d21504a9b7e7e3575f165cae3e38066050562360760cbba",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "36a01a470dee4108e3a5c4921719b0172dba28bdf44e86d657c93d840b91df18",
+      "schema_graph_sha256": "3fb18e421a8d6689abfa2fd0a6a4b8ab08f0116c338ef5bfc5c9b4530ced4da4"
+    },
+    {
+      "method": "POST",
+      "path": "/api/model-center/transfers/{identifier}/cleanup",
+      "operation_id": "cleanup_api_model_center_transfers__identifier__cleanup_post",
+      "owner_ref": "e38dbe2757624cbd0e6d6e652be9d2b766c726c8f6661d3298229526106002fe",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "72563ed68acfd72786b9df09cd7743504eae8b6b5091b73b84087c433a0df230",
+      "schema_graph_sha256": "0d83b8b1c940dbb03c3e2a5e1ac23ae4e0ffac0666688ef446c98e5e1aa636f3"
+    },
+    {
+      "method": "POST",
+      "path": "/api/model-center/transfers/{identifier}/cleanup-preview",
+      "operation_id": "cleanup_preview_api_model_center_transfers__identifier__cleanup_preview_post",
+      "owner_ref": "512acd9b62686077da065e34c2b74208b8d22dfd5c4b9c852808a2571257938b",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "4da1fe1cca8a7bf930f751e5b01b0be1030dc0c79fed9e88c8a32cadcd65dfd7",
+      "schema_graph_sha256": "3fb18e421a8d6689abfa2fd0a6a4b8ab08f0116c338ef5bfc5c9b4530ced4da4"
+    },
+    {
+      "method": "POST",
+      "path": "/api/model-center/transfers/{identifier}/pause",
+      "operation_id": "pause_api_model_center_transfers__identifier__pause_post",
+      "owner_ref": "380db5947c90a41d60d7ffc8488e8cc5dbc6a515ba3ede1c6b65d71c11d25444",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "3b8b02ae7421fa6c10d5a9cf885324a399bed4376d939d3bf892e4a0c253129e",
+      "schema_graph_sha256": "3fb18e421a8d6689abfa2fd0a6a4b8ab08f0116c338ef5bfc5c9b4530ced4da4"
+    },
+    {
+      "method": "POST",
+      "path": "/api/model-center/transfers/{identifier}/resume",
+      "operation_id": "resume_api_model_center_transfers__identifier__resume_post",
+      "owner_ref": "1ed9914ab694d4813852992b0d7b8ae6e4f312873c0a6e09a300c03f15d8b411",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "24e460901f1e4f0ffe0b5021687c0dc7d9ec8e80c9e86f195fa583d11a9f3254",
+      "schema_graph_sha256": "1e7a6d5291f1379df0f5dc77cd5d8251154d53819ed8cad2d7e01832a21e57e0"
+    },
+    {
+      "method": "POST",
       "path": "/api/novels",
       "operation_id": "create_novel_api_novels_post",
       "owner_ref": "8d15f9faf5130c84ab0f9f0c3b4731822039e05355f2f8c1ce9f5d2d594df935",
@@ -14531,8 +14635,8 @@
         "FULL_RECOVERY_ADDED_ROUTE",
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
-      "operation_sha256": "ad693b3aaed6bad44abfae5a1a8867133a929ac387742be9198fb17be08a2aba",
-      "schema_graph_sha256": "1b0e4cab3e6416d1d51186f079770d1bab3d5d5434e45d34def5fbe5ddaf6eed"
+      "operation_sha256": "74142352180f053067d7625ba44a43e4d273d3557152ce7e3907cbc57c1a289c",
+      "schema_graph_sha256": "ee480406d5ba77dd3b76fc2750ae3ba9428cb8016a194e1c04950c718e2d6bd8"
     },
     {
       "method": "POST",
@@ -14603,8 +14707,8 @@
         "FULL_RECOVERY_ADDED_ROUTE",
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
-      "operation_sha256": "5435e6a8d1462c7646fd1445f12f3df7a300903ab4b05e068f59416239ca26f1",
-      "schema_graph_sha256": "1b0e4cab3e6416d1d51186f079770d1bab3d5d5434e45d34def5fbe5ddaf6eed"
+      "operation_sha256": "8c59dabecfa564d64326c8892175c5a602d577d1b28b09ccddef55ac01cef2b6",
+      "schema_graph_sha256": "ee480406d5ba77dd3b76fc2750ae3ba9428cb8016a194e1c04950c718e2d6bd8"
     },
     {
       "method": "POST",
@@ -18898,7 +19002,8 @@
       "operation_id": "preview_video_reference_api_projects__nid__studio_assets__aid__video_reference_preview_post",
       "owner_ref": "b71f9d6c243dc1fc4c8304f073214a865c7321acbb46322b7274628d8fe35627",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "8be651830a085121a0890193c3fcab477c1b5b782cb8cbb688d2087fc7050bb1",
       "schema_graph_sha256": "3442c6fe394530b090684ddd68e9ef152541d3429f141aa8288d1de9521d469d"
@@ -18909,7 +19014,8 @@
       "operation_id": "save_video_reference_api_projects__nid__studio_assets__aid__video_reference_save_post",
       "owner_ref": "120866bd6cb24a45917e1ddf1364b7b83db6858b9ffc0b0c348cbe014d6fceba",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "598a5639b6dca9059733e1670d1b3059131a6fbdc7555f2345d1fb7d49b7d624",
       "schema_graph_sha256": "dc335b932611904a16a7db57b29e0cd864674e30731e569c26fe581de6934a30"
@@ -20657,6 +20763,83 @@
     },
     {
       "method": "POST",
+      "path": "/api/v1/model-center/transfers/preview",
+      "operation_id": "preview_api_v1_model_center_transfers_preview_post",
+      "owner_ref": "c259ff33d13357c0f680daffbe5756430fd3de2a07d95d025e1be5282015436f",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "1d2f58b1f856a61a5307c87e84cf387b8a6a9031fd3f176a89b7b89553d69d6b",
+      "schema_graph_sha256": "1795e483c1ae8923efce3a45ba433532e46e190fbaf9f0bb9fd4267e40ca94d9"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/model-center/transfers/start",
+      "operation_id": "start_api_v1_model_center_transfers_start_post",
+      "owner_ref": "32112d1e823b3cf28600a42a49e33edc0b0fae5694fc4b49768e9d1042c23071",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "da1ed9eec85d8e88c8f37136258247704fd3ac983edac3880b9b3cfdcb03f3f2",
+      "schema_graph_sha256": "5cdb1b5364ebce5a2d9946c02e12e46189f25210020ad57d77279093ce0d199b"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/model-center/transfers/{identifier}/cancel",
+      "operation_id": "cancel_api_v1_model_center_transfers__identifier__cancel_post",
+      "owner_ref": "e9fa12dac10ef0bb9d21504a9b7e7e3575f165cae3e38066050562360760cbba",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "9bbb1980449c3d35ed560df8ec6c5596ab612f8c6d7f554494cabfc052c07f72",
+      "schema_graph_sha256": "3fb18e421a8d6689abfa2fd0a6a4b8ab08f0116c338ef5bfc5c9b4530ced4da4"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/model-center/transfers/{identifier}/cleanup",
+      "operation_id": "cleanup_api_v1_model_center_transfers__identifier__cleanup_post",
+      "owner_ref": "e38dbe2757624cbd0e6d6e652be9d2b766c726c8f6661d3298229526106002fe",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "35df734a13194e6e91c19f903412c3923ec37db5deafde472ae05c30e885d296",
+      "schema_graph_sha256": "0d83b8b1c940dbb03c3e2a5e1ac23ae4e0ffac0666688ef446c98e5e1aa636f3"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/model-center/transfers/{identifier}/cleanup-preview",
+      "operation_id": "cleanup_preview_api_v1_model_center_transfers__identifier__cleanup_preview_post",
+      "owner_ref": "512acd9b62686077da065e34c2b74208b8d22dfd5c4b9c852808a2571257938b",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "c2fafbc1be6f8fe50e6e1fbd07fc1274190e7bdcd7a96a653e40dbb8c1b0e911",
+      "schema_graph_sha256": "3fb18e421a8d6689abfa2fd0a6a4b8ab08f0116c338ef5bfc5c9b4530ced4da4"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/model-center/transfers/{identifier}/pause",
+      "operation_id": "pause_api_v1_model_center_transfers__identifier__pause_post",
+      "owner_ref": "380db5947c90a41d60d7ffc8488e8cc5dbc6a515ba3ede1c6b65d71c11d25444",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "77b7aa8ea0f9ca836c3d11884c4eb34154c86eebdcadb4b254c41efbaee383e4",
+      "schema_graph_sha256": "3fb18e421a8d6689abfa2fd0a6a4b8ab08f0116c338ef5bfc5c9b4530ced4da4"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/model-center/transfers/{identifier}/resume",
+      "operation_id": "resume_api_v1_model_center_transfers__identifier__resume_post",
+      "owner_ref": "1ed9914ab694d4813852992b0d7b8ae6e4f312873c0a6e09a300c03f15d8b411",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "bf6d5c9c7bc1026e1a3d25930457c45a3dc2072f5e4b11e4b46acf072209b382",
+      "schema_graph_sha256": "1e7a6d5291f1379df0f5dc77cd5d8251154d53819ed8cad2d7e01832a21e57e0"
+    },
+    {
+      "method": "POST",
       "path": "/api/v1/novels",
       "operation_id": "create_novel_api_v1_novels_post",
       "owner_ref": "8d15f9faf5130c84ab0f9f0c3b4731822039e05355f2f8c1ce9f5d2d594df935",
@@ -21618,8 +21801,8 @@
         "FULL_RECOVERY_ADDED_ROUTE",
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
-      "operation_sha256": "645088fe42681cbe84915cb4a8832b29b5d8346798ad14244d9b3f9b63ddfc11",
-      "schema_graph_sha256": "1b0e4cab3e6416d1d51186f079770d1bab3d5d5434e45d34def5fbe5ddaf6eed"
+      "operation_sha256": "4bee988e4370c21a9952292a05e2952c8a808fb908642bc61ae799d2f22fefbe",
+      "schema_graph_sha256": "ee480406d5ba77dd3b76fc2750ae3ba9428cb8016a194e1c04950c718e2d6bd8"
     },
     {
       "method": "POST",
@@ -21690,8 +21873,8 @@
         "FULL_RECOVERY_ADDED_ROUTE",
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
-      "operation_sha256": "bcc7e76a99ed2eb3aa6c0a3260b56f89ad31fab9c1e6b3c4a366468ce274ed1a",
-      "schema_graph_sha256": "1b0e4cab3e6416d1d51186f079770d1bab3d5d5434e45d34def5fbe5ddaf6eed"
+      "operation_sha256": "899ed51426dd21ff5f786d728549fa2b5c333bc3c6d1794ccc76de2462a46922",
+      "schema_graph_sha256": "ee480406d5ba77dd3b76fc2750ae3ba9428cb8016a194e1c04950c718e2d6bd8"
     },
     {
       "method": "POST",
@@ -25985,7 +26168,8 @@
       "operation_id": "preview_video_reference_api_v1_projects__nid__studio_assets__aid__video_reference_preview_post",
       "owner_ref": "b71f9d6c243dc1fc4c8304f073214a865c7321acbb46322b7274628d8fe35627",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "84c7897ec39f2ea82080e3052232e09c8437d2eb564b363f9887e82ecc00528c",
       "schema_graph_sha256": "3442c6fe394530b090684ddd68e9ef152541d3429f141aa8288d1de9521d469d"
@@ -25996,7 +26180,8 @@
       "operation_id": "save_video_reference_api_v1_projects__nid__studio_assets__aid__video_reference_save_post",
       "owner_ref": "120866bd6cb24a45917e1ddf1364b7b83db6858b9ffc0b0c348cbe014d6fceba",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "434fc78b8445f3c2c48d20aa4cf17c69534669c04b0a3ab06d0f790f0ad7fdfb",
       "schema_graph_sha256": "dc335b932611904a16a7db57b29e0cd864674e30731e569c26fe581de6934a30"

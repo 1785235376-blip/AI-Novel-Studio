@@ -1,0 +1,27 @@
+....................................F                                    [100%]
+=================================== FAILURES ===================================
+_______ test_linked_root_or_partial_and_unsupported_platform_fail_closed _______
+tests/test_model_center_transfers.py:293: in test_linked_root_or_partial_and_unsupported_platform_fail_closed
+    svc.resume(row['id'], row['version'], GUARD)
+app/model_center/transfers.py:310: in resume
+    if row['source']['size_bytes'] - row['bytes_received'] > self._capacity(root, self._all(directory), directory, excluding=identifier):
+                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/model_center/transfers.py:137: in _capacity
+    binary, _ = self._binary(task, row)
+                ^^^^^^^^^^^^^^^^^^^^^^^
+app/model_center/transfers.py:375: in _binary
+    binary = open_file(task, name, writable=writable, expected=row['file_identity'], links=2 if both else 1)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/model_center/transfer_files.py:80: in open_file
+    fd = os.open(name, flags, 0o600, dir_fd=parent)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   OSError: [Errno 40] Too many levels of symbolic links: 'partial.gguf'
+=============================== warnings summary ===============================
+tests/test_model_center_transfers.py::test_default_owner_has_no_source_destination_or_side_effect
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_model_center_transfers.py::test_linked_root_or_partial_and_unsupported_platform_fail_closed
+1 failed, 36 passed, 1 warning in 4.50s

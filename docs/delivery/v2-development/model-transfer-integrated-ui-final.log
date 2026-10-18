@@ -1,0 +1,31 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/modelcenter/modelCenterOps.test.ts (79 tests) 33ms
+ ✓ src/creative/studioClient.test.ts (38 tests) 24ms
+ ✓ src/creative/studioVideoReferenceContract.additive.test.ts (12 tests) 47ms
+ ✓ src/modelcenter/ModelTransferPanel.additive.test.tsx (28 tests) 434ms
+ ✓ src/modelcenter/ModelCenterPanel.test.tsx (20 tests) 454ms
+ ✓ src/modelcenter/ModelCenterPanel.additive.test.tsx (7 tests) 276ms
+ ✓ src/creative/StudioVideoReferencePanel.additive.test.tsx (15 tests) 445ms
+ ✓ src/creative/StudioModelClaySave.additive.test.tsx (4 tests) 172ms
+ ✓ src/modelcenter/BailianPresetPanel.additive.test.tsx (5 tests) 100ms
+ ✓ src/modelcenter/ModelCenterInjectedSafety.additive.test.tsx (6 tests) 37ms
+ ✓ src/creative/StudioVideoReferenceWorkspace.additive.test.tsx (2 tests) 1311ms
+   ✓ saves through original VIDEO workspace and refreshes original assets, lost receipt false 783ms
+   ✓ saves through original VIDEO workspace and refreshes original assets, lost receipt true 527ms
+ ✓ src/modelcenter/NativeTextPresetPanel.additive.test.tsx (11 tests) 116ms
+
+ Test Files  12 passed (12)
+      Tests  227 passed (227)
+   Start at  02:35:35
+   Duration  8.45s (transform 3.15s, setup 63ms, collect 5.43s, tests 3.45s, environment 2.73s, prepare 582ms)
+
+src/modelcenter/ModelTransferPanel.additive.test.tsx(31,103): error TS2322: Type 'Mock<(work: () => Promise<unknown>) => Promise<unknown>>' is not assignable to type '<T>(w: () => Promise<T>) => Promise<T>'.
+  Type 'Promise<unknown>' is not assignable to type 'Promise<T>'.
+    Type 'unknown' is not assignable to type 'T'.
+      'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.
+src/modelcenter/ModelTransferPanel.additive.test.tsx(31,109): error TS2322: Type 'Mock<(work: () => Promise<unknown>) => Promise<unknown>>' is not assignable to type '<T>(w: () => Promise<T>) => Promise<T>'.
+  Type 'Promise<unknown>' is not assignable to type 'Promise<T>'.
+    Type 'unknown' is not assignable to type 'T'.
+      'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.

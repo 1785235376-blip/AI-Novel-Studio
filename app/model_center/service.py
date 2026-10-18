@@ -350,6 +350,11 @@ class ModelCenterService:
         self.runtime_versions: dict[str, str] = {}
         self.current_hardware_profiles: dict[str, str] = {}
         self._config_lock = threading.RLock()
+        # Empty reviewed catalog and no destination by default. Host composition
+        # may supply reviewed single-artifact inputs; legacy model metadata is
+        # never converted into download authority.
+        from .transfers import ModelTransfers
+        self.transfers = ModelTransfers(self)
         if config_path and config_path.is_file():
             try:
                 saved=json.loads(config_path.read_text(encoding="utf-8"))

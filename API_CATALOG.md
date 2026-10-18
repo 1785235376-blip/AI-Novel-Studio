@@ -2,7 +2,7 @@
 
 Complete mounted source inventory. This catalog is a source map, not a runtime verification verdict.
 
-Starting method/path operations: 1833. Current: 2401. Added: 568. Removed: 0.
+Starting method/path operations: 1833. Current: 2417. Added: 584. Removed: 0.
 
 The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json.gz; API_CATALOG.json binds its digest and all application sources. Original aliases are listed separately.
 
@@ -128,6 +128,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/model-center/runtimes/{runtime_id}/configuration` | `app/model_center/api.py:125` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/model-center/runtimes/{runtime_id}/diagnostics` | `app/model_center/api.py:142` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/model-center/runtimes/{runtime_id}/logs` | `app/model_center/api.py:147` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/model-center/transfers` | `app/model_center/transfer_api.py:46` | FULL_RECOVERY_ADDED_ROUTE |
 | GET | `/api/models` | `app/api.py:1203` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/multimodal/health` | `app/api.py:2351` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels` | `app/api.py:1205` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -596,6 +597,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/v1/model-center/runtimes/{runtime_id}/configuration` | `app/model_center/api.py:125` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/model-center/runtimes/{runtime_id}/diagnostics` | `app/model_center/api.py:142` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/model-center/runtimes/{runtime_id}/logs` | `app/model_center/api.py:147` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/model-center/transfers` | `app/model_center/transfer_api.py:46` | FULL_RECOVERY_ADDED_ROUTE |
 | GET | `/api/v1/models` | `app/api.py:1203` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/multimodal/health` | `app/api.py:2351` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels` | `app/api.py:1205` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1014,8 +1016,8 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines` | `app/api.py:1064` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches` | `app/api.py:1075` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}` | `app/api.py:1080` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/health` | `app/main.py:390` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/novels` | `app/main.py:392` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/health` | `app/main.py:401` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/novels` | `app/main.py:403` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | PATCH | `/api/collaboration/admin/workspaces/{w}` | `app/collaboration_admin.py:111` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | PATCH | `/api/collaboration/admin/workspaces/{w}/members/{user_id}/status` | `app/collaboration_admin.py:200` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | PATCH | `/api/v1/collaboration/admin/workspaces/{w}` | `app/collaboration_admin.py:111` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1094,6 +1096,13 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/model-center/runtimes/{runtime_id}/start` | `app/model_center/api.py:108` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/model-center/runtimes/{runtime_id}/stop` | `app/model_center/api.py:117` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/model-center/runtimes/{runtime_id}/validate` | `app/model_center/api.py:95` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/model-center/transfers/preview` | `app/model_center/transfer_api.py:50` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/model-center/transfers/start` | `app/model_center/transfer_api.py:54` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/model-center/transfers/{identifier}/cancel` | `app/model_center/transfer_api.py:62` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/model-center/transfers/{identifier}/cleanup` | `app/model_center/transfer_api.py:74` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/model-center/transfers/{identifier}/cleanup-preview` | `app/model_center/transfer_api.py:70` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/model-center/transfers/{identifier}/pause` | `app/model_center/transfer_api.py:58` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/model-center/transfers/{identifier}/resume` | `app/model_center/transfer_api.py:66` | FULL_RECOVERY_ADDED_ROUTE |
 | POST | `/api/novels` | `app/api.py:1208` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/import` | `app/api.py:1930` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/adaptations` | `app/adaptation_api.py:99` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1537,8 +1546,8 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/projects/{nid}/studio/assets/{aid}/model-reference/depth-export` | `app/creative/workspace_api.py:325` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/projects/{nid}/studio/assets/{aid}/relationships` | `app/creative/workspace_api.py:403` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/projects/{nid}/studio/assets/{aid}/restore` | `app/creative/workspace_api.py:381` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/assets/{aid}/video-reference/preview` | `app/creative/workspace_api.py:273` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/projects/{nid}/studio/assets/{aid}/video-reference/save` | `app/creative/workspace_api.py:279` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/projects/{nid}/studio/assets/{aid}/video-reference/preview` | `app/creative/workspace_api.py:273` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/assets/{aid}/video-reference/save` | `app/creative/workspace_api.py:279` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/projects/{nid}/studio/canvas-views` | `app/creative/canvas_view_api.py:40` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/projects/{nid}/studio/documents/{document_id}/shots/{shot_id}/prompt-adoption` | `app/creative/prompt_adoption_api.py:49` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/projects/{nid}/studio/graph-runs/{rid}/approve` | `app/creative/graph_api.py:262` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1684,6 +1693,13 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/v1/model-center/runtimes/{runtime_id}/start` | `app/model_center/api.py:108` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/model-center/runtimes/{runtime_id}/stop` | `app/model_center/api.py:117` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/model-center/runtimes/{runtime_id}/validate` | `app/model_center/api.py:95` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/model-center/transfers/preview` | `app/model_center/transfer_api.py:50` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/model-center/transfers/start` | `app/model_center/transfer_api.py:54` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/model-center/transfers/{identifier}/cancel` | `app/model_center/transfer_api.py:62` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/model-center/transfers/{identifier}/cleanup` | `app/model_center/transfer_api.py:74` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/model-center/transfers/{identifier}/cleanup-preview` | `app/model_center/transfer_api.py:70` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/model-center/transfers/{identifier}/pause` | `app/model_center/transfer_api.py:58` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/model-center/transfers/{identifier}/resume` | `app/model_center/transfer_api.py:66` | FULL_RECOVERY_ADDED_ROUTE |
 | POST | `/api/v1/novels` | `app/api.py:1208` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/import` | `app/api.py:1930` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/adaptations` | `app/adaptation_api.py:99` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -2127,8 +2143,8 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/v1/projects/{nid}/studio/assets/{aid}/model-reference/depth-export` | `app/creative/workspace_api.py:325` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/projects/{nid}/studio/assets/{aid}/relationships` | `app/creative/workspace_api.py:403` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/projects/{nid}/studio/assets/{aid}/restore` | `app/creative/workspace_api.py:381` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/assets/{aid}/video-reference/preview` | `app/creative/workspace_api.py:273` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/v1/projects/{nid}/studio/assets/{aid}/video-reference/save` | `app/creative/workspace_api.py:279` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/projects/{nid}/studio/assets/{aid}/video-reference/preview` | `app/creative/workspace_api.py:273` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/assets/{aid}/video-reference/save` | `app/creative/workspace_api.py:279` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/projects/{nid}/studio/canvas-views` | `app/creative/canvas_view_api.py:40` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/projects/{nid}/studio/documents/{document_id}/shots/{shot_id}/prompt-adoption` | `app/creative/prompt_adoption_api.py:49` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/projects/{nid}/studio/graph-runs/{rid}/approve` | `app/creative/graph_api.py:262` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -2228,7 +2244,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches` | `app/api.py:1069` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}/narrative/mysteries/{item_id}/transition` | `app/api.py:1089` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}/narrative/proposals/{proposal_id}/accept` | `app/api.py:1099` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/context-packs` | `app/main.py:398` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/context-packs` | `app/main.py:409` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/asset-providers/{provider_id}` | `app/api.py:1132` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/asset-tasks/worker/config` | `app/api.py:2957` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/audio/providers/{provider_id}` | `app/api.py:2528` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |

@@ -1,10 +1,11 @@
 import { NativeTextPresetPanel } from './NativeTextPresetPanel';
 import { BailianPresetPanel } from './BailianPresetPanel';
+import { ModelTransferPanel } from './ModelTransferPanel';
 /**
  * UX-07 组合根：`ModelCenterPanel`。
  *
- * 这是新的挂载入口（`frontend/src/modelcenter/`），它**不**注册任何模型、不下载、
- * 不清理、不搬迁，也不写任何后端状态。Lead 负责把它挂到工作区；本目录不与
+ * 这是新的挂载入口（`frontend/src/modelcenter/`）。注册表和存储事实保持只读；
+ * 独立受控传输面板仅通过原 owner 的预览/确认契约写入。Lead 负责挂载；本目录不与
  * `frontend/src/ui/**`（含既有 `ModelCenter.tsx` 受保护表面）或 UX-08 的
  * `frontend/src/guide/` 发生任何文件级交叠。
  */
@@ -89,9 +90,9 @@ export function ModelCenterPanel(props: ModelCenterPanelProps) {
         <Button disabled={!controller.canRead} onClick={() => void controller.reload()}>重新读取模型注册表</Button>
       </header>
       <p className="model-center__hint">
-        本面板是只读消费者：不注册模型、不下载、不准备、不修复、不清理、不迁移、不删除、不调度，
+        模型注册表与存储事实为只读：不注册模型、不准备、不修复、不迁移、不删除、不调度，
         也不读取或保存任何密钥值。每一条结论都标注来自哪个原 owner 事实；原 owner 没有提供的事实，
-        界面显示为"未知"而不是补一个看起来更好的值。
+        界面显示为"未知"而不是补一个看起来更好的值。受控下载与自有部分文件清理在下方单独预览并确认。
       </p>
       {props.denied && <StatusMessage tone="error">当前会话无权查看模型中心（DENIED）。</StatusMessage>}
       <StatusBanner state={controller.state} code={controller.problem?.code} message={controller.problem?.message} />
@@ -116,9 +117,10 @@ export function ModelCenterPanel(props: ModelCenterPanelProps) {
       <ProviderKeyState credentials={controller.credentials} />
       <BailianPresetPanel {...props} />
       <NativeTextPresetPanel {...props} />
+      <ModelTransferPanel {...props} />
 
       <div className="model-center__actions">
-        <Button disabled variant="ghost">下载模型（不可用：原 owner 没有下载端点）</Button>
+        <Button disabled variant="ghost">下载模型（注册表不可直接下载：没有已审核来源授权）</Button>
         <Button disabled variant="ghost">准备 / 修复模型（不可用：原 owner 没有对应端点）</Button>
         <Button disabled variant="ghost">清理磁盘（不可用：physical_cleanup_available = false）</Button>
         <Button disabled variant="ghost">删除孤儿文件（不可用：孤儿报告是只读的）</Button>
