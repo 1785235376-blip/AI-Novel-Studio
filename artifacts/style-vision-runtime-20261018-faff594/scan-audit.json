@@ -1,0 +1,271 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "9c159de59dd7b143cddc500eff06457d92bc448c",
+      "path": "API_CATALOG.json",
+      "bytes": 1500304,
+      "sha256": "366211e7903614d9ead1f36b1840e4ec9350a46c7347cce2e69d64e8385041e6"
+    },
+    {
+      "blob": "e31ad3e7bcf547fb6d55ca8b19c7b6094afe249b",
+      "path": "API_CATALOG.md",
+      "bytes": 401071,
+      "sha256": "e096fec8100743c5f48babfeafa9c1ab7914e806507a46b357ab5199c7805cf1"
+    },
+    {
+      "blob": "e3ba3c9df1e5da60e11c90fabdaad6987f88cb33",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 619638,
+      "sha256": "caadac487f6dfed7c56e8410945d0141ee46435b0477c4d2e48a803799facb26"
+    },
+    {
+      "blob": "b9434f24154de6381a221639fa5394a2759b6549",
+      "path": "app/experimental/local_vision_broker.py",
+      "bytes": 2898,
+      "sha256": "97e794613fa8a393e8d05123a7ccd3cd516f8c6cea72ae13bb53359a06d3c7da"
+    },
+    {
+      "blob": "04ea2b4c7cb62b3705edb51c45ed3708621062f2",
+      "path": "app/experimental/model_broker.py",
+      "bytes": 57612,
+      "sha256": "2373e077e35fb33ad6e67ba855cc944d4a9931aef379a89b1507ce33088e8c64"
+    },
+    {
+      "blob": "2841e0412ce40f30f6211daacc0aa8990d18aa2d",
+      "path": "app/experimental/style_analysis.py",
+      "bytes": 26606,
+      "sha256": "084906d77bdbe6dffcc65cfce6c99a4c9462972eb1ecd17ed1a128cb363fbfa4"
+    },
+    {
+      "blob": "fa494dd27a48db14027cf908de2268eaca6a18b7",
+      "path": "app/local_ollama_vision.py",
+      "bytes": 14175,
+      "sha256": "aaa0fc65fd5db413ee9eee0ef8eef190e76a3551176d233e128bec559ba56f57"
+    },
+    {
+      "blob": "6441174f5eedb36e8a86977249e0fe27f6638d89",
+      "path": "app/model_center/discovery.py",
+      "bytes": 71853,
+      "sha256": "0c9ae30b8531f2629254cb948be76b8b2110f869a631cef91bda9507f720d476"
+    },
+    {
+      "blob": "ef379f098c9fd259e0bb569e6aa9fd500eee3f63",
+      "path": "app/model_center/discovery_bridge.py",
+      "bytes": 37622,
+      "sha256": "1afc402f5638c67978465ba1e08da2ef8263adeb9e8423d0e2dbf388423db3e5"
+    },
+    {
+      "blob": "8aae451e85aee2f05708058c0c9834d3711b7ab2",
+      "path": "app/model_runtime.py",
+      "bytes": 19175,
+      "sha256": "7c3196f542ebc5ec03291544e653e732b4b381cb0a84e8441bad2d8e297aeac4"
+    },
+    {
+      "blob": "0f40f00196e0f4d986f13deef740556a025531ad",
+      "path": "app/vision_analysis_runtime.py",
+      "bytes": 7168,
+      "sha256": "e54e50cb1283d43421e8b6b882c73345e18d62d596b2051df3299d18b69ecda2"
+    },
+    {
+      "blob": "c9012a1825cad297c81d05e90652d90d5815f65c",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 31620,
+      "sha256": "59802c771a72bb9a452b31f3cce77669daed066949bbdaeafbab617d7e2d2862"
+    },
+    {
+      "blob": "085a07dca3bac6c63fbffe0c0448124672d52d88",
+      "path": "docs/delivery/v2-development/local-vision-runtime-final.json",
+      "bytes": 731356,
+      "sha256": "fdcacc058abf157d9aee1d5198b7558600d2f73e46d979e8af0bdfdc7443e3e7"
+    },
+    {
+      "blob": "4977df0fa2887abc423c325f7ee47c36759a07c1",
+      "path": "docs/delivery/v2-development/local-vision-runtime-final.log",
+      "bytes": 1485,
+      "sha256": "f82d5e985cefc2d99f124f2674975f7e7765f4361dd506ba7b57d5cd79d40344"
+    },
+    {
+      "blob": "0809e9c482f84a7dd68eba4c36176346da11729b",
+      "path": "docs/delivery/v2-development/local-vision-runtime-reviewed-v3.json",
+      "bytes": 731416,
+      "sha256": "b9f151f5aafa1e988b093146a63ec40502013f836e58293a3bdcb6890562663f"
+    },
+    {
+      "blob": "47621898acc9582b2e7b7a40b7a6045e4ad91f6a",
+      "path": "docs/delivery/v2-development/local-vision-runtime-reviewed-v3.log",
+      "bytes": 1485,
+      "sha256": "00691db4b700d8acf681b16d440d75a88e265b7977c48f81027c655a062d3b7b"
+    },
+    {
+      "blob": "a704e22b8273c2b8f55af00915f4cbd5c157698a",
+      "path": "docs/delivery/v2-development/style-dna-ui-catalog-roundtrip.json",
+      "bytes": 727439,
+      "sha256": "85ecaa4a6c3dc20490176ecb4bb47e5848b77fe26aa4a0d44a326356ea474d5a"
+    },
+    {
+      "blob": "89c22092fe5bcf4796589f3c916e8d5f19abe616",
+      "path": "docs/delivery/v2-development/style-dna-ui-catalog-roundtrip.log",
+      "bytes": 1096,
+      "sha256": "243f326bbda23f52e3e0701e460344a25b0ad1b69e0885d9801f8f9140d2cd53"
+    },
+    {
+      "blob": "686c5a70f40b427161af5ccdea9eb8ccf99064fb",
+      "path": "docs/delivery/v2-development/style-dna-ui-final-file.json",
+      "bytes": 727263,
+      "sha256": "a38a66a9f086fbae28c0ff9db4df36dfab0297bd1007813ec5e20191f6319d51"
+    },
+    {
+      "blob": "0a2a368783fc7b8ef6bd91cab17f283dce5b615e",
+      "path": "docs/delivery/v2-development/style-dna-ui-final-file.log",
+      "bytes": 1088,
+      "sha256": "d579afddde6b79eaf78061d941cbee6fe3cb509c23978e9634033709040375ef"
+    },
+    {
+      "blob": "2267be90b8c1cec1f09822cdfa07438571821c4d",
+      "path": "docs/delivery/v2-development/style-dna-ui-integration/style-dna-ui-final.log",
+      "bytes": 610,
+      "sha256": "ca669b748aed4dc8dd080e03b7aa5b9b5860ef5d26696847d7eb4d8837a27f27"
+    },
+    {
+      "blob": "5bff4e787306f11ea25abdf482898bc65f9dfba2",
+      "path": "docs/delivery/v2-development/style-dna-ui-integration/style-dna-ui-geometry-system.log",
+      "bytes": 25251,
+      "sha256": "fa893c2816963f9e6d1add082cd76d70b238870e8fb71272a309e814885b368e"
+    },
+    {
+      "blob": "db571e5ab31c2b7486eca4b0de1e94e2544a2297",
+      "path": "docs/delivery/v2-development/style-dna-ui-integration/style-dna-ui-geometry.log",
+      "bytes": 9719,
+      "sha256": "ef4b0615579379fbf9a46b98c049f4ad2e01a274311ced86edf0726c3f7518c8"
+    },
+    {
+      "blob": "51fbfed81227090f4889e874dfecc6d9ab4c246b",
+      "path": "docs/delivery/v2-development/style-ui-local-vision-integration-20261018.md",
+      "bytes": 3618,
+      "sha256": "170f82d1d7cfa3ec39d43aa565a59f6d80c895d948383699aa7fdf42a584e149"
+    },
+    {
+      "blob": "dfbb8b06cdc78f7b47fb5438bae5f5b8a26bd307",
+      "path": "docs/delivery/v2-development/style-ui-vision-runtime-file.json",
+      "bytes": 733151,
+      "sha256": "ad7445859cd810b44eeebf487db8178f29417dc584716f2f3d76b345e7192fae"
+    },
+    {
+      "blob": "b506f99d8818a0628442bb0d2fef441e2b418568",
+      "path": "docs/delivery/v2-development/style-ui-vision-runtime-file.log",
+      "bytes": 1133,
+      "sha256": "74609bd9bc173e2161fdacb041a9fbbc9eb989a9d9f19a8309747222cfa41505"
+    },
+    {
+      "blob": "c8a4d34a7213fa43abe1f6db21077b2ae1df3707",
+      "path": "docs/delivery/v2-development/style-ui-vision-runtime-frontend.json",
+      "bytes": 733276,
+      "sha256": "ce686ef17f265e9e4a03cc19c01661da1c08a3465633b83d098f59d8f099c45b"
+    },
+    {
+      "blob": "deff7c880cba92e82de64c609eca63edd683961e",
+      "path": "docs/delivery/v2-development/style-ui-vision-runtime-frontend.log",
+      "bytes": 2440,
+      "sha256": "5c3bfcccc4ee7f2b5168b310b1e412cd291327badab8a73461a10e6124c89c9a"
+    },
+    {
+      "blob": "ecc122f9d15f18bb18c2a6067379609a46c44c18",
+      "path": "docs/delivery/v2-development/style-ui-vision-runtime-postgres-cleanup.json",
+      "bytes": 1584,
+      "sha256": "276fbc23b4c1e340fa4105e25d4161318ddcd773208766cf2c1b90158009a95e"
+    },
+    {
+      "blob": "13afa5dfe8ea7cb0bcd513d0f38a9f9d4b5eb4e0",
+      "path": "docs/delivery/v2-development/style-ui-vision-runtime-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "a3b8c89661a6fb0afe80aff365998e916f614fbab3ed1fab6b1c92ad1097f00e"
+    },
+    {
+      "blob": "e6222151689b8de457250eff0ede19558ff3a960",
+      "path": "docs/delivery/v2-development/style-ui-vision-runtime-postgres.json",
+      "bytes": 733075,
+      "sha256": "9b9d4b37ae023589cd45f2da1d9948126e5dad66fca143b895fadf20ed17c8e2"
+    },
+    {
+      "blob": "df85abd88ab395639db656fb4e7a891af5e81c21",
+      "path": "docs/delivery/v2-development/style-ui-vision-runtime-postgres.log",
+      "bytes": 1125,
+      "sha256": "88d83ee563ebe69676a407505f236342a751576af4cd54bfa7add5dcfe70412c"
+    },
+    {
+      "blob": "b10b95ab3595a60063b6443ee7564a3428b5298c",
+      "path": "docs/delivery/v2-development/style-ui-vision-runtime-public.json",
+      "bytes": 733332,
+      "sha256": "5832e6cb0986daf78bedd0c055d480973ccd9bef0d825f000bca9e4580f4198f"
+    },
+    {
+      "blob": "01ea3d1074363dc27c3ab585b2a903452be18976",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_ui_runtime_postgres.py",
+      "bytes": 1688,
+      "sha256": "fb557e2abd873687dbba8c02850aeb38cfe085e946d1c8feccc745551c8cc6fb"
+    },
+    {
+      "blob": "59537ecf76d4539a84036486acf8f9c58f40aecb",
+      "path": "docs/development/local_vision_runtime_v3.md",
+      "bytes": 9249,
+      "sha256": "21df1e96922757599c17bc27980b079a79353713e2743926f0d3f358bc09d0bf"
+    },
+    {
+      "blob": "500ab957ce5034d478099a8edac404c32cab3319",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 773325,
+      "sha256": "59d722cb0e8aeccf3129a233d653e8606fc2b72975b1959c8f080d8ad66891e8"
+    },
+    {
+      "blob": "a03d409edadf0de5db77707ca49894ef731cad4e",
+      "path": "frontend/src/experimental/StyleAnalysisPanel.tsx",
+      "bytes": 26566,
+      "sha256": "ecbb556e9b2583e91e89e0cda501238b34039578ae73548f6801f925df1ef45e"
+    },
+    {
+      "blob": "d2d0ba5c8fe82c597a6f4618e4ff956ef7bb3ed8",
+      "path": "frontend/src/experimental/StyleDNAEditor.test.tsx",
+      "bytes": 12365,
+      "sha256": "a6383d39fef50f843012328e9323706c13e814bcb90df467411517b4dbc728ce"
+    },
+    {
+      "blob": "62cf0b1ab90b2df43677e66c2a671a8f1d2560e5",
+      "path": "frontend/src/experimental/StyleDNAEditor.tsx",
+      "bytes": 12860,
+      "sha256": "d3f0be6e91db3a54db4e9184c73df9aad4781e003e492ecf84114956e948bd4a"
+    },
+    {
+      "blob": "100f20f9b3987bc4b94acb4872eb40c5fbc7602d",
+      "path": "frontend/src/experimental/styleReviewClient.ts",
+      "bytes": 13737,
+      "sha256": "6dfca1c3c3deb234762d312621e804eeb71e4d60768af33578d48ea3be658d82"
+    },
+    {
+      "blob": "ef273af65ed6abd0ab2538f41df331dfd7ca5447",
+      "path": "packaging/public-build.json",
+      "bytes": 25130,
+      "sha256": "128ffe8771c0b0f2261e8be645067c9914c2de084c5fe64d84598cbf49840ce3"
+    },
+    {
+      "blob": "0a5ba2ca00176b747e65c83ec033d0f32673a9a4",
+      "path": "tests/test_local_vision_runtime_additive.py",
+      "bytes": 24373,
+      "sha256": "c01ac702421880c27f3df0796554e77b2abe26313dbddd11c6ef5e578f911247"
+    },
+    {
+      "blob": "b9c09b9bc5e1c306cdf232d9d4242ab8fcaa6663",
+      "path": "tests/test_style_dna_hierarchy_mounted.py",
+      "bytes": 18882,
+      "sha256": "81b1db36af14c52831ec22a0f884e98100fed42eb98a530cbd93fce73b2d751a"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
