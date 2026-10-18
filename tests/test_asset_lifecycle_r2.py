@@ -64,9 +64,14 @@ def test_symlink_assets_are_never_followed(services, tmp_path):
     assets, _ = services
     item = upload(assets)
     target = tmp_path / "unrelated"
-    target.write_text("private")
+    target.write_text("private", encoding="utf-8")
     assets._bin_path(item["id"]).unlink()
-    (assets.root / (item["id"] + ".bin")).symlink_to(target)
+    try:
+        (assets.root / (item["id"] + ".bin")).symlink_to(target)
+    except OSError as exc:
+        if getattr(exc, "winerror", None) == 1314:
+            pytest.skip("WINDOWS_SYMLINK_PRIVILEGE_UNAVAILABLE: hosted Linux CI covers the symlink contract")
+        raise
     with pytest.raises(AssetIntegrityError, match="regular file"):
         assets.content(item["id"])
 
@@ -138,7 +143,7 @@ def test_approved_reference_index_is_persisted_lexical_with_provenance(services,
     assert memories.search_visual_memory("n1", "长发")["items"][0]["id"] == memory["id"]
     index_files = list((tmp_path / "v1_capabilities" / "visual_memory_indexes").glob("*.json"))
     assert len(index_files) == 1
-    assert json.loads(index_files[0].read_text())["postings"]["silver"][memory["id"]] > 0
+    assert json.loads(index_files[0].read_text(encoding="utf-8"))["postings"]["silver"][memory["id"]] > 0
     restarted = V1CapabilityService(tmp_path, Novels(), None, AssetLibraryService(tmp_path))
     assert restarted.search_visual_memory("n1", "silver")["source_fingerprint"] == found["source_fingerprint"]
     assert restarted.search_visual_memory("n2", "silver")["items"] == []
@@ -183,11 +188,11 @@ def test_index_cache_tampering_rebuilds_from_authority(services, tmp_path):
     memories.approve_visual_memory("n1", memory["id"], 1)
     memories.search_visual_memory("n1", "silver")
     path = next((tmp_path / "v1_capabilities" / "visual_memory_indexes").glob("*.json"))
-    cached = json.loads(path.read_text())
+    cached = json.loads(path.read_text(encoding="utf-8"))
     cached["postings"]["private"] = {memory["id"]: 100}
-    path.write_text(json.dumps(cached))
+    path.write_text(json.dumps(cached), encoding="utf-8")
     assert memories.search_visual_memory("n1", "private")["items"] == []
-    path.write_text("broken")
+    path.write_text("broken", encoding="utf-8")
     assert memories.search_visual_memory("n1", "silver")["items"]
 
 

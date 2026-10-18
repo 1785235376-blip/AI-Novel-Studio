@@ -129,3 +129,16 @@ Current test failures and earlier historical failures are not erased by publicat
 ### Phase7 unified production workflow (2026-10-14)
 
 [Report](../../PHASE7_WORKFLOW_UX_REPORT.md) and [design/contract](production-workflow-phase7.md): one advisory read projection over the existing Director, Storyboard, Image, Video, Audio, Timeline and Asset owners, plus exactly one mutation — the neutral studio's own saved intent through the original scope-atomic preference row (version CAS, retained history, preset). Module counts and statuses are measured from owner rows; per-asset review state is reported only from an owner-stored marker, and media candidate review stays job-level rather than being inferred. The Studio dashboard, workflow board, intent editor, asset overview and inspector consume strict captured DTOs through the existing module-content seam, and a source-bound fixture emitted by the real service is decoded by the strict frontend contract. Whole modules remain PARTIAL; PostgreSQL is NOT_CONFIGURED on this machine; native/GPU/model/full-CI acceptance and M4→M9 gates remain LOCAL_REQUIRED, hosted checks BLOCKED_ACCOUNT_PLATFORM.
+
+## Engineering baseline and requirement traceability (2026-10-19)
+
+The V2 engineering baseline, isolated runbook, defect log, security/media contracts, release gates
+and the single machine-readable requirement index now live in
+[engineering/README.md](engineering/README.md). That index covers the original Master Roadmap
+release items, the 40 A/B/U/F advanced capability packages, DIF-01–DIF-12 and
+IMAGE-COMIC-01–IMAGE-COMIC-20 with one status vocabulary.
+
+This is an engineering tracking baseline, not a release and not a claim that unimplemented
+capabilities exist. The official full V2 remains blocked until the original roadmap, all 12 DIF
+capabilities, all 20 comic sub-features and final same-build acceptance are complete.
+

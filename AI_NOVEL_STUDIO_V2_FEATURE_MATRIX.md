@@ -1811,3 +1811,21 @@ PR仍Draft/open，main/V1 frozen refs未动，完整V2仍PARTIAL、非freeze/RC�
 | Hosted/总体 | 原GitHub账单锁使job steps为空，独立BLOCKED；完整V2 PARTIAL。生产adoption、installer/clean-machine、真实模型/GPU与原全链路边界继续保留。 |
 
 自有验收服务已停；所有失败/通过证据、profile与数据库保留，未递归删除或宣称空间回收。待账单锁解除后重跑最终HEAD hosted CI；生产adoption闸门继续关闭。
+
+
+## 2026-10-19 — Engineering baseline and requirement traceability index
+
+The 2026-10-19 engineering round established the runnable baseline and the unique tracking index.
+Status for the original roadmap items, the 40 A/B/U/F advanced packages, DIF-01–12 and
+IMAGE-COMIC-01–20 is now maintained in exactly one place:
+
+- [docs/v2/engineering/README.md](docs/v2/engineering/README.md) — engineering entry point
+- [docs/v2/engineering/requirements-traceability.json](docs/v2/engineering/requirements-traceability.json) — machine-readable index
+- [docs/v2/engineering/BASELINE_20261019_r1.md](docs/v2/engineering/BASELINE_20261019_r1.md) — actual commands/results at the tested SHA
+- [docs/v2/engineering/DEFECTS_20261019_r1.md](docs/v2/engineering/DEFECTS_20261019_r1.md) — fixed/open defects
+
+This section is a link only: it does not promote any feature to implemented, verified or accepted,
+and it is not a release. Hosted CI, Windows final acceptance, real model/GPU execution and paid
+providers remain outside the round. The official full V2 still requires the original roadmap +
+DIF-01–12 + IMAGE-COMIC-01–20 + final same-build acceptance.
+

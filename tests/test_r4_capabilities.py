@@ -13,7 +13,7 @@ def test_all_forty_packages_and_dependency_waves_are_registered():
     assert {row['id'] for row in CAPABILITIES} == expected
     assert {row['wave'] for row in CAPABILITIES} == set(range(7))
     assert all(set(row['dependencies']).issubset(expected - {row['id']}) for row in CAPABILITIES)
-    matrix = json.loads((Path(__file__).resolve().parents[1] / 'docs/delivery/post-v1-r4-r5-ux/FEATURE_MATRIX.json').read_text())
+    matrix = json.loads((Path(__file__).resolve().parents[1] / 'docs/delivery/post-v1-r4-r5-ux/FEATURE_MATRIX.json').read_text(encoding='utf-8'))
     assert {row['id'] for row in matrix['packages']} == expected
     assert len(matrix['inherited_r3_gaps']) == 9
 

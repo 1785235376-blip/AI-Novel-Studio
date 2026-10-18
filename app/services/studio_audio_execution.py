@@ -651,6 +651,8 @@ class StudioAudioExecution:
                 inspection_current()
                 return output, result
         if not 0 < len(output) <= self.assets.MAX_BYTES: raise MediaValidationError("trim output exceeds asset limit")
+        from ..media_files import normalize_pcm_wav
+        output = normalize_pcm_wav(output)
         result = inspect_media(output, "audio", guard=inspection_current)
         if abs(result["duration_ms"] - duration) > 2: raise MediaValidationError("trim output duration does not match the reviewed interval")
         if (result.get("media_type") != "audio/wav" or result.get("validation") != "PCM_DECODED"

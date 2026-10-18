@@ -1,0 +1,355 @@
+[WebServer] (node:116668) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 8 tests using 1 worker
+
+(node:119432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:119432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\chunk-4MBMRILA.js: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\react-dom_client.js.map: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\react.js.map: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\@tanstack_react-query.js.map: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\react.js: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\react_jsx-runtime.js: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\react-dom.js.map: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\zustand.js.map: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\@tanstack_react-query.js: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\chunk-JL7NITTU.js.map: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\chunk-FSIYESKP.js.map: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\@tiptap_starter-kit.js.map: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\react_jsx-dev-runtime.js.map: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\chunk-HY3VYELS.js.map: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\chunk-6U4ZCYMK.js: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\lucide-react.js: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\chunk-JL7NITTU.js: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\react-dom.js: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\chunk-4MBMRILA.js.map: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\@tiptap_extension-placeholder.js.map: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\zustand.js: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\lucide-react.js.map: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\react_jsx-runtime.js.map: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\@tiptap_react.js: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\@tiptap_react.js.map: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\@tiptap_starter-kit.js: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\chunk-FSIYESKP.js: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\react_jsx-dev-runtime.js: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\react-dom_client.js: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\@tiptap_extension-placeholder.js: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\chunk-HY3VYELS.js: Access is denied.
+[WebServer] 
+[WebServer] X [ERROR] Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\chunk-6U4ZCYMK.js.map: Access is denied.
+[WebServer] 
+[WebServer] D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:1467
+[WebServer]   let error = new Error(text);
+[WebServer]               ^
+[WebServer] 
+[WebServer] Error: Build failed with 32 errors:
+[WebServer] error: Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\chunk-4MBMRILA.js: Access is denied.
+[WebServer] error: Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\react-dom_client.js.map: Access is denied.
+[WebServer] error: Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\react.js.map: Access is denied.
+[WebServer] error: Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\@tanstack_react-query.js.map: Access is denied.
+[WebServer] error: Failed to write to output file: open D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.vite\deps_temp_3e5bb69e\react.js: Access is denied.
+[WebServer] ...
+[WebServer]     at failureErrorWithLog (D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:1467:15)
+[WebServer]     at D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:926:25
+[WebServer]     at D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:1345:9
+[WebServer]     at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+[WebServer]   errors: [Getter/Setter],
+[WebServer]   warnings: [Getter/Setter]
+[WebServer] }
+[WebServer] 
+[WebServer] Node.js v22.14.0
+  x  1 [chromium] › tests\visual\creative-workbench.spec.ts:49:1 › V2 remains off with no creative API requests (2.3s)
+(node:130856) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:130856) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 [chromium] › tests\visual\creative-workbench.spec.ts:51:1 › keyboard stages and cancelled exit preserve unsaved creative content (2.3s)
+(node:130056) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:130056) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  3 [chromium] › tests\visual\creative-workbench.spec.ts:53:117 › V2 shared-shell geometry 1366x768 (2.3s)
+(node:122376) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:122376) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  4 [chromium] › tests\visual\creative-workbench.spec.ts:53:117 › V2 shared-shell geometry 1440x900 (2.3s)
+(node:77580) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:77580) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  5 [chromium] › tests\visual\creative-workbench.spec.ts:53:117 › V2 shared-shell geometry 1920x1080 (2.3s)
+(node:121076) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:121076) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  6 [chromium] › tests\visual\creative-workbench.spec.ts:55:117 › V2 timeline header shields scrolled reorder controls 1366x768 (2.3s)
+(node:121796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:121796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  7 [chromium] › tests\visual\creative-workbench.spec.ts:55:117 › V2 timeline header shields scrolled reorder controls 1440x900 (2.3s)
+(node:109128) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:109128) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  8 [chromium] › tests\visual\creative-workbench.spec.ts:55:117 › V2 timeline header shields scrolled reorder controls 1920x1080 (2.3s)
+
+
+  1) [chromium] › tests\visual\creative-workbench.spec.ts:49:1 › V2 remains off with no creative API requests 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/
+    Call log:
+      - navigating to "http://127.0.0.1:5175/", waiting until "load"
+
+
+      47 | }
+      48 |
+    > 49 | test('V2 remains off with no creative API requests', async ({ page }) => { const requests = await seed(page, false); await page.goto('/'); await expect(page.locator('.app-shell')).toBeVisible(); await expect(page.getByRole('button', { name: '打开 V2 创作工作台' })).toHaveCount(0); expect(requests).toHaveLength(0); });
+         |                                                                                                                                 ^
+      50 |
+      51 | test('keyboard stages and cancelled exit preserve unsaved creative content', async ({ page }) => { await seed(page); await open(page); const novel = page.getByRole('tab', { name: /^小说 Novel/ }); await novel.focus(); await page.keyboard.press('ArrowRight'); await expect(page.getByRole('tab', { name: /^剧本 Screenplay/ })).toBeFocused(); await page.getByLabel('文档标题', { exact: true }).fill('保留此草稿'); await page.getByRole('button', { name: '返回经典工作区' }).click(); await expect(page.getByText('离开会关闭未保存的创作草稿。可以取消离开，先保存或导出。')).toBeVisible(); await page.getByRole('button', { name: '继续编辑', exact: true }).click(); await expect(page.getByLabel('文档标题', { exact: true })).toHaveValue('保留此草稿'); await page.getByRole('tab', { name: /^制作 Production/ }).click(); await page.getByRole('tab', { name: /^剧本 Screenplay/ }).click(); await expect(page.getByLabel('文档标题', { exact: true })).toHaveValue('保留此草稿'); });
+      52 |
+        at D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\tests\visual\creative-workbench.spec.ts:49:129
+
+    Error Context: test-results\creative-workbench\creative-workbench-V2-rema-a7efb-th-no-creative-API-requests-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\creative-workbench\creative-workbench-V2-rema-a7efb-th-no-creative-API-requests-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\creative-workbench\creative-workbench-V2-rema-a7efb-th-no-creative-API-requests-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests\visual\creative-workbench.spec.ts:51:1 › keyboard stages and cancelled exit preserve unsaved creative content 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/
+    Call log:
+      - navigating to "http://127.0.0.1:5175/", waiting until "load"
+
+
+      27 | }
+      28 | async function open(page: Page) {
+    > 29 |   await page.goto('/');
+         |              ^
+      30 |   const entry = page.getByTestId('chapter-tree-scroll').getByRole('button', { name: '打开 V2 创作工作台', exact: true });
+      31 |   await expect(entry).toBeVisible();
+      32 |   await entry.scrollIntoViewIfNeeded();
+        at open (D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\tests\visual\creative-workbench.spec.ts:29:14)
+        at D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\tests\visual\creative-workbench.spec.ts:51:124
+
+    Error Context: test-results\creative-workbench\creative-workbench-keyboar-675f4-ve-unsaved-creative-content-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\creative-workbench\creative-workbench-keyboar-675f4-ve-unsaved-creative-content-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\creative-workbench\creative-workbench-keyboar-675f4-ve-unsaved-creative-content-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › tests\visual\creative-workbench.spec.ts:53:117 › V2 shared-shell geometry 1366x768 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/
+    Call log:
+      - navigating to "http://127.0.0.1:5175/", waiting until "load"
+
+
+      27 | }
+      28 | async function open(page: Page) {
+    > 29 |   await page.goto('/');
+         |              ^
+      30 |   const entry = page.getByTestId('chapter-tree-scroll').getByRole('button', { name: '打开 V2 创作工作台', exact: true });
+      31 |   await expect(entry).toBeVisible();
+      32 |   await entry.scrollIntoViewIfNeeded();
+        at open (D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\tests\visual\creative-workbench.spec.ts:29:14)
+        at D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\tests\visual\creative-workbench.spec.ts:53:277
+
+    Error Context: test-results\creative-workbench\creative-workbench-V2-shared-shell-geometry-1366x768-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\creative-workbench\creative-workbench-V2-shared-shell-geometry-1366x768-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\creative-workbench\creative-workbench-V2-shared-shell-geometry-1366x768-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium] › tests\visual\creative-workbench.spec.ts:53:117 › V2 shared-shell geometry 1440x900 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/
+    Call log:
+      - navigating to "http://127.0.0.1:5175/", waiting until "load"
+
+
+      27 | }
+      28 | async function open(page: Page) {
+    > 29 |   await page.goto('/');
+         |              ^
+      30 |   const entry = page.getByTestId('chapter-tree-scroll').getByRole('button', { name: '打开 V2 创作工作台', exact: true });
+      31 |   await expect(entry).toBeVisible();
+      32 |   await entry.scrollIntoViewIfNeeded();
+        at open (D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\tests\visual\creative-workbench.spec.ts:29:14)
+        at D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\tests\visual\creative-workbench.spec.ts:53:277
+
+    Error Context: test-results\creative-workbench\creative-workbench-V2-shared-shell-geometry-1440x900-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\creative-workbench\creative-workbench-V2-shared-shell-geometry-1440x900-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\creative-workbench\creative-workbench-V2-shared-shell-geometry-1440x900-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [chromium] › tests\visual\creative-workbench.spec.ts:53:117 › V2 shared-shell geometry 1920x1080 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/
+    Call log:
+      - navigating to "http://127.0.0.1:5175/", waiting until "load"
+
+
+      27 | }
+      28 | async function open(page: Page) {
+    > 29 |   await page.goto('/');
+         |              ^
+      30 |   const entry = page.getByTestId('chapter-tree-scroll').getByRole('button', { name: '打开 V2 创作工作台', exact: true });
+      31 |   await expect(entry).toBeVisible();
+      32 |   await entry.scrollIntoViewIfNeeded();
+        at open (D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\tests\visual\creative-workbench.spec.ts:29:14)
+        at D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\tests\visual\creative-workbench.spec.ts:53:277
+
+    Error Context: test-results\creative-workbench\creative-workbench-V2-shared-shell-geometry-1920x1080-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\creative-workbench\creative-workbench-V2-shared-shell-geometry-1920x1080-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\creative-workbench\creative-workbench-V2-shared-shell-geometry-1920x1080-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [chromium] › tests\visual\creative-workbench.spec.ts:55:117 › V2 timeline header shields scrolled reorder controls 1366x768 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/
+    Call log:
+      - navigating to "http://127.0.0.1:5175/", waiting until "load"
+
+
+      27 | }
+      28 | async function open(page: Page) {
+    > 29 |   await page.goto('/');
+         |              ^
+      30 |   const entry = page.getByTestId('chapter-tree-scroll').getByRole('button', { name: '打开 V2 创作工作台', exact: true });
+      31 |   await expect(entry).toBeVisible();
+      32 |   await entry.scrollIntoViewIfNeeded();
+        at open (D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\tests\visual\creative-workbench.spec.ts:29:14)
+        at D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\tests\visual\creative-workbench.spec.ts:59:9
+
+    Error Context: test-results\creative-workbench\creative-workbench-V2-time-9e453-d-reorder-controls-1366x768-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\creative-workbench\creative-workbench-V2-time-9e453-d-reorder-controls-1366x768-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\creative-workbench\creative-workbench-V2-time-9e453-d-reorder-controls-1366x768-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) [chromium] › tests\visual\creative-workbench.spec.ts:55:117 › V2 timeline header shields scrolled reorder controls 1440x900 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/
+    Call log:
+      - navigating to "http://127.0.0.1:5175/", waiting until "load"
+
+
+      27 | }
+      28 | async function open(page: Page) {
+    > 29 |   await page.goto('/');
+         |              ^
+      30 |   const entry = page.getByTestId('chapter-tree-scroll').getByRole('button', { name: '打开 V2 创作工作台', exact: true });
+      31 |   await expect(entry).toBeVisible();
+      32 |   await entry.scrollIntoViewIfNeeded();
+        at open (D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\tests\visual\creative-workbench.spec.ts:29:14)
+        at D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\tests\visual\creative-workbench.spec.ts:59:9
+
+    Error Context: test-results\creative-workbench\creative-workbench-V2-time-443eb-d-reorder-controls-1440x900-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\creative-workbench\creative-workbench-V2-time-443eb-d-reorder-controls-1440x900-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\creative-workbench\creative-workbench-V2-time-443eb-d-reorder-controls-1440x900-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8) [chromium] › tests\visual\creative-workbench.spec.ts:55:117 › V2 timeline header shields scrolled reorder controls 1920x1080 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/
+    Call log:
+      - navigating to "http://127.0.0.1:5175/", waiting until "load"
+
+
+      27 | }
+      28 | async function open(page: Page) {
+    > 29 |   await page.goto('/');
+         |              ^
+      30 |   const entry = page.getByTestId('chapter-tree-scroll').getByRole('button', { name: '打开 V2 创作工作台', exact: true });
+      31 |   await expect(entry).toBeVisible();
+      32 |   await entry.scrollIntoViewIfNeeded();
+        at open (D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\tests\visual\creative-workbench.spec.ts:29:14)
+        at D:\PoemSeed\Worktrees\v2-eng-baseline-20261019\frontend\tests\visual\creative-workbench.spec.ts:59:9
+
+    Error Context: test-results\creative-workbench\creative-workbench-V2-time-b7b95--reorder-controls-1920x1080-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\creative-workbench\creative-workbench-V2-time-b7b95--reorder-controls-1920x1080-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\creative-workbench\creative-workbench-V2-time-b7b95--reorder-controls-1920x1080-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8 failed
+    [chromium] › tests\visual\creative-workbench.spec.ts:49:1 › V2 remains off with no creative API requests 
+    [chromium] › tests\visual\creative-workbench.spec.ts:51:1 › keyboard stages and cancelled exit preserve unsaved creative content 
+    [chromium] › tests\visual\creative-workbench.spec.ts:53:117 › V2 shared-shell geometry 1366x768 
+    [chromium] › tests\visual\creative-workbench.spec.ts:53:117 › V2 shared-shell geometry 1440x900 
+    [chromium] › tests\visual\creative-workbench.spec.ts:53:117 › V2 shared-shell geometry 1920x1080 
+    [chromium] › tests\visual\creative-workbench.spec.ts:55:117 › V2 timeline header shields scrolled reorder controls 1366x768 
+    [chromium] › tests\visual\creative-workbench.spec.ts:55:117 › V2 timeline header shields scrolled reorder controls 1440x900 
+    [chromium] › tests\visual\creative-workbench.spec.ts:55:117 › V2 timeline header shields scrolled reorder controls 1920x1080 

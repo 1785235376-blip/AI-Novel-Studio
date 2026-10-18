@@ -197,7 +197,12 @@ def test_duplicate_json_keys_in_safetensors_rejected(tmp_path):
 def test_symlink_roots_and_entries_skipped_and_nested_roots_deduplicated(tmp_path):
     root = tmp_path/'models'; root.mkdir(); child = root/'sub'; child.mkdir(); safetensors(child/'model.safetensors')
     private = tmp_path/'private'; private.mkdir(); safetensors(private/'secret.safetensors')
-    (root/'linked').symlink_to(private, target_is_directory=True)
+    try:
+        (root/'linked').symlink_to(private, target_is_directory=True)
+    except OSError as exc:
+        if getattr(exc, 'winerror', None) == 1314:
+            pytest.skip('WINDOWS_SYMLINK_PRIVILEGE_UNAVAILABLE: hosted Linux CI covers the symlink contract')
+        raise
     found, _, _ = files([root, child])
     assert len(found) == 1 and found[0]['name'] == 'model.safetensors'
     found, reports, errors = files([root/'linked'])

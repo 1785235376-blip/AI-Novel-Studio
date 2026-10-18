@@ -1,0 +1,86 @@
+{
+  "backend-file-shards.xml.gz": {
+    "bytes": 267599,
+    "sha256": "ab683149a17e60b61604a524df08c7bfe3103e20dca662350d2199df0076b278"
+  },
+  "backend-file-summary.md": {
+    "bytes": 26864,
+    "sha256": "149b121a3af57054ecc7e17298bd3c7f7568e4821321938efe9f0a61dc76383d"
+  },
+  "backend-pg-summary.md": {
+    "bytes": 1064,
+    "sha256": "78d66ce56f34477a3b8e56817262e5ccdef4e9c2bdacf2af36cd3da0b2c15a2c"
+  },
+  "backend-pg.xml.gz": {
+    "bytes": 3521,
+    "sha256": "49ed600c421f1db80a7a55923ed30df1bd88e0ad253c99ddc1f5b4e1f1091958"
+  },
+  "browser-creative-edge.log": {
+    "bytes": 29231,
+    "sha256": "c2f2c92d1fdc380044f7489fae4c33ec74c55ea15c8c6224f7fce501104a9afe"
+  },
+  "browser-creative-summary.md": {
+    "bytes": 2266,
+    "sha256": "87beaac126c9a71bd40231ab213bba20d2c5d22e31ad59f44162a8dd68c9e37f"
+  },
+  "browser-visual-edge.log": {
+    "bytes": 2389,
+    "sha256": "bb61a4351baaf0068a460662c5d47b7cd16de974d789f6f744bb65b80468b8e6"
+  },
+  "browser-visual-summary.md": {
+    "bytes": 1198,
+    "sha256": "245c480cb54cab27f452af2f3d073103d5945ce88f92f71a758c45217cc6ca40"
+  },
+  "desktop-host-build.log": {
+    "bytes": 455,
+    "sha256": "0c3dcb0409270560c9e3fa4b2238fae2209809ee73c65177d2eaa19c8f3b0c82"
+  },
+  "focused-summary.md": {
+    "bytes": 1368,
+    "sha256": "6a7a4edaf39b0e9c7b7b48ca9546f211d3dcfaecaa9d7da00bc18c31001be10f"
+  },
+  "focused.xml.gz": {
+    "bytes": 28878,
+    "sha256": "5e42866d7f3bb15602620ae36f2b9969978d6bade801faac078efddb252d19be"
+  },
+  "font-manifest.json": {
+    "bytes": 1093,
+    "sha256": "ef3338d66254a9e7d010b853ac027e832aec93cf5ad1fd8cc5b89b913cf1c083"
+  },
+  "frontend-build-after-fix.log": {
+    "bytes": 1823,
+    "sha256": "5b1fcdd0672867a06e0e993cb34332a7090fa91a939badc5e718a460e9d40dfc"
+  },
+  "frontend-lint-after-fix.log": {
+    "bytes": 171,
+    "sha256": "a668c5171280404df96e2d6897d3c38b46a648d0e9a204b7c1b0464281672df2"
+  },
+  "frontend-regression-note.md": {
+    "bytes": 357,
+    "sha256": "96387418f6019930f068a4aa915418ea64e0573cd1af843d7c18deaec469899d"
+  },
+  "frontend-test-after-fix.log": {
+    "bytes": 48874,
+    "sha256": "e163b23a301419935e057f58e64567047270c5a482d086fc42c155ac378d18cc"
+  },
+  "frontend-test-summary.md": {
+    "bytes": 684,
+    "sha256": "d46afc889b726a134c7d6ac5b92af2ffa44ee0bcf0e917cec12ca5944faf310b"
+  },
+  "media-summary.md": {
+    "bytes": 397,
+    "sha256": "fd07786a3d85a2f75aa4c372a4f729fc238a40e001059faf24981735fde5525a"
+  },
+  "media.xml.gz": {
+    "bytes": 4001,
+    "sha256": "48877375de21a963d060b2777c33b5fbc8893cd23eca7c750744da8f4fcbd32b"
+  },
+  "postgres-initialization.json": {
+    "bytes": 2208,
+    "sha256": "9fd24e36404af481a5ca4206144a454c963aceacbb288478b45df611f9f199c4"
+  },
+  "postgres-shard-assignment.json": {
+    "bytes": 12701,
+    "sha256": "d643fe9d71734023adf7ad21a1e32f2f96afd36fc872a7fb22ad8984d5858f9e"
+  }
+}

@@ -93,7 +93,7 @@ def test_api_wrapper_and_envelope_risks_are_inspected(service, graph):
     ('{"1":{"inputs":{}}}', 'WORKFLOW_NODE_CLASS_REQUIRED'),
     ('{"1":{"class_type":"X","inputs":[]}}', 'WORKFLOW_INPUTS_INVALID'),
     ('[' * 25 + '0' + ']' * 25, 'WORKFLOW_TOO_DEEP'),
-    (' ' * (MAX_BYTES + 1), 'WORKFLOW_TOO_LARGE'),
+    pytest.param(' ' * (MAX_BYTES + 1), 'WORKFLOW_TOO_LARGE', id='oversized-workflow'),
 ])
 def test_malformed_bounded_json_is_rejected(raw, code):
     with pytest.raises(ValueError, match=code): parse_workflow(raw)

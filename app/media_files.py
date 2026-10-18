@@ -17,6 +17,7 @@ from pathlib import Path
 import shutil
 import socket
 import stat
+import struct
 import subprocess
 import tempfile
 import time
@@ -164,6 +165,84 @@ def _media_inspection_directory():
         _cleanup_media_directory(temporary, identity)
 
 
+def _wav_pcm_metadata(data: bytes) -> dict:
+    """Parse a bounded RIFF/WAVE integer-PCM stream, including WAVE_FORMAT_EXTENSIBLE.
+
+    Python 3.11's standard wave module rejects WAVE_FORMAT_EXTENSIBLE, which
+    ffmpeg emits for high sample rates (for example 96 kHz) even for plain
+    pcm_s16le. The product advertises 8-96 kHz PCM trim profiles, so the media
+    validator must parse the container itself. Read-only and bounds checked.
+    """
+    if len(data) < 12 or data[:4] != b"RIFF" or data[8:12] != b"WAVE":
+        raise MediaValidationError("invalid WAV media")
+    offset = 12
+    fmt = None
+    payload = None
+    while offset + 8 <= len(data):
+        chunk_id = data[offset:offset + 4]
+        size = struct.unpack_from("<I", data, offset + 4)[0]
+        body = offset + 8
+        end = body + size
+        if end > len(data):
+            raise MediaValidationError("WAV data is truncated or empty")
+        if chunk_id == b"fmt ":
+            if size < 16:
+                raise MediaValidationError("invalid WAV media")
+            tag, channels, rate, _, block_align, bits = struct.unpack_from("<HHIIHH", data, body)
+            if tag == 0xFFFE:
+                if size < 40 or data[body + 24:body + 26] != b"\x01\x00":
+                    raise MediaValidationError("unsupported or invalid WAV encoding")
+            elif tag != 1:
+                raise MediaValidationError("unsupported or invalid WAV encoding")
+            if bits <= 0 or bits % 8 or channels <= 0 or rate <= 0 or block_align != channels * (bits // 8):
+                raise MediaValidationError("invalid WAV media")
+            fmt = (channels, rate, bits, tag)
+        elif chunk_id == b"data":
+            if payload is not None:
+                raise MediaValidationError("invalid WAV media")
+            payload = (body, size)
+        offset = end + (size & 1)
+    if fmt is None or payload is None:
+        raise MediaValidationError("invalid WAV media")
+    channels, rate, bits, tag = fmt
+    body, size = payload
+    block = channels * (bits // 8)
+    frames = size // block
+    if frames <= 0 or size % block:
+        raise MediaValidationError("WAV data is truncated or empty")
+    return {
+        "media_type": "audio/wav", "extension": "wav", "duration_ms": round(frames * 1000 / rate),
+        "sample_rate": rate, "channels": channels, "sample_width": bits // 8,
+        "validation": "PCM_DECODED", "_frames": frames, "_format_tag": tag,
+        "_bits": bits, "_payload_offset": body, "_payload_size": size,
+    }
+
+
+def normalize_pcm_wav(data: bytes) -> bytes:
+    """Rewrite WAVE_FORMAT_EXTENSIBLE integer PCM as classic RIFF PCM when lossless.
+
+    ffmpeg emits WAVE_FORMAT_EXTENSIBLE for some otherwise plain PCM profiles (for
+    example 96 kHz stereo pcm_s16le). The extensible form is semantically identical
+    for <=2-channel 16-bit PCM, but older readers (including Python 3.11's wave
+    module and some players) reject it. The product's own WAV consumers are such
+    readers, so trim output is normalized to classic PCM. Metadata chunks are
+    dropped (bounded, non-audio); the PCM payload is preserved byte for byte.
+    """
+    info = _wav_pcm_metadata(data)
+    if info["_format_tag"] == 1:
+        return data
+    channels, rate, bits = info["channels"], info["sample_rate"], info["_bits"]
+    if channels > 2 or bits not in {8, 16, 24, 32}:
+        raise MediaValidationError("unsupported or invalid WAV encoding")
+    block = channels * (bits // 8)
+    fmt = struct.pack("<HHIIHH", 1, channels, rate, rate * block, block, bits)
+    payload = data[info["_payload_offset"]:info["_payload_offset"] + info["_payload_size"]]
+    chunks = b"fmt " + struct.pack("<I", len(fmt)) + fmt + b"data" + struct.pack("<I", len(payload)) + payload
+    if len(payload) & 1:
+        chunks += b"\x00"
+    return b"RIFF" + struct.pack("<I", 4 + len(chunks)) + b"WAVE" + chunks
+
+
 def inspect_media(data: bytes, kind: str, *, guard=None) -> dict:
     """Verify actual local bytes, return measured duration and container MIME.
 
@@ -186,18 +265,9 @@ def inspect_media(data: bytes, kind: str, *, guard=None) -> dict:
     if not data:
         raise MediaValidationError("media is empty")
     if kind == "audio" and data[:4] == b"RIFF" and data[8:12] == b"WAVE":
-        try:
-            with wave.open(io.BytesIO(data), "rb") as audio:
-                frames, rate, channels, width = audio.getnframes(), audio.getframerate(), audio.getnchannels(), audio.getsampwidth()
-                actual = audio.readframes(frames)
-                if not frames or rate <= 0 or len(actual) != frames * channels * width:
-                    raise MediaValidationError("WAV data is truncated or empty")
-                current()
-                return {"media_type": "audio/wav", "extension": "wav", "duration_ms": round(frames * 1000 / rate), "sample_rate": rate, "channels": channels, "sample_width": width, "validation": "PCM_DECODED"}
-        except (wave.Error, EOFError) as exc:
-            if exc is guard_failure:
-                raise
-            raise MediaValidationError("invalid WAV media") from exc
+        info = _wav_pcm_metadata(data)
+        current()
+        return {key: value for key, value in info.items() if not key.startswith("_")}
     mp4 = len(data) >= 12 and data[4:8] == b"ftyp"
     webm = data[:4] == b"\x1aE\xdf\xa3"
     mp3 = data[:3] == b"ID3" or (len(data) > 1 and data[0] == 255 and data[1] & 224 == 224)
@@ -285,21 +355,22 @@ def concatenate_wav(parts: list[bytes], pause_ms: int = 0, *, pauses_ms: list[in
             info = inspect_media(data, "audio")
             if info["media_type"] != "audio/wav":
                 raise MediaValidationError("concatenation currently requires PCM WAV segments")
-            with wave.open(io.BytesIO(data), "rb") as reader:
-                current = (reader.getnchannels(), reader.getsampwidth(), reader.getframerate())
-                if signature is None:
-                    signature = current
-                    writer.setnchannels(current[0]); writer.setsampwidth(current[1]); writer.setframerate(current[2])
-                if current != signature:
-                    raise MediaValidationError("audio segments use different PCM formats")
-                count = reader.getnframes()
-                silence = round(signature[2] * (pause_ms if pauses_ms is None else pauses_ms[index]) / 1000) if index + 1 < len(parts) else 0
-                if (frames + count + silence) * signature[0] * signature[1] + 44 > 25 * 1024 * 1024:
-                    raise MediaValidationError("audio concatenation output exceeds limit")
-                manifest.append({"sequence": index + 1, "start_ms": round(frames * 1000 / signature[2]), "duration_ms": info["duration_ms"]})
-                writer.writeframesraw(reader.readframes(count)); frames += count
-                if index + 1 < len(parts):
-                    writer.writeframesraw((b"\x80" if signature[1] == 1 else b"\x00") * silence * signature[0] * signature[1]); frames += silence
+            meta = _wav_pcm_metadata(data)
+            current = (meta["channels"], meta["sample_width"], meta["sample_rate"])
+            if signature is None:
+                signature = current
+                writer.setnchannels(current[0]); writer.setsampwidth(current[1]); writer.setframerate(current[2])
+            if current != signature:
+                raise MediaValidationError("audio segments use different PCM formats")
+            count = meta["_frames"]
+            silence = round(signature[2] * (pause_ms if pauses_ms is None else pauses_ms[index]) / 1000) if index + 1 < len(parts) else 0
+            if (frames + count + silence) * signature[0] * signature[1] + 44 > 25 * 1024 * 1024:
+                raise MediaValidationError("audio concatenation output exceeds limit")
+            manifest.append({"sequence": index + 1, "start_ms": round(frames * 1000 / signature[2]), "duration_ms": info["duration_ms"]})
+            start = meta["_payload_offset"]
+            writer.writeframesraw(data[start:start + meta["_payload_size"]]); frames += count
+            if index + 1 < len(parts):
+                writer.writeframesraw((b"\x80" if signature[1] == 1 else b"\x00") * silence * signature[0] * signature[1]); frames += silence
     return output.getvalue(), manifest
 
 

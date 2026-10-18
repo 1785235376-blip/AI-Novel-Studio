@@ -1,0 +1,387 @@
+{
+  "round": "20261019-r1",
+  "recorded_at_utc": "2026-10-19T05:15:00+08:00",
+  "results": {
+    "backend_file": "10089 passed, 190 failed, 14 errors, 4866 skipped (two shards combined)",
+    "backend_postgres": "118 passed, 151 deselected, 1 warning in 148.53s (0:02:28)",
+    "focused": "837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)",
+    "media": "106 passed, 0 failed (junit xml)",
+    "frontend": "NOT_RUN",
+    "browser_visual": "NOT_RUN",
+    "browser_creative": "NOT_RUN"
+  },
+  "rows": {
+    "V2-M0": {
+      "test_result": "PASS",
+      "actual_result": "Remote state re-fetched; origin/main=fed2404c, PR #47 Draft MERGEABLE, PR #48 CONFLICTING; archive branch verified artifact-only.",
+      "evidence_path": "docs/v2/engineering/BASELINE_20261019_r1.md",
+      "test_command": "gh pr view 47/48; git fetch; git rev-list; read-only source audit"
+    },
+    "V2-M1": {
+      "test_result": "PARTIAL",
+      "actual_result": "Asset library/lifecycle and media prerequisites passed in the focused batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) and in the final File suite (10089 passed, 190 failed, 14 errors, 4866 skipped (two shards combined)).",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (asset library/lifecycle subset)"
+    },
+    "V2-M2": {
+      "test_result": "PARTIAL",
+      "actual_result": "Creative graph/workspace contract tests passed on the fixed tree.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (creative workflows subset)"
+    },
+    "V2-M3": {
+      "test_result": "PASS",
+      "actual_result": "Local AI environment/inspection and model broker contract tests passed; real model inference remains NOT_RUN.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (Local AI environment/inspection subset)"
+    },
+    "V2-M4": {
+      "test_result": "PASS",
+      "actual_result": "Screenplay export/prompt/bible contract tests passed on the fixed tree; adaptation PG contracts exercised separately.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (screenplay export, prompt, bible subset)"
+    },
+    "V2-M5": {
+      "test_result": "PARTIAL",
+      "actual_result": "Image/media contract tests passed; image model generation NOT_RUN (no authorized local model).",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
+      "test_command": "python -m pytest -q tests/test_v2_audio_wav_controls.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py ... + full File suite"
+    },
+    "V2-M6": {
+      "test_result": "PASS",
+      "actual_result": "Director workspace and mounted director exchange contract tests passed; the OTIO parser cases remain skipped (optional extra NOT installed).",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (director workspace/storyboard subset)"
+    },
+    "V2-M7": {
+      "test_result": "PARTIAL",
+      "actual_result": "Video runtime foundation/contract tests passed; one pre-existing stale model-admission expectation remains open (D-09); real generation NOT_RUN.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (video runtime foundation subset)"
+    },
+    "V2-M8": {
+      "test_result": "PASS",
+      "actual_result": "Real CPU audio trim/resample/PCM saturation, subtitle timeline and audio pipeline tests passed (96 kHz path verified).",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
+      "test_command": "python -m pytest -q tests/test_v2_audio_wav_controls.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py ..."
+    },
+    "V2-M9": {
+      "test_result": "PASS",
+      "actual_result": "Timeline document/render-contract tests passed; real MP4 render remains a separate acceptance step.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (timeline subset) + media batch"
+    },
+    "V2-M10": {
+      "test_result": "PARTIAL",
+      "actual_result": "Research library/offline-sync/interop contracts passed; 3D reference and full QingJian product acceptance remain PLANNED.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (research/interop subset)"
+    },
+    "V2-M11": {
+      "test_result": "PARTIAL",
+      "actual_result": "File suite 10089 passed, 190 failed, 14 errors, 4866 skipped (two shards combined); focused 837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58); PG subset 118 passed, 151 deselected, 1 warning in 148.53s (0:02:28); browser visual 15/15 passed while creative journeys are blocked at their launcher precondition (D-10). Complete cross-module acceptance is not claimed.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/backend-file-summary.md",
+      "test_command": "full File suite + focused batch + real browser checks + real PG subset"
+    },
+    "V2-M12": {
+      "test_result": "NOT_RUN",
+      "actual_result": "LOCAL_REQUIRED: requires the user's machine and an authorized release candidate; not executed.",
+      "evidence_path": "docs/AI_NOVEL_STUDIO_V2_WINDOWS_ACCEPTANCE_PLAN.md",
+      "test_command": "user-executed Windows acceptance",
+      "status": "BLOCKED"
+    },
+    "V2-X01": {
+      "test_result": "PASS",
+      "actual_result": "This round introduced no second authority; documentation/test tooling only.",
+      "evidence_path": "docs/v2/engineering/EXECUTION_AND_DATA_CONTRACTS.md",
+      "test_command": "owner-map review + targeted owner tests"
+    },
+    "V2-X02": {
+      "test_result": "PARTIAL",
+      "actual_result": "Authorization/scope/collaboration suites executed in the final File suite.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/backend-file-summary.md",
+      "test_command": "python -m pytest -p no:cacheprovider -q -ra --tb=short (final full File suite) (authorization/scope suites)"
+    },
+    "V2-X03": {
+      "test_result": "PASS",
+      "actual_result": "Migration/identity-membership contracts passed against the real PostgreSQL 16.15 database.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/backend-pg-summary.md",
+      "test_command": "python -m pytest -p postgres_gate -m postgres_backend_only ... on disposable PostgreSQL 16.15 (identity migration subset)"
+    },
+    "V2-X04": {
+      "test_result": "PASS",
+      "actual_result": "Asset CAS/lifecycle/review contract tests passed on the fixed tree.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (asset lifecycle subset)"
+    },
+    "V2-X05": {
+      "test_result": "PARTIAL",
+      "actual_result": "Job/idempotency/recovery suites ran inside the final File suite.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/backend-file-summary.md",
+      "test_command": "python -m pytest -p no:cacheprovider -q -ra --tb=short (final full File suite) (job/idempotency/recovery suites)"
+    },
+    "V2-X06": {
+      "test_result": "PASS",
+      "actual_result": "Broker and model-center contract tests passed; real GPU inference NOT_RUN.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (broker/model-center subset)"
+    },
+    "V2-X07": {
+      "test_result": "PASS",
+      "actual_result": "No-model mode contract tests passed with MOCK_PROVIDER=true and ENABLE_CLOUD=false.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (local AI environment/no-model subset)"
+    },
+    "V2-X08": {
+      "test_result": "PARTIAL",
+      "actual_result": "Privacy/egress contract tests executed in the final File suite; public/internal edition isolation remains PLANNED (V2-X09).",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/backend-file-summary.md",
+      "test_command": "python -m pytest -p no:cacheprovider -q -ra --tb=short (final full File suite) (privacy/egress/outbound suites)"
+    },
+    "V2-X10": {
+      "test_result": "PASS",
+      "actual_result": "Design-token lint and production build passed; 15/15 real browser visual/geometry checks passed on system Edge.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/browser-visual-summary.md",
+      "test_command": "cd frontend; corepack pnpm lint && corepack pnpm build; Playwright visual suite"
+    },
+    "V2-X11": {
+      "test_result": "BLOCKED",
+      "actual_result": "BLOCKED_EXTERNAL: hosted GitHub Actions runner/account unavailable; all results are local and labeled local.",
+      "evidence_path": "docs/v2/engineering/BASELINE_20261019_r1.md",
+      "test_command": "gh run list / gh pr checks (hosted CI)",
+      "status": "BLOCKED"
+    },
+    "V2-X12": {
+      "test_result": "PASS",
+      "actual_result": "All tests ran with PROJECT_ROOT/profile/NOVEL_DATA_PATH/TMP/DB isolated; cleanup limited to owned run/profile dirs.",
+      "evidence_path": "docs/v2/engineering/RUNBOOK.md",
+      "test_command": "see RUNBOOK isolation contract + run directory accounting"
+    },
+    "IMAGE-COMIC-01": {
+      "test_result": "PASS",
+      "actual_result": "Comic entry/mounted API contract, OFF/V1/dependency fences passed on File and real PostgreSQL backends; 15/15 browser checks include the shell that hosts the entry.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "test_command": "python -m pytest -q tests/test_r5_comic_mounted.py tests/test_r5_comic_layouts.py",
+      "status": "INTEGRATION_VERIFIED"
+    },
+    "IMAGE-COMIC-09": {
+      "test_result": "PASS",
+      "actual_result": "Bubble/narration plain-text objects, measured layout, overflow blockers and deterministic preview/export passed with the pinned OFL font.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
+      "test_command": "python -m pytest -q tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
+      "status": "INTEGRATION_VERIFIED"
+    },
+    "IMAGE-COMIC-13": {
+      "test_result": "PASS",
+      "actual_result": "PAGE 800x1120 and WEBTOON 800x2400 presets, segmented real PNG rendering and byte-identical preview/export passed.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
+      "test_command": "python -m pytest -q tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
+      "status": "INTEGRATION_VERIFIED"
+    },
+    "IMAGE-COMIC-17": {
+      "test_result": "PARTIAL",
+      "actual_result": "Versioned restore to a new DRAFT is implemented and tested; partial re-layout/remake engine is not.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
+      "test_command": "python -m pytest -q tests/test_r5_comic_layouts.py (restore subset)"
+    },
+    "IMAGE-COMIC-18": {
+      "test_result": "PARTIAL",
+      "actual_result": "Deterministic PNG-segment ZIP + manifest + OFL export verified; ORA/CBZ/PDF/EPUB exporters are absent.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
+      "test_command": "python -m pytest -q tests/test_r5_comic_layouts.py (ZIP export subset)"
+    }
+  },
+  "packages": {
+    "F00": {
+      "test_files": [
+        "tests/test_r4_capabilities.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "U06": {
+      "test_files": [
+        "tests/test_r4_change_impact.py",
+        "tests/test_r4_change_impact_mounted.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "U09": {
+      "test_files": [
+        "tests/test_r4_local_ai_inspection.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "U11": {
+      "test_files": [
+        "tests/test_r4_reader_sessions.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "U14": {
+      "test_files": [
+        "tests/test_r4_portable_batches.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "A02": {
+      "test_files": [
+        "tests/test_post_interop_style_model.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "A04": {
+      "test_files": [
+        "tests/test_post_interop_scene_mind.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "A05": {
+      "test_files": [
+        "tests/test_post_interop_scene_mind.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "A06": {
+      "test_files": [
+        "tests/test_r4_model_broker.py",
+        "tests/test_post_interop_wave3_broker.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "A07": {
+      "test_files": [
+        "tests/test_post_interop_wave3_broker.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "A08": {
+      "test_files": [
+        "tests/test_v2_director_workspace.py",
+        "tests/test_r4_director_exchange_mounted.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "A10": {
+      "test_files": [
+        "tests/test_post_interop_wave3_research.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "A11": {
+      "test_files": [
+        "tests/test_post_interop_revision_model.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "A12": {
+      "test_files": [
+        "tests/test_r4_timeline_exchange.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "B01": {
+      "test_files": [
+        "tests/test_r5_declarative_templates.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "B03": {
+      "test_files": [
+        "tests/test_r5_voice_subtitles.py",
+        "tests/test_r5_pause_aware_audio.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "B04": {
+      "test_files": [
+        "tests/test_r5_voice_subtitles.py",
+        "tests/test_r5_pause_aware_audio.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "B05": {
+      "test_files": [
+        "tests/test_r5_multilingual_editions.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "B06": {
+      "test_files": [
+        "tests/test_r5_comic_layouts.py",
+        "tests/test_r5_comic_mounted.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "B07": {
+      "test_files": [
+        "tests/test_r5_interactive_story.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "B08": {
+      "test_files": [
+        "tests/test_r5_writer_room_mounted.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "B09": {
+      "test_files": [
+        "tests/test_r5_project_forks.py",
+        "tests/test_r5_structured_forks.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    },
+    "B10": {
+      "test_files": [
+        "tests/test_r5_offline_sync.py"
+      ],
+      "test_result": "PASS",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md"
+    }
+  }
+}

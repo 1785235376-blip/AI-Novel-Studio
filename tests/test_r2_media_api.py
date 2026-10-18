@@ -83,7 +83,7 @@ def test_media_api_partitions_branch_actor_and_recovers_same_actor_new_session(t
     assert client.get(f'/api/novels/{nid}/image-jobs',headers=renewed).json()['items'][0]['id']==image['id']
     assert client.get(f'/api/novels/{nid}/audiobook/jobs',headers=renewed).json()['items'][0]['id']==audio['id']
     for path in tmp_path.rglob('*.json'):
-        assert 'session-a' not in path.read_text() and 'session-b' not in path.read_text()
+        assert 'session-a' not in path.read_text(encoding='utf-8') and 'session-b' not in path.read_text(encoding='utf-8')
 
 
 def test_callback_requires_matching_remote_attempt_and_replay_cannot_replace_output(monkeypatch):

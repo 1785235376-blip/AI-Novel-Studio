@@ -1,0 +1,3188 @@
+{
+  "schema_version": 1,
+  "document_version": "ENG-2026.10.19-r1",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "base_branch": "feature/v2-narrative-platform",
+  "engineering_branch": "work/v2-eng-baseline-20261019",
+  "tested_baseline_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+  "generated_from_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+  "generated_at_utc": "2026-10-18T21:49:29+00:00",
+  "release_policy": "Official V2 requires the original Master Roadmap release items + DIF-01..12 + IMAGE-COMIC-01..20 + final same-build acceptance. This matrix is a tracking index, not a release certificate.",
+  "source_status": {
+    "release_scope_spec": "SOURCE_MISSING: SPEC-2026.10.19-r1 file not present on disk; DIF/COMIC MUST text marked SOURCE_MISSING where only titles were supplied",
+    "master_roadmap": "D:/PoemSeed/Documents/AI-Novel-Studio_V2/AI_NOVEL_STUDIO_V2_MASTER_ROADMAP.md (external to repo)",
+    "abu_registry_in_tree": "app/experimental/capabilities.py (40 packages)"
+  },
+  "vocabulary": {
+    "status": [
+      "PLANNED",
+      "IMPLEMENTED",
+      "INTEGRATION_VERIFIED",
+      "ACCEPTED",
+      "BLOCKED"
+    ],
+    "test_result": [
+      "PASS",
+      "FAIL",
+      "PARTIAL",
+      "BLOCKED",
+      "NOT_RUN"
+    ],
+    "gap_type": [
+      "NONE",
+      "PARTIAL",
+      "MISSING",
+      "NOT_INTEGRATED",
+      "BLOCKED",
+      "SOURCE_MISSING"
+    ],
+    "release_blocking": [
+      "HIGH",
+      "MEDIUM",
+      "LOW",
+      "NONE"
+    ]
+  },
+  "counts": {
+    "total": 97,
+    "by_group": {
+      "ABU_PACKAGE": 40,
+      "DIF": 12,
+      "IMAGE_COMIC": 20,
+      "ORIGINAL_V2": 25
+    },
+    "by_status": {
+      "BLOCKED": 2,
+      "IMPLEMENTED": 26,
+      "INTEGRATION_VERIFIED": 39,
+      "PLANNED": 30
+    },
+    "by_test_result": {
+      "BLOCKED": 1,
+      "NOT_RUN": 46,
+      "PARTIAL": 11,
+      "PASS": 39
+    },
+    "by_release_blocking": {
+      "HIGH": 49,
+      "MEDIUM": 47,
+      "NONE": 1
+    }
+  },
+  "groups": {
+    "ORIGINAL_V2": "Original Master Roadmap release-required items and cross-cutting contracts",
+    "ABU_PACKAGE": "A/B/U/F advanced capability packages parsed from the server-owned registry",
+    "DIF": "Differentiated capabilities DIF-01..DIF-12",
+    "IMAGE_COMIC": "Image Studio comic sub-features IMAGE-COMIC-01..20"
+  },
+  "requirements": [
+    {
+      "id": "V2-M0",
+      "group": "ORIGINAL_V2",
+      "title": "M0 current-state audit, frozen compatibility and baseline pin",
+      "user_behavior_must": "Before any feature work, fetch the real remote HEAD/PRs, compare roadmap to source, classify EXISTS/PARTIAL/MISSING/BLOCKED, keep V1 manifest/RC1/user data unchanged and record real CI capacity status.",
+      "authority_owner": "Engineering baseline documents + git/remote state (no product owner)",
+      "existing_source_interfaces": [
+        "docs/v2/engineering/BASELINE_20261019_r1.md",
+        "V2_ADVANCED_CAPABILITY_GAP_REPORT.md",
+        "docs/v2/README.md"
+      ],
+      "gap_type": "NONE",
+      "data_api_contract": "Read-only audit; no product API change.",
+      "identity_permission_source_rules": "Read-only; no credentials copied.",
+      "dependencies": [],
+      "test_layers": [
+        "MANUAL"
+      ],
+      "test_command": "gh pr view 47/48; git fetch; git rev-list; read-only source audit",
+      "input_sample": "Live repository at a072cf90 + origin/main fed2404c + PR #47/#48",
+      "expected_result": "Baseline facts recorded as actual repository state, not historical claims.",
+      "actual_result": "Remote state re-fetched; origin/main=fed2404c, PR #47 Draft MERGEABLE, PR #48 CONFLICTING; archive branch verified artifact-only.",
+      "evidence_path": "docs/v2/engineering/BASELINE_20261019_r1.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "NONE",
+      "notes": "Archive branch origin/archive/verified-studio-v2-... adds artifacts/ only: verified by diff-name filtering; no source delta."
+    },
+    {
+      "id": "V2-M1",
+      "group": "ORIGINAL_V2",
+      "title": "M1 Project intent, storage and asset core",
+      "user_behavior_must": "Independent project intent/workspace presets (non-binding), standalone asset IDs/versions/license/source index, no-model editable project, external file import/save/find/export and cross-project isolation.",
+      "authority_owner": "Existing V1.X project/chapter owners + AssetLibraryService + settings/storage managers",
+      "existing_source_interfaces": [
+        "app/services/asset_library_service.py",
+        "app/asset_lifecycle_api.py",
+        "app/config.py",
+        "tests/test_asset_library.py",
+        "tests/test_independent_media_job*"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Asset revisions are content-addressed and versioned; project data under NOVEL_DATA_PATH; storage categories separated from model/cache/export paths.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "V2-M0"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "INTEGRATION",
+        "POSTGRES"
+      ],
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (asset library/lifecycle subset)",
+      "input_sample": "Synthetic isolated File project with imported real PNG/WAV fixtures.",
+      "expected_result": "Import/save/reopen/find/export asset works; cross-project read denied; no model needed.",
+      "actual_result": "Asset library/lifecycle and media prerequisites passed in the focused batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) and in the final File suite (10089 passed, 190 failed, 14 errors, 4866 skipped (two shards combined)).",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-M10",
+      "group": "ORIGINAL_V2",
+      "title": "M10 3D reference, research, publishing and QingJian integration",
+      "user_behavior_must": "Lightweight 3D assets and camera/grey-model reference handoff, project research sources/licensing/citations, delivery manifest; QingJian Tutor slot/context/advice adapter over Local Interop v1; interop cannot read unauthorized project content; missing QingJian does not block work.",
+      "authority_owner": "Local interop owners + research library + export/delivery; 3D reference owner still missing",
+      "existing_source_interfaces": [
+        "app/local_interop/",
+        "contracts/local-interop/v1/",
+        "app/experimental/research_library.py",
+        "app/experimental/offline_sync.py",
+        "tests/test_local_interop*.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Interop keeps stable v1 IDs; research sources carry license/citation; delivery manifest lists versions/digests; 3D exchange is NOT implemented.",
+      "identity_permission_source_rules": "Consult the interop contracts: explicit session/permission grants; no shared global token. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "V2-M1",
+        "V2-M9"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "INTEGRATION",
+        "MANUAL"
+      ],
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (research/interop subset)",
+      "input_sample": "Synthetic project + interop peer fixture.",
+      "expected_result": "Research/interop contracts pass; 3D reference and full QingJian product acceptance remain PLANNED/blocked.",
+      "actual_result": "Research library/offline-sync/interop contracts passed; 3D reference and full QingJian product acceptance remain PLANNED.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
+      "release_blocking": "MEDIUM",
+      "notes": ""
+    },
+    {
+      "id": "V2-M11",
+      "group": "ORIGINAL_V2",
+      "title": "M11 Cross-module journeys, performance and full regression",
+      "user_behavior_must": "Five independent journeys and combined paths (no hard-coded novel→video prerequisite); drag/asset replacement/cache reclaim/NLE latency/async queue/model offline/conflict/revocation/crash recovery; complete matrix and API/UI/test comparison at a frozen SHA.",
+      "authority_owner": "Integration-level verification across existing owners (no new module)",
+      "existing_source_interfaces": [
+        "tests/",
+        ".github/ci/coverage_manifest_v2.json.gz",
+        "docs/delivery/functional-surface-freeze/"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "No new contract; this gate proves the existing ones compose.",
+      "identity_permission_source_rules": "Each journey keeps its owner's authorization rules.",
+      "dependencies": [
+        "V2-M4",
+        "V2-M5",
+        "V2-M6",
+        "V2-M7",
+        "V2-M8",
+        "V2-M9"
+      ],
+      "test_layers": [
+        "INTEGRATION",
+        "BROWSER",
+        "MEDIA",
+        "MANUAL"
+      ],
+      "test_command": "full File suite + focused batch + real browser checks + real PG subset",
+      "input_sample": "Multiple isolated sample projects, no user data.",
+      "expected_result": "Complete suite PASS or exact environment evidence; unverified model quality never PASS.",
+      "actual_result": "File suite 10089 passed, 190 failed, 14 errors, 4866 skipped (two shards combined); focused 837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58); PG subset 118 passed, 151 deselected, 1 warning in 148.53s (0:02:28); browser visual 15/15 passed while creative journeys are blocked at their launcher precondition (D-10). Complete cross-module acceptance is not claimed.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/backend-file-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-M12",
+      "group": "ORIGINAL_V2",
+      "title": "M12 Windows final acceptance (user-authorized)",
+      "user_behavior_must": "On Windows 11 + RTX 5080 16GB + 64GB: real install/upgrade/uninstall, first-run scan, reuse existing models/ComfyUI, full studio chain, security exit; 8/12/16GB VRAM constraints addressed; no user data in public repo; IME/high-DPI/interop results recorded separately.",
+      "authority_owner": "User + released package; not a cloud/automated run",
+      "existing_source_interfaces": [
+        "docs/AI_NOVEL_STUDIO_V2_WINDOWS_ACCEPTANCE_PLAN.md",
+        "docs/desktop_host_acceptance_checklist.md",
+        "docs/AI_NOVEL_STUDIO_V2_LOCAL_MODEL_INTEGRATION.md"
+      ],
+      "gap_type": "BLOCKED",
+      "data_api_contract": "Acceptance binds explicit package SHA256 and file hashes.",
+      "identity_permission_source_rules": "User-authorized local only.",
+      "dependencies": [
+        "V2-M11"
+      ],
+      "test_layers": [
+        "WINDOWS",
+        "MANUAL",
+        "MEDIA"
+      ],
+      "test_command": "user-executed Windows acceptance",
+      "input_sample": "Released candidate package on the user's machine.",
+      "expected_result": "User-signed acceptance report bound to package hashes; this baseline does not run it.",
+      "actual_result": "LOCAL_REQUIRED: requires the user's machine and an authorized release candidate; not executed.",
+      "evidence_path": "docs/AI_NOVEL_STUDIO_V2_WINDOWS_ACCEPTANCE_PLAN.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "BLOCKED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": "LOCAL_REQUIRED."
+    },
+    {
+      "id": "V2-M2",
+      "group": "ORIGINAL_V2",
+      "title": "M2 Creative Graph engine and usable canvas",
+      "user_behavior_must": "Typed node registry/ports, graph save/restore, partial execution, review nodes, caching, Job Manager integration, model capability constraints, canvas keyboard/large-graph usability; graph complete without Director node.",
+      "authority_owner": "app/creative/graph.py + graph_models.py + graph_api.py + graph_execution.py + WorkflowRun/JobManager",
+      "existing_source_interfaces": [
+        "app/creative/graph.py",
+        "app/creative/graph_api.py",
+        "app/creative/graph_execution.py",
+        "frontend/src/creative",
+        "tests/test_v2_creative_workflows.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Graph schema 1 unchanged; model node promotes schema 2 with explicit review gate; invalid edges/cycles rejected; node deletion preserves reviewed assets.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "V2-M1"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "INTEGRATION",
+        "BROWSER"
+      ],
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (creative workflows subset)",
+      "input_sample": "Blank synthetic project with a local typed graph.",
+      "expected_result": "Save/reload graph, execute local nodes, reject malformed edges, never call model without explicit gate.",
+      "actual_result": "Creative graph/workspace contract tests passed on the fixed tree.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-M3",
+      "group": "ORIGINAL_V2",
+      "title": "M3 Model Center local-first onboarding and optional API",
+      "user_behavior_must": "Bounded trusted scan, reuse installed models, duplicate detection, zero manual port entry for trusted local services, model-missing editing remains available, API provider contract behind explicit consent and budget.",
+      "authority_owner": "app/model_center/* + provider registry/broker; release_readiness",
+      "existing_source_interfaces": [
+        "app/model_center/",
+        "app/experimental/model_broker.py",
+        "app/release_readiness.py",
+        "tests/test_local_ai_environment_v2.py",
+        "tests/test_model_center*.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Discovery is read-only bounded metadata; no execution authority from discovery; provider dispatch needs explicit route/budget/consent.",
+      "identity_permission_source_rules": "Host-session protected API; credentials in vault; no keys in responses/logs. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "V2-M1"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "INTEGRATION",
+        "MANUAL"
+      ],
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (Local AI environment/inspection subset)",
+      "input_sample": "Isolated profile with no model installed; synthetic GGUF headers.",
+      "expected_result": "Reports what was discovered vs verified; never starts runtime; editing works without model.",
+      "actual_result": "Local AI environment/inspection and model broker contract tests passed; real model inference remains NOT_RUN.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-M4",
+      "group": "ORIGINAL_V2",
+      "title": "M4 Text, screenplay, adaptation and creative agents",
+      "user_behavior_must": "Keep all V1 long-form writing; novel→screenplay adaptation agent/skill, independent screenplay documents, review, format export; generic text assets usable without Graph.",
+      "authority_owner": "V1.X novel/chapter owner + CreativeService screenplay documents + adaptation receipts",
+      "existing_source_interfaces": [
+        "app/creative/adaptation*.py",
+        "app/creative/screenplay_export.py",
+        "app/creative/prompt_authoring.py",
+        "frontend/src/creative",
+        "tests/test_r4_*.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Screenplay/adaptation documents are versioned via CreativeService CAS; source versions pinned; export formats (TXT/Fountain/EPUB) deterministic.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority; source privacy/egress review bound to exact chapter version+digest",
+      "dependencies": [
+        "V2-M1",
+        "V2-M3"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "INTEGRATION",
+        "BROWSER"
+      ],
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (screenplay export, prompt, bible subset)",
+      "input_sample": "Synthetic short novel with two chapters; adaptation run without paid model.",
+      "expected_result": "Adaptation/screenplay saves with exact source evidence; original novel unchanged; exports readable.",
+      "actual_result": "Screenplay export/prompt/bible contract tests passed on the fixed tree; adaptation PG contracts exercised separately.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-M5",
+      "group": "ORIGINAL_V2",
+      "title": "M5 Image Studio visual generation and real adapter",
+      "user_behavior_must": "Image canvas, generate/edit/reference/character/scene/style/layer-mask interfaces, history/output, installed ComfyUI/local model or optional API, asset version propagation and license provenance.",
+      "authority_owner": "Image services (studio_image_*), AssetLibraryService, provider registry",
+      "existing_source_interfaces": [
+        "app/services/studio_image_execution.py",
+        "app/services/studio_image_mask_authoring.py",
+        "app/services/studio_image_cutout.py",
+        "frontend/src/image*",
+        "tests/test_v2_creative_workflows.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Image provider dispatch only through configured original adapters; output asset records exact source versions and provider/runtime evidence.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority; no cloud dispatch without explicit consent",
+      "dependencies": [
+        "V2-M1",
+        "V2-M3"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "INTEGRATION",
+        "MEDIA",
+        "MANUAL"
+      ],
+      "test_command": "python -m pytest -q tests/test_v2_audio_wav_controls.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py ... + full File suite",
+      "input_sample": "Imported PNG + synthetic provider stub for contract; real model NOT run.",
+      "expected_result": "Image asset lifecycle and deterministic CPU edits verified; model generation explicitly NOT_RUN.",
+      "actual_result": "Image/media contract tests passed; image model generation NOT_RUN (no authorized local model).",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-M6",
+      "group": "ORIGINAL_V2",
+      "title": "M6 Director and Storyboard specialization",
+      "user_behavior_must": "Director console multi-objective planning with human review; shot language/action/order; Shot List/Shot Board/storyboard canvas with image/video/3D reference; shots sourced without requiring a screenplay.",
+      "authority_owner": "DirectorService + storyboard document owners + CreativeService",
+      "existing_source_interfaces": [
+        "app/experimental/director.py",
+        "app/creative/director_workspace.py",
+        "app/creative/storyboard.py",
+        "frontend/src/director",
+        "tests/test_v2_director_workspace.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Director notes/storyboard are typed documents with CAS; shot references pin source versions; camera language is evidence-backed text, not rendered video.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "V2-M2",
+        "V2-M4"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "INTEGRATION",
+        "BROWSER"
+      ],
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (director workspace/storyboard subset)",
+      "input_sample": "Existing image or shot card as storyboard start.",
+      "expected_result": "Director/storyboard documents save, reopen and keep provenance; director node removable without breaking independent images.",
+      "actual_result": "Director workspace and mounted director exchange contract tests passed; the OTIO parser cases remain skipped (optional extra NOT installed).",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-M7",
+      "group": "ORIGINAL_V2",
+      "title": "M7 Video Studio, previs and reference control",
+      "user_behavior_must": "T2V/I2V/V2V only as capability allows, typed reference image/video/previs/camera/depth/pose, local/authorized async adapters, queue/resource limits, preview and media storage; grey-model video vs true 3D camera clearly distinguished.",
+      "authority_owner": "Video execution/assembly services + model registry + media validator",
+      "existing_source_interfaces": [
+        "app/services/studio_video_execution.py",
+        "app/video_assembly_service.py",
+        "frontend/src/video*",
+        "tests/test_v2_video_runtime_foundation.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Unsupported reference controls fail closed; produced video assets record provider/runtime evidence; no ref-control success claim without real output.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "V2-M3",
+        "V2-M6"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "INTEGRATION",
+        "MEDIA",
+        "MANUAL"
+      ],
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (video runtime foundation subset)",
+      "input_sample": "Synthetic image + explicit unavailable provider state.",
+      "expected_result": "Video planning/foundation contract passes; real generation reported NOT_RUN/LOCAL_REQUIRED.",
+      "actual_result": "Video runtime foundation/contract tests passed; one pre-existing stale model-admission expectation remains open (D-09); real generation NOT_RUN.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-M8",
+      "group": "ORIGINAL_V2",
+      "title": "M8 Audio Studio (TTS/voice/ASR/SFX/music)",
+      "user_behavior_must": "Standalone audio: one sentence text→speech without a text project, voice profiles, ASR, basic editing/SFX/BGM assets, waveforms, independent export and timecode links without corrupting sources.",
+      "authority_owner": "AudiobookService + audio execution/mix owners + asset library",
+      "existing_source_interfaces": [
+        "app/audio_production_store.py",
+        "app/audiobook_service.py",
+        "app/services/studio_audio_execution.py",
+        "app/experimental/subtitle_timeline.py",
+        "tests/test_v2_audio_editing_pipeline.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Audio tasks/captions versioned; real PCM/FFmpeg mixdown verified by independent parser; ASR/TTS model adapters NOT_CONFIGURED unless injected.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority; voice authorization evidence required for cloned voices",
+      "dependencies": [
+        "V2-M1",
+        "V2-M3"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "INTEGRATION",
+        "MEDIA"
+      ],
+      "test_command": "python -m pytest -q tests/test_v2_audio_wav_controls.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py ...",
+      "input_sample": "Synthetic WAV tone + caption fixture.",
+      "expected_result": "Real CPU editing/trim/mix and subtitle processing produce verifiable artifacts; model synthesis NOT_RUN.",
+      "actual_result": "Real CPU audio trim/resample/PCM saturation, subtitle timeline and audio pipeline tests passed (96 kHz path verified).",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-M9",
+      "group": "ORIGINAL_V2",
+      "title": "M9 Editing Studio real multi-track NLE",
+      "user_behavior_must": "Independent video/audio/subtitle tracks, drag, in/out points, split/transition, volume, subtitles, preview cache, real FFmpeg composition into a reopenable project exporting a complete video; audio/video sync and offline-media behavior reproducible.",
+      "authority_owner": "studio_timeline_* owners + export snapshot authority",
+      "existing_source_interfaces": [
+        "app/studio_timeline_edit.py",
+        "app/studio_timeline_render.py",
+        "app/studio_timeline_exchange.py",
+        "frontend/src/nle",
+        "tests/test_phase4_timeline.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Timeline documents versioned; render jobs are normal jobs; output MP4/WebM verified by ffprobe; OTIO/SRT/VTT loss reported.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "V2-M8"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "INTEGRATION",
+        "MEDIA",
+        "BROWSER"
+      ],
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (timeline subset) + media batch",
+      "input_sample": "Two external synthetic video clips + one audio clip.",
+      "expected_result": "Timeline reopens; real render produces playable artifact with expected streams; offline media explicit.",
+      "actual_result": "Timeline document/render-contract tests passed; real MP4 render remains a separate acceptance step.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-X01",
+      "group": "ORIGINAL_V2",
+      "title": "Single authoritative data source (no parallel owners)",
+      "user_behavior_must": "Every domain has exactly one authority; V2 work extends the existing owner instead of creating a second Project/Asset/Job/Provider/Model Center/Timeline/QingJian registry.",
+      "authority_owner": "Owner map in EXECUTION_AND_DATA_CONTRACTS.md section 1",
+      "existing_source_interfaces": [
+        "docs/v2/engineering/EXECUTION_AND_DATA_CONTRACTS.md",
+        "app/jobs.py",
+        "app/services/asset_library_service.py",
+        "app/creative/service.py"
+      ],
+      "gap_type": "NONE",
+      "data_api_contract": "CAS/versioned writes through the owning service; no generic write API.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "MANUAL",
+        "UNIT"
+      ],
+      "test_command": "owner-map review + targeted owner tests",
+      "input_sample": "Source tree at tested SHA.",
+      "expected_result": "No duplicated authority introduced by this round.",
+      "actual_result": "This round introduced no second authority; documentation/test tooling only.",
+      "evidence_path": "docs/v2/engineering/EXECUTION_AND_DATA_CONTRACTS.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-X02",
+      "group": "ORIGINAL_V2",
+      "title": "Project permission, scope and branch isolation",
+      "user_behavior_must": "Every read/write is scope/actor/branch checked; cross-project and revoked access fail closed; collaboration conflict/revocation behavior preserved.",
+      "authority_owner": "Authorization + collaboration scope owners",
+      "existing_source_interfaces": [
+        "app/authorization.py",
+        "app/services/collaboration_scope_service.py",
+        "tests/test_authorization*.py",
+        "tests/test_collaboration_scope*.py"
+      ],
+      "gap_type": "NONE",
+      "data_api_contract": "Trusted session token + project/branch headers; no client-supplied scope expansion.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "INTEGRATION",
+        "POSTGRES"
+      ],
+      "test_command": "python -m pytest -p no:cacheprovider -q -ra --tb=short (final full File suite) (authorization/scope suites)",
+      "input_sample": "Two synthetic actors/projects.",
+      "expected_result": "Cross-project/revoked access denied; audit fields intact.",
+      "actual_result": "Authorization/scope/collaboration suites executed in the final File suite.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/backend-file-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-X03",
+      "group": "ORIGINAL_V2",
+      "title": "Migration, backup, restore and upgrade compatibility",
+      "user_behavior_must": "Schema changes are ordered migrations; existing projects upgrade with readback verification; backup/restore and rollback are repeatable; no ad-hoc table creation.",
+      "authority_owner": "database/migrations + scripts/backup.ps1 + scripts/restore.ps1 + scripts/migrate.ps1",
+      "existing_source_interfaces": [
+        "database/migrations/",
+        "scripts/backup.ps1",
+        "scripts/restore.ps1",
+        "docs/backup_restore.md",
+        "tests/test_migration*.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Migrations 001-020 append-only; PostgreSQL/File parity tests exist.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "V2-M1"
+      ],
+      "test_layers": [
+        "INTEGRATION",
+        "POSTGRES"
+      ],
+      "test_command": "python -m pytest -p postgres_gate -m postgres_backend_only ... on disposable PostgreSQL 16.15 (identity migration subset)",
+      "input_sample": "Fresh isolated database + synthetic project backup.",
+      "expected_result": "Upgrade/newer-project readback works; restore reproduces project; no data loss.",
+      "actual_result": "Migration/identity-membership contracts passed against the real PostgreSQL 16.15 database.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/backend-pg-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-X04",
+      "group": "ORIGINAL_V2",
+      "title": "Asset CAS, source provenance and review",
+      "user_behavior_must": "Immutable asset bytes, content digests, exact source version pinning, lineage relations, human review state, stale detection and soft delete.",
+      "authority_owner": "AssetLibraryService + review owners",
+      "existing_source_interfaces": [
+        "app/services/asset_library_service.py",
+        "app/asset_lifecycle_api.py",
+        "app/review.py",
+        "tests/test_asset_lifecycle_r2.py"
+      ],
+      "gap_type": "NONE",
+      "data_api_contract": "Content-addressed immutable bytes + CAS metadata revisions; review bound to digest.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "V2-M1"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "INTEGRATION",
+        "POSTGRES"
+      ],
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (asset lifecycle subset)",
+      "input_sample": "Synthetic PNG/WAV/MP4 imports.",
+      "expected_result": "Version bump requires CAS; stale derived assets flagged; delete is soft.",
+      "actual_result": "Asset CAS/lifecycle/review contract tests passed on the fixed tree.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-X05",
+      "group": "ORIGINAL_V2",
+      "title": "Job state machine, cancellation, UNKNOWN and idempotency",
+      "user_behavior_must": "One queue; explicit states including CANCEL_REQUESTED/CANCELLED/BLOCKED/UNKNOWN_UPSTREAM; cooperative cancel without duplicate paid calls; idempotent retry; no automatic replay; restart recovery explicit.",
+      "authority_owner": "app/jobs.py JobManager + generation settlement hooks",
+      "existing_source_interfaces": [
+        "app/jobs.py",
+        "app/model_execution.py",
+        "tests/test_generation*.py",
+        "tests/test_v2_independent_media_job.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Job records persist actor/inputs/route/receipt; terminal hook + ledger settlement before output acceptance.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "V2-M2"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "INTEGRATION",
+        "POSTGRES"
+      ],
+      "test_command": "python -m pytest -p no:cacheprovider -q -ra --tb=short (final full File suite) (job/idempotency/recovery suites)",
+      "input_sample": "Synthetic jobs with duplicate submissions and interrupted worker.",
+      "expected_result": "Duplicate key reuses job; unknown state never replays; cancel/late output discarded.",
+      "actual_result": "Job/idempotency/recovery suites ran inside the final File suite.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/backend-file-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-X06",
+      "group": "ORIGINAL_V2",
+      "title": "Model discovery, capability admission and resource budgets",
+      "user_behavior_must": "Capability-based admission, no execution from discovery, price/license/budget checks, bounded resource use and release, honest NOT_RUN when unverified.",
+      "authority_owner": "Model Center + model broker + host hardware inventory",
+      "existing_source_interfaces": [
+        "app/model_center/",
+        "app/experimental/model_broker.py",
+        "app/provider_runtime_v2_*",
+        "tests/test_r4_model_broker.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Route/preview/admission receipts; no client-supplied endpoint/credential.",
+      "identity_permission_source_rules": "Host authority + vault; explicit consent for paid/cloud.",
+      "dependencies": [
+        "V2-M3"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "INTEGRATION"
+      ],
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (broker/model-center subset)",
+      "input_sample": "Synthetic provider/model records; no paid call.",
+      "expected_result": "Broker/environment contracts pass; real GPU inference NOT_RUN.",
+      "actual_result": "Broker and model-center contract tests passed; real GPU inference NOT_RUN.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-X07",
+      "group": "ORIGINAL_V2",
+      "title": "No-model mode and graceful degradation",
+      "user_behavior_must": "With no model/network the app still starts, opens projects, edits/saves/reopens and exports existing content; model-dependent actions show actionable unavailable states.",
+      "authority_owner": "Existing settings/feature flags + UI error states",
+      "existing_source_interfaces": [
+        "app/config.py",
+        "frontend/src/",
+        "tests/test_*error*.py",
+        "tests/test_local_ai_environment_v2.py"
+      ],
+      "gap_type": "NONE",
+      "data_api_contract": "Capability state reported by server; disabled features fail closed with codes.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "INTEGRATION"
+      ],
+      "test_command": "python -m pytest -q <focused capability/media/traceability batch> (local AI environment/no-model subset)",
+      "input_sample": "Isolated profile with MOCK_PROVIDER/ENABLE_CLOUD off, no runtime.",
+      "expected_result": "Editing and existing-content operations succeed; unavailable features are explicit.",
+      "actual_result": "No-model mode contract tests passed with MOCK_PROVIDER=true and ENABLE_CLOUD=false.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-X08",
+      "group": "ORIGINAL_V2",
+      "title": "Privacy, consent and secure egress",
+      "user_behavior_must": "Privacy levels fail closed (LOCAL_ONLY/REDACT_BEFORE_CLOUD/CLOUD_ALLOWED); chapter egress consent is version/digest/branch bound; outbound host allowlist; secrets in vault; no sensitive data in logs.",
+      "authority_owner": "app/privacy.py + app/source_privacy.py + app/net_safety.py + credential vault",
+      "existing_source_interfaces": [
+        "app/privacy.py",
+        "app/source_privacy.py",
+        "app/net_safety.py",
+        "tests/test_source_privacy*.py",
+        "tests/test_privacy*.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Cloud context builders merge strictest privacy; unknown policy = LOCAL_ONLY.",
+      "identity_permission_source_rules": "Consent is separate from credential configuration. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "V2-M3"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "INTEGRATION"
+      ],
+      "test_command": "python -m pytest -p no:cacheprovider -q -ra --tb=short (final full File suite) (privacy/egress/outbound suites)",
+      "input_sample": "Protected chapter fixture + hostile URLs.",
+      "expected_result": "Egress denied/redacted; URL allowlist enforced; no secret leakage.",
+      "actual_result": "Privacy/egress contract tests executed in the final File suite; public/internal edition isolation remains PLANNED (V2-X09).",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/backend-file-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-X09",
+      "group": "ORIGINAL_V2",
+      "title": "Public/internal research edition isolation",
+      "user_behavior_must": "Public and internal research versions are separated at the backend, data, runtime-policy and authorization levels, not hidden only in the frontend; internal data never reaches public builds.",
+      "authority_owner": "Not implemented; requires edition manifest + separate backend profile + edition-scoped authz/data root",
+      "existing_source_interfaces": [
+        "app/experimental/flags.py (partial)",
+        "app/packaging/runtime_identity.py (partial)",
+        "app/release_readiness.py (partial)"
+      ],
+      "gap_type": "MISSING",
+      "data_api_contract": "Required: edition identity in requests/build, separate data root, edition-scoped authorization, redaction audit. None exists.",
+      "identity_permission_source_rules": "Edition must not be selectable by client input.",
+      "dependencies": [
+        "V2-X07",
+        "V2-X08"
+      ],
+      "test_layers": [
+        "UNIT",
+        "INTEGRATION",
+        "ACCEPTANCE"
+      ],
+      "test_command": "NOT_RUN - no implementation",
+      "input_sample": "n/a",
+      "expected_result": "Public build cannot access internal routes/data; internal build isolated.",
+      "actual_result": "MISSING at a072cf90: flags are runtime opt-ins, not an edition boundary; documented in SECURITY_AND_ISOLATION.md section 6.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-X10",
+      "group": "ORIGINAL_V2",
+      "title": "UI design-system compliance and shared shell",
+      "user_behavior_must": "All UI work reuses tokens/primitives/AppShell/ModuleWorkspace; no parallel shell; design-token/geometry checks stay green; Chinese input/accessibility preserved.",
+      "authority_owner": "docs/ui/design_system.md + scripts/check_ui_design_tokens.mjs",
+      "existing_source_interfaces": [
+        "docs/ui/design_system.md",
+        "scripts/check_ui_design_tokens.mjs",
+        "frontend/src/ui/tokens.css"
+      ],
+      "gap_type": "NONE",
+      "data_api_contract": "Token source of truth; visual baseline documents.",
+      "identity_permission_source_rules": "n/a",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT",
+        "BROWSER"
+      ],
+      "test_command": "cd frontend; corepack pnpm lint && corepack pnpm build; Playwright visual suite",
+      "input_sample": "Frontend tree.",
+      "expected_result": "Design-token lint and build pass; no UI redesign in this round.",
+      "actual_result": "Design-token lint and production build passed; 15/15 real browser visual/geometry checks passed on system Edge.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/browser-visual-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": ""
+    },
+    {
+      "id": "V2-X11",
+      "group": "ORIGINAL_V2",
+      "title": "CI truth, hosted evidence and capacity accounting",
+      "user_behavior_must": "Report actual hosted CI conclusions; distinguish no-runner/canceled from assertion failure; never splice runs or delete tests to pass; local baseline must be reproducible.",
+      "authority_owner": ".github/workflows/cloud-ci.yml + .github/ci/*",
+      "existing_source_interfaces": [
+        ".github/workflows/cloud-ci.yml",
+        ".github/ci/",
+        "docs/cloud_ci.md"
+      ],
+      "gap_type": "BLOCKED",
+      "data_api_contract": "JUnit receipts bound to SHA; job conclusion authority.",
+      "identity_permission_source_rules": "Read-only CI token; no secrets to jobs.",
+      "dependencies": [],
+      "test_layers": [
+        "MANUAL"
+      ],
+      "test_command": "gh run list / gh pr checks (hosted CI)",
+      "input_sample": "GitHub Actions hosted runs.",
+      "expected_result": "Hosted result reported truthfully.",
+      "actual_result": "BLOCKED_EXTERNAL: hosted GitHub Actions runner/account unavailable; all results are local and labeled local.",
+      "evidence_path": "docs/v2/engineering/BASELINE_20261019_r1.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "BLOCKED",
+      "test_result": "BLOCKED",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "V2-X12",
+      "group": "ORIGINAL_V2",
+      "title": "Test isolation, disk budget and cleanup",
+      "user_behavior_must": "Tests run from isolated PROJECT_ROOT/NOVEL_DATA_PATH/profile/temp/database/browser profile; bounded disk; cleanup only self-created data while retaining logs/hashes/evidence; never touch user data/models/RC1.",
+      "authority_owner": "scripts/run_v2_checks.py + runbook isolation contract",
+      "existing_source_interfaces": [
+        "scripts/run_v2_checks.py",
+        "docs/v2/engineering/RUNBOOK.md",
+        "scripts/pytest_temp_isolation.py"
+      ],
+      "gap_type": "NONE",
+      "data_api_contract": "Isolated environment before app import; receipts under docs/delivery/v2-development.",
+      "identity_permission_source_rules": "No production credentials or user data.",
+      "dependencies": [],
+      "test_layers": [
+        "MANUAL"
+      ],
+      "test_command": "see RUNBOOK isolation contract + run directory accounting",
+      "input_sample": "Fresh isolated run directory on D:.",
+      "expected_result": "Isolation verified by paths in settings; cleanup recorded.",
+      "actual_result": "All tests ran with PROJECT_ROOT/profile/NOVEL_DATA_PATH/TMP/DB isolated; cleanup limited to owned run/profile dirs.",
+      "evidence_path": "docs/v2/engineering/RUNBOOK.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": ""
+    },
+    {
+      "id": "A01",
+      "group": "ABU_PACKAGE",
+      "title": "Bounded story simulation",
+      "user_behavior_must": "Server-owned capability A01 (Bounded story simulation) is available only when its flag story_simulator_v2 and declared dependencies ['A04', 'A05'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=3, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A04",
+        "A05"
+      ],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - no focused suite mapped",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "A02",
+      "group": "ABU_PACKAGE",
+      "title": "Style metrics and drift",
+      "user_behavior_must": "Server-owned capability A02 (Style metrics and drift) is available only when its flag style_dna_v2 and declared dependencies [] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_post_interop_style_model.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=3, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_post_interop_style_model.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "A03",
+      "group": "ABU_PACKAGE",
+      "title": "Evidence-based narrative judge",
+      "user_behavior_must": "Server-owned capability A03 (Evidence-based narrative judge) is available only when its flag narrative_quality_judge_v2 and declared dependencies ['A04', 'A05'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=3, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A04",
+        "A05"
+      ],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - no focused suite mapped",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "A04",
+      "group": "ABU_PACKAGE",
+      "title": "Temporal semantic story graph",
+      "user_behavior_must": "Server-owned capability A04 (Temporal semantic story graph) is available only when its flag temporal_story_graph_v2 and declared dependencies [] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_post_interop_scene_mind.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=2, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_post_interop_scene_mind.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "A05",
+      "group": "ABU_PACKAGE",
+      "title": "Character knowledge and mind state",
+      "user_behavior_must": "Server-owned capability A05 (Character knowledge and mind state) is available only when its flag character_mind_v2 and declared dependencies ['A04'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_post_interop_scene_mind.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=2, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A04"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_post_interop_scene_mind.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "A06",
+      "group": "ABU_PACKAGE",
+      "title": "Explainable model broker",
+      "user_behavior_must": "Server-owned capability A06 (Explainable model broker) is available only when its flag model_broker_v2 and declared dependencies [] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_r4_model_broker.py",
+        "tests/test_post_interop_wave3_broker.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=2, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_r4_model_broker.py tests/test_post_interop_wave3_broker.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "A07",
+      "group": "ABU_PACKAGE",
+      "title": "Model benchmark and capability evidence",
+      "user_behavior_must": "Server-owned capability A07 (Model benchmark and capability evidence) is available only when its flag model_benchmark_v2 and declared dependencies ['A06'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_post_interop_wave3_broker.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=2, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A06"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_post_interop_wave3_broker.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "A08",
+      "group": "ABU_PACKAGE",
+      "title": "Camera grammar and scene direction",
+      "user_behavior_must": "Server-owned capability A08 (Camera grammar and scene direction) is available only when its flag ai_director_v2 and declared dependencies [] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_v2_director_workspace.py",
+        "tests/test_r4_director_exchange_mounted.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=4, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_v2_director_workspace.py tests/test_r4_director_exchange_mounted.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "A09",
+      "group": "ABU_PACKAGE",
+      "title": "Asset lineage and derived relationships",
+      "user_behavior_must": "Server-owned capability A09 (Asset lineage and derived relationships) is available only when its flag asset_lineage_v2 and declared dependencies [] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=2, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - no focused suite mapped",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "A10",
+      "group": "ABU_PACKAGE",
+      "title": "Layered research library",
+      "user_behavior_must": "Server-owned capability A10 (Layered research library) is available only when its flag research_library_v2 and declared dependencies ['A04'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_post_interop_wave3_research.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=3, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A04"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_post_interop_wave3_research.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "A11",
+      "group": "ABU_PACKAGE",
+      "title": "Revision intelligence and partial changes",
+      "user_behavior_must": "Server-owned capability A11 (Revision intelligence and partial changes) is available only when its flag revision_intelligence_v2 and declared dependencies ['A04'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_post_interop_revision_model.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=3, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A04"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_post_interop_revision_model.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "A12",
+      "group": "ABU_PACKAGE",
+      "title": "OTIO and NLE exchange",
+      "user_behavior_must": "Server-owned capability A12 (OTIO and NLE exchange) is available only when its flag timeline_exchange_v2 and declared dependencies ['A09'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_r4_timeline_exchange.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=4, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A09"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_r4_timeline_exchange.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "A13",
+      "group": "ABU_PACKAGE",
+      "title": "Production manifest and controlled replay",
+      "user_behavior_must": "Server-owned capability A13 (Production manifest and controlled replay) is available only when its flag production_manifest_v2 and declared dependencies ['A06', 'A09'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=2, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A06",
+        "A09"
+      ],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - no focused suite mapped",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "B01",
+      "group": "ABU_PACKAGE",
+      "title": "Declarative template library",
+      "user_behavior_must": "Server-owned capability B01 (Declarative template library) is available only when its flag template_library_v2 and declared dependencies [] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_r5_declarative_templates.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=5, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_r5_declarative_templates.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "B02",
+      "group": "ABU_PACKAGE",
+      "title": "Custom agents and workflow SDK",
+      "user_behavior_must": "Server-owned capability B02 (Custom agents and workflow SDK) is available only when its flag declarative_agents_v2 and declared dependencies ['A06', 'B01'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=5, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A06",
+        "B01"
+      ],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - no focused suite mapped",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "B03",
+      "group": "ABU_PACKAGE",
+      "title": "Voice direction and speaker attribution",
+      "user_behavior_must": "Server-owned capability B03 (Voice direction and speaker attribution) is available only when its flag voice_direction_v2 and declared dependencies [] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_r5_voice_subtitles.py",
+        "tests/test_r5_pause_aware_audio.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=4, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_r5_voice_subtitles.py tests/test_r5_pause_aware_audio.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "B04",
+      "group": "ABU_PACKAGE",
+      "title": "Subtitle editing and timeline",
+      "user_behavior_must": "Server-owned capability B04 (Subtitle editing and timeline) is available only when its flag subtitle_timeline_v2 and declared dependencies ['B03'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_r5_voice_subtitles.py",
+        "tests/test_r5_pause_aware_audio.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=4, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "B03"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_r5_voice_subtitles.py tests/test_r5_pause_aware_audio.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "B05",
+      "group": "ABU_PACKAGE",
+      "title": "Multilingual revisions and terminology",
+      "user_behavior_must": "Server-owned capability B05 (Multilingual revisions and terminology) is available only when its flag multilingual_editions_v2 and declared dependencies ['A11'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_r5_multilingual_editions.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=5, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A11"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_r5_multilingual_editions.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "B06",
+      "group": "ABU_PACKAGE",
+      "title": "Comic and Webtoon layouts",
+      "user_behavior_must": "Server-owned capability B06 (Comic and Webtoon layouts) is available only when its flag comic_layouts_v2 and declared dependencies ['A08', 'A09'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_r5_comic_layouts.py",
+        "tests/test_r5_comic_mounted.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=5, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A08",
+        "A09"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "B07",
+      "group": "ABU_PACKAGE",
+      "title": "Interactive narrative export",
+      "user_behavior_must": "Server-owned capability B07 (Interactive narrative export) is available only when its flag interactive_story_v2 and declared dependencies ['A01', 'A04'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_r5_interactive_story.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=5, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A01",
+        "A04"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_r5_interactive_story.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "B08",
+      "group": "ABU_PACKAGE",
+      "title": "Writer room and team review",
+      "user_behavior_must": "Server-owned capability B08 (Writer room and team review) is available only when its flag writer_room_v2 and declared dependencies [] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_r5_writer_room_mounted.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=6, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_r5_writer_room_mounted.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "B09",
+      "group": "ABU_PACKAGE",
+      "title": "Project fork and merge",
+      "user_behavior_must": "Server-owned capability B09 (Project fork and merge) is available only when its flag project_forks_v2 and declared dependencies ['A04', 'A09', 'A11'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_r5_project_forks.py",
+        "tests/test_r5_structured_forks.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=6, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A04",
+        "A09",
+        "A11"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_r5_project_forks.py tests/test_r5_structured_forks.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "B10",
+      "group": "ABU_PACKAGE",
+      "title": "Offline synchronization foundation",
+      "user_behavior_must": "Server-owned capability B10 (Offline synchronization foundation) is available only when its flag offline_sync_v2 and declared dependencies ['B08', 'B09'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_r5_offline_sync.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=6, mode=NOVEL, model_requirement=NONE, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "B08",
+        "B09"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_r5_offline_sync.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "F00",
+      "group": "ABU_PACKAGE",
+      "title": "Foundation, reuse and dependency registry",
+      "user_behavior_must": "Server-owned capability F00 (Foundation, reuse and dependency registry) is available only when its flag (foundation, no flag) and declared dependencies [] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_r4_capabilities.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=0, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_r4_capabilities.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "U01",
+      "group": "ABU_PACKAGE",
+      "title": "Resume the previous workspace",
+      "user_behavior_must": "Server-owned capability U01 (Resume the previous workspace) is available only when its flag workspace_tools_v2 and declared dependencies ['U02'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=1, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "U02"
+      ],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - no focused suite mapped",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "U02",
+      "group": "ABU_PACKAGE",
+      "title": "Loss-resistant editing and visible save state",
+      "user_behavior_must": "Server-owned capability U02 (Loss-resistant editing and visible save state) is available only when its flag writing_recovery_v2 and declared dependencies [] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=1, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - no focused suite mapped",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "U03",
+      "group": "ABU_PACKAGE",
+      "title": "Search, commands and recents",
+      "user_behavior_must": "Server-owned capability U03 (Search, commands and recents) is available only when its flag workspace_tools_v2 and declared dependencies ['U01'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=1, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "U01"
+      ],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - no focused suite mapped",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "U04",
+      "group": "ABU_PACKAGE",
+      "title": "Focus, reference split and inspiration",
+      "user_behavior_must": "Server-owned capability U04 (Focus, reference split and inspiration) is available only when its flag writing_focus_v2 and declared dependencies ['U02'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=1, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "U02"
+      ],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - no focused suite mapped",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "U05",
+      "group": "ABU_PACKAGE",
+      "title": "Selection assistant and partial accept",
+      "user_behavior_must": "Server-owned capability U05 (Selection assistant and partial accept) is available only when its flag selection_assistant_v2 and declared dependencies ['A11'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=3, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A11"
+      ],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - no focused suite mapped",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "U06",
+      "group": "ABU_PACKAGE",
+      "title": "Change impact and selective refresh",
+      "user_behavior_must": "Server-owned capability U06 (Change impact and selective refresh) is available only when its flag change_impact_v2 and declared dependencies ['A04', 'A09'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_r4_change_impact.py",
+        "tests/test_r4_change_impact_mounted.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=2, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A04",
+        "A09"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_r4_change_impact.py tests/test_r4_change_impact_mounted.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "U07",
+      "group": "ABU_PACKAGE",
+      "title": "Unified task center and honest progress",
+      "user_behavior_must": "Server-owned capability U07 (Unified task center and honest progress) is available only when its flag workspace_tools_v2 and declared dependencies [] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=1, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - no focused suite mapped",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "U08",
+      "group": "ABU_PACKAGE",
+      "title": "Context and privacy inspector",
+      "user_behavior_must": "Server-owned capability U08 (Context and privacy inspector) is available only when its flag author_context_inspector_v2 and declared dependencies [] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=1, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - no focused suite mapped",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "U09",
+      "group": "ABU_PACKAGE",
+      "title": "Local AI diagnostic and setup guidance",
+      "user_behavior_must": "Server-owned capability U09 (Local AI diagnostic and setup guidance) is available only when its flag local_ai_workflow_inspector_v2 and declared dependencies [] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_r4_local_ai_inspection.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=1, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_r4_local_ai_inspection.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "U10",
+      "group": "ABU_PACKAGE",
+      "title": "Scenario onboarding and progressive disclosure",
+      "user_behavior_must": "Server-owned capability U10 (Scenario onboarding and progressive disclosure) is available only when its flag workspace_tools_v2 and declared dependencies [] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=1, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - no focused suite mapped",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "U11",
+      "group": "ABU_PACKAGE",
+      "title": "Reading, proofreading and publishing checks",
+      "user_behavior_must": "Server-owned capability U11 (Reading, proofreading and publishing checks) is available only when its flag reader_preflight_v2 and declared dependencies ['A03', 'A11'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_r4_reader_sessions.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=3, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A03",
+        "A11"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_r4_reader_sessions.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "U12",
+      "group": "ABU_PACKAGE",
+      "title": "Actionable errors and private diagnostic export",
+      "user_behavior_must": "Server-owned capability U12 (Actionable errors and private diagnostic export) is available only when its flag workspace_tools_v2 and declared dependencies [] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=1, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - no focused suite mapped",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "U13",
+      "group": "ABU_PACKAGE",
+      "title": "Chinese input, accessibility and scale",
+      "user_behavior_must": "Server-owned capability U13 (Chinese input, accessibility and scale) is available only when its flag writing_recovery_v2 and declared dependencies ['U02', 'U03'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=1, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "U02",
+        "U03"
+      ],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - no focused suite mapped",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "U14",
+      "group": "ABU_PACKAGE",
+      "title": "Portable project, relink and safe cleanup",
+      "user_behavior_must": "Server-owned capability U14 (Portable project, relink and safe cleanup) is available only when its flag portable_projects_v2 and declared dependencies ['A09'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py",
+        "tests/test_r4_portable_batches.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=4, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A09"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q -p no:cacheprovider -ra --tb=short tests/test_r4_portable_batches.py",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "Owning tests passed in the focused final batch (837 passed, 629 skipped, 3 warnings in 298.63s (0:04:58)) or media batch (106 passed, 0 failed (junit xml)); capability availability remains server-controlled and contract-level.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "U15",
+      "group": "ABU_PACKAGE",
+      "title": "Writing goals and controlled notices",
+      "user_behavior_must": "Server-owned capability U15 (Writing goals and controlled notices) is available only when its flag writing_sessions_v2 and declared dependencies ['U07'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=3, mode=NOVEL, model_requirement=NONE, network_requirement=NONE. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "U07"
+      ],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - no focused suite mapped",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "U16",
+      "group": "ABU_PACKAGE",
+      "title": "Safe batch preflight",
+      "user_behavior_must": "Server-owned capability U16 (Safe batch preflight) is available only when its flag safe_batches_v2 and declared dependencies ['U07', 'A06'] are explicitly enabled; availability is computed server-side from implementation state and current flags; clients cannot invent it.",
+      "authority_owner": "app/experimental/capabilities.py + flags.py (server-owned registry)",
+      "existing_source_interfaces": [
+        "app/experimental/capabilities.py",
+        "app/experimental/flags.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Capability discovery reports implementation/available/verification/disabled_reason; wave=4, mode=NOVEL, model_requirement=OPTIONAL, network_requirement=OPTIONAL_AUTHORIZED_ONLY. Registry is the single capability source.",
+      "identity_permission_source_rules": "Registry is read-only; enabling requires explicit EXPERIMENTAL_FEATURES opt-in and dependencies; V1_ACCEPTANCE_MODE disables all. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "U07",
+        "A06"
+      ],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - no focused suite mapped",
+      "input_sample": "Trusted session, synthetic isolated project, explicit flags.",
+      "expected_result": "Focused owning tests pass; disabled/dependency/V1 paths stay fenced; capability reports CONTRACT_VERIFIED not ACCEPTED.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "IMPLEMENTED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": "Registry marks this package PARTIAL_INTEGRATED; product acceptance is not implied by contract tests."
+    },
+    {
+      "id": "DIF-01",
+      "group": "DIF",
+      "title": "Story Kernel",
+      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1 (not present on disk). Known intent from the instruction: a single authoritative narrative kernel linking story facts, canon, causality and generation boundaries.",
+      "authority_owner": "Candidate reuse: temporal story graph (A04) + character mind (A05) + canon/finding review owners; no dedicated Story Kernel owner exists",
+      "existing_source_interfaces": [
+        "app/experimental/story_graph.py",
+        "app/experimental/change_impact.py",
+        "app/experimental/character_author_context.py",
+        "tests/test_post_interop_scene_mind.py"
+      ],
+      "gap_type": "SOURCE_MISSING",
+      "data_api_contract": "Not defined for DIF-01. Reusable owner: versioned story-graph/scene-mind documents in ExperimentalStore with scope/CAS.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A04",
+        "A05"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q tests/test_post_interop_scene_mind.py (related owner coverage only)",
+      "input_sample": "Synthetic project with story graph facts.",
+      "expected_result": "A Story Kernel acceptance scenario must be authored once the SPEC is supplied; related owner tests alone cannot accept it.",
+      "actual_result": "PLANNED: requirement text source missing; related A04/A05 owners are IMPLEMENTED/PARTIAL and tested separately.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "DIF-02",
+      "group": "DIF",
+      "title": "Impact Engine",
+      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: compute and preview the impact of a change across story, assets, tasks and downstream artifacts before applying it.",
+      "authority_owner": "Candidate reuse: U06 change impact and selective refresh; asset lineage (A09); production manifest (A13)",
+      "existing_source_interfaces": [
+        "app/experimental/change_impact.py",
+        "app/experimental/change_impact_api.py",
+        "tests/test_r4_change_impact.py",
+        "tests/test_r4_change_impact_mounted.py"
+      ],
+      "gap_type": "SOURCE_MISSING",
+      "data_api_contract": "Not defined for DIF-02. Reusable owner: change-impact preview over pinned versions/lineage, no direct mutation.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A04",
+        "A09",
+        "U06"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q tests/test_r4_change_impact.py tests/test_r4_change_impact_mounted.py (related owner coverage only)",
+      "input_sample": "Synthetic change set over versioned documents.",
+      "expected_result": "DIF-02 acceptance scenario required; existing impact preview tests are not a DIF-02 acceptance.",
+      "actual_result": "PLANNED: requirement source missing; related U06 owner is implemented and contract-tested.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "DIF-03",
+      "group": "DIF",
+      "title": "Identity Studio",
+      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: authoritative character identity/appearance consistency across text and visual stages.",
+      "authority_owner": "Candidate reuse: character knowledge and mind state (A05), visual identity/embeddings, asset appearance references, Character/Scene Bible",
+      "existing_source_interfaces": [
+        "app/experimental/visual_identity.py",
+        "app/experimental/embeddings.py",
+        "app/experimental/bible_api.py",
+        "app/repositories/file/identity.py"
+      ],
+      "gap_type": "SOURCE_MISSING",
+      "data_api_contract": "Not defined for DIF-03. Reusable owners: bible/character documents and approved appearance asset references.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A05",
+        "A09"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q tests/test_round2_bible.py tests/test_post_interop_embedding_feature_isolation.py (related owner coverage only)",
+      "input_sample": "Synthetic character bible + reference image.",
+      "expected_result": "DIF-03 acceptance requires a defined identity contract and cross-stage consistency scenario.",
+      "actual_result": "PLANNED: requirement source missing; character/bible/embedding owners exist but no Identity Studio acceptance.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "DIF-04",
+      "group": "DIF",
+      "title": "Semantic Rebuild",
+      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: rebuild a derived artifact from its exact semantic sources after an upstream change, preserving provenance and review.",
+      "authority_owner": "Candidate reuse: revision intelligence (A11), selection assistant (U05), change impact (U06), asset lineage",
+      "existing_source_interfaces": [
+        "app/experimental/revision_intelligence.py",
+        "app/experimental/revision_intelligence_api.py",
+        "app/experimental/selection_assistant*.py",
+        "tests/test_post_interop_revision_model.py"
+      ],
+      "gap_type": "SOURCE_MISSING",
+      "data_api_contract": "Not defined for DIF-04. Reusable owners: CAS revision proposals and partial accept flows.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A11",
+        "U05",
+        "U06"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q tests/test_post_interop_revision_model.py tests/test_post_interop_revision_compare.py (related owner coverage only)",
+      "input_sample": "Synthetic revision proposal set.",
+      "expected_result": "DIF-04 needs a rebuild scenario (source change -> semantic diff -> rebuild -> review) before acceptance.",
+      "actual_result": "PLANNED: requirement source missing; related revision-intelligence owner implemented contract-level.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "DIF-05",
+      "group": "DIF",
+      "title": "Scene Twin",
+      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: a scene-level simulation/twin of alternative staging or outcomes for directing/storyboarding decisions.",
+      "authority_owner": "Candidate reuse: bounded story simulation (A01), Director workspace, storyboard; no dedicated Scene Twin owner",
+      "existing_source_interfaces": [
+        "app/experimental/story_simulator.py",
+        "app/creative/director_workspace.py",
+        "tests/test_r4_*"
+      ],
+      "gap_type": "SOURCE_MISSING",
+      "data_api_contract": "Not defined for DIF-05. No owner guarantees a scene-twin comparison artifact.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A01",
+        "A08"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "NOT_RUN - no DIF-05 scenario exists",
+      "input_sample": "n/a",
+      "expected_result": "Requires a authored Scene Twin scenario and owner; simulation owner is not a twin acceptance.",
+      "actual_result": "PLANNED: no DIF-05 implementation or acceptance; A01 simulator is a different bounded capability.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "DIF-06",
+      "group": "DIF",
+      "title": "Performance Director",
+      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: guide performance/emotion/pacing across scenes with evidence-linked direction notes.",
+      "authority_owner": "Candidate reuse: camera grammar and scene direction (A08/ai_director_v2), Director notes, voice direction (B03)",
+      "existing_source_interfaces": [
+        "app/creative/camera_language.py",
+        "app/creative/director_intent.py",
+        "app/experimental/director.py",
+        "frontend/src/director"
+      ],
+      "gap_type": "SOURCE_MISSING",
+      "data_api_contract": "Not defined for DIF-06. Existing director notes are typed CAS documents.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A08",
+        "B03"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q tests/test_v2_director_workspace.py tests/test_r4_director.py (related owner coverage only)",
+      "input_sample": "Synthetic scene + director notes.",
+      "expected_result": "DIF-06 acceptance requires a defined performance-direction scenario; camera grammar is not sufficient.",
+      "actual_result": "PLANNED: requirement source missing; A08 owner exists contract-level.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "DIF-07",
+      "group": "DIF",
+      "title": "Studio QA",
+      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: cross-stage quality assurance with evidence, findings, review and regression against the project's own canon/style.",
+      "authority_owner": "Candidate reuse: evidence-based narrative judge (A03), reader preflight (U11), safe batch preflight (U16), finding review",
+      "existing_source_interfaces": [
+        "app/experimental/narrative_judge.py",
+        "app/experimental/reader_preflight.py",
+        "app/experimental/safe_batches.py",
+        "app/services/finding_review_service.py"
+      ],
+      "gap_type": "SOURCE_MISSING",
+      "data_api_contract": "Not defined for DIF-07. Existing finding/review owners keep exact source+digest.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority; review requires domain.review",
+      "dependencies": [
+        "A03",
+        "U11",
+        "U16"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "INTEGRATION"
+      ],
+      "test_command": "python -m pytest -q tests/test_post_interop_style_judge.py tests/test_r4_portable_batches.py (related owner coverage only)",
+      "input_sample": "Synthetic manuscript with known issues.",
+      "expected_result": "DIF-07 needs an end-to-end QA scenario; related judges/preflight are inputs, not acceptance.",
+      "actual_result": "PLANNED: requirement source missing; related owners exist contract-level.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "DIF-08",
+      "group": "DIF",
+      "title": "Model Lab",
+      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: benchmark/compare local models and routes with real evidence, resource measurement and honest quality statements.",
+      "authority_owner": "Candidate reuse: explainable model broker (A06) + model benchmark (A07) + Model Center discovery",
+      "existing_source_interfaces": [
+        "app/experimental/model_benchmark.py",
+        "app/experimental/model_benchmark_api.py",
+        "app/experimental/model_broker.py",
+        "tests/test_post_interop_wave3_broker.py"
+      ],
+      "gap_type": "SOURCE_MISSING",
+      "data_api_contract": "Not defined for DIF-08. Reusable broker/benchmark receipts store route/model/resource evidence.",
+      "identity_permission_source_rules": "Explicit local/authorized routes only; no paid API without consent. domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A06",
+        "A07"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "MANUAL"
+      ],
+      "test_command": "python -m pytest -q tests/test_r4_model_broker.py tests/test_post_interop_wave3_broker.py (related owner coverage only)",
+      "input_sample": "Synthetic routes; real inference NOT_RUN.",
+      "expected_result": "DIF-08 acceptance requires real benchmark runs on defined models; contract tests do not qualify as quality evidence.",
+      "actual_result": "PLANNED: requirement source missing; no real model benchmark executed (no authorized model).",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "DIF-09",
+      "group": "DIF",
+      "title": "Style DNA",
+      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: extract, store and enforce a project/style fingerprint used for consistency and drift detection.",
+      "authority_owner": "Candidate reuse: A02 style metrics and drift (style_dna_v2), embeddings, style analysis",
+      "existing_source_interfaces": [
+        "app/experimental/style_analysis.py",
+        "app/experimental/style_analysis_api.py",
+        "tests/test_post_interop_style_model.py"
+      ],
+      "gap_type": "SOURCE_MISSING",
+      "data_api_contract": "Not defined for DIF-09. Reusable owner: versioned style metrics/drift records.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A02"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q tests/test_post_interop_style_model.py tests/test_post_interop_style_judge.py (related owner coverage only)",
+      "input_sample": "Synthetic two-style text corpus.",
+      "expected_result": "DIF-09 acceptance needs defined metric thresholds and drift scenarios; owner tests stop short.",
+      "actual_result": "PLANNED: requirement source missing; A02 style owner implemented contract-level.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "DIF-10",
+      "group": "DIF",
+      "title": "Storyverse",
+      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: shared-universe/multi-story world model with cross-story canon links and fork/merge safety.",
+      "authority_owner": "Candidate reuse: shared-universe snapshots/pins, project forks (B09), temporal story graph (A04), offline sync (B10)",
+      "existing_source_interfaces": [
+        "app/experimental/story_graph.py",
+        "app/experimental/project_forks.py",
+        "app/experimental/structured_forks.py",
+        "tests/test_post_interop_shared_universe.py"
+      ],
+      "gap_type": "SOURCE_MISSING",
+      "data_api_contract": "Not defined for DIF-10. Existing forks/universe snapshots are versioned CAS documents.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A04",
+        "B09",
+        "B10"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q tests/test_post_interop_shared_universe.py tests/test_r5_project_forks.py (related owner coverage only)",
+      "input_sample": "Two synthetic stories sharing a universe.",
+      "expected_result": "DIF-10 acceptance scenario required; shared-universe snapshot owner is smaller in scope.",
+      "actual_result": "PLANNED: requirement source missing; related universe/fork owners exist.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "DIF-11",
+      "group": "DIF",
+      "title": "Audience Lab",
+      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: simulate/measure audience reaction or reader experience to guide revision priorities.",
+      "authority_owner": "Candidate reuse: reader preflight (U11), writer room (B08), reader sessions",
+      "existing_source_interfaces": [
+        "app/experimental/reader_preflight.py",
+        "app/experimental/reader_sources.py",
+        "app/experimental/teams.py",
+        "tests/test_r4_reader_sessions.py"
+      ],
+      "gap_type": "SOURCE_MISSING",
+      "data_api_contract": "Not defined for DIF-11. No audience model owner; reader preflight is deterministic/local checks.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "U11",
+        "B08"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q tests/test_r4_reader_sessions.py tests/test_r5_writer_room_mounted.py (related owner coverage only)",
+      "input_sample": "n/a",
+      "expected_result": "DIF-11 needs an audience definition; reader preflight is not an audience lab.",
+      "actual_result": "PLANNED: no audience-lab implementation.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "DIF-12",
+      "group": "DIF",
+      "title": "Production Passport",
+      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: a portable, verifiable production passport for an artifact/project: sources, routes, reviews, rights and hashes across stages.",
+      "authority_owner": "Candidate reuse: production manifest and controlled replay (A13), asset lineage (A09), portable project (U14), export snapshot authority",
+      "existing_source_interfaces": [
+        "app/experimental/production_lineage.py",
+        "app/creative/production_contracts.py",
+        "app/services/export_snapshot_authority.py",
+        "app/experimental/portable_projects.py"
+      ],
+      "gap_type": "SOURCE_MISSING",
+      "data_api_contract": "Not defined for DIF-12. Existing lineage/manifest receipts are internal provenance, not a passport format.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "A09",
+        "A13",
+        "U14"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q tests/test_r4_production_lineage.py tests/test_r4_portable_batches.py (related owner coverage only)",
+      "input_sample": "Synthetic project with derived artifacts.",
+      "expected_result": "DIF-12 requires a defined passport schema/verification; lineage is a prerequisite, not the passport.",
+      "actual_result": "PLANNED: requirement source missing; internal provenance owners exist.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-01",
+      "group": "IMAGE_COMIC",
+      "title": "Comic sub-entry (Image Studio child)",
+      "user_behavior_must": "Comic creation is a child feature of Image Studio (not a new top-level module), with a real entry from the existing workbench and the same project/asset system.",
+      "authority_owner": "frontend ExperimentalWorkbench + app/experimental/comic_layouts*",
+      "existing_source_interfaces": [
+        "frontend/src/experimental/ExperimentalWorkbench.tsx",
+        "app/experimental/comic_layouts_api.py",
+        "tests/test_r5_comic_mounted.py"
+      ],
+      "gap_type": "NONE",
+      "data_api_contract": "Existing mounted API prefix /novels/{nid}/experimental/comic-layouts under both /api and /api/v1.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority; flag comic_layouts_v2 + deps asset_lineage_v2, ai_director_v2",
+      "dependencies": [
+        "B06",
+        "A08",
+        "A09"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "BROWSER"
+      ],
+      "test_command": "python -m pytest -q tests/test_r5_comic_mounted.py tests/test_r5_comic_layouts.py",
+      "input_sample": "Mounted app with trusted session and enabled flags + approved synthetic image.",
+      "expected_result": "Entry/API reachable only with flags; OFF/V1/dependency fences hold.",
+      "actual_result": "Comic entry/mounted API contract, OFF/V1/dependency fences passed on File and real PostgreSQL backends; 15/15 browser checks include the shell that hosts the entry.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-02",
+      "group": "IMAGE_COMIC",
+      "title": "Comic project tree (volume/chapter/page)",
+      "user_behavior_must": "A comic production tree organizing volumes/chapters/pages/panels inside the project and asset system.",
+      "authority_owner": "MISSING; current layout records are flat per screenplay",
+      "existing_source_interfaces": [
+        "app/experimental/comic_layouts.py (layout records only)"
+      ],
+      "gap_type": "MISSING",
+      "data_api_contract": "No comic volume/chapter/page tree contract exists.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "IMAGE-COMIC-01"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "NOT_RUN - not implemented",
+      "input_sample": "n/a",
+      "expected_result": "Requires owner + tree data model + API + tests.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-03",
+      "group": "IMAGE_COMIC",
+      "title": "Smart episode/panel splitting",
+      "user_behavior_must": "Intelligently split a story/script into episodes and panels respecting pacing and reading order.",
+      "authority_owner": "MISSING; only preset generation from existing screenplay shots",
+      "existing_source_interfaces": [
+        "app/experimental/comic_layouts.py: PRESETS PAGE/WEBTOON, initial ≤4/6 shots + manual add"
+      ],
+      "gap_type": "MISSING",
+      "data_api_contract": "No splitting algorithm/contract.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "IMAGE-COMIC-01"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API",
+        "MANUAL"
+      ],
+      "test_command": "NOT_RUN - not implemented",
+      "input_sample": "n/a",
+      "expected_result": "Requires defined splitting policy + evidence; presets are not intelligent splitting.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-04",
+      "group": "IMAGE_COMIC",
+      "title": "Professional panel canvas",
+      "user_behavior_must": "A professional page/panel canvas with spatial editing, layers/guides and direct manipulation.",
+      "authority_owner": "MISSING full canvas; numeric geometry controls + server raster preview only",
+      "existing_source_interfaces": [
+        "app/experimental/comic_layouts.py: Rect/ComicPanel geometry",
+        "frontend ComicLayoutsPanel (numeric controls)"
+      ],
+      "gap_type": "MISSING",
+      "data_api_contract": "Integer page-pixel geometry; no layer/guide model.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "IMAGE-COMIC-01"
+      ],
+      "test_layers": [
+        "UNIT",
+        "BROWSER"
+      ],
+      "test_command": "NOT_RUN - not implemented",
+      "input_sample": "n/a",
+      "expected_result": "A real canvas and its geometry regression are required; numeric controls are not a professional canvas.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-05",
+      "group": "IMAGE_COMIC",
+      "title": "Per-panel image generation",
+      "user_behavior_must": "Generate a panel image from its brief via configured/authorized image capability, with review and provenance.",
+      "authority_owner": "MISSING in comic; image generation exists only in Image Studio owners",
+      "existing_source_interfaces": [
+        "app/services/studio_image_execution.py (image owner, not comic-connected)"
+      ],
+      "gap_type": "MISSING",
+      "data_api_contract": "Comic panel binding only accepts already-approved image assets.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "IMAGE-COMIC-01",
+        "V2-M5"
+      ],
+      "test_layers": [
+        "INTEGRATION",
+        "MEDIA"
+      ],
+      "test_command": "NOT_RUN - not implemented",
+      "input_sample": "n/a",
+      "expected_result": "Requires dispatch route+cost/consent+review integration; not present.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-06",
+      "group": "IMAGE_COMIC",
+      "title": "Character/costume consistency",
+      "user_behavior_must": "Keep characters and costumes consistent across panels using authoritative identity/appearance references.",
+      "authority_owner": "Partial contract: character_ids + AppearanceReference on panels; no consistency engine",
+      "existing_source_interfaces": [
+        "app/experimental/comic_layouts.py: AppearanceReference(character_id, asset_id, expected_asset_version)"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "References pin approved asset versions; no generative consistency enforcement.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "IMAGE-COMIC-01",
+        "DIF-03"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q tests/test_r5_comic_layouts.py (reference contract subset)",
+      "input_sample": "Panel with character + approved reference asset.",
+      "expected_result": "References validated and stale-bound; generation consistency NOT_RUN.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-07",
+      "group": "IMAGE_COMIC",
+      "title": "Pose / spatial control",
+      "user_behavior_must": "Control pose, camera and spatial composition of panel art.",
+      "authority_owner": "MISSING",
+      "existing_source_interfaces": [],
+      "gap_type": "MISSING",
+      "data_api_contract": "No pose/depth/camera contract in comic layouts.",
+      "identity_permission_source_rules": "n/a",
+      "dependencies": [
+        "IMAGE-COMIC-05"
+      ],
+      "test_layers": [
+        "INTEGRATION",
+        "MEDIA"
+      ],
+      "test_command": "NOT_RUN - not implemented",
+      "input_sample": "n/a",
+      "expected_result": "Requires control contract + provider support; absent.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-08",
+      "group": "IMAGE_COMIC",
+      "title": "Local panel repaint/inpainting",
+      "user_behavior_must": "Repaint a region of a panel with mask-based local editing and review.",
+      "authority_owner": "Image Studio mask/inpaint exists for image assets; not connected to comic panels",
+      "existing_source_interfaces": [
+        "app/services/studio_image_mask_authoring.py",
+        "app/services/studio_image_cutout.py"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "No comic-panel repaint route; image owner contract only.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "IMAGE-COMIC-05",
+        "V2-M5"
+      ],
+      "test_layers": [
+        "INTEGRATION",
+        "MEDIA"
+      ],
+      "test_command": "NOT_RUN for comic; image mask owner tests separate",
+      "input_sample": "n/a",
+      "expected_result": "Panel-level repaint with provenance and review required.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-09",
+      "group": "IMAGE_COMIC",
+      "title": "Independent bubble text",
+      "user_behavior_must": "Bubbles/narration are independently editable objects with speaker, text, position and measured typography.",
+      "authority_owner": "app/experimental/comic_layouts.py Bubble",
+      "existing_source_interfaces": [
+        "app/experimental/comic_layouts.py: Bubble(plain text, kind, speaker, font_size); measured layout/preflight"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Plain text ≤1000 chars, 80 bubbles/page, measured overflow/segment-cut warnings; no rich text.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority; review requires domain.review",
+      "dependencies": [
+        "IMAGE-COMIC-01"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
+      "input_sample": "Page with CJK dialogue bubbles.",
+      "expected_result": "Bubbles render as real pixels with deterministic layout; rich text unsupported.",
+      "actual_result": "Bubble/narration plain-text objects, measured layout, overflow blockers and deterministic preview/export passed with the pinned OFL font.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-10",
+      "group": "IMAGE_COMIC",
+      "title": "SFX / onomatopoeia effects",
+      "user_behavior_must": "Sound-effect text/graphic effects with placement and typographic styling.",
+      "authority_owner": "MISSING",
+      "existing_source_interfaces": [],
+      "gap_type": "MISSING",
+      "data_api_contract": "No SFX object type.",
+      "identity_permission_source_rules": "n/a",
+      "dependencies": [
+        "IMAGE-COMIC-09"
+      ],
+      "test_layers": [
+        "UNIT",
+        "BROWSER"
+      ],
+      "test_command": "NOT_RUN - not implemented",
+      "input_sample": "n/a",
+      "expected_result": "Requires SFX model + rendering + review.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-11",
+      "group": "IMAGE_COMIC",
+      "title": "Line-art colorization",
+      "user_behavior_must": "Colorize line art with character/style consistency and review.",
+      "authority_owner": "MISSING",
+      "existing_source_interfaces": [],
+      "gap_type": "MISSING",
+      "data_api_contract": "No colorization contract.",
+      "identity_permission_source_rules": "n/a",
+      "dependencies": [
+        "IMAGE-COMIC-05"
+      ],
+      "test_layers": [
+        "INTEGRATION",
+        "MEDIA"
+      ],
+      "test_command": "NOT_RUN - not implemented",
+      "input_sample": "n/a",
+      "expected_result": "Requires model adapter + quality evidence.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-12",
+      "group": "IMAGE_COMIC",
+      "title": "Cross-panel continuity",
+      "user_behavior_must": "Maintain visual/story continuity across panels (costume, props, space, lighting).",
+      "authority_owner": "MISSING",
+      "existing_source_interfaces": [],
+      "gap_type": "MISSING",
+      "data_api_contract": "No continuity analysis between comic panels.",
+      "identity_permission_source_rules": "n/a",
+      "dependencies": [
+        "IMAGE-COMIC-06"
+      ],
+      "test_layers": [
+        "INTEGRATION"
+      ],
+      "test_command": "NOT_RUN - not implemented",
+      "input_sample": "n/a",
+      "expected_result": "Requires a continuity model/checks and acceptance scenarios.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-13",
+      "group": "IMAGE_COMIC",
+      "title": "Page comic / webtoon",
+      "user_behavior_must": "Support both page-based comics and vertical scrolling webtoon layouts with page/segment geometry.",
+      "authority_owner": "app/experimental/comic_layouts.py PRESETS PAGE/WEBTOON",
+      "existing_source_interfaces": [
+        "app/experimental/comic_layouts.py: PAGE 800x1120, WEBTOON 800x2400, segment_height; segments preview/export"
+      ],
+      "gap_type": "NONE",
+      "data_api_contract": "Integer geometry, safe area, segment boundaries; segment-cut bubbles warned.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "IMAGE-COMIC-01"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
+      "input_sample": "Webtoon preset with multiple shots.",
+      "expected_result": "Segmented PNG output deterministic and preview-identical.",
+      "actual_result": "PAGE 800x1120 and WEBTOON 800x2400 presets, segmented real PNG rendering and byte-identical preview/export passed.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "INTEGRATION_VERIFIED",
+      "test_result": "PASS",
+      "release_blocking": "MEDIUM",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-14",
+      "group": "IMAGE_COMIC",
+      "title": "Pacing and page-turn rhythm",
+      "user_behavior_must": "Guide pacing, page turns and reading rhythm for the layout.",
+      "authority_owner": "MISSING",
+      "existing_source_interfaces": [],
+      "gap_type": "MISSING",
+      "data_api_contract": "No pacing model or rhythm contract.",
+      "identity_permission_source_rules": "n/a",
+      "dependencies": [
+        "IMAGE-COMIC-13"
+      ],
+      "test_layers": [
+        "UNIT"
+      ],
+      "test_command": "NOT_RUN - not implemented",
+      "input_sample": "n/a",
+      "expected_result": "Requires defined pacing rules and evidence; absent.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "MEDIUM",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-15",
+      "group": "IMAGE_COMIC",
+      "title": "Layers / ORA",
+      "user_behavior_must": "Layer-based editing with ORA/PSD-compatible import/export.",
+      "authority_owner": "MISSING",
+      "existing_source_interfaces": [],
+      "gap_type": "MISSING",
+      "data_api_contract": "No layer model; no ORA/PSD reader/writer in source (verified: no CBZ/ORA matches).",
+      "identity_permission_source_rules": "n/a",
+      "dependencies": [
+        "IMAGE-COMIC-04"
+      ],
+      "test_layers": [
+        "UNIT",
+        "MEDIA"
+      ],
+      "test_command": "NOT_RUN - not implemented",
+      "input_sample": "n/a",
+      "expected_result": "Requires layer data model + ORA round-trip; absent.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-16",
+      "group": "IMAGE_COMIC",
+      "title": "Multilingual typesetting",
+      "user_behavior_must": "Typeset text in multiple languages with correct line breaking, fonts and reading direction.",
+      "authority_owner": "PARTIAL: single pinned font Noto Sans SC only",
+      "existing_source_interfaces": [
+        "app/experimental/comic_layouts.py: font_family Literal['NOTO_SANS_SC_OFL'], CJK punctuation rules"
+      ],
+      "gap_type": "MISSING",
+      "data_api_contract": "No language/font selection or RTL support.",
+      "identity_permission_source_rules": "n/a",
+      "dependencies": [
+        "IMAGE-COMIC-09"
+      ],
+      "test_layers": [
+        "UNIT",
+        "MEDIA"
+      ],
+      "test_command": "NOT_RUN - not implemented",
+      "input_sample": "n/a",
+      "expected_result": "Multilingual typesetting unverified; only Simplified Chinese font path supported.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-17",
+      "group": "IMAGE_COMIC",
+      "title": "Local re-layout / remake",
+      "user_behavior_must": "Re-layout or remake selected pages/panels without destroying approved history.",
+      "authority_owner": "PARTIAL: versioned restore creates a new DRAFT; no partial re-layout engine",
+      "existing_source_interfaces": [
+        "app/experimental/comic_layouts.py: saved-version restore/recheck"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "CAS version restore only; no selective re-layout request contract.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "IMAGE-COMIC-04"
+      ],
+      "test_layers": [
+        "UNIT",
+        "API"
+      ],
+      "test_command": "python -m pytest -q tests/test_r5_comic_layouts.py (restore subset)",
+      "input_sample": "Approved layout version.",
+      "expected_result": "Restore is safe; partial re-layout NOT implemented.",
+      "actual_result": "Versioned restore to a new DRAFT is implemented and tested; partial re-layout/remake engine is not.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "PARTIAL",
+      "release_blocking": "MEDIUM",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-18",
+      "group": "IMAGE_COMIC",
+      "title": "Comic format export",
+      "user_behavior_must": "Export comic deliverables in standard formats (e.g. ORA/CBZ/PDF/EPUB) with deterministic bytes.",
+      "authority_owner": "PARTIAL: PNG segments + ZIP manifest + OFL only",
+      "existing_source_interfaces": [
+        "app/experimental/comic_layouts.py: ZIP segment-NNN.png + manifest.json + OFL.txt"
+      ],
+      "gap_type": "PARTIAL",
+      "data_api_contract": "Deterministic ZIP export exists; CBZ/PDF/EPUB exporters absent (verified no CBZ/ORA in source).",
+      "identity_permission_source_rules": "Review required; no external publish.",
+      "dependencies": [
+        "IMAGE-COMIC-13",
+        "IMAGE-COMIC-15"
+      ],
+      "test_layers": [
+        "UNIT",
+        "MEDIA"
+      ],
+      "test_command": "python -m pytest -q tests/test_r5_comic_layouts.py (ZIP export subset)",
+      "input_sample": "Approved PAGE layout.",
+      "expected_result": "ZIP+PNG verified byte-identical to preview; other formats NOT_RUN.",
+      "actual_result": "Deterministic PNG-segment ZIP + manifest + OFL export verified; ORA/CBZ/PDF/EPUB exporters are absent.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "PARTIAL",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-19",
+      "group": "IMAGE_COMIC",
+      "title": "Dynamic-comic handoff",
+      "user_behavior_must": "Hand off comic pages to dynamic-comic (motion/voice/subtitle) production with preserved sources.",
+      "authority_owner": "MISSING",
+      "existing_source_interfaces": [
+        "timeline/video owners exist but no comic→dynamic handoff contract"
+      ],
+      "gap_type": "MISSING",
+      "data_api_contract": "No comic-to-timeline/video handoff route.",
+      "identity_permission_source_rules": "domain.read / domain.write / domain.review checked against project incarnation, scope, actor/session, branch authority",
+      "dependencies": [
+        "IMAGE-COMIC-13",
+        "V2-M9"
+      ],
+      "test_layers": [
+        "INTEGRATION",
+        "MEDIA"
+      ],
+      "test_command": "NOT_RUN - not implemented",
+      "input_sample": "n/a",
+      "expected_result": "Requires handoff schema + review + rendered evidence.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    },
+    {
+      "id": "IMAGE-COMIC-20",
+      "group": "IMAGE_COMIC",
+      "title": "Comic Agent review",
+      "user_behavior_must": "Automated/assisted comic review (layout, readability, continuity, text) with evidence and human approval.",
+      "authority_owner": "MISSING comic-specific review; human digest review and narrative judge owners exist",
+      "existing_source_interfaces": [
+        "app/experimental/comic_layouts.py preflight + review",
+        "app/experimental/narrative_judge.py (text owner)"
+      ],
+      "gap_type": "MISSING",
+      "data_api_contract": "No comic-agent evaluator contract.",
+      "identity_permission_source_rules": "Reviewer must hold domain.review; agent proposals cannot self-approve.",
+      "dependencies": [
+        "IMAGE-COMIC-12",
+        "DIF-07"
+      ],
+      "test_layers": [
+        "INTEGRATION"
+      ],
+      "test_command": "NOT_RUN - not implemented",
+      "input_sample": "n/a",
+      "expected_result": "Requires evaluator + evidence + human acceptance.",
+      "actual_result": "NOT_RUN in this baseline round.",
+      "evidence_path": null,
+      "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+      "status": "PLANNED",
+      "test_result": "NOT_RUN",
+      "release_blocking": "HIGH",
+      "notes": ""
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+[WebServer] (node:128796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 15 tests using 1 worker
+
+(node:117496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:117496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [chromium] › tests\visual\design-system.spec.ts:8:31 › novel workspace visual baseline (642ms)
+  ok  2 [chromium] › tests\visual\design-system.spec.ts:8:31 › image workspace visual baseline (416ms)
+  ok  3 [chromium] › tests\visual\design-system.spec.ts:8:31 › video workspace visual baseline (411ms)
+  ok  4 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1024x768 (310ms)
+  ok  5 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1366x768 (319ms)
+  ok  6 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1440x900 (323ms)
+  ok  7 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1920x1080 (360ms)
+  ok  8 [chromium] › tests\visual\design-system.spec.ts:25:1 › compact desktop keeps the workspace within the viewport (341ms)
+  ok  9 [chromium] › tests\visual\design-system.spec.ts:33:1 › production NOVEL route uses the frozen AppShell (2.8s)
+  ok 10 [chromium] › tests\visual\design-system.spec.ts:105:1 › production conflict compare and manual resolution visual (1.3s)
+  ok 11 [chromium] › tests\visual\design-system.spec.ts:113:1 › production revision detail restore preview and conflict visual (1.5s)
+  ok 12 [chromium] › tests\visual\local-ai-discovery.spec.ts:50:1 › Local AI requires each explicit lifecycle action before routing (1.6s)
+  ok 13 [chromium] › tests\visual\local-ai-discovery.spec.ts:78:3 › Local AI preserves shell and model geometry 1366x768 (1.4s)
+  ok 14 [chromium] › tests\visual\local-ai-discovery.spec.ts:78:3 › Local AI preserves shell and model geometry 1440x900 (1.4s)
+  ok 15 [chromium] › tests\visual\local-ai-discovery.spec.ts:78:3 › Local AI preserves shell and model geometry 1920x1080 (1.4s)
+
+  15 passed (16.8s)

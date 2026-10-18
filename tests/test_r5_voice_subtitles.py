@@ -171,7 +171,7 @@ def test_measured_waveform_exact_ticks_split_merge_and_export_readback(rig,setup
     for fmt in ['srt','vtt']:
         output=service.download(rig.nid,rig.scope,rig.actor,row['id'],row['version'],fmt)
         path=tmp_path/f'captions.{fmt}';path.write_bytes(output)
-        parsed=read_captions(path.read_text(),fmt)
+        parsed=read_captions(path.read_text(encoding='utf-8'),fmt)
         assert parsed==[{'start_ms':0,'end_ms':1001,'text':'你好🌙\nHello'}]
     restart=SubtitleTimelineService(ExperimentalStore(rig.root,rig.backend,rig.store.database_url),rig.novels,rig.chapters,setup.voice,rig.assets)
     assert restart.records(rig.nid,rig.scope,rig.actor)['items'][0]['cues']==row['cues']

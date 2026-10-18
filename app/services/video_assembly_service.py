@@ -29,7 +29,7 @@ class VideoAssemblyService:
         return self.root/hashlib.sha256(json.dumps([novel_id,branch_id,actor_id]).encode()).hexdigest()
 
     def list(self,novel_id,branch_id,actor_id):
-        rows=sorted([json.loads(path.read_text()) for path in self._scope_dir(novel_id,branch_id,actor_id).glob('*.json')],key=lambda row:row['created_at'],reverse=True)
+        rows=sorted([json.loads(path.read_text(encoding='utf-8')) for path in self._scope_dir(novel_id,branch_id,actor_id).glob('*.json')],key=lambda row:row['created_at'],reverse=True)
         return [{**row,'recoverable':row.get('status')=='RUNNING' and row['id'] not in self._active} for row in rows]
 
     def create(self,novel_id,branch_id,actor_id,screenplay_id,clips):

@@ -12,7 +12,8 @@ import os
 from pathlib import Path
 import struct
 import tempfile
-from urllib.request import urlopen
+from http.client import HTTPException
+from urllib.request import Request, urlopen
 
 REVISION = "2894aab31764f10f29c421bdfd2340d3b382d384"
 BASE = f"https://raw.githubusercontent.com/google/fonts/{REVISION}/ofl/notosanssc/"
@@ -47,8 +48,22 @@ def prepare(output: Path):
         if target.exists():
             data = target.read_bytes()
         else:
-            with urlopen(url, timeout=90) as response:
-                data = response.read(MAX_BYTES + 1)
+            # The pinned raw file download was observed to be flaky (short body / IncompleteRead)
+            # in some environments. Retry a bounded number of times with a normal User-Agent; the
+            # pinned SHA256 remains the only authority and a bad body is never written.
+            data = None
+            for _attempt in range(4):
+                try:
+                    request = Request(url, headers={"User-Agent": "AI-Novel-Studio/0.7"})
+                    with urlopen(request, timeout=120) as response:
+                        candidate = response.read()
+                except (OSError, HTTPException):
+                    continue
+                if len(candidate) <= MAX_BYTES and hashlib.sha256(candidate).hexdigest() == digest:
+                    data = candidate
+                    break
+            if data is None:
+                raise ValueError("pinned font/license integrity check failed")
         if len(data) > MAX_BYTES or hashlib.sha256(data).hexdigest() != digest:
             raise ValueError("pinned font/license integrity check failed")
         if name.endswith(".ttf"):

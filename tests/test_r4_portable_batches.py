@@ -264,7 +264,13 @@ def test_portable_missing_restoration_readable_and_asset_escape_fails(work):
     assert 'Alice' in chapter['content'];missing_id=chapter['document']['content'][-1]['attrs']['asset_id'];assert missing_id.startswith('missing-')
     r.novels.delete(restored['target_id'])
     # A symlink cannot make an unrelated host file into a portable member.
-    target=r.root/'never-package';target.write_bytes(b'PRIVATE_HOST_BYTES');(r.assets.root/(asset['id']+'.bin')).symlink_to(target)
+    target=r.root/'never-package';target.write_bytes(b'PRIVATE_HOST_BYTES')
+    try:
+        (r.assets.root/(asset['id']+'.bin')).symlink_to(target)
+    except OSError as exc:
+        if getattr(exc,'winerror',None)==1314:
+            import pytest as _pytest; _pytest.skip('WINDOWS_SYMLINK_PRIVILEGE_UNAVAILABLE: hosted Linux CI covers the symlink contract')
+        raise
     row=r.portable.export(r.ctx,{'chapter_ids':[r.chapter['id']]});raw=r.portable.download(r.ctx,row['id'],1)
     assert b'PRIVATE_HOST_BYTES' not in raw and row['media'][0]['state']=='MISSING'
 
