@@ -1,0 +1,88 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-selection-split/frontend
+
+ ❯ src/nle/ClipInspectorSelectionMove.additive.test.tsx (8 tests | 1 failed) 252ms
+   × selection move inspector > preserves input on unrelated rerender and resets on selection changes 28ms
+     → expected '' to be '500' // Object.is equality
+ ✓ src/nle/ClipInspectorSlipDelete.additive.test.tsx (4 tests) 296ms
+ ❯ src/nle/ClipInspectorSelectionDuplicate.additive.test.tsx (9 tests | 1 failed) 335ms
+   × selection duplicate inspector > preserves authored offset on unrelated renders but clears it on context change 22ms
+     → expected '' to be '500' // Object.is equality
+ ❯ src/nle/nlePanels.test.tsx (18 tests | 1 failed) 489ms
+   × 不受支持的编辑被拒绝而不是静默替换 > 受支持的动作只发出原 owner 的操作描述符 36ms
+     → expected [ { op: 'clip.split', …(3) } ] to deeply equal { op: 'clip.split', …(3) }
+
+ Test Files  3 failed | 1 passed (4)
+      Tests  3 failed | 36 passed (39)
+   Start at  08:05:46
+   Duration  1.55s (transform 405ms, setup 69ms, collect 1.38s, tests 1.37s, environment 1.39s, prepare 277ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/nle/ClipInspectorSelectionDuplicate.additive.test.tsx > selection duplicate inspector > preserves authored offset on unrelated renders but clears it on context change
+AssertionError: expected '' to be '500' // Object.is equality
+
+- Expected
++ Received
+
+- 500
+
+ ❯ src/nle/ClipInspectorSelectionDuplicate.additive.test.tsx:52:76
+     50|     const p = props(), view = render(<ClipInspectorPanel {...p} />); s…
+     51|     view.rerender(<ClipInspectorPanel {...p} timeline={structuredClone…
+     52|     expect((screen.getByLabelText(offsetLabel) as HTMLInputElement).va…
+       |                                                                            ^
+     53|     view.rerender(<ClipInspectorPanel {...p} selectedClipIds={['b']} /…
+     54|     expect((screen.getByLabelText(offsetLabel) as HTMLInputElement).va…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/nle/ClipInspectorSelectionMove.additive.test.tsx > selection move inspector > preserves input on unrelated rerender and resets on selection changes
+AssertionError: expected '' to be '500' // Object.is equality
+
+- Expected
++ Received
+
+- 500
+
+ ❯ src/nle/ClipInspectorSelectionMove.additive.test.tsx:35:81
+     33|     const p = props(), view = render(<ClipInspectorPanel {...p} />); s…
+     34|     view.rerender(<ClipInspectorPanel {...p} timeline={structuredClone…
+     35|     expect((screen.getByLabelText('整体移动增量（毫秒，可为负）') as H…
+       |                                                                                 ^
+     36|     view.rerender(<ClipInspectorPanel {...p} selectedClipIds={['b']} /…
+     37|     expect((screen.getByLabelText('整体移动增量（毫秒，可为负）') as H…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/nle/nlePanels.test.tsx > 不受支持的编辑被拒绝而不是静默替换 > 受支持的动作只发出原 owner 的操作描述符
+AssertionError: expected [ { op: 'clip.split', …(3) } ] to deeply equal { op: 'clip.split', …(3) }
+
+- Expected: 
+Object {
+  "at_ms": 2000,
+  "clip_id": "clip-a",
+  "new_clip_id": "clip-new",
+  "op": "clip.split",
+}
+
++ Received: 
+Array [
+  Object {
+    "at_ms": 2000,
+    "clip_id": "clip-a",
+    "new_clip_id": "clip-new",
+    "op": "clip.split",
+  },
+]
+
+ ❯ src/nle/nlePanels.test.tsx:155:29
+    153|     const command = onEdit.mock.calls[0][0] as { kind: string; payload…
+    154|     expect(command.kind).toBe('clip.split');
+    155|     expect(command.payload).toEqual({ op: 'clip.split', clip_id: 'clip…
+       |                             ^
+    156|     expect(document.querySelector('[data-operation]')?.getAttribute('d…
+    157|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

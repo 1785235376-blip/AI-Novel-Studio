@@ -18,6 +18,13 @@ vi.mock('./StudioTimelineTransferPanel', async importOriginal => {
     captured.props = props; return <original.StudioTimelineTransferPanel {...props} />;
   } };
 });
+const splitRoute = vi.hoisted(() => ({ props: undefined as undefined | import('../nle/TimelineWorkspacePanel').TimelineWorkspacePanelProps }));
+vi.mock('../nle/TimelineWorkspacePanel', async importOriginal => {
+  const original = await importOriginal<typeof import('../nle/TimelineWorkspacePanel')>();
+  return { ...original, TimelineWorkspacePanel: (props: import('../nle/TimelineWorkspacePanel').TimelineWorkspacePanelProps) => {
+    splitRoute.props = props; return <original.TimelineWorkspacePanel {...props} />;
+  } };
+});
 const source = () => checkedTimelineRow(structuredClone(capture.created));
 function preview(): TimelineTransferPreview {
   const row = source();
@@ -148,4 +155,19 @@ it('keeps the original UNKNOWN import request and blocks locators and repeat imp
   await act(async () => captured.props!.controller.importTransfer());
   expect(client.timelineTransferImport).toHaveBeenCalledOnce(); expect(captured.props!.controller.unknown?.requestId).toBe(unknown?.requestId);
   expect(client.timelineSave).not.toHaveBeenCalled();
+});
+
+it('transfer Locate retires old split review and a fresh review uses the visible selection/playhead', async () => {
+  const { row } = await mounted(), clip = row.timeline.tracks[0].clips[0];
+  act(() => { splitRoute.props!.onSelectClips([clip.id]); splitRoute.props!.onPlayhead(clip.start_ms + 100); });
+  const retained = splitRoute.props!;
+  fireEvent.click(screen.getByRole('button', { name: /定位原片段/ }));
+  expect(splitRoute.props!.selectedClipIds).toEqual([clip.id]); expect(splitRoute.props!.playheadMs).toBe(clip.start_ms);
+  expect(retained.isSplitReviewCurrent!()).toBe(false);
+  act(() => retained.onEdit({ kind: 'clip.split', payload: [{ op: 'clip.split', clip_id: clip.id, at_ms: clip.start_ms + 100, new_clip_id: 'retired-right' }] }));
+  expect((screen.getByRole('button', { name: '撤销本地编辑' }) as HTMLButtonElement).disabled).toBe(true);
+  act(() => splitRoute.props!.onPlayhead(clip.start_ms + 100));
+  expect(splitRoute.props!.isSplitReviewCurrent!()).toBe(true);
+  fireEvent.click(screen.getByRole('button', { name: '在播放头拆分所选片段' }));
+  expect((screen.getByRole('button', { name: '撤销本地编辑' }) as HTMLButtonElement).disabled).toBe(false);
 });

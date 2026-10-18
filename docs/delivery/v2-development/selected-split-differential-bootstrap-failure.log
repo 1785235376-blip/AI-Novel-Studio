@@ -1,0 +1,46 @@
+E
+==================================== ERRORS ====================================
+_ ERROR at setup of test_actual_descriptors_and_full_final_document[None-video] _
+
+request = <SubRequest 'restore_global_settings' for <Function test_actual_descriptors_and_full_final_document[None-video]>>
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:241: in <module>
+    from .local_interop.host import LocalInteropHost
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Opt-in Local Interop Host. Observation and advice never execute mutations."""
+    from __future__ import annotations
+    
+    import asyncio
+    import secrets
+    from collections import OrderedDict, deque
+    from dataclasses import dataclass, field
+    from datetime import UTC, datetime, timedelta
+    from uuid import uuid4
+    
+    from app import __version__
+    from app.experimental.flags import enabled_flags
+    from app.runtime_events import runtime_events
+>   from local_interop_desktop.events import EventProvenance, InteropEventSourceRegistry
+E   ModuleNotFoundError: No module named 'local_interop_desktop'
+
+app/local_interop/host.py:14: ModuleNotFoundError
+=========================== short test summary info ============================
+ERROR tests/test_v2_timeline_split_differential.py::test_actual_descriptors_and_full_final_document[None-video]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 error in 1.68s

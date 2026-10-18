@@ -1,0 +1,20 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-selection-split/frontend
+
+ ✓ src/nle/ClipInspectorSelectionMove.additive.test.tsx (8 tests) 274ms
+ ✓ src/nle/ClipInspectorSlipDelete.additive.test.tsx (4 tests) 279ms
+ ✓ src/nle/ClipInspectorSelectionDuplicate.additive.test.tsx (9 tests) 338ms
+ ✓ src/nle/nlePanels.test.tsx (18 tests) 508ms
+ ✓ src/creative/StudioTimelineSelectionSplit.additive.test.tsx (15 tests) 2451ms
+   ✓ mounted selected split fences > rejects retained selection ABA, and permits only fresh exact review once 539ms
+   ✓ mounted selected split fences > rejects retained playhead ABA, and permits only fresh exact review once 371ms
+   ✓ mounted selected split fences > rejects omitted, extra, forged-point and scalar descriptors without history 399ms
+ ✓ src/creative/TimelineTransferReview.test.tsx (20 tests) 2689ms
+   ✓ locates the exact original mounted clip without saving, granting consent or discarding local controls 468ms
+   ✓ transfer Locate retires old split review and a fresh review uses the visible selection/playhead 346ms
+
+ Test Files  6 passed (6)
+      Tests  74 passed (74)
+   Start at  08:08:16
+   Duration  4.22s (transform 1.04s, setup 192ms, collect 3.24s, tests 6.54s, environment 2.25s, prepare 444ms)
+

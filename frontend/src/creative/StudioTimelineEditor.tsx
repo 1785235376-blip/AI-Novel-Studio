@@ -1,3 +1,4 @@
+import { selectionSplitOperations, sameSelectionSplitDescriptors } from '../nle/timelineSelectionSplit';
 import { applyClipColorOperation } from '../nle/timelineClipColor';
 import {StudioTimelineSourceBoundsRepair} from './StudioTimelineSourceBoundsRepair';
 import {useStudioTimelineSourceBounds} from './useStudioTimelineSourceBounds';
@@ -47,6 +48,12 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
   };
   const selectionGeneration = selection.current.generation;
   const [nlePlayhead, setNlePlayhead] = useState(0);
+  const playhead = useRef({ value: 0, generation: 0 });
+  const selectPlayhead = (value: number) => {
+    if (playhead.current.value !== value) playhead.current.generation++;
+    playhead.current.value = value; setNlePlayhead(value);
+  };
+  const playheadGeneration = playhead.current.generation;
   const [nleView, setNleView] = useState({ startMs: 0, scale: 1 });
   const [nleNotice, setNleNotice] = useState('');
   const [sourceEditReveal, setSourceEditReveal] = useState(0);
@@ -278,7 +285,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       const element = clipElements.current.get(target.clip.id);
       if (!element?.isConnected) return;
       element.focus(); element.scrollIntoView?.({ block: 'nearest' });
-      setNleClips([target.clip.id]); setNlePlayhead(target.clip.start_ms);
+      selectClips([target.clip.id]); selectPlayhead(target.clip.start_ms);
     }} />}
     <StudioTimelinePlaybackPanel controller={c.playback} />
     {c.attempt && <StatusMessage tone={c.attempt.state === 'UNKNOWN' ? 'warning' : 'info'}>{c.attempt.state === 'UNKNOWN' ? '渲染或导出结果仍需核对，请从制作任务读取原回执；不会再次发送此请求。' : '此快照与配置的请求已有回执，不会从这里重复发起。'} 原请求：<code>{c.attempt.requestId}</code>{c.attempt.exportProfile && <> · 导出 {c.attempt.exportProfile.preset}</>}</StatusMessage>}
@@ -294,7 +301,14 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
     </section>
     <TimelineWorkspacePanel projectId={props.projectId || ''} identity={props.projectId || ''} timeline={draft.timeline}
       selectedClipIds={nleClips} playheadMs={nlePlayhead} viewStartMs={nleView.startMs} viewScale={nleView.scale}
-      editable={c.canEdit} onSelectClips={selectClips} onPlayhead={setNlePlayhead}
+      editable={c.canEdit} onSelectClips={selectClips} onPlayhead={selectPlayhead}
+      isSplitReviewCurrent={() => {
+        const live = latestReview.current;
+        return live.props.client === props.client && live.c.getHandoffRevision() === reviewGeneration
+          && selection.current.generation === selectionGeneration && playhead.current.generation === playheadGeneration
+          && playhead.current.value === nlePlayhead && live.props.isCurrent() && live.c.canEdit && !live.props.busy
+          && !live.props.isBusy?.() && JSON.stringify(selection.current.ids) === JSON.stringify(nleClips);
+      }}
       onView={next => setNleView({ startMs: next.startMs, scale: next.scale })}
       exportReceipt={c.exportPreview} limits={{ duration_ms: TIMELINE_LIMITS.duration, tracks: audioOnly ? TIMELINE_LIMITS.kindTracks : TIMELINE_LIMITS.tracks,
         tracks_per_kind: TIMELINE_LIMITS.kindTracks, clips: TIMELINE_LIMITS.clips, ...(audioOnly ? {} : { captions: TIMELINE_LIMITS.captions, caption_characters: TIMELINE_LIMITS.captionCharacters }) }}
@@ -339,6 +353,23 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
             live.c.sourceEdit.change(intent); setSourceEditReveal(value => value + 1);
             setNleNotice('已填入原“正式素材加入与替换”面板。请核对范围、预览，再明确保存；尚未替换素材或发送请求。');
           } catch (reason) { setNleNotice(reason instanceof Error ? reason.message : '素材替换未准备，请核对原片段与素材版本。'); }
+          return;
+        }
+        if (command.kind === 'clip.split') {
+          const live = latestReview.current;
+          if (live.props.client !== props.client || live.c.getHandoffRevision() !== reviewGeneration
+            || selection.current.generation !== selectionGeneration || playhead.current.generation !== playheadGeneration
+            || playhead.current.value !== nlePlayhead || !live.props.isCurrent() || !live.c.canEdit || live.props.busy
+            || JSON.stringify(selection.current.ids) !== JSON.stringify(nleClips)) return;
+          try {
+            if (!Array.isArray(command.payload)) throw new Error('拆分必须完整对应当前选择与播放头预览。');
+            const operations = command.payload;
+            const ids = Object.freeze(Object.fromEntries(operations.map(operation => [operation?.clip_id, operation?.new_clip_id])));
+            const expected = selectionSplitOperations(draft.timeline, nleClips, nlePlayhead, ids);
+            if (!sameSelectionSplitDescriptors(operations, expected)) throw new Error('已拒绝额外、遗漏或不匹配的拆分指令。');
+            const applied = live.c.splitSelection(nleClips, nlePlayhead, ids);
+            setNleNotice(applied ? '所选片段已在精确播放头拆分；一次撤销可恢复，保存前不会写入服务端。' : '拆分未应用，请重新核对当前编辑状态。');
+          } catch (reason) { setNleNotice(reason instanceof Error ? reason.message : '拆分未应用。'); }
           return;
         }
         if (command.kind === 'clip.duplicate' && Array.isArray(command.payload)) {
@@ -394,7 +425,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
         // clip.split {at_ms}, clip.duplicate/clip.move {start_ms, track_id}.
         const payload = command.payload as { op?: string; clip_id?: string; at_ms?: number; start_ms?: number; track_id?: string; in_ms?: number; out_ms?: number; offset_ms?: number; ripple?: boolean } | undefined;
         const clipId = payload?.clip_id;
-        const position = command.kind === 'clip.split' ? payload?.at_ms : payload?.start_ms;
+        const position = payload?.start_ms;
         const track = clipId ? draft.timeline.tracks.find(row => row.clips.some(clip => clip.id === clipId)) : undefined;
         // Trim has source in/out points, not a timeline position. Route it before
         // the position-only operations and bind it to the reviewed live context.
@@ -431,7 +462,6 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
           setNleNotice('已拒绝该编辑：缺少原 owner 需要的片段或位置；未执行任何更改。');
           return;
         }
-        if (command.kind === 'clip.split') { c.splitClip(track.id, clipId, position); setNleNotice('已按原 owner 的 split 语义应用到本地草稿；保存前不会写入服务端。'); return; }
         if (command.kind === 'clip.duplicate') { c.duplicateClip(track.id, clipId, position); setNleNotice('已按原 owner 的 duplicate 语义应用到本地草稿。'); return; }
         if (command.kind === 'clip.move' && payload?.track_id) { c.moveClip(track.id, clipId, payload.track_id, position); setNleNotice('已按原 owner 的 move 语义应用到本地草稿。'); return; }
         setNleNotice(`该编辑（${command.kind}）由原 owner 支持，但当前工作台尚未接线到控制器；未执行任何更改。`);

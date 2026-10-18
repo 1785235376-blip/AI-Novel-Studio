@@ -14,7 +14,7 @@ import './timelineWorkspace.css';
  * 冻结挂载形状：主代理把真实控制器值传进来；本面板把每个入参都当不可信数据处理。
  * 面板不发网络请求、不建定时器、不持有第二个编辑器引擎；它只生成原编辑服务的操作描述符。
  */
-export type TimelineWorkspacePanelProps = { projectId: string; identity: string; timeline: unknown; selectedClipIds: string[]; playheadMs: number; viewStartMs: number; viewScale: number; editable: boolean; onSelectClips: (ids: string[]) => void; onPlayhead: (ms: number) => void; onView: (next: { startMs: number; scale: number }) => void; onEdit: (command: { kind: string; payload: unknown }) => void; subtitles?: unknown; exportReceipt?: unknown; limits?: unknown; waveform?: TimelineWaveformPanelProps; onUnavailable?: () => void };
+export type TimelineWorkspacePanelProps = { isSplitReviewCurrent?: () => boolean; projectId: string; identity: string; timeline: unknown; selectedClipIds: string[]; playheadMs: number; viewStartMs: number; viewScale: number; editable: boolean; onSelectClips: (ids: string[]) => void; onPlayhead: (ms: number) => void; onView: (next: { startMs: number; scale: number }) => void; onEdit: (command: { kind: string; payload: unknown }) => void; subtitles?: unknown; exportReceipt?: unknown; limits?: unknown; waveform?: TimelineWaveformPanelProps; onUnavailable?: () => void };
 
 const bounded = (value: unknown, max: number): string => {
   const text = typeof value === 'string' ? value : '';
@@ -60,7 +60,7 @@ export function TimelineWorkspacePanel(props: TimelineWorkspacePanelProps) {
     <TrackHeaderPanel timeline={timeline} selectedClipIds={props.selectedClipIds} editable={props.editable}
       onSelectClips={props.onSelectClips} />
     <ClipInspectorPanel timeline={timeline} selectedClipIds={props.selectedClipIds} playheadMs={props.playheadMs}
-      marks={marks} editable={props.editable} onEdit={props.onEdit} />
+      marks={marks} editable={props.editable} onEdit={props.onEdit} isSplitReviewCurrent={props.isSplitReviewCurrent} />
     {props.waveform && <TimelineWaveformPanel {...props.waveform} />}
     {timeline.schema_version !== 3 && <SubtitleTrackPanel timeline={timeline} subtitles={props.subtitles} editable={props.editable} onEdit={props.onEdit} />}
     <ExportDeliveryPanel mediaKind={timeline.schema_version === 3 ? 'AUDIO' : 'VIDEO'} exportReceipt={props.exportReceipt} limits={props.limits} usage={usage} />

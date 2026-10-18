@@ -1,0 +1,22 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-selection-split/frontend
+
+ ✓ src/nle/timelineSelectionSplit.additive.test.ts (9 tests) 27ms
+ ✓ src/creative/StudioTimelineSelectionSplit.additive.test.tsx (13 tests) 1909ms
+   ✓ mounted selected split fences > rejects retained selection ABA, and permits only fresh exact review once 493ms
+   ✓ mounted selected split fences > rejects retained playhead ABA, and permits only fresh exact review once 342ms
+   ✓ mounted selected split fences > rejects omitted, extra, forged-point and scalar descriptors without history 419ms
+ ✓ src/creative/StudioTimelineSelectionMove.additive.test.tsx (32 tests) 3342ms
+   ✓ mounted selection move routing > moves the whole selected track, undoes atomically, and saves through original CAS 965ms
+   ✓ mounted selection move routing > refuses retained selection ABA callback while a fresh callback works 463ms
+ ✓ src/creative/StudioTimelineSelectionDuplicate.additive.test.tsx (27 tests) 4012ms
+   ✓ mounted selected duplication route > duplicates whole selected track once, preserves generated IDs through Save and fresh GET/remount 1218ms
+   ✓ mounted selected duplication route > verifies exact nested transition fields before applying internal transition batches 483ms
+   ✓ mounted selected duplication route > rejects retained selection ABA callbacks and repeated mounted invocation 566ms
+   ✓ mounted selected duplication route > rejects missing, reordered, wrong-track, unequal-offset, extra-key and unauthorized-update descriptors 412ms
+
+ Test Files  4 passed (4)
+      Tests  81 passed (81)
+   Start at  08:04:49
+   Duration  5.30s (transform 810ms, setup 64ms, collect 2.01s, tests 9.29s, environment 1.14s, prepare 311ms)
+

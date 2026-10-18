@@ -1,3 +1,4 @@
+import { selectionSplitPreview, selectionSplitOperations } from './timelineSelectionSplit';
 import { ClipColorPanel } from './ClipColorPanel';
 import { selectionDuplicateOperations, selectionDuplicateTargets } from './timelineSelectionDuplicate';
 import { selectionMoveOperations } from './timelineSelectionMove';
@@ -28,6 +29,7 @@ const numeric = (value: string): number => value.trim() === '' ? Number.NaN : Nu
  * 每个动作先生成原编辑服务的操作描述符；被拒绝时**只显示原因，不调用 onEdit**。
  */
 export type ClipInspectorPanelProps = {
+  isSplitReviewCurrent?: () => boolean;
   timeline: unknown;
   selectedClipIds: string[];
   playheadMs: number;
@@ -44,12 +46,14 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
   const [duplicateOffset, setDuplicateOffset] = useState('');
   const [duplicateOutcome, setDuplicateOutcome] = useState('');
   const duplicateConsumed = useRef('');
+  const splitConsumed = useRef('');
+  const [splitOutcome, setSplitOutcome] = useState('');
   const [selectionOffset, setSelectionOffset] = useState('');
   const [selectionOutcome, setSelectionOutcome] = useState('');
   const alive = useRef(true);
   useEffect(() => { alive.current = true; return () => { alive.current = false; inputGeneration.current++; }; }, []);
   const [kind, setKind] = useState<string>('split');
-  const [atMs, setAtMs] = useState(''), [inMs, setInMs] = useState(''), [outMs, setOutMs] = useState('');
+  const [inMs, setInMs] = useState(''), [outMs, setOutMs] = useState('');
   const [startMs, setStartMs] = useState(''), [offsetMs, setOffsetMs] = useState('');
   const [targetTrackId, setTargetTrackId] = useState('');
   const [ripple, setRipple] = useState(false);
@@ -61,6 +65,11 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
   const first = facts[0];
   const selectionKey = JSON.stringify([props.selectedClipIds, first?.trackId, first?.clip]);
   const contextKey = JSON.stringify([selectionKey, props.timeline]);
+  const playheadGeneration = useRef({ value: props.playheadMs, generation: 0 });
+  if (playheadGeneration.current.value !== props.playheadMs) {
+    playheadGeneration.current = { value: props.playheadMs, generation: playheadGeneration.current.generation + 1 };
+  }
+  const reviewedPlayheadGeneration = playheadGeneration.current.generation;
   const contextGeneration = useRef({ key: contextKey, editable: props.editable, generation: 0 });
   if (contextGeneration.current.key !== contextKey || contextGeneration.current.editable !== props.editable) {
     contextGeneration.current = { key: contextKey, editable: props.editable, generation: contextGeneration.current.generation + 1 };
@@ -85,12 +94,30 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
   const reset = () => {
     if (!first) return;
     inputGeneration.current++;
-    setAtMs(String(Math.min(timeline.duration_ms - 1, first.startMs + Math.floor(first.durationMs / 2))));
     setInMs(String(first.clip.in_ms)); setOutMs(String(first.clip.out_ms));
     setStartMs(String(Math.min(timeline.duration_ms - 1, first.endMs)));
     setOffsetMs('0'); setTargetTrackId(first.trackId);
     setAssetId(first.clip.source_snapshot.id); setAssetVersion(String(first.clip.source_snapshot.version));
     setAssetDigest(first.clip.source_snapshot.digest); setRipple(false);
+  };
+  let splitPreview: ReturnType<typeof selectionSplitPreview> = [], splitError = '';
+  try { if (props.selectedClipIds.length) splitPreview = selectionSplitPreview(timeline, props.selectedClipIds, props.playheadMs); }
+  catch (reason) { splitError = reason instanceof Error ? reason.message : '拆分预览无效。'; }
+  const generateSelectionSplit = () => {
+    const consent = `${reviewedInputGeneration}:${reviewedContextGeneration}:${reviewedPlayheadGeneration}`;
+    if (!alive.current || !latestContext.current.editable || inputGeneration.current !== reviewedInputGeneration
+      || contextGeneration.current.generation !== reviewedContextGeneration || playheadGeneration.current.generation !== reviewedPlayheadGeneration || splitConsumed.current === consent) return;
+    if (props.isSplitReviewCurrent && !props.isSplitReviewCurrent()) return;
+    splitConsumed.current = consent;
+    try {
+      const targets = selectionSplitPreview(timeline, props.selectedClipIds, props.playheadMs).filter(row => row.affected);
+      if (!targets.length) throw new Error('没有跨越播放头的所选片段。');
+      const newIds = Object.freeze(Object.fromEntries(targets.map(({ clip }) =>
+        [clip.id, (props.newId ?? (() => globalThis.crypto.randomUUID()))()])));
+      const operations = selectionSplitOperations(timeline, props.selectedClipIds, props.playheadMs, newIds);
+      props.onEdit({ kind: 'clip.split', payload: operations });
+      setSplitOutcome(`已生成 ${operations.length} 项原 clip.split 指令；应用结果见时间线提示，仍需明确保存。`);
+    } catch (reason) { setSplitOutcome(`${reason instanceof Error ? reason.message : '拆分未应用。'} 请重新核对后再尝试。`); }
   };
   const generateSelectionDuplicate = () => {
     const consent = `${reviewedInputGeneration}:${reviewedContextGeneration}`;
@@ -119,13 +146,14 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
     } catch (reason) { setSelectionOutcome(reason instanceof Error ? reason.message : '整体移动输入无效。'); }
   };
   const generate = () => {
+    if (kind === 'split') { generateSelectionSplit(); return; }
     if (inputGeneration.current !== reviewedInputGeneration || !first || !latestContext.current.editable || latestContext.current.contextKey !== contextKey) return;
     const context: Record<string, unknown> = {
-      timeline, clipId: first.clip.id, atMs: numeric(atMs), inMs: numeric(inMs), outMs: numeric(outMs),
+      timeline, clipId: first.clip.id, atMs: props.playheadMs, inMs: numeric(inMs), outMs: numeric(outMs),
       startMs: numeric(startMs), offsetMs: numeric(offsetMs), ripple,
       ...(targetTrackId ? { targetTrackId } : {}),
     };
-    if (kind === 'split' || kind === 'copy') {
+    if (kind === 'copy') {
       context.newClipId = (props.newId ?? (() => globalThis.crypto.randomUUID()))();
     }
     if (kind === 'source-replace') {
@@ -152,7 +180,19 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
       </dl>
       {first.trackKind === 'VIDEO' && <ClipColorPanel key={JSON.stringify([contextKey, props.editable])}
         timeline={timeline} selectedClipIds={props.selectedClipIds} editable={props.editable} onEdit={props.onEdit} />}
-      {facts.length > 1 && <Badge tone="info">已选择 {facts.length} 个片段；下方整体移动与整体复制作用于全部选择，其他动作仍针对第一个片段</Badge>}
+      {facts.length > 1 && <Badge tone="info">已选择 {facts.length} 个片段；下方播放头拆分、整体移动与整体复制作用于全部选择，其他动作仍针对第一个片段</Badge>}
+      <section aria-label="播放头拆分预览">
+        <p>在播放头 {props.playheadMs} 毫秒拆分所选片段，不吸附。仅范围内部穿过播放头的片段会拆分。</p>
+        <ul>{props.selectedClipIds.map((id, index) => {
+          const fact = facts.find(row => row.clip.id === id);
+          return <li key={`${index}:${id}`}>{id} · {fact ? <>{fact.trackId} · {fact.startMs} — {fact.endMs} 毫秒：
+            {fact.startMs < props.playheadMs && props.playheadMs < fact.endMs ? '拆分为左右两段' : '跳过（边界或范围外）'}</> : '找不到原片段'}</li>;
+        })}</ul>
+        {splitError && <StatusMessage tone="error">{splitError}</StatusMessage>}
+        <Button disabled={!props.editable || !!splitError || !splitPreview.some(row => row.affected)} onClick={generateSelectionSplit}>在播放头拆分所选片段</Button>
+        <p>保留原轨道、素材版本与总长；未选片段与字幕不变。一次撤销可恢复，明确保存前不写入服务端。</p>
+        {splitOutcome && <StatusMessage>{splitOutcome}</StatusMessage>}
+      </section>
       <div className="nle-clip__form">
         <label>整体移动增量（毫秒，可为负）<input type="number" step={1} value={selectionOffset} aria-label="整体移动增量（毫秒，可为负）"
           onChange={event => authored(() => setSelectionOffset(event.currentTarget.value))} /></label>
@@ -176,7 +216,7 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
         <label>请求的动作<select aria-label="请求的动作" value={kind} onChange={event => authored(() => setKind(event.currentTarget.value))}>
           {ACTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
         </select></label>
-        <label>拆分位置（毫秒）<input type="number" step={1} value={atMs} aria-label="拆分位置（毫秒）" onChange={event => authored(() => setAtMs(event.currentTarget.value))} /></label>
+
         <label>裁剪入点（毫秒）<input type="number" step={1} value={inMs} aria-label="裁剪入点（毫秒）" onChange={event => authored(() => setInMs(event.currentTarget.value))} /></label>
         <label>裁剪出点（毫秒）<input type="number" step={1} value={outMs} aria-label="裁剪出点（毫秒）" onChange={event => authored(() => setOutMs(event.currentTarget.value))} /></label>
         <label>摆放或复制位置（毫秒）<input type="number" step={1} value={startMs} aria-label="摆放或复制位置（毫秒）" onChange={event => authored(() => setStartMs(event.currentTarget.value))} /></label>
@@ -196,7 +236,7 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
       </div>
       <div className="nle-clip__actions">
         <Button disabled={!props.editable} onClick={reset}>以所选片段填入默认值</Button>
-        <Button variant="primary" disabled={!props.editable} onClick={generate}>生成编辑指令</Button>
+        <Button variant="primary" disabled={!props.editable || kind === 'split' && (!!splitError || !splitPreview.some(row => row.affected))} onClick={generate}>生成编辑指令</Button>
       </div>
       {outcome.kind === 'REFUSED' && <div data-refusal-code={outcome.refusal.code}>
         <StatusMessage tone="error">

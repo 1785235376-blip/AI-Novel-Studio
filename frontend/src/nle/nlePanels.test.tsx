@@ -152,8 +152,8 @@ describe('不受支持的编辑被拒绝而不是静默替换', () => {
     expect(onEdit).toHaveBeenCalledTimes(1);
     const command = onEdit.mock.calls[0][0] as { kind: string; payload: { op: string; clip_id: string; at_ms: number; new_clip_id: string } };
     expect(command.kind).toBe('clip.split');
-    expect(command.payload).toEqual({ op: 'clip.split', clip_id: 'clip-a', at_ms: 2000, new_clip_id: 'clip-new' });
-    expect(document.querySelector('[data-operation]')?.getAttribute('data-operation')).toBe('clip.split');
+    expect(command.payload).toEqual([{ op: 'clip.split', clip_id: 'clip-a', at_ms: 2000, new_clip_id: 'clip-new' }]);
+    expect(screen.getByText(/已生成 1 项原 clip.split 指令/)).toBeTruthy();
   });
 
   it('未选择片段时不生成任何指令', () => {

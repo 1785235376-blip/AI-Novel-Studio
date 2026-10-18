@@ -1,3 +1,4 @@
+import { applySelectionSplit, selectionSplitPreview, type SelectionSplitIds } from '../nle/timelineSelectionSplit';
 import { changedRangeBeyondMeasurement, measuredBoundFromWaveform, measuredBoundKey, type TimelineMeasuredBound } from './timelineMeasuredBounds';
 import type { TimelineWaveform } from './studioTimelineWaveformTypes';
 import { selectionDuplicateOperations, type SelectionDuplicateIds } from '../nle/timelineSelectionDuplicate';
@@ -254,15 +255,10 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
       const clip = track?.clips.find(row => row.id === clipId), target = input.timeline.tracks.find(row => row.id === targetId);
       if (!track || !clip || !target || target.kind !== track.kind || !Number.isSafeInteger(position)) throw new Error('请核对原片段、同类型目标轨道与整数毫秒位置。');
       if (action === 'split') {
-        const offset = position - clip.start_ms, duration = timelineClipDuration(clip);
-        if (offset <= 0 || offset >= duration) throw new Error('拆分位置必须位于片段的时间线范围内，保留两段有效长度。');
-        const mediaOffset = offset * (clip.speed_num ?? 1) / (clip.speed_den ?? 1);
-        if (!Number.isSafeInteger(mediaOffset)) throw new Error('此拆分位置不能按当前速度映射至整数毫秒的素材入点。');
-        const right = { ...cloneTimeline(clip), id: crypto.randomUUID(), start_ms: position, in_ms: clip.in_ms + mediaOffset };
-        if (clip.source_snapshot.asset_kind === 'image') { clip.out_ms = offset; right.in_ms = 0; right.out_ms = duration - offset; }
-        else clip.out_ms = right.in_ms;
-        if (input.timeline.schema_version === 2 || input.timeline.schema_version === 3) { clip.fade_out_ms = 0; right.fade_in_ms = 0; }
-        track.clips.push(right);
+        if (!selectionSplitPreview(input.timeline, [clipId], position).some(row => row.affected)) {
+          throw new Error('拆分位置必须位于片段的时间线范围内，保留两段有效长度。');
+        }
+        input.timeline = applySelectionSplit(input.timeline, [clipId], position, { [clipId]: crypto.randomUUID() });
       } else if (action === 'duplicate') {
         target.clips.push({ ...cloneTimeline(clip), id: crypto.randomUUID(), start_ms: position });
       } else {
@@ -273,6 +269,21 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
       change(value => { value.title = checked.title; value.timeline = checked.timeline; });
       setNotice('仅已更新本地时间线；原素材和服务端版本保留，需要明确保存。');
     } catch (reason) { setError(reason instanceof Error ? reason.message : '片段编辑无效，请核对边界与轨道重叠。'); }
+  }
+  function splitSelection(clipIds: readonly string[], playheadMs: number, newIds: SelectionSplitIds,
+    revision: string, client: StudioProductionClient): boolean {
+    if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN'
+      || client !== latest.current.client || revision !== `${epoch.current}:${handoffGeneration.current}`) return false;
+    try {
+      const input = checkedTimelineDraft(cloneTimeline(draftRef.current));
+      input.timeline = applySelectionSplit(input.timeline, clipIds, playheadMs, newIds);
+      const checked = checkedTimelineDraft(input);
+      if (!change(value => { value.title = checked.title; value.timeline = checked.timeline; })) return false;
+      setNotice('已在精确播放头拆分所选片段；一次撤销可恢复，需要明确保存。');
+      return true;
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : '所选片段拆分无效。'); return false;
+    }
   }
   function duplicateSelection(clipIds: readonly string[], offsetMs: number, newIds: SelectionDuplicateIds,
     revision: string, client: StudioProductionClient): boolean {
@@ -557,6 +568,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     moveClip: (trackId: string, clipId: string, targetId: string, position: number) => editClip(trackId, clipId, 'move', position, targetId),
     slipClip: (trackId: string, clipId: string, offsetMs: number) => slipOrRippleRemove(trackId, clipId, 'slip', offsetMs, false, editRevision, props.client),
     rippleRemoveClip: (trackId: string, clipId: string, ripple: boolean) => slipOrRippleRemove(trackId, clipId, 'ripple-remove', 0, ripple, editRevision, props.client),
+    splitSelection: (clipIds: readonly string[], playheadMs: number, newIds: SelectionSplitIds) => splitSelection(clipIds, playheadMs, newIds, editRevision, props.client),
     duplicateSelection: (clipIds: readonly string[], offsetMs: number, newIds: SelectionDuplicateIds) => duplicateSelection(clipIds, offsetMs, newIds, editRevision, props.client),
     moveSelection: (clipIds: readonly string[], offsetMs: number) => moveSelection(clipIds, offsetMs, editRevision, props.client),
     trimClip: (trackId: string, clipId: string, inMs: number, outMs: number, ripple: boolean) => trimClip(trackId, clipId, inMs, outMs, ripple, editRevision, props.client),
