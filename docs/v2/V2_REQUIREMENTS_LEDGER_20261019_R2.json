@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T22:54:00Z",
+  "updated_at_utc": "2026-10-18T23:13:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -1162,32 +1162,34 @@
   ],
   "latest_bounded_wave": {
     "status": "COMMITTED_PARTIAL_REQUIREMENT_REUSE_NOT_FULL_NEW_ID_CLOSURE",
-    "product_sha": "2bbecf3e20ba277a6342d5ae279ea7ae878059fd",
-    "report": "docs/delivery/v2-development/geometry-camera-integration-20261018.md",
+    "product_sha": "f0d7fa56024f4f47d6fe8a68fc5310c119769f68",
+    "report": "docs/delivery/v2-development/storyboard-split-integration-20261018.md",
     "reported_evidence": {
       "combined_ui_tests": 213,
-      "suites": 20,
+      "suites": 15,
       "typescript_vite_token": true,
-      "source_paths": 3178,
-      "backend_evidence_reused_on_exact_non_frontend_bytes": true,
+      "source_paths": 3184,
+      "actual_typescript_original_python_differential": 12,
+      "differential_is_pure_not_persistence": true,
+      "backend_runtime_unchanged": true,
       "formal_browser_acceptance": false
     },
     "items": [
       {
-        "area": "Schematic Comic panel and bubble geometry",
+        "area": "Verified Director-derived Storyboard DRAFT return to current canvas",
         "maps_to": [
-          "IMAGE-COMIC-04",
-          "IMAGE-COMIC-09"
+          "CONSOLE-05",
+          "SHOT-05"
         ],
-        "boundary": "Manual schematic move/resize/nudge and original undo/save; not pixel rendering, typography, live layers or professional full canvas acceptance."
+        "boundary": "Explicit original-owner unconnected planning pin insertion, undo/save/reopen. No automatic approval, generation or full intelligent Director closure."
       },
       {
-        "area": "Selective same-scene Director camera-field reuse",
+        "area": "Reviewed selected Timeline split and single-split transition compatibility",
         "maps_to": [
-          "DIR-03",
-          "DIR-08"
+          "EDIT-02",
+          "EDIT-06"
         ],
-        "boundary": "Explicit manual field preview/apply/undo; not model-led analysis or graph-wide intelligent Console completion."
+        "boundary": "Exact playhead, selected affected/skipped clips, original atomic local history and CAS save; pure parity tests, no new live media/persistence acceptance."
       }
     ],
     "formal_acceptance": false
@@ -6041,7 +6043,15 @@
           }
         ],
         "current_verification": "NOT_REASSESSED"
-      }
+      },
+      "bounded_evidence": [
+        {
+          "product_sha": "f0d7fa56024f4f47d6fe8a68fc5310c119769f68",
+          "report": "docs/delivery/v2-development/storyboard-split-integration-20261018.md",
+          "summary": "Verified Director-derived Storyboard DRAFT return to current canvas. Explicit original-owner unconnected planning pin insertion, undo/save/reopen. No automatic approval, generation or full intelligent Director closure.",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "CONSOLE-06",
@@ -8194,7 +8204,15 @@
           }
         ],
         "current_verification": "NOT_REASSESSED"
-      }
+      },
+      "bounded_evidence": [
+        {
+          "product_sha": "f0d7fa56024f4f47d6fe8a68fc5310c119769f68",
+          "report": "docs/delivery/v2-development/storyboard-split-integration-20261018.md",
+          "summary": "Verified Director-derived Storyboard DRAFT return to current canvas. Explicit original-owner unconnected planning pin insertion, undo/save/reopen. No automatic approval, generation or full intelligent Director closure.",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "SHOT-06",
@@ -9919,7 +9937,15 @@
           }
         ],
         "current_verification": "NOT_REASSESSED"
-      }
+      },
+      "bounded_evidence": [
+        {
+          "product_sha": "f0d7fa56024f4f47d6fe8a68fc5310c119769f68",
+          "report": "docs/delivery/v2-development/storyboard-split-integration-20261018.md",
+          "summary": "Reviewed selected Timeline split and single-split transition compatibility. Exact playhead, selected affected/skipped clips, original atomic local history and CAS save; pure parity tests, no new live media/persistence acceptance.",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "EDIT-03",
@@ -10083,7 +10109,15 @@
           }
         ],
         "current_verification": "NOT_REASSESSED"
-      }
+      },
+      "bounded_evidence": [
+        {
+          "product_sha": "f0d7fa56024f4f47d6fe8a68fc5310c119769f68",
+          "report": "docs/delivery/v2-development/storyboard-split-integration-20261018.md",
+          "summary": "Reviewed selected Timeline split and single-split transition compatibility. Exact playhead, selected affected/skipped clips, original atomic local history and CAS save; pure parity tests, no new live media/persistence acceptance.",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "EDIT-07",
@@ -22238,11 +22272,45 @@
         }
       ],
       "formal_acceptance": false
+    },
+    {
+      "status": "COMMITTED_PARTIAL_REQUIREMENT_REUSE_NOT_FULL_NEW_ID_CLOSURE",
+      "product_sha": "f0d7fa56024f4f47d6fe8a68fc5310c119769f68",
+      "report": "docs/delivery/v2-development/storyboard-split-integration-20261018.md",
+      "reported_evidence": {
+        "combined_ui_tests": 213,
+        "suites": 15,
+        "typescript_vite_token": true,
+        "source_paths": 3184,
+        "actual_typescript_original_python_differential": 12,
+        "differential_is_pure_not_persistence": true,
+        "backend_runtime_unchanged": true,
+        "formal_browser_acceptance": false
+      },
+      "items": [
+        {
+          "area": "Verified Director-derived Storyboard DRAFT return to current canvas",
+          "maps_to": [
+            "CONSOLE-05",
+            "SHOT-05"
+          ],
+          "boundary": "Explicit original-owner unconnected planning pin insertion, undo/save/reopen. No automatic approval, generation or full intelligent Director closure."
+        },
+        {
+          "area": "Reviewed selected Timeline split and single-split transition compatibility",
+          "maps_to": [
+            "EDIT-02",
+            "EDIT-06"
+          ],
+          "boundary": "Exact playhead, selected affected/skipped clips, original atomic local history and CAS save; pure parity tests, no new live media/persistence acceptance."
+        }
+      ],
+      "formal_acceptance": false
     }
   ],
   "current_checkpoint": {
-    "product_sha": "2bbecf3e20ba277a6342d5ae279ea7ae878059fd",
-    "report": "docs/delivery/v2-development/geometry-camera-integration-20261018.md",
+    "product_sha": "f0d7fa56024f4f47d6fe8a68fc5310c119769f68",
+    "report": "docs/delivery/v2-development/storyboard-split-integration-20261018.md",
     "source_identity_section": "Historical initial reconciliation baseline, not current HEAD",
     "all_fixed_ids_accepted": false
   },

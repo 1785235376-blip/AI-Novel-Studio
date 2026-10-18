@@ -1,0 +1,68 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/GraphDirectorStoryboardHandoff.test.tsx (16 tests) 549ms
+ ✓ src/nle/nlePanels.test.tsx (18 tests) 519ms
+ ✓ src/creative/directorCanvasHandoff.additive.test.tsx (15 tests) 977ms
+ ✓ src/creative/StudioGraphDirectorConsole.test.tsx (11 tests) 545ms
+ ✓ src/creative/GraphDirectorCanvasHandoff.additive.test.tsx (15 tests) 1398ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 1650ms
+   ✓ optional mounted graph director source authoring > hands a saved human director to the existing storyboard owner and reopens its status 454ms
+ ✓ src/nle/ClipInspectorSelectionDuplicate.additive.test.tsx (9 tests) 408ms
+ ✓ src/nle/ClipInspectorSlipDelete.additive.test.tsx (4 tests) 403ms
+ ✓ src/creative/StudioTimelineSelectionSplit.additive.test.tsx (16 tests) 2983ms
+   ✓ mounted selected split fences > rejects retained selection ABA, and permits only fresh exact review once 579ms
+   ✓ mounted selected split fences > rejects retained playhead ABA, and permits only fresh exact review once 453ms
+   ✓ mounted selected split fences > rejects omitted, extra, forged-point and scalar descriptors without history 440ms
+   ✓ retires retained inspector Apply before allocating on project ABA 398ms
+   ✓ retires retained inspector Apply before allocating on isBusy ABA 357ms
+ ✓ src/nle/timelineSelectionSplit.additive.test.ts (9 tests) 37ms
+ ✓ src/creative/storyboardCanvasHandoff.test.ts (1 test) 5ms
+ ✓ src/creative/TimelineTransferReview.test.tsx (20 tests) 3173ms
+   ✓ locates the exact original mounted clip without saving, granting consent or discarding local controls 536ms
+   ✓ preserves dirty title and blocks location until the original draft is reconciled 308ms
+   ✓ rejects retained location after edits and undo restore the same contents 311ms
+   ✓ keeps the original UNKNOWN import request and blocks locators and repeat import 308ms
+   ✓ transfer Locate retires old split review and a fresh review uses the visible selection/playhead 434ms
+ ✓ src/nle/ClipInspectorSelectionMove.additive.test.tsx (8 tests) 282ms
+ ✓ src/creative/StudioTimelineSelectionMove.additive.test.tsx (32 tests) 4005ms
+   ✓ mounted selection move routing > moves the whole selected track, undoes atomically, and saves through original CAS 1394ms
+   ✓ mounted selection move routing > refuses retained selection ABA callback while a fresh callback works 563ms
+ ✓ src/creative/StudioTimelineSelectionDuplicate.additive.test.tsx (27 tests) 4577ms
+   ✓ mounted selected duplication route > duplicates whole selected track once, preserves generated IDs through Save and fresh GET/remount 1703ms
+   ✓ mounted selected duplication route > verifies exact nested transition fields before applying internal transition batches 470ms
+   ✓ mounted selected duplication route > rejects retained selection ABA callbacks and repeated mounted invocation 537ms
+   ✓ mounted selected duplication route > rejects missing, reordered, wrong-track, unequal-offset, extra-key and unauthorized-update descriptors 401ms
+
+ Test Files  15 passed (15)
+      Tests  213 passed (213)
+   Start at  08:11:38
+   Duration  6.50s (transform 3.71s, setup 425ms, collect 10.24s, tests 21.51s, environment 5.65s, prepare 1.08s)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2459 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-cKwZaTd1.css      3.88 kB │ gzip:   1.02 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-B-sblpo2.css                      220.74 kB │ gzip:  27.90 kB
+dist/assets/Health-BY4zqzjV.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-CMv-j2nT.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/style-OkmeGDzw.js                      45.12 kB │ gzip:   8.40 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/LocalTutorIntegration-CqNE3Llw.js      47.64 kB │ gzip:  15.65 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-CSM_1qUa.js     848.16 kB │ gzip: 254.11 kB
+dist/assets/App-D84J5OIP.js                     2,926.61 kB │ gzip: 879.13 kB
+✓ built in 7.56s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

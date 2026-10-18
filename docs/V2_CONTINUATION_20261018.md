@@ -429,3 +429,9 @@ Prior source80c8e4c archived at5776531b8c531a7cc12eba153171c13b10960935, parentc
 Product 2bbecf3e20ba277a6342d5ae279ea7ae878059fd integrates two independent manual-authoring slices: schematic panel/bubble move/resize/nudge through original undo/save, and selected same-scene camera-field preview/apply/undo. Root combined213 tests in20 suites plus full TypeScript/Vite/token PASS; all3178 source hashes stable. Prior backend1527 hashes remain unchanged, so existing PG/PUBLIC evidence reused with explicit test-only historical difference. See docs/delivery/v2-development/geometry-camera-integration-20261018.md. Browser/model-led Director/full V2 remain unaccepted.
 
 Previous source26354565 archived asfc629c8e3296e6c8652af12d6d4d5c33066ff007, parent5776531b:14 artifacts /5,565,571 bytes verified. Temporary filesystem reclaimed only clean metadata-only public verification clones, retaining authoritative receipts and unique artifacts.
+
+## 23:13 UTC Storyboard return and selected Timeline split
+
+Product f0d7fa56024f4f47d6fe8a68fc5310c119769f68 closes explicit verified Director-derived Storyboard DRAFT→current Graph insertion through original history/save, and adds reviewed atomic selected-clip split with exact playhead, rational speed, fades/transitions and stale preallocation guards. Existing single-split transition divergence narrowly corrected. Root213 tests in15 suites plus full TS/Vite/token PASS; all3184 source hashes stable. Additional12 actual TS→original Python checks are pure, not persisted File acceptance. Backend runtime unchanged; evidence reused. See docs/delivery/v2-development/storyboard-split-integration-20261018.md. Browser/model/full V2 acceptance remains open.
+
+Previous source9752db6a verified at archive8c789eaee1f63f86caabe92daa1b853178d0700b, parentfc629c8e:14 files /4,548,104 bytes. No main/PR source merge or Release.

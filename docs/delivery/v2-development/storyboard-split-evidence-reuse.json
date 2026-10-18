@@ -1,0 +1,26 @@
+{
+  "product_sha": "f0d7fa56024f4f47d6fe8a68fc5310c119769f68",
+  "comic-author-integration-postgres-final": {
+    "receipt_sha256": "d0087e2a9fa366424b0819b263e3f7ac38d3c9fa2c4a0b45145a2ccb86f8b227",
+    "non_frontend_paths": 1527,
+    "mismatches": []
+  },
+  "comic-author-integration-public": {
+    "receipt_sha256": "43be51d05f1e5e5d294124f61960e81224b1e27e5bf9860635c622a8bf195baf",
+    "non_frontend_paths": 1527,
+    "mismatches": [
+      "tests/test_comic_collections.py"
+    ]
+  },
+  "selected-split-final-differential": {
+    "receipt_sha256": "daf9588250ec4155d8768c7f9b2b09d34428e73394298c4fd94fcf0b87b9770d",
+    "non_frontend_paths": 1505,
+    "mismatches": []
+  },
+  "differential_actual_ts_compiler_paths_matched": [
+    "frontend/src/nle/timelineSelectionSplit.ts",
+    "frontend/src/creative/studioTimelineTypes.ts",
+    "frontend/src/nle/timelineSelectionDuplicate.ts"
+  ],
+  "backend_runtime_packaging_catalog_delta": ""
+}
