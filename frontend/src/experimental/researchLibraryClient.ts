@@ -1,8 +1,8 @@
 import type { ExperimentalClient } from './api';
 export type Citation = { source_id: string; source_version: number; paragraph: number; page?: number; quote_sha256: string };
-export type ResearchMeta = { title: string; author: string; source: string; source_version: string; usage_notes: string; access: 'PRIVATE' | 'PROJECT' };
+export type ResearchMeta = { title: string; author: string; source: string; source_version: string; usage_notes: string; license_statement?: string; verification_note?: string; access: 'PRIVATE' | 'PROJECT' };
 export type Source = ResearchMeta & { status?: string; content_sha256?: string;  id: string; version: number; origin: string; format: string; filename: string; accessed_at: string; extraction_status: string; paragraph_count: number; page_citations?: Citation[]; warnings: string[]; paragraphs?: { paragraph: number; page: number | null; text: string; citation: Citation }[] };
-export type Evidence = { citation: Citation; title: string; author: string; text: string; page: number | null; paragraph: number; source: string; not_understood?: boolean; warning?: string };
+export type Evidence = { citation: Citation; title: string; author: string; text: string; page: number | null; paragraph: number; source: string; not_understood?: boolean; warning?: string; license_statement?: string; verification_note?: string };
 export type HistoricalInspection = { historical_citation: Citation; current_version: number; text: string; page: number | null; historical_only: true; not_understood: boolean; usable_as_current_evidence: false };
 export type Note = { id: string; version: number; title: string; text: string; citations: Citation[]; evidence: Evidence[] };
 export type SettingDraft = { id: string; version: number; title: string; status: 'REVIEW' | 'RESEARCH_REVIEWED'; data: { description: string }; evidence: Evidence[]; canon_promotion_available: false };

@@ -38,6 +38,8 @@ class MetadataIn(StrictInput):
     source_version: str = Field(default='', max_length=160)
     usage_notes: str = Field(default='', max_length=4000)
     access: Literal['PRIVATE', 'PROJECT'] = 'PRIVATE'
+    license_statement: str = Field(default='', max_length=4000)
+    verification_note: str = Field(default='', max_length=4000)
 
 
 class FileIn(MetadataIn):
@@ -245,10 +247,17 @@ class ResearchLibraryService(DomainService):
             if row['created_by'] != actor: raise FileNotFoundError(rid)
             check_version(self._public(row), body.expected_version)
             target = require_row(state, SOURCES, rid)
-            self._change_source(state, target, actor, body.expected_version, body.model_dump(exclude={'expected_version'}))
+            self._change_source(state, target, actor, body.expected_version, self._edit_metadata(body))
             self._invalidate(state, rid)
             guard()
             return self._public(target, True)
+
+    @staticmethod
+    def _edit_metadata(body):
+        # Older clients omitting the additive notes must not erase them.
+        omitted = {key for key in ('license_statement', 'verification_note')
+                   if key not in body.model_fields_set}
+        return body.model_dump(exclude={'expected_version', *omitted})
 
     @staticmethod
     def _storage_limit(state):
@@ -344,7 +353,7 @@ class ResearchLibraryService(DomainService):
             row = self._owned_source(nid, scope, actor, rid, state)
             if row['status'] != 'ACTIVE': raise ValueError('RESEARCH_SOURCE_INACTIVE')
             check_version(self._public(row), body.expected_version)
-            values = {**body.model_dump(exclude={'expected_version'}), **extraction,
+            values = {**self._edit_metadata(body), **extraction,
                       'origin': 'LOCAL_IMPORT', 'accessed_at': now()}
             self._change_source(state, row, actor, body.expected_version, values)
             self._invalidate(state, rid)
@@ -428,6 +437,7 @@ class ResearchLibraryService(DomainService):
                 raise StaleSourceError('RESEARCH_PAGE_CITATION_CHANGED')
             return {'citation': ref, 'title': row['title'], 'author': row.get('author', ''), 'source': row.get('source', ''),
                     'page': ref['page'], 'paragraph': 0, 'text': '', 'layer': 'RESEARCH', 'not_understood': True,
+                    'license_statement': row.get('license_statement', ''), 'verification_note': row.get('verification_note', ''),
                     'warning': 'Page reference only; OCR and visual understanding are not configured.'}
         paragraph = next((p for p in row['paragraphs'] if p['paragraph'] == ref['paragraph']), None)
         if paragraph is None or self._cite(row, paragraph) != ref: raise StaleSourceError('RESEARCH_CITATION_CHANGED')
@@ -437,6 +447,7 @@ class ResearchLibraryService(DomainService):
     def _evidence(row, paragraph):
         return {'citation': ResearchLibraryService._cite(row, paragraph), 'title': row['title'], 'author': row.get('author', ''), 'source': row.get('source', ''),
                 'page': paragraph['page'], 'paragraph': paragraph['paragraph'], 'text': paragraph['text'],
+                'license_statement': row.get('license_statement', ''), 'verification_note': row.get('verification_note', ''),
                 'accessed_at': row.get('accessed_at'), 'imported_at': row.get('created_at'), 'source_digest': row.get('content_sha256'), 'source_version_label': row.get('source_version', ''), 'layer': 'RESEARCH'}
 
     def search(self, nid, scope, actor, query, limit=30):
