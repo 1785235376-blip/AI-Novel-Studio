@@ -1,0 +1,26 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-video-reference-verified/frontend
+
+ ✓ src/creative/studioClient.test.ts (38 tests) 31ms
+ ✓ src/creative/studioVideoReferenceContract.additive.test.ts (12 tests) 52ms
+ ✓ src/creative/StudioVideoReferencePanel.additive.test.tsx (15 tests) 489ms
+ ✓ src/creative/StudioVideoReferenceWorkspace.additive.test.tsx (2 tests) 1355ms
+   ✓ saves through original VIDEO workspace and refreshes original assets, lost receipt false 812ms
+   ✓ saves through original VIDEO workspace and refreshes original assets, lost receipt true 542ms
+ ✓ src/creative/StudioModelClaySave.additive.test.tsx (4 tests) 178ms
+
+ Test Files  5 passed (5)
+      Tests  71 passed (71)
+   Start at  02:21:27
+   Duration  7.20s (transform 3.23s, setup 56ms, collect 4.98s, tests 2.11s, environment 1.02s, prepare 261ms)
+
+src/creative/StudioVideoReferenceWorkspace.additive.test.tsx(58,56): error TS18048: 'init' is possibly 'undefined'.
+src/creative/StudioVideoReferenceWorkspace.additive.test.tsx(62,98): error TS2532: Object is possibly 'undefined'.
+src/creative/StudioVideoReferenceWorkspace.additive.test.tsx(64,38): error TS2532: Object is possibly 'undefined'.
+src/creative/studioVideoReferenceContract.ts(118,94): error TS2322: Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'BlobPart'.
+  Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'ArrayBufferView<ArrayBuffer>'.
+    Types of property 'buffer' are incompatible.
+      Type 'ArrayBufferLike' is not assignable to type 'ArrayBuffer'.
+        Type 'SharedArrayBuffer' is not assignable to type 'ArrayBuffer'.
+          Types of property '[Symbol.toStringTag]' are incompatible.
+            Type '"SharedArrayBuffer"' is not assignable to type '"ArrayBuffer"'.

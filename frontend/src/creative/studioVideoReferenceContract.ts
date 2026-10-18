@@ -66,7 +66,7 @@ export function checkedVideoReferenceSource(asset: StudioAsset): StudioAsset {
     || typeof asset.sha256 !== 'string' || !/^[a-f0-9]{64}$/.test(asset.sha256)) invalid(true);
   return structuredClone(asset);
 }
-function pngBytes(frame: VideoReferenceFrame): Uint8Array {
+function pngBytes(frame: VideoReferenceFrame): Uint8Array<ArrayBuffer> {
   if (typeof frame.content_base64 !== 'string' || frame.content_base64.length > 4 * Math.ceil(PNG_MAX / 3)) invalid();
   let binary: string; try { binary = atob(frame.content_base64); } catch { invalid(); }
   if (binary.length < 45 || binary.length > PNG_MAX || btoa(binary) !== frame.content_base64) invalid();

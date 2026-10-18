@@ -55,11 +55,18 @@ it.each([false, true])('saves through original VIDEO workspace and refreshes ori
     fireEvent.click(confirm); fireEvent.click(save);
   }
   await screen.findByText('所选帧已保存到原素材库。图片到视频需在现有入口另行明确操作。');
-  const writes = fetch.mock.calls.filter(([, init]) => init.method === 'POST');
+  const writes = fetch.mock.calls.filter(([, init]) => init?.method === 'POST');
   expect(writes.map(([url]) => url)).toEqual([`${base}/assets/${source.id}/video-reference/preview`, `${base}/assets/${source.id}/video-reference/save`, ...(lost ? [`${base}/assets/${source.id}/video-reference/save`] : [])]);
   expect(fetch.mock.calls.filter(([url]) => url.startsWith(base + '/assets?')).length).toBeGreaterThan(1);
   expect(fetch.mock.calls.some(([url]) => /generate|execute|production\/jobs/.test(url))).toBe(false);
-  const saves = writes.filter(([url]) => url.endsWith('/save')); const first = JSON.parse(String(saves[0][1].body));
+  const saves = writes.filter(([url]) => url.endsWith('/save'));
+  const firstRequest = saves[0]?.[1];
+  if (!firstRequest) throw new Error('Missing save request');
+  const first = JSON.parse(String(firstRequest.body));
   expect(first.reviewed_preview_digest).toBe(review.preview_digest); expect(first.reviewed_png_sha256).toBe(review.frames[selected].png_sha256);
-  if (lost) expect(JSON.parse(String(saves[1][1].body))).toEqual(first);
+  if (lost) {
+    const retryRequest = saves[1]?.[1];
+    if (!retryRequest) throw new Error('Missing retry save request');
+    expect(JSON.parse(String(retryRequest.body))).toEqual(first);
+  }
 });
