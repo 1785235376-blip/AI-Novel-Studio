@@ -37,3 +37,7 @@ it('captures only explicit Ctrl-wheel and preserves the anchor using original zo
  const zoom = new WheelEvent('wheel', { bubbles: true, cancelable: true, ctrlKey: true, deltaY: -10, clientX: 100, clientY: 80 }); fireEvent(area(), zoom); expect(zoom.defaultPrevented).toBe(true);
  const viewport = p.onChange.mock.calls[0][0].viewport; expect(viewport.zoom).toBeCloseTo(2.2); expect((100 - viewport.x) / viewport.zoom).toBeCloseTo(50); expect((80 - viewport.y) / viewport.zoom).toBeCloseTo(40);
 });
+
+// These owner/gesture tests do not exercise bitmap pixels; the dedicated minimap test checks drawing calls.
+beforeEach(() => { vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null); });
+afterEach(() => vi.restoreAllMocks());

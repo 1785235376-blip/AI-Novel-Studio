@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { useStudioGraphEditor, type StudioGraphEditorProps } from './useStudioGraphEditor';
 const state = vi.hoisted(() => ({ externalDirty: false, discard: vi.fn() }));
 vi.mock('./useStudioGraphEditorController', () => ({ useStudioGraphEditorController: (props: StudioGraphEditorProps) => {
@@ -15,3 +15,7 @@ it('propagates media draft dirtiness through original graph owner and explicit d
  fireEvent.change(screen.getByLabelText('画布标题'), { target: { value: 'Pending' } }); expect(screen.getByLabelText('owner dirty').textContent).toBe('true'); expect(state.externalDirty).toBe(true);
  fireEvent.click(screen.getByText('Owner discard')); expect(screen.getByLabelText('owner dirty').textContent).toBe('false'); expect(state.discard).toHaveBeenCalled(); expect((screen.getByLabelText('画布标题') as HTMLInputElement).value).toBe('媒体素材画布');
 });
+
+// These owner/gesture tests do not exercise bitmap pixels; the dedicated minimap test checks drawing calls.
+beforeEach(() => { vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null); });
+afterEach(() => vi.restoreAllMocks());

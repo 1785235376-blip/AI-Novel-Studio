@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { afterEach, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { MediaCanvasViewPanel } from './MediaCanvasViewPanel';
 import type { CanvasDefinition } from './studioCanvasViewClient';
 afterEach(cleanup);
@@ -37,3 +37,7 @@ it('does not adopt a late saved result after permission ABA; keeps uncertainty v
  await act(async () => resolve(record({ ...blank(), title: 'Late private result' })));
  expect(screen.queryByDisplayValue('Late private result')).toBeNull(); expect((screen.getByLabelText('画布标题') as HTMLInputElement).value).toBe('Original pending'); expect(screen.getByText(/保存结果尚未确认/)).toBeTruthy();
 });
+
+// These owner/gesture tests do not exercise bitmap pixels; the dedicated minimap test checks drawing calls.
+beforeEach(() => { vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null); });
+afterEach(() => vi.restoreAllMocks());

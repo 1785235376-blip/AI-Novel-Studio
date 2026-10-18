@@ -1,3 +1,4 @@
+import { MediaCanvasMiniMap } from './MediaCanvasMiniMap';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Button } from '../ui/primitives';
 import { clampGraphPosition, graphWorldToScreen, zoomGraphAt } from './graphCanvasGeometry';
@@ -75,5 +76,6 @@ export function MediaCardViewport(props: Props) {
       <Button aria-pressed={card.id === props.selected} onClick={() => live.current.onSelect(card.id)}>{state?.filename ?? card.id}</Button><p>{card.asset?.kind ?? '不可用'} · {state?.state ?? '待保存校验'}</p><small>{card.asset?.asset_id ?? '源绑定已隐藏'}</small>
     </div>; })}
   </div><p>共 {props.definition.cards.length}/1000 张，匹配 {shown.matched} 张，当前视口渲染 {shown.cards.length} 张。{shown.clipped && '重叠卡片较多，仅显示前 128 张；请缩小查找范围或调整视口。'}</p>
+  <MediaCanvasMiniMap definition={props.definition} size={size} owner={token} disabled={props.disabled || !!gesture.current} isCurrent={() => current() && !gesture.current} onChange={props.onChange} />
   <p>拖动卡片调整位置，拖动空白处平移；Ctrl＋滚轮缩放。方向键移动焦点卡片或视口，Shift 加快，Esc 取消拖动。完成后仍需保存。</p></>;
 }

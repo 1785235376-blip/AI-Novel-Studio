@@ -10,3 +10,7 @@
 .media-canvas__viewport{touch-action:none}
 .media-canvas__viewport:focus-visible{outline:2px solid var(--color-border-focus);outline-offset:-2px}
 .media-canvas__card{user-select:none}
+
+.media-canvas__minimap{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap}
+.media-canvas__minimap canvas{width:200px;height:120px;border:var(--border-default);border-radius:var(--radius-sm);cursor:pointer}
+.media-canvas__minimap canvas:focus-visible{outline:2px solid var(--color-border-focus)}

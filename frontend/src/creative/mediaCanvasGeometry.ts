@@ -9,3 +9,14 @@ export function visibleMediaCards(definition: CanvasDefinition, width: number, h
   return { cards: visible.slice(0, MEDIA_RENDER_LIMIT), matched: matched.length, clipped: visible.length > MEDIA_RENDER_LIMIT };
 }
 export function mediaViewportCenter(definition: CanvasDefinition, width: number, height: number) { return graphScreenToWorld({ x: width / 2, y: height / 2 }, definition.viewport); }
+
+/** Complete world bounds, including the camera; no sampled omission. */
+export function mediaOverview(definition: CanvasDefinition, width: number, height: number) {
+  const topLeft = graphScreenToWorld({ x: 0, y: 0 }, definition.viewport), bottomRight = graphScreenToWorld({ x: width, y: height }, definition.viewport);
+  let left = topLeft.x, top = topLeft.y, right = bottomRight.x, bottom = bottomRight.y;
+  for (const card of definition.cards) { left = Math.min(left, card.position.x); top = Math.min(top, card.position.y); right = Math.max(right, card.position.x + MEDIA_CARD_WIDTH); bottom = Math.max(bottom, card.position.y + MEDIA_CARD_HEIGHT); }
+  const margin = 24; left -= margin; top -= margin; right += margin; bottom += margin;
+  const scale = Math.min(200 / Math.max(1, right - left), 120 / Math.max(1, bottom - top));
+  const offsetX = (200 - (right - left) * scale) / 2, offsetY = (120 - (bottom - top) * scale) / 2;
+  return { left, top, right, bottom, scale, offsetX, offsetY, camera: { x: topLeft.x, y: topLeft.y, width: bottomRight.x - topLeft.x, height: bottomRight.y - topLeft.y } };
+}
