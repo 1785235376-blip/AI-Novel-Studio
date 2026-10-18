@@ -92,3 +92,11 @@ FS_REALTIME retains original deferred production-cloud scope; do not purchase ho
 At b99210e2, FS_PLANNING gains the explicit local known-zero model request/preview/job/candidate/save/review bridge. Tests exercise synthetic protocol transport; real-model quality remains unaccepted. FS_CANON producer provenance is repaired with ACCEPTED_CANON_SOURCE_V1 and exact-marker candidates. Broad semantic fact extraction and dedicated re-extraction remain open; ordinary prose no longer creates an invented placeholder fact. Basic caption styling is now implemented through original Timeline schema/edit/render/review and transfer-loss owners. These bounded changes do not complete all A/B/U or all NLE capabilities.
 
 Ordered multi-chapter semantic screenplay adaptation is now being implemented as the next source/receipt extension. Existing single-chapter semantic adaptation remains the baseline, not a missing feature. Until completed and checked, the new multichapter path must remain marked in progress.
+
+## 17:06 bounded closures and next slice
+
+At eb1a5257, ordered 2–16 complete saved chapter adaptation is implemented, with 8,000-character per-source and 32,000 aggregate limits. Thus multi-chapter adaptation is no longer wholly missing; larger/partial-source ranges and genuinely multi-source individual scenes remain outside this bounded contract. Legacy single-source adaptation remains supported.
+
+A09/U06 now has a separate read-only direct saved Graph/Timeline asset-usage projection through original authority, including empty-result source identity. This does not complete recursive descendants, all downstream owners, refresh/lock recipes or execution propagation. Broader consolidated impact remains partial.
+
+Video sampled-reference preparation is now under development through original asset/workspace owners. It is not complete yet and does not imply V2V crop or camera/pose/motion analysis. The remaining-development comparison must distinguish these scope-limited implementations from wholly absent code and from final platform/model acceptance.
