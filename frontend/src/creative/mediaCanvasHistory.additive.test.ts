@@ -1,0 +1,12 @@
+import { expect, it } from 'vitest';
+import { CANVAS_HISTORY_BYTES, canvasHistoryBytes, emptyCanvasHistory, recordCanvasEdit, travelCanvasEdit } from './mediaCanvasHistory';
+import type { CanvasDefinition } from './studioCanvasViewClient';
+const definition = (title = 'View'): CanvasDefinition => ({ schema_version: 1, title, cards: [], viewport: { x: 0, y: 0, zoom: 1 } });
+it('undoes and redoes detached definitions without mutating stored snapshots', () => { const before = definition('Before'), after = definition('After'); const h = recordCanvasEdit(emptyCanvasHistory(), before); before.title = 'Mutated caller';
+ const undo = travelCanvasEdit(h, after, false)!; expect(undo.definition.title).toBe('Before'); undo.definition.title = 'Different'; expect(h.past[0].value.title).toBe('Before'); const redo = travelCanvasEdit(undo.history, definition('Before'), true)!; expect(redo.definition).toEqual(after);
+});
+it('bounds history by steps and total bytes and retires redo after a new edit', () => { let h = emptyCanvasHistory(); for (let i = 0; i < 40; i++) h = recordCanvasEdit(h, definition(`View ${i}`)); expect(h.past).toHaveLength(20);
+ const large = definition(); large.cards = Array.from({ length: 1000 }, (_, i) => ({ id: `Card_${i}`, position: { x: 0, y: 0 }, asset: { asset_id: 'a'.repeat(200), version: 1, digest: 'a'.repeat(64), kind: 'image' } }));
+ h = emptyCanvasHistory(); for (let i = 0; i < 20; i++) h = recordCanvasEdit(h, large); expect(canvasHistoryBytes(h)).toBeLessThanOrEqual(CANVAS_HISTORY_BYTES); expect(h.past.length).toBeLessThan(20);
+ const undo = travelCanvasEdit(h, large, false)!; const branched = recordCanvasEdit(undo.history, definition()); expect(branched.future).toEqual([]); expect(travelCanvasEdit(emptyCanvasHistory(), definition(), true)).toBeUndefined();
+});

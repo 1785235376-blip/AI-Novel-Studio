@@ -41,3 +41,12 @@ it('does not adopt a late saved result after permission ABA; keeps uncertainty v
 // These owner/gesture tests do not exercise bitmap pixels; the dedicated minimap test checks drawing calls.
 beforeEach(() => { vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null); });
 afterEach(() => vi.restoreAllMocks());
+it('undoes and redoes local canvas edits without transport, then resets after explicit save', async () => {
+ const { props, views } = fixture(); render(<MediaCanvasViewPanel {...props} />); const title = screen.getByLabelText('画布标题') as HTMLInputElement;
+ fireEvent.change(title, { target: { value: 'Edited view' } }); fireEvent.click(screen.getByText('撤销媒体画布编辑')); expect(title.value).toBe('媒体素材画布'); fireEvent.click(screen.getByText('重做媒体画布编辑')); expect(title.value).toBe('Edited view'); expect(views.create).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByText('保存媒体画布')); await screen.findByText('已保存媒体画布'); expect((screen.getByText('撤销媒体画布编辑') as HTMLButtonElement).disabled).toBe(true);
+});
+it('leaves text-field undo alone and handles scoped canvas shortcuts', () => {
+ const { props } = fixture(); render(<MediaCanvasViewPanel {...props} />); const title = screen.getByLabelText('画布标题') as HTMLInputElement; fireEvent.change(title, { target: { value: 'Edited' } });
+ fireEvent.keyDown(title, { key: 'z', ctrlKey: true }); expect(title.value).toBe('Edited'); fireEvent.keyDown(screen.getByLabelText('媒体卡片视口'), { key: 'z', ctrlKey: true }); expect(title.value).toBe('媒体素材画布'); fireEvent.keyDown(screen.getByLabelText('媒体卡片视口'), { key: 'z', ctrlKey: true, shiftKey: true }); expect(title.value).toBe('Edited');
+});

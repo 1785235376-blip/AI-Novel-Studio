@@ -1,0 +1,39 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/mediaCanvasHistory.additive.test.ts (2 tests) 114ms
+ ✓ src/creative/MediaCanvasViewPanel.additive.test.tsx (10 tests) 455ms
+ ✓ src/creative/MediaCanvasOwner.integration.test.tsx (1 test) 85ms
+
+ Test Files  3 passed (3)
+      Tests  13 passed (13)
+   Start at  21:16:38
+   Duration  1.63s (transform 730ms, setup 42ms, collect 1.35s, tests 654ms, environment 711ms, prepare 206ms)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2385 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-BkplvLLE.css      4.23 kB │ gzip:   1.09 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-DCxM7uA6.css                      217.53 kB │ gzip:  27.47 kB
+dist/assets/Health-Dd9kfOsL.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-DpzRGGQQ.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/style-BzPhfSsE.js                      45.12 kB │ gzip:   8.40 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/LocalTutorIntegration-CMyh8FzA.js      47.64 kB │ gzip:  15.65 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-CHgQQK6u.js     825.43 kB │ gzip: 247.54 kB
+dist/assets/App-Dvj0zLI2.js                     2,539.63 kB │ gzip: 760.09 kB
+✓ built in 7.18s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

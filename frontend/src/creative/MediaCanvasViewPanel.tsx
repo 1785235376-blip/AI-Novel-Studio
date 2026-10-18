@@ -1,3 +1,4 @@
+import { emptyCanvasHistory, recordCanvasEdit, travelCanvasEdit } from './mediaCanvasHistory';
 import { MediaCanvasGroupTools } from './MediaCanvasGroupTools';
 import { removeCanvasCard } from './mediaCanvasGroups';
 import { CanvasAssetPreview } from './CanvasAssetPreview';
@@ -16,6 +17,8 @@ type Props = Pick<StudioGraphEditorProps, 'active' | 'denied' | 'identity' | 'cl
 
 /** Display metadata only; generation, media download and execution keep their original owners. */
 export function MediaCanvasViewPanel(props: Props) {
+  const history = useRef(emptyCanvasHistory()); const [, setHistoryRevision] = useState(0);
+  const resetHistory = () => { history.current = emptyCanvasHistory(); setHistoryRevision(v => v + 1); };
   const [draft, setDraft] = useState(blank), [base, setBase] = useState<CanvasViewRecord>();
   const [rows, setRows] = useState<CanvasViewSummary[]>([]), [assets, setAssets] = useState<StudioAsset[]>([]);
   const [selected, setSelected] = useState(''), [assetId, setAssetId] = useState(''), [query, setQuery] = useState('');
@@ -34,10 +37,15 @@ export function MediaCanvasViewPanel(props: Props) {
   const editable = !locked() && props.canMutate && !uncertain;
   useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   useEffect(() => { props.onDirtyChange(dirty); }, [dirty, props.onDirtyChange]);
-  function edit(next: CanvasDefinition) {
+  function edit(next: CanvasDefinition, recordHistory = true) {
+    if (locked() || !live.current.canMutate || uncertain) return false;
+    try { const valid = checkedCanvasDefinition(next); if (JSON.stringify(valid) === JSON.stringify(draftRef.current)) return false; if (recordHistory) { history.current = recordCanvasEdit(history.current, draftRef.current); setHistoryRevision(v => v + 1); } draftRef.current = valid; setDraft(valid); setDiscard(false); setNotice('尚未保存'); live.current.onDirtyChange(true); return true; }
+    catch { setError('画布内容超出允许范围，当前草稿已保留。'); return false; }
+  }
+  function travel(redo: boolean) {
     if (locked() || !live.current.canMutate || uncertain) return;
-    try { const valid = checkedCanvasDefinition(next); draftRef.current = valid; setDraft(valid); setDiscard(false); setNotice('尚未保存'); live.current.onDirtyChange(true); }
-    catch { setError('画布内容超出允许范围，当前草稿已保留。'); }
+    const next = travelCanvasEdit(history.current, draftRef.current, redo); if (!next) return;
+    if (edit(next.definition, false)) { history.current = next.history; setHistoryRevision(v => v + 1); }
   }
   async function work<T>(write: boolean, task: () => Promise<T>, accept: (value: T) => void) {
     if (!client || locked() || write && (!live.current.canMutate || uncertain)) return;
@@ -46,22 +54,30 @@ export function MediaCanvasViewPanel(props: Props) {
     catch (reason) { if (current()) setError(apiErrorView(reason).message); if (write && alive.current) { setUncertain(true); live.current.onDirtyChange(true); } }
     finally { pendingRef.current = false; if (alive.current) setPending(false); }
   }
-  function adopt(row: CanvasViewRecord) { setBase(row); setDraft(row.definition); draftRef.current = row.definition; setSelected(''); setUncertain(false); setDiscard(false); setNotice('已读取持久化版本'); live.current.onDirtyChange(false); }
+  function adopt(row: CanvasViewRecord) { resetHistory(); setBase(row); setDraft(row.definition); draftRef.current = row.definition; setSelected(''); setUncertain(false); setDiscard(false); setNotice('已读取持久化版本'); live.current.onDirtyChange(false); }
   function open(id: string) { if (dirty && !discard) return; void work(false, () => client!.get(id), adopt); }
   const states = new Map(base?.reference_states.map(row => [row.card_id, row]) ?? []);
   const card = draft.cards.find(c => c.id === selected);
   if (!props.active || props.denied || !client) return null;
-  return <section className="media-canvas" aria-label="独立媒体素材画布">
+  return <section className="media-canvas" aria-label="独立媒体素材画布" onKeyDown={event => {
+      if (event.nativeEvent.isComposing || event.altKey || !(event.ctrlKey || event.metaKey) || (event.target as HTMLElement).closest('input,textarea,select,[contenteditable="true"]')) return;
+      const key = event.key.toLowerCase(), redo = key === 'y' || key === 'z' && event.shiftKey;
+      if (key !== 'z' && key !== 'y' || !editable || !(redo ? history.current.future.length : history.current.past.length)) return;
+      event.preventDefault(); travel(redo);
+    }}>
     <h3>媒体素材画布</h3><p>独立保存素材引用与位置。此视图不执行生成，也不改变执行图；选择卡片后可按需核验预览，仍复用原素材面板。</p>
     <div className="creative-actions">
+      <Button disabled={!editable || !history.current.past.length} onClick={() => travel(false)}>撤销媒体画布编辑</Button>
+      <Button disabled={!editable || !history.current.future.length} onClick={() => travel(true)}>重做媒体画布编辑</Button>
       <Button disabled={pending || props.busy || props.externalDirty} onClick={() => void work(false, () => client.list(), value => setRows(value.items))}>读取已存画布</Button>
       <Button disabled={!editable || draft.cards.some(c => !c.asset)} onClick={() => {
         const snapshot = draftRef.current; const requestId = `view-${crypto.randomUUID()}`;
         void work(true, () => base ? client.save(base.id, base.version, snapshot) : client.create(snapshot, requestId), row => { adopt(row); setNotice('已保存媒体画布'); });
       }}>保存媒体画布</Button>
-      <Button disabled={pending || props.externalDirty || dirty && !discard} onClick={() => { if (locked() || dirty && !discard) return; const next = blank(); setBase(undefined); setDraft(next); draftRef.current = next; setSelected(''); setUncertain(false); setDiscard(false); live.current.onDirtyChange(false); }}>新建空白视图</Button>
+      <Button disabled={pending || props.externalDirty || dirty && !discard} onClick={() => { if (locked() || dirty && !discard) return; const next = blank(); resetHistory(); setBase(undefined); setDraft(next); draftRef.current = next; setSelected(''); setUncertain(false); setDiscard(false); live.current.onDirtyChange(false); }}>新建空白视图</Button>
       <Button disabled={!editable} onClick={() => void work(false, () => props.client.assets(), value => setAssets(value.items.filter(a => ['image', 'video', 'audio'].includes(a.kind))))}>读取可用素材</Button>
     </div>
+    <p>本地撤销最多 20 步、总快照不超过 2 MB；大画布可能提前淘汰旧记录。保存或重新读取后重置。快捷键 Ctrl／⌘ Z，重做 Ctrl Y 或 Shift Z；文字输入框保留自身撤销。</p>
     {dirty && <label><input type="checkbox" checked={discard} onChange={e => setDiscard(e.target.checked)} />允许用所选已存版本或空白视图替换当前草稿</label>}
     {uncertain && <StatusMessage tone="warning">保存结果尚未确认。已停止再次保存，请读取已存画布并核对；替换草稿需要上方明确确认。</StatusMessage>}
     {rows.length > 0 && <ul>{rows.map(row => <li key={row.id}><Button disabled={pending || props.externalDirty || dirty && !discard} onClick={() => open(row.id)}>{row.title} · v{row.version} · {row.card_count} 张</Button></li>)}</ul>}
