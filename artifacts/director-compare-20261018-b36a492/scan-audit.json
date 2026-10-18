@@ -1,0 +1,73 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "fb3b2bf24865297e9f81ac7e28e33e8fd9770802",
+      "path": "docs/GRAPH_DIRECTOR_COMPARE_DECK.md",
+      "bytes": 1850,
+      "sha256": "7f3878fec1fc0c41b42b6679b62181b50603f110d9ddccd9a5e03f9bf0205671"
+    },
+    {
+      "blob": "f3fbb507b1520e3dc4ed68f5317a675a4c0880dd",
+      "path": "docs/delivery/v2-development/director-compare-client-repro.json",
+      "bytes": 696514,
+      "sha256": "9b3bd4b4acddd435990486966720d35071df2797fd8eb972ff1f4ab691f0fc95"
+    },
+    {
+      "blob": "4c738a2c2b36094def6159e79e4fa21ccb523628",
+      "path": "docs/delivery/v2-development/director-compare-client-repro.log",
+      "bytes": 2614,
+      "sha256": "4d5aba091ec6dee6c82e799e8a7810f12dcd0591a3a10680db4061fccf64b9b2"
+    },
+    {
+      "blob": "a239577bb046f72ff75ec5a825746f58f82864a1",
+      "path": "docs/delivery/v2-development/director-compare-deck.json",
+      "bytes": 696754,
+      "sha256": "368b8c6047d23ec6e49298adbef18f6609d6904a24c4d3e11875772e8ba1b88b"
+    },
+    {
+      "blob": "4b3cfa5f672e8b38373f2f74ff681f6d332ee3e5",
+      "path": "docs/delivery/v2-development/director-compare-deck.log",
+      "bytes": 2430,
+      "sha256": "5289c86d2a9e2c4904e6417c0cdbe211f2c6913879fc8b648d4c6e4ef3b84018"
+    },
+    {
+      "blob": "2b7931204ae3bc6825d1f5966f0d463120382d43",
+      "path": "docs/delivery/v2-development/director-compare-final.json",
+      "bytes": 696763,
+      "sha256": "6d5954c362714499327b37717ed51a54c066dc9c08f9fe3c55c36a7b5d2ace8c"
+    },
+    {
+      "blob": "6613bf28d5ab550c6545dc1c00aaadc852a0b641",
+      "path": "docs/delivery/v2-development/director-compare-final.log",
+      "bytes": 2537,
+      "sha256": "8c474efede93386201a44a12d97af3633749a3110a165212d5f25d71fd01d4ec"
+    },
+    {
+      "blob": "1925f2b2db7aaf6aa157b98a1e96669584307f29",
+      "path": "frontend/src/creative/GraphDirectorCompareDeck.additive.test.tsx",
+      "bytes": 4363,
+      "sha256": "a2e1aeb31a7b7ef1cf7c24cc31ce4e3d6419789dba1def7c0d496b5ba0364911"
+    },
+    {
+      "blob": "ba76d49ecdbddaa0cc474fe4e25b98fd6469f959",
+      "path": "frontend/src/creative/GraphDirectorCompareDeck.tsx",
+      "bytes": 3580,
+      "sha256": "70473a829e4200d084aef378defdeeafcb320c4bb603743ddbb5eff731ab9bb4"
+    },
+    {
+      "blob": "6bd9fda6751cff65c7d8658a38a512c6bdb773ed",
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "bytes": 57109,
+      "sha256": "38ccc7b799dd2b156742b585a18a05a026578a770c2d77994225c4565250518e"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
