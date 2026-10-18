@@ -1,20 +1,20 @@
 # Studio V2 current continuation checkpoint
 
-Updated 2026-10-18 06:53 UTC. This document inventories bounded additions, not a
+Updated 2026-10-18 10:40 UTC. This document inventories bounded additions, not a
 replacement for the frozen feature matrix or a V2 percentage/Release declaration.
-The containing Git commit identifies the latest playback-options implementation.
+The source pin below identifies the latest bounded implementation; archive and product heads remain distinct.
 
 ## Source and publication
 
-Working branch: work/dot-director-transport-20261017.
-Product source before this commit: ad6b52444727baa38d7fd63cb56f5cd49fd5f2c3.
-Latest verified archive before this commit: 64e47bfb3a59a27b02c8b90ed65840bca99d5044,
+Working branch: work/dot-recovered-20261018.
+Product source before this documentation commit: 4f1b18ec (voice pronunciation preview).
+Latest verified archive before this commit: 4f4323aa3310bffbd8ffa58e207eb85ff166a6ec,
 branch archive/verified-studio-v2-20261017-5a6f697. It contains incremental source
 bundles, reports and retained logs. Archive branch HEAD is not product source HEAD.
 Each archive bundle declares its prerequisite and includes checksums; restore the
 chain without resetting or overwriting existing work.
 
-Last actual remote main/PR check was 06:15 UTC:
+Last actual remote main/PR check was 10:36 UTC:
 - main fed2404c8e30b44061b7139dced45b7f3301601c
 - draft PR #47 a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3
 - draft PR #48 58bbaad11360330d51f49fc2bb78a955a26469f0
@@ -51,11 +51,24 @@ force push, formal Release, paid API, new quota or user Windows/GPU work occurre
   Original create owner, bindings cleared, no inherited approval/request identity.
 - Canvas visual membership editing: ad6b524, 101 focused checks plus type/build.
   Transfer/ungroup through original history, empty-parent promotion, no node/edge loss.
-- Current commit: session-only timeline cache speed/loop options, 44 focused checks
+- 2a6f0793: session-only timeline cache speed/loop options, 44 focused checks
   plus type/build. No regeneration or exported clip speed change.
 
 Counts overlap across slices and are not a feature-completion numerator. Individual
 reports and original runner receipts retain exact source maps and acceptance limits.
+
+## Recovery and later bounded additions
+
+At 09:39–09:41 UTC the cloud executor disconnected and returned an older filesystem snapshot. The existing public archive base and 49 incremental bundles were verified and imported without resetting unrelated work. Source 4de76c72 was restored exactly; lost uncommitted TXT export work was reimplemented and checked rather than claimed recovered. See the recovery evidence committed with bfe44d71. Tests now use a clean dependency-only interpreter, not the donor editable checkout. A fresh UTF8 disposable PostgreSQL database OID 16384 replaced the lost prior test runtime; the retained first SQL_ASCII bootstrap failed honestly before tests.
+
+- Native PNG/JPEG OCR now has host-pinned program and language files, original job persistence/execution, private broker admission, source-incarnation-aware Research review, explicit UI preview/dispatch/reopen, and reviewed TXT export. Relevant documents begin LOCAL_TESSERACT_OCR, LOCAL_OCR_HOST_SETUP and RESEARCH_NATIVE_OCR. The general synthetic adapter guard was not relaxed.
+- 4de76c72 corrected the UI's derived-citation shape after a prior matching synthetic fixture concealed the mismatch. Corrected tests use source/result digests; earlier green evidence was not relabelled.
+- 7e35a549 retains original incarnation leases through Research commits. A deterministic failing-before regression and passing File/PG checks are retained; no cross-project exploit is claimed from that ordering test alone.
+- 58197ffc adds explicit trusted-host interruption recovery. Operator stop attestation, actor/incarnation/job/ledger checks, no automatic inference replay and idempotent two-owner retry are covered. File 9, PostgreSQL 9, related UI 20 and actual PUBLIC package checks passed. Restart tests inject queued persisted state, not actual process death.
+- d9f72589 adds confirmed local Director-note removal through original Save and history. React 23, File 1 and PG 1 checks passed, including unchanged stored state before Save and history restore.
+- 4f1b18ec adds bounded local pronunciation-rule text preview with a shared Save parser. One Python shared-contract check, React 27 and strengthened mounted 7-case rerun passed. This does not synthesize or evaluate voice quality.
+
+Each implementation report states its exact acceptance boundary. Updated structural inventory is current-source-inventory-20261018-late.json, pinned before this documentation commit. Its 101 rows remain inventory, not percentage or complete audit. Older inventory remains historical evidence.
 
 ## Remaining gates and next-source discipline
 
