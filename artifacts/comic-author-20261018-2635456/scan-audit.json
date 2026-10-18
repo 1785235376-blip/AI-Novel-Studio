@@ -1,0 +1,337 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "e621f46ce3b657db10c187dc7abe9f204a7f2c8c",
+      "path": "API_CATALOG.json",
+      "bytes": 1551546,
+      "sha256": "fbcd08b1449d4bccc2ec646210bebec63be748891fea1f172570b963dc4f8bb6"
+    },
+    {
+      "blob": "22120cd02ad772321e6b89d2dde7070e00770b79",
+      "path": "API_CATALOG.md",
+      "bytes": 415744,
+      "sha256": "80a62b50cfadd3b8f71c67cbbfa4f792409f66373ef597cac4b733ec4b0b5353"
+    },
+    {
+      "blob": "18634c5693833ef1ffaaa36d41319800bc2215a3",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 639657,
+      "sha256": "fd2bdcc46e1e21de382a66fb81295aa9dafe084f75876b6a8d0d7527edd38e2b"
+    },
+    {
+      "blob": "2b7de0817bea15daec991c6f9bd4608fcc72ac90",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 138196,
+      "sha256": "9fe47f1c48a6de8c9657960f0ed51209bea2531854ec6694aab0158dc7e528e0"
+    },
+    {
+      "blob": "df47ec0b761fa79888697c3c7c51df47718f1352",
+      "path": "app/experimental/api.py",
+      "bytes": 43119,
+      "sha256": "694d08041b60fe9d8ad903c8f0cabf2e868519b31d36edc27c019f527b539975"
+    },
+    {
+      "blob": "0cf76ab2c1bd5d800b7bc25d56a53ba4d35baa1b",
+      "path": "app/experimental/comic_author_archive.py",
+      "bytes": 17991,
+      "sha256": "b0246d1300ee65414b293cef35f7a418e1c62860f15971495149d2845aab294b"
+    },
+    {
+      "blob": "48319efe1078eb124d172bc5756786dcb9075ec2",
+      "path": "app/experimental/comic_author_archive_api.py",
+      "bytes": 6043,
+      "sha256": "552943abda65f7a0a03e66caee37cb3cae6b53623f223175c1bae8881724c1d4"
+    },
+    {
+      "blob": "a363bef52622d2ea1326f1356ef282181a473d69",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 42803,
+      "sha256": "137af8fcd406a54fad6d7d91fa5b8d23bfdcb42a5f893088cff2ac705076bc13"
+    },
+    {
+      "blob": "96cf457096a71acc918d599a0e513ef31b0534f1",
+      "path": "docs/delivery/v2-development/comic-author-authority-review-final.json",
+      "bytes": 752852,
+      "sha256": "53c62a515ee818f739bc60735a8f9844ee9d2a9262a685d25c89e3688fa397c4"
+    },
+    {
+      "blob": "2712b43f082611023ca0fa44e2d9f7c317de727e",
+      "path": "docs/delivery/v2-development/comic-author-authority-review-final.log",
+      "bytes": 1635,
+      "sha256": "491928a7d5a13a0b665f9e231d9c1cf95b414232843225ebc4b1d813284d755e"
+    },
+    {
+      "blob": "88f1709146c8f9823c3daa738aadada5b31f4663",
+      "path": "docs/delivery/v2-development/comic-author-collection-cleanup-file.json",
+      "bytes": 753132,
+      "sha256": "8d5852afc0fdf2ee8d71e7788a226a73a453f8e180026186ba6f1f90322aa151"
+    },
+    {
+      "blob": "418c32aead9c179453bb9cb2e06e63c672663fac",
+      "path": "docs/delivery/v2-development/comic-author-collection-cleanup-file.log",
+      "bytes": 1071,
+      "sha256": "e19404b5fdf84b86c4e3ea5ed2b4d62068a77dcbaaec26dcc0cae7b3510a6e05"
+    },
+    {
+      "blob": "dba5014fed2c623d6aa59ffa62820193765a1ccb",
+      "path": "docs/delivery/v2-development/comic-author-exact-fixture-cleanup-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "6d6972884042d9c01c09352b5d12d697fa5609c7c736527fbe097a1bffbaafab"
+    },
+    {
+      "blob": "08f54ccb07d09620a2c38095eef9d667ab6bed50",
+      "path": "docs/delivery/v2-development/comic-author-exact-fixture-cleanup.json",
+      "bytes": 758138,
+      "sha256": "08f9c53e8d32e84d4cc57feca1da88c0e863fe7397242b286ec1dee351460b17"
+    },
+    {
+      "blob": "81d09f0928bd2b4125d7261f2272d3d535bcd891",
+      "path": "docs/delivery/v2-development/comic-author-independent-client-final-tests.log",
+      "bytes": 962,
+      "sha256": "cb0c470c17745c2da234423ae841a3b36a9f598ecb05fa9b0962708d997d93e4"
+    },
+    {
+      "blob": "7409c57bc8686658433788a93ed050a1c93b01f3",
+      "path": "docs/delivery/v2-development/comic-author-independent-client-review.json",
+      "bytes": 4224,
+      "sha256": "e7b1f43e6e6edb7c46562bdb600b087fdacf500f564011239b100f113ec636ba"
+    },
+    {
+      "blob": "c1e7599f7cef3f0884a6999103e5f8b9dfc5cdcc",
+      "path": "docs/delivery/v2-development/comic-author-integrated-frontend-proof.json",
+      "bytes": 3017,
+      "sha256": "4d12e8455d48dcde4cb8bc5b27ec8a86542ba7c503c2e1f616fcd50b25d942e7"
+    },
+    {
+      "blob": "3e4248a8694641a908876a3669ceb9dd5cfbbd07",
+      "path": "docs/delivery/v2-development/comic-author-integration-20261018.md",
+      "bytes": 4998,
+      "sha256": "9a33cd3c098b0ed115c82d26c8a66286f9fb6c82536a937da3ec576a7e3498ed"
+    },
+    {
+      "blob": "e557255f0541615556e19850a6556ff533988819",
+      "path": "docs/delivery/v2-development/comic-author-integration-postgres-cleanup.json",
+      "bytes": 308815,
+      "sha256": "aba15ee9bce7977d6247aed850fb50b801764b9ff27f89e7bbf9e2a368f5101f"
+    },
+    {
+      "blob": "d1d0302a4f090643e046797c44164474c400ce09",
+      "path": "docs/delivery/v2-development/comic-author-integration-postgres-final-cleanup.json",
+      "bytes": 307604,
+      "sha256": "98e037612e4db3d373894d9f38bdede4f632f08383530b9b86645c05b8410a81"
+    },
+    {
+      "blob": "512e4df76dae87707b724c2b35d889a5c9422a8f",
+      "path": "docs/delivery/v2-development/comic-author-integration-postgres-final-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "a5f4f49b00e3c1401588df519070aa26578f68a483ab3487b5af3b66c6b8ad40"
+    },
+    {
+      "blob": "5537f98d2396f05b42ba86a39bb9c65e8d0c86ab",
+      "path": "docs/delivery/v2-development/comic-author-integration-postgres-final.json",
+      "bytes": 758182,
+      "sha256": "d0087e2a9fa366424b0819b263e3f7ac38d3c9fa2c4a0b45145a2ccb86f8b227"
+    },
+    {
+      "blob": "a3cc9d3f85311f1ba60472f735aece78eec6209a",
+      "path": "docs/delivery/v2-development/comic-author-integration-postgres-final.log",
+      "bytes": 1606,
+      "sha256": "cd3f34c1df63ff92e9616dc003ab871dd2fb3945a7dca9d83e497f72108fb01f"
+    },
+    {
+      "blob": "59c0a124f277d591bf91e3bf4dd180f93f711d4f",
+      "path": "docs/delivery/v2-development/comic-author-integration-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "1b638858211e8903b4728e8355673b11fe9bbd3d2d20108405d5176129a6a18f"
+    },
+    {
+      "blob": "989723320903dde7786dbd503cfe809723063184",
+      "path": "docs/delivery/v2-development/comic-author-integration-postgres.json",
+      "bytes": 758122,
+      "sha256": "45e1ed2edc607e3b342a56cfc5de7b6ce519aff59c75ed921aa3ce9ceb6660ab"
+    },
+    {
+      "blob": "9ce49ee1a7377ddc9f9580df8d2d2295becbed56",
+      "path": "docs/delivery/v2-development/comic-author-integration-postgres.log",
+      "bytes": 2043,
+      "sha256": "328425adc4c412a40b95af404b729e9e6025a7a33f22d82f7a4f7cc8f18b823b"
+    },
+    {
+      "blob": "639133bb7f3b1fd62b3db28370443e6cc12d19c5",
+      "path": "docs/delivery/v2-development/comic-author-integration-public.json",
+      "bytes": 758378,
+      "sha256": "43be51d05f1e5e5d294124f61960e81224b1e27e5bf9860635c622a8bf195baf"
+    },
+    {
+      "blob": "eb06dce2e7a138fb443bc2296581458615bc47ba",
+      "path": "docs/delivery/v2-development/comic-author-integration-public.log",
+      "bytes": 634,
+      "sha256": "2b90ceb1502214f0a57e522d9399e03a6735a0c062cf0342a20ff9773cd27f8d"
+    },
+    {
+      "blob": "ba3316d6ad32b99ea190f684ce5c95b709993d57",
+      "path": "docs/delivery/v2-development/comic-author-native-final.json",
+      "bytes": 752516,
+      "sha256": "09fd8d02aea8cbbb8e4bd377111e51b642efaf99fb6c75567c46d21d4f4b9afa"
+    },
+    {
+      "blob": "aa9d515f0273bd24371f2534254e70806e8df9e9",
+      "path": "docs/delivery/v2-development/comic-author-native-final.log",
+      "bytes": 1717,
+      "sha256": "3046c42fb9d4c99bae8467b7ce6a4c3ec5e08739e05badab3a0881f481e027f5"
+    },
+    {
+      "blob": "06c0ec2e001a12428e92a82dae79a8948a3dcde8",
+      "path": "docs/delivery/v2-development/comic-author-native-frontend-build-cancelled.json",
+      "bytes": 415,
+      "sha256": "e928fb257fa82d52099871677e882c98a811b0f573ebb1c5a336a84ce2eade36"
+    },
+    {
+      "blob": "a0c89f41fa6f8a7b96db3b3bd3bcae5bbdee902a",
+      "path": "docs/delivery/v2-development/comic-author-native-frontend-final.json",
+      "bytes": 753269,
+      "sha256": "ec186749b8c3b829a5c2a15871dd30cc74b23cbcfc63f93a5c98e41b3b297cbf"
+    },
+    {
+      "blob": "cdafe437b24a1be0cbba6d0735935d10a3675a4a",
+      "path": "docs/delivery/v2-development/comic-author-native-frontend-final.log",
+      "bytes": 4530,
+      "sha256": "6e95fcaac84075f20271e1b4b9283f5c382745e5c306710dbd11933236877627"
+    },
+    {
+      "blob": "2da7be9e706f45ed10991910c25296b0d08d6cb3",
+      "path": "docs/delivery/v2-development/comic-author-native-roundtrip-report.md",
+      "bytes": 6204,
+      "sha256": "2ef27e8dd9a51e0a89b1824d7b289de96df53d4e890efb0c907008846684e45e"
+    },
+    {
+      "blob": "1435fe27301d5d4a5851b3d556f15c205243c872",
+      "path": "docs/delivery/v2-development/comic-author-native-security.json",
+      "bytes": 752641,
+      "sha256": "998a6a020b2795ee8bb057a130e46044d920b8cbdb63cfb51c3765d72bde0848"
+    },
+    {
+      "blob": "c9c5665e7cf312b129c3c4902f1dfc0e20d08654",
+      "path": "docs/delivery/v2-development/comic-author-native-security.log",
+      "bytes": 1635,
+      "sha256": "63a9f70b249726ddf9e0cca312881a6d7b2690f6585e5179765cc0e0adea7ab4"
+    },
+    {
+      "blob": "abfdd08a99f5fe6df45017fa7c3a23d2aab220aa",
+      "path": "docs/delivery/v2-development/comic-author-native-source-reconciliation.json",
+      "bytes": 1417,
+      "sha256": "d2c30ca29485d7d82517e22d49257d32f54adce0d3e162d6afb5d00894381eb1"
+    },
+    {
+      "blob": "9faa17023fd4f761434882e27c5e12fa71cd39f2",
+      "path": "docs/delivery/v2-development/comic-author-owned-residue-inspection.json",
+      "bytes": 8599,
+      "sha256": "25354b35a627f66bece24a0b491c39dd7b50b5dea8eff1e235a9afc1b4ba5087"
+    },
+    {
+      "blob": "70217ddb4f5270d3fc26756b2bf5e4a575733dd2",
+      "path": "docs/delivery/v2-development/comic-author-residue-inspection-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "1cadfc59bf96ad2bdf38e37426c80f43f1cbc74232f8d97a052f605880f6aff7"
+    },
+    {
+      "blob": "0dbe9ded9301c6b52d95ed7879a397a1096f747b",
+      "path": "docs/delivery/v2-development/comic-author-residue-inspection.json",
+      "bytes": 758055,
+      "sha256": "9daa65ec34bef9d39bc23d8a72f1371cadff91b49f42f4871a70db4350316508"
+    },
+    {
+      "blob": "5c83a504230a0a1f284eb3f0b160d5aab2bfca03",
+      "path": "docs/delivery/v2-development/style-vision-integration/cleanup_comic_author_owned_fixtures.py",
+      "bytes": 2872,
+      "sha256": "949edf737a6774c996e88d2a55c5de653131f7a1383a9e96ac191e90d146912b"
+    },
+    {
+      "blob": "b097ce61dffb86cecdebbcf1c0eb150bcdfd489d",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_comic_author_postgres.py",
+      "bytes": 1750,
+      "sha256": "d9e2f975d21d90f5269d995f0e681d7b85670aca4ee2a747ecf629d6940a874d"
+    },
+    {
+      "blob": "e519643797b7232c96e06b87efde91c1ba1a75ec",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_comic_author_postgres_final.py",
+      "bytes": 1762,
+      "sha256": "c56e3672f89a8b01e96885e926aa18399dfcdde8eb04329825e6c60a9de7935d"
+    },
+    {
+      "blob": "ee7261722c3fe9c3f2734eadb5598328646a1ba9",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 789434,
+      "sha256": "d87f169e0c037206fe43b58beaed2890b3771493071074440f4ad300fcf96a8f"
+    },
+    {
+      "blob": "4529f4f3bb4a5a175362848bde651477fcc640ec",
+      "path": "docs/v2/V2_SCOPE_RECONCILIATION_20261019_R2.md",
+      "bytes": 9996,
+      "sha256": "c1ab8f616fe7f7598893b42603385eb6b97fc4da9e71cf2d90f8cebef44c5cb6"
+    },
+    {
+      "blob": "d6645defc3202fabe277f0ce104a304ec872c66d",
+      "path": "frontend/COMIC_AUTHOR_ARCHIVE_FRONTEND_REPORT.md",
+      "bytes": 3337,
+      "sha256": "48797bbbc57316f2f34c444a3f938768c662d662a0c9fdbfc314f2616a4af11d"
+    },
+    {
+      "blob": "d99ab1eb0fe775a39967e30ceb46386bea40071a",
+      "path": "frontend/src/experimental/ComicAuthorArchivePanel.test.tsx",
+      "bytes": 16726,
+      "sha256": "939831325bfa1fe51d721620aa193b02e3a3888891e5e9ee5a92feb3e75cd7e6"
+    },
+    {
+      "blob": "f76a4fee6b5cdbe8071d0a233e39c8050ee88289",
+      "path": "frontend/src/experimental/ComicAuthorArchivePanel.tsx",
+      "bytes": 9093,
+      "sha256": "ae32e7d7786af1318f602c902b57f1068ff1aa7498e2bce3ffa508aaf707112e"
+    },
+    {
+      "blob": "e798e80731553f4a7102a388e3e2cddb7743f85f",
+      "path": "frontend/src/experimental/ComicCollectionTree.tsx",
+      "bytes": 18712,
+      "sha256": "ebcda29c2b7b5d594ca02d1656d5c0d47ee44839a8e64a55893df77f3b892ce6"
+    },
+    {
+      "blob": "211abcce922935e4c60a64cef1e71e20e312071e",
+      "path": "frontend/src/experimental/comicAuthorArchiveClient.test.ts",
+      "bytes": 4358,
+      "sha256": "aea567eec1d97492eecb0ca1264bfe82dab987bcf10e466316355b3d2ae1dacd"
+    },
+    {
+      "blob": "aa41f77fc40bca12a96c82683c8ea7b4dc958b8a",
+      "path": "frontend/src/experimental/comicAuthorArchiveClient.ts",
+      "bytes": 8808,
+      "sha256": "c2c2e6d171cd92846c2e8d1db1a0f1b31104dd39869ba62598f18e01acbfa624"
+    },
+    {
+      "blob": "de825bb9984b6267aa3b0252752bf80882c314d0",
+      "path": "packaging/public-build.json",
+      "bytes": 26220,
+      "sha256": "9f02b0bef8704ef17761749ae44a2ca799daa14f4470e466a07da8e702010aef"
+    },
+    {
+      "blob": "b3114e3ba3762a11de8545aade87465323bd3c34",
+      "path": "tests/test_comic_author_archive.py",
+      "bytes": 21814,
+      "sha256": "57b9ff0b4096037251c1881eba1dccf3e0c9a4a97c316d9fee2ca3b59b8b9a3c"
+    },
+    {
+      "blob": "9e1f631f11c6575218096b7c0a967d29225b83a6",
+      "path": "tests/test_comic_collections.py",
+      "bytes": 23672,
+      "sha256": "2173c76e21d14845bf09802d3b3de101f293a82765ecece8542964b5e44a42b5"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
