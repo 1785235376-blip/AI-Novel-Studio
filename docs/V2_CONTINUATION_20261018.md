@@ -411,3 +411,9 @@ Previous sourceffbfc595 archived as36ff75ceac27edf8125d965575995f1495306886, par
 Product 3a33b6d3fdf8c964ee1281178d6edb0bcece9e9e adds exact approved-source JPEG/WebP reading-copy ZIPs with1,048,576 aggregate-pixel admission and scoped64MiB streaming. File239 plus affected94 are overlapping and explicitly reconciled; realPG102 restores exact14-table hashes; UI294 and source-matched types/build/token evidence reused; PUBLIC6 passes. Final PG/PUBLIC match3158 source files. See docs/delivery/v2-development/comic-page-archive-integration-20261018.md. No long-book/print/real-reader acceptance claim.
 
 Previous source1ccbce1c archived as a946bafd7dd2d1ef171c389ba8b1e2af23966b7f, parent36ff75ce:14 artifacts /5,527,238 bytes verified. Fixed-layout EPUB remains independent unintegrated work.
+
+## 22:31 UTC actual fixed-layout EPUB reading copy
+
+Product 95a62f57d3a84ae7b74806bd850ac3022e309990 adds bounded EPUB packaging on original approved Comic sources. File 326 with exact backend reconciliation, real PG 88 with exact 14-table cleanup, UI 369 and source-matched types/build/token, PUBLIC 6 pass. PG/PUBLIC match 3,162 source files. No formal EPUBCheck or reader/platform acceptance claimed. See docs/delivery/v2-development/comic-epub-integration-20261018.md. Separate P0 evidence reconciliation confirms tested retirement closure with explicit historical evidence limits.
+
+Prior source 2997fda0 archived as c4b15e8bced83e457419dfb68166f3c388f66e98, parent a946bafd: 14 artifacts / 5,247,349 bytes verified. Storage reclaimed through recoverable sparse-checkout documentation only; unique work retained. Assetless native-author roundtrip remains independent unintegrated work.

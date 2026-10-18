@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T22:14:00Z",
+  "updated_at_utc": "2026-10-18T22:31:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -21663,9 +21663,9 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Ordered PNG CBZ, bounded raster PDF and JPEG/WebP ZIP reading copies implemented. PDF roughly2.7M and page-codec1,048,576aggregate-pixel limits explicit. EPUB and editable native archive, long/high-resolution and independent target/platform acceptance remain open.",
-      "next_action": "Continue remaining EPUB/native formats and actual viewer/platform acceptance without print/PDF-X claims.",
-      "evidence_scope": "Bounded original publication owners; see docs/delivery/v2-development/comic-page-archive-integration-20261018.md"
+      "gap": "Bounded ordered PNG CBZ, raster PDF, JPEG/WebP ZIP and fixed-layout raster EPUB implemented. Native editable portable roundtrip remains missing; assetless author-only slice is independent work. Capacity bounds, EPUBCheck/actual readers and target/platform/print acceptance remain open.",
+      "next_action": "Complete native editable import under original owner/review semantics and independent reading-system/platform acceptance; no print or full conformance claim.",
+      "evidence_scope": "Bounded reading-copy formats only; see docs/delivery/v2-development/comic-epub-integration-20261018.md"
     },
     {
       "id": "IMAGE-COMIC-19",
@@ -22118,11 +22118,31 @@
         "JPEG quality100 remains lossy; no print/color-profile promise",
         "No Windows/actual reader/browser acceptance"
       ]
+    },
+    {
+      "product_sha": "95a62f57d3a84ae7b74806bd850ac3022e309990",
+      "report": "docs/delivery/v2-development/comic-epub-integration-20261018.md",
+      "scope": "Actual bounded fixed-layout raster EPUB and scoped legacy reading-copy download limits",
+      "file_tests": 326,
+      "backend_source_paths_reconciled": 1501,
+      "postgres_tests": 88,
+      "postgres_exact_14_table_cleanup": true,
+      "ui_tests": 369,
+      "frontend_source_paths_reconciled": 1639,
+      "public_tests": 6,
+      "source_paths": 3162,
+      "formal_acceptance": false,
+      "limits": [
+        "Raster-only, limited accessibility, explicit unspecified language",
+        "Conservative64MiB reservation; not100 full-resolution pages",
+        "EPUBCheck and actual reading-system/platform/print acceptance NOT_RUN"
+      ],
+      "p0_security_reconciliation": "docs/delivery/v2-development/project-retirement-evidence-reconciliation-20261018.md"
     }
   ],
   "current_checkpoint": {
-    "product_sha": "3a33b6d3fdf8c964ee1281178d6edb0bcece9e9e",
-    "report": "docs/delivery/v2-development/comic-page-archive-integration-20261018.md",
+    "product_sha": "95a62f57d3a84ae7b74806bd850ac3022e309990",
+    "report": "docs/delivery/v2-development/comic-epub-integration-20261018.md",
     "source_identity_section": "Historical initial reconciliation baseline, not current HEAD",
     "all_fixed_ids_accepted": false
   }

@@ -1,0 +1,87 @@
+{
+  "product_sha": "95a62f57d3a84ae7b74806bd850ac3022e309990",
+  "original_build_receipt": "docs/delivery/v2-development/comic-epub-frontend-build-final.json",
+  "build_receipt_sha256": "2bb26895e273c1c4beece01402f3e0a9aa09eab766a0b8cbf1f5e6b12d058e2a",
+  "frontend_source_paths_matched": 1639,
+  "source_unchanged": true,
+  "copied_dist": ".runtime/verified-frontend/comic-epub-95a62f57/dist",
+  "inventory": [
+    {
+      "path": "assets/App-DgZ1WQvm.js",
+      "sha256": "440e45f64d02c6b507d05bd3d3d7e5b25b51c3ea06445d9ae819ce473d6af60e",
+      "bytes": 2894695
+    },
+    {
+      "path": "assets/App-ipe-r0uF.css",
+      "sha256": "2b6361e75064066fb527b4ceb59361c90440b20baa9c65a8f3addf4fff61155b",
+      "bytes": 219837
+    },
+    {
+      "path": "assets/ExperimentalWorkbench-8WgLsLRp.js",
+      "sha256": "cf01c4cbced8f24d2b3f3b34501df24244f98c93715bab423c75490c0f004660",
+      "bytes": 848156
+    },
+    {
+      "path": "assets/ExperimentalWorkbench-cKwZaTd1.css",
+      "sha256": "7335685a1888ddf356d966aa3d822fb8d9c798e0aeeb5a870804c4802e618e4c",
+      "bytes": 3880
+    },
+    {
+      "path": "assets/Health-QsUmlkua.js",
+      "sha256": "aa66f5a6ca90bdbea74680ca163e57f1d60c036e16693e87dcec89ac4d454a55",
+      "bytes": 989
+    },
+    {
+      "path": "assets/LocalTutorIntegration-5eHGJzCE.js",
+      "sha256": "aca983c4c4be76c842964e2728a3df8a800a25c605a7bcaabc7e3686dcbbc9ab",
+      "bytes": 47635
+    },
+    {
+      "path": "assets/LocalTutorIntegration-BRshkv99.css",
+      "sha256": "87b9bc1757000d4ff1364524d627600b7d4ad88eaa3f21ea0d072d6ad29bb9dc",
+      "bytes": 3626
+    },
+    {
+      "path": "assets/editor-vendor-WoPbGn4i.js",
+      "sha256": "10bb7ac7f6564af822100aee709abbec617a51b0efb78a1e8d92f085e3744499",
+      "bytes": 307091
+    },
+    {
+      "path": "assets/index-Cj-tLRQ5.css",
+      "sha256": "5399d8df3be57bb061fb8c48846d79c359846f844e18b776c58f2de48c58ade7",
+      "bytes": 32292
+    },
+    {
+      "path": "assets/index-DaiO4JyV.js",
+      "sha256": "256ef176ad9690cabd2b93452bb50ab20cb0a7a2f4bf63962c237b9db522ca31",
+      "bytes": 30154
+    },
+    {
+      "path": "assets/query-vendor-CUnTvSIi.js",
+      "sha256": "1fc0a3c6574061fdc18929187fdf6b0d00ab3c003918530126100a762e69a97b",
+      "bytes": 45602
+    },
+    {
+      "path": "assets/react-vendor-D3pO_op5.js",
+      "sha256": "35539930060cd39417338afc8940bb1213d8d1dff683e25a6eb15291f8adfae9",
+      "bytes": 142976
+    },
+    {
+      "path": "assets/style-6MlQLGa4.css",
+      "sha256": "9da58e75fb03b4ae56b9204f968c8a4b155e4527f24008364c5eb9c1ad85448d",
+      "bytes": 3788
+    },
+    {
+      "path": "assets/style-CcQlnOBL.js",
+      "sha256": "817acdb6cf0f484d4b85da014c3abef2c58ea17bfc726034e41e33b85deee33a",
+      "bytes": 45115
+    },
+    {
+      "path": "index.html",
+      "sha256": "4794524a21321cfcd97ecc8e8ee9963d706ed70e3b5dd2fc1e428bbeca27e17d",
+      "bytes": 326
+    }
+  ],
+  "reason": "Exact source-matched stable worker build reused without redundant full rerun",
+  "browser_acceptance": "NOT_RUN"
+}
