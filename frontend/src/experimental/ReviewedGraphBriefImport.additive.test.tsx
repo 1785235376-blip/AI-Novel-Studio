@@ -39,3 +39,12 @@ it('keeps author/license separate and prepares only a non-executable original te
  await inspect();fireEvent.click(screen.getByText('重新核对来源并替换四项正文'));await screen.findByText('已采用原审核文本引用，仍需填写个人身份与许可并预检安装。');expect(onPrepare).not.toHaveBeenCalled();fireEvent.click(screen.getByText('填入简报安装预览'));
  const result=JSON.parse(onPrepare.mock.calls[0][0]);expect(result.manifest.author).toBe('Author');expect(result.manifest.license).toBe('Self-use');expect(result.manifest.permissions.execute).toBe(false);expect(JSON.parse(result.manifest.provenance).run_id).toBe(run.id);expect(JSON.parse(result.manifest.provenance).publisher_verified).toBe(false);
 });
+it('lists original graph and completed runs without execution, then lets the user choose a review node',async()=>{
+ const c={...reader(),list:vi.fn(async()=>({items:[graph,{...graph,id:'legacy',definition:{...graph.definition,schema_version:1 as const}}]})),runs:vi.fn(async()=>({items:[run,{...run,id:'pending',status:'WAITING_APPROVAL' as const,reviewed:false}]}))},onApply=vi.fn();
+ render(<ReviewedGraphBriefImport reader={c} active disabled={false} current={emptyBrief()} onApply={onApply}/>);
+ expect(c.list).not.toHaveBeenCalled();fireEvent.click(screen.getByText('列出本项目简报来源图'));await screen.findByLabelText('简报来源创作图');
+ expect(screen.queryByRole('option',{name:/legacy/})).toBeNull();fireEvent.change(screen.getByLabelText('简报来源创作图'),{target:{value:graph.id}});fireEvent.click(screen.getByText('列出该图已完成运行'));await screen.findByLabelText('已完成的简报运行');
+ expect(c.runs).toHaveBeenCalledWith(graph.id);expect(screen.queryByRole('option',{name:/pending/})).toBeNull();fireEvent.change(screen.getByLabelText('已完成的简报运行'),{target:{value:run.id}});fireEvent.change(screen.getByLabelText('已完成的文字审核节点'),{target:{value:'review'}});
+ expect((screen.getByLabelText('简报来源运行 ID') as HTMLInputElement).value).toBe(run.id);expect((screen.getByLabelText('简报来源审核节点 ID') as HTMLInputElement).value).toBe('review');expect(onApply).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByText('读取并比较原审核简报'));await screen.findByRole('region',{name:'原审核简报差异'});expect(onApply).not.toHaveBeenCalled();
+});

@@ -3,7 +3,7 @@ import type {BriefText} from './personalSkillBrief';
 import type {StudioGraphRecord,StudioGraphRun} from '../creative/studioGraphTypes';
 export type GraphBriefSource={kind:'PERSONAL_REVIEWED_GRAPH_TEXT_REFERENCE';project_id:string;graph_id:string;graph_version:number;graph_digest:string;run_id:string;run_version:number;review_node_id:string;text_sha256:string;origin:'USER_SUPPLIED'|'MANUAL'|'MODEL_PROPOSAL';publisher_verified:false;execution_authority:false;content_may_be_edited:true};
 export type ReviewedGraphBrief={text:BriefText;source:GraphBriefSource};
-export type BriefGraphReader={get:(id:string)=>Promise<StudioGraphRecord>;getRun:(id:string)=>Promise<StudioGraphRun>};
+export type BriefGraphReader={list?:()=>Promise<{items:StudioGraphRecord[]}>;runs?:(id:string)=>Promise<{items:StudioGraphRun[]}>;get:(id:string)=>Promise<StudioGraphRecord>;getRun:(id:string)=>Promise<StudioGraphRun>};
 const fail=():never=>{throw new Error('需要当前项目中未过期、成功完成的 schema 3 创作图及原人工审核节点；来源或审核回执已改变时请重新读取。');};
 export async function readReviewedGraphBrief(client:BriefGraphReader,runId:string,nodeId:string):Promise<ReviewedGraphBrief>{
  if(!/^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/.test(runId)||!/^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$/.test(nodeId))fail();

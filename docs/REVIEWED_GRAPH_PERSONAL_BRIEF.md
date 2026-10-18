@@ -15,3 +15,7 @@ The package keeps a reference to project, graph version/digest, run version, rev
 ## Limits
 
 The direct reference path requires schema 3, a successful run and an original reviewed text output. Legacy schema-1/2 review outputs are not upgraded or relabelled; manual import remains available. It does not auto-find runs, execute AI, infer licenses, install templates or submit anything to an official market. Full browser, real model quality, fresh PostgreSQL acceptance, whole-product and release acceptance were not performed in this slice. The one real-owner fixture is manual text, not evidence of a live model run.
+
+## Source picker followthrough
+
+An explicit original Graph list → completed run list → reviewed node picker is now available in the same importer. It filters to current successful reviewed schema-3 sources and still rereads before comparison/adoption. It does not automatically search on mount or start/approve a run. Direct IDs remain available as a fallback. `reviewed-graph-brief-picker-r1`: 12 focused tests, TypeScript and production build PASS; original large-chunk warning retained.
