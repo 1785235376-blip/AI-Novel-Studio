@@ -77,3 +77,62 @@ describe('original director storyboard handoff', () => {
     await screen.findByText('无权读取'); expect(screen.queryByRole('complementary')).toBeNull(); expect(props.client.derive).not.toHaveBeenCalled();
   });
 });
+
+const addName = '将此分镜草稿添加到当前画布';
+function canvasSetup() {
+  const props = setup();
+  vi.mocked(props.client.export).mockImplementation(async id => ({ document: id === source.id ? source : storyboard, document_digest: id === source.id ? pin.digest : 'b'.repeat(64), format: '', boundary: '' }));
+  return { ...props, canvasHandoff: { scope: {}, verificationScope: {}, available: true, isVerificationCurrent: () => true, insert: vi.fn().mockReturnValue(true) } };
+}
+async function deriveAndVerify() {
+  confirm(); click('交接到原分镜草稿'); await screen.findByRole('complementary');
+  expect((screen.getByRole('button', { name: addName }) as HTMLButtonElement).disabled).toBe(true);
+  click('核对分镜原文档版本');
+  await waitFor(() => expect((screen.getByRole('button', { name: addName }) as HTMLButtonElement).disabled).toBe(false));
+}
+it('verifies both original owners before an explicit one-shot current-canvas insertion', async () => {
+  const props = canvasSetup(); render(<GraphDirectorStoryboardHandoff {...props} />); await deriveAndVerify();
+  expect(props.canvasHandoff.insert).not.toHaveBeenCalled();
+  expect(props.client.export).toHaveBeenCalledWith(source.id);
+  click(addName); click(addName);
+  expect(props.canvasHandoff.insert).toHaveBeenCalledTimes(1);
+  expect(props.canvasHandoff.insert).toHaveBeenCalledWith({ id: storyboard.id, version: 1, digest: 'b'.repeat(64) }, props.canvasHandoff.scope);
+  expect(props.client.update).not.toHaveBeenCalled();
+  expect(screen.getByText(/已添加一个未连接/)).toBeTruthy();
+});
+it.each(['source', 'ancestry', 'digest', 'status', 'version'] as const)('rejects %s drift without any canvas write', async kind => {
+  const props = canvasSetup();
+  vi.mocked(props.client.export).mockImplementation(async id => ({
+    document: id === source.id ? { ...source, version: kind === 'source' ? 4 : 3 } : { ...storyboard,
+      ...(kind === 'ancestry' ? { source_documents: {} } : {}), ...(kind === 'status' ? { status: 'APPROVED' as const } : {}), ...(kind === 'version' ? { version: 2 } : {}) },
+    document_digest: id === source.id ? pin.digest : kind === 'digest' ? 'bad' : 'b'.repeat(64), format: '', boundary: '' }));
+  render(<GraphDirectorStoryboardHandoff {...props} />); confirm(); click('交接到原分镜草稿'); await screen.findByRole('complementary');
+  click('核对分镜原文档版本'); await screen.findByRole('alert'); expect(props.canvasHandoff.insert).not.toHaveBeenCalled();
+});
+it('pins verification before asynchronous reads and retires canvas ABA results', async () => {
+  const props = canvasSetup(); let resolve!: (value: Awaited<ReturnType<GraphDirectorSource['export']>>) => void;
+  vi.mocked(props.client.export).mockReturnValue(new Promise(yes => resolve = yes));
+  const view = render(<GraphDirectorStoryboardHandoff {...props} />); confirm(); click('交接到原分镜草稿'); await screen.findByRole('complementary');
+  click('核对分镜原文档版本');
+  view.rerender(<GraphDirectorStoryboardHandoff {...props} canvasHandoff={{ ...props.canvasHandoff, verificationScope: {} }} />);
+  view.rerender(<GraphDirectorStoryboardHandoff {...props} />);
+  await act(async () => resolve({ document: storyboard, document_digest: 'b'.repeat(64), format: '', boundary: '' }));
+  expect(props.canvasHandoff.insert).not.toHaveBeenCalled(); expect(screen.queryByRole('complementary')).toBeNull();
+});
+it('retires a verified insertion on source ABA and keeps UNKNOWN unable to insert', async () => {
+  const props = canvasSetup(); const view = render(<GraphDirectorStoryboardHandoff {...props} />); await deriveAndVerify();
+  view.rerender(<GraphDirectorStoryboardHandoff {...props} sourceScope="changed" />); view.rerender(<GraphDirectorStoryboardHandoff {...props} />);
+  expect(screen.queryByRole('button', { name: addName })).toBeNull();
+  vi.mocked(props.client.derive).mockRejectedValue(new Error('offline')); confirm(); click('交接到原分镜草稿'); await screen.findByRole('alert');
+  click('读取关联分镜与状态'); await screen.findByRole('button', { name: '读取分镜 Human draft shots · v1' }); click('读取分镜 Human draft shots · v1');
+  await screen.findByRole('complementary'); expect((screen.getByRole('button', { name: addName }) as HTMLButtonElement).disabled).toBe(true);
+});
+
+it('a fresh derivation clears the previously verified insertion intent', async () => {
+  const props = canvasSetup(); render(<GraphDirectorStoryboardHandoff {...props} />); await deriveAndVerify();
+  confirm(); click('交接到原分镜草稿');
+  await waitFor(() => expect(props.client.derive).toHaveBeenCalledTimes(2));
+  await screen.findByRole('complementary');
+  expect((screen.getByRole('button', { name: addName }) as HTMLButtonElement).disabled).toBe(true);
+  click(addName); expect(props.canvasHandoff.insert).not.toHaveBeenCalled();
+});

@@ -2,7 +2,7 @@ import { appendCanvasAssetNode, type CanvasGraphAssetHandoff } from './mediaCanv
 import { buildStoryboardVideoStarter } from './graphStoryboardStarter';
 import { checkedStoryboardReceipt } from './studioStoryboardContract';
 import { buildGraphStarter, type GraphStarterKind } from './graphStarter';
-import type { ReviewedDirectorCanvasHandoff } from './directorCanvasHandoff';
+import type { PlanningCanvasHandoff } from './directorCanvasHandoff';
 import { planningSourceFork, planningSourceReferences } from './graphPlanningFork';
 import type { OpenStoryboardEditor } from './storyboardEditorHandoff';
 import { checkedStudioGraphDraft } from './studioGraphClient';
@@ -225,20 +225,23 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     nodeInspectorRef.current?.focus();
     return true;
   }
-  const reviewedDirectorHandoff: ReviewedDirectorCanvasHandoff = {
+  function planningCanvasHandoff(kind: 'director_plan' | 'storyboard_plan'): PlanningCanvasHandoff { return {
     scope: reviewedScope,
     verificationScope, isVerificationCurrent,
     available: insertionCurrent(insertionScope) && !insertion && !!catalog
-      && graphCatalogForSchema(catalog.definitions, draft.schema_version).some(row => row.id === 'director_plan'),
+      && graphCatalogForSchema(catalog.definitions, draft.schema_version).some(row => row.id === kind),
     insert: (snapshot, scope) => {
       if (!isVerificationCurrent() || scope !== reviewedScope || scope !== reviewedFence.current.token || !insertionCurrent(insertionScope) || insertionRef.current) return false;
       let pin: PlanningSnapshot;
       try { pin = checkedPlanningSnapshot(snapshot); } catch { return false; }
       const before = draftRef.current;
-      insertNode('director_plan', undefined, pin);
+      insertNode(kind, undefined, pin);
       return draftRef.current !== before;
     },
   };
+  }
+  const reviewedDirectorHandoff = planningCanvasHandoff('director_plan');
+  const storyboardCanvasHandoff = planningCanvasHandoff('storyboard_plan');
   const canvasAssetHandoff: CanvasGraphAssetHandoff = {
     scope: verificationScope, isCurrent: isVerificationCurrent,
     available: insertionCurrent(insertionScope) && !insertionRef.current && !!catalog && draft.schema_version >= 3
@@ -801,7 +804,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     planningDocuments: current() ? planningDocuments : [], planningChoice: current() ? planningChoice : '', planningLoading, choosePlanningDocument, loadPlanningDocuments, loadProductionCatalog, updateProductionField, updateShotBinding, updateReferenceMetadata,
     discard, load, loadImageCatalog, change, applyAutoLayout, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
     setReplaceConfirmed, setCandidate, setDiscardConfirmed, setPendingNavigation, setKind, setAssetChoice,
-    canvasAssetHandoff, reviewedDirectorHandoff, insertionScope, positionedInsertion, insertionExpired, invalidatePositionedInsertion, requestPositionedInsertion, cancelPositionedInsertion,
+    canvasAssetHandoff, reviewedDirectorHandoff, storyboardCanvasHandoff, insertionScope, positionedInsertion, insertionExpired, invalidatePositionedInsertion, requestPositionedInsertion, cancelPositionedInsertion,
     nodeInspectorRef, locateRunNode, connectionScope, stageConnection, selectConnectionPort, setSourcePort, setTargetPort, setSelected, reportRunSelection, mediaSchemaConsent, setMediaSchemaConsent, upgradeMediaSchema, executionDirty, setExecutionDirty,
     imageSchemaConfirmed, confirmImageSchema, upgradeImageSchema, updateImagePrompt, updateImageReference,
     updateMediaField, updateMediaParameter, clearUnsupportedMediaParameters, clearMediaTrimInputs, timelineEditor,

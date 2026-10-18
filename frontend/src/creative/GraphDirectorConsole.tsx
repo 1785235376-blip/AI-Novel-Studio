@@ -29,6 +29,7 @@ type Props = {
   verifyDraftOwner?: () => Promise<void>;
   registerRecoveryDiscard?: (discard: (() => void) | undefined) => void;
   canvasHandoff?: ReviewedDirectorCanvasHandoff;
+  storyboardCanvasHandoff?: ReviewedDirectorCanvasHandoff;
   pin?: PlanningSnapshot;
   selectionKey?: string;
   graph?: StudioGraphDefinition;
@@ -50,7 +51,7 @@ const samePin = (a: PlanningSnapshot, b: PlanningSnapshot) => a.id === b.id && a
 
 /** A mounted view of the original Creative owner. Only author drafts live here;
  * Graph retains its exact pin and all execution/review remains with its owners. */
-export function GraphDirectorConsole({ draftOwner, verifyDraftOwner, registerRecoveryDiscard, client, canvasHandoff, pin, selectionKey, graph, selectedNodeId, active, canMutate, busy, isCurrent, read, mutate, onDirtyChange, onImagePendingChange, onOpenModels, onOpenBroker, onOpenStoryboard }: Props) {
+export function GraphDirectorConsole({ draftOwner, verifyDraftOwner, registerRecoveryDiscard, client, canvasHandoff, storyboardCanvasHandoff, pin, selectionKey, graph, selectedNodeId, active, canMutate, busy, isCurrent, read, mutate, onDirtyChange, onImagePendingChange, onOpenModels, onOpenBroker, onOpenStoryboard }: Props) {
   const imageClient = useMemo(() => client.imageDirector?.(), [client]);
   const [imagePending, setImagePending] = useState(false);
   const imagePendingCallback = useRef(onImagePendingChange); imagePendingCallback.current = onImagePendingChange;
@@ -106,6 +107,7 @@ export function GraphDirectorConsole({ draftOwner, verifyDraftOwner, registerRec
   const editing = authorized && canMutate && active && !busy && !working && !blocked && !handoffPending && !proposalPending && !scopePending && !imagePending && !recovery.candidate && isCurrent();
   const authorEpoch = useRef(0);
   const renderedAuthorEpoch = authorEpoch.current;
+  const renderedSelection = selection.current.generation, renderedScope = scope.current.generation;
   const mark = (value: boolean) => { authorEpoch.current++; setDirty(value); onDirtyChange(value || blocked || handoffPending || proposalPending || scopePending || imagePending); };
   const fail = (reason: unknown) => {
     setError(apiErrorView(reason, '导演文档操作未完成，请核对连接与原文档。').message);
@@ -318,7 +320,10 @@ export function GraphDirectorConsole({ draftOwner, verifyDraftOwner, registerRec
         available={authorized && active && canMutate && !dirty && !blocked && !handoffPending && !proposalPending && !imagePending && !working}
         busy={busy || working} isCurrent={current} mutate={mutate} onPending={setScopePending} onOpen={id => { if (current() && !pending) void inspect(id); }} />}
       {base && client.directorSheetExport && <DirectorSheetExportPanel document={base} available={authorized && active && !pending && !busy && !working} isCurrent={current} request={client.directorSheetExport} onDenied={() => fail(new ApiError({status:403,code:'PROJECT_SCOPE_FORBIDDEN',message:'当前导演文档不可导出。'}))}/>}
-      {base && <GraphDirectorStoryboardHandoff canOpen={!dirty && !blocked && !proposalPending && !imagePending && storyboardAllowed} onOpenStoryboard={onOpenStoryboard ? (request, originCurrent) => {
+      {base && <GraphDirectorStoryboardHandoff canvasHandoff={storyboardCanvasHandoff}
+        sourceScope={JSON.stringify([renderedAuthorEpoch, renderedSelection, renderedScope])}
+        isSourceCurrent={() => current() && !composing.current && renderedAuthorEpoch === authorEpoch.current && renderedSelection === selection.current.generation && renderedScope === scope.current.generation}
+        canOpen={!dirty && !blocked && !proposalPending && !imagePending && storyboardAllowed} onOpenStoryboard={onOpenStoryboard ? (request, originCurrent) => {
         const authored = authorEpoch.current, selected = selection.current.generation, generation = scope.current.generation;
         onOpenStoryboard(request, () => originCurrent() && current() && authored === authorEpoch.current && selected === selection.current.generation && owns(generation));
       } : undefined} client={client} source={base} snapshot={snapshot} active={active && authorized && !imagePending} canCreate={editing && !dirty && storyboardAllowed} busy={busy || working} isCurrent={isCurrent} read={read} mutate={mutate} onPending={setHandoffPending} />}

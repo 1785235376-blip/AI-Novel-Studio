@@ -43,7 +43,7 @@ export function useStudioGraphEditor(props: StudioGraphEditorProps) {
     } : undefined}
     client={props.directorSource} onOpenStoryboard={controller.executionDirty || !props.onOpenStoryboard ? undefined : (request, isOriginCurrent) => {
       props.onOpenStoryboard!(request, () => isOriginCurrent() && handoffAuthority.current.epoch === handoffEpoch);
-    }} onOpenModels={props.onOpenModels} onOpenBroker={props.onOpenBroker} selectionKey={JSON.stringify([controller.base?.id, controller.selected, handoffEpoch])} canvasHandoff={controller.reviewedDirectorHandoff} pin={controller.node?.definition_id === 'director_plan' ? controller.node.parameters.document_snapshot : undefined}
+    }} onOpenModels={props.onOpenModels} onOpenBroker={props.onOpenBroker} selectionKey={JSON.stringify([controller.base?.id, controller.selected, handoffEpoch])} canvasHandoff={controller.reviewedDirectorHandoff} storyboardCanvasHandoff={controller.storyboardCanvasHandoff} pin={controller.node?.definition_id === 'director_plan' ? controller.node.parameters.document_snapshot : undefined}
     graph={controller.draft} selectedNodeId={controller.node?.id}
     active={props.active && !props.denied} canMutate={props.canMutate && !props.externalDirty && !mediaViewDirty && !controller.executionDirty}
     busy={props.busy} isCurrent={props.isCurrent} read={props.read} mutate={props.mutate} onDirtyChange={setDirectorDirty} onImagePendingChange={value => { imageSelectionLock.current = value; }} />}{view.content}</>,

@@ -2,13 +2,14 @@ import type { CreativeDocument } from './types';
 import { checkedPlanningSnapshot, type PlanningSnapshot } from './studioProductionGraphContract';
 
 /** Ephemeral UI authority only. Neither this token nor review provenance is Graph data. */
-export type ReviewedDirectorCanvasHandoff = {
+export type PlanningCanvasHandoff = {
   scope: object;
   verificationScope: object;
   isVerificationCurrent: () => boolean;
   available: boolean;
   insert: (pin: PlanningSnapshot, scope: object) => boolean;
 };
+export type ReviewedDirectorCanvasHandoff = PlanningCanvasHandoff;
 export type ReviewedDirectorReceipt = Pick<CreativeDocument, 'id' | 'version'> & { expectedSnapshot?: PlanningSnapshot };
 
 export function reviewedDirectorSnapshot(receipt: ReviewedDirectorReceipt, document: CreativeDocument, digest: string, expected?: PlanningSnapshot): PlanningSnapshot {

@@ -28,13 +28,14 @@ async function fixture(patch: Partial<StudioGraphEditorProps> = {}) {
   act(() => hook.result.current.setSelected(['ancestor']));
   return { hook, initial, graphs };
 }
-it('uses ordinary insertion/history and explicit Graph CAS save; never connects the source storyboard ancestor', async () => {
-  const { hook, graphs } = await fixture(); const before = structuredClone(hook.result.current.draft);
-  const intent = hook.result.current.reviewedDirectorHandoff;
+it.each(['reviewedDirectorHandoff', 'storyboardCanvasHandoff'] as const)('uses ordinary insertion/history and explicit Graph CAS save; never connects the source storyboard ancestor (%s)', async handoff => {
+  const { hook, graphs } = await fixture(); act(() => hook.result.current.change({ ...hook.result.current.draft, title: 'Preserve unsaved edit' }));
+  const before = structuredClone(hook.result.current.draft);
+  const intent = hook.result.current[handoff];
   act(() => { expect(intent.insert(pin, intent.scope)).toBe(true); expect(intent.insert(pin, intent.scope)).toBe(false); });
   expect(hook.result.current.draft.nodes).toHaveLength(2); expect(hook.result.current.draft.nodes[0]).toEqual(before.nodes[0]);
   expect(hook.result.current.draft.nodes[1].parameters).toEqual({ document_snapshot: pin });
-  expect(hook.result.current.draft.edges).toEqual([]); expect(hook.result.current.past).toHaveLength(1);
+  expect(hook.result.current.draft.edges).toEqual([]); expect(hook.result.current.past).toHaveLength(2);
   expect(hook.result.current.dirty).toBe(true); expect(graphs.save).not.toHaveBeenCalled(); expect(graphs.createRun).not.toHaveBeenCalled();
   act(() => hook.result.current.travel(false)); expect(hook.result.current.draft).toEqual(before);
   act(() => hook.result.current.travel(true));
@@ -95,4 +96,24 @@ it('revokes verification synchronously when Graph navigation begins', async () =
   const { hook, graphs } = await fixture(); const intent = hook.result.current.reviewedDirectorHandoff;
   graphs.get.mockReturnValue(new Promise<StudioGraphRecord>(() => {}));
   act(() => { void hook.result.current.open('other'); expect(intent.isVerificationCurrent()).toBe(false); expect(intent.insert(pin, intent.scope)).toBe(false); });
+});
+
+it('storyboard insertion rejects capacity, schema, authority ABA and preserves edges and existing edits', async () => {
+  const { hook, initial } = await fixture();
+  const saved = hook.result.current.draft;
+  act(() => hook.result.current.change({ ...saved, title: 'Keep local edit', edges: [{ id: 'existing', source_node_id: 'ancestor', source_port: 'plan', target_node_id: 'ancestor', target_port: 'plan' }] }));
+  const before = structuredClone(hook.result.current.draft), intent = hook.result.current.storyboardCanvasHandoff;
+  act(() => expect(intent.insert(pin, intent.scope)).toBe(true));
+  expect(hook.result.current.draft.edges).toEqual(before.edges); expect(hook.result.current.draft.title).toBe(before.title);
+  expect(hook.result.current.draft.nodes.at(-1)?.definition_id).toBe('storyboard_plan');
+  act(() => hook.result.current.travel(false));
+  const old = hook.result.current.storyboardCanvasHandoff;
+  hook.rerender({ ...initial, canMutate: false }); hook.rerender(initial);
+  act(() => expect(old.insert(pin, old.scope)).toBe(false));
+  act(() => hook.result.current.change({ ...saved, nodes: Array.from({ length: rawCatalog.media_limits.nodes }, (_, index) => ({ ...saved.nodes[0], id: index === 0 ? 'ancestor' : `n-${index}` })) }));
+  const full = hook.result.current.storyboardCanvasHandoff;
+  act(() => expect(full.insert(pin, full.scope)).toBe(false)); expect(hook.result.current.draft.nodes).toHaveLength(rawCatalog.media_limits.nodes);
+  act(() => hook.result.current.newGraph());
+  const legacy = hook.result.current.storyboardCanvasHandoff;
+  act(() => expect(legacy.insert(pin, legacy.scope)).toBe(false)); expect(hook.result.current.draft.schema_version).toBe(1);
 });
