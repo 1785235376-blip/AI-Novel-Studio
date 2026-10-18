@@ -1,0 +1,271 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "5baf2b94fafd454453f417a39541afe6a586cb79",
+      "path": "API_CATALOG.json",
+      "bytes": 1503931,
+      "sha256": "c83e9f46a527420a2be5429e4d18010962af5ff97b9167277991a093704984de"
+    },
+    {
+      "blob": "eb7e9a546739dc2fe570c171ca4bf65df60d0821",
+      "path": "API_CATALOG.md",
+      "bytes": 401853,
+      "sha256": "7aa472636358b43f83125d3443869cfaebf57444c69ebd97aaea87f8f76ada60"
+    },
+    {
+      "blob": "7d498dc982f2873ce52f2e52d3d3977147b1ac47",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 621136,
+      "sha256": "d7659ba116c85050952daefb4ec7239a9b9b5568484a2e5030f7e13930bd55b9"
+    },
+    {
+      "blob": "3d4c218562267dd35e400a9e76db313aa36923fa",
+      "path": "app/experimental/comic_ora_staging.py",
+      "bytes": 12804,
+      "sha256": "f1c7ed7af51eac076b4a63c0e57b2de3b4227324ad45167ec519c9ffb3a759a6"
+    },
+    {
+      "blob": "547aee8a61208f17552834ea40860ce6577e485e",
+      "path": "app/services/asset_library_service.py",
+      "bytes": 77872,
+      "sha256": "d76694e19423f73aae0c6f09d500c52391b56fd1583578c2e4c42864df70568e"
+    },
+    {
+      "blob": "68ab1a2cb4f242a5c98a0733ab90d3189f8564a9",
+      "path": "app/services/comic_ora_origin.py",
+      "bytes": 2462,
+      "sha256": "af0060ba36cb3238a9481093cc2dc7d8de28fe6ec64800d5332b13bd59859756"
+    },
+    {
+      "blob": "dee7c64119e858efe234e7313a2fc64c75680fcd",
+      "path": "docs/COMIC_ORA_STAGING_SLICE.md",
+      "bytes": 4543,
+      "sha256": "abee8c938d34e883a7ce97fe916904379958b3c0dcb573d98f45d3350b688c73"
+    },
+    {
+      "blob": "5f3b248ad1300d9d796d1527aea3da70455d0ec8",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 34546,
+      "sha256": "e9b462fde30746c6201547ef4f7648765fd249490437083d4d892448abc94668"
+    },
+    {
+      "blob": "ce1bd2e40eb4026755c67c9cab0c1066709a04d2",
+      "path": "docs/delivery/v2-development/comic-ora-stage-bounded-final.json",
+      "bytes": 734990,
+      "sha256": "2920429406152000b3051cb57a01f8be2c6a11d2a9f078cfd56cb8ce7830fa4e"
+    },
+    {
+      "blob": "7b3e0243a03f14d13694f63ace73f2049f68aa9c",
+      "path": "docs/delivery/v2-development/comic-ora-stage-bounded-final.log",
+      "bytes": 1502,
+      "sha256": "fb18de1d2207adaaae948aa766be2bdb6bee3579ee7de127c0b4ee53d3c6cc5e"
+    },
+    {
+      "blob": "281a0dc9dadc86664ecc72695d323497de158381",
+      "path": "docs/delivery/v2-development/comic-ora-stage-first.json",
+      "bytes": 734623,
+      "sha256": "f67c0dca9a89787b29a2e0ffd437ea7916b390947996dd1aa3e395f3c4516e35"
+    },
+    {
+      "blob": "f487b18aee3c81d34674d98fc999a65a11dc90f1",
+      "path": "docs/delivery/v2-development/comic-ora-stage-first.log",
+      "bytes": 21629,
+      "sha256": "6b7670b9dc47cb89dd2eddb831b281c12839ed6dc5aa9f5dc4060565ff9e45a0"
+    },
+    {
+      "blob": "393d331c195e5df7fb97fc0fa0c63cac334ef2c7",
+      "path": "docs/delivery/v2-development/comic-ora-stage-frozen.json",
+      "bytes": 734868,
+      "sha256": "da5f0374abc3c7d018fc0b17f2a54d7902832e2fbaca152cec3d5b879b404d92"
+    },
+    {
+      "blob": "65f2201c4cc179546ace36a01181fcf74862b342",
+      "path": "docs/delivery/v2-development/comic-ora-stage-frozen.log",
+      "bytes": 1422,
+      "sha256": "81dae12e87b5bf25cff59e8de331b2beab5e5c5f196ee0f0ea6f4115a61b33c3"
+    },
+    {
+      "blob": "24fc53a818508d8f9c91d29b3f0b064a299effa0",
+      "path": "docs/delivery/v2-development/comic-ora-stage-regression.json",
+      "bytes": 734908,
+      "sha256": "fb7940ef92d6fdf0f64faf58ce507ae3105441701d1116d123cf2724a3c0c56c"
+    },
+    {
+      "blob": "4567459195ce778e82c80aed5253d59e23e46f72",
+      "path": "docs/delivery/v2-development/comic-ora-stage-regression.log",
+      "bytes": 1422,
+      "sha256": "2ddc45d8e423f621c054ed40d96ad2e3c4c2391c2e450a52248b484db2209db4"
+    },
+    {
+      "blob": "5291504ca71f52a9c863892368e69d3a83f3373c",
+      "path": "docs/delivery/v2-development/comic-ora-stage-reviewed.json",
+      "bytes": 734940,
+      "sha256": "b7c908bd26ee4db097a1ff025a57575c3833babc40aca1b8b5dec03dca0af5aa"
+    },
+    {
+      "blob": "59baf684f23df5663db7a9fe727912407d941254",
+      "path": "docs/delivery/v2-development/comic-ora-stage-reviewed.log",
+      "bytes": 1502,
+      "sha256": "40eb50dd94be6dc9637e18533e86a0f558230a970cdc817943f9803c20deb11d"
+    },
+    {
+      "blob": "c4d8cada0774a041f91f591a451720f9adc24082",
+      "path": "docs/delivery/v2-development/comic-ora-stage-second.json",
+      "bytes": 734633,
+      "sha256": "65089501489cbab2170016c3712ba33cf9171ac2a98074de2834bd432239cde1"
+    },
+    {
+      "blob": "6b81c62ba290aa40644d0ee629d7d94c79ef17da",
+      "path": "docs/delivery/v2-development/comic-ora-stage-second.log",
+      "bytes": 616,
+      "sha256": "600a4c9d39aa376dda7516d95dcfa50cc046eef4d6e16707b265cc3cbce0bf8c"
+    },
+    {
+      "blob": "9cf1c4363fba3ee9e486c62f10eb32f5c25f8845",
+      "path": "docs/delivery/v2-development/comic-ora-test-clock-fix.json",
+      "bytes": 734691,
+      "sha256": "13a1c59fbe9f808eb1a7c7422d90ad39e9a2721041d2264a750f6eea661ac9e0"
+    },
+    {
+      "blob": "9f843a1312a3af3a0ccca5432adb0376d8402190",
+      "path": "docs/delivery/v2-development/comic-ora-test-clock-fix.log",
+      "bytes": 924,
+      "sha256": "0ed0186642cca0752b18684337a7169cdf48b918f7ecb430bc5f88a45d789681"
+    },
+    {
+      "blob": "5e95bd368e4fc40d22d452e920aefe6aab07b432",
+      "path": "docs/delivery/v2-development/ora-staging-committed-source-verification.json",
+      "bytes": 172,
+      "sha256": "d91af41d3c04b6d615fb7eeb832f302491f5ef8bf7f6eb156dfdab57ac00c85a"
+    },
+    {
+      "blob": "0d7415359932a6d6ba3343a108d28bb4194f83f2",
+      "path": "docs/delivery/v2-development/ora-staging-integration-20261018.md",
+      "bytes": 3294,
+      "sha256": "3cd4e1cf21125da18286183ad332b4fc2f4a3b702704431ebbc4f0322d827e40"
+    },
+    {
+      "blob": "bc90ad5e31bd4b2084003fff5f5476163472c2b5",
+      "path": "docs/delivery/v2-development/ora-staging-integration-file-final.json",
+      "bytes": 739322,
+      "sha256": "1191389fdcabee172afe5f3bedbf244e07e1ef509734bcb1fed650801bd45557"
+    },
+    {
+      "blob": "bf450035a166e6ba81f604fb5b437157d961cede",
+      "path": "docs/delivery/v2-development/ora-staging-integration-file-final.log",
+      "bytes": 925,
+      "sha256": "6749305a343e09f492d22c8cd076ef0e9d293459fac53ee2b3ba04a43935c45f"
+    },
+    {
+      "blob": "1338f11591a5a430206128c7875fbe42e4181b12",
+      "path": "docs/delivery/v2-development/ora-staging-integration-file.json",
+      "bytes": 739224,
+      "sha256": "764623b0687ace809b80522d7003cbbf3d5e238d3bb1a4afd4d16d1c5764daa0"
+    },
+    {
+      "blob": "6f99a9d9efff39d506020e62f7d8c4d7635cc61f",
+      "path": "docs/delivery/v2-development/ora-staging-integration-file.log",
+      "bytes": 3750,
+      "sha256": "d24662ac1bfbcb73f0b2f2c141d74b551fd793fa6c441eff9a940819a20816c5"
+    },
+    {
+      "blob": "938faf27d130ae03af8fb10388b1c878b77953c5",
+      "path": "docs/delivery/v2-development/ora-staging-integration-postgres-cleanup.json",
+      "bytes": 1383,
+      "sha256": "f7af0d2ae377a183792ab3c95b59a7431c85ca088fca5577e8e05e34ea0446f4"
+    },
+    {
+      "blob": "2bb339a328f807288ba3eb0d6db434f4d187c58a",
+      "path": "docs/delivery/v2-development/ora-staging-integration-postgres-final-cleanup.json",
+      "bytes": 1389,
+      "sha256": "91ebc74664488bbfc6f1058eb5c82ce28d876b181385d7f3777c97319a0e9ad6"
+    },
+    {
+      "blob": "045cdc1add37ed762375dccdf258d65814186b87",
+      "path": "docs/delivery/v2-development/ora-staging-integration-postgres-final-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "09a56be52d3965368415ddf5a7478b9b406cdb3346566651cd3eb00c8104b628"
+    },
+    {
+      "blob": "38ece9d49ec53508c9ee51bbe7c6fa9ed40bb22b",
+      "path": "docs/delivery/v2-development/ora-staging-integration-postgres-final.json",
+      "bytes": 739270,
+      "sha256": "049e9dadbec4870e1ba9da310d18d7975158a717efc0265e6b9497c506e5cb41"
+    },
+    {
+      "blob": "c438e9d2d008b4bcfcbd6ff21363d939614fcb24",
+      "path": "docs/delivery/v2-development/ora-staging-integration-postgres-final.log",
+      "bytes": 672,
+      "sha256": "dca1ce2928a41b6b4c81151ade0c8164e85219f10e2b5d707d6c9a5d8f523d60"
+    },
+    {
+      "blob": "b5d0c141a7d31dcfaed953a45268b6cf961e4285",
+      "path": "docs/delivery/v2-development/ora-staging-integration-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "78007cfc76fc263067d4679e802d675a781c1163200b202f054277caf64b226c"
+    },
+    {
+      "blob": "74f89ef10906812a977e2b696d784ef0b00d993a",
+      "path": "docs/delivery/v2-development/ora-staging-integration-postgres.json",
+      "bytes": 739210,
+      "sha256": "f93018484507f78ae2157ea128d4ed6a692d82c29ab71a17098903ecf53dc2a9"
+    },
+    {
+      "blob": "0c046a5195f6308f6a1f8e535e88405f0d4b78a9",
+      "path": "docs/delivery/v2-development/ora-staging-integration-postgres.log",
+      "bytes": 672,
+      "sha256": "9d37062c737f4545d310a393f49a2a2647409c27f4e59fe90b0aa81328c8eb92"
+    },
+    {
+      "blob": "b9b8f27863d3f31884546a2b9c9b3865bbe36f3a",
+      "path": "docs/delivery/v2-development/ora-staging-integration-public.json",
+      "bytes": 739466,
+      "sha256": "b6695ca89a60ba1e79eb748e077f0fea3a9438906f2f0c20c16fae2f822458e3"
+    },
+    {
+      "blob": "1a9026a2a5fb108948fd0be9ef456e4367d92a9e",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_ora_staging_postgres.py",
+      "bytes": 1489,
+      "sha256": "d814f3fba439138d3b77415bd69bcf9a5ad6d99db03134d502e3650fbad0782a"
+    },
+    {
+      "blob": "aa1378c7002dac964b47825492f5e77c9038b205",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_ora_staging_postgres_final.py",
+      "bytes": 1501,
+      "sha256": "c0b9f97fe56184c9519522f000a18154d6907d3318e0cdb216f960041f4ff7df"
+    },
+    {
+      "blob": "f8c2e07b4f061436dc4fa191ae0278a093e75d89",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 776521,
+      "sha256": "bbabacea9a53cf75c861d5848dc9f1029e68225a2488b3ba952ec24113845a02"
+    },
+    {
+      "blob": "728f6c306135193d860bb8dcd074b30b8f6d2586",
+      "path": "packaging/public-build.json",
+      "bytes": 25573,
+      "sha256": "9e7cae7874d22f86b90931b9c9539360e2cdadebee97155b5fab261095c3360c"
+    },
+    {
+      "blob": "9fd078168a2066941ed41c27c105f3f430e769c9",
+      "path": "tests/test_comic_ora_import.py",
+      "bytes": 12689,
+      "sha256": "17c859a4ab718617f7c544da45d093b56379b659187d280e7806e7f60f52f05d"
+    },
+    {
+      "blob": "0a974544ffdafb07a8dc99aaaedcb6031cc6b698",
+      "path": "tests/test_comic_ora_staging.py",
+      "bytes": 16256,
+      "sha256": "c012f001d056740f7ebcc77741b47e3308bbb5b5154b0c0a214da1f8b803afa7"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
