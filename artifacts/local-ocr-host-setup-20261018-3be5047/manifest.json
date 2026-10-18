@@ -1,0 +1,6 @@
+{
+  "source_head": "3be50471b007240f0c090aef831f2b53996d8f35",
+  "prerequisite": "9df6c4aba0a3cbfce33f51e9b268b0ab1434d2f5",
+  "bundle": "continuation.bundle",
+  "scope": "Explicit pinned local OCR host startup and original application composition; frontend pending"
+}
