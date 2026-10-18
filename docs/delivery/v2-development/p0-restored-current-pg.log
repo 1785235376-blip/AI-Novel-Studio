@@ -1,0 +1,41 @@
+............................E.........                                   [100%]
+==================================== ERRORS ====================================
+__ ERROR at setup of test_PG_INCARNATION_same_id_recreation_and_old_authority __
+
+    @pytest.fixture(scope="module")
+    def env():
+        assert os.environ.get("PROJECT_ROOT"), "requires the isolated runner"
+>       return make_env("postgres")()
+               ^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_round3i_pg_incarnation.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _env():
+        import os
+    
+        from fastapi.testclient import TestClient
+    
+        from app import dependencies as deps
+        import app.api as api
+        import app.main as main
+    
+>       assert getattr(main.settings, "enable_collaboration_runtime", False) is True, \
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            "run with --collaboration-runtime so the flag is exported before app.main import"
+E       AssertionError: run with --collaboration-runtime so the flag is exported before app.main import
+
+tests/r3i_authorized_shared.py:28: AssertionError
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_v2_project_retirement.py::test_delete_retires_project_authority_without_erasing_workspace_or_audit[postgres-/api-api]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR tests/test_round3i_pg_incarnation.py::test_PG_INCARNATION_same_id_recreation_and_old_authority
+37 passed, 38 deselected, 2 warnings, 1 error in 31.18s

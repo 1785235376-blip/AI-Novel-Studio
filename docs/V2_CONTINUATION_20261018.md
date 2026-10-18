@@ -1,14 +1,14 @@
 # Studio V2 current continuation checkpoint
 
-Updated 2026-10-18 12:14 UTC. This document inventories bounded additions, not a
+Updated 2026-10-18 12:30 UTC. This document inventories bounded additions, not a
 replacement for the frozen feature matrix or a V2 percentage/Release declaration.
 The source pin below identifies the latest bounded implementation; archive and product heads remain distinct.
 
 ## Source and publication
 
 Working branch: work/dot-recovered-20261018.
-Product source before this documentation commit: 8e66c7b91deec83d5695eb3347566902dcca2c3f (persisted nested display groups).
-Latest verified archive before this commit: 8375589798f2e965a55b466844b14ffcbc1e58bd,
+Product source before this documentation commit: c02be1600bf89176dfd0c9f4f9b658c2f3df848e (media multi-selection and alignment).
+Latest verified archive before this commit: 1495b13bfeea17195c14864c254ce253ae7f0f29,
 branch archive/verified-studio-v2-20261017-5a6f697. It contains incremental source
 bundles, reports and retained logs. Archive branch HEAD is not product source HEAD.
 Each archive bundle declares its prerequisite and includes checksums; restore the
@@ -90,9 +90,13 @@ Latest archives are anonymously byte-verified append-only bundles on the existin
 
 The accessible source audit still identifies production cross-device transport/encryption beyond the synthetic injected sync seam, and complete private Mature runtime implementation not evidenced in the public source. Public-package stripping itself is implemented and tested. Do not infer absence in inaccessible private code, and do not enable a hidden public endpoint.
 
-For the current media canvas, next bounded work includes local undo/redo, efficient multi-selection/alignment/group movement, reusable display/workflow bridging, better source refresh/capacity recovery and final browser interaction/performance. Selected verified preview exists; automatic in-card thumbnails do not. Existing older Graph tools must be checked before duplicating functionality.
+For the current media canvas, local undo/redo and multi-selection/cohort movement/alignment now exist (5ffafb1b and c02be160). Next bounded work includes richer group batch operations, reusable display/workflow bridging, better source refresh/capacity recovery and final browser interaction/performance. Selected verified preview exists; automatic in-card thumbnails do not. Existing older Graph tools must be checked before duplicating functionality.
 
 No reliable whole-V2 percentage is asserted: the 101-row structural inventory is not a completed-feature numerator, and the original 904-line master roadmap has not been recovered in full. Preserve the accessible frozen product anchor and actual source history as the continuation basis.
+
+## Original P0 security evidence
+
+The original project-retirement/permission inheritance fix was independently checked in ancestor 093c8f66bfd5172d08f6d2d724b9964f15fdf2af. Current restored source c02be160 was freshly rechecked at 12:26–12:29 UTC: File 43, PostgreSQL 38 passed. The first PG invocation omitted the original collaboration-runtime test option and had one setup error; corrected invocation passed without source/test changes. This is not a new fix or pre-fix rerun. Exact scope and preserved evidence are in P0_RESTORED_SOURCE_RECHECK_20261018.md.
 
 ## Remaining gates and next-source discipline
 
