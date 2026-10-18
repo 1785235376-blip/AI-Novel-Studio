@@ -1,0 +1,73 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "00627376d216c177281a8bcf64cb971096d2cf31",
+      "path": "docs/MEDIA_CANVAS_SELECTED_PREVIEW.md",
+      "bytes": 2053,
+      "sha256": "6bca4699d80c3aa00078e64cdbe84530005e392e4064ab02e2580baf4fafb6ca"
+    },
+    {
+      "blob": "b114470e7bcb3c6fcf45c85e40fb12915e257e56",
+      "path": "docs/delivery/v2-development/media-canvas-preview-lifetime.json",
+      "bytes": 688059,
+      "sha256": "98ce26484c50cb992cb883849c2f5a43931db123186de2f69e3a3acf5e8d7a21"
+    },
+    {
+      "blob": "daa70c6eb92ad84d892f5ca7bca66ac2be4d680f",
+      "path": "docs/delivery/v2-development/media-canvas-preview-lifetime.log",
+      "bytes": 410,
+      "sha256": "64201a4a92b98064746b3fbb3ef3c70aefb3ff37e9a0fe2b60eb7d7abbae700d"
+    },
+    {
+      "blob": "d0f8820afaab7278146383290232ec8dab39ac6c",
+      "path": "docs/delivery/v2-development/media-canvas-preview.json",
+      "bytes": 687824,
+      "sha256": "558fc5f9fa36a7a666f1128ac726c0f4b354e4dac03935dfff8d7a298eed5918"
+    },
+    {
+      "blob": "89a08d660832d18103477d1199aa4908699612c4",
+      "path": "docs/delivery/v2-development/media-canvas-preview.log",
+      "bytes": 2178,
+      "sha256": "2626fc6ad6ac248b25527d5474981f63a0f90ec68dc970e073046763724949f2"
+    },
+    {
+      "blob": "f5245feaccd9a2dc4a60569ac66c8b3d1ef92286",
+      "path": "frontend/src/creative/CanvasAssetPreview.additive.test.tsx",
+      "bytes": 3200,
+      "sha256": "b431ef4b4033ce0cbfbce1f78e9c5923f332749aa99028c5a2c6a884bd2956d4"
+    },
+    {
+      "blob": "419f40b4ec646d64da5f7330b72795f965a20811",
+      "path": "frontend/src/creative/CanvasAssetPreview.tsx",
+      "bytes": 3124,
+      "sha256": "f5eaf622e886b3b406e8534b1cf058f92e51d7d6389c7cea49c43a7baeb4c273"
+    },
+    {
+      "blob": "b605e7153acc2a345d13dd9f1c96b8aa94aae9ed",
+      "path": "frontend/src/creative/MediaCanvasViewPanel.tsx",
+      "bytes": 9823,
+      "sha256": "3af52fc2b4da66f10fd6075c2be211d8ccd6641c04d78a9bebda2185d5cddab0"
+    },
+    {
+      "blob": "8e258f094a874d524e3e21ee377dff091bab3584",
+      "path": "frontend/src/creative/canvasAssetPreview.additive.test.ts",
+      "bytes": 2809,
+      "sha256": "a6fc84b265f46f90c629fdfcc99bd3d204ceaff654f1eb20ef620e8acce0f61b"
+    },
+    {
+      "blob": "fc8844420bcb8f5f9ba0f7cd914cf2c70c513e20",
+      "path": "frontend/src/creative/canvasAssetPreview.ts",
+      "bytes": 2642,
+      "sha256": "7a3cd8a775d94defff6600fd0551630df72527d510d9efbca9ce5d8754c7ebb9"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
