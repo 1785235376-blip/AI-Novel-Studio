@@ -6,8 +6,12 @@ export type ComicRect = Pick<RefNode, 'x' | 'y'> & { width: number; height: numb
 export type ComicBubble = ComicRect & { id: string; kind: 'DIALOGUE' | 'NARRATION'; text: string; character_id: string | null; font_size: number };
 export type ComicAppearanceReference = { character_id: string; asset_id: string; expected_asset_version: number; note: string };
 export type ComicPanel = ComicRect & { id: string; shot_id: string | null; artwork_mode?: 'IMAGE' | 'BLANK'; order: number; character_ids: string[]; asset_id: string | null; expected_asset_version: number | null; fit: 'CONTAIN' | 'COVER'; cover_x_percent?: number; cover_y_percent?: number; bubbles: ComicBubble[]; image_brief?: string; appearance_references?: ComicAppearanceReference[] };
-export type ComicLayerKind = 'PANEL_ART' | 'PANEL_FRAME' | 'BUBBLE_SHAPE' | 'BUBBLE_TEXT';
-export type ComicLayer = { id: string; kind: ComicLayerKind; target_id: string; name: string; visible: boolean; opacity_percent: number };
+export type ComicNativeLayerKind = 'PANEL_ART' | 'PANEL_FRAME' | 'BUBBLE_SHAPE' | 'BUBBLE_TEXT';
+export type ComicLayerKind = ComicNativeLayerKind | 'RASTER';
+type ComicLayerBase = { id: string; target_id: string; name: string; visible: boolean; opacity_percent: number };
+export type ComicNativeLayer = ComicLayerBase & { kind: ComicNativeLayerKind };
+export type ComicRasterLayer = ComicLayerBase & ComicRect & { kind: 'RASTER'; pin: { version: number; sha256: string; review_digest: string } };
+export type ComicLayer = ComicNativeLayer | ComicRasterLayer;
 /** Items are stored bottom-to-top. Text and geometry remain on their canonical objects. */
 export type ComicLayerStack = { schema_version: 1; items: ComicLayer[] };
 export type ComicDocument = { layer_stack?: ComicLayerStack; title: string; source_mode?: 'SCREENPLAY' | 'INDEPENDENT'; screenplay_id: string | null; expected_screenplay_version: number | null; preset: 'PAGE' | 'WEBTOON'; font_family: 'NOTO_SANS_SC_OFL'; width: number; height: number; safe_area: number; segment_height: number; panels: ComicPanel[] };

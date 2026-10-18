@@ -8,7 +8,7 @@ type Props = { document: ComicDocument; disabled: boolean; onChange: (next: Comi
 export function ComicLayersPanel({ document, disabled, onChange }: Props) {
   const [error, setError] = useState('');
   const stack = document.layer_stack, invalid = comicLayersError(document);
-  const patch = (id: string, values: Partial<ComicLayer>) => {
+  const patch = (id: string, values: Partial<Pick<ComicLayer, 'name' | 'visible' | 'opacity_percent'>> & { x?: number; y?: number }) => {
     if (disabled || invalid || !stack) return;
     onChange({ ...document, layer_stack: { ...stack, items: stack.items.map(layer => layer.id === id ? { ...layer, ...values } : layer) } });
   };
@@ -32,7 +32,9 @@ export function ComicLayersPanel({ document, disabled, onChange }: Props) {
         const storedIndex = stack.items.length - 1 - index, label = `图层 ${index + 1}`;
         return <li key={layer.id} className="experimental-record">
           <Badge>{comicLayerKindLabel[layer.kind]}</Badge><span> · {layer.target_id}</span>
+          {layer.kind === 'RASTER' && <p>固定素材 v{layer.pin.version} · SHA-256 {layer.pin.sha256} · 审核 {layer.pin.review_digest}。原始尺寸 {layer.width} × {layer.height} px（不可修改）。文字已栅格化，来源未验证。</p>}
           <fieldset className="experimental-form" disabled={disabled}>
+            {layer.kind === 'RASTER' && (['x', 'y'] as const).map(axis => <Field key={axis} label={`${label} ${axis} 坐标`}><input type="number" min={-12000} max={12000} step={1} value={layer[axis]} onChange={event => { const value = event.target.valueAsNumber; if (Number.isInteger(value) && value >= -12000 && value <= 12000) patch(layer.id, { [axis]: value }); }} /></Field>)}
             <Field label={`${label} 名称`}><input minLength={1} maxLength={120} value={layer.name} onChange={event => patch(layer.id, { name: event.target.value })} /></Field>
             <label className="experimental-check"><input type="checkbox" checked={layer.visible} onChange={event => patch(layer.id, { visible: event.target.checked })} />{label} 可见</label>
             <Field label={`${label} 不透明度 (%)`}><input type="number" min={0} max={100} step={1} value={layer.opacity_percent} onChange={event => {
@@ -42,7 +44,7 @@ export function ComicLayersPanel({ document, disabled, onChange }: Props) {
           </fieldset>
         </li>;
       })}</ol>
-      <StatusMessage>OpenRaster（ORA）导出会把文字与形状栅格化为独立图层；原生项目保留可编辑对白。目前不支持 ORA 导入。</StatusMessage>
+      <StatusMessage>OpenRaster（ORA）导出会把文字与形状栅格化为独立图层；原生项目保留可编辑对白。导入的外部栅格不会恢复可编辑文字；修改位置或图层后须保存并重新查看服务器像素预览。</StatusMessage>
     </>}
   </details>;
 }

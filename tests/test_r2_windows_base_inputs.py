@@ -6,6 +6,7 @@ import io
 import json
 from pathlib import Path
 import stat
+import tomllib
 import zipfile
 
 import pytest
@@ -122,6 +123,22 @@ def test_every_locked_wheel_has_exact_origin_digest_and_license():
     assert manifest["external_prerequisites"]["visual_cpp"]["new_runtime_license_accepted"] is False
 
 
+def test_windows_lock_covers_pinned_comic_application_roots():
+    from pip._vendor.packaging.requirements import Requirement
+    from pip._vendor.packaging.utils import canonicalize_name
+
+    project = tomllib.loads((ROOT / "pyproject.toml").read_text())
+    manifest = json.loads(base.LOCK.read_text())
+    wheels = {canonicalize_name(item["name"]): item for item in manifest["wheels"]}
+    locked = (ROOT / "packaging/requirements-windows.lock.txt").read_text().splitlines()
+    for raw in project["project"]["optional-dependencies"]["comic"]:
+        requirement = Requirement(raw)
+        name = canonicalize_name(requirement.name)
+        assert name in wheels, f"Comic application dependency missing from Windows manifest: {raw}"
+        item = wheels[name]
+        assert requirement.specifier.contains(item["version"]), raw
+        assert f"{item['name']}=={item['version']} --hash=sha256:{item['sha256']}" in locked, raw
+
 def test_full_package_forwards_font_and_builds_self_contained_host():
     script = (ROOT / "scripts/package_windows_acceptance.ps1").read_text()
     assert "-VerifiedFontDirectory (Resolve-Absolute $VerifiedFontDirectory 'VerifiedFontDirectory')" in script
@@ -135,6 +152,7 @@ def test_full_package_forwards_font_and_builds_self_contained_host():
 def test_native_verification_is_explicit_and_synthetic():
     script = (ROOT / "scripts/verify_windows_base.py").read_text()
     assert 'sys.platform != "win32"' in script
+    assert "from fontTools.ttLib import TTFont; " in script
     assert "CREATE EXTENSION pgcrypto" in script
     assert '"--format=custom"' in script
     assert '"--exit-on-error"' in script

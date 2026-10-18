@@ -208,7 +208,8 @@ class DirectorImageCoordinator:
                         and job.expected_request_digest == row.get('request_digest')):
                     result['job_status'] = job.status
                     result['can_cancel'] = job.status not in self.manager.terminal
-            elif result['job_status'] not in self.manager.terminal:
+            if not result['can_cancel'] and (result['job_status'] not in self.manager.terminal
+                    or saved and saved.get('error_code') == 'DIRECTOR_IMAGE_RESTART_UNKNOWN'):
                 result['recovery_state'] = 'EXECUTOR_UNAVAILABLE_NO_REPLAY'
         receipt = row.get('adoption_receipt')
         if receipt:

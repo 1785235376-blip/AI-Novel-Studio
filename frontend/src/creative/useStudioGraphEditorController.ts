@@ -32,6 +32,9 @@ export type StudioGraphEditorProps = {
   active: boolean; denied: boolean; identity: string; client: StudioClient; canMutate: boolean; canReview: boolean;
   directorSource?: GraphDirectorSource;
   onOpenModels?: () => void;
+  onOpenBroker?: () => void;
+  /** Narrow, live IMAGE-intent fence; ordinary read-only selection stays available. */
+  isDirectorImagePending?: () => boolean;
   onOpenStoryboard?: OpenStoryboardEditor;
   providerSource?: Pick<StudioProductionClient, 'providers'>;
   busy: boolean; externalDirty: boolean; isCurrent: () => boolean;
@@ -47,7 +50,7 @@ const same = (left: unknown, right: unknown) => JSON.stringify(left) === JSON.st
 const candidateKey = (value?: StudioGraphRecord) => value && JSON.stringify([value.id, value.version, value.definition_digest, value.execution_digest]);
 
 /** Original graph editing authority and async guards, independent of its visual skin. */
-export function useStudioGraphEditorController({ active, denied, identity, client, providerSource, canMutate, busy, externalDirty, isCurrent, read, mutate, requestedGraphId, onSelectionChange, isBusy, draftOwner }: StudioGraphEditorProps) {
+export function useStudioGraphEditorController({ active, denied, identity, client, providerSource, canMutate, busy, externalDirty, isCurrent, read, mutate, requestedGraphId, onSelectionChange, isBusy, draftOwner, isDirectorImagePending }: StudioGraphEditorProps) {
   const [catalog, setCatalog] = useState<StudioGraphCatalog>(), [records, setRecords] = useState<StudioGraphRecord[]>([]), [base, setBase] = useState<StudioGraphRecord>();
   const [draft, setDraft] = useState<StudioGraphDefinition>(blankGraph), [selected, setSelectedState] = useState<string[]>([]);
   const [copyPreview, setCopyPreview] = useState<{ identity: string; client: StudioClient; graph: string | undefined; epoch: number; source: string; catalog: StudioGraphCatalog; result: GraphSelectionCopy }>();
@@ -137,7 +140,13 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
         ? { ...value, parameters: { ...value.parameters, provider_id: row.provider_id, model_id: row.model_id, allow_cloud: false } } : value) }); },
   });
   const reviewedSelectionEpoch = useRef(0);
-  const setSelected = (value: string[]) => { reviewedSelectionEpoch.current++; providerPicker.reset(); setSelectedState(value); };
+  const imageSelectionFence = useRef(isDirectorImagePending); imageSelectionFence.current = isDirectorImagePending;
+  const setSelected = (value: string[]) => {
+    if (active && !denied && current() && imageSelectionFence.current?.()) {
+      setNotice('图像导演审核尚未处理，请先提交或明确关闭图像审核，再切换图节点。当前成本与备注输入已保留。'); return;
+    }
+    reviewedSelectionEpoch.current++; providerPicker.reset(); setSelectedState(value);
+  };
   const setSourcePort = (value: string) => { reviewedSelectionEpoch.current++; setSourcePortState(value); };
   const setTargetPort = (value: string) => { reviewedSelectionEpoch.current++; setTargetPortState(value); };
   const timelineEditor = useStudioGraphTimelineEditor({ client: client.graphs, node, editable, identity, isCurrent: current, isBusy: locked, read,
@@ -437,18 +446,20 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     change(autoLayout(draftRef.current, { definitions: catalog?.definitions }));
   }
   function navigate(work: () => void) {
+    if (imageSelectionFence.current?.()) { setNotice('图像导演审核尚未处理，请先提交或明确关闭图像审核，再切换创作图。当前输入已保留。'); return; }
     if (!current() || locked() || externalDirty || executionDirty) return;
     if (dirty || blocked) { setDiscardConfirmed(false); setPendingNavigation(() => work); return; }
     work();
   }
   async function open(id: string) {
+    if (imageSelectionFence.current?.()) { setNotice('图像导演审核尚未处理，请先提交或明确关闭图像审核，再切换创作图。当前输入已保留。'); return; }
     if (!current() || locked() || externalDirty || executionDirty) return;
     providerPicker.reset(); const epoch = ++selectedEpoch.current; setError('');
     try { const result = await mutate(async () => {
       const value = await client.graphs.get(id);
       const imageCatalog = await graphCatalogForRecord(value);
       return { value, imageCatalog };
-    }); if (current() && epoch === selectedEpoch.current) { if (result.imageCatalog) { catalogEpoch.current++; setCatalog(result.imageCatalog); } accept(result.value); } }
+    }); if (current() && epoch === selectedEpoch.current && !imageSelectionFence.current?.()) { if (result.imageCatalog) { catalogEpoch.current++; setCatalog(result.imageCatalog); } accept(result.value); } }
     catch (value) { if (current() && epoch === selectedEpoch.current) setError(apiErrorView(value, '创作图读取失败，当前草稿未替换。').message); }
   }
   function newGraph() { if (!current() || locked() || externalDirty || executionDirty) return; setIndependentConsent(''); setIndependentOrigin(undefined); setCatalog(schemaCatalogs.current.get(1)); timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate(); setBase(undefined); setDraft(blankGraph()); setSelected([]); setPast([]); setFuture([]); setBlocked(false); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); reportSelection.current?.({}); }

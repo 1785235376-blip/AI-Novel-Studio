@@ -156,3 +156,32 @@ def test_missing_persisted_job_reopens_metadata_without_replay(mounted,monkeypat
         status=response.json() if 'items' not in response.json() else response.json()['items'][0]
         assert status['recovery_state']=='EXECUTOR_UNAVAILABLE_NO_REPLAY' and status['can_cancel'] is False
     assert e.s.events['post']==0 and e.manager.jobs=={}
+
+
+@pytest.mark.parametrize('recovery',['passive','restart'])
+def test_passive_restarted_queued_job_reports_unavailable_without_authority(lane,monkeypatch,recovery):
+    e=lane;allow_unpriced(e)
+    import threading
+    with monkeypatch.context() as queued:
+        queued.setattr(threading.Thread,'start',lambda self:None)
+        job=dispatch(e)
+    from app.jobs import JobManager
+    from app.creative.director_image_generation import DirectorImageCoordinator
+    old=e.manager
+    if recovery=='restart':
+        restarted=JobManager(e.persistence,old.chapters,old.contexts,old.canon,
+            memory_extractor=old.memory_extractor,snapshot_required=True,collaboration_updates=old.collaboration_updates)
+        passive=restarted.get(job.id)
+        assert passive.status=='FAILED'
+    else:
+        from copy import copy
+        passive=copy(job);passive.director_image_authority=None
+        restarted=SimpleNamespace(jobs={job.id:passive},persistence=e.persistence,terminal=old.terminal)
+    coordinator=DirectorImageCoordinator(e.r.service,restarted,e.broker,e.s.runtime)
+    assert passive.director_image_authority is None
+    result=coordinator.status(e.r.nid,e.r.scope,e.r.actor,e.row['id'],host=e.host,guard=e.guard)
+    assert result['can_cancel'] is False
+    assert result['recovery_state']=='EXECUTOR_UNAVAILABLE_NO_REPLAY'
+    with pytest.raises(ValueError,match='JOB_IDENTITY_INVALID'):
+        coordinator.cancel(e.r.nid,e.r.scope,e.r.actor,e.row['id'],host=e.host,guard=e.guard)
+    assert not passive.cancelled.is_set() and e.s.events['post']==0

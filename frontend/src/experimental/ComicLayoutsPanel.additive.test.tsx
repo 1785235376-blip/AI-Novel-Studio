@@ -50,7 +50,8 @@ it('cancel, edits, refresh and client replacement discard arrangement consent', 
   const preview = () => fireEvent.click(screen.getByRole('button', { name: '预览纵向排列' }));
   preview(); fireEvent.click(screen.getByRole('button', { name: '取消排列预览' })); expect(screen.queryByRole('button', { name: '应用纵向排列到草稿' })).toBeNull();
   preview(); fireEvent.change(screen.getByLabelText('漫画布局名称'), { target: { value: 'New title' } }); expect(screen.queryByRole('button', { name: '应用纵向排列到草稿' })).toBeNull();
-  preview(); fireEvent.click(screen.getByRole('button', { name: '刷新漫画来源与记录' })); expect(screen.queryByRole('button', { name: '应用纵向排列到草稿' })).toBeNull();
+  preview(); expect((screen.getByRole('button', { name: '刷新漫画来源与记录' }) as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByRole('button', { name: '放弃当前页面修改' })); preview(); fireEvent.click(screen.getByRole('button', { name: '刷新漫画来源与记录' })); expect(screen.queryByRole('button', { name: '应用纵向排列到草稿' })).toBeNull();
   await screen.findByRole('button', { name: '预览纵向排列' }); preview(); view.rerender(<ComicLayoutsPanel client={client('other')} />); expect(screen.queryByRole('button', { name: '应用纵向排列到草稿' })).toBeNull();
 });
 

@@ -79,6 +79,7 @@ class ComicOraStaging:
                 'ASSET_REVIEW_DOES_NOT_RECOVER_OR_VERIFY_ORIGINAL_GENERATION_PROVENANCE']
             value['review_digest'] = row['review']['review_digest']
             value['manifest_digest'] = row['review']['manifest_digest']
+            value['review_license_note'] = row['review']['license_note']
         if row.get('attachment'): value['attachment'] = copy.deepcopy(row['attachment'])
         return value
 
@@ -221,6 +222,33 @@ class ComicOraStaging:
                     result['steps'][index]['observed_state'] = ('MISSING_OR_UNAVAILABLE' if step['state'] in {'STAGED', 'REVIEWED'}
                         else 'ORPHAN_BINARY_REQUIRES_ARCHIVE_RESUME' if self.assets._bin_path(step['asset_id']).exists()
                         else 'AWAITING_ARCHIVE_STAGE')
+            self._authority(nid, scope, actor, guard)
+            return result
+
+    def receipts(self, nid, scope, actor, *, guard):
+        self._authority(nid, scope, actor, guard)
+        with self.owner.existing_owner_only():
+            incarnation = self.owner.incarnation(nid)
+            state = self.store.read(nid, scope)
+            rows = [row for row in state['collections'].get(COLLECTION, {}).values()
+                    if isinstance(row, dict) and row.get('actor') == actor
+                    and row.get('incarnation') == incarnation]
+            if len(rows) > MAX_RECEIPTS: raise ValueError('COMIC_ORA_RECEIPT_LIMIT')
+            result = [self._public(self._receipt(state, row['id'], nid, scope, actor, incarnation)) for row in rows]
+            self._authority(nid, scope, actor, guard)
+            return result
+
+    def candidate(self, nid, scope, actor, rid, index, *, guard):
+        self._authority(nid, scope, actor, guard)
+        state = self.store.read(nid, scope)
+        with self.owner.existing_owner_only(), self.assets.project_scope(nid, scope.get('branch_id'),
+                lambda: self.owner.owner_lease(nid), scope_key=self.store.key(nid, scope)):
+            row = self._receipt(state, rid, nid, scope, actor, self.owner.incarnation(nid))
+            if type(index) is not int or not 0 <= index < len(row['steps']): raise FileNotFoundError(rid)
+            step = row['steps'][index]
+            if step['state'] not in {'STAGED', 'REVIEWED'}: raise FileNotFoundError(rid)
+            meta = self._verify(row, step, index, guard)
+            result = self.assets._verified_content(meta, max_bytes=self.assets.MAX_BYTES, guard=guard)
             self._authority(nid, scope, actor, guard)
             return result
 

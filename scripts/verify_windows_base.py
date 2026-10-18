@@ -186,6 +186,7 @@ def verify(base: Path, root: Path) -> dict:
         probe = (
             "import json,sys,importlib.metadata as m; "
             "import fastapi,uvicorn,psycopg,sqlalchemy,httpx,pydantic_settings,reportlab,PIL; "
+            "from fontTools.ttLib import TTFont; "
             "from psycopg import pq; "
             "from reportlab.pdfgen.canvas import Canvas; "
             f"names={list(expected)!r}; "

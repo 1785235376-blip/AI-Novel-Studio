@@ -1,3 +1,5 @@
+import { createDirectorImageClient } from './directorImageClient';
+import { studioClient } from './studioClient';
 import { directorSceneScopeBody, checkedDirectorSceneScopeResult } from './directorSceneScope';
 import type { PlanningSnapshot } from './studioProductionGraphContract';
 import { parseScreenplayPresets, type ScreenplayPresetCatalog } from './screenplayPresets';
@@ -28,6 +30,7 @@ export function creativeClient(novelId: string, context: CollaborationContext) {
   const token = context.sessionToken || (!context.scope && !context.actor && !isPackagedDesktopHost() ? (context.localHostToken ?? useLocalHostSession.getState().token) : '');
   const branch = context.scope?.branchId;
   const directorScope = context.scope ? { ...context.scope } : undefined;
+  const imageContext = { ...context, sessionToken: token, localHostToken: token, scope: directorScope, actor: context.actor ? { ...context.actor } : undefined };
   const root = `/api/novels/${encodeURIComponent(novelId)}`;
   const base = `${root}/experimental/creative`;
   async function responseFor(url: string, method = 'GET', body?: unknown, signal?: AbortSignal): Promise<Response> {
@@ -70,6 +73,10 @@ export function creativeClient(novelId: string, context: CollaborationContext) {
   return {
     // Lazy and request-free. Reuse the already captured original transport;
     // constructing an ordinary legacy client does not activate new endpoints.
+    imageDirector: () => {
+      const imageAssets = studioClient(novelId, imageContext);
+      return createDirectorImageClient(novelId, { json: request }, imageContext, signal => imageAssets.assets(false, signal));
+    },
     independentDirector: (sourceMode: 'STORYBOARD' | 'SCREENPLAY' = 'STORYBOARD') => createDirectorModelClient(novelId, { json: request }, directorScope, sourceMode),
     ...createStoryboardClient(novelId, base, branch ?? null, request),
     capabilities: (signal?: AbortSignal) => request<CreativeCapabilities>(`${base}/capabilities`, 'GET', undefined, signal),

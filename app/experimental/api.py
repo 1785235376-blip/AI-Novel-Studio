@@ -691,6 +691,11 @@ from ..creative.graph import CreativeGraphService
 independent_workspace_service = IndependentWorkspaceService(creative_service,
     legacy_api.asset_library_service, production_lineage_service)
 creative_service.configure_adaptation_assets(independent_workspace_service)
+from .comic_ora_staging import ComicOraStaging
+from .comic_ora_api import create_comic_ora_router
+comic_ora_staging_service = ComicOraStaging(comic_layouts_service, independent_workspace_service)
+router.include_router(create_comic_ora_router(comic_ora_staging_service, authorize, require_flag,
+    authority_lease=legacy_api._workbench_authority_lease))
 def creative_model_host_authority(request, token):
     from ..main import _local_discovery_host_authority
     return _local_discovery_host_authority(request, token)

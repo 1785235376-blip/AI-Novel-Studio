@@ -16,10 +16,11 @@ export type { StudioGraphEditorProps, StudioGraphEditorSelection } from './useSt
  * draft state.
  */
 export function useStudioGraphEditor(props: StudioGraphEditorProps) {
+  const imageSelectionLock = useRef(false);
   const [directorDirty, setDirectorDirty] = useState(false);
   const [mediaViewDirty, setMediaViewDirty] = useState(false);
   const [directorSession, setDirectorSession] = useState(0);
-  const controller = useStudioGraphEditorController({ ...props, externalDirty: props.externalDirty || directorDirty || mediaViewDirty });
+  const controller = useStudioGraphEditorController({ ...props, isDirectorImagePending: () => imageSelectionLock.current, externalDirty: props.externalDirty || directorDirty || mediaViewDirty });
   const [canvasLocal, setCanvasLocal] = useState<LocalCanvasState>(() => blankLocalCanvasState());
   const identity = props.identity, identityRef = useRef(identity);
   useEffect(() => {
@@ -33,12 +34,12 @@ export function useStudioGraphEditor(props: StudioGraphEditorProps) {
   return { ...view, content: <>{!controller.retired && props.client.graphs?.canvasViews && <MediaCanvasViewPanel key={`media:${props.identity}:${directorSession}`} {...props} externalDirty={props.externalDirty || directorDirty || controller.dirty || controller.blocked || controller.executionDirty} onDirtyChange={setMediaViewDirty} graphHandoff={controller.canvasAssetHandoff} />}{props.active && !controller.retired && controller.catalog && <StudioGraphDraftRecovery controller={controller} />}{props.directorSource && !controller.retired && <GraphDirectorConsole key={`${props.identity}:${directorSession}`}
     client={props.directorSource} onOpenStoryboard={controller.executionDirty || !props.onOpenStoryboard ? undefined : (request, isOriginCurrent) => {
       props.onOpenStoryboard!(request, () => isOriginCurrent() && handoffAuthority.current.epoch === handoffEpoch);
-    }} onOpenModels={props.onOpenModels} selectionKey={JSON.stringify([controller.base?.id, controller.selected, handoffEpoch])} canvasHandoff={controller.reviewedDirectorHandoff} pin={controller.node?.definition_id === 'director_plan' ? controller.node.parameters.document_snapshot : undefined}
+    }} onOpenModels={props.onOpenModels} onOpenBroker={props.onOpenBroker} selectionKey={JSON.stringify([controller.base?.id, controller.selected, handoffEpoch])} canvasHandoff={controller.reviewedDirectorHandoff} pin={controller.node?.definition_id === 'director_plan' ? controller.node.parameters.document_snapshot : undefined}
     graph={controller.draft} selectedNodeId={controller.node?.id}
     active={props.active && !props.denied} canMutate={props.canMutate && !props.externalDirty && !mediaViewDirty && !controller.executionDirty}
-    busy={props.busy} isCurrent={props.isCurrent} read={props.read} mutate={props.mutate} onDirtyChange={setDirectorDirty} />}{view.content}</>,
+    busy={props.busy} isCurrent={props.isCurrent} read={props.read} mutate={props.mutate} onDirtyChange={setDirectorDirty} onImagePendingChange={value => { imageSelectionLock.current = value; }} />}{view.content}</>,
     directorPending: directorDirty,
     dirty: mediaViewDirty || directorDirty || controller.dirty || controller.blocked || controller.executionDirty,
-    discard: () => { setDirectorSession(value => value + 1); setDirectorDirty(false); setMediaViewDirty(false); controller.discard(); } };
+    discard: () => { imageSelectionLock.current = false; setDirectorSession(value => value + 1); setDirectorDirty(false); setMediaViewDirty(false); controller.discard(); } };
 
 }

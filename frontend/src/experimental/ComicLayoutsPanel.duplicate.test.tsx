@@ -143,6 +143,10 @@ it.each(['edit', 'undo', 'redo', 'load', 'source', 'refresh', 'save'] as const)(
   const { fetch } = harness(); render(<ComicLayoutsPanel client={client()} />); await open();
   fireEvent.change(screen.getByLabelText('漫画布局名称'), { target: { value: 'Edited' } });
   if (kind === 'redo') fireEvent.click(screen.getByRole('button', { name: '撤销本地排版' }));
+  if (['load', 'source', 'refresh'].includes(kind)) {
+    expect((screen.getByRole('button', { name: `打开布局 ${fixture.document.title}` }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: '放弃当前页面修改' }));
+  }
   const copy = capture(); let first: () => unknown;
   if (kind === 'edit') {
     const change = retained<(event: { target: { value: string } }) => void>(screen.getByLabelText('漫画布局名称'), 'onChange'); first = () => change({ target: { value: 'Newest' } });

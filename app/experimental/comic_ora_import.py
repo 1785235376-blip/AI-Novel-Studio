@@ -249,7 +249,7 @@ def _png(data, budget, *, maximum_pixels=20_000_000):
     return result, metadata
 
 
-def preview_ora(raw: bytes) -> OraPreview:
+def preview_ora(raw: bytes, *, thumbnail_only=False) -> OraPreview:
     """Decode/recompose a supported archive without any persistence or trust grant."""
     from PIL import Image
     from .comic_layouts import renderer_status
@@ -316,6 +316,10 @@ def preview_ora(raw: bytes) -> OraPreview:
             if metadata: losses.append('PNG_METADATA_NOT_IMPORTED:Thumbnails/thumbnail.png')
             if max(thumbnail.size) > 256: _fail('THUMBNAIL_DIMENSIONS_INVALID')
             thumbnail.close()
+            if thumbnail_only:
+                # Account for resizing in the original total pixel-work budget.
+                budget.consume(width * height)
+                canvas.thumbnail((256, 256), Image.Resampling.NEAREST)
             preview = encode_png(canvas); canvas.close()
     except (zipfile.BadZipFile, RuntimeError, EOFError, NotImplementedError, zlib.error):
         _fail('ZIP_INVALID')

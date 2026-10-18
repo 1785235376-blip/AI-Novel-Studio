@@ -1,3 +1,4 @@
+import { ComicOraImportPanel } from './ComicOraImportPanel';
 import { ComicLayersPanel } from './ComicLayersPanel';
 import { comicLayersError, reconcileComicLayers } from './comicLayers';
 import { ComicCollectionTree } from './ComicCollectionTree';
@@ -27,12 +28,14 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
   const action = useReviewAction(); const epoch = useRef(0);
   const [document, setDocument] = useState<ComicDocument>(); const [row, setRow] = useState<ComicRecord>();
   const [past, setPast] = useState<ComicDocument[]>([]); const [future, setFuture] = useState<ComicDocument[]>([]); const [dirty, storeDirty] = useState(false);
-  const [treeDirty, storeTreeDirty] = useState(false), [treeBusy, storeTreeBusy] = useState(false), [collectionActive, setCollectionActive] = useState(false);
-  const pageDirtyRef = useRef(false), treeDirtyRef = useRef(false), treeBusyRef = useRef(false), collectionActiveRef = useRef(false);
-  const setDirty = (value: boolean) => { pageDirtyRef.current = value; onDirtyChange?.(value || treeDirtyRef.current); storeDirty(value); };
-  const navigationBlocked = treeDirty || (collectionActive && dirty);
-  const navigationAllowed = () => !treeDirtyRef.current && !(collectionActiveRef.current && pageDirtyRef.current);
-  const busy = action.busy || treeBusy;
+  const [treeDirty, storeTreeDirty] = useState(false), [treeBusy, storeTreeBusy] = useState(false), [oraDirty, storeOraDirty] = useState(false);
+  const [, setCollectionActive] = useState(false);
+  const pageDirtyRef = useRef(false), treeDirtyRef = useRef(false), treeBusyRef = useRef(false), oraDirtyRef = useRef(false);
+  const setDirty = (value: boolean) => { pageDirtyRef.current = value; onDirtyChange?.(value || treeDirtyRef.current || oraDirtyRef.current); storeDirty(value); };
+  const navigationBlocked = treeDirty || dirty || oraDirty;
+  const navigationAllowed = () => !treeDirtyRef.current && !pageDirtyRef.current && !oraDirtyRef.current;
+  const [oraBusy, setOraBusy] = useState(false); const oraBusyRef = useRef(false);
+  const busy = action.busy || treeBusy || oraBusy;
   const [report, setReport] = useState<ComicPreflight>(); const [segments, setSegments] = useState<string[]>([]); const [loadedSegments, setLoadedSegments] = useState<number[]>([]); const [previewFailed, setPreviewFailed] = useState(false); const [width, setWidth] = useState(360); const [reviewed, setReviewed] = useState(false);
   const [assetId, setAssetId] = useState(''); const [assetUrl, setAssetUrl] = useState(''); const [assetLoaded, setAssetLoaded] = useState(false); const [assetReviewed, setAssetReviewed] = useState(false);
   const [arrangement, setArrangement] = useState<{ result: ComicArrangement; ticket: number; base: ComicDocument }>();
@@ -43,7 +46,7 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
   const renderedGeneration = editorGeneration.current;
   // A callback owns the document generation it rendered. Consume that ownership
   // synchronously, before React paints, for edits, navigation and async admission.
-  const currentEditor = () => (isOwnerCurrent?.() ?? true) && arrangementAlive.current && renderedGeneration === editorGeneration.current && !actionPending.current && !treeBusyRef.current && !action.busy;
+  const currentEditor = () => (isOwnerCurrent?.() ?? true) && arrangementAlive.current && renderedGeneration === editorGeneration.current && !actionPending.current && !treeBusyRef.current && !oraBusyRef.current && !action.busy;
   const duplicateCurrent = useRef<{ document?: ComicDocument; catalog?: ComicCatalog; allowed: boolean; intent?: DuplicateIntent }>({ allowed: false });
   const [restoreVersion, setRestoreVersion] = useState('');
   const [layerEditError, setLayerEditError] = useState('');
@@ -66,7 +69,7 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
   useEffect(() => () => { segments.forEach(URL.revokeObjectURL); }, [segments]);
   useEffect(() => () => { if (assetUrl) URL.revokeObjectURL(assetUrl); }, [assetUrl]);
   const invalidate = () => { setLayerEditError(''); editorGeneration.current++; epoch.current++; arrangementEpoch.current++; setArrangement(undefined); cancelDuplicate(); setReport(undefined); setSegments([]); setLoadedSegments([]); setPreviewFailed(false); setReviewed(false); };
-  useEffect(() => { onDirtyChange?.(dirty || treeDirty); }, [dirty, treeDirty, onDirtyChange]);
+  useEffect(() => { onDirtyChange?.(dirty || treeDirty || oraDirty); }, [dirty, treeDirty, oraDirty, onDirtyChange]);
   useEffect(() => () => { onDirtyChange?.(false); onBusyChange?.(false); }, [onDirtyChange, onBusyChange]);
   const edit = (next: ComicDocument) => {
     if (!currentEditor()) return;
@@ -106,17 +109,22 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
         {!asset.approved && !asset.manual_review_available && <StatusMessage>此图片必须回原生成任务进行审核，不能在排版区绕过。</StatusMessage>}
       </>}
     </Panel>}
-    <ComicCollectionTree client={client} records={records.data?.items || EMPTY_COMIC_RECORDS} recordsReady={rowsReady} pageDirty={dirty} externalBusy={action.busy} selectedPageId={row?.id}
+    <ComicCollectionTree client={client} records={records.data?.items || EMPTY_COMIC_RECORDS} recordsReady={rowsReady} pageDirty={dirty || oraDirty} externalBusy={action.busy || oraBusy} selectedPageId={row?.id}
       isOwnerCurrent={() => arrangementAlive.current && (isOwnerCurrent?.() ?? true)} getOwnerRevision={() => editorGeneration.current}
-      onActiveChange={value => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true)) return; editorGeneration.current++; collectionActiveRef.current = value; setCollectionActive(value); }}
-      onDirtyChange={value => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true)) return; editorGeneration.current++; treeDirtyRef.current = value; storeTreeDirty(value); onDirtyChange?.(pageDirtyRef.current || value); }}
-      onBusyChange={value => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true)) return; editorGeneration.current++; treeBusyRef.current = value; storeTreeBusy(value); onBusyChange?.(actionPending.current || value); }}
-      onOpenPage={load} onPageCreated={page => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true) || pageDirtyRef.current || treeDirtyRef.current) return; commitLoad(page); records.reload(); }} />
+      onActiveChange={value => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true)) return; editorGeneration.current++; setCollectionActive(value); }}
+      onDirtyChange={value => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true)) return; editorGeneration.current++; treeDirtyRef.current = value; storeTreeDirty(value); onDirtyChange?.(pageDirtyRef.current || value || oraDirtyRef.current); }}
+      onBusyChange={value => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true)) return; editorGeneration.current++; treeBusyRef.current = value; storeTreeBusy(value); onBusyChange?.(actionPending.current || oraBusyRef.current || value); }}
+      onOpenPage={load} onPageCreated={page => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true) || pageDirtyRef.current || treeDirtyRef.current || oraDirtyRef.current) return; commitLoad(page); records.reload(); }} />
+    <ComicOraImportPanel client={client} page={!dirty && !treeDirty && savedCurrent ? row : undefined} disabled={!available || action.busy || treeBusy || isComposing}
+      isOwnerCurrent={() => arrangementAlive.current && (isOwnerCurrent?.() ?? true)} getOwnerRevision={() => editorGeneration.current}
+      onDirtyChange={value => { oraDirtyRef.current = value; storeOraDirty(value); onDirtyChange?.(value || pageDirtyRef.current || treeDirtyRef.current); }}
+      onBusyChange={value => { oraBusyRef.current = value; setOraBusy(value); onBusyChange?.(value || actionPending.current || treeBusyRef.current); }}
+      onAttached={page => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true)) return; commitLoad(page); records.reload(); catalog.reload(); }} />
     <Panel title="布局草稿与手工编辑">
-      {navigationBlocked && <StatusMessage tone="warning">集合中有未保存修改。请先保存或明确放弃页面及书结构，再切换布局或来源。</StatusMessage>}
+      {navigationBlocked && <StatusMessage tone="warning">有未保存的页面、书结构或 ORA 本地输入。请先保存或明确放弃相应修改，再切换布局或来源。</StatusMessage>}
       {dirty && <Button disabled={busy} onClick={() => { if (!currentEditor() || composing.current) return; if (row) commitLoad(row); else { invalidate(); setDocument(undefined); setPast([]); setFuture([]); setDirty(false); } }}>放弃当前页面修改</Button>}
       <Button disabled={!available || busy || navigationBlocked} onClick={() => { if (!currentEditor() || !navigationAllowed()) return; invalidate(); setRow(undefined); setDocument(blankComic('PAGE', catalog.data!.presets.PAGE)); setPast([]); setFuture([]); setDirty(true); }}>新建空白漫画页</Button>
-      <Field label="漫画来源剧本"><select disabled={!available || busy || navigationBlocked} value={document?.screenplay_id || ''} onChange={e => { if (!currentEditor() || !navigationAllowed()) return; const source = catalog.data?.screenplays.find(s => s.id === e.target.value); invalidate(); setRow(undefined); setDocument(source ? comicPreset(source, 'PAGE', catalog.data!.presets.PAGE) : undefined); setPast([]); setFuture([]); setDirty(true); }}><option value="">选择已有镜头的剧本</option>{available && catalog.data!.screenplays.map(s => <option key={s.id} value={s.id}>{s.title} · v{s.edit_version}</option>)}</select></Field>
+      <Field label="漫画来源剧本"><select disabled={!available || busy || navigationBlocked} value={document?.screenplay_id || ''} onChange={e => { if (!currentEditor() || !navigationAllowed()) return; const source = catalog.data?.screenplays.find(s => s.id === e.target.value); invalidate(); setRow(undefined); setDocument(source ? comicPreset(source, 'PAGE', catalog.data!.presets.PAGE) : undefined); setPast([]); setFuture([]); setDirty(!!source); }}><option value="">选择已有镜头的剧本</option>{available && catalog.data!.screenplays.map(s => <option key={s.id} value={s.id}>{s.title} · v{s.edit_version}</option>)}</select></Field>
       {available && !catalog.data!.screenplays.length && <EmptyState title="暂无镜头来源" detail="可以直接新建空白漫画页；从剧本改编时再选择已有镜头。" />}
       {document && available && !savedStale && <>
         {sourceChanged && <StatusMessage tone="warning">来源版本已变化。草稿输入仍保留，请重新选择当前来源再保存；旧画面已隐藏。</StatusMessage>}
@@ -239,7 +247,7 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
         {previewFailed && <StatusMessage tone="error">分段图片显示失败，请重新预检；未显示的画面不能批准。</StatusMessage>}
         {row.status !== 'APPROVED' && <><label className="experimental-check"><input type="checkbox" checked={reviewed} disabled={busy || !report.can_render || !segments.length || previewFailed || loadedSegments.length !== segments.length} onChange={e => setReviewed(e.target.checked)} />已核对图片、阅读顺序、所有裁切与分段警告，并批准此布局版本</label><Button disabled={busy || !reviewed || !report.can_render || !segments.length || previewFailed || loadedSegments.length !== segments.length} onClick={() => void runAction(async isCurrent => { const approved = await api.approve(row, report); if (isCurrent()) { commitLoad(approved); records.reload(); } }, '此布局版本已显式批准。请重新渲染已批准版本后下载；不会自动发布。')}>批准当前漫画布局</Button></>}
         <Button disabled={busy || row.status !== 'APPROVED' || !report.can_render || !segments.length || previewFailed || loadedSegments.length !== segments.length} onClick={() => void runAction(async isCurrent => { const ticket = epoch.current; const blob = await api.download(row); if (isCurrent() && ticket === epoch.current) saveOtioFile(blob, 'comic-segments.zip'); }, '已生成分段 PNG、校验清单与适用字体许可的 ZIP 副本。没有发布或自动回写资产。')}>下载已批准漫画分段</Button>
-        {document.layer_stack && <><p>ORA 将导出整页独立栅格图层，文字与形状会栅格化；原生项目保留可编辑对白。目前不支持 ORA 导入。</p><Button disabled={!oraReady} onClick={() => {
+        {document.layer_stack && <><p>ORA 将导出整页独立栅格图层，文字与形状会栅格化；原生项目保留可编辑对白。ORA 可通过上方显式导入流程作为外部栅格导入，不能恢复可编辑对白。</p><Button disabled={!oraReady} onClick={() => {
           if (!oraReady) return;
           void runAction(async isCurrent => { const ticket = epoch.current; const blob = await api.downloadOra(row); if (isCurrent() && ticket === epoch.current) saveOtioFile(blob, 'comic-layers.ora'); }, '已生成 OpenRaster 图层副本。文字与形状已栅格化，原生可编辑对白仍保留。');
         }}>下载已批准漫画图层（ORA）</Button></>}
