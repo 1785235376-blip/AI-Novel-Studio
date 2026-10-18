@@ -1,0 +1,53 @@
+{
+  "review": "Independent read-only native Comic author archive frontend review",
+  "original_reproduction": {
+    "method": "Direct TypeScript transpilation and execution of production client; in-memory localStorage and navigator.locks test doubles; no server POST performed. work callback counts intended dispatch.",
+    "sequence": [
+      "Persist completed request key 1 repeated 32 times for digest a repeated 64 times.",
+      "Tab A observes completed key 1 and prepares explicit new-copy intent.",
+      "Tab B forceNew key 2 callback throws lost response, retaining PENDING key 2.",
+      "Tab A stale forceNew key 3 callback dispatches, overwriting key 2."
+    ],
+    "captured_output": "Before A: { digest: a*64, request_key: 22222222222222222222222222222222, status: PENDING }\nA wrongly dispatches new key: 33333333333333333333333333333333\nAfter A: { digest: a*64, request_key: 33333333333333333333333333333333, status: COMPLETED }",
+    "output_note": "Values transcribed from tool output; whitespace condensed and digest abbreviated, not raw HTTP receipt."
+  },
+  "fixed_recheck": {
+    "sequence": "Same sequence with expectedCompletedKey equal to observed key 1 supplied instead of boolean forceNew.",
+    "captured_output": "Stale A rejected: 已有恢复尝试已变化或结果未知。请重新选择相同文件并检查、核对已有结果，不能开始另一份导入。\nAdditional posts: 0 Persisted: { digest: a*64, request_key: 22222222222222222222222222222222, status: PENDING }",
+    "output_note": "Transcribed from direct execution; whitespace condensed and digest abbreviated. Additional posts means work-callback dispatch count, not live HTTP.",
+    "sha256": {
+      "frontend/src/experimental/ComicAuthorArchivePanel.tsx": "ae32e7d7786af1318f602c902b57f1068ff1aa7498e2bce3ffa508aaf707112e",
+      "frontend/src/experimental/comicAuthorArchiveClient.ts": "c2c2e6d171cd92846c2e8d1db1a0f1b31104dd39869ba62598f18e01acbfa624",
+      "frontend/src/experimental/ComicCollectionTree.tsx": "ebcda29c2b7b5d594ca02d1656d5c0d47ee44839a8e64a55893df77f3b892ce6"
+    }
+  },
+  "independent_test_run_before_fix": "13/13 author tests passed; exposed missing stale-forceNew coverage.",
+  "status": "PASS within stated unit/static scope. No remaining concrete frontend blocker found. Stale forceNew blocker fixed and independent direct recheck preserved PENDING identity with zero additional dispatch.",
+  "limitations": [
+    "No browser or actual cross-tab Web Locks acceptance",
+    "No live frontend/backend roundtrip",
+    "No PostgreSQL acceptance",
+    "No repository edits made by reviewer"
+  ],
+  "independent_final_tests": {
+    "passed": 17,
+    "failed": 0,
+    "files": 2,
+    "mounted_tests": 13,
+    "lock_tests": 4,
+    "log": "/tmp/comic-author-independent-client-final-tests.log"
+  },
+  "final_sha256": {
+    "frontend/src/experimental/ComicAuthorArchivePanel.tsx": "ae32e7d7786af1318f602c902b57f1068ff1aa7498e2bce3ffa508aaf707112e",
+    "frontend/src/experimental/comicAuthorArchiveClient.ts": "c2c2e6d171cd92846c2e8d1db1a0f1b31104dd39869ba62598f18e01acbfa624",
+    "frontend/src/experimental/ComicCollectionTree.tsx": "ebcda29c2b7b5d594ca02d1656d5c0d47ee44839a8e64a55893df77f3b892ce6",
+    "frontend/src/experimental/ComicAuthorArchivePanel.test.tsx": "939831325bfa1fe51d721620aa193b02e3a3888891e5e9ee5a92feb3e75cd7e6",
+    "frontend/src/experimental/comicAuthorArchiveClient.test.ts": "aea567eec1d97492eecb0ca1264bfe82dab987bcf10e466316355b3d2ae1dacd"
+  },
+  "first_recorded_sha256": {
+    "frontend/src/experimental/ComicAuthorArchivePanel.tsx": "ae32e7d7786af1318f602c902b57f1068ff1aa7498e2bce3ffa508aaf707112e",
+    "frontend/src/experimental/comicAuthorArchiveClient.ts": "c2c2e6d171cd92846c2e8d1db1a0f1b31104dd39869ba62598f18e01acbfa624",
+    "frontend/src/experimental/ComicCollectionTree.tsx": "ebcda29c2b7b5d594ca02d1656d5c0d47ee44839a8e64a55893df77f3b892ce6"
+  },
+  "first_recorded_sha256_note": "These hashes were first recorded after initial failure reproduction while implementation worker was fixing the files. They match final production hashes and must not be represented as hashes of the original vulnerable version. No pre-fix vulnerable file hash was captured."
+}

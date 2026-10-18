@@ -1,0 +1,19 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/comic-author-roundtrip/frontend
+
+ ✓ src/experimental/comicAuthorArchiveClient.test.ts (4 tests) 110ms
+ ✓ src/experimental/ComicAuthorArchivePanel.test.tsx (13 tests) 2415ms
+   ✓ mounted native owner inspects without writes, explicitly restores a book and page, and saves editable hidden text and briefs 661ms
+   ✓ private author export needs its own acknowledgement and local page edits invalidate preview 457ms
+
+ Test Files  2 passed (2)
+      Tests  17 passed (17)
+   Start at  07:41:40
+   Duration  3.46s (transform 356ms, setup 25ms, collect 494ms, tests 2.53s, environment 620ms, prepare 141ms)
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

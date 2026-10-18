@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "backend_receipt": "comic-author-native-security.json",
+  "backend_source_changes_since_test": [],
+  "backend_source_count": 1503,
+  "why_aggregate_snapshot_changed": "Disjoint frontend edits occurred during backend runner; exact app/tests/scripts hashes remain equal.",
+  "source_sha256": {
+    "app/experimental/api.py": "694d08041b60fe9d8ad903c8f0cabf2e868519b31d36edc27c019f527b539975",
+    "app/experimental/comic_author_archive.py": "b0246d1300ee65414b293cef35f7a418e1c62860f15971495149d2845aab294b",
+    "app/experimental/comic_author_archive_api.py": "552943abda65f7a0a03e66caee37cb3cae6b53623f223175c1bae8881724c1d4",
+    "tests/test_comic_author_archive.py": "57b9ff0b4096037251c1881eba1dccf3e0c9a4a97c316d9fee2ca3b59b8b9a3c",
+    "frontend/src/experimental/ComicAuthorArchivePanel.tsx": "ae32e7d7786af1318f602c902b57f1068ff1aa7498e2bce3ffa508aaf707112e",
+    "frontend/src/experimental/comicAuthorArchiveClient.ts": "c2c2e6d171cd92846c2e8d1db1a0f1b31104dd39869ba62598f18e01acbfa624",
+    "frontend/src/experimental/ComicCollectionTree.tsx": "ebcda29c2b7b5d594ca02d1656d5c0d47ee44839a8e64a55893df77f3b892ce6",
+    "frontend/src/experimental/ComicAuthorArchivePanel.test.tsx": "939831325bfa1fe51d721620aa193b02e3a3888891e5e9ee5a92feb3e75cd7e6",
+    "frontend/src/experimental/comicAuthorArchiveClient.test.ts": "aea567eec1d97492eecb0ca1264bfe82dab987bcf10e466316355b3d2ae1dacd"
+  }
+}

@@ -691,6 +691,9 @@ from ..creative.graph import CreativeGraphService
 independent_workspace_service = IndependentWorkspaceService(creative_service,
     legacy_api.asset_library_service, production_lineage_service)
 creative_service.configure_adaptation_assets(independent_workspace_service)
+from .comic_author_archive_api import create_comic_author_archive_router
+router.include_router(create_comic_author_archive_router(comic_layouts_service, authorize, require_flag,
+    authority_lease=legacy_api._workbench_authority_lease))
 from .comic_ora_staging import ComicOraStaging
 from .comic_ora_api import create_comic_ora_router
 comic_ora_staging_service = ComicOraStaging(comic_layouts_service, independent_workspace_service)

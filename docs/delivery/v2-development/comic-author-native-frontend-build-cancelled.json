@@ -1,0 +1,9 @@
+{
+  "status": "CANCELLED",
+  "exit_code": 130,
+  "reason": "Root requested cancellation because independent review found stale forceNew lock-admission defect; final frozen frontend will be rerun.",
+  "command_label": "comic-author-native-frontend-build",
+  "tool_session": 44144,
+  "observed_at": "2026-10-18T22:40:15Z",
+  "verification_claim": "NONE; interrupted runner did not emit retained test/build output."
+}

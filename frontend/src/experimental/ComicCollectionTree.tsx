@@ -3,6 +3,7 @@ import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitive
 import type { ExperimentalClient } from './api';
 import { ErrorMessage, Field, ResourceState, useResource } from './shared';
 import { comicLayoutsClient, type ComicBook, type ComicBookDocument, type ComicChapter, type ComicRecord } from './comicLayoutsClient';
+import { ComicAuthorArchivePanel } from './ComicAuthorArchivePanel';
 import { ComicPublicationPanel } from './ComicPublicationPanel';
 
 type Props = {
@@ -38,6 +39,7 @@ export function ComicCollectionTree(props: Props) {
   const [dirty, setDirty] = useState(false), [busy, setBusy] = useState(false);
   const [publicationBusy, setPublicationBusy] = useState(false);
   const publicationPending = useRef(false);
+  const [authorBusy, setAuthorBusy] = useState(false);
   const [error, setError] = useState<unknown>(), [notice, setNotice] = useState('');
   const [newTitle, setNewTitle] = useState(''), [restoreVersion, setRestoreVersion] = useState('');
   const [attach, setAttach] = useState<Record<string, string>>({});
@@ -149,10 +151,16 @@ export function ComicCollectionTree(props: Props) {
         <p>恢复会新建结构版本，恢复旧章节顺序和页面归属；页面文字、格框、图片及审核状态不回滚。</p>
         <Button disabled={!usable || navigationBlocked || !restoreVersion} onClick={() => { if (!book || navigationBlocked || !book.history_versions?.includes(Number(restoreVersion))) return; void run(() => api.restoreBook(book, Number(restoreVersion)), '已新增恢复后的结构版本，页面内容未回滚。'); }}>恢复为新的漫画书结构版本</Button>
         <ComicPublicationPanel key={book!.id} client={props.client} book={book! as ComicBook & ComicBookDocument} records={props.records}
-          disabled={dirty || props.pageDirty || props.externalBusy || busy} collectionRevision={generation.current} getCollectionRevision={() => generation.current}
+          disabled={dirty || props.pageDirty || props.externalBusy || busy || authorBusy} collectionRevision={generation.current} getCollectionRevision={() => generation.current}
           isOwnerCurrent={() => alive.current && (live.current.isOwnerCurrent?.() ?? true)} getOwnerRevision={() => live.current.getOwnerRevision()}
           onBusyChange={value => { publicationPending.current = value; if (alive.current) setPublicationBusy(value); live.current.onBusyChange(value); }} />
       </>}
+      <ComicAuthorArchivePanel client={props.client} book={!dirty && selectedCurrent ? book as ComicBook & ComicBookDocument : undefined} records={props.records}
+        disabled={!ready || !props.recordsReady || dirty || props.pageDirty || props.externalBusy || busy || (publicationBusy && !authorBusy)}
+        collectionRevision={generation.current} getCollectionRevision={() => generation.current}
+        isOwnerCurrent={() => alive.current && (live.current.isOwnerCurrent?.() ?? true)} getOwnerRevision={() => live.current.getOwnerRevision()}
+        onBusyChange={value => { publicationPending.current = value; if (alive.current) { setPublicationBusy(value); setAuthorBusy(value); } live.current.onBusyChange(value); }}
+        onRestored={result => { commit(result.book); books.reload(); const first = result.pages.find(page => page.id === result.book.chapters.flatMap(chapter => chapter.pages)[0]); if (first) props.onPageCreated(first); setNotice(result.replayed ? '已核对已有导入，打开其当前漫画书与页面；不会重复创建或重置当前编辑和审核状态。' : '作者归档已恢复为新草稿，已打开漫画书与首个页面。请继续编辑并按正常流程审核。'); }} />
     </div>
   </Panel>;
 }
