@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-camera-reuse/frontend
+
+ ✓ src/creative/DirectorTimingTools.additive.test.tsx (8 tests) 205ms
+ ✓ src/creative/DirectorNoteActions.additive.test.tsx (9 tests) 448ms
+ ✓ src/creative/DirectorCameraReuse.test.tsx (22 tests) 523ms
+   ✓ previews, applies, undoes and saves through the original canvas, then reopens the saved value 337ms
+
+ Test Files  3 passed (3)
+      Tests  39 passed (39)
+   Start at  07:50:27
+   Duration  1.53s (transform 333ms, setup 52ms, collect 1.30s, tests 1.18s, environment 878ms, prepare 181ms)
+

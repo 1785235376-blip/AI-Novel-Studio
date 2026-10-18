@@ -1,0 +1,18 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-camera-reuse/frontend
+
+ ✓ src/creative/mediaCanvasGeometry.additive.test.ts (2 tests) 18ms
+ ✓ src/creative/graphCanvasGeometry.presentation.additive.test.ts (9 tests) 6ms
+ ✓ src/creative/graphCanvasGeometry.test.ts (9 tests) 24ms
+ ✓ src/creative/ReviewedDirectorCanvas.integration.test.tsx (1 test) 385ms
+   ✓ wires reviewed Creative DRAFT through original export/read, real editor/controller insertion, and explicit Graph Save 385ms
+ ✓ src/creative/AIDirectorReopen.test.tsx (31 tests) 1766ms
+ ✓ src/creative/CreativeAuthoringFields.test.tsx (12 tests) 1780ms
+   ✓ Full-document authoring uses the original save and history flow > updates all preserved content once with expected_version, reopens it, and restores previous genre/time as a new version 466ms
+   ✓ Full-document authoring uses the original save and history flow > retains genre/time on a save conflict until explicit server replacement 402ms
+
+ Test Files  6 passed (6)
+      Tests  64 passed (64)
+   Start at  07:51:40
+   Duration  4.49s (transform 2.61s, setup 114ms, collect 4.66s, tests 3.98s, environment 2.56s, prepare 566ms)
+
