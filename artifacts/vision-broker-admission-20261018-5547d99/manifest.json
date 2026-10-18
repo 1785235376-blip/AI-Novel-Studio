@@ -1,0 +1,6 @@
+{
+  "source_head": "5547d991bac8bd465dd8cd5f248869c1c46416f8",
+  "prerequisite": "e9d11cd3755c51c54ffb5cec95f4e1b2ef84a58d",
+  "bundle": "continuation.bundle",
+  "scope": "Fix reproduced broker availability mismatch: real declared Vision adapters remain unavailable until original Research runtime/job admission exists. Retained RED, 73 File checks with 71 PostgreSQL cases deselected, 17 UI checks, TypeScript and Vite passed. No OCR activation, provider call or release gate claim."
+}
