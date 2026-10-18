@@ -1,0 +1,15 @@
+{
+  "source_head": "a213eb21cdfa53049e4d2b3d96c1fbc8091137c5",
+  "prerequisite": "7de2fb4bc9c266ceba5754e943a5796567a52609",
+  "commits": [
+    "e2f3ec1",
+    "a213eb21cdfa53049e4d2b3d96c1fbc8091137c5"
+  ],
+  "diagnostic_preview_ui_tests": 18,
+  "research_file_tests": 29,
+  "research_ui_tests": 14,
+  "research_postgres_tests": 12,
+  "typescript": "PASS",
+  "postgres_mode": "reuse",
+  "full_v2_release": "NOT_CLAIMED"
+}
