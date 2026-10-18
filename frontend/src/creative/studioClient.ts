@@ -13,6 +13,7 @@ import { createStudioGraphClient } from './studioGraphClient';
 import { createStudioWorkspaceOperationClient } from './studioWorkspaceOperationClient';
 import { checkedStudioPreferences } from './studioWorkspacePreferences';
 import { checkedMaskInput, checkedMaskResult, maskSha256, type StudioMaskInput, type StudioMaskReceipt } from './studioManualMaskContract';
+import { checkBlobReadLimit, readBoundedResponseBlob, type BlobReadLimit } from '../boundedResponseBlob';
 
 export type CreativeIntent = 'NOVEL_WRITING' | 'NOVEL_ADAPTATION' | 'AI_SHORT_FILM' | 'COMMERCIAL_CG'
   | 'ADVERTISEMENT' | 'MUSIC_VIDEO' | 'GAME_PREVIS' | 'IMAGE_DESIGN' | 'PODCAST_VOICE' | 'BLANK' | 'CUSTOM';
@@ -302,8 +303,10 @@ export function studioTransport(context: CollaborationContext) {
       try { return await result.blob(); }
       catch { throw new ApiError({ status: result.status, code: 'STUDIO_RESPONSE_INVALID', message: '文件未能读取，请重试下载。' }); }
     },
-    async blobResponse(url: string, method = 'GET', body?: unknown, signal?: AbortSignal, idempotencyKey?: string): Promise<{ blob: Blob; headers: Headers }> {
-      const result = await response(url, method, body, signal, idempotencyKey);
+    async blobResponse(url: string, method = 'GET', body?: unknown, signal?: AbortSignal, idempotencyKey?: string, limit?: BlobReadLimit): Promise<{ blob: Blob; headers: Headers }> {
+      if (limit) checkBlobReadLimit(limit);
+      const result = await response(url, method, body, signal, idempotencyKey, !!limit);
+      if (limit) return { blob: await readBoundedResponseBlob(result, limit), headers: result.headers };
       try { return { blob: await result.blob(), headers: result.headers }; }
       catch { throw new ApiError({ status: result.status, code: 'STUDIO_RESPONSE_INVALID', message: '文件未能读取，请重试下载。' }); }
     },

@@ -1,0 +1,24 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/comic-page-formats/frontend
+
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 1280ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 397ms
+ ✓ src/experimental/ComicCollectionTree.test.tsx (13 tests) 1677ms
+   ✓ integrates aggregate dirty state and explicit page and structure discard before leaving an active collection 431ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 1853ms
+   ✓ explicit arrangement preview applies one undoable edit and saves only through original owner 453ms
+   ✓ cancel, edits, refresh and client replacement discard arrangement consent 448ms
+   ✓ retained apply cannot cross record, source or owner ABA 367ms
+ ✓ src/creative/IndependentStudioWorkspace.comic.test.tsx (7 tests) 5588ms
+   ✓ Image subview creates a source-free page, edits a bubble, saves and reopens without a model or renderer 1810ms
+   ✓ dirty comic blocks closing until the existing workspace discard confirmation 512ms
+   ✓ selected ORA File reaches the actual Image close guard and survives cancelled navigation 630ms
+   ✓ unsaved ORA license reaches the actual host guard and survives page save dirty cleanup 1295ms
+   ✓ standalone RASTER edits block New/Open/Source until explicit discard without book membership 869ms
+   ✓ same-batch retained host Close observes synchronous ORA dirty before React rerenders 363ms
+
+ Test Files  4 passed (4)
+      Tests  34 passed (34)
+   Start at  07:06:37
+   Duration  11.57s (transform 4.24s, setup 46ms, collect 6.55s, tests 10.40s, environment 1.27s, prepare 275ms)
+

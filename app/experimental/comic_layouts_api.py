@@ -7,7 +7,7 @@ from pydantic import Field
 from .comic_layouts import LayoutIn, LayoutEdit
 from .comic_collections import ComicBookIn, ComicBookEdit, ComicBookPageIn
 from .media import StrictModel
-from .comic_publication import PublicationIn, PublicationExportIn, publication_preflight, export_cbz, PDFPublicationIn, PDFPublicationExportIn, pdf_publication_preflight, export_pdf
+from .comic_publication import PageArchiveIn, PageArchiveExportIn, page_archive_preflight, export_page_archive, PublicationIn, PublicationExportIn, publication_preflight, export_cbz, PDFPublicationIn, PDFPublicationExportIn, pdf_publication_preflight, export_pdf
 import hashlib
 from .production_lineage_api import PrivateProductionRoute, api_call
 
@@ -96,6 +96,19 @@ def create_comic_layouts_router(service, authorize, require_flag):
             data, receipt = export_pdf(service,nid,scope,actor,rid,body,guard)
             return Response(data, media_type='application/pdf', headers={
                 'Content-Disposition': 'attachment; filename="comic-book.pdf"',
+                'X-Comic-Publication-Digest': receipt, 'X-Content-SHA256': hashlib.sha256(data).hexdigest()})
+        return invoke(nid, x_session_token, x_branch_id, 'domain.read', output)
+
+    @router.post('/books/{rid}/page-archive-preflight')
+    def book_page_archive_preflight(nid: str, rid: str, body: PageArchiveIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid, x_session_token, x_branch_id, 'domain.read', lambda a,s,g: page_archive_preflight(service,nid,s,a,rid,body,g))
+
+    @router.post('/books/{rid}/export-page-archive')
+    def book_export_page_archive(nid: str, rid: str, body: PageArchiveExportIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        def output(actor, scope, guard):
+            data, receipt = export_page_archive(service,nid,scope,actor,rid,body,guard)
+            return Response(data, media_type='application/zip', headers={
+                'Content-Disposition': 'attachment; filename="comic-pages.zip"',
                 'X-Comic-Publication-Digest': receipt, 'X-Content-SHA256': hashlib.sha256(data).hexdigest()})
         return invoke(nid, x_session_token, x_branch_id, 'domain.read', output)
 

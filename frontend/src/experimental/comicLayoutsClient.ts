@@ -26,6 +26,11 @@ export type ComicPublicationPage = { id: string; version: number; review_digest:
 export type ComicPublicationPreflight = { book_version: number; reading_direction: ComicReadingDirection; pages: ComicPublicationPage[]; publication_digest: string; page_count: number; losses: string[] };
 export type ComicPdfPageDimensions = { width_pixels: number; height_pixels: number; width_points: number; height_points: number };
 export type ComicPdfPublicationPreflight = ComicPublicationPreflight & { format: 'comic-pdf-raster-v1'; dpi: number; page_dimensions: ComicPdfPageDimensions[] };
+export type ComicPageArchiveQuality = 60 | 80 | 95 | 100;
+export type ComicPageArchiveOptions = { image_format: 'JPEG' | 'WEBP'; loss_mode: 'LOSSY'; quality: ComicPageArchiveQuality } | { image_format: 'WEBP'; loss_mode: 'LOSSLESS'; quality: null };
+export type ComicPageArchiveLimits = { max_total_page_pixels: number; max_pages: number; max_side_pixels: number; max_codec_work_bytes: number; max_output_bytes: number; total_page_pixels: number; reserved_codec_work_bytes: number; reserved_output_bytes: number };
+export type ComicPageArchivePreflight = ComicPublicationPreflight & ComicPageArchiveOptions & { format: 'comic-page-archive-v1'; page_archive_limits: ComicPageArchiveLimits };
+export const comicPageArchiveLimits = { max_total_page_pixels: 1048576, max_pages: 8, max_side_pixels: 2048, max_codec_work_bytes: 536870912, max_output_bytes: 67108864 } as const;
 export type ComicAsset = { id: string; filename: string; version: number; approved: boolean; manual_review_available: boolean };
 export type ComicCatalog = { screenplays: DirectorScreenplay[]; characters: { id: string; name: string }[]; assets: ComicAsset[]; presets: Record<'PAGE' | 'WEBTOON', { width: number; height: number; safe_area: number; segment_height: number }>; renderer: { available: boolean; code?: string }; font: { available: boolean; code?: string } };
 export type ComicPreflight = { issues: { code: string; target: string; severity: string }[]; segments: { index: number; width: number; height: number; y: number }[]; can_render: boolean; review_digest: string; version: number; status: string };
@@ -41,6 +46,25 @@ export function comicLayoutsClient(client: ExperimentalClient) {
     pdfPublicationPreflight: (book: ComicBook, reading_direction: ComicReadingDirection, dpi: number) => {
       if (!validComicPdfDpi(dpi)) return invalidPublication();
       return client.post<ComicPdfPublicationPreflight>(`/comic-layouts/books/${encodeURIComponent(book.id)}/pdf-publication-preflight`, { expected_version: book.version, reading_direction, dpi });
+    },
+    pageArchivePreflight: (book: ComicBook, reading_direction: ComicReadingDirection, options: ComicPageArchiveOptions) => {
+      if (!validComicPageArchiveOptions(options)) return invalidPublication();
+      return client.post<ComicPageArchivePreflight>(`/comic-layouts/books/${encodeURIComponent(book.id)}/page-archive-preflight`, {
+        expected_version: book.version, reading_direction, image_format: options.image_format, loss_mode: options.loss_mode, quality: options.quality,
+      });
+    },
+    downloadPageArchive: async (book: ComicBook, report: ComicPageArchivePreflight) => {
+      if (!client.postBlob || book.version !== report.book_version || report.format !== 'comic-page-archive-v1' || !validComicPageArchiveOptions(report)) return invalidPublication();
+      const { blob, headers } = await client.postBlob(`/comic-layouts/books/${encodeURIComponent(book.id)}/export-page-archive`, {
+        expected_version: report.book_version, reading_direction: report.reading_direction,
+        image_format: report.image_format, loss_mode: report.loss_mode, quality: report.quality,
+        pages: report.pages.map(({ id, version, review_digest }) => ({ id, version, review_digest })), publication_digest: report.publication_digest,
+      }, { maxBytes: comicPageArchiveLimits.max_output_bytes });
+      const sha256 = headers.get('X-Content-SHA256');
+      if (blob.type.split(';')[0] !== 'application/zip' || !blob.size || blob.size > comicPageArchiveLimits.max_output_bytes || headers.get('X-Comic-Publication-Digest') !== report.publication_digest || !sha256 || !/^[a-f0-9]{64}$/.test(sha256)) return invalidPublication();
+      const digest = await globalThis.crypto.subtle.digest('SHA-256', await blob.arrayBuffer());
+      if (Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('') !== sha256) return invalidPublication();
+      return blob;
     },
     downloadCbz: async (book: ComicBook, report: ComicPublicationPreflight) => {
       if (!client.postBlob || book.version !== report.book_version) return invalidPublication();
@@ -80,6 +104,11 @@ export function comicLayoutsClient(client: ExperimentalClient) {
   };
 }
 export function validComicPdfDpi(dpi: number): boolean { return Number.isInteger(dpi) && dpi >= 36 && dpi <= 600; }
+export function validComicPageArchiveOptions(options: { image_format: unknown; loss_mode: unknown; quality: unknown } | null | undefined): options is ComicPageArchiveOptions {
+  return !!options && (options.image_format === 'JPEG' || options.image_format === 'WEBP')
+    && (options.loss_mode === 'LOSSLESS' ? options.image_format === 'WEBP' && options.quality === null
+      : options.loss_mode === 'LOSSY' && typeof options.quality === 'number' && [60, 80, 95, 100].includes(options.quality));
+}
 export function invalidPublication(): never {
   throw new ApiError({ status: 422, code: 'COMIC_PUBLICATION_INVALID_RESPONSE', message: '出版检查或文件校验与当前书不一致。请刷新书和页面，重新检查后再下载。' });
 }

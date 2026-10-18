@@ -1,0 +1,17 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/comic-page-formats/frontend
+
+ ✓ src/experimental/comicLayoutsClient.publication.test.ts (33 tests) 51ms
+ ✓ src/experimental/comicLayoutsClient.pageArchive.test.ts (38 tests) 93ms
+ ✓ src/boundedResponseBlob.test.ts (19 tests) 31ms
+ ✓ src/creative/studioClient.boundedDownload.additive.test.ts (38 tests) 95ms
+ ✓ src/experimental/ComicPublicationPanel.test.tsx (72 tests) 7340ms
+   ✓ mounts below the original tree, makes no implicit posts, and requires an explicit direction and saved-order review 403ms
+ ✓ src/experimental/ComicPublicationPanel.pageArchive.test.tsx (60 tests) 7496ms
+   ✓ reviews ordered 'JPEG'/'LOSSY'/100 and saves one verified ZIP with exact pins 437ms
+
+ Test Files  6 passed (6)
+      Tests  260 passed (260)
+   Start at  07:05:53
+   Duration  8.99s (transform 1.60s, setup 209ms, collect 3.62s, tests 15.11s, environment 1.45s, prepare 406ms)
+

@@ -8,7 +8,7 @@ import io
 import json
 import zipfile
 from typing import Literal
-from pydantic import Field
+from pydantic import Field, model_validator, field_validator
 from .media import StrictModel, digest
 from .common import check_version, StaleSourceError
 from .comic_publication_budget import (publication_budget, consume, MAX_PAGE_PIXELS, MAX_ARCHIVE_BYTES)
@@ -37,6 +37,51 @@ class PDFPublicationIn(PublicationIn):
 
 class PDFPublicationExportIn(PDFPublicationIn, PublicationExportIn):
     pass
+
+
+class PageArchiveIn(PublicationIn):
+    image_format: Literal['JPEG', 'WEBP']
+    loss_mode: Literal['LOSSY', 'LOSSLESS']
+    quality: Literal[60, 80, 95, 100] | None
+
+    @field_validator('quality', mode='before')
+    @classmethod
+    def strict_quality(cls, value):
+        if value is not None and type(value) is not int:
+            raise ValueError('COMIC_PAGE_ARCHIVE_INTEGER_QUALITY_REQUIRED')
+        return value
+
+    @model_validator(mode='after')
+    def codec_contract(self):
+        if self.loss_mode == 'LOSSLESS':
+            if self.image_format != 'WEBP' or self.quality is not None:
+                raise ValueError('COMIC_PAGE_ARCHIVE_LOSSLESS_WEBP_NULL_QUALITY_REQUIRED')
+        elif type(self.quality) is not int:
+            raise ValueError('COMIC_PAGE_ARCHIVE_LOSSY_QUALITY_REQUIRED')
+        return self
+
+
+class PageArchiveExportIn(PageArchiveIn, PublicationExportIn):
+    pass
+
+
+def _archive_options(request):
+    return {'format': 'comic-page-archive-v1', 'image_format': request.image_format,
+            'loss_mode': request.loss_mode, 'quality': request.quality}
+
+
+def _archive_losses(request):
+    return ['FLATTENED_RGB_RASTER_PAGES', 'NO_EDITABLE_LAYERS_OR_TEXT',
+            'DIRECTION_METADATA_DOES_NOT_REORDER_PAGES_OR_PANELS',
+            'NO_COLOR_PROFILE_OR_PRINT_FIDELITY', 'SOURCE_IMAGE_RIGHTS_NOT_VERIFIED',
+            'EXTERNAL_READER_VALIDATION_NOT_RUN',
+            'PIXEL_EXACT_FLATTENED_RGB_ONLY' if request.loss_mode == 'LOSSLESS'
+            else 'LOSSY_PIXELS_INCLUDING_QUALITY_100']
+
+
+def _archive_admission(rows, request):
+    from .comic_page_archive_codec import admit
+    return admit([(r['document']['width'], r['document']['height']) for r in rows], request)
 
 
 PDF_LOSSES = ['FLATTENED_RGB_RASTER_PAGES', 'NO_EDITABLE_LAYERS_OR_TEXT',
@@ -98,6 +143,8 @@ def _locked_snapshot(service, nid, scope, actor, rid, request, guard):
         raise ValueError('COMIC_PUBLICATION_PAGE_PIXEL_LIMIT')
     if isinstance(request, PDFPublicationIn):
         _pdf_admission(rows, request.dpi)
+    if isinstance(request, PageArchiveIn):
+        archive_limits = _archive_admission(rows, request)
     pages = []
     for row in rows:
         guard()
@@ -112,6 +159,8 @@ def _locked_snapshot(service, nid, scope, actor, rid, request, guard):
                'pages': pages, 'reading_direction': request.reading_direction, 'format': 'comic-cbz-v1'}
     if isinstance(request, PDFPublicationIn):
         binding.update(format='comic-pdf-raster-v1', dpi=request.dpi)
+    if isinstance(request, PageArchiveIn):
+        binding.update(_archive_options(request))
     guard()
     # Prevent a structure change during the preflight itself.
     latest = service._book_row(nid, scope, actor, rid)
@@ -134,6 +183,8 @@ def _locked_snapshot(service, nid, scope, actor, rid, request, guard):
                        page_dimensions=[{'width_pixels': r['document']['width'], 'height_pixels': r['document']['height'],
                            'width_points': r['document']['width'] * 72 / request.dpi,
                            'height_points': r['document']['height'] * 72 / request.dpi} for r in rows])
+    if isinstance(request, PageArchiveIn):
+        receipt.update(**_archive_options(request), losses=_archive_losses(request), page_archive_limits=archive_limits)
     return book, rows, receipt
 
 
@@ -267,6 +318,55 @@ def export_pdf(service, nid, scope, actor, rid, value, guard=lambda: None):
         writer.finish()
         # Serialization cannot release bytes before full current-source, privacy,
         # approval, owner incarnation and actor/scope authorization revalidation.
+        final = _snapshot(service, nid, scope, actor, rid, request, guard)[2]
+        if final != receipt:
+            raise StaleSourceError('COMIC_PUBLICATION_CHANGED')
+        guard()
+        return stream.getvalue(), receipt['publication_digest']
+
+
+def page_archive_preflight(service, nid, scope, actor, rid, value, guard=lambda: None):
+    request = PageArchiveIn.model_validate(value)
+    with publication_budget():
+        return _snapshot(service, nid, scope, actor, rid, request, guard)[2]
+
+
+def export_page_archive(service, nid, scope, actor, rid, value, guard=lambda: None):
+    from .comic_page_archive_codec import encode
+    from .comic_layouts import licensed_font
+    request = PageArchiveExportIn.model_validate(value)
+    with publication_budget():
+        book, rows, receipt = _snapshot(service, nid, scope, actor, rid, request, guard)
+        if request.publication_digest != receipt['publication_digest'] or [p.model_dump() for p in request.pages] != receipt['pages']:
+            raise StaleSourceError('COMIC_PUBLICATION_CHANGED')
+        # Admission covers the ENTIRE codec request before the first allocation.
+        # Source loading/rendering retain their existing cumulative budgets.
+        _archive_admission(rows, request)
+        stream = BoundedBuffer()
+        manifest = {**_archive_options(request), 'title': book['document']['title'],
+            'publication_digest': receipt['publication_digest'], 'book_version': book['version'],
+            'reading_direction': request.reading_direction, 'page_order': 'SAVED_CHAPTER_THEN_PAGE_ORDER',
+            'automatic_publication': False, 'losses': receipt['losses'], 'pages': [],
+            'chapters': [{'title': c['title'], 'page_count': len(c['pages'])} for c in book['document']['chapters']]}
+        def put(archive, name, data):
+            info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_STORED
+            archive.writestr(info, data)
+        with zipfile.ZipFile(stream, 'w') as archive:
+            for index, (row, pin) in enumerate(zip(rows, receipt['pages'])):
+                guard()
+                png = _render_page(service, nid, scope, actor, row)
+                data = encode(png, row['document']['width'], row['document']['height'], request)
+                filename = f'{index + 1:04}.' + ('jpg' if request.image_format == 'JPEG' else 'webp')
+                put(archive, filename, data)
+                manifest['pages'].append({'filename': filename, 'sha256': hashlib.sha256(data).hexdigest(),
+                    'version': pin['version'], 'review_digest': pin['review_digest'],
+                    'width': row['document']['width'], 'height': row['document']['height'],
+                    'safe_area_pixels': row['document']['safe_area']})
+                del png, data
+            put(archive, 'manifest.json', json.dumps(manifest, ensure_ascii=False, sort_keys=True).encode())
+            if any(p['bubbles'] for row in rows for p in row['document']['panels']):
+                put(archive, 'OFL.txt', licensed_font()[1])
         final = _snapshot(service, nid, scope, actor, rid, request, guard)[2]
         if final != receipt:
             raise StaleSourceError('COMIC_PUBLICATION_CHANGED')

@@ -1,0 +1,74 @@
+......ssssss................ssssssssssssssss..ss..................ssssss [ 15%]
+ssssssssssss...............ssssssssssssss......ssssss........ssssssss... [ 31%]
+.......ssssssssss..ss..ss..ss..............ssssssssssssss......ssssss... [ 47%]
+.......ssssssssss..ss........ssssssss..........ssssssssss..ss...ss..ss.. [ 63%]
+ss..ss..ss..............ssssssssssssss..ss..........ssssssssss..ss..ss.. [ 79%]
+............ssssssssssssss......ssssss........ssssssss..........ssssssss [ 95%]
+ss..ss..EsEs....ssss                                                     [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_reviewed_raster_visibility_and_opacity_survive_pdf[file] _
+
+request = <SubRequest 'rig' for <Function test_reviewed_raster_visibility_and_opacity_survive_pdf[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-61/test_reviewed_raster_visibilit0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f266936a3c0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/comic-page-formats') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-61/test_reviewed_raster_visibilit0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-61/test_reviewed_raster_visibilit0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-61/test_reviewed_raster_visibilit0').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+__ ERROR at setup of test_cjk_bubbles_flatten_to_original_exact_pixels[file] ___
+
+request = <SubRequest 'rig' for <Function test_cjk_bubbles_flatten_to_original_exact_pixels[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-61/test_cjk_bubbles_flatten_to_or0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f26694dbe00>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/comic-page-formats') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-61/test_cjk_bubbles_flatten_to_or0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-61/test_cjk_bubbles_flatten_to_or0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-61/test_cjk_bubbles_flatten_to_or0').resolve
+
+tests/test_v2_independent_workspace.py:108: AssertionError
+=============================== warnings summary ===============================
+../studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_comic_page_archive.py::test_actual_ordered_codec_bytes_and_no_mutation[file-/api-JPEG-LOSSY-100]
+  /workspace/scratch/20a0022d2b33/comic-page-formats/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR tests/test_comic_publication_pdf.py::test_reviewed_raster_visibility_and_opacity_survive_pdf[file]
+ERROR tests/test_comic_publication_pdf.py::test_cjk_bubbles_flatten_to_original_exact_pixels[file]
+226 passed, 224 skipped, 2 warnings, 2 errors in 27.43s
