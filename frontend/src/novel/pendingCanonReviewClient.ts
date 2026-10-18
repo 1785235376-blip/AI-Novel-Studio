@@ -1,5 +1,5 @@
 import {ApiError,type CollaborationContext} from '../api';
-export type CanonReview = {id:string;version:number;status:string;preview_digest:string;proposals:Record<string,unknown>[];source:{chapter_id:string;version:number;digest:string}|null;source_state:string;source_evidence?:{chapter_id:string;version:number;content:string}|null;lineage:string;history:{version:number;action:string;reason:string;actor_id:string}[];recovery_required:boolean;allowed_actions:string[];stale_source:boolean};
+export type CanonReview = {id:string;version:number;status:string;preview_digest:string;proposals:Record<string,unknown>[];source:{chapter_id:string;version:number;digest:string}|null;source_state:string;source_evidence?:{chapter_id:string;version:number;content:string}|null;lineage:string;extraction?:{method:string;status:string;model_called:boolean;complete?:boolean;limit_reason?:string|null}|null;history:{version:number;action:string;reason:string;actor_id:string}[];recovery_required:boolean;allowed_actions:string[];stale_source:boolean};
 export type CanonDecision = {expected_version:number;preview_digest:string;chapter_id:string|null;action:'approve'|'reject';reason:string;operation_id:string;confirmed:true};
 export function pendingCanonReviewClient(projectId:string,context:CollaborationContext){
   const captured={...context};

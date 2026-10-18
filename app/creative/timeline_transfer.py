@@ -53,6 +53,8 @@ class TimelineTransfer:
                     report.append({"path": "captions", "code": "EXISTING_CAPTIONS_REPLACED", "severity": "LOSS"})
             else:
                 attachment = export_subtitles(timeline, body.format)
+                if "caption_style" in timeline:
+                    report.append({"path": "caption_style", "code": "CAPTION_STYLE_NOT_PRESERVED_IN_PLAIN_SIDECAR", "severity": "LOSS"})
         # Never trust source references from an exchange document as authority.
         # Mapping is explicit and every final asset remains formal and current.
         if body.direction == "IMPORT":

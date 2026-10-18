@@ -1,0 +1,26 @@
+{
+  "sha256": "e9f8ad2277380b7b63fc4662f93fe01f3d753380822c60f8cb8b8b5083c52240",
+  "bytes": 3669,
+  "frames": {
+    "0": {
+      "red_pixels": 0,
+      "black_pixels": 0,
+      "red_bounds": null
+    },
+    "5": {
+      "red_pixels": 126,
+      "black_pixels": 16,
+      "red_bounds": [
+        136,
+        162,
+        183,
+        171
+      ]
+    },
+    "9": {
+      "red_pixels": 0,
+      "black_pixels": 0,
+      "red_bounds": null
+    }
+  }
+}

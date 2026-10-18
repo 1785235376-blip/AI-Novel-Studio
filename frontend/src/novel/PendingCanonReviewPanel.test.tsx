@@ -50,6 +50,20 @@ describe('original Canon review surface',()=>{
     let resolve!:(value:unknown)=>void;mocks.preview.mockReturnValue(new Promise(r=>{resolve=r}));show();fireEvent.click(await screen.findByRole('button',{name:'查看 Canon 候选与历史'}));
     act(()=>useStudio.setState({sessionToken:'new-identity'}));await act(async()=>resolve(row));expect(screen.queryByDisplayValue('Exact synthetic source')).toBeNull();
   });
+  it('explains explicit extraction and requires fresh extraction for stale source',async()=>{
+    mocks.preview.mockResolvedValue({...row,stale_source:true,allowed_actions:['reject'],extraction:{method:'EXPLICIT_SOURCE_MARKER',status:'CANDIDATES_FOUND',model_called:false}});
+    show();await open();confirm();
+    expect(screen.getByText(/仅识别明确的 Canon fact/)).toBeTruthy();
+    expect(screen.getByText(/新候选须从当前正文重新提取/)).toBeTruthy();
+    expect((screen.getByRole('button',{name:'确认批准 Canon'}) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole('button',{name:'确认驳回 Canon'}) as HTMLButtonElement).disabled).toBe(false);
+    fireEvent.click(screen.getByRole('button',{name:'确认批准 Canon'}));expect(mocks.review).not.toHaveBeenCalled();
+  });
+  it('shows extraction budget limits without implying accepted text failed',async()=>{
+    mocks.preview.mockResolvedValue({...row,proposals:[],allowed_actions:['reject'],extraction:{method:'EXPLICIT_SOURCE_MARKER',status:'LIMIT_EXCEEDED',limit_reason:'CANDIDATE_COUNT',complete:false,model_called:false}});
+    show();await open();confirm();expect(screen.getByText(/正文已保存；本次没有可批准的事实候选/)).toBeTruthy();
+    expect((screen.getByRole('button',{name:'确认批准 Canon'}) as HTMLButtonElement).disabled).toBe(true);
+  });
   it('shows missing configuration, empty and disabled states honestly',async()=>{
     mocks.preview.mockResolvedValue({...row,source:null,source_evidence:null,source_state:'NOT_CONFIGURED',allowed_actions:['reject']});const view=show();await open();confirm();expect((screen.getByRole('button',{name:'确认批准 Canon'}) as HTMLButtonElement).disabled).toBe(true);view.unmount();
     mocks.list.mockResolvedValue({items:[]});const empty=show();await screen.findByText('没有 Canon 候选');empty.unmount();mocks.flags.mockResolvedValue({features:{'experimental.finding_review_v1':false}});show();await screen.findByText('版本化 Canon 审阅未启用。');

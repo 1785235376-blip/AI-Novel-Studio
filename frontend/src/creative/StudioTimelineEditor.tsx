@@ -2,6 +2,7 @@ import { applyClipColorOperation } from '../nle/timelineClipColor';
 import {StudioTimelineSourceBoundsRepair} from './StudioTimelineSourceBoundsRepair';
 import {useStudioTimelineSourceBounds} from './useStudioTimelineSourceBounds';
 import { StudioTimelineCloseGaps } from './StudioTimelineCloseGaps';
+import { StudioTimelineCaptionStyle } from './StudioTimelineCaptionStyle';
 import { applyNleCaptionCommand } from './nleCaptionEditing';
 import { nleSourceReplacementIntent } from './nleSourceReplacement';
 import { selectionDuplicateOperations, sameSelectionDuplicateDescriptors } from '../nle/timelineSelectionDuplicate';
@@ -229,6 +230,12 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
     </fieldset>)}
     {videoTimeline && <fieldset disabled={locked}><legend>字幕（可选，作者输入的纯文字）</legend>
       <p>字幕不代表模型转录。每条一至八行，不接受空行、样式标记或文件路径。</p>
+      <StudioTimelineCaptionStyle draft={draft} scope={props.client} disabled={locked} isCurrent={props.isCurrent} getRevision={c.getHandoffRevision}
+        onApply={style => c.change(input => {
+          if (input.timeline.schema_version !== 2) return;
+          if (style === null) delete input.timeline.caption_style;
+          else input.timeline.caption_style = style;
+        })} />
       <Button disabled={videoTimeline.captions.length >= 500} onClick={() => c.change(input => { if (input.timeline.schema_version !== 3) input.timeline.captions.push({ start_ms: 0, end_ms: Math.min(1000, input.timeline.duration_ms), text: '' }); })}>添加字幕</Button>
       {videoTimeline.captions.map((cue, index) => <section key={index} aria-label={`字幕 ${index + 1}`}>
         <NumberField label={`字幕 ${index + 1} 开始（毫秒）`} value={cue.start_ms} max={draft.timeline.duration_ms - 1} onChange={value => c.change(input => { if (input.timeline.schema_version !== 3) input.timeline.captions[index].start_ms = value; })} />

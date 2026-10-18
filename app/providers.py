@@ -258,6 +258,9 @@ class MockProvider(LLMProvider):
     def _text(self,prompt:str)->str:
         if self.failure: raise ProviderError(f"Mock failure: {self.failure}")
         # Explicit synthetic contract only; never a fallback for registered models.
+        from .experimental.planning_model import synthetic_planning_response
+        planned = synthetic_planning_response(prompt)
+        if planned is not None: return planned
         from .experimental.style_analysis_model import synthetic_style_response
         styled = synthetic_style_response(prompt)
         if styled is not None: return styled

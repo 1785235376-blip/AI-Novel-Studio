@@ -1,0 +1,50 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/studioAudioTimeline.additive.test.tsx (34 tests) 823ms
+ ✓ src/experimental/PlanningModelPanel.test.tsx (17 tests) 992ms
+ ✓ src/creative/StudioTimelineCaptionStyle.additive.test.tsx (52 tests) 2025ms
+   ✓ uses mounted editor stage/apply/undo/redo/explicit Save/reopen/reset without automatic calls 733ms
+ ✓ src/creative/StudioTimelineBasicColor.additive.test.tsx (31 tests) 1643ms
+   ✓ routes mounted Inspector through staged draft/undo/explicit Save and original reopen without rendering 789ms
+   ✓ preserves applied color and blocks duplicate saves after CONFLICT 320ms
+ ✓ src/creative/TimelineTransferReview.test.tsx (19 tests) 2604ms
+   ✓ locates the exact original mounted clip without saving, granting consent or discarding local controls 515ms
+   ✓ preserves dirty title and blocks location until the original draft is reconciled 352ms
+ ✓ src/novel/PendingCanonReviewPanel.test.tsx (9 tests) 445ms
+ ✓ src/experimental/PlanningPanel.handoff.test.tsx (7 tests) 604ms
+ ✓ src/experimental/PlanningPanel.recovery.test.tsx (2 tests) 509ms
+   ✓ planning same-node version recovery > retains local edits after external change and only rebases through an explicit action 320ms
+
+ Test Files  8 passed (8)
+      Tests  171 passed (171)
+   Start at  01:41:58
+   Duration  10.20s (transform 3.01s, setup 51ms, collect 5.29s, tests 9.65s, environment 2.69s, prepare 431ms)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2416 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-BkplvLLE.css      4.23 kB │ gzip:   1.09 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-lgva31eI.css                      217.73 kB │ gzip:  27.49 kB
+dist/assets/Health-DDkjKoEU.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-BV9WJ3vp.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/style-FotUmQPk.js                      45.12 kB │ gzip:   8.40 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/LocalTutorIntegration-zk2ZvjcV.js      47.64 kB │ gzip:  15.65 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-DY1T9hLd.js     847.12 kB │ gzip: 254.41 kB
+dist/assets/App-DFJsLFLC.js                     2,629.98 kB │ gzip: 786.68 kB
+✓ built in 7.43s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/novel/PendingCanonReviewPanel.test.tsx (8 tests) 482ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  01:38:01
+   Duration  1.39s (transform 179ms, setup 19ms, collect 289ms, tests 482ms, environment 328ms, prepare 106ms)
+

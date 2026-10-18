@@ -101,7 +101,7 @@ def apply_timeline_edits(timeline, operations):
             raise ValueError("STUDIO_TIMELINE_EDIT_OPERATION_UNSUPPORTED")
         if operation == "canvas.update":
             body = _fields(raw, ("op", "changes"))
-            changes = _fields(body["changes"], (), ("duration_ms", "width", "height", "fps", "schema_version"))
+            changes = _fields(body["changes"], (), ("duration_ms", "width", "height", "fps", "schema_version", "caption_style"))
             if not changes:
                 raise ValueError("STUDIO_TIMELINE_EDIT_EMPTY")
             # Explicit upgrade only; newer editing fields are never injected
@@ -112,7 +112,11 @@ def apply_timeline_edits(timeline, operations):
                     and any(key in changes and changes[key] != result.get(key)
                         for key in ("schema_version", "media_kind", "duration_ms", "width", "height", "fps"))):
                 raise ValueError("STUDIO_TIMELINE_TRACK_LOCKED")
+            if "caption_style" in changes and changes.get("schema_version", result.get("schema_version")) != 2:
+                raise ValueError("STUDIO_TIMELINE_EDIT_SCHEMA_UPGRADE_REQUIRED")
             result.update(deepcopy(changes))
+            if "caption_style" in changes and changes["caption_style"] is None:
+                result.pop("caption_style", None)
         elif operation == "track.insert":
             body = _fields(raw, ("op", "track"))
             _fields(body["track"], ("id", "kind", "order", "clips"), ("muted", "gain_db", "role", "locked"))

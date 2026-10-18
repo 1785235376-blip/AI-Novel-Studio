@@ -1,0 +1,34 @@
+...................F..                                                   [100%]
+=================================== FAILURES ===================================
+_________ test_real_cpu_style_controls_timing_and_frozen_legacy_render _________
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/caption-style-file-debug2-20261018/tmp/test_real_cpu_style_controls_t0')
+
+    @pytest.mark.file_backend_only
+    def test_real_cpu_style_controls_timing_and_frozen_legacy_render(tmp_path):
+        data = cpu_video(tmp_path / 'blue.mp4'); pin = {'id': 'source', 'kind': 'ASSET', 'asset_kind': 'video', 'version': 1, 'digest': hashlib.sha256(data).hexdigest()}
+        def guard(snapshot): return {'snapshot': pin, 'data': data, 'row': {'id': 'source', 'kind': 'video', 'version': 1, 'sha256': pin['digest']}}
+        def render(style, name):
+            value = timeline(pin)
+            if style is not None: value['caption_style'] = style
+            output, _ = render_studio_timeline(value, source_guard=guard, guard=lambda: None, max_bytes=CAP)
+            return decode(output, tmp_path / (name + '.mp4'))
+        proofs = {'bottom': render(STYLE, 'bottom'), 'top': render({**STYLE, 'alignment': 'TOP_CENTER'}, 'top'),
+                  'large': render({**STYLE, 'font_size': 48}, 'large'), 'outlined': render({**STYLE, 'outline_width': 4}, 'outlined'),
+                  'white': render({**STYLE, 'primary_color': '#FFFFFF'}, 'white')}
+        for name in ('bottom', 'top', 'large', 'outlined'):
+            frames = proofs[name]['frames']; assert frames['5']['red_pixels'] > 10
+            assert frames['0']['red_pixels'] == frames['9']['red_pixels'] == 0
+>           assert frames['0']['black_pixels'] == frames['9']['black_pixels'] == 0
+E           assert 25200 == 0
+
+tests/test_v2_timeline_caption_style.py:110: AssertionError
+=============================== warnings summary ===============================
+tests/test_v2_timeline_caption_style.py::test_closed_caption_style_rejects_malformed_saved_values[None]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_timeline_caption_style.py::test_real_cpu_style_controls_timing_and_frozen_legacy_render
+1 failed, 21 passed, 1 deselected, 1 warning in 12.64s

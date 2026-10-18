@@ -2,7 +2,7 @@
 
 Complete mounted source inventory. This catalog is a source map, not a runtime verification verdict.
 
-Starting method/path operations: 1833. Current: 2375. Added: 542. Removed: 0.
+Starting method/path operations: 1833. Current: 2393. Added: 560. Removed: 0.
 
 The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json.gz; API_CATALOG.json binds its digest and all application sources. Original aliases are listed separately.
 
@@ -264,6 +264,9 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/novels/{nid}/experimental/offline-sync/records` | `app/experimental/offline_sync_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/planning/graphs` | `app/experimental/planning_api.py:35` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/planning/graphs/{gid}` | `app/experimental/planning_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/planning/model/catalog` | `app/experimental/planning_model_api.py:29` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/novels/{nid}/experimental/planning/model/requests` | `app/experimental/planning_model_api.py:34` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/novels/{nid}/experimental/planning/model/requests/{rid}` | `app/experimental/planning_model_api.py:39` | FULL_RECOVERY_ADDED_ROUTE |
 | GET | `/api/novels/{nid}/experimental/planning/proposals` | `app/experimental/planning_api.py:85` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/planning/proposals/{pid}` | `app/experimental/planning_api.py:100` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/planning/proposals/{pid}/history` | `app/experimental/planning_api.py:105` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -727,6 +730,9 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/v1/novels/{nid}/experimental/offline-sync/records` | `app/experimental/offline_sync_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/planning/graphs` | `app/experimental/planning_api.py:35` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/planning/graphs/{gid}` | `app/experimental/planning_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/planning/model/catalog` | `app/experimental/planning_model_api.py:29` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/v1/novels/{nid}/experimental/planning/model/requests` | `app/experimental/planning_model_api.py:34` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/v1/novels/{nid}/experimental/planning/model/requests/{rid}` | `app/experimental/planning_model_api.py:39` | FULL_RECOVERY_ADDED_ROUTE |
 | GET | `/api/v1/novels/{nid}/experimental/planning/proposals` | `app/experimental/planning_api.py:85` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/planning/proposals/{pid}` | `app/experimental/planning_api.py:100` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/planning/proposals/{pid}/history` | `app/experimental/planning_api.py:105` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1282,6 +1288,12 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/novels/{nid}/experimental/planning/generate` | `app/experimental/planning_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/planning/graphs` | `app/experimental/planning_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/planning/graphs/{gid}/{action}` | `app/experimental/planning_api.py:60` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/planning/model/requests` | `app/experimental/planning_model_api.py:44` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/planning/model/requests/{rid}/cancel` | `app/experimental/planning_model_api.py:64` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/planning/model/requests/{rid}/candidates/{cid}/save` | `app/experimental/planning_model_api.py:69` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/planning/model/requests/{rid}/dispatch` | `app/experimental/planning_model_api.py:54` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/planning/model/requests/{rid}/preview` | `app/experimental/planning_model_api.py:49` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/planning/model/requests/{rid}/refresh` | `app/experimental/planning_model_api.py:59` | FULL_RECOVERY_ADDED_ROUTE |
 | POST | `/api/novels/{nid}/experimental/planning/nodes` | `app/experimental/planning_api.py:50` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/planning/nodes/{node_id}/{action}` | `app/experimental/planning_api.py:65` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/planning/proposals` | `app/experimental/planning_api.py:90` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1864,6 +1876,12 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/v1/novels/{nid}/experimental/planning/generate` | `app/experimental/planning_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/planning/graphs` | `app/experimental/planning_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/planning/graphs/{gid}/{action}` | `app/experimental/planning_api.py:60` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/planning/model/requests` | `app/experimental/planning_model_api.py:44` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/planning/model/requests/{rid}/cancel` | `app/experimental/planning_model_api.py:64` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/planning/model/requests/{rid}/candidates/{cid}/save` | `app/experimental/planning_model_api.py:69` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/planning/model/requests/{rid}/dispatch` | `app/experimental/planning_model_api.py:54` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/planning/model/requests/{rid}/preview` | `app/experimental/planning_model_api.py:49` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/planning/model/requests/{rid}/refresh` | `app/experimental/planning_model_api.py:59` | FULL_RECOVERY_ADDED_ROUTE |
 | POST | `/api/v1/novels/{nid}/experimental/planning/nodes` | `app/experimental/planning_api.py:50` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/planning/nodes/{node_id}/{action}` | `app/experimental/planning_api.py:65` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/planning/proposals` | `app/experimental/planning_api.py:90` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |

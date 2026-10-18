@@ -1,0 +1,75 @@
+{
+  "source_run": "caption-style-file-debug4-20261018",
+  "files": {
+    "after.png": {
+      "bytes": 1057,
+      "sha256": "a16b2eb5ee1d744d67edf927c5ada8b063b4176b5ba0c69411489a2aa4126c65"
+    },
+    "before.png": {
+      "bytes": 1057,
+      "sha256": "a16b2eb5ee1d744d67edf927c5ada8b063b4176b5ba0c69411489a2aa4126c65"
+    },
+    "bottom-during.png": {
+      "bytes": 3499,
+      "sha256": "df9a2320a694645570bf3bb75846e21d708f600808d5286f2a538b3b8de4b77d"
+    },
+    "bottom.mp4": {
+      "bytes": 5532,
+      "sha256": "e9ab830a2082999cfeed08927d5964de005ef2b198130f51897b0cda0dad5363"
+    },
+    "caption-style-proof.json": {
+      "bytes": 2926,
+      "sha256": "43cb6a129dd5f33c59a0c26d8a8afb507052374a9333558497438ea66834a7a8"
+    },
+    "file-saved-caption-proof.json": {
+      "bytes": 449,
+      "sha256": "4b5ed13bec66ec922bcc377b476422aeef0faba74b7e2f69628e099db933aaaf"
+    },
+    "file-saved-style.mp4": {
+      "bytes": 3669,
+      "sha256": "e9f8ad2277380b7b63fc4662f93fe01f3d753380822c60f8cb8b8b5083c52240"
+    },
+    "large-during.png": {
+      "bytes": 7213,
+      "sha256": "06049fe09339ab880a42505202470900268b34346bbb766e55782a196e2d1da7"
+    },
+    "large.mp4": {
+      "bytes": 7762,
+      "sha256": "4143efb94a60a5ab5a710a0d23f2729d4f55105808c289416ab300edc62e69c0"
+    },
+    "outlined-during.png": {
+      "bytes": 3918,
+      "sha256": "ce5e877ee2213b9c57f842a2875fdd9f2c889a2fe7abf03044603b8987361c77"
+    },
+    "outlined.mp4": {
+      "bytes": 5583,
+      "sha256": "f744d462ef59be80dbdce3a1185dbc852b024bd5b4382e405ec63af6e8112520"
+    },
+    "postgres-saved-caption-proof.json": {
+      "bytes": 449,
+      "sha256": "4b5ed13bec66ec922bcc377b476422aeef0faba74b7e2f69628e099db933aaaf"
+    },
+    "postgres-saved-style.mp4": {
+      "bytes": 3669,
+      "sha256": "e9f8ad2277380b7b63fc4662f93fe01f3d753380822c60f8cb8b8b5083c52240"
+    },
+    "top-during.png": {
+      "bytes": 3943,
+      "sha256": "0bf990a2fef0d29752c2ad1f9b5aeca032831be58e91cb02851688778cd58dfc"
+    },
+    "top.mp4": {
+      "bytes": 5839,
+      "sha256": "82dd8ad62bf7d96c0c3597b1a10b4c96daed3d5dbc5e6f8d2194f33a8334c5a8"
+    },
+    "white-during.png": {
+      "bytes": 3670,
+      "sha256": "c5dae531a496049893c3e98f38e6d08afe7cae305d547433e088591b584ed0b6"
+    },
+    "white.mp4": {
+      "bytes": 5999,
+      "sha256": "8cda364287582a095b65e1f4d68cde14832a5b92c1ad3c6a9856b8449f5fd028"
+    }
+  },
+  "postgres_source_run": "caption-style-pg-final-20261018",
+  "file_source_run": "caption-style-file-final-20261018"
+}

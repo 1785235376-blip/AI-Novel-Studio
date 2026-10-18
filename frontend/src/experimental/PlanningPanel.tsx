@@ -5,8 +5,9 @@ import { type ExperimentalClient, type Row, type Rows, segment } from './api';
 import { Details, Field, Form, ObjectInput, RecordStatus, Refresh, ResourceState, ids, objectValue, useAction, useResource } from './shared';
 
 import type { WorkspaceNavigation } from './uxClient';
+import { PlanningModelPanel } from './PlanningModelPanel';
 
-type PlanningProps = { client: ExperimentalClient; chapter?: Chapter; requestedProposalId?: string; onNavigate?: (target: WorkspaceNavigation) => void };
+type PlanningProps = { client: ExperimentalClient; chapter?: Chapter; requestedProposalId?: string; requestedJobId?: string; onNavigate?: (target: WorkspaceNavigation) => void };
 let planningScopeSequence = 0;
 const emptyFields = { goal: '', conflict: '', turning_point: '', climax: '', ending_intent: '' };
 const fieldLabels: Record<keyof typeof emptyFields, string> = { goal: '目标', conflict: '冲突', turning_point: '转折点', climax: '高潮', ending_intent: '结局意图' };
@@ -14,11 +15,12 @@ export function PlanningPanel(props: PlanningProps) {
   const identity = useMemo(() => ++planningScopeSequence, [props.client]);
   return <PlanningBody key={identity} {...props} />;
 }
-function PlanningBody({ client, chapter, requestedProposalId, onNavigate }: PlanningProps) {
+function PlanningBody({ client, chapter, requestedProposalId, requestedJobId, onNavigate }: PlanningProps) {
   const [dismissedProposal, setDismissedProposal] = useState<string>();
+  const [modelProposalId, setModelProposalId] = useState<string>();
   const [reviewRevision, setReviewRevision] = useState(0);
-  useLayoutEffect(() => { setDismissedProposal(undefined); }, [requestedProposalId]);
-  const targetProposalId = requestedProposalId && requestedProposalId !== dismissedProposal ? requestedProposalId : undefined;
+  useLayoutEffect(() => { setDismissedProposal(undefined); setModelProposalId(undefined); }, [requestedProposalId, requestedJobId]);
+  const targetProposalId = modelProposalId || (requestedProposalId && requestedProposalId !== dismissedProposal ? requestedProposalId : undefined);
   const targetKey = JSON.stringify([targetProposalId, chapter?.id, chapter?.version, reviewRevision]);
   const targetLive = useRef({ key: targetKey, epoch: 0, alive: true });
   if (targetLive.current.key !== targetKey) targetLive.current = { key: targetKey, epoch: targetLive.current.epoch + 1, alive: true };
@@ -68,7 +70,7 @@ function PlanningBody({ client, chapter, requestedProposalId, onNavigate }: Plan
   const busy = action.busy || overview.loading || graph.loading || !!targetProposalId && (exact.loading || !exactRow);
   const requiresRebase = !!node && node.version > editingVersion;
   return <Panel title="分层创作规划 V2" actions={<Refresh reload={reload} busy={busy} />}>
-    <StatusMessage>Project → Volume → Chapter → Scene。生成使用 MOCK_ONLY；批准只更新规划，正文与 Canon 保持人工审核流程。</StatusMessage>
+    <StatusMessage>Project → Volume → Chapter → Scene。保留手动编辑与 MOCK_ONLY 双方案；可选本地模型需要准确预览与单独同意。批准只更新规划，正文与 Canon 保持人工审核流程。</StatusMessage>
     {action.feedback}<ResourceState loading={overview.loading || graph.loading} error={overview.error || graph.error} />
     <div hidden={!!targetProposalId}><Form onSubmit={() => action.run(async () => { const value = await client.post<Row>('/planning/graphs', { title: graphTitle }); setGraphId(value.id); setNodeId(value.root_node_id); setGraphTitle(''); }, '已创建项目规划')}>
       <Field label="规划名称"><input required value={graphTitle} onChange={event => setGraphTitle(event.target.value)} /></Field>
@@ -103,10 +105,11 @@ function PlanningBody({ client, chapter, requestedProposalId, onNavigate }: Plan
       <Button disabled={busy} onClick={() => action.run(() => client.post('/planning/generate', { node_id: node.id, expected_node_version: node.version, adapter_id: 'mock-structured-planner', template_id: template, instruction, candidate_count: 2 }), '已生成 2 个 MOCK_ONLY 待审方案')}>生成 Mock 双方案</Button>
     </section>}
     </div>
+    <PlanningModelPanel client={client} node={node} chapter={chapter} sourceReady={!overview.loading && !overview.error && !graph.loading && !graph.error && graph.data?.id === graphId && graph.data?.status !== 'ARCHIVED'} instruction={instruction} templateId={template} requestedJobId={requestedJobId} onOpenProposal={id => { targetLive.current.epoch++; setModelProposalId(id); overview.reload(); exact.reload(); }} />
     {targetProposalId && <section aria-label="指定原规划方案">
       <StatusMessage>正在读取原规划方案：{targetProposalId}。原节点编辑草稿已保留；这里只审核此方案，不自动写入正文或 Canon。</StatusMessage>
       <ResourceState loading={exact.loading} error={exact.error} />
-      <Button disabled={action.busy} onClick={() => { targetLive.current.epoch++; setDismissedProposal(targetProposalId); }}>返回规划节点与方案列表</Button>
+      <Button disabled={action.busy} onClick={() => { targetLive.current.epoch++; setDismissedProposal(requestedProposalId || targetProposalId); setModelProposalId(undefined); }}>返回规划节点与方案列表</Button>
       <Button disabled={action.busy || exact.loading} onClick={reload}>重新读取指定方案</Button>
     </section>}
     <h3>方案审核与比较</h3>
@@ -114,7 +117,7 @@ function PlanningBody({ client, chapter, requestedProposalId, onNavigate }: Plan
     {!targetProposalId && comparison && <section aria-label="规划方案比较" className="experimental-record"><h3>方案差异</h3>{Object.entries(comparison.differences || {}).map(([key, value]) => <Details key={key} label={fieldLabels[key as keyof typeof fieldLabels] || key} value={value} />)}{!Object.keys(comparison.differences || {}).length && <p>结构字段一致；方案仍需人工选择。</p>}</section>}
     <div className="experimental-list">{proposals.map(row => <article key={row.id} className="experimental-record" aria-label={`方案 ${row.title}`}>
       <label className="experimental-check"><input type="checkbox" disabled={!!targetProposalId} checked={selected.includes(row.id)} onChange={event => setSelected(current => event.target.checked ? [...current, row.id] : current.filter(id => id !== row.id))} />{row.title}</label>
-      <RecordStatus row={row} /><p>{row.fields?.goal}</p><Details value={{ fields: row.fields, links: row.links, sources: row.sources, rationale: row.rationale, created_by: row.created_by, simulation_provenance: row.simulation_provenance }} />
+      <RecordStatus row={row} /><p>{row.fields?.goal}</p><Details value={{ fields: row.fields, links: row.links, sources: row.sources, rationale: row.rationale, created_by: row.created_by, simulation_provenance: row.simulation_provenance, model_provenance: row.model_provenance }} />
       {row.simulation_provenance && <section aria-label="原推演来源">
         <p>方案：{row.id} · 原规划图：{row.graph_id || '未提供'} · 原节点：{row.node_id || '未提供'} · 目标基线版本：{row.target_version ?? '未提供'}</p>
         <p>原推演：{row.simulation_provenance.run_id} · 路线：{row.simulation_provenance.route_id}</p>

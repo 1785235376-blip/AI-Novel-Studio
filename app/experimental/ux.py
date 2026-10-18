@@ -182,6 +182,7 @@ def safe_code(value):
 
 
 FEATURE_OWNED_GENERATION = {
+    "layered_planning_model": ("advanced_planning_v2", "分层规划模型候选"),
     "declarative_agent": ("declarative_agents_v2", "声明式工作流候选"),
     "story_simulator_model": ("story_simulator_v2", "剧情模拟候选"),
     "multilingual_translation": ("multilingual_editions_v2", "语言版本译文候选"),
@@ -190,6 +191,7 @@ FEATURE_OWNED_GENERATION = {
     "revision_comparison_model": ("revision_intelligence_v2", "版本语义比较"),
 }
 FEATURE_JOB_OWNERS = {
+    'layered_planning_model': 'planning_model_job',
     'declarative_agent': 'declarative_model_job', 'story_simulator_model': 'simulator_model_job',
     'multilingual_translation': 'translation_model_job', 'narrative_judge_model': 'judge_model_job',
     'style_analysis_model': 'style_model_job', 'revision_comparison_model': 'revision_model_job',

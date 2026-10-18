@@ -11,8 +11,9 @@ export type StudioTimelineClip = { id: string; source_snapshot: StudioTimelineSo
 export type StudioTimelineTrack = { id: string; kind: 'VIDEO' | 'AUDIO'; order: number; muted: boolean; gain_db: number;
   role?: 'PRIMARY' | 'OVERLAY' | 'DIALOGUE' | 'MUSIC' | 'EFFECTS'; locked?: boolean; clips: StudioTimelineClip[] };
 export type StudioTimelineCaption = { start_ms: number; end_ms: number; text: string };
-export type StudioVideoTimeline = { schema_version?: 2; media_kind?: never; duration_ms: number; width: number; height: number; fps: number; tracks: StudioTimelineTrack[]; captions: StudioTimelineCaption[] };
-export type StudioAudioTimeline = { schema_version: 3; media_kind: 'AUDIO'; duration_ms: number; tracks: StudioTimelineTrack[]; width?: never; height?: never; fps?: never; captions?: never };
+export type StudioTimelineCaptionStyle = { font_size: number; primary_color: string; alignment: 'TOP_CENTER' | 'BOTTOM_CENTER'; outline_width: number };
+export type StudioVideoTimeline = { schema_version?: 2; media_kind?: never; duration_ms: number; width: number; height: number; fps: number; tracks: StudioTimelineTrack[]; captions: StudioTimelineCaption[]; caption_style?: StudioTimelineCaptionStyle };
+export type StudioAudioTimeline = { schema_version: 3; media_kind: 'AUDIO'; duration_ms: number; tracks: StudioTimelineTrack[]; width?: never; height?: never; fps?: never; captions?: never; caption_style?: never };
 export type StudioTimeline = StudioVideoTimeline | StudioAudioTimeline;
 export const isAudioTimeline = (timeline: StudioTimeline): timeline is StudioAudioTimeline => timeline.schema_version === 3;
 export type StudioTimelineDraft = { title: string; timeline: StudioTimeline };
@@ -59,10 +60,19 @@ function compareText(left: string, right: string): number {
   return a.length - b.length;
 }
 
+/** Closed global subtitle presentation; no font files, names or ASS overrides. */
+export function checkedTimelineCaptionStyle(value: unknown): StudioTimelineCaptionStyle {
+  const row = object(value, ['font_size', 'primary_color', 'alignment', 'outline_width']);
+  if (typeof row.primary_color !== 'string' || row.primary_color.length !== 7 || !/^#[0-9a-fA-F]{6}$/.test(row.primary_color)) throw new Error('字幕颜色需要是 #RRGGBB 格式的六位十六进制颜色。');
+  if (row.alignment !== 'TOP_CENTER' && row.alignment !== 'BOTTOM_CENTER') throw new Error('字幕位置只能是顶部居中或底部居中。');
+  return { font_size: integer(row.font_size, 8, 72), primary_color: row.primary_color.toUpperCase(),
+    alignment: row.alignment, outline_width: integer(row.outline_width, 0, 4) };
+}
+
 /** Pure closed DTO validation for the form; the original server remains authoritative. */
 export function checkedTimeline(value: unknown): StudioTimeline {
   const raw = object(value), audioOnly = raw.schema_version === 3;
-  const row = object(value, audioOnly ? ['schema_version', 'media_kind', 'duration_ms', 'tracks'] : ['schema_version', 'duration_ms', 'width', 'height', 'fps', 'tracks', 'captions']);
+  const row = object(value, audioOnly ? ['schema_version', 'media_kind', 'duration_ms', 'tracks'] : ['schema_version', 'duration_ms', 'width', 'height', 'fps', 'tracks', 'captions', ...(raw.schema_version === 2 ? ['caption_style'] : [])]);
   const extended = row.schema_version === 2 || audioOnly;
   if ('schema_version' in row && !extended || audioOnly && row.media_kind !== 'AUDIO') throw new Error('时间线版本或媒体类型无效；音频时间线必须明确使用版本 3 与 AUDIO。');
   const duration = integer(row.duration_ms, 1, TIMELINE_LIMITS.duration);
@@ -167,7 +177,8 @@ export function checkedTimeline(value: unknown): StudioTimeline {
     if (characters > TIMELINE_LIMITS.captionCharacters) throw new Error('字幕总文字超过三万二千字。');
     return { start_ms: start, end_ms: end, text };
   }).sort((left, right) => left.start_ms - right.start_ms || left.end_ms - right.end_ms || compareText(left.text, right.text));
-  return { ...(extended ? { schema_version: 2 as const } : {}), duration_ms: duration, width: width!, height: height!, fps: fps!, tracks, captions };
+  return { ...(extended ? { schema_version: 2 as const } : {}), duration_ms: duration, width: width!, height: height!, fps: fps!, tracks, captions,
+    ...('caption_style' in row ? { caption_style: checkedTimelineCaptionStyle(row.caption_style) } : {}) };
 }
 
 export function checkedTimelineDraft(value: StudioTimelineDraft): StudioTimelineDraft {

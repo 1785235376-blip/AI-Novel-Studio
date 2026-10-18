@@ -43,9 +43,11 @@ function CanonBody({projectId,chapterId,context,namespace}:{projectId:string;cha
       {!rows.error&&!withheld&&selected&&<section aria-label="Canon 人工确认"><h4>候选 v{selected.version} · {selected.status}</h4>
         <ul>{selected.proposals.map((proposal,index)=><li key={index}>{JSON.stringify(proposal)}</li>)}</ul>
         <p>来源状态：{selected.source_state} · {selected.lineage}</p>
+        {selected.extraction&&<p>提取方式：{selected.extraction.method} · {selected.extraction.status}。仅识别明确的 Canon fact: / 设定事实：标记，未进行语义事实提取。</p>}
+        {selected.extraction?.status==='LIMIT_EXCEEDED'&&<StatusMessage tone="warning">提取未完成：{selected.extraction.limit_reason}。正文已保存；本次没有可批准的事实候选。</StatusMessage>}
         {selected.source&&<p>已核对来源 {selected.source.chapter_id} · v{selected.source.version}</p>}
         {selected.source_evidence&&<textarea readOnly aria-label="Canon 来源正文快照" rows={6} value={selected.source_evidence.content}/>}
-        {selected.stale_source&&<StatusMessage tone="warning">审阅后的来源已改变或不可用。保留历史凭据，不会重复批准。</StatusMessage>}
+        {selected.stale_source&&<StatusMessage tone="warning">来源已改变或不可用。新候选须从当前正文重新提取；历史审阅凭据保留，不会重复批准。</StatusMessage>}
         {selected.status==='PENDING'&&!selected.recovery_required&&<><label>明确来源章节 ID<input aria-label="Canon 来源章节 ID" value={sourceId} disabled={action.busy} onChange={e=>{setSourceId(e.target.value);setPreviewDirty(true);setConfirmed(false);}}/></label><Button disabled={blocked} onClick={()=>void preview(selected,true)}>重新预览 Canon 来源</Button>
           <label>审阅理由<textarea aria-label="Canon 审阅理由" value={reason} maxLength={2000} disabled={action.busy} onChange={e=>{setReason(e.target.value);setConfirmed(false);setOperation(crypto.randomUUID());}}/></label>
           <label><input type="checkbox" checked={confirmed} disabled={action.busy} onChange={e=>setConfirmed(e.target.checked)}/>已核对全部候选事实与来源</label>

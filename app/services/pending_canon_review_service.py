@@ -58,6 +58,31 @@ class PendingCanonReviewService:
             if chapter_id and row.get('status', 'PENDING') == 'PENDING' and not row.get('_review_commit'): raise
             source, evidence = None, None; unavailable = True
         source_state = 'EXPLICIT_CURRENT_SOURCE' if source else 'SOURCE_UNAVAILABLE' if unavailable else 'NOT_CONFIGURED'
+        bound = row.get('producer_contract') == 'ACCEPTED_CANON_SOURCE_V1'
+        generated = ({'chapter_id': row.get('chapter_id'), 'version': row.get('source_version'),
+                      'digest': row.get('source_digest')} if bound else None)
+        generated_stale = bool(bound and (generated != source or type(row.get('source_version')) is not int
+                                         or not row.get('source_digest')))
+        evidence_valid = True
+        if bound and not generated_stale:
+            text = evidence['content']
+            for proposal in proposals:
+                anchors = proposal.get('source_evidence')
+                if not isinstance(anchors, list) or not anchors:
+                    evidence_valid = False; break
+                for anchor in anchors:
+                    if not isinstance(anchor, dict):
+                        evidence_valid = False; break
+                    start, end = anchor.get('start'), anchor.get('end')
+                    if (type(start) is not int or type(end) is not int or not 0 <= start < end <= len(text)
+                        or anchor.get('chapter_id') != source['chapter_id']
+                        or anchor.get('chapter_version') != source['version']
+                        or anchor.get('content_sha256') != source['digest']
+                        or anchor.get('quote') != text[start:end]
+                        or (row.get('extraction', {}).get('method') == 'EXPLICIT_SOURCE_MARKER'
+                            and proposal.get('fact') != anchor.get('quote'))):
+                        evidence_valid = False; break
+        can_approve = bool(source and (not bound or (not generated_stale and evidence_valid and proposals)))
         # Historical generated candidates did not record a source version. Do
         # not fabricate that lineage: the author reviews the current source.
         basis = {'pending_digest': pending_digest(row), 'source': source,
@@ -67,11 +92,13 @@ class PendingCanonReviewService:
                 'preview_digest': digest(basis), 'source': source, 'source_state': source_state,
                 'source_evidence': evidence,
                 'lineage': 'LEGACY_SOURCE_VERSION_NOT_RECORDED' if not row.get('source_version') else 'SOURCE_VERSION_RECORDED',
+                'generated_source': generated, 'generated_source_stale': generated_stale,
+                'evidence_valid': evidence_valid, 'extraction': deepcopy(row.get('extraction')),
                 'review_source': deepcopy(row.get('review_source')),
-                'stale_source': bool(row.get('review_source') and row['review_source'] != source),
+                'stale_source': generated_stale or bool(row.get('review_source') and row['review_source'] != source),
                 'history': deepcopy(row.get('review_history', [])), 'recovery_required': bool(row.get('_review_commit')),
                 'allowed_actions': (['recover', 'cancel_recovery'] if row.get('_review_commit') else
-                                    ['approve', 'reject'] if row['status'] == 'PENDING' and source else
+                                    ['approve', 'reject'] if row['status'] == 'PENDING' and can_approve else
                                     ['reject'] if row['status'] == 'PENDING' else []),
                 'owner': OWNER, 'model_called': False}
 
@@ -99,7 +126,11 @@ class PendingCanonReviewService:
             if row.get('status', 'PENDING') != 'PENDING': raise FindingReviewConflict('CANON_ALREADY_REVIEWED')
             preview = self._preview(nid, row, body.chapter_id)
             if preview['preview_digest'] != body.preview_digest: raise FindingReviewConflict('CANON_PREVIEW_STALE')
-            if body.action == 'approve' and not preview['source']: raise ValueError('CANON_SOURCE_REQUIRED')
+            if body.action == 'approve':
+                if preview['generated_source_stale']: raise FindingReviewConflict('CANON_GENERATED_SOURCE_STALE')
+                if not preview['evidence_valid']: raise ValueError('CANON_SOURCE_EVIDENCE_INVALID')
+                if preview['generated_source'] and not preview['proposals']: raise ValueError('CANON_NO_SUPPORTED_CANDIDATES')
+                if not preview['source']: raise ValueError('CANON_SOURCE_REQUIRED')
             if not body.reason.strip(): raise ValueError('CANON_REASON_REQUIRED')
             if len(row.get('review_history', [])) >= 100: raise ValueError('CANON_HISTORY_LIMIT')
             result = deepcopy(row); version = row.get('review_version', 1)

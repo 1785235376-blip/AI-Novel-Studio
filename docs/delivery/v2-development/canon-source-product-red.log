@@ -1,0 +1,172 @@
+..EEEEEEEEEEEF                                                           [100%]
+==================================== ERRORS ====================================
+___ ERROR at setup of test_generated_source_review_and_legacy_bypass_denied ____
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_canon_generation_source.py, line 45
+  def test_generated_source_review_and_legacy_bypass_denied(canon_env):
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py, line 14
+  @pytest.fixture
+  def canon_env(mounted, monkeypatch):
+E       fixture 'mounted' not found
+>       available fixtures: canon_env, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py:14
+_______ ERROR at setup of test_generated_source_cannot_rebase_after_edit _______
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_canon_generation_source.py, line 56
+  def test_generated_source_cannot_rebase_after_edit(canon_env):
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py, line 14
+  @pytest.fixture
+  def canon_env(mounted, monkeypatch):
+E       fixture 'mounted' not found
+>       available fixtures: canon_env, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py:14
+____ ERROR at setup of test_invalid_bound_evidence_denies_approval[digest] _____
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_canon_generation_source.py, line 70
+  @pytest.mark.parametrize('mutation', ['digest', 'version', 'fact', 'quote', 'offset'])
+  def test_invalid_bound_evidence_denies_approval(canon_env, monkeypatch, mutation):
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py, line 14
+  @pytest.fixture
+  def canon_env(mounted, monkeypatch):
+E       fixture 'mounted' not found
+>       available fixtures: canon_env, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py:14
+____ ERROR at setup of test_invalid_bound_evidence_denies_approval[version] ____
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_canon_generation_source.py, line 70
+  @pytest.mark.parametrize('mutation', ['digest', 'version', 'fact', 'quote', 'offset'])
+  def test_invalid_bound_evidence_denies_approval(canon_env, monkeypatch, mutation):
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py, line 14
+  @pytest.fixture
+  def canon_env(mounted, monkeypatch):
+E       fixture 'mounted' not found
+>       available fixtures: canon_env, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py:14
+_____ ERROR at setup of test_invalid_bound_evidence_denies_approval[fact] ______
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_canon_generation_source.py, line 70
+  @pytest.mark.parametrize('mutation', ['digest', 'version', 'fact', 'quote', 'offset'])
+  def test_invalid_bound_evidence_denies_approval(canon_env, monkeypatch, mutation):
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py, line 14
+  @pytest.fixture
+  def canon_env(mounted, monkeypatch):
+E       fixture 'mounted' not found
+>       available fixtures: canon_env, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py:14
+_____ ERROR at setup of test_invalid_bound_evidence_denies_approval[quote] _____
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_canon_generation_source.py, line 70
+  @pytest.mark.parametrize('mutation', ['digest', 'version', 'fact', 'quote', 'offset'])
+  def test_invalid_bound_evidence_denies_approval(canon_env, monkeypatch, mutation):
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py, line 14
+  @pytest.fixture
+  def canon_env(mounted, monkeypatch):
+E       fixture 'mounted' not found
+>       available fixtures: canon_env, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py:14
+____ ERROR at setup of test_invalid_bound_evidence_denies_approval[offset] _____
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_canon_generation_source.py, line 70
+  @pytest.mark.parametrize('mutation', ['digest', 'version', 'fact', 'quote', 'offset'])
+  def test_invalid_bound_evidence_denies_approval(canon_env, monkeypatch, mutation):
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py, line 14
+  @pytest.fixture
+  def canon_env(mounted, monkeypatch):
+E       fixture 'mounted' not found
+>       available fixtures: canon_env, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py:14
+________ ERROR at setup of test_empty_bound_candidate_is_not_approvable ________
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_canon_generation_source.py, line 83
+  def test_empty_bound_candidate_is_not_approvable(canon_env):
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py, line 14
+  @pytest.fixture
+  def canon_env(mounted, monkeypatch):
+E       fixture 'mounted' not found
+>       available fixtures: canon_env, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py:14
+_ ERROR at setup of test_accept_producer_binds_override_to_exact_saved_revision[continue] _
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_canon_generation_source.py, line 90
+  @pytest.mark.parametrize('operation', ['continue', 'rewrite', 'expand'])
+  def test_accept_producer_binds_override_to_exact_saved_revision(canon_env, operation):
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py, line 14
+  @pytest.fixture
+  def canon_env(mounted, monkeypatch):
+E       fixture 'mounted' not found
+>       available fixtures: canon_env, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py:14
+_ ERROR at setup of test_accept_producer_binds_override_to_exact_saved_revision[rewrite] _
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_canon_generation_source.py, line 90
+  @pytest.mark.parametrize('operation', ['continue', 'rewrite', 'expand'])
+  def test_accept_producer_binds_override_to_exact_saved_revision(canon_env, operation):
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py, line 14
+  @pytest.fixture
+  def canon_env(mounted, monkeypatch):
+E       fixture 'mounted' not found
+>       available fixtures: canon_env, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py:14
+_ ERROR at setup of test_accept_producer_binds_override_to_exact_saved_revision[expand] _
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_canon_generation_source.py, line 90
+  @pytest.mark.parametrize('operation', ['continue', 'rewrite', 'expand'])
+  def test_accept_producer_binds_override_to_exact_saved_revision(canon_env, operation):
+file /workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py, line 14
+  @pytest.fixture
+  def canon_env(mounted, monkeypatch):
+E       fixture 'mounted' not found
+>       available fixtures: canon_env, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_surface_pending_canon_review.py:14
+=================================== FAILURES ===================================
+___ test_creation_projection_resolves_initial_revision_after_concurrent_edit ___
+
+    def test_creation_projection_resolves_initial_revision_after_concurrent_edit():
+        from app.jobs import JobManager
+        from app.document import markdown_to_document, document_to_markdown
+        from types import SimpleNamespace
+        raw = chapter('# Title\n\nCanon fact: Initial.')
+        raw.pop('version')
+        initial_doc = markdown_to_document(raw['content'])
+        newer = {**raw, 'version': 2, 'content': 'Concurrent edit', 'document': markdown_to_document('Concurrent edit')}
+        chapters = SimpleNamespace(get=lambda _: newer, history=lambda _: [{'version': 1, 'document': initial_doc}])
+>       accepted = JobManager._accepted_canon_source(chapters, raw)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: type object 'JobManager' has no attribute '_accepted_canon_source'
+
+tests/test_canon_generation_source.py:119: AttributeError
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_canon_generation_source.py::test_exact_markers_bound_unicode_no_fabricated_fallback
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_canon_generation_source.py::test_creation_projection_resolves_initial_revision_after_concurrent_edit
+ERROR tests/test_canon_generation_source.py::test_generated_source_review_and_legacy_bypass_denied
+ERROR tests/test_canon_generation_source.py::test_generated_source_cannot_rebase_after_edit
+ERROR tests/test_canon_generation_source.py::test_invalid_bound_evidence_denies_approval[digest]
+ERROR tests/test_canon_generation_source.py::test_invalid_bound_evidence_denies_approval[version]
+ERROR tests/test_canon_generation_source.py::test_invalid_bound_evidence_denies_approval[fact]
+ERROR tests/test_canon_generation_source.py::test_invalid_bound_evidence_denies_approval[quote]
+ERROR tests/test_canon_generation_source.py::test_invalid_bound_evidence_denies_approval[offset]
+ERROR tests/test_canon_generation_source.py::test_empty_bound_candidate_is_not_approvable
+ERROR tests/test_canon_generation_source.py::test_accept_producer_binds_override_to_exact_saved_revision[continue]
+ERROR tests/test_canon_generation_source.py::test_accept_producer_binds_override_to_exact_saved_revision[rewrite]
+ERROR tests/test_canon_generation_source.py::test_accept_producer_binds_override_to_exact_saved_revision[expand]
+1 failed, 2 passed, 2 warnings, 11 errors in 4.57s

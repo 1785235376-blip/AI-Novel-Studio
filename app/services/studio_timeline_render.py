@@ -460,7 +460,11 @@ def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_p
             captions = directory / "captions.srt"
             captions.write_text("\n\n".join(f"{number}\n{_cue_time(cue['start_ms'])} --> {_cue_time(cue['end_ms'])}\n{cue['text']}"
                                               for number, cue in enumerate(timeline["captions"], 1)) + "\n", encoding="utf-8")
-            filters.append(f"[{video}]subtitles=filename=captions.srt:charenc=UTF-8[vcaption]"); video = "vcaption"
+            style = ""
+            if "caption_style" in timeline:
+                from .studio_timeline_caption_style import compile_caption_style
+                style = ":force_style='" + compile_caption_style(timeline["caption_style"]) + "'"
+            filters.append(f"[{video}]subtitles=filename=captions.srt:charenc=UTF-8{style}[vcaption]"); video = "vcaption"
         # Preserve the historical video filter byte-for-byte. Audio-only WAV
         # compensates limiter delay and disables auto boost so authored gain
         # and placement are retained for samples below the safety ceiling.

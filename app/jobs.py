@@ -110,6 +110,7 @@ class Job:
 # These stamps are set by trusted server coordinators, never from GenerateIn or
 # an unvalidated payload. Intrinsic receipt fields retain older-job fencing.
 GENERATION_ORIGINS = {
+    "layered_planning_model": frozenset({"advanced_planning_v2", "author_context_inspector_v2", "model_broker_v2"}),
     "creative_director_source_model": frozenset({"narrative_production_v2", "author_context_inspector_v2", "model_broker_v2"}),
     "creative_adaptation_model": frozenset({"narrative_production_v2", "author_context_inspector_v2", "model_broker_v2"}),
     "creative_graph_model": frozenset({"ai_execution_v2", "narrative_production_v2", "author_context_inspector_v2", "model_broker_v2"}),
@@ -225,6 +226,9 @@ def require_whole_generation_acceptance(job):
     if "narrative_production_v2" in required:
         from fastapi import HTTPException
         raise HTTPException(409, {"code": "CREATIVE_DRAFT_ONLY"})
+    if origin == "layered_planning_model":
+        from fastapi import HTTPException
+        raise HTTPException(409, {"code": "LAYERED_PLANNING_REVIEW_ONLY"})
     if origin in {"style_analysis_model", "revision_comparison_model"}:
         from fastapi import HTTPException
         raise HTTPException(409, {"code": "STYLE_OPINION_REVIEW_ONLY" if origin == "style_analysis_model" else "REVISION_COMPARISON_REVIEW_ONLY"})
@@ -1228,6 +1232,36 @@ class JobManager:
                         pass  # The durable ACCEPTING claim still prevents replay.
                     raise
 
+    @staticmethod
+    def _accepted_canon_source(chapters, saved):
+        """Bind to the write result, never silently adopt a later current edit.
+
+        File create returns raw initial Markdown without a version. Resolve its
+        immutable v1 document (including via history after a concurrent edit)
+        and verify it against that exact returned projection.
+        """
+        from copy import deepcopy
+        from .document import markdown_to_document, document_to_markdown
+        if saved.get("version") is not None:
+            result = deepcopy(saved)
+            if result.get("document") is not None:
+                canonical = document_to_markdown(result["document"])
+                if canonical != result.get("content"):
+                    raise ValueError("CANON_ACCEPTED_REVISION_MISMATCH")
+            return result
+        expected = document_to_markdown(markdown_to_document(saved["content"]))
+        current = chapters.get(saved["id"])
+        if current.get("id") != saved["id"] or current.get("novel_id") != saved.get("novel_id"):
+            raise ValueError("CANON_ACCEPTED_REVISION_MISMATCH")
+        revision = current if current.get("version") == 1 else next(
+            (row for row in chapters.history(saved["id"]) if row.get("version") == 1), None)
+        if revision is None or revision.get("document") is None:
+            raise ValueError("CANON_ACCEPTED_REVISION_UNAVAILABLE")
+        canonical = document_to_markdown(revision["document"])
+        if canonical != expected:
+            raise ValueError("CANON_ACCEPTED_REVISION_MISMATCH")
+        return {**deepcopy(saved), "version": 1, "document": deepcopy(revision["document"]), "content": canonical}
+
     def _accept_claimed(self,job,chapter,target_version,accepted_output=None,actor=None,scope=None):
         require_generation_content(job)
         require_whole_generation_acceptance(job)
@@ -1262,14 +1296,15 @@ class JobManager:
                         {"title": title, "content": f"{original}\n\n{output}", "version": target_version, "source": "AI_ACCEPT"},
                     )
             self.chapters.save_summary(job.novel_id, (saved["id"] if ":~" in saved["id"] else saved.get("number", chapter["number"] + 1)), output[:240])
-            pending_canon={"id":str(uuid.uuid5(uuid.NAMESPACE_URL, f"novel-generation-accept:{jid}")),"novel_id":job.novel_id,"chapter":saved.get("number", chapter["number"] + 1),**({"chapter_id":saved["id"]} if ":~" in saved["id"] else {}),"status":"PENDING","proposals":[{"fact":"AI draft introduced a possible lasting story fact","source_job":jid}],"source":"archivist"}
+            from .canon_extraction import build_pending_canon
+            accepted_source = self._accepted_canon_source(self.chapters, saved)
+            pending_canon = build_pending_canon(jid, accepted_source)
             self.canon.save_pending(pending_canon)
             job.status="ACCEPTED";self._emit(job)
             try:
                 # The original File create contract returns a list projection;
                 # resolve its durable identity to read the actual version.
-                accepted_version=saved.get("version")
-                if accepted_version is None:accepted_version=self.chapters.get(saved["id"])["version"]
+                accepted_version=accepted_source["version"]
                 self.memory_extractor.enqueue(job.novel_id,saved["id"],accepted_version,job.profile)
             except Exception:pass  # Independent extraction cannot undo author acceptance.
             return {"chapter": saved, "pending_canon": pending_canon}
@@ -1280,7 +1315,10 @@ class JobManager:
             stored_actor=ActorContext(job.actor_id,job.workspace_id or "",session,job.correlation_id);raw=job.scope;stored_scope=AuthorizationScope(ScopeKind(raw["kind"]),raw["workspace_id"],raw.get("project_id"),raw.get("storyline_id"),raw.get("branch_id"))
             saved=self.collaboration_updates.update_chapter(actor=stored_actor,scope=stored_scope,chapter_id=job.chapter_id,document=__import__("app.document",fromlist=["markdown_to_document"]).markdown_to_document(content),expected_version=target_version,reason="AI_ACCEPT")
         else:saved=self.chapters.save(job.chapter_id,{"content":content,"version":target_version,"source":"AI_ACCEPT"})
-        self.chapters.save_summary(job.novel_id,saved["id"] if ":~" in saved["id"] else chapter["number"],content[:240]);pending={"id":str(uuid.uuid5(uuid.NAMESPACE_URL, f"novel-generation-accept:{jid}")),"novel_id":job.novel_id,"chapter":chapter["number"],**({"chapter_id":saved["id"]} if ":~" in saved["id"] else {}),"status":"PENDING","proposals":[{"fact":"AI draft introduced a possible lasting story fact","source_job":jid}],"source":"archivist"};self.canon.save_pending(pending);job.status="ACCEPTED";self._emit(job)
+        self.chapters.save_summary(job.novel_id,saved["id"] if ":~" in saved["id"] else chapter["number"],content[:240])
+        from .canon_extraction import build_pending_canon
+        pending = build_pending_canon(jid, self._accepted_canon_source(self.chapters, saved))
+        self.canon.save_pending(pending);job.status="ACCEPTED";self._emit(job)
         try:self.memory_extractor.enqueue(job.novel_id,job.chapter_id,saved["version"],job.profile)
         except Exception:pass
         return {"chapter":self.chapters_for_job(job).get(job.chapter_id),"pending_canon":pending}

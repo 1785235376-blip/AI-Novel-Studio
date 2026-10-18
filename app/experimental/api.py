@@ -286,6 +286,11 @@ router.include_router(create_model_broker_router(model_broker_service, authorize
 router.include_router(create_model_benchmark_router(model_benchmark_service, authorize, require_flag,
     require_inspection_host_session))
 
+from .planning_model_api import create_planning_model_router
+router.include_router(create_planning_model_router(planning_service, authorize, require_flag,
+    preparer=author_preparer, manager=legacy_api.jobs, broker=model_broker_service,
+    ai_planning=legacy_api.ai_planning_service, require_host_session=require_inspection_host_session))
+
 
 from .flags import enabled_flags
 from .production_lineage import ProductionLineageService

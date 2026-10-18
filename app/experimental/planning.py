@@ -193,6 +193,12 @@ class PlanningService(DomainService):
     NODES = "planning_nodes"
     PROPOSALS = "planning_proposals"
     TEMPLATES = "planning_templates"
+    model_coordinator = None
+
+    def record_model_result(self, ctx, previous, execution, candidates, guard):
+        if self.model_coordinator is None:
+            raise ValueError("PLANNING_MODEL_OWNER_UNAVAILABLE")
+        return self.model_coordinator.record_result(ctx, previous, execution, candidates, guard)
 
     def _payload(self, value, model):
         return model.model_validate(value.model_dump() if isinstance(value, BaseModel) else value).model_dump()
@@ -214,14 +220,17 @@ class PlanningService(DomainService):
         return list(reversed(rows))
 
     def _assert_simulation(self, nid, scope, row, state=None):
+        if row.get("model_request"):
+            raise ValueError("PLANNING_MODEL_REQUEST_IS_NOT_A_REVIEW_PROPOSAL")
         if row.get("simulation_provenance"):
             validator = getattr(self, "simulation_validator", None)
             if not callable(validator):
                 raise StaleSourceError("simulation validator unavailable; reopen with current simulator configuration")
             validator(nid, scope, row, state)
 
-    def _assert_fresh(self, nid, scope, row, state=None, allow_applied=False):
-        self._assert_simulation(nid, scope, row, state)
+    def _assert_fresh(self, nid, scope, row, state=None, allow_applied=False, model_request=False):
+        if not model_request:
+            self._assert_simulation(nid, scope, row, state)
         state = state if state is not None else self.store.read(nid, scope)
         self.assert_sources(nid, row.get("sources", {}), scope)
         try:

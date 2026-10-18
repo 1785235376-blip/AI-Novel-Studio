@@ -1,0 +1,187 @@
+..................FFFFFFF                                                [100%]
+=================================== FAILURES ===================================
+_ test_accept_producer_binds_override_to_exact_saved_revision[file-/api-continue] _
+
+canon_env = namespace(client=<starlette.testclient.TestClient object at 0x7f2472443740>, prefix='/api', base='/api/novels/r3-mount...'privacy_level': 'LOCAL_ONLY'}]}, canon_base='/api/projects/r3-mounted-464578c8de3945f8af959a6e26eb721c/pending-canon')
+operation = 'continue'
+
+    @pytest.mark.parametrize('operation', ['continue', 'rewrite', 'expand'])
+    def test_accept_producer_binds_override_to_exact_saved_revision(canon_env, operation):
+        from app.jobs import Job, JobManager
+        from uuid import uuid4
+        e = canon_env
+        from app.services.generation_service import GenerationService
+        from app.services.context_service import ContextService
+        manager = JobManager(generations=GenerationService(e.bundle.generations), chapters=e.chapters, contexts=ContextService(e.bundle.novels, e.bundle.chapters),
+                             canon=e.canon, memory_extractor=object(), snapshot_required=False)
+        job = Job(id=str(uuid4()), operation=operation, novel_id=e.nid, chapter_id=e.chapter['id'],
+                  instruction='', profile='LOCAL_ONLY', status='COMPLETED', output='Canon fact: Unaccepted.',
+                  source=e.chapter['content'], base_chapter_version=e.chapter['version'])
+        manager.jobs[job.id] = job; manager._persist(job)
+        result = manager.accept(job.id, accepted_output='Canon fact: Accepted override.')
+        row = result['pending_canon']; saved = e.chapters.get(result['chapter']['id'])
+>       assert row['chapter_id'] == saved['id'] and row['source_version'] == saved['version']
+               ^^^^^^^^^^^^^^^^^
+E       KeyError: 'chapter_id'
+
+tests/test_canon_generation_source.py:106: KeyError
+_ test_accept_producer_binds_override_to_exact_saved_revision[file-/api-rewrite] _
+
+canon_env = namespace(client=<starlette.testclient.TestClient object at 0x7f247242fe30>, prefix='/api', base='/api/novels/r3-mount...'privacy_level': 'LOCAL_ONLY'}]}, canon_base='/api/projects/r3-mounted-0e9c94ca120440ae85abae8bcc71b44d/pending-canon')
+operation = 'rewrite'
+
+    @pytest.mark.parametrize('operation', ['continue', 'rewrite', 'expand'])
+    def test_accept_producer_binds_override_to_exact_saved_revision(canon_env, operation):
+        from app.jobs import Job, JobManager
+        from uuid import uuid4
+        e = canon_env
+        from app.services.generation_service import GenerationService
+        from app.services.context_service import ContextService
+        manager = JobManager(generations=GenerationService(e.bundle.generations), chapters=e.chapters, contexts=ContextService(e.bundle.novels, e.bundle.chapters),
+                             canon=e.canon, memory_extractor=object(), snapshot_required=False)
+        job = Job(id=str(uuid4()), operation=operation, novel_id=e.nid, chapter_id=e.chapter['id'],
+                  instruction='', profile='LOCAL_ONLY', status='COMPLETED', output='Canon fact: Unaccepted.',
+                  source=e.chapter['content'], base_chapter_version=e.chapter['version'])
+        manager.jobs[job.id] = job; manager._persist(job)
+        result = manager.accept(job.id, accepted_output='Canon fact: Accepted override.')
+        row = result['pending_canon']; saved = e.chapters.get(result['chapter']['id'])
+>       assert row['chapter_id'] == saved['id'] and row['source_version'] == saved['version']
+               ^^^^^^^^^^^^^^^^^
+E       KeyError: 'chapter_id'
+
+tests/test_canon_generation_source.py:106: KeyError
+_ test_accept_producer_binds_override_to_exact_saved_revision[file-/api-expand] _
+
+canon_env = namespace(client=<starlette.testclient.TestClient object at 0x7f247242faa0>, prefix='/api', base='/api/novels/r3-mount...'privacy_level': 'LOCAL_ONLY'}]}, canon_base='/api/projects/r3-mounted-a3eeeb3a55e744ec893402dec56a5a1b/pending-canon')
+operation = 'expand'
+
+    @pytest.mark.parametrize('operation', ['continue', 'rewrite', 'expand'])
+    def test_accept_producer_binds_override_to_exact_saved_revision(canon_env, operation):
+        from app.jobs import Job, JobManager
+        from uuid import uuid4
+        e = canon_env
+        from app.services.generation_service import GenerationService
+        from app.services.context_service import ContextService
+        manager = JobManager(generations=GenerationService(e.bundle.generations), chapters=e.chapters, contexts=ContextService(e.bundle.novels, e.bundle.chapters),
+                             canon=e.canon, memory_extractor=object(), snapshot_required=False)
+        job = Job(id=str(uuid4()), operation=operation, novel_id=e.nid, chapter_id=e.chapter['id'],
+                  instruction='', profile='LOCAL_ONLY', status='COMPLETED', output='Canon fact: Unaccepted.',
+                  source=e.chapter['content'], base_chapter_version=e.chapter['version'])
+        manager.jobs[job.id] = job; manager._persist(job)
+        result = manager.accept(job.id, accepted_output='Canon fact: Accepted override.')
+        row = result['pending_canon']; saved = e.chapters.get(result['chapter']['id'])
+>       assert row['chapter_id'] == saved['id'] and row['source_version'] == saved['version']
+               ^^^^^^^^^^^^^^^^^
+E       KeyError: 'chapter_id'
+
+tests/test_canon_generation_source.py:106: KeyError
+_ test_accept_producer_binds_override_to_exact_saved_revision[file-/api/v1-continue] _
+
+canon_env = namespace(client=<starlette.testclient.TestClient object at 0x7f2472478c20>, prefix='/api/v1', base='/api/v1/novels/r3...ivacy_level': 'LOCAL_ONLY'}]}, canon_base='/api/v1/projects/r3-mounted-02f0970e1a9d4c729bc2840a7e2d29ef/pending-canon')
+operation = 'continue'
+
+    @pytest.mark.parametrize('operation', ['continue', 'rewrite', 'expand'])
+    def test_accept_producer_binds_override_to_exact_saved_revision(canon_env, operation):
+        from app.jobs import Job, JobManager
+        from uuid import uuid4
+        e = canon_env
+        from app.services.generation_service import GenerationService
+        from app.services.context_service import ContextService
+        manager = JobManager(generations=GenerationService(e.bundle.generations), chapters=e.chapters, contexts=ContextService(e.bundle.novels, e.bundle.chapters),
+                             canon=e.canon, memory_extractor=object(), snapshot_required=False)
+        job = Job(id=str(uuid4()), operation=operation, novel_id=e.nid, chapter_id=e.chapter['id'],
+                  instruction='', profile='LOCAL_ONLY', status='COMPLETED', output='Canon fact: Unaccepted.',
+                  source=e.chapter['content'], base_chapter_version=e.chapter['version'])
+        manager.jobs[job.id] = job; manager._persist(job)
+        result = manager.accept(job.id, accepted_output='Canon fact: Accepted override.')
+        row = result['pending_canon']; saved = e.chapters.get(result['chapter']['id'])
+>       assert row['chapter_id'] == saved['id'] and row['source_version'] == saved['version']
+               ^^^^^^^^^^^^^^^^^
+E       KeyError: 'chapter_id'
+
+tests/test_canon_generation_source.py:106: KeyError
+_ test_accept_producer_binds_override_to_exact_saved_revision[file-/api/v1-rewrite] _
+
+canon_env = namespace(client=<starlette.testclient.TestClient object at 0x7f247247b650>, prefix='/api/v1', base='/api/v1/novels/r3...ivacy_level': 'LOCAL_ONLY'}]}, canon_base='/api/v1/projects/r3-mounted-57fb661160114860808a6b1279814871/pending-canon')
+operation = 'rewrite'
+
+    @pytest.mark.parametrize('operation', ['continue', 'rewrite', 'expand'])
+    def test_accept_producer_binds_override_to_exact_saved_revision(canon_env, operation):
+        from app.jobs import Job, JobManager
+        from uuid import uuid4
+        e = canon_env
+        from app.services.generation_service import GenerationService
+        from app.services.context_service import ContextService
+        manager = JobManager(generations=GenerationService(e.bundle.generations), chapters=e.chapters, contexts=ContextService(e.bundle.novels, e.bundle.chapters),
+                             canon=e.canon, memory_extractor=object(), snapshot_required=False)
+        job = Job(id=str(uuid4()), operation=operation, novel_id=e.nid, chapter_id=e.chapter['id'],
+                  instruction='', profile='LOCAL_ONLY', status='COMPLETED', output='Canon fact: Unaccepted.',
+                  source=e.chapter['content'], base_chapter_version=e.chapter['version'])
+        manager.jobs[job.id] = job; manager._persist(job)
+        result = manager.accept(job.id, accepted_output='Canon fact: Accepted override.')
+        row = result['pending_canon']; saved = e.chapters.get(result['chapter']['id'])
+>       assert row['chapter_id'] == saved['id'] and row['source_version'] == saved['version']
+               ^^^^^^^^^^^^^^^^^
+E       KeyError: 'chapter_id'
+
+tests/test_canon_generation_source.py:106: KeyError
+_ test_accept_producer_binds_override_to_exact_saved_revision[file-/api/v1-expand] _
+
+canon_env = namespace(client=<starlette.testclient.TestClient object at 0x7f2472459430>, prefix='/api/v1', base='/api/v1/novels/r3...ivacy_level': 'LOCAL_ONLY'}]}, canon_base='/api/v1/projects/r3-mounted-7740bca68ec74b268ba3659f41c8cd53/pending-canon')
+operation = 'expand'
+
+    @pytest.mark.parametrize('operation', ['continue', 'rewrite', 'expand'])
+    def test_accept_producer_binds_override_to_exact_saved_revision(canon_env, operation):
+        from app.jobs import Job, JobManager
+        from uuid import uuid4
+        e = canon_env
+        from app.services.generation_service import GenerationService
+        from app.services.context_service import ContextService
+        manager = JobManager(generations=GenerationService(e.bundle.generations), chapters=e.chapters, contexts=ContextService(e.bundle.novels, e.bundle.chapters),
+                             canon=e.canon, memory_extractor=object(), snapshot_required=False)
+        job = Job(id=str(uuid4()), operation=operation, novel_id=e.nid, chapter_id=e.chapter['id'],
+                  instruction='', profile='LOCAL_ONLY', status='COMPLETED', output='Canon fact: Unaccepted.',
+                  source=e.chapter['content'], base_chapter_version=e.chapter['version'])
+        manager.jobs[job.id] = job; manager._persist(job)
+        result = manager.accept(job.id, accepted_output='Canon fact: Accepted override.')
+        row = result['pending_canon']; saved = e.chapters.get(result['chapter']['id'])
+>       assert row['chapter_id'] == saved['id'] and row['source_version'] == saved['version']
+               ^^^^^^^^^^^^^^^^^
+E       KeyError: 'chapter_id'
+
+tests/test_canon_generation_source.py:106: KeyError
+___ test_creation_projection_resolves_initial_revision_after_concurrent_edit ___
+
+    def test_creation_projection_resolves_initial_revision_after_concurrent_edit():
+        from app.jobs import JobManager
+        from app.document import markdown_to_document, document_to_markdown
+        from types import SimpleNamespace
+        raw = chapter('# Title\n\nCanon fact: Initial.')
+        raw.pop('version')
+        initial_doc = markdown_to_document(raw['content'])
+        newer = {**raw, 'version': 2, 'content': 'Concurrent edit', 'document': markdown_to_document('Concurrent edit')}
+        chapters = SimpleNamespace(get=lambda _: newer, history=lambda _: [{'version': 1, 'document': initial_doc}])
+>       accepted = JobManager._accepted_canon_source(chapters, raw)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: type object 'JobManager' has no attribute '_accepted_canon_source'
+
+tests/test_canon_generation_source.py:122: AttributeError
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_canon_generation_source.py::test_exact_markers_bound_unicode_no_fabricated_fallback
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_canon_generation_source.py::test_accept_producer_binds_override_to_exact_saved_revision[file-/api-continue]
+FAILED tests/test_canon_generation_source.py::test_accept_producer_binds_override_to_exact_saved_revision[file-/api-rewrite]
+FAILED tests/test_canon_generation_source.py::test_accept_producer_binds_override_to_exact_saved_revision[file-/api-expand]
+FAILED tests/test_canon_generation_source.py::test_accept_producer_binds_override_to_exact_saved_revision[file-/api/v1-continue]
+FAILED tests/test_canon_generation_source.py::test_accept_producer_binds_override_to_exact_saved_revision[file-/api/v1-rewrite]
+FAILED tests/test_canon_generation_source.py::test_accept_producer_binds_override_to_exact_saved_revision[file-/api/v1-expand]
+FAILED tests/test_canon_generation_source.py::test_creation_projection_resolves_initial_revision_after_concurrent_edit
+7 failed, 18 passed, 22 deselected, 2 warnings in 7.41s

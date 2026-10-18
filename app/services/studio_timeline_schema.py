@@ -19,7 +19,7 @@ def normalize_timeline_v2(value, *, audio_only=False):
         if row["media_kind"] != "AUDIO":
             raise ValueError("STUDIO_TIMELINE_AUDIO_KIND_REQUIRED")
     else:
-        row = _object(value, ("schema_version", "duration_ms", "width", "height", "fps", "tracks", "captions"),
+        row = _object(value, ("schema_version", "duration_ms", "width", "height", "fps", "tracks", "captions", "caption_style"),
                       ("schema_version", "duration_ms", "tracks"))
     if type(row["schema_version"]) is not int or row["schema_version"] != (3 if audio_only else 2):
         raise ValueError("STUDIO_TIMELINE_SCHEMA_INVALID")
@@ -196,5 +196,9 @@ def normalize_timeline_v2(value, *, audio_only=False):
             raise ValueError("STUDIO_TIMELINE_CAPTION_LIMIT")
         captions.append({"start_ms": start, "end_ms": end, "text": text})
     captions.sort(key=lambda cue: (cue["start_ms"], cue["end_ms"], cue["text"]))
-    return {"schema_version": 2, "duration_ms": duration, "width": width, "height": height, "fps": fps,
-            "tracks": sorted(tracks, key=lambda track: track["order"]), "captions": captions}
+    result = {"schema_version": 2, "duration_ms": duration, "width": width, "height": height, "fps": fps,
+              "tracks": sorted(tracks, key=lambda track: track["order"]), "captions": captions}
+    if "caption_style" in row:
+        from .studio_timeline_caption_style import normalize_caption_style
+        result["caption_style"] = normalize_caption_style(row["caption_style"])
+    return result

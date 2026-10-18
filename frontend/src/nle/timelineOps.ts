@@ -666,6 +666,7 @@ function withCaptions(timeline: StudioTimeline, captions: unknown[]): Record<str
     ...(timeline.schema_version === 2 ? { schema_version: 2 } : {}),
     duration_ms: timeline.duration_ms, width: timeline.width, height: timeline.height, fps: timeline.fps,
     tracks: timeline.tracks, captions,
+    ...('caption_style' in timeline ? { caption_style: timeline.caption_style } : {}),
   };
 }
 
