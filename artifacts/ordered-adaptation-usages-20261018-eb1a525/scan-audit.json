@@ -1,0 +1,433 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "219f917ee463ac7da3aa3f6b5f9ce091997c4b1b",
+      "path": "API_CATALOG.json",
+      "bytes": 1470535,
+      "sha256": "39d6f0d9a14201c537c26c3f3a897debdd35a2410f4eb52bc3dcd1ff9bbbb613"
+    },
+    {
+      "blob": "57dfe77e90ac5a91646ac7353570d8a6127ac7b1",
+      "path": "API_CATALOG.md",
+      "bytes": 393090,
+      "sha256": "7f5535eb469826ae7a1a2b0ef6052ce6e7ad62e3073526d1ce354fd307769f28"
+    },
+    {
+      "blob": "262ea09679abf863a313fc55dc5043063d19c745",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 605611,
+      "sha256": "35c5f7f8ba48a7335664a7fbf4a02701587f8e00f77eddd79476e5500f8f9312"
+    },
+    {
+      "blob": "83df9b7d0702df75597f52d841b8f14f2e4f66a7",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 130767,
+      "sha256": "37c77078298d652908b7e7973bb651dcd5c61a4ffa2e726ce3cda19b58afa67f"
+    },
+    {
+      "blob": "2fa0b8b4ebb8326c834e07d0b24031fbf4015e81",
+      "path": "app/creative/adaptation.py",
+      "bytes": 15090,
+      "sha256": "b1881e4071c0943bb4196d64e4ce4def68506016c520a83eed2b1df94c8a9d4a"
+    },
+    {
+      "blob": "506067a4c7013d0fe5865beaa0dfb6a01872ee75",
+      "path": "app/creative/adaptation_assets.py",
+      "bytes": 32878,
+      "sha256": "c4d50f25a448b2f295aab77269df51eca5c62e0314bcdd61a1a093220e50106a"
+    },
+    {
+      "blob": "65ef598267992a38ad11b73dc71fe71c31ed861b",
+      "path": "app/creative/adaptation_generation.py",
+      "bytes": 29439,
+      "sha256": "a8e264742bc0390d855b757baf8362e9f7635170f58b07da913631783a2f2f14"
+    },
+    {
+      "blob": "b6d959350893ee5a9f4319e3e141c50bbf913d37",
+      "path": "app/creative/adaptation_models.py",
+      "bytes": 8010,
+      "sha256": "1f74be2b105b1686196b9ae43cfdd832dccaac90755fd8c48d552b782e004572"
+    },
+    {
+      "blob": "30b358e1cf285b79926d8ce9fe4f32e0392f9bac",
+      "path": "app/creative/adaptation_receipt.py",
+      "bytes": 17022,
+      "sha256": "815d0783c6fa665de3ed85969c1aae6ecd62a6d330a1bb562b3732903147cc92"
+    },
+    {
+      "blob": "e1b7c369684981b1cbc896f4a9f6d2b65278f774",
+      "path": "app/creative/adaptation_sources.py",
+      "bytes": 3336,
+      "sha256": "5f4a563dd45021caae88cc059b88777eff1f61be35e3a74c7adce88f1971ac16"
+    },
+    {
+      "blob": "53d3d26571c3845efbeaa773b65a74be63b1970a",
+      "path": "app/creative/asset_usages.py",
+      "bytes": 5067,
+      "sha256": "e87679d6e0b6d9d25aaa18c3cd0601febdf852c877e3d5b6eb94029cf05cb2c2"
+    },
+    {
+      "blob": "59657655412dab80f5fe66d242b4e87a34f769ef",
+      "path": "app/creative/graph_api.py",
+      "bytes": 18132,
+      "sha256": "8725d220b4ec889b4ebe16b90fbc721aed1a499c0a85d8cdb1d83f44a529c50e"
+    },
+    {
+      "blob": "d4b96e2580b6c7c73a9403dd2c16fe343d4517c0",
+      "path": "app/creative/production_execution_api.py",
+      "bytes": 18230,
+      "sha256": "9c21caa5b356deff7bb1a129a7e89b0363fcf9541b50c68f58f27a659c7e2ca0"
+    },
+    {
+      "blob": "a326c537f79fea5c346c74d1ee43a45dacf7fffa",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 22314,
+      "sha256": "e224ce65d581797cc517d19d90e4daf19688f3d8e9b97723a9e065462911cd3d"
+    },
+    {
+      "blob": "fa6d8318b2e4af7a81e038776dcd0b35da4d8e0b",
+      "path": "docs/delivery/v2-development/adaptation-ordered-baseline.json",
+      "bytes": 712509,
+      "sha256": "7fe831f7e925d0b4001a467f80bf06ee6e6bf8c6dbc39274673a725b89f4aa31"
+    },
+    {
+      "blob": "c8bb04aa94e8b5daf4c922f0c1e8c394b3d84709",
+      "path": "docs/delivery/v2-development/adaptation-ordered-baseline.log",
+      "bytes": 1406,
+      "sha256": "865c4a101c88a48afe29f71db21d084a413c82fa421b09e70568bc61db69460f"
+    },
+    {
+      "blob": "1f636be422575d0e99b24a198619663c345f9bf7",
+      "path": "docs/delivery/v2-development/adaptation-ordered-lifecycle.json",
+      "bytes": 712935,
+      "sha256": "346275a73f05cf5bc1864303b61d13c25a09edaad03010a201bd8b3f39f0e59a"
+    },
+    {
+      "blob": "792efa737ef95a695ef5d278fbe599a8dbbd1eea",
+      "path": "docs/delivery/v2-development/adaptation-ordered-lifecycle.log",
+      "bytes": 1139,
+      "sha256": "4836966102a03f0e02dad0662e34eb01575a264885cbab378c7505f88beeed9a"
+    },
+    {
+      "blob": "9cc08436f778f96bb9dc6a4111ccf64c594c3664",
+      "path": "docs/delivery/v2-development/adaptation-ordered-new.json",
+      "bytes": 712377,
+      "sha256": "cbb955d63c33aca891f8a7413179badb1aaca1b5b7ec8790fa44ab0b73d1cdf9"
+    },
+    {
+      "blob": "4b4b405026c2dec8c4c7f619b9e7d54cf0640726",
+      "path": "docs/delivery/v2-development/adaptation-ordered-new.log",
+      "bytes": 7472,
+      "sha256": "311453f23375a174866875dfd51c1fea761a19fa2f26267e4e895f04ba210a99"
+    },
+    {
+      "blob": "5e7edfb29541d07e127c678e941cd97b3b727f2e",
+      "path": "docs/delivery/v2-development/adaptation-ordered-pg-final-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "590d975414e406f4bded7f863c6ddd4a799f606fc573ca9e63647ddab96b3fd2"
+    },
+    {
+      "blob": "c4986affd669163c3743cdbbeb36246d0e997000",
+      "path": "docs/delivery/v2-development/adaptation-ordered-pg-final.json",
+      "bytes": 713540,
+      "sha256": "b261e60ff148c086101229ea8bac4a4707a40b8d7ff586a0a55f8cb2b622bedd"
+    },
+    {
+      "blob": "76abd8de24f5b7db2e09062f771f1963720b8160",
+      "path": "docs/delivery/v2-development/adaptation-ordered-pg-final.log",
+      "bytes": 1236,
+      "sha256": "1f2734551ed3957d9b2c75c9125181eb1c81fc4e2b4c441987248c070891b7d9"
+    },
+    {
+      "blob": "fff820601ad323e309ef0bfb99a357b8eac0f0c7",
+      "path": "docs/delivery/v2-development/layered-planning-model-20261018.md",
+      "bytes": 7688,
+      "sha256": "6becb1a4262f2001eacf2a121f8153bb9a71056fdf8430c0077d8f42357951b3"
+    },
+    {
+      "blob": "e50d8e90aceb7d566ad8a612ecffca5dabf985af",
+      "path": "docs/delivery/v2-development/ordered-adaptation-usages-public.json",
+      "bytes": 713917,
+      "sha256": "c76dbc5a1cc670cf3c0922bb6103495a2215672f7c308aa93e4bcf8c23eefb6d"
+    },
+    {
+      "blob": "012393b9cc0300749d670c5d4eef568d306e7bd8",
+      "path": "docs/delivery/v2-development/ordered-adaptation-usages-public.log",
+      "bytes": 634,
+      "sha256": "971f9f53f246aa7144e65116144023ad81dae3ab5bcdc7b336b2713c8cf85ac8"
+    },
+    {
+      "blob": "37e7fada60ecb5e89bdcd034b059873b7aa03a5a",
+      "path": "docs/delivery/v2-development/ordered-adaptation-usages-ui-final.json",
+      "bytes": 714382,
+      "sha256": "e928ce83c1e465492b62e627e22e4f939ab0f597fd493a62a11289dc982a74f3"
+    },
+    {
+      "blob": "aedbdb965305c932e8978e9969d83b49a9cd3493",
+      "path": "docs/delivery/v2-development/ordered-adaptation-usages-ui-final.log",
+      "bytes": 3599,
+      "sha256": "92780712baf090df38b2222538e55b84429c4d9188d7af0b235ec1dabae58610"
+    },
+    {
+      "blob": "d6cecb5b7ca765cb3b040dccae02f841391d2fe6",
+      "path": "docs/delivery/v2-development/ordered-adaptation-usages-wave-20261018.md",
+      "bytes": 3078,
+      "sha256": "56a6a8d108ea72d5a1b407b52b0de8ebe0100d7675a85d479faf94ae1a4ce3c4"
+    },
+    {
+      "blob": "38ce36c1b4b167454286c51ebec1621306db7cfb",
+      "path": "docs/delivery/v2-development/ordered-receipt-focused.json",
+      "bytes": 712221,
+      "sha256": "f820db14c453f6612b63b0884acb1804ee49db3e0fa0ace031e9c2cd1d438022"
+    },
+    {
+      "blob": "0561aa6581764e946e8f7219e5d657f028057cac",
+      "path": "docs/delivery/v2-development/ordered-receipt-focused.log",
+      "bytes": 1192,
+      "sha256": "b1aae5faeadca7e958913b61431f4cee124774c58257ab91d60e9f0757bbc5c3"
+    },
+    {
+      "blob": "f35d8e53b7b9f49e722507e31c96790005fbb847",
+      "path": "docs/delivery/v2-development/studio-asset-usages-file-r1.json",
+      "bytes": 713027,
+      "sha256": "aa401167d4d85f9033c544d84aad0514f79dd8d738b82d900a397e50ca58e85e"
+    },
+    {
+      "blob": "97dd6d4470aa818cca8511274df482cd60656c5a",
+      "path": "docs/delivery/v2-development/studio-asset-usages-file-r1.log",
+      "bytes": 24545,
+      "sha256": "9387fc6ef91e52751225eb1a50de4a4e947dbc2bad251c7e9c80284397f6988a"
+    },
+    {
+      "blob": "683b8b99368e3f9172a896da8f7d8165203c73db",
+      "path": "docs/delivery/v2-development/studio-asset-usages-file-r2.json",
+      "bytes": 713028,
+      "sha256": "9565e0740c8684d23769931c575230415d7e83d7a5ba369a0d8f199b9725593c"
+    },
+    {
+      "blob": "af8273b2eb3e9603a6399a7d5bba4dc01f155f21",
+      "path": "docs/delivery/v2-development/studio-asset-usages-file-r2.log",
+      "bytes": 1058,
+      "sha256": "a2adc6c4fe3a6803ac363b0f9837e6b987fa3145e2850cdd232913e9b6d03eb7"
+    },
+    {
+      "blob": "8fafce19dee8108125f5d9768bd70234d8f722b2",
+      "path": "docs/delivery/v2-development/studio-asset-usages-file-r3.json",
+      "bytes": 713284,
+      "sha256": "955f4600c5c092d0813eba1ab7ac7f4f32006ffc66dd7a8d656de7de902ad9d3"
+    },
+    {
+      "blob": "6f88cf0c015e16690e5644a221511046d6f650c2",
+      "path": "docs/delivery/v2-development/studio-asset-usages-file-r3.log",
+      "bytes": 5805,
+      "sha256": "c527cfd60bd14b7dff4078774519d10394565f2890221278ec99c4df0d90aa59"
+    },
+    {
+      "blob": "249751eb066ba9144be175db2fb3acf2ec05886c",
+      "path": "docs/delivery/v2-development/studio-asset-usages-file-r4.json",
+      "bytes": 713628,
+      "sha256": "695055641d7d7295104d89b7aa43e20543e7a1d213164a823e3386f950f1f313"
+    },
+    {
+      "blob": "c5c192b78a7475edd64e37b6d08b822f2996df55",
+      "path": "docs/delivery/v2-development/studio-asset-usages-file-r4.log",
+      "bytes": 5345,
+      "sha256": "601827f550aa3041548603511ff2794d918eedbb955a7e538d0dba0292e2abf6"
+    },
+    {
+      "blob": "0ed38a28c7cfea0df4a498a557537e9f217a27a6",
+      "path": "docs/delivery/v2-development/studio-asset-usages-file-r5.json",
+      "bytes": 713629,
+      "sha256": "5f81d461f22dd2ae181cf8ab193a92d0fa7f8e7c8da3e0fe84ed37a148d132d6"
+    },
+    {
+      "blob": "85c030a07ee4f821454c660cea3c1e2c5322885f",
+      "path": "docs/delivery/v2-development/studio-asset-usages-file-r5.log",
+      "bytes": 1154,
+      "sha256": "b7862d73ce3969c6231eeaa72508252be9c1862740ebcdc78c77c7a8ed9230b7"
+    },
+    {
+      "blob": "acd2450ec69cd4e8ab61083be624b4e30f0c9d92",
+      "path": "docs/delivery/v2-development/studio-asset-usages-file-r6.json",
+      "bytes": 713628,
+      "sha256": "31e7ca24aa7dc6ac0f2a8d18f5218793b2cd5508f71f7ddddbaf8a2388fc2c53"
+    },
+    {
+      "blob": "0d4dfe3718ed639d4b7a977ed4fd138c3c21f47c",
+      "path": "docs/delivery/v2-development/studio-asset-usages-file-r6.log",
+      "bytes": 1154,
+      "sha256": "debfef28bbedd5d3c2d2e1e410a8eaa21c54101428d60ee015e609b471d4e0a9"
+    },
+    {
+      "blob": "35ab62f22ae541e1e3d5d521ec905abc2af601ce",
+      "path": "docs/delivery/v2-development/studio-asset-usages-pg-r1-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "f31ffc82d9696c13e164bf525573b42664f74825d21961e82b0f98882e9798ac"
+    },
+    {
+      "blob": "08d12da135d94dbf1e0619bfc01abdb36402216c",
+      "path": "docs/delivery/v2-development/studio-asset-usages-pg-r1.json",
+      "bytes": 713913,
+      "sha256": "c79ac079b00740402ef725bb6e7fa84e2beef950a4639b38004c4860eaa76c90"
+    },
+    {
+      "blob": "8e53f676249eb3b4305351861bcba3f4c3a9b716",
+      "path": "docs/delivery/v2-development/studio-asset-usages-pg-r1.log",
+      "bytes": 1063,
+      "sha256": "6cddaf1118245fd2830866ce2b98dc22f50d9f3ad4bf8fe5068fe2f6ab99ac51"
+    },
+    {
+      "blob": "a086178c6c0a0742b8d44b86d964d8b5d2e6f5ce",
+      "path": "docs/delivery/v2-development/studio-asset-usages-ui-r1.json",
+      "bytes": 713762,
+      "sha256": "42e90aea7d61c28a3685b903fa0b1416b9c979de0365595622c7f8dee9e1efc7"
+    },
+    {
+      "blob": "4b392aba1594be39248da3410ec8dd6d3c13f5b8",
+      "path": "docs/delivery/v2-development/studio-asset-usages-ui-r1.log",
+      "bytes": 39286,
+      "sha256": "a5f5590fa094c1693e46444484787c51455ea1e027ecbbda79264dc024b128ed"
+    },
+    {
+      "blob": "19b99c5030b6fcb533cb88a93c6510cebeb5bfc6",
+      "path": "docs/delivery/v2-development/studio-asset-usages-ui-r2.json",
+      "bytes": 713762,
+      "sha256": "fea4ba0671a8a35476630c9d8f5cb16e482eb1fe74b403e2134ddba5d0acf59a"
+    },
+    {
+      "blob": "6b265dbc3a91833221f1e107bf99a170022acb70",
+      "path": "docs/delivery/v2-development/studio-asset-usages-ui-r2.log",
+      "bytes": 54754,
+      "sha256": "fc922f38c1e2ef1bf906a423e1928e2af62c172ab093cc149376108ed95f4f0c"
+    },
+    {
+      "blob": "fae76d2d458e70251ca8cda21a82a6498d29c361",
+      "path": "docs/delivery/v2-development/studio-asset-usages-ui-r3.json",
+      "bytes": 713762,
+      "sha256": "f95be47b3f965c59178c41a2ebd55624ddecbbccbc4d89126503a884e08ddb2e"
+    },
+    {
+      "blob": "2feab4a4507924a7b7794d3d64311817bcede5ea",
+      "path": "docs/delivery/v2-development/studio-asset-usages-ui-r3.log",
+      "bytes": 858,
+      "sha256": "0729b2c56a9f7dee9fea2de73d6ac768b34af3447e0e28fb08b9c54057321643"
+    },
+    {
+      "blob": "7ecc50ccbc4a0353b7501adbd95106f887b70003",
+      "path": "docs/v2/CURRENT_DEVELOPMENT_GAPS_20261018.md",
+      "bytes": 15603,
+      "sha256": "fc844f500884042c5ed5940bed965606162c75e7772e71b444c826eea21dc84a"
+    },
+    {
+      "blob": "33d6bb375b394f3f333d6992ee25d2170e835ae9",
+      "path": "docs/v2/source-aware-adaptation.md",
+      "bytes": 12638,
+      "sha256": "902b477b48dd7af67a8e2f5f53e9ba623558ec9d252f238b0c5f712bc7797804"
+    },
+    {
+      "blob": "d9541594e0ee74c0219053dade214ff4852279af",
+      "path": "docs/v2/studio-direct-asset-usages-20261018.md",
+      "bytes": 5787,
+      "sha256": "55745f029bef610d9482851ca778e0ea66a434c85177a2ef83a650616071e25a"
+    },
+    {
+      "blob": "84213558a5704a4046fd8500f1e9ed1c8edee06f",
+      "path": "frontend/src/App.tsx",
+      "bytes": 162781,
+      "sha256": "db86acf266ebc1c7cd71a264b4b17e23227733e1c38126a603b685c247ac7c44"
+    },
+    {
+      "blob": "1585175f219cb3a4712aaec8d487f6ca28766439",
+      "path": "frontend/src/creative/CreativeWorkspace.tsx",
+      "bytes": 42349,
+      "sha256": "458526904ee0df2dccc161cd30073492b35362c5b8708859db38556156ffcb01"
+    },
+    {
+      "blob": "6fdf76c3a664e9fc4e146be8a0cc32f1c1b54b8b",
+      "path": "frontend/src/creative/SourceAdaptationPanel.test.tsx",
+      "bytes": 33405,
+      "sha256": "f5f7771b1467854c7de96e82da18601091b9680c84a6c97e96878f915da16501"
+    },
+    {
+      "blob": "225b492095d4cd69ed499ca9cb04510582895daa",
+      "path": "frontend/src/creative/SourceAdaptationPanel.tsx",
+      "bytes": 29244,
+      "sha256": "702d5d7525975c8f9a4cc612822605581093f43fe779b649f4618932a7986041"
+    },
+    {
+      "blob": "803363579efd06a82d3ae8f4a24fc60309334b3c",
+      "path": "frontend/src/creative/client.ts",
+      "bytes": 18351,
+      "sha256": "350d18e1884ff0c9378e843b20e2177ee0dee80ef40259b32daa664d9056de3d"
+    },
+    {
+      "blob": "07312bdfe57c25468d0d0fe0c4a0ec3f9fd29edb",
+      "path": "frontend/src/experimental/ChangeImpactPanel.tsx",
+      "bytes": 13337,
+      "sha256": "0bee3fce752873e36cb7eb85a201e56e821ac992df25d0a29a7c074cc7b8f732"
+    },
+    {
+      "blob": "416f3c5aa229afc99274e6f94f10bcc60a87ad4a",
+      "path": "frontend/src/experimental/ProductionLineagePanel.tsx",
+      "bytes": 27521,
+      "sha256": "1ace48e06d9c2d5462f01b3d0fc02daa7a5620916eb458b9dc7cb99e57d19689"
+    },
+    {
+      "blob": "b68004d19175e57565dea9658534193d24e48fb3",
+      "path": "frontend/src/experimental/StudioUsagesPanel.integration.test.tsx",
+      "bytes": 10071,
+      "sha256": "af1d4bf4f036e323f9d4d604bd518d727726d49eae47093f9ecc1c6cd45aee2d"
+    },
+    {
+      "blob": "38d363b8158db721ff7e01e62605380511b0b7a0",
+      "path": "frontend/src/experimental/StudioUsagesPanel.test.tsx",
+      "bytes": 16660,
+      "sha256": "020672b2336c72362a611d0168bb02245789298eba0ecadbc3e7682a513420f1"
+    },
+    {
+      "blob": "1136df9ee99d4df8c647eb74d894cf6a3f55476c",
+      "path": "frontend/src/experimental/StudioUsagesPanel.tsx",
+      "bytes": 10260,
+      "sha256": "8f2921ca68fdcd5770c9635b877389164f8a91f94682318b20a2cbe3d721fcdd"
+    },
+    {
+      "blob": "d957ea933da2b5497864bf43f4a88d56e229aa1c",
+      "path": "packaging/public-build.json",
+      "bytes": 24241,
+      "sha256": "3cdb1ddb94e1379eecbc4ccd3c3be99f6c81b5b86c18da872d6aac55ed934e36"
+    },
+    {
+      "blob": "6e1528351722964fa8df17e05358f97d7b6fe7d5",
+      "path": "tests/test_v2_ordered_adaptation.py",
+      "bytes": 10909,
+      "sha256": "cf931e9dc11ab2fd77d649f550f5b0f5d51c2f59622fd8875c9dbfcf5804b7ab"
+    },
+    {
+      "blob": "bfd2687e0010fd14161fc10ce9c6b076f6fa0007",
+      "path": "tests/test_v2_ordered_adaptation_receipt.py",
+      "bytes": 6534,
+      "sha256": "ee3542da2723c7fa6a6c5a1eff3571e7d221aa978df78445c5e109b1263d70db"
+    },
+    {
+      "blob": "90ca5f51d50a0316176fae49cf7e109415f5679d",
+      "path": "tests/test_v2_studio_asset_usages_api.py",
+      "bytes": 16596,
+      "sha256": "793af39cf291951e91dab249cb98515c4eadd479dbf6db44ebab19b904cac3a5"
+    },
+    {
+      "blob": "6cc790301399f2b8f29f80ff1dbd6dee04262b56",
+      "path": "tests/test_v2_studio_asset_usages_postgres.py",
+      "bytes": 6048,
+      "sha256": "b102aec0a8e13042ad838aa523d3ac251a2f11a987c4242e57d1f378ac4d1564"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
