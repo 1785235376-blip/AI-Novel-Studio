@@ -1,16 +1,16 @@
 # Studio V2 current continuation checkpoint
 
-Updated 2026-10-18 19:55 UTC. This document inventories bounded additions, not a
+Updated 2026-10-18 20:02 UTC. This document inventories bounded additions, not a
 replacement for the frozen feature matrix or a V2 percentage/Release declaration.
 The source pin below identifies the latest bounded implementation; archive and product heads remain distinct.
 
 ## Source and publication
 
-Current checkpoint: 2026-10-18 19:55 UTC. Working branch:
+Current checkpoint: 2026-10-18 20:02 UTC. Working branch:
 work/dot-recovered-20261018. Latest committed product source is
-b02ef383287ea3f01ead4e50887caa1cfb172c48 (Style navigation/no-write ORA preview).
+0d72d692dfa56f6a47d8050d12eaf98e364c9e05 (internal IMAGE jobs/unsigned Passport).
 Latest byte-verified public archive is
-40bd889737fc9b891bfc5c0c95c835f97e2174e4 on
+114f61aaa8366a2477ded75a3d394d1d41ba778e on
 archive/verified-studio-v2-20261017-5a6f697. Archive HEAD and product HEAD are
 different identities; the archive stores prerequisite-bound incremental bundles.
 The restored local source contains the integrated working product, whereas the
@@ -313,3 +313,16 @@ navigation-ora-preview-integration-20261018.md.
 Prior source1d6a17f0 was archived as40bd889737fc9b891bfc5c0c95c835f97e2174e4,
 parent9c406ba7:13 paths/4,923,586 bytes independently verified. Director IMAGE
 Job and Production Passport slices remain isolated under review.
+
+## 20:02 UTC internal IMAGE jobs and Passport checkpoint
+
+Product 0d72d692dfa56f6a47d8050d12eaf98e364c9e05 integrates guarded internal
+IMAGE V3 terminal/pending persistence and original approved Media image unsigned
+Passport download. File69, real PG69 with exact five-table row hashes, UI48,
+TypeScript/Vite/token and PUBLIC6 pass. All3090 final source paths match product.
+IMAGE accounting remains UNKNOWN_UPSTREAM and adoption unavailable. Passport
+does not authenticate a signer or certify copyright. See the full bounded report.
+
+Previous source a30d8267 was publicly archived as
+114f61aaa8366a2477ded75a3d394d1d41ba778e, exact parent40bd8897:
+13 paths/5,073,297 bytes independently verified. No normal source branch update.

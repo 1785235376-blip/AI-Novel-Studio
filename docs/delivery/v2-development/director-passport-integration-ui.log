@@ -1,0 +1,38 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/ProductionPassportSidecar.test.tsx (37 tests) 625ms
+ ✓ src/experimental/ProductionLineagePanel.test.tsx (11 tests) 659ms
+
+ Test Files  2 passed (2)
+      Tests  48 passed (48)
+   Start at  05:00:37
+   Duration  1.59s (transform 260ms, setup 20ms, collect 638ms, tests 1.28s, environment 620ms, prepare 155ms)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2438 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-cKwZaTd1.css      3.88 kB │ gzip:   1.02 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-ipe-r0uF.css                      219.84 kB │ gzip:  27.79 kB
+dist/assets/Health-DXYbnwXc.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-C3SLae5S.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/style-BicFvwQP.js                      45.12 kB │ gzip:   8.40 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/LocalTutorIntegration-wUEh-gph.js      47.64 kB │ gzip:  15.65 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-CoXOPbw4.js     830.93 kB │ gzip: 249.15 kB
+dist/assets/App-BmFGvHYZ.js                     2,796.75 kB │ gzip: 839.87 kB
+✓ built in 8.33s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

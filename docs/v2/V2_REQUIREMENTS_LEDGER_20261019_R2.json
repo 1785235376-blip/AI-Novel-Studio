@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T19:55:00Z",
+  "updated_at_utc": "2026-10-18T20:02:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -8220,7 +8220,15 @@
           }
         ],
         "current_verification": "NOT_REASSESSED"
-      }
+      },
+      "bounded_evidence": [
+        {
+          "product_sha": "0d72d692dfa56f6a47d8050d12eaf98e364c9e05",
+          "summary": "Internal sealed IMAGE V3 Job/Broker terminal/pending persistence against existing DIRECTOR scene. No mounted execution, accounting reconciliation or adoption; injected transport only.",
+          "report": "docs/delivery/v2-development/director-passport-integration-20261018.md",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "SHOT-07",
@@ -20928,11 +20936,19 @@
         "A13",
         "CORE_EXPORT"
       ],
-      "code_status": "NOT_REASSESSED",
+      "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Machine/human reports covering licenses, edits, approvals, exact export digest and verified credential/explicit sidecar fallback are not yet closed.",
+      "gap": "Unsigned original approved Media image passport ZIP with redacted JSON/TXT and exact bytes is implemented. C2PA authentication, broader finished-production lineage and full acceptance remain open.",
       "next_action": "Map immutable original provenance into redacted reports; distinguish missing facts and verify tamper behavior for the chosen credential or sidecar profile.",
-      "evidence_scope": "This reconciliation maps source and prior evidence; it runs no product test and does not certify the full new requirement."
+      "evidence_scope": "This reconciliation maps source and prior evidence; it runs no product test and does not certify the full new requirement.",
+      "bounded_evidence": [
+        {
+          "product_sha": "0d72d692dfa56f6a47d8050d12eaf98e364c9e05",
+          "summary": "Original Production/Media/Asset owners provide bounded current-approved image sidecar download with exact byte and current-owner checks; explicitly unsigned/non-legal/non-atomic cross-owner evidence.",
+          "report": "docs/delivery/v2-development/director-passport-integration-20261018.md",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "IMAGE-COMIC-01",
@@ -21953,8 +21969,8 @@
     }
   ],
   "current_checkpoint": {
-    "product_sha": "b02ef383287ea3f01ead4e50887caa1cfb172c48",
-    "report": "docs/delivery/v2-development/navigation-ora-preview-integration-20261018.md",
+    "product_sha": "0d72d692dfa56f6a47d8050d12eaf98e364c9e05",
+    "report": "docs/delivery/v2-development/director-passport-integration-20261018.md",
     "source_identity_section": "Historical initial reconciliation baseline, not the current HEAD",
     "all_fixed_ids_accepted": false
   }

@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-passport-sidecar/frontend
+
+ ✓ src/experimental/ProductionLineagePanel.additive.test.tsx (1 test) 189ms
+ ✓ src/experimental/ProductionLineagePanel.continuation.test.tsx (2 tests) 232ms
+ ✓ src/experimental/ProductionReceiptReview.test.tsx (39 tests) 310ms
+ ✓ src/experimental/ProductionPassportSidecar.test.tsx (37 tests) 673ms
+ ✓ src/experimental/ProductionLineagePanel.test.tsx (11 tests) 824ms
+ ✓ src/experimental/ProductionLineagePanel.navigationCompatibility.test.tsx (15 tests) 970ms
+
+ Test Files  6 passed (6)
+      Tests  105 passed (105)
+   Start at  04:58:40
+   Duration  1.96s (transform 529ms, setup 130ms, collect 1.82s, tests 3.20s, environment 2.17s, prepare 453ms)
+
