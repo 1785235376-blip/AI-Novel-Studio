@@ -14,7 +14,9 @@ The [machine-readable requirements ledger](V2_REQUIREMENTS_LEDGER_20261019_R2.js
 
 There are 425 linked primary entries. This is an indexing count, never a feature count, workload estimate or progress denominator. Old 13/12 gap groups are old-scope findings only. No current product percentage or completion date is established.
 
-## Source identity and reading coverage
+## Historical initial source identity and reading coverage
+
+The committed baseline and remote observation below describe the initial reconciliation, not the latest product or archive. The ledger current_checkpoint and latest_bounded_wave identify the subsequent product checkpoint; dated delivery reports preserve each wave's exact evidence.
 
 Committed baseline: `work/dot-recovered-20261018`, product `e96b749ad7cd6eab29befe0db051c9e1fbf4a060`, documentation HEAD `2c210ebed487052b8ed327f63a7d762d3a0d3e75`, tree `78f4415b896e661f826edb27d93e72e0e21df53e`. Initial read was at 9ccac0be; camera/benchmark are now committed bounded additions. Later in-progress Story/Impact work is excluded from this snapshot.
 
@@ -37,7 +39,7 @@ Deferred production cloud synchronization, realtime same-manuscript collaboratio
 - Restored local source already contains later canvas, Director, native OCR/PDF, static GLB, media and Timeline increments. The attachment's old PR47/ordinary archive-tree audit is historical, not proof these are absent locally.
 - `GraphDirectorProposalReview` and `GraphDirectorStoryboardHandoff`, mounted by `GraphDirectorConsole`, already reuse original suggestion/review/draft/UNKNOWN owners. The separate read-only `StudioGraphDirectorConsole` does not establish that the entire current Director chain is read-only.
 - `story_graph.py` already has World-owned time intervals, knowledge events and fact/belief/speculation layers. `change_impact.py` already provides bounded dependency/selective-refresh behavior. Full new cross-media semantic coverage still needs integration; no second Canon or execution queue is justified.
-- Existing Comic has structured bubbles, framing, PAGE/WEBTOON, source-bound save/history/review and PNG-segment ZIP export. It currently requires screenplay and Shot sources and is mounted in ExperimentalWorkbench. It does not yet establish independent blank Image-owned Comic or the complete layer/ORA/CBZ/PDF/EPUB scope.
+- Comic now has an Image Studio sub-entry and independent blank-page/panel/editable-text save/reopen through original Comic owners, plus book/chapter/page ordering and native reference layers. Legacy adapted layouts still require their screenplay/Shot sources; original NOVEL grants remain required, so IMAGE-only role compatibility is open. The supported flat-raster ORA import/recovery/review/attachment/edit/export workflow and bounded CBZ, raster PDF, JPEG/WebP ZIP and fixed-layout raster EPUB reading copies are integrated. Live layered pixel editing, broader ORA semantics, external-editor/reader/platform acceptance and full native portable restoration remain open. The bounded assetless independent PAGE author archive now preserves editable native text/geometry/layers in fresh draft books; media/assets/sources and WEBTOON remain unsupported. See story-comic-director-integration-20261018.md, image-ora-workflow-integration-20261018.md and comic-epub-integration-20261018.md plus comic-author-integration-20261018.md under docs/delivery/v2-development.
 - The committed static-camera and video-benchmark slices map to parts of DIF-05/DIF-08. Root reports integrated UI193 plus TypeScript/Vite/token, PUBLIC6, real camera PG107 and benchmark API40 File/40 PG; these are bounded, non-additive evidence and were not rerun by this documentation worker. Canonical camera data is not verified native DCC acceptance; benchmark orchestration observations are not measured VRAM, model quality or real billing.
 - The latest bounded Shot Board image comparison is already recorded in source 9cc. Video sampling and controlled-transfer infrastructure remain partial within their stated limits. No old gap is blindly reopened or promoted.
 
@@ -45,7 +47,7 @@ Deferred production cloud synchronization, realtime same-manuscript collaboratio
 
 1. Preserve the committed camera/benchmark wave, ongoing work and source/bundle ancestry; compare actual PR47/48 changes without reset, force-push or blanket replacement. Reuse the existing same-purpose recovery branch after verification.
 2. In parallel where paths permit: deepen Graph/Director editable approval and complete the first Story/Impact source-to-downstream chain. Preserve typed-port, source, permission and exact-impact contracts.
-3. Identity/Style/Image foundations, then Image Studio Comic. First independent Comic slice: no novel or model required; page/panel/editable text/layers → explicit save → reopen. Extend the existing owner compatibly.
+3. Continue Identity/Style/Image and Comic depth from the integrated independent page/panel/text save/reopen, hierarchy, layer/ORA and bounded publication slices. Complete IMAGE-only permissions, live pixel editing, deeper authoring and native portability through original owners; preserve the distinction between model-free authoring and still-required project/domain authority.
 4. Semantic Rebuild and Comic local reflow/motion handoff; then Scene Twin, Performance, Model Lab, Storyverse and professional media/NLE.
 5. QA/Audience/Passport, actual output formats, original A/B/U/FS/CORE gaps, storage/model/project delivery and PUBLIC/PRIVATE closure.
 6. Same-SHA independent final acceptance and separately authorized publication. Preserve raw failures, exact File/PG/frontend/build/media evidence and unrun target gates throughout.

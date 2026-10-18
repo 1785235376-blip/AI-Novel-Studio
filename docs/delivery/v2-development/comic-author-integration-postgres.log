@@ -1,0 +1,24 @@
+........................................................................ [ 54%]
+............................................ssss............             [100%]
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_comic_author_archive.py::test_mounted_export_inspect_restore_reopen_edit_save_replay[postgres-/api]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_comic_author_archive.py::test_untrusted_archive_rejected[postgres-/api-duplicate]
+tests/test_comic_author_archive.py::test_untrusted_archive_rejected[postgres-/api/v1-duplicate]
+  /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/zipfile/__init__.py:1625: UserWarning: Duplicate name: 'manifest.json'
+    return self._open_to_write(zinfo, force_zip64=force_zip64)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+128 passed, 4 skipped, 140 deselected, 4 warnings in 48.64s
+{"exit_code": 0, "exact_row_hashes_equal": false}
+Traceback (most recent call last):
+  File "/workspace/scratch/20a0022d2b33/studio-director-transport/docs/delivery/v2-development/style-vision-integration/verify_comic_author_postgres.py", line 18, in <module>
+    assert before==after,'Owned test persistence changed; inspect exact fixture ownership before cleanup'
+           ^^^^^^^^^^^^^
+AssertionError: Owned test persistence changed; inspect exact fixture ownership before cleanup

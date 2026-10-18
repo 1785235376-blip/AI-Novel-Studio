@@ -417,3 +417,9 @@ Previous source1ccbce1c archived as a946bafd7dd2d1ef171c389ba8b1e2af23966b7f, pa
 Product 95a62f57d3a84ae7b74806bd850ac3022e309990 adds bounded EPUB packaging on original approved Comic sources. File 326 with exact backend reconciliation, real PG 88 with exact 14-table cleanup, UI 369 and source-matched types/build/token, PUBLIC 6 pass. PG/PUBLIC match 3,162 source files. No formal EPUBCheck or reader/platform acceptance claimed. See docs/delivery/v2-development/comic-epub-integration-20261018.md. Separate P0 evidence reconciliation confirms tested retirement closure with explicit historical evidence limits.
 
 Prior source 2997fda0 archived as c4b15e8bced83e457419dfb68166f3c388f66e98, parent a946bafd: 14 artifacts / 5,247,349 bytes verified. Storage reclaimed through recoverable sparse-checkout documentation only; unique work retained. Assetless native-author roundtrip remains independent unintegrated work.
+
+## 22:48 UTC editable assetless Comic author archive
+
+Product dedff1c27e3dd2fcaea53131d5f22fe741a9084b adds native PAGE author export/inspect/new-draft restoration, original-owner edit/reopen and durable explicit retry. File native90, frontend216 plus source-matched types/build/token, final realPG128 with4File-only skips and exact14-table cleanup, PUBLIC6 pass. Initial old-collection fixture residue and exact cleanup/final rerun remain disclosed. See docs/delivery/v2-development/comic-author-integration-20261018.md. No media/source/WEBTOON/full-project or actual browser acceptance claim.
+
+Prior source80c8e4c archived at5776531b8c531a7cc12eba153171c13b10960935, parentc4b15e8b:15 artifacts /5,544,877 bytes verified. Stale ledger baseline/latest-wave and independent Comic/ORA summaries corrected. Separate schematic geometry and selective Director camera reuse are now active, not yet integrated.

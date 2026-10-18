@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T22:31:00Z",
+  "updated_at_utc": "2026-10-18T22:48:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -12,7 +12,8 @@
     "tree_sha": "78f4415b896e661f826edb27d93e72e0e21df53e",
     "product_sha": "e96b749ad7cd6eab29befe0db051c9e1fbf4a060",
     "first_read_sha": "9ccac0be925666f6b9ad1d32cc6286255668f4f0",
-    "working_tree": "LATER_STORY_IMPACT_WORK_EXCLUDED_FROM_THIS_COMMITTED_SNAPSHOT"
+    "working_tree": "LATER_STORY_IMPACT_WORK_EXCLUDED_FROM_THIS_COMMITTED_SNAPSHOT",
+    "identity_scope": "HISTORICAL_INITIAL_RECONCILIATION_BASELINE_NOT_CURRENT_HEAD"
   },
   "remote_observation": {
     "observed_at_utc": "2026-10-18T18:20:36Z",
@@ -1161,38 +1162,29 @@
   ],
   "latest_bounded_wave": {
     "status": "COMMITTED_PARTIAL_REQUIREMENT_REUSE_NOT_FULL_NEW_ID_CLOSURE",
-    "product_sha": "e96b749ad7cd6eab29befe0db051c9e1fbf4a060",
+    "product_sha": "dedff1c27e3dd2fcaea53131d5f22fe741a9084b",
+    "report": "docs/delivery/v2-development/comic-author-integration-20261018.md",
     "reported_evidence": {
-      "source": "Coordinating root report plus committed source/evidence files; not rerun by this documentation worker",
-      "integrated_ui": 193,
-      "typescript_vite_token": "PASS_REPORTED",
-      "public_checks": 6,
-      "camera_postgresql": 107,
-      "video_benchmark_api_file": 40,
-      "video_benchmark_api_postgresql": 40,
+      "file_native_tests": 90,
+      "postgres_tests": 128,
+      "postgres_file_only_skips": 4,
+      "postgres_exact_14_table_cleanup": true,
+      "ui_tests": 216,
+      "frontend_source_paths_reconciled": 1643,
+      "public_tests": 6,
+      "source_paths": 3170,
       "counts_are_not_additive_feature_evidence": true
     },
-    "reports": [
-      "docs/STATIC_GLB_CAMERA_EXCHANGE.md",
-      "docs/VIDEO_BENCHMARK_EXECUTION.md"
-    ],
     "items": [
       {
-        "area": "static GLB camera",
+        "area": "Assetless native editable Comic author archive",
         "maps_to": [
-          "DIF-05"
+          "IMAGE-COMIC-18"
         ],
-        "boundary": "Canonical static camera-only exchange; native Blender/UE target import, animation and timebase remain unaccepted."
-      },
-      {
-        "area": "Studio video benchmark",
-        "maps_to": [
-          "A07",
-          "DIF-08"
-        ],
-        "boundary": "Bounded original-owner observations do not establish real inference quality, VRAM or actual billed fees."
+        "boundary": "Independent PAGE 1–10 pages; explicit hidden author content disclosure; fresh unapproved drafts; original scope atomic receipt and explicit UNKNOWN recovery. Media/assets/sources/WEBTOON/full project restoration and actual browser acceptance remain open."
       }
-    ]
+    ],
+    "formal_acceptance": false
   },
   "release_gate": {
     "source_refs": [
@@ -21008,7 +21000,7 @@
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
       "gap": "Full workflow integration and IMAGE-only role compatibility remain; current original NOVEL grant is still required.",
-      "next_action": "Add Image Studio Comic entry and original-owner blank-project creation without fabricated screenplay/shot or model dependency.",
+      "next_action": "Complete IMAGE-only role compatibility and end-to-end independent Comic acceptance using the existing Image entry and original-owner blank-page creation; preserve legacy adapted-source requirements.",
       "evidence_scope": "Bounded integration evidence at exact product SHA; full requirement is not accepted.",
       "bounded_evidence": [
         {
@@ -21049,7 +21041,7 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Native reference layer editing and true ORA export exist. Live pixel preview, original-Asset import/review/attachment/recovery and actual target-application roundtrip remain open.",
+      "gap": "Book/chapter/page/panel hierarchy, native reference layers and the supported flat-raster ORA import/recovery/review/attachment/edit/export workflow exist. Live pixel preview, broader layer semantics and actual external-editor roundtrip acceptance remain open.",
       "next_action": "Extend existing versioned Comic records and compatible history rather than create another project/Asset store.",
       "evidence_scope": "Bounded integration evidence at exact product SHA; full requirement is not accepted.",
       "bounded_evidence": [
@@ -21069,6 +21061,12 @@
           "product_sha": "69943270e38df8d6d9869808c75760ca0a1c883a",
           "summary": "Versioned original Comic reference layers preserve canonical geometry/text; bounded approved OpenRaster export with explicit raster-text loss receipt. File/PG/UI/PUBLIC integration verified.",
           "report": "docs/delivery/v2-development/comic-layer-ora-integration-20261018.md",
+          "formal_acceptance": false
+        },
+        {
+          "product_sha": "79fbb1e5d80574e513cd51c09b54118b12c80d90",
+          "report": "docs/delivery/v2-development/image-ora-workflow-integration-20261018.md",
+          "summary": "Mounted supported flat-raster ORA preview/stage/recovery/review/attach and native-plus-raster editing through original Comic/Asset owners; external-editor roundtrip and live pixel preview remain open.",
           "formal_acceptance": false
         }
       ]
@@ -21665,7 +21663,15 @@
       "acceptance_status": "NOT_ACCEPTED",
       "gap": "Bounded ordered PNG CBZ, raster PDF, JPEG/WebP ZIP and fixed-layout raster EPUB implemented. Native editable portable roundtrip remains missing; assetless author-only slice is independent work. Capacity bounds, EPUBCheck/actual readers and target/platform/print acceptance remain open.",
       "next_action": "Complete native editable import under original owner/review semantics and independent reading-system/platform acceptance; no print or full conformance claim.",
-      "evidence_scope": "Bounded reading-copy formats only; see docs/delivery/v2-development/comic-epub-integration-20261018.md"
+      "evidence_scope": "Bounded reading-copy formats only; see docs/delivery/v2-development/comic-epub-integration-20261018.md",
+      "bounded_evidence": [
+        {
+          "product_sha": "dedff1c27e3dd2fcaea53131d5f22fe741a9084b",
+          "report": "docs/delivery/v2-development/comic-author-integration-20261018.md",
+          "summary": "Native assetless independent PAGE author ZIP export/inspect/atomic restore/reopen/edit/replay with fresh IDs, explicit hidden-content disclosure and guarded durable attempt recovery. External dependencies rejected; no media-preserving/full project portability acceptance.",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "IMAGE-COMIC-19",
@@ -22138,12 +22144,73 @@
         "EPUBCheck and actual reading-system/platform/print acceptance NOT_RUN"
       ],
       "p0_security_reconciliation": "docs/delivery/v2-development/project-retirement-evidence-reconciliation-20261018.md"
+    },
+    {
+      "status": "COMMITTED_PARTIAL_REQUIREMENT_REUSE_NOT_FULL_NEW_ID_CLOSURE",
+      "product_sha": "dedff1c27e3dd2fcaea53131d5f22fe741a9084b",
+      "report": "docs/delivery/v2-development/comic-author-integration-20261018.md",
+      "reported_evidence": {
+        "file_native_tests": 90,
+        "postgres_tests": 128,
+        "postgres_file_only_skips": 4,
+        "postgres_exact_14_table_cleanup": true,
+        "ui_tests": 216,
+        "frontend_source_paths_reconciled": 1643,
+        "public_tests": 6,
+        "source_paths": 3170,
+        "counts_are_not_additive_feature_evidence": true
+      },
+      "items": [
+        {
+          "area": "Assetless native editable Comic author archive",
+          "maps_to": [
+            "IMAGE-COMIC-18"
+          ],
+          "boundary": "Independent PAGE 1–10 pages; explicit hidden author content disclosure; fresh unapproved drafts; original scope atomic receipt and explicit UNKNOWN recovery. Media/assets/sources/WEBTOON/full project restoration and actual browser acceptance remain open."
+        }
+      ],
+      "formal_acceptance": false
     }
   ],
   "current_checkpoint": {
-    "product_sha": "95a62f57d3a84ae7b74806bd850ac3022e309990",
-    "report": "docs/delivery/v2-development/comic-epub-integration-20261018.md",
+    "product_sha": "dedff1c27e3dd2fcaea53131d5f22fe741a9084b",
+    "report": "docs/delivery/v2-development/comic-author-integration-20261018.md",
     "source_identity_section": "Historical initial reconciliation baseline, not current HEAD",
     "all_fixed_ids_accepted": false
+  },
+  "historical_initial_bounded_wave": {
+    "status": "COMMITTED_PARTIAL_REQUIREMENT_REUSE_NOT_FULL_NEW_ID_CLOSURE",
+    "product_sha": "e96b749ad7cd6eab29befe0db051c9e1fbf4a060",
+    "reported_evidence": {
+      "source": "Coordinating root report plus committed source/evidence files; not rerun by this documentation worker",
+      "integrated_ui": 193,
+      "typescript_vite_token": "PASS_REPORTED",
+      "public_checks": 6,
+      "camera_postgresql": 107,
+      "video_benchmark_api_file": 40,
+      "video_benchmark_api_postgresql": 40,
+      "counts_are_not_additive_feature_evidence": true
+    },
+    "reports": [
+      "docs/STATIC_GLB_CAMERA_EXCHANGE.md",
+      "docs/VIDEO_BENCHMARK_EXECUTION.md"
+    ],
+    "items": [
+      {
+        "area": "static GLB camera",
+        "maps_to": [
+          "DIF-05"
+        ],
+        "boundary": "Canonical static camera-only exchange; native Blender/UE target import, animation and timebase remain unaccepted."
+      },
+      {
+        "area": "Studio video benchmark",
+        "maps_to": [
+          "A07",
+          "DIF-08"
+        ],
+        "boundary": "Bounded original-owner observations do not establish real inference quality, VRAM or actual billed fees."
+      }
+    ]
   }
 }

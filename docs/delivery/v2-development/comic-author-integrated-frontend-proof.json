@@ -1,0 +1,87 @@
+{
+  "product_sha": "6ef470ff6d3841e7f14ab4b896c98fccb034ea33",
+  "original_build_receipt": "docs/delivery/v2-development/comic-author-native-frontend-final.json",
+  "build_receipt_sha256": "ec186749b8c3b829a5c2a15871dd30cc74b23cbcfc63f93a5c98e41b3b297cbf",
+  "frontend_source_paths_matched": 1643,
+  "source_unchanged": true,
+  "copied_dist": ".runtime/verified-frontend/comic-author-6ef470ff/dist",
+  "inventory": [
+    {
+      "path": "assets/App-DW4Zr4jw.js",
+      "sha256": "401e548d20d84d36a23d1f704616b524e0c7f88e4aafeb2796917ec21abba8e0",
+      "bytes": 2906246
+    },
+    {
+      "path": "assets/App-ipe-r0uF.css",
+      "sha256": "2b6361e75064066fb527b4ceb59361c90440b20baa9c65a8f3addf4fff61155b",
+      "bytes": 219837
+    },
+    {
+      "path": "assets/ExperimentalWorkbench-CGFS0N0d.js",
+      "sha256": "dcdf53c99e686c8c5dd4b4481b405a9e1ee1aafc5c4fe8d042a4cd8484f06310",
+      "bytes": 848156
+    },
+    {
+      "path": "assets/ExperimentalWorkbench-cKwZaTd1.css",
+      "sha256": "7335685a1888ddf356d966aa3d822fb8d9c798e0aeeb5a870804c4802e618e4c",
+      "bytes": 3880
+    },
+    {
+      "path": "assets/Health-C1aQNM6G.js",
+      "sha256": "cde55d668c99323285b46867b11031d874f0fa2d58d540d2446afa93920a8f45",
+      "bytes": 989
+    },
+    {
+      "path": "assets/LocalTutorIntegration-BRshkv99.css",
+      "sha256": "87b9bc1757000d4ff1364524d627600b7d4ad88eaa3f21ea0d072d6ad29bb9dc",
+      "bytes": 3626
+    },
+    {
+      "path": "assets/LocalTutorIntegration-Ds0JareP.js",
+      "sha256": "f7c5aa6d0a5a66909661dfcda5a468fcc4b6cb52d76c1dfd8b4e3f645b20f245",
+      "bytes": 47635
+    },
+    {
+      "path": "assets/editor-vendor-WoPbGn4i.js",
+      "sha256": "10bb7ac7f6564af822100aee709abbec617a51b0efb78a1e8d92f085e3744499",
+      "bytes": 307091
+    },
+    {
+      "path": "assets/index-BBByKl1o.js",
+      "sha256": "331c55448874cbe2e581cf81a198e6f834151b103e7d39c909846c94a1378892",
+      "bytes": 30154
+    },
+    {
+      "path": "assets/index-Cj-tLRQ5.css",
+      "sha256": "5399d8df3be57bb061fb8c48846d79c359846f844e18b776c58f2de48c58ade7",
+      "bytes": 32292
+    },
+    {
+      "path": "assets/query-vendor-CUnTvSIi.js",
+      "sha256": "1fc0a3c6574061fdc18929187fdf6b0d00ab3c003918530126100a762e69a97b",
+      "bytes": 45602
+    },
+    {
+      "path": "assets/react-vendor-D3pO_op5.js",
+      "sha256": "35539930060cd39417338afc8940bb1213d8d1dff683e25a6eb15291f8adfae9",
+      "bytes": 142976
+    },
+    {
+      "path": "assets/style-6MlQLGa4.css",
+      "sha256": "9da58e75fb03b4ae56b9204f968c8a4b155e4527f24008364c5eb9c1ad85448d",
+      "bytes": 3788
+    },
+    {
+      "path": "assets/style-CvcqcfJT.js",
+      "sha256": "d90683fefefe14a79564ffec56a56aacb5deda8d21fa2a5acaf671978978ae89",
+      "bytes": 45115
+    },
+    {
+      "path": "index.html",
+      "sha256": "e5fccbb2615d4540f91be02a5cf6653d206eefd5b2ad2bd6bf53aa84e14b07aa",
+      "bytes": 326
+    }
+  ],
+  "reason": "Exact source-matched frozen worker build reused without redundant rerun",
+  "browser_acceptance": "NOT_RUN"
+}

@@ -1,0 +1,234 @@
+{
+  "workspaces": [
+    {
+      "id": "w-f7983fbfb3cb444cb75d61879a52ead5",
+      "payload": {
+        "id": "w-f7983fbfb3cb444cb75d61879a52ead5",
+        "name": "Mounted workspace",
+        "created_at": "2026-10-18T22:44:48.026247+00:00",
+        "updated_at": "2026-10-18T22:44:48.026253+00:00"
+      }
+    },
+    {
+      "id": "w-b8d265dc6d024ffd8ec08fe59ec8b46e",
+      "payload": {
+        "id": "w-b8d265dc6d024ffd8ec08fe59ec8b46e",
+        "name": "Mounted workspace",
+        "created_at": "2026-10-18T22:44:48.892053+00:00",
+        "updated_at": "2026-10-18T22:44:48.892058+00:00"
+      }
+    }
+  ],
+  "users": [
+    {
+      "id": "lead-f7983fbfb3cb444cb75d61879a52ead5",
+      "display_name": "lead-f7983fbfb3cb444cb75d61879a52ead5",
+      "status": "ACTIVE",
+      "created_at": "2026-10-18T22:44:48.078431+00:00",
+      "updated_at": "2026-10-18T22:44:48.07844+00:00",
+      "metadata": null
+    },
+    {
+      "id": "viewer-f7983fbfb3cb444cb75d61879a52ead5",
+      "display_name": "viewer-f7983fbfb3cb444cb75d61879a52ead5",
+      "status": "ACTIVE",
+      "created_at": "2026-10-18T22:44:48.089427+00:00",
+      "updated_at": "2026-10-18T22:44:48.089431+00:00",
+      "metadata": null
+    },
+    {
+      "id": "lead-b8d265dc6d024ffd8ec08fe59ec8b46e",
+      "display_name": "lead-b8d265dc6d024ffd8ec08fe59ec8b46e",
+      "status": "ACTIVE",
+      "created_at": "2026-10-18T22:44:48.945748+00:00",
+      "updated_at": "2026-10-18T22:44:48.945757+00:00",
+      "metadata": null
+    },
+    {
+      "id": "viewer-b8d265dc6d024ffd8ec08fe59ec8b46e",
+      "display_name": "viewer-b8d265dc6d024ffd8ec08fe59ec8b46e",
+      "status": "ACTIVE",
+      "created_at": "2026-10-18T22:44:48.956636+00:00",
+      "updated_at": "2026-10-18T22:44:48.956642+00:00",
+      "metadata": null
+    }
+  ],
+  "workspace_memberships": [
+    {
+      "id": "m-lead-f7983fbfb3cb444cb75d61879a52ead5",
+      "user_id": "lead-f7983fbfb3cb444cb75d61879a52ead5",
+      "workspace_id": "w-f7983fbfb3cb444cb75d61879a52ead5",
+      "status": "ACTIVE",
+      "created_at": "2026-10-18T22:44:48.081472+00:00",
+      "updated_at": "2026-10-18T22:44:48.081477+00:00",
+      "metadata": null
+    },
+    {
+      "id": "m-viewer-f7983fbfb3cb444cb75d61879a52ead5",
+      "user_id": "viewer-f7983fbfb3cb444cb75d61879a52ead5",
+      "workspace_id": "w-f7983fbfb3cb444cb75d61879a52ead5",
+      "status": "ACTIVE",
+      "created_at": "2026-10-18T22:44:48.092278+00:00",
+      "updated_at": "2026-10-18T22:44:48.092281+00:00",
+      "metadata": null
+    },
+    {
+      "id": "m-lead-b8d265dc6d024ffd8ec08fe59ec8b46e",
+      "user_id": "lead-b8d265dc6d024ffd8ec08fe59ec8b46e",
+      "workspace_id": "w-b8d265dc6d024ffd8ec08fe59ec8b46e",
+      "status": "ACTIVE",
+      "created_at": "2026-10-18T22:44:48.948694+00:00",
+      "updated_at": "2026-10-18T22:44:48.948699+00:00",
+      "metadata": null
+    },
+    {
+      "id": "m-viewer-b8d265dc6d024ffd8ec08fe59ec8b46e",
+      "user_id": "viewer-b8d265dc6d024ffd8ec08fe59ec8b46e",
+      "workspace_id": "w-b8d265dc6d024ffd8ec08fe59ec8b46e",
+      "status": "ACTIVE",
+      "created_at": "2026-10-18T22:44:48.95933+00:00",
+      "updated_at": "2026-10-18T22:44:48.959334+00:00",
+      "metadata": null
+    }
+  ],
+  "authorization_audit_events": [
+    {
+      "id": "1ae6455e-565d-4f77-890e-c1aec9cf771e",
+      "payload": {
+        "id": "1ae6455e-565d-4f77-890e-c1aec9cf771e",
+        "scope": {
+          "kind": "BRANCH",
+          "branch_id": "b-f7983fbfb3cb444cb75d61879a52ead5",
+          "project_id": "r3-mounted-c399e40e15c748e88f326e0eb8747bf2",
+          "storyline_id": "s-f7983fbfb3cb444cb75d61879a52ead5",
+          "workspace_id": "w-f7983fbfb3cb444cb75d61879a52ead5"
+        },
+        "action": "ROLE_ASSIGNED",
+        "actor_id": "lead-f7983fbfb3cb444cb75d61879a52ead5",
+        "metadata": {
+          "role": "DOMAIN_LEAD",
+          "domain": "NOVEL",
+          "principal_id": "lead-f7983fbfb3cb444cb75d61879a52ead5"
+        },
+        "target_id": "role-f7983fbfb3cb444cb75d61879a52ead5",
+        "timestamp": "2026-10-18T22:44:48.123435+00:00",
+        "target_type": "DomainRoleAssignment"
+      }
+    },
+    {
+      "id": "b0339b14-a390-4cce-9667-f6faee8b02fb",
+      "payload": {
+        "id": "b0339b14-a390-4cce-9667-f6faee8b02fb",
+        "scope": {
+          "kind": "BRANCH",
+          "branch_id": "b-f7983fbfb3cb444cb75d61879a52ead5",
+          "project_id": "r3-mounted-c399e40e15c748e88f326e0eb8747bf2",
+          "storyline_id": "s-f7983fbfb3cb444cb75d61879a52ead5",
+          "workspace_id": "w-f7983fbfb3cb444cb75d61879a52ead5"
+        },
+        "action": "PERMISSION_ASSIGNED",
+        "actor_id": "lead-f7983fbfb3cb444cb75d61879a52ead5",
+        "metadata": {
+          "domain": "NOVEL",
+          "permission": "domain.read",
+          "principal_id": "viewer-f7983fbfb3cb444cb75d61879a52ead5"
+        },
+        "target_id": "read-f7983fbfb3cb444cb75d61879a52ead5",
+        "timestamp": "2026-10-18T22:44:48.148562+00:00",
+        "target_type": "PermissionAssignment"
+      }
+    },
+    {
+      "id": "c1c85813-d172-4cf8-930a-d6f50d393649",
+      "payload": {
+        "id": "c1c85813-d172-4cf8-930a-d6f50d393649",
+        "scope": {
+          "kind": "BRANCH",
+          "branch_id": "b-f7983fbfb3cb444cb75d61879a52ead5",
+          "project_id": "r3-mounted-c399e40e15c748e88f326e0eb8747bf2",
+          "storyline_id": "s-f7983fbfb3cb444cb75d61879a52ead5",
+          "workspace_id": "w-f7983fbfb3cb444cb75d61879a52ead5"
+        },
+        "action": "ROLE_REVOKED",
+        "actor_id": "lead-f7983fbfb3cb444cb75d61879a52ead5",
+        "metadata": {
+          "role": "DOMAIN_LEAD",
+          "domain": "NOVEL",
+          "principal_id": "lead-f7983fbfb3cb444cb75d61879a52ead5"
+        },
+        "target_id": "role-f7983fbfb3cb444cb75d61879a52ead5",
+        "timestamp": "2026-10-18T22:44:48.789999+00:00",
+        "target_type": "DomainRoleAssignment"
+      }
+    },
+    {
+      "id": "3b8252f7-a1d5-4fd9-9d2d-659c05137bd1",
+      "payload": {
+        "id": "3b8252f7-a1d5-4fd9-9d2d-659c05137bd1",
+        "scope": {
+          "kind": "BRANCH",
+          "branch_id": "b-b8d265dc6d024ffd8ec08fe59ec8b46e",
+          "project_id": "r3-mounted-fdd49b412c084b0fa3960e51362ea27d",
+          "storyline_id": "s-b8d265dc6d024ffd8ec08fe59ec8b46e",
+          "workspace_id": "w-b8d265dc6d024ffd8ec08fe59ec8b46e"
+        },
+        "action": "ROLE_ASSIGNED",
+        "actor_id": "lead-b8d265dc6d024ffd8ec08fe59ec8b46e",
+        "metadata": {
+          "role": "DOMAIN_LEAD",
+          "domain": "NOVEL",
+          "principal_id": "lead-b8d265dc6d024ffd8ec08fe59ec8b46e"
+        },
+        "target_id": "role-b8d265dc6d024ffd8ec08fe59ec8b46e",
+        "timestamp": "2026-10-18T22:44:48.989049+00:00",
+        "target_type": "DomainRoleAssignment"
+      }
+    },
+    {
+      "id": "d707c3ff-8fde-4f5b-92c5-bc87e2e86346",
+      "payload": {
+        "id": "d707c3ff-8fde-4f5b-92c5-bc87e2e86346",
+        "scope": {
+          "kind": "BRANCH",
+          "branch_id": "b-b8d265dc6d024ffd8ec08fe59ec8b46e",
+          "project_id": "r3-mounted-fdd49b412c084b0fa3960e51362ea27d",
+          "storyline_id": "s-b8d265dc6d024ffd8ec08fe59ec8b46e",
+          "workspace_id": "w-b8d265dc6d024ffd8ec08fe59ec8b46e"
+        },
+        "action": "PERMISSION_ASSIGNED",
+        "actor_id": "lead-b8d265dc6d024ffd8ec08fe59ec8b46e",
+        "metadata": {
+          "domain": "NOVEL",
+          "permission": "domain.read",
+          "principal_id": "viewer-b8d265dc6d024ffd8ec08fe59ec8b46e"
+        },
+        "target_id": "read-b8d265dc6d024ffd8ec08fe59ec8b46e",
+        "timestamp": "2026-10-18T22:44:49.015681+00:00",
+        "target_type": "PermissionAssignment"
+      }
+    },
+    {
+      "id": "fc1b3538-2a55-4ddc-bea2-85d5ae32cea3",
+      "payload": {
+        "id": "fc1b3538-2a55-4ddc-bea2-85d5ae32cea3",
+        "scope": {
+          "kind": "BRANCH",
+          "branch_id": "b-b8d265dc6d024ffd8ec08fe59ec8b46e",
+          "project_id": "r3-mounted-fdd49b412c084b0fa3960e51362ea27d",
+          "storyline_id": "s-b8d265dc6d024ffd8ec08fe59ec8b46e",
+          "workspace_id": "w-b8d265dc6d024ffd8ec08fe59ec8b46e"
+        },
+        "action": "ROLE_REVOKED",
+        "actor_id": "lead-b8d265dc6d024ffd8ec08fe59ec8b46e",
+        "metadata": {
+          "role": "DOMAIN_LEAD",
+          "domain": "NOVEL",
+          "principal_id": "lead-b8d265dc6d024ffd8ec08fe59ec8b46e"
+        },
+        "target_id": "role-b8d265dc6d024ffd8ec08fe59ec8b46e",
+        "timestamp": "2026-10-18T22:44:49.659587+00:00",
+        "target_type": "DomainRoleAssignment"
+      }
+    }
+  ]
+}
