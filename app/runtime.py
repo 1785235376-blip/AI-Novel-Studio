@@ -17,6 +17,11 @@ from .model_runtime import (
 from .openai_compatible import CompatibleProviderConfig,OpenAICompatibleTextProvider
 from .stable_identity import ExecutionNodeIdentityStore, StableIdentityStore, get_host_identity_store, canonical_model_identity_key
 
+def _packaged_runtime() -> bool:
+    """Match original credential transport and the desktop host marker."""
+    return settings.enable_packaged_runtime or os.getenv("PACKAGED_WINDOWS_MODE", "").lower() in {"1", "true", "yes", "on"}
+
+
 class Runtime:
     def __init__(self, identity_store: StableIdentityStore | None = None):
         self.providers={"ollama":OllamaProvider(settings.ollama_url),"mock":MockProvider(settings.mock_delay_ms,settings.mock_failure)}
@@ -32,7 +37,7 @@ class Runtime:
         self._sync_model("mock","mock-writer",display_name="内置测试写作模型",context_window=8192)
         self._sync_model("ollama", settings.local_model, display_name=settings.local_model, probe=False)
         deepseek=OpenAICompatibleTextProvider(CompatibleProviderConfig("deepseek",os.getenv("DEEPSEEK_BASE_URL","https://api.deepseek.com/v1"),"DEEPSEEK_API_KEY"))
-        self._deepseek_execution_mode = "mock_standin" if settings.mock_provider and not settings.enable_packaged_runtime else "real"
+        self._deepseek_execution_mode = "mock_standin" if settings.mock_provider and not _packaged_runtime() else "real"
         if self._deepseek_execution_mode == "mock_standin":
             configured = True
             available = self.providers["mock"].health_check()
@@ -40,7 +45,7 @@ class Runtime:
             health_status = "mock_standin" if available else "mock_standin_unavailable"
         else:
             from .credential_vault import credential_vault
-            configured = credential_vault.has("deepseek") or (not settings.enable_packaged_runtime and bool(os.getenv("DEEPSEEK_API_KEY")))
+            configured = credential_vault.has("deepseek") or (not _packaged_runtime() and bool(os.getenv("DEEPSEEK_API_KEY")))
             available = configured
             self._deepseek_provider_adapter = deepseek
             health_status = "available" if available else "not_configured"
@@ -86,7 +91,7 @@ class Runtime:
                 or any(ord(character) <= 32 or ord(character) == 127 for character in model_id)):
             raise ValueError("BAILIAN_EXPLICIT_MODEL_REQUIRED")
         adapter = BailianTextProvider(region)
-        packaged = settings.enable_packaged_runtime or os.getenv("PACKAGED_WINDOWS_MODE", "").lower() in {"1", "true", "yes", "on"}
+        packaged = _packaged_runtime()
         configured = credential_vault.has("aliyun-bailian") or (not packaged and bool(os.getenv("DASHSCOPE_API_KEY")))
         self.provider_registry.register(ProviderDescriptor("aliyun-bailian", "阿里云百炼（文本）", "remote",
             frozenset({Modality.TEXT}), configured, configured,
@@ -102,7 +107,7 @@ class Runtime:
         if provider_id not in configs or not model_id or len(model_id)>200:
             raise ValueError("explicit supported native provider and model required")
         cls,url,key_env=configs[provider_id]
-        packaged = settings.enable_packaged_runtime or os.getenv("PACKAGED_WINDOWS_MODE", "").lower() in {"1", "true", "yes", "on"}
+        packaged = _packaged_runtime()
         configured=credential_vault.has(provider_id) or (not packaged and bool(os.getenv(key_env)))
         adapter=cls(CompatibleProviderConfig(provider_id,url,key_env))
         self.provider_registry.register(ProviderDescriptor(provider_id,provider_id.title(),"remote",frozenset({Modality.TEXT}),configured,configured,"configured_unverified" if configured else "not_configured"),adapter,replace=True)
@@ -119,7 +124,7 @@ class Runtime:
                     execution_mode = "mock_standin"
                 else:
                     from .credential_vault import credential_vault
-                    configured = credential_vault.has("deepseek") or (not settings.enable_packaged_runtime and bool(os.getenv("DEEPSEEK_API_KEY")))
+                    configured = credential_vault.has("deepseek") or (not _packaged_runtime() and bool(os.getenv("DEEPSEEK_API_KEY")))
                     available = p.health_check() if configured else False
                     health_status = "available" if available else ("not_configured" if not configured else "unavailable")
                     execution_mode = "real"
@@ -178,7 +183,7 @@ class Runtime:
             return False
         return any(item.provider_id==provider_id and item.provider_type in {"remote", "cloud"} for item in self.provider_registry.descriptors())
     def router(self,profile:str,role:str)->ModelRouter:
-        packaged=bool(settings.enable_packaged_runtime)
+        packaged=_packaged_runtime()
         local="mock" if settings.mock_provider and not packaged else "ollama"
         local_model="mock-writer" if local=="mock" else settings.local_model
         cloud=os.getenv(f"CLOUD_{role.upper()}_PROVIDER") or os.getenv("DEFAULT_CLOUD_PROVIDER")
@@ -209,7 +214,7 @@ class Runtime:
         return self.generation_runtime.text_node
     def packaged_author_route_ready(self, provider_id: str) -> bool:
         """Packaged DesktopHost must not complete author text with mock or unconfigured DeepSeek."""
-        if not settings.enable_packaged_runtime:
+        if not _packaged_runtime():
             return True
         if provider_id == "mock":
             return False

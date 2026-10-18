@@ -1,0 +1,9 @@
+# Honor the original packaged Windows runtime marker consistently
+
+After the native-provider readiness correction, four adjacent original Runtime regressions were reproduced with PACKAGED_WINDOWS_MODE=true, the settings flag false and only synthetic environment credentials. The old code selected the DeepSeek mock stand-in, admitted the mock author route, chose a mock local route, and marked the real DeepSeek status configured in the separate non-mock case. All four original assertions failed before this change.
+
+Runtime now shares one effective packaged predicate across its existing stand-in selection, DeepSeek readiness/status, local router, author-readiness gate, Bailian registration and native registration. It matches the already-existing shared credential transport predicate. No launcher, environment value, actual vault, account permission, model download or paid API was changed. Development mock behavior and normal original vault-backed positives remain covered by the unchanged original tests.
+
+Evidence: 4 failing-before cases retained; final focused suite 55 passed, including the existing provider-status/vault interaction contracts, runtime development/packaged tests, native and Bailian contracts, catalog and actual PUBLIC wheel checks. API inventory retains 2367 method/path entries with fingerprint 91de58b3396d356a966484398a0a9c685048ff29ef5779767a75ebb690434c91. Frontend source remains unchanged from its last successful TypeScript/Vite build.
+
+These tests exercise original Runtime objects in an isolated test host; they are not clean Windows installation, live API connectivity or proof of an exploited credential transmission. No global audit of every legacy provider entry point is claimed. The earlier report's statement that these four paths were not yet reproduced remains historical to fd8ad26.

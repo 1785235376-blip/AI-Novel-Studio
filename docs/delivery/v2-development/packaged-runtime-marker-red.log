@@ -1,0 +1,93 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_packaged_marker_fences_original_runtime_without_settings_alias[standin] _
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/packaged-runtime-marker-red/pytest/test_packaged_marker_fences_or0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd783e3f920>
+boundary = 'standin'
+
+    @pytest.mark.parametrize('boundary', ['standin', 'author', 'router', 'status'])
+    def test_packaged_marker_fences_original_runtime_without_settings_alias(tmp_path, monkeypatch, boundary):
+        value = host(tmp_path, monkeypatch, mock=boundary != 'status')
+        if boundary == 'standin':
+>           assert value._deepseek_execution_mode == 'real'
+E           AssertionError: assert 'mock_standin' == 'real'
+E             
+E             - real
+E             + mock_standin
+
+tests/test_packaged_runtime_marker_additive.py:26: AssertionError
+_ test_packaged_marker_fences_original_runtime_without_settings_alias[author] __
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/packaged-runtime-marker-red/pytest/test_packaged_marker_fences_or1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd783eedc70>
+boundary = 'author'
+
+    @pytest.mark.parametrize('boundary', ['standin', 'author', 'router', 'status'])
+    def test_packaged_marker_fences_original_runtime_without_settings_alias(tmp_path, monkeypatch, boundary):
+        value = host(tmp_path, monkeypatch, mock=boundary != 'status')
+        if boundary == 'standin':
+            assert value._deepseek_execution_mode == 'real'
+        elif boundary == 'author':
+>           assert value.packaged_author_route_ready('mock') is False
+E           AssertionError: assert True is False
+E            +  where True = packaged_author_route_ready('mock')
+E            +    where packaged_author_route_ready = <app.runtime.Runtime object at 0x7fd783eec0b0>.packaged_author_route_ready
+
+tests/test_packaged_runtime_marker_additive.py:28: AssertionError
+_ test_packaged_marker_fences_original_runtime_without_settings_alias[router] __
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/packaged-runtime-marker-red/pytest/test_packaged_marker_fences_or2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd783ed75c0>
+boundary = 'router'
+
+    @pytest.mark.parametrize('boundary', ['standin', 'author', 'router', 'status'])
+    def test_packaged_marker_fences_original_runtime_without_settings_alias(tmp_path, monkeypatch, boundary):
+        value = host(tmp_path, monkeypatch, mock=boundary != 'status')
+        if boundary == 'standin':
+            assert value._deepseek_execution_mode == 'real'
+        elif boundary == 'author':
+            assert value.packaged_author_route_ready('mock') is False
+            assert value.packaged_author_route_ready('deepseek') is False
+        elif boundary == 'router':
+>           assert [route.provider for route in value.router('LOCAL_ONLY', 'writer').routes['writer']] == ['ollama']
+E           AssertionError: assert ['mock'] == ['ollama']
+E             
+E             At index 0 diff: 'mock' != 'ollama'
+E             Use -v to get more diff
+
+tests/test_packaged_runtime_marker_additive.py:31: AssertionError
+_ test_packaged_marker_fences_original_runtime_without_settings_alias[status] __
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/packaged-runtime-marker-red/pytest/test_packaged_marker_fences_or3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd783eed610>
+boundary = 'status'
+
+    @pytest.mark.parametrize('boundary', ['standin', 'author', 'router', 'status'])
+    def test_packaged_marker_fences_original_runtime_without_settings_alias(tmp_path, monkeypatch, boundary):
+        value = host(tmp_path, monkeypatch, mock=boundary != 'status')
+        if boundary == 'standin':
+            assert value._deepseek_execution_mode == 'real'
+        elif boundary == 'author':
+            assert value.packaged_author_route_ready('mock') is False
+            assert value.packaged_author_route_ready('deepseek') is False
+        elif boundary == 'router':
+            assert [route.provider for route in value.router('LOCAL_ONLY', 'writer').routes['writer']] == ['ollama']
+        else:
+            status = value.provider_status()['deepseek']
+>           assert status['configured'] is False and status['available'] is False
+E           assert (True is False)
+
+tests/test_packaged_runtime_marker_additive.py:34: AssertionError
+=============================== warnings summary ===============================
+tests/test_packaged_runtime_marker_additive.py::test_packaged_marker_fences_original_runtime_without_settings_alias[standin]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_packaged_runtime_marker_additive.py::test_packaged_marker_fences_original_runtime_without_settings_alias[standin]
+FAILED tests/test_packaged_runtime_marker_additive.py::test_packaged_marker_fences_original_runtime_without_settings_alias[author]
+FAILED tests/test_packaged_runtime_marker_additive.py::test_packaged_marker_fences_original_runtime_without_settings_alias[router]
+FAILED tests/test_packaged_runtime_marker_additive.py::test_packaged_marker_fences_original_runtime_without_settings_alias[status]
+4 failed, 1 warning in 4.56s
