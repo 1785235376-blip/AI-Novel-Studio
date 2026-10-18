@@ -1,16 +1,16 @@
 # Studio V2 current continuation checkpoint
 
-Updated 2026-10-18 19:33 UTC. This document inventories bounded additions, not a
+Updated 2026-10-18 19:47 UTC. This document inventories bounded additions, not a
 replacement for the frozen feature matrix or a V2 percentage/Release declaration.
 The source pin below identifies the latest bounded implementation; archive and product heads remain distinct.
 
 ## Source and publication
 
-Current checkpoint: 2026-10-18 19:33 UTC. Working branch:
+Current checkpoint: 2026-10-18 19:47 UTC. Working branch:
 work/dot-recovered-20261018. Latest committed product source is
-9d5ac505b4ef67e556af16162129f0830b83310d (Style authoring/local vision runtime).
+69943270e38df8d6d9869808c75760ca0a1c883a (Comic native layers/ORA export).
 Latest byte-verified public archive is
-bab2926453fdb2ea9980e507c61bc2c33d062bcf on
+9c406ba770e58b037918ddb2ecbed121f24284fb on
 archive/verified-studio-v2-20261017-5a6f697. Archive HEAD and product HEAD are
 different identities; the archive stores prerequisite-bound incremental bundles.
 The restored local source contains the integrated working product, whereas the
@@ -287,3 +287,17 @@ bab2926453fdb2ea9980e507c61bc2c33d062bcf: 13 files / 5,871,246 bytes, anonymous
 exact-parent/path/byte/hash verification passed. Fresh remote observation at
 19:20 UTC left main and PR47/48 heads unchanged. New source publication remains
 archive-only; no main merge, release, tag or new public source branch.
+
+## 19:47 UTC Comic layers and ORA export checkpoint
+
+Product 69943270e38df8d6d9869808c75760ca0a1c883a adds optional native reference
+layers and real bounded ORA export. File 84, PG 52, UI 148, TypeScript/Vite/token
+and final PUBLIC 6 passed; exact skip/failure distinctions are preserved in
+comic-layer-ora-integration-20261018.md. Pixel preview requires save and server
+preview. ORA import and target-application roundtrip remain open.
+
+Previous source faff5940 was anonymously verified in public archive
+9c406ba770e58b037918ddb2ecbed121f24284fb, parent bab2926453fdb2ea9980e507c61bc2c33d062bcf:
+13 paths / 4,760,204 bytes. Normal source branches remain unchanged.
+Style host navigation fixes and durable IMAGE V3 Job preparation remain isolated,
+not included in this product. Full V2 acceptance remains open.

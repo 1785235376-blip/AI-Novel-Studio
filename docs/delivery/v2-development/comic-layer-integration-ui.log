@@ -1,0 +1,59 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/comicLayers.test.ts (20 tests) 32ms
+ ✓ src/experimental/comicDuplication.test.ts (36 tests) 14ms
+ ✓ src/experimental/comicArrangement.test.ts (18 tests) 8ms
+ ✓ src/experimental/ComicReadingOrder.additive.test.tsx (5 tests) 784ms
+   ✓ integrates with original layout history without saving or approving automatically 662ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 1201ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 456ms
+ ✓ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests) 1272ms
+   ✓ uses original undo redo and CAS save while retaining inactive values through fit toggles 328ms
+   ✓ original vertical arrangement preserves framing values through apply and undo 330ms
+ ✓ src/experimental/ComicCollectionTree.test.tsx (13 tests) 1633ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 2028ms
+   ✓ explicit arrangement preview applies one undoable edit and saves only through original owner 698ms
+   ✓ cancel, edits, refresh and client replacement discard arrangement consent 457ms
+ ✓ src/experimental/ComicLayoutsPanel.layers.test.tsx (11 tests) 3220ms
+   ✓ legacy save stays unlayered until explicit enable and never shows ORA export 507ms
+   ✓ explicit enable and layer edits preserve canonical dialogue, save through CAS and remain undoable 775ms
+   ✓ structural add/remove preserves unrelated layer settings and exact undo coverage 493ms
+ ✓ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (25 tests) 5480ms
+   ✓ explicit preview discloses pins and applies one exact undoable copy through original CAS save 909ms
+   ✓ invalid destination never consumes IDs or changes history and cancel discards preview 494ms
+   ✓ retained apply callbacks cannot survive edit, coordinate replacement, cancel, or repeat 334ms
+   ✓ refresh, stale catalog pins, source ABA and client/scope replacement fence retained callbacks 342ms
+
+ Test Files  10 passed (10)
+      Tests  148 passed (148)
+   Start at  04:45:17
+   Duration  6.68s (transform 731ms, setup 231ms, collect 2.49s, tests 15.67s, environment 3.44s, prepare 914ms)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2436 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-cKwZaTd1.css      3.88 kB │ gzip:   1.02 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-ipe-r0uF.css                      219.84 kB │ gzip:  27.79 kB
+dist/assets/Health-CfuRcB7e.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-DmB9yrpa.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/style-D6yDA3tV.js                      45.12 kB │ gzip:   8.40 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/LocalTutorIntegration-DfSgLXO9.js      47.64 kB │ gzip:  15.65 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-DcRPQ93T.js     829.47 kB │ gzip: 248.55 kB
+dist/assets/App-BEzotDsn.js                     2,786.32 kB │ gzip: 836.60 kB
+✓ built in 7.60s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

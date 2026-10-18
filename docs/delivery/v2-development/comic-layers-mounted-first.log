@@ -1,0 +1,53 @@
+.................s....FF....................s........................... [ 81%]
+................                                                         [100%]
+=================================== FAILURES ===================================
+____________ test_ora_actor_branch_and_flags_fail_closed[file-/api] ____________
+
+mounted = namespace(client=<starlette.testclient.TestClient object at 0x7f878d0f3ad0>, prefix='/api', base='/api/novels/r3-mount...rs={'X-Session-Token': 'viewer-1ee0c55b44684174bf596c544beaf9e4', 'X-Branch-ID': 'b-1ee0c55b44684174bf596c544beaf9e4'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f878d92e330>
+
+    def test_ora_actor_branch_and_flags_fail_closed(mounted, monkeypatch):
+        e = scoped(mounted, monkeypatch)
+        page = checked(e.client.post(e.base + '/comic-layouts/records', headers=e.headers, json=layered(blank())), 201)
+        path = e.base + '/comic-layouts/records/' + page['id']
+        report = checked(e.client.post(path + '/preflight', headers=e.headers, json={'expected_version': 1}))
+        checked(e.client.post(path + '/approve', headers=e.headers, json={'expected_version': 1, 'review_digest': report['review_digest'], 'acknowledge_warnings': True}))
+        for headers in ({}, e.viewer_headers, {**e.headers, 'X-Branch-ID': e.other_branch}):
+            response = e.client.get(path + '/export-ora?expected_version=2', headers=headers)
+>           assert response.status_code in (403, 404)
+E           assert 401 in (403, 404)
+E            +  where 401 = <Response [401 Unauthorized]>.status_code
+
+tests/test_comic_layers_mounted.py:66: AssertionError
+__________ test_ora_actor_branch_and_flags_fail_closed[file-/api/v1] ___________
+
+mounted = namespace(client=<starlette.testclient.TestClient object at 0x7f878cb962a0>, prefix='/api/v1', base='/api/v1/novels/r3...rs={'X-Session-Token': 'viewer-38e06f825361474db165dbdfb183d84d', 'X-Branch-ID': 'b-38e06f825361474db165dbdfb183d84d'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f878ccd6780>
+
+    def test_ora_actor_branch_and_flags_fail_closed(mounted, monkeypatch):
+        e = scoped(mounted, monkeypatch)
+        page = checked(e.client.post(e.base + '/comic-layouts/records', headers=e.headers, json=layered(blank())), 201)
+        path = e.base + '/comic-layouts/records/' + page['id']
+        report = checked(e.client.post(path + '/preflight', headers=e.headers, json={'expected_version': 1}))
+        checked(e.client.post(path + '/approve', headers=e.headers, json={'expected_version': 1, 'review_digest': report['review_digest'], 'acknowledge_warnings': True}))
+        for headers in ({}, e.viewer_headers, {**e.headers, 'X-Branch-ID': e.other_branch}):
+            response = e.client.get(path + '/export-ora?expected_version=2', headers=headers)
+>           assert response.status_code in (403, 404)
+E           assert 401 in (403, 404)
+E            +  where 401 = <Response [401 Unauthorized]>.status_code
+
+tests/test_comic_layers_mounted.py:66: AssertionError
+=============================== warnings summary ===============================
+../studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_comic_layers.py::test_legacy_omission_exact_report_and_pixels
+  /workspace/scratch/20a0022d2b33/studio-comic-layers-work/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_comic_layers_mounted.py::test_ora_actor_branch_and_flags_fail_closed[file-/api]
+FAILED tests/test_comic_layers_mounted.py::test_ora_actor_branch_and_flags_fail_closed[file-/api/v1]
+2 failed, 84 passed, 2 skipped, 36 deselected, 2 warnings in 13.34s

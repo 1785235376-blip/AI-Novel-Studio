@@ -1,0 +1,47 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-comic-layers-work/frontend
+
+ ✓ src/ui/AppShell.test.tsx (19 tests) 374ms
+ ✓ src/experimental/Wave5TemplatesSdkComics.test.tsx (4 tests) 1105ms
+   ✓ combines legacy and extended catalogs, filters exact types and copies Agent to original definition without execution 424ms
+   ✓ Comic briefs and appearance refs use approved versioned original assets and removing a character removes its reference 303ms
+ ✓ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests) 1895ms
+   ✓ shows legacy center without injecting fields when opening and saving a legacy document 459ms
+   ✓ uses original undo redo and CAS save while retaining inactive values through fit toggles 526ms
+   ✓ revokes displayed pixels warning consent and approval on framing edits 329ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 2051ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 575ms
+   ✓ preflight blockers are displayed and do not fetch fake preview pixels 326ms
+   ✓ approves only displayed current pixels with exact digest and downloads only the approved version 415ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 2123ms
+   ✓ explicit arrangement preview applies one undoable edit and saves only through original owner 474ms
+   ✓ cancel, edits, refresh and client replacement discard arrangement consent 335ms
+   ✓ retained apply cannot cross record, source or owner ABA 696ms
+ ✓ src/experimental/ComicCollectionTree.test.tsx (13 tests) 2231ms
+   ✓ integrates aggregate dirty state and explicit page and structure discard before leaving an active collection 425ms
+ ✓ src/experimental/comicLayers.test.ts (20 tests) 25ms
+ ✓ src/experimental/comicArrangement.test.ts (18 tests) 11ms
+ ✓ src/experimental/comicDuplication.test.ts (36 tests) 21ms
+ ✓ tests/uiContracts.test.ts (5 tests) 4ms
+ ✓ src/ui/primitives.test.tsx (4 tests) 100ms
+ ✓ src/experimental/ComicReadingOrder.additive.test.tsx (5 tests) 809ms
+   ✓ integrates with original layout history without saving or approving automatically 645ms
+ ✓ src/experimental/ComicLayoutsPanel.layers.test.tsx (11 tests) 4582ms
+   ✓ legacy save stays unlayered until explicit enable and never shows ORA export 804ms
+   ✓ explicit enable and layer edits preserve canonical dialogue, save through CAS and remain undoable 1118ms
+   ✓ structural add/remove preserves unrelated layer settings and exact undo coverage 647ms
+   ✓ ORA export needs approved loaded current pixels and admits a double click once 424ms
+ ✓ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (25 tests) 7134ms
+   ✓ explicit preview discloses pins and applies one exact undoable copy through original CAS save 1156ms
+   ✓ invalid destination never consumes IDs or changes history and cancel discards preview 763ms
+   ✓ retained apply callbacks cannot survive edit, coordinate replacement, cancel, or repeat 509ms
+   ✓ refresh, stale catalog pins, source ABA and client/scope replacement fence retained callbacks 490ms
+ ✓ src/creative/IndependentStudioWorkspace.comic.test.tsx (3 tests) 2286ms
+   ✓ Image subview creates a source-free page, edits a bubble, saves and reopens without a model or renderer 1763ms
+   ✓ dirty comic blocks closing until the existing workspace discard confirmation 395ms
+
+ Test Files  15 passed (15)
+      Tests  183 passed (183)
+   Start at  04:25:15
+   Duration  10.33s (transform 5.26s, setup 409ms, collect 9.68s, tests 24.75s, environment 5.82s, prepare 1.36s)
+

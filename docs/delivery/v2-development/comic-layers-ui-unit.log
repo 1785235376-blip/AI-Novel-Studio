@@ -1,0 +1,16 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-comic-layers-work/frontend
+
+ ✓ src/experimental/comicDuplication.test.ts (36 tests) 16ms
+ ✓ src/experimental/comicArrangement.test.ts (18 tests) 8ms
+ ✓ src/experimental/comicLayers.test.ts (18 tests) 16ms
+ ✓ src/experimental/ComicLayoutsPanel.layers.test.tsx (11 tests) 2687ms
+   ✓ legacy save stays unlayered until explicit enable and never shows ORA export 310ms
+   ✓ explicit enable and layer edits preserve canonical dialogue, save through CAS and remain undoable 528ms
+   ✓ structural add/remove preserves unrelated layer settings and exact undo coverage 395ms
+
+ Test Files  4 passed (4)
+      Tests  83 passed (83)
+   Start at  04:24:17
+   Duration  3.59s (transform 322ms, setup 63ms, collect 443ms, tests 2.73s, environment 344ms, prepare 277ms)
+

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T19:33:00Z",
+  "updated_at_utc": "2026-10-18T19:47:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -21000,7 +21000,7 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Book/chapter/page membership and recovery now exist. Native logical layers, broader editing/semantic tree operations and full acceptance remain.",
+      "gap": "Native reference layer editing and true ORA export exist. Live pixel preview, original-Asset import/review/attachment/recovery and actual target-application roundtrip remain open.",
       "next_action": "Extend existing versioned Comic records and compatible history rather than create another project/Asset store.",
       "evidence_scope": "Bounded integration evidence at exact product SHA; full requirement is not accepted.",
       "bounded_evidence": [
@@ -21014,6 +21014,12 @@
           "product_sha": "eb8b8b8ed617c34e1e01415fa5eef9d4c074c348",
           "summary": "Original Comic owner: book/chapter/page ordering, explicit attach, atomic blank/copy, save/reopen and recoverable membership/structure history.",
           "report": "docs/delivery/v2-development/comic-style-vision-integration-20261018.md",
+          "formal_acceptance": false
+        },
+        {
+          "product_sha": "69943270e38df8d6d9869808c75760ca0a1c883a",
+          "summary": "Versioned original Comic reference layers preserve canonical geometry/text; bounded approved OpenRaster export with explicit raster-text loss receipt. File/PG/UI/PUBLIC integration verified.",
+          "report": "docs/delivery/v2-development/comic-layer-ora-integration-20261018.md",
           "formal_acceptance": false
         }
       ]
@@ -21464,9 +21470,17 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Existing saved layout/history and PNG ZIP are not a logical layer tree or actual ORA round-trip.",
+      "gap": "Native reference layer editing and true ORA export exist. Live pixel preview, original-Asset import/review/attachment/recovery and actual target-application roundtrip remain open.",
       "next_action": "Persist independent editable source layers and implement real ORA export/import/re-edit with loss receipts.",
-      "evidence_scope": "Existing B06 capabilities only satisfy bounded parts; no new Comic requirement is accepted by this mapping."
+      "evidence_scope": "Existing B06 capabilities only satisfy bounded parts; no new Comic requirement is accepted by this mapping.",
+      "bounded_evidence": [
+        {
+          "product_sha": "69943270e38df8d6d9869808c75760ca0a1c883a",
+          "summary": "Versioned original Comic reference layers preserve canonical geometry/text; bounded approved OpenRaster export with explicit raster-text loss receipt. File/PG/UI/PUBLIC integration verified.",
+          "report": "docs/delivery/v2-development/comic-layer-ora-integration-20261018.md",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "IMAGE-COMIC-16",
@@ -21927,8 +21941,8 @@
     }
   ],
   "current_checkpoint": {
-    "product_sha": "9d5ac505b4ef67e556af16162129f0830b83310d",
-    "report": "docs/delivery/v2-development/style-ui-local-vision-integration-20261018.md",
+    "product_sha": "69943270e38df8d6d9869808c75760ca0a1c883a",
+    "report": "docs/delivery/v2-development/comic-layer-ora-integration-20261018.md",
     "source_identity_section": "Historical initial reconciliation baseline, not the current HEAD",
     "all_fixed_ids_accepted": false
   }

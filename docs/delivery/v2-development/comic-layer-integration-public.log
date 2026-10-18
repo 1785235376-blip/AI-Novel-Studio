@@ -1,0 +1,87 @@
+FEE...                                                                   [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_real_wheel_matches_public_stage_and_keeps_standard_inputs _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...ctor-transport/.runtime/v2-checks/comic-layer-integration-public/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:73: in build_distribution
+    manifest = build.load_manifest(ROOT / 'packaging/public-build.json')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:73: in load_manifest
+    fail('PUBLIC_FILE_LIST_INVALID')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = 'PUBLIC_FILE_LIST_INVALID'
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_FILE_LIST_INVALID
+
+scripts/public_build.py:44: ValueError
+__ ERROR at setup of test_real_metadata_keeps_declared_dependencies_external ___
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-check...ctor-transport/.runtime/v2-checks/comic-layer-integration-public/pytest'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def artifact(tmp_path_factory):
+>       return build_distribution(tmp_path_factory)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_wheel_artifact.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_public_wheel_artifact.py:73: in build_distribution
+    manifest = build.load_manifest(ROOT / 'packaging/public-build.json')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/public_build.py:73: in load_manifest
+    fail('PUBLIC_FILE_LIST_INVALID')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = 'PUBLIC_FILE_LIST_INVALID'
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_FILE_LIST_INVALID
+
+scripts/public_build.py:44: ValueError
+=================================== FAILURES ===================================
+___ test_current_standard_feature_modules_are_explicitly_in_public_manifest ____
+
+    def test_current_standard_feature_modules_are_explicitly_in_public_manifest():
+        names={'app/bailian_text_preset.py','app/creative/model_reference_depth.py',
+            'app/creative/model_reference_glb.py','app/creative/model_reference_materials.py',
+            'app/creative/model_reference_scene.py','app/creative/screenplay_model.py',
+            'app/services/studio_model_reference_origin.py'}
+>       manifest=build.load_manifest(ROOT/'packaging/public-build.json')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_public_continued_features_additive.py:10: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/public_build.py:73: in load_manifest
+    fail('PUBLIC_FILE_LIST_INVALID')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+message = 'PUBLIC_FILE_LIST_INVALID'
+
+    def fail(message: str) -> None:
+>       raise ValueError(message)
+E       ValueError: PUBLIC_FILE_LIST_INVALID
+
+scripts/public_build.py:44: ValueError
+=============================== warnings summary ===============================
+tests/test_public_continued_features_additive.py::test_current_standard_feature_modules_are_explicitly_in_public_manifest
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_public_continued_features_additive.py::test_current_standard_feature_modules_are_explicitly_in_public_manifest
+ERROR tests/test_public_wheel_artifact.py::test_real_wheel_matches_public_stage_and_keeps_standard_inputs
+ERROR tests/test_public_wheel_artifact.py::test_real_metadata_keeps_declared_dependencies_external
+1 failed, 3 passed, 1 warning, 2 errors in 4.98s
