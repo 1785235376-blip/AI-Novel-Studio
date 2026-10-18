@@ -1,0 +1,6 @@
+{
+  "source_head": "18b43b7d81ef8972f96594dd59577efe2de707ba",
+  "prerequisite": "2c0e0fdc9608b6a706a083fd5b68d089d99c18f1",
+  "bundle": "continuation.bundle",
+  "scope": "Original immutable staged-tree API reconciliation: 2359 method/path entries, 44 additions including aliases, zero removals. Six unchanged metadata/provenance tests passed. No runtime activation, permission acceptance or V2 release claim."
+}
