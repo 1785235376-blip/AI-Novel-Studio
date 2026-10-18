@@ -10,7 +10,7 @@ Current checkpoint: 2026-10-18 18:20 UTC. Working branch:
 work/dot-recovered-20261018. Latest committed product source is
 e96b749ad7cd6eab29befe0db051c9e1fbf4a060 (bounded camera/benchmark wave).
 Latest byte-verified public archive is
-1d7e2309c94627b9a5b3bc5542aacb1d01c874a6 on
+c8a93e10c4444e6fd7a1fbfea9b4f16dcbc817b0 on
 archive/verified-studio-v2-20261017-5a6f697. Archive HEAD and product HEAD are
 different identities; the archive stores prerequisite-bound incremental bundles.
 The restored local source contains the integrated working product, whereas the
@@ -207,7 +207,7 @@ Next active slice is CPU sampled video reference preparation: exact formal Video
 
 ## 17:31 sampled reference checkpoint
 
-Product 033a4f6a258473857c5d0ecba56be564563871f2 is archived at 50b4e54afc67694f3e7900efedc36145cc33c1de, parent f7739d58bb68186117887172060ec1b17f75a14d. Anonymous readback verified all 12 files / 5,086,938 bytes. Isolated worktree validation excluded unfinished Model Center changes: File187, UI71 + TypeScript/Vite/token, PUBLIC6 passed, with real PG45 on identical backend. Compared3001 verified source paths against committed Git blobs with zero mismatches. Original isolated TS failure is retained; subsequent type/test-only fix passed.
+Product 033a4f6a258473857c5d0ecba56be564563871f2 is archived at 50b4e54afc67694f3e7900efedc36145cc33c1de, parent f7739d58bb68186117887172060ec1b17f75a14d. Anonymous readback verified all 12 files / 5,086,938 bytes. Isolated worktree validation excluded unfinished Model Center changes: File187, UI71 + TypeScript/Vite/token, PUBLIC 6 passed, with real PG45 on identical backend. Compared3001 verified source paths against committed Git blobs with zero mismatches. Original isolated TS failure is retained; subsequent type/test-only fix passed.
 
 See delivery/v2-development/video-reference-isolated-summary-20261018.md for actual-PTS sampled video references and strict limitations. This is a partial closure of remaining group5, not full Video preparation. Catalog2401 fingerprint82b5ec4f5f29bc8fbccd638ef74668dffa23939b691026c3cec81646a1a8abb1.
 
@@ -238,13 +238,37 @@ remains coordinated. None of these in-progress lanes is claimed complete.
 
 Product e66c53138989de1aff021994110c2083900f0aec integrates exact reviewed
 story-fact/shot impact, model-free independent Comic and authored Director
-audience/platform/budget constraints. Root UI203/TypeScript/Vite/token, PUBLIC6
+audience/platform/budget constraints. Root UI203/TypeScript/Vite/token, PUBLIC 6
 and retirement File33 passed. Actual Story/Comic/Director PostgreSQL evidence and
 limits are in docs/delivery/v2-development/story-comic-director-integration-20261018.md.
-All3049 source paths from final PUBLIC receipt match the committed product.
+All 3049 source paths from final PUBLIC receipt match the committed product.
 No formal V2 completion or percentage follows from these bounded checks.
 
 Next independent work: original-owner Style DNA hierarchy in an isolated worktree,
 Comic book/chapter/page collections, and a separate additive Director IMAGE/vision
 contract seam in an isolated worktree. No actual model calls are authorized by
 test fixtures; unsupported vision must remain explicitly unavailable.
+
+## 18:56 UTC archive delivery
+
+Archive c8a93e10c4444e6fd7a1fbfea9b4f16dcbc817b0 was anonymously read back
+against parent 1d7e2309c94627b9a5b3bc5542aacb1d01c874a6: all 13 files /
+5,516,265 bytes matched their exact SHA256 and Git identities. Source checkpoint
+18ce2ce945574d9842df5e99b4ecf215d4111fc6 includes product e66c5313; later
+dirty Comic collection work is excluded. PUBLIC stage 577 source identities and
+554 wheel source members match that product. Normal PR source branches remain
+unchanged; no new public integration source branch has been pushed.
+
+## 19:20 UTC bounded product checkpoint
+
+Product eb8b8b8ed617c34e1e01415fa5eef9d4c074c348 adds Comic collections and
+Style DNA backend hierarchy, plus an unmounted Director image source/codec
+foundation. See docs/delivery/v2-development/comic-style-vision-integration-20261018.md
+for exact passed/failed/corrected-run distinctions. Integration File 144, UI 97,
+TypeScript/Vite/token and PUBLIC 6 passed; real PG evidence covers the applicable
+owner lifecycles with explicit test-only corrections. Final owner-test receipt
+3061 source paths match this committed product exactly. No full V2 acceptance.
+
+Style DNA UI, guarded local vision runtime and native Comic layers/ORA export are
+being developed in separate isolated worktrees. They are not included in this
+checkpoint; unsupported runtime/adoption/format capabilities remain unavailable.

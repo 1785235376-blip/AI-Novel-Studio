@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T18:52:00Z",
+  "updated_at_utc": "2026-10-18T19:20:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -20811,11 +20811,19 @@
         "DIF-02",
         "IMAGE-COMIC-10"
       ],
-      "code_status": "NOT_REASSESSED",
+      "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Versioned hierarchical text/camera/composition/color/linework/voice/music rules and impact-aware overrides require implementation mapping.",
+      "gap": "Backend authored hierarchy and exact-source read-only resolution exist; UI, generation/Impact adoption and complete style coverage remain. Bound multimodal STYLE cannot use legacy A02 analysis/execution previews.",
       "next_action": "Reuse original style and asset references for global/scene/panel scopes, conflicts and Impact Engine change previews.",
-      "evidence_scope": "This reconciliation maps source and prior evidence; it runs no product test and does not certify the full new requirement."
+      "evidence_scope": "This reconciliation maps source and prior evidence; it runs no product test and does not certify the full new requirement.",
+      "bounded_evidence": [
+        {
+          "product_sha": "eb8b8b8ed617c34e1e01415fa5eef9d4c074c348",
+          "summary": "Original STYLE owns eight typed dimensions, global/chapter/scene/shot resolution, current/history privacy, canonical digest and epoch fencing.",
+          "report": "docs/delivery/v2-development/comic-style-vision-integration-20261018.md",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "DIF-10",
@@ -20986,7 +20994,7 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Book/chapter/multiple-page hierarchy, full layer model and complete tree operations remain.",
+      "gap": "Book/chapter/page membership and recovery now exist. Native logical layers, broader editing/semantic tree operations and full acceptance remain.",
       "next_action": "Extend existing versioned Comic records and compatible history rather than create another project/Asset store.",
       "evidence_scope": "Bounded integration evidence at exact product SHA; full requirement is not accepted.",
       "bounded_evidence": [
@@ -20994,6 +21002,12 @@
           "product_sha": "e66c53138989de1aff021994110c2083900f0aec",
           "summary": "Original independent page/panel/bubble structure can be edited, saved, reopened and restored.",
           "report": "docs/delivery/v2-development/story-comic-director-integration-20261018.md",
+          "formal_acceptance": false
+        },
+        {
+          "product_sha": "eb8b8b8ed617c34e1e01415fa5eef9d4c074c348",
+          "summary": "Original Comic owner: book/chapter/page ordering, explicit attach, atomic blank/copy, save/reopen and recoverable membership/structure history.",
+          "report": "docs/delivery/v2-development/comic-style-vision-integration-20261018.md",
           "formal_acceptance": false
         }
       ]
@@ -21884,6 +21898,22 @@
       "real_postgres": "Story99 plus focused1; Comic57 plus targeted20 with explicit skips; Director2. Overlapping counts not additive.",
       "scope": "Story fact use, independent Comic, authored Director constraints",
       "acceptance": "PARTIAL_NOT_RELEASE"
+    },
+    {
+      "product_sha": "eb8b8b8ed617c34e1e01415fa5eef9d4c074c348",
+      "report": "docs/delivery/v2-development/comic-style-vision-integration-20261018.md",
+      "scope": "Comic collections, Style DNA backend, unmounted Director image-source/codec foundation",
+      "root_frontend_tests": 97,
+      "root_file_tests": 144,
+      "public_checks": 6,
+      "postgres_evidence": "Comic76; Style/foundation58 passed in combined run plus corrected missing-owner target1; serialized revocation6 overlaps. Original failures retained, not one invented all-green run.",
+      "formal_acceptance": false
     }
-  ]
+  ],
+  "current_checkpoint": {
+    "product_sha": "eb8b8b8ed617c34e1e01415fa5eef9d4c074c348",
+    "report": "docs/delivery/v2-development/comic-style-vision-integration-20261018.md",
+    "source_identity_section": "Historical initial reconciliation baseline, not the current HEAD",
+    "all_fixed_ids_accepted": false
+  }
 }
