@@ -49,3 +49,18 @@ Critical existing video assumptions are in video_assembly_service.py, creative/p
 Real model/literary/visual quality, target Windows/IME/install/upgrade, true browser interaction/performance, and final 2V/2A/subtitle product journey remain separate acceptance stages. Prior CPU render receipts remain valid at their own source, not automatically at final source. Full DCC, auto-rigging, complete 3D camera simulator, Resolve-equivalent grading and advanced realtime voice/cloning are separately scoped extensions in original Appendix A; respect later specific additions without silently requiring entire external products.
 
 U01–U16 and FS/CORE still need complete current functional reconciliation. Their structural owner index cannot support a whole-product percentage. Maintain implementation gaps and acceptance gaps separately; do not calculate a false completion rate from test count or source-file presence.
+
+## U01–U16 consumer follow-through (read-only review at f53f4324)
+
+Concrete additional gaps:
+- U07 / FS_REVIEW: independent Studio's Tasks surface routes through TaskOwnerResult, whose exact reopen supports only older experimental MediaService. Newer Studio production jobs and Graph runs are absent from that original experimental task projection. Their own production list/get endpoints already exist. Add an explicit read-only original-owner projection and exact reopen; never route these jobs through generic experimental cancellation/review.
+- U06: consolidated downstream impact excludes newer Creative Graph/Studio Timeline consumers (individual source guards remain).
+- U14 / Storage: selected chapter/media portable exchange and relinking exist. Collaboration restore/relink are intentionally unavailable. StudioStorageAdmission already checks real filesystem capacity/reserve. General directory migration/recovery and configurable cache-limit workflows remain; portable export-cache cleanup is not all storage management.
+- U16: safe_batches supports PROOF/EXPORT/SYNTHETIC_MEDIA/REGISTERED_MEDIA/VOICE_REDO, but not newer Studio video/Graph/Timeline execution. Existing safety machinery must be extended through original owners, not replaced.
+- U04: focus typography, reference split, bookmarks and inspiration exist in the same editor. Separate multiwindow authoring/coordination is not evidenced; the later frozen anchor includes multiwindow.
+
+Historical branch-adapter statements are not automatically current: experimental/api.py binds BranchManuscriptService readers to writing-focus and workspace-tools owners. Reader preflight, sessions and portable readers consume those bindings; author_context_sources also uses scoped chapters. Do not propagate old absent-adapter claims into U01/U03/U04/U05/U08/U11.
+
+No additional concrete code omission was established in the bounded inspection of U01/U02/U05/U08/U09/U10/U11/U12/U13/U15. This is not a completion claim: native IME, screen reader, publishing layout and hardware/model acceptance were not run. U03 has bounded lexical search and module navigation; global index breadth differs from complete semantic search. OS/background notifications are not automatically required merely because notices are in-app.
+
+FS/CORE inspection covered interaction, review, branch-reader integration, generation selection/context and asset storage. Other FS/CORE rows were not fully audited, including Canon, continuity, foreshadowing, import, planning, realtime, SDK, universe, visual, broader research and export internals. No whole-product percentage is derived from this bounded audit.
