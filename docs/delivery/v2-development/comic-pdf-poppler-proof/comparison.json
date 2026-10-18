@@ -1,0 +1,46 @@
+{
+  "renderer": "Poppler pdftoppm26.05.0",
+  "dpi": 96,
+  "pages": [
+    {
+      "kind": "raster",
+      "expected": "/workspace/scratch/20a0022d2b33/comic-pdf-slice/.runtime/pdf-cloud-proof/raster/0001.png",
+      "rendered": "/tmp/comic-pdf-poppler-check-20261018/raster/page-1.png",
+      "size": [
+        320,
+        320
+      ],
+      "exact_rgb_match": false,
+      "differing_pixels": 320,
+      "expected_sha256": "8114e9de071e2bd6d817f9ea973b84dbd45d0df2b376eee12ae00e5930606c1b",
+      "rendered_sha256": "ee07b735b62f642b43314b6581a8dad30f326929e3dcba7bc49de84163e564d0"
+    },
+    {
+      "kind": "raster",
+      "expected": "/workspace/scratch/20a0022d2b33/comic-pdf-slice/.runtime/pdf-cloud-proof/raster/0002.png",
+      "rendered": "/tmp/comic-pdf-poppler-check-20261018/raster/page-2.png",
+      "size": [
+        320,
+        320
+      ],
+      "exact_rgb_match": true,
+      "differing_pixels": 0,
+      "expected_sha256": "7125905e2c5da60415b73fe718bf6e397c12aea21d76296cb70963f944d73d97",
+      "rendered_sha256": "77ef28aed1fa25e162896218164f1d75a0899e5e42a4b8739b6385f9fbaf6dbb"
+    },
+    {
+      "kind": "cjk",
+      "expected": "/workspace/scratch/20a0022d2b33/comic-pdf-slice/.runtime/pdf-cloud-proof/cjk/0001.png",
+      "rendered": "/tmp/comic-pdf-poppler-check-20261018/cjk/page-1.png",
+      "size": [
+        640,
+        640
+      ],
+      "exact_rgb_match": false,
+      "differing_pixels": 9122,
+      "expected_sha256": "04762604844d1e14b5eda4c2b9dfc447578d61c92bc7f848b748d4a89e4365f3",
+      "rendered_sha256": "df2efc627a9d071f3ae5018a502c7a65c93c20caeac32902a98875547d3312f2"
+    }
+  ],
+  "scope": "Cloud renderer of synthetic original publication fixtures only; not native Windows, browser, print or whole-product acceptance"
+}

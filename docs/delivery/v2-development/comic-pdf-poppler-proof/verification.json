@@ -1,0 +1,26 @@
+{
+  "renderer_version": "pdftoppm version 26.05.0\nCopyright 2005-2026 The Poppler Developers - http://poppler.freedesktop.org\nCopyright 1996-2011, 2022 Glyph & Cog, LLC",
+  "commands": [
+    "pdfinfo SOURCE/comic.pdf",
+    "pdftoppm -r 96 -png SOURCE/comic.pdf DEST/page"
+  ],
+  "outcome": "All three pages rendered; dimensions match original PNGs; Chinese text and layout visually inspected",
+  "pixel_exact": false,
+  "pixel_comparison": "Hidden raster page exact; visible raster320 pixels differ (max40 per channel); CJK9122 pixels differ at glyph/frame edges. No pixel-exact render claim.",
+  "boundary": "Synthetic original-owner fixtures; cloud Poppler only. No browser, native Windows, screen-reader, print/PDF-X or arbitrary user-artifact acceptance.",
+  "files": {
+    "comparison.json": "63b1ecb831b169d71eb21d44649b273e51ee643dddc3095c68a9e9ae33da48e6",
+    "source/raster/receipt.json": "cc12cae5f41ded9de4d75ab939443e893ccdf301e09c52f32e0d6ce36f8493e5",
+    "source/raster/0002.png": "7125905e2c5da60415b73fe718bf6e397c12aea21d76296cb70963f944d73d97",
+    "source/raster/0001.png": "8114e9de071e2bd6d817f9ea973b84dbd45d0df2b376eee12ae00e5930606c1b",
+    "source/raster/comic.pdf": "f95675eb99a6d969ec11ed9809aebedd18512d8aeb1d81b4e63727787e779be1",
+    "source/cjk/receipt.json": "6d6ff8c77c48f8300a306720d50053b3e4999ad76a2f09a239736a19880c417b",
+    "source/cjk/0001.png": "04762604844d1e14b5eda4c2b9dfc447578d61c92bc7f848b748d4a89e4365f3",
+    "source/cjk/comic.pdf": "4fc34e5f4e12aa899fb5360ca8128796431748adff4dd7b3e8752f12a9537d1e",
+    "rendered/raster/page-2.png": "77ef28aed1fa25e162896218164f1d75a0899e5e42a4b8739b6385f9fbaf6dbb",
+    "rendered/raster/page-1.png": "ee07b735b62f642b43314b6581a8dad30f326929e3dcba7bc49de84163e564d0",
+    "rendered/raster/pdfinfo.txt": "71f806ef3e16570fbf4972d6002652dc98410b4e4fe83f7da44721e7101d0625",
+    "rendered/cjk/page-1.png": "df2efc627a9d071f3ae5018a502c7a65c93c20caeac32902a98875547d3312f2",
+    "rendered/cjk/pdfinfo.txt": "55f93baa4847d7540c68f029845b961077998fd60e5eb67407be324a14922547"
+  }
+}

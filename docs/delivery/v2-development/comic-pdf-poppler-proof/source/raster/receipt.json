@@ -1,0 +1,60 @@
+{
+  "preflight": {
+    "book_version": 1,
+    "reading_direction": "LTR",
+    "pages": [
+      {
+        "id": "0ab9ddda-aa1e-4ec8-8f9e-de2ac9f808aa",
+        "version": 3,
+        "review_digest": "f6191c7e1caab628d038849ab1dcb1319b8f86321ebdfecd96c9a83c1c30beb2"
+      },
+      {
+        "id": "3a18af28-ec50-4726-8404-2a0bca458884",
+        "version": 2,
+        "review_digest": "f9a6a1b7b414073e8f0f74ce580444f3fea6a8a7c51a98dab15d02449ea9866f"
+      }
+    ],
+    "publication_digest": "9d374dcda06c685c86479c6f37e1eab326335804c93ef09befcd3094e7d3d943",
+    "page_count": 2,
+    "losses": [
+      "FLATTENED_RGB_RASTER_PAGES",
+      "NO_EDITABLE_LAYERS_OR_TEXT",
+      "DIRECTION_METADATA_DOES_NOT_REORDER_PAGES_OR_PANELS",
+      "CALLER_SELECTED_DPI_NOT_PRINT_QUALITY",
+      "NO_BLEED_OR_PDF_A_PDF_X_CONFORMANCE",
+      "SOURCE_IMAGE_RIGHTS_NOT_VERIFIED",
+      "EXTERNAL_READER_VALIDATION_NOT_RUN"
+    ],
+    "pdf_limits": {
+      "max_pdf_work_bytes": 536870912,
+      "max_output_bytes": 67108864,
+      "total_page_pixels": 204800,
+      "max_total_page_pixels_for_page_count": 2763434
+    },
+    "format": "comic-pdf-raster-v1",
+    "dpi": 96,
+    "page_dimensions": [
+      {
+        "width_pixels": 320,
+        "height_pixels": 320,
+        "width_points": 240.0,
+        "height_points": 240.0
+      },
+      {
+        "width_pixels": 320,
+        "height_pixels": 320,
+        "width_points": 240.0,
+        "height_points": 240.0
+      }
+    ]
+  },
+  "sha256": "f95675eb99a6d969ec11ed9809aebedd18512d8aeb1d81b4e63727787e779be1",
+  "fixture_only": true,
+  "independent_viewer_acceptance": false,
+  "source_sha256": {
+    "app/pdf_export.py": "3564271cec4eff882d42a05231bae5e291add3b45da703856c0607b9aa7175ef",
+    "app/experimental/comic_publication.py": "14e78f617ca49c1fdfd5fb3147073227f0e6dab08eebcc97b087ac5132a8995e",
+    "app/experimental/comic_publication_budget.py": "6a2806372b1944f2840af17f1593eb677b7c3d1238f58f971ae2c7379200d3ac",
+    "app/experimental/comic_layouts_api.py": "0aa69a1d919d1f78c296e5676b950fc9f1fc56b1f77b5aa7f327e6d032668328"
+  }
+}

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T21:29:00Z",
+  "updated_at_utc": "2026-10-18T21:43:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -21662,9 +21662,9 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Ordered current-approved multi-page CBZ with actual full PNGs and bounded source/render/output work is implemented. Independent CBZ reader/Windows acceptance, JPEG/WebP, PDF, print DPI/bleed, EPUB and editable native project archive remain open.",
-      "next_action": "Verify independent CBZ readers and continue remaining format/loss/metadata requirements without claiming PDF/X.",
-      "evidence_scope": "Bounded CBZ integration only; see docs/delivery/v2-development/exchange-recovery-integration-20261018.md"
+      "gap": "Ordered full-page CBZ and bounded raster PDF reading copies implemented. PDF roughly2.7M aggregate pixel ceiling is explicit. Independent synthetic cloud Poppler rendering checked; Windows/browser/print acceptance, JPEG/WebP, EPUB and editable native archive remain open.",
+      "next_action": "Continue remaining formats and real target/platform acceptance; do not imply full-size print/PDF-X support.",
+      "evidence_scope": "Bounded original publication owner; see docs/delivery/v2-development/comic-pdf-integration-20261018.md"
     },
     {
       "id": "IMAGE-COMIC-19",
@@ -22058,11 +22058,30 @@
         "No automatic Timeline placement or graph execution retry"
       ],
       "retained_failures": "Undefined promotion job variable corrected; delayed response and retained-callback ABA corrected; raw failure evidence retained."
+    },
+    {
+      "product_sha": "36a2ff56f81d03b04dc76ecb62b1f2f6cce6381d",
+      "report": "docs/delivery/v2-development/comic-pdf-integration-20261018.md",
+      "scope": "Bounded ordered Comic raster PDF reading copies with explicit DPI and capacity",
+      "file_tests": 150,
+      "postgres_tests": 143,
+      "postgres_exact_14_table_cleanup": true,
+      "ui_tests": 317,
+      "ui_suites": 18,
+      "public_tests": 6,
+      "source_paths": 3150,
+      "cloud_renderer": "Poppler26.05.0,3fixturepages rendered; dimensions match,CJK visually legible; NOT pixel-exact",
+      "formal_acceptance": false,
+      "limits": [
+        "Approximately2.7M aggregate page pixels, lower with more pages",
+        "Flattened raster only, no editable text/layers",
+        "No Windows/browser/screen-reader/print/PDF-X acceptance"
+      ]
     }
   ],
   "current_checkpoint": {
-    "product_sha": "35d9167f63cc462052fcff3b30445a76654b95e8",
-    "report": "docs/delivery/v2-development/speech-graph-integration-20261018.md",
+    "product_sha": "36a2ff56f81d03b04dc76ecb62b1f2f6cce6381d",
+    "report": "docs/delivery/v2-development/comic-pdf-integration-20261018.md",
     "source_identity_section": "Historical initial reconciliation baseline, not current HEAD",
     "all_fixed_ids_accepted": false
   }

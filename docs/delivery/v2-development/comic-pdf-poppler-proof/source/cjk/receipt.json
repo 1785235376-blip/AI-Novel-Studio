@@ -1,0 +1,49 @@
+{
+  "preflight": {
+    "book_version": 1,
+    "reading_direction": "LTR",
+    "pages": [
+      {
+        "id": "9e3bd5fe-3b19-4d30-aeae-694af5ca071b",
+        "version": 2,
+        "review_digest": "619cdb3c5410f1f9d8e10f44396340fb776ccf3c937027db9200c5d7c3a7d52a"
+      }
+    ],
+    "publication_digest": "79887e013cc4dfc29c5e3076105dd7e4d977323c70ab72c38d4a71fc6f08a794",
+    "page_count": 1,
+    "losses": [
+      "FLATTENED_RGB_RASTER_PAGES",
+      "NO_EDITABLE_LAYERS_OR_TEXT",
+      "DIRECTION_METADATA_DOES_NOT_REORDER_PAGES_OR_PANELS",
+      "CALLER_SELECTED_DPI_NOT_PRINT_QUALITY",
+      "NO_BLEED_OR_PDF_A_PDF_X_CONFORMANCE",
+      "SOURCE_IMAGE_RIGHTS_NOT_VERIFIED",
+      "EXTERNAL_READER_VALIDATION_NOT_RUN"
+    ],
+    "pdf_limits": {
+      "max_pdf_work_bytes": 536870912,
+      "max_output_bytes": 67108864,
+      "total_page_pixels": 409600,
+      "max_total_page_pixels_for_page_count": 2768896
+    },
+    "format": "comic-pdf-raster-v1",
+    "dpi": 96,
+    "page_dimensions": [
+      {
+        "width_pixels": 640,
+        "height_pixels": 640,
+        "width_points": 480.0,
+        "height_points": 480.0
+      }
+    ]
+  },
+  "sha256": "4fc34e5f4e12aa899fb5360ca8128796431748adff4dd7b3e8752f12a9537d1e",
+  "fixture_only": true,
+  "independent_viewer_acceptance": false,
+  "source_sha256": {
+    "app/pdf_export.py": "3564271cec4eff882d42a05231bae5e291add3b45da703856c0607b9aa7175ef",
+    "app/experimental/comic_publication.py": "14e78f617ca49c1fdfd5fb3147073227f0e6dab08eebcc97b087ac5132a8995e",
+    "app/experimental/comic_publication_budget.py": "6a2806372b1944f2840af17f1593eb677b7c3d1238f58f971ae2c7379200d3ac",
+    "app/experimental/comic_layouts_api.py": "0aa69a1d919d1f78c296e5676b950fc9f1fc56b1f77b5aa7f327e6d032668328"
+  }
+}

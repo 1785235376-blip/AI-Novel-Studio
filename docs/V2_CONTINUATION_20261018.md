@@ -393,3 +393,9 @@ Prior source 311adda1 archived as ce99a289b1f3ed369433400443aac7fa817b08a9, pare
 Product 35d9167f63cc462052fcff3b30445a76654b95e8 adds exact saved dialogue → original Audio request/review/Asset and guarded failed-node inspector selection. File 57, real PG 55 with exact 14-table cleanup, UI 386 in 21 suites, TS/build/token and PUBLIC 6 pass. File/UI final snapshots cover 3,149 source paths; earlier PG/PUBLIC backend and packaging bytes are unchanged after UI-only Graph integration. See docs/delivery/v2-development/speech-graph-integration-20261018.md. Synthetic speech transport, jsdom focus and source checks do not establish actual model/browser acceptance.
 
 Prior source 9a3b3a51 archived as 0ea2c08e889dd7aba5d0df68d0ae944289c33e2a, exact parent ce99a289: 14 artifacts / 5,565,777 bytes verified. Current independent Comic PDF slice remains unintegrated.
+
+##21:43 UTC bounded Comic PDF reading copy
+
+Product 36a2ff56f81d03b04dc76ecb62b1f2f6cce6381d adds exact-pinned ordered raster PDF, explicit DPI and disclosed roughly2.7M aggregate-pixel limit. File150, realPG143 with exact14-table cleanup, UI317 in18suites, TS/build/token and PUBLIC6 pass. All3150 final source hashes match. Poppler26.05.0 independently rendered3 synthetic original-owner pages: dimensions match,CJK legible; rendering is not pixel-exact. See docs/delivery/v2-development/comic-pdf-integration-20261018.md. Windows/browser/print/fullV2 acceptance remains open.
+
+Prior source6daeac8f archived as7897be0666d3fa86bd75b8023e6f393446d4e70d, parent0ea2c08e:14artifacts/5568770bytes verified. Local-text selective Graph cache reuse is independent ongoing work, unintegrated.

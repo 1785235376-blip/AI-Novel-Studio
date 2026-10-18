@@ -1,0 +1,23 @@
+{
+  "product_sha": "36a2ff56f81d03b04dc76ecb62b1f2f6cce6381d",
+  "receipts": {
+    "comic-pdf-integration-postgres": {
+      "status": "PASS",
+      "source_paths": 3150,
+      "sources_changed_during_check": false,
+      "current_files_match": true
+    },
+    "comic-pdf-integration-frontend": {
+      "status": "PASS",
+      "source_paths": 3150,
+      "sources_changed_during_check": false,
+      "current_files_match": true
+    },
+    "comic-pdf-public-build": {
+      "status": "PASS",
+      "source_paths": 3150,
+      "sources_changed_during_check": false,
+      "current_files_match": true
+    }
+  }
+}

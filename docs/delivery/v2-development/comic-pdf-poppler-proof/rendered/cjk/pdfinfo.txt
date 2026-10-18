@@ -1,0 +1,22 @@
+Title:           Raster layers
+Subject:         {"automatic_publication": false, "dpi": 96, "format": "comic-pdf-raster-v1", "losses": ["FLATTENED_RGB_RASTER_PAGES", "NO_EDITABLE_LAYERS_OR_TEXT", "DIRECTION_METADATA_DOES_NOT_REORDER_PAGES_OR_PANELS", "CALLER_SELECTED_DPI_NOT_PRINT_QUALITY", "NO_BLEED_OR_PDF_A_PDF_X_CONFORMANCE", "SOURCE_IMAGE_RIGHTS_NOT_VERIFIED", "EXTERNAL_READER_VALIDATION_NOT_RUN"], "page_count": 1, "page_dimensions": [{"height_pixels": 640, "height_points": 480.0, "width_pixels": 640, "width_points": 480.0}], "page_order": "SAVED_CHAPTER_THEN_PAGE_ORDER", "publication_digest": "79887e013cc4dfc29c5e3076105dd7e4d977323c70ab72c38d4a71fc6f08a794", "reading_direction": "LTR"}
+Keywords:        
+Author:          AI Novel Studio
+Creator:         AI Novel Studio raster reading copy
+Producer:        ReportLab PDF Library - (opensource)
+CreationDate:    Sat Jan  1 09:00:00 2000 JST
+ModDate:         Sat Jan  1 09:00:00 2000 JST
+Custom Metadata: no
+Metadata Stream: no
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           1
+Encrypted:       no
+Page size:       480 x 480 pts
+Page rot:        0
+File size:       11300 bytes
+Optimized:       no
+PDF version:     1.4
