@@ -1,0 +1,289 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "7fe0b7c692122f86f275401057f19880f06529ca",
+      "path": "API_CATALOG.json",
+      "bytes": 1482399,
+      "sha256": "1bd137c14dd55974fbaa6e97eb7c23467616525370cb83fbdbb345cacdd76cdf"
+    },
+    {
+      "blob": "fc232475087595ed4ce7c67a18088d7fac62c23e",
+      "path": "API_CATALOG.md",
+      "bytes": 395914,
+      "sha256": "cbc485e941945940b1c21259b1bb79f4ad30769685bd2d8062684342b05df9ef"
+    },
+    {
+      "blob": "6770c7f40913e68edbb0ac38353e33be271c6fa3",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 611091,
+      "sha256": "8541ec220556cf6b161b5225b9e3c74165e6af28198dc7c53a66cccdf5179062"
+    },
+    {
+      "blob": "41662d76910d7db1312ef26ee2fbbb54f8bdfcc5",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 131803,
+      "sha256": "3ffd1ade81b920091d12e7ca5364a2dbc6539889ed56cf53964239a85ec28afb"
+    },
+    {
+      "blob": "e0b34f9bd7c692bf0da89ab5cb1b790577646c75",
+      "path": "app/main.py",
+      "bytes": 28072,
+      "sha256": "f1681e92a3de5d89ea818aa907f6e8701ec00fc61403119c2ded4792665ab963"
+    },
+    {
+      "blob": "7973739d7f45f5dfe6c18c696322151b3ff91dfc",
+      "path": "app/model_center/service.py",
+      "bytes": 42961,
+      "sha256": "0df5ff36ebdbb677398321dff0ea23e6d8a5ce0ac692997d88529fe74e2666b9"
+    },
+    {
+      "blob": "0ffc211f5caa2c75a1783a46860e8ffa9ecda284",
+      "path": "app/model_center/transfer_api.py",
+      "bytes": 3812,
+      "sha256": "ad993af9a68748ea7c0f8557fe55c17b16bfaa9f058f2f17d05e281a169ff3fa"
+    },
+    {
+      "blob": "87af1b8f15694e7e2d05ecfa08b14dec84b623d3",
+      "path": "app/model_center/transfer_files.py",
+      "bytes": 10128,
+      "sha256": "649fbb027a796f24bb37216a6a89dada13ddaf702fc741c9b6b5f5e69b22c250"
+    },
+    {
+      "blob": "e4c532c17faf5772da69cea73658559c5f000786",
+      "path": "app/model_center/transfer_transport.py",
+      "bytes": 20239,
+      "sha256": "12f720f74726e0eaa36448be6f5f2a4cd797d557f9bb45af69153ec0bfb2b04d"
+    },
+    {
+      "blob": "d57d806bec449362b7fbb38650c131faa37257d2",
+      "path": "app/model_center/transfer_types.py",
+      "bytes": 4021,
+      "sha256": "8a601ded17cf5e3faf8cd6ad411dfeb98b5580a7c0a22097f9201703195ff709"
+    },
+    {
+      "blob": "eedff0849efc1f3a475511e77ad8c94f538ea0e9",
+      "path": "app/model_center/transfers.py",
+      "bytes": 35118,
+      "sha256": "71da0edf0677ed48ffe69275ff035bace9c6dd2c7efa7ef5fae8908f133135bd"
+    },
+    {
+      "blob": "af99d04e2551f17ec6803c13222ddfa9f06128f1",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 24873,
+      "sha256": "d22a7d03a05af5390c2d9c158ccbadd280a3d081e144c653dab38c2fcfe28c5b"
+    },
+    {
+      "blob": "f25bc5ecff66d32efb3e5ab57b698be6b22c0e42",
+      "path": "docs/delivery/v2-development/model-transfer-backend-final-r2.json",
+      "bytes": 720296,
+      "sha256": "f86fd4fb8cf2c48505f192b9dd0c98f96f5fae3407759805b862ca0d447b3bb6"
+    },
+    {
+      "blob": "57fba3f6d73b9d1646b3a6e86b00361aab58b626",
+      "path": "docs/delivery/v2-development/model-transfer-backend-final-r2.log",
+      "bytes": 1475,
+      "sha256": "6472fe7e9791d2219794685250cc34ae096a058708a33e957262389315139469"
+    },
+    {
+      "blob": "bfa5187017eace764ba80cddd03d78afec3d395c",
+      "path": "docs/delivery/v2-development/model-transfer-backend-final.json",
+      "bytes": 720193,
+      "sha256": "19127bf4d5e3d5b54f84df641cc0966efa3ee2d13d7941fc5dbd4e02eeb35be9"
+    },
+    {
+      "blob": "ea0d37b17b2aca2bd9017adb6baf734feb8979ec",
+      "path": "docs/delivery/v2-development/model-transfer-backend-final.log",
+      "bytes": 9968,
+      "sha256": "141805b07dfda22675ece914dc2ef923fc66a3385a57c99c40ebe168fff7be16"
+    },
+    {
+      "blob": "d3ceb521c1f7859a2f1f2545233975b5141b501d",
+      "path": "docs/delivery/v2-development/model-transfer-core-api-dev-r3.json",
+      "bytes": 719984,
+      "sha256": "324b89eeb0beda9f7ab92e861528a593f07a6ea54270cf0a4f7a7f4cd52c0f6d"
+    },
+    {
+      "blob": "474575a5c0934e172cc554934e3af22eb52a0e0a",
+      "path": "docs/delivery/v2-development/model-transfer-core-api-dev-r3.log",
+      "bytes": 1032,
+      "sha256": "76fe62d19899dcf8db494afc2a50312c9cc46c71617ecf8fb21e33f12fbdb8dd"
+    },
+    {
+      "blob": "28697e3f20d7d02961569e16dc081ec11165e9d7",
+      "path": "docs/delivery/v2-development/model-transfer-core-api-dev-r4.json",
+      "bytes": 719984,
+      "sha256": "d3e401505503df13bb1531ef0eb963bef0d451b6d0e753f5c3ac46becfd089f8"
+    },
+    {
+      "blob": "4da58b9a14e0b6c74551402f3d7cc7b1e4f6bd49",
+      "path": "docs/delivery/v2-development/model-transfer-core-api-dev-r4.log",
+      "bytes": 1112,
+      "sha256": "fa15611320e463667f649d986a8f70a2f2440fca91f21e692ece3e799c429aee"
+    },
+    {
+      "blob": "a39f442438a74764202cc55fb265131e944b47f0",
+      "path": "docs/delivery/v2-development/model-transfer-core-dev-r1.json",
+      "bytes": 719671,
+      "sha256": "414ee8d5855eb33f75e851eeb11a1226e5e2f5a2029710476bfe6fb8a82907d2"
+    },
+    {
+      "blob": "ac4c5c3c6f6c0f1040148a9814461d8706bf1c8f",
+      "path": "docs/delivery/v2-development/model-transfer-core-dev-r1.log",
+      "bytes": 2075,
+      "sha256": "357d245d52385e772e2715ce75223c8bb5b233829a8bed7b6fa9ff011f2ed476"
+    },
+    {
+      "blob": "7afa07a2f928eb52cd4b71b7e3e8a9993350447e",
+      "path": "docs/delivery/v2-development/model-transfer-core-dev-r2.json",
+      "bytes": 719671,
+      "sha256": "97ce0eccd260f83dabacc8bcdb63a2118cbd9d1baa34cf9922d89799b1f0b596"
+    },
+    {
+      "blob": "9c610a3ec9899b02a07fbf04d9364f71faa3878c",
+      "path": "docs/delivery/v2-development/model-transfer-core-dev-r2.log",
+      "bytes": 2667,
+      "sha256": "7df2a30f1fe34d886b327e0c9a5820106bae64575cd539c4897bce137f41cefe"
+    },
+    {
+      "blob": "a482ae3748bd83885a8ec2a7cf70c6f6a91ea247",
+      "path": "docs/delivery/v2-development/model-transfer-frontend-final.json",
+      "bytes": 719374,
+      "sha256": "b30feddc5a2533f01068b0fafdd2144ac4f0b84abcdeafc04bc910dd959f93fd"
+    },
+    {
+      "blob": "23e54430d4f087590bf809106052b24925cf4e50",
+      "path": "docs/delivery/v2-development/model-transfer-frontend-final.log",
+      "bytes": 776,
+      "sha256": "5964f082250b36c7dddf0cf92d8c87b351709bb5c205610abaa47677fe072697"
+    },
+    {
+      "blob": "6b00157d2bdfa0eabab4106b07360b5873d1d703",
+      "path": "docs/delivery/v2-development/model-transfer-https-transport.json",
+      "bytes": 719474,
+      "sha256": "d15c2b5cd4145f28a1b7a278ffed71dc156e3b087b7138a957f2e51f1076d97f"
+    },
+    {
+      "blob": "c3b34433b2b9a12999a91d2c418a6983c5f8f93d",
+      "path": "docs/delivery/v2-development/model-transfer-https-transport.log",
+      "bytes": 782,
+      "sha256": "6651093be651ec064dce74b756acf5141af95d0c3c786bfe30348741e02012bf"
+    },
+    {
+      "blob": "37aae6aab8af4a3ec70e999c22ff35950766f1f2",
+      "path": "docs/delivery/v2-development/model-transfer-integrated-public.json",
+      "bytes": 720250,
+      "sha256": "7df457144c8ddd1419fb1588618d8ae55667f86ffd8e26f8846c6cef63ba8b50"
+    },
+    {
+      "blob": "8adce48dbee1c6ff752b44199e89c3df1d67faa7",
+      "path": "docs/delivery/v2-development/model-transfer-integrated-public.log",
+      "bytes": 634,
+      "sha256": "845bcfb622b0a0ae5ca7c5c00c94c39e004237f169a850ccf4295c962d9c15b7"
+    },
+    {
+      "blob": "dcb960c36ecb3baabb9869e2977f02a1f41fb049",
+      "path": "docs/delivery/v2-development/model-transfer-integrated-ui-final.json",
+      "bytes": 720253,
+      "sha256": "8caf3de7272c4a5c545f06cf6bd1161389f4d68aa3985637c7e3506642d379f1"
+    },
+    {
+      "blob": "a36efa3b4dcf5390dd082a05f6867acaeabf39b7",
+      "path": "docs/delivery/v2-development/model-transfer-integrated-ui-final.log",
+      "bytes": 2186,
+      "sha256": "19006aeea1ef366a5cd9748e180806c6bbc76eb76c33dafbb54b7ce88e979708"
+    },
+    {
+      "blob": "cc0b60ef3efe3e329e5f58f30b4a46c0cee55206",
+      "path": "docs/delivery/v2-development/model-transfer-integrated-ui-r2.json",
+      "bytes": 720226,
+      "sha256": "fcda90c588a4c24943082bd32a57e837aa6ea078dc18566defb685272882b57d"
+    },
+    {
+      "blob": "3f31aa8a37ae67ae74ca9e02a357e7ebab7de08b",
+      "path": "docs/delivery/v2-development/model-transfer-integrated-ui-r2.log",
+      "bytes": 3059,
+      "sha256": "eedde80617d9d70eb0fef5ef4517e94e14450789b02bae65d9453e9a9776700b"
+    },
+    {
+      "blob": "9ef1e41c0a294620cbd3a47d7101a3e3127bed94",
+      "path": "docs/delivery/v2-development/model-transfer-integration-summary-20261018.md",
+      "bytes": 2614,
+      "sha256": "a90eee90636e7cb4a403b5c53681a007d95a018a7469ac2ec556a74d7aa95cc8"
+    },
+    {
+      "blob": "18bb522434004c2822655ae56aef60d0a634246b",
+      "path": "docs/model_center_controlled_transfers.md",
+      "bytes": 10774,
+      "sha256": "7ee9291fa5011f35ec2e712087f75e13f56eb793c635fcb2d22ca71e6bec2663"
+    },
+    {
+      "blob": "33f0200793eb6a048c7d88183325c296bac6e62a",
+      "path": "docs/v2/REMAINING_DEVELOPMENT_COMPARISON_20261018.md",
+      "bytes": 10689,
+      "sha256": "5bbed6f76580fd8deafede816d475603d47b24c73edbc3a5986b07cb9df32b6c"
+    },
+    {
+      "blob": "3c386ba62b24d8c50338d6621b7e838f0f6bc8f2",
+      "path": "frontend/src/modelcenter/ModelCenterPanel.tsx",
+      "bytes": 7514,
+      "sha256": "0bb4d446e49542034e08afb7f058ef6cc6c3c8f6bc8844c94d3573f2899888b8"
+    },
+    {
+      "blob": "4c3b92c157a2f898a6d808a5a965619aa7a487c4",
+      "path": "frontend/src/modelcenter/ModelTransferPanel.additive.test.tsx",
+      "bytes": 23610,
+      "sha256": "f88ee1beae8f18d41840c98e4a78c2d4e645a6e9d4dee7497b3bb4edbc7e667e"
+    },
+    {
+      "blob": "aba0e7eae7d94a82966dbb1cf66c5fe6a4711592",
+      "path": "frontend/src/modelcenter/ModelTransferPanel.tsx",
+      "bytes": 14139,
+      "sha256": "ddd1c5e424d3cd8bc9f6d0c17b8f756827ac00829c69e70d352b86b4ecfee907"
+    },
+    {
+      "blob": "83b120d2bd6a914144499f9e428a7cd2b1a6f6d5",
+      "path": "frontend/src/modelcenter/modelTransferClient.ts",
+      "bytes": 5084,
+      "sha256": "bf0132c53673a07cafe48eb26d8807fbd84fb50889b414e926e9173604f01bf8"
+    },
+    {
+      "blob": "be36e92b0f279ea05a37986852e6a8c8b6500e86",
+      "path": "frontend/src/modelcenter/modelTransferContract.ts",
+      "bytes": 8917,
+      "sha256": "19e45bdc237997de5c81e129a060114aa4b6d98473a13f47dae4758ba143df70"
+    },
+    {
+      "blob": "80148795d8301a50b97411e75134bf117035d6f7",
+      "path": "packaging/public-build.json",
+      "bytes": 24593,
+      "sha256": "2a85aa1ea95cd71a540d005fa2119e75dfd78a0b31b7916de0c37af0411d79f4"
+    },
+    {
+      "blob": "e03ad0bd3d1a3beb0b6fd9e487b40d529593d6d5",
+      "path": "tests/test_model_center_transfer_api.py",
+      "bytes": 6181,
+      "sha256": "67e36d1f803d69c9cd26e1627364fbbd0a3a1a64bdc284aab176cd8af583d732"
+    },
+    {
+      "blob": "3d46b83117840d428eb2b73db872f3b57062dfa5",
+      "path": "tests/test_model_center_transfer_transport.py",
+      "bytes": 22955,
+      "sha256": "801015e8a2338589038596f69730c85fe750fd6de8462ffaffde9758f2116763"
+    },
+    {
+      "blob": "bf2f3f36a1685a71348a5845fa366156d98a9653",
+      "path": "tests/test_model_center_transfers.py",
+      "bytes": 25310,
+      "sha256": "0ccb36a1b6925ebdb1e546ef84e77984c51ce78643c506198a9d92b8f10fafd2"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
