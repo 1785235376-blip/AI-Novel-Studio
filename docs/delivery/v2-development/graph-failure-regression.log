@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/graph-failure-navigation/frontend
+
+ ✓ src/creative/graphFailureGuidance.test.ts (5 tests) 3ms
+ ✓ src/creative/GraphReadRevocation.regression.test.tsx (8 tests) 542ms
+ ✓ src/creative/GraphFailureNavigation.additive.test.tsx (8 tests) 603ms
+ ✓ src/creative/GraphRunPanel.test.tsx (25 tests) 1021ms
+ ✓ src/creative/StudioGraphInsertion.additive.test.tsx (20 tests) 1349ms
+ ✓ src/creative/GraphCanvas.test.tsx (25 tests) 1960ms
+
+ Test Files  6 passed (6)
+      Tests  91 passed (91)
+   Start at  06:24:43
+   Duration  3.85s (transform 1.93s, setup 155ms, collect 4.98s, tests 5.48s, environment 3.17s, prepare 712ms)
+

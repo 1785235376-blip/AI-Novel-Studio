@@ -1,0 +1,308 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/graph-failure-navigation/frontend
+
+ ✓ src/creative/GraphReadRevocation.regression.test.tsx (8 tests) 327ms
+ ❯ src/creative/GraphFailureNavigation.additive.test.tsx (8 tests | 1 failed) 531ms
+   × rejects retained node selection after busy transitions including return 66ms
+     → expected true to be false // Object.is equality
+ ❯ src/creative/GraphRunPanel.test.tsx (24 tests | 1 failed) 826ms
+   × failed node inspection stays on the exact original graph > blocks navigation during dirty inputs or pending reads and hides rows after authority loss 44ms
+     → Unable to find an accessible element with the role "button" and name "检查节点 source"
+
+Here are the accessible roles:
+
+  region:
+
+  Name "创作图运行与审核":
+  [36m<section[39m
+    [33maria-label[39m=[32m"创作图运行与审核"[39m
+    [33mclass[39m=[32m"studio-graph-run"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "节点运行":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "核对运行范围":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+    [33mdisabled[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "读取运行记录":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+    [33mdisabled[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  combobox:
+
+  Name "已保存运行":
+  [36m<select[39m
+    [33maria-label[39m=[32m"已保存运行"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  option:
+
+  Name "选择运行记录":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "run_one · 失败 · v7":
+  [36m<option[39m
+    [33mvalue[39m=[32m"run_one"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"创作图运行与审核"[39m
+      [33mclass[39m=[32m"studio-graph-run"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m节点运行[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m先核对保存图与节点范围。前置节点使用原工作流；模型和媒体节点分别预览、确认与执行。媒体 schema 3 核对原资产版本与内容，审核后才供下游采用。[0m
+      [36m</p>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [33mdisabled[39m=[32m""[39m
+      [36m>[39m
+        [0m核对运行范围[0m
+      [36m</button>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [33mdisabled[39m=[32m""[39m
+      [36m>[39m
+        [0m读取运行记录[0m
+      [36m</button>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m正在读取原工作流信息…[0m
+      [36m</div>[39m
+      [36m<label>[39m
+        [0m已保存运行[0m
+        [36m<select[39m
+          [33maria-label[39m=[32m"已保存运行"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择运行记录[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"run_one"[39m
+          [36m>[39m
+            [0mrun_one[0m
+            [0m · [0m
+            [0m失败[0m
+            [0m · v[0m
+            [0m7[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  2 failed | 38 passed (40)
+   Start at  06:23:37
+   Duration  2.23s (transform 1.06s, setup 38ms, collect 2.40s, tests 1.68s, environment 943ms, prepare 201ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/GraphFailureNavigation.additive.test.tsx > rejects retained node selection after busy transitions including return
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/creative/GraphFailureNavigation.additive.test.tsx:48:79
+     46|   const changed = { ...initial, [key]: key === 'identity' ? 'project-B…
+     47|   hook.rerender(changed);
+     48|   act(() => expect(locate(before.base!.definition.nodes[0].id, before.…
+       |                                                                               ^
+     49|   hook.rerender(initial);
+     50|   act(() => expect(locate(before.base!.definition.nodes[0].id, before.…
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+react@16.3.2_@testing-library+dom@10.4.1_@types+react-dom@18.3.7_@type_b0bbe147884ef4cbbf95e64a97c782e8/node_modules/@testing-library/react/dist/act-compat.js:47:24
+ ❯ act ../../studio-usability/frontend/node_modules/.pnpm/react@18.3.1/node_modules/react/cjs/react.development.js:2512:16
+ ❯ Proxy.<anonymous> ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+react@16.3.2_@testing-library+dom@10.4.1_@types+react-dom@18.3.7_@type_b0bbe147884ef4cbbf95e64a97c782e8/node_modules/@testing-library/react/dist/act-compat.js:46:25
+ ❯ src/creative/GraphFailureNavigation.additive.test.tsx:48:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/creative/GraphRunPanel.test.tsx > failed node inspection stays on the exact original graph > blocks navigation during dirty inputs or pending reads and hides rows after authority loss
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "检查节点 source"
+
+Here are the accessible roles:
+
+  region:
+
+  Name "创作图运行与审核":
+  [36m<section[39m
+    [33maria-label[39m=[32m"创作图运行与审核"[39m
+    [33mclass[39m=[32m"studio-graph-run"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "节点运行":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "核对运行范围":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+    [33mdisabled[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "读取运行记录":
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+    [33mdisabled[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  combobox:
+
+  Name "已保存运行":
+  [36m<select[39m
+    [33maria-label[39m=[32m"已保存运行"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  option:
+
+  Name "选择运行记录":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "run_one · 失败 · v7":
+  [36m<option[39m
+    [33mvalue[39m=[32m"run_one"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"创作图运行与审核"[39m
+      [33mclass[39m=[32m"studio-graph-run"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m节点运行[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m先核对保存图与节点范围。前置节点使用原工作流；模型和媒体节点分别预览、确认与执行。媒体 schema 3 核对原资产版本与内容，审核后才供下游采用。[0m
+      [36m</p>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [33mdisabled[39m=[32m""[39m
+      [36m>[39m
+        [0m核对运行范围[0m
+      [36m</button>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [33mdisabled[39m=[32m""[39m
+      [36m>[39m
+        [0m读取运行记录[0m
+      [36m</button>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ui-status-message ui-status-message--info"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m正在读取原工作流信息…[0m
+      [36m</div>[39m
+      [36m<label>[39m
+        [0m已保存运行[0m
+        [36m<select[39m
+          [33maria-label[39m=[32m"已保存运行"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择运行记录[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"run_one"[39m
+          [36m>[39m
+            [0mrun_one[0m
+            [0m · [0m
+            [0m失败[0m
+            [0m · v[0m
+            [0m7[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ button src/creative/GraphRunPanel.test.tsx:45:41
+     43| }
+     44| const click = (name: string) => fireEvent.click(screen.getByRole('butt…
+     45| const button = (name: string) => screen.getByRole('button', { name }) …
+       |                                         ^
+     46| const acknowledgePreflight = () => fireEvent.click(screen.getByRole('c…
+     47| const acknowledgeOutput = () => fireEvent.click(screen.getByRole('chec…
+ ❯ src/creative/GraphRunPanel.test.tsx:244:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

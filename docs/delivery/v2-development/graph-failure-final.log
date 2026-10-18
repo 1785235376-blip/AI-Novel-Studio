@@ -1,0 +1,19 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/graph-failure-navigation/frontend
+
+ ✓ src/creative/GraphNodeStateControl.additive.test.tsx (10 tests) 254ms
+ ✓ src/creative/GraphConnectionList.additive.test.tsx (7 tests) 312ms
+ ✓ src/creative/GraphReadRevocation.regression.test.tsx (8 tests) 510ms
+ ✓ src/creative/graphFailureGuidance.test.ts (5 tests) 3ms
+ ✓ src/creative/GraphRunPanel.test.tsx (26 tests) 968ms
+ ✓ src/creative/StudioGraphInsertion.additive.test.tsx (20 tests) 1313ms
+ ✓ src/creative/GraphCanvas.test.tsx (25 tests) 1847ms
+ ✓ src/creative/GraphFailureNavigation.additive.test.tsx (9 tests) 963ms
+   ✓ mounts the original run-to-inspector path and focuses the exact failed node 434ms
+ ✓ src/creative/StudioGraphConnection.additive.test.tsx (15 tests) 1152ms
+
+ Test Files  9 passed (9)
+      Tests  125 passed (125)
+   Start at  06:25:39
+   Duration  3.65s (transform 3.16s, setup 173ms, collect 9.97s, tests 7.32s, environment 4.07s, prepare 793ms)
+

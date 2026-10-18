@@ -387,3 +387,9 @@ README caveats. Parent321f498. No main/Release/new public source branch.
 Product 195ebd9b0cb80431cc987de5a103867ef58cb285 adds actual ordered full-page CBZ, pinned Ink exchange, guarded local Director author recovery and Audio admission catalog compatibility. File 289, final real PG 113 with exact 14-table cleanup, UI 632 in 55 suites, TS/build/token and PUBLIC 6 pass. Initial PG fixture cleanup failure and exact-owned correction are retained. All 3137 source paths match final product. See docs/delivery/v2-development/exchange-recovery-integration-20261018.md. Browser, independent CBZ readers, native target/platform and whole V2 acceptance remain open. Director storage/locking and 1024-marker ceiling are explicit limits.
 
 Prior source 311adda1 archived as ce99a289b1f3ed369433400443aac7fa817b08a9, parent b6e00c9d: 14 files / 5,352,949 bytes anonymously verified. No main/Release/normal source branch update.
+
+## 21:29 UTC Storyboard speech and Graph failure navigation
+
+Product 35d9167f63cc462052fcff3b30445a76654b95e8 adds exact saved dialogue → original Audio request/review/Asset and guarded failed-node inspector selection. File 57, real PG 55 with exact 14-table cleanup, UI 386 in 21 suites, TS/build/token and PUBLIC 6 pass. File/UI final snapshots cover 3,149 source paths; earlier PG/PUBLIC backend and packaging bytes are unchanged after UI-only Graph integration. See docs/delivery/v2-development/speech-graph-integration-20261018.md. Synthetic speech transport, jsdom focus and source checks do not establish actual model/browser acceptance.
+
+Prior source 9a3b3a51 archived as 0ea2c08e889dd7aba5d0df68d0ae944289c33e2a, exact parent ce99a289: 14 artifacts / 5,565,777 bytes verified. Current independent Comic PDF slice remains unintegrated.

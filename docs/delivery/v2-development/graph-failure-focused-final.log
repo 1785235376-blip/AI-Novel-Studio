@@ -1,0 +1,214 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/graph-failure-navigation/frontend
+
+ ✓ src/creative/GraphReadRevocation.regression.test.tsx (8 tests) 322ms
+ ✓ src/creative/GraphFailureNavigation.additive.test.tsx (8 tests) 524ms
+ ❯ src/creative/GraphRunPanel.test.tsx (25 tests | 1 failed) 899ms
+   × retires retained location callbacks across same-version graph, callback and run ABA transitions 13ms
+     → expected "spy" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st spy call:
+
+    Array [
+      "source",
+      Object {
+        "can_edit": true,
+        "created_at": "2026-10-09T13:00:00Z",
+        "definition": Object {
+          "edges": Array [
+            Object {
+              "id": "source_draft",
+              "source_node_id": "source",
+              "source_port": "text",
+              "target_node_id": "draft",
+              "target_port": "text",
+            },
+            Object {
+              "id": "draft_review",
+              "source_node_id": "draft",
+              "source_port": "draft",
+              "target_node_id": "review",
+              "target_port": "draft",
+            },
+          ],
+          "nodes": Array [
+            Object {
+              "definition_id": "text_input",
+              "definition_version": 1,
+              "enabled": true,
+              "id": "source",
+              "parameters": Object {
+                "text": "Source text",
+              },
+              "position": Object {
+                "x": 0,
+                "y": 0,
+              },
+            },
+            Object {
+              "definition_id": "draft_prepare",
+              "definition_version": 1,
+              "enabled": true,
+              "id": "draft",
+              "parameters": Object {},
+              "position": Object {
+                "x": 300,
+                "y": 0,
+              },
+            },
+            Object {
+              "definition_id": "human_review",
+              "definition_version": 1,
+              "enabled": true,
+              "id": "review",
+              "parameters": Object {},
+              "position": Object {
+                "x": 600,
+                "y": 0,
+              },
+            },
+          ],
+          "schema_version": 1,
+          "title": "Saved graph",
+          "viewport": Object {
+            "x": 0,
+            "y": 0,
+            "zoom": 1,
+          },
+        },
+        "definition_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "execution_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "id": "graph",
+        "project_id": "project",
+        "reference_states": Array [],
+        "scope": Object {
+          "branch_id": "branch",
+          "mode": "collaboration",
+          "novel_id": "project",
+          "storyline_id": "storyline",
+          "workspace_id": "workspace",
+        },
+        "updated_at": "2026-10-09T13:00:00Z",
+        "version": 4,
+      },
+    ]
+
+
+Number of calls: 1
+
+ ✓ src/creative/StudioGraphInsertion.additive.test.tsx (20 tests) 1289ms
+ ✓ src/creative/GraphCanvas.test.tsx (25 tests) 1646ms
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 85 passed (86)
+   Start at  06:24:15
+   Duration  3.02s (transform 1.69s, setup 76ms, collect 4.57s, tests 4.68s, environment 1.82s, prepare 319ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/GraphRunPanel.test.tsx > retires retained location callbacks across same-version graph, callback and run ABA transitions
+AssertionError: expected "spy" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st spy call:
+
+    Array [
+      "source",
+      Object {
+        "can_edit": true,
+        "created_at": "2026-10-09T13:00:00Z",
+        "definition": Object {
+          "edges": Array [
+            Object {
+              "id": "source_draft",
+              "source_node_id": "source",
+              "source_port": "text",
+              "target_node_id": "draft",
+              "target_port": "text",
+            },
+            Object {
+              "id": "draft_review",
+              "source_node_id": "draft",
+              "source_port": "draft",
+              "target_node_id": "review",
+              "target_port": "draft",
+            },
+          ],
+          "nodes": Array [
+            Object {
+              "definition_id": "text_input",
+              "definition_version": 1,
+              "enabled": true,
+              "id": "source",
+              "parameters": Object {
+                "text": "Source text",
+              },
+              "position": Object {
+                "x": 0,
+                "y": 0,
+              },
+            },
+            Object {
+              "definition_id": "draft_prepare",
+              "definition_version": 1,
+              "enabled": true,
+              "id": "draft",
+              "parameters": Object {},
+              "position": Object {
+                "x": 300,
+                "y": 0,
+              },
+            },
+            Object {
+              "definition_id": "human_review",
+              "definition_version": 1,
+              "enabled": true,
+              "id": "review",
+              "parameters": Object {},
+              "position": Object {
+                "x": 600,
+                "y": 0,
+              },
+            },
+          ],
+          "schema_version": 1,
+          "title": "Saved graph",
+          "viewport": Object {
+            "x": 0,
+            "y": 0,
+            "zoom": 1,
+          },
+        },
+        "definition_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "execution_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "id": "graph",
+        "project_id": "project",
+        "reference_states": Array [],
+        "scope": Object {
+          "branch_id": "branch",
+          "mode": "collaboration",
+          "novel_id": "project",
+          "storyline_id": "storyline",
+          "workspace_id": "workspace",
+        },
+        "updated_at": "2026-10-09T13:00:00Z",
+        "version": 4,
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/creative/GraphRunPanel.test.tsx:265:56
+    263|   const third = hook.result.current.locateNode;
+    264|   await act(() => hook.result.current.openRun(value.id));
+    265|   act(() => third('source')); expect(onLocateNode).not.toHaveBeenCalle…
+       |                                                        ^
+    266|   act(() => hook.result.current.locateNode('source')); expect(onLocate…
+    267| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
