@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "aaf206f12ab6f73201b44394b58f78c4ed855fd67bcb4c1051bfc49c5b5a9437",
+  "application_source_fingerprint_sha256": "0581733a9255a039bce6704b83559df0debf20e3d9089a1e714233091c9128ca",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -57,7 +57,7 @@
     "app/creative/adaptation_receipt.py": "815d0783c6fa665de3ed85969c1aae6ecd62a6d330a1bb562b3732903147cc92",
     "app/creative/adaptation_sources.py": "5f4a563dd45021caae88cc059b88777eff1f61be35e3a74c7adce88f1971ac16",
     "app/creative/ai_execution.py": "7ab5bd82d2443c3ce61ad5fa9aeb9554f265c06bff2d8b1782e20e167ffc0782",
-    "app/creative/api.py": "65c6f3cb49d44abad870ebc7282bdb369c5f1c41c110535ea90b2e9a4b9d644b",
+    "app/creative/api.py": "10c41fdc8b9e9380e6146bbc2fd2c18c5d5d9c31cc7e67ec336530e6fcffc6da",
     "app/creative/asset_usages.py": "e87679d6e0b6d9d25aaa18c3cd0601febdf852c877e3d5b6eb94029cf05cb2c2",
     "app/creative/bible_api.py": "9040dd1a8ebd3469b59241365910d7fe370741431db0e2329da884b8748607ca",
     "app/creative/bible_projection.py": "44bcce83294c71af72ef936e5d77933db4f2bc404f736a848231581799db43d4",
@@ -106,9 +106,9 @@
     "app/creative/models.py": "66021f358385c7eff1aeda65b0160b3c09214e4d255a483a3a3a0fba4a661c15",
     "app/creative/production_contract_api.py": "9d3c228ca86578e7f9fbbeacf74b552a9010e2c66c66e049b086e4edbfa2229b",
     "app/creative/production_contracts.py": "281607b57ae46b242e1f581fe9d69900f73b58608820df83632b1a1df6ab34a1",
-    "app/creative/production_execution.py": "3a16ec4c25a10051b69ac81f960723f810662196f2eaa57b1edc4af34ec17bb0",
+    "app/creative/production_execution.py": "e808643ccc91424b08a74c90a3afc680a484a309e63a73f212c6b182f099be2c",
     "app/creative/production_execution_api.py": "9c21caa5b356deff7bb1a129a7e89b0363fcf9541b50c68f58f27a659c7e2ca0",
-    "app/creative/production_execution_models.py": "4aba9013da8987a5f00bc68e499648a5778f5c1cec42086278fdd86bf150d564",
+    "app/creative/production_execution_models.py": "11b4b1252c45d50fc6a0fab13650ffd6ed70529e90b8bc5e33034006749b73ce",
     "app/creative/production_workflow.py": "6560c3aa21ce95ab9a1c7f678956bf3f44884942bf0965a3802f6899c907de4e",
     "app/creative/production_workflow_api.py": "4c2e9ae20af747846aa2a9bbffc1dd3a983c05ef8197b5042ea0cdce8f10011c",
     "app/creative/production_workflow_models.py": "59510c5cf8fc3e7d83b9757928fe95f34ac9dc52a9404b4957d03dbadc349939",
@@ -130,7 +130,7 @@
     "app/creative/storage_admission.py": "055cc172c00063f9dad333e7d4815174bd3c3e6b8f3af742a548c4427f0acf86",
     "app/creative/story_fact_api.py": "21febafa9952fa210eb33d00f28e5868ee63da9a92543ddb1820190e18e5c434",
     "app/creative/story_fact_bindings.py": "ce2574ef29460fc76baa6ef2e7991b8c6e799f70486a73ccdeecbfbe4de6b944",
-    "app/creative/storyboard.py": "3c0f9959c482f51c41787b60471fedbc39a3628991031804eb86f5270a94f525",
+    "app/creative/storyboard.py": "6845f5ab62bce05860547de8eec3b49cd54218fa3fb97f4f69ac055722d1e62e",
     "app/creative/storyboard_model.py": "253472b23c9704a5e31d5803a730ff01713570fcb3bf55f86347da5b4e54aa61",
     "app/creative/text_assets.py": "9c295da83af44cfaf49c0edd65f3dc1f5fc9d88ea808cb368ebb750bdb091d76",
     "app/creative/text_execution_receipt.py": "3797c24bfec8d499558bb0f2a1fc6d5ff78911d06b8ee6a6c46c4b20a582df65",
@@ -500,7 +500,7 @@
     "app/services/pcm16_envelope.py": "b22309bdbee90cdab75262b24d93e63fbf8aa557cdb0ccce8485676cd961d220",
     "app/services/pending_canon_review_service.py": "29a6860bf5e8e600387b993d36429f1362ed40df4c3191aac214c73087a62084",
     "app/services/screenplay_service.py": "2c0e86d5561a68c426646f46b2b4986bd8a88ac65cb9a995428467ad17367be9",
-    "app/services/studio_audio_execution.py": "b46f9763540903022fcd070039cd3f00c87e26eade340e116481ef0c37b34ff1",
+    "app/services/studio_audio_execution.py": "c0e5c804b125bb2b4fff5f353f32e00c8f85e93a23068b0f543ec89a6d9668db",
     "app/services/studio_audio_mp3_profile.py": "6b187cb81083a18113555b11809f1014a45748fdb700c4bf5fd8ea844cd59cf1",
     "app/services/studio_audio_trim_profiles.py": "b81e54cb2edc1ded89b75e4c9d6a39d55ba5b401fff685e1021382e9ef0fa6f5",
     "app/services/studio_image_control_contract.py": "48534f0b626b769474bb8a7d0fa86cf2189b3c8a0599eb54e9d54450a1bdf32b",
@@ -542,9 +542,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 666,
+    "added": 668,
     "changed_contract": 24,
-    "current_method_paths": 2499,
+    "current_method_paths": 2501,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -561,7 +561,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "242f25ef14e572059a9751a18d1c8c69daa14875157d6371d2d935a62356d467",
+    "sha256": "3e7acbb64571ac27e8b4828484d43b3299d189bf16e4e554c0d381956f29f100",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -14889,7 +14889,8 @@
       "operation_id": "book_export_cbz_api_novels__nid__experimental_comic_layouts_books__rid__export_cbz_post",
       "owner_ref": "b6c12ab720422626010b1c9a379409641cd2474157eca35e55ed53cf9e49d87b",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d40627f45bdd8ad94768a0c4a010109cde89725068713eb936824b24898f8499",
       "schema_graph_sha256": "ecda72f6decd291f1bc3d6a1f514cc3e9a19a163f4678127072835f9dd990130"
@@ -14912,7 +14913,8 @@
       "operation_id": "book_publication_preflight_api_novels__nid__experimental_comic_layouts_books__rid__publication_preflight_post",
       "owner_ref": "9f35136de624123dc6c2b604f311880c19bc5bc71007244c24b56f993b65dc95",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "279ebaecd7b4c0608495030ba92ab95994e21effd90a51df545a29c20dde01a8",
       "schema_graph_sha256": "75200c8c9f8c22b9025200963aa67b8c1c7449ceb11b7898d6bb5f071522599f"
@@ -15492,6 +15494,17 @@
       ],
       "operation_sha256": "c4d0e4e780b7ea3af127105fd4774040ac1d6d6eb29ce535a965e499aaea5703",
       "schema_graph_sha256": "00fe2a32e38e9fb43d2a34e12688152813f146bdfbc6ba2c1d89795827a3ab49"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/audio-request",
+      "operation_id": "storyboard_audio_request_api_novels__nid__experimental_creative_documents__rid__shots__shot_id__audio_request_post",
+      "owner_ref": "8abd14323153733cfb403972c6cb918745ec8ad840f4186181782c391c2d40cd",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "ab7cff94baf19726a5dce1975faae97b521df954a5ab1b734475ada0535c6a0b",
+      "schema_graph_sha256": "f409a59f287f5717e5975f3d14e44045530c9ac7f9c44a9a348e2f90bae4f86b"
     },
     {
       "method": "POST",
@@ -20005,7 +20018,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "60212d7e88bd51540491f7e59211e07b88a834d919836182818b70e9772f6c2c",
-      "schema_graph_sha256": "db1c8d69106825a0556fb60f7bfc8775cbed24d0db667cdc4f5c3b1441c00075"
+      "schema_graph_sha256": "064a92ae37a957857b114155254cfa8d1bb293662ac7bf079d15e17dffc2b56b"
     },
     {
       "method": "POST",
@@ -20077,7 +20090,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "3126426a88e300355790d136f958248301a16f5139cb4e70c8ab39c30091be15",
-      "schema_graph_sha256": "1919e1cc162a05c8a4c8bb0dce0c7fdf6dd86e4eb906b03dc87e4cf2bf28c053"
+      "schema_graph_sha256": "bcf81f373d41c1f7ed19e7b2d36f90bb7b94a17b9455d54be0d17da7600520ac"
     },
     {
       "method": "POST",
@@ -22336,7 +22349,8 @@
       "operation_id": "book_export_cbz_api_v1_novels__nid__experimental_comic_layouts_books__rid__export_cbz_post",
       "owner_ref": "b6c12ab720422626010b1c9a379409641cd2474157eca35e55ed53cf9e49d87b",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "126adef57f77546ab5a9b5a83f363acd5509375939e7082f876dd9a70166ac9d",
       "schema_graph_sha256": "ecda72f6decd291f1bc3d6a1f514cc3e9a19a163f4678127072835f9dd990130"
@@ -22359,7 +22373,8 @@
       "operation_id": "book_publication_preflight_api_v1_novels__nid__experimental_comic_layouts_books__rid__publication_preflight_post",
       "owner_ref": "9f35136de624123dc6c2b604f311880c19bc5bc71007244c24b56f993b65dc95",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "dcf5c76fd36a1a1e8b3e367af1bbfd0ce4845dab7e8360cc421ca81d5105878e",
       "schema_graph_sha256": "75200c8c9f8c22b9025200963aa67b8c1c7449ceb11b7898d6bb5f071522599f"
@@ -22939,6 +22954,17 @@
       ],
       "operation_sha256": "87490bda674e4a73fd9f9d15b2a83d0463e9f26e86cabe170b46243f2991781d",
       "schema_graph_sha256": "00fe2a32e38e9fb43d2a34e12688152813f146bdfbc6ba2c1d89795827a3ab49"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/creative/documents/{rid}/shots/{shot_id}/audio-request",
+      "operation_id": "storyboard_audio_request_api_v1_novels__nid__experimental_creative_documents__rid__shots__shot_id__audio_request_post",
+      "owner_ref": "8abd14323153733cfb403972c6cb918745ec8ad840f4186181782c391c2d40cd",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "7c499581397e3147c36747cfc3f5ac8a7ffa37d7a471c822cba82ae53d13a741",
+      "schema_graph_sha256": "f409a59f287f5717e5975f3d14e44045530c9ac7f9c44a9a348e2f90bae4f86b"
     },
     {
       "method": "POST",
@@ -27452,7 +27478,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "32936d799c0ef3b5154fc968de01fb0187b84989bca2edb1a41879b972b73719",
-      "schema_graph_sha256": "db1c8d69106825a0556fb60f7bfc8775cbed24d0db667cdc4f5c3b1441c00075"
+      "schema_graph_sha256": "064a92ae37a957857b114155254cfa8d1bb293662ac7bf079d15e17dffc2b56b"
     },
     {
       "method": "POST",
@@ -27524,7 +27550,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "a58d92ce075a59cfd2cb4f619690f346892e0573f37c73201d79adf34b1240b0",
-      "schema_graph_sha256": "1919e1cc162a05c8a4c8bb0dce0c7fdf6dd86e4eb906b03dc87e4cf2bf28c053"
+      "schema_graph_sha256": "bcf81f373d41c1f7ed19e7b2d36f90bb7b94a17b9455d54be0d17da7600520ac"
     },
     {
       "method": "POST",
