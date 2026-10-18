@@ -1,0 +1,31 @@
+{
+  "scope": "all new Git blobs, including retained failed logs; ZIP member names and exact OFL/PNG verified",
+  "raw_scan": {
+    "counts": {
+      "secret_assignment": 1
+    },
+    "scanned": 18,
+    "blobs": 20,
+    "total_bytes": 4136506,
+    "max_blob": 658957,
+    "hits": [
+      {
+        "kind": "secret_assignment",
+        "path": "frontend/src/modelcenter/ModelCenterInjectedSafety.additive.test.tsx",
+        "line": 23,
+        "oid": "cdce590435320056690ae478f6064c6e72cbe4c9"
+      }
+    ]
+  },
+  "reviewed_fixture_allowlist": [
+    {
+      "kind": "secret_assignment",
+      "path": "frontend/src/modelcenter/ModelCenterInjectedSafety.additive.test.tsx",
+      "line": 23,
+      "oid": "cdce590435320056690ae478f6064c6e72cbe4c9",
+      "reason": "Explicit synthetic negative-test value synthetic-not-a-key; no credential or authentication use"
+    }
+  ],
+  "unresolved_hits": 0,
+  "limitations": "Pattern scan is not proof of absence of secrets."
+}

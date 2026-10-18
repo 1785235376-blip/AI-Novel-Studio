@@ -1,0 +1,15 @@
+{
+  "source_head": "d1f1013f0525595249bee46e5cae0d296233b0ac",
+  "prerequisite": "04ec4d1ff4d59e49369a73d5f78b75f10054c44b",
+  "source_branch": "work/dot-director-transport-20261017",
+  "commits": [
+    "40e85c2fc505ee87072a675cd2ed17a58cf754d8",
+    "d1f1013f0525595249bee46e5cae0d296233b0ac"
+  ],
+  "status": "FOCUSED_INJECTED_FACTS_AND_CJK_ACCEPTANCE",
+  "full_acceptance": "NOT_ESTABLISHED",
+  "full_regression": "DEFERRED",
+  "production_build": "DEFERRED",
+  "browser_live_model_postgresql": "NOT_RUN",
+  "archive_ci": "SKIPPED_BY_COMMIT_MESSAGE; not PASS"
+}
