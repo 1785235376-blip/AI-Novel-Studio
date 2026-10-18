@@ -139,3 +139,82 @@ def research_analysis_jobs(service):
 
     return ReviewAdapterJobs(service, 'research_analysis_jobs', source,
                             lambda: service.vision_provider, execute)
+
+
+class PreparedResearchOCRSource:
+    """Transient source snapshot for a future original JobManager OCR invocation.
+
+    This object is not a job, approval, scheduler or dispatch entry. It captures
+    only the original Research owner's current image and rechecks it on every
+    read. Real Research dispatch remains closed in ReviewAdapterJobs.
+    """
+
+    def __init__(self, service, nid, scope, actor, source_id, source_version, guard):
+        import copy
+        from .research_library import ResearchLibraryService
+        if (not isinstance(service, ResearchLibraryService)
+                or service.historical_inspection is not True or not callable(guard)
+                or not isinstance(nid, str) or not nid or not isinstance(actor, str) or not actor
+                or not isinstance(scope, dict) or scope.get('novel_id') != nid
+                or not isinstance(source_id, str) or not source_id
+                or type(source_version) is not int or source_version < 1):
+            raise ValueError('RESEARCH_OCR_SOURCE_AUTHORITY_REQUIRED')
+        self._service, self._nid, self._actor = service, nid, actor
+        self._scope = copy.deepcopy(scope)
+        self._source_id, self._source_version, self._guard = source_id, source_version, guard
+        self._binding = None
+        self._read()
+
+    @property
+    def binding(self):
+        import copy
+        return copy.deepcopy(self._binding)
+
+    def _read(self):
+        import hashlib
+        from ..import_parsers import decode_base64
+        from .common import StaleSourceError
+        self._guard()
+        identity = self._service.history_identity(self._nid)
+        row = self._service._source(self._nid, self._scope, self._actor, self._source_id)
+        if (row.get('research_project_incarnation') != identity
+                or row.get('version') != self._source_version):
+            raise StaleSourceError('RESEARCH_OCR_SOURCE_CHANGED')
+        metadata = row.get('image_metadata') or {}
+        image_format = metadata.get('format')
+        if row.get('format') != 'IMAGE' or image_format not in {'PNG', 'JPEG'}:
+            raise ValueError('RESEARCH_OCR_PNG_OR_JPEG_REQUIRED')
+        encoded = row.get('content_base64')
+        # Reject before decoding; the original import may allow larger sources.
+        if not isinstance(encoded, str) or len(encoded) > 4 * ((4 * 1024 * 1024 + 2) // 3):
+            raise ValueError('RESEARCH_OCR_INPUT_LIMIT')
+        content = decode_base64(encoded)
+        if not 0 < len(content) <= 4 * 1024 * 1024:
+            raise ValueError('RESEARCH_OCR_INPUT_LIMIT')
+        source_digest = hashlib.sha256(content).hexdigest()
+        if source_digest != row.get('content_sha256'):
+            raise StaleSourceError('RESEARCH_OCR_SOURCE_CHANGED')
+        binding = {'contract': 'research-ocr-source/1', 'project_id': self._nid,
+            'project_incarnation': identity, 'scope': self._scope, 'actor_id': self._actor,
+            'source_id': self._source_id, 'source_version': self._source_version,
+            'source_digest': source_digest, 'access': row.get('access'),
+            'media_type': 'image/png' if image_format == 'PNG' else 'image/jpeg', 'page': 1}
+        if self._binding is not None and binding != self._binding:
+            raise StaleSourceError('RESEARCH_OCR_SOURCE_CHANGED')
+        self._guard()
+        if self._service.history_identity(self._nid) != identity:
+            raise StaleSourceError('RESEARCH_OCR_SOURCE_CHANGED')
+        # Re-read after callbacks; a callback may revoke or replace the source.
+        current = self._service._source(self._nid, self._scope, self._actor, self._source_id)
+        if current != row:
+            raise StaleSourceError('RESEARCH_OCR_SOURCE_CHANGED')
+        import copy
+        self._binding = copy.deepcopy(binding)
+        return content
+
+    def read_current(self):
+        """Return original bytes only while this exact source is still current."""
+        return self._read()
+
+    def validate_current(self):
+        self._read()
