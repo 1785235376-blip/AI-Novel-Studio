@@ -1,0 +1,73 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "9df76f2d42c265679da6602c38beb20844e40b77",
+      "path": "docs/P0_RESTORED_SOURCE_RECHECK_20261018.md",
+      "bytes": 2399,
+      "sha256": "da2df0d6eb58f4d69765a4f82a493d1e04edc022b58fd104e762438e55d81049"
+    },
+    {
+      "blob": "5f1a5cd6e396eff27de45f071f9849cae727611f",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 12337,
+      "sha256": "d9ac42c80909a00e3c2807b00ef2424098552c527ce5bca72d35bf3112a61f60"
+    },
+    {
+      "blob": "7c180922d3b3b6570d351a838965eee65fa0e096",
+      "path": "docs/delivery/v2-development/p0-restored-current-file.json",
+      "bytes": 690758,
+      "sha256": "5f7fc863cdd5ccacfd278b9374569937e2dee848f176c0a75f9d7287082c1549"
+    },
+    {
+      "blob": "915426605f0ad2428b56da3627cc26598d905e76",
+      "path": "docs/delivery/v2-development/p0-restored-current-file.log",
+      "bytes": 1075,
+      "sha256": "9f6744292becf8b4f22e84a713f11ffe2b90d8f94b5d056d4efee194b496d371"
+    },
+    {
+      "blob": "a783b2d25d427c3bf3cbe616533e215f157ce40c",
+      "path": "docs/delivery/v2-development/p0-restored-current-pg-final-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "39a192e412396f52e219462efeed4afc19b4dcf1f5cd941ee417e33155923f13"
+    },
+    {
+      "blob": "b6a9798e7c8485f4d238ead2d6f8b2c960e69647",
+      "path": "docs/delivery/v2-development/p0-restored-current-pg-final.json",
+      "bytes": 690821,
+      "sha256": "db961b5414094c754885fd97815a920cb41dfd1ec4c68d37b8b8f667b061c29e"
+    },
+    {
+      "blob": "ff108b78bae150ed3f796fa38ab3b61e7f9fc9cb",
+      "path": "docs/delivery/v2-development/p0-restored-current-pg-final.log",
+      "bytes": 1079,
+      "sha256": "7027eddf9b88ec20d08812a53750c51aed242dad46658618fbce8b94c5864327"
+    },
+    {
+      "blob": "4ad87c4068921175057ee0fe057c587ec5763d6f",
+      "path": "docs/delivery/v2-development/p0-restored-current-pg-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "093083c446a726ac66a372a93c4864eb15e13ff245540d36828ee4adbcd70ff1"
+    },
+    {
+      "blob": "9fd6399bf5b6ee9151dfe288adcc154b5cd6875f",
+      "path": "docs/delivery/v2-development/p0-restored-current-pg.json",
+      "bytes": 690762,
+      "sha256": "423b2040d3a3a047390c65053b64080b1a6a709e1055b09d4ba59f2f63728df8"
+    },
+    {
+      "blob": "4a83d36f77dd54d962956a55571b90c87fe7cdee",
+      "path": "docs/delivery/v2-development/p0-restored-current-pg.log",
+      "bytes": 2391,
+      "sha256": "f99ea46ae079cc9d31308f83d38cb93bf4d2ada1cb501d8276964e64138aaf30"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
