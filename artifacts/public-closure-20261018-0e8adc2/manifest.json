@@ -1,0 +1,14 @@
+{
+  "source_head": "0e8adc24380bc334d4e12651010293cc00273854",
+  "prerequisite": "9923494cb6cb810de73b064705e7f87c531ff5fd",
+  "bundle": "continuation.bundle",
+  "scope": "Fix six omitted standard module entries in the existing PUBLIC allowlist; private backend exclusion and source guards unchanged. Original offline real-wheel/profile suite plus one additive check: 57 PASS. Initial failed closure evidence retained. Test Python wheel only, no installed app/Windows/end-to-end/release claim. See docs/PUBLIC_CONTINUED_FEATURE_CLOSURE.md.",
+  "public_test_wheel": {
+    "file": "ai_novel_studio-0.7.0-py3-none-any.whl",
+    "bytes": 1901988,
+    "sha256": "385ccfd6bc65df3243a0d160142f01c0836a289f1b17beb16e51e9e66e293a58",
+    "release": false,
+    "application_imported": false,
+    "network_called": false
+  }
+}
