@@ -1,3 +1,6 @@
+import { useDirectorAuthorRecovery } from './useDirectorAuthorRecovery';
+import { DirectorAuthorRecoveryPanel } from './DirectorAuthorRecoveryPanel';
+import type { StudioGraphDraftOwner } from './studioGraphLocalDraft';
 import { DirectorImageReviewPanel } from './DirectorImageReviewPanel';
 import { DirectorSceneScopePanel } from './DirectorSceneScopePanel';
 import {DirectorSheetExportPanel} from './DirectorSheetExportPanel';
@@ -22,6 +25,9 @@ import './creative.css';
 export type GraphDirectorSource = Pick<ReturnType<typeof creativeClient>, 'create' | 'update' | 'export' | 'capabilities' | 'list' | 'derive' | 'history'> & GraphDirectorReviewSource & Partial<Pick<ReturnType<typeof creativeClient>, 'directorSheetExport' | 'deriveDirectorScope' | 'imageDirector'>>;
 type Props = {
   client: GraphDirectorSource;
+  draftOwner?: StudioGraphDraftOwner;
+  verifyDraftOwner?: () => Promise<void>;
+  registerRecoveryDiscard?: (discard: (() => void) | undefined) => void;
   canvasHandoff?: ReviewedDirectorCanvasHandoff;
   pin?: PlanningSnapshot;
   selectionKey?: string;
@@ -44,7 +50,7 @@ const samePin = (a: PlanningSnapshot, b: PlanningSnapshot) => a.id === b.id && a
 
 /** A mounted view of the original Creative owner. Only author drafts live here;
  * Graph retains its exact pin and all execution/review remains with its owners. */
-export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey, graph, selectedNodeId, active, canMutate, busy, isCurrent, read, mutate, onDirtyChange, onImagePendingChange, onOpenModels, onOpenBroker, onOpenStoryboard }: Props) {
+export function GraphDirectorConsole({ draftOwner, verifyDraftOwner, registerRecoveryDiscard, client, canvasHandoff, pin, selectionKey, graph, selectedNodeId, active, canMutate, busy, isCurrent, read, mutate, onDirtyChange, onImagePendingChange, onOpenModels, onOpenBroker, onOpenStoryboard }: Props) {
   const imageClient = useMemo(() => client.imageDirector?.(), [client]);
   const [imagePending, setImagePending] = useState(false);
   const imagePendingCallback = useRef(onImagePendingChange); imagePendingCallback.current = onImagePendingChange;
@@ -62,6 +68,7 @@ export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey,
   const [proposalPending, setProposalPending] = useState(false);
   const [scopePending, setScopePending] = useState(false);
   const [handoffPending, setHandoffPending] = useState(false), [storyboardAllowed, setStoryboardAllowed] = useState(false);
+  const [authorityDenied, setAuthorityDenied] = useState(false);
   const [open, setOpen] = useState(false), [authorized, setAuthorized] = useState(false);
   const [draft, setDraft] = useState<CreativeInput>(empty), [base, setBase] = useState<CreativeDocument>();
   const [dirty, setDirty] = useState(false), [blocked, setBlocked] = useState(false), [working, setWorking] = useState(false), [saving, setSaving] = useState(false);
@@ -83,23 +90,27 @@ export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey,
   const owns = (generation: number) => current() && scope.current.generation === generation;
   useEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; }; }, []);
   useEffect(() => { if (!active) epoch.current++; }, [active]);
-  const pending = dirty || blocked || handoffPending || proposalPending || scopePending || imagePending;
-  const pendingInputs = useRef({ dirty, blocked, handoffPending, scopePending, imagePending, onDirtyChange });
-  pendingInputs.current = { dirty, blocked, handoffPending, scopePending, imagePending, onDirtyChange };
+  const recovery = useDirectorAuthorRecovery({ owner: draftOwner, available: authorized && canMutate && active && !!verifyDraftOwner,
+    isCurrent: current, draft, base, pin: snapshot, dirty, uncertain: blocked });
+  useEffect(() => { registerRecoveryDiscard?.(recovery.clear); return () => registerRecoveryDiscard?.(undefined); }, [registerRecoveryDiscard, recovery.clear]);
+  const pending = !!recovery.candidate || dirty || blocked || handoffPending || proposalPending || scopePending || imagePending;
+  const pendingInputs = useRef({ recoveryPending: !!recovery.candidate, dirty, blocked, handoffPending, scopePending, imagePending, onDirtyChange });
+  pendingInputs.current = { recoveryPending: !!recovery.candidate, dirty, blocked, handoffPending, scopePending, imagePending, onDirtyChange };
   const proposalChanged = useCallback((value: boolean) => {
     setProposalPending(value);
     const input = pendingInputs.current;
-    input.onDirtyChange(value || input.dirty || input.blocked || input.handoffPending || input.scopePending || input.imagePending);
+    input.onDirtyChange(value || input.recoveryPending || input.dirty || input.blocked || input.handoffPending || input.scopePending || input.imagePending);
   }, []);
   const reportedPending = useRef(false);
   useEffect(() => { if (reportedPending.current !== pending) { reportedPending.current = pending; onDirtyChange(pending); } }, [pending, onDirtyChange]);
-  const editing = authorized && canMutate && active && !busy && !working && !blocked && !handoffPending && !proposalPending && !scopePending && !imagePending && isCurrent();
+  const editing = authorized && canMutate && active && !busy && !working && !blocked && !handoffPending && !proposalPending && !scopePending && !imagePending && !recovery.candidate && isCurrent();
   const authorEpoch = useRef(0);
   const renderedAuthorEpoch = authorEpoch.current;
   const mark = (value: boolean) => { authorEpoch.current++; setDirty(value); onDirtyChange(value || blocked || handoffPending || proposalPending || scopePending || imagePending); };
   const fail = (reason: unknown) => {
     setError(apiErrorView(reason, '导演文档操作未完成，请核对连接与原文档。').message);
     if (reason instanceof ApiError && [401, 403].includes(reason.status)) {
+      setAuthorityDenied(true);
       setReviewed(undefined); setReviewedPin(undefined); setAuthorized(false); setBase(undefined); setSnapshot(undefined); setCandidate(undefined); setDocuments([]); setChoice('');
     }
   };
@@ -137,6 +148,7 @@ export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey,
     if (!editing || lock.current || !dirty || !draft.title.trim() || creativeAuthoringProblems(draft).length) return;
     lock.current = true; setWorking(true); setSaving(true); setBlocked(true); setError('');
     setNotice('保存请求已提交，结果核对完成前不会重复写入。');
+    recovery.persist(draft, base, snapshot, true);
     const input = documentInput(draft), origin = base, generation = scope.current.generation, ticket = ++epoch.current;
     try {
       const row = await mutate(() => origin ? client.update(origin.id, origin.version, input) : client.create(input));
@@ -182,10 +194,45 @@ export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey,
   }
   function discard() {
     if (!current() || busy || lock.current || !discardConfirmed) return;
+    recovery.clear();
     setDraft(candidate ? documentInput(candidate.document) : base ? documentInput(base) : empty());
     if (candidate) { setBase(candidate.document); setSnapshot(candidate.pin); }
     if (blocked && !candidate) setNotice('仅放弃了本地草稿；远端保存结果仍未知。再次创建前先核对原文档目录，避免重复创建。');
     setCandidate(undefined); setBlocked(false); mark(false); setDiscardConfirmed(false); setError('');
+  }
+  async function restoreAuthorDraft() {
+    const cached = recovery.candidate;
+    if (!cached || !verifyDraftOwner || !current() || !authorized || !canMutate || busy || lock.current
+      || dirty || blocked || handoffPending || proposalPending || scopePending || imagePending || composing.current) return;
+    const generation = scope.current.generation, ticket = ++epoch.current, authored = authorEpoch.current, selected = selection.current.generation;
+    const verifier = verifyDraftOwner;
+    lock.current = true; setWorking(true); setError('');
+    try {
+      recovery.verifyCandidate(cached);
+      const result = await read(async () => {
+        await verifier();
+        if (!owns(generation) || ticket !== epoch.current) throw new Error('导演恢复身份已改变。');
+        recovery.verifyCandidate(cached);
+        const caps = await client.capabilities();
+        if (!caps.enabled || !caps.can_mutate || !caps.modes.includes('DIRECTOR')) throw new Error('当前身份没有导演作者权限，草稿未恢复。');
+        if (!owns(generation) || ticket !== epoch.current) throw new Error('导演恢复身份已改变。');
+        recovery.verifyCandidate(cached);
+        if (!cached.base) return undefined;
+        const value = await client.export(cached.base.id);
+        if (value.document.mode !== 'DIRECTOR' || value.document.status !== 'DRAFT' || value.document.id !== cached.base.id
+          || value.document.version !== cached.base.version || !/^[a-f0-9]{64}$/.test(value.document_digest)
+          || cached.base.digest && value.document_digest !== cached.base.digest) throw new Error('导演原文档版本或摘要已变化，恢复草稿保持；请先核对原文档。');
+        return value;
+      });
+      if (!owns(generation) || ticket !== epoch.current || authored !== authorEpoch.current || selected !== selection.current.generation || composing.current) return;
+      recovery.consume(cached);
+      reviewedRef.current = undefined; setReviewed(undefined); setReviewedPin(undefined); verifiedIntent.current = undefined;
+      setBase(result?.document); setSnapshot(result ? { id: result.document.id, version: result.document.version, digest: result.document_digest } : undefined);
+      setDraft(cached.draft); setCandidate(undefined); setScene(undefined); setShot(undefined); setDiscardConfirmed(false);
+      setBlocked(cached.uncertain); mark(true);
+      setNotice(cached.uncertain ? '已恢复作者输入；原保存结果仍未知，禁止重新提交。请核对原文档或目录后明确处理。' : '已恢复导演作者输入，尚未保存到服务端。原审批、任务和图绑定没有恢复或改变。');
+    } catch (reason) { if (owns(generation) && ticket === epoch.current) fail(reason); }
+    finally { lock.current = false; if (alive.current) setWorking(false); }
   }
   function proofCurrent() {
     const proof = verifiedIntent.current;
@@ -207,6 +254,7 @@ export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey,
     } finally { lock.current = false; }
   }
   if (!active || !isCurrent()) return null;
+  if (authorityDenied || recovery.retired) return <StatusMessage tone="warning">导演作者身份或权限已改变，内容已隐藏；本机恢复副本未删除。请重新打开工作区核对权限。</StatusMessage>;
   if (ownerClient.current !== client) return <StatusMessage tone="warning">导演来源连接已改变，请重新打开工作区。</StatusMessage>;
   return <Panel title="画布导演总控台 · 可选">
     <p>人工编排：复用原导演文档、版本与审核。此面板可关闭；不要求其它模块先经过导演。</p>
@@ -224,14 +272,17 @@ export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey,
       {snapshot && <p>当前原文档：{snapshot.id} · v{snapshot.version} · {snapshot.digest}</p>}
       {pin && base?.id === pin.id && (base.version !== pin.version || snapshot && !samePin(pin, snapshot)) && <StatusMessage tone="warning">节点来源已变更，原绑定没有自动更新；请核对下游影响。</StatusMessage>}
       {pin && <GraphDirectorSourceImpact key={JSON.stringify([selectedKey, base?.id, base?.version])} client={client} pin={pin} graph={graph} selectedNodeId={selectedNodeId} active={active && !imagePending} busy={busy || working} isCurrent={isCurrent} read={read} />}
+      {authorized && <DirectorAuthorRecoveryPanel candidate={recovery.candidate} notice={recovery.notice} savedAt={recovery.savedAt}
+        enabled={recovery.enabled && !!verifyDraftOwner} busy={busy || working || imagePending} canRestore={!!verifyDraftOwner && canMutate && !dirty && !blocked && !handoffPending && !proposalPending && !scopePending && !imagePending}
+        onRestore={() => void restoreAuthorDraft()} onDiscard={recovery.clear} />}
       {notice && <StatusMessage>{notice}</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}
       {working && <StatusMessage>正在读取或保存原导演文档…</StatusMessage>}
       {authorized && hasDirectorProposalReview(client) && <GraphDirectorProposalReview client={client}
-        active={active && !imagePending} canMutate={canMutate && !dirty && !blocked && !handoffPending && !scopePending && !imagePending} busy={busy || working}
+        active={active && !imagePending} canMutate={canMutate && !recovery.candidate && !dirty && !blocked && !handoffPending && !scopePending && !imagePending} busy={busy || working}
         isCurrent={isCurrent} read={read} mutate={mutate} onPendingChange={proposalChanged} onOpenModels={onOpenModels}
         onDenied={() => fail(new ApiError({ status: 403, code: 'PROJECT_SCOPE_FORBIDDEN', message: '导演审核来源当前不可读取。' }))}
         onDocument={(row, expectedSnapshot) => {
-          if (!current() || dirty || blocked || handoffPending || imagePending || lock.current) return;
+          if (!current() || recovery.candidate || dirty || blocked || handoffPending || imagePending || lock.current) return;
           if (row.mode !== 'DIRECTOR' || row.status !== 'DRAFT' || !row.id || !Number.isSafeInteger(row.version) || row.version < 1)
             throw new Error('审核后的导演文档回执无效，请读取原建议状态。');
           const expected = expectedSnapshot ? reviewedDirectorSnapshot({ id: row.id, version: row.version }, row, expectedSnapshot.digest, expectedSnapshot) : undefined;
@@ -269,7 +320,7 @@ export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey,
         const authored = authorEpoch.current, selected = selection.current.generation, generation = scope.current.generation;
         onOpenStoryboard(request, () => originCurrent() && current() && authored === authorEpoch.current && selected === selection.current.generation && owns(generation));
       } : undefined} client={client} source={base} snapshot={snapshot} active={active && authorized && !imagePending} canCreate={editing && !dirty && storyboardAllowed} busy={busy || working} isCurrent={isCurrent} read={read} mutate={mutate} onPending={setHandoffPending} />}
-      {(dirty || blocked) && <section aria-label="导演草稿处理"><p>导演草稿尚未保存或待核对，图编辑与运行暂时锁定。内容仅保留在本次页面中，关闭页面可能丢失。</p>
+      {(dirty || blocked) && <section aria-label="导演草稿处理"><p>导演草稿尚未保存或待核对，图编辑与运行暂时锁定。本机恢复状态见上方；未确认保留时，关闭页面可能丢失输入。</p>
         <Button disabled={!authorized || !canMutate || busy || working} onClick={() => {
           if (!current() || !authorized || !canMutate || busy || working || lock.current || composing.current || renderedAuthorEpoch !== authorEpoch.current) return;
           try { downloadPortableBlob(directorDraftBackup(draft, base, snapshot, blocked), 'director-author-draft-backup.json');

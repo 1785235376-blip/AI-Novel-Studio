@@ -17,6 +17,7 @@ export type { StudioGraphEditorProps, StudioGraphEditorSelection } from './useSt
  */
 export function useStudioGraphEditor(props: StudioGraphEditorProps) {
   const imageSelectionLock = useRef(false);
+  const discardDirectorRecovery = useRef<(() => void)>();
   const [directorDirty, setDirectorDirty] = useState(false);
   const [mediaViewDirty, setMediaViewDirty] = useState(false);
   const [directorSession, setDirectorSession] = useState(0);
@@ -32,6 +33,14 @@ export function useStudioGraphEditor(props: StudioGraphEditorProps) {
   const handoffEpoch = handoffAuthority.current.epoch;
   const view = studioGraphEditorView(controller, { ...props, externalDirty: props.externalDirty || directorDirty || mediaViewDirty }, { local: canvasLocal, onLocal: setCanvasLocal });
   return { ...view, content: <>{!controller.retired && props.client.graphs?.canvasViews && <MediaCanvasViewPanel key={`media:${props.identity}:${directorSession}`} {...props} externalDirty={props.externalDirty || directorDirty || controller.dirty || controller.blocked || controller.executionDirty} onDirtyChange={setMediaViewDirty} graphHandoff={controller.canvasAssetHandoff} />}{props.active && !controller.retired && controller.catalog && <StudioGraphDraftRecovery controller={controller} />}{props.directorSource && !controller.retired && <GraphDirectorConsole key={`${props.identity}:${directorSession}`}
+    draftOwner={props.draftOwner} registerRecoveryDiscard={discard => { discardDirectorRecovery.current = discard; }}
+    verifyDraftOwner={props.draftOwner ? async () => {
+      const owner = props.draftOwner!;
+      if (!props.active || props.denied || !props.isCurrent()) throw new Error('导演作者身份已改变。');
+      const overview = await props.client.overview();
+      if (!props.isCurrent() || overview.project.id !== owner.projectId || overview.project.incarnation !== owner.incarnation || !overview.capabilities.can_mutate)
+        throw new Error('项目代次或作者权限已改变，导演草稿未恢复。');
+    } : undefined}
     client={props.directorSource} onOpenStoryboard={controller.executionDirty || !props.onOpenStoryboard ? undefined : (request, isOriginCurrent) => {
       props.onOpenStoryboard!(request, () => isOriginCurrent() && handoffAuthority.current.epoch === handoffEpoch);
     }} onOpenModels={props.onOpenModels} onOpenBroker={props.onOpenBroker} selectionKey={JSON.stringify([controller.base?.id, controller.selected, handoffEpoch])} canvasHandoff={controller.reviewedDirectorHandoff} pin={controller.node?.definition_id === 'director_plan' ? controller.node.parameters.document_snapshot : undefined}
@@ -40,6 +49,6 @@ export function useStudioGraphEditor(props: StudioGraphEditorProps) {
     busy={props.busy} isCurrent={props.isCurrent} read={props.read} mutate={props.mutate} onDirtyChange={setDirectorDirty} onImagePendingChange={value => { imageSelectionLock.current = value; }} />}{view.content}</>,
     directorPending: directorDirty,
     dirty: mediaViewDirty || directorDirty || controller.dirty || controller.blocked || controller.executionDirty,
-    discard: () => { imageSelectionLock.current = false; setDirectorSession(value => value + 1); setDirectorDirty(false); setMediaViewDirty(false); controller.discard(); } };
+    discard: () => { if (props.active && !props.denied && props.isCurrent()) discardDirectorRecovery.current?.(); imageSelectionLock.current = false; setDirectorSession(value => value + 1); setDirectorDirty(false); setMediaViewDirty(false); controller.discard(); } };
 
 }
