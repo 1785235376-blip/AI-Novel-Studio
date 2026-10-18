@@ -1,0 +1,19 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "795c2128c383d704a91a961eac57231349a4e9c5",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 129398,
+      "sha256": "ae9ba8fee719825c16f1a85196813af7bfc01da763d3f6475e93f00c5eb80042"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
