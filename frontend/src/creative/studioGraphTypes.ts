@@ -11,6 +11,8 @@ export type GraphMediaOperation = typeof GRAPH_MEDIA_OPERATIONS[number];
 export const GRAPH_IMAGE_OPERATIONS = ['m5.image.t2i', 'm5.image.i2i', 'm5.image.reference', 'm5.image.inpaint'] as const;
 export type GraphImageOperation = typeof GRAPH_IMAGE_OPERATIONS[number];
 export const GRAPH_VIDEO_OPERATIONS = ['m7.video.t2v', 'm7.video.i2v', 'm7.video.v2v'] as const;
+export const GRAPH_LOCAL_DEPENDENCY_REUSE_MODE = 'OPT_IN_REVIEWED_SCHEMA1_LOCAL_DEPENDENCIES_V1';
+export const GRAPH_LOCAL_DEPENDENCY_DEFINITION_IDS = ['text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review'] as const;
 export type GraphVideoOperation = typeof GRAPH_VIDEO_OPERATIONS[number];
 export type GraphUpscaleOperation = 'm5.image.upscale';
 /** Finite, code-owned contracts. A catalog entry cannot register executable code. */
@@ -78,6 +80,7 @@ export type StudioGraphRunCreateInput = {
   reviewed_preflight_digest: string;
   target_node_ids: string[];
   request_id: string;
+  reuse_reviewed_local_dependencies?: boolean;
 };
 export type StudioGraphAction = 'execute' | 'approve' | 'reject' | 'cancel' | 'pause' | 'resume';
 export type StudioGraphActionInput = {
@@ -143,6 +146,7 @@ export type StudioGraphCatalog = {
     automatic_retry: false;
     actor_private: true;
     cache_mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY';
+    local_dependency_reuse?: typeof GRAPH_LOCAL_DEPENDENCY_REUSE_MODE;
   };
 };
 export type StudioGraphScope = { mode: 'local'; novel_id: string }
@@ -208,7 +212,7 @@ export type StudioGraphRun = StudioGraphOwner & {
   current_node_id: string | null;
   node_states: Record<string, StudioGraphNodeState>;
   review: { node_id: string; output_digest: string; draft: StudioGraphDraft } | null;
-  cache: { hits: number; misses: number; mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' };
+  cache: { hits: number; misses: number; mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' | typeof GRAPH_LOCAL_DEPENDENCY_REUSE_MODE };
   created_at: string;
   updated_at: string;
   model_called: boolean;

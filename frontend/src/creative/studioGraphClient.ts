@@ -5,7 +5,7 @@ import { videoGraphDefinitions } from './graphDraft';
 import { checkedPlanningSnapshot, checkedPlanningDocument, checkedPlanningProjection, productionGraphDefinitions, type PlanningDocument, type PlanningSnapshot } from './studioProductionGraphContract';
 import { createDirectorWorkspaceClient } from '../director/directorWorkspaceClient';
 import { ApiError, type CollaborationContext } from '../api';
-import { GRAPH_VIDEO_OPERATIONS, GRAPH_IMAGE_OPERATIONS, GRAPH_MEDIA_OPERATIONS } from './studioGraphTypes';
+import { GRAPH_VIDEO_OPERATIONS, GRAPH_IMAGE_OPERATIONS, GRAPH_MEDIA_OPERATIONS, GRAPH_LOCAL_DEPENDENCY_REUSE_MODE, GRAPH_LOCAL_DEPENDENCY_DEFINITION_IDS } from './studioGraphTypes';
 import { checkedImageUpscaleProof, checkedImageReferenceMetadata, checkedImageRecipeCommand, checkedImageRecipeFields, checkedImageRuntimeInputs, sameImageRuntimeInputs } from './studioImageRuntimeContract';
 import type {
   RecordedGraphMediaCommand, GraphImageOperation, GraphMediaOperation, StudioGraphAction, StudioGraphActionInput, StudioGraphCatalogDefinition, StudioGraphDefinition,
@@ -750,6 +750,10 @@ function catalog(value: unknown): StudioGraphCatalog {
     actor_private: true, cache_mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY',
   };
   const modelEnabled = capabilities.model_execution === true;
+  if (capabilities.local_dependency_reuse !== undefined) {
+    if (capabilities.local_dependency_reuse !== GRAPH_LOCAL_DEPENDENCY_REUSE_MODE) invalid();
+    expectedCapabilities.local_dependency_reuse = GRAPH_LOCAL_DEPENDENCY_REUSE_MODE;
+  }
   const mediaEnabled = capabilities.media_execution === true;
   const timelineEnabled = capabilities.timeline_execution === true;
   const imageEnabled = capabilities.image_graph === true, productionEnabled = capabilities.production_graph === true, videoEnabled = capabilities.video_graph === true;
@@ -943,10 +947,12 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       review = { node_id: nodeId, output_digest: digest(source.output_digest), draft: draft(source.draft, modelOutput) };
     }
     const cache = record(row.cache);
-    if (cache.mode !== 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY') invalid();
+    if (cache.mode !== 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' && cache.mode !== GRAPH_LOCAL_DEPENDENCY_REUSE_MODE) invalid();
+    if (cache.mode === GRAPH_LOCAL_DEPENDENCY_REUSE_MODE && (model || media || modelCalled || knownGraph
+      && (knownGraph.schemaVersion !== 1 || Object.values(knownGraph.nodes).some(kind => !GRAPH_LOCAL_DEPENDENCY_DEFINITION_IDS.some(local => local === kind))))) invalid();
     const result: StudioGraphRun = { ...ownership, id: runId, version: integer(row.version, 1), graph_id: graphId, graph_version: integer(row.graph_version, 1),
       status, current_node_id: currentNodeId, node_states: nodeStates, review,
-      cache: { hits: integer(cache.hits, 0, 24), misses: integer(cache.misses, 0, 24), mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' },
+      cache: { hits: integer(cache.hits, 0, 24), misses: integer(cache.misses, 0, 24), mode: cache.mode },
       created_at: text(row.created_at, 64), updated_at: text(row.updated_at, 64), model_called: modelCalled, external_calls: 0,
       ...(model ? { model_runtime: model } : {}),
       ...(media ? { media_runtime: media } : {}),
@@ -1100,6 +1106,8 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       const url = graphUrl(graphId), row = record(value, true);
       const payload: StudioGraphRunCreateInput = { expected_graph_version: integer(row.expected_graph_version, 1, Number.MAX_SAFE_INTEGER, true),
         reviewed_preflight_digest: digest(row.reviewed_preflight_digest, true), target_node_ids: uniqueIds(row.target_node_ids, true), request_id: id(row.request_id, true) };
+      // False and omission retain the legacy request bytes and idempotency contract.
+      if (row.reuse_reviewed_local_dependencies !== undefined && bool(row.reuse_reviewed_local_dependencies, true)) payload.reuse_reviewed_local_dependencies = true;
       return transport.json(`${url}/runs`, 'POST', payload, undefined, payload.request_id).then(value => checkedRun(value, undefined, graphId));
     },
     getRun: (runId: string, signal?: AbortSignal): Promise<StudioGraphRun> => transport.json(runUrl(runId), 'GET', undefined, signal).then(value => checkedRun(value, runId)),

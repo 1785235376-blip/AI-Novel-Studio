@@ -817,6 +817,14 @@ class GraphRunCreate(Strict):
     reviewed_preflight_digest: Digest
     target_node_ids: list[Id] = Field(default_factory=list, max_length=MAX_NODES)
     request_id: RequestId
+    reuse_reviewed_local_dependencies: bool = Field(default=False, strict=True)
+
+    @model_serializer(mode="wrap")
+    def serialize_run_request(self, handler):
+        value = handler(self)
+        if not self.reuse_reviewed_local_dependencies:
+            value.pop("reuse_reviewed_local_dependencies", None)
+        return value
 
 
 class GraphMediaRunCreate(GraphRunCreate):

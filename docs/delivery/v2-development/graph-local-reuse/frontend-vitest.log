@@ -1,0 +1,22 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/graph-local-cache/frontend
+
+ ✓ src/creative/studioProductionGraphClient.test.ts (17 tests) 30ms
+ ✓ src/creative/studioGraphVideoContract.phase4.test.ts (31 tests) 34ms
+ ✓ src/creative/studioGraphModelClient.test.ts (36 tests) 33ms
+ ✓ src/creative/studioGraphClient.test.ts (61 tests) 50ms
+ ✓ src/creative/studioImageGraphClient.test.ts (14 tests) 18ms
+ ✓ src/creative/studioGraphTextAssetClient.test.ts (57 tests) 30ms
+ ✓ src/creative/studioGraphTextExecutionReceiptClient.test.ts (84 tests) 44ms
+ ✓ src/creative/studioGraphTransportForwarding.test.ts (8 tests) 14ms
+ ✓ src/creative/studioGraphDirectorClient.test.ts (14 tests) 15ms
+ ✓ src/creative/GraphReadRevocation.regression.test.tsx (8 tests) 320ms
+ ✓ src/creative/GraphTextAssetPanel.test.tsx (13 tests) 704ms
+ ✓ src/creative/GraphModelExecutionPanel.test.tsx (18 tests) 1047ms
+ ✓ src/creative/GraphRunPanel.test.tsx (48 tests) 1182ms
+
+ Test Files  13 passed (13)
+      Tests  409 passed (409)
+   Start at  06:54:32
+   Duration  2.80s (transform 1.92s, setup 253ms, collect 6.54s, tests 3.52s, environment 1.47s, prepare 892ms)
+

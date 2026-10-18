@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
 import type { StudioGraphClient } from './studioGraphClient';
 import type { StudioGraphAction, StudioGraphPreflight, StudioGraphRecord, StudioGraphRun } from './studioGraphTypes';
+import { GRAPH_LOCAL_DEPENDENCY_DEFINITION_IDS } from './studioGraphTypes';
 import { graphId } from './graphDraft';
 import { GRAPH_MODEL_UNAVAILABLE_NOTICE, type GraphModelAction, type GraphModelActionEvidence } from './useStudioGraphModelExecutionController';
 import type { GraphMediaAction, GraphMediaActionEvidence } from './useStudioGraphMediaExecution';
@@ -24,6 +25,8 @@ const uncertainFailure = (value: unknown) => !(value instanceof ApiError) || val
 const reviewIdentity = (run?: StudioGraphRun) => run?.review
   ? JSON.stringify([run.id, run.version, run.review.node_id, run.review.output_digest]) : undefined;
 const invalidRun = () => new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '运行回执与当前图或记录不一致，请重新读取。' });
+const localDependencyReuseEligible = (graph?: StudioGraphRecord) => !!graph && graph.definition.schema_version === 1
+  && graph.definition.nodes.length > 0 && graph.definition.nodes.every(node => GRAPH_LOCAL_DEPENDENCY_DEFINITION_IDS.some(kind => kind === node.definition_id));
 
 /** Local UI exclusion only. Every command still belongs to the original checked client. */
 export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
@@ -32,6 +35,8 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
   const [selected, setSelected] = useState<StudioGraphRun>(), [error, setError] = useState(''), [notice, setNotice] = useState('');
   const [pendingKind, setPendingKind] = useState<OperationKind>(), [uncertain, setUncertain] = useState(false), [note, setNote] = useState('');
   const [creationUncertain, setCreationUncertain] = useState(false);
+  const [reuseReviewedLocalDependencies, setReuseReviewedLocalDependencies] = useState(false);
+  const reuseLocalRef = useRef(false);
   const alive = useRef(true), revoked = useRef(false), sequence = useRef(0), pending = useRef<Operation>();
   const latest = useRef(props); latest.current = props;
   const selectedRef = useRef(selected); selectedRef.current = selected;
@@ -41,6 +46,10 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
     navigationFence.current = { values: navigationValues, token: {} };
   }
   const navigationScope = navigationFence.current.token;
+  const reuseValues = [props.client, props.graph, targets(props.targetNodeIds), props.busy, props.dirty, props.canMutate, props.isCurrent, props.isCurrent(), reuseReviewedLocalDependencies];
+  const reuseFence = useRef({ values: reuseValues, token: {} });
+  if (reuseValues.some((value, index) => !Object.is(value, reuseFence.current.values[index]))) reuseFence.current = { values: reuseValues, token: {} };
+  const reuseScope = reuseFence.current.token;
   const preflightRef = useRef(preflight); preflightRef.current = preflight;
   const preflightConsentRef = useRef(preflightConsent); preflightConsentRef.current = preflightConsent;
   const outputConsentRef = useRef(outputConsent); outputConsentRef.current = outputConsent;
@@ -71,6 +80,7 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
     }
     // Retire captured navigation even when a read resolves in the same React batch.
     navigationFence.current = { values: navigationFence.current.values, token: {} };
+    reuseFence.current = { values: reuseFence.current.values, token: {} };
     const operation = { id: ++sequence.current, kind, client: latest.current.client, owner: ownerRef.current, controller: new AbortController() };
     pending.current = operation; setPendingKind(kind); return operation;
   }
@@ -82,11 +92,19 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
   }
   function cancelRead(operation: Operation) { operation.controller.abort(); finish(operation); }
   function resetReview() { outputConsentRef.current = undefined; setOutputConsent(undefined); }
+  function resetLocalReuse() {
+    if (reuseLocalRef.current) {
+      preflightConsentRef.current = undefined; setPreflightConsent(undefined);
+      reuseFence.current = { values: reuseFence.current.values, token: {} };
+    }
+    reuseLocalRef.current = false; setReuseReviewedLocalDependencies(false);
+  }
   function markUncertain(value: boolean) { uncertainRef.current = value; setUncertain(value); }
   function clearPrivateState() {
     preflightRef.current = undefined; selectedRef.current = undefined; preflightConsentRef.current = undefined;
     setPreflight(undefined); setPreflightConsent(undefined); setSelected(undefined); setRuns([]); resetReview();
     noteRef.current = ''; setNote(''); creation.current = undefined; setCreationUncertain(false);
+    resetLocalReuse();
   }
   function unavailable(deny = false, model = false) {
     if (!alive.current || !latest.current.isCurrent()) return;
@@ -117,9 +135,12 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
   useEffect(() => {
     preflightEpoch.current++; preflightRef.current = undefined; preflightConsentRef.current = undefined;
     setPreflight(undefined); setPreflightConsent(undefined);
-    if (!creation.current?.uncertain && pending.current?.kind !== 'CREATE') creation.current = undefined;
+    if (!creation.current?.uncertain && pending.current?.kind !== 'CREATE') { creation.current = undefined; resetLocalReuse(); }
     if (pending.current?.kind === 'INSPECT') cancelRead(pending.current);
   }, [targetsKey, props.dirty]);
+  useEffect(() => {
+    if (!props.canMutate && !creation.current?.uncertain && pending.current?.kind !== 'CREATE') resetLocalReuse();
+  }, [props.canMutate]);
   useEffect(() => { resetReview(); }, [props.canReview, props.dirty]);
   useEffect(() => { if (selected && current()) latest.current.onRunSelectionChange?.(selected.id); }, [selected?.id, props.onRunSelectionChange, current]);
 
@@ -184,19 +205,34 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
       && run?.status === 'WAITING_APPROVAL' && !run.stale && !uncertainRef.current ? reviewIdentity(run) : undefined;
     outputConsentRef.current = value; setOutputConsent(value);
   }
+  function canChooseLocalReuse() {
+    const source = latest.current;
+    return reuseScope === reuseFence.current.token && current() && localDependencyReuseEligible(source.graph)
+      && !source.busy && !source.dirty && !pending.current && source.canMutate && !creation.current?.uncertain
+      && !!preflightKey(preflightRef.current) && !!preflightRef.current?.executable;
+  }
+  function changeLocalReuse(checked: boolean) {
+    if (!canChooseLocalReuse() || checked === reuseLocalRef.current) return;
+    reuseFence.current = { values: reuseFence.current.values, token: {} };
+    reuseLocalRef.current = checked; setReuseReviewedLocalDependencies(checked);
+    preflightConsentRef.current = undefined; setPreflightConsent(undefined); creation.current = undefined;
+  }
   async function createRun() {
     const source = latest.current, flight = preflightRef.current, key = preflightKey(flight);
     if (!source.graph || !flight?.executable || !key || preflightConsentRef.current !== key || source.busy || source.dirty || !source.canMutate || !current()) return;
-    const identity = JSON.stringify([source.graph.id, source.graph.version, flight.preflight_digest, flight.target_node_ids]);
+    const reuseLocal = reuseLocalRef.current;
+    if (reuseLocal && !localDependencyReuseEligible(source.graph)) return;
+    const identity = JSON.stringify([source.graph.id, source.graph.version, flight.preflight_digest, flight.target_node_ids, ...(reuseLocal ? [true] : [])]);
     if (creation.current?.uncertain && creation.current.identity !== identity) {
-      setError('先核对上次创建回执；仅相同图版本、预检与目标可明确复用原请求，不能更换范围盲目重建。'); return;
+      setError('先核对上次创建回执；仅相同图版本、预检、目标与复用选项可明确复用原请求，不能更换范围盲目重建。'); return;
     }
     const operation = begin('CREATE'); if (!operation) return;
     if (creation.current?.identity !== identity) creation.current = { identity, request: graphId('run'), uncertain: false };
     const request = creation.current.request; setError('');
     try {
       const value = await source.mutate(() => source.client.createRun(source.graph!.id, { expected_graph_version: source.graph!.version,
-        reviewed_preflight_digest: flight.preflight_digest, target_node_ids: [...flight.target_node_ids], request_id: request }));
+        reviewed_preflight_digest: flight.preflight_digest, target_node_ids: [...flight.target_node_ids], request_id: request,
+        ...(reuseLocal ? { reuse_reviewed_local_dependencies: true } : {}) }));
       if (live(operation)) {
         acceptRun(value, undefined, source.graph.version); markUncertain(false); preflightConsentRef.current = undefined; setPreflightConsent(undefined);
         creation.current = undefined; setCreationUncertain(false); setNotice('运行记录已建立。尚未自动执行节点。');
@@ -360,6 +396,8 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
   return { preflight: visible ? preflight : undefined, reviewed: visible && reviewed, outputReviewed: visible && outputReviewed,
     runs: visible ? runs : [], selected: visible ? selected : undefined, error, notice, note: visible ? note : '', uncertain, creationUncertain, locked,
     modelLocked: props.busy || props.dirty || !current() || !!pendingKind && !['MODEL_READ', 'LIST'].includes(pendingKind),
+    localReuseEligible: visible && localDependencyReuseEligible(props.graph), reuseReviewedLocalDependencies: visible && reuseReviewedLocalDependencies,
+    canChooseLocalReuse: canChooseLocalReuse(), changeLocalReuse,
     canReadRuns: !!props.graph && !props.busy && !pendingKind && current(),
     canSelectRun: !!props.graph && !props.busy && (!pendingKind || ['LIST', 'OPEN', 'RESTORE'].includes(pendingKind)) && current(),
     loading: ['INSPECT', 'LIST', 'OPEN', 'RESTORE'].includes(pendingKind ?? ''), pendingKind,

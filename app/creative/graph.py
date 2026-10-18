@@ -211,7 +211,8 @@ class CreativeGraphService:
             "capabilities": {"local_execution": True, "chapter_required": False, "model_execution": False,
                 "external_reference_execution": False, "external_reference_detach": False,
                 "binary_cache": False, "parallel_execution": False, "automatic_retry": False,
-                "actor_private": True, "cache_mode": "SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY"}}
+                "actor_private": True, "cache_mode": "SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY",
+                "local_dependency_reuse": "OPT_IN_REVIEWED_SCHEMA1_LOCAL_DEPENDENCIES_V1"}}
         if models:
             result["capabilities"].update(model_execution=True, model_execution_contract=CONTRACT)
         if media:

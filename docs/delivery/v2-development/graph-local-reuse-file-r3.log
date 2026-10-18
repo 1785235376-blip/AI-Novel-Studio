@@ -1,0 +1,56 @@
+.........F.............................................                  [100%]
+=================================== FAILURES ===================================
+____________ test_bad_historical_proof_is_a_miss[file-incarnation] _____________
+
+rig = namespace(nid='v2-independent-dd95d6df0c5d46a98d471ce402e3a118', scope={'mode': 'local', 'novel_id': 'v2-independent-d...IdentityRepository object at 0x7f04b14007a0>), create_project=<function rig.<locals>.create_project at 0x7f04b134eca0>)
+corruption = 'incarnation'
+
+    @pytest.mark.parametrize("corruption", ["actor", "scope", "project", "incarnation", "history", "graph_digest",
+        "output", "engine", "receipt", "review_actor", "review_trace", "review_history", "rejected", "unreviewed"])
+    def test_bad_historical_proof_is_a_miss(rig, corruption):
+        graph = create(rig); source = done(rig, graph); graph = save(rig, graph)
+        owner = service(rig)
+>       with owner.store.transaction(rig.nid, rig.scope) as state:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_graph_local_reuse.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:144: in __exit__
+    next(self.gen)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.project_store.CreativeProjectStore object at 0x7f04b13b3290>
+nid = 'v2-independent-dd95d6df0c5d46a98d471ce402e3a118'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-dd95d6df0c5d46a98d471ce402e3a118'}
+
+    @contextmanager
+    def transaction(self, nid, scope):
+        key = self.store.key(nid, scope)
+        if not hasattr(self._local, "active"):
+            self._local.active = {}
+        # Acquire in the existing scope -> project order, but keep the owner
+        # lock until the underlying atomic commit finishes. The owner delete
+        # therefore cannot finish midway through a creative mutation.
+        with ExitStack() as lifecycle:
+            with self.store.transaction(nid, scope) as document:
+                identity = lifecycle.enter_context(self._owner(nid))
+                view = self._view(document, identity)
+                self._local.active[key] = view
+                try:
+                    yield view
+                    for name in COLLECTIONS:
+                        current = view["collections"].get(name, {})
+                        if any(not isinstance(row, dict) or row.get(BINDING) != identity for row in current.values()):
+>                           raise ValueError("CREATIVE_PROJECT_BINDING_INVALID")
+E                           ValueError: CREATIVE_PROJECT_BINDING_INVALID
+
+app/creative/project_store.py:197: ValueError
+=============================== warnings summary ===============================
+tests/test_v2_graph_local_reuse.py::test_default_wire_and_strict_opt_in
+  /workspace/scratch/20a0022d2b33/graph-local-cache/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_graph_local_reuse.py::test_bad_historical_proof_is_a_miss[file-incarnation]
+1 failed, 54 passed, 54 deselected, 1 warning in 10.91s

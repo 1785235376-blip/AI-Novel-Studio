@@ -3,6 +3,7 @@ import { ApiError, type CollaborationContext } from '../api';
 import { useLocalHostSession } from '../localHostSession';
 import { studioClient } from './studioClient';
 import type { StudioGraphAction, StudioGraphCatalog, StudioGraphDefinition, StudioGraphDefinitionId, StudioGraphRecord, StudioGraphRun } from './studioGraphTypes';
+import { GRAPH_LOCAL_DEPENDENCY_REUSE_MODE } from './studioGraphTypes';
 
 const projectId = 'project / one', graphId = 'graph / one', runId = 'run / one';
 const root = '/api/projects/project%20%2F%20one/studio', graphUrl = `${root}/graphs/graph%20%2F%20one`, runUrl = `${root}/graph-runs/run%20%2F%20one`;
@@ -129,6 +130,46 @@ describe('scoped graph transport', () => {
 });
 
 describe('bounded graph inputs', () => {
+  it.each([undefined, false, true])('serializes only explicit true for reviewed local dependency reuse: %s', async reuse => {
+    fetchMock.mockResolvedValue(reply(run()));
+    const body = { request_id: 'run_one', expected_graph_version: 3, reviewed_preflight_digest: sha, target_node_ids: [] };
+    const pending = studioClient(projectId, context()).graphs.createRun(graphId, { ...body, reuse_reviewed_local_dependencies: reuse });
+    expect(fetchMock.mock.calls[0][1].body).toBe(JSON.stringify({ expected_graph_version: 3, reviewed_preflight_digest: sha,
+      target_node_ids: [], request_id: 'run_one', ...(reuse ? { reuse_reviewed_local_dependencies: true } : {}) }));
+    expect(fetchMock.mock.calls[0][1].headers['Idempotency-Key']).toBe('run_one');
+    await pending;
+  });
+
+  it.each([null, 0, 1, 'false', 'true', {}, []])('rejects non-boolean local dependency reuse without sending: %j', reuse => {
+    expect(() => studioClient(projectId, context()).graphs.createRun(graphId, { request_id: 'run_one', expected_graph_version: 3,
+      reviewed_preflight_digest: sha, target_node_ids: [], reuse_reviewed_local_dependencies: reuse } as never)).toThrow(ApiError);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('decodes opt-in catalog and local run evidence without changing the default cache mode', async () => {
+    const client = studioClient(projectId, context()).graphs;
+    const capabilities = { ...catalog().capabilities, local_dependency_reuse: GRAPH_LOCAL_DEPENDENCY_REUSE_MODE };
+    fetchMock.mockResolvedValueOnce(reply({ ...catalog(), capabilities })).mockResolvedValueOnce(reply(graph()))
+      .mockResolvedValueOnce(reply({ ...run(), cache: { hits: 2, misses: 1, mode: GRAPH_LOCAL_DEPENDENCY_REUSE_MODE } }));
+    expect((await client.catalog()).capabilities).toEqual(capabilities); await client.get(graphId);
+    expect((await client.getRun(runId)).cache).toEqual({ hits: 2, misses: 1, mode: GRAPH_LOCAL_DEPENDENCY_REUSE_MODE });
+  });
+
+  it('rejects unknown reuse capabilities and unknown cache modes', async () => {
+    const client = studioClient(projectId, context()).graphs;
+    fetchMock.mockResolvedValue(reply({ ...catalog(), capabilities: { ...catalog().capabilities, local_dependency_reuse: 'UNBOUNDED_REUSE' } }));
+    await expect(client.catalog()).rejects.toBeInstanceOf(ApiError);
+    fetchMock.mockResolvedValue(reply({ ...run(), cache: { hits: 0, misses: 0, mode: 'UNBOUNDED_REUSE' } }));
+    await expect(client.getRun(runId)).rejects.toBeInstanceOf(ApiError);
+  });
+
+  it('rejects opt-in receipt evidence for a known nonlocal graph schema', async () => {
+    const client = studioClient(projectId, context()).graphs, value = graph(); value.definition.schema_version = 2;
+    fetchMock.mockResolvedValueOnce(reply(value)); await client.get(graphId);
+    fetchMock.mockResolvedValue(reply({ ...run(), cache: { hits: 1, misses: 0, mode: GRAPH_LOCAL_DEPENDENCY_REUSE_MODE } }));
+    await expect(client.getRun(runId)).rejects.toBeInstanceOf(ApiError);
+  });
+
   it('sends only owned fields and retains explicitly supplied text without metadata', async () => {
     const value = definition();
     value.nodes[0].parameters = { text: 'Author source', provider: 'private-provider' } as typeof value.nodes[0]['parameters'];

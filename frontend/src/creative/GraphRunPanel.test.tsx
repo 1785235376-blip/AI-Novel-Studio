@@ -6,6 +6,7 @@ import { ApiError } from '../api';
 import { useStudioGraphRunController } from './useStudioGraphRunController';
 import { GraphRunPanel } from './GraphRunPanel';
 import type { StudioGraphPreflight, StudioGraphRecord, StudioGraphRun } from './studioGraphTypes';
+import { GRAPH_LOCAL_DEPENDENCY_REUSE_MODE } from './studioGraphTypes';
 
 const digest = 'a'.repeat(64), outputDigest = 'b'.repeat(64), stamp = '2026-10-09T13:00:00Z';
 const owner = { project_id: 'project', scope: { mode: 'collaboration' as const, novel_id: 'project', workspace_id: 'workspace', storyline_id: 'storyline', branch_id: 'branch' } };
@@ -53,6 +54,124 @@ async function selectRun() {
   await screen.findByRole('region', { name: '当前创作图运行' });
 }
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
+
+describe('explicit reviewed local dependency reuse', () => {
+  const reuseLabel = '跨保存版本复用已审核本地依赖（可选）';
+  const reuse = () => screen.getByRole('checkbox', { name: reuseLabel }) as HTMLInputElement;
+
+  it('is off and disabled until the exact saved local graph has an executable preflight', async () => {
+    const { client } = setup(); expect(reuse().checked).toBe(false); expect(reuse().disabled).toBe(true);
+    fireEvent.click(reuse()); expect(reuse().checked).toBe(false); expect(client.createRun).not.toHaveBeenCalled();
+    await inspect(); expect(reuse().disabled).toBe(false); expect(reuse().checked).toBe(false);
+    expect(screen.getByText(/本次输出仍须重新人工审核/)).toBeTruthy();
+  });
+
+  it('requires fresh preflight consent after opt-in and includes only true on explicit creation', async () => {
+    const { client } = setup(); await inspect(); acknowledgePreflight(); fireEvent.click(reuse());
+    expect(reuse().checked).toBe(true); expect(button('创建本地运行').disabled).toBe(true);
+    expect(client.createRun).not.toHaveBeenCalled(); acknowledgePreflight(); click('创建本地运行');
+    await screen.findByRole('region', { name: '当前创作图运行' });
+    expect(client.createRun).toHaveBeenCalledWith('graph', { expected_graph_version: 4, reviewed_preflight_digest: digest,
+      target_node_ids: ['review'], request_id: expect.stringMatching(/^run_[a-f0-9]+$/), reuse_reviewed_local_dependencies: true });
+    expect(client.action).not.toHaveBeenCalled(); expect(client.dispatchModel).not.toHaveBeenCalled();
+  });
+
+  it('preserves the original wire shape after the opt-in is unchecked', async () => {
+    const { client } = setup(); await inspect(); fireEvent.click(reuse()); acknowledgePreflight(); fireEvent.click(reuse());
+    expect(button('创建本地运行').disabled).toBe(true); acknowledgePreflight(); click('创建本地运行');
+    await screen.findByRole('region', { name: '当前创作图运行' });
+    expect(client.createRun.mock.calls[0][1]).not.toHaveProperty('reuse_reviewed_local_dependencies');
+  });
+
+  it.each([2, 3, 4, 5] as const)('does not offer cross-save reuse for schema %s', schema => {
+    const value = graph(); value.definition.schema_version = schema; setup({ graph: value });
+    expect(screen.queryByRole('checkbox', { name: reuseLabel })).toBeNull();
+  });
+
+  it.each(['asset_reference', 'text_generate', 'media_generate', 'image_generate', 'timeline_export'] as const)('checks the entire graph including a disabled, unselected %s', kind => {
+    const value = graph(); value.definition.nodes.push({ ...value.definition.nodes[0], id: 'unselected', definition_id: kind, enabled: false });
+    setup({ graph: value }); expect(screen.queryByRole('checkbox', { name: reuseLabel })).toBeNull();
+  });
+
+  it.each([{ busy: true }, { dirty: true }, { canMutate: false }])('cannot change the option while blocked: %j', async patch => {
+    const { rerender, client } = setup(); await inspect(); rerender(patch);
+    expect(reuse().disabled).toBe(true); fireEvent.click(reuse()); expect(reuse().checked).toBe(false);
+    expect(client.createRun).not.toHaveBeenCalled();
+  });
+
+  it('disables the option during reads and for a blocked preflight', async () => {
+    const { client } = setup(); const pending = deferred<StudioGraphPreflight>(); client.preflight.mockReturnValue(pending.promise);
+    click('核对运行范围'); expect(reuse().disabled).toBe(true);
+    await act(async () => pending.resolve({ ...preflight(), executable: false, issues: [{ code: 'CREATIVE_GRAPH_TEXT_REQUIRED' }] }));
+    expect(reuse().disabled).toBe(true); fireEvent.click(reuse()); expect(reuse().checked).toBe(false);
+  });
+
+  it('requires fresh consent when mutation authority loss resets the opted-in policy', async () => {
+    const { client, rerender } = setup(); await inspect(); fireEvent.click(reuse()); acknowledgePreflight();
+    rerender({ canMutate: false }); expect(reuse().checked).toBe(false);
+    rerender({ canMutate: true }); expect(button('创建本地运行').disabled).toBe(true);
+    click('创建本地运行'); expect(client.createRun).not.toHaveBeenCalled();
+    acknowledgePreflight(); click('创建本地运行'); await screen.findByRole('region', { name: '当前创作图运行' });
+    expect(client.createRun.mock.calls[0][1]).not.toHaveProperty('reuse_reviewed_local_dependencies');
+  });
+
+  it('retains the exact opted-in request through an explicit uncertain retry and refuses mode changes', async () => {
+    const { client, rerender } = setup(); client.createRun.mockRejectedValueOnce(new ApiError({ status: 0, code: 'STUDIO_NETWORK_FAILED', message: 'Connection lost.' }));
+    await inspect(); fireEvent.click(reuse()); acknowledgePreflight(); click('创建本地运行');
+    await screen.findByRole('button', { name: '使用同一请求重试创建运行' });
+    expect(reuse().disabled).toBe(true); fireEvent.click(reuse()); expect(reuse().checked).toBe(true);
+    rerender({ dirty: true }); rerender({ dirty: false }); await inspect(); acknowledgePreflight();
+    expect(client.createRun).toHaveBeenCalledOnce(); click('使用同一请求重试创建运行');
+    await screen.findByRole('region', { name: '当前创作图运行' });
+    expect(client.createRun.mock.calls[1]).toEqual(client.createRun.mock.calls[0]);
+    expect(client.createRun.mock.calls[1][1].reuse_reviewed_local_dependencies).toBe(true);
+    expect(client.action).not.toHaveBeenCalled();
+  });
+
+  it('changes the request identity when the reuse mode changes after a definite creation failure', async () => {
+    const { client } = setup(); client.createRun.mockRejectedValueOnce(new ApiError({ status: 400, code: 'INVALID_REQUEST', message: 'Rejected.' }));
+    await inspect(); acknowledgePreflight(); click('创建本地运行'); await screen.findByText('Rejected.');
+    fireEvent.click(reuse()); acknowledgePreflight(); click('创建本地运行'); await screen.findByRole('region', { name: '当前创作图运行' });
+    expect(client.createRun.mock.calls[1][1].request_id).not.toBe(client.createRun.mock.calls[0][1].request_id);
+    expect(client.createRun.mock.calls[1][1].reuse_reviewed_local_dependencies).toBe(true);
+  });
+
+  it('resets opt-in on target, saved graph version and client changes', async () => {
+    const { rerender, client, props } = setup(); await inspect(); fireEvent.click(reuse());
+    rerender({ targetNodeIds: ['source'] }); expect(reuse().checked).toBe(false); expect(reuse().disabled).toBe(true);
+    rerender({}); await inspect(); fireEvent.click(reuse());
+    rerender({ graph: { ...props.graph!, version: 5 } }); expect(reuse().checked).toBe(false); expect(reuse().disabled).toBe(true);
+    rerender({}); await inspect(); fireEvent.click(reuse());
+    rerender({ client: { ...client } }); expect(reuse().checked).toBe(false); expect(reuse().disabled).toBe(true);
+  });
+
+  it('retires retained opt-in callbacks through authority, busy and same-version graph ABA changes', async () => {
+    let allowed = true;
+    const { props, unmount } = setup({ isCurrent: () => allowed }); unmount();
+    const hook = renderHook(input => useStudioGraphRunController(input), { initialProps: props });
+    await act(() => hook.result.current.inspect()); const first = hook.result.current.changeLocalReuse;
+    hook.rerender({ ...props, busy: true }); hook.rerender(props); act(() => first(true));
+    expect(hook.result.current.reuseReviewedLocalDependencies).toBe(false);
+    const second = hook.result.current.changeLocalReuse;
+    hook.rerender({ ...props, graph: structuredClone(props.graph) }); hook.rerender(props); act(() => second(true));
+    expect(hook.result.current.reuseReviewedLocalDependencies).toBe(false);
+    const third = hook.result.current.changeLocalReuse;
+    allowed = false; hook.rerender(props); allowed = true; hook.rerender(props); act(() => third(true));
+    expect(hook.result.current.reuseReviewedLocalDependencies).toBe(false);
+    const beforeToggle = hook.result.current.changeLocalReuse;
+    act(() => hook.result.current.changeLocalReuse(true)); expect(hook.result.current.reuseReviewedLocalDependencies).toBe(true);
+    act(() => beforeToggle(false)); expect(hook.result.current.reuseReviewedLocalDependencies).toBe(true);
+    act(() => hook.result.current.changeLocalReuse(false)); act(() => beforeToggle(true));
+    expect(hook.result.current.reuseReviewedLocalDependencies).toBe(false);
+  });
+
+  it('shows cross-save semantics only from the run receipt and still requires independent output review', async () => {
+    const { client } = setup(); client.getRun.mockResolvedValue(reviewRun({ cache: { hits: 2, misses: 1, mode: GRAPH_LOCAL_DEPENDENCY_REUSE_MODE } }));
+    await selectRun(); expect(screen.getByText(/本次已选择跨保存版本复用已审核本地依赖/)).toBeTruthy();
+    expect(button('批准节点输出').disabled).toBe(true); acknowledgeOutput(); expect(button('批准节点输出').disabled).toBe(false);
+    expect(client.action).not.toHaveBeenCalled();
+  });
+});
 
 describe('explicit graph preflight and local run creation', () => {
   it('does not read, execute or create automatically and requires a saved graph', () => {

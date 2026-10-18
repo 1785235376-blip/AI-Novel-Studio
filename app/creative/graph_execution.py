@@ -22,10 +22,15 @@ from .project_store import BINDING
 
 ADAPTER_VERSION = "creative-graph-local/1"
 CACHE_MODE = "SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY"
+DEPENDENCY_CACHE_MODE = "OPT_IN_REVIEWED_SCHEMA1_LOCAL_DEPENDENCIES_V1"
 
 
 def digest(value):
     return hashlib.sha256(canonical(value).encode()).hexdigest()
+
+
+class _CacheRunStopped(Exception):
+    """The original host has already recorded the destination timeout."""
 
 
 class _LocalGraphAdapter:
@@ -86,6 +91,14 @@ class CreativeGraphExecutor:
             raise StaleSourceError("CREATIVE_GRAPH_RUN_DEFINITION_CHANGED")
         if row.get("adapter_version") != ADAPTER_VERSION:
             raise StaleSourceError("CREATIVE_GRAPH_ADAPTER_CHANGED")
+        reuse = row.get("reuse_reviewed_local_dependencies", False)
+        reuse_mode = row.get("cache", {}).get("mode") == DEPENDENCY_CACHE_MODE
+        if type(reuse) is not bool or reuse_mode != reuse:
+            raise StaleSourceError("CREATIVE_GRAPH_LOCAL_REUSE_BINDING_CHANGED")
+        if reuse:
+            from .graph_local_reuse import eligible
+            if not eligible(graph["definition"]) or row.get("graph_schema_version", 1) != 1:
+                raise StaleSourceError("CREATIVE_GRAPH_LOCAL_REUSE_BINDING_CHANGED")
         selected = row["selected_closure"]
         expected = [node for node in graph["definition"]["nodes"] if node["id"] in selected]
         schema = graph["definition"]["schema_version"]
@@ -170,6 +183,10 @@ class CreativeGraphExecutor:
             graph = self.service._owned(nid, scope, actor, self.service.GRAPHS, rid, state)
             check_version(graph, body.expected_graph_version)
             body = parse_graph_run_create(body, graph["definition"])
+            if body.reuse_reviewed_local_dependencies:
+                from .graph_local_reuse import eligible
+                if not eligible(graph["definition"]):
+                    raise ValueError("CREATIVE_GRAPH_LOCAL_REUSE_SCHEMA1_REQUIRED")
             preflight = self.service._preflight(graph, {"expected_version": body.expected_graph_version,
                 "target_node_ids": body.target_node_ids}, actor, guard=current, state=state)
             if not preflight["executable"]:
@@ -209,6 +226,9 @@ class CreativeGraphExecutor:
                 "steps_completed": 0, "attempt": 1, "retry_of": None, "trace": [], "dispatch_trace": [],
                 "reviewed": False, "reviewed_nodes": [], "external_ai_calls": False, "external_calls": 0, "model_called": False,
                 "applied": False, "execution_mode": "ORIGINAL_WORKFLOW_LOCAL_RULES"}
+            if body.reuse_reviewed_local_dependencies:
+                payload["reuse_reviewed_local_dependencies"] = True
+                payload["cache"]["mode"] = DEPENDENCY_CACHE_MODE
             if any(node["definition_id"] == "text_generate" for node in typed_nodes):
                 from .ai_execution import CONTRACT
                 payload.update(model_execution_contract=CONTRACT, model_preview=None, model_execution=None)
@@ -293,7 +313,10 @@ class CreativeGraphExecutor:
             row["execution_digest"], ADAPTER_VERSION, node["id"], node["definition_id"],
             node["definition_version"], node["parameters"], inputs])
 
-    def _cached(self, row, actor, node_id, key, state):
+    def _cached(self, row, actor, node_id, key, state, *, outputs=None, guard=lambda: None):
+        if row.get("reuse_reviewed_local_dependencies") is True:
+            from .graph_local_reuse import cached
+            return cached(self, row, actor, node_id, state, outputs, guard)
         if row.get("graph_schema_version") in {3, 4, 5}:
             return None
         if any(item["id"] == node_id and item["definition_id"] == "text_generate" for item in row["typed_nodes"]):
@@ -329,7 +352,15 @@ class CreativeGraphExecutor:
             host.claim_agent_task(row["id"], node_id, actor)
             inputs = self._inputs(row, node_id, outputs)
             key = self._key(row, actor, node, inputs)
-            output = self._cached(row, actor, node_id, key, state)
+            def cache_guard():
+                guard()
+                if host.get_workflow_run(row["id"])["status"] == "FAILED":
+                    raise _CacheRunStopped()
+            try:
+                output = self._cached(row, actor, node_id, key, state, outputs=outputs, guard=cache_guard)
+            except _CacheRunStopped:
+                break
+            guard()
             hit = output is not None
             try:
                 if output is None:
@@ -359,6 +390,9 @@ class CreativeGraphExecutor:
                 break
             outputs[node_id] = deepcopy(output)
             cache_keys[node_id] = {"key": key, "output_digest": digest(output)}
+            if row.get("reuse_reviewed_local_dependencies") is True:
+                from .graph_local_reuse import signature
+                cache_keys[node_id]["dependency_signature"] = signature(row, actor, node_id, outputs)
             cache["hits" if hit else "misses"] += 1
             host.complete_agent_task(row["id"], node_id, "SUCCEEDED", output={"ports": output,
                 "provenance": {"method": "ORIGINAL_ASSET_REFERENCE" if node["definition_id"] == "asset_reference" else "LOCAL_RULES",
