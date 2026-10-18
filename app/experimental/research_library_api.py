@@ -7,6 +7,7 @@ from pydantic import Field
 
 from .common import api_call
 from .research_vision import ResearchAnalysisIn
+from .research_native_ocr import NativeOCRPreviewIn, NativeOCRDispatchIn, NativeResearchOCRCoordinator
 from .research_library import FileIn, WebIn, EditIn, CitationIn, NoteIn, AdoptIn, StrictInput, ReplaceFileIn, RestoreSourceIn, EditNoteIn
 
 
@@ -25,6 +26,9 @@ def create_research_library_router(service, authorize, require_flag):
             async def bounded(request):
                 # Reject before body parsing/extraction, even with chunked IO.
                 require_flag('research_library_v2')
+                if request.url.path.endswith(('/native-preview', '/native-dispatch')):
+                    from .research_ocr_execution import FLAGS
+                    for flag in FLAGS: require_flag(flag)
                 authorize(request.path_params['nid'], request.headers.get('X-Session-Token'),
                           request.headers.get('X-Branch-ID'), 'domain.write')
                 if request.method in {'POST', 'PUT'}:
@@ -62,6 +66,9 @@ def create_research_library_router(service, authorize, require_flag):
     def run(nid, token, branch, fn, *args, mutation=False, permission='domain.write'):
         def access():
             require_flag('research_library_v2')
+            if getattr(fn, '__self__', None) is service.native_ocr and service.native_ocr is not None:
+                from .research_ocr_execution import FLAGS
+                for flag in FLAGS: require_flag(flag)
             identity = authorize(nid, token, branch, 'domain.write')
             if permission != 'domain.write' and authorize(nid, token, branch, permission) != identity:
                 raise HTTPException(403, {'code': 'RESEARCH_AUTHORITY_CHANGED'})
@@ -240,8 +247,34 @@ def create_research_library_router(service, authorize, require_flag):
     def create_analysis(nid: str, body: ResearchAnalysisIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return run(nid, x_session_token, x_branch_id, service.create_analysis, body.model_dump(), mutation=True)
 
+    def native_controller():
+        controller = service.native_ocr
+        if type(controller) is not NativeResearchOCRCoordinator or controller.research is not service:
+            raise HTTPException(409, {'code': 'RESEARCH_OCR_NOT_CONFIGURED'})
+        return controller
+
+    @router.post('/analysis/jobs/{rid}/native-preview')
+    def native_preview(nid: str, rid: str, body: NativeOCRPreviewIn,
+                       x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return run(nid, x_session_token, x_branch_id, native_controller().preview,
+                   rid, body.model_dump(), mutation=True)
+
+    @router.post('/analysis/jobs/{rid}/native-dispatch')
+    def native_dispatch(nid: str, rid: str, body: NativeOCRDispatchIn,
+                        x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return run(nid, x_session_token, x_branch_id, native_controller().dispatch,
+                   rid, body.model_dump(), mutation=True)
+
     @router.post('/analysis/jobs/{rid}/{action}')
     def analysis_action(nid: str, rid: str, action: str, body: VersionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return run(nid, x_session_token, x_branch_id, service.analysis_action, rid, action, body.expected_version, mutation=True)
+        def guarded_action(nid, scope, actor, rid, action, version, *, guard):
+            def current():
+                guard()
+                row = service.analysis_job(nid, scope, actor, rid)
+                if action == 'review' and row.get('native_ocr_execution'):
+                    if authorize(nid, x_session_token, x_branch_id, 'domain.review') != (actor, scope):
+                        raise HTTPException(403, {'code': 'RESEARCH_AUTHORITY_CHANGED'})
+            return service.analysis_action(nid, scope, actor, rid, action, version, guard=current)
+        return run(nid, x_session_token, x_branch_id, guarded_action, rid, action, body.expected_version, mutation=True)
 
     return router
