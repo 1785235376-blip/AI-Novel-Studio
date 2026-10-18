@@ -77,6 +77,7 @@
     "app/creative/director_binding.py",
     "app/creative/director_camera_geometry.py",
     "app/creative/director_image_adoption.py",
+    "app/creative/director_image_api.py",
     "app/creative/director_image_binding.py",
     "app/creative/director_image_execution.py",
     "app/creative/director_image_generation.py",

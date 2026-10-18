@@ -19,7 +19,7 @@ FLAG = "narrative_production_v2"
 
 
 def create_creative_router(service, authorize, require_flag, *, require_host_session=None, model_host_authority=None,
-                           director_observation=False, director_model_actions=False):
+                           director_observation=False, director_model_actions=False, director_images=None):
     if (type(director_observation) is not bool or type(director_model_actions) is not bool
             or (director_model_actions and not director_observation)):
         raise ValueError("DIRECTOR_OBSERVATION_OPTION_INVALID")
@@ -35,12 +35,12 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
             raise HTTPException(403, {"code": "CREATIVE_AUTHORITY_INVALID"})
         return actor, scope
 
-    def invoke(nid, token, branch, permission, callback):
+    def invoke(nid, token, branch, permission, callback, *, gated=True):
         def operation():
-            actor, scope = access(nid, token, branch, permission)
+            actor, scope = access(nid, token, branch, permission, gated=gated)
 
             def guard():
-                if access(nid, token, branch, permission) != (actor, scope):
+                if access(nid, token, branch, permission, gated=gated) != (actor, scope):
                     raise HTTPException(403, {"code": "CREATIVE_AUTHORITY_CHANGED"})
 
             try:
@@ -69,6 +69,11 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
         from .production_execution_api import create_production_invoker
         call = create_production_invoker(invoke, require_host_session=require_host_session, model_host_authority=model_host_authority)
         return call(request, nid, token, branch, permission, callback)
+
+    if director_images is not None:
+        from .director_image_api import create_director_image_router
+        router.include_router(create_director_image_router(director_images, invoke,
+            require_host_session=require_host_session, model_host_authority=model_host_authority))
 
     from .story_fact_api import create_story_fact_router
     router.include_router(create_story_fact_router(service, storyboard_call, access, require_flag))

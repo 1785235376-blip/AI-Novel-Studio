@@ -1,4 +1,4 @@
-"""Unmounted IMAGE coordinator over original execution and human-review owners."""
+"""Private IMAGE coordinator over original execution and human-review owners."""
 from contextlib import contextmanager, ExitStack
 from contextvars import ContextVar
 from copy import deepcopy
@@ -171,15 +171,78 @@ class DirectorImageCoordinator:
                 change_row(current,actor,expected_version,lambda value:value.update(status='PENDING_REVIEW',pending=pending))
             return deepcopy(current)
 
+    def recovery_authority(self, nid, scope, actor, rid, *, host, guard):
+        """Current host/project ownership only, never generation or content authority."""
+        from ..model_center.discovery_authority import DiscoveryAuthority
+        if type(host) is not DiscoveryAuthority or not callable(guard):
+            raise ValueError('DIRECTOR_IMAGE_HOST_REQUIRED')
+        host.guard(); guard()
+        row = self._row(nid,scope,actor,rid)
+        binding = ImageBinding.model_validate(row['binding'])
+        if self.store.incarnation(nid) != binding.source.project_incarnation:
+            raise ValueError('DIRECTOR_IMAGE_OWNER_CHANGED')
+        host.guard(); guard()
+        return row, binding
+
+    def status(self,nid,scope,actor,rid,*,host,guard):
+        row,binding = self.recovery_authority(nid,scope,actor,rid,host=host,guard=guard)
+        result = {'id':row['id'],'version':row['version'],'status':row['status'],
+            'job_id':row.get('job_id'),'job_status':None,'can_cancel':False,
+            'automatic_retry':False,'content_freshness':'NOT_CHECKED',
+            'target_document_id':binding.target.document_id,'target_scene_id':binding.target.scene_id}
+        if row.get('job_id'):
+            from .director_image_binding import job_binding
+            job = self.manager.jobs.get(row['job_id'])
+            try: saved = self.manager.persistence.get(row['job_id'])
+            except KeyError: saved = None
+            if saved:
+                job_binding(saved)
+                if (saved['director_image_binding'] != binding.model_dump()
+                        or saved['expected_request_digest'] != row.get('request_digest')):
+                    raise ValueError('DIRECTOR_IMAGE_JOB_IDENTITY_INVALID')
+                result['job_status'] = saved['status']
+            if job is not None:
+                cap = job.director_image_authority
+                if (type(cap) is _DirectorImageCapability and cap.coordinator is self
+                        and cap.job is job and cap.binding == binding
+                        and job.expected_request_digest == row.get('request_digest')):
+                    result['job_status'] = job.status
+                    result['can_cancel'] = job.status not in self.manager.terminal
+            elif result['job_status'] not in self.manager.terminal:
+                result['recovery_state'] = 'EXECUTOR_UNAVAILABLE_NO_REPLAY'
+        receipt = row.get('adoption_receipt')
+        if receipt:
+            # Historical metadata, deliberately excluding source, proof and note content.
+            result['adoption_receipt'] = {'request_id':receipt['request_id'],
+                'target':deepcopy(receipt['target']),'historical':True,'committed':True}
+        self.recovery_authority(nid,scope,actor,rid,host=host,guard=guard)
+        return result
+
+    def list_owned(self,nid,scope,actor,*,host,guard,limit=30):
+        host.guard(); guard()
+        rows = self.store.read(nid,scope)['collections'].get(COLLECTION,{})
+        ids = [r['id'] for r in rows.values() if r.get('contract') == CONTRACT
+               and r.get('created_by') == actor and r.get('scope') == scope]
+        result = [self.status(nid,scope,actor,rid,host=host,guard=guard) for rid in ids[-limit:]]
+        host.guard(); guard()
+        return {'items':result,'limit':limit,'truncated':len(ids)>limit}
+
     def cancel(self,nid,scope,actor,rid,*,host,guard):
-        row = self._row(nid,scope,actor,rid); binding = ImageBinding.model_validate(row['binding'])
-        self.check(binding,guard,host)
-        job = self.manager.get(row['job_id'])
-        cap = job.director_image_authority
-        from .director_image_execution import require_capability
-        require_capability(self.manager,job,started=True)
-        if job.status in self.manager.terminal: raise ValueError('DIRECTOR_IMAGE_NOT_RUNNING')
-        job.cancelled.set()
+        row,binding = self.recovery_authority(nid,scope,actor,rid,host=host,guard=guard)
+        job = self.manager.jobs.get(row.get('job_id'))
+        if job is None: raise ValueError('DIRECTOR_IMAGE_EXECUTOR_UNAVAILABLE_NO_REPLAY')
+        with job.condition:
+            cap = job.director_image_authority
+            if (type(cap) is not _DirectorImageCapability or cap.coordinator is not self
+                    or cap.manager is not self.manager or cap.job is not job or not cap.started
+                    or cap.binding != binding or cap.cancellation is not job.cancelled
+                    or cap.proposal_id != rid
+                    or any(getattr(job,k) != v for k,v in cap.identity.items())
+                    or job.expected_request_digest != row.get('request_digest')):
+                raise ValueError('DIRECTOR_IMAGE_JOB_IDENTITY_INVALID')
+            self.recovery_authority(nid,scope,actor,rid,host=host,guard=guard)
+            if job.status in self.manager.terminal: raise ValueError('DIRECTOR_IMAGE_NOT_RUNNING')
+            job.cancelled.set()
         return {'job_id':job.id,'state':'CANCELLATION_REQUESTED','upstream_stopped':False}
 
     def declare_cost(self,nid,scope,actor,rid,value,*,host,guard):

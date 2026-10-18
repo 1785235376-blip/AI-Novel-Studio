@@ -57,7 +57,7 @@ class AssetLibraryService:
         def redact(item):
             if isinstance(item, dict):
                 for key in ("_required_features", "_owner_actor_id", "_origin_provenance", "_project_binding",
-                            "_text_result_origin", "_text_result_review", "_text_execution_receipt", "_studio_result_origin", "_manual_mask_origin", "_model_reference_origin", "_video_reference_origin", "_prompt_write_origin", "_comic_ora_origin"):
+                            "_text_result_origin", "_text_result_review", "_text_execution_receipt", "_studio_result_origin", "_manual_mask_origin", "_model_reference_origin", "_video_reference_origin", "_prompt_write_origin", "_comic_ora_origin", "_comic_ora_review"):
                     item.pop(key, None)
                 if not lineage_enabled and isinstance(item.get("parameters"), dict):
                     item["parameters"].pop("asset_lineage_v2", None)
@@ -1133,12 +1133,20 @@ class AssetLibraryService:
                 self._write_meta(meta)
             return meta
 
-    def promote_owned(self, asset_id: str, *, actor_id: str, branch_id: str | None, expected_version: int, provenance: dict, guard=None):
+    def promote_owned(self, asset_id: str, *, actor_id: str, branch_id: str | None, expected_version: int, provenance: dict, guard=None, _comic_ora_review=None):
         """Server-only explicit review: retain origin, identity and bytes."""
         with self._lock, workspace_mutation(self.root, "asset-library"):
             meta = self.get(asset_id, branch_id=branch_id, actor_id=actor_id)
             if '_comic_ora_origin' in meta:
-                raise ValueError('COMIC_ORA_EXPLICIT_IMPORT_REVIEW_NOT_IMPLEMENTED')
+                from .comic_ora_origin import record, unseal_review
+                if _comic_ora_review is None or not callable(guard):
+                    raise ValueError('COMIC_ORA_EXPLICIT_IMPORT_REVIEW_NOT_IMPLEMENTED_FOR_GENERIC_CALL')
+                proof = unseal_review(_comic_ora_review, record(meta))
+                if (proof != provenance or proof['actor'] != actor_id
+                        or meta['version'] not in (1, 2) or expected_version != 1):
+                    raise ValueError('COMIC_ORA_REVIEW_INVALID')
+            elif _comic_ora_review is not None:
+                raise ValueError('COMIC_ORA_REVIEW_INVALID')
             if meta.get("_text_result_origin") is not None:
                 raise ValueError("TEXT_RESULT_PRIVATE_OWNER_REQUIRED")
             saved_provenance = {**copy.deepcopy(provenance), "review_actor": actor_id}
@@ -1150,8 +1158,10 @@ class AssetLibraryService:
             if meta["version"] != expected_version:
                 from .v1_capability_service import CapabilityVersionConflict
                 raise CapabilityVersionConflict(self.public(meta))
-            self._verified_content(meta)
+            self._verified_content(meta, max_bytes=self.MAX_BYTES, guard=guard) if _comic_ora_review is not None else self._verified_content(meta)
             if guard: guard()
+            if _comic_ora_review is not None:
+                meta['_comic_ora_review'] = copy.deepcopy(proof)
             meta.update(_owner_actor_id=None, _origin_provenance=saved_provenance,
                         approved_at=now(), updated_at=now(), version=meta["version"] + 1)
             self._write_meta(meta)

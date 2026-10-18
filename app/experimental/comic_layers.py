@@ -5,7 +5,7 @@ their referenced panel/bubble remains the single editable source of truth.
 """
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, Annotated
 from contextlib import contextmanager
 from contextvars import ContextVar
 from pydantic import Field, model_validator, field_validator
@@ -50,9 +50,30 @@ class ComicLayer(StrictModel):
         return self
 
 
+class ComicRasterPin(StrictModel):
+    version: int = Field(ge=2, strict=True)
+    sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
+    review_digest: str = Field(pattern=r'^[a-f0-9]{64}$')
+
+
+class ComicRasterLayer(ComicLayer):
+    kind: Literal['RASTER']
+    pin: ComicRasterPin
+    x: int = Field(ge=-12000, le=12000, strict=True)
+    y: int = Field(ge=-12000, le=12000, strict=True)
+    width: int = Field(ge=1, le=16000, strict=True)
+    height: int = Field(ge=1, le=16000, strict=True)
+
+    @model_validator(mode='after')
+    def bounded_pixels(self):
+        if self.width * self.height > 20_000_000:
+            raise ValueError('COMIC_RASTER_PIXEL_LIMIT')
+        return self
+
+
 class ComicLayerStack(StrictModel):
     schema_version: Literal[1]
-    items: list[ComicLayer] = Field(max_length=256)
+    items: list[Annotated[ComicLayer | ComicRasterLayer, Field(discriminator='kind')]] = Field(max_length=256)
 
     @field_validator('schema_version', mode='before')
     @classmethod
@@ -71,11 +92,12 @@ class ComicLayerStack(StrictModel):
 def validate_references(stack, panels):
     expected = {(kind, p.id) for p in panels for kind in ('PANEL_ART', 'PANEL_FRAME')}
     expected |= {(kind, b.id) for p in panels for b in p.bubbles for kind in ('BUBBLE_SHAPE', 'BUBBLE_TEXT')}
-    actual = [(i.kind, i.target_id) for i in stack.items]
+    actual = [(i.kind, i.target_id) for i in stack.items if i.kind != 'RASTER']
     if len(actual) != len(set(actual)) or set(actual) != expected:
         raise ValueError('COMIC_LAYER_REFERENCE_COVERAGE_REQUIRED')
     # Count hidden layers too: export preserves their pixels for later editing.
     pixels = 2 * sum(p.width * p.height + sum(b.width * b.height for b in p.bubbles) for p in panels)
+    pixels += sum(i.width * i.height for i in stack.items if i.kind == 'RASTER')
     if pixels > MAX_LAYER_PIXELS:
         raise ValueError('COMIC_LAYER_PIXEL_LIMIT_64000000')
 
@@ -94,6 +116,13 @@ def iter_layer_images(document, images, placements, text=None):
     pixel_budget = [MAX_LAYER_SOURCE_PIXELS]
     for item in document['layer_stack']['items']:
         kind = item['kind']
+        if kind == 'RASTER':
+            surface = _image(images[item['target_id']], pixel_budget=pixel_budget)
+            if surface.size != (item['width'], item['height']):
+                surface.close()
+                raise ValueError('COMIC_RASTER_DIMENSIONS_CHANGED')
+            yield item, item['x'], item['y'], surface
+            continue
         obj = (panels if kind.startswith('PANEL_') else bubbles)[item['target_id']]
         surface = Image.new('RGBA', (obj['width'], obj['height']), (0, 0, 0, 0))
         draw = ImageDraw.Draw(surface)

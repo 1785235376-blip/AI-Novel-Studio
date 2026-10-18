@@ -682,10 +682,7 @@ legacy_api.creation_workbench_service.style_dna_service = StyleDNAService(
 creative_service.story_facts.configure(story_graph_service)
 comic_layouts_service.independent_store = creative_service.store
 creative_service.configure_generation(model_broker_service, author_preparer, legacy_api.jobs)
-router.include_router(create_creative_router(creative_service, authorize, require_flag,
-    require_host_session=require_inspection_host_session,
-    model_host_authority=lambda request, token: creative_model_host_authority(request, token),
-    director_observation=True, director_model_actions=True))
+
 
 from ..creative.workspace import IndependentWorkspaceService
 from ..creative.workspace_api import create_independent_workspace_router
@@ -698,6 +695,14 @@ def creative_model_host_authority(request, token):
     from ..main import _local_discovery_host_authority
     return _local_discovery_host_authority(request, token)
 
+
+from ..creative.director_image_generation import DirectorImageCoordinator
+director_image_coordinator = DirectorImageCoordinator(independent_workspace_service,
+    legacy_api.jobs, model_broker_service, runtime)
+router.include_router(create_creative_router(creative_service, authorize, require_flag,
+    require_host_session=require_inspection_host_session,
+    model_host_authority=lambda request, token: creative_model_host_authority(request, token),
+    director_observation=True, director_model_actions=True, director_images=director_image_coordinator))
 
 creative_graph_service = CreativeGraphService(creative_service.store, independent_workspace_service)
 creative_graph_service.configure_models(model_broker_service, legacy_api.jobs)

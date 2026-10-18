@@ -189,7 +189,8 @@ class ComicCollectionsMixin:
                         old_id = bubble['id']; bubble['id'] = new_id(); remap[('BUBBLE', old_id)] = bubble['id']
                 for item in page_document.get('layer_stack', {}).get('items', []):
                     item['id'] = 'layer_' + new_id()
-                    item['target_id'] = remap[(item['kind'].split('_')[0], item['target_id'])]
+                    if item['kind'] != 'RASTER':
+                        item['target_id'] = remap[(item['kind'].split('_')[0], item['target_id'])]
             else:
                 page_document = {'title': '空白漫画页', 'source_mode': 'INDEPENDENT', 'panels': []}
             payload = self._payload(nid, scope, actor, page_document)

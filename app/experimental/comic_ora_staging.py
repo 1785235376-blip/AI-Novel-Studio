@@ -13,7 +13,7 @@ import stat
 from uuid import uuid4
 
 from .comic_ora_import import preview_ora
-from .common import now
+from .common import now, check_version, change_row
 from ..services.comic_ora_origin import FIELD, CONTRACT, FEATURES, record
 
 COLLECTION = 'comic_ora_staging_v1'
@@ -39,8 +39,14 @@ class ComicOraStaging:
         self.comic.novels.get(nid)
 
     @contextmanager
-    def _transaction(self, nid, scope, actor, guard):
+    def _transaction(self, nid, scope, actor, guard, *, bound_assets=True):
         self._authority(nid, scope, actor, guard)
+        if not bound_assets:
+            with self.comic._independent_transaction(nid, scope) as state:
+                self._authority(nid, scope, actor, guard)
+                yield state, self.owner.incarnation(nid)
+                self._authority(nid, scope, actor, guard)
+            return
         # Raw scope -> original Asset -> original project owner. Project lease
         # outlives scope commit. Never use wrapped CreativeProjectStore.transaction.
         with self.owner.existing_owner_only(), ExitStack() as leases:
@@ -59,15 +65,22 @@ class ComicOraStaging:
             raise FileNotFoundError(rid)
         if (row.get('id') != rid or row.get('contract') != CONTRACT or not isinstance(row.get('steps'), list)
                 or not 1 <= len(row['steps']) <= 256 or type(row.get('version')) is not int
-                or not 1 <= row['version'] <= 257
-                or any(not isinstance(s, dict) or s.get('state') not in {'PENDING', 'STAGED'} for s in row['steps'])
+                or not 1 <= row['version'] <= 515
+                or any(not isinstance(s, dict) or s.get('state') not in {'PENDING', 'STAGED', 'REVIEWED'} for s in row['steps'])
                 or len({s.get('asset_id') for s in row['steps']}) != len(row['steps'])):
             raise ValueError('COMIC_ORA_RECEIPT_CORRUPT')
         return row
 
     @staticmethod
     def _public(row):
-        return {k: copy.deepcopy(row[k]) for k in ('id', 'version', 'archive_sha256', 'status', 'steps', 'losses')}
+        value = {k: copy.deepcopy(row[k]) for k in ('id', 'version', 'archive_sha256', 'status', 'steps', 'losses')}
+        if row.get('review'):
+            value['losses'] = [loss for loss in value['losses'] if loss != 'NO_ASSET_STAGING_REVIEW_OR_PAGE_ATTACHMENT'] + [
+                'ASSET_REVIEW_DOES_NOT_RECOVER_OR_VERIFY_ORIGINAL_GENERATION_PROVENANCE']
+            value['review_digest'] = row['review']['review_digest']
+            value['manifest_digest'] = row['review']['manifest_digest']
+        if row.get('attachment'): value['attachment'] = copy.deepcopy(row['attachment'])
+        return value
 
     def prepare(self, nid, scope, actor, raw, *, archive_sha256, request_key, guard):
         """Explicit staging intent AFTER a separate no-write preview/hash acceptance."""
@@ -103,8 +116,13 @@ class ComicOraStaging:
 
     def _verify(self, row, step, index, guard):
         meta = self.assets.get(step['asset_id'], branch_id=row['scope'].get('branch_id'), actor_id=row['actor'])
-        if (record(meta) != self._origin(row, step, index) or meta['version'] != 1
+        if (record(meta) != self._origin(row, step, index) or meta['version'] not in (1, 2)
                 or meta.get('idempotency_key') != 'comic-ora:' + row['id'] + ':' + str(index)):
+            raise ValueError('COMIC_ORA_STAGED_ASSET_CHANGED')
+        if meta.get('_comic_ora_review') is not None:
+            if not row.get('review') or meta['_comic_ora_review'] != self._review_proof(row, step) or meta['version'] != 2:
+                raise ValueError('COMIC_ORA_REVIEW_CHANGED')
+        elif step['state'] == 'REVIEWED' or meta['version'] != 1:
             raise ValueError('COMIC_ORA_STAGED_ASSET_CHANGED')
         self.assets._verified_content(meta, max_bytes=self.assets.MAX_BYTES, guard=guard)
         return meta
@@ -151,7 +169,7 @@ class ComicOraStaging:
                 step = row['steps'][index]
                 if any(step.get(k) != v for k, v in parsed.report['layers'][index].items()):
                     raise ValueError('COMIC_ORA_RECEIPT_CHANGED')
-                if step['state'] == 'STAGED':
+                if step['state'] in {'STAGED', 'REVIEWED'}:
                     self._verify(row, step, index, guard)
                     continue
                 if step['state'] != 'PENDING': raise ValueError('COMIC_ORA_STEP_INVALID')
@@ -197,11 +215,147 @@ class ComicOraStaging:
             result = self._public(row)
             for index, step in enumerate(row['steps']):
                 try:
-                    self._verify(row, step, index, guard)
-                    result['steps'][index]['observed_state'] = 'STAGED' if step['state'] == 'STAGED' else 'COMMITTED_AWAITING_RECEIPT_RESUME'
+                    meta = self._verify(row, step, index, guard)
+                    result['steps'][index]['observed_state'] = ('REVIEWED' if step['state'] == 'REVIEWED' else 'REVIEW_COMMITTED_AWAITING_RECEIPT_RESUME') if meta.get('_comic_ora_review') else 'STAGED' if step['state'] == 'STAGED' else 'COMMITTED_AWAITING_RECEIPT_RESUME'
                 except FileNotFoundError:
-                    result['steps'][index]['observed_state'] = ('MISSING_OR_UNAVAILABLE' if step['state'] == 'STAGED'
+                    result['steps'][index]['observed_state'] = ('MISSING_OR_UNAVAILABLE' if step['state'] in {'STAGED', 'REVIEWED'}
                         else 'ORPHAN_BINARY_REQUIRES_ARCHIVE_RESUME' if self.assets._bin_path(step['asset_id']).exists()
                         else 'AWAITING_ARCHIVE_STAGE')
             self._authority(nid, scope, actor, guard)
             return result
+
+    @staticmethod
+    def _digest(value):
+        from .store import canonical
+        import hashlib
+        return hashlib.sha256(canonical(value).encode()).hexdigest()
+
+    def _manifest(self, row, parsed, guard):
+        if row['archive_sha256'] != parsed.report['archive_sha256'] or len(row['steps']) != len(parsed.layers):
+            raise ValueError('COMIC_ORA_PREVIEW_CHANGED')
+        pins = []
+        for index, step in enumerate(row['steps']):
+            if step['state'] not in {'STAGED', 'REVIEWED'}: raise ValueError('COMIC_ORA_STAGING_INCOMPLETE')
+            if any(step.get(k) != v for k, v in parsed.report['layers'][index].items()):
+                raise ValueError('COMIC_ORA_RECEIPT_CHANGED')
+            self._verify(row, step, index, guard)
+            pins.append({k: copy.deepcopy(v) for k, v in step.items() if k not in {'state', 'asset_version'}} |
+                        {'staged_version': 1})
+        return {'receipt_id': row['id'], 'scope_key': self.store.key(row['novel_id'], row['scope']),
+                'incarnation': row['incarnation'], 'actor': row['actor'], 'archive_sha256': row['archive_sha256'],
+                'page': {'width': parsed.report['width'], 'height': parsed.report['height']}, 'layers': pins,
+                'origin_classification': 'UNVERIFIED_RASTER', 'native_text_recovered': False}
+
+    def review_manifest(self, nid, scope, actor, rid, raw, *, guard):
+        self._authority(nid, scope, actor, guard)
+        parsed = preview_ora(raw)
+        state = self.store.read(nid, scope)
+        with self.owner.existing_owner_only(), self.assets.project_scope(nid, scope.get('branch_id'),
+                lambda: self.owner.owner_lease(nid), scope_key=self.store.key(nid, scope)):
+            row = self._receipt(state, rid, nid, scope, actor, self.owner.incarnation(nid))
+            manifest = self._manifest(row, parsed, guard)
+            self._authority(nid, scope, actor, guard)
+            return {'manifest': manifest, 'manifest_digest': self._digest(manifest)}
+
+    @staticmethod
+    def _review_proof(row, step):
+        review = row['review']
+        return {'contract': 'comic-ora-reviewed-raster/1', 'receipt_id': row['id'], 'actor': row['actor'],
+                'manifest_digest': review['manifest_digest'], 'review_digest': review['review_digest'],
+                'archive_sha256': row['archive_sha256'], 'png_sha256': step['png_sha256'],
+                'origin_classification': 'UNVERIFIED_RASTER', 'license_note': review['license_note'],
+                'native_text_recovered': False}
+
+    def review(self, nid, scope, actor, rid, raw, *, manifest_digest, license_note,
+               acknowledge_raster_text, max_steps=1, guard):
+        """Explicit original Asset review; each promotion survives receipt rollback."""
+        from ..services.comic_ora_origin import reviewed, seal_review
+        self._authority(nid, scope, actor, guard)
+        if acknowledge_raster_text is not True: raise ValueError('COMIC_ORA_RASTER_LOSS_ACK_REQUIRED')
+        if type(max_steps) is not int or not 1 <= max_steps <= MAX_BATCH: raise ValueError('COMIC_ORA_BATCH_LIMIT')
+        parsed = preview_ora(raw)
+        # Persist immutable review intent before the first separate Asset commit.
+        with self._transaction(nid, scope, actor, guard) as (state, incarnation):
+            row = self._receipt(state, rid, nid, scope, actor, incarnation)
+            manifest = self._manifest(row, parsed, guard)
+            if self._digest(manifest) != manifest_digest: raise ValueError('COMIC_ORA_REVIEW_MANIFEST_CHANGED')
+            review = {'manifest': manifest, 'manifest_digest': manifest_digest, 'license_note': license_note}
+            review['review_digest'] = self._digest(review)
+            # Same validator used by the original Asset hook, before receipt writes.
+            reviewed(self._review_proof({**row, 'review': review}, row['steps'][0]), self._origin(row, row['steps'][0], 0))
+            if row.get('review') is not None and row['review'] != review: raise ValueError('COMIC_ORA_REVIEW_INTENT_IMMUTABLE')
+            if not row.get('review'):
+                row['review'] = review; row['version'] += 1; row['status'] = 'REVIEW_IN_PROGRESS'
+        completed = 0
+        for index in range(len(parsed.layers)):
+            with self._transaction(nid, scope, actor, guard) as (state, incarnation):
+                row = self._receipt(state, rid, nid, scope, actor, incarnation)
+                step = row['steps'][index]
+                meta = self._verify(row, step, index, guard)
+                if step['state'] == 'REVIEWED': continue
+                proof = self._review_proof(row, step)
+                def before_commit(): self._authority(nid, scope, actor, guard)
+                self.assets.promote_owned(step['asset_id'], actor_id=actor, branch_id=scope.get('branch_id'),
+                    expected_version=1, provenance=proof, guard=before_commit,
+                    _comic_ora_review=seal_review(self._origin(row, step, index), proof))
+                self._authority(nid, scope, actor, guard)
+                step.update(state='REVIEWED', asset_version=2)
+                row['version'] += 1
+                row['status'] = 'REVIEWED_READY_FOR_ATTACHMENT' if all(s['state'] == 'REVIEWED' for s in row['steps']) else 'REVIEW_IN_PROGRESS'
+                completed += 1
+            if completed >= max_steps: break
+        return self.status(nid, scope, actor, rid, guard=guard)
+
+    def attach(self, nid, scope, actor, rid, page_id, *, expected_page_version, review_digest, guard):
+        """Only receipt + existing independent page CAS commit atomically together."""
+        from .comic_layouts import LayoutIn
+        from .comic_layers import ora_decode_budget
+        with ora_decode_budget(), self._transaction(nid, scope, actor, guard, bound_assets=False) as (state, incarnation):
+            row = self._receipt(state, rid, nid, scope, actor, incarnation)
+            if not row.get('review') or row['review']['review_digest'] != review_digest:
+                raise ValueError('COMIC_ORA_REVIEW_CHANGED')
+            if any(s['state'] != 'REVIEWED' for s in row['steps']): raise ValueError('COMIC_ORA_REVIEW_INCOMPLETE')
+            page = state['collections'].get(self.comic.RECORDS, {}).get(page_id)
+            if (not isinstance(page, dict) or page.get('created_by') != actor or page.get('novel_id') != nid
+                    or page.get('scope') != scope or page.get('project_incarnation') != incarnation
+                    or not self.comic._independent(page)):
+                raise FileNotFoundError(page_id)
+            with self.workspace._asset_scope(nid, scope):
+                for index, step in enumerate(row['steps']): self._verify(row, step, index, guard)
+            self.comic._current(nid, scope, actor, page)
+            existing = row.get('attachment')
+            if existing:
+                if (existing['page_id'] != page_id or existing['expected_page_version'] != expected_page_version
+                        or existing['page_version'] != page['version']
+                        or existing['document_digest'] != self._digest(page['document'])):
+                    raise ValueError('COMIC_ORA_ATTACHMENT_REPLAY_CHANGED')
+                return {'receipt': self._public(row), 'page': self.comic._view(nid, scope, actor, page)}
+            check_version(page, expected_page_version)
+            if len(page['history']) >= 100: raise ValueError('COMIC_REVISION_LIMIT_CREATE_NEW_LAYOUT')
+            document = copy.deepcopy(page['document'])
+            if {k: document[k] for k in ('width', 'height')} != row['review']['manifest']['page']:
+                raise ValueError('COMIC_ORA_PAGE_DIMENSIONS_MISMATCH')
+            if 'layer_stack' not in document:
+                items = []
+                for panel in sorted(document['panels'], key=lambda p: p['order']):
+                    refs = [(k, panel['id']) for k in ('PANEL_ART', 'PANEL_FRAME')]
+                    refs += [(k, b['id']) for b in panel['bubbles'] for k in ('BUBBLE_SHAPE', 'BUBBLE_TEXT')]
+                    items += [{'id': 'layer_' + str(uuid4()), 'kind': k, 'target_id': target,
+                               'name': k, 'visible': True, 'opacity_percent': 100} for k, target in refs]
+                document['layer_stack'] = {'schema_version': 1, 'items': items}
+            additions = [{'id': 'layer_' + str(uuid4()), 'kind': 'RASTER', 'target_id': s['asset_id'],
+                          'pin': {'version': 2, 'sha256': s['png_sha256'], 'review_digest': review_digest},
+                          **{k: s[k] for k in ('name', 'visible', 'opacity_percent', 'x', 'y', 'width', 'height')}}
+                         for s in row['steps']]
+            # Imported raster sits below existing native text/art; no native content is discarded.
+            document['layer_stack']['items'] = additions + document['layer_stack']['items']
+            document = LayoutIn.model_validate(document).model_dump()
+            payload = self.comic._payload(nid, scope, actor, document)
+            self.comic._current(nid, scope, actor, payload)
+            change_row(page, actor, expected_page_version, lambda current: current.update(payload))
+            row['version'] += 1; row['status'] = 'ATTACHED'
+            row['attachment'] = {'page_id': page_id, 'expected_page_version': expected_page_version,
+                'page_version': page['version'], 'document_digest': self._digest(page['document']),
+                'layer_ids': [i['id'] for i in additions]}
+            self._authority(nid, scope, actor, guard)
+            return {'receipt': self._public(row), 'page': self.comic._view(nid, scope, actor, page)}

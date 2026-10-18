@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "b65dfffae3758b7184834c65b9f3d128049b46f043dd0795f1d549d4d8194e3c",
+  "application_source_fingerprint_sha256": "d76a0bed60a6dd534991ac36205d9aec77b1ebe5e80349bd782a4056a8ffe8b7",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -57,7 +57,7 @@
     "app/creative/adaptation_receipt.py": "815d0783c6fa665de3ed85969c1aae6ecd62a6d330a1bb562b3732903147cc92",
     "app/creative/adaptation_sources.py": "5f4a563dd45021caae88cc059b88777eff1f61be35e3a74c7adce88f1971ac16",
     "app/creative/ai_execution.py": "7ab5bd82d2443c3ce61ad5fa9aeb9554f265c06bff2d8b1782e20e167ffc0782",
-    "app/creative/api.py": "3f9045993f6a8b8696da71caa80f663bbd009c7d421d70d71945780e84127c2b",
+    "app/creative/api.py": "65c6f3cb49d44abad870ebc7282bdb369c5f1c41c110535ea90b2e9a4b9d644b",
     "app/creative/asset_usages.py": "e87679d6e0b6d9d25aaa18c3cd0601febdf852c877e3d5b6eb94029cf05cb2c2",
     "app/creative/bible_api.py": "9040dd1a8ebd3469b59241365910d7fe370741431db0e2329da884b8748607ca",
     "app/creative/bible_projection.py": "44bcce83294c71af72ef936e5d77933db4f2bc404f736a848231581799db43d4",
@@ -70,9 +70,10 @@
     "app/creative/director_binding.py": "7b260f6a9b74c492042e05c0ab5f37b6c0b81eb95f9a7949894e175a7d3d909c",
     "app/creative/director_camera_geometry.py": "90e5e2f94e6afa2c7b96e20e66d9f5320f9716309a6c7be2ef9e874da49554f7",
     "app/creative/director_image_adoption.py": "f291c5fd61dbd50817c67975a9bfd4068965237cb0732d635fdc6ace9cb0ddfe",
+    "app/creative/director_image_api.py": "011b451b5e3f991018a23f4847dd2ba2db46d8d703db18d3804e7a2a861cabe2",
     "app/creative/director_image_binding.py": "aadba9842f0e3c0637e61d401c0faad218535bc6a758c53d6e0a74e04a60e169",
     "app/creative/director_image_execution.py": "d4c4f73d57268eb482efa466b4aff0fb79bad69963ad829ed80e66597f6dc3e1",
-    "app/creative/director_image_generation.py": "f889c9f6aa32c9266841bf99abb626326ff38411521b3e16ac15c575f1604903",
+    "app/creative/director_image_generation.py": "00d805767aa10775d683f1cb086f89e25fbb1f10a6398857e34c4ea7ed1893e1",
     "app/creative/director_image_preview.py": "d68e475fd36dffcca857bd36170d606220c7abd7a3cd97201c6c553d6b5fe6d4",
     "app/creative/director_image_source.py": "223a9145c42051eb65ba10306fdfaf93605a4dc49b9298eea0526e6d16f85169",
     "app/creative/director_image_terminal.py": "86dd4070c39b8da3bb8a8970b2d26a81b32a438fc146d3f97fbb15f466f6fa52",
@@ -148,7 +149,7 @@
     "app/document_revision.py": "d0a3085d6c453d78196b93eae9ae66b775db9508c53ab49961513f5bc33036f5",
     "app/experimental/__init__.py": "737a87c497146972d1cc905f0076f076d5414a8093066146a5bac6b190d788f3",
     "app/experimental/adaptation_projection.py": "dbc51d4bbf0f44b0defb57d7f9a19491d4abf9f18645c13f6241e1600682e91e",
-    "app/experimental/api.py": "d0eb7aa8ca189bcbbff62dc172c179c2fff5a7d6a519c1ad94b044fb20c5f072",
+    "app/experimental/api.py": "06634192038fb57945df8612ae91eaf6c2a13a023deac7d63a8c7aeed99894f5",
     "app/experimental/audience_review.py": "1ba78d647d62715830a346dfc368c506d0becb0d295d4283651b6595f7774b20",
     "app/experimental/audience_review_api.py": "bb9bfb116c682c6ecab43731baa96fb1e1d92d61d046fd91025190462ce5c14e",
     "app/experimental/audiobook.py": "822155147b635156fcca184155b80846a7c39efde5b025df7688337d98c63115",
@@ -161,13 +162,13 @@
     "app/experimental/change_impact.py": "e156cb33c94f5862b99069d3b4f2c1393d2e972a5c2d7c4394ab49b33cf953be",
     "app/experimental/change_impact_api.py": "3106680005594c84b0a3949863dd27f376e800456f24d48a6ef7b82a12826197",
     "app/experimental/character_author_context.py": "8ab58d124a70f69c91b4b564703c1109d10671847e126e3264e5b03c1f77c5a3",
-    "app/experimental/comic_collections.py": "453acc14f1a39d0e1c94197b653924c0e5a4b97c14a8a9f5e5c5d926f787fbb5",
-    "app/experimental/comic_layers.py": "340979c7f9c646e85f1fe63bbf9b534a61ba9a77bbf20f63ea61b54a908f362f",
-    "app/experimental/comic_layouts.py": "236982fd5031c06f8871703f8c47279d74b5dc54626be45fa068d01b48a4f9a5",
+    "app/experimental/comic_collections.py": "a59462a099c7227489ff72222b3a79c81895d69ef2cf8dac8645166abba6cc54",
+    "app/experimental/comic_layers.py": "a3571681d406e4d077ac97384d7604eeb7b96305c60b92ffbb594ff35895412c",
+    "app/experimental/comic_layouts.py": "c3d671572b4db2c0fac62dcbf8e6c319b8bcd04d6d1d1bad8c24f5ceb2f1af8f",
     "app/experimental/comic_layouts_api.py": "d00945fd330ae04baaca55e416238918ace6c6627e9833f5e9877a1a96479ad7",
-    "app/experimental/comic_ora.py": "b986f0ae1b3d088be7bc0e6e7b8dad3efc84f005735d5e7c0faa15c6edc5faaf",
+    "app/experimental/comic_ora.py": "fa96c64f31e62ac2a1f7e8bd23cface286b013f14bae3128560fefdec0dcb2a3",
     "app/experimental/comic_ora_import.py": "4599ce5a67ebbfd06a60d66d062ff4c83be6b5f09375c34e5e0841730926a18a",
-    "app/experimental/comic_ora_staging.py": "f1c7ed7af51eac076b4a63c0e57b2de3b4227324ad45167ec519c9ffb3a759a6",
+    "app/experimental/comic_ora_staging.py": "3e7298f0d1535579efd211131861d7aad858463d550f8e028e44d19fe26b0074",
     "app/experimental/common.py": "e69739dbefb4fd71e5ac8945f76a534b77bca5cd8252648304a5724ab39127a0",
     "app/experimental/declarative_adapter_sdk.py": "8783ff8a17478dbd13023951176567904ab8c4985fc90aaf80a7fa1a7b707bc1",
     "app/experimental/declarative_agents.py": "2e106fad1a3b403cad889a27db9626edeffe5f01107452c6f1c73316b77e50b8",
@@ -459,7 +460,7 @@
     "app/services/agent_context_service.py": "647b09c44bf8b54f1545cd1d0ac2e2a7afb9183f54103140d6ef4d2332c4c297",
     "app/services/agent_job_service.py": "894983ea8de02effb5e6bd05b1ab4daccbeb41404b6abea1b06b18ccafa780e7",
     "app/services/ai_planning_service.py": "1b7f2b06bd62ae4d378ca1809a6003b6db1e1b5b3d449f88b2b929c8dad8c9fa",
-    "app/services/asset_library_service.py": "d76694e19423f73aae0c6f09d500c52391b56fd1583578c2e4c42864df70568e",
+    "app/services/asset_library_service.py": "6e7b9ab09531d0432a099ef07b6b89908dc76447b3bb00ac8bf4e4c641961a3c",
     "app/services/asset_task_worker.py": "8f0f6a64af0bfb0a6d1e50dfd42511cfb5262b7dde530153237d18ee270bfd3c",
     "app/services/audiobook_service.py": "0b1840e0a0d7df70e633e78ed4dbb9fbfe392db6ab1e098c23c987d8dd2b63a7",
     "app/services/authorization_service.py": "ad1862ae3aa21eb9547e4d9ddadf30c08a4aeff8e9a2c4a9d345548d689bd374",
@@ -467,7 +468,7 @@
     "app/services/canon_service.py": "f1d985bcd028a39147a1548dacebfdf5508ec8e226faff696cb7b050e513b843",
     "app/services/chapter_service.py": "30430822dd30f6ef0eac50f708941797801d099f842c357d4bc25c04ecfd9900",
     "app/services/collaboration_scope_service.py": "605fe6b9de231240f4b76fe54595db3f24ca02dbc3e060c8db637e6bcd6c1dfd",
-    "app/services/comic_ora_origin.py": "af0060ba36cb3238a9481093cc2dc7d8de28fe6ec64800d5332b13bd59859756",
+    "app/services/comic_ora_origin.py": "ef81fa0d05211a19c68bcd80d9f38bb03e0fddabaa5adf3df91e05f8d24dad36",
     "app/services/context_service.py": "184c44949b85b9815528c1b0ef6ca15b0f5cf2e83decd38ef1b5bc7279869cc4",
     "app/services/context_snapshot_service.py": "cc1c32a28725acb69cf732063233e4489868dc0b2b3b337c65dbee04912ed13c",
     "app/services/continuity_finding_service.py": "ac10263f095d7458da6b0b4351a53634c661fb3dd13d186895b7537ff67e1022",
@@ -537,9 +538,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 624,
+    "added": 644,
     "changed_contract": 24,
-    "current_method_paths": 2457,
+    "current_method_paths": 2477,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -556,7 +557,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "b47f45de16d7c10d0ce5961177160563b0e00ec1e6d54fa5863e1cb00f9b6d3e",
+    "sha256": "e9f5403e0ae3df33c030fdc7b4252fd426048d62348b85566579d2225c3916a3",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -2692,6 +2693,39 @@
     },
     {
       "method": "GET",
+      "path": "/api/novels/{nid}/experimental/creative/director-image-v3/capabilities",
+      "operation_id": "capabilities_api_novels__nid__experimental_creative_director_image_v3_capabilities_get",
+      "owner_ref": "b46dc7859c08d16bed9654e979db3a37256438d79b0eb9493eec23b1041a375e",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "77d2c0e1a1fb870fdb2b98a063b5bdab127ce8494e781527e241f5303495e7d0",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/creative/director-image-v3/proposals",
+      "operation_id": "listing_api_novels__nid__experimental_creative_director_image_v3_proposals_get",
+      "owner_ref": "4547d59fe9a79b716f3f59fd0bb3d4ed01e4a341b8b1d8dc8aad39c1e37774ab",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "0dbc94c18488ac55080c769c07b40f4a3c6fb5b268a6b9963ed91ebce80f0fb1",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/creative/director-image-v3/proposals/{rid}",
+      "operation_id": "status_api_novels__nid__experimental_creative_director_image_v3_proposals__rid__get",
+      "owner_ref": "e8ad320b8675e49cf78f5bf3602b3dda1343841e8a3677b1011d229d8e701b35",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "e1610847f42f4da1fa420ad256dd81bf23dc4a50fcf3033bdf7faa11526ba40f",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
       "path": "/api/novels/{nid}/experimental/creative/director-proposals",
       "operation_id": "proposals_api_novels__nid__experimental_creative_director_proposals_get",
       "owner_ref": "b8db8423ab8ded8b8c56ff6838d9edcfd795374d30086845e31d215591186b69",
@@ -3572,7 +3606,8 @@
       "operation_id": "catalog_api_novels__nid__experimental_narrative_judge_audience_catalog_get",
       "owner_ref": "7a22b5deed92bb3658e805cb796a03cebe8959fa654c78577bbfbfe741c78ea1",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "97c60f4260029c06b8cf8d5300c6784a65c439893428d5f2e3d92c44db805098",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -3583,7 +3618,8 @@
       "operation_id": "comparisons_api_novels__nid__experimental_narrative_judge_audience_comparisons_get",
       "owner_ref": "2dfae4d285dc7af4d3466606ca38ae4b023710c5be5d5117c9a1703315a21b37",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "6e8801af90020fd83f49c7bf5ba0cd849779082a6f641bc8340e4ae0a5d577db",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -3594,7 +3630,8 @@
       "operation_id": "source_api_novels__nid__experimental_narrative_judge_audience_source__chapter_id__get",
       "owner_ref": "14872c7ed884284306289457c7d50b858e0ac1f85ed99865bc1cde671fb0b2b2",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "f2f2f96e53d6de8cd8fb494ac366d1da030f41d7de8849af6f3657e4484d7fdb",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -8450,6 +8487,39 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-image-v3/capabilities",
+      "operation_id": "capabilities_api_v1_novels__nid__experimental_creative_director_image_v3_capabilities_get",
+      "owner_ref": "b46dc7859c08d16bed9654e979db3a37256438d79b0eb9493eec23b1041a375e",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "3d24711be8d0e5975a36f0619191c92df0e23eb0f4e3b51589ca9bf163c3e0ef",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-image-v3/proposals",
+      "operation_id": "listing_api_v1_novels__nid__experimental_creative_director_image_v3_proposals_get",
+      "owner_ref": "4547d59fe9a79b716f3f59fd0bb3d4ed01e4a341b8b1d8dc8aad39c1e37774ab",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "83421ba5ae500e9b812f52cae20fc3211b40e005442ab5a75c66aee5623b37b6",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-image-v3/proposals/{rid}",
+      "operation_id": "status_api_v1_novels__nid__experimental_creative_director_image_v3_proposals__rid__get",
+      "owner_ref": "e8ad320b8675e49cf78f5bf3602b3dda1343841e8a3677b1011d229d8e701b35",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "66cf9e0f639d9c453199435bb7fcfb9de0038b8304871022884888571bfd16e2",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/novels/{nid}/experimental/creative/director-proposals",
       "operation_id": "proposals_api_v1_novels__nid__experimental_creative_director_proposals_get",
       "owner_ref": "b8db8423ab8ded8b8c56ff6838d9edcfd795374d30086845e31d215591186b69",
@@ -9330,7 +9400,8 @@
       "operation_id": "catalog_api_v1_novels__nid__experimental_narrative_judge_audience_catalog_get",
       "owner_ref": "7a22b5deed92bb3658e805cb796a03cebe8959fa654c78577bbfbfe741c78ea1",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "1ae4be49e108701b09205d9501abc7806a208b1591208535bf56bef88cef9e5b",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -9341,7 +9412,8 @@
       "operation_id": "comparisons_api_v1_novels__nid__experimental_narrative_judge_audience_comparisons_get",
       "owner_ref": "2dfae4d285dc7af4d3466606ca38ae4b023710c5be5d5117c9a1703315a21b37",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "a75d5658810e0383d0f9edf4183bab8764ee087b4d4fa6254b5409637fb805c2",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -9352,7 +9424,8 @@
       "operation_id": "source_api_v1_novels__nid__experimental_narrative_judge_audience_source__chapter_id__get",
       "owner_ref": "14872c7ed884284306289457c7d50b858e0ac1f85ed99865bc1cde671fb0b2b2",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "c7631922009684dac1bebf61724caec1da245e74e4f22d88a6c1d4d12bb7d745",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -14774,7 +14847,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "08622ef5e8d2370872c946c5cd02e5f74e85e89ae6f3f27b6e02d01ad3cf07ad",
-      "schema_graph_sha256": "c98e18bd6afa5f23f544f6780c773cf79d13d9b3d54b30a05345994b504db590"
+      "schema_graph_sha256": "b56423b40704b8641df6c73940d1234167c8e88bd70ca2fb0ba4479c18d65115"
     },
     {
       "method": "POST",
@@ -14883,6 +14956,83 @@
       ],
       "operation_sha256": "ed22d5d01c25f4fc763cf9a4c4e5d5b7195ec16f683ac7b8c06338645c97f2ab",
       "schema_graph_sha256": "720d89d2e44dbc4306637267024eeb2b517e126f876a17bcecbecac70f32002d"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/creative/director-image-v3/preview",
+      "operation_id": "preview_api_novels__nid__experimental_creative_director_image_v3_preview_post",
+      "owner_ref": "d6422c536673d8008ffb0589d5478cf25885cff27f01de6b875402cf070fdd3c",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "cbc4aae9d40b9fa8fb32235d44c4628f5fb5e8e45af8c71e7f83fe671d58ed90",
+      "schema_graph_sha256": "cf07dfa6eebc737fe9dc3648a1bee28717ee922984f587082e6bca95b16d48fa"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/creative/director-image-v3/proposals/{rid}/adopt",
+      "operation_id": "adopt_api_novels__nid__experimental_creative_director_image_v3_proposals__rid__adopt_post",
+      "owner_ref": "895592f363b3134e1451972861b45630819dec671225961424b8da6ff0cd16f0",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "b2dba6cdf07dcc7a53f7dc3b6395556b0699c4ec47cfabefc8c58af17d9cf956",
+      "schema_graph_sha256": "fed0f7445df14183bcc6c03cd752e35bdfd53276e098e4abd5c3b2a0099a2728"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/creative/director-image-v3/proposals/{rid}/cancel",
+      "operation_id": "cancel_api_novels__nid__experimental_creative_director_image_v3_proposals__rid__cancel_post",
+      "owner_ref": "84eebbc99d4add663e0b9a45177448315c7ad920596dee0b512e226b20357b4a",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "3cfb0463c3fee1dd617013ecdcbcfaae64bad2ca8b367d98c2e56bb68c08c93f",
+      "schema_graph_sha256": "ea7b6de2d42b3d00ad9ed47a2110c8517326ee8c479b016017fa32e7ed660322"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/creative/director-image-v3/proposals/{rid}/declare-cost",
+      "operation_id": "declare_api_novels__nid__experimental_creative_director_image_v3_proposals__rid__declare_cost_post",
+      "owner_ref": "87d4df817e37b0559256e0ddf562656e5f8e1f6463d6dd7114027137e4cbccce",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "af60adfa0135af10391920c06378369c551d4903488bbf7fe29031ab79d3d7d8",
+      "schema_graph_sha256": "7d371dc7924734ba3a2a3408d379f1aff4e349da5b7dbfe04cce13a69a722248"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/creative/director-image-v3/proposals/{rid}/dispatch",
+      "operation_id": "dispatch_api_novels__nid__experimental_creative_director_image_v3_proposals__rid__dispatch_post",
+      "owner_ref": "d95a60c5dbcfedec24bb382f700b0fb9447a2166f1cae63f6bb33c1af5acf1a5",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "114ee8c4703f8284e7b1364d034bf6316f710d76a50067b88398973b988de189",
+      "schema_graph_sha256": "3ad09a33856c959ed9c959f73f07f5ac275e28d44f0403f97c3008840fd6fc58"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/creative/director-image-v3/proposals/{rid}/prepare-review",
+      "operation_id": "pending_api_novels__nid__experimental_creative_director_image_v3_proposals__rid__prepare_review_post",
+      "owner_ref": "aeb6eb158d509236fe23c54a4a4fa2683fbf04d1e984a0c4b01791715123a4e2",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "23a929ff56237f0e22b3e41747bbc9562630d9ca496d3c1813fed39b8406028c",
+      "schema_graph_sha256": "ebc9929ae5f8c7759c483e478891bc22d9e3c0ef22a1d46fb1fb1c4d9db35d02"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/creative/director-image-v3/proposals/{rid}/review",
+      "operation_id": "review_api_novels__nid__experimental_creative_director_image_v3_proposals__rid__review_post",
+      "owner_ref": "284e79cc100297321fe0196c29761de38524a70c34a39dd7acb42934a4732efc",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "6e4a934d75d25d46328f9b9e59f48561fa7822652a4cefbaf02ba5cfc92765e2",
+      "schema_graph_sha256": "ea7b6de2d42b3d00ad9ed47a2110c8517326ee8c479b016017fa32e7ed660322"
     },
     {
       "method": "POST",
@@ -16092,7 +16242,8 @@
       "operation_id": "create_api_novels__nid__experimental_narrative_judge_audience_comparisons_post",
       "owner_ref": "748964cf6520e8a06ada30e9d0c0ddb92226cdfd245bfc256533a02d40d72a7f",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "2662355af410c03e6483271bd2550ef3e11b21cce0e05b1a0f0f433664093ab5",
       "schema_graph_sha256": "90949dfeac2197fe74b38d8f9bc9073c64e8126ec6b3c8a873810f0e2eb60b44"
@@ -16103,7 +16254,8 @@
       "operation_id": "prepare_source_api_novels__nid__experimental_narrative_judge_audience_source__chapter_id__prepare_post",
       "owner_ref": "79a102ee00494656a6d8beeef68b4c399b7c28f6404b983ae2b6a3d6393b2b3b",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "721aee898895a41f7918c27a62f61ffd612d036ce32b453f53c44b28f0e0ea2d",
       "schema_graph_sha256": "abadde62cdf98d9492773683a3beaa71eb7efa7a3efd1fa66086c26caac6abd2"
@@ -22041,7 +22193,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "e3b5dab31c2abde55ac0e5c7d389f582cfe3a00f59f5df63b162fe8d10ddaec9",
-      "schema_graph_sha256": "c98e18bd6afa5f23f544f6780c773cf79d13d9b3d54b30a05345994b504db590"
+      "schema_graph_sha256": "b56423b40704b8641df6c73940d1234167c8e88bd70ca2fb0ba4479c18d65115"
     },
     {
       "method": "POST",
@@ -22150,6 +22302,83 @@
       ],
       "operation_sha256": "268b0ad4cbc046a43234423c79b4286a1eb39fa5f9dbdd9906bcaa856a00d038",
       "schema_graph_sha256": "720d89d2e44dbc4306637267024eeb2b517e126f876a17bcecbecac70f32002d"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-image-v3/preview",
+      "operation_id": "preview_api_v1_novels__nid__experimental_creative_director_image_v3_preview_post",
+      "owner_ref": "d6422c536673d8008ffb0589d5478cf25885cff27f01de6b875402cf070fdd3c",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "82c14614519b4c5a9d24f422a23d329f81fe412498017f5c3145bc0eea0e1765",
+      "schema_graph_sha256": "cf07dfa6eebc737fe9dc3648a1bee28717ee922984f587082e6bca95b16d48fa"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-image-v3/proposals/{rid}/adopt",
+      "operation_id": "adopt_api_v1_novels__nid__experimental_creative_director_image_v3_proposals__rid__adopt_post",
+      "owner_ref": "895592f363b3134e1451972861b45630819dec671225961424b8da6ff0cd16f0",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "b9a5d9b3a62c109c25b3781fc983e5719222340c04ea18dc023f850f51089a66",
+      "schema_graph_sha256": "fed0f7445df14183bcc6c03cd752e35bdfd53276e098e4abd5c3b2a0099a2728"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-image-v3/proposals/{rid}/cancel",
+      "operation_id": "cancel_api_v1_novels__nid__experimental_creative_director_image_v3_proposals__rid__cancel_post",
+      "owner_ref": "84eebbc99d4add663e0b9a45177448315c7ad920596dee0b512e226b20357b4a",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "4e04d7a4621e87f966d4247f13dc5cbe11b014f4bdb8dbe4c8ace5aefff20316",
+      "schema_graph_sha256": "ea7b6de2d42b3d00ad9ed47a2110c8517326ee8c479b016017fa32e7ed660322"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-image-v3/proposals/{rid}/declare-cost",
+      "operation_id": "declare_api_v1_novels__nid__experimental_creative_director_image_v3_proposals__rid__declare_cost_post",
+      "owner_ref": "87d4df817e37b0559256e0ddf562656e5f8e1f6463d6dd7114027137e4cbccce",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "e4027329f929e59ab4277d373edc86c8facfd48b4426e6c489be4b0990c289bc",
+      "schema_graph_sha256": "7d371dc7924734ba3a2a3408d379f1aff4e349da5b7dbfe04cce13a69a722248"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-image-v3/proposals/{rid}/dispatch",
+      "operation_id": "dispatch_api_v1_novels__nid__experimental_creative_director_image_v3_proposals__rid__dispatch_post",
+      "owner_ref": "d95a60c5dbcfedec24bb382f700b0fb9447a2166f1cae63f6bb33c1af5acf1a5",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "bdbe75f6aa95556da6cfee0591b11920b566622c35114ae3f6af4de91bc456da",
+      "schema_graph_sha256": "3ad09a33856c959ed9c959f73f07f5ac275e28d44f0403f97c3008840fd6fc58"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-image-v3/proposals/{rid}/prepare-review",
+      "operation_id": "pending_api_v1_novels__nid__experimental_creative_director_image_v3_proposals__rid__prepare_review_post",
+      "owner_ref": "aeb6eb158d509236fe23c54a4a4fa2683fbf04d1e984a0c4b01791715123a4e2",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "ed541e0e7fac297b9b4cbeb3bc5bccff8745f3c5c130ead1cd88f4ec7bc00023",
+      "schema_graph_sha256": "ebc9929ae5f8c7759c483e478891bc22d9e3c0ef22a1d46fb1fb1c4d9db35d02"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-image-v3/proposals/{rid}/review",
+      "operation_id": "review_api_v1_novels__nid__experimental_creative_director_image_v3_proposals__rid__review_post",
+      "owner_ref": "284e79cc100297321fe0196c29761de38524a70c34a39dd7acb42934a4732efc",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "915f3af43845dfeeddb1cd60e34ba6634e0dedbac6a450a18fc0fa26bed980a9",
+      "schema_graph_sha256": "ea7b6de2d42b3d00ad9ed47a2110c8517326ee8c479b016017fa32e7ed660322"
     },
     {
       "method": "POST",
@@ -23359,7 +23588,8 @@
       "operation_id": "create_api_v1_novels__nid__experimental_narrative_judge_audience_comparisons_post",
       "owner_ref": "748964cf6520e8a06ada30e9d0c0ddb92226cdfd245bfc256533a02d40d72a7f",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "2d239bf4da4d12fe7367de4e9edbc40804333d820096382551e9918c28e8b9d3",
       "schema_graph_sha256": "90949dfeac2197fe74b38d8f9bc9073c64e8126ec6b3c8a873810f0e2eb60b44"
@@ -23370,7 +23600,8 @@
       "operation_id": "prepare_source_api_v1_novels__nid__experimental_narrative_judge_audience_source__chapter_id__prepare_post",
       "owner_ref": "79a102ee00494656a6d8beeef68b4c399b7c28f6404b983ae2b6a3d6393b2b3b",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "90b4834cbd3c700decd476055bdb761af51a76501762e081b9e4f9b1a68a1667",
       "schema_graph_sha256": "abadde62cdf98d9492773683a3beaa71eb7efa7a3efd1fa66086c26caac6abd2"
@@ -28150,7 +28381,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "0d1459e37c7b5cfea5d7e0d88c31b7dd91d159137d0fed035caa299ac60c0178",
-      "schema_graph_sha256": "1fbbf8baea1aea123a7befd34dd8bc62e9ab0f8359a3be8d9278a13eaf756531"
+      "schema_graph_sha256": "658eb8fa981f0206fb6fda72a265a505bc56541a8c257cba7aae2adce7e9e73b"
     },
     {
       "method": "PUT",
@@ -29232,7 +29463,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "291eb521642972bde7c51533fef8a50f42b1649e3551d38f63a027f2b301602b",
-      "schema_graph_sha256": "1fbbf8baea1aea123a7befd34dd8bc62e9ab0f8359a3be8d9278a13eaf756531"
+      "schema_graph_sha256": "658eb8fa981f0206fb6fda72a265a505bc56541a8c257cba7aae2adce7e9e73b"
     },
     {
       "method": "PUT",

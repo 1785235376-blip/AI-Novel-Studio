@@ -42,7 +42,9 @@ def encode_ora(document, images, report, version):
     canvas = Image.new('RGBA', (document['width'], document['height']), 'white')
     entries = []
     receipt = {'format': 'comic-ora-reference-layers-v1', 'layout_version': version,
-               'review_digest': report['review_digest'], 'losses': LOSSES,
+               'review_digest': report['review_digest'], 'losses': [
+                   'ORA_TARGET_APPLICATION_ROUNDTRIP_NOT_VALIDATED' if loss == 'ORA_IMPORT_AND_TARGET_APPLICATION_ROUNDTRIP_NOT_IMPLEMENTED'
+                   and any(i['kind'] == 'RASTER' for i in document['layer_stack']['items']) else loss for loss in LOSSES],
                'native_project_modified': False, 'automatic_publication': False,
                'privacy_level': 'LOCAL_ONLY', 'layers': []}
 

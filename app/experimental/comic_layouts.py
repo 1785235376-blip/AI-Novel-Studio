@@ -123,6 +123,8 @@ class LayoutIn(StrictModel):
             if any(ord(c) < 32 or 0xD800 <= ord(c) <= 0xDFFF or ord(c) in (0xFFFE, 0xFFFF) for c in self.title):
                 raise ValueError('COMIC_LAYER_TITLE_INVALID')
             validate_references(self.layer_stack, self.panels)
+            if self.source_mode != 'INDEPENDENT' and any(i.kind == 'RASTER' for i in self.layer_stack.items):
+                raise ValueError('COMIC_RASTER_INDEPENDENT_ONLY')
         if self.source_mode == 'INDEPENDENT':
             if self.screenplay_id is not None or self.expected_screenplay_version is not None or any(p.shot_id is not None for p in self.panels):
                 raise ValueError('COMIC_INDEPENDENT_SOURCE_CONFLICT')
@@ -312,6 +314,14 @@ def compose(document, images, *, render=False):
             if font_data is not None and ready['available']:
                 try: text[bid] = _text_layout(bubble, font_data, coverage)
                 except ValueError as error: issue(str(error), bid)
+    for item in document.get('layer_stack', {}).get('items', []):
+        if item['kind'] != 'RASTER': continue
+        source = images.get(item['target_id'])
+        if source is None: issue('COMIC_MISSING_REVIEWED_RASTER', item['id'])
+        elif ready['available']:
+            image = _image(source, pixel_budget=pixel_budget)
+            if image.size != (item['width'], item['height']): issue('COMIC_RASTER_DIMENSIONS_CHANGED', item['id'])
+            image.close()
     segments = [{'index': i, 'y': y, 'width': document['width'], 'height': min(document['segment_height'], document['height'] - y)}
                 for i, y in enumerate(range(0, document['height'], document['segment_height']))]
     result = {'issues': issues, 'segments': segments, 'placements': placements, 'can_render': not any(i['severity'] == 'BLOCKER' for i in issues), 'geometry': 'INTEGER_PAGE_PIXELS_V1'}
@@ -442,6 +452,33 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
         if renderer_status()['available']: _image(content, pixel_budget=pixel_budget)
         return asset, content
 
+    def _raster_asset(self, nid, scope, actor, item, *, pixel_budget=None):
+        """Only reviewed ORA pins enter the bound reader; legacy _asset is untouched."""
+        from ..services.comic_ora_origin import record, reviewed
+        owner = self._independent_owner()
+        expected_binding = {'novel_id': nid, 'branch_id': scope.get('branch_id'),
+                            'scope_key': self.store.key(nid, scope), 'incarnation': self._independent_identity(nid)}
+        active = getattr(self.assets._scope, 'binding', None)
+        if active is not None and active != expected_binding: raise FileNotFoundError(item['target_id'])
+        lease = nullcontext() if active is not None else self.assets.project_scope(nid, scope.get('branch_id'),
+            lambda: owner.owner_lease(nid), scope_key=expected_binding['scope_key'])
+        with owner.existing_owner_only(), lease:
+            asset = self.assets.get(item['target_id'], branch_id=scope.get('branch_id'), actor_id=actor)
+            origin = record(asset); proof = reviewed(asset.get('_comic_ora_review'), origin)
+            pin = item['pin']
+            if (origin['actor'] != actor or asset.get('novel_id') != nid
+                    or asset.get('_project_binding') != expected_binding
+                    or (asset['version'], asset['sha256'], proof['review_digest']) !=
+                       (pin['version'], pin['sha256'], pin['review_digest'])):
+                raise StaleSourceError('COMIC_RASTER_REVIEW_CHANGED')
+            data = self.assets.content(asset['id'], branch_id=scope.get('branch_id'), actor_id=actor,
+                                       max_bytes=self.assets.MAX_BYTES)
+            image = _image(data, pixel_budget=pixel_budget)
+            if image.size != (item['width'], item['height']):
+                image.close(); raise StaleSourceError('COMIC_RASTER_DIMENSIONS_CHANGED')
+            image.close()
+            return asset, data
+
     def _binding(self, asset):
         return {'version': asset['version'], 'sha256': asset['sha256'], 'approved_at': asset.get('approved_at'), 'metadata_digest': digest(asset)}
 
@@ -501,6 +538,13 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
                 bind(panel.asset_id, panel.expected_asset_version, 'COMIC_ASSET_VERSION_CHANGED')
             for reference in panel.appearance_references:
                 bind(reference.asset_id, reference.expected_asset_version, 'COMIC_APPEARANCE_ASSET_VERSION_CHANGED')
+        for item in document.get('layer_stack', {}).get('items', []):
+            if item['kind'] == 'RASTER':
+                asset, _ = self._raster_asset(nid, scope, actor, item, pixel_budget=pixel_budget)
+                binding = {**self._binding(asset), 'origin_kind': 'REVIEWED_ORA_RASTER'}
+                if item['target_id'] in assets and assets[item['target_id']] != binding:
+                    raise ValueError('COMIC_RASTER_BINDING_CONFLICT')
+                assets[item['target_id']] = binding
         return {**({'project_incarnation': self._independent_identity(nid)} if independent and bind_independent else {}), 'document': document, 'screenplay_version': source['edit_version'] if source is not None else None, 'source_evidence': director.evidence(nid, scope, source) if source is not None else {'sources': {}, 'privacy': {}},
                 'character_sources': character_sources, 'asset_sources': assets,
                 'scene_ids': {p.id: shots[p.shot_id].get('scene_id') if p.shot_id in shots else None for p in body.panels}, 'status': 'DRAFT', 'approval': None}
@@ -522,8 +566,18 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
         images = {}
         pixel_budget = [MAX_LAYER_SOURCE_PIXELS] if 'layer_stack' in row['document'] else None
         for aid, binding in row['asset_sources'].items():
-            asset, data = self._asset(nid, scope, actor, aid, pixel_budget=pixel_budget)
-            if self._binding(asset) != binding: raise StaleSourceError('COMIC_ASSET_CHANGED')
+            if binding.get('origin_kind') == 'REVIEWED_ORA_RASTER':
+                refs = [i for i in row['document'].get('layer_stack', {}).get('items', [])
+                        if i['kind'] == 'RASTER' and i['target_id'] == aid]
+                if not refs: raise StaleSourceError('COMIC_RASTER_REFERENCE_MISSING')
+                asset, data = self._raster_asset(nid, scope, actor, refs[0], pixel_budget=pixel_budget)
+                if any(i['pin'] != refs[0]['pin'] or (i['width'], i['height']) != (refs[0]['width'], refs[0]['height']) for i in refs):
+                    raise StaleSourceError('COMIC_RASTER_REFERENCE_CONFLICT')
+                current_binding = {**self._binding(asset), 'origin_kind': 'REVIEWED_ORA_RASTER'}
+            else:
+                asset, data = self._asset(nid, scope, actor, aid, pixel_budget=pixel_budget)
+                current_binding = self._binding(asset)
+            if current_binding != binding: raise StaleSourceError('COMIC_ASSET_CHANGED')
             images[aid] = data
             if sum(map(len, images.values())) > MAX_OUTPUT: raise ValueError('COMIC_SOURCE_BYTES_LIMIT')
         return images
