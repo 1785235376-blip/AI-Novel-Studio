@@ -1,0 +1,175 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "c59fa63d9ca74c4c5ca6aa3db1f337b0ae4fc2e2",
+      "path": "API_CATALOG.json",
+      "bytes": 1451396,
+      "sha256": "4d619ed72a1689539805368d43c32d68da820a74c28ee058730727058222bec5"
+    },
+    {
+      "blob": "2f7ff332cdcff0fe513f9d7162edc0987e1bc0d3",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 594181,
+      "sha256": "e58c5fa2c6b065cad38b97b1255f6b32c273bb92fcd7dc56e01c7c86e1391385"
+    },
+    {
+      "blob": "99ba2a56ba456fbb3011c85714b5db1a0732e30a",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 128792,
+      "sha256": "5a75af856c9232d71014959cc97af538a2f24a1ac4db3decec414ff0fad2394e"
+    },
+    {
+      "blob": "43a4e06212502d44e9f68ae12e3da0ce2ab024f9",
+      "path": "app/creative/models.py",
+      "bytes": 20453,
+      "sha256": "572bb0b7753f8ce67e8fc3a4eef9a20c5fa213f928d33e5382e8db38ebce6b3a"
+    },
+    {
+      "blob": "f64dc64ff87f59d34c8dc06cf287524252d92639",
+      "path": "app/creative/service.py",
+      "bytes": 28803,
+      "sha256": "d1db4bde0280e6f8d64bc47329e6df8905984f98b0f78361048930cdb1882cad"
+    },
+    {
+      "blob": "6d4d99b7f2395bae61cb120325e30de9761d0000",
+      "path": "docs/SCRIPT_SCREENPLAY_BRIDGE.md",
+      "bytes": 3392,
+      "sha256": "cd5534ebaf7b73da6eda537d2b76cb9e44a5ddaf54ffe850c5833b5f89a165c0"
+    },
+    {
+      "blob": "efdb0a4912d39540a43ef5c2f80818c4029e171c",
+      "path": "docs/delivery/v2-development/script-director-chain-r1-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "f0f4fcb96c1f0eb9d7dd0143722a280262119f03415d8b038714b958b82834ec"
+    },
+    {
+      "blob": "51f7e6d9c0c4e5932f831defaba212f9b6f6f1e2",
+      "path": "docs/delivery/v2-development/script-director-chain-r1.json",
+      "bytes": 682087,
+      "sha256": "95688ddcd64a02949f4933d274db697f5b2f6e6402fb2ce89bc9d34fa5df65b3"
+    },
+    {
+      "blob": "f3f60799024f8c6747faba5c41792340b5be3eac",
+      "path": "docs/delivery/v2-development/script-director-chain-r1.log",
+      "bytes": 1093,
+      "sha256": "1c188ac8767ed6f8fcd31fd54b9c62863652e61c54320c084c0ea6f8c52fddda"
+    },
+    {
+      "blob": "f0ebadc81832af34e2fe6081278deb729cea7801",
+      "path": "docs/delivery/v2-development/script-screenplay-bridge-pg-r1-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "9ab1ac828926a2bd9fc6f2e0fe3a81e850003041c2510a023eec6998d129ae5d"
+    },
+    {
+      "blob": "e11d31b7de0df61c3b7429c9ecbf78bf07f1080d",
+      "path": "docs/delivery/v2-development/script-screenplay-bridge-pg-r1.json",
+      "bytes": 682095,
+      "sha256": "2c386b633fe5eed69192488f71a49d581adec23a77273ad88d49575aea6a6f63"
+    },
+    {
+      "blob": "5690aec6c732b60d9cb7f7a50264ad21044aac3e",
+      "path": "docs/delivery/v2-development/script-screenplay-bridge-pg-r1.log",
+      "bytes": 777206,
+      "sha256": "8debcedb5fff96fb351bc1e859d9d27d23824710654e798e2b399b6210365acc"
+    },
+    {
+      "blob": "aa9de576472f7ca39bec58fa808e7dd0ed196338",
+      "path": "docs/delivery/v2-development/script-screenplay-bridge-pg-r2-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "bd779c8bcd2fc83d46705dbef5c38736b6cad3d4b38b0f49d66106875e4e351a"
+    },
+    {
+      "blob": "8c256f84c78a64fe9fdfdf6d8a3fc30de5a85943",
+      "path": "docs/delivery/v2-development/script-screenplay-bridge-pg-r2.json",
+      "bytes": 682396,
+      "sha256": "6ef9a77b3e4f9bc50a4d714c27b9bf41a316e4baba62174ea727717555a46bac"
+    },
+    {
+      "blob": "bbf3c37a402392f01e92b8b0fc4733cd576959c4",
+      "path": "docs/delivery/v2-development/script-screenplay-bridge-pg-r2.log",
+      "bytes": 1089,
+      "sha256": "087044dee9f433dfa028210055b93837611b9e963060b3ea7f07532172c32daf"
+    },
+    {
+      "blob": "dd2fb48fdff25cb8c8f8615b78cb7bdba7eb605a",
+      "path": "docs/delivery/v2-development/script-screenplay-bridge-r1.json",
+      "bytes": 682559,
+      "sha256": "f24204b38f7c06640ad06a0f3da9842a81b6cab9862816a9f3bbadaef2df99d3"
+    },
+    {
+      "blob": "5ddb353a6f5800e5d7e0dbb4ae0274b3799849d9",
+      "path": "docs/delivery/v2-development/script-screenplay-bridge-r1.log",
+      "bytes": 777189,
+      "sha256": "b6ba33d0f8ca06c1b7c2d0a283f805b4e25ecba6d50b40c49ad15cc5728b5a64"
+    },
+    {
+      "blob": "f5d107d57b56f0ebf433cd4e01033d2f2a8104b1",
+      "path": "docs/delivery/v2-development/script-screenplay-bridge-r2.json",
+      "bytes": 682802,
+      "sha256": "91849ffd817852e08dc1b3aa7642a6ec525967be63245b3f9cf9fef60b2402b7"
+    },
+    {
+      "blob": "f5ed5f952e4f694e6beb481e6bee56dac4151293",
+      "path": "docs/delivery/v2-development/script-screenplay-bridge-r2.log",
+      "bytes": 2106,
+      "sha256": "9779985c37f3f2346ce3a088d9fecd83ae1a32fae32d690faa0210d6e666c9e1"
+    },
+    {
+      "blob": "e69794fde35c1f175422a5f470222a4ba0460f3e",
+      "path": "docs/delivery/v2-development/script-screenplay-bridge-ui-r3.json",
+      "bytes": 682045,
+      "sha256": "a8030cc32ac656f2d6d601e9a2a1d52f815325447fe73b594d2dad562c82e06e"
+    },
+    {
+      "blob": "70a589862c0527d1a863ff858bb467affb5c3ed6",
+      "path": "docs/delivery/v2-development/script-screenplay-bridge-ui-r3.log",
+      "bytes": 2477,
+      "sha256": "9ae9e08c58073aa5d5b2d04b4320f2dcda55844082b2b57554ba0e23ce9c3e51"
+    },
+    {
+      "blob": "336e7a7276f75b4263661571e79a5949329787f1",
+      "path": "frontend/src/creative/CreativeWorkspace.tsx",
+      "bytes": 41945,
+      "sha256": "14bdcf0e95bddd239450c4dd485d6bb7203b02b7a75df1d7526e37a9e39209d0"
+    },
+    {
+      "blob": "2019d5c4b1ccca97ac446be11b1dc2c754ab939a",
+      "path": "frontend/src/creative/GenericScriptWorkspace.test.tsx",
+      "bytes": 11878,
+      "sha256": "6be97f35fcbd04b88e5afcd0604a23bc8899f57d310387dcae93b7e07fa67949"
+    },
+    {
+      "blob": "d12fa1df117ec0f2b38408f59585204ebfc21989",
+      "path": "frontend/src/creative/ScriptScreenplayBridge.additive.test.tsx",
+      "bytes": 2654,
+      "sha256": "c850938c9d9af6df51a7bdb559347bc910da48970222ac1a1b3d8f9d2d30608d"
+    },
+    {
+      "blob": "70458be9829bc28594c53aaac7646c7123e3d62a",
+      "path": "frontend/src/creative/ScriptScreenplayBridge.tsx",
+      "bytes": 3219,
+      "sha256": "e066423e01f063006e9ad1f5237da16ca03a9f90c8d1a1fe0d1c2b13e84d67db"
+    },
+    {
+      "blob": "0c569773b5576d885020447b0b66c086b37c0496",
+      "path": "frontend/src/creative/client.ts",
+      "bytes": 17321,
+      "sha256": "22a4a5e8126a9b9b735c70c187603666764a975a536862c8a4962a426b193bd4"
+    },
+    {
+      "blob": "be0b9716cc4977b1ed526053352753bf2a35ea35",
+      "path": "tests/test_script_screenplay_bridge_additive.py",
+      "bytes": 5155,
+      "sha256": "c24b665c8467fdedfbd424ff78f890769825dfcf9263c8347fd1c30b7d1941bb"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
