@@ -1,0 +1,607 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "4069004a5459da4b8e06eaa3adbaba364cb04e03",
+      "path": "AI_NOVEL_STUDIO_V2_FEATURE_MATRIX.md",
+      "bytes": 286806,
+      "sha256": "beaaa1e7d7bb236d942d11e10c22ec789fdca6545461ca44c9a4cde90aff2b7a"
+    },
+    {
+      "blob": "ef4a47ee2c7d0c99974348ddc3f6e3e7ef9ededd",
+      "path": "API_CATALOG.json",
+      "bytes": 1486849,
+      "sha256": "e0ff743219e50d25cc08034ab846b40084bc83c6254c7e3a371e71a8e6d6c0c3"
+    },
+    {
+      "blob": "76887479683b57f8db2e5473473895934b6558b0",
+      "path": "API_CATALOG.md",
+      "bytes": 397341,
+      "sha256": "a6baa71cd36c327a7cfd62a18f2358a45c1f4777e8d4e4cd6ef58a0c8312abed"
+    },
+    {
+      "blob": "b3341b4be9e24e330742dcdf9b332e21495eca70",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 612432,
+      "sha256": "435e926ca7ed2f83639d0e487a18145c3ab521c8425adce5e8b1019738be956f"
+    },
+    {
+      "blob": "79a731fcc17a76019abf6ad63aaad510d9dec285",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 132197,
+      "sha256": "24fb30678c8e41a3852b7886166ddf5882934299e5257fc9b489ab9472467b5b"
+    },
+    {
+      "blob": "7d80208e7fa66cad5207c6cccbc1f9250ff9ed0b",
+      "path": "FUNCTIONAL_SURFACE_MATRIX.md",
+      "bytes": 12007,
+      "sha256": "c90c3d218570ff9d6ea8ec0ac22cacd5fd00d83ea15ee375dffd1c29e3e57a82"
+    },
+    {
+      "blob": "ca6d898eede8204a52e4f01fe5b73b42b74f9011",
+      "path": "POST_INTEROP_FEATURE_MATRIX.md",
+      "bytes": 39069,
+      "sha256": "25d37bf16390635516fbb2c2cb6fadbadbf78b0ce473caebb5ec7d5c4d2a1996"
+    },
+    {
+      "blob": "257b21e1529c737672eabe4c75883a958f55b116",
+      "path": "app/creative/model_reference_cameras.py",
+      "bytes": 7483,
+      "sha256": "349c6ccacbb89b53bbc8fb064b550197a201c97b68e717eedc0476c4abf082af"
+    },
+    {
+      "blob": "52b1a8710a671d1b53b4106243b3d50e73afcb13",
+      "path": "app/creative/model_reference_glb.py",
+      "bytes": 12825,
+      "sha256": "ea38229829b8ef0c51c8d6caed601db6ffd5455edc90aa3f45557bad0c9978b3"
+    },
+    {
+      "blob": "5fa0fb7fd6841cd66c6547816e6d0ac92a4ac0d6",
+      "path": "app/creative/model_reference_scene.py",
+      "bytes": 6768,
+      "sha256": "6d8cafe84e7d5681395d4eb4725de1fcc8fa381a0cc0fad72b639d6e2d804047"
+    },
+    {
+      "blob": "c47a39c00ea51338e5241ff0a0c9e4659a89378b",
+      "path": "app/creative/production_execution.py",
+      "bytes": 121043,
+      "sha256": "3a16ec4c25a10051b69ac81f960723f810662196f2eaa57b1edc4af34ec17bb0"
+    },
+    {
+      "blob": "49f1009787580c8a017d0e996da4e10766684fcc",
+      "path": "app/creative/workspace.py",
+      "bytes": 47827,
+      "sha256": "f75e8bbdf7b341daf113699f3415366d9c0279e8635bc3c8dc246a559df9e49a"
+    },
+    {
+      "blob": "89cf35bae13379a4fabe857297a34f6e1b3b831a",
+      "path": "app/creative/workspace_api.py",
+      "bytes": 30518,
+      "sha256": "a458b518a07fb68ecfbaff6b71da6505126747322b2aef193e4cfa4caf7b5e94"
+    },
+    {
+      "blob": "9f36b7f3409ca7b1715f0125606f589770728000",
+      "path": "app/creative/workspace_models.py",
+      "bytes": 5398,
+      "sha256": "3d06a937f859ac702e23852c2e51ecdc6bfe3996d0e936c716eea74ed1535724"
+    },
+    {
+      "blob": "ee368f0252828d3abdb9dd30c5e90ff118439503",
+      "path": "app/experimental/api.py",
+      "bytes": 41691,
+      "sha256": "f39f15181a0b854926a2c9f0dcf43f66fe96590f528188da5a31f4840b7f6f40"
+    },
+    {
+      "blob": "09cb9f45b509119470954b11528f25fcf88306af",
+      "path": "app/experimental/model_benchmark.py",
+      "bytes": 31370,
+      "sha256": "cedf56042fe3ac6d447333711b7e2fe81c5ad93ebf2df1264b8dfeffb55f1804"
+    },
+    {
+      "blob": "71874246ecf2f4b271e056cbad88f9eaba7ec1e2",
+      "path": "app/experimental/model_benchmark_api.py",
+      "bytes": 14916,
+      "sha256": "5026d9fde113c0120e7412af072176d286cdc0005d4c6e6067c44c53513c366c"
+    },
+    {
+      "blob": "0e2f769f850a66368e04154260737f07e7a49291",
+      "path": "app/experimental/model_benchmark_video.py",
+      "bytes": 30477,
+      "sha256": "8364c3e24251fbb14e0f4d006fc2087d6fa7943887066919fb9f41174618ae4a"
+    },
+    {
+      "blob": "ac81243dca81700a44b7c2ecd4964e80875f5ec0",
+      "path": "app/experimental/model_broker.py",
+      "bytes": 57353,
+      "sha256": "a3ec2da85357178fe7631695bf577ccd661b85956c5feb2c7f9a0b188efb41ad"
+    },
+    {
+      "blob": "e7aae0260d165b4ffac046ca4c95ad718d8081a7",
+      "path": "app/experimental/model_broker_api.py",
+      "bytes": 17473,
+      "sha256": "746119904d78f7a83b8754118a597ee4da581ba66c3970ec034d4862c5db3d2b"
+    },
+    {
+      "blob": "e0c3c0770e0b0fbb0edc4c56860feed2d39766e4",
+      "path": "app/services/studio_video_execution.py",
+      "bytes": 20570,
+      "sha256": "18704e79b6b1ea48eff26e27774f0a6058705c406478237a897508ddebc89fef"
+    },
+    {
+      "blob": "03cd1c434b32d77e6f746bf30b9e4c83af9bc905",
+      "path": "docs/STATIC_GLB_CAMERA_EXCHANGE.md",
+      "bytes": 6556,
+      "sha256": "06fdbf9053d960d2aaf94cbc287a519f1b1fd0fc8d7368f8ea00a8c8e9ed533b"
+    },
+    {
+      "blob": "8f43c6ea1533d99f4e1c03ea9a7bc344255ecf3e",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 27642,
+      "sha256": "0631adac164ee680545385d1e80603c6301c0501e82ab3dabe2d915a0c3630f6"
+    },
+    {
+      "blob": "b2dd2c258f1004769dacfb49f5af71db60ffe49f",
+      "path": "docs/VIDEO_BENCHMARK_EXECUTION.md",
+      "bytes": 18127,
+      "sha256": "e6ea0cca95cdbe8b71afbe203d1a20f295d585d018c8f0f1625aafef587e941d"
+    },
+    {
+      "blob": "84ca8db263a6f661c61862b2fa5b632d316ff2af",
+      "path": "docs/delivery/v2-development/camera-benchmark-integrated-frontend.json",
+      "bytes": 726362,
+      "sha256": "087121e7fe01ad8a72e064680069d5bf7fbae9f085ef439099a3f6ff4b9d29c2"
+    },
+    {
+      "blob": "c76741f37b5b39e5ca664c4b35496b0ca09b7977",
+      "path": "docs/delivery/v2-development/camera-benchmark-integrated-frontend.log",
+      "bytes": 3107,
+      "sha256": "0a3d7299cb985371e0dd326e6684950107a7ae93b63d44c8501c4e99f875af83"
+    },
+    {
+      "blob": "a81b4fd96277290e8a6e9e00494f898693aab8dc",
+      "path": "docs/delivery/v2-development/camera-benchmark-integrated-summary-20261018.md",
+      "bytes": 2415,
+      "sha256": "1e2c2536f030d00d2a2a490fff90df797b19ddbfbdb94d3c90950418defceb57"
+    },
+    {
+      "blob": "2f5c16a91ba0db320a0dbb6068beab96aab04a79",
+      "path": "docs/delivery/v2-development/camera-benchmark-public-wheel.json",
+      "bytes": 726118,
+      "sha256": "34d8174dde8ad792bfd9a8e3735ea2f6aca7a9b3e6ffa520b68ac2f0c75f92de"
+    },
+    {
+      "blob": "2e8aa58804831192c02cef85500128cf09daa330",
+      "path": "docs/delivery/v2-development/camera-benchmark-public-wheel.log",
+      "bytes": 634,
+      "sha256": "066124e14e865a82d9b405701881f9c7c8ec0a85d00464de350debdbe0284471"
+    },
+    {
+      "blob": "6b4cae28bf51193f342a7f5503fbb1f6255d50f6",
+      "path": "docs/delivery/v2-development/camera-combined-file-final.json",
+      "bytes": 726482,
+      "sha256": "20623afd4a35593a0d7531cba6d63471e97d48ff73021558fe7349e7b9aaa175"
+    },
+    {
+      "blob": "288078fb2bae0bba6992149caba4a4c558b21581",
+      "path": "docs/delivery/v2-development/camera-combined-file-final.log",
+      "bytes": 1342,
+      "sha256": "7932ed3159663a08ba7f47710be2862245865ed220f5f2e2ced40b3e49403153"
+    },
+    {
+      "blob": "fffb7e572267908d2a7169cf37977d6020ed7d48",
+      "path": "docs/delivery/v2-development/camera-legacy-owner-file-r1.json",
+      "bytes": 725973,
+      "sha256": "d4a3f9d82d9e19dcd1f1c671b54717422455663059bb4451c7f59946d98f5be0"
+    },
+    {
+      "blob": "e3ebe1c11cbd2bb1580f5e6f30456496427cc239",
+      "path": "docs/delivery/v2-development/camera-legacy-owner-file-r1.log",
+      "bytes": 1078,
+      "sha256": "578aee260cc5731849686d8f81ef8c89c2f30ddfb7759859fcf5ad41349847c3"
+    },
+    {
+      "blob": "0c6cae0ef93a41cd6b4b8d349c17224ccea3c211",
+      "path": "docs/delivery/v2-development/camera-parser-file-r1.json",
+      "bytes": 724406,
+      "sha256": "541005727b631c1dc0e88547f4b07324e70007a40efbe6b0b0f15a3c3b93063d"
+    },
+    {
+      "blob": "d0837014092831a8cfc2a731aac828220a4ea8bb",
+      "path": "docs/delivery/v2-development/camera-parser-file-r1.log",
+      "bytes": 699,
+      "sha256": "982a0de168af50f4d8f339e49d90aa605ad97e2d51cf1c669402513318c38724"
+    },
+    {
+      "blob": "54ea9a5f9d1f728a20f40f42afdb551b722d149a",
+      "path": "docs/delivery/v2-development/static-camera-owner-file-final.json",
+      "bytes": 725938,
+      "sha256": "450f4a0abee118ff059e7989a727d37833fac0f133e6a7bb4dd18ab28581a361"
+    },
+    {
+      "blob": "b518a46d7c4577f77e8d4a05f95a9c923bb0987c",
+      "path": "docs/delivery/v2-development/static-camera-owner-file-final.log",
+      "bytes": 1191,
+      "sha256": "b992b8f33f57e02d7ce40ac56ba8c821461780400bcb1745b35f4ca385ef10d4"
+    },
+    {
+      "blob": "e42760eabfafb21b78a8f9aafa1c24dd1e3b8dd1",
+      "path": "docs/delivery/v2-development/static-camera-owner-file-guards-r2.json",
+      "bytes": 725979,
+      "sha256": "a28e94a231167ec181c65fec9fde10732a1a04b6afb10c7ded53f81201afea4e"
+    },
+    {
+      "blob": "173dc4e7e32af358e2b28a9d3d8c39318f637e2c",
+      "path": "docs/delivery/v2-development/static-camera-owner-file-guards-r2.log",
+      "bytes": 1191,
+      "sha256": "6128ad8398c3d5914b0b5007a689665b1e87dd355dae55c7eec1e01ab9934f74"
+    },
+    {
+      "blob": "12b01008ce9cd085aa45e9e3d3bb1f1fba59fbe3",
+      "path": "docs/delivery/v2-development/static-camera-owner-file-guards.json",
+      "bytes": 725948,
+      "sha256": "c9edc0293a5e71ddbee6e545dab3debd9716b28b113705de37545b34ac85bd4f"
+    },
+    {
+      "blob": "25ff357b94e2b61ce9c5c7bf08acffc6e35baee6",
+      "path": "docs/delivery/v2-development/static-camera-owner-file-guards.log",
+      "bytes": 8887,
+      "sha256": "c5dd98e0ce591d0072de4d953d930f8ea6098c1fd49edef0b131375b3a9df4ac"
+    },
+    {
+      "blob": "77c2a2b96dacbb548caebb04f7cfa853a21ed154",
+      "path": "docs/delivery/v2-development/static-camera-owner-file-r2.json",
+      "bytes": 725908,
+      "sha256": "36afbb12cd55743b3a1f496e6586f8c3fc3124678919caf90975811e238db7b3"
+    },
+    {
+      "blob": "61e751e7ac03a0c54c651411a07c61991c1e6741",
+      "path": "docs/delivery/v2-development/static-camera-owner-file-r2.log",
+      "bytes": 1173,
+      "sha256": "f2ca1a3d794322fba35631c9b70caf68ed85a26900ea3b94248ad9e2a8c4033f"
+    },
+    {
+      "blob": "e3812aa67620f9179edbbe50c20e7cce4b04c71d",
+      "path": "docs/delivery/v2-development/static-camera-owner-file.json",
+      "bytes": 725335,
+      "sha256": "c0c3b131a8d6af8481d95361e28d207359f0393015b42cc06ee96e8f1ec6c094"
+    },
+    {
+      "blob": "73f93b0f1902b7fbba2e3b84e20ba534704564e6",
+      "path": "docs/delivery/v2-development/static-camera-owner-file.log",
+      "bytes": 7570,
+      "sha256": "b7bef65377c16e9de4d98e10f15c9a702f24b98d40e7400c20c1a9d5e7e921ef"
+    },
+    {
+      "blob": "228b739dac028f860c51ad6835bcd1c10d6b08c7",
+      "path": "docs/delivery/v2-development/static-camera-owner-pg-final-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "a3accd3fe276e496cb0bf08ac92bbc64e9ebe3bfee8cac91a89829e28947a627"
+    },
+    {
+      "blob": "72f41a99e28d8aabc13cadbc94bdc267b4240576",
+      "path": "docs/delivery/v2-development/static-camera-owner-pg-final-shutdown.json",
+      "bytes": 382,
+      "sha256": "4d3f072b414905e3be6146f113fab2d8b20b1376a73725f4d4dba21f4a80a238"
+    },
+    {
+      "blob": "47540eb8d1bfa698e7f3858b8ce6f183b4b13744",
+      "path": "docs/delivery/v2-development/static-camera-owner-pg-final.json",
+      "bytes": 727771,
+      "sha256": "1b5fed9491d3863fe14f5aa2040efb5a2ff56a79eb3273586f6efd62afc93811"
+    },
+    {
+      "blob": "72834354780529a53cda4238cd097a2f761758bd",
+      "path": "docs/delivery/v2-development/static-camera-owner-pg-final.log",
+      "bytes": 13645,
+      "sha256": "082be3435253313350257fcbd48b1dd2b4d076ae39440ec46c308c58686dbb5f"
+    },
+    {
+      "blob": "08e4b766d001a8619b5adc3c612f912a38fbcc1c",
+      "path": "docs/delivery/v2-development/static-camera-types-r1.json",
+      "bytes": 725650,
+      "sha256": "6f39518aa5bd1952aa0f8657ad7e83b72c6bffb25a861e88f8dfcfc9fdf7c981"
+    },
+    {
+      "blob": "5959d55922c9da32fd3b8717d5b6321bf00474e1",
+      "path": "docs/delivery/v2-development/static-camera-ui-final-r1.json",
+      "bytes": 726538,
+      "sha256": "d062ecdded7ed0a38614cf2cfc7b5dcfedd994653e0579644676a9d971ea864b"
+    },
+    {
+      "blob": "8003d22c189886137acc9e6ce5bbffe93740b93d",
+      "path": "docs/delivery/v2-development/static-camera-ui-final-r1.log",
+      "bytes": 1640,
+      "sha256": "d7eae47845743dc32e4250d9214989ad7070ea9a3c547b2d1446f0c1ec371e05"
+    },
+    {
+      "blob": "58e633cff48ce3835152bc5b13d24b91b7b81b79",
+      "path": "docs/delivery/v2-development/video-benchmark-api-file.json",
+      "bytes": 723332,
+      "sha256": "cfac363e0d4c121a101a52b00d28c0a21dcaac8913a43f733719bc39ee94ee05"
+    },
+    {
+      "blob": "17214516a4476689654e5615cebcb03b2cc71966",
+      "path": "docs/delivery/v2-development/video-benchmark-api-file.log",
+      "bytes": 1061,
+      "sha256": "77dcea7242d2228513201673ff32b64b70d7c0356b8b021e4871378915d98a88"
+    },
+    {
+      "blob": "82b1880d5e7277fb31cdcb5657a7978f0399e07a",
+      "path": "docs/delivery/v2-development/video-benchmark-api-final-file.json",
+      "bytes": 723962,
+      "sha256": "b20865396e94f3abb6bb792959a334ef861b7b0c7ca8dc574c2e0fdc3af9b9a2"
+    },
+    {
+      "blob": "c7f7a8693a3604d5ff3624764fd2985db8cb8481",
+      "path": "docs/delivery/v2-development/video-benchmark-api-final-file.log",
+      "bytes": 1091,
+      "sha256": "64d8bbdb3cc73ead7939f93b0f9e20aaead0c8443ea48b9409ef1f0ff222a2b4"
+    },
+    {
+      "blob": "b085ed3c3c543ac2d27b8dc08843a51ffc286df7",
+      "path": "docs/delivery/v2-development/video-benchmark-api-final-pg-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "3292a372d297887834d4d538e293702bd7cf5163dd8f5d24bf5a3f252ce69281"
+    },
+    {
+      "blob": "278b743a420068a7f7aa2923853dd6e0b737827c",
+      "path": "docs/delivery/v2-development/video-benchmark-api-final-pg.json",
+      "bytes": 724019,
+      "sha256": "5bdcd8e902b7a13e1d49213490fc685bcda641a90cd15d671bcb3956425acd9c"
+    },
+    {
+      "blob": "9b0e522dd21699ffed981b4acf84b7ddf2087fde",
+      "path": "docs/delivery/v2-development/video-benchmark-api-final-pg.log",
+      "bytes": 1095,
+      "sha256": "78b1d69e3bfa37e75caa83df16ced7bbe14a78a671e049be6e5e43925d841c80"
+    },
+    {
+      "blob": "12c8911c3d08d5eafc76b6fcfb52531b41f0a798",
+      "path": "docs/delivery/v2-development/video-benchmark-api-incarnation-file.json",
+      "bytes": 725978,
+      "sha256": "10435a02e8685d7b118ccdd9886a0299c13a817338104efeb7ffb4d3f2138ee7"
+    },
+    {
+      "blob": "4c8c62c1e792f2c10ff35f9e2561d23b6f4c7f08",
+      "path": "docs/delivery/v2-development/video-benchmark-api-incarnation-file.log",
+      "bytes": 1091,
+      "sha256": "68745e6c30ee6c81ade6e1fdf4b760ca6cf31c7353f88495df94fb0b3b3efeb0"
+    },
+    {
+      "blob": "b5ca7cb0283e1ab496f4c40d93ee20e92b1794b2",
+      "path": "docs/delivery/v2-development/video-benchmark-api-incarnation-pg-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "b568e4aab86da6f432fb089dc24b01ca32290864f800e828f6d0a8aeb70ec382"
+    },
+    {
+      "blob": "b37993285d99db4ca0f4f1c0bcde5b01b6e17190",
+      "path": "docs/delivery/v2-development/video-benchmark-api-incarnation-pg.json",
+      "bytes": 726035,
+      "sha256": "ae5a1604859eb2be7d998cff64666ed1c61a93e654e89f433d5df3b900fcfc0c"
+    },
+    {
+      "blob": "e5ae7dc991313b6438b6655ce8704c9570323bab",
+      "path": "docs/delivery/v2-development/video-benchmark-api-incarnation-pg.log",
+      "bytes": 1105,
+      "sha256": "4d539b3cb5da52db6441902bcb7568e17046befb959aa40154b105fa2184b19c"
+    },
+    {
+      "blob": "92457e70654f49792277f74d619775077f402bc9",
+      "path": "docs/delivery/v2-development/video-benchmark-file-r2.json",
+      "bytes": 723321,
+      "sha256": "386dc4d3946e214703ff1fa131df1142aa0a5e6dfe2d318743cf15ae0722dc6e"
+    },
+    {
+      "blob": "23755b1f498c3ed1e011b06e8b152aaa77a57aaf",
+      "path": "docs/delivery/v2-development/video-benchmark-file-r2.log",
+      "bytes": 1061,
+      "sha256": "1c268896ecd7136d6ef017908846a2184a94a317ce215c0ebc944a0d1aa88b7d"
+    },
+    {
+      "blob": "0a3af54b38a66fa66946c07e4d0aae2504972823",
+      "path": "docs/delivery/v2-development/video-benchmark-file-r3.json",
+      "bytes": 723322,
+      "sha256": "91d797db094829899fa5125a552f8233d2f0b5d1adfd5fc169fb8bc950b6cf54"
+    },
+    {
+      "blob": "eb026ac3358a94c5f248988907965f7619f07473",
+      "path": "docs/delivery/v2-development/video-benchmark-file-r3.log",
+      "bytes": 1061,
+      "sha256": "b01adc41ead4cd73fd59600366f08b20237df302910a3aeaf23d1b74af4f6a0c"
+    },
+    {
+      "blob": "d95e196d0ee67d2f41c0475a5732a7b5042b28fa",
+      "path": "docs/delivery/v2-development/video-benchmark-file.json",
+      "bytes": 723023,
+      "sha256": "1083666fa4ed8e74ebf210969347810e31ae5f1b34e46b0fde3a6cd6c87b1860"
+    },
+    {
+      "blob": "4f13f6a9bb12bb1c9c5828ae7e110c10d279178b",
+      "path": "docs/delivery/v2-development/video-benchmark-file.log",
+      "bytes": 4803,
+      "sha256": "53d77afde9b24bccc750a9d4081c854c41db79f87d0f2be0b7cc5b050f644c7b"
+    },
+    {
+      "blob": "c69ca7dcbf717b003dc0bb266516b095d09acd6f",
+      "path": "docs/delivery/v2-development/video-benchmark-pg-r1-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "7bc3dfe3772e40c998cd01c9097a0bbcd91d05b33a0c250293a6569826cdf8de"
+    },
+    {
+      "blob": "edaaeb2bb27fd4f6e0a1cdac3716a0abde07c0de",
+      "path": "docs/delivery/v2-development/video-benchmark-pg-r1.json",
+      "bytes": 723379,
+      "sha256": "2ef389d9f75e049c3beebc7b715b2831cece194ede43568e096753d85ab6b426"
+    },
+    {
+      "blob": "cb39c5181eedb37520faf883f90ef169c3c15a6b",
+      "path": "docs/delivery/v2-development/video-benchmark-pg-r1.log",
+      "bytes": 1075,
+      "sha256": "02d09b80e211ea346a18b9addb72dcdbc67c4a867d754d53f3e0383679e721c6"
+    },
+    {
+      "blob": "b26dac295b9f6456661a6bbf2f2c078559bee209",
+      "path": "docs/delivery/v2-development/video-benchmark-regression.json",
+      "bytes": 723285,
+      "sha256": "530fb9f5391dedda36b41cac1bcdb4bfe5dc03bf79437aff5da3802f8fb5d88d"
+    },
+    {
+      "blob": "d56c4928d2bd6ee11be0c6f71c1139279424a1ec",
+      "path": "docs/delivery/v2-development/video-benchmark-regression.log",
+      "bytes": 1152,
+      "sha256": "9dbbcdff2fd7b5145363419ddaa204928ff05d4cc407304797b87c8bf23ae8a9"
+    },
+    {
+      "blob": "4bbf897f1e3ef466d043ad99def3afa69be63de4",
+      "path": "docs/delivery/v2-development/video-benchmark-text-regression.json",
+      "bytes": 723355,
+      "sha256": "8e8e007200adc3a5de17cad928d953f3c87a407867b47aca64f260d73089243b"
+    },
+    {
+      "blob": "9c2ccdfb8a6675a5c2e0204a1a401a0d7fda66c3",
+      "path": "docs/delivery/v2-development/video-benchmark-text-regression.log",
+      "bytes": 1053,
+      "sha256": "3b04571ef4ca389218e33c3e235f6e4a8d03ef12a091fc05a2d7b4d58212db52"
+    },
+    {
+      "blob": "4587c09538681f5e26490ca24d7f109194dafcdb",
+      "path": "docs/v2/REMAINING_DEVELOPMENT_COMPARISON_20261018.md",
+      "bytes": 12525,
+      "sha256": "0d8c43e65e2ab693a290aa62142e44424f851ff573f1976a326219646852a2a8"
+    },
+    {
+      "blob": "d7028d6915bfcc37278156749c51312335d56f94",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 768495,
+      "sha256": "ced7f6c2a02be3798fd2cdfb9f00a635333b405d36eddf33d71a83f7281ea961"
+    },
+    {
+      "blob": "3bd798bda80aa70ddc02cc24c9cf3956c196bd66",
+      "path": "docs/v2/V2_SCOPE_RECONCILIATION_20261019_R2.md",
+      "bytes": 8795,
+      "sha256": "12a4230164bbea55b572462610c1a0951f5088a63755bfe3202873448f54efba"
+    },
+    {
+      "blob": "a8ed51ecb825b37b40d73bb39dadb323f43b7440",
+      "path": "frontend/src/creative/IndependentStudioWorkspace.tsx",
+      "bytes": 73321,
+      "sha256": "50cbeaa761b3d7b2a7d927d9f4e2a30b55e489adf5daaf33322deb0c1029bb4f"
+    },
+    {
+      "blob": "5ffcd735c43c045e671071bb578e7a1f63718c90",
+      "path": "frontend/src/creative/StudioModelCameraInspection.additive.test.tsx",
+      "bytes": 9074,
+      "sha256": "08a4bb92df344ada35250a742c726c65c2da264d6b10b0fc03c8c55c65b55687"
+    },
+    {
+      "blob": "6495cf441a1262f47fd54380d984c6b8cb8979bc",
+      "path": "frontend/src/creative/StudioModelCameraInspection.tsx",
+      "bytes": 9474,
+      "sha256": "bcb1e1e4f5185cd6d4a273c2bf42db4c45bc4330366bc962ef5edc7eb9b1aa98"
+    },
+    {
+      "blob": "6dff001e5c399a1908a6fdcf18bd8bd531db4d34",
+      "path": "frontend/src/creative/StudioModelCameraWorkspace.additive.test.tsx",
+      "bytes": 6039,
+      "sha256": "755485736c17436801f0cb37fbf14db2cf691a052e788479a4d7a87a2139bf1a"
+    },
+    {
+      "blob": "089df4c3542cb28d024d5195988bdb47b4c7e0db",
+      "path": "frontend/src/creative/StudioModelReferencePanel.tsx",
+      "bytes": 9142,
+      "sha256": "bbb6d0d4538955336ffc2f96061c32346d0e9c4b5c710e70c9776384fb991aac"
+    },
+    {
+      "blob": "66d64426ae80b33c487bf506d571561605fa1028",
+      "path": "frontend/src/creative/modelCameraWire.testFixture.json",
+      "bytes": 7323,
+      "sha256": "f15f4f1afa759be94d0cb35b8c6dbbfcfc0752153ac0bcebf52e806361157305"
+    },
+    {
+      "blob": "1b3aa15c80318ee85ec015f93fdd70b1b8cf9588",
+      "path": "frontend/src/creative/studioClient.ts",
+      "bytes": 37784,
+      "sha256": "7189a9c3372cde939fdd85f7e7a6ab4c76bdde63fca734c7acb46f4e487b3031"
+    },
+    {
+      "blob": "116a4ccac16fa7658fed2e71e53da217ac70c27e",
+      "path": "frontend/src/creative/studioModelCamera.testFixtures.ts",
+      "bytes": 3671,
+      "sha256": "a60a38839978c8c15f677f1512778b88cef0fe6cf97f3739c9de2ae9b81c1cd4"
+    },
+    {
+      "blob": "5e77ebf1e31fbe05f37322413aaf97ee949f0df9",
+      "path": "frontend/src/creative/studioModelCameraContract.additive.test.ts",
+      "bytes": 10518,
+      "sha256": "765d1c0ab88ee3af345a2a1ed8d0123ae8945c8aea74ebe6ff37750b06a87903"
+    },
+    {
+      "blob": "7c4f4c1b14d3de2d0e4f8a1104b857ec3b3e3c2e",
+      "path": "frontend/src/creative/studioModelCameraContract.ts",
+      "bytes": 12021,
+      "sha256": "9d3911dfbe7520560ae048e24035f8439764f9fc511db600460d313eb4635d9d"
+    },
+    {
+      "blob": "202157c6d749c67621154e4d90a1d08e25cde871",
+      "path": "frontend/src/experimental/ModelBenchmarkPanel.tsx",
+      "bytes": 31539,
+      "sha256": "4a456b129590657fb4671f7e6a785410dfd5371712106938d4cae890cf834947"
+    },
+    {
+      "blob": "230b955a6ee364752f7f6e42b437b6346adb9093",
+      "path": "frontend/src/experimental/ModelBenchmarkPanel.video.test.tsx",
+      "bytes": 31330,
+      "sha256": "0ff96ca793902da558d3307b53c0f1c61b0028a93086fec4ac2382bdb130ce35"
+    },
+    {
+      "blob": "84bad9bcaed6af64562709b466474afed2f833c1",
+      "path": "frontend/src/experimental/modelBrokerClient.ts",
+      "bytes": 5439,
+      "sha256": "a3375af7a54c7db0548321d1cc2acdfc0d26a1f596f347e1a5940b3aa870c1f7"
+    },
+    {
+      "blob": "f8da0deba357179799e8d16155b9aca0eca34c96",
+      "path": "packaging/public-build.json",
+      "bytes": 24689,
+      "sha256": "533e9acd7b4ec59e79c10f2036f2fa1c7dff1c341a04bc92cc53df1081c89dd9"
+    },
+    {
+      "blob": "958f7bc65b9b822e93778f05abe416a9ed9ad666",
+      "path": "tests/test_v2_static_glb_camera_owner.py",
+      "bytes": 24531,
+      "sha256": "cbfe2d44846747debac9f991f53178ec714ac47620b71f81984c889da44afd55"
+    },
+    {
+      "blob": "e74725527f2af28e71fb3bbe8911cab44b427e8d",
+      "path": "tests/test_v2_static_glb_cameras.py",
+      "bytes": 11729,
+      "sha256": "8af3b3ad3ab0313173f83a370fa68232be6029a5ef6780bf1e180f7da5cafa0f"
+    },
+    {
+      "blob": "82ab789bd2b9d9ec0e42f6117393f5f9cd569754",
+      "path": "tests/test_v2_video_benchmark.py",
+      "bytes": 27609,
+      "sha256": "d536a96039d79a6105971d91766844a7fafff9280a5d0f3f1f75704f6d821ac1"
+    },
+    {
+      "blob": "e3f51be3f90327195e9eb84371c39f01cce835f0",
+      "path": "tests/test_v2_video_benchmark_api.py",
+      "bytes": 22705,
+      "sha256": "ca1e6107b3be4df433205de2202c4e974adf981d0371bcfc9aec22f9b45b6aa6"
+    },
+    {
+      "blob": "49cef1e3d00bf3e2737e3b5b8e1a657e08b20eaa",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 27473,
+      "sha256": "fb231b5dd834244b04b72ea861ee686e9d29222ad6fa3d8104f0aed755e1fdc9"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
