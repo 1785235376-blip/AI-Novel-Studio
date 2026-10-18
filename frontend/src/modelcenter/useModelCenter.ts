@@ -14,7 +14,7 @@ import { ApiError } from '../api';
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
 import type { CollaborationContext } from '../api';
 import { createModelCenterClient, type ModelCenterClient, type ModelCenterSourceStatus } from './modelCenterClient';
-import { modelCenterCatalog, modelCenterStorage } from './modelCenterContract';
+import { modelCenterInjectedCatalog, modelCenterStorage } from './modelCenterContract';
 import {
   MODEL_CENTER_CODES,
   type ModelCenterCatalogPayload, type ModelCenterCredentialState, type ModelCenterHardwareFact,
@@ -69,17 +69,6 @@ function problemOf(reason: unknown, fallback: string): ModelCenterProblem {
   return { code: MODEL_CENTER_CODES.readFailed.code, message: fallback };
 }
 
-function isDecodedCatalog(value: unknown): value is ModelCenterCatalogPayload {
-  return !!value && typeof value === 'object' && !Array.isArray(value)
-    && Array.isArray((value as ModelCenterCatalogPayload).models)
-    && Array.isArray((value as ModelCenterCatalogPayload).runtimes);
-}
-function isDecodedStorage(value: unknown): value is ModelCenterStoragePayload {
-  return !!value && typeof value === 'object' && !Array.isArray(value)
-    && typeof (value as ModelCenterStoragePayload).limits?.project_asset_bytes === 'number'
-    && typeof (value as ModelCenterStoragePayload).physical_cleanup_available === 'boolean';
-}
-
 export function useModelCenter(props: ModelCenterControllerProps) {
   const [state, setState] = useState<ModelCenterSurfaceState>(props.denied ? 'DENIED' : 'IDLE');
   const [problem, setProblem] = useState<ModelCenterProblem>();
@@ -126,15 +115,20 @@ export function useModelCenter(props: ModelCenterControllerProps) {
     const request = ++epoch.current;
     pending.current = true; setProblem(undefined); setState('LOADING');
     try {
+      // Injected facts cannot bypass the same project-context boundary used
+      // when the original client performs its own read.
+      if (!client.current) throw new ApiError({ status: 400, code: MODEL_CENTER_CODES.catalogInvalid.code, message: MODEL_CENTER_CODES.catalogInvalid.message });
+      if (captured.scope && captured.scope.projectId !== captured.projectId) throw new ApiError({ status: 403,
+        code: MODEL_CENTER_CODES.catalogScopeMismatch.code, message: MODEL_CENTER_CODES.catalogScopeMismatch.message });
       let providedCatalog: ModelCenterCatalogPayload | undefined;
       let providedStorage: ModelCenterStoragePayload | undefined;
       const notes: ModelCenterProblem[] = [];
       if (captured.catalog !== undefined) {
-        try { providedCatalog = isDecodedCatalog(captured.catalog) ? captured.catalog : modelCenterCatalog((captured.catalog as { models?: unknown }).models, (captured.catalog as { runtimes?: unknown }).runtimes); }
+        try { providedCatalog = modelCenterInjectedCatalog(captured.catalog); }
         catch (reason) { notes.push(problemOf(reason, MODEL_CENTER_CODES.catalogInvalid.message)); }
       }
       if (captured.storage !== undefined) {
-        try { providedStorage = isDecodedStorage(captured.storage) ? captured.storage : modelCenterStorage(captured.storage); }
+        try { providedStorage = modelCenterStorage(captured.storage); }
         catch (reason) { notes.push(problemOf(reason, MODEL_CENTER_CODES.storageInvalid.message)); }
       }
       if (captured.hardware !== undefined) {

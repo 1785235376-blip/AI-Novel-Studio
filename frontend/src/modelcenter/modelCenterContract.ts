@@ -381,6 +381,40 @@ export function modelCenterCatalog(
   });
 }
 
+/** Revalidate caller-injected projections; an array shape is not decoder evidence. */
+export function modelCenterInjectedCatalog(value: unknown): ModelCenterCatalogPayload {
+  return scope('catalog', () => {
+    const root = object(value, ['models', 'runtimes', 'capability_snapshots', 'hidden_by_authority', 'sources'], 'catalog');
+    if (!Array.isArray(root.models) && !Array.isArray(root.runtimes)) {
+      // Preserve the original pair of raw endpoint envelopes, without accepting
+      // a mixed raw/decoded projection or extra claimed observation fields.
+      object(value, ['models', 'runtimes'], 'catalog');
+      return modelCenterCatalog(root.models, root.runtimes);
+    }
+    const models = list(root.models, MODEL_CENTER_BOUNDS.items, 'catalog').map(value => {
+      const item = object(value, [...MODEL_ALLOWED, 'hardware_profile'], 'catalog');
+      if (item.hardware_profile === undefined) return item;
+      if (item.hardware_profile_details !== undefined) invalid();
+      const profile = object(item.hardware_profile, ['id', 'gpu_name', 'profile_kind', 'tested',
+        'vram_required_mib', 'vram_recommended_mib', 'ram_required_mib', 'ram_recommended_mib'], 'catalog');
+      const mapped: Record<string, unknown> = {};
+      for (const [key, entry] of Object.entries(profile)) mapped[key.endsWith('_mib') ? key.slice(0, -4) : key] = entry;
+      const { hardware_profile: _profile, ...rest } = item;
+      return { ...rest, hardware_profile_details: [mapped] };
+    });
+    const runtimes = list(root.runtimes, MODEL_CENTER_BOUNDS.items, 'catalog');
+    const snapshots = list(root.capability_snapshots, MODEL_CENTER_BOUNDS.items, 'catalog').map(value => {
+      const item = object(value, SNAPSHOT_ALLOWED, 'catalog');
+      return modelCenterRuntimeCapabilitySnapshot(item, identityToken(item.runtime_id, 'catalog'));
+    });
+    if (new Set(snapshots.map(item => item.runtime_id)).size !== snapshots.length) invalid();
+    const sources = list(root.sources, 2, 'catalog');
+    if (sources.length !== 2 || sources[0] !== 'MODEL_CENTER_MODELS' || sources[1] !== 'MODEL_CENTER_RUNTIMES') invalid();
+    const hidden = integer(root.hidden_by_authority, MODEL_CENTER_BOUNDS.items, 'catalog');
+    return modelCenterCatalog({ items: models }, { items: runtimes }, snapshots, hidden);
+  });
+}
+
 /* ------------------------------------------------------------------ 存储准入 */
 
 const STORAGE_ALLOWED = ['assets', 'trash', 'limits', 'model_storage', 'cache_storage', 'export_storage', 'physical_cleanup_available', 'admission'] as const;

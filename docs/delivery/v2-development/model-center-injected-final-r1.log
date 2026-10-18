@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/modelcenter/ModelCenterInjectedSafety.additive.test.tsx (6 tests) 35ms
+ ✓ src/modelcenter/BailianPresetPanel.additive.test.tsx (5 tests) 118ms
+ ✓ src/modelcenter/ModelCenterPanel.additive.test.tsx (7 tests) 310ms
+ ✓ src/modelcenter/ModelCenterPanel.test.tsx (20 tests) 474ms
+
+ Test Files  4 passed (4)
+      Tests  38 passed (38)
+   Start at  12:59:16
+   Duration  1.26s (transform 313ms, setup 78ms, collect 854ms, tests 936ms, environment 1.24s, prepare 261ms)
+

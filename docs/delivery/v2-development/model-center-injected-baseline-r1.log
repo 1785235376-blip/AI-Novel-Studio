@@ -1,0 +1,65 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/modelcenter/ModelCenterInjectedSafety.additive.test.tsx (2 tests | 2 failed) 27ms
+   × refuses incomplete injected catalog rather than exposing a renderer-crashing decoded value 21ms
+     → expected { models: [], runtimes: [] } to be undefined
+   × refuses injected storage claiming physical cleanup authority 5ms
+     → expected { …(7) } to be undefined
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  12:57:15
+   Duration  764ms (transform 123ms, setup 18ms, collect 189ms, tests 27ms, environment 281ms, prepare 53ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/modelcenter/ModelCenterInjectedSafety.additive.test.tsx > refuses incomplete injected catalog rather than exposing a renderer-crashing decoded value
+AssertionError: expected { models: [], runtimes: [] } to be undefined
+
+- Expected: 
+undefined
+
++ Received: 
+Object {
+  "models": Array [],
+  "runtimes": Array [],
+}
+
+ ❯ src/modelcenter/ModelCenterInjectedSafety.additive.test.tsx:12:254
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/modelcenter/ModelCenterInjectedSafety.additive.test.tsx > refuses injected storage claiming physical cleanup authority
+AssertionError: expected { …(7) } to be undefined
+
+- Expected: 
+undefined
+
++ Received: 
+Object {
+  "assets": Object {
+    "bytes": 0,
+    "count": 0,
+  },
+  "cache_storage": "SEPARATE_OWNER",
+  "export_storage": "CLIENT_SELECTED_DOWNLOAD",
+  "limits": Object {
+    "asset_bytes": 1024,
+    "project_asset_bytes": 4096,
+    "project_assets": 10,
+  },
+  "model_storage": "EXTERNAL_READ_ONLY",
+  "physical_cleanup_available": true,
+  "trash": Object {
+    "bytes": 0,
+    "count": 0,
+  },
+}
+
+ ❯ src/modelcenter/ModelCenterInjectedSafety.additive.test.tsx:15:277
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
