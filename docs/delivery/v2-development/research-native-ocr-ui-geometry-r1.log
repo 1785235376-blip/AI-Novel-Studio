@@ -1,0 +1,33 @@
+
+Running 4 tests using 1 worker
+
+  ✘  1 [chromium] › tests/visual/design-system.spec.ts:14:124 › shell geometry 1024x768 (1ms)
+Testing stopped early after 1 maximum allowed failures.
+
+
+  1) [chromium] › tests/visual/design-system.spec.ts:14:124 › shell geometry 1024x768 ──────────────
+
+    Error: browserType.launch: Executable doesn't exist at /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/research-native-ocr-ui-geometry-r1/xdg-cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/geometry/design-system-shell-geometry-1024x768-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/geometry/design-system-shell-geometry-1024x768-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/geometry/design-system-shell-geometry-1024x768-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests/visual/design-system.spec.ts:14:124 › shell geometry 1024x768 ───────────────
+  3 did not run
+  1 error was not a part of any test, see above for details

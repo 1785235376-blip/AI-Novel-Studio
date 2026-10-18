@@ -1,0 +1,16 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/ResearchNativeOCRPanel.test.tsx (3 tests) 208ms
+ ✓ src/experimental/ResearchLibraryPanel.additive.test.tsx (2 tests) 329ms
+   ✓ locates page-only evidence in the original source without claiming extracted text 307ms
+ ✓ src/experimental/ResearchLibraryPanel.continuation.test.tsx (3 tests) 435ms
+ ✓ src/experimental/ResearchLibraryPanel.test.tsx (10 tests) 973ms
+ ✓ src/experimental/ResearchLibraryPanel.location.test.tsx (9 tests) 1236ms
+   ✓ locates the exact second-page original paragraph, preserves draft, and saves only explicit original-owner selection 417ms
+
+ Test Files  5 passed (5)
+      Tests  27 passed (27)
+   Start at  18:22:59
+   Duration  2.14s (transform 299ms, setup 88ms, collect 1.23s, tests 3.18s, environment 1.82s, prepare 345ms)
+

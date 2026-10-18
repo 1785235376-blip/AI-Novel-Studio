@@ -1,0 +1,30 @@
+(node:7) Warning: Failed to load the ES module: /workspace/scratch/20a0022d2b33/studio-director-transport/frontend/playwright.visual.config.ts. Make sure to set "type": "module" in the nearest package.json file or use the .mjs extension.
+(Use `node --trace-warnings ...` to show where the warning was created)
+/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/playwright.visual.config.ts:11
+const frontend = _nodePath.default.dirname((0, _nodeUrl.fileURLToPath)(import.meta.url));
+                                                                              ^^^^
+
+SyntaxError: Cannot use 'import.meta' outside a module
+    at wrapSafe (node:internal/modules/cjs/loader:1804:18)
+    at Module._compile (node:internal/modules/cjs/loader:1846:20)
+    at Object.<anonymous> (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1617:12)
+    at require (node:internal/modules/helpers:153:16)
+    at Object.<anonymous> (/tmp/studio-native-ocr-geometry.config.ts:1:1)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object.<anonymous> (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1617:12)
+    at require (node:internal/modules/helpers:153:16)
+    at requireOrImport (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:1138:18)
+    at loadUserConfig (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:1323:52)
+    at loadConfig (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:1330:28)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at Object.loadConfigFromFile (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:1546:10)
+    at runTests (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/cli/testActions.js:46:18)
+    at _Command.<anonymous> (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/program.js:55:7)
