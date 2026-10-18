@@ -82,3 +82,18 @@ No frontend source changed, so no repeated TypeScript/production UI build. No
 full-suite, public distribution rebuild, Windows, browser, real model quality or
 all-V2 readiness claim. Earlier File-only reports remain historical; this report
 adds current bounded PostgreSQL evidence without rewriting old outcomes.
+
+## Structured SCREENPLAY V2 transport follow-through
+
+The existing two V2 SCREENPLAY HTTP scenarios also pass with genuine PostgreSQL
+owners: model-v2 preview/dispatch, restart, pending review, human edit, DRAFT
+adoption/reopen, and rejection of wrong source kind or missing Host. The original
+scenario assertions are reused unchanged; only their File persisted-byte helper
+is replaced by canonical reads of actual PostgreSQL JSONB and their restart helper
+constructs fresh original PostgreSQL owners. This is not a mocked persistence
+view. The original model response remains a test wire.
+
+Receipt director-pending-postgres-screenplay-http-r1: 2 PASS on the existing GREEN
+OID 31303, server stopped. No production changes were needed after 80b42c8. As with
+the Storyboard route check, this is mounted ASGI transport, not a full product
+browser, real model or Windows acceptance result.
