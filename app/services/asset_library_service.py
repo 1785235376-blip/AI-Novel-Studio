@@ -57,7 +57,7 @@ class AssetLibraryService:
         def redact(item):
             if isinstance(item, dict):
                 for key in ("_required_features", "_owner_actor_id", "_origin_provenance", "_project_binding",
-                            "_text_result_origin", "_text_result_review", "_text_execution_receipt", "_studio_result_origin", "_manual_mask_origin", "_model_reference_origin", "_video_reference_origin", "_prompt_write_origin"):
+                            "_text_result_origin", "_text_result_review", "_text_execution_receipt", "_studio_result_origin", "_manual_mask_origin", "_model_reference_origin", "_video_reference_origin", "_prompt_write_origin", "_comic_ora_origin"):
                     item.pop(key, None)
                 if not lineage_enabled and isinstance(item.get("parameters"), dict):
                     item["parameters"].pop("asset_lineage_v2", None)
@@ -141,6 +141,10 @@ class AssetLibraryService:
 
     def _in_scope(self, meta: dict, branch_id: str | None, actor_id: str | None = None) -> bool:
         binding, active = meta.get("_project_binding"), getattr(self._scope, "binding", None)
+        if "_comic_ora_origin" in meta:
+            from .comic_ora_origin import record
+            try: record(meta)
+            except (ValueError, TypeError, KeyError): return False
         if "_manual_mask_origin" in meta:
             try:
                 self._manual_record(meta)
@@ -199,7 +203,8 @@ class AssetLibraryService:
                _initial_manual_mask: dict | None = None, _manual_expected_retry_id: str | None = None,
                _initial_prompt_write: dict | None = None,
                _initial_model_reference: dict | None = None, _model_reference_expected_retry_id: str | None = None,
-               _initial_video_reference: dict | None = None, _video_reference_expected_retry_id: str | None = None):
+               _initial_video_reference: dict | None = None, _video_reference_expected_retry_id: str | None = None,
+               _initial_comic_ora: dict | None = None):
         from ..experimental.flags import RUNTIME_FLAGS, enabled_flags
         if set(required_features) - set(RUNTIME_FLAGS) or not set(required_features).issubset(enabled_flags()):
             raise ValueError("asset origin feature unavailable")
@@ -241,6 +246,17 @@ class AssetLibraryService:
             identity["_project_binding"] = copy.deepcopy(binding)
         if required_features or owner_actor_id:
             identity.update(_required_features=sorted(set(required_features)), _owner_actor_id=owner_actor_id)
+        if _initial_comic_ora is not None:
+            from .comic_ora_origin import marker, FEATURES
+            origin = marker(_initial_comic_ora)
+            if (binding is None or owner_actor_id != origin['actor'] or not callable(guard)
+                    or kind != 'image' or media_type != 'image/png' or not FEATURES.issubset(required_features)
+                    or any(v is not None for v in (_initial_text_result, _initial_studio_result, _initial_manual_mask,
+                        _initial_model_reference, _initial_video_reference, _initial_prompt_write))
+                    or (origin['scope_key'], origin['incarnation'], origin['png_sha256']) !=
+                       (binding['scope_key'], binding['incarnation'], identity['sha256'])):
+                raise ValueError('COMIC_ORA_ORIGIN_INVALID')
+            identity['_comic_ora_origin'] = origin
         if _initial_prompt_write is not None:
             # Server-only request provenance joins the original first metadata
             # commit and idempotency identity. No HTTP DTO exposes this field.
@@ -406,6 +422,27 @@ class AssetLibraryService:
                 video_prior = self.video_reference_retry(novel_id, idempotency_key, branch_id=branch_id)
                 if _video_reference_expected_retry_id is not None and (video_prior is None or video_prior["id"] != _video_reference_expected_retry_id):
                     raise ValueError("VIDEO_REFERENCE_RETRY_CHANGED")
+            comic_orphan_verified = False
+            if _initial_comic_ora is not None:
+                # Exact preallocated ID is journaled before this call. Never
+                # discover/adopt another actor's record via a generic list.
+                expected_id = identity['_comic_ora_origin']['asset_id']
+                if self._meta_path(expected_id).exists():
+                    existing = self._load(expected_id)
+                    if (existing.get('novel_id') != novel_id or existing.get('idempotency_key') != idempotency_key
+                            or any(existing.get(k) != v for k, v in identity.items()) or existing.get('deleted_at')
+                            or not self._in_scope(existing, branch_id, owner_actor_id)):
+                        raise AssetIdempotencyConflict('COMIC_ORA_STAGED_ID_CONFLICT')
+                    self._verified_content(existing, max_bytes=self.MAX_BYTES, guard=guard)
+                    guard()
+                    return existing
+                if self._bin_path(expected_id).exists():
+                    # Exact ID was durably planned before create. Reconcile only
+                    # bytes identical to the caller's newly parsed canonical PNG.
+                    # Never remove a pre-existing orphan on another write failure.
+                    self._verified_content({'id': expected_id, 'size': len(data), 'sha256': identity['sha256']},
+                                           max_bytes=self.MAX_BYTES, guard=guard)
+                    comic_orphan_verified = True
             if idempotency_key:
                 candidates = ([manual_prior] if manual_prior is not None else []) if manual_lineage is not None else self.list(novel_id, branch_id=branch_id, include_deleted=True, actor_id=owner_actor_id)
                 if model_lineage is not None: candidates = [reference_prior] if reference_prior is not None else []
@@ -425,7 +462,7 @@ class AssetLibraryService:
                     if model_lineage is not None: self._model_reference_source(origin, novel_id, branch_id)
                     if video_lineage is not None: self._video_reference_source(origin, novel_id, branch_id)
                     return existing
-            asset_id = str(uuid.uuid4())
+            asset_id = identity['_comic_ora_origin']['asset_id'] if _initial_comic_ora is not None else str(uuid.uuid4())
             meta = {"id": asset_id, "novel_id": novel_id, **identity, "created_at": now(), "updated_at": now(),
                     "version": 1, "deleted_at": None, "idempotency_key": idempotency_key}
             if initial_review is not None:
@@ -454,7 +491,7 @@ class AssetLibraryService:
                 # owner lock. If metadata never committed, keep no unindexed
                 # binary. A metadata commit followed by an error is recoverable
                 # through the idempotency key and must retain its original bytes.
-                if not self._meta_path(asset_id).exists():
+                if not self._meta_path(asset_id).exists() and not comic_orphan_verified:
                     target.unlink(missing_ok=True)
                 raise
             finally:
@@ -1010,6 +1047,8 @@ class AssetLibraryService:
             if expected_version is not None and meta["version"] != expected_version:
                 from .v1_capability_service import CapabilityVersionConflict
                 raise CapabilityVersionConflict(self.public(meta))
+            if '_comic_ora_origin' in meta and any(meta.get(k) != v for k, v in fields.items()):
+                raise ValueError('COMIC_ORA_STAGED_METADATA_IMMUTABLE')
             if meta.get("_text_result_origin") is not None and any(
                     key in fields and fields[key] != meta.get(key)
                     for key in ("source_job_id", "provider_id", "model_id", "parameters", "approved_at", "source_asset_ids")):
@@ -1098,6 +1137,8 @@ class AssetLibraryService:
         """Server-only explicit review: retain origin, identity and bytes."""
         with self._lock, workspace_mutation(self.root, "asset-library"):
             meta = self.get(asset_id, branch_id=branch_id, actor_id=actor_id)
+            if '_comic_ora_origin' in meta:
+                raise ValueError('COMIC_ORA_EXPLICIT_IMPORT_REVIEW_NOT_IMPLEMENTED')
             if meta.get("_text_result_origin") is not None:
                 raise ValueError("TEXT_RESULT_PRIVATE_OWNER_REQUIRED")
             saved_provenance = {**copy.deepcopy(provenance), "review_actor": actor_id}

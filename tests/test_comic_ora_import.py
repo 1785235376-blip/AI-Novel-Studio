@@ -27,7 +27,11 @@ def archive(*, xml=None, changes=None, additions=(), compression=zipfile.ZIP_STO
     stream = io.BytesIO()
     with zipfile.ZipFile(stream, 'w') as out:
         for name, data in [*files.items(), *additions]:
-            if data is not None: out.writestr(name, data, compress_type=zipfile.ZIP_STORED if name == 'mimetype' else compression)
+            if data is not None:
+                # Re-selection fixtures must preserve exact archive bytes across
+                # DOS timestamp boundaries. Preserve explicit adversarial ZipInfo.
+                member = name if isinstance(name, zipfile.ZipInfo) else zipfile.ZipInfo(name, (2000, 1, 1, 0, 0, 0))
+                out.writestr(member, data, compress_type=zipfile.ZIP_STORED if member.filename == 'mimetype' else compression)
     return stream.getvalue()
 
 

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "c970e594ba614c08d6268bdbbb407f83e013e7057c9d0f130e5f4df15262a39a",
+  "application_source_fingerprint_sha256": "03e9147e0f6c11cc222d43d815518a2dad6619df46466b3b622747afb20e9cdd",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -164,6 +164,7 @@
     "app/experimental/comic_layouts_api.py": "d00945fd330ae04baaca55e416238918ace6c6627e9833f5e9877a1a96479ad7",
     "app/experimental/comic_ora.py": "b986f0ae1b3d088be7bc0e6e7b8dad3efc84f005735d5e7c0faa15c6edc5faaf",
     "app/experimental/comic_ora_import.py": "4599ce5a67ebbfd06a60d66d062ff4c83be6b5f09375c34e5e0841730926a18a",
+    "app/experimental/comic_ora_staging.py": "f1c7ed7af51eac076b4a63c0e57b2de3b4227324ad45167ec519c9ffb3a759a6",
     "app/experimental/common.py": "e69739dbefb4fd71e5ac8945f76a534b77bca5cd8252648304a5724ab39127a0",
     "app/experimental/declarative_adapter_sdk.py": "8783ff8a17478dbd13023951176567904ab8c4985fc90aaf80a7fa1a7b707bc1",
     "app/experimental/declarative_agents.py": "2e106fad1a3b403cad889a27db9626edeffe5f01107452c6f1c73316b77e50b8",
@@ -454,7 +455,7 @@
     "app/services/agent_context_service.py": "647b09c44bf8b54f1545cd1d0ac2e2a7afb9183f54103140d6ef4d2332c4c297",
     "app/services/agent_job_service.py": "894983ea8de02effb5e6bd05b1ab4daccbeb41404b6abea1b06b18ccafa780e7",
     "app/services/ai_planning_service.py": "1b7f2b06bd62ae4d378ca1809a6003b6db1e1b5b3d449f88b2b929c8dad8c9fa",
-    "app/services/asset_library_service.py": "63ce58e7081d40461b1c7ed647e6c74cc90e5ec158fc2a8d9dc4c52b52c57f70",
+    "app/services/asset_library_service.py": "d76694e19423f73aae0c6f09d500c52391b56fd1583578c2e4c42864df70568e",
     "app/services/asset_task_worker.py": "8f0f6a64af0bfb0a6d1e50dfd42511cfb5262b7dde530153237d18ee270bfd3c",
     "app/services/audiobook_service.py": "0b1840e0a0d7df70e633e78ed4dbb9fbfe392db6ab1e098c23c987d8dd2b63a7",
     "app/services/authorization_service.py": "ad1862ae3aa21eb9547e4d9ddadf30c08a4aeff8e9a2c4a9d345548d689bd374",
@@ -462,6 +463,7 @@
     "app/services/canon_service.py": "f1d985bcd028a39147a1548dacebfdf5508ec8e226faff696cb7b050e513b843",
     "app/services/chapter_service.py": "30430822dd30f6ef0eac50f708941797801d099f842c357d4bc25c04ecfd9900",
     "app/services/collaboration_scope_service.py": "605fe6b9de231240f4b76fe54595db3f24ca02dbc3e060c8db637e6bcd6c1dfd",
+    "app/services/comic_ora_origin.py": "af0060ba36cb3238a9481093cc2dc7d8de28fe6ec64800d5332b13bd59859756",
     "app/services/context_service.py": "184c44949b85b9815528c1b0ef6ca15b0f5cf2e83decd38ef1b5bc7279869cc4",
     "app/services/context_snapshot_service.py": "cc1c32a28725acb69cf732063233e4489868dc0b2b3b337c65dbee04912ed13c",
     "app/services/continuity_finding_service.py": "ac10263f095d7458da6b0b4351a53634c661fb3dd13d186895b7537ff67e1022",
@@ -550,7 +552,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "69d55ce978db93338d2bc95673ce2b3bea128d9f24105579a204cd95659e26fa",
+    "sha256": "d7659ba116c85050952daefb4ec7239a9b9b5568484a2e5030f7e13930bd55b9",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -3938,7 +3940,8 @@
       "operation_id": "passport_api_novels__nid__experimental_production_manifests__rid__outputs__pid__passport_get",
       "owner_ref": "47521f39e9649b6b90dd307f7bf6008a0764868f16912d13c3d40091a8083d17",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "176077ba96b449a9bc00e306e1d1c6ecd48002c20ac4eb37bc1ca8ff5e52877a",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -9662,7 +9665,8 @@
       "operation_id": "passport_api_v1_novels__nid__experimental_production_manifests__rid__outputs__pid__passport_get",
       "owner_ref": "47521f39e9649b6b90dd307f7bf6008a0764868f16912d13c3d40091a8083d17",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d4335add699c1d8c59b0a81f51a71645dea46ef96b58060ce32302c9f5877411",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
