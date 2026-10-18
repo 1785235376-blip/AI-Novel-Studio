@@ -1,0 +1,25 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/storyboard-speech/frontend
+
+ ✓ src/creative/StoryboardProductionPanel.phase4.test.tsx (24 tests) 1135ms
+ ✓ src/creative/StoryboardVideoPipeline.phase5.test.tsx (12 tests) 2207ms
+ ✓ src/creative/studioAudioMp3Contract.test.tsx (32 tests) 377ms
+ ✓ src/creative/studioAudioFades.additive.test.tsx (29 tests) 800ms
+ ✓ src/creative/StoryboardSpeechControls.additive.test.tsx (18 tests) 1349ms
+ ✓ src/creative/StudioMediaRouteChoice.test.tsx (9 tests) 474ms
+ ✓ src/creative/StudioImageRuntimeProduction.test.tsx (6 tests) 3477ms
+   ✓ image runtime source roles through the mounted original workspace > records weighted references without automatic queue, execution or review and invalidates old preview consent on weight edit 583ms
+   ✓ image runtime source roles through the mounted original workspace > binds base then mask, preserves explicit candidate byte verification and separate review 776ms
+   ✓ image runtime source roles through the mounted original workspace > requires fresh cloud consent after reference weights change and never falls back or sends automatically 1276ms
+   ✓ image runtime source roles through the mounted original workspace > retains exact request identity after lost create and recovers only by original read 365ms
+ ✓ src/creative/studioAudioFlacContract.phase6.test.tsx (18 tests) 209ms
+ ✓ src/creative/studioStoryboardContract.phase4.test.ts (52 tests) 35ms
+ ✓ src/creative/StudioVideoAssetHandoff.test.tsx (26 tests) 1459ms
+ ✓ src/creative/studioStoryboardSpeech.additive.test.ts (35 tests) 54ms
+ ✓ src/creative/studioStoryboardShotContext.phase5.test.ts (18 tests) 21ms
+
+ Test Files  12 passed (12)
+      Tests  279 passed (279)
+   Start at  06:23:17
+   Duration  12.66s (transform 3.94s, setup 84ms, collect 7.45s, tests 11.60s, environment 3.11s, prepare 623ms)
+

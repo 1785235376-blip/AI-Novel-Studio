@@ -244,6 +244,14 @@ class ProductionExecutionService:
             raise ValueError("STUDIO_IMAGE_CUTOUT_PROOF_CHANGED")
 
     def _sources_current(self, nid, scope, context, guard):
+        if context.get("storyboard_speech") is not None:
+            from .storyboard import validate_speech_command
+            command = MediaCommand.model_validate(context["command"])
+            if command.storyboard_speech is None or command.storyboard_speech.model_dump() != context["storyboard_speech"]:
+                raise StaleSourceError("STUDIO_STORYBOARD_SPEECH_CONTEXT_CHANGED")
+            validate_speech_command(self.workspace.creative.get(nid, scope,
+                command.storyboard_speech.document_snapshot.id), command)
+            guard()
         if context.get("storyboard_shot") is not None:
             from .storyboard import validate_shot_pin
             pin = context["storyboard_shot"]
@@ -477,6 +485,13 @@ class ProductionExecutionService:
             context["storyboard_shot"] = command.storyboard_shot.model_dump()
             from .storyboard import validate_video_command
             validate_video_command(self.workspace.creative.get(nid, scope, command.storyboard_shot.document_snapshot.id), command)
+        if command.storyboard_speech is not None:
+            if graph_binding is not None:
+                raise ValueError("STUDIO_STORYBOARD_SPEECH_STANDALONE_ONLY")
+            context["storyboard_speech"] = command.storyboard_speech.model_dump()
+            from .storyboard import validate_speech_command
+            validate_speech_command(self.workspace.creative.get(nid, scope,
+                command.storyboard_speech.document_snapshot.id), command)
         if graph_binding is not None:
             from .graph_media_binding import validate_graph_binding
             context["graph_binding"] = validate_graph_binding(graph_binding, context)
@@ -484,7 +499,7 @@ class ProductionExecutionService:
         if command.operation_id == "m5.image.cutout" and graph_binding is not None:
             raise ValueError("STUDIO_IMAGE_CUTOUT_STANDALONE_ONLY")
         evidence = [{"snapshot": source["snapshot"], "measured": source.get("measured")}
-            for source in self._sources_current(nid, scope, {**context, "sources": sources, "operation_id": command.operation_id}, guard)]
+            for source in self._sources_current(nid, scope, {**context, "command": command.model_dump(), "sources": sources, "operation_id": command.operation_id}, guard)]
         binding = self._binding(command)
         names = self._parameters(command)
         # Resolve supported random seeds once from the captured request ID.
@@ -878,6 +893,8 @@ class ProductionExecutionService:
             origin["graph_binding"] = copy.deepcopy(context["graph_binding"])
         if context.get("storyboard_shot") is not None:
             origin["storyboard_shot"] = copy.deepcopy(context["storyboard_shot"])
+        if context.get("storyboard_speech") is not None:
+            origin["storyboard_speech"] = copy.deepcopy(context["storyboard_speech"])
         return origin
 
     def _private_media_candidate(self, nid, scope, actor, context, jid, candidate):
@@ -1034,6 +1051,8 @@ class ProductionExecutionService:
                 source_guard=lambda: self._sources_current(nid, scope, context, guard), promote=promote,
                 recover_review=self._review_compensation(nid, scope, actor, context, jid))
         elif owner == "audio":
+            if context.get("storyboard_speech") is not None:
+                self._sources_current(nid, scope, context, guard)
             row = self._audio(scope, actor).review(nid, jid, action.expected_version, context, guard, sources, action.reviewed_output_digest, promote,
                 recover_review=self._review_compensation(nid, scope, actor, context, jid))
         else:
@@ -1283,6 +1302,8 @@ class ProductionExecutionService:
                         origin["graph_binding"] = copy.deepcopy(context["graph_binding"])
                     if context.get("storyboard_shot") is not None:
                         origin["storyboard_shot"] = copy.deepcopy(context["storyboard_shot"])
+                    if context.get("storyboard_speech") is not None:
+                        origin["storyboard_speech"] = copy.deepcopy(context["storyboard_speech"])
                     def commit():
                         guard(); job_guard()
                         if prior is None: self.workspace.storage_admission.require(1)
@@ -1308,6 +1329,8 @@ class ProductionExecutionService:
                             self.workspace.assets.content(row["id"], branch_id=scope.get("branch_id"))
                     candidate = self.workspace.assets.get(aid, branch_id=scope.get("branch_id"), actor_id=actor)
                     origin = candidate.get("_studio_result_origin", {})
+                    if context.get("storyboard_speech") is not None and origin != self._media_result_origin(context, provenance["source_job_id"]):
+                        raise ValueError("STUDIO_STORYBOARD_SPEECH_CANDIDATE_CHANGED")
                     if origin.get("graph_binding") != context.get("graph_binding") or any(origin.get(k) != context.get(k) for k in ("scope_key", "incarnation", "actor", "request_digest")):
                         raise ValueError("STUDIO_CANDIDATE_OWNER_MISMATCH")
                     def commit(): guard(); job_guard()
@@ -1430,6 +1453,8 @@ class ProductionExecutionService:
                     if not settings.enable_cloud or not command.allow_cloud: raise ValueError("STUDIO_CLOUD_DISABLED")
         guard()
         def before_send(*args):
+            if context.get("storyboard_speech") is not None:
+                self._sources_current(nid, scope, context, guard)
             if context.get("graph_binding") is not None:
                 if graph_guard is None: raise ValueError("CREATIVE_GRAPH_MEDIA_DISPATCH_GUARD_REQUIRED")
                 graph_guard()

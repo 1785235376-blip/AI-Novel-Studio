@@ -135,6 +135,11 @@ class StoryboardShotPin(ExecutionModel):
     shot_digest: Digest
 
 
+class StoryboardSpeechPin(StoryboardShotPin):
+    """One explicitly selected authored dialogue; separate from video provenance."""
+    dialogue_index: int = Field(ge=0, le=199, strict=True)
+
+
 class _MediaCommandShape(ExecutionModel):
     operation_id: MediaOperation
     request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$")
@@ -150,6 +155,7 @@ class _MediaCommandShape(ExecutionModel):
     mask_source: ProductionSourceSnapshot | None = None
     video_reference: VideoReference | None = None
     storyboard_shot: StoryboardShotPin | None = None
+    storyboard_speech: StoryboardSpeechPin | None = None
     audio_profile: Literal["studio-audio-mp3/1"] | None = None
 
     @field_validator("audio_profile", mode="before")
@@ -163,7 +169,7 @@ class _MediaCommandShape(ExecutionModel):
     @model_serializer(mode="wrap")
     def legacy_image_identity(self, handler):
         value = handler(self)
-        for key in ("image_source", "image_references", "mask_source", "video_reference", "storyboard_shot", "audio_profile"):
+        for key in ("image_source", "image_references", "mask_source", "video_reference", "storyboard_shot", "storyboard_speech", "audio_profile"):
             if value.get(key) is None or (key == "image_references" and value[key] == []):
                 value.pop(key, None)
         return value
@@ -178,6 +184,16 @@ class _MediaCommandShape(ExecutionModel):
                     source.kind == "CREATIVE_DOCUMENT" and (source.id, source.version, source.digest) ==
                     (pin.id, pin.version, pin.digest) for source in self.source_snapshots)):
                 raise ValueError("STUDIO_STORYBOARD_SOURCE_PIN_REQUIRED")
+        if self.storyboard_speech is not None:
+            pin = self.storyboard_speech.document_snapshot
+            if (self.operation_id != "m8.audio.speech" or self.storyboard_shot is not None
+                    or len(self.source_snapshots) != 1 or self.provider_id is None or self.model_id is None
+                    or self.parameters.voice_id is None or self.parameters.speech_rate is None):
+                raise ValueError("STUDIO_STORYBOARD_SPEECH_COMMAND_INVALID")
+            source = self.source_snapshots[0]
+            if (source.kind != "CREATIVE_DOCUMENT" or (source.id, source.version, source.digest) !=
+                    (pin.id, pin.version, pin.digest)):
+                raise ValueError("STUDIO_STORYBOARD_SPEECH_SOURCE_PIN_REQUIRED")
         p = self.parameters.model_dump(exclude_none=True)
         allowed = {
             "m5.image.t2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},

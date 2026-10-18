@@ -129,6 +129,19 @@ def validate_video_command(row, command):
             raise StaleSourceError("CREATIVE_STORYBOARD_VIDEO_IMAGE_CHANGED")
 
 
+def validate_speech_command(row, command):
+    """Validate speech against the exact approved original shot, never video semantics."""
+    pin = command.storyboard_speech
+    if pin is None or command.operation_id != "m8.audio.speech":
+        raise ValueError("CREATIVE_STORYBOARD_SPEECH_COMMAND_REQUIRED")
+    shot = validate_shot_pin(row, pin.model_dump(exclude={"dialogue_index"}))
+    if pin.dialogue_index >= len(shot.dialogue):
+        raise ValueError("CREATIVE_STORYBOARD_SPEECH_DIALOGUE_REQUIRED")
+    text = shot.dialogue[pin.dialogue_index].text
+    if not text.strip() or command.prompt != text:
+        raise ValueError("CREATIVE_STORYBOARD_SPEECH_PROMPT_CHANGED")
+
+
 def storyboard_receipt(row):
     """Pure validated projection; caller owns scope/source/asset fences."""
     from .service import document_digest
@@ -197,6 +210,15 @@ class ShotImageRequest(ShotAction):
     request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$", strict=True)
     provider: ProviderSelection
     parameters: MediaExecutionParameters = Field(default_factory=MediaExecutionParameters)
+
+
+class ShotAudioRequest(ShotAction):
+    document_digest: str = Field(pattern=r"^[0-9a-f]{64}$", strict=True)
+    dialogue_index: int = Field(ge=0, le=199, strict=True)
+    request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$", strict=True)
+    provider: ProviderSelection
+    voice_id: Name
+    speech_rate: float = Field(ge=0.5, le=2, strict=True)
 
 
 class StoryboardVideoJob(StrictCreativeModel):
@@ -513,6 +535,37 @@ class StoryboardWorkspace:
     def _shot_pin(receipt, shot):
         return {"document_snapshot": copy.deepcopy(receipt["document_snapshot"]),
                 **{name: shot[name] for name in ("shot_id", "shot_version", "shot_digest")}}
+
+    def audio_request(self, nid, scope, actor, rid, shot_id, value, guard=lambda: None):
+        body = ShotAudioRequest.model_validate(value)
+        if self.production is None:
+            raise ValueError("CREATIVE_STORYBOARD_AUDIO_OWNER_REQUIRED")
+        with self._phase(nid, scope, actor, guard):
+            row = self.creative.get(nid, scope, rid)
+            receipt, shot = self._owned_shot(row, shot_id, body)
+            if not receipt["approved"]:
+                raise StaleSourceError("CREATIVE_STORYBOARD_APPROVAL_REQUIRED")
+            if receipt["document_snapshot"]["digest"] != body.document_digest:
+                raise StaleSourceError("CREATIVE_STORYBOARD_AUDIO_SOURCE_CHANGED")
+            if body.provider.operation_id != "m8.audio.speech":
+                raise ValueError("CREATIVE_STORYBOARD_AUDIO_PROVIDER_OPERATION_INVALID")
+            dialogue = shot["shot"]["dialogue"]
+            if body.dialogue_index >= len(dialogue) or not dialogue[body.dialogue_index]["text"].strip():
+                raise ValueError("CREATIVE_STORYBOARD_SPEECH_DIALOGUE_REQUIRED")
+            pin = {**self._shot_pin(receipt, shot), "dialogue_index": body.dialogue_index}
+            command = MediaCommand.model_validate({"operation_id": "m8.audio.speech", "request_id": body.request_id,
+                "provider_id": body.provider.provider_id, "model_id": body.provider.model_id,
+                "parameters": {"voice_id": body.voice_id, "speech_rate": body.speech_rate},
+                "source_snapshots": [{"kind": "CREATIVE_DOCUMENT", **pin["document_snapshot"], "reference_only": True}],
+                "storyboard_speech": pin, "prompt": dialogue[body.dialogue_index]["text"]})
+            validate_speech_command(row, command)
+            # Check the existing route and parameter contract without dispatching or creating a job.
+            self.production._binding(command)
+            self.production._parameters(command)
+            guard()
+            return {"contract": "studio-storyboard-audio-request/1", "shot_pin": pin, "command": command.model_dump(),
+                "automatic_dispatch": False, "model_called": False,
+                "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW", "product_acceptance": "LOCAL_REQUIRED"}
 
     def video_request(self, nid, scope, actor, rid, shot_id, value, guard=lambda: None):
         body = ShotVideoRequest.model_validate(value)

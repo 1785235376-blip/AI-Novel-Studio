@@ -1,0 +1,38 @@
+{
+  "source_commit": "ce3ac098",
+  "source_path": "app/creative/production_execution_models.py",
+  "evidence": "Actual baseline serializer; synthetic text and settings; no model invocation",
+  "cases": [
+    {
+      "input": {
+        "operation_id": "m8.audio.speech",
+        "request_id": "baseline-omission",
+        "provider_id": "synthetic-provider",
+        "model_id": "synthetic-model",
+        "prompt": "Synthetic authored fixture",
+        "parameters": {
+          "voice_id": "synthetic-voice",
+          "speech_rate": 1.25
+        }
+      },
+      "canonical_command": "{\"allow_cloud\":false,\"license_note\":\"\",\"model_id\":\"synthetic-model\",\"operation_id\":\"m8.audio.speech\",\"parameters\":{\"duration_seconds\":null,\"frame_rate\":null,\"height\":null,\"in_ms\":null,\"negative_prompt\":null,\"out_ms\":null,\"quality\":null,\"seed\":null,\"size\":null,\"speech_rate\":1.25,\"steps\":null,\"voice_id\":\"synthetic-voice\",\"width\":null},\"prompt\":\"Synthetic authored fixture\",\"provider_id\":\"synthetic-provider\",\"request_id\":\"baseline-omission\",\"source_snapshots\":[]}",
+      "sha256": "37bc0d1911071606101c6ba7dd23e02571e9f02d6392d14b655d7ece5f979d2f"
+    },
+    {
+      "input": {
+        "operation_id": "m7.video.t2v",
+        "request_id": "baseline-omission",
+        "provider_id": "synthetic-provider",
+        "model_id": "synthetic-model",
+        "prompt": "Synthetic authored fixture",
+        "parameters": {
+          "duration_seconds": 3,
+          "frame_rate": 24,
+          "seed": 7
+        }
+      },
+      "canonical_command": "{\"allow_cloud\":false,\"license_note\":\"\",\"model_id\":\"synthetic-model\",\"operation_id\":\"m7.video.t2v\",\"parameters\":{\"duration_seconds\":3,\"frame_rate\":24,\"height\":null,\"in_ms\":null,\"negative_prompt\":null,\"out_ms\":null,\"quality\":null,\"seed\":7,\"size\":null,\"speech_rate\":null,\"steps\":null,\"voice_id\":null,\"width\":null},\"prompt\":\"Synthetic authored fixture\",\"provider_id\":\"synthetic-provider\",\"request_id\":\"baseline-omission\",\"source_snapshots\":[]}",
+      "sha256": "519bd795d1f9d1690fe263ac97c864408e960404bf54b6f9fcf780e4fc1a9b09"
+    }
+  ]
+}

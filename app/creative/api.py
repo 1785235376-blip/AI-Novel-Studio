@@ -13,7 +13,7 @@ from .models import (CreativeProductionDocumentIn, CreativeDocumentUpdate, Creat
 from .adaptation_models import AdaptationIn, AdaptationReview, AdaptationPreview
 from .storyboard_model import DirectorStoryboardModelPreview, DirectorStoryboardModelDispatch
 from .storyboard import (StoryboardApproval, ShotImageBinding, ShotImageRequest, StoryboardTimelineDraft,
-    ShotVideoRequest, ShotVideoBinding, StoryboardTimelineCreate, StoryboardVideoAdoption)
+    ShotAudioRequest, ShotVideoRequest, ShotVideoBinding, StoryboardTimelineCreate, StoryboardVideoAdoption)
 
 FLAG = "narrative_production_v2"
 
@@ -165,6 +165,11 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
     def storyboard_timeline(nid: str, rid: str, request: Request, body: StoryboardTimelineDraft, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return storyboard_call(request, nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.storyboards.timeline_draft(nid, scope, actor, rid, body, guard))
+
+    @router.post("/documents/{rid}/shots/{shot_id}/audio-request")
+    def storyboard_audio_request(nid: str, rid: str, shot_id: str, request: Request, body: ShotAudioRequest, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return storyboard_call(request, nid, x_session_token, x_branch_id, "domain.read",
+                      lambda actor, scope, guard: service.storyboards.audio_request(nid, scope, actor, rid, shot_id, body, guard))
 
     @router.post("/documents/{rid}/shots/{shot_id}/video-request")
     def storyboard_video_request(nid: str, rid: str, shot_id: str, request: Request, body: ShotVideoRequest, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

@@ -234,7 +234,7 @@ def _body(value):
 
 def _body_shape(value):
     """Common strict shape, also used after stored owner/hash admission."""
-    allowed = {"operation_id", "provider_id", "model_id", "prompt", "parameters", "source_snapshots", "audio_profile"}
+    allowed = {"operation_id", "provider_id", "model_id", "prompt", "parameters", "source_snapshots", "audio_profile", "storyboard_speech"}
     if not isinstance(value, dict) or set(value) - allowed or value.get("operation_id") not in CAPABILITIES:
         raise _error("STUDIO_AUDIO_OPERATION_UNSUPPORTED", "原音频 owner 不支持此操作", 400)
     operation = value["operation_id"]
@@ -300,14 +300,21 @@ def _body_shape(value):
         raise _error("STUDIO_AUDIO_TRIM_SOURCE_REQUIRED", "裁剪须引用一个原音频资产", 400)
     if operation != "m8.audio.trim" and any(source.get("kind") != "CREATIVE_DOCUMENT" for source in sources):
         raise _error("STUDIO_AUDIO_GENERATION_SOURCE_UNSUPPORTED", "生成只接受原创作文本来源，不会假装消费音频引用", 400)
+    if "storyboard_speech" in value:
+        from ..creative.production_execution_models import MediaCommand
+        try:
+            MediaCommand.model_validate({**value, "request_id": "speech-shape"})
+        except (ValueError, TypeError):
+            raise _error("STUDIO_STORYBOARD_SPEECH_INVALID", "分镜对白语音请求无效", 400) from None
     return {"operation_id": operation, "provider_id": value.get("provider_id"), "model_id": value.get("model_id"),
             "prompt": prompt, "parameters": parameters, "source_snapshots": copy.deepcopy(sources),
-            **({"audio_profile": value["audio_profile"]} if "audio_profile" in value else {})}
+            **({"audio_profile": value["audio_profile"]} if "audio_profile" in value else {}),
+            **({"storyboard_speech": copy.deepcopy(value["storyboard_speech"])} if "storyboard_speech" in value else {})}
 
 
 def _binding(value, body):
     required = {"scope_key", "incarnation", "actor", "request_id", "operation_id", "request_digest", "sources", "provider_binding", "rights"}
-    optional = {"license_note", "command", "execution_recipe", "graph_binding"}
+    optional = {"license_note", "command", "execution_recipe", "graph_binding", "storyboard_speech"}
     if (not isinstance(value, dict) or not required.issubset(value) or set(value) - required - optional
             or value["operation_id"] != body["operation_id"]):
         raise _error("STUDIO_AUDIO_BINDING_REQUIRED", "须由原项目 owner 提供当前音频绑定", 403)
@@ -364,7 +371,14 @@ def _binding(value, body):
         raise _error("STUDIO_AUDIO_PEAK_BINDING_REQUIRED", "峰值归一化缺少原命令或配方绑定", 403)
     if fade_bound and ("command" not in value or "execution_recipe" not in value):
         raise _error("STUDIO_AUDIO_FADE_BINDING_REQUIRED", "淡入淡出缺少原命令或配方绑定", 403)
-    if "audio_profile" in body or fade_bound or peak_bound:
+    speech_bound = "storyboard_speech" in body or "storyboard_speech" in value or (
+        isinstance(value.get("command"), dict) and "storyboard_speech" in value["command"])
+    if speech_bound and ("command" not in value or "execution_recipe" not in value
+            or "graph_binding" in value or body.get("storyboard_speech") is None
+            or body.get("storyboard_speech") != value.get("storyboard_speech")
+            or body.get("storyboard_speech") != value.get("command", {}).get("storyboard_speech")):
+        raise _error("STUDIO_STORYBOARD_SPEECH_BINDING_CHANGED", "分镜对白绑定已变化", 409)
+    if "audio_profile" in body or fade_bound or peak_bound or speech_bound:
         from ..creative.production_execution_models import MediaCommand
         try:
             command = MediaCommand.model_validate(value["command"])
@@ -379,7 +393,7 @@ def _binding(value, body):
                     or request_digest != value["request_digest"]):
                 raise ValueError("versioned command binding")
         except (ValueError, TypeError, KeyError):
-            raise _error("STUDIO_AUDIO_PEAK_BINDING_CHANGED" if peak_bound else "STUDIO_AUDIO_FADE_BINDING_CHANGED" if fade_bound else "STUDIO_AUDIO_PROFILE_BINDING_CHANGED",
+            raise _error("STUDIO_STORYBOARD_SPEECH_BINDING_CHANGED" if speech_bound else "STUDIO_AUDIO_PEAK_BINDING_CHANGED" if peak_bound else "STUDIO_AUDIO_FADE_BINDING_CHANGED" if fade_bound else "STUDIO_AUDIO_PROFILE_BINDING_CHANGED",
                 "音频命令与原请求摘要不一致", 409) from None
     if "execution_recipe" in value:
         recipe = value["execution_recipe"]
@@ -777,6 +791,8 @@ class StudioAudioExecution:
                 if graph_binding is None:
                     raise ValueError("CREATIVE_GRAPH_MEDIA_BINDING_INVALID")
                 expected_origin["graph_binding"] = copy.deepcopy(graph_binding)
+            if "storyboard_speech" in binding:
+                expected_origin["storyboard_speech"] = copy.deepcopy(binding["storyboard_speech"])
             expected_project = {"novel_id": nid, "branch_id": self.branch_id,
                                 "scope_key": binding["scope_key"], "incarnation": binding["incarnation"]}
             if (not isinstance(candidate, dict) or candidate.get("novel_id") != nid or candidate.get("kind") != "audio"
@@ -1040,6 +1056,8 @@ class StudioAudioExecution:
             "provider_id": provider.get("provider_id"), "model_id": provider.get("model_id"), "license_note": binding.get("license_note", "")}
         if "graph_binding" in binding:
             origin["graph_binding"] = copy.deepcopy(binding["graph_binding"])
+        if "storyboard_speech" in binding:
+            origin["storyboard_speech"] = copy.deepcopy(binding["storyboard_speech"])
         if (not isinstance(asset, dict) or asset.get("kind") != "audio" or asset.get("novel_id") != nid
                 or asset.get("branch_id") != self.branch_id or asset.get("deleted_at") or asset.get("_owner_actor_id") != binding["actor"]
                 or asset.get("source_job_id") != captured["id"] or asset.get("_required_features") != ["narrative_production_v2"]

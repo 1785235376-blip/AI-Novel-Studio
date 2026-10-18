@@ -1,3 +1,4 @@
+import { sameStoryboardSpeech } from './studioStoryboardSpeechContract';
 import { exactHandoffAsset, type TimelineAssetHandoff } from './StudioTimelineAssetHandoff';
 import { AUDIO_MP3_PROFILE, AUDIO_MP3_SAMPLE_RATES } from './studioProductionClient';
 import { checkedVideoReference, type VideoReference } from './studioVideoRuntimeContract';
@@ -493,13 +494,14 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     try {
       const rows = await latest.current.read(() => value.client.list(value.controller.signal)); if (!live(value)) return;
       const visibleRows = latest.current.preparedCommand ? rows.filter(row => row.request_id === latest.current.preparedCommand!.request_id && row.operation_id === latest.current.preparedCommand!.operation_id) : rows;
+      if (latest.current.preparedCommand?.storyboard_speech && visibleRows.some(row => !sameStoryboardSpeech(latest.current.preparedCommand!, row.command))) throw invalid('原语音任务与当前分镜对白请求不一致，请读取原回执核对。');
       setJobs(visibleRows);
       if (creation.current?.uncertain) {
-        const attempt = creation.current, match = rows.find(row => row.request_id === attempt.requestId && row.operation_id === attempt.operation && row.request_digest === attempt.requestDigest);
+        const attempt = creation.current, match = visibleRows.find(row => row.request_id === attempt.requestId && row.operation_id === attempt.operation && row.request_digest === attempt.requestDigest);
         if (match) { creation.current = { ...attempt, uncertain: false }; baseline.current = attempt.input; adoptJob(match); markUncertain(false); setNotice('已找到原请求的保存记录；不会重新创建或执行。'); }
         else setNotice('尚未找到原请求回执。保留不确定状态，请勿重复发送。');
       } else if (selectedRef.current) {
-        const old = selectedRef.current, match = rows.find(row => row.owner === old.owner && row.id === old.id);
+        const old = selectedRef.current, match = visibleRows.find(row => row.owner === old.owner && row.id === old.id);
         if (match) { adoptJob(match); markUncertain(false); } else { clearCandidate(); selectedRef.current = undefined; setSelected(undefined); }
       }
     } catch (reason) { if (live(value)) failure(reason, '任务列表读取失败。'); } finally { finish(value); }
@@ -509,7 +511,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     const value = begin('GET'); if (!value) return; clearCandidate();
     try {
       const result = await latest.current.read(() => value.client.get(job.owner, job.id, value.controller.signal)); if (!live(value)) return;
-      if (prepared && (result.request_id !== prepared.request_id || result.operation_id !== prepared.operation_id)) throw invalid('原任务与当前分镜请求不一致，请读取该请求回执。');
+      if (prepared && (result.request_id !== prepared.request_id || result.operation_id !== prepared.operation_id || prepared.storyboard_speech && !sameStoryboardSpeech(prepared, result.command))) throw invalid('原任务与当前分镜请求不一致，请读取该请求回执。');
       adoptJob(result); if (!creation.current?.uncertain) markUncertain(false); setNotice('已读取当前任务版本；未重新执行。');
     } catch (reason) { if (live(value)) failure(reason, '任务读取失败。'); } finally { finish(value); }
   }
