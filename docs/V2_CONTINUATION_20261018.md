@@ -381,3 +381,9 @@ browser, external-editor and real-model acceptance remain open.
 Prior source7a9e745 archived asb6e00c9d5601140760fc97c98d99569ed7242afa:
 14 artifacts/4,981,463 bytes verified, extra exact standalone report and explicit
 README caveats. Parent321f498. No main/Release/new public source branch.
+
+## 21:17 UTC bounded publication, exchange and author recovery
+
+Product 195ebd9b0cb80431cc987de5a103867ef58cb285 adds actual ordered full-page CBZ, pinned Ink exchange, guarded local Director author recovery and Audio admission catalog compatibility. File 289, final real PG 113 with exact 14-table cleanup, UI 632 in 55 suites, TS/build/token and PUBLIC 6 pass. Initial PG fixture cleanup failure and exact-owned correction are retained. All 3137 source paths match final product. See docs/delivery/v2-development/exchange-recovery-integration-20261018.md. Browser, independent CBZ readers, native target/platform and whole V2 acceptance remain open. Director storage/locking and 1024-marker ceiling are explicit limits.
+
+Prior source 311adda1 archived as ce99a289b1f3ed369433400443aac7fa817b08a9, parent b6e00c9d: 14 files / 5,352,949 bytes anonymously verified. No main/Release/normal source branch update.

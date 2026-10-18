@@ -1,0 +1,125 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/DirectorModelControls.storyboard-model.additive.test.tsx (49 tests) 1442ms
+ ✓ src/creative/AIDirectorReopen.test.tsx (31 tests) 1822ms
+ ✓ src/creative/DirectorAuthorRecovery.test.tsx (22 tests) 1307ms
+ ✓ src/creative/AIDirectorPanel.storyboard.additive.test.tsx (19 tests) 1088ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 1461ms
+   ✓ optional mounted graph director source authoring > hands a saved human director to the existing storyboard owner and reopens its status 303ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (9 tests) 5248ms
+   ✓ independent studio graph content integration > promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing 1159ms
+   ✓ independent studio graph content integration > saves an empty disconnected definition through the scoped owner and reopens it without creating a run 590ms
+   ✓ independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job 1063ms
+   ✓ independent studio graph content integration > retains the CAS-conflicted draft until an explicit checked adoption of the separately fetched server version 781ms
+   ✓ independent studio graph content integration > protects unsaved graph input when leaving the graph content or fixed module switcher 636ms
+   ✓ independent studio graph content integration > displays redacted saved references without enabling a full-save or deletion roundtrip 328ms
+ ✓ src/creative/DirectorImageReviewPanel.test.tsx (11 tests) 924ms
+ ✓ src/creative/AIDirectorPanel.test.tsx (10 tests) 728ms
+ ✓ src/creative/StudioGraphDraftRecovery.test.tsx (11 tests) 2608ms
+   ✓ mounted text graph autosave and explicit recovery > autosaves local authoring, survives remount and restores only after a live owner check without executing 727ms
+   ✓ mounted text graph autosave and explicit recovery > rechecks a saved baseline exactly and keeps the original CAS version for explicit save 346ms
+ ✓ src/creative/graphSelectionCopyController.test.tsx (23 tests) 1405ms
+ ✓ src/creative/GraphDirectorSourceImpact.test.tsx (19 tests) 268ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.presentation.additive.test.tsx (18 tests) 22657ms
+   ✓ independent studio graph content integration > captures a saved source, chooses another graph, reviews and pastes once with original save/reopen 1721ms
+   ✓ independent studio graph content integration > previews same-graph copies, invalidates edits, pastes once and saves/reopens through original history 1451ms
+   ✓ independent studio graph content integration > explicitly persists view preferences with one undo step and original save/reopen 1654ms
+   ✓ independent studio graph content integration > persists groups through original undo/save/reopen and inspector node deletion 1581ms
+   ✓ independent studio graph content integration > saves independent notes with original undo, redo, reopen and removal 1120ms
+   ✓ independent studio graph content integration > saves/reopens graph annotation with original undo, redo, removal and no model dispatch 1043ms
+   ✓ independent studio graph content integration > guards departure when only an independent note is unsaved 519ms
+   ✓ independent studio graph content integration > warns before leaving when only the graph annotation changed 534ms
+   ✓ independent studio graph content integration > applies layout over dirty author text with one undo step, saves the camera, and restores both on reopen 1148ms
+   ✓ independent studio graph content integration > commits snapped drag once through original undo/save/reopen without persisting view settings 1532ms
+   ✓ independent studio graph content integration > applies selected alignment with one undo, preserves dirty text, and saves/reopens original positions 1307ms
+   ✓ independent studio graph content integration > saves MiniMap camera via original history while preserving dirty author text and reopens it 978ms
+   ✓ independent studio graph content integration > searches current nodes without dispatch, then saves/reopens explicit camera navigation with dirty text and exact pins 1065ms
+   ✓ independent studio graph content integration > restores each graph camera by stable ID and keeps dirty layout until explicit navigation consent 715ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 409, with explicit checked adoption only 1649ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 0, with explicit checked adoption only 1750ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 500, with explicit checked adoption only 1420ms
+   ✓ persists nested visual organization with undo, dirty leave warning, reopen and parent-node deletion promotion 1468ms
+ ✓ src/creative/GraphDirectorCanvasHandoff.additive.test.tsx (15 tests) 1114ms
+ ✓ src/creative/StudioGraphDraftRecovery.notes.test.tsx (7 tests) 1250ms
+   ✓ cached presentation recovery inspection through the original controller > pages every one of 1024 eligible short notes with at most twenty textareas and no truncation 1067ms
+ ✓ src/creative/IndependentDirectorModelReview.test.tsx (7 tests) 648ms
+ ✓ src/creative/GraphDirectorStoryboardHandoff.test.tsx (7 tests) 280ms
+ ✓ src/creative/GraphReadRevocation.regression.test.tsx (8 tests) 279ms
+ ✓ src/creative/directorCanvasHandoff.additive.test.tsx (13 tests) 732ms
+ ✓ src/creative/DirectorSceneScopePanel.additive.test.tsx (7 tests) 472ms
+ ✓ src/creative/MediaCanvasRecovery.additive.test.tsx (12 tests) 237ms
+ ✓ src/director/DirectorWorkspace.test.tsx (12 tests) 277ms
+ ✓ src/creative/IndependentStudioWorkspace.directorImage.additive.test.tsx (2 tests) 6636ms
+   ✓ keeps unsent IMAGE cost through real Broker navigation cancel, then discards only after explicit confirmation 3802ms
+   ✓ keeps unsent IMAGE note through real Broker navigation cancel, then discards only after explicit confirmation 2833ms
+ ✓ src/creative/AIDirectorPanel.reasoning.additive.test.tsx (2 tests) 448ms
+ ✓ src/director/DirectorCameraEvidence.additive.test.tsx (20 tests) 277ms
+ ✓ src/creative/GraphDirectorProposalReview.test.tsx (9 tests) 204ms
+ ✓ src/creative/GraphDirectorModelAuthority.additive.test.tsx (32 tests) 374ms
+ ✓ src/creative/GraphDirectorImage.integration.test.tsx (2 tests) 4678ms
+   ✓ protects IMAGE cost and note inputs from real canvas click, Escape, node directory and console reads 4274ms
+   ✓ keeps normal read-only graph selection available when there is no IMAGE intent 404ms
+ ✓ src/creative/StudioGraphDirectorConsole.test.tsx (11 tests) 455ms
+ ✓ src/creative/AIDirectorScreenplay.integration.test.tsx (3 tests) 404ms
+ ✓ src/creative/AIDirectorIndependent.integration.test.tsx (3 tests) 431ms
+   ✓ mounts the versioned view only after explicit capability read and hands exact adopted pin to original parent 340ms
+ ✓ src/creative/AIDirectorFastReceipt.test.tsx (3 tests) 332ms
+ ✓ src/creative/DirectorNoteActions.additive.test.tsx (9 tests) 386ms
+ ✓ src/creative/MediaCanvasGraphHandoff.additive.test.tsx (15 tests) 178ms
+ ✓ src/creative/DirectorIntentConstraints.test.tsx (3 tests) 315ms
+ ✓ src/creative/ReviewedDirectorCanvas.integration.test.tsx (1 test) 369ms
+   ✓ wires reviewed Creative DRAFT through original export/read, real editor/controller insertion, and explicit Graph Save 369ms
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 192ms
+ ✓ src/creative/DirectorTimingTools.additive.test.tsx (8 tests) 187ms
+ ✓ src/creative/GraphDirectorCompareDeck.additive.test.tsx (4 tests) 354ms
+ ✓ src/director/DirectorWorkspaceDraftLifetime.additive.test.tsx (4 tests) 318ms
+ ✓ src/creative/GraphDirectorAdoptionPin.additive.test.tsx (5 tests) 394ms
+ ✓ src/creative/DirectorDraftBackup.additive.test.tsx (2 tests) 193ms
+ ✓ src/creative/DirectorDraftComparison.additive.test.tsx (5 tests) 94ms
+ ✓ src/creative/DirectorSheetExport.additive.test.tsx (2 tests) 37ms
+ ✓ src/creative/useStudioGraphEditor.storyboardAuthority.additive.test.tsx (1 test) 13ms
+ ✓ src/creative/AIDirectorPanel.sourceLabels.additive.test.tsx (1 test) 95ms
+ ✓ src/creative/directorModelClient.test.ts (35 tests) 21ms
+ ✓ src/creative/graphSelectionCopy.test.ts (17 tests) 16ms
+ ✓ src/director/directorWorkspaceContract.test.ts (15 tests) 11ms
+ ✓ src/creative/directorImageClient.test.ts (13 tests) 19ms
+ ✓ src/creative/directorObservationClient.test.ts (30 tests) 12ms
+ ✓ src/creative/studioGraphDirectorClient.test.ts (14 tests) 14ms
+ ✓ src/creative/directorScreenplayClient.additive.test.ts (8 tests) 9ms
+ ✓ src/creative/directorModelDraftHandoff.test.ts (15 tests) 15ms
+ ✓ src/creative/directorModelPlanningContract.additive.test.ts (11 tests) 9ms
+ ✓ src/creative/directorModelClient.capture.test.ts (2 tests) 6ms
+
+ Test Files  55 passed (55)
+      Tests  632 passed (632)
+   Start at  06:15:14
+   Duration  51.91s (transform 4.97s, setup 332ms, collect 16.15s, tests 63.75s, environment 13.81s, prepare 2.71s)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2448 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-cKwZaTd1.css      3.88 kB │ gzip:   1.02 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-ipe-r0uF.css                      219.84 kB │ gzip:  27.79 kB
+dist/assets/Health-hFRw6MGZ.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-CViOaVTn.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/style-Dc4ICaBr.js                      45.12 kB │ gzip:   8.40 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/LocalTutorIntegration-C-iRfWDV.js      47.64 kB │ gzip:  15.65 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-C9YtI8lN.js     848.16 kB │ gzip: 254.11 kB
+dist/assets/App-TNqgWXAN.js                     2,862.79 kB │ gzip: 859.75 kB
+✓ built in 7.75s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

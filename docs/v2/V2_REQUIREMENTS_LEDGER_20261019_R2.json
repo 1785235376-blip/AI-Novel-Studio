@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T20:50:00Z",
+  "updated_at_utc": "2026-10-18T21:17:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -20889,11 +20889,11 @@
         "B09",
         "FS_INTERACTION"
       ],
-      "code_status": "NOT_REASSESSED",
+      "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Current RenPy/neutral export does not establish verified RenPy/Ink target execution or faithful conditions/state/loss reports for the new scope.",
-      "next_action": "Inspect current engine adapters, preserve branch permissions and verify conditional playback in each promised target; do not replace Ink with Godot by assumption.",
-      "evidence_scope": "This reconciliation maps source and prior evidence; it runs no product test and does not certify the full new requirement."
+      "gap": "Pinned community inkjs adapter and actual fixture compiler/runtime state/choice/save-reload evidence added. Native C# and current arbitrary artifact validation, wider approved-world-rule/branch navigation remain open.",
+      "next_action": "Complete remaining Storyverse requirements and independent promised-target acceptance; preserve original branch/source/review owners.",
+      "evidence_scope": "Bounded Ink exchange integration only; see docs/delivery/v2-development/exchange-recovery-integration-20261018.md"
     },
     {
       "id": "DIF-11",
@@ -21662,9 +21662,9 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Existing export is comic-png-segments-v1 ZIP; it does not close JPEG/WebP pages, CBZ, PDF, fixed-layout EPUB or editable project archive.",
-      "next_action": "Implement formats with direction/size/DPI/bleed metadata, validation and independent-reader checks; do not claim unverified PDF/X.",
-      "evidence_scope": "Existing B06 capabilities only satisfy bounded parts; no new Comic requirement is accepted by this mapping."
+      "gap": "Ordered current-approved multi-page CBZ with actual full PNGs and bounded source/render/output work is implemented. Independent CBZ reader/Windows acceptance, JPEG/WebP, PDF, print DPI/bleed, EPUB and editable native project archive remain open.",
+      "next_action": "Verify independent CBZ readers and continue remaining format/loss/metadata requirements without claiming PDF/X.",
+      "evidence_scope": "Bounded CBZ integration only; see docs/delivery/v2-development/exchange-recovery-integration-20261018.md"
     },
     {
       "id": "IMAGE-COMIC-19",
@@ -22018,12 +22018,33 @@
       "frontend_tests": 42,
       "public_checks": 6,
       "formal_acceptance": false
+    },
+    {
+      "product_sha": "195ebd9b0cb80431cc987de5a103867ef58cb285",
+      "report": "docs/delivery/v2-development/exchange-recovery-integration-20261018.md",
+      "scope": "Ordered CBZ, pinned Ink adapter, scoped author-only Director recovery and original Audio catalog compatibility",
+      "file_tests": 289,
+      "postgres_tests": 113,
+      "postgres_exact_14_table_cleanup": true,
+      "ui_tests": 632,
+      "ui_suites": 55,
+      "public_tests": 6,
+      "source_paths": 3137,
+      "formal_acceptance": false,
+      "failure_retained": "Initial PG assertions passed but old fixture cleanup failed; exact synthetic residues restored, finally teardown corrected and rerun passed. Audio baseline assertion failure also preserved.",
+      "limitations": [
+        "No actual browser multi-tab acceptance",
+        "Director local recovery has16 snapshot admission and1024 permanent per-owner attempt marker ceiling",
+        "No independent CBZ reader or native Windows acceptance",
+        "Ink community runtime fixture proof does not validate arbitrary user artifacts",
+        "No real model execution or full V2 acceptance"
+      ]
     }
   ],
   "current_checkpoint": {
-    "product_sha": "79fbb1e5d80574e513cd51c09b54118b12c80d90",
-    "report": "docs/delivery/v2-development/image-ora-workflow-integration-20261018.md",
-    "source_identity_section": "Historical initial reconciliation baseline, not the current HEAD",
+    "product_sha": "195ebd9b0cb80431cc987de5a103867ef58cb285",
+    "report": "docs/delivery/v2-development/exchange-recovery-integration-20261018.md",
+    "source_identity_section": "Historical initial reconciliation baseline, not current HEAD",
     "all_fixed_ids_accepted": false
   }
 }
