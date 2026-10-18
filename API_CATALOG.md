@@ -293,7 +293,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/novels/{nid}/experimental/reader-preflight/settings` | `app/experimental/reader_preflight_api.py:19` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/research-library/analysis/jobs` | `app/experimental/research_library_api.py:239` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/research-library/analysis/jobs/{rid}` | `app/experimental/research_library_api.py:243` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/novels/{nid}/experimental/research-library/analysis/jobs/{rid}/native-export` | `app/experimental/research_library_api.py:257` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/novels/{nid}/experimental/research-library/analysis/jobs/{rid}/native-export` | `app/experimental/research_library_api.py:257` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/research-library/analysis/status` | `app/experimental/research_library_api.py:235` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/research-library/note-repairs` | `app/experimental/research_library_api.py:200` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/research-library/notes` | `app/experimental/research_library_api.py:191` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -754,7 +754,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/v1/novels/{nid}/experimental/reader-preflight/settings` | `app/experimental/reader_preflight_api.py:19` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/research-library/analysis/jobs` | `app/experimental/research_library_api.py:239` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/research-library/analysis/jobs/{rid}` | `app/experimental/research_library_api.py:243` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/novels/{nid}/experimental/research-library/analysis/jobs/{rid}/native-export` | `app/experimental/research_library_api.py:257` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/v1/novels/{nid}/experimental/research-library/analysis/jobs/{rid}/native-export` | `app/experimental/research_library_api.py:257` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/research-library/analysis/status` | `app/experimental/research_library_api.py:235` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/research-library/note-repairs` | `app/experimental/research_library_api.py:200` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/research-library/notes` | `app/experimental/research_library_api.py:191` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |

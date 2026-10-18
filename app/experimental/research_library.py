@@ -631,7 +631,10 @@ class ResearchLibraryService(DomainService):
     def analysis_job(self, nid, scope, actor, rid):
         from .research_vision import research_analysis_jobs
         self._analysis_owner(nid, scope, actor, rid)
-        return research_analysis_jobs(self).get(nid, scope, actor, rid)
+        row = research_analysis_jobs(self).get(nid, scope, actor, rid)
+        if self.native_ocr is not None:
+            row = self.native_ocr.recovery_projection(nid, scope, actor, row)
+        return row
 
     def create_analysis(self, nid, scope, actor, value, *, guard):
         from .research_vision import ResearchAnalysisIn, research_analysis_jobs

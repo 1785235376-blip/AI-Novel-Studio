@@ -128,3 +128,25 @@ def test_export_requires_current_human_review_and_exact_receipt(rig,monkeypatch)
     with pytest.raises(FileNotFoundError):
         c.controller.export_reviewed(rig.nid,rig.scope,'other',reviewed['id'],reviewed['version'],reviewed['result_digest'])
     assert rig.raw_store.read(rig.nid,rig.scope)==before
+
+
+def test_restart_projection_reports_interruption_without_releasing_hold(rig,monkeypatch):
+    from app.experimental.research_library import ResearchLibraryService
+    c=setup(rig,monkeypatch);ready=preview(rig,c)
+    def interrupted_start(job):
+        job.status='QUEUED';c.manager.jobs[job.id]=job;c.manager._persist(job)
+    monkeypatch.setattr(c.manager,'_start_research_ocr_job',interrupted_start)
+    row=c.controller.dispatch(rig.nid,rig.scope,rig.actor,ready['id'],
+        {'expected_version':ready['version'],'reviewed_preview_digest':ready['native_ocr_preview']['reviewed_preview_digest'],'idempotency_key':'restart'},guard=lambda:None)
+    assert row['status']=='RUNNING'
+    research=ResearchLibraryService(rig.raw_store,rig.novels,rig.chapters,historical_inspection=True)
+    manager=reopen(rig);NativeResearchOCRCoordinator(research,c.broker,manager)
+    before=deepcopy(rig.raw_store.read(rig.nid,rig.scope))
+    projected=research.analysis_job(rig.nid,rig.scope,rig.actor,row['id'])
+    assert projected['status']=='INTERRUPTED' and projected['persisted_status']=='RUNNING'
+    assert projected['recovery']['automatic_resume'] is False
+    assert projected['recovery']['budget_hold_retained'] is True
+    assert projected['recovery']['explicit_host_recovery_required'] is True
+    assert rig.raw_store.read(rig.nid,rig.scope)==before
+    assert c.broker.ledger(rig.nid,rig.scope,rig.actor)[0]['status']=='RESERVED'
+    assert manager.get(row['native_ocr_execution']['generation_id']).status=='FAILED'

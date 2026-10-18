@@ -242,6 +242,33 @@ class NativeResearchOCRCoordinator:
             raise
         answer = self.rows.get(nid, scope, actor, rid); guard(); return answer
 
+    def recovery_projection(self, nid, scope, actor, row):
+        """Read-only interruption feedback; never releases holds or replays jobs."""
+        result = deepcopy(row)
+        execution = row.get('native_ocr_execution')
+        if row.get('status') != 'RUNNING' or not execution:
+            return result
+        with self.lease(nid, execution['binding']['project_incarnation']):
+            self._row(nid, scope, actor, row['id'])
+            self.rows._source(nid, scope, actor, row)
+            try:
+                current = self.manager.get(execution['generation_id'])
+            except KeyError:
+                current = None
+            authority = getattr(current, 'research_ocr_execution_authority', None)
+            if authority is not None and not getattr(authority, 'finished', False):
+                return result
+            ledger = self.broker.get(nid, scope, self.broker.LEDGER, execution['reservation_id'])
+            if (ledger.get('created_by') != actor or ledger.get('job_id') != execution['generation_id']
+                    or ledger.get('authorization_digest') != execution['expected_request_digest']
+                    or ledger.get('native_ocr_incarnation') != execution['binding']['project_incarnation']):
+                raise ValueError('RESEARCH_OCR_RECOVERY_IDENTITY_MISMATCH')
+            result.update(status='INTERRUPTED', persisted_status=row['status'],
+                recovery={'code': 'RESEARCH_OCR_EXECUTOR_NOT_RESUMABLE', 'automatic_resume': False,
+                    'budget_hold_retained': ledger['status'] in {'RESERVED', 'DISPATCHED', 'UNKNOWN_UPSTREAM'},
+                    'explicit_host_recovery_required': True})
+        return result
+
     def export_reviewed(self, nid, scope, actor, rid, expected_version, result_digest):
         row = self._row(nid, scope, actor, rid)
         self.rows._version(row, expected_version)

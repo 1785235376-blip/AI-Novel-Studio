@@ -102,3 +102,18 @@ it('exports only the pinned reviewed receipt through the original endpoint',asyn
   await waitFor(()=>expect(revoke).toHaveBeenCalledWith('blob:ocr-export'),{timeout:2000});
  } finally {click.mockRestore();}
 });
+it('shows an interrupted receipt and retained hold without replaying it',async()=>{
+ const calls:string[]=[];
+ const interrupted={...initial,status:'INTERRUPTED',recovery:{code:'RESEARCH_OCR_EXECUTOR_NOT_RESUMABLE',budget_hold_retained:true,explicit_host_recovery_required:true}};
+ vi.stubGlobal('fetch',vi.fn(async(url:string,options:RequestInit)=>{
+  calls.push(options.method||'GET');
+  if(url.endsWith('/status'))return response({native_ocr:{status:'NOT_CONFIGURED',routes:[]}});
+  return response(url.endsWith('/jobs')?{items:[interrupted]}:interrupted);
+ }));
+ render(<ResearchNativeOCRPanel client={client()} source={source}/>);
+ fireEvent.click(await screen.findByRole('button',{name:'打开 OCR 记录 ocr-one'}));
+ await screen.findByText(/调度占用仍保留/);
+ expect(screen.getByText('INTERRUPTED · v1')).toBeTruthy();
+ expect(screen.queryByRole('button',{name:'确认执行 OCR'})).toBeNull();
+ expect(calls.every(method=>method==='GET')).toBe(true);
+});

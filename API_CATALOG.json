@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "1ba1c06d50ee4d3f9c53f9eb103cfe022786b8d8c9cb1332b20734d20e1ccf2d",
+  "application_source_fingerprint_sha256": "839ae7dfbc60d8ae308e2fa56114ca8f99b85e19e328346f4ce218431bff0a0d",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -193,9 +193,9 @@
     "app/experimental/reader_preflight_api.py": "afea16c08e468117a0b23a4dcd432cb1c862b69663cd3947243aa579264589b6",
     "app/experimental/reader_sources.py": "dce77103b022d84664368197e7f9350d7a657d291c8ebe4bf047e58270989273",
     "app/experimental/research_extract.py": "70662a3ad21ae785291396b2a1bede5181c871bfe3b779f4375076848c86ef6d",
-    "app/experimental/research_library.py": "5b146d93a4ea77c90f3039ebbb1f557ef489ac4c05d100466445d1f5b357a6f6",
+    "app/experimental/research_library.py": "6db32b3f366204737dffcfdfe471db2a74f48cd82b72176d57fa233d17941538",
     "app/experimental/research_library_api.py": "c7747e3f7c3810b8c3a34e7428e9deb3697d8af0c6aeb97d248110c116f541fd",
-    "app/experimental/research_native_ocr.py": "84363d93c1cf2e7c983fea237563e32285c72c4c098e6980a840ae9b610c672a",
+    "app/experimental/research_native_ocr.py": "c5ab4087431c0f8a9ec8e24f767c0c28f4546f63b2d589e11a0920f339cc96e3",
     "app/experimental/research_ocr_binding.py": "03df4334ebee685e7b656e8a3b816b61107dc518193ed8084133764be6ee8774",
     "app/experimental/research_ocr_execution.py": "689b362c8353977472452cb05326e9190f0ef62897d3f35a1d86156d2709e758",
     "app/experimental/research_vision.py": "8b079127265864d5d32b7eff6be9683073f926eaf445016ac90d917b5abb1497",
@@ -508,7 +508,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "bc606acfdfae97727ef7a3142f71b399c7b97fc2da9dc99a886554474289c6a2",
+    "sha256": "c0b3f16044543082cc1fee475c749192b8c147165a7e73430f63870fa127c1d4",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -3944,7 +3944,8 @@
       "operation_id": "native_export_api_novels__nid__experimental_research_library_analysis_jobs__rid__native_export_get",
       "owner_ref": "e47d83843d2ebdfe70d664bb912d743d422cafdf0420013b647068f305ee9af7",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "65711b3caf90c9906800ef3a9f73a9d8486af39c6f031f1b12f8515501b0462f",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -9476,7 +9477,8 @@
       "operation_id": "native_export_api_v1_novels__nid__experimental_research_library_analysis_jobs__rid__native_export_get",
       "owner_ref": "e47d83843d2ebdfe70d664bb912d743d422cafdf0420013b647068f305ee9af7",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d385a21f72611dd06c231cbe6c649c19433025058f32d36a9309b1594da1e2a1",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
