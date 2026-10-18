@@ -1,0 +1,6 @@
+{
+  "source_head": "2afac05acae34e5568728097d971e7d412ca217a",
+  "prerequisite": "ed6402416e07c58be91ad14571801ca2ac4c9a26",
+  "bundle": "continuation.bundle",
+  "scope": "Read-only original Research OCR source preparation with incarnation, source version, content hash and live authority checks. File and real PostgreSQL tests passed. Real OCR dispatch remains disabled; original JobManager integration is still pending."
+}
