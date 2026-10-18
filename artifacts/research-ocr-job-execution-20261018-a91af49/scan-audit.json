@@ -1,0 +1,11 @@
+{
+  "scan": {
+    "counts": {},
+    "scanned": 24,
+    "blobs": 24,
+    "total_bytes": 5590149,
+    "max_blob": 676560,
+    "hits": []
+  },
+  "result": "No matching secret patterns in incremental Git blobs; no runtime database or private user content included."
+}
