@@ -1,20 +1,20 @@
 # Studio V2 current continuation checkpoint
 
-Updated 2026-10-18 12:30 UTC. This document inventories bounded additions, not a
+Updated 2026-10-18 13:30 UTC. This document inventories bounded additions, not a
 replacement for the frozen feature matrix or a V2 percentage/Release declaration.
 The source pin below identifies the latest bounded implementation; archive and product heads remain distinct.
 
 ## Source and publication
 
 Working branch: work/dot-recovered-20261018.
-Product source before this documentation commit: c02be1600bf89176dfd0c9f4f9b658c2f3df848e (media multi-selection and alignment).
-Latest verified archive before this commit: 1495b13bfeea17195c14864c254ce253ae7f0f29,
+Product source before this documentation commit: 225e91ba (native PDF page OCR closed loop; resolve the full Git commit locally).
+Latest verified archive before this commit: d834820d0232ec0ffcb23c13f47cd4e5de469d20,
 branch archive/verified-studio-v2-20261017-5a6f697. It contains incremental source
 bundles, reports and retained logs. Archive branch HEAD is not product source HEAD.
 Each archive bundle declares its prerequisite and includes checksums; restore the
 chain without resetting or overwriting existing work.
 
-Last actual remote main/PR check was 12:14 UTC:
+Last actual remote main/PR check was 13:28 UTC:
 - main fed2404c8e30b44061b7139dced45b7f3301601c
 - draft PR #47 a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3
 - draft PR #48 58bbaad11360330d51f49fc2bb78a955a26469f0
@@ -116,3 +116,14 @@ merely because bounded additions exist. Inspect actual current owners before sel
 new gaps; do not redo features based on the old M0 matrix. Keep meaningful focused
 checks with changes, reserve full product acceptance for the authorized final stage,
 and retain failures. Continue serially while worker quota is unavailable.
+
+
+## 13:30 continuation
+
+- Fresh original P0 recheck is committed in 04bd8d40: File 43 passes and PostgreSQL 38 passes, original actual persistence tests and fresh-owner positive controls. The first PG setup omitted the required collaboration-runtime flag; its failure log is preserved. This verifies an existing fix, not a new security fix.
+- Text graph templates e1e36dab and same-project version-pinned reference templates b9e24316 reuse original graph copy/history/save. Cross-project media rebinding and executable nested subgraphs remain open.
+- PDF raster 3a9a0d85, model seam f2c4d516, passive source identity 535c06c3, and integrated original Research PDF loop 225e91ba form one additive chain. Final capabilities and boundaries are in RESEARCH_PDF_NATIVE_OCR_CLOSED_LOOP.md. Native PDF page OCR is now integrated, superseding earlier foundation documents' pending integration notes only.
+- Final PDF integration evidence: File 55 passes, real PG 28 passes (server stopped), UI 11 passes plus TypeScript/Vite, actual public wheel/catalog 6 passes. No browser visual acceptance, Windows or general OCR quality claim. API count remains 2375.
+- Existing archive d834820d contains through 535c06c3; the newest integration slice is being archived separately. Do not assume an archive HEAD is product source.
+- Main and draft PR #47/#48 remain unchanged at the SHA values above. No additional fees or paid cloud/model calls.
+- Next development focus returns to the professional Director/Graph workspace gaps. Display-card groups are not executable nested graphs. Preserve original bounded execution owners and current source/approval identity when adding any bridge.
