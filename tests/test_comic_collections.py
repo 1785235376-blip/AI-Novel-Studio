@@ -147,8 +147,29 @@ def test_legacy_adapted_page_never_attached_or_modified(mounted):
     assert e.store.read(e.nid,e.scope) == before
 
 
-def test_books_actor_branch_permissions_and_stale_projection(mounted,monkeypatch):
-    e = scoped(mounted,monkeypatch); book = create_book(e,e.headers)
+@pytest.fixture
+def collection_scope(mounted, monkeypatch):
+    e = scoped(mounted, monkeypatch)
+    try:
+        yield e
+    finally:
+        # Only this scoped fixture's generated workspace/users/project. The
+        # enclosing mounted owner removes its novel and scope documents later.
+        if e.backend == 'postgres':
+            with e.store._connect() as connection:
+                for table in ('domain_role_assignments', 'permission_assignments', 'authorization_audit_events'):
+                    connection.execute(f"DELETE FROM {table} WHERE payload->'scope'->>'workspace_id'=%s", (e.workspace,))
+                connection.execute('DELETE FROM workspace_memberships WHERE workspace_id=%s AND user_id IN (%s,%s)', (e.workspace, e.lead, e.viewer))
+                for table in ('storyline_branches', 'storylines'):
+                    connection.execute(f"DELETE FROM {table} WHERE payload->>'workspace_id'=%s AND payload->>'project_id'=%s", (e.workspace, e.nid))
+                connection.execute('DELETE FROM project_workspaces WHERE project_id=%s AND workspace_id=%s', (e.nid, e.workspace))
+                connection.execute("UPDATE novels SET workspace_id='default-workspace' WHERE slug=%s AND workspace_id=%s", (e.nid, e.workspace))
+                connection.execute('DELETE FROM workspaces WHERE id=%s', (e.workspace,))
+                connection.execute('DELETE FROM users WHERE id IN (%s,%s)', (e.lead, e.viewer))
+
+
+def test_books_actor_branch_permissions_and_stale_projection(collection_scope):
+    e = collection_scope; book = create_book(e,e.headers)
     path = e.base + '/comic-layouts/books/' + book['id']
     result = checked(e.client.post(path+'/pages',headers=e.headers,json={'expected_version':1,'chapter_id':'one'}),201)
     for headers in [{},e.viewer_headers,{**e.headers,'X-Branch-ID':e.other_branch}]:
