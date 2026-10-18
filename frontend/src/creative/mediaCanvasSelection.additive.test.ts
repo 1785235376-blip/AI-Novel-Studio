@@ -1,0 +1,8 @@
+import { expect, it } from 'vitest';
+import { alignCanvasCards, translateCanvasCards } from './mediaCanvasSelection';
+import type { CanvasDefinition } from './studioCanvasViewClient';
+const definition = (): CanvasDefinition => ({ schema_version: 1, title: 'Selection', viewport: { x: 0, y: 0, zoom: 1 }, cards: [0, 100, 500].map((x, i) => ({ id: `C${i}`, position: { x, y: i * 40 }, asset: { asset_id: `A${i}`, version: 1, digest: 'a'.repeat(64), kind: 'image' } })), groups: [{ id: 'G', name: 'G', card_ids: ['C0', 'C1'], collapsed: false }] });
+it('reuses Graph alignment geometry and returns only display cards with unchanged bindings/groups', () => { const d = definition(), result = alignCanvasCards(d, ['C0', 'C1', 'C2'], 'distribute'); expect(result.cards.map(c => c.position.x)).toEqual([0, 250, 500]); expect(result.cards.map(c => c.asset)).toEqual(d.cards.map(c => c.asset)); expect(result.groups).toEqual(d.groups); expect(result).not.toHaveProperty('nodes'); expect(result).not.toHaveProperty('edges'); expect(alignCanvasCards(d, ['missing'], 'left')).toBe(d); });
+it('clamps the cohort delta rather than distorting offsets and handles 1000 selected references', () => { const d = definition(); d.cards[0].position.x = 99990; d.cards[1].position.x = 99950; const moved = translateCanvasCards(d, ['C0', 'C1'], 100, 5); expect(moved.cards[0].position.x).toBe(100000); expect(moved.cards[1].position.x).toBe(99960); expect(moved.cards[2]).toBe(d.cards[2]);
+ d.cards = Array.from({ length: 1000 }, (_, i) => ({ id: `C${i}`, position: { x: i, y: 0 } })); const all = translateCanvasCards(d, d.cards.map(c => c.id), 5, 6); expect(all.cards[999].position).toEqual({ x: 1004, y: 6 }); expect(translateCanvasCards(d, ['C0'], NaN, 0)).toBe(d);
+});

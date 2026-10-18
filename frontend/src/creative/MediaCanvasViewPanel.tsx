@@ -1,3 +1,4 @@
+import { alignCanvasCards } from './mediaCanvasSelection';
 import { emptyCanvasHistory, recordCanvasEdit, travelCanvasEdit } from './mediaCanvasHistory';
 import { MediaCanvasGroupTools } from './MediaCanvasGroupTools';
 import { removeCanvasCard } from './mediaCanvasGroups';
@@ -21,6 +22,7 @@ export function MediaCanvasViewPanel(props: Props) {
   const resetHistory = () => { history.current = emptyCanvasHistory(); setHistoryRevision(v => v + 1); };
   const [draft, setDraft] = useState(blank), [base, setBase] = useState<CanvasViewRecord>();
   const [rows, setRows] = useState<CanvasViewSummary[]>([]), [assets, setAssets] = useState<StudioAsset[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selected, setSelected] = useState(''), [assetId, setAssetId] = useState(''), [query, setQuery] = useState('');
   const [pending, setPending] = useState(false), [uncertain, setUncertain] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState('');
   const [discard, setDiscard] = useState(false), [size, setSize] = useState({ width: 800, height: 480 });
@@ -28,7 +30,7 @@ export function MediaCanvasViewPanel(props: Props) {
   draftRef.current = draft; live.current = props;
   const dirty = uncertain || JSON.stringify(draft) !== JSON.stringify(base?.definition ?? blank());
   const client = props.client.graphs.canvasViews;
-  const authority = [props.identity, props.client, props.active, props.denied, props.canMutate, props.externalDirty, base, draft, discard];
+  const authority = [props.identity, props.client, props.active, props.denied, props.canMutate, props.externalDirty, base, draft, discard, selected, JSON.stringify(selectedIds)];
   const fence = useRef({ values: authority, token: {} });
   if (authority.some((value, index) => value !== fence.current.values[index])) fence.current = { values: authority, token: {} };
   const token = fence.current.token;
@@ -54,9 +56,12 @@ export function MediaCanvasViewPanel(props: Props) {
     catch (reason) { if (current()) setError(apiErrorView(reason).message); if (write && alive.current) { setUncertain(true); live.current.onDirtyChange(true); } }
     finally { pendingRef.current = false; if (alive.current) setPending(false); }
   }
-  function adopt(row: CanvasViewRecord) { resetHistory(); setBase(row); setDraft(row.definition); draftRef.current = row.definition; setSelected(''); setUncertain(false); setDiscard(false); setNotice('已读取持久化版本'); live.current.onDirtyChange(false); }
+  function adopt(row: CanvasViewRecord) { resetHistory(); setBase(row); setDraft(row.definition); draftRef.current = row.definition; setSelected(''); setSelectedIds([]); setUncertain(false); setDiscard(false); setNotice('已读取持久化版本'); live.current.onDirtyChange(false); }
   function open(id: string) { if (dirty && !discard) return; void work(false, () => client!.get(id), adopt); }
   const states = new Map(base?.reference_states.map(row => [row.card_id, row]) ?? []);
+  const currentCardIds = new Set(draft.cards.map(card => card.id));
+  const selection = selectedIds.filter(id => currentCardIds.has(id));
+  function selectCard(id: string, additive = false) { if (!current() || pendingRef.current) return; setSelected(id); setSelectedIds(previous => additive ? previous.includes(id) ? previous.filter(value => value !== id) : [...previous, id] : [id]); }
   const card = draft.cards.find(c => c.id === selected);
   if (!props.active || props.denied || !client) return null;
   return <section className="media-canvas" aria-label="独立媒体素材画布" onKeyDown={event => {
@@ -74,7 +79,7 @@ export function MediaCanvasViewPanel(props: Props) {
         const snapshot = draftRef.current; const requestId = `view-${crypto.randomUUID()}`;
         void work(true, () => base ? client.save(base.id, base.version, snapshot) : client.create(snapshot, requestId), row => { adopt(row); setNotice('已保存媒体画布'); });
       }}>保存媒体画布</Button>
-      <Button disabled={pending || props.externalDirty || dirty && !discard} onClick={() => { if (locked() || dirty && !discard) return; const next = blank(); resetHistory(); setBase(undefined); setDraft(next); draftRef.current = next; setSelected(''); setUncertain(false); setDiscard(false); live.current.onDirtyChange(false); }}>新建空白视图</Button>
+      <Button disabled={pending || props.externalDirty || dirty && !discard} onClick={() => { if (locked() || dirty && !discard) return; const next = blank(); resetHistory(); setBase(undefined); setDraft(next); draftRef.current = next; setSelected(''); setSelectedIds([]); setUncertain(false); setDiscard(false); live.current.onDirtyChange(false); }}>新建空白视图</Button>
       <Button disabled={!editable} onClick={() => void work(false, () => props.client.assets(), value => setAssets(value.items.filter(a => ['image', 'video', 'audio'].includes(a.kind))))}>读取可用素材</Button>
     </div>
     <p>本地撤销最多 20 步、总快照不超过 2 MB；大画布可能提前淘汰旧记录。保存或重新读取后重置。快捷键 Ctrl／⌘ Z，重做 Ctrl Y 或 Shift Z；文字输入框保留自身撤销。</p>
@@ -87,7 +92,7 @@ export function MediaCanvasViewPanel(props: Props) {
       <Button disabled={!editable || !assetId || draft.cards.length >= 1000} onClick={() => {
         const asset = assets.find(a => a.id === assetId); if (!asset || !['image', 'video', 'audio'].includes(asset.kind)) return;
         const id = `Card_${crypto.randomUUID().replaceAll('-', '')}`, position = mediaViewportCenter(draftRef.current, size.width, size.height);
-        edit({ ...draftRef.current, cards: [...draftRef.current.cards, { id, position: { x: clampGraphPosition(position.x), y: clampGraphPosition(position.y) }, asset: { asset_id: asset.id, version: asset.version, digest: asset.sha256, kind: asset.kind as 'image' | 'video' | 'audio' } }] }); setSelected(id);
+        edit({ ...draftRef.current, cards: [...draftRef.current.cards, { id, position: { x: clampGraphPosition(position.x), y: clampGraphPosition(position.y) }, asset: { asset_id: asset.id, version: asset.version, digest: asset.sha256, kind: asset.kind as 'image' | 'video' | 'audio' } }] }); selectCard(id);
       }}>加入引用卡片</Button>
       <label>查找卡片或素材 ID<input value={query} onChange={e => setQuery(e.target.value)} /></label>
     </div>
@@ -95,8 +100,13 @@ export function MediaCanvasViewPanel(props: Props) {
       {(['x', 'y'] as const).map(axis => <label key={axis}>视口 {axis}<input type="number" min={-100000} max={100000} value={draft.viewport[axis]} disabled={!editable} onChange={e => edit({ ...draftRef.current, viewport: { ...draftRef.current.viewport, [axis]: clampGraphPosition(e.target.valueAsNumber) } })} /></label>)}
       <label>缩放<input type="number" step="0.1" min="0.35" max="2.5" value={draft.viewport.zoom} disabled={!editable} onChange={e => edit({ ...draftRef.current, viewport: { ...draftRef.current.viewport, zoom: clampGraphZoom(e.target.valueAsNumber) } })} /></label>
     </div>
+    <div className="creative-actions"><span>已选 {selection.length} 张卡片</span>
+      <Button disabled={!editable} onClick={() => { if (!locked()) { setSelectedIds(draft.cards.map(c => c.id)); setSelected(draft.cards[0]?.id ?? ''); } }}>选择全部卡片（含视口外）</Button>
+      <Button disabled={pending} onClick={() => { if (current()) setSelectedIds([]); }}>清空卡片多选</Button>
+      {([['left', '左对齐'], ['center', '水平居中'], ['top', '顶端对齐'], ['distribute', '水平等距']] as const).map(([mode, label]) => <Button key={mode} disabled={!editable || selection.length < (mode === 'distribute' ? 3 : 2)} onClick={() => edit(alignCanvasCards(draftRef.current, selection, mode))}>{label}所选卡片</Button>)}
+    </div>
     <MediaCanvasGroupTools definition={draft} selectedCard={selected} owner={token} disabled={!editable} isCurrent={current} onChange={edit} />
-    <MediaCardViewport definition={draft} states={states} selected={selected} query={query} owner={token} disabled={!editable} isCurrent={current} onSelect={setSelected} onChange={edit} onSize={setSize} />
+    <MediaCardViewport definition={draft} states={states} selected={selected} selection={selection} query={query} owner={token} disabled={!editable} isCurrent={current} onSelect={selectCard} onChange={edit} onSize={setSize} />
     {card && <div className="creative-actions"><span>选中 {card.id}</span>{(['x', 'y'] as const).map(axis => <label key={axis}>卡片 {axis}<input type="number" value={card.position[axis]} disabled={!editable} onChange={e => edit({ ...draftRef.current, cards: draftRef.current.cards.map(c => c.id === card.id ? { ...c, position: { ...c.position, [axis]: clampGraphPosition(e.target.valueAsNumber) } } : c) })} /></label>)}
       <Button disabled={!editable} onClick={() => { edit(removeCanvasCard(draftRef.current, card.id)); setSelected(''); }}>移除此引用卡片</Button></div>}
     {card?.asset && <CanvasAssetPreview key={card.id} reference={card.asset} owner={token} client={props.client} disabled={pending || props.busy || props.externalDirty} isCurrent={current} read={props.read} />}

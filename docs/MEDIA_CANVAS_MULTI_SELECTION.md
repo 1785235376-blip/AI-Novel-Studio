@@ -1,0 +1,9 @@
+# Media canvas cohort movement and alignment
+
+2026-10-18. The display editor now supports modifier-click multi-selection, explicit selection of all cards including off-screen ones, clearing selection, coherent cohort dragging/keyboard movement, and left/center/top/equal-spacing alignment. These change only the original display draft and use its bounded Undo/Redo and explicit Save.
+
+Alignment reuses `alignGraphNodes` through a temporary position-only Graph-shaped projection. That object is never validated as an executable graph, persisted, transmitted or passed to a run owner; only positions are copied back into the existing card definitions. Original graph node caps and execution authority remain unchanged. Card source bindings, groups, viewport and untouched positions are preserved. Cohort movement clamps one delta so members do not distort at coordinate boundaries.
+
+Selection changes now retire captured editor callbacks. A focused failing-before test exposed a retained alignment callback applying an old selected set after modifier selection changed; the product owner token now includes primary/cohort selection. The original assertion was retained and passed afterward. This is a UI intent-lifetime bug caught before publishing this slice, not a claim of cross-project access.
+
+Verification: first selection/geometry run 35 passed; final strengthened run 37 passed, including unchanged original Graph geometry tests. TypeScript, production Vite and shared token guard passed. The failing-before receipt `media-selection-retained-red` remains in history. Browser multi-pointer, visual and FPS acceptance are still open. Display-group membership controls currently operate on the primary selected card; richer group batch operations and reusable executable subgraphs remain separate work.

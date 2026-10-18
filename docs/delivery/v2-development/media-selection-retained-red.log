@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/creative/MediaCanvasViewPanel.additive.test.tsx (11 tests | 1 failed | 10 skipped) 172ms
+   × retires an alignment callback when the selected cohort changes 171ms
+     → expected '0' to be '200' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 skipped (11)
+   Start at  21:22:11
+   Duration  1.08s (transform 200ms, setup 15ms, collect 356ms, tests 172ms, environment 299ms, prepare 62ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/MediaCanvasViewPanel.additive.test.tsx > retires an alignment callback when the selected cohort changes
+AssertionError: expected '0' to be '200' // Object.is equality
+
+Expected: "200"
+Received: "0"
+
+ ❯ src/creative/MediaCanvasViewPanel.additive.test.tsx:58:68
+     56|  fireEvent.click(screen.getByText('选择全部卡片（含视口外）')); const …
+     57|  fireEvent.click(screen.getAllByRole('button', { name: 'a.png' })[1], …
+     58|  expect((screen.getByLabelText('卡片 x') as HTMLInputElement).value).t…
+       |                                                                    ^
+     59| });
+     60| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

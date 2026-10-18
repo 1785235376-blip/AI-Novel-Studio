@@ -50,3 +50,10 @@ it('leaves text-field undo alone and handles scoped canvas shortcuts', () => {
  const { props } = fixture(); render(<MediaCanvasViewPanel {...props} />); const title = screen.getByLabelText('画布标题') as HTMLInputElement; fireEvent.change(title, { target: { value: 'Edited' } });
  fireEvent.keyDown(title, { key: 'z', ctrlKey: true }); expect(title.value).toBe('Edited'); fireEvent.keyDown(screen.getByLabelText('媒体卡片视口'), { key: 'z', ctrlKey: true }); expect(title.value).toBe('媒体素材画布'); fireEvent.keyDown(screen.getByLabelText('媒体卡片视口'), { key: 'z', ctrlKey: true, shiftKey: true }); expect(title.value).toBe('Edited');
 });
+it('retires an alignment callback when the selected cohort changes', async () => {
+ const { props, views } = fixture(); const d = blank(); d.cards = [0, 200, 400].map((x, i) => ({ id: `Card_${i}`, position: { x, y: 0 }, asset: { asset_id: 'asset', version: 1, digest: 'a'.repeat(64), kind: 'image' as const } })); views.get.mockResolvedValue(record(d));
+ render(<MediaCanvasViewPanel {...props} />); fireEvent.click(screen.getByText('读取已存画布')); await screen.findByText('Saved · v1 · 0 张'); fireEvent.click(screen.getByText('Saved · v1 · 0 张')); await screen.findByText(/共 3\/1000/);
+ fireEvent.click(screen.getByText('选择全部卡片（含视口外）')); const align = retained(screen.getByText('左对齐所选卡片'));
+ fireEvent.click(screen.getAllByRole('button', { name: 'a.png' })[1], { shiftKey: true }); act(align);
+ expect((screen.getByLabelText('卡片 x') as HTMLInputElement).value).toBe('200'); expect(screen.queryByText('尚未保存')).toBeNull();
+});
