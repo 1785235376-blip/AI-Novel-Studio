@@ -19,6 +19,29 @@ def graph_client(client, monkeypatch):
     return e
 
 
+@pytest.fixture
+def scoped_graph_client(graph_client, monkeypatch):
+    """Own only this graph test's exact generated collaboration identities."""
+    e = graph_client
+    try:
+        scoped(e, monkeypatch)
+        yield e
+    finally:
+        if e.backend == "postgres" and hasattr(e, "workspace"):
+            # scoped() assigns fresh UUID-suffixed IDs before writing. Keep
+            # cleanup exact even if setup or a test assertion fails midway.
+            with e.store._connect() as connection:
+                for table in ("domain_role_assignments", "permission_assignments", "authorization_audit_events"):
+                    connection.execute(f"DELETE FROM {table} WHERE payload->'scope'->>'workspace_id'=%s AND payload->'scope'->>'project_id'=%s", (e.workspace, e.nid))
+                connection.execute("DELETE FROM workspace_memberships WHERE workspace_id=%s AND user_id IN (%s,%s)", (e.workspace, e.lead, e.viewer))
+                for table in ("storyline_branches", "storylines"):
+                    connection.execute(f"DELETE FROM {table} WHERE payload->>'workspace_id'=%s AND payload->>'project_id'=%s", (e.workspace, e.nid))
+                connection.execute("DELETE FROM project_workspaces WHERE project_id=%s AND workspace_id=%s", (e.nid, e.workspace))
+                connection.execute("UPDATE novels SET workspace_id='default-workspace' WHERE slug=%s AND workspace_id=%s", (e.nid, e.workspace))
+                connection.execute("DELETE FROM workspaces WHERE id=%s", (e.workspace,))
+                connection.execute("DELETE FROM users WHERE id IN (%s,%s)", (e.lead, e.viewer))
+
+
 def definition(text="User-authored graph text", *, review=True):
     nodes = [
         {"id": "Input", "definition_id": "text_input", "parameters": {"text": text}},
@@ -103,8 +126,8 @@ def test_graph_routes_default_off_and_v1_override(graph_client, monkeypatch, acc
         assert result.json()["detail"]["code"] == "EXPERIMENTAL_FEATURE_DISABLED"
 
 
-def test_graph_scoped_authority_actor_private_reads_and_exact_route_admission(graph_client, monkeypatch):
-    e = scoped(graph_client, monkeypatch)
+def test_graph_scoped_authority_actor_private_reads_and_exact_route_admission(scoped_graph_client):
+    e = scoped_graph_client
     assert e.client.get(e.graph_base).status_code == 401
     assert e.client.get(e.graph_base, headers={"X-Session-Token": e.lead}).status_code == 400
     row = create(e, headers=e.headers)
@@ -132,8 +155,8 @@ def test_graph_cas_conflict_is_sanitized_and_never_returns_authored_text(graph_c
 
 
 @pytest.mark.parametrize("private_error", [False, True])
-def test_graph_late_revocation_suppresses_results_and_private_errors(graph_client, monkeypatch, private_error):
-    e = scoped(graph_client, monkeypatch)
+def test_graph_late_revocation_suppresses_results_and_private_errors(scoped_graph_client, monkeypatch, private_error):
+    e = scoped_graph_client
     row = create(e, headers=e.headers)
     original = e.graphs.get
     def revoked(*args, **kwargs):
@@ -164,8 +187,8 @@ def test_asset_reference_is_display_only_and_cannot_admit_execution(graph_client
     assert checked(e.client.get(e.studio_base + "/assets/" + asset["id"])) == asset
 
 
-def test_original_review_permission_is_distinct_from_graph_write(graph_client, monkeypatch):
-    e = scoped(graph_client, monkeypatch)
+def test_original_review_permission_is_distinct_from_graph_write(scoped_graph_client):
+    e = scoped_graph_client
     row = create(e, headers=e.headers)
     run = admit(e, row, headers=e.headers)
     path = e.studio_base + "/graph-runs/" + run["id"]
