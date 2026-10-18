@@ -1,0 +1,54 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/comic-publication-slice/frontend
+
+ ✓ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests) 1652ms
+   ✓ uses original undo redo and CAS save while retaining inactive values through fit toggles 437ms
+   ✓ original vertical arrangement preserves framing values through apply and undo 342ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 1862ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 786ms
+ ✓ src/experimental/comicLayoutsClient.publication.test.ts (12 tests) 46ms
+ ✓ src/experimental/ComicCollectionTree.test.tsx (13 tests) 2593ms
+   ✓ creates an empty book only explicitly and preserves a bounded manual structure with all page-version pins 433ms
+   ✓ moves pages across chapters and removes membership without deleting pages; restore is explicit and version-aware 352ms
+   ✓ integrates aggregate dirty state and explicit page and structure discard before leaving an active collection 658ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 2818ms
+   ✓ explicit arrangement preview applies one undoable edit and saves only through original owner 724ms
+   ✓ cancel, edits, refresh and client replacement discard arrangement consent 611ms
+   ✓ retained arrangement apply is fenced after cancellation, edits and repeat invocation 469ms
+   ✓ retained apply cannot cross record, source or owner ABA 556ms
+ ✓ src/experimental/ComicOraImportPanel.test.tsx (15 tests) 2907ms
+   ✓ keeps every write explicit, gates review on actual pixels, and attaches only as DRAFT 576ms
+   ✓ retained review callback cannot bypass changed acknowledgements or double submit 482ms
+ ✓ src/experimental/comicDuplication.test.ts (36 tests) 12ms
+ ✓ src/experimental/comicLayers.test.ts (20 tests) 24ms
+ ✓ src/experimental/comicRasterLayers.test.ts (15 tests) 9ms
+ ✓ src/creative/studioClient.test.ts (38 tests) 56ms
+ ✓ src/experimental/comicArrangement.test.ts (18 tests) 16ms
+ ✓ src/creative/studioClient.boundedDownload.additive.test.ts (38 tests) 131ms
+ ✓ src/experimental/ComicReadingOrder.additive.test.tsx (5 tests) 848ms
+   ✓ integrates with original layout history without saving or approving automatically 703ms
+ ✓ tests/uiContracts.test.ts (5 tests) 4ms
+ ✓ src/experimental/comicOraClient.test.ts (4 tests) 14ms
+ ✓ src/experimental/ComicPublicationPanel.test.tsx (27 tests) 3545ms
+   ✓ mounts below the original tree, makes no implicit posts, and requires an explicit direction and saved-order review 687ms
+   ✓ survives its own aggregate busy revision and blocks the original page editor during publication work 363ms
+ ✓ src/experimental/ComicLayoutsPanel.layers.test.tsx (11 tests) 4944ms
+   ✓ legacy save stays unlayered until explicit enable and never shows ORA export 559ms
+   ✓ explicit enable and layer edits preserve canonical dialogue, save through CAS and remain undoable 930ms
+   ✓ structural add/remove preserves unrelated layer settings and exact undo coverage 976ms
+   ✓ ORA export needs approved loaded current pixels and admits a double click once 497ms
+   ✓ ORA failure 403 preserves the authored native document 371ms
+   ✓ ORA failure 409 preserves the authored native document 415ms
+ ✓ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (25 tests) 7503ms
+   ✓ explicit preview discloses pins and applies one exact undoable copy through original CAS save 1047ms
+   ✓ invalid destination never consumes IDs or changes history and cancel discards preview 771ms
+   ✓ retained apply callbacks cannot survive edit, coordinate replacement, cancel, or repeat 720ms
+   ✓ IME start invalidates intent and prevents preview until composition ends 364ms
+   ✓ refresh, stale catalog pins, source ABA and client/scope replacement fence retained callbacks 497ms
+   ✓ ID collisions fail atomically and displayed pixels and consent disappear on successful copy 329ms
+
+ Test Files  18 passed (18)
+      Tests  302 passed (302)
+   Start at  06:06:06
+   Duration  8.85s (transform 2.44s, setup 313ms, collect 7.20s, tests 28.98s, environment 4.91s, prepare 1.54s)
+

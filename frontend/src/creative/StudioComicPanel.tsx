@@ -28,6 +28,7 @@ export function StudioComicPanel({ projectId, context, isCurrent, onDirtyChange,
     return {
       get: <T,>(path: string, signal?: AbortSignal) => read(() => transport.json<T>(root + path, 'GET', undefined, signal)),
       post: <T,>(path: string, body: unknown) => read(() => transport.json<T>(root + path, 'POST', body)),
+      postBlob: (path: string, body: unknown) => read(() => transport.blobResponse(root + path, 'POST', body)),
       put: <T,>(path: string, body: unknown) => read(() => transport.json<T>(root + path, 'PUT', body)),
       blob: (path: string, signal?: AbortSignal) => read(() => transport.blob(root + path, 'GET', undefined, signal)),
     };

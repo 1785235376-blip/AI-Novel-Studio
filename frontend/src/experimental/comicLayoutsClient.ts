@@ -1,4 +1,5 @@
 import type { ExperimentalClient } from './api';
+import { ApiError } from '../api';
 import type { DirectorScreenplay } from './directorClient';
 import type { RefNode } from '../novel/useMultimodalWorkspacePersistence';
 // Original canvas coordinate/identity contract, with explicit print dimensions.
@@ -20,6 +21,9 @@ export type ComicChapter = { id: string; title: string; pages: string[] };
 export type ComicBookDocument = { title: string; chapters: ComicChapter[] };
 export type ComicBook = { id: string; version: number; stale: boolean; title?: string; chapters?: ComicChapter[]; history_versions?: number[] };
 export type ComicBookPageResult = { book: ComicBook; page: ComicRecord };
+export type ComicReadingDirection = 'LTR' | 'RTL';
+export type ComicPublicationPage = { id: string; version: number; review_digest: string };
+export type ComicPublicationPreflight = { book_version: number; reading_direction: ComicReadingDirection; pages: ComicPublicationPage[]; publication_digest: string; page_count: number; losses: string[] };
 export type ComicAsset = { id: string; filename: string; version: number; approved: boolean; manual_review_available: boolean };
 export type ComicCatalog = { screenplays: DirectorScreenplay[]; characters: { id: string; name: string }[]; assets: ComicAsset[]; presets: Record<'PAGE' | 'WEBTOON', { width: number; height: number; safe_area: number; segment_height: number }>; renderer: { available: boolean; code?: string }; font: { available: boolean; code?: string } };
 export type ComicPreflight = { issues: { code: string; target: string; severity: string }[]; segments: { index: number; width: number; height: number; y: number }[]; can_render: boolean; review_digest: string; version: number; status: string };
@@ -31,6 +35,19 @@ export function comicLayoutsClient(client: ExperimentalClient) {
     saveBook: (book: ComicBook, document: ComicBookDocument, expected_page_versions: Record<string, number>) => client.put<ComicBook>(`/comic-layouts/books/${encodeURIComponent(book.id)}`, { ...document, expected_version: book.version, expected_page_versions }),
     createBookPage: (book: ComicBook, chapter_id: string, source?: ComicRecord) => client.post<ComicBookPageResult>(`/comic-layouts/books/${encodeURIComponent(book.id)}/pages`, { expected_version: book.version, chapter_id, ...(source ? { source_layout_id: source.id, expected_source_version: source.version } : {}) }),
     restoreBook: (book: ComicBook, target_version: number) => client.post<ComicBook>(`/comic-layouts/books/${encodeURIComponent(book.id)}/restore`, { expected_version: book.version, target_version }),
+    publicationPreflight: (book: ComicBook, reading_direction: ComicReadingDirection) => client.post<ComicPublicationPreflight>(`/comic-layouts/books/${encodeURIComponent(book.id)}/publication-preflight`, { expected_version: book.version, reading_direction }),
+    downloadCbz: async (book: ComicBook, report: ComicPublicationPreflight) => {
+      if (!client.postBlob || book.version !== report.book_version) return invalidPublication();
+      const { blob, headers } = await client.postBlob(`/comic-layouts/books/${encodeURIComponent(book.id)}/export-cbz`, {
+        expected_version: report.book_version, reading_direction: report.reading_direction,
+        pages: report.pages.map(({ id, version, review_digest }) => ({ id, version, review_digest })), publication_digest: report.publication_digest,
+      });
+      const sha256 = headers.get('X-Content-SHA256');
+      if (blob.type.split(';')[0] !== 'application/vnd.comicbook+zip' || !blob.size || headers.get('X-Comic-Publication-Digest') !== report.publication_digest || !sha256 || !/^[a-f0-9]{64}$/.test(sha256)) return invalidPublication();
+      const digest = await globalThis.crypto.subtle.digest('SHA-256', await blob.arrayBuffer());
+      if (Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('') !== sha256) return invalidPublication();
+      return blob;
+    },
     catalog: (signal?: AbortSignal) => client.get<ComicCatalog>('/comic-layouts/catalog', signal),
     records: (signal?: AbortSignal) => client.get<{ items: ComicRecord[] }>('/comic-layouts/records', signal),
     image: (id: string) => client.blob(`/comic-layouts/images/${encodeURIComponent(id)}`),
@@ -43,6 +60,9 @@ export function comicLayoutsClient(client: ExperimentalClient) {
     downloadOra: (row: ComicRecord) => client.blob(path(row) + `/export-ora?expected_version=${row.version}`),
     download: (row: ComicRecord) => client.blob(path(row) + `/export?expected_version=${row.version}`),
   };
+}
+export function invalidPublication(): never {
+  throw new ApiError({ status: 422, code: 'COMIC_PUBLICATION_INVALID_RESPONSE', message: '出版检查或文件校验与当前书不一致。请刷新书和页面，重新检查后再下载。' });
 }
 export const comicIssueLabel: Record<string, string> = {
   COMIC_SPATIAL_ORDER_CONFLICT: '支持从上到下、同一行从左到右的顺序；编号与位置冲突', COMIC_MISSING_APPROVED_IMAGE: '缺少已批准图片', COMIC_READING_ORDER_CONFLICT: '阅读顺序必须从 1 连续编号，不能重复', COMIC_PANEL_OUTSIDE_SAFE_AREA: '格框超出页面安全区', COMIC_PANEL_OVERLAP: '格框重叠',

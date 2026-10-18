@@ -3,6 +3,7 @@ import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitive
 import type { ExperimentalClient } from './api';
 import { ErrorMessage, Field, ResourceState, useResource } from './shared';
 import { comicLayoutsClient, type ComicBook, type ComicBookDocument, type ComicChapter, type ComicRecord } from './comicLayoutsClient';
+import { ComicPublicationPanel } from './ComicPublicationPanel';
 
 type Props = {
   client: ExperimentalClient;
@@ -35,6 +36,8 @@ export function ComicCollectionTree(props: Props) {
   const [book, setBook] = useState<ComicBook>();
   const [draft, setDraft] = useState<ComicBookDocument>();
   const [dirty, setDirty] = useState(false), [busy, setBusy] = useState(false);
+  const [publicationBusy, setPublicationBusy] = useState(false);
+  const publicationPending = useRef(false);
   const [error, setError] = useState<unknown>(), [notice, setNotice] = useState('');
   const [newTitle, setNewTitle] = useState(''), [restoreVersion, setRestoreVersion] = useState('');
   const [attach, setAttach] = useState<Record<string, string>>({});
@@ -49,14 +52,14 @@ export function ComicCollectionTree(props: Props) {
   useEffect(() => { if (recordsSeen.current !== props.records) { recordsSeen.current = props.records; books.reload(); } }, [props.records, books.reload]);
   const ready = !books.loading && !books.error && !!books.data && Array.isArray(books.data.items);
   const latestBook = ready ? books.data!.items.find(item => item.id === book?.id) : undefined;
-  const usable = ready && props.recordsReady && !props.externalBusy && !props.pageDirty && !busy;
+  const usable = ready && props.recordsReady && !props.externalBusy && !props.pageDirty && !busy && !publicationBusy;
   const pageRows = new Map(props.records.filter(row => !row.stale && row.document?.source_mode === 'INDEPENDENT').map(row => [row.id, row]));
   const pageIds = draft?.chapters.flatMap(chapter => chapter.pages) || [];
   const allReferencesAvailable = props.recordsReady && pageIds.every(id => pageRows.has(id));
   const projectableBook = (value?: ComicBook): value is ComicBook & ComicBookDocument => visibleBook(value) && props.recordsReady && value.chapters.every(chapter => chapter.pages.every(id => pageRows.has(id)));
   const selectedCurrent = projectableBook(book) && projectableBook(latestBook) && book.version === latestBook.version && allReferencesAvailable;
   const navigationBlocked = dirty || props.pageDirty;
-  const current = () => alive.current && (live.current.isOwnerCurrent?.() ?? true) && renderedGeneration === generation.current && ownerRevision === live.current.getOwnerRevision() && !pending.current && !live.current.externalBusy;
+  const current = () => alive.current && (live.current.isOwnerCurrent?.() ?? true) && renderedGeneration === generation.current && ownerRevision === live.current.getOwnerRevision() && !pending.current && !publicationPending.current && !live.current.externalBusy;
   const changeDirty = (value: boolean) => { setDirty(value); props.onDirtyChange(value); };
   const consume = () => { generation.current++; setNotice(''); setError(undefined); };
   const edit = (next: ComicBookDocument) => {
@@ -97,7 +100,7 @@ export function ComicCollectionTree(props: Props) {
       <ResourceState loading={books.loading} error={books.error} />
       {!!error && <ErrorMessage error={error} />}{notice && <StatusMessage tone="success">{notice}</StatusMessage>}
       {navigationBlocked && <StatusMessage tone="warning">有未保存的{dirty && props.pageDirty ? '书结构和页面' : dirty ? '书结构' : '页面'}。请先保存或明确放弃对应草稿，再切换书或页面、新建页面、复制页面或恢复结构。</StatusMessage>}
-      <div className="experimental-actions"><Button disabled={busy || props.externalBusy || navigationBlocked || books.loading} onClick={() => { if (!current() || navigationBlocked || composing.current) return; consume(); books.reload(); }}>刷新漫画书</Button></div>
+      <div className="experimental-actions"><Button disabled={busy || publicationBusy || props.externalBusy || navigationBlocked || books.loading} onClick={() => { if (!current() || navigationBlocked || composing.current) return; consume(); books.reload(); }}>刷新漫画书</Button></div>
       <Field label="新漫画书名称"><input maxLength={240} value={newTitle} disabled={!usable || navigationBlocked} onChange={event => { if (!current()) return; consume(); setNewTitle(event.target.value); }} /></Field>
       <Button disabled={!usable || navigationBlocked || !newTitle.trim() || (books.data?.items.length || 0) >= 20} onClick={() => { if (navigationBlocked || !newTitle.trim() || (books.data?.items.length || 0) >= 20) return; void run(() => api.createBook(newTitle.trim()), '已创建空漫画书，可以添加章节。', () => setNewTitle('')); }}>创建漫画书</Button>
       {ready && !books.data!.items.length && <EmptyState title="还没有漫画书" detail="创建书后添加章节，再新建、复制或附加已保存的独立页面。" />}
@@ -145,6 +148,10 @@ export function ComicCollectionTree(props: Props) {
         <Field label="恢复漫画书结构版本"><select disabled={!usable || navigationBlocked} value={restoreVersion} onChange={event => { if (!current()) return; consume(); setRestoreVersion(event.target.value); }}><option value="">选择历史结构版本</option>{book!.history_versions?.slice(-100).map(version => <option key={version} value={version}>v{version}</option>)}</select></Field>
         <p>恢复会新建结构版本，恢复旧章节顺序和页面归属；页面文字、格框、图片及审核状态不回滚。</p>
         <Button disabled={!usable || navigationBlocked || !restoreVersion} onClick={() => { if (!book || navigationBlocked || !book.history_versions?.includes(Number(restoreVersion))) return; void run(() => api.restoreBook(book, Number(restoreVersion)), '已新增恢复后的结构版本，页面内容未回滚。'); }}>恢复为新的漫画书结构版本</Button>
+        <ComicPublicationPanel key={book!.id} client={props.client} book={book! as ComicBook & ComicBookDocument} records={props.records}
+          disabled={dirty || props.pageDirty || props.externalBusy || busy} collectionRevision={generation.current} getCollectionRevision={() => generation.current}
+          isOwnerCurrent={() => alive.current && (live.current.isOwnerCurrent?.() ?? true)} getOwnerRevision={() => live.current.getOwnerRevision()}
+          onBusyChange={value => { publicationPending.current = value; if (alive.current) setPublicationBusy(value); live.current.onBusyChange(value); }} />
       </>}
     </div>
   </Panel>;

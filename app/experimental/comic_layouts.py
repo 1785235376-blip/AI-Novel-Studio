@@ -14,6 +14,7 @@ from contextlib import contextmanager, ExitStack, nullcontext
 from typing import Literal
 from pydantic import Field, model_serializer, model_validator
 from .comic_collections import ComicCollectionsMixin
+from .comic_publication_budget import source_read_limit, segment_buffer, lineage_read_work, publication_active
 from .comic_layers import ComicLayerStack, validate_references, iter_layer_images, composite_layer, MAX_LAYER_SOURCE_PIXELS, MAX_LAYER_PIXELS, ora_decode_budget, consume_decode_pixels
 from .common import DomainService, StaleSourceError, check_version, now, new_row, change_row
 from .director import DirectorService
@@ -204,6 +205,8 @@ def _image(data, *, pixel_budget=None):
                 if pixels > pixel_budget[0]:
                     raise ValueError('COMIC_LAYER_SOURCE_PIXEL_LIMIT_64000000')
                 pixel_budget[0] -= pixels
+            from .comic_publication_budget import source_work
+            source_work(len(data), image.width * image.height)
             consume_decode_pixels(image.width * image.height)
             image.load()
             # Explicit EXIF orientation normalization for both preview/export.
@@ -355,7 +358,7 @@ def compose(document, images, *, render=False):
                 for i, line in enumerate(lines): draw.text((bubble['x'] + 12, bubble['y'] + 12 + i * line_height), line, font=font, fill='black', anchor='lt')
     output = []
     for segment in segments:
-        stream = io.BytesIO(); canvas.crop((0, segment['y'], document['width'], segment['y'] + segment['height'])).save(stream, format='PNG', compress_level=9)
+        stream = segment_buffer(); canvas.crop((0, segment['y'], document['width'], segment['y'] + segment['height'])).save(stream, format='PNG', compress_level=9)
         data = stream.getvalue()
         with Image.open(io.BytesIO(data)) as check:
             check.verify()
@@ -431,7 +434,10 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
         if asset.get('novel_id') != nid or asset.get('branch_id') != scope.get('branch_id'): raise FileNotFoundError(aid)
         if asset['media_type'] not in {'image/png', 'image/jpeg', 'image/webp'}: raise ValueError('COMIC_STATIC_RASTER_REQUIRED')
         if approved and not asset.get('approved_at'): raise ValueError('COMIC_ASSET_REVIEW_REQUIRED')
-        if self.lineage is not None and self.lineage.asset(nid, scope, aid)['stale']: raise StaleSourceError('COMIC_ASSET_LINEAGE_CHANGED')
+        if self.lineage is not None:
+            lineage_read_work(asset)
+            if self.lineage.asset(nid, scope, aid, include_impact=not publication_active())['stale']:
+                raise StaleSourceError('COMIC_ASSET_LINEAGE_CHANGED')
         # Bind privacy decisions across recorded lineage, not only content bytes.
         privacy, seen, frontier = {}, set(), [asset]
         while frontier:
@@ -448,7 +454,7 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
                 if parent_row.get('novel_id') != nid or parent_row.get('branch_id') != scope.get('branch_id'): raise FileNotFoundError(pid)
                 frontier.append(parent_row)
         asset['_comic_source_privacy'] = privacy
-        content = self.assets.content(aid, branch_id=scope.get('branch_id'), actor_id=actor)
+        content = self.assets.content(aid, branch_id=scope.get('branch_id'), actor_id=actor, max_bytes=source_read_limit(asset))
         if renderer_status()['available']: _image(content, pixel_budget=pixel_budget)
         return asset, content
 
@@ -472,7 +478,7 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
                        (pin['version'], pin['sha256'], pin['review_digest'])):
                 raise StaleSourceError('COMIC_RASTER_REVIEW_CHANGED')
             data = self.assets.content(asset['id'], branch_id=scope.get('branch_id'), actor_id=actor,
-                                       max_bytes=self.assets.MAX_BYTES)
+                                       max_bytes=source_read_limit(asset, self.assets.MAX_BYTES))
             image = _image(data, pixel_budget=pixel_budget)
             if image.size != (item['width'], item['height']):
                 image.close(); raise StaleSourceError('COMIC_RASTER_DIMENSIONS_CHANGED')

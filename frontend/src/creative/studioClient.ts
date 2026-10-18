@@ -302,6 +302,11 @@ export function studioTransport(context: CollaborationContext) {
       try { return await result.blob(); }
       catch { throw new ApiError({ status: result.status, code: 'STUDIO_RESPONSE_INVALID', message: '文件未能读取，请重试下载。' }); }
     },
+    async blobResponse(url: string, method = 'GET', body?: unknown, signal?: AbortSignal, idempotencyKey?: string): Promise<{ blob: Blob; headers: Headers }> {
+      const result = await response(url, method, body, signal, idempotencyKey);
+      try { return { blob: await result.blob(), headers: result.headers }; }
+      catch { throw new ApiError({ status: result.status, code: 'STUDIO_RESPONSE_INVALID', message: '文件未能读取，请重试下载。' }); }
+    },
     async boundedBlob(url: string, maxBytes: number, signal?: AbortSignal): Promise<Blob> {
       if (!Number.isSafeInteger(maxBytes) || maxBytes < 1 || maxBytes > 8 * 1024 * 1024) {
         throw new ApiError({ status: 400, code: 'STUDIO_DOWNLOAD_LIMIT_INVALID', message: '预览文件大小上限无效。' });
