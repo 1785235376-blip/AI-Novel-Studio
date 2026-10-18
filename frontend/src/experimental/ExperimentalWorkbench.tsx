@@ -1,3 +1,4 @@
+import { useStyleDNALeaveGuard, type StyleDNALeaveBridge } from './useStyleDNALeaveGuard';
 import {studioClient} from '../creative/studioClient';
 import { useEffect, useLayoutEffect, useId, useMemo, useRef, useState } from 'react';
 import { FlaskConical } from 'lucide-react';
@@ -50,8 +51,15 @@ import './experimental.css';
 
 export { EXPERIMENTAL_GROUPS, EXPERIMENTAL_TABS } from './experimentalNavigation';
 import { EXPERIMENTAL_TABS } from './experimentalNavigation';
-export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavigate, currentAnchor, requestedTab, workspaceSection, focusActive, onFocusChange, onPreferencesChange, onReferencesChange, onUseCharacter, onExitCharacter, activeCharacterId, onOpenGeneration, onUseStyle, currentSelection, saved, onChapterSaved, revisionGeneration, localDraftState, saveFailure, workspaceView, onWorkspaceViewChange, onWorkspaceSaved, requestedTask }: { novelId: string; chapter?: Chapter; context: CollaborationContext; flags?: ExperimentalFlags; onNavigate?: (target: WorkspaceNavigation) => void; currentAnchor?: WorkspaceAnchor; requestedTab?: string; workspaceSection?: 'resume' | 'search' | 'tasks' | 'diagnostics' | 'guide'; focusActive?: boolean; onFocusChange?: (active: boolean) => void; onPreferencesChange?: (preferences: WritingFocusPreferences) => void; onReferencesChange?: () => void; onUseCharacter?: (characterId: string, chapterId: string, sceneId?: string) => void; onExitCharacter?: () => void; activeCharacterId?: string; onOpenGeneration?: (jobId: string, chapterId: string) => Promise<void>; onUseStyle?: (id: string) => void; currentSelection?: { from: number; to: number; text: string }; saved?: boolean; onChapterSaved?: (chapter: Chapter) => void; revisionGeneration?: RevisionGenerationOptions; localDraftState?: DraftStatus[]; saveFailure?: boolean; workspaceView?: WorkspaceView; onWorkspaceViewChange?: (view: WorkspaceView) => void; onWorkspaceSaved?: () => void; requestedTask?: { id: string; authority?: string; parent_id?: string } }) {
+export function ExperimentalWorkbench({ leaveGuard: hostLeaveGuard, novelId, chapter, context, flags, onNavigate, currentAnchor, requestedTab, workspaceSection, focusActive, onFocusChange, onPreferencesChange, onReferencesChange, onUseCharacter, onExitCharacter, activeCharacterId, onOpenGeneration, onUseStyle, currentSelection, saved, onChapterSaved, revisionGeneration, localDraftState, saveFailure, workspaceView, onWorkspaceViewChange, onWorkspaceSaved, requestedTask }: { leaveGuard?: StyleDNALeaveBridge; novelId: string; chapter?: Chapter; context: CollaborationContext; flags?: ExperimentalFlags; onNavigate?: (target: WorkspaceNavigation) => void; currentAnchor?: WorkspaceAnchor; requestedTab?: string; workspaceSection?: 'resume' | 'search' | 'tasks' | 'diagnostics' | 'guide'; focusActive?: boolean; onFocusChange?: (active: boolean) => void; onPreferencesChange?: (preferences: WritingFocusPreferences) => void; onReferencesChange?: () => void; onUseCharacter?: (characterId: string, chapterId: string, sceneId?: string) => void; onExitCharacter?: () => void; activeCharacterId?: string; onOpenGeneration?: (jobId: string, chapterId: string) => Promise<void>; onUseStyle?: (id: string) => void; currentSelection?: { from: number; to: number; text: string }; saved?: boolean; onChapterSaved?: (chapter: Chapter) => void; revisionGeneration?: RevisionGenerationOptions; localDraftState?: DraftStatus[]; saveFailure?: boolean; workspaceView?: WorkspaceView; onWorkspaceViewChange?: (view: WorkspaceView) => void; onWorkspaceSaved?: () => void; requestedTask?: { id: string; authority?: string; parent_id?: string } }) {
   const client = useMemo(() => experimentalClient(novelId, context), [novelId, context.sessionToken, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId, context.actor?.id]);
+  const localLeaveGuard = useStyleDNALeaveGuard(() => true, JSON.stringify([novelId, context.sessionToken, context.actor?.id, context.scope]));
+  const leaveGuard = hostLeaveGuard || localLeaveGuard;
+  const clientNow = useRef(client); clientNow.current = client;
+  const requestTab = (next: string) => {
+    if (next === active) return;
+    leaveGuard.request(current => { if (current() && clientNow.current === client) { setSelected(next); setToolQuery(''); } });
+  };
   const briefGraphReader=useMemo(()=>studioClient(novelId,context).graphs,[client]);
   const navigateFromSimulator = useMemo(() => onNavigate ? simulatorOwnerNavigation(onNavigate) : undefined, [onNavigate]);
   const [selected, setSelected] = useState(requestedTab || 'advanced_planning_v2');
@@ -69,16 +77,19 @@ export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavi
   const [toolQuery, setToolQuery] = useState('');
   const filterInput = useRef<HTMLInputElement>(null);
   const filterHintId = useId(), toolNavigationId = useId();
-  useEffect(() => { if (requestedTab) { setSelected(requestedTab); setToolQuery(''); } }, [requestedTab]);
+  useEffect(() => { if (requestedTab) requestTab(requestedTab); }, [requestedTab]);
   const tabs = EXPERIMENTAL_TABS.filter(([key]) => enabled(flags, key));
   const queryTerms = toolQuery.normalize('NFKC').trim().toLowerCase().split(/\s+/).filter(Boolean);
   const visibleTabs = tabs.filter(([key, label]) => queryTerms.every(term => `${label} experimental.${key}`.normalize('NFKC').toLowerCase().includes(term)));
   // Filter navigation only. Keep the active panel and its draft state mounted.
   const active = tabs.some(([key]) => key === selected) ? selected : tabs[0]?.[0];
+  // Pin the actual fallback so enabling another tool cannot unmount a dirty editor.
+  useLayoutEffect(() => { if (active && active !== selected) setSelected(active); }, [active, selected]);
   const activeLabel = tabs.find(([key]) => key === active)?.[1];
   if (!tabs.length) return <EmptyState title="Experimental 未启用" detail="这些功能默认关闭，V1.0 验收模式保持关闭。" />;
   if (!novelId) return <EmptyState title="先选择作品" detail="实验记录仍受作品、分支和审核权限约束。" />;
   return <section className="experimental-workbench" aria-label="Experimental 工作台">
+    {!hostLeaveGuard && localLeaveGuard.dialog}
     <div className="experimental-actions"><h2>Experimental 工作台</h2><Badge tone="warning">默认关闭 · V1.1 预览</Badge></div>
     <div className="experimental-actions">
       <Field label="查找已启用工具"><input ref={filterInput} type="search" value={toolQuery} autoComplete="off" placeholder="工具名称或标识" aria-describedby={filterHintId} aria-controls={toolNavigationId} onChange={event => setToolQuery(event.target.value)} /></Field>
@@ -86,11 +97,11 @@ export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavi
       <small id={filterHintId}>仅筛选下方入口；当前工具：{activeLabel}。</small>
     </div>
     {!!queryTerms.length && <StatusMessage>{visibleTabs.length ? `找到 ${visibleTabs.length} / ${tabs.length} 个已启用工具。` : '没有匹配的已启用工具。请更换关键词或清除筛选。'}</StatusMessage>}
-    <nav id={toolNavigationId} className="experimental-tabs" aria-label="实验功能">{visibleTabs.map(([key, label]) => <Button key={key} type="button" aria-pressed={active === key} onClick={() => { setSelected(key); setToolQuery(''); }}>{label}</Button>)}</nav>
+    <nav id={toolNavigationId} className="experimental-tabs" aria-label="实验功能">{visibleTabs.map(([key, label]) => <Button key={key} type="button" aria-pressed={active === key} onClick={() => requestTab(key)}>{label}</Button>)}</nav>
     {active === 'temporal_story_graph_v2' && <StoryGraphPanel client={client} chapter={chapter} requestedRecordId={requestedTask?.authority === 'graph_record' ? requestedTask.id : undefined} mindEnabled={enabled(flags, 'character_mind_v2')} onNavigate={onNavigate} onUseCharacter={onUseCharacter} onExitCharacter={onExitCharacter} activeCharacterId={activeCharacterId} />}
     {active === 'model_broker_v2' && <ModelBrokerPanel saved={saved} client={client} novelId={novelId} context={context} chapter={chapter} benchmarkEnabled={enabled(flags, 'model_benchmark_v2')} onOpenGeneration={onOpenGeneration} />}
     {active === 'asset_lineage_v2' && <ProductionLineagePanel client={client} manifestsEnabled={enabled(flags, 'production_manifest_v2')} onNavigate={onNavigate} />}
-    {active === 'style_dna_v2' && <StyleAnalysisPanel client={client} chapter={chapter} requestedJobId={requestedTask?.authority === 'style_model_job' ? requestedTask.id : undefined} onNavigate={onNavigate} onUseStyle={onUseStyle} />}
+    {active === 'style_dna_v2' && <StyleAnalysisPanel leaveGuard={leaveGuard} client={client} chapter={chapter} requestedJobId={requestedTask?.authority === 'style_model_job' ? requestedTask.id : undefined} onNavigate={onNavigate} onUseStyle={onUseStyle} />}
     {active === 'narrative_quality_judge_v2' && <NarrativeJudgePanel client={client} requestedJobId={requestedTask?.authority === 'judge_model_job' ? requestedTask.id : undefined} chapter={chapter} onNavigate={onNavigate} onPrepareRevision={saved && enabled(flags, 'revision_intelligence_v2') ? intent => {
       if (handoffLive.current.epoch !== handoffEpoch || handoffLive.current.client !== client) return;
       setJudgeRevision({ client, chapter: chapterSnapshot, intent }); setSelected('revision_intelligence_v2'); setToolQuery('');

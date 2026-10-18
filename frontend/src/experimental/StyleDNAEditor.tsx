@@ -1,3 +1,4 @@
+import type { StyleDNALeaveBridge, StyleDNALeaveOwner } from './useStyleDNALeaveGuard';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ApiError } from '../api';
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
@@ -7,15 +8,16 @@ const labels = { writing_tone: '文字语气', camera_language: '镜头语言', 
 const empty = (): StyleProfileInput => ({ title: '', instructions: '', rules: [], chapter_ids: [], character_ids: [], style_dna: { schema_version: 1, global_rules: {}, overrides: [] } });
 const editable = (row: StyleProfileInput) => !!row.style_dna && row.style_dna.overrides.length <= 1 && row.style_dna.overrides.every(item => item.target.level === 'CHAPTER');
 const clean = (rules: StyleRules) => Object.fromEntries(Object.entries(rules).filter(([, text]) => text?.trim()).map(([key, text]) => [key, text!.trim()])) as StyleRules;
-type Props = { api: StyleReviewClient; catalog?: StyleCatalog; available: boolean; error?: unknown; onRefresh: () => void };
+type Props = { api: StyleReviewClient; catalog?: StyleCatalog; available: boolean; error?: unknown; onRefresh: () => void; leaveGuard?: StyleDNALeaveBridge };
 let ownerSequence = 0;
 export function StyleDNAEditor(props: Props) {
-  const identity = useMemo(() => ++ownerSequence, [props.api]);
+  const identity = useMemo(() => ++ownerSequence, [props.api, props.leaveGuard?.generation]);
   return <StyleDNAEditorBody key={identity} {...props} />;
 }
-function StyleDNAEditorBody({ api, catalog, available, error, onRefresh }: Props) {
+function StyleDNAEditorBody({ api, catalog, available, error, onRefresh, leaveGuard }: Props) {
   const [id, setId] = useState(''), [version, setVersion] = useState(0), [draft, setDraft] = useState(empty), [dirty, setDirty] = useState(false), [notice, setNotice] = useState('');
   const [targetId, setTargetId] = useState(''), [result, setResult] = useState<StyleResolution>(), [failure, setFailure] = useState<unknown>(), [busy, setBusy] = useState(false), [quarantined, setQuarantined] = useState(false);
+  const ownerKey = useRef({}), draftRevision = useRef(0), dirtyNow = useRef(false);
   const epoch = useRef(0), running = useRef(false), alive = useRef(true);
   const row = catalog?.styles.find(item => item.id === id && item.style_dna);
   const lost = !!id && available && !row;
@@ -29,17 +31,17 @@ function StyleDNAEditorBody({ api, catalog, available, error, onRefresh }: Props
   useLayoutEffect(() => {
     const denied = error instanceof ApiError && [401, 403, 404].includes(error.problem.status);
     if (error || lost) invalidate();
-    if (denied || lost) { setDraft(empty()); setDirty(false); setQuarantined(true); }
+    if (denied || lost) { setDraft(empty()); dirtyNow.current = false; setDirty(false); setQuarantined(true); }
   }, [error, lost]);
   useLayoutEffect(() => { invalidate(); }, [available, catalog, row?.version, row?.style_dna_resolution?.source_digest, stale]);
   useEffect(() => { if (!dirty) return; const guard = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ''; }; window.addEventListener('beforeunload', guard); return () => window.removeEventListener('beforeunload', guard); }, [dirty]);
   const select = (next: string) => {
     if (dirty && !window.confirm('放弃未保存的 Style DNA 修改？')) return;
-    invalidate(); setNotice(''); setId(next); setTargetId(''); setQuarantined(false); setDirty(false);
+    invalidate(); setNotice(''); setId(next); setTargetId(''); setQuarantined(false); dirtyNow.current = false; setDirty(false);
     const value = catalog?.styles.find(item => item.id === next && item.style_dna);
     setVersion(value?.version || 0); setDraft(value ? { title: value.title, instructions: value.instructions, rules: value.rules, chapter_ids: value.chapter_ids, character_ids: value.character_ids, style_dna: structuredClone(value.style_dna) } : empty());
   };
-  const change = (next: StyleProfileInput) => { invalidate(); setNotice(''); setDraft(next); setDirty(true); };
+  const change = (next: StyleProfileInput) => { draftRevision.current++; dirtyNow.current = true; invalidate(); setNotice(''); setDraft(next); setDirty(true); };
   const execute = async (operation: () => Promise<void>) => {
     if (running.current || !visible) return;
     running.current = true; setBusy(true); setFailure(undefined);
@@ -47,24 +49,48 @@ function StyleDNAEditorBody({ api, catalog, available, error, onRefresh }: Props
     try { await operation(); } catch (value) {
       if (alive.current && ticket === epoch.current) {
         setFailure(value); setResult(undefined);
-        if (value instanceof ApiError && [401, 403, 404].includes(value.problem.status)) { setQuarantined(true); setDraft(empty()); setDirty(false); onRefresh(); }
+        if (value instanceof ApiError && [401, 403, 404].includes(value.problem.status)) { setQuarantined(true); setDraft(empty()); dirtyNow.current = false; setDirty(false); onRefresh(); }
       }
     } finally { running.current = false; if (alive.current) setBusy(false); }
   };
-  const save = () => {
+  const save = async (): Promise<number | undefined> => {
+    if (!alive.current || running.current || !visible || !supported || !valid || drift) return;
+    const revision = draftRevision.current;
+    let confirmed: number | undefined;
     const ticket = epoch.current;
     const dna = draft.style_dna!;
     const body = { ...draft, style_dna: { ...dna, global_rules: clean(dna.global_rules), overrides: dna.overrides.map(item => ({ ...item, rules: clean(item.rules) })) } };
-    void execute(async () => {
+    await execute(async () => {
       const saved = id ? await api.updateProfile(id, version, body) : await api.createProfile(body);
-      if (!alive.current || ticket !== epoch.current) return;
-      setId(id); setVersion(id ? saved.version : 0); setDraft(id ? body : empty()); setDirty(false); invalidate(); setNotice('草稿已保存。请从档案列表重新打开并核对，再审核。'); onRefresh();
+      if (!alive.current || ticket !== epoch.current || draftRevision.current !== revision) return;
+      if (!saved || typeof saved.id !== 'string' || !saved.id || (id && saved.id !== id)
+          || !Number.isInteger(saved.version) || saved.version <= (id ? version : 0) || !saved.style_dna)
+        throw new Error('Style DNA 保存回执未核对，输入已保留。请刷新后核对原档案。');
+      confirmed = revision;
+      setId(id); setVersion(id ? saved.version : 0); setDraft(id ? body : empty()); dirtyNow.current = false; setDirty(false); invalidate(); setNotice('草稿已保存。请从档案列表重新打开并核对，再审核。'); onRefresh();
     });
+    return confirmed;
   };
   const chapters = catalog?.chapters.filter(item => /^[a-f0-9]{64}$/.test(item.content_digest || '')) || [];
   const pin = (chapterId: string): StyleTarget | undefined => { const chapter = chapters.find(item => item.id === chapterId); return chapter ? { level: 'CHAPTER', chapter: { id: chapter.id, version: chapter.version, digest: chapter.content_digest! } } : undefined; };
   const override = draft.style_dna?.overrides[0];
   const valid = !!draft.title.trim() && !!draft.instructions.trim() && (!!Object.keys(clean(draft.style_dna!.global_rules)).length || !!override) && (!override || !!Object.keys(clean(override.rules)).length);
+  const denied = error instanceof ApiError && [401, 403, 404].includes(error.problem.status);
+  const liveGuard = useRef<StyleDNALeaveOwner>();
+  liveGuard.current = {
+    key: ownerKey.current,
+    read: () => ({ dirty: dirtyNow.current, busy: running.current, canSave: visible && supported && valid && !drift,
+      retired: !alive.current || denied || lost || quarantined, revision: draftRevision.current }),
+    save,
+    discard: () => {
+      if (!alive.current || running.current) return false;
+      draftRevision.current++; dirtyNow.current = false; setDirty(false); invalidate(); setDraft(empty()); setNotice(''); return true;
+    },
+  };
+  const register = leaveGuard?.register, changed = leaveGuard?.changed;
+  useLayoutEffect(() => register?.({ key: ownerKey.current, read: () => liveGuard.current!.read(),
+    save: () => liveGuard.current!.save(), discard: () => liveGuard.current!.discard() }), [register]);
+  useLayoutEffect(() => { changed?.(ownerKey.current); }, [changed, dirty, busy, visible, valid, drift, supported, denied, lost, quarantined]);
   const target = targetId ? pin(targetId) : { level: 'GLOBAL' } as StyleTarget;
   const ruleFields = (scope: string, rules: StyleRules, update: (rules: StyleRules) => void) => <div className="experimental-grid">{styleDimensions.map(key => <Field key={key} label={`${scope} · ${labels[key]}`}><textarea maxLength={2000} value={rules[key] || ''} onChange={event => update({ ...rules, [key]: event.target.value })} /></Field>)}</div>;
   return <Panel title="Style DNA · 多模态风格规则">

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "f89931a94e6f5501814f237af585e5ee22506cd2c0cca4180f9854dd4b3a8dda",
+  "application_source_fingerprint_sha256": "4490059fd55b50fb2e1c79f3f4272425bc971b42ae9010f23000d1763603186b",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -159,6 +159,7 @@
     "app/experimental/comic_layouts.py": "236982fd5031c06f8871703f8c47279d74b5dc54626be45fa068d01b48a4f9a5",
     "app/experimental/comic_layouts_api.py": "d00945fd330ae04baaca55e416238918ace6c6627e9833f5e9877a1a96479ad7",
     "app/experimental/comic_ora.py": "b986f0ae1b3d088be7bc0e6e7b8dad3efc84f005735d5e7c0faa15c6edc5faaf",
+    "app/experimental/comic_ora_import.py": "4599ce5a67ebbfd06a60d66d062ff4c83be6b5f09375c34e5e0841730926a18a",
     "app/experimental/common.py": "e69739dbefb4fd71e5ac8945f76a534b77bca5cd8252648304a5724ab39127a0",
     "app/experimental/declarative_adapter_sdk.py": "8783ff8a17478dbd13023951176567904ab8c4985fc90aaf80a7fa1a7b707bc1",
     "app/experimental/declarative_agents.py": "2e106fad1a3b403cad889a27db9626edeffe5f01107452c6f1c73316b77e50b8",
@@ -544,7 +545,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "d25271c638b54a03f373726d56b021e4abf0fa91c1d80f19117a6765541f3982",
+    "sha256": "5d705d5b6cc296e5fc4473bd6739154368484fae5b7ec72b795e4135f0f56944",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -2612,7 +2613,8 @@
       "operation_id": "export_ora_api_novels__nid__experimental_comic_layouts_records__rid__export_ora_get",
       "owner_ref": "07fe0a6da36ca467114c11d8fcf0ba38bb69e25e0f65b566d24b2d30ae019dd4",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "a5c0dc6171e7ac08b32873879bf53dfe2a6eef0f2b3db1b4468e0024c679b0a4",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -8324,7 +8326,8 @@
       "operation_id": "export_ora_api_v1_novels__nid__experimental_comic_layouts_records__rid__export_ora_get",
       "owner_ref": "07fe0a6da36ca467114c11d8fcf0ba38bb69e25e0f65b566d24b2d30ae019dd4",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "6a99344d67a88a57b0c74f63b0040bb8d7c2c7fa232eb7c00116a312a8ec27e4",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"

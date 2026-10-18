@@ -1,3 +1,4 @@
+import type { StyleDNALeaveBridge } from './useStyleDNALeaveGuard';
 import { StyleDNAEditor } from './StyleDNAEditor';
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { StyleComparisonReview } from './StyleComparisonReview';
@@ -9,7 +10,7 @@ import { Details, ErrorMessage, Field, ResourceState, useResource } from './shar
 import type { WorkspaceNavigation } from './uxClient';
 import { styleOperationLabels, styleReviewClient, useReviewAction, type StyleProfile, type StyleProfileInput, type StylePreview, type StyleOperation, type StyleAnalysis, type StyleReviewClient } from './styleReviewClient';
 
-type Props = { client: ExperimentalClient; requestedJobId?: string; chapter?: Chapter; onNavigate?: (target: WorkspaceNavigation) => void; onUseStyle?: (id: string) => void };
+type Props = { leaveGuard?: StyleDNALeaveBridge; client: ExperimentalClient; requestedJobId?: string; chapter?: Chapter; onNavigate?: (target: WorkspaceNavigation) => void; onUseStyle?: (id: string) => void };
 const emptyProfile = (): StyleProfileInput => ({ title: '', instructions: '', rules: [], chapter_ids: [], character_ids: [] });
 const statusLabel = { DRAFT: '待审核草稿', APPROVED: '已审核', ARCHIVED: '已归档' };
 const toggle = (values: string[], id: string) => values.includes(id) ? values.filter(value => value !== id) : [...values, id];
@@ -18,7 +19,7 @@ export function StyleAnalysisPanel(props: Props) {
   const identity = useMemo(() => ++scopeSequence, [props.client]);
   return <StyleAnalysisBody key={identity} {...props} />;
 }
-function StyleAnalysisBody({ client, chapter, onNavigate, onUseStyle, requestedJobId }: Props) {
+function StyleAnalysisBody({ client, chapter, onNavigate, onUseStyle, requestedJobId, leaveGuard }: Props) {
   const api = useMemo(() => styleReviewClient(client), [client]);
   const catalog = useResource(signal => api.styleCatalog(signal), [api]);
   const analyses = useResource(signal => api.analyses(signal), [api]);
@@ -63,7 +64,7 @@ function StyleAnalysisBody({ client, chapter, onNavigate, onUseStyle, requestedJ
     {!!catalog.error && <StatusMessage tone="warning">请核对本机会话、项目与分支权限或功能开关后刷新。未保存的表单仍保留。</StatusMessage>}
     {!!action.error && <ErrorMessage error={action.error} />}{action.notice && <StatusMessage tone="success">{action.notice}</StatusMessage>}
     {conflict && <StatusMessage tone="warning">版本冲突：输入已保留。刷新来源并核对服务器版本，再明确决定是否继续保存或重新预览。</StatusMessage>}
-    <StyleDNAEditor api={api} catalog={catalog.data} available={available} error={catalog.error} onRefresh={refresh} />
+    <StyleDNAEditor leaveGuard={leaveGuard} api={api} catalog={catalog.data} available={available} error={catalog.error} onRefresh={refresh} />
     <Panel title="可复用风格档案">
       <p>风格指令沿用创作方案的版本化档案。审核后还须预览并明确选择，才会成为写作输入。</p>
       {editing && <StatusMessage>正在编辑「{editing.title}」v{editing.version}。保存会成为新的待审核草稿。</StatusMessage>}
