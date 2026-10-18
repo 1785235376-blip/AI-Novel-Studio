@@ -1,0 +1,211 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "c22a78d8180e3a6cdd7f2c47818cd83dbc5d04dd",
+      "path": "API_CATALOG.json",
+      "bytes": 1510189,
+      "sha256": "5696d1954d0a6e024aa663437968928f425eda127411fdaa9f023f44cfa7f7f6"
+    },
+    {
+      "blob": "a4ca85e2ef1fef702a7f43d718c56bac0c09e3d6",
+      "path": "API_CATALOG.md",
+      "bytes": 403464,
+      "sha256": "832cf00502c47b6869490430768dcd6319a672d44af7a5b21698baaeabba133a"
+    },
+    {
+      "blob": "a5a1fb0a76927b3d5cffabaecd69761687af274e",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 624530,
+      "sha256": "b47f45de16d7c10d0ce5961177160563b0e00ec1e6d54fa5863e1cb00f9b6d3e"
+    },
+    {
+      "blob": "7073a159e09c643f982b9fe59c7b4920652831d9",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 134757,
+      "sha256": "820a5acc65a790d41bff67a4ad67e19cfabc3d979e32f0c87290f6a8bec86e07"
+    },
+    {
+      "blob": "530f1e1aee1489ced7768e8438f528356bfc45e0",
+      "path": "app/experimental/audience_review.py",
+      "bytes": 12799,
+      "sha256": "1ba78d647d62715830a346dfc368c506d0becb0d295d4283651b6595f7774b20"
+    },
+    {
+      "blob": "28dff2da2da5c5118119901b65694a8fe7136276",
+      "path": "app/experimental/audience_review_api.py",
+      "bytes": 2379,
+      "sha256": "bb9bfb116c682c6ecab43731baa96fb1e1d92d61d046fd91025190462ce5c14e"
+    },
+    {
+      "blob": "2afc2c6c148369429708ae41f2418abb14643b8a",
+      "path": "app/experimental/narrative_judge.py",
+      "bytes": 31601,
+      "sha256": "57565b9aa616fafd28a229e41b53f8d5712b091671bcd4bb82bd3a09c758f754"
+    },
+    {
+      "blob": "c38df0fc800f5c46266f4a2c2e1ce9ccb14f1965",
+      "path": "app/experimental/narrative_judge_api.py",
+      "bytes": 7392,
+      "sha256": "66a974e6dbf98a7d298d7a01af33f584157ab1f5795a8286a2173dc73f20cfdf"
+    },
+    {
+      "blob": "bb169232d6c31bec5ee64f7f66ff506d040d7109",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 35564,
+      "sha256": "41516ecefca074fd6c2158b1d7e5d793693cb4db2b9ad5ac43938f40eb1a336d"
+    },
+    {
+      "blob": "80fb9cf4b3a7fa6202f079a8d4bd4dfdf93703aa",
+      "path": "docs/delivery/v2-development/audience-committed-source-verification.json",
+      "bytes": 165,
+      "sha256": "844a5fe33716e6e6deed4a407868a1d1e5cdabbfcecf4ec2acf19b3ca8ef67b4"
+    },
+    {
+      "blob": "1d3fa1ff1667d1676f823c4bd99636af62d2c61b",
+      "path": "docs/delivery/v2-development/audience-integration-20261018.md",
+      "bytes": 2952,
+      "sha256": "b0b7fc1aea66fdbcf7c965a017d13225dd9ff6a0957dd33320a2eb769b34f6a1"
+    },
+    {
+      "blob": "3ea6b57086eae4cfb5cd25dd982eef82e8827512",
+      "path": "docs/delivery/v2-development/audience-integration-file.json",
+      "bytes": 741409,
+      "sha256": "e01607e63240120914f8fbf724d498d4ea886be5bca7073759851065bbf39d52"
+    },
+    {
+      "blob": "58feab2b6d543decbeaa1e32b6379972ab88164a",
+      "path": "docs/delivery/v2-development/audience-integration-file.log",
+      "bytes": 1061,
+      "sha256": "0d55b2e19b95822ea091766cc5b8aeee203468b1c5acd08b9c950bf7dbfa820d"
+    },
+    {
+      "blob": "6a5cabc60caa6333cb180ee1e5b357f0f1710b4e",
+      "path": "docs/delivery/v2-development/audience-integration-postgres-cleanup.json",
+      "bytes": 1573,
+      "sha256": "aa2ac7a1ab069dc97feec86be548918767cdcf75751108766b861e51e10c45cd"
+    },
+    {
+      "blob": "59d17136eac1e06af533abff7f2f046d1c747c6d",
+      "path": "docs/delivery/v2-development/audience-integration-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "af52b03157c577bb22b993af8570bc6aec5efff2210a16f6dbdfac89edfd6351"
+    },
+    {
+      "blob": "51505ffef80874c673ecf7dd832eb031036d528e",
+      "path": "docs/delivery/v2-development/audience-integration-postgres.json",
+      "bytes": 741544,
+      "sha256": "cf9b6e81dd8272f65c3a6ea422a74aeaf4c0cd0a0bbcaf4bcdc7e7342fa90ff9"
+    },
+    {
+      "blob": "69e387985672d1b00077419db05325a789e6bec2",
+      "path": "docs/delivery/v2-development/audience-integration-postgres.log",
+      "bytes": 1126,
+      "sha256": "a15f7c0e60693d2839ef966be70d049433bb79fde28c25198484dfb311741d00"
+    },
+    {
+      "blob": "83247b9fd709e7e2aa161baaeb35f2407789ab9b",
+      "path": "docs/delivery/v2-development/audience-integration-public.json",
+      "bytes": 741800,
+      "sha256": "0c71c648a686dd2eebf7e5e0084f6bcd1fbbef1c4d442ff5ffcf87bd10b05421"
+    },
+    {
+      "blob": "990a9953d522a47847fb506b754e743db8ea5f81",
+      "path": "docs/delivery/v2-development/audience-integration-public.log",
+      "bytes": 634,
+      "sha256": "8df9167d8f93dcb8b1c5fff4c203975f07d9283af54476377ee7fed7bfbc9734"
+    },
+    {
+      "blob": "a2dc0135d7b1849e67d466581f7cdec9d55dab82",
+      "path": "docs/delivery/v2-development/audience-integration-ui.json",
+      "bytes": 741380,
+      "sha256": "290f382d06e43a930c35e9feac33805432c3400901cec6237f91ef5fcdabfebd"
+    },
+    {
+      "blob": "29755e5a71bd308ae13d7f3eb68267342cbd76a9",
+      "path": "docs/delivery/v2-development/audience-integration-ui.log",
+      "bytes": 2197,
+      "sha256": "f83f4ae031388c5a4bf23c9819a83881165ac8f3052712b97e6fcff96ac010b1"
+    },
+    {
+      "blob": "8dcb49f8b31a92bf62382ad21ff681fb78ab00d3",
+      "path": "docs/delivery/v2-development/audience-mounted-integration-file.json",
+      "bytes": 741644,
+      "sha256": "e1fae9db7115bb5183c3f357e2f9e5d95f8b22ee2b506c8877c50b5cf5129266"
+    },
+    {
+      "blob": "9d2b617fd2a9f0e40f81fd1535133280817c9aeb",
+      "path": "docs/delivery/v2-development/audience-mounted-integration-file.log",
+      "bytes": 1069,
+      "sha256": "389ccfb63cdc6e963716d9e79dd095011e775468de6e8236c725c63ee16b5235"
+    },
+    {
+      "blob": "10242425b89c1e89dd7f5114e771d64588d54991",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_audience_postgres.py",
+      "bytes": 1563,
+      "sha256": "30fabe948086b7eb76f01b2042e56ede793860ad770e85c018c2a6eaf6cb6409"
+    },
+    {
+      "blob": "46865db31cf0f8657efb8e7ba7ac3543a48421ed",
+      "path": "docs/development/audience_review_local_v1.md",
+      "bytes": 5218,
+      "sha256": "7969e0931555a5300a171baf977d7529b9cc7a44978f481092f08e4915dd734b"
+    },
+    {
+      "blob": "9848dc47e3d2cb68dbd21ab6c364d2612e474a77",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 777496,
+      "sha256": "5afa3849ccd2c519d3ab32f33137e4dc9b75f8742feec0d3feab0b92bd01580c"
+    },
+    {
+      "blob": "48441c175053d3a21e45a8975faf95b849d49723",
+      "path": "frontend/src/experimental/AudienceReviewPanel.test.tsx",
+      "bytes": 18834,
+      "sha256": "4be78a12f12513fd5140a768982b51c9fb0a1e64fe1fa18ffa2f81fcf9634506"
+    },
+    {
+      "blob": "0711f32f4692ea5080519effb376ea793b68e65d",
+      "path": "frontend/src/experimental/AudienceReviewPanel.tsx",
+      "bytes": 21839,
+      "sha256": "5c5c0911ca6ddc27eeea5fd332f7335ddd6001738bc3e9a9b6081bf0e48e01fc"
+    },
+    {
+      "blob": "1413e4b0a52f3cf604692765e4b438d96aebd15b",
+      "path": "frontend/src/experimental/NarrativeJudgePanel.tsx",
+      "bytes": 20088,
+      "sha256": "bb9401bda042e55a23a68f5ddceb1f6f921799240266e140a8ef93da2a3a75b6"
+    },
+    {
+      "blob": "6340d9e63b05dfd9eac1468769f0cff69d747ed4",
+      "path": "frontend/src/experimental/audienceReviewClient.ts",
+      "bytes": 2555,
+      "sha256": "9696dc8b4cb1fc96e3289c5c5a4e7f51248e7cad31321864fac6f33fd550aca0"
+    },
+    {
+      "blob": "d83ad083094b67d3700d80034667cb0cde30ea00",
+      "path": "packaging/public-build.json",
+      "bytes": 25763,
+      "sha256": "aac0dc3732cb1019ae70062392f708f7c4ddf81334463970b3e9fea58386fbf3"
+    },
+    {
+      "blob": "9fbb2219b49632a4fd30f6c65be2dbc8f00b5c8e",
+      "path": "tests/test_audience_review.py",
+      "bytes": 15738,
+      "sha256": "d0b7e9ea262c6bb3e6c78c1bcce072bede71d8a9b1535cd8d097c54a41129463"
+    },
+    {
+      "blob": "f4547af92937f210adef0ab6be6fb2e443d10639",
+      "path": "tests/test_audience_review_mounted.py",
+      "bytes": 5224,
+      "sha256": "6b74195410b65617ef5041dce33853b2e960adfb3e5fcded0da53e47146f1ac1"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
