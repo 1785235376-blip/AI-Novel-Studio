@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "86a9dc16480d2f73f5864636b7f4e290e9b9cac2d7753be900e1f5b5930cc774",
+  "application_source_fingerprint_sha256": "1ba1c06d50ee4d3f9c53f9eb103cfe022786b8d8c9cb1332b20734d20e1ccf2d",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -194,8 +194,8 @@
     "app/experimental/reader_sources.py": "dce77103b022d84664368197e7f9350d7a657d291c8ebe4bf047e58270989273",
     "app/experimental/research_extract.py": "70662a3ad21ae785291396b2a1bede5181c871bfe3b779f4375076848c86ef6d",
     "app/experimental/research_library.py": "5b146d93a4ea77c90f3039ebbb1f557ef489ac4c05d100466445d1f5b357a6f6",
-    "app/experimental/research_library_api.py": "205864de2f8745dcb0c43eaa3f8e44993eb2a3c997110c766d9717b99b07cb1d",
-    "app/experimental/research_native_ocr.py": "8e4b019f7b796934f08ef6ca1295e9dd9e601d613653c7989ddff0bfd4990fa6",
+    "app/experimental/research_library_api.py": "c7747e3f7c3810b8c3a34e7428e9deb3697d8af0c6aeb97d248110c116f541fd",
+    "app/experimental/research_native_ocr.py": "84363d93c1cf2e7c983fea237563e32285c72c4c098e6980a840ae9b610c672a",
     "app/experimental/research_ocr_binding.py": "03df4334ebee685e7b656e8a3b816b61107dc518193ed8084133764be6ee8774",
     "app/experimental/research_ocr_execution.py": "689b362c8353977472452cb05326e9190f0ef62897d3f35a1d86156d2709e758",
     "app/experimental/research_vision.py": "8b079127265864d5d32b7eff6be9683073f926eaf445016ac90d917b5abb1497",
@@ -489,9 +489,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 530,
+    "added": 532,
     "changed_contract": 24,
-    "current_method_paths": 2363,
+    "current_method_paths": 2365,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -508,7 +508,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "62c7dc905592f40508f323581866b6beefa0027010e77fe6874ec4db53182492",
+    "sha256": "bc606acfdfae97727ef7a3142f71b399c7b97fc2da9dc99a886554474289c6a2",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -3936,6 +3936,17 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "9faad673e60a1a31b9b5e93039c4449d2d267d649b8b86fb2b08549d31cb9a98",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/research-library/analysis/jobs/{rid}/native-export",
+      "operation_id": "native_export_api_novels__nid__experimental_research_library_analysis_jobs__rid__native_export_get",
+      "owner_ref": "e47d83843d2ebdfe70d664bb912d743d422cafdf0420013b647068f305ee9af7",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "65711b3caf90c9906800ef3a9f73a9d8486af39c6f031f1b12f8515501b0462f",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -9457,6 +9468,17 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "ccfbd5eba430a584b557268e1ebe5db8c356da5b08fa56cd380e920e1a0c4907",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/research-library/analysis/jobs/{rid}/native-export",
+      "operation_id": "native_export_api_v1_novels__nid__experimental_research_library_analysis_jobs__rid__native_export_get",
+      "owner_ref": "e47d83843d2ebdfe70d664bb912d743d422cafdf0420013b647068f305ee9af7",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "d385a21f72611dd06c231cbe6c649c19433025058f32d36a9309b1594da1e2a1",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -16230,7 +16252,8 @@
       "operation_id": "native_dispatch_api_novels__nid__experimental_research_library_analysis_jobs__rid__native_dispatch_post",
       "owner_ref": "364c9aaf556f22c8fdcf1fca8f7069a03108c3ca869bdb5132ecb5fd965cc494",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "1311317045a88b296ab34b700d88e9733422560503320470ffacce53d4ace23e",
       "schema_graph_sha256": "a8a91251c6ebdfc677cdc1c6387a9a9848985dd2b351e73290d627ec16860acd"
@@ -16241,7 +16264,8 @@
       "operation_id": "native_preview_api_novels__nid__experimental_research_library_analysis_jobs__rid__native_preview_post",
       "owner_ref": "799914c1a78315ddb172ff320fda263447011090ce7ac98189de7f57b9206983",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "b64d5a0f4bfcf4cf366aac29ca7a98fb8c67ba4adce38f826136ee9a95fe1c55",
       "schema_graph_sha256": "73c5714bd865ae377ec4678fd77ff6397ac557447d286990351f6424d548a09a"
@@ -23197,7 +23221,8 @@
       "operation_id": "native_dispatch_api_v1_novels__nid__experimental_research_library_analysis_jobs__rid__native_dispatch_post",
       "owner_ref": "364c9aaf556f22c8fdcf1fca8f7069a03108c3ca869bdb5132ecb5fd965cc494",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "00017c0635770a1c0adb5390bd4c57bcbd260da1faad507776eaae2a55c1b640",
       "schema_graph_sha256": "a8a91251c6ebdfc677cdc1c6387a9a9848985dd2b351e73290d627ec16860acd"
@@ -23208,7 +23233,8 @@
       "operation_id": "native_preview_api_v1_novels__nid__experimental_research_library_analysis_jobs__rid__native_preview_post",
       "owner_ref": "799914c1a78315ddb172ff320fda263447011090ce7ac98189de7f57b9206983",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "1c13f2703310f8a1777b90009de78cb6e4fc34ddb9e690a3b1ed826988a793d8",
       "schema_graph_sha256": "73c5714bd865ae377ec4678fd77ff6397ac557447d286990351f6424d548a09a"

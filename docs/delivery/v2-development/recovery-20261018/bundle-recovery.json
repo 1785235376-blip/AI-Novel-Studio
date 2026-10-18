@@ -1,0 +1,351 @@
+{
+  "archive": "b1802fc290a4cf6746bec3d675694c03a01e88d3",
+  "target": "4de76c72ab1a95328bb88db25ead021a8b771aba",
+  "target_present": true,
+  "restored": [
+    {
+      "path": "artifacts/director-primary-20261017-17c6500/director.bundle",
+      "sha256": "92fc57fe84f7a617feb5ba9371a1a5e3918b80f51280366bb97884bb6b5edd0e",
+      "heads": [
+        "17c6500852359a99bfb023ae173e87d686c67829 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/director-audio-primary-20261017-4684577/continuation.bundle",
+      "sha256": "47140aee88c473f3705468132a29772d6bd462583f3958f9ee488d8298e4d58e",
+      "heads": [
+        "468457706f64d9b8cc793b9a6fa39fa4b354aa15 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/feature-first-20261017-48f1ce3/continuation.bundle",
+      "sha256": "b480ff543501b6106d8ed4212e35899dcb86681ce4ce29b8af2ee5934a67c9c9",
+      "heads": [
+        "48f1ce3ae5eecfcab2bed1452abc4823dfd51f9f refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/overnight-authoring-20261017-c6eb39a/continuation.bundle",
+      "sha256": "ec38f25ec3decebac475e914c74c04f9bf616e5d16c1f9c005fdb86bb02b1155",
+      "heads": [
+        "c6eb39abe593782824a072246236751f9a8bb324 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/overnight-editing-20261017-28bab42/continuation.bundle",
+      "sha256": "6784d684b37af51bf27d044a6c3effa480b15594832fdeb0a8f0e9b3446a62e5",
+      "heads": [
+        "28bab429031aaa6bc2c9c507a273de1108c5cce7 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/static-glb-20261017-5a9fc37/continuation.bundle",
+      "sha256": "1b999f79b789df3e25fda9de58fa5c033f00ed96410594c953d305bd207cf5f7",
+      "heads": [
+        "5a9fc376648edcff4f3266a94b8ffb7def48dcd1 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/screenplay-director-20261018-dacb268/continuation.bundle",
+      "sha256": "ef21684741108f14c4c20be0662ebbd9579fc26e605027573288c4fae95da459",
+      "heads": [
+        "dacb268a9aeb417e3b82aa44900585f484182c9f refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/capability-followthrough-20261018-4a1cb4a/continuation.bundle",
+      "sha256": "1702df807e6af52e703cbd2fd17a0f23f51030344a4bae090560892aeefd4c74",
+      "heads": [
+        "4a1cb4a96bc200085ab6fd89ac31c657b6558515 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/depth-reference-20261018-4bda61c/continuation.bundle",
+      "sha256": "037f2e2ee48431e4d427464772de48cc564f97032a380b06a4d4c765115186af",
+      "heads": [
+        "4bda61c41dc55e359284a11f232225c44583f8ee refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/authoring-followthrough-20261018-23e0c94/continuation.bundle",
+      "sha256": "e45f5cb32ba1f2bef0fc9343fcc9c670cb06c7f02151bddea6d91fc8532b70c7",
+      "heads": [
+        "23e0c94977efa48d1019d7bb2533c0e2ca567efb refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/models-tracks-20261018-04ec4d1/continuation.bundle",
+      "sha256": "58b74f887c9e79f6f8a3bdab3d3e2143562f6cca65591af96db308ee6dff524a",
+      "heads": [
+        "04ec4d1ff4d59e49369a73d5f78b75f10054c44b refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/cjk-model-facts-20261018-d1f1013/continuation.bundle",
+      "sha256": "856b7795fda1e3c6a6c63b334b37fb62545875c712b4875a40187c6c46cb4707",
+      "heads": [
+        "d1f1013f0525595249bee46e5cae0d296233b0ac refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/clay-reference-20261018-7ce7f00/continuation.bundle",
+      "sha256": "e1627352a4e86f6943d3f3b6b11793814cef5902693008a96c1b6e7ec73613e8",
+      "heads": [
+        "7ce7f00671c1ee6ac909b9da8c74c2c090daf0df refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/research-incarnation-20261018-7de2fb4/continuation.bundle",
+      "sha256": "1a2b9b34363e849a137c67eea2bca0a84f493d625c56e63acc987ef745088dc1",
+      "heads": [
+        "7de2fb4bc9c266ceba5754e943a5796567a52609 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/preview-declarations-20261018-a213eb2/continuation.bundle",
+      "sha256": "9f43e6b41a8f7e4763c5a43dec9fa1e0ff4d287577776e8ca87a2bc8822b0a47",
+      "heads": [
+        "a213eb21cdfa53049e4d2b3d96c1fbc8091137c5 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/director-backup-20261018-b7f5e5e/continuation.bundle",
+      "sha256": "d5a1dfbb6bf4becf2a4ce68dcd76b35850e677943abbf99791baf7bae2e16353",
+      "heads": [
+        "b7f5e5ea282326d4130fce6af0e5c8c4ab8f4322 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/director-notes-20261018-8e4a7a4/continuation.bundle",
+      "sha256": "f05737c9c7e5e64d551805d5abd6cc622eb7bb4e398d1d5d2ec23bf9a0bc3819",
+      "heads": [
+        "8e4a7a47cc8584d043499a489d75d303fefb5aba refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/director-postgres-20261018-80b42c8/continuation.bundle",
+      "sha256": "d86eaf1766c545869d8086beaf0db2468e680cbfab99138db191b47182ed551b",
+      "heads": [
+        "80b42c81b593a58ee5f330415054b576135930c2 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/screenplay-postgres-20261018-e0fc391/continuation.bundle",
+      "sha256": "674fb61b4bf67aca35adff987148ac9ea8b87bf9ebbbbc06acbcbc3a4393e1bc",
+      "heads": [
+        "e0fc391dcfe0f8efe46a2167192f4660c8c78892 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/director-sheet-20261018-3a7b3b3/continuation.bundle",
+      "sha256": "dcce1bb4529844a0442b8a4f8d03d7e722c8c66db9f6c72f2b7e303dfe30b131",
+      "heads": [
+        "3a7b3b3c992db49be19b93842dc69fb27a901666 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/clay-save-20261018-2f420b7/continuation.bundle",
+      "sha256": "02f9eca80694e32b2a8b799a5d71b532f5b99325b2ca5896256f8f7f844fd541",
+      "heads": [
+        "2f420b72e0f17c6aaaff34a18d14306f9fbfc640 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/reviewed-brief-20261018-6990d74/continuation.bundle",
+      "sha256": "22a151deda0fc31092405d5a759d20f3552fef1574cebf729b180b4f82bdbafb",
+      "heads": [
+        "6990d74b46693eb490dc1e22670e82a59ceec738 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/brief-picker-20261018-94239d2/continuation.bundle",
+      "sha256": "cb8c56a9400400f2daf0f68cb77a508dd6297c66a28a8d1e67be0855b018f7d6",
+      "heads": [
+        "94239d2f673a2128b17e505b77da8bb1821080b2 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/timeline-bounds-20261018-9923494/continuation.bundle",
+      "sha256": "56b8b993627806ee70cc68c8268967e9c180be0e6a4db948e01500efb2cee647",
+      "heads": [
+        "9923494cb6cb810de73b064705e7f87c531ff5fd refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/public-closure-20261018-0e8adc2/continuation.bundle",
+      "sha256": "33328a39d56345c0b455a31b0dea48bdeb7000d7badbcb06c268a8ee434b5fbd",
+      "heads": [
+        "0e8adc24380bc334d4e12651010293cc00273854 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/timeline-bound-repair-20261018-0ceb48a/continuation.bundle",
+      "sha256": "1b2c23a1fbe6dec4702ecb605c3c3cafb4b62498a5c892c7eb00796bc9ec4b09",
+      "heads": [
+        "0ceb48a40b56693dc7ad23452bfa7ee3e85dae66 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/creative-navigation-20261018-b67e01c/continuation.bundle",
+      "sha256": "ecdc56023c35c9387eab4de5954fc2b833dad02941b3aa888d956ba6f53f41bf",
+      "heads": [
+        "b67e01c6ce7233936192f288227cc7a6fd81144b refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/tutor-floating-20261018-8db2a35/continuation.bundle",
+      "sha256": "c58b158ea7329b1227a85141f7a947e18bfcda26c3d7b25e10f35e29892bc5c5",
+      "heads": [
+        "8db2a35bec318631ecc58752638fc3e9aa3bd7d8 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/prompt-independent-draft-20261018-de24555/continuation.bundle",
+      "sha256": "86598536fc9f11de3e13b436156392c415ff4418cae5fe546210166171d624a2",
+      "heads": [
+        "de24555cdeea554ebddc06eea022bb4d66b494ee refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/graph-group-membership-20261018-ad6b524/continuation.bundle",
+      "sha256": "10536915d895f441cccd56ecd061bd33aa7982704e7050897e3286d1f82f17d0",
+      "heads": [
+        "ad6b52444727baa38d7fd63cb56f5cd49fd5f2c3 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/timeline-review-playback-20261018-2a6f079/continuation.bundle",
+      "sha256": "0a258cfdf91c2165405eb624d066050fb66647568fa89a6282cf008af8b34d3f",
+      "heads": [
+        "2a6f0793067213592c5462b571505a3c1edf8f05 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/current-source-inventory-20261018-eb47e52/continuation.bundle",
+      "sha256": "608dfbbc3ebf56f305febf3ee9996fe013f193360d60f1ba8c97f3eeea376b78",
+      "heads": [
+        "eb47e52efeffc058e45780c88ca4319b4914bb62 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/vision-ocr-foundation-20261018-e9d11cd/continuation.bundle",
+      "sha256": "12a795b80939bb1b708fee0c514e46863422709a7c19500f371650ae38c4c724",
+      "heads": [
+        "e9d11cd3755c51c54ffb5cec95f4e1b2ef84a58d refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/vision-broker-admission-20261018-5547d99/continuation.bundle",
+      "sha256": "e74403819006c2b80eb6df683d62221fccdb4500cac32b9a59a266b4a14ce740",
+      "heads": [
+        "5547d991bac8bd465dd8cd5f248869c1c46416f8 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/storyboard-sheet-export-20261018-2c0e0fd/continuation.bundle",
+      "sha256": "f83f1d79ee3fc30f731f3e79ec395bba726ddbb5c5b69ace66931d3831edc23f",
+      "heads": [
+        "2c0e0fdc9608b6a706a083fd5b68d089d99c18f1 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/current-api-catalog-20261018-18b43b7/continuation.bundle",
+      "sha256": "66a5da80d935cd6bf437dffb86cba6fbc7c9d637d4765eb72e2133354ce20bed",
+      "heads": [
+        "18b43b7d81ef8972f96594dd59577efe2de707ba refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/native-text-preset-guide-20261018-ed64024/continuation.bundle",
+      "sha256": "5a78e642d8da9940d5dba086a72bc7a46c6a2f46023cef19ec741b1751f6ad6e",
+      "heads": [
+        "ed6402416e07c58be91ad14571801ca2ac4c9a26 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/research-ocr-source-preparation-20261018-2afac05/continuation.bundle",
+      "sha256": "d81587a420e7c74573d4e0da38b22e7d2ea93fffd6bb83f550e678a1b7849984",
+      "heads": [
+        "2afac05acae34e5568728097d971e7d412ca217a refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/local-tesseract-ocr-20261018-3a1b39f/continuation.bundle",
+      "sha256": "5c54c533cccec7d488b2be0ae331345119f07d0710f48d905f0908db357d5cfd",
+      "heads": [
+        "3a1b39f269d0aa74a30eceb71317715246070f70 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/research-ocr-job-persistence-20261018-9b93ec3/continuation.bundle",
+      "sha256": "3b706dfc033cbc5731db5ea15a32ec7fdb048a033c79c64bb2cca660c40f6242",
+      "heads": [
+        "9b93ec31bb513ff954e35a799f007312590a7c69 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/research-ocr-job-execution-20261018-a91af49/continuation.bundle",
+      "sha256": "19c28f9f478c2754e61ca1b18c48124793e6200626b6c23d27073b22209a2c21",
+      "heads": [
+        "a91af496b7c3838b8539c610889bb263e0eccc0e refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/research-ocr-result-handoff-20261018-3b758e4/continuation.bundle",
+      "sha256": "04f8b61e6a1eb08c0e5181ad19afab78b9eb328a5d6d1d14a25f56f1248f836b",
+      "heads": [
+        "3b758e4bfe4309a1b3085077da2c417be9fcb38c refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/native-ocr-broker-admission-20261018-8eea685/continuation.bundle",
+      "sha256": "471ca9da2a5faa64b132e4fa144623aa35aa2a8facf0855b1208f04702055675",
+      "heads": [
+        "8eea685d9533e84e41ec91f99fed9a59ac9191a0 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/research-native-ocr-coordinator-20261018-5b0daea/continuation.bundle",
+      "sha256": "487e41e1c52152650a933bb543b632a3aa484c4db3644bd2a2c147c8578b8668",
+      "heads": [
+        "5b0daea9eec8aba18732c0fb1ace12d7f3395d57 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/research-native-ocr-routes-20261018-9df6c4a/continuation.bundle",
+      "sha256": "c05fce8070f9e6163c697546daed8177497a54818677fbdb69641fe59f60f770",
+      "heads": [
+        "9df6c4aba0a3cbfce33f51e9b268b0ab1434d2f5 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/local-ocr-host-setup-20261018-3be5047/continuation.bundle",
+      "sha256": "0bbc2e97becf19ee8db6b85260e77f18e549ea70a2f5928020aa0fe24d160cb0",
+      "heads": [
+        "3be50471b007240f0c090aef831f2b53996d8f35 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/research-native-ocr-ui-20261018-558f3ec/continuation.bundle",
+      "sha256": "90024386688ad8c2ec76d9c875647b8a9b7a0ab668b30612db8990c7830cdea2",
+      "heads": [
+        "558f3eccc73a438eca1b42532d25d9869acdfa69 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/research-ocr-api-catalog-20261018-ff06d6c/continuation.bundle",
+      "sha256": "f8015df95309ff4b8c1245842fc32e7fac3e9e0a660b8d62d5993149f5e91a23",
+      "heads": [
+        "ff06d6ca682da7b95e36eb7a166a94cf2ac2d857 refs/heads/work/dot-director-transport-20261017"
+      ]
+    },
+    {
+      "path": "artifacts/research-ocr-derived-citation-ui-20261018-4de76c7/continuation.bundle",
+      "sha256": "a5b06d9129e17d2c2b76b470bc87c171da1f48b0e2306e60ac3f6adf8e253a4b",
+      "heads": [
+        "4de76c72ab1a95328bb88db25ead021a8b771aba refs/heads/work/dot-director-transport-20261017"
+      ]
+    }
+  ],
+  "unresolved": []
+}

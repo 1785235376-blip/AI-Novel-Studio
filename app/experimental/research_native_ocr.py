@@ -242,6 +242,16 @@ class NativeResearchOCRCoordinator:
             raise
         answer = self.rows.get(nid, scope, actor, rid); guard(); return answer
 
+    def export_reviewed(self, nid, scope, actor, rid, expected_version, result_digest):
+        row = self._row(nid, scope, actor, rid)
+        self.rows._version(row, expected_version)
+        if row['status'] != 'REVIEWED' or row.get('result_digest') != result_digest:
+            raise ValueError('RESEARCH_OCR_REVIEWED_EXPORT_REQUIRED')
+        self.validate_review(nid, scope, actor, row)
+        content = ('\n\n'.join(block['text'] for block in row['result']['blocks']) + '\n').encode('utf-8')
+        if len(content) > MAX_RESULT_BYTES: raise ValueError('RESEARCH_OCR_RESULT_LIMIT')
+        return content
+
     def validate_review(self, nid, scope, actor, row):
         if self._row(nid, scope, actor, row['id']) != row:
             raise StaleSourceError('RESEARCH_OCR_REVIEW_CHANGED')

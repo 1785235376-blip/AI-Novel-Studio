@@ -66,7 +66,8 @@ def create_research_library_router(service, authorize, require_flag):
     def run(nid, token, branch, fn, *args, mutation=False, permission='domain.write'):
         def access():
             require_flag('research_library_v2')
-            if getattr(fn, '__self__', None) is service.native_ocr and service.native_ocr is not None:
+            if (getattr(fn, '__self__', None) is service.native_ocr and service.native_ocr is not None
+                    and getattr(fn, '__name__', '') in {'preview', 'dispatch'}):
                 from .research_ocr_execution import FLAGS
                 for flag in FLAGS: require_flag(flag)
             identity = authorize(nid, token, branch, 'domain.write')
@@ -252,6 +253,16 @@ def create_research_library_router(service, authorize, require_flag):
         if type(controller) is not NativeResearchOCRCoordinator or controller.research is not service:
             raise HTTPException(409, {'code': 'RESEARCH_OCR_NOT_CONFIGURED'})
         return controller
+
+    @router.get('/analysis/jobs/{rid}/native-export')
+    def native_export(nid: str, rid: str, expected_version: int = Query(ge=1),
+                      result_digest: str = Query(pattern=r'^[a-f0-9]{64}$'),
+                      x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        content = run(nid, x_session_token, x_branch_id, native_controller().export_reviewed,
+                      rid, expected_version, result_digest)
+        return Response(content, media_type='text/plain; charset=utf-8', headers={
+            'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
+            'Content-Disposition': 'attachment; filename="research-ocr.txt"'})
 
     @router.post('/analysis/jobs/{rid}/native-preview')
     def native_preview(nid: str, rid: str, body: NativeOCRPreviewIn,

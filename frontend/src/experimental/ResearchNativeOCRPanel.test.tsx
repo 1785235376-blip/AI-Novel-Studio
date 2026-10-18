@@ -22,7 +22,7 @@ function fixture() {
   if(url.endsWith('/review'))return response(saved={...saved,version:saved.version+1,status:'REVIEWED'});
   return response(saved);
  }));
- return {calls,complete:()=>saved={...preview,version:4,status:'REVIEW_REQUIRED',result:{blocks:[{text:'STUDIO OCR 123',page:1,citation:{source_id:'image',source_version:1,source_digest:'a'.repeat(64),result_digest:'c'.repeat(64),layer:'RESEARCH_DERIVED'}}]}}};
+ return {calls,complete:()=>saved={...preview,version:4,status:'REVIEW_REQUIRED',result_digest:'e'.repeat(64),result:{blocks:[{text:'STUDIO OCR 123',page:1,citation:{source_id:'image',source_version:1,source_digest:'a'.repeat(64),result_digest:'c'.repeat(64),layer:'RESEARCH_DERIVED'}}]}}};
 }
 it('requires reviewed preview, runs explicitly, refreshes and reviews saved result',async()=>{
  const f=fixture();render(<ResearchNativeOCRPanel client={client()} source={source}/>);
@@ -84,4 +84,21 @@ it('rejects derived OCR citations bound to a different source digest',async()=>{
  const { currentOCR } = await import('./researchNativeOCRClient');
  const row={...initial,result:{blocks:[{text:'wrong',page:1,citation:{source_id:'image',source_version:1,source_digest:'d'.repeat(64),result_digest:'c'.repeat(64),layer:'RESEARCH_DERIVED' as const}}]}};
  expect(currentOCR(row,source)).toBe(false);
+});
+it('exports only the pinned reviewed receipt through the original endpoint',async()=>{
+ const f=fixture();f.complete();
+ const create=vi.fn(()=> 'blob:ocr-export'),revoke=vi.fn();
+ const OriginalURL=URL;vi.stubGlobal('URL',class extends OriginalURL { static createObjectURL=create; static revokeObjectURL=revoke; });
+ const click=vi.spyOn(HTMLAnchorElement.prototype,'click').mockImplementation(()=>{});
+ try {
+  render(<ResearchNativeOCRPanel client={client()} source={source}/>);
+  fireEvent.click(await screen.findByRole('button',{name:'打开 OCR 记录 ocr-one'}));
+  await screen.findByText('STUDIO OCR 123');
+  expect(screen.queryByRole('button',{name:'导出已审核文字 TXT'})).toBeNull();
+  fireEvent.click(screen.getByRole('button',{name:'核对文字后标记已审核'}));
+  fireEvent.click(await screen.findByRole('button',{name:'导出已审核文字 TXT'}));
+  await waitFor(()=>expect(click).toHaveBeenCalledTimes(1));
+  expect(f.calls.some(c=>c.method==='GET'&&c.url.endsWith('/native-export?expected_version=5&result_digest='+ 'e'.repeat(64)))).toBe(true);
+  await waitFor(()=>expect(revoke).toHaveBeenCalledWith('blob:ocr-export'),{timeout:2000});
+ } finally {click.mockRestore();}
 });

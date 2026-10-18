@@ -114,3 +114,17 @@ def test_source_revocation_after_completion_prevents_review(rig,monkeypatch):
     with pytest.raises((ValueError,FileNotFoundError)):
         c.research.analysis_action(rig.nid,rig.scope,rig.actor,result['id'],'review',result['version'],guard=lambda:None)
     assert rig.raw_store.read(rig.nid,rig.scope)==before
+
+
+def test_export_requires_current_human_review_and_exact_receipt(rig,monkeypatch):
+    c=setup(rig,monkeypatch);ready=preview(rig,c);_,job,result=dispatch(rig,c,ready)
+    with pytest.raises(ValueError,match='REVIEWED_EXPORT_REQUIRED'):
+        c.controller.export_reviewed(rig.nid,rig.scope,rig.actor,result['id'],result['version'],result['result_digest'])
+    reviewed=c.research.analysis_action(rig.nid,rig.scope,rig.actor,result['id'],'review',result['version'],guard=lambda:None)
+    before=deepcopy(rig.raw_store.read(rig.nid,rig.scope))
+    assert c.controller.export_reviewed(rig.nid,rig.scope,rig.actor,reviewed['id'],reviewed['version'],reviewed['result_digest'])==b'STUDIO OCR 123\n'
+    with pytest.raises(ValueError,match='REVIEWED_EXPORT_REQUIRED'):
+        c.controller.export_reviewed(rig.nid,rig.scope,rig.actor,reviewed['id'],reviewed['version'],'0'*64)
+    with pytest.raises(FileNotFoundError):
+        c.controller.export_reviewed(rig.nid,rig.scope,'other',reviewed['id'],reviewed['version'],reviewed['result_digest'])
+    assert rig.raw_store.read(rig.nid,rig.scope)==before

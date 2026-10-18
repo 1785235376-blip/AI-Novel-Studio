@@ -38,6 +38,13 @@ def test_mounted_native_preview_dispatch_review_and_poll(rig,monkeypatch):
         reviewed=client.post(path+'/review',headers=headers,json={'expected_version':row['version']})
         assert reviewed.status_code==200,reviewed.text
         assert reviewed.json()['status']=='REVIEWED'
+        row=reviewed.json()
+        exported=client.get(path+'/native-export',headers=headers,params={'expected_version':row['version'],'result_digest':row['result_digest']})
+        assert exported.status_code==200,exported.text
+        assert exported.content==b'STUDIO OCR 123\n'
+        assert exported.headers['cache-control']=='no-store'
+        assert exported.headers['content-disposition']=='attachment; filename="research-ocr.txt"'
+        assert exported.headers['x-content-type-options']=='nosniff'
         assert client.get(path,headers={'X-Session-Token':'invalid','X-Branch-ID':'current'}).status_code==403
 
 
