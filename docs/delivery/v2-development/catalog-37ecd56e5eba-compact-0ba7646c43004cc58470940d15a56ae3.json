@@ -1,0 +1,28 @@
+{
+  "staged_tree": "37ecd56e5ebabd3c5733e1a1286577b9073954b0",
+  "utc": "2026-10-18T07:28:44.541647+00:00",
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/bin/python",
+    "-B",
+    "-c",
+    "import json, os, runpy, sys\nfrom pathlib import Path\nroot = Path.cwd().resolve()\nomitted = root / 'docs' / 'delivery'\ndef reject_omitted_reads(event, args):\n    if event == 'open' and isinstance(args[0], (str, bytes, os.PathLike)):\n        path = Path(os.fsdecode(args[0])).resolve()\n        if path == omitted or path.is_relative_to(omitted):\n            raise RuntimeError('Compact catalog accessed excluded delivery evidence')\nsys.addaudithook(reject_omitted_reads)\nrunpy.run_path(str(root / 'scripts/refresh_product_api_catalog.py'), run_name='__main__')\norigins = {}\nfor name, module in list(sys.modules.items()):\n    if name.split('.')[0] in {'app', 'local_interop_protocol', 'local_interop_desktop'}:\n        for origin in [getattr(module, '__file__', None), *getattr(module, '__path__', [])]:\n            if origin and not Path(origin).resolve().is_relative_to(root):\n                raise RuntimeError('Project import escaped compact snapshot: ' + name)\n        if getattr(module, '__file__', None):\n            origins[name] = str(Path(module.__file__).resolve().relative_to(root))\n(root / '.profile/catalog-import-origins.json').write_text(json.dumps(origins, sort_keys=True) + '\\n')\n"
+  ],
+  "cwd": "/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-staged/0ba7646c43004cc58470940d15a56ae3",
+  "exit_code": 0,
+  "snapshot": {
+    "mode": "compact",
+    "excluded_prefix": "docs/delivery/",
+    "retained_files": 3614,
+    "retained_blob_bytes": 46093728,
+    "excluded_files": 10501,
+    "excluded_blob_bytes": 1972476140,
+    "retained_inventory_sha256": "c8df66659d351c83ca7059e3d070ced7e5cac77817a68c582d13dfad0d3db0a0",
+    "project_import_origins_sha256": "31140989dfb78e52de56901873f4260ea5493a133ce4abad0c8b32de5df26d10"
+  },
+  "sha256": {
+    "API_CATALOG.json": "e38b66b1999aaf3b453bedf28f816d210ab4f78ef8d5794cab8b02d6bb507c97",
+    "API_CATALOG.md": "24a51d9d79ceb146413173135b7f9e88289a29a6fa1e7ef7a8cc245573edf648",
+    "API_CATALOG_DETAIL.json.gz": "c3d823c00df7ffb2327ecd07e99bb0fb9b70fedc10fb1a5c87df50544c41b489",
+    "API_OPENAPI.json.gz": "50e72efb92e3a25017b5e6c6e84634710c5616533da41bf468067a0bf6fc0186"
+  }
+}

@@ -1,0 +1,5 @@
+{"operations": 2359, "added_this_refresh": 44, "removed": 0, "source_fingerprint": "6c6d8296a0762bd40b2b4efaac606d6923a38508b930f64d97d2d0c671db94a6"}
+/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-staged/0ba7646c43004cc58470940d15a56ae3/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+  class GlossaryDocument(StrictModel):
+
+{"snapshot": "/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-staged/0ba7646c43004cc58470940d15a56ae3", "receipt": "/workspace/scratch/20a0022d2b33/studio-director-transport/docs/delivery/v2-development/catalog-37ecd56e5eba-compact-0ba7646c43004cc58470940d15a56ae3.json"}
