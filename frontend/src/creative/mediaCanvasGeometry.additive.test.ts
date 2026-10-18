@@ -1,0 +1,6 @@
+import { expect, it } from 'vitest';
+import { visibleMediaCards, mediaViewportCenter } from './mediaCanvasGeometry';
+import type { CanvasDefinition } from './studioCanvasViewClient';
+const definition = (): CanvasDefinition => ({ schema_version: 1, title: 'View', viewport: { x: 0, y: 0, zoom: 1 }, cards: Array.from({ length: 1000 }, (_, i) => ({ id: `Card_${i}`, position: { x: i * 300, y: 0 } })) });
+it('culls 1000 persisted cards without deleting off-screen definitions', () => { const d = definition(), before = structuredClone(d); expect(visibleMediaCards(d, 800, 480).cards.map(c => c.id)).toEqual(['Card_0', 'Card_1', 'Card_2']); expect(d).toEqual(before); d.viewport.x = -900; expect(visibleMediaCards(d, 800, 480).cards.map(c => c.id)).toEqual(['Card_3', 'Card_4', 'Card_5']); });
+it('bounds overlapping DOM and supports filtering and original coordinate conversion', () => { const d = definition(); d.cards.forEach(c => { c.position.x = 0; }); expect(visibleMediaCards(d, 800, 480).cards).toHaveLength(128); expect(visibleMediaCards(d, 800, 480).clipped).toBe(true); expect(visibleMediaCards(d, 800, 480, 'Card_999').cards).toHaveLength(1); d.viewport = { x: 40, y: 60, zoom: 2 }; expect(mediaViewportCenter(d, 800, 480)).toEqual({ x: 180, y: 90 }); });

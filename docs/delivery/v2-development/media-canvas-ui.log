@@ -1,0 +1,327 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/mediaCanvasGeometry.additive.test.ts (2 tests) 13ms
+ ✓ src/creative/studioCanvasViewClient.additive.test.ts (14 tests) 24ms
+ ❯ src/creative/MediaCanvasViewPanel.additive.test.tsx (6 tests | 1 failed) 128ms
+   × loads actual client assets, creates a view, saves movement and reopens 75ms
+     → Unable to find a label with the text of: 卡片 x
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"独立媒体素材画布"[39m
+      [33mclass[39m=[32m"media-canvas"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m媒体素材画布[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m独立保存素材引用与位置。此视图不执行生成，也不改变执行图；素材内容预览仍在原素材面板中进行。[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"creative-actions"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取已存画布[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m保存媒体画布[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m新建空白视图[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取可用素材[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"creative-actions"[39m
+      [36m>[39m
+        [36m<label>[39m
+          [0m画布标题[0m
+          [36m<input[39m
+            [33mmaxlength[39m=[32m"160"[39m
+            [33mvalue[39m=[32m"媒体素材画布"[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m素材[0m
+          [36m<select>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择素材[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"asset"[39m
+            [36m>[39m
+              [0ma.png[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m加入引用卡片[0m
+        [36m</button>[39m
+        [36m<label>[39m
+          [0m查找卡片或素材 ID[0m
+          [36m<input[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"creative-actions"[39m
+      [36m>[39m
+        [36m<label>[39m
+          [0m视口 [0m
+          [0mx[0m
+          [36m<input[39m
+            [33mmax[39m=[32m"100000"[39m
+            [33mmin[39m=[32m"-100000"[39m
+            [33mtype[39m=[32m"number"[39m
+            [33mvalue[39m=[32m"0"[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m视口 [0m
+          [0my[0m
+          [36m<input[39m
+            [33mmax[39m=[32m"100000"[39m
+            [33mmin[39m=[32m"-100000"[39m
+            [33mtype[39m=[32m"number"[39m
+            [33mvalue[39m=[32m"0"[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m缩放[0m
+          [36m<input[39m
+            [33mmax[39m=[32m"2.5"[39m
+            [33mmin[39m=[32m"0.35"[39m
+            [33mstep[39m=[32m"0.1"[39m
+            [33mtype[39m=[32m"number"[39m
+            [33mvalue[39m=[32m"1"[39m
+          [36m/>[39m
+        [36m</label>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33maria-label[39m=[32m"媒体卡片视口"[39m
+        [33mclass[39m=[32m"media-canvas__viewport"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"media-canvas__card"[39m
+          [33mstyle[39m=[32m"left: 400px; top: 240px; width: 240px; height: 120px;"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-pressed[39m=[32m"false"[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0mCard_970f89981f014518a44e9216ec51fa77[0m
+          [36m</button>[39m
+          [36m<p>[39m
+            [0mimage[0m
+            [0m · [0m
+            [0m待保存校验[0m
+          [36m</p>[39m
+          [36m<small>[39m
+            [0masset[0m
+          [36m</small>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<p>[39m
+        [0m共 [0m
+        [0m1[0m
+        [0m/1000 张，匹配 [0m
+        [0m1[0m
+        [0m 张，当前视口渲染 [0m
+        [0m1[0m
+        [0m 张。[0m
+      [36m</p>[39m
+      [36m<p[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m已保存媒体画布[0m
+      [36m</p>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 21 passed (22)
+   Start at  20:46:36
+   Duration  966ms (transform 482ms, setup 30ms, collect 678ms, tests 165ms, environment 369ms, prepare 150ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/MediaCanvasViewPanel.additive.test.tsx > loads actual client assets, creates a view, saves movement and reopens
+TestingLibraryElementError: Unable to find a label with the text of: 卡片 x
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"独立媒体素材画布"[39m
+      [33mclass[39m=[32m"media-canvas"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m媒体素材画布[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m独立保存素材引用与位置。此视图不执行生成，也不改变执行图；素材内容预览仍在原素材面板中进行。[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"creative-actions"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取已存画布[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m保存媒体画布[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m新建空白视图[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m读取可用素材[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"creative-actions"[39m
+      [36m>[39m
+        [36m<label>[39m
+          [0m画布标题[0m
+          [36m<input[39m
+            [33mmaxlength[39m=[32m"160"[39m
+            [33mvalue[39m=[32m"媒体素材画布"[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m素材[0m
+          [36m<select>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m选择素材[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"asset"[39m
+            [36m>[39m
+              [0ma.png[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m加入引用卡片[0m
+        [36m</button>[39m
+        [36m<label>[39m
+          [0m查找卡片或素材 ID[0m
+          [36m<input[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"creative-actions"[39m
+      [36m>[39m
+        [36m<label>[39m
+          [0m视口 [0m
+          [0mx[0m
+          [36m<input[39m
+            [33mmax[39m=[32m"100000"[39m
+            [33mmin[39m=[32m"-100000"[39m
+            [33mtype[39m=[32m"number"[39m
+            [33mvalue[39m=[32m"0"[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m视口 [0m
+          [0my[0m
+          [36m<input[39m
+            [33mmax[39m=[32m"100000"[39m
+            [33mmin[39m=[32m"-100000"[39m
+            [33mtype[39m=[32m"number"[39m
+            [33mvalue[39m=[32m"0"[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m缩放[0m
+          [36m<input[39m
+            [33mmax[39m=[32m"2.5"[39m
+            [33mmin[39m=[32m"0.35"[39m
+            [33mstep[39m=[32m"0.1"[39m
+            [33mtype[39m=[32m"number"[39m
+            [33mvalue[39m=[32m"1"[39m
+          [36m/>[39m
+        [36m</label>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33maria-label[39m=[32m"媒体卡片视口"[39m
+        [33mclass[39m=[32m"media-canvas__viewport"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"media-canvas__card"[39m
+          [33mstyle[39m=[32m"left: 400px; top: 240px; width: 240px; height: 120px;"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-pressed[39m=[32m"false"[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0mCard_970f89981f014518a44e9216ec51fa77[0m
+          [36m</button>[39m
+          [36m<p>[39m
+            [0mimage[0m
+            [0m · [0m
+            [0m待保存校验[0m
+          [36m</p>[39m
+          [36m<small>[39m
+            [0masset[0m
+          [36m</small>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<p>[39m
+        [0m共 [0m
+        [0m1[0m
+        [0m/1000 张，匹配 [0m
+        [0m1[0m
+        [0m 张，当前视口渲染 [0m
+        [0m1[0m
+        [0m 张。[0m
+      [36m</p>[39m
+      [36m<p[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m>[39m
+        [0m已保存媒体画布[0m
+      [36m</p>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getAllByLabelText ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/queries/label-text.js:111:38
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/creative/MediaCanvasViewPanel.additive.test.tsx:14:26
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

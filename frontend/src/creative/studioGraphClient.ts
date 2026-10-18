@@ -1,3 +1,4 @@
+import { createCanvasViewClient } from './studioCanvasViewClient';
 import { checkedStoryboardShot, checkedStoryboardReceipt } from './studioStoryboardContract';
 import { checkedVideoReference, checkedVideoRecipe, storyboardShotFields, sameVideoReference } from './studioVideoRuntimeContract';
 import { videoGraphDefinitions } from './graphDraft';
@@ -1020,6 +1021,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     const recordValue = record(value); owner(recordValue); closed(recordValue, ['project_id', 'scope', 'documents']); const documents = list(recordValue.documents, 100).map(checkedPlanningDocument); if (new Set(documents.map(document => document.id)).size !== documents.length) invalid(); return { documents };
   });
   return {
+    canvasViews: createCanvasViewClient(projectId, transport, owner),
     ...createStudioProviderClient(base, transport, owner),
     graphTimelineList: (signal?: AbortSignal): Promise<{ items: StudioTimelineRow[] }> => transport.json(`${base}/production/timelines`, 'GET', undefined, signal).then(value => {
       const rows = list(record(value).items, 25).map(value => checkedTimelineRow(value)); if (new Set(rows.map(row => row.id)).size !== rows.length) invalid(); return { items: rows };
@@ -1179,6 +1181,6 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
 
 // Older embedded clients can omit the advisory extension; execution stays unchanged.
 type StudioGraphMediaClient = Pick<ReturnType<typeof createStudioGraphClient>, 'previewMedia' | 'dispatchMedia' | 'executeMedia' | 'refreshMedia' | 'reconcileMedia' | 'reviewMedia' | 'mediaCandidate' | 'graphTimelineList' | 'graphTimelineGet'>;
-type StudioGraphImageClient = Pick<ReturnType<typeof createStudioGraphClient>, 'imageCatalog' | 'productionCatalog' | 'planningDocuments' | 'readDirectorWorkspace' | 'videoCatalog' | 'videoStoryboard'>;
+type StudioGraphImageClient = Pick<ReturnType<typeof createStudioGraphClient>, 'imageCatalog' | 'productionCatalog' | 'planningDocuments' | 'readDirectorWorkspace' | 'videoCatalog' | 'videoStoryboard' | 'canvasViews'>;
 export type StudioGraphClient = Omit<ReturnType<typeof createStudioGraphClient>, keyof StudioProviderClient | keyof StudioGraphMediaClient | keyof StudioGraphImageClient>
   & Partial<StudioProviderClient> & Partial<StudioGraphMediaClient> & Partial<StudioGraphImageClient>;

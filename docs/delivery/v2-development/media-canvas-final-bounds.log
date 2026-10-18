@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/mediaCanvasGeometry.additive.test.ts (2 tests) 10ms
+ ✓ src/creative/studioCanvasViewClient.additive.test.ts (14 tests) 21ms
+ ✓ src/creative/MediaCanvasViewPanel.additive.test.tsx (8 tests) 314ms
+
+ Test Files  3 passed (3)
+      Tests  24 passed (24)
+   Start at  20:49:23
+   Duration  1.12s (transform 448ms, setup 31ms, collect 606ms, tests 345ms, environment 332ms, prepare 200ms)
+
