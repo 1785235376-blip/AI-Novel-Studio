@@ -85,3 +85,25 @@ The fixed 256 × 192 grayscale image has a white background and per-face, two-si
 The original scene view exposes a separate explicit clay PNG action using the same guarded export component and original manual_export capability. Semantic contracts remain distinct while source/camera checks, PNG signature/header/hash verification and download lifecycle are reused. Switching export mode/source/view or losing current authority discards late results. The original material inspection remains metadata-only; this clay image does not apply those materials.
 
 Evidence: static-glb-clay-r1 has 13 new/original raster, File/source and mounted router tests PASS, including order-independent real occlusion, final source retirement, exact read authority, private budget refusal and unchanged original depth bytes. static-glb-clay-ui-r1 has 21 new/original scene/depth/clay/workspace cases plus TypeScript PASS. Genuine File clay wire is decoded by UI tests; the mounted workspace route case intentionally exercises the budget-error path. No full suite/build, PostgreSQL, actual browser, Blender/UE, live model or full 3D acceptance is claimed.
+
+## In-workspace verified diagnostic PNG review
+
+The original scene depth/clay exporter now also offers an explicit preview action.
+It uses the same bounded CPU receipt and strict source/camera/PNG hash checks as
+export, then displays a 256 × 192 Blob URL locally. Nothing is computed on mount;
+preview creates no Asset, model job, persistence or download. A separate action
+can download exactly the already checked Blob without recomputing or requesting
+another result. Existing direct export remains available.
+
+Closing, changing source/scope/view/kind, losing authority, disabling the surface,
+or unmounting removes the displayed preview and revokes its object URL. Pending
+work is retired across permission/disabled/owner ABA as well as source/view changes.
+The original manual_export gate remains required for this diagnostic endpoint.
+This is a session-local review surface, not saved camera bookmarks, material
+rendering, image conditioning, persistent assets or real browser acceptance.
+
+Evidence: static-glb-diagnostic-preview-ui-r1: 18 focused new/original checks and
+TypeScript PASS. New tests use genuine original File-produced depth PNG bytes,
+check exact Blob reuse, disposal and late/tampered result rejection; original
+clay/depth contract and direct-export cases remain unchanged. No backend code
+changed, so no repeated PostgreSQL/full-suite run or production rebuild.
