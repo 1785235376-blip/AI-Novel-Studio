@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/StudioModelMeshPreview.additive.test.tsx (5 tests) 148ms
+ ✓ src/creative/StudioModelDepthExport.additive.test.tsx (5 tests) 93ms
+ ✓ src/creative/StudioModelScenePreview.additive.test.tsx (4 tests) 97ms
+
+ Test Files  3 passed (3)
+      Tests  14 passed (14)
+   Start at  12:25:30
+   Duration  1.18s (transform 503ms, setup 45ms, collect 1.26s, tests 337ms, environment 936ms, prepare 185ms)
+

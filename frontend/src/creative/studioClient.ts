@@ -1,3 +1,4 @@
+import { checkedDepthCamera, checkedModelDepth, type ModelDepthCamera } from './studioModelDepthContract';
 import { checkedModelReferenceAsset, checkedModelReferenceInspection, checkedModelMeshPreview, checkedModelScenePreview, type ModelReferenceImport } from './studioModelReferenceContract';
 import { ApiError, type Asset, type AssetProvenance, type AssetRelationship, type AssetRelationshipKind, type AssetRelationshipReference, type AssetRelationshipReferenceKind, type AssetRelationshipTarget, type CollaborationContext } from '../api';
 import { useLocalHostSession } from '../localHostSession';
@@ -354,6 +355,11 @@ export function studioClient(projectId: string, context: CollaborationContext) {
     inspectModelReference: (asset: StudioAsset, signal?: AbortSignal) => transport.json<unknown>(`${assetUrl(asset.id)}/model-reference`, 'GET', undefined, signal).then(value => checkedModelReferenceInspection(value,checkedAsset(asset))),
     inspectModelMesh: (asset: StudioAsset, signal?: AbortSignal) => transport.json<unknown>(`${assetUrl(asset.id)}/model-reference/mesh-preview`, 'GET', undefined, signal).then(value => checkedModelMeshPreview(value,checkedAsset(asset))),
     inspectModelScene: (asset: StudioAsset, signal?: AbortSignal) => transport.json<unknown>(`${assetUrl(asset.id)}/model-reference/scene-preview`, 'GET', undefined, signal).then(value => checkedModelScenePreview(value,checkedAsset(asset))),
+    exportModelDepth: async (asset: StudioAsset, camera: ModelDepthCamera, signal?: AbortSignal) => {
+      const source=structuredClone(checkedModelReferenceAsset(checkedAsset(asset))),view=checkedDepthCamera(camera);
+      const value=await transport.json<unknown>(`${assetUrl(source.id)}/model-reference/depth-export`, 'POST', {contract:'studio-static-glb-depth-export/1',source_version:source.version,source_sha256:source.sha256,...view},signal);
+      return checkedModelDepth(value,source,view);
+    },
     asset: (id: string, signal?: AbortSignal) => transport.json<StudioAsset>(assetUrl(id), 'GET', undefined, signal).then(checkedAsset),
     lineage: (id: string, body: StudioLineageInput) => transport.json<StudioAsset>(`${assetUrl(id)}/lineage`, 'PUT', { ...body, expected_version: version(body.expected_version, 1) }).then(checkedAsset),
     download: (id: string, signal?: AbortSignal) => transport.blob(`${assetUrl(id)}/download`, 'GET', undefined, signal),

@@ -528,6 +528,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       onInspect={asset => guarded(() => client.inspectModelReference(asset))}
       onMesh={(asset,signal) => guarded(() => client.inspectModelMesh(asset,signal),signal)}
       onScene={(asset,signal) => guarded(() => client.inspectModelScene(asset,signal),signal)}
+      onDepth={(asset,camera,signal) => guarded(() => client.exportModelDepth(asset,camera,signal),signal)}
       onImport={async body => {
         if (!current() || !writable || overview.capabilities.manual_import !== true || busyRef.current || dirtyRef.current) throw new Error('请先处理当前输入并核对项目写入权限。');
         busyRef.current = true; setBusy(true); setNotice('');

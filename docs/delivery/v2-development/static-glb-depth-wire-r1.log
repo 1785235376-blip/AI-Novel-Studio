@@ -1,0 +1,8 @@
+.                                                                        [100%]
+=============================== warnings summary ===============================
+tests/test_v2_static_glb_depth_owner.py::test_real_file_source_depth_download_is_readonly_and_exact[file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1 passed, 1 warning in 4.88s

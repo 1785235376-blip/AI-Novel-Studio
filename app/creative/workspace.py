@@ -352,6 +352,37 @@ class IndependentWorkspaceService:
                 **({"mesh_preview": parsed["mesh_preview"]} if mesh_preview else {}),
                 **({"scene_preview": parsed["scene_preview"]} if scene_preview else {})}
 
+    def export_model_depth(self, nid, scope, aid, value, guard=lambda: None):
+        from .workspace_models import StaticSceneDepthExport
+        from .model_reference_depth import render_depth
+        from ..experimental.common import StaleSourceError
+        body = StaticSceneDepthExport.model_validate(value)
+        guard()
+        with self._asset_scope(nid, scope):
+            incarnation = self.store.incarnation(nid)
+            row = self._row(nid, scope, aid)
+            if (row["version"], row["sha256"]) != (body.source_version, body.source_sha256):
+                raise StaleSourceError("MODEL_REFERENCE_SOURCE_CHANGED")
+        inspected = self.inspect_model_reference(nid, scope, aid, guard, scene_preview=True)
+        pin = inspected["asset_snapshot"]
+        if (pin["version"], pin["digest"]) != (body.source_version, body.source_sha256):
+            raise StaleSourceError("MODEL_REFERENCE_SOURCE_CHANGED")
+        count = 0
+        def checkpoint():
+            nonlocal count
+            count += 1
+            if count % 32 == 0: guard()
+        guard()
+        png, proof = render_depth(inspected["scene_preview"], body.yaw, body.pitch, checkpoint=checkpoint)
+        guard()
+        with self._asset_scope(nid, scope):
+            row = self._row(nid, scope, aid)
+            if (self.store.incarnation(nid) != incarnation
+                    or (row["version"], row["sha256"]) != (body.source_version, body.source_sha256)):
+                raise StaleSourceError("MODEL_REFERENCE_SOURCE_CHANGED")
+            guard()
+        return {"asset_snapshot": pin, "depth_export": proof, "content_base64": base64.b64encode(png).decode("ascii")}
+
     def _persist_manual_import(self, nid, scope, actor, body, data, media_type, guard):
         # Shared original asset owner, admission and idempotency for bounded manual imports.
         guard()

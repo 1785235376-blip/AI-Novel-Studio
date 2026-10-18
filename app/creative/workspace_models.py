@@ -98,3 +98,12 @@ class AssetRelationshipIn(StrictModel):
     type: RelationshipKind
     target: RelationshipTarget
     reason: str = Field(default="", max_length=1000)
+
+
+class StaticSceneDepthExport(StrictModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    contract: Literal["studio-static-glb-depth-export/1"]
+    source_version: int = Field(ge=1, le=2**53 - 1)
+    source_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    yaw: float = Field(default=35.0, ge=-180, le=180, allow_inf_nan=False)
+    pitch: float = Field(default=25.0, ge=-89, le=89, allow_inf_nan=False)
