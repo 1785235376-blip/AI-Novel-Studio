@@ -1,3 +1,4 @@
+import {useFloatingTutorPlacement} from './useFloatingTutorPlacement';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ApiError } from '../api';
@@ -33,6 +34,7 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
   const identity = localTutorIdentity(props);
   const client = useMemo(() => interopClient(props.context), [identity]);
   const [view, setView] = useState<View>(props.initialView ?? 'ask');
+  const [presentation,setPresentation]=useState<'dialog'|'floating'>('dialog'),[collapsed,setCollapsed]=useState(false);
   const [status, setStatus] = useState<InteropStatus>();
   const [desktopPending, setDesktopPending] = useState(false);
   const desktopRevision = useRef(0);
@@ -70,6 +72,10 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
   const closeButton = useRef<HTMLButtonElement>(null);
   const closeAction = useRef(props.onClose);
   closeAction.current = props.onClose;
+  const floating=presentation==='floating'&&view==='ask'&&eventSharing!=='unknown';
+  const placement=useFloatingTutorPlacement(dialog,floating,identity,collapsed);
+  const layoutState=useRef({view,busy,desktopPending,eventSharing});layoutState.current={view,busy,desktopPending,eventSharing};
+  useEffect(()=>{if(eventSharing==='unknown'){setPresentation('dialog');setCollapsed(false);}},[eventSharing]);
 
   const clearReview = () => { setEventPreview(undefined); setPreview(undefined); setDiagnostic(undefined); setGuidance(undefined); setVerification(undefined); setNotice(''); };
   function cancelPending(showNotice = true) {
@@ -235,6 +241,7 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
     return () => { alive.current = false; disconnect(false); };
   }, [client]);
   useLayoutEffect(() => {
+    if(floating)return;
     const previous = document.activeElement as HTMLElement | null;
     closeButton.current?.focus();
     // Native buttons lose focus when disabled during an async request. Keep the
@@ -246,7 +253,7 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
     };
     document.addEventListener('keydown', outsideKey, true);
     return () => { document.removeEventListener('keydown', outsideKey, true); if (previous?.isConnected) previous.focus(); };
-  }, []);
+  }, [floating]);
   // A fresh version, changed selection or unsaved editor invalidates approval.
   const sourceIdentity = JSON.stringify([props.chapterVersion, props.sourceReady, props.selection?.text_start, props.selection?.text_end, props.selection?.text]);
   const sourceObserved = useRef(sourceIdentity);
@@ -325,7 +332,7 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
     && (content !== 'SELECTION' || selectionReady) && (content !== 'SPECIFIC_CONTEXT' || sourceIds.length > 0);
   const previewExpired = (expires: string) => !Number.isFinite(Date.parse(expires)) || Date.parse(expires) <= Date.now();
   const changeContent = (value: ContentKind) => { cancelPending(false); clearReview(); setContent(content === value ? 'NONE' : value); };
-  const switchView = (next: View) => { if (eventPreview) stopEventSharing(); else { cancelPending(false); clearReview(); } setView(next); };
+  const switchView = (next: View) => { if(next!=='ask'){setPresentation('dialog');setCollapsed(false);} if (eventPreview) stopEventSharing(); else { cancelPending(false); clearReview(); } setView(next); };
   const connect = () => void run('连接本机 Tutor', async (request_id, signal, current) => {
     const scope = props.context.scope!;
     const value = await client.connect({ request_id, endpoint, project_id: props.projectId,
@@ -406,23 +413,24 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
     });
   };
 
-  const body = <div className="backdrop local-tutor-backdrop" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) close(); }}>
-    <section ref={dialog} className="local-tutor-dialog" role="dialog" aria-modal="true" aria-labelledby="local-tutor-title"
+  const body = <div className={floating?"local-tutor-floating-layer":"backdrop local-tutor-backdrop"} role="presentation" onMouseDown={event => { if (!floating&&event.target === event.currentTarget) close(); }}>
+    <section ref={dialog} className={`local-tutor-dialog${floating?" local-tutor-floating":""}`} style={floating&&placement?{left:placement.left,top:placement.top,right:'auto',width:placement.width,maxHeight:Math.max(1,Math.min(640,(window.visualViewport?.height||window.innerHeight)-16))}:undefined} role="dialog" aria-modal={!floating} aria-labelledby="local-tutor-title"
       onKeyDown={event => {
         if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); close(); }
-        if (event.key !== 'Tab') return;
+        if (event.key !== 'Tab'||floating) return;
         const nodes = [...event.currentTarget.querySelectorAll<HTMLElement>('button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]')];
         if (!nodes.length) return;
         const index = nodes.indexOf(document.activeElement as HTMLElement);
         event.preventDefault(); nodes[(index + (event.shiftKey ? -1 : 1) + nodes.length) % nodes.length]?.focus();
       }}>
-      <header className="local-tutor-header"><div><h2 id="local-tutor-title">问助手 · Local Tutor</h2><p>本机优先 · 预览后确认 · 只读指导</p></div><Button ref={closeButton} onClick={close} aria-label="关闭本机 Tutor">关闭</Button></header>
-      <nav className="local-tutor-tabs" aria-label="Tutor 功能">
+      <header className="local-tutor-header"><div><h2 id="local-tutor-title">问助手 · Local Tutor</h2><p>本机优先 · 预览后确认 · 只读指导</p></div><div className="local-tutor-window-actions"><Button ref={closeButton} onClick={close} aria-label="关闭本机 Tutor">关闭</Button>{floating?<><Button onClick={()=>{if(alive.current)setCollapsed(value=>!value);}}>{collapsed?'展开浮窗':'收起浮窗'}</Button><Button onClick={()=>{if(alive.current){setPresentation('dialog');setCollapsed(false);}}}>返回对话框</Button></>:view==='ask'&&<Button disabled={!!busy||desktopPending||eventSharing==='unknown'} onClick={()=>{const live=layoutState.current;if(alive.current&&!pending.current&&!live.busy&&!live.desktopPending&&live.view==='ask'&&live.eventSharing!=='unknown'){setPresentation('floating');setCollapsed(false);}}}>切换为助手浮窗</Button>}</div></header>
+      {floating&&<p className="local-tutor-floating-note">浮窗仅改变布局，不新增共享权限。{placement&&placement.overlap>0?'当前空间不足以完全避让输入区，可收起浮窗或返回对话框。':'优先避让当前输入或选区。'}</p>}
+      <nav className="local-tutor-tabs" aria-label="Tutor 功能" hidden={floating&&collapsed}>
         <Button aria-pressed={view === 'ask'} onClick={() => switchView('ask')}>问助手</Button>
         <Button aria-pressed={view === 'diagnostics'} onClick={() => switchView('diagnostics')}>共享诊断</Button>
         <Button aria-pressed={view === 'settings'} onClick={() => switchView('settings')}>集成设置</Button>
       </nav>
-      <div className="local-tutor-scroll">
+      <div className="local-tutor-scroll" hidden={floating&&collapsed}>
         {error && <StatusMessage tone="error">{error}</StatusMessage>}
         {notice && <StatusMessage>{notice}</StatusMessage>}
         {eventSharing === 'unknown' && !session && <StatusMessage tone="warning"><strong>撤销状态 UNKNOWN</strong><p>尚未确认主机已停止持续共享。关闭面板不会关闭 Studio 主机。</p>{revokingSession.current && <Button onClick={() => void disconnect()}>重试断开连接</Button>}{masterOffPending.current && <Button disabled={!!busy} onClick={() => changeEnabled(false)}>重试关闭集成</Button>}<Button onClick={dismissUnconfirmed}>仅关闭面板（撤销未确认）</Button></StatusMessage>}

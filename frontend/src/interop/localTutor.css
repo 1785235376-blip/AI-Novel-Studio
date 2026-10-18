@@ -29,3 +29,10 @@
 .local-tutor-permissions > li > div { flex: 1; min-width: 0; }
 .local-tutor-permissions p { margin: var(--space-1) 0; color: var(--color-text-secondary); }
 .local-tutor-stages { padding-inline-start: var(--space-4); }
+
+.local-tutor-window-actions { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.local-tutor-floating-layer { position: fixed; inset: 0; z-index: var(--z-overlay); pointer-events: none; }
+.local-tutor-floating { position: absolute; pointer-events: auto; inset-block-start: var(--space-2); inset-inline-end: var(--space-2); width: min(25rem, calc(100vw - var(--space-4))); max-height: calc(100vh - var(--space-4)); box-shadow: var(--shadow-floating); }
+.local-tutor-floating .local-tutor-header { align-items: flex-start; flex-wrap: wrap; }
+.local-tutor-floating-note { margin: 0; padding: var(--space-2) var(--space-4); color: var(--color-text-secondary); }
+.local-tutor-scroll[hidden], .local-tutor-tabs[hidden] { display: none; }

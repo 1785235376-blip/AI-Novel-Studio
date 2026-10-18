@@ -1,0 +1,40 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/interop/entry.test.tsx (1 test) 88ms
+ ✓ src/interop/entryScopeReview.test.tsx (1 test) 144ms
+ ✓ src/interop/LocalTutorFloating.additive.test.tsx (6 tests) 337ms
+ ❯ src/interop/LocalTutorIntegration.test.tsx (70 tests | 1 failed) 4644ms
+   × keeps keyboard focus contained in the dialog 25ms
+     → expected <button …(1)></button> to be <button …(1)></button> // Object.is equality
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 77 passed (78)
+   Start at  15:27:50
+   Duration  5.65s (transform 355ms, setup 105ms, collect 1.23s, tests 5.21s, environment 1.29s, prepare 235ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/interop/LocalTutorIntegration.test.tsx > keeps keyboard focus contained in the dialog
+AssertionError: expected <button …(1)></button> to be <button …(1)></button> // Object.is equality
+
+- Expected
++ Received
+
+  <button
+    class="ui-button ui-button--secondary"
+  >
+-   关闭并断开
++   切换为助手浮窗
+  </button>
+
+ ❯ src/interop/LocalTutorIntegration.test.tsx:218:34
+    216|   const modal = await screen.findByRole('dialog'); const close = withi…
+    217|   close.focus(); fireEvent.keyDown(close, { key: 'Tab', shiftKey: true…
+    218|   expect(document.activeElement).toBe(within(modal).getByRole('button'…
+       |                                  ^
+    219| });
+    220| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
