@@ -80,10 +80,11 @@ class NativeResearchOCRCoordinator:
         ready = set(FLAGS).issubset(enabled_flags())
         routes = self.broker.candidates(local_ocr_only=True) if ready else []
         return {'status': 'CONFIGURED' if routes else 'NOT_CONFIGURED',
-            'operations': ['OCR'], 'media_types': ['image/png', 'image/jpeg'],
+            'operations': ['OCR'], 'media_types': ['image/png', 'image/jpeg'] + (['application/pdf'] if any(row['identity'].get('source_kind') == 'PDF' for row in routes) else []),
             'review_required': True, 'automatic_canon': False, 'model_quality': 'NOT_RUN',
             'routes': [{'provider_id': row['provider_id'], 'model_id': row['model_id'],
                 'display_name': row['display_name'],
+                **({'source_kind': 'PDF'} if row['identity'].get('source_kind') == 'PDF' else {}),
                 'languages': row['identity']['native_ocr_binding']['route']['languages']}
                 for row in routes]}
 
@@ -101,8 +102,15 @@ class NativeResearchOCRCoordinator:
 
     def _source(self, nid, scope, actor, row, guard):
         self.rows._source(nid, scope, actor, row)
+        original = self.research._source(nid, scope, actor, row['request']['source_id'])
+        pages = row['request'].get('pages') or []
+        if original.get('format') == 'PDF' and (len(pages) != 1 or type(pages[0]) is not int):
+            raise ValueError('RESEARCH_PDF_OCR_ONE_EXPLICIT_PAGE_REQUIRED')
+        if original.get('format') != 'PDF' and pages not in ([], [1]):
+            raise ValueError('RESEARCH_OCR_IMAGE_PAGE_INVALID')
         return PreparedResearchOCRSource(self.research, nid, scope, actor,
-            row['request']['source_id'], row['request']['source_version'], guard)
+            row['request']['source_id'], row['request']['source_version'], guard,
+            page=pages[0] if pages else None)
 
     def preview(self, nid, scope, actor, rid, value, *, guard):
         body = NativeOCRPreviewIn.model_validate(value)
@@ -122,6 +130,8 @@ class NativeResearchOCRCoordinator:
             self.rows._version(latest, body.expected_version)
         source = self._source(nid, scope, actor, row, current)
         binding = self.node.binding(body.provider_id, body.model_id)
+        if (source.binding['media_type'] == 'application/pdf') != (binding['route']['schema'] == 'local-vision-ocr-pdf-native-admission/1'):
+            raise ValueError('RESEARCH_OCR_SOURCE_ROUTE_MISMATCH')
         if body.language not in binding['route']['languages']:
             raise ValueError('RESEARCH_OCR_LANGUAGE_NOT_ADMITTED')
         route = next((item for item in self.broker.candidates(local_ocr_only=True)
@@ -197,6 +207,8 @@ class NativeResearchOCRCoordinator:
         binding = {k: v for k, v in source.binding.items() if k not in {'contract', 'access', 'page'}}
         binding.update(contract='RESEARCH_OCR_JOB_V1', source_kind='IMAGE', language=proposal['language'],
             route_digest=proposal['route_digest'], reviewed_preview_digest=body.reviewed_preview_digest)
+        if source.binding['media_type'] == 'application/pdf':
+            binding.update(contract='RESEARCH_PDF_OCR_JOB_V1', source_kind='PDF', page=source.binding['page'])
         def before_dispatch():
             if not holder['claimed']: raise ValueError('RESEARCH_OCR_RECEIPT_NOT_CLAIMED')
             if datetime.now(timezone.utc) >= datetime.fromisoformat(proposal['expires_at']):
@@ -213,9 +225,9 @@ class NativeResearchOCRCoordinator:
                 current()
                 capability = ResearchVisionCapability(provider_id=proposal['provider_id'], model_id=proposal['model_id'],
                     model_revision=proposal['route_digest'], local=True, operations=['OCR'], verification='CONTRACT_VERIFIED')
-                source_input = ResearchVisionInput(b'', 'IMAGE', (1,), binding['source_id'], binding['source_version'], binding['source_digest'])
+                source_input = ResearchVisionInput(b'', binding['source_kind'], (binding.get('page', 1),), binding['source_id'], binding['source_version'], binding['source_digest'])
                 result = bind_research_analysis_result(source_input, {'blocks': [
-                    {'kind': 'TEXT', 'page': 1, 'text': response.text[i:i + 8000]}
+                    {'kind': 'TEXT', 'page': binding.get('page', 1), 'text': response.text[i:i + 8000]}
                     for i in range(0, len(response.text), 8000)], 'warnings': ['LOCAL_NATIVE_OCR_REVIEW_REQUIRED']}, capability)
                 if len(canonical(result).encode()) > MAX_RESULT_BYTES: raise ValueError('RESEARCH_OCR_RESULT_LIMIT')
                 with self.broker._owned_transaction(nid, scope, lease) as state:
@@ -285,13 +297,13 @@ class NativeResearchOCRCoordinator:
         return result
 
     def recover(self, nid, scope, actor, rid, value, *, guard):
-        from .research_ocr_binding import ResearchOCRJobBinding
+        from .research_ocr_binding import parse_research_ocr_binding
         body = NativeOCRRecoveryIn.model_validate(value)
         if not body.evidence_note.strip(): raise ValueError('RESEARCH_OCR_RECOVERY_EVIDENCE_REQUIRED')
         guard(); original = self.rows._row(nid, scope, actor, rid)
         execution = deepcopy(original.get('native_ocr_execution'))
         if not execution: raise ValueError('RESEARCH_OCR_RECOVERY_NOT_REQUIRED')
-        binding = ResearchOCRJobBinding.model_validate(execution['binding'])
+        binding = parse_research_ocr_binding(execution['binding'])
         if (binding.project_id != nid or binding.actor_id != actor or binding.scope.model_dump() != scope):
             raise ValueError('RESEARCH_OCR_RECOVERY_IDENTITY_MISMATCH')
         lease = lambda: self.lease(nid, binding.project_incarnation)
@@ -391,9 +403,9 @@ class NativeResearchOCRCoordinator:
                 raise ValueError('RESEARCH_OCR_DURABLE_RESULT_MISMATCH')
             capability = ResearchVisionCapability(provider_id=job['requested_provider'], model_id=job['requested_model'],
                 model_revision=binding['route_digest'], local=True, operations=['OCR'], verification='CONTRACT_VERIFIED')
-            source_input = ResearchVisionInput(b'', 'IMAGE', (1,), binding['source_id'], binding['source_version'], binding['source_digest'])
+            source_input = ResearchVisionInput(b'', binding['source_kind'], (binding.get('page', 1),), binding['source_id'], binding['source_version'], binding['source_digest'])
             expected = bind_research_analysis_result(source_input, {'blocks': [
-                {'kind': 'TEXT', 'page': 1, 'text': text[i:i + 8000]} for i in range(0, len(text), 8000)],
+                {'kind': 'TEXT', 'page': binding.get('page', 1), 'text': text[i:i + 8000]} for i in range(0, len(text), 8000)],
                 'warnings': ['LOCAL_NATIVE_OCR_REVIEW_REQUIRED']}, capability)
             decision = self.broker.get(nid, scope, self.broker.DECISIONS, ledger['preview_id'])
             admitted = (decision.get('chosen') or {}).get('identity', {}).get('native_ocr_binding', {})
@@ -405,6 +417,14 @@ class NativeResearchOCRCoordinator:
                 'model_sha256': admitted.get('route', {}).get('model_sha256'),
                 'admission_digest': admitted.get('route', {}).get('admission_digest'),
                 'automatic_canon': False, 'review_required': True, 'model_quality': 'NOT_RUN'}
+            if binding['source_kind'] == 'PDF':
+                evidence = job.get('research_ocr_output_evidence')
+                from .research_ocr_binding import parse_research_ocr_binding, validate_pdf_output_evidence
+                validate_pdf_output_evidence(parse_research_ocr_binding(binding), evidence, job)
+                receipt.update(source_page=binding['page'], rendered_image_sha256=evidence['rendered_image_sha256'],
+                    renderer_digest=admitted.get('route', {}).get('renderer_digest'))
+                if evidence != receipt:
+                    raise ValueError('RESEARCH_OCR_DURABLE_RESULT_MISMATCH')
             if (result != expected or row.get('model') != capability.model_dump()
                     or execution.get('runtime_receipt') != receipt
                     or ledger.get('created_by') != actor or decision.get('created_by') != actor

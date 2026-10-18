@@ -97,10 +97,11 @@ def test_original_node_rejects_wrong_or_extra_pdf_receipts(rig, pdf_provider, mo
     with pytest.raises(ModelRuntimeError): runtime.vision_ocr_node.execute(request(runtime))
 
 
-def test_pdf_provider_is_not_automatically_admitted_as_image_native_broker(rig, pdf_provider):
-    # Explicitly distinct route. The current broker's exact LocalTesseract class
-    # fence must be extended separately with PDF source and page authority.
+def test_pdf_provider_has_distinct_explicit_broker_admission(rig, pdf_provider):
     from app.experimental.native_ocr_broker import candidates
     runtime, _ = rig; install(runtime, pdf_provider)
     host = SimpleNamespace(generation_runtime=runtime, provider_registry=runtime.providers, model_registry=runtime.models)
-    assert not candidates(host)
+    rows = candidates(host)
+    assert len(rows) == 1 and rows[0]['identity']['source_kind'] == 'PDF'
+    assert rows[0]['identity']['pdf_adapter_hash'] and rows[0]['identity']['raster_adapter_hash']
+    assert rows[0]['identity']['native_ocr_binding']['route']['schema'] == 'local-vision-ocr-pdf-native-admission/1'

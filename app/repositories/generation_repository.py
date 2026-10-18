@@ -74,6 +74,9 @@ def check_graph_job_update(previous, item):
     from ..experimental.research_ocr_binding import is_research_ocr_job
     if is_research_ocr_job(item) or (previous is not None and is_research_ocr_job(previous)):
         keys += ("research_ocr_binding", "operation", "experimental_origin", "chapter_id", "profile", "creative_director_binding")
+    if previous is not None and previous.get("research_ocr_output_evidence") is not None:
+        if previous.get("research_ocr_output_evidence") != item.get("research_ocr_output_evidence"):
+            raise GenerationProjectIdentityError("GENERATION_RESEARCH_OCR_EVIDENCE_CHANGED")
     if is_creative_director_job(item) or (previous is not None and is_creative_director_job(previous)):
         keys += ("creative_director_binding", "operation", "experimental_origin", "chapter_id")
     if previous is not None and (graph_job_binding(previous) is None or any(

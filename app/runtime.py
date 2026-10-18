@@ -69,6 +69,30 @@ class Runtime:
             if not all(ocr_fields.values()): raise ValueError('LOCAL_OCR_COMPLETE_HOST_CONFIGURATION_REQUIRED')
             self.register_local_ocr_route(**ocr_fields)
 
+        pdf_fields = {key: os.getenv(variable, '').strip() for key, variable in {
+            'renderer': 'LOCAL_PDF_RENDER_EXECUTABLE', 'renderer_sha256': 'LOCAL_PDF_RENDER_EXECUTABLE_SHA256'}.items()}
+        if any(pdf_fields.values()):
+            if not all(pdf_fields.values()) or not all(ocr_fields.values()):
+                raise ValueError('LOCAL_PDF_OCR_COMPLETE_HOST_CONFIGURATION_REQUIRED')
+            self.register_local_pdf_ocr_route(**ocr_fields, **pdf_fields)
+
+    def register_local_pdf_ocr_route(self, *, executable, executable_sha256,
+                                     traineddata, model_sha256, language, renderer, renderer_sha256):
+        """Explicit host pins only; preserves the separate existing IMAGE route."""
+        from .local_tesseract_ocr import LocalTesseractOCRProvider
+        from .local_pdf_raster import LocalPDFPageRasterizer
+        from .local_pdf_ocr import LocalPDFOCRProvider
+        provider_id = 'local-pdf-tesseract-ocr'
+        image = LocalTesseractOCRProvider(provider_id=provider_id, model_id=language,
+            executable=executable, executable_sha256=executable_sha256,
+            traineddata=traineddata, model_sha256=model_sha256, language=language)
+        raster = LocalPDFPageRasterizer(executable=renderer, executable_sha256=renderer_sha256)
+        adapter = LocalPDFOCRProvider(image_provider=image, rasterizer=raster)
+        self.provider_registry.register(ProviderDescriptor(provider_id, 'Local PDF page OCR', 'local',
+            frozenset({Modality.VISION}), True, True, 'pinned_native_unverified_quality'), adapter, replace=True)
+        self.model_registry.register(ModelDescriptor(language, provider_id, 'PDF page OCR (' + language + ')',
+            Modality.VISION, frozenset({'OCR'})), replace=True)
+
     def register_local_ocr_route(self, *, executable, executable_sha256,
                                  traineddata, model_sha256, language):
         """Trusted host bootstrap only. No download, discovery or inference."""

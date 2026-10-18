@@ -1,0 +1,33 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/ResearchPDFOCRPanel.test.tsx (3 tests) 174ms
+ ✓ src/experimental/ResearchNativeOCRPanel.test.tsx (8 tests) 1333ms
+   ✓ exports only the pinned reviewed receipt through the original endpoint 1044ms
+
+ Test Files  2 passed (2)
+      Tests  11 passed (11)
+   Start at  22:26:10
+   Duration  2.11s (transform 164ms, setup 24ms, collect 427ms, tests 1.51s, environment 633ms, prepare 130ms)
+
+src/experimental/ResearchPDFOCRPanel.test.tsx(58,20): error TS2345: Argument of type '{ id: string; version: number; status: string; request: { source_id: string; source_version: number; operation: string; pages: number[]; }; result: { blocks: { text: string; page: number; citation: { source_id: string; ... 4 more ...; page: number; }; }[]; }; }' is not assignable to parameter of type 'OCRRow'.
+  The types of 'result.blocks' are incompatible between these types.
+    Type '{ text: string; page: number; citation: { source_id: string; source_version: number; source_digest: string | undefined; result_digest: string; layer: "RESEARCH_DERIVED"; page: number; }; }[]' is not assignable to type '{ text: string; page: number; citation: { source_id: string; source_version: number; source_digest: string; result_digest: string; page?: number | undefined; layer: "RESEARCH_DERIVED"; }; }[]'.
+      Type '{ text: string; page: number; citation: { source_id: string; source_version: number; source_digest: string | undefined; result_digest: string; layer: "RESEARCH_DERIVED"; page: number; }; }' is not assignable to type '{ text: string; page: number; citation: { source_id: string; source_version: number; source_digest: string; result_digest: string; page?: number | undefined; layer: "RESEARCH_DERIVED"; }; }'.
+        The types of 'citation.source_digest' are incompatible between these types.
+          Type 'string | undefined' is not assignable to type 'string'.
+            Type 'undefined' is not assignable to type 'string'.
+src/experimental/ResearchPDFOCRPanel.test.tsx(58,102): error TS2345: Argument of type '{ id: string; version: number; status: string; request: { source_id: string; source_version: number; operation: string; pages: number[]; }; result: { blocks: { text: string; page: number; citation: { source_id: string; ... 4 more ...; page: number; }; }[]; }; }' is not assignable to parameter of type 'OCRRow'.
+  The types of 'result.blocks' are incompatible between these types.
+    Type '{ text: string; page: number; citation: { source_id: string; source_version: number; source_digest: string | undefined; result_digest: string; layer: "RESEARCH_DERIVED"; page: number; }; }[]' is not assignable to type '{ text: string; page: number; citation: { source_id: string; source_version: number; source_digest: string; result_digest: string; page?: number | undefined; layer: "RESEARCH_DERIVED"; }; }[]'.
+      Type '{ text: string; page: number; citation: { source_id: string; source_version: number; source_digest: string | undefined; result_digest: string; layer: "RESEARCH_DERIVED"; page: number; }; }' is not assignable to type '{ text: string; page: number; citation: { source_id: string; source_version: number; source_digest: string; result_digest: string; page?: number | undefined; layer: "RESEARCH_DERIVED"; }; }'.
+        The types of 'citation.source_digest' are incompatible between these types.
+          Type 'string | undefined' is not assignable to type 'string'.
+            Type 'undefined' is not assignable to type 'string'.
+src/experimental/ResearchPDFOCRPanel.test.tsx(58,146): error TS2345: Argument of type '{ id: string; version: number; status: string; request: { source_id: string; source_version: number; operation: string; pages: number[]; }; result: { blocks: { text: string; page: number; citation: { source_id: string; ... 4 more ...; page: number; }; }[]; }; }' is not assignable to parameter of type 'OCRRow'.
+  The types of 'result.blocks' are incompatible between these types.
+    Type '{ text: string; page: number; citation: { source_id: string; source_version: number; source_digest: string | undefined; result_digest: string; layer: "RESEARCH_DERIVED"; page: number; }; }[]' is not assignable to type '{ text: string; page: number; citation: { source_id: string; source_version: number; source_digest: string; result_digest: string; page?: number | undefined; layer: "RESEARCH_DERIVED"; }; }[]'.
+      Type '{ text: string; page: number; citation: { source_id: string; source_version: number; source_digest: string | undefined; result_digest: string; layer: "RESEARCH_DERIVED"; page: number; }; }' is not assignable to type '{ text: string; page: number; citation: { source_id: string; source_version: number; source_digest: string; result_digest: string; page?: number | undefined; layer: "RESEARCH_DERIVED"; }; }'.
+        The types of 'citation.source_digest' are incompatible between these types.
+          Type 'string | undefined' is not assignable to type 'string'.
+            Type 'undefined' is not assignable to type 'string'.

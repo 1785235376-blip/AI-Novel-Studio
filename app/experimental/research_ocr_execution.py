@@ -11,11 +11,11 @@ from datetime import datetime, timezone
 import time
 from threading import get_ident
 
-from .research_ocr_binding import ResearchOCRJobBinding
+from .research_ocr_binding import parse_research_ocr_binding
 from .research_vision import PreparedResearchOCRSource
 from ..audio_processing_runtime import audio_digest
 from ..model_runtime import ModelRuntimeError, RuntimeErrorCode
-from ..vision_ocr_runtime import VisionOCRModelNode, VisionOCRRequest
+from ..vision_ocr_runtime import VisionOCRModelNode, VisionOCRRequest, PDFPageOCRRequest
 
 FLAGS = ('research_library_v2', 'ai_execution_v2', 'narrative_production_v2',
          'model_broker_v2', 'author_context_inspector_v2')
@@ -59,10 +59,12 @@ class _ResearchOCRCapability:
         deadline = validate_generation_bounds(job)
         if deadline is None or datetime.now(timezone.utc) >= deadline:
             raise ModelRuntimeError(RuntimeErrorCode.TIMEOUT, 'OCR 任务已超时')
-        binding = ResearchOCRJobBinding.model_validate(job.research_ocr_binding)
+        binding = parse_research_ocr_binding(job.research_ocr_binding)
         source = self.source.binding
         if any(source.get(key) != getattr(binding, key) for key in
                ('project_id', 'project_incarnation', 'actor_id', 'source_id', 'source_version', 'source_digest', 'media_type')):
+            raise ValueError('RESEARCH_OCR_SOURCE_BINDING_CHANGED')
+        if binding.source_kind == 'PDF' and (source.get('source_kind') != 'PDF' or source.get('page') != binding.page):
             raise ValueError('RESEARCH_OCR_SOURCE_BINDING_CHANGED')
         if source['scope'] != binding.scope.model_dump():
             raise ValueError('RESEARCH_OCR_SOURCE_BINDING_CHANGED')
@@ -88,7 +90,7 @@ class _ResearchOCRCapability:
             raise ValueError('RESEARCH_OCR_TERMINAL_RESULT_UNAVAILABLE')
         persisted = self.manager.persistence.get(job.id)
         if any(persisted.get(key) != job.public().get(key) for key in
-               ('status', 'output', 'terminal_hook_status', 'research_ocr_binding', 'expected_request_digest')):
+               ('status', 'output', 'terminal_hook_status', 'research_ocr_binding', 'expected_request_digest', 'research_ocr_output_evidence')):
             raise ValueError('RESEARCH_OCR_TERMINAL_RESULT_UNAVAILABLE')
         self.current()
         return deepcopy(self._result)
@@ -98,7 +100,7 @@ def prepare(manager, *, source, node, binding, provider_id, model_id, deadline,
             before_dispatch, on_terminal, max_output_bytes=128000, on_result=None):
     from uuid import uuid4
     from ..jobs import Job
-    parsed = ResearchOCRJobBinding.model_validate(binding)
+    parsed = parse_research_ocr_binding(binding)
     job = Job(id=str(uuid4()), operation='research_ocr', novel_id=parsed.project_id,
         chapter_id=None, instruction='', profile='LOCAL_ONLY', requested_provider=provider_id,
         requested_model=model_id, status='PREPARED', actor_id=parsed.actor_id, scope=parsed.scope.model_dump(),
@@ -139,15 +141,19 @@ def run(manager, job):
         manager._emit(job)
         raw = capability.source.read_current()
         binding = job.research_ocr_binding
-        request = VisionOCRRequest(job.requested_provider, job.requested_model, raw,
+        request_type = PDFPageOCRRequest if binding['source_kind'] == 'PDF' else VisionOCRRequest
+        extra = {'page': binding['page']} if binding['source_kind'] == 'PDF' else {}
+        request = request_type(job.requested_provider, job.requested_model, raw,
             binding['media_type'], binding['language'], binding['source_digest'], binding['route_digest'],
-            job.id, dispatch_guard=capability.current, cancellation=job.cancelled)
+            job.id, dispatch_guard=capability.current, cancellation=job.cancelled, **extra)
         capability.before_dispatch()
         capability.current()
         response = capability.node.execute(request)
         capability.current()
         if len(response.text.encode('utf-8')) > job.generation_max_output_bytes:
             raise ModelRuntimeError(RuntimeErrorCode.GENERATION_FAILED, 'OCR 输出超过本次任务限制')
+        if binding['source_kind'] == 'PDF':
+            job.research_ocr_output_evidence = deepcopy(response.receipt)
         job.provider, job.model = response.provider_id, response.model_id
         job.output, job.status, job.execution_outcome = response.text, 'COMPLETED', 'COMPLETED'
     except Exception as exc:

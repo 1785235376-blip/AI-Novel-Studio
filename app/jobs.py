@@ -63,6 +63,7 @@ class Job:
     graph_binding:dict|None=None
     creative_director_binding:dict|None=None
     research_ocr_binding:dict|None=None
+    research_ocr_output_evidence:dict|None=None
     research_ocr_execution_authority:object=field(default=None,repr=False)
     creative_execution_authority:object=field(default=None,repr=False)
     creative_director_cancel_requested:bool=field(default=False,repr=False)
@@ -75,6 +76,9 @@ class Job:
         if self.research_ocr_binding is not None:
             from copy import deepcopy
             result["research_ocr_binding"] = deepcopy(self.research_ocr_binding)
+        if self.research_ocr_output_evidence is not None:
+            from copy import deepcopy
+            result["research_ocr_output_evidence"] = deepcopy(self.research_ocr_output_evidence)
         if self.creative_director_binding is not None:
             from copy import deepcopy
             result["creative_director_binding"] = deepcopy(self.creative_director_binding)

@@ -1,9 +1,10 @@
 import type { ExperimentalClient } from './api';
 import type { Source } from './researchLibraryClient';
-export type OCRRoute = { provider_id: string; model_id: string; display_name: string; languages: string[] };
-export type OCRPreview = { receipt_version: number; source_binding: { source_id: string; source_version: number; source_digest: string }; provider_id: string; model_id: string; language: string; expires_at: string; reviewed_preview_digest: string; external_provider_fee_microusd: number; host_compute_cost_included: false };
-export type OCRRow = { id: string; version: number; status: string; recovery?: { code: string; budget_hold_retained: boolean; explicit_host_recovery_required: boolean; reservation_version?: number }; result_digest?: string; request: { source_id: string; source_version: number; operation: string }; native_ocr_preview?: OCRPreview | null; result?: { blocks: { text: string; page: number; citation: { source_id: string; source_version: number; source_digest: string; result_digest: string; layer: 'RESEARCH_DERIVED' } }[] } | null };
-export function currentOCR(row: OCRRow, source: Source) {
+export type OCRRoute = { source_kind?: 'IMAGE' | 'PDF'; provider_id: string; model_id: string; display_name: string; languages: string[] };
+export type OCRPreview = { receipt_version: number; source_binding: { source_id: string; source_version: number; source_digest: string; page?: number }; provider_id: string; model_id: string; language: string; expires_at: string; reviewed_preview_digest: string; external_provider_fee_microusd: number; host_compute_cost_included: false };
+export type OCRRow = { id: string; version: number; status: string; recovery?: { code: string; budget_hold_retained: boolean; explicit_host_recovery_required: boolean; reservation_version?: number }; result_digest?: string; request: { source_id: string; source_version: number; operation: string; pages?: number[] }; native_ocr_preview?: OCRPreview | null; result?: { blocks: { text: string; page: number; citation: { source_id: string; source_version: number; source_digest: string; result_digest: string; page?: number; layer: 'RESEARCH_DERIVED' } }[] } | null };
+export function currentOCR(row: OCRRow, source: Source, page?: number) {
+  if (source.format === 'PDF' && (!Array.isArray(row?.request?.pages) || row.request.pages.length !== 1 || !Number.isInteger(row.request.pages[0]) || row.request.pages[0] < 1 || row.request.pages[0] > 1000 || (page !== undefined && row.request.pages[0] !== page) || (row.result && (!Array.isArray(row.result.blocks) || row.result.blocks.some(block => block.page !== row.request.pages![0] || block.citation?.page !== block.page))))) return false;
   return !!row && typeof row.id === 'string' && Number.isInteger(row.version) && row.version > 0 && row.request?.operation === 'OCR' && row.request.source_id === source.id && row.request.source_version === source.version && (!row.result || (Array.isArray(row.result.blocks) && row.result.blocks.every(block => typeof block.text === 'string' && block.citation?.source_id === source.id && block.citation.source_version === source.version && block.citation.source_digest === source.content_sha256 && block.citation.layer === 'RESEARCH_DERIVED' && /^[a-f0-9]{64}$/.test(block.citation.result_digest))));
 }
 export function researchNativeOCRClient(client: ExperimentalClient) {
@@ -20,7 +21,10 @@ export function researchNativeOCRClient(client: ExperimentalClient) {
       if (row.status !== 'REVIEWED' || !row.result_digest || !/^[a-f0-9]{64}$/.test(row.result_digest)) throw new Error('需要已审核的固定 OCR 结果');
       return client.blob(path(row.id) + `/native-export?expected_version=${row.version}&result_digest=${row.result_digest}`);
     },
-    create: (source: Source) => client.post<OCRRow>(base + '/jobs', { source_id: source.id, source_version: source.version, operation: 'OCR', pages: [1] }),
+    create: (source: Source, page?: number) => {
+      if (source.format === 'PDF' && (!Number.isInteger(page) || page! < 1 || page! > 1000)) throw new Error('请明确选择一个 PDF 页码');
+      return client.post<OCRRow>(base + '/jobs', { source_id: source.id, source_version: source.version, operation: 'OCR', pages: [source.format === 'PDF' ? page : 1] });
+    },
     preview: (row: OCRRow, route: OCRRoute, language: string) => client.post<OCRRow>(path(row.id) + '/native-preview', { expected_version: row.version, provider_id: route.provider_id, model_id: route.model_id, language }),
     dispatch: (row: OCRRow, key: string) => client.post<OCRRow>(path(row.id) + '/native-dispatch', { expected_version: row.version, reviewed_preview_digest: row.native_ocr_preview?.reviewed_preview_digest, idempotency_key: key }),
     action: (row: OCRRow, action: 'review' | 'cancel') => client.post<OCRRow>(path(row.id) + '/' + action, { expected_version: row.version }),

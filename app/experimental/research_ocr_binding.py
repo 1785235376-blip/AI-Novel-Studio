@@ -79,12 +79,16 @@ def is_research_ocr_job(value):
     get = value.get if isinstance(value, dict) else lambda key, default=None: getattr(value, key, default)
     return (('research_ocr_binding' in value if isinstance(value, dict)
              else get('research_ocr_binding') is not None)
+            or ('research_ocr_output_evidence' in value if isinstance(value, dict) else get('research_ocr_output_evidence') is not None)
             or get('operation') == OPERATION or get('experimental_origin') == ORIGIN)
 
 
 def research_ocr_job_binding(item):
     try:
         binding = parse_research_ocr_binding(item.get('research_ocr_binding'))
+        evidence = item.get('research_ocr_output_evidence')
+        if evidence is not None:
+            validate_pdf_output_evidence(binding, evidence, item)
         if (item.get('operation') != OPERATION or item.get('experimental_origin') != ORIGIN
                 or item.get('chapter_id') is not None or item.get('graph_binding') is not None
                 or item.get('adaptation_binding') is not None or 'creative_director_binding' in item
@@ -97,3 +101,27 @@ def research_ocr_job_binding(item):
     except (ValueError, TypeError, KeyError, AttributeError):
         raise ValueError('GENERATION_RESEARCH_OCR_BINDING_INVALID') from None
     return binding.model_dump()
+
+
+def validate_pdf_output_evidence(binding, value, item):
+    from hashlib import sha256
+    fields = {'model_called', 'source_digest', 'input_sha256', 'route_digest', 'language', 'text_sha256',
+        'source_page', 'rendered_image_sha256', 'renderer_digest', 'provider_uuid', 'model_uuid',
+        'execution_node_uuid', 'model_sha256', 'admission_digest', 'automatic_canon', 'review_required', 'model_quality'}
+    if (type(binding) is not ResearchPDFOCRJobBinding or not isinstance(value, dict) or set(value) != fields
+            or value['model_called'] is not True or value['automatic_canon'] is not False
+            or value['review_required'] is not True or value['model_quality'] != 'NOT_RUN'
+            or type(value['source_page']) is not int or value['source_page'] != binding.page
+            or value['source_digest'] != binding.source_digest or value['input_sha256'] != binding.source_digest
+            or value['route_digest'] != binding.route_digest or value['language'] != binding.language):
+        raise ValueError('RESEARCH_PDF_OCR_OUTPUT_EVIDENCE_INVALID')
+    for key in ('text_sha256', 'rendered_image_sha256', 'renderer_digest', 'model_sha256', 'admission_digest'):
+        if not isinstance(value[key], str) or re.fullmatch('[a-f0-9]{64}', value[key]) is None:
+            raise ValueError('RESEARCH_PDF_OCR_OUTPUT_EVIDENCE_INVALID')
+    for key in ('provider_uuid', 'model_uuid', 'execution_node_uuid'):
+        if not isinstance(value[key], str) or str(UUID(value[key])) != value[key]:
+            raise ValueError('RESEARCH_PDF_OCR_OUTPUT_EVIDENCE_INVALID')
+    if item.get('status') == 'COMPLETED':
+        text = item.get('output')
+        if not isinstance(text, str) or not text or sha256(text.encode('utf-8')).hexdigest() != value['text_sha256']:
+            raise ValueError('RESEARCH_PDF_OCR_OUTPUT_EVIDENCE_INVALID')
