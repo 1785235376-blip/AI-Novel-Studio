@@ -1,0 +1,679 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "64136b570fbd1325f14fc945fcd944154be65010",
+      "path": "API_CATALOG.json",
+      "bytes": 1491870,
+      "sha256": "72fef9aaa9aa98acb2900fd639f75dc360a425774cd0672f780dc1eed020c837"
+    },
+    {
+      "blob": "7b3dedbbc085e3965a548914daa05cc8bf89a973",
+      "path": "API_CATALOG.md",
+      "bytes": 398697,
+      "sha256": "f2e5694c4a714884da819a3a98655d7e1517b5a6f3ddf00051ca2ee0b6b14cc3"
+    },
+    {
+      "blob": "cc993ca3536692b97762c6392619f377eb2e3ba4",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 614640,
+      "sha256": "3fe2b2123d0d94412142c56172be6471de10b0c22b936b5ffa9de7a9a1aa8bb8"
+    },
+    {
+      "blob": "28e9ecdc0f874b5e1aec33b1ae4131ac45ed9b67",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 132758,
+      "sha256": "e40020fdaa6da6ffb283f9d08fb4827ebf043887404120bdc3834836403847bc"
+    },
+    {
+      "blob": "e6aa07fb9b1fa245807b84aaf2ab17491ec17c02",
+      "path": "app/creative/api.py",
+      "bytes": 29549,
+      "sha256": "3f9045993f6a8b8696da71caa80f663bbd009c7d421d70d71945780e84127c2b"
+    },
+    {
+      "blob": "34276882c95a16cbd0f7fa118dac4ad5bc9d97e9",
+      "path": "app/creative/director_intent.py",
+      "bytes": 20125,
+      "sha256": "ad7bf83887f602cd2558342f243bfb7924b62613ef8e909d599f1c0d5b05bb8c"
+    },
+    {
+      "blob": "ea5a84b1f0143f07d128f08b678f22a5969e4e59",
+      "path": "app/creative/models.py",
+      "bytes": 23387,
+      "sha256": "66021f358385c7eff1aeda65b0160b3c09214e4d255a483a3a3a0fba4a661c15"
+    },
+    {
+      "blob": "5c03cc6691e295bfe909c9682aa89401ed04f7f1",
+      "path": "app/creative/project_store.py",
+      "bytes": 9708,
+      "sha256": "47dd70dece6ece848f2410ac648314f59b1dc51d3cefdb5ccdd541957f494f7a"
+    },
+    {
+      "blob": "8c7eceb524e60f869083059cf15a5d90023e4df3",
+      "path": "app/creative/service.py",
+      "bytes": 30713,
+      "sha256": "9fc93f14e1051d1636dfc1b34d6c6c7b896c2efbcb148014c5419a3733adf09b"
+    },
+    {
+      "blob": "bbf0968e5ffdf9677beddbffddfe65e5b598bda6",
+      "path": "app/creative/story_fact_api.py",
+      "bytes": 4046,
+      "sha256": "21febafa9952fa210eb33d00f28e5868ee63da9a92543ddb1820190e18e5c434"
+    },
+    {
+      "blob": "7a179773604ea398a12c4bb26d3c828d2252331c",
+      "path": "app/creative/story_fact_bindings.py",
+      "bytes": 18341,
+      "sha256": "ce2574ef29460fc76baa6ef2e7991b8c6e799f70486a73ccdeecbfbe4de6b944"
+    },
+    {
+      "blob": "e8256d89a6461395ad608e37a5c22c6e8ac54dfb",
+      "path": "app/experimental/api.py",
+      "bytes": 41816,
+      "sha256": "5ef8655c2d30a520cd5bdcd25dc861fef678833279f1fafe7d065d2485000e55"
+    },
+    {
+      "blob": "552c99e34d2123531a9527c0918bfbee67c9951b",
+      "path": "app/experimental/comic_layouts.py",
+      "bytes": 38855,
+      "sha256": "986a6b3413bdb9142d5b26720d8f9c93ed2df18dcca2bc25751832deec4e44c8"
+    },
+    {
+      "blob": "ca4fb0c3f10de415745af73f99c2b20f6046ac88",
+      "path": "app/experimental/story_graph.py",
+      "bytes": 28976,
+      "sha256": "97e313100a3c2e1de44ea5627b3025f5fc2ce2f7b3265acd880360870b7b70d4"
+    },
+    {
+      "blob": "21149236c38492d67b0264f1ddc2e132a35eeab6",
+      "path": "app/experimental/world.py",
+      "bytes": 31940,
+      "sha256": "518a2be30f2d9a1c76f4b45c2cd68ef9fb204d8a74b4d70650f396caaca8454c"
+    },
+    {
+      "blob": "df6fcbc754701fc1b36aae3a09a9c74c7df9a47d",
+      "path": "docs/DIRECTOR_INTENT_CONSTRAINTS_ADDITIVE.md",
+      "bytes": 4060,
+      "sha256": "10475b2ee7a8f0f073a9949d63cf42ac75a744e276b8253938442a2b15dab493"
+    },
+    {
+      "blob": "43ab204c36acfa05eb1674a3d0d69e8b3f49140f",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 29298,
+      "sha256": "a9f908674f3843664602d944f89e9612bb4c47fc583ef89adda0ef967493be70"
+    },
+    {
+      "blob": "0f2fdfe5b78a638d7b49a10ff575533349997b71",
+      "path": "docs/delivery/v2-development/comic-independent-cleanup-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "5341a195ec99b5055fa34c951c7a77573e7d48cb633924274465dac5dd6c1a2b"
+    },
+    {
+      "blob": "9eb37fe09cb05a069af20dec072ee6749a617dc3",
+      "path": "docs/delivery/v2-development/comic-independent-cleanup.json",
+      "bytes": 728908,
+      "sha256": "ee2a8154b0410dec64a4bebb0f5620b9c434e775f92ee7f700fa211c2a17531d"
+    },
+    {
+      "blob": "c8e5b1ae1bc27adc193d1f7ad7e50924da876300",
+      "path": "docs/delivery/v2-development/comic-independent-cleanup.log",
+      "bytes": 2191,
+      "sha256": "bc071133107c085a1307f69134a19f37328a0024fe34cd7e04320e09bf4f2f47"
+    },
+    {
+      "blob": "b646a6004df5789f30dd3bff5da97990497a815d",
+      "path": "docs/delivery/v2-development/comic-independent-epoch-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "242a726fcd21bc1af96a3121763446e5142115131cc70d2e2eb8c993e2cd9fb6"
+    },
+    {
+      "blob": "cf2ebcd999e157d632ce8f84680fe9921f22fc66",
+      "path": "docs/delivery/v2-development/comic-independent-epoch-postgres.json",
+      "bytes": 729186,
+      "sha256": "c7c4d716c1b501b6dd9cc4fccc790aed895b7b5030548d54522e029a3a1d57b1"
+    },
+    {
+      "blob": "adb1541a6c36ab05d34e0f5ada17314d7c40c524",
+      "path": "docs/delivery/v2-development/comic-independent-epoch-postgres.log",
+      "bytes": 1066,
+      "sha256": "07c5e66d304d9c71c1354518381632840498b9a5709d457b49aa65402d5082c2"
+    },
+    {
+      "blob": "91febe4e1304ef9d39726f04678c96d4d9bd3b7a",
+      "path": "docs/delivery/v2-development/comic-independent-epoch.json",
+      "bytes": 729104,
+      "sha256": "a69d7473dca357b7669165d9c5e70e0688cbe07a11293d3019856cb7763b4090"
+    },
+    {
+      "blob": "eb58bd1c645ce4fef418f74fe0169110d7a712ff",
+      "path": "docs/delivery/v2-development/comic-independent-epoch.log",
+      "bytes": 1143,
+      "sha256": "614f58145ff501e683f3828d30c379cfaa283a98f3acee8043a466400b7bf0cf"
+    },
+    {
+      "blob": "e0c68c27f6e039f58db56e80c1444c45f236a250",
+      "path": "docs/delivery/v2-development/comic-independent-final-locks.json",
+      "bytes": 729004,
+      "sha256": "035dcc14ed5d75d10c0decd37120840e7867e26469dfd5ec88c51df9d4cfb9d3"
+    },
+    {
+      "blob": "3d4c429ee051d9c9781607f476f4c68e8a47dec7",
+      "path": "docs/delivery/v2-development/comic-independent-final-locks.log",
+      "bytes": 1051,
+      "sha256": "6f6aef27fbee7d45b6b2b1396a6d497625ed4da6b1701bef0a5a12028c45ae98"
+    },
+    {
+      "blob": "81eaf1f070ac267974f77967320f204ce07cb462",
+      "path": "docs/delivery/v2-development/comic-independent-final.json",
+      "bytes": 728356,
+      "sha256": "9c0ef3833ecd00b86dc29ebf724d42c0c844aaaec05ab585ba4563222c5951ab"
+    },
+    {
+      "blob": "f486e168f3b1f24cce5bec71e89e176773ea4b61",
+      "path": "docs/delivery/v2-development/comic-independent-final.log",
+      "bytes": 1143,
+      "sha256": "5054f24a5947bac5e7e5f4f54ce850c9f3279d4a20dcb0b108541a21dcb20e79"
+    },
+    {
+      "blob": "61e9abae7d4a7681e20e06c53733b17017693a3c",
+      "path": "docs/delivery/v2-development/comic-independent-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "c4a8172ed1880d9fc9396aaf1c41b872749e394f5232d612126507f491e39d5c"
+    },
+    {
+      "blob": "3cf8f7fffb0b1f3193f758e87942eec6dc99e7f0",
+      "path": "docs/delivery/v2-development/comic-independent-postgres.json",
+      "bytes": 728462,
+      "sha256": "13dda07b4e8eb018498a12f64ea7e465ad8ae401b6ccc34ef7f099b18c8096a6"
+    },
+    {
+      "blob": "96bf57764bdbdfc6c1a71acac34ca285193d6f14",
+      "path": "docs/delivery/v2-development/comic-independent-postgres.log",
+      "bytes": 1067,
+      "sha256": "dbe58037d10e2f8d100114f7fe2a8d88ae77049850a578877cf8104223b609af"
+    },
+    {
+      "blob": "02faa5a6b78e7e79b17a42730c4bb9dd450f5052",
+      "path": "docs/delivery/v2-development/comic-independent-ui/README.md",
+      "bytes": 5503,
+      "sha256": "64888284fef9953c5546e40420fb828e441537bc8583e6094fe8d7f661e58f23"
+    },
+    {
+      "blob": "6c2a2384e7f2d4cc7d6018392f68af8272e2b2ab",
+      "path": "docs/delivery/v2-development/comic-independent-ui/commands.txt",
+      "bytes": 1705,
+      "sha256": "79c5bced280aa0e64cf3b6cc54e52ac9ba8f6611fa3e48b621a2246da5ec8c51"
+    },
+    {
+      "blob": "570287606569976114197d6f51411d0d5509d249",
+      "path": "docs/delivery/v2-development/comic-independent-ui/fixture-cleanup.json",
+      "bytes": 1282,
+      "sha256": "275bdf4a8ef2215466c40d4f836a8699beb134aad72d5a48c531d12330a19e1c"
+    },
+    {
+      "blob": "b479fe2b79b536fe540ccc18db64aee12cd04954",
+      "path": "docs/delivery/v2-development/comic-independent-ui/fixture-url-api-failure.log",
+      "bytes": 35835,
+      "sha256": "b0378858523a5b7e828eaaa395de22f1f1844cff9f5a50ba6337c37a65fa6b0c"
+    },
+    {
+      "blob": "8db096185559dfc929b529f37c3082daa4dab0f8",
+      "path": "docs/delivery/v2-development/comic-independent-ui/postgres-stopped-after-first-pass.log",
+      "bytes": 26,
+      "sha256": "e138ccb54fdb08283c6eb21159c53207bbbbf07077246e2804e18d22efe6e250"
+    },
+    {
+      "blob": "0e603b3de1a8dd04ef2a87cb7268d4ce6a102ef0",
+      "path": "docs/delivery/v2-development/comic-independent-ui/postgres-stopped-final.log",
+      "bytes": 46,
+      "sha256": "7c7823eda8795bbecf95b939a19c3aa0c786b7266c0717ac7c9160dfcc9c57b5"
+    },
+    {
+      "blob": "7a03fb6e2c350864cb993a95c8f4e0cb1c158498",
+      "path": "docs/delivery/v2-development/comic-independent-ui/runner-options-failure.log",
+      "bytes": 2240,
+      "sha256": "4910852b37a4d916df0323c60d43014ab2ef5bf0e2731b40724d7c29662efc2e"
+    },
+    {
+      "blob": "6e42a9f6b287c8e3220476542a72999a94ac1274",
+      "path": "docs/delivery/v2-development/comic-independent-ui/source-sha256.json",
+      "bytes": 1079,
+      "sha256": "125a7ba5642bae87ec50c0274df05a06e8c9f022f274a3ae737c464ee8ef3c3d"
+    },
+    {
+      "blob": "3c0a17f5234b00a3ed91cdd9cfe6d2b2c7bd5170",
+      "path": "docs/delivery/v2-development/comic-independent-ui/unit-final.log",
+      "bytes": 3198,
+      "sha256": "ce05208f2992dad383e60d397998f9151ef132b50631d5ffd87df6685dbf8e9e"
+    },
+    {
+      "blob": "b28ce12c033196ff05935b0535447410a45e5de3",
+      "path": "docs/delivery/v2-development/comic-independent-ui/verify_fixture_cleanup.py",
+      "bytes": 2811,
+      "sha256": "8b626a991302ec572e6b544fa8ce73ba53239686a8e310744f5ca8b397482a6d"
+    },
+    {
+      "blob": "d6416f1e551e8fa226ccf37edf303445bdfe4dd5",
+      "path": "docs/delivery/v2-development/comic-independent-ui/visual-unavailable.log",
+      "bytes": 11920,
+      "sha256": "d2516fbe1ba12c38a1488d09d48d50f749fa128051403cdd634572cdafa65ad0"
+    },
+    {
+      "blob": "f2a598d4d16c83f83d25f31584d18c98f9495678",
+      "path": "docs/delivery/v2-development/comic-independent.json",
+      "bytes": 728017,
+      "sha256": "9122271e8c35d3f48161cefd24c072faeefeff82a302b82dc3f5af0384a1a912"
+    },
+    {
+      "blob": "a6662355d210fbb97d5208ec4ddde61d693d6a44",
+      "path": "docs/delivery/v2-development/comic-independent.log",
+      "bytes": 1142,
+      "sha256": "69d3c59c9cfb16bfa80476c804a392aa09f22a1e73ad8e94a9e2669bbb292a9e"
+    },
+    {
+      "blob": "7b8090755bdba2df97adc6106537ffac8b17d2e4",
+      "path": "docs/delivery/v2-development/director-intent-constraints-file-param.json",
+      "bytes": 729153,
+      "sha256": "864a7826021f033ef6f3a2e8bfafa85eb7306d84483191cb872ca1b9c8a4d76a"
+    },
+    {
+      "blob": "8c905615d7a22e3145dc4c5295312b12370d545a",
+      "path": "docs/delivery/v2-development/director-intent-constraints-file-param.log",
+      "bytes": 1065,
+      "sha256": "7ce30ef5f34b89ad4c74b7ac405f6350b8a02c19b3d99e2c4a258aa1a758bb7c"
+    },
+    {
+      "blob": "cdb5ef804007315331962ee523df60c9883b8483",
+      "path": "docs/delivery/v2-development/director-intent-constraints-file-r2.json",
+      "bytes": 729182,
+      "sha256": "ec89820d70f210f157e8dff5f267ef2a9590b5d2baaa6c91602a1786b4dee7f4"
+    },
+    {
+      "blob": "5d7e471f0ccd5442b27337ae2552ce151a3e670e",
+      "path": "docs/delivery/v2-development/director-intent-constraints-file-r2.log",
+      "bytes": 1073,
+      "sha256": "3f119275fcfcfbf4768cfcbd3704e95e86dc14a6ec9ba2dc14802a19733762c0"
+    },
+    {
+      "blob": "65b5b52f254cdc2e249968018e92d6adbe49e3b1",
+      "path": "docs/delivery/v2-development/director-intent-constraints-file-r3.json",
+      "bytes": 729183,
+      "sha256": "80f1fa8d0c0ea404503862cda43433a77ad691671302116b38d6ff30ecc9675b"
+    },
+    {
+      "blob": "4dfccd82a7ee6fad7f4d6d24b67fa489b2d2d53a",
+      "path": "docs/delivery/v2-development/director-intent-constraints-file-r3.log",
+      "bytes": 1073,
+      "sha256": "464874f754f68a4f5b8ebb9c07a54e36a8ef4538eb201bbd5f2f13d720d5aba8"
+    },
+    {
+      "blob": "f09bf2d2f8c8f57d95cb2593bea691e80ba7cd04",
+      "path": "docs/delivery/v2-development/director-intent-constraints-file.json",
+      "bytes": 728842,
+      "sha256": "64d550094610270a21c5c6b2a8926f9639bf39bbf61971bef2496ab2a237c3a2"
+    },
+    {
+      "blob": "97e5712ae933d95c2582dc038fc47c39e3e49423",
+      "path": "docs/delivery/v2-development/director-intent-constraints-file.log",
+      "bytes": 4945,
+      "sha256": "fd570473245eaa92c2128756087adee37b5ca0b9807121287e3baf9684344177"
+    },
+    {
+      "blob": "94271d78d5065531c025ee9bb2b8ef897634130b",
+      "path": "docs/delivery/v2-development/director-intent-constraints-postgres-cleanup.json",
+      "bytes": 24503,
+      "sha256": "dbb97567c4f264b5ba9a96b1c26cae92592dfb24100a73c4240a1d5756ee9c34"
+    },
+    {
+      "blob": "598568ea6b6ccddafd2cfb71812ba50fa79990ae",
+      "path": "docs/delivery/v2-development/director-intent-constraints-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "bb60dab91f2c6e08864959f1cfdedf4a1741b53f38a52d17bd34bcbc42717f20"
+    },
+    {
+      "blob": "2f8e5aba9c44c9d5807492cbe0f9991e11b69ada",
+      "path": "docs/delivery/v2-development/director-intent-constraints-postgres-stop-proof.json",
+      "bytes": 160,
+      "sha256": "b73abbc81275c19ae458afafb6446c7645990cc533af2cf29e7d6068bbe9573d"
+    },
+    {
+      "blob": "fd9f2c55868b625977c73b3aed1cdc4123a15d2b",
+      "path": "docs/delivery/v2-development/director-intent-constraints-postgres.json",
+      "bytes": 729026,
+      "sha256": "5786548983d82f0276e7cd2e18d945cf0e7e37250d9851ed058b34cd4cacb7c1"
+    },
+    {
+      "blob": "34260d3a33ad427d80b9462380c97fa431cc0c16",
+      "path": "docs/delivery/v2-development/director-intent-constraints-postgres.log",
+      "bytes": 1248,
+      "sha256": "847b727ae8dbf638f0f7d2ceb9fa213d3f89764aad483e22b9fa577bb38b685d"
+    },
+    {
+      "blob": "46bf75234c47ba06de6c4b38e3d30d80d55bf619",
+      "path": "docs/delivery/v2-development/director-intent-constraints-type-r2.json",
+      "bytes": 728874,
+      "sha256": "f314a71c8882508d501663dc01abce7ceae8167f8bcdce9cf40c5deff562c0cb"
+    },
+    {
+      "blob": "3949110951f842bf37adcc6a6715cead79e30522",
+      "path": "docs/delivery/v2-development/director-intent-constraints-type.json",
+      "bytes": 728847,
+      "sha256": "f1dba470c82e11dd1e22e29328edea323af1e1e73e23420d31ec85b9df917e94"
+    },
+    {
+      "blob": "da7bbcd7cb9e1aec368f9204c84c5ea30c983f84",
+      "path": "docs/delivery/v2-development/director-intent-constraints-type.log",
+      "bytes": 693,
+      "sha256": "fe6fe054489c507496a9e9645718a61badeafbaa6a27d22f70d194b7e5a5bc39"
+    },
+    {
+      "blob": "027f4754f00972c85a1c90f0ced2e5c953a1dddd",
+      "path": "docs/delivery/v2-development/director-intent-constraints-ui-r2.json",
+      "bytes": 729207,
+      "sha256": "3043e759f8f2ec22a90d7f0ec2e08306cdf49bbf05f316af66ca991759c69a11"
+    },
+    {
+      "blob": "2a49777ac1633229d2e8a51e729610f4c45b9e92",
+      "path": "docs/delivery/v2-development/director-intent-constraints-ui-r2.log",
+      "bytes": 666,
+      "sha256": "656974030d6e55f3c9a84b750ab8b480fe3f49d5ccd6bb6fb4dfef8e272f649b"
+    },
+    {
+      "blob": "bb248a914903d6823636b9686c3494a4108c9e38",
+      "path": "docs/delivery/v2-development/director-intent-constraints-ui.json",
+      "bytes": 729050,
+      "sha256": "29d14f44abe4939633ef6e0a96a789e1547f18c8098fb266e47ff9f39c3febe5"
+    },
+    {
+      "blob": "08c44d31da6bc908d9065c6450aef7b7384d15a1",
+      "path": "docs/delivery/v2-development/director-intent-constraints-ui.log",
+      "bytes": 859,
+      "sha256": "f27ebfa6feb499bfea1de24ba93223f956e81afb7d6a467e77223f1805144f2e"
+    },
+    {
+      "blob": "7005292e7cb8e1bb3c55b8fe6f7b15502fcdf991",
+      "path": "docs/delivery/v2-development/story-comic-director-integrated-ui.json",
+      "bytes": 729812,
+      "sha256": "1bd498cdd7b2662b9336e776232b14ec3fc1b674b75bd362223cb18047571360"
+    },
+    {
+      "blob": "f28a2d04278ce93ab42f920961baa01bd5601951",
+      "path": "docs/delivery/v2-development/story-comic-director-integrated-ui.log",
+      "bytes": 221244,
+      "sha256": "d88664cf8002adba044b054137f6400b21adb6b36e55cb0a157798ec5beead2f"
+    },
+    {
+      "blob": "4368814edc28605c1a3a4e3199b0b3987d448edd",
+      "path": "docs/delivery/v2-development/story-comic-director-integration-20261018.md",
+      "bytes": 4808,
+      "sha256": "e415ba95c93c8a47ea1aa2e29c1df30c4d919a924a401cc79ce0436972c4ff01"
+    },
+    {
+      "blob": "ef6e9b28de75b612ea9e144d72567ea979c55718",
+      "path": "docs/delivery/v2-development/story-comic-director-public-final.json",
+      "bytes": 729266,
+      "sha256": "83f0c3c977caf25905e44a6836459f1fcd7ed66c72921d60ef075377a8e67538"
+    },
+    {
+      "blob": "85a8645735c074280245aab7c1209d805fc7434f",
+      "path": "docs/delivery/v2-development/story-comic-director-public-final.log",
+      "bytes": 634,
+      "sha256": "35e6970268dfd2a97b555f42804394742df4707c0d8d392b838ed04f1e149f53"
+    },
+    {
+      "blob": "d8bcb5fa047c359c712627de52d1626af856d843",
+      "path": "docs/delivery/v2-development/story-comic-director-public-wheel.json",
+      "bytes": 729266,
+      "sha256": "03c5ec598b6a9f2772d5f73cc06a4095dcc64c6ba5cc742993d4856e9e7d6c73"
+    },
+    {
+      "blob": "783e91639ecee015faa0928dc4182d2f6e619aea",
+      "path": "docs/delivery/v2-development/story-comic-director-public-wheel.log",
+      "bytes": 634,
+      "sha256": "481d74d0bf4bbabed88f2a189bd6aeaabd81f033aa3a70809711a0973afdbfb7"
+    },
+    {
+      "blob": "d21019932befc5174942f6c32db33c16bb2c5dd2",
+      "path": "docs/delivery/v2-development/story-comic-retirement-file.json",
+      "bytes": 729084,
+      "sha256": "a6896ae7525400ddd2018d16fc6a6770047e194eb0ecd964ad8277c9dd669203"
+    },
+    {
+      "blob": "228dda8f508237bdb94231c58bcbc01748457fc2",
+      "path": "docs/delivery/v2-development/story-comic-retirement-file.log",
+      "bytes": 1075,
+      "sha256": "83d42d68290b20b1088c937fc70ce34df50d218fa5208e3fee56e248ed5a618c"
+    },
+    {
+      "blob": "7fc0d05f3891cb5e030ba0115fb89657e6ccf07e",
+      "path": "docs/delivery/v2-development/story-fact-p1-file-final.json",
+      "bytes": 729184,
+      "sha256": "d5e5f1c19172f74ef4792faf303e9c7b5137b911edffadfa9d61427058a396d3"
+    },
+    {
+      "blob": "7e95a64549d50627a55243e58390aaec333a06be",
+      "path": "docs/delivery/v2-development/story-fact-p1-file-final.log",
+      "bytes": 1141,
+      "sha256": "d2eb729725c2db5741f4955729c34aa4014c65690eea26da39c8700fe60a1f83"
+    },
+    {
+      "blob": "dee895939d9f24264a1d8492447dc3992b3e8c8d",
+      "path": "docs/delivery/v2-development/story-fact-p1-file-response-final.json",
+      "bytes": 729140,
+      "sha256": "ef06ec73dc8b6460032dd65fbc552170713aca796ea7a909e55017ea976273fc"
+    },
+    {
+      "blob": "af325c163680107740cb65d182b4654b2272f840",
+      "path": "docs/delivery/v2-development/story-fact-p1-file-response-final.log",
+      "bytes": 1067,
+      "sha256": "48f3d32dcc172f54050e9ff38d615f442d5479df47bd2fddb17faad0173e06b7"
+    },
+    {
+      "blob": "5804e7d1e254b142bd39689dfc17d5227a0c1b87",
+      "path": "docs/delivery/v2-development/story-fact-p1-file.json",
+      "bytes": 728991,
+      "sha256": "031a9d3c3047fc648ba3b0895752009bdae86514ce0a30fb9f16d6e51b2b7bb5"
+    },
+    {
+      "blob": "1d0edf775d95d21b869428050e96fae0cfbabc3e",
+      "path": "docs/delivery/v2-development/story-fact-p1-file.log",
+      "bytes": 1141,
+      "sha256": "16fd53c902d06d14ac44d4f76e82c28852528de856a3f4148b6787d876b62c21"
+    },
+    {
+      "blob": "7f9564e90dad46d19b42aa7a697971964d528d98",
+      "path": "docs/delivery/v2-development/story-fact-p1-postgres-cleanup.json",
+      "bytes": 810,
+      "sha256": "589fdafd4698484eaaae113ceb46dfd3ee23b97a74ac11b0791e46febb5946c8"
+    },
+    {
+      "blob": "f09fa5cfda2d5b6e740d1c12f4438571ea720b53",
+      "path": "docs/delivery/v2-development/story-fact-p1-postgres-final-postgres-runtime.json",
+      "bytes": 1424,
+      "sha256": "b85f325a57c7ce8d630db5b7c1544253dd43f2162737eb350fde5fb6e2352782"
+    },
+    {
+      "blob": "01a8a64734a40dcaa9b4fb62c7f2bcdc7ec79d39",
+      "path": "docs/delivery/v2-development/story-fact-p1-postgres-interruption.json",
+      "bytes": 292,
+      "sha256": "663acd67ee32adc0b4ffbcdc40f9dd997c114daccba18aa5ccef5ebd9d4dcc3c"
+    },
+    {
+      "blob": "9b9243a816801061ee51fcb6fca420f2216e1265",
+      "path": "docs/delivery/v2-development/story-fact-p1-postgres-rerun-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "e4b729e40c34ed1bb8ff5e8e0bc20271012103f08a384e60efe59a0bac57aad3"
+    },
+    {
+      "blob": "6a841d644017b642ab390aa4dd33217c07686eb2",
+      "path": "docs/delivery/v2-development/story-fact-p1-postgres-rerun.json",
+      "bytes": 728955,
+      "sha256": "337fa4beeef16fd5f6266de0f4dce9fec65e461a7fc8cd90840139260bd400d2"
+    },
+    {
+      "blob": "741f3302941b16dde34d3a8207e1447195bbe5b7",
+      "path": "docs/delivery/v2-development/story-fact-p1-postgres-rerun.log",
+      "bytes": 2951,
+      "sha256": "92d26a1b65b609cee6e463c69391e45b05d54648cb206664f0bf4160fd3a84b5"
+    },
+    {
+      "blob": "8a5676a7c73fabf29b1129bb1fa63b1129c5ad30",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 770643,
+      "sha256": "2b58224d96677c3ef6eb7888caf6aded52f12a184861d87364b55c8e870012ad"
+    },
+    {
+      "blob": "a637f7eea74093d69394dd47e45237121634b1ce",
+      "path": "docs/v2/story-fact-impact-p1-20261018.md",
+      "bytes": 9445,
+      "sha256": "262f03cf938072ef5c89d1974ef990d415fa168f322335c464bb2de0f49c1996"
+    },
+    {
+      "blob": "52eff31f5ada19d9107b69773aa5c15e159b87a8",
+      "path": "frontend/src/creative/AIDirectorPanel.tsx",
+      "bytes": 28007,
+      "sha256": "2eaede5145aac1c30f8a589032209c30ba15d4df9f93b27b5633d6484cc8b17d"
+    },
+    {
+      "blob": "4b283e6c4643a9322201067f4812c8b159bf9526",
+      "path": "frontend/src/creative/DirectorIntentConstraints.test.tsx",
+      "bytes": 5833,
+      "sha256": "71ef5efe0ea479b65c34d44052e70ca756e2f1a7d0b6d1533da9c95574794a5b"
+    },
+    {
+      "blob": "c3ac8f53b1c79a941c18d45a055607010a1692a4",
+      "path": "frontend/src/creative/DirectorTargetPanel.tsx",
+      "bytes": 4693,
+      "sha256": "8b254cc363de2babc530f8ada4252de2b7e41d34cbcb17d0bf47e4dd6aa38b86"
+    },
+    {
+      "blob": "6f4e3ce0664034c65f49674a7e4661009a6989b8",
+      "path": "frontend/src/creative/IndependentStudioWorkspace.comic.test.tsx",
+      "bytes": 6807,
+      "sha256": "30812571cfb498865413b59a953ad9607d830603b2abd26ff69d21a0191423c4"
+    },
+    {
+      "blob": "c7e8ec29dfc9a794ca2471f0e8de1fa9b499ae23",
+      "path": "frontend/src/creative/IndependentStudioWorkspace.tsx",
+      "bytes": 74362,
+      "sha256": "8bce20db1ec414dd5c324debf28352725c5e15b739f3088872117c0a5f651f6a"
+    },
+    {
+      "blob": "112af511aaaf13771af8a2b6dfae6e620744e295",
+      "path": "frontend/src/creative/StudioComicPanel.tsx",
+      "bytes": 2593,
+      "sha256": "b8c9cd10adf6e281322025caf6a6e77f92bd30ce7bc13dbd114042fc7053ffd4"
+    },
+    {
+      "blob": "b6b987fe49871fb83d1cc8582c0ee294ef839ca3",
+      "path": "frontend/src/creative/directorDraftComparison.ts",
+      "bytes": 4809,
+      "sha256": "f1c640ad4d5c2fcad61b927b5d6a532052e36a570a9d3141c84cda2530ed1d48"
+    },
+    {
+      "blob": "803a953be04dbd611e3ddd7b6b8e52e19264fcee",
+      "path": "frontend/src/creative/studioProductionGraphContract.ts",
+      "bytes": 12109,
+      "sha256": "b3401e3b53ef79e1aa6a59e88b30fffbeec306a3555ba15ae7699a9f2acfa347"
+    },
+    {
+      "blob": "75bdaaac867a92a405cdb025f99fdeb7ad85f20c",
+      "path": "frontend/src/creative/types.ts",
+      "bytes": 8483,
+      "sha256": "0fbd9c8293dae513a55ecf7f517a48349f2fd43d82f9add65cec4dfd42e01aaf"
+    },
+    {
+      "blob": "f7aeaff09fb2a252a2890cc285588d149f19c1d2",
+      "path": "frontend/src/experimental/ComicLayoutsPanel.tsx",
+      "bytes": 36367,
+      "sha256": "88ecde5759daec328572dd3a77363ec402607e0486714474dc71d0f3b482ddb8"
+    },
+    {
+      "blob": "4b0f619d0464899f7d4e7b578b44f9d4da3de50e",
+      "path": "frontend/src/experimental/comicDuplication.test.ts",
+      "bytes": 7460,
+      "sha256": "0270b254989378173e52f799e828797d398d077000809fa49eb1c64f08d2f6dd"
+    },
+    {
+      "blob": "c0fdb098a62e4a62165ada7037b92a0e53fa1a9d",
+      "path": "frontend/src/experimental/comicDuplication.ts",
+      "bytes": 7442,
+      "sha256": "a3e957805973d7176222ff23a863ac0b988a7099b56f10731cb3175ebf91bbf0"
+    },
+    {
+      "blob": "ca43fd64837c34e7540dc746e9d5b03e01a6b536",
+      "path": "frontend/src/experimental/comicLayoutsClient.ts",
+      "bytes": 6392,
+      "sha256": "5d2820525f5ec41de63b06ee96719bb3181a1684f36e7a5757a2a9e17b87a12e"
+    },
+    {
+      "blob": "975a329b256c552ea0bf7d5c2f5073effde89509",
+      "path": "frontend/src/storyboard/StoryFactUsagePanel.test.tsx",
+      "bytes": 8382,
+      "sha256": "764228faec36992799882785f26c57b383df91c7225f76a61f23fb80280233c8"
+    },
+    {
+      "blob": "89356696ccc621ce629502ce3105c9bd5809a5f9",
+      "path": "frontend/src/storyboard/StoryFactUsagePanel.tsx",
+      "bytes": 8119,
+      "sha256": "8b0ce2d374ff328ac2cecdfa41490dd09b48542510667b221a342accbb047d7d"
+    },
+    {
+      "blob": "eb5efe03789ecd5806ba8fb3a3a06cf04c49d27e",
+      "path": "frontend/src/storyboard/StoryboardWorkspacePanel.tsx",
+      "bytes": 14154,
+      "sha256": "46152bdd63e34eb1bfebf219b4b45fa883c15864b884b425f41d1b09fad37173"
+    },
+    {
+      "blob": "8a1c2c69b5ca0c9f480508e6e19e4cccf34d06c0",
+      "path": "frontend/src/storyboard/storyFactClient.ts",
+      "bytes": 4429,
+      "sha256": "a79569f085456fd1ddf25380b3254148ab7c5b33350305857bd3711230fe0a70"
+    },
+    {
+      "blob": "9ef3411c391370cd7e2af510372252d645306528",
+      "path": "frontend/src/storyboard/storyFactUsage.css",
+      "bytes": 335,
+      "sha256": "0f075959fdc6ddec75ebe45daa5ea77cb46f41e69c87f9125110b971bcdbd7d1"
+    },
+    {
+      "blob": "55054db49c1c10997d6c6747855f0cc115a715b8",
+      "path": "packaging/public-build.json",
+      "bytes": 24770,
+      "sha256": "553c7a29cacc26d7cb9751b9cccdcea759a4ff06384ee62f01e2be56ebaf98c6"
+    },
+    {
+      "blob": "9168c212fe7c539d2a2326c7122136844aec6b50",
+      "path": "tests/test_comic_independent.py",
+      "bytes": 18428,
+      "sha256": "4c49cac3ab2e91e6552d22b3a41161de08c27620da16e3d11d01b8c8b1c16463"
+    },
+    {
+      "blob": "f7b884b9259d2ad2299b2c9cf2302ab57d2c1cad",
+      "path": "tests/test_director_intent_constraints_additive.py",
+      "bytes": 8444,
+      "sha256": "6a97ef56d81fdc0dc8841a5607b5c18d1c3742b7b275992c31c99d3cec07c312"
+    },
+    {
+      "blob": "3839ec25e7108bc516ea0f0bd79c153f079faeb1",
+      "path": "tests/test_v2_story_fact_bindings.py",
+      "bytes": 27301,
+      "sha256": "94a5cac0864f6c75061b0ef2d5eda46150e1461ec08f8756b9915078dcced1f5"
+    },
+    {
+      "blob": "ad0ceaec86803df16e2fe8d2759f251b99fa5dae",
+      "path": "tests/test_v2_story_fact_bindings_api.py",
+      "bytes": 6844,
+      "sha256": "bfd6eab780e364a187e75b28022eda2829d308335b7fb58df431f1fcc8755a04"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
