@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Current remote CI and browser reachability (2026-10-18 03:12 UTC)
+
+Fresh remote main/PR47/PR48 HEADs remain unchanged. Latest archive HEAD4a0cea9 has a failed Cloud CI run39092404921:11 jobs, zero steps. The public GitHub run page in the cloud browser explicitly reports an account billing lock. No test execution occurred there, no billing setting was changed and no rerun was requested. Code/archives remain uploaded and byte-verified; local focused evidence remains separate. User informed with the exact run link.
+
+Important browser distinction: the cloud browser successfully read public GitHub. It could not reach an owned Vite session at127.0.0.1:5174/ui-fixture (connection refused); a separate shell call also could not reach that session while it remained running. Cause is not established, and no supported forwarding path was found. The Vite session was stopped, no tunnel/public deployment/user computer was used. Product browser acceptance stays BLOCKED; do not describe the browser as globally unavailable. Exact observation:docs/v2/ci-browser-observation-20261018.json.
+
 ## Bounded GLB static scene transforms and UI (2026-10-18 03:04 UTC)
 
 Added a separate read-only scene-preview contract and explicit coordinate-space mode to the original GLB Asset diagnostic. It validates strict node trees and finite matrix/TRS, composes parent/world transforms, expands bounded mesh instances, and recomputes selected-scene world bounds. Default/sole-scene selection is explicit; ambiguous or oversized/invalid scenes fail rather than returning partial geometry. Original mesh-local metadata/endpoint remain unchanged. No material/texture/animation/camera rendering, external resource, model or GPU processing.

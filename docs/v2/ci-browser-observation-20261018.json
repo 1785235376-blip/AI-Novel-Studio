@@ -1,0 +1,37 @@
+{
+  "observed_at": "2026-10-18T03:11:54Z",
+  "source_head": "4a1cb4a96bc200085ab6fd89ac31c657b6558515",
+  "archive_head": "4a0cea95a9c730f4d35c848fcb6e907eadea149c",
+  "remote_heads": {
+    "main": "fed2404c8e30b44061b7139dced45b7f3301601c",
+    "pr47": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
+    "pr48": "58bbaad11360330d51f49fc2bb78a955a26469f0"
+  },
+  "github_actions": {
+    "run_id": 39092404921,
+    "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/39092404921",
+    "workflow": "Cloud CI",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "failure",
+    "jobs": 11,
+    "executed_steps": 0,
+    "annotation": "The job was not started because your account is locked due to a billing issue.",
+    "verification": "GitHub run/jobs API plus public run page in cloud browser",
+    "job_log_lookup": "404 BlobNotFound",
+    "interpretation": "HOSTED_CI_NOT_EXECUTED; not evidence of product test failure or success",
+    "billing_changes": false,
+    "reruns_requested": false
+  },
+  "browser": {
+    "public_github_page": "REACHABLE",
+    "development_server": "Vite started successfully in owned execution session on127.0.0.1:5174",
+    "cloud_browser_ui_fixture": "net::ERR_CONNECTION_REFUSED",
+    "separate_shell_probe": "connection refused",
+    "cause": "Not established; no supported forwarding route found",
+    "server_cleanup": "Owned Vite session stopped with exit130",
+    "product_browser_acceptance": "BLOCKED",
+    "user_computer_used": false,
+    "new_tunnel_or_public_deployment": false
+  }
+}
