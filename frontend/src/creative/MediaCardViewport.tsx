@@ -39,7 +39,7 @@ export function MediaCardViewport(props: Props) {
     return () => node.removeEventListener('wheel', wheel);
   }, [token]);
   const definition = preview?.token === token ? preview.value : props.definition;
-  const shown = visibleMediaCards(definition, size.width, size.height, props.query);
+  const shown = visibleMediaCards(definition, size.width, size.height, props.query, props.selected);
   function start(event: React.PointerEvent<HTMLDivElement>) {
     if (!current() || gesture.current || event.button !== 0) return;
     const card = (event.target as HTMLElement).closest<HTMLElement>('[data-media-card]')?.dataset.mediaCard;

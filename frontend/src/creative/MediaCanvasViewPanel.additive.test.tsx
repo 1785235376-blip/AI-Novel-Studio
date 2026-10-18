@@ -57,3 +57,10 @@ it('retires an alignment callback when the selected cohort changes', async () =>
  fireEvent.click(screen.getAllByRole('button', { name: 'a.png' })[1], { shiftKey: true }); act(align);
  expect((screen.getByLabelText('卡片 x') as HTMLInputElement).value).toBe('200'); expect(screen.queryByText('尚未保存')).toBeNull();
 });
+it('locates an off-screen collapsed card through original view history and save',async()=>{
+ const {props,views}=fixture(),definition=blank();definition.cards=[{id:'Far',position:{x:90000,y:90000},asset:{asset_id:'asset',version:1,digest:'a'.repeat(64),kind:'image'}}];definition.groups=[{id:'Group',name:'Hidden',card_ids:['Far'],collapsed:true}];views.get.mockResolvedValue(record(definition));
+ render(<MediaCanvasViewPanel {...props}/>);fireEvent.click(screen.getByText('读取已存画布'));fireEvent.click(await screen.findByText('Saved · v1 · 0 张'));await screen.findByText(/共 1\/1000/);
+ expect(document.querySelectorAll('.media-canvas__card')).toHaveLength(0);fireEvent.change(screen.getByLabelText('查找卡片或素材 ID'),{target:{value:'Far'}});fireEvent.click(screen.getByText('定位 Far'));expect(document.querySelectorAll('.media-canvas__card')).toHaveLength(1);
+ fireEvent.click(screen.getByText('撤销媒体画布编辑'));expect(document.querySelectorAll('.media-canvas__card')).toHaveLength(0);fireEvent.click(screen.getByText('重做媒体画布编辑'));expect(document.querySelectorAll('.media-canvas__card')).toHaveLength(1);
+ fireEvent.click(screen.getByText('保存媒体画布'));await waitFor(()=>expect(views.save).toHaveBeenCalledTimes(1));expect(views.save.mock.calls[0][2].groups![0].collapsed).toBe(false);expect(views.save.mock.calls[0][2].cards).toEqual(definition.cards);
+});

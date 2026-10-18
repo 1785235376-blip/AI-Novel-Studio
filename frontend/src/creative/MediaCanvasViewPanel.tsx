@@ -1,3 +1,4 @@
+import { focusCanvasCard, searchCanvasCards } from './mediaCanvasSearch';
 import { MediaCanvasGraphHandoff } from './MediaCanvasGraphHandoff';
 import type { CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoff';
 import { alignCanvasCards } from './mediaCanvasSelection';
@@ -65,6 +66,7 @@ export function MediaCanvasViewPanel(props: Props) {
   const selection = selectedIds.filter(id => currentCardIds.has(id));
   function selectCard(id: string, additive = false) { if (!current() || pendingRef.current) return; setSelected(id); setSelectedIds(previous => additive ? previous.includes(id) ? previous.filter(value => value !== id) : [...previous, id] : [id]); }
   const card = draft.cards.find(c => c.id === selected);
+  const matches = searchCanvasCards(draft, query);
   if (!props.active || props.denied || !client) return null;
   return <section className="media-canvas" aria-label="独立媒体素材画布" onKeyDown={event => {
       if (event.nativeEvent.isComposing || event.altKey || !(event.ctrlKey || event.metaKey) || (event.target as HTMLElement).closest('input,textarea,select,[contenteditable="true"]')) return;
@@ -98,6 +100,12 @@ export function MediaCanvasViewPanel(props: Props) {
       }}>加入引用卡片</Button>
       <label>查找卡片或素材 ID<input value={query} onChange={e => setQuery(e.target.value)} /></label>
     </div>
+    {query.trim() && <section aria-label="画布查找结果"><p>匹配 {matches.length} 张，显示前 20 张。定位会移动视口并展开该卡片的上级分组；需要保存才会保留视图变化。</p>
+      {matches.slice(0,20).map(result => <Button key={result.id} disabled={!editable} onClick={() => {
+        if (locked() || !live.current.canMutate || uncertain) return;
+        try { edit(focusCanvasCard(draftRef.current,result.id,size.width,size.height)); selectCard(result.id); } catch { setError('卡片或视口已改变，请重新查找。'); }
+      }}>定位 {result.id}</Button>)}{!matches.length && <p>没有匹配卡片。隐藏或无权访问的素材详情不会参与查找。</p>}
+    </section>}
     <div className="creative-actions">
       {(['x', 'y'] as const).map(axis => <label key={axis}>视口 {axis}<input type="number" min={-100000} max={100000} value={draft.viewport[axis]} disabled={!editable} onChange={e => edit({ ...draftRef.current, viewport: { ...draftRef.current.viewport, [axis]: clampGraphPosition(e.target.valueAsNumber) } })} /></label>)}
       <label>缩放<input type="number" step="0.1" min="0.35" max="2.5" value={draft.viewport.zoom} disabled={!editable} onChange={e => edit({ ...draftRef.current, viewport: { ...draftRef.current.viewport, zoom: clampGraphZoom(e.target.valueAsNumber) } })} /></label>
