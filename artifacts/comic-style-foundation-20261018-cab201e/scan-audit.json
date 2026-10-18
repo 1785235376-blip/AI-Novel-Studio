@@ -1,0 +1,703 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "0c8d6c6a145c0cb558e3ec692cc13c609866db20",
+      "path": "API_CATALOG.json",
+      "bytes": 1499501,
+      "sha256": "77198e8dc4b9ce2815be36b7d25cf59a2ddfca322937aca7d3a6a24d5fbb1eef"
+    },
+    {
+      "blob": "72aab5efb3e4753bda75e900b8e8a91a2ac0645b",
+      "path": "API_CATALOG.md",
+      "bytes": 400711,
+      "sha256": "55001e045c7216568205d7cfda769eb04503e0263a84eb72175bf884ae0cb625"
+    },
+    {
+      "blob": "233f150b46bfbe71bff21e186d60a104d93124eb",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 618881,
+      "sha256": "3b553a6e51511c7ffafaf29a9f49ba4c1d71a4a4a23407f4fa9149abfb8f7e85"
+    },
+    {
+      "blob": "283563d6ae8b46592ef54c63129458c8a27829ad",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 133634,
+      "sha256": "073eff11ce4ad9ea75d94c7b48c2fe5cee9482a9c74595661e9f6371b6a2c752"
+    },
+    {
+      "blob": "149b7d4461d92fd17765458aa09c8d54ac9fe820",
+      "path": "app/api.py",
+      "bytes": 265963,
+      "sha256": "3160d732ef546ab1e1b547f87ead896a44fe96f14c7c4b75e90b0d5c63e44838"
+    },
+    {
+      "blob": "b4645936a326eeefe7f3018b8e648a6ec51c8300",
+      "path": "app/creation_workbench_api.py",
+      "bytes": 5374,
+      "sha256": "5b0e7ff7cfaf472a4e445fb44c7494402a3c3370793b91cc7f3e053d63f5549e"
+    },
+    {
+      "blob": "a68dcf502ffcf4f4f7d43ca7a5e516e9d970c58a",
+      "path": "app/creative/director_image_preview.py",
+      "bytes": 6214,
+      "sha256": "d68e475fd36dffcca857bd36170d606220c7abd7a3cd97201c6c553d6b5fe6d4"
+    },
+    {
+      "blob": "28b304555f024544c2a56824063908d1423ce284",
+      "path": "app/creative/director_image_source.py",
+      "bytes": 8040,
+      "sha256": "223a9145c42051eb65ba10306fdfaf93605a4dc49b9298eea0526e6d16f85169"
+    },
+    {
+      "blob": "2bd0f3ae05912af100c4e4180fd65b351262b7ba",
+      "path": "app/director_vision_wire.py",
+      "bytes": 3885,
+      "sha256": "caeae4d91960493363b202fbf4b6b20a65349892ca2fb29aa975277cc397a2c2"
+    },
+    {
+      "blob": "1f5e202c7119ac48704540414fbba8b1090ec915",
+      "path": "app/experimental/api.py",
+      "bytes": 42270,
+      "sha256": "d0eb7aa8ca189bcbbff62dc172c179c2fff5a7d6a519c1ad94b044fb20c5f072"
+    },
+    {
+      "blob": "59530ac15a5b2bf1ad4bdb59963a943bab4fcd10",
+      "path": "app/experimental/comic_collections.py",
+      "bytes": 12106,
+      "sha256": "67fcb97bb296e4423d18f79af8e46b5d12e2a0cb3ae2d3bdffa1dccbff21591f"
+    },
+    {
+      "blob": "39307a11ecf1d065e84bf21089a895025731f731",
+      "path": "app/experimental/comic_layouts.py",
+      "bytes": 38931,
+      "sha256": "251f7b8b4f4d6ce64f7404a056727153831c20dd9d6e5455ca386685166a3e05"
+    },
+    {
+      "blob": "1f7d7e7a51f8be3d9890339e5e9890fd6a3fd472",
+      "path": "app/experimental/comic_layouts_api.py",
+      "bytes": 7808,
+      "sha256": "ef83632fc0df3adc058301d82abcbbbc773e46b8e941690930dfc4d2cd521ca3"
+    },
+    {
+      "blob": "c41420dea79b3375270d2356877762c8be15e397",
+      "path": "app/experimental/style_analysis.py",
+      "bytes": 25832,
+      "sha256": "f3ae5886536db1ed93fe35cfdc54c9115d8e0e23991fa3774f76945e82aea922"
+    },
+    {
+      "blob": "f72af0ce0a142b4ea1192efa0f5a84303e081d0f",
+      "path": "app/experimental/style_analysis_api.py",
+      "bytes": 9411,
+      "sha256": "f05ce1e4e2f570384acbced2a241e62c8abe49a01367abd82b49cc9a195da8ac"
+    },
+    {
+      "blob": "81a46e22df68a247fb24fa39b5a63210b78c1740",
+      "path": "app/experimental/style_dna.py",
+      "bytes": 12994,
+      "sha256": "d7fd06a4e201caccb9eb5308e6884fe3d076b343da4785a85fa068c30b5c7b23"
+    },
+    {
+      "blob": "9d93210e6fb37af50915ac99124a7535d5e0c424",
+      "path": "app/services/creation_workbench_service.py",
+      "bytes": 26541,
+      "sha256": "fd6b2309b389e276ea447993b5c3b0c92832619e2242318349d57d3d095aff0b"
+    },
+    {
+      "blob": "fe764ee881302fd86380ac144fa4554db5564693",
+      "path": "app/style_dna_contract.py",
+      "bytes": 3284,
+      "sha256": "54370bce3698e06c82e87f69e2a9a65f5d6b64ec56f6f436644c33f1bedb9b3d"
+    },
+    {
+      "blob": "9f0186d766cccb3e9f4f4008ee77390c2d3d0356",
+      "path": "docs/STYLE_DNA_HIERARCHY_SLICE.md",
+      "bytes": 5274,
+      "sha256": "6cd5a1f10e368f3926d2400dfb6e9d4b67e81d821049b0c70409ff44e0eb4373"
+    },
+    {
+      "blob": "f86635771e58f30d1c98cde755c5f50534aeabc6",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 30705,
+      "sha256": "901985ca33c386676dbc4463e5082c196048bed93132e2b3356fc9ea10356f2f"
+    },
+    {
+      "blob": "ce5ff2fe3367bdb4485e08dffcc3e9d8ec0715b8",
+      "path": "docs/delivery/v2-development/comic-collection-ui-corrected.json",
+      "bytes": 729829,
+      "sha256": "0eb80492272c3594c1c432696174f8e97e9eeb6a2399b6fe96fe3d597dca09d3"
+    },
+    {
+      "blob": "7771ad506655860c3fb9e1a9a64617806f09067f",
+      "path": "docs/delivery/v2-development/comic-collection-ui-corrected.log",
+      "bytes": 28897,
+      "sha256": "f6bff0baaba5bb5831b8a38de978a83246a2414a3b4d3490cc2e4adbb0a16312"
+    },
+    {
+      "blob": "687682ca1c980b23b69feb54d35d1af33b78ac99",
+      "path": "docs/delivery/v2-development/comic-collection-ui-final.json",
+      "bytes": 731500,
+      "sha256": "ee3e4ea562f1afd12cb912f0bda66809a6b32980bc7a2b2e548305928b20b449"
+    },
+    {
+      "blob": "82b132a0b0773513061cb8b077b37047aa51c242",
+      "path": "docs/delivery/v2-development/comic-collection-ui-final.log",
+      "bytes": 2103,
+      "sha256": "c01cd947cdc43a7ae43d5d39a41bf826fb091d49b5d62880f3623e44e064528a"
+    },
+    {
+      "blob": "200e8a27006ade47b005cacd8602dc2a8659f426",
+      "path": "docs/delivery/v2-development/comic-collection-ui-frozen.json",
+      "bytes": 731942,
+      "sha256": "e62308b05e90a26a46b5808d8d6e5b4574e18ca3e42b88583aa3a05675bbb73d"
+    },
+    {
+      "blob": "e32698ed0f5e3446f904c24411400ae612eae3bc",
+      "path": "docs/delivery/v2-development/comic-collection-ui-frozen.log",
+      "bytes": 2164,
+      "sha256": "9eb3acc5a08600c7329ef6bb578c1a7a74ea457c44908d7aa6c97a7f3ebd677c"
+    },
+    {
+      "blob": "f744ac551282dca353d368a089de3b1dac31dae9",
+      "path": "docs/delivery/v2-development/comic-collection-ui-initial.json",
+      "bytes": 729790,
+      "sha256": "a709478dd6923bbfa9f44a219d0ae12cfd4b9adb541ce84fd2c764b02f805bba"
+    },
+    {
+      "blob": "39227c487071bebc0526f79b673d1bb44a7bf2c3",
+      "path": "docs/delivery/v2-development/comic-collection-ui-initial.log",
+      "bytes": 1429,
+      "sha256": "8df49c1a58c231383eb7b6a8188cd7803281591665ee965948606e12937b5de4"
+    },
+    {
+      "blob": "3760224c1d1b8af9bbb23ec8adffee4a7fecae3d",
+      "path": "docs/delivery/v2-development/comic-collection-ui-integration-current.json",
+      "bytes": 729948,
+      "sha256": "c3e0e19d60ef3ba0e919f8ae4766f4320cef903308c2eb214c7cbacab97f211e"
+    },
+    {
+      "blob": "fe79215d782b16e5e8d2279fdc79b1924c90a794",
+      "path": "docs/delivery/v2-development/comic-collection-ui-integration-current.log",
+      "bytes": 37810,
+      "sha256": "e79625def4b04c03567106ef7b3d19aafa8f2bf59261ba4519444ce12a97f5e1"
+    },
+    {
+      "blob": "1a1464856c0f456761c5f896b7bc7c8f989ea252",
+      "path": "docs/delivery/v2-development/comic-collection-ui-integration.json",
+      "bytes": 729876,
+      "sha256": "5ba4151cc06288fd168277dd4d6c877843d073b9b62eefdbce4766b040b33b82"
+    },
+    {
+      "blob": "1bcfdce22f6677230b452723e92c4c76dbf1802b",
+      "path": "docs/delivery/v2-development/comic-collection-ui-integration.log",
+      "bytes": 77798,
+      "sha256": "9fd0bc477f1197c6dc8b193c42daf298d25b5bac756d0a61bf22a3b3ec09d362"
+    },
+    {
+      "blob": "a0dc9b5a295f7edde23c3d79904f587be5811df8",
+      "path": "docs/delivery/v2-development/comic-collection-ui-new.json",
+      "bytes": 729775,
+      "sha256": "89e02dfa39a3262c64968a51905f11c15cabc683eca2e3d40310996abaa97cc0"
+    },
+    {
+      "blob": "9f0d2d59cbb47fb03a781a5a9de4305c3f043072",
+      "path": "docs/delivery/v2-development/comic-collection-ui-new.log",
+      "bytes": 78489,
+      "sha256": "d2aee5957d0c06cc2cc2d80bac8ae45050a36bfb171d2476ef94bcc2b80396da"
+    },
+    {
+      "blob": "dd927c740f1230e27a1381cc711bb6ce481b4525",
+      "path": "docs/delivery/v2-development/comic-collection-ui-projection.json",
+      "bytes": 730747,
+      "sha256": "a9963baa9e809072325c80a0af18eaf0d0573d794a9316fd68877e1a3270e24e"
+    },
+    {
+      "blob": "01b8f5f508ea7e5df390bd6af06e959b2a674484",
+      "path": "docs/delivery/v2-development/comic-collection-ui-projection.log",
+      "bytes": 13785,
+      "sha256": "b9113cbc6a118bd045365827641535d0349ed208187cec88a1cd51acc8209fb6"
+    },
+    {
+      "blob": "1fb06ac5ba66006877225d3a9e0a6a8423852458",
+      "path": "docs/delivery/v2-development/comic-collection-ui-tokens.json",
+      "bytes": 731476,
+      "sha256": "edb980f0d791610a82c86aa2f310f3e4bb7a51d9155a50a249594d17582f9a25"
+    },
+    {
+      "blob": "5d360cae0b41785dbe3c1a8fbcea17b729d57365",
+      "path": "docs/delivery/v2-development/comic-collection-ui-types-frozen.json",
+      "bytes": 731592,
+      "sha256": "e620bb3fa13d6f10ea2e5979eccf0114823a9b5542111e2ad5050fd953681ec2"
+    },
+    {
+      "blob": "945c35375ef1ec18fe8aaebaca55b9545c1ae9ec",
+      "path": "docs/delivery/v2-development/comic-collection-ui-types.json",
+      "bytes": 731096,
+      "sha256": "3f216d884ebe21e206868c88b61d2ed7e0ee3fddf0e2b6e93ffb7b4e98f52274"
+    },
+    {
+      "blob": "c9c197f30847a9c161ad1acc3243b40826d64c64",
+      "path": "docs/delivery/v2-development/comic-collection-ui-visual.json",
+      "bytes": 731126,
+      "sha256": "81724b6c3a89d1c96f0098aad7bf539daecbe5e2b6e53f51c010d5699d669ca3"
+    },
+    {
+      "blob": "29e3d7d8e14d366b55fa60d2803df8dd92fca34a",
+      "path": "docs/delivery/v2-development/comic-collection-ui-visual.log",
+      "bytes": 37830,
+      "sha256": "e7e730003e279969cd4e491b0547a9dbc26ba33c88748592ac318dcc9c44af58"
+    },
+    {
+      "blob": "1cc7c96aca99f3815b16e8a263b2b11d01a85872",
+      "path": "docs/delivery/v2-development/comic-collections-file-1.json",
+      "bytes": 729644,
+      "sha256": "6444a8b127fc8e17c48b342b745cce965d74844d8d02c98f844db7ff56957051"
+    },
+    {
+      "blob": "640999de9a31b26e77df3becafa85635c3bd65fc",
+      "path": "docs/delivery/v2-development/comic-collections-file-1.log",
+      "bytes": 8707,
+      "sha256": "7acbd6c5b0d468fe388b62164bb9d61bd2c48f3ce7541925cf68e2b1b06afeaa"
+    },
+    {
+      "blob": "e8919b4a26247a9b3b0f3120474f9c26d9caa568",
+      "path": "docs/delivery/v2-development/comic-collections-file-2.json",
+      "bytes": 729721,
+      "sha256": "85138361c5bff85bdffad7637e0b2b0930415e0ccb42f8465437ccdf9afb278b"
+    },
+    {
+      "blob": "5afe4c0d792ef35805f6e899504ed8658def22f0",
+      "path": "docs/delivery/v2-development/comic-collections-file-2.log",
+      "bytes": 1125,
+      "sha256": "f9b104e4f40f8163e178154269f50920dd3a064e4537b16057787941fca31e0c"
+    },
+    {
+      "blob": "e20334381a7296bbd1e29cebc7fcd83921bb36d2",
+      "path": "docs/delivery/v2-development/comic-collections-file-3.json",
+      "bytes": 729981,
+      "sha256": "77c139fb9f88c77269522d32a33be5ea326fe6fbacfe89674f90682d16561134"
+    },
+    {
+      "blob": "297741bd919722195998090e7144fe621d89849a",
+      "path": "docs/delivery/v2-development/comic-collections-file-3.log",
+      "bytes": 1126,
+      "sha256": "592fb1cfa2e12292ab399d6aa8e17e791034814c8d0e44556eaf2ab56f2ee8f7"
+    },
+    {
+      "blob": "e6e8890fdf7e4809b70e0e3886bc0d7ad1586c0a",
+      "path": "docs/delivery/v2-development/comic-collections-postgres-1-cleanup.json",
+      "bytes": 24431,
+      "sha256": "875bb1bac7466c3f6d61505765bc13cd2759cac32b21945997b011f1fb12343c"
+    },
+    {
+      "blob": "495b5ea1c6f608746ed739896260b839a5bdf8bb",
+      "path": "docs/delivery/v2-development/comic-collections-postgres-1-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "844f69d3c8120dca319175e8ae6d91e78f427467cff8e01183490f8c3b61780c"
+    },
+    {
+      "blob": "7066e004985286b3f1d665102696ffe864617b16",
+      "path": "docs/delivery/v2-development/comic-collections-postgres-1.json",
+      "bytes": 729717,
+      "sha256": "c94fb0d008a3628b768e998e513dc281ddc09e16713d1ce79d849a3c5a85f03b"
+    },
+    {
+      "blob": "446975cb37a8d9cb1f195fddfd60dc1670e6a0ec",
+      "path": "docs/delivery/v2-development/comic-collections-postgres-1.log",
+      "bytes": 1320,
+      "sha256": "97e8044e8e7d9595e5530931ec6fa0d9a019d1d455493cab89e08c7d00f0c998"
+    },
+    {
+      "blob": "c2f42483e4bfac26c785d4af96fc8efff1642d37",
+      "path": "docs/delivery/v2-development/comic-collections-postgres-2-cleanup.json",
+      "bytes": 24431,
+      "sha256": "78a0373bca9d4d56c21120f385576c7375e37ad66d58050a1ce0bd55271f8984"
+    },
+    {
+      "blob": "9035b902d485f825c2d831b464bc887b0abe9cf6",
+      "path": "docs/delivery/v2-development/comic-collections-postgres-2-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "7c532ce068734f5e52a1458b1d9402e98e2f3eabc7ce779cf2ced2df03250409"
+    },
+    {
+      "blob": "53ac6c8725f3d3c2b3d95e9bd71c2d8247e309b0",
+      "path": "docs/delivery/v2-development/comic-collections-postgres-2.json",
+      "bytes": 730303,
+      "sha256": "4caf685d2d234668f4c6962335eb23ba2fae1cd61205892da7ef6f3fbbfe72c6"
+    },
+    {
+      "blob": "57372602a4abc87b63f49fab4f598e67ade78f07",
+      "path": "docs/delivery/v2-development/comic-collections-postgres-2.log",
+      "bytes": 1321,
+      "sha256": "c54de190f0e0729c437ee0425e4354e68bff376bb477535e2f25b2689fbdc511"
+    },
+    {
+      "blob": "513732bceacb9bcf32554ed0a204aa48e23d09b0",
+      "path": "docs/delivery/v2-development/comic-collections-postgres-stop-proof.json",
+      "bytes": 154,
+      "sha256": "1bd9a571c0c7c6712c08ba787d0f4a4b92539e5a8267b0257cb4bfcd0f85b7c3"
+    },
+    {
+      "blob": "2fa8203cd7b823e7f3aae91aa83371a4fd9b44dc",
+      "path": "docs/delivery/v2-development/comic-collections/README.md",
+      "bytes": 7270,
+      "sha256": "6b86a9901d29d6fa4e650c5f1f01163337d0c627f3b9ba9be5f2ea222e806143"
+    },
+    {
+      "blob": "1a5b67f5d6506bf0cd5a8058eeeb3df301369c34",
+      "path": "docs/delivery/v2-development/comic-collections/backend-sha256.json",
+      "bytes": 437,
+      "sha256": "d0f0e8cd9b7370f1499bb10d1b67bf83697999e0492129ef9f61c683feafc425"
+    },
+    {
+      "blob": "3055aea382a3d2c3b5497f88dd2117237fef078a",
+      "path": "docs/delivery/v2-development/comic-collections/source-sha256.json",
+      "bytes": 930,
+      "sha256": "d4b4dc745f4b1dfdd0efdb4121056036e9c3d7d7e7d4e96d5aacaf2d13bda348"
+    },
+    {
+      "blob": "b3a07253bed7299cf1c88d0644a26fef872def30",
+      "path": "docs/delivery/v2-development/comic-collections/verify_postgres.py",
+      "bytes": 1535,
+      "sha256": "f966e7111b546de24fa80307798285067990ab7f97a9027f22bdd7f8b4a920cf"
+    },
+    {
+      "blob": "fe11fb71e712de190e4feafb0c48d959faca556e",
+      "path": "docs/delivery/v2-development/comic-style-vision-integrated-ui.json",
+      "bytes": 732085,
+      "sha256": "63692f49facec5da15aa20e8d1c9cf11f38483093369c99df5cb804fba80454b"
+    },
+    {
+      "blob": "68d3de49b439646429dfa0451c2c0f720f95be74",
+      "path": "docs/delivery/v2-development/comic-style-vision-integrated-ui.log",
+      "bytes": 3987,
+      "sha256": "8eabfd3454cd3a99ffea9719f0903ce20e331c180dcd1af83d33d5cb796541e6"
+    },
+    {
+      "blob": "0fd8fa4d55943ff77618252dab126dd02c9c56e9",
+      "path": "docs/delivery/v2-development/comic-style-vision-integration-20261018.md",
+      "bytes": 4594,
+      "sha256": "7f8016b578752f308e51d41ffed1e8be82d3afbcec27c3573512d7d195d8e02a"
+    },
+    {
+      "blob": "bcfcea16cf21daf8166aab1fb9a2d5aaac2468e4",
+      "path": "docs/delivery/v2-development/comic-style-vision-public-final.json",
+      "bytes": 731968,
+      "sha256": "e52d20a430c6af208273a9052cf078f0d82a99de424b636b206ef2d8a6cf7b69"
+    },
+    {
+      "blob": "1d71cd2c7de4e34d1f54cdbe354b5dfa50ce11d8",
+      "path": "docs/delivery/v2-development/comic-style-vision-public-final.log",
+      "bytes": 634,
+      "sha256": "85f91fafc6c3ed3e358ff4668d07c6706c0c6572fdca857238a370b8691d6fda"
+    },
+    {
+      "blob": "339c45a795a42234823851a90aa89f828f6963b6",
+      "path": "docs/delivery/v2-development/comic-style-vision-public.json",
+      "bytes": 731908,
+      "sha256": "662c27c861c9d9ec3e733d6c06f482423a9843b38cd65c1fa79115a774351199"
+    },
+    {
+      "blob": "8ba3dbf26af1cc49cf0e6a162c8413f196181c20",
+      "path": "docs/delivery/v2-development/comic-style-vision-public.log",
+      "bytes": 634,
+      "sha256": "e78675968629e18ac1d6e0a32b8899770ffb935059e49d966da6cd79c954c251"
+    },
+    {
+      "blob": "f80978206ad54a9ad28b5cc7709c88e5443eea87",
+      "path": "docs/delivery/v2-development/director-image-foundation-final.json",
+      "bytes": 730314,
+      "sha256": "a4ffa9ac4033559e168dc358c4d5ac74e48e050d6789e05009a9188c3dabba18"
+    },
+    {
+      "blob": "00d31cf6b525666542d985377a9fac60b8ad2b5e",
+      "path": "docs/delivery/v2-development/director-image-foundation-final.log",
+      "bytes": 1190,
+      "sha256": "019a6385a5d7ba42fb4d51f346b05a083b23e31573d96ff58a5758d290a8b64b"
+    },
+    {
+      "blob": "945951f26c63f54f4470c57c675e515ea0e9b044",
+      "path": "docs/delivery/v2-development/director-image-owner-postgres-final-cleanup.json",
+      "bytes": 1548,
+      "sha256": "49c732e4851e5adfcaaa6e82ce26316d4b48988c3fdc6cc490155fcd40023dee"
+    },
+    {
+      "blob": "bc524060824bdb90215c4609555f39a58c65d67f",
+      "path": "docs/delivery/v2-development/director-image-owner-postgres-final-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "1f207becbf4f4b7a60c5438a3d09cb77d858e7041aac1d61430183718a058a63"
+    },
+    {
+      "blob": "119cbe3185496c75b8cb550ab70f9d6caa394874",
+      "path": "docs/delivery/v2-development/director-image-owner-postgres-final.json",
+      "bytes": 731723,
+      "sha256": "3c5177140a987233f1a435e65ba5fa4ae56a754d6e36c6c0ba762ac5d9f29203"
+    },
+    {
+      "blob": "daca7352444ea2379d36d16734ee4ffb3ebdaa63",
+      "path": "docs/delivery/v2-development/director-image-owner-postgres-final.log",
+      "bytes": 1101,
+      "sha256": "dc3fb54029170517c8f9e98e8f30e13932716491fcded83480c8e7d76f18361e"
+    },
+    {
+      "blob": "5663ac3ec1d25f5206310b9ad9bf86143fc1e465",
+      "path": "docs/delivery/v2-development/director-image-owner-test-fix.json",
+      "bytes": 730960,
+      "sha256": "203060e2a2069548e686a6588d0aa4a2a00ba3fcf1c25c2dbec7bb3f08ec98fd"
+    },
+    {
+      "blob": "497918d3f1d8bb72561e36b47ed08123007e1d27",
+      "path": "docs/delivery/v2-development/director-image-owner-test-fix.log",
+      "bytes": 628,
+      "sha256": "1d517f829db283a2ace56a21f8fd7d5a1b32b0d734feb532d11f2cd712baf1b2"
+    },
+    {
+      "blob": "3acbcf15948ec98a3ccacb023ab7c18656cf2cda",
+      "path": "docs/delivery/v2-development/style-dna-concurrency-file.json",
+      "bytes": 726708,
+      "sha256": "71a213579f62681fefcca9fd70f4cadca7bbf905d06d5fc07729fdfc0751ff91"
+    },
+    {
+      "blob": "57607b5979b2fb541e6831d6e92c0d21223ab99d",
+      "path": "docs/delivery/v2-development/style-dna-concurrency-file.log",
+      "bytes": 1088,
+      "sha256": "28f835e93287f65b180f325ce284699950a0b1531f4f40672ad466f4b7237895"
+    },
+    {
+      "blob": "2f3cea7d0541dac78be6c7deddf44e4dd393f671",
+      "path": "docs/delivery/v2-development/style-dna-final-reviewed.json",
+      "bytes": 726940,
+      "sha256": "6196a23cfc59925aa7b9494ae3e61f1637ed7d0498d4a531096d17b483d94c28"
+    },
+    {
+      "blob": "faf06b80462828f468f52a9bb1d6794610ba6b22",
+      "path": "docs/delivery/v2-development/style-dna-final-reviewed.log",
+      "bytes": 1168,
+      "sha256": "0139029124daf171027f4638ec805e2b86fd35b25910f40996910fe5101eba7b"
+    },
+    {
+      "blob": "ad107566f15b2f864f1980f97f6a2b29e06a31e2",
+      "path": "docs/delivery/v2-development/style-vision-comic-integrated-file.json",
+      "bytes": 731970,
+      "sha256": "a77cdbcfece12da3d983d1fa04dcf07209e5da9f0532ac9d34a2371108891ead"
+    },
+    {
+      "blob": "1ff6a9d55b3dee4ebc996abaa4fdd51d997314e6",
+      "path": "docs/delivery/v2-development/style-vision-comic-integrated-file.log",
+      "bytes": 1144,
+      "sha256": "24b80142acbb27604a3e9b865f3c7569dd8494a8894cb499b4da03fe46e47242"
+    },
+    {
+      "blob": "355fd9e5f3b548f2f79443d70719530da7617ebf",
+      "path": "docs/delivery/v2-development/style-vision-concurrency-postgres-cleanup.json",
+      "bytes": 1519,
+      "sha256": "53613f95ae086ab7c67a4ce2a2e0159a45d543f9f4af8f209710a18f76194e76"
+    },
+    {
+      "blob": "b3f4374c1b3bd480d75fd6440ebaa7be1b275919",
+      "path": "docs/delivery/v2-development/style-vision-concurrency-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "b8efb0dd20f57dcf0ac7d16a0326f3b1a291018f841e63e635c47d2f08792698"
+    },
+    {
+      "blob": "593f5abce593af5d7fb56ec776c6f78d29d89e51",
+      "path": "docs/delivery/v2-development/style-vision-concurrency-postgres.json",
+      "bytes": 731720,
+      "sha256": "781d58020ac90849720e0815fab27e8d54a438df97aad904b8dd233598e77de6"
+    },
+    {
+      "blob": "3f27172f5b1711dcfd5bb99c6c31be8d0140c741",
+      "path": "docs/delivery/v2-development/style-vision-concurrency-postgres.log",
+      "bytes": 1133,
+      "sha256": "471d06c9d2786854e5bfc517d7bfb707e476ce37a1eb371e7a0ed222b2e742cd"
+    },
+    {
+      "blob": "c8b209e902e093e46be46a8f2baadd8f295f86cd",
+      "path": "docs/delivery/v2-development/style-vision-integrated-postgres-postgres-runtime.json",
+      "bytes": 1424,
+      "sha256": "0665f97588c136fecdeb38364394844eeeb844cfc9b773d857b55bc5a3d3f388"
+    },
+    {
+      "blob": "9e704403f586e9eb1e6272e3b5d838a568f01c47",
+      "path": "docs/delivery/v2-development/style-vision-integrated-postgres-rerun-cleanup.json",
+      "bytes": 1496,
+      "sha256": "57c921d515c5c55aed00b359946a4e6ef524373d130cac078a39dc23e729137a"
+    },
+    {
+      "blob": "5bdeace92d8a45af5039092e0202070ddef06e7a",
+      "path": "docs/delivery/v2-development/style-vision-integrated-postgres-rerun-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "3f05ac777d217c67c7bf878af3af109a80053018f182d88b3a918139cc0c150d"
+    },
+    {
+      "blob": "a470cf8d57cf5b63b2d287611c7c9ac6d92a55a2",
+      "path": "docs/delivery/v2-development/style-vision-integrated-postgres-rerun.json",
+      "bytes": 731750,
+      "sha256": "798a4f3247e449da1a95d9310cab9900b5b8d19645c88e2fdf0f8b92083f4643"
+    },
+    {
+      "blob": "fd98d899efef30275d242c2872542262d09d0539",
+      "path": "docs/delivery/v2-development/style-vision-integrated-postgres-rerun.log",
+      "bytes": 2937,
+      "sha256": "6bfd6f6d67068c7b279aad67a940db3c802ddfb979d48a74ec2b49fefe467fb7"
+    },
+    {
+      "blob": "69e8c88eb3342a97a53c84b8a26bd08953cfdac6",
+      "path": "docs/delivery/v2-development/style-vision-integration/cleanup_interrupted.py",
+      "bytes": 1883,
+      "sha256": "beb1a765c6163e1814d929aaed0bff83a95f29ae739a2bc945943cc6676a0171"
+    },
+    {
+      "blob": "16eab4772d6fbef38861c339852f541933335c3c",
+      "path": "docs/delivery/v2-development/style-vision-integration/interrupted-session.json",
+      "bytes": 128,
+      "sha256": "5f7c36de9f3d03bb83e28563bbcc20ba8e9fc7731e831dd2df82a73429fd5cdd"
+    },
+    {
+      "blob": "8788571b72ceb486e3ffc96f37b32f1191fc0080",
+      "path": "docs/delivery/v2-development/style-vision-integration/probe_interrupted.py",
+      "bytes": 1262,
+      "sha256": "ad77b7bf4a77e871626c0bdb3bdbe8eff6b8e6793fb29f6cb265f69df1e3fba4"
+    },
+    {
+      "blob": "ede30c271b86fc0770e7324e2b53e446d8a1b918",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_director_owner.py",
+      "bytes": 1649,
+      "sha256": "5a749c8f16b03bc4e8074f89f8e1702c260b29d0c024895d932eca269f1e98f8"
+    },
+    {
+      "blob": "5a710e29b2714a6fac505b60685031c3cfef83f9",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_postgres.py",
+      "bytes": 1573,
+      "sha256": "0b3f22c1ca4cd435c905df7eb0ea7db28a8bd1a4bfaa3f0186cfad8a6e2aa430"
+    },
+    {
+      "blob": "c016b8d85baf4c7d5804c320c534df7f010e55e0",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_postgres_rerun.py",
+      "bytes": 1711,
+      "sha256": "6ee9ab442e59516edab7fbe64f02de4aca94cec8dd93652a6ce392558239de73"
+    },
+    {
+      "blob": "44b1d90871d1b3e17e81d22f543d8a22b0d0266b",
+      "path": "docs/delivery/v2-development/style-vision-interrupted-cleanup-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "9784695a5ffa79f7e3b1d9889b5c7a2247bef24ea27884af2c391a1ef7144f86"
+    },
+    {
+      "blob": "3d0137b4698cea4b42cb5cb661e89600d4a5caa6",
+      "path": "docs/delivery/v2-development/style-vision-interrupted-cleanup-proof.json",
+      "bytes": 375,
+      "sha256": "5e3359f442e1d20947ae1c50cc7ba2a5aa17c6d49a3cdaebc944e9f1c4faffde"
+    },
+    {
+      "blob": "6909551b16554dc16440ab2533cc68b5aeb1b37e",
+      "path": "docs/delivery/v2-development/style-vision-interrupted-cleanup.json",
+      "bytes": 731694,
+      "sha256": "f0a12823ee730565137b8c17bfc93e4b2c9f6734d42e2760ae830091f8014bdf"
+    },
+    {
+      "blob": "f67ba011060ec255490549b3ea47e3c948adfb00",
+      "path": "docs/delivery/v2-development/style-vision-interrupted-cleanup.log",
+      "bytes": 349,
+      "sha256": "6e04576778cc662c7709ccab924d5ad6bfcffa3cf0dd112f7d184b26781188fe"
+    },
+    {
+      "blob": "a1a297065e3159185580aa978cc1a6b2bd55bd14",
+      "path": "docs/delivery/v2-development/style-vision-interrupted-durable-probe.json",
+      "bytes": 1294,
+      "sha256": "e078ae7631af8091c4a59a6b40cf5597b78219bd208c032f0e690b0b96afb9a8"
+    },
+    {
+      "blob": "3046cebeb2f1d5d15ebe2de76532a78df33bb013",
+      "path": "docs/delivery/v2-development/style-vision-interrupted-probe-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "ff96556b95a7d28116de059c94b2f303172f4066b69eccba3771f61923fd026a"
+    },
+    {
+      "blob": "dd2b2a277f8b9985b721c31d2c3ad3682418d534",
+      "path": "docs/delivery/v2-development/style-vision-interrupted-probe.json",
+      "bytes": 731674,
+      "sha256": "8d10b96bdebf0524475b16befd0aecde44bdecc2458f3b757dae5c7ff169395a"
+    },
+    {
+      "blob": "f3bc8534447fd0ac4a67ef552b25712465041476",
+      "path": "docs/delivery/v2-development/style-vision-interrupted-probe.log",
+      "bytes": 291,
+      "sha256": "3b54d44df1611420c813822d98423d6779ff6401f6e9d98ba08a3d9ef197be76"
+    },
+    {
+      "blob": "8b86ac72268c9fe51f1a8ca2ef02ee585a41fd06",
+      "path": "docs/development/director_image_foundation_v3.md",
+      "bytes": 9485,
+      "sha256": "1ca4179152213d074aba075bd034017a44b3de7abeb220b18b11811bb80f22cf"
+    },
+    {
+      "blob": "9d96fda23f98bdf4cb56aa847b64dbcdda76cee8",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 772504,
+      "sha256": "3ea80dd8c3a32dbae2990e832ba2c3e6e81073c49a4898b7f0ef7da8c24eb0a3"
+    },
+    {
+      "blob": "852fcfbde7d36e119546138add099b278a0b90a5",
+      "path": "frontend/src/experimental/ComicCollectionTree.test.tsx",
+      "bytes": 16702,
+      "sha256": "6ba19573704769e5b9339c1be2dbfa75d84e43a8dc45735f0f319fe0b9be5f0a"
+    },
+    {
+      "blob": "cd772804d8b974eb8b2c04fbdc02d898e2cd80d6",
+      "path": "frontend/src/experimental/ComicCollectionTree.tsx",
+      "bytes": 16499,
+      "sha256": "c76daac0b0350ee18dba747798123f488ba862978a5b6d13d1194dcdcdf1491d"
+    },
+    {
+      "blob": "11a388a88ee6a62092280bed7a9916a0a67882ff",
+      "path": "frontend/src/experimental/ComicLayoutsPanel.tsx",
+      "bytes": 38955,
+      "sha256": "f3d168fde1a39e1e3e34d261baa596155b379e65fcbce018d7e9cb2f3d74fb52"
+    },
+    {
+      "blob": "c7140990eaf035923301d2e365a529a172d4ce8c",
+      "path": "frontend/src/experimental/comicLayoutsClient.ts",
+      "bytes": 7759,
+      "sha256": "ae25907a43729cf5ffe47d4ff2465a18c5a0634d4e1421ae86af7c9115f1f5ab"
+    },
+    {
+      "blob": "ebfa3e6eb5f2d1aa435083c4628cb5ff0c71b504",
+      "path": "packaging/public-build.json",
+      "bytes": 25011,
+      "sha256": "9966da29b903d564ab2448ab5e135755c1314eb8108c03e9544c69b7d7613628"
+    },
+    {
+      "blob": "f72363b08caf07bf6b456d318258136ecc7b0f64",
+      "path": "tests/test_comic_collections.py",
+      "bytes": 22244,
+      "sha256": "0059d6476156fe7974adfde87c5a43b166b8a313ef27507f856fe66037f2e47e"
+    },
+    {
+      "blob": "124ac5cc75582eaf93e877ef3cf42cbb5819cde7",
+      "path": "tests/test_director_image_foundation_additive.py",
+      "bytes": 13995,
+      "sha256": "32926968e461e299c9ef2898785a922d5b41d75e9908b3b7d4d76eae80400e5e"
+    },
+    {
+      "blob": "c9e333933cd7bd7523217780a4ac083d98980c3b",
+      "path": "tests/test_style_dna_hierarchy.py",
+      "bytes": 12629,
+      "sha256": "ea5d4aef91dbaabcffd71e03bf3d4badb05c2fb17489ebe064285ad4714840fe"
+    },
+    {
+      "blob": "b5c8134cdcdc140dd4d6637c44787c68a1028e1b",
+      "path": "tests/test_style_dna_hierarchy_mounted.py",
+      "bytes": 17000,
+      "sha256": "8760876914f99cc41469258613e1412673430f555af9fecfab501d421986795b"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
