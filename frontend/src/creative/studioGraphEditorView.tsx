@@ -1,3 +1,5 @@
+import { readProjectTemplateSource } from './graphProjectTemplates';
+import { GraphProjectTemplateTools } from './GraphProjectTemplateTools';
 import { GraphTextTemplateTools } from './GraphTextTemplateTools';
 import { GraphDraftChecklist } from './GraphDraftChecklist';
 import { GraphStoryboardStarter } from './GraphStoryboardStarter';
@@ -205,6 +207,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
           <Button onClick={controller.cancelSelectionCopy}>取消复制预览</Button>
         </div>}
       </section>
+      <GraphProjectTemplateTools definition={draft} base={base} selected={selected} catalog={catalog} owner={props.draftOwner} fenceOwner={controller.insertionScope} disabled={!editable || timelineEditor.formDirty} isCurrent={() => current() && !props.isBusy?.()} readSource={id => props.read(() => { if (!props.draftOwner) throw new Error('项目身份未核对。'); return readProjectTemplateSource(props.client, props.draftOwner, id, current); })} onApply={(definition, ids) => { change(definition); setSelected(ids); }} />
       <GraphTextTemplateTools definition={draft} catalog={catalog} owner={controller.insertionScope} disabled={!editable || timelineEditor.formDirty} isCurrent={() => current() && !props.isBusy?.()} onApply={(definition, ids) => { change(definition); setSelected(ids); }} />
       <GraphCanvas insertionScope={canvas ? controller.insertionScope : undefined}
         onInsertionInteraction={canvas ? controller.invalidatePositionedInsertion : undefined}

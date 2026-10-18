@@ -1,0 +1,21 @@
+import { expect, it } from 'vitest';
+import { createProjectGraphTemplate, planProjectGraphTemplate, readProjectGraphTemplate } from './graphProjectTemplates';
+import { modelCatalog, modelGraph } from './studioGraphModel.testFixtures';
+import { blankGraph } from './graphDraft';
+import type { StudioGraphDraftOwner } from './studioGraphLocalDraft';
+const owner: StudioGraphDraftOwner = { projectId: 'model_project', incarnation: 'file:instance', actorId: 'actor', actorWorkspaceId: '', mode: 'local', workspaceId: '', storylineId: '', branchId: '' };
+it('exports only a pinned owner/source reference and reuses the original authorized copy planner', () => { const source = modelGraph(), raw = createProjectGraphTemplate(source, ['input', 'generate'], owner); expect(raw).not.toContain('Author source'); expect(raw).not.toContain('parameters'); expect(raw).not.toContain('sessionToken'); const template = readProjectGraphTemplate(raw, owner), target = { ...blankGraph(), schema_version: 2 as const }; const planned = planProjectGraphTemplate(template, source, target, modelCatalog(), owner); expect(planned.result.definition.nodes).toHaveLength(2); expect(planned.result.definition.nodes[0].id).not.toBe('input'); expect(target.nodes).toEqual([]); });
+it.each(['actor', 'incarnation', 'branch', 'extra', 'version', 'digest', 'readonly', 'stale', 'project'])('refuses %s without copying', mode => { const source = modelGraph(), template = readProjectGraphTemplate(createProjectGraphTemplate(source, ['input'], owner), owner), current = { ...owner };
+ if (mode === 'actor') current.actorId = 'other'; if (mode === 'incarnation') current.incarnation = 'file:other'; if (mode === 'branch') current.branchId = 'other'; if (mode === 'extra') (template as any).session_token = 'not-a-real-token'; if (mode === 'version') source.version++; if (mode === 'digest') source.definition_digest = 'e'.repeat(64); if (mode === 'readonly') source.can_edit = false; if (mode === 'stale') source.reference_states = [{ node_id: 'input', state: 'STALE' }]; if (mode === 'project') source.project_id = 'other';
+ expect(() => planProjectGraphTemplate(template, source, { ...blankGraph(), schema_version: 2 }, modelCatalog(), current)).toThrow();
+});
+
+import { vi } from 'vitest';
+import { readProjectTemplateSource } from './graphProjectTemplates';
+import { imageGraphRecord, imageGraphCatalog } from './studioImageGraph.testFixtures';
+it('plans a source-pinned image graph without putting media or provider configuration into the file', () => { const source = imageGraphRecord(), imageOwner = { ...owner, projectId: source.project_id }; const raw = createProjectGraphTemplate(source, source.definition.nodes.map(node => node.id), imageOwner); expect(raw).not.toContain('image-provider'); expect(raw).not.toContain('parameters'); const planned = planProjectGraphTemplate(readProjectGraphTemplate(raw, imageOwner), source, { ...blankGraph(), schema_version: 4 }, imageGraphCatalog(), imageOwner); expect(planned.result.nodeCount).toBe(5); expect(planned.result.definition.nodes[0].parameters).toEqual(source.definition.nodes[0].parameters); expect(planned.result.edgeCount).toBe(4); });
+it('checks actual project incarnation before and after the original source read', async () => { const source = modelGraph(), client = { overview: vi.fn().mockResolvedValue({ project: { id: owner.projectId, incarnation: owner.incarnation } }), graphs: { get: vi.fn().mockResolvedValue(source) } } as any;
+ expect(await readProjectTemplateSource(client, owner, source.id, () => true)).toBe(source); expect(client.overview).toHaveBeenCalledTimes(2); expect(client.graphs.get).toHaveBeenCalledTimes(1);
+ client.overview.mockReset().mockResolvedValueOnce({ project: { id: owner.projectId, incarnation: owner.incarnation } }).mockResolvedValue({ project: { id: owner.projectId, incarnation: 'file:replacement' } });
+ await expect(readProjectTemplateSource(client, owner, source.id, () => true)).rejects.toThrow('项目实例');
+});

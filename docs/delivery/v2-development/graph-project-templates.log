@@ -1,0 +1,31 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/graphSelectionCopy.test.ts (17 tests) 17ms
+ ✓ src/creative/graphProjectTemplates.additive.test.ts (10 tests) 7ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (9 tests) 4780ms
+   ✓ independent studio graph content integration > promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing 1033ms
+   ✓ independent studio graph content integration > saves an empty disconnected definition through the scoped owner and reopens it without creating a run 497ms
+   ✓ independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job 943ms
+   ✓ independent studio graph content integration > retains the CAS-conflicted draft until an explicit checked adoption of the separately fetched server version 772ms
+   ✓ independent studio graph content integration > protects unsaved graph input when leaving the graph content or fixed module switcher 481ms
+   ✓ independent studio graph content integration > clears private graph draft after authoritative access denial and rejects a late scope response 336ms
+   ✓ independent studio graph content integration > displays redacted saved references without enabling a full-save or deletion roundtrip 357ms
+
+ Test Files  3 passed (3)
+      Tests  36 passed (36)
+   Start at  21:48:38
+   Duration  8.61s (transform 2.76s, setup 45ms, collect 3.84s, tests 4.80s, environment 387ms, prepare 206ms)
+
+src/creative/graphProjectTemplates.ts(13,49): error TS2339: Property 'workspace_id' does not exist on type 'StudioGraphScope'.
+  Property 'workspace_id' does not exist on type '{ mode: "local"; novel_id: string; }'.
+src/creative/graphProjectTemplates.ts(13,93): error TS2339: Property 'storyline_id' does not exist on type 'StudioGraphScope'.
+  Property 'storyline_id' does not exist on type '{ mode: "local"; novel_id: string; }'.
+src/creative/graphProjectTemplates.ts(13,137): error TS2339: Property 'branch_id' does not exist on type 'StudioGraphScope'.
+  Property 'branch_id' does not exist on type '{ mode: "local"; novel_id: string; }'.
+src/creative/graphProjectTemplates.ts(14,41): error TS2339: Property 'workspace_id' does not exist on type 'StudioGraphScope'.
+  Property 'workspace_id' does not exist on type '{ mode: "local"; novel_id: string; }'.
+src/creative/graphProjectTemplates.ts(14,71): error TS2339: Property 'storyline_id' does not exist on type 'StudioGraphScope'.
+  Property 'storyline_id' does not exist on type '{ mode: "local"; novel_id: string; }'.
+src/creative/graphProjectTemplates.ts(14,101): error TS2339: Property 'branch_id' does not exist on type 'StudioGraphScope'.
+  Property 'branch_id' does not exist on type '{ mode: "local"; novel_id: string; }'.
