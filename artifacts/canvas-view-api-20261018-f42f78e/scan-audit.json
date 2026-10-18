@@ -1,0 +1,145 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "c5387f11ad5b3e23fce68a497a3e78184b36be2d",
+      "path": "API_CATALOG.json",
+      "bytes": 1455893,
+      "sha256": "2618ebe9f2c0c3175d5a65e2c510b04a875d4d25e4ca3d7b5920c8046fbbd324"
+    },
+    {
+      "blob": "5b666ec1e48991af36449f6e87eea11ee5faebfd",
+      "path": "API_CATALOG.md",
+      "bytes": 388911,
+      "sha256": "ec8a818f4e5a55fd818e5219f06f3f8c14e86c65501b42e7e4d456ba369a4d38"
+    },
+    {
+      "blob": "e7e2e42c0d11c32bb0d6d710a73560938b0e79cc",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 596880,
+      "sha256": "8de922459e35d9e2850a48a5b5c50f5e8aa574cad4ce5819db6df88f5791773b"
+    },
+    {
+      "blob": "9c07a2a63ee643d8cb7d898ba60741c3ee033abd",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 129241,
+      "sha256": "787ae8ad944a156aa3c470e16c9531fd38871eaaed5fa1248ad5824e2f8b9e61"
+    },
+    {
+      "blob": "1182b9fab6e194b449fadaa66c26179d6b347c86",
+      "path": "app/creative/canvas_view_api.py",
+      "bytes": 3150,
+      "sha256": "aab57d8c1d3b114795daf82c5bae49cdc6b573697dc0867f6e9bf80d57d89c8c"
+    },
+    {
+      "blob": "97a2bd5fa4b51ee7eb2ce1eb92cc691b9b008105",
+      "path": "app/creative/graph_api.py",
+      "bytes": 16854,
+      "sha256": "11e16e2ecc86852683611cb434ad73cccdbd30816c9d7c061a46d29b03bdfb8b"
+    },
+    {
+      "blob": "adcf3ba4a2ae8a4125ece88c525c8fcc8dfea612",
+      "path": "app/creative/workspace_api.py",
+      "bytes": 24241,
+      "sha256": "de2833d2d5cdf248f7d149f2a7e347fa0bf486929a39c3d93e9f29324b8300b5"
+    },
+    {
+      "blob": "d23e54ae5f19cd633207560c45410a4933880f42",
+      "path": "docs/CREATIVE_CANVAS_VIEW_API.md",
+      "bytes": 2655,
+      "sha256": "f282a47ad258a1717647616bb576590f64e528dfc3f2c385d9a68972dac14b16"
+    },
+    {
+      "blob": "103919da72ca75454d7ba6942c96a504892fe692",
+      "path": "docs/delivery/v2-development/canvas-view-api-file-final.json",
+      "bytes": 684049,
+      "sha256": "741fffe0a7b37c41a2649eb4253c732da741de94b5fe059b9b4f5835bc0d5097"
+    },
+    {
+      "blob": "2d049c7f2bb46d73b10468e63f6e9f08e370ac33",
+      "path": "docs/delivery/v2-development/canvas-view-api-file-final.log",
+      "bytes": 1045,
+      "sha256": "f9d55b966484936049ab692f8b7b82da0a1898d2547938e5bde73f3354a2a377"
+    },
+    {
+      "blob": "ce6482325ae3fa163f78cde8cba7524f0483d7ea",
+      "path": "docs/delivery/v2-development/canvas-view-api-file.json",
+      "bytes": 684030,
+      "sha256": "6f78b62e20a3dfdd6664dc363d611351d4e5be898cc97fa5f42843dadf2419b3"
+    },
+    {
+      "blob": "82072d7f21a7ace4da174ba017b2fcc74c6979fb",
+      "path": "docs/delivery/v2-development/canvas-view-api-file.log",
+      "bytes": 1043,
+      "sha256": "aff5a242b4e4b8e94a80eaf062b77aa5880c9a734d3c034a3757ab937c7fd524"
+    },
+    {
+      "blob": "ce14722843a574b1801ff0968d31acba78f01e77",
+      "path": "docs/delivery/v2-development/canvas-view-api-pg-final-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "236e395cc2a6b71a04cd14e83fdecd5fbafc3833f646ec9037797395022d88eb"
+    },
+    {
+      "blob": "dcf915829ca424c4f3e0a2298a02551af8e3e873",
+      "path": "docs/delivery/v2-development/canvas-view-api-pg-final.json",
+      "bytes": 684106,
+      "sha256": "a35f2974b5b9747ebb4e1f0a5d44e69c86586756caaf6d86b21ae0055be0792f"
+    },
+    {
+      "blob": "d795cdb8bc5f59e13f13ccbd7790c4428ba84559",
+      "path": "docs/delivery/v2-development/canvas-view-api-pg-final.log",
+      "bytes": 1050,
+      "sha256": "22fcc4cf98ede671e36c8023ec66d2cb082670d92869828763904ea7e07bb075"
+    },
+    {
+      "blob": "fb6e48f7cd90ac297c11bc4e539b1f33f2c7abbe",
+      "path": "docs/delivery/v2-development/canvas-view-api-pg-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "404c27d19abf38a937b15a134385803d9f8156c4da28776a99583838ab795095"
+    },
+    {
+      "blob": "422727b152d452cc1730add67730ee9ed86c896b",
+      "path": "docs/delivery/v2-development/canvas-view-api-pg.json",
+      "bytes": 684046,
+      "sha256": "d8103cd183f4e59d83afd16864c62442f69f9afb1ef030875acd072ecec5b0f8"
+    },
+    {
+      "blob": "6deadf64cf4c8ed272fd78c66a17bd7d7985c551",
+      "path": "docs/delivery/v2-development/canvas-view-api-pg.log",
+      "bytes": 1048,
+      "sha256": "4771dba783986aba18aa6673f12355b975fed8278a7d089275ac4a3e5470f7c7"
+    },
+    {
+      "blob": "c9b12f39ef5eb5a94ca1ae52fbdb8fc499c05920",
+      "path": "docs/delivery/v2-development/canvas-view-api-public.json",
+      "bytes": 684183,
+      "sha256": "fdbb98c96b8c4f912f73e595d10649caf209279514d8c114d5442a8be438d34f"
+    },
+    {
+      "blob": "78e9bf9f65432f3f7f75855f98d0ec2ee7944a7b",
+      "path": "docs/delivery/v2-development/canvas-view-api-public.log",
+      "bytes": 634,
+      "sha256": "0165b0ec59129b69844375a3439dcc3b0c9740d0b82e30f073fe508e49955d30"
+    },
+    {
+      "blob": "78cbe5a306817079c0ece8cf5be449289881ea4e",
+      "path": "packaging/public-build.json",
+      "bytes": 23831,
+      "sha256": "455f75d52696e56dece7e69bdf8cd873cc1fa3c1f1f967cde397d3c5ceff70fc"
+    },
+    {
+      "blob": "9823d6d185f5c373c2d0600c9898155ac83e227a",
+      "path": "tests/test_canvas_view_api_additive.py",
+      "bytes": 5624,
+      "sha256": "199ab40480c4c3364497b7bd5c0b0498d2f0fca2c9bc9b86e0d6504b585174a9"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
