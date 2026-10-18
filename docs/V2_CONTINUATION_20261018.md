@@ -190,3 +190,11 @@ Product 033a4f6a258473857c5d0ecba56be564563871f2 is archived at 50b4e54afc67694f
 See delivery/v2-development/video-reference-isolated-summary-20261018.md for actual-PTS sampled video references and strict limitations. This is a partial closure of remaining group5, not full Video preparation. Catalog2401 fingerprint82b5ec4f5f29bc8fbccd638ef74668dffa23939b691026c3cec81646a1a8abb1.
 
 Model Center single-file transfer mechanism is currently in development with synthetic tests only. Empty reviewed source catalog/destination and POSIX-only safety mean it cannot be described as working downloads for current Windows/catalog models. Windows support, trusted production manifests and actual upstream acceptance remain separate; no real model downloads, fees or credentials were used.
+
+## 17:41 partial transfer checkpoint
+
+Product be9a72314b785da31b3400001a89cf4d64b64402 is archived at 5252f72e1d9ccf6a2e492fb2aa6ed1ac1ca04677, parent 50b4e54afc67694f3e7900efedc36145cc33c1de. Anonymous readback verified 12 files / 5,098,160 bytes and exact content identities. Backend 452 passed (14 PG variants not requested), integrated UI 227 + TypeScript/Vite/token, PUBLIC 6 passed. Initial test-only generic typing failure is retained. Catalog 2417, fingerprint c89b2d50cd9edb15954084a7da62fb6c33bdca274082bf9d2bb83ae3ceab1759.
+
+This is partial Model Center transfer infrastructure. Production manifests/destination are empty, no provisioning UI/loader exists, and Windows fails closed. No current catalog model has become downloadable. Exact trusted metadata, destination provisioning, Windows support and real upstream acceptance remain open. See docs/model_center_controlled_transfers.md and delivery/v2-development/model-transfer-integration-summary-20261018.md. Do not mark remaining group7 or M3 complete.
+
+Next active implementation: bounded opt-in saved-shot image thumbnails and text/image comparison in original CreativeCanvas board, authenticated exact formal Asset pins and bounded image resources. VIDEO_WORKFLOW benchmark is undergoing read-only design review, not implementation yet. No main merge, Release, actual model download or paid service.
