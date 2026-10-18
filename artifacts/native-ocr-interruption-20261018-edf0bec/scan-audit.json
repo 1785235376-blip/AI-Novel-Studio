@@ -1,0 +1,115 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "e0145423fa73509576357303db58e85e55ab07a8",
+      "path": "API_CATALOG.json",
+      "bytes": 1450100,
+      "sha256": "54403c2aae17662e81dfa6d4a179c8f2ede3f190f0681eac1fcf5bc278c23b19"
+    },
+    {
+      "blob": "b9bbf8c5a2c81391f2f07349c9d5ec537519278f",
+      "path": "API_CATALOG.md",
+      "bytes": 387510,
+      "sha256": "0a0d6101643f41dbd41637c2d86fe5e0f9ff63d53eba29b3fc322ef907597c01"
+    },
+    {
+      "blob": "cb207b987174c1a8e1f4314c2af7719eb318f48a",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 593569,
+      "sha256": "c0b3f16044543082cc1fee475c749192b8c147165a7e73430f63870fa127c1d4"
+    },
+    {
+      "blob": "febcd8c99a51253ace209d743bd330b76d39e945",
+      "path": "app/experimental/research_library.py",
+      "bytes": 37310,
+      "sha256": "6db32b3f366204737dffcfdfe471db2a74f48cd82b72176d57fa233d17941538"
+    },
+    {
+      "blob": "0341e8f42d4b44f543059b66cdc553a52f47ab51",
+      "path": "app/experimental/research_native_ocr.py",
+      "bytes": 22110,
+      "sha256": "c5ab4087431c0f8a9ec8e24f767c0c28f4546f63b2d589e11a0920f339cc96e3"
+    },
+    {
+      "blob": "6e5d1c7ca32e1415b508238d4c79bce2f33f1a23",
+      "path": "docs/RESEARCH_OCR_INTERRUPTION_FEEDBACK.md",
+      "bytes": 2124,
+      "sha256": "c4dad77213d9ec8590cd7ecb86e7eef30ce182327e994fe38081de66097989bc"
+    },
+    {
+      "blob": "e11418cccf07edae9b4478a14911abb26859ca6d",
+      "path": "docs/delivery/v2-development/native-ocr-interruption-build-r1.json",
+      "bytes": 679012,
+      "sha256": "dde8421510a2dc6e301081ddc64ee127480dd4308fcfe7546dd9c50e23a1d158"
+    },
+    {
+      "blob": "03d7195ded43f1f0d81685a98ed658ede6a3bb4c",
+      "path": "docs/delivery/v2-development/native-ocr-interruption-build-r1.log",
+      "bytes": 2708,
+      "sha256": "b1bec0d9b6f4721484b19e240a080742201ac561f0f7a58d79365c2122463952"
+    },
+    {
+      "blob": "3d7d988740a79c2043cb407ecb7710096aa7f198",
+      "path": "docs/delivery/v2-development/native-ocr-interruption-file-r1.json",
+      "bytes": 678695,
+      "sha256": "0ecd69795a0196afa138837d71d81f85515596234c8ced0af1023653b448d1f8"
+    },
+    {
+      "blob": "e7615bc28462ab5cb9c1d461f6d6005df8aa640d",
+      "path": "docs/delivery/v2-development/native-ocr-interruption-file-r1.log",
+      "bytes": 1076,
+      "sha256": "bd5bad5fa846adad10865ad2f885bd5a54b2d5e3f14b6c048f8b5b920d850cd3"
+    },
+    {
+      "blob": "08d81723bb255eafe3ea3f1a3845e01df3501724",
+      "path": "docs/delivery/v2-development/native-ocr-interruption-pg-r1-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "7178f2bd60675e86d456493a33714bd7223711748efe5a4ccf3f8bf1d3434d88"
+    },
+    {
+      "blob": "1e0db3d5784ff8b1555ea72872a6b5813ba52f20",
+      "path": "docs/delivery/v2-development/native-ocr-interruption-pg-r1.json",
+      "bytes": 678752,
+      "sha256": "6c66d589fc6dec9bdebd851b1f1326c61eb53817c1fafbcb2d4960a2246ad1d2"
+    },
+    {
+      "blob": "994cec82c34f3b468035a59f56e91f1d1ccb9484",
+      "path": "docs/delivery/v2-development/native-ocr-interruption-pg-r1.log",
+      "bytes": 1081,
+      "sha256": "4063d70dfc6c9bc77a355ef3eb2bc22fbbccbb52479f739e0c93da18cd46386d"
+    },
+    {
+      "blob": "47b0f880332dd0f95acc64478937199548d19890",
+      "path": "frontend/src/experimental/ResearchNativeOCRPanel.test.tsx",
+      "bytes": 9010,
+      "sha256": "2a385f645d0699f122ee5d194708ad71c1e3c6b2df608e1d29480442d5098110"
+    },
+    {
+      "blob": "15ac892d7d44ee99d683439b4c2913461c4739a6",
+      "path": "frontend/src/experimental/ResearchNativeOCRPanel.tsx",
+      "bytes": 7537,
+      "sha256": "1268117ef27aec3ae193fe7db64ad7f362dece4f6e0372a2c2e930436371fa1c"
+    },
+    {
+      "blob": "b1ecc4e988028fce10c32392dfc17f9d52569956",
+      "path": "frontend/src/experimental/researchNativeOCRClient.ts",
+      "bytes": 3266,
+      "sha256": "b63eca2d90090825785686d8ff6bd10c0c0d7f1391508297ea1eab2811bcd7bb"
+    },
+    {
+      "blob": "ed4c56cacdafd9c868babde4de8b7f97713cbbde",
+      "path": "tests/test_research_native_ocr_coordinator_additive.py",
+      "bytes": 9682,
+      "sha256": "cb7bed7bd93b961dc7bcd3740c1a60f41e6df8caee212918d48ec8e59f85248b"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}

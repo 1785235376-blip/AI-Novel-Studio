@@ -1,0 +1,83 @@
+{
+  "source_head": "edf0beca08b10a6595d3d1675781ba04c2e97ac3",
+  "members": [
+    {
+      "path": "assets/App-DRLVwzqD.css",
+      "bytes": 215510,
+      "sha256": "fdaaace8b9d67b861d6688d8ad5690b307b8f5291b9d7c6946924e066051dbc4"
+    },
+    {
+      "path": "assets/App-lWV3dRVX.js",
+      "bytes": 2502985,
+      "sha256": "c7b17a7204d0e7dd9b860ed5ec48ffee8f022995cd55bc2428346bc540bce88b"
+    },
+    {
+      "path": "assets/ExperimentalWorkbench-BkplvLLE.css",
+      "bytes": 4227,
+      "sha256": "eb03b5f08475d0fc486898aaedcfe9cf3c5d7bd09b82320b5a78c85ee8dc3b9e"
+    },
+    {
+      "path": "assets/ExperimentalWorkbench-CF8lIjWg.js",
+      "bytes": 822049,
+      "sha256": "d445db3fbc9d1ced1d881306b902898737b2f0ad198e936f4c41157abf7395d9"
+    },
+    {
+      "path": "assets/Health-DTlRGJcO.js",
+      "bytes": 989,
+      "sha256": "69b629999d8ed83850441bca7c5a970f4aaae3d89ade1a242293fb0597f54c44"
+    },
+    {
+      "path": "assets/LocalTutorIntegration-BRshkv99.css",
+      "bytes": 3626,
+      "sha256": "87b9bc1757000d4ff1364524d627600b7d4ad88eaa3f21ea0d072d6ad29bb9dc"
+    },
+    {
+      "path": "assets/LocalTutorIntegration-CB15fFYE.js",
+      "bytes": 47635,
+      "sha256": "5591f32daf3a944b8032d5294208e5ab086fdb058fa568cdc52f46d3ee823ad7"
+    },
+    {
+      "path": "assets/editor-vendor-WoPbGn4i.js",
+      "bytes": 307091,
+      "sha256": "10bb7ac7f6564af822100aee709abbec617a51b0efb78a1e8d92f085e3744499"
+    },
+    {
+      "path": "assets/index-Cj-tLRQ5.css",
+      "bytes": 32292,
+      "sha256": "5399d8df3be57bb061fb8c48846d79c359846f844e18b776c58f2de48c58ade7"
+    },
+    {
+      "path": "assets/index-DMKjTMcG.js",
+      "bytes": 30154,
+      "sha256": "06fa3aa5401408b57cac4966735a00a021219e369368fe5fe60fffba36db6f04"
+    },
+    {
+      "path": "assets/query-vendor-CUnTvSIi.js",
+      "bytes": 45602,
+      "sha256": "1fc0a3c6574061fdc18929187fdf6b0d00ab3c003918530126100a762e69a97b"
+    },
+    {
+      "path": "assets/react-vendor-D3pO_op5.js",
+      "bytes": 142976,
+      "sha256": "35539930060cd39417338afc8940bb1213d8d1dff683e25a6eb15291f8adfae9"
+    },
+    {
+      "path": "assets/style-1BmVKbV0.js",
+      "bytes": 45115,
+      "sha256": "1f9a65792f7793224410cfbb5290a7e2211e29bed7226234560db12204dec988"
+    },
+    {
+      "path": "assets/style-6MlQLGa4.css",
+      "bytes": 3788,
+      "sha256": "9da58e75fb03b4ae56b9204f968c8a4b155e4527f24008364c5eb9c1ad85448d"
+    },
+    {
+      "path": "index.html",
+      "bytes": 326,
+      "sha256": "ba0fc8f587eb1f7d69d319d6fb967108fc37188fb2591350fe439c355bb28f39"
+    }
+  ],
+  "hits": [],
+  "browser_acceptance": "BLOCKED",
+  "release": false
+}
