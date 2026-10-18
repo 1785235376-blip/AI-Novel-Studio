@@ -1,0 +1,37 @@
+F..................                                                      [100%]
+=================================== FAILURES ===================================
+______ test_explicit_original_preview_binds_scene_ids_before_notes_clear _______
+
+lifecycle = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/screenplay-priv...firmed': True, 'runtime_config': {'management': 'EXTERNAL', 'type': 'LLAMA_CPP', 'endpoint': 'http://127.0.0.1:8999'}})
+
+    def test_explicit_original_preview_binds_scene_ids_before_notes_clear(lifecycle):
+        e = screenplay(lifecycle); note = e.row['director_notes'][0]
+        result = preview(e); stored = raw_proposal(e); p = stored['model_preview']
+        assert result['id'] == stored['id'] and p['model_called'] is False
+        assert stored['director_notes'] == []
+        assert p['source_binding']['contract'] == 'CREATIVE_DIRECTOR_SCREENPLAY_SOURCE_V2'
+        assert p['source_binding']['source_kind'] == 'SCREENPLAY'
+        assert p['source_mapping'] == [{'note_id': note['id'], 'scene_id': 'scene-a', 'source_sequence': 4, 'number': 1}]
+        data = json.loads(p['prompt'].removeprefix(SCREENPLAY_CONTRACT+'\n'))
+        assert data['source_mapping'] == p['source_mapping']
+        assert data['screenplay']['scenes'] == e.source['scenes']
+        assert not e.manager.jobs
+        # No accidental activation of old dispatcher or public proposal projection.
+        with pytest.raises(ValueError):
+            e.coordinator._dispatch_independent(e.ctx,e.row['id'], {
+                'expected_version': stored['version'], 'reviewed_preview_digest': p['preview_digest']},
+                e.guard,host_authority=e.authority)
+>       with pytest.raises(ValueError): e.documents.proposals.get(e.nid,e.scope,e.actor,e.row['id'])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_v2_screenplay_private_preview.py:43: Failed
+=============================== warnings summary ===============================
+tests/test_v2_screenplay_private_preview.py::test_explicit_original_preview_binds_scene_ids_before_notes_clear
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_screenplay_private_preview.py::test_explicit_original_preview_binds_scene_ids_before_notes_clear
+1 failed, 18 passed, 1 warning in 5.61s

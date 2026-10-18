@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Explicit private screenplay preview precursor (2026-10-18 02:31 UTC)
+
+The original Director coordinator now has an explicit internal screenplay-preview method using a separate passive CREATIVE_DIRECTOR_SCREENPLAY_SOURCE_V2 binding. It retains original Host/actor checks, original source/incarnation leases and original local known-zero broker preview. Exact scene/note associations are frozen inside the preview digest before the existing preview transition clears candidate notes. No model is called, no job is admitted, and execution_available is explicitly false. Legacy job binding, dispatcher, transport and UI remain STORYBOARD-only. Public proposal projection keeps private prompt/model state hidden using the existing MODEL_UNAVAILABLE projection.
+
+Focused new contracts plus existing original Director execution lifecycle:182 PASS. First new test incorrectly expected public get to throw instead of the original redacted projection; corrected only that new assertion and retained failure evidence. Actual File/broker state was used with fixture local-provider transport; no live model or browser claim. Next work is exact V2 dispatch/terminal/pending-review integration, not a completed screenplay runtime.
+
 ## Independent screenplay scene contract precursor (2026-10-18 02:28 UTC)
 
 Added passive screenplay_model.py with a separate INDEPENDENT_SCREENPLAY_SCENE_CONTEXT_V1 contract. Against genuine original File-created independent SCREENPLAY documents and proposals, it binds exact source digest/version/incarnation and existing note IDs to authored scene order, builds a bounded untrusted-source prompt without fake chapters/shots, and strictly validates one output note per scene plus original excerpt evidence and required reasoning/uncertainty. Seventeen focused checks PASS, including malformed output, changed source/association, prompt/output limits, duplicate JSON and unchanged original STORYBOARD binding. No File writes occur during this passive processing.

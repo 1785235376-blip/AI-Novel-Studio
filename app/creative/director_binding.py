@@ -63,6 +63,18 @@ class CreativeDirectorBinding(_Frozen):
         return self
 
 
+class CreativeDirectorScreenplayBinding(CreativeDirectorBinding):
+    """Explicit passive V2 source; legacy job admission remains V1-only."""
+    contract: Literal["CREATIVE_DIRECTOR_SCREENPLAY_SOURCE_V2"]
+    source_kind: Literal["SCREENPLAY"]
+
+
+def _passive_source_binding(value):
+    contract = value.get("contract") if isinstance(value, dict) else getattr(value, "contract", None)
+    model = CreativeDirectorScreenplayBinding if contract == "CREATIVE_DIRECTOR_SCREENPLAY_SOURCE_V2" else CreativeDirectorBinding
+    return model.model_validate(value)
+
+
 def is_creative_director_job(value):
     """Every discriminator independently fences even incomplete/mixed records."""
     get = value.get if isinstance(value, dict) else lambda key, default=None: getattr(value, key, default)
@@ -95,7 +107,7 @@ def creative_director_job_binding(item, *, require_request_digest=True):
 
 
 def _source_authority(documents, binding, actor_id, scope):
-    binding = CreativeDirectorBinding.model_validate(binding)
+    binding = _passive_source_binding(binding)
     if actor_id != binding.actor_id or scope != binding.scope.model_dump():
         raise ValueError("CREATIVE_DIRECTOR_SOURCE_AUTHORITY_MISMATCH")
     return binding
@@ -109,7 +121,7 @@ def _creative_director_owner_lease(documents, binding):
     """Original owner, scope first, with no missing-marker provisioning."""
     from ..file_project_lifecycle import project_operation
     from .project_store import BINDING, _read_marker
-    binding = CreativeDirectorBinding.model_validate(binding)
+    binding = _passive_source_binding(binding)
     store, nid = documents.store, binding.project_id
     key = store.store.key(nid, binding.scope.model_dump())
     if key not in getattr(store.store._local, "active", {}):
@@ -155,7 +167,7 @@ def _validate_creative_director_source_locked(documents, binding, *, actor_id, s
     before, view_before = canonical(raw), canonical(view)
     try:
         row = raw["collections"].get(documents.COLLECTION, {}).get(binding.source_document_id)
-        if (not isinstance(row, dict) or row.get("mode") != "STORYBOARD"
+        if (not isinstance(row, dict) or row.get("mode") != binding.source_kind
                 or row.get("source_independent") is not True
                 or row.get("source_chapter_ids") != [] or row.get("source_evidence") != {}
                 or row.get("source_documents") != {} or row.get("source_privacy") != {}):
@@ -189,7 +201,7 @@ def validate_creative_director_source(documents, binding, *, actor_id, scope):
         # Check unsupported sources before entering an owner that could read it.
         raw = store.store._local.active[store.store.key(nid, scope)]
         row = raw["collections"].get(documents.COLLECTION, {}).get(binding.source_document_id)
-        if (not isinstance(row, dict) or row.get("mode") != "STORYBOARD"
+        if (not isinstance(row, dict) or row.get("mode") != binding.source_kind
                 or row.get("source_independent") is not True or row.get("source_chapter_ids") != []
                 or row.get("source_evidence") != {} or row.get("source_documents") != {}
                 or row.get("source_privacy") != {}):
@@ -222,7 +234,7 @@ def _has_internal_director_record(row):
             contract = value.get("contract")
             if contract is not None and not isinstance(contract, str): return True
             if contract in (CREATIVE_DIRECTOR_INTERNAL_CONTRACT, "CREATIVE_DIRECTOR_SOURCE_V1",
-                            "CREATIVE_DIRECTOR_PENDING_REVIEW_V1"):
+                            "CREATIVE_DIRECTOR_PENDING_REVIEW_V1", "CREATIVE_DIRECTOR_SCREENPLAY_SOURCE_V2"):
                 return True
             stack.extend((item, depth + 1, True) for item in value.values() if isinstance(item, (dict, list)))
         else:

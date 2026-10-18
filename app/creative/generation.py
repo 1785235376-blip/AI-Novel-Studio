@@ -458,12 +458,16 @@ class DirectorModelCoordinator:
             raise ValueError("CREATIVE_DIRECTOR_HOST_AUTHORITY_REQUIRED")
         host_authority.guard()
 
-    def _independent_binding(self, ctx, rid, reviewed_preview_digest="0" * 64):
-        from .director_binding import CreativeDirectorBinding
+    def _independent_binding(self, ctx, rid, reviewed_preview_digest="0" * 64, *, screenplay=False):
+        from .director_binding import CreativeDirectorBinding, CreativeDirectorScreenplayBinding
+        if type(screenplay) is not bool:
+            raise ValueError("CREATIVE_DIRECTOR_SOURCE_OPTION_INVALID")
         # Raw read never provisions a missing Creative File marker.
         state = self.store.store.read(ctx.novel_id, ctx.scope)
         row = self.proposals._owned(ctx.novel_id, ctx.scope, ctx.actor, rid, state)
-        return CreativeDirectorBinding(contract="CREATIVE_DIRECTOR_SOURCE_V1", source_kind="STORYBOARD",
+        model = CreativeDirectorScreenplayBinding if screenplay else CreativeDirectorBinding
+        return model(contract="CREATIVE_DIRECTOR_SCREENPLAY_SOURCE_V2" if screenplay else "CREATIVE_DIRECTOR_SOURCE_V1",
+            source_kind="SCREENPLAY" if screenplay else "STORYBOARD",
             project_id=ctx.novel_id, project_incarnation=row["project_incarnation"], actor_id=ctx.actor,
             scope=deepcopy(ctx.scope), source_document_id=row["source_document_id"],
             source_version=row["source_version"], source_digest=row["source_digest"],
@@ -544,6 +548,12 @@ class DirectorModelCoordinator:
         return self._preview_independent_contract(ctx, rid, value, guard,
             host_authority=host_authority, output_contract=STORYBOARD_CONTRACT)
 
+    def _preview_independent_screenplay(self, ctx, rid, value, guard, *, host_authority):
+        """Internal explicit preview precursor; no V1 dispatch/read compatibility."""
+        from .screenplay_model import SCREENPLAY_CONTRACT
+        return self._preview_independent_contract(ctx, rid, value, guard,
+            host_authority=host_authority, output_contract=SCREENPLAY_CONTRACT)
+
     def _preview_independent(self, ctx, rid, value, guard, *, host_authority):
         """Preserve the original V1 free-text internal draft request unchanged."""
         return self._preview_independent_contract(ctx, rid, value, guard,
@@ -563,7 +573,8 @@ class DirectorModelCoordinator:
             temperature: float = Field(default=0.0, ge=0, le=2, allow_inf_nan=False)
         body = Input.model_validate(value)
         self._independent_host(host_authority); guard(); self._flags()
-        binding = self._independent_binding(ctx, rid)
+        from .screenplay_model import SCREENPLAY_CONTRACT, screenplay_prompt_data
+        binding = self._independent_binding(ctx, rid, screenplay=output_contract == SCREENPLAY_CONTRACT)
         with self._independent_checkpoint(ctx, rid, guard, host_authority, binding) as (row, source):
             self._independent_version(row, body.expected_version)
             if row.get("model_execution"):
@@ -578,9 +589,12 @@ class DirectorModelCoordinator:
                 "storyboard": {"title": source["title"], "scenes": deepcopy(source["scenes"]), "shots": deepcopy(source["shots"])},
                 "visual_target": visual_target}
             if output_contract is not None:
-                if output_contract != STORYBOARD_CONTRACT:
+                if output_contract == SCREENPLAY_CONTRACT:
+                    data = screenplay_prompt_data(row, source)
+                elif output_contract == STORYBOARD_CONTRACT:
+                    data = _storyboard_prompt_data(row, source)
+                else:
                     raise ValueError("CREATIVE_MODEL_SOURCE_CONTRACT_MISMATCH")
-                data = _storyboard_prompt_data(row, source)
             prompt = (output_contract or CREATIVE_DIRECTOR_INTERNAL_CONTRACT) + "\n" + canonical(data)
             graph_prompt_digest(prompt, max_output_tokens=body.max_output_tokens, temperature=body.temperature)
         def fresh():
@@ -611,6 +625,11 @@ class DirectorModelCoordinator:
             "model_called": False, "automatic_retry": False, "allow_cloud_fallback": False}
         if output_contract is not None:
             preview["output_contract"] = output_contract
+            if output_contract == SCREENPLAY_CONTRACT:
+                # Preview clears candidate notes below. Freeze the exact scene/
+                # note association in its digest, never reconstruct by new IDs.
+                preview["source_mapping"] = deepcopy(data["source_mapping"])
+                preview["execution_available"] = False
         preview["preview_digest"] = digest(preview)
         # Original Creative transaction retains its original history/incarnation.
         with self._independent_transaction(ctx, binding) as raw:
