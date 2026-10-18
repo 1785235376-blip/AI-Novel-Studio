@@ -1,0 +1,6 @@
+{
+  "source_head": "558f3eccc73a438eca1b42532d25d9869acdfa69",
+  "prerequisite": "3be50471b007240f0c090aef831f2b53996d8f35",
+  "bundle": "continuation.bundle",
+  "scope": "Scoped Research OCR controls, React/TypeScript/build checks; browser visual checks blocked and retained"
+}
