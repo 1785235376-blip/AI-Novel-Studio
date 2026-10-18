@@ -150,3 +150,19 @@ it('creates using selected planning IDs in selection order rather than storage o
   const request = fetch.mock.calls.find(([url, init]) => url.endsWith('/interactive-stories') && init.method === 'POST')!;
   const spec = JSON.parse(String(request[1].body)).spec; expect(spec.entry_node_id).toBe('gate'); expect(spec.nodes.map((n: any) => n.node_id)).toEqual(['gate', 'end']);
 });
+
+it.each(['SUPPORTED_SUBSET', 'UNSUPPORTED'] as const)('shows Ink %s before original loss acknowledgement without claiming current-artifact execution', async compatibility => {
+  const fetch = backend(makeStory('APPROVED'), url => url.endsWith('/export-preview') ? reply({ preview_digest: 'c'.repeat(64), can_export: true, losses: ['INK_TARGET_CURRENT_ARTIFACT_NOT_RUN'], media_manifest: [], target_runtime: 'NOT_RUN', analysis,
+    ink_target: { compatibility, version: '2.3.2', artifact_runtime: 'NOT_RUN' }, ink_issues: compatibility === 'UNSUPPORTED' ? [{ code: 'INK_UNSUPPORTED_CHOICE_WHITESPACE', node_id: 'gate', choice_id: 'home' }] : [] }) : undefined);
+  vi.stubGlobal('fetch', fetch); render(<InteractiveStoryPanel client={client()} />); await select();
+  fireEvent.click(screen.getByRole('button', { name: '预检互动导出' }));
+  const status = await screen.findByRole('region', { name: 'Ink 目标兼容状态' });
+  expect(status.textContent).toContain('当前文件运行：NOT_RUN'); expect(status.textContent).toContain('原生 C#：NOT_RUN');
+  if (compatibility === 'UNSUPPORTED') { expect(status.textContent).toContain('包中省略 Ink 脚本'); expect(status.textContent).toContain('节点 gate · 选择 home'); }
+  else expect(status.textContent).toContain('将包含脚本与来源映射');
+  const acknowledgement = screen.getByLabelText('已核对缺失项与兼容性损失，确认生成独立下载');
+  expect(status.compareDocumentPosition(acknowledgement) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  expect((screen.getByRole('button', { name: '生成互动故事包' }) as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(acknowledgement);
+  expect((screen.getByRole('button', { name: '生成互动故事包' }) as HTMLButtonElement).disabled).toBe(false);
+});

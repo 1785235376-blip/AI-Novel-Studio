@@ -10,7 +10,7 @@ export type StoryCatalog = { graphs: { id: string; version: number; title: strin
 export type StoryPlay = { node: Omit<StoryNode, 'choices'>; character_name?: string; choices: { id: string; label: string; enabled: boolean }[]; variables: Record<string, boolean | number>; steps: number; max_steps: number; status: 'PLAYING' | 'ENDING' | 'STEP_CAP_REACHED' | 'NO_EXIT'; path: string[] };
 export type StoryRefreshPreview = { preview_digest: string; retained_nodes: number; changed_source_count: number };
 export type StoryReviewPreview = { preview_digest: string; can_approve: boolean; analysis: StoryAnalysis };
-export type StoryExportPreview = { preview_digest: string; can_export: boolean; losses: string[]; target_runtime: string; media_manifest: { asset_id: string; missing: boolean; packaged: boolean; reason: string }[]; analysis: StoryAnalysis };
+export type StoryExportPreview = { ink_target?: { compatibility: 'SUPPORTED_SUBSET' | 'UNSUPPORTED'; version: string; artifact_runtime: string }; ink_issues?: { code: string; node_id?: string; choice_id?: string; character_id?: string }[]; preview_digest: string; can_export: boolean; losses: string[]; target_runtime: string; media_manifest: { asset_id: string; missing: boolean; packaged: boolean; reason: string }[]; analysis: StoryAnalysis };
 export type StoryRevision = { version: number; status: string; spec: StorySpec; preview_digest: string };
 export function interactiveStoryClient(client: ExperimentalClient) {
   const base = '/interactive-stories', path = (row: InteractiveStory) => `${base}/${encodeURIComponent(row.id)}`;

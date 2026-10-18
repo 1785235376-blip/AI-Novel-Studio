@@ -1,0 +1,1 @@
+tsc -b --pretty false: exit 0; no diagnostics.

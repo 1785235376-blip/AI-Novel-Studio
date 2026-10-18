@@ -1,0 +1,19 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/storyverse-ink-20261018/frontend
+
+ ✓ src/experimental/InteractiveStoryHistory.test.tsx (1 test) 147ms
+ ✓ src/experimental/InteractiveStoryBacktrack.additive.test.tsx (6 tests) 219ms
+ ✓ src/experimental/InteractiveStoryPanel.additive.test.tsx (11 tests) 1682ms
+   ✓ locates exact saved issues in the original dirty editor without writing or discarding Unicode input 450ms
+ ✓ src/experimental/InteractiveStoryPanel.test.tsx (13 tests) 1801ms
+   ✓ authors Unicode choices and typed variables then saves exact original IDs and scope 566ms
+ ✓ src/experimental/InteractiveStoryPanel.membership.test.tsx (25 tests) 3078ms
+   ✓ adds the exact unused ID/version with blank author fields, preserves dirty Unicode and saves only explicitly 577ms
+ ✓ src/experimental/InteractiveStoryPanel.removal.test.tsx (32 tests) 4806ms
+   ✓ previews exact ID and version, explicitly removes only that node, preserves dirty Unicode and saves through the original contract 573ms
+
+ Test Files  6 passed (6)
+      Tests  88 passed (88)
+   Start at  06:04:52
+   Duration  6.15s (transform 635ms, setup 169ms, collect 2.21s, tests 11.73s, environment 3.18s, prepare 553ms)
+

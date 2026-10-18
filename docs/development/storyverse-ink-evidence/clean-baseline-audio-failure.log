@@ -1,0 +1,34 @@
+Fs                                                                       [100%]
+=================================== FAILURES ===================================
+______ test_real_model_adapter_requires_original_runtime_admission[file] _______
+
+env = namespace(rig=namespace(nid='r3-media-c417726de0b74b3a821d46c4b4950d1a', scope={'mode': 'local', 'novel_id': 'r3-media...r', 'created_at': '2026-10-18T21:02:27.475181+00:00', 'updated_at': '2026-10-18T21:02:27.475181+00:00', 'history': []})
+
+    def test_real_model_adapter_requires_original_runtime_admission(env):
+        e=env; e.adapter.definition=replace(e.adapter.definition,verification='CONTRACT_VERIFIED')
+        task=queue(e)
+        assert task['status']=='NOT_CONFIGURED' and e.adapter.calls==[]
+        with pytest.raises(ValueError):action(e,task,'execute')
+        with pytest.raises(ValueError,match='NOT_CONFIGURED'):action(e,task,'resume')
+        catalog=e.service.processing_catalog()
+        assert next(row for row in catalog['operations'] if row['operation']=='ASR')['status']=='NOT_CONFIGURED'
+>       assert catalog['model_runtime_admission']=='NOT_CONFIGURED_ORIGINAL_MEDIA_RUNTIME_REQUIRED'
+E       AssertionError: assert 'ORIGINAL_AUD...OUTE_REQUIRED' == 'NOT_CONFIGUR...TIME_REQUIRED'
+E         
+E         - NOT_CONFIGURED_ORIGINAL_MEDIA_RUNTIME_REQUIRED
+E         + ORIGINAL_AUDIO_MODEL_NODE_EXPLICIT_REGISTERED_LOCAL_ROUTE_REQUIRED
+
+tests/test_surface_freeze_media_engine_adapters.py:367: AssertionError
+=============================== warnings summary ===============================
+../studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_surface_freeze_media_engine_adapters.py::test_real_model_adapter_requires_original_runtime_admission[file]
+  /workspace/scratch/20a0022d2b33/storyverse-baseline-20261018/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_surface_freeze_media_engine_adapters.py::test_real_model_adapter_requires_original_runtime_admission[file]
+1 failed, 1 skipped, 65 deselected, 2 warnings in 4.81s

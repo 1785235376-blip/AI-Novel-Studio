@@ -465,7 +465,9 @@ class GodotExportAdapter:
             'godot/README.txt': b'Godot 4 data adapter, not a playable Godot project. Target runtime NOT_RUN.\nImport story.json using a trusted target integration; consume typed conditions, never eval them.\nUse plain text Labels, not BBCode. Indices are zero-based. Enforce max_steps and typed variable bounds.\nMedia references remain manifest-only. No engine, addons, arbitrary scripts or user code are included.\n'}
 
 
-ENGINE_ADAPTERS: tuple[EngineExportAdapter, ...] = (RenPyExportAdapter(), GodotExportAdapter())
+from .ink_export import InkExportAdapter, LOSSES as INK_LOSSES, PIN as INK_PIN
+
+ENGINE_ADAPTERS: tuple[EngineExportAdapter, ...] = (RenPyExportAdapter(), GodotExportAdapter(), InkExportAdapter())
 
 
 class InteractiveStoryService(SourceFencedService):
@@ -507,7 +509,7 @@ class InteractiveStoryService(SourceFencedService):
         return {'schema': SCHEMA, 'input_schema': StorySpec.model_json_schema(), 'condition_language': 'BOUNDED_BOOL_INT_AST',
                 'supported_targets': ['ENGINE_NEUTRAL_JSON', *[a.target for a in ENGINE_ADAPTERS]],
                 'target_schemas': {'GODOT_4_DATA_ADAPTER': GodotStoryResource.model_json_schema()},
-                'target_limits': {'GODOT_4_DATA_ADAPTER': 'DATA_ONLY_TARGET_IMPORTER_REQUIRED', 'RENPY_8_5_4_TEXT_MENU_SUBSET': 'GENERATED_TEXT_MENU_NO_MEDIA_RUNTIME'},
+                'target_limits': {InkExportAdapter.target: 'TYPED_TEXT_SUBSET_COMMUNITY_PORT_CURRENT_ARTIFACT_NOT_RUN', 'GODOT_4_DATA_ADAPTER': 'DATA_ONLY_TARGET_IMPORTER_REQUIRED', 'RENPY_8_5_4_TEXT_MENU_SUBSET': 'GENERATED_TEXT_MENU_NO_MEDIA_RUNTIME'},
                 'third_party_execution': 'DENY_ALL', 'runtime_status': 'NOT_RUN',
                 'media_policy': 'VERSIONED_REFERENCES_ONLY_NOT_DEPLOYED', 'adapter_policy': 'SHIPPED_TRUSTED_EXPORTERS_ONLY',
                 'max_steps': LIMITS['steps'], 'max_analysis_states': LIMITS['analysis_states'],
@@ -751,10 +753,19 @@ class InteractiveStoryService(SourceFencedService):
         data = ExportIn.model_validate(value); row = self._owned(nid, scope, actor, sid)
         self._version(row, data.expected_version); self._current(nid, scope, row)
         manifest = self._manifest(nid, scope, row); analysis = analyze(row['spec'])
+        ink_analysis = InkExportAdapter().validate(row['spec'])
+        ink_issues = list(ink_analysis['issues'])
+        for node in row['spec']['nodes']:
+            character_id = node['character_id']
+            name = row['capture']['characters'].get(character_id, '')
+            if any(c in name for c in '\n\r\t'):
+                ink_issues.append({'code': 'INK_UNSUPPORTED_SPEAKER_WHITESPACE',
+                    'node_id': node['node_id'], 'character_id': character_id})
         result = {'can_export': row['status'] == 'APPROVED' and analysis['can_review'], 'media_manifest': manifest,
-            'losses': ['MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED', 'NO_TARGET_CUSTOM_SCREENS_ANIMATION_OR_PLUGINS', 'TARGET_WHITESPACE_AND_FONT_RENDERING_NOT_VERIFIED'],
+            'losses': ['MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED', 'NO_TARGET_CUSTOM_SCREENS_ANIMATION_OR_PLUGINS', 'TARGET_WHITESPACE_AND_FONT_RENDERING_NOT_VERIFIED', *INK_LOSSES, *['INK_TARGET_OMITTED_UNSUPPORTED:' + issue['code'] for issue in ink_issues]],
+            'ink_target': {**INK_PIN, 'compatibility': 'UNSUPPORTED' if ink_issues else 'SUPPORTED_SUBSET'}, 'ink_issues': ink_issues,
             'target_runtime': 'NOT_RUN', 'schema': SCHEMA, 'analysis': analysis,
-            'engine_adapters': [{'target': a.target, 'schema_validation': 'CONTRACT_VERIFIED', 'runtime': 'NOT_RUN'} for a in ENGINE_ADAPTERS]}
+            'engine_adapters': [{'target': a.target, 'schema_validation': 'UNSUPPORTED' if a.target == InkExportAdapter.target and ink_issues else 'CONTRACT_VERIFIED', 'runtime': 'NOT_RUN'} for a in ENGINE_ADAPTERS]}
         result['preview_digest'] = digest([self._receipt(row), result]); self._current(nid, scope, row); reauthorize(); return result
 
     def export(self, nid, scope, actor, sid, value, *, reauthorize=lambda: None):
@@ -773,7 +784,15 @@ class InteractiveStoryService(SourceFencedService):
             'game/story.rpy': renpy_export(row['spec'], row['capture']['characters']).encode('utf-8'),
             'README.txt': ('Experimental B07 independent export, not a manuscript or Canon write.\nExtract into a NEW empty directory.\nstory.json is the versioned engine-neutral story.\ngame/story.rpy is a generated Ren\'Py 8.5.4 documented text/menu subset.\nTarget runtime NOT_RUN. No runtime, plugins, media bytes or third-party scripts included.\nUse a new Ren\'Py project to inspect the generated file. Never overwrite an existing project.\nMedia references, missing resources and compatibility losses are listed separately.\nThe in-app preview uses bounded deterministic playback; character names and dialogue are escaped.\n').encode('utf-8')}
         for adapter in ENGINE_ADAPTERS:
+            if adapter.target == InkExportAdapter.target and preview['ink_issues']:
+                files['ink/validation.json'] = encode({'schema': 'poemseed-ink-exchange/1',
+                    **preview['ink_target'], 'issues': preview['ink_issues'],
+                    'script_packaged': False, 'losses': ['INK_TARGET_OMITTED_UNSUPPORTED']})
+                continue
             files.update(adapter.files(row['spec'], row['capture']['characters']))
+        files['source-receipt.json'] = encode({'schema': 'interactive-export-source-receipt/1',
+            'adaptation_id': row['id'], 'adaptation_version': row['version'], 'source_digest': digest(row['capture']),
+            'review_receipt': self._receipt(row), 'export_preview_digest': preview['preview_digest']})
         files['checksums.json'] = encode({name: hashlib.sha256(content).hexdigest() for name, content in files.items()})
         buffer = io.BytesIO()
         with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as archive:
