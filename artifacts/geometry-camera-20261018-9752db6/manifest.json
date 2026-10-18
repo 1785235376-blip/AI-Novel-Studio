@@ -1,0 +1,8 @@
+{
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "source_head": "9752db6a33b9fe7c9981670897b641d17d0a8cd5",
+  "prerequisite": "2635456585ed0842a2c893eae04672d337f73c30",
+  "source_branch": "work/dot-recovered-20261018",
+  "publication": "archive only; no main merge or Release",
+  "scope": "geometry-camera"
+}

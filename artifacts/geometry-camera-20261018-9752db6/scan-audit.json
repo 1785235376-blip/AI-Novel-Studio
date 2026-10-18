@@ -1,0 +1,211 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "3a3ccb5b42cdc44bd3d4d619b27735db73c8aa29",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 43717,
+      "sha256": "c335e6e1806989e8e42e395f09355c9c772726a3731b30ea02238ee4a510a949"
+    },
+    {
+      "blob": "3a6da2b502645636fcbd1969369a652374671362",
+      "path": "docs/delivery/v2-development/comic-geometry-final-focused.json",
+      "bytes": 637530,
+      "sha256": "517aa895f4194e8440b02ab9ff9462fe27466f11e8cce1279da7da85056c7ce6"
+    },
+    {
+      "blob": "cdfbcba15f528f0bb1eac4403dbc89e60e0fec29",
+      "path": "docs/delivery/v2-development/comic-geometry-final-focused.log",
+      "bytes": 5072,
+      "sha256": "f14424450214652da3b6b0fd9c0673f02a8aacfb7ea085b7a227f009ba4e5856"
+    },
+    {
+      "blob": "6f56877327aee011ad26305f928867addaa6ed46",
+      "path": "docs/delivery/v2-development/comic-geometry-final-tokens.json",
+      "bytes": 636861,
+      "sha256": "55388fa84416128774eb8aeb5b15e48a5f03cc43159577b33bba94b88889f1db"
+    },
+    {
+      "blob": "2c2ab233ea947ec96d06d9f549b47203fa23f68e",
+      "path": "docs/delivery/v2-development/comic-geometry-final-types.json",
+      "bytes": 636884,
+      "sha256": "1d46e871a58be8cc6f3f89b9364a52bdfa2311ae0d4062832725687a486c088f"
+    },
+    {
+      "blob": "6952c6786f77675483553700be7b78b3d1550b99",
+      "path": "docs/delivery/v2-development/comic-geometry-focused.json",
+      "bytes": 637476,
+      "sha256": "4e1084e3ff8fd863bc6f50dcee439f27bb226cb1e687284eb483ae888982f12b"
+    },
+    {
+      "blob": "b2c6dd1318dc3f7613b1a72263eaa658408cab0e",
+      "path": "docs/delivery/v2-development/comic-geometry-focused.log",
+      "bytes": 4041,
+      "sha256": "73812e76301de7f016838b633163355f206ae026d2ce45bf21319b4e30661105"
+    },
+    {
+      "blob": "f59499b2c329bf3d9323410d559efa5038e59f94",
+      "path": "docs/delivery/v2-development/comic-geometry-tokens.json",
+      "bytes": 636807,
+      "sha256": "c85f2b843bceda170a9e39310e49a6a886940f54b44ad9e60b09dd68fbe38102"
+    },
+    {
+      "blob": "23d5459170eee7fe02fdf134b6332f673c77682b",
+      "path": "docs/delivery/v2-development/comic-geometry-types.json",
+      "bytes": 636830,
+      "sha256": "6014a4e870cfa52610aa083b91ae0522ed189774fa1ebdf3964f6d826840ec15"
+    },
+    {
+      "blob": "b5eb0a4e61ccf9c40b135b31620d0bab73ebd7e0",
+      "path": "docs/delivery/v2-development/director-camera-reuse-build.json",
+      "bytes": 636418,
+      "sha256": "f8dcd831bba56d1bcee25291b624930461d6e79a66903069d8f2fd1e9a3790cb"
+    },
+    {
+      "blob": "64dc09f1d30cea007d42bc67cd36e09800c3b4e3",
+      "path": "docs/delivery/v2-development/director-camera-reuse-build.log",
+      "bytes": 84,
+      "sha256": "f2bae60ba22f24289af17baf9d42f51612337f766a1538c23841437eb566d32e"
+    },
+    {
+      "blob": "34f81b9ca3d29179c74e74c637b27cd4bf2d5174",
+      "path": "docs/delivery/v2-development/director-camera-reuse-regression.json",
+      "bytes": 636713,
+      "sha256": "094e6473f7be07246c446009cb282989ec6d404dee94e072437ee17eda655fa6"
+    },
+    {
+      "blob": "ea68fa06a3e926e5c5e33b38a86a1cc04d574db9",
+      "path": "docs/delivery/v2-development/director-camera-reuse-regression.log",
+      "bytes": 1177,
+      "sha256": "e0eedd8b8e9bafd93d55e60be834e22b8e1b5926c3b96d2941cb2335c676451f"
+    },
+    {
+      "blob": "544d25c1e316a0438697e65223de417ec6754e07",
+      "path": "docs/delivery/v2-development/director-camera-reuse-report.md",
+      "bytes": 3198,
+      "sha256": "7f7c2eb2a801b3c19960e638381627dc7336aee391e8d8d3c0bc5bc29737b0cf"
+    },
+    {
+      "blob": "f8fdbce9a466447a9120d25508ea05ac4dfc5765",
+      "path": "docs/delivery/v2-development/director-camera-reuse-tests.json",
+      "bytes": 636516,
+      "sha256": "95569554157d24d8774ccf2cc80cea341067f0e9ac9e42837b73b5b396ec6d06"
+    },
+    {
+      "blob": "22567a9b1c5b7f2082594301a133fd47a11065c6",
+      "path": "docs/delivery/v2-development/director-camera-reuse-tests.log",
+      "bytes": 589,
+      "sha256": "9ddec9526e32b9819197014d83493ceefe36a02593ca73bd80c091508ef86fde"
+    },
+    {
+      "blob": "9e66fce1b9c7f29045770392b444523eaf8c3adc",
+      "path": "docs/delivery/v2-development/director-camera-reuse-tokens.json",
+      "bytes": 636351,
+      "sha256": "f18a1a0dff4ae4494ade3f56675d296d0628986c4fc40fd5465a28d8e408e40a"
+    },
+    {
+      "blob": "593e20cfb1c9373f78c68f535df6fb046ef811bd",
+      "path": "docs/delivery/v2-development/geometry-camera-backend-evidence-reuse.json",
+      "bytes": 765,
+      "sha256": "7b5bad63af7152bade344bb8b2758ee808c812f893f547cab3b2f676b93c97e3"
+    },
+    {
+      "blob": "fde70a11ca14e7f325cefdcd2231df3e089cfa01",
+      "path": "docs/delivery/v2-development/geometry-camera-integration-20261018.md",
+      "bytes": 4716,
+      "sha256": "89af948b3752da87b42a1830995c0791de63b58f2e92bc6ce9929aa369f8c0e5"
+    },
+    {
+      "blob": "766e5470b6706925329161b8ef902d8f948a5f78",
+      "path": "docs/delivery/v2-development/geometry-camera-integration-frontend.json",
+      "bytes": 761089,
+      "sha256": "789c4368f0ebf43b48399945cbe7ecc7653fe1bf8dff83ef81253500e7e012c5"
+    },
+    {
+      "blob": "2a8f3e55194699f7134477da879212569745079b",
+      "path": "docs/delivery/v2-development/geometry-camera-integration-frontend.log",
+      "bytes": 7287,
+      "sha256": "e3f828852b1f4dcb8434f6904bcc83ac46bb8dc7f6dfb37347dac745fc5df276"
+    },
+    {
+      "blob": "212d36a558808054cd276a2f1f9f61411dc2b559",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 792547,
+      "sha256": "9fb27fd3b326e9976821c45ef0d6d5a73e78bc0ece0dee4155930ec2306a8531"
+    },
+    {
+      "blob": "6003de410b657da432cadf7cc44cf9d4434faf60",
+      "path": "frontend/src/creative/CreativeCanvas.tsx",
+      "bytes": 28901,
+      "sha256": "0e057230e9c72e43000835fb6c9130aebdcaca1a7d4112f645514f1d44e172dd"
+    },
+    {
+      "blob": "fcfc46481b5627ddb7ac551a56177f2b66b293ea",
+      "path": "frontend/src/creative/DirectorCameraReuse.test.tsx",
+      "bytes": 10830,
+      "sha256": "c0c962dfdff0687a472b5b081bfe7d09dbd0484c1401cc1c972dacb98cf9204c"
+    },
+    {
+      "blob": "7e4e7dd422facee5ede2182d29e161a84610e432",
+      "path": "frontend/src/creative/DirectorCameraReuse.tsx",
+      "bytes": 6147,
+      "sha256": "ad331857700da56604ee81cc6b78a42d9ff469f2c555ff730aea656233e3167b"
+    },
+    {
+      "blob": "a8e2722d8b21895e13e708c905737e9ce29b14e9",
+      "path": "frontend/src/creative/directorCameraReuse.ts",
+      "bytes": 2905,
+      "sha256": "1d3ff0037e93200babb8e31e08d6cfff62ee4f6a89383288b65cf61f9a1264a3"
+    },
+    {
+      "blob": "2446cf19e7a023fe604f2cb631c50bc4ff22c227",
+      "path": "frontend/src/experimental/ComicGeometryEditor.test.tsx",
+      "bytes": 4227,
+      "sha256": "698a3e7d326ad1e98e1205df5d3e7858ac9ffe9a1954802ebdd9b6f5e87b0d06"
+    },
+    {
+      "blob": "651b0b9c4953f61201fc65e9a784ccaf3b547a23",
+      "path": "frontend/src/experimental/ComicGeometryEditor.tsx",
+      "bytes": 6546,
+      "sha256": "aed1637b58a9458a0af916894ce640cbe833d19da3b341f32102b5749f37d7ec"
+    },
+    {
+      "blob": "ff1bc43bb29216bee5d3997ec252c8336026776a",
+      "path": "frontend/src/experimental/ComicLayoutsPanel.geometry.test.tsx",
+      "bytes": 4263,
+      "sha256": "f31f3cb6e07b30abc2dce92967c544f709c84514718d48419834662e55d0e7fa"
+    },
+    {
+      "blob": "e80e693a44be7cdb9cde4124b2845e58bd0058ad",
+      "path": "frontend/src/experimental/ComicLayoutsPanel.tsx",
+      "bytes": 42460,
+      "sha256": "3294206d2d2462a0df4cd023091a79f3087a2e71508100f3765ff90cab054c29"
+    },
+    {
+      "blob": "de3588ea6bc5c35c6df5f0919e2817f7d84e7335",
+      "path": "frontend/src/experimental/comicGeometry.test.ts",
+      "bytes": 3094,
+      "sha256": "a1b341864d19c82720abd5ef779af4a162117c562e737fb7a5b7c3f90f3fa084"
+    },
+    {
+      "blob": "a04fa39702dc0f2ff079e72690ba3750c2f164a0",
+      "path": "frontend/src/experimental/comicGeometry.ts",
+      "bytes": 2927,
+      "sha256": "1c5b09b0ea1a95b3625394aa809beb3a1e1f2fd698a051984ebddec2b8ac8af0"
+    },
+    {
+      "blob": "bf0753f7fbd3bbf1457bd02c6297aa2bb321074f",
+      "path": "frontend/src/experimental/comicLayouts.css",
+      "bytes": 1382,
+      "sha256": "df41350967d85d9033022f44b3911dc3d4ecd8f4e31bbbb45629917d355b0cb9"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
