@@ -1,0 +1,67 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "4386ad86265307e26b0e89a5a291dbac00f95a1a",
+      "path": "API_CATALOG.json",
+      "bytes": 1451396,
+      "sha256": "7b3ec79fbe54e0a19989571d36868be7d633460d6fba2e7c870f541afbe5aa6e"
+    },
+    {
+      "blob": "6dcc4f09c35f04afd63dae4e013a0c8f2ad44779",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 594117,
+      "sha256": "a87704e7e1d2911f48aa961bf813b35ccab8dd8f914c36153e8ded52f72392cf"
+    },
+    {
+      "blob": "259e8464eaa2a7802009f8eafbf1c1ddd0e29b78",
+      "path": "app/runtime.py",
+      "bytes": 17770,
+      "sha256": "d0a51728976cc6f935bb473a86b7c9b73cc2e3f6f363c8a834b1d31d977119f6"
+    },
+    {
+      "blob": "9e2c273092cd590abaf1ef4341a0b4c409ca73dd",
+      "path": "docs/NATIVE_TEXT_PACKAGED_READINESS.md",
+      "bytes": 1772,
+      "sha256": "c610f481c39477a46c3497cd13b59f5da22abfd59a3aab9f31b90787802d32c9"
+    },
+    {
+      "blob": "f695172ee64a504e174b05d86ce27ecb0db49b2d",
+      "path": "docs/delivery/v2-development/native-text-packaged-readiness-green.json",
+      "bytes": 681148,
+      "sha256": "d0d472fc98b7310b1ae4f5b9c8a4904718980a1cbb07bcfef0f49474c4127cc8"
+    },
+    {
+      "blob": "7fd8c456eb7036464a8553615bb7be7fb59d6ff4",
+      "path": "docs/delivery/v2-development/native-text-packaged-readiness-green.log",
+      "bytes": 666,
+      "sha256": "5e7c4751c61b2439970da12c6c8b658d6bab1146c974ec0dfd7786f636c2288c"
+    },
+    {
+      "blob": "54ac6634e9250f659e696aadef5912b5097cb39c",
+      "path": "docs/delivery/v2-development/native-text-packaged-readiness-red.json",
+      "bytes": 680737,
+      "sha256": "bb60335052c682a6d7d45228c3ed66409470ccb7d9c0132693bede0203eb6524"
+    },
+    {
+      "blob": "4c2fc4d23856e9435d6a0beb9f5d9e63577e9d57",
+      "path": "docs/delivery/v2-development/native-text-packaged-readiness-red.log",
+      "bytes": 5116,
+      "sha256": "f09c0edcc156a40172538c875e196fb2f8a4bb2ddc4346dd6e452e08bdf8b208"
+    },
+    {
+      "blob": "a20657aaf144e08ff34e993b240f067f164483d5",
+      "path": "tests/test_native_text_packaged_readiness_additive.py",
+      "bytes": 2932,
+      "sha256": "d9210e809da1819db42d338bc95bd2e87f4fefbd8dcfb04dd8d3a3258d5536cc"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
