@@ -1,0 +1,4 @@
+
+no tests ran in 1.24s
+ERROR: contradictory backend-only markers: tests/test_v2_comic_cjk_artifact.py::test_original_approved_cjk_comic_exports_real_glyph_pixels[postgres]
+

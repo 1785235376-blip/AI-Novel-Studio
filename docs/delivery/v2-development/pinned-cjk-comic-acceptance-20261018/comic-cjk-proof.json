@@ -1,0 +1,51 @@
+{
+  "font_sha256": "eeb06b8a64fd04a2744d95579db1571b51027cda61ed78c62e4b730791525461",
+  "png_sha256": "4148eb7fae1c15fd6d885f96e650f3bc540b25491442459ea3fff8117a7d4d87",
+  "zip_sha256": "a727c656f74ac6773b1dceaadda604eb39eb31e00b1c7eba49ec8b95fc8cbfff",
+  "text": "中文对白：请保留每一份创作。",
+  "artwork": "SYNTHETIC_TEST_ASSET",
+  "manifest": {
+    "asset_bindings": {
+      "183ca8f6-7f45-48cb-8938-fda89ba88408": {
+        "approved_at": "2026-10-18T04:04:47.323768+00:00",
+        "metadata_digest": "da1d2064f301a9ff25588122e7ab9bd7a7f57b33f3bd5bf9deb1ff4e79c701a2",
+        "sha256": "5ca057e33a3afbba95b53f230f1abd4792d75b99c1ce310303de87f9ab955f5b",
+        "version": 2
+      }
+    },
+    "automatic_publication": false,
+    "format": "comic-png-segments-v1",
+    "layout_version": 2,
+    "panel_sources": [
+      {
+        "appearance_references": [],
+        "asset_id": "183ca8f6-7f45-48cb-8938-fda89ba88408",
+        "image_brief": "",
+        "panel_id": "panel",
+        "scene_id": "6497f3d1-e354-4fd0-977e-485b1aac2e1a",
+        "shot_id": "bb2dc75b-5832-44d8-b900-20b793301e96"
+      }
+    ],
+    "privacy_level": "LOCAL_ONLY",
+    "review_digest": "13f6d52ccfe5b97eb258341edaa9ee0026311d86264e33afdc43dcd1226c5c3b",
+    "segments": [
+      {
+        "filename": "segment-001.png",
+        "height": 560,
+        "index": 0,
+        "sha256": "4148eb7fae1c15fd6d885f96e650f3bc540b25491442459ea3fff8117a7d4d87",
+        "width": 800,
+        "y": 0
+      },
+      {
+        "filename": "segment-002.png",
+        "height": 560,
+        "index": 1,
+        "sha256": "cd8de5c2474e8dfb905bced4d0bc3dcb0fc3512951c735fb66b0feff35f77e86",
+        "width": 800,
+        "y": 560
+      }
+    ],
+    "status": "APPROVED_LAYOUT_EXPORT_COPY"
+  }
+}
