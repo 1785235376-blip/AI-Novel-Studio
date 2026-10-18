@@ -1,0 +1,157 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "23187f2e98d6de1f75c2f948bf0fab9ea60a493e",
+      "path": "docs/delivery/v2-development/b10-offline-local-file-receive-20261018.md",
+      "bytes": 4178,
+      "sha256": "b5d80216f213c77bcbd2b830c3346cb392d77d79c1b9c950f6bc290ebb6ad35d"
+    },
+    {
+      "blob": "920b0bd7bbf8737e87e8743f9bf4852905b2ea1a",
+      "path": "docs/delivery/v2-development/graph-node-removal-debug-20261018-1534.json",
+      "bytes": 702795,
+      "sha256": "78cde5d27e2019aa9d87469aeaa9947b0b2dca82b90fcccd303765f2b5dbcec2"
+    },
+    {
+      "blob": "6982ab89d1a8d4ef3bf2e0a34c03d166a4da09ea",
+      "path": "docs/delivery/v2-development/graph-node-removal-debug-20261018-1534.log",
+      "bytes": 406,
+      "sha256": "8619dab04230f46d4dd4e240e3df66ca721f1e27f3b227754e26300cc05da22a"
+    },
+    {
+      "blob": "f77726789e71fa89a271746a9c7d7f77ce928a03",
+      "path": "docs/delivery/v2-development/graph-node-removal-integration-debug-20261018-1535.json",
+      "bytes": 702999,
+      "sha256": "0d9833aad058fdf686c3aeab908ff8020c388070c32761dba35485cab46b9a58"
+    },
+    {
+      "blob": "58ec804594fb182effefeadacb80dfe5b3b24f56",
+      "path": "docs/delivery/v2-development/graph-node-removal-integration-debug-20261018-1535.log",
+      "bytes": 4277,
+      "sha256": "876fea40c3d7c266056dc6ffa3655491aefa4c09840d2855b0c26719b7b29300"
+    },
+    {
+      "blob": "394e413756f89b8ee65b2e2e0530e4fb0c539cff",
+      "path": "docs/delivery/v2-development/graph-node-removal-preview-20261018.md",
+      "bytes": 5176,
+      "sha256": "965af70e9f40ec730a781cf88825bb53f18bfcc6d326339c9230f6e20158c9b5"
+    },
+    {
+      "blob": "646dc58d5466c5ca149db2251093cd99685ef853",
+      "path": "docs/delivery/v2-development/graph-offline-final-summary-20261018.md",
+      "bytes": 966,
+      "sha256": "7f3ffceb705ccb21583101244120af4938f8d555103950bbde7271bd619d78f6"
+    },
+    {
+      "blob": "230a4be99a270a551f28fe5fb36de3fd3e806e17",
+      "path": "docs/delivery/v2-development/graph-removal-offline-file-final.json",
+      "bytes": 703220,
+      "sha256": "537c3350db2941b2e79b5142ab2b5339a78aba35fabebd52cc1c783581ace578"
+    },
+    {
+      "blob": "d778e8c0ed7b6f1d1dfd5cdc41743073d2771d6a",
+      "path": "docs/delivery/v2-development/graph-removal-offline-file-final.log",
+      "bytes": 6773,
+      "sha256": "b79f25261ce1f23afd10e104edec7c94847d9accd6ff2a0ee3f3504deb113d13"
+    },
+    {
+      "blob": "12ffeb46507ec291880dd44e4ee0f1187c8ed4b0",
+      "path": "docs/v2/CURRENT_DEVELOPMENT_GAPS_20261018.md",
+      "bytes": 8472,
+      "sha256": "5b0871e2ee5de252e2b199ea0b507e9b65a2472d1557efa7e9cb0756cce8053f"
+    },
+    {
+      "blob": "c358bc166c6a502eac0c3dc8c9be6a4867e344bb",
+      "path": "frontend/src/creative/GraphCanvas.test.tsx",
+      "bytes": 14302,
+      "sha256": "5cae07508613ee7b67b6b19032444abf0edeb0ce713892beb69cf1d88282f93d"
+    },
+    {
+      "blob": "b8d3d9f4d7db7b37f6f68b2152d0834a083f9d8c",
+      "path": "frontend/src/creative/GraphCanvas.tsx",
+      "bytes": 52697,
+      "sha256": "c6f58f7890f815884a5a550ba07edbfcf1406362561bce98cd253af7f3191504"
+    },
+    {
+      "blob": "51568d2f363d6f0cf9dc42bf82fabaf0eeb71d34",
+      "path": "frontend/src/creative/GraphNodeRemovalControl.additive.test.tsx",
+      "bytes": 18308,
+      "sha256": "68bc762dbedea78c0a8490c15c630806e9a4173727283602477d05c6010be284"
+    },
+    {
+      "blob": "43593a0723e983389fa9f0279c20f1f41f57b496",
+      "path": "frontend/src/creative/GraphNodeRemovalControl.tsx",
+      "bytes": 6532,
+      "sha256": "2d252e69be5d39bf5aec450f7f4423d3b77c484a2ae3e7785f5958f508a6409b"
+    },
+    {
+      "blob": "174525520a9a0e866b0e38f393f3819645c06f36",
+      "path": "frontend/src/creative/IndependentStudioGraphWorkspace.presentation.additive.test.tsx",
+      "bytes": 39121,
+      "sha256": "b60bc9c943c17c53a34227735aefcde5891b4071283a41235235bc5a79731e07"
+    },
+    {
+      "blob": "4df819e2aed2ba7ee3d377267e602719bf98a4e2",
+      "path": "frontend/src/creative/IndependentStudioGraphWorkspace.test.tsx",
+      "bytes": 14563,
+      "sha256": "84e8ae3d90d19b128f7a8b37438485fa9bbc1b8771b06001c0228a3502203ff8"
+    },
+    {
+      "blob": "f39f3cadec89c0c7223227985765c4d4d54dce0d",
+      "path": "frontend/src/creative/graphNodeRemovalImpact.ts",
+      "bytes": 2245,
+      "sha256": "9e5734162b188be751e63a322163ee9566030374be604fbc159a2f12fd1d905f"
+    },
+    {
+      "blob": "73fc6193fe66e78361d210915859318ce85cbea9",
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "bytes": 57629,
+      "sha256": "8862f28e1a78eea7d434acd5e2663d24a51a7c189a5a57e3eff32ad648ae755e"
+    },
+    {
+      "blob": "6d52b051e392feacf9a753ad327e960967e15f7e",
+      "path": "frontend/src/experimental/OfflineSyncPanel.tsx",
+      "bytes": 21877,
+      "sha256": "f8c343d2997ffee48e359de9b10ed5d67d3d291e89a136a3d571e7649d79114d"
+    },
+    {
+      "blob": "5fa80631e2817a52adc70aa90cb584a267748c64",
+      "path": "frontend/src/experimental/OfflineSyncReceive.test.tsx",
+      "bytes": 18988,
+      "sha256": "bfac9b92013954138c974cce61a8dd37b9c78716ad5366ce36fc04d19b418491"
+    },
+    {
+      "blob": "5d05f59f50aacf2b3a22784b0a76808fdc6dec33",
+      "path": "frontend/src/experimental/OfflineSyncReceive.tsx",
+      "bytes": 7955,
+      "sha256": "475a113f0bbf5d464bf10ca0c558bcbfcb7c131f7fd533c58a23975968787b3d"
+    },
+    {
+      "blob": "46fe3b293466e1f6f5d446a6f32537537fcdaf10",
+      "path": "frontend/src/experimental/offlineSyncFile.test.ts",
+      "bytes": 5920,
+      "sha256": "5ac73e7048cedb720b57d18dbfcb3e0b181b14efeeb53d289edc0527f24b3f11"
+    },
+    {
+      "blob": "37195a7aa54a21d551d49fe679a616533c01d859",
+      "path": "frontend/src/experimental/offlineSyncFile.ts",
+      "bytes": 3128,
+      "sha256": "d478f4fdf92ce806e448817205bdc3b01c5c7633cbb4db47e4cb76aebf75098a"
+    },
+    {
+      "blob": "872d45b85dae2661248e76412d63582603f49bb0",
+      "path": "docs/v2/CURRENT_DEVELOPMENT_GAPS_20261018.md",
+      "bytes": 8463,
+      "sha256": "8b0e6fb837c290ec08bffbe0b9542e3d871ebd0368d17893c4cba8287a1ac619"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
