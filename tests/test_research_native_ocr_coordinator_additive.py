@@ -150,3 +150,40 @@ def test_restart_projection_reports_interruption_without_releasing_hold(rig,monk
     assert rig.raw_store.read(rig.nid,rig.scope)==before
     assert c.broker.ledger(rig.nid,rig.scope,rig.actor)[0]['status']=='RESERVED'
     assert manager.get(row['native_ocr_execution']['generation_id']).status=='FAILED'
+
+
+def test_native_mutations_keep_incarnation_lease_through_original_commit(rig,monkeypatch):
+    from contextlib import contextmanager
+    from threading import local
+    c=setup(rig,monkeypatch);depth=local()
+    original_lease=c.controller.lease;original_transaction=rig.raw_store.transaction
+    @contextmanager
+    def lease(nid,identity):
+        with original_lease(nid,identity) as value:
+            depth.value=getattr(depth,'value',0)+1
+            try:yield value
+            finally:depth.value-=1
+    @contextmanager
+    def transaction(nid,scope):
+        with original_transaction(nid,scope) as state:
+            before=deepcopy(state['collections'].get('research_analysis_jobs',{}))
+            yield state
+            after=state['collections'].get('research_analysis_jobs',{})
+            if before!=after and any(row.get('native_ocr_preview') or row.get('native_ocr_execution') for row in after.values()):
+                assert getattr(depth,'value',0)>0,'Original project incarnation lease was released before Research commit'
+    monkeypatch.setattr(c.controller,'lease',lease)
+    monkeypatch.setattr(rig.raw_store,'transaction',transaction)
+    ready=preview(rig,c);_,job,result=dispatch(rig,c,ready)
+    assert job.status=='COMPLETED' and result['status']=='REVIEW_REQUIRED'
+    reviewed=c.research.analysis_action(rig.nid,rig.scope,rig.actor,result['id'],'review',result['version'],guard=lambda:None)
+    assert reviewed['status']=='REVIEWED'
+
+
+def test_generic_actions_cannot_run_or_reset_a_native_receipt(rig,monkeypatch):
+    c=setup(rig,monkeypatch);ready=preview(rig,c)
+    before=deepcopy(rig.raw_store.read(rig.nid,rig.scope))
+    for action in ('run','recover'):
+        with pytest.raises(ValueError,match='RESEARCH_OCR_ORIGINAL_EXECUTION_OWNER_REQUIRED'):
+            c.research.analysis_action(rig.nid,rig.scope,rig.actor,ready['id'],action,ready['version'],guard=lambda:None)
+    assert rig.raw_store.read(rig.nid,rig.scope)==before
+    assert c.manager.jobs=={} and c.broker.ledger(rig.nid,rig.scope,rig.actor)==[]

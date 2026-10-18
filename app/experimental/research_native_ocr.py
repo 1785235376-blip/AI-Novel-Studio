@@ -127,7 +127,7 @@ class NativeResearchOCRCoordinator:
             'external_provider_fee_microusd': 0, 'host_compute_cost_included': False,
             'automatic_canon': False, 'review_required': True, 'model_quality': 'NOT_RUN'}
         proposal['reviewed_preview_digest'] = digest(proposal)
-        with self.research.store.transaction(nid, scope) as state, lease():
+        with self.broker._owned_transaction(nid, scope, lease) as state:
             current(); row = self._row(nid, scope, actor, rid, state)
             bounded_change(row, actor, body.expected_version, {'native_ocr_preview': proposal,
                 'native_ocr_execution': None, 'status': 'DRAFT', 'result': None, 'execution_token': None, 'error_code': None},
@@ -136,7 +136,7 @@ class NativeResearchOCRCoordinator:
             return self.rows.public(row)
 
     def _fail(self, nid, scope, actor, rid, token, lease):
-        with self.research.store.transaction(nid, scope) as state, lease():
+        with self.broker._owned_transaction(nid, scope, lease) as state:
             row = self.rows._row(nid, scope, actor, rid, state)
             if row.get('execution_token') == token:
                 bounded_change(row, actor, row['version'], {'status': 'FAILED', 'execution_token': None,
@@ -203,7 +203,7 @@ class NativeResearchOCRCoordinator:
                     {'kind': 'TEXT', 'page': 1, 'text': response.text[i:i + 8000]}
                     for i in range(0, len(response.text), 8000)], 'warnings': ['LOCAL_NATIVE_OCR_REVIEW_REQUIRED']}, capability)
                 if len(canonical(result).encode()) > MAX_RESULT_BYTES: raise ValueError('RESEARCH_OCR_RESULT_LIMIT')
-                with self.research.store.transaction(nid, scope) as state, lease():
+                with self.broker._owned_transaction(nid, scope, lease) as state:
                     current(); row = self._row(nid, scope, actor, rid, state)
                     execution = deepcopy(row['native_ocr_execution'])
                     execution.update(output_sha256=sha256(response.text.encode()).hexdigest(), runtime_receipt=deepcopy(response.receipt))
@@ -225,7 +225,7 @@ class NativeResearchOCRCoordinator:
             proposal['broker_preview_version'], key, job.id, guard=current,
             authorization_digest=job.expected_request_digest, owner_lease=lease)
         try:
-            with self.research.store.transaction(nid, scope) as state, lease():
+            with self.broker._owned_transaction(nid, scope, lease) as state:
                 current(); row = self._row(nid, scope, actor, rid, state)
                 bounded_change(row, actor, body.expected_version, {'status': 'RUNNING', 'result': None,
                     'execution_token': token, 'error_code': None, 'native_ocr_execution': {

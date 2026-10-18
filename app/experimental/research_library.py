@@ -641,15 +641,32 @@ class ResearchLibraryService(DomainService):
         return research_analysis_jobs(self).create(nid, scope, actor, ResearchAnalysisIn.model_validate(value).model_dump(), guard)
 
     def analysis_action(self, nid, scope, actor, rid, action, expected_version, *, guard):
+        from contextlib import ExitStack
         from .research_vision import research_analysis_jobs
+        from .research_native_ocr import NativeResearchOCRCoordinator
         self._analysis_owner(nid, scope, actor, rid)
-        def current_guard():
-            guard()
-            self._analysis_owner(nid, scope, actor, rid)
-            row = self.get(nid, scope, 'research_analysis_jobs', rid)
-            if action == 'review' and row.get('native_ocr_execution'):
-                from .research_native_ocr import NativeResearchOCRCoordinator
-                if type(self.native_ocr) is not NativeResearchOCRCoordinator or self.native_ocr.research is not self:
-                    raise ValueError('RESEARCH_OCR_ORIGINAL_OWNERS_REQUIRED')
-                self.native_ocr.validate_review(nid, scope, actor, row)
-        return research_analysis_jobs(self).action(nid, scope, actor, rid, action, expected_version, current_guard)
+        original = self.get(nid, scope, 'research_analysis_jobs', rid)
+        native = original.get('native_ocr_execution') or original.get('native_ocr_preview')
+        if native and action in {'run', 'recover'}:
+            raise ValueError('RESEARCH_OCR_ORIGINAL_EXECUTION_OWNER_REQUIRED')
+        # Enter the incarnation lease from the original action's in-transaction
+        # guard, then retain it until that original transaction has committed.
+        # Acquiring it before action() would reverse scope -> project ordering.
+        with ExitStack() as leases:
+            leased = False
+            def current_guard():
+                nonlocal leased
+                guard()
+                if native and not leased:
+                    if type(self.native_ocr) is not NativeResearchOCRCoordinator or self.native_ocr.research is not self:
+                        raise ValueError('RESEARCH_OCR_ORIGINAL_OWNERS_REQUIRED')
+                    binding = native.get('binding') or native.get('source_binding')
+                    leases.enter_context(self.native_ocr.lease(nid, binding['project_incarnation']))
+                    leased = True
+                self._analysis_owner(nid, scope, actor, rid)
+                row = self.get(nid, scope, 'research_analysis_jobs', rid)
+                if action == 'review' and row.get('native_ocr_execution'):
+                    if type(self.native_ocr) is not NativeResearchOCRCoordinator or self.native_ocr.research is not self:
+                        raise ValueError('RESEARCH_OCR_ORIGINAL_OWNERS_REQUIRED')
+                    self.native_ocr.validate_review(nid, scope, actor, row)
+            return research_analysis_jobs(self).action(nid, scope, actor, rid, action, expected_version, current_guard)

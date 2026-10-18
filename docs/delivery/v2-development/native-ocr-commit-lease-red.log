@@ -1,0 +1,71 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__ test_native_mutations_keep_incarnation_lease_through_original_commit[file] __
+
+rig = namespace(nid='v2-independent-9f6f12382b6c40efb2386e9fd784ceb1', scope={'mode': 'local', 'novel_id': 'v2-independent-9...IdentityRepository object at 0x7fcf4cfa99a0>), create_project=<function rig.<locals>.create_project at 0x7fcf501460c0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fcf5047d5b0>
+
+    def test_native_mutations_keep_incarnation_lease_through_original_commit(rig,monkeypatch):
+        from contextlib import contextmanager
+        from threading import local
+        c=setup(rig,monkeypatch);depth=local()
+        original_lease=c.controller.lease;original_transaction=rig.raw_store.transaction
+        @contextmanager
+        def lease(nid,identity):
+            with original_lease(nid,identity) as value:
+                depth.value=getattr(depth,'value',0)+1
+                try:yield value
+                finally:depth.value-=1
+        @contextmanager
+        def transaction(nid,scope):
+            with original_transaction(nid,scope) as state:
+                before=deepcopy(state['collections'].get('research_analysis_jobs',{}))
+                yield state
+                after=state['collections'].get('research_analysis_jobs',{})
+                if before!=after and any(row.get('native_ocr_preview') or row.get('native_ocr_execution') for row in after.values()):
+                    assert getattr(depth,'value',0)>0,'Original project incarnation lease was released before Research commit'
+        monkeypatch.setattr(c.controller,'lease',lease)
+        monkeypatch.setattr(rig.raw_store,'transaction',transaction)
+>       ready=preview(rig,c);_,job,result=dispatch(rig,c,ready)
+              ^^^^^^^^^^^^^^
+
+tests/test_research_native_ocr_coordinator_additive.py:176: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_research_native_ocr_coordinator_additive.py:22: in preview
+    return c.controller.preview(e.nid,e.scope,e.actor,c.analysis['id'],
+app/experimental/research_native_ocr.py:130: in preview
+    with self.research.store.transaction(nid, scope) as state, lease():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:144: in __exit__
+    next(self.gen)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+nid = 'v2-independent-9f6f12382b6c40efb2386e9fd784ceb1'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-9f6f12382b6c40efb2386e9fd784ceb1'}
+
+    @contextmanager
+    def transaction(nid,scope):
+        with original_transaction(nid,scope) as state:
+            before=deepcopy(state['collections'].get('research_analysis_jobs',{}))
+            yield state
+            after=state['collections'].get('research_analysis_jobs',{})
+            if before!=after and any(row.get('native_ocr_preview') or row.get('native_ocr_execution') for row in after.values()):
+>               assert getattr(depth,'value',0)>0,'Original project incarnation lease was released before Research commit'
+E               AssertionError: Original project incarnation lease was released before Research commit
+E               assert 0 > 0
+E                +  where 0 = getattr(<_thread._local object at 0x7fcf4cc02f20>, 'value', 0)
+
+tests/test_research_native_ocr_coordinator_additive.py:173: AssertionError
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_research_native_ocr_coordinator_additive.py::test_native_mutations_keep_incarnation_lease_through_original_commit[file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_research_native_ocr_coordinator_additive.py::test_native_mutations_keep_incarnation_lease_through_original_commit[file]
+1 failed, 17 deselected, 2 warnings in 4.92s
