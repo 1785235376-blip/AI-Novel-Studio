@@ -46,7 +46,8 @@ export function StudioGraphTimelineNodeEditor({ node, state, editable, connected
     </fieldset>
     {state.formDirty && <Button disabled={state.loading} onClick={state.clearForm}>放弃尚未加入的剪辑输入</Button>}
     <p>已保存到图草稿的编辑：{state.operations.length} · 素材替换：{state.bindings.length} · 合计最多 40。</p>
-    <ol>{state.operations.map((operation, index) => <li key={index}><details><summary>{index + 1}. {operation.op}</summary><pre>{JSON.stringify(operation, null, 2)}</pre></details><Button disabled={!editable || state.loading} onClick={() => state.removeOperation(index)}>移除此剪辑操作</Button></li>)}</ol>
+    <p>剪辑按列表顺序应用。上移或下移只修改图草稿；复制、分割产生的新片段必须先创建再使用。请重新预览，由原时间线服务校验完整结果后再确认派发。</p>
+    <ol>{state.operations.map((operation, index) => <li key={index}><details><summary>{index + 1}. {operation.op}</summary><pre>{JSON.stringify(operation, null, 2)}</pre></details><Button aria-label={`上移第 ${index + 1} 项剪辑操作`} disabled={!editable || state.loading || index === 0} onClick={() => state.moveOperation(index, index - 1)}>上移</Button><Button aria-label={`下移第 ${index + 1} 项剪辑操作`} disabled={!editable || state.loading || index === state.operations.length - 1} onClick={() => state.moveOperation(index, index + 1)}>下移</Button><Button disabled={!editable || state.loading} onClick={() => state.removeOperation(index)}>移除此剪辑操作</Button></li>)}</ol>
     <p>本机渲染与完整流程验收仍为 LOCAL_REQUIRED。图保存、连接及预览不会执行剪辑或导出。</p>
   </section>;
 }

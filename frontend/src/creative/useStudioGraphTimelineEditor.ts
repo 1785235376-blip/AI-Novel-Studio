@@ -90,10 +90,28 @@ export function useStudioGraphTimelineEditor(props: Props) {
       const checked = checkedGraphTimelineParameters({ ...node.parameters, edit_operations: edits }); latest.current.update(checked); setForm(empty()); setError('');
     } catch (reason) { setError(reason instanceof Error ? reason.message : '剪辑操作未加入，原输入保持。'); }
   }
-  function removeOperation(index: number) { const node = latest.current.node; if (!node || !Number.isSafeInteger(index)) return;
-    update({ ...node.parameters, edit_operations: (node.parameters.edit_operations || []).filter((_, position) => position !== index) }); }
+  // Index-based list controls belong to the exact rendered node/parameters. A
+  // retained handler must never reorder or remove a different node's operation.
+  const listOwner = useRef({ identity: props.identity, client: props.client, node: props.node, token: {} });
+  if (listOwner.current.identity !== props.identity || listOwner.current.client !== props.client || listOwner.current.node !== props.node) {
+    listOwner.current = { identity: props.identity, client: props.client, node: props.node, token: {} };
+  }
+  const listToken = listOwner.current.token;
+  function listCurrent() { return canEdit() && listOwner.current.token === listToken && latest.current.node === props.node; }
+  function removeOperation(index: number) {
+    const node = latest.current.node, edits = node?.parameters.edit_operations || [];
+    if (!listCurrent() || !node || !Number.isSafeInteger(index) || index < 0 || index >= edits.length) return;
+    update({ ...node.parameters, edit_operations: edits.filter((_, position) => position !== index) });
+  }
+  function moveOperation(index: number, destination: number) {
+    const node = latest.current.node, edits = node?.parameters.edit_operations || [];
+    if (!listCurrent() || !node || !Number.isSafeInteger(index) || !Number.isSafeInteger(destination)
+      || index < 0 || destination < 0 || index >= edits.length || destination >= edits.length || index === destination) return;
+    const next = [...edits], [selected] = next.splice(index, 1); next.splice(destination, 0, selected);
+    update({ ...node.parameters, edit_operations: next });
+  }
   return { rows, choice, chosen, bound, loading, error, form, formDirty, formOwnerMatches: !form.owner || form.owner === props.node?.id,
     clips, operations, bindings, canLoad: typeof props.client.graphTimelineList === 'function' && !loading && !props.isBusy() && props.isCurrent(),
-    choose, loadRows, bindChosen, setPreset, setProfileField, bindSource, changeForm, selectClip, clearForm, resetForm, append, removeOperation };
+    choose, loadRows, bindChosen, setPreset, setProfileField, bindSource, changeForm, selectClip, clearForm, resetForm, append, removeOperation, moveOperation };
 }
 export type StudioGraphTimelineEditorController = ReturnType<typeof useStudioGraphTimelineEditor>;

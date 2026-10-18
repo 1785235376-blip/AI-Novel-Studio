@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/StudioGraphTimelineOrder.additive.test.tsx (3 tests) 82ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  12:30:35
+   Duration  991ms (transform 183ms, setup 17ms, collect 285ms, tests 82ms, environment 355ms, prepare 61ms)
+
