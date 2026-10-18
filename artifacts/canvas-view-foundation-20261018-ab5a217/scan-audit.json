@@ -1,0 +1,109 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "36d412ad0b1286435e8dfe16b74f16827181b1a4",
+      "path": "API_CATALOG.json",
+      "bytes": 1451610,
+      "sha256": "35298ca71642032002181d5b8dd827d936da1d9037fb12934ef23a0aa9cd6924"
+    },
+    {
+      "blob": "039a66a4f2f3cb340fdbcf5299057e09206fb7d0",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 594820,
+      "sha256": "3e759ab790be0c467a681e1195755dec9b843ecd645c28fab768737056b1fb87"
+    },
+    {
+      "blob": "b361b14efac0c55a3683567fe729ab83540859f6",
+      "path": "app/creative/canvas_view_models.py",
+      "bytes": 1783,
+      "sha256": "bbd55e4250e2e6eeaef070f5ed9468023e6f5b0b19197f6f46f02b3d5351990d"
+    },
+    {
+      "blob": "98f837072f45fa9f820b5fffda8c0ccef7193ab4",
+      "path": "app/creative/canvas_views.py",
+      "bytes": 6422,
+      "sha256": "a0a91051d94052e109b80b061f7b402a383d6a7aeddf5dbf0235050d97709a9f"
+    },
+    {
+      "blob": "8560de1a7d67db4898d95572720c0d0f5075c286",
+      "path": "app/creative/graph.py",
+      "bytes": 37856,
+      "sha256": "2071dd83c2a1673a60eae6618ce04e07420277c5ee99096048543d4119278df0"
+    },
+    {
+      "blob": "e5819bfbb0db64c4d7187b0499146cbc998aa2eb",
+      "path": "app/creative/project_store.py",
+      "bytes": 9677,
+      "sha256": "15d360332389f81d34087a03fa289b3dc0831056f80b269cd78d1a888b93f49f"
+    },
+    {
+      "blob": "51aae6755e11086a73e53dab6213bab9d785339e",
+      "path": "docs/CREATIVE_CANVAS_VIEW_FOUNDATION.md",
+      "bytes": 3865,
+      "sha256": "449e5bd0a1c3003a610c2b80530290590ced53ba5229feff103f56ac66d26498"
+    },
+    {
+      "blob": "808da6f79e26c478922158f507655f778c5b121c",
+      "path": "docs/delivery/v2-development/canvas-view-foundation-file-r1.json",
+      "bytes": 684057,
+      "sha256": "081e4f883407e2455f25203f26acd055f80be651e059523201658935ee38ea17"
+    },
+    {
+      "blob": "eb7494bfb005b4f978d99fd5b5f8227099fc95cc",
+      "path": "docs/delivery/v2-development/canvas-view-foundation-file-r1.log",
+      "bytes": 2919,
+      "sha256": "ce841a001e704a514dfb700e53b2e6be8aada49cd104a43206e570dfa75bceb8"
+    },
+    {
+      "blob": "5947e7f2c768af41e2d8ee8052c53460e005d2f7",
+      "path": "docs/delivery/v2-development/canvas-view-foundation-file-r2.json",
+      "bytes": 683653,
+      "sha256": "49e6dade1edf3dddacd113371b46fd4a85c4c9c02fadfb1fc873dee21f47a9b0"
+    },
+    {
+      "blob": "e27317b4a6e6e50ab729e6e4532257255f47062b",
+      "path": "docs/delivery/v2-development/canvas-view-foundation-file-r2.log",
+      "bytes": 653,
+      "sha256": "b74afcfa40bedd99d9716c7182e36a01984a74caccad959ef6fb879510b2e607"
+    },
+    {
+      "blob": "8bd4b2621d856687836f1a95422938f12fbd0f65",
+      "path": "docs/delivery/v2-development/canvas-view-foundation-pg-r1-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "db71f1aecf53df425ee99f6c7547ecb506eaa6061e18645eca5186f04fea97ff"
+    },
+    {
+      "blob": "fe32c14e405a10b908f7090c77981f0b7225a5e4",
+      "path": "docs/delivery/v2-development/canvas-view-foundation-pg-r1.json",
+      "bytes": 683761,
+      "sha256": "864f97b1a0a098c4e31b97140f1d4edc202a76366ad6aa4b67d9b37464462250"
+    },
+    {
+      "blob": "c683e1529951c19930758d7e04639ee29fed2ef2",
+      "path": "docs/delivery/v2-development/canvas-view-foundation-pg-r1.log",
+      "bytes": 659,
+      "sha256": "1da30debda117a0d2f94748b0f3997e3af2b89353068a8fbf9fdd6efeb35045d"
+    },
+    {
+      "blob": "1f148d3ecf2bf5d1904501bb6e682661c26e9e68",
+      "path": "packaging/public-build.json",
+      "bytes": 23792,
+      "sha256": "3cdabddb3ac925d0fa22082e85f406a21bf917408ac6a9dabc03dab34e33d793"
+    },
+    {
+      "blob": "643cb75faecf959fdf332a296da56a89bae29ec4",
+      "path": "tests/test_creative_canvas_views_additive.py",
+      "bytes": 6778,
+      "sha256": "6b52fd1ce1737fd63210dbf262b8209d0fe8f97e1dd536123a899e1d31dc75ac"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
