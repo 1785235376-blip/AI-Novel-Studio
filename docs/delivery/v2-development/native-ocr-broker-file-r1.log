@@ -1,0 +1,59 @@
+..F.F......................                                              [100%]
+=================================== FAILURES ===================================
+____ test_disabled_or_replaced_provider_invalidates_original_preview[file] _____
+
+rig = namespace(nid='v2-independent-600c672e4652494b8e7739de10229da1', scope={'mode': 'local', 'novel_id': 'v2-independent-6...IdentityRepository object at 0x7effd62c3bc0>), create_project=<function rig.<locals>.create_project at 0x7effd60bb600>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7effd646c0b0>
+
+    def test_disabled_or_replaced_provider_invalidates_original_preview(rig,monkeypatch):
+        c=configured(rig,monkeypatch)
+        model=next(m for m in c.runtime.model_registry.descriptors() if m.provider_id=='native-ocr')
+        c.runtime.model_registry.register(replace(model,enabled=False),replace=True)
+        with pytest.raises(ValueError):reserve(rig,c)
+>       assert c.broker.ledger(rig.nid,rig.scope,rig.actor)['items']==[]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: list indices must be integers or slices, not str
+
+tests/test_native_ocr_broker_additive.py:91: TypeError
+__________ test_actual_ocr_job_uses_real_original_broker_hooks[file] ___________
+
+rig = namespace(nid='v2-independent-ace5936a8dae4932be56d7e53bc47fff', scope={'mode': 'local', 'novel_id': 'v2-independent-a...IdentityRepository object at 0x7effd6569670>), create_project=<function rig.<locals>.create_project at 0x7effd60bbe20>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7effd622e3c0>
+
+    def test_actual_ocr_job_uses_real_original_broker_hooks(rig,monkeypatch):
+        c=configured(rig,monkeypatch);manager=reopen(rig);holder={}
+        def dispatch():
+            c.broker.guard_dispatch(rig.nid,rig.scope,rig.actor,holder['reservation']['id'],holder['job'].id,
+                guard=c.source.validate_current,owner_lease=c.lease)
+        def terminal():
+            job=holder['job']
+            c.broker.finalize(rig.nid,rig.scope,rig.actor,holder['reservation']['id'],job.id,
+                job.execution_outcome or 'UNKNOWN',owner_lease=c.lease)
+        binding={k:v for k,v in c.source.binding.items() if k not in {'contract','access','page'}}
+        binding.update(contract='RESEARCH_OCR_JOB_V1',source_kind='IMAGE',language='eng',
+            route_digest=c.route['identity']['native_ocr_binding']['route_digest'],reviewed_preview_digest='c'*64)
+        job=manager._prepare_research_ocr_job(source=c.source,node=c.runtime.generation_runtime.vision_ocr_node,
+            binding=binding,provider_id='native-ocr',model_id='eng',deadline=(datetime.now(timezone.utc)+timedelta(seconds=60)).isoformat(),
+            before_dispatch=dispatch,on_terminal=terminal)
+        holder['job']=job;holder['reservation']=reserve(rig,c,job.id)
+        manager._start_research_ocr_job(job);wait(SimpleNamespace(job=job))
+        assert job.status=='COMPLETED' and job.research_ocr_execution_authority.result().text=='STUDIO OCR 123'
+>       ledger=c.broker.ledger(rig.nid,rig.scope,rig.actor)['items']
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: list indices must be integers or slices, not str
+
+tests/test_native_ocr_broker_additive.py:117: TypeError
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_native_ocr_broker_additive.py::test_private_inventory_and_zero_fee_are_not_synthetic_or_public[file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_native_ocr_broker_additive.py::test_disabled_or_replaced_provider_invalidates_original_preview[file]
+FAILED tests/test_native_ocr_broker_additive.py::test_actual_ocr_job_uses_real_original_broker_hooks[file]
+2 failed, 25 passed, 27 deselected, 2 warnings in 7.98s

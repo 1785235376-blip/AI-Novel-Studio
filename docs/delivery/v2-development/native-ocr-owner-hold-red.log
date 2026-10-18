@@ -1,0 +1,61 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____ test_new_project_does_not_inherit_old_native_hold_or_idempotency[file] ____
+
+rig = namespace(nid='v2-independent-dcad4caf301d40238d833fc93d9847ba', scope={'mode': 'local', 'novel_id': 'v2-independent-d...IdentityRepository object at 0x7f290600cc50>), create_project=<function rig.<locals>.create_project at 0x7f29093f34c0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f2905ff7920>
+
+    def test_new_project_does_not_inherit_old_native_hold_or_idempotency(rig,monkeypatch):
+        from copy import deepcopy
+        c=configured(rig,monkeypatch);old=reserve(rig,c);before=deepcopy(old)
+        rig.novels.delete(rig.nid);rig.create_project(nid=rig.nid)
+        fresh=configured(rig,monkeypatch)
+        assert fresh.decision['chosen'] is not None, 'Old native reservation blocked a new project incarnation'
+>       new=reserve(rig,fresh,key='one')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_native_ocr_broker_additive.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_native_ocr_broker_additive.py:62: in reserve
+    return c.broker.reserve(e.nid,e.scope,e.actor,c.decision['id'],c.decision['version'],key,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.experimental.model_broker.ModelBrokerService object at 0x7f2905ef6a20>
+nid = 'v2-independent-dcad4caf301d40238d833fc93d9847ba'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-dcad4caf301d40238d833fc93d9847ba'}
+actor = 'local-studio-author'
+preview_id = '529cfc0b-ba7c-431b-93fa-01d14eb267e3', expected_version = 1
+idempotency_key = 'one', job_id = '21da0c8b-8dea-46f6-a44d-97958fff8220'
+guard = <bound method PreparedResearchOCRSource.validate_current of <app.experimental.research_vision.PreparedResearchOCRSource object at 0x7f290658cc20>>
+authorization_digest = None
+
+    def reserve(self, nid, scope, actor, preview_id, expected_version, idempotency_key, job_id, guard=lambda: None, authorization_digest=None, *, owner_lease=None):
+        if not idempotency_key or len(idempotency_key) > 160 or not job_id or len(job_id) > 160: raise ValueError('BROKER_RESERVATION_ID_REQUIRED')
+        row = self.get(nid, scope, self.DECISIONS, preview_id)
+        check_version(row, expected_version)
+        self._assert_preview(nid, scope, actor, row)
+        guard()
+        key = digest([actor, idempotency_key])
+        with self._owned_transaction(nid, scope, owner_lease) as doc:
+            guard()
+            ledger = doc['collections'].setdefault(self.LEDGER, {})
+            old = ledger.get(key)
+            if old:
+>               if old['preview_id'] != preview_id or old.get('authorization_digest') != authorization_digest or (authorization_digest is None and old['job_id'] != job_id): raise ValueError('BROKER_IDEMPOTENCY_MISMATCH')
+                                                                                                                                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               ValueError: BROKER_IDEMPOTENCY_MISMATCH
+
+app/experimental/model_broker.py:638: ValueError
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_native_ocr_broker_additive.py::test_new_project_does_not_inherit_old_native_hold_or_idempotency[file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_native_ocr_broker_additive.py::test_new_project_does_not_inherit_old_native_hold_or_idempotency[file]
+1 failed, 11 deselected, 2 warnings in 5.46s

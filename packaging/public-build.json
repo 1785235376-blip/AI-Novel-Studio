@@ -183,6 +183,7 @@
     "app/experimental/narrative_judge.py",
     "app/experimental/narrative_judge_api.py",
     "app/experimental/narrative_judge_model.py",
+    "app/experimental/native_ocr_broker.py",
     "app/experimental/offline_sync.py",
     "app/experimental/offline_sync_api.py",
     "app/experimental/offline_sync_production.py",

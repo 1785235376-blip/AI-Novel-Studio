@@ -245,7 +245,11 @@ class ModelBrokerService(DomainService):
             facts['hardware_hash'] = digest([asdict(profiles[pid]) for pid in center_model.hardware_profiles if pid in profiles]) if isinstance(profiles, dict) and center_model.hardware_profiles else None
         return facts, reasons
 
-    def candidates(self, *, local_text_only=False):
+    def candidates(self, *, local_text_only=False, local_ocr_only=False):
+        if local_ocr_only:
+            if local_text_only: raise ValueError('BROKER_CANDIDATE_PROFILE_CONFLICT')
+            from .native_ocr_broker import candidates
+            return candidates(self.runtime)
         providers = {row.provider_id: row for row in self.runtime.provider_registry.descriptors()}
         items = []
         for model in self.runtime.model_registry.descriptors():
@@ -406,11 +410,27 @@ class ModelBrokerService(DomainService):
         except Exception:
             return {'state': 'UNAVAILABLE', 'ram_mib': None, 'vram_mib': None, 'free_memory': None}
 
-    def current_route(self, route_id, *, local_text_only=False):
-        candidates = self.candidates(local_text_only=True) if local_text_only else self.candidates()
+    def current_route(self, route_id, *, local_text_only=False, local_ocr_only=False):
+        candidates = self.candidates(local_ocr_only=True) if local_ocr_only else self.candidates(local_text_only=True) if local_text_only else self.candidates()
         route = next((r for r in candidates if r['route_id'] == route_id), None)
         if not route: raise ValueError('BROKER_ROUTE_NOT_REGISTERED')
         return route
+
+    def _native_ocr_owner(self, nid):
+        from ..creative.project_store import CreativeProjectStore
+        owner = CreativeProjectStore(self.store)
+        try:
+            with owner.existing_owner_only():
+                return owner.incarnation(nid)
+        except FileNotFoundError:
+            return None
+
+    def _native_ocr_rows(self, nid, rows):
+        rows = list(rows)
+        if not any('native_ocr_incarnation' in row for row in rows): return rows
+        current = self._native_ocr_owner(nid)
+        return [row for row in rows if 'native_ocr_incarnation' not in row
+                or current is not None and row['native_ocr_incarnation'] == current]
 
     def budget(self, nid, scope):
         doc = self.store.read(nid, scope)
@@ -419,7 +439,7 @@ class ModelBrokerService(DomainService):
                 'boundary': 'Reservation admission limit; upstream charges can exceed an estimate.'}
 
     def _totals(self, doc):
-        rows = list(doc['collections'].get(self.LEDGER, {}).values())
+        rows = self._native_ocr_rows(doc['novel_id'], doc['collections'].get(self.LEDGER, {}).values())
         return {'committed_microusd': sum(r.get('accounted_microusd') or 0 for r in rows),
                 'inflight': sum(r['status'] in {'RESERVED', 'DISPATCHED', 'UNKNOWN_UPSTREAM'} for r in rows),
                 'unknown_count': sum(r['status'] == 'UNKNOWN_UPSTREAM' for r in rows),
@@ -462,6 +482,11 @@ class ModelBrokerService(DomainService):
             return copy.deepcopy(rows[body.route_id])
 
     def _price(self, route, prices):
+        if route.get('candidate_profile') == 'LOCAL_NATIVE_OCR_ONLY_V1':
+            return {'reserve_microusd': 0, 'currency': 'USD',
+                    'source': 'Pinned local native OCR; no external provider invoice',
+                    'applicability': 'native_provider_fee_only_excludes_host_compute',
+                    'actual_known_zero': True, 'zero_kind': 'LOCAL_PROVIDER_FEE'}
         if route['synthetic']:
             return {'reserve_microusd': 0, 'currency': 'USD', 'source': 'Builtin deterministic adapter; no provider invoice',
                     'applicability': 'synthetic_provider_fee_only', 'actual_known_zero': True}
@@ -480,8 +505,11 @@ class ModelBrokerService(DomainService):
                            'privacy_level': effective_source_privacy(chapter, scope.get('branch_id'))}
         return result
 
-    def preview(self, nid, scope, actor, value, guard=lambda: None, route_guard=None, *, local_text_only=False, owner_lease=None):
+    def preview(self, nid, scope, actor, value, guard=lambda: None, route_guard=None, *, local_text_only=False, local_ocr_only=False, owner_lease=None):
         body = BrokerRequest.model_validate(value)
+        native_owner = self._native_ocr_owner(nid) if local_ocr_only else None
+        if local_ocr_only and (native_owner is None or not callable(owner_lease)):
+            raise ValueError('BROKER_NATIVE_OCR_OWNER_REQUIRED')
         self.novels.get(nid)
         guard()
         sources = self._sources(nid, scope, body.chapter_ids)
@@ -490,7 +518,9 @@ class ModelBrokerService(DomainService):
         prices = doc['collections'].get(self.PRICES, {})
         if local_text_only and (body.capability != 'TEXT' or body.profile != 'LOCAL_ONLY' or body.allow_cloud_fallback):
             raise ValueError('BROKER_LOCAL_TEXT_PROFILE_REQUIRED')
-        candidates = self.candidates(local_text_only=True) if local_text_only else self.candidates()
+        if local_ocr_only and (local_text_only or body.capability != 'VISION' or body.profile != 'LOCAL_ONLY' or body.allow_cloud_fallback or body.allow_synthetic or body.chapter_ids or body.context_tokens or body.task_type is not None):
+            raise ValueError('BROKER_LOCAL_OCR_PROFILE_REQUIRED')
+        candidates = self.candidates(local_ocr_only=True) if local_ocr_only else self.candidates(local_text_only=True) if local_text_only else self.candidates()
         hardware = self.hardware_capacity() if body.min_host_ram_mib or body.min_host_vram_mib else {'state': 'NOT_REQUESTED', 'free_memory': None}
         evidence = self.evidence_reader(nid, scope) if callable(self.evidence_reader) else []
         for route in candidates:
@@ -532,7 +562,7 @@ class ModelBrokerService(DomainService):
                 reasons.append('LATENCY_EVIDENCE_UNKNOWN_OR_OVER_LIMIT')
             route['price'] = self._price(route, prices)
             cost = route['price']['reserve_microusd'] if route['price'] else None
-            route['cost_state'] = 'ESTIMATE' if route['price'] and not route['synthetic'] else 'KNOWN_SYNTHETIC_ZERO' if route['synthetic'] else 'UNKNOWN'
+            route['cost_state'] = 'KNOWN_LOCAL_PROVIDER_ZERO' if route['price'] and route['price'].get('zero_kind') == 'LOCAL_PROVIDER_FEE' else 'ESTIMATE' if route['price'] and not route['synthetic'] else 'KNOWN_SYNTHETIC_ZERO' if route['synthetic'] else 'UNKNOWN'
             if cost is None and (budget['require_known_estimate'] or budget['limit_microusd'] is not None or body.max_cost_microusd is not None): reasons.append('PRICE_ESTIMATE_REQUIRED')
             if body.max_cost_microusd is not None and cost is not None and cost > body.max_cost_microusd: reasons.append('TASK_BUDGET_EXCEEDED')
             if budget['limit_microusd'] is not None and cost is not None and budget['committed_microusd'] + cost > budget['limit_microusd']: reasons.append('PROJECT_BUDGET_EXCEEDED')
@@ -577,20 +607,29 @@ class ModelBrokerService(DomainService):
                        'license_confirmation_required': body.require_confirmed_license}}
         if local_text_only:
             payload['candidate_profile'] = 'LOCAL_TEXT_ONLY_V1'
+        elif local_ocr_only:
+            payload['candidate_profile'] = 'LOCAL_NATIVE_OCR_ONLY_V1'
+            payload['native_ocr_incarnation'] = native_owner
+            payload['will_send'].update(author_request_preview_required=False, research_ocr_preview_required=True)
         with self._owned_transaction(nid, scope, owner_lease) as doc:
             guard()
+            if local_ocr_only and self._native_ocr_owner(nid) != native_owner:
+                raise StaleSourceError('BROKER_NATIVE_OCR_OWNER_CHANGED')
             row = new_row(nid, scope, actor, payload)
             doc['collections'].setdefault(self.DECISIONS, {})[row['id']] = row
             return copy.deepcopy(row)
 
     def decisions(self, nid, scope, actor):
-        return sorted((r for r in self.list(nid, scope, self.DECISIONS) if r['created_by'] == actor), key=lambda r: r['created_at'], reverse=True)[:100]
+        return sorted((r for r in self._native_ocr_rows(nid, self.list(nid, scope, self.DECISIONS)) if r['created_by'] == actor), key=lambda r: r['created_at'], reverse=True)[:100]
 
     def _assert_preview(self, nid, scope, actor, row):
+        if row.get('candidate_profile') == 'LOCAL_NATIVE_OCR_ONLY_V1' and (not row.get('native_ocr_incarnation') or row['native_ocr_incarnation'] != self._native_ocr_owner(nid)):
+            raise StaleSourceError('BROKER_NATIVE_OCR_OWNER_CHANGED')
         if row['created_by'] != actor: raise ValueError('BROKER_ACTOR_MISMATCH')
         if row['status'] != 'PREVIEW' or not row.get('chosen'): raise ValueError('BROKER_LEGAL_PREVIEW_REQUIRED')
         if row['sources'] != self._sources(nid, scope, row['request']['chapter_ids']): raise StaleSourceError('BROKER_SOURCES_CHANGED')
-        current = self.current_route(row['chosen']['route_id'], local_text_only=True) if row.get('candidate_profile') == 'LOCAL_TEXT_ONLY_V1' else self.current_route(row['chosen']['route_id'])
+        profile = row.get('candidate_profile')
+        current = self.current_route(row['chosen']['route_id'], local_ocr_only=True) if profile == 'LOCAL_NATIVE_OCR_ONLY_V1' else self.current_route(row['chosen']['route_id'], local_text_only=True) if profile == 'LOCAL_TEXT_ONLY_V1' else self.current_route(row['chosen']['route_id'])
         if not current['available'] or current['fingerprint'] != row['chosen']['fingerprint'] or current['binding_hash'] != row['chosen']['binding_hash']:
             raise StaleSourceError('BROKER_ROUTE_CHANGED')
         constraints = row['request']
@@ -611,10 +650,12 @@ class ModelBrokerService(DomainService):
     def reserve(self, nid, scope, actor, preview_id, expected_version, idempotency_key, job_id, guard=lambda: None, authorization_digest=None, *, owner_lease=None):
         if not idempotency_key or len(idempotency_key) > 160 or not job_id or len(job_id) > 160: raise ValueError('BROKER_RESERVATION_ID_REQUIRED')
         row = self.get(nid, scope, self.DECISIONS, preview_id)
+        if row.get('candidate_profile') == 'LOCAL_NATIVE_OCR_ONLY_V1' and not callable(owner_lease):
+            raise ValueError('BROKER_NATIVE_OCR_OWNER_REQUIRED')
         check_version(row, expected_version)
         self._assert_preview(nid, scope, actor, row)
         guard()
-        key = digest([actor, idempotency_key])
+        key = digest([actor, idempotency_key, row['native_ocr_incarnation']]) if row.get('candidate_profile') == 'LOCAL_NATIVE_OCR_ONLY_V1' else digest([actor, idempotency_key])
         with self._owned_transaction(nid, scope, owner_lease) as doc:
             guard()
             ledger = doc['collections'].setdefault(self.LEDGER, {})
@@ -637,6 +678,8 @@ class ModelBrokerService(DomainService):
                 'reserve_microusd': amount, 'accounted_microusd': amount, 'actual_microusd': None,
                 'currency': 'USD', 'price': price, 'cost_state': 'RESERVED_ESTIMATE' if amount is not None else 'UNKNOWN',
                 'dispatched': False, 'overrun': False})
+            if row.get('candidate_profile') == 'LOCAL_NATIVE_OCR_ONLY_V1':
+                entry['native_ocr_incarnation'] = row['native_ocr_incarnation']
             entry['id'] = key
             ledger[key] = entry
             return copy.deepcopy(entry)
@@ -645,6 +688,8 @@ class ModelBrokerService(DomainService):
         entry = self.get(nid, scope, self.LEDGER, reservation_id)
         if entry['job_id'] != job_id or entry['created_by'] != actor: raise ValueError('BROKER_RESERVATION_AUTHORITY_MISMATCH')
         row = self.get(nid, scope, self.DECISIONS, entry['preview_id'])
+        if row.get('candidate_profile') == 'LOCAL_NATIVE_OCR_ONLY_V1' and not callable(owner_lease):
+            raise ValueError('BROKER_NATIVE_OCR_OWNER_REQUIRED')
         self._assert_preview(nid, scope, actor, row)
         with self._owned_transaction(nid, scope, owner_lease) as doc:
             guard()
@@ -666,6 +711,9 @@ class ModelBrokerService(DomainService):
         with self._owned_transaction(nid, scope, owner_lease) as doc:
             entry = doc['collections'].get(self.LEDGER, {}).get(reservation_id)
             if not entry or entry['job_id'] != job_id or entry['created_by'] != actor: raise ValueError('BROKER_RESERVATION_AUTHORITY_MISMATCH')
+            if 'native_ocr_incarnation' in entry and not callable(owner_lease):
+                raise ValueError('BROKER_NATIVE_OCR_OWNER_REQUIRED')
+            if not self._native_ocr_rows(nid, [entry]): raise StaleSourceError('BROKER_NATIVE_OCR_OWNER_CHANGED')
             if entry['status'] not in {'RESERVED', 'DISPATCHED'}: return copy.deepcopy(entry)
             actual = None
             price = entry['price'] or {}
@@ -676,19 +724,21 @@ class ModelBrokerService(DomainService):
             values = {'status': 'RELEASED' if not entry['dispatched'] else 'SETTLED' if actual is not None else 'UNKNOWN_UPSTREAM',
                       'job_status': status, 'actual_microusd': actual,
                       'accounted_microusd': actual if actual is not None else entry['reserve_microusd'],
-                      'cost_state': 'KNOWN_SYNTHETIC_ZERO' if entry['dispatched'] and price.get('actual_known_zero') else 'CALCULATED_FROM_REPORTED_USAGE' if actual is not None and entry['dispatched'] else 'NOT_DISPATCHED' if not entry['dispatched'] else 'UNKNOWN_UPSTREAM',
+                      'cost_state': 'KNOWN_LOCAL_PROVIDER_ZERO' if entry['dispatched'] and price.get('zero_kind') == 'LOCAL_PROVIDER_FEE' and price.get('actual_known_zero') else 'KNOWN_SYNTHETIC_ZERO' if entry['dispatched'] and price.get('actual_known_zero') else 'CALCULATED_FROM_REPORTED_USAGE' if actual is not None and entry['dispatched'] else 'NOT_DISPATCHED' if not entry['dispatched'] else 'UNKNOWN_UPSTREAM',
                       'overrun': actual is not None and entry['reserve_microusd'] is not None and actual > entry['reserve_microusd']}
             change_row(entry, actor, entry['version'], lambda r: r.update(values))
             return copy.deepcopy(entry)
 
     def ledger(self, nid, scope, actor):
-        return sorted((r for r in self.list(nid, scope, self.LEDGER) if r['created_by'] == actor), key=lambda r: r['created_at'], reverse=True)[:100]
+        return sorted((r for r in self._native_ocr_rows(nid, self.list(nid, scope, self.LEDGER)) if r['created_by'] == actor), key=lambda r: r['created_at'], reverse=True)[:100]
 
 
     def reconcile(self, nid, scope, actor, rid, value, guard=lambda: None, allow_orphan=False):
         body = ReconcileInput.model_validate(value)
         def update(row):
             guard()
+            if 'native_ocr_incarnation' in row:
+                raise ValueError('BROKER_NATIVE_OCR_RECONCILIATION_OWNER_REQUIRED')
             if row['created_by'] != actor: raise ValueError('BROKER_RESERVATION_AUTHORITY_MISMATCH')
             orphan = row['status'] in {'RESERVED', 'DISPATCHED'} and allow_orphan and body.original_executor_stopped_confirmed
             if not orphan and row['status'] != 'UNKNOWN_UPSTREAM' and not (row['status'] == 'SETTLED' and row.get('overrun')):
