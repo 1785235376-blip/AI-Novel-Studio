@@ -1,26 +1,46 @@
 # Studio V2 current continuation checkpoint
 
-Updated 2026-10-18 13:30 UTC. This document inventories bounded additions, not a
+Updated 2026-10-18 18:20 UTC. This document inventories bounded additions, not a
 replacement for the frozen feature matrix or a V2 percentage/Release declaration.
 The source pin below identifies the latest bounded implementation; archive and product heads remain distinct.
 
 ## Source and publication
 
-Working branch: work/dot-recovered-20261018.
-Product source before this documentation commit: 225e91ba (native PDF page OCR closed loop; resolve the full Git commit locally).
-Latest verified archive before this commit: d834820d0232ec0ffcb23c13f47cd4e5de469d20,
-branch archive/verified-studio-v2-20261017-5a6f697. It contains incremental source
-bundles, reports and retained logs. Archive branch HEAD is not product source HEAD.
-Each archive bundle declares its prerequisite and includes checksums; restore the
-chain without resetting or overwriting existing work.
+Current checkpoint: 2026-10-18 18:20 UTC. Working branch:
+work/dot-recovered-20261018. Latest committed product source is
+e96b749ad7cd6eab29befe0db051c9e1fbf4a060 (bounded camera/benchmark wave).
+Latest byte-verified public archive is
+0e5cd80918e8022bee1f94f9295b22c206e0ac77 on
+archive/verified-studio-v2-20261017-5a6f697. Archive HEAD and product HEAD are
+different identities; the archive stores prerequisite-bound incremental bundles.
+The restored local source contains the integrated working product, whereas the
+archive branch's ordinary source tree is not the current product tree.
 
-Last actual remote main/PR check was 13:28 UTC:
+Anonymous remote ref inspection at 18:20 UTC confirmed:
 - main fed2404c8e30b44061b7139dced45b7f3301601c
-- draft PR #47 a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3
-- draft PR #48 58bbaad11360330d51f49fc2bb78a955a26469f0
+- PR #47 head a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3
+- PR #48 head 58bbaad11360330d51f49fc2bb78a955a26469f0
+- archive 0e5cd80918e8022bee1f94f9295b22c206e0ac77
 
-These archive uploads do not update those PR source branches. No main merge,
+The new GAP-BACKLOG-2026-10-19-r2 was fully read: 1326 lines, 134744 bytes,
+SHA256 0fa7530806476c6a8e4e53e207e468ea6c6ed93b55f3a155796c8fde694b0fd8.
+Its appendix B includes SPEC-2026.10.19-r1. DIF-01..12 and
+IMAGE-COMIC-01..20 join the same formal V2 gate alongside the original frozen
+requirements. Old grouped gap counts and percentages are historical and cannot
+measure this expanded release scope. The fixed-ID reconciliation is being updated.
+No new requirement is accepted merely because it has a similarly named owner.
+
+Camera and video benchmark work is committed after targeted File/PostgreSQL,
+193 combined UI tests, TypeScript, production build and six PUBLIC artifact checks;
+3036 checked source paths match the committed source. It is not expanded into
+further P5 work. Next priority is the existing Story/Impact and
+Graph/Director owners, followed by standalone model-free Comic editing inside
+Image Studio. Actual target-software and final release acceptance remain separate.
+
+These archive uploads do not update the PR source branches. No main merge,
 force push, formal Release, paid API, new quota or user Windows/GPU work occurred.
+Publishing a new public integration branch remains distinct from local integration
+and existing archive uploads; no new branch was pushed in this checkpoint.
 
 ## Evidence since the earlier checkpoint
 
