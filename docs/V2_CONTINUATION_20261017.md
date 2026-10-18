@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Application TCP screenplay-to-Graph closure (2026-10-18 02:46 UTC)
+
+Two focused cases passed on both /api and /api/v1 through the actual app's loopback TCP server, original Host/session middleware and File owners. Independent screenplay model-v2 preview/execution/pending-review supplied the original model-to-Graph handoff test unchanged thereafter: human adoption, exact Director pin, Graph create/idempotent retry, versioned position Save/CAS conflict, explicit planning-only Graph execution, fresh-owner HTTP graph/run reopen, and stale-source feedback without automatically changing the saved pin. Exactly one fixture provider request/job remained; Graph execution made no second model call. This is real TCP/File persistence, not browser UI E2E, packaged-process restart or live-model quality.
+
+Local receipt screenplay-application-graph-r1:2 PASS. Five preceding screenplay feature commits throughdacb268 are archived and remotely verified at58a08a86b3972e84cbe77d0ed9e1cf2020738283, artifacts/screenplay-director-20261018-dacb268 (5 files,588862bytes). User informed02:44UTC. This new small closure receipt will join a later archive batch.
+
 ## Existing Director review UI accepts independent screenplay (2026-10-18 02:42 UTC)
 
 The original AI Director panel now offers an explicit independent screenplay review entry. It requires the new advertised screenplay capability, captures SCREENPLAY mode in the existing scoped client, and routes every action/read to model-v2. Existing preview/human consent/status/review/uncertain-result recovery/adopted-DRAFT handoff controls are reused. V1 remains the default client for storyboard. Strict decoders reject mixed discriminators/source modes, wrong source pins, invented shot keys and malformed/duplicate scene mappings. Reopened drafts still pass the original digest/pin handoff.
