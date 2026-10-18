@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/BriefCandidateImport.additive.test.tsx (4 tests) 163ms
+ ✓ src/experimental/PersonalSkillBriefComposer.test.tsx (17 tests) 1047ms
+ ✓ src/creative/GraphStarter.additive.test.tsx (9 tests) 439ms
+   ✓ uses the actual controller change/undo/Save and never auto-runs 306ms
+
+ Test Files  3 passed (3)
+      Tests  30 passed (30)
+   Start at  11:53:01
+   Duration  2.43s (transform 1.19s, setup 64ms, collect 2.16s, tests 1.65s, environment 897ms, prepare 164ms)
+

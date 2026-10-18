@@ -1,5 +1,13 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Personal writing-brief candidate bridge (2026-10-18 02:54 UTC)
+
+Added a code-owned “writing brief organization” starter to the existing schema2/3 text Graph: original text_input→text_generate→human_review nodes only, with visible bounded author instruction and no route selection or automatic call. After explicit original Graph execution/review, users can manually copy the four-field JSON into the original personal brief composer. The new importer rejects duplicate/escaped-duplicate keys, extra authority/identity/license fields, non-string/nested values and oversized data. It shows the four original/candidate fields and requires a separate replace confirmation. IME, edits, disabled/inactive ABA and original field changes retire stale approval.
+
+Replacement touches only four text fields, clears the old verified preset attribution, keeps user identity/license, and explicitly marks user-supplied model-candidate provenance as UNVERIFIED. It then uses the unchanged template preview/compare/install owner and existing false execution/network permissions. This is a manual candidate bridge, NOT automatic background curation, authenticated Graph-output transfer, official submission, external plugin compatibility or an end-to-end real-model run.
+
+Focused new/unchanged composer+starter tests:30 PASS and TypeScript. First run exposed an IME revision rerender bug; runtime invalidation was fixed, failure receipt retained. No backend, additional executor, provider, browser visual acceptance or full build added.
+
 ## Application TCP screenplay-to-Graph closure (2026-10-18 02:46 UTC)
 
 Two focused cases passed on both /api and /api/v1 through the actual app's loopback TCP server, original Host/session middleware and File owners. Independent screenplay model-v2 preview/execution/pending-review supplied the original model-to-Graph handoff test unchanged thereafter: human adoption, exact Director pin, Graph create/idempotent retry, versioned position Save/CAS conflict, explicit planning-only Graph execution, fresh-owner HTTP graph/run reopen, and stale-source feedback without automatically changing the saved pin. Exactly one fixture provider request/job remained; Graph execution made no second model call. This is real TCP/File persistence, not browser UI E2E, packaged-process restart or live-model quality.

@@ -1,0 +1,87 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/experimental/BriefCandidateImport.additive.test.tsx (4 tests | 1 failed) 140ms
+   × requires visible comparison and retires stale approval across edits, IME and inactive ABA 60ms
+     → Unable to find an element with the text: 确认替换四项正文. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<details>[39m
+      [36m<summary>[39m
+        [0m导入模型整理候选（人工核对）[0m
+      [36m</summary>[39m
+      [36m<p>[39m
+        [0m可在创作画布的“写作简报整理”起步方案中明确运行并审核，再将输出粘贴到这里。本入口不调用模型、不核实模型来源，也不保存或执行插件。[0m
+      [36m</p>[39m
+      [36m<label>[39m
+        [0m待审核简报 JSON[0m
+        [36m<textarea[39m
+          [33mmaxlength[39m=[32m"128000"[39m
+        [36m>[39m
+          [0m{"purpose":"用途","writing_goals":"目标","constraints":"不增加许可","checklist":"人工确认"}[0m
+        [36m</textarea>[39m
+      [36m</label>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m比较四项简报内容[0m
+      [36m</button>[39m
+    [36m</details>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ✓ src/experimental/PersonalSkillBriefComposer.test.tsx (17 tests) 955ms
+ ✓ src/creative/GraphStarter.additive.test.tsx (9 tests) 388ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 29 passed (30)
+   Start at  11:52:20
+   Duration  2.14s (transform 1.03s, setup 43ms, collect 1.82s, tests 1.48s, environment 957ms, prepare 184ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/experimental/BriefCandidateImport.additive.test.tsx > requires visible comparison and retires stale approval across edits, IME and inactive ABA
+TestingLibraryElementError: Unable to find an element with the text: 确认替换四项正文. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<details>[39m
+      [36m<summary>[39m
+        [0m导入模型整理候选（人工核对）[0m
+      [36m</summary>[39m
+      [36m<p>[39m
+        [0m可在创作画布的“写作简报整理”起步方案中明确运行并审核，再将输出粘贴到这里。本入口不调用模型、不核实模型来源，也不保存或执行插件。[0m
+      [36m</p>[39m
+      [36m<label>[39m
+        [0m待审核简报 JSON[0m
+        [36m<textarea[39m
+          [33mmaxlength[39m=[32m"128000"[39m
+        [36m>[39m
+          [0m{"purpose":"用途","writing_goals":"目标","constraints":"不增加许可","checklist":"人工确认"}[0m
+        [36m</textarea>[39m
+      [36m</label>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m比较四项简报内容[0m
+      [36m</button>[39m
+    [36m</details>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ click src/experimental/BriefCandidateImport.additive.test.tsx:13:51
+     11| const value={purpose:'用途',writing_goals:'目标',constraints:'不增加许…
+     12| afterEach(cleanup);
+     13| const click=(name:string)=>fireEvent.click(screen.getByText(name));
+       |                                                   ^
+     14| const fill=()=>{fireEvent.change(screen.getByLabelText('待审核简报 JSO…
+     15| it('builds ordinary text/model/review nodes without route selection or…
+ ❯ src/experimental/BriefCandidateImport.additive.test.tsx:31:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
