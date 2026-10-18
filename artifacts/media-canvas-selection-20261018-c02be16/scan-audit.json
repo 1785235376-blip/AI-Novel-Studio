@@ -1,0 +1,91 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "dfb92677269bb7338676e570fbc98c6d74223609",
+      "path": "docs/MEDIA_CANVAS_MULTI_SELECTION.md",
+      "bytes": 1806,
+      "sha256": "7ac413ccb8faf20c6fab755ff7575fe9087baf78d3d120a40385e8d1559b7963"
+    },
+    {
+      "blob": "6f91fec6914fc600427086cf6d885c5b29a58c81",
+      "path": "docs/delivery/v2-development/media-canvas-selection-final.json",
+      "bytes": 690797,
+      "sha256": "76a1c5f1729d65812f00d76d3e10de2035430403e732187e8b2c530eca6a2873"
+    },
+    {
+      "blob": "26a2e5b1fab399afd0528710cf5494db1bbfe44a",
+      "path": "docs/delivery/v2-development/media-canvas-selection-final.log",
+      "bytes": 2327,
+      "sha256": "940e08756801c7f0ef51e95b0931d4c54504a7861aee5be57cd58ddc54f6e332"
+    },
+    {
+      "blob": "a012c6b5e07e6e1a2b96e8e35bf0fb0ea384d570",
+      "path": "docs/delivery/v2-development/media-canvas-selection.json",
+      "bytes": 690692,
+      "sha256": "252de392aee88f609bb424e0198b5f81bb836411b3b212696ac63987b0e5cf01"
+    },
+    {
+      "blob": "fc4fd84cee63452c09daff41588af3dff3f4e0b1",
+      "path": "docs/delivery/v2-development/media-canvas-selection.log",
+      "bytes": 2257,
+      "sha256": "cd39d5d5338ff4c6ef7ed09f29d8d5af8e17bc2f04edfe84f42f3e05695f3af8"
+    },
+    {
+      "blob": "f00aaa461b966dc62bcb491ac75995d8184bd9f6",
+      "path": "docs/delivery/v2-development/media-selection-retained-red.json",
+      "bytes": 690536,
+      "sha256": "5057bef498080ff3ffebfec7a98b87597f2c1ee4a39d79c7ada3e40c27ffc58d"
+    },
+    {
+      "blob": "1cd99f71a9b89a52d2fcc9700a67cb294b57313b",
+      "path": "docs/delivery/v2-development/media-selection-retained-red.log",
+      "bytes": 1300,
+      "sha256": "0ae223b2fd3f1c74ff50049a101840b776e375f1d009217aaa8ace3035d9e95b"
+    },
+    {
+      "blob": "8a67b00a21a53ef946483c28f0f6369284ebd212",
+      "path": "frontend/src/creative/MediaCanvasViewPanel.additive.test.tsx",
+      "bytes": 9396,
+      "sha256": "d48a6ae01f4f8ede3ceedb19fc4affaa7ef403a251b92104df7390ea6c6caac2"
+    },
+    {
+      "blob": "ea9689fc3f3968d026c7ac2d4d98d759680a9c81",
+      "path": "frontend/src/creative/MediaCanvasViewPanel.tsx",
+      "bytes": 13296,
+      "sha256": "8ff126a8e3fa5a8d624160a4ef867755ca344d5ee52163fa31fe73af05f51449"
+    },
+    {
+      "blob": "806a3ad21a01bc3b83aae0336f12981cc19d65ca",
+      "path": "frontend/src/creative/MediaCardViewport.additive.test.tsx",
+      "bytes": 6002,
+      "sha256": "a6b9aae02b6ffeee6dba15b40377a273a5e8907043096dab4e719153e3086123"
+    },
+    {
+      "blob": "07d8041584472dcec45f0a3aa108be7564a78dbe",
+      "path": "frontend/src/creative/MediaCardViewport.tsx",
+      "bytes": 9311,
+      "sha256": "d9db94e2faba427e065707843f78f12b4106510113a4558a441a9cfa00810cc5"
+    },
+    {
+      "blob": "8e05023933b6e191d5d8ac9233cdfad9b5f62fb9",
+      "path": "frontend/src/creative/mediaCanvasSelection.additive.test.ts",
+      "bytes": 1750,
+      "sha256": "153bfa935413d4648f03926ab913c797073457548e995040004fb5bc23421b73"
+    },
+    {
+      "blob": "bb272479a682261f8c9b60af4e4c2e4728799d73",
+      "path": "frontend/src/creative/mediaCanvasSelection.ts",
+      "bytes": 2040,
+      "sha256": "a2f4188974ad782733e221489a890936c148cd19f6c545722ef7720496711c32"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
