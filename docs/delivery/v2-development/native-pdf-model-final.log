@@ -1,0 +1,9 @@
+........................................................................ [ 83%]
+..............                                                           [100%]
+=============================== warnings summary ===============================
+tests/test_local_pdf_ocr_additive.py::test_real_original_node_preserves_pdf_page_and_derived_image_identity
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+86 passed, 1 warning in 10.59s

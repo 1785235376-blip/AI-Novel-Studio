@@ -52,6 +52,34 @@ class VisionOCRRequest:
 
 
 @dataclass(frozen=True, slots=True)
+class PDFPageOCRRequest:
+    """Separate source envelope; never accepted by the IMAGE/V1 request."""
+    provider_id: str
+    model_id: str
+    content: bytes
+    media_type: str
+    language: str
+    source_digest: str
+    route_digest: str
+    request_id: str
+    page: int
+    dispatch_guard: Callable[[], None] = field(repr=False, compare=False)
+    cancellation: Event | None = field(default=None, repr=False, compare=False)
+
+    def __post_init__(self):
+        _identity(self.provider_id); _identity(self.model_id); _identity(self.request_id)
+        if (type(self.content) is not bytes or not 0 < len(self.content) <= 4 * 1024 * 1024
+                or not self.content.startswith(b'%PDF-') or self.media_type != 'application/pdf'
+                or type(self.page) is not int or not 1 <= self.page <= 1000
+                or not isinstance(self.language, str) or not re.fullmatch(r'[A-Za-z]{2,3}(?:-[A-Za-z]{2,8})?', self.language)
+                or not _hash(self.source_digest) or not _hash(self.route_digest)
+                or hashlib.sha256(self.content).hexdigest() != self.source_digest
+                or not callable(self.dispatch_guard)
+                or self.cancellation is not None and not isinstance(self.cancellation, Event)):
+            raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, 'PDF OCR 须绑定原始文档、明确页码、语言与准入')
+
+
+@dataclass(frozen=True, slots=True)
 class VisionOCRResponse:
     provider_id: str
     model_id: str
@@ -79,7 +107,8 @@ class VisionOCRModelNode:
         descriptor = next((row for row in self.providers.descriptors() if row.provider_id == provider_id), None)
         if (descriptor is None or descriptor.provider_type != 'local' or Modality.VISION not in descriptor.supported_modalities
                 or 'OCR' not in model.capabilities or getattr(provider, 'supports_dispatch_guard', False) is not True
-                or not callable(getattr(provider, 'route_snapshot', None)) or not callable(getattr(provider, 'recognize_image', None))):
+                or not callable(getattr(provider, 'route_snapshot', None))
+                or not (callable(getattr(provider, 'recognize_image', None)) or callable(getattr(provider, 'recognize_pdf_page', None)))):
             raise ModelRuntimeError(RuntimeErrorCode.CAPABILITY_NOT_SUPPORTED, '须使用原注册表内明确支持 OCR 的本地视觉模型')
         identities = self.providers.identity_store
         if (identities is None or self.models.identity_store is None or identities.path != self.models.identity_store.path
@@ -91,11 +120,16 @@ class VisionOCRModelNode:
         if execution_id is None:
             raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, '原主机执行节点尚未注册')
         route = provider.route_snapshot()
-        native = isinstance(route, dict) and route.get('schema') == 'local-vision-ocr-native-admission/1'
+        pdf = isinstance(route, dict) and route.get('schema') == 'local-vision-ocr-pdf-native-admission/1'
+        native = pdf or isinstance(route, dict) and route.get('schema') == 'local-vision-ocr-native-admission/1'
         fields = {'schema', 'provider_id', 'model_id', 'model_sha256', 'admission_digest', 'languages', 'adapter_version'}
         fields.add('executable_sha256' if native else 'endpoint')
+        if pdf:
+            fields.update({'renderer_sha256', 'renderer_digest'})
         if (not isinstance(route, dict) or set(route) != fields
-                or route.get('schema') not in {'local-vision-ocr-admission/1', 'local-vision-ocr-native-admission/1'}
+                or route.get('schema') not in {'local-vision-ocr-admission/1', 'local-vision-ocr-native-admission/1', 'local-vision-ocr-pdf-native-admission/1'}
+                or not callable(getattr(provider, 'recognize_pdf_page' if pdf else 'recognize_image', None))
+                or pdf and (not _hash(route.get('renderer_sha256')) or not _hash(route.get('renderer_digest')))
                 or route.get('provider_id') != provider_id or route.get('model_id') != model_id
                 or not isinstance(route.get('languages'), list) or not 1 <= len(route['languages']) <= 32
                 or any(not isinstance(x, str) or not re.fullmatch(r'[A-Za-z]{2,3}(?:-[A-Za-z]{2,8})?', x) for x in route['languages'])
@@ -116,12 +150,15 @@ class VisionOCRModelNode:
         value['route_digest'] = audio_digest(value)
         return value
 
-    def execute(self, request: VisionOCRRequest) -> VisionOCRResponse:
+    def execute(self, request: VisionOCRRequest | PDFPageOCRRequest) -> VisionOCRResponse:
         from .creative.ai_execution import require_execution
         require_execution()
-        if not isinstance(request, VisionOCRRequest):
+        if type(request) not in {VisionOCRRequest, PDFPageOCRRequest}:
             raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, 'OCR 请求类型无效')
         captured = self.binding(request.provider_id, request.model_id)
+        pdf = type(request) is PDFPageOCRRequest
+        if pdf != (captured['route']['schema'] == 'local-vision-ocr-pdf-native-admission/1'):
+            raise ModelRuntimeError(RuntimeErrorCode.CAPABILITY_NOT_SUPPORTED, 'OCR 来源类型与已核对的模型路由不一致')
         if captured['route_digest'] != request.route_digest or request.language not in captured['route']['languages']:
             raise ModelRuntimeError(RuntimeErrorCode.MODEL_DISABLED, 'OCR 路由或语言准入已变化，请重新核对')
         provider = self.providers.resolve(request.provider_id)
@@ -134,9 +171,12 @@ class VisionOCRModelNode:
                 raise ModelRuntimeError(RuntimeErrorCode.MODEL_DISABLED, 'OCR 模型或准入变化，输出已丢弃')
             require_execution()
         guard()
-        response = provider.recognize_image(replace(request, dispatch_guard=guard))
+        method = provider.recognize_pdf_page if pdf else provider.recognize_image
+        response = method(replace(request, dispatch_guard=guard))
         guard()
         fields = {'model_called', 'source_digest', 'input_sha256', 'route_digest', 'language', 'text_sha256'}
+        if pdf:
+            fields.update({'source_page', 'rendered_image_sha256', 'renderer_digest'})
         valid = isinstance(response, VisionOCRResponse) and response.provider_id == request.provider_id and response.model_id == request.model_id and isinstance(response.text, str)
         if valid:
             try:
@@ -146,6 +186,10 @@ class VisionOCRModelNode:
                     and response.receipt['model_called'] is True and response.receipt['source_digest'] == request.source_digest
                     and response.receipt['input_sha256'] == request.source_digest and response.receipt['route_digest'] == request.route_digest
                     and response.receipt['language'] == request.language
+                    and (not pdf or (type(response.receipt['source_page']) is int
+                        and response.receipt['source_page'] == request.page
+                        and _hash(response.receipt['rendered_image_sha256'])
+                        and response.receipt['renderer_digest'] == captured['route']['renderer_digest']))
                     and response.receipt['text_sha256'] == hashlib.sha256(raw).hexdigest())
             except (UnicodeError, AttributeError):
                 valid = False

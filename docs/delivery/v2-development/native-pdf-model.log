@@ -1,0 +1,39 @@
+..................F..................................................... [ 90%]
+........                                                                 [100%]
+=================================== FAILURES ===================================
+____ test_pdf_provider_is_not_automatically_admitted_as_image_native_broker ____
+
+rig = (<app.model_runtime.GenerationRuntime object at 0x7fe97649c590>, <test_vision_ocr_runtime_additive.Provider object at 0x7fe9764cfce0>)
+pdf_provider = <app.local_pdf_ocr.LocalPDFOCRProvider object at 0x7fe9764f5550>
+
+    def test_pdf_provider_is_not_automatically_admitted_as_image_native_broker(rig, pdf_provider):
+        # Explicitly distinct route. The current broker's exact LocalTesseract class
+        # fence must be extended separately with PDF source and page authority.
+        from app.experimental.native_ocr_broker import candidates
+        runtime, _ = rig; install(runtime, pdf_provider)
+>       assert not candidates(runtime)
+                   ^^^^^^^^^^^^^^^^^^^
+
+tests/test_local_pdf_ocr_additive.py:104: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+runtime = <app.model_runtime.GenerationRuntime object at 0x7fe97649c590>
+
+    def candidates(runtime):
+        from ..local_tesseract_ocr import LocalTesseractOCRProvider
+        from ..vision_ocr_runtime import VisionOCRModelNode
+        from .model_broker import implementation_hash
+>       node = runtime.generation_runtime.vision_ocr_node
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'GenerationRuntime' object has no attribute 'generation_runtime'
+
+app/experimental/native_ocr_broker.py:18: AttributeError
+=============================== warnings summary ===============================
+tests/test_local_pdf_ocr_additive.py::test_real_original_node_preserves_pdf_page_and_derived_image_identity
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_local_pdf_ocr_additive.py::test_pdf_provider_is_not_automatically_admitted_as_image_native_broker
+1 failed, 79 passed, 1 warning in 8.87s

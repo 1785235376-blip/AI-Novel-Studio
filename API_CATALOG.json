@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "0aee95e65c305dfff0860079bf56753d4b25b5c074c829afe006b323b090bef5",
+  "application_source_fingerprint_sha256": "176c657c6e0fe90b2132d00ab988296805c706199bb17319be1f6c4e414a6e7f",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -273,6 +273,7 @@
     "app/local_interop/provider.py": "017e9f134521f802772984896202802704f4c787a559ad8dffd686d24ee08e18",
     "app/local_interop/synthetic_tutor.py": "dfd16434f7d6f99d1be0932a6d144a47a0c28fb2deb0d791aebf2f065db617e2",
     "app/local_interop/transport.py": "132c7e9af560512012b8aa0e0e89ca5ef0024c1527b7ab7b8b2b425ac232fc4a",
+    "app/local_pdf_ocr.py": "8958e900dd7ebe5fa142f6b5702a6a28d229d8af8d0d01ce3c95db42b0825760",
     "app/local_pdf_raster.py": "4702fab42cbf0810a935b7bb99f1b7468dd2508444926834ba24e70fe5eaf8f1",
     "app/local_tesseract_ocr.py": "be44f680deed59fd840d8450df8574a611ae28ff0cd3fada45ec66ae9317a588",
     "app/local_whisper_cpp.py": "dda33e1a3aa7b24e174761fd51a8e0c4d8c62aa05ed67a713707af5e0faaaf1f",
@@ -486,7 +487,7 @@
     "app/structured_log.py": "05185e38aa5f8b7caf2fb8a3b9b96c9de44f76a415308ad3f074e9973cc3723f",
     "app/trusted_sessions.py": "11f2520cade262fae3317e23c4379b0d376359faecc1df33160a4f1ba80c67bd",
     "app/video_assembly_api.py": "4b9fafc79e883ae13824289ebb75c87efcd8fc6c7a7204275c676555597b55a4",
-    "app/vision_ocr_runtime.py": "4dc0d9f3d9b240d1a6e57345125636a98f3a84fc04e8871ee5faa2bc1dd234e9",
+    "app/vision_ocr_runtime.py": "9c52b712e99fa6b545ac7f2335502957880eaf3ad098030a577e933c345d7c30",
     "app/visual_workflow.py": "a5ad2b66b50289603df914bead47ecc12e351d15c4fc957192af9693382206c7",
     "app/workflow.py": "c8f65bfcc73b454038a177aeb519b2e3cd032d8f9ed57fe4bb8b50d0d3e607ef",
     "app/workflow_api.py": "5db645456385c1199d15b0c13576bb092696e948fff592954d6077bb0120211c",
@@ -512,7 +513,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "7c66dc4922696607290bb182d30b457c62dc535268c1fde109e5cdb45d042b21",
+    "sha256": "811ce225db8362103028aa04057adf93350501a13f423222afc61070df259195",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
