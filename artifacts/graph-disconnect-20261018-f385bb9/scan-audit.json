@@ -1,0 +1,67 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "c36b65309950510ae95ebccec2f9cc671352e6dd",
+      "path": "docs/GRAPH_DISCONNECT_IMPACT_PREVIEW.md",
+      "bytes": 1717,
+      "sha256": "3ac8672507b4530f1e01e4529ab5d3c79db8d0fe0894a6b14df27461be459f32"
+    },
+    {
+      "blob": "bfd54ea8e2bc964b9c0845d2d58c7d0490c63ee0",
+      "path": "docs/delivery/v2-development/graph-disconnect-final.json",
+      "bytes": 698989,
+      "sha256": "452b0a9096b1169f66dfae94ab21df8adb8b5e67d5e5fb9229a9cd2a910e7540"
+    },
+    {
+      "blob": "6696fd766d2fa5a8d5b1ca55806a1823b19d257e",
+      "path": "docs/delivery/v2-development/graph-disconnect-final.log",
+      "bytes": 2349,
+      "sha256": "3d3cd091458133f9fe40fe6bb01215be79c94d367b4a0319fe502027d90ca266"
+    },
+    {
+      "blob": "227e0ac9e3047c09dfc3ae912946154fd2b7d5de",
+      "path": "docs/delivery/v2-development/graph-disconnect-preview.json",
+      "bytes": 699007,
+      "sha256": "4dffd09c4c5380709d3a84ca605d81d812a4737e960b5c99462b9ab2a7b728b0"
+    },
+    {
+      "blob": "960daf57cdc7756732c195c4e27c8e7ecc2a2f86",
+      "path": "docs/delivery/v2-development/graph-disconnect-preview.log",
+      "bytes": 10885,
+      "sha256": "2e0b01b1864f8a743e3cef9248cbc229d86886b69f9d36202e6d5a0e3c297056"
+    },
+    {
+      "blob": "04e6bed28020821c03a0b3dc8c3f76c6f86d3bf7",
+      "path": "frontend/src/creative/GraphConnectionList.additive.test.tsx",
+      "bytes": 4783,
+      "sha256": "26a48f8c15ea13a89b2bf5b069208a7b3e606743050803bd447595d35d66e0bd"
+    },
+    {
+      "blob": "896dec47da8aed6051e3738500058e05d79ed31b",
+      "path": "frontend/src/creative/GraphConnectionList.tsx",
+      "bytes": 3697,
+      "sha256": "c8d7d6a486b0358c33730f49292fb9f9c9424a0b6eec15396524bbe6891843b3"
+    },
+    {
+      "blob": "a9fd3567971d027d80c118817fb93ff322be35bb",
+      "path": "frontend/src/creative/graphDisconnectImpact.ts",
+      "bytes": 1554,
+      "sha256": "c9b3a0bf409b7b6f53c842789692660787367725af990cb8b5b46517ed8297b5"
+    },
+    {
+      "blob": "c326a9d46d289e6bff11426df4e7ea9ebf192591",
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "bytes": 56934,
+      "sha256": "4d5dafb3eb6748f11d364c14611022458a7e55187839af3885e65ab5cbb81044"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
