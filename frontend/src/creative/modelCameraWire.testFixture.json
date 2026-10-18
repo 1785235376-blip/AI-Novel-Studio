@@ -1,0 +1,198 @@
+{
+  "asset": {
+    "id": "4caced16-327b-4eaf-bc96-c46e9035c1cf",
+    "novel_id": "v2-independent-344f0877d75b4465afdfbf7dad2d00d4",
+    "filename": "triangle.glb",
+    "kind": "model",
+    "media_type": "model/gltf-binary",
+    "size": 768,
+    "sha256": "65072ace77998022732842591905bd1a14ddd0cdab35135236a3684a769f796c",
+    "branch_id": null,
+    "created_at": "2026-10-18T18:10:25.287094+00:00",
+    "updated_at": "2026-10-18T18:10:25.287101+00:00",
+    "version": 1,
+    "deleted_at": null,
+    "idempotency_key": "camera-source",
+    "provenance": {
+      "id": "4caced16-327b-4eaf-bc96-c46e9035c1cf",
+      "label": "triangle.glb",
+      "kind": "model",
+      "version": 1,
+      "digest": "65072ace77998022732842591905bd1a14ddd0cdab35135236a3684a769f796c",
+      "deleted": false,
+      "integrity": "VERIFIED",
+      "origin": "UNDECLARED",
+      "license": {
+        "label": "UNSPECIFIED",
+        "source": "",
+        "note": ""
+      },
+      "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+      "operation": "",
+      "parents": [],
+      "sources": [],
+      "producer": {
+        "declared_by": null,
+        "provider_id": null,
+        "model_id": null
+      },
+      "generation": null,
+      "declaration_history_versions": [],
+      "stale": false,
+      "source_task_id": null
+    },
+    "relationships": []
+  },
+  "inspection": {
+    "asset_snapshot": {
+      "id": "4caced16-327b-4eaf-bc96-c46e9035c1cf",
+      "kind": "ASSET",
+      "asset_kind": "model",
+      "version": 1,
+      "digest": "65072ace77998022732842591905bd1a14ddd0cdab35135236a3684a769f796c"
+    },
+    "inspection": {
+      "contract": "studio-static-glb-inspection/1",
+      "format": "GLB_2_STATIC_TRIANGLE_GEOMETRY",
+      "byte_count": 768,
+      "sha256": "65072ace77998022732842591905bd1a14ddd0cdab35135236a3684a769f796c",
+      "mesh_count": 1,
+      "node_count": 3,
+      "primitive_count": 1,
+      "position_count_per_primitive": 3,
+      "triangle_count_per_primitive": 1,
+      "bounds": {
+        "space": "MESH_LOCAL_UNTRANSFORMED",
+        "min": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          1.0,
+          2.0,
+          0.0
+        ]
+      },
+      "scene_transforms_applied": false,
+      "materials_rendered": false,
+      "textures_decoded": false,
+      "full_gltf_conformance_verified": false,
+      "external_resources_loaded": false,
+      "model_called": false,
+      "preview_available": false,
+      "frame_export_available": false
+    },
+    "camera_inspection": {
+      "contract": "studio-static-glb-cameras/1",
+      "space": "SCENE_WORLD_STATIC",
+      "coordinate_system": "GLTF_RH_Y_UP_METERS",
+      "matrix_layout": "COLUMN_MAJOR",
+      "scene_index": 0,
+      "scene_selection": "DECLARED_DEFAULT",
+      "camera_definition_count": 1,
+      "instances": [
+        {
+          "node_index": 1,
+          "camera_index": 0,
+          "node_name": "Source camera node",
+          "camera_name": "Source perspective camera",
+          "world_matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            5.0,
+            7.0,
+            9.0,
+            1.0
+          ],
+          "projection": {
+            "type": "perspective",
+            "yfov": 0.7,
+            "znear": 0.1,
+            "aspectRatio": null,
+            "zfar": null
+          }
+        }
+      ],
+      "rigid_transforms_only": true,
+      "animation_applied": false,
+      "model_called": false
+    }
+  },
+  "request": {
+    "contract": "studio-static-glb-camera-export/1",
+    "source_version": 1,
+    "source_sha256": "65072ace77998022732842591905bd1a14ddd0cdab35135236a3684a769f796c",
+    "scene_index": 0,
+    "node_index": 1,
+    "camera_index": 0,
+    "profile": "GLTF_2_CAMERA_ONLY"
+  },
+  "result": {
+    "asset_snapshot": {
+      "id": "4caced16-327b-4eaf-bc96-c46e9035c1cf",
+      "kind": "ASSET",
+      "asset_kind": "model",
+      "version": 1,
+      "digest": "65072ace77998022732842591905bd1a14ddd0cdab35135236a3684a769f796c"
+    },
+    "camera_export": {
+      "contract": "studio-static-glb-camera-export/1",
+      "profile": "GLTF_2_CAMERA_ONLY",
+      "scene_index": 0,
+      "scene_selection": "DECLARED_DEFAULT",
+      "camera": {
+        "node_index": 1,
+        "camera_index": 0,
+        "node_name": "Source camera node",
+        "camera_name": "Source perspective camera",
+        "world_matrix": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          5.0,
+          7.0,
+          9.0,
+          1.0
+        ],
+        "projection": {
+          "type": "perspective",
+          "yfov": 0.7,
+          "znear": 0.1,
+          "aspectRatio": null,
+          "zfar": null
+        }
+      },
+      "coordinate_system": "GLTF_RH_Y_UP_METERS",
+      "matrix_layout": "COLUMN_MAJOR",
+      "byte_count": 650,
+      "sha256": "c42e03e7addf295465c2493d55492e9fc3b44110925943fcea208f541d99cd2c",
+      "animation_applied": false,
+      "model_called": false,
+      "asset_created": false,
+      "blender_import_acceptance": "NOT_RUN",
+      "unreal_import_acceptance": "NOT_RUN"
+    },
+    "content_base64": "eyJhc3NldCI6eyJnZW5lcmF0b3IiOiJTdHVkaW8gc3RhdGljIGNhbWVyYSBleGNoYW5nZS8xIiwidmVyc2lvbiI6IjIuMCJ9LCJjYW1lcmFzIjpbeyJuYW1lIjoiU291cmNlIHBlcnNwZWN0aXZlIGNhbWVyYSIsInBlcnNwZWN0aXZlIjp7Inlmb3YiOjAuNywiem5lYXIiOjAuMX0sInR5cGUiOiJwZXJzcGVjdGl2ZSJ9XSwiZXh0cmFzIjp7InN0dWRpb19jYW1lcmFfc291cmNlIjp7ImFzc2V0X2lkIjoiNGNhY2VkMTYtMzI3Yi00ZWFmLWJjOTYtYzQ2ZTkwMzVjMWNmIiwiY2FtZXJhX2luZGV4IjowLCJjb250cmFjdCI6InN0dWRpby1zdGF0aWMtZ2xiLWNhbWVyYS1zb3VyY2UvMSIsIm5vZGVfaW5kZXgiOjEsInNjZW5lX2luZGV4IjowLCJzY2VuZV9zZWxlY3Rpb24iOiJERUNMQVJFRF9ERUZBVUxUIiwic2hhMjU2IjoiNjUwNzJhY2U3Nzk5ODAyMjczMjg0MjU5MTkwNWJkMWExNGRkZDBjZGFiMzUxMzUyMzZhMzY4NGE3NjlmNzk2YyIsInZlcnNpb24iOjF9fSwibm9kZXMiOlt7ImNhbWVyYSI6MCwibWF0cml4IjpbMS4wLDAuMCwwLjAsMC4wLDAuMCwxLjAsMC4wLDAuMCwwLjAsMC4wLDEuMCwwLjAsNS4wLDcuMCw5LjAsMS4wXSwibmFtZSI6IlNvdXJjZSBjYW1lcmEgbm9kZSJ9XSwic2NlbmUiOjAsInNjZW5lcyI6W3sibm9kZXMiOlswXX1dfQo="
+  },
+  "source_glb_base64": "Z2xURgIAAAAAAwAAuAIAAEpTT057ImFzc2V0Ijp7InZlcnNpb24iOiIyLjAifSwiYnVmZmVycyI6W3siYnl0ZUxlbmd0aCI6NDJ9XSwiYnVmZmVyVmlld3MiOlt7ImJ1ZmZlciI6MCwiYnl0ZU9mZnNldCI6MCwiYnl0ZUxlbmd0aCI6MzZ9LHsiYnVmZmVyIjowLCJieXRlT2Zmc2V0IjozNiwiYnl0ZUxlbmd0aCI6Nn1dLCJhY2Nlc3NvcnMiOlt7ImJ1ZmZlclZpZXciOjAsImNvbXBvbmVudFR5cGUiOjUxMjYsImNvdW50IjozLCJ0eXBlIjoiVkVDMyJ9LHsiYnVmZmVyVmlldyI6MSwiY29tcG9uZW50VHlwZSI6NTEyMywiY291bnQiOjMsInR5cGUiOiJTQ0FMQVIifV0sIm1lc2hlcyI6W3sicHJpbWl0aXZlcyI6W3siYXR0cmlidXRlcyI6eyJQT1NJVElPTiI6MH0sImluZGljZXMiOjF9XX1dLCJub2RlcyI6W3sibWVzaCI6MCwidHJhbnNsYXRpb24iOlsxMDAsMCwwXX0seyJuYW1lIjoiU291cmNlIGNhbWVyYSBub2RlIiwiY2FtZXJhIjowLCJ0cmFuc2xhdGlvbiI6WzEsMiwzXX0seyJuYW1lIjoiU291cmNlIGNhbWVyYSBwYXJlbnQiLCJjaGlsZHJlbiI6WzFdLCJ0cmFuc2xhdGlvbiI6WzQsNSw2XX1dLCJzY2VuZXMiOlt7Im5vZGVzIjpbMCwyXX1dLCJzY2VuZSI6MCwiY2FtZXJhcyI6W3sibmFtZSI6IlNvdXJjZSBwZXJzcGVjdGl2ZSBjYW1lcmEiLCJ0eXBlIjoicGVyc3BlY3RpdmUiLCJwZXJzcGVjdGl2ZSI6eyJ5Zm92IjowLjcsInpuZWFyIjowLjF9fV19ICAsAAAAQklOAAAAgL8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAABAAAAAAAAAAQACAAAA"
+}

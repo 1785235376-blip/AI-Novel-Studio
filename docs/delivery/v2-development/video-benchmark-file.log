@@ -1,0 +1,72 @@
+..F.............                                                         [100%]
+=================================== FAILURES ===================================
+____ test_one_video_sample_decodes_private_original_bytes_and_reopens[file] ____
+
+video_benchmark = namespace(r=namespace(nid='v2-independent-5fa63f7ea8944090a360b129f98fe25a', scope={'mode': 'local', 'novel_id': 'v2-i...r', 'created_at': '2026-10-18T17:54:38.158771+00:00', 'updated_at': '2026-10-18T17:54:38.158771+00:00', 'history': []})
+
+    def test_one_video_sample_decodes_private_original_bytes_and_reopens(video_benchmark):
+        e = video_benchmark
+        reviewed = preview(e, start(e))
+        running = execute(e, reviewed)
+        job = running["video_sample"]["job"]
+        assert running["status"] == "RUNNING" and running["completed"] == 0
+        assert running["results"] == [] and job["owner"] == "video"
+        assert job["status"] == "REMOTE_RUNNING" and job["output_candidate"] is None
+        assert prompt_count(e) == 1
+        assert not any(url.endswith("/view") for url, _ in e.wire.calls)
+        assert e.broker.budget(e.r.nid, e.r.scope)["inflight"] == 1
+        completed = refresh(e, running)
+        assert completed["status"] == "COMPLETED" and completed["completed"] == 1
+        assert len(completed["results"]) == 1
+        result = completed["results"][0]
+        receipt = result["media_receipt"]
+        assert receipt["owner"] == "video" and receipt["task_id"] == job["id"]
+        assert receipt["status"] == "AWAITING_REVIEW"
+        candidate = receipt["output_candidate"]
+        assert candidate == completed["video_sample"]["job"]["output_candidate"]
+        assert completed["video_sample"]["job"]["approved_asset_version"] is None
+        assert candidate["kind"] == "video" and candidate["version"] == 1
+        assert result["passed"] is True and result["error_code"] is None
+        assert result["latency_ms"] is None and result["observed_task_latency_ms"] >= 0
+        assert prompt_count(e) == 1 and e.discovery.center.lifecycle.start.call_count == 0
+        with pytest.raises(FileNotFoundError):
+            e.r.service.asset(e.r.nid, e.r.scope, candidate["id"])
+        with pytest.raises(FileNotFoundError):
+            e.r.assets.content(candidate["id"])
+        with pytest.raises(FileNotFoundError):
+            e.r.assets.content(candidate["id"], actor_id="another-author")
+>       data = e.r.assets.content(candidate["id"], actor_id=e.r.actor)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_video_benchmark.py:193: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/services/asset_library_service.py:984: in content
+    meta = self.get(asset_id, branch_id=branch_id, actor_id=actor_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.services.asset_library_service.AssetLibraryService object at 0x7f6002737ad0>
+asset_id = '9393a387-fde2-4237-bfd2-4d1545870dc6'
+
+    def get(self, asset_id: str, *, branch_id: str | None = None, include_deleted: bool = False, actor_id: str | None = None):
+        if branch_id is not None:
+            self._identifier(branch_id, "branch_id")
+        meta = self._load(asset_id)
+        if not self._in_scope(meta, branch_id, actor_id) or (meta.get("deleted_at") and not include_deleted):
+>           raise FileNotFoundError(asset_id)
+E           FileNotFoundError: 9393a387-fde2-4237-bfd2-4d1545870dc6
+
+app/services/asset_library_service.py:906: FileNotFoundError
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_v2_video_benchmark.py::test_video_start_and_preview_never_send_and_same_request_is_idempotent[file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_video_benchmark.py::test_one_video_sample_decodes_private_original_bytes_and_reopens[file]
+1 failed, 15 passed, 16 deselected, 2 warnings in 17.00s

@@ -55,7 +55,8 @@ def local_matrix(node):
     return result
 
 
-def scene_geometry(document, meshes):
+def scene_tree(document):
+    """Validate the existing bounded tree without expanding mesh geometry."""
     nodes, scenes = document.get("nodes"), document.get("scenes")
     if not isinstance(nodes, list) or not 1 <= len(nodes) <= 256 or not isinstance(scenes, list) or not 1 <= len(scenes) <= 64:
         fail("MODEL_REFERENCE_GLB_SCENE_REQUIRED")
@@ -91,6 +92,11 @@ def scene_geometry(document, meshes):
     if scene.get("extensions"): fail("MODEL_REFERENCE_GLB_ANIMATION_OR_EXTENSION_UNSUPPORTED")
     roots = [index(value) for value in scene["nodes"]]
     if not roots or len(set(roots)) != len(roots) or any(parents[root] for root in roots): fail()
+    return nodes, children, transforms, roots, selected
+
+
+def scene_geometry(document, meshes):
+    nodes, children, transforms, roots, selected = scene_tree(document)
     stack = [(root, IDENTITY) for root in reversed(roots)]
     primitives, positions, triangles, instances, traversed = [], 0, 0, 0, 0
     minimum, maximum = [math.inf] * 3, [-math.inf] * 3

@@ -585,6 +585,8 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
           throw reason;
         } finally {if(current())invalidateStorage();}
       }}
+      onCameras={(asset,signal) => guarded(() => client.inspectModelCameras(asset,signal),signal)}
+      onCameraExport={(asset,selection,signal) => guarded(() => client.exportModelCamera(asset,selection,signal),signal)}
       onMaterials={(asset,signal) => guarded(() => client.inspectModelMaterials(asset,signal),signal)}
       onImport={async body => {
         if (!current() || !writable || overview.capabilities.manual_import !== true || busyRef.current || dirtyRef.current) throw new Error('请先处理当前输入并核对项目写入权限。');

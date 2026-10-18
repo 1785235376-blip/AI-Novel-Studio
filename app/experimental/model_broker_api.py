@@ -111,7 +111,9 @@ def create_model_broker_router(service, authorize, require_flag, require_host_se
                 'prices': api_call(service.list, nid, scope, service.PRICES),
                 'author_execution_available': callable(prepare_author) and manager is not None,
                 'provider_profile_state': 'USES_EXISTING_HOST_VAULT_AND_RUNTIME_REGISTRATIONS',
-                'supports': ['TEXT_AUTHOR_EXECUTOR', 'IMAGE_AUDIO_PREFLIGHT_FOR_SAFE_BATCHES'], 'unsupported_capabilities': ['VIDEO', 'EMBEDDING'],
+                'supports': ['TEXT_AUTHOR_EXECUTOR', 'IMAGE_AUDIO_PREFLIGHT_FOR_SAFE_BATCHES'] +
+                    (['ORIGINAL_STUDIO_VIDEO_BENCHMARK_PREFLIGHT'] if getattr(service, 'video_registry', None) is not None else []),
+                'unsupported_capabilities': ['EMBEDDING'] if getattr(service, 'video_registry', None) is not None else ['VIDEO', 'EMBEDDING'],
                 'source_privacy': 'CURRENT_CHAPTER_AND_PROJECT_AUTHORITY', 'auto_fallback': False}
 
     @router.get('/task-capabilities')

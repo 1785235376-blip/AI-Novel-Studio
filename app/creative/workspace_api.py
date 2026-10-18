@@ -1,5 +1,6 @@
 """Opt-in neutral project routes; original project/branch authority is unchanged."""
 from urllib.parse import quote
+import json
 import re
 from typing import Literal
 from contextlib import nullcontext
@@ -18,8 +19,8 @@ def is_independent_studio_route(method, normalized_path):
     """Exact method/path admission; each handler still resolves full authority."""
     root = r"/api/projects/[^/]+/studio"
     patterns = {
-        "GET": root + r"(?:/(?:preferences|storage|references|relationships|production-contracts|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/(?:download|model-reference(?:/(?:mesh-preview|scene-preview|materials))?))?)?|director/workspace/[^/]+))?",
-        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/model-reference|/[^/]+/(?:restore|relationships|mask|model-reference/(?:depth-export|clay-export|clay-save)|video-reference/(?:preview|save)))?))",
+        "GET": root + r"(?:/(?:preferences|storage|references|relationships|production-contracts|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/(?:download|model-reference(?:/(?:mesh-preview|scene-preview|materials|cameras))?))?)?|director/workspace/[^/]+))?",
+        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/model-reference|/[^/]+/(?:restore|relationships|mask|model-reference/(?:depth-export|clay-export|clay-save|camera-export)|video-reference/(?:preview|save)))?))",
         "PUT": root + r"/(?:preferences|assets/[^/]+/lineage)",
         "DELETE": root + r"/assets/[^/]+(?:/relationships/[^/]+)?",
     }
@@ -96,6 +97,42 @@ class ModelReferenceImportRoute(PrivateProductionRoute):
                 return await handler(request)
             except RequestValidationError:
                 raise HTTPException(422, {"code": "MODEL_REFERENCE_REQUEST_INVALID"}, headers=headers) from None
+            except HTTPException as exc:
+                exc.headers = {**(exc.headers or {}), **headers}
+                raise
+        return checked
+
+
+class ModelCameraExportRoute(PrivateProductionRoute):
+    """Private camera reads and small closed source-selection export requests."""
+    MAX_BODY = 4096
+
+    def get_route_handler(self):
+        handler = super().get_route_handler()
+        async def checked(request):
+            headers = {"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"}
+            try:
+                if request.method == "GET":
+                    return await handler(request)
+                payload = bytearray()
+                async for part in request.stream():
+                    if len(payload) + len(part) > self.MAX_BODY:
+                        raise HTTPException(413, {"code": "MODEL_REFERENCE_CAMERA_REQUEST_LIMIT"}, headers=headers)
+                    payload.extend(part)
+                request._body = bytes(payload)
+                def pairs(items):
+                    result = {}
+                    for key, value in items:
+                        if key in result:
+                            raise ValueError("duplicate")
+                        result[key] = value
+                    return result
+                def invalid_constant(value):
+                    raise ValueError("nonfinite")
+                request._json = json.loads(request._body, object_pairs_hook=pairs, parse_constant=invalid_constant)
+                return await handler(request)
+            except (RequestValidationError, ValueError, UnicodeError, RecursionError):
+                raise HTTPException(422, {"code": "MODEL_REFERENCE_CAMERA_REQUEST_INVALID"}, headers=headers) from None
             except HTTPException as exc:
                 exc.headers = {**(exc.headers or {}), **headers}
                 raise
@@ -307,6 +344,29 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
                       lambda actor, scope, guard: service.import_model_reference(nid, scope, actor, body, guard))
 
     router.include_router(model_reference_router)
+
+    from .workspace_models import StaticCameraExport
+    camera_router = APIRouter(route_class=ModelCameraExportRoute)
+
+    def camera_reference_call(nid, token, branch, callback):
+        # Cover invoke's initial identity/authority reads as well as the
+        # service callback: an observation cannot create a missing owner.
+        with service.store.existing_owner_only():
+            return model_reference_call(nid, token, branch, "domain.read", callback)
+
+    @camera_router.post("/projects/{nid}/studio/assets/{aid}/model-reference/camera-export")
+    def export_model_reference_camera(nid: str, aid: str, body: StaticCameraExport,
+                                      x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return camera_reference_call(nid, x_session_token, x_branch_id,
+            lambda actor, scope, guard: service.export_model_camera(nid, scope, aid, body, guard))
+
+    @camera_router.get("/projects/{nid}/studio/assets/{aid}/model-reference/cameras")
+    def inspect_model_reference_cameras(nid: str, aid: str,
+                                       x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return camera_reference_call(nid, x_session_token, x_branch_id,
+            lambda actor, scope, guard: service.inspect_model_reference(nid, scope, aid, guard, camera_inspection=True))
+
+    router.include_router(camera_router)
 
     @router.get("/projects/{nid}/studio/assets/{aid}/model-reference")
     def inspect_model_reference(nid: str, aid: str,

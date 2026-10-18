@@ -49,6 +49,7 @@ class ProductionExecutionService:
         self.image_jobs, self.image_registry = image_jobs, image_registry
         self.video_owner, self.video_providers, self.video_configs = video_owner, video_providers, video_configs
         self.audio_store, self.vault, self.transport = audio_store, vault, transport
+        self.benchmark_video = None
         from ..services.studio_video_execution import StudioVideoExecution
         self.video = StudioVideoExecution(video_owner)
         from .graph_asset_inputs import GraphAssetInputs
@@ -460,13 +461,18 @@ class ProductionExecutionService:
             "m8.audio.speech": ["voice_id", "speech_rate"], "m8.audio.music": ["duration_seconds", "seed"],
             "m8.audio.effects": ["duration_seconds", "seed"], "m8.audio.trim": ["in_ms", "out_ms", "gain_db", "sample_rate", "channels", "output_format", "fade_in_ms", "fade_out_ms", "target_peak_dbfs"]}[command.operation_id]
 
-    def preview(self, nid, scope, actor, value, guard, *, graph_binding=None):
+    def preview(self, nid, scope, actor, value, guard, *, graph_binding=None, benchmark_binding=None):
         command = MediaCommand.model_validate(value)
         if (graph_binding is not None and command.operation_id == "m8.audio.trim"
                 and any(getattr(command.parameters, key) is not None for key in ("gain_db", "sample_rate", "channels", "output_format", "fade_in_ms", "fade_out_ms", "target_peak_dbfs"))):
             raise ValueError("STUDIO_AUDIO_CONTROLS_STANDALONE_ONLY")
         if command.operation_id in {"m5.image.cutout", "m5.image.inpaint"}: guard = self._cutout_guard(guard)
         context = self._base(nid, scope, actor, guard)
+        if benchmark_binding is not None:
+            from ..experimental.model_benchmark_video import validate_binding
+            if graph_binding is not None or command.operation_id != "m7.video.t2v" or command.source_snapshots or command.allow_cloud:
+                raise ValueError("BENCHMARK_VIDEO_COMMAND_INVALID")
+            context["benchmark_binding"] = validate_binding(benchmark_binding, context)
         if command.storyboard_shot is not None:
             context["storyboard_shot"] = command.storyboard_shot.model_dump()
             from .storyboard import validate_video_command
@@ -606,15 +612,16 @@ class ProductionExecutionService:
                 ("duration_ms", "byte_count", "width", "height", "fps", "video_codec", "audio_codec", "sample_rate", "channels",
                  "container", "profile_validation", "render_profile", "export_profile", "sample_count", "bits_per_sample") if key in row.get("measured", {})}
                 if owner == "timeline" and isinstance(row.get("measured"), dict) else
+                copy.deepcopy(row.get("measured")) if owner == "video" else
                 copy.deepcopy(row.get("measured")) if owner == "audio" and context.get("operation_id") == "m8.audio.trim"
                 and context.get("graph_binding") is None else None,
             "approved_asset_version": row.get("approved_asset_version", row.get("output_asset_version") if row.get("status") == "APPROVED" else None),
             "request_id": row.get("context", {}).get("request_id"), "product_acceptance": "LOCAL_REQUIRED",
             "automatic_replay": False, "remote_compute_may_continue": owner != "timeline" and row.get("cancellation_mode") == "LOCAL_RESULT_DISCARD"}
 
-    def create(self, nid, scope, actor, value, guard, *, graph_binding=None):
+    def create(self, nid, scope, actor, value, guard, *, graph_binding=None, benchmark_binding=None):
         body = MediaCreate.model_validate(value)
-        preview, context, command = self.preview(nid, scope, actor, body.command, guard, graph_binding=graph_binding)
+        preview, context, command = self.preview(nid, scope, actor, body.command, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding)
         if preview["preview_digest"] != body.reviewed_preview_digest:
             raise StaleSourceError("STUDIO_PRODUCTION_PREVIEW_CHANGED")
         payload = command.model_dump(exclude={"source_snapshots", "allow_cloud", "license_note", "request_id"})
@@ -643,7 +650,7 @@ class ProductionExecutionService:
         guard()
         return self.view(row, owner)
 
-    def _row(self, nid, scope, actor, owner, jid, guard, *, graph_binding=None):
+    def _row(self, nid, scope, actor, owner, jid, guard, *, graph_binding=None, benchmark_binding=None):
         context = self._base(nid, scope, actor, guard)
         branch = scope.get("branch_id")
         if owner == "image": row = self._image(actor).get_studio(nid, branch, actor, jid, guard)
@@ -655,9 +662,23 @@ class ProductionExecutionService:
         else: raise ValueError("STUDIO_EXECUTION_OWNER_INVALID")
         captured = row.get("context", {})
         self._graph_admission(captured, graph_binding, jid)
+        self._benchmark_admission(captured, benchmark_binding, jid)
         if any(captured.get(k) != context[k] for k in ("actor", "scope_key", "incarnation")):
             raise FileNotFoundError(jid)
         return row, captured
+
+    @staticmethod
+    def _benchmark_admission(context, binding, jid):
+        from ..experimental.model_benchmark_video import validate_binding
+        expected = validate_binding(binding, context) if binding is not None else None
+        if context.get("benchmark_binding") != expected or ("benchmark_binding" in context and expected is None):
+            raise FileNotFoundError(jid)
+
+    def _benchmark_current(self, nid, scope, actor, context):
+        if context.get("benchmark_binding") is not None:
+            if self.benchmark_video is None:
+                raise ValueError("BENCHMARK_VIDEO_OWNER_UNAVAILABLE")
+            self.benchmark_video.guard_dispatch(nid, scope, actor, context)
 
     @staticmethod
     def _graph_admission(context, graph_binding, jid):
@@ -671,15 +692,17 @@ class ProductionExecutionService:
         if captured is not None:
             validate_graph_binding(captured, context)
 
-    def get(self, nid, scope, actor, owner, jid, guard, *, graph_binding=None):
-        row, _ = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding)
+    def get(self, nid, scope, actor, owner, jid, guard, *, graph_binding=None, benchmark_binding=None):
+        row, _ = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding)
         return self.view(row, owner)
 
-    def list(self, nid, scope, actor, guard, *, graph_binding=None):
+    def list(self, nid, scope, actor, guard, *, graph_binding=None, benchmark_binding=None):
         context = self._base(nid, scope, actor, guard)
         rows = []
         def admitted(row):
-            try: self._graph_admission(row.get("context", {}), graph_binding, row["id"])
+            try:
+                self._graph_admission(row.get("context", {}), graph_binding, row["id"])
+                self._benchmark_admission(row.get("context", {}), benchmark_binding, row["id"])
             except FileNotFoundError: return False
             return True
         for row in self._image(actor).list_studio(nid, scope.get("branch_id"), actor, context, guard):
@@ -694,8 +717,8 @@ class ProductionExecutionService:
         guard()
         return {"items": sorted(rows, key=lambda row: (row.get("created_at") or "", row["id"]), reverse=True), "product_acceptance": "LOCAL_REQUIRED"}
 
-    def candidate(self, nid, scope, actor, owner, jid, guard, *, graph_binding=None):
-        row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding)
+    def candidate(self, nid, scope, actor, owner, jid, guard, *, graph_binding=None, benchmark_binding=None):
+        row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding)
         candidate = self.view(row, owner)["output_candidate"]
         if candidate is None: raise FileNotFoundError(jid)
         if owner == "timeline":
@@ -729,7 +752,7 @@ class ProductionExecutionService:
                     raise StaleSourceError("STUDIO_CANDIDATE_BYTES_CHANGED")
                 result = self.workspace.assets.public(meta)
                 guard()
-            latest, latest_context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding)
+            latest, latest_context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding)
             if (latest["version"] != row["version"] or latest["request_digest"] != row["request_digest"]
                     or latest["status"] != row["status"] or latest.get("output_candidate") != row.get("output_candidate")
                     or latest.get("receipt_digest") != row.get("receipt_digest") or latest_context != context):
@@ -763,7 +786,7 @@ class ProductionExecutionService:
                     data = self.workspace.assets.content(meta["id"], branch_id=scope.get("branch_id"), actor_id=actor)
                 result = self.workspace.assets.public(meta)
                 guard()
-        latest, latest_context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding)
+        latest, latest_context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding)
         if (latest["version"] != row["version"] or latest["status"] != row["status"] or latest_context != context
                 or latest["request_digest"] != row["request_digest"] or latest.get("receipt_digest") != row.get("receipt_digest")
                 or self.view(latest, owner)["output_candidate"] != candidate):
@@ -790,8 +813,8 @@ class ProductionExecutionService:
         return {"contract": "studio-production-review/1", "job_id": row["id"], "request_digest": row["request_digest"],
             "output_digest": candidate["digest"], "candidate_version": candidate["version"], "review_actor": actor}
 
-    def cancel(self, nid, scope, actor, owner, jid, action, guard, *, graph_binding=None):
-        row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding)
+    def cancel(self, nid, scope, actor, owner, jid, action, guard, *, graph_binding=None, benchmark_binding=None):
+        row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding)
         if (row["version"], row["request_digest"]) != (action.expected_version, action.expected_request_digest):
             raise CapabilityVersionConflict(self.view(row, owner))
         if owner == "video":
@@ -814,8 +837,8 @@ class ProductionExecutionService:
         guard()
         return self.view(row, owner)
 
-    def reconcile(self, nid, scope, actor, owner, jid, action, guard, *, graph_binding=None, graph_guard=None, graph_source_guard=None):
-        row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding)
+    def reconcile(self, nid, scope, actor, owner, jid, action, guard, *, graph_binding=None, graph_guard=None, graph_source_guard=None, benchmark_binding=None):
+        row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding)
         if (row["version"], row["request_digest"]) != (action.expected_version, action.expected_request_digest):
             raise CapabilityVersionConflict(self.view(row, owner))
         if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint"}: guard = self._cutout_guard(guard)
@@ -901,6 +924,10 @@ class ProductionExecutionService:
         with self.store.source_lease(nid, scope) as document:
             guard()
             graph_asset_guard = None
+            if context.get("benchmark_binding") is not None:
+                if self.benchmark_video is None:
+                    raise ValueError("BENCHMARK_VIDEO_OWNER_UNAVAILABLE")
+                self.benchmark_video.publication_guard(nid, scope, actor, context, document)
             if context.get("graph_binding") is not None:
                 if graph_source_guard is None:
                     raise ValueError("CREATIVE_GRAPH_MEDIA_SOURCE_GUARD_REQUIRED")
@@ -986,8 +1013,8 @@ class ProductionExecutionService:
                 guard()
                 return copy.deepcopy(asset)
 
-    def review(self, nid, scope, actor, owner, jid, action, guard, *, graph_binding=None, graph_source_guard=None):
-        row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding)
+    def review(self, nid, scope, actor, owner, jid, action, guard, *, graph_binding=None, graph_source_guard=None, benchmark_binding=None):
+        row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding)
         if row["request_digest"] != action.expected_request_digest:
             raise CapabilityVersionConflict(self.view(row, owner))
         if owner == "timeline":
@@ -1209,6 +1236,9 @@ class ProductionExecutionService:
 
     def _callbacks(self, nid, scope, actor, context, guard, *, graph_source_guard=None):
         def timeline_current(document):
+            if context.get("benchmark_binding") is not None:
+                if self.benchmark_video is None: raise ValueError("BENCHMARK_VIDEO_OWNER_UNAVAILABLE")
+                self.benchmark_video.publication_guard(nid, scope, actor, context, document)
             asset_guard = None
             if context.get("graph_binding") is not None:
                 if graph_source_guard is None:
@@ -1353,8 +1383,8 @@ class ProductionExecutionService:
         guard()
         return {"items": rows, "automatic_runtime_start": False, "health_probed": False, "credentials_read": False}
 
-    def execute(self, nid, scope, actor, owner, jid, action, guard, *, graph_binding=None, graph_guard=None, graph_source_guard=None):
-        row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding)
+    def execute(self, nid, scope, actor, owner, jid, action, guard, *, graph_binding=None, graph_guard=None, graph_source_guard=None, benchmark_binding=None):
+        row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding)
         if (row["version"], row["request_digest"]) != (action.expected_version, action.expected_request_digest):
             raise CapabilityVersionConflict(self.view(row, owner))
         if owner == "timeline":
@@ -1413,6 +1443,7 @@ class ProductionExecutionService:
             if owner == "video" and args and self.video_providers.get(binding["provider_id"]) is not args[-1]:
                 raise StaleSourceError("STUDIO_PROVIDER_INSTANCE_CHANGED")
             self._egress(nid, scope, command, binding, guard)
+            self._benchmark_current(nid, scope, actor, context)
         source_guard = self._source_guard(nid, scope, guard)
         publish, _ = self._callbacks(nid, scope, actor, context, guard, graph_source_guard=graph_source_guard)
         branch = scope.get("branch_id")
@@ -1444,8 +1475,8 @@ class ProductionExecutionService:
         guard()
         return self.view(row, owner)
 
-    def refresh_video(self, nid, scope, actor, jid, action, guard, *, graph_binding=None, graph_guard=None, graph_source_guard=None):
-        row, context = self._row(nid, scope, actor, "video", jid, guard, graph_binding=graph_binding)
+    def refresh_video(self, nid, scope, actor, jid, action, guard, *, graph_binding=None, graph_guard=None, graph_source_guard=None, benchmark_binding=None):
+        row, context = self._row(nid, scope, actor, "video", jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding)
         command = MediaCommand.model_validate(context["command"])
         def resolve(binding):
             if context.get("graph_binding") is not None:
@@ -1454,6 +1485,7 @@ class ProductionExecutionService:
             if self._binding(command) != binding: raise StaleSourceError("STUDIO_PROVIDER_ROUTE_CHANGED")
             if self._recipe(command) != context.get("execution_recipe"): raise StaleSourceError("STUDIO_EXECUTION_RECIPE_CHANGED")
             self._egress(nid, scope, command, binding, guard)
+            self._benchmark_current(nid, scope, actor, context)
             return self.video_providers[binding["provider_id"]]
         publish, _ = self._callbacks(nid, scope, actor, context, guard, graph_source_guard=graph_source_guard)
         row = self.video.refresh(nid, scope.get("branch_id"), actor, jid, action, context=context, guard=guard,

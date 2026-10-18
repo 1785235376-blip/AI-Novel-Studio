@@ -284,7 +284,8 @@ model_broker_service.evidence_reader = model_benchmark_service.evidence
 router.include_router(create_model_broker_router(model_broker_service, authorize, require_flag,
     require_inspection_host_session, prepare_author=author_preparer.prepare_author, manager=legacy_api.jobs))
 router.include_router(create_model_benchmark_router(model_benchmark_service, authorize, require_flag,
-    require_inspection_host_session))
+    require_inspection_host_session,
+    model_host_authority=lambda request, token: creative_model_host_authority(request, token)))
 
 from .planning_model_api import create_planning_model_router
 router.include_router(create_planning_model_router(planning_service, authorize, require_flag,
@@ -698,6 +699,7 @@ studio_production_service = ProductionExecutionService(independent_workspace_ser
     legacy_api.image_job_service, asset_provider_registry, legacy_api.video_assembly_service,
     legacy_api.screenplay_service.video_providers, legacy_api._video_provider_configs,
     audio_production_store, legacy_api.credential_vault, studio_media_transport)
+model_benchmark_service.configure_video(studio_production_service)
 creative_graph_service.configure_media(studio_production_service)
 from ..creative.bible_workspace import BibleWorkspaceService
 studio_bible_service = BibleWorkspaceService(independent_workspace_service, world_service)

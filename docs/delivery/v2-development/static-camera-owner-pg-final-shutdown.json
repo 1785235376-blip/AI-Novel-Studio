@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-18T18:21:41.503325+00:00",
+  "pg_ctl_status_exit": 3,
+  "pg_ctl_stdout": "pg_ctl: no server running",
+  "pg_ctl_stderr": "",
+  "postmaster_pid_absent": true,
+  "loopback_55439_closed": true,
+  "check_receipt": "static-camera-owner-pg-final.json",
+  "check_receipt_sha256": "1b5fed9491d3863fe14f5aa2040efb5a2ff56a79eb3273586f6efd62afc93811",
+  "status": "PASS"
+}

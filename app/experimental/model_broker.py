@@ -157,11 +157,12 @@ class ModelBrokerService(DomainService):
     BUDGET = 'broker_budget_v2'
     PRICES = 'broker_prices_v2'
 
-    def __init__(self, store, novels, chapters, *, runtime, model_center=None, media_registry=None, audio_resolver=None, vision_resolver=None):
+    def __init__(self, store, novels, chapters, *, runtime, model_center=None, media_registry=None, audio_resolver=None, vision_resolver=None, video_registry=None):
         super().__init__(store, novels, chapters)
         self.runtime, self.model_center, self.media_registry = runtime, model_center, media_registry
         self.audio_resolver = audio_resolver
         self.vision_resolver = vision_resolver
+        self.video_registry = video_registry
         self.evidence_reader = None
         self._credential_salt = secrets.token_bytes(32)
         self._credential_bindings = {}
@@ -376,6 +377,9 @@ class ModelBrokerService(DomainService):
             except (ValueError, RuntimeError, AttributeError, TypeError):
                 # Invalid/missing host registration stays unavailable.
                 pass
+        if self.video_registry is not None:
+            from .model_benchmark_video import video_candidates
+            items.extend(video_candidates(self.runtime, self.video_registry))
         return items
 
     def preview_task(self, nid, scope, actor, value, guard=lambda: None):
@@ -552,7 +556,7 @@ class ModelBrokerService(DomainService):
                 if required and (route['cloud'] or available is None or available < required): reasons.append('HOST_CAPACITY_UNKNOWN_OR_INSUFFICIENT')
             if body.context_tokens and (route['context_window'] is None or route['context_window'] < body.context_tokens):
                 reasons.append('CONTEXT_CAPACITY_UNKNOWN_OR_INSUFFICIENT')
-            matched = [r for r in evidence if r.get('route_fingerprint') == route['fingerprint'] and r.get('evidence_state') == 'CURRENT' and r.get('origin') == 'EXECUTED' and r.get('metrics', {}).get('error_count') == 0]
+            matched = [r for r in evidence if r.get('route_fingerprint') == route['fingerprint'] and r.get('evidence_state') == 'CURRENT' and r.get('origin') == 'EXECUTED' and r.get('routing_eligible', True) and r.get('metrics', {}).get('error_count') == 0]
             route['evidence_ids'] = [r['id'] for r in matched]
             metrics = [r.get('metrics', {}).get('latency_ms') for r in matched]
             metrics = [v for v in metrics if isinstance(v, (int, float)) and math.isfinite(v)]

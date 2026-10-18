@@ -6,9 +6,18 @@ import { Details, Field, ResourceState, useAction, useResource } from './shared'
 
 type TestCase = { title: string; kind: string; prompt: string; rule: string; expected: string[] };
 const emptyCase = (): TestCase => ({ title: '中文续写样本', kind: 'CHINESE_CONTINUATION', prompt: '', rule: 'NONEMPTY', expected: [] });
-const kinds = [['CHINESE_CONTINUATION', '中文续写'], ['STRUCTURED_EXTRACTION', '结构化提取'], ['SHORT_REVIEW', '短审稿'], ['TOOL_PROTOCOL', '工具协议（只核对文本，不执行工具）'], ['IMAGE_WORKFLOW', '本地图片流程（单图实测）'], ['VIDEO_WORKFLOW', '指定视频流程（结果导入）']];
+const kinds = [['CHINESE_CONTINUATION', '中文续写'], ['STRUCTURED_EXTRACTION', '结构化提取'], ['SHORT_REVIEW', '短审稿'], ['TOOL_PROTOCOL', '工具协议（只核对文本，不执行工具）'], ['IMAGE_WORKFLOW', '本地图片流程（单图实测）'], ['VIDEO_WORKFLOW', '本地文生视频（单任务实测）']];
 const uuid = () => globalThis.crypto?.randomUUID?.() || `benchmark-${Date.now()}-${Math.random()}`;
+const videoExecution = 'ONE_REGISTERED_LOCAL_T2V_THROUGH_ORIGINAL_STUDIO_REVIEW';
+const videoPreset = '固定本地文生视频参数：256 × 256；请求时长 1 秒；帧率 8 fps；seed 7。原工作流会按配方取整帧数，实际帧数和时长以请求预览为准。';
 export function ModelBenchmarkPanel({ api, routes }: { api: BrokerApi; routes: BrokerRoute[] }) {
+  // A different client is a different actor/project scope. Never reuse its private
+  // receipts or reviewed authorization, even for the same-looking run identifier.
+  const owner = useRef({ api, key: 0 });
+  if (owner.current.api !== api) owner.current = { api, key: owner.current.key + 1 };
+  return <ModelBenchmarkContent key={owner.current.key} api={api} routes={routes} />;
+}
+function ModelBenchmarkContent({ api, routes }: { api: BrokerApi; routes: BrokerRoute[] }) {
   const resource = useResource(signal => api.benchmarks(signal), [api]);
   const profiles = useResource(async signal => { const value = await api.capabilityProfiles(signal); if (!Array.isArray(value.items)) throw new Error('能力档案响应无效'); return value; }, [api]);
   const [title, setTitle] = useState(''), [cases, setCases] = useState<TestCase[]>([emptyCase()]), [repetitions, setRepetitions] = useState(1), [output, setOutput] = useState(128), [seconds, setSeconds] = useState(30), [budget, setBudget] = useState(0);
@@ -20,23 +29,27 @@ export function ModelBenchmarkPanel({ api, routes }: { api: BrokerApi; routes: B
   const action = useAction(resource.reload);
   const currentSet = resource.data?.sets.find(r => r.id === setId);
   const runKinds = new Set<string>(currentSet?.cases.map((row: TestCase) => row.kind) || []);
-  const capability = runKinds.size === 1 && runKinds.has('IMAGE_WORKFLOW') ? 'IMAGE' : runKinds.has('IMAGE_WORKFLOW') || runKinds.has('VIDEO_WORKFLOW') ? null : 'TEXT';
-  const validRoutes = routes.filter(r => r.available && !r.cloud && r.capability === capability);
+  const capability = runKinds.size === 1 && runKinds.has('IMAGE_WORKFLOW') ? 'IMAGE' : runKinds.size === 1 && runKinds.has('VIDEO_WORKFLOW') ? 'VIDEO' : runKinds.has('IMAGE_WORKFLOW') || runKinds.has('VIDEO_WORKFLOW') ? null : 'TEXT';
+  const videoAvailable = resource.data?.video_execution === videoExecution;
+  const validRoutes = routes.filter(r => r.available && !r.cloud && r.capability === capability && (capability !== 'VIDEO' || videoAvailable));
   const validRoute = validRoutes.some(r => r.route_id === routeId);
+  const videoCases = cases.some(row => row.kind === 'VIDEO_WORKFLOW');
+  const videoBudgetValid = capability !== 'VIDEO' || currentSet?.max_cost_microusd === 0;
   const changed = () => { inputEpoch.current++; requestId.current = uuid(); };
   const reset = () => { changed(); setEditing(undefined); setTitle(''); setCases([emptyCase()]); };
-  const edit = (row: Row) => { changed(); setEditing(row); setTitle(row.title); setCases(row.cases); setRepetitions(row.repetitions); setOutput(row.max_output_tokens); setSeconds(row.timeout_seconds); setBudget(row.max_cost_microusd); };
-  const patchCase = (index: number, patch: Partial<TestCase>) => { changed(); setCases(old => old.map((row, i) => i === index ? { ...row, ...patch } : row)); };
+  const edit = (row: Row) => { changed(); setEditing(row); setTitle(row.title); setCases(row.cases); setRepetitions(row.repetitions); setOutput(row.max_output_tokens); setSeconds(row.timeout_seconds); setBudget(row.cases.some((item: TestCase) => item.kind === 'VIDEO_WORKFLOW') ? 0 : row.max_cost_microusd); };
+  const patchCase = (index: number, patch: Partial<TestCase>) => { changed(); if (patch.kind === 'VIDEO_WORKFLOW') setBudget(0); setCases(old => old.map((row, i) => i === index ? { ...row, ...patch } : row)); };
   return <div className="experimental-section">
     <Panel title="有界评测与能力证据">
-      <p>由你主动开始，每次最多 6 个样本、逐步执行。只调用已启用本地或明确标记的合成 Adapter；安装、读取页面不会运行评测。图片每步通过已登记本地路线生成一张，保留原媒体任务与待审候选。视频仍仅导入证据，尚无对应本地调度授权。</p>
+      <p>由你主动开始，每次最多 6 个样本、逐步执行。只调用已启用本地或明确标记的合成 Adapter；安装、读取页面不会运行评测。图片每步通过已登记本地路线生成一张，保留原媒体任务与待审候选。视频仅在已登记本地路线可用时，通过原 Studio 请求预览与明确核对执行一个文生视频任务，输出保持私有待审。</p>
       <StatusMessage>接口成功只代表协议完成。文学质量、tokens/s、显存和冷/热启动没有测量时保持未知；小样本结果不形成模型排行榜。</StatusMessage>
       <ResourceState loading={resource.loading} error={resource.error} />
       {editing && <StatusMessage>编辑「{editing.title}」v{editing.version}；保存后旧版本评测结论会标为历史。</StatusMessage>}
       <Field label="评测任务集标题"><input maxLength={120} value={title} onChange={e => { changed(); setTitle(e.target.value); }} /></Field>
-      {cases.map((row, index) => <fieldset className="experimental-record" key={index}><legend>样本 {index + 1}</legend><Field label={`样本 ${index + 1} 标题`}><input maxLength={120} value={row.title} onChange={e => patchCase(index, { title: e.target.value })} /></Field><Field label={`样本 ${index + 1} 类型`}><select value={row.kind} onChange={e => patchCase(index, { kind: e.target.value, ...(e.target.value === 'IMAGE_WORKFLOW' ? { rule: 'NONEMPTY', expected: [] } : {}) })}>{kinds.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></Field><Field label={`样本 ${index + 1} 合成测试输入`}><textarea maxLength={3000} value={row.prompt} onChange={e => patchCase(index, { prompt: e.target.value })} /></Field><Field label={`样本 ${index + 1} 正确性规则`}><select disabled={row.kind === 'IMAGE_WORKFLOW'} value={row.rule} onChange={e => patchCase(index, { rule: e.target.value })}><option value="NONEMPTY">{row.kind === 'IMAGE_WORKFLOW' ? '图像可解码与尺寸记录（不代表美术质量）' : '非空文本（不代表质量）'}</option><option value="CONTAINS">包含指定文本</option><option value="JSON_KEYS">有效 JSON 对象包含指定键</option></select></Field>{row.rule !== 'NONEMPTY' && <Field label={`样本 ${index + 1} 规则目标（每行一项）`}><textarea value={row.expected.join('\n')} onChange={e => patchCase(index, { expected: e.target.value.split('\n').filter(Boolean) })} /></Field>}{cases.length > 1 && <Button disabled={action.busy} onClick={() => { changed(); setCases(old => old.filter((_, i) => i !== index)); }}>移除样本 {index + 1}</Button>}</fieldset>)}
+      {cases.map((row, index) => <fieldset className="experimental-record" key={index}><legend>样本 {index + 1}</legend><Field label={`样本 ${index + 1} 标题`}><input maxLength={120} value={row.title} onChange={e => patchCase(index, { title: e.target.value })} /></Field><Field label={`样本 ${index + 1} 类型`}><select value={row.kind} onChange={e => patchCase(index, { kind: e.target.value, ...(['IMAGE_WORKFLOW', 'VIDEO_WORKFLOW'].includes(e.target.value) ? { rule: 'NONEMPTY', expected: [] } : {}) })}>{kinds.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></Field><Field label={`样本 ${index + 1} 合成测试输入`}><textarea maxLength={3000} value={row.prompt} onChange={e => patchCase(index, { prompt: e.target.value })} /></Field><Field label={`样本 ${index + 1} 正确性规则`}><select disabled={['IMAGE_WORKFLOW', 'VIDEO_WORKFLOW'].includes(row.kind)} value={row.rule} onChange={e => patchCase(index, { rule: e.target.value })}><option value="NONEMPTY">{row.kind === 'IMAGE_WORKFLOW' ? '图像可解码与尺寸记录（不代表美术质量）' : row.kind === 'VIDEO_WORKFLOW' ? '原视频任务与私有候选记录（不代表视频质量）' : '非空文本（不代表质量）'}</option><option value="CONTAINS">包含指定文本</option><option value="JSON_KEYS">有效 JSON 对象包含指定键</option></select></Field>{row.rule !== 'NONEMPTY' && <Field label={`样本 ${index + 1} 规则目标（每行一项）`}><textarea value={row.expected.join('\n')} onChange={e => patchCase(index, { expected: e.target.value.split('\n').filter(Boolean) })} /></Field>}{cases.length > 1 && <Button disabled={action.busy} onClick={() => { changed(); setCases(old => old.filter((_, i) => i !== index)); }}>移除样本 {index + 1}</Button>}</fieldset>)}
+      {videoCases && <StatusMessage>{videoPreset} 视频的外部服务费用预占上限固定为 0 µUSD，需已有明确的零费用估算；本机算力、电费与硬件成本未测量。</StatusMessage>}
       <Button disabled={cases.length >= 6 || action.busy} onClick={() => { changed(); setCases(old => [...old, emptyCase()]); }}>增加评测样本</Button>
-      <div className="experimental-grid"><Field label="每个样本重复次数"><input type="number" min="1" max="3" value={repetitions} onChange={e => { changed(); setRepetitions(Number(e.target.value)); }} /></Field><Field label="每次最大输出 Token"><input type="number" min="1" max="512" value={output} onChange={e => { changed(); setOutput(Number(e.target.value)); }} /></Field><Field label="每样本取消时限（秒）"><input type="number" min="1" max="120" value={seconds} onChange={e => { changed(); setSeconds(Number(e.target.value)); }} /></Field><Field label="整组费用预占上限（µUSD）"><input type="number" min="0" value={budget} onChange={e => { changed(); setBudget(Number(e.target.value)); }} /></Field></div>
+      <div className="experimental-grid"><Field label="每个样本重复次数"><input type="number" min="1" max="3" value={repetitions} onChange={e => { changed(); setRepetitions(Number(e.target.value)); }} /></Field><Field label="每次最大输出 Token"><input type="number" min="1" max="512" value={output} onChange={e => { changed(); setOutput(Number(e.target.value)); }} /></Field><Field label="每样本取消时限（秒）"><input type="number" min="1" max="120" value={seconds} onChange={e => { changed(); setSeconds(Number(e.target.value)); }} /></Field><Field label="整组费用预占上限（µUSD）"><input type="number" min="0" disabled={videoCases} value={budget} onChange={e => { changed(); setBudget(Number(e.target.value)); }} /></Field></div>
       <p>总样本数 {cases.length * repetitions} / 6。超时会请求取消；同步上游调用可能需要其传输超时才能结束，已经发出的内容和消耗无法撤回。</p>
       <div className="experimental-actions"><Button disabled={action.busy || !title.trim() || cases.some(r => !r.title.trim() || !r.prompt.trim() || (r.rule !== 'NONEMPTY' && !r.expected.length)) || cases.length * repetitions > 6} onClick={() => void action.run(async () => {
         const ticket = inputEpoch.current, value = { title, cases, repetitions, max_output_tokens: output, timeout_seconds: seconds, max_cost_microusd: budget };
@@ -45,7 +58,7 @@ export function ModelBenchmarkPanel({ api, routes }: { api: BrokerApi; routes: B
       }, '任务集已保存，尚未调用模型。')}>{editing ? '保存任务集新版本' : '保存评测任务集'}</Button>{editing && <Button onClick={reset}>放弃任务集编辑</Button>}<Button disabled={action.busy} onClick={resource.reload}>刷新评测记录（保留输入）</Button></div>{action.feedback}
       {!resource.loading && !resource.error && <div className="experimental-list">{resource.data?.sets.map(row => <article className="experimental-record" key={row.id}><strong>{row.title} · v{row.version}</strong><p>{row.cases.length * row.repetitions} 个有界样本</p><Button onClick={() => edit(row)}>编辑任务集 {row.title}</Button></article>)}</div>}
     </Panel>
-    <Panel title="明确选择并运行评测"><Field label="待运行任务集"><select value={setId} onChange={e => { requestId.current = uuid(); setSetId(e.target.value); }}><option value="">请选择已保存任务集</option>{resource.data?.sets.map(r => <option key={r.id} value={r.id}>{r.title} · v{r.version}</option>)}</select></Field><Field label="本次评测的本地模型路线"><select value={routeId} onChange={e => { requestId.current = uuid(); setRouteId(e.target.value); }}><option value="">请选择明确路线</option>{validRoutes.map(r => <option key={r.route_id} value={r.route_id}>{r.display_name}{r.synthetic ? ' · 合成协议测试' : ''}</option>)}</select></Field>{!validRoutes.length && <EmptyState title="没有可执行本地 Adapter" detail="仍可管理任务集、导入外部证据。不会下载模型或改走收费云服务。" />}<Button disabled={!currentSet || !validRoute || action.busy || resource.loading || !!resource.error} onClick={() => void action.run(async () => { await api.startBenchmark(currentSet!, routeId, requestId.current); if (alive.current) requestId.current = uuid(); }, '评测已准备。请明确执行下一样本，不会自动连续运行。')}>建立有界评测运行</Button>
+    <Panel title="明确选择并运行评测"><Field label="待运行任务集"><select value={setId} onChange={e => { requestId.current = uuid(); setSetId(e.target.value); }}><option value="">请选择已保存任务集</option>{resource.data?.sets.map(r => <option key={r.id} value={r.id}>{r.title} · v{r.version}</option>)}</select></Field><Field label="本次评测的本地模型路线"><select value={routeId} onChange={e => { requestId.current = uuid(); setRouteId(e.target.value); }}><option value="">请选择明确路线</option>{validRoutes.map(r => <option key={r.route_id} value={r.route_id}>{r.display_name}{r.synthetic ? ' · 合成协议测试' : ''}</option>)}</select></Field>{capability === 'VIDEO' && <><StatusMessage>{videoPreset}</StatusMessage>{!videoAvailable && <StatusMessage tone="warning">当前服务尚未开放本地文生视频实测。可以保存任务集与导入证据。</StatusMessage>}</>}{!videoBudgetValid && <StatusMessage tone="warning">视频评测的外部费用上限必须为 0 µUSD，请先编辑并保存任务集。</StatusMessage>}{capability === null && <StatusMessage tone="warning">图片、视频与文本不能混合执行，请分别保存任务集。</StatusMessage>}{!validRoutes.length && <EmptyState title="没有可执行本地 Adapter" detail="仍可管理任务集、导入外部证据。不会下载模型或改走收费云服务。" />}<Button disabled={!currentSet || !validRoute || !videoBudgetValid || action.busy || resource.loading || !!resource.error} onClick={() => void action.run(async () => { await api.startBenchmark(currentSet!, routeId, requestId.current); if (alive.current) requestId.current = uuid(); }, '评测已准备，尚未生成。请核对并明确执行单个样本，不会自动连续运行。')}>建立有界评测运行</Button>
       {!resource.loading && !resource.error && resource.data?.runs.map(row => <BenchmarkRun key={row.id} api={api} run={row} onChange={resource.reload} />)}
     </Panel>
     <Panel title="隐藏模型标签的小样本偏好">
@@ -57,13 +70,116 @@ export function ModelBenchmarkPanel({ api, routes }: { api: BrokerApi; routes: B
     </Panel>
     <Panel title="模型能力档案与证据分层"><Button onClick={profiles.reload}>刷新能力档案</Button><ResourceState loading={profiles.loading} error={profiles.error} />{!profiles.loading && !profiles.error && profiles.data?.items.map(row => <article key={row.route_id} className="experimental-record"><strong>{row.provider_id} / {row.model_id}</strong><p>{row.evidence_tiers.join(' · ')}{row.synthetic ? ' · 合成协议测试' : ''}</p><p>目录声明、检测、协议测试、本地评测分别记录；用户验证：{row.user_verified ? '已记录' : '未记录'}。未知吞吐、显存、文学质量保持未知。</p><Details value={row} label="档案字段来源与已执行测量" /></article>)}</Panel>
     <Panel title="当前证据与结果导入"><p>导入文件仅作为用户提供的未验证证据保留，不自动授权路线、不执行工作流，也不进入速度或质量调度。模型、运行时、Adapter 或任务集变化会使旧结论失效。</p><Field label="读取评测结果 JSON 文件"><input type="file" accept="application/json,.json" onChange={async e => { const file = e.target.files?.[0], ticket = ++importEpoch.current; setImportError(''); setImportText(''); if (!file) return; if (file.size > 65536) { setImportError('结果文件不得超过 64 KiB。'); return; } try { const text = await file.text(); JSON.parse(text); if (alive.current && ticket === importEpoch.current) setImportText(text); } catch { if (alive.current && ticket === importEpoch.current) setImportError('结果文件不是有效 JSON。'); } }} /></Field><Field label="待导入结果 JSON（核对后提交）"><textarea value={importText} onChange={e => { importEpoch.current++; setImportText(e.target.value); }} /></Field><p>必填：set_id、expected_set_version、route_id、route_fingerprint、input_hash、workflow_hash、model_id、runtime_version、adapter_hash、latency_ms、sample_count、error_count、provenance。哈希使用 SHA-256；不得包含密钥、路径或原稿。</p>{importError && <StatusMessage tone="error">{importError}</StatusMessage>}<Button disabled={!importText.trim() || action.busy} onClick={() => void action.run(async () => { const ticket = importEpoch.current; await api.importEvidence(JSON.parse(importText)); if (alive.current && ticket === importEpoch.current) setImportText(''); }, '导入证据已保存，仍标记为未验证。')}>核对并导入评测证据</Button>
-      {!resource.loading && !resource.error && resource.data?.evidence.map(row => <article className="experimental-record" key={row.id}><div className="experimental-actions"><strong>{row.verification}</strong><Badge tone={row.evidence_state === 'CURRENT' ? 'success' : 'warning'}>{row.evidence_state === 'CURRENT' ? '当前版本相符' : '历史 / 待复验'}</Badge></div><p>{row.origin === 'EXECUTED' ? '本机执行' : '导入未验证'} · {row.metrics?.sample_count} 个样本 · 延迟 {row.metrics?.latency_ms} ms · 规则通过 {row.metrics?.rule_pass_count ?? '未提供'}</p><p>文学质量、tokens/s、显存、冷/热启动：未评测。</p>{!!row.invalidation_reasons?.length && <p>{row.invalidation_reasons.join(' · ')}</p>}<Details value={row} label="查看精确指纹、参数与证据范围" /><Button disabled={action.busy || row.status === 'INVALIDATED'} onClick={() => void action.run(async () => { await api.invalidateEvidence(row); profiles.reload(); }, '证据已标记失效，调度器不再使用。')}>使此证据失效</Button>{row.origin === 'EXECUTED' && row.evidence_state === 'CURRENT' && <EvidenceReview api={api} row={row} onSaved={profiles.reload} />}</article>)}
+      {!resource.loading && !resource.error && resource.data?.evidence.map(row => <article className="experimental-record" key={row.id}><div className="experimental-actions"><strong>{row.verification}</strong><Badge tone={row.evidence_state === 'CURRENT' ? 'success' : 'warning'}>{row.evidence_state === 'CURRENT' ? '当前版本相符' : '历史 / 待复验'}</Badge></div><p>{row.origin === 'EXECUTED' ? '本机执行' : '导入未验证'} · {row.metrics?.sample_count} 个样本 · {row.capability === 'VIDEO' ? `推理延迟未测量；任务观测耗时 ${measuredTime(row.metrics?.observed_task_latency_ms)}（含轮询与用户等待）` : `延迟 ${row.metrics?.latency_ms ?? '未测量'} ms`} · 规则通过 {row.metrics?.rule_pass_count ?? '未提供'}</p><p>文学质量、tokens/s、显存、冷/热启动：未评测。</p>{!!row.invalidation_reasons?.length && <p>{row.invalidation_reasons.join(' · ')}</p>}<Details value={row} label="查看精确指纹、参数与证据范围" /><Button disabled={action.busy || row.status === 'INVALIDATED'} onClick={() => void action.run(async () => { await api.invalidateEvidence(row); profiles.reload(); }, '证据已标记失效，调度器不再使用。')}>使此证据失效</Button>{row.origin === 'EXECUTED' && row.evidence_state === 'CURRENT' && <EvidenceReview api={api} row={row} onSaved={profiles.reload} />}</article>)}
     </Panel>
   </div>;
 }
+function measuredTime(value: unknown) {
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0 ? `${value} ms` : '未测量';
+}
 function BenchmarkRun({ api, run, onChange }: { api: BrokerApi; run: Row; onChange: () => void }) {
   const action = useAction(onChange), cancelAction = useAction(onChange);
-  return <article className="experimental-record"><strong>运行 {run.id.slice(0, 12)} · {run.status}</strong><progress aria-label="评测完成进度" value={run.completed} max={run.total} /><p>{run.completed} / {run.total} 已完成；每次按钮只执行一个保存的样本。</p><div className="experimental-actions"><Button disabled={action.busy || run.status !== 'READY'} onClick={() => void action.run(() => api.benchmarkAction(run, 'step'), '此样本处理已返回，请核对状态与原始结果。')}>执行下一评测样本</Button><Button disabled={!['READY', 'RUNNING'].includes(run.status || '')} onClick={() => void cancelAction.run(async () => { const latest = await api.benchmarks(); const current = latest.runs.find(r => r.id === run.id); if (current) await api.benchmarkAction(current, 'cancel'); }, '评测已请求取消。')}>取消此评测运行</Button><Button onClick={onChange}>核对运行状态</Button></div>{action.busy && <StatusMessage>正在执行一个本地样本。可取消；不会自动运行下一样本。</StatusMessage>}{action.feedback}{cancelAction.feedback}{run.results?.map((result: Row, index: number) => <details key={index}><summary>{result.case_title} · {result.passed ? '规则通过' : '规则未通过'} · {result.latency_ms} ms</summary>{result.error_code && <p>{result.error_code}</p>}<Field label={`样本 ${index + 1} 输出（不代表文学质量）`}><textarea readOnly value={result.output || ''} /></Field><p>输入摘要：{result.input_hash}</p>{result.media_receipt && <><p>原媒体任务：{result.media_receipt.task_id} · {result.media_receipt.status}。请到封面与分镜生成工作流查看和审核候选。</p><Details value={result.media_receipt} label="图像输出摘要、解码尺寸与待审状态" /></>}</details>)}{run.status === 'RUNNING' && <StatusMessage tone="warning">如果执行器重启，此运行不会自动重发。请核对上游并取消旧运行；未知费用继续保留。</StatusMessage>}</article>;
+  const [reviewed, setReviewed] = useState(''), [attempted, setAttempted] = useState('');
+  const video = run.capability === 'VIDEO', sample = run.video_sample, preview = sample?.preview, job = sample?.job;
+  const digest = typeof preview?.preview_digest === 'string' && /^[a-f0-9]{64}$/.test(preview.preview_digest) ? preview.preview_digest : '';
+  const reviewKey = digest ? `${run.id}:${run.version}:${digest}` : '';
+  const freshPreview = run.status === 'READY' && sample?.status === 'PREVIEWED' && sample?.index === run.completed;
+  const resumeQueued = sample?.index === run.completed && run.status === 'RUNNING' && job?.status === 'QUEUED' && ['QUEUED', 'ADMISSION_UNKNOWN'].includes(sample?.status);
+  const reviewable = !!reviewKey && !!preview?.production_preview && (freshPreview || resumeQueued) && attempted !== reviewKey;
+  const canExecute = reviewable && reviewed === reviewKey && !action.busy && !cancelAction.busy;
+  const candidates = new Map<number, string>();
+  const recordCandidate = (index: unknown, candidate: any) => {
+    if (typeof index === 'number' && Number.isInteger(index) && index >= 0 && index < run.total && index < 6 && typeof candidate?.digest === 'string' && /^[a-f0-9]{64}$/.test(candidate.digest)) candidates.set(index, candidate.digest);
+  };
+  for (const result of run.results || []) if (result.media_receipt?.owner === 'video') recordCandidate(result.index, result.media_receipt.output_candidate);
+  recordCandidate(sample?.index, job?.output_candidate);
+  return <article className="experimental-record">
+    <strong>运行 {run.id.slice(0, 12)} · {run.status}</strong>
+    <progress aria-label="评测完成进度" value={run.completed} max={run.total} />
+    <p>{run.completed} / {run.total} 已完成；{video ? '每个样本最多一个原 Studio 视频任务；继续执行、刷新与核对均沿用已有任务。' : '每次按钮只执行一个保存的样本。'}</p>
+    {video && <>
+      <p>{videoPreset}</p>
+      <StatusMessage>输出保持私有待审，不会自动审核、采用或发布。吞吐量、显存、冷/热启动与纯推理延迟均未测量。</StatusMessage>
+      <StatusMessage>私有输出完成不会自动核销费用。已发出的原预占仍可能是 UNKNOWN_UPSTREAM；请在原模型调度中明确核对费用。未结预占可能阻止下一样本，此处没有费用绕过操作。</StatusMessage>
+      {run.status === 'READY' && sample?.status === 'COMPLETED' && <StatusMessage>上一样本已完成。请先预览下一样本，再核对并单独授权；上一份预览不能重复执行。</StatusMessage>}
+      {resumeQueued && <StatusMessage tone="warning">已找回排队中的原视频任务。重新核对同一请求后可继续执行已有任务，不会新建或重新排队。</StatusMessage>}
+      {preview && <section aria-label="视频样本原始请求预览" className="experimental-section">
+        <Field label="这一视频样本的准确生成 Prompt"><textarea readOnly value={preview.production_preview?.command?.prompt || ''} /></Field>
+        <p>本地模型：{preview.production_preview?.provider?.provider_id} / {preview.production_preview?.provider?.model_id}</p>
+        <p>配方实际帧数：{preview.production_preview?.execution_recipe?.timing?.frames ?? '未提供'}；实际时长：{measuredTime(preview.production_preview?.execution_recipe?.timing?.duration_ms)}；外部费用预占上限 0 µUSD，实际费用仍待原调度核对。</p>
+        <Details value={preview.production_preview} label="原 Studio 请求、模型与实际视频配方" />
+        <p>请求预览摘要：{digest || '无效，请重新预览'}</p>
+        <label className="experimental-check"><input type="checkbox" disabled={!reviewable || action.busy || cancelAction.busy} checked={reviewable && reviewed === reviewKey} onChange={event => setReviewed(event.target.checked ? reviewKey : '')} />我已核对原始请求、模型、参数与费用，仅授权生成这一个私有视频样本</label>
+      </section>}
+      {job && <section aria-label="原视频任务回执" className="experimental-section">
+        <p>原视频任务：{job.id} · v{job.version} · {job.status}</p>
+        <p>原请求摘要：{job.request_digest}</p>
+        <Details value={job} label="原视频任务与私有候选回执" />
+      </section>}
+      {[...candidates].map(([index, candidateDigest]) => <BenchmarkVideoCandidate key={`${run.id}:${index}:${candidateDigest}`} api={api} runId={run.id} index={index} candidateDigest={candidateDigest} />)}
+    </>}
+    <div className="experimental-actions">
+      {video ? <>
+        <Button disabled={action.busy || cancelAction.busy || run.status !== 'READY'} onClick={() => { setReviewed(''); void action.run(() => api.benchmarkAction(run, 'preview'), '原视频请求预览已返回，尚未生成。请核对后单独授权执行。'); }}>预览这一视频样本请求</Button>
+        <Button disabled={!canExecute} onClick={() => {
+          if (!canExecute) return;
+          setReviewed(''); setAttempted(reviewKey);
+          void action.run(() => api.executeBenchmark(run, digest), '单个原视频任务已处理，请核对原任务状态；不会自动执行下一样本。');
+        }}>{resumeQueued ? '继续执行已排队的原视频任务' : '按已核对请求执行一个视频样本'}</Button>
+        <Button disabled={action.busy || cancelAction.busy || run.status !== 'RUNNING'} onClick={() => void action.run(() => api.benchmarkAction(run, 'refresh'), '已刷新同一原视频任务，未重发生成请求。')}>刷新原视频任务</Button>
+        <Button disabled={action.busy || cancelAction.busy || !['RUNNING', 'UNKNOWN'].includes(run.status || '')} onClick={() => void action.run(() => api.benchmarkAction(run, 'reconcile'), '已核对同一原视频任务，未重发生成请求。')}>核对原视频任务（不重发）</Button>
+      </> : <Button disabled={action.busy || run.status !== 'READY'} onClick={() => void action.run(() => api.benchmarkAction(run, 'step'), '此样本处理已返回，请核对状态与原始结果。')}>执行下一评测样本</Button>}
+      <Button disabled={cancelAction.busy || !['READY', 'RUNNING'].includes(run.status || '')} onClick={() => { setReviewed(''); void cancelAction.run(async () => { const latest = await api.benchmarks(); const current = latest.runs.find(r => r.id === run.id); if (current) await api.benchmarkAction(current, 'cancel'); }, '评测已请求取消。'); }}>取消此评测运行</Button>
+      <Button onClick={onChange}>核对运行状态</Button>
+    </div>
+    {action.busy && <StatusMessage>{video ? '正在处理这一个原视频任务。可取消；不会自动执行下一样本。' : '正在执行一个本地样本。可取消；不会自动运行下一样本。'}</StatusMessage>}
+    {video && !!reviewKey && attempted === reviewKey && (run.status === 'READY' || resumeQueued) && !action.busy && <StatusMessage tone="warning">执行已尝试，请先核对运行状态，确认原任务回执后再操作。</StatusMessage>}
+    {action.feedback}{cancelAction.feedback}
+    {run.results?.map((result: Row, index: number) => {
+      const videoResult = video || result.media_receipt?.owner === 'video';
+      return <details key={index}>
+        <summary>{result.case_title} · {result.passed ? '规则通过' : '规则未通过'} · {videoResult ? `任务观测耗时 ${measuredTime(result.observed_task_latency_ms)}` : measuredTime(result.latency_ms)}</summary>
+        {result.error_code && <p>{result.error_code}</p>}
+        {videoResult ? <p>任务观测耗时包含轮询与用户等待，不代表纯推理延迟。推理延迟、吞吐量、显存、冷/热启动未测量。</p> : <Field label={`样本 ${index + 1} 输出（不代表文学质量）`}><textarea readOnly value={result.output || ''} /></Field>}
+        <p>输入摘要：{result.input_hash}</p>
+        {result.media_receipt && (videoResult ? <><p>原视频任务：{result.media_receipt.task_id} · {result.media_receipt.status}。候选保持私有。此处可查看视频并记录证据级人工核对，不提供采用或发布。</p><Details value={result.media_receipt} label="视频候选与原任务状态（未自动审核）" /></> : <><p>原媒体任务：{result.media_receipt.task_id} · {result.media_receipt.status}。请到封面与分镜生成工作流查看和审核候选。</p><Details value={result.media_receipt} label="图像输出摘要、解码尺寸与待审状态" /></>)}
+      </details>;
+    })}
+    {run.status === 'RUNNING' && <StatusMessage tone="warning">{video ? '原视频任务仍在处理或等待核对。请刷新或核对同一任务；执行器重启和未知状态不会触发自动重发。' : '如果执行器重启，此运行不会自动重发。请核对上游并取消旧运行；未知费用继续保留。'}</StatusMessage>}
+    {video && run.status === 'COMPLETED' && <StatusMessage>有界评测已完成。完成状态只记录本组执行证据；候选保持私有，可查看并记录证据级人工核对，不提供采用或发布。</StatusMessage>}
+  </article>;
+}
+
+function BenchmarkVideoCandidate({ api, runId, index, candidateDigest }: { api: BrokerApi; runId: string; index: number; candidateDigest: string }) {
+  const [source, setSource] = useState(''), [busy, setBusy] = useState(false), [error, setError] = useState('');
+  const request = useRef<AbortController>(), objectUrl = useRef(''), alive = useRef(false);
+  const revoke = () => { if (objectUrl.current) URL.revokeObjectURL(objectUrl.current); objectUrl.current = ''; };
+  useEffect(() => {
+    alive.current = true;
+    return () => { alive.current = false; request.current?.abort(); request.current = undefined; revoke(); };
+  }, []);
+  const close = () => { request.current?.abort(); request.current = undefined; revoke(); setSource(''); setBusy(false); setError(''); };
+  const load = async () => {
+    if (request.current || objectUrl.current) return;
+    const controller = new AbortController(); request.current = controller; setBusy(true); setError('');
+    try {
+      const blob = await api.benchmarkVideoCandidate(runId, index, controller.signal);
+      if (!alive.current || controller.signal.aborted || request.current !== controller) return;
+      if (!blob.size || !blob.type.toLowerCase().startsWith('video/')) throw new Error('Invalid video candidate');
+      const url = URL.createObjectURL(blob); objectUrl.current = url; setSource(url);
+    } catch {
+      if (alive.current && !controller.signal.aborted && request.current === controller) setError('私有视频读取失败，请核对当前权限与候选状态后重试。');
+    } finally {
+      if (alive.current && request.current === controller) { request.current = undefined; setBusy(false); }
+    }
+  };
+  return <section aria-label={`样本 ${index + 1} 私有视频候选`} className="experimental-section">
+    <p>样本 {index + 1} 候选摘要：{candidateDigest}。仅供本组证据核对，保持私有。</p>
+    <div className="experimental-actions"><Button disabled={busy || !!source} onClick={() => void load()}>查看样本 {index + 1} 的私有视频</Button>{(busy || source) && <Button onClick={close}>关闭样本 {index + 1} 视频预览</Button>}</div>
+    {busy && <StatusMessage>正在读取这一私有视频候选…</StatusMessage>}
+    {error && <StatusMessage tone="error">{error}</StatusMessage>}
+    {source && <video src={source} controls preload="metadata" aria-label={`样本 ${index + 1} 私有视频预览`} style={{ maxWidth: '100%' }} onError={() => { close(); setError('浏览器无法播放这个视频格式。候选仍保留为私有证据。'); }} />}
+  </section>;
 }
 
 function EvidenceReview({ api, row, onSaved }: { api: BrokerApi; row: Row; onSaved: () => void }) {

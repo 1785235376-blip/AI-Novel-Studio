@@ -1,3 +1,4 @@
+import {checkedModelCameras,checkedModelCameraSelection,checkedModelCameraExport,MODEL_CAMERA_EXPORT_CONTRACT,type ModelCameraSelection} from './studioModelCameraContract';
 import { VIDEO_REFERENCE_PREVIEW, VIDEO_REFERENCE_ASSET, checkedVideoReferenceSource, checkedVideoReferenceWindow, checkedVideoReferencePreview, checkedVideoReferenceSaved, type VideoReferenceOrigin, type VideoReferencePreview, type VideoReferenceWindow } from './studioVideoReferenceContract';
 import {CLAY_ASSET_CONTRACT,checkedClayAssetResult,type ClayAssetOrigin} from './studioModelClaySaveContract';
 import type {ModelClayExport} from './studioModelClayContract';
@@ -457,6 +458,25 @@ export function studioClient(projectId: string, context: CollaborationContext) {
     inspectModelReference: (asset: StudioAsset, signal?: AbortSignal) => transport.json<unknown>(`${assetUrl(asset.id)}/model-reference`, 'GET', undefined, signal).then(value => checkedModelReferenceInspection(value,checkedAsset(asset))),
     inspectModelMesh: (asset: StudioAsset, signal?: AbortSignal) => transport.json<unknown>(`${assetUrl(asset.id)}/model-reference/mesh-preview`, 'GET', undefined, signal).then(value => checkedModelMeshPreview(value,checkedAsset(asset))),
     inspectModelMaterials: (asset: StudioAsset, signal?: AbortSignal) => transport.json<unknown>(`${assetUrl(asset.id)}/model-reference/materials`, 'GET', undefined, signal).then(value => checkedModelMaterials(value,checkedAsset(asset))),
+    inspectModelCameras: async (asset: StudioAsset, signal?: AbortSignal) => {
+      const source=structuredClone(checkedModelReferenceAsset(checkedAsset(asset)));
+      if(signal?.aborted)throw new DOMException('读取已取消。','AbortError');
+      const value=await transport.json<unknown>(`${assetUrl(source.id)}/model-reference/cameras`,'GET',undefined,signal);
+      if(signal?.aborted)throw new DOMException('读取已取消。','AbortError');
+      return checkedModelCameras(value,source);
+    },
+    exportModelCamera: async (asset: StudioAsset, selection: ModelCameraSelection, signal?: AbortSignal) => {
+      const source=structuredClone(checkedModelReferenceAsset(checkedAsset(asset))),choice=checkedModelCameraSelection(selection);
+      if(signal?.aborted)throw new DOMException('导出已取消。','AbortError');
+      const value=await transport.json<unknown>(`${assetUrl(source.id)}/model-reference/camera-export`,'POST',{
+        contract:MODEL_CAMERA_EXPORT_CONTRACT,source_version:source.version,source_sha256:source.sha256,
+        scene_index:choice.scene_index,node_index:choice.camera.node_index,camera_index:choice.camera.camera_index,profile:'GLTF_2_CAMERA_ONLY',
+      },signal);
+      if(signal?.aborted)throw new DOMException('导出已取消。','AbortError');
+      const result=await checkedModelCameraExport(value,source,choice);
+      if(signal?.aborted)throw new DOMException('导出已取消。','AbortError');
+      return result;
+    },
     inspectModelScene: (asset: StudioAsset, signal?: AbortSignal) => transport.json<unknown>(`${assetUrl(asset.id)}/model-reference/scene-preview`, 'GET', undefined, signal).then(value => checkedModelScenePreview(value,checkedAsset(asset))),
     saveModelClay: async (asset: StudioAsset, review: ModelClayExport, key: string) => {
       const source=structuredClone(checkedModelReferenceAsset(checkedAsset(asset)));

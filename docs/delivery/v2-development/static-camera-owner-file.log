@@ -1,0 +1,116 @@
+...FF................................................................... [ 83%]
+...........F..                                                           [100%]
+=================================== FAILURES ===================================
+_ test_wrong_project_branch_and_private_owner_are_excluded[file-project-inspect] _
+
+rig = namespace(nid='v2-independent-59b96411a2e54b50abaff51585fc9008', scope={'mode': 'local', 'novel_id': 'v2-independent-5...IdentityRepository object at 0x7ffa3ae22480>), create_project=<function rig.<locals>.create_project at 0x7ffa3ae267a0>)
+method = 'inspect', exclusion = 'project'
+
+    @pytest.mark.parametrize("method", ["inspect", "export"])
+    @pytest.mark.parametrize("exclusion", ["project", "branch", "private-owner"])
+    def test_wrong_project_branch_and_private_owner_are_excluded(rig, method, exclusion):
+        asset = source_asset(rig)
+        nid, scope = rig.nid, rig.scope
+        if exclusion == "project":
+            nid = rig.create_project("Other camera owner")
+            scope = {"mode": "local", "novel_id": nid}
+        elif exclusion == "branch":
+            scope = branch_scope(rig)
+        else:
+            raw = rig.assets._load(asset["id"])
+            raw["_owner_actor_id"] = rig.actor
+            rig.assets._write_meta(raw)
+        before = files(rig)
+        service = reopened(rig)
+        with pytest.raises((FileNotFoundError, ValueError)):
+            if method == "inspect":
+                service.inspect_model_reference(nid, scope, asset["id"], camera_inspection=True)
+            else:
+                service.export_model_camera(nid, scope, asset["id"], export_body(asset))
+        assert service.list_assets(nid, scope) == {"items": []}
+>       assert files(rig) == before
+E       assert {'.workspace-...x00\x00', ...} == {'.workspace-...x00\x00', ...}
+E         
+E         Omitting 36 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'novels/v2-independent-e0d21eac3d0d448d83c17f6daae9eafa/creative_project_v2.json': b'{"pr'
+E                                                                                             b'ojec'
+E                                                                                             b't_in'
+E                                                                                             b'carn'...
+E         
+E         ...Full output truncated (18 lines hidden), use '-vv' to show
+
+tests/test_v2_static_glb_camera_owner.py:192: AssertionError
+_ test_wrong_project_branch_and_private_owner_are_excluded[file-project-export] _
+
+rig = namespace(nid='v2-independent-e411de114eea4078b05c626f43fdd319', scope={'mode': 'local', 'novel_id': 'v2-independent-e...IdentityRepository object at 0x7ffa3ae21940>), create_project=<function rig.<locals>.create_project at 0x7ffa3ae9bf60>)
+method = 'export', exclusion = 'project'
+
+    @pytest.mark.parametrize("method", ["inspect", "export"])
+    @pytest.mark.parametrize("exclusion", ["project", "branch", "private-owner"])
+    def test_wrong_project_branch_and_private_owner_are_excluded(rig, method, exclusion):
+        asset = source_asset(rig)
+        nid, scope = rig.nid, rig.scope
+        if exclusion == "project":
+            nid = rig.create_project("Other camera owner")
+            scope = {"mode": "local", "novel_id": nid}
+        elif exclusion == "branch":
+            scope = branch_scope(rig)
+        else:
+            raw = rig.assets._load(asset["id"])
+            raw["_owner_actor_id"] = rig.actor
+            rig.assets._write_meta(raw)
+        before = files(rig)
+        service = reopened(rig)
+        with pytest.raises((FileNotFoundError, ValueError)):
+            if method == "inspect":
+                service.inspect_model_reference(nid, scope, asset["id"], camera_inspection=True)
+            else:
+                service.export_model_camera(nid, scope, asset["id"], export_body(asset))
+        assert service.list_assets(nid, scope) == {"items": []}
+>       assert files(rig) == before
+E       assert {'.workspace-...x00\x00', ...} == {'.workspace-...x00\x00', ...}
+E         
+E         Omitting 36 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'novels/v2-independent-c708ddd8d5314ed8a033b4ff6b676f0e/creative_project_v2.json': b'{"pr'
+E                                                                                             b'ojec'
+E                                                                                             b't_in'
+E                                                                                             b'carn'...
+E         
+E         ...Full output truncated (18 lines hidden), use '-vv' to show
+
+tests/test_v2_static_glb_camera_owner.py:192: AssertionError
+____ test_export_request_body_limit_counts_stream_not_declared_length[file] ____
+
+rig = namespace(nid='v2-independent-afda2351b7654570837d7824183b3b47', scope={'mode': 'local', 'novel_id': 'v2-independent-a...IdentityRepository object at 0x7ffa38d07ce0>), create_project=<function rig.<locals>.create_project at 0x7ffa38c08cc0>)
+camera_http = namespace(client=<starlette.testclient.TestClient object at 0x7ffa38c385c0>, source={'id': 'adbb5201-1c02-46c8-a203-e5...ts/v2-independent-afda2351b7654570837d7824183b3b47/studio/assets/adbb5201-1c02-46c8-a203-e5167fde9bc2/model-reference')
+
+    def test_export_request_body_limit_counts_stream_not_declared_length(rig, camera_http):
+        from app.creative.workspace_api import ModelCameraExportRoute
+        h = camera_http
+        value = json.dumps(export_body(h.source)).encode("utf-8")
+        before = files(rig)
+        bounded = value + b" " * (ModelCameraExportRoute.MAX_BODY - len(value))
+        response = h.client.post(h.path + "/camera-export", headers=h.headers, content=bounded)
+>       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"MODEL_REFERENCE_CAMERA_REQUEST_INVALID"}}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_v2_static_glb_camera_owner.py:360: AssertionError
+=============================== warnings summary ===============================
+tests/test_v2_static_glb_camera_owner.py::test_real_owner_reopen_camera_inspection_export_exact_and_readonly[file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_v2_static_glb_camera_owner.py::test_real_routes_use_read_authority_and_return_exact_private_wire[file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_static_glb_camera_owner.py::test_wrong_project_branch_and_private_owner_are_excluded[file-project-inspect]
+FAILED tests/test_v2_static_glb_camera_owner.py::test_wrong_project_branch_and_private_owner_are_excluded[file-project-export]
+FAILED tests/test_v2_static_glb_camera_owner.py::test_export_request_body_limit_counts_stream_not_declared_length[file]
+3 failed, 83 passed, 85 deselected, 2 warnings in 10.01s

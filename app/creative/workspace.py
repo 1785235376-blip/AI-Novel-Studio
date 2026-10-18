@@ -10,7 +10,7 @@ import base64
 import copy
 import hashlib
 import json
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 import shutil
 import errno
 import re
@@ -336,33 +336,78 @@ class IndependentWorkspaceService:
         guard()
         return self._persist_manual_import(nid, scope, actor, body, data, "model/gltf-binary", guard)
 
-    def inspect_model_reference(self, nid, scope, aid, guard=lambda: None, *, mesh_preview=False, scene_preview=False, material_inspection=False):
+    def inspect_model_reference(self, nid, scope, aid, guard=lambda: None, *, mesh_preview=False, scene_preview=False, material_inspection=False, camera_inspection=False):
+        # Camera observation must never provision a missing File identity. The
+        # pre-existing geometry paths keep their original owner admission.
+        lease = self.store.existing_owner_only() if camera_inspection is True else nullcontext()
+        with lease:
+            return self._inspect_model_reference(nid, scope, aid, guard, mesh_preview=mesh_preview,
+                scene_preview=scene_preview, material_inspection=material_inspection, camera_inspection=camera_inspection)
+
+    def _inspect_model_reference(self, nid, scope, aid, guard, *, mesh_preview, scene_preview, material_inspection, camera_inspection):
         from .model_reference_glb import MAX_BYTES, inspect_static_glb
         from ..experimental.common import StaleSourceError
         guard()
         with self._asset_scope(nid, scope):
+            incarnation = self.store.incarnation(nid)
             row = self._row(nid, scope, aid)
             if row.get("kind") != "model" or row.get("media_type") != "model/gltf-binary":
                 raise ValueError("MODEL_REFERENCE_GLB_ASSET_REQUIRED")
             snapshot = {"id": row["id"], "kind": "ASSET", "asset_kind": "model", "version": row["version"], "digest": row["sha256"]}
             _, data = self.pinned_content(nid, scope, snapshot, max_bytes=MAX_BYTES, guard=guard)
-        if (any(type(v) is not bool for v in (mesh_preview, scene_preview, material_inspection))
-                or sum((mesh_preview, scene_preview, material_inspection)) > 1):
+        if (any(type(v) is not bool for v in (mesh_preview, scene_preview, material_inspection, camera_inspection))
+                or sum((mesh_preview, scene_preview, material_inspection, camera_inspection)) > 1):
             raise ValueError("MODEL_REFERENCE_GLB_PREVIEW_OPTION_INVALID")
-        parsed = (inspect_static_glb(data, include_materials=True) if material_inspection else
+        parsed = (inspect_static_glb(data, include_cameras=True) if camera_inspection else
+                  inspect_static_glb(data, include_materials=True) if material_inspection else
                   inspect_static_glb(data, include_geometry=True, include_scene=True) if scene_preview else
                   inspect_static_glb(data, include_geometry=True) if mesh_preview else inspect_static_glb(data))
-        inspection = parsed["inspection"] if mesh_preview or scene_preview or material_inspection else parsed
+        inspection = parsed["inspection"] if mesh_preview or scene_preview or material_inspection or camera_inspection else parsed
         guard()
         with self._asset_scope(nid, scope):
             current = self._row(nid, scope, aid)
-            if (current["version"], current["sha256"], current["kind"]) != (snapshot["version"], snapshot["digest"], "model"):
+            if (self.store.incarnation(nid) != incarnation or current.get("media_type") != "model/gltf-binary"
+                    or (current["version"], current["sha256"], current["kind"]) != (snapshot["version"], snapshot["digest"], "model")):
                 raise StaleSourceError("MODEL_REFERENCE_SOURCE_CHANGED")
             guard()
         return {"asset_snapshot": snapshot, "inspection": inspection,
                 **({"mesh_preview": parsed["mesh_preview"]} if mesh_preview else {}),
                 **({"scene_preview": parsed["scene_preview"]} if scene_preview else {}),
-                **({"material_inspection": parsed["material_inspection"]} if material_inspection else {})}
+                **({"material_inspection": parsed["material_inspection"]} if material_inspection else {}),
+                **({"camera_inspection": parsed["camera_inspection"]} if camera_inspection else {})}
+
+    def export_model_camera(self, nid, scope, aid, value, guard=lambda: None):
+        """Read-only canonical camera exchange from an exact formal GLB source."""
+        from .workspace_models import StaticCameraExport
+        body = StaticCameraExport.model_validate(value)
+        with self.store.existing_owner_only():
+            return self._export_model_camera(nid, scope, aid, body, guard)
+
+    def _export_model_camera(self, nid, scope, aid, body, guard):
+        from .model_reference_cameras import export_camera
+        from ..experimental.common import StaleSourceError
+        guard()
+        with self._asset_scope(nid, scope):
+            incarnation = self.store.incarnation(nid)
+            row = self._row(nid, scope, aid)
+            if (row["version"], row["sha256"]) != (body.source_version, body.source_sha256):
+                raise StaleSourceError("MODEL_REFERENCE_SOURCE_CHANGED")
+        inspected = self.inspect_model_reference(nid, scope, aid, guard, camera_inspection=True)
+        pin = inspected["asset_snapshot"]
+        if (pin["version"], pin["digest"]) != (body.source_version, body.source_sha256):
+            raise StaleSourceError("MODEL_REFERENCE_SOURCE_CHANGED")
+        data, proof = export_camera(inspected["camera_inspection"], pin, scene_index=body.scene_index,
+                                   node_index=body.node_index, camera_index=body.camera_index)
+        encoded = base64.b64encode(data).decode("ascii")
+        guard()
+        with self._asset_scope(nid, scope):
+            row = self._row(nid, scope, aid)
+            if (self.store.incarnation(nid) != incarnation or row.get("kind") != "model"
+                    or row.get("media_type") != "model/gltf-binary"
+                    or (row["version"], row["sha256"]) != (body.source_version, body.source_sha256)):
+                raise StaleSourceError("MODEL_REFERENCE_SOURCE_CHANGED")
+            guard()
+        return {"asset_snapshot": pin, "camera_export": proof, "content_base64": encoded}
 
     def preview_video_reference(self, nid, scope, aid, value, guard):
         from .video_reference import VideoReferencePreparation

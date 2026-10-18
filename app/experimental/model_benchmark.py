@@ -1,4 +1,4 @@
-"""User-triggered, bounded steps through original text and image authorities.
+"""User-triggered, bounded steps through original text, image and video owners.
 
 Each step runs at most one saved case. There is no background executor, startup
 benchmark, paid provider, executable workflow import, or fabricated performance.
@@ -90,6 +90,13 @@ class ModelBenchmarkService(DomainService):
     def __init__(self, store, novels, chapters, *, broker, media=None):
         super().__init__(store, novels, chapters)
         self.broker, self.media = broker, media
+        self.video = None
+
+    def configure_video(self, production):
+        from .model_benchmark_video import VideoBenchmarkCoordinator
+        self.video = VideoBenchmarkCoordinator(self, production)
+        self.broker.video_registry = production.video_providers
+        production.benchmark_video = self.video
 
     @staticmethod
     def set_hash(row):
@@ -110,6 +117,7 @@ class ModelBenchmarkService(DomainService):
         routes = {r['route_id']: r for r in self.broker.candidates()}
         sets = {r['id']: r for r in self.sets(nid, scope)}
         rows = self.list(nid, scope, self.EVIDENCE)
+        rows = [r for r in rows if r.get('capability') != 'VIDEO' or self.video is not None and self.video.visible(nid, r)]
         for row in rows:
             route, test_set = routes.get(row['route_id']), sets.get(row['set_id'])
             reasons = []
@@ -119,7 +127,7 @@ class ModelBenchmarkService(DomainService):
             if row['status'] == 'INVALIDATED': reasons.append('EXPLICITLY_INVALIDATED')
             row['evidence_state'] = 'HISTORICAL' if reasons else 'CURRENT'
             row['invalidation_reasons'] = reasons
-            row['routing_eligible'] = not reasons and row['origin'] == 'EXECUTED'
+            row['routing_eligible'] = not reasons and row['origin'] == 'EXECUTED' and row.get('capability') != 'VIDEO'
             row['evidence_tier'] = ('USER_SUPPLIED_UNVERIFIED' if row['origin'] != 'EXECUTED' else
                 'CONTRACT_TESTED' if row.get('verification') == 'SYNTHETIC_PROTOCOL_ONLY' else 'LOCALLY_BENCHMARKED')
         return sorted(rows, key=lambda r: r['created_at'], reverse=True)
@@ -163,6 +171,9 @@ class ModelBenchmarkService(DomainService):
         check_version(evidence, body.expected_version)
         run = self.get(nid, scope, self.RUNS, evidence['run_id'])
         if run['status'] != 'COMPLETED': raise ValueError('BENCHMARK_COMPLETED_OUTPUT_REVIEW_REQUIRED')
+        if run.get('capability') == 'VIDEO':
+            if self.video is None: raise ValueError('BENCHMARK_VIDEO_OWNER_UNAVAILABLE')
+            self.video.validate_outputs(nid, scope, actor, run, guard)
         key = digest([actor, rid, body.expected_version])
         with self.store.transaction(nid, scope) as doc:
             guard()
@@ -208,7 +219,9 @@ class ModelBenchmarkService(DomainService):
         check_version(test_set, body.expected_set_version)
         kinds = {c['kind'] for c in test_set['cases']}
         if 'VIDEO_WORKFLOW' in kinds:
-            raise ValueError('BENCHMARK_VIDEO_LOCAL_ADMISSION_UNAVAILABLE_IMPORT_ONLY')
+            if self.video is None:
+                raise ValueError('BENCHMARK_VIDEO_LOCAL_ADMISSION_UNAVAILABLE_IMPORT_ONLY')
+            return self.video.start(nid, scope, actor, body, test_set, guard)
         capability = 'IMAGE' if kinds == {'IMAGE_WORKFLOW'} else 'TEXT'
         if 'IMAGE_WORKFLOW' in kinds and capability != 'IMAGE': raise ValueError('BENCHMARK_MIXED_MODALITIES_UNSUPPORTED')
         route = self.broker.current_route(body.route_id)
@@ -249,9 +262,12 @@ class ModelBenchmarkService(DomainService):
             return copy.deepcopy(row)
 
     def runs(self, nid, scope, actor):
-        return sorted((r for r in self.list(nid, scope, self.RUNS) if r['created_by'] == actor), key=lambda r: r['created_at'], reverse=True)[:100]
+        return sorted((r for r in self.list(nid, scope, self.RUNS) if r['created_by'] == actor
+            and (r.get('capability') != 'VIDEO' or self.video is not None and self.video.visible(nid, r))), key=lambda r: r['created_at'], reverse=True)[:100]
 
-    def cancel(self, nid, scope, actor, rid, version):
+    def cancel(self, nid, scope, actor, rid, version, guard=lambda: None):
+        if self.get(nid, scope, self.RUNS, rid).get('capability') == 'VIDEO' and self.video is not None:
+            return self.video.cancel(nid, scope, actor, rid, version, guard)
         def transition(row):
             if row['created_by'] != actor: raise ValueError('BENCHMARK_ACTOR_MISMATCH')
             if row['status'] not in {'READY', 'RUNNING'}: raise ValueError('BENCHMARK_RUN_TERMINAL')
@@ -260,6 +276,8 @@ class ModelBenchmarkService(DomainService):
 
     def step(self, nid, scope, actor, rid, version, guard=lambda: None):
         row = self.get(nid, scope, self.RUNS, rid)
+        if row.get('capability') == 'VIDEO':
+            raise ValueError('BENCHMARK_VIDEO_EXACT_PREVIEW_REQUIRED')
         check_version(row, version)
         if row['created_by'] != actor: raise ValueError('BENCHMARK_ACTOR_MISMATCH')
         if row['status'] != 'READY' or row['completed'] >= row['total']: raise ValueError('BENCHMARK_RUN_NOT_READY')

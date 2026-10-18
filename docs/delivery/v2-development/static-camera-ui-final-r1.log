@@ -1,0 +1,26 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/studioClient.test.ts (38 tests) 45ms
+ ✓ src/creative/studioModelCameraContract.additive.test.ts (55 tests) 90ms
+ ✓ src/creative/studioClient.boundedDownload.additive.test.ts (38 tests) 115ms
+ ✓ src/creative/StudioModelCameraInspection.additive.test.tsx (20 tests) 523ms
+ ✓ src/creative/StudioModelDepthExport.additive.test.tsx (6 tests) 171ms
+ ✓ src/creative/StudioModelClaySave.additive.test.tsx (4 tests) 232ms
+ ✓ src/creative/StudioModelScenePreview.additive.test.tsx (4 tests) 129ms
+ ✓ src/creative/StudioModelMeshPreview.additive.test.tsx (5 tests) 173ms
+ ✓ src/creative/StudioModelReference.additive.test.tsx (5 tests) 222ms
+ ✓ src/creative/StudioModelMaterials.additive.test.tsx (4 tests) 69ms
+ ✓ src/creative/StudioModelClayExport.additive.test.tsx (4 tests) 90ms
+ ✓ src/creative/StudioModelDiagnosticPreview.additive.test.tsx (8 tests) 223ms
+ ✓ src/creative/StudioModelCameraWorkspace.additive.test.tsx (3 tests) 1030ms
+   ✓ reads and exports explicit source camera through the original asset workspace without asset/job/model writes 583ms
+ ✓ src/creative/StudioModelReferenceWorkspace.additive.test.tsx (2 tests) 1548ms
+   ✓ imports through original workspace, with lost-response retry false and no FFmpeg 892ms
+   ✓ imports through original workspace, with lost-response retry true and no FFmpeg 654ms
+
+ Test Files  14 passed (14)
+      Tests  196 passed (196)
+   Start at  03:13:44
+   Duration  6.77s (transform 4.95s, setup 316ms, collect 14.83s, tests 4.66s, environment 4.90s, prepare 1.19s)
+

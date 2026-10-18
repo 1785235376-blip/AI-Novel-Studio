@@ -216,7 +216,7 @@ class StudioVideoExecution:
                 or candidate.get("size") != len(data) or candidate.get("media_type") != measured["media_type"]):
             raise ValueError("STUDIO_VIDEO_CANDIDATE_RECEIPT_INVALID")
         return self._mutate(nid, branch, actor, row, context, status="AWAITING_REVIEW", execution_token=None,
-            remote_task_id=remote, output_candidate={"id": candidate["id"], "version": candidate["version"], "digest": candidate["sha256"], "kind": "video"})
+            remote_task_id=remote, measured=copy.deepcopy(measured), output_observed_at=now(), output_candidate={"id": candidate["id"], "version": candidate["version"], "digest": candidate["sha256"], "kind": "video"})
 
     @exclusive
     def refresh(self, nid, branch, actor, jid, action, *, context, guard, source_guard, resolve, publish, inspect_source=None):

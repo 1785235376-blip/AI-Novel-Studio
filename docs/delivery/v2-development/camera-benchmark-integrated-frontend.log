@@ -1,0 +1,49 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/studioClient.test.ts (38 tests) 37ms
+ ✓ src/experimental/ModelBenchmarkPanel.continuation.test.tsx (1 test) 216ms
+ ✓ src/creative/studioClient.boundedDownload.additive.test.ts (38 tests) 135ms
+ ✓ src/creative/StudioModelCameraInspection.additive.test.tsx (20 tests) 382ms
+ ✓ src/creative/studioModelCameraContract.additive.test.ts (55 tests) 46ms
+ ✓ src/creative/StudioModelReference.additive.test.tsx (5 tests) 207ms
+ ✓ src/experimental/ModelBenchmarkPanel.video.test.tsx (31 tests) 2450ms
+   ✓ bounded local T2V benchmark > keeps mount and run creation generation-free and filters local available VIDEO routes 390ms
+ ✓ src/creative/StudioModelCameraWorkspace.additive.test.tsx (3 tests) 1054ms
+   ✓ reads and exports explicit source camera through the original asset workspace without asset/job/model writes 608ms
+ ✓ src/creative/StudioModelReferenceWorkspace.additive.test.tsx (2 tests) 1577ms
+   ✓ imports through original workspace, with lost-response retry false and no FFmpeg 927ms
+   ✓ imports through original workspace, with lost-response retry true and no FFmpeg 649ms
+
+ Test Files  9 passed (9)
+      Tests  193 passed (193)
+   Start at  03:21:07
+   Duration  6.55s (transform 4.75s, setup 187ms, collect 12.36s, tests 6.10s, environment 2.64s, prepare 692ms)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2428 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-BkplvLLE.css      4.23 kB │ gzip:   1.09 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-DDGk9-SA.css                      219.19 kB │ gzip:  27.69 kB
+dist/assets/Health-BuMelU-i.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-CGSgvxme.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/style-CxVJFrG3.js                      45.12 kB │ gzip:   8.40 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/LocalTutorIntegration-we0HeYnO.js      47.64 kB │ gzip:  15.65 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-B3A-4bM-.js     857.06 kB │ gzip: 257.42 kB
+dist/assets/App-xSW5D2mI.js                     2,715.66 kB │ gzip: 814.04 kB
+✓ built in 7.07s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

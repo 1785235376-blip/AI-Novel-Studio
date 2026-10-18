@@ -118,3 +118,14 @@ class StaticSceneClaySave(StaticSceneClayExport):
     reviewed_png_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     confirm_reference: Literal[True]
     idempotency_key: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,119}$")
+
+
+class StaticCameraExport(StrictModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    contract: Literal["studio-static-glb-camera-export/1"]
+    source_version: int = Field(ge=1, le=2**53 - 1)
+    source_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    scene_index: int = Field(ge=0, le=63)
+    node_index: int = Field(ge=0, le=255)
+    camera_index: int = Field(ge=0, le=63)
+    profile: Literal["GLTF_2_CAMERA_ONLY"]
