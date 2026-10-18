@@ -2,7 +2,7 @@
 
 Complete mounted source inventory. This catalog is a source map, not a runtime verification verdict.
 
-Starting method/path operations: 1833. Current: 2521. Added: 688. Removed: 0.
+Starting method/path operations: 1833. Current: 2525. Added: 692. Removed: 0.
 
 The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json.gz; API_CATALOG.json binds its digest and all application sources. Original aliases are listed separately.
 
@@ -295,7 +295,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/novels/{nid}/experimental/production/assets/{aid}` | `app/experimental/production_lineage_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/production/assets/{aid}/impact` | `app/experimental/production_lineage_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/production/assets/{aid}/studio-graph-usages` | `app/creative/graph_api.py:124` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/novels/{nid}/experimental/production/assets/{aid}/studio-timeline-usages` | `app/creative/production_execution_api.py:160` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/production/assets/{aid}/studio-timeline-usages` | `app/creative/production_execution_api.py:176` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/production/manifests` | `app/experimental/production_lineage_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/production/manifests/{rid}/export` | `app/experimental/production_lineage_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/production/manifests/{rid}/outputs/{pid}/passport` | `app/experimental/production_lineage_api.py:107` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -497,13 +497,13 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/projects/{nid}/studio/graphs/{gid}/runs` | `app/creative/graph_api.py:241` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/projects/{nid}/studio/preferences` | `app/creative/workspace_api.py:267` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/projects/{nid}/studio/production-contracts` | `app/creative/production_contract_api.py:12` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/projects/{nid}/studio/production/jobs` | `app/creative/production_execution_api.py:126` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/projects/{nid}/studio/production/jobs/{owner}/{jid}` | `app/creative/production_execution_api.py:130` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/projects/{nid}/studio/production/jobs/{owner}/{jid}/candidate` | `app/creative/production_execution_api.py:134` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/projects/{nid}/studio/production/providers` | `app/creative/production_execution_api.py:102` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/projects/{nid}/studio/production/timelines` | `app/creative/production_execution_api.py:177` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/projects/{nid}/studio/production/timelines/{tid}` | `app/creative/production_execution_api.py:185` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/projects/{nid}/studio/production/timelines/{tid}/history` | `app/creative/production_execution_api.py:201` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{nid}/studio/production/jobs` | `app/creative/production_execution_api.py:142` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{nid}/studio/production/jobs/{owner}/{jid}` | `app/creative/production_execution_api.py:146` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{nid}/studio/production/jobs/{owner}/{jid}/candidate` | `app/creative/production_execution_api.py:150` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{nid}/studio/production/providers` | `app/creative/production_execution_api.py:118` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{nid}/studio/production/timelines` | `app/creative/production_execution_api.py:193` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{nid}/studio/production/timelines/{tid}` | `app/creative/production_execution_api.py:201` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{nid}/studio/production/timelines/{tid}/history` | `app/creative/production_execution_api.py:217` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/projects/{nid}/studio/production/workflow` | `app/creative/production_workflow_api.py:15` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/projects/{nid}/studio/prompts` | `app/creative/prompt_api.py:18` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/projects/{nid}/studio/prompts/context` | `app/creative/prompt_api.py:25` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -781,7 +781,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/v1/novels/{nid}/experimental/production/assets/{aid}` | `app/experimental/production_lineage_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/production/assets/{aid}/impact` | `app/experimental/production_lineage_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/production/assets/{aid}/studio-graph-usages` | `app/creative/graph_api.py:124` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/novels/{nid}/experimental/production/assets/{aid}/studio-timeline-usages` | `app/creative/production_execution_api.py:160` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/production/assets/{aid}/studio-timeline-usages` | `app/creative/production_execution_api.py:176` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/production/manifests` | `app/experimental/production_lineage_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/production/manifests/{rid}/export` | `app/experimental/production_lineage_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/production/manifests/{rid}/outputs/{pid}/passport` | `app/experimental/production_lineage_api.py:107` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -983,13 +983,13 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/v1/projects/{nid}/studio/graphs/{gid}/runs` | `app/creative/graph_api.py:241` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/projects/{nid}/studio/preferences` | `app/creative/workspace_api.py:267` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/projects/{nid}/studio/production-contracts` | `app/creative/production_contract_api.py:12` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/projects/{nid}/studio/production/jobs` | `app/creative/production_execution_api.py:126` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/projects/{nid}/studio/production/jobs/{owner}/{jid}` | `app/creative/production_execution_api.py:130` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/projects/{nid}/studio/production/jobs/{owner}/{jid}/candidate` | `app/creative/production_execution_api.py:134` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/projects/{nid}/studio/production/providers` | `app/creative/production_execution_api.py:102` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/projects/{nid}/studio/production/timelines` | `app/creative/production_execution_api.py:177` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/projects/{nid}/studio/production/timelines/{tid}` | `app/creative/production_execution_api.py:185` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/history` | `app/creative/production_execution_api.py:201` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{nid}/studio/production/jobs` | `app/creative/production_execution_api.py:142` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{nid}/studio/production/jobs/{owner}/{jid}` | `app/creative/production_execution_api.py:146` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{nid}/studio/production/jobs/{owner}/{jid}/candidate` | `app/creative/production_execution_api.py:150` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{nid}/studio/production/providers` | `app/creative/production_execution_api.py:118` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{nid}/studio/production/timelines` | `app/creative/production_execution_api.py:193` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{nid}/studio/production/timelines/{tid}` | `app/creative/production_execution_api.py:201` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/history` | `app/creative/production_execution_api.py:217` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/projects/{nid}/studio/production/workflow` | `app/creative/production_workflow_api.py:15` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/projects/{nid}/studio/prompts` | `app/creative/prompt_api.py:18` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/projects/{nid}/studio/prompts/context` | `app/creative/prompt_api.py:25` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1637,27 +1637,29 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/projects/{nid}/studio/graphs/model-match` | `app/creative/graph_api.py:181` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/projects/{nid}/studio/graphs/{gid}/preflight` | `app/creative/graph_api.py:235` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/projects/{nid}/studio/graphs/{gid}/runs` | `app/creative/graph_api.py:247` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/jobs` | `app/creative/production_execution_api.py:122` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/jobs/video/{jid}/refresh` | `app/creative/production_execution_api.py:144` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/jobs/{owner}/{jid}/cancel` | `app/creative/production_execution_api.py:148` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/jobs/{owner}/{jid}/execute` | `app/creative/production_execution_api.py:140` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/jobs/{owner}/{jid}/reconcile` | `app/creative/production_execution_api.py:156` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/jobs/{owner}/{jid}/review` | `app/creative/production_execution_api.py:152` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/preview` | `app/creative/production_execution_api.py:118` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/timelines` | `app/creative/production_execution_api.py:181` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/edit` | `app/creative/production_execution_api.py:197` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/export` | `app/creative/production_execution_api.py:213` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/export-preview` | `app/creative/production_execution_api.py:209` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/playback-attestation` | `app/creative/production_execution_api.py:114` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/playback-build` | `app/creative/production_execution_api.py:110` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/playback-preview` | `app/creative/production_execution_api.py:106` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/render` | `app/creative/production_execution_api.py:193` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/restore` | `app/creative/production_execution_api.py:205` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/source-bounds` | `app/creative/production_execution_api.py:93` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/transfer-attachment` | `app/creative/production_execution_api.py:225` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/transfer-import` | `app/creative/production_execution_api.py:221` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/transfer-preview` | `app/creative/production_execution_api.py:217` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/waveform-preview` | `app/creative/production_execution_api.py:85` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/comic-pages/{rid}/panels/{panel_id}/adopt-image` | `app/creative/production_execution_api.py:92` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/projects/{nid}/studio/production/comic-pages/{rid}/panels/{panel_id}/image-request` | `app/creative/production_execution_api.py:85` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/projects/{nid}/studio/production/jobs` | `app/creative/production_execution_api.py:138` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/jobs/video/{jid}/refresh` | `app/creative/production_execution_api.py:160` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/jobs/{owner}/{jid}/cancel` | `app/creative/production_execution_api.py:164` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/jobs/{owner}/{jid}/execute` | `app/creative/production_execution_api.py:156` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/jobs/{owner}/{jid}/reconcile` | `app/creative/production_execution_api.py:172` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/jobs/{owner}/{jid}/review` | `app/creative/production_execution_api.py:168` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/preview` | `app/creative/production_execution_api.py:134` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/timelines` | `app/creative/production_execution_api.py:197` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/edit` | `app/creative/production_execution_api.py:213` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/export` | `app/creative/production_execution_api.py:229` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/export-preview` | `app/creative/production_execution_api.py:225` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/playback-attestation` | `app/creative/production_execution_api.py:130` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/playback-build` | `app/creative/production_execution_api.py:126` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/playback-preview` | `app/creative/production_execution_api.py:122` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/render` | `app/creative/production_execution_api.py:209` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/restore` | `app/creative/production_execution_api.py:221` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/source-bounds` | `app/creative/production_execution_api.py:109` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/transfer-attachment` | `app/creative/production_execution_api.py:241` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/transfer-import` | `app/creative/production_execution_api.py:237` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/transfer-preview` | `app/creative/production_execution_api.py:233` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{nid}/studio/production/timelines/{tid}/waveform-preview` | `app/creative/production_execution_api.py:101` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/projects/{nid}/studio/production/workflow/intent` | `app/creative/production_workflow_api.py:21` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/projects/{nid}/studio/prompts` | `app/creative/prompt_authoring_api.py:35` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/projects/{nid}/studio/prompts/{family_id}/revisions` | `app/creative/prompt_authoring_api.py:44` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -2268,27 +2270,29 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/v1/projects/{nid}/studio/graphs/model-match` | `app/creative/graph_api.py:181` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/projects/{nid}/studio/graphs/{gid}/preflight` | `app/creative/graph_api.py:235` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/projects/{nid}/studio/graphs/{gid}/runs` | `app/creative/graph_api.py:247` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/jobs` | `app/creative/production_execution_api.py:122` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/jobs/video/{jid}/refresh` | `app/creative/production_execution_api.py:144` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/jobs/{owner}/{jid}/cancel` | `app/creative/production_execution_api.py:148` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/jobs/{owner}/{jid}/execute` | `app/creative/production_execution_api.py:140` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/jobs/{owner}/{jid}/reconcile` | `app/creative/production_execution_api.py:156` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/jobs/{owner}/{jid}/review` | `app/creative/production_execution_api.py:152` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/preview` | `app/creative/production_execution_api.py:118` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/timelines` | `app/creative/production_execution_api.py:181` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/edit` | `app/creative/production_execution_api.py:197` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/export` | `app/creative/production_execution_api.py:213` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/export-preview` | `app/creative/production_execution_api.py:209` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/playback-attestation` | `app/creative/production_execution_api.py:114` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/playback-build` | `app/creative/production_execution_api.py:110` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/playback-preview` | `app/creative/production_execution_api.py:106` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/render` | `app/creative/production_execution_api.py:193` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/restore` | `app/creative/production_execution_api.py:205` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/source-bounds` | `app/creative/production_execution_api.py:93` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/transfer-attachment` | `app/creative/production_execution_api.py:225` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/transfer-import` | `app/creative/production_execution_api.py:221` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/transfer-preview` | `app/creative/production_execution_api.py:217` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/waveform-preview` | `app/creative/production_execution_api.py:85` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/comic-pages/{rid}/panels/{panel_id}/adopt-image` | `app/creative/production_execution_api.py:92` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/projects/{nid}/studio/production/comic-pages/{rid}/panels/{panel_id}/image-request` | `app/creative/production_execution_api.py:85` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/projects/{nid}/studio/production/jobs` | `app/creative/production_execution_api.py:138` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/jobs/video/{jid}/refresh` | `app/creative/production_execution_api.py:160` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/jobs/{owner}/{jid}/cancel` | `app/creative/production_execution_api.py:164` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/jobs/{owner}/{jid}/execute` | `app/creative/production_execution_api.py:156` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/jobs/{owner}/{jid}/reconcile` | `app/creative/production_execution_api.py:172` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/jobs/{owner}/{jid}/review` | `app/creative/production_execution_api.py:168` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/preview` | `app/creative/production_execution_api.py:134` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/timelines` | `app/creative/production_execution_api.py:197` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/edit` | `app/creative/production_execution_api.py:213` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/export` | `app/creative/production_execution_api.py:229` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/export-preview` | `app/creative/production_execution_api.py:225` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/playback-attestation` | `app/creative/production_execution_api.py:130` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/playback-build` | `app/creative/production_execution_api.py:126` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/playback-preview` | `app/creative/production_execution_api.py:122` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/render` | `app/creative/production_execution_api.py:209` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/restore` | `app/creative/production_execution_api.py:221` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/source-bounds` | `app/creative/production_execution_api.py:109` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/transfer-attachment` | `app/creative/production_execution_api.py:241` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/transfer-import` | `app/creative/production_execution_api.py:237` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/transfer-preview` | `app/creative/production_execution_api.py:233` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{nid}/studio/production/timelines/{tid}/waveform-preview` | `app/creative/production_execution_api.py:101` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/projects/{nid}/studio/production/workflow/intent` | `app/creative/production_workflow_api.py:21` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/projects/{nid}/studio/prompts` | `app/creative/prompt_authoring_api.py:35` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/projects/{nid}/studio/prompts/{family_id}/revisions` | `app/creative/prompt_authoring_api.py:44` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -2433,7 +2437,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | PUT | `/api/projects/{nid}/studio/canvas-views/{vid}` | `app/creative/canvas_view_api.py:51` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/projects/{nid}/studio/graphs/{gid}` | `app/creative/graph_api.py:229` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/projects/{nid}/studio/preferences` | `app/creative/workspace_api.py:272` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| PUT | `/api/projects/{nid}/studio/production/timelines/{tid}` | `app/creative/production_execution_api.py:189` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/projects/{nid}/studio/production/timelines/{tid}` | `app/creative/production_execution_api.py:205` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/user-preferences-enabled` | `app/api.py:912` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/user-preferences-share-enabled` | `app/api.py:914` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/user-preferences/{key}` | `app/api.py:905` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -2523,7 +2527,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | PUT | `/api/v1/projects/{nid}/studio/canvas-views/{vid}` | `app/creative/canvas_view_api.py:51` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/v1/projects/{nid}/studio/graphs/{gid}` | `app/creative/graph_api.py:229` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/v1/projects/{nid}/studio/preferences` | `app/creative/workspace_api.py:272` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| PUT | `/api/v1/projects/{nid}/studio/production/timelines/{tid}` | `app/creative/production_execution_api.py:189` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/projects/{nid}/studio/production/timelines/{tid}` | `app/creative/production_execution_api.py:205` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/v1/user-preferences-enabled` | `app/api.py:912` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/v1/user-preferences-share-enabled` | `app/api.py:914` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | PUT | `/api/v1/user-preferences/{key}` | `app/api.py:905` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |

@@ -73,6 +73,7 @@
     "app/creative/canvas_view_api.py",
     "app/creative/canvas_view_models.py",
     "app/creative/canvas_views.py",
+    "app/creative/comic_image_generation.py",
     "app/creative/content_policy.py",
     "app/creative/director_binding.py",
     "app/creative/director_camera_geometry.py",
@@ -615,6 +616,7 @@
     }
   },
   "docker_files": [
+    "contracts/comic-panel-image-generation-v1.md",
     "contracts/functional-surfaces/findings-canon.v1.json",
     "contracts/functional-surfaces/realtime-sync-models.v1.json",
     "contracts/functional-surfaces/realtime-sync.v1.json",

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "2cffd00d93b3d5e30677ee594086dcec21e0288b90175587a098fca316ba7cd1",
+  "application_source_fingerprint_sha256": "0afe0bea69127c88ff104da4126a9b91fec6fbae6872332f5c13a6bab3f2c216",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -66,6 +66,7 @@
     "app/creative/canvas_view_api.py": "aab57d8c1d3b114795daf82c5bae49cdc6b573697dc0867f6e9bf80d57d89c8c",
     "app/creative/canvas_view_models.py": "d211d3b2509b8c5db191c2fe28db056ac983660f853f703ceaded8f0f81b3d4e",
     "app/creative/canvas_views.py": "a0a91051d94052e109b80b061f7b402a383d6a7aeddf5dbf0235050d97709a9f",
+    "app/creative/comic_image_generation.py": "bb1d38194ef1cb8b8e2072333179d1cb3b48abd273fed5b1411a01aaf2fa1461",
     "app/creative/content_policy.py": "65e0b56b63673b200c612eaa3df21b033b7b673b5e6fbe1ecaac9c761a458bbd",
     "app/creative/director_binding.py": "7b260f6a9b74c492042e05c0ab5f37b6c0b81eb95f9a7949894e175a7d3d909c",
     "app/creative/director_camera_geometry.py": "90e5e2f94e6afa2c7b96e20e66d9f5320f9716309a6c7be2ef9e874da49554f7",
@@ -106,10 +107,10 @@
     "app/creative/model_reference_scene.py": "6d8cafe84e7d5681395d4eb4725de1fcc8fa381a0cc0fad72b639d6e2d804047",
     "app/creative/models.py": "66021f358385c7eff1aeda65b0160b3c09214e4d255a483a3a3a0fba4a661c15",
     "app/creative/production_contract_api.py": "9d3c228ca86578e7f9fbbeacf74b552a9010e2c66c66e049b086e4edbfa2229b",
-    "app/creative/production_contracts.py": "281607b57ae46b242e1f581fe9d69900f73b58608820df83632b1a1df6ab34a1",
-    "app/creative/production_execution.py": "e808643ccc91424b08a74c90a3afc680a484a309e63a73f212c6b182f099be2c",
-    "app/creative/production_execution_api.py": "9c21caa5b356deff7bb1a129a7e89b0363fcf9541b50c68f58f27a659c7e2ca0",
-    "app/creative/production_execution_models.py": "11b4b1252c45d50fc6a0fab13650ffd6ed70529e90b8bc5e33034006749b73ce",
+    "app/creative/production_contracts.py": "a6e48474dbd18700028aa07a3c1ed7c4cee76fa1b4dbb9ca485e3b52a89ebd06",
+    "app/creative/production_execution.py": "f1cf9fb68175f0ea103b1f134e1173f716e792d0e046b3ae36a764a7a3aedaa8",
+    "app/creative/production_execution_api.py": "1d4f090bf8e583a1152943b35602b0bc32a6525b6cf665e7ee86fdcad2e99014",
+    "app/creative/production_execution_models.py": "b99e74b20a00174af1aa8d2b5517307d7cafc0e4f14cbf88fdd80c5e36b5c533",
     "app/creative/production_workflow.py": "6560c3aa21ce95ab9a1c7f678956bf3f44884942bf0965a3802f6899c907de4e",
     "app/creative/production_workflow_api.py": "4c2e9ae20af747846aa2a9bbffc1dd3a983c05ef8197b5042ea0cdce8f10011c",
     "app/creative/production_workflow_models.py": "59510c5cf8fc3e7d83b9757928fe95f34ac9dc52a9404b4957d03dbadc349939",
@@ -139,7 +140,7 @@
     "app/creative/timeline_transfer.py": "a2fc7270805ec90b0e7f8f30000e58cea984c0c94840120c568726a11477e15a",
     "app/creative/timeline_waveform.py": "f374eceb4104f6b810284a814b4f5d0b8cdbe935c770506a07c44950951afbcf",
     "app/creative/video_reference.py": "1ccb113fba2b010cb48f19c4e833d9de5c3fd09ec88f46edc38210beab8dbf92",
-    "app/creative/workspace.py": "f75e8bbdf7b341daf113699f3415366d9c0279e8635bc3c8dc246a559df9e49a",
+    "app/creative/workspace.py": "d6f692a0e9f2f8bf75c34ff4d4a1de9da38b37323e4427e8c02c111b5c128f4c",
     "app/creative/workspace_api.py": "a458b518a07fb68ecfbaff6b71da6505126747322b2aef193e4cfa4caf7b5e94",
     "app/creative/workspace_models.py": "3d06a937f859ac702e23852c2e51ecdc6bfe3996d0e936c716eea74ed1535724",
     "app/creative/workspace_relationships.py": "e33cd0076d2e6aec5685b8007992ce298664cf035edf9ca4bb87d319407de310",
@@ -150,7 +151,7 @@
     "app/document_revision.py": "d0a3085d6c453d78196b93eae9ae66b775db9508c53ab49961513f5bc33036f5",
     "app/experimental/__init__.py": "737a87c497146972d1cc905f0076f076d5414a8093066146a5bac6b190d788f3",
     "app/experimental/adaptation_projection.py": "dbc51d4bbf0f44b0defb57d7f9a19491d4abf9f18645c13f6241e1600682e91e",
-    "app/experimental/api.py": "694d08041b60fe9d8ad903c8f0cabf2e868519b31d36edc27c019f527b539975",
+    "app/experimental/api.py": "315b71a84e213a840a732c50b0eabebada8c9f76dce92f7f952350e28c483f6c",
     "app/experimental/audience_review.py": "1ba78d647d62715830a346dfc368c506d0becb0d295d4283651b6595f7774b20",
     "app/experimental/audience_review_api.py": "bb9bfb116c682c6ecab43731baa96fb1e1d92d61d046fd91025190462ce5c14e",
     "app/experimental/audiobook.py": "822155147b635156fcca184155b80846a7c39efde5b025df7688337d98c63115",
@@ -168,7 +169,7 @@
     "app/experimental/comic_collections.py": "a59462a099c7227489ff72222b3a79c81895d69ef2cf8dac8645166abba6cc54",
     "app/experimental/comic_epub_package.py": "dcef7ce40f74060844ab8f7a71e4729dffc1acc405e27adb70c99a2c7d8f234c",
     "app/experimental/comic_layers.py": "a3571681d406e4d077ac97384d7604eeb7b96305c60b92ffbb594ff35895412c",
-    "app/experimental/comic_layouts.py": "fa3b54bccb1331ed8346f39506006d4b507a37ac1ce75900f1a5174868ab9039",
+    "app/experimental/comic_layouts.py": "708dc4d4ac4f3afe49183c2c460771bc886fa942d2507371983250dcf70632ff",
     "app/experimental/comic_layouts_api.py": "7ccbb13526200eb8c0fb4f6a089eed6bd392719b888b9a6de36e446eb010d926",
     "app/experimental/comic_ora.py": "fa96c64f31e62ac2a1f7e8bd23cface286b013f14bae3128560fefdec0dcb2a3",
     "app/experimental/comic_ora_api.py": "e698a697db1350c23d7453a1cd1e0ce0e6ace0ebe2f7c65e9190c3527d13a8f4",
@@ -510,7 +511,7 @@
     "app/services/studio_audio_trim_profiles.py": "b81e54cb2edc1ded89b75e4c9d6a39d55ba5b401fff685e1021382e9ef0fa6f5",
     "app/services/studio_image_control_contract.py": "48534f0b626b769474bb8a7d0fa86cf2189b3c8a0599eb54e9d54450a1bdf32b",
     "app/services/studio_image_cutout.py": "cb06258734697b7f74e70876c0549f27e5ad3400e3e58307d54c776372b2339f",
-    "app/services/studio_image_execution.py": "ed2a733ac99a337e6a9a680621db61e03fa153ea50254d3f7a7d0d0b47bb2dec",
+    "app/services/studio_image_execution.py": "cf782d466cd352eac349165a6c8fc24aba834cf49509c3bf2324b002ba795f04",
     "app/services/studio_image_mask_authoring.py": "d6f61fabfbb4233d99c0c2be8216e0be017f3db11009249adf640717e6a5fcb5",
     "app/services/studio_image_provider_recipes.py": "c3f44701a1fb988c51e6785cf41cc4e80d88bb8e5478e5f332409517e767a5e9",
     "app/services/studio_image_upscale_contract.py": "aad27a9d6a3ec9e25d25d3246d0fdde712356f037772a74926176e776eb1e626",
@@ -547,9 +548,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 688,
+    "added": 692,
     "changed_contract": 24,
-    "current_method_paths": 2521,
+    "current_method_paths": 2525,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -566,7 +567,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "f4b954c1ab40e27b6563eb08b182f1681d236a9a39762683d822dba296ac4df1",
+    "sha256": "a79d39474121cae4790c07b0a50084eb472a3c046b300cc45f172e3bee985291",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -20136,6 +20137,28 @@
     },
     {
       "method": "POST",
+      "path": "/api/projects/{nid}/studio/production/comic-pages/{rid}/panels/{panel_id}/adopt-image",
+      "operation_id": "comic_image_adopt_api_projects__nid__studio_production_comic_pages__rid__panels__panel_id__adopt_image_post",
+      "owner_ref": "bdbdb4fddac588265821f6ddabb3d04d48a2804c3b11c306c272f9bdc47c051c",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "bdc77176afa67509dbf33a14a6fc6270e01d66b7213fc34723265200da7217b7",
+      "schema_graph_sha256": "96b4d65bc12159e9b5f9c0331d698b4a8badbeab7b2a5630f2fc9b2a137c5be5"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/production/comic-pages/{rid}/panels/{panel_id}/image-request",
+      "operation_id": "comic_image_request_api_projects__nid__studio_production_comic_pages__rid__panels__panel_id__image_request_post",
+      "owner_ref": "13172a1e2527fb1b13d2f92f0b17867fadbedac4a30a2ef09a9680f53b8a8ca2",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "7aa0e56292e8c5a43cc1971d167a345d84d5b63797583a5a5999f8a5480911b3",
+      "schema_graph_sha256": "a3d104b50ac4d0ed62dae0cbe4835c95d5f2da5eeeb79d673306c9bd0594f1fa"
+    },
+    {
+      "method": "POST",
       "path": "/api/projects/{nid}/studio/production/jobs",
       "operation_id": "create_api_projects__nid__studio_production_jobs_post",
       "owner_ref": "1a2b54b06e97153804bc40be12b5535c4ce7e6cd40fe0868cf004060858de847",
@@ -20144,7 +20167,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "60212d7e88bd51540491f7e59211e07b88a834d919836182818b70e9772f6c2c",
-      "schema_graph_sha256": "064a92ae37a957857b114155254cfa8d1bb293662ac7bf079d15e17dffc2b56b"
+      "schema_graph_sha256": "e8ca9e924e4469a2532d4eabd1363276b0cf65c72f16b4b765697ee9cad36015"
     },
     {
       "method": "POST",
@@ -20216,7 +20239,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "3126426a88e300355790d136f958248301a16f5139cb4e70c8ab39c30091be15",
-      "schema_graph_sha256": "bcf81f373d41c1f7ed19e7b2d36f90bb7b94a17b9455d54be0d17da7600520ac"
+      "schema_graph_sha256": "ccda712418b183a7af653e3afa417c4c5a65625510ad2b1afbad6a892393dcf9"
     },
     {
       "method": "POST",
@@ -27717,6 +27740,28 @@
     },
     {
       "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/production/comic-pages/{rid}/panels/{panel_id}/adopt-image",
+      "operation_id": "comic_image_adopt_api_v1_projects__nid__studio_production_comic_pages__rid__panels__panel_id__adopt_image_post",
+      "owner_ref": "bdbdb4fddac588265821f6ddabb3d04d48a2804c3b11c306c272f9bdc47c051c",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "cc16c336f096a7a9da3253985c7b10da9d80e6fd7980949fe79fea2d40539e74",
+      "schema_graph_sha256": "96b4d65bc12159e9b5f9c0331d698b4a8badbeab7b2a5630f2fc9b2a137c5be5"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/production/comic-pages/{rid}/panels/{panel_id}/image-request",
+      "operation_id": "comic_image_request_api_v1_projects__nid__studio_production_comic_pages__rid__panels__panel_id__image_request_post",
+      "owner_ref": "13172a1e2527fb1b13d2f92f0b17867fadbedac4a30a2ef09a9680f53b8a8ca2",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "ad2b84049bbf6267efd0826c873e3c592fe494a180087a154da04be455e09f82",
+      "schema_graph_sha256": "a3d104b50ac4d0ed62dae0cbe4835c95d5f2da5eeeb79d673306c9bd0594f1fa"
+    },
+    {
+      "method": "POST",
       "path": "/api/v1/projects/{nid}/studio/production/jobs",
       "operation_id": "create_api_v1_projects__nid__studio_production_jobs_post",
       "owner_ref": "1a2b54b06e97153804bc40be12b5535c4ce7e6cd40fe0868cf004060858de847",
@@ -27725,7 +27770,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "32936d799c0ef3b5154fc968de01fb0187b84989bca2edb1a41879b972b73719",
-      "schema_graph_sha256": "064a92ae37a957857b114155254cfa8d1bb293662ac7bf079d15e17dffc2b56b"
+      "schema_graph_sha256": "e8ca9e924e4469a2532d4eabd1363276b0cf65c72f16b4b765697ee9cad36015"
     },
     {
       "method": "POST",
@@ -27797,7 +27842,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "a58d92ce075a59cfd2cb4f619690f346892e0573f37c73201d79adf34b1240b0",
-      "schema_graph_sha256": "bcf81f373d41c1f7ed19e7b2d36f90bb7b94a17b9455d54be0d17da7600520ac"
+      "schema_graph_sha256": "ccda712418b183a7af653e3afa417c4c5a65625510ad2b1afbad6a892393dcf9"
     },
     {
       "method": "POST",
