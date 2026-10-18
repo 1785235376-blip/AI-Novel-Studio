@@ -86,3 +86,9 @@ The bounded FS/CORE review now additionally identifies these concrete gaps:
 - FS_IMPORT: real parsers and reviewed checkpoint apply exist, but semantic extraction uses a local heuristic path.
 
 FS_REALTIME retains original deferred production-cloud scope; do not purchase hosting. FS_UNIVERSE has bounded immutable snapshot references. FS_CONTINUITY, STORY_DATABASE, TIMELINE and CORE_CREATION have mounted source/review/CAS paths; no additional concrete omission was established in this bounded review. SDK declarative recipes and trusted adapters exist; executable plugins are intentionally denied. Native Windows NamedPipe transport exists; target integration remains a separate acceptance boundary. Neither this inspection nor the structural index is a whole-product completion percentage.
+
+## 16:46 bounded closures
+
+At b99210e2, FS_PLANNING gains the explicit local known-zero model request/preview/job/candidate/save/review bridge. Tests exercise synthetic protocol transport; real-model quality remains unaccepted. FS_CANON producer provenance is repaired with ACCEPTED_CANON_SOURCE_V1 and exact-marker candidates. Broad semantic fact extraction and dedicated re-extraction remain open; ordinary prose no longer creates an invented placeholder fact. Basic caption styling is now implemented through original Timeline schema/edit/render/review and transfer-loss owners. These bounded changes do not complete all A/B/U or all NLE capabilities.
+
+Ordered multi-chapter semantic screenplay adaptation is now being implemented as the next source/receipt extension. Existing single-chapter semantic adaptation remains the baseline, not a missing feature. Until completed and checked, the new multichapter path must remain marked in progress.

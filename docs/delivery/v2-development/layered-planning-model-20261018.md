@@ -110,6 +110,12 @@ PUBLIC manifest/catalog, combined builds, PostgreSQL coordination and packaging.
   `sources_changed_during_check: false`. Final whole-wave File/PostgreSQL
   receipts are owned by coordinated verification. Earlier debug receipts can
   show concurrent source changes and do not establish a frozen package hash.
+- Granted-slot PostgreSQL run: **64 passed, 64 File deselected**, 68.94 seconds;
+  `layered-planning-pg-final-20261018.json` reports
+  `sources_changed_during_check: false`. Its `-postgres-runtime.json` receipt
+  confirms PostgreSQL 17.11, original database
+  `v2_recovered_ocr_export_20261018` / OID 16384, no database creation or
+  migrations, `server_stop: stopped`, and `cleanup_status: completed`.
 - A disabled-model negative caught an uncaught `ModelRuntimeError` after
   preview. It already prevented send; the new bridge now maps it to a bounded
   domain error rather than leaking a runtime exception.
