@@ -1,16 +1,16 @@
 # Studio V2 current continuation checkpoint
 
-Updated 2026-10-18 19:47 UTC. This document inventories bounded additions, not a
+Updated 2026-10-18 19:55 UTC. This document inventories bounded additions, not a
 replacement for the frozen feature matrix or a V2 percentage/Release declaration.
 The source pin below identifies the latest bounded implementation; archive and product heads remain distinct.
 
 ## Source and publication
 
-Current checkpoint: 2026-10-18 19:47 UTC. Working branch:
+Current checkpoint: 2026-10-18 19:55 UTC. Working branch:
 work/dot-recovered-20261018. Latest committed product source is
-69943270e38df8d6d9869808c75760ca0a1c883a (Comic native layers/ORA export).
+b02ef383287ea3f01ead4e50887caa1cfb172c48 (Style navigation/no-write ORA preview).
 Latest byte-verified public archive is
-9c406ba770e58b037918ddb2ecbed121f24284fb on
+40bd889737fc9b891bfc5c0c95c835f97e2174e4 on
 archive/verified-studio-v2-20261017-5a6f697. Archive HEAD and product HEAD are
 different identities; the archive stores prerequisite-bound incremental bundles.
 The restored local source contains the integrated working product, whereas the
@@ -301,3 +301,15 @@ Previous source faff5940 was anonymously verified in public archive
 13 paths / 4,760,204 bytes. Normal source branches remain unchanged.
 Style host navigation fixes and durable IMAGE V3 Job preparation remain isolated,
 not included in this product. Full V2 acceptance remains open.
+
+## 19:55 UTC navigation and parser checkpoint
+
+Product b02ef383287ea3f01ead4e50887caa1cfb172c48 closes bounded Style host
+navigation loss paths and adds pure no-write ORA inspection. Integrated UI71 plus
+separate original UI96, parser78, TS/Vite/token and PUBLIC6 passed. No ORA staging/
+review/page attachment yet. Detailed boundaries and review fixes are recorded in
+navigation-ora-preview-integration-20261018.md.
+
+Prior source1d6a17f0 was archived as40bd889737fc9b891bfc5c0c95c835f97e2174e4,
+parent9c406ba7:13 paths/4,923,586 bytes independently verified. Director IMAGE
+Job and Production Passport slices remain isolated under review.

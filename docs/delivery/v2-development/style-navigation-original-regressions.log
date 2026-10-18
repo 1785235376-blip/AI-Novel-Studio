@@ -1,0 +1,44 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/CreativeWorkspace.productionSaveState.regression.test.tsx (1 test) 531ms
+   ✓ keeps real production dirty protection without labelling an unsubmitted production draft as saving 530ms
+ ✓ src/creative/CreativeWorkspace.storyboardIntake.additive.test.tsx (9 tests) 1403ms
+   ✓ prepared original storyboard editor intake > renders exactly one original IMAGE editor without first-document bootstrap or writes 328ms
+   ✓ prepared original storyboard editor intake > uses original dirty return consent and cancellation preserves the draft 301ms
+ ✓ src/AppAuthorTaskNavigation.additive.test.tsx (1 test) 848ms
+   ✓ preserves exact simulator/planning navigation when workspace tools are off 847ms
+ ✓ src/AppAuthorTaskNavigation.test.tsx (10 tests) 1379ms
+   ✓ opens the exact original text job without broker or recovery flags, generation or acceptance 743ms
+ ✓ src/creative/CreativeWorkspace.saveState.regression.test.tsx (26 tests) 6995ms
+   ✓ Creative current document save-state ownership > hydrates a fresh saved document without inventing dirty content or a write 561ms
+   ✓ Creative current document save-state ownership > returns to clean only after a real title edit is restored exactly to the saved payload 315ms
+   ✓ Creative current document save-state ownership > names other-stage real dirty drafts while preserving the saved current document and the original exit guard 326ms
+   ✓ Creative current document save-state ownership > adopts the actual normalized server response as both input and CAS base after saving 408ms
+   ✓ Creative current document save-state ownership > ignores the old scope save receipt and its saved status after a new branch is mounted 523ms
+   ✓ Creative current document save-state ownership > does not attach a late verification candidate to a different clean document after an uncertain derive 388ms
+   ✓ Creative current document save-state ownership > distinguishes a pending original derive operation from saving the current document 320ms
+   ✓ Creative current document save-state ownership > distinguishes a pending reviewed history restore and adopts only its original versioned response 388ms
+   ✓ Creative current document save-state ownership > keeps the exact draft blocked after network failure until explicit original-server adoption 392ms
+   ✓ Creative current document save-state ownership > keeps the exact draft blocked after conflict failure until explicit original-server adoption 361ms
+ ✓ src/AppModuleNavigationIntent.test.tsx (34 tests) 3970ms
+   ✓ App module navigation during delayed original overview > counts an explicit click on the already-selected NOVEL as intent 857ms
+ ✓ src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx (15 tests) 10199ms
+   ✓ mounted original asset browser to timeline handoff > routes a real browser reference into the original timeline preview and exact draft only after explicit acceptance 2287ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 时间线模块 1069ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 图片模块 1038ms
+   ✓ mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 视频模块 864ms
+   ✓ mounted asset browser to original image draft > requires an explicit 图片 operation choice and two metadata reads without dispatch 417ms
+   ✓ mounted asset browser to original image draft > requires an explicit 视频 operation choice and two metadata reads without dispatch 366ms
+   ✓ relationship inspection original asset navigation > re-reads exact original asset after explicit dirty discard and performs no writes 1059ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"version":3} 481ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"} 524ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"novel_id":"other-project"} 448ms
+   ✓ relationship inspection original asset navigation > does not open a changed original owner read {"deleted_at":"deleted"} 467ms
+   ✓ relationship inspection original asset navigation > retires inspection when the original selection goes A to B to A in one batch 591ms
+
+ Test Files  7 passed (7)
+      Tests  96 passed (96)
+   Start at  04:53:44
+   Duration  17.27s (transform 8.07s, setup 220ms, collect 36.79s, tests 25.33s, environment 3.71s, prepare 530ms)
+

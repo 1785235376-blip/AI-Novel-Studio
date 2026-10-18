@@ -1,0 +1,13 @@
+........................................................................ [ 91%]
+......s                                                                  [100%]
+=============================== warnings summary ===============================
+tests/test_comic_ora_import.py::test_pure_preview_recomposes_pixels_and_distrusts_sidecars
+  /workspace/scratch/20a0022d2b33/studio-comic-layers-work/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_comic_ora_import.py::test_duplicate_colliding_or_traversal_members[data/red.png]
+  /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/zipfile/__init__.py:1625: UserWarning: Duplicate name: 'data/red.png'
+    return self._open_to_write(zinfo, force_zip64=force_zip64)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+78 passed, 1 skipped, 8 deselected, 2 warnings in 7.39s

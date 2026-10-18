@@ -1,0 +1,18 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-style-navigation-work/frontend
+
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 4119ms
+   ✓ creative workspace protected manuscript and request boundaries > requires explicit server-version adoption and preserves the draft when adoption is cancelled 338ms
+ ✓ src/AppStyleDNANavigation.test.tsx (18 tests) 4949ms
+   ✓ protects original App Switch image before any transition 339ms
+   ✓ composes the original CreativeWorkspace return with Style DNA cancel and 保存 Style DNA 后离开 525ms
+   ✓ composes the original CreativeWorkspace return with Style DNA cancel and 放弃 Style DNA 修改并离开 431ms
+   ✓ keeps Style DNA confirmation reachable after switching to another creative mode 450ms
+   ✓ rechecks creative edits entered after its approval while the Style decision waits: 保存 Style DNA 后离开 594ms
+   ✓ rechecks creative edits entered after its approval while the Style decision waits: 放弃 Style DNA 修改并离开 610ms
+
+ Test Files  2 passed (2)
+      Tests  47 passed (47)
+   Start at  04:51:09
+   Duration  16.36s (transform 4.44s, setup 25ms, collect 6.27s, tests 9.07s, environment 583ms, prepare 111ms)
+
