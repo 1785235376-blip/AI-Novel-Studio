@@ -1,0 +1,61 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-comic-geometry/frontend
+
+ ✓ src/experimental/ComicReadingOrder.additive.test.tsx (5 tests) 1606ms
+   ✓ requires separate confirmation and applies only once through supplied owner 408ms
+   ✓ integrates with original layout history without saving or approving automatically 1000ms
+ ✓ src/experimental/ComicOraImportPanel.test.tsx (15 tests) 2200ms
+   ✓ keeps every write explicit, gates review on actual pixels, and attaches only as DRAFT 904ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 2285ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 974ms
+   ✓ approved-review ticket clears when geometry changes; preview widths do not rerender geometry 341ms
+   ✓ approves only displayed current pixels with exact digest and downloads only the approved version 383ms
+ ✓ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests) 2638ms
+   ✓ shows legacy center without injecting fields when opening and saving a legacy document 1005ms
+   ✓ uses original undo redo and CAS save while retaining inactive values through fit toggles 633ms
+   ✓ original vertical arrangement preserves framing values through apply and undo 393ms
+ ✓ src/experimental/comicGeometry.test.ts (10 tests) 5ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 3175ms
+   ✓ explicit arrangement preview applies one undoable edit and saves only through original owner 1084ms
+   ✓ cancel, edits, refresh and client replacement discard arrangement consent 598ms
+   ✓ retained arrangement apply is fenced after cancellation, edits and repeat invocation 349ms
+   ✓ retained apply cannot cross record, source or owner ABA 640ms
+ ✓ src/experimental/ComicCollectionTree.test.tsx (13 tests) 3075ms
+   ✓ reads only on mount, hides stale book and page titles, and exposes independent pages only 652ms
+   ✓ creates an empty book only explicitly and preserves a bounded manual structure with all page-version pins 474ms
+   ✓ moves pages across chapters and removes membership without deleting pages; restore is explicit and version-aware 370ms
+   ✓ failed save keeps the local structure and requires explicit discard before navigation 303ms
+   ✓ integrates aggregate dirty state and explicit page and structure discard before leaving an active collection 332ms
+ ✓ src/experimental/ComicGeometryEditor.test.tsx (10 tests) 196ms
+ ✓ src/experimental/ComicLayoutsPanel.geometry.test.tsx (1 test) 1857ms
+   ✓ blank two-panel text page geometry uses original undo, explicit save, reopen and authoritative preview 1857ms
+ ✓ src/experimental/ComicLayoutsPanel.layers.test.tsx (11 tests) 5747ms
+   ✓ legacy save stays unlayered until explicit enable and never shows ORA export 1279ms
+   ✓ explicit enable and layer edits preserve canonical dialogue, save through CAS and remain undoable 977ms
+   ✓ structural add/remove preserves unrelated layer settings and exact undo coverage 716ms
+   ✓ ORA export needs approved loaded current pixels and admits a double click once 405ms
+   ✓ ORA failure 403 preserves the authored native document 556ms
+   ✓ ORA failure 409 preserves the authored native document 462ms
+   ✓ ORA failure 500 preserves the authored native document 341ms
+ ✓ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (25 tests) 9450ms
+   ✓ explicit preview discloses pins and applies one exact undoable copy through original CAS save 1561ms
+   ✓ invalid destination never consumes IDs or changes history and cancel discards preview 935ms
+   ✓ retained apply callbacks cannot survive edit, coordinate replacement, cancel, or repeat 735ms
+   ✓ IME start invalidates intent and prevents preview until composition ends 331ms
+   ✓ refresh, stale catalog pins, source ABA and client/scope replacement fence retained callbacks 563ms
+   ✓ ID collisions fail atomically and displayed pixels and consent disappear on successful copy 340ms
+   ✓ copy then retained edit in the same batch cannot resurrect or persist an old draft 373ms
+   ✓ copy then retained undo in the same batch cannot resurrect or persist an old draft 358ms
+   ✓ copy then retained redo in the same batch cannot resurrect or persist an old draft 373ms
+   ✓ copy then retained load in the same batch cannot resurrect or persist an old draft 341ms
+   ✓ copy then retained source in the same batch cannot resurrect or persist an old draft 327ms
+   ✓ copy then retained refresh in the same batch cannot resurrect or persist an old draft 305ms
+   ✓ copy then retained save in the same batch cannot resurrect or persist an old draft 334ms
+   ✓ copy then retained append in the same batch cannot resurrect or persist an old draft 303ms
+   ✓ final compositionEnd followed by onChange in one batch preserves committed IME text 327ms
+
+ Test Files  11 passed (11)
+      Tests  110 passed (110)
+   Start at  07:51:34
+   Duration  11.27s (transform 1.25s, setup 252ms, collect 5.65s, tests 32.24s, environment 7.04s, prepare 1.03s)
+

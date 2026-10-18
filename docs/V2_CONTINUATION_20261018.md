@@ -423,3 +423,9 @@ Prior source 2997fda0 archived as c4b15e8bced83e457419dfb68166f3c388f66e98, pare
 Product dedff1c27e3dd2fcaea53131d5f22fe741a9084b adds native PAGE author export/inspect/new-draft restoration, original-owner edit/reopen and durable explicit retry. File native90, frontend216 plus source-matched types/build/token, final realPG128 with4File-only skips and exact14-table cleanup, PUBLIC6 pass. Initial old-collection fixture residue and exact cleanup/final rerun remain disclosed. See docs/delivery/v2-development/comic-author-integration-20261018.md. No media/source/WEBTOON/full-project or actual browser acceptance claim.
 
 Prior source80c8e4c archived at5776531b8c531a7cc12eba153171c13b10960935, parentc4b15e8b:15 artifacts /5,544,877 bytes verified. Stale ledger baseline/latest-wave and independent Comic/ORA summaries corrected. Separate schematic geometry and selective Director camera reuse are now active, not yet integrated.
+
+## 22:54 UTC Comic geometry and Director camera reuse
+
+Product 2bbecf3e20ba277a6342d5ae279ea7ae878059fd integrates two independent manual-authoring slices: schematic panel/bubble move/resize/nudge through original undo/save, and selected same-scene camera-field preview/apply/undo. Root combined213 tests in20 suites plus full TypeScript/Vite/token PASS; all3178 source hashes stable. Prior backend1527 hashes remain unchanged, so existing PG/PUBLIC evidence reused with explicit test-only historical difference. See docs/delivery/v2-development/geometry-camera-integration-20261018.md. Browser/model-led Director/full V2 remain unaccepted.
+
+Previous source26354565 archived asfc629c8e3296e6c8652af12d6d4d5c33066ff007, parent5776531b:14 artifacts /5,565,571 bytes verified. Temporary filesystem reclaimed only clean metadata-only public verification clones, retaining authoritative receipts and unique artifacts.

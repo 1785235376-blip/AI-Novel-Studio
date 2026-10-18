@@ -1,0 +1,50 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-comic-geometry/frontend
+
+ ✓ src/experimental/ComicReadingOrder.additive.test.tsx (5 tests) 1192ms
+   ✓ integrates with original layout history without saving or approving automatically 985ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 1579ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 506ms
+   ✓ approves only displayed current pixels with exact digest and downloads only the approved version 369ms
+ ✓ src/experimental/ComicOraImportPanel.test.tsx (15 tests) 1858ms
+   ✓ keeps every write explicit, gates review on actual pixels, and attaches only as DRAFT 305ms
+ ✓ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests) 1928ms
+   ✓ shows legacy center without injecting fields when opening and saving a legacy document 596ms
+   ✓ uses original undo redo and CAS save while retaining inactive values through fit toggles 537ms
+ ✓ src/experimental/comicGeometry.test.ts (4 tests) 5ms
+ ✓ src/experimental/ComicCollectionTree.test.tsx (13 tests) 2271ms
+   ✓ creates an empty book only explicitly and preserves a bounded manual structure with all page-version pins 395ms
+   ✓ integrates aggregate dirty state and explicit page and structure discard before leaving an active collection 436ms
+ ✓ src/experimental/ComicGeometryEditor.test.tsx (10 tests) 230ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 2848ms
+   ✓ explicit arrangement preview applies one undoable edit and saves only through original owner 757ms
+   ✓ cancel, edits, refresh and client replacement discard arrangement consent 617ms
+   ✓ retained arrangement apply is fenced after cancellation, edits and repeat invocation 492ms
+   ✓ retained apply cannot cross record, source or owner ABA 502ms
+ ✓ src/experimental/ComicLayoutsPanel.geometry.test.tsx (1 test) 1323ms
+   ✓ blank two-panel text page geometry uses original undo, explicit save, reopen and authoritative preview 1322ms
+ ✓ src/experimental/ComicLayoutsPanel.layers.test.tsx (11 tests) 4544ms
+   ✓ legacy save stays unlayered until explicit enable and never shows ORA export 689ms
+   ✓ explicit enable and layer edits preserve canonical dialogue, save through CAS and remain undoable 1096ms
+   ✓ structural add/remove preserves unrelated layer settings and exact undo coverage 641ms
+   ✓ ORA failure 409 preserves the authored native document 305ms
+ ✓ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (25 tests) 8546ms
+   ✓ explicit preview discloses pins and applies one exact undoable copy through original CAS save 1447ms
+   ✓ invalid destination never consumes IDs or changes history and cancel discards preview 683ms
+   ✓ retained apply callbacks cannot survive edit, coordinate replacement, cancel, or repeat 549ms
+   ✓ refresh, stale catalog pins, source ABA and client/scope replacement fence retained callbacks 565ms
+   ✓ ID collisions fail atomically and displayed pixels and consent disappear on successful copy 371ms
+   ✓ copy then retained edit in the same batch cannot resurrect or persist an old draft 356ms
+   ✓ copy then retained undo in the same batch cannot resurrect or persist an old draft 300ms
+   ✓ copy then retained redo in the same batch cannot resurrect or persist an old draft 334ms
+   ✓ copy then retained load in the same batch cannot resurrect or persist an old draft 313ms
+   ✓ copy then retained source in the same batch cannot resurrect or persist an old draft 320ms
+   ✓ copy then retained refresh in the same batch cannot resurrect or persist an old draft 303ms
+   ✓ copy then retained save in the same batch cannot resurrect or persist an old draft 325ms
+   ✓ final compositionEnd followed by onChange in one batch preserves committed IME text 327ms
+
+ Test Files  11 passed (11)
+      Tests  104 passed (104)
+   Start at  07:49:24
+   Duration  9.79s (transform 892ms, setup 235ms, collect 4.02s, tests 26.32s, environment 4.61s, prepare 816ms)
+

@@ -1,0 +1,94 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/DirectorCameraReuse.test.tsx (22 tests) 871ms
+   ✓ previews, applies, undoes and saves through the original canvas, then reopens the saved value 593ms
+ ✓ src/experimental/ComicOraImportPanel.test.tsx (15 tests) 1401ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 1646ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 516ms
+   ✓ approves only displayed current pixels with exact digest and downloads only the approved version 302ms
+ ✓ src/experimental/ComicCollectionTree.test.tsx (13 tests) 2169ms
+   ✓ integrates aggregate dirty state and explicit page and structure discard before leaving an active collection 410ms
+ ✓ src/creative/graphCanvasGeometry.test.ts (9 tests) 14ms
+ ✓ src/creative/graphCanvasGeometry.presentation.additive.test.ts (9 tests) 10ms
+ ✓ src/creative/AIDirectorReopen.test.tsx (31 tests) 2300ms
+ ✓ src/creative/DirectorNoteActions.additive.test.tsx (9 tests) 653ms
+   ✓ requires a draft-bound explicit removal confirmation and leaves persistence to the original Save action 437ms
+ ✓ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests) 1505ms
+   ✓ uses original undo redo and CAS save while retaining inactive values through fit toggles 365ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 2424ms
+   ✓ explicit arrangement preview applies one undoable edit and saves only through original owner 458ms
+   ✓ cancel, edits, refresh and client replacement discard arrangement consent 556ms
+   ✓ retained arrangement apply is fenced after cancellation, edits and repeat invocation 437ms
+   ✓ retained apply cannot cross record, source or owner ABA 562ms
+ ✓ src/creative/DirectorTimingTools.additive.test.tsx (8 tests) 274ms
+ ✓ src/experimental/ComicLayoutsPanel.layers.test.tsx (11 tests) 4866ms
+   ✓ legacy save stays unlayered until explicit enable and never shows ORA export 603ms
+   ✓ explicit enable and layer edits preserve canonical dialogue, save through CAS and remain undoable 1173ms
+   ✓ structural add/remove preserves unrelated layer settings and exact undo coverage 620ms
+   ✓ ORA export needs approved loaded current pixels and admits a double click once 362ms
+   ✓ ORA failure 403 preserves the authored native document 392ms
+   ✓ ORA failure 409 preserves the authored native document 386ms
+   ✓ ORA failure 500 preserves the authored native document 318ms
+   ✓ retained layer control cannot cross a later edit, repeated callback or undo generation 309ms
+ ✓ src/experimental/comicGeometry.test.ts (10 tests) 11ms
+ ✓ src/creative/mediaCanvasGeometry.additive.test.ts (2 tests) 18ms
+ ✓ src/creative/CreativeAuthoringFields.test.tsx (12 tests) 2575ms
+   ✓ Full-document authoring uses the original save and history flow > updates all preserved content once with expected_version, reopens it, and restores previous genre/time as a new version 701ms
+   ✓ Full-document authoring uses the original save and history flow > retains genre/time on a save conflict until explicit server replacement 457ms
+ ✓ src/experimental/ComicGeometryEditor.test.tsx (10 tests) 193ms
+ ✓ src/creative/ReviewedDirectorCanvas.integration.test.tsx (1 test) 604ms
+   ✓ wires reviewed Creative DRAFT through original export/read, real editor/controller insertion, and explicit Graph Save 603ms
+ ✓ src/experimental/ComicReadingOrder.additive.test.tsx (5 tests) 965ms
+   ✓ integrates with original layout history without saving or approving automatically 809ms
+ ✓ src/experimental/ComicLayoutsPanel.geometry.test.tsx (1 test) 1623ms
+   ✓ blank two-panel text page geometry uses original undo, explicit save, reopen and authoritative preview 1622ms
+ ✓ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (25 tests) 9220ms
+   ✓ explicit preview discloses pins and applies one exact undoable copy through original CAS save 1057ms
+   ✓ invalid destination never consumes IDs or changes history and cancel discards preview 582ms
+   ✓ retained apply callbacks cannot survive edit, coordinate replacement, cancel, or repeat 496ms
+   ✓ IME start invalidates intent and prevents preview until composition ends 321ms
+   ✓ refresh, stale catalog pins, source ABA and client/scope replacement fence retained callbacks 727ms
+   ✓ ID collisions fail atomically and displayed pixels and consent disappear on successful copy 408ms
+   ✓ copy then retained edit in the same batch cannot resurrect or persist an old draft 442ms
+   ✓ copy then retained undo in the same batch cannot resurrect or persist an old draft 491ms
+   ✓ copy then retained redo in the same batch cannot resurrect or persist an old draft 510ms
+   ✓ copy then retained load in the same batch cannot resurrect or persist an old draft 361ms
+   ✓ copy then retained source in the same batch cannot resurrect or persist an old draft 404ms
+   ✓ copy then retained refresh in the same batch cannot resurrect or persist an old draft 370ms
+   ✓ copy then retained save in the same batch cannot resurrect or persist an old draft 308ms
+   ✓ copy then retained append in the same batch cannot resurrect or persist an old draft 344ms
+   ✓ final compositionEnd followed by onChange in one batch preserves committed IME text 366ms
+
+ Test Files  20 passed (20)
+      Tests  213 passed (213)
+   Start at  07:52:58
+   Duration  10.55s (transform 4.44s, setup 265ms, collect 11.66s, tests 33.34s, environment 7.68s, prepare 1.42s)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2457 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-cKwZaTd1.css      3.88 kB │ gzip:   1.02 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-B-sblpo2.css                      220.74 kB │ gzip:  27.90 kB
+dist/assets/Health-PHJ6yMwU.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-BOXJdQQM.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/style-DpWMrKgj.js                      45.12 kB │ gzip:   8.40 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/LocalTutorIntegration-CzvINFAv.js      47.64 kB │ gzip:  15.65 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-BfEWB5RJ.js     848.16 kB │ gzip: 254.11 kB
+dist/assets/App-DCvT2e4P.js                     2,917.47 kB │ gzip: 876.38 kB
+✓ built in 7.59s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

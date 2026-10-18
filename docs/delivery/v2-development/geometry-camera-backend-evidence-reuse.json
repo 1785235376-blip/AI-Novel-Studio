@@ -1,0 +1,18 @@
+{
+  "comic-author-integration-postgres-final": {
+    "receipt_sha256": "d0087e2a9fa366424b0819b263e3f7ac38d3c9fa2c4a0b45145a2ccb86f8b227",
+    "non_frontend_source_paths": 1527,
+    "mismatches": [],
+    "note": "Non-frontend source bytes unchanged; no duplicate backend rerun."
+  },
+  "comic-author-integration-public": {
+    "receipt_sha256": "43be51d05f1e5e5d294124f61960e81224b1e27e5bf9860635c622a8bf195baf",
+    "non_frontend_source_paths": 1527,
+    "mismatches": [
+      "tests/test_comic_collections.py"
+    ],
+    "note": "Earlier PUBLIC receipt predates test-only original collection teardown; unchanged application and package retained."
+  },
+  "product_sha": "2bbecf3e20ba277a6342d5ae279ea7ae878059fd",
+  "backend_test_packaging_catalog_git_diff": ""
+}

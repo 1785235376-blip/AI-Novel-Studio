@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T22:48:00Z",
+  "updated_at_utc": "2026-10-18T22:54:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -1162,26 +1162,32 @@
   ],
   "latest_bounded_wave": {
     "status": "COMMITTED_PARTIAL_REQUIREMENT_REUSE_NOT_FULL_NEW_ID_CLOSURE",
-    "product_sha": "dedff1c27e3dd2fcaea53131d5f22fe741a9084b",
-    "report": "docs/delivery/v2-development/comic-author-integration-20261018.md",
+    "product_sha": "2bbecf3e20ba277a6342d5ae279ea7ae878059fd",
+    "report": "docs/delivery/v2-development/geometry-camera-integration-20261018.md",
     "reported_evidence": {
-      "file_native_tests": 90,
-      "postgres_tests": 128,
-      "postgres_file_only_skips": 4,
-      "postgres_exact_14_table_cleanup": true,
-      "ui_tests": 216,
-      "frontend_source_paths_reconciled": 1643,
-      "public_tests": 6,
-      "source_paths": 3170,
-      "counts_are_not_additive_feature_evidence": true
+      "combined_ui_tests": 213,
+      "suites": 20,
+      "typescript_vite_token": true,
+      "source_paths": 3178,
+      "backend_evidence_reused_on_exact_non_frontend_bytes": true,
+      "formal_browser_acceptance": false
     },
     "items": [
       {
-        "area": "Assetless native editable Comic author archive",
+        "area": "Schematic Comic panel and bubble geometry",
         "maps_to": [
-          "IMAGE-COMIC-18"
+          "IMAGE-COMIC-04",
+          "IMAGE-COMIC-09"
         ],
-        "boundary": "Independent PAGE 1–10 pages; explicit hidden author content disclosure; fresh unapproved drafts; original scope atomic receipt and explicit UNKNOWN recovery. Media/assets/sources/WEBTOON/full project restoration and actual browser acceptance remain open."
+        "boundary": "Manual schematic move/resize/nudge and original undo/save; not pixel rendering, typography, live layers or professional full canvas acceptance."
+      },
+      {
+        "area": "Selective same-scene Director camera-field reuse",
+        "maps_to": [
+          "DIR-03",
+          "DIR-08"
+        ],
+        "boundary": "Explicit manual field preview/apply/undo; not model-led analysis or graph-wide intelligent Console completion."
       }
     ],
     "formal_acceptance": false
@@ -7721,7 +7727,15 @@
           }
         ],
         "current_verification": "NOT_REASSESSED"
-      }
+      },
+      "bounded_evidence": [
+        {
+          "product_sha": "2bbecf3e20ba277a6342d5ae279ea7ae878059fd",
+          "report": "docs/delivery/v2-development/geometry-camera-integration-20261018.md",
+          "summary": "Selective same-scene Director camera-field reuse. Explicit manual field preview/apply/undo; not model-led analysis or graph-wide intelligent Console completion.",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "DIR-04",
@@ -7926,7 +7940,15 @@
           }
         ],
         "current_verification": "NOT_REASSESSED"
-      }
+      },
+      "bounded_evidence": [
+        {
+          "product_sha": "2bbecf3e20ba277a6342d5ae279ea7ae878059fd",
+          "report": "docs/delivery/v2-development/geometry-camera-integration-20261018.md",
+          "summary": "Selective same-scene Director camera-field reuse. Explicit manual field preview/apply/undo; not model-led analysis or graph-wide intelligent Console completion.",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "DIR-09",
@@ -21137,7 +21159,15 @@
       "acceptance_status": "NOT_ACCEPTED",
       "gap": "Existing rectangular PAGE/WEBTOON framing is not full irregular/spread/bleed/read-order editing.",
       "next_action": "Extend original geometry and UI for manual editable panel boundaries, safe areas and blank/text-only panels.",
-      "evidence_scope": "Existing B06 capabilities only satisfy bounded parts; no new Comic requirement is accepted by this mapping."
+      "evidence_scope": "Existing B06 capabilities only satisfy bounded parts; no new Comic requirement is accepted by this mapping.",
+      "bounded_evidence": [
+        {
+          "product_sha": "2bbecf3e20ba277a6342d5ae279ea7ae878059fd",
+          "report": "docs/delivery/v2-development/geometry-camera-integration-20261018.md",
+          "summary": "Schematic Comic panel and bubble geometry. Manual schematic move/resize/nudge and original undo/save; not pixel rendering, typography, live layers or professional full canvas acceptance.",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "IMAGE-COMIC-05",
@@ -21312,6 +21342,12 @@
           "product_sha": "e66c53138989de1aff021994110c2083900f0aec",
           "summary": "Existing structured multilingual bubbles are editable on intentional blank pages without a model or renderer.",
           "report": "docs/delivery/v2-development/story-comic-director-integration-20261018.md",
+          "formal_acceptance": false
+        },
+        {
+          "product_sha": "2bbecf3e20ba277a6342d5ae279ea7ae878059fd",
+          "report": "docs/delivery/v2-development/geometry-camera-integration-20261018.md",
+          "summary": "Schematic Comic panel and bubble geometry. Manual schematic move/resize/nudge and original undo/save; not pixel rendering, typography, live layers or professional full canvas acceptance.",
           "formal_acceptance": false
         }
       ]
@@ -22170,11 +22206,43 @@
         }
       ],
       "formal_acceptance": false
+    },
+    {
+      "status": "COMMITTED_PARTIAL_REQUIREMENT_REUSE_NOT_FULL_NEW_ID_CLOSURE",
+      "product_sha": "2bbecf3e20ba277a6342d5ae279ea7ae878059fd",
+      "report": "docs/delivery/v2-development/geometry-camera-integration-20261018.md",
+      "reported_evidence": {
+        "combined_ui_tests": 213,
+        "suites": 20,
+        "typescript_vite_token": true,
+        "source_paths": 3178,
+        "backend_evidence_reused_on_exact_non_frontend_bytes": true,
+        "formal_browser_acceptance": false
+      },
+      "items": [
+        {
+          "area": "Schematic Comic panel and bubble geometry",
+          "maps_to": [
+            "IMAGE-COMIC-04",
+            "IMAGE-COMIC-09"
+          ],
+          "boundary": "Manual schematic move/resize/nudge and original undo/save; not pixel rendering, typography, live layers or professional full canvas acceptance."
+        },
+        {
+          "area": "Selective same-scene Director camera-field reuse",
+          "maps_to": [
+            "DIR-03",
+            "DIR-08"
+          ],
+          "boundary": "Explicit manual field preview/apply/undo; not model-led analysis or graph-wide intelligent Console completion."
+        }
+      ],
+      "formal_acceptance": false
     }
   ],
   "current_checkpoint": {
-    "product_sha": "dedff1c27e3dd2fcaea53131d5f22fe741a9084b",
-    "report": "docs/delivery/v2-development/comic-author-integration-20261018.md",
+    "product_sha": "2bbecf3e20ba277a6342d5ae279ea7ae878059fd",
+    "report": "docs/delivery/v2-development/geometry-camera-integration-20261018.md",
     "source_identity_section": "Historical initial reconciliation baseline, not current HEAD",
     "all_fixed_ids_accepted": false
   },
