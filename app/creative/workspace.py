@@ -173,6 +173,12 @@ class IndependentWorkspaceService:
                 "source_asset_id": origin["source"]["id"], "source_version": origin["source"]["version"],
                 "source_sha256": origin["source"]["sha256"],
                 **{key: origin[key] for key in ("width", "height", "bitplane_sha256", "keep_pixels", "remove_pixels", "mask_sha256")}}
+        if "_model_reference_origin" in row:
+            origin = self.assets._model_reference_record(row)
+            public["model_reference"] = {"contract": origin["contract"], "diagnostic_only": True,
+                "source_asset_id": origin["source"]["id"], "source_version": origin["source"]["version"],
+                "source_sha256": origin["source"]["sha256"],
+                **{key: origin[key] for key in ("width", "height", "yaw", "pitch", "png_sha256", "scene_index")}}
         return {**public,
                 "provenance": provenance,
                 "relationships": self.relationships.project(nid, scope, row)}
@@ -367,6 +373,67 @@ class IndependentWorkspaceService:
         body = StaticSceneClayExport.model_validate(value)
         return self._export_model_diagnostic(nid,scope,aid,body,render_clay,"clay_export",guard)
 
+    def save_model_clay_reference(self, nid, scope, actor, aid, value, guard):
+        """Explicit reviewed clay pixels become one original image Asset."""
+        from .workspace_models import StaticSceneClaySave
+        from ..services.studio_model_reference_origin import CONTRACT
+        from ..services.asset_library_service import AssetIdempotencyConflict
+        from ..experimental.common import StaleSourceError
+        body = StaticSceneClaySave.model_validate(value)
+        if not callable(guard) or not isinstance(actor, str) or not actor:
+            raise ValueError("MODEL_REFERENCE_AUTHORITY_REQUIRED")
+        guard()
+        scope_key = self.store.key(nid, scope)
+        key = 'studio-clay-reference:' + hashlib.sha256(json.dumps([scope_key, body.idempotency_key], separators=(',', ':')).encode()).hexdigest()
+        with self._asset_scope(nid, scope):
+            incarnation = self.store.incarnation(nid)
+            observed = self.assets.model_reference_retry(nid, key, branch_id=scope.get("branch_id"))
+            observed_id = observed["id"] if observed else None
+        exported = self.export_model_clay(nid, scope, aid, {
+            "contract":"studio-static-glb-clay-export/1", "source_version":body.source_version,
+            "source_sha256":body.source_sha256, "yaw":body.yaw, "pitch":body.pitch}, guard)
+        proof = exported["clay_export"]
+        if proof["png_sha256"] != body.reviewed_png_sha256:
+            raise StaleSourceError("MODEL_REFERENCE_REVIEWED_PIXELS_CHANGED")
+        png = base64.b64decode(exported["content_base64"], validate=True)
+        origin = {"contract":CONTRACT, "actor":actor, "scope_key":scope_key, "incarnation":incarnation,
+            "source":{"id":aid,"version":body.source_version,"sha256":body.source_sha256},
+            **{k:proof[k] for k in ("width","height","yaw","pitch","png_sha256","scene_index")}}
+        with self._asset_scope(nid, scope):
+            if self.store.incarnation(nid) != incarnation:
+                raise StaleSourceError("MODEL_REFERENCE_SOURCE_CHANGED")
+            source = self.assets._model_reference_source(origin, nid, scope.get("branch_id"))
+            prior = self.assets.model_reference_retry(nid, key, branch_id=scope.get("branch_id"))
+            if observed_id is not None and (prior is None or prior["id"] != observed_id):
+                raise ValueError("MODEL_REFERENCE_RETRY_CHANGED")
+            if prior is not None and prior.get("_model_reference_origin") != origin:
+                raise AssetIdempotencyConflict("MODEL_REFERENCE_IDEMPOTENCY_CONFLICT")
+            usage = self.assets.project_usage(nid, branch_id=scope.get("branch_id"))
+            if prior is None:
+                if usage["count"] >= self.MAX_ASSETS or usage["bytes"] + len(png) > self.MAX_PROJECT_BYTES:
+                    raise ValueError("CREATIVE_PROJECT_ASSET_QUOTA")
+                self.storage_admission.require(len(png))
+            def before_commit():
+                guard()
+                if self.store.incarnation(nid) != incarnation: raise StaleSourceError("MODEL_REFERENCE_SOURCE_CHANGED")
+                self.assets._model_reference_source(origin, nid, scope.get("branch_id"))
+                if prior is None: self.storage_admission.require(1)
+            features = tuple(sorted({FLAG, "asset_lineage_v2", *source.get("_required_features", [])}))
+            try:
+                row = self.assets.create(nid, 'model-clay-reference.png', exported["content_base64"], 'image/png', 'image', key,
+                    branch_id=scope.get("branch_id"), required_features=features, guard=before_commit,
+                    _initial_model_reference=origin, _model_reference_expected_retry_id=prior["id"] if prior else None)
+            except OSError as exc:
+                if exc.errno == errno.ENOSPC:
+                    from .storage_admission import StudioStorageCapacityError
+                    raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE") from None
+                raise
+            before_commit()
+            return {"asset":self._view(nid,scope,row), "receipt":{"contract":CONTRACT,
+                "source_asset_id":aid, "source_version":body.source_version, "source_sha256":body.source_sha256,
+                "png_sha256":proof["png_sha256"], "replayed":prior is not None, "model_called":False,
+                "diagnostic_only":True, "asset_created":prior is None}}
+
     def _export_model_diagnostic(self, nid, scope, aid, body, renderer, proof_key, guard):
         from ..experimental.common import StaleSourceError
         guard()
@@ -432,6 +499,10 @@ class IndependentWorkspaceService:
                 origin = self.assets._manual_record(row)
                 if body.origin != "MANUAL_EDIT" or body.chapter_ids or body.parent_asset_ids != [origin["source"]["id"]]:
                     raise ValueError("IMAGE_MASK_SOURCE_IMMUTABLE")
+            if "_model_reference_origin" in row:
+                origin = self.assets._model_reference_record(row)
+                if body.origin != "MANUAL_EDIT" or body.chapter_ids or body.parent_asset_ids != [origin["source"]["id"]]:
+                    raise ValueError("MODEL_REFERENCE_SOURCE_IMMUTABLE")
             if row.get("_studio_result_origin"):
                 origin = copy.deepcopy(row["_studio_result_origin"])
                 parent_ids = self._production_asset_ids(origin)

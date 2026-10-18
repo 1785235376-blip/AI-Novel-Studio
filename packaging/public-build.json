@@ -457,6 +457,7 @@
     "app/services/studio_image_mask_authoring.py",
     "app/services/studio_image_provider_recipes.py",
     "app/services/studio_image_upscale_contract.py",
+    "app/services/studio_model_reference_origin.py",
     "app/services/studio_timeline_edit.py",
     "app/services/studio_timeline_exchange.py",
     "app/services/studio_timeline_export.py",

@@ -57,7 +57,7 @@ class AssetLibraryService:
         def redact(item):
             if isinstance(item, dict):
                 for key in ("_required_features", "_owner_actor_id", "_origin_provenance", "_project_binding",
-                            "_text_result_origin", "_text_result_review", "_text_execution_receipt", "_studio_result_origin", "_manual_mask_origin", "_prompt_write_origin"):
+                            "_text_result_origin", "_text_result_review", "_text_execution_receipt", "_studio_result_origin", "_manual_mask_origin", "_model_reference_origin", "_prompt_write_origin"):
                     item.pop(key, None)
                 if not lineage_enabled and isinstance(item.get("parameters"), dict):
                     item["parameters"].pop("asset_lineage_v2", None)
@@ -146,6 +146,11 @@ class AssetLibraryService:
                 self._manual_record(meta)
             except (ValueError, TypeError, KeyError):
                 return False
+        if "_model_reference_origin" in meta:
+            try:
+                self._model_reference_record(meta)
+            except (ValueError, TypeError, KeyError, AttributeError):
+                return False
         from ..creative import adaptation_receipt as adaptation_contract
         origin, receipt = meta.get("_text_result_origin"), meta.get(adaptation_contract.PRIVATE_FIELD)
         if ((isinstance(origin, dict) and origin.get("contract") == adaptation_contract.ASSET_CONTRACT)
@@ -187,7 +192,8 @@ class AssetLibraryService:
                required_features: tuple[str, ...] = (), owner_actor_id: str | None = None, guard=None,
                _initial_text_result: dict | None = None, _initial_studio_result: dict | None = None,
                _initial_manual_mask: dict | None = None, _manual_expected_retry_id: str | None = None,
-               _initial_prompt_write: dict | None = None):
+               _initial_prompt_write: dict | None = None,
+               _initial_model_reference: dict | None = None, _model_reference_expected_retry_id: str | None = None):
         from ..experimental.flags import RUNTIME_FLAGS, enabled_flags
         if set(required_features) - set(RUNTIME_FLAGS) or not set(required_features).issubset(enabled_flags()):
             raise ValueError("asset origin feature unavailable")
@@ -238,7 +244,7 @@ class AssetLibraryService:
             if (not isinstance(origin, dict) or set(origin) != fields or binding is None
                     or not owner_actor_id or not callable(guard) or kind != "prompt" or media_type != "text/plain"
                     or "narrative_production_v2" not in required_features
-                    or any(value is not None for value in (_initial_text_result, _initial_studio_result, _initial_manual_mask))
+                    or any(value is not None for value in (_initial_text_result, _initial_studio_result, _initial_manual_mask, _initial_model_reference))
                     or origin["contract"] != "studio-prompt-write-origin/1"
                     or origin["operation"] not in {"CREATE", "REVISE"}
                     or not isinstance(origin["allocated_family_id"], str) or not 1 <= len(origin["allocated_family_id"]) <= 240
@@ -252,6 +258,30 @@ class AssetLibraryService:
             identity["_prompt_write_origin"] = origin
         initial_review = None
         manual_lineage = None
+        model_lineage = None
+        if _initial_model_reference is not None:
+            from .studio_model_reference_origin import marker, pixels
+            if (any(v is not None for v in (_initial_text_result, _initial_studio_result, _initial_manual_mask, _initial_prompt_write))
+                    or binding is None or owner_actor_id is not None or not callable(guard)
+                    or kind != "image" or media_type != "image/png"
+                    or not {"narrative_production_v2", "asset_lineage_v2"}.issubset(required_features)):
+                raise ValueError("MODEL_REFERENCE_ASSET_ORIGIN_INVALID")
+            origin = marker(_initial_model_reference)
+            if (origin["scope_key"], origin["incarnation"], origin["png_sha256"]) != (binding["scope_key"], binding["incarnation"], identity["sha256"]):
+                raise ValueError("MODEL_REFERENCE_ASSET_ORIGIN_INVALID")
+            pixels(data)
+            source = self._model_reference_source(origin, novel_id, branch_id)
+            if not set(source.get("_required_features", [])).issubset(required_features):
+                raise ValueError("MODEL_REFERENCE_SOURCE_FEATURES_REQUIRED")
+            identity.update(_model_reference_origin=origin, source_asset_ids=[origin["source"]["id"]], source_job_id=None, provider_id=None, model_id=None)
+            model_lineage = {"schema":"asset-lineage-v2", "origin":"MANUAL_EDIT",
+                "license":{"label":"UNSPECIFIED","source":"","note":""},
+                "license_verification":"AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+                "operation":"Static GLB clay diagnostic reference", "declared_by":origin["actor"], "declared_at":now(),
+                "sources":{}, "parents":{origin["source"]["id"]:{"version":origin["source"]["version"],"digest":origin["source"]["sha256"]}},
+                "output_digest":origin["png_sha256"]}
+        elif _model_reference_expected_retry_id is not None:
+            raise ValueError("MODEL_REFERENCE_ASSET_ORIGIN_INVALID")
         if _initial_manual_mask is not None:
             if (_initial_text_result is not None or _initial_studio_result is not None or binding is None
                     or owner_actor_id is not None or not callable(guard) or kind != "image" or media_type != "image/png"
@@ -332,8 +362,14 @@ class AssetLibraryService:
                 manual_prior = self.manual_mask_retry(novel_id, idempotency_key, branch_id=branch_id)
                 if _manual_expected_retry_id is not None and (manual_prior is None or manual_prior["id"] != _manual_expected_retry_id):
                     raise ValueError("IMAGE_MASK_RETRY_CHANGED")
+            reference_prior = None
+            if model_lineage is not None:
+                reference_prior = self.model_reference_retry(novel_id, idempotency_key, branch_id=branch_id)
+                if _model_reference_expected_retry_id is not None and (reference_prior is None or reference_prior["id"] != _model_reference_expected_retry_id):
+                    raise ValueError("MODEL_REFERENCE_RETRY_CHANGED")
             if idempotency_key:
                 candidates = ([manual_prior] if manual_prior is not None else []) if manual_lineage is not None else self.list(novel_id, branch_id=branch_id, include_deleted=True, actor_id=owner_actor_id)
+                if model_lineage is not None: candidates = [reference_prior] if reference_prior is not None else []
                 for existing in candidates:
                     if existing.get("idempotency_key") != idempotency_key:
                         continue
@@ -346,6 +382,7 @@ class AssetLibraryService:
                         guard()
                     if manual_lineage is not None:
                         self._manual_source(origin, novel_id, branch_id)
+                    if model_lineage is not None: self._model_reference_source(origin, novel_id, branch_id)
                     return existing
             asset_id = str(uuid.uuid4())
             meta = {"id": asset_id, "novel_id": novel_id, **identity, "created_at": now(), "updated_at": now(),
@@ -354,6 +391,7 @@ class AssetLibraryService:
                 meta["_text_result_review"] = initial_review
             if manual_lineage is not None:
                 meta["parameters"] = {"asset_lineage_v2": manual_lineage}
+            if model_lineage is not None: meta["parameters"] = {"asset_lineage_v2": model_lineage}
             target = self._bin_path(asset_id)
             fd, temporary = tempfile.mkstemp(dir=self.root, prefix=asset_id + ".", suffix=".tmp")
             try:
@@ -365,6 +403,7 @@ class AssetLibraryService:
                     guard()
                 if manual_lineage is not None:
                     self._manual_source(origin, novel_id, branch_id)
+                if model_lineage is not None: self._model_reference_source(origin, novel_id, branch_id)
                 os.replace(temporary, target)
                 self._write_meta(meta)
             except Exception:
@@ -460,6 +499,31 @@ class AssetLibraryService:
                 if ((row.get("novel_id"), row.get("branch_id")) != (novel_id, branch_id)
                         or found is not None or not self._in_scope(row, branch_id) or "_manual_mask_origin" not in row):
                     raise ValueError("IMAGE_MASK_RECEIPT_UNAVAILABLE")
+                found = row
+            return found
+
+    @staticmethod
+    def _model_reference_record(meta):
+        from .studio_model_reference_origin import record
+        return record(meta)
+
+    def _model_reference_source(self, origin, novel_id, branch_id):
+        from .studio_model_reference_origin import source
+        return source(self, origin, novel_id, branch_id)
+
+    def model_reference_retry(self, novel_id, key, *, branch_id):
+        binding = getattr(self._scope, "binding", None)
+        if binding is None or (binding["novel_id"], binding["branch_id"]) != (novel_id, branch_id) or not isinstance(key, str):
+            raise ValueError("MODEL_REFERENCE_ASSET_ORIGIN_INVALID")
+        with self._lock, workspace_mutation(self.root, "asset-library"):
+            found = None
+            for path in self.root.glob("*.json"):
+                try: row = self._load(path.stem)
+                except (ValueError, OSError, RecursionError): raise ValueError("MODEL_REFERENCE_RECEIPT_UNAVAILABLE") from None
+                if (row.get("idempotency_key"), row.get("_project_binding")) != (key, binding): continue
+                if ((row.get("novel_id"), row.get("branch_id")) != (novel_id, branch_id) or found is not None
+                        or not self._in_scope(row, branch_id) or "_model_reference_origin" not in row):
+                    raise ValueError("MODEL_REFERENCE_RECEIPT_UNAVAILABLE")
                 found = row
             return found
 
@@ -899,6 +963,14 @@ class AssetLibraryService:
                     raise ValueError("IMAGE_MASK_SOURCE_IMMUTABLE")
                 if "parameters" in fields and _lineage_write:
                     self._manual_lineage(fields["parameters"].get("asset_lineage_v2"), origin)
+            if "_model_reference_origin" in meta:
+                from .studio_model_reference_origin import lineage
+                origin = self._model_reference_record(meta)
+                if any(key in fields and fields[key] != meta.get(key) for key in
+                       ("source_asset_ids", "source_job_id", "provider_id", "model_id", "approved_at")):
+                    raise ValueError("MODEL_REFERENCE_SOURCE_IMMUTABLE")
+                if "parameters" in fields and _lineage_write:
+                    lineage(fields["parameters"].get("asset_lineage_v2"), origin)
             if "parameters" in fields:
                 # Legacy generation parameters are caller-controlled. They
                 # cannot manufacture or erase the gated provenance authority.
@@ -978,7 +1050,8 @@ class AssetLibraryService:
         """
         with self._lock, workspace_mutation(self.root, "asset-library"):
             meta = self.get(asset_id, branch_id=branch_id)
-            manual = self._manual_record(meta) if "_manual_mask_origin" in meta else None
+            manual = (self._manual_record(meta) if "_manual_mask_origin" in meta else
+                      self._model_reference_record(meta) if "_model_reference_origin" in meta else None)
             if manual is not None and (parent_ids != [manual["source"]["id"]]
                     or declaration.get("origin") != "MANUAL_EDIT" or declaration.get("sources") != {}):
                 raise ValueError("IMAGE_MASK_SOURCE_IMMUTABLE")

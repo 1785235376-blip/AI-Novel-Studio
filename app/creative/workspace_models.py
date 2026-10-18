@@ -111,3 +111,10 @@ class StaticSceneDepthExport(StrictModel):
 
 class StaticSceneClayExport(StaticSceneDepthExport):
     contract: Literal["studio-static-glb-clay-export/1"]
+
+
+class StaticSceneClaySave(StaticSceneClayExport):
+    contract: Literal["studio-static-glb-clay-asset/1"]
+    reviewed_png_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    confirm_reference: Literal[True]
+    idempotency_key: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,119}$")

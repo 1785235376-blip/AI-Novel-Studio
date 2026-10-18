@@ -1,0 +1,1411 @@
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF.....FFFFFFF.                         [100%]
+=================================== FAILURES ===================================
+__ test_reviewed_pixels_save_once_with_first_commit_lineage_and_reopen[file] ___
+
+rig = namespace(nid='v2-independent-d3d48d6470234ea8b687a8a6d7ba6238', scope={'mode': 'local', 'novel_id': 'v2-independent-d...IdentityRepository object at 0x7fdac1b3ce00>), create_project=<function rig.<locals>.create_project at 0x7fdac70449a0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdac724f3b0>
+
+    def test_reviewed_pixels_save_once_with_first_commit_lineage_and_reopen(rig,monkeypatch):
+>       e=rig;source,view,request=prepared(e);seen=[];original=e.assets._write_meta
+                                  ^^^^^^^^^^^
+
+tests/test_v2_clay_reference_asset_additive.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_clay_reference_asset_additive.py:10: in prepared
+    source=upload(e);view=e.service.export_model_clay(e.nid,e.scope,source['id'],export_body(source))
+           ^^^^^^^^^
+tests/test_v2_static_glb_owner.py:22: in upload
+    return rig.service.import_model_reference(rig.nid, rig.scope, rig.actor, body() if value is None else value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:334: in import_model_reference
+    return self._persist_manual_import(nid, scope, actor, body, data, "model/gltf-binary", guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:476: in _persist_manual_import
+    self.storage_admission.require(len(data))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1a12990>
+incoming_bytes = 524
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+______ test_changed_review_or_identity_never_creates_duplicate[file-hash] ______
+
+rig = namespace(nid='v2-independent-2e4d2dabf3704b27bac272e8ebd0c13e', scope={'mode': 'local', 'novel_id': 'v2-independent-2...IdentityRepository object at 0x7fdac1a11520>), create_project=<function rig.<locals>.create_project at 0x7fdac7044900>)
+change = 'hash'
+
+    @pytest.mark.parametrize('change',['hash','source','actor','confirmation'])
+    def test_changed_review_or_identity_never_creates_duplicate(rig,change):
+>       e=rig;source,view,request=prepared(e);save(e,source,request);before=files(e);actor=e.actor
+                                  ^^^^^^^^^^^
+
+tests/test_v2_clay_reference_asset_additive.py:43: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_clay_reference_asset_additive.py:10: in prepared
+    source=upload(e);view=e.service.export_model_clay(e.nid,e.scope,source['id'],export_body(source))
+           ^^^^^^^^^
+tests/test_v2_static_glb_owner.py:22: in upload
+    return rig.service.import_model_reference(rig.nid, rig.scope, rig.actor, body() if value is None else value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:334: in import_model_reference
+    return self._persist_manual_import(nid, scope, actor, body, data, "model/gltf-binary", guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:476: in _persist_manual_import
+    self.storage_admission.require(len(data))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1941b80>
+incoming_bytes = 524
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_____ test_changed_review_or_identity_never_creates_duplicate[file-source] _____
+
+rig = namespace(nid='v2-independent-c8c158967f6d4c0bb229838763d18727', scope={'mode': 'local', 'novel_id': 'v2-independent-c...IdentityRepository object at 0x7fdac1a13a40>), create_project=<function rig.<locals>.create_project at 0x7fdac1a1be20>)
+change = 'source'
+
+    @pytest.mark.parametrize('change',['hash','source','actor','confirmation'])
+    def test_changed_review_or_identity_never_creates_duplicate(rig,change):
+>       e=rig;source,view,request=prepared(e);save(e,source,request);before=files(e);actor=e.actor
+                                  ^^^^^^^^^^^
+
+tests/test_v2_clay_reference_asset_additive.py:43: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_clay_reference_asset_additive.py:10: in prepared
+    source=upload(e);view=e.service.export_model_clay(e.nid,e.scope,source['id'],export_body(source))
+           ^^^^^^^^^
+tests/test_v2_static_glb_owner.py:22: in upload
+    return rig.service.import_model_reference(rig.nid, rig.scope, rig.actor, body() if value is None else value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:334: in import_model_reference
+    return self._persist_manual_import(nid, scope, actor, body, data, "model/gltf-binary", guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:476: in _persist_manual_import
+    self.storage_admission.require(len(data))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1941370>
+incoming_bytes = 524
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_____ test_changed_review_or_identity_never_creates_duplicate[file-actor] ______
+
+rig = namespace(nid='v2-independent-007a61abb42e457ab7bc8a45cbcad3a9', scope={'mode': 'local', 'novel_id': 'v2-independent-0...IdentityRepository object at 0x7fdac1a129c0>), create_project=<function rig.<locals>.create_project at 0x7fdac1a19440>)
+change = 'actor'
+
+    @pytest.mark.parametrize('change',['hash','source','actor','confirmation'])
+    def test_changed_review_or_identity_never_creates_duplicate(rig,change):
+>       e=rig;source,view,request=prepared(e);save(e,source,request);before=files(e);actor=e.actor
+                                  ^^^^^^^^^^^
+
+tests/test_v2_clay_reference_asset_additive.py:43: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_clay_reference_asset_additive.py:10: in prepared
+    source=upload(e);view=e.service.export_model_clay(e.nid,e.scope,source['id'],export_body(source))
+           ^^^^^^^^^
+tests/test_v2_static_glb_owner.py:22: in upload
+    return rig.service.import_model_reference(rig.nid, rig.scope, rig.actor, body() if value is None else value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:334: in import_model_reference
+    return self._persist_manual_import(nid, scope, actor, body, data, "model/gltf-binary", guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:476: in _persist_manual_import
+    self.storage_admission.require(len(data))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac19400b0>
+incoming_bytes = 524
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+__ test_changed_review_or_identity_never_creates_duplicate[file-confirmation] __
+
+rig = namespace(nid='v2-independent-e5ab87e9948d4deb975f6e37c5f866d0', scope={'mode': 'local', 'novel_id': 'v2-independent-e...IdentityRepository object at 0x7fdac1a119a0>), create_project=<function rig.<locals>.create_project at 0x7fdac1a19580>)
+change = 'confirmation'
+
+    @pytest.mark.parametrize('change',['hash','source','actor','confirmation'])
+    def test_changed_review_or_identity_never_creates_duplicate(rig,change):
+>       e=rig;source,view,request=prepared(e);save(e,source,request);before=files(e);actor=e.actor
+                                  ^^^^^^^^^^^
+
+tests/test_v2_clay_reference_asset_additive.py:43: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_clay_reference_asset_additive.py:10: in prepared
+    source=upload(e);view=e.service.export_model_clay(e.nid,e.scope,source['id'],export_body(source))
+           ^^^^^^^^^
+tests/test_v2_static_glb_owner.py:22: in upload
+    return rig.service.import_model_reference(rig.nid, rig.scope, rig.actor, body() if value is None else value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:334: in import_model_reference
+    return self._persist_manual_import(nid, scope, actor, body, data, "model/gltf-binary", guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:476: in _persist_manual_import
+    self.storage_admission.require(len(data))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1943d10>
+incoming_bytes = 524
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_ test_metadata_cannot_forge_provider_or_rebind_lineage_and_annotation_retains_pin[file] _
+
+rig = namespace(nid='v2-independent-2c81cb1d6c1e4f5aa6ba63ffa4dfbfa0', scope={'mode': 'local', 'novel_id': 'v2-independent-2...IdentityRepository object at 0x7fdac1940800>), create_project=<function rig.<locals>.create_project at 0x7fdac706d260>)
+
+    def test_metadata_cannot_forge_provider_or_rebind_lineage_and_annotation_retains_pin(rig):
+>       e=rig;source,view,request=prepared(e);result=save(e,source,request);asset=result['asset'];before=files(e)
+                                  ^^^^^^^^^^^
+
+tests/test_v2_clay_reference_asset_additive.py:53: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_clay_reference_asset_additive.py:10: in prepared
+    source=upload(e);view=e.service.export_model_clay(e.nid,e.scope,source['id'],export_body(source))
+           ^^^^^^^^^
+tests/test_v2_static_glb_owner.py:22: in upload
+    return rig.service.import_model_reference(rig.nid, rig.scope, rig.actor, body() if value is None else value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:334: in import_model_reference
+    return self._persist_manual_import(nid, scope, actor, body, data, "model/gltf-binary", guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:476: in _persist_manual_import
+    self.storage_admission.require(len(data))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac18608c0>
+incoming_bytes = 524
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+__ test_revoke_during_render_and_final_guard_failure_leave_no_new_asset[file] __
+
+rig = namespace(nid='v2-independent-8eda07d237e4419aa7d687f83eba0270', scope={'mode': 'local', 'novel_id': 'v2-independent-8...IdentityRepository object at 0x7fdac1a12de0>), create_project=<function rig.<locals>.create_project at 0x7fdac1a19580>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdac1a13e60>
+
+    def test_revoke_during_render_and_final_guard_failure_leave_no_new_asset(rig,monkeypatch):
+        import app.creative.model_reference_depth as renderer
+>       e=rig;source,view,request=prepared(e);original=renderer.render_clay;allowed=True;before=files(e)
+                                  ^^^^^^^^^^^
+
+tests/test_v2_clay_reference_asset_additive.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_clay_reference_asset_additive.py:10: in prepared
+    source=upload(e);view=e.service.export_model_clay(e.nid,e.scope,source['id'],export_body(source))
+           ^^^^^^^^^
+tests/test_v2_static_glb_owner.py:22: in upload
+    return rig.service.import_model_reference(rig.nid, rig.scope, rig.actor, body() if value is None else value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:334: in import_model_reference
+    return self._persist_manual_import(nid, scope, actor, body, data, "model/gltf-binary", guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:476: in _persist_manual_import
+    self.storage_admission.require(len(data))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1943f80>
+incoming_bytes = 524
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+________ test_original_route_needs_write_authority_not_only_read[file] _________
+
+rig = namespace(nid='v2-independent-3cf4ffd50b7b4429975b67cf824e67b0', scope={'mode': 'local', 'novel_id': 'v2-independent-3...IdentityRepository object at 0x7fdac1a13c80>), create_project=<function rig.<locals>.create_project at 0x7fdac19491c0>)
+
+    def test_original_route_needs_write_authority_not_only_read(rig):
+        from fastapi import FastAPI,HTTPException
+        from fastapi.testclient import TestClient
+        from app.creative.workspace_api import create_independent_workspace_router,is_independent_studio_route
+        from app.experimental.flags import require_flag
+>       e=rig;source,view,request=prepared(e);permissions=[]
+                                  ^^^^^^^^^^^
+
+tests/test_v2_clay_reference_asset_additive.py:81: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_clay_reference_asset_additive.py:10: in prepared
+    source=upload(e);view=e.service.export_model_clay(e.nid,e.scope,source['id'],export_body(source))
+           ^^^^^^^^^
+tests/test_v2_static_glb_owner.py:22: in upload
+    return rig.service.import_model_reference(rig.nid, rig.scope, rig.actor, body() if value is None else value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:334: in import_model_reference
+    return self._persist_manual_import(nid, scope, actor, body, data, "model/gltf-binary", guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:476: in _persist_manual_import
+    self.storage_admission.require(len(data))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1860230>
+incoming_bytes = 524
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+__ test_first_metadata_write_is_complete_real_pixels_and_replay_reopens[file] __
+
+mask = namespace(nid='v2-independent-ffcb45d8fd10467395ccd5f7e82de816', scope={'mode': 'local', 'novel_id': 'v2-independent-f...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdac18a5eb0>
+
+    def test_first_metadata_write_is_complete_real_pixels_and_replay_reopens(mask, monkeypatch):
+        e = mask; original = e.assets._write_meta; seen = []
+        def write(row):
+            if row.get('_manual_mask_origin'):
+                assert row['version'] == 1 and row['source_asset_ids'] == [e.source['id']]
+                assert row['parameters']['asset_lineage_v2']['origin'] == 'MANUAL_EDIT'
+                assert row['parameters']['asset_lineage_v2']['parents'] == {e.source['id']: {'version': 1, 'digest': e.source['sha256']}}
+                seen.append(row['id'])
+            return original(row)
+        monkeypatch.setattr(e.assets, '_write_meta', write)
+>       result = save(e); row = result['asset']; p = row['provenance']
+                 ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:43: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac186a930>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+___ test_same_key_changed_identity_never_creates_another_asset[file-pixels] ____
+
+mask = namespace(nid='v2-independent-5f754be3e3f64dde9ed63fa1dfd4fde8', scope={'mode': 'local', 'novel_id': 'v2-independent-5...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+change = 'pixels'
+
+    @pytest.mark.parametrize('change', ['pixels', 'actor', 'source_version', 'source_digest'])
+    def test_same_key_changed_identity_never_creates_another_asset(mask, change):
+>       e = mask; save(e); before = asset_files(e); body = copy.deepcopy(e.body); actor = None
+                  ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac186b9b0>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+____ test_same_key_changed_identity_never_creates_another_asset[file-actor] ____
+
+mask = namespace(nid='v2-independent-056e96ce84794d4b80a3567275515213', scope={'mode': 'local', 'novel_id': 'v2-independent-0...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+change = 'actor'
+
+    @pytest.mark.parametrize('change', ['pixels', 'actor', 'source_version', 'source_digest'])
+    def test_same_key_changed_identity_never_creates_another_asset(mask, change):
+>       e = mask; save(e); before = asset_files(e); body = copy.deepcopy(e.body); actor = None
+                  ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1952720>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_ test_same_key_changed_identity_never_creates_another_asset[file-source_version] _
+
+mask = namespace(nid='v2-independent-33453d44505b4ef0906d6618f8ce4f8d', scope={'mode': 'local', 'novel_id': 'v2-independent-3...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+change = 'source_version'
+
+    @pytest.mark.parametrize('change', ['pixels', 'actor', 'source_version', 'source_digest'])
+    def test_same_key_changed_identity_never_creates_another_asset(mask, change):
+>       e = mask; save(e); before = asset_files(e); body = copy.deepcopy(e.body); actor = None
+                  ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac19509b0>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_ test_same_key_changed_identity_never_creates_another_asset[file-source_digest] _
+
+mask = namespace(nid='v2-independent-018646731eb94a51a9b7493fad4636f5', scope={'mode': 'local', 'novel_id': 'v2-independent-0...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+change = 'source_digest'
+
+    @pytest.mark.parametrize('change', ['pixels', 'actor', 'source_version', 'source_digest'])
+    def test_same_key_changed_identity_never_creates_another_asset(mask, change):
+>       e = mask; save(e); before = asset_files(e); body = copy.deepcopy(e.body); actor = None
+                  ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1953470>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_ test_retry_after_mutable_annotation_keeps_identity_and_original_parent[file] _
+
+mask = namespace(nid='v2-independent-8add3e73d5cf447e9a1e3aec16a216d4', scope={'mode': 'local', 'novel_id': 'v2-independent-8...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+
+    def test_retry_after_mutable_annotation_keeps_identity_and_original_parent(mask):
+>       e = mask; result = save(e); row = result['asset']
+                           ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:70: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1868350>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_ test_generic_metadata_cannot_relabel_manual_source[file-source_asset_ids-value0] _
+
+mask = namespace(nid='v2-independent-32eec608339a4f7db804edc15faf37ea', scope={'mode': 'local', 'novel_id': 'v2-independent-3...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+field = 'source_asset_ids', value = []
+
+    @pytest.mark.parametrize('field,value', [('source_asset_ids', []), ('source_job_id', 'fake-job'), ('provider_id', 'fake-provider'), ('model_id', 'fake-model'), ('approved_at', 'fake')])
+    def test_generic_metadata_cannot_relabel_manual_source(mask, field, value):
+>       e = mask; row = save(e)['asset']; before = asset_files(e)
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1869cd0>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_ test_generic_metadata_cannot_relabel_manual_source[file-source_job_id-fake-job] _
+
+mask = namespace(nid='v2-independent-0533b89d1d614015be1194a7488f1793', scope={'mode': 'local', 'novel_id': 'v2-independent-0...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+field = 'source_job_id', value = 'fake-job'
+
+    @pytest.mark.parametrize('field,value', [('source_asset_ids', []), ('source_job_id', 'fake-job'), ('provider_id', 'fake-provider'), ('model_id', 'fake-model'), ('approved_at', 'fake')])
+    def test_generic_metadata_cannot_relabel_manual_source(mask, field, value):
+>       e = mask; row = save(e)['asset']; before = asset_files(e)
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac187faa0>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_ test_generic_metadata_cannot_relabel_manual_source[file-provider_id-fake-provider] _
+
+mask = namespace(nid='v2-independent-d48aa491a14541cba1d989340c49e457', scope={'mode': 'local', 'novel_id': 'v2-independent-d...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+field = 'provider_id', value = 'fake-provider'
+
+    @pytest.mark.parametrize('field,value', [('source_asset_ids', []), ('source_job_id', 'fake-job'), ('provider_id', 'fake-provider'), ('model_id', 'fake-model'), ('approved_at', 'fake')])
+    def test_generic_metadata_cannot_relabel_manual_source(mask, field, value):
+>       e = mask; row = save(e)['asset']; before = asset_files(e)
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac187f860>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_ test_generic_metadata_cannot_relabel_manual_source[file-model_id-fake-model] _
+
+mask = namespace(nid='v2-independent-b9105f25f7bb49d2a2a7563626551373', scope={'mode': 'local', 'novel_id': 'v2-independent-b...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+field = 'model_id', value = 'fake-model'
+
+    @pytest.mark.parametrize('field,value', [('source_asset_ids', []), ('source_job_id', 'fake-job'), ('provider_id', 'fake-provider'), ('model_id', 'fake-model'), ('approved_at', 'fake')])
+    def test_generic_metadata_cannot_relabel_manual_source(mask, field, value):
+>       e = mask; row = save(e)['asset']; before = asset_files(e)
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1950380>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+__ test_generic_metadata_cannot_relabel_manual_source[file-approved_at-fake] ___
+
+mask = namespace(nid='v2-independent-5a0d6495ee4e449daf4214f3452539b4', scope={'mode': 'local', 'novel_id': 'v2-independent-5...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+field = 'approved_at', value = 'fake'
+
+    @pytest.mark.parametrize('field,value', [('source_asset_ids', []), ('source_job_id', 'fake-job'), ('provider_id', 'fake-provider'), ('model_id', 'fake-model'), ('approved_at', 'fake')])
+    def test_generic_metadata_cannot_relabel_manual_source(mask, field, value):
+>       e = mask; row = save(e)['asset']; before = asset_files(e)
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac187c3e0>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+___ test_generic_privileged_lineage_cannot_forge_or_refresh_pin[file-origin] ___
+
+mask = namespace(nid='v2-independent-c579fbd89d264199b1f33004eef28a8b', scope={'mode': 'local', 'novel_id': 'v2-independent-c...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+change = 'origin'
+
+    @pytest.mark.parametrize('change', ['origin', 'parent', 'digest', 'version', 'sources', 'erase'])
+    def test_generic_privileged_lineage_cannot_forge_or_refresh_pin(mask, change):
+>       e = mask; row = save(e)['asset']; before = asset_files(e)
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac187f6b0>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+___ test_generic_privileged_lineage_cannot_forge_or_refresh_pin[file-parent] ___
+
+mask = namespace(nid='v2-independent-0e2d7560c98846e9b391d8cda33b1c3d', scope={'mode': 'local', 'novel_id': 'v2-independent-0...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+change = 'parent'
+
+    @pytest.mark.parametrize('change', ['origin', 'parent', 'digest', 'version', 'sources', 'erase'])
+    def test_generic_privileged_lineage_cannot_forge_or_refresh_pin(mask, change):
+>       e = mask; row = save(e)['asset']; before = asset_files(e)
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1863050>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+___ test_generic_privileged_lineage_cannot_forge_or_refresh_pin[file-digest] ___
+
+mask = namespace(nid='v2-independent-48a42df276b04a47bd783947e01c6688', scope={'mode': 'local', 'novel_id': 'v2-independent-4...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+change = 'digest'
+
+    @pytest.mark.parametrize('change', ['origin', 'parent', 'digest', 'version', 'sources', 'erase'])
+    def test_generic_privileged_lineage_cannot_forge_or_refresh_pin(mask, change):
+>       e = mask; row = save(e)['asset']; before = asset_files(e)
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac187e720>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+__ test_generic_privileged_lineage_cannot_forge_or_refresh_pin[file-version] ___
+
+mask = namespace(nid='v2-independent-7a4219c0d3fc4a30a65af6e115b0e112', scope={'mode': 'local', 'novel_id': 'v2-independent-7...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+change = 'version'
+
+    @pytest.mark.parametrize('change', ['origin', 'parent', 'digest', 'version', 'sources', 'erase'])
+    def test_generic_privileged_lineage_cannot_forge_or_refresh_pin(mask, change):
+>       e = mask; row = save(e)['asset']; before = asset_files(e)
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1862180>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+__ test_generic_privileged_lineage_cannot_forge_or_refresh_pin[file-sources] ___
+
+mask = namespace(nid='v2-independent-88138a47f3ff4e82bce997e03c24a25c', scope={'mode': 'local', 'novel_id': 'v2-independent-8...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+change = 'sources'
+
+    @pytest.mark.parametrize('change', ['origin', 'parent', 'digest', 'version', 'sources', 'erase'])
+    def test_generic_privileged_lineage_cannot_forge_or_refresh_pin(mask, change):
+>       e = mask; row = save(e)['asset']; before = asset_files(e)
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1863b90>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+___ test_generic_privileged_lineage_cannot_forge_or_refresh_pin[file-erase] ____
+
+mask = namespace(nid='v2-independent-32e47e3151d945bd833a617f82292373', scope={'mode': 'local', 'novel_id': 'v2-independent-3...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+change = 'erase'
+
+    @pytest.mark.parametrize('change', ['origin', 'parent', 'digest', 'version', 'sources', 'erase'])
+    def test_generic_privileged_lineage_cannot_forge_or_refresh_pin(mask, change):
+>       e = mask; row = save(e)['asset']; before = asset_files(e)
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1942b10>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_ test_low_disk_existing_replay_is_allocation_free_and_changed_payload_conflicts[file] _
+
+mask = namespace(nid='v2-independent-3736261345864272803db0eb5dba26e2', scope={'mode': 'local', 'novel_id': 'v2-independent-3...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdac187fb30>
+
+    def test_low_disk_existing_replay_is_allocation_free_and_changed_payload_conflicts(mask, monkeypatch):
+>       e = mask; expected = save(e); before = asset_files(e)
+                             ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:114: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1862960>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_ test_damaged_same_key_receipt_never_falls_through_to_new_creation[file-novel_id] _
+
+mask = namespace(nid='v2-independent-8bd207849b674d1bb79fe0c238e561f2', scope={'mode': 'local', 'novel_id': 'v2-independent-8...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+field = 'novel_id'
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdac1952480>
+
+    @pytest.mark.parametrize('field', ['novel_id', 'branch_id', '_manual_mask_origin', 'parameters', 'json'])
+    def test_damaged_same_key_receipt_never_falls_through_to_new_creation(mask, field, monkeypatch):
+>       e = mask; row = save(e)['asset']; path = e.assets._meta_path(row['id']); value = json.loads(path.read_text())
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1943fe0>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_ test_damaged_same_key_receipt_never_falls_through_to_new_creation[file-branch_id] _
+
+mask = namespace(nid='v2-independent-ab1e3d5a4685438b9ba0c1ecdb420ecc', scope={'mode': 'local', 'novel_id': 'v2-independent-a...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+field = 'branch_id'
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdac1863650>
+
+    @pytest.mark.parametrize('field', ['novel_id', 'branch_id', '_manual_mask_origin', 'parameters', 'json'])
+    def test_damaged_same_key_receipt_never_falls_through_to_new_creation(mask, field, monkeypatch):
+>       e = mask; row = save(e)['asset']; path = e.assets._meta_path(row['id']); value = json.loads(path.read_text())
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1a10950>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_ test_damaged_same_key_receipt_never_falls_through_to_new_creation[file-_manual_mask_origin] _
+
+mask = namespace(nid='v2-independent-db80b47586cc435596c5cbb6183bf452', scope={'mode': 'local', 'novel_id': 'v2-independent-d...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+field = '_manual_mask_origin'
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdac19425d0>
+
+    @pytest.mark.parametrize('field', ['novel_id', 'branch_id', '_manual_mask_origin', 'parameters', 'json'])
+    def test_damaged_same_key_receipt_never_falls_through_to_new_creation(mask, field, monkeypatch):
+>       e = mask; row = save(e)['asset']; path = e.assets._meta_path(row['id']); value = json.loads(path.read_text())
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1a12ae0>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_ test_damaged_same_key_receipt_never_falls_through_to_new_creation[file-parameters] _
+
+mask = namespace(nid='v2-independent-ca349738a3f64d5ea96bf853d3002134', scope={'mode': 'local', 'novel_id': 'v2-independent-c...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+field = 'parameters'
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdac1861d90>
+
+    @pytest.mark.parametrize('field', ['novel_id', 'branch_id', '_manual_mask_origin', 'parameters', 'json'])
+    def test_damaged_same_key_receipt_never_falls_through_to_new_creation(mask, field, monkeypatch):
+>       e = mask; row = save(e)['asset']; path = e.assets._meta_path(row['id']); value = json.loads(path.read_text())
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac19428d0>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_ test_damaged_same_key_receipt_never_falls_through_to_new_creation[file-json] _
+
+mask = namespace(nid='v2-independent-f822a74d04264565b6d40fafb20aacd1', scope={'mode': 'local', 'novel_id': 'v2-independent-f...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+field = 'json'
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdac1950d70>
+
+    @pytest.mark.parametrize('field', ['novel_id', 'branch_id', '_manual_mask_origin', 'parameters', 'json'])
+    def test_damaged_same_key_receipt_never_falls_through_to_new_creation(mask, field, monkeypatch):
+>       e = mask; row = save(e)['asset']; path = e.assets._meta_path(row['id']); value = json.loads(path.read_text())
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1a13770>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+___________ test_precommit_authority_loss_never_publishes_mask[file] ___________
+
+mask = namespace(nid='v2-independent-fda93c35ee744bb99fd543ae63a8804e', scope={'mode': 'local', 'novel_id': 'v2-independent-f...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdac187e810>
+
+    def test_precommit_authority_loss_never_publishes_mask(mask, monkeypatch):
+        e = mask; before = asset_files(e); original = e.assets.create
+        def intercepted(*a, **k):
+            if k.get('_initial_manual_mask'):
+                k['guard'] = lambda: (_ for _ in ()).throw(RuntimeError('revoked'))
+            return original(*a, **k)
+        monkeypatch.setattr(e.assets, 'create', intercepted)
+>       with pytest.raises(RuntimeError, match='revoked'): save(e)
+                                                           ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:144: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac18760f0>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+__________ test_two_same_request_saves_share_one_original_asset[file] __________
+
+mask = namespace(nid='v2-independent-772915c0dab24eb7ad9dad33b3e88e80', scope={'mode': 'local', 'novel_id': 'v2-independent-7...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+
+    def test_two_same_request_saves_share_one_original_asset(mask):
+        e = mask; other = reopened(e); gate = Barrier(2)
+        def run(service): gate.wait(); return save(e, service=service)
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            a = pool.submit(run, e.service); b = pool.submit(run, other)
+>           one, two = a.result(timeout=10), b.result(timeout=10)
+                       ^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:153: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/thread.py:59: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_manual_mask_owner.py:150: in run
+    def run(service): gate.wait(); return save(e, service=service)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1877020>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_____ test_observed_retry_cannot_become_unreserved_creation[file-missing] ______
+
+mask = namespace(nid='v2-independent-0d0cb4cab4d743e4b1eadd9dad61a105', scope={'mode': 'local', 'novel_id': 'v2-independent-0...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdac1862930>
+damage = 'missing'
+
+    @pytest.mark.parametrize('damage', ['missing', 'replaced'])
+    def test_observed_retry_cannot_become_unreserved_creation(mask, monkeypatch, damage):
+        import app.services.studio_image_mask_authoring as pixels
+        import app.services.asset_library_service as owner
+>       e = mask; result = save(e); path = e.assets._meta_path(result['asset']['id']); original = pixels.encode_mask
+                           ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:161: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1877800>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_____ test_observed_retry_cannot_become_unreserved_creation[file-replaced] _____
+
+mask = namespace(nid='v2-independent-b1933e58289b4cfd9b30ec969840a178', scope={'mode': 'local', 'novel_id': 'v2-independent-b...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdac1a11a00>
+damage = 'replaced'
+
+    @pytest.mark.parametrize('damage', ['missing', 'replaced'])
+    def test_observed_retry_cannot_become_unreserved_creation(mask, monkeypatch, damage):
+        import app.services.studio_image_mask_authoring as pixels
+        import app.services.asset_library_service as owner
+>       e = mask; result = save(e); path = e.assets._meta_path(result['asset']['id']); original = pixels.encode_mask
+                           ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:161: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1875670>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+________ test_source_features_are_inherited_and_cannot_disappear[file] _________
+
+mask = namespace(nid='v2-independent-f6f8a07e7e4d4d8183350ba0c8195133', scope={'mode': 'local', 'novel_id': 'v2-independent-f...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdac1950d70>
+
+    def test_source_features_are_inherited_and_cannot_disappear(mask, monkeypatch):
+        e = mask; flags = 'narrative_production_v2,asset_lineage_v2,creative_workspace_v2'
+        # Use a registered runtime flag already present in the original owner.
+        from app.experimental.flags import RUNTIME_FLAGS
+        extra = next(x for x in sorted(RUNTIME_FLAGS) if x not in {'narrative_production_v2', 'asset_lineage_v2'})
+        flags = 'narrative_production_v2,asset_lineage_v2,' + extra
+        monkeypatch.setenv('EXPERIMENTAL_FEATURES', flags)
+        path = e.assets._meta_path(e.source['id']); value = json.loads(path.read_text()); value['_required_features'].append(extra); path.write_text(json.dumps(value))
+>       row = save(e)['asset']
+              ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:221: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1862870>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_ test_initial_manual_origin_cannot_mix_with_other_server_origins[file-_initial_text_result] _
+
+mask = namespace(nid='v2-independent-5ed264f1339a4ecc94c6b2b9221e3d6a', scope={'mode': 'local', 'novel_id': 'v2-independent-5...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+other = '_initial_text_result'
+
+    @pytest.mark.parametrize('other', ['_initial_text_result', '_initial_studio_result'])
+    def test_initial_manual_origin_cannot_mix_with_other_server_origins(mask, other):
+>       e = mask; row = save(e)['asset']; before = asset_files(e)
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:229: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac17305c0>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+_ test_initial_manual_origin_cannot_mix_with_other_server_origins[file-_initial_studio_result] _
+
+mask = namespace(nid='v2-independent-7d55b723ecaa45beb7509db465bdde0f', scope={'mode': 'local', 'novel_id': 'v2-independent-7...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+other = '_initial_studio_result'
+
+    @pytest.mark.parametrize('other', ['_initial_text_result', '_initial_studio_result'])
+    def test_initial_manual_origin_cannot_mix_with_other_server_origins(mask, other):
+>       e = mask; row = save(e)['asset']; before = asset_files(e)
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:229: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1732a50>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+________________ test_private_marker_recursively_redacted[file] ________________
+
+mask = namespace(nid='v2-independent-265b6e0d12a942a78a162a9fc4643e38', scope={'mode': 'local', 'novel_id': 'v2-independent-2...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+
+    def test_private_marker_recursively_redacted(mask):
+>       e = mask; row = save(e)['asset']
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:240: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1732bd0>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+____________ test_retry_read_errors_are_sanitized[file-exception0] _____________
+
+mask = namespace(nid='v2-independent-8d9c2d59e0cd4144a6f0e209a33a2d68', scope={'mode': 'local', 'novel_id': 'v2-independent-8...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdac1a138c0>
+exception = OSError('private-path-canary')
+
+    @pytest.mark.parametrize('exception', [OSError('private-path-canary'), RecursionError('private-content-canary')])
+    def test_retry_read_errors_are_sanitized(mask, monkeypatch, exception):
+>       e = mask; row = save(e)['asset']; original = e.assets._load
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:249: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac1733e00>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+____________ test_retry_read_errors_are_sanitized[file-exception1] _____________
+
+mask = namespace(nid='v2-independent-aeca3bf9fbb74a248c96562d56abb14a', scope={'mode': 'local', 'novel_id': 'v2-independent-a...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdac1950500>
+exception = RecursionError('private-content-canary')
+
+    @pytest.mark.parametrize('exception', [OSError('private-path-canary'), RecursionError('private-content-canary')])
+    def test_retry_read_errors_are_sanitized(mask, monkeypatch, exception):
+>       e = mask; row = save(e)['asset']; original = e.assets._load
+                        ^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:249: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac17333b0>
+incoming_bytes = 4228
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+__ test_maximum_size_guard_reads_are_coalesced_and_final_guard_is_fresh[file] __
+
+mask = namespace(nid='v2-independent-80c16fb87c5f41ff9d7c56cc6b033bb8', scope={'mode': 'local', 'novel_id': 'v2-independent-8...gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=', 'idempotency_key': 'authored-mask'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdac1876390>
+
+    def test_maximum_size_guard_reads_are_coalesced_and_final_guard_is_fresh(mask, monkeypatch):
+        e = mask; data = source_png(1024, 1024)
+        with e.service._asset_scope(e.nid, e.scope):
+            e.source = e.assets.create(e.nid, 'maximum.png', base64.b64encode(data).decode(), 'image/png', 'image', 'maximum', required_features=('narrative_production_v2',))
+        e.body.update(source_sha256=e.source['sha256'], width=1024, height=1024, bitplane_base64=plane(1024, 1024))
+        calls = 0
+        def current():
+            nonlocal calls
+            calls += 1
+            assert e.store.incarnation(e.nid)
+>       result = save(e, guard=current)
+                 ^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_manual_mask_owner.py:267: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_manual_mask_owner.py:26: in save
+    return (service or e.service).author_mask(e.nid, e.scope, actor or e.actor, e.source['id'], body or e.body, guard)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/workspace.py:590: in author_mask
+    self.storage_admission.require(len(png))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.storage_admission.StudioStorageAdmission object at 0x7fdac168c4d0>
+incoming_bytes = 1049748
+
+    def require(self, incoming_bytes):
+        if type(incoming_bytes) is not int or incoming_bytes < 1:
+            raise ValueError("CREATIVE_STORAGE_ESTIMATE_INVALID")
+        if incoming_bytes > self.available():
+>           raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE")
+E           app.creative.storage_admission.StudioStorageCapacityError: CREATIVE_STORAGE_LOW_SPACE
+
+app/creative/storage_admission.py:35: StudioStorageCapacityError
+=============================== warnings summary ===============================
+tests/test_v2_clay_reference_asset_additive.py::test_reviewed_pixels_save_once_with_first_commit_lineage_and_reopen[file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_v2_clay_reference_asset_additive.py::test_original_route_needs_write_authority_not_only_read[file]
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_clay_reference_asset_additive.py::test_reviewed_pixels_save_once_with_first_commit_lineage_and_reopen[file]
+FAILED tests/test_v2_clay_reference_asset_additive.py::test_changed_review_or_identity_never_creates_duplicate[file-hash]
+FAILED tests/test_v2_clay_reference_asset_additive.py::test_changed_review_or_identity_never_creates_duplicate[file-source]
+FAILED tests/test_v2_clay_reference_asset_additive.py::test_changed_review_or_identity_never_creates_duplicate[file-actor]
+FAILED tests/test_v2_clay_reference_asset_additive.py::test_changed_review_or_identity_never_creates_duplicate[file-confirmation]
+FAILED tests/test_v2_clay_reference_asset_additive.py::test_metadata_cannot_forge_provider_or_rebind_lineage_and_annotation_retains_pin[file]
+FAILED tests/test_v2_clay_reference_asset_additive.py::test_revoke_during_render_and_final_guard_failure_leave_no_new_asset[file]
+FAILED tests/test_v2_clay_reference_asset_additive.py::test_original_route_needs_write_authority_not_only_read[file]
+FAILED tests/test_v2_manual_mask_owner.py::test_first_metadata_write_is_complete_real_pixels_and_replay_reopens[file]
+FAILED tests/test_v2_manual_mask_owner.py::test_same_key_changed_identity_never_creates_another_asset[file-pixels]
+FAILED tests/test_v2_manual_mask_owner.py::test_same_key_changed_identity_never_creates_another_asset[file-actor]
+FAILED tests/test_v2_manual_mask_owner.py::test_same_key_changed_identity_never_creates_another_asset[file-source_version]
+FAILED tests/test_v2_manual_mask_owner.py::test_same_key_changed_identity_never_creates_another_asset[file-source_digest]
+FAILED tests/test_v2_manual_mask_owner.py::test_retry_after_mutable_annotation_keeps_identity_and_original_parent[file]
+FAILED tests/test_v2_manual_mask_owner.py::test_generic_metadata_cannot_relabel_manual_source[file-source_asset_ids-value0]
+FAILED tests/test_v2_manual_mask_owner.py::test_generic_metadata_cannot_relabel_manual_source[file-source_job_id-fake-job]
+FAILED tests/test_v2_manual_mask_owner.py::test_generic_metadata_cannot_relabel_manual_source[file-provider_id-fake-provider]
+FAILED tests/test_v2_manual_mask_owner.py::test_generic_metadata_cannot_relabel_manual_source[file-model_id-fake-model]
+FAILED tests/test_v2_manual_mask_owner.py::test_generic_metadata_cannot_relabel_manual_source[file-approved_at-fake]
+FAILED tests/test_v2_manual_mask_owner.py::test_generic_privileged_lineage_cannot_forge_or_refresh_pin[file-origin]
+FAILED tests/test_v2_manual_mask_owner.py::test_generic_privileged_lineage_cannot_forge_or_refresh_pin[file-parent]
+FAILED tests/test_v2_manual_mask_owner.py::test_generic_privileged_lineage_cannot_forge_or_refresh_pin[file-digest]
+FAILED tests/test_v2_manual_mask_owner.py::test_generic_privileged_lineage_cannot_forge_or_refresh_pin[file-version]
+FAILED tests/test_v2_manual_mask_owner.py::test_generic_privileged_lineage_cannot_forge_or_refresh_pin[file-sources]
+FAILED tests/test_v2_manual_mask_owner.py::test_generic_privileged_lineage_cannot_forge_or_refresh_pin[file-erase]
+FAILED tests/test_v2_manual_mask_owner.py::test_low_disk_existing_replay_is_allocation_free_and_changed_payload_conflicts[file]
+FAILED tests/test_v2_manual_mask_owner.py::test_damaged_same_key_receipt_never_falls_through_to_new_creation[file-novel_id]
+FAILED tests/test_v2_manual_mask_owner.py::test_damaged_same_key_receipt_never_falls_through_to_new_creation[file-branch_id]
+FAILED tests/test_v2_manual_mask_owner.py::test_damaged_same_key_receipt_never_falls_through_to_new_creation[file-_manual_mask_origin]
+FAILED tests/test_v2_manual_mask_owner.py::test_damaged_same_key_receipt_never_falls_through_to_new_creation[file-parameters]
+FAILED tests/test_v2_manual_mask_owner.py::test_damaged_same_key_receipt_never_falls_through_to_new_creation[file-json]
+FAILED tests/test_v2_manual_mask_owner.py::test_precommit_authority_loss_never_publishes_mask[file]
+FAILED tests/test_v2_manual_mask_owner.py::test_two_same_request_saves_share_one_original_asset[file]
+FAILED tests/test_v2_manual_mask_owner.py::test_observed_retry_cannot_become_unreserved_creation[file-missing]
+FAILED tests/test_v2_manual_mask_owner.py::test_observed_retry_cannot_become_unreserved_creation[file-replaced]
+FAILED tests/test_v2_manual_mask_owner.py::test_source_features_are_inherited_and_cannot_disappear[file]
+FAILED tests/test_v2_manual_mask_owner.py::test_initial_manual_origin_cannot_mix_with_other_server_origins[file-_initial_text_result]
+FAILED tests/test_v2_manual_mask_owner.py::test_initial_manual_origin_cannot_mix_with_other_server_origins[file-_initial_studio_result]
+FAILED tests/test_v2_manual_mask_owner.py::test_private_marker_recursively_redacted[file]
+FAILED tests/test_v2_manual_mask_owner.py::test_retry_read_errors_are_sanitized[file-exception0]
+FAILED tests/test_v2_manual_mask_owner.py::test_retry_read_errors_are_sanitized[file-exception1]
+FAILED tests/test_v2_manual_mask_owner.py::test_maximum_size_guard_reads_are_coalesced_and_final_guard_is_fresh[file]
+42 failed, 6 passed, 48 deselected, 2 warnings in 7.29s
