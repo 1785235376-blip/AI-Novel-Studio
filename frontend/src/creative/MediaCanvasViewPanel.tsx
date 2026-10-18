@@ -1,3 +1,5 @@
+import { MediaCanvasGraphHandoff } from './MediaCanvasGraphHandoff';
+import type { CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoff';
 import { alignCanvasCards } from './mediaCanvasSelection';
 import { emptyCanvasHistory, recordCanvasEdit, travelCanvasEdit } from './mediaCanvasHistory';
 import { MediaCanvasGroupTools } from './MediaCanvasGroupTools';
@@ -14,7 +16,7 @@ import { clampGraphPosition, clampGraphZoom } from './graphCanvasGeometry';
 import { mediaViewportCenter } from './mediaCanvasGeometry';
 import './mediaCanvas.css';
 const blank = (): CanvasDefinition => ({ schema_version: 1, title: '媒体素材画布', cards: [], viewport: { x: 0, y: 0, zoom: 1 } });
-type Props = Pick<StudioGraphEditorProps, 'active' | 'denied' | 'identity' | 'client' | 'canMutate' | 'busy' | 'externalDirty' | 'isCurrent' | 'read' | 'mutate' | 'isBusy'> & { onDirtyChange: (dirty: boolean) => void };
+type Props = Pick<StudioGraphEditorProps, 'active' | 'denied' | 'identity' | 'client' | 'canMutate' | 'busy' | 'externalDirty' | 'isCurrent' | 'read' | 'mutate' | 'isBusy'> & { onDirtyChange: (dirty: boolean) => void; graphHandoff?: CanvasGraphAssetHandoff };
 
 /** Display metadata only; generation, media download and execution keep their original owners. */
 export function MediaCanvasViewPanel(props: Props) {
@@ -109,6 +111,7 @@ export function MediaCanvasViewPanel(props: Props) {
     <MediaCardViewport definition={draft} states={states} selected={selected} selection={selection} query={query} owner={token} disabled={!editable} isCurrent={current} onSelect={selectCard} onChange={edit} onSize={setSize} />
     {card && <div className="creative-actions"><span>选中 {card.id}</span>{(['x', 'y'] as const).map(axis => <label key={axis}>卡片 {axis}<input type="number" value={card.position[axis]} disabled={!editable} onChange={e => edit({ ...draftRef.current, cards: draftRef.current.cards.map(c => c.id === card.id ? { ...c, position: { ...c.position, [axis]: clampGraphPosition(e.target.valueAsNumber) } } : c) })} /></label>)}
       <Button disabled={!editable} onClick={() => { edit(removeCanvasCard(draftRef.current, card.id)); setSelected(''); }}>移除此引用卡片</Button></div>}
+    {card?.asset && props.graphHandoff && <MediaCanvasGraphHandoff key={`graph:${card.id}`} reference={card.asset} owner={token} client={props.client} handoff={props.graphHandoff} disabled={dirty || pending || props.externalDirty || !props.canMutate} isCurrent={current} read={props.read} />}
     {card?.asset && <CanvasAssetPreview key={card.id} reference={card.asset} owner={token} client={props.client} disabled={pending || props.busy || props.externalDirty} isCurrent={current} read={props.read} />}
     {error && <StatusMessage tone="warning">{error}</StatusMessage>}{notice && <p role="status">{notice}</p>}
   </section>;

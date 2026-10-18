@@ -1,3 +1,4 @@
+import { appendCanvasAssetNode, type CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoff';
 import { buildStoryboardVideoStarter } from './graphStoryboardStarter';
 import { checkedStoryboardReceipt } from './studioStoryboardContract';
 import { buildGraphStarter, type GraphStarterKind } from './graphStarter';
@@ -217,6 +218,18 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
       const before = draftRef.current;
       insertNode('director_plan', undefined, pin);
       return draftRef.current !== before;
+    },
+  };
+  const canvasAssetHandoff: CanvasGraphAssetHandoff = {
+    scope: verificationScope, isCurrent: isVerificationCurrent,
+    available: insertionCurrent(insertionScope) && !insertionRef.current && !!catalog && draft.schema_version >= 3
+      && graphCatalogForSchema(catalog.definitions, draft.schema_version).some(row => row.id === 'asset_reference'),
+    insert: (reference, scope) => {
+      if (scope !== verificationScope || !isVerificationCurrent() || !insertionCurrent(insertionScope) || insertionRef.current || !catalog) return false;
+      try { const next = appendCanvasAssetNode(draftRef.current, catalog, reference); change(next.definition);
+        if (draftRef.current !== next.definition) return false;
+        setSelected([next.nodeId]); setNotice('已从素材画布加入版本固定的引用节点，尚未保存或执行。'); return true;
+      } catch { setError('素材引用与目标图格式或容量不匹配，未改动原图。'); return false; }
     },
   };
   const dirty = !same(draft, base?.definition || blankGraph()) || timelineEditor.formDirty;
@@ -767,7 +780,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     planningDocuments: current() ? planningDocuments : [], planningChoice: current() ? planningChoice : '', planningLoading, choosePlanningDocument, loadPlanningDocuments, loadProductionCatalog, updateProductionField, updateShotBinding, updateReferenceMetadata,
     discard, load, loadImageCatalog, change, applyAutoLayout, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
     setReplaceConfirmed, setCandidate, setDiscardConfirmed, setPendingNavigation, setKind, setAssetChoice,
-    reviewedDirectorHandoff, insertionScope, positionedInsertion, insertionExpired, invalidatePositionedInsertion, requestPositionedInsertion, cancelPositionedInsertion,
+    canvasAssetHandoff, reviewedDirectorHandoff, insertionScope, positionedInsertion, insertionExpired, invalidatePositionedInsertion, requestPositionedInsertion, cancelPositionedInsertion,
     connectionScope, stageConnection, selectConnectionPort, setSourcePort, setTargetPort, setSelected, reportRunSelection, mediaSchemaConsent, setMediaSchemaConsent, upgradeMediaSchema, executionDirty, setExecutionDirty,
     imageSchemaConfirmed, confirmImageSchema, upgradeImageSchema, updateImagePrompt, updateImageReference,
     updateMediaField, updateMediaParameter, clearUnsupportedMediaParameters, clearMediaTrimInputs, timelineEditor,

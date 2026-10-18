@@ -1,0 +1,69 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/MediaCanvasOwner.integration.test.tsx (1 test) 97ms
+ ✓ src/creative/MediaCanvasViewPanel.additive.test.tsx (11 tests) 568ms
+ ❯ src/creative/MediaCanvasGraphHandoff.additive.test.tsx (15 tests | 1 failed) 293ms
+   × actual graph owner keeps history, rejects stale handoff scope and saves through original CAS 85ms
+     → client.asset is not a function
+ ✓ src/creative/GraphDirectorCanvasHandoff.additive.test.tsx (15 tests) 1166ms
+ ✓ src/creative/GraphStarter.additive.test.tsx (9 tests) 484ms
+   ✓ uses the actual controller change/undo/Save and never auto-runs 351ms
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 50 passed (51)
+   Start at  22:35:19
+   Duration  3.11s (transform 2.29s, setup 94ms, collect 5.78s, tests 2.61s, environment 2.16s, prepare 377ms)
+
+stderr | src/creative/MediaCanvasGraphHandoff.additive.test.tsx > actual graph owner keeps history, rejects stale handoff scope and saves through original CAS
+Error: Uncaught [TypeError: client.asset is not a function]
+    at reportException (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/jsdom@25.0.1/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at reportUncaughtErrorInDEV (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:22877:5)
+    at captureCommitPhaseError (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27165:5) TypeError: client.asset is not a function
+    at /workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/creative/useStudioGraphEditorController.ts:635:28
+    at read (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx:41:171)
+    at /workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/creative/useStudioGraphEditorController.ts:635:10
+    at commitHookEffectListMount (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27078:3)
+    at flushPassiveEffects (/workspace/scratch/20a0022d2b33/studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+The above error occurred in the <Harness> component:
+
+    at Harness (/workspace/scratch/20a0022d2b33/studio-director-transport/frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx:110:40)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/MediaCanvasGraphHandoff.additive.test.tsx > actual graph owner keeps history, rejects stale handoff scope and saves through original CAS
+TypeError: client.asset is not a function
+ ❯ src/creative/useStudioGraphEditorController.ts:635:28
+    633|     if (!active || !node || node.definition_id !== 'asset_reference' |…
+    634|     setPreviewState('READING'); const abort = new AbortController();
+    635|     void read(() => client.asset(node.parameters.asset_id!, abort.sign…
+       |                            ^
+    636|       if (!valid || !current()) return;
+    637|       if (value.version !== node.parameters.version || value.sha256 !=…
+ ❯ read src/creative/MediaCanvasGraphHandoff.additive.test.tsx:41:171
+ ❯ src/creative/useStudioGraphEditorController.ts:635:10
+ ❯ commitHookEffectListMount ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:23189:26
+ ❯ commitPassiveMountOnFiber ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24970:11
+ ❯ commitPassiveMountEffects_complete ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24930:9
+ ❯ commitPassiveMountEffects_begin ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24917:7
+ ❯ commitPassiveMountEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:24905:3
+ ❯ flushPassiveEffectsImpl ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27078:3
+ ❯ flushPassiveEffects ../../studio-usability/frontend/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27023:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
