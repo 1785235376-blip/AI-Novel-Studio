@@ -1,0 +1,324 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/GraphDirectorCompareDeck.additive.test.tsx (4 tests) 370ms
+ ❯ src/creative/GraphConnectionList.additive.test.tsx (7 tests | 1 failed) 202ms
+   × requires preview and explicit consent, consuming even a retained callback once 52ms
+     → Found multiple elements with the text: /generate.prompt/
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<li>[39m
+  [0mprompt[0m
+  [0m.[0m
+  [0mprompt[0m
+  [0m → [0m
+  [0mgenerate[0m
+  [0m.[0m
+  [0mprompt[0m
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [36m>[39m
+    [0m移除连接 [0m
+    [0mprompt_generate[0m
+  [36m</button>[39m
+[36m</li>[39m
+
+Ignored nodes: comments, script, style
+[36m<p>[39m
+  [0m新增缺少的必需输入：[0m
+  [0mgenerate.prompt[0m
+  [0m。[0m
+[36m</p>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"图连接列表"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m已保存到草稿的连接[0m
+      [36m</h3>[39m
+      [36m<ul>[39m
+        [36m<li>[39m
+          [0masset[0m
+          [0m.[0m
+          [0masset[0m
+          [0m → [0m
+          [0mreferences[0m
+          [0m.[0m
+          [0msource_1[0m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m移除连接 [0m
+            [0masset_references[0m
+          [36m</button>[39m
+        [36m</li>[39m
+        [36m<li>[39m
+          [0mreferences[0m
+          [0m.[0m
+          [0mreferences[0m
+          [0m → [0m
+          [0mprompt[0m
+          [0m.[0m
+          [0mreferences[0m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m移除连接 [0m
+            [0mreferences_prompt[0m
+          [36m</button>[39m
+        [36m</li>[39m
+        [36m<li>[39m
+          [0mprompt[0m
+          [0m.[0m
+          [0mprompt[0m
+          [0m → [0m
+          [0mgenerate[0m
+          [0m.[0m
+          [0mprompt[0m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m移除连接 [0m
+            [0mprompt_generate[0m
+          [36m</button>[39m
+        [36m</li>[39m
+        [36m<li>[39m
+          [0mgenerate[0m
+          [0m.[0m
+          [0mcandidate[0m
+          [0m → [0m
+          [0mreview[0m
+          [0m.[0m
+          [0mcandidate[0m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m移除连接 [0m
+            [0mgenerate_review[0m
+          [36m</button>[39m
+        [36m</li>[39m
+      [36m</ul>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"断开连接影响预览"[39m
+      [36m>[39m
+        [36m<h4>[39m
+          [0m断开 [0m
+          [0mprompt_generate[0m
+          [0m 的结构影响[0m
+        [36m</h4>[39m
+        [36m<p>[39m
+          [0m目标及可达下游：[0m
+          [0mgenerate、review[0m
+          [0m。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m新增缺少的必需输入：[0m
+          [0mgenerate.prompt[0m
+          [0m。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m不在该下游路径中的节点：[0m
+          [0masset、references、prompt[0m
+          [0m。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m仅从本地草稿移除这一条连接，不删除任何节点、原素材、文档或运行历史。可一次撤销；保存和再次运行仍走原流程。这里不判断模型语义或费用。[0m
+        [36m</p>[39m
+        [36m<label>[39m
+          [36m<input[39m
+            [33mtype[39m=[32m"checkbox"[39m
+          [36m/>[39m
+          [0m已核对下游影响，确认只断开此连接[0m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m确认断开到本地草稿[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m保留原连接[0m
+        [36m</button>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ✓ src/creative/MediaCanvasGraphHandoff.additive.test.tsx (15 tests) 210ms
+ ✓ src/creative/GraphStarter.additive.test.tsx (9 tests) 401ms
+   ✓ uses the actual controller change/undo/Save and never auto-runs 304ms
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 34 passed (35)
+   Start at  23:02:01
+   Duration  2.37s (transform 1.31s, setup 35ms, collect 3.20s, tests 1.18s, environment 1.53s, prepare 276ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/GraphConnectionList.additive.test.tsx > requires preview and explicit consent, consuming even a retained callback once
+TestingLibraryElementError: Found multiple elements with the text: /generate.prompt/
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<li>[39m
+  [0mprompt[0m
+  [0m.[0m
+  [0mprompt[0m
+  [0m → [0m
+  [0mgenerate[0m
+  [0m.[0m
+  [0mprompt[0m
+  [36m<button[39m
+    [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+  [36m>[39m
+    [0m移除连接 [0m
+    [0mprompt_generate[0m
+  [36m</button>[39m
+[36m</li>[39m
+
+Ignored nodes: comments, script, style
+[36m<p>[39m
+  [0m新增缺少的必需输入：[0m
+  [0mgenerate.prompt[0m
+  [0m。[0m
+[36m</p>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"图连接列表"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m已保存到草稿的连接[0m
+      [36m</h3>[39m
+      [36m<ul>[39m
+        [36m<li>[39m
+          [0masset[0m
+          [0m.[0m
+          [0masset[0m
+          [0m → [0m
+          [0mreferences[0m
+          [0m.[0m
+          [0msource_1[0m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m移除连接 [0m
+            [0masset_references[0m
+          [36m</button>[39m
+        [36m</li>[39m
+        [36m<li>[39m
+          [0mreferences[0m
+          [0m.[0m
+          [0mreferences[0m
+          [0m → [0m
+          [0mprompt[0m
+          [0m.[0m
+          [0mreferences[0m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m移除连接 [0m
+            [0mreferences_prompt[0m
+          [36m</button>[39m
+        [36m</li>[39m
+        [36m<li>[39m
+          [0mprompt[0m
+          [0m.[0m
+          [0mprompt[0m
+          [0m → [0m
+          [0mgenerate[0m
+          [0m.[0m
+          [0mprompt[0m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m移除连接 [0m
+            [0mprompt_generate[0m
+          [36m</button>[39m
+        [36m</li>[39m
+        [36m<li>[39m
+          [0mgenerate[0m
+          [0m.[0m
+          [0mcandidate[0m
+          [0m → [0m
+          [0mreview[0m
+          [0m.[0m
+          [0mcandidate[0m
+          [36m<button[39m
+            [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [36m>[39m
+            [0m移除连接 [0m
+            [0mgenerate_review[0m
+          [36m</button>[39m
+        [36m</li>[39m
+      [36m</ul>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"断开连接影响预览"[39m
+      [36m>[39m
+        [36m<h4>[39m
+          [0m断开 [0m
+          [0mprompt_generate[0m
+          [0m 的结构影响[0m
+        [36m</h4>[39m
+        [36m<p>[39m
+          [0m目标及可达下游：[0m
+          [0mgenerate、review[0m
+          [0m。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m新增缺少的必需输入：[0m
+          [0mgenerate.prompt[0m
+          [0m。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m不在该下游路径中的节点：[0m
+          [0masset、references、prompt[0m
+          [0m。[0m
+        [36m</p>[39m
+        [36m<p>[39m
+          [0m仅从本地草稿移除这一条连接，不删除任何节点、原素材、文档或运行历史。可一次撤销；保存和再次运行仍走原流程。这里不判断模型语义或费用。[0m
+        [36m</p>[39m
+        [36m<label>[39m
+          [36m<input[39m
+            [33mtype[39m=[32m"checkbox"[39m
+          [36m/>[39m
+          [0m已核对下游影响，确认只断开此连接[0m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+          [33mdisabled[39m=[32m""[39m
+        [36m>[39m
+          [0m确认断开到本地草稿[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m保留原连接[0m
+        [36m</button>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getElementError ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:20:35
+ ❯ getMultipleElementsFoundError ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:23:10
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/creative/GraphConnectionList.additive.test.tsx:17:184
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

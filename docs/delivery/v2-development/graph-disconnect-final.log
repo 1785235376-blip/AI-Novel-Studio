@@ -1,0 +1,41 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/GraphDirectorCompareDeck.additive.test.tsx (4 tests) 387ms
+ ✓ src/creative/MediaCanvasGraphHandoff.additive.test.tsx (15 tests) 209ms
+ ✓ src/creative/GraphConnectionList.additive.test.tsx (7 tests) 218ms
+ ✓ src/creative/GraphStarter.additive.test.tsx (9 tests) 411ms
+   ✓ uses the actual controller change/undo/Save and never auto-runs 310ms
+
+ Test Files  4 passed (4)
+      Tests  35 passed (35)
+   Start at  23:02:26
+   Duration  2.36s (transform 1.26s, setup 48ms, collect 3.23s, tests 1.23s, environment 1.44s, prepare 271ms)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2398 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-BkplvLLE.css      4.23 kB │ gzip:   1.09 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-DCxM7uA6.css                      217.53 kB │ gzip:  27.47 kB
+dist/assets/Health-189F5oVs.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-D4EVUbKB.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/style-DgKEB2SJ.js                      45.12 kB │ gzip:   8.41 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/LocalTutorIntegration-iWSA83P-.js      47.64 kB │ gzip:  15.65 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-BtvMYo3E.js     826.63 kB │ gzip: 247.92 kB
+dist/assets/App-DizSjKDJ.js                     2,571.65 kB │ gzip: 769.47 kB
+✓ built in 6.93s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

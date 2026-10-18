@@ -1,3 +1,4 @@
+import { GraphConnectionList } from './GraphConnectionList';
 import { GraphDirectorCompareDeck } from './GraphDirectorCompareDeck';
 import { readProjectTemplateSource } from './graphProjectTemplates';
 import { GraphProjectTemplateTools } from './GraphProjectTemplateTools';
@@ -217,7 +218,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
         connectionIssue={(source, target) => connectionIssue(draft, catalog.definitions, { id: 'pending-connection',
           source_node_id: source.nodeId, source_port: source.portId, target_node_id: target.nodeId, target_port: target.portId })}
         preferencesSource={base} connectionNodeIds={connectionNodeIds(sourcePort, targetPort)} definition={draft} nodeDefinitions={catalog.definitions} selectedNodeIds={selected} onSelectionChange={setSelected} onDefinitionChange={change} readonly={!editable} busy={busy} protectedNodeIds={protectedNodes} interactionKey={`${identity}:${base?.id || 'new'}`} onPortSelect={port => controller.selectConnectionPort(port, controller.connectionScope)} />
-      <section aria-label="图连接列表"><h3>已保存到草稿的连接</h3>{!draft.edges.length && <p>暂无连接；不相连节点可以独立保存。</p>}<ul>{draft.edges.map(edge => <li key={edge.id}>{edge.source_node_id}.{edge.source_port} → {edge.target_node_id}.{edge.target_port}<Button disabled={!editable} onClick={() => change({ ...draft, edges: draft.edges.filter(row => row.id !== edge.id) })}>移除连接 {edge.id}</Button></li>)}</ul></section>
+      <GraphConnectionList definition={draft} definitions={catalog.definitions} owner={controller.insertionScope} disabled={!editable || timelineEditor.formDirty} isCurrent={() => current() && !props.isBusy?.()} onChange={change} />
       <GraphRunPanel client={client.graphs} graph={base} targetNodeIds={selected} dirty={dirty || blocked} busy={busy} canMutate={canMutate && !externalDirty} canReview={canReview && !externalDirty} modelExecutionEnabled={!videoGraph && catalog.capabilities.model_execution && catalog.capabilities.model_execution_contract === 'creative-graph-model/1'} mediaExecutionEnabled={mediaEnabled} onDirtyChange={setExecutionDirty} isCurrent={current} read={read} mutate={mutate} requestedRunId={requestedRunId} onRunSelectionChange={reportRunSelection} />
     </>}
   </section>;
