@@ -1,3 +1,4 @@
+import { useMediaCanvasRecovery } from './useMediaCanvasRecovery';
 import { focusCanvasCard, searchCanvasCards } from './mediaCanvasSearch';
 import { MediaCanvasGraphHandoff } from './MediaCanvasGraphHandoff';
 import type { CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoff';
@@ -17,10 +18,11 @@ import { clampGraphPosition, clampGraphZoom } from './graphCanvasGeometry';
 import { mediaViewportCenter } from './mediaCanvasGeometry';
 import './mediaCanvas.css';
 const blank = (): CanvasDefinition => ({ schema_version: 1, title: '媒体素材画布', cards: [], viewport: { x: 0, y: 0, zoom: 1 } });
-type Props = Pick<StudioGraphEditorProps, 'active' | 'denied' | 'identity' | 'client' | 'canMutate' | 'busy' | 'externalDirty' | 'isCurrent' | 'read' | 'mutate' | 'isBusy'> & { onDirtyChange: (dirty: boolean) => void; graphHandoff?: CanvasGraphAssetHandoff };
+type Props = Pick<StudioGraphEditorProps, 'active' | 'denied' | 'identity' | 'client' | 'canMutate' | 'busy' | 'externalDirty' | 'isCurrent' | 'read' | 'mutate' | 'isBusy' | 'draftOwner'> & { onDirtyChange: (dirty: boolean) => void; graphHandoff?: CanvasGraphAssetHandoff };
 
 /** Display metadata only; generation, media download and execution keep their original owners. */
 export function MediaCanvasViewPanel(props: Props) {
+  const createRequest = useRef(`view-${crypto.randomUUID()}`), recoveryBusy = useRef(false);
   const history = useRef(emptyCanvasHistory()); const [, setHistoryRevision] = useState(0);
   const resetHistory = () => { history.current = emptyCanvasHistory(); setHistoryRevision(v => v + 1); };
   const [draft, setDraft] = useState(blank), [base, setBase] = useState<CanvasViewRecord>();
@@ -38,7 +40,13 @@ export function MediaCanvasViewPanel(props: Props) {
   if (authority.some((value, index) => value !== fence.current.values[index])) fence.current = { values: authority, token: {} };
   const token = fence.current.token;
   const current = () => alive.current && fence.current.token === token && live.current.active && !live.current.denied && live.current.isCurrent();
-  const locked = () => !current() || pendingRef.current || live.current.busy || !!live.current.isBusy?.() || live.current.externalDirty;
+  const locked = () => !current() || recoveryBusy.current || pendingRef.current || live.current.busy || !!live.current.isBusy?.() || live.current.externalDirty;
+  const recovery = useMediaCanvasRecovery({ owner: props.draftOwner, client: props.client, active: props.active, denied: props.denied,
+    canMutate: props.canMutate, busy: props.busy || pending, externalDirty: props.externalDirty, definition: draft, base, dirty, uncertain,
+    requestId: createRequest.current, isCurrent: current, read: props.read, onBusy: value => { recoveryBusy.current = value; },
+    onRestore: (snapshot, record) => { if (!current() || !live.current.canMutate) return; resetHistory(); setBase(record);
+      const restored = structuredClone(snapshot.definition); draftRef.current = restored; setDraft(restored); createRequest.current = snapshot.request_id;
+      setUncertain(snapshot.uncertain); setSelected(''); setSelectedIds([]); setDiscard(false); setNotice('已恢复本机媒体草稿，尚未保存或执行。'); live.current.onDirtyChange(true); } });
   const editable = !locked() && props.canMutate && !uncertain;
   useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   useEffect(() => { props.onDirtyChange(dirty); }, [dirty, props.onDirtyChange]);
@@ -74,16 +82,17 @@ export function MediaCanvasViewPanel(props: Props) {
       if (key !== 'z' && key !== 'y' || !editable || !(redo ? history.current.future.length : history.current.past.length)) return;
       event.preventDefault(); travel(redo);
     }}>
+    {recovery.panel}
     <h3>媒体素材画布</h3><p>独立保存素材引用与位置。此视图不执行生成，也不改变执行图；选择卡片后可按需核验预览，仍复用原素材面板。</p>
     <div className="creative-actions">
       <Button disabled={!editable || !history.current.past.length} onClick={() => travel(false)}>撤销媒体画布编辑</Button>
       <Button disabled={!editable || !history.current.future.length} onClick={() => travel(true)}>重做媒体画布编辑</Button>
       <Button disabled={pending || props.busy || props.externalDirty} onClick={() => void work(false, () => client.list(), value => setRows(value.items))}>读取已存画布</Button>
       <Button disabled={!editable || draft.cards.some(c => !c.asset)} onClick={() => {
-        const snapshot = draftRef.current; const requestId = `view-${crypto.randomUUID()}`;
+        const snapshot = draftRef.current; const requestId = createRequest.current;
         void work(true, () => base ? client.save(base.id, base.version, snapshot) : client.create(snapshot, requestId), row => { adopt(row); setNotice('已保存媒体画布'); });
       }}>保存媒体画布</Button>
-      <Button disabled={pending || props.externalDirty || dirty && !discard} onClick={() => { if (locked() || dirty && !discard) return; const next = blank(); resetHistory(); setBase(undefined); setDraft(next); draftRef.current = next; setSelected(''); setSelectedIds([]); setUncertain(false); setDiscard(false); live.current.onDirtyChange(false); }}>新建空白视图</Button>
+      <Button disabled={pending || props.externalDirty || dirty && !discard} onClick={() => { if (locked() || dirty && !discard) return; const next = blank(); createRequest.current = `view-${crypto.randomUUID()}`; resetHistory(); setBase(undefined); setDraft(next); draftRef.current = next; setSelected(''); setSelectedIds([]); setUncertain(false); setDiscard(false); live.current.onDirtyChange(false); }}>新建空白视图</Button>
       <Button disabled={!editable} onClick={() => void work(false, () => props.client.assets(), value => setAssets(value.items.filter(a => ['image', 'video', 'audio'].includes(a.kind))))}>读取可用素材</Button>
     </div>
     <p>本地撤销最多 20 步、总快照不超过 2 MB；大画布可能提前淘汰旧记录。保存或重新读取后重置。快捷键 Ctrl／⌘ Z，重做 Ctrl Y 或 Shift Z；文字输入框保留自身撤销。</p>
