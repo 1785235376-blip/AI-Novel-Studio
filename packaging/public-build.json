@@ -484,6 +484,7 @@
     "app/structured_log.py",
     "app/trusted_sessions.py",
     "app/video_assembly_api.py",
+    "app/vision_ocr_runtime.py",
     "app/visual_workflow.py",
     "app/workflow.py",
     "app/workflow_api.py",

@@ -1,0 +1,9 @@
+........................................................................ [ 88%]
+.........                                                                [100%]
+=============================== warnings summary ===============================
+tests/test_vision_ocr_runtime_additive.py::test_construction_has_no_call_and_uses_original_registries
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+81 passed, 1 warning in 6.17s

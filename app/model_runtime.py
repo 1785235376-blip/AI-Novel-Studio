@@ -14,6 +14,7 @@ from .stable_identity import IdentityMutationError, StableIdentityStore, canonic
 
 if TYPE_CHECKING:
     from .audio_processing_runtime import AudioProcessingProvider
+    from .vision_ocr_runtime import VisionOCRProvider
 
 
 class Modality(str, Enum):
@@ -228,11 +229,11 @@ class LegacyTextProviderAdapter:
 
 class ProviderRegistry:
     def __init__(self, identity_store: StableIdentityStore | None = None) -> None:
-        self._providers: dict[str, TextProvider | AudioProcessingProvider] = {}
+        self._providers: dict[str, TextProvider | AudioProcessingProvider | VisionOCRProvider] = {}
         self._descriptors: dict[str, ProviderDescriptor] = {}
         self.identity_store = identity_store
 
-    def register(self, descriptor: ProviderDescriptor, provider: TextProvider | AudioProcessingProvider, *, replace: bool = False) -> None:
+    def register(self, descriptor: ProviderDescriptor, provider: TextProvider | AudioProcessingProvider | VisionOCRProvider, *, replace: bool = False) -> None:
         if descriptor.provider_id in self._providers and not replace:
             raise ValueError(f"provider already registered: {descriptor.provider_id}")
         if self.identity_store is not None:
@@ -245,7 +246,7 @@ class ProviderRegistry:
         self._providers[descriptor.provider_id] = provider
         self._descriptors[descriptor.provider_id] = descriptor
 
-    def resolve(self, provider_id: str) -> TextProvider | AudioProcessingProvider:
+    def resolve(self, provider_id: str) -> TextProvider | AudioProcessingProvider | VisionOCRProvider:
         try:
             descriptor, provider = self._descriptors[provider_id], self._providers[provider_id]
         except KeyError as exc:
@@ -387,3 +388,6 @@ class GenerationRuntime:
         # audio route is registered or launched by constructing this node.
         from .audio_processing_runtime import AudioProcessingModelNode
         self.audio_processing_node = AudioProcessingModelNode(providers, models)
+        # This constructs a typed seam only. Research dispatch remains separately gated.
+        from .vision_ocr_runtime import VisionOCRModelNode
+        self.vision_ocr_node = VisionOCRModelNode(providers, models)
