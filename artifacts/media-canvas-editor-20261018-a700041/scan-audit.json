@@ -1,0 +1,151 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "68b1fb22a66eb6943c2d4eaafbad1d5bf1a8c205",
+      "path": "docs/MEDIA_CANVAS_DISPLAY_EDITOR.md",
+      "bytes": 3942,
+      "sha256": "69c1762cbe8047a4dc63605d81900851525e28e5407e12f5784b70396913f54b"
+    },
+    {
+      "blob": "f3db62cf5399068650fd2270a67b5cf0460015cd",
+      "path": "docs/delivery/v2-development/canvas-view-client.json",
+      "bytes": 684448,
+      "sha256": "ac92c4ec64e4d0f763de17a7b7b8052658a09d8ae1f9b5a45387d73ad0735092"
+    },
+    {
+      "blob": "51deb802b28d481e18e571c09b93893decb0a289",
+      "path": "docs/delivery/v2-development/canvas-view-client.log",
+      "bytes": 2051,
+      "sha256": "0e3761ba351f0857eb63bdb02cb8c61ecf2b6e7d3e35efe1cdb21a28d72b11a4"
+    },
+    {
+      "blob": "29cc0724a8f502ddafdd7ed9b237ad21d246bdb6",
+      "path": "docs/delivery/v2-development/media-canvas-browser-probe.json",
+      "bytes": 686006,
+      "sha256": "cb869bc3ca4255de5ab8e688976e26d53dd91379a643e3fe20f63abf0c22c82e"
+    },
+    {
+      "blob": "41512d0eef022ae75ccbb3ab6e85a74d0427f393",
+      "path": "docs/delivery/v2-development/media-canvas-browser-probe.log",
+      "bytes": 1294,
+      "sha256": "bf2dcf393b8f898ec39002359fc7825ee17fe221bdea9335320fd3c2583ddf06"
+    },
+    {
+      "blob": "e6ebb42f4837a17635053f827faed6dcab7e5e5e",
+      "path": "docs/delivery/v2-development/media-canvas-final-bounds.json",
+      "bytes": 686055,
+      "sha256": "b1fedee99be7d5dce199e397f6d32436dd944c0306561a2210074ad82e5012ac"
+    },
+    {
+      "blob": "003a4bca47cfd8866bad35db768c3d28ad6a679c",
+      "path": "docs/delivery/v2-development/media-canvas-final-bounds.log",
+      "bytes": 488,
+      "sha256": "2cecc64e693fbebf37bdb638236058818fbfe6adf36b20089f6a04f9d5b2072e"
+    },
+    {
+      "blob": "6515a4ead601040e98dff0f9a409a5f33c37d3a1",
+      "path": "docs/delivery/v2-development/media-canvas-owner.json",
+      "bytes": 686149,
+      "sha256": "c60a408f404eb572515b8f8ef3bb5b435ac319b57c9f4afeabd676f653d896a2"
+    },
+    {
+      "blob": "cb1fe229913204cd55f47fc6929d2dff1e3e3aaf",
+      "path": "docs/delivery/v2-development/media-canvas-owner.log",
+      "bytes": 3366,
+      "sha256": "2548087a1938f13c834df3bc026986a33e8c7256eb942b0fc77b18b87acbb77d"
+    },
+    {
+      "blob": "5fab46e32d7676edb5804d20547bf37b321de28b",
+      "path": "docs/delivery/v2-development/media-canvas-ui-final.json",
+      "bytes": 685827,
+      "sha256": "d4a8f984ad5d8b4fe4ab013ae8c6e3e00c92a650348af9a46c8548c527268887"
+    },
+    {
+      "blob": "70529dc1eeb7c3628ffc79687844896442a97ebe",
+      "path": "docs/delivery/v2-development/media-canvas-ui-final.log",
+      "bytes": 2198,
+      "sha256": "3df0871413eccebfad3dfb9be9bd8fab00436c9dd641250cc3d630764cb6beae"
+    },
+    {
+      "blob": "7d720a045e7eb0fe016194c3716d74d51e2b9169",
+      "path": "docs/delivery/v2-development/media-canvas-ui.json",
+      "bytes": 685773,
+      "sha256": "6c87eb234f73b91c1fb1c10bed13b2fc7d2b68797d9a4e087fd3b328e54054c1"
+    },
+    {
+      "blob": "17cd4e20cce2bb964a02b68b6608e3c152ce6a66",
+      "path": "docs/delivery/v2-development/media-canvas-ui.log",
+      "bytes": 11569,
+      "sha256": "8a8c3e2fe92e7390b9282aed27df2cf571142c690d5a732ef96bcb9b23d2bd85"
+    },
+    {
+      "blob": "443f2305465bef55008265a0b3249683e4992d5b",
+      "path": "frontend/src/creative/MediaCanvasOwner.integration.test.tsx",
+      "bytes": 2039,
+      "sha256": "cb167221a6012c24449ecc117f6045e87e37e02bb4993bacb7a7c1fc6f163b20"
+    },
+    {
+      "blob": "83d065f5ff1243c77c972cf29379ff2698f72563",
+      "path": "frontend/src/creative/MediaCanvasViewPanel.additive.test.tsx",
+      "bytes": 6680,
+      "sha256": "a384f151056967d645b94af9fdf50f25ee370761b68038d006f7be4ad11a5f27"
+    },
+    {
+      "blob": "0291cfe4f627578be8a235bd98cd1ec3c9dcaea9",
+      "path": "frontend/src/creative/MediaCanvasViewPanel.tsx",
+      "bytes": 10820,
+      "sha256": "51bbeba2de8a9a2fafb99dfa24993472618a5f445dde5d538381b412557d4e8c"
+    },
+    {
+      "blob": "5b4a05c1a8b3931636012b0f6e9e4bcd22994b9c",
+      "path": "frontend/src/creative/mediaCanvas.css",
+      "bytes": 1214,
+      "sha256": "3c00955ae75dca0e0d63b8ef5eab1ef295b456a28adc66d895ece0deb3b10fae"
+    },
+    {
+      "blob": "30ab4682a7dbfb799543006f487fe69bb89aea4b",
+      "path": "frontend/src/creative/mediaCanvasGeometry.additive.test.ts",
+      "bytes": 1265,
+      "sha256": "672f5d9ce83a931576acfe58aa8eacd6e230a0d1c461cd44c8daa5c01a5fcc0b"
+    },
+    {
+      "blob": "b84e85bbe0c4d8e78ce73af2e44e5d47c9a8853c",
+      "path": "frontend/src/creative/mediaCanvasGeometry.ts",
+      "bytes": 1310,
+      "sha256": "fee78cbe0fa1a7f79ba7c989ae2c2e3d9c43673a896420f37bfbd61b2bffb8ff"
+    },
+    {
+      "blob": "f4462b6156702b75377b7001dd68eba8d78226c6",
+      "path": "frontend/src/creative/studioCanvasViewClient.additive.test.ts",
+      "bytes": 4778,
+      "sha256": "faefa0ff6e3b4ce8c06ddd1cc6df9abf04cb91de4bf0920c515f4cc03f29fede"
+    },
+    {
+      "blob": "c3b4ce6309c83efdd13a58f2068d462fd175f58c",
+      "path": "frontend/src/creative/studioCanvasViewClient.ts",
+      "bytes": 8069,
+      "sha256": "c28a995b40e1658d36bb04cb27abab2fde15b7894a69781a879bf6140e25cdb5"
+    },
+    {
+      "blob": "e3b2ba99c15423044b8548961e8804c34d8cfb8e",
+      "path": "frontend/src/creative/studioGraphClient.ts",
+      "bytes": 107781,
+      "sha256": "159a338fea25a69b6354a700a6e7340e889dfd05b349bd5b317d7b142dd33524"
+    },
+    {
+      "blob": "75f760e647f7515bb4490fd19c40096378ef7c20",
+      "path": "frontend/src/creative/useStudioGraphEditor.tsx",
+      "bytes": 4223,
+      "sha256": "fa18ad85394771b4dd8be3a6f851add41b772a708d2d6be3b5b2bc1f42e89039"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
