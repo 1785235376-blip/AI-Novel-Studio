@@ -940,11 +940,17 @@ class DirectorModelCoordinator:
         return parse_screenplay_output(row, source, output, max_output_bytes=MAX_OUTPUT_BYTES, frozen_mapping=mapping)
 
     def _require_independent_transport_v1(self, ctx, rid):
+        return self._require_independent_transport(ctx, rid, screenplay=False)
+
+    def _require_independent_transport(self, ctx, rid, *, screenplay=False):
+        if type(screenplay) is not bool: raise ValueError("DIRECTOR_MODEL_TRANSPORT_OPTION_INVALID")
         row = self.proposals._owned(ctx.novel_id, ctx.scope, ctx.actor, rid)
         preview = row.get("model_preview")
         if preview is not None:
             binding = preview.get("source_binding") or {}
-            if binding.get("contract") != "CREATIVE_DIRECTOR_SOURCE_V1" or binding.get("source_kind") != "STORYBOARD":
+            expected_contract = "CREATIVE_DIRECTOR_SCREENPLAY_SOURCE_V2" if screenplay else "CREATIVE_DIRECTOR_SOURCE_V1"
+            expected_kind = "SCREENPLAY" if screenplay else "STORYBOARD"
+            if binding.get("contract") != expected_contract or binding.get("source_kind") != expected_kind:
                 raise ValueError("DIRECTOR_MODEL_TRANSPORT_SOURCE_VERSION_UNSUPPORTED")
 
     def _independent_candidates_locked(self, ctx, rid, row, source, guard, host_authority):

@@ -97,15 +97,41 @@ class PendingReceipt(_Strict):
     provenance: PendingProvenance
 
 
-def project_preview(row):
+class ScreenplayPreviewReceipt(PreviewReceipt):
+    contract: Literal['DIRECTOR_SCREENPLAY_MODEL_PREVIEW_V2'] = 'DIRECTOR_SCREENPLAY_MODEL_PREVIEW_V2'
+    source_mode: Literal['SCREENPLAY'] = 'SCREENPLAY'
+
+
+class ScreenplaySourceMapping(_Strict):
+    note_id: Identifier
+    scene_id: Identifier
+    source_sequence: int = Field(ge=1, le=10000)
+    number: int = Field(ge=1, le=200)
+
+
+class ScreenplayPendingProvenance(PendingProvenance):
+    source_mode: Literal['SCREENPLAY']
+    source_mapping: list[ScreenplaySourceMapping] = Field(min_length=1, max_length=200)
+
+
+class ScreenplayPendingReceipt(PendingReceipt):
+    contract: Literal['DIRECTOR_SCREENPLAY_MODEL_PENDING_REVIEW_V2'] = 'DIRECTOR_SCREENPLAY_MODEL_PENDING_REVIEW_V2'
+    provenance: ScreenplayPendingProvenance
+
+
+def project_preview(row, *, screenplay=False):
+    if type(screenplay) is not bool: raise ValueError("DIRECTOR_MODEL_TRANSPORT_OPTION_INVALID")
     preview = row['model_preview']
     route = preview['broker_decision']['chosen']
     binding = preview['source_binding']
-    if binding.get('contract') != 'CREATIVE_DIRECTOR_SOURCE_V1' or binding.get('source_kind') != 'STORYBOARD':
+    expected_contract = 'CREATIVE_DIRECTOR_SCREENPLAY_SOURCE_V2' if screenplay else 'CREATIVE_DIRECTOR_SOURCE_V1'
+    expected_kind = 'SCREENPLAY' if screenplay else 'STORYBOARD'
+    if binding.get('contract') != expected_contract or binding.get('source_kind') != expected_kind:
         raise ValueError('DIRECTOR_MODEL_TRANSPORT_SOURCE_VERSION_UNSUPPORTED')
     if preview['allow_synthetic'] is not False or route['synthetic'] is not False:
         raise ValueError('DIRECTOR_MODEL_NON_SYNTHETIC_REQUIRED')
-    return PreviewReceipt(proposal_id=row['id'], version=row['version'],
+    model = ScreenplayPreviewReceipt if screenplay else PreviewReceipt
+    return model(proposal_id=row['id'], version=row['version'],
         reviewed_preview_digest=preview['preview_digest'], prompt=preview['prompt'],
         parameters=preview['parameters'], route_id=preview['route_id'], route_fingerprint=preview['route_fingerprint'],
         provider_id=route['provider_id'], model_id=route['model_id'],
@@ -113,10 +139,13 @@ def project_preview(row):
         source_digest=binding['source_digest']).model_dump()
 
 
-def project_pending(candidate):
+def project_pending(candidate, *, screenplay=False):
+    if type(screenplay) is not bool: raise ValueError("DIRECTOR_MODEL_TRANSPORT_OPTION_INVALID")
     provenance = candidate['provenance']
     # Reservation internals, raw output digest and any future fields are not
     # automatically added to the public projection.
-    selected = {key: provenance[key] for key in PendingProvenance.model_fields}
-    return PendingReceipt(**{key: candidate[key] for key in ('proposal_id', 'expected_version',
+    provenance_model = ScreenplayPendingProvenance if screenplay else PendingProvenance
+    model = ScreenplayPendingReceipt if screenplay else PendingReceipt
+    selected = {key: provenance[key] for key in provenance_model.model_fields}
+    return model(**{key: candidate[key] for key in ('proposal_id', 'expected_version',
         'director_notes', 'output_digest', 'visual_target')}, provenance=selected).model_dump()

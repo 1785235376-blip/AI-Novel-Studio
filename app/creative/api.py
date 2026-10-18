@@ -274,7 +274,8 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
                     except ValueError:
                         pass  # Never advertise unsupported durable persistence.
                     else:
-                        result = {**result, "independent_director_contract": "CREATIVE_DIRECTOR_MODEL_V1"}
+                        result = {**result, "independent_director_contract": "CREATIVE_DIRECTOR_MODEL_V1",
+                            "independent_screenplay_contract": "CREATIVE_DIRECTOR_SCREENPLAY_MODEL_V2"}
             except Exception:
                 model_guard()
                 raise
@@ -391,8 +392,12 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
         from .director_observation_api import create_director_observation_router
         router.include_router(create_director_observation_router(service, invoke,
             require_host_session=require_host_session, model_host_authority=model_host_authority))
+        router.include_router(create_director_observation_router(service, invoke,
+            require_host_session=require_host_session, model_host_authority=model_host_authority, screenplay=True))
     if director_model_actions:
         from .director_model_api import create_director_model_router
         router.include_router(create_director_model_router(service, invoke,
             require_host_session=require_host_session, model_host_authority=model_host_authority))
+        router.include_router(create_director_model_router(service, invoke,
+            require_host_session=require_host_session, model_host_authority=model_host_authority, screenplay=True))
     return router

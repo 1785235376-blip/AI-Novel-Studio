@@ -1,5 +1,11 @@
 # Studio V2 continuation checkpoint — 2026-10-17
 
+## Versioned screenplay HTTP transport (2026-10-18 02:39 UTC)
+
+The same Director adapter factories now explicitly compose model-v2 routes for SCREENPLAY under the existing construction-time action/observation flags and Host/actor guards. V1 remains STORYBOARD-only. V2 preview/pending receipts have distinct closed discriminators and scene mappings rather than fabricated shot IDs. Original status, cancellation, terminal evidence, human review, read-only reconciliation and DRAFT owners are reused. Durable capability advertisement includes the new screenplay contract only when the original backend supports pending persistence.
+
+Real mounted File HTTP test completed preview→one fixture-wire job→restart/fresh Host→pending→human review→DRAFT/reopen, with no automatic replay. Wrong-source and missing-Host actions failed before mutation. New plus unchanged V1 transport checks:49 PASS. The captured wire is retained in the owned test runtime for frontend decoder work. No live-provider/browser or frontend integration claim yet.
+
 ## Independent screenplay private lifecycle (2026-10-18 02:36 UTC)
 
 The explicit screenplay preview now feeds the original private Job/broker/coordinator path under its V2 source discriminator. Frozen scene/note associations survive preview clearing and are validated again against the exact original source. Original persisted terminal evidence accepts the discriminated V1 storyboard or V2 screenplay identity without relaxing either pair. Exact historical completion can publish pending candidates, reopen under fresh Host authority after restart, accept explicit human edits, save an original Director DRAFT and reopen it. Existing source/incarnation, host, local known-zero provider, reservation, digest and no-replay protections remain in the original owners.

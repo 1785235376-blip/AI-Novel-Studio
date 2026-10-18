@@ -88,15 +88,17 @@ def create_director_owner_invoker(service, invoke, *, require_host_session, mode
     return call
 
 
-def create_director_observation_router(service, invoke, *, require_host_session, model_host_authority):
+def create_director_observation_router(service, invoke, *, require_host_session, model_host_authority, screenplay=False):
     """Construction-time opt-in; original runtime feature and Host guards remain authoritative."""
+    if type(screenplay) is not bool: raise ValueError("DIRECTOR_MODEL_TRANSPORT_OPTION_INVALID")
+    model_path = "model-v2" if screenplay else "model-v1"
     router = APIRouter(route_class=DirectorObservationRoute)
     call = create_director_owner_invoker(service, invoke,
         require_host_session=require_host_session, model_host_authority=model_host_authority)
 
     def observe(request, nid, token, branch, rid, action, body=None):
         def operation(generation, ctx, current, authority):
-            generation._require_independent_transport_v1(ctx, rid)
+            generation._require_independent_transport(ctx, rid, screenplay=screenplay)
             if action == "status":
                 raw = generation._read_independent_status(ctx, rid, current, host_authority=authority)
                 return StatusReceipt.model_validate(raw).model_dump()
@@ -109,17 +111,17 @@ def create_director_observation_router(service, invoke, *, require_host_session,
             "status" if action == "status" else "adopted-draft", operation,
             error_code="DIRECTOR_OBSERVATION_UNAVAILABLE")
 
-    @router.get("/director-proposals/{rid}/model-v1/status")
+    @router.get(f"/director-proposals/{{rid}}/{model_path}/status")
     def status(nid: str, rid: str, request: Request,
                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return observe(request, nid, x_session_token, x_branch_id, rid, "status")
 
-    @router.get("/director-proposals/{rid}/model-v1/adopted-draft")
+    @router.get(f"/director-proposals/{{rid}}/{model_path}/adopted-draft")
     def adopted(nid: str, rid: str, request: Request,
                 x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return observe(request, nid, x_session_token, x_branch_id, rid, "adopted")
 
-    @router.post("/director-proposals/{rid}/model-v1/reconcile-review")
+    @router.post(f"/director-proposals/{{rid}}/{model_path}/reconcile-review")
     def reconcile(nid: str, rid: str, request: Request, body: DirectorProposalReview,
                   x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return observe(request, nid, x_session_token, x_branch_id, rid, "reconcile", body)

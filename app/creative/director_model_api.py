@@ -10,23 +10,26 @@ from .director_transport_contract import PreviewInput, DispatchInput, PrepareInp
 from .models import DirectorProposalReview
 
 
-def create_director_model_router(service, invoke, *, require_host_session, model_host_authority):
+def create_director_model_router(service, invoke, *, require_host_session, model_host_authority, screenplay=False):
+    if type(screenplay) is not bool: raise ValueError("DIRECTOR_MODEL_TRANSPORT_OPTION_INVALID")
+    model_path = "model-v2" if screenplay else "model-v1"
     router = APIRouter(route_class=DirectorObservationRoute)
     call = create_director_owner_invoker(service, invoke,
         require_host_session=require_host_session, model_host_authority=model_host_authority)
 
     def action(request, nid, token, branch, rid, method, body=None):
         def operation(generation, ctx, current, authority):
-            generation._require_independent_transport_v1(ctx, rid)
+            generation._require_independent_transport(ctx, rid, screenplay=screenplay)
             # Durable terminal evidence is currently implemented by the File
             # owner only. Reject unsupported backends before preview writes.
             generation._pending_repository()
             if method == 'preview':
-                row = generation._preview_independent_review(ctx, rid, body.model_dump(), current, host_authority=authority)
-                return project_preview(row)
+                preview_method = generation._preview_independent_screenplay if screenplay else generation._preview_independent_review
+                row = preview_method(ctx, rid, body.model_dump(), current, host_authority=authority)
+                return project_preview(row, screenplay=screenplay)
             if method == 'read-preview':
                 row = generation._read_independent_preview(ctx, rid, current, host_authority=authority)
-                return project_preview(row)
+                return project_preview(row, screenplay=screenplay)
             if method == 'dispatch':
                 generation._dispatch_independent(ctx, rid, body.model_dump(), current,
                     host_authority=authority, terminal_evidence=True)
@@ -34,10 +37,10 @@ def create_director_model_router(service, invoke, *, require_host_session, model
                 return StatusReceipt.model_validate(raw).model_dump()
             if method == 'prepare-review':
                 raw = generation._prepare_independent_pending_review(ctx, rid, body.model_dump(), current, host_authority=authority)
-                return project_pending(raw)
+                return project_pending(raw, screenplay=screenplay)
             if method == 'pending-review':
                 raw = generation._read_independent_pending_review(ctx, rid, current, host_authority=authority)
-                return project_pending(raw)
+                return project_pending(raw, screenplay=screenplay)
             if method == 'review':
                 generation._review_independent_pending(ctx, rid, body, current, host_authority=authority)
                 raw = generation._read_independent_adopted(ctx, rid, current, host_authority=authority)
@@ -55,37 +58,37 @@ def create_director_model_router(service, invoke, *, require_host_session, model
         return call(request, nid, token, branch, rid, permission, kind, operation,
             error_code='DIRECTOR_MODEL_ACTION_NOT_CONFIRMED')
 
-    @router.post('/director-proposals/{rid}/model-v1/preview')
+    @router.post(f'/director-proposals/{{rid}}/{model_path}/preview')
     def preview(nid: str, rid: str, request: Request, body: PreviewInput,
                 x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return action(request,nid,x_session_token,x_branch_id,rid,'preview',body)
 
-    @router.get('/director-proposals/{rid}/model-v1/preview')
+    @router.get(f'/director-proposals/{{rid}}/{model_path}/preview')
     def read_preview(nid: str, rid: str, request: Request,
                      x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return action(request,nid,x_session_token,x_branch_id,rid,'read-preview')
 
-    @router.post('/director-proposals/{rid}/model-v1/dispatch')
+    @router.post(f'/director-proposals/{{rid}}/{model_path}/dispatch')
     def dispatch(nid: str, rid: str, request: Request, body: DispatchInput,
                  x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return action(request,nid,x_session_token,x_branch_id,rid,'dispatch',body)
 
-    @router.post('/director-proposals/{rid}/model-v1/prepare-review')
+    @router.post(f'/director-proposals/{{rid}}/{model_path}/prepare-review')
     def prepare(nid: str, rid: str, request: Request, body: PrepareInput,
                 x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return action(request,nid,x_session_token,x_branch_id,rid,'prepare-review',body)
 
-    @router.get('/director-proposals/{rid}/model-v1/pending-review')
+    @router.get(f'/director-proposals/{{rid}}/{model_path}/pending-review')
     def pending(nid: str, rid: str, request: Request,
                 x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return action(request,nid,x_session_token,x_branch_id,rid,'pending-review')
 
-    @router.post('/director-proposals/{rid}/model-v1/review')
+    @router.post(f'/director-proposals/{{rid}}/{model_path}/review')
     def review(nid: str, rid: str, request: Request, body: DirectorProposalReview,
                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return action(request,nid,x_session_token,x_branch_id,rid,'review',body)
 
-    @router.post('/director-proposals/{rid}/model-v1/cancel')
+    @router.post(f'/director-proposals/{{rid}}/{model_path}/cancel')
     def cancel(nid: str, rid: str, request: Request, body: CancelInput,
                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return action(request,nid,x_session_token,x_branch_id,rid,'cancel',body)
