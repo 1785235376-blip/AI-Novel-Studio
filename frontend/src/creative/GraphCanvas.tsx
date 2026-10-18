@@ -3,11 +3,11 @@ import type { CSSProperties, KeyboardEvent, PointerEvent } from 'react';
 import { Hand, MousePointer2, Trash2, ZoomIn, ZoomOut } from 'lucide-react';
 import { Badge, Button } from '../ui/primitives';
 import { GRAPH_NODE_LABELS } from './studioGraphLabels';
-import type { StudioGraphDefinition, StudioGraphPosition, StudioGraphViewPreferences } from './studioGraphTypes';
+import type { StudioGraphCatalogDefinition, StudioGraphDefinition, StudioGraphPosition, StudioGraphViewPreferences } from './studioGraphTypes';
 import {
   GRAPH_MAX_ZOOM, GRAPH_MIN_ZOOM, GRAPH_NODE_HEADER_HEIGHT, GRAPH_NODE_WIDTH, GRAPH_PORT_ROW_HEIGHT,
   alignGraphNodes, clampGraphPosition, snapGraphNodes, graphEdgePath, graphNodeHeight, graphNodesInScreenRect,
-  graphSelectionRect, graphPortPosition, graphScreenToWorld, isGraphEditableTarget, moveGraphNodes, removeGraphNodes, zoomGraphAt,
+  graphSelectionRect, graphPortPosition, graphScreenToWorld, isGraphEditableTarget, moveGraphNodes, zoomGraphAt,
 } from './graphCanvasGeometry';
 import type { GraphAlignment, GraphCanvasNodeDefinition, GraphCanvasRect } from './graphCanvasGeometry';
 import { collapseGraphDisplay, createGraphDisplayIndex, projectGraphDisplay, projectGraphMiniMap, GRAPH_VIEW_OVERSCAN } from './graphCanvasPresentation';
@@ -16,6 +16,7 @@ import { GraphDependencyInspector } from './GraphDependencyInspector';
 import { GraphVisualGroups } from './GraphVisualGroups';
 import './graphCanvas.css';
 import { GraphNoteEditor, GraphNoteCards } from './GraphCanvasNotes';
+import { GraphNodeRemovalPreview, useGraphNodeRemoval } from './GraphNodeRemovalControl';
 
 export type { GraphCanvasNodeDefinition, GraphCanvasPort } from './graphCanvasGeometry';
 export type GraphCanvasPortSelection = { nodeId: string; portId: string; direction: 'input' | 'output' };
@@ -35,6 +36,11 @@ export type GraphCanvasProps = {
   onRequestInsertion?: (position: StudioGraphPosition, scope: object, restoreFocus: () => void) => boolean;
   onConnectionStage?: (source: GraphCanvasPortSelection, target: GraphCanvasPortSelection, scope: object) => boolean;
   protectedNodeIds?: readonly string[];
+  /** Exact versioned catalog is required for structural removal analysis. */
+  removalDefinitions?: readonly StudioGraphCatalogDefinition[];
+  removalOwner?: object;
+  removalDisabled?: boolean;
+  isRemovalCurrent?: () => boolean;
   /** Pending connection endpoints owned by the existing editor controller. */
   connectionNodeIds?: readonly string[];
   /** Change with the active project/actor owner, even when the definition identity is reused. */
@@ -65,7 +71,9 @@ type ConnectionPreview = { start: StudioGraphPosition; end: StudioGraphPosition;
 const sameIds = (a: readonly string[], b: readonly string[]) => a.length === b.length && a.every((id, index) => id === b[index]);
 
 export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSelectionChange, onDefinitionChange,
-  onPortSelect, connectionIssue, connectionScope, onConnectionStage, insertionScope, onRequestInsertion, onInsertionInteraction, protectedNodeIds = [], connectionNodeIds = [], interactionKey, preferencesSource, readonly = false, busy = false }: GraphCanvasProps) {
+  onPortSelect, connectionIssue, connectionScope, onConnectionStage, insertionScope, onRequestInsertion, onInsertionInteraction, protectedNodeIds = [],
+  removalDefinitions = [], removalOwner, removalDisabled = false, isRemovalCurrent,
+  connectionNodeIds = [], interactionKey, preferencesSource, readonly = false, busy = false }: GraphCanvasProps) {
   const blocked = readonly || busy;
   const [selectedNote, setSelectedNote] = useState<string | null>(null);
   useEffect(() => { setSelectedNote(null); }, [interactionKey, preferencesSource]);
@@ -150,6 +158,13 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
     miniMapPaths[selectedSet.has(card.id) ? 1 : 0] += `M${x} ${y}h${Math.max(width, 1)}v${Math.max(height, 1)}h${-Math.max(width, 1)}Z`;
   }
   const removable = selected.filter(id => !protectedNodeIds.includes(id));
+  const removalScope = useMemo(() => ({ removalOwner, insertionScope, interactionKey }), [removalOwner, insertionScope, interactionKey]);
+  const removal = useGraphNodeRemoval({ definition, nodeIds: selected, selectionIds: selectedNodeIds,
+    protectedNodeIds, definitions: removalDefinitions, owner: removalScope,
+    sourceOwner: preferencesSource, disabled: blocked || removalDisabled || !!activeGesture,
+    isCurrent: () => !gesture.current && (!isRemovalCurrent || isRemovalCurrent()),
+    onApply: (next, removed) => { onDefinitionChange(next, true); onSelectionChange(selected.filter(id => !removed.includes(id))); },
+  });
 
   useEffect(() => {
     const element = viewportRef.current;
@@ -366,8 +381,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
 
   const deleteSelected = () => {
     if (blocked || !removable.length || gesture.current) return;
-    onDefinitionChange(removeGraphNodes(definition, removable, protectedNodeIds), true);
-    onSelectionChange(selected.filter(id => !removable.includes(id)));
+    removal.inspect();
   };
 
   const zoomBy = (factor: number) => {
@@ -408,7 +422,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
         && requestInsertion({ x: rect.width / 2, y: rect.height / 2 })) event.preventDefault();
       return;
     }
-    if (event.key === 'Escape') { event.preventDefault(); if (validAlignment) { setAlignment(null); return; } if (gesture.current) cancelGesture(); else onSelectionChange([]); return; }
+    if (event.key === 'Escape') { event.preventDefault(); if (removal.candidate) { removal.cancel(); return; } if (validAlignment) { setAlignment(null); return; } if (gesture.current) cancelGesture(); else onSelectionChange([]); return; }
     if (busy) return;
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'a') { event.preventDefault(); onSelectionChange(definition.nodes.map(node => node.id)); return; }
     if (blocked || gesture.current) return;
@@ -432,8 +446,9 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       <span className="graph-canvas__count" role="status">{selected.length ? `已选 ${selected.length} 个节点` : `${definition.nodes.length} 个节点 · ${definition.edges.length} 条连接`}</span>
       <Button type="button" variant="ghost" aria-label="显示小地图" aria-pressed={showMiniMap} onKeyDown={event => event.stopPropagation()} onClick={() => updateView({ show_minimap: !showMiniMap })}>小地图</Button>
       {readonly && <Badge>只读</Badge>}
-      <Button type="button" variant="ghost" aria-label="删除所选图节点" disabled={blocked || !removable.length} title={selected.length && !removable.length ? '已保存的资产引用只能移动或停用' : '删除所选节点及其连接'} onClick={deleteSelected}><Trash2 size={16} /></Button>
+      <Button type="button" variant="ghost" aria-label="删除所选图节点" disabled={blocked || removalDisabled || !!activeGesture || !removable.length} title={selected.length && !removable.length ? '已保存的来源引用只能移动或停用' : '预览移除所选节点及其连接的结构影响'} onClick={deleteSelected}><Trash2 size={16} /></Button>
     </header>
+    <GraphNodeRemovalPreview removal={removal} />
     <GraphNodeNavigator nodes={definition.nodes} definitions={nodeDefinitions} owner={interactionKey}
       busy={busy || !!activeGesture} readonly={readonly} onNavigate={id => {
         if (busy || gesture.current) return;
@@ -670,7 +685,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       </Button>
       <p id={`${descriptionId}-minimap`} className="graph-canvas__help">小地图：全图节点与当前视口。点击定位；方向键平移，Shift 加速；Enter / 空格居中。蓝色节点表示已选。{blocked ? '当前不可修改视图。' : ''}</p>
     </div>}
-    <p id={descriptionId} className="graph-canvas__help">拖动节点移动；空白处框选；Shift 多选；Alt 拖动或平移工具移动视图；Ctrl / ⌘ + 滚轮缩放。选中节点后可用方向键移动、Delete 删除，Esc 取消操作。</p>
+    <p id={descriptionId} className="graph-canvas__help">拖动节点移动；空白处框选；Shift 多选；Alt 拖动或平移工具移动视图；Ctrl / ⌘ + 滚轮缩放。选中节点后可用方向键移动、Delete 预览移除影响，Esc 取消操作。</p>
     <ul className="sr-only" aria-label="节点图连接">{edgeDescriptions}</ul>
   </section>;
 }

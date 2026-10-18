@@ -1,4 +1,5 @@
 import { GraphNodeStateControl } from './GraphNodeStateControl';
+import { GraphNodeRemovalControl } from './GraphNodeRemovalControl';
 import { GraphConnectionList } from './GraphConnectionList';
 import { GraphDirectorCompareDeck } from './GraphDirectorCompareDeck';
 import { readProjectTemplateSource } from './graphProjectTemplates';
@@ -11,7 +12,6 @@ import { IMAGE_REFERENCE_PURPOSES, IMAGE_REFERENCE_PURPOSE_LABELS } from './stud
 import { AssetInspector } from '../novel/AssetInspector';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { GraphCanvas } from './GraphCanvas';
-import { removeGraphNodes } from './graphCanvasGeometry';
 import { GraphRunPanel } from './GraphRunPanel';
 import { GRAPH_NODE_LABELS } from './studioGraphLabels';
 import type { StudioGraphCatalog, StudioGraphCatalogDefinition, StudioGraphDefinition, StudioGraphDefinitionId } from './studioGraphTypes';
@@ -214,17 +214,19 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
       <GraphProjectTemplateTools definition={draft} base={base} selected={selected} catalog={catalog} owner={props.draftOwner} fenceOwner={controller.insertionScope} disabled={!editable || timelineEditor.formDirty} isCurrent={() => current() && !props.isBusy?.()} readSource={id => props.read(() => { if (!props.draftOwner) throw new Error('项目身份未核对。'); return readProjectTemplateSource(props.client, props.draftOwner, id, current); })} onApply={(definition, ids) => { change(definition); setSelected(ids); }} />
       <GraphTextTemplateTools definition={draft} catalog={catalog} owner={controller.insertionScope} disabled={!editable || timelineEditor.formDirty} isCurrent={() => current() && !props.isBusy?.()} onApply={(definition, ids) => { change(definition); setSelected(ids); }} />
       <GraphCanvas insertionScope={canvas ? controller.insertionScope : undefined}
+        removalDefinitions={catalog.definitions} removalOwner={controller.insertionScope} removalDisabled={timelineEditor.formDirty}
+        isRemovalCurrent={() => controller.isPlanningForkCurrent() && current() && props.active && !props.isBusy?.()}
         onInsertionInteraction={canvas ? controller.invalidatePositionedInsertion : undefined}
         onRequestInsertion={canvas ? controller.requestPositionedInsertion : undefined} connectionScope={controller.connectionScope} onConnectionStage={controller.stageConnection}
         connectionIssue={(source, target) => connectionIssue(draft, catalog.definitions, { id: 'pending-connection',
           source_node_id: source.nodeId, source_port: source.portId, target_node_id: target.nodeId, target_port: target.portId })}
         preferencesSource={base} connectionNodeIds={connectionNodeIds(sourcePort, targetPort)} definition={draft} nodeDefinitions={catalog.definitions} selectedNodeIds={selected} onSelectionChange={setSelected} onDefinitionChange={change} readonly={!editable} busy={busy} protectedNodeIds={protectedNodes} interactionKey={`${identity}:${base?.id || 'new'}`} onPortSelect={port => controller.selectConnectionPort(port, controller.connectionScope)} />
-      <GraphConnectionList definition={draft} definitions={catalog.definitions} owner={controller.insertionScope} disabled={!editable || timelineEditor.formDirty} isCurrent={() => current() && !props.isBusy?.()} onChange={change} />
+      <GraphConnectionList definition={draft} definitions={catalog.definitions} owner={controller.insertionScope} disabled={!editable || timelineEditor.formDirty} isCurrent={() => controller.isPlanningForkCurrent() && current() && props.active && !props.isBusy?.()} onChange={change} />
       <GraphRunPanel client={client.graphs} graph={base} targetNodeIds={selected} dirty={dirty || blocked} busy={busy} canMutate={canMutate && !externalDirty} canReview={canReview && !externalDirty} modelExecutionEnabled={!videoGraph && catalog.capabilities.model_execution && catalog.capabilities.model_execution_contract === 'creative-graph-model/1'} mediaExecutionEnabled={mediaEnabled} onDirtyChange={setExecutionDirty} isCurrent={current} read={read} mutate={mutate} requestedRunId={requestedRunId} onRunSelectionChange={reportRunSelection} />
     </>}
   </section>;
   const referenceState = base?.reference_states.find(row => row.node_id === node?.id)?.state;
-  const inspector = <section className="studio-graph-inspector" aria-label="创作图节点检查器">{node ? <><h2>{GRAPH_NODE_LABELS[node.definition_id]}</h2><p>{node.id} · 定义 v{node.definition_version}</p><GraphNodeStateControl nodeId={node.id} definition={draft} definitions={catalog?.definitions ?? []} owner={controller.insertionScope} disabled={!editable || timelineEditor.formDirty} isCurrent={() => current() && !props.isBusy?.()} onChange={change} />
+  const inspector = <section className="studio-graph-inspector" aria-label="创作图节点检查器">{node ? <><h2>{GRAPH_NODE_LABELS[node.definition_id]}</h2><p>{node.id} · 定义 v{node.definition_version}</p><GraphNodeStateControl nodeId={node.id} definition={draft} definitions={catalog?.definitions ?? []} owner={controller.insertionScope} disabled={!editable || timelineEditor.formDirty} isCurrent={() => controller.isPlanningForkCurrent() && current() && props.active && !props.isBusy?.()} onChange={change} />
     {(['text_input', 'manual_transform', 'director_note'] as const).includes(node.definition_id as 'text_input') && <label>{node.definition_id === 'text_input' ? '作者输入文本' : node.definition_id === 'manual_transform' ? '手工处理结果' : '可选导演备注'}<textarea maxLength={node.definition_id === 'director_note' ? 4000 : 8000} disabled={!editable} value={String(node.parameters[node.definition_id === 'text_input' ? 'text' : node.definition_id === 'manual_transform' ? 'result' : 'note'] || '')} onChange={event => { const key = node.definition_id === 'text_input' ? 'text' : node.definition_id === 'manual_transform' ? 'result' : 'note'; change({ ...draft, nodes: draft.nodes.map(row => row.id === node.id ? { ...row, parameters: { [key]: event.target.value } } : row) }); }} /></label>}
     {node.definition_id === 'text_generate' && <><label>本地模型写作指令<textarea maxLength={4000} disabled={!editable} value={node.parameters.instruction || ''} onChange={event => change({ ...draft, nodes: draft.nodes.map(row => row.id === node.id ? { ...row, parameters: { ...row.parameters, instruction: event.target.value } } : row) })} /></label><label>最大输出 token<input type="number" min={1} max={2048} step={1} disabled={!editable} value={node.parameters.max_output_tokens ?? 512} onChange={event => { const value = Number(event.target.value); if (Number.isSafeInteger(value) && value >= 1 && value <= 2048) change({ ...draft, nodes: draft.nodes.map(row => row.id === node.id ? { ...row, parameters: { ...row.parameters, max_output_tokens: value } } : row) }); }} /></label><p>保存节点不调用模型。将草稿输出连接到人工审核节点后，创建运行并单独核对本地路由和完整输入。</p></>}
     {node.definition_id === 'image_reference' && <><p>每个端口绑定一张原图片或已审核素材。权重在原路线中归一化后用于像素初始化；不能据此宣称角色、风格或构图一致性。</p>
@@ -271,7 +273,11 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
     {node.definition_id === 'media_review' && <p>连接一个媒体制作候选。运行时先读取候选、核对摘要并明确批准或拒绝；批准入库后才输出素材引用，不自动执行下游。</p>}
     <div className="studio-graph-position">{(['x', 'y'] as const).map(axis => <label key={axis}>节点 {axis.toUpperCase()}<input type="number" min={-100000} max={100000} value={node.position[axis]} disabled={!editable} onChange={event => { const value = Number(event.target.value); if (Number.isFinite(value) && value >= -100000 && value <= 100000) change({ ...draft, nodes: draft.nodes.map(row => row.id === node.id ? { ...row, position: { ...row.position, [axis]: value } } : row) }); }} /></label>)}</div>
     {node.definition_id === 'asset_reference' && <><p>图读取时引用状态：{referenceState || '待保存核对'} · {draft.schema_version >= 3 ? '执行时核对当前来源版本和真实内容' : '旧图只读引用，不执行媒体处理'}</p>{node.parameters.asset_id ? <p>原资产 {node.parameters.asset_id} · 绑定 v{node.parameters.version}</p> : <p>引用不可用或无权访问，原详情已隐藏。</p>}{previewState === 'READING' && <StatusMessage>正在核对引用资产版本与摘要…</StatusMessage>}{previewState === 'STALE' && <StatusMessage tone="warning">当前资产与图中绑定不同，未显示为原绑定版本。请核对图服务端版本与来源状态。</StatusMessage>}{previewState === 'UNAVAILABLE' && <StatusMessage tone="warning">引用资产当前不可读取，原绑定保持。</StatusMessage>}{node.parameters.asset_id && <Button disabled={busy || previewState === 'READING'} onClick={refreshPreview}>核对引用资产</Button>}{preview && <AssetInspector asset={preview} downloadAsset={downloadPreviewAsset} isCurrent={current} showReferences={false} />}</>}
-    <Button variant="danger" disabled={!editable || protectedNodes.includes(node.id)} onClick={() => { change(removeGraphNodes(draft, [node.id], protectedNodes)); setSelected([]); }}>移除当前节点</Button><p>移除节点只修改本图，不删除任何原资产、章节或运行记录。</p>
+    <GraphNodeRemovalControl definition={draft} nodeIds={[node.id]} selectionIds={selected} protectedNodeIds={protectedNodes}
+      definitions={catalog?.definitions ?? []} owner={controller.insertionScope} sourceOwner={base}
+      disabled={!editable || timelineEditor.formDirty} isCurrent={() => controller.isPlanningForkCurrent() && current() && props.active && !props.isBusy?.()}
+      onApply={definition => { change(definition); setSelected([]); }} />
+    <p>移除节点只修改本图，不删除任何原资产、章节或运行记录。</p>
     </> : <EmptyState title="未选择图节点" detail="在画布或键盘节点列表中选择一个节点，编辑其参数和位置。" />}</section>;
   return { content, inspector };
 }

@@ -1,0 +1,37 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/GraphNodeRemovalControl.additive.test.tsx (44 tests) 1736ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (9 tests) 5548ms
+   ✓ independent studio graph content integration > promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing 1436ms
+   ✓ independent studio graph content integration > saves an empty disconnected definition through the scoped owner and reopens it without creating a run 566ms
+   ✓ independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job 1021ms
+   ✓ independent studio graph content integration > retains the CAS-conflicted draft until an explicit checked adoption of the separately fetched server version 869ms
+   ✓ independent studio graph content integration > protects unsaved graph input when leaving the graph content or fixed module switcher 534ms
+   ✓ independent studio graph content integration > clears private graph draft after authoritative access denial and rejects a late scope response 331ms
+   ✓ independent studio graph content integration > displays redacted saved references without enabling a full-save or deletion roundtrip 405ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.presentation.additive.test.tsx (18 tests) 21171ms
+   ✓ independent studio graph content integration > captures a saved source, chooses another graph, reviews and pastes once with original save/reopen 1890ms
+   ✓ independent studio graph content integration > previews same-graph copies, invalidates edits, pastes once and saves/reopens through original history 1439ms
+   ✓ independent studio graph content integration > explicitly persists view preferences with one undo step and original save/reopen 1588ms
+   ✓ independent studio graph content integration > persists groups through original undo/save/reopen and inspector node deletion 1496ms
+   ✓ independent studio graph content integration > saves independent notes with original undo, redo, reopen and removal 1193ms
+   ✓ independent studio graph content integration > saves/reopens graph annotation with original undo, redo, removal and no model dispatch 1023ms
+   ✓ independent studio graph content integration > guards departure when only an independent note is unsaved 643ms
+   ✓ independent studio graph content integration > warns before leaving when only the graph annotation changed 483ms
+   ✓ independent studio graph content integration > applies layout over dirty author text with one undo step, saves the camera, and restores both on reopen 1070ms
+   ✓ independent studio graph content integration > commits snapped drag once through original undo/save/reopen without persisting view settings 1241ms
+   ✓ independent studio graph content integration > applies selected alignment with one undo, preserves dirty text, and saves/reopens original positions 1291ms
+   ✓ independent studio graph content integration > saves MiniMap camera via original history while preserving dirty author text and reopens it 980ms
+   ✓ independent studio graph content integration > searches current nodes without dispatch, then saves/reopens explicit camera navigation with dirty text and exact pins 906ms
+   ✓ independent studio graph content integration > restores each graph camera by stable ID and keeps dirty layout until explicit navigation consent 573ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 409, with explicit checked adoption only 1299ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 0, with explicit checked adoption only 1302ms
+   ✓ independent studio graph content integration > preserves layout and viewport on save failure 500, with explicit checked adoption only 1340ms
+   ✓ persists nested visual organization with undo, dirty leave warning, reopen and parent-node deletion promotion 1414ms
+
+ Test Files  3 passed (3)
+      Tests  71 passed (71)
+   Start at  00:35:32
+   Duration  25.97s (transform 3.43s, setup 134ms, collect 9.39s, tests 28.46s, environment 938ms, prepare 186ms)
+

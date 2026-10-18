@@ -89,7 +89,9 @@ describe('independent studio graph content integration', () => {
   });
   it('allows optional Director removal and bounded undo without adding a chapter or starting a job', async () => {
     mount(); await enter(); add('text_input'); fireEvent.change(screen.getByLabelText('作者输入文本'), { target: { value: '保留作者文本' } }); add('director_note');
-    fireEvent.change(screen.getByLabelText('可选导演备注'), { target: { value: '完全可选' } }); click('移除当前节点'); click('保存创作图');
+    fireEvent.change(screen.getByLabelText('可选导演备注'), { target: { value: '完全可选' } }); click('移除当前节点');
+    expect(screen.getByLabelText('可选导演备注')).toBeTruthy(); expect(client.graphs.create).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByLabelText('已核对结构影响，确认移除这些节点')); click('确认移除节点到本地草稿'); click('保存创作图');
     await screen.findByText('创作图已保存 · v1。没有自动创建运行。'); expect(saved.definition.nodes.map(node => node.definition_id)).toEqual(['text_input']); expect(saved.definition.edges).toEqual([]);
     add('director_note'); click('撤销图编辑'); click('保存创作图'); expect(client.graphs.save).not.toHaveBeenCalled(); expect(client.graphs.createRun).not.toHaveBeenCalled();
   });

@@ -143,7 +143,12 @@ describe('independent studio graph content integration', () => {
     expect(saved.definition.presentation).toEqual({ groups: [{ id: 'group_1', name: '场景', node_ids: ['text'] }] });
     mounted.unmount(); mount(); await enter(); await open();
     fireEvent.change(screen.getByLabelText('视觉分组'), { target: { value: 'group_1' } }); click('选择分组成员');
-    click('移除当前节点'); click('保存创作图'); await screen.findByText('创作图已保存 · v3。没有自动创建运行。');
+    click('移除当前节点'); expect(screen.getByRole('button', { name: '选择节点 文本输入 · text' })).toBeTruthy();
+    const savesBeforeRemoval = vi.mocked(client.graphs.save).mock.calls.length;
+    expect(screen.getByRole('option', { name: '场景 · 1 个节点' })).toBeTruthy();
+    fireEvent.click(screen.getByLabelText('已核对结构影响，确认移除这些节点')); click('确认移除节点到本地草稿');
+    expect(client.graphs.save).toHaveBeenCalledTimes(savesBeforeRemoval);
+    click('保存创作图'); await screen.findByText('创作图已保存 · v3。没有自动创建运行。');
     expect(saved.definition.nodes).toEqual([]); expect(saved.definition).not.toHaveProperty('presentation');
     expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.preflight).not.toHaveBeenCalled();
   });
@@ -401,6 +406,9 @@ it('persists nested visual organization with undo, dirty leave warning, reopen a
   mounted.unmount(); mount(); await enter(); await open();
   expect(screen.getByRole('option', { name: 'Root / Child · 1 个节点' })).toBeTruthy();
   fireEvent.click(screen.getByRole('button', { name: '选择节点 文本输入 · text' })); click('移除当前节点');
+  expect(screen.getByRole('button', { name: '选择节点 文本输入 · text' })).toBeTruthy();
+  expect(screen.getByRole('option', { name: 'Root / Child · 1 个节点' })).toBeTruthy();
+  fireEvent.click(screen.getByLabelText('已核对结构影响，确认移除这些节点')); click('确认移除节点到本地草稿');
   click('保存创作图'); await screen.findByText('创作图已保存 · v3。没有自动创建运行。');
   expect(saved.definition.presentation!.groups).toEqual([{ id: 'child', name: 'Child', node_ids: ['other'] }]);
   expect(saved.definition.nodes).toEqual([before.nodes[1]]);

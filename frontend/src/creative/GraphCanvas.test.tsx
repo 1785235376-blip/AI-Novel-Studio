@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { GraphCanvas } from './GraphCanvas';
 import type { GraphCanvasProps, GraphCanvasNodeDefinition } from './GraphCanvas';
 import type { StudioGraphDefinition } from './studioGraphTypes';
+import { modelCatalog } from './studioGraphModel.testFixtures';
 
 const nodeDefinitions: GraphCanvasNodeDefinition[] = [
   { id: 'text_input', label: '文本输入', inputs: [], outputs: [{ id: 'text', type: 'TEXT' }] },
@@ -27,7 +28,7 @@ function setup(options: Partial<GraphCanvasProps> = {}) {
     const [selected, setSelected] = useState<readonly string[]>(props.selectedNodeIds || []);
     useEffect(() => { if (props.definition) setDefinition(props.definition); }, [props.definition]);
     useEffect(() => { if (props.selectedNodeIds) setSelected(props.selectedNodeIds); }, [props.selectedNodeIds]);
-    return <GraphCanvas {...props} definition={definition} nodeDefinitions={nodeDefinitions} selectedNodeIds={selected}
+    return <GraphCanvas removalDefinitions={modelCatalog().definitions} {...props} definition={definition} nodeDefinitions={nodeDefinitions} selectedNodeIds={selected}
       onDefinitionChange={(next, record) => { changes(next, record); setDefinition(next); }}
       onSelectionChange={ids => { selections(ids); setSelected(ids); }} />;
   }
@@ -146,6 +147,8 @@ describe('controlled typed graph canvas', () => {
 
   it('removes selected nodes and incident edges in one controlled update', () => {
     const { changes } = setup(); fireEvent.click(source()); fireEvent.keyDown(viewport(), { key: 'Delete' });
+    expect(changes).not.toHaveBeenCalled(); expect(source()).toBeTruthy();
+    fireEvent.click(screen.getByLabelText('已核对结构影响，确认移除这些节点')); fireEvent.click(screen.getByText('确认移除节点到本地草稿'));
     expect(changes).toHaveBeenCalledTimes(1); expect(changes.mock.calls[0][0].nodes.map((node: { id: string }) => node.id)).toEqual(['prepare']);
     expect(changes.mock.calls[0][0].edges).toEqual([]); expect(document.querySelector('[data-graph-edge-id="edge"]')).toBeNull();
   });
@@ -153,6 +156,8 @@ describe('controlled typed graph canvas', () => {
   it('preserves protected saved references when deleting a mixed selection', () => {
     const { changes } = setup({ protectedNodeIds: ['source'] }); fireEvent.click(source()); fireEvent.click(prepare(), { shiftKey: true });
     fireEvent.keyDown(viewport(), { key: 'Delete' });
+    expect(changes).not.toHaveBeenCalled(); expect(source()).toBeTruthy(); expect(prepare()).toBeTruthy();
+    fireEvent.click(screen.getByLabelText('已核对结构影响，确认移除这些节点')); fireEvent.click(screen.getByText('确认移除节点到本地草稿'));
     expect(changes.mock.calls[0][0].nodes.map((node: { id: string }) => node.id)).toEqual(['source']);
     expect(source().getAttribute('aria-pressed')).toBe('true');
     expect((screen.getByRole('button', { name: '删除所选图节点' }) as HTMLButtonElement).disabled).toBe(true);

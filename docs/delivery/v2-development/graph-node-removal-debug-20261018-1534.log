@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/GraphCanvas.test.tsx (25 tests) 1680ms
+ ✓ src/creative/GraphNodeRemovalControl.additive.test.tsx (42 tests) 1140ms
+
+ Test Files  2 passed (2)
+      Tests  67 passed (67)
+   Start at  00:34:43
+   Duration  2.92s (transform 868ms, setup 29ms, collect 1.56s, tests 2.82s, environment 644ms, prepare 145ms)
+
