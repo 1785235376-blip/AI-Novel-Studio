@@ -37,6 +37,15 @@ Focused debugging passed **91 tests in 4 suites**:
 
 The focused command used Vitest with `--maxWorkers=2 --minWorkers=1`. An initial test-fixture error put the multibyte sample exactly at the allowed limit rather than over it; the fixture was corrected by one character and the full focused set rerun successfully. Production enforcement was not relaxed.
 
-The root owner coordinates final source-bound receipts through `scripts/run_v2_checks.py`, the shared TypeScript/Vite build, and relevant visual/geometry checks after both independent source edits stabilize. This report's focused debugging is not a substitute for those aggregate checks.
+The root-owned aggregate run through `scripts/run_v2_checks.py` completed successfully after both independent source edits stabilized:
+
+- Receipt: `docs/delivery/v2-development/graph-removal-offline-file-final.json`.
+- Log: `docs/delivery/v2-development/graph-removal-offline-file-final.log`.
+- 219 tests passed across 11 suites, including all four offline suites listed above.
+- TypeScript check, Vite production build and UI token guard passed.
+- Receipt status is `PASS`, exit code is 0, and `sources_changed_during_check` is `false`.
+- Vite retains its existing advisory for chunks larger than 500 kB; this was not treated as a new acceptance claim or a reason to change unrelated bundling.
+
+This aggregate result does not itself establish real-browser visual/geometry acceptance.
 
 The change follows the repository UI skill, DS-v1.0, component rules and canonical NOVEL reference. It consumes existing `Panel`, `Field`, `Button`, `Details` and `StatusMessage`; it introduces no CSS, tokens or protected-shell changes. No real-browser acceptance, Windows desktop validation or external transport acceptance is claimed here. No commit, push or merge was performed by this worker.
