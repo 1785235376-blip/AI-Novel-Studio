@@ -280,6 +280,7 @@
     "app/local_interop/provider.py",
     "app/local_interop/synthetic_tutor.py",
     "app/local_interop/transport.py",
+    "app/local_pdf_raster.py",
     "app/local_tesseract_ocr.py",
     "app/local_whisper_cpp.py",
     "app/lore/__init__.py",

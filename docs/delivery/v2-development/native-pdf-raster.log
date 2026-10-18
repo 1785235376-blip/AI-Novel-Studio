@@ -1,0 +1,8 @@
+................                                                         [100%]
+=============================== warnings summary ===============================
+tests/test_local_pdf_raster_additive.py::test_real_image_only_pdf_pages_are_distinct_bounded_pngs
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+16 passed, 1 warning in 8.21s

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "629d579c3d4598b0af0c2faf4f08611be174240eb793d065a30d89275fa5db7a",
+  "application_source_fingerprint_sha256": "0aee95e65c305dfff0860079bf56753d4b25b5c074c829afe006b323b090bef5",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -273,6 +273,7 @@
     "app/local_interop/provider.py": "017e9f134521f802772984896202802704f4c787a559ad8dffd686d24ee08e18",
     "app/local_interop/synthetic_tutor.py": "dfd16434f7d6f99d1be0932a6d144a47a0c28fb2deb0d791aebf2f065db617e2",
     "app/local_interop/transport.py": "132c7e9af560512012b8aa0e0e89ca5ef0024c1527b7ab7b8b2b425ac232fc4a",
+    "app/local_pdf_raster.py": "4702fab42cbf0810a935b7bb99f1b7468dd2508444926834ba24e70fe5eaf8f1",
     "app/local_tesseract_ocr.py": "be44f680deed59fd840d8450df8574a611ae28ff0cd3fada45ec66ae9317a588",
     "app/local_whisper_cpp.py": "dda33e1a3aa7b24e174761fd51a8e0c4d8c62aa05ed67a713707af5e0faaaf1f",
     "app/lore/__init__.py": "d98f33239a543cc4eadc79a90c3394da7827fadc0fe94b77ce4a793fea242df4",
@@ -511,7 +512,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "5c61b01486fc2753fd7ae5e3a33e75c058026b532283bd748034aaf10b9ce7da",
+    "sha256": "7c66dc4922696607290bb182d30b457c62dc535268c1fde109e5cdb45d042b21",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
