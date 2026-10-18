@@ -619,6 +619,7 @@
     "contracts/functional-surfaces/realtime-sync-models.v1.json",
     "contracts/functional-surfaces/realtime-sync.v1.json",
     "contracts/functional-surfaces/search-visual-research.v1.json",
+    "contracts/independent-screenplay-shot-plan-v1.md",
     "contracts/local-interop/desktop-prep-parity.json",
     "contracts/local-interop/v1/README.md",
     "contracts/local-interop/v1/cancel-request.schema.json",
