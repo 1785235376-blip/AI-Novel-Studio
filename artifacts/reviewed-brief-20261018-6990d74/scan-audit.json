@@ -1,0 +1,11 @@
+{
+  "scan": {
+    "counts": {},
+    "scanned": 16,
+    "blobs": 16,
+    "total_bytes": 2072908,
+    "max_blob": 666915,
+    "hits": []
+  },
+  "result": "No matching secret patterns in incremental Git blobs; synthetic original File Graph fixture only."
+}
