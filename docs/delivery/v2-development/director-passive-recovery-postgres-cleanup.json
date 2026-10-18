@@ -1,0 +1,56 @@
+{
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_director_image_mounted_additive.py",
+    "-m",
+    "postgres_backend_only",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=.runtime/v2-checks/director-passive-recovery-postgres/pytest",
+    "-q",
+    "-k",
+    "passive_restarted"
+  ],
+  "exit_code": 0,
+  "before": {
+    "identity": [
+      "v2_recovered_ocr_export_20261018",
+      16384,
+      "UTF8",
+      "PostgreSQL 17.11 (Debian 17.11-0+deb13u1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit"
+    ],
+    "row_sha256": {
+      "novels": [
+        "8c000d5fe12d276cb1157822f1a70ec234c7f498792619eca033a114553f6d62"
+      ],
+      "experimental_scope_documents": [
+        "0bdf29f5104aa53f7c8c9c767fb13f9eded5973f7961d0ec9ecc5b052091c335"
+      ],
+      "generation_jobs": [],
+      "chapters": [],
+      "characters": []
+    }
+  },
+  "after": {
+    "identity": [
+      "v2_recovered_ocr_export_20261018",
+      16384,
+      "UTF8",
+      "PostgreSQL 17.11 (Debian 17.11-0+deb13u1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit"
+    ],
+    "row_sha256": {
+      "novels": [
+        "8c000d5fe12d276cb1157822f1a70ec234c7f498792619eca033a114553f6d62"
+      ],
+      "experimental_scope_documents": [
+        "0bdf29f5104aa53f7c8c9c767fb13f9eded5973f7961d0ec9ecc5b052091c335"
+      ],
+      "generation_jobs": [],
+      "chapters": [],
+      "characters": []
+    }
+  },
+  "exact_row_hashes_equal": true
+}

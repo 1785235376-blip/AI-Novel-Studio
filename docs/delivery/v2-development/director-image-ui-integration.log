@@ -1,0 +1,29 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/directorImageClient.test.ts (13 tests) 25ms
+ ✓ src/creative/DirectorImageReviewPanel.test.tsx (11 tests) 1228ms
+   ✓ mounted IMAGE review lifetime and separate explicit actions > makes no mount-time request; keeps dispatch, blank cost and note adoption separate 389ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 1638ms
+   ✓ optional mounted graph director source authoring > hands a saved human director to the existing storyboard owner and reopens its status 326ms
+ ✓ src/creative/GraphDirectorImage.integration.test.tsx (2 tests) 5056ms
+   ✓ protects IMAGE cost and note inputs from real canvas click, Escape, node directory and console reads 4673ms
+   ✓ keeps normal read-only graph selection available when there is no IMAGE intent 382ms
+ ✓ src/creative/IndependentStudioWorkspace.directorImage.additive.test.tsx (2 tests) 7017ms
+   ✓ keeps unsent IMAGE cost through real Broker navigation cancel, then discards only after explicit confirmation 4283ms
+   ✓ keeps unsent IMAGE note through real Broker navigation cancel, then discards only after explicit confirmation 2733ms
+ ✓ src/AppStyleDNANavigation.test.tsx (20 tests) 5619ms
+   ✓ protects original App Switch image before any transition 358ms
+   ✓ composes the original CreativeWorkspace return with Style DNA cancel and 保存 Style DNA 后离开 587ms
+   ✓ composes the original CreativeWorkspace return with Style DNA cancel and 放弃 Style DNA 修改并离开 415ms
+   ✓ keeps Style DNA confirmation reachable after switching to another creative mode 351ms
+   ✓ rechecks creative edits during 保存 Style DNA 后离开 before 返回经典工作区 527ms
+   ✓ rechecks creative edits during 放弃 Style DNA 修改并离开 before 返回经典工作区 522ms
+   ✓ rechecks creative edits during 保存 Style DNA 后离开 before Switch image 507ms
+   ✓ rechecks creative edits during 放弃 Style DNA 修改并离开 before Switch image 483ms
+
+ Test Files  6 passed (6)
+      Tests  60 passed (60)
+   Start at  05:40:17
+   Duration  14.18s (transform 10.01s, setup 139ms, collect 19.13s, tests 20.58s, environment 2.89s, prepare 533ms)
+

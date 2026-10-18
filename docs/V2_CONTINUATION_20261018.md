@@ -1,16 +1,16 @@
 # Studio V2 current continuation checkpoint
 
-Updated 2026-10-18 20:25 UTC. This document inventories bounded additions, not a
+Updated 2026-10-18 20:50 UTC. This document inventories bounded additions, not a
 replacement for the frozen feature matrix or a V2 percentage/Release declaration.
 The source pin below identifies the latest bounded implementation; archive and product heads remain distinct.
 
 ## Source and publication
 
-Current checkpoint: 2026-10-18 20:25 UTC. Working branch:
+Current checkpoint: 2026-10-18 20:50 UTC. Working branch:
 work/dot-recovered-20261018. Latest committed product source is
-7fad622f9cec1c4a8455f4f97412fcfa22dc9641 (mounted IMAGE API/ORA raster attachment).
+79fbb1e5d80574e513cd51c09b54118b12c80d90 (guarded IMAGE/ORA UI and font closure).
 Latest byte-verified public archive is
-321f498d6023508e972da86d2330484c9d34f1d3 on
+b6e00c9d5601140760fc97c98d99569ed7242afa on
 archive/verified-studio-v2-20261017-5a6f697. Archive HEAD and product HEAD are
 different identities; the archive stores prerequisite-bound incremental bundles.
 The restored local source contains the integrated working product, whereas the
@@ -368,3 +368,16 @@ closures and real inference/external-app acceptance remain open.
 
 Prior source899a2566 archived as321f498d6023508e972da86d2330484c9d34f1d3:
 13 paths/5,262,941 bytes anonymously verified against parentcfe6ef4.
+
+## 20:50 UTC bounded authoring workflow closure
+
+Product79fbb1e5d80574e513cd51c09b54118b12c80d90 adds guarded Director IMAGE
+authoring and ORA upload/recovery/raster UI. Combined UI120+TS/build/token,
+ORA File26/realPG57 with14-table exact cleanup, passive recovery File2/PG2,
+pinned CJK File5/PG1 (one File-only skip), Windows-source41 and PUBLIC6 pass.
+All3121 source paths match. Windows fonttools omission fixed; actual Windows,
+browser, external-editor and real-model acceptance remain open.
+
+Prior source7a9e745 archived asb6e00c9d5601140760fc97c98d99569ed7242afa:
+14 artifacts/4,981,463 bytes verified, extra exact standalone report and explicit
+README caveats. Parent321f498. No main/Release/new public source branch.

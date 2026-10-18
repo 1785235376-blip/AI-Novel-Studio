@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T20:25:00Z",
+  "updated_at_utc": "2026-10-18T20:50:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -8238,6 +8238,12 @@
           "product_sha": "7fad622f9cec1c4a8455f4f97412fcfa22dc9641",
           "summary": "Original-host-authorized IMAGE API preview/dispatch/recovery/declaration/review/adoption mounted; injected-model File/PG tests. Console frontend and real inference acceptance pending.",
           "report": "docs/delivery/v2-development/mounted-director-ora-integration-20261018.md",
+          "formal_acceptance": false
+        },
+        {
+          "product_sha": "79fbb1e5d80574e513cd51c09b54118b12c80d90",
+          "summary": "Original authoring console IMAGE preview/dispatch/recovery/declaration/review/adoption UI with real host/Graph dirty guards. Injected execution tests; real model/visual acceptance open.",
+          "report": "docs/delivery/v2-development/image-ora-workflow-integration-20261018.md",
           "formal_acceptance": false
         }
       ]
@@ -21512,7 +21518,7 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Native layers/export and server-side ORA preview/staging/review/RASTER attachment/re-edit exist. Mounted upload/recovery/editor UI and external target-application roundtrip remain open.",
+      "gap": "Supported flat-raster ORA import/recovery/review/attach/edit/export is mounted. External editor roundtrip, broader unsupported ORA semantics and visual acceptance remain open.",
       "next_action": "Persist independent editable source layers and implement real ORA export/import/re-edit with loss receipts.",
       "evidence_scope": "Existing B06 capabilities only satisfy bounded parts; no new Comic requirement is accepted by this mapping.",
       "bounded_evidence": [
@@ -21538,6 +21544,12 @@
           "product_sha": "7fad622f9cec1c4a8455f4f97412fcfa22dc9641",
           "summary": "Sealed original candidate promotion, durable recovery and atomic existing-page RASTER attachment with mixed legacy asset compatibility and export→parse. No mounted ORA UI/routes.",
           "report": "docs/delivery/v2-development/mounted-director-ora-integration-20261018.md",
+          "formal_acceptance": false
+        },
+        {
+          "product_sha": "79fbb1e5d80574e513cd51c09b54118b12c80d90",
+          "summary": "Bounded authenticated upload, exact receipt recovery and candidate pixel review, independent-page CAS attachment and raster-preserving UI; File/PG/component proof.",
+          "report": "docs/delivery/v2-development/image-ora-workflow-integration-20261018.md",
           "formal_acceptance": false
         }
       ]
@@ -21574,7 +21586,15 @@
       "acceptance_status": "NOT_ACCEPTED",
       "gap": "Existing pinned CJK font raster handling is reusable; Chinese/English/Japanese fallback, vertical layout and reviewed translation flow remain open.",
       "next_action": "Reuse multilingual review and editable text with font fallback and human-confirmed translation/read-order.",
-      "evidence_scope": "Existing B06 capabilities only satisfy bounded parts; no new Comic requirement is accepted by this mapping."
+      "evidence_scope": "Existing B06 capabilities only satisfy bounded parts; no new Comic requirement is accepted by this mapping.",
+      "bounded_evidence": [
+        {
+          "product_sha": "79fbb1e5d80574e513cd51c09b54118b12c80d90",
+          "summary": "Exact official pinned CJK font/dependency acceptance: five File tests and one PG rendering case; Windows closed dependency omission corrected with source tests, native Windows unrun. Not general multilingual typography.",
+          "report": "docs/delivery/v2-development/image-ora-workflow-integration-20261018.md",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "IMAGE-COMIC-17",
@@ -22001,8 +22021,8 @@
     }
   ],
   "current_checkpoint": {
-    "product_sha": "7fad622f9cec1c4a8455f4f97412fcfa22dc9641",
-    "report": "docs/delivery/v2-development/mounted-director-ora-integration-20261018.md",
+    "product_sha": "79fbb1e5d80574e513cd51c09b54118b12c80d90",
+    "report": "docs/delivery/v2-development/image-ora-workflow-integration-20261018.md",
     "source_identity_section": "Historical initial reconciliation baseline, not the current HEAD",
     "all_fixed_ids_accepted": false
   }

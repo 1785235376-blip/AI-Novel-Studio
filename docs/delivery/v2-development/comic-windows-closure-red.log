@@ -1,0 +1,23 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___________ test_windows_lock_covers_pinned_comic_application_roots ____________
+
+    def test_windows_lock_covers_pinned_comic_application_roots():
+        from pip._vendor.packaging.requirements import Requirement
+        from pip._vendor.packaging.utils import canonicalize_name
+    
+        project = tomllib.loads((ROOT / "pyproject.toml").read_text())
+        manifest = json.loads(base.LOCK.read_text())
+        wheels = {canonicalize_name(item["name"]): item for item in manifest["wheels"]}
+        locked = (ROOT / "packaging/requirements-windows.lock.txt").read_text().splitlines()
+        for raw in project["project"]["optional-dependencies"]["comic"]:
+            requirement = Requirement(raw)
+            name = canonicalize_name(requirement.name)
+>           assert name in wheels, f"Comic application dependency missing from Windows manifest: {raw}"
+E           AssertionError: Comic application dependency missing from Windows manifest: fonttools==4.59.1
+E           assert 'fonttools' in {'annotated-doc': {'checksum_source': 'https://pypi.org/pypi/annotated-doc/0.0.5/json', 'filename': 'annotated_doc-0.0...trs-26.1.0-py3-none-any.whl', 'license_files': ['attrs-26.1.0.dist-info/licenses/LICENSE'], 'name': 'attrs', ...}, ...}
+
+tests/test_r2_windows_base_inputs.py:138: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_r2_windows_base_inputs.py::test_windows_lock_covers_pinned_comic_application_roots
+1 failed in 0.13s

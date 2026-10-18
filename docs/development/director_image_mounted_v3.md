@@ -40,3 +40,28 @@ New mounted tests reuse File/real-PostgreSQL-parametrized original owner fixture
 and injected transports. No live model call, live inference quality proof,
 PostgreSQL service startup, browser launch, release or main merge is performed
 for this change. Browser launch was already known blocked in the task environment.
+
+## Authoring UI and race controls
+
+The authoring console now has an explicit IMAGE review panel. It captures the
+original client's session/scope, and reads original Asset and registered VISION
+choices only after the user opens it. Dispatch, cost declaration and human note
+adoption have separate consent steps; the amount starts blank. Broker admission
+failure points to the original budget settings through existing workspace leave
+guards, without changing policy.
+
+Private evidence is retired on context, source, target, selection, permission and
+inactive transitions. Refresh clears old evidence before reading. Unsubmitted
+cost/note text blocks destructive panel reads and unrelated console reads until
+explicit clear/submission. A narrow synchronous IMAGE-intent selection fence
+protects Graph click, Escape and node-directory changes without disabling normal
+read-only selection. Lost command acknowledgements direct the user to explicit
+same-proposal status/review; commands are never automatically replayed.
+
+The final isolated backend mounted suite passed 16 File cases; its 16 real-PG
+variants were prepared but not run by this worker. Earlier broader backend
+regressions passed 141 cases before the three final metadata/cancellation cases
+were added. Frontend source was independently reviewed, including real mounted
+Graph selection and workspace Broker-navigation/discard tests. Production build,
+TypeScript and UI token lint passed. These checks establish implementation
+behavior with injected transports, not live inference or browser visual proof.
